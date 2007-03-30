@@ -23,24 +23,50 @@
 
 #endregion
 
+using System;
+using System.IO;
+using System.Globalization;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Xml;
 
-namespace ProjectInfinity.Utilities.CommandLine
+namespace ProjectInfinity.Localisation
 {
   /// <summary>
-  /// Sets an option, with arguments.
+  /// Generates string section and id from combo string 
   /// </summary>
-  public interface ICommandLineOptions
+  public class StringId
   {
-    /// <summary>
-    /// Sets an option, with arguments.
-    /// </summary>
-    /// <param name="option">The option.</param>
-    /// <param name="argument">The argument (can be null).</param>
-    void SetOption(string option, string argument);
+    string _section;
+      int _id;
 
-    /// <summary>
-    /// Displays the options to console
-    /// </summary>
-    void DisplayOptions();
+    public StringId(string section, int id)
+    {
+      _section = section;
+      _id = id;
+    }
+
+    public StringId(string skinLabel)
+    {
+      // Parse string example @mytv#10
+      Regex label = new Regex("@(?<section>[a-z]+)#(?<id>[0-9]+)");
+
+      Match combineString = label.Match(skinLabel);
+
+      _section = combineString.Groups["section"].Value;
+      _id = Int32.Parse(combineString.Groups["id"].Value);
+    }
+
+    public string Section
+    {
+      get { return _section; }
+    }
+
+    public int Id
+    {
+      get { return _id; }
+    }
   }
 }

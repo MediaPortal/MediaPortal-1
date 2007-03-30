@@ -23,24 +23,21 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
-namespace ProjectInfinity.Utilities.CommandLine
+namespace Utilities.Localisation.LanguageStrings
 {
-  /// <summary>
-  /// Sets an option, with arguments.
-  /// </summary>
-  public interface ICommandLineOptions
+  public class StringSection
   {
-    /// <summary>
-    /// Sets an option, with arguments.
-    /// </summary>
-    /// <param name="option">The option.</param>
-    /// <param name="argument">The argument (can be null).</param>
-    void SetOption(string option, string argument);
-
-    /// <summary>
-    /// Displays the options to console
-    /// </summary>
-    void DisplayOptions();
+    #region Variables
+    [XmlAttribute("name")]
+    public string name;
+    [XmlElement("String")]
+    public List<StringLocalised> localisedStrings;
+    #endregion
   }
 }

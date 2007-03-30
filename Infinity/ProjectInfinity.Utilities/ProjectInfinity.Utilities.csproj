@@ -40,7 +40,17 @@
   <ItemGroup>
     <Compile Include="CommandLine\CommandLine.cs" />
     <Compile Include="CommandLine\ICommandLineOptions.cs" />
+    <Compile Include="Localisation\LocalisationProvider.cs" />
+    <Compile Include="Localisation\StringsFile\StringFile.cs" />
+    <Compile Include="Localisation\StringsFile\StringLocalised.cs" />
+    <Compile Include="Localisation\StringsFile\StringSection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ProjectInfinity.Interface\ProjectInfinity.Interface.csproj">
+      <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
+      <Name>ProjectInfinity.Interface</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

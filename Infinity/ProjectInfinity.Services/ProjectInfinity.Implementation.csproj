@@ -37,6 +37,7 @@
     <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Localisation\StringManager.cs" />
     <Compile Include="Logging\FileLogger.cs" />
     <Compile Include="Menu\Menu.cs" />
     <Compile Include="Menu\MenuManager.cs" />
@@ -57,6 +58,10 @@
     <ProjectReference Include="..\ProjectInfinity.Interface\ProjectInfinity.Interface.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
       <Name>ProjectInfinity.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ProjectInfinity.Utilities\ProjectInfinity.Utilities.csproj">
+      <Project>{4FE7B8AE-1330-424A-91A1-C68D7ABF9CB8}</Project>
+      <Name>ProjectInfinity.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

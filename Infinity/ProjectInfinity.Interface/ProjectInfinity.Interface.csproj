@@ -36,6 +36,8 @@
     <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Localisation\ILocalisaton.cs" />
+    <Compile Include="Localisation\StringId.cs" />
     <Compile Include="Menu\IMenu.cs" />
     <Compile Include="Menu\IMenuItem.cs" />
     <Compile Include="Menu\IMenuManager.cs" />
