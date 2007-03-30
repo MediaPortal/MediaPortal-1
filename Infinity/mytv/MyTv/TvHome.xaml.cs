@@ -79,6 +79,29 @@ namespace MyTv
         this.NavigationService.GoBack();
         return;
       }
+      if (Keyboard.IsKeyDown(System.Windows.Input.Key.LeftAlt) || Keyboard.IsKeyDown(System.Windows.Input.Key.RightAlt))
+      {
+        if (Keyboard.IsKeyDown(System.Windows.Input.Key.Enter))
+        {
+          Window window = Window.GetWindow(this);
+          if (window.WindowState == System.Windows.WindowState.Maximized)
+          {
+            window.ShowInTaskbar = true;
+            WindowTaskbar.Show(); ;
+            window.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
+            window.WindowState = System.Windows.WindowState.Normal;
+          }
+          else
+          {
+            window.ShowInTaskbar = false;
+            window.WindowStyle = System.Windows.WindowStyle.None;
+            WindowTaskbar.Hide(); ;
+            window.WindowState = System.Windows.WindowState.Maximized;
+          }
+          e.Handled = true;
+          return;
+        }
+      }
       if (e.Key == System.Windows.Input.Key.X)
       {
         if (TvPlayerCollection.Instance.Count > 0)
@@ -680,13 +703,13 @@ namespace MyTv
       videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
       string fileName = "";
       TvPlayerCollection.Instance.DisposeAll();
-      if (ChannelNavigator.Instance.Card.IsRecording )
+      if (ChannelNavigator.Instance.Card.IsRecording)
       {
-        fileName = ChannelNavigator.Instance.Card.RecordingFileName; 
+        fileName = ChannelNavigator.Instance.Card.RecordingFileName;
       }
       else
       {
-        fileName = ChannelNavigator.Instance.Card.TimeShiftFileName; 
+        fileName = ChannelNavigator.Instance.Card.TimeShiftFileName;
       }
 
       //create a new media player 
@@ -715,7 +738,7 @@ namespace MyTv
         if (player.NaturalDuration.HasTimeSpan)
         {
           TimeSpan duration = player.Duration;
-          player.Position = duration.Add(new TimeSpan(0,0,-1));
+          player.Position = duration.Add(new TimeSpan(0, 0, -1));
         }
         //set tv button on
         buttonTvOnOff.IsChecked = true;
