@@ -627,6 +627,29 @@ namespace MyTv
         this.NavigationService.GoBack();
         return;
       }
+      if (Keyboard.IsKeyDown(System.Windows.Input.Key.LeftAlt) || Keyboard.IsKeyDown(System.Windows.Input.Key.RightAlt))
+      {
+        if (Keyboard.IsKeyDown(System.Windows.Input.Key.Enter))
+        {
+          Window window = Window.GetWindow(this);
+          if (window.WindowState == System.Windows.WindowState.Maximized)
+          {
+            window.ShowInTaskbar = true;
+            WindowTaskbar.Show(); ;
+            window.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
+            window.WindowState = System.Windows.WindowState.Normal;
+          }
+          else
+          {
+            window.ShowInTaskbar = false;
+            window.WindowStyle = System.Windows.WindowStyle.None;
+            WindowTaskbar.Hide(); ;
+            window.WindowState = System.Windows.WindowState.Maximized;
+          }
+          e.Handled = true;
+          return;
+        }
+      }
       if (e.Key == System.Windows.Input.Key.X)
       {
         if (TvPlayerCollection.Instance.Count > 0)
