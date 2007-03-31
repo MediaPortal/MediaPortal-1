@@ -807,6 +807,48 @@ namespace TvPlugin
         case Action.ActionType.ACTION_AUTOZAP:
           StartAutoZap();
           break;
+
+        case Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE:
+        case Action.ActionType.ACTION_NEXT_AUDIO:
+          {
+            IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
+
+            if (streams.Length > 1)
+            {
+              int newIndex = 0;
+              int oldIndex = 0;
+              if (IsSingleSeat())
+              {
+                oldIndex = g_Player.CurrentAudioStream;
+                g_Player.SwitchToNextAudio();
+                newIndex = g_Player.CurrentAudioStream;
+              }
+              else
+              {
+                IAudioStream currentStream = TVHome.Card.AudioStream;
+                for (int i = 0; i < streams.Length; i++)
+                {
+                  if (streams[i] == currentStream)
+                  {
+                    oldIndex = i;
+                    break;
+                  }
+                }
+                newIndex = (oldIndex + 1) % streams.Length;
+                TVHome.Card.AudioStream = streams[newIndex];
+              }
+              Log.Debug("Switching from audio stream {0} to {1}", oldIndex, newIndex);
+
+              // Show OSD Label
+              _statusVisible = true;
+              _statusTimeOutTimer = DateTime.Now;
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+              msg.Label = string.Format("{0}:{1} ({2}/{3})", streams[newIndex].StreamType, streams[newIndex].Language, newIndex + 1, streams.Length);
+              Log.Debug(msg.Label);
+              OnMessage(msg);
+            }
+          }
+          break;
       }
 
       base.OnAction(action);
