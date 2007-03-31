@@ -102,5 +102,29 @@
     <String id="75">Minutes</String>
     <String id="76">All</String>
     <String id="77">episodes</String>
+    <String id="78">recorded</String>
+    <String id="79">View</String>
+    <String id="80">Sort</String>
+    <String id="81">Switch</String>
+    <String id="82">Cleanup</String>
+    <String id="83">Compress</String>
+    <String id="84">Sort:Channel</String>
+    <String id="85">Sort:Date</String>
+    <String id="86">Sort:Duration</String>
+    <String id="87">Sort:Genre</String>
+    <String id="88">Sort:Title</String>
+    <String id="89">Sort:Watched</String>
+    <String id="90">View:List</String>
+    <String id="91">View:Icons</String>
+    <String id="92">Play recording</String>
+    <String id="93">Delete recording</String>
+    <String id="94">Settings</String>
+    <String id="95">Are you sure to delete this recording ?</String>
+    <String id="96">File not found</String>
+    <String id="97">Duration</String>
+    <String id="98">Title</String>
+    <String id="99">Genre</String>
+    <String id="100">Watched</String>
+    <String id="101">This will delete all recordings you have watched. Are you sure?</String>
   </Section>
 </Language>

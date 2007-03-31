@@ -17,6 +17,9 @@ using Gentle.Common;
 using Gentle.Framework;
 using Dialogs;
 using TvControl;
+using ProjectInfinity;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Localisation;
 
 namespace MyTv
 {
@@ -74,6 +77,12 @@ namespace MyTv
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       // Sets keyboard focus on the first Button in the sample.
+      labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 78);//recorded
+      buttonView.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 79);//View
+      buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 80);//Sort
+      buttonSwitch.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 81);//Switch
+      buttonCleanup.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 82);//Cleanup
+      buttonCompress.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 83);//Compress
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       Keyboard.Focus(buttonView);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
@@ -140,22 +149,22 @@ namespace MyTv
       switch (_sortMode)
       {
         case SortMode.Channel:
-          buttonSort.Content = "Sort:Channel";
+          buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 84);//"Sort:Channel";
           break;
         case SortMode.Date:
-          buttonSort.Content = "Sort:Date";
+          buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 85);//"Sort:Date";
           break;
         case SortMode.Duration:
-          buttonSort.Content = "Sort:Duration";
+          buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 86);//"Sort:Duration";
           break;
         case SortMode.Genre:
-          buttonSort.Content = "Sort:Genre";
+          buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 87);//"Sort:Genre";
           break;
         case SortMode.Title:
-          buttonSort.Content = "Sort:Title";
+          buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 88);//"Sort:Title";
           break;
         case SortMode.Watched:
-          buttonSort.Content = "Sort:Watched";
+          buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 89);//"Sort:Watched";
           break;
       }
       Grid grid = new Grid();
@@ -176,7 +185,7 @@ namespace MyTv
         {
           case ViewMode.List:
             {
-              buttonView.Content = "View:List";
+              buttonView.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 90);//"View:List";
               Grid gridSub = new Grid();
               gridSub.ColumnDefinitions.Add(new ColumnDefinition());
               gridSub.ColumnDefinitions.Add(new ColumnDefinition());
@@ -225,7 +234,7 @@ namespace MyTv
           case ViewMode.Icon:
             {
               //icon view...
-              buttonView.Content = "View:Icons";
+              buttonView.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 91);//"View:Icons";
               Grid gridSub = new Grid();
               gridSub.ColumnDefinitions.Add(new ColumnDefinition());
               gridSub.ColumnDefinitions.Add(new ColumnDefinition());
@@ -313,11 +322,11 @@ namespace MyTv
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
-      dlgMenu.Header = "Menu";
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);//"Menu";
       dlgMenu.SubTitle = "";
-      dlgMenu.Items.Add(new DialogMenuItem("Play recording"));
-      dlgMenu.Items.Add(new DialogMenuItem("Delete recording"));
-      dlgMenu.Items.Add(new DialogMenuItem("Settings"));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 92)/*Play recording*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 93)/*Delete recording*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 94)/*Settings*/));
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;//nothing selected
       switch (dlgMenu.SelectedIndex)
@@ -342,8 +351,8 @@ namespace MyTv
       Window w = Window.GetWindow(this);
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
-      dlgMenu.Header = "Menu";
-      dlgMenu.Content = "Are you sure to delete this recording ?";
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);//"Menu";
+      dlgMenu.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 95);//"Are you sure to delete this recording ?";
       dlgMenu.ShowDialog();
       if (dlgMenu.DialogResult == DialogResult.No) return;
 
@@ -359,9 +368,9 @@ namespace MyTv
         Window w = Window.GetWindow(this);
         dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
         dlgError.Owner = w;
-        dlgError.Title = "Cannot open file";
-        dlgError.Header = "Error";
-        dlgError.Content = "File not found " + recording.FileName;
+        dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
+        dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
+        dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 96)/*File not found*/+ " " + recording.FileName;
         dlgError.ShowDialog();
         return;
       }
@@ -406,9 +415,9 @@ namespace MyTv
           Window w = Window.GetWindow(this);
           dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
           dlgError.Owner = w;
-          dlgError.Title = "Cannot open file";
-          dlgError.Header = "Error";
-          dlgError.Content = "Unable to open the file " + TvPlayerCollection.Instance[0].ErrorMessage;
+          dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
+          dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
+          dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/+ " " + TvPlayerCollection.Instance[0].ErrorMessage;
           dlgError.ShowDialog();
         }
       }
@@ -466,14 +475,14 @@ namespace MyTv
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
-      dlgMenu.Header = "Menu";
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);// "Menu";
       dlgMenu.SubTitle = "";
-      dlgMenu.Items.Add(new DialogMenuItem("Duration"));
-      dlgMenu.Items.Add(new DialogMenuItem("Channel"));
-      dlgMenu.Items.Add(new DialogMenuItem("Date"));
-      dlgMenu.Items.Add(new DialogMenuItem("Title"));
-      dlgMenu.Items.Add(new DialogMenuItem("Genre"));
-      dlgMenu.Items.Add(new DialogMenuItem("Watched"));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 97)/*Duration*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 2)/*Channel*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 73)/*Date*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 98)/*Title*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 99)/*Genre*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 100)/*Watched*/));
       dlgMenu.SelectedIndex = (int)_sortMode;
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;//nothing selected
@@ -492,8 +501,8 @@ namespace MyTv
       Window w = Window.GetWindow(this);
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
-      dlgMenu.Header = "Menu";
-      dlgMenu.Content = "This will delete all recordings you have watched. Are you sure?";
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);// "Menu";
+      dlgMenu.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 101);//"This will delete all recordings you have watched. Are you sure?";
       dlgMenu.ShowDialog();
       if (dlgMenu.DialogResult == DialogResult.No) return;
       IList itemlist = Recording.ListAll();
