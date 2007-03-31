@@ -196,7 +196,7 @@ namespace MyTv
           dlg.Owner = w;
           dlg.Title = "";
           dlg.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);//Error
-          dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 11);//Infinity needs TsReader.ax to be registered!
+          dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 12);//Infinity needs TsReader.ax to be registered!
           dlg.ShowDialog();
           return;
         }
