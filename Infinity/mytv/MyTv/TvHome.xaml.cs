@@ -22,7 +22,9 @@ using TvDatabase;
 using Gentle.Common;
 using Gentle.Framework;
 using DirectShowLib;
-
+using ProjectInfinity;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Localisation;
 namespace MyTv
 {
   /// <summary>
@@ -64,7 +66,16 @@ namespace MyTv
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.Focus(buttonTvGuide);
-
+      buttonTvGuide.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 0);
+      buttonRecordNow.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 1);
+      buttonChannel.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 2);
+      buttonTvStreams.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 3);
+      buttonTvOnOff.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 4);
+      buttonScheduled.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 5);
+      buttonRecorded.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 6);
+      buttonSearch.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 7);
+      buttonTeletext.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 8);
+      labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 9);
       //try to connect to server in background...
       ConnectToServerDelegate starter = new ConnectToServerDelegate(this.ConnectToServer);
       starter.BeginInvoke(null, null);
@@ -170,8 +181,8 @@ namespace MyTv
         dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
         dlg.Owner = w;
         dlg.Title = "";
-        dlg.Header = "Error";
-        dlg.Content = "Infinity needs Windows Media Player 10 or higher to playback video!";
+        dlg.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);//Error
+        dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 11);//Infinity needs Windows Media Player 10 or higher to playback video!";
         dlg.ShowDialog();
         return;
       }
@@ -184,8 +195,8 @@ namespace MyTv
           dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
           dlg.Owner = w;
           dlg.Title = "";
-          dlg.Header = "Error";
-          dlg.Content = "Infinity needs TsReader.ax to be registered!";
+          dlg.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);//Error
+          dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 11);//Infinity needs TsReader.ax to be registered!
           dlg.ShowDialog();
           return;
         }
@@ -272,9 +283,9 @@ namespace MyTv
           dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
           dlgMenu.Owner = w;
           dlgMenu.Items.Clear();
-          dlgMenu.Header = "Record";
-          dlgMenu.Items.Add(new DialogMenuItem("current program"));
-          dlgMenu.Items.Add(new DialogMenuItem("until manual stopped"));
+          dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);//Record
+          dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 14)/*current program*/));
+          dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 15)/*until manual stopped*/));
           dlgMenu.ShowDialog();
           switch (dlgMenu.SelectedIndex)
           {
@@ -308,7 +319,8 @@ namespace MyTv
         else
         {
           //manual record
-          Schedule newSchedule = new Schedule(channel.IdChannel, "Manual (" + channel.Name + ")",
+          string manual = ServiceScope.Get<ILocalisation>().ToString("mytv", 16);//Manual
+          Schedule newSchedule = new Schedule(channel.IdChannel, manual + " (" + channel.Name + ")",
                                       DateTime.Now, DateTime.Now.AddDays(1));
           newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
           newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
@@ -374,12 +386,15 @@ namespace MyTv
     void OnChannelClicked(object sender, EventArgs args)
     {
       if (ChannelNavigator.Instance.CurrentGroup == null) return;
+      ServiceScope.Get<ILogger>().Info("MyTv: OnChannelClicked");
+
       //show dialog menu showing all channels of current tvgroup
       MpMenu dlgMenu = new MpMenu();
       Window w = Window.GetWindow(this);
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
+      ServiceScope.Get<ILogger>().Info("MyTv:   get channels");
       TvBusinessLayer layer = new TvBusinessLayer();
       IList groups = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
       List<Channel> _tvChannelList = new List<Channel>();
@@ -391,8 +406,10 @@ namespace MyTv
           _tvChannelList.Add(ch);
         }
       }
+      ServiceScope.Get<ILogger>().Info("MyTv:   get now&next");
       Dictionary<int, NowAndNext> listNowNext = layer.GetNowAndNext();
 
+      ServiceScope.Get<ILogger>().Info("MyTv:   get recording channels");
       bool checkChannelState = true;
       List<int> channelsRecording = null;
       List<int> channelsTimeshifting = null;
@@ -414,10 +431,16 @@ namespace MyTv
           }
         }
       }
+
+      ServiceScope.Get<ILogger>().Info("MyTv:   {0} channels recording", channelsRecording.Count);
+      ServiceScope.Get<ILogger>().Info("MyTv:   {0} channels timeshifting", channelsTimeshifting.Count);
+      ServiceScope.Get<ILogger>().Info("MyTv:   checkChannelState:{0}", checkChannelState);
+      ServiceScope.Get<ILogger>().Info("MyTv:   add {0} channels", _tvChannelList.Count);
       int selected = 0;
       ChannelState currentChannelState = ChannelState.tunable;
       for (int i = 0; i < _tvChannelList.Count; i++)
       {
+        ServiceScope.Get<ILogger>().Info("MyTv:   add {0} ", i);
         Channel currentChannel = _tvChannelList[i];
         if (checkChannelState)
           currentChannelState = (ChannelState)server.GetChannelState(currentChannel.IdChannel);
@@ -438,20 +461,20 @@ namespace MyTv
           prog = new NowAndNext(currentChannel.IdChannel, DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1), DateTime.Now.AddHours(2), DateTime.Now.AddHours(3), "No data available", "No data available", -1, -1);
 
         string percent = String.Format("{0}-{1}%", currentChannel.Name, CalculateProgress(prog.NowStartTime, prog.NowEndTime).ToString());
-        string now = String.Format("Now:{0}", prog.TitleNow);
-        string next = String.Format("Next:{0}", prog.TitleNext);
+        string now = String.Format("{0}:{1}", ServiceScope.Get<ILocalisation>().ToString("mytv", 17)/*Now*/, prog.TitleNow);
+        string next = String.Format("{0}:{1}", ServiceScope.Get<ILocalisation>().ToString("mytv", 18)/*Next*/, prog.TitleNext);
 
 
         switch (currentChannelState)
         {
           case ChannelState.nottunable:
-            percent = "(unavailable) " + percent;
+            percent = ServiceScope.Get<ILocalisation>().ToString("mytv", 19)/*(unavailable)*/  + percent;
             break;
           case ChannelState.timeshifting:
-            percent = "(timeshifting) " + percent;
+            percent = ServiceScope.Get<ILocalisation>().ToString("mytv", 20)/*(timeshifting)*/  + percent;
             break;
           case ChannelState.recording:
-            percent = "(recording) " + percent;
+            percent = ServiceScope.Get<ILocalisation>().ToString("mytv", 21)/*(recording)*/  + percent;
             break;
         }
         string channelLogoFileName = Thumbs.GetLogoFileName(currentChannel.Name);
@@ -464,8 +487,8 @@ namespace MyTv
           dlgMenu.Items.Add(new DialogMenuItem("", now, next, percent));
         }
       }
-
-      dlgMenu.Header = "On Now";
+      ServiceScope.Get<ILogger>().Info("MyTv:   showdialog");
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 22);/*(On Now)*/
       dlgMenu.SubTitle = DateTime.Now.ToString("HH:mm");
       dlgMenu.SelectedIndex = selected;
       dlgMenu.ShowDialog();
@@ -590,42 +613,42 @@ namespace MyTv
         Window w = Window.GetWindow(this);
         dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
         dlg.Owner = w;
-        dlg.Title = "Failed to start TV";
-        dlg.Header = "Error";
+        dlg.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 23);//"Failed to start TV;
+        dlg.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);/*(Error)*/
         switch (succeeded)
         {
           case TvResult.AllCardsBusy:
-            dlg.Content = "All cards are currently busy";
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 24); //"All cards are currently busy";
             break;
           case TvResult.CardIsDisabled:
-            dlg.Content = "Card is disabled";
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 25);// "Card is disabled";
             break;
           case TvResult.ChannelIsScrambled:
-            dlg.Content = "Channel is scrambled";
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 26);//"Channel is scrambled";
             break;
           case TvResult.ChannelNotMappedToAnyCard:
-            dlg.Content = "Channel is not mapped to any tv card";
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 27);//"Channel is not mapped to any tv card";
             break;
           case TvResult.ConnectionToSlaveFailed:
-            dlg.Content = "Failed to connect to slave server";
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 28);//"Failed to connect to slave server";
             break;
           case TvResult.NotTheOwner:
-            dlg.Content = "Card is owned by another user";
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 29);//"Card is owned by another user";
             break;
           case TvResult.NoTuningDetails:
-            dlg.Content = "Channel does not have tuning information";
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 30);//"Channel does not have tuning information";
             break;
           case TvResult.NoVideoAudioDetected:
-            dlg.Content = "No Video/Audio streams detected";
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 31);//"No Video/Audio streams detected";
             break;
           case TvResult.UnableToStartGraph:
-            dlg.Content = "Unable to start graph";
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 32);//"Unable to start graph";
             break;
           case TvResult.UnknownChannel:
-            dlg.Content = "Unknown channel";
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 33);//"Unknown channel";
             break;
           case TvResult.UnknownError:
-            dlg.Content = "Unknown error occured";
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 34);//"Unknown error occured";
             break;
         }
         dlg.ShowDialog();
@@ -639,7 +662,7 @@ namespace MyTv
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
-      dlgMenu.Header = "Streams";
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 35);// "Streams";
       IList cards = TvDatabase.Card.ListAll();
       List<Channel> channels = new List<Channel>();
       int count = 0;
@@ -691,8 +714,8 @@ namespace MyTv
         dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
         dlgError.Owner = win;
         dlgError.Title = "";
-        dlgError.Header = "Streams";
-        dlgError.Content = "No active streams";
+        dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 35);// "Streams";
+        dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 36);//"No active streams";
         dlgError.ShowDialog();
         return;
       }
@@ -764,9 +787,9 @@ namespace MyTv
         Window w = Window.GetWindow(this);
         dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
         dlgError.Owner = w;
-        dlgError.Title = "Cannot open file";
-        dlgError.Header = "Error";
-        dlgError.Content = "Unable to open the timeshifting file " + player.ErrorMessage;
+        dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);//"Cannot open file";
+        dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);//"Error";
+        dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/ + player.ErrorMessage;
         dlgError.ShowDialog();
       }
       TvPlayerCollection.Instance.DisposeAll();

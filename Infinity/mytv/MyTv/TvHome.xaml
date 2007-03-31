@@ -9,7 +9,7 @@
       <StackPanel DockPanel.Dock="Top" Height="100">
         <DockPanel>
           <StackPanel DockPanel.Dock="Left">
-            <Label Style="{StaticResource LabelHeaderStyle}" >
+            <Label Name="labelHeader" Style="{StaticResource LabelHeaderStyle}" >
               television
             </Label>
           </StackPanel>
@@ -22,14 +22,14 @@
       </StackPanel>
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" KeyboardNavigation.DirectionalNavigation="Cycle">
         <Button Name="buttonTvGuide" Template="{StaticResource MpButton}" Height="32"  Click="OnTvGuideClicked"  MouseEnter="OnMouseEnter" >TvGuide</Button>
-        <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnRecordClicked" >Record now</Button>
-        <Button Template="{StaticResource MpButton}" Height="32" Click="OnChannelClicked" MouseEnter="OnMouseEnter"  >Channel</Button>
-        <Button Template="{StaticResource MpButton}" Height="32" Click="OnTvStreamsClicked" MouseEnter="OnMouseEnter"  >Tv Streams</Button>
+        <Button Name="buttonRecordNow" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnRecordClicked" >Record now</Button>
+        <Button Name="buttonChannel" Template="{StaticResource MpButton}" Height="32" Click="OnChannelClicked" MouseEnter="OnMouseEnter"  >Channel</Button>
+        <Button Name="buttonTvStreams" Template="{StaticResource MpButton}" Height="32" Click="OnTvStreamsClicked" MouseEnter="OnMouseEnter"  >Tv Streams</Button>
         <CheckBox x:Name="buttonTvOnOff" Template="{StaticResource MpRadioButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnTvOnOff" >Tv On</CheckBox>
-        <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnScheduledClicked" >Scheduled</Button>
-        <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnRecordedClicked">Recorded</Button>
-        <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSearchClicked"  >Search</Button>
-        <Button Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Teletext</Button>
+        <Button Name="buttonScheduled" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnScheduledClicked" >Scheduled</Button>
+        <Button Name="buttonRecorded" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnRecordedClicked">Recorded</Button>
+        <Button Name="buttonSearch" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSearchClicked"  >Search</Button>
+        <Button Name="buttonTeletext" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Teletext</Button>
       </StackPanel>
 
 
