@@ -91,8 +91,8 @@ namespace TvLibrary.Implementations.DVB
       Simple_A,
       Simple_B,
       Level_1_A_A,
-      Level_1_B_A,
       Level_1_A_B,
+      Level_1_B_A,
       Level_1_B_B
     }
     enum FecType
