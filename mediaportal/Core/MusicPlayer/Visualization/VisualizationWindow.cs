@@ -84,7 +84,6 @@ namespace MediaPortal.Visualization
     [System.Security.SuppressUnmanagedCodeSecurity] // We won't use this maliciously
     [DllImport("User32.dll", CharSet = CharSet.Auto)]
     public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndAfter, int x, int y, int w, int h, uint flags);
-
     #endregion
 
     #region enums
@@ -1530,7 +1529,7 @@ namespace MediaPortal.Visualization
 
       catch (Exception ex)
       {
-        Console.WriteLine("DoResize caused an exception:{0}", ex);
+        Console.WriteLine("DoResize caused an exception:{0}", ex.StackTrace);
       }
 
       finally
@@ -1561,7 +1560,7 @@ namespace MediaPortal.Visualization
     {
       if (VisualizationRunning)
         return;
-
+    
       Visible = true;
       Refresh();
       Application.DoEvents();
@@ -2462,7 +2461,6 @@ namespace MediaPortal.Visualization
             break;
           }
       }
-
       base.WndProc(ref m);
     }
 

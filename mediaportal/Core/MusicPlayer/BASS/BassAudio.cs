@@ -535,6 +535,17 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Returns the Playback Type
+    /// </summary>
+    public override int PlaybackType
+    {
+      get
+      {
+        return _playBackType;
+      }
+    }
+
+    /// <summary>
     /// Returns the instance of the Video Window
     /// </summary>
     public VisualizationWindow VisualizationWindow

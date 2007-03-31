@@ -38,7 +38,7 @@ namespace MediaPortal.Visualization
             GForce,
             WhiteCap,
             SoftSkies,
-            MilkDrop,
+            Winamp,
             Sonique,
             WMP,
         };
@@ -48,6 +48,7 @@ namespace MediaPortal.Visualization
                 "{BFA29983-66E4-11d7-A75D-0000B4908923}",   // The WMP version the the G-Force plugin.  Since we support G-Force natively, we don't need this one
                 "{3DC95765-154D-11d8-A75D-0000B4908923}",   // The WMP version the the WhiteCap plugin.  Since we support WhiteCap natively, we don't need this one
                 "{4EC05565-154D-11d8-A75D-0000B4908923}",   // The WMP version the the SoftSkies plugin.  Since we support SoftSkies natively, we don't need this one 
+                "{BDEEAAAB-15DC-4e7d-802D-10115C069AD8}",   // The WMP version of TwistedPixel. We support the Winamp Version
             };
 
         private VisualizationInfo.PluginType _VisualizationType = VisualizationInfo.PluginType.None;
@@ -247,8 +248,8 @@ namespace MediaPortal.Visualization
                     sVizType = " (Sonique)";
                     break;
 
-                case VisualizationInfo.PluginType.MilkDrop:
-                    sVizType = " (Milkdrop)";
+                case VisualizationInfo.PluginType.Winamp:
+                    sVizType = " (Winamp)";
                     break;
 
                 case VisualizationInfo.PluginType.WMP:

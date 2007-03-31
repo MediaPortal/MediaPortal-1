@@ -30,22 +30,22 @@ using System.Drawing;
 
 namespace MediaPortal.Visualization
 {
-    public interface IVisualization
-    {
-        bool Initialized { get;}
-        bool PreRenderRequired { get;}
-        bool IsEngineInstalled();
-        bool Initialize();
-        bool InitializePreview();   // Used for visualization previews
-        bool Config();
-        int PreRenderVisualization();
-        int RenderVisualization();
-        bool Start();
-        bool Pause();
-        bool Stop();
-        bool WindowSizeChanged(Size newSize);
-        bool WindowChanged(VisualizationWindow vizWindow);
-        bool SetOutputContext(VisualizationBase.OutputContextType outputType);
-        bool Close();
-    }
+  public interface IVisualization
+  {
+    bool Initialized { get;}
+    bool PreRenderRequired { get;}
+    bool IsEngineInstalled();
+    bool Initialize();
+    bool InitializePreview();   // Used for visualization previews
+    bool Config();
+    int PreRenderVisualization();
+    int RenderVisualization();
+    bool Start();
+    bool Pause();
+    bool Stop();
+    bool WindowSizeChanged(Size newSize);
+    bool WindowChanged(VisualizationWindow vizWindow);
+    bool SetOutputContext(VisualizationBase.OutputContextType outputType);
+    bool Close();
+  }
 }

@@ -40,159 +40,159 @@ using System.Runtime.InteropServices;
 namespace MediaPortal.Visualization
 {
 
-    abstract public class VisualizationBase : IDisposable, IVisualization
+  abstract public class VisualizationBase : IDisposable, IVisualization
+  {
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RECT
     {
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
-        {
-            public int left;
-            public int top;
-            public int right;
-            public int bottom;
-        }
-
-        public enum OutputContextType
-        {
-            WindowHandle = 1,
-            DeviceContext = 2,
-        };
-
-        protected delegate int ThreadSafeRenderDelegate();
-        public delegate void VisualizationCreatedDelegate(object sender);
-        public event VisualizationCreatedDelegate VisualizationCreated;
-
-        protected VisualizationInfo VizPluginInfo = null;
-        protected static VisualizationWindow _VisualizationWindow;
-        protected static BassAudioEngine _Bass = null;
-        protected bool _Initialized = false;
-        protected bool _IsPreviewVisualization = false;
-
-
-        #region Properties
-
-        public static BassAudioEngine Bass
-        {
-            get { return _Bass; }
-            set { _Bass = value; }
-        }
-
-        public static VisualizationWindow VisualizationWindow
-        {
-            get { return _VisualizationWindow; }
-            set { _VisualizationWindow = value; }
-        }
-
-        public bool Initialized
-        {
-            get { return _Initialized; }
-        }
-
-        virtual public bool PreRenderRequired
-        {
-            get { return false; }
-        }
-
-        virtual public bool IsPreviewVisualization
-        {
-            get { return _IsPreviewVisualization; }
-            set { _IsPreviewVisualization = value; }
-        }
-
-        #endregion
-
-        public VisualizationBase()
-        {
-        }
-
-        public VisualizationBase(VisualizationInfo vizPluginInfo, VisualizationWindow vizCtrl)
-            : this()
-        {
-            VizPluginInfo = vizPluginInfo;
-            VisualizationWindow = vizCtrl;
-        }
-
-        #region IDisposable Members
-
-        virtual public void Dispose()
-        {
-        }
-
-        #endregion
-
-        protected void VisualizationLoaded()
-        {
-            if (this.VisualizationCreated != null)
-                VisualizationCreated(this);
-        }
-
-        #region IVisualization Members
-        virtual public bool IsEngineInstalled()
-        {
-            return false;
-        }
-
-        virtual public bool Initialize()
-        {
-            return false;
-        }
-
-        virtual public bool InitializePreview()
-        {
-            _IsPreviewVisualization = true;
-            return false;
-        }
-        
-        virtual public bool Config()
-        {
-            return false;
-        }
-
-        virtual public int PreRenderVisualization()
-        {
-            return 0;
-        }
-
-        virtual public int RenderVisualization()
-        {
-            return 0;
-        }
-
-        virtual public bool Start()
-        {
-            return false;
-        }
-
-        virtual public bool Pause()
-        {
-            return false;
-        }
-
-        virtual public bool Stop()
-        {
-            return false;
-        }
-
-        virtual public bool WindowSizeChanged(Size newSize)
-        {
-            return true;
-        }
-
-        virtual public bool WindowChanged(VisualizationWindow vizWindow)
-        {
-            VisualizationWindow = vizWindow;
-            return false;
-        }
-
-        virtual public bool SetOutputContext(VisualizationBase.OutputContextType outputType)
-        {
-            return false;
-        }
-
-        virtual public bool Close()
-        {
-            return false;
-        }
-
-        #endregion
+      public int left;
+      public int top;
+      public int right;
+      public int bottom;
     }
+
+    public enum OutputContextType
+    {
+      WindowHandle = 1,
+      DeviceContext = 2,
+    };
+
+    protected delegate int ThreadSafeRenderDelegate();
+    public delegate void VisualizationCreatedDelegate(object sender);
+    public event VisualizationCreatedDelegate VisualizationCreated;
+
+    protected VisualizationInfo VizPluginInfo = null;
+    protected static VisualizationWindow _VisualizationWindow;
+    protected static BassAudioEngine _Bass = null;
+    protected bool _Initialized = false;
+    protected bool _IsPreviewVisualization = false;
+
+
+    #region Properties
+
+    public static BassAudioEngine Bass
+    {
+      get { return _Bass; }
+      set { _Bass = value; }
+    }
+
+    public static VisualizationWindow VisualizationWindow
+    {
+      get { return _VisualizationWindow; }
+      set { _VisualizationWindow = value; }
+    }
+
+    public bool Initialized
+    {
+      get { return _Initialized; }
+    }
+
+    virtual public bool PreRenderRequired
+    {
+      get { return false; }
+    }
+
+    virtual public bool IsPreviewVisualization
+    {
+      get { return _IsPreviewVisualization; }
+      set { _IsPreviewVisualization = value; }
+    }
+
+    #endregion
+
+    public VisualizationBase()
+    {
+    }
+
+    public VisualizationBase(VisualizationInfo vizPluginInfo, VisualizationWindow vizCtrl)
+      : this()
+    {
+      VizPluginInfo = vizPluginInfo;
+      VisualizationWindow = vizCtrl;
+    }
+
+    #region IDisposable Members
+
+    virtual public void Dispose()
+    {
+    }
+
+    #endregion
+
+    protected void VisualizationLoaded()
+    {
+      if (this.VisualizationCreated != null)
+        VisualizationCreated(this);
+    }
+
+    #region IVisualization Members
+    virtual public bool IsEngineInstalled()
+    {
+      return false;
+    }
+
+    virtual public bool Initialize()
+    {
+      return false;
+    }
+
+    virtual public bool InitializePreview()
+    {
+      _IsPreviewVisualization = true;
+      return false;
+    }
+
+    virtual public bool Config()
+    {
+      return false;
+    }
+
+    virtual public int PreRenderVisualization()
+    {
+      return 0;
+    }
+
+    virtual public int RenderVisualization()
+    {
+      return 0;
+    }
+
+    virtual public bool Start()
+    {
+      return false;
+    }
+
+    virtual public bool Pause()
+    {
+      return false;
+    }
+
+    virtual public bool Stop()
+    {
+      return false;
+    }
+
+    virtual public bool WindowSizeChanged(Size newSize)
+    {
+      return true;
+    }
+
+    virtual public bool WindowChanged(VisualizationWindow vizWindow)
+    {
+      VisualizationWindow = vizWindow;
+      return false;
+    }
+
+    virtual public bool SetOutputContext(VisualizationBase.OutputContextType outputType)
+    {
+      return false;
+    }
+
+    virtual public bool Close()
+    {
+      return false;
+    }
+
+    #endregion
+  }
 }

@@ -68,7 +68,7 @@ namespace MediaPortal.Visualization
           return false;
         }
 
-        BassVis.BASS_VIS_SetConfig(BASSVISConfig.BASS_VIS_CONFIG_SONIQUE_SLOWFADE, 0);
+        BassVis.BASS_SONIQUEVIS_SetConfig(BASSSONIQUEVISConfig.BASS_SONIQUEVIS_CONFIG_SLOWFADE, 0);
         bool result = SetOutputContext(VisualizationWindow.OutputContextType);
         _Initialized = result && VisChannel != 0;
       }

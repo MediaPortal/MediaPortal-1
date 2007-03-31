@@ -1,0 +1,287 @@
+#region Copyright (C) 2005-2007 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2007 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.IO;
+using System.Windows.Forms;
+
+using Un4seen.Bass;
+using Un4seen.Bass.AddOn.Vis;
+
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.TagReader;
+
+namespace MediaPortal.Visualization
+{
+  public class WinampViz : VisualizationBase
+  {
+    #region Imports
+    [DllImport("User32.dll", ExactSpelling = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+    private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int cx, int cy, bool repaint);
+
+    [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto, EntryPoint = "GetWindow")]
+    static extern IntPtr GetWindow(IntPtr hWnd, int child);
+
+    const int GW_CHILD = 5;
+
+    // The following imports can be removed, once the new BASS.Net API is ready
+    [DllImport("bass_vis.dll", CharSet = CharSet.Auto)]
+    public static extern int BASS_WINAMPVIS_ExecuteVis([In, MarshalAs(UnmanagedType.LPStr)] string pluginName, int moduleNum, [MarshalAs(UnmanagedType.Bool)] bool ownHDC, [MarshalAs(UnmanagedType.Bool)] bool ownHDC2);
+
+    [DllImport("bass_vis.dll", CharSet = CharSet.Auto)]
+    public static extern void BASS_WINAMPVIS_Play(IntPtr hWinampWindow);
+
+    [DllImport("bass_vis.dll", CharSet = CharSet.Auto)]
+    public static extern void BASS_WINAMPVIS_Pause(IntPtr hWinampWindow);
+
+    [DllImport("bass_vis.dll", CharSet = CharSet.Auto)]
+    public static extern void BASS_WINAMPVIS_Stop(IntPtr hWinampWindow);
+    #endregion
+
+    #region Variables
+    private int visHandle = 0;
+    private bool RenderStarted = false;
+
+    private IntPtr hwndWinAmp;    // The Winamp fake window, to which we send start and stop commands
+    private IntPtr genHwnd;       // The internal Gen Window of the Visualisation
+    private IntPtr hwndChild;     // Handle to the Winamp Child Window.
+
+    private MusicTag trackTag = null;
+    private string _songTitle = "  ";   // Title of the song played
+    #endregion
+
+    #region Constructors/Destructors
+    public WinampViz(VisualizationInfo vizPluginInfo, VisualizationWindow vizCtrl)
+      : base(vizPluginInfo, vizCtrl)
+    {
+    }
+    #endregion
+
+    #region Public Methods
+    public override bool Initialize()
+    {
+      Bass.PlaybackStateChanged += new BassAudioEngine.PlaybackStateChangedDelegate(PlaybackStateChanged);
+
+      BassVis.BASS_WINAMPVIS_Init(BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), GUIGraphicsContext.form.Handle);
+
+      try
+      {
+        Log.Info("Visualization Manager: Initializing {0} visualization...", VizPluginInfo.Name);
+
+        if (VizPluginInfo == null)
+        {
+          Log.Error("Visualization Manager: {0} visualization engine initialization failed! Reason:{1}",
+              VizPluginInfo.Name, "Missing or invalid VisualizationInfo object.");
+
+          return false;
+        }
+
+        bool result = SetOutputContext(VisualizationWindow.OutputContextType);
+        _Initialized = result && visHandle != 0;
+
+        RenderStarted = false;
+      }
+
+      catch (Exception ex)
+      {
+        Log.Error("Visualization Manager: Winamp visualization engine initialization failed with the following exception {0}", ex);
+        return false;
+      }
+
+      return Initialized;
+    }
+    #endregion
+
+    #region Private Methods
+    private void PlaybackStateChanged(object sender, BassAudioEngine.PlayState oldState, BassAudioEngine.PlayState newState)
+    {
+      Log.Debug("WinampViz: BassPlayer_PlaybackStateChanged from {0} to {1}", oldState.ToString(), newState.ToString());
+      if (newState == BassAudioEngine.PlayState.Playing)
+      {
+        RenderStarted = false;
+        trackTag = TagReader.TagReader.ReadTag(Bass.CurrentFile);
+        if (trackTag != null)
+          _songTitle = String.Format("{0} - {1}", trackTag.Artist, trackTag.Title);
+        else
+          _songTitle = "  ";
+
+        // Send a Start command to the Winamp Fake window
+        BASS_WINAMPVIS_Play(hwndWinAmp);
+      }
+      else
+        if (newState == BassAudioEngine.PlayState.Paused)
+        {
+          // Send a Start command to the Winamp Fake window
+          BASS_WINAMPVIS_Pause(hwndWinAmp);
+        }
+        else
+          if (newState == BassAudioEngine.PlayState.Ended)
+          {
+            // Send a Start command to the Winamp Fake window        
+            BASS_WINAMPVIS_Stop(hwndWinAmp);
+            RenderStarted = false;
+          }
+    }
+    #endregion
+
+    #region <Base class> Overloads
+    public override bool InitializePreview()
+    {
+      base.InitializePreview();
+      return Initialize();
+    }
+
+     public override void Dispose()
+    {
+      base.Dispose();
+      Close();
+    }
+
+    public override int RenderVisualization()
+    {
+      try
+      {
+        if (VisualizationWindow == null || !VisualizationWindow.Visible)
+          return 0;
+
+        // Set Song information, so that the plugin can display it
+        if (trackTag != null && Bass != null)
+          BassVis.BASS_WINAMPVIS_SetChanInfo(visHandle, _songTitle, Bass.CurrentFile, (int)Bass.CurrentPosition, (int)Bass.Duration, 1, 1);
+        else
+          BassVis.BASS_WINAMPVIS_SetChanInfo(visHandle, _songTitle, "  ", 0, 0, 1, 1);
+
+        if (RenderStarted)
+          return 1;
+
+        int stream = 0;
+
+        if (Bass != null)
+          stream = (int)Bass.GetCurrentVizStream();
+
+        RenderStarted = BassVis.BASS_WINAMPVIS_RenderStream(stream);
+        BASS_WINAMPVIS_Play(hwndWinAmp);
+      }
+
+      catch (Exception)
+      {
+      }
+
+      return 1;
+    }
+
+    public override bool Close()
+    {
+      try
+      {
+        if (visHandle != 0)
+        {
+          BASS_WINAMPVIS_Stop(hwndWinAmp);
+          BassVis.BASS_WINAMPVIS_Free(visHandle);
+          BassVis.BASS_WINAMPVIS_Quit();
+          visHandle = 0;
+        }
+
+        return true;
+      }
+
+      catch (Exception ex)
+      {
+        return false;
+      }
+    }
+
+    public override bool WindowChanged(VisualizationWindow vizWindow)
+    {
+      base.WindowChanged(vizWindow);
+      return true;
+    }
+
+    public override bool WindowSizeChanged(Size newSize)
+    {
+      // If width or height are 0 the call to CreateVis will fail.  
+      // If width or height are 1 the window is in transition so we can ignore it.
+      if (VisualizationWindow.Width <= 1 || VisualizationWindow.Height <= 1)
+        return false;
+
+      // Do a move of the Winamp Viz
+      if (visHandle != 0)
+      {
+        hwndChild = GetWindow(VisualizationWindow.Handle, GW_CHILD);
+        if (hwndChild != IntPtr.Zero)
+          MoveWindow(hwndChild, 0, 0, newSize.Width, newSize.Height, true);
+      }
+      return true;
+    }
+
+    public override bool SetOutputContext(VisualizationBase.OutputContextType outputType)
+    {
+      if (VisualizationWindow == null)
+        return false;
+
+      if (_Initialized)
+        return true;
+
+      // If width or height are 0 the call to CreateVis will fail.  
+      // If width or height are 1 the window is in transition so we can ignore it.
+      if (VisualizationWindow.Width <= 1 || VisualizationWindow.Height <= 1)
+        return false;
+
+      if (VizPluginInfo == null || VizPluginInfo.FilePath.Length == 0 || !File.Exists(VizPluginInfo.FilePath))
+        return false;
+
+      if (visHandle != 0)
+      {
+        bool result = BassVis.BASS_WINAMPVIS_Free(visHandle);
+        visHandle = 0;
+        RenderStarted = false;
+      }
+
+      // Set Dummy Information for the plugin, before creating it
+      BassVis.BASS_WINAMPVIS_SetChanInfo(0, _songTitle, "  ", 0, 0, 1, 1);
+
+      // Create the Visualisation
+      visHandle = BASS_WINAMPVIS_ExecuteVis(VizPluginInfo.FilePath, VizPluginInfo.PresetIndex, true, true);
+      if (visHandle != 0)
+      {
+        // Get a handle to the fake Winamp window created by the plugin
+        hwndWinAmp = BassVis.BASS_WINAMPVIS_GetAmpHwnd();
+        // get the handle of the internal Winamp Gen Window
+        genHwnd = BassVis.BASS_WINAMPVIS_GetGenHwnd();
+
+        // And now move the Plugin into our own Viz window
+        BassVis.BASS_WINAMPVIS_SetGenHwndParent(genHwnd, VisualizationWindow.Handle, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height);
+        BASS_WINAMPVIS_Play(hwndWinAmp);
+      }
+
+      return visHandle != 0;
+    }
+    #endregion
+  }
+}
