@@ -23,12 +23,12 @@ namespace ProjectInfinity
       logger.Critical("ProjectInfinity is starting...");
       //register service implementations
       ServiceScope.Add<IMessageBroker>(new MessageBroker()); //Our messagebroker
+      //A pluginmanager that uses reflection to enumerate available plugins
       ServiceScope.Add<IPluginManager>(new ReflectionPluginManager());
       ServiceScope.Add<IThemeManager>(new ThemeManager());
       ServiceScope.Add<IMenuManager>(new MenuManager());
       ServiceScope.Add<INavigationService>(new NavigationService());
       ServiceScope.Add<ILocalisation>(new StringManager("Language", "en"));
-      //A pluginmanager that uses reflection to enumerate available plugins
 
       ICommandLineOptions piArgs = new ProjectInfinityCommandLine();
 
@@ -41,7 +41,7 @@ namespace ProjectInfinity
         piArgs.DisplayOptions();
         return;
       }
-      ProjectInfinityCore.Start();
+      Core.Start();
 
     }
   }

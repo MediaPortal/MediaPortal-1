@@ -36,6 +36,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ConfigurationTests.cs" />
     <Compile Include="Messaging\MessageBrokerTest.cs" />
     <Compile Include="Messaging\Mocks\InvalidPublisher.cs" />
     <Compile Include="Messaging\Mocks\InvalidReceiver.cs" />

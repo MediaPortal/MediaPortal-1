@@ -1,12 +1,11 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Messaging.SystemMessages;
+using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
 using ProjectInfinity.Themes;
-using ProjectInfinity.Windows;
 
 namespace ProjectInfinity
 {
@@ -75,42 +74,29 @@ namespace ProjectInfinity
       msgBroker.Register(this);
     }
 
-    public static void Start()
-    {
-      Core infinity = new Core();
-      infinity.Run();
-    }
-
-    private void Run()
+    private void DoStart()
     {
       //notify our own subscribers (through the message broker)
       OnStartup(new EventArgs());
 
       //Start the plugins
       ServiceScope.Get<IPluginManager>().StartAll();
+      ServiceScope.Get<IThemeManager>().SetDefaultTheme();
+      INavigationService navigation = ServiceScope.Get<INavigationService>();
 
-      //Get the main window and start it
-      IMainWindow window = ServiceScope.Get<IMainWindow>();
-      if (window == null)
-      {
-        throw new ArgumentNullException("Service is not available", "IMainWindow");
-      }
-      Window mainWindow = window as Window;
-      if (mainWindow == null)
-      {
-        throw new ArgumentException("Window does not inherit from System.Windows.Window", "IMainWindow");
-      }
-      mainWindow.Closing += new CancelEventHandler(mainWindow_Closing);
+      navigation.Closing += new CancelEventHandler(mainWindow_Closing);
       try
       {
         OnStartupComplete(EventArgs.Empty);
-        ServiceScope.Get<IThemeManager>().SetDefaultTheme();
-        Run(mainWindow);
+
+
+        //navigation.Navigate(startupUri);
+        Run(navigation.GetWindow());
         OnShutdown(EventArgs.Empty);
       }
       finally
       {
-        mainWindow.Closing -= new CancelEventHandler(mainWindow_Closing);
+        navigation.Closing -= new CancelEventHandler(mainWindow_Closing);
       }
       OnShutdownComplete(EventArgs.Empty);
     }
@@ -195,10 +181,10 @@ namespace ProjectInfinity
 
     #endregion
 
-    public void InitializeComponent()
+    public static void Start()
     {
-      System.Uri resourceLocater = new System.Uri("/ProjectInfinity;component/app.xaml", System.UriKind.Relative);
-      System.Windows.Application.LoadComponent(this, resourceLocater);
+      Core core = new Core();
+      core.DoStart();
     }
   }
 }
