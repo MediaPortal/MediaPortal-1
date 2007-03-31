@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Language>
+   <Section name="days">
+      <String id="0">Monday</String>
+      <String id="1">Tuesday</String>
+      <String id="2">Wednesday</String>
+      <String id="3">Thursday</String>
+      <String id="4">Friday</String>
+      <String id="5">Saturday</String>
+      <String id="6">Sunday</String>
+   </Section>
+   <Section name="months">
+      <String id="0">January</String>
+      <String id="1">February</String>
+      <String id="2">March</String>
+      <String id="3">Apirl</String>
+      <String id="4">May</String>
+      <String id="5">June</String>
+      <String id="6">July</String>
+      <String id="7">August</String>
+      <String id="8">September</String>
+      <String id="9">October</String>
+      <String id="10">November</String>
+      <String id="11">December</String>
+   </Section>
+  <Section name="mytv">
+    <String id="0">Tv Guide</String>
+    <String id="1">Record Now</String>
+    <String id="2">Channel</String>
+    <String id="3">Tv Streams</String>
+    <String id="4">Tv On</String>
+    <String id="5">Scheduled</String>
+    <String id="6">Recorded</String>
+    <String id="7">Search</String>
+    <String id="8">Teletext</String>
+    <String id="9">television</String>
+    <String id="10">Error</String>
+    <String id="11">Infinity needs Windows Media Player 10 or higher to playback video!</String>
+    <String id="12">Infinity needs Windows Media Player 10 or higher to playback video!</String>
+    <String id="13">Record</String>
+    <String id="14">current program</String>
+    <String id="15">until manual stopped</String>
+    <String id="16">Manual</String>
+    <String id="17">Now</String>
+    <String id="18">Next</String>
+    <String id="19">(unavailable)</String>
+    <String id="20">(timeshifting)</String>
+    <String id="21">(recording)</String>
+    <String id="22">On Now</String>
+    <String id="23">Failed to start TV</String>
+    <String id="24">All cards are currently busy</String>
+    <String id="25">Card is disabled</String>
+    <String id="26">Channel is scrambled</String>
+    <String id="27">Channel is not mapped to any tv card</String>
+    <String id="28">Failed to connect to slave server</String>
+    <String id="29">Card is owned by another user</String>
+    <String id="30">Channel does not have tuning information</String>
+    <String id="31">No Video/Audio streams detected</String>
+    <String id="32">Unable to start graph</String>
+    <String id="33">Unknown channel</String>
+    <String id="34">Unknown error occured</String>
+    <String id="35">Streams</String>
+    <String id="36">No active streams</String>
+    <String id="37">Cannot open file</String>
+    <String id="38">Unable to open the file</String>
+  </Section>
+</Language>
