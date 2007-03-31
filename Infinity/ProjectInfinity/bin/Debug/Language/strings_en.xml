@@ -126,5 +126,10 @@
     <String id="99">Genre</String>
     <String id="100">Watched</String>
     <String id="101">This will delete all recordings you have watched. Are you sure?</String>
+    <String id="102">Please enter the hostname of the tvserver</String>
+    <String id="103">Save</String>
+    <String id="104">Unable to modify gentle.config</String>
+    <String id="105">Connected to tvserver, but unable to connect to database</String>
+    <String id="106">Failed to connect to tvserver</String>
   </Section>
 </Language>

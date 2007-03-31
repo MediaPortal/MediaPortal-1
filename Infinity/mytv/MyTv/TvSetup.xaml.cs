@@ -15,6 +15,9 @@ using TvControl;
 using TvDatabase;
 using Gentle.Common;
 using Gentle.Framework;
+using ProjectInfinity;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Localisation;
 
 namespace MyTv
 {
@@ -39,6 +42,8 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      labelText.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 102);//Please enter the hostname of the tvserver
+      buttonSave.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 103);//Save
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.Focus(textboxServer);
     }
@@ -121,7 +126,7 @@ namespace MyTv
         }
         catch (Exception)
         {
-          result1.Content = "Unable to modify gentle.config";
+          result1.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 104);//"Unable to modify gentle.config";
           Keyboard.Focus(textboxServer);
           return;
         }
@@ -129,12 +134,12 @@ namespace MyTv
       }
       else if (tvServerOk)
       {
-        result1.Content = "Connected to tvserver, but unable to connect to database";
+        result1.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 105);//"Connected to tvserver, but unable to connect to database";
         Keyboard.Focus(textboxServer);
       }
       else
       {
-        result1.Content = "Failed to connect to tvserver";
+        result1.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 106);//"Failed to connect to tvserver";
         Keyboard.Focus(textboxServer);
       }
     }

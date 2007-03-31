@@ -22,11 +22,11 @@
         </DockPanel>
       </StackPanel>
       <StackPanel DockPanel.Dock="Bottom">
-        <Label Style="{StaticResource LabelNormalStyle}">Please enter the hostname of the tvserver</Label>
+        <Label Name="labelText" Style="{StaticResource LabelNormalStyle}">Please enter the hostname of the tvserver</Label>
 
         <StackPanel Orientation='Horizontal'>
           <l:SoftKeyboardTextBox Margin='5' Name='textboxServer'></l:SoftKeyboardTextBox>
-          <Button Template="{StaticResource MpButton}" Height="32" Width="120" Click="OnTest" MouseEnter="OnMouseEnter"  >Save</Button>
+          <Button Name="buttonSave" Template="{StaticResource MpButton}" Height="32" Width="120" Click="OnTest" MouseEnter="OnMouseEnter"  >Save</Button>
         </StackPanel>
         <Label Style="{StaticResource LabelErrorStyle}" Foreground="Red" Name="result1"></Label>
 
