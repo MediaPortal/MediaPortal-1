@@ -27,6 +27,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
@@ -688,7 +689,23 @@ namespace TvPlugin
       Log.Info("SkipForConflictingRecording: Schedule = " + rec.ToString());
 
       TvBusinessLayer layer = new TvBusinessLayer();
+			Setting setting = layer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
+			string lastUpdate = setting.Value;
+			
+			rec.Persist();            // save it for the ConflictManager
+			TvServer server = new TvServer();
+			server.OnNewSchedule();   // inform ConflictManger
+
+			int counter = 0;
+			while ((lastUpdate.Equals(setting.Value)) && (counter++ < 6)) ;  // wait until Conflict Manager has done his job
+			{
+				Thread.Sleep(500);
+				setting = layer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
+			}
       IList conflicts = rec.ConflictingSchedules();
+			rec.Delete();           // for testing -> toDo: add Schedule handling in the functions below
+			server.OnNewSchedule(); // inform Conflict Manager
+
       if (conflicts.Count > 0)
       {
         GUIDialogTVConflict dlg = (GUIDialogTVConflict)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVCONFLICT);
