@@ -16,6 +16,9 @@ using System.Windows.Shapes;
 using TvDatabase;
 using TvControl;
 using TvLibrary.Interfaces;
+using ProjectInfinity;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Localisation;
 namespace MyTv
 {
   /// <summary>
@@ -138,7 +141,7 @@ namespace MyTv
       int rowNr = 0;
       for (int i = _singleRowOffset; i < _maxChannels; ++i)
       {
-        Program program ;
+        Program program;
         if (i < programs.Count)
           program = (Program)programs[i];
         else
@@ -584,6 +587,7 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 39);//tvguide
       _maxChannels = (int)((this.ActualHeight - 300) / 34);
       this.SizeChanged += new SizeChangedEventHandler(TvGuide_SizeChanged);
       LoadChannels();

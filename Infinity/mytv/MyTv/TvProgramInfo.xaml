@@ -8,7 +8,7 @@
       <StackPanel DockPanel.Dock="Top" Height="100">
         <DockPanel>
           <StackPanel DockPanel.Dock="Left">
-            <Label Style="{StaticResource LabelHeaderStyle}" >
+            <Label Name="labelHeader" Style="{StaticResource LabelHeaderStyle}" >
               program info
             </Label>
           </StackPanel>

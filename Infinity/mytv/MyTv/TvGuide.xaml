@@ -9,7 +9,7 @@
       <StackPanel DockPanel.Dock="Top" Height="120">
         <DockPanel>
           <StackPanel DockPanel.Dock="Left">
-            <Label Style="{StaticResource LabelHeaderStyle}" >
+            <Label Name="labelHeader" Style="{StaticResource LabelHeaderStyle}" >
               tvguide
             </Label>
           </StackPanel>

@@ -14,6 +14,9 @@ using System.Windows.Shapes;
 using TvDatabase;
 using TvControl;
 using Dialogs;
+using ProjectInfinity;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Localisation;
 
 namespace MyTv
 {
@@ -48,6 +51,13 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 40);//new schedule
+      buttonQuickRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 41);//Quick Record
+      buttonAdvancedRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 42);//Advanced Record
+      buttonTvGuide.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 0);//Tv guide
+      buttonSearchTitle.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 43);//Search by title
+      buttonSearchKeyword.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 44);//Search by keyword
+      buttonSearchGenre.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 45);//Search by genre
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       Keyboard.Focus(buttonQuickRecord);
