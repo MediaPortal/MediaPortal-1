@@ -15,6 +15,9 @@ using TvDatabase;
 using TvControl;
 using Dialogs;
 using MCEControls;
+using ProjectInfinity;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Localisation;
 
 namespace MyTv
 {
@@ -73,6 +76,9 @@ namespace MyTv
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       // Sets keyboard focus on the first Button in the sample.
+      labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 107);
+      buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 80);
+      buttonType.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 108);
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       textboxSearch.TextChanged += new TextChangedEventHandler(textboxSearch_TextChanged);
       Keyboard.Focus(textboxSearch);
@@ -253,12 +259,12 @@ namespace MyTv
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
-      dlgMenu.Header = "Menu";
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68); //"Menu";
       dlgMenu.SubTitle = "";
-      dlgMenu.Items.Add(new DialogMenuItem("Channel"));
-      dlgMenu.Items.Add(new DialogMenuItem("Date"));
-      dlgMenu.Items.Add(new DialogMenuItem("Title"));
-      dlgMenu.Items.Add(new DialogMenuItem("Description"));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 2)/*Channel*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 73)/*"Date*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 98)/*"Title*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 109)/*"Description*/));
       dlgMenu.SelectedIndex = (int)_sortMode;
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;//nothing selected
@@ -272,11 +278,11 @@ namespace MyTv
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
-      dlgMenu.Header = "Menu";
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68); //"Menu";
       dlgMenu.SubTitle = "";
-      dlgMenu.Items.Add(new DialogMenuItem("Title"));
-      dlgMenu.Items.Add(new DialogMenuItem("Genre"));
-      dlgMenu.Items.Add(new DialogMenuItem("Description"));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 98)/*"Title*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 99)/*Genre*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 109)/*"Description*/));
       dlgMenu.SelectedIndex = (int)_searchType;
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;//nothing selected

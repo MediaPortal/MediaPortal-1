@@ -9,7 +9,7 @@
       <StackPanel DockPanel.Dock="Top" >
         <DockPanel>
           <StackPanel DockPanel.Dock="Left" Height="100">
-            <Label Style="{StaticResource LabelHeaderStyle}" >
+            <Label Name="labelHeader" Style="{StaticResource LabelHeaderStyle}" >
               search
             </Label>
           </StackPanel>

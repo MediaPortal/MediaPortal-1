@@ -131,5 +131,8 @@
     <String id="104">Unable to modify gentle.config</String>
     <String id="105">Connected to tvserver, but unable to connect to database</String>
     <String id="106">Failed to connect to tvserver</String>
+    <String id="107">search</String>
+    <String id="108">Type</String>
+    <String id="109">Description</String>
   </Section>
 </Language>
