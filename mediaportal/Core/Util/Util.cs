@@ -1853,25 +1853,25 @@ namespace MediaPortal.Util
           foreach (Process proc in Process.GetProcessesByName("ehtray"))
             proc.Kill();
         }
-        if (Process.GetProcessesByName("ehmsas").Length != 0)
-        {
-          _restartWmcEhmsas = true;
-          _ehmsasPath = Process.GetProcessesByName("ehmsas")[0].MainModule.FileName;
-          foreach (Process proc in Process.GetProcessesByName("ehmsas"))
-            proc.Kill();
-        }
+        //if (Process.GetProcessesByName("ehmsas").Length != 0)
+        //{
+        //  _restartWmcEhmsas = true;
+        //  _ehmsasPath = Process.GetProcessesByName("ehmsas")[0].MainModule.FileName;
+        //  foreach (Process proc in Process.GetProcessesByName("ehmsas"))
+        //    proc.Kill();
+        //}
         Thread.Sleep(200);
         if (Process.GetProcessesByName("ehtray").Length != 0)
         {
           Log.Error("StopVistaServices: Cannot terminate ehtray.exe");
         }
-        if (Process.GetProcessesByName("ehmsas").Length != 0)
-        {
-          Log.Error("StopVistaServices: Cannot terminate ehmsas.exe");
-        }
+        //if (Process.GetProcessesByName("ehmsas").Length != 0)
+        //{
+        //  Log.Error("StopVistaServices: Cannot terminate ehmsas.exe");
+        //}
       }
       else
-        Log.Error("!!! MediaPortal needs to be run with administrative rights on Vista to stop the Media Center services that occupy your TV cards/remote control !!!");
+        Log.Error("!!! MediaPortal needs to be run as Administrator on Vista to stop the Media Center services that occupy your TV cards/remote control !!!");
     }
 
     static public void RestartMCEServices()
@@ -1905,11 +1905,11 @@ namespace MediaPortal.Util
 
       if ((_restartWmcEhtray && _ehtrayPath != string.Empty) || (_restartWmcEhmsas && _ehmsasPath != string.Empty))
       {
-        Log.Info("Restarting Vista MC specific services");
+        Log.Info("Restarting Vista MC specific background applications");
         if (_restartWmcEhtray)
           Process.Start(_ehtrayPath);
-        if (_restartWmcEhmsas)
-          Process.Start(_ehmsasPath);
+        //if (_restartWmcEhmsas)
+        //  Process.Start(_ehmsasPath);
       }
     }
 
