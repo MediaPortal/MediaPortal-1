@@ -697,7 +697,7 @@ namespace TvPlugin
 			server.OnNewSchedule();   // inform ConflictManger
 
 			int counter = 0;
-			while ((lastUpdate.Equals(setting.Value)) && (counter++ < 6)) ;  // wait until Conflict Manager has done his job
+			while ((lastUpdate.Equals(setting.Value)) && (counter++ < 20)) // wait until Conflict Manager has done his job
 			{
 				Thread.Sleep(500);
 				setting = layer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
@@ -706,6 +706,7 @@ namespace TvPlugin
 			rec.Delete();           // for testing -> toDo: add Schedule handling in the functions below
 			server.OnNewSchedule(); // inform Conflict Manager
 
+			Log.Info("SkipForConflictingRecording: Conflicts.Count = " + conflicts.Count.ToString());
       if (conflicts.Count > 0)
       {
         GUIDialogTVConflict dlg = (GUIDialogTVConflict)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVCONFLICT);
