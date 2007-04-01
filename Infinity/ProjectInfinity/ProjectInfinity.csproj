@@ -109,6 +109,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(ProjectDir)$(OutDir)PostBuild.bat"</PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)PostBuild-$(ConfigurationName).bat"</PostBuildEvent>
   </PropertyGroup>
 </Project>
