@@ -690,7 +690,7 @@ namespace TvPlugin
 
       TvBusinessLayer layer = new TvBusinessLayer();
 			
-			Setting setting = layer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
+/*			Setting setting = layer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
 			string lastUpdate = setting.Value;
 			Log.Info("SkipForConflictingRecording: LastUpDateTime = " + setting.Value);
 			
@@ -718,7 +718,8 @@ namespace TvPlugin
 				conflicts = layer.GetConflictingSchedules(rec);
 				Log.Info("SkipForConflictingRecording: 2.Conflicts.Count = " + conflicts.Count.ToString());
 			}
-
+*/
+			IList conflicts = layer.GetConflictingSchedules(rec);
       if (conflicts.Count > 0)
       {
         GUIDialogTVConflict dlg = (GUIDialogTVConflict)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVCONFLICT);
