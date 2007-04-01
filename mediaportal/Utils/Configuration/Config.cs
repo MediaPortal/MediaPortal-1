@@ -183,6 +183,27 @@ private Config()
     {
       return directories.ContainsKey(path);
     }
+
+    /// <summary>
+    /// Checks if MediaPortalDirs.xml has been updated by a new installation or SVN update
+    /// in case it resides in the user's MyDocuments folder
+    /// </summary>
+    public static bool DirsFileUpdateDetected
+    {
+      get
+      {
+        string userFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\MediaPortalDirs.xml";
+        string baseFile = AppDomain.CurrentDomain.BaseDirectory + "MediaPortalDirs.xml";
+
+        if (!File.Exists(userFile))
+          return false;
+
+        if (File.GetLastWriteTimeUtc(userFile) < File.GetLastWriteTimeUtc(baseFile))
+          return true;
+        else
+          return false;
+      }
+    }
     #endregion
 
     #region Private Methods
@@ -237,7 +258,7 @@ private Config()
                 XmlNode path = nodeDir.SelectSingleNode("Path");
                 if (path != null)
                 {
-                  
+
                   string strPath = path.InnerText;
                   string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                   strPath = strPath.Replace("%APPDATA%", appData);
