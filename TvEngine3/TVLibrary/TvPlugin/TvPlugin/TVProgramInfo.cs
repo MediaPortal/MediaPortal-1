@@ -689,8 +689,10 @@ namespace TvPlugin
       Log.Info("SkipForConflictingRecording: Schedule = " + rec.ToString());
 
       TvBusinessLayer layer = new TvBusinessLayer();
+			
 			Setting setting = layer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
 			string lastUpdate = setting.Value;
+			Log.Info("SkipForConflictingRecording: LastUpDateTime = " + setting.Value);
 			
 			rec.Persist();            // save it for the ConflictManager
 			TvServer server = new TvServer();
@@ -701,12 +703,22 @@ namespace TvPlugin
 			{
 				Thread.Sleep(500);
 				setting = layer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
+				Log.Info("SkipForConflictingRecording: LastUpDateTime = " + setting.Value);
 			}
-      IList conflicts = rec.ConflictingSchedules();
+			Log.Info("SkipForConflictingRecording: rec.IdSchedule = " + rec.IdSchedule.ToString());
+			IList conflicts = rec.ConflictingSchedules();
+			Log.Info("SkipForConflictingRecording: 1.Conflicts.Count = " + conflicts.Count.ToString());
+
 			rec.Delete();           // for testing -> toDo: add Schedule handling in the functions below
 			server.OnNewSchedule(); // inform Conflict Manager
 
-			Log.Info("SkipForConflictingRecording: Conflicts.Count = " + conflicts.Count.ToString());
+			if (conflicts.Count < 1)
+			{
+				Log.Info("SkipForConflictingRecording: Start 2nd try");
+				conflicts = layer.GetConflictingSchedules(rec);
+				Log.Info("SkipForConflictingRecording: 2.Conflicts.Count = " + conflicts.Count.ToString());
+			}
+
       if (conflicts.Count > 0)
       {
         GUIDialogTVConflict dlg = (GUIDialogTVConflict)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVCONFLICT);
