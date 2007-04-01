@@ -45,6 +45,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Player;
 using MediaPortal.Configuration;
+using System.Threading;
 
 namespace MediaPortal.Util
 {
@@ -103,10 +104,14 @@ namespace MediaPortal.Util
     static bool m_bHideExtensions = false;
     static bool enableGuiSounds;
 
-    static bool restartMCEehRecvr = false;
-    static bool restartMCEehSched = false;
-    static ServiceController ehRecvr = new ServiceController("ehRecvr");
-    static ServiceController ehSched = new ServiceController("ehSched");
+    static bool _restartMCEehRecvr = false;
+    static bool _restartMCEehSched = false;
+    static bool _restartWmcEhtray = false;
+    static bool _restartWmcEhmsas = false;
+    static ServiceController _ehRecvr = new ServiceController("ehRecvr");
+    static ServiceController _ehSched = new ServiceController("ehSched");
+    static string _ehtrayPath = string.Empty;
+    static string _ehmsasPath = string.Empty;
 
     static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
 
@@ -1784,8 +1789,10 @@ namespace MediaPortal.Util
 
     static public void StopMCEServices()
     {
+      // Stop Vista & XP services
       bool ehRecvrExist = false;
       bool ehSchedExist = false;
+      bool success = true;
       // Check for existance of MCE services without throwing/catching exceptions
       ServiceController[] services = ServiceController.GetServices();
       foreach (ServiceController srv in services)
@@ -1804,64 +1811,105 @@ namespace MediaPortal.Util
         }
       }
       // Stop MCE ehRecvr and ehSched services
-      if ((ehRecvrExist && (ehRecvr.Status != ServiceControllerStatus.Stopped) && (ehRecvr.Status != ServiceControllerStatus.StopPending))
-        || (ehSchedExist && (ehSched.Status != ServiceControllerStatus.Stopped) && (ehSched.Status != ServiceControllerStatus.StopPending)))
+      if ((ehRecvrExist && (_ehRecvr.Status != ServiceControllerStatus.Stopped) && (_ehRecvr.Status != ServiceControllerStatus.StopPending))
+        || (ehSchedExist && (_ehSched.Status != ServiceControllerStatus.Stopped) && (_ehSched.Status != ServiceControllerStatus.StopPending)))
       {
         Log.Info("  Stopping Microsoft Media Center services");
         try
         {
-          if ((ehRecvr.Status != ServiceControllerStatus.Stopped) && (ehRecvr.Status != ServiceControllerStatus.StopPending))
+          if ((_ehRecvr.Status != ServiceControllerStatus.Stopped) && (_ehRecvr.Status != ServiceControllerStatus.StopPending))
           {
-            ehRecvr.Stop();
-            restartMCEehRecvr = true;
+            _ehRecvr.Stop();
+            _restartMCEehRecvr = true;
           }
         }
         catch
         {
-          Log.Info("Error stopping MCE service \"ehRecvr\"");
+          success = false;
+          Log.Error("Error stopping MCE service \"ehRecvr\"");
         }
         try
         {
-          if ((ehSched.Status != ServiceControllerStatus.Stopped) && (ehSched.Status != ServiceControllerStatus.StopPending))
+          if ((_ehSched.Status != ServiceControllerStatus.Stopped) && (_ehSched.Status != ServiceControllerStatus.StopPending))
           {
-            ehSched.Stop();
-            restartMCEehSched = true;
+            _ehSched.Stop();
+            _restartMCEehSched = true;
           }
         }
         catch
         {
-          Log.Info("Error stopping MCE service \"ehSched\"");
+          success = false;
+          Log.Error("Error stopping MCE service \"ehSched\"");
         }
       }
+
+      if (success)
+      {
+        // Stop Vista specific services
+        if (Process.GetProcessesByName("ehtray").Length != 0)
+        {
+          _restartWmcEhtray = true;
+          _ehtrayPath = Process.GetProcessesByName("ehtray")[0].MainModule.FileName;
+          foreach (Process proc in Process.GetProcessesByName("ehtray"))
+            proc.Kill();
+        }
+        if (Process.GetProcessesByName("ehmsas").Length != 0)
+        {
+          _restartWmcEhmsas = true;
+          _ehmsasPath = Process.GetProcessesByName("ehmsas")[0].MainModule.FileName;
+          foreach (Process proc in Process.GetProcessesByName("ehmsas"))
+            proc.Kill();
+        }
+        Thread.Sleep(200);
+        if (Process.GetProcessesByName("ehtray").Length != 0)
+        {
+          Log.Error("StopVistaServices: Cannot terminate ehtray.exe");
+        }
+        if (Process.GetProcessesByName("ehmsas").Length != 0)
+        {
+          Log.Error("StopVistaServices: Cannot terminate ehmsas.exe");
+        }
+      }
+      else
+        Log.Error("!!! MediaPortal needs to be run with administrative rights on Vista to stop the Media Center services that occupy your TV cards/remote control !!!");
     }
 
     static public void RestartMCEServices()
     {
-      if (restartMCEehRecvr || restartMCEehSched)
+      if (_restartMCEehRecvr || _restartMCEehSched)
       {
-        Log.Info("Restarting MCE Services");
+        Log.Info("Restarting MCE services");
 
         try
         {
-          if (restartMCEehRecvr)
-            ehRecvr.Start();
+          if (_restartMCEehRecvr)
+            _ehRecvr.Start();
         }
         catch (Exception ex)
         {
-          if (ehRecvr.Status != ServiceControllerStatus.Running)
+          if (_ehRecvr.Status != ServiceControllerStatus.Running)
             Log.Info("Error starting MCE service \"ehRecvr\" {0}", ex.ToString());
         }
 
         try
         {
-          if (restartMCEehSched)
-            ehSched.Start();
+          if (_restartMCEehSched)
+            _ehSched.Start();
         }
         catch (Exception ex)
         {
-          if (ehSched.Status != ServiceControllerStatus.Running)
+          if (_ehSched.Status != ServiceControllerStatus.Running)
             Log.Info("Error starting MCE service \"ehSched\" {0}", ex.ToString());
         }
+      }
+
+      if ((_restartWmcEhtray && _ehtrayPath != string.Empty) || (_restartWmcEhmsas && _ehmsasPath != string.Empty))
+      {
+        Log.Info("Restarting Vista MC specific services");
+        if (_restartWmcEhtray)
+          Process.Start(_ehtrayPath);
+        if (_restartWmcEhmsas)
+          Process.Start(_ehmsasPath);
       }
     }
 
