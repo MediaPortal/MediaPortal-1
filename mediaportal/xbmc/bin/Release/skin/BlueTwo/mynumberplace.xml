@@ -10,50 +10,37 @@
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
-      <type>group</type>
       <description>group element</description>
-      <layout>StackLayout(2)</layout>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <posX>60</posX>
       <posY>97</posY>
+      <layout>StackLayout(2)</layout>
       <control>
         <description>New Game</description>
         <type>button</type>
         <id>2</id>
         <label>19102</label>
-        <onleft>2</onleft>
-        <onright>1000</onright>
         <onup>17</onup>
-        <ondown>3</ondown>
       </control>
       <control>
         <description>Help once</description>
         <type>button</type>
         <id>3</id>
         <label>19118</label>
-        <onleft>3</onleft>
-        <onright>1000</onright>
-        <onup>2</onup>
-        <ondown>4</ondown>
       </control>
       <control>
         <description>Reset Game</description>
         <type>button</type>
         <id>4</id>
         <label>19119</label>
-        <onleft>4</onleft>
-        <onright>1000</onright>
-        <onup>3</onup>
-        <ondown>5</ondown>
       </control>
       <control>
         <description>Solve</description>
         <type>button</type>
         <id>5</id>
         <label>19103</label>
-        <onleft>5</onleft>
-        <onright>1000</onright>
-        <onup>4</onup>
-        <ondown>6</ondown>
       </control>
       <control>
         <description>Block Invalid Moves</description>
@@ -61,8 +48,6 @@
         <id>6</id>
         <label>19105</label>
         <font>font13</font>
-        <onup>5</onup>
-        <ondown>7</ondown>
       </control>
       <control>
         <description>Show Invalid Moves</description>
@@ -70,32 +55,24 @@
         <id>7</id>
         <label>19106</label>
         <font>font13</font>
-        <onup>6</onup>
-        <ondown>8</ondown>
       </control>
       <control>
         <description>Level button</description>
         <type>button</type>
         <id>8</id>
         <label>19107</label>
-        <onleft>8</onleft>
-        <onright>1000</onright>
-        <onup>7</onup>
-        <ondown>9</ondown>
       </control>
       <control>
         <description>Clear</description>
         <type>button</type>
         <id>9</id>
         <label>19104</label>
-        <onleft>9</onleft>
-        <onright>1000</onright>
-        <onup>8</onup>
-        <ondown>2</ondown>
       </control>
     </control>
     <control>
       <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <control>
         <description>Scoreboard background</description>
         <type>image</type>
@@ -181,10 +158,10 @@
       </control>
     </control>
     <control>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
       <description>Selected item Label</description>
       <type>fadelabel</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <id>1</id>
       <posX>340</posX>
       <posY>70</posY>
@@ -195,8 +172,10 @@
       <textcolor>White</textcolor>
     </control>
     <control>
-      <type>group</type>
       <description>BarVerGroup</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <id>700</id>
       <posX>290</posX>
       <posY>111</posY>
@@ -234,8 +213,10 @@
       </control>
     </control>
     <control>
-      <type>group</type>
       <description>BarHorGroup</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <id>705</id>
       <posX>290</posX>
       <posY>108</posY>
@@ -262,8 +243,10 @@
       </control>
     </control>
     <control>
-      <type>group</type>
       <description>TheButton</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
       <id>10</id>
       <posX>290</posX>
       <posY>111</posY>
@@ -287,7 +270,6 @@
         <id>1000</id>
         <posX>291</posX>
         <posY>110</posY>
-        <onleft>2</onleft>
         <onright>1001</onright>
         <onup>9000</onup>
         <ondown>2000</ondown>
@@ -433,7 +415,6 @@
         <id>2000</id>
         <posX>291</posX>
         <posY>153</posY>
-        <onleft>2</onleft>
         <onright>2001</onright>
         <onup>1000</onup>
         <ondown>3000</ondown>
@@ -578,7 +559,6 @@
         <id>3000</id>
         <posX>291</posX>
         <posY>197</posY>
-        <onleft>2</onleft>
         <onright>3001</onright>
         <onup>2000</onup>
         <ondown>4000</ondown>
@@ -723,7 +703,6 @@
         <id>4000</id>
         <posX>291</posX>
         <posY>246</posY>
-        <onleft>2</onleft>
         <onright>4001</onright>
         <onup>3000</onup>
         <ondown>5000</ondown>
@@ -868,7 +847,6 @@
         <id>5000</id>
         <posX>291</posX>
         <posY>289</posY>
-        <onleft>2</onleft>
         <onright>5001</onright>
         <onup>4000</onup>
         <ondown>6000</ondown>
@@ -1013,7 +991,6 @@
         <id>6000</id>
         <posX>291</posX>
         <posY>333</posY>
-        <onleft>2</onleft>
         <onright>6001</onright>
         <onup>5000</onup>
         <ondown>7000</ondown>
@@ -1158,7 +1135,6 @@
         <id>7000</id>
         <posX>291</posX>
         <posY>381</posY>
-        <onleft>2</onleft>
         <onright>7001</onright>
         <onup>6000</onup>
         <ondown>8000</ondown>
@@ -1303,7 +1279,6 @@
         <id>8000</id>
         <posX>291</posX>
         <posY>424</posY>
-        <onleft>2</onleft>
         <onright>8001</onright>
         <onup>7000</onup>
         <ondown>9000</ondown>
@@ -1448,7 +1423,6 @@
         <id>9000</id>
         <posX>291</posX>
         <posY>468</posY>
-        <onleft>2</onleft>
         <onright>9001</onright>
         <onup>8000</onup>
         <ondown>1000</ondown>
