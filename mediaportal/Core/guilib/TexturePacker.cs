@@ -204,7 +204,7 @@ namespace MediaPortal.GUI.Library
       System.IO.File.Delete(file1);
       for (int i = 0; i < 10; i++)
       {
-        string fileName = string.Format(@"{0}\packedgfx{1}.png", GUIGraphicsContext.SkinCacheFolder, i);
+        string fileName = string.Format(@"{0}\packedgfx2{1}.png", GUIGraphicsContext.SkinCacheFolder, i);
 
         System.IO.File.Delete(fileName);
       }
@@ -243,6 +243,8 @@ namespace MediaPortal.GUI.Library
 
     bool LoadPackedSkin(string skinName)
     {
+      Log.Debug("Skin Folder : {0}", GUIGraphicsContext.Skin);
+      Log.Debug("Cache Folder: {0}", GUIGraphicsContext.SkinCacheFolder);
       string packedXml = string.Format(@"{0}\packedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -424,7 +426,7 @@ namespace MediaPortal.GUI.Library
           //return false;
         }
         int pos;
-        string skinName = String.Format(@"{0}\media", GUIGraphicsContext.SkinCacheFolder).ToLower();
+        string skinName = String.Format(@"{0}\media", GUIGraphicsContext.Skin).ToLower();
 
         pos = file.IndexOf(skinName);
         if (pos >= 0)
