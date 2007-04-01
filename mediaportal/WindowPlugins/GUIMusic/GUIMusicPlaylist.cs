@@ -598,7 +598,7 @@ namespace MediaPortal.GUI.Music
 
     #endregion
     void OnThreadMessage(GUIMessage message)
-    {
+    {      
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
@@ -1210,7 +1210,7 @@ namespace MediaPortal.GUI.Music
             }
           string strFile = String.Empty;
           if (g_Player.Player.CurrentFile != null && g_Player.Player.CurrentFile != String.Empty && g_Player.IsMusic)
-          {
+          {            
             strFile = g_Player.Player.CurrentFile;
 
             bool songFound = dbs.GetSongByFileName(strFile, ref current10SekSong);
@@ -1341,12 +1341,14 @@ namespace MediaPortal.GUI.Music
 
     void OnScrobbleLookupsCompleted(List<Song> LookupArtists)
     {
+      Log.Debug("GUIMusicPlaylist: OnScrobbleLookupsCompleted - processing {0} results", Convert.ToString(LookupArtists.Count));
+      
       if (LookupArtists.Count < _maxScrobbledArtistsForSongs)
       {
         if (LookupArtists.Count > 0)
           for (int i = 0; i < LookupArtists.Count; i++)
             ScrobbleSimilarArtists(LookupArtists[i].Artist);
-      }
+          }
       else // enough artists
       {
         int addedSimilarSongs = 0;
@@ -1401,6 +1403,8 @@ namespace MediaPortal.GUI.Music
       {
         songList.Add(singlesong);
       }
+
+//      Log.Debug("GUIMusicPlaylist: ScrobbleSimilarArtists found {0} songs allowed to add", Convert.ToString(songList.Count));
 
       // exit if not enough songs were found
       if (songList.Count < _maxScrobbledSongsPerArtist)
@@ -1485,6 +1489,8 @@ namespace MediaPortal.GUI.Music
         Song refSong = new Song();
 
         refSong = songList[randomPosition];
+
+//        Log.Debug("GUIMusicPlaylist: ScrobbleSimilarArtists tries to add this song - {0}", refSong.ToShortString());
 
         if (AddRandomSongToPlaylist(ref refSong))
         {

@@ -1244,6 +1244,7 @@ namespace MediaPortal.Music.Database
 
     public List<Song> getSimilarArtists(string Artist_, bool randomizeList_)
     {
+      Artist_ = AudioscrobblerBase.getValidURLLastFMString(Artist_);
       if (randomizeList_)
       {
         Random rand = new Random();
@@ -1826,13 +1827,14 @@ namespace MediaPortal.Music.Database
             else if (child.Name == "match" && child.ChildNodes.Count != 0)
               nodeSong.LastFMMatch = child.ChildNodes[0].Value;
           }
-          if (Convert.ToInt32(nodeSong.LastFMMatch) > _minimumArtistMatchPercent)
+          // Unfortunately http://ws.audioscrobbler.com/1.0/artist/Metallica/similar.xml doesn't supply values for "match" any longer :(
+          //if (Convert.ToInt32(nodeSong.LastFMMatch) > _minimumArtistMatchPercent)
             SimilarArtistList.Add(nodeSong);
         }
       }
-      catch
+      catch (Exception ex)
       {
-        // input nice exception here...
+        Log.Error("AudioscrobblerUtils: Error occurred in ParseXMLDocForSimilarArtists - {0}", ex.Message);
       }
       return SimilarArtistList;
     }
