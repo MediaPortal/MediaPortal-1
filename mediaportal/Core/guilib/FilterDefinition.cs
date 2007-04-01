@@ -45,6 +45,7 @@ namespace MediaPortal.GUI.View
 		protected string whereValue="*";
 		protected string selectedValue="";
 		protected string defaultView="List";
+		protected string defaultSort="Name";
 		protected int    limit=-1;
 
 		public FilterDefinition()
@@ -84,7 +85,14 @@ namespace MediaPortal.GUI.View
 			set { defaultView=value;}
 		}
 
-		[XmlElement("Where")]
+    [XmlElement("DefaultSort")]
+    public string DefaultSort
+    {
+      get { return defaultSort; }
+      set { defaultSort = value; }
+    }
+
+    [XmlElement("Where")]
 		public string Where
 		{
 			get { return whereClause;}

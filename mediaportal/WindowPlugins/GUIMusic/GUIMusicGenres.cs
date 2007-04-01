@@ -59,9 +59,9 @@ namespace MediaPortal.GUI.Music
     string m_strDirectory = String.Empty;
     int m_iItemSelected = -1;
     VirtualDirectory m_directory = new VirtualDirectory();
-    int[] views = new int[50];
-    bool[] sortasc = new bool[50];
-    int[] sortby = new int[50];
+    View[,] views;
+    bool[,] sortasc;
+    MusicSort.SortMethod[,] sortby;
     static string _showArtist = String.Empty;
 
     int _currentLevel;
@@ -86,8 +86,6 @@ namespace MediaPortal.GUI.Music
 
     public GUIMusicGenres()
     {
-      for (int i = 0; i < sortasc.Length; ++i)
-        sortasc[i] = true;
       GetID = (int)GUIWindow.Window.WINDOW_MUSIC_GENRE;
 
       m_directory.AddDrives();
@@ -180,11 +178,44 @@ namespace MediaPortal.GUI.Music
     {
       get
       {
-        return (View)views[handler.CurrentLevel];
+        if (handler.View != null)
+        {
+          if (views == null)
+          {
+            views = new View[handler.Views.Count, 50];
+
+            ArrayList viewStrings = new ArrayList();
+            viewStrings.Add("List");
+            viewStrings.Add("Icons");
+            viewStrings.Add("Big Icons");
+            viewStrings.Add("Albums");
+            viewStrings.Add("Filmstrip");
+
+            for (int i = 0; i < handler.Views.Count; ++i)
+            {
+              for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
+              {
+                FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
+                int defaultView = viewStrings.IndexOf(def.DefaultView);
+
+                if (defaultView != -1)
+                  views[i, j] = (View)defaultView;
+                else
+                  views[i, j] = View.List;
+              }
+            }
+          }
+
+          return views[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+        }
+        else
+        {
+          return View.List;
+        }
       }
       set
       {
-        views[handler.CurrentLevel] = (int)value;
+        views[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value;
       }
     }
 
@@ -192,24 +223,83 @@ namespace MediaPortal.GUI.Music
     {
       get
       {
-        return sortasc[handler.CurrentLevel];
+        if (handler.View != null)
+        {
+          if (sortasc == null)
+          {
+            sortasc = new bool[handler.Views.Count, 50];
+
+            for (int i = 0; i < handler.Views.Count; ++i)
+            {
+              for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
+              {
+                FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
+                sortasc[i, j] = def.SortAscending;
+              }
+            }
+          }
+
+          return sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+        }
+
+        return true;
       }
       set
       {
-        sortasc[handler.CurrentLevel] = value;
+        sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value;
       }
     }
+
     protected override MusicSort.SortMethod CurrentSortMethod
     {
       get
       {
-        return (MusicSort.SortMethod)sortby[handler.CurrentLevel];
+        if (handler.View != null)
+        {
+          if (sortby == null)
+          {
+            sortby = new MusicSort.SortMethod[handler.Views.Count, 50];
+
+            ArrayList sortStrings = new ArrayList();
+            sortStrings.Add("Name");
+            sortStrings.Add("Date");
+            sortStrings.Add("Size");
+            sortStrings.Add("Track");
+            sortStrings.Add("Duration");
+            sortStrings.Add("Title");
+            sortStrings.Add("Artist");
+            sortStrings.Add("Album");
+            sortStrings.Add("Filename");
+            sortStrings.Add("Rating");
+
+            for (int i = 0; i < handler.Views.Count; ++i)
+            {
+              for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
+              {
+                FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
+                int defaultSort = sortStrings.IndexOf(def.DefaultSort);
+
+                if (defaultSort != -1)
+                  sortby[i, j] = (MusicSort.SortMethod)defaultSort;
+                else
+                  sortby[i, j] = MusicSort.SortMethod.Name;
+              }
+            }
+          }
+
+          return sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+        }
+        else
+        {
+          return MusicSort.SortMethod.Name;
+        }
       }
       set
       {
-        sortby[handler.CurrentLevel] = (int)value;
+        sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value;
       }
     }
+
     protected override bool AllowView(View view)
     {
       return true;
@@ -887,20 +977,6 @@ namespace MediaPortal.GUI.Music
         GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
       }
 
-      FilterDefinition def = handler.View.Filters[handler.CurrentLevel] as FilterDefinition;
-      if (def != null)
-      {
-        if (def.DefaultView == "List")
-          CurrentView = GUIMusicBaseWindow.View.List;
-        if (def.DefaultView == "Icons")
-          CurrentView = GUIMusicBaseWindow.View.Icons;
-        if (def.DefaultView == "Big Icons")
-          CurrentView = GUIMusicBaseWindow.View.LargeIcons;
-        if (def.DefaultView == "Albums")
-          CurrentView = GUIMusicBaseWindow.View.Albums;
-        if (def.DefaultView == "Filmstrip")
-          CurrentView = GUIMusicBaseWindow.View.FilmStrip;
-      }
       SwitchView();
       GUIWaitCursor.Hide();
     }

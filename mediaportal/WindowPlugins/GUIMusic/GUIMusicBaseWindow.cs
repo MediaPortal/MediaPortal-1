@@ -569,7 +569,10 @@ namespace MediaPortal.GUI.Music
       }
 
       if (btnSortBy != null)
+      {
         btnSortBy.Label = strLine;
+        btnSortBy.IsAscending = CurrentSortAsc;
+      }
     }
 
     protected virtual void OnClick(int item)

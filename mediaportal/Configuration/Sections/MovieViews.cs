@@ -172,7 +172,18 @@ namespace MediaPortal.Configuration.Sections
 				"Big Icons",
 				"Filmstrip",
 
-		};
+		  };
+
+    private string[] sortBy = new string[]
+			{
+        "Name",
+        "Date",
+        "Size",
+        "Year",
+        "Rating",
+        "Label",
+      };
+
     public MovieViews()
       : this("Movie Views")
     { }
@@ -306,9 +317,10 @@ namespace MediaPortal.Configuration.Sections
       dtcCheck.DataType = Type.GetType("System.Boolean"); //Set its //data Type
       dtcCheck.DefaultValue = false; //Set the default value
       dtcCheck.AllowDBNull = false;
-      dtcCheck.ColumnName = "Sort Ascending";
+      dtcCheck.ColumnName = "Asc";
       datasetFilters.Columns.Add(dtcCheck); //Add the above column to the //Data Table
 
+      // Add the ViewAs column
       dtCol = new DataColumn("ViewAs");
       dtCol.DataType = Type.GetType("System.String");
       dtCol.DefaultValue = "";
@@ -327,6 +339,25 @@ namespace MediaPortal.Configuration.Sections
       cbView.Cell = 1;
       cbView.SelectionChangeCommitted += new EventHandler(cbView_SelectionChangeCommitted);
 
+      // Add the SortBy column
+      dtCol = new DataColumn("SortBy");
+      dtCol.DataType = Type.GetType("System.String");
+      dtCol.DefaultValue = "";
+      datasetFilters.Columns.Add(dtCol);
+
+      SyncedComboBox cbSort = new SyncedComboBox();
+      cbSort.Cursor = Cursors.Arrow;
+      cbSort.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbSort.Dock = DockStyle.Fill;
+      cbSort.DisplayMember = "SortBy";
+      foreach (string strText in sortBy)
+      {
+        cbSort.Items.Add(strText);
+      }
+      cbSort.Grid = dataGrid1;
+      cbSort.Cell = 1;
+      cbSort.SelectionChangeCommitted += new EventHandler(cbSort_SelectionChangeCommitted);
+
       //fill in all rows...
       for (int i = 0; i < currentView.Filters.Count; ++i)
       {
@@ -336,7 +367,7 @@ namespace MediaPortal.Configuration.Sections
         {
           limit = "";
         }
-        datasetFilters.Rows.Add(new object[] { def.Where, def.SqlOperator, def.Restriction, limit, def.SortAscending, def.DefaultView });
+        datasetFilters.Rows.Add(new object[] { def.Where, def.SqlOperator, def.Restriction, limit, def.SortAscending, def.DefaultView, def.DefaultSort });
       }
 
       //Set the Data Grid Source as the Data Table created above
@@ -366,10 +397,11 @@ namespace MediaPortal.Configuration.Sections
         //individual columns   
         GridColumnStylesCollection colStyle;
         colStyle = dataGrid1.TableStyles[0].GridColumnStyles;
-        colStyle[0].Width = 100;
-        colStyle[1].Width = 90;
-        colStyle[2].Width = 50;
-        colStyle[3].Width = 80;
+        colStyle[0].Width = 90;
+        colStyle[1].Width = 60;
+        colStyle[2].Width = 80;
+        colStyle[3].Width = 50;
+        colStyle[4].Width = 30;
 
         /*
 				DataGridColumnStyle boolCol = new FormattableBooleanColumn();
@@ -389,9 +421,12 @@ namespace MediaPortal.Configuration.Sections
       DataGridBoolColumn boolColumn = (DataGridBoolColumn)dataGrid1.TableStyles[0].GridColumnStyles[4];
       boolColumn.AllowNull = false;
 
-
       dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[5];
       dgtb.TextBox.Controls.Add(cbView);
+
+      dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[6];
+      dgtb.TextBox.Controls.Add(cbSort);
+
       updating = false;
     }
 
@@ -595,6 +630,29 @@ namespace MediaPortal.Configuration.Sections
       table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
 
     }
+
+    private void cbSort_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (updating)
+      {
+        return;
+      }
+      SyncedComboBox box = sender as SyncedComboBox;
+      if (box == null)
+      {
+        return;
+      }
+      DataGridCell currentCell = dataGrid1.CurrentCell;
+      DataTable table = dataGrid1.DataSource as DataTable;
+
+      if (currentCell.RowNumber == table.Rows.Count)
+      {
+        table.Rows.Add(new object[] { "", "", "", "" });
+      }
+      table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
+
+    }
+
     private void cbOperators_SelectionChangeCommitted(object sender, EventArgs e)
     {
       try
@@ -709,6 +767,7 @@ namespace MediaPortal.Configuration.Sections
           }
           def.SortAscending = (bool)row[4];
           def.DefaultView = row[5].ToString();
+          def.DefaultSort = row[6].ToString();
           view.Filters.Add(def);
         }
       }

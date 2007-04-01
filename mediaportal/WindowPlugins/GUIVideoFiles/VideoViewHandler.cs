@@ -24,6 +24,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Collections;
+using System.Collections.Generic;
 using SQLite.NET;
 using MediaPortal.GUI.View;
 using MediaPortal.GUI.Library;
@@ -39,7 +40,8 @@ namespace MediaPortal.GUI.Video
 	{
 		ViewDefinition currentView;
 		int						 currentLevel=0;
-		ArrayList      views=new ArrayList();
+    List<ViewDefinition> views = new List<ViewDefinition>();
+
 		public VideoViewHandler()
 		{
       if (!System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "videoViews.xml")))
@@ -99,8 +101,12 @@ namespace MediaPortal.GUI.Video
 					try
 					{
 						SoapFormatter formatter = new SoapFormatter();
-						views = (ArrayList)formatter.Deserialize(fileStream);
-						fileStream.Close();
+            ArrayList viewlist = (ArrayList)formatter.Deserialize(fileStream);
+            foreach (ViewDefinition view in viewlist)
+            {
+              views.Add(view);
+            }
+            fileStream.Close();
 					}
 					catch
 					{
@@ -116,8 +122,7 @@ namespace MediaPortal.GUI.Video
 			set { currentView=value;}
 		}
 
-
-		public ArrayList Views
+    public List<ViewDefinition> Views
 		{
 			get { return views; }
 			set { views=value;}

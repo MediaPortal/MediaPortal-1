@@ -49,17 +49,14 @@ namespace MediaPortal.GUI.Video
     string currentFolder = String.Empty;
     int currentSelectedItem = -1;
     VirtualDirectory m_directory = new VirtualDirectory();
-    int[] views = new int[50];
-    bool[] sortasc = new bool[50];
-    int[] sortby = new int[50];
-
+    View[,] views;
+    bool[,] sortasc;
+    VideoSort.SortMethod[,] sortby;
 
     #endregion
 
     public GUIVideoTitle()
     {
-      for (int i = 0; i < sortasc.Length; ++i)
-        sortasc[i] = true;
       GetID = (int)GUIWindow.Window.WINDOW_VIDEO_TITLE;
 
       m_directory.AddDrives();
@@ -85,11 +82,43 @@ namespace MediaPortal.GUI.Video
     {
       get
       {
-        return (View)views[handler.CurrentLevel];
+        if (handler.View != null)
+        {
+          if (views == null)
+          {
+            views = new View[handler.Views.Count, 50];
+
+            ArrayList viewStrings = new ArrayList();
+            viewStrings.Add("List");
+            viewStrings.Add("Icons");
+            viewStrings.Add("Big Icons");
+            viewStrings.Add("Filmstrip");
+
+            for (int i = 0; i < handler.Views.Count; ++i)
+            {
+              for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
+              {
+                FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
+                int defaultView = viewStrings.IndexOf(def.DefaultView);
+
+                if (defaultView != -1)
+                  views[i, j] = (View)defaultView;
+                else
+                  views[i, j] = View.List;
+              }
+            }
+          }
+
+          return views[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+        }
+        else
+        {
+          return View.List;
+        }
       }
       set
       {
-        views[handler.CurrentLevel] = (int)value;
+        views[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value;
       }
     }
 
@@ -97,24 +126,79 @@ namespace MediaPortal.GUI.Video
     {
       get
       {
-        return sortasc[handler.CurrentLevel];
+        if (handler.View != null)
+        {
+          if (sortasc == null)
+          {
+            sortasc = new bool[handler.Views.Count, 50];
+
+            for (int i = 0; i < handler.Views.Count; ++i)
+            {
+              for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
+              {
+                FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
+                sortasc[i, j] = def.SortAscending;
+              }
+            }
+          }
+
+          return sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+        }
+
+        return true;
       }
       set
       {
-        sortasc[handler.CurrentLevel] = value;
+        sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value;
       }
     }
+
     protected override VideoSort.SortMethod CurrentSortMethod
     {
       get
       {
-        return (VideoSort.SortMethod)sortby[handler.CurrentLevel];
+        if (handler.View != null)
+        {
+          if (sortby == null)
+          {
+            sortby = new VideoSort.SortMethod[handler.Views.Count, 50];
+
+            ArrayList sortStrings = new ArrayList();
+            sortStrings.Add("Name");
+            sortStrings.Add("Date");
+            sortStrings.Add("Size");
+            sortStrings.Add("Year");
+            sortStrings.Add("Rating");
+            sortStrings.Add("Label");
+
+            for (int i = 0; i < handler.Views.Count; ++i)
+            {
+              for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
+              {
+                FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
+                int defaultSort = sortStrings.IndexOf(def.DefaultSort);
+
+                if (defaultSort != -1)
+                  sortby[i, j] = (VideoSort.SortMethod)defaultSort;
+                else
+                  sortby[i, j] = VideoSort.SortMethod.Name;
+              }
+            }
+          }
+
+          return sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+        }
+        else
+        {
+          return VideoSort.SortMethod.Name;
+        }
       }
       set
       {
-        sortby[handler.CurrentLevel] = (int)value;
+        sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value;
       }
     }
+
     protected override bool AllowView(View view)
     {
       return true;
@@ -384,16 +468,6 @@ namespace MediaPortal.GUI.Video
 
       SetLabels();
       OnSort();
-
-      FilterDefinition def = handler.View.Filters[handler.CurrentLevel] as FilterDefinition;
-      if (def != null)
-      {
-        if (def.DefaultView == "List")            CurrentView = GUIVideoBaseWindow.View.List;
-        if (def.DefaultView == "Icons")           CurrentView = GUIVideoBaseWindow.View.Icons;
-        if (def.DefaultView == "Big Icons")       CurrentView = GUIVideoBaseWindow.View.LargeIcons;
-        if (def.DefaultView == "Albums")          CurrentView = GUIVideoBaseWindow.View.List;
-        if (def.DefaultView == "Filmstrip")       CurrentView = GUIVideoBaseWindow.View.FilmStrip;
-      }
 
       SwitchView();
       for (int i = 0; i < facadeView.Count; ++i)
