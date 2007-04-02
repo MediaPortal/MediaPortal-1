@@ -638,12 +638,6 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 		m_CurrentSubtitle->SetPTS( PTS );
     LogDebugPTS( "Subtitle PTS", PTS );
 
-		if (first_PTS == 0) 
-		{ 
-			first_PTS = PTS; 
-      m_pObserver->NotifyFirstPTS( first_PTS );
-		}
-
 		PES_header_data_length=buf[8];
 		i = 9 + PES_header_data_length;
 
@@ -653,13 +647,23 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 		if( data_identifier != 0x20 ) 
 		{
 			LogDebug("DVBsubs: ERROR: PES data_identifier != 0x20 (%02x), aborting\n",data_identifier);
-			return 1;
+	    if( m_CurrentSubtitle )
+      {
+        delete m_CurrentSubtitle;			
+        m_CurrentSubtitle = NULL;
+      }
+      return 1;
 		}
 		
 		if( subtitle_stream_id != 0 ) 
 		{
 			LogDebug( "DVBsubs: ERROR: subtitle_stream_id != 0 (%02x), aborting\n", subtitle_stream_id );
-			return 1;
+	    if( m_CurrentSubtitle )
+      {
+        delete m_CurrentSubtitle;			
+        m_CurrentSubtitle = NULL;
+      }
+      return 1;
 		}
 
 		while( i < ( PES_packet_length - 1 ) ) 
@@ -670,6 +674,11 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 				LogDebug( "DVBsubs: ERROR: sync byte not present, skipping rest of PES packet" );
 				i = PES_packet_length;
 				//continue;
+	      if( m_CurrentSubtitle )
+        {
+          delete m_CurrentSubtitle;			
+          m_CurrentSubtitle = NULL;
+        }
         return 1;
 			}
 			
@@ -681,6 +690,12 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 			segment_length = ( buf[i + 2] << 8 ) | buf[i + 3];
 
 			new_i = i + segment_length + 4;
+
+		  if (first_PTS == 0) 
+		  { 
+			  first_PTS = PTS; 
+        m_pObserver->NotifyFirstPTS( first_PTS );
+		  }
 
 			/* SEGMENT_DATA_FIELD */
 			switch(segment_type) {
