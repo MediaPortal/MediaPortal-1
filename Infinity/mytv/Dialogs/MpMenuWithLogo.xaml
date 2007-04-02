@@ -10,9 +10,11 @@
     </Storyboard>
 
     <DataTemplate x:Key="itemTemplate"  DataType="{x:Type local:DialogMenuItem}">
-      <Button Name="PART_Button" Template="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="472" MouseEnter="OnMouseEnter"  >
-        <Grid Width="472" >
+      <Button Name="PART_Button" Template="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter"  >
+        <Grid Width="430" >
           <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
             <ColumnDefinition/>
             <ColumnDefinition/>
             <ColumnDefinition/>
@@ -27,10 +29,10 @@
             <RowDefinition/>
             <RowDefinition/>
           </Grid.RowDefinitions>
-          <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Source="{Binding Logo}" Height="32" Width="32"/>
-          <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="8" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Label1}"/>
+          <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Source="{Binding Logo}" />
+          <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="10" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Label1}"/>
           <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="6" Style="{StaticResource LabelSmallStyleWhite}" Content="{Binding Label2}"/>
-          <Label Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="2" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Label3}"/>
+          <Label Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Label3}"/>
         </Grid>
       </Button>
     </DataTemplate>

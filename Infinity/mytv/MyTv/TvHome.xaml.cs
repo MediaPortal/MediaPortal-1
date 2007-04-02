@@ -441,7 +441,7 @@ namespace MyTv
       ChannelState currentChannelState = ChannelState.tunable;
       for (int i = 0; i < _tvChannelList.Count; i++)
       {
-      //  ServiceScope.Get<ILogger>().Info("MyTv:   add {0} ", i);
+        //  ServiceScope.Get<ILogger>().Info("MyTv:   add {0} ", i);
         Channel currentChannel = _tvChannelList[i];
         if (checkChannelState)
           currentChannelState = (ChannelState)server.GetChannelState(currentChannel.IdChannel);
@@ -478,7 +478,7 @@ namespace MyTv
             percent = ServiceScope.Get<ILocalisation>().ToString("mytv", 21)/*(recording)*/  + percent;
             break;
         }
-        string channelLogoFileName = Thumbs.GetLogoFileName(currentChannel.Name);
+        string channelLogoFileName = String.Format(@"{0}\{1}",System.IO.Directory.GetCurrentDirectory(),Thumbs.GetLogoFileName(currentChannel.Name));
         if (!System.IO.File.Exists(channelLogoFileName))
         {
           channelLogoFileName = "";
