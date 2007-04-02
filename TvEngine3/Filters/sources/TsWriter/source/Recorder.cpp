@@ -197,8 +197,6 @@ STDMETHODIMP CRecorder::StopRecord()
 	    DWORD written = 0;
 	    WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
       m_iWriteBufferPos=0;
-      
-
     }
 		CloseHandle(m_hFile);
 		m_hFile=INVALID_HANDLE_VALUE;
@@ -218,68 +216,76 @@ void CRecorder::Write(byte* buffer, int len)
   {
 	  try
 	  {
-		  if (m_hFile!=INVALID_HANDLE_VALUE)
-		  {
-	      DWORD written = 0;
-	      if (FALSE==WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
-        {
-          //On fat16/fat32 we can only create files of max. 2gb/4gb
-          if (ERROR_FILE_TOO_LARGE == GetLastError())
+      if (m_iWriteBufferPos > 0)
+      {
+		    if (m_hFile != INVALID_HANDLE_VALUE)
+		    {
+	        DWORD written = 0;
+	        if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
           {
-            LogDebug("Recorder:Maximum filesize reached for file:'%s' %d",m_szFileName);
-              //close the file...
-		        CloseHandle(m_hFile);
+            //On fat16/fat32 we can only create files of max. 2gb/4gb
+            if (ERROR_FILE_TOO_LARGE == GetLastError())
+            {
+              LogDebug("Recorder:Maximum filesize reached for file:'%s' %d",m_szFileName);
+                //close the file...
+		          CloseHandle(m_hFile);
+              m_hFile=INVALID_HANDLE_VALUE;
 
-            //create a new file
-            char ext[6];
-            char fileName[MAX_PATH];
-            char part[100];
-						int len=strlen(m_szFileName)-1;
-						int pos=len-1;
-						while (pos>0)
-						{
-							if (m_szFileName[pos]=='.') break;
-							pos--;
-						}
-            strcpy(ext, &m_szFileName[pos]);
-            strncpy(fileName, m_szFileName, pos);
-            fileName[pos]=0;
-            sprintf(part,"_p%d",m_iPart);
-            char newFileName[MAX_PATH];
-            sprintf(newFileName,"%s%s%s",fileName,part,ext);
+              //create a new file
+              char ext[MAX_PATH];
+              char fileName[MAX_PATH];
+              char part[100];
+						  int len=strlen(m_szFileName)-1;
+						  int pos=len-1;
+						  while (pos>0)
+						  {
+							  if (m_szFileName[pos]=='.') break;
+							  pos--;
+						  }
+              strcpy(ext, &m_szFileName[pos]);
+              strncpy(fileName, m_szFileName, pos);
+              fileName[pos]=0;
+              sprintf(part,"_p%d",m_iPart);
+              char newFileName[MAX_PATH];
+              sprintf(newFileName,"%s%s%s",fileName,part,ext);
 
-						LogDebug("Recorder:Create new  file:'%s' %d",newFileName);
-	          m_hFile = CreateFile(newFileName,      // The filename
-						           (DWORD) GENERIC_WRITE,         // File access
-						           (DWORD) FILE_SHARE_READ,       // Share access
-						           NULL,                  // Security
-						           (DWORD) OPEN_ALWAYS,           // Open flags
-						           (DWORD) 0,             // More flags
-						           NULL);                 // Template
-	          if (m_hFile == INVALID_HANDLE_VALUE)
-	          {
-              LogDebug("Recorder:unable to create file:'%s' %d",newFileName, GetLastError());
-              m_iWriteBufferPos=0;
-		          return ;
-	          }
-            m_iPart++;
-            WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
+						  LogDebug("Recorder:Create new  file:'%s' %d",newFileName);
+	            m_hFile = CreateFile(newFileName,      // The filename
+						             (DWORD) GENERIC_WRITE,         // File access
+						             (DWORD) FILE_SHARE_READ,       // Share access
+						             NULL,                  // Security
+						             (DWORD) OPEN_ALWAYS,           // Open flags
+						             (DWORD) 0,             // More flags
+						             NULL);                 // Template
+	            if (m_hFile == INVALID_HANDLE_VALUE)
+	            {
+                LogDebug("Recorder:unable to create file:'%s' %d",newFileName, GetLastError());
+                m_iWriteBufferPos=0;
+		            return ;
+	            }
+              m_iPart++;
+              WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
+            }
           }
-        }
-				else
-				{
-					LogDebug("Recorder:unable to write file:'%s' %d",m_szFileName, GetLastError());
-				}
-        m_iWriteBufferPos=0;
-		  }
+				  else // of if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
+				  {
+					  LogDebug("Recorder:unable to write file:'%s' %d %d %x",m_szFileName, GetLastError(),m_iWriteBufferPos,m_hFile);
+				  }
+		    }//if (m_hFile!=INVALID_HANDLE_VALUE)
+      }//if (m_iWriteBufferPos>0)
+      m_iWriteBufferPos=0;
 	  }
 	  catch(...)
 	  {
 		  LogDebug("Timeshifter:Write exception");
 	  }
+  }// of if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
+
+  if ( (m_iWriteBufferPos+len) < RECORD_BUFFER_SIZE && len > 0)
+  {
+    memcpy(&m_pWriteBuffer[m_iWriteBufferPos],buffer,len);
+    m_iWriteBufferPos+=len;
   }
-  memcpy(&m_pWriteBuffer[m_iWriteBufferPos],buffer,len);
-  m_iWriteBufferPos+=len;
 }
 
 void CRecorder::WriteTs(byte* tsPacket)
