@@ -158,7 +158,7 @@ namespace MyTv
         tag.IsBottomEdge = ((rowNr) == _maxChannels);
         Button b = new Button();
         b.Tag = tag;
-        b.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
+        b.Style= (Style)Application.Current.Resources["MpButton"];
         b.Content = program.StartTime.ToString("HH:mm");
         b.MouseEnter += new MouseEventHandler(OnMouseEnter);
         b.GotKeyboardFocus += new KeyboardFocusChangedEventHandler(OnButtonGotKeyboardFocus);
@@ -180,7 +180,7 @@ namespace MyTv
         tag.IsBottomEdge = ((rowNr) == _maxChannels);
         b = new Button();
         b.Tag = tag;
-        b.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
+        b.Style = (Style)Application.Current.Resources["MpButton"];
         b.Content = program.Title;
         b.MouseEnter += new MouseEventHandler(OnMouseEnter);
         b.GotKeyboardFocus += new KeyboardFocusChangedEventHandler(OnButtonGotKeyboardFocus);
@@ -294,7 +294,7 @@ namespace MyTv
       tag.Channel = channel;
       Button b = new Button();
       b.Tag = tag;
-      b.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
+      b.Style = (Style)Application.Current.Resources["MpButton"];
       Grid grid = new Grid();
       grid.ColumnDefinitions.Add(new ColumnDefinition());
       grid.ColumnDefinitions.Add(new ColumnDefinition());
@@ -425,24 +425,24 @@ namespace MyTv
         if (isNow)
         {
           if (program.StartTime < now && program.EndTime > end)
-            b.Template = (ControlTemplate)Application.Current.Resources["MpButtonLightBoth"];
+            b.Style = (Style)Application.Current.Resources["MpButtonLightBoth"];
           else if (program.StartTime < now)
-            b.Template = (ControlTemplate)Application.Current.Resources["MpButtonLightLeft"];
+            b.Style = (Style)Application.Current.Resources["MpButtonLightLeft"];
           else if (program.EndTime > end)
-            b.Template = (ControlTemplate)Application.Current.Resources["MpButtonLightRight"];
+            b.Style = (Style)Application.Current.Resources["MpButtonLightRight"];
           else
-            b.Template = (ControlTemplate)Application.Current.Resources["MpButtonLight"];
+            b.Style = (Style)Application.Current.Resources["MpButtonLight"];
         }
         else
         {
           if (program.StartTime < now && program.EndTime > end)
-            b.Template = (ControlTemplate)Application.Current.Resources["MpButtonBoth"];
+            b.Style = (Style)Application.Current.Resources["MpButtonBoth"];
           else if (program.StartTime < now)
-            b.Template = (ControlTemplate)Application.Current.Resources["MpButtonLeft"];
+            b.Style = (Style)Application.Current.Resources["MpButtonLeft"];
           else if (program.EndTime > end)
-            b.Template = (ControlTemplate)Application.Current.Resources["MpButtonRight"];
+            b.Style = (Style)Application.Current.Resources["MpButtonRight"];
           else
-            b.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
+            b.Style = (Style)Application.Current.Resources["MpButton"];
 
         }
         if (bRecording)

@@ -57,8 +57,8 @@
           <RowDefinition/>
         </Grid.RowDefinitions>
         <TextBlock x:Name="textBox" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="4" FontFamily="Segoe" FontSize="28" FontWeight="Normal" Foreground="White" >asdsa</TextBlock>
-        <Button x:Name="buttonYes" Margin="20,0,20,0" Grid.Column="0" Grid.Row="5" Height="32" Template="{DynamicResource MpButton}" Click="OnYesClicked" MouseEnter="subItemMouseEnter"  >Yes</Button>
-        <Button x:Name="buttonNo" Margin="20,0,20,0" Grid.Column="1" Grid.Row="5" Height="32" Template="{DynamicResource MpButton}" Click="OnNoClicked" MouseEnter="subItemMouseEnter"  >No</Button>
+        <Button x:Name="buttonYes" Margin="20,0,20,0" Grid.Column="0" Grid.Row="5" Height="32" Style="{DynamicResource MpButton}" Click="OnYesClicked" MouseEnter="subItemMouseEnter"  >Yes</Button>
+        <Button x:Name="buttonNo" Margin="20,0,20,0" Grid.Column="1" Grid.Row="5" Height="32" Style="{DynamicResource MpButton}" Click="OnNoClicked" MouseEnter="subItemMouseEnter"  >No</Button>
       </Grid>
     </Canvas>
   </Grid>

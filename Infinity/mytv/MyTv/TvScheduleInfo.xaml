@@ -6,7 +6,7 @@
     >
   <Page.Resources>
     <DataTemplate x:Key="itemIconTemplate"  DataType="{x:Type local:DialogMenuItem}">
-      <Button Name="PART_Button" Template="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter"  >
+      <Button Name="PART_Button" Style="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter"  >
         <Grid Width="430" >
           <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -33,7 +33,7 @@
       </Button>
     </DataTemplate>
     <DataTemplate x:Key="itemListTemplate"  DataType="{x:Type local:DialogMenuItem}">
-      <Button Name="PART_Button" Template="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter"  >
+      <Button Name="PART_Button" Style="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter"  >
         <Grid Width="430" >
           <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -98,13 +98,13 @@
         </Grid>
       </StackPanel>
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
-        <Button Name="buttonRecord" Template="{StaticResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnRecordClicked">Record</Button>
-        <Button Name="buttonAdvancedRecord" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnAdvancedRecordClicked">Advanced Record</Button>
-        <Button Name="buttonKeepUntil" Template="{StaticResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnKeepUntil" >Keep until</Button>
-        <Button Name="buttonQuality" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Quality setting</Button>
-        <Button Name="buttonEpisodes" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSetEpisodes" >Episodes management</Button>
-        <Button Name="buttonPreRecord" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnPreRecordInterval" >Pre-record</Button>
-        <Button Name="buttonPostRecord" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnPostRecordInterval"  >Post-record</Button>
+        <Button Name="buttonRecord" Style="{DynamicResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnRecordClicked">Record</Button>
+        <Button Name="buttonAdvancedRecord" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnAdvancedRecordClicked">Advanced Record</Button>
+        <Button Name="buttonKeepUntil" Style="{DynamicResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnKeepUntil" >Keep until</Button>
+        <Button Name="buttonQuality" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Quality setting</Button>
+        <Button Name="buttonEpisodes" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSetEpisodes" >Episodes management</Button>
+        <Button Name="buttonPreRecord" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnPreRecordInterval" >Pre-record</Button>
+        <Button Name="buttonPostRecord" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnPostRecordInterval"  >Post-record</Button>
       </StackPanel>
 
       <StackPanel Margin="0,0,30,0">

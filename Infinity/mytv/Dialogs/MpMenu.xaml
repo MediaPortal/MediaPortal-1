@@ -10,7 +10,7 @@
     </Storyboard>
 
     <DataTemplate x:Key="itemTemplate"  DataType="{x:Type local:DialogMenuItem}">
-      <Button Name="PART_Button" Template="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter" Content="{Binding Label1}" >
+      <Button Name="PART_Button" Style="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter" Content="{Binding Label1}" >
       </Button>
     </DataTemplate>
   </Window.Resources>

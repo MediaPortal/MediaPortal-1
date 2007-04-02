@@ -6,7 +6,7 @@
     >
   <Page.Resources>
     <DataTemplate x:Key="itemIconTemplate"  DataType="{x:Type local:DialogMenuItem}">
-      <Button Name="PART_Button" Template="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter"  >
+      <Button Name="PART_Button" Style="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter"  >
         <Grid Width="430" >
           <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -33,7 +33,7 @@
       </Button>
     </DataTemplate>
     <DataTemplate x:Key="itemListTemplate"  DataType="{x:Type local:DialogMenuItem}">
-      <Button Name="PART_Button" Template="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter"  >
+      <Button Name="PART_Button" Style="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter"  >
         <Grid Width="430" >
           <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -100,11 +100,11 @@
         </Grid>
       </StackPanel>
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
-        <Button Name="buttonView" Template="{StaticResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnViewClicked">View</Button>
-        <Button Name="buttonSort" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSortClicked" >Sort</Button>
-        <Button Name="buttonSwitch" Template="{StaticResource MpButton}" Height="32"  MouseEnter="OnMouseEnter"  >Switch</Button>
-        <Button Name="buttonCleanup" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnCleanupClicked" >Cleanup</Button>
-        <Button Name="buttonCompress" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Compress</Button>
+        <Button Name="buttonView" Style="{DynamicResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnViewClicked">View</Button>
+        <Button Name="buttonSort" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSortClicked" >Sort</Button>
+        <Button Name="buttonSwitch" Style="{DynamicResource MpButton}" Height="32"  MouseEnter="OnMouseEnter"  >Switch</Button>
+        <Button Name="buttonCleanup" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnCleanupClicked" >Cleanup</Button>
+        <Button Name="buttonCompress" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Compress</Button>
       </StackPanel>
       <ListBox x:Name="gridList" FocusManager.IsFocusScope="False"  ItemTemplate="{StaticResource itemIconTemplate}" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="True" Background="Transparent" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.CanContentScroll="True" IsSynchronizedWithCurrentItem="True" />
     </DockPanel >

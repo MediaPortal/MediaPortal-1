@@ -20,12 +20,12 @@
         </DockPanel>
       </StackPanel>
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
-        <Button Name="buttonQuickRecord" Template="{StaticResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnQuickRecord">Quick Record</Button>
-        <Button Name="buttonAdvancedRecord" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnAdvancedRecord">Advanced Record</Button>
-        <Button Name="buttonTvGuide" Template="{StaticResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnTvGuide" >Tv Guide</Button>
-        <Button Name="buttonSearchTitle" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSearchTitle">Search by title</Button>
-        <Button Name="buttonSearchKeyword" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSearchKeyword"  >Search by Keyword</Button>
-        <Button Name="buttonSearchGenre" Template="{StaticResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSearchGenre"  >Search by genre</Button>
+        <Button Name="buttonQuickRecord" Style="{DynamicResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnQuickRecord">Quick Record</Button>
+        <Button Name="buttonAdvancedRecord" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnAdvancedRecord">Advanced Record</Button>
+        <Button Name="buttonTvGuide" Style="{DynamicResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnTvGuide" >Tv Guide</Button>
+        <Button Name="buttonSearchTitle" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSearchTitle">Search by title</Button>
+        <Button Name="buttonSearchKeyword" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSearchKeyword"  >Search by Keyword</Button>
+        <Button Name="buttonSearchGenre" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSearchGenre"  >Search by genre</Button>
       </StackPanel>
       <Grid x:Name="gridList" Margin="0,0,30,0">
       </Grid>

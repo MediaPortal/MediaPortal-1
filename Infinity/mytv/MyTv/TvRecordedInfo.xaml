@@ -44,7 +44,7 @@
 
       </StackPanel>
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
-        <Button Name="buttonKeepUntil" Template="{StaticResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnKeepUntil" >KeepUntil</Button>
+        <Button Name="buttonKeepUntil" Style="{DynamicResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnKeepUntil" >KeepUntil</Button>
       </StackPanel>
       <StackPanel x:Name="gridList" Margin="0,0,30,0">
         <TextBlock Name="labelTitle" Style="{StaticResource TextBlockLargeStyle}"/>

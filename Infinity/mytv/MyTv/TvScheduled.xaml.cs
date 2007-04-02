@@ -70,6 +70,12 @@ namespace MyTv
     }
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
+      if (e.Key == System.Windows.Input.Key.Left)
+      {
+        Keyboard.Focus(buttonSort);
+        e.Handled = true;
+        return;
+      }
       if (e.Key == System.Windows.Input.Key.Escape)
       {
         //return to previous screen
@@ -100,6 +106,9 @@ namespace MyTv
       this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
       Keyboard.Focus(buttonSort);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
+      gridList.SelectionMode = SelectionMode.Single;
+      gridList.BorderThickness = new Thickness(0);
+      
 
 
       if (TvPlayerCollection.Instance.Count > 0)
