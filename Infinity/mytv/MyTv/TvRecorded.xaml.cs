@@ -98,6 +98,7 @@ namespace MyTv
       buttonCompress.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 83);//Compress
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       Keyboard.AddGotKeyboardFocusHandler(gridList, new KeyboardFocusChangedEventHandler(onKeyboardFocus));
+      
       this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
       Keyboard.Focus(buttonView);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");

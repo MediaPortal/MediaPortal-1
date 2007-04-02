@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -47,6 +48,18 @@ namespace MyTv
       if (b != null)
       {
         Keyboard.Focus(b);
+        Button button = sender as Button;
+        if (button != null)
+        {
+          ContentPresenter content = button.TemplatedParent as ContentPresenter;
+          if (content != null)
+          {
+            if (content.Content != null)
+            {
+              gridList.SelectedItem = content.Content;
+            }
+          }
+        }
       }
     }
     void ShowUpcomingEpisodes()
@@ -60,8 +73,8 @@ namespace MyTv
       buttonPreRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 51);//Pre-record
       buttonPostRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 52);//Post-record
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
-      gridList.Children.Clear();
-      Grid grid = new Grid();
+      
+      
       //set program description
       string strTime = String.Format("{0} {1} - {2}", _schedule.StartTime.ToString("dd-MM"), _schedule.StartTime.ToString("HH:mm"), _schedule.EndTime.ToString("HH:mm"));
 
@@ -100,40 +113,14 @@ namespace MyTv
       DateTime dtDay = DateTime.Now;
       IList episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), _schedule.ProgramName, null);
       int row = 0;
+      DialogMenuItemCollection collection =  new DialogMenuItemCollection();
       foreach (Program episode in episodes)
       {
-        grid.RowDefinitions.Add(new RowDefinition());
-        Button button = new Button();
-        button.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
-        Grid gridSub = new Grid();
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.RowDefinitions.Add(new RowDefinition());
-        gridSub.RowDefinitions.Add(new RowDefinition());
-
         string logo = System.IO.Path.ChangeExtension(episode.ReferencedChannel().Name, ".png");
-        if (System.IO.File.Exists(logo))
+        if (!System.IO.File.Exists(logo))
         {
-          Image image = new Image();
-          PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(logo, UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-
-          image.Source = decoder.Frames[0];
-          Grid.SetColumn(image, 0);
-          Grid.SetRow(image, 0);
-          Grid.SetRowSpan(image, 2);
-          gridSub.Children.Add(image);
+          logo="";
         }
-
-
-
         Schedule recordingSchedule;
         string recIcon = "";
         if (IsRecordingProgram(episode, out recordingSchedule, false))
@@ -151,6 +138,7 @@ namespace MyTv
           }
           //item.TVTag = recordingSchedule;
         }
+        /*
         if (recIcon != "")
         {
           if (System.IO.File.Exists(recIcon))
@@ -169,49 +157,12 @@ namespace MyTv
             gridSub.Children.Add(image);
           }
         }
-        Label label = new Label();
-        label.Content = episode.Title;
-        label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
-        Grid.SetColumn(label, 1);
-        Grid.SetRow(label, 0);
-        Grid.SetColumnSpan(label, 8);
-        gridSub.Children.Add(label);
-        //item.MusicTag = episode;
-        //item.ThumbnailImage = logo;
-        //item.IconImageBig = logo;
-        //item.IconImage = logo;
-        strTime = String.Format("{0} {1} - {2}", episode.StartTime.ToString("dd-MM"), episode.StartTime.ToString("HH:mm"), episode.EndTime.ToString("HH:mm"));
-
-        label = new Label();
-        label.Content = strTime;
-        label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-        Grid.SetColumn(label, 1);
-        Grid.SetColumnSpan(label, 6);
-        Grid.SetRow(label, 1);
-        gridSub.Children.Add(label);
-
-        label = new Label();
-        label.Content = episode.ReferencedChannel().Name;
-        label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-        label.HorizontalAlignment = HorizontalAlignment.Right;
-        //label.Margin = new Thickness(0, 0, 60, 0);
-        Grid.SetColumn(label, 7);
-        Grid.SetColumnSpan(label, 2);
-        Grid.SetRow(label, 1);
-        gridSub.Children.Add(label);
-
-        gridSub.Loaded += new RoutedEventHandler(gridSub_Loaded);
-        button.Tag = episode;
-        button.GotFocus += new RoutedEventHandler(button_GotFocus);
-        button.MouseEnter += new MouseEventHandler(OnMouseEnter);
-        button.Content = gridSub;
-        button.Click += new RoutedEventHandler(OnUpcomingEpisodeClicked);
-        Grid.SetColumn(button, 0);
-        Grid.SetRow(button, row);
-        grid.Children.Add(button);
-        row++;
+        */
+        DialogMenuItem item = new DialogMenuItem(logo,episode.Title,strTime,episode.ReferencedChannel().Name);
+        item.Tag=episode;
+        collection.Add(item);
       }
-      gridList.Children.Add(grid);
+      gridList.ItemsSource = collection;
     }
 
     void button_GotFocus(object sender, RoutedEventArgs e)
@@ -261,6 +212,9 @@ namespace MyTv
     {
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
+      Keyboard.AddGotKeyboardFocusHandler(gridList, new KeyboardFocusChangedEventHandler(onKeyboardFocus));
+
+      this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
       Keyboard.Focus(buttonRecord);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
       ShowUpcomingEpisodes();
@@ -283,6 +237,34 @@ namespace MyTv
 
 
     }
+    void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
+    {
+      if (gridList.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+      {
+        ListBoxItem focusedItem = gridList.ItemContainerGenerator.ContainerFromIndex(gridList.SelectedIndex) as ListBoxItem;
+        if (focusedItem != null)
+        {
+          Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
+          ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
+          Button b = gridList.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
+          Keyboard.Focus(b);
+          b.Focus();
+        }
+      }
+    }
+    void onKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+      ListBoxItem focusedItem = e.NewFocus as ListBoxItem;
+      if (focusedItem != null)
+      {
+        Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
+        ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
+        Button b = gridList.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
+        Keyboard.Focus(b);
+        b.Focus();
+        e.Handled = true;
+      }
+    }
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
       if (e.Key == System.Windows.Input.Key.Escape)
@@ -300,13 +282,19 @@ namespace MyTv
         }
       }
     }
-
-
-    void OnUpcomingEpisodeClicked(object sender, RoutedEventArgs e)
+    void Button_Click(object sender, RoutedEventArgs e)
     {
-      Button b = sender as Button;
-      if (b == null) return;
-      Program p = b.Tag as Program;
+      if (e.Source == gridList)
+      {
+        OnUpcomingEpisodeClicked();
+      }
+    }
+
+
+    void OnUpcomingEpisodeClicked()
+    {
+      DialogMenuItem item = gridList.SelectedItem as DialogMenuItem;
+      Program p = item.Tag as Program;
       if (p == null) return;
       OnRecordProgram(p);
     }

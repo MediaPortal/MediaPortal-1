@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -53,6 +54,18 @@ namespace MyTv
       if (b != null)
       {
         Keyboard.Focus(b);
+        Button button = sender as Button;
+        if (button != null)
+        {
+          ContentPresenter content = button.TemplatedParent as ContentPresenter;
+          if (content != null)
+          {
+            if (content.Content != null)
+            {
+              gridList.SelectedItem = content.Content;
+            }
+          }
+        }
       }
     }
     protected void onKeyDown(object sender, KeyEventArgs e)
@@ -82,6 +95,9 @@ namespace MyTv
       // Sets keyboard focus on the first Button in the sample.
       labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 111);// "scheduled";
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
+      Keyboard.AddGotKeyboardFocusHandler(gridList, new KeyboardFocusChangedEventHandler(onKeyboardFocus));
+
+      this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
       Keyboard.Focus(buttonSort);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
 
@@ -99,6 +115,34 @@ namespace MyTv
 
       LoadSchedules();
 
+    }
+    void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
+    {
+      if (gridList.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+      {
+        ListBoxItem focusedItem = gridList.ItemContainerGenerator.ContainerFromIndex(gridList.SelectedIndex) as ListBoxItem;
+        if (focusedItem != null)
+        {
+          Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
+          ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
+          Button b = gridList.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
+          Keyboard.Focus(b);
+          b.Focus();
+        }
+      }
+    }
+    void onKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+      ListBoxItem focusedItem = e.NewFocus as ListBoxItem;
+      if (focusedItem != null)
+      {
+        Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
+        ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
+        Button b = gridList.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
+        Keyboard.Focus(b);
+        b.Focus();
+        e.Handled = true;
+      }
     }
 
     /// <summary>
@@ -151,8 +195,8 @@ namespace MyTv
           buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 88);//"Sort:Title";
           break;
       }
-      Grid grid = new Grid();
-      gridList.Children.Clear();
+      DialogMenuItemCollection collection = new DialogMenuItemCollection();
+
       IList schedules = Schedule.ListAll();
       List<Schedule> listSchedules = new List<Schedule>();
       foreach (Schedule schedule in schedules)
@@ -161,78 +205,17 @@ namespace MyTv
       int row = 0;
       foreach (Schedule schedule in listSchedules)
       {
-        grid.RowDefinitions.Add(new RowDefinition());
-        Button button = new Button();
-        button.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
-
-        //icon view...
-
-        Grid gridSub = new Grid();
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.RowDefinitions.Add(new RowDefinition());
-        gridSub.RowDefinitions.Add(new RowDefinition());
         string logo = Thumbs.GetLogoFileName(schedule.ReferencedChannel().Name + ".png");
-        if (System.IO.File.Exists(logo))
+        if (!System.IO.File.Exists(logo))
         {
-          Image image = new Image();
-          PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(logo, UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-
-          image.Source = decoder.Frames[0];
-          Grid.SetColumn(image, 0);
-          Grid.SetRow(image, 0);
-          Grid.SetRowSpan(image, 2);
-          gridSub.Children.Add(image);
+          logo = "";
         }
-        Label label = new Label();
-        label.Content = schedule.ProgramName;
-        label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
-        Grid.SetColumn(label, 1);
-        Grid.SetRow(label, 0);
-        Grid.SetColumnSpan(label, 8);
-        gridSub.Children.Add(label);
 
-        label = new Label();
-        label.Content = schedule.ReferencedChannel().Name;
-        label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-        Grid.SetColumn(label, 1);
-        Grid.SetColumnSpan(label, 6);
-        Grid.SetRow(label, 1);
-        gridSub.Children.Add(label);
-
-        label = new Label();
-        label.Content = GetContentForRightLabel(schedule);
-        label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-        label.HorizontalAlignment = HorizontalAlignment.Right;
-        //label.Margin = new Thickness(0, 0, 60, 0);
-        Grid.SetColumn(label, 7);
-        Grid.SetColumnSpan(label, 2);
-        Grid.SetRow(label, 1);
-        gridSub.Children.Add(label);
-        gridSub.Loaded += new RoutedEventHandler(gridSub_Loaded);
-
-
-        button.Content = gridSub;
-        button.Tag = schedule;
-        button.GotFocus += new RoutedEventHandler(button_GotFocus);
-        button.MouseEnter += new MouseEventHandler(OnMouseEnter);
-        button.Click += new RoutedEventHandler(OnScheduleClicked);
-        //label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
-        Grid.SetColumn(button, 0);
-        Grid.SetRow(button, row);
-        grid.Children.Add(button);
-        row++;
+        DialogMenuItem item = new DialogMenuItem(logo, schedule.ProgramName, schedule.ReferencedChannel().Name, GetContentForRightLabel(schedule));
+        item.Tag = schedule;
+        collection.Add(item);
       }
-      gridList.Children.Add(grid);
-      gridList.VerticalAlignment = VerticalAlignment.Top;
+      gridList.ItemsSource = collection;
     }
 
     void button_GotFocus(object sender, RoutedEventArgs e)
@@ -255,16 +238,24 @@ namespace MyTv
       g.Width = ((Button)(g.Parent)).ActualWidth;
     }
 
+    void Button_Click(object sender, RoutedEventArgs e)
+    {
+      if (e.Source == gridList)
+      {
+        OnScheduleClicked();
+      }
+    }
+
     /// <summary>
     /// Called when user has clicked on a recording
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-    void OnScheduleClicked(object sender, RoutedEventArgs e)
+    void OnScheduleClicked()
     {
-      Button b = sender as Button;
-      if (b == null) return;
-      Schedule rec = b.Tag as Schedule;
+      DialogMenuItem item = gridList.SelectedItem as DialogMenuItem;
+      if (item == null) return;
+      Schedule rec = item.Tag as Schedule;
       if (rec == null) return;
 
       MpMenu dlgMenu = new MpMenu();
