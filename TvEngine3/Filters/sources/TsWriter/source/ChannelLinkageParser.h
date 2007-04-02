@@ -79,7 +79,6 @@ public:
 
 private:
     vector<CSectionDecoder*> m_vecDecoders;
-	bool				m_bGrabbing;
 	CCriticalSection m_section;
     CTsHeader             m_tsHeader;
 

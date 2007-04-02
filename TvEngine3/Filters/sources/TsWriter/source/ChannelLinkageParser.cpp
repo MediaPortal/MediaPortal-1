@@ -56,6 +56,7 @@ CChannelLinkageParser::~CChannelLinkageParser(void)
 void CChannelLinkageParser::Start()
 {
 	CEnterCriticalSection enter(m_section);
+	m_mapChannels.clear();
 	m_bScanning=true;
 }
 
@@ -169,7 +170,7 @@ void CChannelLinkageParser::GetLinkedChannel (ULONG channelIndex,ULONG linkIndex
 
 void CChannelLinkageParser::OnTsPacket(CTsHeader& header, byte* tsPacket)
 {
-	if (m_bGrabbing==false) return;
+	if (m_bScanning==false) return;
 
 	CEnterCriticalSection enter(m_section);
 	for (int i=0; i < (int)m_vecDecoders.size();++i)
@@ -213,7 +214,7 @@ void CChannelLinkageParser::DecodeLinkage(byte* buf, int len)
 			return;
 		time_t currentTime=time(NULL);
 		time_t timespan=currentTime-m_scanTimeout;
-		if (timespan>20)
+		if (timespan>10)
 		{
 			m_bScanning=false;
 			m_bScanningDone=true;
@@ -282,8 +283,8 @@ void CChannelLinkageParser::DecodeLinkage(byte* buf, int len)
 					lChannel.name=cname;
 					free(cname);
 					channel.m_linkedChannels.push_back(lChannel);
-					LogDebug("LinkageChannel tsid=%d nid=%d sid=%d",channel.transport_id,channel.original_network_id,channel.service_id);
-					LogDebug("GEMX: LinkageDescriptor found len=%d tsid=%d nid=%d sid=%d %s",descriptor_len,lChannel.transport_id,lChannel.network_id,lChannel.service_id,lChannel.name);
+					//LogDebug("LinkageChannel tsid=%d nid=%d sid=%d",channel.transport_id,channel.original_network_id,channel.service_id);
+					//LogDebug("GEMX: LinkageDescriptor found len=%d tsid=%d nid=%d sid=%d %s",descriptor_len,lChannel.transport_id,lChannel.network_id,lChannel.service_id,lChannel.name);
 				}
 				off   +=(descriptor_len+2);
 			}
