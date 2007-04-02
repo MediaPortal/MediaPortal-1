@@ -5,9 +5,9 @@
     >
     <Grid>
 
-    <Button Template="{StaticResource PIButton}" HorizontalAlignment="Left" Margin="20,63,0,0" Name="playButton" VerticalAlignment="Top" Width="75">Play</Button>
+    <Button Style="{StaticResource MpButton}" HorizontalAlignment="Left" Margin="20,63,0,0" Name="playButton" VerticalAlignment="Top" Width="75">Play</Button>
     <Label Margin="24.0066666666667,106.04,20,0" Name="musicLabel" FlowDirection="LeftToRight" Height="23.96" VerticalAlignment="Top" Background="#00FFFFF0"></Label>
-    <Button Template="{StaticResource PIButton}"  Margin="104,63,0,0" Name="stopButton" VerticalAlignment="Top" HorizontalAlignment="Left" Width="75">Stop</Button>
+    <Button Style="{StaticResource MpButton}"  Margin="104,63,0,0" Name="stopButton" VerticalAlignment="Top" HorizontalAlignment="Left" Width="75">Stop</Button>
     <Label FlowDirection="LeftToRight" Height="23.96" Margin="26,0,18.006666666667,109.04" VerticalAlignment="Bottom" Name="ratingLabel" />
     </Grid>
  </Page>

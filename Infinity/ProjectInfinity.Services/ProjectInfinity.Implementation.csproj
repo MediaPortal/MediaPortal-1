@@ -37,7 +37,6 @@
     <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core.cs" />
     <Compile Include="Localisation\StringManager.cs" />
     <Compile Include="Logging\FileLogger.cs" />
     <Compile Include="Menu\Menu.cs" />
