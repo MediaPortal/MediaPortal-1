@@ -43,16 +43,11 @@ namespace MediaPortal.GUI.TV
   /// </summary>
   public class GUITVCropSettings : GUIWindow, IRenderLayer
   {
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnClose = null;
-    [SkinControlAttribute(8)]
-    protected GUISpinControl spinTop = null;
-    [SkinControlAttribute(12)]
-    protected GUISpinControl spinBottom = null;
-    [SkinControlAttribute(16)]
-    protected GUISpinControl spinLeft = null;
-    [SkinControlAttribute(20)]
-    protected GUISpinControl spinRight = null;
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnClose = null;
+    [SkinControlAttribute(8)]    protected GUISpinControl spinTop = null;
+    [SkinControlAttribute(12)]   protected GUISpinControl spinBottom = null;
+    [SkinControlAttribute(16)]   protected GUISpinControl spinLeft = null;
+    [SkinControlAttribute(20)]   protected GUISpinControl spinRight = null;
 
     bool _running;
     int _parentWindowID = 0;
@@ -127,7 +122,6 @@ namespace MediaPortal.GUI.TV
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
     }
-
 
     /// <summary>
     /// On Message

@@ -210,7 +210,7 @@ namespace MediaPortal.GUI.RSS
       if (dlg == null)
         return;
       dlg.Reset();
-      dlg.SetHeading(706); // menu
+      dlg.SetHeading(496); // menu
       foreach (Site loc in m_sites)
       {
         dlg.Add(loc.m_Name);

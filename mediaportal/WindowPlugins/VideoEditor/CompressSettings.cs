@@ -19,20 +19,14 @@ namespace WindowPlugins.VideoEditor
 		//private const int windowID = 170603;
 		bool result;
 
-		[SkinControlAttribute(302)]
-		protected GUISpinControl profilSelect = null;
-		[SkinControlAttribute(402)]
-		protected GUISpinControl videoQualitySelect = null;
-		[SkinControlAttribute(403)]
-		protected GUISpinControl audioQualitySelect = null;
-		[SkinControlAttribute(100)]
-		protected GUISliderControl resolution = null;
-		[SkinControlAttribute(102)]
-		protected GUILabelControl resolutionLbl = null;
-		[SkinControlAttribute(104)]
-		protected GUIButtonControl okBtn = null;
-		[SkinControlAttribute(24)]
-		protected GUIButtonControl abbortBtn = null;
+		[SkinControlAttribute(302)]		protected GUISpinControl profilSelect = null;
+		[SkinControlAttribute(402)]		protected GUISpinControl videoQualitySelect = null;
+		[SkinControlAttribute(403)]		protected GUISpinControl audioQualitySelect = null;
+		[SkinControlAttribute(100)]		protected GUISliderControl resolution = null;
+		[SkinControlAttribute(102)]		protected GUILabelControl resolutionLbl = null;
+		[SkinControlAttribute(104)]		protected GUIButtonControl okBtn = null;
+		[SkinControlAttribute(24)] 		protected GUIButtonControl abbortBtn = null;
+
 		CompressionSettings settings;
 
 		public CompressSettings(ref CompressionSettings settings)
@@ -43,7 +37,6 @@ namespace WindowPlugins.VideoEditor
 			settings.videoQuality = 2200;
 			settings.audioQuality = 192;
 			GetID = (int)GUIWindow.Window.WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS;
-
 		}
 
 		public CompressSettings()
