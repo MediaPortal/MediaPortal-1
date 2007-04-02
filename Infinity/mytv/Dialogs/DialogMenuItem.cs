@@ -15,147 +15,42 @@ namespace Dialogs
 {
   public class DialogMenuItem
   {
-    List<UIElement> _subItems = new List<UIElement>();
+    #region variables
     string _logo, _label1, _label2, _label3;
+    #endregion
+    #region ctors
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DialogMenuItem"/> class.
+    /// </summary>
     public DialogMenuItem()
     {
-    }
-    public DialogMenuItem(string logo, string label1, string label2, string label3)
-    {
-      Button button = new Button();
-      button.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
-      Grid grid = new Grid();
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.RowDefinitions.Add(new RowDefinition());
-      grid.RowDefinitions.Add(new RowDefinition());
-      if (logo.Length > 0)
-      {
-        Image image = new Image();
-        PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(logo, UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-
-        image.Source = decoder.Frames[0];
-        Grid.SetColumn(image, 0);
-        Grid.SetRow(image, 0);
-        Grid.SetRowSpan(image, 2);
-        grid.Children.Add(image);
-      }
-      Label label = new Label();
-      label.Content = label1;
-      label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
-      Grid.SetColumn(label, 1);
-      Grid.SetRow(label, 0);
-      Grid.SetColumnSpan(label, 8);
-      grid.Children.Add(label);
-
-      label = new Label();
-      label.Content = label2;
-      label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-      Grid.SetColumn(label, 1);
-      Grid.SetColumnSpan(label, 6);
-      Grid.SetRow(label, 1);
-      grid.Children.Add(label);
-
-      label = new Label();
-      label.Content = label3;
-      label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-      label.HorizontalAlignment = HorizontalAlignment.Right;
-      label.Margin = new Thickness(0, 0, 20, 0);
-      Grid.SetColumn(label, 7);
-      Grid.SetColumnSpan(label, 2);
-      Grid.SetRow(label, 1);
-      grid.Children.Add(label);
-      grid.Loaded += new RoutedEventHandler(grid_Loaded);
-      button.Content = grid;
-
-      _subItems.Add(button);
     }
     /// <summary>
     /// Initializes a new instance of the <see cref="DialogMenuItem"/> class.
     /// </summary>
+    /// <param name="logo">The logo.</param>
     /// <param name="label1">The label1.</param>
     /// <param name="label2">The label2.</param>
     /// <param name="label3">The label3.</param>
-    public DialogMenuItem(string label1, string label2, string label3)
+    public DialogMenuItem(string logo, string label1, string label2, string label3)
     {
-      Button button = new Button();
-      button.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
-      Grid grid = new Grid();
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.RowDefinitions.Add(new RowDefinition());
-      grid.RowDefinitions.Add(new RowDefinition());
-
-      Label label = new Label();
-      label.Content = label1;
-      label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
-      Grid.SetColumn(label, 0);
-      Grid.SetRow(label, 0);
-      Grid.SetColumnSpan(label, 2);
-      grid.Children.Add(label);
-
-      label = new Label();
-      label.Content = label2;
-      label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-      Grid.SetColumn(label, 0);
-      Grid.SetRow(label, 1);
-      grid.Children.Add(label);
-
-      label = new Label();
-      label.Content = label3;
-      label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-      label.HorizontalAlignment = HorizontalAlignment.Right;
-      label.Margin = new Thickness(0, 0, 20, 0);
-      Grid.SetColumn(label, 1);
-      Grid.SetRow(label, 1);
-      grid.Children.Add(label);
-      grid.Loaded += new RoutedEventHandler(grid_Loaded);
-      button.Content = grid;
-      
-      _subItems.Add(button);
+      Logo = logo;
+      Label1 = label1;
+      Label2 = label2;
+      Label3 = label3;
     }
 
-    void grid_Loaded(object sender, RoutedEventArgs e)
-    {
-      Grid g = sender as Grid;
-      if (g == null) return;
-      g.Width = ((Button)(g.Parent)).ActualWidth;
-    }
     /// <summary>
     /// Initializes a new instance of the <see cref="DialogMenuItem"/> class.
     /// </summary>
     /// <param name="buttonName">Name of the button.</param>
     public DialogMenuItem(string buttonName)
     {
-      Button b = new Button();
-      b.Content = buttonName;
-      b.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
-      b.Height = 32;
-      _subItems.Add(b);
+      Label1 = buttonName;
     }
+    #endregion
 
-    /// <summary>
-    /// Gets or sets the sub items.
-    /// </summary>
-    /// <value>The sub items.</value>
-    public List<UIElement> SubItems
-    {
-      get
-      {
-        return _subItems;
-      }
-      set
-      {
-        _subItems = value;
-      }
-    }
+    #region properties
     public string Logo
     {
       get
@@ -200,5 +95,6 @@ namespace Dialogs
         _label3 = value;
       }
     }
+    #endregion
   }
 }

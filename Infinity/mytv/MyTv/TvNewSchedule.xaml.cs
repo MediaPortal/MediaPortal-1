@@ -102,28 +102,28 @@ namespace MyTv
     }
     void OnAdvancedRecord(object sender, RoutedEventArgs e)
     {
-      MpMenu dlgMenu = new MpMenu();
+      MpMenuWithLogo dlgLogoMenu = new MpMenuWithLogo();
       Window w = Window.GetWindow(this);
-      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      dlgMenu.Owner = w;
-      dlgMenu.Items.Clear();
-      dlgMenu.Header = "Channel";
-      dlgMenu.SubTitle = "";
+      dlgLogoMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+      dlgLogoMenu.Owner = w;
+      dlgLogoMenu.Items.Clear();
+      dlgLogoMenu.Header = "Channel";
+      dlgLogoMenu.SubTitle = "";
 
       IList channels = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
       foreach (GroupMap chan in channels)
       {
-        string logo = Thumbs.GetLogoFileName(chan.ReferencedChannel().Name);
+        string logo = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.GetLogoFileName(chan.ReferencedChannel().Name));
         if (!System.IO.File.Exists(logo))
           logo = "";
-        dlgMenu.Items.Add(new DialogMenuItem(logo, chan.ReferencedChannel().Name, "", ""));
+        dlgLogoMenu.Items.Add(new DialogMenuItem(logo, chan.ReferencedChannel().Name, "", ""));
       }
-      dlgMenu.ShowDialog();
-      if (dlgMenu.SelectedIndex < 0) return;
+      dlgLogoMenu.ShowDialog();
+      if (dlgLogoMenu.SelectedIndex < 0) return;
 
-      Channel selectedChannel = ((GroupMap)channels[dlgMenu.SelectedIndex]).ReferencedChannel() as Channel;
-      
-      dlgMenu = new MpMenu();
+      Channel selectedChannel = ((GroupMap)channels[dlgLogoMenu.SelectedIndex]).ReferencedChannel() as Channel;
+
+      MpMenu dlgMenu = new MpMenu();
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Header = "Type";
@@ -226,26 +226,26 @@ namespace MyTv
     }
     void OnQuickRecord(object sender, RoutedEventArgs e)
     {
-      MpMenu dlgMenu = new MpMenu();
+      MpMenuWithLogo dlgLogoMenu = new MpMenuWithLogo();
       Window w = Window.GetWindow(this);
-      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      dlgMenu.Owner = w;
-      dlgMenu.Items.Clear();
-      dlgMenu.Header = "Channel";
-      dlgMenu.SubTitle = "";
+      dlgLogoMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+      dlgLogoMenu.Owner = w;
+      dlgLogoMenu.Items.Clear();
+      dlgLogoMenu.Header = "Channel";
+      dlgLogoMenu.SubTitle = "";
 
       IList channels = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
       foreach (GroupMap chan in channels)
       {
-        string logo = Thumbs.GetLogoFileName(chan.ReferencedChannel().Name);
+        string logo = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.GetLogoFileName(chan.ReferencedChannel().Name));
         if (!System.IO.File.Exists(logo))
           logo = "";
-        dlgMenu.Items.Add(new DialogMenuItem(logo, chan.ReferencedChannel().Name,"", ""));
+        dlgLogoMenu.Items.Add(new DialogMenuItem(logo, chan.ReferencedChannel().Name,"", ""));
       }
-      dlgMenu.ShowDialog();
-      if (dlgMenu.SelectedIndex < 0) return;
+      dlgLogoMenu.ShowDialog();
+      if (dlgLogoMenu.SelectedIndex < 0) return;
 
-      Channel selectedChannel = ((GroupMap)channels[dlgMenu.SelectedIndex]).ReferencedChannel() as Channel;
+      Channel selectedChannel = ((GroupMap)channels[dlgLogoMenu.SelectedIndex]).ReferencedChannel() as Channel;
       /*
       dlgMenu = new MpMenu();
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -272,7 +272,7 @@ namespace MyTv
       day = 0;
 
 
-      dlgMenu = new MpMenu();
+      MpMenu dlgMenu = new MpMenu();
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Header = "Start";

@@ -1,12 +1,20 @@
 <Window x:Class="Dialogs.MpMenu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" BorderThickness ="0" Width="530" Height="370" WindowStyle="None" Loaded="OnLoaded" Background="Transparent">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Dialogs"
+    Title="Dialogs"  BorderThickness ="0" Width="530" Height="370" WindowStyle="None" Loaded="OnLoaded" Background="Transparent">
 
   <Window.Resources>
     <Storyboard x:Key="fadeIn">
       <DoubleAnimation From="0" To="1" Duration="0:0:1" Storyboard.TargetName="gridMain" Storyboard.TargetProperty="(UIElement.Opacity)"/>
     </Storyboard>
+
+    <DataTemplate x:Key="itemTemplate"  DataType="{x:Type local:DialogMenuItem}">
+      <Button Name="PART_Button" Template="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter" Content="{Binding Label1}" >
+      </Button>
+    </DataTemplate>
   </Window.Resources>
+
   <Window.Triggers>
     <EventTrigger RoutedEvent="FrameworkElement.Loaded" SourceName="gridMain">
       <BeginStoryboard Storyboard="{StaticResource fadeIn}"/>
@@ -42,10 +50,9 @@
         </Rectangle.Fill>
       </Rectangle>
       <Label x:Name="labelDate" Width="78" Height="38.898" Content="18:09" FontFamily="Segoe Media Center" FontSize="24" FontWeight="Bold" Foreground="#FF5995D7" Canvas.Left="372" Canvas.Top="6.855"/>
-      <Button x:Name="buttonClose" Style="{DynamicResource MpCloseButton}" Width="45" Height="43" Canvas.Left="470.669" Canvas.Top="13.607" Click="OnCloseClicked" MouseEnter="subItemMouseEnter" KeyDown="OnScrollKeyDown" />
-      <ScrollViewer VerticalScrollBarVisibility="Hidden" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" KeyDown="OnScrollKeyDown" >
-        <Grid x:Name="gridContent" KeyDown="OnScrollKeyDown" />
-      </ScrollViewer>
+      <Button x:Name="buttonClose" Style="{DynamicResource MpCloseButton}" Width="45" Height="43" Canvas.Left="470.669" Canvas.Top="13.607" Click="OnCloseClicked" MouseEnter="OnMouseEnter" KeyDown="onKeyDown" />
+      <ListBox x:Name="gridContent" FocusManager.IsFocusScope="False"  ItemTemplate="{StaticResource itemTemplate}" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="True" Background="Transparent" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.CanContentScroll="True" IsSynchronizedWithCurrentItem="True" />
+
     </Canvas>
   </Grid>
 

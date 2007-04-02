@@ -329,7 +329,7 @@ namespace MyTv
           dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
           dlgMenu.Owner = w;
           dlgMenu.Items.Clear();
-          dlgMenu.Header = "Menu";
+          dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68); //"Menu";
           dlgMenu.SubTitle = "";
           dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 54)/*"Delete this recording*/));
           dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 55)/*"Delete series recording*/));
@@ -576,8 +576,8 @@ namespace MyTv
         dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
         dlgMenu.Owner = w;
         dlgMenu.Items.Clear();
-        dlgMenu.Header = "Menu";
-        dlgMenu.SubTitle = "Date";
+        dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68); //"Menu";
+        dlgMenu.SubTitle = ServiceScope.Get<ILocalisation>().ToString("mytv", 73); //"Date";
         int selected = 0;
         for (int days = 1; days <= 31; days++)
         {

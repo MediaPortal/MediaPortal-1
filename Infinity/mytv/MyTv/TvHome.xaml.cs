@@ -478,7 +478,7 @@ namespace MyTv
             percent = ServiceScope.Get<ILocalisation>().ToString("mytv", 21)/*(recording)*/  + percent;
             break;
         }
-        string channelLogoFileName = String.Format(@"{0}\{1}",System.IO.Directory.GetCurrentDirectory(),Thumbs.GetLogoFileName(currentChannel.Name));
+        string channelLogoFileName = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.GetLogoFileName(currentChannel.Name));
         if (!System.IO.File.Exists(channelLogoFileName))
         {
           channelLogoFileName = "";
@@ -665,7 +665,7 @@ namespace MyTv
     void OnTvStreamsClicked(object sender, EventArgs args)
     {
       int selected = 0;
-      MpMenu dlgMenu = new MpMenu();
+      MpMenuWithLogo dlgMenu = new MpMenuWithLogo();
       Window w = Window.GetWindow(this);
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
@@ -694,12 +694,12 @@ namespace MyTv
             user = tvcard.User;
             Channel ch = Channel.Retrieve(idChannel);
             channels.Add(ch);
-            string logo = Thumbs.GetLogoFileName(ch.Name);
+            string logo = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.GetLogoFileName(ch.Name));
             if (!System.IO.File.Exists(logo))
             {
               logo = "";
             }
-            dlgMenu.Items.Add(new DialogMenuItem(logo, ch.Name, user.Name));
+            dlgMenu.Items.Add(new DialogMenuItem(logo, ch.Name, "", user.Name));
             //item.IconImage = strLogo;
             //if (isRecording)
             //  item.PinImage = Thumbs.TvRecordingIcon;

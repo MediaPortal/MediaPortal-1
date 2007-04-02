@@ -12,6 +12,9 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Dialogs;
 using TvDatabase;
+using ProjectInfinity;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Localisation;
 
 namespace MyTv
 {
@@ -52,7 +55,7 @@ namespace MyTv
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       Keyboard.Focus(buttonKeepUntil);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
-
+      labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 78);// "recorded";
 
       if (TvPlayerCollection.Instance.Count > 0)
       {
@@ -95,12 +98,12 @@ namespace MyTv
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
-      dlgMenu.Header = "Menu";
-      dlgMenu.SubTitle = "Until";
-      dlgMenu.Items.Add(new DialogMenuItem("Until space needed"));
-      dlgMenu.Items.Add(new DialogMenuItem("Until watched"));
-      dlgMenu.Items.Add(new DialogMenuItem("Until Date"));
-      dlgMenu.Items.Add(new DialogMenuItem("Always"));
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);//"Menu";
+      dlgMenu.SubTitle = ServiceScope.Get<ILocalisation>().ToString("mytv", 47);// Keep Until";
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 69)/*Until space needed*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 70)/*Until watched*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 71)/*Until Date*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 72)/*Always*/));
       dlgMenu.SelectedIndex = (int)_recording.KeepUntil;
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;//nothing selected

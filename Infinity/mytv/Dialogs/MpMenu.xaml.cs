@@ -20,13 +20,23 @@ namespace Dialogs
   public partial class MpMenu : System.Windows.Window
   {
 
-    List<DialogMenuItem> _menuItems = new List<DialogMenuItem>();
+    DialogMenuItemCollection _menuItems;
     int _selectedIndex = 0;
     /// <summary>
-    /// Initializes a new instance of the <see cref="MpMenu"/> class.
+    /// Initializes a new instance of the <see cref="MpImageMenu"/> class.
     /// </summary>
     public MpMenu()
     {
+      _menuItems = new DialogMenuItemCollection();
+      this.WindowStyle = WindowStyle.None;
+      this.ShowInTaskbar = false;
+      this.ResizeMode = ResizeMode.NoResize;
+      this.AllowsTransparency = true;
+      InitializeComponent();
+    }
+    public MpMenu(DialogMenuItemCollection items)
+    {
+      _menuItems = items;
       this.WindowStyle = WindowStyle.None;
       this.ShowInTaskbar = false;
       this.ResizeMode = ResizeMode.NoResize;
@@ -41,7 +51,7 @@ namespace Dialogs
       }
       set
       {
-         labelDate.Content = value;
+        labelDate.Content = value;
       }
     }
 
@@ -53,7 +63,7 @@ namespace Dialogs
       }
       set
       {
-         labelHeader.Content = value;
+        labelHeader.Content = value;
       }
     }
     /// <summary>
@@ -63,72 +73,43 @@ namespace Dialogs
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-      gridContent.Children.Clear();
+
+      this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
       this.Visibility = Visibility.Visible;
-      int maxColumns = 0;
-      Grid grid = new Grid();
-      grid.VerticalAlignment = VerticalAlignment.Top;
-      
-      for (int row = 0; row < _menuItems.Count; ++row)
+      gridContent.ItemsSource = _menuItems;
+      gridContent.SelectionChanged += new SelectionChangedEventHandler(gridContent_SelectionChanged);
+      gridContent.SelectionMode = SelectionMode.Single;
+      if (_selectedIndex >= 0)
+        gridContent.SelectedIndex = _selectedIndex;
+      Keyboard.Focus(gridContent);
+      Keyboard.AddGotKeyboardFocusHandler(gridContent, new KeyboardFocusChangedEventHandler(onKeyboardFocus));
+
+
+    }
+    void onKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+      ListBoxItem focusedItem = e.NewFocus as ListBoxItem;
+      if (focusedItem != null)
       {
-        DialogMenuItem item = _menuItems[row];
-        grid.RowDefinitions.Add(new RowDefinition());
-        for (int i = 0; i < item.SubItems.Count; ++i)
-        {
-          if (i >= maxColumns)
-          {
-            grid.ColumnDefinitions.Add(new ColumnDefinition());
-            maxColumns = i + 1;
-          }
-          Grid.SetColumn(item.SubItems[i], i);
-          Grid.SetRow(item.SubItems[i], row);
-          grid.Children.Add(item.SubItems[i]);
-          if ((item.SubItems[i] as Button) != null)
-          {
-            Button element = (Button)item.SubItems[i];
-            element.Click += new RoutedEventHandler(OnItemClicked);
-          }
-          item.SubItems[i].MouseEnter += new MouseEventHandler(subItemMouseEnter);
-        }
-      }
-      gridContent.Children.Add(grid);
-      if (_selectedIndex >= 0 && _selectedIndex < _menuItems.Count)
-      {
-        Keyboard.Focus(_menuItems[SelectedIndex].SubItems[0]);
+        Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
+        ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
+        Button b = gridContent.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
+        Keyboard.Focus(b);
+        b.Focus();
+        e.Handled = true;
       }
     }
 
-    /// <summary>
-    /// Updates the selected index.
-    /// </summary>
-    void UpdateSelectedIndex()
+    void Button_Click(object sender, RoutedEventArgs e)
     {
-      int selectedIndex = -1;
-      foreach (DialogMenuItem item in _menuItems)
+      if (e.Source == gridContent)
       {
-        selectedIndex++;
-        foreach (UIElement element in item.SubItems)
-        {
-          if (element.IsFocused)
-          {
-            SelectedIndex = selectedIndex;
-            return;
-          }
-        }
+        this.Close();
       }
-      SelectedIndex = -1;
     }
-
-    /// <summary>
-    /// Called when an item is clicked
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-    void OnItemClicked(object sender, RoutedEventArgs e)
+    void gridContent_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      UpdateSelectedIndex();
-      this.Visibility = Visibility.Hidden;
-      return;
+      _selectedIndex = gridContent.SelectedIndex;
     }
 
     /// <summary>
@@ -136,7 +117,7 @@ namespace Dialogs
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
-    void OnScrollKeyDown(object sender, KeyEventArgs e)
+    void onKeyDown(object sender, KeyEventArgs e)
     {
       if (e.Key == Key.Right)
       {
@@ -145,8 +126,15 @@ namespace Dialogs
       }
       if (e.Key == Key.Left)
       {
-        Keyboard.Focus(_menuItems[SelectedIndex].SubItems[0]);
+        Keyboard.Focus(gridContent);
         e.Handled = true;
+      }
+      if (e.Key == System.Windows.Input.Key.Escape)
+      {
+        //return to previous screen
+        SelectedIndex = -1;
+        this.Close();
+        return;
       }
     }
 
@@ -155,12 +143,20 @@ namespace Dialogs
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
-    void subItemMouseEnter(object sender, MouseEventArgs e)
+    void OnMouseEnter(object sender, MouseEventArgs e)
     {
-      IInputElement b = sender as IInputElement;
+      Button b = sender as Button;
       if (b != null)
       {
         Keyboard.Focus(b);
+        ContentPresenter content = b.TemplatedParent as ContentPresenter;
+        if (content != null)
+        {
+          if (content.Content != null)
+          {
+            gridContent.SelectedItem = content.Content;
+          }
+        }
       }
     }
 
@@ -200,7 +196,7 @@ namespace Dialogs
     /// Gets or sets the items.
     /// </summary>
     /// <value>The items.</value>
-    public List<DialogMenuItem> Items
+    public DialogMenuItemCollection Items
     {
       get
       {
@@ -222,16 +218,6 @@ namespace Dialogs
     {
       SelectedIndex = -1;
       this.Visibility = Visibility.Hidden;
-    }
-    protected void onKeyDown(object sender, KeyEventArgs e)
-    {
-      if (e.Key == System.Windows.Input.Key.Escape)
-      {
-        //return to previous screen
-        SelectedIndex = -1;
-        this.Visibility = Visibility.Hidden;
-        return;
-      }
     }
 
   }

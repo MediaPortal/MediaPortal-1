@@ -135,5 +135,11 @@
     <String id="108">Type</String>
     <String id="109">Description</String>
     <String id="110">schedule info</String>
+    <String id="111">scheduled</String>
+    <String id="112">Cancel this show</String>
+    <String id="113">Delete this entire recording</String>
+    <String id="114">Play recording from beginning</String>
+    <String id="115">Play recording from live point</String>
+    <String id="116">Cleaned up {0} schedules</String>
   </Section>
 </Language>

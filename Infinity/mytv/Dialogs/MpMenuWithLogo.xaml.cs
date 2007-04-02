@@ -25,6 +25,15 @@ namespace Dialogs
     /// <summary>
     /// Initializes a new instance of the <see cref="MpImageMenu"/> class.
     /// </summary>
+    public MpMenuWithLogo()
+    {
+      _menuItems =  new DialogMenuItemCollection();
+      this.WindowStyle = WindowStyle.None;
+      this.ShowInTaskbar = false;
+      this.ResizeMode = ResizeMode.NoResize;
+      this.AllowsTransparency = true;
+      InitializeComponent();
+    }
     public MpMenuWithLogo(DialogMenuItemCollection items)
     {
       _menuItems = items;
