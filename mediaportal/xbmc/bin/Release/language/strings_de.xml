@@ -989,6 +989,9 @@
     <String id="2052">Rezept durchsuchen</String>
     <String id="2053">Kategorie</String>
     <String id="2054">Kein Eintrag!</String>
+	<String id="2059">Comskip Datei gefunden, </String>
+	<String id="2060">soll diese verwendet werden?</String>
+	<String id="2061">Die Comskip-Datei ist nicht kompatibel.</String>
 		<String id="2062">schlecht</String>
 		<String id="2063">mittel</String>
 		<String id="2064">gut</String>

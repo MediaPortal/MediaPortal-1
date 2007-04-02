@@ -989,6 +989,9 @@
     <String id="2052">Search in Recipie</String>
     <String id="2053">Categorie</String>
     <String id="2054">No Entry!</String>
+	<String id="2059">Comskip file found, </String>
+	<String id="2060">would you like to use it?</String>
+	<String id="2061">The Comskip file is incompatible</String>
 		<String id="2062">low</String>
 		<String id="2063">medium</String>
 		<String id="2064">high</String>
