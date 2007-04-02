@@ -265,12 +265,12 @@ void CRecorder::Write(byte* buffer, int len)
 	            }
               m_iPart++;
               WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
-            }
-          }
-				  else // of if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
-				  {
-					  LogDebug("Recorder:unable to write file:'%s' %d %d %x",m_szFileName, GetLastError(),m_iWriteBufferPos,m_hFile);
-				  }
+            }//of if (ERROR_FILE_TOO_LARGE == GetLastError())
+						else
+						{				 
+							LogDebug("Recorder:unable to write file:'%s' %d %d %x",m_szFileName, GetLastError(),m_iWriteBufferPos,m_hFile);
+						}
+          }//of if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
 		    }//if (m_hFile!=INVALID_HANDLE_VALUE)
       }//if (m_iWriteBufferPos>0)
       m_iWriteBufferPos=0;
