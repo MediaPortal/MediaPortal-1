@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity", "ProjectI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPlugin", "TestPlugin\TestPlugin.csproj", "{EA5E414F-E7C5-40E0-B8DF-C73640637DBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity.Menu", "ProjectInfinity.Menu\ProjectInfinity.Menu.csproj", "{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity.Plugins", "ProjectInfinity.Menu\ProjectInfinity.Plugins.csproj", "{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dialogs", "mytv\Dialogs\Dialogs.csproj", "{82284525-5023-452C-89E3-A8765590AAEA}"
 EndProject

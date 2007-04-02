@@ -4,7 +4,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}</ProjectGuid>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <RootNamespace>ProjectInfinity.Menu</RootNamespace>
+    <RootNamespace>ProjectInfinity</RootNamespace>
     <AssemblyName>ProjectInfinity.Menu</AssemblyName>
     <WarningLevel>4</WarningLevel>
     <OutputType>library</OutputType>
@@ -46,10 +46,13 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MenuPage.xaml" />
+    <Page Include="Menu\MenuPage.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MenuPlugin.cs" />
+    <Compile Include="Menu\MenuPage.xaml.cs">
+      <DependentUpon>MenuPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Menu\MenuPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -69,10 +72,6 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="MenuPage.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>MenuPage.xaml</DependentUpon>
     </Compile>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
