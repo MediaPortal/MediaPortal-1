@@ -986,6 +986,9 @@
     <String id="2053">Kategori</String>
     <String id="2054">Ingen innslag!</String>
     <String id="2065">Vennligst, velg hvilken mpg fil du vil konvertere til divx:</String>
+    <String id="2062">lav</String>
+    <String id="2063">medium</String>
+    <String id="2064">høy</String>
     <String id="2066">Mpeg til divx</String>
     <String id="2067">Vennligst, velg hvilken dvr-ms fil du vil konvertere til divx:</String>
     <String id="2068">Dvr-ms til divx</String>
