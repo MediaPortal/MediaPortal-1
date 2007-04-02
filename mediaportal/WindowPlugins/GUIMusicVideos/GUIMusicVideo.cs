@@ -558,6 +558,8 @@ namespace MediaPortal.GUI.MusicVideos
         dlgSel.Reset();
         if (dlgSel != null)
         {
+          dlgSel.SetHeading(GUILocalizeStrings.Get(498)); // Menu
+
           dlgSel.Add(GUILocalizeStrings.Get(208)); // Play
           dlgSel.Add(GUILocalizeStrings.Get(926)); // Add to playList
           if ((int)State.FAVORITE == CURRENT_STATE)
@@ -566,7 +568,7 @@ namespace MediaPortal.GUI.MusicVideos
             dlgSel.Add(GUILocalizeStrings.Get(930)); // Add to favorites
           dlgSel.Add(GUILocalizeStrings.Get(30007)); // Search other videos by this artist
           //dlgSel.Add("Artist Biography");
-          dlgSel.SetHeading(GUILocalizeStrings.Get(924)); // Menu 
+          
           dlgSel.DoModal(GetID);
           int liSelectedIdx = dlgSel.SelectedId;
           Log.Info("you selected action :{0}", liSelectedIdx);
@@ -701,16 +703,14 @@ namespace MediaPortal.GUI.MusicVideos
       dlgSel.Reset();
       if (dlgSel != null)
       {
-        foreach (string lsGenreNm in loGenreNames)
-        {
+        foreach (string lsGenreNm in loGenreNames)        
           dlgSel.Add(lsGenreNm);
-        }
-        dlgSel.SetHeading(GUILocalizeStrings.Get(924)); // Menu
+        
+        dlgSel.SetHeading(GUILocalizeStrings.Get(496)); // Menu
         dlgSel.DoModal(GetID);
         if (dlgSel.SelectedLabel == -1)
-        {
           return "";
-        }
+        
         Log.Info("you selected genre :{0}", dlgSel.SelectedLabelText);
         lsSelectedGenre = dlgSel.SelectedLabelText;
       }
@@ -721,10 +721,9 @@ namespace MediaPortal.GUI.MusicVideos
     {
 
       string lsSelectedFav = "";
-      if (moFavoriteManager == null)
-      {
+      if (moFavoriteManager == null)      
         moFavoriteManager = new YahooFavorites();
-      }
+      
       ArrayList loFavNames = moFavoriteManager.getFavoriteNames();
       if (loFavNames.Count > 1)
       {
@@ -732,24 +731,21 @@ namespace MediaPortal.GUI.MusicVideos
         dlgSel.Reset();
         if (dlgSel != null)
         {
-          foreach (string lsFavNm in loFavNames)
-          {
+          foreach (string lsFavNm in loFavNames)          
             dlgSel.Add(lsFavNm);
-          }
-          dlgSel.SetHeading(GUILocalizeStrings.Get(924)); // Menu
+          
+          dlgSel.SetHeading(GUILocalizeStrings.Get(497)); // Menu
           dlgSel.DoModal(GetID);
-          if (dlgSel.SelectedLabel == -1)
-          {
+          if (dlgSel.SelectedLabel == -1)          
             return "";
-          }
+          
           Log.Info("you selected favorite :{0}", dlgSel.SelectedLabelText);
           lsSelectedFav = dlgSel.SelectedLabelText;
         }
       }
-      else
-      {
+      else      
         lsSelectedFav = (string)loFavNames[0];
-      }
+      
       return lsSelectedFav;
     }
 
@@ -764,16 +760,13 @@ namespace MediaPortal.GUI.MusicVideos
         Array.Sort(loCountryArray);
 
         foreach (string country in loCountryArray)
-        {
-          //Console.WriteLine("country = {0}", country);
           dlgSel.Add(country);
-        }
-        dlgSel.SetHeading(GUILocalizeStrings.Get(924)); // Menu
+        
+        dlgSel.SetHeading(GUILocalizeStrings.Get(496)); // Menu
         dlgSel.DoModal(GetID);
-        if (dlgSel.SelectedLabel == -1)
-        {
+        if (dlgSel.SelectedLabel == -1)        
           return;
-        }
+        
         Log.Info("you selected country :{0}", dlgSel.SelectedLabelText);
         moSettings.msDefaultCountryName = dlgSel.SelectedLabelText;
         moYahooSearch = new YahooSearch(moSettings.msDefaultCountryName);

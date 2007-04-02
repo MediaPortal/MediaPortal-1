@@ -1080,7 +1080,7 @@ namespace MediaPortal.GUI.Video
       if (dlg == null)
         return;
       dlg.Reset();
-      dlg.SetHeading(924); // menu
+      dlg.SetHeading(498); // menu
 
       dlg.AddLocalizedString(941); // Change aspect ratio
 

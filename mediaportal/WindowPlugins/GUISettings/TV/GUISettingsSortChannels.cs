@@ -283,6 +283,7 @@ namespace WindowPlugins.GUISettings.TV
 				}
 			}
 		}
+
 		void SaveGroup()
 		{
 			if (currentGroup==null) return;

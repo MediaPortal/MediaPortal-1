@@ -78,6 +78,7 @@ namespace WindowPlugins.GUISettings.TV
         OnAutoTurnOnTS();
       base.OnClicked(controlId, control, actionType);
     }
+
     void OnVideoCodec()
     {
       string strVideoCodec = "";
@@ -91,7 +92,7 @@ namespace WindowPlugins.GUISettings.TV
       if ( dlg != null )
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
         int count = 0;
         foreach ( string codec in availableVideoFilters )
@@ -125,7 +126,7 @@ namespace WindowPlugins.GUISettings.TV
       if ( dlg != null )
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
         int count = 0;
         foreach ( string codec in availableAudioFilters )
@@ -157,7 +158,7 @@ namespace WindowPlugins.GUISettings.TV
 			if (dlg!=null)
 			{
 				dlg.Reset();
-				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+				dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
 				dlg.Add("Video Mixing Renderer 7");
 				dlg.Add("Video Mixing Renderer 9");
 				dlg.SelectedLabel=vmr9Index;
@@ -184,7 +185,7 @@ namespace WindowPlugins.GUISettings.TV
       if ( dlg != null )
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
         for ( int index = 0; index < aspectRatio.Length; index++ )
         {
@@ -204,6 +205,7 @@ namespace WindowPlugins.GUISettings.TV
         }
       }
     }
+
     void OnTimeshiftBuffer()
     {
       int buflen = 30;
@@ -215,7 +217,7 @@ namespace WindowPlugins.GUISettings.TV
       if ( dlg != null )
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
         int count = 0;
         for ( int i = 30; i <= 180; i += 30 )
@@ -238,6 +240,7 @@ namespace WindowPlugins.GUISettings.TV
         }
       }
     }
+
     void OnDeinterlace()
     {
       string[] deinterlaceModes = { "None", "Bob", "Weave", "Best" };
@@ -251,7 +254,7 @@ namespace WindowPlugins.GUISettings.TV
       if ( dlg != null )
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
 
         for ( int index = 0; index < deinterlaceModes.Length; index++ )
         {
@@ -267,6 +270,7 @@ namespace WindowPlugins.GUISettings.TV
         }
       }
     }
+
     void OnAutoTurnOnTv()
     {
       bool autoTurnOn = false;
@@ -279,7 +283,7 @@ namespace WindowPlugins.GUISettings.TV
       if ( dlg != null )
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         dlg.Add(GUILocalizeStrings.Get(775));       //Start TV in MyTV sections automatically
         dlg.Add(GUILocalizeStrings.Get(776));       //Do not start / switch to TV automatically
         dlg.SelectedLabel = autoTurnOn ? 0 : 1;
@@ -305,7 +309,7 @@ namespace WindowPlugins.GUISettings.TV
       if ( dlg != null )
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         dlg.Add(GUILocalizeStrings.Get(778));       //Start with timeshift automatically enabled
         dlg.Add(GUILocalizeStrings.Get(779));       //Timeshift must be enabled manually
         dlg.SelectedLabel = autoTurnOnTS ? 0 : 1;
@@ -338,7 +342,7 @@ namespace WindowPlugins.GUISettings.TV
       if ( dlg != null )
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
         int count = 0;
         foreach ( string codec in availableAudioFilters )

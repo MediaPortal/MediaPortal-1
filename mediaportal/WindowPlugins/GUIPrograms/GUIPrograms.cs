@@ -584,7 +584,7 @@ namespace WindowPlugins.GUIPrograms
       GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
       dlg.Reset();
-      dlg.SetHeading(924); // menu
+      dlg.SetHeading(499); // menu
       dlg.Add("Files");
       foreach (ViewDefinition view in ProgramSettings.viewHandler.Views)
       {

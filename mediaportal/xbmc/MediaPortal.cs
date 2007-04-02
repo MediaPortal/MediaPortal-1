@@ -1830,7 +1830,7 @@ public class MediaPortalApp : D3DApp, IRender
             if (dlg != null)
             {
               dlg.Reset();
-              dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
+              dlg.SetHeading(GUILocalizeStrings.Get(498)); //Menu
               dlg.AddLocalizedString(1030); //PowerOff
               dlg.AddLocalizedString(1031); //Reboot
               dlg.AddLocalizedString(1032); //Suspend

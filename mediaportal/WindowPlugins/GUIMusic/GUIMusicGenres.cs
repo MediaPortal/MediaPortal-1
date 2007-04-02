@@ -703,7 +703,7 @@ namespace MediaPortal.GUI.Music
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
       dlg.Reset();
-      dlg.SetHeading(924); // menu
+      dlg.SetHeading(498); // menu
 
       dlg.AddLocalizedString(926);    // Add to playlist
       dlg.AddLocalizedString(4557);    // Add all to playlist

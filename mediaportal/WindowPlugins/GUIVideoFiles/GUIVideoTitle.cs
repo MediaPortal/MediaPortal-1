@@ -309,7 +309,7 @@ namespace MediaPortal.GUI.Video
         if (actor != null)
         {
           dlg.Reset();
-          dlg.SetHeading(924); // menu
+          dlg.SetHeading(498); // menu
           dlg.Add(GUILocalizeStrings.Get(368)); //IMDB
 
           dlg.DoModal(GetID);
@@ -325,7 +325,7 @@ namespace MediaPortal.GUI.Video
       }
       if (movie.ID < 0) return;
       dlg.Reset();
-      dlg.SetHeading(924); // menu
+      dlg.SetHeading(498); // menu
       dlg.Add(GUILocalizeStrings.Get(925)); //delete
       dlg.Add(GUILocalizeStrings.Get(368)); //IMDB
       dlg.Add(GUILocalizeStrings.Get(208)); //play

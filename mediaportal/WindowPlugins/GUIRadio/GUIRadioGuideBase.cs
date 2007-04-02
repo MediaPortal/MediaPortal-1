@@ -1916,13 +1916,12 @@ namespace MediaPortal.GUI.Radio
       if (dlg != null)
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(498));//Menu
 
         if (_currentRadioStation.Length > 0)
           dlg.AddLocalizedString(938);// View this channel
 
-        dlg.AddLocalizedString(939);// Switch mode
-       
+        dlg.AddLocalizedString(939);// Switch mode       
 
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1) return;

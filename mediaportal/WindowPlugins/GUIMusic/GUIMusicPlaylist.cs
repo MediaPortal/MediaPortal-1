@@ -314,7 +314,7 @@ namespace MediaPortal.GUI.Music
         if (dlg != null)
         {
           dlg.Reset();
-          dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+          dlg.SetHeading(GUILocalizeStrings.Get(497));//Menu
           int selected = 0;
           int count = 0;
           foreach (string scrobbler in scrobbleusers)

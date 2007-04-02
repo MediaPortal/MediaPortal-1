@@ -675,7 +675,7 @@ namespace MediaPortal.GUI.Music
         return;
 
       dlg.Reset();
-      dlg.SetHeading(924);                // Menu
+      dlg.SetHeading(498);                // Menu
 
       dlg.AddLocalizedString(930);        //Add to favorites
 

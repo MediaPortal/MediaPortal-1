@@ -7,6 +7,7 @@
     <String id="3" prefix="Meine ">Videos</String>
     <String id="4">Programm</String>
     <String id="5">Einstellungen</String>
+    <String id="6">Hier fehlt Text!</String>
     <String id="7" prefix="Mein ">Datei-Manager</String>
     <String id="8" prefix="Mein ">Wetter</String>
     <String id="9" prefix="Meine ">Nachrichten</String>
@@ -421,6 +422,10 @@
     <String id="491">Große Symbole verwenden</String>
     <String id="492">Tonspur</String>
     <String id="493">Schauspieler</String>
+    <String id="496">Optionen</String>
+    <String id="497">Benutzer</String>
+    <String id="498">Aktionen</String>
+    <String id="499">Ansicht-Menü</String>
     <String id="500">Datei-Menü</String>
     <String id="501">Als Ziel festlegen</String>
     <String id="502">Kann Aktion nicht ausführen</String>

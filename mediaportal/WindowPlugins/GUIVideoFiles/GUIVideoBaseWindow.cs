@@ -530,7 +530,7 @@ namespace MediaPortal.GUI.Video
       if (dlg == null)
         return;
       dlg.Reset();
-      dlg.SetHeading(924); // menu
+      dlg.SetHeading(499); // menu
       dlg.Add(GUILocalizeStrings.Get(134));//videos
       foreach (ViewDefinition view in handler.Views)
       {

@@ -632,7 +632,7 @@ namespace WindowPlugins.VideoEditor
        /* GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
         if (dlg == null) return;
         dlg.Reset();
-        dlg.SetHeading(924); // menu
+        dlg.SetHeading(498); // menu
         dlg.Add("Löschen");
         dlg.DoModal(GetID);
         if (dlg.SelectedId == -1) return;*/

@@ -458,7 +458,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         return;
 
       dlg.Reset();
-      dlg.SetHeading(924);                  // Menu
+      dlg.SetHeading(498);                  // Menu
 
       dlg.AddLocalizedString(34010);        // Love
       dlg.AddLocalizedString(34011);        // Ban
@@ -729,19 +729,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (!filename.Contains(@"/last.mp3?") || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
         return;
 
-      //GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-
-      //if (dlg == null)
-      //  return;
-
-      //dlg.Reset();
-      //dlg.SetHeading(924);                // Menu
-      //dlg.Add("No more content for this selection");
-
-      //dlg.DoModal(GetID);
-
-      //if (dlg.SelectedId == -1)
-      //  return;
       OnPlaybackStopped();
 
       ShowSongTrayBallon(GUILocalizeStrings.Get(34051), GUILocalizeStrings.Get(34052), 15, true); // Stream ended, No more content or bad connection

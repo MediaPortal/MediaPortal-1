@@ -67,6 +67,7 @@ namespace WindowPlugins.GUISettings.TV
       if (control == btnAudioRenderer) OnAudioRenderer();
       base.OnClicked(controlId, control, actionType);
     }
+
     void OnVideoCodec()
     {
       string strVideoCodec = "";
@@ -80,7 +81,7 @@ namespace WindowPlugins.GUISettings.TV
       if (dlg != null)
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
         int count = 0;
         foreach (string codec in availableVideoFilters)
@@ -113,7 +114,7 @@ namespace WindowPlugins.GUISettings.TV
       if (dlg != null)
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
         int count = 0;
         foreach (string codec in availableAudioFilters)
@@ -144,7 +145,7 @@ namespace WindowPlugins.GUISettings.TV
 			if (dlg!=null)
 			{
 				dlg.Reset();
-				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+				dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
 				dlg.Add("Video Mixing Renderer 7");
 				dlg.Add("Video Mixing Renderer 9");
 				dlg.SelectedLabel=vmr9Index;
@@ -170,7 +171,7 @@ namespace WindowPlugins.GUISettings.TV
       if (dlg != null)
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
         for (int index = 0; index < aspectRatio.Length; index++)
         {
@@ -202,7 +203,7 @@ namespace WindowPlugins.GUISettings.TV
       if (dlg != null)
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
         int count = 0;
         foreach (string codec in availableAudioFilters)

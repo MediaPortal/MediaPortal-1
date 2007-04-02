@@ -281,6 +281,7 @@ namespace MediaPortal.GUI.TV
         }
       }
     }
+
     public void OnShowMenu(GUIListItem item)
     {
       if (item == null) return;
@@ -290,7 +291,7 @@ namespace MediaPortal.GUI.TV
       if (dlg == null) return;
 
       dlg.Reset();
-      dlg.SetHeading(924);//menu
+      dlg.SetHeading(498);//menu
       if (info.status == Transcoder.Status.Busy)
         dlg.AddLocalizedString(222);//cancel
       else

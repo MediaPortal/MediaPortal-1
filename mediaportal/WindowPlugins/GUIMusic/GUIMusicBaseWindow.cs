@@ -969,7 +969,7 @@ namespace MediaPortal.GUI.Music
       if (dlg == null)
         return;
       dlg.Reset();
-      dlg.SetHeading(924); // menu
+      dlg.SetHeading(499); // menu
       dlg.Add(GUILocalizeStrings.Get(134));//songs
       foreach (ViewDefinition view in handler.Views)
       {

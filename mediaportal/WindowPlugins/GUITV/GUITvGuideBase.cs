@@ -2409,7 +2409,7 @@ namespace MediaPortal.GUI.TV
       if (dlg != null)
       {
         dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.SetHeading(GUILocalizeStrings.Get(498));//Menu
 
         if (_currentTvChannel.Length > 0)
           dlg.AddLocalizedString(938);// View this channel

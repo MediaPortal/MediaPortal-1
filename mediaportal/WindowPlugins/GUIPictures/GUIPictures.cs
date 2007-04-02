@@ -557,7 +557,7 @@ namespace MediaPortal.GUI.Pictures
       if (dlg == null)
         return;
       dlg.Reset();
-      dlg.SetHeading(924); // menu
+      dlg.SetHeading(498); // menu
       if (!item.IsFolder)
       {
         dlg.AddLocalizedString(735); //rotate
@@ -567,10 +567,8 @@ namespace MediaPortal.GUI.Pictures
       }
 
       int iPincodeCorrect;
-      if (!virtualDirectory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && isFileMenuEnabled)
-      {
-        dlg.AddLocalizedString(500); // FileMenu
-      }
+      if (!virtualDirectory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && isFileMenuEnabled)      
+        dlg.AddLocalizedString(500); // FileMenu      
 
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)

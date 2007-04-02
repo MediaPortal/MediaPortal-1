@@ -385,19 +385,17 @@ namespace WindowPlugins.VideoEditor
 
     protected override void OnShowContextMenu()
     {
-      if (cutListCtrl.SelectedListItem == null)
-      {
+      if (cutListCtrl.SelectedListItem == null)      
         return;
-      }
+      
       if (editCutPoint)
       {
         GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
-        if (dlg == null)
-        {
+        if (dlg == null)        
           return;
-        }
+        
         dlg.Reset();
-        dlg.SetHeading(924); // menu
+        dlg.SetHeading(498); // menu
         dlg.AddLocalizedString(510); //cancel
         dlg.DoModal(GetID);
         if (dlg.SelectedId == -1)
@@ -418,7 +416,7 @@ namespace WindowPlugins.VideoEditor
           return;
         }
         dlg.Reset();
-        dlg.SetHeading(924); // menu
+        dlg.SetHeading(498); // menu
         dlg.AddLocalizedString(117); //Delete
         dlg.AddLocalizedString(2076); //edit
         dlg.DoModal(GetID);

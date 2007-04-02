@@ -728,7 +728,7 @@ namespace MediaPortal.GUI.Music
       if (dlg == null)
         return;
       dlg.Reset();
-      dlg.SetHeading(924); // menu
+      dlg.SetHeading(498); // menu
 
       if (!facadeView.Focus)
       {
