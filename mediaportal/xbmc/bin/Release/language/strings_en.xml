@@ -1,5 +1,5 @@
-ï»¿<?xml version="1.0" encoding="utf-8"?>
-<Language name="English" characters="512">
+<?xml version="1.0" encoding="utf-8"?>
+<Language name="English" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="My ">Programs</String>
     <String id="1" prefix="My ">Pictures</String>
@@ -40,10 +40,10 @@
     <String id="105">Sort by: Size</String>
     <String id="106">No</String>
     <String id="107">Yes</String>
-    <String id="108">SlideShow</String>
+    <String id="108">Slideshow</String>
     <String id="109">Create Thumbs</String>
     <String id="110">Create Thumbnails</String>
-    <String id="111">Shortcuts</String>
+    <String id="111">Short-cuts</String>
     <String id="112">PAUSED</String>
     <String id="113" prefix="My ">Files : Source</String>
     <String id="114" prefix="My ">Files : Destination</String>
@@ -62,7 +62,7 @@
     <String id="127">Objects</String>
     <String id="128">General</String>
     <String id="129">Slideshow</String>
-    <String id="130">System info</String>
+    <String id="130">System info.</String>
     <String id="131">Screen</String>
     <String id="132">Albums</String>
     <String id="133">Artists</String>
@@ -100,7 +100,7 @@
     <String id="165">Disc Present</String>
     <String id="166">Skin:</String>
     <String id="167">FTP server:</String>
-    <String id="168">Synchronize Time:</String>
+    <String id="168">Synchronise Time:</String>
     <String id="169">Resolution:</String>
     <String id="170">Album:</String>
     <String id="171">Artist:</String>
@@ -121,7 +121,7 @@
     <String id="186">OK</String>
     <String id="187">No albums found!</String>
     <String id="188">Select all</String>
-    <String id="189">Scanning media info</String>
+    <String id="189">Scanning media info.</String>
     <String id="190">Save</String>
     <String id="191">Shuffle</String>
     <String id="192">Clear</String>
@@ -129,12 +129,12 @@
     <String id="194">Searching...</String>
     <String id="195">No IMDB info found!</String>
     <String id="196">Select movie:</String>
-    <String id="197">Querying IMDB info</String>
+    <String id="197">Querying IMDB info.</String>
     <String id="198">Downloading Movie details</String>
     <String id="199">Director:</String>
     <String id="200">Writer:</String>
     <String id="201">Year:</String>
-    <String id="202">Tagline:</String>
+    <String id="202">Tag-line:</String>
     <String id="203">Plot outline:</String>
     <String id="204">Rating:</String>
     <String id="205">Votes:</String>
@@ -143,7 +143,7 @@
     <String id="208">Play</String>
     <String id="209">Next</String>
     <String id="210">Previous</String>
-    <String id="211">Searching for applications</String>
+    <String id="211">Searching for applications...</String>
     <String id="212">applications found</String>
     <String id="213">UI Calibration</String>
     <String id="214">Screen Calib.</String>
@@ -155,13 +155,13 @@
     <String id="220">Remote Share</String>
     <String id="221">Network is not connected</String>
     <String id="222">Cancel</String>
-    <String id="223">Auto widescreen switching</String>
+    <String id="223">Automatic widescreen switching</String>
     <String id="224">Speed</String>
     <String id="225">Transition time</String>
     <String id="226">Enable PAL60</String>
     <String id="227">Enable CDDB</String>
     <String id="228">Shuffle Playlist on load</String>
-    <String id="229">HD Spindown time (mins)</String>
+    <String id="229">HD Spindown time (min)</String>
     <String id="230">Filters</String>
     <String id="231">None</String>
     <String id="232">Point</String>
@@ -185,7 +185,7 @@
     <String id="251">Select destination directory</String>
     <String id="252">Output to all speakers</String>
     <String id="253">Number of channels</String>
-    <String id="254">DD Stereo Passthrough</String>
+    <String id="254">DD Stereo Pass-through</String>
     <String id="255">CDDB</String>
     <String id="256">Querying freedb for CDDB info</String>
     <String id="257">Error</String>
@@ -207,7 +207,7 @@
     <String id="273">Bottom Right Overscan Compensation</String>
     <String id="274">Subtitles Position</String>
     <String id="275">Pixel Ratio Adjustment</String>
-    <String id="276">-WARNING!- Leave at 0,0 for best quality,change for shrinking video to fit.</String>
+    <String id="276">-WARNING!- For best quality, leave at 0.0 when shrinking video to fit.</String>
     <String id="277">Move the bar to change the subtitles position</String>
     <String id="278">-Important!- for best quality, change rectangle so it's perfectly square</String>
     <String id="279">Unable to load settings</String>
@@ -216,8 +216,8 @@
     <String id="282">found %i items</String>
     <String id="283">Search results</String>
     <String id="284">No results found</String>
-    <String id="285">Deinterlace filter</String>
-    <String id="286">Postprocessing filter</String>
+    <String id="285">De-interlace filter</String>
+    <String id="286">Post-processing filter</String>
     <String id="287">Subtitles</String>
     <String id="288">Font</String>
     <String id="289">Size</String>
@@ -239,49 +239,49 @@
     <String id="305">Enabled</String>
     <String id="306">Non-Interleaved</String>
     <String id="307">Auto</String>
-    <String id="308">vertical deblocking filter</String>
-    <String id="309">horizontal deblocking filter</String>
-    <String id="310">Auto brightness/contrast</String>
+    <String id="308">vertical de-blocking filter</String>
+    <String id="309">horizontal de-blocking filter</String>
+    <String id="310">Automatic brightness/contrast</String>
     <String id="311">Dering</String>
     <String id="312">(0=auto)</String>
-    <String id="313">Reorganize database</String>
+    <String id="313">Reorganise database</String>
     <String id="314">Preparing...</String>
     <String id="315">Database error</String>
     <String id="316">Searching songs...</String>
-    <String id="317">Reorganization successfull</String>
+    <String id="317">Reorganisation successful</String>
     <String id="318">Marking deleted songs</String>
-    <String id="319">Error reorganizing songs</String>
+    <String id="319">Error reorganising songs</String>
     <String id="320">Searching artists...</String>
-    <String id="321">Error reorganizing artists</String>
+    <String id="321">Error reorganising artists</String>
     <String id="322">Searching genres...</String>
-    <String id="323">Error reorganizing genres</String>
-    <String id="324">Searching pathes...</String>
-    <String id="325">Error reorganizing pathes</String>
+    <String id="323">Error reorganising genres</String>
+    <String id="324">Searching paths...</String>
+    <String id="325">Error reorganising paths</String>
     <String id="326">Searching albums...</String>
-    <String id="327">Error reorganizing albums</String>
+    <String id="327">Error reorganising albums</String>
     <String id="328">Writing changes...</String>
     <String id="329">Error writing changes</String>
     <String id="330">This may take some time...</String>
     <String id="331">Compressing database...</String>
     <String id="332">Error compressing database</String>
-    <String id="333">Do you want to reorganize my music database?</String>
-    <String id="334">Reorganize my music database</String>
+    <String id="333">Do you want to reorganise my music database?</String>
+    <String id="334">Reorganise my music database</String>
     <String id="335">Start</String>
-    <String id="336">Adj. Framerate</String>
+    <String id="336">Adj. Frame rate</String>
     <String id="337">Audio Output:</String>
-    <String id="338">Analog</String>
+    <String id="338">Analogue</String>
     <String id="339">Digital</String>
     <String id="340">Various Artists</String>
     <String id="341">Play DVD</String>
     <String id="342">Movies</String>
-    <String id="343">Adjust framerate</String>
+    <String id="343">Adjust frame rate</String>
     <String id="344">Actors</String>
     <String id="345">Year</String>
     <String id="346">Stack</String>
     <String id="347">Unstack</String>
     <String id="348">Flat directory hierarchy</String>
     <String id="349">Show only Default.xbe</String>
-    <String id="350">Programs</String>
+    <String id="350">Programmes</String>
     <String id="351">Off</String>
     <String id="352">Dim</String>
     <String id="353">Black</String>
@@ -292,10 +292,10 @@
     <String id="358">All albums</String>
     <String id="359">Recent albums</String>
     <String id="360">Screensaver</String>
-    <String id="361">R. SlideShow</String>
+    <String id="361">R. Slideshow</String>
     <String id="362">Screensaver Fade Level (%)</String>
     <String id="363">Sort by: File</String>
-    <String id="364">DD/DTS Multichannel Passthrough</String>
+    <String id="364">DD/DTS Multichannel Pass-through</String>
     <String id="365">Sort by: Name</String>
     <String id="366">Sort by: Year</String>
     <String id="367">Sort by: Rating</String>
@@ -332,14 +332,14 @@
     <String id="398">Temperature Units</String>
     <String id="399">Speed Units</String>
     <String id="400">Weather</String>
-    <String id="401">Temp</String>
+    <String id="401">Temp.</String>
     <String id="402">Feels Like</String>
     <String id="403">UV Index</String>
     <String id="404">Wind</String>
     <String id="405">Dew Point</String>
     <String id="406">Humidity</String>
     <String id="410">Accessing Weather.com</String>
-    <String id="411">Getting Weather For:</String>
+    <String id="411">Getting Weather for:</String>
     <String id="412">Unable to get weather data</String>
     <String id="413">Manual</String>
     <String id="414">No review for this album</String>
@@ -350,39 +350,39 @@
     <String id="419" prefix="My ">Videos/Actors</String>
     <String id="420" prefix="My ">Videos/Years</String>
     <String id="421" prefix="My ">Videos/Title</String>
-    <String id="422">Delete albuminfo</String>
-    <String id="423">Delete CDDB info</String>
+    <String id="422">Delete album info.</String>
+    <String id="423">Delete CDDB info.</String>
     <String id="424">Select</String>
-    <String id="425">No albuminfo found.</String>
-    <String id="426">No CDDB info found.</String>
+    <String id="425">No album info. found.</String>
+    <String id="426">No CDDB info. found.</String>
     <String id="427">Disc:</String>
     <String id="428">Insert correct CD/DVD</String>
     <String id="429">Please insert the following CD/DVD</String>
     <String id="430">Sort by: DVD#</String>
     <String id="431">No Cache</String>
     <String id="432">Delete movie from database</String>
-    <String id="433">Are you sure to remove</String>
+    <String id="433">Are you sure you want to remove</String>
     <String id="434">the movie?</String>
     <String id="435">Track:</String>
     <String id="436">Year:</String>
     <String id="437">Duration:</String>
     <String id="438">Opening file</String>
     <String id="439">Cache</String>
-    <String id="440">Harddisk</String>
+    <String id="440">Hard Disc</String>
     <String id="441">UDF</String>
     <String id="442">LAN</String>
     <String id="443">Internet</String>
     <String id="444">video</String>
-    <String id="445">audio</String>
+    <String id="445">Audio</String>
     <String id="446">DVD</String>
     <String id="447">Autorun</String>
     <String id="448">LCD</String>
     <String id="449">Enabled</String>
     <String id="450">Columns</String>
-    <String id="451">Row 1 adress:</String>
-    <String id="452">Row 2 adress:</String>
-    <String id="453">Row 3 adress:</String>
-    <String id="454">Row 4 adress:</String>
+    <String id="451">Row 1 address:</String>
+    <String id="452">Row 2 address:</String>
+    <String id="453">Row 3 address:</String>
+    <String id="454">Row 4 address:</String>
     <String id="455">Rows:</String>
     <String id="456">Mode:</String>
     <String id="457">Switch view</String>
@@ -396,10 +396,10 @@
     <String id="465">Contrast</String>
     <String id="466">Gamma</String>
     <String id="467">Type</String>
-    <String id="468">Move the bar to change the osd position</String>
+    <String id="468">Move the bar to change the OSD position</String>
     <String id="469">OSD Position</String>
     <String id="470">Credits</String>
-    <String id="471">Modchip</String>
+    <String id="471">Mod. Chip</String>
     <String id="472">OSD Timeout</String>
     <String id="473">High Quality Resampling</String>
     <String id="474">Off</String>
@@ -418,7 +418,7 @@
     <String id="487">Repeat One</String>
     <String id="488">Repeat folder playlist</String>
     <String id="489">Use playlist in songs</String>
-    <String id="490">Auto switch list and icons in songs</String>
+    <String id="490">Automatically switch list and icons in songs</String>
     <String id="491">Use big icons</String>
     <String id="492">Audio language</String>
     <String id="493">Actor:</String>
@@ -430,7 +430,7 @@
     <String id="501">Set as destination</String>
     <String id="502">Unable to complete action</String>
     <String id="503">Delete this folder</String>
-    <String id="504">Goto destination</String>
+    <String id="504">Go to destination</String>
     <String id="505">Calculating</String>
     <String id="506">Are you sure?</String>
     <String id="507">items</String>
@@ -448,7 +448,7 @@
     <String id="519">Subtitles off</String>
     <String id="529">View: Big Icon List</String>
     <String id="530">Photo disc inserted, do you want to open it?</String>
-    <String id="531">Movie disc inserted, do you want to open it?</String>
+    <String id="531">Video disc inserted, do you want to open it?</String>
     <String id="532">Audio disc inserted, do you want to open it?</String>
     <String id="533">Radio guide</String>
     <String id="534">Moderate</String>
@@ -486,20 +486,20 @@
     <String id="595">Fullscreen</String>
     <String id="596">Waiting for Page {0}/{1}...</String>
     <String id="599">Storm</String>
-    <String id="600">TVGuide</String>
+    <String id="600">TV Guide</String>
     <String id="601">Record Now</String>
     <String id="602">Channel</String>
     <String id="603">Scheduled</String>
     <String id="604">Recorded TV</String>
     <String id="605" prefix="My ">TV</String>
-    <String id="606">Loading new TVGuide</String>
+    <String id="606">Loading new TV Guide</String>
     <String id="607">Load</String>
-    <String id="608">TVGuide Import failed</String>
-    <String id="609">TVGuide Import done</String>
+    <String id="608">TV Guide Import failed</String>
+    <String id="609">TV Guide Import done</String>
     <String id="610">Don't record</String>
     <String id="611">Record once</String>
-    <String id="612">Record everytime on this channel</String>
-    <String id="613">Record everytime on every channel</String>
+    <String id="612">Record every time on this channel</String>
+    <String id="613">Record every time on every channel</String>
     <String id="614">Record every week at this time</String>
     <String id="615">Record every day at this time</String>
     <String id="616">Select Recording type</String>
@@ -510,11 +510,11 @@
     <String id="621">Sort by: Date</String>
     <String id="622">Sort by: Name</String>
     <String id="623">Sort by: Type</String>
-    <String id="624">Cleanup</String>
+    <String id="624">Clean-up</String>
     <String id="625">Schedules removed:</String>
     <String id="626">Change type</String>
     <String id="627">Channels:</String>
-    <String id="628">Programs:</String>
+    <String id="628">Programmes:</String>
     <String id="629">Stop Record</String>
     <String id="630">Do you want to reboot?</String>
     <String id="631">Do you want to shutdown?</String>
@@ -529,15 +529,15 @@
     <String id="640">Saturation</String>
     <String id="641">Sharpness</String>
     <String id="642">Loading TV channels</String>
-    <String id="643">Loading TV programs</String>
-    <String id="644">Sorting TV programs</String>
+    <String id="643">Loading TV programmes</String>
+    <String id="644">Sorting TV programmes</String>
     <String id="645">Loading XML file</String>
     <String id="646">Scheduled recordings</String>
     <String id="647">Once</String>
     <String id="648">Daily</String>
     <String id="649">Every</String>
-    <String id="650">Everytime on {0}</String>
-    <String id="651">Everytime on any channel</String>
+    <String id="650">Every time on {0}</String>
+    <String id="651">Every time on any channel</String>
     <String id="652">Recorded TV</String>
     <String id="653">Delete this recording?</String>
     <String id="654">Eject</String>
@@ -553,10 +553,10 @@
     <String id="664">Delete this picture?</String>
     <String id="665" prefix="My ">Radio</String>
     <String id="666">Stations</String>
-    <String id="667">Auto Tune</String>
+    <String id="667">Auto-Tune</String>
     <String id="668">Sort by: Type</String>
     <String id="669">Sort by: Genre</String>
-    <String id="670">Sort by: Bitrate</String>
+    <String id="670">Sort by: Bit-rate</String>
     <String id="671">Sort by: Watched</String>
     <String id="672">Record Mon-Fri</String>
     <String id="673">Scroll speed</String>
@@ -570,7 +570,7 @@
     <String id="681">Waiting</String>
     <String id="682">Recording</String>
     <String id="683">Finished</String>
-    <String id="684">Canceled</String>
+    <String id="684">Cancelled</String>
     <String id="685">Sort by: Status</String>
     <String id="686">Born</String>
     <String id="687">Years Active</String>
@@ -589,7 +589,7 @@
     <String id="706">Select Feed</String>
     <String id="707">TV On</String>
     <String id="708">Timeshifting</String>
-    <String id="709">Auto update</String>
+    <String id="709">Auto-update</String>
     <String id="710">A new version is available</String>
     <String id="711">Upgrade from v#old -&gt;v#new ?</String>
     <String id="712">Back</String>
@@ -598,16 +598,16 @@
     <String id="715">CD inserted, do you want to play it?</String>
     <String id="716">Satellite</String>
     <String id="717">Weather</String>
-    <String id="718">Clear Top100</String>
+    <String id="718">Clear Top 100</String>
     <String id="719">Are you sure to reset the top 100 list?</String>
     <String id="720">Show: Duration</String>
     <String id="721">Show: Times played</String>
     <String id="722">Unable to play Disc</String>
     <String id="723">Did you insert a Disc?</String>
-    <String id="724">Search TVGuide</String>
+    <String id="724">Search TV Guide</String>
     <String id="725">Genres</String>
     <String id="726">Title</String>
-    <String id="727">Live tv in background</String>
+    <String id="727">Live TV in background</String>
     <String id="728">No Video/TV playing</String>
     <String id="729">Make sure you use VMR9 and that something is playing</String>
     <String id="730">This schedule is recording. If you delete</String>
@@ -624,10 +624,10 @@
     <String id="741">View: Humidity</String>
     <String id="742">View: Precipitation</String>
     <String id="743">4 Day Forecast</String>
-    <String id="744">Sun Rise</String>
-    <String id="745">Sun Set</String>
-    <String id="746">max</String>
-    <String id="747">min</String>
+    <String id="744">Sunrise</String>
+    <String id="745">Sunset</String>
+    <String id="746">max.</String>
+    <String id="747">min.</String>
     <String id="748">Precipitation</String>
     <String id="750">Images</String>
     <String id="751">Show all songs from current artist</String>
@@ -644,11 +644,11 @@
     <String id="762">Failed to start TV</String>
     <String id="763">Recorder is busy</String>
     <String id="764">Recorder is paused</String>
-    <String id="765">Not enough free disk space</String>
+    <String id="765">Not enough free disc space</String>
     <String id="766">already importing...</String>
     <String id="767">Invalid XMLTV file</String>
     <String id="768">No channels found</String>
-    <String id="769">No programs found</String>
+    <String id="769">No programmes found</String>
     <String id="770">No xmltv file found</String>
     <String id="771">The entered PIN could not be accepted</String>
     <String id="772">Do you want to try again?</String>
@@ -662,8 +662,8 @@
     <String id="780">Select scheduling method</String>
     <String id="781">Quick record</String>
     <String id="782">Advanced record</String>
-    <String id="789">Now: </String>
-    <String id="790">Next: </String>
+    <String id="789">Now:</String>
+    <String id="790">Next:</String>
     <String id="798">low</String>
     <String id="799">high</String>
     <String id="800">Starts with</String>
@@ -677,7 +677,7 @@
     <String id="808">Ingredients</String>
     <String id="809">Directions</String>
     <String id="810">Card</String>
-    <String id="820">Delete unseen recording?</String>
+    <String id="820">Delete unwatched recording?</String>
     <String id="830">Reset watched status</String>
     <String id="850" prefix="My ">Alarm</String>
     <String id="851">Playlist</String>
@@ -686,17 +686,17 @@
     <String id="854">Enabled on these days</String>
     <String id="855">Alarm Time</String>
     <String id="856">Sleep Timer On</String>
-    <String id="857">Snooze For</String>
+    <String id="857">Snooze for</String>
     <String id="858">Dismiss</String>
     <String id="859">Sleep Timer</String>
-    <String id="860">Fade-in volume</String>
+    <String id="860">Fade-in Volume</String>
     <String id="861">Alarm Details</String>
     <String id="862">Radio</String>
     <String id="863">File</String>
     <String id="864">Media type</String>
     <String id="865">Number of minutes until sleep:</String>
-    <String id="866">Fade-out volume</String>
-    <String id="867">Shutdown computer</String>
+    <String id="866">Fade-out Volume</String>
+    <String id="867">Shut down computer</String>
     <String id="868">Reset</String>
     <String id="869">New alarm</String>
     <String id="870">Recurring</String>
@@ -704,7 +704,7 @@
     <String id="872">Starts with</String>
     <String id="873">TV Show</String>
     <String id="874">Episode</String>
-    <String id="875">Current program</String>
+    <String id="875">Current programme</String>
     <String id="876">Until manual stop</String>
     <String id="877">Priorities</String>
     <String id="878">Storage</String>
@@ -724,18 +724,18 @@
     <String id="892">Conflicts</String>
     <String id="893">Portable</String>
     <String id="894">Compress TV Recordings</String>
-    <String id="895">Auto compress</String>
+    <String id="895">Automatically compress</String>
     <String id="896">Compress</String>
     <String id="897">Settings</String>
     <String id="898">MPEG-2</String>
     <String id="899">WMV</String>
     <String id="900">Resume movie from last time ?</String>
     <String id="901">MSN Messenger</String>
-    <String id="902">Online contacts</String>
+    <String id="902">On-line contacts</String>
     <String id="903">Sign in</String>
     <String id="904">Sign out</String>
-    <String id="905">You need to configure this plugin first</String>
-    <String id="906">Fill in your email adres in the setup</String>
+    <String id="905">You need to configure this plug-in first</String>
+    <String id="906">Fill in your e-mail address in the set-up</String>
     <String id="907">Could not connect to MSN</String>
     <String id="908">is typing a message...</String>
     <String id="909">Connecting...</String>
@@ -757,15 +757,15 @@
     <String id="925">Delete this movie</String>
     <String id="926">Add to playlist</String>
     <String id="927">Warning</String>
-    <String id="928">Find coverart</String>
+    <String id="928">Find cover art</String>
     <String id="929">Close menu</String>
-    <String id="930">Add to favorites</String>
+    <String id="930">Add to favourites</String>
     <String id="931">Rating</String>
-    <String id="932">Favorites</String>
+    <String id="932">Favourites</String>
     <String id="933">Remove from favorites</String>
     <String id="934">Set rating</String>
     <String id="935">Show: Rating</String>
-    <String id="936">Resume from: </String>
+    <String id="936">Resume from:</String>
     <String id="937">Import TV Guide</String>
     <String id="938">View this channel</String>
     <String id="939">Switch mode</String>
@@ -777,7 +777,7 @@
     <String id="945">Letterbox 4:3</String>
     <String id="946">Pan and Scan</String>
     <String id="947">Zoom</String>
-    <String id="948">Online</String>
+    <String id="948">On-line</String>
     <String id="949">Busy</String>
     <String id="950">Be Right Back</String>
     <String id="951">Away</String>
@@ -785,7 +785,7 @@
     <String id="953">Lunch</String>
     <String id="954">Hidden</String>
     <String id="955">Idle</String>
-    <String id="956">Online</String>
+    <String id="956">On-line</String>
     <String id="957">MSN Messenger</String>
     <String id="958">Talking to</String>
     <String id="959">has joined the conversation</String>
@@ -811,16 +811,16 @@
     <String id="987">Years</String>
     <String id="988">Quality</String>
     <String id="989">FPS</String>
-    <String id="990">Bitrate</String>
+    <String id="990">Bit-rate</String>
     <String id="991">Priority</String>
     <String id="992">Delete original file</String>
     <String id="993">Custom</String>
-    <String id="994">Enable Auto compress</String>
-    <String id="995">Are you sure to compress the</String>
+    <String id="994">Enable Auto-Compress</String>
+    <String id="995">Are you sure you want to compress the</String>
     <String id="996">selected recordings?</String>
     <String id="997">Completed</String>
     <String id="998">XviD</String>
-    <String id="999">This plugin allows you to transcode your</String>
+    <String id="999">This plug-in allows you to transcode your</String>
     <String id="1000">TV Recordings from dvr-ms into mpg, xvid or wmv</String>
     <String id="1001">Please note. You'll need to have the</String>
     <String id="1002">Elecard MPEG2 video decoder installed</String>
@@ -830,17 +830,17 @@
     <String id="1006">Allow recording to begin</String>
     <String id="1007">Cancel recording and maintain watching tv</String>
     <String id="1008">Queue</String>
-    <String id="1009">Downloading coverart</String>
+    <String id="1009">Downloading cover art</String>
     <String id="1010">Watched</String>
     <String id="1011">Biography</String>
-    <String id="1012">This program will be interrupted by</String>
+    <String id="1012">This programme will be interrupted by</String>
     <String id="1013">Would you like to record the second part also?</String>
-    <String id="1014">Notify me before program begins</String>
-    <String id="1015">Don't notify me when program begins</String>
-    <String id="1016">Reminder: program is about to start</String>
+    <String id="1014">Notify me before programme begins</String>
+    <String id="1015">Don't notify me when programme begins</String>
+    <String id="1016">Reminder: Programme is about to start</String>
     <String id="1017">Sort by: Duration</String>
-    <String id="1018">Program starts in {0} minutes</String>
-    <String id="1019">Program is about to begin</String>
+    <String id="1018">Programme starts in {0} minutes</String>
+    <String id="1019">Programme is about to begin</String>
     <String id="1020">Information</String>
     <String id="1021">Press Alt+Enter to</String>
     <String id="1022">return to window mode.</String>
@@ -868,7 +868,7 @@
     <String id="1044">Until space needed</String>
     <String id="1045">Until date</String>
     <String id="1046">Always</String>
-    <String id="1047">Start fullscreen</String>
+    <String id="1047">Start in fullscreen mode</String>
     <String id="1048">Settings</String>
     <String id="1049">Hibernate</String>
     <String id="1050">Sat-Sun</String>
@@ -888,7 +888,7 @@
     <String id="1111">Skip conflicting recording(s)</String>
     <String id="1112">Keep conflict</String>
     <String id="1190">Zoom 14:9</String>
-    <String id="1200">Setup Wizard</String>
+    <String id="1200">Set-up Wizard</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>
@@ -899,7 +899,7 @@
     <String id="1447">Recording stopped:</String>
     <String id="1448">Select None</String>
     <String id="1449">Stop recording</String>
-    <String id="1450">Are you sure to stop recording?</String>
+    <String id="1450">Are you sure you want to stop recording?</String>
     <String id="1500">Unable to start timeshifting</String>
     <String id="1501">Card is disabled</String>
     <String id="1502">No free card available</String>
@@ -937,8 +937,8 @@
     <String id="1974">Memory</String>
     <String id="1975">Next page</String>
     <String id="1976">rpm</String>
-    <String id="1977">Filesystem</String>
-    <String id="1978">VirtualMem</String>
+    <String id="1977">File system</String>
+    <String id="1978">Virtual Memory</String>
     <String id="2005">Delete</String>
     <String id="2006">Title</String>
     <String id="2007">Yield</String>
@@ -947,7 +947,7 @@
     <String id="2010">Card</String>
     <String id="2011">Print</String>
     <String id="2012">Delete</String>
-    <String id="2013">Favorites</String>
+    <String id="2013">Favourites</String>
     <String id="2014">Unknown</String>
     <String id="2015">per Serving</String>
     <String id="2016">small</String>
@@ -973,21 +973,21 @@
     <String id="2036">gallon</String>
     <String id="2037">ounce</String>
     <String id="2038">pound</String>
-    <String id="2039">mililiter</String>
-    <String id="2040">mililiter</String>
-    <String id="2041">centiliter</String>
-    <String id="2042">deciliter</String>
-    <String id="2043">liter</String>
+    <String id="2039">millilitre</String>
+    <String id="2040">millilitre</String>
+    <String id="2041">centilitre</String>
+    <String id="2042">decilitre</String>
+    <String id="2043">litre</String>
     <String id="2044">milligram</String>
     <String id="2045">centigram</String>
     <String id="2046">decigram</String>
     <String id="2047">gram</String>
     <String id="2048">kilogram</String>
-    <String id="2049">Delete this Recipie?</String>
-    <String id="2050">Delete this Categorie?</String>
+    <String id="2049">Delete this Recipe?</String>
+    <String id="2050">Delete this Category?</String>
     <String id="2051">Search in Title</String>
-    <String id="2052">Search in Recipie</String>
-    <String id="2053">Categorie</String>
+    <String id="2052">Search in Recipe</String>
+    <String id="2053">Category</String>
     <String id="2054">No Entry!</String>
 	<String id="2059">Comskip file found, </String>
 	<String id="2060">would you like to use it?</String>
@@ -999,26 +999,26 @@
     <String id="2066">Mpeg to divx</String>
     <String id="2067">Please, choose the dvr-ms file you would like to convert to divx:</String>
     <String id="2068">Dvr-ms to divx</String>
-    <String id="2069">Finished to join the video files</String>
-    <String id="2070">Finished to convert the video file</String>
+    <String id="2069">Finished joining the video files</String>
+    <String id="2070">Finished converting the video file</String>
     <String id="2071">Dvr-ms to mpeg</String>
     <String id="2072">Start converting</String>
     <String id="2073">Please, choose the dvr-ms file you would like to convert:</String>
     <String id="2074">Please, choose the files you would like to join:</String>
-    <String id="2075">Define the new cutpoints</String>
+    <String id="2075">Define the new cut points</String>
     <String id="2076">Edit</String>
     <String id="2077">Cut</String>
     <String id="2078">Join</String>
     <String id="2079">Start joining</String>
     <String id="2080">Unsupported filetype</String>
     <String id="2081">Cannot cut</String>
-    <String id="2082">Finished to cut the video file</String>
+    <String id="2082">Finished cutting the video file</String>
     <String id="2083">Would you like to delete the original file?</String>
     <String id="2084">start</String>
     <String id="2085">end</String>
     <String id="2086">forward</String>
     <String id="2087">backward</String>
-    <String id="2088">Cutlist:</String>
+    <String id="2088">Cut list:</String>
     <String id="2089">adjust quality</String>
     <String id="2090" prefix="My ">Video-Editor</String>
     <String id="2091">Process has been canceled</String>
@@ -1037,9 +1037,9 @@
     <String id="2105">Create Data-CD</String>
     <String id="2106">Create Data-DVD</String>
     <String id="2107">Start copy</String>
-    <String id="2108">Insert empty CD/DVD</String>
+    <String id="2108">Insert blank CD/DVD</String>
     <String id="2109">then press OK</String>
-    <String id="2110">Insert original CD/DVD</String>
+    <String id="2110">Insert source CD/DVD</String>
     <String id="2111">Finished !</String>
     <String id="2112">Waiting for CD/DVD</String>
     <String id="2113">Copy all</String>
@@ -1051,12 +1051,12 @@
     <String id="2119">Start convert</String>
     <String id="2120">Converting file(s)...</String>
     <String id="2121">Couldn't convert file(s)!</String>
-    <String id="2122">starts!</String>
-    <String id="2123">Disk info</String>
-    <String id="2124">Cannot Erase: Media is not writable</String>
-    <String id="2125">Erase Disk....</String>
+    <String id="2122">start!</String>
+    <String id="2123">Disc info</String>
+    <String id="2124">Cannot Erase: Media is not writeable</String>
+    <String id="2125">Erase Disc....</String>
     <String id="2126">Eject CD</String>
-    <String id="2127">The CD is not writable</String>
+    <String id="2127">The CD is not writeable</String>
     <String id="2128">Preparing Burn: estimated time:</String>
     <String id="2129">Preparing to Burn</String>
     <String id="2130">Block</String>
@@ -1096,27 +1096,27 @@
     <String id="2216">Files moved!</String>
     <String id="2217">Destination File exists!</String>
     <String id="2218">File overwrite?</String>
-    <String id="2219">From selected drive cant move!</String>
+    <String id="2219">Cannot move from selected drive!</String>
     <String id="2220">Copy the selected file?</String>
     <String id="2221">Do you want to delete the selected files?</String>
     <String id="2222">Files deleted!</String>
-    <String id="2223">Trashcan</String>
+    <String id="2223">Rubbish Bin</String>
     <String id="2224">Folder exists!</String>
     <String id="2225">Folder created</String>
-    <String id="2500">No searchterm entered!</String>
-    <String id="2501">Please enter a valid searchterm!</String>
+    <String id="2500">No search term entered!</String>
+    <String id="2501">Please enter a valid search term!</String>
     <String id="2502">Select your local Wikipedia:</String>
     <String id="2503">Selected Wikipedia:</String>
-    <String id="2504">Sorry, no article was found for your searchterm...</String>
+    <String id="2504">Sorry, no article was found for your search term...</String>
     <String id="2505">Links to other articles:</String>
     <String id="2506">No links from this article.</String>
     <String id="2507">Images from this article:</String>
     <String id="2508">No images referenced by this article.</String>
-    <String id="2509">This page is only a redirect.</String>
-    <String id="2510">Please choose the redirect target from the link list.</String>
+    <String id="2509">This page is only a redirection.</String>
+    <String id="2510">Please choose the redirection target from the link list.</String>
     <String id="2511">Links</String>
     <String id="2512">The image could not be displayed.</String>
-    <String id="2513">Please have a look at the logfile.</String>
+    <String id="2513">Please have a look at the log file.</String>
     <String id="2514">Back to the text</String>
     <String id="2515">Images</String>
     <String id="2516" prefix="My ">Wikipedia</String>
@@ -1134,7 +1134,7 @@
     <String id="2997">h</String>
     <String id="2998">min</String>
     <String id="2999">sec</String>
-    <String id="3000">Program Options</String>
+    <String id="3000">Programme Options</String>
     <String id="3001">Hour</String>
     <String id="3002">Hours</String>
     <String id="3003">Minute</String>
@@ -1152,13 +1152,13 @@
     <String id="3015">Days</String>
     <String id="3016">Already Ended</String>
     <String id="3017">Started</String>
-    <String id="3018">Minute Remaining</String>
+    <String id="3018">Minutes Remaining</String>
     <String id="3019">Series</String>
     <String id="3020">Episode</String>
     <String id="3021">Part</String>
     <String id="3022">of</String>
     <String id="4000">Web Browser</String>
-    <String id="4001">Favorites</String>
+    <String id="4001">Favourites</String>
     <String id="4002">Unable to load URL</String>
     <String id="4003">Please specify a favorites folder in the setup.</String>
     <String id="4500">Skip albums with existing cover art</String>
@@ -1168,15 +1168,15 @@
     <String id="4504">{0}% - {1} of {2}</String>
     <String id="4505">Searching {0}...</String>
     <String id="4506">[Blank]</String>
-    <String id="4507">Cover art grabber aborted by user</String>
+    <String id="4507">Cover art grab aborted by user</String>
     <String id="4508">Cover art grab completed successfuly</String>
     <String id="4509">Cover art grab completed with errors</String>
     <String id="4510">{0} cover art images updated</String>
-    <String id="4511">Cover Art Grabber Done</String>
+    <String id="4511">Cover art grab done</String>
     <String id="4512">All covers up to date</String>
     <String id="4513">Various</String>
     <String id="4514">Cover Art Grabber</String>
-    <String id="4515">Cover Art Grabber Search Results</String>
+    <String id="4515">Cover art grab search results</String>
     <String id="4516">No cover art found</String>
     <String id="4517">Close</String>
     <String id="4518">Album title not found\r\nTrying: {0}</String>
@@ -1188,7 +1188,7 @@
     <String id="4541">Playing next</String>
     <String id="4542">No playlists loaded</String>
     <String id="4543">Track information not available</String>
-    <String id="4550">Enqueue</String>
+    <String id="4550">Cue</String>
     <String id="4551">Play next</String>
     <String id="4552">Play now</String>
     <String id="4553">Show playlist</String>
@@ -1206,14 +1206,14 @@
     <String id="5908">More</String>
     <String id="5909">Can't stream movie!</String>
     <String id="5910">Getting movie info</String>
-    <String id="5911">New in theaters</String>
+    <String id="5911">New in theatres</String>
     <String id="5912">Previous week</String>
     <String id="5913">This week</String>
     <String id="5914">Next week</String>
     <String id="5915">No movie reviews yet</String>
     <String id="5916">No trailers were found.</String>
     <String id="5917">German trailers</String>
-    <String id="5918">TÃ©lÃ©vision Suisse Romande VOD</String>
+    <String id="5918">Télévision Suisse Romande VOD</String>
     <String id="5919">Weekend box office</String>
     <String id="5920">Movies opening this week</String>
     <String id="5921">Movies coming soon</String>
@@ -1224,31 +1224,31 @@
     <String id="6000">Video Codec</String>
     <String id="6001">Audio Codec</String>
     <String id="6002">Audio Renderer</String>
-    <String id="6003">Deinterlacing</String>
+    <String id="6003">De-interlacing</String>
     <String id="6004">Aspect ratio</String>
     <String id="6005">Timeshift buffer</String>
-    <String id="6006">Auto turn on TV</String>
+    <String id="6006">Automatically turn on TV</String>
     <String id="6007">Recording options</String>
     <String id="6008">Channel sorting</String>
     <String id="6009">DVB Guide</String>
     <String id="6010">XMLTV EPG grabber</String>
     <String id="6011">DVB EPG:</String>
-    <String id="6012">Update TVGuide from the following DVB channels:</String>
+    <String id="6012">Update TV Guide from the following DVB channels:</String>
     <String id="6013">Manual xmltv</String>
-    <String id="6014">TV setup</String>
+    <String id="6014">TV set-up</String>
     <String id="6015">DVD setup</String>
-    <String id="6016">Auto delete recordings after watching them</String>
+    <String id="6016">Automatically delete recordings after watching them</String>
     <String id="6017">Add recordings to movie database</String>
-    <String id="6018">minutes before program starts</String>
-    <String id="6019">minutes after program ends</String>
+    <String id="6018">minutes before programme starts</String>
+    <String id="6019">minutes after programme ends</String>
     <String id="6020">Repeat/loop slideshows</String>
-    <String id="6021">Auto shuffle slideshow</String>
-    <String id="6022">Movie setup</String>
-    <String id="6023">Screen setup</String>
+    <String id="6021">Auto-shuffle slideshow</String>
+    <String id="6022">Movie set-up</String>
+    <String id="6023">Screen set-up</String>
     <String id="6024">Skip steps</String>
-    <String id="6025">Skip step setup</String>
-    <String id="6026">Please specify the ipadress or hostname</String>
-    <String id="6027">of the master Tv-server</String>
+    <String id="6025">Skip step set-up</String>
+    <String id="6026">Please specify the IP address or host name</String>
+    <String id="6027">of the master TV-server</String>
     <String id="6028">Current setting:</String>
     <String id="6029">Change</String>
     <String id="6030">Today</String>
@@ -1259,19 +1259,19 @@
     <String id="6035">Add Schedule</String>
     <String id="8000" prefix="My ">Mail</String>
     <String id="8001">Check Mailbox</String>
-    <String id="8002">Autocheck off</String>
-    <String id="8003">Autocheck on</String>
+    <String id="8002">Auto-check off</String>
+    <String id="8003">Auto-check on</String>
     <String id="8004">You have new Mail!</String>
     <String id="8005">Refreshing Mailbox</String>
-    <String id="8007">Autocheck</String>
+    <String id="8007">Auto-check</String>
     <String id="8008">Back</String>
     <String id="8009">Mark all unread</String>
     <String id="8010">No Mailbox defined</String>
-    <String id="8011">Please go to Setup and define</String>
-    <String id="8012">at least 1 Mailbox to use the Mail-Plugin.</String>
+    <String id="8011">Please go to Set-up and define</String>
+    <String id="8012">at least 1 Mailbox to use the Mail Plug-in.</String>
     <String id="8013">No Server response</String>
     <String id="8014">The Server '{0}' doesn't respond!</String>
-    <String id="8015">Check your config for Mailbox '{0}'</String>
+    <String id="8015">Check your configuration for Mailbox '{0}'</String>
     <String id="8016">From</String>
     <String id="8017">To</String>
     <String id="8018">Subject</String>
@@ -1293,7 +1293,7 @@
     <String id="9004">Compensation:</String>
     <String id="9005">Shutter Speed:</String>
     <String id="9006">Date taken:</String>
-    <String id="9007">Fstop:</String>
+    <String id="9007">F-stop:</String>
     <String id="9008">Exposure time:</String>
     <String id="9009">Camera Model:</String>
     <String id="9010">Equipment make:</String>
@@ -1325,8 +1325,8 @@
     <String id="13009">Random transitions</String>
     <String id="13010">X-fade transitions</String>
     <String id="13011">Ken Burns speed</String>
-    <String id="13012">Loading picture, please wait</String>
-    <String id="13013">Loading video, please wait</String>
+    <String id="13012">Loading picture, please wait...</String>
+    <String id="13013">Loading video, please wait...</String>
     <String id="13014">Scanning directory</String>
     <String id="13015">Importing gamebase file</String>
     <String id="13016">Sort by: Launches</String>
@@ -1340,7 +1340,7 @@
     <String id="19005">Score</String>
     <String id="19006">Level</String>
     <String id="19007">Lines</String>
-    <String id="19008">Highscore</String>
+    <String id="19008">High score</String>
     <String id="19009">Next</String>
     <String id="19010">Press or click to start...</String>
     <String id="19011">Paused</String>
@@ -1352,14 +1352,14 @@
     <String id="19104">Clear</String>
     <String id="19105">Block invalid moves</String>
     <String id="19106">Show invalid moves</String>
-    <String id="19107">Level: </String>
+    <String id="19107">Level:</String>
     <String id="19108">easy</String>
     <String id="19109">medium</String>
     <String id="19110">difficult</String>
     <String id="19111">Game Over</String>
-    <String id="19112">Congratulation!</String>
+    <String id="19112">Congratulations!</String>
     <String id="19113">You have solved the game correctly.</String>
-    <String id="19114">Sorry, but your solution is wrong.</String>
+    <String id="19114">Sorry, but your solution is incorrect.</String>
     <String id="19115">kids</String>
     <String id="19116">Cell value</String>
     <String id="19117">Clear cell</String>
@@ -1408,15 +1408,15 @@
     <String id="30007">Search other videos by this artist</String>
     <String id="30008">rank</String>
     <String id="30009">page</String>
-    <String id="30010">Search results for {0} - page {1} </String>
+    <String id="30010">Search results for {0} - page {1}</String>
     <String id="33000">Scrobble On</String>
     <String id="33001">Scrobble: Similar</String>
     <String id="33002">Scrobble: Neighbours</String>
     <String id="33003">Scrobble: Tags</String>
     <String id="33004">Scrobble: Recently</String>
-    <String id="33005">Account: </String>
+    <String id="33005">Account:</String>
     <String id="33006">Scrobble: Friends</String>
-    <String id="33007">Scrobble: Offline</String>
+    <String id="33007">Scrobble: Off-line</String>
     <String id="33008">There is no playlist active</String>
     <String id="33009">to insert or add the track!</String>
     <String id="33010">Automatically fill playlist with</String>
@@ -1427,33 +1427,33 @@
     <String id="33016">tracks your friends like</String>
     <String id="33017">random tracks</String>
     <String id="33018">random unheard tracks</String>
-    <String id="33019">random favorite tracks</String>
+    <String id="33019">random favourite tracks</String>
     <String id="33030">Top album tracks</String>
-    <String id="33031">Other tracks tagged with: </String>
+    <String id="33031">Other tracks tagged with:</String>
     <String id="33040">Copy now playing spam to clipboard</String>
     <String id="33041">Add this album to playlist</String>
     <String id="34000" prefix="My ">Last.fm</String>
     <String id="34001">Start / Change stream</String>
-    <String id="34002">Friend: </String>
-    <String id="34003">Neighbour: </String>
-    <String id="34004">Group: </String>
+    <String id="34002">Friend:</String>
+    <String id="34003">Neighbour:</String>
+    <String id="34004">Group:</String>
     <String id="34010">Love</String>
     <String id="34011">Ban</String>
     <String id="34012">Skip</String>
     <String id="34013">Discovery mode</String>
     <String id="34014">Submit to profile</String>
-    <String id="34020">Current stream: </String>
+    <String id="34020">Current stream:</String>
     <String id="34030">No tags</String>
     <String id="34031">No friends</String>
-    <String id="34040">Recommendation radio</String>
-    <String id="34041">Tune into chosen Tag: </String>
+    <String id="34040">Recommended radio</String>
+    <String id="34041">Tune into chosen Tag:</String>
     <String id="34042">No tag has been chosen yet</String>
-    <String id="34043">Personal radio of: </String>
-    <String id="34044">Loved tracks of: </String>
+    <String id="34043">Personal radio of:</String>
+    <String id="34044">Loved tracks of:</String>
     <String id="34045">No Friend has been chosen yet</String>
     <String id="34046">My personal radio</String>
     <String id="34047">My loved tracks</String>
-    <String id="34048">My neighbour radio</String>
+    <String id="34048">My neighbour's radio</String>
     <String id="34050">No stream active</String>
     <String id="34051">Stream ended!</String>
     <String id="34052">No more content or bad connection</String>
@@ -1472,7 +1472,7 @@
     <String id="100009">Settings-&gt;Screen</String>
     <String id="100010">Settings-&gt;Screen-&gt;UI Calibration</String>
     <String id="100011">Settings-&gt;Screen-&gt;Screen Calibration</String>
-    <String id="100012">Settings-&gt;SlideShow</String>
+    <String id="100012">Settings-&gt;Slideshow</String>
     <String id="100013">Settings-&gt;Screen-&gt;Filters</String>
     <String id="100014">Settings-&gt;Music</String>
     <String id="100015">Settings-&gt;Screen-&gt;Subtitles</String>
@@ -1482,7 +1482,7 @@
     <String id="100021" prefix="My ">Videos/genre</String>
     <String id="100022" prefix="My ">Videos/actor</String>
     <String id="100023" prefix="My ">Videos/year</String>
-    <String id="100024">Settings-&gt;Programs</String>
+    <String id="100024">Settings-&gt;Programmes</String>
     <String id="100025" prefix="My ">Videos/title</String>
     <String id="100026">Settings-&gt;General-&gt;Cache</String>
     <String id="100027">Settings-&gt;General-&gt;Autorun</String>
@@ -1494,96 +1494,96 @@
     <String id="100033">MSN Messenger chat</String>
     <String id="100034" prefix="My ">Plugins</String>
     <String id="100035">Basic home</String>
-    <String id="100100">Yes/no dialog</String>
-    <String id="100101">Progress dialog</String>
-    <String id="100500" prefix="My ">Music/playlist</String>
-    <String id="100501" prefix="My ">Music/shares</String>
-    <String id="100502" prefix="My ">Music/albums</String>
-    <String id="100503" prefix="My ">Music/artists</String>
-    <String id="100504" prefix="My ">Music/genres</String>
-    <String id="100505" prefix="My ">Music/top100</String>
-    <String id="100506" prefix="My ">Music/Favorites</String>
-    <String id="100507" prefix="My">Music/Years</String>
-    <String id="100508" prefix="My ">Music/Lookup/Results</String>
-    <String id="100509" prefix="My ">Music/Lookup/Progress</String>
-    <String id="100510" prefix="My ">Music/Now playing</String>
-    <String id="100511" prefix="My">Music/Fullscreen</String>
-    <String id="100600" prefix="My ">TV/Guide</String>
-    <String id="100601" prefix="My ">TV/Scheduler</String>
-    <String id="100602" prefix="My ">TV/fullscreen</String>
-    <String id="100603" prefix="My ">TV/Recorded TV</String>
-    <String id="100604" prefix="My ">TV/Search</String>
-    <String id="100605" prefix="My ">TV/Recorded Tv/Genre</String>
-    <String id="100606" prefix="My ">TV/Recorded Tv/channels</String>
-    <String id="100607" prefix="My ">TV/Scheduler/Priorities</String>
-    <String id="100608" prefix="My ">TV/Scheduler/Conflicts</String>
-    <String id="100609" prefix="My ">TV/Compress/Main</String>
-    <String id="100610" prefix="My ">TV/Compress/Settings</String>
-    <String id="100611" prefix="My ">TV/Compress/Auto</String>
-    <String id="100612" prefix="My ">TV/Compress/Compress</String>
-    <String id="100613" prefix="My ">TV/Compress/Status</String>
-    <String id="100614" prefix="My ">Video Artist Info</String>
-    <String id="100615" prefix="My ">Wizard/Welcome</String>
-    <String id="100616" prefix="My ">Wizard/Cards detected</String>
-    <String id="100617" prefix="My ">Wizard/Country</String>
-    <String id="100618" prefix="My ">Wizard/Scan</String>
-    <String id="100619" prefix="My ">Wizard/DVBC/Country</String>
-    <String id="100620" prefix="My ">Wizard/DVBC/Scan</String>
-    <String id="100621" prefix="My ">Wizard/DVBS/LNB</String>
-    <String id="100622" prefix="My ">Wizard/DVBS/LNB details</String>
-    <String id="100623" prefix="My ">Wizard/DVBS/Transponder</String>
-    <String id="100624" prefix="My ">Wizard/DVBS/Scan</String>
-    <String id="100625" prefix="My ">Wizard/ATSC/Scan</String>
-    <String id="100626" prefix="My ">Wizard/Analog/Country</String>
-    <String id="100627" prefix="My ">Wizard/Analog/City</String>
-    <String id="100628" prefix="My ">Wizard/Analog/Imported</String>
-    <String id="100629" prefix="My ">Wizard/Analog/Manual</String>
-    <String id="100630" prefix="My ">Wizard/Analog/Scan</String>
-    <String id="100631" prefix="My ">Wizard/Analog/Rename</String>
-    <String id="100632" prefix="My ">Wizard/Analog/Radio</String>
-    <String id="100633" prefix="My ">Wizard/Analog/Rename Radio</String>
-    <String id="100634" prefix="My ">Wizard/Remote</String>
-    <String id="100635" prefix="My ">Wizard/EPG</String>
-    <String id="100636" prefix="My ">Wizard/General</String>
-    <String id="100699" prefix="My ">Wizard/Finished</String>
-    <String id="100700" prefix="My ">TV Settings</String>
-    <String id="100701" prefix="My ">TV Recording Settings</String>
-    <String id="100702" prefix="My ">TV Sort channels</String>
-    <String id="100703" prefix="My ">Movie settings</String>
-    <String id="100704" prefix="My ">DVD settings</String>
-    <String id="100705" prefix="My ">Skin settings</String>
-    <String id="100706" prefix="My ">EPG settings</String>
-    <String id="100707" prefix="My ">EPG -&gt; Channel mapping</String>
-    <String id="100708" prefix="My ">Skip step settings</String>
-    <String id="100709" prefix="My ">TV server settings</String>
-    <String id="100748" prefix="My ">Program info</String>
-    <String id="100749" prefix="My ">TV/No signal</String>
-    <String id="100750" prefix="My ">Recipes</String>
-    <String id="100755" prefix="My ">Status</String>
-    <String id="100756" prefix="My ">Status details</String>
-    <String id="100757" prefix="My ">Status preferences</String>
-    <String id="100758" prefix="My ">File dialog</String>
-    <String id="100759" prefix="My ">Recorded Tv Info</String>
-    <String id="100760" prefix="My ">Burner</String>
-    <String id="100761" prefix="My ">TV guide</String>
-    <String id="100762" prefix="My ">Radio guide</String>
-    <String id="100770" prefix="My ">Explorer</String>
+    <String id="100100">Yes/No dialogue</String>
+    <String id="100101">Progress dialogue</String>
+    <String id="100500">Music/playlist</String>
+    <String id="100501">Music/shares</String>
+    <String id="100502">Music/albums</String>
+    <String id="100503">Music/artists</String>
+    <String id="100504">Music/genres</String>
+    <String id="100505">Music/top 100</String>
+    <String id="100506">Music/Favourites</String>
+    <String id="100507">Music/Years</String>
+    <String id="100508">Music/Lookup/Results</String>
+    <String id="100509">Music/Lookup/Progress</String>
+    <String id="100510">Music/Now playing</String>
+    <String id="100511">Music/Fullscreen</String>
+    <String id="100600">TV/Guide</String>
+    <String id="100601">TV/Scheduler</String>
+    <String id="100602">TV/fullscreen</String>
+    <String id="100603">TV/Recorded TV</String>
+    <String id="100604">TV/Search</String>
+    <String id="100605">TV/Recorded Tv/Genre</String>
+    <String id="100606">TV/Recorded Tv/channels</String>
+    <String id="100607">TV/Scheduler/Priorities</String>
+    <String id="100608">TV/Scheduler/Conflicts</String>
+    <String id="100609">TV/Compress/Main</String>
+    <String id="100610">TV/Compress/Settings</String>
+    <String id="100611">TV/Compress/Automatic</String>
+    <String id="100612">TV/Compress/Compress</String>
+    <String id="100613">TV/Compress/Status</String>
+    <String id="100614">Video Artist Info</String>
+    <String id="100615">Wizard/Welcome</String>
+    <String id="100616">Wizard/Cards detected</String>
+    <String id="100617">Wizard/Country</String>
+    <String id="100618">Wizard/Scan</String>
+    <String id="100619">Wizard/DVBC/Country</String>
+    <String id="100620">Wizard/DVBC/Scan</String>
+    <String id="100621">Wizard/DVBS/LNB</String>
+    <String id="100622">Wizard/DVBS/LNB details</String>
+    <String id="100623">Wizard/DVBS/Transponder</String>
+    <String id="100624">Wizard/DVBS/Scan</String>
+    <String id="100625">Wizard/ATSC/Scan</String>
+    <String id="100626">Wizard/Analogue/Country</String>
+    <String id="100627">Wizard/Analogue/City</String>
+    <String id="100628">Wizard/Analogue/Imported</String>
+    <String id="100629">Wizard/Analogue/Manual</String>
+    <String id="100630">Wizard/Analogue/Scan</String>
+    <String id="100631">Wizard/Analogue/Rename</String>
+    <String id="100632">Wizard/Analogue/Radio</String>
+    <String id="100633">Wizard/Analogue/Rename Radio</String>
+    <String id="100634">Wizard/Remote</String>
+    <String id="100635">Wizard/EPG</String>
+    <String id="100636">Wizard/General</String>
+    <String id="100699">Wizard/Finished</String>
+    <String id="100700">TV Settings</String>
+    <String id="100701">TV Recording Settings</String>
+    <String id="100702">TV Sort channels</String>
+    <String id="100703">Movie settings</String>
+    <String id="100704">DVD settings</String>
+    <String id="100705">Skin settings</String>
+    <String id="100706">EPG settings</String>
+    <String id="100707">EPG -&gt; Channel mapping</String>
+    <String id="100708">Skip step settings</String>
+    <String id="100709">TV server settings</String>
+    <String id="100748">Programme info.</String>
+    <String id="100749">TV/No signal</String>
+    <String id="100750">Recipes</String>
+    <String id="100755">Status</String>
+    <String id="100756">Status details</String>
+    <String id="100757">Status preferences</String>
+    <String id="100758">File dialogue</String>
+    <String id="100759">Recorded Tv Info.</String>
+    <String id="100760">Burner</String>
+    <String id="100761">TV guide</String>
+    <String id="100762">Radio guide</String>
+    <String id="100770">Explorer</String>
     <String id="101000">keyboard</String>
-    <String id="102000">Select dialog</String>
+    <String id="102000">Select dialogue</String>
     <String id="102001" prefix="My ">Music/info</String>
-    <String id="102002">Dialog OK</String>
+    <String id="102002">Dialogue OK</String>
     <String id="102003" prefix="My ">Videos/Info</String>
     <String id="102004" prefix="My ">Scripts/Info</String>
     <String id="102005">Fullscreen video</String>
     <String id="102006">Audio visualisation</String>
     <String id="102007" prefix="My ">Picture/slideshow</String>
-    <String id="102008">Filestacking dialog</String>
-    <String id="102009">Selection dialog</String>
+    <String id="102008">Filestacking dialogue</String>
+    <String id="102009">Selection dialogue</String>
     <String id="102010">Date/Time</String>
-    <String id="102011">Artist info</String>
+    <String id="102011">Artist info.</String>
     <String id="102012">Context menu</String>
     <String id="102013">Set Rating</String>
-    <String id="102014">Picture info</String>
+    <String id="102014">Picture info.</String>
     <String id="102015">Mini menu</String>
     <String id="102016">Notification</String>
     <String id="102600" prefix="My ">Weather</String>
@@ -1608,38 +1608,38 @@
     <String id="200001">not listed then you will need to supply the EPG manually</String>
     <String id="200002">You can now map the EPG channels to your TV channels</String>
     <String id="200003">select a channel and press enter to change the mapping</String>
-    <String id="200004">Manual supplied tvguide.xml</String>
+    <String id="200004">Manually supplied tvguide.xml</String>
     <String id="200005">Please specify the remote control you use:</String>
-    <String id="200006">Press Next to continue the setup:</String>
+    <String id="200006">Press Next to continue the set-up:</String>
     <String id="200007">&lt; Back</String>
-    <String id="200008">Setup - Remote control</String>
+    <String id="200008">Set-up - Remote control</String>
     <String id="200009">Next &gt;</String>
-    <String id="200010">MediaPortal turns your PC in a very advanced Multi-Media Center / HTPC.</String>
-    <String id="200011">With MediaPortal you can enjoy listening to your favorite music, radio, viewing your digital photos,</String>
-    <String id="200012">watching Videos, DVDs and live TV and much more.</String>
-    <String id="200013">This wizard will help you to setup Mediaportal quickly and easily. Please follow all the steps,</String>
+    <String id="200010">MediaPortal turns your PC into a very advanced Multi-Media Centre / HTPC.</String>
+    <String id="200011">With MediaPortal you can enjoy listening to your favourite music and radio, view your digital photos,</String>
+    <String id="200012">watch Videos, DVDs, and live TV, and much more.</String>
+    <String id="200013">This wizard will help you to set up Mediaportal quickly and easily. Please follow all the steps,</String>
     <String id="200014">and start by setting your language and location below:</String>
     <String id="200015">Now press the Next button to begin</String>
     <String id="200017">Welcome to MediaPortal.</String>
-    <String id="200018">Congratulations. Mediaportal is now setup and ready to use</String>
+    <String id="200018">Congratulations. Mediaportal is now set up and ready to use</String>
     <String id="200019">Press the Finish button to close this wizard</String>
     <String id="200020">Finish</String>
-    <String id="200021">TV Setup - EPG</String>
+    <String id="200021">TV Set-up - EPG</String>
     <String id="200022">MediaPortal has found the following tv-cards:</String>
     <String id="200023">Press the Next button to configure these cards</String>
-    <String id="200024">TV Setup</String>
+    <String id="200024">TV Set-up</String>
     <String id="200025">Language</String>
     <String id="200026">Country</String>
-    <String id="200027">Setup - General</String>
-    <String id="200028">Does this PC have always on Internet access?</String>
+    <String id="200027">Set-up - General</String>
+    <String id="200028">Does this PC have always-on Internet access?</String>
     <String id="200029">How will you use MediaPortal?</String>
     <String id="200030">On a dedicated PC</String>
     <String id="200031">Yes</String>
     <String id="200032">No</String>
-    <String id="200033">TV Setup - Analog TV</String>
+    <String id="200033">TV Set-up - Analogue TV</String>
     <String id="200034">Please select your city from the following list.</String>
-    <String id="200035">Note if your city is not listed then you will need to manual tune.</String>
-    <String id="200036">Manual Tune</String>
+    <String id="200035">Note if your city is not listed then you will need to use Manual Tuning.</String>
+    <String id="200036">Manual Tuning</String>
     <String id="200037">Skip &gt;</String>
     <String id="200038">On a desktop PC shared with other applications</String>
     <String id="200039">Add skip step</String>
