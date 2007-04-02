@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -67,6 +68,18 @@ namespace MyTv
       if (b != null)
       {
         Keyboard.Focus(b);
+        Button button = sender as Button;
+        if (button != null)
+        {
+          ContentPresenter content = button.TemplatedParent as ContentPresenter;
+          if (content != null)
+          {
+            if (content.Content != null)
+            {
+              gridList.SelectedItem = content.Content;
+            }
+          }
+        }
       }
     }
     /// <summary>
@@ -84,6 +97,8 @@ namespace MyTv
       buttonCleanup.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 82);//Cleanup
       buttonCompress.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 83);//Compress
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
+      Keyboard.AddGotKeyboardFocusHandler(gridList, new KeyboardFocusChangedEventHandler(onKeyboardFocus));
+      this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
       Keyboard.Focus(buttonView);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
 
@@ -102,7 +117,36 @@ namespace MyTv
       LoadRecordings();
       Thread thumbNailThread = new Thread(new ThreadStart(CreateThumbnailsThread));
       thumbNailThread.Start();
+      gridList.ItemContainerGenerator.StatusChanged += new EventHandler(ItemContainerGenerator_StatusChanged);
 
+    }
+    void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
+    {
+      if (gridList.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+      {
+        ListBoxItem focusedItem = gridList.ItemContainerGenerator.ContainerFromIndex(gridList.SelectedIndex) as ListBoxItem;
+        if (focusedItem != null)
+        {
+          Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
+          ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
+          Button b = gridList.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
+          Keyboard.Focus(b);
+          b.Focus();
+        }
+      }
+    }
+    void onKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+      ListBoxItem focusedItem = e.NewFocus as ListBoxItem;
+      if (focusedItem != null)
+      {
+        Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
+        ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
+        Button b = gridList.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
+        Keyboard.Focus(b);
+        b.Focus();
+        e.Handled = true;
+      }
     }
     /// <summary>
     /// Gets the content for right label of each recording.
@@ -167,155 +211,55 @@ namespace MyTv
           buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 89);//"Sort:Watched";
           break;
       }
-      Grid grid = new Grid();
-      gridList.Children.Clear();
       IList recordings = Recording.ListAll();
       List<Recording> listRecordings = new List<Recording>();
       foreach (Recording recording in recordings)
         listRecordings.Add(recording);
       listRecordings.Sort(this);
-      int row = 0;
+      DialogMenuItemCollection collection = new DialogMenuItemCollection();
+      switch (_viewMode)
+      {
+        case ViewMode.List:
+          {
+            gridList.ItemTemplate = (DataTemplate)this.Resources["itemListTemplate"];
+          }
+          break;
+        case ViewMode.Icon:
+          {
+            gridList.ItemTemplate = (DataTemplate)this.Resources["itemIconTemplate"];
+          }
+          break;
+      }
       foreach (Recording recording in listRecordings)
       {
-        grid.RowDefinitions.Add(new RowDefinition());
-        Button button = new Button();
-        button.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
-
-        switch (_viewMode)
+        string logo = System.IO.Path.ChangeExtension(recording.FileName, ".png");
+        if (!System.IO.File.Exists(logo))
         {
-          case ViewMode.List:
-            {
-              buttonView.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 90);//"View:List";
-              Grid gridSub = new Grid();
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.RowDefinitions.Add(new RowDefinition());
-              string logo = System.IO.Path.ChangeExtension(recording.FileName, ".png");
-              if (System.IO.File.Exists(logo))
-              {
-                Image image = new Image();
-                PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(logo, UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-
-                image.Source = decoder.Frames[0];
-                image.Width = 32;
-                image.Height = 32;
-                Grid.SetColumn(image, 0);
-                Grid.SetRow(image, 0);
-                gridSub.Children.Add(image);
-              }
-              Label label = new Label();
-              label.Content = recording.Title;
-              label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
-              Grid.SetColumn(label, 1);
-              Grid.SetRow(label, 0);
-              Grid.SetColumnSpan(label, 8);
-              gridSub.Children.Add(label);
-              label = new Label();
-              label.Content = GetContentForRightLabel(recording);
-              label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
-              label.HorizontalAlignment = HorizontalAlignment.Right;
-              //label.Margin = new Thickness(0, 0, 60, 0);
-              Grid.SetColumn(label, 7);
-              Grid.SetColumnSpan(label, 2);
-              Grid.SetRow(label, 0);
-              gridSub.Children.Add(label);
-              gridSub.Loaded += new RoutedEventHandler(gridSub_Loaded);
-              button.Content = gridSub;
-            }
-            break;
-          case ViewMode.Icon:
-            {
-              //icon view...
-              buttonView.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 91);//"View:Icons";
-              Grid gridSub = new Grid();
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-              gridSub.RowDefinitions.Add(new RowDefinition());
-              gridSub.RowDefinitions.Add(new RowDefinition());
-              string logo = System.IO.Path.ChangeExtension(recording.FileName, ".png");
-              if (System.IO.File.Exists(logo))
-              {
-                Image image = new Image();
-                PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(logo, UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-
-                image.Source = decoder.Frames[0];
-                Grid.SetColumn(image, 0);
-                Grid.SetRow(image, 0);
-                Grid.SetRowSpan(image, 2);
-                gridSub.Children.Add(image);
-              }
-              Label label = new Label();
-              label.Content = recording.Title;
-              label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
-              Grid.SetColumn(label, 1);
-              Grid.SetRow(label, 0);
-              Grid.SetColumnSpan(label, 8);
-              gridSub.Children.Add(label);
-
-              label = new Label();
-              label.Content = recording.Genre;
-              label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-              Grid.SetColumn(label, 1);
-              Grid.SetColumnSpan(label, 6);
-              Grid.SetRow(label, 1);
-              gridSub.Children.Add(label);
-
-              label = new Label();
-              label.Content = GetContentForRightLabel(recording);
-              label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-              label.HorizontalAlignment = HorizontalAlignment.Right;
-              //label.Margin = new Thickness(0, 0, 60, 0);
-              Grid.SetColumn(label, 7);
-              Grid.SetColumnSpan(label, 2);
-              Grid.SetRow(label, 1);
-              gridSub.Children.Add(label);
-              gridSub.Loaded += new RoutedEventHandler(gridSub_Loaded);
-
-
-              button.Content = gridSub;
-            }
-            break;
+          logo = "";
         }
-        button.Tag = recording;
-        button.GotFocus += new RoutedEventHandler(button_GotFocus);
-        button.MouseEnter += new MouseEventHandler(OnMouseEnter);
-        button.Click += new RoutedEventHandler(OnRecordingClicked);
-        //label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
-        Grid.SetColumn(button, 0);
-        Grid.SetRow(button, row);
-        grid.Children.Add(button);
-        row++;
+        DialogMenuItem item = new DialogMenuItem(logo, recording.Title, recording.Genre, GetContentForRightLabel(recording));
+        item.Tag = recording;
+        collection.Add(item);
       }
-      gridList.Children.Add(grid);
-      gridList.VerticalAlignment = VerticalAlignment.Top;
-    }
+      gridList.ItemsSource = collection;
 
+    }
+    void Button_Click(object sender, RoutedEventArgs e)
+    {
+      if (e.Source == gridList)
+      {
+        OnRecordingClicked();
+      }
+    }
     /// <summary>
     /// Called when user has clicked on a recording
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-    void OnRecordingClicked(object sender, RoutedEventArgs e)
+    void OnRecordingClicked()
     {
-      Button b = sender as Button;
-      if (b == null) return;
-      Recording recording = b.Tag as Recording;
+      DialogMenuItem item = gridList.SelectedItem as DialogMenuItem;
+      Recording recording = item.Tag as Recording;
       if (recording == null) return;
       MpMenu dlgMenu = new MpMenu();
       Window w = Window.GetWindow(this);

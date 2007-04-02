@@ -17,6 +17,7 @@ namespace Dialogs
   {
     #region variables
     string _logo, _label1, _label2, _label3;
+    object _tag;
     #endregion
     #region ctors
     /// <summary>
@@ -93,6 +94,17 @@ namespace Dialogs
       set
       {
         _label3 = value;
+      }
+    }
+    public object Tag
+    {
+      get
+      {
+        return _tag;
+      }
+      set
+      {
+        _tag = value;
       }
     }
     #endregion
