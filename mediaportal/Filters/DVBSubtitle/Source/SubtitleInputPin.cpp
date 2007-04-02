@@ -1,4 +1,4 @@
-/* 
+/*
  *	Copyright (C) 2006-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -6,15 +6,15 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -56,7 +56,7 @@ CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
           m_pPin( NULL )
 {
   m_pesDecoder = new CPesDecoder( this );
-  
+
   Reset();
 	LogDebug( "Subtitle: Input pin created" );
 }
@@ -79,7 +79,7 @@ HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
   if( pmt->subtype == MEDIASUBTYPE_MPEG2_TRANSPORT )
 	{
     LogDebug("Subtitle: CSubtitleInputPin::CheckMediaType() - found MEDIASUBTYPE_MPEG2_TRANSPORT");
-    return S_OK; 
+    return S_OK;
 	}
 	return S_FALSE;
 }
@@ -101,9 +101,9 @@ HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
 {
 	HRESULT hr = CBasePin::CompleteConnect( pPin );
   m_pPin = pPin;
-  
+
   if( m_SubtitlePid == -1 )
-    return hr;  // PID is mapped later when we have it 
+    return hr;  // PID is mapped later when we have it
 
   hr = MapPidToDemuxer( m_SubtitlePid, m_pPin, MEDIA_TRANSPORT_PACKET );
   m_pesDecoder->SetPid( m_SubtitlePid );
@@ -139,13 +139,13 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 	CheckPointer( pSample, E_POINTER );
 
 	PBYTE pbData = NULL;
-	
+
 	REFERENCE_TIME tStart, tStop;
 	pSample->GetTime( &tStart, &tStop);
 	long lDataLen = 0;
 	HRESULT hr = pSample->GetPointer( &pbData );
 
-  if( FAILED( hr ) ) 
+  if( FAILED( hr ) )
 	{
 		LogDebug( "Subtitle: Receive() err" );
 		return hr;
@@ -153,7 +153,7 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 	lDataLen = pSample->GetActualDataLength();
 
   OnRawData( pbData, lDataLen );
-  
+
   return S_OK;
 }
 
@@ -170,15 +170,15 @@ void CSubtitleInputPin::OnTsPacket( byte* tsPacket )
 //
 // OnNewPesPacket
 //
-int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen, 
+int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen,
                                        byte* data, int len, bool isStart )
 {
   byte* pesData = NULL;
-  pesData = (unsigned char*)malloc( headerlen + len ); 
+  pesData = (unsigned char*)malloc( headerlen + len );
 
   memcpy( pesData, header, headerlen );
   memcpy( pesData + headerlen, data, len );
-    
+
   m_pSubDecoder->ProcessPES( pesData, headerlen + len, m_SubtitlePid );
 
   delete pesData;
@@ -194,6 +194,7 @@ int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen
 void CSubtitleInputPin::Reset()
 {
 	m_bReset = true;
+	m_pesDecoder->Reset();
 }
 
 
@@ -215,8 +216,7 @@ STDMETHODIMP CSubtitleInputPin::EndOfStream( void )
 {
     CAutoLock lock( m_pReceiveLock );
     return CRenderedInputPin::EndOfStream();
-
-} 
+}
 
 
 //
@@ -245,5 +245,5 @@ STDMETHODIMP CSubtitleInputPin::NewSegment( REFERENCE_TIME tStart,
 											REFERENCE_TIME tStop,
 											double dRate )
 {
-    return S_OK;
+  return CRenderedInputPin::NewSegment( tStart, tStop, dRate );
 }
