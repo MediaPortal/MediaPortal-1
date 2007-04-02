@@ -44,6 +44,7 @@
   <ItemGroup>
     <Page Include="MpDialogOk.xaml" />
     <Page Include="MpDialogYesNo.xaml" />
+    <Page Include="MpMenuWithLogo.xaml" />
     <Page Include="MpMenu.xaml" />
     <Compile Include="MpMenu.xaml.cs">
       <DependentUpon>MpMenu.xaml</DependentUpon>
@@ -52,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DialogMenuItem.cs" />
+    <Compile Include="DialogMenuItemCollection.cs" />
     <Compile Include="DialogResult.cs" />
     <Compile Include="MpDialogOk.xaml.cs">
       <SubType>Code</SubType>
@@ -60,6 +62,10 @@
     <Compile Include="MpDialogYesNo.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>MpDialogYesNo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MpMenuWithLogo.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>MpMenuWithLogo.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

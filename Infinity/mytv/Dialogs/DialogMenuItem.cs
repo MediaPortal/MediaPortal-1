@@ -16,7 +16,10 @@ namespace Dialogs
   public class DialogMenuItem
   {
     List<UIElement> _subItems = new List<UIElement>();
-
+    string _logo, _label1, _label2, _label3;
+    public DialogMenuItem()
+    {
+    }
     public DialogMenuItem(string logo, string label1, string label2, string label3)
     {
       Button button = new Button();
@@ -151,6 +154,50 @@ namespace Dialogs
       set
       {
         _subItems = value;
+      }
+    }
+    public string Logo
+    {
+      get
+      {
+        return _logo;
+      }
+      set
+      {
+        _logo = value;
+      }
+    }
+    public string Label1
+    {
+      get
+      {
+        return _label1;
+      }
+      set
+      {
+        _label1 = value;
+      }
+    }
+    public string Label2
+    {
+      get
+      {
+        return _label2;
+      }
+      set
+      {
+        _label2 = value;
+      }
+    }
+    public string Label3
+    {
+      get
+      {
+        return _label3;
+      }
+      set
+      {
+        _label3 = value;
       }
     }
   }

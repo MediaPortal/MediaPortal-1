@@ -1,0 +1,80 @@
+﻿<Window x:Class="Dialogs.MpMenuWithLogo"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Dialogs"
+    Title="Dialogs"  BorderThickness ="0" Width="530" Height="370" WindowStyle="None" Loaded="OnLoaded" Background="Transparent">
+
+  <Window.Resources>
+    <Storyboard x:Key="fadeIn">
+      <DoubleAnimation From="0" To="1" Duration="0:0:1" Storyboard.TargetName="gridMain" Storyboard.TargetProperty="(UIElement.Opacity)"/>
+    </Storyboard>
+
+    <DataTemplate x:Key="itemTemplate"  DataType="{x:Type local:DialogMenuItem}">
+      <Button Name="PART_Button" Template="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="472" MouseEnter="OnMouseEnter"  >
+        <Grid Width="472" >
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+          </Grid.RowDefinitions>
+          <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Source="{Binding Logo}" Height="32" Width="32"/>
+          <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="8" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Label1}"/>
+          <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="6" Style="{StaticResource LabelSmallStyleWhite}" Content="{Binding Label2}"/>
+          <Label Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="2" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Label3}"/>
+        </Grid>
+      </Button>
+    </DataTemplate>
+  </Window.Resources>
+
+  <Window.Triggers>
+    <EventTrigger RoutedEvent="FrameworkElement.Loaded" SourceName="gridMain">
+      <BeginStoryboard Storyboard="{StaticResource fadeIn}"/>
+    </EventTrigger>
+  </Window.Triggers>
+
+  <Grid x:Name="gridMain" FocusManager.IsFocusScope="True" >
+
+    <Canvas Margin="0,0,-1,-1">
+      <Rectangle Stroke="#C0FFFFFF" StrokeThickness="10" RadiusX="5" RadiusY="5" x:Name="background" Width="533" Height="345">
+        <Rectangle.Fill>
+          <LinearGradientBrush EndPoint="0.493,-0.003" StartPoint="0.491,0.987">
+            <GradientStop Color="#FF0A3D8C" Offset="0"/>
+            <GradientStop Color="#FF0F5EBA" Offset="1"/>
+          </LinearGradientBrush>
+        </Rectangle.Fill>
+      </Rectangle>
+      <Rectangle Stroke="#C0FFFFFF" StrokeThickness="0" RadiusX="0" RadiusY="0" Width="151.448" Height="38.534" x:Name="header" Canvas.Left="10.5" Canvas.Top="10.074">
+        <Rectangle.Fill>
+          <LinearGradientBrush EndPoint="0.493,-0.003" StartPoint="0.491,0.987">
+            <GradientStop Color="#FF508BCE" Offset="0"/>
+            <GradientStop Color="#FFECF2FA" Offset="1"/>
+          </LinearGradientBrush>
+        </Rectangle.Fill>
+      </Rectangle>
+      <Label Width="141.137" Height="49.946" Content="On Now" FontFamily="Segoe" FontSize="24" FontWeight="Normal" x:Name="labelHeader" Canvas.Left="18.311" Canvas.Top="9.608"/>
+      <Rectangle StrokeThickness="0" RadiusX="0" RadiusY="0" x:Name="horizontalStrike" Height="2" Width="319.821" Canvas.Left="10.5" Canvas.Top="48.554">
+        <Rectangle.Fill>
+          <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+            <GradientStop Color="#FF6397D3" Offset="0"/>
+            <GradientStop Color="#C00F5CB4" Offset="1"/>
+          </LinearGradientBrush>
+        </Rectangle.Fill>
+      </Rectangle>
+      <Label x:Name="labelDate" Width="78" Height="38.898" Content="18:09" FontFamily="Segoe Media Center" FontSize="24" FontWeight="Bold" Foreground="#FF5995D7" Canvas.Left="372" Canvas.Top="6.855"/>
+      <Button x:Name="buttonClose" Style="{DynamicResource MpCloseButton}" Width="45" Height="43" Canvas.Left="470.669" Canvas.Top="13.607" Click="OnCloseClicked" MouseEnter="OnMouseEnter" KeyDown="onKeyDown" />
+      <ListBox x:Name="gridContent" FocusManager.IsFocusScope="False"  ItemTemplate="{StaticResource itemTemplate}" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="True" Background="Transparent" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.CanContentScroll="True" IsSynchronizedWithCurrentItem="True" />
+
+    </Canvas>
+  </Grid>
+
+</Window>

@@ -39,6 +39,7 @@ namespace MyTv
     private delegate void SeekToEndDelegate();
     private delegate void MediaPlayerErrorDelegate();
     private delegate void ConnectToServerDelegate();
+    bool _firstTime = true;
     #endregion
 
     #region ctor
@@ -77,8 +78,9 @@ namespace MyTv
       buttonTeletext.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 8);
       labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 9);
       //try to connect to server in background...
-      ConnectToServerDelegate starter = new ConnectToServerDelegate(this.ConnectToServer);
-      starter.BeginInvoke(null, null);
+      //ConnectToServerDelegate starter = new ConnectToServerDelegate(this.ConnectToServer);
+      //starter.BeginInvoke(null, null);
+      ConnectToServer();
     }
 
     protected void onKeyDown(object sender, KeyEventArgs e)
@@ -132,6 +134,7 @@ namespace MyTv
     {
       try
       {
+        if (!_firstTime) return;
         RemoteControl.HostName = UserSettings.GetString("tv", "serverHostName");
 
         string connectionString, provider;
@@ -145,6 +148,7 @@ namespace MyTv
         node.InnerText = connectionString;
         nodeProvider.InnerText = provider;
         doc.Save("gentle.config");
+        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
         ChannelNavigator.Instance.Initialize();
 
         int cards = RemoteControl.Instance.Cards;
@@ -173,6 +177,7 @@ namespace MyTv
     /// </summary>
     void OnSucceededToConnectToServer()
     {
+      _firstTime = false;
       WindowMediaPlayerCheck check = new WindowMediaPlayerCheck();
       if (!check.IsInstalled)
       {
@@ -389,11 +394,7 @@ namespace MyTv
       ServiceScope.Get<ILogger>().Info("MyTv: OnChannelClicked");
 
       //show dialog menu showing all channels of current tvgroup
-      MpMenu dlgMenu = new MpMenu();
-      Window w = Window.GetWindow(this);
-      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      dlgMenu.Owner = w;
-      dlgMenu.Items.Clear();
+      DialogMenuItemCollection menuItems = new DialogMenuItemCollection();
       ServiceScope.Get<ILogger>().Info("MyTv:   get channels");
       TvBusinessLayer layer = new TvBusinessLayer();
       IList groups = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
@@ -440,7 +441,7 @@ namespace MyTv
       ChannelState currentChannelState = ChannelState.tunable;
       for (int i = 0; i < _tvChannelList.Count; i++)
       {
-        ServiceScope.Get<ILogger>().Info("MyTv:   add {0} ", i);
+      //  ServiceScope.Get<ILogger>().Info("MyTv:   add {0} ", i);
         Channel currentChannel = _tvChannelList[i];
         if (checkChannelState)
           currentChannelState = (ChannelState)server.GetChannelState(currentChannel.IdChannel);
@@ -478,19 +479,26 @@ namespace MyTv
             break;
         }
         string channelLogoFileName = Thumbs.GetLogoFileName(currentChannel.Name);
-        if (System.IO.File.Exists(channelLogoFileName))
+        if (!System.IO.File.Exists(channelLogoFileName))
         {
-          dlgMenu.Items.Add(new DialogMenuItem(channelLogoFileName, now, next, percent));
+          channelLogoFileName = "";
         }
-        else
-        {
-          dlgMenu.Items.Add(new DialogMenuItem("", now, next, percent));
-        }
+        DialogMenuItem item = new DialogMenuItem();
+        item.Logo = channelLogoFileName;
+        item.Label1 = now;
+        item.Label2 = next;
+        item.Label3 = percent;
+        menuItems.Add(item);
       }
-      ServiceScope.Get<ILogger>().Info("MyTv:   showdialog");
+      ServiceScope.Get<ILogger>().Info("MyTv:   create dialog");
+      MpMenuWithLogo dlgMenu = new MpMenuWithLogo(menuItems);
+      Window w = Window.GetWindow(this);
+      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+      dlgMenu.Owner = w;
       dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 22);/*(On Now)*/
       dlgMenu.SubTitle = DateTime.Now.ToString("HH:mm");
       dlgMenu.SelectedIndex = selected;
+      ServiceScope.Get<ILogger>().Info("MyTv:   show dialog");
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;//nothing selected
 
