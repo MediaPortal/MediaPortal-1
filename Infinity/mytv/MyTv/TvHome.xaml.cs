@@ -398,13 +398,21 @@ namespace MyTv
       ServiceScope.Get<ILogger>().Info("MyTv:   get channels");
       TvBusinessLayer layer = new TvBusinessLayer();
       IList groups = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
+      IList channelList = Channel.ListAll();
       List<Channel> _tvChannelList = new List<Channel>();
+      ServiceScope.Get<ILogger>().Info("MyTv:   get channels2");
       foreach (GroupMap map in groups)
       {
-        Channel ch = map.ReferencedChannel();
-        if (ch.VisibleInGuide)
+        foreach (Channel ch in channelList)
         {
-          _tvChannelList.Add(ch);
+          if (ch.IdChannel == map.IdChannel)
+          {
+            if (ch.VisibleInGuide && ch.IsTv)
+            {
+              _tvChannelList.Add(ch);
+            }
+            break;
+          }
         }
       }
       ServiceScope.Get<ILogger>().Info("MyTv:   get now&next");
@@ -439,6 +447,9 @@ namespace MyTv
       ServiceScope.Get<ILogger>().Info("MyTv:   add {0} channels", _tvChannelList.Count);
       int selected = 0;
       ChannelState currentChannelState = ChannelState.tunable;
+      string nowLocalize = ServiceScope.Get<ILocalisation>().ToString("mytv", 17);/*Now*/
+      string nextLocalize = ServiceScope.Get<ILocalisation>().ToString("mytv", 18);/*Next*/
+      string currentFolder = System.IO.Directory.GetCurrentDirectory();
       for (int i = 0; i < _tvChannelList.Count; i++)
       {
         //  ServiceScope.Get<ILogger>().Info("MyTv:   add {0} ", i);
@@ -462,8 +473,8 @@ namespace MyTv
           prog = new NowAndNext(currentChannel.IdChannel, DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1), DateTime.Now.AddHours(2), DateTime.Now.AddHours(3), "No data available", "No data available", -1, -1);
 
         string percent = String.Format("{0}-{1}%", currentChannel.Name, CalculateProgress(prog.NowStartTime, prog.NowEndTime).ToString());
-        string now = String.Format("{0}:{1}", ServiceScope.Get<ILocalisation>().ToString("mytv", 17)/*Now*/, prog.TitleNow);
-        string next = String.Format("{0}:{1}", ServiceScope.Get<ILocalisation>().ToString("mytv", 18)/*Next*/, prog.TitleNext);
+        string now = String.Format("{0}:{1}", nowLocalize, prog.TitleNow);
+        string next = String.Format("{0}:{1}", nextLocalize, prog.TitleNext);
 
 
         switch (currentChannelState)
@@ -478,16 +489,12 @@ namespace MyTv
             percent = ServiceScope.Get<ILocalisation>().ToString("mytv", 21)/*(recording)*/  + percent;
             break;
         }
-        string channelLogoFileName = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.GetLogoFileName(currentChannel.Name));
+        string channelLogoFileName = String.Format(@"{0}\{1}", currentFolder, Thumbs.GetLogoFileName(currentChannel.Name));
         if (!System.IO.File.Exists(channelLogoFileName))
         {
           channelLogoFileName = "";
         }
-        DialogMenuItem item = new DialogMenuItem();
-        item.Logo = channelLogoFileName;
-        item.Label1 = now;
-        item.Label2 = next;
-        item.Label3 = percent;
+        DialogMenuItem item = new DialogMenuItem(channelLogoFileName,now,next,percent);
         menuItems.Add(item);
       }
       ServiceScope.Get<ILogger>().Info("MyTv:   create dialog");

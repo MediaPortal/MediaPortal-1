@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -74,6 +75,7 @@ namespace Dialogs
     {
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
 
+      Keyboard.AddGotKeyboardFocusHandler(gridContent, new KeyboardFocusChangedEventHandler(onKeyboardFocus));
       this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
       this.Visibility = Visibility.Visible;
       gridContent.ItemsSource = _menuItems;
@@ -82,9 +84,23 @@ namespace Dialogs
       if (_selectedIndex >= 0)
         gridContent.SelectedIndex = _selectedIndex;
       Keyboard.Focus(gridContent);
-      Keyboard.AddGotKeyboardFocusHandler(gridContent, new KeyboardFocusChangedEventHandler(onKeyboardFocus));
+      gridContent.ItemContainerGenerator.StatusChanged += new EventHandler(ItemContainerGenerator_StatusChanged);
+    }
 
-
+    void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
+    {
+      if (gridContent.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+      {
+        ListBoxItem focusedItem = gridContent.ItemContainerGenerator.ContainerFromIndex(gridContent.SelectedIndex) as ListBoxItem;
+        if (focusedItem != null)
+        {
+          Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
+          ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
+          Button b = gridContent.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
+          Keyboard.Focus(b);
+          b.Focus();
+        }
+      }
     }
     void onKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {
