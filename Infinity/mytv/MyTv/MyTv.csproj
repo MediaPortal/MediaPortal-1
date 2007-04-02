@@ -198,9 +198,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ProjectInfinity.Interface\ProjectInfinity.Interface.csproj">
+    <ProjectReference Include="..\..\ProjectInfinity.Interface\ProjectInfinity.Core.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
-      <Name>ProjectInfinity.Interface</Name>
+      <Name>ProjectInfinity.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Dialogs\Dialogs.csproj">
       <Project>{82284525-5023-452C-89E3-A8765590AAEA}</Project>

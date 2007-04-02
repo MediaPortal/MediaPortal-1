@@ -55,13 +55,13 @@
     <Compile Include="Services\ServiceScopeTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ProjectInfinity.Interface\ProjectInfinity.Interface.csproj">
+    <ProjectReference Include="..\ProjectInfinity.Interface\ProjectInfinity.Core.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
-      <Name>ProjectInfinity.Interface</Name>
+      <Name>ProjectInfinity.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ProjectInfinity.Services\ProjectInfinity.Implementation.csproj">
+    <ProjectReference Include="..\ProjectInfinity.Services\ProjectInfinity.Services.csproj">
       <Project>{4C45C46E-2ED2-4801-B3C3-FC2560E9FFE0}</Project>
-      <Name>ProjectInfinity.Implementation</Name>
+      <Name>ProjectInfinity.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -54,9 +54,9 @@
     <Compile Include="Themes\ThemeManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ProjectInfinity.Interface\ProjectInfinity.Interface.csproj">
+    <ProjectReference Include="..\ProjectInfinity.Interface\ProjectInfinity.Core.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
-      <Name>ProjectInfinity.Interface</Name>
+      <Name>ProjectInfinity.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProjectInfinity.Utilities\ProjectInfinity.Utilities.csproj">
       <Project>{4FE7B8AE-1330-424A-91A1-C68D7ABF9CB8}</Project>

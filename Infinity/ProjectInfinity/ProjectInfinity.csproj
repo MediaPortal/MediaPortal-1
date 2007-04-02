@@ -90,13 +90,13 @@
       <Project>{7D7C667F-2839-429D-B45A-EA4CF0A244F2}</Project>
       <Name>ExtendedMusicPlayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ProjectInfinity.Interface\ProjectInfinity.Interface.csproj">
+    <ProjectReference Include="..\ProjectInfinity.Interface\ProjectInfinity.Core.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
-      <Name>ProjectInfinity.Interface</Name>
+      <Name>ProjectInfinity.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ProjectInfinity.Services\ProjectInfinity.Implementation.csproj">
+    <ProjectReference Include="..\ProjectInfinity.Services\ProjectInfinity.Services.csproj">
       <Project>{4C45C46E-2ED2-4801-B3C3-FC2560E9FFE0}</Project>
-      <Name>ProjectInfinity.Implementation</Name>
+      <Name>ProjectInfinity.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProjectInfinity.Utilities\ProjectInfinity.Utilities.csproj">
       <Project>{4FE7B8AE-1330-424A-91A1-C68D7ABF9CB8}</Project>

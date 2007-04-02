@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity.Interface", "ProjectInfinity.Interface\ProjectInfinity.Interface.csproj", "{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity.Core", "ProjectInfinity.Interface\ProjectInfinity.Core.csproj", "{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity.Implementation", "ProjectInfinity.Services\ProjectInfinity.Implementation.csproj", "{4C45C46E-2ED2-4801-B3C3-FC2560E9FFE0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity.Services", "ProjectInfinity.Services\ProjectInfinity.Services.csproj", "{4C45C46E-2ED2-4801-B3C3-FC2560E9FFE0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity.Tests", "ProjectInfinity.Tests\ProjectInfinity.Tests.csproj", "{5063560E-9D12-4382-9887-F5E36D466003}"
 EndProject
