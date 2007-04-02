@@ -74,20 +74,11 @@ namespace SetupTv.Sections
     {
       Log.Info("ComSkipLauncher: Configuration deactivated");
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting;
+      ComSkipLauncher.RunAtStart = this.RunAtStart;
+      ComSkipLauncher.Program = this.Program;
+      ComSkipLauncher.Parameters = this.Parameters;
 
-      setting = layer.GetSetting("ComSkipLauncher_RunAtStart");
-      setting.Value = RunAtStart.ToString();
-      setting.Persist();
-
-      setting = layer.GetSetting("ComSkipLauncher_Program");
-      setting.Value = Program;
-      setting.Persist();
-
-      setting = layer.GetSetting("ComSkipLauncher_Parameters");
-      setting.Value = Parameters;
-      setting.Persist();
+      ComSkipLauncher.SaveSettings();
 
       base.OnSectionDeActivated();
     }
@@ -95,11 +86,11 @@ namespace SetupTv.Sections
     {
       Log.Info("ComSkipLauncher: Configuration activated");
 
-      TvBusinessLayer layer = new TvBusinessLayer();
+      ComSkipLauncher.LoadSettings();
 
-      RunAtStart   = Convert.ToBoolean(layer.GetSetting("ComSkipLauncher_RunAtStart", "True").Value);
-      Program      = layer.GetSetting("ComSkipLauncher_Program", ComSkipLauncher.DefaultProgram).Value;
-      Parameters   = layer.GetSetting("ComSkipLauncher_Parameters", ComSkipLauncher.DefaultParameters).Value;
+      RunAtStart  = ComSkipLauncher.RunAtStart;
+      Program     = ComSkipLauncher.Program;
+      Parameters  = ComSkipLauncher.Parameters;
 
       base.OnSectionActivated();
     }

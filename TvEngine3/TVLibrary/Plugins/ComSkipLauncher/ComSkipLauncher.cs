@@ -23,16 +23,17 @@ namespace TvEngine
 
     #region Constants
 
-    public static readonly string DefaultProgram     = "\\Program Files\\ComSkip\\ComSkip.exe";
-    public static readonly string DefaultParameters  = "\"{0}\"";
+    static readonly bool    DefaultRunAtStrart  = true;
+    static readonly string  DefaultProgram      = "ComSkip.exe";
+    static readonly string  DefaultParameters   = "\"{0}\"";
 
     #endregion Constants
 
     #region Members
 
-    bool _runAtStart    = true;
-    string _program     = DefaultProgram;
-    string _parameters  = DefaultParameters;
+    static bool   _runAtStart   = DefaultRunAtStrart;
+    static string _program      = DefaultProgram;
+    static string _parameters   = DefaultParameters;
 
     #endregion Members
 
@@ -66,6 +67,22 @@ namespace TvEngine
     public bool MasterOnly
     {
       get { return false; }
+    }
+
+    internal static bool RunAtStart
+    {
+      get { return _runAtStart; }
+      set { _runAtStart = value; }
+    }
+    internal static string Program
+    {
+      get { return _program; }
+      set { _program = value; }
+    }
+    internal static string Parameters
+    {
+      get { return _parameters; }
+      set { _parameters = value; }
     }
 
     #endregion Properties
@@ -107,17 +124,21 @@ namespace TvEngine
 
         if (tvEvent.EventType == TvServerEventType.RecordingStarted && _runAtStart)
         {
-          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, tvEvent.channel.Name);
-
-          Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, tvEvent.channel.Name, _program, parameters);
+          Channel channel = TvDatabase.Channel.Retrieve(tvEvent.Recording.IdChannel);
+          
+          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.Name);
+          
+          Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, channel.Name, _program, parameters);
 
           LaunchProcess(_program, parameters, Path.GetDirectoryName(tvEvent.Recording.FileName), ProcessWindowStyle.Hidden);
         }
         else if (tvEvent.EventType == TvServerEventType.RecordingEnded && !_runAtStart)
         {
-          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, tvEvent.channel.Name);
+          Channel channel = TvDatabase.Channel.Retrieve(tvEvent.Recording.IdChannel);
 
-          Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, tvEvent.channel.Name, _program, parameters);
+          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.Name);
+
+          Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, channel.Name, _program, parameters);
 
           LaunchProcess(_program, parameters, Path.GetDirectoryName(tvEvent.Recording.FileName), ProcessWindowStyle.Hidden);
         }
@@ -128,23 +149,47 @@ namespace TvEngine
       }
     }
 
-    void LoadSettings()
+    internal static void LoadSettings()
     {
       try
       {
         TvBusinessLayer layer = new TvBusinessLayer();
 
-        _runAtStart  = Convert.ToBoolean(layer.GetSetting("ComSkipLauncher_RunAtStart", "False").Value);
+        _runAtStart   = Convert.ToBoolean(layer.GetSetting("ComSkipLauncher_RunAtStart", DefaultRunAtStrart.ToString()).Value);
         _program     = layer.GetSetting("ComSkipLauncher_Program", DefaultProgram).Value;
         _parameters  = layer.GetSetting("ComSkipLauncher_Parameters", DefaultParameters).Value;
       }
       catch (Exception ex)
       {
-        _runAtStart = true;
+        _runAtStart = DefaultRunAtStrart;
         _program    = DefaultProgram;
         _parameters = DefaultParameters;
 
         Log.Error("ComSkipLauncher - LoadSettings(): {0}", ex.Message);
+      }
+    }
+    internal static void SaveSettings()
+    {
+      try
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting setting;
+
+        setting = layer.GetSetting("ComSkipLauncher_RunAtStart");
+        setting.Value = _runAtStart.ToString();
+        setting.Persist();
+
+        setting = layer.GetSetting("ComSkipLauncher_Program");
+        setting.Value = _program;
+        setting.Persist();
+
+        setting = layer.GetSetting("ComSkipLauncher_Parameters");
+        setting.Value = _parameters;
+        setting.Persist();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("ComSkipLauncher - SaveSettings(): {0}", ex.Message);
       }
     }
 
