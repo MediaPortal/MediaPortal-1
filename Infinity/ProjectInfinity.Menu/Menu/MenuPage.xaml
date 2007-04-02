@@ -1,7 +1,7 @@
 ﻿<Page x:Class="ProjectInfinity.Menu.View.MenuPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:menu="clr-namespace:ProjectInfinity.Menu;assembly=ProjectInfinity.Implementation" 
+    xmlns:menu="clr-namespace:ProjectInfinity.Menu;assembly=ProjectInfinity.Services" 
     Title="MenuPage" Background="{StaticResource backGroundBrush}" 
     >
   <Page.Resources>
