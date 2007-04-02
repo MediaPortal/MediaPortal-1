@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿﻿<?xml version="1.0" encoding="utf-8"?>
 <Language name="Hungarian" characters="512">
   <Section name="unmapped">
     <String id="0">Programok</String>
@@ -1285,7 +1285,7 @@
     <String id="2080">Nem támogatott fájl típus</String>
     <String id="2081">Nem tudom vágni</String>
     <String id="2082">Mpeg:A vágás befejeződött</String>
-    <String id="2083">Dvrms:A vágás befejeződött</String>
+    <String id="2083">Szeretné törölni az eredeti fájlt?</String>
     <String id="2084">kezdet</String>
     <String id="2085">vége</String>
     <String id="2086">előre</String>
@@ -1593,5 +1593,13 @@
     <String id="6033">Kulcsszó szerinti keresés</String>
     <String id="6034">Műfaj szerinti keresés</String>
     <String id="6035">Ütemezés hozzáadása</String>
+    <String id="6">Hiányzó cimke!</String>
+    <String id="1055">(csúsztatott felvétel)</String>
+    <String id="1054">(felvétel)</String>
+    <String id="1056">(nem elérhető)</String>
+    <String id="2062">alacsony</String>
+    <String id="2063">közepes</String>
+    <String id="2064">magas</String>
+    <String id="108888">Zenei menü</String>
   </Section>
 </Language>
