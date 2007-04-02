@@ -16,6 +16,9 @@ using TvControl;
 using Gentle.Common;
 using Gentle.Framework;
 using Dialogs;
+using ProjectInfinity;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Localisation;
 
 namespace MyTv
 {
@@ -48,6 +51,14 @@ namespace MyTv
     }
     void ShowUpcomingEpisodes()
     {
+      labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 110);//schedule info
+      buttonRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 13);//Record
+      buttonAdvancedRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 42);//Advanced Record
+      buttonKeepUntil.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 47);//Keep Until
+      buttonQuality.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 49);//Quality setting
+      buttonEpisodes.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 50);//Episodes management
+      buttonPreRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 51);//Pre-record
+      buttonPostRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 52);//Post-record
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
       gridList.Children.Clear();
       Grid grid = new Grid();
@@ -64,7 +75,7 @@ namespace MyTv
 
       if (_isRecording)
       {
-        buttonRecord.Content = "Dont record";
+        buttonRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 53);//Dont Record
         buttonAdvancedRecord.IsEnabled = false;
         buttonKeepUntil.IsEnabled = true;
         buttonQuality.IsEnabled = true;
@@ -74,7 +85,7 @@ namespace MyTv
       }
       else
       {
-        buttonRecord.Content = "Record";
+        buttonRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 13);//Record
         buttonAdvancedRecord.IsEnabled = true;
         buttonKeepUntil.IsEnabled = false;
         buttonQuality.IsEnabled = true;
@@ -320,8 +331,8 @@ namespace MyTv
           dlgMenu.Items.Clear();
           dlgMenu.Header = "Menu";
           dlgMenu.SubTitle = "";
-          dlgMenu.Items.Add(new DialogMenuItem("Delete this recording"));
-          dlgMenu.Items.Add(new DialogMenuItem("Delete series recording"));
+          dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 54)/*"Delete this recording*/));
+          dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 55)/*"Delete series recording*/));
           dlgMenu.ShowDialog();
           if (dlgMenu.SelectedIndex == -1)
             return;
@@ -391,8 +402,8 @@ namespace MyTv
       Window w = Window.GetWindow(this);
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
-      dlgMenu.Header = "Delete";
-      dlgMenu.Content = "Delete this recording ? This schedule is recording. If you delete the schedule then the recording will be stopped.";
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 56);// "Delete";
+      dlgMenu.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 57);// "Delete this recording ? This schedule is recording. If you delete the schedule then the recording will be stopped.";
       dlgMenu.ShowDialog();
       if (dlgMenu.DialogResult == DialogResult.Yes)
       {
@@ -454,16 +465,16 @@ namespace MyTv
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
-      dlgMenu.Header = "Record";
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 13);//Record
       dlgMenu.SubTitle = "";
-      dlgMenu.Items.Add(new DialogMenuItem("None"));
-      dlgMenu.Items.Add(new DialogMenuItem("Record once"));
-      dlgMenu.Items.Add(new DialogMenuItem("Record everytime on this channel"));
-      dlgMenu.Items.Add(new DialogMenuItem("Record everytime on every channel"));
-      dlgMenu.Items.Add(new DialogMenuItem("Record every week at this time"));
-      dlgMenu.Items.Add(new DialogMenuItem("Record every day at this time")); ;
-      dlgMenu.Items.Add(new DialogMenuItem("Record Mon-fri"));
-      dlgMenu.Items.Add(new DialogMenuItem("Record Sat-Sun"));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 58)/* "None"*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 59)/*"Record once"*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 60)/*"Record everytime on this channel"*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 61)/*"Record everytime on every channel"*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 62)/*"Record every week at this time"*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 63)/*"Record every day at this time"*/)); ;
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 64)/*"Record Mon-fri"*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 65)/*"Record Sat-Sun"*/));
       dlgMenu.ShowDialog();
 
       if (dlgMenu.SelectedIndex < 1) return;
@@ -521,8 +532,8 @@ namespace MyTv
             Window ww = Window.GetWindow(this);
             dlgYesNo.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             dlgYesNo.Owner = ww;
-            dlgYesNo.Header = "Multipart";
-            dlgYesNo.Content = String.Format("This program will be interrupted by {0} Would you like to record the second part also?");
+            dlgYesNo.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 66);//""Multipart";
+            dlgYesNo.Content = String.Format(ServiceScope.Get<ILocalisation>().ToString("mytv", 667)/*This program will be interrupted by {0} Would you like to record the second part also?")*/, next.Title);
             dlgYesNo.ShowDialog();
             if (dlgYesNo.DialogResult == DialogResult.Yes)
             {
@@ -548,12 +559,12 @@ namespace MyTv
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
-      dlgMenu.Header = "Menu";
-      dlgMenu.SubTitle = "Until";
-      dlgMenu.Items.Add(new DialogMenuItem("Until space needed"));
-      dlgMenu.Items.Add(new DialogMenuItem("Until watched"));
-      dlgMenu.Items.Add(new DialogMenuItem("Until Date"));
-      dlgMenu.Items.Add(new DialogMenuItem("Always"));
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);//"Menu";
+      dlgMenu.SubTitle = ServiceScope.Get<ILocalisation>().ToString("mytv", 47);// Keep Until";
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 69)/*Until space needed*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 70)/*Until watched*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 71)/*Until Date*/));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 72)/*Always*/));
       dlgMenu.SelectedIndex = (int)_schedule.KeepMethod;
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;//nothing selected
@@ -588,13 +599,14 @@ namespace MyTv
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
-      dlgMenu.Header = "PreRecord";
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 51);//"Pre-record";
       dlgMenu.SubTitle = "";
-      dlgMenu.Items.Add(new DialogMenuItem("Default"));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 74)/*Default*/));
       for (int minute = 0; minute < 20; minute++)
       {
-        dlgMenu.Items.Add(new DialogMenuItem(String.Format("{0} mins", minute)));
+        dlgMenu.Items.Add(new DialogMenuItem(String.Format("{0} {1}", minute, ServiceScope.Get<ILocalisation>().ToString("mytv", 75)/*minutes*/)));
       }
+
       if (_schedule.PreRecordInterval < 0) dlgMenu.SelectedIndex = 0;
       else dlgMenu.SelectedIndex = _schedule.PreRecordInterval + 1;
       dlgMenu.ShowDialog();
@@ -612,12 +624,12 @@ namespace MyTv
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
-      dlgMenu.Header = "PostRecord";
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 52);//Post-record
       dlgMenu.SubTitle = "";
-      dlgMenu.Items.Add(new DialogMenuItem("Default"));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 74)/*Default*/));
       for (int minute = 0; minute < 20; minute++)
       {
-        dlgMenu.Items.Add(new DialogMenuItem(String.Format("{0} mins", minute)));
+        dlgMenu.Items.Add(new DialogMenuItem(String.Format("{0} {1}", minute, ServiceScope.Get<ILocalisation>().ToString("mytv", 75)/*minutes*/)));
       }
       if (_schedule.PostRecordInterval < 0) dlgMenu.SelectedIndex = 0;
       else dlgMenu.SelectedIndex = _schedule.PostRecordInterval + 1;
@@ -637,11 +649,11 @@ namespace MyTv
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = w;
       dlgMenu.Items.Clear();
-      dlgMenu.Header = "Episodes";
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 50);//Episodes management
       dlgMenu.SubTitle = "";
-      dlgMenu.Items.Add(new DialogMenuItem("All"));
+      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 76)/*All*/));
       for (int i = 1; i < 40; ++i)
-        dlgMenu.Items.Add(new DialogMenuItem(i.ToString() + " episodes"));
+        dlgMenu.Items.Add(new DialogMenuItem(i.ToString() + ServiceScope.Get<ILocalisation>().ToString("mytv", 77)/*episodes*/));
       if (_schedule.MaxAirings == Int32.MaxValue)
         dlgMenu.SelectedIndex = 0;
       else
