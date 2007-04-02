@@ -80,7 +80,10 @@ namespace ProjectInfinity.Plugins
       }
       IPlugin plugin = (IPlugin) Activator.CreateInstance(pluginTypes[pluginName]);
       plugin.Initialize();
-      runningPlugins.Add(pluginName, plugin);
+      if (!runningPlugins.ContainsKey(pluginName))
+      {
+        runningPlugins.Add(pluginName, plugin);
+      }
       OnPluginStarted(new PluginStartStopEventArgs(pluginName));
     }
 
@@ -93,7 +96,7 @@ namespace ProjectInfinity.Plugins
       foreach (IPluginInfo info in GetAvailablePlugins())
       {
         if (info.AutoStart)
-        Start(info.Name);
+          Start(info.Name);
       }
     }
 
@@ -148,7 +151,7 @@ namespace ProjectInfinity.Plugins
           {
             continue;
           }
-          PluginAttribute[] attributes = (PluginAttribute[]) type.GetCustomAttributes(typeof (PluginAttribute), false);
+          PluginAttribute[] attributes = (PluginAttribute[])type.GetCustomAttributes(typeof(PluginAttribute), false);
           if (attributes.Length == 0)
           {
             continue;
