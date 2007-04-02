@@ -241,6 +241,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\ChannelLinkageScanner.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\ChannelScan.cpp"
 				>
 			</File>
@@ -321,6 +325,10 @@
 				>
 				<File
 					RelativePath=".\source\ChannelInfo.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\source\ChannelLinkageParser.cpp"
 					>
 				</File>
 				<File
@@ -458,6 +466,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\ChannelLinkageScanner.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\ChannelScan.h"
 				>
 			</File>
@@ -534,6 +546,10 @@
 				>
 				<File
 					RelativePath=".\source\ChannelInfo.h"
+					>
+				</File>
+				<File
+					RelativePath=".\source\ChannelLinkageParser.h"
 					>
 				</File>
 				<File
