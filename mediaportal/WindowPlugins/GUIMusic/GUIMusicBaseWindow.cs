@@ -188,10 +188,12 @@ namespace MediaPortal.GUI.Music
         return false;
       return true;
     }
+
     protected virtual bool AllowSortMethod(MusicSort.SortMethod method)
     {
       return true;
     }
+
     protected virtual View CurrentView
     {
       get { return currentView; }
@@ -381,80 +383,18 @@ namespace MediaPortal.GUI.Music
 
       if (control == btnSortBy)
       {
-        bool shouldContinue = false;
+        OnShowSort();
 
-        do
-        {
-          shouldContinue = false;
+        // bool shouldContinue = false;
 
-          switch (CurrentSortMethod)
-          {
-            case MusicSort.SortMethod.Name:
-              CurrentSortMethod = MusicSort.SortMethod.Artist;
-              break;
-            case MusicSort.SortMethod.Artist:
-              CurrentSortMethod = MusicSort.SortMethod.Title;
-              break;
-            case MusicSort.SortMethod.Title:
-              CurrentSortMethod = MusicSort.SortMethod.Album;
-              break;
-            case MusicSort.SortMethod.Album:
-              CurrentSortMethod = MusicSort.SortMethod.Track;
-              break;
-            case MusicSort.SortMethod.Track:
-              CurrentSortMethod = MusicSort.SortMethod.Rating;
-              break;
-            case MusicSort.SortMethod.Rating:
-              CurrentSortMethod = MusicSort.SortMethod.Date;
-              break;
-            case MusicSort.SortMethod.Date:
-              CurrentSortMethod = MusicSort.SortMethod.Size;
-              break;
-            case MusicSort.SortMethod.Size:
-              CurrentSortMethod = MusicSort.SortMethod.Duration;
-              break;
-            case MusicSort.SortMethod.Duration:
-              CurrentSortMethod = MusicSort.SortMethod.Filename;
-              break;
-            case MusicSort.SortMethod.Filename:
-              CurrentSortMethod = MusicSort.SortMethod.Name;
-              break;
-          }
-          //          switch (CurrentSortMethod)
-          //{
-          //  case MusicSort.SortMethod.Name:
-          //    CurrentSortMethod = MusicSort.SortMethod.Date;
-          //    break;
-          //  case MusicSort.SortMethod.Date:
-          //    CurrentSortMethod = MusicSort.SortMethod.Size;
-          //    break;
-          //  case MusicSort.SortMethod.Size:
-          //    CurrentSortMethod = MusicSort.SortMethod.Track;
-          //    break;
-          //  case MusicSort.SortMethod.Track:
-          //    CurrentSortMethod = MusicSort.SortMethod.Duration;
-          //    break;
-          //  case MusicSort.SortMethod.Duration:
-          //    CurrentSortMethod = MusicSort.SortMethod.Title;
-          //    break;
-          //  case MusicSort.SortMethod.Title:
-          //    CurrentSortMethod = MusicSort.SortMethod.Album;
-          //    break;
-          //  case MusicSort.SortMethod.Album:
-          //    CurrentSortMethod = MusicSort.SortMethod.Filename;
-          //    break;
-          //  case MusicSort.SortMethod.Filename:
-          //    CurrentSortMethod = MusicSort.SortMethod.Rating;
-          //    break;
-          //  case MusicSort.SortMethod.Rating:
-          //    CurrentSortMethod = MusicSort.SortMethod.Name;
-          //    break;
-          //}
-          if (!AllowSortMethod(CurrentSortMethod))
-            shouldContinue = true;
-        } while (shouldContinue);
-        OnSort();
-        GUIControl.FocusControl(GetID, control.GetID);
+        //do
+        //{
+        //  shouldContinue = false;
+
+        //  if (!AllowSortMethod(CurrentSortMethod))
+        //    shouldContinue = true;
+        //} while (shouldContinue);
+
       }//if (control==btnSortBy)
 
       if (control == btnViews)
@@ -638,19 +578,17 @@ namespace MediaPortal.GUI.Music
         if (g_Player.CurrentFile.Contains(@"/last.mp3?"))
           g_Player.Stop();
 
-
-      if (m_database == null)
-      {
+      if (m_database == null)      
         m_database = new MusicDatabase();
-      }
-      if (handler == null)
-      {
+      
+      if (handler == null)      
         handler = new MusicViewHandler();
-      }
+      
       LoadSettings();
 
       if (btnSortBy != null)
         btnSortBy.SortChanged += new SortEventHandler(SortChanged);
+
       base.OnPageLoad();
     }
 
@@ -963,13 +901,78 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    protected void OnShowSort()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+        return;
+      dlg.Reset();
+      dlg.SetHeading(495);
+
+      dlg.AddLocalizedString(103); // name
+      dlg.AddLocalizedString(269); // artist
+      dlg.AddLocalizedString(270); // album
+      dlg.AddLocalizedString(266); // track
+      dlg.AddLocalizedString(268); // title
+      dlg.AddLocalizedString(363); // filename
+      dlg.AddLocalizedString(367); // rating
+      dlg.AddLocalizedString(267); // duration
+      dlg.AddLocalizedString(105); // size
+      dlg.AddLocalizedString(104); // date
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedLabel == -1)
+        return;
+
+      switch (dlg.SelectedId)
+      {
+        case 103:
+          CurrentSortMethod = MusicSort.SortMethod.Name;
+          break;
+        case 269:
+          CurrentSortMethod = MusicSort.SortMethod.Artist;
+          break;
+        case 270:
+          CurrentSortMethod = MusicSort.SortMethod.Album;
+          break;
+        case 266:
+          CurrentSortMethod = MusicSort.SortMethod.Track;
+          break;
+        case 268:
+          CurrentSortMethod = MusicSort.SortMethod.Title;
+          break;
+        case 363:
+          CurrentSortMethod = MusicSort.SortMethod.Filename;
+          break;
+        case 367:
+          CurrentSortMethod = MusicSort.SortMethod.Rating;
+          break;
+        case 267:
+          CurrentSortMethod = MusicSort.SortMethod.Duration;
+          break;
+        case 105:
+          CurrentSortMethod = MusicSort.SortMethod.Size;
+          break;
+        case 104:
+          CurrentSortMethod = MusicSort.SortMethod.Date;
+          break;
+        default:
+          CurrentSortMethod = MusicSort.SortMethod.Name;
+          break;
+      }
+      
+      OnSort();
+      GUIControl.FocusControl(GetID, btnSortBy.GetID);
+    }
+
     protected void OnShowViews()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
         return;
       dlg.Reset();
-      dlg.SetHeading(499); // menu
+      dlg.SetHeading(499); // Actions
       dlg.Add(GUILocalizeStrings.Get(134));//songs
       foreach (ViewDefinition view in handler.Views)
       {
@@ -1721,8 +1724,6 @@ namespace MediaPortal.GUI.Music
 
       OnSort();
       UpdateButtonStates();
-
-      //			GUIControl.FocusControl(GetID, control.GetID);
     }
 
     protected virtual bool IsSortableView(ViewDefinition view, int viewLevel)
