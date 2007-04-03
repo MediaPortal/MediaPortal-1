@@ -842,7 +842,7 @@ namespace TvService
         if (description == null) description = "";
         if (genre == null) genre = "";
 
-        TvDatabase.Program newProgram = new TvDatabase.Program(channel.IdChannel, program.StartTime, program.EndTime, title, description, genre, false);
+        TvDatabase.Program newProgram = new TvDatabase.Program(channel.IdChannel, program.StartTime, program.EndTime, title, description, genre, false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty);
         newProgram.Persist();
         lastProgram = program.EndTime;
 

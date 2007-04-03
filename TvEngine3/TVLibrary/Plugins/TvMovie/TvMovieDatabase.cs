@@ -614,7 +614,10 @@ namespace TvEngine
                 break;
               }
             }
-            Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false);
+            DateTime OnAirDate = DateTime.MinValue;
+            OnAirDate.AddYears(Convert.ToInt32(date) - DateTime.MinValue.Year);
+
+            Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, starRating, classification);
 
             if (audioFormat == String.Empty)
               prog.Description = description.Replace("<br>", "\n");

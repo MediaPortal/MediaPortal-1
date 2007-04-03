@@ -52,7 +52,7 @@ namespace TvDatabase
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
-    public Program(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre, bool notify)
+    public Program(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre, bool notify, DateTime originalAirDate, string seriesNum, string episodeNum, int starRating, string classification)
     {
       isChanged = true;
       this.idChannel = idChannel;
@@ -62,13 +62,18 @@ namespace TvDatabase
       this.description = description;
       this.genre = genre;
       this.notify = notify;
+      this.originalAirDate = originalAirDate;
+      this.seriesNum = seriesNum;
+      this.episodeNum = episodeNum;
+      this.starRating = starRating;
+      this.classification = classification;
     }
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
     /// </summary> 
-    public Program(int idProgram, int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre, bool notify)
+    public Program(int idProgram, int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre, bool notify, DateTime originalAirDate, string seriesNum, string episodeNum, int starRating, string classification)
     {
       this.idProgram = idProgram;
       this.idChannel = idChannel;
@@ -78,6 +83,11 @@ namespace TvDatabase
       this.description = description;
       this.genre = genre;
       this.notify = notify;
+      this.originalAirDate = originalAirDate;
+      this.seriesNum = seriesNum;
+      this.episodeNum = episodeNum;
+      this.starRating = starRating;
+      this.classification = classification;
     }
     #endregion
 
@@ -411,7 +421,7 @@ namespace TvDatabase
 
     public Program Clone()
     {
-      Program p = new Program(idChannel, StartTime, EndTime, Title, Description, Genre, Notify);
+      Program p = new Program(idChannel, StartTime, EndTime, Title, Description, Genre, Notify, OriginalAirDate, SeriesNum, EpisodeNum, StarRating, Classification);
       return p;
     }
   }
