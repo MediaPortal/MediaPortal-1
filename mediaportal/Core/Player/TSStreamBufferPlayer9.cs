@@ -670,7 +670,7 @@ namespace MediaPortal.Player
 
         if (_mediaCtrl != null)
         {
-          hr = _mediaCtrl.Stop();
+            hr = _mediaCtrl.Stop();
         }
         _mediaCtrl = null;
         _mediaEvt = null;
@@ -679,14 +679,12 @@ namespace MediaPortal.Player
         _basicAudio = null;
         _basicVideo = null;
 
-
         if (_fileSource != null)
         {
           while ((hr = Marshal.ReleaseComObject(_fileSource)) > 0)
             ;
           _fileSource = null;
         }
-
 
         if (_vmr9 != null)
         {
@@ -748,7 +746,6 @@ namespace MediaPortal.Player
           _mpegDemux = null;
         }
 
-
         DirectShowUtil.RemoveFilters(_graphBuilder);
 
         if (_rotEntry != null)
@@ -796,7 +793,6 @@ namespace MediaPortal.Player
         _videoHeight = _vmr9.VideoHeight;
       }
     }
-
 
     public override void SeekAbsolute(double dTimeInSecs)
     {
