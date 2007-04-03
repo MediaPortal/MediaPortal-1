@@ -136,6 +136,7 @@ namespace MediaPortal.TagReader
               musicTag.FileName = strFile;
               musicTag.BitRate = reader.AverageBitrate;
               musicTag.Lyrics = Utils.CleanLyrics(reader.Lyrics);
+              musicTag.Rating = reader.Rating;
               if (musicTag.CoverArtImageBytes != null)
               {
                 System.Drawing.Image img = musicTag.CoverArtImage;

@@ -376,6 +376,11 @@ namespace Tag.MAC
       get { return GetFieldString(APE_TAG_FIELD_PUBLISHER_URL); }
     }
 
+    public override int Rating
+    {
+      get { return base.Rating; }
+    }
+
     public override string ReplayGainAlbum
     {
       get { return GetFieldString(APE_TAG_FIELD_REPLAY_GAIN_ALBUM); }

@@ -660,6 +660,36 @@ namespace Tag.MP3
       }
     }
 
+    /// <summary>
+    /// Returns the Rating of the song.
+    /// we act according to MediaMonkey and mp3tag.
+    /// Scanning for POPM/POP frames and look for the user with no@email
+    /// </summary>
+    public override int Rating
+    {
+      get
+      {
+        byte[] frame = this.GetFrameValueStringSearch(FrameNames.POPM, FrameNamesV2.POP, "no@email");
+        
+        if (frame == null)
+          return 0;
+
+        int rating = frame[9];
+        if (rating > 205)
+          return 5;
+        else if (rating > 154)
+          return 4;
+        else if (rating > 104)
+          return 3;
+        else if (rating > 53)
+          return 2;
+        else if (rating > 0)
+          return 1;
+
+        return 0; // Should never happen :-)
+      }
+    }
+
     public override string ReplayGainAlbum
     {
       get
@@ -1010,18 +1040,25 @@ namespace Tag.MP3
       return frame.Data;
     }
 
-    private string GetFrameValueStringSearch(string sPartialFieldName)
+    private byte[] GetFrameValueStringSearch(string sFrameID, string sFrameIDv2, string sSearchString)
     {
-      if (sPartialFieldName.Length < 5)
-        return string.Empty;
+      if (sSearchString == String.Empty)
+        return null;
 
-      sPartialFieldName = sPartialFieldName.ToLower();
+      sSearchString = sSearchString.ToLower();
 
       foreach (ID3Frame frame in Id3Tag.ID3Frames)
       {
+        if (sFrameID.CompareTo(frame.ID) == 0 || sFrameIDv2.CompareTo(frame.ID) == 0)
+        {
+          System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
+          string data = enc.GetString(frame.BinaryData);
+          if (data.ToLower().Contains(sSearchString))
+            return frame.BinaryData;
+        }
       }
 
-      return string.Empty;
+      return null;
     }
 
     private int GetFrameValueInt(string sFrameID)

@@ -57,6 +57,7 @@ namespace MediaPortal.TagReader
     string Notes { get; }
     string PeakLevel { get; }
     string PublisherURL { get; }
+    int Rating { get; }
     string ReplayGainAlbum { get; }
     string ReplayGainRadio { get; }
     int SampleRate { get; }

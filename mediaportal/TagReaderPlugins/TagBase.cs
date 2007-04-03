@@ -192,6 +192,11 @@ namespace Tag
       get { return string.Empty; }
     }
 
+    virtual public int Rating
+    {
+      get { return 0; }
+    }
+
     virtual public string ReplayGainAlbum
     {
       get { return string.Empty; }
