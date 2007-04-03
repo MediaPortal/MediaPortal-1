@@ -176,7 +176,6 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
 CDVBSub::~CDVBSub()
 {
 	LogDebug( "CDVBSub::~CDVBSub() - start" );
-
   if( m_pSubDecoder )
   {
     m_pSubDecoder->SetObserver( NULL );
@@ -295,10 +294,12 @@ STDMETHODIMP CDVBSub::Stop()
   //Reset(); 
 
   m_bStopping = true;
+  LogDebug( "Release ITSFileSource" );
   m_pTSFileSource->Release();
   m_pTSFileSource = NULL;
+  LogDebug( "Release ITSFileSource - done" );
 
-	HRESULT hr = CBaseFilter::Stop();
+  HRESULT hr = CBaseFilter::Stop();
   LogDebug("CDVBSub::Stop - end" );
   return hr;
 }
