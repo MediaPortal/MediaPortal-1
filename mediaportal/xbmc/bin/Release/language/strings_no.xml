@@ -422,6 +422,10 @@
     <String id="491">Bruk store ikoner</String>
     <String id="492">Lydspråk</String>
     <String id="493">Skuespiller:</String>
+    <String id="496">Instillinger</String>
+    <String id="497">Bruker</String>
+    <String id="498">Valg</String>
+    <String id="499">Visning meny</String>
     <String id="500">Filmeny</String>
     <String id="501">Sett som mål</String>
     <String id="502">Kan ikke fullføre handlingen</String>
@@ -985,10 +989,13 @@
     <String id="2052">Søk i oppskrift</String>
     <String id="2053">Kategori</String>
     <String id="2054">Ingen innslag!</String>
-    <String id="2065">Vennligst, velg hvilken mpg fil du vil konvertere til divx:</String>
+    <String id="2059">Comskip filen ikke funnet</String>
+    <String id="2060">Vil du like å bruke denne</String>
+    <String id="2061">Ikke kompatibel Comskip-fil</String>
     <String id="2062">lav</String>
     <String id="2063">medium</String>
     <String id="2064">høy</String>
+    <String id="2065">Vennligst, velg hvilken mpg fil du vil konvertere til divx:</String>
     <String id="2066">Mpeg til divx</String>
     <String id="2067">Vennligst, velg hvilken dvr-ms fil du vil konvertere til divx:</String>
     <String id="2068">Dvr-ms til divx</String>
