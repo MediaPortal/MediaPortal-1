@@ -6,5 +6,6 @@ namespace ProjectInfinity.Menu
 {
   public interface IPluginItem : IMenuItem
   {
+    string Description { get;}
   }
 }

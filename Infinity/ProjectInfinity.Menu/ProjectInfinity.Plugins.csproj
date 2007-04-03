@@ -49,10 +49,13 @@
     <Page Include="Menu\MenuPage.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Menu\MenuViewModel.cs" />
+    <Compile Include="Menu\PluginItemViewModel.cs" />
     <Compile Include="Menu\MenuPage.xaml.cs">
       <DependentUpon>MenuPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Menu\MenuPlugin.cs" />
+    <Compile Include="Menu\MenuItemViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
