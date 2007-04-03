@@ -472,6 +472,9 @@ namespace MediaPortal.Music.Database
 
     public void SetRating(string filename, int rating)
     {
+      if (filename == string.Empty || filename.Length == 0)
+        return;
+
       try
       {
         Song song = new Song();
