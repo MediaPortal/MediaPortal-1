@@ -224,36 +224,7 @@ namespace MediaPortal.GUI.Video
 
       if (control == btnSortBy)
       {
-        bool shouldContinue = false;
-        do
-        {
-          shouldContinue = false;
-          switch (CurrentSortMethod)
-          {
-            case VideoSort.SortMethod.Name:
-              CurrentSortMethod = VideoSort.SortMethod.Date;
-              break;
-            case VideoSort.SortMethod.Date:
-              CurrentSortMethod = VideoSort.SortMethod.Size;
-              break;
-            case VideoSort.SortMethod.Size:
-              CurrentSortMethod = VideoSort.SortMethod.Year;
-              break;
-            case VideoSort.SortMethod.Year:
-              CurrentSortMethod = VideoSort.SortMethod.Rating;
-              break;
-            case VideoSort.SortMethod.Rating:
-              CurrentSortMethod = VideoSort.SortMethod.Label;
-              break;
-            case VideoSort.SortMethod.Label:
-              CurrentSortMethod = VideoSort.SortMethod.Name;
-              break;
-          }
-          if (!AllowSortMethod(CurrentSortMethod))
-            shouldContinue = true;
-        } while (shouldContinue);
-        OnSort();
-        GUIControl.FocusControl(GetID, control.GetID);
+        OnShowSortOptions();
       }//if (control==btnSortBy)
 
 
@@ -318,7 +289,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
     }
-
+    
     protected void SelectCurrentItem()
     {
       int iItem = facadeView.SelectedListItemIndex;
@@ -568,6 +539,55 @@ namespace MediaPortal.GUI.Video
           LoadDirectory(String.Empty);
         }
       }
+    }
+
+    protected void OnShowSortOptions()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+        return;
+      dlg.Reset();
+      dlg.SetHeading(495);
+
+      dlg.AddLocalizedString(365); // name
+      dlg.AddLocalizedString(104); // date
+      dlg.AddLocalizedString(105); // size
+      dlg.AddLocalizedString(366); // year
+      dlg.AddLocalizedString(367); // rating
+      dlg.AddLocalizedString(430); // label
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedLabel == -1)
+        return;
+
+      switch (dlg.SelectedId)
+      {
+        case 365:
+          CurrentSortMethod = VideoSort.SortMethod.Name;
+          break;
+        case 104:
+          CurrentSortMethod = VideoSort.SortMethod.Date;
+          break;
+        case 105:
+          CurrentSortMethod = VideoSort.SortMethod.Size;
+          break;
+        case 366:
+          CurrentSortMethod = VideoSort.SortMethod.Year;
+          break;
+        case 367:
+          CurrentSortMethod = VideoSort.SortMethod.Rating;
+          break;
+        case 430:
+          CurrentSortMethod = VideoSort.SortMethod.Label;
+          break;
+        default:
+          CurrentSortMethod = VideoSort.SortMethod.Name;
+          break;
+      }
+
+      OnSort();
+      GUIControl.FocusControl(GetID, btnSortBy.GetID);
     }
 
     protected virtual void LoadDirectory(string path)
