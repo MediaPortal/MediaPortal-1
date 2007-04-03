@@ -432,20 +432,7 @@ namespace MediaPortal.GUI.Pictures
       }
       if (control == btnSortBy) // sort by
       {
-        switch ((SortMethod)mapSettings.SortBy)
-        {
-          case SortMethod.Name:
-            mapSettings.SortBy = (int)SortMethod.Date;
-            break;
-          case SortMethod.Date:
-            mapSettings.SortBy = (int)SortMethod.Size;
-            break;
-          case SortMethod.Size:
-            mapSettings.SortBy = (int)SortMethod.Name;
-            break;
-        }
-        OnSort();
-        GUIControl.FocusControl(GetID, control.GetID);
+        OnShowSortMenu();
       }
 
       if (control == facadeView)
@@ -490,7 +477,6 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
     }
-
 
     public override bool OnMessage(GUIMessage message)
     {
@@ -1208,6 +1194,43 @@ namespace MediaPortal.GUI.Pictures
       GUITextureManager.CleanupThumbs();
       GUIWaitCursor.Hide();
       LoadDirectory(currentFolder);
+    }
+
+    private void OnShowSortMenu()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+        return;
+      dlg.Reset();
+      dlg.SetHeading(495);
+
+      dlg.AddLocalizedString(103); // name
+      dlg.AddLocalizedString(105); // size
+      dlg.AddLocalizedString(104); // date
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedLabel == -1)
+        return;
+
+      switch (dlg.SelectedId)
+      {
+        case 103:
+          mapSettings.SortBy = (int)SortMethod.Name;
+          break;
+        case 104:
+          mapSettings.SortBy = (int)SortMethod.Date;
+          break;
+        case 105:
+          mapSettings.SortBy = (int)SortMethod.Size;
+          break;
+        default:
+          mapSettings.SortBy = (int)SortMethod.Name;
+          break;
+      }
+
+      OnSort();
+      GUIControl.FocusControl(GetID, btnSortBy.GetID);
     }
 
     void OnShowFileMenu()
