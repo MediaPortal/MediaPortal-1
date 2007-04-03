@@ -19,11 +19,11 @@
 			<description>Header</description>
 			<type>label</type>
 			<id>23</id>
-			<posX>190</posX>
+			<posX>270</posX>
 			<posY>133</posY>
 			<align>left</align>
 			<font>font16</font>
-			<label>Konvertierungseinstellungen</label>
+			<label>2055</label>
 		</control>
 		<control>
 			<type>label</type>
@@ -32,7 +32,7 @@
 			<posY>199</posY>
 			<align>left</align>
 			<font>font14</font>
-			<label>Videoqualitaet:</label>
+			<label>2056</label>
 		</control>
 		<control>
 			<description>VideoqualySelect</description>
@@ -65,7 +65,7 @@
 			<posY>236</posY>
 			<align>left</align>
 			<font>font14</font>
-			<label>Tonqualitaet:</label>
+			<label>2057</label>
 		</control>
 		<control>
 			<description>VideoqualySelect</description>
@@ -98,7 +98,7 @@
 			<posY>272</posY>
 			<align>left</align>
 			<font>font14</font>
-			<label>Aufloesung:</label>
+			<label>2058</label>
 		</control>
 		<control>
 			<type>slider</type>
