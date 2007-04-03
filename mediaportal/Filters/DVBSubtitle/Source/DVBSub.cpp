@@ -277,9 +277,14 @@ STDMETHODIMP CDVBSub::Pause()
 //
 STDMETHODIMP CDVBSub::Stop()
 {
+  LogDebug("CDVBSub::Stop - beging" );
   CAutoLock cObjectLock( m_pLock );
-	Reset();
-	return CBaseFilter::Stop();
+  // Calling reset here seems to hang the whole graph (a deadlock with TSFileSource?)
+  // Filter state is reseted in ::Run()
+  //Reset(); 
+	HRESULT hr = CBaseFilter::Stop();
+  LogDebug("CDVBSub::Stop - end" );
+  return hr;
 }
 
 
