@@ -29,8 +29,8 @@ namespace MyTv
 
   public partial class TvScheduleInfo : System.Windows.Controls.Page
   {
-    Schedule _schedule ;
-    bool _isRecording=true;
+    Schedule _schedule;
+    bool _isRecording = true;
     public TvScheduleInfo(Schedule schedule)
     {
       _schedule = schedule;
@@ -40,12 +40,12 @@ namespace MyTv
 
     void ShowUpcomingEpisodes()
     {
-      
-      
+
+
       //set program description
       string strTime = String.Format("{0} {1} - {2}", _schedule.StartTime.ToString("dd-MM"), _schedule.StartTime.ToString("HH:mm"), _schedule.EndTime.ToString("HH:mm"));
 
-//      labelGenre.Text = _schedule.Genre;
+      //      labelGenre.Text = _schedule.Genre;
       labelStartEnd.Text = strTime;
       //      labelDescription.Text = _schedule.Description;
       labelTitle.Text = _schedule.ProgramName;
@@ -73,20 +73,20 @@ namespace MyTv
         buttonPreRecord.IsEnabled = false;
         buttonPostRecord.IsEnabled = false;
       }
-      
+
       //find upcoming episodes
 
       TvBusinessLayer layer = new TvBusinessLayer();
       DateTime dtDay = DateTime.Now;
       IList episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), _schedule.ProgramName, null);
       int row = 0;
-      DialogMenuItemCollection collection =  new DialogMenuItemCollection();
+      DialogMenuItemCollection collection = new DialogMenuItemCollection();
       foreach (Program episode in episodes)
       {
         string logo = System.IO.Path.ChangeExtension(episode.ReferencedChannel().Name, ".png");
         if (!System.IO.File.Exists(logo))
         {
-          logo="";
+          logo = "";
         }
         Schedule recordingSchedule;
         string recIcon = "";
@@ -105,28 +105,17 @@ namespace MyTv
           }
           //item.TVTag = recordingSchedule;
         }
-        /*
         if (recIcon != "")
         {
-          if (System.IO.File.Exists(recIcon))
+          recIcon = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), recIcon);
+          if (!System.IO.File.Exists(recIcon))
           {
-            Image image = new Image();
-            PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(recIcon, UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-
-            image.Source = decoder.Frames[0];
-            image.Height = 32;
-            image.Width = 32;
-            image.VerticalAlignment = VerticalAlignment.Center;
-            image.HorizontalAlignment = HorizontalAlignment.Right;
-            Grid.SetColumn(image, 1);
-            Grid.SetRow(image, 0);
-            Grid.SetColumnSpan(image, 8);
-            gridSub.Children.Add(image);
+            recIcon = "";
           }
         }
-        */
-        DialogMenuItem item = new DialogMenuItem(logo,episode.Title,strTime,episode.ReferencedChannel().Name);
-        item.Tag=episode;
+        DialogMenuItem item = new DialogMenuItem(logo, episode.Title, strTime, episode.ReferencedChannel().Name);
+        item.Tag = episode;
+        item.RecordingLogo = recIcon;
         collection.Add(item);
       }
       gridList.ItemsSource = collection;
@@ -272,7 +261,7 @@ namespace MyTv
       if (p == null) return;
       OnRecordProgram(p);
     }
-    
+
     void OnRecordClicked(object sender, EventArgs e)
     {
       //OnRecordProgram(_schedule);

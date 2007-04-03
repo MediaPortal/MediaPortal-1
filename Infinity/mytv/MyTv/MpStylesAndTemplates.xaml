@@ -714,13 +714,15 @@
     <Setter Property="MinWidth" Value="120"/>
     <Setter Property="MinHeight" Value="32"/>
     <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="VerticalAlignment" Value="Stretch"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="ListBox">
-          <ScrollViewer FocusManager.IsFocusScope="False"
+          <ScrollViewer FocusManager.IsFocusScope="False"  
             Margin="0"
             Focusable="False">
-            <VirtualizingStackPanel IsItemsHost="True" FocusManager.IsFocusScope="False" />
+            <VirtualizingStackPanel IsItemsHost="True" FocusManager.IsFocusScope="False"  />
           </ScrollViewer>
         </ControlTemplate>
       </Setter.Value>
@@ -728,32 +730,33 @@
   </Style>
 
   <DataTemplate x:Key="itemIconTemplate"  DataType="{x:Type local:DialogMenuItem}">
-      <Grid  >
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-          <RowDefinition/>
-          <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="32" Width="32"  Source="{Binding Logo}" />
-        <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="10" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Label1}"/>
-        <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="6" Style="{StaticResource LabelSmallStyleWhite}" Content="{Binding Label2}"/>
-        <Label Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Label3}"/>
-      </Grid>
+    <Grid Width="450">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition/>
+        <RowDefinition/>
+      </Grid.RowDefinitions>
+      <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="32" Width="32"  Source="{Binding Logo}" />
+      <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="10" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Label1}"/>
+      <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="6" Style="{StaticResource LabelSmallStyleWhite}" Content="{Binding Label2}"/>
+      <Label Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Label3}"/>
+      <Image Grid.Row="0" Grid.Column="8" Grid.RowSpan="2"  Height="32" Width="32"  Source="{Binding RecordingLogo}" />
+    </Grid>
     </DataTemplate>
     <DataTemplate x:Key="itemListTemplate" DataType="{x:Type local:DialogMenuItem}">
-      <Grid  >
+      <Grid Width="450">
         <Grid.ColumnDefinitions>
           <ColumnDefinition/>
           <ColumnDefinition/>
@@ -771,8 +774,9 @@
           <RowDefinition/>
         </Grid.RowDefinitions>
         <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="32" Width="32"  Source="{Binding Logo}" />
-      <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="6" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Label1}"/>
-      <Label Grid.Row="0" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Label3}"/>
+        <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="6" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Label1}"/>
+        <Label Grid.Row="0" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Label3}"/>
+        <Image Grid.Row="0" Grid.Column="8"  Height="32" Width="32"  Source="{Binding RecordingLogo}" />
     </Grid>
   </DataTemplate>
 

@@ -56,7 +56,7 @@
       <StackPanel Margin="0,0,30,0">
         <TextBlock Name="labelTitle" Style="{StaticResource TextBlockLargeStyle}"/>
         <TextBlock Name="labelDescription"  Style="{StaticResource TextBlockNormalStyle}" />
-        <ListBox x:Name="gridList" ItemContainerStyle="{StaticResource MpListViewItem}"  Style="{StaticResource MpListView}" ItemTemplate="{StaticResource itemIconTemplate}" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" />
+        <ListBox x:Name="gridList" ItemContainerStyle="{StaticResource MpListViewItem}"  Style="{StaticResource MpListView}" ItemTemplate="{StaticResource itemIconTemplate}"  />
 
       </StackPanel>
     </DockPanel >

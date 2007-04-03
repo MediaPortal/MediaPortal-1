@@ -120,40 +120,18 @@ namespace MyTv
         }
         if (recIcon != "")
         {
-         /* if (System.IO.File.Exists(recIcon))
+          recIcon = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), recIcon);
+          if (!System.IO.File.Exists(recIcon))
           {
-            Image image = new Image();
-            PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(recIcon, UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-
-            image.Source = decoder.Frames[0];
-            image.Height = 32;
-            image.Width = 32;
-            image.VerticalAlignment = VerticalAlignment.Center;
-            image.HorizontalAlignment = HorizontalAlignment.Right;
-            Grid.SetColumn(image, 1);
-            Grid.SetRow(image, 0);
-            Grid.SetColumnSpan(image, 8);
-            gridSub.Children.Add(image);
-          }*/
+            recIcon = "";
+          }
         }
         DialogMenuItem item = new DialogMenuItem(logo, episode.Title, strTime, episode.ReferencedChannel().Name);
+        item.RecordingLogo = recIcon;
         item.Tag = episode;
         collection.Add(item);
       }
       gridList.ItemsSource = collection;
-    }
-
-    void button_GotFocus(object sender, RoutedEventArgs e)
-    {
-      Button b = sender as Button;
-      if (b == null) return;
-      Program recording = b.Tag as Program;
-      if (recording == null) return;
-
-      labelTitle.Text = recording.Title;
-      labelDescription.Text = recording.Description;
-      labelStartEnd.Text = String.Format("{0}-{1}", recording.StartTime.ToString("HH:mm"), recording.EndTime.ToString("HH:mm"));
-      labelGenre.Text = recording.Genre;
     }
 
 
