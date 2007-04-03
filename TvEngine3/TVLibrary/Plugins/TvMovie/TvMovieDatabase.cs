@@ -615,7 +615,16 @@ namespace TvEngine
               }
             }
             DateTime OnAirDate = DateTime.MinValue;
-            OnAirDate.AddYears(Convert.ToInt32(date) - DateTime.MinValue.Year);
+
+            try
+            {
+              OnAirDate = DateTime.Parse(String.Format("01.01.{0} 00:00:00", date)); 
+            }
+            catch (Exception ex3)
+            {
+              Log.Error("TVMovie: Error parsing OnAirDate - {0}", ex3.Message);
+            }
+
             short EPGStarRating = -1;
 
             switch (starRating)
