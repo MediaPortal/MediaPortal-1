@@ -36,91 +36,91 @@ using SetupTv;
 
 namespace ProcessPlugins.EpgGrabber
 {
-    public class PluginSetup
+  public class PluginSetup
+  {
+    internal const string PLUGIN_NAME = "Zap2it EPG Client";
+    internal const string PLUGIN_VERSION = "1.8a";
+
+    #region ISetupForm Members
+
+    // Returns the name of the plugin which is shown in the plugin menu
+    public string Name
     {
-        internal const string PLUGIN_NAME    = "Zap2it EPG Client";
-        internal const string PLUGIN_VERSION = "1.8a";
-
-        #region ISetupForm Members
-
-        // Returns the name of the plugin which is shown in the plugin menu
-        public string Name
-        {
-            get { return PLUGIN_NAME; }
-        }
-
-        // Returns the name of the plugin which is shown in the plugin menu
-        public string Version
-        {
-           get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(2); }
-        }
-
-        // Returns the author of the plugin which is shown in the plugin menu
-        public string Author
-        {
-           get { return "Jonathan <bradsjm>"; }
-        }
-
-        // Returns the author of the plugin which is shown in the plugin menu
-        public bool MasterOnly
-        {
-           get { return true; }
-        }
-
-        // Returns the description of the plugin is shown in the plugin menu
-        public string Description()
-        {
-            return "Electronic Program Guide client for Zap2it Labs DataDirect US and Canada free TV listing service. Signup at labs.zap2it.com";
-        }
-
-        // indicates if a plugin has its own setup screen
-        public bool HasSetup()
-        {
-            return true;
-        }
-
-        // show the setup dialog
-        public SetupTv.SectionSettings Setup
-        {
-           get 
-           {
-              Zap2itPluginConfig configForm = new Zap2itPluginConfig();
-              //using (configForm)
-              //{
-              //   configForm.Text += " v" + Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
-              //   configForm.textBoxUsername.Text                = PluginSettings.Username;
-              //   configForm.textBoxPassword.Text                = PluginSettings.Password;
-              //   configForm.numericUpDownDays.Value             = PluginSettings.GuideDays;
-              //   configForm.checkBoxAddChannels.Checked         = PluginSettings.AddNewChannels;
-              //   configForm.checkBoxRenameChannels.Checked      = PluginSettings.RenameExistingChannels;
-              //   configForm.comboBoxNameFormat.Text             = PluginSettings.ChannelNameTemplate;
-              //   configForm.checkBoxNotification.Checked        = PluginSettings.NotifyOnCompletion;
-              //   configForm.comboBoxExternalInput.Items.AddRange(Enum.GetNames(typeof(TvLibrary.Implementations.AnalogChannel.VideoInputType)));
-              //   configForm.comboBoxExternalInput.SelectedIndex = configForm.comboBoxExternalInput.FindStringExact(PluginSettings.ExternalInput.ToString());
-              //   configForm.comboBoxExternalInput.Enabled       = configForm.checkBoxAddChannels.Checked;
-
-              //   //if (configForm.ShowDialog() == DialogResult.OK)
-              //   //{
-              //   //   PluginSettings.UseDvbEpgGrabber = false;
-              //   //   PluginSettings.Username = configForm.textBoxUsername.Text;
-              //   //   PluginSettings.Password = configForm.textBoxPassword.Text;
-              //   //   PluginSettings.GuideDays = (int)configForm.numericUpDownDays.Value;
-              //   //   PluginSettings.AddNewChannels = configForm.checkBoxAddChannels.Checked;
-              //   //   PluginSettings.RenameExistingChannels = configForm.checkBoxRenameChannels.Checked;
-              //   //   PluginSettings.ChannelNameTemplate = configForm.comboBoxNameFormat.Text;
-              //   //   PluginSettings.NotifyOnCompletion = configForm.checkBoxNotification.Checked;
-              //   //   PluginSettings.ExternalInput = (TvLibrary.Implementations.AnalogChannel.VideoInputType)Enum.Parse(typeof(TvLibrary.Implementations.AnalogChannel.VideoInputType), configForm.comboBoxExternalInput.SelectedItem.ToString());
-              //   //   if (configForm.checkboxForceUpdate.Checked)
-              //   //   {
-              //   //      PluginSettings.NextPoll = DateTime.Now;
-              //   //   }
-              //   //}
-              //}
-
-              return configForm;
-           }
-        }
-        #endregion
+      get { return PLUGIN_NAME; }
     }
+
+    // Returns the name of the plugin which is shown in the plugin menu
+    public string Version
+    {
+      get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(2); }
+    }
+
+    // Returns the author of the plugin which is shown in the plugin menu
+    public string Author
+    {
+      get { return "Jonathan <bradsjm>"; }
+    }
+
+    // Returns the author of the plugin which is shown in the plugin menu
+    public bool MasterOnly
+    {
+      get { return true; }
+    }
+
+    // Returns the description of the plugin is shown in the plugin menu
+    public string Description()
+    {
+      return "Electronic Program Guide client for Zap2it Labs DataDirect US and Canada free TV listing service. Signup at labs.zap2it.com";
+    }
+
+    // indicates if a plugin has its own setup screen
+    public bool HasSetup()
+    {
+      return true;
+    }
+
+    // show the setup dialog
+    public SetupTv.SectionSettings Setup
+    {
+      get
+      {
+        Zap2itPluginConfig configForm = new Zap2itPluginConfig();
+        //using (configForm)
+        //{
+        //   configForm.Text += " v" + Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
+        //   configForm.textBoxUsername.Text                = PluginSettings.Username;
+        //   configForm.textBoxPassword.Text                = PluginSettings.Password;
+        //   configForm.numericUpDownDays.Value             = PluginSettings.GuideDays;
+        //   configForm.checkBoxAddChannels.Checked         = PluginSettings.AddNewChannels;
+        //   configForm.checkBoxRenameChannels.Checked      = PluginSettings.RenameExistingChannels;
+        //   configForm.comboBoxNameFormat.Text             = PluginSettings.ChannelNameTemplate;
+        //   configForm.checkBoxNotification.Checked        = PluginSettings.NotifyOnCompletion;
+        //   configForm.comboBoxExternalInput.Items.AddRange(Enum.GetNames(typeof(TvLibrary.Implementations.AnalogChannel.VideoInputType)));
+        //   configForm.comboBoxExternalInput.SelectedIndex = configForm.comboBoxExternalInput.FindStringExact(PluginSettings.ExternalInput.ToString());
+        //   configForm.comboBoxExternalInput.Enabled       = configForm.checkBoxAddChannels.Checked;
+
+        //   //if (configForm.ShowDialog() == DialogResult.OK)
+        //   //{
+        //   //   PluginSettings.UseDvbEpgGrabber = false;
+        //   //   PluginSettings.Username = configForm.textBoxUsername.Text;
+        //   //   PluginSettings.Password = configForm.textBoxPassword.Text;
+        //   //   PluginSettings.GuideDays = (int)configForm.numericUpDownDays.Value;
+        //   //   PluginSettings.AddNewChannels = configForm.checkBoxAddChannels.Checked;
+        //   //   PluginSettings.RenameExistingChannels = configForm.checkBoxRenameChannels.Checked;
+        //   //   PluginSettings.ChannelNameTemplate = configForm.comboBoxNameFormat.Text;
+        //   //   PluginSettings.NotifyOnCompletion = configForm.checkBoxNotification.Checked;
+        //   //   PluginSettings.ExternalInput = (TvLibrary.Implementations.AnalogChannel.VideoInputType)Enum.Parse(typeof(TvLibrary.Implementations.AnalogChannel.VideoInputType), configForm.comboBoxExternalInput.SelectedItem.ToString());
+        //   //   if (configForm.checkboxForceUpdate.Checked)
+        //   //   {
+        //   //      PluginSettings.NextPoll = DateTime.Now;
+        //   //   }
+        //   //}
+        //}
+
+        return configForm;
+      }
+    }
+    #endregion
+  }
 
 }

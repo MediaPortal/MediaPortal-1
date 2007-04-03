@@ -223,7 +223,12 @@ CREATE TABLE `program` (
   `endTime` datetime NOT NULL,
   `title` varchar(2000) NOT NULL,
   `description` varchar(4000) NOT NULL,
+  `seriesNum` varchar(200) NOT NULL,
+  `episodeNum` varchar(200) NOT NULL,
   `genre` varchar(200) NOT NULL,
+  `originalAirDate` datetime NOT NULL,
+  `classification` varchar(200) NOT NULL,
+  `starRating` int(11) NOT NULL,
   `notify` bit(1) NOT NULL,
   PRIMARY KEY  (`idProgram`),
   KEY `IDX_StartTime` (`startTime`),
@@ -414,7 +419,7 @@ CREATE TABLE `version` (
 --
 
 /*!40000 ALTER TABLE `version` DISABLE KEYS */;
-INSERT INTO `version` VALUES  (1,24);
+INSERT INTO `version` VALUES  (1,25);
 /*!40000 ALTER TABLE `version` ENABLE KEYS */;
 #
 

@@ -208,7 +208,12 @@ CREATE TABLE Program(
 	endTime datetime NOT NULL,
 	title varchar(2000) NOT NULL,
 	description varchar(4000) NOT NULL,
+	seriesNum varchar(200) NOT NULL,
+	episodeNum varchar(200) NOT NULL,
 	genre varchar(200) NOT NULL,
+	originalAirDate datetime NOT NULL,	
+	classification varchar(200) NOT NULL,
+	starRating int NOT NULL,
 	notify bit NOT NULL,
  CONSTRAINT PK_Programs PRIMARY KEY  
 (
@@ -573,5 +578,5 @@ GO
 delete from version
 GO
 
-insert into version(versionNumber) values(24)
+insert into version(versionNumber) values(25)
 GO

@@ -4,5 +4,5 @@ ALTER TABLE Recording ADD stopTime int NOT NULL DEFAULT  0
 GO
 delete from version
 GO
-insert into version(versionNumber) values(24)
+insert into version(versionNumber) values(25)
 GO
