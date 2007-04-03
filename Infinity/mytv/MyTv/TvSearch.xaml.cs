@@ -56,19 +56,6 @@ namespace MyTv
     }
 
     /// <summary>
-    /// Called when mouse enters a button
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
-    void OnMouseEnter(object sender, MouseEventArgs e)
-    {
-      IInputElement b = sender as IInputElement;
-      if (b != null)
-      {
-        Keyboard.Focus(b);
-      }
-    }
-    /// <summary>
     /// Called when screen is loaded
     /// </summary>
     /// <param name="sender">The sender.</param>
@@ -94,11 +81,61 @@ namespace MyTv
         videoBrush.Drawing = videoDrawing;
         videoWindow.Fill = videoBrush;
       }
+      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
+      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
+      gridList.SelectionChanged += new SelectionChangedEventHandler(gridList_SelectionChanged);
+      gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
+      gridList.KeyDown += new KeyEventHandler(gridList_KeyDown);
+      textboxSearch.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new UpdateResultsDelegate(OnUpdateResults));
+
     }
 
-    void textboxSearch_TextChanged(object sender, TextChangedEventArgs e)
+    void gridList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      textboxSearch.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new UpdateResultsDelegate(OnUpdateResults));
+      UpdateInfoBox();
+    }
+    void handleMouse(object sender, MouseEventArgs e)
+    {
+      FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
+      while (element != null)
+      {
+        if (element as Button != null)
+        {
+          Keyboard.Focus((Button)element);
+          return;
+        }
+        if (element as ListBoxItem != null)
+        {
+          gridList.SelectedItem = element.DataContext;
+          Keyboard.Focus((ListBoxItem)element);
+          //UpdateInfoBox();
+          return;
+        }
+        element = element.TemplatedParent as FrameworkElement;
+      }
+    }
+    void Button_Click(object sender, RoutedEventArgs e)
+    {
+      if (e.Source != gridList) return;
+      OnProgramClicked();
+    }
+    void gridList_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == System.Windows.Input.Key.Up)
+      {
+        if (gridList.SelectedIndex == 0)
+        {
+          Keyboard.Focus(buttonType);
+          e.Handled = true;
+          return;
+        }
+      }
+      if (e.Key == System.Windows.Input.Key.Enter)
+      {
+        OnProgramClicked();
+        e.Handled = true;
+        return;
+      }
     }
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
@@ -108,21 +145,21 @@ namespace MyTv
         this.NavigationService.GoBack();
         return;
       }
-    }
-    protected void OnScrollKeyDown(object sender, KeyEventArgs e)
-    {
-      if (e.Key == Key.Up)
+      if (e.Key == System.Windows.Input.Key.X)
       {
-        if (_selectedProgram != null && _firstProgram != null)
+        if (TvPlayerCollection.Instance.Count > 0)
         {
-          if (_selectedProgram.IdProgram == _firstProgram.IdProgram)
-          {
-            Keyboard.Focus(buttonType);
-            e.Handled = true;
-          }
+          this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+          return;
         }
       }
     }
+
+    void textboxSearch_TextChanged(object sender, TextChangedEventArgs e)
+    {
+      textboxSearch.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new UpdateResultsDelegate(OnUpdateResults));
+    }
+
 
     string GetContentForRightLabel(Program program)
     {
@@ -131,9 +168,6 @@ namespace MyTv
 
     void OnUpdateResults()
     {
-      //Grid grid = new Grid();
-      gridList.Children.Clear();
-      gridList.RowDefinitions.Clear();
 
       if (textboxSearch.Text == "") return;
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -148,89 +182,27 @@ namespace MyTv
       foreach (Program program in programs)
         listPrograms.Add(program);
       listPrograms.Sort(this);
-      int row = 0;
+      DialogMenuItemCollection collection = new DialogMenuItemCollection();
       foreach (Program program in listPrograms)
       {
-        if (row > 80) break;
-        gridList.RowDefinitions.Add(new RowDefinition());
-        Button button = new Button();
-        button.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
-        button.Height = 54;
-
-        Grid gridSub = new Grid();
-        gridSub.VerticalAlignment = VerticalAlignment.Top;
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.RowDefinitions.Add(new RowDefinition());
-        gridSub.RowDefinitions.Add(new RowDefinition());
-        string logo = Thumbs.GetLogoFileName(program.ReferencedChannel().Name);
-        if (System.IO.File.Exists(logo))
+        string logo = String.Format(@"{0}\{1}",System.IO.Directory.GetCurrentDirectory(),Thumbs.GetLogoFileName(program.ReferencedChannel().Name));
+        if (!System.IO.File.Exists(logo))
         {
-          Image image = new Image();
-          PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(logo, UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-          image.Source = decoder.Frames[0];
-          image.Width = 32;
-          image.Height = 32;
-          Grid.SetColumn(image, 0);
-          Grid.SetRow(image, 0);
-          Grid.SetRowSpan(image, 2);
-          gridSub.Children.Add(image);
+          logo="";
         }
-        Label label = new Label();
-        label.Content = program.Title;
-        label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
-        Grid.SetColumn(label, 1);
-        Grid.SetRow(label, 0);
-        Grid.SetColumnSpan(label, 8);
-        gridSub.Children.Add(label);
+        DialogMenuItem item = new DialogMenuItem(logo,program.Title,program.ReferencedChannel().Name,GetContentForRightLabel(program));
+        item.Tag = program;
+        collection.Add(item);
 
-        label = new Label();
-        label.Content = program.ReferencedChannel().Name;
-        label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-        Grid.SetColumn(label, 1);
-        Grid.SetColumnSpan(label, 6);
-        Grid.SetRow(label, 1);
-        gridSub.Children.Add(label);
-
-        label = new Label();
-        label.Content = GetContentForRightLabel(program);
-        label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-        label.HorizontalAlignment = HorizontalAlignment.Right;
-        label.Margin = new Thickness(0, 0, 20, 0);
-        Grid.SetColumn(label, 7);
-        Grid.SetColumnSpan(label, 2);
-        Grid.SetRow(label, 1);
-        gridSub.Children.Add(label);
-
-        gridSub.Loaded += new RoutedEventHandler(gridSub_Loaded);
-        button.Content = gridSub;
-        button.Tag = program;
-        button.GotFocus += new RoutedEventHandler(button_GotFocus);
-        button.MouseEnter += new MouseEventHandler(OnMouseEnter);
-        button.Click += new RoutedEventHandler(OnProgramClicked);
-        if (row == 0)
-          _firstProgram = program;
-        Grid.SetColumn(button, 0);
-        Grid.SetRow(button, row);
-        gridList.Children.Add(button);
-        row++;
       }
-      //gridList.Children.Add(grid);
-      gridList.VerticalAlignment = VerticalAlignment.Top;
+      gridList.ItemsSource = collection;
       Keyboard.Focus(textboxSearch);
     }
-    void button_GotFocus(object sender, RoutedEventArgs e)
+    void UpdateInfoBox()
     {
-      Button b = sender as Button;
-      if (b == null) return;
-      _selectedProgram = b.Tag as Program;
+      DialogMenuItem item = gridList.SelectedItem as DialogMenuItem;
+      if (item == null) return;
+      _selectedProgram = item.Tag as Program;
 
       labelTitle.Text = _selectedProgram.Title;
       labelDescription.Text = _selectedProgram.Description;
@@ -238,17 +210,11 @@ namespace MyTv
       labelGenre.Text = _selectedProgram.Genre;
     }
 
-    void gridSub_Loaded(object sender, RoutedEventArgs e)
+    void OnProgramClicked()
     {
-      Grid g = sender as Grid;
-      if (g == null) return;
-      g.Width = ((Button)(g.Parent)).ActualWidth;
-    }
-    void OnProgramClicked(object sender, RoutedEventArgs e)
-    {
-      Button b = sender as Button;
-      if (b == null) return;
-      _selectedProgram = b.Tag as Program;
+      DialogMenuItem item = gridList.SelectedItem as DialogMenuItem;
+      if (item == null) return;
+      _selectedProgram = item.Tag as Program;
       TvProgramInfo info = new TvProgramInfo(_selectedProgram);
       NavigationService.Navigate(info);
     }

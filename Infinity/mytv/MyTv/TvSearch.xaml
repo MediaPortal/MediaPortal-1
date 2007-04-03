@@ -50,15 +50,10 @@
         </Grid>
       </StackPanel>
       <StackPanel>
-        <Button Name="buttonSort" Style="{DynamicResource MpButton}" Height="32" Width="180"  MouseEnter="OnMouseEnter" Click="OnSortClicked" HorizontalAlignment="Left" Margin="30,0,0,0">Sort</Button>
-        <Button Name="buttonType" Style="{DynamicResource MpButton}" Height="32" Width="180"  MouseEnter="OnMouseEnter" Click="OnTypeClicked" HorizontalAlignment="Left" Margin="30,0,0,0">Type</Button>
-        <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" >
-          <Grid x:Name="gridList" Margin="30,0,30,0" VerticalAlignment="Top" KeyDown="OnScrollKeyDown">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-          </Grid>
-        </ScrollViewer>
+        <Button Name="buttonSort" Style="{DynamicResource MpButton}" Height="32" Width="180"   Click="OnSortClicked" HorizontalAlignment="Left" Margin="30,0,0,0">Sort</Button>
+        <Button Name="buttonType" Style="{DynamicResource MpButton}" Height="32" Width="180"   Click="OnTypeClicked" HorizontalAlignment="Left" Margin="30,0,0,0">Type</Button>
+        <ListBox x:Name="gridList" ItemContainerStyle="{StaticResource MpListViewItem}"  Style="{StaticResource MpListView}" ItemTemplate="{StaticResource itemIconTemplate}" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" />
+
       </StackPanel>
     </DockPanel >
   </Grid>
