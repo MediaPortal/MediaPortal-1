@@ -172,10 +172,10 @@ namespace MyTv
       buttonPostRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 52);//Post-record
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-      this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
       Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
       gridList.SelectionChanged += new SelectionChangedEventHandler(gridList_SelectionChanged);
       gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
+      gridList.KeyDown += new KeyEventHandler(gridList_KeyDown);
       Keyboard.Focus(buttonRecord);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
       ShowUpcomingEpisodes();
@@ -197,6 +197,20 @@ namespace MyTv
       labelGenre.Text = _program.Genre;
 
 
+    }
+
+    void gridList_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == Key.Enter)
+      {
+        DialogMenuItem item = gridList.SelectedItem as DialogMenuItem;
+        if (item == null) return;
+        Program program = item.Tag as Program;
+        if (program == null) return;
+        OnRecordProgram(program);
+        e.Handled = true;
+        return;
+      }
     }
     protected void onKeyDown(object sender, KeyEventArgs e)
     {

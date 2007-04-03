@@ -74,7 +74,6 @@ namespace MyTv
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
 
-      this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
       Keyboard.Focus(buttonView);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
 
@@ -94,7 +93,8 @@ namespace MyTv
       Thread thumbNailThread = new Thread(new ThreadStart(CreateThumbnailsThread));
       thumbNailThread.Start();
       gridList.SelectionChanged += new SelectionChangedEventHandler(gridList_SelectionChanged);
-      gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler( Button_Click),true);
+      gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
+      gridList.KeyDown += new KeyEventHandler(gridList_KeyDown);
     }
 
     void gridList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -162,6 +162,7 @@ namespace MyTv
     /// <summary>
     /// Loads the recordings and shows them onscreen.
     /// </summary>
+
     void LoadRecordings()
     {
       switch (_sortMode)
@@ -223,6 +224,15 @@ namespace MyTv
     {
       if (e.Source != gridList) return;
       OnRecordingClicked();
+    }
+    void gridList_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == System.Windows.Input.Key.Enter)
+      {
+        OnRecordingClicked();
+        e.Handled = true;
+        return;
+      }
     }
     /// <summary>
     /// Called when user has clicked on a recording

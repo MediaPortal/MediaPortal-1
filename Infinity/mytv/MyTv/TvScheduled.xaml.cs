@@ -78,7 +78,6 @@ namespace MyTv
       // Sets keyboard focus on the first Button in the sample.
       labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 111);// "scheduled";
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-      this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click),true);
       Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
       Keyboard.Focus(buttonSort);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
@@ -100,6 +99,7 @@ namespace MyTv
       LoadSchedules();
       gridList.SelectionChanged += new SelectionChangedEventHandler(gridList_SelectionChanged);
       gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
+      gridList.KeyDown += new KeyEventHandler(gridList_KeyDown);
     }
 
     void gridList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -213,6 +213,15 @@ namespace MyTv
     }
 
 
+    void gridList_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == System.Windows.Input.Key.Enter)
+      {
+        OnScheduleClicked();
+        e.Handled = true;
+        return;
+      }
+    }
     void Button_Click(object sender, RoutedEventArgs e)
     {
       if (e.Source == gridList)

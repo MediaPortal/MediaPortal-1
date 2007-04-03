@@ -171,10 +171,10 @@ namespace MyTv
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
 
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-      this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
       Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
       gridList.SelectionChanged += new SelectionChangedEventHandler(gridList_SelectionChanged);
       gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
+      gridList.KeyDown += new KeyEventHandler(gridList_KeyDown);
 
       Keyboard.Focus(buttonRecord);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
@@ -250,6 +250,15 @@ namespace MyTv
       if (e.Source == gridList)
       {
         OnUpcomingEpisodeClicked();
+      }
+    }
+    void gridList_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == System.Windows.Input.Key.Enter)
+      {
+        OnUpcomingEpisodeClicked();
+        e.Handled = true;
+        return;
       }
     }
 

@@ -75,6 +75,7 @@ namespace Dialogs
     {
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       gridContent.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
+      gridContent.KeyDown += new KeyEventHandler(gridContent_KeyDown);
       Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
       this.Visibility = Visibility.Visible;
       gridContent.ItemsSource = _menuItems;
@@ -89,13 +90,20 @@ namespace Dialogs
       gridContent.ItemContainerGenerator.StatusChanged += new EventHandler(ItemContainerGenerator_StatusChanged);
     }
 
+    void gridContent_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == Key.Enter)
+      {
+        this.Close();
+      }
+    }
+
     void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
     {
       if (gridContent.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
       {
         DependencyObject dp=gridContent.ItemContainerGenerator.ContainerFromItem(gridContent.SelectedItem);
         Keyboard.Focus((ListBoxItem)dp);
-
       }
     }
 
@@ -118,6 +126,7 @@ namespace Dialogs
         element = element.TemplatedParent as FrameworkElement;
       }
     }
+
     void Button_Click(object sender, RoutedEventArgs e)
     {
       if (e.Source == gridContent)
