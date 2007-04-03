@@ -990,6 +990,10 @@
     <String id="2052">Search in Recipe</String>
     <String id="2053">Category</String>
     <String id="2054">No Entry!</String>
+    <String id="2055">Settings</String>
+    <String id="2056">Videoquality:</String>
+    <String id="2057">Audioquality:</String>
+    <String id="2058">Resolution:</String>
 	<String id="2059">Comskip file found, </String>
 	<String id="2060">would you like to use it?</String>
 	<String id="2061">The Comskip file is incompatible</String>

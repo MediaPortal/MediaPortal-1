@@ -990,6 +990,10 @@
     <String id="2052">Rezept durchsuchen</String>
     <String id="2053">Kategorie</String>
     <String id="2054">Kein Eintrag!</String>
+    <String id="2055">Einstellungen</String>
+    <String id="2056">Videoqualität:</String>
+    <String id="2057">Audioqualität:</String>
+    <String id="2058">Auflösung:</String>
 	<String id="2059">Comskip Datei gefunden, </String>
 	<String id="2060">soll diese verwendet werden?</String>
 	<String id="2061">Die Comskip-Datei ist nicht kompatibel.</String>
