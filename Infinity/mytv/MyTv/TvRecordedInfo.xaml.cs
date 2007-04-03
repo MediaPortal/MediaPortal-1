@@ -71,8 +71,6 @@ namespace MyTv
       labelDescription.Text = _recording.Description;
       labelStartEnd.Text = String.Format("{0}-{1}", _recording.StartTime.ToString("HH:mm"), _recording.EndTime.ToString("HH:mm"));
       labelGenre.Text = _recording.Genre;
-
-
     }
     protected void onKeyDown(object sender, KeyEventArgs e)
     {

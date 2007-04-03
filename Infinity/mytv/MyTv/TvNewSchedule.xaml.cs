@@ -32,19 +32,6 @@ namespace MyTv
     }
 
     /// <summary>
-    /// Called when mouse enters a button
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
-    void OnMouseEnter(object sender, MouseEventArgs e)
-    {
-      IInputElement b = sender as IInputElement;
-      if (b != null)
-      {
-        Keyboard.Focus(b);
-      }
-    }
-    /// <summary>
     /// Called when screen is loaded
     /// </summary>
     /// <param name="sender">The sender.</param>
@@ -59,23 +46,19 @@ namespace MyTv
       buttonSearchKeyword.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 44);//Search by keyword
       buttonSearchGenre.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 45);//Search by genre
       // Sets keyboard focus on the first Button in the sample.
-      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
+      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
       Keyboard.Focus(buttonQuickRecord);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
     }
-    protected void onKeyDown(object sender, KeyEventArgs e)
+    void handleMouse(object sender, MouseEventArgs e)
     {
-      if (e.Key == System.Windows.Input.Key.Escape)
+      FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
+      while (element.TemplatedParent != null)
       {
-        //return to previous screen
-        this.NavigationService.GoBack();
-        return;
-      }
-      if (e.Key == System.Windows.Input.Key.X)
-      {
-        if (TvPlayerCollection.Instance.Count > 0)
+        element = (FrameworkElement)element.TemplatedParent;
+        if (element as Button != null)
         {
-          this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+          Keyboard.Focus((Button)element);
           return;
         }
       }

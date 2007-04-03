@@ -4,60 +4,6 @@
     xmlns:local="clr-namespace:Dialogs;assembly=dialogs"
     Title="TvScheduleInfo" Loaded="OnLoaded" Background="{StaticResource backGroundBrush}" WindowWidth="800" WindowHeight="600"
     >
-  <Page.Resources>
-    <DataTemplate x:Key="itemIconTemplate"  DataType="{x:Type local:DialogMenuItem}">
-      <Button Name="PART_Button" Style="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter"  >
-        <Grid Width="430" >
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-          </Grid.ColumnDefinitions>
-          <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-          </Grid.RowDefinitions>
-          <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Source="{Binding Logo}" />
-          <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="10" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Label1}"/>
-          <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="6" Style="{StaticResource LabelSmallStyleWhite}" Content="{Binding Label2}"/>
-          <Label Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Label3}"/>
-        </Grid>
-      </Button>
-    </DataTemplate>
-    <DataTemplate x:Key="itemListTemplate"  DataType="{x:Type local:DialogMenuItem}">
-      <Button Name="PART_Button" Style="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter"  >
-        <Grid Width="430" >
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-          </Grid.ColumnDefinitions>
-          <Grid.RowDefinitions>
-            <RowDefinition/>
-          </Grid.RowDefinitions>
-          <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Source="{Binding Logo}" />
-          <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="6" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Label1}"/>
-          <Label Grid.Row="0" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Label3}"/>
-        </Grid>
-      </Button>
-    </DataTemplate>
-  </Page.Resources>
   <Grid>
     <DockPanel >
       <StackPanel DockPanel.Dock="Top" Height="100">
@@ -98,20 +44,21 @@
         </Grid>
       </StackPanel>
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
-        <Button Name="buttonRecord" Style="{DynamicResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnRecordClicked">Record</Button>
-        <Button Name="buttonAdvancedRecord" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnAdvancedRecordClicked">Advanced Record</Button>
-        <Button Name="buttonKeepUntil" Style="{DynamicResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnKeepUntil" >Keep until</Button>
-        <Button Name="buttonQuality" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Quality setting</Button>
-        <Button Name="buttonEpisodes" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSetEpisodes" >Episodes management</Button>
-        <Button Name="buttonPreRecord" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnPreRecordInterval" >Pre-record</Button>
-        <Button Name="buttonPostRecord" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnPostRecordInterval"  >Post-record</Button>
+        <Button Name="buttonRecord" Style="{DynamicResource MpButton}" Height="32"  Click="OnRecordClicked">Record</Button>
+        <Button Name="buttonAdvancedRecord" Style="{DynamicResource MpButton}" Height="32" Click="OnAdvancedRecordClicked">Advanced Record</Button>
+        <Button Name="buttonKeepUntil" Style="{DynamicResource MpButton}" Height="32"  Click="OnKeepUntil" >Keep until</Button>
+        <Button Name="buttonQuality" Style="{DynamicResource MpButton}" Height="32"  >Quality setting</Button>
+        <Button Name="buttonEpisodes" Style="{DynamicResource MpButton}" Height="32" Click="OnSetEpisodes" >Episodes management</Button>
+        <Button Name="buttonPreRecord" Style="{DynamicResource MpButton}" Height="32" Click="OnPreRecordInterval" >Pre-record</Button>
+        <Button Name="buttonPostRecord" Style="{DynamicResource MpButton}" Height="32" Click="OnPostRecordInterval"  >Post-record</Button>
       </StackPanel>
 
       <StackPanel Margin="0,0,30,0">
         <TextBlock Name="labelTitle" Style="{StaticResource TextBlockLargeStyle}"/>
         <TextBlock Name="labelDescription"  Style="{StaticResource TextBlockNormalStyle}" />
-        <ListBox x:Name="gridList" FocusManager.IsFocusScope="False"  ItemTemplate="{StaticResource itemIconTemplate}" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="True" Background="Transparent" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.CanContentScroll="True" IsSynchronizedWithCurrentItem="True" />
+        <ListBox x:Name="gridList" ItemContainerStyle="{StaticResource MpListViewItem}"  Style="{StaticResource MpListView}" ItemTemplate="{StaticResource itemIconTemplate}" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" />
       </StackPanel>
+
     </DockPanel >
   </Grid>
 </Page>

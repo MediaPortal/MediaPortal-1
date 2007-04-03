@@ -58,31 +58,6 @@ namespace MyTv
     }
 
     /// <summary>
-    /// Called when mouse enters a button
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
-    void OnMouseEnter(object sender, MouseEventArgs e)
-    {
-      IInputElement b = sender as IInputElement;
-      if (b != null)
-      {
-        Keyboard.Focus(b);
-        Button button = sender as Button;
-        if (button != null)
-        {
-          ContentPresenter content = button.TemplatedParent as ContentPresenter;
-          if (content != null)
-          {
-            if (content.Content != null)
-            {
-              gridList.SelectedItem = content.Content;
-            }
-          }
-        }
-      }
-    }
-    /// <summary>
     /// Called when screen is loaded
     /// </summary>
     /// <param name="sender">The sender.</param>
@@ -97,8 +72,8 @@ namespace MyTv
       buttonCleanup.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 82);//Cleanup
       buttonCompress.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 83);//Compress
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-      Keyboard.AddGotKeyboardFocusHandler(gridList, new KeyboardFocusChangedEventHandler(onKeyboardFocus));
-      
+      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
+
       this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
       Keyboard.Focus(buttonView);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
@@ -118,37 +93,35 @@ namespace MyTv
       LoadRecordings();
       Thread thumbNailThread = new Thread(new ThreadStart(CreateThumbnailsThread));
       thumbNailThread.Start();
-      gridList.ItemContainerGenerator.StatusChanged += new EventHandler(ItemContainerGenerator_StatusChanged);
+      gridList.SelectionChanged += new SelectionChangedEventHandler(gridList_SelectionChanged);
+      gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler( Button_Click),true);
+    }
 
-    }
-    void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
+    void gridList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      if (gridList.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+      UpdateInfoBox();
+    }
+    void handleMouse(object sender, MouseEventArgs e)
+    {
+      FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
+      while (element != null)
       {
-        ListBoxItem focusedItem = gridList.ItemContainerGenerator.ContainerFromIndex(gridList.SelectedIndex) as ListBoxItem;
-        if (focusedItem != null)
+        if (element as Button != null)
         {
-          Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
-          ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
-          Button b = gridList.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
-          Keyboard.Focus(b);
-          b.Focus();
+          Keyboard.Focus((Button)element);
+          return;
         }
+        if (element as ListBoxItem != null)
+        {
+          gridList.SelectedItem = element.DataContext;
+          Keyboard.Focus((ListBoxItem)element);
+          UpdateInfoBox();
+          return;
+        }
+        element = element.TemplatedParent as FrameworkElement;
       }
     }
-    void onKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-    {
-      ListBoxItem focusedItem = e.NewFocus as ListBoxItem;
-      if (focusedItem != null)
-      {
-        Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
-        ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
-        Button b = gridList.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
-        Keyboard.Focus(b);
-        b.Focus();
-        e.Handled = true;
-      }
-    }
+
     /// <summary>
     /// Gets the content for right label of each recording.
     /// This depends on the current sort mode
@@ -222,12 +195,12 @@ namespace MyTv
       {
         case ViewMode.List:
           {
-            gridList.ItemTemplate = (DataTemplate)this.Resources["itemListTemplate"];
+            gridList.ItemTemplate = (DataTemplate)Application.Current.Resources["itemListTemplate"];
           }
           break;
         case ViewMode.Icon:
           {
-            gridList.ItemTemplate = (DataTemplate)this.Resources["itemIconTemplate"];
+            gridList.ItemTemplate = (DataTemplate)Application.Current.Resources["itemIconTemplate"];
           }
           break;
       }
@@ -244,13 +217,12 @@ namespace MyTv
       }
       gridList.ItemsSource = collection;
 
+
     }
     void Button_Click(object sender, RoutedEventArgs e)
     {
-      if (e.Source == gridList)
-      {
-        OnRecordingClicked();
-      }
+      if (e.Source != gridList) return;
+      OnRecordingClicked();
     }
     /// <summary>
     /// Called when user has clicked on a recording
@@ -368,11 +340,11 @@ namespace MyTv
       }
       TvPlayerCollection.Instance.DisposeAll();
     }
-    void button_GotFocus(object sender, RoutedEventArgs e)
+    void UpdateInfoBox()
     {
-      Button b = sender as Button;
-      if (b == null) return;
-      Recording recording = b.Tag as Recording;
+      DialogMenuItem item = gridList.SelectedItem as DialogMenuItem;
+      if (item == null) return;
+      Recording recording = item.Tag as Recording;
       if (recording == null) return;
 
       labelTitle.Text = recording.Title;
@@ -381,12 +353,6 @@ namespace MyTv
       labelGenre.Text = recording.Genre;
     }
 
-    void gridSub_Loaded(object sender, RoutedEventArgs e)
-    {
-      Grid g = sender as Grid;
-      if (g == null) return;
-      g.Width = ((Button)(g.Parent)).ActualWidth;
-    }
 
     /// <summary>
     /// Called when view button gets clicked
@@ -462,6 +428,12 @@ namespace MyTv
     }
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
+      if (e.Key == System.Windows.Input.Key.Left)
+      {
+        Keyboard.Focus(buttonView);
+        e.Handled = true;
+        return;
+      }
       if (e.Key == System.Windows.Input.Key.Escape)
       {
         //return to previous screen

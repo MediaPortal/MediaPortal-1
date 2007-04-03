@@ -74,49 +74,50 @@ namespace Dialogs
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-      Keyboard.AddGotKeyboardFocusHandler(gridContent, new KeyboardFocusChangedEventHandler(onKeyboardFocus));
-
-      this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
+      gridContent.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
+      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
       this.Visibility = Visibility.Visible;
       gridContent.ItemsSource = _menuItems;
       gridContent.SelectionChanged += new SelectionChangedEventHandler(gridContent_SelectionChanged);
       gridContent.SelectionMode = SelectionMode.Single;
       if (_selectedIndex >= 0)
         gridContent.SelectedIndex = _selectedIndex;
+      else
+        gridContent.SelectedIndex = 0;
+
       Keyboard.Focus(gridContent);
       gridContent.ItemContainerGenerator.StatusChanged += new EventHandler(ItemContainerGenerator_StatusChanged);
-
     }
+
     void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
     {
       if (gridContent.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
       {
-        ListBoxItem focusedItem = gridContent.ItemContainerGenerator.ContainerFromIndex(gridContent.SelectedIndex) as ListBoxItem;
-        if (focusedItem != null)
-        {
-          Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
-          ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
-          Button b = gridContent.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
-          Keyboard.Focus(b);
-          b.Focus();
-        }
+        DependencyObject dp = gridContent.ItemContainerGenerator.ContainerFromItem(gridContent.SelectedItem);
+        Keyboard.Focus((ListBoxItem)dp);
+
       }
     }
 
-    void onKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    void handleMouse(object sender, MouseEventArgs e)
     {
-      ListBoxItem focusedItem = e.NewFocus as ListBoxItem;
-      if (focusedItem != null)
+      FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
+      while (element != null)
       {
-        Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
-        ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
-        Button b = gridContent.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
-        Keyboard.Focus(b);
-        b.Focus();
-        e.Handled = true;
+        if (element as Button != null)
+        {
+          Keyboard.Focus((Button)element);
+          return;
+        }
+        if (element as ListBoxItem != null)
+        {
+          gridContent.SelectedItem = element.DataContext;
+          Keyboard.Focus((ListBoxItem)element);
+          return;
+        }
+        element = element.TemplatedParent as FrameworkElement;
       }
     }
-
     void Button_Click(object sender, RoutedEventArgs e)
     {
       if (e.Source == gridContent)
@@ -155,27 +156,6 @@ namespace Dialogs
       }
     }
 
-    /// <summary>
-    /// called when mouse enters a button
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
-    void OnMouseEnter(object sender, MouseEventArgs e)
-    {
-      Button b = sender as Button;
-      if (b != null)
-      {
-        Keyboard.Focus(b);
-        ContentPresenter content = b.TemplatedParent as ContentPresenter;
-        if (content != null)
-        {
-          if (content.Content != null)
-          {
-            gridContent.SelectedItem = content.Content;
-          }
-        }
-      }
-    }
 
     /// <summary>
     /// Gets or sets the index of the selected.

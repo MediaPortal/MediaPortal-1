@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
+using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
@@ -43,31 +44,7 @@ namespace MyTv
     {
       InitializeComponent();
     }
-    /// <summary>
-    /// Called when mouse enters a button
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
-    void OnMouseEnter(object sender, MouseEventArgs e)
-    {
-      IInputElement b = sender as IInputElement;
-      if (b != null)
-      {
-        Keyboard.Focus(b);
-        Button button = sender as Button;
-        if (button != null)
-        {
-          ContentPresenter content = button.TemplatedParent as ContentPresenter;
-          if (content != null)
-          {
-            if (content.Content != null)
-            {
-              gridList.SelectedItem = content.Content;
-            }
-          }
-        }
-      }
-    }
+
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
       if (e.Key == System.Windows.Input.Key.Left)
@@ -101,14 +78,12 @@ namespace MyTv
       // Sets keyboard focus on the first Button in the sample.
       labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 111);// "scheduled";
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-      Keyboard.AddGotKeyboardFocusHandler(gridList, new KeyboardFocusChangedEventHandler(onKeyboardFocus));
-
-      this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
+      this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click),true);
+      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
       Keyboard.Focus(buttonSort);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
       gridList.SelectionMode = SelectionMode.Single;
-      gridList.BorderThickness = new Thickness(0);
-      
+
 
 
       if (TvPlayerCollection.Instance.Count > 0)
@@ -123,34 +98,32 @@ namespace MyTv
       }
 
       LoadSchedules();
+      gridList.SelectionChanged += new SelectionChangedEventHandler(gridList_SelectionChanged);
+      gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
+    }
 
-    }
-    void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
+    void gridList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-      if (gridList.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+      UpdateInfoBox();
+    }
+    void handleMouse(object sender, MouseEventArgs e)
+    {
+      FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
+      while (element != null)
       {
-        ListBoxItem focusedItem = gridList.ItemContainerGenerator.ContainerFromIndex(gridList.SelectedIndex) as ListBoxItem;
-        if (focusedItem != null)
+        if (element as Button != null)
         {
-          Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
-          ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
-          Button b = gridList.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
-          Keyboard.Focus(b);
-          b.Focus();
+          Keyboard.Focus((Button)element);
+          return;
         }
-      }
-    }
-    void onKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-    {
-      ListBoxItem focusedItem = e.NewFocus as ListBoxItem;
-      if (focusedItem != null)
-      {
-        Border border = (Border)VisualTreeHelper.GetChild(focusedItem, 0);
-        ContentPresenter contentPresenter = VisualTreeHelper.GetChild(border, 0) as ContentPresenter;
-        Button b = gridList.ItemTemplate.FindName("PART_Button", contentPresenter) as Button;
-        Keyboard.Focus(b);
-        b.Focus();
-        e.Handled = true;
+        if (element as ListBoxItem != null)
+        {
+          gridList.SelectedItem = element.DataContext;
+          Keyboard.Focus((ListBoxItem)element);
+          UpdateInfoBox();
+          return;
+        }
+        element = element.TemplatedParent as FrameworkElement;
       }
     }
 
@@ -227,11 +200,10 @@ namespace MyTv
       gridList.ItemsSource = collection;
     }
 
-    void button_GotFocus(object sender, RoutedEventArgs e)
+    void UpdateInfoBox()
     {
-      Button b = sender as Button;
-      if (b == null) return;
-      Recording recording = b.Tag as Recording;
+      if (gridList.SelectedItem == null) return;
+      Recording recording = ((DialogMenuItem)gridList.SelectedItem).Tag as Recording;
       if (recording == null) return;
 
       labelTitle.Text = recording.Title;
@@ -240,12 +212,6 @@ namespace MyTv
       labelGenre.Text = recording.Genre;
     }
 
-    void gridSub_Loaded(object sender, RoutedEventArgs e)
-    {
-      Grid g = sender as Grid;
-      if (g == null) return;
-      g.Width = ((Button)(g.Parent)).ActualWidth;
-    }
 
     void Button_Click(object sender, RoutedEventArgs e)
     {

@@ -9,6 +9,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Controls.Primitives;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Dialogs;
@@ -33,32 +34,8 @@ namespace MyTv
       InitializeComponent();
     }
 
-    /// <summary>
-    /// Called when mouse enters a button
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
-    void OnMouseEnter(object sender, MouseEventArgs e)
-    {
-      IInputElement b = sender as IInputElement;
-      if (b != null)
-      {
-        Keyboard.Focus(b);
-      }
-    }
     void ShowUpcomingEpisodes()
     {
-      labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 46);//program info
-      buttonRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 13);//Record
-      buttonAdvancedRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 42);//Advanced Record
-      buttonKeepUntil.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 47);//Keep until
-      buttonAlertMe.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 48);//Alert me
-      buttonQuality.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 49);//Quality setting
-      buttonEpisodes.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 50);//Episodes management
-      buttonPreRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 51);//Pre-record
-      buttonPostRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 52);//Post-record
-      labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
-      gridList.Children.Clear();
       Grid grid = new Grid();
       //set program description
       string strTime = String.Format("{0} {1} - {2}", _program.StartTime.ToString("dd-MM"), _program.StartTime.ToString("HH:mm"), _program.EndTime.ToString("HH:mm"));
@@ -115,39 +92,14 @@ namespace MyTv
       DateTime dtDay = DateTime.Now;
       IList episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), _program.Title, null);
       int row = 0;
+      DialogMenuItemCollection collection = new DialogMenuItemCollection();
       foreach (Program episode in episodes)
       {
-        grid.RowDefinitions.Add(new RowDefinition());
-        Button button = new Button();
-        button.Template = (ControlTemplate)Application.Current.Resources["MpButton"];
-        Grid gridSub = new Grid();
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.ColumnDefinitions.Add(new ColumnDefinition());
-        gridSub.RowDefinitions.Add(new RowDefinition());
-        gridSub.RowDefinitions.Add(new RowDefinition());
-
         string logo = System.IO.Path.ChangeExtension(episode.ReferencedChannel().Name, ".png");
-        if (System.IO.File.Exists(logo))
+        if (!System.IO.File.Exists(logo))
         {
-          Image image = new Image();
-          PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(logo, UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-
-          image.Source = decoder.Frames[0];
-          Grid.SetColumn(image, 0);
-          Grid.SetRow(image, 0);
-          Grid.SetRowSpan(image, 2);
-          gridSub.Children.Add(image);
+          logo = "";
         }
-
-
 
         Schedule recordingSchedule;
         string recIcon = "";
@@ -168,7 +120,7 @@ namespace MyTv
         }
         if (recIcon != "")
         {
-          if (System.IO.File.Exists(recIcon))
+         /* if (System.IO.File.Exists(recIcon))
           {
             Image image = new Image();
             PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(recIcon, UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
@@ -182,51 +134,13 @@ namespace MyTv
             Grid.SetRow(image, 0);
             Grid.SetColumnSpan(image, 8);
             gridSub.Children.Add(image);
-          }
+          }*/
         }
-        Label label = new Label();
-        label.Content = episode.Title;
-        label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
-        Grid.SetColumn(label, 1);
-        Grid.SetRow(label, 0);
-        Grid.SetColumnSpan(label, 8);
-        gridSub.Children.Add(label);
-        //item.MusicTag = episode;
-        //item.ThumbnailImage = logo;
-        //item.IconImageBig = logo;
-        //item.IconImage = logo;
-        strTime = String.Format("{0} {1} - {2}", episode.StartTime.ToString("dd-MM"), episode.StartTime.ToString("HH:mm"), episode.EndTime.ToString("HH:mm"));
-
-        label = new Label();
-        label.Content = strTime;
-        label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-        Grid.SetColumn(label, 1);
-        Grid.SetColumnSpan(label, 6);
-        Grid.SetRow(label, 1);
-        gridSub.Children.Add(label);
-
-        label = new Label();
-        label.Content = episode.ReferencedChannel().Name;
-        label.Style = (Style)Application.Current.Resources["LabelSmallStyleWhite"];
-        label.HorizontalAlignment = HorizontalAlignment.Right;
-        //label.Margin = new Thickness(0, 0, 60, 0);
-        Grid.SetColumn(label, 7);
-        Grid.SetColumnSpan(label, 2);
-        Grid.SetRow(label, 1);
-        gridSub.Children.Add(label);
-
-        gridSub.Loaded += new RoutedEventHandler(gridSub_Loaded);
-        button.Tag = episode;
-        button.GotFocus += new RoutedEventHandler(button_GotFocus);
-        button.MouseEnter += new MouseEventHandler(OnMouseEnter);
-        button.Content = gridSub;
-        button.Click += new RoutedEventHandler(OnUpcomingEpisodeClicked);
-        Grid.SetColumn(button, 0);
-        Grid.SetRow(button, row);
-        grid.Children.Add(button);
-        row++;
+        DialogMenuItem item = new DialogMenuItem(logo, episode.Title, strTime, episode.ReferencedChannel().Name);
+        item.Tag = episode;
+        collection.Add(item);
       }
-      gridList.Children.Add(grid);
+      gridList.ItemsSource = collection;
     }
 
     void button_GotFocus(object sender, RoutedEventArgs e)
@@ -242,12 +156,6 @@ namespace MyTv
       labelGenre.Text = recording.Genre;
     }
 
-    void gridSub_Loaded(object sender, RoutedEventArgs e)
-    {
-      Grid g = sender as Grid;
-      if (g == null) return;
-      g.Width = ((Button)(g.Parent)).ActualWidth;
-    }
 
 
     bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
@@ -275,7 +183,21 @@ namespace MyTv
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       // Sets keyboard focus on the first Button in the sample.
+      labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 46);//program info
+      buttonRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 13);//Record
+      buttonAdvancedRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 42);//Advanced Record
+      buttonKeepUntil.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 47);//Keep until
+      buttonAlertMe.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 48);//Alert me
+      buttonQuality.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 49);//Quality setting
+      buttonEpisodes.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 50);//Episodes management
+      buttonPreRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 51);//Pre-record
+      buttonPostRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 52);//Post-record
+      labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
+      this.AddHandler(Button.ClickEvent, new RoutedEventHandler(Button_Click));
+      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
+      gridList.SelectionChanged += new SelectionChangedEventHandler(gridList_SelectionChanged);
+      gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
       Keyboard.Focus(buttonRecord);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
       ShowUpcomingEpisodes();
@@ -300,6 +222,13 @@ namespace MyTv
     }
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
+      if (e.Key == System.Windows.Input.Key.Left)
+      {
+        //return to previous screen
+        Keyboard.Focus(buttonRecord);
+        e.Handled = true;
+        return;
+      }
       if (e.Key == System.Windows.Input.Key.Escape)
       {
         //return to previous screen
@@ -317,6 +246,31 @@ namespace MyTv
     }
 
 
+    void gridList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      UpdateInfoBox();
+    }
+    void handleMouse(object sender, MouseEventArgs e)
+    {
+      FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
+      while (element != null)
+      {
+        if (element as Button != null)
+        {
+          Keyboard.Focus((Button)element);
+          return;
+        }
+        if (element as ListBoxItem != null)
+        {
+          gridList.SelectedItem = element.DataContext;
+          Keyboard.Focus((ListBoxItem)element);
+          UpdateInfoBox();
+          return;
+        }
+        element = element.TemplatedParent as FrameworkElement;
+      }
+    }
+
     void OnUpcomingEpisodeClicked(object sender, RoutedEventArgs e)
     {
       Button b = sender as Button;
@@ -324,6 +278,28 @@ namespace MyTv
       Program p = b.Tag as Program;
       if (p == null) return;
       OnRecordProgram(p);
+    }
+    void UpdateInfoBox()
+    {
+      if (gridList.SelectedItem == null) return;
+      Program program = ((DialogMenuItem)gridList.SelectedItem).Tag as Program;
+      if (program == null) return;
+
+      labelTitle.Text = program.Title;
+      labelDescription.Text = program.Description;
+      labelStartEnd.Text = String.Format("{0}-{1}", program.StartTime.ToString("HH:mm"), program.EndTime.ToString("HH:mm"));
+      labelGenre.Text = program.Genre;
+    }
+    void Button_Click(object sender, RoutedEventArgs e)
+    {
+      if (e.Source == gridList)
+      {
+        DialogMenuItem item = gridList.SelectedItem as DialogMenuItem;
+        if (item == null) return;
+        Program program = item.Tag as Program;
+        if (program == null) return;
+        OnRecordProgram(program);
+      }
     }
     void OnRecordClicked(object sender, EventArgs e)
     {

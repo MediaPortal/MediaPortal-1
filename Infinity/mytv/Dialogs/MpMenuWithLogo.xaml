@@ -8,36 +8,7 @@
     <Storyboard x:Key="fadeIn">
       <DoubleAnimation From="0" To="1" Duration="0:0:1" Storyboard.TargetName="gridMain" Storyboard.TargetProperty="(UIElement.Opacity)"/>
     </Storyboard>
-
-    <DataTemplate x:Key="itemTemplate"  DataType="{x:Type local:DialogMenuItem}">
-      <Button Name="PART_Button" Style="{DynamicResource MpButton}" HorizontalAlignment="Stretch" Width="460" MouseEnter="OnMouseEnter"  >
-        <Grid Width="430" >
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-          </Grid.ColumnDefinitions>
-          <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-          </Grid.RowDefinitions>
-          <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Source="{Binding Logo}" />
-          <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="10" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Label1}"/>
-          <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="6" Style="{StaticResource LabelSmallStyleWhite}" Content="{Binding Label2}"/>
-          <Label Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Label3}"/>
-        </Grid>
-      </Button>
-    </DataTemplate>
   </Window.Resources>
-
   <Window.Triggers>
     <EventTrigger RoutedEvent="FrameworkElement.Loaded" SourceName="gridMain">
       <BeginStoryboard Storyboard="{StaticResource fadeIn}"/>
@@ -73,8 +44,8 @@
         </Rectangle.Fill>
       </Rectangle>
       <Label x:Name="labelDate" Width="78" Height="38.898" Content="18:09" FontFamily="Segoe Media Center" FontSize="24" FontWeight="Bold" Foreground="#FF5995D7" Canvas.Left="372" Canvas.Top="6.855"/>
-      <Button x:Name="buttonClose" Style="{DynamicResource MpCloseButton}" Width="45" Height="43" Canvas.Left="470.669" Canvas.Top="13.607" Click="OnCloseClicked" MouseEnter="OnMouseEnter" KeyDown="onKeyDown" />
-      <ListBox x:Name="gridContent" FocusManager.IsFocusScope="False"  ItemTemplate="{StaticResource itemTemplate}" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="True" Background="Transparent" HorizontalAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.CanContentScroll="True" IsSynchronizedWithCurrentItem="True" />
+      <Button x:Name="buttonClose" Style="{DynamicResource MpCloseButton}" Width="45" Height="43" Canvas.Left="470.669" Canvas.Top="13.607" Click="OnCloseClicked" KeyDown="onKeyDown" />
+      <ListBox x:Name="gridContent" ItemContainerStyle="{StaticResource MpListViewItem}"  Style="{StaticResource MpListView}" ItemTemplate="{StaticResource itemIconTemplate}" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" />
 
     </Canvas>
   </Grid>

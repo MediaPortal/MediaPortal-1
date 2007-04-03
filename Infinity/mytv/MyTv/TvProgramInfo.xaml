@@ -43,21 +43,21 @@
         </Grid>
       </StackPanel>
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
-        <Button Name="buttonRecord" Style="{DynamicResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnRecordClicked">Record</Button>
-        <Button Name="buttonAdvancedRecord" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnAdvancedRecordClicked">Advanced Record</Button>
-        <Button Name="buttonKeepUntil" Style="{DynamicResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnKeepUntil" >Keep until</Button>
-        <CheckBox  Name="buttonAlertMe" Style="{StaticResource MpRadioButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnNotify">Alert me</CheckBox >
-        <Button Name="buttonQuality" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter"  >Quality setting</Button>
-        <Button Name="buttonEpisodes" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnSetEpisodes" >Episodes management</Button>
-        <Button Name="buttonPreRecord" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnPreRecordInterval" >Pre-record</Button>
-        <Button Name="buttonPostRecord" Style="{DynamicResource MpButton}" Height="32" MouseEnter="OnMouseEnter" Click="OnPostRecordInterval"  >Post-record</Button>
+        <Button Name="buttonRecord" Style="{DynamicResource MpButton}" Height="32"   Click="OnRecordClicked">Record</Button>
+        <Button Name="buttonAdvancedRecord" Style="{DynamicResource MpButton}" Height="32"  Click="OnAdvancedRecordClicked">Advanced Record</Button>
+        <Button Name="buttonKeepUntil" Style="{DynamicResource MpButton}" Height="32"   Click="OnKeepUntil" >Keep until</Button>
+        <CheckBox  Name="buttonAlertMe" Style="{StaticResource MpRadioButton}" Height="32"  Click="OnNotify">Alert me</CheckBox >
+        <Button Name="buttonQuality" Style="{DynamicResource MpButton}" Height="32"   >Quality setting</Button>
+        <Button Name="buttonEpisodes" Style="{DynamicResource MpButton}" Height="32"  Click="OnSetEpisodes" >Episodes management</Button>
+        <Button Name="buttonPreRecord" Style="{DynamicResource MpButton}" Height="32"  Click="OnPreRecordInterval" >Pre-record</Button>
+        <Button Name="buttonPostRecord" Style="{DynamicResource MpButton}" Height="32"  Click="OnPostRecordInterval"  >Post-record</Button>
       </StackPanel>
 
       <StackPanel Margin="0,0,30,0">
         <TextBlock Name="labelTitle" Style="{StaticResource TextBlockLargeStyle}"/>
         <TextBlock Name="labelDescription"  Style="{StaticResource TextBlockNormalStyle}" />
-        <Grid x:Name="gridList" Margin="0,0,30,0">
-        </Grid>
+        <ListBox x:Name="gridList" ItemContainerStyle="{StaticResource MpListViewItem}"  Style="{StaticResource MpListView}" ItemTemplate="{StaticResource itemIconTemplate}" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" />
+
       </StackPanel>
     </DockPanel >
   </Grid>

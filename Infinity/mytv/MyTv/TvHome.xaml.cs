@@ -64,6 +64,7 @@ namespace MyTv
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
 
+      ServiceScope.Get<ILogger>().Info("mytv:OnLoaded");
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.Focus(buttonTvGuide);
@@ -77,12 +78,26 @@ namespace MyTv
       buttonSearch.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 7);
       buttonTeletext.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 8);
       labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 9);
+      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
       //try to connect to server in background...
       //ConnectToServerDelegate starter = new ConnectToServerDelegate(this.ConnectToServer);
       //starter.BeginInvoke(null, null);
       ConnectToServer();
     }
 
+    void handleMouse(object sender, MouseEventArgs e)
+    {
+      FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
+      while (element.TemplatedParent != null)
+      {
+        element = (FrameworkElement)element.TemplatedParent;
+        if (element as Button != null)
+        {
+          Keyboard.Focus((Button)element);
+          return;
+        }
+      }
+    }
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
       if (e.Key == System.Windows.Input.Key.Escape)
@@ -135,6 +150,7 @@ namespace MyTv
       try
       {
         if (!_firstTime) return;
+        ServiceScope.Get<ILogger>().Info("mytv:ConnectToServer");
         RemoteControl.HostName = UserSettings.GetString("tv", "serverHostName");
 
         string connectionString, provider;
@@ -149,6 +165,8 @@ namespace MyTv
         nodeProvider.InnerText = provider;
         doc.Save("gentle.config");
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
+
+        ServiceScope.Get<ILogger>().Info("mytv:initialize channel navigator");
         ChannelNavigator.Instance.Initialize();
 
         int cards = RemoteControl.Instance.Cards;
@@ -156,9 +174,11 @@ namespace MyTv
       }
       catch (Exception)
       {
+        ServiceScope.Get<ILogger>().Info("mytv:initialize connect failed");
         buttonTvGuide.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new ConnectToServerDelegate(OnFailedToConnectToServer));
         return;
       }
+      ServiceScope.Get<ILogger>().Info("mytv:initialize connect succeeded");
       buttonTvGuide.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new ConnectToServerDelegate(OnSucceededToConnectToServer));
     }
 
@@ -178,6 +198,7 @@ namespace MyTv
     void OnSucceededToConnectToServer()
     {
       _firstTime = false;
+      ServiceScope.Get<ILogger>().Info("mytv:check wmp version");
       WindowMediaPlayerCheck check = new WindowMediaPlayerCheck();
       if (!check.IsInstalled)
       {
@@ -191,6 +212,7 @@ namespace MyTv
         dlg.ShowDialog();
         return;
       }
+      ServiceScope.Get<ILogger>().Info("mytv:check tsreader.ax installed");
       TsReaderCheck checkReader = new TsReaderCheck();
       {
         if (!checkReader.IsInstalled)
@@ -206,6 +228,7 @@ namespace MyTv
           return;
         }
       }
+      ServiceScope.Get<ILogger>().Info("mytv:UpdateInfoBox");
       UpdateInfoBox();
 
       if (TvPlayerCollection.Instance.Count > 0)
@@ -218,21 +241,9 @@ namespace MyTv
         videoBrush.Drawing = videoDrawing;
         videoWindow.Fill = videoBrush;
       }
+      ServiceScope.Get<ILogger>().Info("mytv:OnSucceededToConnectToServer done");
     }
 
-    /// <summary>
-    /// Called when mouse enters a button
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
-    void OnMouseEnter(object sender, MouseEventArgs e)
-    {
-      IInputElement b = sender as IInputElement;
-      if (b != null)
-      {
-        Keyboard.Focus(b);
-      }
-    }
 
     /// <summary>
     /// Called when tv guide button is clicked.

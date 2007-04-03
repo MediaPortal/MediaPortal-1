@@ -6,6 +6,9 @@ using TvControl;
 using TvDatabase;
 using Gentle.Common;
 using Gentle.Framework;
+using ProjectInfinity;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Localisation;
 
 namespace MyTv
 {
@@ -37,6 +40,7 @@ namespace MyTv
     /// </summary>
     public void Initialize()
     {
+      ServiceScope.Get<ILogger>().Info("Navigator.Initialize");
       _groups.Clear();
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
       sb.AddConstraint(Operator.Equals, "isTv", 1);
@@ -44,12 +48,15 @@ namespace MyTv
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
 
+      ServiceScope.Get<ILogger>().Info("Navigator #1");
       sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
       sb.AddOrderByField(true, "groupName");
       stmt = sb.GetStatement(true);
       IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
       IList allgroupMaps = GroupMap.ListAll();
       bool found = false;
+
+      ServiceScope.Get<ILogger>().Info("Navigator #2");
       foreach (ChannelGroup group in groups)
       {
         if (group.GroupName == "All Channels")//GUILocalizeStrings.Get(972))
@@ -79,6 +86,7 @@ namespace MyTv
         }
       }
 
+      ServiceScope.Get<ILogger>().Info("Navigator #3");
       if (!found)
       {
         TvBusinessLayer layer = new TvBusinessLayer();
@@ -89,6 +97,7 @@ namespace MyTv
         }
         //MediaPortal.GUI.Library.Log.Info(" group:{0} created", GUILocalizeStrings.Get(972));
       }
+      ServiceScope.Get<ILogger>().Info("Navigator #4");
 
       groups = ChannelGroup.ListAll();
       foreach (ChannelGroup group in groups)
@@ -97,6 +106,7 @@ namespace MyTv
         _groups.Add(group);
       }
 
+      ServiceScope.Get<ILogger>().Info("Navigator #5");
       int channelId = UserSettings.GetInt("tv", "channel");
       try
       {
@@ -105,6 +115,7 @@ namespace MyTv
       catch (Exception)
       {
       }
+      ServiceScope.Get<ILogger>().Info("Navigator initialized");
     }
     /// <summary>
     /// Gets the currently active channel group.
