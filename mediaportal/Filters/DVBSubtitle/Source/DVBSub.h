@@ -63,7 +63,6 @@ struct SUBTITLE
   WORD        bmBitsPixel;
   LPVOID      bmBits;
 
-
   unsigned    __int64 timestamp;
   unsigned    __int64 timeOut;
   int         firstScanLine;
@@ -80,7 +79,7 @@ DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
 };
 
 
-extern void LogDebug(const char *fmt, ...);
+extern void LogDebug( const char *fmt, ... );
 
 class CDVBSub : public CBaseFilter, public MSubdecoderObserver, MPidObserver, IDVBSubtitle
 {
@@ -101,7 +100,6 @@ public:
   virtual HRESULT STDMETHODCALLTYPE DiscardOldestSubtitle();
   virtual HRESULT STDMETHODCALLTYPE GetSubtitleCount( int* count );
 
-
   // IDVBSubtitle
   virtual HRESULT STDMETHODCALLTYPE SetCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) );
   virtual HRESULT STDMETHODCALLTYPE SetTimestampResetCallback( int (CALLBACK *pTimestampResetObserver)() );
@@ -110,7 +108,7 @@ public:
   // IUnknown
   DECLARE_IUNKNOWN;
 
-  STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
+  STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
 
   // From MSubdecoderObserver
 	void NotifySubtitle();
@@ -120,7 +118,7 @@ public:
   void SetPcrPid( LONG pid );
 	void SetSubtitlePid( LONG pid );
 
-  static CUnknown * WINAPI CreateInstance(LPUNKNOWN pUnk, HRESULT *pHr);
+  static CUnknown * WINAPI CreateInstance( LPUNKNOWN pUnk, HRESULT *pHr );
 
 	void Reset();
 
@@ -154,5 +152,6 @@ private: // data
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub);
   int                 (CALLBACK *m_pTimestampResetObserver) ();
 
-	CComQIPtr<ITSFileSource> m_pTSFileSource;
+  ITSFileSource*      m_pTSFileSource;
+  bool                m_bStopping;
 };

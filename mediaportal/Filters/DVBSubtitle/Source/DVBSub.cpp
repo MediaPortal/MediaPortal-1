@@ -88,10 +88,12 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_pSubtitleObserver( NULL ),
   m_pTimestampResetObserver( NULL ),
   m_pIMediaSeeking( NULL ),
+  m_pTSFileSource( NULL ),
   m_basePCR( -1 ),
   m_firstPCR( -1 ),
   m_startTimestamp( -1 ),
-  m_seekDifPCR( -1 )
+  m_seekDifPCR( -1 ),
+  m_bStopping( false )
 {
 	// Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -105,7 +107,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
     return;
   }
 
-	// Create subtitle input pin
+  // Create subtitle input pin
 	m_pSubtitleInputPin = new CSubtitleInputPin( this,
 								GetOwner(),
 								this,
@@ -173,11 +175,18 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
 //
 CDVBSub::~CDVBSub()
 {
-	m_pSubDecoder->SetObserver( NULL );
+	LogDebug( "CDVBSub::~CDVBSub() - start" );
+
+  if( m_pSubDecoder )
+  {
+    m_pSubDecoder->SetObserver( NULL );
+  }
 	delete m_pSubDecoder;
 	delete m_pSubtitleInputPin;
 	delete m_pPcrPin;
   delete m_pPMTPin;
+
+  LogDebug( "CDVBSub::~CDVBSub() - end" );
 }
 
 
@@ -248,6 +257,8 @@ HRESULT CDVBSub::CheckConnect( PIN_DIRECTION dir, IPin *pPin )
 //
 STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 {
+  m_bStopping = false;
+  
   // Get media seeking interface if missing
   if( !m_pIMediaSeeking )
   {
@@ -282,6 +293,11 @@ STDMETHODIMP CDVBSub::Stop()
   // Calling reset here seems to hang the whole graph (a deadlock with TSFileSource?)
   // Filter state is reseted in ::Run()
   //Reset(); 
+
+  m_bStopping = true;
+  m_pTSFileSource->Release();
+  m_pTSFileSource = NULL;
+
 	HRESULT hr = CBaseFilter::Stop();
   LogDebug("CDVBSub::Stop - end" );
   return hr;
@@ -335,10 +351,11 @@ void CDVBSub::Reset()
 //
 // Test
 //
-STDMETHODIMP CDVBSub::Test(int status){
+STDMETHODIMP CDVBSub::Test(int status)
+{
 	LogDebug("TEST : %i", status);
 	return S_OK;
-  }
+}
 
 
 //
@@ -468,59 +485,33 @@ void CDVBSub::SetPcr( ULONGLONG pcr )
 HRESULT CDVBSub::ConnectToTSFileSource()
 {
 	// Already connected?
-	if( m_pTSFileSource )
+	if( m_pTSFileSource || m_bStopping )
 		return S_OK;
 
-	IEnumFilters *pEnum( NULL );
-  IBaseFilter *pFilter( NULL );
-  ULONG cFetched( 0 );
-	CComQIPtr<IBaseFilter> pBaseFilter;
-	FILTER_INFO pFilterInfo;
+  IEnumFilters *enumFilters;
+  IBaseFilter *curFilter;
+  ULONG fetched;
+  FILTER_INFO pInfo;
+  IFilterGraph *pGraph = GetFilterGraph();
 
-	QueryInterface( IID_IBaseFilter,( void**)&pBaseFilter );
-	pBaseFilter->QueryFilterInfo( &pFilterInfo );
-
-	pFilterInfo.pGraph->Release();
-
-	if( pFilterInfo.pGraph == NULL )
-	{
-		return S_FALSE;
-	}
-
-  HRESULT hr = pFilterInfo.pGraph->EnumFilters( &pEnum );
-  if( FAILED(hr) )
-	return hr;
-
-  while( pEnum->Next( 1, &pFilter, &cFetched ) == S_OK )
+  pGraph->EnumFilters( &enumFilters );
+  enumFilters->Reset();
+  
+  while( enumFilters->Next( 1, &curFilter, &fetched ) == S_OK )
   {
-    FILTER_INFO FilterInfo;
-    hr = pFilter->QueryFilterInfo( &FilterInfo );
-    if ( FAILED(hr) )
+    curFilter->QueryFilterInfo( &pInfo );
+    if( wcscmp( pInfo.achName, L"TsFileSource" ) == 0 )
     {
-      continue;  // Next one?
+      curFilter->QueryInterface( IID_ITSFileSource, ( void**)&m_pTSFileSource );
     }
-
-    char szName[MAX_FILTER_NAME];
-    int cch = WideCharToMultiByte( CP_ACP, 0, FilterInfo.achName,
-      MAX_FILTER_NAME, szName, MAX_FILTER_NAME, 0, 0 );
-
-    if( strcmp( szName, "TsFileSource" ) == 0 )
-    {
-      pFilter->QueryInterface( IID_ITSFileSource, ( void**)&m_pTSFileSource );
-    }
-
-    if( FilterInfo.pGraph != NULL )
-    {
-      FilterInfo.pGraph->Release();
-    }
-    pFilter->Release();
+    curFilter->Release();
+    curFilter = NULL;
   }
 
-  if( pEnum )
-  {
-	  pEnum->Release();
-  }
-	return S_OK;
+  enumFilters->Release();
+  enumFilters = NULL;
+
+  return S_OK;
 }
 
 
