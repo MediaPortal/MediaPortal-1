@@ -32,8 +32,8 @@
     <String id="31">November</String>
     <String id="32">December</String>
     <String id="50" prefix="My ">DVDs</String>
-    <String id="100">View: Icons</String>
-    <String id="101">View: List</String>
+    <String id="100">Layout: Icons</String>
+    <String id="101">Layout: List</String>
     <String id="102">Scan</String>
     <String id="103">Sort by: Name</String>
     <String id="104">Sort by: Date</String>
@@ -345,7 +345,7 @@
     <String id="414">No review for this album</String>
     <String id="415">Downloading thumbnail...</String>
     <String id="416">Not available</String>
-    <String id="417">View: Big Icons</String>
+    <String id="417">Layout: Big Icons</String>
     <String id="418" prefix="My ">Videos/Genres</String>
     <String id="419" prefix="My ">Videos/Actors</String>
     <String id="420" prefix="My ">Videos/Years</String>
@@ -385,7 +385,7 @@
     <String id="454">Row 4 address:</String>
     <String id="455">Rows:</String>
     <String id="456">Mode:</String>
-    <String id="457">Switch view</String>
+    <String id="457">Switch View</String>
     <String id="458">B/Mark</String>
     <String id="459">Subs</String>
     <String id="460">Audio Stream</String>
@@ -447,7 +447,7 @@
     <String id="517">Fatal error, action not completed</String>
     <String id="518">Delete this song?</String>
     <String id="519">Subtitles off</String>
-    <String id="529">View: Big Icon List</String>
+    <String id="529">Layout: Big Icon List</String>
     <String id="530">Photo disc inserted, do you want to open it?</String>
     <String id="531">Video disc inserted, do you want to open it?</String>
     <String id="532">Audio disc inserted, do you want to open it?</String>
@@ -614,7 +614,7 @@
     <String id="730">This schedule is recording. If you delete</String>
     <String id="731">the schedule then the recording is stopped.</String>
     <String id="732">Are you sure?</String>
-    <String id="733">View: Filmstrip</String>
+    <String id="733">Layout: Filmstrip</String>
     <String id="734">Image:</String>
     <String id="735">Rotate</String>
     <String id="736">No data available</String>

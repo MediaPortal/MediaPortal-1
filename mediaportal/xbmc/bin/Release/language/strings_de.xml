@@ -198,7 +198,7 @@
     <String id="264">Aufnehmen</String>
     <String id="265">Aufnahme stoppen</String>
     <String id="266">Sortiere: Titelnummer</String>
-    <String id="267">Sortiere: Zeit</String>
+    <String id="267">Sortiere: Länge</String>
     <String id="268">Sortiere: Titel</String>
     <String id="269">Sortiere: Interpret</String>
     <String id="270">Sortiere: Album</String>
@@ -385,7 +385,7 @@
     <String id="454">Reihe 4:</String>
     <String id="455">Reihen:</String>
     <String id="456">Modus:</String>
-    <String id="457">Ansicht ändern</String>
+    <String id="457">Anordnung ändern</String>
     <String id="458">B/Markierung</String>
     <String id="459">Untertitel</String>
     <String id="460">Sprache/Kanal</String>
@@ -447,7 +447,7 @@
     <String id="517">Ausnahmefehler! Aktion nicht beendet.</String>
     <String id="518">Dieses Lied löschen?</String>
     <String id="519">Untertitel aus</String>
-    <String id="529">Ansicht: Vorschau-Liste</String>
+    <String id="529">Ansicht: Cover-Liste</String>
     <String id="530">Foto-CD eingelegt! Öffnen?</String>
     <String id="531">Film-CD eingelegt! Öffnen?</String>
     <String id="532">Musik-CD eingelegt! Öffnen?</String>
