@@ -616,8 +616,29 @@ namespace TvEngine
             }
             DateTime OnAirDate = DateTime.MinValue;
             OnAirDate.AddYears(Convert.ToInt32(date) - DateTime.MinValue.Year);
+            short EPGStarRating = -1;
 
-            Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, starRating, classification);
+            switch (starRating)
+            {
+              case 0:
+                EPGStarRating = 2; break;
+              case 1:
+                EPGStarRating = 4; break;
+              case 2:
+                EPGStarRating = 6; break;
+              case 3:
+                EPGStarRating = 8; break;
+              case 4:
+                EPGStarRating = 10; break;
+              case 5:
+                EPGStarRating = 8; break;
+              case 6:
+                EPGStarRating = 10; break;
+              default:
+                EPGStarRating = -1; break;
+            }
+
+            Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification);
 
             if (audioFormat == String.Empty)
               prog.Description = description.Replace("<br>", "\n");
