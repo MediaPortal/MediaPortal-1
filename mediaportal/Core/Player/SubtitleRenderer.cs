@@ -108,8 +108,7 @@ namespace MediaPortal.Player
         /// </summary>
         private IBaseFilter filter = null;
 
-
-        // timestampt offset in MILLISECONDS
+      // timestampt offset in MILLISECONDS
         private double startPos = 0;
 
         private Subtitle currentSubtitle = null;
