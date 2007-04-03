@@ -175,34 +175,28 @@ namespace MediaPortal.Music.Database
         }
         catch (Exception) { }
 
-        // no database V7 - copy and update V6
-        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV7.db3")))
+        // no database V8 - copy and update V7
+        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV8.db3")))
         {
           //Adds a reset to _lastImport so if you delete the music database after using MediaPortal previously the database never got updated for older files.
           _lastImport = DateTime.MinValue;
-          if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV6.db3")))
+          if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV7.db3")))
           {
-            if (File.Exists(Config.GetFile(Config.Dir.Database, "musicdatabase5.db3")))
+            File.Copy((Config.GetFile(Config.Dir.Database, "MusicDatabaseV7.db3")), (Config.GetFile(Config.Dir.Database, "MusicDatabaseV8.db3")), false);
+            if (UpdateDB_V7_to_V8())
             {
-              File.Copy((Config.GetFile(Config.Dir.Database, "musicdatabase5.db3")), (Config.GetFile(Config.Dir.Database, "MusicDatabaseV7.db3")), false);
-
+              Log.Info("MusicDatabaseV8: old V7 database successfully updated");
             }
             else
-              Log.Info("**** Please rescan your music shares ****");
-          }
-          else
-          {
-            if (UpdateDB_V6_to_V7())
             {
-              Log.Info("MusicDatabaseV7: old V6 database successfully updated");
-              File.Copy((Config.GetFile(Config.Dir.Database, "MusicDatabaseV6.db3")), (Config.GetFile(Config.Dir.Database, "MusicDatabaseV7.db3")), false);
+              Log.Error("MusicDatabaseV7: error while trying to update your database to V8");
+              // Remove the invalid V8 database
+              File.Delete(Config.GetFile(Config.Dir.Database, "MusicDatabaseV8.db3"));
             }
-            else
-              Log.Error("MusicDatabaseV6: error while trying to update your database to V7");
           }
         }
 
-        m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV7.db3"));
+        m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV8.db3"));
 
         DatabaseUtility.SetPragmas(m_db);
 
@@ -214,7 +208,14 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.AddTable(m_db, "path", "CREATE TABLE path ( idPath integer primary key,  strPath text)");
         DatabaseUtility.AddTable(m_db, "albuminfo", "CREATE TABLE albuminfo ( idAlbumInfo integer primary key, idAlbum integer, idArtist integer,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer)");
         DatabaseUtility.AddTable(m_db, "artistinfo", "CREATE TABLE artistinfo ( idArtistInfo integer primary key, idArtist integer, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text)");
-        DatabaseUtility.AddTable(m_db, "song", "CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer, favorite integer)");
+        DatabaseUtility.AddTable(m_db, "song", "CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer, favorite integer, dateadded timestamp)");
+        // Add a Trigger for inserting the Date into the song table, whenever we do an update
+        string strSQL = "CREATE TRIGGER IF NOT EXISTS insert_song_timeStamp AFTER INSERT ON song " +
+                        "BEGIN " +
+                        " UPDATE song SET dateadded = DATETIME('NOW') " +
+                        " WHERE rowid = new.rowid; " +
+                        "END;";
+        m_db.Execute(strSQL);
 
         DatabaseUtility.AddTable(m_db, "scrobbleusers", "CREATE TABLE scrobbleusers ( idScrobbleUser integer primary key, strUsername text, strPassword text)");
         DatabaseUtility.AddTable(m_db, "scrobblesettings", "CREATE TABLE scrobblesettings ( idScrobbleSettings integer primary key, idScrobbleUser integer, iAddArtists integer, iAddTracks integer, iNeighbourMode integer, iRandomness integer, iScrobbleDefault integer, iSubmitOn integer, iDebugLog integer, iOfflineMode integer, iPlaylistLimit integer, iPreferCount integer, iRememberStartArtist)");
@@ -252,40 +253,30 @@ namespace MediaPortal.Music.Database
     {
     }
 
-    void temp()
-    {
-
-    }
     static public SQLiteClient DBHandle
     {
       get { return m_db; }
     }
 
-    static bool UpdateDB_V6_to_V7()
+    static bool UpdateDB_V7_to_V8()
     {
       bool success = true;
-      m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV6.db3"));
+      // We're already working on a copy of the V7 database
+      m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV8.db3"));
       SQLiteResultSet results;
 
-      string strSQL = "ALTER TABLE scrobblesettings ADD COLUMN iOfflineMode integer";
+      string strSQL = "ALTER TABLE song ADD COLUMN dateadded timestamp";
       results = m_db.Execute(strSQL);
-      if (!DatabaseUtility.TableColumnExists(m_db, "scrobblesettings", "iOfflineMode"))
+      if (!DatabaseUtility.TableColumnExists(m_db, "song", "dateadded"))
         success = false;
 
-      strSQL = "ALTER TABLE scrobblesettings ADD COLUMN iPlaylistLimit integer";
-      results = m_db.Execute(strSQL);
-      if (!DatabaseUtility.TableColumnExists(m_db, "scrobblesettings", "iPlaylistLimit"))
-        success = false;
-
-      strSQL = "ALTER TABLE scrobblesettings ADD COLUMN iPreferCount integer";
-      results = m_db.Execute(strSQL);
-      if (!DatabaseUtility.TableColumnExists(m_db, "scrobblesettings", "iPreferCount"))
-        success = false;
-
-      strSQL = "ALTER TABLE scrobblesettings ADD COLUMN iRememberStartArtist integer";
-      results = m_db.Execute(strSQL);
-      if (!DatabaseUtility.TableColumnExists(m_db, "scrobblesettings", "iRememberStartArtist"))
-        success = false;
+      // Add a Trigger for inserting the Date into the song table, whenever we do an update
+      strSQL = "CREATE TRIGGER insert_song_timeStamp AFTER INSERT ON song " +
+                      "BEGIN " +
+                      " UPDATE song SET dateadded = DATETIME('NOW') " +
+                      " WHERE rowid = new.rowid; " +
+                      "END;";
+      m_db.Execute(strSQL);
 
       return success;
     }
@@ -2988,6 +2979,7 @@ namespace MediaPortal.Music.Database
           song.Year = tag.Year;
           song.Track = tag.Track;
           song.Duration = tag.Duration;
+          song.Rating = tag.Rating;
 
           char[] trimChars = { ' ', '\x00' };
           String tagAlbumName = String.Format("{0}-{1}", tag.Artist.Trim(trimChars), tag.Album.Trim(trimChars));
@@ -3100,12 +3092,12 @@ namespace MediaPortal.Music.Database
           //Log.Write ("Song {0} will be updated with CRC={1}",song.FileName,dwCRC);
 
           string strSQL;
-          strSQL = String.Format("update song set idArtist={0},idAlbum={1},idGenre={2},idPath={3},strTitle='{4}',iTrack={5},iDuration={6},iYear={7},dwFileNameCRC='{8}',strFileName='{9}' where idSong={10}",
+          strSQL = String.Format("update song set idArtist={0},idAlbum={1},idGenre={2},idPath={3},strTitle='{4}',iTrack={5},iDuration={6},iYear={7},dwFileNameCRC='{8}',strFileName='{9}',iRating={11} where idSong={10}",
             idArtist, idAlbum, idGenre, idPath,
             song.Title,
             song.Track, song.Duration, song.Year,
             dwCRC,
-            strFileName, idSong);
+            strFileName, idSong, song.Rating);
           //Log.Write (strSQL);
           try
           {
