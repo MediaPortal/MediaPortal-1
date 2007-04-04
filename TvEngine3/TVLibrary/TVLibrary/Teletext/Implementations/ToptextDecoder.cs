@@ -145,8 +145,8 @@ namespace TvLibrary.Teletext
       _pageGreen = ConvertToHex(green);
       _pageYellow = ConvertToHex(yellow);
       _pageBlue = ConvertToHex(blue);
-      if (nextGroup == String.Empty) nextGroup = yellow.ToString();
-      if (nextBlock == String.Empty) nextBlock = green.ToString();
+      if (nextGroup == String.Empty) nextGroup = green.ToString();
+      if (nextBlock == String.Empty) nextBlock = yellow.ToString();
 
       Hamming.SetPacketNumber(0, ref _row24, pageNumber, 24);
       int spaces = 40 - (nextGroup.Length + nextBlock.Length + 3 + 3 + 4);
@@ -221,44 +221,44 @@ namespace TvLibrary.Teletext
 
       for (int page = decimalPage + 1; page <= 899; page++)
       {
-        if (yellowPage == -1)
+        if (greenPage == -1)
         {
           if (_pageType[page] == GroupPageSingle || _pageType[page] == GroupPageMulti)
           {
-            yellowPage = page;
-            nextGroup = _pageDescription[yellowPage];
-            if (nextGroup == null) nextGroup = yellowPage.ToString();
+            greenPage = page;
+            nextGroup = _pageDescription[greenPage];
+            if (nextGroup == null) nextGroup = greenPage.ToString();
           }
         }
-        if (greenPage == -1)
+        if (yellowPage == -1)
         {
           if (_pageType[page] == BlockPageSingle || _pageType[page] == BlockPageMulti)
           {
-            greenPage = page;
-            nextBlock = _pageDescription[greenPage];
-            if (nextBlock == null) nextBlock = greenPage.ToString();
+            yellowPage = page;
+            nextBlock = _pageDescription[yellowPage];
+            if (nextBlock == null) nextBlock = yellowPage.ToString();
           }
         }
       }
 
       for (int page = 100; page <= decimalPage; page++)
       {
-        if (yellowPage == -1)
+        if (greenPage == -1)
         {
           if (_pageType[page] == GroupPageSingle || _pageType[page] == GroupPageMulti)
           {
-            yellowPage = page;
-            nextGroup = _pageDescription[yellowPage];
-            if (nextGroup == null) nextGroup = yellowPage.ToString();
+            greenPage = page;
+            nextGroup = _pageDescription[greenPage];
+            if (nextGroup == null) nextGroup = greenPage.ToString();
           }
         }
-        if (greenPage == -1)
+        if (yellowPage == -1)
         {
           if (_pageType[page] == BlockPageSingle || _pageType[page] == BlockPageMulti)
           {
-            greenPage = page;
-            nextBlock = _pageDescription[greenPage];
-            if (nextBlock == null) nextBlock = greenPage.ToString();
+            yellowPage = page;
+            nextBlock = _pageDescription[yellowPage];
+            if (nextBlock == null) nextBlock = yellowPage.ToString();
           }
         }
       }
@@ -448,3 +448,5 @@ namespace TvLibrary.Teletext
     }
   }
 }
+
+ 	  	 
