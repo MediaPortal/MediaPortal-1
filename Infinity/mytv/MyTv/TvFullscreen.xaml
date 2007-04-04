@@ -59,8 +59,9 @@
       <Label Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Left" Margin="10,0,0,0" x:Name="labelStart" Width="Auto" Foreground="#FFFFFFFF" Grid.Column="0" Content="11:13 PM" Grid.ColumnSpan="3" VerticalAlignment="Center"/>
       <Label Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="labelEnd" Width="Auto" Foreground="#FFFFFFFF" Grid.Column="22" Content="12:13 PM" Grid.ColumnSpan="3" VerticalAlignment="Center"/>
       <Rectangle Fill="#FF8DA7CD"  x:Name="gridProgressBack"  Grid.Column="3" Grid.ColumnSpan="19"  Margin="0,15,0,15"/>
-      <Rectangle Fill="Red"  x:Name="partRed" Grid.Column="3"   Margin="0,15,0,15"/>
-      <Rectangle Fill="Green"  x:Name="partGreen" Grid.Column="3"   Margin="0,15,0,15"/>
+      <Rectangle Fill="Orange"  x:Name="partOrange" Grid.Column="3" Grid.ColumnSpan="19"  HorizontalAlignment="Left"  Margin="0,15,0,15"/>
+      <Rectangle Fill="Green"  x:Name="partGreen" Grid.Column="3" Grid.ColumnSpan="19" HorizontalAlignment="Left"  Margin="0,15,0,15"/>
+      <Rectangle Fill="Red"  x:Name="partRed" Grid.Column="3" Grid.ColumnSpan="19" HorizontalAlignment="Left"  Margin="0,15,0,15"/>
       <Rectangle StrokeThickness="0" RadiusX="8" RadiusY="8" Margin="0,5,5,5" Grid.Column="24" Grid.ColumnSpan="6" x:Name="stateBackground">
         <Rectangle.Fill>
           <LinearGradientBrush EndPoint="0.502,0.032" StartPoint="0.505,1.032">
@@ -69,7 +70,7 @@
           </LinearGradientBrush>
         </Rectangle.Fill>
       </Rectangle>
-      <Label Style="{StaticResource LabelNormalStyle}" Name="labelState" HorizontalAlignment="Stretch" Margin="8,0,8,0" VerticalAlignment="Center" Content="Label" Grid.Column="24" Grid.ColumnSpan="6"/>
+      <Label Style="{StaticResource LabelNormalStyle}" Name="labelState" Foreground="Black" HorizontalAlignment="Stretch" Margin="8,0,8,0" VerticalAlignment="Center" Content="Label" Grid.Column="24" Grid.ColumnSpan="6"/>
     </Grid>
   </Grid>
 </Page>

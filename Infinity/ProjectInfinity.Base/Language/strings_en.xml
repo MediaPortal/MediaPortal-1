@@ -141,5 +141,11 @@
     <String id="114">Play recording from beginning</String>
     <String id="115">Play recording from live point</String>
     <String id="116">Cleaned up {0} schedules</String>
+    <String id="117">|| Paused</String>
+    <String id="118">secs</String>
+    <String id="119">mins</String>
+    <String id="120">hours</String>
+    <String id="121">start</String>
+    <String id="122">end</String>
   </Section>
 </Language>

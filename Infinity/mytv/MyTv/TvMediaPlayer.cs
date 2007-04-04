@@ -84,6 +84,7 @@ namespace MyTv
             {
               int totalMilliSecs = (int)subkey.GetValue("duration");
               TimeSpan ts = new TimeSpan(0, 0, 0, 0,totalMilliSecs);
+              //this.NaturalDuration = new System.Windows.Duration(ts);
               return ts;
               
             }
