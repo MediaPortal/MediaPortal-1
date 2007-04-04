@@ -1,3 +1,9 @@
+//
+// Left todo:
+//  fullscreen tv : -zap osd and other osds
+//  tvguide       : -zapping
+//                : -conflicts
+//
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
