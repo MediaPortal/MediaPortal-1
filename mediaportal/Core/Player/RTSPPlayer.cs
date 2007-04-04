@@ -514,12 +514,6 @@ namespace MediaPortal.Player
           while (Marshal.ReleaseComObject(audioCodecFilter) > 0) ;
           audioCodecFilter = null;
         }
-        if (_subtitleFilter != null)
-        {
-          Log.Info("cleanup _subtitleFilter");
-          while ((hr = Marshal.ReleaseComObject(_subtitleFilter)) > 0) ;
-          _subtitleFilter = null;
-        }
         if (audioRendererFilter != null)
         {
           Log.Info("cleanup audioRendererFilter");
