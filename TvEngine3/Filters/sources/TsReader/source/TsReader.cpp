@@ -298,7 +298,6 @@ STDMETHODIMP CTsReaderFilter::Stop()
 
 STDMETHODIMP CTsReaderFilter::Pause()
 {
-  StopThread();
 	LogDebug("CTsReaderFilter::Pause()");
   CAutoLock cObjectLock(m_pLock);
 
@@ -331,12 +330,12 @@ STDMETHODIMP CTsReaderFilter::Pause()
         m_rtspClient.Pause();
       }
       
-      if (!IsThreadRunning())
-      {
-        //LogDebug("  CTsReaderFilter::Pause()->start duration thread");
-        StartThread();
-      }
     }
+  }
+  if (!IsThreadRunning())
+  {
+    //LogDebug("  CTsReaderFilter::Pause()->start duration thread");
+    StartThread();
   }
   return hr;
 }

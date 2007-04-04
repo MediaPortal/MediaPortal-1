@@ -65,10 +65,12 @@ void CTsDuration::UpdateDuration()
   m_bSearchEnd=true;
   m_endPcr.Reset();
   __int64 offset=sizeof(buffer);
+  
+  __int64 fileSize=m_reader->GetFileSize();
   while (!m_endPcr.IsValid)
   {
     DWORD dwBytesRead;
-    m_reader->SetFilePointer(-offset,FILE_END);
+    m_reader->SetFilePointer(fileSize-offset,FILE_BEGIN);
     if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
     {
       return;
@@ -78,7 +80,7 @@ void CTsDuration::UpdateDuration()
       return;
     }
     OnRawData(buffer,dwBytesRead);
-    offset+=sizeof(buffer);
+    offset-=sizeof(buffer);
   }
 }
 
