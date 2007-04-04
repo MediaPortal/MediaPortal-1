@@ -941,13 +941,8 @@ namespace TvLibrary.Implementations.DVB
 
         _interfaceChannelScan = (ITsChannelScan)_filterTsWriter;
         _interfaceEpgGrabber = (ITsEpgScanner)_filterTsWriter;
-        Log.Log.Info("GEMX: Fetching linkagescanner");
         _interfaceChannelLinkageScanner = (ITsChannelLinkageScanner)_filterTsWriter;
-        if (_interfaceChannelLinkageScanner == null)
-          Log.Log.Info("GEMX: NÖ");
-        else
-          Log.Log.Info("GEMX: jau");
-      }
+       }
     }
 
     /// <summary>
