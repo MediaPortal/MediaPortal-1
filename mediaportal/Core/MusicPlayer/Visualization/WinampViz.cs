@@ -61,7 +61,7 @@ namespace MediaPortal.Visualization
     private IntPtr hwndChild;     // Handle to the Winamp Child Window.
 
     private MusicTag trackTag = null;
-    private string _songTitle = "  ";   // Title of the song played
+    private string _songTitle = "   ";   // Title of the song played
     #endregion
 
     #region Constructors/Destructors
@@ -121,7 +121,7 @@ namespace MediaPortal.Visualization
         if (trackTag != null)
           _songTitle = String.Format("{0} - {1}", trackTag.Artist, trackTag.Title);
         else
-          _songTitle = "  ";
+          _songTitle = "   ";
 
         // Send a Start command to the Winamp Fake window
         BassVis.BASS_WINAMPVIS_Play((int)hwndWinAmp);
