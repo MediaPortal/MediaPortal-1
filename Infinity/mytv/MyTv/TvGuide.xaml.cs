@@ -300,6 +300,8 @@ namespace MyTv
       tag.IsLeftEdge = true;
       tag.RowNr = rowNr;
       tag.Channel = channel;
+      tag.IsBottomEdge = isBottom;
+      tag.IsUpperEdge = (rowNr == 1);
       Button b = new Button();
       b.Tag = tag;
       b.Style = (Style)Application.Current.Resources["MpButton"];
@@ -595,6 +597,7 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
       labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 39);//tvguide
       _maxChannels = (int)((this.ActualHeight - 300) / 34);
       this.SizeChanged += new SizeChangedEventHandler(TvGuide_SizeChanged);
@@ -607,10 +610,10 @@ namespace MyTv
         MediaPlayer player = TvPlayerCollection.Instance[0];
         VideoDrawing videoDrawing = new VideoDrawing();
         videoDrawing.Player = player;
-        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+        videoDrawing.Rect = new Rect(0, 0, buttonVideo.ActualWidth, buttonVideo.ActualHeight);
         DrawingBrush videoBrush = new DrawingBrush();
         videoBrush.Drawing = videoDrawing;
-        videoWindow.Fill = videoBrush;
+        buttonVideo.Background = videoBrush;
       }
     }
 
@@ -911,15 +914,58 @@ namespace MyTv
       if (b != null)
       {
         _selectedItem = b.Tag as GuideTag;
-        if (_selectedItem.Program != null)
+        if (_selectedItem != null)
         {
-          _selectedTime = _selectedItem.Program.StartTime;
+          if (_selectedItem.Program != null)
+          {
+            _selectedTime = _selectedItem.Program.StartTime;
+          }
+          _focusedRow = _selectedItem.RowNr - 1;
         }
-        _focusedRow = _selectedItem.RowNr - 1;
         Keyboard.Focus(b);
       }
     }
 
+    void handleMouse(object sender, MouseEventArgs e)
+    {
+      FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
+      while (element.TemplatedParent != null)
+      {
+        element = (FrameworkElement)element.TemplatedParent;
+        if (element as Button != null)
+        {
+          Keyboard.Focus((Button)element);
+          Button b = element as Button;
+          _selectedItem = b.Tag as GuideTag;
+          if (_selectedItem != null)
+          {
+            if (_selectedItem.Program != null)
+            {
+              _selectedTime = _selectedItem.Program.StartTime;
+            }
+            _focusedRow = _selectedItem.RowNr - 1;
+          }
+          return;
+        }
+        if (element as CheckBox != null)
+        {
+          Keyboard.Focus((CheckBox)element);
+          return;
+        }
+        if (element as RadioButton != null)
+        {
+          Keyboard.Focus((RadioButton)element);
+          return;
+        }
+      }
+    }
+    void OnbuttonVideoClicked(object sender, EventArgs args)
+    {
+      if (TvPlayerCollection.Instance.Count != 0)
+      {
+        this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+      }
+    }
     void OnProgramClicked(object sender, RoutedEventArgs e)
     {
       Button b = sender as Button;
@@ -995,7 +1041,7 @@ namespace MyTv
         {
           if (TvPlayerCollection.Instance[0].FileName != card.TimeShiftFileName)
           {
-            videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+            buttonVideo.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
             TvPlayerCollection.Instance.DisposeAll();
           }
         }
@@ -1013,10 +1059,10 @@ namespace MyTv
         //create video drawing which draws the video in the video window
         VideoDrawing videoDrawing = new VideoDrawing();
         videoDrawing.Player = player;
-        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+        videoDrawing.Rect = new Rect(0, 0, buttonVideo.ActualWidth, buttonVideo.ActualHeight);
         DrawingBrush videoBrush = new DrawingBrush();
         videoBrush.Drawing = videoDrawing;
-        videoWindow.Fill = videoBrush;
+        buttonVideo.Background = videoBrush;
         videoDrawing.Player.Play();
 
       }
@@ -1105,7 +1151,7 @@ namespace MyTv
       if (TvPlayerCollection.Instance.Count == 0) return;
       TvMediaPlayer player = TvPlayerCollection.Instance[0];
       ServiceScope.Get<ILogger>().Info("Tv:  failed to open file {0} error:{1}", player.FileName, player.ErrorMessage);
-      videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+      buttonVideo.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
       if (player.HasError)
       {
         MpDialogOk dlgError = new MpDialogOk();

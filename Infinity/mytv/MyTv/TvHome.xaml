@@ -20,7 +20,7 @@
           </StackPanel>
         </DockPanel>
       </StackPanel>
-      <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" KeyboardNavigation.DirectionalNavigation="Cycle">
+      <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
         <Button Name="buttonTvGuide" Style="{DynamicResource MpButton}" Height="32"  Click="OnTvGuideClicked"   >TvGuide</Button>
         <Button Name="buttonRecordNow" Style="{DynamicResource MpButton}" Height="32"  Click="OnRecordClicked" >Record now</Button>
         <Button Name="buttonChannel" Style="{DynamicResource MpButton}" Height="32" Click="OnChannelClicked"   >Channel</Button>
@@ -66,7 +66,7 @@
           <RowDefinition/>
           <RowDefinition/>
         </Grid.RowDefinitions>
-        <Rectangle Grid.Column="0" Grid.Row="0" Grid.RowSpan="12" Grid.ColumnSpan="6" x:Name="videoWindow" RadiusX="4" RadiusY="4" Fill="Black" StrokeThickness="14" Stroke="#FF1253A3"  ></Rectangle>
+        <Button x:Name="buttonVideo" Style="{StaticResource buttonVideoWindow}" Click="OnVideoWindowClicked" Grid.Column="0" Grid.Row="0" Grid.RowSpan="12" Grid.ColumnSpan="6"  />
         <ProgressBar Template="{StaticResource MpProgressBar}" Grid.Column="0" Grid.Row="12" Grid.ColumnSpan="6" x:Name="progressBar" Width="400" Height="30"  ></ProgressBar>
 
         <Label Grid.Column="0" Grid.Row="13" Grid.ColumnSpan="9"  x:Name="labelTitle" Style="{StaticResource LabelNormalStyle}"/>

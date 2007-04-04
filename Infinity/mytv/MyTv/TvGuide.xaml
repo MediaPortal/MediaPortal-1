@@ -39,7 +39,7 @@
             <RowDefinition/>
             <RowDefinition/>
           </Grid.RowDefinitions>
-          <Rectangle x:Name="videoWindow" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  Grid.RowSpan="3" Width="160" Height="120" RadiusX="4" RadiusY="4" Fill="Black" StrokeThickness="2" Stroke="#FF1253A3"  ></Rectangle>
+          <Button x:Name="buttonVideo" Style="{StaticResource buttonVideoWindow}" Click="OnbuttonVideoClicked"  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  Grid.RowSpan="3" Width="160" Height="120"   />
           <TextBlock Name="labelTitle" Grid.Column="2" Grid.ColumnSpan="5" Grid.Row="0" Style="{StaticResource TextBlockLargeStyle}" >
             NOS-Journaal
           </TextBlock>

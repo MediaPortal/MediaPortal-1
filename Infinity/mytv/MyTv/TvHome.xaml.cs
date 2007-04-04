@@ -152,6 +152,13 @@ namespace MyTv
           return;
         }
       }
+      if (e.Key == System.Windows.Input.Key.Enter)
+      {
+        if (buttonTvOnOff.IsKeyboardFocused)
+        {
+          OnTvOnOff(null, null);
+        }
+      }
     }
     /// <summary>
     /// background worker. Connects to server.
@@ -169,10 +176,10 @@ namespace MyTv
             MediaPlayer player = TvPlayerCollection.Instance[0];
             VideoDrawing videoDrawing = new VideoDrawing();
             videoDrawing.Player = player;
-            videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+            videoDrawing.Rect = new Rect(0, 0, buttonVideo.ActualWidth, buttonVideo.ActualHeight);
             DrawingBrush videoBrush = new DrawingBrush();
             videoBrush.Drawing = videoDrawing;
-            videoWindow.Fill = videoBrush;
+            buttonVideo.Background = videoBrush;
           }
           UpdateInfoBox();
           return;
@@ -263,10 +270,10 @@ namespace MyTv
         MediaPlayer player = TvPlayerCollection.Instance[0];
         VideoDrawing videoDrawing = new VideoDrawing();
         videoDrawing.Player = player;
-        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+        videoDrawing.Rect = new Rect(0, 0, buttonVideo.ActualWidth, buttonVideo.ActualHeight);
         DrawingBrush videoBrush = new DrawingBrush();
         videoBrush.Drawing = videoDrawing;
-        videoWindow.Fill = videoBrush;
+        buttonVideo.Background = videoBrush;
       }
       ServiceScope.Get<ILogger>().Info("mytv:OnSucceededToConnectToServer done");
     }
@@ -390,12 +397,13 @@ namespace MyTv
       if (TvPlayerCollection.Instance.Count != 0)
       {
         ServiceScope.Get<ILogger>().Info("Tv:  stop tv");
-        videoWindow.Fill = new SolidColorBrush(Color.FromArgb(0xff, 0, 0, 0));
+        buttonVideo.Background = new SolidColorBrush(Color.FromArgb(0xff, 0, 0, 0));
         TvPlayerCollection.Instance.DisposeAll();
         if (ChannelNavigator.Instance.Card != null)
         {
           ChannelNavigator.Instance.Card.StopTimeShifting();
         }
+        buttonTvOnOff.IsChecked = false;
       }
       else
       {
@@ -406,7 +414,13 @@ namespace MyTv
         }
       }
     }
-
+    void OnVideoWindowClicked(object sender, EventArgs args)
+    {
+      if (TvPlayerCollection.Instance.Count != 0)
+      {
+        this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+      }
+    }
     /// <summary>
     /// Get current tv program
     /// </summary>
@@ -638,7 +652,7 @@ namespace MyTv
         {
           if (TvPlayerCollection.Instance[0].FileName != card.TimeShiftFileName)
           {
-            videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+            buttonVideo.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
             TvPlayerCollection.Instance.DisposeAll();
           }
         }
@@ -656,10 +670,10 @@ namespace MyTv
         //create video drawing which draws the video in the video window
         VideoDrawing videoDrawing = new VideoDrawing();
         videoDrawing.Player = player;
-        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+        videoDrawing.Rect = new Rect(0, 0, buttonVideo.ActualWidth, buttonVideo.ActualHeight);
         DrawingBrush videoBrush = new DrawingBrush();
         videoBrush.Drawing = videoDrawing;
-        videoWindow.Fill = videoBrush;
+        buttonVideo.Background = videoBrush;
         videoDrawing.Player.Play();
 
       }
@@ -788,7 +802,7 @@ namespace MyTv
       dlgMenu.ShowDialog();
       if (dlgMenu.SelectedIndex < 0) return;
       ChannelNavigator.Instance.Card = new VirtualCard(_users[dlgMenu.SelectedIndex], RemoteControl.HostName);
-      videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+      buttonVideo.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
       string fileName = "";
       TvPlayerCollection.Instance.DisposeAll();
       if (ChannelNavigator.Instance.Card.IsRecording)
@@ -808,10 +822,10 @@ namespace MyTv
       //create video drawing which draws the video in the video window
       VideoDrawing videoDrawing = new VideoDrawing();
       videoDrawing.Player = player;
-      videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+      videoDrawing.Rect = new Rect(0, 0, buttonVideo.ActualWidth, buttonVideo.ActualHeight);
       DrawingBrush videoBrush = new DrawingBrush();
       videoBrush.Drawing = videoDrawing;
-      videoWindow.Fill = videoBrush;
+      buttonVideo.Background = videoBrush;
       videoDrawing.Player.Play();
 
       ChannelNavigator.Instance.Card.User.Name = new User().Name;
@@ -850,7 +864,7 @@ namespace MyTv
       if (TvPlayerCollection.Instance.Count == 0) return;
       TvMediaPlayer player = TvPlayerCollection.Instance[0];
       ServiceScope.Get<ILogger>().Info("Tv:  failed to open file {0} error:{1}", player.FileName, player.ErrorMessage);
-      videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+      buttonVideo.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
       if (player.HasError)
       {
         MpDialogOk dlgError = new MpDialogOk();

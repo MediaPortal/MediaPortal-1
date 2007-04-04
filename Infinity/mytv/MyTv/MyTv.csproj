@@ -101,7 +101,8 @@
   <ItemGroup>
     <None Include="MpStylesAndTemplates.xaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </None>
     <Page Include="TvFullscreen.xaml" />
     <Page Include="TvGuide.xaml" />
