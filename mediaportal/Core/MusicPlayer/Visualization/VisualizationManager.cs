@@ -226,6 +226,8 @@ namespace MediaPortal.Visualization
 
       string skinFolderPath = Path.Combine(Application.StartupPath, @"musicplayer\plugins\visualizations");
       string[] soniqueVisPaths = BassVis.BASS_VIS_FindPlugins(skinFolderPath, BASSWINAMPFindPlugin.BASS_VIS_FIND_SONIQUE | BASSWINAMPFindPlugin.BASS_VIS_FIND_RECURSIVE); ;
+      // Init winamp Support, otherwise we won't get any infos about winamp plugins
+      BassVis.BASS_WINAMPVIS_Init(BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), GUIGraphicsContext.form.Handle);
       string[] winampVisPaths = BassVis.BASS_VIS_FindPlugins(skinFolderPath, BASSWINAMPFindPlugin.BASS_VIS_FIND_WINAMP | BASSWINAMPFindPlugin.BASS_VIS_FIND_RECURSIVE); ;
 
       List<VisualizationInfo> wmpPluginsInfo = GetWMPPluginInfo();
@@ -294,11 +296,10 @@ namespace MediaPortal.Visualization
             }
             VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.Winamp, filePath, name, string.Empty, presets);
             _VisualizationPluginsInfo.Add(vizInfo);
-            BassVis.BASS_WINAMPVIS_Free(visPlugin);
+            //BassVis.BASS_WINAMPVIS_Free(visPlugin);
           }
         }
       }
-
       return _VisualizationPluginsInfo;
     }
 
@@ -509,6 +510,10 @@ namespace MediaPortal.Visualization
       Dispose();
     }
 
+    public void ConfigWinampViz()
+    {
+      Viz.Config();
+    }
     #endregion
   }
 }

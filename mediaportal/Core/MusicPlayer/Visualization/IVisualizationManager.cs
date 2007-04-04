@@ -30,17 +30,18 @@ using System.Drawing;
 
 namespace MediaPortal.Visualization
 {
-    public interface IVisualizationManager
-    {
-        List<VisualizationInfo> GetVisualizationPluginsInfo();
-        bool CreateVisualization(VisualizationInfo vizPluginInfo);
-        bool CreatePreviewVisualization(VisualizationInfo vizPluginInfo);   // Used to preview visualizations when in the configuration app
-        bool ResizeVisualizationWindow(Size newSize);
-        bool Start();
-        bool Pause();
-        bool Stop();
-        void ShutDown();
-        int TargetFPS { get; set;}
-        List<VisualizationInfo> VisualizationPluginsInfo { get;}
-    }
+  public interface IVisualizationManager
+  {
+    List<VisualizationInfo> GetVisualizationPluginsInfo();
+    bool CreateVisualization(VisualizationInfo vizPluginInfo);
+    bool CreatePreviewVisualization(VisualizationInfo vizPluginInfo);   // Used to preview visualizations when in the configuration app
+    bool ResizeVisualizationWindow(Size newSize);
+    bool Start();
+    bool Pause();
+    bool Stop();
+    void ShutDown();
+    int TargetFPS { get; set;}
+    List<VisualizationInfo> VisualizationPluginsInfo { get;}
+    void ConfigWinampViz();
+  }
 }
