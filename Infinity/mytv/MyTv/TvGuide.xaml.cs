@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using Dialogs;
 using TvDatabase;
 using TvControl;
 using TvLibrary.Interfaces;
@@ -27,6 +27,14 @@ namespace MyTv
 
   public partial class TvGuide : System.Windows.Controls.Page
   {
+    #region variables
+    private delegate void StartTimeShiftingDelegate(Channel channel);
+    private delegate void EndTimeShiftingDelegate(TvResult result, VirtualCard card);
+    private delegate void SeekToEndDelegate();
+    private delegate void MediaPlayerErrorDelegate();
+    private delegate void ConnectToServerDelegate();
+    #endregion
+
     #region private classes
     class GuideTag
     {
@@ -920,11 +928,222 @@ namespace MyTv
         _selectedItem = b.Tag as GuideTag;
         if (_selectedItem.Program != null)
         {
-          TvProgramInfo info = new TvProgramInfo(_selectedItem.Program);
-          NavigationService.Navigate(info);
+          if (DateTime.Now >= _selectedItem.Program.StartTime && DateTime.Now <= _selectedItem.Program.EndTime)
+          {
+            //show tv channel
+            ViewChannel(_selectedItem.Program.ReferencedChannel());
+          }
+          else
+          {
+            TvProgramInfo info = new TvProgramInfo(_selectedItem.Program);
+            NavigationService.Navigate(info);
+          }
         }
       }
     }
     #endregion
+
+    #region view tv channel
+    /// <summary>
+    /// Start viewing the tv channel 
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    void ViewChannel(Channel channel)
+    {
+      ServiceScope.Get<ILogger>().Info("Tv: view channel:{0}", channel.Name);
+      ChannelNavigator.Instance.SelectedChannel = channel;
+      //tell server to start timeshifting the channel
+      //we do this in the background so GUI stays responsive...
+      StartTimeShiftingDelegate starter = new StartTimeShiftingDelegate(this.StartTimeShiftingBackGroundWorker);
+      starter.BeginInvoke(channel, null, null);
+    }
+
+    /// <summary>
+    /// Starts the timeshifting 
+    /// this is done in the background so the GUI stays responsive
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    private void StartTimeShiftingBackGroundWorker(Channel channel)
+    {
+      ServiceScope.Get<ILogger>().Info("Tv:  start timeshifting channel:{0}", channel.Name);
+      TvServer server = new TvServer();
+      VirtualCard card;
+
+      User user = new User();
+      TvResult succeeded = TvResult.Succeeded;
+      succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+
+      // Schedule the update function in the UI thread.
+      this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new EndTimeShiftingDelegate(OnStartTimeShiftingResult), succeeded, card);
+    }
+    /// <summary>
+    /// Called from dispatcher when StartTimeShiftingBackGroundWorker() has a result for us
+    /// we check the result and if needed start a new media player to playback the tv timeshifting file
+    /// </summary>
+    /// <param name="succeeded">The result.</param>
+    /// <param name="card">The card.</param>
+    private void OnStartTimeShiftingResult(TvResult succeeded, VirtualCard card)
+    {
+      ServiceScope.Get<ILogger>().Info("Tv:  timeshifting channel:{0} result:{1}", ChannelNavigator.Instance.SelectedChannel.Name, succeeded);
+
+      if (succeeded == TvResult.Succeeded)
+      {
+        //timeshifting worked, now view the channel
+        ChannelNavigator.Instance.Card = card;
+        //do we already have a media player ?
+        if (TvPlayerCollection.Instance.Count != 0)
+        {
+          if (TvPlayerCollection.Instance[0].FileName != card.TimeShiftFileName)
+          {
+            videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+            TvPlayerCollection.Instance.DisposeAll();
+          }
+        }
+        if (TvPlayerCollection.Instance.Count != 0)
+        {
+          this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
+          return;
+        }
+        //create a new media player 
+        ServiceScope.Get<ILogger>().Info("Tv:  open file", card.TimeShiftFileName);
+        MediaPlayer player = TvPlayerCollection.Instance.Get(card, card.TimeShiftFileName);
+        player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
+        player.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
+
+        //create video drawing which draws the video in the video window
+        VideoDrawing videoDrawing = new VideoDrawing();
+        videoDrawing.Player = player;
+        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+        DrawingBrush videoBrush = new DrawingBrush();
+        videoBrush.Drawing = videoDrawing;
+        videoWindow.Fill = videoBrush;
+        videoDrawing.Player.Play();
+
+      }
+      else
+      {
+        //close media player
+        if (TvPlayerCollection.Instance.Count != 0)
+        {
+          TvPlayerCollection.Instance.DisposeAll();
+        }
+
+        //show error to user
+        MpDialogOk dlg = new MpDialogOk();
+        Window w = Window.GetWindow(this);
+        dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlg.Owner = w;
+        dlg.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 23);//"Failed to start TV;
+        dlg.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);/*(Error)*/
+        switch (succeeded)
+        {
+          case TvResult.AllCardsBusy:
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 24); //"All cards are currently busy";
+            break;
+          case TvResult.CardIsDisabled:
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 25);// "Card is disabled";
+            break;
+          case TvResult.ChannelIsScrambled:
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 26);//"Channel is scrambled";
+            break;
+          case TvResult.ChannelNotMappedToAnyCard:
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 27);//"Channel is not mapped to any tv card";
+            break;
+          case TvResult.ConnectionToSlaveFailed:
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 28);//"Failed to connect to slave server";
+            break;
+          case TvResult.NotTheOwner:
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 29);//"Card is owned by another user";
+            break;
+          case TvResult.NoTuningDetails:
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 30);//"Channel does not have tuning information";
+            break;
+          case TvResult.NoVideoAudioDetected:
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 31);//"No Video/Audio streams detected";
+            break;
+          case TvResult.UnableToStartGraph:
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 32);//"Unable to start graph";
+            break;
+          case TvResult.UnknownChannel:
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 33);//"Unknown channel";
+            break;
+          case TvResult.UnknownError:
+            dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 34);//"Unknown error occured";
+            break;
+        }
+        dlg.ShowDialog();
+      }
+    }
+
+    #region media player events & dispatcher methods
+    void OnSeekToEnd()
+    {
+      if (TvPlayerCollection.Instance.Count != 0)
+      {
+        ServiceScope.Get<ILogger>().Info("Tv:  seek to livepoint");
+        TvMediaPlayer player = TvPlayerCollection.Instance[0];
+        if (player.NaturalDuration.HasTimeSpan)
+        {
+          TimeSpan duration = player.Duration;
+          ServiceScope.Get<ILogger>().Info("Tv:  current position:{0} duration:{1}", player.Position, duration);
+          player.Position = duration;
+          ServiceScope.Get<ILogger>().Info("Tv:  new position:{0} duration:{1}", player.Position, duration);
+        }
+        this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullscreen.xaml", UriKind.Relative));
+      }
+
+    }
+
+    /// <summary>
+    /// Called when media player has an error condition
+    /// show messagebox to user and close media playback
+    /// </summary>
+    void OnMediaPlayerError()
+    {
+
+      if (TvPlayerCollection.Instance.Count == 0) return;
+      TvMediaPlayer player = TvPlayerCollection.Instance[0];
+      ServiceScope.Get<ILogger>().Info("Tv:  failed to open file {0} error:{1}", player.FileName, player.ErrorMessage);
+      videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+      if (player.HasError)
+      {
+        MpDialogOk dlgError = new MpDialogOk();
+        Window w = Window.GetWindow(this);
+        dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgError.Owner = w;
+        dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);//"Cannot open file";
+        dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);//"Error";
+        dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/ + player.ErrorMessage;
+        dlgError.ShowDialog();
+      }
+      TvPlayerCollection.Instance.DisposeAll();
+
+    }
+    /// <summary>
+    /// Handles the MediaOpened event of the _mediaPlayer control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+    void _mediaPlayer_MediaOpened(object sender, EventArgs e)
+    {
+      //media is opened, seek to end (via dispatcher)
+      this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
+    }
+
+    /// <summary>
+    /// Handles the MediaFailed event of the _mediaPlayer control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.Windows.Media.ExceptionEventArgs"/> instance containing the event data.</param>
+    void _mediaPlayer_MediaFailed(object sender, ExceptionEventArgs e)
+    {
+      // media player failed to open file
+      // show error dialog (via dispatcher)
+      this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
+    }
+
+    #endregion
+    #endregion
+
   }
 }

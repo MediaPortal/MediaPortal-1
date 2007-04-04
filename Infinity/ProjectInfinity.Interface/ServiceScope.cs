@@ -58,7 +58,7 @@ namespace ProjectInfinity
     /// <b>ServiceContect.Current = passedContect</b> to override the current context
     /// with the passed one.
     /// </remarks>
-    [ThreadStatic] private static ServiceScope current;
+    /*[ThreadStatic]*/ private static ServiceScope current;
 
     /// <summary>
     /// Pointer to the previous <see cref="ServiceScope"/>.  We need this pointer 

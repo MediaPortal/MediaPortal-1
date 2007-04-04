@@ -45,7 +45,7 @@ namespace MyTv
     private delegate void SeekToEndDelegate();
     private delegate void MediaPlayerErrorDelegate();
     private delegate void ConnectToServerDelegate();
-    bool _firstTime = true;
+    static bool _firstTime = true;
     #endregion
 
     #region ctor
@@ -69,7 +69,6 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-
       ServiceScope.Get<ILogger>().Info("mytv:OnLoaded");
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       // Sets keyboard focus on the first Button in the sample.
@@ -85,9 +84,7 @@ namespace MyTv
       buttonTeletext.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 8);
       labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 9);
       Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
-      //try to connect to server in background...
-      //ConnectToServerDelegate starter = new ConnectToServerDelegate(this.ConnectToServer);
-      //starter.BeginInvoke(null, null);
+      buttonTvOnOff.IsChecked = (TvPlayerCollection.Instance.Count > 0);
       ConnectToServer();
     }
 
@@ -100,6 +97,16 @@ namespace MyTv
         if (element as Button != null)
         {
           Keyboard.Focus((Button)element);
+          return;
+        }
+        if (element as CheckBox != null)
+        {
+          Keyboard.Focus((CheckBox)element);
+          return;
+        }
+        if (element as RadioButton != null)
+        {
+          Keyboard.Focus((RadioButton)element);
           return;
         }
       }
@@ -155,7 +162,21 @@ namespace MyTv
     {
       try
       {
-        if (!_firstTime) return;
+        if (!_firstTime)
+        {
+          if (TvPlayerCollection.Instance.Count > 0)
+          {
+            MediaPlayer player = TvPlayerCollection.Instance[0];
+            VideoDrawing videoDrawing = new VideoDrawing();
+            videoDrawing.Player = player;
+            videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
+            DrawingBrush videoBrush = new DrawingBrush();
+            videoBrush.Drawing = videoDrawing;
+            videoWindow.Fill = videoBrush;
+          }
+          UpdateInfoBox();
+          return;
+        }
         ServiceScope.Get<ILogger>().Info("mytv:ConnectToServer");
         RemoteControl.HostName = UserSettings.GetString("tv", "serverHostName");
 
@@ -181,11 +202,11 @@ namespace MyTv
       catch (Exception)
       {
         ServiceScope.Get<ILogger>().Info("mytv:initialize connect failed");
-        buttonTvGuide.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new ConnectToServerDelegate(OnFailedToConnectToServer));
+        this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new ConnectToServerDelegate(OnFailedToConnectToServer));
         return;
       }
       ServiceScope.Get<ILogger>().Info("mytv:initialize connect succeeded");
-      buttonTvGuide.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new ConnectToServerDelegate(OnSucceededToConnectToServer));
+      this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new ConnectToServerDelegate(OnSucceededToConnectToServer));
     }
 
     /// <summary>
@@ -368,11 +389,13 @@ namespace MyTv
     {
       if (TvPlayerCollection.Instance.Count != 0)
       {
+        ServiceScope.Get<ILogger>().Info("Tv:  stop tv");
         videoWindow.Fill = new SolidColorBrush(Color.FromArgb(0xff, 0, 0, 0));
         TvPlayerCollection.Instance.DisposeAll();
       }
       else
       {
+        ServiceScope.Get<ILogger>().Info("Tv:  start tv");
         if (ChannelNavigator.Instance.SelectedChannel != null)
         {
           ViewChannel(ChannelNavigator.Instance.SelectedChannel);
@@ -511,7 +534,7 @@ namespace MyTv
         {
           channelLogoFileName = "";
         }
-        DialogMenuItem item = new DialogMenuItem(channelLogoFileName,now,next,percent);
+        DialogMenuItem item = new DialogMenuItem(channelLogoFileName, now, next, percent);
         menuItems.Add(item);
       }
       ServiceScope.Get<ILogger>().Info("MyTv:   create dialog");
@@ -567,6 +590,8 @@ namespace MyTv
     /// <param name="channel">The channel.</param>
     void ViewChannel(Channel channel)
     {
+      ServiceScope.Get<ILogger>().Info("Tv: view channel:{0}", channel.Name);
+      ChannelNavigator.Instance.SelectedChannel = channel;
       //tell server to start timeshifting the channel
       //we do this in the background so GUI stays responsive...
       StartTimeShiftingDelegate starter = new StartTimeShiftingDelegate(this.StartTimeShiftingBackGroundWorker);
@@ -580,6 +605,7 @@ namespace MyTv
     /// <param name="channel">The channel.</param>
     private void StartTimeShiftingBackGroundWorker(Channel channel)
     {
+      ServiceScope.Get<ILogger>().Info("Tv:  start timeshifting channel:{0}", channel.Name);
       TvServer server = new TvServer();
       VirtualCard card;
 
@@ -588,7 +614,7 @@ namespace MyTv
       succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
 
       // Schedule the update function in the UI thread.
-      buttonTvGuide.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new EndTimeShiftingDelegate(OnStartTimeShiftingResult), succeeded, card);
+      this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new EndTimeShiftingDelegate(OnStartTimeShiftingResult), succeeded, card);
     }
     /// <summary>
     /// Called from dispatcher when StartTimeShiftingBackGroundWorker() has a result for us
@@ -598,6 +624,7 @@ namespace MyTv
     /// <param name="card">The card.</param>
     private void OnStartTimeShiftingResult(TvResult succeeded, VirtualCard card)
     {
+      ServiceScope.Get<ILogger>().Info("Tv:  timeshifting channel:{0} result:{1}", ChannelNavigator.Instance.SelectedChannel.Name, succeeded);
       if (succeeded == TvResult.Succeeded)
       {
         //timeshifting worked, now view the channel
@@ -613,9 +640,11 @@ namespace MyTv
         }
         if (TvPlayerCollection.Instance.Count != 0)
         {
+          this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
           return;
         }
         //create a new media player 
+        ServiceScope.Get<ILogger>().Info("Tv:  open file", card.TimeShiftFileName);
         MediaPlayer player = TvPlayerCollection.Instance.Get(card, card.TimeShiftFileName);
         player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
         player.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
@@ -789,11 +818,14 @@ namespace MyTv
     {
       if (TvPlayerCollection.Instance.Count != 0)
       {
+        ServiceScope.Get<ILogger>().Info("Tv:  seek to livepoint");
         TvMediaPlayer player = TvPlayerCollection.Instance[0];
         if (player.NaturalDuration.HasTimeSpan)
         {
           TimeSpan duration = player.Duration;
-          player.Position = duration.Add(new TimeSpan(0, 0, -1));
+          ServiceScope.Get<ILogger>().Info("Tv:  current position:{0} duration:{1}",player.Position, duration);
+          player.Position = duration;
+          ServiceScope.Get<ILogger>().Info("Tv:  new position:{0} duration:{1}", player.Position, duration);
         }
         //set tv button on
         buttonTvOnOff.IsChecked = true;
@@ -812,6 +844,7 @@ namespace MyTv
 
       if (TvPlayerCollection.Instance.Count == 0) return;
       TvMediaPlayer player = TvPlayerCollection.Instance[0];
+      ServiceScope.Get<ILogger>().Info("Tv:  failed to open file {0} error:{1}", player.FileName, player.ErrorMessage);
       videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
       if (player.HasError)
       {
@@ -840,7 +873,7 @@ namespace MyTv
     void _mediaPlayer_MediaOpened(object sender, EventArgs e)
     {
       //media is opened, seek to end (via dispatcher)
-      buttonTvGuide.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
+      this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
     }
 
     /// <summary>
@@ -852,7 +885,7 @@ namespace MyTv
     {
       // media player failed to open file
       // show error dialog (via dispatcher)
-      buttonTvGuide.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
+      this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
     }
 
     #endregion

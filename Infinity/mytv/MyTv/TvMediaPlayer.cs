@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TvControl;
+using Microsoft.Win32;
 namespace MyTv
 {
   public class TvMediaPlayer : MediaPlayer
@@ -77,15 +78,15 @@ namespace MyTv
       {
         if (_card != null)
         {
-          if (_card.IsTimeShifting)
+          if (_card.IsTimeShifting || _card.IsRecording)
           {
-            TimeSpan ts = DateTime.Now - _card.TimeShiftStarted;
-            return ts;
-          }
-          if (_card.IsRecording)
-          {
-            TimeSpan ts = DateTime.Now - _card.RecordingStarted;
-            return ts;
+            using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Mediaportal\TsReader"))
+            {
+              int totalMilliSecs = (int)subkey.GetValue("duration");
+              TimeSpan ts = new TimeSpan(0, 0, 0, 0,totalMilliSecs);
+              return ts;
+              
+            }
           }
         }
         if (NaturalDuration.HasTimeSpan) return NaturalDuration.TimeSpan;
