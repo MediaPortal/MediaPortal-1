@@ -96,6 +96,7 @@ namespace MediaPortal.Player
     protected IBaseFilter audioCodecFilter = null;
     protected IBaseFilter audioRendererFilter = null;
     protected IBaseFilter _subtitleFilter = null;
+    protected SubtitleRenderer dvbSubRenderer = null;
     protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
     protected IBaseFilter _mpegDemux;
     protected IDirectVobSub vobSub;
@@ -211,8 +212,21 @@ namespace MediaPortal.Player
         if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
 
         if (enableDvbSubtitles == true)
-          _subtitleFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "MediaPortal DVB subtitles transform");
+        {
+          try
+          {
+            _subtitleFilter = SubtitleRenderer.GetInstance().AddSubtitleFilter(graphBuilder);
+            SubtitleRenderer.GetInstance().SetPlayer(this);
+            dvbSubRenderer = SubtitleRenderer.GetInstance();
+          }
+          catch (Exception e)
+          {
+            Log.Error(e);
+          }
 
+        }
+
+        Log.Debug("Is subtitle fitler null? {0}",(_subtitleFilter == null));
         // FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
@@ -326,7 +340,7 @@ namespace MediaPortal.Player
             Log.Info("RTSPPlayer:_pinPcr OK");
 
             IPin pDemuxerPcr = DsFindPin.ByName(_mpegDemux, "Pcr");
-            IPin pSubtitlePcr = DsFindPin.ByName(_subtitleFilter, "Audio");
+            IPin pSubtitlePcr = DsFindPin.ByName(_subtitleFilter, "Pcr");
             hr = graphBuilder.Connect(pDemuxerPcr, pSubtitlePcr);
           }
           else
@@ -334,13 +348,13 @@ namespace MediaPortal.Player
             Log.Info("RTSPPlayer:Failed to create _pinPcr in demuxer:{0:X}", hr);
           }
 
-          hr = demuxer.CreateOutputPin(GetSubtitleMedia(), "Subtitle", out _pinSubtitle);
+          hr = demuxer.CreateOutputPin(GetTSMedia(), "Subtitle", out _pinSubtitle);
           if (hr == 0)
           {
-            Log.Info("RTSPPlayer:_pinPcr OK");
+            Log.Info("RTSPPlayer:_pinSubtitle OK");
 
             IPin pDemuxerSubtitle = DsFindPin.ByName(_mpegDemux, "Subtitle");
-            IPin pSubtitle = DsFindPin.ByName(_subtitleFilter, "Subtitle");
+            IPin pSubtitle = DsFindPin.ByName(_subtitleFilter, "In");
             hr = graphBuilder.Connect(pDemuxerSubtitle, pSubtitle);
           }
           else
@@ -512,6 +526,16 @@ namespace MediaPortal.Player
           while (Marshal.ReleaseComObject(audioRendererFilter) > 0) ;
           audioRendererFilter = null;
         }
+
+        if (_subtitleFilter != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_subtitleFilter)) > 0)
+            ;
+          _subtitleFilter = null;
+          if(this.dvbSubRenderer != null) this.dvbSubRenderer.SetPlayer(null);
+          this.dvbSubRenderer = null;
+        }
+
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)
         {
@@ -1101,6 +1125,7 @@ namespace MediaPortal.Player
           }
         }
         UpdateCurrentPosition();
+        if (dvbSubRenderer != null) dvbSubRenderer.OnSeek(CurrentPosition);
         Log.Info("RTSPPlayer: current pos:{0}", CurrentPosition);
 
       }
