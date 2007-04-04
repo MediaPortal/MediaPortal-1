@@ -318,6 +318,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void OnBeforeTune()
     {
+      Log.Log.WriteFile("subch:{0} OnBeforeTune", _subChannelId);
       if (IsTimeShifting)
       {
         if (_subChannelIndex >= 0)
@@ -325,7 +326,6 @@ namespace TvLibrary.Implementations.DVB
           _tsFilterInterface.TimeShiftPause(_subChannelIndex, 1);
         }
       }
-      Log.Log.WriteFile("subch:{0} OnBeforeTune", _subChannelId);
       _startTimeShifting = false;
       _startRecording = false;
       _channelInfo = new ChannelInfo();
@@ -340,6 +340,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void OnAfterTune()
     {
+      Log.Log.WriteFile("subch:{0} OnAfterTune", _subChannelId);
       _pmtTimer.Enabled = true;
       ArrayList pids = new ArrayList();
       pids.Add((ushort)0x0);//pat
@@ -369,6 +370,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void OnGraphStart()
     {
+      Log.Log.WriteFile("subch:{0} OnGraphStart", _subChannelId);
       DateTime dtNow;
       if (_graphBuilder != null)
       {
@@ -383,16 +385,18 @@ namespace TvLibrary.Implementations.DVB
           ATSCChannel atscChannel = _currentChannel as ATSCChannel;
           if (channel != null)
           {
-            SetupPmtGrabber(channel.PmtPid, channel.ServiceId);
-            if (atscChannel == null)
+            if (SetupPmtGrabber(channel.PmtPid, channel.ServiceId))
             {
-              dtNow = DateTime.Now;
-              while (_pmtVersion < 0 && channel.PmtPid > 0)
+              if (atscChannel == null)
               {
-                Log.Log.Write("subch:{0} wait for pmt {1:X}", _subChannelId, channel.PmtPid);
-                System.Threading.Thread.Sleep(20);
-                TimeSpan ts = DateTime.Now - dtNow;
-                if (ts.TotalMilliseconds >= (_parameters.TimeOutPMT * 1000)) break;
+                dtNow = DateTime.Now;
+                while (_pmtVersion < 0 && channel.PmtPid > 0)
+                {
+                  Log.Log.Write("subch:{0} wait for pmt {1:X}", _subChannelId, channel.PmtPid);
+                  System.Threading.Thread.Sleep(20);
+                  TimeSpan ts = DateTime.Now - dtNow;
+                  if (ts.TotalMilliseconds >= (_parameters.TimeOutPMT * 1000)) break;
+                }
               }
             }
           }
@@ -414,16 +418,18 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void OnGraphStarted()
     {
+      Log.Log.WriteFile("subch:{0} OnGraphStarted", _subChannelId);
       _graphRunning = true;
       _dateTimeShiftStarted = DateTime.MinValue;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       ATSCChannel atscChannel = _currentChannel as ATSCChannel;
+      bool result = false;
       if (dvbChannel != null)
       {
-        SetupPmtGrabber(dvbChannel.PmtPid, dvbChannel.ServiceId);
+        result=SetupPmtGrabber(dvbChannel.PmtPid, dvbChannel.ServiceId);
       }
       _pmtTimer.Enabled = true;
-      if (dvbChannel != null && atscChannel == null)
+      if (dvbChannel != null && atscChannel == null && result)
       {
         if (dvbChannel.PmtPid >= 0)
         {
@@ -445,6 +451,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void OnGraphStop()
     {
+      Log.Log.WriteFile("subch:{0} OnGraphStop", _subChannelId);
       _pmtPid = -1;
       _dateTimeShiftStarted = DateTime.MinValue;
       _dateRecordingStarted = DateTime.MinValue;
@@ -477,6 +484,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void OnGraphStopped()
     {
+      Log.Log.WriteFile("subch:{0} OnGraphStopped", _subChannelId);
       _graphRunning = false;
       _graphState = GraphState.Created;
 
@@ -948,11 +956,11 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="pmtPid">pid of the PMT</param>
     /// <param name="serviceId">The service id.</param>
-    protected void SetupPmtGrabber(int pmtPid, int serviceId)
+    protected bool SetupPmtGrabber(int pmtPid, int serviceId)
     {
       Log.Log.Info("subch:{0} SetupPmtGrabber:pid {1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
-      if (pmtPid < 0) return;
-      if (pmtPid == _pmtPid) return;
+      if (pmtPid < 0) return false;
+      if (pmtPid == _pmtPid) return false;
       _pmtVersion = -1;
       _pmtPid = pmtPid;
       if ((_currentChannel as ATSCChannel) != null)
@@ -990,6 +998,7 @@ namespace TvLibrary.Implementations.DVB
 
         }
       }
+      return true;
     }
 
     /// <summary>

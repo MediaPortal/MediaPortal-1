@@ -396,6 +396,7 @@ namespace TvLibrary.Implementations.DVB
       (_graphBuilder as IMediaControl).GetState(10, out state);
       if (state == FilterState.Running) return;
 
+      Log.Log.Info("dvb:rungraph");
       int hr = (_graphBuilder as IMediaControl).Run();
       if (hr < 0 || hr > 1)
       {
