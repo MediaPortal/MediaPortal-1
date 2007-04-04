@@ -85,6 +85,7 @@ public:
 protected:
   void ThreadProc();
 private:
+  void SetDuration();
   HRESULT AddGraphToRot(IUnknown *pUnkGraph) ;
   void    RemoveGraphFromRot();
 	CAudioPin*	    m_pAudioPin;;

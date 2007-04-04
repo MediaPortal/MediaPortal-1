@@ -150,6 +150,11 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	wcscpy(m_fileName,L"");
   m_dwGraphRegister=0;
   m_rtspClient.Initialize();
+  HKEY key;
+  if (ERROR_SUCCESS==RegCreateKey(HKEY_CURRENT_USER, "Software\\MediaPortal\\TsReader",&key))
+  {
+    RegCloseKey(key);
+  }
 }
 
 CTsReaderFilter::~CTsReaderFilter()
@@ -418,6 +423,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   }
 
   AddGraphToRot(GetFilterGraph());
+  SetDuration();
 
 	return S_OK;
 }
@@ -561,8 +567,9 @@ void CTsReaderFilter::ThreadProc()
         {
           float secs=(float)duration.Duration().Millisecs();
           secs/=1000.0f;
-          LogDebug("notify length change:%f",secs);
+          //LogDebug("notify length change:%f",secs);
           NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
+          SetDuration();
         }
       }
     }
@@ -577,8 +584,20 @@ void CTsReaderFilter::ThreadProc()
       pcrEnd.FromClock(duration);
       m_duration.Set( pcrstart, pcrEnd);
       NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
+      SetDuration();
     }
     Sleep(1000);
+  }
+}
+
+void CTsReaderFilter::SetDuration()
+{
+  DWORD secs=m_duration.Duration().Millisecs();
+  HKEY key;
+  if (ERROR_SUCCESS==RegOpenKey(HKEY_CURRENT_USER, "Software\\MediaPortal\\TsReader",&key))
+  {
+    RegSetValueEx(key, "duration",0,REG_DWORD,(const BYTE*)&secs,sizeof(DWORD));
+    RegCloseKey(key);
   }
 }
 HRESULT CTsReaderFilter::AddGraphToRot(IUnknown *pUnkGraph) 
