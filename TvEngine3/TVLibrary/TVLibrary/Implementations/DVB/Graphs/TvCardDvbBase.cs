@@ -40,8 +40,10 @@ using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Epg;
 using TvLibrary.Teletext;
 using TvLibrary.Log;
+using TvLibrary.ChannelLinkage;
 using TvLibrary.Helper;
 using MediaPortal.TV.Epg;
+
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
@@ -137,6 +139,7 @@ namespace TvLibrary.Implementations.DVB
     protected bool _isATSC = false;
     protected ITsEpgScanner _interfaceEpgGrabber;
     protected ITsChannelScan _interfaceChannelScan;
+    protected ITsChannelLinkageScanner _interfaceChannelLinkageScanner;
     protected int _subChannelId = 0;
     protected Dictionary<int, TvDvbChannel> _mapSubChannels;
     protected ScanParameters _parameters;
@@ -938,6 +941,12 @@ namespace TvLibrary.Implementations.DVB
 
         _interfaceChannelScan = (ITsChannelScan)_filterTsWriter;
         _interfaceEpgGrabber = (ITsEpgScanner)_filterTsWriter;
+        Log.Log.Info("GEMX: Fetching linkagescanner");
+        _interfaceChannelLinkageScanner = (ITsChannelLinkageScanner)_filterTsWriter;
+        if (_interfaceChannelLinkageScanner == null)
+          Log.Log.Info("GEMX: NÖ");
+        else
+          Log.Log.Info("GEMX: jau");
       }
     }
 
@@ -2069,6 +2078,78 @@ namespace TvLibrary.Implementations.DVB
       if (_mapSubChannels.Count > 0)
       {
         _mapSubChannels[0].StopRecording();
+      }
+    }
+    #endregion
+
+    #region Channel linkage handling
+
+    /// <summary>
+    /// Starts scanning for linkage info
+    /// </summary>
+    public void StartLinkageScanner()//ChannelLinkageCallback callback)
+    {
+      if (!CheckThreadId()) return;
+
+      //_linkageCallback = callback
+      //_interfaceChannelLinkageScanner.SetCallBack((IChannelLinkageCallback)callback;
+      _interfaceChannelLinkageScanner.Start();
+
+    }
+    /// <summary>
+    /// Returns the EPG grabbed or null if epg grabbing is still busy
+    /// </summary>
+    public List<ParentChannel> ChannelLinkages
+    {
+      get
+      {
+        try
+        {
+          uint titleCount;
+          uint channelCount = 0;
+          List<ParentChannel> parentChannels = new List<ParentChannel>();
+          _interfaceChannelLinkageScanner.GetChannelCount(out channelCount);
+          if (channelCount == 0)
+            return parentChannels;
+          for (uint i = 0; i < channelCount; i++)
+          {
+            ushort network_id = 0; ;
+            ushort transport_id = 0; ;
+            ushort service_id=0;
+            _interfaceChannelLinkageScanner.GetChannel(i, ref network_id,ref transport_id,ref service_id);
+            ParentChannel pChannel = new ParentChannel();
+            pChannel.NetworkId = network_id;
+            pChannel.TransportId = transport_id;
+            pChannel.ServiceId = service_id;
+            uint linkCount = 0;
+            _interfaceChannelLinkageScanner.GetLinkedChannelsCount(i, out linkCount);
+            if (linkCount > 0)
+            {
+              for (uint j = 0; j < linkCount; j++)
+              {
+                ushort nid=0;
+                ushort tid=0;
+                ushort sid=0;
+                IntPtr ptrName;
+                _interfaceChannelLinkageScanner.GetLinkedChannel(i,j,ref nid,ref tid,ref sid,out ptrName);
+                LinkedChannel lChannel = new LinkedChannel();
+                lChannel.NetworkId = nid;
+                lChannel.TransportId = tid;
+                lChannel.ServiceId = sid;
+                lChannel.Name = Marshal.PtrToStringAnsi(ptrName);
+                pChannel.LinkedChannels.Add(lChannel);
+              }
+            }
+            parentChannels.Add(pChannel);
+          }
+          _interfaceChannelLinkageScanner.Reset();
+          return parentChannels;
+        }
+        catch (Exception ex)
+        {
+          Log.Log.Write(ex);
+          return new List<ParentChannel>();
+        }
       }
     }
     #endregion
