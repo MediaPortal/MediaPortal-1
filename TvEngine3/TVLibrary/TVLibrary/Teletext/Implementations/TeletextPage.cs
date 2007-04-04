@@ -306,20 +306,20 @@ namespace TvLibrary.Teletext
       unsafe
       {
         byte* ptr = (byte*)pagePtr.ToPointer();
-        for (int row = 1; row < 31; row++)
+        for (int row = 0; row < 31; row++)
         {
           int off = row * 42;
           if (pageData[off] == 32) continue;
           for (int col = 0; col < 42; col++)
           {
-            if (row != 0)
-            {
+            //if (row != 0)
+            //{
               if (ptr[off + col] != pageData[off + col])
               {
                 updated = true;
                 ptr[off + col] = pageData[off + col];
               }
-            }
+            //}
           }
         }
       }
