@@ -37,7 +37,7 @@ MultiFileReader::MultiFileReader()
 	m_TSFileId = 0;
 	m_bReadOnly = 1;
 	m_bDelay = 0;
-  m_bDebugOutput=1;
+  m_bDebugOutput=0;
   m_cachedFileSize=0;
 }
 

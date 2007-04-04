@@ -25,6 +25,8 @@
 #include <sbe.h>
 #include "tsreader.h"
 #include "audiopin.h"
+
+#define MAX_TIME  86400000L
 byte MPEG1AudioFormat[] = 
 {
   0x50, 0x00,				//wFormatTag
@@ -163,9 +165,17 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
 	{
 		LogDebug("pin:CompleteConnect() failed:%x",hr);
 	}
-  REFERENCE_TIME refTime;
-  m_pTsReaderFilter->GetDuration(&refTime);
-  m_rtDuration=CRefTime(refTime);
+
+  if (m_pTsReaderFilter->IsTimeShifting())
+  {
+    m_rtDuration=CRefTime(MAX_TIME);
+  }
+  else
+  {
+    REFERENCE_TIME refTime;
+    m_pTsReaderFilter->GetDuration(&refTime);
+    m_rtDuration=CRefTime(refTime);
+  }
 	return hr;
 }
 
@@ -177,9 +187,18 @@ HRESULT CAudioPin::BreakConnect()
 
 HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 {
-  REFERENCE_TIME durTime;
-  m_pTsReaderFilter->GetDuration(&durTime);
-  m_rtDuration=CRefTime(durTime);
+
+  if (m_pTsReaderFilter->IsTimeShifting())
+  {
+    m_rtDuration=CRefTime(MAX_TIME);
+  }
+  else
+  {
+    REFERENCE_TIME refTime;
+    m_pTsReaderFilter->GetDuration(&refTime);
+    m_rtDuration=CRefTime(refTime);
+  }
+
   if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
 	{
 		Sleep(1);
@@ -264,7 +283,9 @@ void CAudioPin::SetStart(CRefTime rtStartTime)
 {
 }
 STDMETHODIMP CAudioPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
-{/*
+{
+
+  /*
 	REFERENCE_TIME rtStop = *pStop;
 	REFERENCE_TIME rtCurrent = *pCurrent;
 	if (CurrentFlags & AM_SEEKING_RelativePositioning)
@@ -372,9 +393,16 @@ STDMETHODIMP CAudioPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
 {
  // LogDebug("aud:GetDuration");
-  REFERENCE_TIME refTime;
-  m_pTsReaderFilter->GetDuration(&refTime);
-  m_rtDuration=CRefTime(refTime);
+  if (m_pTsReaderFilter->IsTimeShifting())
+  {
+    m_rtDuration=CRefTime(MAX_TIME);
+  }
+  else
+  {
+    REFERENCE_TIME refTime;
+    m_pTsReaderFilter->GetDuration(&refTime);
+    m_rtDuration=CRefTime(refTime);
+  }
   return CSourceSeeking::GetDuration(pDuration);
 }
 

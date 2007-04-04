@@ -81,6 +81,7 @@ public:
   CAudioPin*      GetAudioPin();
   CVideoPin*      GetVideoPin();
   CSubtitlePin*   GetSubtitlePin();
+  bool            IsTimeShifting();
 
 protected:
   void ThreadProc();
@@ -107,5 +108,6 @@ private:
   DWORD           m_tickCount;
   CRefTime        m_seekTime;
   bool            m_bNeedSeeking;
+  bool            m_bTimeShifting;
 };
 

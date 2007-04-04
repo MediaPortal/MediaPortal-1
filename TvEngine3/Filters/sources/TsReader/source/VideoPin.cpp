@@ -27,6 +27,7 @@
 #include "AudioPin.h"
 #include "Videopin.h"
 
+#define MAX_TIME  86400000L
 BYTE g_Mpeg2ProgramVideo[]= {
       0x00, 0x00, 0x00, 0x00,							//  .hdr.rcSource.left
       0x00, 0x00, 0x00, 0x00,							//  .hdr.rcSource.top
@@ -247,10 +248,17 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 	{
 		LogDebug("pin:CompleteConnect() failed:%x",hr);
 	}
-  REFERENCE_TIME refTime;
-  m_pTsReaderFilter->GetDuration(&refTime);
-  m_rtDuration=CRefTime(refTime);
-  
+
+  if (m_pTsReaderFilter->IsTimeShifting())
+  {
+    m_rtDuration=CRefTime(MAX_TIME);
+  }
+  else
+  {
+    REFERENCE_TIME refTime;
+    m_pTsReaderFilter->GetDuration(&refTime);
+    m_rtDuration=CRefTime(refTime);
+  }
 	return hr;
 }
 
@@ -264,11 +272,16 @@ HRESULT CVideoPin::BreakConnect()
 HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 {
 //	::OutputDebugStringA("CVideoPin::FillBuffer()\n");
-
-  
-  REFERENCE_TIME durTime;
-  m_pTsReaderFilter->GetDuration(&durTime);
-  m_rtDuration=CRefTime(durTime);
+  if (m_pTsReaderFilter->IsTimeShifting())
+  {
+    m_rtDuration=CRefTime(MAX_TIME);
+  }
+  else
+  {
+    REFERENCE_TIME refTime;
+    m_pTsReaderFilter->GetDuration(&refTime);
+    m_rtDuration=CRefTime(refTime);
+  }
   if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
 	{
 		Sleep(1);
@@ -350,7 +363,7 @@ HRESULT CVideoPin::ChangeRate()
 }
 
 STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
-{/*
+{ /*
 	REFERENCE_TIME rtStop = *pStop;
 	REFERENCE_TIME rtCurrent = *pCurrent;
 	if (CurrentFlags & AM_SEEKING_RelativePositioning)
@@ -466,10 +479,16 @@ STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 
 STDMETHODIMP CVideoPin::GetDuration(LONGLONG *pDuration)
 {
-  //LogDebug("vid:GetDuration");
-  REFERENCE_TIME refTime;
-  m_pTsReaderFilter->GetDuration(&refTime);
-  m_rtDuration=CRefTime(refTime);
+  if (m_pTsReaderFilter->IsTimeShifting())
+  {
+    m_rtDuration=CRefTime(MAX_TIME);
+  }
+  else
+  {
+    REFERENCE_TIME refTime;
+    m_pTsReaderFilter->GetDuration(&refTime);
+    m_rtDuration=CRefTime(refTime);
+  }
   return CSourceSeeking::GetDuration(pDuration);
 }
 

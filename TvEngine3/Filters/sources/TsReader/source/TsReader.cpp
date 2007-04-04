@@ -295,7 +295,10 @@ STDMETHODIMP CTsReaderFilter::Stop()
   
 	return hr;
 }
-
+bool CTsReaderFilter::IsTimeShifting()
+{
+  return m_bTimeShifting;
+}
 STDMETHODIMP CTsReaderFilter::Pause()
 {
 	LogDebug("CTsReaderFilter::Pause()");
@@ -367,6 +370,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   int length=strlen(url);	
   if ((length > 5) && (_strcmpi(&url[length-4], ".tsp") == 0))
   {
+    m_bTimeShifting=true;
     FILE* fd=fopen(url,"rb");
     if (fd==NULL) return E_FAIL;
     fread(url,1,100,fd);
@@ -397,12 +401,14 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   else
   {
     if ((length < 9) || (_strcmpi(&url[length-9], ".tsbuffer") != 0))
-    {
+    { 
+      m_bTimeShifting=false;
       m_fileReader = new FileReader();
       m_fileDuration = new FileReader();
     }
     else
     {
+      m_bTimeShifting=true;
       m_fileReader = new MultiFileReader();
       m_fileDuration = new MultiFileReader();
     }
@@ -480,6 +486,11 @@ void CTsReaderFilter::Seek(CRefTime& seekTime)
   m_bSeeking=true;
   if (m_fileDuration!=NULL)
   {
+    double startTime=m_seekTime.Millisecs();
+    double duration=m_duration.Duration().Millisecs();
+    startTime/=1000.0f;
+    duration/=1000.0f;
+    LogDebug("  Seek-> %f/%f",startTime,duration);
     if (seekTime >= m_duration.Duration())
       seekTime=m_duration.Duration();
     CTsFileSeek seek(m_duration);
