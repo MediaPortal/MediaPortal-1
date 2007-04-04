@@ -841,7 +841,7 @@ namespace MyTv
         if (player.NaturalDuration.HasTimeSpan)
         {
           TimeSpan duration = player.Duration;
-          TimeSpan newPos = duration + new TimeSpan(0, 0, 0, 0, -100);
+          TimeSpan newPos = duration + new TimeSpan(0, 0, 0, 0, -500);
           ServiceScope.Get<ILogger>().Info("Tv:  current position:{0} duration:{1}",player.Position, duration);
           player.Position = newPos;
           ServiceScope.Get<ILogger>().Info("Tv:  new position:{0} duration:{1}", player.Position, duration);
