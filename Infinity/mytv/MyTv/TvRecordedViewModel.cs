@@ -270,6 +270,17 @@ namespace MyTv
     }
 
     /// <summary>
+    /// Returns whether video is present or not.
+    /// </summary>
+    /// <value>Visibility.Visible when video is present otherwise Visibility.Collapsed</value>
+    public Visibility IsVideoPresent
+    {
+      get
+      {
+        return (TvPlayerCollection.Instance.Count != 0) ? Visibility.Visible : Visibility.Collapsed;
+      }
+    }
+    /// <summary>
     /// Notifies subscribers that property has been changed
     /// </summary>
     /// <param name="propertyName">Name of the property.</param>
@@ -580,11 +591,10 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        _viewModel.Page.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
-      }
-      public override bool CanExecute(object parameter)
-      {
-        return (TvPlayerCollection.Instance.Count != 0);
+        if (TvPlayerCollection.Instance.Count != 0)
+        {
+          _viewModel.Page.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+        }
       }
     }
     #endregion
@@ -629,6 +639,7 @@ namespace MyTv
           TvPlayerCollection.Instance.DisposeAll();
           _viewModel.ChangeProperty("VideoBrush");
           _viewModel.ChangeProperty("FullScreen");
+          _viewModel.ChangeProperty("IsVideoPresent");
         }
         TvMediaPlayer player = TvPlayerCollection.Instance.Get(null, fileName);
         player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
@@ -644,6 +655,7 @@ namespace MyTv
       {
         _viewModel.ChangeProperty("VideoBrush");
         _viewModel.ChangeProperty("FullScreen");
+        _viewModel.ChangeProperty("IsVideoPresent");
       }
       void _mediaPlayer_MediaFailed(object sender, ExceptionEventArgs e)
       {
