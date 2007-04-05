@@ -1312,7 +1312,7 @@ namespace TvPlugin
           program = (Program)programs[offset + ichan];
         else
         {
-          program = new Program(channel.IdChannel, DateTime.Now, DateTime.Now, "-", "-", "-", false);
+          program = new Program(channel.IdChannel, DateTime.Now, DateTime.Now, "-", "-", "-", false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty);
         }
 
         int ypos = GetControl(ichan + (int)Controls.IMG_CHAN1).YPosition;
@@ -1499,7 +1499,7 @@ namespace TvPlugin
         DateTime dt = Utils.longtodate(iEnd);
         //dt=dt.AddMinutes(_timePerBlock);
         long iProgEnd = Utils.datetolong(dt);
-        Program prog = new Program(channel.IdChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd), GUILocalizeStrings.Get(736), "", "", false);
+        Program prog = new Program(channel.IdChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd), GUILocalizeStrings.Get(736), "", "", false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty);
         programs.Add(prog);
       }
       if (programs.Count > 0)
