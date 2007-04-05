@@ -11,10 +11,11 @@
     <control>
       <description>button group</description>
       <type>group</type>
+      <!-- animations in this screen are equal for all objects, because nextblock-image got it's animation by tetris control, but it's possition is in scoreboard -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <posX>60</posX>
       <posY>97</posY>
       <layout>StackLayout</layout>
@@ -40,13 +41,15 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <control>
         <description>Scoreboard background</description>
         <type>image</type>
         <id>200</id>
         <posX>60</posX>
         <posY>322</posY>
+        <width>190</width>
+        <height>225</height>
         <texture>tetris\scoreboard.png</texture>
         <colordiffuse>60ffffff</colordiffuse>
       </control>
@@ -128,7 +131,7 @@
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <control>
         <description>Tetris control</description>

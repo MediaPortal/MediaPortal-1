@@ -11,10 +11,11 @@
     <control>
       <description>button group</description>
       <type>group</type>
+      <!-- animations in this screen are equal for all objects, because nextblock-image got it's animation by tetris control, but it's possition is in scoreboard -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <posX>113</posX>
       <posY>129</posY>
       <layout>StackLayout</layout>
@@ -40,15 +41,15 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <control>
         <description>Scoreboard background</description>
         <type>image</type>
         <id>200</id>
         <posX>113</posX>
-        <posY>525</posY>
-        <width>363</width>
-        <height>200</height>
+        <posY>425</posY>
+        <width>285</width>
+        <height>300</height>
         <texture>tetris\scoreboard.png</texture>
         <colordiffuse>60ffffff</colordiffuse>
       </control>
@@ -56,7 +57,7 @@
         <description>Score: label</description>
         <type>label</type>
         <id>201</id>
-        <posX>140</posX>
+        <posX>128</posX>
         <posY>546</posY>
         <label>19005</label>
       </control>
@@ -64,7 +65,7 @@
         <description>Score</description>
         <type>label</type>
         <id>202</id>
-        <posX>447</posX>
+        <posX>383</posX>
         <posY>546</posY>
         <width>216</width>
         <align>right</align>
@@ -74,7 +75,7 @@
         <description>Level: label</description>
         <type>label</type>
         <id>203</id>
-        <posX>140</posX>
+        <posX>128</posX>
         <posY>592</posY>
         <label>19006</label>
       </control>
@@ -82,7 +83,7 @@
         <description>Level</description>
         <type>label</type>
         <id>204</id>
-        <posX>447</posX>
+        <posX>383</posX>
         <posY>592</posY>
         <width>216</width>
         <align>right</align>
@@ -92,7 +93,7 @@
         <description>Lines: label</description>
         <type>label</type>
         <id>205</id>
-        <posX>140</posX>
+        <posX>128</posX>
         <posY>637</posY>
         <label>19007</label>
       </control>
@@ -100,7 +101,7 @@
         <description>Lines</description>
         <type>label</type>
         <id>206</id>
-        <posX>447</posX>
+        <posX>383</posX>
         <posY>637</posY>
         <width>216</width>
         <align>right</align>
@@ -110,7 +111,7 @@
         <description>Highscore: label</description>
         <type>label</type>
         <id>205</id>
-        <posX>140</posX>
+        <posX>128</posX>
         <posY>682</posY>
         <label>19008</label>
       </control>
@@ -118,7 +119,7 @@
         <description>Highscore</description>
         <type>label</type>
         <id>206</id>
-        <posX>447</posX>
+        <posX>383</posX>
         <posY>682</posY>
         <width>216</width>
         <align>right</align>
@@ -130,7 +131,7 @@
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <control>
         <description>Tetris control</description>
@@ -152,8 +153,8 @@
         <texturefocus>tetris\background_focus.png</texturefocus>
         <textureLeft>tetris\guide.png</textureLeft>
         <textureRight>tetris\guide.png</textureRight>
-        <nextblockx>155</nextblockx>
-        <nextblocky>368</nextblocky>
+        <nextblockx>256</nextblockx>
+        <nextblocky>475</nextblocky>
       </control>
     </control>
   </controls>
