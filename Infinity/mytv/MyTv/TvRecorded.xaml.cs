@@ -56,7 +56,9 @@ namespace MyTv
       _model = new TvRecordedViewModel(this);
       //and set the gui's datacontext to our model
       gridMain.DataContext = _model;
-
+      //this.InputBindings.Add(new KeyBinding(_model.FullScreenTv, new KeyGesture(System.Windows.Input.Key.X, ModifierKeys.None)));
+      this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
+      this.InputBindings.Add(new KeyBinding(NavigationCommands.PreviousPage, new KeyGesture(System.Windows.Input.Key.Escape)));
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.Focus(buttonView);
 
@@ -109,19 +111,15 @@ namespace MyTv
         e.Handled = true;
         return;
       }
-      if (e.Key == System.Windows.Input.Key.Escape)
-      {
-        //return to previous screen
-        this.NavigationService.GoBack();
-        return;
-      }
       if (e.Key == System.Windows.Input.Key.X)
       {
-        if (TvPlayerCollection.Instance.Count > 0)
+        ICommand command = _model.FullScreenTv;
+        if (command.CanExecute(this))
         {
-          this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
-          return;
+          command.Execute(this);
+          e.Handled = true;
         }
+        return;
       }
     }
     /// <summary>

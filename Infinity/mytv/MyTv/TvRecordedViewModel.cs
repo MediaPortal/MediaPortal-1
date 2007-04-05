@@ -50,10 +50,11 @@ namespace MyTv
     ICommand _sortCommand;
     ICommand _viewCommand;
     ICommand _cleanUpCommand;
-    ICommand _fullScreenCommand;
+    ICommand _fullScreenTvCommand;
     ICommand _playCommand;
     ICommand _deleteCommand;
     ICommand _contextMenuCommand;
+    ICommand _fullScreenCommand;
     Window _window;
     Page _page;
     ViewType _viewMode = ViewType.Icon;
@@ -315,15 +316,15 @@ namespace MyTv
     /// Returns a ICommand for cleaning up watched recordings
     /// </summary>
     /// <value>The command.</value>
-    public ICommand FullScreen
+    public ICommand FullScreenTv
     {
       get
       {
-        if (_fullScreenCommand == null)
+        if (_fullScreenTvCommand == null)
         {
-          _fullScreenCommand = new FullScreenCommand(this);
+          _fullScreenTvCommand = new FullScreenTvCommand(this);
         }
-        return _fullScreenCommand;
+        return _fullScreenTvCommand;
       }
     }
     /// <summary>
@@ -387,6 +388,22 @@ namespace MyTv
       }
     }
     #endregion
+    /// <summary>
+    /// Returns a ICommand for toggeling between fullscreen mode and windowed mode
+    /// </summary>
+    /// <value>The command.</value>
+    public ICommand FullScreen
+    {
+      get
+      {
+        if (_fullScreenCommand == null)
+        {
+          _fullScreenCommand = new FullScreenCommand(this);
+        }
+        return _fullScreenCommand;
+      }
+    }
+
 
     #region Commands subclasses
     #region base command class
@@ -542,17 +559,17 @@ namespace MyTv
     }
     #endregion
 
-    #region Fullscreen command class
+    #region FullscreenTv command class
     /// <summary>
     /// Fullscreen command will navigate to fullscreen window
     /// </summary>
-    public class FullScreenCommand : RecordedCommand
+    public class FullScreenTvCommand : RecordedCommand
     {
       /// <summary>
       /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
       /// </summary>
       /// <param name="viewModel">The view model.</param>
-      public FullScreenCommand(TvRecordedViewModel viewModel)
+      public FullScreenTvCommand(TvRecordedViewModel viewModel)
         : base(viewModel)
       {
       }
@@ -746,6 +763,45 @@ namespace MyTv
               _viewModel.Page.NavigationService.Navigate(infopage);
             }
             break;
+        }
+      }
+    }
+    #endregion
+    #region FullScreenCommand  class
+    /// <summary>
+    /// FullScreenCommand will toggle application between normal and fullscreen mode
+    /// </summary> 
+    public class FullScreenCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="FullScreenCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public FullScreenCommand(TvRecordedViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        Window window = _viewModel.Window;
+        if (window.WindowState == System.Windows.WindowState.Maximized)
+        {
+          window.ShowInTaskbar = true;
+          WindowTaskbar.Show(); ;
+          window.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
+          window.WindowState = System.Windows.WindowState.Normal;
+        }
+        else
+        {
+          window.ShowInTaskbar = false;
+          window.WindowStyle = System.Windows.WindowStyle.None;
+          WindowTaskbar.Hide(); ;
+          window.WindowState = System.Windows.WindowState.Maximized;
         }
       }
     }

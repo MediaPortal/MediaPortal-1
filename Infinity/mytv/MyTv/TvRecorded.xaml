@@ -55,9 +55,8 @@
         <Label Grid.Row="0" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Channel}"/>
       </Grid>
     </DataTemplate>
-
-
   </Page.Resources>
+
   <Grid x:Name="gridMain">
     <Grid.ColumnDefinitions>
       <ColumnDefinition/>
@@ -95,7 +94,7 @@
     </Grid.RowDefinitions>
     <Label Grid.Row="0" Grid.ColumnSpan="8" Grid.RowSpan="4"  Name="labelHeader" Style="{StaticResource LabelHeaderStyle}" Content="{Binding HeaderLabel}" />
     <Label x:Name="labelDate" Grid.Row="1" Grid.Column="8" Grid.ColumnSpan="2"  Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,20,20,0" Content="{Binding DateLabel}" />
-    <Button x:Name="videoWindow" Command="{Binding Path=FullScreen}"  Background="{Binding VideoBrush}" Style="{StaticResource buttonVideoWindow}" Margin="10,0,0,0" Grid.Column="0" Grid.Row="15" Grid.ColumnSpan="2"  Grid.RowSpan="4" Width="160" Height="120"   />
+    <Button x:Name="videoWindow" Command="{Binding Path=FullScreenTv}"  Background="{Binding VideoBrush}" Style="{StaticResource buttonVideoWindow}" Margin="10,0,0,0" Grid.Column="0" Grid.Row="15" Grid.ColumnSpan="2"  Grid.RowSpan="4" Width="160" Height="120"   />
     <TextBlock Name="labelTitle" Margin="10,0,0,0" Grid.Column="2" Grid.Row="14" Grid.ColumnSpan="8"  Style="{StaticResource TextBlockLargeStyle}" Text="{Binding Path=Recordings.CurrentItem.Title, Mode=OneWay}"/>
     <TextBlock Name="labelStartEnd" Margin="10,0,0,0" Grid.Column="2" Grid.Row="15" Grid.ColumnSpan="2" Style="{StaticResource TextBlockNormalStyle}" Text="{Binding Path=Recordings.CurrentItem.StartEndLabel, Mode=OneWay}" HorizontalAlignment="Left"/>
     <TextBlock Name="labelGenre" Grid.Column="8" Grid.Row="15" Grid.ColumnSpan="2" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Right" Margin="0,0,20,0" Text="{Binding Path=Recordings.CurrentItem.Genre, Mode=OneWay}"/>
