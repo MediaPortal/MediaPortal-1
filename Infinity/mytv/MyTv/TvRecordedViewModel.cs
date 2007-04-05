@@ -58,14 +58,22 @@ namespace MyTv
     Page _page;
     ViewType _viewMode = ViewType.Icon;
     RecordingCollectionView _recordingView;
-    RecordingDatabaseModel _dataModel = new RecordingDatabaseModel();
+    RecordingDatabaseModel _dataModel;
     public event PropertyChangedEventHandler PropertyChanged;
 
     #endregion
 
     #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvRecordedViewModel"/> class.
+    /// </summary>
+    /// <param name="page">The page.</param>
     public TvRecordedViewModel(Page page)
     {
+      //create a new data model
+      _dataModel = new RecordingDatabaseModel();
+
+      //store page & window
       _page = page;
       _window = Window.GetWindow(_page);
     }
@@ -680,7 +688,8 @@ namespace MyTv
       }
     }
     #endregion
-    #region Delete command class
+
+    #region ContextMenu command class
     /// <summary>
     /// ContextMenuCommand will show the context menu
     /// </summary> 
@@ -746,7 +755,7 @@ namespace MyTv
     #region RecordingDatabaseModel class
     /// <summary>
     /// Class representing our database model.
-    /// It simply retrieves all recordings from the database and 
+    /// It simply retrieves all recordings from the tv database and 
     /// creates a list of RecordingModel
     /// </summary>
     class RecordingDatabaseModel
