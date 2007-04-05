@@ -249,6 +249,10 @@ namespace MediaPortal.GUI.Music
           {
             // @ Bav: _videoWindow == null here -> System.NullReferenceException
             //SetVideoWindow(new Rectangle());
+            Rectangle dummyRect = new Rectangle();
+            if (!dummyRect.Equals(GUIGraphicsContext.VideoWindow))
+              GUIGraphicsContext.VideoWindow = dummyRect;
+
             //_videoWindow.SetVideoWindow = false;  // avoid flickering if visualization is turned off
           }
       }
