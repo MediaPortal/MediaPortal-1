@@ -27,13 +27,14 @@
         <onup>17</onup>
       </control>
       <control>
+        <description>Sort button</description>
         <type>sortbutton</type>
         <id>3</id>
         <label>103</label>
         <onright>50</onright>
       </control>
       <control>
-        <description>Switch View</description>
+        <description>Switch View button</description>
         <type>button</type>
         <id>6</id>
         <label>457</label>
@@ -47,14 +48,14 @@
         <onright>50</onright>
       </control>
       <control>
-        <description>Play CD</description>
+        <description>Play CD button</description>
         <type>button</type>
         <id>9</id>
-        <label>890</label>
+        <label>890</label>  
         <onright>50</onright>
       </control>
       <control>
-        <description>Eject Disc</description>
+        <description>Eject Disc button</description>
         <type>button</type>
         <id>13</id>
         <label>654</label>
@@ -80,12 +81,12 @@
         <description>Current Playlist button</description>
         <type>button</type>
         <id>8</id>
-        <label>4555</label>
+        <label>136</label>
         <action>33</action>
         <onright>50</onright>
       </control>
       <control>
-        <description>My Playlists</description>
+        <description>My Playlists button</description>
         <type>button</type>
         <id>10</id>
         <label>983</label>
@@ -93,6 +94,6 @@
         <ondown>99</ondown>
       </control>
     </control>
-    <import>common.facade.xml</import>
+    <import>common.facade.music.xml</import>
   </controls>
 </window>

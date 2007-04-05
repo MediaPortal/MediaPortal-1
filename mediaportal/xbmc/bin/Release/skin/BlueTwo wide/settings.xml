@@ -12,11 +12,15 @@
   <controls>
     <import>common.window.xml</import>
     <control>
-      <type>group</type>
       <description>group element</description>
-      <layout>StackLayout</layout>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="500" end="800,0">WindowClose</animation>
       <posX>531</posX>
       <posY>220</posY>
+      <layout>StackLayout</layout>
       <!-- topmost item needs an onup with a value of 17 for topbar to work -->
       <control>
         <description>Wizard</description>
@@ -75,7 +79,7 @@
         <label>1027</label>
         <hyperlink>704</hyperlink>
       </control>
-      <!-- last item needs an ondown with a value of 3 to support wraparound -->
+      <!-- last item needs an ondown with a value of 99 to navigate to overlay -->
       <control>
         <description>My Music</description>
         <type>button</type>
@@ -83,7 +87,7 @@
         <width>262</width>
         <label>2</label>
         <hyperlink>14</hyperlink>
-        <ondown>3</ondown>
+        <ondown>99</ondown>
       </control>
     </control>
   </controls>

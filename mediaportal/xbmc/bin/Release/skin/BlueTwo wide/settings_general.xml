@@ -8,80 +8,69 @@
   <controls>
     <import>common.settings.xml</import>
     <control>
-      <description>Skin</description>
-      <type>selectbutton</type>
-      <id>10</id>
-      <posX>113</posX>
-      <posY>174</posY>
-      <width>280</width>
-      <label>166</label>
-      <onup>99</onup>
-      <ondown>11</ondown>
-    </control>
-    <control>
-      <description>Language</description>
-      <type>selectbutton</type>
-      <id>11</id>
-      <posX>113</posX>
-      <posY>220</posY>
-      <width>280</width>
-      <label>248</label>
-      <onup>10</onup>
-      <ondown>12</ondown>
-      <onright>99</onright>
-    </control>
-    <control>
-      <description>Start in fullscreen mode</description>
-      <type>togglebutton</type>
-      <id>12</id>
-      <posX>113</posX>
-      <posY>265</posY>
-      <width>280</width>
-      <font>font13</font>
-      <textcolor>White</textcolor>
-      <colordiffuse>White</colordiffuse>
-      <disabledcolor>#60ffffff</disabledcolor>
-      <label>1047</label>
-      <onup>11</onup>
-      <ondown>13</ondown>
-    </control>
-    <control>
-      <description>Screensaver</description>
-      <type>togglebutton</type>
-      <id>13</id>
-      <posX>113</posX>
-      <posY>310</posY>
-      <width>280</width>
-      <font>font13</font>
-      <textcolor>White</textcolor>
-      <colordiffuse>White</colordiffuse>
-      <disabledcolor>#60ffffff</disabledcolor>
-      <label>360</label>
-      <onup>12</onup>
-      <ondown>21</ondown>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="500" end="800,0">WindowClose</animation>
+      <posX>280</posX>
+      <posY>165</posY>
+      <layout>StackLayout</layout>
+      <!-- topmost item needs an onup with a value of 17 for topbar to work -->
+      <control>
+        <description>Skin</description>
+        <type>selectbutton</type>
+        <id>10</id>
+        <width>280</width>
+        <label>166</label>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Language</description>
+        <type>selectbutton</type>
+        <id>11</id>
+        <width>280</width>
+        <label>248</label>
+      </control>
+      <control>
+        <description>Start in fullscreen mode</description>
+        <type>togglebutton</type>
+        <id>12</id>
+        <width>280</width>
+        <label>1047</label>
+      </control>
+      <control>
+        <description>Screensaver</description>
+        <type>togglebutton</type>
+        <id>13</id>
+        <width>280</width>
+        <label>360</label>
+      </control>
+      <control>
+        <description>Skip steps screen button</description>
+        <type>button</type>
+        <id>21</id>
+        <width>280</width>
+        <label>6024</label>
+        <hyperlink>708</hyperlink>
+        <ondown>99</ondown>
+      </control>
     </control>
     <control>
       <description>Skin Preview</description>
       <type>image</type>
       <id>20</id>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="500" end="800,0">WindowClose</animation>
       <posX>474</posX>
       <posY>174</posY>
       <posX>533</posX>
       <width>533</width>
       <height>400</height>
       <texture />
-    </control>
-    <control>
-      <description>Skip steps screen button</description>
-      <type>button</type>
-      <id>21</id>
-      <posX>113</posX>
-      <posY>354</posY>
-      <width>280</width>
-      <label>6024</label>
-      <hyperlink>708</hyperlink>
-      <onup>13</onup>
-      <ondown>10</ondown>
     </control>
   </controls>
 </window>

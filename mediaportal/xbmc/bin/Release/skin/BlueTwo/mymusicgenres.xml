@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-  <id>504</id>
+  <id>501</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:#view</define>
@@ -27,13 +27,14 @@
         <onup>17</onup>
       </control>
       <control>
+        <description>Sort button</description>
         <type>sortbutton</type>
         <id>3</id>
         <label>103</label>
         <onright>50</onright>
       </control>
       <control>
-        <description>Switch View</description>
+        <description>Switch View button</description>
         <type>button</type>
         <id>6</id>
         <label>457</label>
@@ -42,7 +43,7 @@
       <control>
         <description>Search button</description>
         <type>button</type>
-        <id>9</id>
+        <id>12</id>
         <label>137</label>
         <onright>50</onright>
       </control>
@@ -55,20 +56,29 @@
         <onright>50</onright>
       </control>
       <control>
-        <description>Play CD</description>
+        <description>Play CD button</description>
         <type>button</type>
-        <id>12</id>
-        <label>890</label>
+        <id>9</id>
+        <label>890</label>  
         <onright>50</onright>
       </control>
       <control>
-        <description>Eject Disc</description>
+        <description>Eject Disc button</description>
         <type>button</type>
-        <id>10</id>
+        <id>13</id>
         <label>654</label>
         <action>100</action>
         <onright>50</onright>
       </control>
+      <!--
+      <control>
+        <type>image</type>
+        <description>Divider image</description>
+        <id>999</id>
+        <texture>hbar1.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      -->
       <control>
         <description>Now playing button</description>
         <type>button</type>
@@ -81,101 +91,22 @@
         <description>Current Playlist button</description>
         <type>button</type>
         <id>8</id>
-        <label>4555</label>
+        <label>136</label>
         <action>33</action>
         <onright>50</onright>
+        <ondown>99</ondown>
       </control>
+      <!-- would be more common layout, but does not work yet
       <control>
-        <description>My Playlists</description>
+        <description>My Playlists button</description>
         <type>button</type>
-        <id>14</id>
+        <id>10</id>
         <label>983</label>
         <onright>50</onright>
         <ondown>99</ondown>
       </control>
+      -->
     </control>
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
-      <control>
-        <description>composite control consisting of a list control and a thumbnail panel</description>
-        <type>facadeview</type>
-        <id>50</id>
-        <control>
-          <description>listcontrol</description>
-          <type>listcontrol</type>
-          <id>50</id>
-          <onleft>2</onleft>
-          <textcolor>FFFFFFFF</textcolor>
-        </control>
-        <control>
-          <description>Thumbnail Panel</description>
-          <type>thumbnailpanel</type>
-          <id>51</id>
-          <onleft>2</onleft>
-        </control>
-        <control>
-          <description>album view listcontrol</description>
-          <type>listcontrol</type>
-          <subtype>album</subtype>
-          <id>52</id>
-          <font>font13</font>
-          <font2>font13</font2>
-          <selectedColor2>FFF8BC70</selectedColor2>
-          <textYOff>15</textYOff>
-          <textXOff2>412</textXOff2>
-          <textYOff2>60</textYOff2>
-          <itemWidth>80</itemWidth>
-          <itemHeight>80</itemHeight>
-          <spaceBetweenItems>4</spaceBetweenItems>
-          <textureHeight>99</textureHeight>
-          <onleft>2</onleft>
-        </control>
-        <control>
-          <description>Filmstrip view</description>
-          <type>filmstrip</type>
-          <id>53</id>
-          <onleft>2</onleft>
-          <onright>2</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
-          <itemWidth>80</itemWidth>
-    <itemHeight>76</itemHeight>
-    <textureWidth>73</textureWidth>
-    <textureHeight>69</textureHeight>
-    <thumbWidth>61</thumbWidth>
-    <thumbHeight>61</thumbHeight>
-    <thumbPosX>8</thumbPosX>
-    <thumbPosY>4</thumbPosY>
-    <imageFolder>icon_empty_nofocus_music.png</imageFolder>
-    <imageFolderFocus>icon_empty_focus_music.png</imageFolderFocus>
-    <frame>icon_empty_nofocus_music.png</frame>
-    <frameFocus>-</frameFocus>
-    <backgroundx>270</backgroundx>
-          <backgroundy>99</backgroundy>
-          <backgroundwidth>402</backgroundwidth>
-          <backgroundheight>315</backgroundheight>
-          <InfoImagex>359</InfoImagex>
-          <InfoImagey>77</InfoImagey>
-          <InfoImagewidth>200</InfoImagewidth>
-          <InfoImageheight>265</InfoImageheight>
-          <thumbs flipY="true" diffuse="Thumb_Mask.png"/>
-
-          <InfoImage flipY="true" diffuse="Thumb_Mask.png"/>
-          <showFrame>yes</showFrame>
-          <showFolder>yes</showFolder>
-          <showBackGround>no</showBackGround>
-          <showInfoImage>yes</showInfoImage>
-          <enableFocusZoom>no</enableFocusZoom>
-          <thumbAnimation effect="zoom" start="100,100" end="150,150" time="300">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="150,150" end="100,100" time="300">unfocus</thumbAnimation>
-          
-        </control>
-      </control>
-    </control>
+    <import>common.facade.music.xml</import>
   </controls>
 </window>

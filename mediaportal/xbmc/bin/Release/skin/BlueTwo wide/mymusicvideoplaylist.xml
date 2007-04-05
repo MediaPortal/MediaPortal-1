@@ -3,160 +3,73 @@
   <id>500</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#header.label:136</define>
+  <define>#header.image:logo_music videos.png</define>
+  <define>#header.hover:hover_musicvideo.png</define>
   <controls>
+    <import>common.window.xml</import>
     <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>1366</width>
-      <height>768</height>
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>113</posX>
-      <posY>26</posY>
-      <texture>-</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Playlist text label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>474</posX>
-      <posY>93</posY>
-      <label>136</label>
-      <font>font16</font>
-      <align>right</align>
-      <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Number of Files Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>493</posX>
-      <posY>706</posY>
-      <label>#itemcount</label>
-      <align>left</align>
-      <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Selected item Label</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>1252</posX>
-      <posY>93</posY>
-      <width>533</width>
-      <label>#selecteditem</label>
-      <font>font13</font>
-      <align>right</align>
-      <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <type>group</type>
       <description>group element</description>
+      <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+      <posX>113</posX>
+      <posY>129</posY>
+      <layout>StackLayout</layout>
       <control>
         <description>Shuffle button</description>
         <type>button</type>
         <id>20</id>
-        <posX>113</posX>
-        <posY>129</posY>
         <label>191</label>
-        <onleft>20</onleft>
         <onright>50</onright>
-        <onup>2</onup>
-        <ondown>21</ondown>
-        <onup>2</onup>
-        <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="500">WindowClose</animation>
+        <onup>17</onup>
       </control>
       <control>
         <description>Save button</description>
         <type>button</type>
         <id>21</id>
-        <posX>113</posX>
-        <posY>174</posY>
         <label>190</label>
-        <onleft>21</onleft>
         <onright>50</onright>
-        <onup>20</onup>
-        <ondown>22</ondown>
-        <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="500">WindowClose</animation>
       </control>
       <control>
         <description>Clear button</description>
         <type>button</type>
         <id>22</id>
-        <posX>113</posX>
-        <posY>220</posY>
         <label>192</label>
-        <onleft>22</onleft>
         <onright>50</onright>
-        <onup>21</onup>
-        <ondown>23</ondown>
-        <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="500">WindowClose</animation>
       </control>
       <control>
         <description>Play button</description>
         <type>button</type>
         <id>23</id>
-        <posX>113</posX>
-        <posY>265</posY>
         <label>208</label>
-        <onleft>23</onleft>
         <onright>50</onright>
-        <onup>22</onup>
-        <ondown>24</ondown>
-        <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="500">WindowClose</animation>
       </control>
       <control>
         <description>Next button</description>
         <type>button</type>
         <id>24</id>
-        <posX>113</posX>
-        <posY>310</posY>
         <label>209</label>
-        <onleft>24</onleft>
         <onright>50</onright>
-        <onup>23</onup>
-        <ondown>25</ondown>
-        <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="500">WindowClose</animation>
       </control>
       <control>
         <description>Previous button</description>
         <type>button</type>
         <id>25</id>
-        <posX>113</posX>
-        <posY>356</posY>
         <label>210</label>
-        <onleft>25</onleft>
         <onright>50</onright>
-        <onup>24</onup>
-        <ondown>26</ondown>
-        <animation effect="fade" time="250">WindowOpen</animation>
-        <animation effect="fade" time="500">WindowClose</animation>
+        <ondown>99</ondown>
       </control>
     </control>
     <control>
-      <type>group</type>
       <description>group element</description>
+      <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="250" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="500" end="800,0">WindowClose</animation>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>
@@ -206,5 +119,55 @@
         </control>
       </control>
     </control>
+    <!-- not sure whether this is still needed
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>113</posX>
+      <posY>26</posY>
+      <texture>-</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Playlist text label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>474</posX>
+      <posY>93</posY>
+      <label>136</label>
+      <font>font16</font>
+      <align>right</align>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>493</posX>
+      <posY>706</posY>
+      <label>#itemcount</label>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>1252</posX>
+      <posY>93</posY>
+      <width>533</width>
+      <label>#selecteditem</label>
+      <font>font13</font>
+      <align>right</align>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    -->
   </controls>
 </window>

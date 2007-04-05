@@ -10,13 +10,15 @@
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
-      <description>group element</description>
+      <description>button group</description>
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
       <posX>60</posX>
       <posY>97</posY>
-      <layout>StackLayout(2)</layout>
+      <layout>StackLayout</layout>
       <control>
         <description>New Game</description>
         <type>button</type>
@@ -70,9 +72,12 @@
       </control>
     </control>
     <control>
+      <description>info group</description>
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
       <control>
         <description>Scoreboard background</description>
         <type>image</type>
@@ -158,10 +163,12 @@
       </control>
     </control>
     <control>
-      <description>Selected item Label</description>
+      <description>current playtime Label</description>
       <type>fadelabel</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <id>1</id>
       <posX>340</posX>
       <posY>70</posY>
@@ -176,6 +183,8 @@
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <id>700</id>
       <posX>290</posX>
       <posY>111</posY>
@@ -217,6 +226,8 @@
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <id>705</id>
       <posX>290</posX>
       <posY>108</posY>
@@ -247,6 +258,8 @@
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <id>10</id>
       <posX>290</posX>
       <posY>111</posY>

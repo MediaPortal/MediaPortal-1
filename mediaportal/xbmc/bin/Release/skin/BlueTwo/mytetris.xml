@@ -9,34 +9,38 @@
   <controls>
     <import>common.window.xml</import>
     <control>
+      <description>button group</description>
       <type>group</type>
-      <description>group element</description>
-      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
       <posX>60</posX>
       <posY>97</posY>
+      <layout>StackLayout</layout>
       <control>
         <description>New Game</description>
         <type>button</type>
         <id>2</id>
         <label>19002</label>
-        <onleft>2</onleft>
         <onright>10</onright>
         <onup>17</onup>
-        <ondown>4</ondown>
       </control>
       <control>
         <description>Sounds</description>
         <type>togglebutton</type>
         <id>4</id>
         <label>19004</label>
-        <onleft>4</onleft>
         <onright>10</onright>
-        <onup>2</onup>
-        <ondown>2</ondown>
       </control>
     </control>
     <control>
+      <description>info group</description>
       <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
       <control>
         <description>Scoreboard background</description>
         <type>image</type>
@@ -120,8 +124,12 @@
       </control>
     </control>
     <control>
-      <type>group</type>
       <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <control>
         <description>Tetris control</description>
         <type>tetris</type>

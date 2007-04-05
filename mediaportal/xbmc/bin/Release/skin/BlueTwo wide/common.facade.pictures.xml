@@ -2,12 +2,12 @@
 <window>
   <controls>
     <control>
+      <description>group element</description>
       <type>group</type>
-      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <description>group element</description>
+      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>
@@ -43,12 +43,23 @@
           <backgroundwidth>572</backgroundwidth>
           <InfoImagex>628</InfoImagex>
           <InfoImagewidth>500</InfoImagewidth>
+          <thumbs flipY="true" diffuse="Thumb_Mask.png"/>
+          <!--
+          <InfoImage flipY="true" diffuse="Thumb_Mask.png"/>
+          -->
+          <showFrame>yes</showFrame>
+          <showFolder>yes</showFolder>
+          <showBackGround>yes</showBackGround>
+          <showInfoImage>yes</showInfoImage>
+          <enableFocusZoom>no</enableFocusZoom>
+          <thumbAnimation effect="zoom" start="100,100" end="150,150" time="300">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="150,150" end="100,100" time="300">unfocus</thumbAnimation>
         </control>
         <control>
           <description>playlist listcontrol</description>
           <type>playlistcontrol</type>
           <id>50</id>
-          <scrollOffset>1</scrollOffset>
+          <scrollOffset>2</scrollOffset>
         </control>
       </control>
     </control>

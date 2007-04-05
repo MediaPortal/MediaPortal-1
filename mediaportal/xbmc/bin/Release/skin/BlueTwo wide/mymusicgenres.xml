@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-  <id>504</id>
+  <id>501</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:#view</define>
@@ -27,13 +27,14 @@
         <onup>17</onup>
       </control>
       <control>
+        <description>Sort button</description>
         <type>sortbutton</type>
         <id>3</id>
         <label>103</label>
         <onright>50</onright>
       </control>
       <control>
-        <description>Switch View</description>
+        <description>Switch View button</description>
         <type>button</type>
         <id>6</id>
         <label>457</label>
@@ -42,21 +43,21 @@
       <control>
         <description>Search button</description>
         <type>button</type>
-        <id>9</id>
+        <id>12</id>
         <label>137</label>
         <onright>50</onright>
       </control>
       <control>
-        <description>Play CD</description>
+        <description>Play CD button</description>
         <type>button</type>
-        <id>12</id>
-        <label>890</label>
+        <id>9</id>
+        <label>890</label>  
         <onright>50</onright>
       </control>
       <control>
-        <description>Eject Disc</description>
+        <description>Eject Disc button</description>
         <type>button</type>
-        <id>10</id>
+        <id>13</id>
         <label>654</label>
         <action>100</action>
         <onright>50</onright>
@@ -80,71 +81,22 @@
         <description>Current Playlist button</description>
         <type>button</type>
         <id>8</id>
-        <label>4555</label>
+        <label>136</label>
         <action>33</action>
         <onright>50</onright>
+        <ondown>99</ondown>
       </control>
+      <!-- would be more common layout, but does not work yet
       <control>
-        <description>My Playlists</description>
+        <description>My Playlists button</description>
         <type>button</type>
-        <id>14</id>
+        <id>10</id>
         <label>983</label>
         <onright>50</onright>
         <ondown>99</ondown>
       </control>
+      -->
     </control>
-    <control>
-      <type>group</type>
-      <description>group element</description>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
-      <control>
-        <description>composite control consisting of a list control and a thumbnail panel</description>
-        <type>facadeview</type>
-        <id>50</id>
-        <control>
-          <description>listcontrol</description>
-          <type>listcontrol</type>
-          <id>50</id>
-          <onleft>2</onleft>
-          <textcolor>FFFFFFFF</textcolor>
-        </control>
-        <control>
-          <description>Thumbnail Panel</description>
-          <type>thumbnailpanel</type>
-          <id>51</id>
-          <onleft>2</onleft>
-        </control>
-        <control>
-          <description>album view listcontrol</description>
-          <type>listcontrol</type>
-          <subtype>album</subtype>
-          <id>52</id>
-          <font>font13</font>
-          <font2>font13</font2>
-          <selectedColor2>FFF8BC70</selectedColor2>
-          <textXOff>36</textXOff>
-          <textYOff>20</textYOff>
-          <textXOff2>712</textXOff2>
-          <textYOff2>80</textYOff2>
-          <itemWidth>136</itemWidth>
-          <itemHeight>102</itemHeight>
-          <spaceBetweenItems>5</spaceBetweenItems>
-          <textureHeight>132</textureHeight>
-          <onleft>2</onleft>
-        </control>
-        <control>
-          <description>Filmstrip view</description>
-          <type>filmstrip</type>
-          <id>53</id>
-          <onleft>2</onleft>
-          <onright>2</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
-        </control>
-      </control>
-    </control>
+    <import>common.facade.music.xml</import>
   </controls>
 </window>
