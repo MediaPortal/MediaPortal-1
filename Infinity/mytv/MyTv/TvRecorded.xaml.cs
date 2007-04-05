@@ -54,7 +54,7 @@ namespace MyTv
     {
       //create new view model
       _model = new TvRecordedViewModel(this);
-      //and set the datacontext to our model
+      //and set the gui's datacontext to our model
       gridMain.DataContext = _model;
 
       // Sets keyboard focus on the first Button in the sample.
@@ -63,7 +63,7 @@ namespace MyTv
       //add some event handlers to keep mouse/keyboard focused together...
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
-      gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
+      gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(gridList_Click), true);
       gridList.KeyDown += new KeyEventHandler(gridList_KeyDown);
 
       //Thread thumbNailThread = new Thread(new ThreadStart(CreateThumbnailsThread));
@@ -98,6 +98,7 @@ namespace MyTv
     /// <summary>
     /// Event handler for OnKeyDown
     /// Handles some basic navigation
+    /// Guess this should be done via command binding?
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
@@ -139,7 +140,12 @@ namespace MyTv
         return;
       }
     }
-    void Button_Click(object sender, RoutedEventArgs e)
+    /// <summary>
+    /// Handles the Click event of the gridList control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+    void gridList_Click(object sender, RoutedEventArgs e)
     {
       if (e.Source != gridList) return;
       OnRecordingClicked();
