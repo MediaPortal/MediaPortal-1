@@ -846,7 +846,7 @@ namespace MediaPortal.GUI.Music
         RatingValue = -1;
 
       CurrentTrackTag.Rating = RatingValue;
-      GUIPropertyManager.SetProperty("#Play.Current.Rating", Convert.ToString(CurrentTrackTag.Rating));
+      GUIPropertyManager.SetProperty("#Play.Current.Rating", (Convert.ToDecimal(2 * CurrentTrackTag.Rating + 1)).ToString());
 
       MusicDatabase dbs = new MusicDatabase();
       string strFile = g_Player.CurrentFile;
@@ -1040,7 +1040,7 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Current.Artist", CurrentTrackTag.Artist);
           GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentTrackTag.Genre);
           GUIPropertyManager.SetProperty("#Play.Current.Year", strYear);
-          GUIPropertyManager.SetProperty("#Play.Current.Rating", Convert.ToString(CurrentTrackTag.Rating));
+          GUIPropertyManager.SetProperty("#Play.Current.Rating", (Convert.ToDecimal(2 * CurrentTrackTag.Rating + 1)).ToString());
           GUIPropertyManager.SetProperty("#duration", MediaPortal.Util.Utils.SecondsToHMSString(CurrentTrackTag.Duration));
 
           //if (ImgListNextRating != null)
@@ -1084,7 +1084,7 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Next.Artist", NextTrackTag.Artist);
           GUIPropertyManager.SetProperty("#Play.Next.Genre", NextTrackTag.Genre);
           GUIPropertyManager.SetProperty("#Play.Next.Year", strYear);
-          GUIPropertyManager.SetProperty("#Play.Next.Rating", Convert.ToString(NextTrackTag.Rating));
+          GUIPropertyManager.SetProperty("#Play.Next.Rating", (Convert.ToDecimal(2 * NextTrackTag.Rating + 1)).ToString());
         }
         else
         {

@@ -252,6 +252,7 @@ namespace MediaPortal.GUI.Video
       base.OnPageLoad();
       LoadDirectory(currentFolder);
     }
+
     protected override void OnPageDestroy(int newWindowId)
     {
       currentSelectedItem = facadeView.SelectedListItemIndex;
@@ -262,6 +263,7 @@ namespace MediaPortal.GUI.Video
       }
       base.OnPageDestroy(newWindowId);
     }
+
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
@@ -292,8 +294,7 @@ namespace MediaPortal.GUI.Video
         GUIVideoFiles.PlayMovie(movie.ID);
       }
     }
-
-   
+       
     protected override void OnShowContextMenu()
     {
       GUIListItem item = facadeView.SelectedListItem;
@@ -338,11 +339,9 @@ namespace MediaPortal.GUI.Video
         case 0: // Delete
           OnDeleteItem(item);
           break;
-
         case 1: // IMDB
           OnInfo(itemNo);
           break;
-
         case 2: // play
           OnClick(itemNo);
           break;
@@ -351,7 +350,6 @@ namespace MediaPortal.GUI.Video
           break;
       }
     }
-
 
     protected override void OnQueueItem(int itemIndex)
     {
@@ -399,7 +397,6 @@ namespace MediaPortal.GUI.Video
 
     }
     #endregion
-
 
     protected override void LoadDirectory(string strNewDirectory)
     {
@@ -493,7 +490,6 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-
     protected override void SetLabels()
     {
       base.SetLabels();
@@ -503,6 +499,7 @@ namespace MediaPortal.GUI.Video
         handler.SetLabel(item.AlbumInfoTag as IMDBMovie, ref item);
       }
     }
+
     void OnDeleteItem(GUIListItem item)
     {
       if (item.IsRemote) return;
@@ -557,6 +554,7 @@ namespace MediaPortal.GUI.Video
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_INFO);
       }
     }
+
     void OnVideoArtistInfo(IMDBActor actor)
     {
       GUIVideoArtistInfo infoDlg = (GUIVideoArtistInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_ARTIST_INFO);
