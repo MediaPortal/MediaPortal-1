@@ -210,9 +210,20 @@ namespace MediaPortal.Visualization
 
     public override bool Config()
     {
+      // We need to stop the Vis first, otherwise some plugins don't allow the config to be called
+      if (visHandle != 0)
+      {
+        BassVis.BASS_WINAMPVIS_Stop((int)hwndWinAmp);
+        BassVis.BASS_WINAMPVIS_Free(visHandle);
+        visHandle = 0;
+      }
+
       int tmpVis = BassVis.BASS_WINAMPVIS_GetHandle(VizPluginInfo.FilePath);
       if (tmpVis != 0)
+      {
+        int numModules = BassVis.BASS_WINAMPVIS_GetNumModules(VizPluginInfo.FilePath);
         BassVis.BASS_WINAMPVIS_Config(tmpVis, VizPluginInfo.PresetIndex);
+      }
 
       return true;
     }

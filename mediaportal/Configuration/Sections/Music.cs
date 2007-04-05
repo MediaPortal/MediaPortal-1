@@ -981,7 +981,6 @@ namespace MediaPortal.Configuration.Sections
       this.btWinampConfig.TabIndex = 12;
       this.btWinampConfig.Text = "Cfg.";
       this.btWinampConfig.UseVisualStyleBackColor = true;
-      this.btWinampConfig.Visible = false;
       this.btWinampConfig.Click += new System.EventHandler(this.btWinampConfig_Click);
       // 
       // SoundSpectrumLnkLbl
@@ -1664,11 +1663,6 @@ namespace MediaPortal.Configuration.Sections
     private void btWinampConfig_Click(object sender, EventArgs e)
     {
       VizWindow.Run = false;
-      int visPlugin = BassVis.BASS_WINAMPVIS_GetHandle(VizPluginInfo.FilePath);
-      if (visPlugin != 0)
-      {
-        string pluginname = BassVis.BASS_WINAMPVIS_GetName(visPlugin);
-      }
       IVizMgr.ConfigWinampViz();
     }
 
