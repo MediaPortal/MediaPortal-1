@@ -23,36 +23,32 @@
           <type>thumbnailpanel</type>
           <id>50</id>
           <scrollOffset>1</scrollOffset>
-          <onleft>2</onleft>
         </control>
         <control>
           <description>Filmstrip view</description>
           <type>filmstrip</type>
           <id>50</id>
-          <onleft>2</onleft>
-          <onright>2</onright>
           <onup>2</onup>
-          <ondown>2</ondown>
-          <itemWidth>80</itemWidth>
-          <itemHeight>76</itemHeight>
-          <textureWidth>73</textureWidth>
-          <textureHeight>69</textureHeight>
-          <thumbWidth>61</thumbWidth>
-          <thumbHeight>61</thumbHeight>
-          <thumbPosX>8</thumbPosX>
-          <thumbPosY>4</thumbPosY>
+          <!-- needs fine tuning, these values are from references.xml
+        <itemWidth>120</itemWidth>
+        <itemHeight>136</itemHeight>
+        <textureWidth>112</textureWidth>
+        <textureHeight>112</textureHeight>
+        <thumbWidth>85</thumbWidth>
+        <thumbHeight>85</thumbHeight>
+        <thumbPosX>13</thumbPosX>
+        <thumbPosY>13</thumbPosY>
+          -->
           <imageFolder>icon_empty_nofocus_music.png</imageFolder>
           <imageFolderFocus>icon_empty_focus_music.png</imageFolderFocus>
           <frame>icon_empty_nofocus_music.png</frame>
           <frameFocus>-</frameFocus>
-          <backgroundx>270</backgroundx>
-          <backgroundy>99</backgroundy>
-          <backgroundwidth>402</backgroundwidth>
-          <backgroundheight>315</backgroundheight>
-          <InfoImagex>359</InfoImagex>
-          <InfoImagey>77</InfoImagey>
-          <InfoImagewidth>200</InfoImagewidth>
-          <InfoImageheight>265</InfoImageheight>
+          <!-- needs fine tuning, these values are from references.xml
+        <backgroundx>672</backgroundx>
+        <backgroundy>126</backgroundy>
+        <backgroundwidth>427</backgroundwidth>
+        <backgroundheight>446</backgroundheight>
+          -->
           <thumbs flipY="true" diffuse="Thumb_Mask.png"/>
           <InfoImage flipY="true" diffuse="Thumb_Mask.png"/>
           <showFrame>yes</showFrame>
