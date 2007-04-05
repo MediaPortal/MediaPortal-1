@@ -469,6 +469,23 @@
       <visible>no</visible>
     </control>
     <control>
+            <type>imagelist</type>
+            <id>1337</id>
+            <posX>475</posX>
+            <posY>686</posY>
+            <width>128</width>
+            <height>30</height>
+            <textureWidth>24</textureWidth>
+            <textureHeight>24</textureHeight>
+            <subitems>
+                <subitem>greystar.png</subitem>
+                <subitem>star.png</subitem>
+            </subitems>
+            <orientation>horizontal</orientation>
+            <align>right</align>
+            <percentage>#Play.Current.Rating</percentage>
+        </control>
+        <control>
       <type>fadelabel</type>
       <description>best album tracks label</description>
       <id>29</id>
