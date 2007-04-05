@@ -757,7 +757,15 @@ namespace WindowPlugins.GUIPrograms
       }
       else
       {
-        GUIPropertyManager.SetProperty("#curheader", GUILocalizeStrings.Get(0));
+        string strText = ProgramSettings.ReadSetting(ProgramUtils.cPLUGINTITLE);
+        if ((strText != "") && (strText != null))
+        {
+          GUIPropertyManager.SetProperty("#curheader", strText);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#curheader", GUILocalizeStrings.Get(0));
+        }
       }
 
       btnViewAs.Label = mapSettings.ViewAsText;

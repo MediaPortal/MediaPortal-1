@@ -26,6 +26,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.GUI.Library;
 using Programs.Utils;
 using ProgramsDatabase;
 
@@ -135,8 +136,7 @@ namespace WindowPlugins.GUIPrograms
       PluginTitle.Text = ProgramSettings.ReadSetting(ProgramUtils.cPLUGINTITLE);
       if (PluginTitle.Text == "")
       {
-        // doesn't work! PluginTitle.Text = GUILocalizeStrings.Get(0);
-        PluginTitle.Text = "My Programs";
+        PluginTitle.Text = GUILocalizeStrings.Get(0);
       }
       return true;
     }
@@ -147,7 +147,7 @@ namespace WindowPlugins.GUIPrograms
       // curApp is null!
       if (Loaded)
       {
-        if ((PluginTitle.Text != "") && (PluginTitle.Text != "My Programs"))
+        if ((PluginTitle.Text != "") && (PluginTitle.Text != GUILocalizeStrings.Get(0)))
         {
           ProgramSettings.WriteSetting(ProgramUtils.cPLUGINTITLE, PluginTitle.Text);
         }
@@ -160,7 +160,7 @@ namespace WindowPlugins.GUIPrograms
 
     private void ResetButton_Click(object sender, EventArgs e)
     {
-      PluginTitle.Text = "My Programs";
+      PluginTitle.Text = GUILocalizeStrings.Get(0);
     }
 
     private void AppSettingsRoot_Load(object sender, EventArgs e)
