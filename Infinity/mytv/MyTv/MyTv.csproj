@@ -148,9 +148,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RecordingModel.cs" />
     <Compile Include="ThumbnailGenerator.cs" />
     <Compile Include="Thumbs.cs" />
     <Compile Include="TsReaderCheck.cs" />
+    <Compile Include="TvRecordedViewModel.cs" />
     <Compile Include="TvFullscreen.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvFullscreen.xaml</DependentUpon>
