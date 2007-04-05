@@ -30,7 +30,7 @@ namespace MyTv
 
   public partial class TvRecorded : System.Windows.Controls.Page
   {
-    #region enums and variables
+    #region variables
     TvRecordedViewModel _model;
     #endregion
 
@@ -66,8 +66,8 @@ namespace MyTv
       gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(gridList_Click), true);
       gridList.KeyDown += new KeyEventHandler(gridList_KeyDown);
 
-      //Thread thumbNailThread = new Thread(new ThreadStart(CreateThumbnailsThread));
-      //thumbNailThread.Start();
+      Thread thumbNailThread = new Thread(new ThreadStart(CreateThumbnailsThread));
+      thumbNailThread.Start();
     }
 
     /// <summary>
@@ -161,43 +161,8 @@ namespace MyTv
     void OnRecordingClicked()
     {
       RecordingModel item = gridList.SelectedItem as RecordingModel;
-      Recording recording = item.Recording;
-      if (recording == null) return;
-      MpMenu dlgMenu = new MpMenu();
-      Window w = Window.GetWindow(this);
-      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      dlgMenu.Owner = w;
-      dlgMenu.Items.Clear();
-      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);//"Menu";
-      dlgMenu.SubTitle = "";
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 92)/*Play recording*/));
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 93)/*Delete recording*/));
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 94)/*Settings*/));
-      dlgMenu.ShowDialog();
-      if (dlgMenu.SelectedIndex < 0) return;//nothing selected
-      switch (dlgMenu.SelectedIndex)
-      {
-        case 0:
-          {
-            ICommand command = _model.Play;
-            command.Execute(recording.FileName);
-          }
-          break;
-
-        case 1:
-          {
-            ICommand command = _model.Delete;
-            command.Execute(recording);
-          }
-          break;
-
-        case 2:
-          {
-            TvRecordedInfo infopage = new TvRecordedInfo(recording);
-            this.NavigationService.Navigate(infopage);
-          }
-          break;
-      }
+      ICommand contextMenu = _model.ContextMenu;
+      contextMenu.Execute(item);
     }
 
     #endregion
@@ -215,7 +180,7 @@ namespace MyTv
         //ThumbnailGenerator generator = new ThumbnailGenerator();
         //if (generator.GenerateThumbnail(rec.FileName))
         //{
-          //this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new UpdateListDelegate(LoadRecordings));
+        //this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new UpdateListDelegate(LoadRecordings));
         //}
       }
     }

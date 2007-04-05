@@ -20,6 +20,9 @@ using ProjectInfinity.Localisation;
 
 namespace MyTv
 {
+  /// <summary>
+  /// View Model for the recorded tv GUI
+  /// </summary>
   class TvRecordedViewModel : INotifyPropertyChanged
   {
     #region variables and enums
@@ -50,6 +53,7 @@ namespace MyTv
     ICommand _fullScreenCommand;
     ICommand _playCommand;
     ICommand _deleteCommand;
+    ICommand _contextMenuCommand;
     Window _window;
     Page _page;
     ViewType _viewMode = ViewType.Icon;
@@ -359,6 +363,21 @@ namespace MyTv
         return _deleteCommand;
       }
     }
+    /// <summary>
+    /// Returns a ICommand for showing the context menu
+    /// </summary>
+    /// <value>The command.</value>
+    public ICommand ContextMenu
+    {
+      get
+      {
+        if (_contextMenuCommand == null)
+        {
+          _contextMenuCommand = new ContextMenuCommand(this);
+        }
+        return _contextMenuCommand;
+      }
+    }
     #endregion
 
     #region Commands subclasses
@@ -658,6 +677,67 @@ namespace MyTv
         TvServer server = new TvServer();
         server.DeleteRecording(recording.IdRecording);
         _viewModel.ChangeProperty("Recordings");
+      }
+    }
+    #endregion
+    #region Delete command class
+    /// <summary>
+    /// ContextMenuCommand will show the context menu
+    /// </summary> 
+    public class ContextMenuCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public ContextMenuCommand(TvRecordedViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        RecordingModel item = parameter as RecordingModel;
+        Recording recording = item.Recording;
+        if (recording == null) return;
+        MpMenu dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Items.Clear();
+        dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);//"Menu";
+        dlgMenu.SubTitle = "";
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 92)/*Play recording*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 93)/*Delete recording*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 94)/*Settings*/));
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex < 0) return;//nothing selected
+        switch (dlgMenu.SelectedIndex)
+        {
+          case 0:
+            {
+              ICommand command = _viewModel.Play;
+              command.Execute(recording.FileName);
+            }
+            break;
+
+          case 1:
+            {
+              ICommand command = _viewModel.Delete;
+              command.Execute(recording);
+            }
+            break;
+
+          case 2:
+            {
+              TvRecordedInfo infopage = new TvRecordedInfo(recording);
+              _viewModel.Page.NavigationService.Navigate(infopage);
+            }
+            break;
+        }
       }
     }
     #endregion
