@@ -31,8 +31,6 @@ namespace MyTv
   public partial class TvRecorded : System.Windows.Controls.Page
   {
     #region enums and variables
-    private delegate void MediaPlayerErrorDelegate();
-    private delegate void UpdateListDelegate();
     TvRecordedViewModel _model;
     #endregion
 
@@ -67,19 +65,6 @@ namespace MyTv
       Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
       gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
       gridList.KeyDown += new KeyEventHandler(gridList_KeyDown);
-
-      
-      // show video in our video window
-      if (TvPlayerCollection.Instance.Count > 0)
-      {
-        MediaPlayer player = TvPlayerCollection.Instance[0];
-        VideoDrawing videoDrawing = new VideoDrawing();
-        videoDrawing.Player = player;
-        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
-        DrawingBrush videoBrush = new DrawingBrush();
-        videoBrush.Drawing = videoDrawing;
-        videoWindow.Fill = videoBrush;
-      }
 
       //Thread thumbNailThread = new Thread(new ThreadStart(CreateThumbnailsThread));
       //thumbNailThread.Start();
@@ -187,11 +172,19 @@ namespace MyTv
       switch (dlgMenu.SelectedIndex)
       {
         case 0:
-          PlayRecording(recording);
+          {
+            ICommand command = _model.Play;
+            command.Execute(recording.FileName);
+          }
           break;
+
         case 1:
-          DeleteRecording(recording);
+          {
+            ICommand command = _model.Delete;
+            command.Execute(recording);
+          }
           break;
+
         case 2:
           {
             TvRecordedInfo infopage = new TvRecordedInfo(recording);
@@ -200,87 +193,7 @@ namespace MyTv
           break;
       }
     }
-    void DeleteRecording(Recording recording)
-    {
-      MpDialogYesNo dlgMenu = new MpDialogYesNo();
-      Window w = Window.GetWindow(this);
-      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      dlgMenu.Owner = w;
-      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);//"Menu";
-      dlgMenu.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 95);//"Are you sure to delete this recording ?";
-      dlgMenu.ShowDialog();
-      if (dlgMenu.DialogResult == DialogResult.No) return;
 
-      TvServer server = new TvServer();
-      server.DeleteRecording(recording.IdRecording);
-    }
-    void PlayRecording(Recording recording)
-    {
-      if (!System.IO.File.Exists(recording.FileName))
-      {
-        MpDialogOk dlgError = new MpDialogOk();
-        Window w = Window.GetWindow(this);
-        dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        dlgError.Owner = w;
-        dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
-        dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
-        dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 96)/*File not found*/+ " " + recording.FileName;
-        dlgError.ShowDialog();
-        return;
-      }
-      videoWindow.Fill = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
-      TvPlayerCollection.Instance.DisposeAll();
-      TvMediaPlayer player = TvPlayerCollection.Instance.Get(null, recording.FileName);
-      player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
-
-      //create video drawing which draws the video in the video window
-      VideoDrawing videoDrawing = new VideoDrawing();
-      videoDrawing.Player = player;
-      videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
-      DrawingBrush videoBrush = new DrawingBrush();
-      videoBrush.Drawing = videoDrawing;
-      videoWindow.Fill = videoBrush;
-      videoDrawing.Player.Play();
-    }
-
-    #endregion
-
-    #region media player events
-    /// <summary>
-    /// Handles the MediaFailed event of the _mediaPlayer control.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.Windows.Media.ExceptionEventArgs"/> instance containing the event data.</param>
-    void _mediaPlayer_MediaFailed(object sender, ExceptionEventArgs e)
-    {
-      // media player failed to open file
-      // show error dialog (via dispatcher)
-      this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
-    }
-
-    /// <summary>
-    /// Called when media player has an error condition
-    /// show messagebox to user and close media playback
-    /// </summary>
-    void OnMediaPlayerError()
-    {
-      videoWindow.Fill = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-      if (TvPlayerCollection.Instance.Count > 0)
-      {
-        if (TvPlayerCollection.Instance[0].HasError)
-        {
-          MpDialogOk dlgError = new MpDialogOk();
-          Window w = Window.GetWindow(this);
-          dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-          dlgError.Owner = w;
-          dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
-          dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
-          dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/+ " " + TvPlayerCollection.Instance[0].ErrorMessage;
-          dlgError.ShowDialog();
-        }
-      }
-      TvPlayerCollection.Instance.DisposeAll();
-    }
     #endregion
 
     #region thumnail thread

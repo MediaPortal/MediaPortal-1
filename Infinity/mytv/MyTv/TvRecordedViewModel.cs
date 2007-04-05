@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using TvDatabase;
 using TvControl;
 using Dialogs;
@@ -46,12 +47,16 @@ namespace MyTv
     ICommand _sortCommand;
     ICommand _viewCommand;
     ICommand _cleanUpCommand;
+    ICommand _fullScreenCommand;
+    ICommand _playCommand;
+    ICommand _deleteCommand;
     Window _window;
     Page _page;
     ViewType _viewMode = ViewType.Icon;
     RecordingCollectionView _recordingView;
     RecordingDatabaseModel _dataModel = new RecordingDatabaseModel();
     public event PropertyChangedEventHandler PropertyChanged;
+
     #endregion
 
     #region ctor
@@ -63,6 +68,27 @@ namespace MyTv
     #endregion
 
     #region properties
+    /// <summary>
+    /// Gets the video brush.
+    /// </summary>
+    /// <value>The video brush.</value>
+    public Brush VideoBrush
+    {
+      get
+      {
+        if (TvPlayerCollection.Instance.Count > 0)
+        {
+          MediaPlayer player = TvPlayerCollection.Instance[0];
+          VideoDrawing videoDrawing = new VideoDrawing();
+          videoDrawing.Player = player;
+          videoDrawing.Rect = new Rect(0, 0, player.NaturalVideoWidth, player.NaturalVideoHeight);
+          DrawingBrush videoBrush = new DrawingBrush();
+          videoBrush.Drawing = videoDrawing;
+          return videoBrush;
+        }
+        return new SolidColorBrush(Color.FromArgb(0xff, 0, 0, 0));
+      }
+    }
     /// <summary>
     /// Returns the ListViewCollection containing the recordings
     /// </summary>
@@ -106,6 +132,17 @@ namespace MyTv
       get
       {
         return _window;
+      }
+    }
+    /// <summary>
+    /// Gets the current Page.
+    /// </summary>
+    /// <value>The page.</value>
+    public Page Page
+    {
+      get
+      {
+        return _page;
       }
     }
     /// <summary>
@@ -266,6 +303,21 @@ namespace MyTv
     /// Returns a ICommand for cleaning up watched recordings
     /// </summary>
     /// <value>The command.</value>
+    public ICommand FullScreen
+    {
+      get
+      {
+        if (_fullScreenCommand == null)
+        {
+          _fullScreenCommand = new FullScreenCommand(this);
+        }
+        return _fullScreenCommand;
+      }
+    }
+    /// <summary>
+    /// Returns a ICommand for cleaning up watched recordings
+    /// </summary>
+    /// <value>The command.</value>
     public ICommand CleanUp
     {
       get
@@ -275,6 +327,36 @@ namespace MyTv
           _cleanUpCommand = new CleanUpCommand(this);
         }
         return _cleanUpCommand;
+      }
+    }
+    /// <summary>
+    /// Returns a ICommand for playing a recording
+    /// </summary>
+    /// <value>The command.</value>
+    public ICommand Play
+    {
+      get
+      {
+        if (_playCommand == null)
+        {
+          _playCommand = new PlayCommand(this);
+        }
+        return _playCommand;
+      }
+    }
+    /// <summary>
+    /// Returns a ICommand for deleting a recording
+    /// </summary>
+    /// <value>The command.</value>
+    public ICommand Delete
+    {
+      get
+      {
+        if (_deleteCommand == null)
+        {
+          _deleteCommand = new DeleteCommand(this);
+        }
+        return _deleteCommand;
       }
     }
     #endregion
@@ -390,6 +472,7 @@ namespace MyTv
       }
     }
     #endregion
+
     #region cleanup command class
     /// <summary>
     /// Cleanup command will delete recordings which have been watched
@@ -427,6 +510,153 @@ namespace MyTv
             server.DeleteRecording(rec.IdRecording);
           }
         }
+        _viewModel.ChangeProperty("Recordings");
+      }
+    }
+    #endregion
+
+    #region Fullscreen command class
+    /// <summary>
+    /// Fullscreen command will navigate to fullscreen window
+    /// </summary>
+    public class FullScreenCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public FullScreenCommand(TvRecordedViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        _viewModel.Page.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+      }
+      public override bool CanExecute(object parameter)
+      {
+        return (TvPlayerCollection.Instance.Count != 0);
+      }
+    }
+    #endregion
+
+    #region Play command class
+    /// <summary>
+    /// Play command will start playing a recording
+    /// </summary>
+    public class PlayCommand : RecordedCommand
+    {
+      private delegate void MediaPlayerErrorDelegate();
+      private delegate void MediaPlayerOpenDelegate();
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public PlayCommand(TvRecordedViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        string fileName = parameter as string;
+        if (!System.IO.File.Exists(fileName))
+        {
+          MpDialogOk dlgError = new MpDialogOk();
+          dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+          dlgError.Owner = _viewModel.Window;
+          dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
+          dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
+          dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 96)/*File not found*/+ " " + fileName;
+          dlgError.ShowDialog();
+          return;
+        }
+        if (TvPlayerCollection.Instance.Count > 0)
+        {
+          TvPlayerCollection.Instance.DisposeAll();
+          _viewModel.ChangeProperty("VideoBrush");
+          _viewModel.ChangeProperty("FullScreen");
+        }
+        TvMediaPlayer player = TvPlayerCollection.Instance.Get(null, fileName);
+        player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
+        player.MediaOpened += new EventHandler(player_MediaOpened);
+        player.Play();
+      }
+
+      void player_MediaOpened(object sender, EventArgs e)
+      {
+        _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerOpenDelegate(OnMediaOpened));
+      }
+      void OnMediaOpened()
+      {
+        _viewModel.ChangeProperty("VideoBrush");
+        _viewModel.ChangeProperty("FullScreen");
+      }
+      void _mediaPlayer_MediaFailed(object sender, ExceptionEventArgs e)
+      {
+        _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
+      }
+      void OnMediaPlayerError()
+      {
+        if (TvPlayerCollection.Instance.Count > 0)
+        {
+          if (TvPlayerCollection.Instance[0].HasError)
+          {
+            MpDialogOk dlgError = new MpDialogOk();
+            dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            dlgError.Owner = _viewModel.Window;
+            dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
+            dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
+            dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/+ " " + TvPlayerCollection.Instance[0].ErrorMessage;
+            dlgError.ShowDialog();
+          }
+        }
+        TvPlayerCollection.Instance.DisposeAll();
+      }
+    }
+    #endregion
+
+    #region Delete command class
+    /// <summary>
+    /// Delete command will delete a recoring
+    /// </summary>
+    public class DeleteCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public DeleteCommand(TvRecordedViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        Recording recording = parameter as Recording;
+        MpDialogYesNo dlgMenu = new MpDialogYesNo();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);//"Menu";
+        dlgMenu.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 95);//"Are you sure to delete this recording ?";
+        dlgMenu.ShowDialog();
+        if (dlgMenu.DialogResult == DialogResult.No) return;
+
+        TvServer server = new TvServer();
+        server.DeleteRecording(recording.IdRecording);
         _viewModel.ChangeProperty("Recordings");
       }
     }
