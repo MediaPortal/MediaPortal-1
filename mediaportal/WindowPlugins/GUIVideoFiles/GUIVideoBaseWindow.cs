@@ -213,7 +213,10 @@ namespace MediaPortal.GUI.Video
               if (!AllowView(CurrentView) || facadeView.ListView == null)
                 shouldContinue = true;
               else
-                facadeView.View = GUIFacadeControl.ViewMode.List;
+                if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST)
+                  facadeView.View = GUIFacadeControl.ViewMode.Playlist;
+                else
+                  facadeView.View = GUIFacadeControl.ViewMode.List;
               break;
           }
         } while (shouldContinue);
