@@ -58,7 +58,7 @@ namespace MyTv
       gridMain.DataContext = _model;
       //this.InputBindings.Add(new KeyBinding(_model.FullScreenTv, new KeyGesture(System.Windows.Input.Key.X, ModifierKeys.None)));
       this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
-      this.InputBindings.Add(new KeyBinding(NavigationCommands.PreviousPage, new KeyGesture(System.Windows.Input.Key.Escape)));
+      this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.Focus(buttonView);
 

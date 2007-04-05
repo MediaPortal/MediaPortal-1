@@ -149,6 +149,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="RecordingModel.cs" />
+    <Compile Include="ScheduleModel.cs" />
     <Compile Include="ThumbnailGenerator.cs" />
     <Compile Include="Thumbs.cs" />
     <Compile Include="TsReaderCheck.cs" />
@@ -184,6 +185,7 @@
       <SubType>Code</SubType>
       <DependentUpon>TvScheduled.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TvScheduledViewModel.cs" />
     <Compile Include="TvScheduleInfo.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvScheduleInfo.xaml</DependentUpon>

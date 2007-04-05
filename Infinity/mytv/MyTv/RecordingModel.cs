@@ -130,13 +130,32 @@ namespace MyTv
       }
     }
 
+    /// <summary>
+    /// Gets the start-end label.
+    /// </summary>
+    /// <value>The start-end label.</value>
     public string StartEndLabel
     {
       get
       {
-        return  String.Format("{0}-{1}", StartTime.ToString("HH:mm"), EndTime.ToString("HH:mm"));
+        return String.Format("{0}-{1}", StartTime.ToString("HH:mm"), EndTime.ToString("HH:mm"));
+      }
+    }
+    /// <summary>
+    /// Gets the duration.
+    /// </summary>
+    /// <value>The duration.</value>
+    public string Duration
+    {
+      get
+      {
+        TimeSpan ts = EndTime - StartTime;
+        if (ts.Minutes < 10)
+          return String.Format("{0}:0{1}", ts.Hours, ts.Minutes);
+        else
+          return String.Format("{0}:B{1}", ts.Hours, ts.Minutes);
       }
     }
     #endregion
-    }
   }
+}
