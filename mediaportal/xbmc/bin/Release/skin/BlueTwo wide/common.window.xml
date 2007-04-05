@@ -9,27 +9,25 @@
       <height>768</height>
     </control>
     <control>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
       <type>image</type>
       <id>1</id>
       <posX>113</posX>
       <posY>26</posY>
       <texture>#header.image</texture>
-    </control>
-    <control>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
       <type>label</type>
       <id>1</id>
-      <posX>474</posX>
+      <posX>398</posX>
       <posY>93</posY>
       <label>#header.label</label>
       <font>font16</font>
       <align>right</align>
       <textcolor>White</textcolor>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
       <description>Number of Files Label</description>
@@ -40,12 +38,10 @@
       <label>#itemcount</label>
       <align>left</align>
       <textcolor>White</textcolor>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
-    </control>
-    <control>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
       <id>1</id>
@@ -56,10 +52,10 @@
       <font>font14</font>
       <align>right</align>
       <textcolor>White</textcolor>
-    </control>
-    <control>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
       <type>image</type>
       <id>1</id>
       <posX>155</posX>
@@ -67,8 +63,8 @@
       <width>217</width>
       <height>213</height>
       <texture>#header.hover</texture>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
     </control>
   </controls>
 </window>
