@@ -61,10 +61,10 @@ namespace MyTv
       Keyboard.Focus(buttonView);
 
       //add some event handlers to keep mouse/keyboard focused together...
-      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
-      gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(gridList_Click), true);
-      gridList.KeyDown += new KeyEventHandler(gridList_KeyDown);
+      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onPreviewKeyDown));
+      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(OnMouseMoveEvent));
+      this.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(OnMouseButtonDownEvent), true);
+      this.KeyDown += new KeyEventHandler(onKeyDown);
 
       Thread thumbNailThread = new Thread(new ThreadStart(CreateThumbnailsThread));
       thumbNailThread.Start();
@@ -76,7 +76,7 @@ namespace MyTv
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
-    void handleMouse(object sender, MouseEventArgs e)
+    void OnMouseMoveEvent(object sender, MouseEventArgs e)
     {
       FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
       while (element != null)
@@ -88,7 +88,6 @@ namespace MyTv
         }
         if (element as ListBoxItem != null)
         {
-          gridList.SelectedItem = element.DataContext;
           Keyboard.Focus((ListBoxItem)element);
           return;
         }
@@ -102,7 +101,7 @@ namespace MyTv
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
-    protected void onKeyDown(object sender, KeyEventArgs e)
+    protected void onPreviewKeyDown(object sender, KeyEventArgs e)
     {
       if (e.Key == System.Windows.Input.Key.Left)
       {
@@ -126,29 +125,32 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Handles the KeyDown event of the gridList control.
+    /// Handles the KeyDown event 
     /// When keydown=enter, OnRecordingClicked() gets called
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
-    void gridList_KeyDown(object sender, KeyEventArgs e)
+    void onKeyDown(object sender, KeyEventArgs e)
     {
+      if ((e.Source as ListBox) == null) return;
       if (e.Key == System.Windows.Input.Key.Enter)
       {
-        OnRecordingClicked();
+        ListBox box = e.Source as ListBox;
+        OnRecordingClicked(box);
         e.Handled = true;
         return;
       }
     }
     /// <summary>
-    /// Handles the Click event of the gridList control.
+    /// Handles the mouse button down event
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-    void gridList_Click(object sender, RoutedEventArgs e)
+    void OnMouseButtonDownEvent(object sender, RoutedEventArgs e)
     {
-      if (e.Source != gridList) return;
-      OnRecordingClicked();
+      if ((e.Source as ListBox) == null) return;
+      ListBox box = e.Source as ListBox;
+      OnRecordingClicked(box);
     }
     #endregion
 
@@ -158,9 +160,9 @@ namespace MyTv
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-    void OnRecordingClicked()
+    void OnRecordingClicked(ListBox listBox)
     {
-      RecordingModel item = gridList.SelectedItem as RecordingModel;
+      RecordingModel item = listBox.SelectedItem as RecordingModel;
       ICommand contextMenu = _model.ContextMenu;
       contextMenu.Execute(item);
     }
