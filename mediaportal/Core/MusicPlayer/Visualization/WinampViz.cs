@@ -76,7 +76,7 @@ namespace MediaPortal.Visualization
     {
       Bass.PlaybackStateChanged += new BassAudioEngine.PlaybackStateChangedDelegate(PlaybackStateChanged);
 
-      BassVis.BASS_WINAMPVIS_Init(BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), GUIGraphicsContext.form.Handle);
+      BassVis.BASS_WINAMPVIS_Init(BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), VisualizationWindow.Handle);
 
       // The following Play is necessary for supporting Winamp Viz, which need a playing env, like Geiss 2, Beatharness, etc.
       // Workaround until BassVis 2.3.0.7 is released
@@ -106,7 +106,7 @@ namespace MediaPortal.Visualization
         return false;
       }
 
-      return Initialized;
+      return _Initialized;
     }
     #endregion
 
@@ -159,12 +159,12 @@ namespace MediaPortal.Visualization
     {
       try
       {
-        if (VisualizationWindow == null || !VisualizationWindow.Visible)
+        if (VisualizationWindow == null || !VisualizationWindow.Visible || visHandle == 0)
           return 0;
 
         // Set Song information, so that the plugin can display it
         if (trackTag != null && Bass != null)
-          BassVis.BASS_WINAMPVIS_SetChanInfo(visHandle, _songTitle, Bass.CurrentFile, (int)Bass.CurrentPosition, (int)Bass.Duration, 1, 1);
+          BassVis.BASS_WINAMPVIS_SetChanInfo(visHandle, String.Format("1. {0}",_songTitle), Bass.CurrentFile, (int)Bass.CurrentPosition, (int)Bass.Duration, 1, 1);
         else
           BassVis.BASS_WINAMPVIS_SetChanInfo(visHandle, _songTitle, "  ", 0, 0, 1, 1);
 
@@ -194,7 +194,6 @@ namespace MediaPortal.Visualization
         if (visHandle != 0)
         {
           BassVis.BASS_WINAMPVIS_Stop((int)hwndWinAmp);
-          BassVis.BASS_WINAMPVIS_Free(visHandle);
           BassVis.BASS_WINAMPVIS_Quit();
           visHandle = 0;
         }
@@ -202,7 +201,7 @@ namespace MediaPortal.Visualization
         return true;
       }
 
-      catch (Exception ex)
+      catch (Exception)
       {
         return false;
       }
@@ -291,6 +290,7 @@ namespace MediaPortal.Visualization
         BassVis.BASS_WINAMPVIS_Play((int)hwndWinAmp);
       }
 
+      _Initialized = visHandle != 0;
       return visHandle != 0;
     }
     #endregion
