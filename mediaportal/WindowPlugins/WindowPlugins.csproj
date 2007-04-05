@@ -328,6 +328,10 @@
     <Compile Include="GUIMyDreambox\Dreambox\XML.cs" />
     <Compile Include="GUIMyDreambox\GuiRecordings.cs" />
     <Compile Include="GUIMyDreambox\MyDreamboxRadio.cs" />
+    <Compile Include="GUIPrograms\appItemAppExec.cs" />
+    <Compile Include="GUIPrograms\AppSettingsAppExec.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="GUIVideoFiles\SelectDVDHandler.cs" />
     <Compile Include="Home\GUIHome.cs" />
     <Compile Include="Home\GUIHomeBaseWindow.cs" />
@@ -1162,6 +1166,10 @@
     <EmbeddedResource Include="GUIRSSFeed\rssicon.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="GUIPrograms\AppSettingsAppExec.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AppSettingsAppExec.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUIRSSFeed\rssicon_disabled.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

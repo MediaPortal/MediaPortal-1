@@ -58,6 +58,7 @@ namespace WindowPlugins.GUIPrograms
     private AppSettingsFilelauncher sectionFilelauncher = new AppSettingsFilelauncher();
     private AppSettingsMameDirect sectionMameDirect = new AppSettingsMameDirect();
     private AppSettingsGamebase sectionGamebase = new AppSettingsGamebase();
+    private AppSettingsAppExec sectionAppExec = new AppSettingsAppExec();
     private AppSettingsGrouper sectionGrouper = new AppSettingsGrouper();
     private AppSettingsRoot sectionRoot = new AppSettingsRoot();
     private AppFilesView filesView = new AppFilesView();
@@ -78,9 +79,9 @@ namespace WindowPlugins.GUIPrograms
     private MenuItem menuMyFile;
     private MenuItem menuFileLauncher;
     private MenuItem menuGrouper;
-    private TabControl detailsTabControl;
-    private TabPage detailsPage;
-    private TabPage filesPage;
+    private MediaPortal.UserInterface.Controls.MPTabControl detailsTabControl;
+    private MediaPortal.UserInterface.Controls.MPTabPage detailsPage;
+    private MediaPortal.UserInterface.Controls.MPTabPage filesPage;
     private Panel holderPanel;
     private ToolBarButton sep5;
     private ContextMenu popupTools;
@@ -103,6 +104,7 @@ namespace WindowPlugins.GUIPrograms
     private System.Windows.Forms.Panel holderPanelViews;
     private System.Windows.Forms.MenuItem menuGamebaseImporter;
     private System.Windows.Forms.MenuItem SourceTypeToGamebase;
+    private MenuItem appLauncherMenuItem;
     private bool m_ProfilesLoaded = false;
 
     public SetupForm()
@@ -197,7 +199,10 @@ namespace WindowPlugins.GUIPrograms
     /// </summary>
     private void InitializeComponent()
     {
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(SetupForm));
+      System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("whazzz up");
+      System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("my Programs", new System.Windows.Forms.TreeNode[] {
+            treeNode1});
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SetupForm));
       this.appTree = new System.Windows.Forms.TreeView();
       this.toolBarMenu = new System.Windows.Forms.ToolBar();
       this.buttonAddChild = new System.Windows.Forms.ToolBarButton();
@@ -209,6 +214,7 @@ namespace WindowPlugins.GUIPrograms
       this.menuDirBrowse = new System.Windows.Forms.MenuItem();
       this.menuItem1 = new System.Windows.Forms.MenuItem();
       this.menuMAMEDirect = new System.Windows.Forms.MenuItem();
+      this.menuGamebaseImporter = new System.Windows.Forms.MenuItem();
       this.menuMlfFile = new System.Windows.Forms.MenuItem();
       this.sep1 = new System.Windows.Forms.ToolBarButton();
       this.buttonDelete = new System.Windows.Forms.ToolBarButton();
@@ -223,11 +229,13 @@ namespace WindowPlugins.GUIPrograms
       this.SourceTypeToDirBrowse = new System.Windows.Forms.MenuItem();
       this.SourceTypeToDirCache = new System.Windows.Forms.MenuItem();
       this.SourceTypeToMyIni = new System.Windows.Forms.MenuItem();
+      this.SourceTypeToGamebase = new System.Windows.Forms.MenuItem();
       this.SourceTypeToMLF = new System.Windows.Forms.MenuItem();
       this.SourceTypeToFilelauncher = new System.Windows.Forms.MenuItem();
       this.menuItemReadFromProfile = new System.Windows.Forms.MenuItem();
       this.menuItem2 = new System.Windows.Forms.MenuItem();
       this.sep5 = new System.Windows.Forms.ToolBarButton();
+      this.appLauncherMenuItem = new System.Windows.Forms.MenuItem();
       this.detailsTabControl = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.detailsPage = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.holderPanel = new System.Windows.Forms.Panel();
@@ -235,8 +243,6 @@ namespace WindowPlugins.GUIPrograms
       this.holderPanelFiles = new System.Windows.Forms.Panel();
       this.viewsPage = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.holderPanelViews = new System.Windows.Forms.Panel();
-      this.menuGamebaseImporter = new System.Windows.Forms.MenuItem();
-      this.SourceTypeToGamebase = new System.Windows.Forms.MenuItem();
       this.detailsTabControl.SuspendLayout();
       this.detailsPage.SuspendLayout();
       this.filesPage.SuspendLayout();
@@ -247,52 +253,53 @@ namespace WindowPlugins.GUIPrograms
       // 
       this.appTree.AllowDrop = true;
       this.appTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)));
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.appTree.HideSelection = false;
       this.appTree.HotTracking = true;
-      this.appTree.ImageIndex = -1;
       this.appTree.Indent = 19;
       this.appTree.ItemHeight = 16;
       this.appTree.LabelEdit = true;
       this.appTree.Location = new System.Drawing.Point(8, 40);
       this.appTree.Name = "appTree";
+      treeNode1.Name = "";
+      treeNode1.Text = "whazzz up";
+      treeNode2.Name = "";
+      treeNode2.Text = "my Programs";
       this.appTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-                                                                        new System.Windows.Forms.TreeNode("my Programs", new System.Windows.Forms.TreeNode[] {
-                                                                                                                                                               new System.Windows.Forms.TreeNode("whazzz up")})});
-      this.appTree.SelectedImageIndex = -1;
-      this.appTree.Size = new System.Drawing.Size(224, 468);
+            treeNode2});
+      this.appTree.Size = new System.Drawing.Size(224, 447);
       this.appTree.TabIndex = 8;
-      this.appTree.DragOver += new System.Windows.Forms.DragEventHandler(this.appTree_DragOver);
-      this.appTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
-      this.appTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.appTree_BeforeSelect);
-      this.appTree.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.appTree_AfterLabelEdit);
-      this.appTree.DragEnter += new System.Windows.Forms.DragEventHandler(this.appTree_DragEnter);
-      this.appTree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.appTree_ItemDrag);
-      this.appTree.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.appTree_BeforeLabelEdit);
       this.appTree.DragDrop += new System.Windows.Forms.DragEventHandler(this.appTree_DragDrop);
+      this.appTree.DragOver += new System.Windows.Forms.DragEventHandler(this.appTree_DragOver);
+      this.appTree.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.appTree_AfterLabelEdit);
+      this.appTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
+      this.appTree.DragEnter += new System.Windows.Forms.DragEventHandler(this.appTree_DragEnter);
+      this.appTree.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.appTree_BeforeLabelEdit);
+      this.appTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.appTree_BeforeSelect);
+      this.appTree.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.appTree_ItemDrag);
       // 
       // toolBarMenu
       // 
       this.toolBarMenu.Appearance = System.Windows.Forms.ToolBarAppearance.Flat;
       this.toolBarMenu.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.toolBarMenu.Buttons.AddRange(new System.Windows.Forms.ToolBarButton[] {
-                                                                                   this.buttonAddChild,
-                                                                                   this.sep1,
-                                                                                   this.buttonDelete,
-                                                                                   this.sep2,
-                                                                                   this.buttonUp,
-                                                                                   this.sep3,
-                                                                                   this.buttonDown,
-                                                                                   this.sep4,
-                                                                                   this.buttonTools,
-                                                                                   this.sep5});
+            this.buttonAddChild,
+            this.sep1,
+            this.buttonDelete,
+            this.sep2,
+            this.buttonUp,
+            this.sep3,
+            this.buttonDown,
+            this.sep4,
+            this.buttonTools,
+            this.sep5});
       this.toolBarMenu.ButtonSize = new System.Drawing.Size(60, 36);
       this.toolBarMenu.Divider = false;
       this.toolBarMenu.DropDownArrows = true;
       this.toolBarMenu.Location = new System.Drawing.Point(0, 0);
       this.toolBarMenu.Name = "toolBarMenu";
       this.toolBarMenu.ShowToolTips = true;
-      this.toolBarMenu.Size = new System.Drawing.Size(666, 27);
+      this.toolBarMenu.Size = new System.Drawing.Size(666, 35);
       this.toolBarMenu.TabIndex = 13;
       this.toolBarMenu.TextAlign = System.Windows.Forms.ToolBarTextAlign.Right;
       this.toolBarMenu.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.toolBarMenu_ButtonClick);
@@ -300,18 +307,20 @@ namespace WindowPlugins.GUIPrograms
       // buttonAddChild
       // 
       this.buttonAddChild.DropDownMenu = this.popupAddChild;
+      this.buttonAddChild.Name = "buttonAddChild";
       this.buttonAddChild.Style = System.Windows.Forms.ToolBarButtonStyle.DropDownButton;
       this.buttonAddChild.Text = "&Add Child";
       // 
       // popupAddChild
       // 
       this.popupAddChild.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                                  this.menuDirCache,
-                                                                                  this.menuFileLauncher,
-                                                                                  this.menuGrouper,
-                                                                                  this.menuMyFile,
-                                                                                  this.menuDirBrowse,
-                                                                                  this.menuItem1});
+            this.menuDirCache,
+            this.menuFileLauncher,
+            this.appLauncherMenuItem,
+            this.menuGrouper,
+            this.menuMyFile,
+            this.menuDirBrowse,
+            this.menuItem1});
       // 
       // menuDirCache
       // 
@@ -327,29 +336,29 @@ namespace WindowPlugins.GUIPrograms
       // 
       // menuGrouper
       // 
-      this.menuGrouper.Index = 2;
+      this.menuGrouper.Index = 3;
       this.menuGrouper.Text = "Grouper";
       this.menuGrouper.Click += new System.EventHandler(this.menuGrouper_Click);
       // 
       // menuMyFile
       // 
-      this.menuMyFile.Index = 3;
+      this.menuMyFile.Index = 4;
       this.menuMyFile.Text = "*.my File Importer";
       this.menuMyFile.Click += new System.EventHandler(this.menuMyFile_Click);
       // 
       // menuDirBrowse
       // 
-      this.menuDirBrowse.Index = 4;
+      this.menuDirBrowse.Index = 5;
       this.menuDirBrowse.Text = "Directory-Browse";
       this.menuDirBrowse.Click += new System.EventHandler(this.menuDirBrowse_Click);
       // 
       // menuItem1
       // 
-      this.menuItem1.Index = 5;
+      this.menuItem1.Index = 6;
       this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                              this.menuMAMEDirect,
-                                                                              this.menuGamebaseImporter,
-                                                                              this.menuMlfFile});
+            this.menuMAMEDirect,
+            this.menuGamebaseImporter,
+            this.menuMlfFile});
       this.menuItem1.Text = "Extended";
       // 
       // menuMAMEDirect
@@ -357,6 +366,12 @@ namespace WindowPlugins.GUIPrograms
       this.menuMAMEDirect.Index = 0;
       this.menuMAMEDirect.Text = "MAME Direct Importer";
       this.menuMAMEDirect.Click += new System.EventHandler(this.menuMAMEDirect_Click);
+      // 
+      // menuGamebaseImporter
+      // 
+      this.menuGamebaseImporter.Index = 1;
+      this.menuGamebaseImporter.Text = "GAMEBASE Importer";
+      this.menuGamebaseImporter.Click += new System.EventHandler(this.menuGamebase_Click);
       // 
       // menuMlfFile
       // 
@@ -366,55 +381,63 @@ namespace WindowPlugins.GUIPrograms
       // 
       // sep1
       // 
+      this.sep1.Name = "sep1";
       this.sep1.Style = System.Windows.Forms.ToolBarButtonStyle.Separator;
       // 
       // buttonDelete
       // 
+      this.buttonDelete.Name = "buttonDelete";
       this.buttonDelete.Text = "Delete...";
       // 
       // sep2
       // 
+      this.sep2.Name = "sep2";
       this.sep2.Style = System.Windows.Forms.ToolBarButtonStyle.Separator;
       // 
       // buttonUp
       // 
+      this.buttonUp.Name = "buttonUp";
       this.buttonUp.Text = "&Up";
       // 
       // sep3
       // 
+      this.sep3.Name = "sep3";
       this.sep3.Style = System.Windows.Forms.ToolBarButtonStyle.Separator;
       // 
       // buttonDown
       // 
+      this.buttonDown.Name = "buttonDown";
       this.buttonDown.Text = "&Down";
       // 
       // sep4
       // 
+      this.sep4.Name = "sep4";
       this.sep4.Style = System.Windows.Forms.ToolBarButtonStyle.Separator;
       // 
       // buttonTools
       // 
       this.buttonTools.DropDownMenu = this.popupTools;
+      this.buttonTools.Name = "buttonTools";
       this.buttonTools.Style = System.Windows.Forms.ToolBarButtonStyle.DropDownButton;
       this.buttonTools.Text = "Tools";
       // 
       // popupTools
       // 
       this.popupTools.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                               this.MenuItemChangeSourceType,
-                                                                               this.menuItemReadFromProfile});
+            this.MenuItemChangeSourceType,
+            this.menuItemReadFromProfile});
       this.popupTools.Popup += new System.EventHandler(this.popupTools_Popup);
       // 
       // MenuItemChangeSourceType
       // 
       this.MenuItemChangeSourceType.Index = 0;
       this.MenuItemChangeSourceType.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                                             this.SourceTypeToDirBrowse,
-                                                                                             this.SourceTypeToDirCache,
-                                                                                             this.SourceTypeToMyIni,
-                                                                                             this.SourceTypeToGamebase,
-                                                                                             this.SourceTypeToMLF,
-                                                                                             this.SourceTypeToFilelauncher});
+            this.SourceTypeToDirBrowse,
+            this.SourceTypeToDirCache,
+            this.SourceTypeToMyIni,
+            this.SourceTypeToGamebase,
+            this.SourceTypeToMLF,
+            this.SourceTypeToFilelauncher});
       this.MenuItemChangeSourceType.Text = "Change Source Type to";
       this.MenuItemChangeSourceType.Select += new System.EventHandler(this.MenuItemChangeSourceType_Select);
       // 
@@ -436,6 +459,12 @@ namespace WindowPlugins.GUIPrograms
       this.SourceTypeToMyIni.Text = "*.my File Importer";
       this.SourceTypeToMyIni.Click += new System.EventHandler(this.SourceTypeToMyIni_Click);
       // 
+      // SourceTypeToGamebase
+      // 
+      this.SourceTypeToGamebase.Index = 3;
+      this.SourceTypeToGamebase.Text = "Gamebase Importer";
+      this.SourceTypeToGamebase.Click += new System.EventHandler(this.SourceTypeToGamebase_Click);
+      // 
       // SourceTypeToMLF
       // 
       this.SourceTypeToMLF.Index = 4;
@@ -452,7 +481,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       this.menuItemReadFromProfile.Index = 1;
       this.menuItemReadFromProfile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                                            this.menuItem2});
+            this.menuItem2});
       this.menuItemReadFromProfile.Text = "Read From Profile";
       // 
       // menuItem2
@@ -462,20 +491,27 @@ namespace WindowPlugins.GUIPrograms
       // 
       // sep5
       // 
+      this.sep5.Name = "sep5";
       this.sep5.Style = System.Windows.Forms.ToolBarButtonStyle.Separator;
+      // 
+      // appLauncherMenuItem
+      // 
+      this.appLauncherMenuItem.Index = 2;
+      this.appLauncherMenuItem.Text = "Application launcher";
+      this.appLauncherMenuItem.Click += new System.EventHandler(this.appLauncherMenuItem_Click);
       // 
       // detailsTabControl
       // 
       this.detailsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.detailsTabControl.Controls.Add(this.detailsPage);
       this.detailsTabControl.Controls.Add(this.filesPage);
       this.detailsTabControl.Controls.Add(this.viewsPage);
       this.detailsTabControl.Location = new System.Drawing.Point(240, 40);
       this.detailsTabControl.Name = "detailsTabControl";
       this.detailsTabControl.SelectedIndex = 0;
-      this.detailsTabControl.Size = new System.Drawing.Size(416, 468);
+      this.detailsTabControl.Size = new System.Drawing.Size(416, 447);
       this.detailsTabControl.TabIndex = 14;
       this.detailsTabControl.SelectedIndexChanged += new System.EventHandler(this.DetailsTabControl_SelectedIndexChanged);
       // 
@@ -484,18 +520,19 @@ namespace WindowPlugins.GUIPrograms
       this.detailsPage.Controls.Add(this.holderPanel);
       this.detailsPage.Location = new System.Drawing.Point(4, 22);
       this.detailsPage.Name = "detailsPage";
-      this.detailsPage.Size = new System.Drawing.Size(408, 442);
+      this.detailsPage.Size = new System.Drawing.Size(408, 421);
       this.detailsPage.TabIndex = 0;
       this.detailsPage.Text = "Details";
+      this.detailsPage.UseVisualStyleBackColor = true;
       // 
       // holderPanel
       // 
       this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanel.Location = new System.Drawing.Point(3, 3);
       this.holderPanel.Name = "holderPanel";
-      this.holderPanel.Size = new System.Drawing.Size(397, 436);
+      this.holderPanel.Size = new System.Drawing.Size(397, 415);
       this.holderPanel.TabIndex = 12;
       // 
       // filesPage
@@ -506,12 +543,13 @@ namespace WindowPlugins.GUIPrograms
       this.filesPage.Size = new System.Drawing.Size(408, 442);
       this.filesPage.TabIndex = 1;
       this.filesPage.Text = "Files";
+      this.filesPage.UseVisualStyleBackColor = true;
       // 
       // holderPanelFiles
       // 
       this.holderPanelFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanelFiles.Location = new System.Drawing.Point(6, 3);
       this.holderPanelFiles.Name = "holderPanelFiles";
       this.holderPanelFiles.Size = new System.Drawing.Size(397, 436);
@@ -525,33 +563,22 @@ namespace WindowPlugins.GUIPrograms
       this.viewsPage.Size = new System.Drawing.Size(408, 442);
       this.viewsPage.TabIndex = 2;
       this.viewsPage.Text = "Views";
+      this.viewsPage.UseVisualStyleBackColor = true;
       // 
       // holderPanelViews
       // 
       this.holderPanelViews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanelViews.Location = new System.Drawing.Point(6, 3);
       this.holderPanelViews.Name = "holderPanelViews";
       this.holderPanelViews.Size = new System.Drawing.Size(397, 436);
       this.holderPanelViews.TabIndex = 14;
       // 
-      // menuGamebaseImporter
-      // 
-      this.menuGamebaseImporter.Index = 1;
-      this.menuGamebaseImporter.Text = "GAMEBASE Importer";
-      this.menuGamebaseImporter.Click += new System.EventHandler(this.menuGamebase_Click);
-      // 
-      // SourceTypeToGamebase
-      // 
-      this.SourceTypeToGamebase.Index = 3;
-      this.SourceTypeToGamebase.Text = "Gamebase Importer";
-      this.SourceTypeToGamebase.Click += new System.EventHandler(this.SourceTypeToGamebase_Click);
-      // 
       // SetupForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(666, 514);
+      this.ClientSize = new System.Drawing.Size(666, 493);
       this.Controls.Add(this.detailsTabControl);
       this.Controls.Add(this.toolBarMenu);
       this.Controls.Add(this.appTree);
@@ -565,6 +592,7 @@ namespace WindowPlugins.GUIPrograms
       this.filesPage.ResumeLayout(false);
       this.viewsPage.ResumeLayout(false);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion
@@ -953,6 +981,9 @@ namespace WindowPlugins.GUIPrograms
             break;
           case myProgSourceType.GAMEBASE:
             res = sectionGamebase;
+            break;
+          case myProgSourceType.APPEXEC:
+            res = sectionAppExec;
             break;
         }
       }
@@ -1536,6 +1567,11 @@ namespace WindowPlugins.GUIPrograms
         tempApp.LoadFromXmlProfile(profileNode);
         pageCurrentSettings.LoadFromAppItem(tempApp);
       }
+    }
+
+    private void appLauncherMenuItem_Click(object sender, EventArgs e)
+    {
+      DoAddChild(myProgSourceType.APPEXEC);
     }
 
   }

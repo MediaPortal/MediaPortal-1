@@ -685,6 +685,24 @@ namespace WindowPlugins.GUIPrograms
             }
           }
           break;
+        case GUIMessage.MessageType.GUI_MSG_GET_PASSWORD:
+          // Only one window should act on this.
+          if (GetID != (int)GUIWindow.Window.WINDOW_FILES)
+            break;
+
+          VirtualKeyboard keyboard2 = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+          if (null == keyboard2) return base.OnMessage(message);
+          keyboard2.Reset();
+          keyboard2.Password = true;
+          keyboard2.Text = message.Label;
+          keyboard2.DoModal(GUIWindowManager.ActiveWindow);
+          if (keyboard2.IsConfirmed)
+          {
+            message.Label = keyboard2.Text;
+          }
+          else message.Label = "";
+          break;
+
       }
       return base.OnMessage(message);
     }
@@ -993,12 +1011,21 @@ namespace WindowPlugins.GUIPrograms
           }
           else
           {
-            item.ThumbnailImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png";
-            item.IconImageBig = GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png";
-            item.IconImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderNF.png";
+            if (app.SourceType == myProgSourceType.APPEXEC)
+            {
+              item.ThumbnailImage = GUIGraphicsContext.Skin + @"\media\DefaultAlbum.png";
+              item.IconImageBig = GUIGraphicsContext.Skin + @"\media\DefaultAlbum.png";
+              item.IconImage = GUIGraphicsContext.Skin + @"\media\DefaultDVDEmpty.png";
+            }
+            else
+            {
+              item.ThumbnailImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png";
+              item.IconImageBig = GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png";
+              item.IconImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderNF.png";
+            }
           }
           item.MusicTag = app;
-          item.IsFolder = true; // pseudo-folder....
+          item.IsFolder = (app.SourceType != myProgSourceType.APPEXEC); // pseudo-folder for all but appexec
           item.OnItemSelected += new GUIListItem.ItemSelectedHandler(OnItemSelected);
           facadeView.Add(item);
         }
@@ -1053,6 +1080,26 @@ namespace WindowPlugins.GUIPrograms
         mapSettings.LastAppID = lastApp.AppID;
         lastFilepath = lastApp.DefaultFilepath();
         lastApp.LaunchFile(item);
+      }
+      else
+      {
+        // Hmmm... This must be APPEXEC
+        if (item.MusicTag != null)
+        {
+          if (item.MusicTag is AppItem)
+          {
+            bool bPinOk = true;
+            AppItem candidate = (AppItem)item.MusicTag;
+            if (candidate.Pincode > 0)
+            {
+              bPinOk = candidate.CheckPincode();
+            }
+            if (bPinOk)
+            {
+              ((AppItem)item.MusicTag).LaunchFile(item);
+            }
+          }
+        }
       }
     }
 
@@ -1212,7 +1259,8 @@ namespace WindowPlugins.GUIPrograms
       if (filmstrip == null)
         return;
       string thumbName = "";
-      if ((item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png") && (item.ThumbnailImage != ""))
+      if ((item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png") && (item.ThumbnailImage != "") &&
+        item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultAlbum.png")
       {
         // only show big thumb if there is really one....
         thumbName = item.ThumbnailImage;

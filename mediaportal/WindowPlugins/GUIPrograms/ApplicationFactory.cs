@@ -75,6 +75,9 @@ namespace ProgramsDatabase
         case myProgSourceType.GAMEBASE:
           res = new AppItemGamebase(sqlDB);
           break;
+        case myProgSourceType.APPEXEC:
+          res = new appItemAppExec(sqlDB);
+          break;
       }
       return res;
     }
