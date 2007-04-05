@@ -25,7 +25,6 @@
         <width>280</width>
         <label>166</label>
         <onup>17</onup>
-        <ondown>11</ondown>
       </control>
       <control>
         <description>Language</description>
@@ -33,8 +32,6 @@
         <id>11</id>
         <width>280</width>
         <label>248</label>
-        <onup>10</onup>
-        <ondown>12</ondown>
       </control>
       <control>
         <description>Start in fullscreen mode</description>

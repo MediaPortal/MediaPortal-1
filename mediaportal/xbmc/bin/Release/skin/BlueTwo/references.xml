@@ -509,13 +509,13 @@
     <id>2</id>
     <posX>330</posX>
     <posY>126</posY>
+    <width>16</width>
+    <height>16</height>
     <textureUp>page_up_nofocus.png</textureUp>
     <textureDown>page_down_nofocus.png</textureDown>
     <textureUpFocus>page_up_focus.png</textureUpFocus>
     <textureDownFocus>page_down_focus.png</textureDownFocus>
     <align>left</align>
-    <width>16</width>
-    <height>16</height>
     <font>font13</font>
     <reverse>yes</reverse>
     <textcolor>white</textcolor>
@@ -530,10 +530,10 @@
     <id>4</id>
     <posX>208</posX>
     <posY>166</posY>
+    <label>167</label>
+    <font>font13</font>
     <textcolor>ffffffff</textcolor>
     <disabledcolor>60ffffff</disabledcolor>
-    <font>font13</font>
-    <label>167</label>
     <textureCheckmark>check-box.png</textureCheckmark>
     <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
     <MarkWidth>16</MarkWidth>
@@ -552,7 +552,6 @@
     <width>190</width>
     <height>32</height>
     <label>457</label>
-    <font>font13</font>
     <textXOff>15</textXOff>
     <textYOff>5</textYOff>
     <textXOff2>10</textXOff2>
@@ -568,10 +567,6 @@
     <textcolor>white</textcolor>
     <colordiffuse>white</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
-    <onleft>50</onleft>
-    <onright>50</onright>
-    <onup>3</onup>
-    <ondown>7</ondown>
     <animation effect="zoom" start="100,100" end="110,110" time="100">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="300">unfocus</animation>
   </control>
