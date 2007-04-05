@@ -14,7 +14,7 @@
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="500" end="800,0">WindowClose</animation>
-      <posX>280</posX>
+      <posX>113</posX>
       <posY>165</posY>
       <layout>StackLayout</layout>
       <!-- topmost item needs an onup with a value of 17 for topbar to work -->
@@ -25,6 +25,7 @@
         <width>280</width>
         <label>166</label>
         <onup>17</onup>
+        <ondown>11</ondown>
       </control>
       <control>
         <description>Language</description>
@@ -32,6 +33,8 @@
         <id>11</id>
         <width>280</width>
         <label>248</label>
+        <onup>10</onup>
+        <ondown>12</ondown>
       </control>
       <control>
         <description>Start in fullscreen mode</description>
@@ -65,9 +68,8 @@
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="500" end="800,0">WindowClose</animation>
-      <posX>474</posX>
-      <posY>174</posY>
       <posX>533</posX>
+      <posY>174</posY>
       <width>533</width>
       <height>400</height>
       <texture />
