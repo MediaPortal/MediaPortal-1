@@ -71,6 +71,7 @@ namespace MyTv
       //store page & window
       _page = page;
       _window = Window.GetWindow(_page);
+      _scheduleView = new ScheduleCollectionView(_dataModel);
     }
     #endregion
 

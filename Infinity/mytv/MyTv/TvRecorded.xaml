@@ -99,11 +99,11 @@
     <TextBlock Name="labelStartEnd" Margin="10,0,0,0" Grid.Column="2" Grid.Row="15" Grid.ColumnSpan="2" Style="{StaticResource TextBlockNormalStyle}" Text="{Binding Path=Recordings.CurrentItem.StartEndLabel, Mode=OneWay}" HorizontalAlignment="Left"/>
     <TextBlock Name="labelGenre" Grid.Column="8" Grid.Row="15" Grid.ColumnSpan="2" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Right" Margin="0,0,20,0" Text="{Binding Path=Recordings.CurrentItem.Genre, Mode=OneWay}"/>
     <TextBlock Name="labelDescription" Margin="10,0,0,0" Grid.Column="2" Grid.Row="16" Grid.ColumnSpan="8" Grid.RowSpan="4"  Style="{StaticResource TextBlockNormalStyle}" Text="{Binding Path=Recordings.CurrentItem.Description, Mode=OneWay}"/>
-    <Button Name="buttonView" Command="{Binding Path=View}"  Margin="10,0,0,0" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Style="{DynamicResource MpButton}" Height="32" Content="{Binding Path=ViewLabel}"/>
-    <Button Name="buttonSort" Command="{Binding Path=Sort}" Margin="10,0,0,0" Grid.Row="5" Grid.Column="0"  Grid.ColumnSpan="2" Style="{DynamicResource MpButton}" Height="32" Content="{Binding Path=SortLabel}"/>
-    <Button Name="buttonSwitch" Margin="10,0,0,0" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{DynamicResource MpButton}" Height="32" Content="{Binding Path=SwitchLabel}"/>
-    <Button Name="buttonCleanup" Command="{Binding Path=CleanUp}" Margin="10,0,0,0" Grid.Row="7" Grid.Column="0"  Grid.ColumnSpan="2" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=CleanupLabel}"/>
-    <Button Name="buttonCompress" Margin="10,0,0,0" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=CompressLabel}"/>
-    <ListBox x:Name="gridList" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="8" Grid.RowSpan="9" ItemsSource="{Binding Recordings}"  ItemContainerStyle="{StaticResource MpListViewItem}"  Style="{StaticResource MpListView}" ItemTemplate="{Binding ItemTemplate}" Margin="10,0,10,0" />
+    <Button Name="buttonView" Command="{Binding Path=View}"  Margin="10,0,0,0" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Style="{DynamicResource MpButton}"  Content="{Binding Path=ViewLabel}"/>
+    <Button Name="buttonSort" Command="{Binding Path=Sort}" Margin="10,0,0,0" Grid.Row="5" Grid.Column="0"  Grid.ColumnSpan="2" Style="{DynamicResource MpButton}"  Content="{Binding Path=SortLabel}"/>
+    <Button Name="buttonSwitch" Margin="10,0,0,0" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{DynamicResource MpButton}"  Content="{Binding Path=SwitchLabel}"/>
+    <Button Name="buttonCleanup" Command="{Binding Path=CleanUp}" Margin="10,0,0,0" Grid.Row="7" Grid.Column="0"  Grid.ColumnSpan="2" Style="{DynamicResource MpButton}"   Content="{Binding Path=CleanupLabel}"/>
+    <Button Name="buttonCompress" Margin="10,0,0,0" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Style="{DynamicResource MpButton}"   Content="{Binding Path=CompressLabel}"/>
+    <ListBox x:Name="gridList" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="8" Grid.RowSpan="9" ItemsSource="{Binding Recordings}"  ItemContainerStyle="{StaticResource MpListViewItem}"  Style="{StaticResource MpListView}" ItemTemplate="{Binding ItemTemplate}" Margin="30,0,30,0" />
   </Grid>
 </Page>

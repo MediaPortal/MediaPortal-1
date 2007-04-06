@@ -57,52 +57,55 @@
   </Page.Resources>
 
   <Grid x:Name="gridMain">
-    <DockPanel >
-      <StackPanel DockPanel.Dock="Top" Height="100">
-        <DockPanel>
-          <StackPanel DockPanel.Dock="Left">
-            <Label Name="labelHeader" Style="{StaticResource LabelHeaderStyle}" Content="{Binding HeaderLabel}" />
-          </StackPanel>
-          <StackPanel DockPanel.Dock="Right" >
-            <Label x:Name="labelDate" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,20,20,0" Content="{Binding DateLabel}" />
-          </StackPanel>
-        </DockPanel>
-      </StackPanel>
-      <StackPanel DockPanel.Dock="Bottom">
-        <Grid Height="150" VerticalAlignment="Bottom">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-          </Grid.ColumnDefinitions>
-          <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-          </Grid.RowDefinitions>
-          <Button x:Name="videoWindow" Visibility="{Binding Path=IsVideoPresent}" Command="{Binding Path=FullScreenTv}"  Background="{Binding VideoBrush}" Style="{StaticResource buttonVideoWindow}" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  Grid.RowSpan="3" Width="160" Height="120"   />
-          <TextBlock Name="labelTitle" Grid.Column="2" Grid.ColumnSpan="5" Grid.Row="0" Style="{StaticResource TextBlockLargeStyle}" Text="{Binding Path=Schedules.CurrentItem.Title, Mode=OneWay}"/>
-          <TextBlock Name="labelDescription" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="5" Style="{StaticResource TextBlockNormalStyle}" Text="{Binding Path=Schedules.CurrentItem.Description, Mode=OneWay}"/>
-          <TextBlock Name="labelStartEnd" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="5" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Left" Text="{Binding Path=Schedules.CurrentItem.StartEnd, Mode=OneWay}"/>
-          <TextBlock Name="labelGenre" Grid.Column="6" Grid.Row="2" Grid.ColumnSpan="4" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Right" Margin="0,0,20,0" Text="{Binding Path=Schedules.CurrentItem.Genre, Mode=OneWay}"/>
-        </Grid>
-      </StackPanel>
-      <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0"  >
-        <Button Name="buttonSort" Command="{Binding Path=Sort}" Style="{DynamicResource MpButton}" Height="32"   Content="{Binding SortLabel}"/>
-        <Button Name="buttonNew" Command="{Binding Path=New}" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding NewLabel}"/>
-        <Button Name="buttonCleanup" Command="{Binding Path=CleanUp}" Style="{DynamicResource MpButton}" Height="32"   Content="{Binding CleanUpLabel}" />
-        <Button Name="buttonPriorities" Command="{Binding Path=Priorities}" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding PrioritiesLabel}"/>
-        <Button Name="buttonConflicts" Command="{Binding Path=Conflicts}" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding ConflictsLabel}" />
-      </StackPanel>
-      <ListBox x:Name="gridList" ItemContainerStyle="{StaticResource MpListViewItem}"  ItemsSource="{Binding Schedules}"  Style="{StaticResource MpListView}" ItemTemplate="{Binding ItemTemplate}" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" />
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition/>
+      <ColumnDefinition/>
+      <ColumnDefinition/>
+      <ColumnDefinition/>
+      <ColumnDefinition/>
+      <ColumnDefinition/>
+      <ColumnDefinition/>
+      <ColumnDefinition/>
+      <ColumnDefinition/>
+      <ColumnDefinition/>
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+      <RowDefinition/>
+    </Grid.RowDefinitions>
+    <Label Grid.Row="0" Grid.ColumnSpan="8" Grid.RowSpan="4"  Name="labelHeader" Style="{StaticResource LabelHeaderStyle}" Content="{Binding HeaderLabel}" />
+    <Label x:Name="labelDate" Grid.Row="1" Grid.Column="8" Grid.ColumnSpan="2"  Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,20,20,0" Content="{Binding DateLabel}" />
+    <Button x:Name="videoWindow" Visibility="{Binding Path=IsVideoPresent}" Command="{Binding Path=FullScreenTv}"  Background="{Binding VideoBrush}" Style="{StaticResource buttonVideoWindow}" Margin="10,0,0,0" Grid.Column="0" Grid.Row="15" Grid.ColumnSpan="2"  Grid.RowSpan="4" Width="160" Height="120"   />
+    <TextBlock Name="labelTitle" Margin="10,0,0,0" Grid.Column="2" Grid.Row="14" Grid.ColumnSpan="8"  Style="{StaticResource TextBlockLargeStyle}" Text="{Binding Path=Schedules.CurrentItem.Title, Mode=OneWay}"/>
+    <TextBlock Name="labelStartEnd" Margin="10,0,0,0" Grid.Column="2" Grid.Row="15" Grid.ColumnSpan="2" Style="{StaticResource TextBlockNormalStyle}" Text="{Binding Path=Schedules.CurrentItem.StartEndLabel, Mode=OneWay}" HorizontalAlignment="Left"/>
+    <TextBlock Name="labelGenre" Grid.Column="8" Grid.Row="15" Grid.ColumnSpan="2" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Right" Margin="0,0,20,0" Text="{Binding Path=Schedules.CurrentItem.Genre, Mode=OneWay}"/>
+    <TextBlock Name="labelDescription" Margin="10,0,0,0" Grid.Column="2" Grid.Row="16" Grid.ColumnSpan="8" Grid.RowSpan="4"  Style="{StaticResource TextBlockNormalStyle}" Text="{Binding Path=Schedules.CurrentItem.Description, Mode=OneWay}"/>
 
-    </DockPanel >
+    <Button Name="buttonSort" Margin="10,0,0,0" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding Path=Sort}" Style="{DynamicResource MpButton}"    Content="{Binding SortLabel}"/>
+    <Button Name="buttonNew" Margin="10,0,0,0" Grid.Row="5" Grid.Column="0"  Grid.ColumnSpan="2" Command="{Binding Path=New}" Style="{DynamicResource MpButton}"   Content="{Binding NewLabel}"/>
+    <Button Name="buttonCleanup" Margin="10,0,0,0" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"  Command="{Binding Path=CleanUp}" Style="{DynamicResource MpButton}"    Content="{Binding CleanUpLabel}" />
+    <Button Name="buttonPriorities" Margin="10,0,0,0" Grid.Row="7" Grid.Column="0"  Grid.ColumnSpan="2" Command="{Binding Path=Priorities}" Style="{DynamicResource MpButton}"   Content="{Binding PrioritiesLabel}"/>
+    <Button Name="buttonConflicts" Margin="10,0,0,0" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding Path=Conflicts}" Style="{DynamicResource MpButton}"   Content="{Binding ConflictsLabel}" />
+    <ListBox x:Name="gridList" Margin="30,0,30,0" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="8" Grid.RowSpan="9" ItemContainerStyle="{StaticResource MpListViewItem}"  ItemsSource="{Binding Schedules}"  Style="{StaticResource MpListView}" ItemTemplate="{Binding ItemTemplate}"  />
+
   </Grid>
 </Page>
 
