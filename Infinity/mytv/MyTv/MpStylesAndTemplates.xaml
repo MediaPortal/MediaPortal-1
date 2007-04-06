@@ -678,6 +678,7 @@
 
   <Style x:Key="MpListViewItem" TargetType="ListBoxItem">
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
     <Setter Property="Control.Template">
       <Setter.Value>
         <ControlTemplate TargetType="ListBoxItem">

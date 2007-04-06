@@ -7,7 +7,7 @@
   <Page.Resources>
 
     <DataTemplate x:Key="scheduleItemIconTemplate"  DataType="{x:Type local:ScheduleModel}">
-      <Grid Width="450">
+      <Grid >
         <Grid.ColumnDefinitions>
           <ColumnDefinition/>
           <ColumnDefinition/>
@@ -32,7 +32,7 @@
       </Grid>
     </DataTemplate>
     <DataTemplate x:Key="scheduleItemListTemplate" DataType="{x:Type local:ScheduleModel}">
-      <Grid Width="450">
+      <Grid >
         <Grid.ColumnDefinitions>
           <ColumnDefinition/>
           <ColumnDefinition/>

@@ -8,7 +8,7 @@
   <Page.Resources>
 
     <DataTemplate x:Key="recordingItemIconTemplate"  DataType="{x:Type local:RecordingModel}">
-      <Grid Width="450">
+      <Grid >
         <Grid.ColumnDefinitions>
           <ColumnDefinition/>
           <ColumnDefinition/>
@@ -33,7 +33,7 @@
       </Grid>
     </DataTemplate>
     <DataTemplate x:Key="recordingItemListTemplate" DataType="{x:Type local:RecordingModel}">
-      <Grid Width="450">
+      <Grid >
         <Grid.ColumnDefinitions>
           <ColumnDefinition/>
           <ColumnDefinition/>
