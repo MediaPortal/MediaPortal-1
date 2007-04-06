@@ -22,6 +22,8 @@ namespace MyTv
     int _currentgroup = 0;
     List<ChannelGroup> _groups = new List<ChannelGroup>();
     public event PropertyChangedEventHandler PropertyChanged;
+    System.Windows.Threading.DispatcherTimer _isRecordingTimer;
+    bool _isRecording;
     #endregion
 
     /// <summary>
@@ -37,6 +39,34 @@ namespace MyTv
         return _instance;
       }
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ChannelNavigator"/> class.
+    /// </summary>
+    public ChannelNavigator()
+    {
+      _isRecordingTimer = new System.Windows.Threading.DispatcherTimer();
+      _isRecordingTimer.Interval = new TimeSpan(0, 0, 1);
+      _isRecordingTimer.IsEnabled = false;
+      _isRecordingTimer.Tick += new EventHandler(OnCheckIsRecording);
+    }
+
+    /// <summary>
+    /// timer callback which checks if the tvserver is recording...
+    /// </summary>
+    void OnCheckIsRecording(object sender, EventArgs e)
+    {
+      try
+      {
+        if (RemoteControl.IsConnected == false) return;
+        IsRecording = RemoteControl.Instance.IsAnyCardRecording();
+      }
+      catch (Exception)
+      {
+      }
+    }
+
+    #region methods
     /// <summary>
     /// Loads the tvgroups/channels from the database.
     /// </summary>
@@ -118,7 +148,11 @@ namespace MyTv
       {
       }
       ServiceScope.Get<ILogger>().Info("Navigator initialized");
+      _isRecordingTimer.IsEnabled = true;
     }
+    #endregion
+
+    #region properties
     /// <summary>
     /// Gets the currently active channel group.
     /// </summary>
@@ -144,7 +178,7 @@ namespace MyTv
       }
       set
       {
-        if (value!= null && _selectedChannel!=null)
+        if (value != null && _selectedChannel != null)
         {
           if (value.IdChannel == _selectedChannel.IdChannel) return;
         }
@@ -171,6 +205,30 @@ namespace MyTv
       set
       {
         _card = value;
+      }
+    }
+    #endregion
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the tvserver is recording.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance is recording; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsRecording
+    {
+      get
+      {
+        return _isRecording;
+      }
+      set
+      {
+        if (value != _isRecording)
+        {
+          _isRecording = value;
+          if (PropertyChanged != null)
+            PropertyChanged(this, new PropertyChangedEventArgs("IsRecording"));
+        }
       }
     }
   }

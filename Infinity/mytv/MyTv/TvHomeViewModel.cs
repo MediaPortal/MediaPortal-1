@@ -61,13 +61,20 @@ namespace MyTv
 
     void OnChannelChanged(object sender, PropertyChangedEventArgs e)
     {
-      ChangeProperty("ProgramPercent");
-      ChangeProperty("ProgramTitle");
-      ChangeProperty("ProgramGenre");
-      ChangeProperty("ProgramPercent");
-      ChangeProperty("ProgramDescription");
-      ChangeProperty("ProgramStartEnd");
-      ChangeProperty("ProgramChannelName");
+      if (e.PropertyName == "SelectedChannel")
+      {
+        ChangeProperty("ProgramPercent");
+        ChangeProperty("ProgramTitle");
+        ChangeProperty("ProgramGenre");
+        ChangeProperty("ProgramPercent");
+        ChangeProperty("ProgramDescription");
+        ChangeProperty("ProgramStartEnd");
+        ChangeProperty("ProgramChannelName");
+      }
+      if (e.PropertyName == "IsRecording")
+      {
+        ChangeProperty("IsRecordingLogo");
+      }
     }
     #endregion
 
@@ -83,6 +90,19 @@ namespace MyTv
     }
 
     /// <summary>
+    /// Gets the recording logo.
+    /// </summary>
+    /// <value>The is recording logo.</value>
+    public string IsRecordingLogo
+    {
+      get
+      {
+        if (ChannelNavigator.Instance.IsRecording)
+          return String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.TvRecordingIcon);
+        else return "";
+      }
+    }
+    /// <summary>
     /// Returns percentage how far current program is done
     /// </summary>
     /// <value>The program percent.</value>
@@ -97,7 +117,7 @@ namespace MyTv
         TimeSpan duration = program.EndTime - program.StartTime;
         TimeSpan passed = DateTime.Now - program.StartTime;
         float percent = (float)(passed.TotalMinutes / duration.TotalMinutes);
-        return  (int)(percent * 100);
+        return (int)(percent * 100);
       }
     }
     /// <summary>

@@ -11,8 +11,9 @@
           <StackPanel DockPanel.Dock="Left">
             <Label Name="labelHeader" Content="{Binding Path=HeaderLabel}" Style="{StaticResource LabelHeaderStyle}" />
           </StackPanel>
-          <StackPanel DockPanel.Dock="Right" >
-            <Label x:Name="labelDate" Content="{Binding Path=DateLabel}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,20,20,0" />
+          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <Label x:Name="labelDate" Content="{Binding Path=DateLabel}" Style="{StaticResource LabelNormalStyle}" Margin="0,20,20,0" />
+            <Image Source="{Binding Path=IsRecordingLogo}" Margin="0,20,20,0" />
           </StackPanel>
         </DockPanel>
       </StackPanel>
