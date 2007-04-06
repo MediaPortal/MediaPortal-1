@@ -41,6 +41,7 @@ namespace Dialogs
       textBox.Text = Content;
       textBox.TextWrapping = TextWrapping.WrapWithOverflow;
       Keyboard.Focus(buttonClose);
+      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
     }
     void subItemMouseEnter(object sender, MouseEventArgs e)
     {
@@ -48,6 +49,21 @@ namespace Dialogs
       if (b != null)
       {
         Keyboard.Focus(b);
+      }
+    }
+    /// <summary>
+    /// Called when key pressed
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
+    void onKeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == System.Windows.Input.Key.Escape)
+      {
+        //return to previous screen
+        e.Handled = true;
+        this.Close();
+        return;
       }
     }
     void OnCloseClicked(object sender, EventArgs args)

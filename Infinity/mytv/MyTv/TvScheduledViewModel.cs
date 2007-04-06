@@ -629,8 +629,7 @@ namespace MyTv
       }
     }
     #endregion
-
-
+    
     #region Delete command class
     /// <summary>
     /// Delete command will delete a recoring
@@ -722,8 +721,7 @@ namespace MyTv
       }
     }
     #endregion
-
-
+    
     #region ContextMenu command class
     /// <summary>
     /// ContextMenuCommand will show the context menu
