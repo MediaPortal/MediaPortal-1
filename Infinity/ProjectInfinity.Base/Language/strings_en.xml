@@ -147,5 +147,8 @@
     <String id="120">hours</String>
     <String id="121">start</String>
     <String id="122">end</String>
+    <String id="123">New</String>
+    <String id="124">Priorities</String>
+    <String id="125">Conflicts</String>
   </Section>
 </Language>

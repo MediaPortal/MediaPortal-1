@@ -28,46 +28,14 @@ namespace MyTv
   /// Interaction logic for TvScheduled.xaml
   /// </summary>
 
-  public partial class TvScheduled : System.Windows.Controls.Page, IComparer<Schedule>
+  public partial class TvScheduled : System.Windows.Controls.Page
   {
-    private delegate void SeekToEndDelegate();
-    private delegate void MediaPlayerErrorDelegate();
-    enum SortMode
-    {
-      Duration,
-      Channel,
-      Date,
-      Title
-    };
-    SortMode _sortMode = SortMode.Date;
+    TvScheduledViewModel _model;
     public TvScheduled()
     {
       InitializeComponent();
     }
 
-    protected void onKeyDown(object sender, KeyEventArgs e)
-    {
-      if (e.Key == System.Windows.Input.Key.Left)
-      {
-        Keyboard.Focus(buttonSort);
-        e.Handled = true;
-        return;
-      }
-      if (e.Key == System.Windows.Input.Key.Escape)
-      {
-        //return to previous screen
-        this.NavigationService.GoBack();
-        return;
-      }
-      if (e.Key == System.Windows.Input.Key.X)
-      {
-        if (TvPlayerCollection.Instance.Count > 0)
-        {
-          this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
-          return;
-        }
-      }
-    }
     /// <summary>
     /// Called when screen is loaded
     /// </summary>
@@ -75,38 +43,22 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      _model = new TvScheduledViewModel(this);
+      gridMain.DataContext = _model;
+
+      //this.InputBindings.Add(new KeyBinding(_model.FullScreenTv, new KeyGesture(System.Windows.Input.Key.X, ModifierKeys.None)));
+      this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
+      this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
+
       // Sets keyboard focus on the first Button in the sample.
-      labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 111);// "scheduled";
-      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
+      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(OnPreviewKeyDown));
+      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(OnMouseMove));
       Keyboard.Focus(buttonSort);
-      labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
-      gridList.SelectionMode = SelectionMode.Single;
-
-
-
-      if (TvPlayerCollection.Instance.Count > 0)
-      {
-        MediaPlayer player = TvPlayerCollection.Instance[0];
-        VideoDrawing videoDrawing = new VideoDrawing();
-        videoDrawing.Player = player;
-        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
-        DrawingBrush videoBrush = new DrawingBrush();
-        videoBrush.Drawing = videoDrawing;
-        videoWindow.Fill = videoBrush;
-      }
-
-      LoadSchedules();
-      gridList.SelectionChanged += new SelectionChangedEventHandler(gridList_SelectionChanged);
-      gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
-      gridList.KeyDown += new KeyEventHandler(gridList_KeyDown);
+      this.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(OnMouseDownEvent), true);
+      this.KeyDown += new KeyEventHandler(OnKeyDown);
     }
 
-    void gridList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      UpdateInfoBox();
-    }
-    void handleMouse(object sender, MouseEventArgs e)
+    void OnMouseMove(object sender, MouseEventArgs e)
     {
       FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
       while (element != null)
@@ -118,118 +70,48 @@ namespace MyTv
         }
         if (element as ListBoxItem != null)
         {
-          gridList.SelectedItem = element.DataContext;
           Keyboard.Focus((ListBoxItem)element);
-          UpdateInfoBox();
           return;
         }
         element = element.TemplatedParent as FrameworkElement;
       }
     }
-
-    /// <summary>
-    /// Gets the content for right label of each schedule.
-    /// This depends on the current sort mode
-    /// </summary>
-    /// <param name="schedule">The schedule.</param>
-    /// <returns></returns>
-    string GetContentForRightLabel(Schedule schedule)
+    void OnKeyDown(object sender, KeyEventArgs e)
     {
-      switch (_sortMode)
-      {
-        case SortMode.Channel:
-          return schedule.ReferencedChannel().Name;
-        case SortMode.Date:
-          return schedule.StartTime.ToLongDateString();
-        case SortMode.Duration:
-          {
-            TimeSpan ts = schedule.EndTime - schedule.StartTime;
-            if (ts.Minutes < 10)
-              return String.Format("{0}:0{1}", ts.Hours, ts.Minutes);
-            else
-              return String.Format("{0}:{1}", ts.Hours, ts.Minutes);
-          }
-        case SortMode.Title:
-          {
-            TimeSpan ts = schedule.EndTime - schedule.StartTime;
-            if (ts.Minutes < 10)
-              return String.Format("{0}:0{1}", ts.Hours, ts.Minutes);
-            else
-              return String.Format("{0}:{1}", ts.Hours, ts.Minutes);
-          }
-      }
-      return "";
-    }
-    /// <summary>
-    /// Loads the schedules and shows them onscreen.
-    /// </summary>
-    void LoadSchedules()
-    {
-      switch (_sortMode)
-      {
-        case SortMode.Channel:
-          buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 84);//"Sort:Channel";
-          break;
-        case SortMode.Date:
-          buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 85);//"Sort:Date";
-          break;
-        case SortMode.Title:
-          buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 88);//"Sort:Title";
-          break;
-      }
-      DialogMenuItemCollection collection = new DialogMenuItemCollection();
-
-      IList schedules = Schedule.ListAll();
-      List<Schedule> listSchedules = new List<Schedule>();
-      foreach (Schedule schedule in schedules)
-        listSchedules.Add(schedule);
-      listSchedules.Sort(this);
-      int row = 0;
-      foreach (Schedule schedule in listSchedules)
-      {
-        string logo = Thumbs.GetLogoFileName(schedule.ReferencedChannel().Name + ".png");
-        if (!System.IO.File.Exists(logo))
-        {
-          logo = "";
-        }
-
-        DialogMenuItem item = new DialogMenuItem(logo, schedule.ProgramName, schedule.ReferencedChannel().Name, GetContentForRightLabel(schedule));
-        item.Tag = schedule;
-        collection.Add(item);
-      }
-      gridList.ItemsSource = collection;
-    }
-
-    void UpdateInfoBox()
-    {
-      if (gridList.SelectedItem == null) return;
-      Recording recording = ((DialogMenuItem)gridList.SelectedItem).Tag as Recording;
-      if (recording == null) return;
-
-      labelTitle.Text = recording.Title;
-      labelDescription.Text = recording.Description;
-      labelStartEnd.Text = String.Format("{0}-{1}", recording.StartTime.ToString("HH:mm"), recording.EndTime.ToString("HH:mm"));
-      labelGenre.Text = recording.Genre;
-    }
-
-
-    void gridList_KeyDown(object sender, KeyEventArgs e)
-    {
+      if ((e.Source as ListBox) == null) return;
       if (e.Key == System.Windows.Input.Key.Enter)
       {
-        OnScheduleClicked();
+        ListBox box = e.Source as ListBox;
+        //OnScheduleClicked(box);
         e.Handled = true;
         return;
       }
     }
-    void Button_Click(object sender, RoutedEventArgs e)
+    void OnMouseDownEvent(object sender, RoutedEventArgs e)
     {
-      if (e.Source == gridList)
+      if ((e.Source as ListBox) == null) return;
+      ListBox box = e.Source as ListBox;
+      //OnScheduleClicked(box);
+    }
+    protected void OnPreviewKeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key == System.Windows.Input.Key.Left)
       {
-        OnScheduleClicked();
+        Keyboard.Focus(buttonSort);
+        e.Handled = true;
+        return;
+      }
+      if (e.Key == System.Windows.Input.Key.X)
+      {
+        if (TvPlayerCollection.Instance.Count > 0)
+        {
+          this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+          return;
+        }
       }
     }
 
+#if NOTUSE
     /// <summary>
     /// Called when user has clicked on a recording
     /// </summary>
@@ -377,7 +259,7 @@ namespace MyTv
     }
     void Play(string fileName, bool fromBeginning)
     {
-      videoWindow.Fill = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+      //videoWindow.Fill = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
       TvPlayerCollection.Instance.DisposeAll();
       TvMediaPlayer player = TvPlayerCollection.Instance.Get(null, fileName);
       player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
@@ -453,94 +335,7 @@ namespace MyTv
     }
 
 
-    void OnCleanupClicked(object sender, RoutedEventArgs e)
-    {
-      int iCleaned = 0;
-      IList itemlist = Schedule.ListAll();
-      foreach (Schedule rec in itemlist)
-      {
-        if (rec.IsDone() || rec.Canceled != Schedule.MinSchedule)
-        {
-          iCleaned++;
-          Schedule r = Schedule.Retrieve(rec.IdSchedule);
-          r.Delete();
-        }
-      }
-      MpDialogOk dlgMenu = new MpDialogOk();
-      Window w = Window.GetWindow(this);
-      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      dlgMenu.Owner = w;
-      dlgMenu.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 84);//"Cleanup";
-      dlgMenu.Header = "";
-      dlgMenu.Content = String.Format(ServiceScope.Get<ILocalisation>().ToString("mytv", 116)/*Cleaned up {0} schedules "*/, iCleaned);
-      dlgMenu.ShowDialog();
-    }
-    void OnNewClicked(object sender, RoutedEventArgs e)
-    {
-      this.NavigationService.Navigate(new Uri("/MyTv;component/TvNewSchedule.xaml", UriKind.Relative));
-    }
 
-    void OnPrioritiesClicked(object sender, RoutedEventArgs e)
-    {
-    }
-
-    void OnConflictsClicked(object sender, RoutedEventArgs e)
-    {
-    }
-
-    /// <summary>
-    /// Called when sort button is clicked
-    /// show sort dialog-menu
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-    void OnSortClicked(object sender, RoutedEventArgs e)
-    {
-      MpMenu dlgMenu = new MpMenu();
-      Window w = Window.GetWindow(this);
-      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      dlgMenu.Owner = w;
-      dlgMenu.Items.Clear();
-      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);// "Menu";
-      dlgMenu.SubTitle = "";
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 97)/*Duration*/));
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 2)/*Channel*/));
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 73)/*Date*/));
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 98)/*Title*/));
-      dlgMenu.SelectedIndex = (int)_sortMode;
-      dlgMenu.ShowDialog();
-      if (dlgMenu.SelectedIndex < 0) return;//nothing selected
-      _sortMode = (SortMode)dlgMenu.SelectedIndex;
-      LoadSchedules();
-    }
-    #region IComparer<Schedule> Members
-
-    /// <summary>
-    /// Compares two objects and returns a value indicating whether one is less than, equal to, or greater than the other.
-    /// </summary>
-    /// <param name="x">The first object to compare.</param>
-    /// <param name="y">The second object to compare.</param>
-    /// <returns>
-    /// Value Condition Less than zerox is less than y.Zerox equals y.Greater than zerox is greater than y.
-    /// </returns>
-    public int Compare(Schedule x, Schedule y)
-    {
-      switch (_sortMode)
-      {
-        case SortMode.Channel:
-          return String.Compare(x.ReferencedChannel().Name.ToString(), y.ReferencedChannel().Name, true);
-        case SortMode.Date:
-          return x.StartTime.CompareTo(y.StartTime);
-        case SortMode.Duration:
-          TimeSpan t1 = x.EndTime - x.StartTime;
-          TimeSpan t2 = y.EndTime - y.StartTime;
-          return t1.CompareTo(t2);
-        case SortMode.Title:
-          return String.Compare(x.ProgramName, y.ProgramName, true);
-      }
-      return 0;
-    }
-
-    #endregion
+#endif
   }
 }

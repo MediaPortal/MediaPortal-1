@@ -49,7 +49,9 @@ namespace MyTv
 
     ICommand _sortCommand;
     ICommand _viewCommand;
+    ICommand _cleanUpCommand;
     ICommand _deleteCommand;
+    ICommand _newCommand;
     ICommand _fullScreenTvCommand;
     ICommand _fullScreenCommand;
     #endregion
@@ -81,6 +83,28 @@ namespace MyTv
         PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
     }
 
+    /// <summary>
+    /// Gets the localized-label for the header
+    /// </summary>
+    /// <value>The localized label.</value>
+    public string HeaderLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 111);// "scheduled";
+      }
+    }
+    /// <summary>
+    /// Gets the localized-label for the current date/time
+    /// </summary>
+    /// <value>The localized label.</value>
+    public string DateLabel
+    {
+      get
+      {
+        return DateTime.Now.ToString("dd-MM HH:mm");
+      }
+    }
     /// <summary>
     /// Gets the video brush.
     /// </summary>
@@ -174,6 +198,50 @@ namespace MyTv
       }
     }
     /// <summary>
+    /// Gets the localized-label for the Cleanup button
+    /// </summary>
+    /// <value>The localized label.</value>
+    public string CleanUpLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 82);//Cleanup
+      }
+    }
+    /// <summary>
+    /// Gets the localized-label for the New button
+    /// </summary>
+    /// <value>The localized label.</value>
+    public string NewLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 123);//New
+      }
+    }
+    /// <summary>
+    /// Gets the localized-label for the Priorities button
+    /// </summary>
+    /// <value>The localized label.</value>
+    public string PrioritiesLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 124);//Priorities
+      }
+    }
+    /// <summary>
+    /// Gets the localized-label for the Conflicts button
+    /// </summary>
+    /// <value>The localized label.</value>
+    public string ConflictsLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 125);//Conflicts
+      }
+    }
+    /// <summary>
     /// Gets or sets the view mode.
     /// </summary>
     /// <value>The view mode.</value>
@@ -255,6 +323,23 @@ namespace MyTv
         return _viewCommand;
       }
     }
+
+    /// <summary>
+    /// Returns a ICommand for cleaning up watched recordings
+    /// </summary>
+    /// <value>The command.</value>
+    public ICommand CleanUp
+    {
+      get
+      {
+        if (_cleanUpCommand == null)
+        {
+          _cleanUpCommand = new CleanUpCommand(this);
+        }
+        return _cleanUpCommand;
+      }
+    }
+
     /// <summary>
     /// Returns a ICommand for cleaning up watched recordings
     /// </summary>
@@ -271,6 +356,21 @@ namespace MyTv
       }
     }
     /// <summary>
+    /// Returns a ICommand for toggeling between fullscreen mode and windowed mode
+    /// </summary>
+    /// <value>The command.</value>
+    public ICommand FullScreen
+    {
+      get
+      {
+        if (_fullScreenCommand == null)
+        {
+          _fullScreenCommand = new FullScreenCommand(this);
+        }
+        return _fullScreenCommand;
+      }
+    }
+    /// <summary>
     /// Returns a ICommand for deleting a schedule
     /// </summary>
     /// <value>The command.</value>
@@ -283,6 +383,21 @@ namespace MyTv
           _deleteCommand = new DeleteCommand(this);
         }
         return _deleteCommand;
+      }
+    }
+    /// <summary>
+    /// Returns a ICommand for creating a schedule
+    /// </summary>
+    /// <value>The command.</value>
+    public ICommand New
+    {
+      get
+      {
+        if (_newCommand == null)
+        {
+          _newCommand = new NewCommand(this);
+        }
+        return _newCommand;
       }
     }
     #endregion
@@ -358,6 +473,7 @@ namespace MyTv
 
         //and tell the model that the sort property is changed
         _viewModel.ChangeProperty("SortLabel");
+        _viewModel.ChangeProperty("Schedules");
       }
     }
     #endregion
@@ -397,6 +513,49 @@ namespace MyTv
     }
     #endregion
 
+    #region cleanup command class
+    /// <summary>
+    /// Cleanup command will delete recordings which have been watched
+    /// </summary>
+    public class CleanUpCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public CleanUpCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        int iCleaned = 0;
+        IList itemlist = Schedule.ListAll();
+        foreach (Schedule rec in itemlist)
+        {
+          if (rec.IsDone() || rec.Canceled != Schedule.MinSchedule)
+          {
+            iCleaned++;
+            Schedule r = Schedule.Retrieve(rec.IdSchedule);
+            r.Delete();
+          }
+        }
+        MpDialogOk dlgMenu = new MpDialogOk();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 84);//"Cleanup";
+        dlgMenu.Header = "";
+        dlgMenu.Content = String.Format(ServiceScope.Get<ILocalisation>().ToString("mytv", 116)/*Cleaned up {0} schedules "*/, iCleaned);
+        dlgMenu.ShowDialog();
+        _viewModel.ChangeProperty("Schedules");
+      }
+    }
+    #endregion
 
     #region FullscreenTv command class
     /// <summary>
@@ -450,6 +609,32 @@ namespace MyTv
       public override void Execute(object parameter)
       {
         _viewModel.ChangeProperty("Schedules");
+      }
+    }
+    #endregion
+
+    #region New command class
+    /// <summary>
+    /// Delete command will create a recoring
+    /// </summary>
+    public class NewCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public NewCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        _viewModel.Page.NavigationService.Navigate(new Uri("/MyTv;component/TvNewSchedule.xaml", UriKind.Relative));
       }
     }
     #endregion

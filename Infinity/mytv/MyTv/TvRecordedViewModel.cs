@@ -23,7 +23,7 @@ namespace MyTv
   /// <summary>
   /// View Model for the recorded tv GUI
   /// </summary>
-  class TvRecordedViewModel : INotifyPropertyChanged
+  public class TvRecordedViewModel : INotifyPropertyChanged
   {
     #region variables and enums
     /// <summary>
