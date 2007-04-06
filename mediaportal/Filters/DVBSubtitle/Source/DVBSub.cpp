@@ -256,6 +256,7 @@ HRESULT CDVBSub::CheckConnect( PIN_DIRECTION dir, IPin *pPin )
 //
 STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 {
+  CAutoLock cObjectLock( m_pLock );
   m_bStopping = false;
   
   // Get media seeking interface if missing
@@ -267,7 +268,10 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 
   Reset();
   m_startTimestamp = tStart;
-  CAutoLock cObjectLock( m_pLock );
+  
+  if( ! m_pTSFileSource )
+    ConnectToTSFileSource();
+
 	return CBaseFilter::Run( tStart );
 }
 
@@ -443,7 +447,6 @@ void CDVBSub::SetPcr( ULONGLONG pcr )
   if( m_basePCR < 0 )
   {
     LogDebugPTS( "SetPcr PCR :", pcr );
-    ConnectToTSFileSource();
 
     if( m_pTSFileSource )
     {
@@ -489,6 +492,8 @@ HRESULT CDVBSub::ConnectToTSFileSource()
 	if( m_pTSFileSource || m_bStopping )
 		return S_OK;
 
+  LogDebug( "ConnectToTSFileSource - start");
+
   IEnumFilters *enumFilters;
   IBaseFilter *curFilter;
   ULONG fetched;
@@ -512,7 +517,18 @@ HRESULT CDVBSub::ConnectToTSFileSource()
   enumFilters->Release();
   enumFilters = NULL;
 
-  return S_OK;
+  if( m_pTSFileSource )
+  {
+    LogDebug( "ConnectToTSFileSource - done");  
+    return S_OK;
+  }
+  else
+  {
+    LogDebug( "ConnectToTSFileSource - No TSFileSource filter in graph, using a remote client?");
+    m_basePCR = 0;
+    m_fixPCR = 0;
+    return S_FALSE;
+  }
 }
 
 
