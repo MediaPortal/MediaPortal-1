@@ -610,7 +610,7 @@
     <String id="726">Title</String>
     <String id="727">Live TV in background</String>
     <String id="728">No Video/TV playing</String>
-    <String id="729">Make sure you use VMR9 and that something is playing</String>
+    <String id="729">Make sure a video is playing</String>
     <String id="730">This schedule is recording. If you delete</String>
     <String id="731">the schedule then the recording is stopped.</String>
     <String id="732">Are you sure?</String>

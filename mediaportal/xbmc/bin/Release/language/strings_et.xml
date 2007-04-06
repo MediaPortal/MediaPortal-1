@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Language name="Estonian" characters="255">
   <Section name="unmapped">
     <String id="0">Programmid</String>
@@ -556,7 +556,7 @@
     <String id="726">Title</String>
     <String id="727">Live tv in background</String>
     <String id="728">Unable to start</String>
-    <String id="729">Make sure you use VMR9 and that something is playing</String>
+    <String id="729">Make sure a video is playing</String>
     <String id="730">This schedule is recording. If you delete</String>
     <String id="731">the schedule then the recording is stopped.</String>
     <String id="732">Are you sure?</String>
