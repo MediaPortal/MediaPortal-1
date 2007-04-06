@@ -2,39 +2,43 @@
 <window>
   <controls>
     <control>
-      <type>image</type>
       <description>BG</description>
+      <type>image</type>
       <id>1</id>
       <width>720</width>
       <height>576</height>
     </control>
     <control>
+      <description>Header Logo</description>
       <type>image</type>
       <id>1</id>
-      <posX>48</posX>
-      <posY>390</posY>
-      <texture>#header.hover</texture>
+      <posX>60</posX>
+      <posY>20</posY>
+      <texture>#header.image</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
-      <type>image</type>
-      <description>MP	Logo</description>
-      <id>1</id>
-      <posX>32</posX>
-      <posY>24</posY>
-      <texture>mplogo.png</texture>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
-    </control>
-    <control>
+      <description>Header Label</description>
       <type>label</type>
-      <description>e.g. Setup TV</description>
       <id>1</id>
       <posX>32</posX>
       <posY>96</posY>
       <label>#header.label</label>
       <font>font18</font>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>Hover image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>77</posX>
+      <posY>400</posY>
+      <width>161</width>
+      <height>158</height>
+      <texture>#header.hover</texture>
+      <visible>!videoplayer.usingoverlays</visible>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>

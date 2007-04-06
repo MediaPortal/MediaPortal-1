@@ -4,20 +4,20 @@
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:128</define>
+  <define>#header.image:settings_logo.png</define>
   <define>#header.hover:hover_settings.png</define>
   <controls>
     <import>common.settings.xml</import>
     <control>
-      <description>group element</description>
+      <description>buttons</description>
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="800,0">WindowClose</animation>
-      <posX>60</posX>
-      <posY>131</posY>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="250" start="800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <posX>56</posX>
+      <posY>151</posY>
       <layout>StackLayout</layout>
-      <!-- topmost item needs an onup with a value of 17 for topbar to work -->
       <control>
         <description>Skin</description>
         <type>selectbutton</type>
@@ -62,9 +62,9 @@
       <type>image</type>
       <id>20</id>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="800,0">WindowClose</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="250" start="800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
       <posX>281</posX>
       <posY>131</posY>
       <width>400</width>

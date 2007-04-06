@@ -4,56 +4,45 @@
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:6023</define>
+  <define>#header.image:settings_logo.png</define>
   <define>#header.hover:hover_settings.png</define>
   <controls>
     <import>common.settings.xml</import>
     <control>
+      <description>buttons</description>
       <type>group</type>
-      <description>group element</description>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="250" start="800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <posX>245</posX>
+      <posY>165</posY>
+      <layout>StackLayout</layout>
       <control>
         <description>UI Calibration button</description>
         <type>button</type>
         <id>2</id>
-        <posX>280</posX>
-        <posY>165</posY>
-        <width>197</width>
-        <font>font13</font>
+        <width>230</width>
         <label>213</label>
         <hyperlink>10</hyperlink>
-        <onleft>2</onleft>
-        <onright>2</onright>
-        <onup>4</onup>
-        <ondown>3</ondown>
+        <onup>17</onup>
       </control>
       <control>
         <description>Screen Calibration button</description>
         <type>button</type>
         <id>3</id>
-        <posX>280</posX>
-        <posY>199</posY>
-        <width>197</width>
-        <font>font13</font>
+        <width>230</width>
         <label>214</label>
         <hyperlink>11</hyperlink>
-        <onleft>3</onleft>
-        <onright>3</onright>
-        <onup>2</onup>
-        <ondown>4</ondown>
       </control>
       <control>
         <description>Scroll speed button</description>
         <type>button</type>
         <id>4</id>
-        <posX>280</posX>
-        <posY>233</posY>
-        <width>197</width>
-        <font>font13</font>
+        <width>230</width>
         <label>673</label>
         <hyperlink>31</hyperlink>
-        <onleft>4</onleft>
-        <onright>4</onright>
-        <onup>3</onup>
-        <ondown>2</ondown>
+        <ondown>99</ondown>
       </control>
     </control>
   </controls>
