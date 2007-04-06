@@ -68,9 +68,12 @@ namespace ProcessPlugins.TvMovie
     {
       Log.Debug("TVMovie: Stopping schedules-importer");
 
-      _watcher.EnableRaisingEvents = false;
-      _watcher.Changed -= new FileSystemEventHandler(_watcher_Changed);
-      _watcher.Dispose();
+			if (_watcher != null)
+			{
+				_watcher.EnableRaisingEvents = false;
+				_watcher.Changed -= new FileSystemEventHandler(_watcher_Changed);
+				_watcher.Dispose();
+			}
     }
 
 
