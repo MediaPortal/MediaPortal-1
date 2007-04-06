@@ -1224,9 +1224,12 @@ namespace TvDatabase
             Log.Info("AssignSchedulesToCard: card {0}, ID = {1} has schedule = " + assignedSchedule.ToString(), count, card.IdCard);
             if (schedule.IsOverlapping(assignedSchedule))
             {
-              Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule.ToString() + " on card {0}, ID = {1}", count, card.IdCard);
-              free = false;
-              break;
+							if (!(schedule.isSameTransponder(assignedSchedule) && card.supportSubChannels))
+							{
+								Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule.ToString() + " on card {0}, ID = {1}", count, card.IdCard);
+								free = false;
+								break;
+							}
             }
           }
           if (free)
