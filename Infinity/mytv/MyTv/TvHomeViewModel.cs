@@ -56,6 +56,18 @@ namespace MyTv
       //store page & window
       _page = page;
       _window = Window.GetWindow(_page);
+      ChannelNavigator.Instance.PropertyChanged += new PropertyChangedEventHandler(OnChannelChanged);
+    }
+
+    void OnChannelChanged(object sender, PropertyChangedEventArgs e)
+    {
+      ChangeProperty("ProgramPercent");
+      ChangeProperty("ProgramTitle");
+      ChangeProperty("ProgramGenre");
+      ChangeProperty("ProgramPercent");
+      ChangeProperty("ProgramDescription");
+      ChangeProperty("ProgramStartEnd");
+      ChangeProperty("ProgramChannelName");
     }
     #endregion
 
@@ -70,6 +82,94 @@ namespace MyTv
         PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
     }
 
+    /// <summary>
+    /// Returns percentage how far current program is done
+    /// </summary>
+    /// <value>The program percent.</value>
+    public double ProgramPercent
+    {
+      get
+      {
+        if (ChannelNavigator.Instance.SelectedChannel == null) return 0;
+        Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
+        if (program == null) return 0;
+
+        TimeSpan duration = program.EndTime - program.StartTime;
+        TimeSpan passed = DateTime.Now - program.StartTime;
+        float percent = (float)(passed.TotalMinutes / duration.TotalMinutes);
+        return  (int)(percent * 100);
+      }
+    }
+    /// <summary>
+    /// Gets the program title.
+    /// </summary>
+    /// <value>The program title.</value>
+    public string ProgramTitle
+    {
+      get
+      {
+        if (ChannelNavigator.Instance.SelectedChannel == null) return "";
+        Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
+        if (program == null) return "";
+        return program.Title;
+      }
+    }
+    /// <summary>
+    /// Gets the program genre.
+    /// </summary>
+    /// <value>The program genre.</value>
+    public string ProgramGenre
+    {
+      get
+      {
+        if (ChannelNavigator.Instance.SelectedChannel == null) return "";
+        Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
+        if (program == null) return "";
+        return program.Genre;
+      }
+    }
+    /// <summary>
+    /// Gets the program description.
+    /// </summary>
+    /// <value>The program description.</value>
+    public string ProgramDescription
+    {
+      get
+      {
+        if (ChannelNavigator.Instance.SelectedChannel == null) return "";
+        Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
+        if (program == null) return "";
+        return program.Description;
+      }
+    }
+    /// <summary>
+    /// Gets the program start-end.
+    /// </summary>
+    /// <value>The program start-end.</value>
+    public string ProgramStartEnd
+    {
+      get
+      {
+        if (ChannelNavigator.Instance.SelectedChannel == null) return "";
+        Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
+        if (program == null) return "";
+        return String.Format("{0}-{1}", program.StartTime.ToString("HH:mm"), program.EndTime.ToString("HH:mm")); ;
+      }
+    }
+    /// <summary>
+    /// Gets the program start-end.
+    /// </summary>
+    /// <value>The program start-end.</value>
+    public string ProgramChannelName
+    {
+      get
+      {
+        if (ChannelNavigator.Instance.SelectedChannel == null) return "";
+        Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
+        if (program == null) return "";
+        return program.ReferencedChannel().Name;
+      }
+    }
     /// <summary>
     /// Gets the window.
     /// </summary>
@@ -268,7 +368,7 @@ namespace MyTv
         {
           _timeShiftCommand = new TimeShiftCommand(this);
         }
-        return _playCommand;
+        return _timeShiftCommand;
       }
     }
     /// <summary>
@@ -621,6 +721,7 @@ namespace MyTv
 
         User user = new User();
         TvResult succeeded = TvResult.Succeeded;
+        ChannelNavigator.Instance.SelectedChannel = channel;
         succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
 
         // Schedule the update function in the UI thread.

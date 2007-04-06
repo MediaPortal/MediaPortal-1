@@ -63,12 +63,12 @@
           <RowDefinition/>
         </Grid.RowDefinitions>
         <Button x:Name="buttonVideo" Style="{StaticResource buttonVideoWindow}" Command="{Binding Path=FullScreenTv}"  Background="{Binding VideoBrush}" Grid.Column="0" Grid.Row="0" Grid.RowSpan="12" Grid.ColumnSpan="6"  />
-        <ProgressBar Template="{StaticResource MpProgressBar}" Grid.Column="0" Grid.Row="12" Grid.ColumnSpan="6" x:Name="progressBar" Width="400" Height="30"  ></ProgressBar>
+        <ProgressBar Value="{Binding ProgramPercent,Mode=OneWay}" Template="{StaticResource MpProgressBar}" Grid.Column="0" Grid.Row="12" Grid.ColumnSpan="6" x:Name="progressBar" Width="400" Height="30"  ></ProgressBar>
 
-        <Label Grid.Column="0" Grid.Row="13" Grid.ColumnSpan="9"  x:Name="labelTitle" Style="{StaticResource LabelNormalStyle}"/>
-        <Label Grid.Column="0" Grid.Row="14" Grid.ColumnSpan="6" x:Name="labelStart" Style="{StaticResource LabelNormalStyle}"/>
-        <Label Grid.Column="6" Grid.Row="14" Grid.ColumnSpan="3" x:Name="labelChannel" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,0,50,0"/>
-        <TextBlock Grid.Column="0" Grid.Row="15" Grid.RowSpan="4" Grid.ColumnSpan="9" x:Name="labelDescription" Style="{StaticResource TextBlockNormalStyle}" />
+        <Label Content="{Binding ProgramTitle}" Grid.Column="0" Grid.Row="13" Grid.ColumnSpan="9"  x:Name="labelTitle" Style="{StaticResource LabelNormalStyle}"/>
+        <Label Content="{Binding ProgramStartEnd}" Grid.Column="0" Grid.Row="14" Grid.ColumnSpan="6" x:Name="labelStart" Style="{StaticResource LabelNormalStyle}"/>
+        <Label Content="{Binding ProgramChannelName}" Grid.Column="6" Grid.Row="14" Grid.ColumnSpan="3" x:Name="labelChannel" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,0,50,0"/>
+        <TextBlock Text="{Binding ProgramDescription}" Grid.Column="0" Grid.Row="15" Grid.RowSpan="4" Grid.ColumnSpan="9" x:Name="labelDescription" Style="{StaticResource TextBlockNormalStyle}" />
       </Grid>
     </DockPanel>
   </Grid>

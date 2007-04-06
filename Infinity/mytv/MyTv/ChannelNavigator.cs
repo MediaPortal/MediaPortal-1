@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using TvControl;
 using TvDatabase;
@@ -12,7 +13,7 @@ using ProjectInfinity.Localisation;
 
 namespace MyTv
 {
-  class ChannelNavigator
+  class ChannelNavigator : INotifyPropertyChanged
   {
     #region variables
     static ChannelNavigator _instance = null;
@@ -20,6 +21,7 @@ namespace MyTv
     Channel _selectedChannel;
     int _currentgroup = 0;
     List<ChannelGroup> _groups = new List<ChannelGroup>();
+    public event PropertyChangedEventHandler PropertyChanged;
     #endregion
 
     /// <summary>
@@ -122,11 +124,12 @@ namespace MyTv
     /// </summary>
     public ChannelGroup CurrentGroup
     {
-      
-      get {
+
+      get
+      {
         if (_groups == null) return null;
-        if (_currentgroup < 0 || _currentgroup>=_groups.Count ) return null;
-        return (ChannelGroup)_groups[_currentgroup]; 
+        if (_currentgroup < 0 || _currentgroup >= _groups.Count) return null;
+        return (ChannelGroup)_groups[_currentgroup];
       }
     }
     /// <summary>
@@ -141,11 +144,16 @@ namespace MyTv
       }
       set
       {
-        if (value != _selectedChannel && value != null)
+        if (value!= null && _selectedChannel!=null)
         {
-          UserSettings.SetInt("tv", "channel", value.IdChannel);
+          if (value.IdChannel == _selectedChannel.IdChannel) return;
         }
         _selectedChannel = value;
+        UserSettings.SetInt("tv", "channel", _selectedChannel.IdChannel);
+        if (PropertyChanged != null)
+        {
+          PropertyChanged(this, new PropertyChangedEventArgs("SelectedChannel"));
+        }
       }
 
     }

@@ -113,10 +113,10 @@ namespace MyTv
       }
       if (e.Key == System.Windows.Input.Key.Enter)
       {
-        if (Keyboard.FocusedElement as CheckBox!=null)
+        if (Keyboard.FocusedElement as CheckBox != null)
         {
           CheckBox box = Keyboard.FocusedElement as CheckBox;
-          box.IsChecked=!box.IsChecked;
+          box.IsChecked = !box.IsChecked;
         }
       }
     }
@@ -132,17 +132,6 @@ namespace MyTv
       {
         if (!_firstTime)
         {
-          if (TvPlayerCollection.Instance.Count > 0)
-          {
-            MediaPlayer player = TvPlayerCollection.Instance[0];
-            VideoDrawing videoDrawing = new VideoDrawing();
-            videoDrawing.Player = player;
-            videoDrawing.Rect = new Rect(0, 0, buttonVideo.ActualWidth, buttonVideo.ActualHeight);
-            DrawingBrush videoBrush = new DrawingBrush();
-            videoBrush.Drawing = videoDrawing;
-            buttonVideo.Background = videoBrush;
-          }
-          UpdateInfoBox();
           return;
         }
         ServiceScope.Get<ILogger>().Info("mytv:ConnectToServer");
@@ -223,58 +212,10 @@ namespace MyTv
           return;
         }
       }
-      ServiceScope.Get<ILogger>().Info("mytv:UpdateInfoBox");
-      UpdateInfoBox();
+      
 
-      if (TvPlayerCollection.Instance.Count > 0)
-      {
-        MediaPlayer player = TvPlayerCollection.Instance[0];
-        VideoDrawing videoDrawing = new VideoDrawing();
-        videoDrawing.Player = player;
-        videoDrawing.Rect = new Rect(0, 0, buttonVideo.ActualWidth, buttonVideo.ActualHeight);
-        DrawingBrush videoBrush = new DrawingBrush();
-        videoBrush.Drawing = videoDrawing;
-        buttonVideo.Background = videoBrush;
-      }
       ServiceScope.Get<ILogger>().Info("mytv:OnSucceededToConnectToServer done");
     }
-
-
-    /// <summary>
-    /// Updates the info like program title,description,time start/end and progress bar on screen.
-    /// </summary>
-    void UpdateInfoBox()
-    {
-      labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
-      if (ChannelNavigator.Instance.SelectedChannel == null)
-      {
-        labelStart.Content = "";
-        labelTitle.Content = "";
-        labelChannel.Content = "";
-        labelDescription.Text = "";
-        progressBar.Value = 0;
-        return;
-      }
-      Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
-      if (program == null)
-      {
-        labelStart.Content = "";
-        labelTitle.Content = "";
-        labelChannel.Content = "";
-        labelDescription.Text = "";
-        progressBar.Value = 0;
-        return;
-      }
-      labelStart.Content = String.Format("{0}-{1}", program.StartTime.ToString("HH:mm"), program.EndTime.ToString("HH:mm"));
-      labelTitle.Content = program.Title;
-      labelChannel.Content = ChannelNavigator.Instance.SelectedChannel.Name;
-      labelDescription.Text = program.Description;
-
-      TimeSpan duration = program.EndTime - program.StartTime;
-      TimeSpan passed = DateTime.Now - program.StartTime;
-      float percent = (float)(passed.TotalMinutes / duration.TotalMinutes);
-      progressBar.Value = (int)(percent * 100);
-    }
-
   }
+
 }
