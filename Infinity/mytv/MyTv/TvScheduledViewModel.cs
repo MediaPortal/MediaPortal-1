@@ -51,9 +51,11 @@ namespace MyTv
     ICommand _viewCommand;
     ICommand _cleanUpCommand;
     ICommand _deleteCommand;
+    ICommand _playCommand;
     ICommand _newCommand;
     ICommand _fullScreenTvCommand;
     ICommand _fullScreenCommand;
+    ICommand _contextMenuCommand;
     #endregion
 
     #region ctor
@@ -81,6 +83,18 @@ namespace MyTv
     {
       if (PropertyChanged != null)
         PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    /// <summary>
+    /// Gets the data model.
+    /// </summary>
+    /// <value>The data model.</value>
+    public ScheduleDatabaseModel DataModel
+    {
+      get
+      {
+        return _dataModel;
+      }
     }
 
     /// <summary>
@@ -400,6 +414,36 @@ namespace MyTv
         return _newCommand;
       }
     }
+    /// <summary>
+    /// Returns a ICommand for showing the context menu
+    /// </summary>
+    /// <value>The command.</value>
+    public ICommand ContextMenu
+    {
+      get
+      {
+        if (_contextMenuCommand == null)
+        {
+          _contextMenuCommand = new ContextMenuCommand(this);
+        }
+        return _contextMenuCommand;
+      }
+    }
+    /// <summary>
+    /// Returns a ICommand for showing the context menu
+    /// </summary>
+    /// <value>The command.</value>
+    public ICommand Play
+    {
+      get
+      {
+        if (_playCommand == null)
+        {
+          _playCommand = new PlayCommand(this);
+        }
+        return _playCommand;
+      }
+    }
     #endregion
 
     #region Commands subclasses
@@ -541,8 +585,7 @@ namespace MyTv
           if (rec.IsDone() || rec.Canceled != Schedule.MinSchedule)
           {
             iCleaned++;
-            Schedule r = Schedule.Retrieve(rec.IdSchedule);
-            r.Delete();
+            _viewModel.DataModel.Delete(rec.IdSchedule);
           }
         }
         MpDialogOk dlgMenu = new MpDialogOk();
@@ -678,6 +721,257 @@ namespace MyTv
       }
     }
     #endregion
+
+
+    #region ContextMenu command class
+    /// <summary>
+    /// ContextMenuCommand will show the context menu
+    /// </summary> 
+    public class ContextMenuCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public ContextMenuCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        ScheduleModel item = parameter as ScheduleModel;
+        if (item == null) return;
+        Schedule rec = item.Schedule;
+        if (rec == null) return;
+
+        MpMenu dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Items.Clear();
+        dlgMenu.Header = "Menu";
+        dlgMenu.SubTitle = "";
+        dlgMenu.SelectedIndex = (int)0;
+        if (dlgMenu.SelectedIndex < 0) return;//nothing selected
+        int[] options = new int[10];
+        int option = 0;
+        if (rec.Series == false)
+        {
+          dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 56)/*Delete*/));
+          options[option++] = 618;
+        }
+        else
+        {
+          dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 112)/*Cancel this show*/));
+          options[option++] = 981;
+          dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 113)/*Delete this entire recording*/));
+          options[option++] = 982;
+          dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 50)/*Episodes management*/));
+          options[option++] = 888;
+        }
+        VirtualCard card;
+        TvServer server = new TvServer();
+        if (server.IsRecordingSchedule(rec.IdSchedule, out card))
+        {
+          dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 114)/*Play recording from beginning*/));
+          options[option++] = 979;
+          dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 115)/*Play recording from live point*/));
+          options[option++] = 980;
+        }
+        else
+        {
+          dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 49)/*Quality settings*/));
+          options[option++] = 882;
+        }
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 94)/*Settings*/));
+        options[option++] = 1048;
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex == -1) return;
+
+        string fileName = "";
+        if (server.IsRecordingSchedule(rec.IdSchedule, out card))
+        {
+          fileName = card.RecordingFileName;
+        }
+        switch (options[dlgMenu.SelectedIndex])
+        {
+          case 888:////Episodes management
+            //TvPriorities.OnSetEpisodesToKeep(rec);
+            break;
+
+          case 1048:////settings
+            TvScheduleInfo infopage = new TvScheduleInfo(rec);
+            _viewModel.Page.NavigationService.Navigate(infopage);
+            //TVProgramInfo.CurrentRecording = item.MusicTag as Schedule;
+            //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
+            return;
+          case 882:////Quality settings
+            //GUITVPriorities.OnSetQuality(rec);
+            break;
+
+          case 981: //Cancel this show
+            {
+              if (server.IsRecordingSchedule(rec.IdSchedule, out card))
+              {
+
+                MpDialogYesNo dlgYesNo = new MpDialogYesNo();
+                dlgYesNo.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dlgYesNo.Owner = _viewModel.Window;
+                dlgYesNo.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);// "Menu";
+                dlgYesNo.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 57);// "Delete this recording? This schedule is recording. If you delete the schedule then the recording is stopped.";
+                dlgYesNo.ShowDialog();
+                if (dlgYesNo.DialogResult == DialogResult.No) return;
+                server.StopRecordingSchedule(rec.IdSchedule);
+                _viewModel.DataModel.CancelSchedule(rec.IdSchedule, rec.StartTime);
+              }
+              else
+              {
+                server.StopRecordingSchedule(rec.IdSchedule);
+                _viewModel.DataModel.CancelSchedule(rec.IdSchedule, rec.StartTime);
+              }
+            }
+            break;
+
+          case 982: //Delete series recording
+            goto case 618;
+
+          case 618: // delete entire recording
+            {
+              if (server.IsRecordingSchedule(rec.IdSchedule, out card))
+              {
+                MpDialogYesNo dlgYesNo = new MpDialogYesNo();
+                dlgYesNo.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dlgYesNo.Owner = _viewModel.Window;
+                dlgYesNo.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);// "Menu";
+                dlgYesNo.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 57);// "Delete this recording? This schedule is recording. If you delete the schedule then the recording is stopped.";
+                dlgYesNo.ShowDialog();
+                if (dlgYesNo.DialogResult == DialogResult.No) return;
+                server.StopRecordingSchedule(rec.IdSchedule);
+                _viewModel.DataModel.Delete(rec.IdSchedule);
+              }
+              else
+              {
+                _viewModel.DataModel.Delete(rec.IdSchedule);
+
+              }
+            }
+            break;
+
+          case 979: // Play recording from beginning
+            {
+              ICommand cmd = _viewModel.Play;
+              cmd.Execute(new PlayCommand.PlayParameter(fileName, false));
+            }
+            return;
+
+          case 980: // Play recording from live point
+            {
+              ICommand cmd = _viewModel.Play;
+              cmd.Execute(new PlayCommand.PlayParameter(fileName, true));
+            }
+            break;
+        }
+      }
+    }
+    #endregion
+
+    #region Play command class
+    /// <summary>
+    /// Play command will start playing a recording
+    /// </summary>
+    public class PlayCommand : RecordedCommand
+    {
+      public class PlayParameter
+      {
+        public string FileName;
+        public bool StartFromLivePoint;
+        public PlayParameter(string filename, bool startFromLivePoint)
+        {
+          FileName = filename;
+          StartFromLivePoint = startFromLivePoint;
+        }
+      }
+      private delegate void MediaPlayerErrorDelegate();
+      private delegate void MediaPlayerOpenDelegate();
+      PlayParameter _playParameter;
+      /// <summary>
+      /// Initializes a new instance of the <see cref="PlayCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public PlayCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        if (TvPlayerCollection.Instance.Count > 0)
+        {
+          TvPlayerCollection.Instance.DisposeAll();
+          _viewModel.ChangeProperty("VideoBrush");
+          _viewModel.ChangeProperty("FullScreen");
+          _viewModel.ChangeProperty("IsVideoPresent");
+        }
+        _playParameter = parameter as PlayParameter;
+
+
+        TvMediaPlayer player = TvPlayerCollection.Instance.Get(null, _playParameter.FileName);
+        player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
+        player.MediaOpened += new EventHandler(player_MediaOpened);
+        player.Play();
+      }
+
+      void player_MediaOpened(object sender, EventArgs e)
+      {
+        _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerOpenDelegate(OnMediaOpened));
+      }
+      void OnMediaOpened()
+      {
+        _viewModel.ChangeProperty("VideoBrush");
+        _viewModel.ChangeProperty("FullScreen");
+        _viewModel.ChangeProperty("IsVideoPresent");
+        if (_playParameter.StartFromLivePoint)
+        {
+          TvMediaPlayer player = TvPlayerCollection.Instance[0];
+          if (player.NaturalDuration.HasTimeSpan)
+          {
+            TimeSpan duration = player.Duration;
+            TimeSpan newPos = duration + new TimeSpan(0, 0, 0, 0, -500);
+            player.Position = newPos;
+          }
+        }
+      }
+      void _mediaPlayer_MediaFailed(object sender, ExceptionEventArgs e)
+      {
+        _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
+      }
+      void OnMediaPlayerError()
+      {
+        if (TvPlayerCollection.Instance.Count > 0)
+        {
+          if (TvPlayerCollection.Instance[0].HasError)
+          {
+            MpDialogOk dlgError = new MpDialogOk();
+            dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            dlgError.Owner = _viewModel.Window;
+            dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
+            dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
+            dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/+ " " + TvPlayerCollection.Instance[0].ErrorMessage;
+            dlgError.ShowDialog();
+          }
+        }
+        TvPlayerCollection.Instance.DisposeAll();
+      }
+    }
+    #endregion
     #endregion
 
     #region ScheduleDatabaseModel class
@@ -686,9 +980,10 @@ namespace MyTv
     /// It simply retrieves all recordings from the tv database and 
     /// creates a list of ScheduleModel
     /// </summary>
-    class ScheduleDatabaseModel
+    public class ScheduleDatabaseModel : INotifyPropertyChanged
     {
       #region variables
+      public event PropertyChangedEventHandler PropertyChanged;
       List<ScheduleModel> _listSchedules = new List<ScheduleModel>();
       #endregion
 
@@ -698,6 +993,39 @@ namespace MyTv
       public ScheduleDatabaseModel()
       {
         Reload();
+      }
+      public void CancelSchedule(int idSchedule, DateTime cancelTime)
+      {
+        CanceledSchedule schedule = new CanceledSchedule(idSchedule, cancelTime);
+        schedule.Persist();
+        TvServer server = new TvServer();
+        server.OnNewSchedule();
+        Reload();
+        if (PropertyChanged != null)
+        {
+          PropertyChanged(this, new PropertyChangedEventArgs("Schedules"));
+        }
+      }
+      /// <summary>
+      /// Deletes this instance.
+      /// </summary>
+      public void Delete(int idSchedule)
+      {
+        TvServer server = new TvServer();
+        for (int i = 0; i < _listSchedules.Count; ++i)
+        {
+          if (_listSchedules[i].Schedule.IdSchedule == idSchedule)
+          {
+            _listSchedules[i].Schedule.Delete();
+            server.OnNewSchedule();
+            _listSchedules.RemoveAt(i);
+            if (PropertyChanged != null)
+            {
+              PropertyChanged(this, new PropertyChangedEventArgs("Schedules"));
+            }
+            break;
+          }
+        }
       }
       /// <summary>
       /// Refreshes the list with the database.
@@ -747,6 +1075,12 @@ namespace MyTv
         : base(model.Schedules)
       {
         _model = model;
+        _model.PropertyChanged += new PropertyChangedEventHandler(onDatabaseChanged);
+      }
+
+      void onDatabaseChanged(object sender, PropertyChangedEventArgs e)
+      {
+        this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
       }
 
       /// <summary>

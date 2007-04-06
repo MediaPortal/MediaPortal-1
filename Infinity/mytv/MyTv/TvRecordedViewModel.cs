@@ -82,6 +82,18 @@ namespace MyTv
 
     #region properties
     /// <summary>
+    /// Gets the data model.
+    /// </summary>
+    /// <value>The data model.</value>
+    public RecordingDatabaseModel DataModel
+    {
+      get
+      {
+        return _dataModel;
+      }
+    }
+
+    /// <summary>
     /// Gets the video brush.
     /// </summary>
     /// <value>The video brush.</value>
@@ -398,7 +410,6 @@ namespace MyTv
         return _contextMenuCommand;
       }
     }
-    #endregion
     /// <summary>
     /// Returns a ICommand for toggeling between fullscreen mode and windowed mode
     /// </summary>
@@ -414,6 +425,7 @@ namespace MyTv
         return _fullScreenCommand;
       }
     }
+    #endregion
 
 
     #region Commands subclasses
@@ -561,11 +573,9 @@ namespace MyTv
         {
           if (rec.TimesWatched > 0)
           {
-            TvServer server = new TvServer();
-            server.DeleteRecording(rec.IdRecording);
+            _viewModel.DataModel.Delete(rec.IdRecording);
           }
         }
-        _viewModel.ChangeProperty("Recordings");
       }
     }
     #endregion
@@ -711,9 +721,7 @@ namespace MyTv
         dlgMenu.ShowDialog();
         if (dlgMenu.DialogResult == DialogResult.No) return;
 
-        TvServer server = new TvServer();
-        server.DeleteRecording(recording.IdRecording);
-        _viewModel.ChangeProperty("Recordings");
+        _viewModel.DataModel.Delete(recording.IdRecording);
       }
     }
     #endregion
@@ -779,6 +787,7 @@ namespace MyTv
       }
     }
     #endregion
+
     #region FullScreenCommand  class
     /// <summary>
     /// FullScreenCommand will toggle application between normal and fullscreen mode
@@ -826,9 +835,10 @@ namespace MyTv
     /// It simply retrieves all recordings from the tv database and 
     /// creates a list of RecordingModel
     /// </summary>
-    class RecordingDatabaseModel
+    public class RecordingDatabaseModel : INotifyPropertyChanged
     {
       #region variables
+      public event PropertyChangedEventHandler PropertyChanged;
       List<RecordingModel> _listRecordings = new List<RecordingModel>();
       #endregion
 
@@ -854,6 +864,23 @@ namespace MyTv
         }
       }
 
+      public void Delete(int idRecording)
+      {
+        TvServer server = new TvServer();
+        for (int i = 0; i < _listRecordings.Count; ++i)
+        {
+          if (_listRecordings[i].Recording.IdRecording == idRecording)
+          {
+            _listRecordings.RemoveAt(i);
+            server.DeleteRecording(idRecording);
+            if (PropertyChanged != null)
+            {
+              PropertyChanged(this, new PropertyChangedEventArgs("Recordings"));
+            }
+            break;
+          }
+        }
+      }
       /// <summary>
       /// Gets the recordings.
       /// </summary>
@@ -887,6 +914,12 @@ namespace MyTv
         : base(model.Recordings)
       {
         _model = model;
+        _model.PropertyChanged += new PropertyChangedEventHandler(OnDatabaseChanged);
+      }
+
+      void OnDatabaseChanged(object sender, PropertyChangedEventArgs e)
+      {
+        this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
       }
 
       /// <summary>

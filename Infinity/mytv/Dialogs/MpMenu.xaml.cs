@@ -159,6 +159,7 @@ namespace Dialogs
       if (e.Key == System.Windows.Input.Key.Escape)
       {
         //return to previous screen
+        e.Handled = true;
         SelectedIndex = -1;
         this.Close();
         return;
