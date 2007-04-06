@@ -4,32 +4,28 @@
     xmlns:ns="clr-namespace:Dialogs;assembly=dialogs"
     Title="MyTv" Loaded="OnLoaded" Background="{StaticResource backGroundBrush}" WindowWidth="800" WindowHeight="600"
     >
-  <Grid >
+  <Grid x:Name="gridMain">
     <DockPanel >
       <StackPanel DockPanel.Dock="Top" Height="100">
         <DockPanel>
           <StackPanel DockPanel.Dock="Left">
-            <Label Name="labelHeader" Style="{StaticResource LabelHeaderStyle}" >
-              television
-            </Label>
+            <Label Name="labelHeader" Content="{Binding Path=HeaderLabel}" Style="{StaticResource LabelHeaderStyle}" />
           </StackPanel>
           <StackPanel DockPanel.Dock="Right" >
-            <Label x:Name="labelDate" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,20,20,0" >
-              Sunday 18 March 09:54
-            </Label>
+            <Label x:Name="labelDate" Content="{Binding Path=DateLabel}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,20,20,0" />
           </StackPanel>
         </DockPanel>
       </StackPanel>
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
-        <Button Name="buttonTvGuide" Style="{DynamicResource MpButton}" Height="32"  Click="OnTvGuideClicked"   >TvGuide</Button>
-        <Button Name="buttonRecordNow" Style="{DynamicResource MpButton}" Height="32"  Click="OnRecordClicked" >Record now</Button>
-        <Button Name="buttonChannel" Style="{DynamicResource MpButton}" Height="32" Click="OnChannelClicked"   >Channel</Button>
-        <Button Name="buttonTvStreams" Style="{DynamicResource MpButton}" Height="32" Click="OnTvStreamsClicked"   >Tv Streams</Button>
-        <CheckBox x:Name="buttonTvOnOff" Style="{StaticResource MpRadioButton}" Height="32"  Click="OnTvOnOff" >Tv On</CheckBox>
-        <Button Name="buttonScheduled" Style="{DynamicResource MpButton}" Height="32"  Click="OnScheduledClicked" >Scheduled</Button>
-        <Button Name="buttonRecorded" Style="{DynamicResource MpButton}" Height="32"  Click="OnRecordedClicked">Recorded</Button>
-        <Button Name="buttonSearch" Style="{DynamicResource MpButton}" Height="32"  Click="OnSearchClicked"  >Search</Button>
-        <Button Name="buttonTeletext" Style="{DynamicResource MpButton}" Height="32"   >Teletext</Button>
+        <Button Name="buttonTvGuide" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=TvGuideLabel}" />
+        <Button Name="buttonRecordNow" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=ChannelLabel}" />
+        <Button Name="buttonChannel" Style="{DynamicResource MpButton}" Height="32" Content="{Binding Path=ChannelLabel}"  />
+        <Button Name="buttonTvStreams" Style="{DynamicResource MpButton}" Height="32" Content="{Binding Path=TvStreamsLabel}"   />
+        <CheckBox x:Name="buttonTvOnOff" Style="{StaticResource MpRadioButton}" Height="32"  Content="{Binding Path=TvOnOffLabel}"/>
+        <Button Name="buttonScheduled" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=ScheduledLabel}"/>
+        <Button Name="buttonRecorded" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=RecordedLabel}"/>
+        <Button Name="buttonSearch" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=SearchLabel}"/>
+        <Button Name="buttonTeletext" Style="{DynamicResource MpButton}" Height="32" Content="{Binding Path=TeletextLabel}"/>
       </StackPanel>
 
 

@@ -40,6 +40,7 @@ namespace MyTv
   public partial class TvHome : System.Windows.Controls.Page
   {
     #region variables
+    TvHomeViewModel _model;
     private delegate void StartTimeShiftingDelegate(Channel channel);
     private delegate void EndTimeShiftingDelegate(TvResult result, VirtualCard card);
     private delegate void SeekToEndDelegate();
@@ -69,22 +70,14 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      _model = new TvHomeViewModel();
+      gridMain.DataContext = _model;
+
       ServiceScope.Get<ILogger>().Info("mytv:OnLoaded");
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.Focus(buttonTvGuide);
-      buttonTvGuide.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 0);
-      buttonRecordNow.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 1);
-      buttonChannel.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 2);
-      buttonTvStreams.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 3);
-      buttonTvOnOff.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 4);
-      buttonScheduled.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 5);
-      buttonRecorded.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 6);
-      buttonSearch.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 7);
-      buttonTeletext.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 8);
-      labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 9);
       Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
-      buttonTvOnOff.IsChecked = (TvPlayerCollection.Instance.Count > 0);
       ConnectToServer();
     }
 
@@ -414,6 +407,7 @@ namespace MyTv
         }
       }
     }
+
     void OnVideoWindowClicked(object sender, EventArgs args)
     {
       if (TvPlayerCollection.Instance.Count != 0)
