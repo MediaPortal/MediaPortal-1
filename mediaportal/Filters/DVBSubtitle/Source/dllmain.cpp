@@ -28,34 +28,40 @@ static bool folderOk = false;
 
 const AMOVIESETUP_FILTER FilterInfo =
 {
-    &CLSID_DVBSub,		      // Filter CLSID
-    L"MediaPortal DVBSub",  // String name
-    MERIT_DO_NOT_USE,			  // Filter merit
-    0,										  // Number pins
-    NULL									  // Pin details
+  &CLSID_DVBSub,		      // Filter CLSID
+  L"MediaPortal DVBSub",  // String name
+  MERIT_DO_NOT_USE,			  // Filter merit
+  0,										  // Number pins
+  NULL									  // Pin details
 };
 
 CFactoryTemplate g_Templates[1] = 
 {
-    { 
-      L"MediaPortal DVBSub",      // Name
-      &CLSID_DVBSub,              // CLSID
-      CDVBSub::CreateInstance,    // Method to create an instance of MyComponent
-      NULL,                       // Initialization function
-      &FilterInfo                 // Set-up information (for filters)
-    }
+  { 
+    L"MediaPortal DVBSub",      // Name
+    &CLSID_DVBSub,              // CLSID
+    CDVBSub::CreateInstance,    // Method to create an instance of MyComponent
+    NULL,                       // Initialization function
+    &FilterInfo                 // Set-up information (for filters)
+  }
 };
 
 int g_cTemplates = 1;
 
 STDAPI DllRegisterServer()
 {
-    return AMovieDllRegisterServer2( TRUE );
+  LogDebug( "DllRegisterServer - called" );
+  int error = AMovieDllRegisterServer2( TRUE );
+  LogDebug( "  AMovieDllRegisterServer2 returned %i", error );
+  return error;
 }
 
 STDAPI DllUnregisterServer()
 {
-    return AMovieDllRegisterServer2( FALSE );
+  LogDebug( "DllUnregisterServer - called" );
+  int error = AMovieDllRegisterServer2( FALSE );
+  LogDebug( "  AMovieDllRegisterServer2 returned %i", error );
+  return error;
 }
 
 extern "C" BOOL WINAPI DllEntryPoint(HINSTANCE, ULONG, LPVOID);
@@ -64,34 +70,31 @@ BOOL APIENTRY DllMain(HANDLE hModule,
                       DWORD  dwReason, 
                       LPVOID lpReserved)
 {
-	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
+	LogDebug( "DllMain - called" );
+  return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
 
-#ifndef DEBUG
-#define DEBUG
-#endif
-
 // Logging 
-#ifdef DEBUG
+//#ifdef DEBUG
 char *logbuffer=NULL; 
-void LogDebug(const char *fmt, ...) 
+void LogDebug( const char *fmt, ... ) 
 {
-	va_list ap;
-	va_start(ap,fmt);
+  va_list ap;
+	va_start( ap, fmt );
 
 	char buffer[1000]; 
 	int tmp;
-	va_start(ap,fmt);
-	tmp=vsprintf(buffer, fmt, ap);
-	va_end(ap); 
+	va_start( ap, fmt );
+	tmp = vsprintf( buffer, fmt, ap );
+	va_end( ap ); 
 
   TCHAR folder[MAX_PATH];
   TCHAR fileName[MAX_PATH];
-  ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(fileName,"%s\\MediaPortal\\log\\MPDVBSubs.Log",folder);
-  //FILE* fp = fopen(fileName,"a+");
-  FILE* fp = fopen("C:\\DVBSUB.log","a+");
-	if (fp!=NULL)
+  ::SHGetSpecialFolderPath( NULL,folder,CSIDL_COMMON_APPDATA,FALSE );
+  sprintf( fileName, "%s\\MediaPortal\\log\\MPDVBSubs.Log", folder );
+  //FILE* fp = fopen( fileName,"a+" );
+  FILE* fp = fopen( "C:\\DVBsub.log","a+" );
+	if( fp != NULL )
 	{
 		SYSTEMTIME systemTime;
 		GetLocalTime(&systemTime);
@@ -103,11 +106,11 @@ void LogDebug(const char *fmt, ...)
 	}
 };
 
-#else
-void LogDebug(const char *fmt, ...) {}
-#endif
+//#else
+//void LogDebug(const char *fmt, ...) {}
+//#endif
 
-#ifdef DEBUG
+//#ifdef DEBUG
 char pts_temp[500];
 void LogDebugPTS( const char *fmt, uint64_t pts ) 
 {
@@ -122,6 +125,6 @@ void LogDebugPTS( const char *fmt, uint64_t pts )
   sprintf( pts_temp,"%s %d:%02d:%02d%c%03d",fmt,h,m,s,'.',u );
 	LogDebug( pts_temp );
 }
-#else
-void LogDebugPTS( const char *fmt, uint64_t pts  ){}
-#endif 
+//#else
+//void LogDebugPTS( const char *fmt, uint64_t pts  ){}
+//#endif 
