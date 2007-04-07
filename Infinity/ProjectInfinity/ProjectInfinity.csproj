@@ -104,7 +104,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="The Infinity Project-Mystical Experiences-8-Blue Aura.mp3" />
+    <None Include="The Infinity Project-Mystical Experiences-8-Blue Aura.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />

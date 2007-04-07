@@ -38,7 +38,7 @@ namespace TestPlugin
       try
       {
         IMusicPlayer player = ServiceScope.Get<IMusicPlayer>();
-        player.Play(@"..\..\The Infinity Project-Mystical Experiences-8-Blue Aura.mp3");
+        player.Play(@".\The Infinity Project-Mystical Experiences-8-Blue Aura.mp3");
       }
       catch (ServiceNotFoundException)
       {
