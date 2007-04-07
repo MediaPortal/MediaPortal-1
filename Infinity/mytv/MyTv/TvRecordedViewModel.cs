@@ -14,6 +14,7 @@ using TvDatabase;
 using TvControl;
 using Dialogs;
 using ProjectInfinity;
+using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 
@@ -101,9 +102,9 @@ namespace MyTv
     {
       get
       {
-        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
-          MediaPlayer player = TvPlayerCollection.Instance[0];
+          MediaPlayer player = (MediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0].UnderlyingPlayer;
           VideoDrawing videoDrawing = new VideoDrawing();
           videoDrawing.Player = player;
           videoDrawing.Rect = new Rect(0, 0, player.NaturalVideoWidth, player.NaturalVideoHeight);
@@ -289,7 +290,7 @@ namespace MyTv
     {
       get
       {
-        return (ServiceScope.Get<ITvPlayerCollection>().Count != 0) ? Visibility.Visible : Visibility.Collapsed;
+        return (ServiceScope.Get<IPlayerCollectionService>().Count != 0) ? Visibility.Visible : Visibility.Collapsed;
       }
     }
     /// <summary>
@@ -601,7 +602,7 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
         {
           _viewModel.Page.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
         }
@@ -644,16 +645,18 @@ namespace MyTv
           dlgError.ShowDialog();
           return;
         }
-        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
-          ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
+          ServiceScope.Get<IPlayerCollectionService>().Clear();
           _viewModel.ChangeProperty("VideoBrush");
           _viewModel.ChangeProperty("FullScreen");
           _viewModel.ChangeProperty("IsVideoPresent");
         }
-        TvMediaPlayer player = ServiceScope.Get<ITvPlayerCollection>().Get(null, fileName);
-        player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
+        TvMediaPlayer player = new TvMediaPlayer(null, fileName);
+        ServiceScope.Get<IPlayerCollectionService>().Add(player);
+        player.MediaFailed += new EventHandler<MediaExceptionEventArgs>(_mediaPlayer_MediaFailed);
         player.MediaOpened += new EventHandler(player_MediaOpened);
+        player.Open(PlayerMediaType.TvRecording,fileName);
         player.Play();
       }
 
@@ -667,26 +670,27 @@ namespace MyTv
         _viewModel.ChangeProperty("FullScreen");
         _viewModel.ChangeProperty("IsVideoPresent");
       }
-      void _mediaPlayer_MediaFailed(object sender, ExceptionEventArgs e)
+      void _mediaPlayer_MediaFailed(object sender, MediaExceptionEventArgs e)
       {
         _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
       }
       void OnMediaPlayerError()
       {
-        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
-          if (TvPlayerCollection.Instance[0].HasError)
+          TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
+          if (player.HasError)
           {
             MpDialogOk dlgError = new MpDialogOk();
             dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             dlgError.Owner = _viewModel.Window;
             dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
             dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
-            dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/+ " " + TvPlayerCollection.Instance[0].ErrorMessage;
+            dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/+ " " + player.ErrorMessage;
             dlgError.ShowDialog();
           }
         }
-        ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
+        ServiceScope.Get<IPlayerCollectionService>().Clear();
       }
     }
     #endregion

@@ -19,6 +19,7 @@ using Gentle.Framework;
 using Dialogs;
 using TvControl;
 using ProjectInfinity;
+using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 
@@ -105,7 +106,7 @@ namespace MyTv
       }
       if (e.Key == System.Windows.Input.Key.X)
       {
-        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
           this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
           return;

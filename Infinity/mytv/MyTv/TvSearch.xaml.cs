@@ -16,6 +16,7 @@ using TvControl;
 using Dialogs;
 using MCEControls;
 using ProjectInfinity;
+using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 
@@ -71,9 +72,9 @@ namespace MyTv
       Keyboard.Focus(textboxSearch);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
 
-      if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
+      if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
       {
-        MediaPlayer player = TvPlayerCollection.Instance[0];
+        MediaPlayer player = (MediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0].UnderlyingPlayer;
         VideoDrawing videoDrawing = new VideoDrawing();
         videoDrawing.Player = player;
         videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
@@ -147,7 +148,7 @@ namespace MyTv
       }
       if (e.Key == System.Windows.Input.Key.X)
       {
-        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
           this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
           return;

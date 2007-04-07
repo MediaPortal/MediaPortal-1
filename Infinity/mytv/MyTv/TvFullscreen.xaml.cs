@@ -15,6 +15,7 @@ using Dialogs;
 using TvDatabase;
 using TvControl;
 using ProjectInfinity;
+using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 namespace MyTv
@@ -75,9 +76,9 @@ namespace MyTv
       _reachedStart = false;
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
 
-      if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
+      if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
       {
-        MediaPlayer player = TvPlayerCollection.Instance[0];
+        MediaPlayer player = (MediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0].UnderlyingPlayer;
         player.MediaEnded += new EventHandler(player_MediaEnded);
         VideoDrawing videoDrawing = new VideoDrawing();
         videoDrawing.Player = player;
@@ -160,9 +161,9 @@ namespace MyTv
       if (e.Key == Key.Space)
       {
         e.Handled = true;
-        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
-          TvMediaPlayer player = TvPlayerCollection.Instance[0];
+          TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
           player.Pause();
           UpdateTopOsd();
         }
@@ -174,8 +175,8 @@ namespace MyTv
     /// </summary>
     void UpdateTopOsd()
     {
-      if (ServiceScope.Get<ITvPlayerCollection>().Count == 0) return;
-      TvMediaPlayer player = TvPlayerCollection.Instance[0];
+      if (ServiceScope.Get<IPlayerCollectionService>().Count == 0) return;
+      TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
       if (player.IsPaused || _seekDirection != SeekDirection.Unknown || _bottomOsdVisible)
         gridOSD.Visibility = Visibility.Visible;
       else
@@ -292,7 +293,7 @@ namespace MyTv
     void UpdateBottomOsd()
     {
       gridOSDBottom.Visibility = _bottomOsdVisible ? Visibility.Visible : Visibility.Hidden;
-      if (ServiceScope.Get<ITvPlayerCollection>().Count == 0) return;
+      if (ServiceScope.Get<IPlayerCollectionService>().Count == 0) return;
       Channel ch = null;
       if (_zapChannel != "")
       {
@@ -343,8 +344,8 @@ namespace MyTv
       _seekTimeoutTimer.Stop();
       _seekTimeoutTimer.IsEnabled = true;
       _seekTimeoutTimer.Start();
-      if (ServiceScope.Get<ITvPlayerCollection>().Count == 0) return false;
-      TvMediaPlayer player = TvPlayerCollection.Instance[0];
+      if (ServiceScope.Get<IPlayerCollectionService>().Count == 0) return false;
+      TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
       TimeSpan newPosition = ts + player.Position;
       if (newPosition.TotalSeconds > player.Duration.TotalSeconds)
       {
@@ -446,9 +447,9 @@ namespace MyTv
     {
       _seekTimeoutTimer.Stop();
       _seekTimeoutTimer.IsEnabled = false;
-      if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
+      if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
       {
-        TvMediaPlayer player = TvPlayerCollection.Instance[0];
+        TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
         if (_reachedStart)
           player.Position = new TimeSpan(0, 0, 0);
         else if (_reachedEnd)
@@ -506,7 +507,7 @@ namespace MyTv
         if (group != null)
         {
           IList maps = group.ReferringGroupMap();
-          for (int i=0; i < maps.Count;++i)
+          for (int i = 0; i < maps.Count; ++i)
           {
             GroupMap map = (GroupMap)maps[i];
             if (map.ReferencedChannel() == ServiceScope.Get<ITvChannelNavigator>().SelectedChannel)
@@ -578,8 +579,8 @@ namespace MyTv
     void OnChannelKey(Key key)
     {
       if (_seekDirection != SeekDirection.Unknown) return;
-      if (ServiceScope.Get<ITvPlayerCollection>().Count == 0) return;
-      TvMediaPlayer player = TvPlayerCollection.Instance[0];
+      if (ServiceScope.Get<IPlayerCollectionService>().Count == 0) return;
+      TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
       if (player.Card == null) return;
       if (player.Card.IsTimeShifting == false && player.Card.IsRecording == false) return;
 
@@ -638,28 +639,30 @@ namespace MyTv
         //timeshifting worked, now view the channel
         ServiceScope.Get<ITvChannelNavigator>().Card = card;
         //do we already have a media player ?
-        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
         {
-          if (TvPlayerCollection.Instance[0].FileName != card.TimeShiftFileName)
+          if (ServiceScope.Get<IPlayerCollectionService>()[0].FileName != card.TimeShiftFileName)
           {
             gridMain.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-            ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
+            ServiceScope.Get<IPlayerCollectionService>().Clear();
           }
         }
-        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
         {
           this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
           return;
         }
         //create a new media player 
         ServiceScope.Get<ILogger>().Info("Tv:  open file", card.TimeShiftFileName);
-        MediaPlayer player = ServiceScope.Get<ITvPlayerCollection>().Get(card, card.TimeShiftFileName);
-        player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
+        TvMediaPlayer player = new TvMediaPlayer(card, card.TimeShiftFileName);
+        ServiceScope.Get<IPlayerCollectionService>().Add(player);
+        player.MediaFailed += new EventHandler<MediaExceptionEventArgs>(_mediaPlayer_MediaFailed);
         player.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
+        player.Open(PlayerMediaType.TvLive, card.TimeShiftFileName);
 
         //create video drawing which draws the video in the video window
         VideoDrawing videoDrawing = new VideoDrawing();
-        videoDrawing.Player = player;
+        videoDrawing.Player = (MediaPlayer)player.UnderlyingPlayer;
         videoDrawing.Rect = new Rect(0, 0, gridMain.ActualWidth, gridMain.ActualHeight);
         DrawingBrush videoBrush = new DrawingBrush();
         videoBrush.Drawing = videoDrawing;
@@ -670,9 +673,9 @@ namespace MyTv
       else
       {
         //close media player
-        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
         {
-          ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
+          ServiceScope.Get<IPlayerCollectionService>().Clear();
         }
 
         //show error to user
@@ -724,21 +727,18 @@ namespace MyTv
     #region media player events & dispatcher methods
     void OnSeekToEnd()
     {
-      if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
+      if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
       {
         ServiceScope.Get<ILogger>().Info("Tv:  seek to livepoint");
-        TvMediaPlayer player = TvPlayerCollection.Instance[0];
+        TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
 
-        if (player.NaturalDuration.HasTimeSpan)
+        TimeSpan duration = player.Duration;
+        TimeSpan newPos = duration + new TimeSpan(0, 0, 0, 0, -500);
+        ServiceScope.Get<ILogger>().Info("MyTv: OnSeekToEnd current {0}/{1}", newPos, player.Duration);
+        if (!player.IsStream)
         {
-          TimeSpan duration = player.Duration;
-          TimeSpan newPos = duration + new TimeSpan(0, 0, 0, 0, -500);
-          ServiceScope.Get<ILogger>().Info("MyTv: OnSeekToEnd current {0}/{1}", newPos, player.Duration);
-          if (!player.IsStream)
-          {
-            ServiceScope.Get<ILogger>().Info("MyTv: Seek to {0}/{1}", newPos, duration);
-            player.Position = newPos;
-          }
+          ServiceScope.Get<ILogger>().Info("MyTv: Seek to {0}/{1}", newPos, duration);
+          player.Position = newPos;
         }
 
       }
@@ -751,8 +751,8 @@ namespace MyTv
     void OnMediaPlayerError()
     {
 
-      if (ServiceScope.Get<ITvPlayerCollection>().Count == 0) return;
-      TvMediaPlayer player = TvPlayerCollection.Instance[0];
+      if (ServiceScope.Get<IPlayerCollectionService>().Count == 0) return;
+      TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
       ServiceScope.Get<ILogger>().Info("Tv:  failed to open file {0} error:{1}", player.FileName, player.ErrorMessage);
       gridMain.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
       if (player.HasError)
@@ -766,7 +766,7 @@ namespace MyTv
         dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/ + player.ErrorMessage;
         dlgError.ShowDialog();
       }
-      ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
+      ServiceScope.Get<IPlayerCollectionService>().Clear();
 
     }
     /// <summary>
@@ -785,7 +785,7 @@ namespace MyTv
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.Windows.Media.ExceptionEventArgs"/> instance containing the event data.</param>
-    void _mediaPlayer_MediaFailed(object sender, ExceptionEventArgs e)
+    void _mediaPlayer_MediaFailed(object sender, MediaExceptionEventArgs e)
     {
       // media player failed to open file
       // show error dialog (via dispatcher)

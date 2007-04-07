@@ -29,6 +29,7 @@ using Gentle.Common;
 using Gentle.Framework;
 using DirectShowLib;
 using ProjectInfinity;
+using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 namespace MyTv
@@ -43,7 +44,6 @@ namespace MyTv
     TvHomeViewModel _model;
     private delegate void ConnectToServerDelegate();
     static bool _firstTime = true;
-    TvPlayerCollection _players = TvPlayerCollection.Instance;
     TvChannelNavigator _navigator =  TvChannelNavigator.Instance;
     #endregion
 
@@ -106,7 +106,7 @@ namespace MyTv
     {
       if (e.Key == System.Windows.Input.Key.X)
       {
-        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
           e.Handled = true;
           this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));

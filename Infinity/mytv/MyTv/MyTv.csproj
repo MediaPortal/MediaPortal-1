@@ -126,7 +126,6 @@
   <ItemGroup>
     <Compile Include="TvChannelNavigator\ChannelNavigator.cs" />
     <Compile Include="TvChannelNavigator\ITvChannelNavigator.cs" />
-    <Compile Include="TvMediaPlayer\ITvPlayerCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -170,7 +169,6 @@
       <SubType>Code</SubType>
       <DependentUpon>TvNewSchedule.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TvMediaPlayer\TvPlayerCollection.cs" />
     <Compile Include="TvPlugin.cs" />
     <Compile Include="TvProgramInfo.xaml.cs">
       <SubType>Code</SubType>

@@ -17,6 +17,7 @@ using TvDatabase;
 using TvControl;
 using TvLibrary.Interfaces;
 using ProjectInfinity;
+using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 namespace MyTv
@@ -166,7 +167,7 @@ namespace MyTv
         tag.IsBottomEdge = ((rowNr) == _maxChannels);
         Button b = new Button();
         b.Tag = tag;
-        b.Style= (Style)Application.Current.Resources["MpButton"];
+        b.Style = (Style)Application.Current.Resources["MpButton"];
         b.Content = program.StartTime.ToString("HH:mm");
         b.MouseEnter += new MouseEventHandler(OnMouseEnter);
         b.GotKeyboardFocus += new KeyboardFocusChangedEventHandler(OnButtonGotKeyboardFocus);
@@ -605,9 +606,9 @@ namespace MyTv
       RenderTvGuide();
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
 
-      if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
+      if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
       {
-        MediaPlayer player = TvPlayerCollection.Instance[0];
+        MediaPlayer player = (MediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0].UnderlyingPlayer;
         VideoDrawing videoDrawing = new VideoDrawing();
         videoDrawing.Player = player;
         videoDrawing.Rect = new Rect(0, 0, buttonVideo.ActualWidth, buttonVideo.ActualHeight);
@@ -667,7 +668,7 @@ namespace MyTv
       }
       if (e.Key == System.Windows.Input.Key.X)
       {
-        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
           this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
           return;
@@ -961,7 +962,7 @@ namespace MyTv
     }
     void OnbuttonVideoClicked(object sender, EventArgs args)
     {
-      if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
+      if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
       {
         this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
       }
@@ -1037,28 +1038,30 @@ namespace MyTv
         //timeshifting worked, now view the channel
         ServiceScope.Get<ITvChannelNavigator>().Card = card;
         //do we already have a media player ?
-        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
         {
-          if (TvPlayerCollection.Instance[0].FileName != card.TimeShiftFileName)
+          if (ServiceScope.Get<IPlayerCollectionService>()[0].FileName != card.TimeShiftFileName)
           {
             buttonVideo.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-            ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
+            ServiceScope.Get<IPlayerCollectionService>().Clear();
           }
         }
-        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
         {
           this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
           return;
         }
         //create a new media player 
         ServiceScope.Get<ILogger>().Info("Tv:  open file", card.TimeShiftFileName);
-        MediaPlayer player = ServiceScope.Get<ITvPlayerCollection>().Get(card, card.TimeShiftFileName);
-        player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
+        TvMediaPlayer player = new TvMediaPlayer(card, card.TimeShiftFileName);
+        ServiceScope.Get<IPlayerCollectionService>().Add(player);
+        player.MediaFailed += new EventHandler<MediaExceptionEventArgs>(_mediaPlayer_MediaFailed);
         player.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
+        player.Open(PlayerMediaType.TvLive, card.TimeShiftFileName);
 
         //create video drawing which draws the video in the video window
         VideoDrawing videoDrawing = new VideoDrawing();
-        videoDrawing.Player = player;
+        videoDrawing.Player = (MediaPlayer)player.UnderlyingPlayer;
         videoDrawing.Rect = new Rect(0, 0, buttonVideo.ActualWidth, buttonVideo.ActualHeight);
         DrawingBrush videoBrush = new DrawingBrush();
         videoBrush.Drawing = videoDrawing;
@@ -1069,9 +1072,9 @@ namespace MyTv
       else
       {
         //close media player
-        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
+        if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
         {
-          ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
+          ServiceScope.Get<IPlayerCollectionService>().Clear();
         }
 
         //show error to user
@@ -1124,21 +1127,18 @@ namespace MyTv
     #region media player events & dispatcher methods
     void OnSeekToEnd()
     {
-      if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
+      if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
       {
         ServiceScope.Get<ILogger>().Info("Tv:  seek to livepoint");
-        TvMediaPlayer player = TvPlayerCollection.Instance[0];
+        TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
 
-        if (player.NaturalDuration.HasTimeSpan)
+        TimeSpan duration = player.Duration;
+        TimeSpan newPos = duration + new TimeSpan(0, 0, 0, 0, -500);
+        ServiceScope.Get<ILogger>().Info("MyTv: OnSeekToEnd current {0}/{1}", newPos, player.Duration);
+        if (!player.IsStream)
         {
-          TimeSpan duration = player.Duration;
-          TimeSpan newPos = duration + new TimeSpan(0, 0, 0, 0, -500);
-          ServiceScope.Get<ILogger>().Info("MyTv: OnSeekToEnd current {0}/{1}", newPos, player.Duration);
-          if (!player.IsStream)
-          {
-            ServiceScope.Get<ILogger>().Info("MyTv: Seek to {0}/{1}", newPos, duration);
-            player.Position = newPos;
-          }
+          ServiceScope.Get<ILogger>().Info("MyTv: Seek to {0}/{1}", newPos, duration);
+          player.Position = newPos;
         }
         this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullscreen.xaml", UriKind.Relative));
       }
@@ -1152,8 +1152,8 @@ namespace MyTv
     void OnMediaPlayerError()
     {
 
-      if (ServiceScope.Get<ITvPlayerCollection>().Count == 0) return;
-      TvMediaPlayer player = TvPlayerCollection.Instance[0];
+      if (ServiceScope.Get<IPlayerCollectionService>().Count == 0) return;
+      TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
       ServiceScope.Get<ILogger>().Info("Tv:  failed to open file {0} error:{1}", player.FileName, player.ErrorMessage);
       buttonVideo.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
       if (player.HasError)
@@ -1167,7 +1167,7 @@ namespace MyTv
         dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/ + player.ErrorMessage;
         dlgError.ShowDialog();
       }
-      ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
+      ServiceScope.Get<IPlayerCollectionService>().Clear();
 
     }
     /// <summary>
@@ -1186,7 +1186,7 @@ namespace MyTv
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.Windows.Media.ExceptionEventArgs"/> instance containing the event data.</param>
-    void _mediaPlayer_MediaFailed(object sender, ExceptionEventArgs e)
+    void _mediaPlayer_MediaFailed(object sender, MediaExceptionEventArgs e)
     {
       // media player failed to open file
       // show error dialog (via dispatcher)
