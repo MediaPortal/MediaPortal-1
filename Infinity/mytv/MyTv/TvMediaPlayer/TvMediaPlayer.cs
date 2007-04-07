@@ -13,6 +13,7 @@ namespace MyTv
 {
   public class TvMediaPlayer : IPlayer, IDisposable
   {
+    #region IPlayer events
     //
     // Summary:
     //     Occurs when an error is encountered
@@ -21,6 +22,7 @@ namespace MyTv
     // Summary:
     //     Occurs when the media is opened.
     public event EventHandler MediaOpened;
+    #endregion
 
     #region delegates
     private delegate void StopTimeshiftingDelegate(VirtualCard card);
@@ -52,6 +54,7 @@ namespace MyTv
 
     #endregion
 
+    #region IPlayer interface
     /// <summary>
     /// Opens the specified file name.
     /// </summary>
@@ -296,7 +299,9 @@ namespace MyTv
         return _underLyingPlayer;
       }
     }
+    #endregion
 
+    #region private methods
     void TvMediaPlayer_MediaFailed(object sender, ExceptionEventArgs e)
     {
       _exception = e.ErrorException;
@@ -327,6 +332,7 @@ namespace MyTv
         }
       }
     }
+    #endregion
 
     #region IDisposable Members
 
