@@ -940,11 +940,17 @@ namespace MyTv
         if (_playParameter.StartFromLivePoint)
         {
           TvMediaPlayer player = TvPlayerCollection.Instance[0];
+
           if (player.NaturalDuration.HasTimeSpan)
           {
             TimeSpan duration = player.Duration;
             TimeSpan newPos = duration + new TimeSpan(0, 0, 0, 0, -500);
-            player.Position = newPos;
+            ServiceScope.Get<ILogger>().Info("MyTv: OnSeekToEnd current {0}/{1}", newPos, player.Duration);
+            if (!player.IsStream)
+            {
+              ServiceScope.Get<ILogger>().Info("MyTv: Seek to {0}/{1}", newPos, duration);
+              player.Position = newPos;
+            }
           }
         }
       }

@@ -39,6 +39,11 @@ namespace MyTv
       _exception = e.ErrorException;
     }
     #endregion
+
+    /// <summary>
+    /// Gets the error message.
+    /// </summary>
+    /// <value>The error message.</value>
     public string ErrorMessage
     {
       get
@@ -47,6 +52,10 @@ namespace MyTv
         return _exception.Message;
       }
     }
+    /// <summary>
+    /// Gets a value indicating whether this instance has error.
+    /// </summary>
+    /// <value><c>true</c> if this instance has error; otherwise, <c>false</c>.</value>
     public bool HasError
     {
       get
@@ -54,6 +63,9 @@ namespace MyTv
         return (_exception != null);
       }
     }
+    /// <summary>
+    /// Pauses/Continues media playback.
+    /// </summary>
     public new void Pause()
     {
       _paused = !_paused;
@@ -66,6 +78,10 @@ namespace MyTv
         base.Play();
       }
     }
+    /// <summary>
+    /// Gets a value indicating whether this instance is paused.
+    /// </summary>
+    /// <value><c>true</c> if this instance is paused; otherwise, <c>false</c>.</value>
     public bool IsPaused
     {
       get
@@ -73,6 +89,10 @@ namespace MyTv
         return _paused;
       }
     }
+    /// <summary>
+    /// Gets or sets a value indicating whether this instance is a rtsp stream or local file.
+    /// </summary>
+    /// <value><c>true</c> if this instance is stream; otherwise, <c>false</c>.</value>
     public bool IsStream
     {
       get
@@ -84,6 +104,10 @@ namespace MyTv
         _isStream = value;
       }
     }
+    /// <summary>
+    /// Gets the duration.
+    /// </summary>
+    /// <value>The duration.</value>
     public TimeSpan Duration
     {
       get
@@ -106,6 +130,10 @@ namespace MyTv
         return  new TimeSpan(0, 0, 0, 0);
       }
     }
+    /// <summary>
+    /// Gets the name of the file.
+    /// </summary>
+    /// <value>The name of the file.</value>
     public string FileName
     {
       get
@@ -113,6 +141,10 @@ namespace MyTv
         return _fileName;
       }
     }
+    /// <summary>
+    /// Gets the card.
+    /// </summary>
+    /// <value>The card.</value>
     public VirtualCard Card
     {
       get
