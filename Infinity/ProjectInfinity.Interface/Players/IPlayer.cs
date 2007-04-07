@@ -11,8 +11,36 @@ namespace ProjectInfinity.Players
     TvRecording,
     TvLive
   };
+
+  // Summary:
+  //     Provides error exception data for media events.
+  public class MediaExceptionEventArgs : EventArgs
+  {
+    Exception _exception;
+    public MediaExceptionEventArgs(Exception exception)
+    {
+      _exception = exception;
+    }
+
+    public Exception ErrorException 
+    {
+      get
+      {
+        return _exception;
+      }
+    }
+  }
   public interface IPlayer : IDisposable
   {
+
+    //
+    // Summary:
+    //     Occurs when an error is encountered
+    event EventHandler<MediaExceptionEventArgs> MediaFailed;
+    //
+    // Summary:
+    //     Occurs when the media is opened.
+    event EventHandler MediaOpened;
 
     /// <summary>
     /// Opens the specified file name.
