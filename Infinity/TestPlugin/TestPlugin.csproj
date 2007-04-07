@@ -87,6 +87,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) $(SolutionDir)\ProjectInfinity\bin\$(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>xcopy /y "$(TargetPath)" "$(SolutionDir)ProjectInfinity\bin\$(ConfigurationName)"</PostBuildEvent>
   </PropertyGroup>
 </Project>
