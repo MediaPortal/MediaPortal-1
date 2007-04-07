@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <profile>
   <section name="Allsites">
-	<entry name="sitenames">English,German,French,Dutch,Norwegian,Swedish,Italian,Spanish,Portuguese,Danish,Polish</entry>
+	<entry name="sitenames">English,German,French,Dutch,Norwegian,Swedish,Italian,Spanish,Portuguese,Danish,Polish,Czech,Hungarian</entry>
   </section>
   <section name="English">
 	<entry name="url">http://en.wikipedia.org/wiki/Special:Export/</entry>
@@ -68,5 +68,17 @@
 	<entry name="imagepattern">Grafika</entry>
 	<entry name="imageurl">http://pl.wikipedia.org/wiki/Grafika:</entry>
 	<entry name="string">2610</entry>
+  </section>
+  <section name="Czech">
+	<entry name="url">http://cs.wikipedia.org/wiki/Speciální:Export/</entry>
+	<entry name="imagepattern">Soubor</entry>
+	<entry name="imageurl">http://cs.wikipedia.org/wiki/Soubor:</entry>
+	<entry name="string">2611</entry>
+  </section>
+  <section name="Hungarian">
+	<entry name="url">http://hu.wikipedia.org/wiki/Speciális:Export/</entry>
+	<entry name="imagepattern">Kép</entry>
+	<entry name="imageurl">http://hu.wikipedia.org/wiki/Kép:</entry>
+	<entry name="string">2612</entry>
   </section>
 </profile>
