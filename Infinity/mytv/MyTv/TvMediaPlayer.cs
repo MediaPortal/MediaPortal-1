@@ -16,6 +16,7 @@ namespace MyTv
     VirtualCard _card;
     Exception _exception;
     bool _paused=false;
+    bool _isStream = false;
     string _fileName;
     #endregion
 
@@ -70,6 +71,17 @@ namespace MyTv
       get
       {
         return _paused;
+      }
+    }
+    public bool IsStream
+    {
+      get
+      {
+        return _isStream;
+      }
+      set
+      {
+        _isStream = value;
       }
     }
     public TimeSpan Duration

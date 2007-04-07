@@ -41,6 +41,7 @@ namespace MyTv
     /// <returns></returns>
     public TvMediaPlayer Get(VirtualCard card, string fileName)
     {
+      bool isStream = false;
       ServiceScope.Get<ILogger>().Info("Tv:  start playing:{0}", fileName);
       string orgFileName = fileName;
       if (!File.Exists(fileName))
@@ -51,12 +52,14 @@ namespace MyTv
           fileName = card.RTSPUrl;
         else
           fileName = server.GetRtspUrlForFile(fileName);
+        isStream = true;
 
         ServiceScope.Get<ILogger>().Info("Tv:  start playing stream:{0}", fileName);
       }
       string fname = fileName;
       if (fileName.StartsWith("rtsp://"))
       {
+        isStream = true;
         fname = String.Format(@"{0}\1.tsp", Directory.GetCurrentDirectory());
         if (File.Exists(fname))
         {
@@ -78,6 +81,7 @@ namespace MyTv
       ServiceScope.Get<ILogger>().Info("Tv:  open :{0}", fname);
       Uri uri = new Uri(fname, UriKind.Absolute);
       TvMediaPlayer player = new TvMediaPlayer(card, orgFileName);
+      player.IsStream = isStream;
       player.Open(uri);
       _players.Add(player);
       ServiceScope.Get<ILogger>().Info("Tv:  player opened");
