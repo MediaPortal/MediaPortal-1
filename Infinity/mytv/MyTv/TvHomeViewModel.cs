@@ -26,7 +26,7 @@ namespace MyTv
     #region variables
     private delegate void StartTimeShiftingDelegate(Channel channel);
     private delegate void EndTimeShiftingDelegate(TvResult result, VirtualCard card);
-    private delegate void SeekToEndDelegate();
+    
     private delegate void MediaPlayerErrorDelegate();
     private delegate void ConnectToServerDelegate();
     Window _window;
@@ -669,16 +669,6 @@ namespace MyTv
       }
       void OnMediaOpened()
       {
-        TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
-
-        TimeSpan duration = player.Duration;
-        TimeSpan newPos = duration + new TimeSpan(0, 0, 0, 0, -500);
-        ServiceScope.Get<ILogger>().Info("MyTv: OnSeekToEnd current {0}/{1}", newPos, player.Duration);
-        if (!player.IsStream)
-        {
-          ServiceScope.Get<ILogger>().Info("MyTv: Seek to {0}/{1}", newPos, duration);
-          player.Position = newPos;
-        }
         _viewModel.ChangeProperty("VideoBrush");
         _viewModel.ChangeProperty("FullScreen");
         _viewModel.ChangeProperty("IsVideoPresent");
@@ -782,8 +772,8 @@ namespace MyTv
           }
           if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
           {
-            _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
-            return;
+            TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
+            player.SeekToEnd();
           }
 
           ICommand cmd = _viewModel.Play;
@@ -844,19 +834,6 @@ namespace MyTv
               break;
           }
           dlg.ShowDialog();
-        }
-      }
-      private void OnSeekToEnd()
-      {
-        TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
-        
-        TimeSpan duration = player.Duration;
-        TimeSpan newPos = duration + new TimeSpan(0, 0, 0, 0, -500);
-        ServiceScope.Get<ILogger>().Info("MyTv: OnSeekToEnd current {0}/{1}", newPos, player.Duration);
-        if (!player.IsStream)
-        {
-          ServiceScope.Get<ILogger>().Info("MyTv: Seek to {0}/{1}", newPos, duration);
-          player.Position = newPos;
         }
       }
 

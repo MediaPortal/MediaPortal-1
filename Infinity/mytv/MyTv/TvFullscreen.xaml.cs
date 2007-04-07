@@ -28,7 +28,6 @@ namespace MyTv
   {
     private delegate void StartTimeShiftingDelegate(Channel channel);
     private delegate void EndTimeShiftingDelegate(TvResult result, VirtualCard card);
-    private delegate void SeekToEndDelegate();
     private delegate void MediaPlayerErrorDelegate();
     enum SeekDirection
     {
@@ -649,7 +648,8 @@ namespace MyTv
         }
         if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
         {
-          this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
+          TvMediaPlayer currentPlayer = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
+          currentPlayer.SeekToEnd();
           return;
         }
         //create a new media player 
@@ -657,7 +657,6 @@ namespace MyTv
         TvMediaPlayer player = new TvMediaPlayer(card, card.TimeShiftFileName);
         ServiceScope.Get<IPlayerCollectionService>().Add(player);
         player.MediaFailed += new EventHandler<MediaExceptionEventArgs>(_mediaPlayer_MediaFailed);
-        player.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
         player.Open(PlayerMediaType.TvLive, card.TimeShiftFileName);
 
         //create video drawing which draws the video in the video window
@@ -725,25 +724,6 @@ namespace MyTv
       }
     }
     #region media player events & dispatcher methods
-    void OnSeekToEnd()
-    {
-      if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
-      {
-        ServiceScope.Get<ILogger>().Info("Tv:  seek to livepoint");
-        TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
-
-        TimeSpan duration = player.Duration;
-        TimeSpan newPos = duration + new TimeSpan(0, 0, 0, 0, -500);
-        ServiceScope.Get<ILogger>().Info("MyTv: OnSeekToEnd current {0}/{1}", newPos, player.Duration);
-        if (!player.IsStream)
-        {
-          ServiceScope.Get<ILogger>().Info("MyTv: Seek to {0}/{1}", newPos, duration);
-          player.Position = newPos;
-        }
-
-      }
-    }
-
     /// <summary>
     /// Called when media player has an error condition
     /// show messagebox to user and close media playback
@@ -769,16 +749,7 @@ namespace MyTv
       ServiceScope.Get<IPlayerCollectionService>().Clear();
 
     }
-    /// <summary>
-    /// Handles the MediaOpened event of the _mediaPlayer control.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-    void _mediaPlayer_MediaOpened(object sender, EventArgs e)
-    {
-      //media is opened, seek to end (via dispatcher)
-      this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
-    }
+
 
     /// <summary>
     /// Handles the MediaFailed event of the _mediaPlayer control.

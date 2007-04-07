@@ -312,6 +312,7 @@ namespace MyTv
       {
         MediaOpened(this, e);
       }
+      SeekToEnd();
     }
     void DoStopTimeshifting(VirtualCard card)
     {
@@ -330,6 +331,14 @@ namespace MyTv
     {
       Stop();
       Close();
+    }
+    public void SeekToEnd()
+    {
+      TimeSpan duration = Duration;
+      TimeSpan newPos = duration + new TimeSpan(0, 0, 0, 0, -500);
+      ServiceScope.Get<ILogger>().Info("MyTv: OnSeekToEnd current {0}/{1}", newPos, Duration);
+      ServiceScope.Get<ILogger>().Info("MyTv: Seek to {0}/{1}", newPos, duration);
+      Position = newPos;
     }
 
     #endregion

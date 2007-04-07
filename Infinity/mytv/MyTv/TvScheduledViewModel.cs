@@ -927,7 +927,7 @@ namespace MyTv
         ServiceScope.Get<IPlayerCollectionService>().Add(player);
         player.MediaFailed += new EventHandler<MediaExceptionEventArgs>(_mediaPlayer_MediaFailed);
         player.MediaOpened += new EventHandler(player_MediaOpened);
-        player.Open(PlayerMediaType.TvLive,_playParameter.FileName);
+        player.Open(PlayerMediaType.TvLive, _playParameter.FileName);
         player.Play();
       }
 
@@ -940,18 +940,11 @@ namespace MyTv
         _viewModel.ChangeProperty("VideoBrush");
         _viewModel.ChangeProperty("FullScreen");
         _viewModel.ChangeProperty("IsVideoPresent");
-        if (_playParameter.StartFromLivePoint)
-        {
-          TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
 
-          TimeSpan duration = player.Duration;
-          TimeSpan newPos = duration + new TimeSpan(0, 0, 0, 0, -500);
-          ServiceScope.Get<ILogger>().Info("MyTv: OnSeekToEnd current {0}/{1}", newPos, player.Duration);
-          if (!player.IsStream)
-          {
-            ServiceScope.Get<ILogger>().Info("MyTv: Seek to {0}/{1}", newPos, duration);
-            player.Position = newPos;
-          }
+        TvMediaPlayer currentPlayer = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
+        if (!_playParameter.StartFromLivePoint)
+        {
+          currentPlayer.Position = new TimeSpan(0, 0, 0, 0);
         }
       }
       void _mediaPlayer_MediaFailed(object sender, MediaExceptionEventArgs e)
