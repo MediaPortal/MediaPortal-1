@@ -140,7 +140,6 @@ namespace DShowNET.Helper
              //   return null;
             
               }
-              IBaseFilter test;
            
               NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
               if (NewFilter == null)

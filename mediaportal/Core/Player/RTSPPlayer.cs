@@ -716,8 +716,8 @@ namespace MediaPortal.Player
       fCurrentPos /= 10000000d;
       _currentPos = fCurrentPos;
 
-      long lContentStart, lContentEnd, lDuration;
-      double fContentStart, fContentEnd, duration;
+      long lContentStart, lContentEnd;
+      double fContentStart, fContentEnd;
       _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
       //_mediaSeeking.GetDuration(out  lDuration);
       //mediaPos.get_Duration(out duration);

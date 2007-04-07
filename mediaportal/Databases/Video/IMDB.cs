@@ -2587,7 +2587,7 @@ namespace MediaPortal.Video.Database
           {
             movieDetails.Rating = (float)System.Double.Parse(info.Groups["rating"].Value) * 2;
           }
-          catch (Exception ex)
+          catch (Exception)
           {
           }
         }

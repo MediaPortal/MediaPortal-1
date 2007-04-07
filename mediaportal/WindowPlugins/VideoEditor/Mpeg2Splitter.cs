@@ -387,8 +387,6 @@ namespace Mpeg2SplitterPackage
 
         private void AdjustTimeStampOffset(int counts, ref DateTime tTimeStampOffset)
         {
-            long ta;
-            int hour, min, sec;
             string oldTimeStamp, newTimeStamp;
 
             TimeSpan Offset = tTimeStampOffset.Subtract(zeroTime);
@@ -420,7 +418,6 @@ namespace Mpeg2SplitterPackage
             int pes_base_1;
             int pes_base_2;
             Int64 old_pes_base, new_pes_base;
-            Int64 x;
             DateTime tTimeStamp;
             double time_in_sec;
 

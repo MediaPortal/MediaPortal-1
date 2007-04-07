@@ -50,7 +50,7 @@ namespace MediaPortal.Player
         public int firstScanLine;
         public long id = 0;
 
-        public string ToString()
+        public override string ToString()
         {
             return "Subtitle " + id + " meta data: Timeout=" + timeOut + " timestamp=" + presentTime;
         }
@@ -95,7 +95,7 @@ namespace MediaPortal.Player
         // important, these delegates must NOT be garbage collected
         // or horrible things will happen when the native code tries to call those!
         private SubtitleCallback callBack;
-        private ResetTimestampCallback resetTimeStampCallBack;
+        // private ResetTimestampCallback resetTimeStampCallBack;
 
         /// <summary>
         /// Texture storing the current/last subtitle
@@ -460,7 +460,7 @@ namespace MediaPortal.Player
                                 Pool.Managed);
             }
 
-            if (wx0 != wx || wy0 != wy || wwidth0 != wwidth || wheight0 != wheight0)
+            if (wx0 != wx || wy0 != wy || wwidth0 != wwidth || wheight0 != wheight)
             {
                 Log.Debug("Subtitle: Setting vertices");
                 CustomVertex.TransformedTextured[] verts = (CustomVertex.TransformedTextured[])vertexBuffer.Lock(0, 0);

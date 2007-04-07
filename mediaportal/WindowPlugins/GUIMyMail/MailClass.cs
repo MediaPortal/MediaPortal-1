@@ -653,11 +653,13 @@ namespace MyMail
         errors -= SslPolicyErrors.RemoteCertificateChainErrors;
       }
 
+      /* --> CertNameMistmatchOK is always set to false
       if (((errors & SslPolicyErrors.RemoteCertificateNameMismatch) ==
             SslPolicyErrors.RemoteCertificateNameMismatch) && CertNameMistmatchOK)
       {
         errors -= SslPolicyErrors.RemoteCertificateNameMismatch;
       }
+       */
 
       if (errors == SslPolicyErrors.None)
         return true;

@@ -298,7 +298,7 @@ namespace MediaPortal.Configuration.Sections
           i++;
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
 
       }

@@ -60,6 +60,10 @@ namespace MediaPortal.GUI.Library
         GUIInfo right = (GUIInfo)r;
         return (m_info == right.m_info && m_data1 == right.m_data1 && m_data2 == right.m_data2);
       }
+      public override int GetHashCode()
+      {
+        return base.GetHashCode();
+      }
     }
 
     class CCombinedValue
@@ -286,7 +290,7 @@ namespace MediaPortal.GUI.Library
     public const int CONTROL_HAS_FOCUS = 30000;
     public const int BUTTON_SCROLLER_HAS_ICON = 30001;
 
-    static string VERSION_STRING = "2.0.0";
+    // static string VERSION_STRING = "2.0.0";
 
     // the multiple information vector
     static int MULTI_INFO_START = 40000;
@@ -304,34 +308,7 @@ namespace MediaPortal.GUI.Library
     static List<GUIInfo> m_multiInfo = new List<GUIInfo>();
 
     // Current playing stuff
-    //CFileItem m_currentSong;
-    //CIMDBMovie m_currentMovie;
-    static string m_currentMovieThumb;
-    static uint m_lastMusicBitrateTime;
-    static uint m_MusicBitrate;
     static int i_SmartRequest;
-
-    // fan stuff
-    static uint m_lastSysHeatInfoTime;
-    static int m_fanSpeed;
-    //CTemperature m_gpuTemp;
-    //CTemperature m_cpuTemp;
-
-    //Fullscreen OSD Stuff
-    static uint m_AfterSeekTimeout;
-    static bool m_playerSeeking;
-    static bool m_playerShowTime;
-    static bool m_playerShowCodec;
-    static bool m_playerShowInfo;
-
-    static bool m_performingSeek;
-    // FPS counters
-    static float m_fps;
-    static uint m_frameCounter;
-    static uint m_lastFPSTime;
-
-    // Xbox Autodetect stuff
-    static bool m_hasAutoDetectedXbox;
 
     static int m_nextWindowID;
     static int m_prevWindowID;
@@ -341,12 +318,6 @@ namespace MediaPortal.GUI.Library
     #region ctor
     static GUIInfoManager()
     {
-      m_lastSysHeatInfoTime = 0;
-      m_lastMusicBitrateTime = 0;
-      m_fanSpeed = 0;
-      m_AfterSeekTimeout = 0;
-      m_playerSeeking = false;
-      m_performingSeek = false;
       m_nextWindowID = (int)GUIWindow.Window.WINDOW_INVALID;
       m_prevWindowID = (int)GUIWindow.Window.WINDOW_INVALID;
       m_stringParameters.Add("__ZZZZ__");   // to offset the string parameters by 1 to assure that all entries are non-zero
@@ -1250,7 +1221,6 @@ namespace MediaPortal.GUI.Library
              */
             return false;
           }
-          break;
         case WINDOW_NEXT:
           bReturn = (info.m_data1 == m_nextWindowID);
           break;

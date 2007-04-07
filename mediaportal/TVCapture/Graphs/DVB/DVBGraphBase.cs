@@ -78,7 +78,6 @@ namespace MediaPortal.TV.Recording
   /// </summary>
   public class DVBGraphBase : MediaPortal.TV.Recording.IGraph, IHardwarePidFiltering
   {
-    protected const bool UseTsTimeShifting = false;
     #region guids
     public static Guid MEDIATYPE_MPEG2_SECTIONS = new Guid(0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
     public static Guid MEDIASUBTYPE_MPEG2_DATA = new Guid(0xc892e55b, 0x252d, 0x42b5, 0xa3, 0x16, 0xd9, 0x97, 0xe7, 0xa5, 0xd9, 0x95);
@@ -817,10 +816,7 @@ namespace MediaPortal.TV.Recording
       Log.Info("DVBGraph:(). StartTimeShifting: ac3={0}", _isUsingAC3);
 
       bool success = false;
-      if ( UseTsTimeShifting )
-        success = CreateTsTimeShifting(strFileName, _isUsingAC3);
-      else
-        success = CreateSinkSource(strFileName, _isUsingAC3);
+      success = CreateSinkSource(strFileName, _isUsingAC3);
 
 
       if ( success )
@@ -4470,10 +4466,7 @@ namespace MediaPortal.TV.Recording
 
     public string TvTimeshiftFileName()
     {
-      if ( UseTsTimeShifting )
-        return "live.tsbuffer";
-      else
-        return "live.tv";
+      return "live.tv";
     }
 
 
@@ -4633,15 +4626,7 @@ namespace MediaPortal.TV.Recording
         return false;
       if ( !SignalPresent() )
         return false;
-      if ( !UseTsTimeShifting )
-        return true;
-
-      ITSFileSink sink = _filterTsFileSink as ITSFileSink;
-      if ( sink == null )
-        return false;
-      long filesize = 0;
-      sink.GetFileBufferSize(ref filesize);
-      return ( filesize > 20L * 1024L );//4L*1024L * 1024L);//4MB
+      return true;
     }
 
     public bool IsRadio()

@@ -392,7 +392,7 @@ namespace DirecTV
         WriteDebug("DirecTV.SerialInterface.ReadResponse(): received: {0:x}", response);
         return (response == expect);
       }
-      catch (System.TimeoutException te)
+      catch (System.TimeoutException)
       {
         WriteDebug("DirecTV.SerialInterface.ReadResponse(): SerialPortTimedOut");
       }

@@ -37,7 +37,6 @@ namespace WindowPlugins.VideoEditor
 {
 	public partial class VideoEditorConfiguration : Form
 	{
-		System.Collections.ArrayList codecList;
 		public VideoEditorConfiguration()
 		{
 			InitializeComponent();

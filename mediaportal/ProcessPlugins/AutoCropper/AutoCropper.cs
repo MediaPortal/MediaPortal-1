@@ -94,17 +94,14 @@ namespace ProcessPlugins.AutoCropper
           mode = Mode.MANUAL;
           workerEvent.Set();
           return "Manual";
-          break;
         case Mode.DYNAMIC:
           mode = Mode.DYNAMIC;
           workerEvent.Set();
           return "Auto";
-          break;
         case Mode.OFF:
           mode = Mode.OFF;
           workerEvent.Set();
           return "Off";
-          break;
       }
       return "Error";
     }

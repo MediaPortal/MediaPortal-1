@@ -616,12 +616,13 @@ namespace MediaPortal.Player
               Application.DoEvents();
               System.Threading.Thread.Sleep(100);
             }
-
+            /*
             //_vmr9 is not supported, switch to overlay
             Log.Info("TSStreamBufferPlayer9: switch to overlay");
             _mediaCtrl = null;
             Cleanup();
             return base.GetInterfaces(filename);
+             */
           }
 
           _vmr9.SetDeinterlaceMode();

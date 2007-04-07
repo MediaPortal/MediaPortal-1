@@ -42,7 +42,6 @@ namespace ProcessPlugins.AutoCropper
   public class AutoCropperConfig : System.Windows.Forms.Form
   {
     private System.ComponentModel.IContainer components = null;
-    bool _init = false;
     private MediaPortal.UserInterface.Controls.MPCheckBox enableAutoCropper;
     private GroupBox Parameters;
     private MediaPortal.UserInterface.Controls.MPLabel topScanStartLabel;

@@ -47,7 +47,6 @@ namespace MediaPortal.GUI.Library
     static LocalisationProvider _stringProvider;
     static Dictionary<string, string> _cultures;
     static string[] _languages;
-    static bool _prefix;
     #endregion
 
     #region Constructors/Destructors

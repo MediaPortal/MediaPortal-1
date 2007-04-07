@@ -123,7 +123,7 @@ namespace DShowNET
     readonly Guid GUID_THBDA_CMD = new Guid("255E0082-2017-4b03-90F8-856A62CB3D67");
     readonly uint THBDA_IOCTL_CI_SEND_PMT = 0xaa000338;
     readonly uint THBDA_IOCTL_CHECK_INTERFACE = 0xaa0001e4;
-    readonly uint THBDA_IOCTL_CI_PARSER_PMT = 0xaa00033c;
+    // readonly uint THBDA_IOCTL_CI_PARSER_PMT = 0xaa00033c;
     readonly uint THBDA_IOCTL_CI_GET_STATE = 0xaa000320;//CTL_CODE(THBDA_IO_INDEX, 200, METHOD_BUFFERED, FILE_ANY_ACCESS)
 
     bool _initialized;

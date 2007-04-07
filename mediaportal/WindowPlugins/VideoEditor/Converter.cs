@@ -7,7 +7,6 @@ namespace WindowPlugins.VideoEditor
     class Converter
     {
         bool hasMencoder = false;
-        bool inProgress = false;
         string mencoderPath;
         EditSettings settings;
         System.Diagnostics.ProcessStartInfo mencoderProcessInfo;
@@ -79,7 +78,6 @@ namespace WindowPlugins.VideoEditor
 								mencoderProcess = new System.Diagnostics.Process();
 								mencoderProcessInfo.UseShellExecute = false;
 								mencoderProcess.StartInfo = mencoderProcessInfo;
-								inProgress = true;
 								mencoderProcess.Start();
 								mencoderProcess.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
 								consoleReader = mencoderProcess.StandardOutput;
@@ -130,11 +128,10 @@ namespace WindowPlugins.VideoEditor
 						}
 						if (OnFinished != null)
 							OnFinished();
-						inProgress = false;
 						if (OnProgress != null)
 							OnProgress(100);
 					}
-					catch (Exception ex)
+					catch (Exception)
 					{
 
 					}
