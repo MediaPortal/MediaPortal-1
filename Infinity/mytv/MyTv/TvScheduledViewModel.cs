@@ -17,6 +17,7 @@ using ProjectInfinity;
 using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
+using ProjectInfinity.Navigation;
 
 namespace MyTv
 {
@@ -625,7 +626,7 @@ namespace MyTv
       {
         if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
         {
-          _viewModel.Page.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+          ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
         }
       }
     }
@@ -678,7 +679,7 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        _viewModel.Page.NavigationService.Navigate(new Uri("/MyTv;component/TvNewSchedule.xaml", UriKind.Relative));
+        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvNewSchedule.xaml", UriKind.Relative));
       }
     }
     #endregion
@@ -805,7 +806,7 @@ namespace MyTv
 
           case 1048:////settings
             TvScheduleInfo infopage = new TvScheduleInfo(rec);
-            _viewModel.Page.NavigationService.Navigate(infopage);
+            ServiceScope.Get<INavigationService>().Navigate(infopage);
             //TVProgramInfo.CurrentRecording = item.MusicTag as Schedule;
             //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
             return;

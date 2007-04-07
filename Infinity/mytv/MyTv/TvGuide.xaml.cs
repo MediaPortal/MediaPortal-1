@@ -20,6 +20,7 @@ using ProjectInfinity;
 using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
+using ProjectInfinity.Navigation;
 namespace MyTv
 {
   /// <summary>
@@ -639,7 +640,7 @@ namespace MyTv
       if (e.Key == Key.Escape)
       {
         //return to previous screen
-        this.NavigationService.GoBack();
+        ServiceScope.Get<INavigationService>().GoBack();
         return;
       }
       if (Keyboard.IsKeyDown(System.Windows.Input.Key.LeftAlt) || Keyboard.IsKeyDown(System.Windows.Input.Key.RightAlt))
@@ -669,7 +670,7 @@ namespace MyTv
       {
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
-          this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+          ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
           return;
         }
       }
@@ -963,7 +964,7 @@ namespace MyTv
     {
       if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
       {
-        this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
       }
     }
     void OnProgramClicked(object sender, RoutedEventArgs e)
@@ -982,7 +983,7 @@ namespace MyTv
           else
           {
             TvProgramInfo info = new TvProgramInfo(_selectedItem.Program);
-            NavigationService.Navigate(info);
+            ServiceScope.Get<INavigationService>().Navigate(info);
           }
         }
       }

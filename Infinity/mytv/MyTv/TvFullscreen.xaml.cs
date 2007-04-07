@@ -18,6 +18,7 @@ using ProjectInfinity;
 using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
+using ProjectInfinity.Navigation;
 namespace MyTv
 {
   /// <summary>
@@ -99,7 +100,7 @@ namespace MyTv
     void player_MediaEnded(object sender, EventArgs e)
     {
 
-      this.NavigationService.GoBack();
+      ServiceScope.Get<INavigationService>().GoBack();
     }
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
@@ -154,7 +155,7 @@ namespace MyTv
       {
         //return to previous screen
         e.Handled = true;
-        this.NavigationService.GoBack();
+        ServiceScope.Get<INavigationService>().GoBack();
         return;
       }
       if (e.Key == Key.Space)

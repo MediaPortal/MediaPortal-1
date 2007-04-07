@@ -32,6 +32,7 @@ using ProjectInfinity;
 using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
+using ProjectInfinity.Navigation;
 namespace MyTv
 {
   /// <summary>
@@ -109,7 +110,7 @@ namespace MyTv
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
           e.Handled = true;
-          this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+          ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
           return;
         }
       }
@@ -175,7 +176,7 @@ namespace MyTv
     /// </summary>
     void OnFailedToConnectToServer()
     {
-      this.NavigationService.Navigate(new Uri("/MyTv;component/TvSetup.xaml", UriKind.Relative));
+      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSetup.xaml", UriKind.Relative));
     }
 
     /// <summary>

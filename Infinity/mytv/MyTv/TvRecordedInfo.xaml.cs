@@ -16,6 +16,7 @@ using ProjectInfinity;
 using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
+using ProjectInfinity.Navigation;
 
 namespace MyTv
 {
@@ -78,14 +79,14 @@ namespace MyTv
       if (e.Key == System.Windows.Input.Key.Escape)
       {
         //return to previous screen
-        this.NavigationService.GoBack();
+        ServiceScope.Get<INavigationService>().GoBack();
         return;
       }
       if (e.Key == System.Windows.Input.Key.X)
       {
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
-          this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+          ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
           return;
         }
       }

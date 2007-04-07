@@ -18,6 +18,7 @@ using Gentle.Framework;
 using ProjectInfinity;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
+using ProjectInfinity.Navigation;
 
 namespace MyTv
 {
@@ -138,7 +139,7 @@ namespace MyTv
           Keyboard.Focus(textboxServer);
           return;
         }
-        this.NavigationService.GoBack();
+        ServiceScope.Get<INavigationService>().GoBack();
       }
       else if (tvServerOk)
       {

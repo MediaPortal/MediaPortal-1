@@ -17,6 +17,7 @@ using Dialogs;
 using ProjectInfinity;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
+using ProjectInfinity.Navigation;
 
 namespace MyTv
 {
@@ -66,22 +67,22 @@ namespace MyTv
 
     void OnTvGuide(object sender, RoutedEventArgs e)
     {
-      this.NavigationService.Navigate(new Uri("/MyTv;component/TvGuide.xaml", UriKind.Relative));
+      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvGuide.xaml", UriKind.Relative));
     }
     void OnSearchTitle(object sender, RoutedEventArgs e)
     {
-      this.NavigationService.Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
+      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
 
     }
     void OnSearchKeyword(object sender, RoutedEventArgs e)
     {
       TvSearch search = new TvSearch(TvSearch.SearchType.Description);
-      this.NavigationService.Navigate(search);
+      ServiceScope.Get<INavigationService>().Navigate(search);
     }
     void OnSearchGenre(object sender, RoutedEventArgs e)
     {
       TvSearch search = new TvSearch(TvSearch.SearchType.Genre);
-      this.NavigationService.Navigate(search);
+      ServiceScope.Get<INavigationService>().Navigate(search);
     }
     void OnAdvancedRecord(object sender, RoutedEventArgs e)
     {
@@ -205,7 +206,7 @@ namespace MyTv
       rec.Persist();
       TvServer server = new TvServer();
       server.OnNewSchedule();
-      this.NavigationService.GoBack();
+      ServiceScope.Get<INavigationService>().GoBack();
     }
     void OnQuickRecord(object sender, RoutedEventArgs e)
     {
@@ -314,7 +315,7 @@ namespace MyTv
       rec.Persist();
       TvServer server = new TvServer();
       server.OnNewSchedule();
-      this.NavigationService.GoBack();
+      ServiceScope.Get<INavigationService>().GoBack();
     }
   }
 }

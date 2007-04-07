@@ -17,6 +17,7 @@ using ProjectInfinity;
 using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
+using ProjectInfinity.Navigation;
 
 
 namespace MyTv
@@ -604,7 +605,7 @@ namespace MyTv
       {
         if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
         {
-          _viewModel.Page.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+          ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
         }
       }
     }
@@ -784,7 +785,7 @@ namespace MyTv
           case 2:
             {
               TvRecordedInfo infopage = new TvRecordedInfo(recording);
-              _viewModel.Page.NavigationService.Navigate(infopage);
+              ServiceScope.Get<INavigationService>().Navigate(infopage);
             }
             break;
         }
