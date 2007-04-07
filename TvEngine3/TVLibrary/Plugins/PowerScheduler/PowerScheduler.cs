@@ -173,6 +173,7 @@ namespace TvEngine.PowerScheduler
     /// Called by the PowerSchedulerPlugin to start the PowerScheduler
     /// </summary>
     /// <param name="controller">TVController from the tvservice</param>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Start(IController controller)
     {
       _controller = controller;
@@ -211,12 +212,14 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Called by the PowerSchedulerPlugin to stop the PowerScheduler
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Stop()
     {
       // stop the global timer responsible for standby checking and refreshing settings
       _timer.Enabled = false;
       _timer.Elapsed -= new System.Timers.ElapsedEventHandler(OnTimerElapsed);
       _timer.Dispose();
+      _timer = null;
 
       // disable the wakeup timer
       _wakeupTimer.SecondsToWait = -1;
@@ -554,6 +557,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     /// <param name="powerStatus">PowerBroadcastStatus the system is changing to</param>
     /// <returns>bool indicating if the broadcast was honoured</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private bool OnPowerEvent(System.ServiceProcess.PowerBroadcastStatus powerStatus)
     {
       switch (powerStatus)
@@ -565,9 +569,10 @@ namespace TvEngine.PowerScheduler
           SetWakeupTimer();
           if (idle)
           {
+            _timer.Enabled = false;
+            _controller.EpgGrabberEnabled = false;
             FreeTVCards();
             SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
-            _timer.Enabled = false;
           }
           return idle;
         case System.ServiceProcess.PowerBroadcastStatus.QuerySuspendFailed:
@@ -595,6 +600,8 @@ namespace TvEngine.PowerScheduler
             ReinitializeController();
           }
           ResetAndEnableTimer();
+          if (!_controller.EpgGrabberEnabled)
+            _controller.EpgGrabberEnabled = true;
           SendPowerSchedulerEvent(PowerSchedulerEventType.ResumedFromStandby);
           return true;
       }
@@ -609,7 +616,8 @@ namespace TvEngine.PowerScheduler
     {
       _lastIdleTime = DateTime.Now;
       _idle = false;
-      _timer.Enabled = true;
+      if (_timer != null)
+        _timer.Enabled = true;
     }
 
     /// <summary>
