@@ -98,9 +98,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="MpStylesAndTemplates.xaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Page Include="VideoFullscreen.xaml" />
     <Page Include="VideoHome.xaml" />
   </ItemGroup>
