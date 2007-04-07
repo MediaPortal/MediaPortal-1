@@ -9,7 +9,8 @@ namespace ProjectInfinity.Players
     Music,
     Movie,
     TvRecording,
-    TvLive
+    TvLive,
+    DVD
   };
 
   // Summary:

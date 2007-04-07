@@ -79,7 +79,6 @@
     <Compile Include="VideoHomeViewModel.cs" />
     <Compile Include="VideoModel.cs" />
     <Compile Include="VideoPlayer.cs" />
-    <Compile Include="VideoPlayerCollection.cs" />
     <Compile Include="VideoPlugin.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>

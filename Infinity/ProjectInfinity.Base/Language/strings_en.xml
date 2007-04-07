@@ -170,5 +170,14 @@
     <String id="15">Year</String>
     <String id="16">Rating</String>
     <String id="17">DVD</String>
+    <String id="18">View: Film strip</String>
+    <String id="19">View: List</String>
+    <String id="20">View: Icon</String>
+    <String id="21">Film strip</String>
+    <String id="22">List</String>
+    <String id="23">Icon</String>
+    <String id="24">Please select drive to play from</String>
+    <String id="25">DVD Playback</String>
+    <String id="26">DVD Playback failed. Are you sure you've put a DVD into the player?</String>
   </Section>
 </Language>
