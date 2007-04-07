@@ -74,6 +74,7 @@ namespace MyTv
     /// <param name="args">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnTest(object sender, EventArgs args)
     {
+      string connectionString = "", provider = "";
       RemoteControl.Clear();
       RemoteControl.HostName = textboxServer.Text;
       bool tvServerOk = false;
@@ -82,34 +83,38 @@ namespace MyTv
       //check connection with tvserver
       try
       {
+        ServiceScope.Get<ILogger>().Info("Connect to tvserver {0}", textboxServer.Text);
         int cards = RemoteControl.Instance.Cards;
         Gentle.Framework.ProviderFactory.ResetGentle(true);
-        string connectionString, provider;
         RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
 
         tvServerOk = true;
 
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        ServiceScope.Get<ILogger>().Info("Unable to connect to  tvserver at {0}", RemoteControl.HostName);
+        ServiceScope.Get<ILogger>().Error(ex);
         RemoteControl.Clear();
       }
 
       //check connection with database
       try
       {
+        ServiceScope.Get<ILogger>().Info("Connect to database {0}", connectionString);
         IList cards = Card.ListAll();
         databaseOk = true;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        ServiceScope.Get<ILogger>().Info("Unable to connect open database at {0}", connectionString);
+        ServiceScope.Get<ILogger>().Error(ex);
       }
       if (tvServerOk && databaseOk)
       {
         try
         {
-          string connectionString, provider;
           RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
 
           XmlDocument doc = new XmlDocument();

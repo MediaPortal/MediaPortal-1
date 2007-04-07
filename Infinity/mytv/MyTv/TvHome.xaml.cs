@@ -156,9 +156,10 @@ namespace MyTv
         int cards = RemoteControl.Instance.Cards;
         IList channels = Channel.ListAll();
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         ServiceScope.Get<ILogger>().Info("mytv:initialize connect failed");
+        ServiceScope.Get<ILogger>().Error(ex);
         this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new ConnectToServerDelegate(OnFailedToConnectToServer));
         return;
       }
