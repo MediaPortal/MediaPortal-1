@@ -312,7 +312,10 @@ namespace MyTv
       {
         MediaOpened(this, e);
       }
-      SeekToEnd();
+      if (!IsStream )
+      {
+        SeekToEnd();
+      }
     }
     void DoStopTimeshifting(VirtualCard card)
     {
