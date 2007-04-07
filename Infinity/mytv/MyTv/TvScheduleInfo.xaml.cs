@@ -181,7 +181,7 @@ namespace MyTv
       ShowUpcomingEpisodes();
 
 
-      if (TvPlayerCollection.Instance.Count > 0)
+      if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
       {
         MediaPlayer player = TvPlayerCollection.Instance[0];
         VideoDrawing videoDrawing = new VideoDrawing();
@@ -238,7 +238,7 @@ namespace MyTv
       }
       if (e.Key == System.Windows.Input.Key.X)
       {
-        if (TvPlayerCollection.Instance.Count > 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
         {
           this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
           return;

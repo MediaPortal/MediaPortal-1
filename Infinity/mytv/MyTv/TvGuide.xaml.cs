@@ -91,7 +91,7 @@ namespace MyTv
     {
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
       _recordingList = Schedule.ListAll();
-      _groupMaps = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
+      _groupMaps = ServiceScope.Get<ITvChannelNavigator>().CurrentGroup.ReferringGroupMap();
     }
 
     /// <summary>
@@ -605,7 +605,7 @@ namespace MyTv
       RenderTvGuide();
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
 
-      if (TvPlayerCollection.Instance.Count > 0)
+      if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
       {
         MediaPlayer player = TvPlayerCollection.Instance[0];
         VideoDrawing videoDrawing = new VideoDrawing();
@@ -667,7 +667,7 @@ namespace MyTv
       }
       if (e.Key == System.Windows.Input.Key.X)
       {
-        if (TvPlayerCollection.Instance.Count > 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
         {
           this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
           return;
@@ -961,7 +961,7 @@ namespace MyTv
     }
     void OnbuttonVideoClicked(object sender, EventArgs args)
     {
-      if (TvPlayerCollection.Instance.Count != 0)
+      if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
       {
         this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
       }
@@ -997,7 +997,7 @@ namespace MyTv
     void ViewChannel(Channel channel)
     {
       ServiceScope.Get<ILogger>().Info("Tv: view channel:{0}", channel.Name);
-      ChannelNavigator.Instance.SelectedChannel = channel;
+      ServiceScope.Get<ITvChannelNavigator>().SelectedChannel = channel;
       //tell server to start timeshifting the channel
       //we do this in the background so GUI stays responsive...
       StartTimeShiftingDelegate starter = new StartTimeShiftingDelegate(this.StartTimeShiftingBackGroundWorker);
@@ -1030,29 +1030,29 @@ namespace MyTv
     /// <param name="card">The card.</param>
     private void OnStartTimeShiftingResult(TvResult succeeded, VirtualCard card)
     {
-      ServiceScope.Get<ILogger>().Info("Tv:  timeshifting channel:{0} result:{1}", ChannelNavigator.Instance.SelectedChannel.Name, succeeded);
+      ServiceScope.Get<ILogger>().Info("Tv:  timeshifting channel:{0} result:{1}", ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.Name, succeeded);
 
       if (succeeded == TvResult.Succeeded)
       {
         //timeshifting worked, now view the channel
-        ChannelNavigator.Instance.Card = card;
+        ServiceScope.Get<ITvChannelNavigator>().Card = card;
         //do we already have a media player ?
-        if (TvPlayerCollection.Instance.Count != 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
         {
           if (TvPlayerCollection.Instance[0].FileName != card.TimeShiftFileName)
           {
             buttonVideo.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-            TvPlayerCollection.Instance.DisposeAll();
+            ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
           }
         }
-        if (TvPlayerCollection.Instance.Count != 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
         {
           this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
           return;
         }
         //create a new media player 
         ServiceScope.Get<ILogger>().Info("Tv:  open file", card.TimeShiftFileName);
-        MediaPlayer player = TvPlayerCollection.Instance.Get(card, card.TimeShiftFileName);
+        MediaPlayer player = ServiceScope.Get<ITvPlayerCollection>().Get(card, card.TimeShiftFileName);
         player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
         player.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
 
@@ -1069,9 +1069,9 @@ namespace MyTv
       else
       {
         //close media player
-        if (TvPlayerCollection.Instance.Count != 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
         {
-          TvPlayerCollection.Instance.DisposeAll();
+          ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
         }
 
         //show error to user
@@ -1124,7 +1124,7 @@ namespace MyTv
     #region media player events & dispatcher methods
     void OnSeekToEnd()
     {
-      if (TvPlayerCollection.Instance.Count != 0)
+      if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
       {
         ServiceScope.Get<ILogger>().Info("Tv:  seek to livepoint");
         TvMediaPlayer player = TvPlayerCollection.Instance[0];
@@ -1152,7 +1152,7 @@ namespace MyTv
     void OnMediaPlayerError()
     {
 
-      if (TvPlayerCollection.Instance.Count == 0) return;
+      if (ServiceScope.Get<ITvPlayerCollection>().Count == 0) return;
       TvMediaPlayer player = TvPlayerCollection.Instance[0];
       ServiceScope.Get<ILogger>().Info("Tv:  failed to open file {0} error:{1}", player.FileName, player.ErrorMessage);
       buttonVideo.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
@@ -1167,7 +1167,7 @@ namespace MyTv
         dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/ + player.ErrorMessage;
         dlgError.ShowDialog();
       }
-      TvPlayerCollection.Instance.DisposeAll();
+      ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
 
     }
     /// <summary>

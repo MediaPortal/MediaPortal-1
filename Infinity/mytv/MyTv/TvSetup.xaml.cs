@@ -42,6 +42,7 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      ServiceScope.Get<ILogger>().Info("mytv:setuptv");
       labelText.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 102);//Please enter the hostname of the tvserver
       buttonSave.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 103);//Save
       // Sets keyboard focus on the first Button in the sample.
@@ -125,12 +126,14 @@ namespace MyTv
           node.InnerText = connectionString;
           nodeProvider.InnerText = provider;
           doc.Save("gentle.config");
-          ChannelNavigator.Instance.Initialize();
+          TvChannelNavigator.Instance.Initialize();
           UserSettings.SetString("tv", "serverHostName", RemoteControl.HostName);
+          ServiceScope.Get<ILogger>().Info("mytv:setuptv->connected successfully");
 
         }
         catch (Exception)
         {
+          ServiceScope.Get<ILogger>().Info("mytv:setuptv->Unable to modify gentle.config");
           result1.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 104);//"Unable to modify gentle.config";
           Keyboard.Focus(textboxServer);
           return;
@@ -139,11 +142,13 @@ namespace MyTv
       }
       else if (tvServerOk)
       {
+        ServiceScope.Get<ILogger>().Info("mytv:setuptv->unable to connect to database");
         result1.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 105);//"Connected to tvserver, but unable to connect to database";
         Keyboard.Focus(textboxServer);
       }
       else
       {
+        ServiceScope.Get<ILogger>().Info("mytv:setuptv->unable to connect to tvserver");
         result1.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 106);//"Failed to connect to tvserver";
         Keyboard.Focus(textboxServer);
       }

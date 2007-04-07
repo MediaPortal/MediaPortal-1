@@ -93,7 +93,7 @@ namespace MyTv
       dlgLogoMenu.Header = "Channel";
       dlgLogoMenu.SubTitle = "";
 
-      IList channels = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
+      IList channels = ServiceScope.Get<ITvChannelNavigator>().CurrentGroup.ReferringGroupMap();
       foreach (GroupMap chan in channels)
       {
         string logo = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.GetLogoFileName(chan.ReferencedChannel().Name));
@@ -217,7 +217,7 @@ namespace MyTv
       dlgLogoMenu.Header = "Channel";
       dlgLogoMenu.SubTitle = "";
 
-      IList channels = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
+      IList channels = ServiceScope.Get<ITvChannelNavigator>().CurrentGroup.ReferringGroupMap();
       foreach (GroupMap chan in channels)
       {
         string logo = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.GetLogoFileName(chan.ReferencedChannel().Name));

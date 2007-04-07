@@ -43,6 +43,8 @@ namespace MyTv
     TvHomeViewModel _model;
     private delegate void ConnectToServerDelegate();
     static bool _firstTime = true;
+    TvPlayerCollection _players = TvPlayerCollection.Instance;
+    TvChannelNavigator _navigator =  TvChannelNavigator.Instance;
     #endregion
 
     #region ctor
@@ -104,7 +106,7 @@ namespace MyTv
     {
       if (e.Key == System.Windows.Input.Key.X)
       {
-        if (TvPlayerCollection.Instance.Count > 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
         {
           e.Handled = true;
           this.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
@@ -151,7 +153,7 @@ namespace MyTv
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
 
         ServiceScope.Get<ILogger>().Info("mytv:initialize channel navigator");
-        ChannelNavigator.Instance.Initialize();
+        TvChannelNavigator.Instance.Initialize();
 
         int cards = RemoteControl.Instance.Cards;
         IList channels = Channel.ListAll();

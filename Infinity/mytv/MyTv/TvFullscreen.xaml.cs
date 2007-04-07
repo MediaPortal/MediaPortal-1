@@ -75,7 +75,7 @@ namespace MyTv
       _reachedStart = false;
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
 
-      if (TvPlayerCollection.Instance.Count > 0)
+      if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
       {
         MediaPlayer player = TvPlayerCollection.Instance[0];
         player.MediaEnded += new EventHandler(player_MediaEnded);
@@ -160,7 +160,7 @@ namespace MyTv
       if (e.Key == Key.Space)
       {
         e.Handled = true;
-        if (TvPlayerCollection.Instance.Count > 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
         {
           TvMediaPlayer player = TvPlayerCollection.Instance[0];
           player.Pause();
@@ -174,7 +174,7 @@ namespace MyTv
     /// </summary>
     void UpdateTopOsd()
     {
-      if (TvPlayerCollection.Instance.Count == 0) return;
+      if (ServiceScope.Get<ITvPlayerCollection>().Count == 0) return;
       TvMediaPlayer player = TvPlayerCollection.Instance[0];
       if (player.IsPaused || _seekDirection != SeekDirection.Unknown || _bottomOsdVisible)
         gridOSD.Visibility = Visibility.Visible;
@@ -186,7 +186,7 @@ namespace MyTv
       {
         if (player.Card.IsTimeShifting || player.Card.IsTimeShifting)
         {
-          Channel channel = ChannelNavigator.Instance.SelectedChannel;
+          Channel channel = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel;
           Program program = channel.CurrentProgram;
           labelStart.Content = channel.CurrentProgram.StartTime.ToString("HH:mm");
           labelEnd.Content = channel.CurrentProgram.EndTime.ToString("HH:mm");
@@ -292,7 +292,7 @@ namespace MyTv
     void UpdateBottomOsd()
     {
       gridOSDBottom.Visibility = _bottomOsdVisible ? Visibility.Visible : Visibility.Hidden;
-      if (TvPlayerCollection.Instance.Count == 0) return;
+      if (ServiceScope.Get<ITvPlayerCollection>().Count == 0) return;
       Channel ch = null;
       if (_zapChannel != "")
       {
@@ -300,7 +300,7 @@ namespace MyTv
         if (Int32.TryParse(_zapChannel, out channelNr))
         {
           channelNr--;
-          ChannelGroup group = ChannelNavigator.Instance.CurrentGroup;
+          ChannelGroup group = ServiceScope.Get<ITvChannelNavigator>().CurrentGroup;
           if (group != null)
           {
             IList maps = group.ReferringGroupMap();
@@ -314,7 +314,7 @@ namespace MyTv
       }
       else
       {
-        ch = ChannelNavigator.Instance.SelectedChannel;
+        ch = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel;
       }
       if (ch == null) return;
       Program program = ch.CurrentProgram;
@@ -343,7 +343,7 @@ namespace MyTv
       _seekTimeoutTimer.Stop();
       _seekTimeoutTimer.IsEnabled = true;
       _seekTimeoutTimer.Start();
-      if (TvPlayerCollection.Instance.Count == 0) return false;
+      if (ServiceScope.Get<ITvPlayerCollection>().Count == 0) return false;
       TvMediaPlayer player = TvPlayerCollection.Instance[0];
       TimeSpan newPosition = ts + player.Position;
       if (newPosition.TotalSeconds > player.Duration.TotalSeconds)
@@ -446,7 +446,7 @@ namespace MyTv
     {
       _seekTimeoutTimer.Stop();
       _seekTimeoutTimer.IsEnabled = false;
-      if (TvPlayerCollection.Instance.Count != 0)
+      if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
       {
         TvMediaPlayer player = TvPlayerCollection.Instance[0];
         if (_reachedStart)
@@ -483,7 +483,7 @@ namespace MyTv
       if (Int32.TryParse(_zapChannel, out channelNr))
       {
         channelNr--;
-        ChannelGroup group = ChannelNavigator.Instance.CurrentGroup;
+        ChannelGroup group = ServiceScope.Get<ITvChannelNavigator>().CurrentGroup;
         if (group != null)
         {
           IList maps = group.ReferringGroupMap();
@@ -502,14 +502,14 @@ namespace MyTv
       if (_zapChannel.Length == 0)
       {
         _zapChannel = "2";
-        ChannelGroup group = ChannelNavigator.Instance.CurrentGroup;
+        ChannelGroup group = ServiceScope.Get<ITvChannelNavigator>().CurrentGroup;
         if (group != null)
         {
           IList maps = group.ReferringGroupMap();
           for (int i=0; i < maps.Count;++i)
           {
             GroupMap map = (GroupMap)maps[i];
-            if (map.ReferencedChannel() == ChannelNavigator.Instance.SelectedChannel)
+            if (map.ReferencedChannel() == ServiceScope.Get<ITvChannelNavigator>().SelectedChannel)
             {
               i++;
               _zapChannel = i.ToString();
@@ -538,14 +538,14 @@ namespace MyTv
       if (_zapChannel.Length == 0)
       {
         _zapChannel = "0";
-        ChannelGroup group = ChannelNavigator.Instance.CurrentGroup;
+        ChannelGroup group = ServiceScope.Get<ITvChannelNavigator>().CurrentGroup;
         if (group != null)
         {
           IList maps = group.ReferringGroupMap();
           for (int i = 0; i < maps.Count; ++i)
           {
             GroupMap map = (GroupMap)maps[i];
-            if (map.ReferencedChannel() == ChannelNavigator.Instance.SelectedChannel)
+            if (map.ReferencedChannel() == ServiceScope.Get<ITvChannelNavigator>().SelectedChannel)
             {
               i++;
               _zapChannel = i.ToString();
@@ -558,7 +558,7 @@ namespace MyTv
       if (Int32.TryParse(_zapChannel, out channelNr))
       {
         channelNr++;
-        ChannelGroup group = ChannelNavigator.Instance.CurrentGroup;
+        ChannelGroup group = ServiceScope.Get<ITvChannelNavigator>().CurrentGroup;
         if (group != null)
         {
           IList maps = group.ReferringGroupMap();
@@ -578,7 +578,7 @@ namespace MyTv
     void OnChannelKey(Key key)
     {
       if (_seekDirection != SeekDirection.Unknown) return;
-      if (TvPlayerCollection.Instance.Count == 0) return;
+      if (ServiceScope.Get<ITvPlayerCollection>().Count == 0) return;
       TvMediaPlayer player = TvPlayerCollection.Instance[0];
       if (player.Card == null) return;
       if (player.Card.IsTimeShifting == false && player.Card.IsRecording == false) return;
@@ -599,7 +599,7 @@ namespace MyTv
     void ViewChannel(Channel channel)
     {
       ServiceScope.Get<ILogger>().Info("Tv: view channel:{0}", channel.Name);
-      ChannelNavigator.Instance.SelectedChannel = channel;
+      ServiceScope.Get<ITvChannelNavigator>().SelectedChannel = channel;
       //tell server to start timeshifting the channel
       //we do this in the background so GUI stays responsive...
       StartTimeShiftingDelegate starter = new StartTimeShiftingDelegate(this.StartTimeShiftingBackGroundWorker);
@@ -632,28 +632,28 @@ namespace MyTv
     /// <param name="card">The card.</param>
     private void OnStartTimeShiftingResult(TvResult succeeded, VirtualCard card)
     {
-      ServiceScope.Get<ILogger>().Info("Tv:  timeshifting channel:{0} result:{1}", ChannelNavigator.Instance.SelectedChannel.Name, succeeded);
+      ServiceScope.Get<ILogger>().Info("Tv:  timeshifting channel:{0} result:{1}", ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.Name, succeeded);
       if (succeeded == TvResult.Succeeded)
       {
         //timeshifting worked, now view the channel
-        ChannelNavigator.Instance.Card = card;
+        ServiceScope.Get<ITvChannelNavigator>().Card = card;
         //do we already have a media player ?
-        if (TvPlayerCollection.Instance.Count != 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
         {
           if (TvPlayerCollection.Instance[0].FileName != card.TimeShiftFileName)
           {
             gridMain.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-            TvPlayerCollection.Instance.DisposeAll();
+            ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
           }
         }
-        if (TvPlayerCollection.Instance.Count != 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
         {
           this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
           return;
         }
         //create a new media player 
         ServiceScope.Get<ILogger>().Info("Tv:  open file", card.TimeShiftFileName);
-        MediaPlayer player = TvPlayerCollection.Instance.Get(card, card.TimeShiftFileName);
+        MediaPlayer player = ServiceScope.Get<ITvPlayerCollection>().Get(card, card.TimeShiftFileName);
         player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
         player.MediaOpened += new EventHandler(_mediaPlayer_MediaOpened);
 
@@ -670,9 +670,9 @@ namespace MyTv
       else
       {
         //close media player
-        if (TvPlayerCollection.Instance.Count != 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
         {
-          TvPlayerCollection.Instance.DisposeAll();
+          ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
         }
 
         //show error to user
@@ -724,7 +724,7 @@ namespace MyTv
     #region media player events & dispatcher methods
     void OnSeekToEnd()
     {
-      if (TvPlayerCollection.Instance.Count != 0)
+      if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
       {
         ServiceScope.Get<ILogger>().Info("Tv:  seek to livepoint");
         TvMediaPlayer player = TvPlayerCollection.Instance[0];
@@ -751,7 +751,7 @@ namespace MyTv
     void OnMediaPlayerError()
     {
 
-      if (TvPlayerCollection.Instance.Count == 0) return;
+      if (ServiceScope.Get<ITvPlayerCollection>().Count == 0) return;
       TvMediaPlayer player = TvPlayerCollection.Instance[0];
       ServiceScope.Get<ILogger>().Info("Tv:  failed to open file {0} error:{1}", player.FileName, player.ErrorMessage);
       gridMain.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
@@ -766,7 +766,7 @@ namespace MyTv
         dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/ + player.ErrorMessage;
         dlgError.ShowDialog();
       }
-      TvPlayerCollection.Instance.DisposeAll();
+      ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
 
     }
     /// <summary>

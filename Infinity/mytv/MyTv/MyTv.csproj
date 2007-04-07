@@ -124,7 +124,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChannelNavigator.cs" />
+    <Compile Include="TvChannelNavigator\ChannelNavigator.cs" />
+    <Compile Include="TvChannelNavigator\ITvChannelNavigator.cs" />
+    <Compile Include="TvMediaPlayer\ITvPlayerCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -150,9 +152,9 @@
     </Compile>
     <Compile Include="RecordingModel.cs" />
     <Compile Include="ScheduleModel.cs" />
-    <Compile Include="ThumbnailGenerator.cs" />
-    <Compile Include="Thumbs.cs" />
-    <Compile Include="TsReaderCheck.cs" />
+    <Compile Include="Helper classes\ThumbnailGenerator.cs" />
+    <Compile Include="Helper classes\Thumbs.cs" />
+    <Compile Include="Helper classes\TsReaderCheck.cs" />
     <Compile Include="TvHomeViewModel.cs" />
     <Compile Include="TvRecordedViewModel.cs" />
     <Compile Include="TvFullscreen.xaml.cs">
@@ -163,12 +165,12 @@
       <SubType>Code</SubType>
       <DependentUpon>TvGuide.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TvMediaPlayer.cs" />
+    <Compile Include="TvMediaPlayer\TvMediaPlayer.cs" />
     <Compile Include="TvNewSchedule.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvNewSchedule.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TvPlayerCollection.cs" />
+    <Compile Include="TvMediaPlayer\TvPlayerCollection.cs" />
     <Compile Include="TvPlugin.cs" />
     <Compile Include="TvProgramInfo.xaml.cs">
       <SubType>Code</SubType>
@@ -199,9 +201,9 @@
       <SubType>Code</SubType>
       <DependentUpon>TvSetup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserSettings.cs" />
-    <Compile Include="WindowMediaPlayerCheck.cs" />
-    <Compile Include="WindowTaskbar.cs" />
+    <Compile Include="Helper classes\UserSettings.cs" />
+    <Compile Include="Helper classes\WindowMediaPlayerCheck.cs" />
+    <Compile Include="Helper classes\WindowTaskbar.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>

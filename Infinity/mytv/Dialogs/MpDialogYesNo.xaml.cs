@@ -28,7 +28,7 @@ namespace Dialogs
       this.WindowStyle = WindowStyle.None;
       this.ShowInTaskbar = false;
       this.ResizeMode = ResizeMode.NoResize;
-      this.AllowsTransparency = true;
+      this.AllowsTransparency = true;//we need it so we can alphablend the dialog with the gui. However this causes s/w rendering in wpf
       InitializeComponent();
     }
     public DialogResult DialogResult

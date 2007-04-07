@@ -56,7 +56,7 @@ namespace MyTv
       //store page & window
       _page = page;
       _window = Window.GetWindow(_page);
-      ChannelNavigator.Instance.PropertyChanged += new PropertyChangedEventHandler(OnChannelChanged);
+      ServiceScope.Get<ITvChannelNavigator>().PropertyChanged += new PropertyChangedEventHandler(OnChannelChanged);
     }
 
     void OnChannelChanged(object sender, PropertyChangedEventArgs e)
@@ -97,7 +97,7 @@ namespace MyTv
     {
       get
       {
-        if (ChannelNavigator.Instance.IsRecording)
+        if (ServiceScope.Get<ITvChannelNavigator>().IsRecording)
           return String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.TvRecordingIcon);
         else return "";
       }
@@ -110,8 +110,8 @@ namespace MyTv
     {
       get
       {
-        if (ChannelNavigator.Instance.SelectedChannel == null) return 0;
-        Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
+        if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel == null) return 0;
+        Program program = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.CurrentProgram;
         if (program == null) return 0;
 
         TimeSpan duration = program.EndTime - program.StartTime;
@@ -128,8 +128,8 @@ namespace MyTv
     {
       get
       {
-        if (ChannelNavigator.Instance.SelectedChannel == null) return "";
-        Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
+        if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel == null) return "";
+        Program program = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.CurrentProgram;
         if (program == null) return "";
         return program.Title;
       }
@@ -142,8 +142,8 @@ namespace MyTv
     {
       get
       {
-        if (ChannelNavigator.Instance.SelectedChannel == null) return "";
-        Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
+        if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel == null) return "";
+        Program program = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.CurrentProgram;
         if (program == null) return "";
         return program.Genre;
       }
@@ -156,8 +156,8 @@ namespace MyTv
     {
       get
       {
-        if (ChannelNavigator.Instance.SelectedChannel == null) return "";
-        Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
+        if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel == null) return "";
+        Program program = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.CurrentProgram;
         if (program == null) return "";
         return program.Description;
       }
@@ -170,8 +170,8 @@ namespace MyTv
     {
       get
       {
-        if (ChannelNavigator.Instance.SelectedChannel == null) return "";
-        Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
+        if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel == null) return "";
+        Program program = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.CurrentProgram;
         if (program == null) return "";
         return String.Format("{0}-{1}", program.StartTime.ToString("HH:mm"), program.EndTime.ToString("HH:mm")); ;
       }
@@ -184,8 +184,8 @@ namespace MyTv
     {
       get
       {
-        if (ChannelNavigator.Instance.SelectedChannel == null) return "";
-        Program program = ChannelNavigator.Instance.SelectedChannel.CurrentProgram;
+        if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel == null) return "";
+        Program program = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.CurrentProgram;
         if (program == null) return "";
         return program.ReferencedChannel().Name;
       }
@@ -293,7 +293,7 @@ namespace MyTv
     {
       get
       {
-        return (TvPlayerCollection.Instance.Count > 0);
+        return (ServiceScope.Get<ITvPlayerCollection>().Count > 0);
       }
     }
     /// <summary>
@@ -304,7 +304,7 @@ namespace MyTv
     {
       get
       {
-        return (TvPlayerCollection.Instance.Count != 0) ? Visibility.Visible : Visibility.Collapsed;
+        return (ServiceScope.Get<ITvPlayerCollection>().Count != 0) ? Visibility.Visible : Visibility.Collapsed;
       }
     }
     /// <summary>
@@ -315,7 +315,7 @@ namespace MyTv
     {
       get
       {
-        if (TvPlayerCollection.Instance.Count > 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
         {
           MediaPlayer player = TvPlayerCollection.Instance[0];
           VideoDrawing videoDrawing = new VideoDrawing();
@@ -563,7 +563,7 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        if (TvPlayerCollection.Instance.Count != 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
         {
           _viewModel.Page.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
         }
@@ -645,16 +645,16 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        if (TvPlayerCollection.Instance.Count > 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
         {
-          TvPlayerCollection.Instance.DisposeAll();
+          ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
           _viewModel.ChangeProperty("VideoBrush");
           _viewModel.ChangeProperty("FullScreen");
           _viewModel.ChangeProperty("IsVideoPresent");
           _viewModel.ChangeProperty("TvOnOff");
         }
         _playParameter = parameter as PlayParameter;
-        TvMediaPlayer player = TvPlayerCollection.Instance.Get(_playParameter.Card, _playParameter.FileName);
+        TvMediaPlayer player = ServiceScope.Get<ITvPlayerCollection>().Get(_playParameter.Card, _playParameter.FileName);
         player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
         player.MediaOpened += new EventHandler(player_MediaOpened);
         player.Play();
@@ -690,7 +690,7 @@ namespace MyTv
       }
       void OnMediaPlayerError()
       {
-        if (TvPlayerCollection.Instance.Count > 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
         {
           if (TvPlayerCollection.Instance[0].HasError)
           {
@@ -703,7 +703,7 @@ namespace MyTv
             dlgError.ShowDialog();
           }
         }
-        TvPlayerCollection.Instance.DisposeAll();
+        ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
       }
     }
     #endregion
@@ -747,7 +747,7 @@ namespace MyTv
 
         User user = new User();
         TvResult succeeded = TvResult.Succeeded;
-        ChannelNavigator.Instance.SelectedChannel = channel;
+        ServiceScope.Get<ITvChannelNavigator>().SelectedChannel = channel;
         succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
 
         // Schedule the update function in the UI thread.
@@ -761,14 +761,14 @@ namespace MyTv
       /// <param name="card">The card.</param>
       private void OnStartTimeShiftingResult(TvResult succeeded, VirtualCard card)
       {
-        ServiceScope.Get<ILogger>().Info("Tv:  timeshifting channel:{0} result:{1}", ChannelNavigator.Instance.SelectedChannel.Name, succeeded);
+        ServiceScope.Get<ILogger>().Info("Tv:  timeshifting channel:{0} result:{1}", ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.Name, succeeded);
         if (succeeded == TvResult.Succeeded)
         {
           //timeshifting worked, now view the channel
-          ChannelNavigator.Instance.Card = card;
+          ServiceScope.Get<ITvChannelNavigator>().Card = card;
 
           //do we already have a media player ?
-          if (TvPlayerCollection.Instance.Count != 0)
+          if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
           {
             if (TvPlayerCollection.Instance[0].FileName != card.TimeShiftFileName)
             {
@@ -776,10 +776,10 @@ namespace MyTv
               _viewModel.ChangeProperty("FullScreen");
               _viewModel.ChangeProperty("IsVideoPresent");
               _viewModel.ChangeProperty("TvOnOff");
-              TvPlayerCollection.Instance.DisposeAll();
+              ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
             }
           }
-          if (TvPlayerCollection.Instance.Count != 0)
+          if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
           {
             _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new SeekToEndDelegate(OnSeekToEnd));
             return;
@@ -791,13 +791,13 @@ namespace MyTv
         else
         {
           //close media player
-          if (TvPlayerCollection.Instance.Count != 0)
+          if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
           {
             _viewModel.ChangeProperty("VideoBrush");
             _viewModel.ChangeProperty("FullScreen");
             _viewModel.ChangeProperty("IsVideoPresent");
             _viewModel.ChangeProperty("TvOnOff");
-            TvPlayerCollection.Instance.DisposeAll();
+            ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
           }
 
           //show error to user
@@ -927,7 +927,7 @@ namespace MyTv
               //  item.PinImage = "";
 
               _users.Add(user);
-              if (ChannelNavigator.Instance.Card != null && ChannelNavigator.Instance.Card.IdChannel == idChannel)
+              if (ServiceScope.Get<ITvChannelNavigator>().Card != null && ServiceScope.Get<ITvChannelNavigator>().Card.IdChannel == idChannel)
               {
                 selected = count;
               }
@@ -949,7 +949,7 @@ namespace MyTv
         dlgMenu.SelectedIndex = selected;
         dlgMenu.ShowDialog();
         if (dlgMenu.SelectedIndex < 0) return;
-        ChannelNavigator.Instance.Card = new VirtualCard(_users[dlgMenu.SelectedIndex], RemoteControl.HostName);
+        ServiceScope.Get<ITvChannelNavigator>().Card = new VirtualCard(_users[dlgMenu.SelectedIndex], RemoteControl.HostName);
 
 
         string fileName = "";
@@ -960,20 +960,20 @@ namespace MyTv
           _viewModel.ChangeProperty("IsVideoPresent");
           _viewModel.ChangeProperty("TvOnOff");
         }
-        TvPlayerCollection.Instance.DisposeAll();
-        if (ChannelNavigator.Instance.Card.IsRecording)
+        ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
+        if (ServiceScope.Get<ITvChannelNavigator>().Card.IsRecording)
         {
-          fileName = ChannelNavigator.Instance.Card.RecordingFileName;
+          fileName = ServiceScope.Get<ITvChannelNavigator>().Card.RecordingFileName;
         }
         else
         {
-          fileName = ChannelNavigator.Instance.Card.TimeShiftFileName;
+          fileName = ServiceScope.Get<ITvChannelNavigator>().Card.TimeShiftFileName;
         }
 
         //create a new media player 
         ICommand cmd = _viewModel.Play;
-        cmd.Execute(new TvHomeViewModel.PlayCommand.PlayParameter(ChannelNavigator.Instance.Card.TimeShiftFileName, ChannelNavigator.Instance.Card));
-        ChannelNavigator.Instance.Card.User.Name = new User().Name;
+        cmd.Execute(new TvHomeViewModel.PlayCommand.PlayParameter(ServiceScope.Get<ITvChannelNavigator>().Card.TimeShiftFileName, ServiceScope.Get<ITvChannelNavigator>().Card));
+        ServiceScope.Get<ITvChannelNavigator>().Card.User.Name = new User().Name;
       }
     }
     #endregion
@@ -1019,14 +1019,14 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        if (ChannelNavigator.Instance.CurrentGroup == null) return;
+        if (ServiceScope.Get<ITvChannelNavigator>().CurrentGroup == null) return;
         ServiceScope.Get<ILogger>().Info("MyTv: OnChannelClicked");
 
         //show dialog menu showing all channels of current tvgroup
         DialogMenuItemCollection menuItems = new DialogMenuItemCollection();
         ServiceScope.Get<ILogger>().Info("MyTv:   get channels");
         TvBusinessLayer layer = new TvBusinessLayer();
-        IList groups = ChannelNavigator.Instance.CurrentGroup.ReferringGroupMap();
+        IList groups = ServiceScope.Get<ITvChannelNavigator>().CurrentGroup.ReferringGroupMap();
         IList channelList = Channel.ListAll();
         List<Channel> _tvChannelList = new List<Channel>();
         ServiceScope.Get<ILogger>().Info("MyTv:   get channels2");
@@ -1063,7 +1063,7 @@ namespace MyTv
           {
             // note: it could be possible we're watching a stream another user is timeshifting...
             // TODO: add user check
-            if (channelsTimeshifting.Count == 1 && TvPlayerCollection.Instance.Count != 0)
+            if (channelsTimeshifting.Count == 1 && ServiceScope.Get<ITvPlayerCollection>().Count != 0)
             {
               checkChannelState = false;
             }
@@ -1094,7 +1094,7 @@ namespace MyTv
             if (channelsTimeshifting.Contains(currentChannel.IdChannel))
               currentChannelState = ChannelState.timeshifting;
 
-          if (currentChannel == ChannelNavigator.Instance.SelectedChannel) selected = i;
+          if (currentChannel == ServiceScope.Get<ITvChannelNavigator>().SelectedChannel) selected = i;
           NowAndNext prog;
           if (listNowNext.ContainsKey(currentChannel.IdChannel) != false)
             prog = listNowNext[currentChannel.IdChannel];
@@ -1138,11 +1138,11 @@ namespace MyTv
         if (dlgMenu.SelectedIndex < 0) return;//nothing selected
 
         //get the selected tv channel
-        ChannelNavigator.Instance.SelectedChannel = _tvChannelList[dlgMenu.SelectedIndex];
+        ServiceScope.Get<ITvChannelNavigator>().SelectedChannel = _tvChannelList[dlgMenu.SelectedIndex];
 
         //and view it
         ICommand cmd = _viewModel.TimeShift;
-        cmd.Execute(ChannelNavigator.Instance.SelectedChannel);
+        cmd.Execute(ServiceScope.Get<ITvChannelNavigator>().SelectedChannel);
       }
     }
     #endregion
@@ -1272,26 +1272,26 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        if (TvPlayerCollection.Instance.Count != 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
         {
           ServiceScope.Get<ILogger>().Info("Tv:  stop tv");
-          TvPlayerCollection.Instance.DisposeAll();
+          ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
           _viewModel.ChangeProperty("VideoBrush");
           _viewModel.ChangeProperty("FullScreen");
           _viewModel.ChangeProperty("IsVideoPresent");
           _viewModel.ChangeProperty("TvOnOff");
-          if (ChannelNavigator.Instance.Card != null)
+          if (ServiceScope.Get<ITvChannelNavigator>().Card != null)
           {
-            ChannelNavigator.Instance.Card.StopTimeShifting();
+            ServiceScope.Get<ITvChannelNavigator>().Card.StopTimeShifting();
           }
         }
         else
         {
           ServiceScope.Get<ILogger>().Info("Tv:  start tv");
-          if (ChannelNavigator.Instance.SelectedChannel != null)
+          if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel != null)
           {
             ICommand cmd = _viewModel.TimeShift;
-            cmd.Execute(ChannelNavigator.Instance.SelectedChannel);
+            cmd.Execute(ServiceScope.Get<ITvChannelNavigator>().SelectedChannel);
           }
         }
       }
@@ -1323,7 +1323,7 @@ namespace MyTv
         TvBusinessLayer layer = new TvBusinessLayer();
         TvServer server = new TvServer();
         VirtualCard card;
-        Channel channel = ChannelNavigator.Instance.SelectedChannel;
+        Channel channel = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel;
         if (channel == null) return;
         if (false == server.IsRecording(channel.Name, out card))
         {
@@ -1347,7 +1347,7 @@ namespace MyTv
                             channel.CurrentProgram.StartTime, channel.CurrentProgram.EndTime);
                   newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                  newSchedule.RecommendedCard = ChannelNavigator.Instance.Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
+                  newSchedule.RecommendedCard = ServiceScope.Get<ITvChannelNavigator>().Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
 
                   newSchedule.Persist();
                   server.OnNewSchedule();
@@ -1360,7 +1360,7 @@ namespace MyTv
                                               DateTime.Now, DateTime.Now.AddDays(1));
                   newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                  newSchedule.RecommendedCard = ChannelNavigator.Instance.Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
+                  newSchedule.RecommendedCard = ServiceScope.Get<ITvChannelNavigator>().Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
 
                   newSchedule.Persist();
                   server.OnNewSchedule();
@@ -1376,7 +1376,7 @@ namespace MyTv
                                         DateTime.Now, DateTime.Now.AddDays(1));
             newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
             newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-            newSchedule.RecommendedCard = ChannelNavigator.Instance.Card.Id;
+            newSchedule.RecommendedCard = ServiceScope.Get<ITvChannelNavigator>().Card.Id;
 
             newSchedule.Persist();
             server.OnNewSchedule();
@@ -1384,7 +1384,7 @@ namespace MyTv
         }
         else
         {
-          server.StopRecordingSchedule(ChannelNavigator.Instance.Card.RecordingScheduleId);
+          server.StopRecordingSchedule(ServiceScope.Get<ITvChannelNavigator>().Card.RecordingScheduleId);
         }
       }
     }

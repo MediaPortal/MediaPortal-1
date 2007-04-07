@@ -128,7 +128,7 @@ namespace MyTv
     {
       get
       {
-        if (TvPlayerCollection.Instance.Count > 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
         {
           MediaPlayer player = TvPlayerCollection.Instance[0];
           VideoDrawing videoDrawing = new VideoDrawing();
@@ -301,7 +301,7 @@ namespace MyTv
     {
       get
       {
-        return (TvPlayerCollection.Instance.Count != 0) ? Visibility.Visible : Visibility.Collapsed;
+        return (ServiceScope.Get<ITvPlayerCollection>().Count != 0) ? Visibility.Visible : Visibility.Collapsed;
       }
     }
     #endregion
@@ -622,7 +622,7 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        if (TvPlayerCollection.Instance.Count != 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count != 0)
         {
           _viewModel.Page.NavigationService.Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
         }
@@ -912,9 +912,9 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        if (TvPlayerCollection.Instance.Count > 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
         {
-          TvPlayerCollection.Instance.DisposeAll();
+          ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
           _viewModel.ChangeProperty("VideoBrush");
           _viewModel.ChangeProperty("FullScreen");
           _viewModel.ChangeProperty("IsVideoPresent");
@@ -922,7 +922,7 @@ namespace MyTv
         _playParameter = parameter as PlayParameter;
 
 
-        TvMediaPlayer player = TvPlayerCollection.Instance.Get(null, _playParameter.FileName);
+        TvMediaPlayer player = ServiceScope.Get<ITvPlayerCollection>().Get(null, _playParameter.FileName);
         player.MediaFailed += new EventHandler<ExceptionEventArgs>(_mediaPlayer_MediaFailed);
         player.MediaOpened += new EventHandler(player_MediaOpened);
         player.Play();
@@ -960,7 +960,7 @@ namespace MyTv
       }
       void OnMediaPlayerError()
       {
-        if (TvPlayerCollection.Instance.Count > 0)
+        if (ServiceScope.Get<ITvPlayerCollection>().Count > 0)
         {
           if (TvPlayerCollection.Instance[0].HasError)
           {
@@ -973,7 +973,7 @@ namespace MyTv
             dlgError.ShowDialog();
           }
         }
-        TvPlayerCollection.Instance.DisposeAll();
+        ServiceScope.Get<ITvPlayerCollection>().DisposeAll();
       }
     }
     #endregion
