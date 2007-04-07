@@ -28,6 +28,14 @@ namespace ProjectInfinity.Players
     /// </summary>
     void Pause();
     /// <summary>
+    /// starts playing.
+    /// </summary>
+    void Play();
+    /// <summary>
+    /// stops playing.
+    /// </summary>
+    void Stop();
+    /// <summary>
     /// Gets a value indicating whether this player is paused.
     /// </summary>
     /// <value><c>true</c> if this instance is paused; otherwise, <c>false</c>.</value>
