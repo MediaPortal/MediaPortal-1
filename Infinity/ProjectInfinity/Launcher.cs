@@ -10,6 +10,7 @@ using ProjectInfinity.Themes;
 using ProjectInfinity.Utilities.CommandLine;
 using ProjectInfinity.Windows;
 using ProjectInfinity.Localisation;
+using ProjectInfinity.Players;
 
 namespace ProjectInfinity
 {
@@ -28,6 +29,7 @@ namespace ProjectInfinity
       ServiceScope.Add<IThemeManager>(new ThemeManager());
       ServiceScope.Add<IMenuManager>(new MenuManager());
       ServiceScope.Add<INavigationService>(new NavigationService());
+      ServiceScope.Add<IPlayerCollectionService>(new PlayerCollectionService());
       ServiceScope.Add<ILocalisation>(new StringManager("Language", "en"));
 
       ICommandLineOptions piArgs = new ProjectInfinityCommandLine();

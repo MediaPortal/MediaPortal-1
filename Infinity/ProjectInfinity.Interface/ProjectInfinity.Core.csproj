@@ -46,6 +46,9 @@
     <Compile Include="Messaging\Message.cs" />
     <Compile Include="MusicMessages.cs" />
     <Compile Include="Navigation\INavigationService.cs" />
+    <Compile Include="Players\IPlayer.cs" />
+    <Compile Include="Players\IPlayerCollection.cs" />
+    <Compile Include="Players\PlayerCollectionService.cs" />
     <Compile Include="PluginMessages.cs" />
     <Compile Include="SystemMessages.cs" />
     <Compile Include="Music\IMusicPlayer.cs" />

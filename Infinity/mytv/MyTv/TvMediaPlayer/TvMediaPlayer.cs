@@ -13,6 +13,7 @@ namespace MyTv
     #region delegates
     private delegate void StopTimeshiftingDelegate(VirtualCard card);
     #endregion
+
     #region variables
     VirtualCard _card;
     Exception _exception;
