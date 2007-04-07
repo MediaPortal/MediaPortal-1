@@ -3,6 +3,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using TvControl;
+using ProjectInfinity;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Localisation;
 
 namespace MyTv
 {
@@ -38,14 +41,18 @@ namespace MyTv
     /// <returns></returns>
     public TvMediaPlayer Get(VirtualCard card, string fileName)
     {
+      ServiceScope.Get<ILogger>().Info("Tv:  start playing:{0}", fileName);
       string orgFileName = fileName;
       if (!File.Exists(fileName))
       {
+        ServiceScope.Get<ILogger>().Info("Tv:  file does not exists, get rtsp stream");
         TvServer server = new TvServer();
         if (fileName == card.TimeShiftFileName)
           fileName = card.RTSPUrl;
         else
           fileName = server.GetRtspUrlForFile(fileName);
+
+        ServiceScope.Get<ILogger>().Info("Tv:  start playing stream:{0}", fileName);
       }
       string fname = fileName;
       if (fileName.StartsWith("rtsp://"))
@@ -55,6 +62,8 @@ namespace MyTv
         {
           File.Delete(fname);
         }
+
+        ServiceScope.Get<ILogger>().Info("Tv:  create :{0}", fname);
         using (FileStream stream = new FileStream(fname, FileMode.OpenOrCreate))
         {
           using (BinaryWriter writer = new BinaryWriter(stream))
@@ -65,10 +74,13 @@ namespace MyTv
           }
         }
       }
+
+      ServiceScope.Get<ILogger>().Info("Tv:  open :{0}", fname);
       Uri uri = new Uri(fname, UriKind.Absolute);
       TvMediaPlayer player = new TvMediaPlayer(card, orgFileName);
       player.Open(uri);
       _players.Add(player);
+      ServiceScope.Get<ILogger>().Info("Tv:  player opened");
       return player;
     }
 
@@ -117,6 +129,7 @@ namespace MyTv
     /// </summary>
     public void DisposeAll()
     {
+      ServiceScope.Get<ILogger>().Info("Tv:  dispose all players");
       List<TvMediaPlayer> players = new List<TvMediaPlayer>();
       foreach (TvMediaPlayer player in _players)
       {
