@@ -76,13 +76,15 @@ namespace MyTv
     }
     void OnSearchKeyword(object sender, RoutedEventArgs e)
     {
-      TvSearch search = new TvSearch(TvSearch.SearchType.Description);
-      ServiceScope.Get<INavigationService>().Navigate(search);
+      //TvSearch search = new TvSearch(TvSearch.SearchType.Description);
+      //ServiceScope.Get<INavigationService>().Navigate(search);
+      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
     }
     void OnSearchGenre(object sender, RoutedEventArgs e)
     {
-      TvSearch search = new TvSearch(TvSearch.SearchType.Genre);
-      ServiceScope.Get<INavigationService>().Navigate(search);
+      //TvSearch search = new TvSearch(TvSearch.SearchType.Genre);
+      //ServiceScope.Get<INavigationService>().Navigate(search);
+      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
     }
     void OnAdvancedRecord(object sender, RoutedEventArgs e)
     {

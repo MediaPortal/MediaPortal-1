@@ -27,33 +27,11 @@ namespace MyTv
   /// Interaction logic for TvNewSchedule.xaml
   /// </summary>
 
-  public partial class TvSearch : System.Windows.Controls.Page, IComparer<Program>
+  public partial class TvSearch : System.Windows.Controls.Page
   {
-    public enum SearchType
-    {
-      Title,
-      Genre,
-      Description,
-    }
-    enum SortMode
-    {
-      Channel,
-      Date,
-      Title,
-      Description
-    }
-    Program _firstProgram;
-    Program _selectedProgram;
-    SearchType _searchType = SearchType.Title;
-    SortMode _sortMode = SortMode.Title;
-    private delegate void UpdateResultsDelegate();
+    TvSearchViewModel _model;
     public TvSearch()
     {
-      InitializeComponent();
-    }
-    public TvSearch(SearchType searchType)
-    {
-      _searchType = searchType;
       InitializeComponent();
     }
 
@@ -64,39 +42,25 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-      // Sets keyboard focus on the first Button in the sample.
-      labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 107);
-      buttonSort.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 80);
-      buttonType.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 108);
-      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-      textboxSearch.TextChanged += new TextChangedEventHandler(textboxSearch_TextChanged);
+      _model = new TvSearchViewModel(this);
+      gridMain.DataContext = _model;
       Keyboard.Focus(textboxSearch);
-      labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
+      this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
+      this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
+      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onPreviewKeyDown));
+      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(OnMouseMoveEvent));
+      this.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(OnMouseButtonDownEvent), true);
+      this.KeyDown += new KeyEventHandler(onKeyDown);
 
-      if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
-      {
-        MediaPlayer player = (MediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0].UnderlyingPlayer;
-        VideoDrawing videoDrawing = new VideoDrawing();
-        videoDrawing.Player = player;
-        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
-        DrawingBrush videoBrush = new DrawingBrush();
-        videoBrush.Drawing = videoDrawing;
-        videoWindow.Fill = videoBrush;
-      }
-      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
-      gridList.SelectionChanged += new SelectionChangedEventHandler(gridList_SelectionChanged);
-      gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
-      gridList.KeyDown += new KeyEventHandler(gridList_KeyDown);
-      textboxSearch.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new UpdateResultsDelegate(OnUpdateResults));
 
     }
-
-    void gridList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      UpdateInfoBox();
-    }
-    void handleMouse(object sender, MouseEventArgs e)
+    /// <summary>
+    /// Event handler for mouse events
+    /// When mouse enters an control, this method will give the control keyboardfocus
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
+    void OnMouseMoveEvent(object sender, MouseEventArgs e)
     {
       FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
       while (element != null)
@@ -108,181 +72,68 @@ namespace MyTv
         }
         if (element as ListBoxItem != null)
         {
-          gridList.SelectedItem = element.DataContext;
           Keyboard.Focus((ListBoxItem)element);
-          //UpdateInfoBox();
           return;
         }
         element = element.TemplatedParent as FrameworkElement;
       }
     }
-    void Button_Click(object sender, RoutedEventArgs e)
+    /// <summary>
+    /// Event handler for OnKeyDown
+    /// Handles some basic navigation
+    /// Guess this should be done via command binding?
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
+    protected void onPreviewKeyDown(object sender, KeyEventArgs e)
     {
-      if (e.Source != gridList) return;
-      OnProgramClicked();
-    }
-    void gridList_KeyDown(object sender, KeyEventArgs e)
-    {
-      if (e.Key == System.Windows.Input.Key.Up)
+      if (e.Key == System.Windows.Input.Key.X)
       {
-        if (gridList.SelectedIndex == 0)
+        ICommand command = _model.FullScreenTv;
+        if (command.CanExecute(this))
         {
-          Keyboard.Focus(buttonType);
+          command.Execute(this);
           e.Handled = true;
-          return;
         }
+        return;
       }
+    }
+    /// <summary>
+    /// Handles the KeyDown event 
+    /// When keydown=enter, OnRecordingClicked() gets called
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
+    void onKeyDown(object sender, KeyEventArgs e)
+    {
+      if ((e.Source as ListBox) == null) return;
       if (e.Key == System.Windows.Input.Key.Enter)
       {
-        OnProgramClicked();
+        ListBox box = e.Source as ListBox;
+        OnProgramClicked(box);
         e.Handled = true;
         return;
       }
     }
-    protected void onKeyDown(object sender, KeyEventArgs e)
+    /// <summary>
+    /// Handles the mouse button down event
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+    void OnMouseButtonDownEvent(object sender, RoutedEventArgs e)
     {
-      if (e.Key == System.Windows.Input.Key.Escape)
-      {
-        //return to previous screen
-        ServiceScope.Get<INavigationService>().GoBack();
-        return;
-      }
-      if (e.Key == System.Windows.Input.Key.X)
-      {
-        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
-        {
-          ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
-          return;
-        }
-      }
-    }
-
-    void textboxSearch_TextChanged(object sender, TextChangedEventArgs e)
-    {
-      textboxSearch.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new UpdateResultsDelegate(OnUpdateResults));
+      if ((e.Source as ListBox) == null) return;
+      ListBox box = e.Source as ListBox;
+      OnProgramClicked(box);
     }
 
 
-    string GetContentForRightLabel(Program program)
+    void OnProgramClicked(ListBox box)
     {
-      return program.StartTime.ToString();
-    }
-
-    void OnUpdateResults()
-    {
-
-      if (textboxSearch.Text == "") return;
-      TvBusinessLayer layer = new TvBusinessLayer();
-      IList programs;
-      if (_searchType == SearchType.Title)
-        programs = layer.SearchPrograms(textboxSearch.Text);
-      else if (_searchType == SearchType.Genre)
-        programs = layer.SearchProgramsPerGenre(textboxSearch.Text, "");
-      else
-        programs = layer.SearchProgramsByDescription(textboxSearch.Text);
-      List<Program> listPrograms = new List<Program>();
-      foreach (Program program in programs)
-        listPrograms.Add(program);
-      listPrograms.Sort(this);
-      DialogMenuItemCollection collection = new DialogMenuItemCollection();
-      foreach (Program program in listPrograms)
-      {
-        string logo = String.Format(@"{0}\{1}",System.IO.Directory.GetCurrentDirectory(),Thumbs.GetLogoFileName(program.ReferencedChannel().Name));
-        if (!System.IO.File.Exists(logo))
-        {
-          logo="";
-        }
-        DialogMenuItem item = new DialogMenuItem(logo,program.Title,program.ReferencedChannel().Name,GetContentForRightLabel(program));
-        item.Tag = program;
-        collection.Add(item);
-
-      }
-      gridList.ItemsSource = collection;
-      Keyboard.Focus(textboxSearch);
-    }
-    void UpdateInfoBox()
-    {
-      DialogMenuItem item = gridList.SelectedItem as DialogMenuItem;
-      if (item == null) return;
-      _selectedProgram = item.Tag as Program;
-
-      labelTitle.Text = _selectedProgram.Title;
-      labelDescription.Text = _selectedProgram.Description;
-      labelStartEnd.Text = String.Format("{0}-{1}", _selectedProgram.StartTime.ToString("HH:mm"), _selectedProgram.EndTime.ToString("HH:mm"));
-      labelGenre.Text = _selectedProgram.Genre;
-    }
-
-    void OnProgramClicked()
-    {
-      DialogMenuItem item = gridList.SelectedItem as DialogMenuItem;
-      if (item == null) return;
-      _selectedProgram = item.Tag as Program;
-      TvProgramInfo info = new TvProgramInfo(_selectedProgram);
+      ProgramModel model = box.SelectedItem as ProgramModel;
+      TvProgramInfo info = new TvProgramInfo(model.Program);
       ServiceScope.Get<INavigationService>().Navigate(info);
     }
-    void OnSortClicked(object sender, RoutedEventArgs e)
-    {
-      MpMenu dlgMenu = new MpMenu();
-      Window w = Window.GetWindow(this);
-      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      dlgMenu.Owner = w;
-      dlgMenu.Items.Clear();
-      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68); //"Menu";
-      dlgMenu.SubTitle = "";
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 2)/*Channel*/));
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 73)/*"Date*/));
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 98)/*"Title*/));
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 109)/*"Description*/));
-      dlgMenu.SelectedIndex = (int)_sortMode;
-      dlgMenu.ShowDialog();
-      if (dlgMenu.SelectedIndex < 0) return;//nothing selected
-      _sortMode = (SortMode)dlgMenu.SelectedIndex;
-      OnUpdateResults();
-    }
-    void OnTypeClicked(object sender, RoutedEventArgs e)
-    {
-      MpMenu dlgMenu = new MpMenu();
-      Window w = Window.GetWindow(this);
-      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-      dlgMenu.Owner = w;
-      dlgMenu.Items.Clear();
-      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68); //"Menu";
-      dlgMenu.SubTitle = "";
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 98)/*"Title*/));
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 99)/*Genre*/));
-      dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 109)/*"Description*/));
-      dlgMenu.SelectedIndex = (int)_searchType;
-      dlgMenu.ShowDialog();
-      if (dlgMenu.SelectedIndex < 0) return;//nothing selected
-      _searchType = (SearchType)dlgMenu.SelectedIndex;
-      OnUpdateResults();
-    }
-    #region IComparer<Recording> Members
 
-    /// <summary>
-    /// Compares two objects and returns a value indicating whether one is less than, equal to, or greater than the other.
-    /// </summary>
-    /// <param name="x">The first object to compare.</param>
-    /// <param name="y">The second object to compare.</param>
-    /// <returns>
-    /// Value Condition Less than zerox is less than y.Zerox equals y.Greater than zerox is greater than y.
-    /// </returns>
-    public int Compare(Program x, Program y)
-    {
-      switch (_sortMode)
-      {
-        case SortMode.Channel:
-          return String.Compare(x.ReferencedChannel().Name.ToString(), y.ReferencedChannel().Name, true);
-        case SortMode.Date:
-          return x.StartTime.CompareTo(y.StartTime);
-        case SortMode.Title:
-          return String.Compare(x.Title, y.Title, true);
-        case SortMode.Description:
-          return String.Compare(x.Description, y.Description, true);
-      }
-      return 0;
-    }
-
-    #endregion
   }
 }

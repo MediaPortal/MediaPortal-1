@@ -124,6 +124,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ProgramModel.cs" />
     <Compile Include="TvBaseViewModel.cs" />
     <Compile Include="TvChannelNavigator\ChannelNavigator.cs" />
     <Compile Include="TvChannelNavigator\ITvChannelNavigator.cs" />
@@ -195,6 +196,7 @@
       <SubType>Code</SubType>
       <DependentUpon>TvSearch.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TvSearchViewModel.cs" />
     <Compile Include="TvSetup.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvSetup.xaml</DependentUpon>

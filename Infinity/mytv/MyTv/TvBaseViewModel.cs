@@ -269,7 +269,7 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 6);//Recorded
       }
     }
-    public string SearchLabel
+    public virtual string SearchLabel
     {
       get
       {
