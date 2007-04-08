@@ -150,6 +150,8 @@
     <String id="123">New</String>
     <String id="124">Priorities</String>
     <String id="125">Conflicts</String>
+    <String id="126">Enter search text</String>
+    <String id="127">Sort:Description</String>
   </Section>
   <Section name="myvideos">
     <String id="0">View</String>
