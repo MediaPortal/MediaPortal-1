@@ -70,8 +70,13 @@ namespace MyTv
       {
         ServiceScope.Get<ILogger>().Info("Tv:  file does not exists, get rtsp stream");
         TvServer server = new TvServer();
-        if (fileName == _card.TimeShiftFileName)
-          fileName = _card.RTSPUrl;
+        if (_card != null)
+        {
+          if (fileName == _card.TimeShiftFileName)
+            fileName = _card.RTSPUrl;
+          else
+            fileName = server.GetRtspUrlForFile(fileName);
+        }
         else
           fileName = server.GetRtspUrlForFile(fileName);
         isStream = true;

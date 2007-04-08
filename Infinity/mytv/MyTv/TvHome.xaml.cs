@@ -42,7 +42,7 @@ namespace MyTv
   public partial class TvHome : System.Windows.Controls.Page
   {
     #region variables
-    TvHomeViewModel _model;
+    TvBaseViewModel _model;
     private delegate void ConnectToServerDelegate();
     static bool _firstTime = true;
     TvChannelNavigator _navigator =  TvChannelNavigator.Instance;
@@ -68,7 +68,7 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-      _model = new TvHomeViewModel(this);
+      _model = new TvBaseViewModel(this);
       gridMain.DataContext = _model;
       this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));

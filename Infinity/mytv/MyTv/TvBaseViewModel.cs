@@ -19,17 +19,11 @@ using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
 
-
 namespace MyTv
 {
-  public class TvHomeViewModel : INotifyPropertyChanged
+  public class TvBaseViewModel : INotifyPropertyChanged
   {
     #region variables
-    private delegate void StartTimeShiftingDelegate(Channel channel);
-    private delegate void EndTimeShiftingDelegate(TvResult result, VirtualCard card);
-    
-    private delegate void MediaPlayerErrorDelegate();
-    private delegate void ConnectToServerDelegate();
     Window _window;
     Page _page;
     ICommand _fullScreenTvCommand;
@@ -49,10 +43,10 @@ namespace MyTv
 
     #region ctor
     /// <summary>
-    /// Initializes a new instance of the <see cref="TvHomeViewModel"/> class.
+    /// Initializes a new instance of the <see cref="TvBaseViewModel"/> class.
     /// </summary>
     /// <param name="page">The page.</param>
-    public TvHomeViewModel(Page page)
+    public TvBaseViewModel(Page page)
     {
 
       //store page & window
@@ -104,6 +98,30 @@ namespace MyTv
         else return "";
       }
     }
+    /// <summary>
+    /// Gets the window.
+    /// </summary>
+    /// <value>The window.</value>
+    public Window Window
+    {
+      get
+      {
+        return _window;
+      }
+    }
+    /// <summary>
+    /// Gets the current Page.
+    /// </summary>
+    /// <value>The page.</value>
+    public Page Page
+    {
+      get
+      {
+        return _page;
+      }
+    }
+
+    #region properties for current tuned channel
     /// <summary>
     /// Returns percentage how far current program is done
     /// </summary>
@@ -192,28 +210,9 @@ namespace MyTv
         return program.ReferencedChannel().Name;
       }
     }
-    /// <summary>
-    /// Gets the window.
-    /// </summary>
-    /// <value>The window.</value>
-    public Window Window
-    {
-      get
-      {
-        return _window;
-      }
-    }
-    /// <summary>
-    /// Gets the current Page.
-    /// </summary>
-    /// <value>The page.</value>
-    public Page Page
-    {
-      get
-      {
-        return _page;
-      }
-    }
+    #endregion
+
+    #region button label properties
     public string DateLabel
     {
       get
@@ -284,7 +283,7 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 8);//Teletext
       }
     }
-    public string HeaderLabel
+    public virtual string HeaderLabel
     {
       get
       {
@@ -298,6 +297,9 @@ namespace MyTv
         return (ServiceScope.Get<IPlayerCollectionService>().Count > 0);
       }
     }
+    #endregion
+
+    #region video properties
     /// <summary>
     /// Returns whether video is present or not.
     /// </summary>
@@ -330,6 +332,7 @@ namespace MyTv
         return new SolidColorBrush(Color.FromArgb(0xff, 0, 0, 0));
       }
     }
+    #endregion
     #endregion
 
     #region commands
@@ -517,12 +520,12 @@ namespace MyTv
 
     #region Commands subclasses
     #region base command class
-    public abstract class HomeCommand : ICommand
+    public abstract class TvBaseCommand : ICommand
     {
-      protected TvHomeViewModel _viewModel;
+      protected TvBaseViewModel _viewModel;
       public event EventHandler CanExecuteChanged;
 
-      public HomeCommand(TvHomeViewModel viewModel)
+      public TvBaseCommand(TvBaseViewModel viewModel)
       {
         _viewModel = viewModel;
       }
@@ -544,46 +547,17 @@ namespace MyTv
     }
     #endregion
 
-    #region FullscreenTv command class
-    /// <summary>
-    /// Fullscreen command will navigate to fullscreen window
-    /// </summary>
-    public class FullScreenTvCommand : HomeCommand
-    {
-      /// <summary>
-      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
-      /// </summary>
-      /// <param name="viewModel">The view model.</param>
-      public FullScreenTvCommand(TvHomeViewModel viewModel)
-        : base(viewModel)
-      {
-      }
-
-      /// <summary>
-      /// Executes the command.
-      /// </summary>
-      /// <param name="parameter">The parameter.</param>
-      public override void Execute(object parameter)
-      {
-        if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
-        {
-          ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
-        }
-      }
-    }
-    #endregion
-
     #region FullScreenCommand  class
     /// <summary>
     /// FullScreenCommand will toggle application between normal and fullscreen mode
     /// </summary> 
-    public class FullScreenCommand : HomeCommand
+    public class FullScreenCommand : TvBaseCommand
     {
       /// <summary>
       /// Initializes a new instance of the <see cref="FullScreenCommand"/> class.
       /// </summary>
       /// <param name="viewModel">The view model.</param>
-      public FullScreenCommand(TvHomeViewModel viewModel)
+      public FullScreenCommand(TvBaseViewModel viewModel)
         : base(viewModel)
       {
       }
@@ -617,16 +591,24 @@ namespace MyTv
     /// <summary>
     /// Play command will start playing a recording
     /// </summary>
-    public class PlayCommand : HomeCommand
+    public class PlayCommand : TvBaseCommand
     {
       public class PlayParameter
       {
         public string FileName;
         public VirtualCard Card;
+        public bool StartAtBeginning;
         public PlayParameter(string filename, VirtualCard card)
         {
           FileName = filename;
           Card = card;
+          StartAtBeginning = false;
+        }
+        public PlayParameter(string filename, VirtualCard card, bool startAtBeginning)
+        {
+          FileName = filename;
+          Card = card;
+          StartAtBeginning = startAtBeginning;
         }
       }
       private delegate void MediaPlayerErrorDelegate();
@@ -636,7 +618,7 @@ namespace MyTv
       /// Initializes a new instance of the <see cref="PlayCommand"/> class.
       /// </summary>
       /// <param name="viewModel">The view model.</param>
-      public PlayCommand(TvHomeViewModel viewModel)
+      public PlayCommand(TvBaseViewModel viewModel)
         : base(viewModel)
       {
       }
@@ -674,6 +656,11 @@ namespace MyTv
         _viewModel.ChangeProperty("FullScreen");
         _viewModel.ChangeProperty("IsVideoPresent");
         _viewModel.ChangeProperty("TvOnOff");
+        if (_playParameter.StartAtBeginning)
+        {
+          IPlayer player = ServiceScope.Get<IPlayerCollectionService>()[0];
+          player.Position = new TimeSpan(0, 0, 0, 0);
+        }
       }
       void _mediaPlayer_MediaFailed(object sender, MediaExceptionEventArgs e)
       {
@@ -704,13 +691,16 @@ namespace MyTv
     /// <summary>
     /// Fullscreen command will navigate to fullscreen window
     /// </summary>
-    public class TimeShiftCommand : HomeCommand
+    public class TimeShiftCommand : TvBaseCommand
     {
+      private delegate void MediaPlayerErrorDelegate();
+      private delegate void StartTimeShiftingDelegate(Channel channel);
+      private delegate void EndTimeShiftingDelegate(TvResult result, VirtualCard card);
       /// <summary>
       /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
       /// </summary>
       /// <param name="viewModel">The view model.</param>
-      public TimeShiftCommand(TvHomeViewModel viewModel)
+      public TimeShiftCommand(TvBaseViewModel viewModel)
         : base(viewModel)
       {
       }
@@ -778,7 +768,7 @@ namespace MyTv
           }
 
           ICommand cmd = _viewModel.Play;
-          cmd.Execute(new TvHomeViewModel.PlayCommand.PlayParameter(card.TimeShiftFileName, card));
+          cmd.Execute(new TvBaseViewModel.PlayCommand.PlayParameter(card.TimeShiftFileName, card));
         }
         else
         {
@@ -845,13 +835,13 @@ namespace MyTv
     /// <summary>
     /// TvStreamsCommand will show the tvstreams dialog
     /// </summary> 
-    public class TvStreamsCommand : HomeCommand
+    public class TvStreamsCommand : TvBaseCommand
     {
       /// <summary>
       /// Initializes a new instance of the <see cref="TvStreamsCommand"/> class.
       /// </summary>
       /// <param name="viewModel">The view model.</param>
-      public TvStreamsCommand(TvHomeViewModel viewModel)
+      public TvStreamsCommand(TvBaseViewModel viewModel)
         : base(viewModel)
       {
       }
@@ -949,7 +939,7 @@ namespace MyTv
 
         //create a new media player 
         ICommand cmd = _viewModel.Play;
-        cmd.Execute(new TvHomeViewModel.PlayCommand.PlayParameter(ServiceScope.Get<ITvChannelNavigator>().Card.TimeShiftFileName, ServiceScope.Get<ITvChannelNavigator>().Card));
+        cmd.Execute(new TvBaseViewModel.PlayCommand.PlayParameter(ServiceScope.Get<ITvChannelNavigator>().Card.TimeShiftFileName, ServiceScope.Get<ITvChannelNavigator>().Card));
         ServiceScope.Get<ITvChannelNavigator>().Card.User.Name = new User().Name;
       }
     }
@@ -959,13 +949,13 @@ namespace MyTv
     /// <summary>
     /// MiniEpgCommand will show the mini epg
     /// </summary> 
-    public class MiniEpgCommand : HomeCommand
+    public class MiniEpgCommand : TvBaseCommand
     {
       /// <summary>
       /// Initializes a new instance of the <see cref="FullScreenCommand"/> class.
       /// </summary>
       /// <param name="viewModel">The view model.</param>
-      public MiniEpgCommand(TvHomeViewModel viewModel)
+      public MiniEpgCommand(TvBaseViewModel viewModel)
         : base(viewModel)
       {
       }
@@ -1124,121 +1114,17 @@ namespace MyTv
     }
     #endregion
 
-    #region Search command class
-    /// <summary>
-    /// Fullscreen command will navigate to search window
-    /// </summary>
-    public class SearchCommand : HomeCommand
-    {
-      /// <summary>
-      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
-      /// </summary>
-      /// <param name="viewModel">The view model.</param>
-      public SearchCommand(TvHomeViewModel viewModel)
-        : base(viewModel)
-      {
-      }
-
-      /// <summary>
-      /// Executes the command.
-      /// </summary>
-      /// <param name="parameter">The parameter.</param>
-      public override void Execute(object parameter)
-      {
-        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
-      }
-    }
-    #endregion
-
-    #region TvGuide command class
-    /// <summary>
-    /// Fullscreen command will navigate to TvGuide window
-    /// </summary>
-    public class TvGuideCommand : HomeCommand
-    {
-      /// <summary>
-      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
-      /// </summary>
-      /// <param name="viewModel">The view model.</param>
-      public TvGuideCommand(TvHomeViewModel viewModel)
-        : base(viewModel)
-      {
-      }
-
-      /// <summary>
-      /// Executes the command.
-      /// </summary>
-      /// <param name="parameter">The parameter.</param>
-      public override void Execute(object parameter)
-      {
-        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvGuide.xaml", UriKind.Relative));
-      }
-    }
-    #endregion
-
-    #region Recorded command class
-    /// <summary>
-    /// Fullscreen command will navigate to recorded tv window
-    /// </summary>
-    public class RecordedCommand : HomeCommand
-    {
-      /// <summary>
-      /// Initializes a new instance of the <see cref="RecordedCommand"/> class.
-      /// </summary>
-      /// <param name="viewModel">The view model.</param>
-      public RecordedCommand(TvHomeViewModel viewModel)
-        : base(viewModel)
-      {
-      }
-
-      /// <summary>
-      /// Executes the command.
-      /// </summary>
-      /// <param name="parameter">The parameter.</param>
-      public override void Execute(object parameter)
-      {
-        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvRecorded.xaml", UriKind.Relative));
-      }
-    }
-    #endregion
-
-    #region Scheduled command class
-    /// <summary>
-    /// ScheduledCommand command will navigate to scheduled tv window
-    /// </summary>
-    public class ScheduledCommand : HomeCommand
-    {
-      /// <summary>
-      /// Initializes a new instance of the <see cref="ScheduledCommand"/> class.
-      /// </summary>
-      /// <param name="viewModel">The view model.</param>
-      public ScheduledCommand(TvHomeViewModel viewModel)
-        : base(viewModel)
-      {
-      }
-
-      /// <summary>
-      /// Executes the command.
-      /// </summary>
-      /// <param name="parameter">The parameter.</param>
-      public override void Execute(object parameter)
-      {
-        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvScheduled.xaml", UriKind.Relative));
-      }
-    }
-    #endregion
-
     #region TurnTvOnOffCommand command class
     /// <summary>
     /// TurnTvOnOffCommand command will turn tv on/off
     /// </summary>
-    public class TurnTvOnOffCommand : HomeCommand
+    public class TurnTvOnOffCommand : TvBaseCommand
     {
       /// <summary>
       /// Initializes a new instance of the <see cref="TurnTvOnOffCommand"/> class.
       /// </summary>
       /// <param name="viewModel">The view model.</param>
-      public TurnTvOnOffCommand(TvHomeViewModel viewModel)
+      public TurnTvOnOffCommand(TvBaseViewModel viewModel)
         : base(viewModel)
       {
       }
@@ -1279,13 +1165,13 @@ namespace MyTv
     /// <summary>
     /// RecordNowCommand command start/stop recording
     /// </summary>
-    public class RecordNowCommand : HomeCommand
+    public class RecordNowCommand : TvBaseCommand
     {
       /// <summary>
       /// Initializes a new instance of the <see cref="RecordNowCommand"/> class.
       /// </summary>
       /// <param name="viewModel">The view model.</param>
-      public RecordNowCommand(TvHomeViewModel viewModel)
+      public RecordNowCommand(TvBaseViewModel viewModel)
         : base(viewModel)
       {
       }
@@ -1366,6 +1252,143 @@ namespace MyTv
       }
     }
     #endregion
+
+    #region navigation commands
+    #region Search command class
+    /// <summary>
+    /// Fullscreen command will navigate to search window
+    /// </summary>
+    public class SearchCommand : TvBaseCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public SearchCommand(TvBaseViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
+      }
+    }
+    #endregion
+
+    #region TvGuide command class
+    /// <summary>
+    /// Fullscreen command will navigate to TvGuide window
+    /// </summary>
+    public class TvGuideCommand : TvBaseCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public TvGuideCommand(TvBaseViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvGuide.xaml", UriKind.Relative));
+      }
+    }
+    #endregion
+
+    #region Recorded command class
+    /// <summary>
+    /// Fullscreen command will navigate to recorded tv window
+    /// </summary>
+    public class RecordedCommand : TvBaseCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="RecordedCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public RecordedCommand(TvBaseViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvRecorded.xaml", UriKind.Relative));
+      }
+    }
+    #endregion
+
+    #region Scheduled command class
+    /// <summary>
+    /// ScheduledCommand command will navigate to scheduled tv window
+    /// </summary>
+    public class ScheduledCommand : TvBaseCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ScheduledCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public ScheduledCommand(TvBaseViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvScheduled.xaml", UriKind.Relative));
+      }
+    }
+    #endregion
+
+    #region FullscreenTv command class
+    /// <summary>
+    /// Fullscreen command will navigate to fullscreen window
+    /// </summary>
+    public class FullScreenTvCommand : TvBaseCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public FullScreenTvCommand(TvBaseViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
+        {
+          ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+        }
+      }
+    }
+    #endregion
+
+    #endregion
     #endregion
   }
 }
+

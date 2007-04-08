@@ -25,7 +25,7 @@ namespace MyTv
   /// <summary>
   /// View Model for the recorded tv GUI
   /// </summary>
-  public class TvRecordedViewModel : INotifyPropertyChanged
+  public class TvRecordedViewModel : TvBaseViewModel
   {
     #region variables and enums
     /// <summary>
@@ -52,17 +52,11 @@ namespace MyTv
     ICommand _sortCommand;
     ICommand _viewCommand;
     ICommand _cleanUpCommand;
-    ICommand _fullScreenTvCommand;
-    ICommand _playCommand;
     ICommand _deleteCommand;
     ICommand _contextMenuCommand;
-    ICommand _fullScreenCommand;
-    Window _window;
-    Page _page;
     ViewType _viewMode = ViewType.Icon;
     RecordingCollectionView _recordingView;
     RecordingDatabaseModel _dataModel;
-    public event PropertyChangedEventHandler PropertyChanged;
 
     #endregion
 
@@ -72,13 +66,10 @@ namespace MyTv
     /// </summary>
     /// <param name="page">The page.</param>
     public TvRecordedViewModel(Page page)
+      :base(page)
     {
       //create a new data model
       _dataModel = new RecordingDatabaseModel();
-
-      //store page & window
-      _page = page;
-      _window = Window.GetWindow(_page);
     }
     #endregion
 
@@ -95,27 +86,6 @@ namespace MyTv
       }
     }
 
-    /// <summary>
-    /// Gets the video brush.
-    /// </summary>
-    /// <value>The video brush.</value>
-    public Brush VideoBrush
-    {
-      get
-      {
-        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
-        {
-          MediaPlayer player = (MediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0].UnderlyingPlayer;
-          VideoDrawing videoDrawing = new VideoDrawing();
-          videoDrawing.Player = player;
-          videoDrawing.Rect = new Rect(0, 0, player.NaturalVideoWidth, player.NaturalVideoHeight);
-          DrawingBrush videoBrush = new DrawingBrush();
-          videoBrush.Drawing = videoDrawing;
-          return videoBrush;
-        }
-        return new SolidColorBrush(Color.FromArgb(0xff, 0, 0, 0));
-      }
-    }
     /// <summary>
     /// Returns the ListViewCollection containing the recordings
     /// </summary>
@@ -148,28 +118,6 @@ namespace MyTv
           _viewMode = value;
           ChangeProperty("ItemTemplate");
         }
-      }
-    }
-    /// <summary>
-    /// Gets the current Window.
-    /// </summary>
-    /// <value>The window.</value>
-    public Window Window
-    {
-      get
-      {
-        return _window;
-      }
-    }
-    /// <summary>
-    /// Gets the current Page.
-    /// </summary>
-    /// <value>The page.</value>
-    public Page Page
-    {
-      get
-      {
-        return _page;
       }
     }
     /// <summary>
@@ -209,22 +157,11 @@ namespace MyTv
     /// Gets the localized-label for the header
     /// </summary>
     /// <value>The localized label.</value>
-    public string HeaderLabel
+    public override string HeaderLabel
     {
       get
       {
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 78);//recorded
-      }
-    }
-    /// <summary>
-    /// Gets the localized-label for the current date/time
-    /// </summary>
-    /// <value>The localized label.</value>
-    public string DateLabel
-    {
-      get
-      {
-        return DateTime.Now.ToString("dd-MM HH:mm");
       }
     }
     /// <summary>
@@ -276,33 +213,13 @@ namespace MyTv
         switch (_viewMode)
         {
           case ViewType.List:
-            return (DataTemplate)_page.Resources["recordingItemListTemplate"];
+            return (DataTemplate)Page.Resources["recordingItemListTemplate"];
           default:
-            return (DataTemplate)_page.Resources["recordingItemIconTemplate"];
+            return (DataTemplate)Page.Resources["recordingItemIconTemplate"];
         }
       }
     }
 
-    /// <summary>
-    /// Returns whether video is present or not.
-    /// </summary>
-    /// <value>Visibility.Visible when video is present otherwise Visibility.Collapsed</value>
-    public Visibility IsVideoPresent
-    {
-      get
-      {
-        return (ServiceScope.Get<IPlayerCollectionService>().Count != 0) ? Visibility.Visible : Visibility.Collapsed;
-      }
-    }
-    /// <summary>
-    /// Notifies subscribers that property has been changed
-    /// </summary>
-    /// <param name="propertyName">Name of the property.</param>
-    public void ChangeProperty(string propertyName)
-    {
-      if (PropertyChanged != null)
-        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-    }
     #endregion
 
     #region commands
@@ -321,7 +238,6 @@ namespace MyTv
         return _sortCommand;
       }
     }
-
     /// <summary>
     /// Returns a ICommand for changing the view mode.
     /// </summary>
@@ -341,21 +257,6 @@ namespace MyTv
     /// Returns a ICommand for cleaning up watched recordings
     /// </summary>
     /// <value>The command.</value>
-    public ICommand FullScreenTv
-    {
-      get
-      {
-        if (_fullScreenTvCommand == null)
-        {
-          _fullScreenTvCommand = new FullScreenTvCommand(this);
-        }
-        return _fullScreenTvCommand;
-      }
-    }
-    /// <summary>
-    /// Returns a ICommand for cleaning up watched recordings
-    /// </summary>
-    /// <value>The command.</value>
     public ICommand CleanUp
     {
       get
@@ -365,21 +266,6 @@ namespace MyTv
           _cleanUpCommand = new CleanUpCommand(this);
         }
         return _cleanUpCommand;
-      }
-    }
-    /// <summary>
-    /// Returns a ICommand for playing a recording
-    /// </summary>
-    /// <value>The command.</value>
-    public ICommand Play
-    {
-      get
-      {
-        if (_playCommand == null)
-        {
-          _playCommand = new PlayCommand(this);
-        }
-        return _playCommand;
       }
     }
     /// <summary>
@@ -412,23 +298,7 @@ namespace MyTv
         return _contextMenuCommand;
       }
     }
-    /// <summary>
-    /// Returns a ICommand for toggeling between fullscreen mode and windowed mode
-    /// </summary>
-    /// <value>The command.</value>
-    public ICommand FullScreen
-    {
-      get
-      {
-        if (_fullScreenCommand == null)
-        {
-          _fullScreenCommand = new FullScreenCommand(this);
-        }
-        return _fullScreenCommand;
-      }
-    }
     #endregion
-
 
     #region Commands subclasses
     #region base command class
@@ -582,120 +452,6 @@ namespace MyTv
     }
     #endregion
 
-    #region FullscreenTv command class
-    /// <summary>
-    /// Fullscreen command will navigate to fullscreen window
-    /// </summary>
-    public class FullScreenTvCommand : RecordedCommand
-    {
-      /// <summary>
-      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
-      /// </summary>
-      /// <param name="viewModel">The view model.</param>
-      public FullScreenTvCommand(TvRecordedViewModel viewModel)
-        : base(viewModel)
-      {
-      }
-
-      /// <summary>
-      /// Executes the command.
-      /// </summary>
-      /// <param name="parameter">The parameter.</param>
-      public override void Execute(object parameter)
-      {
-        if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
-        {
-          ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
-        }
-      }
-    }
-    #endregion
-
-    #region Play command class
-    /// <summary>
-    /// Play command will start playing a recording
-    /// </summary>
-    public class PlayCommand : RecordedCommand
-    {
-      private delegate void MediaPlayerErrorDelegate();
-      private delegate void MediaPlayerOpenDelegate();
-      /// <summary>
-      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
-      /// </summary>
-      /// <param name="viewModel">The view model.</param>
-      public PlayCommand(TvRecordedViewModel viewModel)
-        : base(viewModel)
-      {
-      }
-
-      /// <summary>
-      /// Executes the command.
-      /// </summary>
-      /// <param name="parameter">The parameter.</param>
-      public override void Execute(object parameter)
-      {
-        string fileName = parameter as string;
-        if (!System.IO.File.Exists(fileName))
-        {
-          MpDialogOk dlgError = new MpDialogOk();
-          dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-          dlgError.Owner = _viewModel.Window;
-          dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
-          dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
-          dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 96)/*File not found*/+ " " + fileName;
-          dlgError.ShowDialog();
-          return;
-        }
-        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
-        {
-          ServiceScope.Get<IPlayerCollectionService>().Clear();
-          _viewModel.ChangeProperty("VideoBrush");
-          _viewModel.ChangeProperty("FullScreen");
-          _viewModel.ChangeProperty("IsVideoPresent");
-        }
-        TvMediaPlayer player = new TvMediaPlayer(null, fileName);
-        ServiceScope.Get<IPlayerCollectionService>().Add(player);
-        player.MediaFailed += new EventHandler<MediaExceptionEventArgs>(_mediaPlayer_MediaFailed);
-        player.MediaOpened += new EventHandler(player_MediaOpened);
-        player.Open(PlayerMediaType.TvRecording,fileName);
-        player.Play();
-      }
-
-      void player_MediaOpened(object sender, EventArgs e)
-      {
-        _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerOpenDelegate(OnMediaOpened));
-      }
-      void OnMediaOpened()
-      {
-        _viewModel.ChangeProperty("VideoBrush");
-        _viewModel.ChangeProperty("FullScreen");
-        _viewModel.ChangeProperty("IsVideoPresent");
-      }
-      void _mediaPlayer_MediaFailed(object sender, MediaExceptionEventArgs e)
-      {
-        _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
-      }
-      void OnMediaPlayerError()
-      {
-        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
-        {
-          TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
-          if (player.HasError)
-          {
-            MpDialogOk dlgError = new MpDialogOk();
-            dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            dlgError.Owner = _viewModel.Window;
-            dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
-            dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
-            dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/+ " " + player.ErrorMessage;
-            dlgError.ShowDialog();
-          }
-        }
-        ServiceScope.Get<IPlayerCollectionService>().Clear();
-      }
-    }
-    #endregion
-
     #region Delete command class
     /// <summary>
     /// Delete command will delete a recoring
@@ -771,7 +527,7 @@ namespace MyTv
           case 0:
             {
               ICommand command = _viewModel.Play;
-              command.Execute(recording.FileName);
+              command.Execute(new PlayCommand.PlayParameter( recording.FileName,null,true));
             }
             break;
 
@@ -788,46 +544,6 @@ namespace MyTv
               ServiceScope.Get<INavigationService>().Navigate(infopage);
             }
             break;
-        }
-      }
-    }
-    #endregion
-
-    #region FullScreenCommand  class
-    /// <summary>
-    /// FullScreenCommand will toggle application between normal and fullscreen mode
-    /// </summary> 
-    public class FullScreenCommand : RecordedCommand
-    {
-      /// <summary>
-      /// Initializes a new instance of the <see cref="FullScreenCommand"/> class.
-      /// </summary>
-      /// <param name="viewModel">The view model.</param>
-      public FullScreenCommand(TvRecordedViewModel viewModel)
-        : base(viewModel)
-      {
-      }
-
-      /// <summary>
-      /// Executes the command.
-      /// </summary>
-      /// <param name="parameter">The parameter.</param>
-      public override void Execute(object parameter)
-      {
-        Window window = _viewModel.Window;
-        if (window.WindowState == System.Windows.WindowState.Maximized)
-        {
-          window.ShowInTaskbar = true;
-          WindowTaskbar.Show(); ;
-          window.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
-          window.WindowState = System.Windows.WindowState.Normal;
-        }
-        else
-        {
-          window.ShowInTaskbar = false;
-          window.WindowStyle = System.Windows.WindowStyle.None;
-          WindowTaskbar.Hide(); ;
-          window.WindowState = System.Windows.WindowState.Maximized;
         }
       }
     }
