@@ -30,6 +30,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
+using TvLibrary.ChannelLinkage;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Helper;
 
@@ -329,6 +330,23 @@ namespace TvLibrary.Implementations.Hybrid
       get
       {
         return _cards[_currentCardIndex].DiSEqCMotor;
+      }
+    }
+    /// <summary>
+    /// Starts scanning for linkage info
+    /// </summary>
+    public void StartLinkageScanner(BaseChannelLinkageScanner callback)
+    {
+      _cards[_currentCardIndex].StartLinkageScanner(callback);
+    }
+    /// <summary>
+    /// Returns the channel linkages grabbed
+    /// </summary>
+    public List<PortalChannel> ChannelLinkages
+    {
+      get
+      {
+        return _cards[_currentCardIndex].ChannelLinkages;
       }
     }
 

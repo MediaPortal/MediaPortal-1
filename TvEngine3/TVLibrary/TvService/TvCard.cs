@@ -35,6 +35,7 @@ using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
+using TvLibrary.ChannelLinkage;
 using TvLibrary.Log;
 using TvLibrary.Streaming;
 using TvControl;
@@ -50,6 +51,7 @@ namespace TvService
     bool _isLocal;
     ITVCard _card;
     Card _dbsCard;
+    ChannelLinkageGrabber _linkageGrabber=null;
     #endregion
 
     #region ctor
@@ -194,6 +196,8 @@ namespace TvService
         {
           _card.Context = new TvCardContext();
         }
+        if (_linkageGrabber == null)
+          _linkageGrabber = new ChannelLinkageGrabber(_card);
       }
     }
 
@@ -711,7 +715,6 @@ namespace TvService
           //RemoteControl.Instance.GrabEpg();
           return false;
         }
-
         _card.GrabEpg(grabber);
         return true;
 
@@ -1640,6 +1643,7 @@ namespace TvService
             return TvResult.NoVideoAudioDetected;
           }
           context.OnZap(user);
+          //_card.StartLinkageScanner(_linkageGrabber);
           return TvResult.Succeeded;
         }
       }

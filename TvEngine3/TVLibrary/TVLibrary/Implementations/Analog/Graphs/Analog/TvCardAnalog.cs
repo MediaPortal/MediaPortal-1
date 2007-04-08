@@ -34,6 +34,7 @@ using TvLibrary.Epg;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Helper;
 using TvLibrary.Interfaces;
+using TvLibrary.ChannelLinkage;
 using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.Analog
@@ -191,6 +192,26 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
+    #endregion
+
+    #region Channel linkage handling
+
+    /// <summary>
+    /// Starts scanning for linkage info
+    /// </summary>
+    public void StartLinkageScanner(BaseChannelLinkageScanner callback)
+    {
+    }
+    /// <summary>
+    /// Returns the channel linkages grabbed
+    /// </summary>
+    public List<PortalChannel> ChannelLinkages
+    {
+      get
+      {
+        return null;
+      }
+    }
     #endregion
 
     #region epg & scanning

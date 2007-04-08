@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TvLibrary.Epg;
+using TvLibrary.ChannelLinkage;
 using TvLibrary.Teletext;
 using DirectShowLib.SBE;
 namespace TvLibrary.Interfaces
@@ -128,6 +129,17 @@ namespace TvLibrary.Interfaces
     /// <value>The number of channels decrypting.</value>
     int NumberOfChannelsDecrypting { get;}
 
+    #endregion
+
+    #region Channel linkage handling
+    /// <summary>
+    /// Starts scanning for linkage info
+    /// </summary>
+    void StartLinkageScanner(BaseChannelLinkageScanner callback);
+    /// <summary>
+    /// Returns the channel linkages grabbed
+    /// </summary>
+    List<PortalChannel> ChannelLinkages { get;}
     #endregion
 
     #region epg & scanning

@@ -26,22 +26,6 @@ using System.Runtime.InteropServices;
 namespace TvLibrary.Interfaces.Analyzer
 {
   /// <summary>
-  /// callback interface for the ChannelLinkageScanner
-  /// </summary>
-  [ComVisible(true), ComImport,
-Guid("F8A86679-C80A-42fd-A148-20D681A67024"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IChannelLinkageCallback
-  {
-    /// <summary>
-    /// Called when channel linkages are received.
-    /// </summary>
-    /// <returns></returns>
-    [PreserveSig]
-    int OnLinkageReceived();
-  };
-
-  /// <summary>
   /// Interface to the channel linkage scanner com object
   /// </summary>
   [ComVisible(true), ComImport,

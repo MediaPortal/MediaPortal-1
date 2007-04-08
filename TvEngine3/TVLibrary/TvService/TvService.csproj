@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChannelLinkage\ChannelLinkageGrabber.cs" />
     <Compile Include="DiskManagement\DiskManagement.cs" />
     <Compile Include="DiskManagement\EpisodeManagement.cs" />
     <Compile Include="DiskManagement\RecordingFileInfo.cs" />

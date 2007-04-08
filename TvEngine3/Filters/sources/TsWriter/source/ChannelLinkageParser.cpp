@@ -58,6 +58,7 @@ void CChannelLinkageParser::Start()
 	CEnterCriticalSection enter(m_section);
 	m_mapChannels.clear();
 	m_bScanning=true;
+	m_scanTimeout=time(NULL);
 }
 
 void CChannelLinkageParser::Reset()

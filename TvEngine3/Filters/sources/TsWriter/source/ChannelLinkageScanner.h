@@ -41,13 +41,13 @@ DECLARE_INTERFACE_(IChannelLinkageCallback, IUnknown)
 // video anayzer interface
 DECLARE_INTERFACE_(ITsChannelLinkageScanner, IUnknown)
 {
-	STDMETHOD(Start)() PURE;
-	
+	STDMETHOD(Start)(THIS_) PURE;
+	STDMETHOD(Reset)(THIS_)PURE;
+
 	STDMETHOD(GetChannelCount) (THIS_ ULONG* channelCount)PURE;
 	STDMETHOD(GetChannel) (THIS_ ULONG channelIndex, WORD* network_id, WORD* transport_id,WORD* service_id  )PURE;
 	STDMETHOD(GetLinkedChannelsCount) (THIS_ ULONG channelIndex, ULONG* linkedChannelsCount)PURE;
 	STDMETHOD(GetLinkedChannel) (THIS_ ULONG channelIndex,ULONG linkIndex, WORD* network_id, WORD* transport_id,WORD* service_id, char** channelName  )PURE;
-	STDMETHOD(Reset)(THIS_)PURE;
   
 	STDMETHOD(SetCallBack)(THIS_ IChannelLinkageCallback* callback)PURE;
 };
@@ -64,9 +64,9 @@ public:
 	STDMETHODIMP Reset();
 
 	STDMETHODIMP GetChannelCount (THIS_ ULONG* channelCount);
-	STDMETHODIMP GetChannel (THIS_ ULONG channel, WORD* networkId, WORD* transportid,WORD* service_id  );
-	STDMETHODIMP GetLinkedChannelsCount (THIS_ ULONG channel, ULONG* linkedChannelsCount);
-	STDMETHODIMP GetLinkedChannel (THIS_ ULONG channel,ULONG linkIndex, WORD* networkId, WORD* transportid,WORD* service_id, char** channelName  );
+	STDMETHODIMP GetChannel (THIS_ ULONG channelIndex, WORD* network_id, WORD* transport_id,WORD* service_id  );
+	STDMETHODIMP GetLinkedChannelsCount (THIS_ ULONG channelIndex, ULONG* linkedChannelsCount);
+	STDMETHODIMP GetLinkedChannel (THIS_ ULONG channel,ULONG linkIndex, WORD* network_id, WORD* transport_id,WORD* service_id, char** channelName  );
 
 	STDMETHODIMP SetCallBack(IChannelLinkageCallback* callback);
 

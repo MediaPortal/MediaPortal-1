@@ -2083,37 +2083,36 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
-    public void StartLinkageScanner()//ChannelLinkageCallback callback)
+    public void StartLinkageScanner(BaseChannelLinkageScanner callback)
     {
       if (!CheckThreadId()) return;
 
-      //_linkageCallback = callback
-      //_interfaceChannelLinkageScanner.SetCallBack((IChannelLinkageCallback)callback;
+      _interfaceChannelLinkageScanner.SetCallBack((IChannelLinkageCallback)callback);
       _interfaceChannelLinkageScanner.Start();
 
     }
     /// <summary>
     /// Returns the EPG grabbed or null if epg grabbing is still busy
     /// </summary>
-    public List<ParentChannel> ChannelLinkages
+    public List<PortalChannel> ChannelLinkages
     {
       get
       {
         try
         {
           uint titleCount;
-          uint channelCount = 0;
-          List<ParentChannel> parentChannels = new List<ParentChannel>();
+          uint channelCount;
+          List<PortalChannel> portalChannels = new List<PortalChannel>();
           _interfaceChannelLinkageScanner.GetChannelCount(out channelCount);
           if (channelCount == 0)
-            return parentChannels;
+            return portalChannels;
           for (uint i = 0; i < channelCount; i++)
           {
             ushort network_id = 0; ;
             ushort transport_id = 0; ;
             ushort service_id=0;
             _interfaceChannelLinkageScanner.GetChannel(i, ref network_id,ref transport_id,ref service_id);
-            ParentChannel pChannel = new ParentChannel();
+            PortalChannel pChannel = new PortalChannel();
             pChannel.NetworkId = network_id;
             pChannel.TransportId = transport_id;
             pChannel.ServiceId = service_id;
@@ -2136,15 +2135,15 @@ namespace TvLibrary.Implementations.DVB
                 pChannel.LinkedChannels.Add(lChannel);
               }
             }
-            parentChannels.Add(pChannel);
+            portalChannels.Add(pChannel);
           }
           _interfaceChannelLinkageScanner.Reset();
-          return parentChannels;
+          return portalChannels;
         }
         catch (Exception ex)
         {
           Log.Log.Write(ex);
-          return new List<ParentChannel>();
+          return new List<PortalChannel>();
         }
       }
     }

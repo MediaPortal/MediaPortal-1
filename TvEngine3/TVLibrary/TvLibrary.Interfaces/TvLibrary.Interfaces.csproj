@@ -37,8 +37,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChannelLinkage\LinkedChannel.cs" />
-    <Compile Include="ChannelLinkage\ParentChannel.cs" />
+    <Compile Include="ChannelLinkage\PortalChannel.cs" />
     <Compile Include="Interfaces\IDiSEqCMotor.cs" />
+    <Compile Include="Interfaces\ITVChannelLinkage.cs" />
     <Compile Include="Interfaces\ITvSubChannel.cs" />
     <Compile Include="Interfaces\SpecialChannel.cs" />
     <Compile Include="RtspClient.cs" />
