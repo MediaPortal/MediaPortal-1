@@ -120,12 +120,11 @@ public:
 
   static CUnknown * WINAPI CreateInstance( LPUNKNOWN pUnk, HRESULT *pHr );
 
-	void Reset();
-
   void SetPcr( ULONGLONG pcr );
 
 private:
-
+  void Reset();
+  void LogDebugMediaPosition( const char *text );
   HRESULT ConnectToTSFileSource();
 
 private: // data
@@ -154,4 +153,5 @@ private: // data
 
   ITSFileSource*      m_pTSFileSource;
   bool                m_bStopping;
+  bool                m_bPaused;
 };

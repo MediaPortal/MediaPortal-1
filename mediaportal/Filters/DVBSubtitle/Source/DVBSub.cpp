@@ -93,7 +93,8 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_firstPCR( -1 ),
   m_startTimestamp( -1 ),
   m_seekDifPCR( -1 ),
-  m_bStopping( false )
+  m_bStopping( false ),
+  m_bPaused( false )
 {
 	// Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -266,7 +267,17 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 	  pGraph->QueryInterface( &m_pIMediaSeeking );
   }
 
-  Reset();
+  LogDebugMediaPosition( "Run - media seeking position" );        
+
+  if( !m_bPaused )
+  {
+    Reset();
+  }
+  else
+  {
+    m_bPaused = false;
+  }
+
   m_startTimestamp = tStart;
   
   if( ! m_pTSFileSource )
@@ -281,8 +292,10 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 //
 STDMETHODIMP CDVBSub::Pause()
 {
+  m_bPaused = true;
   CAutoLock cObjectLock( m_pLock );
-	return CBaseFilter::Pause();
+  LogDebugMediaPosition( "Pause - media seeking position" );
+  return CBaseFilter::Pause();
 }
 
 
@@ -291,20 +304,21 @@ STDMETHODIMP CDVBSub::Pause()
 //
 STDMETHODIMP CDVBSub::Stop()
 {
-  LogDebug("CDVBSub::Stop - beging" );
+  LogDebug("CDVBSub::Stop - beginning" );
   CAutoLock cObjectLock( m_pLock );
   // Calling reset here seems to hang the whole graph (a deadlock with TSFileSource?)
-  // Filter state is reseted in ::Run()
+  // Filter state is reseted in ::Run() if needed
   //Reset(); 
 
   m_bStopping = true;
+
   LogDebug( "Release ITSFileSource" );
   m_pTSFileSource->Release();
   m_pTSFileSource = NULL;
   LogDebug( "Release ITSFileSource - done" );
 
   HRESULT hr = CBaseFilter::Stop();
-  LogDebug("CDVBSub::Stop - end" );
+  LogDebug("CDVBSub::Stop - done" );
   return hr;
 }
 
@@ -335,21 +349,11 @@ void CDVBSub::Reset()
 
   // Notify reset observer
   if( m_pTimestampResetObserver )
-    (*m_pTimestampResetObserver)();
-
-  LONGLONG pos( 0 );
-  IFilterGraph *pGraph = GetFilterGraph();
-  IMediaSeeking* pIMediaSeeking;
-  pGraph->QueryInterface( &pIMediaSeeking );
-  if( pIMediaSeeking )
   {
-    pIMediaSeeking->GetCurrentPosition( &pos );
-	  if( pos > 0 )
-	  {
-		  pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
-	    LogDebugPTS( "Reset - MediaSeeking Pos : ", pos ); 
-    }
-  } 
+    (*m_pTimestampResetObserver)();
+  }
+
+  LogDebugMediaPosition( "Reset - media seeking position" );  
 }
 
 
@@ -368,7 +372,8 @@ STDMETHODIMP CDVBSub::Test(int status)
 //
 void CDVBSub::NotifySubtitle()
 {
-	LogDebug("NOTIFY - subtitle");
+  LogDebugMediaPosition( "subtitle arrived - media seeking position" );
+
   // calculate the time stamp
   CSubtitle* pSubtitle( NULL );
   pSubtitle = m_pSubDecoder->GetLatestSubtitle();
@@ -467,7 +472,9 @@ void CDVBSub::SetPcr( ULONGLONG pcr )
   if( m_seekDifPCR < 0 )
   {
     // updated on every seek (reset)
-	  LONGLONG pos( 0 );
+    LogDebugMediaPosition( "SetPCR - media seeking position" );  
+
+    LONGLONG pos( 0 );
 	  if( m_pIMediaSeeking )
 	  {
       m_pIMediaSeeking->GetCurrentPosition( &pos );
@@ -476,7 +483,8 @@ void CDVBSub::SetPcr( ULONGLONG pcr )
 			  pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
 		    LogDebugPTS( "Set PCR - MediaSeeking Pos : ", pos ); 
       }
-	  }    
+	  }  
+
     m_seekDifPCR = pos;
     LogDebugPTS( "fixDifPCR: ", m_fixPCR );
   }
@@ -621,6 +629,22 @@ STDMETHODIMP CDVBSub::DiscardOldestSubtitle()
   return S_FALSE;
 }
 
+//
+// LogDebugMediaPosition
+//
+void CDVBSub::LogDebugMediaPosition( const char *text )
+{
+  LONGLONG pos( 0 );
+  if( m_pIMediaSeeking )
+  {
+    m_pIMediaSeeking->GetCurrentPosition( &pos );
+	  if( pos > 0 )
+	  {
+		  pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
+	    LogDebugPTS( text, pos ); 
+    }
+  } 
+}
 
 //
 // CreateInstance
