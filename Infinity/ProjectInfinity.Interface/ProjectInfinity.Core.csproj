@@ -49,6 +49,9 @@
     <Compile Include="Players\IPlayer.cs" />
     <Compile Include="Players\IPlayerCollection.cs" />
     <Compile Include="Players\PlayerCollectionService.cs" />
+    <Compile Include="Playlist\IPlaylistItem.cs" />
+    <Compile Include="Playlist\IPlaylistManager.cs" />
+    <Compile Include="Playlist\PlaylistManager.cs" />
     <Compile Include="PluginMessages.cs" />
     <Compile Include="SystemMessages.cs" />
     <Compile Include="Music\IMusicPlayer.cs" />

@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ProjectInfinity.Playlist;
 
 namespace MyVideos
 {
-  public class VideoModel
+  public class VideoModel : IPlaylistItem
   {
     #region variables
     private string _name;
@@ -100,6 +101,18 @@ namespace MyVideos
 
         return _logo;
       }
+    }
+    #endregion
+
+    #region playlist properties
+    public string UpArrow
+    {
+      get { return Thumbs.UpArrowIconPath; }
+    }
+
+    public string DownArrow
+    {
+      get { return Thumbs.DownArrowIconPath; }
     }
     #endregion
   }

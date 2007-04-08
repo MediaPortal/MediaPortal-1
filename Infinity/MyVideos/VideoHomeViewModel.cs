@@ -19,6 +19,8 @@ using Dialogs;
 using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using System.Windows.Media;
+using System.Windows.Navigation;
+using ProjectInfinity.Playlist;
 
 namespace MyVideos
 {
@@ -50,7 +52,7 @@ namespace MyVideos
     ICommand _sortCommand;
     ICommand _viewCommand;
     ICommand _switchCommand;
-    ICommand _PlaylistCommand;
+    ICommand _playlistCommand;
     ICommand _dvdCommand;
     ICommand _itemCommand;
     ICommand _fullscreenCommand;
@@ -188,8 +190,20 @@ namespace MyVideos
         return _dvdCommand;
       }
     }
+
+    public ICommand Playlist
+    {
+      get
+      {
+        if (_playlistCommand == null)
+          _playlistCommand = new PlaylistCommand(this);
+
+        return _playlistCommand;
+      }
+    }
     #endregion
 
+    #region properties
     public ViewType ViewMode
     {
       get { return _viewType; }
@@ -268,6 +282,7 @@ namespace MyVideos
     {
       get { return _page; }
     }
+    #endregion
 
     public void ChangeProperty(string propertyName)
     {
@@ -275,6 +290,46 @@ namespace MyVideos
         PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
     }
   }
+
+  #region add to playlist command class
+  public class AddToPlaylistCommand : BaseCommand
+  {
+    public AddToPlaylistCommand(VideoHomeViewModel viewModel)
+      : base(viewModel)
+    {
+    }
+
+    public override void Execute(object parameter)
+    {
+      VideoModel model = (VideoModel)parameter;
+
+      PlaylistManager _manager = (PlaylistManager)ServiceScope.Get<IPlaylistManager>();
+
+      if (_manager == null)
+      {
+        _manager = new PlaylistManager();
+        ServiceScope.Add<IPlaylistManager>(_manager);
+      }
+
+      ServiceScope.Get<IPlaylistManager>().Add(model);
+    }
+  }
+  #endregion
+
+  #region playlist command class
+  public class PlaylistCommand : BaseCommand
+  {
+    public PlaylistCommand(VideoHomeViewModel viewModel)
+      : base(viewModel)
+    {
+    }
+
+    public override void Execute(object parameter)
+    {
+      _viewModel.Page.NavigationService.Navigate(new Uri("/MyVideos;component/VideoPlaylist.xaml", UriKind.Relative));
+    }
+  }
+  #endregion
 
   #region fullscreen command class
   class FullscreenCommand : BaseCommand
@@ -642,7 +697,6 @@ namespace MyVideos
         {
           _sortMode = value;
           this.CustomSort = new VideoComparer(_sortMode);
-          // TODO: fix sorting
         }
       }
     }

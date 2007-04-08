@@ -2,6 +2,7 @@ using System;
 using ProjectInfinity;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.Playlist;
 
 namespace MyVideos
 {
@@ -13,6 +14,10 @@ namespace MyVideos
     public void Initialize()
     {
       ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyVideos;component/VideoHome.xaml", UriKind.Relative));
+
+      // Add playlist service
+      IPlaylistManager playlist = new PlaylistManager();
+      ServiceScope.Add<IPlaylistManager>(playlist);
     }
 
     #endregion

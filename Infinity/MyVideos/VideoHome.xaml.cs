@@ -20,6 +20,8 @@ using System.Windows.Shapes;
 using ProjectInfinity;
 using ProjectInfinity.Menu;
 using ProjectInfinity.Messaging;
+using ProjectInfinity.Localisation;
+using ProjectInfinity.Players;
 
 namespace MyVideos
 {
@@ -59,6 +61,20 @@ namespace MyVideos
 
       this.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(OnMouseButtonDownEvent), true);
       this.KeyDown += new KeyEventHandler(onKeyDown);
+
+      // Display the video in the background (if there is any)
+      // This one we might need to rewrite to get the (buttonVideo.Visibility...) away / or maybe we should just
+      // show it even if the background is playing video, what do you think?
+      if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
+      {
+        VideoPlayer player = (VideoPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
+
+        if (player.HasMedia)
+        {
+          gridMain.Background = _model.VideoBrush;
+          buttonVideo.Visibility = Visibility.Hidden;
+        }
+      }
     }
 
     /// <summary>
@@ -81,10 +97,37 @@ namespace MyVideos
       if ((e.Source as ListBox) != null)
       {
         ListBox box = (ListBox)e.Source;
-        OnVideoItemClicked(box);
-        e.Handled = true;
 
-        return;
+        if ((e as MouseButtonEventArgs).RightButton == MouseButtonState.Pressed)
+        {
+          Dialogs.MpMenu dlgMenu = new Dialogs.MpMenu();
+          dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+          dlgMenu.Owner = Window.GetWindow(this);
+          dlgMenu.Items.Clear();
+          dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68); // Menu
+          dlgMenu.SubTitle = (box.SelectedItem as VideoModel).Title;
+          dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 30))); // Add to playlist
+          dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 29))); // View information
+          dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 27))); // Download information
+          dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 28))); // Delete from disk
+          dlgMenu.ShowDialog();
+
+          switch (dlgMenu.SelectedIndex)
+          {
+            case 0:
+              // Add to playlist
+              ICommand addToPlaylist = new AddToPlaylistCommand(_model);
+              addToPlaylist.Execute((VideoModel)box.SelectedItem);
+              break;
+          }
+        }
+        else
+        {
+          OnVideoItemClicked(box);
+          e.Handled = true;
+
+          return;
+        }
       }
     }
 

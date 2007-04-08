@@ -181,5 +181,12 @@
     <String id="24">Please select drive to play from</String>
     <String id="25">DVD Playback</String>
     <String id="26">DVD Playback failed. Are you sure you've put a DVD into the player?</String>
+    <String id="27">Download information</String>
+    <String id="28">Delete from drisk</String>
+    <String id="29">View information</String>
+    <String id="30">Add to playlist</String>
+    <String id="31">Partymix</String>
+    <String id="32">Next track</String>
+    <String id="33">Previous track</String>
   </Section>
 </Language>

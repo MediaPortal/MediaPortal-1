@@ -19,12 +19,15 @@ namespace MyVideos
     private string _fileName;
     private bool _paused = false;
     private bool _isStream = false;
+    private bool _hasMedia = false;
     private Exception _exception;
 
     public VideoPlayer(string fileName)
     {
       _fileName = fileName;
       _underlyingPlayer = new MediaPlayer();
+
+      _hasMedia = true;
     }
 
     public void Open(PlayerMediaType mediaType, string fileName)
@@ -52,12 +55,16 @@ namespace MyVideos
       else
         _underlyingPlayer.Open(new Uri(fileName));
       ServiceScope.Get<ILogger>().Info("Video:  player opened");
+
+      _hasMedia = true;
     }
 
     public void Close()
     {
       _underlyingPlayer.Stop();
       _underlyingPlayer.Close();
+
+      _hasMedia = false;
     }
 
     public void Play()
@@ -84,12 +91,18 @@ namespace MyVideos
       if (MediaFailed != null)
       {
         MediaFailed(this, new MediaExceptionEventArgs(e.ErrorException));
+        _hasMedia = false;
       }
     }
 
     public string FileName
     {
       get { return _fileName; }
+    }
+
+    public bool HasMedia
+    {
+      get { return _hasMedia; }
     }
 
     public bool HasError
