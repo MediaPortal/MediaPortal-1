@@ -163,6 +163,9 @@ namespace MyTv
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       // Sets keyboard focus on the first Button in the sample.
+      //this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
+      this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
+
       labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 46);//program info
       buttonRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 13);//Record
       buttonAdvancedRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 42);//Advanced Record
@@ -216,19 +219,6 @@ namespace MyTv
     }
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
-      if (e.Key == System.Windows.Input.Key.Left)
-      {
-        //return to previous screen
-        Keyboard.Focus(buttonRecord);
-        e.Handled = true;
-        return;
-      }
-      if (e.Key == System.Windows.Input.Key.Escape)
-      {
-        //return to previous screen
-        ServiceScope.Get<INavigationService>().GoBack();
-        return;
-      }
       if (e.Key == System.Windows.Input.Key.X)
       {
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)

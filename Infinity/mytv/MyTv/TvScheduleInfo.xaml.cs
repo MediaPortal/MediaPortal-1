@@ -160,6 +160,9 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      //this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
+      this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
+
       labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 110);//schedule info
       buttonRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 13);//Record
       buttonAdvancedRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 42);//Advanced Record
@@ -227,17 +230,6 @@ namespace MyTv
     }
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
-      if (e.Key == System.Windows.Input.Key.Left)
-      {
-        Keyboard.Focus(buttonRecord);
-        return;
-      }
-      if (e.Key == System.Windows.Input.Key.Escape)
-      {
-        //return to previous screen
-        ServiceScope.Get<INavigationService>().GoBack();
-        return;
-      }
       if (e.Key == System.Windows.Input.Key.X)
       {
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
