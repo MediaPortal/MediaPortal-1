@@ -6,6 +6,7 @@ namespace ProjectInfinity.Plugins
     private string _description;
     private bool _autoStart = false;
     private bool _listInMenu = false;
+    private string _imagePath;
 
     public PluginInfo(string name, string description)
     {
@@ -19,6 +20,7 @@ namespace ProjectInfinity.Plugins
       _description = attribute.Description;
       _autoStart = attribute.AutoStart;
       _listInMenu = attribute.ListInMenu;
+      _imagePath = attribute.ImagePath;
     }
 
     public string Name
@@ -41,6 +43,11 @@ namespace ProjectInfinity.Plugins
     public bool ListInMenu
     {
       get { return _listInMenu; }
+    }
+
+    public string ImagePath
+    {
+      get { return _imagePath; }
     }
 
     #endregion

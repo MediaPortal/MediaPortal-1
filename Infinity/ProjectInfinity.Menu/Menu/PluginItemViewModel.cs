@@ -40,6 +40,10 @@ namespace ProjectInfinity.Menu
       get { return item.Description; }
     }
 
+    public string ImagePath
+    {
+      get { return item.ImagePath; }
+    }
     /// <summary>
     /// Returns an <see cref="ICommand"/> implementation that can be used to start
     /// the plugin that is represented by this item.

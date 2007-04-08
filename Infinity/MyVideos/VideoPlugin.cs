@@ -6,7 +6,7 @@ using ProjectInfinity.Playlist;
 
 namespace MyVideos
 {
-  [Plugin("My Video", "My Video", ListInMenu = true)]
+  [Plugin("My Video", "My Video", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/media/images/Video.png")]
   public class VideoPlugin : IPlugin
   {
     #region IPlugin Members

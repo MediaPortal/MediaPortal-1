@@ -1,25 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ProjectInfinity;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
 
-namespace MyTv
+namespace ProjectInfinity.Pictures
 {
-  [Plugin("My Tv", "My Tv", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/media/images/tv.png")]
-  public class TvPlugin: IPlugin
+  [Plugin("MyPictures", "Show Pictures", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/media/images/Pictures.png")]
+  class PicturePlugin : IPlugin
   {
-    #region IPlugin Members
-
     public void Initialize()
     {
-      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvHome.xaml", UriKind.Relative));
+      ServiceScope.Get<INavigationService>().Navigate(new Uri("/ProjectInfinity.Plugins;component/Pictures/PictureView.xaml", UriKind.Relative));
     }
-
-    #endregion
-
-    #region IDisposable Members
 
     ///<summary>
     ///Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -28,6 +21,5 @@ namespace MyTv
     public void Dispose()
     {
     }
-    #endregion
   }
 }

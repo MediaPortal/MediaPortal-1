@@ -12,6 +12,7 @@ namespace ProjectInfinity.Plugins
   {
     public string Name;
     public string Description;
+    public string ImagePath;
     public bool AutoStart;
     public bool ListInMenu;
 

@@ -1,31 +1,29 @@
 ﻿<Page x:Class="ProjectInfinity.Menu.View.MenuPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:ProjectInfinity.Menu"
-    Title="MenuPage" Background="{StaticResource backGroundBrush}" 
+    xmlns:local="clr-namespace:ProjectInfinity.Menu;assembly=ProjectInfinity.Services"
+    xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls"
+    Title="MenuPage" Background="{StaticResource backGroundBrush}"
     >
   <Page.Resources>
     <ItemsPanelTemplate x:Key="MenuItemsPanelTemplate">
-      <StackPanel Orientation="Vertical" Margin ="50,50,50,50"/>
-      </ItemsPanelTemplate>
+      <StackPanel Margin ="50,50,50,50"/>
+    </ItemsPanelTemplate>
 
-      <ControlTemplate x:Key="MenuTemplate" TargetType="{x:Type Menu}">
-      <StackPanel Orientation="Vertical">
+    <ControlTemplate x:Key="MenuTemplate" TargetType="{x:Type controls:ListView}">
         <ItemsPresenter/>
-      </StackPanel>
     </ControlTemplate>
-    <HierarchicalDataTemplate DataType="{x:Type local:MenuViewModel}" ItemsSource ="{Binding Path=Items}">
-      <TextBlock Text="{Binding Path=Text}" />
-    </HierarchicalDataTemplate>
-    <DataTemplate DataType="{x:Type local:PluginItemViewModel}">
-        <Button Command="{Binding Start}" ToolTip ="{Binding Path=Description}" >
-          <WrapPanel>
-            <TextBlock Text="{Binding Path=Text}" FontSize="20" />
-          </WrapPanel>
-        </Button>
+    <DataTemplate DataType="{x:Type local:PluginItem}">
+        <TextBlock  Text="{Binding Path=Text}" FontSize="20" ToolTip ="{Binding Path=Description}" Margin="0,10,0,10" />
     </DataTemplate>
   </Page.Resources>
-  <StackPanel>
-    <Menu  ItemsPanel ="{StaticResource MenuItemsPanelTemplate}" Template="{StaticResource MenuTemplate}" ItemsSource ="{Binding Path=Items}" />
-  </StackPanel>
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="2*" />
+    </Grid.ColumnDefinitions>
+
+    <controls:ListView Grid.Column="0" ItemsPanel ="{StaticResource MenuItemsPanelTemplate}" Template="{StaticResource MenuTemplate}" ItemsSource ="{Binding Items}" IsSynchronizedWithCurrentItem="True" Command="{Binding Launch}" SelectionMode="Single" />
+    <Image Grid.Column="1" Source="{Binding Path=Items.CurrentItem.ImagePath}" />
+  </Grid>
 </Page>

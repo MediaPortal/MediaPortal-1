@@ -8,11 +8,13 @@ namespace ProjectInfinity.Menu
   /// </remarks>
   public class MenuViewModel
   {
-    private IMenu menu;
+    private IMenu _menu;
+    private MenuItemViewModel _menuItems;
 
     public MenuViewModel(IMenu model)
     {
-      menu = model;
+      _menu = model;
+      _menuItems = new MenuItemViewModel(_menu.Items);
     }
 
     /// <summary>
@@ -20,7 +22,7 @@ namespace ProjectInfinity.Menu
     /// </summary>
     public string Text
     {
-      get { return menu.Text; }
+      get { return _menu.Text; }
     }
 
     /// <summary>
@@ -29,7 +31,7 @@ namespace ProjectInfinity.Menu
     /// </summary>
     public MenuItemViewModel Items
     {
-      get { return new MenuItemViewModel(menu.Items); }
+      get { return _menuItems;}
     }
   }
 }

@@ -25,6 +25,12 @@ namespace ProjectInfinity.Menu
     {
       get { return _pluginInfo.Description;}
     }
+
+    public string ImagePath
+    {
+      get { return _pluginInfo.ImagePath; }
+    }
+
     #endregion
   }
 }
