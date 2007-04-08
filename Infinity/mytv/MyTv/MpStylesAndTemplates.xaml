@@ -679,6 +679,8 @@
   <Style x:Key="MpListViewItem" TargetType="ListBoxItem">
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="KeyboardNavigation.TabNavigation" Value="Continue" />
+    <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Local" />
     <Setter Property="Control.Template">
       <Setter.Value>
         <ControlTemplate TargetType="ListBoxItem">
@@ -696,6 +698,9 @@
                 <StopStoryboard BeginStoryboardName="onFocused"/>
               </Trigger.ExitActions>
             </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+              <Setter Property="Foreground" Value="#40FFFFFF" />
+            </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
 
@@ -706,6 +711,8 @@
   <Style x:Key="MpListView" TargetType="ListBox">
     <Setter Property="SnapsToDevicePixels" Value="true"/>
     <Setter Property="OverridesDefaultStyle" Value="true"/>
+    <Setter Property="KeyboardNavigation.TabNavigation" Value="Continue" />
+    <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Local" />
     <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
     <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
     <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>

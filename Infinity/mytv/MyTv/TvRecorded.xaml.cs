@@ -104,12 +104,6 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
     protected void onPreviewKeyDown(object sender, KeyEventArgs e)
     {
-      if (e.Key == System.Windows.Input.Key.Left)
-      {
-        Keyboard.Focus(buttonView);
-        e.Handled = true;
-        return;
-      }
       if (e.Key == System.Windows.Input.Key.X)
       {
         ICommand command = _model.FullScreenTv;

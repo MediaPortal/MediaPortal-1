@@ -98,12 +98,6 @@ namespace MyTv
     }
     protected void OnPreviewKeyDown(object sender, KeyEventArgs e)
     {
-      if (e.Key == System.Windows.Input.Key.Left)
-      {
-        Keyboard.Focus(buttonSort);
-        e.Handled = true;
-        return;
-      }
       if (e.Key == System.Windows.Input.Key.X)
       {
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
