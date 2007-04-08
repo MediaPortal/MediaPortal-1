@@ -60,7 +60,6 @@ namespace MyTv
       this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
       // Sets keyboard focus on the first Button in the sample.
-      Keyboard.Focus(buttonView);
 
       //add some event handlers to keep mouse/keyboard focused together...
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onPreviewKeyDown));

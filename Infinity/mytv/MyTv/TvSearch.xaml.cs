@@ -44,7 +44,6 @@ namespace MyTv
     {
       _model = new TvSearchViewModel(this);
       gridMain.DataContext = _model;
-      Keyboard.Focus(textboxSearch);
       this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onPreviewKeyDown));
@@ -107,9 +106,10 @@ namespace MyTv
     void onKeyDown(object sender, KeyEventArgs e)
     {
       if ((e.Source as ListBox) == null) return;
+      ListBox box = e.Source as ListBox;
+      
       if (e.Key == System.Windows.Input.Key.Enter)
       {
-        ListBox box = e.Source as ListBox;
         OnProgramClicked(box);
         e.Handled = true;
         return;

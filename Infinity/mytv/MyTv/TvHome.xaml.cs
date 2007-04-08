@@ -76,7 +76,6 @@ namespace MyTv
       ServiceScope.Get<ILogger>().Info("mytv:OnLoaded");
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       // Sets keyboard focus on the first Button in the sample.
-      Keyboard.Focus(buttonTvGuide);
       Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
       ConnectToServer();
     }

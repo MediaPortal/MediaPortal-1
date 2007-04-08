@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   	xmlns:l='clr-namespace:MCEControls;assembly=Keyboard'
     xmlns:local="clr-namespace:MyTv"
+    FocusManager.FocusedElement="{Binding ElementName=textboxSearch}"
     Title="TvSearch" Loaded="OnLoaded" Background="{StaticResource backGroundBrush}" WindowWidth="800" WindowHeight="600"
     >
   <Page.Resources>

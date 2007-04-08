@@ -55,7 +55,6 @@ namespace MyTv
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(OnPreviewKeyDown));
       Mouse.AddMouseMoveHandler(this, new MouseEventHandler(OnMouseMove));
-      Keyboard.Focus(buttonSort);
       this.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(OnMouseDownEvent), true);
       this.KeyDown += new KeyEventHandler(OnKeyDown);
     }
