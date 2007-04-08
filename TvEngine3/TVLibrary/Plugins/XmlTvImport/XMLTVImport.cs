@@ -348,7 +348,7 @@ namespace TvEngine
                   string seriesNum = "";
                   string episodeNum = "";
                   string episodePart = "";
-                  string starRating = "";
+                  string starRating = "0";
                   string clasification = "";
 
                   if (nodeRepeat != null) repeat = "Repeat";
