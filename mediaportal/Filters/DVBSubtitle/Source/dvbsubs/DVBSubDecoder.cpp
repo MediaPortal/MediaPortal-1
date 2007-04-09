@@ -338,7 +338,7 @@ void CDVBSubDecoder::Process_page_composition_segment()
 	//LogDebug("DVBsubs: page_state=%d", page_state );
   
   // HACK, not all broadcasters provide valid a timeout values for subtitles
-  if( page_time_out <= 1 || page_time_out > 5 )
+  if( page_time_out <= 1 || page_time_out > 7 )
   {
     LogDebug("DVBsubs: page_time_out was %i , forcing it to 5 seconds", page_time_out );
     page_time_out = 5; // in seconds
