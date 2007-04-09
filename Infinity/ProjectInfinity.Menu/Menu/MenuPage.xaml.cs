@@ -8,7 +8,6 @@ namespace ProjectInfinity.Menu.View
     public MenuPage()
     {
       InitializeComponent();
-      DataContext = new MenuItemViewModel(ServiceScope.Get<IMenuManager>().GetMenu());
     }
   }
 }
