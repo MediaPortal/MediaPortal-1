@@ -122,8 +122,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ProgramModel.cs" />
-    <Compile Include="TvBaseViewModel.cs" />
+    <Compile Include="Models\ProgramModel.cs" />
+    <Compile Include="Models\TvBaseViewModel.cs" />
     <Compile Include="TvChannelNavigator\ChannelNavigator.cs" />
     <Compile Include="TvChannelNavigator\ITvChannelNavigator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -149,12 +149,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="RecordingModel.cs" />
-    <Compile Include="ScheduleModel.cs" />
+    <Compile Include="Models\RecordingModel.cs" />
+    <Compile Include="Models\ScheduleModel.cs" />
     <Compile Include="Helper classes\ThumbnailGenerator.cs" />
     <Compile Include="Helper classes\Thumbs.cs" />
     <Compile Include="Helper classes\TsReaderCheck.cs" />
-    <Compile Include="TvRecordedViewModel.cs" />
+    <Compile Include="Models\TvRecordedViewModel.cs" />
     <Compile Include="TvFullscreen.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvFullscreen.xaml</DependentUpon>
@@ -181,7 +181,7 @@
       <SubType>Code</SubType>
       <DependentUpon>TvScheduled.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TvScheduledViewModel.cs" />
+    <Compile Include="Models\TvScheduledViewModel.cs" />
     <Compile Include="TvScheduleInfo.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvScheduleInfo.xaml</DependentUpon>
@@ -190,7 +190,7 @@
       <SubType>Code</SubType>
       <DependentUpon>TvSearch.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TvSearchViewModel.cs" />
+    <Compile Include="Models\TvSearchViewModel.cs" />
     <Compile Include="TvSetup.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvSetup.xaml</DependentUpon>
