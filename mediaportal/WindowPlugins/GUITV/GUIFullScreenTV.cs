@@ -157,6 +157,10 @@ namespace MediaPortal.GUI.TV
     ,
       LABEL_ROW3 = 12
     ,
+      LABEL_CHANNEL = 14
+    ,
+      LABEL_SKIPSTEPS = 15
+    ,
       IMG_PAUSE = 16
     ,
       IMG_2X = 17
@@ -755,7 +759,7 @@ namespace MediaPortal.GUI.TV
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekStep(false);
               string strStatus = g_Player.GetStepDescription();
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_SKIPSTEPS, 0, 0, null);
               msg.Label = strStatus;
               OnMessage(msg);
             }
@@ -771,7 +775,7 @@ namespace MediaPortal.GUI.TV
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekStep(true);
               string strStatus = g_Player.GetStepDescription();
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_SKIPSTEPS, 0, 0, null);
               msg.Label = strStatus;
               OnMessage(msg);
             }
@@ -786,7 +790,7 @@ namespace MediaPortal.GUI.TV
               _statusVisible = true;
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekRelativePercentage(-10);
-            }
+	          }
           }
           break;
 
@@ -1398,7 +1402,7 @@ namespace MediaPortal.GUI.TV
       if (dlg == null)
         return;
       dlg.Reset();
-      dlg.SetHeading(699); // TV Main
+      dlg.SetHeading(699); // TV main
 
       if (GUIGraphicsContext.DBLClickAsRightClick)
         dlg.AddLocalizedString(10104); // TV MiniEPG
@@ -1918,20 +1922,28 @@ namespace MediaPortal.GUI.TV
       HideControl(GetID, (int)Control.LABEL_ROW2);
       HideControl(GetID, (int)Control.LABEL_ROW3);
       HideControl(GetID, (int)Control.BLUE_BAR);
+      HideControl(GetID, (int)Control.LABEL_CHANNEL);
+      HideControl(GetID, (int)Control.LABEL_SKIPSTEPS);
       if (_screenState.SeekStep != 0)
       {
         ShowControl(GetID, (int)Control.BLUE_BAR);
-        ShowControl(GetID, (int)Control.LABEL_ROW1);
+        //ShowControl(GetID, (int)Control.LABEL_ROW1);
+        //ShowControl(GetID, (int)Control.LABEL_CHANNEL);
+        ShowControl(GetID, (int)Control.LABEL_SKIPSTEPS);
       }
       if (_statusVisible)
       {
         ShowControl(GetID, (int)Control.BLUE_BAR);
         ShowControl(GetID, (int)Control.LABEL_ROW1);
+        //ShowControl(GetID, (int)Control.LABEL_CHANNEL);
+        //ShowControl(GetID, (int)Control.LABEL_SKIPSTEPS);
       }
       if (_groupVisible || _channelInputVisible)
       {
         ShowControl(GetID, (int)Control.BLUE_BAR);
         ShowControl(GetID, (int)Control.LABEL_ROW1);
+        ShowControl(GetID, (int)Control.LABEL_CHANNEL);
+        //ShowControl(GetID, (int)Control.LABEL_SKIPSTEPS);
       }
       HideControl(GetID, (int)Control.MSG_BOX);
       HideControl(GetID, (int)Control.MSG_BOX_LABEL1);
@@ -2244,10 +2256,11 @@ namespace MediaPortal.GUI.TV
       }
       if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
       {
+        ShowControl(GetID, (int)Control.LABEL_CHANNEL);
         _channelInputVisible = true;
         _keyPressedTimer = DateTime.Now;
         _channelName += chKey;
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_CHANNEL, 0, 0, null);
 
         string displayedChannelName = string.Empty;
 
@@ -2266,7 +2279,7 @@ namespace MediaPortal.GUI.TV
         else
           msg.Label = String.Format("{0} {1}", GUILocalizeStrings.Get(602), _channelName);  // Channel
 
-        GUIControl cntTarget = base.GetControl((int)Control.LABEL_ROW1);
+        GUIControl cntTarget = base.GetControl((int)Control.LABEL_CHANNEL);
         if (cntTarget != null)
         {
           cntTarget.OnMessage(msg);
@@ -2493,7 +2506,7 @@ namespace MediaPortal.GUI.TV
         }
       }
     }
-
+			
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {

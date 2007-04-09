@@ -60,6 +60,34 @@
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
+	<control>
+      <description>channelname</description>
+      <type>label</type>
+      <id>14</id>
+      <posX>38</posX>
+      <posY>30</posY>
+      <width>190</width>
+      <label>-</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>White</textcolor>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+	<control>
+      <description>skip steps</description>
+      <type>label</type>
+      <id>15</id>
+      <posX>614</posX>
+      <posY>30</posY>
+      <width>80</width>
+      <label>-</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>Black</textcolor>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
     <control>
       <description>pause image</description>
       <type>image</type>
