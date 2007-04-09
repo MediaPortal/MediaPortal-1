@@ -303,11 +303,14 @@ void CPMTInputPin::OnTsPacket( byte* tsPacket )
 //
 void CPMTInputPin::Reset()
 {
+  LogDebug( "CPMTInputPin - reset" );
+  m_bReset = true;
   m_subtitlePid = -1;
   m_pcrPid = -1;
   m_pPatParser->Reset();
+  LogDebug( "CPMTInputPin - PatParser reset done" );
   mappedPids.clear();
-  m_bReset = true;
+  LogDebug( "CPMTInputPin - reset done" );
 }
 
 

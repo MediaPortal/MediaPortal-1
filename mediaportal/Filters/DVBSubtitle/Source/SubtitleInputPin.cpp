@@ -117,7 +117,6 @@ HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
 //
 STDMETHODIMP CSubtitleInputPin::ReceiveCanBlock()
 {
-  //return S_FALSE;
   return S_OK;
 }
 
@@ -134,7 +133,7 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 
 	if ( m_bReset )
 	{
-		LogDebug( "Subtitle: reset" );
+		LogDebug( "SubtitlePin: reset" );
 		m_bReset = false;
 	}
 	CheckPointer( pSample, E_POINTER );
@@ -215,8 +214,8 @@ void CSubtitleInputPin::SetSubtitlePid( LONG pPid )
 //
 STDMETHODIMP CSubtitleInputPin::EndOfStream( void )
 {
-    CAutoLock lock( m_pReceiveLock );
-    return CRenderedInputPin::EndOfStream();
+  CAutoLock lock( m_pReceiveLock );
+  return CRenderedInputPin::EndOfStream();
 }
 
 
@@ -225,7 +224,6 @@ STDMETHODIMP CSubtitleInputPin::EndOfStream( void )
 //
 STDMETHODIMP CSubtitleInputPin::BeginFlush( void )
 {
-//	Reset();
 	return CRenderedInputPin::BeginFlush();
 }
 
@@ -235,7 +233,7 @@ STDMETHODIMP CSubtitleInputPin::BeginFlush( void )
 //
 STDMETHODIMP CSubtitleInputPin::EndFlush( void )
 {
-//	Reset();
+  m_pDVBSub->NotifySeeking();
 	return CRenderedInputPin::EndFlush();
 }
 

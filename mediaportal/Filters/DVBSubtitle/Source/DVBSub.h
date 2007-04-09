@@ -121,6 +121,7 @@ public:
   static CUnknown * WINAPI CreateInstance( LPUNKNOWN pUnk, HRESULT *pHr );
 
   void SetPcr( ULONGLONG pcr );
+  void NotifySeeking();
 
 private:
   void Reset();
@@ -153,5 +154,5 @@ private: // data
 
   ITSFileSource*      m_pTSFileSource;
   bool                m_bStopping;
-  bool                m_bPaused;
+  bool                m_bSeekingDone;
 };

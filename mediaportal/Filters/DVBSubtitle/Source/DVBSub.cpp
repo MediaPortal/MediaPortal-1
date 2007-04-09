@@ -94,7 +94,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_startTimestamp( -1 ),
   m_seekDifPCR( -1 ),
   m_bStopping( false ),
-  m_bPaused( false )
+  m_bSeekingDone( true )
 {
 	// Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -269,13 +269,10 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 
   LogDebugMediaPosition( "Run - media seeking position" );        
 
-  if( !m_bPaused )
+  if( m_bSeekingDone )
   {
+    m_bSeekingDone = false;
     Reset();
-  }
-  else
-  {
-    m_bPaused = false;
   }
 
   m_startTimestamp = tStart;
@@ -292,7 +289,6 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 //
 STDMETHODIMP CDVBSub::Pause()
 {
-  m_bPaused = true;
   CAutoLock cObjectLock( m_pLock );
   LogDebugMediaPosition( "Pause - media seeking position" );
   return CBaseFilter::Pause();
@@ -488,6 +484,14 @@ void CDVBSub::SetPcr( ULONGLONG pcr )
     m_seekDifPCR = pos;
     LogDebugPTS( "fixDifPCR: ", m_fixPCR );
   }
+}
+
+//
+// NotifySeeking
+//
+void CDVBSub::NotifySeeking()
+{
+  m_bSeekingDone = true;
 }
 
 
