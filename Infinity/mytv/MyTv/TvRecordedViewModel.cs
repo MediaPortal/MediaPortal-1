@@ -586,9 +586,8 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        RecordingModel model = parameter as RecordingModel;
-        if (model == null) return;
-        Recording recording = model.Recording;
+        Recording recording = parameter as Recording;
+        if (recording == null) return;
         MpMenu dlgMenu = new MpMenu();
         dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
         dlgMenu.Owner = _viewModel.Window;
