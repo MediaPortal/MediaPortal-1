@@ -74,12 +74,13 @@ namespace MyTv
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
 
       ServiceScope.Get<ILogger>().Info("mytv:OnLoaded");
-      //Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
+      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       // Sets keyboard focus on the first Button in the sample.
       ConnectToServer();
     }
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
+      ServiceScope.Get<ILogger>().Info("Keypressed: key:{0} systemkey:{1}", e.Key, e.SystemKey);
       if (e.Key == System.Windows.Input.Key.X)
       {
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)

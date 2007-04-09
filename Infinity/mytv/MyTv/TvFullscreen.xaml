@@ -2,9 +2,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls"
+    FocusManager.FocusedElement="{Binding ElementName=gridMain}"
     Title="TvFullscreen" Loaded="OnLoaded"
     >
-  <Grid Name="gridMain" Focusable="True" KeyDown="onKeyDown">
+  <Grid Name="gridMain" Focusable="True" KeyDown="onKeyDown" Background="{Binding Path=VideoBrush}">
 
     <Grid VerticalAlignment="Top" Height="50" Grid.Column="1" x:Name="gridOSD" Visibility="Hidden" Margin="50,20,50,0">
       <Grid.RowDefinitions>
@@ -73,7 +74,6 @@
       </Rectangle>
       <Label Style="{StaticResource LabelNormalStyle}" Name="labelState" Foreground="Black" HorizontalAlignment="Stretch" Margin="8,0,8,0" VerticalAlignment="Center" Content="Label" Grid.Column="24" Grid.ColumnSpan="6"/>
     </Grid>
-
 
     <Grid x:Name="gridOSDBottom" VerticalAlignment="Bottom" Height="100" Margin="30,0,30,30" >
       <Grid.RowDefinitions>
