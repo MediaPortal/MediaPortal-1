@@ -374,6 +374,7 @@ namespace MyTv
       public void Search(SearchType mode, string text)
       {
         _listPrograms.Clear();
+        if (text == null) return;
         if (text == "") return;
 
         IList programs;

@@ -30,11 +30,22 @@ namespace MyTv
   public partial class TvSearch : System.Windows.Controls.Page
   {
     TvSearchViewModel _model;
+    static TvSearchViewModel.SearchType _searchType = TvSearchViewModel.SearchType.Title;
     public TvSearch()
     {
       InitializeComponent();
     }
-
+    static public TvSearchViewModel.SearchType SearchMode
+    {
+      get
+      {
+        return _searchType;
+      }
+      set
+      {
+        _searchType = value;
+      }
+    }
     /// <summary>
     /// Called when screen is loaded
     /// </summary>
@@ -44,6 +55,7 @@ namespace MyTv
     {
       _model = new TvSearchViewModel(this);
       gridMain.DataContext = _model;
+      _model.SearchMode = _searchType;
       this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onPreviewKeyDown));

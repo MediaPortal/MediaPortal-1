@@ -264,12 +264,10 @@ namespace MyTv
       if (p == null) return;
       OnRecordProgram(p);
     }
-
     void OnRecordClicked(object sender, EventArgs e)
     {
       //OnRecordProgram(_schedule);
     }
-
     void OnRecordProgram(Program program)
     {
       Schedule recordingSchedule;
@@ -503,8 +501,6 @@ namespace MyTv
       }
       ShowUpcomingEpisodes();
     }
-
-
     void OnKeepUntil(object sender, EventArgs args)
     {
 

@@ -51,6 +51,11 @@ namespace MyTv
     ICommand _cleanUpCommand;
     ICommand _deleteCommand;
     ICommand _newCommand;
+    ICommand _quickRecordCommand;
+    ICommand _advancedRecordCommand;
+    ICommand _searchTitleCommand;
+    ICommand _searchGenreCommand;
+    ICommand _searchKeywordCommand;
     ICommand _contextMenuCommand;
     #endregion
 
@@ -60,7 +65,7 @@ namespace MyTv
     /// </summary>
     /// <param name="page">The page.</param>
     public TvScheduledViewModel(Page page)
-      :base(page)
+      : base(page)
     {
       //create a new data model
       _dataModel = new ScheduleDatabaseModel();
@@ -190,6 +195,73 @@ namespace MyTv
       }
     }
     /// <summary>
+    /// Gets the localized-label for the new schedule header label
+    /// </summary>
+    /// <value>The localized label.</value>
+    public string NewScheduleLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 40);//new schedule
+      }
+    }
+    /// <summary>
+    /// Gets the quick record label.
+    /// </summary>
+    /// <value>The quick record label.</value>
+    public string QuickRecordLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 41);//Quick Record
+      }
+    }
+    /// <summary>
+    /// Gets the advanced record label.
+    /// </summary>
+    /// <value>The advanced record label.</value>
+    public string AdvancedRecordLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 42);//Advanced Record
+      }
+    }
+    /// <summary>
+    /// Gets the search title label.
+    /// </summary>
+    /// <value>The search title label.</value>
+    public string SearchTitleLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 43);//Search by title
+      }
+    }
+    /// <summary>
+    /// Gets the search keyword label.
+    /// </summary>
+    /// <value>The search keyword label.</value>
+    public string SearchKeywordLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 44);//Search by keyword
+      }
+    }
+    /// <summary>
+    /// Gets the search genre label.
+    /// </summary>
+    /// <value>The search genre label.</value>
+    public string SearchGenreLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 45);//Search by genre
+      }
+    }
+
+    /// <summary>
     /// Gets or sets the view mode.
     /// </summary>
     /// <value>The view mode.</value>
@@ -306,6 +378,7 @@ namespace MyTv
         return _newCommand;
       }
     }
+
     /// <summary>
     /// Returns a ICommand for showing the context menu
     /// </summary>
@@ -319,6 +392,81 @@ namespace MyTv
           _contextMenuCommand = new ContextMenuCommand(this);
         }
         return _contextMenuCommand;
+      }
+    }
+    /// <summary>
+    /// Gets the quick record command
+    /// </summary>
+    /// <value>The quick record.</value>
+    public ICommand QuickRecord
+    {
+      get
+      {
+        if (_quickRecordCommand == null)
+        {
+          _quickRecordCommand = new QuickRecordCommand(this);
+        }
+        return _quickRecordCommand;
+      }
+    }
+    /// <summary>
+    /// Gets the advanced record command
+    /// </summary>
+    /// <value>The advanced record.</value>
+    public ICommand AdvancedRecord
+    {
+      get
+      {
+        if (_advancedRecordCommand == null)
+        {
+          _advancedRecordCommand = new AdvancedRecordCommand(this);
+        }
+        return _advancedRecordCommand;
+      }
+    }
+    /// <summary>
+    /// Gets the search title command.
+    /// </summary>
+    /// <value>The search title.</value>
+    public ICommand SearchTitle
+    {
+      get
+      {
+        if (_searchTitleCommand == null)
+        {
+          _searchTitleCommand = new SearchTitleCommand(this);
+        }
+        return _searchTitleCommand;
+      }
+    }
+    /// <summary>
+    /// Gets the search genre command.
+    /// </summary>
+    /// <value>The search genre.</value>
+    public ICommand SearchGenre
+    {
+      get
+      {
+        if (_searchGenreCommand == null)
+        {
+          _searchGenreCommand = new SearchGenreCommand(this);
+        }
+        return _searchGenreCommand;
+      }
+    }
+    /// <summary>
+    /// Gets the search keyword command.
+    /// </summary>
+    /// <value>The search keyword.</value>
+    public ICommand SearchKeyword
+    {
+      get
+      {
+        if (_searchKeywordCommand == null)
+        {
+          _searchKeywordCommand = new SearchKeywordCommand(this);
+        }
+        return _searchKeywordCommand;
       }
     }
     #endregion
@@ -670,7 +818,7 @@ namespace MyTv
           case 979: // Play recording from beginning
             {
               ICommand cmd = _viewModel.Play;
-              cmd.Execute(new PlayCommand.PlayParameter(fileName, null,false));
+              cmd.Execute(new PlayCommand.PlayParameter(fileName, null, false));
             }
             return;
 
@@ -681,6 +829,359 @@ namespace MyTv
             }
             break;
         }
+      }
+    }
+    #endregion
+    #region QuickRecord command class
+    /// <summary>
+    /// QuickRecord Command
+    /// </summary> 
+    public class QuickRecordCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="QuickRecord"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public QuickRecordCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        MpMenuWithLogo dlgLogoMenu = new MpMenuWithLogo();
+        dlgLogoMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgLogoMenu.Owner = _viewModel.Window;
+        dlgLogoMenu.Items.Clear();
+        dlgLogoMenu.Header = "Channel";
+        dlgLogoMenu.SubTitle = "";
+
+        IList channels = ServiceScope.Get<ITvChannelNavigator>().CurrentGroup.ReferringGroupMap();
+        foreach (GroupMap chan in channels)
+        {
+          string logo = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.GetLogoFileName(chan.ReferencedChannel().Name));
+          if (!System.IO.File.Exists(logo))
+            logo = "";
+          dlgLogoMenu.Items.Add(new DialogMenuItem(logo, chan.ReferencedChannel().Name, "", ""));
+        }
+        dlgLogoMenu.ShowDialog();
+        if (dlgLogoMenu.SelectedIndex < 0) return;
+
+        Channel selectedChannel = ((GroupMap)channels[dlgLogoMenu.SelectedIndex]).ReferencedChannel() as Channel;
+        /*
+        dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = w;
+        dlgMenu.Header = "Type";
+        dlgMenu.Items.Add(new DialogMenuItem("Once"));
+        dlgMenu.Items.Add(new DialogMenuItem("Daily"));
+        dlgMenu.Items.Add(new DialogMenuItem("Weekly"));
+        dlgMenu.Items.Add(new DialogMenuItem("Every time on this channel"));
+        dlgMenu.Items.Add(new DialogMenuItem("Every time on every channel"));
+        dlgMenu.Items.Add(new DialogMenuItem("Sat-Sun"));
+        dlgMenu.Items.Add(new DialogMenuItem("Mon-Fri"));
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex < 0) return;*/
+
+        Schedule rec = new Schedule(selectedChannel.IdChannel, "", Schedule.MinSchedule, Schedule.MinSchedule);
+        TvBusinessLayer layer = new TvBusinessLayer();
+        rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+        rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+        rec.ScheduleType = (int)ScheduleRecordingType.Once;
+
+        DateTime dtNow = DateTime.Now;
+        int day;
+        day = 0;
+
+
+        MpMenu dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Header = "Start";
+
+        //time
+        //int no = 0;
+        int hour, minute, steps;
+        steps = 15;
+        dlgMenu.Items.Add(new DialogMenuItem("00:00"));
+        for (hour = 0; hour <= 23; hour++)
+        {
+          for (minute = 0; minute < 60; minute += steps)
+          {
+            if (hour == 0 && minute == 0) continue;
+            string time = "";
+            if (hour < 10) time = "0" + hour.ToString();
+            else time = hour.ToString();
+            time += ":";
+            if (minute < 10) time = time + "0" + minute.ToString();
+            else time += minute.ToString();
+
+            //if (hour < 1) time = String.Format("{0} {1}", minute, GUILocalizeStrings.Get(3004));
+            dlgMenu.Items.Add(new DialogMenuItem(time));
+          }
+        }
+        // pre-select the current time
+        dlgMenu.SelectedIndex = (DateTime.Now.Hour * (60 / steps)) + (Convert.ToInt16(DateTime.Now.Minute / steps));
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex == -1) return;
+
+        int mins = (dlgMenu.SelectedIndex) * steps;
+        hour = (mins) / 60;
+        minute = ((mins) % 60);
+
+
+
+        dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Header = "Duration";
+        //duration
+        for (float hours = 0.5f; hours <= 24f; hours += 0.5f)
+        {
+          dlgMenu.Items.Add(new DialogMenuItem(String.Format("{0} hours", hours.ToString("f2"))));
+        }
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex == -1) return;
+
+        int duration = (dlgMenu.SelectedIndex + 1) * 30;
+
+
+        dtNow = DateTime.Now.AddDays(day);
+        rec.StartTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);
+        rec.EndTime = rec.StartTime.AddMinutes(duration);
+        rec.ProgramName = "Manual" + " (" + rec.ReferencedChannel().Name + ")";
+        rec.Persist();
+        TvServer server = new TvServer();
+        server.OnNewSchedule();
+        ServiceScope.Get<INavigationService>().GoBack();
+      }
+    }
+    #endregion
+
+    #region AdvancedRecord command class
+    /// <summary>
+    /// QuickRecord Command
+    /// </summary> 
+    public class AdvancedRecordCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="AdvancedRecordCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public AdvancedRecordCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        MpMenuWithLogo dlgLogoMenu = new MpMenuWithLogo();
+        dlgLogoMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgLogoMenu.Owner = _viewModel.Window;
+        dlgLogoMenu.Items.Clear();
+        dlgLogoMenu.Header = "Channel";
+        dlgLogoMenu.SubTitle = "";
+
+        IList channels = ServiceScope.Get<ITvChannelNavigator>().CurrentGroup.ReferringGroupMap();
+        foreach (GroupMap chan in channels)
+        {
+          string logo = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.GetLogoFileName(chan.ReferencedChannel().Name));
+          if (!System.IO.File.Exists(logo))
+            logo = "";
+          dlgLogoMenu.Items.Add(new DialogMenuItem(logo, chan.ReferencedChannel().Name, "", ""));
+        }
+        dlgLogoMenu.ShowDialog();
+        if (dlgLogoMenu.SelectedIndex < 0) return;
+
+        Channel selectedChannel = ((GroupMap)channels[dlgLogoMenu.SelectedIndex]).ReferencedChannel() as Channel;
+
+        MpMenu dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Header = "Type";
+        dlgMenu.Items.Add(new DialogMenuItem("Once"));
+        dlgMenu.Items.Add(new DialogMenuItem("Daily"));
+        dlgMenu.Items.Add(new DialogMenuItem("Weekly"));
+        dlgMenu.Items.Add(new DialogMenuItem("Every time on this channel"));
+        dlgMenu.Items.Add(new DialogMenuItem("Every time on every channel"));
+        dlgMenu.Items.Add(new DialogMenuItem("Sat-Sun"));
+        dlgMenu.Items.Add(new DialogMenuItem("Mon-Fri"));
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex < 0) return;
+
+        Schedule rec = new Schedule(selectedChannel.IdChannel, "", Schedule.MinSchedule, Schedule.MinSchedule);
+        TvBusinessLayer layer = new TvBusinessLayer();
+        rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+        rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+        rec.ScheduleType = (int)dlgMenu.SelectedIndex;
+
+
+        DateTime dtNow = DateTime.Now;
+        dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Header = "Date";
+        int day;
+
+        for (day = 0; day < 30; day++)
+        {
+          if (day > 0)
+            dtNow = DateTime.Now.AddDays(day);
+          dlgMenu.Items.Add(new DialogMenuItem(dtNow.ToLongDateString()));
+        }
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex == -1)
+          return;
+        day = dlgMenu.SelectedIndex;
+        dtNow = DateTime.Now.AddDays(day);
+
+        dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Header = "Start";
+
+        //time
+        //int no = 0;
+        int hour, minute, steps;
+        steps = 15;
+        dlgMenu.Items.Add(new DialogMenuItem("00:00"));
+        for (hour = 0; hour <= 23; hour++)
+        {
+          for (minute = 0; minute < 60; minute += steps)
+          {
+            if (hour == 0 && minute == 0) continue;
+            string time = "";
+            if (hour < 10) time = "0" + hour.ToString();
+            else time = hour.ToString();
+            time += ":";
+            if (minute < 10) time = time + "0" + minute.ToString();
+            else time += minute.ToString();
+
+            //if (hour < 1) time = String.Format("{0} {1}", minute, GUILocalizeStrings.Get(3004));
+            dlgMenu.Items.Add(new DialogMenuItem(time));
+          }
+        }
+        // pre-select the current time
+        dlgMenu.SelectedIndex = (DateTime.Now.Hour * (60 / steps)) + (Convert.ToInt16(DateTime.Now.Minute / steps));
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex == -1) return;
+
+        int mins = (dlgMenu.SelectedIndex) * steps;
+        hour = (mins) / 60;
+        minute = ((mins) % 60);
+
+
+
+        dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Header = "Duration";
+        //duration
+        for (float hours = 0.5f; hours <= 24f; hours += 0.5f)
+        {
+          dlgMenu.Items.Add(new DialogMenuItem(String.Format("{0} hours", hours.ToString("f2"))));
+        }
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex == -1) return;
+
+        int duration = (dlgMenu.SelectedIndex + 1) * 30;
+
+
+        dtNow = DateTime.Now.AddDays(day);
+        rec.StartTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);
+        rec.EndTime = rec.StartTime.AddMinutes(duration);
+        rec.ProgramName = "Manual" + " (" + rec.ReferencedChannel().Name + ")";
+        rec.Persist();
+        TvServer server = new TvServer();
+        server.OnNewSchedule();
+        ServiceScope.Get<INavigationService>().GoBack();
+      }
+    }
+    #endregion
+    #region SearchTitle command class
+    /// <summary>
+    /// SearchTitleCommand Command
+    /// </summary> 
+    public class SearchTitleCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="SearchTitleCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public SearchTitleCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        TvSearch.SearchMode = TvSearchViewModel.SearchType.Title;
+        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
+      }
+    }
+    #endregion
+
+    #region SearchGenreCommand class
+    /// <summary>
+    /// SearchGenreCommand Command
+    /// </summary> 
+    public class SearchGenreCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="SearchGenreCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public SearchGenreCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        TvSearch.SearchMode = TvSearchViewModel.SearchType.Genre;
+        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
+      }
+    }
+    #endregion
+    #region SearchKeywordCommand class
+    /// <summary>
+    /// SearchGenreCommand Command
+    /// </summary> 
+    public class SearchKeywordCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="SearchKeywordCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public SearchKeywordCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        TvSearch.SearchMode = TvSearchViewModel.SearchType.Description;
+        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
       }
     }
     #endregion
