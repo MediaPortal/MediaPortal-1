@@ -54,6 +54,7 @@ namespace MyTv
     ICommand _cleanUpCommand;
     ICommand _deleteCommand;
     ICommand _contextMenuCommand;
+    ICommand _keepUntilCommand;
     ViewType _viewMode = ViewType.Icon;
     RecordingCollectionView _recordingView;
     RecordingDatabaseModel _dataModel;
@@ -66,7 +67,7 @@ namespace MyTv
     /// </summary>
     /// <param name="page">The page.</param>
     public TvRecordedViewModel(Page page)
-      :base(page)
+      : base(page)
     {
       //create a new data model
       _dataModel = new RecordingDatabaseModel();
@@ -298,6 +299,21 @@ namespace MyTv
         return _contextMenuCommand;
       }
     }
+    /// <summary>
+    /// Returns a ICommand for modifying the keep until date/time
+    /// </summary>
+    /// <value>The command.</value>
+    public ICommand KeepUntil
+    {
+      get
+      {
+        if (_keepUntilCommand == null)
+        {
+          _keepUntilCommand = new KeepUntilCommand(this);
+        }
+        return _keepUntilCommand;
+      }
+    }
     #endregion
 
     #region Commands subclasses
@@ -519,7 +535,7 @@ namespace MyTv
         dlgMenu.SubTitle = "";
         dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 92)/*Play recording*/));
         dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 93)/*Delete recording*/));
-        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 94)/*Settings*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 47)/*Keep until*/));
         dlgMenu.ShowDialog();
         if (dlgMenu.SelectedIndex < 0) return;//nothing selected
         switch (dlgMenu.SelectedIndex)
@@ -527,7 +543,7 @@ namespace MyTv
           case 0:
             {
               ICommand command = _viewModel.Play;
-              command.Execute(new PlayCommand.PlayParameter( recording.FileName,null,true));
+              command.Execute(new PlayCommand.PlayParameter(recording.FileName, null, true));
             }
             break;
 
@@ -540,10 +556,74 @@ namespace MyTv
 
           case 2:
             {
-              TvRecordedInfo infopage = new TvRecordedInfo(recording);
-              ServiceScope.Get<INavigationService>().Navigate(infopage);
+              ICommand command = _viewModel.KeepUntil;
+              command.Execute(recording);
             }
             break;
+        }
+      }
+    }
+    #endregion
+
+    #region KeepUntil command class
+    /// <summary>
+    /// KeepUntil command will KeepUntil a recoring
+    /// </summary>
+    public class KeepUntilCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public KeepUntilCommand(TvRecordedViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        RecordingModel model = parameter as RecordingModel;
+        if (model == null) return;
+        Recording recording = model.Recording;
+        MpMenu dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Items.Clear();
+        dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);//"Menu";
+        dlgMenu.SubTitle = ServiceScope.Get<ILocalisation>().ToString("mytv", 47);// Keep Until";
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 69)/*Until space needed*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 70)/*Until watched*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 71)/*Until Date*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 72)/*Always*/));
+        dlgMenu.SelectedIndex = (int)recording.KeepUntil;
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex < 0) return;//nothing selected
+        recording.KeepUntil = dlgMenu.SelectedIndex;
+        recording.Persist();
+        if (dlgMenu.SelectedIndex == 2)
+        {
+          dlgMenu = new MpMenu();
+          dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+          dlgMenu.Owner = _viewModel.Window;
+          dlgMenu.Items.Clear();
+          dlgMenu.Header = "Menu";
+          dlgMenu.SubTitle = "Date";
+          int selected = 0;
+          for (int days = 1; days <= 31; days++)
+          {
+            DateTime dt = DateTime.Now.AddDays(days);
+            dlgMenu.Items.Add(new DialogMenuItem(dt.ToLongDateString()));
+            if (dt.Date == recording.KeepUntilDate) selected = days - 1;
+          }
+          dlgMenu.ShowDialog();
+          if (dlgMenu.SelectedIndex < 0) return;//nothing selected
+          int daysChoosen = dlgMenu.SelectedIndex + 1;
+          recording.KeepUntilDate = DateTime.Now.AddDays(daysChoosen);
+          recording.Persist();
         }
       }
     }
