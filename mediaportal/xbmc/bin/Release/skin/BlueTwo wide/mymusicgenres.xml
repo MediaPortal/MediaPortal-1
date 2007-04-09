@@ -84,7 +84,6 @@
         <label>136</label>
         <action>33</action>
         <onright>50</onright>
-        <ondown>99</ondown>
       </control>
       <control>
         <description>My Playlists button</description>
