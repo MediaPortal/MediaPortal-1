@@ -56,6 +56,7 @@ namespace MyTv
     {
       InitializeComponent();
     }
+
     /// <summary>
     /// Called when [loaded].
     /// </summary>
@@ -65,8 +66,9 @@ namespace MyTv
     {
       _model = new TvBaseViewModel(this);
       gridMain.DataContext = _model;
-
+      this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
+
       _zapChannel = "";
       _seekTimeoutTimer = new System.Windows.Threading.DispatcherTimer();
       _seekTimeoutTimer.Interval = new TimeSpan(0, 0, 1);
