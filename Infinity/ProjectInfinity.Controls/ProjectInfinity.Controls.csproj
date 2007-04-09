@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Button.cs" />
     <Compile Include="ItemActivatedEventArgs.cs" />
+    <Compile Include="ListBox.cs" />
     <Compile Include="ListView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

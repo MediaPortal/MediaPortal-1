@@ -54,48 +54,8 @@ namespace MyTv
 
       // Sets keyboard focus on the first Button in the sample.
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(OnPreviewKeyDown));
-      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(OnMouseMove));
-      this.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(OnMouseDownEvent), true);
-      this.KeyDown += new KeyEventHandler(OnKeyDown);
     }
 
-    void OnMouseMove(object sender, MouseEventArgs e)
-    {
-      FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
-      while (element != null)
-      {
-        if (element as Button != null)
-        {
-          Keyboard.Focus((Button)element);
-          return;
-        }
-        if (element as ListBoxItem != null)
-        {
-          Keyboard.Focus((ListBoxItem)element);
-          return;
-        }
-        element = element.TemplatedParent as FrameworkElement;
-      }
-    }
-    void OnKeyDown(object sender, KeyEventArgs e)
-    {
-      if ((e.Source as ListBox) == null) return;
-      if (e.Key == System.Windows.Input.Key.Enter)
-      {
-        ListBox box = e.Source as ListBox;
-        ICommand cmd = _model.ContextMenu;
-        cmd.Execute(box.SelectedItem);
-        e.Handled = true;
-        return;
-      }
-    }
-    void OnMouseDownEvent(object sender, RoutedEventArgs e)
-    {
-      if ((e.Source as ListBox) == null) return;
-      ListBox box = e.Source as ListBox;
-      ICommand cmd = _model.ContextMenu;
-      cmd.Execute(box.SelectedItem);
-    }
     protected void OnPreviewKeyDown(object sender, KeyEventArgs e)
     {
       if (e.Key == System.Windows.Input.Key.X)

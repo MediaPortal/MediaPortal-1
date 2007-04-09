@@ -106,6 +106,6 @@
     <controls:Button Name="buttonSwitch" Margin="10,0,0,0" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{DynamicResource MpButton}"  Content="{Binding Path=SwitchLabel}"/>
     <controls:Button Name="buttonCleanup" Command="{Binding Path=CleanUp}" Margin="10,0,0,0" Grid.Row="7" Grid.Column="0"  Grid.ColumnSpan="2" Style="{DynamicResource MpButton}"   Content="{Binding Path=CleanupLabel}"/>
     <controls:Button Name="buttonCompress" Margin="10,0,0,0" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Style="{DynamicResource MpButton}"   Content="{Binding Path=CompressLabel}"/>
-    <ListBox x:Name="gridList" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="8" Grid.RowSpan="9" ItemsSource="{Binding Recordings}"  ItemContainerStyle="{StaticResource MpListViewItem}"  Style="{StaticResource MpListView}" ItemTemplate="{Binding ItemTemplate}" Margin="30,0,30,0" />
+    <controls:ListBox x:Name="gridList" Command="{Binding Path=ContextMenu}" CommandParameter="{Binding Path=Recordings.CurrentItem}" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="8" Grid.RowSpan="9" ItemsSource="{Binding Recordings}"  ItemContainerStyle="{StaticResource MpListViewItem}"  Style="{StaticResource MpListView}" ItemTemplate="{Binding ItemTemplate}" Margin="30,0,30,0" />
   </Grid>
 </Page>

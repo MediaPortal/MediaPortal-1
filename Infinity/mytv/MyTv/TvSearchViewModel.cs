@@ -43,6 +43,7 @@ namespace MyTv
     SearchType _searchType = SearchType.Title;
     ICommand _sortCommand;
     ICommand _typeCommand;
+    ICommand _contextMenu;
     SearchCollectionView _searchView;
     SearchDatabaseModel _dataModel;
     string _searchText;
@@ -183,6 +184,21 @@ namespace MyTv
         return _typeCommand;
       }
     }
+    /// <summary>
+    /// Returns a ICommand for ContextMenu
+    /// </summary>
+    /// <value>The command.</value>
+    public ICommand ContextMenu
+    {
+      get
+      {
+        if (_contextMenu == null)
+        {
+          _contextMenu = new ContextMenuCommand(this);
+        }
+        return _contextMenu;
+      }
+    }
     #endregion
 
     #region Commands subclasses
@@ -300,6 +316,34 @@ namespace MyTv
 
         //and tell the model that the sort property is changed
         _viewModel.ChangeProperty("TypeLabel");
+      }
+    }
+    #endregion
+    #region ContextMenu command class
+    /// <summary>
+    /// ContextMenuCommand changes the way the view gets sorted
+    /// </summary>
+    public class ContextMenuCommand : SearchBaseCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="SortCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public ContextMenuCommand(TvSearchViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        ProgramModel model = parameter as ProgramModel;
+        if (model == null) return;
+        TvProgramInfo info = new TvProgramInfo(model.Program);
+        ServiceScope.Get<INavigationService>().Navigate(info);
       }
     }
     #endregion

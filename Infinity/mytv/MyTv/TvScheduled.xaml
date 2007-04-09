@@ -106,7 +106,7 @@
     <controls:Button Name="buttonCleanup" Margin="10,0,0,0" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"  Command="{Binding Path=CleanUp}" Style="{DynamicResource MpButton}"    Content="{Binding CleanUpLabel}" />
     <controls:Button Name="buttonPriorities" Margin="10,0,0,0" Grid.Row="7" Grid.Column="0"  Grid.ColumnSpan="2" Command="{Binding Path=Priorities}" Style="{DynamicResource MpButton}"   Content="{Binding PrioritiesLabel}"/>
     <controls:Button Name="buttonConflicts" Margin="10,0,0,0" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding Path=Conflicts}" Style="{DynamicResource MpButton}"   Content="{Binding ConflictsLabel}" />
-    <ListBox x:Name="gridList" Margin="30,0,30,0" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="8" Grid.RowSpan="9" ItemContainerStyle="{StaticResource MpListViewItem}"  ItemsSource="{Binding Schedules}"  Style="{StaticResource MpListView}" ItemTemplate="{Binding ItemTemplate}"  />
+    <controls:ListBox x:Name="gridList" Command="{Binding Path=ContextMenu}" CommandParameter="{Binding Path=Schedules.CurrentItem}"  Margin="30,0,30,0" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="8" Grid.RowSpan="9" ItemContainerStyle="{StaticResource MpListViewItem}"  ItemsSource="{Binding Schedules}"  Style="{StaticResource MpListView}" ItemTemplate="{Binding ItemTemplate}"  />
 
   </Grid>
 </Page>

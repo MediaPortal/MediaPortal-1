@@ -63,45 +63,11 @@ namespace MyTv
 
       //add some event handlers to keep mouse/keyboard focused together...
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onPreviewKeyDown));
-      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(OnMouseMoveEvent));
-      this.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(OnMouseButtonDownEvent), true);
-      this.KeyDown += new KeyEventHandler(onKeyDown);
 
       Thread thumbNailThread = new Thread(new ThreadStart(CreateThumbnailsThread));
       thumbNailThread.Start();
     }
 
-    /// <summary>
-    /// Event handler for mouse events
-    /// When mouse enters an control, this method will give the control keyboardfocus
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
-    void OnMouseMoveEvent(object sender, MouseEventArgs e)
-    {
-      FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
-      while (element != null)
-      {
-        if (element as Button != null)
-        {
-          Keyboard.Focus((Button)element);
-          return;
-        }
-        if (element as ListBoxItem != null)
-        {
-          Keyboard.Focus((ListBoxItem)element);
-          return;
-        }
-        element = element.TemplatedParent as FrameworkElement;
-      }
-    }
-    /// <summary>
-    /// Event handler for OnKeyDown
-    /// Handles some basic navigation
-    /// Guess this should be done via command binding?
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
     protected void onPreviewKeyDown(object sender, KeyEventArgs e)
     {
       if (e.Key == System.Windows.Input.Key.X)
@@ -114,34 +80,6 @@ namespace MyTv
         }
         return;
       }
-    }
-    /// <summary>
-    /// Handles the KeyDown event 
-    /// When keydown=enter, OnRecordingClicked() gets called
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
-    void onKeyDown(object sender, KeyEventArgs e)
-    {
-      if ((e.Source as ListBox) == null) return;
-      if (e.Key == System.Windows.Input.Key.Enter)
-      {
-        ListBox box = e.Source as ListBox;
-        OnRecordingClicked(box);
-        e.Handled = true;
-        return;
-      }
-    }
-    /// <summary>
-    /// Handles the mouse button down event
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-    void OnMouseButtonDownEvent(object sender, RoutedEventArgs e)
-    {
-      if ((e.Source as ListBox) == null) return;
-      ListBox box = e.Source as ListBox;
-      OnRecordingClicked(box);
     }
     #endregion
 
