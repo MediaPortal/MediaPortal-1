@@ -1,6 +1,7 @@
 ﻿<Page x:Class="MyTv.TvNewSchedule"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls"
     Title="TvNewSchedule"  Loaded="OnLoaded" Background="{StaticResource backGroundBrush}" WindowWidth="800" WindowHeight="600"
     >
   <Grid>
@@ -20,12 +21,12 @@
         </DockPanel>
       </StackPanel>
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
-        <Button Name="buttonQuickRecord" Style="{DynamicResource MpButton}" Height="32"  Click="OnQuickRecord">Quick Record</Button>
-        <Button Name="buttonAdvancedRecord" Style="{DynamicResource MpButton}" Height="32" Click="OnAdvancedRecord">Advanced Record</Button>
-        <Button Name="buttonTvGuide" Style="{DynamicResource MpButton}" Height="32"  Click="OnTvGuide" >Tv Guide</Button>
-        <Button Name="buttonSearchTitle" Style="{DynamicResource MpButton}" Height="32" Click="OnSearchTitle">Search by title</Button>
-        <Button Name="buttonSearchKeyword" Style="{DynamicResource MpButton}" Height="32" Click="OnSearchKeyword"  >Search by Keyword</Button>
-        <Button Name="buttonSearchGenre" Style="{DynamicResource MpButton}" Height="32" Click="OnSearchGenre"  >Search by genre</Button>
+        <controls:Button Name="buttonQuickRecord" Style="{DynamicResource MpButton}" Height="32"  Click="OnQuickRecord">Quick Record</controls:Button>
+        <controls:Button Name="buttonAdvancedRecord" Style="{DynamicResource MpButton}" Height="32" Click="OnAdvancedRecord">Advanced Record</controls:Button>
+        <controls:Button Name="buttonTvGuide" Style="{DynamicResource MpButton}" Height="32"  Click="OnTvGuide" >Tv Guide</controls:Button>
+        <controls:Button Name="buttonSearchTitle" Style="{DynamicResource MpButton}" Height="32" Click="OnSearchTitle">Search by title</controls:Button>
+        <controls:Button Name="buttonSearchKeyword" Style="{DynamicResource MpButton}" Height="32" Click="OnSearchKeyword"  >Search by Keyword</controls:Button>
+        <controls:Button Name="buttonSearchGenre" Style="{DynamicResource MpButton}" Height="32" Click="OnSearchGenre"  >Search by genre</controls:Button>
       </StackPanel>
       <Grid></Grid>
 

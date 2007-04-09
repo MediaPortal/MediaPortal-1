@@ -1,6 +1,7 @@
 ﻿<Page x:Class="MyTv.TvRecordedInfo"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls"
     Title="TvRecordedInfo" Loaded="OnLoaded" Background="{StaticResource backGroundBrush}" WindowWidth="800" WindowHeight="600"
     >
   <Grid>
@@ -44,7 +45,7 @@
 
       </StackPanel>
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
-        <Button Name="buttonKeepUntil" Style="{DynamicResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnKeepUntil" >KeepUntil</Button>
+        <controls:Button Name="buttonKeepUntil" Style="{DynamicResource MpButton}" Height="32"  MouseEnter="OnMouseEnter" Click="OnKeepUntil" >KeepUntil</controls:Button>
       </StackPanel>
       <StackPanel x:Name="gridList" Margin="0,0,30,0">
         <TextBlock Name="labelTitle" Style="{StaticResource TextBlockLargeStyle}"/>

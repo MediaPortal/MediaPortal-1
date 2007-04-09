@@ -1,6 +1,7 @@
 ﻿<Page x:Class="MyTv.TvScheduleInfo"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls"
     xmlns:local="clr-namespace:Dialogs;assembly=dialogs"
     Title="TvScheduleInfo" Loaded="OnLoaded" Background="{StaticResource backGroundBrush}" WindowWidth="800" WindowHeight="600"
     >
@@ -44,13 +45,13 @@
         </Grid>
       </StackPanel>
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
-        <Button Name="buttonRecord" Style="{DynamicResource MpButton}" Height="32"  Click="OnRecordClicked">Record</Button>
-        <Button Name="buttonAdvancedRecord" Style="{DynamicResource MpButton}" Height="32" Click="OnAdvancedRecordClicked">Advanced Record</Button>
-        <Button Name="buttonKeepUntil" Style="{DynamicResource MpButton}" Height="32"  Click="OnKeepUntil" >Keep until</Button>
-        <Button Name="buttonQuality" Style="{DynamicResource MpButton}" Height="32"  >Quality setting</Button>
-        <Button Name="buttonEpisodes" Style="{DynamicResource MpButton}" Height="32" Click="OnSetEpisodes" >Episodes management</Button>
-        <Button Name="buttonPreRecord" Style="{DynamicResource MpButton}" Height="32" Click="OnPreRecordInterval" >Pre-record</Button>
-        <Button Name="buttonPostRecord" Style="{DynamicResource MpButton}" Height="32" Click="OnPostRecordInterval"  >Post-record</Button>
+        <controls:Button Name="buttonRecord" Style="{DynamicResource MpButton}" Height="32"  Click="OnRecordClicked">Record</controls:Button>
+        <controls:Button Name="buttonAdvancedRecord" Style="{DynamicResource MpButton}" Height="32" Click="OnAdvancedRecordClicked">Advanced Record</controls:Button>
+        <controls:Button Name="buttonKeepUntil" Style="{DynamicResource MpButton}" Height="32"  Click="OnKeepUntil" >Keep until</controls:Button>
+        <controls:Button Name="buttonQuality" Style="{DynamicResource MpButton}" Height="32"  >Quality setting</controls:Button>
+        <controls:Button Name="buttonEpisodes" Style="{DynamicResource MpButton}" Height="32" Click="OnSetEpisodes" >Episodes management</controls:Button>
+        <controls:Button Name="buttonPreRecord" Style="{DynamicResource MpButton}" Height="32" Click="OnPreRecordInterval" >Pre-record</controls:Button>
+        <controls:Button Name="buttonPostRecord" Style="{DynamicResource MpButton}" Height="32" Click="OnPostRecordInterval"  >Post-record</controls:Button>
       </StackPanel>
 
       <StackPanel Margin="0,0,30,0">

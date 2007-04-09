@@ -74,33 +74,9 @@ namespace MyTv
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
 
       ServiceScope.Get<ILogger>().Info("mytv:OnLoaded");
-      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
+      //Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
       // Sets keyboard focus on the first Button in the sample.
-      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
       ConnectToServer();
-    }
-    void handleMouse(object sender, MouseEventArgs e)
-    {
-      FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
-      while (element.TemplatedParent != null)
-      {
-        element = (FrameworkElement)element.TemplatedParent;
-        if (element as Button != null)
-        {
-          Keyboard.Focus((Button)element);
-          return;
-        }
-        if (element as CheckBox != null)
-        {
-          Keyboard.Focus((CheckBox)element);
-          return;
-        }
-        if (element as RadioButton != null)
-        {
-          Keyboard.Focus((RadioButton)element);
-          return;
-        }
-      }
     }
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
@@ -111,14 +87,6 @@ namespace MyTv
           e.Handled = true;
           ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
           return;
-        }
-      }
-      if (e.Key == System.Windows.Input.Key.Enter)
-      {
-        if (Keyboard.FocusedElement as CheckBox != null)
-        {
-          CheckBox box = Keyboard.FocusedElement as CheckBox;
-          box.IsChecked = !box.IsChecked;
         }
       }
     }

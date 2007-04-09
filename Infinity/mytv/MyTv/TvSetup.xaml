@@ -1,6 +1,7 @@
 ﻿<Page x:Class="MyTv.TvSetup"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls"
   	xmlns:l='clr-namespace:MCEControls;assembly=Keyboard'
     Title="TvSetup" Background="{StaticResource backGroundBrush}" Loaded="OnLoaded" 
     >
@@ -26,7 +27,7 @@
 
         <StackPanel Orientation='Horizontal'>
           <l:SoftKeyboardTextBox Margin='5' Name='textboxServer'></l:SoftKeyboardTextBox>
-          <Button Name="buttonSave" Style="{DynamicResource MpButton}" Height="32" Width="120" Click="OnTest" MouseEnter="OnMouseEnter"  >Save</Button>
+          <controls:Button Name="buttonSave" Style="{DynamicResource MpButton}" Height="32" Width="120" Click="OnTest" MouseEnter="OnMouseEnter"  >Save</controls:Button>
         </StackPanel>
         <Label Style="{StaticResource LabelErrorStyle}" Foreground="Red" Name="result1"></Label>
 

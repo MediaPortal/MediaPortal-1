@@ -47,24 +47,9 @@ namespace MyTv
       buttonSearchKeyword.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 44);//Search by keyword
       buttonSearchGenre.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 45);//Search by genre
       // Sets keyboard focus on the first Button in the sample.
-      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
       Keyboard.Focus(buttonQuickRecord);
       labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
     }
-    void handleMouse(object sender, MouseEventArgs e)
-    {
-      FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
-      while (element.TemplatedParent != null)
-      {
-        element = (FrameworkElement)element.TemplatedParent;
-        if (element as Button != null)
-        {
-          Keyboard.Focus((Button)element);
-          return;
-        }
-      }
-    }
-
     void OnTvGuide(object sender, RoutedEventArgs e)
     {
       ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvGuide.xaml", UriKind.Relative));

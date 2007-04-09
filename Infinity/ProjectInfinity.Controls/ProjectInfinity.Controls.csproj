@@ -41,6 +41,7 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Button.cs" />
     <Compile Include="ItemActivatedEventArgs.cs" />
     <Compile Include="ListView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,6 +64,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RadioButton.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
