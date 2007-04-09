@@ -52,7 +52,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Menu\MenuViewModel.cs" />
-    <Compile Include="Menu\PluginItemViewModel.cs" />
     <Compile Include="Menu\MenuPage.xaml.cs">
       <DependentUpon>MenuPage.xaml</DependentUpon>
     </Compile>
