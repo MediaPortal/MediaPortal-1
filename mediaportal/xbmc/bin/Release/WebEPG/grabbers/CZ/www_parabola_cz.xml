@@ -75,7 +75,7 @@
     <Channel id="xxxxtreme@hustler.cz" siteId="67" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.parabola.cz/program.php" post="tvs1=[ID]&amp;tvs2=2&amp;tvs3=4&amp;tvs4=5&amp;tvday=[DAY_NAME]" external="false" encoding="" />
+    <Site url="http://www.parabola.cz/program.php?tvs1=[ID]&amp;tvday=[DAY_NAME]" post="" external="false" encoding="windows-1250" />
     <Search startOffset="0" maxlistings="0" startPage="0">
       <DayNames>
         <Day>9</Day>
