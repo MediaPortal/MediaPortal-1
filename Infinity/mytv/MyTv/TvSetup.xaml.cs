@@ -46,21 +46,7 @@ namespace MyTv
       ServiceScope.Get<ILogger>().Info("mytv:setuptv");
       labelText.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 102);//Please enter the hostname of the tvserver
       buttonSave.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 103);//Save
-      // Sets keyboard focus on the first Button in the sample.
-      Keyboard.Focus(textboxServer);
-    }
-    /// <summary>
-    /// Called when mouse enters a button
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.MouseEventArgs"/> instance containing the event data.</param>
-    void OnMouseEnter(object sender, MouseEventArgs e)
-    {
-      IInputElement b = sender as IInputElement;
-      if (b != null)
-      {
-        Keyboard.Focus(b);
-      }
+
     }
     /// <summary>
     /// Called when Save button is pressed
