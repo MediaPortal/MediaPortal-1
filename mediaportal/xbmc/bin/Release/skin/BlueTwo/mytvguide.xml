@@ -35,11 +35,11 @@
       <description>Date</description>
       <type>label</type>
       <id>1</id>
-      <posX>670</posX>
-      <posY>50</posY>
+      <posX>700</posX>
+      <posY>30</posY>
       <label>#date</label>
       <align>right</align>
-      <font>font13</font>
+      <font>font14</font>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -48,11 +48,11 @@
       <description>Time</description>
       <type>label</type>
       <id>1</id>
-      <posX>670</posX>
-      <posY>70</posY>
+      <posX>700</posX>
+      <posY>48</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font13</font>
+      <font>font14</font>
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -323,6 +323,7 @@
     </control>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="500">WindowClose</animation>
+
     <control>
       <description>TV preview window</description>
       <type>videowindow</type>
@@ -373,3 +374,4 @@
     </control>
   </controls>
 </window>
+

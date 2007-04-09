@@ -8,6 +8,7 @@
   <define>#header.hover:hover_my pictures.png</define>
   <controls>
     <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <type>group</type>
       <description>group element</description>
@@ -60,3 +61,4 @@
     <import>common.facade.pictures.xml</import>
   </controls>
 </window>
+

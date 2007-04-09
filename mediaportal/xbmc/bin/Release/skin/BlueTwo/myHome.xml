@@ -89,7 +89,7 @@
       <animation effect="fade" time="500">WindowClose</animation>
       <id>201</id>
       <posX>343</posX>
-      <posY>182</posY>
+      <posY>172</posY>
       <label>#time</label>
       <align>right</align>
       <font>font14</font>
@@ -182,3 +182,4 @@
     </control>
   </controls>
 </window>
+

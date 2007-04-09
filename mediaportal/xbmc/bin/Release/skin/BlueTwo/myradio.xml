@@ -8,6 +8,7 @@
   <define>#header.hover:hover_my radio.png</define>
   <controls>
     <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <type>group</type>
       <description>group element</description>
@@ -105,3 +106,4 @@
     </control>
   </controls>
 </window>
+

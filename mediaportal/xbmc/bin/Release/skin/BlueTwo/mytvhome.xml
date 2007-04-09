@@ -155,7 +155,7 @@
       <id>13</id>
       <posX>290</posX>
       <posY>415</posY>
-      <width>250</width>
+      <width>300</width>
       <label>#TV.View.title</label>
       <font>font13</font>
       <textcolor>White</textcolor>
@@ -291,3 +291,4 @@
     </control>
   </controls>
 </window>
+

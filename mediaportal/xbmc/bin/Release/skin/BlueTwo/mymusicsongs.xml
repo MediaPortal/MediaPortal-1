@@ -8,6 +8,7 @@
   <define>#header.hover:hover_my music.png</define>
   <controls>
     <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>group element</description>
       <type>group</type>
@@ -27,14 +28,13 @@
         <onup>17</onup>
       </control>
       <control>
-        <description>Sort button</description>
         <type>sortbutton</type>
         <id>3</id>
         <label>103</label>
         <onright>50</onright>
       </control>
       <control>
-        <description>Switch View button</description>
+        <description>Switch View</description>
         <type>button</type>
         <id>6</id>
         <label>457</label>
@@ -56,29 +56,20 @@
         <onright>50</onright>
       </control>
       <control>
-        <description>Play CD button</description>
+        <description>Play CD</description>
         <type>button</type>
         <id>9</id>
         <label>890</label>  
         <onright>50</onright>
       </control>
       <control>
-        <description>Eject Disc button</description>
+        <description>Eject Disc</description>
         <type>button</type>
         <id>13</id>
         <label>654</label>
         <action>100</action>
         <onright>50</onright>
       </control>
-      <!--
-      <control>
-        <type>image</type>
-        <description>Divider image</description>
-        <id>999</id>
-        <texture>hbar1.png</texture>
-        <keepaspectratio>yes</keepaspectratio>
-      </control>
-      -->
       <control>
         <description>Now playing button</description>
         <type>button</type>
@@ -91,12 +82,12 @@
         <description>Current Playlist button</description>
         <type>button</type>
         <id>8</id>
-        <label>136</label>
+        <label>4555</label>
         <action>33</action>
         <onright>50</onright>
       </control>
       <control>
-        <description>My Playlists button</description>
+        <description>My Playlists</description>
         <type>button</type>
         <id>10</id>
         <label>983</label>
@@ -107,3 +98,4 @@
     <import>common.facade.music.xml</import>
   </controls>
 </window>
+

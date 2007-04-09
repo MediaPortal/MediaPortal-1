@@ -5,7 +5,7 @@
       <description>Date</description>
       <type>label</type>
       <id>200</id>
-      <posX>610</posX>
+      <posX>700</posX>
       <posY>30</posY>
       <label>#date</label>
       <align>right</align>
@@ -18,8 +18,8 @@
       <description>Time</description>
       <type>label</type>
       <id>201</id>
-      <posX>705</posX>
-      <posY>30</posY>
+      <posX>700</posX>
+      <posY>48</posY>
       <label>#time</label>
       <align>right</align>
       <font>font14</font>
@@ -29,3 +29,4 @@
     </control>
   </controls>
 </window>
+
