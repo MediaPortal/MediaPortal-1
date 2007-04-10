@@ -1437,7 +1437,8 @@ namespace MediaPortal.Player
           if (_useASIO || _Mixing)
             streamFlags = BASSStream.BASS_STREAM_DECODE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE;
           else
-            streamFlags = BASSStream.BASS_SAMPLE_SOFTWARE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE;
+            //streamFlags = BASSStream.BASS_SAMPLE_SOFTWARE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE;
+            streamFlags = BASSStream.BASS_STREAM_AUTOFREE;
 
           FilePath = filePath;
 
