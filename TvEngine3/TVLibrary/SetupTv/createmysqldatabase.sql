@@ -329,6 +329,18 @@ CREATE TABLE `setting` (
 #
 
 --
+-- Definition of table `channellinkagemap`
+--
+DROP TABLE IF EXISTS `channellinkagemap`;
+CREATE TABLE `channellinkagemap` (
+  `idMapping int(11) NOT NULL auto_increment,
+  `idPortalChannel` int(11) NOT NULL,
+  `idLinkedChannel` int(11) NOT NULL,
+  PRIMARY KEY (`idMapping`)
+) ENGINE=MyISAM AUTO_INCREMENT=68 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+#
+
+--
 -- Definition of table `tuningdetail`
 --
 
@@ -419,7 +431,7 @@ CREATE TABLE `version` (
 --
 
 /*!40000 ALTER TABLE `version` DISABLE KEYS */;
-INSERT INTO `version` VALUES  (1,25);
+INSERT INTO `version` VALUES  (1,26);
 /*!40000 ALTER TABLE `version` ENABLE KEYS */;
 #
 

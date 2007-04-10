@@ -155,6 +155,33 @@ namespace TvDatabase
       if (channels.Count == 0) return null;
       return (TuningDetail)channels[0];
     }
+    public Channel GetChannel(int idChannel)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+      
+      SqlStatement stmt = sb.GetStatement(true);
+      IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      if (channels == null) return null;
+      if (channels.Count == 0) return null;
+      return (Channel)channels[0];
+    }
+
+    public Channel GetChannelByTuningDetail(int networkId,int transportId,int serviceId)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(TuningDetail));
+            sb.AddConstraint(Operator.Equals, "networkId", networkId);
+      sb.AddConstraint(Operator.Equals, "transportId", transportId);
+      sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
+
+      SqlStatement stmt = sb.GetStatement(true);
+      IList details = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
+      
+      if (details == null) return null;
+      if (details.Count == 0) return null;
+      TuningDetail detail=(TuningDetail)details[0];
+      return detail.ReferencedChannel();
+    }
 
     public TuningDetail GetAtscChannel(ATSCChannel channel)
     {
@@ -723,6 +750,25 @@ namespace TvDatabase
       detail.InnerFecRate = innerFecRate;
       detail.Persist();
       return detail;
+    }
+    #endregion
+
+    #region linkage map
+    public IList GetLinkagesForPortalChannel(Channel PortalChannel)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelLinkageMap));
+      sb.AddConstraint(Operator.Equals, "idPortalChannel", PortalChannel.IdChannel);
+      SqlStatement stmt = sb.GetStatement(true);
+      return ObjectFactory.GetCollection(typeof(ChannelLinkageMap), stmt.Execute());
+    }
+    public void DeleteLinkageMapForPortalChannel(Channel PortalChannel)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(ChannelLinkageMap));
+      DateTime dtYesterday = DateTime.Now.AddDays(-1);
+      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+      sb.AddConstraint(Operator.Equals,"idPortalChannel",PortalChannel.IdChannel);
+      SqlStatement stmt = sb.GetStatement(true);
+      stmt.Execute();
     }
     #endregion
 

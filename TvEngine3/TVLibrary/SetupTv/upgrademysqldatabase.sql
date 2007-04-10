@@ -1,14 +1,11 @@
 USE TvLibrary;
 #
-ALTER TABLE `Program` ADD `originalAirDate` datetime NOT NULL DEFAULT  0;
-#
-ALTER TABLE `Program` ADD `seriesNum` varchar(200) NOT NULL DEFAULT '';
-#
-ALTER TABLE `Program` ADD `episodeNum` varchar(200) NOT NULL DEFAULT '';
-#
-ALTER TABLE `Program` ADD `starRating` int NOT NULL DEFAULT 0;
-#
-ALTER TABLE `Program` ADD `classification` varchar(200) NOT NULL DEFAULT '';
-#
-UPDATE `version` SET `versionNumber`=25;
+CREATE TABLE `channellinkagemap` (
+  `idMapping int(11) NOT NULL auto_increment,
+  `idPortalChannel` int(11) NOT NULL,
+  `idLinkedChannel` int(11) NOT NULL,
+  PRIMARY KEY (`idMapping`)
+) ENGINE=MyISAM AUTO_INCREMENT=68 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+#  
+UPDATE `version` SET `versionNumber`=26;
 #

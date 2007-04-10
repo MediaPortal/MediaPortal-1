@@ -203,6 +203,12 @@ namespace TvLibrary.Implementations.Analog
     {
     }
     /// <summary>
+    /// Stops/Resets the linkage scanner
+    /// </summary>
+    public void ResetLinkageScanner()
+    {
+    }
+    /// <summary>
     /// Returns the channel linkages grabbed
     /// </summary>
     public List<PortalChannel> ChannelLinkages

@@ -49,6 +49,7 @@
     <Compile Include="Card.cs" />
     <Compile Include="Channel.cs" />
     <Compile Include="ChannelGroup.cs" />
+    <Compile Include="ChannelLinkageMap.cs" />
     <Compile Include="ChannelMap.cs" />
     <Compile Include="Conflict.cs" />
     <Compile Include="DiSEqCMotor.cs" />

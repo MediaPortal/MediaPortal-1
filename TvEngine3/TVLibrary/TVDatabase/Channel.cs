@@ -424,6 +424,27 @@ namespace TvDatabase
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(TuningDetail), this );
     }
+    /// <summary>
+    /// Get a list of linked channels referring to the current entity.
+    /// </summary>
+    public IList ReferringLinkedChannels()
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelLinkageMap));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "idPortalChannel", idChannel);
+
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection(typeof(ChannelLinkageMap), stmt.Execute());
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(ChannelLinkageMap), this );
+    }
     #endregion
 
     public Program NextProgram
@@ -532,6 +553,10 @@ namespace TvDatabase
       list = ReferringTuningDetail();
       foreach (TuningDetail detail in list)
         detail.Remove();
+
+      list = ReferringLinkedChannels();
+      foreach (ChannelLinkageMap linkageMap in list)
+        linkageMap.Remove();
       Remove();
     }
 

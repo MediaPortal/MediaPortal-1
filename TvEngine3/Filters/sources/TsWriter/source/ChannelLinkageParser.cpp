@@ -59,18 +59,20 @@ void CChannelLinkageParser::Start()
 	m_mapChannels.clear();
 	m_bScanning=true;
 	m_scanTimeout=time(NULL);
+	m_prevChannelIndex=-1;
 }
 
 void CChannelLinkageParser::Reset()
 {
 	CEnterCriticalSection enter(m_section);
+	m_bScanning=false;
+	m_bScanningDone=false;
 	for (int i=0; i < (int)m_vecDecoders.size();++i)
 	{
 		CSectionDecoder* pDecoder = m_vecDecoders[i];
 		pDecoder->Reset();
 	}
-	m_bScanning=false;
-	m_bScanningDone=false;
+	m_mapChannels.clear();
 }
 
 bool CChannelLinkageParser::IsScanningDone()
@@ -78,7 +80,7 @@ bool CChannelLinkageParser::IsScanningDone()
 	return m_bScanningDone;
 }
 
-bool CChannelLinkageParser::GetChannelByindex(ULONG channelIndex, ParentChannel& parentChannel)
+bool CChannelLinkageParser::GetChannelByindex(ULONG channelIndex, PortalChannel& portalChannel)
 {
 	CEnterCriticalSection lock (m_section);
 	LinkedChannel lChannel;
@@ -94,8 +96,8 @@ bool CChannelLinkageParser::GetChannelByindex(ULONG channelIndex, ParentChannel&
 		it++; 
 		count++;
 	}
-	parentChannel=it->second;
-	m_prevChannel=parentChannel;
+	portalChannel=it->second;
+	m_prevChannel=portalChannel;
 	m_prevChannelIndex=channelIndex;
 
 	return true;
@@ -103,20 +105,20 @@ bool CChannelLinkageParser::GetChannelByindex(ULONG channelIndex, ParentChannel&
 
 ULONG CChannelLinkageParser::GetChannelCount()
 {
-	CEnterCriticalSection enter(m_section);
+	CEnterCriticalSection lock (m_section);
 	return (ULONG)m_mapChannels.size();
 }
 
-void CChannelLinkageParser::GetChannel (ULONG channel, WORD* network_id, WORD* transport_id,WORD* service_id  )
+void CChannelLinkageParser::GetChannel (ULONG channelIndex, WORD* network_id, WORD* transport_id,WORD* service_id  )
 {
-	CEnterCriticalSection enter(m_section);
+	CEnterCriticalSection lock (m_section);
 	*network_id=0;
 	*transport_id=0;
 	*service_id=0;
-	if (channel!=m_prevChannelIndex)
+	if (channelIndex!=m_prevChannelIndex)
 	{
-		ParentChannel pChannel;
-		if (!GetChannelByindex(channel,pChannel)) return ;
+		PortalChannel pChannel;
+		if (!GetChannelByindex(channelIndex,pChannel)) return;
 		*network_id=pChannel.original_network_id;
 		*transport_id=pChannel.transport_id;
 		*service_id=pChannel.service_id;
@@ -131,8 +133,8 @@ void CChannelLinkageParser::GetChannel (ULONG channel, WORD* network_id, WORD* t
 
 ULONG CChannelLinkageParser::GetLinkedChannelsCount (ULONG channel)
 {
-	CEnterCriticalSection enter(m_section);
-	ParentChannel pChannel;
+	CEnterCriticalSection lock (m_section);
+	PortalChannel pChannel;
 	if (!GetChannelByindex(channel,pChannel)) return 0;
 	return (ULONG)pChannel.m_linkedChannels.size();
 }
@@ -140,20 +142,20 @@ ULONG CChannelLinkageParser::GetLinkedChannelsCount (ULONG channel)
 void CChannelLinkageParser::GetLinkedChannel (ULONG channelIndex,ULONG linkIndex, WORD* network_id, WORD* transport_id,WORD* service_id, char** channelName  )
 {
 	CEnterCriticalSection enter(m_section);
-	ParentChannel pChannel;
+	PortalChannel pChannel;
 	*network_id=0;
 	*transport_id=0;
 	*service_id=0;
 	*channelName=(char*)"";
 	if (channelIndex!=m_prevChannelIndex)
 	{
-		ParentChannel pChannel;
+		PortalChannel pChannel;
 		if (!GetChannelByindex(channelIndex,pChannel)) return ;
 	}
 	if (linkIndex >= m_prevChannel.m_linkedChannels.size()) return;
 
 	ULONG count=0;
-	ParentChannel::ilinkedChannels itLink=m_prevChannel.m_linkedChannels.begin();
+	PortalChannel::ilinkedChannels itLink=m_prevChannel.m_linkedChannels.begin();
 	while (count < linkIndex) 
 	{ 
 		itLink++; 
@@ -215,7 +217,7 @@ void CChannelLinkageParser::DecodeLinkage(byte* buf, int len)
 			return;
 		time_t currentTime=time(NULL);
 		time_t timespan=currentTime-m_scanTimeout;
-		if (timespan>10)
+		if (timespan>5)
 		{
 			m_bScanning=false;
 			m_bScanningDone=true;
@@ -239,7 +241,7 @@ void CChannelLinkageParser::DecodeLinkage(byte* buf, int len)
 		imapChannels it=m_mapChannels.find(key);
 		if (it==m_mapChannels.end())
 		{
-			ParentChannel newChannel ;
+			PortalChannel newChannel ;
 			newChannel.original_network_id=network_id;
 			newChannel.service_id=service_id;
 			newChannel.transport_id=transport_id;
@@ -249,11 +251,11 @@ void CChannelLinkageParser::DecodeLinkage(byte* buf, int len)
 		}
 		if (it==m_mapChannels.end()) 
 			return;
-		ParentChannel& channel=it->second; 
+		PortalChannel& channel=it->second; 
 
 		//did we already receive this section ?
 		key=crc32 ((char*)buf,len);
-		ParentChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(key);
+		PortalChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(key);
 		if (itSec!=channel.mapSectionsReceived.end())
 			return; //yes
 		channel.mapSectionsReceived[key]=true;
@@ -278,14 +280,14 @@ void CChannelLinkageParser::DecodeLinkage(byte* buf, int len)
 					lChannel.transport_id=(buf[start+off+2]<<8)+buf[start+off+3];
 					lChannel.network_id=(buf[start+off+4]<<8)+buf[start+off+5];
 					lChannel.service_id=(buf[start+off+6]<<8)+buf[start+off+7];
-					char *cname=(char*)malloc(200);
+					char *cname=(char*)malloc(400);
 					strncpy(cname,(char*)&buf[start+off+9],descriptor_len-7);
 					cname[descriptor_len-7]=0;
-					lChannel.name=cname;
+					lChannel.name.assign(cname);
 					free(cname);
 					channel.m_linkedChannels.push_back(lChannel);
-					//LogDebug("LinkageChannel tsid=%d nid=%d sid=%d",channel.transport_id,channel.original_network_id,channel.service_id);
-					//LogDebug("GEMX: LinkageDescriptor found len=%d tsid=%d nid=%d sid=%d %s",descriptor_len,lChannel.transport_id,lChannel.network_id,lChannel.service_id,lChannel.name);
+					//LogDebug("ChannelLinkageScanner: PortalChannel tsid=%d nid=%d sid=%d",channel.transport_id,channel.original_network_id,channel.service_id);
+					//LogDebug("ChannelLinkageScanner: LinkedChannel found len=%d tsid=%d nid=%d sid=%d %s",descriptor_len,lChannel.transport_id,lChannel.network_id,lChannel.service_id,lChannel.name.c_str());
 				}
 				off   +=(descriptor_len+2);
 			}

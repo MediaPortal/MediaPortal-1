@@ -119,7 +119,7 @@ STDMETHODIMP CChannelLinkageScanner::GetLinkedChannel (THIS_ ULONG channelIndex,
 
 STDMETHODIMP CChannelLinkageScanner::SetCallBack(IChannelLinkageCallback* callback)
 {
-	LogDebug("ChannelLinkage: set callback");
+	LogDebug("ChannelLinkageScanner: set callback");
 	m_pCallBack=callback;
 	return S_OK;
 }
@@ -139,12 +139,12 @@ void CChannelLinkageScanner::OnTsPacket(byte* tsPacket)
       }
 	  if (m_ChannelLinkageParser.IsScanningDone())
 	  {
+		m_bScanning=false;
 		if (m_pCallBack!=NULL)
 		{
 		  LogDebug("ChannelLinkageScanner: do callback");
 		  m_pCallBack->OnLinkageReceived();
 		}
-		m_bScanning=false;
 	  }
 	}
 	catch(...)

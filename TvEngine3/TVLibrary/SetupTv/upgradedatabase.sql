@@ -1,16 +1,14 @@
 USE TvLibrary
 GO
-ALTER TABLE Program ADD originalAirDate datetime NOT NULL DEFAULT  0
+CREATE TABLE ChannelLinkageMap (
+	idMapping int IDENTITY(1,1) NOT NULL,
+	idPortalChannel int NOT NULL,
+	idLinkedChannel int NOT NULL,
+ CONSTRAINT PK_ChannelLinkageMap PRIMARY KEY CLUSTERED 
+(
+	idMapping ASC
+)
+)
 GO
-ALTER TABLE Program ADD seriesNum varchar(200) NOT NULL DEFAULT ''
-GO
-ALTER TABLE Program ADD episodeNum varchar(200) NOT NULL DEFAULT ''
-GO
-ALTER TABLE Program ADD starRating int NOT NULL DEFAULT 0
-GO
-ALTER TABLE Program ADD classification varchar(200) NOT NULL DEFAULT ''
-GO
-delete from version
-GO
-insert into version(versionNumber) values(25)
+insert into version(versionNumber) values(26)
 GO

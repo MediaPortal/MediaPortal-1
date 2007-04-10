@@ -56,15 +56,6 @@ namespace TvLibrary.Interfaces.Analyzer
     int GetChannelCount([Out] out uint channelCount);
 
     /// <summary>
-    /// Gets the number of linked channels for a channel
-    /// </summary>
-    /// <param name="channel">The channel.</param>
-    /// <param name="eventCount">The link count.</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int GetLinkedChannelsCount([In] uint channelIndex, [Out] out uint linkedChannelsCount);
-
-    /// <summary>
     /// Gets the channel details.
     /// </summary>
     /// <param name="channel">The channel.</param>
@@ -74,6 +65,15 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int GetChannel([In] uint channelIndex, [In, Out] ref UInt16 network_id, [In, Out] ref UInt16 transport_id, [In, Out] ref UInt16 service_id);
+
+    /// <summary>
+    /// Gets the number of linked channels for a channel
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    /// <param name="eventCount">The link count.</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int GetLinkedChannelsCount([In] uint channelIndex, [Out] out uint linkedChannelsCount);
 
     /// <summary>
     /// Gets the linked channel details.

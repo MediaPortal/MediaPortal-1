@@ -340,6 +340,13 @@ namespace TvLibrary.Implementations.Hybrid
       _cards[_currentCardIndex].StartLinkageScanner(callback);
     }
     /// <summary>
+    /// Stops/Resets the linkage scanner
+    /// </summary>
+    public void ResetLinkageScanner()
+    {
+      _cards[_currentCardIndex].ResetLinkageScanner();
+    }
+    /// <summary>
     /// Returns the channel linkages grabbed
     /// </summary>
     public List<PortalChannel> ChannelLinkages

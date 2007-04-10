@@ -137,6 +137,10 @@ namespace TvLibrary.Interfaces
     /// </summary>
     void StartLinkageScanner(BaseChannelLinkageScanner callback);
     /// <summary>
+    /// Stops/Resets the linkage scanner
+    /// </summary>
+    void ResetLinkageScanner();
+    /// <summary>
     /// Returns the channel linkages grabbed
     /// </summary>
     List<PortalChannel> ChannelLinkages { get;}

@@ -2080,6 +2080,24 @@ namespace TvLibrary.Implementations.DVB
 
     #region Channel linkage handling
 
+    private bool SameAsPortalChannel(PortalChannel pChannel, LinkedChannel lChannel)
+    {
+      return ((pChannel.NetworkId == lChannel.NetworkId) && (pChannel.TransportId == lChannel.NetworkId) && (pChannel.ServiceId == lChannel.ServiceId));
+    }
+    private bool IsNewLinkedChannel(PortalChannel pChannel, LinkedChannel lChannel)
+    {
+      bool bRet = true;
+      foreach (LinkedChannel lchan in pChannel.LinkedChannels)
+      {
+        if ((lchan.NetworkId == lChannel.NetworkId) && (lchan.TransportId == lChannel.TransportId) && (lchan.ServiceId == lChannel.ServiceId))
+        {
+          bRet = false;
+          break;
+        }
+      }
+      return bRet;
+    }
+
     /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
@@ -2090,6 +2108,13 @@ namespace TvLibrary.Implementations.DVB
       _interfaceChannelLinkageScanner.SetCallBack((IChannelLinkageCallback)callback);
       _interfaceChannelLinkageScanner.Start();
 
+    }
+    /// <summary>
+    /// Stops/Resets the linkage scanner
+    /// </summary>
+    public void ResetLinkageScanner()
+    {
+      _interfaceChannelLinkageScanner.Reset();
     }
     /// <summary>
     /// Returns the EPG grabbed or null if epg grabbing is still busy
@@ -2132,10 +2157,12 @@ namespace TvLibrary.Implementations.DVB
                 lChannel.TransportId = tid;
                 lChannel.ServiceId = sid;
                 lChannel.Name = Marshal.PtrToStringAnsi(ptrName);
-                pChannel.LinkedChannels.Add(lChannel);
+                if ((!SameAsPortalChannel(pChannel,lChannel)) && (IsNewLinkedChannel(pChannel,lChannel)))
+                  pChannel.LinkedChannels.Add(lChannel);
               }
             }
-            portalChannels.Add(pChannel);
+            if (pChannel.LinkedChannels.Count>0)
+              portalChannels.Add(pChannel);
           }
           _interfaceChannelLinkageScanner.Reset();
           return portalChannels;

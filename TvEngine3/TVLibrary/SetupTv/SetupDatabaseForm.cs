@@ -36,7 +36,7 @@ namespace SetupTv
 {
   public partial class SetupDatabaseForm : Form
   {
-    int _currentSchemaVersion = 25;
+    int _currentSchemaVersion = 26;
 
     enum ProviderType
     {

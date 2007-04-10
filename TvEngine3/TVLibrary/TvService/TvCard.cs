@@ -1643,7 +1643,7 @@ namespace TvService
             return TvResult.NoVideoAudioDetected;
           }
           context.OnZap(user);
-          //_card.StartLinkageScanner(_linkageGrabber);
+          _card.StartLinkageScanner(_linkageGrabber);
           return TvResult.Succeeded;
         }
       }
@@ -1731,6 +1731,7 @@ namespace TvService
           }
           TvCardContext context = _card.Context as TvCardContext;
           if (context == null) return true;
+          _card.ResetLinkageScanner();
           context.Remove(user);
           if (IsIdle)
           {

@@ -1400,6 +1400,12 @@ namespace TvPlugin
       //dlg.AddLocalizedString(915); // TV Channels
       dlg.AddLocalizedString(4); // TV Guide
 
+      TvBusinessLayer layer = new TvBusinessLayer();
+      IList linkages = layer.GetLinkagesForPortalChannel(TVHome.Navigator.Channel);
+      if (linkages != null)
+        if (linkages.Count > 0)
+          dlg.AddLocalizedString(200042); // Linked Channels
+
       /*if (TVHome.Navigator.Groups.Count > 1)
         dlg.AddLocalizedString(971); // Group*/
       if (TVHome.Card.HasTeletext)
@@ -1562,6 +1568,10 @@ namespace TvPlugin
       case 601: // RecordNow
          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORD, GUIWindowManager.ActiveWindow, 0, 0, 0, 0, null);
          this.OnMessage(msg);
+          break;
+
+        case 200042: // Linked channels
+          ShowLinkedChannelsMenu(linkages);
           break;
 
       }
@@ -1738,6 +1748,25 @@ namespace TvPlugin
           g_Player.Pause();
         }
       }        
+    }
+
+    void ShowLinkedChannelsMenu(IList linkages)
+    {
+      if (dlg == null) return;
+      dlg.Reset();
+      dlg.SetHeading(200042); // Linked channels menu
+      foreach (ChannelLinkageMap map in linkages)
+      {
+        GUIListItem item = new GUIListItem(map.ReferringLinkedChannel().Name);
+        dlg.Add(item);
+      }
+      dlg.SelectedLabel = 0;
+      _isDialogVisible = true;
+      dlg.DoModal(GetID);
+      _isDialogVisible = false;
+      if (dlg.SelectedLabel < 0) return;
+      ChannelLinkageMap lmap=(ChannelLinkageMap)linkages[dlg.SelectedLabel];
+      TVHome.Navigator.ZapToChannel(lmap.ReferringLinkedChannel(), true);
     }
 
     public override void Process()
