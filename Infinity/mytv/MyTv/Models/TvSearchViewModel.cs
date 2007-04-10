@@ -140,17 +140,6 @@ namespace MyTv
         return _searchView;
       }
     }
-    /// <summary>
-    /// Returns the datatemplate for the listbox items
-    /// </summary>
-    /// <value>The datatemplate.</value>
-    public DataTemplate ItemTemplate
-    {
-      get
-      {
-        return (DataTemplate)Page.Resources["searchItemListTemplate"];
-      }
-    }
     #endregion
 
     #region commands

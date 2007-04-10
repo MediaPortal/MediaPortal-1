@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -53,6 +55,12 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      gridMain.Children.Clear();
+      using (FileStream steam = new FileStream(@"skin\default\mytv\tvsearch.xaml", FileMode.Open, FileAccess.Read))
+      {
+        UIElement documentRoot = (UIElement)XamlReader.Load(steam);
+        gridMain.Children.Add(documentRoot);
+      }
       _model = new TvSearchViewModel(this);
       gridMain.DataContext = _model;
       _model.SearchMode = _searchType;
