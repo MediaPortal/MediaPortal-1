@@ -97,7 +97,7 @@
       <Project>{82284525-5023-452C-89E3-A8765590AAEA}</Project>
       <Name>Dialogs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ProjectInfinity.Interface\ProjectInfinity.Core.csproj">
+    <ProjectReference Include="..\ProjectInfinity.Core\ProjectInfinity.Core.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
       <Name>ProjectInfinity.Core</Name>
     </ProjectReference>

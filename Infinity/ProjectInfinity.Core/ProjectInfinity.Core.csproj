@@ -4,11 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4C45C46E-2ED2-4801-B3C3-FC2560E9FFE0}</ProjectGuid>
+    <ProjectGuid>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ProjectInfinity</RootNamespace>
-    <AssemblyName>ProjectInfinity.Services</AssemblyName>
+    <AssemblyName>ProjectInfinity.Core</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,35 +33,44 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UIAutomationProvider, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Localisation\StringManager.cs" />
-    <Compile Include="Logging\FileLogger.cs" />
-    <Compile Include="Menu\Menu.cs" />
-    <Compile Include="Menu\MenuManager.cs" />
-    <Compile Include="Menu\PluginItem.cs" />
-    <Compile Include="Music\WMPMusicPlayer.cs" />
-    <Compile Include="Navigation\NavigationService.cs" />
-    <Compile Include="Plugins\PluginInfo.cs" />
-    <Compile Include="Plugins\ReflectionPluginManager.cs" />
-    <Compile Include="Messaging\MessageBroker.cs" />
-    <Compile Include="Messaging\MessageEventArgs.cs" />
-    <Compile Include="Messaging\MessageTopic.cs" />
-    <Compile Include="Messaging\MessageTopicCollection.cs" />
+    <Compile Include="Core.cs" />
+    <Compile Include="Localisation\ILocalisaton.cs" />
+    <Compile Include="Localisation\StringId.cs" />
+    <Compile Include="Menu\IMenu.cs" />
+    <Compile Include="Menu\IMenuItem.cs" />
+    <Compile Include="Menu\IMenuManager.cs" />
+    <Compile Include="Menu\IPluginItem.cs" />
+    <Compile Include="Messaging\Message.cs" />
+    <Compile Include="MusicMessages.cs" />
+    <Compile Include="Navigation\INavigationService.cs" />
+    <Compile Include="Players\IPlayer.cs" />
+    <Compile Include="Players\IPlayerCollection.cs" />
+    <Compile Include="Players\PlayerCollectionService.cs" />
+    <Compile Include="Playlist\IPlaylistItem.cs" />
+    <Compile Include="Playlist\IPlaylistManager.cs" />
+    <Compile Include="Playlist\PlaylistManager.cs" />
+    <Compile Include="PluginMessages.cs" />
+    <Compile Include="SystemMessages.cs" />
+    <Compile Include="Music\IMusicPlayer.cs" />
+    <Compile Include="Music\MusicStartMessage.cs" />
+    <Compile Include="Plugins\IPlugin.cs" />
+    <Compile Include="Plugins\IPluginManager.cs" />
+    <Compile Include="Plugins\IPluginInfo.cs" />
+    <Compile Include="Plugins\PluginAttribute.cs" />
+    <Compile Include="Plugins\PluginStartStopEventArgs.cs" />
+    <Compile Include="ServiceNotFoundException.cs" />
+    <Compile Include="Themes\IThemeManager.cs" />
+    <Compile Include="Windows\IMainWindow.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\LogLevel.cs" />
+    <Compile Include="Messaging\IMessageBroker.cs" />
+    <Compile Include="Messaging\MessagePublicationAttribute.cs" />
+    <Compile Include="Messaging\MessageSubscriptionAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Themes\ThemeManager.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ProjectInfinity.Core\ProjectInfinity.Core.csproj">
-      <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
-      <Name>ProjectInfinity.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ProjectInfinity.Utilities\ProjectInfinity.Utilities.csproj">
-      <Project>{4FE7B8AE-1330-424A-91A1-C68D7ABF9CB8}</Project>
-      <Name>ProjectInfinity.Utilities</Name>
-    </ProjectReference>
+    <Compile Include="ServiceScope.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
