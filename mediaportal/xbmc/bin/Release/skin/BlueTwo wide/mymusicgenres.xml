@@ -47,6 +47,14 @@
         <label>137</label>
         <onright>50</onright>
       </control>
+<!--       <control>
+        <description>Rotating Menu</description>
+        <type>button</type>
+        <id>0</id>
+        <label>Music Menu</label>
+        <hyperlink>8888</hyperlink>
+        <onright>50</onright>
+      </control>   -->    
       <control>
         <description>Play CD button</description>
         <type>button</type>
@@ -62,6 +70,7 @@
         <action>100</action>
         <onright>50</onright>
       </control>
+      <!--
       <control>
         <type>image</type>
         <description>Divider image</description>
@@ -69,6 +78,7 @@
         <texture>hbar1.png</texture>
         <keepaspectratio>yes</keepaspectratio>
       </control>
+      -->
       <control>
         <description>Now playing button</description>
         <type>button</type>

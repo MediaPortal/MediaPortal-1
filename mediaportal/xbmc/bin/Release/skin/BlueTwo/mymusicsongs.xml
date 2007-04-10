@@ -28,6 +28,7 @@
         <onup>17</onup>
       </control>
       <control>
+        <description>Sort button</description>
         <type>sortbutton</type>
         <id>3</id>
         <label>103</label>
@@ -48,9 +49,9 @@
         <onright>50</onright>
       </control>
       <control>
-        <description>CD Menu</description>
+        <description>Rotating Menu</description>
         <type>button</type>
-        <id>120</id>
+        <id>0</id>
         <label>Music Menu</label>
         <hyperlink>8888</hyperlink>
         <onright>50</onright>
@@ -63,13 +64,20 @@
         <onright>50</onright>
       </control>
       <control>
-        <description>Eject Disc</description>
+        <description>Eject Disc button</description>
         <type>button</type>
         <id>13</id>
         <label>654</label>
         <action>100</action>
         <onright>50</onright>
       </control>
+      <control>
+        <type>image</type>
+        <description>Divider image</description>
+        <id>999</id>
+        <texture>hbar1.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>      
       <control>
         <description>Now playing button</description>
         <type>button</type>

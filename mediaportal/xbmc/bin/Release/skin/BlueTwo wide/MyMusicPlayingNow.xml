@@ -37,7 +37,7 @@
       <id>0</id>
       <posX>113</posX>
       <posY>26</posY>
-      <texture>music_logo.png</texture>
+      <texture flipY="true" diffuse="Thumb_Mask.png">music_logo.png</texture>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>

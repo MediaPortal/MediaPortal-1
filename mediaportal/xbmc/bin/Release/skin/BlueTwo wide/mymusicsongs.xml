@@ -8,6 +8,7 @@
   <define>#header.hover:hover_my music.png</define>
   <controls>
     <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>group element</description>
       <type>group</type>
@@ -47,6 +48,14 @@
         <label>137</label>
         <onright>50</onright>
       </control>
+<!--       <control>
+        <description>Rotating Menu</description>
+        <type>button</type>
+        <id>0</id>
+        <label>Music Menu</label>
+        <hyperlink>8888</hyperlink>
+        <onright>50</onright>
+      </control>  -->     
       <control>
         <description>Play CD button</description>
         <type>button</type>
@@ -81,12 +90,12 @@
         <description>Current Playlist button</description>
         <type>button</type>
         <id>8</id>
-        <label>136</label>
+        <label>4555</label>
         <action>33</action>
         <onright>50</onright>
       </control>
       <control>
-        <description>My Playlists button</description>
+        <description>My Playlists</description>
         <type>button</type>
         <id>10</id>
         <label>983</label>
