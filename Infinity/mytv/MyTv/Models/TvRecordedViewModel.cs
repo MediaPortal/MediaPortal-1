@@ -117,7 +117,20 @@ namespace MyTv
         if (_viewMode != value)
         {
           _viewMode = value;
-          ChangeProperty("ItemTemplate");
+          ChangeProperty("ViewModeType");
+        }
+      }
+    }
+    public string ViewModeType
+    {
+      get
+      {
+        switch( _viewMode)
+        {
+          case ViewType.Icon:
+            return "Icon";
+          default:
+            return "List";
         }
       }
     }
@@ -201,23 +214,6 @@ namespace MyTv
       get
       {
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 79);//"View";
-      }
-    }
-    /// <summary>
-    /// Returns the datatemplate for the listbox items
-    /// </summary>
-    /// <value>The datatemplate.</value>
-    public DataTemplate ItemTemplate
-    {
-      get
-      {
-        switch (_viewMode)
-        {
-          case ViewType.List:
-            return (DataTemplate)Page.Resources["recordingItemListTemplate"];
-          default:
-            return (DataTemplate)Page.Resources["recordingItemIconTemplate"];
-        }
       }
     }
 

@@ -9,6 +9,12 @@ namespace ProjectInfinity.Controls
 {
   public class ListBox : System.Windows.Controls.ListBox
   {
+
+    public static readonly DependencyProperty ViewModeProperty = DependencyProperty.Register(
+                                                                                                  "ViewMode",
+                                                                                                  typeof(string),
+                                                                                                  typeof(ListBox),
+                                                                                                  new FrameworkPropertyMetadata(null));
     /// <summary>
     /// Identifies the <see cref="Command"/> property.
     /// </summary>
@@ -37,6 +43,13 @@ namespace ProjectInfinity.Controls
                                                                                                   new FrameworkPropertyMetadata
                                                                                                     (null));
 
+    
+
+    public string ViewMode
+    {
+      get { return (string)GetValue(ViewModeProperty); }
+      set { SetValue(ViewModeProperty, value); }
+    }
     protected override void OnMouseEnter(MouseEventArgs e)
     {
       base.OnMouseEnter(e);

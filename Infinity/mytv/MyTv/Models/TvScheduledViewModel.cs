@@ -276,24 +276,20 @@ namespace MyTv
         if (_viewMode != value)
         {
           _viewMode = value;
-          ChangeProperty("ItemTemplate");
+          ChangeProperty("ViewModeType");
         }
       }
     }
-    /// <summary>
-    /// Returns the datatemplate for the listbox items
-    /// </summary>
-    /// <value>The datatemplate.</value>
-    public DataTemplate ItemTemplate
+    public string ViewModeType
     {
       get
       {
         switch (_viewMode)
         {
-          case ViewType.List:
-            return (DataTemplate)Page.Resources["scheduleItemListTemplate"];
+          case ViewType.Icon:
+            return "Icon";
           default:
-            return (DataTemplate)Page.Resources["scheduleItemIconTemplate"];
+            return "List";
         }
       }
     }
@@ -832,6 +828,7 @@ namespace MyTv
       }
     }
     #endregion
+
     #region QuickRecord command class
     /// <summary>
     /// QuickRecord Command
@@ -1106,6 +1103,7 @@ namespace MyTv
       }
     }
     #endregion
+
     #region SearchTitle command class
     /// <summary>
     /// SearchTitleCommand Command
