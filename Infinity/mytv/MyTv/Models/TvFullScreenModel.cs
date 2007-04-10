@@ -71,28 +71,6 @@ namespace MyTv
     #endregion
 
     #region properties
-    public double TopOsdProgressBarWidth
-    {
-      get
-      {
-        return _topOsdBarWidth;
-      }
-      set
-      {
-        _topOsdBarWidth = value;
-      }
-    }
-    public double BottomOsdProgressBarWidth
-    {
-      get
-      {
-        return _bottomOsdBarWidth;
-      }
-      set
-      {
-        _bottomOsdBarWidth = value;
-      }
-    }
     /// <summary>
     /// Gets the top osd visibility.
     /// </summary>
@@ -189,7 +167,6 @@ namespace MyTv
           {
             Channel channel = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel;
             Program program = channel.CurrentProgram;
-            double totalWidth = TopOsdProgressBarWidth;//gridProgressBack.ActualWidth;
 
             // caclulate total duration of the current program
             TimeSpan ts = (channel.CurrentProgram.EndTime - channel.CurrentProgram.StartTime);
@@ -201,7 +178,7 @@ namespace MyTv
 
             double percentLivePoint = ((double)livePoint) / ((double)programDuration);
             if (percentLivePoint < 0) percentLivePoint = 0;
-            return percentLivePoint * totalWidth;
+            return percentLivePoint * 100;
           }
         }
         return 0;
@@ -223,7 +200,6 @@ namespace MyTv
           {
             Channel channel = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel;
             Program program = channel.CurrentProgram;
-            double totalWidth = TopOsdProgressBarWidth;//gridProgressBack.ActualWidth;
 
 
             // caclulate total duration of the current program
@@ -240,7 +216,7 @@ namespace MyTv
 
             double timeShiftStartPointPercent = ((double)timeShiftStartPoint) / ((double)programDuration);
             if (timeShiftStartPointPercent < 0) timeShiftStartPointPercent = 0;
-            return timeShiftStartPointPercent * totalWidth;
+            return timeShiftStartPointPercent * 100;
           }
         }
         return 0;
@@ -254,7 +230,6 @@ namespace MyTv
     {
       get
       {
-        double totalWidth = TopOsdProgressBarWidth;//gridProgressBack.ActualWidth;
         if (ServiceScope.Get<IPlayerCollectionService>().Count == 0) return 0;
         TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
         if (player.Card != null)
@@ -278,12 +253,12 @@ namespace MyTv
             playingPoint = (livePoint - playingPoint);
             double playingPointPercent = ((double)playingPoint) / ((double)programDuration);
             if (playingPointPercent < 0) playingPointPercent = 0;
-            return playingPointPercent * totalWidth;
+            return playingPointPercent * 100;
           }
         }
 
         float percent = (float)(player.Position.TotalSeconds / player.Duration.TotalSeconds);
-        return percent * totalWidth;
+        return percent * 100;
       }
     }
 
@@ -437,7 +412,6 @@ namespace MyTv
         Program program = ch.CurrentProgram;
         if (program == null) return 0;
 
-        double totalWidth = BottomOsdProgressBarWidth;// osdBottomProgressBackground.ActualWidth;
         // caclulate total duration of the current program
         TimeSpan ts = (program.EndTime - program.StartTime);
         double programDuration = ts.TotalSeconds;
@@ -447,7 +421,7 @@ namespace MyTv
         double livePoint = ts.TotalSeconds;
         double percentLivePoint = ((double)livePoint) / ((double)programDuration);
         if (percentLivePoint < 0) percentLivePoint = 0;
-        return  percentLivePoint * totalWidth;
+        return percentLivePoint * 100;
       }
     }
     public string ZapChannelLogo

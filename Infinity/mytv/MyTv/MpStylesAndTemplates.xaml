@@ -151,11 +151,31 @@
     </Setter>
   </Style>
   <ControlTemplate x:Key="MpProgressBar"  TargetType="{x:Type ProgressBar}">
-    <Grid>
-      <Rectangle Name="PART_Track" Height="20" Width="300" Fill="#FF8DA7CD" />
+    <Grid HorizontalAlignment="Stretch">
+      <Rectangle HorizontalAlignment="Left"  Name="PART_Track" Height="20" Width="300" Fill="#FF8DA7CD" />
       <Rectangle HorizontalAlignment="Left"  Name="PART_Indicator" Height="20" Fill="#FF19A05D" />
     </Grid>
   </ControlTemplate>
+
+  <ControlTemplate x:Key="MpOrangeProgressBar"  TargetType="{x:Type ProgressBar}">
+    <Grid HorizontalAlignment="Stretch">
+      <Rectangle HorizontalAlignment="Stretch" Name="PART_Track" Height="20"  Fill="#FF8DA7CD" />
+      <Rectangle HorizontalAlignment="Left"  Name="PART_Indicator" Height="20" Fill="Orange" />
+    </Grid>
+  </ControlTemplate>
+  <ControlTemplate x:Key="MpGreenProgressBar"  TargetType="{x:Type ProgressBar}">
+    <Grid HorizontalAlignment="Stretch">
+      <Rectangle HorizontalAlignment="Stretch" Name="PART_Track" Height="20"  Fill="Transparent" />
+      <Rectangle HorizontalAlignment="Left"  Name="PART_Indicator" Height="20" Fill="Green" />
+    </Grid>
+  </ControlTemplate>
+  <ControlTemplate x:Key="MpRedProgressBar"  TargetType="{x:Type ProgressBar}">
+    <Grid HorizontalAlignment="Stretch">
+      <Rectangle HorizontalAlignment="Stretch" Name="PART_Track" Height="20"  Fill="Transparent" />
+      <Rectangle HorizontalAlignment="Left"  Name="PART_Indicator" Height="20" Fill="Red" />
+    </Grid>
+  </ControlTemplate>
+
 
   <Style x:Key="TextBlockLargeStyle"  TargetType="{x:Type TextBlock}">
     <Setter Property="FontFamily" Value="Segoe Media Center Semibold"/>
