@@ -22,7 +22,6 @@ namespace ProjectInfinity.Pictures
     public PictureView()
     {
       InitializeComponent();
-      DataContext = new PictureViewModel();
     }
 
   }

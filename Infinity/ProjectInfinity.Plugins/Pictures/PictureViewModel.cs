@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Data;
 using System.Windows.Input;
+using ProjectInfinity.Navigation;
 
 namespace ProjectInfinity.Pictures
 {
@@ -18,19 +19,27 @@ namespace ProjectInfinity.Pictures
     private List<MediaItem> _model = new List<MediaItem>();
     private LaunchCommand _launchCommand;
     private CollectionView _itemView;
+    private Folder _currentFolder;
 
     public PictureViewModel()
     {
       //TODO: read starting folder from configuration
-      DirectoryInfo dir = new DirectoryInfo(@"c:\media\foto");
-      Reload(dir);
+      Reload(new Folder(new DirectoryInfo(@"c:\")), false);
     }
 
-    private void Reload(DirectoryInfo dir)
+    public Folder CurrentFolder { get { return _currentFolder;}}
+
+    private void Reload(Folder dir, bool includeParent)
     {
-      FileSystemInfo[] entries = dir.GetFileSystemInfos();
+      DirectoryInfo directoryInfo = dir.Info;
+      DirectoryInfo parentInfo = directoryInfo.Parent;
+      FileSystemInfo[] entries = directoryInfo.GetFileSystemInfos();
       MediaFactory factory = new MediaFactory();
+      _currentFolder = dir;
+      OnPropertyChanged(new PropertyChangedEventArgs("CurrentFolder"));
       _model.Clear();
+      if (includeParent && parentInfo != null)
+        _model.Add(new ParentFolder(parentInfo));
       foreach (FileSystemInfo entry in entries)
       {
         MediaItem item = factory.Create(entry);
@@ -118,11 +127,12 @@ namespace ProjectInfinity.Pictures
 
       public void Visit(Folder folder)
       {
-        _viewModel.Reload(folder.Info);
+        _viewModel.Reload(folder,true);
       }
 
       public void Visit(Picture picture)
       {
+        ServiceScope.Get<INavigationService>().Navigate(new Uri("/ProjectInfinity.Plugins;component/Pictures/FullScreenPictureView.xaml", UriKind.Relative));
       }
     }
   }

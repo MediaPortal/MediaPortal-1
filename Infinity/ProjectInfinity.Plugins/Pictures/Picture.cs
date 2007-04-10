@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace ProjectInfinity.Pictures
@@ -14,6 +15,14 @@ namespace ProjectInfinity.Pictures
     public override string Name
     {
       get { return _info.Name; }
+    }
+
+    public Uri Uri
+    {
+      get
+      {
+        return new Uri(@"file://"+_info.FullName.Replace('\\','/'));
+      }
     }
 
     public override void Accept(IMediaVisitor visitor)

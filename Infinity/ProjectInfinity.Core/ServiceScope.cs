@@ -118,6 +118,11 @@ namespace ProjectInfinity
       Current.AddService(service);
     }
 
+    public static void Replace<T>(T service)
+    {
+      Current.ReplaceService<T>(service);
+    }
+
     public static void Remove<T>()
     {
       Current.RemoveService<T>();
@@ -211,5 +216,11 @@ namespace ProjectInfinity
     }
 
     #endregion
+
+    private void ReplaceService<T>(T service)
+    {
+      RemoveService<T>();
+      AddService<T>(service);
+    }
   }
 }

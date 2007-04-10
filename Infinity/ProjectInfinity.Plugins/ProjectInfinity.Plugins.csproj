@@ -63,12 +63,14 @@
     </Compile>
     <Compile Include="Pictures\IMediaVisitor.cs" />
     <Compile Include="Pictures\MediaItem.cs" />
+    <Compile Include="Pictures\ParentFolder.cs" />
     <Compile Include="Pictures\Picture.cs" />
     <Compile Include="Pictures\PicturePlugin.cs" />
     <Compile Include="Pictures\PictureView.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>PictureView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pictures\PictureViewHelper.cs" />
     <Compile Include="Pictures\PictureViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
