@@ -15,6 +15,7 @@ namespace ProjectInfinity.Pictures
     public override string Name
     {
       get { return ".."; }
-    }
+    }
+
   }
 }
