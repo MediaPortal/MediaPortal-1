@@ -99,10 +99,6 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="MpStylesAndTemplates.xaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </None>
     <Page Include="TvFullscreen.xaml" />
     <Page Include="TvGuide.xaml" />
     <Page Include="TvHome.xaml" />

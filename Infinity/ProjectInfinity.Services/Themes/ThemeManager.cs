@@ -11,7 +11,7 @@ namespace ProjectInfinity.Themes
 
     public ThemeManager()
     {
-      DirectoryInfo dir = new DirectoryInfo(@"Themes");
+      DirectoryInfo dir = new DirectoryInfo(@"Skin\default");// skin name=configuration. Needs to be changed later
       if (!dir.Exists)
         return;
       foreach(FileInfo file in dir.GetFiles("*.xaml"))
@@ -23,7 +23,7 @@ namespace ProjectInfinity.Themes
 
     public void SetDefaultTheme()
     {
-      Application.Current.Resources = themes["MpStylesAndTemplates"];
+      Application.Current.Resources = themes["theme"];
     }
   }
 }
