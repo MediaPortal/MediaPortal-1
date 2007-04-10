@@ -754,11 +754,26 @@ namespace TvDatabase
     #endregion
 
     #region linkage map
-    public IList GetLinkagesForPortalChannel(Channel PortalChannel)
+    public IList GetLinkagesForChannel(Channel channel)
     {
+      int idChannel=-1;
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelLinkageMap));
-      sb.AddConstraint(Operator.Equals, "idPortalChannel", PortalChannel.IdChannel);
+      sb.AddConstraint(Operator.Equals, "idLinkedChannel", channel.IdChannel);
       SqlStatement stmt = sb.GetStatement(true);
+      IList links = ObjectFactory.GetCollection(typeof(ChannelLinkageMap), stmt.Execute());
+      if (links != null)
+      {
+        if (links.Count > 0)
+        {
+          ChannelLinkageMap map = (ChannelLinkageMap)links[0];
+          idChannel = map.ReferringPortalChannel().IdChannel;
+        }
+      }
+      if (idChannel==-1)
+        idChannel=channel.IdChannel;
+      sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(ChannelLinkageMap));
+      sb.AddConstraint(Operator.Equals, "idPortalChannel", idChannel);
+      stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection(typeof(ChannelLinkageMap), stmt.Execute());
     }
     public void DeleteLinkageMapForPortalChannel(Channel PortalChannel)

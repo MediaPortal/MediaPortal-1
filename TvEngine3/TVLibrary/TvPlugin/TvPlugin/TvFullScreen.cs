@@ -1401,7 +1401,7 @@ namespace TvPlugin
       dlg.AddLocalizedString(4); // TV Guide
 
       TvBusinessLayer layer = new TvBusinessLayer();
-      IList linkages = layer.GetLinkagesForPortalChannel(TVHome.Navigator.Channel);
+      IList linkages = layer.GetLinkagesForChannel(TVHome.Navigator.Channel);
       if (linkages != null)
         if (linkages.Count > 0)
           dlg.AddLocalizedString(200042); // Linked Channels
@@ -1755,12 +1755,18 @@ namespace TvPlugin
       if (dlg == null) return;
       dlg.Reset();
       dlg.SetHeading(200042); // Linked channels menu
+      int selected=0;
+      int counter = 0;
       foreach (ChannelLinkageMap map in linkages)
       {
-        GUIListItem item = new GUIListItem(map.ReferringLinkedChannel().Name);
+        string channelName = map.ReferringLinkedChannel().Name;
+        GUIListItem item = new GUIListItem(channelName);
+        if (channelName == TVHome.Card.ChannelName)
+          selected = counter;
         dlg.Add(item);
+        counter++;
       }
-      dlg.SelectedLabel = 0;
+      dlg.SelectedLabel = selected;
       _isDialogVisible = true;
       dlg.DoModal(GetID);
       _isDialogVisible = false;
