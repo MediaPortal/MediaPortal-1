@@ -610,7 +610,7 @@
     <String id="726">Tittel</String>
     <String id="727">"Live"-TV i bakgrunnen</String>
     <String id="728">Kan ikke starte</String>
-    <String id="729">Bekreft at du bruker VMR9 og at noe spilles av</String>
+    <String id="729">Bekreft at en video spilles av</String>
     <String id="730">Planlagt opptak tar opp nå. Hvis du sletter</String>
     <String id="731">dette planlagte opptaket vil opptaket stoppes.</String>
     <String id="732">Er du sikker?</String>
@@ -1136,6 +1136,8 @@
     <String id="2608">Portugisisk</String>
     <String id="2609">Dansk</String>
     <String id="2610">Polsk</String>
+    <String id="2611">Tsjekkisk</String>
+    <String id="2612">Ungarsk</String>
     <String id="2997">t</String>
     <String id="2998">min</String>
     <String id="2999">sek</String>
