@@ -41,17 +41,17 @@
         <label>457</label>
         <onright>50</onright>
       </control>
-      <control>
+<!--       <control>
         <description>Search button</description>
         <type>button</type>
         <id>12</id>
         <label>137</label>
         <onright>50</onright>
-      </control>
+      </control> -->
       <control>
         <description>Rotating Menu</description>
         <type>button</type>
-        <id>0</id>
+        <id>1337</id>
         <label>Music Menu</label>
         <hyperlink>8888</hyperlink>
         <onright>50</onright>
