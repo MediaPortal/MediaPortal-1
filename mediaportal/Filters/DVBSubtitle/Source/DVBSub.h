@@ -89,7 +89,6 @@ public:
   ~CDVBSub();
 
   // Methods from directshow base classes
-  HRESULT CheckConnect( PIN_DIRECTION dir, IPin *pPin );
   STDMETHODIMP Run( REFERENCE_TIME tStart );
 	STDMETHODIMP Pause();
 	STDMETHODIMP Stop();
@@ -122,6 +121,7 @@ public:
 
   void SetPcr( ULONGLONG pcr );
   void NotifySeeking();
+
 
 private:
   void Reset();

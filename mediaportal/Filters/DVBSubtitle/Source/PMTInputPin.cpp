@@ -97,8 +97,12 @@ HRESULT CPMTInputPin::CheckMediaType( const CMediaType *pmt )
 //
 HRESULT CPMTInputPin::CompleteConnect( IPin *pPin )
 {
+  LogDebug( "PMT input pin - CompleteConnect ");
   m_pDemuxerPin = pPin;
 	HRESULT hr = CBasePin::CompleteConnect( pPin );
+  
+  CAutoLock lock( m_pLock );
+
   if( hr == S_OK )
   {
     hr = MapPidToDemuxer( PMT_PID, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
@@ -106,6 +110,7 @@ HRESULT CPMTInputPin::CompleteConnect( IPin *pPin )
     if( hr == S_OK )
       hr = FindVideoPID();
   }
+  LogDebug( "PMT input pin - CompleteConnect - done - hr = %i", hr);
   return hr;
 }
 
@@ -118,12 +123,32 @@ void CPMTInputPin::SetVideoPid( int videoPid )
   m_streamVideoPid = videoPid;
 }
 
+//
+// ReceiveCanBlock
+//
+STDMETHODIMP CPMTInputPin::ReceiveCanBlock()
+{
+  return S_OK;
+}
 
 //
 // Receive
 //
 STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
 {
+  //LogDebug( "CPMTInputPin::Receive" );
+
+  DWORD dwMSecs( 0 ); 
+  FILTER_STATE state;
+
+  m_pFilter->GetState( dwMSecs, &state );
+  if( state == State_Stopped || state == State_Paused )
+  {
+    LogDebug( "CPMTInputPin::Receive - filter state stopped/paused - done" );
+    return S_FALSE;
+  }
+
+  CAutoLock lock( m_pReceiveLock );
   CheckPointer( pSample, E_POINTER );
 
   if( m_bReset )
@@ -131,8 +156,7 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
     FindVideoPID();
     m_bReset = false;
   }
-
-  CAutoLock lock( m_pReceiveLock );
+  
   PBYTE pbData=NULL;
 	long lDataLen=0;
 
@@ -175,6 +199,7 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
       }
     }
   }
+  //LogDebug( "CPMTInputPin::Receive - done" );
   return hr;
 }
 
@@ -184,6 +209,8 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
 //
 HRESULT CPMTInputPin::FindVideoPID()
 {
+  LogDebug( "CPMTInputPin::FindVideoPID()" );
+
   HRESULT hr;
   IFilterGraph *pGraph = m_pFilter->GetFilterGraph();
   IBaseFilter *pDemuxer = NULL;;
@@ -245,6 +272,7 @@ HRESULT CPMTInputPin::FindVideoPID()
     }
     pIEnumPins->Release();
   }
+  LogDebug( "CPMTInputPin::FindVideoPID() - done" );
   return hr;
 }
 
@@ -319,7 +347,7 @@ void CPMTInputPin::Reset()
 //
 STDMETHODIMP CPMTInputPin::BeginFlush( void )
 {
-	Reset();
+	//Reset();
 	return CBaseInputPin::BeginFlush();
 }
 

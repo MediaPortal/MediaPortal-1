@@ -126,14 +126,25 @@ STDMETHODIMP CSubtitleInputPin::ReceiveCanBlock()
 //
 STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 {
-	CAutoLock lock(m_pReceiveLock);
+//	LogDebug( "CSubtitleInputPin::Receive" );
+  DWORD dwMSecs( 0 ); 
+  FILTER_STATE state;
+
+  m_pDVBSub->GetState( dwMSecs, &state );
+  if( state == State_Stopped || state == State_Paused )
+  {
+    LogDebug( "CSubtitleInputPin::Receive - filter state stopped/paused - done" );
+    return S_FALSE;
+  }
+
+  CAutoLock lock( m_pReceiveLock );
+//  CAutoLock lock( m_pLock );
 
 	if( m_SubtitlePid == -1 )
     return S_OK;  // Nothing to be done yet
 
 	if ( m_bReset )
 	{
-		LogDebug( "SubtitlePin: reset" );
 		m_bReset = false;
 	}
 	CheckPointer( pSample, E_POINTER );
@@ -154,6 +165,7 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 
   OnRawData( pbData, lDataLen );
 
+//  LogDebug( "CSubtitleInputPin::Receive - done" );
   return S_OK;
 }
 

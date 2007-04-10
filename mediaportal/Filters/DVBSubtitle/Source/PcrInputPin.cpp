@@ -97,13 +97,32 @@ HRESULT CPcrInputPin::CompleteConnect( IPin *pPin )
   return hr;
 }
 
+//
+// ReceiveCanBlock
+//
+STDMETHODIMP CPcrInputPin::ReceiveCanBlock()
+{
+  return S_OK;
+}
 
 //
 // Receive
 //
 STDMETHODIMP CPcrInputPin::Receive( IMediaSample *pSample )
 {
-	CAutoLock lock( m_pReceiveLock );
+	//LogDebug( "CPcrInputPin::Receive" );
+
+  DWORD dwMSecs( 0 ); 
+  FILTER_STATE state;
+
+  m_pFilter->GetState( dwMSecs, &state );
+  if( state == State_Stopped || state == State_Paused )
+  {
+    LogDebug( "CPcrInputPin::Receive - filter state stopped/paused - done" );
+    return S_FALSE;
+  }
+
+  CAutoLock lock( m_pReceiveLock );
 
   if( m_pcrPid == -1 )
     return S_OK;  // Nothing to be done yet
@@ -124,6 +143,7 @@ STDMETHODIMP CPcrInputPin::Receive( IMediaSample *pSample )
 
 	OnRawData( pbData, lDataLen );
 
+  //LogDebug( "CPcrInputPin::Receive - done" );
   return S_OK;
 }
 
@@ -133,8 +153,10 @@ STDMETHODIMP CPcrInputPin::Receive( IMediaSample *pSample )
 //
 void CPcrInputPin::Reset()
 {
+  LogDebug( "CPcrInputPin::Reset" );
   m_currentPTS = 0;
   m_pcrPid = -1;
+  LogDebug( "CPcrInputPin::Reset - done" );
 }
 
 
@@ -155,7 +177,7 @@ void CPcrInputPin::SetPcrPid( LONG pPid )
 //
 STDMETHODIMP CPcrInputPin::BeginFlush(void)
 {
-	Reset();
+//	Reset();
 	return CRenderedInputPin::BeginFlush();
 }
 

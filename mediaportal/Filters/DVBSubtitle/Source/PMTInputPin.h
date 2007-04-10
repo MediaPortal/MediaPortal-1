@@ -45,9 +45,10 @@ public:
 
   ~CPMTInputPin();
 
-  STDMETHODIMP Receive(IMediaSample *pSample);
-  STDMETHODIMP BeginFlush(void);
-  STDMETHODIMP EndFlush(void);
+  STDMETHODIMP Receive( IMediaSample *pSample );
+  STDMETHODIMP BeginFlush( void );
+  STDMETHODIMP EndFlush( void );
+  STDMETHODIMP ReceiveCanBlock();
 
   HRESULT CheckMediaType( const CMediaType * );
   HRESULT CompleteConnect( IPin *pPin );

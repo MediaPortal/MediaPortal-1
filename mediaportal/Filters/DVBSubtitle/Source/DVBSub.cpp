@@ -218,41 +218,6 @@ int CDVBSub::GetPinCount()
 
 
 //
-// CheckConnect
-//
-HRESULT CDVBSub::CheckConnect( PIN_DIRECTION dir, IPin *pPin )
-{
-  AM_MEDIA_TYPE mediaType;
-  int videoPid = 0;
-
-  pPin->ConnectionMediaType( &mediaType );
-
-  // Search for demuxer's video pin
-  if(  mediaType.majortype == MEDIATYPE_Video && dir == PINDIR_INPUT )
-  {
-	  IMPEG2PIDMap* pMuxMapPid;
-	  if( SUCCEEDED( pPin->QueryInterface( &pMuxMapPid ) ) )
-    {
-		  IEnumPIDMap *pIEnumPIDMap;
-		  if( SUCCEEDED( pMuxMapPid->EnumPIDMap( &pIEnumPIDMap ) ) )
-      {
-			  ULONG count = 0;
-			  PID_MAP pidMap;
-			  while( pIEnumPIDMap->Next( 1, &pidMap, &count ) == S_OK )
-        {
-          m_VideoPid = pidMap.ulPID;
-          m_pPMTPin->SetVideoPid( m_VideoPid );
-          LogDebug( "  found video PID %d",  m_VideoPid );
-			  }
-		  }
-		  pMuxMapPid->Release();
-    }
-  }
-  return S_OK;
-}
-
-
-//
 // Run
 //
 STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
@@ -269,6 +234,18 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 
   LogDebugMediaPosition( "Run - media seeking position" );        
 
+  if( ! m_pTSFileSource )
+    ConnectToTSFileSource();
+
+  if( m_pTSFileSource && m_basePCR < 0 )
+  {
+    REFERENCE_TIME posBase( 0 );
+    m_pTSFileSource->GetBasePCRPosition( &posBase );
+
+    m_basePCR = ( posBase / 1000 ) * 9;
+    LogDebugPTS( "TSFileSource base PCR:", m_basePCR );
+  }
+
   if( m_bSeekingDone )
   {
     m_bSeekingDone = false;
@@ -277,9 +254,6 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 
   m_startTimestamp = tStart;
   
-  if( ! m_pTSFileSource )
-    ConnectToTSFileSource();
-
 	return CBaseFilter::Run( tStart );
 }
 
@@ -308,8 +282,12 @@ STDMETHODIMP CDVBSub::Stop()
 
   m_bStopping = true;
 
+  // Make sure no further processing is done
+  if( m_pSubDecoder ) m_pSubDecoder->Reset();
+	if( m_pSubtitleInputPin ) m_pSubtitleInputPin->Reset();
+
   LogDebug( "Release ITSFileSource" );
-  m_pTSFileSource->Release();
+  if( m_pTSFileSource ) m_pTSFileSource->Release();
   m_pTSFileSource = NULL;
   LogDebug( "Release ITSFileSource - done" );
 
@@ -324,7 +302,7 @@ STDMETHODIMP CDVBSub::Stop()
 //
 void CDVBSub::Reset()
 {
-	LogDebug( "Reset()" );
+  LogDebug( "CDVBSub::Reset()" );
   CAutoLock cObjectLock( m_pLock );
 
 	m_pSubDecoder->Reset();
@@ -334,22 +312,13 @@ void CDVBSub::Reset()
   //m_fixPCR = -1; // update this only in the beginning
   //m_firstPCR = -1;
 
-  if( m_pTSFileSource )
-  {
-    REFERENCE_TIME posBase( 0 );
-    m_pTSFileSource->GetBasePCRPosition( &posBase );
-
-    m_basePCR = ( posBase / 1000 ) * 9;
-    LogDebugPTS( "TSFileSource base PCR:", m_basePCR );
-  }
-
   // Notify reset observer
   if( m_pTimestampResetObserver )
   {
     (*m_pTimestampResetObserver)();
   }
 
-  LogDebugMediaPosition( "Reset - media seeking position" );  
+  LogDebugMediaPosition( "CDVBSub::Reset - media seeking position" );  
 }
 
 
