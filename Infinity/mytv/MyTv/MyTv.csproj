@@ -124,6 +124,7 @@
   <ItemGroup>
     <Compile Include="Models\ProgramModel.cs" />
     <Compile Include="Models\TvBaseViewModel.cs" />
+    <Compile Include="Models\TvFullScreenModel.cs" />
     <Compile Include="TvChannelNavigator\ChannelNavigator.cs" />
     <Compile Include="TvChannelNavigator\ITvChannelNavigator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

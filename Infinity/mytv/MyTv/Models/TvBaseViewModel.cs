@@ -765,6 +765,7 @@ namespace MyTv
           {
             TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
             player.SeekToEnd();
+            return;
           }
 
           ICommand cmd = _viewModel.Play;
