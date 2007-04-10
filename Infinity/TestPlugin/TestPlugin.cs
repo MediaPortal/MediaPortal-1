@@ -5,7 +5,7 @@ using ProjectInfinity.Plugins;
 
 namespace TestPlugin
 {
-  [Plugin("Test", "Plugin for testing purposes", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/media/images/Music.png")]
+  [Plugin("Test", "Plugin for testing purposes", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Music.png")]
   public class TestPlugin : IPlugin
   {
     #region IPlugin Members
