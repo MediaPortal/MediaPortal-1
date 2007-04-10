@@ -22,11 +22,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity", "ProjectI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPlugin", "TestPlugin\TestPlugin.csproj", "{EA5E414F-E7C5-40E0-B8DF-C73640637DBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity.Plugins", "ProjectInfinity.Menu\ProjectInfinity.Plugins.csproj", "{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{4FE7B8AE-1330-424A-91A1-C68D7ABF9CB8} = {4FE7B8AE-1330-424A-91A1-C68D7ABF9CB8}
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dialogs", "mytv\Dialogs\Dialogs.csproj", "{82284525-5023-452C-89E3-A8765590AAEA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keyboard", "mytv\Keyboard\Keyboard.csproj", "{452B2155-B622-4246-90C3-4900B8DB06D9}"
@@ -43,6 +38,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity.Controls", "ProjectInfinity.Controls\ProjectInfinity.Controls.csproj", "{D30415D7-E1FC-4C3F-9667-E6301E1A2F6A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity.Core", "ProjectInfinity.Core\ProjectInfinity.Core.csproj", "{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectInfinity.Plugins", "ProjectInfinity.Plugins\ProjectInfinity.Plugins.csproj", "{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,10 +69,6 @@ Global
 		{EA5E414F-E7C5-40E0-B8DF-C73640637DBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA5E414F-E7C5-40E0-B8DF-C73640637DBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA5E414F-E7C5-40E0-B8DF-C73640637DBA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{82284525-5023-452C-89E3-A8765590AAEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{82284525-5023-452C-89E3-A8765590AAEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82284525-5023-452C-89E3-A8765590AAEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -100,6 +93,10 @@ Global
 		{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{284F0FD8-F1AC-4E30-80F2-BDB9293D050C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
