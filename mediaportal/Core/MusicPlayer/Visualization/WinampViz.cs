@@ -194,6 +194,7 @@ namespace MediaPortal.Visualization
         if (visHandle != 0)
         {
           BassVis.BASS_WINAMPVIS_Stop((int)hwndWinAmp);
+          BassVis.BASS_WINAMPVIS_Free(visHandle);
           BassVis.BASS_WINAMPVIS_Quit();
           visHandle = 0;
         }
