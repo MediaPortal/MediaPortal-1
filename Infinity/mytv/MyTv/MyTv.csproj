@@ -219,8 +219,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /y "$(TargetDir)*.dll" "$(SolutionDir)ProjectInfinity\bin\$(ConfigurationName)"
-xcopy /y "$(TargetDir)*.xaml" "$(SolutionDir)ProjectInfinity\bin\$(ConfigurationName)\Themes"
-xcopy /y "$(TargetDir)media\images\*.*" "$(SolutionDir)ProjectInfinity\bin\$(ConfigurationName)\media\images"
 xcopy /y "$(TargetDir)gentle.config" "$(SolutionDir)ProjectInfinity\bin\$(ConfigurationName)"
 </PostBuildEvent>
   </PropertyGroup>
