@@ -1802,7 +1802,8 @@ namespace MediaPortal.GUI.Video
     {
       if (item.IsFolder)
       {
-        if (item.IsRemote) return;
+        if (item.IsRemote)
+          return;
         if (item.Label != "..")
         {
           ArrayList items = new ArrayList();
@@ -1819,10 +1820,12 @@ namespace MediaPortal.GUI.Video
         VideoDatabase.DeleteMovie(item.Path);
         TVDatabase.RemoveRecordedTVByFileName(item.Path);
 
-        if (item.IsRemote) return;
-        MediaPortal.Util.Utils.FileDelete(item.Path);
+        if (item.IsRemote)
+          return;
+        MediaPortal.Util.Utils.DeleteRecording(item.Path);
       }
     }
+
     /// <summary>
     /// Returns true if the specified window belongs to the my videos plugin
     /// </summary>

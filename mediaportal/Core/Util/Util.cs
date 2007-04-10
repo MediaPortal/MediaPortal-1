@@ -2085,12 +2085,11 @@ namespace MediaPortal.Util
       Utils.FileDelete(recordingFilename);
 
       int pos = recordingFilename.LastIndexOf(@"\");
-      if (pos < 0) return;
-      string path = recordingFilename.Substring(0, pos);
-      string filename = recordingFilename.Substring(pos + 1);
-      pos = filename.LastIndexOf(".");
-      if (pos >= 0)
-        filename = filename.Substring(0, pos);
+      if (pos < 0)
+        return;
+      string path = System.IO.Path.GetDirectoryName(recordingFilename);
+      string filename = System.IO.Path.GetFileNameWithoutExtension(recordingFilename);
+
       filename = filename.ToLower();
       string[] files;
       try
