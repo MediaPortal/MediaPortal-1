@@ -6,7 +6,7 @@ using ProjectInfinity.Plugins;
 
 namespace ProjectInfinity.Pictures
 {
-  [Plugin("MyPictures", "Show Pictures", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/images/Pictures.png")]
+  [Plugin("MyPictures", "Show Pictures", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Pictures.png")]
   class PicturePlugin : IPlugin
   {
     public void Initialize()
