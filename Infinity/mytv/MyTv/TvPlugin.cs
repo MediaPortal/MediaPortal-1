@@ -7,7 +7,7 @@ using ProjectInfinity.Plugins;
 
 namespace MyTv
 {
-  [Plugin("My Tv", "My Tv", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/media/images/tv.png")]
+  [Plugin("My Tv", "My Tv", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/images/tv.png")]
   public class TvPlugin: IPlugin
   {
     #region IPlugin Members
