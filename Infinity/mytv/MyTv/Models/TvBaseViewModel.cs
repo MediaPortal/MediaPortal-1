@@ -119,6 +119,11 @@ namespace MyTv
       {
         return _page;
       }
+      set
+      {
+        _page = value;
+        _window = Window.GetWindow(_page);
+      }
     }
 
     #region properties for current tuned channel

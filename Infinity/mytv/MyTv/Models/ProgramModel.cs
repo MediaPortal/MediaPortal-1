@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using TvDatabase;
@@ -142,7 +143,42 @@ namespace MyTv
         if (ts.Minutes < 10)
           return String.Format("{0}:0{1}", ts.Hours, ts.Minutes);
         else
-          return String.Format("{0}:B{1}", ts.Hours, ts.Minutes);
+          return String.Format("{0}:{1}", ts.Hours, ts.Minutes);
+      }
+    }
+    public string Date
+    {
+      get
+      {
+        return StartTime.ToString("dd-MM HH:mm");
+      }
+    }
+    public bool IsRecorded
+    {
+      get
+      {
+        IList schedules = Schedule.ListAll();
+        foreach (Schedule schedule in schedules)
+        {
+          if (schedule.Canceled != Schedule.MinSchedule) continue;
+          if (schedule.IsRecordingProgram(this.Program, true))
+          {
+            return true;
+          }
+        }
+
+        return false;
+      }
+    }
+    public string RecordingLogo
+    {
+      get
+      {
+        if (IsRecorded)
+        {
+          return  String.Format(@"{0}\{1}",System.IO.Directory.GetCurrentDirectory(),Thumbs.TvRecordingIcon);
+        }
+        return "";
       }
     }
     #endregion

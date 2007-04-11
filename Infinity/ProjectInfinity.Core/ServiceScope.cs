@@ -127,7 +127,10 @@ namespace ProjectInfinity
     {
       Current.RemoveService<T>();
     }
-
+    public static bool IsRegistered<T>()
+    {
+      return Current.IsServiceRegistered<T>();
+    }
     /// <summary>
     /// Gets a service from the current <see cref="ServiceScope"/>
     /// </summary>
@@ -166,6 +169,15 @@ namespace ProjectInfinity
       services.Remove(typeof (T));
     }
 
+    private bool IsServiceRegistered<T>()
+    {
+      Type type = typeof(T);
+      if (services.ContainsKey(type))
+      {
+        return true;
+      }
+      return false;
+    }
     private T GetService<T>(bool throwIfNotFound)
     {
       Type type = typeof (T);

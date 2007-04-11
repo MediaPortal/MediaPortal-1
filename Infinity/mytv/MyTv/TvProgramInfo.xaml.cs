@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -29,129 +31,10 @@ namespace MyTv
 
   public partial class TvProgramInfo : System.Windows.Controls.Page
   {
-    Program _program;
-    public TvProgramInfo(Program program)
+    TvScheduledViewModel _model;
+    public TvProgramInfo()
     {
-      _program = program;
       InitializeComponent();
-    }
-
-    void ShowUpcomingEpisodes()
-    {
-      Grid grid = new Grid();
-      //set program description
-      string strTime = String.Format("{0} {1} - {2}", _program.StartTime.ToString("dd-MM"), _program.StartTime.ToString("HH:mm"), _program.EndTime.ToString("HH:mm"));
-
-      labelGenre.Text = _program.Genre;
-      labelStartEnd.Text = strTime;
-      labelDescription.Text = _program.Description;
-      labelTitle.Text = _program.Title;
-
-      //check if we are recording this program
-      IList schedules = Schedule.ListAll();
-      bool isRecording = false;
-      bool isSeries = false;
-      foreach (Schedule schedule in schedules)
-      {
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
-        if (schedule.IsRecordingProgram(_program, true))
-        {
-          if (!schedule.IsSerieIsCanceled(_program.StartTime))
-          {
-            if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
-              isSeries = true;
-            isRecording = true;
-            break;
-          }
-        }
-      }
-
-      if (isRecording)
-      {
-        buttonRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 53);//Dont Record
-        buttonAdvancedRecord.IsEnabled = false;
-        buttonKeepUntil.IsEnabled = true;
-        buttonQuality.IsEnabled = true;
-        buttonEpisodes.IsEnabled = isSeries;
-        buttonPreRecord.IsEnabled = true;
-        buttonPostRecord.IsEnabled = true;
-      }
-      else
-      {
-        buttonRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 13);//Record
-        buttonAdvancedRecord.IsEnabled = true;
-        buttonKeepUntil.IsEnabled = false;
-        buttonQuality.IsEnabled = true;
-        buttonEpisodes.IsEnabled = false;
-        buttonPreRecord.IsEnabled = false;
-        buttonPostRecord.IsEnabled = false;
-      }
-      buttonAlertMe.IsChecked = _program.Notify;
-
-      //find upcoming episodes
-
-      TvBusinessLayer layer = new TvBusinessLayer();
-      DateTime dtDay = DateTime.Now;
-      IList episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), _program.Title, null);
-      int row = 0;
-      DialogMenuItemCollection collection = new DialogMenuItemCollection();
-      foreach (Program episode in episodes)
-      {
-        string logo = System.IO.Path.ChangeExtension(episode.ReferencedChannel().Name, ".png");
-        if (!System.IO.File.Exists(logo))
-        {
-          logo = "";
-        }
-
-        Schedule recordingSchedule;
-        string recIcon = "";
-        if (IsRecordingProgram(episode, out recordingSchedule, false))
-        {
-          if (false == recordingSchedule.IsSerieIsCanceled(episode.StartTime))
-          {
-            if (recordingSchedule.ReferringConflicts().Count > 0)
-            {
-              recIcon = Thumbs.TvConflictRecordingIcon;
-            }
-            else
-            {
-              recIcon = Thumbs.TvRecordingIcon;
-            }
-          }
-          //item.TVTag = recordingSchedule;
-        }
-        if (recIcon != "")
-        {
-          recIcon = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), recIcon);
-          if (!System.IO.File.Exists(recIcon))
-          {
-            recIcon = "";
-          }
-        }
-        DialogMenuItem item = new DialogMenuItem(logo, episode.Title, strTime, episode.ReferencedChannel().Name);
-        item.RecordingLogo = recIcon;
-        item.Tag = episode;
-        collection.Add(item);
-      }
-      gridList.ItemsSource = collection;
-    }
-
-
-
-    bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
-    {
-      recordingSchedule = null;
-      IList schedules = Schedule.ListAll();
-      foreach (Schedule schedule in schedules)
-      {
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
-        if (schedule.IsRecordingProgram(program, filterCanceledRecordings))
-        {
-          recordingSchedule = schedule;
-          return true;
-        }
-      }
-      return false;
     }
 
 
@@ -162,133 +45,22 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      gridMain.Children.Clear();
+      using (FileStream steam = new FileStream(@"skin\default\mytv\TvProgramInfo.xaml", FileMode.Open, FileAccess.Read))
+      {
+        UIElement documentRoot = (UIElement)XamlReader.Load(steam);
+        gridMain.Children.Add(documentRoot);
+      }
+      _model =  ServiceScope.Get<TvScheduledViewModel>();
+      _model.Page = this;
+      gridMain.DataContext = _model;
+
       // Sets keyboard focus on the first Button in the sample.
       //this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
-
-      labelHeader.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 46);//program info
-      buttonRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 13);//Record
-      buttonAdvancedRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 42);//Advanced Record
-      buttonKeepUntil.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 47);//Keep until
-      buttonAlertMe.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 48);//Alert me
-      buttonQuality.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 49);//Quality setting
-      buttonEpisodes.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 50);//Episodes management
-      buttonPreRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 51);//Pre-record
-      buttonPostRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 52);//Post-record
-      labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
-      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-      Mouse.AddMouseMoveHandler(this, new MouseEventHandler(handleMouse));
-      gridList.SelectionChanged += new SelectionChangedEventHandler(gridList_SelectionChanged);
-      gridList.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(Button_Click), true);
-      gridList.KeyDown += new KeyEventHandler(gridList_KeyDown);
-      Keyboard.Focus(buttonRecord);
-      labelDate.Content = DateTime.Now.ToString("dd-MM HH:mm");
-      ShowUpcomingEpisodes();
-
-
-      if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
-      {
-        MediaPlayer player = (MediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0].UnderlyingPlayer;
-        VideoDrawing videoDrawing = new VideoDrawing();
-        videoDrawing.Player = player;
-        videoDrawing.Rect = new Rect(0, 0, videoWindow.ActualWidth, videoWindow.ActualHeight);
-        DrawingBrush videoBrush = new DrawingBrush();
-        videoBrush.Drawing = videoDrawing;
-        videoWindow.Fill = videoBrush;
-      }
-      labelTitle.Text = _program.Title;
-      labelDescription.Text = _program.Description;
-      labelStartEnd.Text = String.Format("{0}-{1}", _program.StartTime.ToString("HH:mm"), _program.EndTime.ToString("HH:mm"));
-      labelGenre.Text = _program.Genre;
-
-
+      this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
     }
-
-    void gridList_KeyDown(object sender, KeyEventArgs e)
-    {
-      if (e.Key == Key.Enter)
-      {
-        DialogMenuItem item = gridList.SelectedItem as DialogMenuItem;
-        if (item == null) return;
-        Program program = item.Tag as Program;
-        if (program == null) return;
-        OnRecordProgram(program);
-        e.Handled = true;
-        return;
-      }
-    }
-    protected void onKeyDown(object sender, KeyEventArgs e)
-    {
-      if (e.Key == System.Windows.Input.Key.X)
-      {
-        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
-        {
-          ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
-          return;
-        }
-      }
-    }
-
-
-    void gridList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      UpdateInfoBox();
-    }
-    void handleMouse(object sender, MouseEventArgs e)
-    {
-      FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
-      while (element != null)
-      {
-        if (element as Button != null)
-        {
-          Keyboard.Focus((Button)element);
-          return;
-        }
-        if (element as ListBoxItem != null)
-        {
-          gridList.SelectedItem = element.DataContext;
-          Keyboard.Focus((ListBoxItem)element);
-          UpdateInfoBox();
-          return;
-        }
-        element = element.TemplatedParent as FrameworkElement;
-      }
-    }
-
-    void OnUpcomingEpisodeClicked(object sender, RoutedEventArgs e)
-    {
-      Button b = sender as Button;
-      if (b == null) return;
-      Program p = b.Tag as Program;
-      if (p == null) return;
-      OnRecordProgram(p);
-    }
-    void UpdateInfoBox()
-    {
-      if (gridList.SelectedItem == null) return;
-      Program program = ((DialogMenuItem)gridList.SelectedItem).Tag as Program;
-      if (program == null) return;
-
-      labelTitle.Text = program.Title;
-      labelDescription.Text = program.Description;
-      labelStartEnd.Text = String.Format("{0}-{1}", program.StartTime.ToString("HH:mm"), program.EndTime.ToString("HH:mm"));
-      labelGenre.Text = program.Genre;
-    }
-    void Button_Click(object sender, RoutedEventArgs e)
-    {
-      if (e.Source == gridList)
-      {
-        DialogMenuItem item = gridList.SelectedItem as DialogMenuItem;
-        if (item == null) return;
-        Program program = item.Tag as Program;
-        if (program == null) return;
-        OnRecordProgram(program);
-      }
-    }
-    void OnRecordClicked(object sender, EventArgs e)
-    {
-      OnRecordProgram(_program);
-    }
+#if NOTUSED
     void OnRecordProgram(Program program)
     {
       Schedule recordingSchedule;
@@ -655,5 +427,124 @@ namespace MyTv
       server.OnNewSchedule();
       ShowUpcomingEpisodes();
     }
+
+    void ShowUpcomingEpisodes()
+    {
+      Grid grid = new Grid();
+      //set program description
+      string strTime = String.Format("{0} {1} - {2}", _program.StartTime.ToString("dd-MM"), _program.StartTime.ToString("HH:mm"), _program.EndTime.ToString("HH:mm"));
+
+      labelGenre.Text = _program.Genre;
+      labelStartEnd.Text = strTime;
+      labelDescription.Text = _program.Description;
+      labelTitle.Text = _program.Title;
+
+      //check if we are recording this program
+      IList schedules = Schedule.ListAll();
+      bool isRecording = false;
+      bool isSeries = false;
+      foreach (Schedule schedule in schedules)
+      {
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        if (schedule.IsRecordingProgram(_program, true))
+        {
+          if (!schedule.IsSerieIsCanceled(_program.StartTime))
+          {
+            if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
+              isSeries = true;
+            isRecording = true;
+            break;
+          }
+        }
+      }
+
+      if (isRecording)
+      {
+        buttonRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 53);//Dont Record
+        buttonAdvancedRecord.IsEnabled = false;
+        buttonKeepUntil.IsEnabled = true;
+        buttonQuality.IsEnabled = true;
+        buttonEpisodes.IsEnabled = isSeries;
+        buttonPreRecord.IsEnabled = true;
+        buttonPostRecord.IsEnabled = true;
+      }
+      else
+      {
+        buttonRecord.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 13);//Record
+        buttonAdvancedRecord.IsEnabled = true;
+        buttonKeepUntil.IsEnabled = false;
+        buttonQuality.IsEnabled = true;
+        buttonEpisodes.IsEnabled = false;
+        buttonPreRecord.IsEnabled = false;
+        buttonPostRecord.IsEnabled = false;
+      }
+      buttonAlertMe.IsChecked = _program.Notify;
+
+      //find upcoming episodes
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      DateTime dtDay = DateTime.Now;
+      IList episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), _program.Title, null);
+      int row = 0;
+      DialogMenuItemCollection collection = new DialogMenuItemCollection();
+      foreach (Program episode in episodes)
+      {
+        string logo = System.IO.Path.ChangeExtension(episode.ReferencedChannel().Name, ".png");
+        if (!System.IO.File.Exists(logo))
+        {
+          logo = "";
+        }
+
+        Schedule recordingSchedule;
+        string recIcon = "";
+        if (IsRecordingProgram(episode, out recordingSchedule, false))
+        {
+          if (false == recordingSchedule.IsSerieIsCanceled(episode.StartTime))
+          {
+            if (recordingSchedule.ReferringConflicts().Count > 0)
+            {
+              recIcon = Thumbs.TvConflictRecordingIcon;
+            }
+            else
+            {
+              recIcon = Thumbs.TvRecordingIcon;
+            }
+          }
+          //item.TVTag = recordingSchedule;
+        }
+        if (recIcon != "")
+        {
+          recIcon = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), recIcon);
+          if (!System.IO.File.Exists(recIcon))
+          {
+            recIcon = "";
+          }
+        }
+        DialogMenuItem item = new DialogMenuItem(logo, episode.Title, strTime, episode.ReferencedChannel().Name);
+        item.RecordingLogo = recIcon;
+        item.Tag = episode;
+        collection.Add(item);
+      }
+      gridList.ItemsSource = collection;
+    }
+
+
+
+    bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
+    {
+      recordingSchedule = null;
+      IList schedules = Schedule.ListAll();
+      foreach (Schedule schedule in schedules)
+      {
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        if (schedule.IsRecordingProgram(program, filterCanceledRecordings))
+        {
+          recordingSchedule = schedule;
+          return true;
+        }
+      }
+      return false;
+    }
+#endif
   }
 }

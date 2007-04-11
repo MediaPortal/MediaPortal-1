@@ -331,8 +331,14 @@ namespace MyTv
       {
         ProgramModel model = parameter as ProgramModel;
         if (model == null) return;
-        TvProgramInfo info = new TvProgramInfo(model.Program);
-        ServiceScope.Get<INavigationService>().Navigate(info);
+
+        if (!ServiceScope.IsRegistered<TvScheduledViewModel>())
+        {
+          ServiceScope.Add<TvScheduledViewModel>(new TvScheduledViewModel(_viewModel.Page));
+        }
+        TvScheduledViewModel viewmodel = ServiceScope.Get<TvScheduledViewModel>();
+        viewmodel.CurrentProgram = model;
+        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvProgramInfo.xaml", UriKind.Relative));
       }
     }
     #endregion

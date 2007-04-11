@@ -43,6 +43,7 @@ namespace MyTv
       Icon
     };
     ScheduleCollectionView _scheduleView;
+    EpisodeCollectionView _episodesView;
     ScheduleDatabaseModel _dataModel;
     ViewType _viewMode = ViewType.Icon;
 
@@ -57,6 +58,9 @@ namespace MyTv
     ICommand _searchGenreCommand;
     ICommand _searchKeywordCommand;
     ICommand _contextMenuCommand;
+    ICommand _recordProgramCommand;
+    ICommand _recordProgramAdvancedCommand;
+
     #endregion
 
     #region ctor
@@ -72,6 +76,7 @@ namespace MyTv
 
       //store page & window
       _scheduleView = new ScheduleCollectionView(_dataModel);
+      _episodesView = new EpisodeCollectionView(_dataModel);
     }
     #endregion
 
@@ -89,6 +94,87 @@ namespace MyTv
       }
     }
 
+    public ProgramModel CurrentProgram
+    {
+      get
+      {
+        return _dataModel.CurrentProgram;
+      }
+      set
+      {
+        _dataModel.CurrentProgram = value;
+      }
+    }
+    /// <summary>
+    /// Gets the localized-label for the programinfo header
+    /// </summary>
+    /// <value>The localized label.</value>
+    public string ProgramInfoHeaderLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 46);//program info
+      }
+    }
+    public string RecordLabel
+    {
+      get
+      {
+        if (_dataModel.CurrentProgram != null)
+        {
+          if (_dataModel.CurrentProgram.IsRecorded)
+          {
+            return ServiceScope.Get<ILocalisation>().ToString("mytv", 53);//Dont Record
+          }
+        }
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 13);//Record
+      }
+    }
+    public string KeepUntilLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 47);//Keep until
+      }
+    }
+    public string AlertMeLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 48);//Alert me
+      }
+    }
+
+    public string QualityLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 49);//Quality setting
+      }
+    }
+    public string EpisodesLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 50);//Episodes management
+      }
+    }
+    public string PreRecordLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 51);//Pre-record
+      }
+    }
+    public string PostRecordLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("mytv", 52);//Post-record
+      }
+    }
+
+
     /// <summary>
     /// Gets the localized-label for the header
     /// </summary>
@@ -102,7 +188,7 @@ namespace MyTv
     }
 
     /// <summary>
-    /// Returns the ListViewCollection containing the recordings
+    /// Returns the ListViewCollection containing the schedules
     /// </summary>
     /// <value>The recordings.</value>
     public CollectionView Schedules
@@ -116,6 +202,22 @@ namespace MyTv
         return _scheduleView;
       }
     }
+    /// <summary>
+    /// Returns the ListViewCollection containing the upcoming episodes
+    /// </summary>
+    /// <value>The recordings.</value>
+    public CollectionView Episodes
+    {
+      get
+      {
+        if (_episodesView == null)
+        {
+          _episodesView = new EpisodeCollectionView(_dataModel);
+        }
+        return _episodesView;
+      }
+    }
+
     /// <summary>
     /// Gets the localized-label for the Sort button
     /// </summary>
@@ -463,6 +565,29 @@ namespace MyTv
           _searchKeywordCommand = new SearchKeywordCommand(this);
         }
         return _searchKeywordCommand;
+      }
+    }
+
+    public ICommand RecordProgram
+    {
+      get
+      {
+        if (_recordProgramCommand == null)
+        {
+          _recordProgramCommand = new RecordProgramCommand(this);
+        }
+        return _recordProgramCommand;
+      }
+    }
+    public ICommand RecordProgramAdvanced
+    {
+      get
+      {
+        if (_recordProgramAdvancedCommand == null)
+        {
+          _recordProgramAdvancedCommand = new RecordProgramAdvancedCommand(this);
+        }
+        return _recordProgramAdvancedCommand;
       }
     }
     #endregion
@@ -1157,6 +1282,7 @@ namespace MyTv
       }
     }
     #endregion
+
     #region SearchKeywordCommand class
     /// <summary>
     /// SearchGenreCommand Command
@@ -1183,6 +1309,252 @@ namespace MyTv
       }
     }
     #endregion
+
+    #region RecordProgramCommand class
+
+    public class RecordProgramCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="RecordProgramCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public RecordProgramCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        if (parameter == null) return;
+        ProgramModel program = parameter as ProgramModel;
+        Program _program = program.Program;
+        Schedule recordingSchedule;
+        if (IsRecordingProgram(_program, out  recordingSchedule, false))
+        {
+          //already recording this program
+          if (recordingSchedule.ScheduleType != (int)ScheduleRecordingType.Once)
+          {
+            MpMenu dlgMenu = new MpMenu();
+            dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            dlgMenu.Owner = _viewModel.Window;
+            dlgMenu.Items.Clear();
+            dlgMenu.Header = "Menu";
+            dlgMenu.SubTitle = "";
+            dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 54)/* Delete this recording*/));
+            dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 55)/* Delete series recording*/));
+            dlgMenu.ShowDialog();
+            if (dlgMenu.SelectedIndex == -1)
+              return;
+            switch (dlgMenu.SelectedIndex)
+            {
+              case 0: //Delete this recording only
+                {
+                  if (CheckIfRecording(recordingSchedule))
+                  {
+                    //delete specific series
+                    CanceledSchedule canceledSchedule = new CanceledSchedule(recordingSchedule.IdSchedule, program.StartTime);
+                    canceledSchedule.Persist();
+                    TvServer server = new TvServer();
+                    server.StopRecordingSchedule(recordingSchedule.IdSchedule);
+                    server.OnNewSchedule();
+                  }
+                }
+                break;
+              case 1: //Delete entire recording
+                {
+                  if (CheckIfRecording(recordingSchedule))
+                  {
+                    //cancel recording
+                    TvServer server = new TvServer();
+                    server.StopRecordingSchedule(recordingSchedule.IdSchedule);
+                    recordingSchedule.Delete();
+                    server.OnNewSchedule();
+                  }
+                }
+                break;
+            }
+          }
+          else
+          {
+            if (CheckIfRecording(recordingSchedule))
+            {
+              TvServer server = new TvServer();
+              server.StopRecordingSchedule(recordingSchedule.IdSchedule);
+              recordingSchedule.Delete();
+              server.OnNewSchedule();
+            }
+          }
+        }
+        else
+        {
+          //not recording this program
+          // check if this program is conflicting with any other already scheduled recording
+          TvBusinessLayer layer = new TvBusinessLayer();
+          Schedule rec = new Schedule(_program.IdChannel, program.Title, program.StartTime, program.EndTime);
+          rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+          rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+          //if (SkipForConflictingRecording(rec)) return;
+
+          rec.Persist();
+          TvServer server = new TvServer();
+          server.OnNewSchedule();
+        }
+        _viewModel.DataModel.Reload();
+        _viewModel.ChangeProperty("RecordLabel");
+      }
+      protected bool CheckIfRecording(Schedule rec)
+      {
+
+        VirtualCard card;
+        TvServer server = new TvServer();
+        if (!server.IsRecordingSchedule(rec.IdSchedule, out card)) return true;
+        MpDialogYesNo dlgMenu = new MpDialogYesNo();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 56);//"Delete";
+        dlgMenu.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 57);//"Delete this recording ? This schedule is recording. If you delete the schedule then the recording will be stopped.";
+        dlgMenu.ShowDialog();
+        if (dlgMenu.DialogResult == DialogResult.Yes)
+        {
+          return true;
+        }
+        return false;
+      }
+      protected bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
+      {
+        recordingSchedule = null;
+        IList schedules = Schedule.ListAll();
+        foreach (Schedule schedule in schedules)
+        {
+          if (schedule.Canceled != Schedule.MinSchedule) continue;
+          if (schedule.IsRecordingProgram(program, filterCanceledRecordings))
+          {
+            recordingSchedule = schedule;
+            return true;
+          }
+        }
+        return false;
+      }
+    }
+    #endregion
+
+    #region RecordProgramAdvancedCommand class
+
+    public class RecordProgramAdvancedCommand : RecordProgramCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="RecordProgramAdvancedCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public RecordProgramAdvancedCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        ProgramModel program = parameter as ProgramModel;
+        Program _program = program.Program;
+        if (_program == null)
+          return;
+        MpMenu dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Items.Clear();
+        dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 13);//""Record";
+        dlgMenu.SubTitle = "";
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 58)/* "None"*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 59)/*"Record once"*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 60)/*"Record everytime on this channel"*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 61)/*"Record everytime on every channel"*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 62)/*"Record every week at this time"*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 63)/*"Record every day at this time"*/)); ;
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 64)/*"Record Mon-fri"*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 65)/*"Record Sat-Sun"*/));
+        dlgMenu.ShowDialog();
+
+        if (dlgMenu.SelectedIndex < 1) return;
+
+        Schedule rec = new Schedule(_program.IdChannel, _program.Title, _program.StartTime, _program.EndTime);
+        switch (dlgMenu.SelectedIndex)
+        {
+          case 1://once
+            rec.ScheduleType = (int)ScheduleRecordingType.Once;
+            break;
+          case 2://everytime, this channel
+            rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
+            break;
+          case 3://everytime, all channels
+            rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
+            break;
+          case 4://weekly
+            rec.ScheduleType = (int)ScheduleRecordingType.Weekly;
+            break;
+          case 5://daily
+            rec.ScheduleType = (int)ScheduleRecordingType.Daily;
+            break;
+          case 6://Mo-Fi
+            rec.ScheduleType = (int)ScheduleRecordingType.WorkingDays;
+            break;
+          case 7://Record Sat-Sun
+            rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
+            break;
+        }
+        //if (SkipForConflictingRecording(rec)) return;
+
+        TvBusinessLayer layer = new TvBusinessLayer();
+        rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+        rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+        rec.Persist();
+        TvServer server = new TvServer();
+        server.OnNewSchedule();
+
+        //check if this program is interrupted (for example by a news bulletin)
+        //ifso ask the user if he wants to record the 2nd part also
+        IList programs = new ArrayList();
+        DateTime dtStart = rec.EndTime.AddMinutes(1);
+        DateTime dtEnd = dtStart.AddHours(3);
+        programs = layer.GetPrograms(rec.ReferencedChannel(), dtStart, dtEnd);
+        if (programs.Count >= 2)
+        {
+          Program next = programs[0] as Program;
+          Program nextNext = programs[1] as Program;
+          if (nextNext.Title == rec.ProgramName)
+          {
+            TimeSpan ts = next.EndTime - next.StartTime;
+            if (ts.TotalMinutes <= 40)
+            {
+              MpDialogYesNo dlgYesNo = new MpDialogYesNo();
+              dlgYesNo.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+              dlgYesNo.Owner = _viewModel.Window;
+              dlgYesNo.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 66);//""Multipart";
+              dlgYesNo.Content = String.Format(ServiceScope.Get<ILocalisation>().ToString("mytv", 667)/*This program will be interrupted by {0} Would you like to record the second part also?")*/, next.Title);
+              dlgYesNo.ShowDialog();
+              if (dlgYesNo.DialogResult == DialogResult.Yes)
+              {
+                rec = new Schedule(_program.IdChannel, _program.Title, nextNext.StartTime, nextNext.EndTime);
+
+                rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
+                rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+                rec.Persist();
+                server.OnNewSchedule();
+              }
+            }
+          }
+        }
+        _viewModel.DataModel.Reload();
+        _viewModel.ChangeProperty("RecordLabel");
+      }
+    }
+    #endregion
     #endregion
 
     #region ScheduleDatabaseModel class
@@ -1195,7 +1567,9 @@ namespace MyTv
     {
       #region variables
       public event PropertyChangedEventHandler PropertyChanged;
+      ProgramModel _program;
       List<ScheduleModel> _listSchedules = new List<ScheduleModel>();
+      List<ProgramModel> _listEpisodes = new List<ProgramModel>();
       #endregion
 
       /// <summary>
@@ -1238,6 +1612,7 @@ namespace MyTv
           }
         }
       }
+
       /// <summary>
       /// Refreshes the list with the database.
       /// </summary>
@@ -1251,6 +1626,32 @@ namespace MyTv
           ScheduleModel item = new ScheduleModel(schedule);
           _listSchedules.Add(item);
         }
+        _listEpisodes.Clear();
+        if (_program != null)
+        {
+          TvBusinessLayer layer = new TvBusinessLayer();
+          DateTime dtDay = DateTime.Now;
+          IList episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), _program.Title, null);
+          foreach (Program episode in episodes)
+          {
+            _listEpisodes.Add(new ProgramModel(episode));
+          }
+        }
+        if (PropertyChanged != null)
+          PropertyChanged(this, new PropertyChangedEventArgs("Episodes"));
+      }
+
+      public ProgramModel CurrentProgram
+      {
+        get
+        {
+          return _program;
+        }
+        set
+        {
+          _program = value;
+          Reload();
+        }
       }
 
       /// <summary>
@@ -1262,6 +1663,17 @@ namespace MyTv
         get
         {
           return _listSchedules;
+        }
+      }
+      /// <summary>
+      /// Gets the upcoming episodes.
+      /// </summary>
+      /// <value>IList containing 0 or more ScheduleModel instances.</value>
+      public IList Episodes
+      {
+        get
+        {
+          return _listEpisodes;
         }
       }
     }
@@ -1310,6 +1722,55 @@ namespace MyTv
           {
             _sortMode = value;
             this.CustomSort = new ScheduleComparer(_sortMode);
+          }
+        }
+      }
+    }
+    #endregion
+
+    #region EpisodeCollectionView class
+    /// <summary>
+    /// This class represents the schedule view
+    /// </summary>
+    class EpisodeCollectionView : ListCollectionView
+    {
+      #region variables
+      SortType _sortMode = SortType.Date;
+      private ScheduleDatabaseModel _model;
+      #endregion
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ScheduleCollectionView"/> class.
+      /// </summary>
+      /// <param name="model">The database model.</param>
+      public EpisodeCollectionView(ScheduleDatabaseModel model)
+        : base(model.Episodes)
+      {
+        _model = model;
+        _model.PropertyChanged += new PropertyChangedEventHandler(onDatabaseChanged);
+      }
+
+      void onDatabaseChanged(object sender, PropertyChangedEventArgs e)
+      {
+        this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+      }
+
+      /// <summary>
+      /// Gets or sets the sort mode.
+      /// </summary>
+      /// <value>The sort mode.</value>
+      public SortType SortMode
+      {
+        get
+        {
+          return _sortMode;
+        }
+        set
+        {
+          if (_sortMode != value)
+          {
+            _sortMode = value;
+            //this.CustomSort = new ScheduleComparer(_sortMode);
           }
         }
       }

@@ -982,8 +982,13 @@ namespace MyTv
           }
           else
           {
-            TvProgramInfo info = new TvProgramInfo(_selectedItem.Program);
-            ServiceScope.Get<INavigationService>().Navigate(info);
+            if (!ServiceScope.IsRegistered<TvScheduledViewModel>())
+            {
+              ServiceScope.Add<TvScheduledViewModel>(new TvScheduledViewModel(this));
+            }
+            TvScheduledViewModel model = ServiceScope.Get<TvScheduledViewModel>();
+            model.CurrentProgram = new ProgramModel(_selectedItem.Program);
+            ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvProgramInfo.xaml", UriKind.Relative));
           }
         }
       }
