@@ -1,7 +1,7 @@
 USE TvLibrary;
 #
 CREATE TABLE `channellinkagemap` (
-  `idMapping int(11) NOT NULL auto_increment,
+  `idMapping` int(11) NOT NULL auto_increment,
   `idPortalChannel` int(11) NOT NULL,
   `idLinkedChannel` int(11) NOT NULL,
   PRIMARY KEY (`idMapping`)
