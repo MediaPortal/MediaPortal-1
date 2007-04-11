@@ -669,12 +669,21 @@ namespace Tag.MP3
     {
       get
       {
-        byte[] frame = this.GetFrameValueStringSearch(FrameNames.POPM, FrameNamesV2.POP, "no@email");
+        byte[] frame = this.GetValueBinary(FrameNames.POPM, FrameNamesV2.POP);
         
         if (frame == null)
           return 0;
 
-        int rating = frame[9];
+
+        // Read over the email address
+        int i = 0;
+        for (i = 0; i < frame.GetLength(0); i++)
+        {
+          if (frame[i] == 0x00)
+            break;
+        }
+
+        int rating = frame[i + 1];
         if (rating > 205)
           return 5;
         else if (rating > 154)
@@ -1084,9 +1093,15 @@ namespace Tag.MP3
       }
     }
 
+
     private byte[] GetValueBinary(string sFrameID)
     {
-      ID3Frame frame = GetFrame(sFrameID);
+      return GetValueBinary(sFrameID, "");
+    }
+
+    private byte[] GetValueBinary(string sFrameID, string sFrameIDv2)
+    {
+      ID3Frame frame = GetFrame(sFrameID, sFrameIDv2);
 
       if (frame == null)
         return null;
