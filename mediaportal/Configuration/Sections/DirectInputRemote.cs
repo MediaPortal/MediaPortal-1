@@ -57,10 +57,10 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel lblComboKill;
     private MediaPortal.UserInterface.Controls.MPTextBox txtComboClose;
     private MediaPortal.UserInterface.Controls.MPTextBox txtComboKill;
-    private CheckBox cbEnable;
-    private TabControl tabControl1;
-    private TabPage tabPageDirectInputDevices;
-    private Label txtMonitor;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbEnable;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageDirectInputDevices;
+    private MediaPortal.UserInterface.Controls.MPLabel txtMonitor;
 
     private MediaPortal.UserInterface.Controls.MPTextBox lastEdit;
 
@@ -139,11 +139,13 @@ namespace MediaPortal.Configuration.Sections
       // cbEnable
       // 
       this.cbEnable.AutoSize = true;
+      this.cbEnable.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbEnable.Location = new System.Drawing.Point(16, 24);
       this.cbEnable.Name = "cbEnable";
-      this.cbEnable.Size = new System.Drawing.Size(276, 17);
+      this.cbEnable.Size = new System.Drawing.Size(278, 17);
       this.cbEnable.TabIndex = 0;
       this.cbEnable.Text = "Use Direct Input devices (Gamepads, Joysticks, etc.)";
+      this.cbEnable.UseVisualStyleBackColor = true;
       this.cbEnable.CheckedChanged += new System.EventHandler(this.cbEnable_CheckedChanged);
       // 
       // gbI
@@ -152,6 +154,8 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.gbI.Controls.Add(this.txtMonitor);
+      this.gbI.Enabled = false;
+      this.gbI.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbI.Location = new System.Drawing.Point(12, 240);
       this.gbI.Name = "gbI";
       this.gbI.Size = new System.Drawing.Size(440, 124);
@@ -180,6 +184,7 @@ namespace MediaPortal.Configuration.Sections
       this.gbSettings.Controls.Add(this.lblDelayMS);
       this.gbSettings.Controls.Add(this.lblDInputDevice);
       this.gbSettings.Enabled = false;
+      this.gbSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbSettings.Location = new System.Drawing.Point(12, 72);
       this.gbSettings.Name = "gbSettings";
       this.gbSettings.Size = new System.Drawing.Size(440, 72);
@@ -195,6 +200,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnRunControlPanel.Size = new System.Drawing.Size(72, 22);
       this.btnRunControlPanel.TabIndex = 2;
       this.btnRunControlPanel.Text = "Control Panel";
+      this.btnRunControlPanel.UseVisualStyleBackColor = true;
       this.btnRunControlPanel.Click += new System.EventHandler(this.btnRunControlPanel_Click);
       // 
       // buttonDefault
@@ -205,6 +211,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonDefault.Size = new System.Drawing.Size(72, 22);
       this.buttonDefault.TabIndex = 5;
       this.buttonDefault.Text = "&Reset";
+      this.buttonDefault.UseVisualStyleBackColor = true;
       this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
       // 
       // numDelay
@@ -223,7 +230,7 @@ namespace MediaPortal.Configuration.Sections
             0,
             0});
       this.numDelay.Name = "numDelay";
-      this.numDelay.Size = new System.Drawing.Size(192, 20);
+      this.numDelay.Size = new System.Drawing.Size(192, 21);
       this.numDelay.TabIndex = 4;
       this.numDelay.Value = new decimal(new int[] {
             150,
@@ -236,6 +243,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbDevices.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbDevices.BorderColor = System.Drawing.Color.Empty;
       this.cbDevices.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbDevices.Location = new System.Drawing.Point(152, 20);
       this.cbDevices.Name = "cbDevices";
@@ -248,7 +256,7 @@ namespace MediaPortal.Configuration.Sections
       this.lblDelayMS.AutoSize = true;
       this.lblDelayMS.Location = new System.Drawing.Point(16, 48);
       this.lblDelayMS.Name = "lblDelayMS";
-      this.lblDelayMS.Size = new System.Drawing.Size(71, 13);
+      this.lblDelayMS.Size = new System.Drawing.Size(73, 13);
       this.lblDelayMS.TabIndex = 3;
       this.lblDelayMS.Text = "Delay (msec):";
       // 
@@ -257,18 +265,20 @@ namespace MediaPortal.Configuration.Sections
       this.lblDInputDevice.AutoSize = true;
       this.lblDInputDevice.Location = new System.Drawing.Point(16, 24);
       this.lblDInputDevice.Name = "lblDInputDevice";
-      this.lblDInputDevice.Size = new System.Drawing.Size(100, 13);
+      this.lblDInputDevice.Size = new System.Drawing.Size(102, 13);
       this.lblDInputDevice.TabIndex = 0;
       this.lblDInputDevice.Text = "Direct Input device:";
       // 
       // btnMapping
       // 
       this.btnMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnMapping.Enabled = false;
       this.btnMapping.Location = new System.Drawing.Point(352, 20);
       this.btnMapping.Name = "btnMapping";
       this.btnMapping.Size = new System.Drawing.Size(72, 22);
       this.btnMapping.TabIndex = 1;
       this.btnMapping.Text = "Mapping";
+      this.btnMapping.UseVisualStyleBackColor = true;
       this.btnMapping.Click += new System.EventHandler(this.btnMapping_Click);
       // 
       // groupBox1
@@ -277,6 +287,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.btnMapping);
       this.groupBox1.Controls.Add(this.cbEnable);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(12, 8);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(440, 56);
@@ -293,6 +304,7 @@ namespace MediaPortal.Configuration.Sections
       this.gbButtonCombos.Controls.Add(this.txtComboClose);
       this.gbButtonCombos.Controls.Add(this.txtComboKill);
       this.gbButtonCombos.Enabled = false;
+      this.gbButtonCombos.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbButtonCombos.Location = new System.Drawing.Point(12, 152);
       this.gbButtonCombos.Name = "gbButtonCombos";
       this.gbButtonCombos.Size = new System.Drawing.Size(440, 80);
@@ -308,6 +320,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnLearn.Size = new System.Drawing.Size(72, 22);
       this.btnLearn.TabIndex = 4;
       this.btnLearn.Text = "&Learn";
+      this.btnLearn.UseVisualStyleBackColor = true;
       this.btnLearn.Click += new System.EventHandler(this.btnLearn_Click);
       // 
       // label2
@@ -315,7 +328,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(16, 48);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(76, 13);
+      this.label2.Size = new System.Drawing.Size(77, 13);
       this.label2.TabIndex = 2;
       this.label2.Text = "Close process:";
       // 
@@ -330,19 +343,27 @@ namespace MediaPortal.Configuration.Sections
       // 
       // txtComboClose
       // 
+      this.txtComboClose.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtComboClose.BorderColor = System.Drawing.Color.Empty;
       this.txtComboClose.Location = new System.Drawing.Point(152, 44);
       this.txtComboClose.Name = "txtComboClose";
-      this.txtComboClose.Size = new System.Drawing.Size(192, 20);
+      this.txtComboClose.Size = new System.Drawing.Size(192, 21);
       this.txtComboClose.TabIndex = 3;
       this.txtComboClose.Enter += new System.EventHandler(this.txtComboClose_Enter);
+      this.txtComboClose.TextChanged += new System.EventHandler(this.txtComboClose_TextChanged);
       // 
       // txtComboKill
       // 
+      this.txtComboKill.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtComboKill.BorderColor = System.Drawing.Color.Empty;
       this.txtComboKill.Location = new System.Drawing.Point(152, 20);
       this.txtComboKill.Name = "txtComboKill";
-      this.txtComboKill.Size = new System.Drawing.Size(192, 20);
+      this.txtComboKill.Size = new System.Drawing.Size(192, 21);
       this.txtComboKill.TabIndex = 1;
       this.txtComboKill.Enter += new System.EventHandler(this.txtComboKill_Enter);
+      this.txtComboKill.TextChanged += new System.EventHandler(this.txtComboKill_TextChanged);
       // 
       // tabPageDirectInputDevices
       // 
@@ -356,9 +377,13 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageDirectInputDevices.Size = new System.Drawing.Size(464, 374);
       this.tabPageDirectInputDevices.TabIndex = 0;
       this.tabPageDirectInputDevices.Text = "Direct Input Devices";
+      this.tabPageDirectInputDevices.UseVisualStyleBackColor = true;
       // 
       // tabControl1
       // 
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPageDirectInputDevices);
       this.tabControl1.Location = new System.Drawing.Point(0, 8);
       this.tabControl1.Name = "tabControl1";
@@ -410,8 +435,12 @@ namespace MediaPortal.Configuration.Sections
     private void cbEnable_CheckedChanged(object sender, EventArgs e)
     {
       diHandler.Active = cbEnable.Checked;
+
+      btnMapping.Enabled = cbEnable.Checked;
       gbSettings.Enabled = cbEnable.Checked;
       gbButtonCombos.Enabled = cbEnable.Checked;
+      gbI.Enabled = cbEnable.Checked;
+
       if (cbEnable.Checked)
       {
         SyncCombo();
@@ -432,8 +461,10 @@ namespace MediaPortal.Configuration.Sections
       diHandler.RunControlPanel();
     }
 
-    private void DirectInputRemote_Load(object sender, System.EventArgs e)
+    public override void LoadSettings()
     {
+      diHandler.LoadSettings();
+
       cbEnable.Checked = diHandler.Active;
       cbDevices.SelectedIndex = diHandler.SelectedDeviceIndex;
       numDelay.Value = diHandler.Delay;
@@ -441,16 +472,8 @@ namespace MediaPortal.Configuration.Sections
       txtComboClose.Text = diHandler.ButtonComboClose;
     }
 
-
-    public override void LoadSettings()
-    {
-      diHandler.LoadSettings();
-    }
-
     public override void SaveSettings()
     {
-      diHandler.ButtonComboClose = txtComboClose.Text;
-      diHandler.ButtonComboKill = txtComboKill.Text;
       diHandler.SaveSettings();
     }
 
@@ -479,7 +502,6 @@ namespace MediaPortal.Configuration.Sections
       else if (lastEdit == txtComboClose)
       {
         txtComboClose.Text = diHandler.GetCurrentButtonCombo();
-
       }
     }
 
@@ -491,6 +513,16 @@ namespace MediaPortal.Configuration.Sections
     private void txtComboClose_Enter(object sender, System.EventArgs e)
     {
       lastEdit = txtComboClose;
+    }
+
+    private void txtComboKill_TextChanged(object sender, EventArgs e)
+    {
+      diHandler.ButtonComboKill = txtComboKill.Text;
+    }
+
+    private void txtComboClose_TextChanged(object sender, EventArgs e)
+    {
+      diHandler.ButtonComboClose = txtComboClose.Text;
     }
   }
 }
