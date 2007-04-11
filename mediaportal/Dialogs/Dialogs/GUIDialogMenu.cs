@@ -45,6 +45,8 @@ namespace MediaPortal.Dialogs
     [SkinControlAttribute(2)]    protected GUIButtonControl btnClose = null;
     [SkinControlAttribute(3)]    protected GUIListControl listView = null;
     [SkinControlAttribute(4)]    protected GUILabelControl lblHeading = null;
+    [SkinControlAttribute(5)]    protected GUILabelControl lblGFXHeading = null;
+
     int selectedItemIndex = -1;
     int selectedId = -1;
     bool showQuickNumbers = true;
@@ -70,10 +72,10 @@ namespace MediaPortal.Dialogs
     {
       get { return true; }
     }
+
     public override void PreInit()
     {
     }
-
 
     public override void OnAction(Action action)
     {
@@ -104,7 +106,7 @@ namespace MediaPortal.Dialogs
         keySelection += key;
         if (keySelection.Length == listItems.Count.ToString().Length)
         {
-          selectOpcion(keySelection);
+          selectOption(keySelection);
           keySelection = string.Empty;
           return;
         }
@@ -114,7 +116,8 @@ namespace MediaPortal.Dialogs
 
       base.OnAction(action);
     }
-    public void selectOpcion(string keySelected)
+
+    public void selectOption(string keySelected)
     {
       int selected;
       try
@@ -136,13 +139,14 @@ namespace MediaPortal.Dialogs
         OnMessage(msg);
       }
     }
+
     public override void Process()
     {
       if (keySelection == string.Empty) return;
       TimeSpan ts = DateTime.Now - keyTimer;
       if (ts.TotalMilliseconds >= 1000)
       {
-        selectOpcion(keySelection);
+        selectOption(keySelection);
         keySelection = string.Empty;
       }
     }
@@ -227,10 +231,9 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
-            m_bRunning = false;
-
-            // THIS IS AN INFINITY LOOP if you press the dialog's quick numbers (like 1,2,3)
             base.OnMessage(message);
+            m_bRunning = false;            
+
             return true;
           }
 
@@ -261,9 +264,7 @@ namespace MediaPortal.Dialogs
 
           }
           return true;
-
       }
-
       return base.OnMessage(message);
     }
 
@@ -308,6 +309,7 @@ namespace MediaPortal.Dialogs
       get { return showQuickNumbers; }
       set { showQuickNumbers = value; }
     }
+
     public void AddLocalizedString(int iLocalizedString)
     {
       int iItemIndex = listItems.Count + 1;
@@ -350,18 +352,16 @@ namespace MediaPortal.Dialogs
       InitControls();
 
       lblHeading.Label = strLine;
+      if (lblGFXHeading != null)
+        lblGFXHeading.Label = GUILocalizeStrings.Get(924);
     }
-
 
     public void SetHeading(int iString)
     {
-
       SetHeading(GUILocalizeStrings.Get(iString));
       selectedItemIndex = -1;
       listItems.Clear();
     }
-
-
 
     #region IRenderLayer
     public bool ShouldRenderLayer()

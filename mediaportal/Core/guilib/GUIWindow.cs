@@ -916,7 +916,6 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public virtual void FreeResources()
     {
-
       _windowAllocated = false;
       try
       {
@@ -1235,92 +1234,80 @@ namespace MediaPortal.GUI.Library
     public virtual bool OnMessage(GUIMessage message)
     {
       if (message == null) return true;
+
       //lock (this)
       AnimationTrigger(message);
       int id;
+      int iControlId = message.SenderControlId;
       {
         try
         {
           switch (message.Message)
           {
-            case GUIMessage.MessageType.GUI_MSG_CLICKED:
-              {
-                int iControlId = message.SenderControlId;
-                if (iControlId != 0)
-                  OnClicked(iControlId, GetControl(iControlId), (Action.ActionType)message.Param1);
-              }
+            case GUIMessage.MessageType.GUI_MSG_CLICKED:              
+              if (iControlId != 0)
+                OnClicked(iControlId, GetControl(iControlId), (Action.ActionType)message.Param1);
               break;
+
             case GUIMessage.MessageType.GUI_MSG_CLICKED_DOWN:
-              {
-                int iControlId = message.SenderControlId;
-                if (iControlId != 0)
-                  OnClickedDown(iControlId, GetControl(iControlId), (Action.ActionType)message.Param1);
-              }
+              if (iControlId != 0)
+                OnClickedDown(iControlId, GetControl(iControlId), (Action.ActionType)message.Param1);
               break;
 
             case GUIMessage.MessageType.GUI_MSG_CLICKED_UP:
-              {
-                int iControlId = message.SenderControlId;
-                if (iControlId != 0)
-                  OnClickedUp(iControlId, GetControl(iControlId), (Action.ActionType)message.Param1);
-              }
+              if (iControlId != 0)
+                OnClickedUp(iControlId, GetControl(iControlId), (Action.ActionType)message.Param1);
               break;
-
 
             // Initialize the window.
             case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+              if (_shouldRestore)
               {
-
-                if (_shouldRestore)
-                {
-                  DoRestoreSkin();
-
-                }
-                else
-                {
-                  GUIPropertyManager.SetProperty("#itemcount", String.Empty);
-                  GUIPropertyManager.SetProperty("#selecteditem", String.Empty);
-                  GUIPropertyManager.SetProperty("#selecteditem2", String.Empty);
-                  GUIPropertyManager.SetProperty("#selectedthumb", String.Empty);
-                  LoadSkin();
-                  AllocResources();
-
-                }
-
-                InitControls();
-
-                GUIGraphicsContext.Overlay = _isOverlayAllowed;
-
-                // set topbar autohide 
-                switch (_autoHideTopbarType)
-                {
-                  case AutoHideTopBar.No:
-                    _autoHideTopbar = false;
-                    break;
-                  case AutoHideTopBar.Yes:
-                    _autoHideTopbar = true;
-                    break;
-                  default:
-                    _autoHideTopbar = GUIGraphicsContext.DefaultTopBarHide;
-                    break;
-                }
-                GUIGraphicsContext.AutoHideTopBar = _autoHideTopbar;
-                GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
-                GUIGraphicsContext.DisableTopBar = _disableTopBar;
-
-                if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
-                {
-                  if (message.Param1 != GetID)
-                    _previousWindowId = message.Param1;
-                }
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0, null);
-                OnMessage(msg);
-
-
-                GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
-
-                Log.Info("window:{0} init", this.ToString());
+                DoRestoreSkin();
               }
+              else
+              {
+                GUIPropertyManager.SetProperty("#itemcount", String.Empty);
+                GUIPropertyManager.SetProperty("#selecteditem", String.Empty);
+                GUIPropertyManager.SetProperty("#selecteditem2", String.Empty);
+                GUIPropertyManager.SetProperty("#selectedthumb", String.Empty);
+                LoadSkin();
+                AllocResources();
+              }
+
+              InitControls();
+
+              GUIGraphicsContext.Overlay = _isOverlayAllowed;
+
+              // set topbar autohide 
+              switch (_autoHideTopbarType)
+              {
+                case AutoHideTopBar.No:
+                  _autoHideTopbar = false;
+                  break;
+                case AutoHideTopBar.Yes:
+                  _autoHideTopbar = true;
+                  break;
+                default:
+                  _autoHideTopbar = GUIGraphicsContext.DefaultTopBarHide;
+                  break;
+              }
+              GUIGraphicsContext.AutoHideTopBar = _autoHideTopbar;
+              GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
+              GUIGraphicsContext.DisableTopBar = _disableTopBar;
+
+              if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
+              {
+                if (message.Param1 != GetID)
+                  _previousWindowId = message.Param1;
+              }
+
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0, null);
+              OnMessage(msg);
+
+              GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+              Log.Info("window:{0} init", this.ToString());
+
               _hasRendered = false;
               OnPageLoad();
 

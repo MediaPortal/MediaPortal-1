@@ -8,18 +8,18 @@
       <description>background</description>
       <type>image</type>
       <id>0</id>
-      <posX>60</posX>
-      <posY>558</posY>
-      <width>400</width>
-      <height>150</height>
-      <texture>zaposd_background.png</texture>
+      <posX>10</posX>
+      <posY>430</posY>
+      <width>700</width>
+      <height>140</height>
+      <texture>zaposd_background_wide.png</texture>
     </control>
     <control>
       <description>TV Logo</description>
       <type>image</type>
       <id>10</id>
-      <posX>81</posX>
-      <posY>571</posY>
+      <posX>56</posX>
+      <posY>461</posY>
       <width>50</width>
       <height>50</height>
       <texture>#TV.View.thumb</texture>
@@ -30,10 +30,10 @@
       <description>Progress Bar</description>
       <type>progress</type>
       <id>1</id>
-      <posX>225</posX>
-      <posY>616</posY>
-      <width>133</width>
-      <height>4</height>
+      <posX>380</posX>
+      <posY>461</posY>
+      <width>220</width>
+      <height>5</height>
       <texturebg>osd_progress_back.png</texturebg>
       <visible>yes</visible>
       <label>#TV.View.Percentage</label>
@@ -42,30 +42,30 @@
       <description>Start Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>150</posX>
-      <posY>606</posY>
+      <posX>320</posX>
+      <posY>456</posY>
       <label>#TV.View.start</label>
       <align>left</align>
-      <font>font10</font>
+      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
       <description>End Time Info</description>
       <type>label</type>
       <id>102</id>
-      <posX>353</posX>
-      <posY>606</posY>
+      <posX>610</posX>
+      <posY>456</posY>
       <label>#TV.View.stop</label>
       <align>left</align>
-      <font>font10</font>
+      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>340</posX>
-      <posY>573</posY>
+      <posX>610</posX>
+      <posY>514</posY>
       <texture>rec.png</texture>
       <colordiffuse>50ffffff</colordiffuse>
     </control>
@@ -76,9 +76,9 @@
       <width>300</width>
       <height>30</height>
       <posX>150</posX>
-      <posY>633</posY>
+      <posY>480</posY>
       <align>left</align>
-      <font>font12</font>
+      <font>font17</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -88,20 +88,20 @@
       <width>300</width>
       <height>30</height>
       <posX>150</posX>
-      <posY>666</posY>
+      <posY>514</posY>
       <align>left</align>
-      <font>font10</font>
+      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
     </control>
     <control>
       <description>Current channel</description>
       <type>label</type>
       <id>35</id>
-      <posX>150</posX>
-      <posY>571</posY>
+      <posX>146</posX>
+      <posY>452</posY>
       <label>-</label>
       <align>left</align>
-      <font>font12</font>
+      <font>font16</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
   </controls>

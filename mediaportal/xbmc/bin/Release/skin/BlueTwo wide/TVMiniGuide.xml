@@ -18,8 +18,8 @@
       <description>exit button</description>
       <type>button</type>
       <id>34</id>
-      <posX>1062</posX>
-      <posY>180</posY>
+      <posX>966</posX>
+      <posY>160</posY>
       <width>58</width>
       <height>58</height>
       <textureFocus>dialogue_shutdown_focus.png</textureFocus>

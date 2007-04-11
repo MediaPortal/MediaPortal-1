@@ -24,15 +24,17 @@
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
-      <description>Heading text label</description>
+      <description>GFX-Heading "menu" text label</description>
       <type>label</type>
-      <id>0</id>
+      <id>5</id>
       <posX>164</posX>
       <posY>88</posY>
       <width>240</width>
       <label>924</label>
       <font>font14</font>
       <textcolor>Black</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>      
     </control>
     <control>
       <description>Heading text label</description>

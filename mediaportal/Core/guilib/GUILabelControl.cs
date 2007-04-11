@@ -303,7 +303,7 @@ namespace MediaPortal.GUI.Library
           if (message.Label != null)
             Label = message.Label;
           else
-            Label = String.Empty;
+            Label = string.Empty;
           return true;
         }
       }
@@ -341,6 +341,7 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     public override void SetPosition(int dwPosX, int dwPosY)
     {
       if (_positionX == dwPosX && _positionY == dwPosY) return;
@@ -348,6 +349,7 @@ namespace MediaPortal.GUI.Library
       _positionY = dwPosY;
       _reCalculate = true;
     }
+
     /// <summary>
     /// Get/set the color of the text
     /// </summary>
@@ -466,6 +468,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void FreeResources()
     {
+      Label = string.Empty;
       _reCalculate = true;
       GUIPropertyManager.OnPropertyChanged -= new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
       base.FreeResources();
@@ -535,10 +538,12 @@ namespace MediaPortal.GUI.Library
         return _textheight;
       }
     }
+
     void ClearFontCache()
     {
       Update();
     }
+
     public override void Animate(float timePassed, Animator animator)
     {
       base.Animate(timePassed, animator);

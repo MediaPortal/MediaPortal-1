@@ -42,10 +42,8 @@ namespace MediaPortal.Dialogs
     GUIWindow m_pParentWindow = null;
     #endregion
 
-    [SkinControlAttribute(10)]
-    protected GUIButtonControl btnNo = null;
-    [SkinControlAttribute(11)]
-    protected GUIButtonControl btnYes = null;
+    [SkinControlAttribute(10)]    protected GUIButtonControl btnNo = null;
+    [SkinControlAttribute(11)]    protected GUIButtonControl btnYes = null;
     bool m_bConfirmed = false;
     bool m_bPrevOverlay = true;
 
@@ -63,10 +61,10 @@ namespace MediaPortal.Dialogs
     {
       get { return true; }
     }
+
     public override void PreInit()
     {
     }
-
 
     public override void OnAction(Action action)
     {
@@ -181,10 +179,8 @@ namespace MediaPortal.Dialogs
           }
           break;
       }
-
       return base.OnMessage(message);
     }
-
 
     public bool IsConfirmed
     {
@@ -225,8 +221,6 @@ namespace MediaPortal.Dialogs
       if (iString == 0) SetLine(iLine, String.Empty);
       SetLine(iLine, GUILocalizeStrings.Get(iString));
     }
-
-
 
     #region IRenderLayer
     public bool ShouldRenderLayer()

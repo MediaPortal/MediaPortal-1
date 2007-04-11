@@ -24,11 +24,24 @@
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
+      <description>GFX-Heading "menu" text label</description>
+      <type>label</type>
+      <id>5</id>
+      <posX>350</posX>
+      <posY>166</posY>
+      <width>240</width>
+      <label>924</label>
+      <font>font14</font>
+      <textcolor>Black</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>      
+    </control>
+    <control>
       <description>Heading text label</description>
       <type>label</type>
       <id>4</id>
-      <posX>425</posX>
-      <posY>185</posY>
+      <posX>520</posX>
+      <posY>166</posY>
       <label>181</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -39,8 +52,8 @@
       <description>Exit button</description>
       <type>button</type>
       <id>2</id>
-      <posX>905</posX>
-      <posY>190</posY>
+      <posX>966</posX>
+      <posY>160</posY>
       <width>58</width>
       <height>58</height>
       <textureFocus>dialogue_shutdown_focus.png</textureFocus>
