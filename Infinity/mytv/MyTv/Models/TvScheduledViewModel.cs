@@ -60,7 +60,13 @@ namespace MyTv
     ICommand _contextMenuCommand;
     ICommand _recordProgramCommand;
     ICommand _recordProgramAdvancedCommand;
-
+    ICommand _keepUntilProgramCommand;
+    ICommand _alertMeProgramCommand;
+    ICommand _qualityProgramCommand;
+    ICommand _episodesProgramCommand;
+    ICommand _preRecordProgramCommand;
+    ICommand _postRecordProgramCommand;
+    int _selectedEpisodeIndex = -1;
     #endregion
 
     #region ctor
@@ -103,6 +109,18 @@ namespace MyTv
       set
       {
         _dataModel.CurrentProgram = value;
+      }
+    }
+
+    public int SelectedEpisodeIndex
+    {
+      get
+      {
+        return _selectedEpisodeIndex;
+      }
+      set
+      {
+        _selectedEpisodeIndex = value;
       }
     }
     /// <summary>
@@ -579,6 +597,7 @@ namespace MyTv
         return _recordProgramCommand;
       }
     }
+
     public ICommand RecordProgramAdvanced
     {
       get
@@ -588,6 +607,62 @@ namespace MyTv
           _recordProgramAdvancedCommand = new RecordProgramAdvancedCommand(this);
         }
         return _recordProgramAdvancedCommand;
+      }
+    }
+
+    public ICommand KeepUntilProgram
+    {
+      get
+      {
+        if (_keepUntilProgramCommand == null)
+        {
+          _keepUntilProgramCommand = new KeepUntilProgramCommand(this);
+        }
+        return _keepUntilProgramCommand;
+      }
+    }
+    public ICommand AlertMeProgram
+    {
+      get
+      {
+        if (_alertMeProgramCommand == null)
+        {
+          _alertMeProgramCommand = new AlertMeProgramCommand(this);
+        }
+        return _alertMeProgramCommand;
+      }
+    }
+    public ICommand PreRecordProgram
+    {
+      get
+      {
+        if (_preRecordProgramCommand == null)
+        {
+          _preRecordProgramCommand = new PreRecordProgramCommand(this);
+        }
+        return _preRecordProgramCommand;
+      }
+    }
+    public ICommand PostRecordProgram
+    {
+      get
+      {
+        if (_postRecordProgramCommand == null)
+        {
+          _postRecordProgramCommand = new PostRecordProgramCommand(this);
+        }
+        return _postRecordProgramCommand;
+      }
+    }
+    public ICommand EpisodesProgram
+    {
+      get
+      {
+        if (_episodesProgramCommand == null)
+        {
+          _episodesProgramCommand = new EpisodesProgramCommand(this);
+        }
+        return _episodesProgramCommand;
       }
     }
     #endregion
@@ -1330,10 +1405,10 @@ namespace MyTv
       public override void Execute(object parameter)
       {
         if (parameter == null) return;
-        ProgramModel program = parameter as ProgramModel;
-        Program _program = program.Program;
+        ProgramModel model = parameter as ProgramModel;
+        Program _program = model.Program;
         Schedule recordingSchedule;
-        if (IsRecordingProgram(_program, out  recordingSchedule, false))
+        if (model.IsRecordingProgram(out  recordingSchedule, false))
         {
           //already recording this program
           if (recordingSchedule.ScheduleType != (int)ScheduleRecordingType.Once)
@@ -1356,7 +1431,7 @@ namespace MyTv
                   if (CheckIfRecording(recordingSchedule))
                   {
                     //delete specific series
-                    CanceledSchedule canceledSchedule = new CanceledSchedule(recordingSchedule.IdSchedule, program.StartTime);
+                    CanceledSchedule canceledSchedule = new CanceledSchedule(recordingSchedule.IdSchedule, _program.StartTime);
                     canceledSchedule.Persist();
                     TvServer server = new TvServer();
                     server.StopRecordingSchedule(recordingSchedule.IdSchedule);
@@ -1394,7 +1469,7 @@ namespace MyTv
           //not recording this program
           // check if this program is conflicting with any other already scheduled recording
           TvBusinessLayer layer = new TvBusinessLayer();
-          Schedule rec = new Schedule(_program.IdChannel, program.Title, program.StartTime, program.EndTime);
+          Schedule rec = new Schedule(_program.IdChannel, _program.Title, _program.StartTime, _program.EndTime);
           rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
           rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
           //if (SkipForConflictingRecording(rec)) return;
@@ -1421,21 +1496,6 @@ namespace MyTv
         if (dlgMenu.DialogResult == DialogResult.Yes)
         {
           return true;
-        }
-        return false;
-      }
-      protected bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
-      {
-        recordingSchedule = null;
-        IList schedules = Schedule.ListAll();
-        foreach (Schedule schedule in schedules)
-        {
-          if (schedule.Canceled != Schedule.MinSchedule) continue;
-          if (schedule.IsRecordingProgram(program, filterCanceledRecordings))
-          {
-            recordingSchedule = schedule;
-            return true;
-          }
         }
         return false;
       }
@@ -1553,6 +1613,273 @@ namespace MyTv
         }
         _viewModel.DataModel.Reload();
         _viewModel.ChangeProperty("RecordLabel");
+      }
+    }
+    #endregion
+    #region KeepUntilProgramCommand class
+    /// <summary>
+    /// KeepUntilProgramCommand
+    /// </summary> 
+    public class KeepUntilProgramCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="KeepUntilProgramCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public KeepUntilProgramCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        ProgramModel model = parameter as ProgramModel;
+        if (model == null) return;
+        Program _program = model.Program;
+        if (_program == null)
+          return;
+        if (!model.IsRecorded) return;
+        
+        Schedule rec;
+        if (false == model.IsRecordingProgram( out  rec, false)) return;
+
+        MpMenu dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Items.Clear();
+        dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);//"Menu";
+        dlgMenu.SubTitle = ServiceScope.Get<ILocalisation>().ToString("mytv", 47);// Keep Until";
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 69)/*Until space needed*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 70)/*Until watched*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 71)/*Until Date*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 72)/*Always*/));
+        dlgMenu.SelectedIndex = (int)rec.KeepMethod;
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex < 0) return;//nothing selected
+        rec.KeepMethod = dlgMenu.SelectedIndex;
+        rec.Persist();
+        if (dlgMenu.SelectedIndex == 2)
+        {
+          dlgMenu = new MpMenu();
+          dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+          dlgMenu.Owner = _viewModel.Window;
+          dlgMenu.Items.Clear();
+          dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68);//"Menu";
+          dlgMenu.SubTitle = ServiceScope.Get<ILocalisation>().ToString("mytv", 73);//"Date";
+          int selected = 0;
+          for (int days = 1; days <= 31; days++)
+          {
+            DateTime dt = DateTime.Now.AddDays(days);
+            dlgMenu.Items.Add(new DialogMenuItem(dt.ToLongDateString()));
+            if (dt.Date == rec.KeepDate) selected = days - 1;
+          }
+          dlgMenu.ShowDialog();
+          if (dlgMenu.SelectedIndex < 0) return;//nothing selected
+          int daysChoosen = dlgMenu.SelectedIndex + 1;
+          rec.KeepDate = DateTime.Now.AddDays(daysChoosen);
+          rec.Persist();
+        }
+        _viewModel.DataModel.Reload();
+      }
+    }
+    #endregion
+
+    #region AlertMeProgramCommand class
+    /// <summary>
+    /// AlertMeProgramCommand
+    /// </summary> 
+    public class AlertMeProgramCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="AlertMeProgramCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public AlertMeProgramCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        ProgramModel model = parameter as ProgramModel;
+        if (model == null) return;
+        Program _program = model.Program;
+        if (_program == null)
+          return;
+        _program.Notify = !_program.Notify;
+        _program.Persist();
+        _viewModel.DataModel.Reload();
+      }
+    }
+    #endregion
+
+    #region PreRecordProgramCommand class
+    /// <summary>
+    /// AlertMeProgramCommand
+    /// </summary> 
+    public class PreRecordProgramCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="AlertMeProgramCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public PreRecordProgramCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        ProgramModel model = parameter as ProgramModel;
+        if (model == null) return;
+        Program _program = model.Program;
+        if (_program == null)
+          return;
+        if (!model.IsRecorded) return;
+        Schedule rec;
+        if (false == model.IsRecordingProgram(out  rec, false)) return;
+        MpMenu dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Items.Clear();
+        dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 51);//"Pre-record";
+        dlgMenu.SubTitle = "";
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 74)/*Default*/));
+        for (int minute = 0; minute < 20; minute++)
+        {
+          dlgMenu.Items.Add(new DialogMenuItem(String.Format("{0} {1}", minute, ServiceScope.Get<ILocalisation>().ToString("mytv", 75)/*minutes*/)));
+        }
+        if (rec.PreRecordInterval < 0) dlgMenu.SelectedIndex = 0;
+        else dlgMenu.SelectedIndex = rec.PreRecordInterval + 1;
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex < 0) return;
+        rec.PreRecordInterval = dlgMenu.SelectedIndex - 1;
+        rec.Persist();
+        TvServer server = new TvServer();
+        server.OnNewSchedule();
+        _viewModel.DataModel.Reload();
+      }
+    }
+    #endregion
+
+    #region PostRecordProgramCommand class
+    /// <summary>
+    /// AlertMeProgramCommand
+    /// </summary> 
+    public class PostRecordProgramCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="PostRecordProgramCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public PostRecordProgramCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        ProgramModel model = parameter as ProgramModel;
+        if (model == null) return;
+        Program _program = model.Program;
+        if (_program == null)
+          return;
+        if (!model.IsRecorded) return;
+        Schedule rec;
+        if (false == model.IsRecordingProgram(out  rec, false)) return;
+        MpMenu dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Items.Clear();
+        dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 52);//Post-record
+        dlgMenu.SubTitle = "";
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 74)/*Default*/));
+        for (int minute = 0; minute < 20; minute++)
+        {
+          dlgMenu.Items.Add(new DialogMenuItem(String.Format("{0} {1}", minute, ServiceScope.Get<ILocalisation>().ToString("mytv", 75)/*minutes*/)));
+        }
+        if (rec.PostRecordInterval < 0) dlgMenu.SelectedIndex = 0;
+        else dlgMenu.SelectedIndex = rec.PostRecordInterval + 1;
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex < 0) return;
+        rec.PostRecordInterval = dlgMenu.SelectedIndex - 1;
+        rec.Persist();
+        TvServer server = new TvServer();
+        server.OnNewSchedule();
+        _viewModel.DataModel.Reload();
+      }
+    }
+    #endregion
+
+    #region EpisodesProgramCommand class
+    /// <summary>
+    /// EpisodesProgramCommand
+    /// </summary> 
+    public class EpisodesProgramCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="EpisodesProgramCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public EpisodesProgramCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        ProgramModel model = parameter as ProgramModel;
+        if (model == null) return;
+        Program _program = model.Program;
+        if (_program == null)
+          return;
+        if (!model.IsRecorded) return;
+
+        Schedule schedule;
+        if (false == model.IsRecordingProgram(out  schedule, false)) return;
+        MpMenu dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = _viewModel.Window;
+        dlgMenu.Items.Clear();
+        dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 50);//Episodes management
+        dlgMenu.SubTitle = "";
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 76)/*All*/));
+        for (int i = 1; i < 40; ++i)
+          dlgMenu.Items.Add(new DialogMenuItem(i.ToString() +" "+ ServiceScope.Get<ILocalisation>().ToString("mytv", 77)/*episodes*/));
+        if (schedule.MaxAirings == Int32.MaxValue)
+          dlgMenu.SelectedIndex = 0;
+        else
+          dlgMenu.SelectedIndex = schedule.MaxAirings;
+
+        dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex == -1) return;
+
+        if (dlgMenu.SelectedIndex == 0) schedule.MaxAirings = Int32.MaxValue;
+        else schedule.MaxAirings = dlgMenu.SelectedIndex;
+        schedule.Persist();
+        TvServer server = new TvServer();
+        server.OnNewSchedule();
+        _viewModel.DataModel.Reload();
       }
     }
     #endregion

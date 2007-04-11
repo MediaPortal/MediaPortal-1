@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -43,7 +44,7 @@ namespace ProjectInfinity.Controls
                                                                                                   new FrameworkPropertyMetadata
                                                                                                     (null));
 
-    
+
 
     public string ViewMode
     {
@@ -59,7 +60,20 @@ namespace ProjectInfinity.Controls
         if (element as ListBoxItem != null)
         {
           this.SelectedItem = element;
+          //Trace.WriteLine(String.Format("{0} {1}", this.SelectedIndex, this.SelectedItem));
           Keyboard.Focus((System.Windows.Controls.ListBoxItem)element);
+          for (int i = 0; i < Items.Count; ++i)
+          {
+            IInputElement inpElement = ItemContainerGenerator.ContainerFromIndex(i) as IInputElement;
+            if (inpElement != null)
+            {
+              if (inpElement.IsKeyboardFocused)
+              {
+                this.SelectedIndex = i;
+                break;
+              }
+            }
+          }
           e.Handled = true;
           return;
         }
@@ -114,7 +128,7 @@ namespace ProjectInfinity.Controls
       return;
     }
 
-     
+
     protected override void OnInitialized(EventArgs e)
     {
       ItemContainerGenerator.StatusChanged += new EventHandler(ItemContainerGenerator_StatusChanged);

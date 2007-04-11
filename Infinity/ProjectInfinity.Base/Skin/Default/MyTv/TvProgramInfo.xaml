@@ -60,27 +60,27 @@
           <RowDefinition/>
           <RowDefinition/>
           <RowDefinition/>
+          <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:Button x:Name="videoWindow" Visibility="{Binding Path=IsVideoPresent}" Command="{Binding Path=FullScreenTv}"  Background="{Binding VideoBrush}" Style="{StaticResource buttonVideoWindow}"  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  Grid.RowSpan="3" Width="160" Height="120"  />
-        <TextBlock Name="labelStartEnd" Text="{Binding Path=Episodes.CurrentItem.StartEnd, Mode=OneWay}"  Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="5" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Left"/>
-        <TextBlock Name="labelGenre" Text="{Binding Path=Episodes.CurrentItem.Genre, Mode=OneWay}"  Grid.Column="6" Grid.Row="2" Grid.ColumnSpan="4" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Right" Margin="0,0,20,0"/>
+        <controls:Button x:Name="videoWindow" Visibility="{Binding Path=IsVideoPresent}" Command="{Binding Path=FullScreenTv}"  Background="{Binding VideoBrush}" Style="{StaticResource buttonVideoWindow}"  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  Grid.RowSpan="4" Width="160" Height="120"  />
+        <TextBlock Name="labelTitle" Text="{Binding Path=Episodes.CurrentItem.Title, Mode=OneWay}" Style="{StaticResource TextBlockLargeStyle}" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="5" />
+        <TextBlock Name="labelStartEnd" Text="{Binding Path=Episodes.CurrentItem.StartEndLabel, Mode=OneWay}"  Grid.Column="7" Grid.Row="0" Grid.ColumnSpan="2" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Right" Margin="0,0,20,0"/>
+        <TextBlock Name="labelDescription"  Text="{Binding Path=Episodes.CurrentItem.Description, Mode=OneWay}" Style="{StaticResource TextBlockNormalStyle}" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="7" />
       </Grid>
     </StackPanel>
     <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
       <controls:Button Name="buttonRecord" Command="{Binding Path=RecordProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}"  Content="{Binding Path=RecordLabel}" Style="{DynamicResource MpButton}" Height="32"   />
       <controls:Button Name="buttonAdvancedRecord" Command="{Binding Path=RecordProgramAdvanced}" CommandParameter="{Binding Path=Episodes.CurrentItem}"  Content="{Binding Path=AdvancedRecordLabel}" Style="{DynamicResource MpButton}" Height="32"  />
-      <controls:Button Name="buttonKeepUntil" Content="{Binding Path=KeepUntilLabel}" Style="{DynamicResource MpButton}" Height="32"   />
-      <controls:RadioButton  Name="buttonAlertMe" Content="{Binding Path=AlertMeLabel}" Style="{StaticResource MpRadioButton}" Height="32"  />
-      <controls:Button Name="buttonQuality" Content="{Binding Path=QualityLabel}" Style="{DynamicResource MpButton}" Height="32"   />
-      <controls:Button Name="buttonEpisodes" Content="{Binding Path=EpisodesLabel}" Style="{DynamicResource MpButton}" Height="32"  />
-      <controls:Button Name="buttonPreRecord" Content="{Binding Path=PreRecordLabel}" Style="{DynamicResource MpButton}" Height="32"  />
-      <controls:Button Name="buttonPostRecord" Content="{Binding Path=PostRecordLabel}" Style="{DynamicResource MpButton}" Height="32"  />
+      <controls:Button Name="buttonKeepUntil" Command="{Binding Path=KeepUntilProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" Content="{Binding Path=KeepUntilLabel}" Style="{DynamicResource MpButton}" Height="32"   />
+      <controls:RadioButton  Name="buttonAlertMe" Command="{Binding Path=AlertMeProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" Content="{Binding Path=AlertMeLabel}" Style="{StaticResource MpRadioButton}" Height="32"  />
+      <controls:Button Name="buttonQuality" Command="{Binding Path=QualityProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" Content="{Binding Path=QualityLabel}" Style="{DynamicResource MpButton}" Height="32"   />
+      <controls:Button Name="buttonEpisodes" Command="{Binding Path=EpisodesProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" Content="{Binding Path=EpisodesLabel}" Style="{DynamicResource MpButton}" Height="32"  />
+      <controls:Button Name="buttonPreRecord" Command="{Binding Path=PreRecordProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" Content="{Binding Path=PreRecordLabel}" Style="{DynamicResource MpButton}" Height="32"  />
+      <controls:Button Name="buttonPostRecord" Command="{Binding Path=PostRecordProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" Content="{Binding Path=PostRecordLabel}" Style="{DynamicResource MpButton}" Height="32"  />
     </StackPanel>
 
     <StackPanel Margin="0,0,30,0">
-      <TextBlock Name="labelTitle" Text="{Binding Path=Episodes.CurrentItem.Title, Mode=OneWay}" Style="{StaticResource TextBlockLargeStyle}"/>
-      <TextBlock Name="labelDescription"  Text="{Binding Path=Episodes.CurrentItem.Description, Mode=OneWay}" Style="{StaticResource TextBlockNormalStyle}" />
-      <controls:ListBox x:Name="gridList" SelectedIndex="0" ViewMode="{Binding Path=ViewModeType}" Command="{Binding Path=RecordProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" ItemContainerStyle="{StaticResource MpListViewItem}"  ItemsSource="{Binding Episodes}"   Style="{StaticResource MpListView}" ItemTemplate="{StaticResource programIconTemplate}"  />
+      <controls:ListBox x:Name="gridList" SelectedIndex="{Binding Path=SelectedEpisodeIndex}"  ViewMode="{Binding Path=ViewModeType}" Command="{Binding Path=RecordProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" ItemContainerStyle="{StaticResource MpListViewItem}"  ItemsSource="{Binding Episodes}"   Style="{StaticResource MpListView}" ItemTemplate="{StaticResource programIconTemplate}"  />
 
     </StackPanel>
   </DockPanel >

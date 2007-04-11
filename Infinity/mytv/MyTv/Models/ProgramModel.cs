@@ -209,5 +209,21 @@ namespace MyTv
     {
       return Program.IdProgram;
     }
+
+    public bool IsRecordingProgram( out Schedule recordingSchedule, bool filterCanceledRecordings)
+    {
+      recordingSchedule = null;
+      IList schedules = Schedule.ListAll();
+      foreach (Schedule schedule in schedules)
+      {
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        if (schedule.IsRecordingProgram(Program, filterCanceledRecordings))
+        {
+          recordingSchedule = schedule;
+          return true;
+        }
+      }
+      return false;
+    }
   }
 }
