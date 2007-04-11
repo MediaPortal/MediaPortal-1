@@ -104,6 +104,20 @@ namespace TvEngine
       get { return _status; }
     }
 
+    private int ParseStarRating(string epgRating)
+    {
+      // format = 5.2/10
+      string strRating = epgRating.Remove(epgRating.IndexOf(@"/") - 1);
+      int Rating = -1;
+      decimal tmpRating = -1;
+      if (Decimal.TryParse(strRating, out tmpRating))
+        Rating = Convert.ToInt16(tmpRating);
+      else      
+        Log.Info("XMLTVImport: starrating could not be used - {0},({1})", epgRating, strRating);
+      
+      return Rating;
+    }
+
     public bool Import(string fileName, bool showProgress)
     {
       Dictionary<int, DateTime> lastProgramForChannel = new Dictionary<int, DateTime>();
@@ -348,7 +362,7 @@ namespace TvEngine
                   string seriesNum = "";
                   string episodeNum = "";
                   string episodePart = "";
-                  string starRating = "-1";
+                  int starRating = -1;
                   string classification = "";
 
                   if (nodeRepeat != null) repeat = "Repeat";
@@ -554,20 +568,9 @@ namespace TvEngine
                     date = nodeDate.InnerText;
                   }
 
-                  if (nodeStarRating != null && nodeStarRating.InnerText != null)
-                  {
-                    try
-                    {
-                      starRating = nodeStarRating.InnerText;
-                      if (Convert.ToInt32(starRating) > 10)
-                        starRating = "-1";
-                    }
-                    catch (Exception ex1)
-                    {
-                      Log.Info("XMLTVImport: starrating could not be used - {0},{1}", starRating, ex1.Message);
-                      starRating = "-1";
-                    }
-                    
+                  if (nodeStarRating != null && nodeStarRating.InnerText.Length > 0)
+                  {                   
+                      starRating = ParseStarRating(nodeStarRating.InnerText);
                   }
 
                   if (nodeClassification != null && nodeClassification.InnerText != null)
@@ -584,7 +587,7 @@ namespace TvEngine
                       break;
                     }
                   }
-                  Program prog = new Program(channel.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, DateTime.MinValue, seriesNum, episodeNum, Convert.ToInt32(starRating), classification);
+                  Program prog = new Program(channel.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, DateTime.MinValue, seriesNum, episodeNum, starRating, classification);
                   //prog.Description = ConvertHTMLToAnsi(strDescription);
                   //prog.StartTime = iStart;
                   //prog.EndTime = iStop;
