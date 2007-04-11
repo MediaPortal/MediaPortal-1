@@ -480,20 +480,7 @@ namespace TvEngine
       sqlb.Append(" FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;");
 
       sqlSelect = string.Format(sqlb.ToString(), stationName);
-
-      //if (_useShortProgramDesc)
-      //{
-      //  if (_showAudioFormat)
-      //    sqlSelect = string.Format("SELECT TVDaten.Bewertungen, TVDaten.Kurzkritik, TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.KurzBeschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung, TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
-      //  else
-      //    sqlSelect = string.Format("SELECT TVDaten.Bewertungen, TVDaten.Kurzkritik, TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.KurzBeschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
-      //}
-      //else
-      //  if (_showAudioFormat)
-      //    sqlSelect = string.Format("SELECT TVDaten.Bewertungen, TVDaten.Kurzkritik, TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Beschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung, TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
-      //  else
-      //    sqlSelect = string.Format("SELECT TVDaten.Bewertungen, TVDaten.Kurzkritik, TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Beschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
-
+ 
       OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
       OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand);
 
@@ -616,13 +603,16 @@ namespace TvEngine
             }
             DateTime OnAirDate = DateTime.MinValue;
 
-            try
+            if (date.Length > 0 && date != @"-")
             {
-              OnAirDate = DateTime.Parse(String.Format("01.01.{0} 00:00:00", date));
-            }
-            catch (Exception ex3)
-            {
-              Log.Info("TVMovie: Invalid year for OnAirDate - {0}", date);
+              try
+              {
+                OnAirDate = DateTime.Parse(String.Format("01.01.{0} 00:00:00", date));
+              }
+              catch (Exception ex3)
+              {
+                Log.Info("TVMovie: Invalid year for OnAirDate - {0}", date);
+              }
             }
 
             short EPGStarRating = -1;

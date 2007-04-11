@@ -21,16 +21,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Threading;
+using System.Globalization;
 using System.IO;
+using System.Text;
+using System.Threading;
+using System.Xml;
+
 using TvDatabase;
 using TvLibrary.Log;
 using TvLibrary.Implementations;
 
 using Gentle.Common;
 using Gentle.Framework;
+
 namespace TvEngine
 {
   class XMLTVImport : IComparer
@@ -110,10 +113,13 @@ namespace TvEngine
       string strRating = epgRating.Remove(epgRating.IndexOf(@"/") - 1);
       int Rating = -1;
       decimal tmpRating = -1;
-      if (Decimal.TryParse(strRating, out tmpRating))
+      NumberFormatInfo NFO = NumberFormatInfo.InvariantInfo;
+      NumberStyles NStyle = NumberStyles.Float;
+
+      if (Decimal.TryParse(strRating, NStyle, NFO, out tmpRating))
         Rating = Convert.ToInt16(tmpRating);
       else      
-        Log.Info("XMLTVImport: starrating could not be used - {0},({1})", epgRating, strRating);
+        Log.Info("XMLTVImport: star-rating could not be used - {0},({1})", epgRating, strRating);
       
       return Rating;
     }
