@@ -972,6 +972,7 @@ namespace MediaPortal.GUI.Music
         item.AlbumInfoTag = song;
         item.MusicTag = tag;
         item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+        item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         facadeView.Add(item);
       }
 
@@ -1449,6 +1450,14 @@ namespace MediaPortal.GUI.Music
         return true;
       else
         return false;
+    }
+
+    private void item_OnItemSelected(GUIListItem item, GUIControl parent)
+    {
+      GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
+      if (filmstrip == null)
+        return;
+      filmstrip.InfoImageFileName = item.ThumbnailImage;
     }
 
     private void OnQueueAllItems()
