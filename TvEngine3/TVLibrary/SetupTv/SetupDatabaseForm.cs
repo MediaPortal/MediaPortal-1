@@ -335,6 +335,7 @@ namespace SetupTv
         MessageBox.Show(this, "Connection succeeded!");
       }
     }
+
     void Save()
     {
       string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
@@ -453,24 +454,28 @@ namespace SetupTv
       }
     }
 
-    private void groupBox1_Enter(object sender, EventArgs e)
-    {
-
-    }
-
     private void radioButton2_CheckedChanged(object sender, EventArgs e)
     {
-
+      if (radioButton2.Checked)
+      {
+        if (mpTextBoxUserId.Text == "sa")
+        {
+          mpTextBoxUserId.Text = "root";
+          mpTextBoxServer.Text = Dns.GetHostName();
+        }
+      }
     }
 
     private void radioButton1_CheckedChanged(object sender, EventArgs e)
     {
-
-    }
-
-    private void mpLabel3_Click(object sender, EventArgs e)
-    {
-
+      if (radioButton1.Checked)
+      {
+        if (mpTextBoxUserId.Text == "root")
+        {
+          mpTextBoxUserId.Text = "sa";
+          mpTextBoxServer.Text = Dns.GetHostName() + @"\SQLEXPRESS";
+        }
+      }
     }
   }
 }

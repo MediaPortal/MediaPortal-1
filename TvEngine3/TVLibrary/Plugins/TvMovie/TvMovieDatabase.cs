@@ -618,11 +618,11 @@ namespace TvEngine
 
             try
             {
-              OnAirDate = DateTime.Parse(String.Format("01.01.{0} 00:00:00", date)); 
+              OnAirDate = DateTime.Parse(String.Format("01.01.{0} 00:00:00", date));
             }
             catch (Exception ex3)
             {
-              Log.Error("TVMovie: Error parsing OnAirDate - {0}", ex3.Message);
+              Log.Info("TVMovie: Invalid year for OnAirDate - {0}", date);
             }
 
             short EPGStarRating = -1;

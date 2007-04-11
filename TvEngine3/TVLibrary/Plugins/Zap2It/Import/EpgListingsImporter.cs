@@ -332,10 +332,10 @@ namespace ProcessPlugins.EpgGrabber
 
         string zTitle = tvProgram.Title;
         string zEpisode = string.IsNullOrEmpty(tvProgram.Subtitle) ? EMPTY : tvProgram.Subtitle;
-        string zDate = string.IsNullOrEmpty(tvProgram.OriginalAirDateStr) ? EMPTY : tvProgram.OriginalAirDate.Date.ToString();
+        string zDate = string.IsNullOrEmpty(tvProgram.OriginalAirDateStr) ? DateTime.MinValue.ToString() : tvProgram.OriginalAirDate.Date.ToString();
         string zSeriesNum = string.IsNullOrEmpty(tvProgram.Series) ? EMPTY : tvProgram.Series;
         string zEpisodeNum = string.IsNullOrEmpty(tvProgram.SyndicatedEpisodeNumber) ? EMPTY : tvProgram.SyndicatedEpisodeNumber;
-        string zStarRating = string.IsNullOrEmpty(tvProgram.StarRating) ? EMPTY : tvProgram.StarRatingNum.ToString() + "/8";
+        string zStarRating = string.IsNullOrEmpty(tvProgram.StarRating) ? "-1" : tvProgram.StarRatingNum.ToString() + "/8";
         string zClassification = string.IsNullOrEmpty(tvProgram.MPAARating) ? tvSchedule.TVRating : tvProgram.MPAARating;
         string zRepeat = (tvProgram.IsRepeat(tvSchedule)) ? "Repeat" : string.Empty;
 

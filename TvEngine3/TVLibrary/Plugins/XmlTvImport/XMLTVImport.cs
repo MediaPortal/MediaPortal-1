@@ -333,7 +333,7 @@ namespace TvEngine
               XmlNode nodeEpisodeNum = programNode.SelectSingleNode("episode-num");
               XmlNode nodeDate = programNode.SelectSingleNode("date");
               XmlNode nodeStarRating = programNode.SelectSingleNode("star-rating");
-              XmlNode nodeClasification = programNode.SelectSingleNode("rating");
+              XmlNode nodeClassification = programNode.SelectSingleNode("rating");
 
               if (nodeStart != null && nodeChannel != null && nodeTitle != null)
               {
@@ -348,8 +348,8 @@ namespace TvEngine
                   string seriesNum = "";
                   string episodeNum = "";
                   string episodePart = "";
-                  string starRating = "0";
-                  string clasification = "";
+                  string starRating = "-1";
+                  string classification = "";
 
                   if (nodeRepeat != null) repeat = "Repeat";
 
@@ -469,16 +469,19 @@ namespace TvEngine
                   {
                     category = nodeCategory.InnerText;
                   }
+
                   if (nodeDescription != null && nodeDescription.InnerText != null)
                   {
                     description = nodeDescription.InnerText;
                   }
+
                   if (nodeEpisode != null && nodeEpisode.InnerText != null)
                   {
                     episode = nodeEpisode.InnerText;
                     if (title.Length == 0)
                       title = nodeEpisode.InnerText;
                   }
+
                   if (nodeEpisodeNum != null && nodeEpisodeNum.InnerText != null)
                   {
                     if (nodeEpisodeNum.Attributes.GetNamedItem("system").InnerText == "xmltv_ns")
@@ -545,17 +548,31 @@ namespace TvEngine
                       }
                     }
                   }
+
                   if (nodeDate != null && nodeDate.InnerText != null)
                   {
                     date = nodeDate.InnerText;
                   }
+
                   if (nodeStarRating != null && nodeStarRating.InnerText != null)
                   {
-                    starRating = nodeStarRating.InnerText;
+                    try
+                    {
+                      starRating = nodeStarRating.InnerText;
+                      if (Convert.ToInt32(starRating) > 10)
+                        starRating = "-1";
+                    }
+                    catch (Exception ex1)
+                    {
+                      Log.Info("XMLTVImport: starrating could not be used - {0},{1}", starRating, ex1.Message);
+                      starRating = "-1";
+                    }
+                    
                   }
-                  if (nodeClasification != null && nodeClasification.InnerText != null)
+
+                  if (nodeClassification != null && nodeClassification.InnerText != null)
                   {
-                    clasification = nodeClasification.InnerText;
+                    classification = nodeClassification.InnerText;
                   }
 
                   Channel channel = null;
@@ -567,7 +584,7 @@ namespace TvEngine
                       break;
                     }
                   }
-                  Program prog = new Program(channel.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, DateTime.MinValue, seriesNum, episodeNum, Convert.ToInt32(starRating), clasification);
+                  Program prog = new Program(channel.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, DateTime.MinValue, seriesNum, episodeNum, Convert.ToInt32(starRating), classification);
                   //prog.Description = ConvertHTMLToAnsi(strDescription);
                   //prog.StartTime = iStart;
                   //prog.EndTime = iStop;

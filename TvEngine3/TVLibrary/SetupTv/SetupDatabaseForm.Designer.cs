@@ -77,7 +77,6 @@ namespace SetupTv
       this.mpLabel3.Size = new System.Drawing.Size(56, 13);
       this.mpLabel3.TabIndex = 3;
       this.mpLabel3.Text = "Password:";
-      this.mpLabel3.Click += new System.EventHandler(this.mpLabel3_Click);
       // 
       // mpTextBoxUserId
       // 
@@ -139,7 +138,6 @@ namespace SetupTv
       this.groupBox1.TabIndex = 9;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Database Server settings";
-      this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
       // 
       // radioButton2
       // 
