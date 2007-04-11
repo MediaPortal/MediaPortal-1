@@ -1461,8 +1461,9 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        ProgramModel program = parameter as ProgramModel;
-        Program _program = program.Program;
+        ProgramModel model = parameter as ProgramModel;
+        if (model == null) return;
+        Program _program = model.Program;
         if (_program == null)
           return;
         MpMenu dlgMenu = new MpMenu();

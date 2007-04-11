@@ -68,7 +68,7 @@
     </StackPanel>
     <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
       <controls:Button Name="buttonRecord" Command="{Binding Path=RecordProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}"  Content="{Binding Path=RecordLabel}" Style="{DynamicResource MpButton}" Height="32"   />
-      <controls:Button Name="buttonAdvancedRecord" Content="{Binding Path=AdvancedRecordLabel}" Style="{DynamicResource MpButton}" Height="32"  />
+      <controls:Button Name="buttonAdvancedRecord" Command="{Binding Path=RecordProgramAdvanced}" CommandParameter="{Binding Path=Episodes.CurrentItem}"  Content="{Binding Path=AdvancedRecordLabel}" Style="{DynamicResource MpButton}" Height="32"  />
       <controls:Button Name="buttonKeepUntil" Content="{Binding Path=KeepUntilLabel}" Style="{DynamicResource MpButton}" Height="32"   />
       <controls:RadioButton  Name="buttonAlertMe" Content="{Binding Path=AlertMeLabel}" Style="{StaticResource MpRadioButton}" Height="32"  />
       <controls:Button Name="buttonQuality" Content="{Binding Path=QualityLabel}" Style="{DynamicResource MpButton}" Height="32"   />
@@ -80,7 +80,7 @@
     <StackPanel Margin="0,0,30,0">
       <TextBlock Name="labelTitle" Text="{Binding Path=Episodes.CurrentItem.Title, Mode=OneWay}" Style="{StaticResource TextBlockLargeStyle}"/>
       <TextBlock Name="labelDescription"  Text="{Binding Path=Episodes.CurrentItem.Description, Mode=OneWay}" Style="{StaticResource TextBlockNormalStyle}" />
-      <controls:ListBox x:Name="gridList" ViewMode="{Binding Path=ViewModeType}" Command="{Binding Path=RecordProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" ItemContainerStyle="{StaticResource MpListViewItem}"  ItemsSource="{Binding Episodes}"   Style="{StaticResource MpListView}" ItemTemplate="{StaticResource programIconTemplate}"  />
+      <controls:ListBox x:Name="gridList" SelectedIndex="0" ViewMode="{Binding Path=ViewModeType}" Command="{Binding Path=RecordProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" ItemContainerStyle="{StaticResource MpListViewItem}"  ItemsSource="{Binding Episodes}"   Style="{StaticResource MpListView}" ItemTemplate="{StaticResource programIconTemplate}"  />
 
     </StackPanel>
   </DockPanel >

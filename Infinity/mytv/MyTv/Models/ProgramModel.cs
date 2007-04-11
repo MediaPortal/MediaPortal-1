@@ -2,6 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 using TvDatabase;
 namespace MyTv
 {
@@ -176,11 +185,29 @@ namespace MyTv
       {
         if (IsRecorded)
         {
-          return  String.Format(@"{0}\{1}",System.IO.Directory.GetCurrentDirectory(),Thumbs.TvRecordingIcon);
+          return String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.TvRecordingIcon);
         }
         return "";
       }
     }
     #endregion
+    public override bool Equals(object obj)
+    {
+      ProgramModel model = obj as ProgramModel;
+      if (model == null)
+      {
+        ListBoxItem box = obj as ListBoxItem;
+        if (box != null)
+        {
+          model = box.Content as ProgramModel;
+        }
+      }
+      if (model == null) return false;
+      return (model.Program.IdProgram == Program.IdProgram);
+    }
+    public override int GetHashCode()
+    {
+      return Program.IdProgram;
+    }
   }
 }
