@@ -396,7 +396,6 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this.tabControl1);
       this.Name = "DirectInputRemote";
       this.Size = new System.Drawing.Size(472, 408);
-      this.Load += new System.EventHandler(this.DirectInputRemote_Load);
       this.gbI.ResumeLayout(false);
       this.gbI.PerformLayout();
       this.gbSettings.ResumeLayout(false);
