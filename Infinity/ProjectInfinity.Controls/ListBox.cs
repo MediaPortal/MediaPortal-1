@@ -4,12 +4,12 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+using System.Windows.Controls.Primitives;
 namespace ProjectInfinity.Controls
 {
   public class ListBox : System.Windows.Controls.ListBox
   {
-
+    bool _firstTime = true;
     public static readonly DependencyProperty ViewModeProperty = DependencyProperty.Register(
                                                                                                   "ViewMode",
                                                                                                   typeof(string),
@@ -50,11 +50,6 @@ namespace ProjectInfinity.Controls
       get { return (string)GetValue(ViewModeProperty); }
       set { SetValue(ViewModeProperty, value); }
     }
-    protected override void OnMouseEnter(MouseEventArgs e)
-    {
-      base.OnMouseEnter(e);
-      Keyboard.Focus(this);
-    }
 
     protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
     {
@@ -63,8 +58,9 @@ namespace ProjectInfinity.Controls
       {
         if (element as ListBoxItem != null)
         {
-          this.SelectedItem = (System.Windows.Controls.ListBoxItem)element;
+          this.SelectedItem = element;
           Keyboard.Focus((System.Windows.Controls.ListBoxItem)element);
+          e.Handled = true;
           return;
         }
         element = element.TemplatedParent as FrameworkElement;
@@ -118,6 +114,27 @@ namespace ProjectInfinity.Controls
       return;
     }
 
+     
+    protected override void OnInitialized(EventArgs e)
+    {
+      ItemContainerGenerator.StatusChanged += new EventHandler(ItemContainerGenerator_StatusChanged);
+    }
+
+    void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
+    {
+      if (ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+      {
+        if (_firstTime == true)
+        {
+          _firstTime = false;
+          if (SelectedIndex >= 0)
+          {
+            DependencyObject obj = ItemContainerGenerator.ContainerFromIndex(SelectedIndex);
+            Keyboard.Focus((ListBoxItem)obj);
+          }
+        }
+      }
+    }
 
     /// <summary>
     /// Gets or sets the <see cref="ICommand"/> to execute whenever an item is activated.

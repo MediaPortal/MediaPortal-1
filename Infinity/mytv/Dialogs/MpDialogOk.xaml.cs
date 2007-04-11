@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -18,9 +20,7 @@ namespace Dialogs
 
   public partial class MpDialogOk : System.Windows.Window
   {
-    string _title;
-    string _header;
-    string _content;
+    DialogViewModel _model;
     public MpDialogOk()
     {
       this.WindowStyle = WindowStyle.None;
@@ -28,6 +28,7 @@ namespace Dialogs
       this.ResizeMode = ResizeMode.NoResize;
       this.AllowsTransparency = true;//we need it so we can alphablend the dialog with the gui. However this causes s/w rendering in wpf
       InitializeComponent();
+      _model = new DialogViewModel(this);
     }
 
     /// <summary>
@@ -36,41 +37,17 @@ namespace Dialogs
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-      labelHeader.Content = Header;
-      labelTitle.Content = Title;
-      textBox.Text = Content;
-      textBox.TextWrapping = TextWrapping.WrapWithOverflow;
-      Keyboard.Focus(buttonClose);
-      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-    }
-    void subItemMouseEnter(object sender, MouseEventArgs e)
-    {
-      IInputElement b = sender as IInputElement;
-      if (b != null)
+      gridMain.Children.Clear();
+      using (FileStream steam = new FileStream(@"skin\default\Dialogs\DialogOk.xaml", FileMode.Open, FileAccess.Read))
       {
-        Keyboard.Focus(b);
+        UIElement documentRoot = (UIElement)XamlReader.Load(steam);
+        gridMain.Children.Add(documentRoot);
       }
-    }
-    /// <summary>
-    /// Called when key pressed
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.Input.KeyEventArgs"/> instance containing the event data.</param>
-    void onKeyDown(object sender, KeyEventArgs e)
-    {
-      if (e.Key == System.Windows.Input.Key.Escape)
-      {
-        //return to previous screen
-        e.Handled = true;
-        this.Close();
-        return;
-      }
-    }
-    void OnCloseClicked(object sender, EventArgs args)
-    {
-      this.Close();
-    }
+      gridMain.DataContext = _model;
+      this.InputBindings.Add(new KeyBinding(_model.Close, new KeyGesture(System.Windows.Input.Key.Escape)));
 
+
+    }
     /// <summary>
     /// Gets or sets the title.
     /// </summary>
@@ -79,11 +56,11 @@ namespace Dialogs
     {
       get
       {
-        return _title;
+        return _model.Title;
       }
       set
       {
-        _title = value;
+        _model.Title = value;
       }
     }
     /// <summary>
@@ -94,11 +71,11 @@ namespace Dialogs
     {
       get
       {
-        return _header;
+        return _model.Header;
       }
       set
       {
-        _header = value;
+        _model.Header = value;
       }
     }
     /// <summary>
@@ -109,11 +86,11 @@ namespace Dialogs
     {
       get
       {
-        return _content;
+        return _model.Content;
       }
       set
       {
-        _content = value;
+        _model.Content = value;
       }
     }
 

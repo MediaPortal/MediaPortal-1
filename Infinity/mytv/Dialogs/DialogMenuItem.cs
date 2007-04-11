@@ -16,8 +16,8 @@ namespace Dialogs
   public class DialogMenuItem
   {
     #region variables
-    string _logo, _label1, _label2, _label3;
-    string _recordingLogo;
+    string _logo = "", _label1 = "", _label2 = "", _label3 = "";
+    string _recordingLogo = "";
     object _tag;
     #endregion
     #region ctors
@@ -49,6 +49,31 @@ namespace Dialogs
     public DialogMenuItem(string buttonName)
     {
       Label1 = buttonName;
+    }
+
+    public override bool Equals(object obj)
+    {
+      DialogMenuItem item = obj as DialogMenuItem;
+      if (item == null)
+      {
+        if (obj as ListBoxItem != null)
+        {
+          ListBoxItem box = (ListBoxItem)obj;
+          item = (DialogMenuItem)box.Content as DialogMenuItem;
+        }
+        else return false;
+      }
+      if (item == null) return false;
+      if (_logo != item._logo) return false;
+      if (_label1 != item._label1) return false;
+      if (_label2 != item._label2) return false;
+      if (_label3 != item._label3) return false;
+      if (_recordingLogo != item._recordingLogo) return false;
+      return true;
+    }
+    public override int GetHashCode()
+    {
+      return base.GetHashCode() ^ _logo.GetHashCode() ^ _label1.GetHashCode() ^ _label2.GetHashCode() ^ _label3.GetHashCode() & _recordingLogo.GetHashCode();
     }
     #endregion
 
