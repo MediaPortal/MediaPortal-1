@@ -3,7 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls"
   	xmlns:l='clr-namespace:MCEControls;assembly=Keyboard'
-    FocusManager.FocusedElement="{Binding ElementName=textboxServer}"
     Title="TvSetup" Background="{StaticResource backGroundBrush}" Loaded="OnLoaded" 
     >
   <Grid x:Name="gridMain">
