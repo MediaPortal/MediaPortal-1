@@ -969,7 +969,7 @@ namespace MediaPortal.Video.Database
         if (iStartOfMovieList < 0)
         {
           int iMovieTitle = strBody.IndexOf("<title>");
-          int iMovieDirector = strBody.IndexOf("Directed");
+          int iMovieDirector = strBody.IndexOf("Director");
           int iMovieGenre = strBody.IndexOf("Genre:");
           int iMoviePlot = strBody.IndexOf("Plot");
 
@@ -1109,8 +1109,8 @@ namespace MediaPortal.Video.Database
           movieDetails.Title = url.Title;
         movieDetails.Title = movieDetails.Title.Trim();
         string movieTitle = System.Web.HttpUtility.HtmlEncode(movieDetails.Title);
-        int iDirectedBy = strBody.IndexOf("Directed by");
-        int iCredits = strBody.IndexOf("Writing credits");
+        int iDirectedBy = strBody.IndexOf("Director");
+        int iCredits = strBody.IndexOf("Writer");
         int iGenre = strBody.IndexOf("Genre:");
         int iTagLine = strBody.IndexOf("Tagline:</h5>");
         int iPlotOutline = strBody.IndexOf("Plot Outline:</h5>");
