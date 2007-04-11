@@ -6,33 +6,7 @@
     FocusManager.FocusedElement="{Binding ElementName=textboxServer}"
     Title="TvSetup" Background="{StaticResource backGroundBrush}" Loaded="OnLoaded" 
     >
-  <Grid>
+  <Grid x:Name="gridMain">
 
-    <DockPanel >
-      <StackPanel DockPanel.Dock="Top" Height="120">
-        <DockPanel>
-          <StackPanel DockPanel.Dock="Left">
-            <Label Style="{StaticResource LabelHeaderStyle}" >
-              setup tv
-            </Label>
-          </StackPanel>
-          <StackPanel DockPanel.Dock="Right" >
-            <Label Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="right" Margin="0,20,20,0" >
-              Sunday 18 March 09:54
-            </Label>
-          </StackPanel>
-        </DockPanel>
-      </StackPanel>
-      <StackPanel DockPanel.Dock="Bottom">
-        <Label Name="labelText" Style="{StaticResource LabelNormalStyle}">Please enter the hostname of the tvserver</Label>
-
-        <StackPanel Orientation='Horizontal'>
-          <l:SoftKeyboardTextBox Margin='5' Name='textboxServer'></l:SoftKeyboardTextBox>
-          <controls:Button Name="buttonSave" Style="{DynamicResource MpButton}" Height="32" Width="120" Click="OnTest" >Save</controls:Button>
-        </StackPanel>
-        <Label Style="{StaticResource LabelErrorStyle}" Foreground="Red" Name="result1"></Label>
-
-      </StackPanel>
-    </DockPanel>
   </Grid>
 </Page>
