@@ -53,17 +53,21 @@ namespace SetupTv.Sections
       this.textBoxEpgTimeOut = new System.Windows.Forms.TextBox();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.label2 = new System.Windows.Forms.Label();
-      this.label16 = new System.Windows.Forms.Label();
-      this.label17 = new System.Windows.Forms.Label();
       this.textBoxMaxFiles = new System.Windows.Forms.TextBox();
+      this.label16 = new System.Windows.Forms.Label();
+      this.label20 = new System.Windows.Forms.Label();
+      this.label17 = new System.Windows.Forms.Label();
+      this.label19 = new System.Windows.Forms.Label();
+      this.textBoxMaxFileSize = new System.Windows.Forms.TextBox();
       this.textBoxMinfiles = new System.Windows.Forms.TextBox();
       this.label18 = new System.Windows.Forms.Label();
-      this.textBoxMaxFileSize = new System.Windows.Forms.TextBox();
-      this.label19 = new System.Windows.Forms.Label();
-      this.label20 = new System.Windows.Forms.Label();
+      this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.label21 = new System.Windows.Forms.Label();
+      this.checkBoxEnableLinkageScanner = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
+      this.groupBox4.SuspendLayout();
       this.SuspendLayout();
       // 
       // label1
@@ -309,6 +313,13 @@ namespace SetupTv.Sections
       this.label2.TabIndex = 23;
       this.label2.Text = "MByte/file";
       // 
+      // textBoxMaxFiles
+      // 
+      this.textBoxMaxFiles.Location = new System.Drawing.Point(89, 42);
+      this.textBoxMaxFiles.Name = "textBoxMaxFiles";
+      this.textBoxMaxFiles.Size = new System.Drawing.Size(100, 20);
+      this.textBoxMaxFiles.TabIndex = 19;
+      // 
       // label16
       // 
       this.label16.AutoSize = true;
@@ -319,6 +330,15 @@ namespace SetupTv.Sections
       this.label16.Text = "files";
       this.label16.Click += new System.EventHandler(this.label16_Click);
       // 
+      // label20
+      // 
+      this.label20.AutoSize = true;
+      this.label20.Location = new System.Drawing.Point(14, 71);
+      this.label20.Name = "label20";
+      this.label20.Size = new System.Drawing.Size(41, 13);
+      this.label20.TabIndex = 17;
+      this.label20.Text = "Filesize";
+      // 
       // label17
       // 
       this.label17.AutoSize = true;
@@ -328,12 +348,21 @@ namespace SetupTv.Sections
       this.label17.TabIndex = 21;
       this.label17.Text = "files";
       // 
-      // textBoxMaxFiles
+      // label19
       // 
-      this.textBoxMaxFiles.Location = new System.Drawing.Point(89, 42);
-      this.textBoxMaxFiles.Name = "textBoxMaxFiles";
-      this.textBoxMaxFiles.Size = new System.Drawing.Size(100, 20);
-      this.textBoxMaxFiles.TabIndex = 19;
+      this.label19.AutoSize = true;
+      this.label19.Location = new System.Drawing.Point(14, 45);
+      this.label19.Name = "label19";
+      this.label19.Size = new System.Drawing.Size(51, 13);
+      this.label19.TabIndex = 16;
+      this.label19.Text = "Maximum";
+      // 
+      // textBoxMaxFileSize
+      // 
+      this.textBoxMaxFileSize.Location = new System.Drawing.Point(89, 68);
+      this.textBoxMaxFileSize.Name = "textBoxMaxFileSize";
+      this.textBoxMaxFileSize.Size = new System.Drawing.Size(100, 20);
+      this.textBoxMaxFileSize.TabIndex = 18;
       // 
       // textBoxMinfiles
       // 
@@ -351,40 +380,45 @@ namespace SetupTv.Sections
       this.label18.TabIndex = 15;
       this.label18.Text = "Minimum";
       // 
-      // textBoxMaxFileSize
+      // groupBox4
       // 
-      this.textBoxMaxFileSize.Location = new System.Drawing.Point(89, 68);
-      this.textBoxMaxFileSize.Name = "textBoxMaxFileSize";
-      this.textBoxMaxFileSize.Size = new System.Drawing.Size(100, 20);
-      this.textBoxMaxFileSize.TabIndex = 18;
+      this.groupBox4.Controls.Add(this.checkBoxEnableLinkageScanner);
+      this.groupBox4.Controls.Add(this.label21);
+      this.groupBox4.Location = new System.Drawing.Point(22, 385);
+      this.groupBox4.Name = "groupBox4";
+      this.groupBox4.Size = new System.Drawing.Size(325, 52);
+      this.groupBox4.TabIndex = 14;
+      this.groupBox4.TabStop = false;
+      this.groupBox4.Text = "Linkage Scanner";
       // 
-      // label19
+      // label21
       // 
-      this.label19.AutoSize = true;
-      this.label19.Location = new System.Drawing.Point(14, 45);
-      this.label19.Name = "label19";
-      this.label19.Size = new System.Drawing.Size(51, 13);
-      this.label19.TabIndex = 16;
-      this.label19.Text = "Maximum";
+      this.label21.AutoSize = true;
+      this.label21.Location = new System.Drawing.Point(14, 25);
+      this.label21.Name = "label21";
+      this.label21.Size = new System.Drawing.Size(46, 13);
+      this.label21.TabIndex = 16;
+      this.label21.Text = "Enabled";
       // 
-      // label20
+      // checkBoxEnableLinkageScanner
       // 
-      this.label20.AutoSize = true;
-      this.label20.Location = new System.Drawing.Point(14, 71);
-      this.label20.Name = "label20";
-      this.label20.Size = new System.Drawing.Size(41, 13);
-      this.label20.TabIndex = 17;
-      this.label20.Text = "Filesize";
+      this.checkBoxEnableLinkageScanner.AutoSize = true;
+      this.checkBoxEnableLinkageScanner.Location = new System.Drawing.Point(89, 25);
+      this.checkBoxEnableLinkageScanner.Name = "checkBoxEnableLinkageScanner";
+      this.checkBoxEnableLinkageScanner.Size = new System.Drawing.Size(15, 14);
+      this.checkBoxEnableLinkageScanner.TabIndex = 17;
+      this.checkBoxEnableLinkageScanner.UseVisualStyleBackColor = true;
       // 
       // ScanSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.groupBox4);
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
       this.Name = "ScanSettings";
-      this.Size = new System.Drawing.Size(462, 417);
+      this.Size = new System.Drawing.Size(445, 417);
       this.Load += new System.EventHandler(this.ScanSettings_Load);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
@@ -392,6 +426,8 @@ namespace SetupTv.Sections
       this.groupBox2.PerformLayout();
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
+      this.groupBox4.ResumeLayout(false);
+      this.groupBox4.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -431,5 +467,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TextBox textBoxMaxFileSize;
     private System.Windows.Forms.TextBox textBoxMinfiles;
     private System.Windows.Forms.Label label18;
+    private System.Windows.Forms.GroupBox groupBox4;
+    private System.Windows.Forms.CheckBox checkBoxEnableLinkageScanner;
+    private System.Windows.Forms.Label label21;
   }
 }

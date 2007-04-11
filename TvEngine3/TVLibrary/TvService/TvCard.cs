@@ -49,6 +49,7 @@ namespace TvService
   {
     #region variables
     bool _isLocal;
+    bool _linkageScannerEnabled;
     ITVCard _card;
     Card _dbsCard;
     ChannelLinkageGrabber _linkageGrabber=null;
@@ -62,6 +63,8 @@ namespace TvService
     {
       _card = null;
       _dbsCard = null;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      _linkageScannerEnabled=(layer.GetSetting("linkageScannerEnabled","no").Value=="yes");
     }
     #endregion
 
@@ -1643,7 +1646,8 @@ namespace TvService
             return TvResult.NoVideoAudioDetected;
           }
           context.OnZap(user);
-          _card.StartLinkageScanner(_linkageGrabber);
+          if (_linkageScannerEnabled)
+            _card.StartLinkageScanner(_linkageGrabber);
           return TvResult.Succeeded;
         }
       }
@@ -1731,7 +1735,8 @@ namespace TvService
           }
           TvCardContext context = _card.Context as TvCardContext;
           if (context == null) return true;
-          _card.ResetLinkageScanner();
+          if (_linkageScannerEnabled)
+            _card.ResetLinkageScanner();
           context.Remove(user);
           if (IsIdle)
           {

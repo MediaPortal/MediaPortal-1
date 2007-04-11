@@ -65,6 +65,8 @@ namespace SetupTv.Sections
       textBoxMinfiles.Text = layer.GetSetting("timeshiftMinFiles", "6").Value;
       textBoxMaxFiles.Text = layer.GetSetting("timeshiftMaxFiles", "20").Value;
       textBoxMaxFileSize.Text = layer.GetSetting("timeshiftMaxFileSize", "256").Value;
+
+      checkBoxEnableLinkageScanner.Checked=(layer.GetSetting("linkageScannerEnabled","no").Value=="yes");
     }
     public override void OnSectionDeActivated()
     {
@@ -108,6 +110,13 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("timeshiftMaxFileSize", "256");
       s.Value = textBoxMaxFileSize.Text;
+      s.Persist();
+
+      s = layer.GetSetting("linkageScannerEnabled", "no");
+      if (checkBoxEnableLinkageScanner.Checked)
+        s.Value = "yes";
+      else
+        s.Value = "no";
       s.Persist();
     }
 
