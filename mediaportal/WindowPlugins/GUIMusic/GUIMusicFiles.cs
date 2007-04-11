@@ -284,7 +284,8 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    #region variables
+    #region Base variables
+
     MapSettings _MapSettings = new MapSettings();
 
     DirectoryHistory m_history = new DirectoryHistory();
@@ -308,6 +309,7 @@ namespace MediaPortal.GUI.Music
     static bool _createMissingFolderThumbs = false;
     static object _workerLock;
     static object _serializeWorker;
+    bool m_bPlaylistsViewMode = false;
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
@@ -316,6 +318,7 @@ namespace MediaPortal.GUI.Music
     [SkinControlAttribute(9)]     protected GUIButtonControl btnPlayCd;
     [SkinControlAttribute(10)]    protected GUIButtonControl btnPlaylistFolder;
     [SkinControlAttribute(12)]    protected GUIButtonControl btnSearch;
+
     #endregion
 
     public GUIMusicFiles()
@@ -358,7 +361,6 @@ namespace MediaPortal.GUI.Music
       get { return m_musicCD; }
       set { m_musicCD = value; }
     }
-
 
     #region Serialisation
     protected override void LoadSettings()
@@ -438,7 +440,6 @@ namespace MediaPortal.GUI.Music
         }
       }
     }
-
     #endregion
 
     #region overrides
@@ -471,31 +472,66 @@ namespace MediaPortal.GUI.Music
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
-        if (currentFolder != m_strPlayListPath)
+        if (facadeView.Focus)
         {
-          if (facadeView.Focus)
+          GUIListItem item = facadeView[0];
+
+          // It is possible that PlaylistsRoot is in a MusicShare,
+          // to prevent HidePlaylists when just browsing the share,
+          // first check PlaylistViewMode.
+          if (m_bPlaylistsViewMode)
           {
-            GUIListItem item = facadeView[0];
-            if ((item != null) && item.IsFolder && (item.Label == "..") && (currentFolder != m_strDirectoryStart))
+            if (IsSavedPlaylistsRoot())
+            {
+              HideSavedPlaylists();
+              return;
+            }
+            else if ((item != null) && item.IsFolder && (item.Label == ".."))
             {
               LoadDirectory(item.Path);
               return;
             }
           }
-        }
-        else if (facadeView.Focus)
-        {
-          LoadDirectory(m_strCurrentFolder);
-          return;
+          else if ((item != null) && item.IsFolder && (item.Label == ".."))
+          {
+            LoadDirectory(item.Path);
+            return;
+          }
         }
       }
+
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
         GUIListItem item = facadeView[0];
-        if ((item != null) && item.IsFolder && (item.Label == ".."))
+
+        // It is possible that PlaylistsRoot is in a MusicShare,
+        // to prevent HidePlaylists when just browsing the share,
+        // first check PlaylistViewMode.
+        if (m_bPlaylistsViewMode)
+        {
+          if (IsSavedPlaylistsRoot())
+          {
+            // When browsing SavedPlaylist there is no ParentDir in PlaylistsRoot,
+            // so no need for HideSavedPlaylist(), is done by ACTION_PREVIOUS_MENU
+            // The other side is, we still have [..] in FacadeView,
+            // so user can expect that ACTION_PARENT_DIR is working in this case, too.
+
+            //HideSavedPlaylists();
+            return;
+          }
+          else if ((item != null) && item.IsFolder && (item.Label == ".."))
+          {
+            LoadDirectory(item.Path);
+            return;
+          }
+        }
+        else if ((item != null) && item.IsFolder && (item.Label == ".."))
+        {
           LoadDirectory(item.Path);
-        return;
+          return;
+        }
       }
+
       base.OnAction(action);
     }
 
@@ -523,7 +559,10 @@ namespace MediaPortal.GUI.Music
     protected override void OnPageDestroy(int newWindowId)
     {
       m_iItemSelected = facadeView.SelectedListItemIndex;
+      m_bPlaylistsViewMode = false;
+
       SaveFolderSettings(currentFolder);
+
       base.OnPageDestroy(newWindowId);
     }
 
@@ -544,11 +583,11 @@ namespace MediaPortal.GUI.Music
         {
           SaveFolderSettings(currentFolder);
         }
-
         if (strNewDirectory != currentFolder || _MapSettings == null)
         {
           LoadFolderSettings(strNewDirectory);
         }
+
         currentFolder = strNewDirectory;
         GUIControl.ClearControl(GetID, facadeView.GetID);
 
@@ -568,8 +607,6 @@ namespace MediaPortal.GUI.Music
             if (tag.Duration > 0)
               totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
           }
-          if (item.Label == ".." && currentFolder == m_strPlayListPath)
-            continue;
           item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
           item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
           facadeView.Add(item);
@@ -596,6 +633,7 @@ namespace MediaPortal.GUI.Music
             break;
           }
         }
+
         int iTotalItems = itemlist.Count;
         if (itemlist.Count > 0)
         {
@@ -609,7 +647,6 @@ namespace MediaPortal.GUI.Music
           strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
                       MediaPortal.Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));//songs
         }
-
         GUIPropertyManager.SetProperty("#itemcount", strObjects);
 
         if (m_iItemSelected >= 0 && !itemSelected)
@@ -617,10 +654,6 @@ namespace MediaPortal.GUI.Music
           GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
         }
         GUIWaitCursor.Hide();
-        if (iTotalItems == 0)
-        {
-          btnPlaylistFolder.Focus = true;
-        }
       }
       catch (Exception ex)
       {
@@ -631,7 +664,6 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
-
       if (control == btnPlayCd)
       {
         for (char c = 'C'; c <= 'Z'; c++)
@@ -643,19 +675,15 @@ namespace MediaPortal.GUI.Music
           }
         }
       }
+
       if (control == btnPlaylistFolder)
       {
-        if (currentFolder != m_strPlayListPath)
-        {
-          m_strCurrentFolder = currentFolder;
-          currentFolder = m_strPlayListPath;
-        }
+        if (m_bPlaylistsViewMode)
+          HideSavedPlaylists();
         else
-        {
-          currentFolder = m_strCurrentFolder;
-        }
-        LoadDirectory(currentFolder);
+          ShowSavedPlaylists();
       }
+
       base.OnClicked(controlId, control, actionType);
     }
 
@@ -924,12 +952,17 @@ namespace MediaPortal.GUI.Music
     protected override void OnClick(int iItem)
     {
       GUIListItem item = facadeView.SelectedListItem;
-      if (item == null)
-        return;
+
+      if (item == null) return;
+
       if (item.IsFolder)
       {
         m_iItemSelected = -1;
-        LoadDirectory(item.Path);
+
+        if (IsSavedPlaylistsRoot() && (item.Label == ".."))
+          HideSavedPlaylists();
+        else
+          LoadDirectory(item.Path);
       }
       else
       {
@@ -1417,6 +1450,33 @@ namespace MediaPortal.GUI.Music
       {
         strLine = keyboard.Text;
       }
+    }
+
+    private void ShowSavedPlaylists()
+    {
+      m_strCurrentFolder = currentFolder;
+      currentFolder = m_strPlayListPath;
+
+      LoadDirectory(currentFolder);
+
+      m_bPlaylistsViewMode = true;
+    }
+
+    private void HideSavedPlaylists()
+    {
+      currentFolder = m_strCurrentFolder;
+
+      LoadDirectory(currentFolder);
+
+      m_bPlaylistsViewMode = false;
+    }
+
+    private bool IsSavedPlaylistsRoot()
+    {
+      if (currentFolder == m_strPlayListPath)
+        return true;
+      else
+        return false;
     }
 
     //static private void StartMissingThumbCreation(string filename)
