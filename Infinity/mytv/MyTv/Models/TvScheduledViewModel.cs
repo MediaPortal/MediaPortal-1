@@ -2081,6 +2081,7 @@ namespace MyTv
       void onDatabaseChanged(object sender, PropertyChangedEventArgs e)
       {
         this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        this.MoveCurrentTo(null);
       }
 
       /// <summary>
