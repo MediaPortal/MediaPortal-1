@@ -13,12 +13,19 @@
 	</font>
   !-->
     <font>
+        <name>font9</name>
+        <filename>Franklin Gothic Medium</filename>
+        <height>10</height>
+        <start>0</start>
+        <end>1536</end>
+    </font>  
+    <font>
         <name>font10</name>
         <filename>Franklin Gothic Medium</filename>
         <height>11</height>
         <start>0</start>
         <end>1536</end>
-    </font>
+    </font> 
     <font>
         <name>font12</name>
         <filename>Franklin Gothic Medium</filename>
