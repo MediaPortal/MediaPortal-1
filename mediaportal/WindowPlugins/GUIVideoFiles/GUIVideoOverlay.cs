@@ -41,27 +41,19 @@ namespace MediaPortal.GUI.Video
     string _fileName = "";
     string _program = "";
 
-    [SkinControlAttribute(0)]
-    protected GUIImage _videoRectangle = null;
-    [SkinControlAttribute(1)]
-    protected GUIVideoControl _videoWindow = null;
-    [SkinControlAttribute(2)]
-    protected GUILabelControl _labelPlayTime = null;
-    [SkinControlAttribute(3)]
-    protected GUIImage _imagePlayLogo = null;
-    [SkinControlAttribute(4)]
-    protected GUIImage _imagePauseLogo = null;
-    [SkinControlAttribute(5)]
-    protected GUIFadeLabel _labelInfo = null;
-    [SkinControlAttribute(6)]
-    protected GUIImage _labelBigPlayTime = null;
-    [SkinControlAttribute(7)]
-    protected GUIImage _imageFastForward = null;
-    [SkinControlAttribute(8)]
-    protected GUIImage _imageRewind = null;
+    [SkinControlAttribute(0)]    protected GUIImage _videoRectangle = null;
+    [SkinControlAttribute(1)]    protected GUIVideoControl _videoWindow = null;
+    [SkinControlAttribute(2)]    protected GUILabelControl _labelPlayTime = null;
+    [SkinControlAttribute(3)]    protected GUIImage _imagePlayLogo = null;
+    [SkinControlAttribute(4)]    protected GUIImage _imagePauseLogo = null;
+    [SkinControlAttribute(5)]    protected GUIFadeLabel _labelInfo = null;
+    [SkinControlAttribute(6)]    protected GUIImage _labelBigPlayTime = null;
+    [SkinControlAttribute(7)]    protected GUIImage _imageFastForward = null;
+    [SkinControlAttribute(8)]    protected GUIImage _imageRewind = null;
 
     string _thumbLogo = "";
     bool _didRenderLastTime = false;
+
     public GUIVideoOverlay()
     {
       GetID = (int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY;
@@ -69,7 +61,7 @@ namespace MediaPortal.GUI.Video
     }
     ~GUIVideoOverlay()
     {
-     GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(OnVideoChanged);
+      GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(OnVideoChanged);
     }
 
     public override bool Init()
@@ -84,15 +76,18 @@ namespace MediaPortal.GUI.Video
     {
       get { return false; }
     }
+
     public override void PreInit()
     {
       base.PreInit();
       AllocResources();
 
     }
+
     public override void Render(float timePassed)
     {
     }
+
     void OnUpdateState(bool render)
     {
       if (_didRenderLastTime != render)
@@ -190,10 +185,13 @@ namespace MediaPortal.GUI.Video
         if (_imageRewind != null)
           _imageRewind.Visible = false; // (g_Player.Speed<0);
 
-
-
         if (_videoRectangle != null)
-          _videoRectangle.Visible = GUIGraphicsContext.ShowBackground;
+        {
+          if (g_Player.Playing)
+            _videoRectangle.Visible = GUIGraphicsContext.ShowBackground;
+          else
+            _videoRectangle.Visible = false;
+        }
       }
       base.Render(timePassed);
     }
@@ -320,6 +318,7 @@ namespace MediaPortal.GUI.Video
       }
       _thumbLogo = GUIPropertyManager.GetProperty("#Play.Current.Thumb");
     }
+
     public override bool Focused
     {
       get
@@ -346,6 +345,7 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
+
     protected override bool ShouldFocus(Action action)
     {
       return (action.wID == Action.ActionType.ACTION_MOVE_DOWN);
@@ -360,11 +360,13 @@ namespace MediaPortal.GUI.Video
         Focused = false;
       }
     }
+
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {
       return DoesPostRender();
     }
+
     public void RenderLayer(float timePassed)
     {
       PostRender(timePassed, 2);
