@@ -233,7 +233,12 @@ namespace MediaPortal.GUI.Music
           _imageCrossfade.Visible = (g_Player.PlaybackType == (int)PlayBackType.CROSSFADE);
 
         if (_videoRectangle != null)
-          _videoRectangle.Visible = GUIGraphicsContext.ShowBackground;
+        {
+          if (g_Player.Playing)
+            _videoRectangle.Visible = GUIGraphicsContext.ShowBackground;
+          else
+            _videoRectangle.Visible = false;
+        }
 
 
         if (_videoWindow != null)
