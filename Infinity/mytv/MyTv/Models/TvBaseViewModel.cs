@@ -1281,6 +1281,7 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
+        TvSearch.SearchMode = TvSearchViewModel.SearchType.Title;
         ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
       }
     }
