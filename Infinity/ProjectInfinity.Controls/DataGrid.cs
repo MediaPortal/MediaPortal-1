@@ -83,8 +83,9 @@ namespace ProjectInfinity.Controls
     #endregion
 
     /// <summary>
-    /// Gets or sets the <see cref="ICommand"/> to execute whenever an item is activated.
+    /// Gets or sets the items source.
     /// </summary>
+    /// <value>The items source.</value>
     public DataGridCollection ItemsSource
     {
       get
@@ -99,17 +100,29 @@ namespace ProjectInfinity.Controls
       }
     }
 
+    /// <summary>
+    /// called when itemssource property is changed
+    /// </summary>
+    /// <param name="dependencyObject">The dependency object.</param>
+    /// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
     private static void ItemsSourcePropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
     {
       (dependencyObject as DataGrid).ItemsSource = (e.NewValue as DataGridCollection);
     }
 
+    /// <summary>
+    /// Called when the selected item changes
+    /// </summary>
+    /// <param name="item">The item.</param>
     public void OnItemSelected(DataGridCell item)
     {
       ItemsSource.CurrentItem = item;
       RaiseEvent(new SelectedItemChangedEventArgs(SelectedItemChanged, item));
     }
 
+    /// <summary>
+    /// Updates the grid so it shows the collection.
+    /// </summary>
     public void UpdateGrid()
     {
       this.Children.Clear();
@@ -143,6 +156,10 @@ namespace ProjectInfinity.Controls
       }
     }
 
+    /// <summary>
+    /// Gets or sets the selected item.
+    /// </summary>
+    /// <value>The selected item.</value>
     public DataGridCell SelectedItem
     {
       get
@@ -158,6 +175,10 @@ namespace ProjectInfinity.Controls
       }
     }
 
+    /// <summary>
+    /// Invoked when an unhandled <see cref="E:System.Windows.Input.Mouse.PreviewMouseDown"></see> attached routed event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+    /// </summary>
+    /// <param name="e">The <see cref="T:System.Windows.Input.MouseButtonEventArgs"></see> that contains the event data. The event data reports that one or more mouse buttons were pressed.</param>
     protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
     {
       //execute the command if there is one
@@ -178,6 +199,10 @@ namespace ProjectInfinity.Controls
       return;
     }
 
+    /// <summary>
+    /// Invoked when an unhandled <see cref="E:System.Windows.Input.Keyboard.PreviewKeyDown"></see> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+    /// </summary>
+    /// <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs"></see> that contains the event data.</param>
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
       if (e.Key == Key.Enter)
@@ -236,6 +261,10 @@ namespace ProjectInfinity.Controls
       }
       base.OnPreviewKeyDown(e);
     }
+    /// <summary>
+    /// Gets the selected row.
+    /// </summary>
+    /// <value>The selected row.</value>
     public int SelectedRow
     {
       get
@@ -260,6 +289,10 @@ namespace ProjectInfinity.Controls
       }
     }
 
+    /// <summary>
+    /// Gets the selected column.
+    /// </summary>
+    /// <value>The selected column.</value>
     public int SelectedColumn
     {
       get
@@ -284,6 +317,10 @@ namespace ProjectInfinity.Controls
       }
     }
 
+    /// <summary>
+    /// Gets or sets the scroll direction.
+    /// </summary>
+    /// <value>The scroll direction.</value>
     public string ScrollDirection
     {
       get

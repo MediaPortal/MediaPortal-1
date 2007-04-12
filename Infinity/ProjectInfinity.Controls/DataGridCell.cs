@@ -13,19 +13,35 @@ namespace ProjectInfinity.Controls
     DataGrid _grid;
     FrameworkElement _content;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataGridCell"/> class.
+    /// </summary>
     public DataGridCell()
     {
     }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataGridCell"/> class.
+    /// </summary>
+    /// <param name="column">The column.</param>
     public DataGridCell(int column)
     {
       _column = column;
     }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataGridCell"/> class.
+    /// </summary>
+    /// <param name="column">The column.</param>
+    /// <param name="columnSpan">The column span.</param>
     public DataGridCell(int column, int columnSpan)
     {
       _column = column;
       _columnSpan = columnSpan;
     }
 
+    /// <summary>
+    /// Gets or sets the data grid.
+    /// </summary>
+    /// <value>The data grid.</value>
     public DataGrid DataGrid
     {
       get
@@ -38,6 +54,10 @@ namespace ProjectInfinity.Controls
       }
     }
 
+    /// <summary>
+    /// Gets or sets the content.
+    /// </summary>
+    /// <value>The content.</value>
     public FrameworkElement Content
     {
       get
@@ -51,11 +71,20 @@ namespace ProjectInfinity.Controls
       }
     }
 
+    /// <summary>
+    /// Handles the GotKeyboardFocus event of the _content control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.Windows.Input.KeyboardFocusChangedEventArgs"/> instance containing the event data.</param>
     void _content_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {
       _grid.OnItemSelected(this);
     }
 
+    /// <summary>
+    /// Gets or sets the column span.
+    /// </summary>
+    /// <value>The column span.</value>
     public int ColumnSpan
     {
       get
@@ -68,6 +97,10 @@ namespace ProjectInfinity.Controls
       }
     }
 
+    /// <summary>
+    /// Gets or sets the column.
+    /// </summary>
+    /// <value>The column.</value>
     public int Column
     {
       get

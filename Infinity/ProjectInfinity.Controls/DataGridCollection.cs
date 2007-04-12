@@ -26,6 +26,10 @@ namespace ProjectInfinity.Controls
     public event PropertyChangedEventHandler PropertyChanged;
     public event NotifyCollectionChangedEventHandler CollectionChanged;
 
+    /// <summary>
+    /// Gets or sets the data grid.
+    /// </summary>
+    /// <value>The data grid.</value>
     public DataGrid DataGrid
     {
       get
@@ -37,6 +41,10 @@ namespace ProjectInfinity.Controls
         _grid = value;
       }
     }
+    /// <summary>
+    /// Called when collection changed
+    /// Updates the grid so it shows the new collection
+    /// </summary>
     public void OnCollectionChanged()
     {
       if (CollectionChanged != null)
@@ -48,6 +56,10 @@ namespace ProjectInfinity.Controls
         _grid.UpdateGrid();
       }
     }
+    /// <summary>
+    /// Gets or sets the current item.
+    /// </summary>
+    /// <value>The current item.</value>
     public DataGridCell CurrentItem
     {
       get
