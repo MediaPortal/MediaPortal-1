@@ -41,7 +41,7 @@ namespace MyTv
 
     #region properties
     /// <summary>
-    /// Gets the title.
+    /// Gets the title of the program
     /// </summary>
     /// <value>The title.</value>
     public string Title
@@ -52,7 +52,7 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the genre.
+    /// Gets the genre of the program
     /// </summary>
     /// <value>The genre.</value>
     public string Genre
@@ -63,7 +63,7 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the description.
+    /// Gets the programs' description.
     /// </summary>
     /// <value>The description.</value>
     public string Description
@@ -74,7 +74,7 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the channel.
+    /// Gets the channel name
     /// </summary>
     /// <value>The channel.</value>
     public string Channel
@@ -96,7 +96,7 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the start time.
+    /// Gets the programs start time.
     /// </summary>
     /// <value>The start time.</value>
     public DateTime StartTime
@@ -107,7 +107,7 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the end time.
+    /// Gets the programs  end time.
     /// </summary>
     /// <value>The end time.</value>
     public DateTime EndTime
@@ -118,7 +118,7 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the program.
+    /// Gets the program itself
     /// </summary>
     /// <value>The program.</value>
     public Program Program
@@ -130,7 +130,7 @@ namespace MyTv
     }
 
     /// <summary>
-    /// Gets the start-end label.
+    /// Gets the start-end in hh:mm-hh:mm format
     /// </summary>
     /// <value>The start-end label.</value>
     public string StartEndLabel
@@ -141,7 +141,7 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the duration.
+    /// Gets the duration in hh:mm format
     /// </summary>
     /// <value>The duration.</value>
     public string Duration
@@ -155,6 +155,10 @@ namespace MyTv
           return String.Format("{0}:{1}", ts.Hours, ts.Minutes);
       }
     }
+    /// <summary>
+    /// Gets the date the program is started
+    /// </summary>
+    /// <value>The date.</value>
     public string Date
     {
       get
@@ -162,6 +166,12 @@ namespace MyTv
         return StartTime.ToString("dd-MM HH:mm");
       }
     }
+    /// <summary>
+    /// Gets a value indicating whether this program is being recorded.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this program is being recorded; otherwise, <c>false</c>.
+    /// </value>
     public bool IsRecorded
     {
       get
@@ -179,6 +189,10 @@ namespace MyTv
         return false;
       }
     }
+    /// <summary>
+    /// Gets the recording logo.
+    /// </summary>
+    /// <value>The recording logo.</value>
     public string RecordingLogo
     {
       get
@@ -191,6 +205,13 @@ namespace MyTv
       }
     }
     #endregion
+    /// <summary>
+    /// Determines whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <param name="obj">The <see cref="T:System.Object"></see> to compare with the current <see cref="T:System.Object"></see>.</param>
+    /// <returns>
+    /// true if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>; otherwise, false.
+    /// </returns>
     public override bool Equals(object obj)
     {
       ProgramModel model = obj as ProgramModel;
@@ -205,11 +226,25 @@ namespace MyTv
       if (model == null) return false;
       return (model.Program.IdProgram == Program.IdProgram);
     }
+    /// <summary>
+    /// Serves as a hash function for a particular type.
+    /// </summary>
+    /// <returns>
+    /// A hash code for the current <see cref="T:System.Object"></see>.
+    /// </returns>
     public override int GetHashCode()
     {
       return Program.IdProgram;
     }
 
+    /// <summary>
+    /// Determines whether this program is recorded and ifso returns the schedule
+    /// </summary>
+    /// <param name="recordingSchedule">The schedule recording the program.</param>
+    /// <param name="filterCanceledRecordings">if set to <c>true</c> [filter canceled recordings].</param>
+    /// <returns>
+    /// 	<c>true</c> if [is recording program] [the specified recording schedule]; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsRecordingProgram( out Schedule recordingSchedule, bool filterCanceledRecordings)
     {
       recordingSchedule = null;

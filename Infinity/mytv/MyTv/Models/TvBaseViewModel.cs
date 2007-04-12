@@ -126,7 +126,7 @@ namespace MyTv
       }
     }
 
-    #region properties for current tuned channel
+    #region properties of the current tuned channel
     /// <summary>
     /// Returns percentage how far current program is done
     /// </summary>
