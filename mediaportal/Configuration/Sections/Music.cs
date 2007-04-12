@@ -1628,6 +1628,7 @@ namespace MediaPortal.Configuration.Sections
         else
           VizPresetsCmbBox.Enabled = false;
 
+        IVizMgr.InitWinampVis();
         // Force a Resize event to ensure the viz engine is notified of window size
         IVizMgr.ResizeVisualizationWindow(VizWindow.Size);
         VizWindow.Run = true;

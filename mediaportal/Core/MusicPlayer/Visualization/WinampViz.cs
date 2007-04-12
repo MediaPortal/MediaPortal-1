@@ -55,6 +55,7 @@ namespace MediaPortal.Visualization
     #region Variables
     private int visHandle = 0;
     private bool RenderStarted = false;
+    private bool firstRun = true;
 
     private IntPtr hwndWinAmp;    // The Winamp fake window, to which we send start and stop commands
     private IntPtr genHwnd;       // The internal Gen Window of the Visualisation
@@ -94,8 +95,9 @@ namespace MediaPortal.Visualization
           return false;
         }
 
-        bool result = SetOutputContext(VisualizationWindow.OutputContextType);
-        _Initialized = result && visHandle != 0;
+        // For Winamp Visualisations, we need to do the initialisation at a later stage, otherwise we get a hang.
+        _Initialized = true;
+        firstRun = true;
 
         RenderStarted = false;
       }
@@ -164,7 +166,7 @@ namespace MediaPortal.Visualization
 
         // Set Song information, so that the plugin can display it
         if (trackTag != null && Bass != null)
-          BassVis.BASS_WINAMPVIS_SetChanInfo(visHandle, String.Format("1. {0}",_songTitle), Bass.CurrentFile, (int)Bass.CurrentPosition, (int)Bass.Duration, 1, 1);
+          BassVis.BASS_WINAMPVIS_SetChanInfo(visHandle, String.Format("1. {0}", _songTitle), Bass.CurrentFile, (int)Bass.CurrentPosition, (int)Bass.Duration, 1, 1);
         else
           BassVis.BASS_WINAMPVIS_SetChanInfo(visHandle, _songTitle, "  ", 0, 0, 1, 1);
 
@@ -228,6 +230,11 @@ namespace MediaPortal.Visualization
       return true;
     }
 
+    public override bool IsWinampVis()
+    {
+      return true;
+    }
+
     public override bool WindowChanged(VisualizationWindow vizWindow)
     {
       base.WindowChanged(vizWindow);
@@ -256,7 +263,7 @@ namespace MediaPortal.Visualization
       if (VisualizationWindow == null)
         return false;
 
-      if (_Initialized)
+      if (_Initialized && !firstRun)
         return true;
 
       // If width or height are 0 the call to CreateVis will fail.  
@@ -291,6 +298,7 @@ namespace MediaPortal.Visualization
         BassVis.BASS_WINAMPVIS_Play((int)hwndWinAmp);
       }
 
+      firstRun = false;
       _Initialized = visHandle != 0;
       return visHandle != 0;
     }

@@ -35,6 +35,7 @@ namespace MediaPortal.Visualization
     bool Initialized { get;}
     bool PreRenderRequired { get;}
     bool IsEngineInstalled();
+    bool IsWinampVis();
     bool Initialize();
     bool InitializePreview();   // Used for visualization previews
     bool Config();

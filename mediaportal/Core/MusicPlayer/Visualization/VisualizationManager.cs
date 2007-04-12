@@ -514,6 +514,12 @@ namespace MediaPortal.Visualization
     {
       Viz.Config();
     }
+
+    public void InitWinampVis()
+    {
+      if (Viz.IsWinampVis())
+        Viz.SetOutputContext(VizRenderWindow.OutputContextType);
+    }
     #endregion
   }
 }

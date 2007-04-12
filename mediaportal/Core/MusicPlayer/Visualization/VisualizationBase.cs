@@ -131,6 +131,11 @@ namespace MediaPortal.Visualization
       return false;
     }
 
+    virtual public bool IsWinampVis()
+    {
+      return false;
+    }
+
     virtual public bool Initialize()
     {
       return false;
