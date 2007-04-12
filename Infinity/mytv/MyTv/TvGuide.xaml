@@ -4,20 +4,16 @@
     xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls"
     Title="TvGuide" Background="{StaticResource backGroundBrush}" Loaded="OnLoaded" 
     >
-  <Grid>
+  <Grid x:Name="gridMain">
 
-    <DockPanel >
+    <DockPanel>
       <StackPanel DockPanel.Dock="Top" Height="120">
         <DockPanel>
           <StackPanel DockPanel.Dock="Left">
-            <Label Name="labelHeader" Style="{StaticResource LabelHeaderStyle}" >
-              tvguide
-            </Label>
+            <Label Content="{Binding Path=HeaderLabel}" Name="labelHeader" Style="{StaticResource LabelHeaderStyle}" />
           </StackPanel>
           <StackPanel DockPanel.Dock="Right" >
-            <Label Style="{StaticResource LabelNormalStyle}" Name="labelDate" HorizontalAlignment="right" Margin="0,20,20,0" >
-              Sunday 18 March 09:54
-            </Label>
+            <Label Content="{Binding Path=DateLabel}" Style="{StaticResource LabelNormalStyle}" Name="labelDate" HorizontalAlignment="right" Margin="0,20,20,0" />
           </StackPanel>
         </DockPanel>
       </StackPanel>
@@ -41,22 +37,15 @@
             <RowDefinition/>
           </Grid.RowDefinitions>
           <controls:Button x:Name="buttonVideo" Style="{StaticResource buttonVideoWindow}" Click="OnbuttonVideoClicked"  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  Grid.RowSpan="3" Width="160" Height="120"   />
-          <TextBlock Name="labelTitle" Grid.Column="2" Grid.ColumnSpan="5" Grid.Row="0" Style="{StaticResource TextBlockLargeStyle}" >
-            NOS-Journaal
-          </TextBlock>
-          <TextBlock Name="labelDescription" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="5" Style="{StaticResource TextBlockNormalStyle}" >
-            Een team van forensische detectives zorgt ervoor dat geen moord onopgelost blijft onder de tropische zon van Miami. In een verlaten woning wordt het lichaam gevonden van een politicus. Hij had zich weinig geliefd gemaakt omdat hij een plan steunde voor grondonteigening.
-          </TextBlock>
-          <TextBlock Name="labelStartEnd" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="5" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Left" >
-            14.00-15.00
-          </TextBlock>
-          <TextBlock Name="labelGenre" Grid.Column="6" Grid.Row="2" Grid.ColumnSpan="4" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Right" Margin="0,0,20,0" >
-            Niews/Actualteiten
-          </TextBlock>
+          <TextBlock Name="labelTitle" Text="{Binding Path=EpgData.CurrentItem.Title, Mode=OneWay}"  Grid.Column="2" Grid.ColumnSpan="5" Grid.Row="0" Style="{StaticResource TextBlockLargeStyle}" />
+          <TextBlock Name="labelDescription" Text="{Binding Path=EpgData.CurrentItem.Description, Mode=OneWay}" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="5" Style="{StaticResource TextBlockNormalStyle}" />
+          <TextBlock Name="labelStartEnd" Text="{Binding Path=EpgData.CurrentItem.StartEndLabel, Mode=OneWay}" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="5" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Left" />
+          <TextBlock Name="labelGenre" Text="{Binding Path=EpgData.CurrentItem.Genre, Mode=OneWay}" Grid.Column="6" Grid.Row="2" Grid.ColumnSpan="4" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Right" Margin="0,0,20,0" />
+          
         </Grid>
       </StackPanel>
       <StackPanel Name="stackGuide"  KeyboardNavigation.DirectionalNavigation="None">
-        <Grid Name="gridGuide" KeyboardNavigation.DirectionalNavigation="None">
+        <controls:DataGrid Name="gridGuide" Command="{Binding Path=ProgramClicked}" CommandParameter="{Binding Path=EpgData.CurrentItem}"  ItemsSource="{Binding Path=EpgData}" KeyboardNavigation.DirectionalNavigation="None">
           <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
@@ -90,7 +79,7 @@
 
           </Grid.ColumnDefinitions>
 
-        </Grid>
+        </controls:DataGrid>
       </StackPanel>
     </DockPanel>
   </Grid>

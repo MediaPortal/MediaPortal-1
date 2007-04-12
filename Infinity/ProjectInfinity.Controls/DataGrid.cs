@@ -89,10 +89,12 @@ namespace ProjectInfinity.Controls
     public void UpdateGrid()
     {
       this.Children.Clear();
+      this.RowDefinitions.Clear();
       if (ItemsSource == null) return;
       int rowNr = 0;
       foreach (DataGridRow row in ItemsSource)
       {
+        this.RowDefinitions.Add(new RowDefinition());
         row.DataGrid = this;
         int columnNr = 0;
         foreach (DataGridCell cell in row.Cells)
@@ -132,23 +134,6 @@ namespace ProjectInfinity.Controls
       }
     }
 
-    /// <summary>
-    /// Gets or sets the <see cref="ICommand"/> to execute whenever an item is activated.
-    /// </summary>
-    public ICommand Command
-    {
-      get { return GetValue(CommandProperty) as ICommand; }
-      set { SetValue(CommandProperty, value); }
-    }
-
-    /// <summary>
-    /// Gets or sets the parameter to be passed to the executed <see cref="Command"/>.
-    /// </summary>
-    public object CommandParameter
-    {
-      get { return GetValue(CommandParameterProperty); }
-      set { SetValue(CommandParameterProperty, value); }
-    }
 
     /// <summary>
     /// Gets or sets the element on which to raise the specified <see cref="Command"/>.
@@ -201,6 +186,26 @@ namespace ProjectInfinity.Controls
       e.Handled = true;
       return;
     }
+
+
+    /// <summary>
+    /// Gets or sets the <see cref="ICommand"/> to execute whenever an item is activated.
+    /// </summary>
+    public ICommand Command
+    {
+      get { return GetValue(CommandProperty) as ICommand; }
+      set { SetValue(CommandProperty, value); }
+    }
+
+    /// <summary>
+    /// Gets or sets the parameter to be passed to the executed <see cref="Command"/>.
+    /// </summary>
+    public object CommandParameter
+    {
+      get { return GetValue(CommandParameterProperty); }
+      set { SetValue(CommandParameterProperty, value); }
+    }
+
     private void HookUpCommand(ICommand oldCommand, ICommand newCommand)
     {
       if (oldCommand != null)
