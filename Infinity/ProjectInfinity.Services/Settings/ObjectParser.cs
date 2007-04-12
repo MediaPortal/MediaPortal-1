@@ -1,0 +1,221 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Reflection;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
+using System.Collections;
+using System.Xml;
+using ProjectInfinity.Settings.Xml;
+
+namespace ProjectInfinity.Settings
+{
+  /// <summary>
+  /// Static Class used to store or retrieve settings classes
+  /// </summary>
+  class ObjectParser
+  {
+    static ObjectParser() { }
+
+    /// <summary>
+    /// Serialize public properties of a Settings object to a given xml file
+    /// </summary>
+    /// <param name="obj">Setting Object to serialize</param>
+    /// <param name="fileName">Xml file name</param>
+    public static void Serialize(object obj, string fileName)
+    {
+      Dictionary<string, object> globalSettingsList = new Dictionary<string, object>();
+      Dictionary<string, object> userSettingsList = new Dictionary<string, object>();
+      XmlSettingsProvider xmlWriter = new XmlSettingsProvider(fileName);
+      foreach (PropertyInfo property in obj.GetType().GetProperties())
+      {
+        Type thisType = property.PropertyType;
+
+        #region CLR Typed property
+        if (isCLRType(thisType))
+        {
+          object[] attributes = property.GetCustomAttributes(typeof(SettingAttribute), false);
+          SettingScope scope = SettingScope.Global;
+          if (attributes.Length != 0)
+          {
+            SettingAttribute attribute = (SettingAttribute)attributes[0];
+            scope = attribute.SettingScope;
+            string defaultval = attribute.DefaultValue;
+          }
+          else
+          {
+            scope = SettingScope.Global;
+            string defaultval = "";
+          }
+
+          if (scope == SettingScope.User)
+          {
+            userSettingsList.Add(property.Name, obj.GetType().GetProperty(property.Name).GetValue(obj, null));
+          }
+          else
+          {
+            globalSettingsList.Add(property.Name, obj.GetType().GetProperty(property.Name).GetValue(obj, null));
+          }
+        }
+        #endregion
+
+        #region not CLR Typed property
+        else
+        {
+          XmlSerializer xmlSerial = new XmlSerializer(thisType);
+          StringBuilder sb = new StringBuilder();
+          StringWriter strWriter = new StringWriter(sb);
+          XmlTextWriter writer = new XmlNoNamespaceWriter(strWriter);
+          writer.Formatting = System.Xml.Formatting.Indented;
+          xmlSerial.Serialize(writer, obj.GetType().GetProperty(property.Name).GetValue(obj, null));
+          strWriter.Close();
+          strWriter.Dispose();
+          // remove unneeded encoding tag
+          sb.Remove(0, 41);
+          object[] attributes = property.GetCustomAttributes(typeof(SettingAttribute), false);
+          SettingScope scope = SettingScope.Global;
+          if (attributes.Length != 0)
+          {
+            SettingAttribute attribute = (SettingAttribute)attributes[0];
+            scope = attribute.SettingScope;
+            string defaultval = attribute.DefaultValue;
+          }
+          else
+          {
+            scope = SettingScope.Global;
+            string defaultval = "";
+          }
+
+          if (scope == SettingScope.User)
+          {
+            userSettingsList.Add(property.Name, sb.ToString());
+          }
+          else
+          {
+            globalSettingsList.Add(property.Name, sb.ToString());
+          }
+        }
+        #endregion
+
+        #region write Settings
+        // write settings to xml
+        foreach (KeyValuePair<string, object> pair in globalSettingsList)
+        {
+          xmlWriter.SetValue(obj.ToString(), pair.Key, pair.Value.ToString(), SettingScope.Global);
+        }
+        foreach (KeyValuePair<string, object> pair in userSettingsList)
+        {
+          xmlWriter.SetValue(obj.ToString(), pair.Key, pair.Value.ToString(), SettingScope.User);
+        }
+        xmlWriter.Save();
+        #endregion
+
+      }
+    }
+
+    /// <summary>
+    /// De-serialize public properties of a Settings object from a given xml file
+    /// </summary>
+    /// <param name="obj">Setting Object to retrieve</param>
+    /// <param name="fileName">Xml file name</param>
+    public static void Deserialize(object obj, string fileName)
+    {
+      Dictionary<string, bool> globalSettingsList = new Dictionary<string, bool>();
+      Dictionary<string, bool> userSettingsList = new Dictionary<string, bool>();
+      XmlSettingsProvider xmlreader = new XmlSettingsProvider(fileName);
+      foreach (PropertyInfo property in obj.GetType().GetProperties())
+      {
+        Type thisType = property.PropertyType;
+
+        #region get scope
+        SettingScope scope = SettingScope.Global;
+        object[] attributes = property.GetCustomAttributes(typeof(SettingAttribute), false);
+        string defaultval = "";
+        if (attributes.Length != 0)
+        {
+          SettingAttribute attribute = (SettingAttribute)attributes[0];
+          scope = attribute.SettingScope;
+          defaultval = attribute.DefaultValue;
+        }
+        else
+        {
+          scope = SettingScope.Global;
+          defaultval = "";
+        }
+        #endregion
+
+        if (isCLRType(thisType))
+        #region CLR Typed property
+        {
+          try
+          {
+            string value = xmlreader.GetValue(obj.ToString(), property.Name, scope);
+            if (value == null || value == string.Empty) value = defaultval;
+            if (thisType == typeof(string)) property.SetValue(obj, value, null);
+            if (thisType == typeof(bool)) property.SetValue(obj, bool.Parse(value), null);
+            if (thisType == typeof(Int16)) property.SetValue(obj, Int16.Parse(value), null);
+            if (thisType == typeof(Int32)) property.SetValue(obj, Int32.Parse(value), null);
+            if (thisType == typeof(Int64)) property.SetValue(obj, Int64.Parse(value), null);
+            if (thisType == typeof(UInt16)) property.SetValue(obj, UInt16.Parse(value), null);
+            if (thisType == typeof(UInt32)) property.SetValue(obj, UInt32.Parse(value), null);
+            if (thisType == typeof(UInt64)) property.SetValue(obj, UInt64.Parse(value), null);
+            if (thisType == typeof(float)) property.SetValue(obj, float.Parse(value), null);
+            if (thisType == typeof(double)) property.SetValue(obj, double.Parse(value), null);
+            if (thisType == typeof(Int16)) property.SetValue(obj, Int16.Parse(value), null);
+            if (thisType == typeof(Int32)) property.SetValue(obj, Int32.Parse(value), null);
+            if (thisType == typeof(DateTime)) property.SetValue(obj, DateTime.Parse(value), null);
+          }
+          catch (Exception ex)
+          {
+            int foo = 0;
+          }
+        }
+        #endregion
+
+        else
+        #region not CLR Typed property
+        {
+          XmlSerializer xmlSerial = new XmlSerializer(thisType);
+       
+          string value = xmlreader.GetValue(obj.ToString(), property.Name, scope);
+          TextReader reader = new StringReader(value);
+          try
+          {
+            property.SetValue(obj, xmlSerial.Deserialize(reader), null);
+          }
+          catch (Exception ex)
+          {
+          }
+
+        }
+        #endregion
+
+      }
+    }
+
+    /// <summary>
+    /// Detects if the current property type is or not a CLR type
+    /// </summary>
+    /// <param name="aType">property type</param>
+    /// <returns>true: CLR Type , false: guess what</returns>
+    public static bool isCLRType(Type aType)
+    {
+      if ((aType == typeof(int))
+           || (aType == typeof(string))
+           || (aType == typeof(bool))
+           || (aType == typeof(float))
+           || (aType == typeof(double))
+           || (aType == typeof(UInt32))
+           || (aType == typeof(UInt64))
+           || (aType == typeof(UInt32))
+           || (aType == typeof(UInt16))
+           || (aType == typeof(System.DateTime)))
+      {
+        return true;
+      }
+      return false;
+    }
+
+  }
+}
