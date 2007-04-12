@@ -73,7 +73,7 @@
       <StackPanel>
         <controls:Button Name="buttonSort" Content="{Binding Path=SortLabel}" Command="{Binding Path=Sort}" Style="{DynamicResource MpButton}" Height="32" Width="180"   HorizontalAlignment="Left" Margin="30,0,0,0"/>
         <controls:Button Name="buttonType" Content="{Binding Path=TypeLabel}" Command="{Binding Path=ChangeSearchType}" Style="{DynamicResource MpButton}" Height="32" Width="180"   HorizontalAlignment="Left" Margin="30,0,0,0"/>
-        <controls:ListBox x:Name="gridList"  Command="{Binding Path=ContextMenu}" CommandParameter="{Binding Path=Programs.CurrentItem}"  ItemsSource="{Binding Programs}"  ItemContainerStyle="{StaticResource MpListViewItem}"  Style="{StaticResource MpListView}" ItemTemplate="{StaticResource searchItemListTemplate}" Width="472" Height="251.446" Canvas.Left="28" Canvas.Top="63.554" />
+        <controls:ListBox x:Name="gridList"  Command="{Binding Path=ContextMenu}" CommandParameter="{Binding Path=Programs.CurrentItem}"  ItemsSource="{Binding Programs}"  ItemContainerStyle="{StaticResource MpListViewItem}"  Style="{StaticResource MpListView}" ItemTemplate="{StaticResource searchItemListTemplate}"   Margin="50,0,50,0"  Canvas.Left="28" Canvas.Top="63.554" />
       </StackPanel>
     </DockPanel >
 </Grid>
