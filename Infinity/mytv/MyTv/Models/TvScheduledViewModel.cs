@@ -83,6 +83,10 @@ namespace MyTv
       //store page & window
       _scheduleView = new ScheduleCollectionView(_dataModel);
       _episodesView = new EpisodeCollectionView(_dataModel);
+      if (!ServiceScope.IsRegistered<TvScheduledViewModel>())
+      {
+        ServiceScope.Add<TvScheduledViewModel>(this);
+      }
     }
     #endregion
 
@@ -954,10 +958,17 @@ namespace MyTv
             break;
 
           case 1048:////settings
-            TvScheduleInfo infopage = new TvScheduleInfo(rec);
-            ServiceScope.Get<INavigationService>().Navigate(infopage);
-            //TVProgramInfo.CurrentRecording = item.MusicTag as Schedule;
-            //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
+            TvBusinessLayer layer = new TvBusinessLayer();
+            IList programs = layer.GetPrograms(DateTime.Now, DateTime.Now.AddDays(10));
+            foreach (Program prog in programs)
+            {
+              if (rec.IsRecordingProgram(prog, false))
+              {
+                _viewModel.CurrentProgram = new ProgramModel(prog);
+                ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvProgramInfo.xaml", UriKind.Relative));
+                return;
+              }
+            }
             return;
           case 882:////Quality settings
             //GUITVPriorities.OnSetQuality(rec);

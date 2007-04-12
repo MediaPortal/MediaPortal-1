@@ -28,7 +28,7 @@
         <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="10" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Title}"/>
         <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="6" Style="{StaticResource LabelSmallStyleWhite}" Content="{Binding Date}"/>
         <Label Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Channel}"/>
-        <Image Grid.Row="1" Grid.Column="6" Grid.ColumnSpan="1" Source="{Binding RecordingLogo}"  HorizontalAlignment="Right" />
+        <Image Grid.Row="0" Grid.Column="6" Grid.ColumnSpan="1" Grid.RowSpan="2" Height="32" Width="32" Source="{Binding RecordingLogo}"  HorizontalAlignment="Right" />
       </Grid>
     </DataTemplate>
   </Grid.Resources>

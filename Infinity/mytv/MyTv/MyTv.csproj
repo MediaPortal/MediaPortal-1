@@ -109,7 +109,6 @@
       </SubType>
     </Page>
     <Page Include="TvScheduled.xaml" />
-    <Page Include="TvScheduleInfo.xaml" />
     <Page Include="TvSearch.xaml" />
     <Page Include="TvSetup.xaml" />
     <Compile Include="TvHome.xaml.cs">
@@ -180,10 +179,6 @@
       <DependentUpon>TvScheduled.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\TvScheduledViewModel.cs" />
-    <Compile Include="TvScheduleInfo.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>TvScheduleInfo.xaml</DependentUpon>
-    </Compile>
     <Compile Include="TvSearch.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvSearch.xaml</DependentUpon>
