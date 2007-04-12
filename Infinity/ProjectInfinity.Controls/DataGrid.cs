@@ -71,6 +71,7 @@ namespace ProjectInfinity.Controls
       set 
       { 
         SetValue(ItemsSourceProperty, value);
+        ItemsSource.DataGrid = this;
         UpdateGrid();
       }
     }

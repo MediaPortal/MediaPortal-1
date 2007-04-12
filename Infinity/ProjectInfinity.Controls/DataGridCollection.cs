@@ -19,13 +19,36 @@ using System.Windows.Shapes;
 namespace ProjectInfinity.Controls
 {
 
-  public class DataGridCollection : List<DataGridRow>, INotifyPropertyChanged
+  public class DataGridCollection : List<DataGridRow>, INotifyPropertyChanged, INotifyCollectionChanged
   {
+    DataGrid _grid;
     DataGridCell _currentItem;
-    public  event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged;
+    public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-
-    public DataGridCell  CurrentItem
+    public DataGrid DataGrid
+    {
+      get
+      {
+        return _grid;
+      }
+      set
+      {
+        _grid = value;
+      }
+    }
+    public void OnCollectionChanged()
+    {
+      if (CollectionChanged != null)
+      {
+        CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+      }
+      if (_grid != null)
+      {
+        _grid.UpdateGrid();
+      }
+    }
+    public DataGridCell CurrentItem
     {
       get
       {
