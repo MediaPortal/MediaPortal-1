@@ -21,6 +21,7 @@ namespace MyTv
 {
   public class TvGuideViewModel : TvBaseViewModel
   {
+    #region private classes
     public class EpgGridCell : DataGridCell
     {
       ProgramModel _model;
@@ -164,6 +165,9 @@ namespace MyTv
         }
       }
     }
+    #endregion
+
+    #region variables
     DataGridCollection _epgRows = new DataGridCollection();
     ICommand _programClicked;
     int _maxChannels;
@@ -175,13 +179,17 @@ namespace MyTv
     bool _singleMode = false;
     int _maxSingleRows;
     int _singleRowOffset = 0;
+    #endregion
 
+    #region ctor
     public TvGuideViewModel(Page page)
       : base(page)
     {
       Reload();
     }
+    #endregion
 
+    #region properties
     public DataGridCollection EpgData
     {
       get
@@ -228,7 +236,9 @@ namespace MyTv
         return _programClicked;
       }
     }
+    #endregion
 
+    #region tvguide datagrid renderer
     public void Reload()
     {
       _maxChannels = (int)((Window.ActualHeight - 300) / 34);
@@ -586,8 +596,9 @@ namespace MyTv
         cell += span;
       }
     }
+    #endregion
 
-
+    #region ProgramClickedCommand class
     public class ProgramClickedCommand : ICommand
     {
       #region ICommand Members
@@ -639,5 +650,6 @@ namespace MyTv
 
       #endregion
     }
+    #endregion
   }
 }
