@@ -91,12 +91,19 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-      if (_fontName == null) _fontName = String.Empty;
+
+      if (_fontName == null)
+        _fontName = String.Empty;
       if (_fontName != "" && _fontName != "-")
         _font = GUIFontManager.GetFont(_fontName);
+
       GUILocalizeStrings.LocalizeLabel(ref _labelText);
-      if (_labelText == null) _labelText = String.Empty;
-      if (_labelText.IndexOf("#") >= 0) _containsProperty = true;
+
+      if (_labelText == null)
+        _labelText = String.Empty;
+      if (_labelText.IndexOf("#") >= 0)
+        _containsProperty = true;
+
       _cachedTextLabel = _labelText;
       _propertyHasChanged = true;
     }
@@ -417,21 +424,33 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string Label
     {
-      get { return _labelText; }
+      get
+      {
+        //if (_labelText.Length == 0 && _cachedTextLabel.Length > 0)
+        //  _labelText = _cachedTextLabel;
+
+        return _labelText;
+      }
       set
       {
-        if (value == null) return;
-        if (value.Equals(_labelText)) return;
+        if (value == null)
+          return;
+        if (value.Equals(_labelText))
+          return;
+
         _labelText = value;
         _cachedTextLabel = _labelText;
-        if (_labelText.IndexOf("#") >= 0) _containsProperty = true;
-        else _containsProperty = false;
+
+        if (_labelText.IndexOf("#") >= 0)
+          _containsProperty = true;
+        else
+          _containsProperty = false;
+
         _textwidth = 0;
         _textheight = 0;
         _reCalculate = true;
       }
     }
-
 
     /// <summary>
     /// Property which returns true if the label contains a property
@@ -468,7 +487,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void FreeResources()
     {
-      Label = string.Empty;
+      //_labelText = string.Empty;
       _reCalculate = true;
       GUIPropertyManager.OnPropertyChanged -= new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
       base.FreeResources();

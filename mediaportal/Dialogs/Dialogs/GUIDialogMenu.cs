@@ -231,6 +231,9 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
+            lblHeading.Label = string.Empty;
+            lblGFXHeading.Label = string.Empty;
+
             base.OnMessage(message);
             m_bRunning = false;            
 
@@ -353,7 +356,12 @@ namespace MediaPortal.Dialogs
 
       lblHeading.Label = strLine;
       if (lblGFXHeading != null)
-        lblGFXHeading.Label = GUILocalizeStrings.Get(924);
+      {
+        if (strLine.Length < 1)
+          lblGFXHeading.Label = string.Empty;
+        else
+          lblGFXHeading.Label = GUILocalizeStrings.Get(924);
+      }
     }
 
     public void SetHeading(int iString)
