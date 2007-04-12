@@ -170,10 +170,11 @@ namespace MyTv
     #region variables
     DataGridCollection _epgRows = new DataGridCollection();
     ICommand _programClicked;
+    ICommand _scrollCommand;
     int _maxChannels;
     IList _recordingList;
     IList _groupMaps;
-    int _currentChannelOffset = 0;
+    int _multiOffset = 0;
     DateTime _currentTime = DateTime.Now;
     Channel _selectedChannel;
     bool _singleMode = false;
@@ -215,6 +216,28 @@ namespace MyTv
         _singleMode = value;
       }
     }
+    public int SingleOffset
+    {
+      get
+      {
+        return _singleRowOffset;
+      }
+      set
+      {
+        _singleRowOffset = value;
+      }
+    }
+    public int MultiOffset
+    {
+      get
+      {
+        return _multiOffset;
+      }
+      set
+      {
+        _multiOffset = value;
+      }
+    }
     public Channel SelectedChannel
     {
       get
@@ -227,6 +250,19 @@ namespace MyTv
       }
     }
 
+    public DateTime Time
+    {
+      get
+      {
+        return _currentTime;
+      }
+      set
+      {
+        _currentTime = value;
+      }
+    }
+
+
     public ICommand ProgramClicked
     {
       get
@@ -236,16 +272,48 @@ namespace MyTv
         return _programClicked;
       }
     }
+    public ICommand OnScroll
+    {
+      get
+      {
+        if (_scrollCommand == null)
+          _scrollCommand = new ScrollCommand(this);
+        return _scrollCommand;
+      }
+    }
     #endregion
 
     #region tvguide datagrid renderer
     public void Reload()
     {
+      int selectedColumn = -1;
+      int selectedRow = -1;
+      if (_epgRows.CurrentItem != null)
+      {
+        selectedColumn = _epgRows.CurrentItem.DataGrid.SelectedColumn;
+        selectedRow = _epgRows.CurrentItem.DataGrid.SelectedRow;
+      }
       _maxChannels = (int)((Window.ActualHeight - 300) / 34);
       LoadChannels();
       RenderTvGuide();
       _epgRows.OnCollectionChanged();
       ChangeProperty("EpgData");
+      while (selectedRow >= _epgRows.Count) selectedRow--;
+      if (selectedRow >= 0)
+      {
+        while (selectedColumn >= _epgRows[selectedRow].Cells.Count) selectedColumn--;
+        if (selectedColumn >= 0)
+        {
+          Keyboard.Focus(_epgRows[selectedRow].Cells[selectedColumn].Content);
+        }
+      }
+      if (selectedRow < 0 || selectedColumn < 0)
+      {
+        if (_epgRows.Count > 1)
+        {
+          Keyboard.Focus(_epgRows[1].Cells[0].Content);
+        }
+      }
     }
     /// <summary>
     /// Loads the channels of the current selected group 
@@ -260,7 +328,7 @@ namespace MyTv
     {
       _epgRows.Clear();
       List<Channel> tvChannels = new List<Channel>();
-      for (int i = _currentChannelOffset; i < _currentChannelOffset + _maxChannels; ++i)
+      for (int i = _multiOffset; i < _multiOffset + _maxChannels - 1; ++i)
       {
         int off = i;
         if (off >= _groupMaps.Count)
@@ -305,7 +373,7 @@ namespace MyTv
           program = new Program(_selectedChannel.IdChannel, now, now.AddMinutes(30), "No information", "", "", false);
           now = now.AddMinutes(30);
         }
-        
+
         DataGridRow dataRow = new DataGridRow();
 
         ProjectInfinity.Controls.Button b = new ProjectInfinity.Controls.Button();
@@ -645,6 +713,75 @@ namespace MyTv
             model.CurrentProgram = cell.ProgramModel;
             ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvProgramInfo.xaml", UriKind.Relative));
           }
+        }
+      }
+
+      #endregion
+    }
+    #endregion
+
+    #region ScrollCommand class
+    public class ScrollCommand : ICommand
+    {
+      #region ICommand Members
+      TvGuideViewModel _viewModel;
+      public event EventHandler CanExecuteChanged;
+      public ScrollCommand(TvGuideViewModel model)
+      {
+        _viewModel = model;
+      }
+
+      public bool CanExecute(object parameter)
+      {
+        return true;
+      }
+
+
+      public void Execute(object parameter)
+      {
+        string direction = parameter as string;
+        if (direction == null) return;
+        switch (direction)
+        {
+          case "Down":
+            if (_viewModel.SingleMode)
+            {
+              _viewModel.SingleOffset++;
+              _viewModel.Reload();
+            }
+            else
+            {
+              _viewModel.MultiOffset++;
+              _viewModel.Reload();
+            }
+            break;
+          case "Up":
+            if (_viewModel.SingleMode)
+            {
+              if (_viewModel.SingleOffset > 0)
+              {
+                _viewModel.SingleOffset--;
+                _viewModel.Reload();
+              }
+            }
+            else
+            {
+              if (_viewModel.MultiOffset > 0)
+              {
+                _viewModel.MultiOffset--;
+                _viewModel.Reload();
+              }
+            }
+            break;
+          case "Left":
+            _viewModel.Time = _viewModel.Time.AddMinutes(-30);
+            _viewModel.Reload();
+            break;
+
+          case "Right":
+            _viewModel.Time = _viewModel.Time.AddMinutes(30);
+            _viewModel.Reload();
+            break;
         }
       }
 

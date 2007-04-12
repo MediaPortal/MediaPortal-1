@@ -19,7 +19,7 @@
       </StackPanel>
 
       <StackPanel DockPanel.Dock="Bottom">
-        <Grid Height="150">
+        <Grid Height="150" >
           <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
@@ -35,17 +35,19 @@
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
           </Grid.RowDefinitions>
-          <controls:Button x:Name="buttonVideo" Style="{StaticResource buttonVideoWindow}" Click="OnbuttonVideoClicked"  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  Grid.RowSpan="3" Width="160" Height="120"   />
+          <controls:Button x:Name="buttonVideo" Style="{StaticResource buttonVideoWindow}" Command="{Binding Path=FullScreenTv}"  Background="{Binding VideoBrush}"  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  Grid.RowSpan="5" Width="160" Height="120"   />
           <TextBlock Name="labelTitle" Text="{Binding Path=EpgData.CurrentItem.Title, Mode=OneWay}"  Grid.Column="2" Grid.ColumnSpan="5" Grid.Row="0" Style="{StaticResource TextBlockLargeStyle}" />
-          <TextBlock Name="labelDescription" Text="{Binding Path=EpgData.CurrentItem.Description, Mode=OneWay}" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="5" Style="{StaticResource TextBlockNormalStyle}" />
-          <TextBlock Name="labelStartEnd" Text="{Binding Path=EpgData.CurrentItem.StartEndLabel, Mode=OneWay}" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="5" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Left" />
-          <TextBlock Name="labelGenre" Text="{Binding Path=EpgData.CurrentItem.Genre, Mode=OneWay}" Grid.Column="6" Grid.Row="2" Grid.ColumnSpan="4" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Right" Margin="0,0,20,0" />
-          
+          <TextBlock Name="labelStartEnd" Text="{Binding Path=EpgData.CurrentItem.StartEndLabel, Mode=OneWay}" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="5" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Left" />
+          <TextBlock Name="labelGenre" Text="{Binding Path=EpgData.CurrentItem.Genre, Mode=OneWay}" Grid.Column="6" Grid.Row="1" Grid.ColumnSpan="4" Style="{StaticResource TextBlockNormalStyle}" HorizontalAlignment="Right" Margin="0,0,20,0" />
+          <TextBlock Name="labelDescription" Text="{Binding Path=EpgData.CurrentItem.Description, Mode=OneWay}" Grid.Column="2" Grid.Row="2"  Grid.RowSpan="4" Grid.ColumnSpan="7" Style="{StaticResource TextBlockNormalStyle}" Margin="0,0,30,30"/>
+
         </Grid>
       </StackPanel>
       <StackPanel Name="stackGuide"  KeyboardNavigation.DirectionalNavigation="None">
-        <controls:DataGrid Name="gridGuide" Command="{Binding Path=ProgramClicked}" CommandParameter="{Binding Path=EpgData.CurrentItem}"  ItemsSource="{Binding Path=EpgData}" KeyboardNavigation.DirectionalNavigation="None">
+        <controls:DataGrid Name="gridGuide" Scroll="{Binding Path=OnScroll}" ScrollParameter="{Binding Path=ScrollDirection}" Command="{Binding Path=ProgramClicked}" CommandParameter="{Binding Path=EpgData.CurrentItem}"  ItemsSource="{Binding Path=EpgData}" KeyboardNavigation.DirectionalNavigation="None">
           <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>

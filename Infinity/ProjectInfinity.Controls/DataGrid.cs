@@ -16,6 +16,27 @@ namespace ProjectInfinity.Controls
 {
   public class DataGrid : System.Windows.Controls.Grid
   {
+    #region variables and properties
+    /// <summary>
+    /// Identifies the <see cref="Command"/> property.
+    /// </summary>
+    public static readonly DependencyProperty ScrollProperty = DependencyProperty.Register("Scroll",
+                                                                                            typeof(ICommand),
+                                                                                            typeof(DataGrid),
+                                                                                            new FrameworkPropertyMetadata
+                                                                                              (null,
+                                                                                               new PropertyChangedCallback
+                                                                                                 (ScrollPropertyChanged)));
+
+    /// <summary>
+    /// Identifies the <see cref="CommandParameter"/> property.
+    /// </summary>
+    public static readonly DependencyProperty ScrollParameterProperty = DependencyProperty.Register("ScrollParameter",
+                                                                                                     typeof(object),
+                                                                                                     typeof(DataGrid),
+                                                                                                     new FrameworkPropertyMetadata
+                                                                                                       (null));
+
     public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register("ItemsSource",
                                                                                             typeof(DataGridCollection),
                                                                                             typeof(DataGrid),
@@ -59,17 +80,19 @@ namespace ProjectInfinity.Controls
                                                                                                   typeof(DataGrid),
                                                                                                   new FrameworkPropertyMetadata
                                                                                                     (null));
+    #endregion
+
     /// <summary>
     /// Gets or sets the <see cref="ICommand"/> to execute whenever an item is activated.
     /// </summary>
     public DataGridCollection ItemsSource
     {
-      get 
+      get
       {
-        return GetValue(ItemsSourceProperty) as DataGridCollection; 
+        return GetValue(ItemsSourceProperty) as DataGridCollection;
       }
-      set 
-      { 
+      set
+      {
         SetValue(ItemsSourceProperty, value);
         ItemsSource.DataGrid = this;
         UpdateGrid();
@@ -118,7 +141,7 @@ namespace ProjectInfinity.Controls
         }
         rowNr++;
       }
-    } 
+    }
 
     public DataGridCell SelectedItem
     {
@@ -135,39 +158,6 @@ namespace ProjectInfinity.Controls
       }
     }
 
-
-    /// <summary>
-    /// Gets or sets the element on which to raise the specified <see cref="Command"/>.
-    /// </summary>
-    public IInputElement CommandTarget
-    {
-      get { return GetValue(CommandTargetProperty) as IInputElement; }
-      set { SetValue(CommandTargetProperty, value); }
-    }
-
-    protected override void OnPreviewKeyDown(KeyEventArgs e)
-    {
-      if (e.Key == Key.Enter)
-      {
-        //execute the command if there is one
-        if (Command != null)
-        {
-          RoutedCommand routedCommand = Command as RoutedCommand;
-
-          if (routedCommand != null)
-          {
-            routedCommand.Execute(CommandParameter, CommandTarget);
-          }
-          else
-          {
-            Command.Execute(CommandParameter);
-          }
-        }
-        e.Handled = true;
-        return;
-      }
-      base.OnPreviewKeyDown(e);
-    }
     protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
     {
       //execute the command if there is one
@@ -188,7 +178,137 @@ namespace ProjectInfinity.Controls
       return;
     }
 
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
+    {
+      if (e.Key == Key.Enter)
+      {
+        //execute the command if there is one
+        if (Command != null)
+        {
+          RoutedCommand routedCommand = Command as RoutedCommand;
+          if (routedCommand != null)
+          {
+            routedCommand.Execute(CommandParameter, CommandTarget);
+          }
+          else
+          {
+            Command.Execute(CommandParameter);
+          }
+        }
+        e.Handled = true;
+        return;
+      }
+      if (e.Key == Key.Down)
+      {
+        if (SelectedRow + 1 >= ItemsSource.Count)
+        {
+          ScrollDirection = "Down";
+          e.Handled = true;
+          return;
+        }
+      }
+      if (e.Key == Key.Up)
+      {
+        if (SelectedRow - 1 < 1)
+        {
+          ScrollDirection = "Up";
+          e.Handled = true;
+          return;
+        }
+      }
+      if (e.Key == Key.Right && SelectedRow >= 0)
+      {
+        if (SelectedColumn + 1 >= ItemsSource[SelectedRow].Cells.Count)
+        {
+          ScrollDirection = "Right";
+          e.Handled = true;
+          return;
+        }
+      }
+      if (e.Key == Key.Left)
+      {
+        if (SelectedColumn - 1 < 0)
+        {
+          ScrollDirection = "Left";
+          e.Handled = true;
+          return;
+        }
+      }
+      base.OnPreviewKeyDown(e);
+    }
+    public int SelectedRow
+    {
+      get
+      {
+        if (ItemsSource == null) return -1;
+        int rowNr = 0;
+        foreach (DataGridRow row in ItemsSource)
+        {
+          foreach (DataGridCell cell in row.Cells)
+          {
+            if (cell.Content != null)
+            {
+              if (cell.Content.IsKeyboardFocused)
+              {
+                return rowNr;
+              }
+            }
+          }
+          rowNr++;
+        }
+        return -1;
+      }
+    }
 
+    public int SelectedColumn
+    {
+      get
+      {
+        if (ItemsSource == null) return -1;
+        foreach (DataGridRow row in ItemsSource)
+        {
+          int cellNr = 0;
+          foreach (DataGridCell cell in row.Cells)
+          {
+            if (cell.Content != null)
+            {
+              if (cell.Content.IsKeyboardFocused)
+              {
+                return cellNr;
+              }
+            }
+            cellNr++;
+          }
+        }
+        return -1;
+      }
+    }
+
+    public string ScrollDirection
+    {
+      get
+      {
+        return ScrollParameter as string;
+      }
+      set
+      {
+        ScrollParameter = value;
+        if (Scroll != null)
+        {
+          RoutedCommand routedCommand = Scroll as RoutedCommand;
+          if (routedCommand != null)
+          {
+            routedCommand.Execute(ScrollParameter, null);
+          }
+          else
+          {
+            Scroll.Execute(ScrollParameter);
+          }
+        }
+      }
+    }
+
+    #region command
     /// <summary>
     /// Gets or sets the <see cref="ICommand"/> to execute whenever an item is activated.
     /// </summary>
@@ -205,6 +325,16 @@ namespace ProjectInfinity.Controls
     {
       get { return GetValue(CommandParameterProperty); }
       set { SetValue(CommandParameterProperty, value); }
+    }
+
+
+    /// <summary>
+    /// Gets or sets the element on which to raise the specified <see cref="Command"/>.
+    /// </summary>
+    public IInputElement CommandTarget
+    {
+      get { return GetValue(CommandTargetProperty) as IInputElement; }
+      set { SetValue(CommandTargetProperty, value); }
     }
 
     private void HookUpCommand(ICommand oldCommand, ICommand newCommand)
@@ -235,5 +365,51 @@ namespace ProjectInfinity.Controls
     {
       (dependencyObject as DataGrid).HookUpCommand(e.OldValue as ICommand, e.NewValue as ICommand);
     }
+    #endregion
+
+
+    #region scroll
+    /// <summary>
+    /// Gets or sets the <see cref="ICommand"/> to execute whenever an item is activated.
+    /// </summary>
+    public ICommand Scroll
+    {
+      get { return GetValue(ScrollProperty) as ICommand; }
+      set { SetValue(ScrollProperty, value); }
+    }
+
+    /// <summary>
+    /// Gets or sets the parameter to be passed to the executed <see cref="Command"/>.
+    /// </summary>
+    public object ScrollParameter
+    {
+      get { return GetValue(ScrollParameterProperty); }
+      set { SetValue(ScrollParameterProperty, value); }
+    }
+
+
+
+    private void HookUpScroll(ICommand oldScroll, ICommand newScroll)
+    {
+      if (oldScroll != null)
+      {
+        RemoveScroll(oldScroll, newScroll);
+      }
+      AddScroll(oldScroll, newScroll);
+    }
+
+    private void RemoveScroll(ICommand oldScroll, ICommand newScroll)
+    {
+    }
+
+    private void AddScroll(ICommand oldScroll, ICommand newScroll)
+    {
+    }
+
+    private static void ScrollPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+      (dependencyObject as DataGrid).HookUpScroll(e.OldValue as ICommand, e.NewValue as ICommand);
+    }
+    #endregion
   }
 }
