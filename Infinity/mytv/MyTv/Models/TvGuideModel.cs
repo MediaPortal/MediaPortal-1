@@ -234,6 +234,7 @@ namespace MyTv
       _maxChannels = (int)((Window.ActualHeight - 300) / 34);
       LoadChannels();
       RenderTvGuide();
+      _epgRows.OnCollectionChanged();
       ChangeProperty("EpgData");
     }
     /// <summary>
@@ -295,7 +296,7 @@ namespace MyTv
           now = now.AddMinutes(30);
         }
         
-        DataGridRow dataRow = new DataGridRow(i);
+        DataGridRow dataRow = new DataGridRow();
 
         ProjectInfinity.Controls.Button b = new ProjectInfinity.Controls.Button();
         b.Style = (Style)Application.Current.Resources["MpButton"];
