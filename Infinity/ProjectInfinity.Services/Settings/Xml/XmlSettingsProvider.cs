@@ -76,7 +76,7 @@ namespace ProjectInfinity.Settings
       modified = false;
     }
 
-    public void SetValue(string section, string entry, SettingScope scope)
+    public void SetValue(string section, string entry, string value, SettingScope scope)
     {
       // If the value is null, remove the entry
       if (value == null)

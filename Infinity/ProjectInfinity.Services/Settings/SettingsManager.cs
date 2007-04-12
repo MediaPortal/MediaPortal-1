@@ -9,7 +9,7 @@ namespace ProjectInfinity.Settings
   /// <summary>
   /// Main Config Service
   /// </summary>
-  public class SettingsManager 
+  public class SettingsManager : ISettingsManager
   {
     /// <summary>
     /// Retrieves an object's public properties from a given Xml file 
@@ -26,7 +26,7 @@ namespace ProjectInfinity.Settings
     /// </summary>
     /// <param name="settingsObject">Object's instance</param>
     /// <param name="filename">Xml file where we wanna store datas</param>
-    public bool Save(object settingsObject, string filename)
+    public void Save(object settingsObject, string filename)
     {
       ObjectParser.Serialize(settingsObject, filename);
     }
