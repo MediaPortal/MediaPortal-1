@@ -39,6 +39,10 @@ namespace MyTv
     }
     #endregion
     #region properties
+    /// <summary>
+    /// Gets the localized label header.
+    /// </summary>
+    /// <value>The label header.</value>
     public string LabelHeader
     {
       get
@@ -46,6 +50,10 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 128);//setup tv;
       }
     }
+    /// <summary>
+    /// Gets the  date.
+    /// </summary>
+    /// <value>The label date.</value>
     public string LabelDate
     {
       get
@@ -53,6 +61,10 @@ namespace MyTv
         return DateTime.Now.ToString("dd-MM HH:mm");
       }
     }
+    /// <summary>
+    /// Gets the localized label for save.
+    /// </summary>
+    /// <value>The label save.</value>
     public string LabelSave
     {
       get
@@ -60,6 +72,10 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 103);//Save
       }
     }
+    /// <summary>
+    /// Gets the localized label for the text.
+    /// </summary>
+    /// <value>The label text.</value>
     public string LabelText
     {
       get
@@ -67,6 +83,10 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 102);//Please enter the hostname of the tvserver
       }
     }
+    /// <summary>
+    /// Gets or sets the label error.
+    /// </summary>
+    /// <value>The label error.</value>
     public string LabelError
     {
       get
@@ -82,6 +102,10 @@ namespace MyTv
     }
     #endregion
     #region commands
+    /// <summary>
+    /// Returns ICommand to save the settings
+    /// </summary>
+    /// <value>The save.</value>
     public ICommand Save
     {
       get
@@ -93,6 +117,10 @@ namespace MyTv
         return _saveCommand;
       }
     }
+    /// <summary>
+    /// Gets or sets the host name of the tvserver.
+    /// </summary>
+    /// <value>host name of the tvserver.</value>
     public string HostName
     {
       get
@@ -106,9 +134,18 @@ namespace MyTv
     }
     #endregion
     #region command classes
+    /// <summary>
+    /// This command will save the hostname
+    /// connect to the tvserver and when succeed returns to the previous screen
+    /// If not succeeded it will present an error to the user
+    /// </summary>
     public class SaveCommand : ICommand
     {
       TvSetupModel _viewModel;
+      /// <summary>
+      /// Initializes a new instance of the <see cref="SaveCommand"/> class.
+      /// </summary>
+      /// <param name="model">The model.</param>
       public SaveCommand(TvSetupModel model)
       {
         _viewModel = model;

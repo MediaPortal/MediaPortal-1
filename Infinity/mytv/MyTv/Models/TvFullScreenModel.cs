@@ -152,7 +152,7 @@ namespace MyTv
     }
 
     /// <summary>
-    /// Gets the width of the orange part of the top progress bar .
+    /// Gets the value of the orange part of the top progress bar .
     /// </summary>
     /// <value>The top progress bar orange.</value>
     public double TopProgressBarOrange
@@ -185,7 +185,7 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the width of the red part of the top progress bar .
+    /// Gets the value of the red part of the top progress bar .
     /// </summary>
     /// <value>The top progress bar orange.</value>
     public double TopProgressBarRed
@@ -223,7 +223,7 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the width of the green part of the top progress bar .
+    /// Gets the value of the green part of the top progress bar .
     /// </summary>
     /// <value>The top progress bar green.</value>
     public double TopProgressBarGreen
@@ -263,9 +263,9 @@ namespace MyTv
     }
 
     /// <summary>
-    /// Gets the state of the label.
+    /// Gets the localized state for the top osd
     /// </summary>
-    /// <value>The state of the label.</value>
+    /// <value>The state.</value>
     public string LabelState
     {
       get
@@ -309,6 +309,10 @@ namespace MyTv
         return labelState;
       }
     }
+    /// <summary>
+    /// Gets the channel wher are going to zap to.
+    /// </summary>
+    /// <value>The  channel.</value>
     public Channel ZapChannel
     {
       get
@@ -339,6 +343,10 @@ namespace MyTv
         return ch;
       }
     }
+    /// <summary>
+    /// Gets the start time of the current program on the channel we're going to zap to
+    /// </summary>
+    /// <value>The zap channel start time.</value>
     public string ZapChannelStartTime
     {
       get
@@ -350,6 +358,10 @@ namespace MyTv
         return program.StartTime.ToString("HH:mm"); 
       }
     }
+    /// <summary>
+    /// Gets the end time of the current program on the channel we're going to zap to
+    /// </summary>
+    /// <value>The zap channel end time.</value>
     public string ZapChannelEndTime
     {
       get
@@ -361,6 +373,10 @@ namespace MyTv
         return program.EndTime.ToString("HH:mm"); 
       }
     }
+    /// <summary>
+    /// Gets the genre of the current program on the channel we're going to zap to
+    /// </summary>
+    /// <value>The zap channel genre.</value>
     public string ZapChannelGenre
     {
       get
@@ -372,6 +388,10 @@ namespace MyTv
         return program.Genre;
       }
     }
+    /// <summary>
+    /// Gets the title of the current program on the channel we're going to zap to
+    /// </summary>
+    /// <value>The zap channel title.</value>
     public string ZapChannelTitle
     {
       get
@@ -383,6 +403,10 @@ namespace MyTv
         return program.Title;
       }
     }
+    /// <summary>
+    /// Gets the name of the channel on the channel we're going to zap to
+    /// </summary>
+    /// <value>The name of the zap channel.</value>
     public string ZapChannelName
     {
       get
@@ -392,6 +416,10 @@ namespace MyTv
         return ch.Name;
       }
     }
+    /// <summary>
+    /// Gets the description of the current program on the channel we're going to zap to
+    /// </summary>
+    /// <value>The zap channel description.</value>
     public string ZapChannelDescription
     {
       get
@@ -403,6 +431,10 @@ namespace MyTv
         return program.Description;
       }
     }
+    /// <summary>
+    /// gets the value (0-100) how far the program is for the channel we're zapping too.
+    /// </summary>
+    /// <value>The width of the zap channel.</value>
     public double ZapChannelWidth
     {
       get
@@ -424,6 +456,10 @@ namespace MyTv
         return percentLivePoint * 100;
       }
     }
+    /// <summary>
+    /// Gets the logo of  the channel we're going to zap to
+    /// </summary>
+    /// <value>The zap channel logo.</value>
     public string ZapChannelLogo
     {
       get
@@ -440,6 +476,16 @@ namespace MyTv
     }
     #endregion
 
+    #region seeking
+    /// <summary>
+    /// Determines whether we can seek the specified timespan.
+    /// </summary>
+    /// <param name="ts">The timespan we want to seek.</param>
+    /// <param name="reachedStart">if set to <c>true</c> we reached the start.</param>
+    /// <param name="reachedEnd">if set to <c>true</c> we reached the end (livepoint).</param>
+    /// <returns>
+    /// 	<c>true</c> if this instance can seek the specified timespan; otherwise, <c>false</c>.
+    /// </returns>
     public bool CanSeek(TimeSpan ts, ref bool reachedStart, ref bool reachedEnd)
     {
       _seekTimeoutTimer.Stop();
@@ -464,6 +510,10 @@ namespace MyTv
       reachedStart = false;
       return true;
     }
+    /// <summary>
+    /// Handles left/right keys for seeking
+    /// </summary>
+    /// <param name="key">The key.</param>
     public void OnSeek(Key key)
     {
       if (_zapChannel != "") return;
@@ -548,6 +598,12 @@ namespace MyTv
           break;
       }
     }
+    /// <summary>
+    /// Timer callback
+    /// When occurs this method will do the actual seeking
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     public void seekTimeoutEvent(object sender, EventArgs e)
     {
       _seekTimeoutTimer.Stop();
@@ -583,6 +639,16 @@ namespace MyTv
       ChangeProperty("TopProgressBarRed");
       ChangeProperty("TopProgressBarGreen");
     }
+
+    #endregion
+
+    #region zapping
+    /// <summary>
+    /// Timer callback
+    /// When occurs, this method will do the actual zapping
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     public void zapTimeoutEvent(object sender, EventArgs e)
     {
       _zapTimeoutTimer.Stop();
@@ -614,6 +680,9 @@ namespace MyTv
       ChangeProperty("LabelState");
     }
 
+    /// <summary>
+    /// Zap to previous channel
+    /// </summary>
     public void OnChannelDown()
     {
       if (_zapChannel.Length == 0)
@@ -660,6 +729,9 @@ namespace MyTv
       ChangeProperty("ZapChannelWidth");
       ChangeProperty("ZapChannelLogo");
     }
+    /// <summary>
+    /// Zap to next channel
+    /// </summary>
     public void OnChannelUp()
     {
       if (_zapChannel.Length == 0)
@@ -712,6 +784,11 @@ namespace MyTv
       ChangeProperty("ZapChannelLogo");
       return;
     }
+    /// <summary>
+    /// Handles keypresses 0-9
+    /// to directly zap to a channel number
+    /// </summary>
+    /// <param name="key">The key.</param>
     public void OnChannelKey(Key key)
     {
       if (_seekDirection != SeekDirection.Unknown) return;
@@ -739,8 +816,7 @@ namespace MyTv
       ChangeProperty("ZapChannelWidth");
       ChangeProperty("ZapChannelLogo");
     }
-
-    #region zapping
+    
     /// <summary>
     /// Start viewing the tv channel 
     /// </summary>
@@ -768,6 +844,9 @@ namespace MyTv
       ChangeProperty("ZapChannelLogo");
     }
 
+    /// <summary>
+    /// Pause playback
+    /// </summary>
     public void Pause()
     {
       if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)

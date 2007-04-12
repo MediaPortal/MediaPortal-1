@@ -87,6 +87,7 @@ namespace MyTv
 
     /// <summary>
     /// Gets the recording logo.
+    /// Only present if a card is currently recording
     /// </summary>
     /// <value>The is recording logo.</value>
     public string IsRecordingLogo
@@ -146,7 +147,7 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the program title.
+    /// Gets the program title for the channel currently tuned
     /// </summary>
     /// <value>The program title.</value>
     public string ProgramTitle
@@ -160,7 +161,7 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the program genre.
+    /// Gets the program genre for the channel currently tuned
     /// </summary>
     /// <value>The program genre.</value>
     public string ProgramGenre
@@ -174,7 +175,7 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the program description.
+    /// Gets the program description for the channel currently tuned
     /// </summary>
     /// <value>The program description.</value>
     public string ProgramDescription
@@ -188,7 +189,7 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the program start-end.
+    /// Gets the start-end for the channel currently tuned
     /// </summary>
     /// <value>The program start-end.</value>
     public string ProgramStartEnd
@@ -202,9 +203,9 @@ namespace MyTv
       }
     }
     /// <summary>
-    /// Gets the program start-end.
+    /// Gets the channel name for the channel currently tuned
     /// </summary>
-    /// <value>The program start-end.</value>
+    /// <value>The channel name.</value>
     public string ProgramChannelName
     {
       get
@@ -218,6 +219,10 @@ namespace MyTv
     #endregion
 
     #region button label properties
+    /// <summary>
+    /// Gets the current date
+    /// </summary>
+    /// <value>The date label.</value>
     public string DateLabel
     {
       get
@@ -225,6 +230,10 @@ namespace MyTv
         return DateTime.Now.ToString("dd-MM HH:mm");
       }
     }
+    /// <summary>
+    /// Gets the localized version of the tv guide label.
+    /// </summary>
+    /// <value>The tv guide label.</value>
     public string TvGuideLabel
     {
       get
@@ -232,6 +241,10 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 0);//TvGuide
       }
     }
+    /// <summary>
+    /// Gets the the localized version of the record now label.
+    /// </summary>
+    /// <value>The record now label.</value>
     public string RecordNowLabel
     {
       get
@@ -239,6 +252,10 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 1);//Record now
       }
     }
+    /// <summary>
+    /// Gets the the localized version of the channel label.
+    /// </summary>
+    /// <value>The channel label.</value>
     public string ChannelLabel
     {
       get
@@ -246,6 +263,10 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 2);//Channel
       }
     }
+    /// <summary>
+    /// Gets the the localized version of the tv streams label.
+    /// </summary>
+    /// <value>The tv streams label.</value>
     public string TvStreamsLabel
     {
       get
@@ -253,6 +274,10 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 3);//TvStreams
       }
     }
+    /// <summary>
+    /// Gets the the localized version of the tv on off label.
+    /// </summary>
+    /// <value>The tv on off label.</value>
     public string TvOnOffLabel
     {
       get
@@ -260,6 +285,10 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 4);//TvOnOff
       }
     }
+    /// <summary>
+    /// Gets the the localized version of the scheduled label.
+    /// </summary>
+    /// <value>The scheduled label.</value>
     public string ScheduledLabel
     {
       get
@@ -267,6 +296,10 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 5);//Scheduled
       }
     }
+    /// <summary>
+    /// Gets the the localized version of the recorded label.
+    /// </summary>
+    /// <value>The recorded label.</value>
     public string RecordedLabel
     {
       get
@@ -274,6 +307,10 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 6);//Recorded
       }
     }
+    /// <summary>
+    /// Gets the the localized version of the search label.
+    /// </summary>
+    /// <value>The search label.</value>
     public virtual string SearchLabel
     {
       get
@@ -281,6 +318,10 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 7);//Search
       }
     }
+    /// <summary>
+    /// Gets the the localized version of the teletext label.
+    /// </summary>
+    /// <value>The teletext label.</value>
     public string TeletextLabel
     {
       get
@@ -288,6 +329,10 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 8);//Teletext
       }
     }
+    /// <summary>
+    /// Gets the the localized version of the header label.
+    /// </summary>
+    /// <value>The header label.</value>
     public virtual string HeaderLabel
     {
       get
@@ -295,6 +340,10 @@ namespace MyTv
         return ServiceScope.Get<ILocalisation>().ToString("mytv", 9);//television
       }
     }
+    /// <summary>
+    /// returns whether tv is turned on or off
+    /// </summary>
+    /// <value>The tv on off.</value>
     public bool? TvOnOff
     {
       get
@@ -594,7 +643,7 @@ namespace MyTv
 
     #region Play command class
     /// <summary>
-    /// Play command will start playing a recording
+    /// Play command will start playing a file
     /// </summary>
     public class PlayCommand : TvBaseCommand
     {
@@ -631,7 +680,7 @@ namespace MyTv
       /// <summary>
       /// Executes the command.
       /// </summary>
-      /// <param name="parameter">The parameter.</param>
+      /// <param name="parameter">reference to PlayParameter.</param>
       public override void Execute(object parameter)
       {
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
@@ -694,7 +743,7 @@ namespace MyTv
 
     #region TimeShift command class
     /// <summary>
-    /// Fullscreen command will navigate to fullscreen window
+    /// TimeShift command will start timeshifting and playing tv
     /// </summary>
     public class TimeShiftCommand : TvBaseCommand
     {
@@ -702,7 +751,7 @@ namespace MyTv
       private delegate void StartTimeShiftingDelegate(Channel channel);
       private delegate void EndTimeShiftingDelegate(TvResult result, VirtualCard card);
       /// <summary>
-      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// Initializes a new instance of the <see cref="TimeShiftCommand"/> class.
       /// </summary>
       /// <param name="viewModel">The view model.</param>
       public TimeShiftCommand(TvBaseViewModel viewModel)
@@ -713,7 +762,7 @@ namespace MyTv
       /// <summary>
       /// Executes the command.
       /// </summary>
-      /// <param name="parameter">The parameter.</param>
+      /// <param name="parameter">reference to a Channel.</param>
       public override void Execute(object parameter)
       {
         Channel channel = parameter as Channel;
@@ -958,7 +1007,7 @@ namespace MyTv
     public class MiniEpgCommand : TvBaseCommand
     {
       /// <summary>
-      /// Initializes a new instance of the <see cref="FullScreenCommand"/> class.
+      /// Initializes a new instance of the <see cref="MiniEpgCommand"/> class.
       /// </summary>
       /// <param name="viewModel">The view model.</param>
       public MiniEpgCommand(TvBaseViewModel viewModel)
@@ -1262,12 +1311,12 @@ namespace MyTv
     #region navigation commands
     #region Search command class
     /// <summary>
-    /// Fullscreen command will navigate to search window
+    /// SearchCommand command will navigate to search window
     /// </summary>
     public class SearchCommand : TvBaseCommand
     {
       /// <summary>
-      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// Initializes a new instance of the <see cref="SearchCommand"/> class.
       /// </summary>
       /// <param name="viewModel">The view model.</param>
       public SearchCommand(TvBaseViewModel viewModel)
@@ -1289,12 +1338,12 @@ namespace MyTv
 
     #region TvGuide command class
     /// <summary>
-    /// Fullscreen command will navigate to TvGuide window
+    /// TvGuideCommand command will navigate to TvGuide window
     /// </summary>
     public class TvGuideCommand : TvBaseCommand
     {
       /// <summary>
-      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// Initializes a new instance of the <see cref="TvGuideCommand"/> class.
       /// </summary>
       /// <param name="viewModel">The view model.</param>
       public TvGuideCommand(TvBaseViewModel viewModel)
@@ -1315,7 +1364,7 @@ namespace MyTv
 
     #region Recorded command class
     /// <summary>
-    /// Fullscreen command will navigate to recorded tv window
+    /// Recorded command will navigate to recorded tv window
     /// </summary>
     public class RecordedCommand : TvBaseCommand
     {
@@ -1372,7 +1421,7 @@ namespace MyTv
     public class FullScreenTvCommand : TvBaseCommand
     {
       /// <summary>
-      /// Initializes a new instance of the <see cref="CleanUpCommand"/> class.
+      /// Initializes a new instance of the <see cref="FullScreenTvCommand"/> class.
       /// </summary>
       /// <param name="viewModel">The view model.</param>
       public FullScreenTvCommand(TvBaseViewModel viewModel)
