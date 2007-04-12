@@ -53,6 +53,7 @@
     <Compile Include="Playlist\IPlaylistManager.cs" />
     <Compile Include="Playlist\PlaylistManager.cs" />
     <Compile Include="PluginMessages.cs" />
+    <Compile Include="Settings\ISettingsManager.cs" />
     <Compile Include="SystemMessages.cs" />
     <Compile Include="Music\IMusicPlayer.cs" />
     <Compile Include="Music\MusicStartMessage.cs" />
