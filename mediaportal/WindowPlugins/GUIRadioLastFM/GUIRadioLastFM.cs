@@ -48,6 +48,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       BTN_START_STREAM = 10,
       BTN_CHOOSE_TAG = 20,
       BTN_CHOOSE_FRIEND = 30,
+      BTN_SUBMIT_PROFILE = 35,
       BTN_DISCOVERY_MODE = 40,
       LIST_TRACK_TAGS = 55,
       IMG_ARTIST_ART = 112,
@@ -56,6 +57,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     [SkinControlAttribute((int)SkinControlIDs.BTN_START_STREAM)]    protected GUIButtonControl btnStartStream = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_CHOOSE_TAG)]      protected GUIButtonControl btnChooseTag = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_CHOOSE_FRIEND)]   protected GUIButtonControl btnChooseFriend = null;
+    [SkinControlAttribute((int)SkinControlIDs.BTN_SUBMIT_PROFILE)]  protected GUIToggleButtonControl btnSubmitProfile = null;
     [SkinControlAttribute((int)SkinControlIDs.BTN_DISCOVERY_MODE)]  protected GUIToggleButtonControl btnDiscoveryMode = null;
     //[SkinControlAttribute((int)SkinControlIDs.LIST_TRACK_TAGS)]     protected GUIListControl facadeTrackTags = null;
     [SkinControlAttribute((int)SkinControlIDs.IMG_ARTIST_ART)]      protected GUIImage imgArtistArt = null;
@@ -154,7 +156,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (!LastFMStation.IsInit)
       {
         LastFMStation.LoadConfig();
-        LastFMStation.SubmitRadioSongs = _configSubmitToProfile;
+        btnSubmitProfile.Selected = LastFMStation.SubmitRadioSongs = _configSubmitToProfile;        
       }   
       else
         GUIWaitCursor.Hide();
@@ -167,7 +169,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     //  }
     //}
     #endregion
-
 
     #region BaseWindow Members
     public override void OnAction(Action action)
@@ -197,7 +198,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         btnChooseFriend.Disabled = true;
         btnChooseFriend.Label = GUILocalizeStrings.Get(34031);
-      }
+      }     
+
       GUIPropertyManager.SetProperty("#trackduration", " ");
 
       String ThumbFileName = String.Empty;
@@ -430,10 +432,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
         GUIPropertyManager.SetProperty("#selecteditem", btnChooseFriend.Label);
       }
 
-      if (control == btnDiscoveryMode)
-      {
-        LastFMStation.DiscoveryMode = btnDiscoveryMode.Selected;
-      }
+      if (control == btnDiscoveryMode)      
+        LastFMStation.DiscoveryMode = btnDiscoveryMode.Selected;      
+
+      if (control == btnSubmitProfile)
+        LastFMStation.SubmitRadioSongs = btnSubmitProfile.Selected;
 
       base.OnClicked(controlId, control, actionType);
     }
@@ -467,6 +470,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (LastFMStation.CurrentTrackTag != null)
         dlg.AddLocalizedString(33040);  // copy IRC spam
 
+      dlg.AddLocalizedString(34015);    // Reload tags/friends
+
       dlg.DoModal(GetID);
 
       if (dlg.SelectedId == -1)
@@ -483,7 +488,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
         case 34012:     // Skip
           LastFMStation.SendControlCommand(StreamControls.skiptrack);
           break;
-
         case 33040:    // IRC spam          
           try
           {
@@ -498,11 +502,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
             Log.Error("GUIRadioLastFM: could not copy song spam to clipboard - {0}", ex.Message);
           }
           break;
-
+        case 34015:
+          btnChooseTag.Label = GUILocalizeStrings.Get(34030);
+          btnChooseFriend.Label = GUILocalizeStrings.Get(34031);
+          OnRadioSettingsSuccess();
+          //UpdateUsersTags(LastFMStation.AccountUser);
+          //UpdateUsersFriends(LastFMStation.AccountUser);
+          break;
       }
     }
     #endregion
-
 
     #region Internet Lookups
     private void UpdateUsersFriends(string _serviceUser)
@@ -683,7 +692,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     }
     #endregion
 
-
     #region Handlers
     private void OnLastFMStation_StreamSongChanged(MusicTag newCurrentSong, DateTime startTime)
     {
@@ -737,9 +745,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
       //dlg.AddLocalizedString(930);        //Add to favorites
     }
-
     #endregion
-
 
     #region Utils
     void ShowSongTrayBallon(String notifyTitle, String notifyMessage_, int showSeconds_, bool popup_)
@@ -866,7 +872,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     }
     #endregion
 
-
     #region ISetupForm Members
     public int GetWindowId()
     {
@@ -890,12 +895,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public bool CanEnable()
     {
-      bool AudioScrobblerOn = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        AudioScrobblerOn = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
-      }
-      return AudioScrobblerOn;
+      //bool AudioScrobblerOn = false;
+      //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      //{
+      //  AudioScrobblerOn = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
+      //}
+      //return AudioScrobblerOn;
+      return true;
     }
 
     public bool DefaultEnabled()

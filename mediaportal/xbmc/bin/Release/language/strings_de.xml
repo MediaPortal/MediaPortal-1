@@ -31,7 +31,7 @@
     <String id="30">Oktober</String>
     <String id="31">November</String>
     <String id="32">Dezember</String>
-    <String id="50" prefix="Meine ">DVDs</String>
+    <String id="50" prefix="Meine ">DVDs</String>    
     <String id="100">Ansicht: Symbole klein</String>
     <String id="101">Ansicht: Liste</String>
     <String id="102">Neue Dateien suchen / hinzufügen</String>
@@ -1449,6 +1449,7 @@
     <String id="34012">Nächster Titel</String>
     <String id="34013">Nur ungehörte Titel</String>
     <String id="34014">Ins Profil eintragen</String>
+    <String id="34015">Tags/Freunde neu laden</String>
     <String id="34020">Aktueller Stream: </String>
     <String id="34030">Keine Tags</String>
     <String id="34031">Keine Freunde</String>
