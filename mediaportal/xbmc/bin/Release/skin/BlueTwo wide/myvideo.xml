@@ -9,7 +9,7 @@
   <controls>
     <import>common.window.xml</import>
     <control>
-      <description>group element</description>
+      <description>button group</description>
       <type>group</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -76,6 +76,7 @@
         <id>9</id>
         <label>983</label>
         <onright>50</onright>
+        <ondown>8</ondown>
       </control>
       <control>
         <description>Trailers button</description>
