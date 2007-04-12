@@ -324,6 +324,18 @@ namespace MediaPortal.GUI.Music
               return;
             }
           }
+          else if ((item != null) && item.IsFolder && (item.Label == ".."))
+          {
+            handler.CurrentLevel--;
+            m_iItemSelected = -1;
+            LoadDirectory((handler.CurrentLevel + 1).ToString());
+            return;
+          }
+
+          // 2007-04-12 --chefkoch
+          // commented the following code and used just the lines above of it for testing
+          // if now problems occured anymore, it can be removed
+          /*
           else if (item != null && item.IsFolder)
           {
             if (item.Label == ".." && item.Path != String.Empty)
@@ -339,7 +351,9 @@ namespace MediaPortal.GUI.Music
                 handler.CurrentLevel--;
               }
               else
+              {
                 handler.Select(item.AlbumInfoTag as Song);
+              }
 
               m_iItemSelected = -1;
               //set level if no path is set
@@ -352,8 +366,9 @@ namespace MediaPortal.GUI.Music
                 LoadDirectory(item.Path);
               }
             }
-            return;
           }
+          */
+
         }
       }
 
@@ -379,36 +394,49 @@ namespace MediaPortal.GUI.Music
             return;
           }
         }
-        else if (item != null && item.IsFolder)
+        else if ((item != null) && item.IsFolder && (item.Label == ".."))
         {
-          if (item.Label == ".." && item.Path != String.Empty)
+          handler.CurrentLevel--;
+          m_iItemSelected = -1;
+          LoadDirectory((handler.CurrentLevel + 1).ToString());
+          return;
+        }
+
+        // 2007-04-12 --chefkoch
+        // commented the following code and used just the lines above of it for testing
+        // if now problems occured anymore, it can be removed
+        /*
+      else if (item != null && item.IsFolder)
+      {
+        if (item.Label == ".." && item.Path != String.Empty)
+        {
+          // Remove selection
+          m_iItemSelected = -1;
+          LoadDirectory(m_strDirectory);
+        }
+        else
+        {
+          if (item.Label == "..")
           {
-            // Remove selection
-            m_iItemSelected = -1;
-            LoadDirectory(m_strDirectory);
+            handler.CurrentLevel--;
+          }
+          else
+            handler.Select(item.AlbumInfoTag as Song);
+
+          m_iItemSelected = -1;
+          //set level if no path is set
+          if (item.Path == "")
+          {
+            LoadDirectory((handler.CurrentLevel + 1).ToString());
           }
           else
           {
-            if (item.Label == "..")
-            {
-              handler.CurrentLevel--;
-            }
-            else
-              handler.Select(item.AlbumInfoTag as Song);
-
-            m_iItemSelected = -1;
-            //set level if no path is set
-            if (item.Path == "")
-            {
-              LoadDirectory((handler.CurrentLevel + 1).ToString());
-            }
-            else
-            {
-              LoadDirectory(item.Path);
-            }
+            LoadDirectory(item.Path);
           }
-          return;
         }
+        return;
+      }
+        */
       }
 
       base.OnAction(action);
