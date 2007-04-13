@@ -137,7 +137,7 @@ namespace ProjectInfinity.Controls
       set
       {
         SetValue(ItemTemplateProperty, value);
-        UpdateGrid();
+       // UpdateGrid();
       }
     }
     public DataTemplate ItemTemplateHeader
@@ -149,7 +149,7 @@ namespace ProjectInfinity.Controls
       set
       {
         SetValue(ItemTemplateHeaderProperty, value);
-        UpdateGrid();
+       // UpdateGrid();
       }
     }
     public DataTemplate ItemTemplateLeft
@@ -161,7 +161,7 @@ namespace ProjectInfinity.Controls
       set
       {
         SetValue(ItemTemplateLeftProperty, value);
-        UpdateGrid();
+       // UpdateGrid();
       }
     }
 

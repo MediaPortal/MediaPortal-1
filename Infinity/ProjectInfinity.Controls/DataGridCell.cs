@@ -1,17 +1,20 @@
 using System;
+using System.ComponentModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
 namespace ProjectInfinity.Controls
 {
-  public class DataGridCell 
+  public class DataGridCell : INotifyPropertyChanged
   {
     int _columnSpan = -1;
     int _column = -1;
     DataGrid _grid;
     FrameworkElement _content;
+    public event PropertyChangedEventHandler PropertyChanged;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DataGridCell"/> class.
@@ -113,6 +116,12 @@ namespace ProjectInfinity.Controls
       }
     }
 
-
+    public void ChangeProperty(string propertyName)
+    {
+      if (PropertyChanged != null)
+      {
+        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+      }
+    }
   }
 }
