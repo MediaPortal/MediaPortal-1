@@ -37,6 +37,30 @@ namespace ProjectInfinity.Controls
                                                                                                      new FrameworkPropertyMetadata
                                                                                                        (null));
 
+    public static readonly DependencyProperty ItemTemplateProperty = DependencyProperty.Register("ItemTemplate",
+                                                                                            typeof(DataTemplate),
+                                                                                            typeof(DataGrid),
+                                                                                            new FrameworkPropertyMetadata
+                                                                                              (null,
+                                                                                               new PropertyChangedCallback
+                                                                                                 (ItemTemplatePropertyChanged)));
+
+    public static readonly DependencyProperty ItemTemplateHeaderProperty = DependencyProperty.Register("ItemTemplateHeader",
+                                                                                            typeof(DataTemplate),
+                                                                                            typeof(DataGrid),
+                                                                                            new FrameworkPropertyMetadata
+                                                                                              (null,
+                                                                                               new PropertyChangedCallback
+                                                                                                 (ItemTemplateHeaderPropertyChanged)));
+
+    public static readonly DependencyProperty ItemTemplateLeftProperty = DependencyProperty.Register("ItemTemplateLeft",
+                                                                                                typeof(DataTemplate),
+                                                                                                typeof(DataGrid),
+                                                                                                new FrameworkPropertyMetadata
+                                                                                                  (null,
+                                                                                                   new PropertyChangedCallback
+                                                                                                     (ItemTemplateLeftPropertyChanged)));
+
     public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register("ItemsSource",
                                                                                             typeof(DataGridCollection),
                                                                                             typeof(DataGrid),
@@ -101,6 +125,48 @@ namespace ProjectInfinity.Controls
     }
 
     /// <summary>
+    /// Gets or sets the item template.
+    /// </summary>
+    /// <value>The item template.</value>
+    public DataTemplate ItemTemplate
+    {
+      get
+      {
+        return GetValue(ItemTemplateProperty) as DataTemplate;
+      }
+      set
+      {
+        SetValue(ItemTemplateProperty, value);
+        UpdateGrid();
+      }
+    }
+    public DataTemplate ItemTemplateHeader
+    {
+      get
+      {
+        return GetValue(ItemTemplateHeaderProperty) as DataTemplate;
+      }
+      set
+      {
+        SetValue(ItemTemplateHeaderProperty, value);
+        UpdateGrid();
+      }
+    }
+    public DataTemplate ItemTemplateLeft
+    {
+      get
+      {
+        return GetValue(ItemTemplateLeftProperty) as DataTemplate;
+      }
+      set
+      {
+        SetValue(ItemTemplateLeftProperty, value);
+        UpdateGrid();
+      }
+    }
+
+
+    /// <summary>
     /// called when itemssource property is changed
     /// </summary>
     /// <param name="dependencyObject">The dependency object.</param>
@@ -108,6 +174,18 @@ namespace ProjectInfinity.Controls
     private static void ItemsSourcePropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
     {
       (dependencyObject as DataGrid).ItemsSource = (e.NewValue as DataGridCollection);
+    }
+    private static void ItemTemplatePropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+      (dependencyObject as DataGrid).ItemTemplate = (e.NewValue as DataTemplate);
+    }
+    private static void ItemTemplateHeaderPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+      (dependencyObject as DataGrid).ItemTemplateHeader = (e.NewValue as DataTemplate);
+    }
+    private static void ItemTemplateLeftPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+      (dependencyObject as DataGrid).ItemTemplateLeft = (e.NewValue as DataTemplate);
     }
 
     /// <summary>
@@ -137,6 +215,32 @@ namespace ProjectInfinity.Controls
         foreach (DataGridCell cell in row.Cells)
         {
           cell.DataGrid = this;
+
+          bool templateApplied = false;
+          if (rowNr == 0)
+          {
+            if (ItemTemplateHeader != null)
+            {
+              templateApplied = true;
+              cell.Content = (FrameworkElement)ItemTemplate.LoadContent();
+            }
+          }
+
+          if (columnNr == 0 && !templateApplied)
+          {
+            if (ItemTemplateLeft != null)
+            {
+              templateApplied = true;
+              cell.Content = (FrameworkElement)ItemTemplate.LoadContent();
+            }
+          }
+
+          if (ItemTemplate != null && !templateApplied)
+          {
+            templateApplied = true;
+            cell.Content = (FrameworkElement)ItemTemplate.LoadContent();
+          }
+
           SetRow(cell.Content, rowNr);
           if (row.RowSpan >= 1)
             SetRowSpan(cell.Content, row.RowSpan);
@@ -148,6 +252,8 @@ namespace ProjectInfinity.Controls
 
           if (cell.ColumnSpan >= 1)
             SetColumnSpan(cell.Content, cell.ColumnSpan);
+
+          cell.Content.DataContext = cell;
           this.Children.Add(cell.Content);
 
           columnNr++;
