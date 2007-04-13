@@ -120,6 +120,24 @@ HRESULT CAudioPin::GetMediaType(CMediaType *pmt)
 
 	return S_OK;
 }
+HRESULT CAudioPin::CheckConnect(IPin *pReceivePin)
+{
+  HRESULT hr;
+#ifndef DEBUG
+  PIN_INFO pinInfo;
+  FILTER_INFO filterInfo;
+  hr=pReceivePin->QueryPinInfo(&pinInfo);
+  if (!SUCCEEDED(hr)) return E_FAIL;
+  if (pinInfo.pFilter==NULL) return E_FAIL;
+  hr=pinInfo.pFilter->QueryFilterInfo(&filterInfo);
+  if (!SUCCEEDED(hr)) return E_FAIL;
+  if (wcscmp(filterInfo.achName,L"ffdshow Audio Decoder")==0)
+  {
+    return E_FAIL;
+  }
+#endif
+  return CBaseOutputPin::CheckConnect(pReceivePin);
+}
 
 HRESULT CAudioPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest)
 {
