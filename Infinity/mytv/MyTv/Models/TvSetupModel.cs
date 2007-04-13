@@ -19,6 +19,7 @@ using ProjectInfinity;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
+using ProjectInfinity.Settings;
 
 namespace MyTv
 {
@@ -214,7 +215,11 @@ namespace MyTv
             nodeProvider.InnerText = provider;
             doc.Save("gentle.config");
             TvChannelNavigator.Instance.Initialize();
-            UserSettings.SetString("tv", "serverHostName", RemoteControl.HostName);
+            TvSettings settings = new TvSettings();
+            ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+            settings.HostName = RemoteControl.HostName;
+            ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xml");
+
             ServiceScope.Get<ILogger>().Info("mytv:setuptv->connected successfully");
             ServiceScope.Get<INavigationService>().GoBack();
 

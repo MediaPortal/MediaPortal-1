@@ -35,6 +35,7 @@ using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
+using ProjectInfinity.Settings;
 namespace MyTv
 {
   /// <summary>
@@ -114,7 +115,10 @@ namespace MyTv
           return;
         }
         ServiceScope.Get<ILogger>().Info("mytv:ConnectToServer");
-        RemoteControl.HostName = UserSettings.GetString("tv", "serverHostName");
+
+        TvSettings settings = new TvSettings();
+        ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+        RemoteControl.HostName = settings.HostName;
 
         string connectionString, provider;
         RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);

@@ -10,7 +10,7 @@ using Gentle.Framework;
 using ProjectInfinity;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
-
+using ProjectInfinity.Settings;
 namespace MyTv
 {
   public class TvChannelNavigator : ITvChannelNavigator, INotifyPropertyChanged
@@ -144,7 +144,9 @@ namespace MyTv
       }
 
       ServiceScope.Get<ILogger>().Info("Navigator #5");
-      int channelId = UserSettings.GetInt("tv", "channel");
+      TvSettings settings = new TvSettings();
+      ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+      int channelId = settings.CurrentChannel;
       try
       {
         SelectedChannel = Channel.Retrieve(channelId);
@@ -188,7 +190,14 @@ namespace MyTv
           if (value.IdChannel == _selectedChannel.IdChannel) return;
         }
         _selectedChannel = value;
-        UserSettings.SetInt("tv", "channel", _selectedChannel.IdChannel);
+
+        TvSettings settings = new TvSettings();
+        ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+        if (_selectedChannel!=null)
+          settings.CurrentChannel=_selectedChannel.IdChannel;
+        else
+          settings.CurrentChannel=-1;
+        ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xml");
         if (PropertyChanged != null)
         {
           PropertyChanged(this, new PropertyChangedEventArgs("SelectedChannel"));
