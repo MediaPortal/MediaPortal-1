@@ -1325,12 +1325,15 @@ namespace MediaPortal.GUI.Library
           {
             item.Selected = false;
           }
-          foreach (GUIListItem item in _listItems)
+          if (message.Label != "")
           {
-            if (item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase))
+            foreach (GUIListItem item in _listItems)
             {
-              item.Selected = true;
-              break;
+              if (item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase))
+              {
+                item.Selected = true;
+                break;
+              }
             }
           }
         }

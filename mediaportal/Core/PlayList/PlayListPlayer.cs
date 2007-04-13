@@ -164,23 +164,17 @@ namespace MediaPortal.Playlists
           }
           break;
 
-      // SV Allows BassMusicPlayer to continuously play
-      case GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING:
-          {
-            PlayNext();
-            if (!g_Player.Playing)
-            {
-              g_Player.Release();
-            }
-          }
-          break;
-
+        // SV Allows BassMusicPlayer to continuously play
+        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING:
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
           {
             PlayNext();
             if (!g_Player.Playing)
             {
               g_Player.Release();
+
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, -1, 0, null);
+              GUIGraphicsContext.SendMessage(msg);        // Clear focus when playback ended
             }
           }
           break;

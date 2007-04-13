@@ -1018,12 +1018,15 @@ namespace MediaPortal.GUI.Library
 				{
 					item.Selected = false;
 				}
-				foreach (GUIListItem item in _listItems)
-				{
-					if (item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase))
-					{
-						item.Selected = true;
-						break;
+        if (message.Label != "")
+        {
+  				foreach (GUIListItem item in _listItems)
+	  			{
+            if (item.Path.Equals(message.Label, StringComparison.OrdinalIgnoreCase))
+            {
+              item.Selected = true;
+              break;
+            }
 					}
 				}
 			}
