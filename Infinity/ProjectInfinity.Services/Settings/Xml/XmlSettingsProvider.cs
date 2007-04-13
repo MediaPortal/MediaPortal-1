@@ -14,11 +14,9 @@ namespace ProjectInfinity.Settings
     bool modified = false;
     string filename = null;
 
-    public XmlSettingsProvider(string filename)
+    public XmlSettingsProvider(string xmlfilename)
     {
-      IsolatedStorageFile storageFile = IsolatedStorageFile.GetStore(IsolatedStorageScope.User, null);
-      IsolatedStorageFileStream file = new IsolatedStorageFileStream(filename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None); 
-
+      filename = xmlfilename;
       document = new XmlDocument();
       if (File.Exists(filename))
       {

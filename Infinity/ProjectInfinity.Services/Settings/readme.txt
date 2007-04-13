@@ -70,7 +70,7 @@ namespace ProjectInfinity.Settings
 When your custom settings class is done , you can use it this way :
 
 // first use the ServiceScope manager to get the SettingsManager running instance :
-ISettingsManager mgr = ServiceScope<ISettingsManager>.Get();
+ISettingsManager mgr = ServiceScope.Get<ISettingsManager>();
 
 // Instanciate a settings object (based on your own class)
 MySampleSettingsClass mySettings = new MySampleSettingsClass();

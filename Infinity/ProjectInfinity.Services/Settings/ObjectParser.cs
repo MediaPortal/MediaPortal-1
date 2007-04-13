@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using System.Collections;
 using System.Xml;
 using ProjectInfinity.Settings.Xml;
+using ProjectInfinity.Logging;
 
 namespace ProjectInfinity.Settings
 {
@@ -25,12 +26,15 @@ namespace ProjectInfinity.Settings
     /// <param name="fileName">Xml file name</param>
     public static void Serialize(object obj, string fileName)
     {
-      Dictionary<string, object> globalSettingsList = new Dictionary<string, object>();
-      Dictionary<string, object> userSettingsList = new Dictionary<string, object>();
+      ILogger log = ServiceScope.Get<ILogger>();
+      Dictionary<string, string> globalSettingsList = new Dictionary<string, string>();
+      Dictionary<string, string> userSettingsList = new Dictionary<string, string>();
       XmlSettingsProvider xmlWriter = new XmlSettingsProvider(fileName);
       foreach (PropertyInfo property in obj.GetType().GetProperties())
       {
         Type thisType = property.PropertyType;
+        string defaultval="";
+        log.Debug("Got property name: {0}", property.Name);
 
         #region CLR Typed property
         if (isCLRType(thisType))
@@ -41,21 +45,27 @@ namespace ProjectInfinity.Settings
           {
             SettingAttribute attribute = (SettingAttribute)attributes[0];
             scope = attribute.SettingScope;
-            string defaultval = attribute.DefaultValue;
+            defaultval = attribute.DefaultValue;
           }
           else
           {
             scope = SettingScope.Global;
-            string defaultval = "";
+            defaultval = "";
           }
-
+          string value = defaultval;
+          if (obj.GetType().GetProperty(property.Name).GetValue(obj, null) != null)
+          {
+            value = obj.GetType().GetProperty(property.Name).GetValue(obj, null).ToString();
+          }
           if (scope == SettingScope.User)
           {
-            userSettingsList.Add(property.Name, obj.GetType().GetProperty(property.Name).GetValue(obj, null));
+            log.Debug("added property: {0}, value= {1} to user list", property.Name, obj.GetType().GetProperty(property.Name).GetValue(obj, null));
+            userSettingsList.Add(property.Name, value);
           }
           else
           {
-            globalSettingsList.Add(property.Name, obj.GetType().GetProperty(property.Name).GetValue(obj, null));
+            log.Debug("added property: {0}, value= {1} to global list", property.Name, obj.GetType().GetProperty(property.Name).GetValue(obj, null));
+            globalSettingsList.Add(property.Name, value);
           }
         }
         #endregion
@@ -79,12 +89,12 @@ namespace ProjectInfinity.Settings
           {
             SettingAttribute attribute = (SettingAttribute)attributes[0];
             scope = attribute.SettingScope;
-            string defaultval = attribute.DefaultValue;
+            defaultval = attribute.DefaultValue;
           }
           else
           {
             scope = SettingScope.Global;
-            string defaultval = "";
+            defaultval = "";
           }
 
           if (scope == SettingScope.User)
@@ -98,20 +108,23 @@ namespace ProjectInfinity.Settings
         }
         #endregion
 
-        #region write Settings
-        // write settings to xml
-        foreach (KeyValuePair<string, object> pair in globalSettingsList)
-        {
-          xmlWriter.SetValue(obj.ToString(), pair.Key, pair.Value.ToString(), SettingScope.Global);
-        }
-        foreach (KeyValuePair<string, object> pair in userSettingsList)
-        {
-          xmlWriter.SetValue(obj.ToString(), pair.Key, pair.Value.ToString(), SettingScope.User);
-        }
-        xmlWriter.Save();
-        #endregion
-
       }
+
+      #region write Settings
+      // write settings to xml
+      foreach (KeyValuePair<string, string> pair in globalSettingsList)
+      {
+        log.Debug("Writing Xml setting: {0}, value= {1}", pair.Key, pair.Value);
+        xmlWriter.SetValue(obj.ToString(), pair.Key, pair.Value, SettingScope.Global);
+      }
+      foreach (KeyValuePair<string, string> pair in userSettingsList)
+      {
+        log.Debug("Writing Xml setting: {0}, value= {1}", pair.Key, pair.Value);
+        xmlWriter.SetValue(obj.ToString(), pair.Key, pair.Value, SettingScope.User);
+      }
+      xmlWriter.Save();
+      #endregion
+
     }
 
     /// <summary>
@@ -121,8 +134,6 @@ namespace ProjectInfinity.Settings
     /// <param name="fileName">Xml file name</param>
     public static void Deserialize(object obj, string fileName)
     {
-      Dictionary<string, bool> globalSettingsList = new Dictionary<string, bool>();
-      Dictionary<string, bool> userSettingsList = new Dictionary<string, bool>();
       XmlSettingsProvider xmlreader = new XmlSettingsProvider(fileName);
       foreach (PropertyInfo property in obj.GetType().GetProperties())
       {

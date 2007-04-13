@@ -52,7 +52,6 @@
     <Compile Include="Messaging\MessageTopic.cs" />
     <Compile Include="Messaging\MessageTopicCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings\SettingAttribute.cs" />
     <Compile Include="Settings\MySampleSettingsClass.cs" />
     <Compile Include="Settings\ObjectParser.cs" />
     <Compile Include="Settings\SettingsManager.cs" />

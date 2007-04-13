@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ProjectInfinity.Settings;
 
 namespace ProjectInfinity.Settings
 {
@@ -8,7 +9,7 @@ namespace ProjectInfinity.Settings
   /// Sample settings class wich will implement your own settings object in your code/plugin
   /// Only public properties are stored/retrieved
   /// </summary>
-  class MySampleSettingsClass 
+  public class MySampleSettingsClass 
   {
     private int _myInt;
     private string _myString;
