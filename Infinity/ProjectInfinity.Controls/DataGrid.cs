@@ -222,7 +222,7 @@ namespace ProjectInfinity.Controls
             if (ItemTemplateHeader != null)
             {
               templateApplied = true;
-              cell.Content = (FrameworkElement)ItemTemplate.LoadContent();
+              cell.Content = (FrameworkElement)ItemTemplateHeader.LoadContent();
             }
           }
 
@@ -231,7 +231,7 @@ namespace ProjectInfinity.Controls
             if (ItemTemplateLeft != null)
             {
               templateApplied = true;
-              cell.Content = (FrameworkElement)ItemTemplate.LoadContent();
+              cell.Content = (FrameworkElement)ItemTemplateLeft.LoadContent();
             }
           }
 
