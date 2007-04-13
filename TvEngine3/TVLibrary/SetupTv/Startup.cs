@@ -116,7 +116,7 @@ namespace SetupTv
         {
           if (!dlg.ExecuteSQLScript("upgrade"))
           {
-            if (MessageBox.Show("The database has to be updated and will therefore get deleted and recreated.\n\nDo you want to proceed?", "SetupTV", MessageBoxButtons.YesNo) != DialogResult.Yes)
+            if (MessageBox.Show("Failed to upgrade the database.\nIt has to be updated and will therefore get deleted and recreated.\n\nDo you want to proceed?", "SetupTV", MessageBoxButtons.YesNo) != DialogResult.Yes)
             {
               dlg.Close();
               return;
@@ -126,7 +126,7 @@ namespace SetupTv
         }
         else
         {
-          if (MessageBox.Show("The database has to be updated and will therefore get deleted and recreated.\n\nDo you want to proceed?", "SetupTV", MessageBoxButtons.YesNo) != DialogResult.Yes)
+          if (MessageBox.Show("The database cannot be upgraded and will therefore be (re)created.\n\nDo you want to proceed?", "SetupTV", MessageBoxButtons.YesNo) != DialogResult.Yes)
           {
             dlg.Close();
             return;
