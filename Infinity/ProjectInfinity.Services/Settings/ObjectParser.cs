@@ -190,13 +190,16 @@ namespace ProjectInfinity.Settings
           XmlSerializer xmlSerial = new XmlSerializer(thisType);
        
           string value = xmlreader.GetValue(obj.ToString(), property.Name, scope);
-          TextReader reader = new StringReader(value);
-          try
+          if (value != null)
           {
-            property.SetValue(obj, xmlSerial.Deserialize(reader), null);
-          }
-          catch (Exception ex)
-          {
+            TextReader reader = new StringReader(value);
+            try
+            {
+              property.SetValue(obj, xmlSerial.Deserialize(reader), null);
+            }
+            catch (Exception ex)
+            {
+            }
           }
 
         }
