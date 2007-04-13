@@ -71,7 +71,13 @@ namespace MediaPortal.MusicVideos.Database
       //Log.Info(lsHtml);
       //Log.Info(lsHtml);
       //Regex loGenreRegex = new Regex("http://" + loSite.countryId + ".rd.yahoo.com/launch/mv/hp/genre/(\\w+)/\\*http://[\\.\\w]+/genrehub.asp?genreID=(\\d+)");
-      Regex loGenreRegex = new Regex("([\\w,&,;,\\-,/]*)/\\*http://[\\.,\\w]*music.yahoo.com[\\s.]+/musicvideos/genrehub.asp\\?genreID=(\\d+)");
+      
+      Regex loGenreRegex; 
+      if(lsCntryId=="us"){
+      	loGenreRegex = new Regex("href=\"\\s+/[^/]*/genrehub.asp\\?genreID=(?<id>\\d+)\">(?:.*genreheaders/(?<name>[^.]+))*(?:<font color=\"\\#FFFFFF\"><b>(?<name>[^<]+))*");
+      }else{
+      	loGenreRegex = new Regex("(?<name>[\\w,&,;,\\-,/]*)/\\*http://[\\.,\\w]*music.yahoo.com[\\s.]+/musicvideos/genrehub.asp\\?genreID=(?<id>\\d+)");
+      }
       MatchCollection loGenreMatches = loGenreRegex.Matches(lsHtml);
       //Genre loGenre;       
       string lsGenreId;
@@ -84,8 +90,8 @@ namespace MediaPortal.MusicVideos.Database
       {
 
         loGenreGrpCol = loGenreMatches[i].Groups;
-        lsGenreName = loGenreGrpCol[1].Value;
-        lsGenreId = loGenreGrpCol[2].Value;
+        lsGenreName = loGenreGrpCol["name"].Value;
+        lsGenreId = loGenreGrpCol["id"].Value;
         try
         {
           Log.Info(loGenreGrpCol[0].Value);

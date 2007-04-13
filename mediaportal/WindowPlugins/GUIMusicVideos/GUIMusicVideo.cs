@@ -697,6 +697,7 @@ namespace MediaPortal.GUI.MusicVideos
     private string promptForGenre()
     {
       string lsSelectedGenre = "";
+      moGenre = new YahooGenres();
       ArrayList loGenreNames = moGenre.moSortedGenreList;
 
       GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
