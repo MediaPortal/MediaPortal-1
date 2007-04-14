@@ -240,6 +240,7 @@ namespace Dialogs
 
       public override void Execute(object parameter)
       {
+        _viewModel.SelectedIndex = -1;
         _viewModel.Window.Close();
       }
     }
