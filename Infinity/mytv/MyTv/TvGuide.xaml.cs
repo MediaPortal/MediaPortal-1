@@ -1,9 +1,11 @@
 using System;
+using System.IO;
 using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -51,6 +53,12 @@ namespace MyTv
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      gridMain.Children.Clear();
+      using (FileStream steam = new FileStream(@"skin\default\mytv\TvGuide.xaml", FileMode.Open, FileAccess.Read))
+      {
+        UIElement documentRoot = (UIElement)XamlReader.Load(steam);
+        gridMain.Children.Add(documentRoot);
+      }
       _model = new TvGuideViewModel(this);
       gridMain.DataContext = _model;
       this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));

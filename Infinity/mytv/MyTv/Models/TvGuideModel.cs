@@ -19,153 +19,216 @@ using TvDatabase;
 
 namespace MyTv
 {
-  public class TvGuideViewModel : TvBaseViewModel
+  #region private classes
+  public class EpgGridCell : DataGridCell
   {
-    #region private classes
-    public class EpgGridCell : DataGridCell
-    {
-      ProgramModel _model;
-      Channel _channel;
+    ProgramModel _model;
+    Channel _channel;
+    public Style _buttonStyle;
+    string _timeStamp;
+    string _recodingLogo;
+    string _channelName;
 
-      public EpgGridCell()
+    public EpgGridCell()
+    {
+    }
+    public EpgGridCell(int column)
+      : base(column)
+    {
+    }
+    public EpgGridCell(int column, int columnSpan)
+      : base(column, columnSpan)
+    {
+    }
+    public string Time
+    {
+      get
       {
+        return _timeStamp;
       }
-      public EpgGridCell(int column)
-        : base(column)
+      set
       {
-      }
-      public EpgGridCell(int column, int columnSpan)
-        : base(column, columnSpan)
-      {
-      }
-      public Channel Channel
-      {
-        get
-        {
-          return _channel;
-        }
-        set
-        {
-          _channel = value;
-        }
-      }
-      public ProgramModel ProgramModel
-      {
-        get
-        {
-          return _model;
-        }
-        set
-        {
-          _model = value;
-        }
-      }
-      public string Title
-      {
-        get
-        {
-          if (_model == null) return "";
-          return _model.Title;
-        }
-      }
-      public string Description
-      {
-        get
-        {
-          if (_model == null) return "";
-          return _model.Description;
-        }
-      }
-      public string ChannelName
-      {
-        get
-        {
-          if (_model == null) return "";
-          return _model.Channel;
-        }
-      }
-      public string Date
-      {
-        get
-        {
-          if (_model == null) return "";
-          return _model.Date;
-        }
-      }
-      public string Duration
-      {
-        get
-        {
-          if (_model == null) return "";
-          return _model.Duration;
-        }
-      }
-      public DateTime StartTime
-      {
-        get
-        {
-          if (_model == null) return DateTime.MinValue;
-          return _model.StartTime;
-        }
-      }
-      public DateTime EndTime
-      {
-        get
-        {
-          if (_model == null) return DateTime.MinValue;
-          return _model.EndTime;
-        }
-      }
-      public string Genre
-      {
-        get
-        {
-          if (_model == null) return "";
-          return _model.Genre;
-        }
-      }
-      public bool IsRecorded
-      {
-        get
-        {
-          if (_model == null) return false;
-          return _model.IsRecorded;
-        }
-      }
-      public string Logo
-      {
-        get
-        {
-          if (_model == null) return "";
-          return _model.Logo;
-        }
-      }
-      public Program Program
-      {
-        get
-        {
-          if (_model == null) return null;
-          return _model.Program;
-        }
-      }
-      public string RecordingLogo
-      {
-        get
-        {
-          if (_model == null) return "";
-          return _model.RecordingLogo;
-        }
-      }
-      public string StartEndLabel
-      {
-        get
-        {
-          if (_model == null) return "";
-          return _model.StartEndLabel;
-        }
+        _timeStamp = value;
+        ChangeProperty("Time");
       }
     }
-    #endregion
+    public Style ButtonStyle
+    {
+      get
+      {
+        return _buttonStyle;
+      }
+      set
+      {
+        _buttonStyle = value;
+        ChangeProperty("ButtonStyle");
+      }
+    }
+    public Channel Channel
+    {
+      get
+      {
+        return _channel;
+      }
+      set
+      {
+        _channel = value;
+        ChangeProperty("Channel");
+        ChangeProperty("ChannelName");
+        ChangeProperty("Logo");
+      }
+    }
+    public ProgramModel ProgramModel
+    {
+      get
+      {
+        return _model;
+      }
+      set
+      {
+        _model = value;
+        ChangeProperty("Channel");
+        ChangeProperty("ChannelName");
+        ChangeProperty("Title");
+        ChangeProperty("Description");
+        ChangeProperty("Genre");
+        ChangeProperty("Logo");
+      }
+    }
+    public string Title
+    {
+      get
+      {
+        if (_model == null) return "";
+        return _model.Title;
+      }
+    }
+    public string Description
+    {
+      get
+      {
+        if (_model == null) return "";
+        return _model.Description;
+      }
+    }
+    public string ChannelName
+    {
+      get
+      {
+        if (_channelName != null)
+        {
+          return _channelName;
+        }
+        if (_model == null)
+        {
+          if (_channel != null)
+          {
+            return _channel.Name;
+          }
+          return "";
+        }
+        return _model.Channel;
+      }
+      set
+      {
+        _channelName = value;
+      }
+    }
+    public string Date
+    {
+      get
+      {
+        if (_model == null) return "";
+        return _model.Date;
+      }
+    }
+    public string Duration
+    {
+      get
+      {
+        if (_model == null) return "";
+        return _model.Duration;
+      }
+    }
+    public DateTime StartTime
+    {
+      get
+      {
+        if (_model == null) return DateTime.MinValue;
+        return _model.StartTime;
+      }
+    }
+    public DateTime EndTime
+    {
+      get
+      {
+        if (_model == null) return DateTime.MinValue;
+        return _model.EndTime;
+      }
+    }
+    public string Genre
+    {
+      get
+      {
+        if (_model == null) return "";
+        return _model.Genre;
+      }
+    }
+    public bool IsRecorded
+    {
+      get
+      {
+        if (_model == null) return false;
+        return _model.IsRecorded;
+      }
+    }
+    public string Logo
+    {
+      get
+      {
+        if (_model == null)
+        {
+          if (Channel != null)
+          {
+            return String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.GetLogoFileName(Channel.Name));
+          }
+          return "";
+        }
+        return _model.Logo;
+      }
+    }
+    public Program Program
+    {
+      get
+      {
+        if (_model == null) return null;
+        return _model.Program;
+      }
+    }
+    public string RecordingLogo
+    {
+      get
+      {
+        return _recodingLogo;
+      }
+      set
+      {
+        _recodingLogo = value;
+        ChangeProperty("RecodingLogo");
+      }
+    }
+    public string StartEndLabel
+    {
+      get
+      {
+        if (_model == null) return "";
+        return _model.StartEndLabel;
+      }
+    }
+  }
+  #endregion
+  public class TvGuideViewModel : TvBaseViewModel
+  {
 
     #region variables
     DataGridCollection _epgRows = new DataGridCollection();
@@ -363,6 +426,9 @@ namespace MyTv
       IList programs = layer.GetPrograms(_selectedChannel, now, end);
       _maxSingleRows = programs.Count;
       int rowNr = 0;
+
+      _epgRows.Add(new DataGridRow());
+
       for (int i = _singleRowOffset; i < _maxChannels; ++i)
       {
         Program program;
@@ -376,22 +442,15 @@ namespace MyTv
 
         DataGridRow dataRow = new DataGridRow();
 
-        ProjectInfinity.Controls.Button b = new ProjectInfinity.Controls.Button();
-        b.Style = (Style)Application.Current.Resources["MpButton"];
-        b.Content = program.StartTime.ToString("HH:mm");
         EpgGridCell dataCell = new EpgGridCell(0, 5);
-        dataCell.Content = b;
+        dataCell.ChannelName = program.StartTime.ToString("HH:mm");
         dataCell.Channel = _selectedChannel;
         dataRow.Cells.Add(dataCell);
 
 
-
         dataCell = new EpgGridCell(5, 25);
+        dataCell.ButtonStyle = (Style)Application.Current.Resources["MpButton"];
         dataCell.ProgramModel = new ProgramModel(program);
-        b = new ProjectInfinity.Controls.Button();
-        b.Style = (Style)Application.Current.Resources["MpButton"];
-        b.Content = program.Title;
-        dataCell.Content = b;
         dataRow.Cells.Add(dataCell);
 
         rowNr++;
@@ -410,33 +469,20 @@ namespace MyTv
     {
       DataGridRow row = new DataGridRow();
       TvBusinessLayer layer = new TvBusinessLayer();
-      DataGridCell cellHeader = new DataGridCell(5, 6);
-      Label header1 = new Label();
-      header1.Style = (Style)Application.Current.Resources["LabelHeaderNormalStyle"];
-      header1.Content = now.ToShortTimeString();
-      cellHeader.Content = header1;
+      EpgGridCell cellHeader = new EpgGridCell(5, 6);
+      cellHeader.Time = now.ToShortTimeString();
       row.Cells.Add(cellHeader);
 
-      cellHeader = new DataGridCell(11, 6);
-      header1 = new Label();
-      header1.Style = (Style)Application.Current.Resources["LabelHeaderNormalStyle"];
-      header1.Content = now.AddMinutes(30).ToShortTimeString();
-      cellHeader.Content = header1;
+      cellHeader = new EpgGridCell(11, 6);
+      cellHeader.Time = now.AddMinutes(30).ToShortTimeString();
       row.Cells.Add(cellHeader);
 
-      cellHeader = new DataGridCell(17, 6);
-      header1 = new Label();
-      header1.Style = (Style)Application.Current.Resources["LabelHeaderNormalStyle"];
-      header1.Content = now.AddMinutes(60).ToShortTimeString();
-
-      cellHeader.Content = header1;
+      cellHeader = new EpgGridCell(17, 6);
+      cellHeader.Time = now.AddMinutes(60).ToShortTimeString();
       row.Cells.Add(cellHeader);
 
-      cellHeader = new DataGridCell(23, 6);
-      header1 = new Label();
-      header1.Style = (Style)Application.Current.Resources["LabelHeaderNormalStyle"];
-      header1.Content = now.AddMinutes(90).ToShortTimeString();
-      cellHeader.Content = header1;
+      cellHeader = new EpgGridCell(23, 6);
+      cellHeader.Time = now.AddMinutes(90).ToShortTimeString();
       row.Cells.Add(cellHeader);
       _epgRows.Add(row);
 
@@ -475,38 +521,8 @@ namespace MyTv
     void RenderMultiChannelRow(int rowNr, DateTime startTime, DateTime endTime, Channel channel, List<Program> programs, bool isBottom)
     {
       DataGridRow dataRow = new DataGridRow();
-
-      ProjectInfinity.Controls.Button b = new ProjectInfinity.Controls.Button();
-      b.Style = (Style)Application.Current.Resources["MpButton"];
-      Grid grid = new Grid();
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.ColumnDefinitions.Add(new ColumnDefinition());
-      grid.RowDefinitions.Add(new RowDefinition());
-      string channelLogoFileName = Thumbs.GetLogoFileName(channel.Name);
-      if (System.IO.File.Exists(channelLogoFileName))
-      {
-        Image image = new Image();
-        PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(channelLogoFileName, UriKind.Relative), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-
-        image.Source = decoder.Frames[0];
-        Grid.SetColumn(image, 0);
-        Grid.SetRow(image, 0);
-        grid.Children.Add(image);
-      }
-      Label label = new Label();
-      label.Content = channel.Name;
-      label.Style = (Style)Application.Current.Resources["LabelNormalStyleWhite"];
-      Grid.SetColumn(label, 1);
-      Grid.SetRow(label, 0);
-      Grid.SetColumnSpan(label, 3);
-      grid.Children.Add(label);
-
-      b.Content = grid;
       EpgGridCell dataGridCell = new EpgGridCell(0, 5);
       dataGridCell.Channel = channel;
-      dataGridCell.Content = b;
       dataRow.Cells.Add(dataGridCell);
 
       RenderMultiChannelCells(ref dataRow, rowNr, startTime, endTime, channel, programs, isBottom);
@@ -563,6 +579,7 @@ namespace MyTv
         int span = (int)((ts.TotalMinutes + 0.5) / 5);
         //if (span <= 0) continue;
 
+        EpgGridCell dataCell = new EpgGridCell(cell, span);
         bool bRecording = false;
         bool bSeries = false;
         bool bConflict = false;
@@ -582,7 +599,6 @@ namespace MyTv
           }
         }
 
-        ProjectInfinity.Controls.Button b = new ProjectInfinity.Controls.Button();
         bool isNow = false;
         //------start--------------end
         //---x           x
@@ -592,74 +608,42 @@ namespace MyTv
         if (isNow)
         {
           if (program.StartTime < now && program.EndTime > end)
-            b.Style = (Style)Application.Current.Resources["MpButtonLightBoth"];
+            dataCell.ButtonStyle = (Style)Application.Current.Resources["MpButtonLightBoth"];
           else if (program.StartTime < now)
-            b.Style = (Style)Application.Current.Resources["MpButtonLightLeft"];
+            dataCell.ButtonStyle = (Style)Application.Current.Resources["MpButtonLightLeft"];
           else if (program.EndTime > end)
-            b.Style = (Style)Application.Current.Resources["MpButtonLightRight"];
+            dataCell.ButtonStyle = (Style)Application.Current.Resources["MpButtonLightRight"];
           else
-            b.Style = (Style)Application.Current.Resources["MpButtonLight"];
+            dataCell.ButtonStyle = (Style)Application.Current.Resources["MpButtonLight"];
         }
         else
         {
           if (program.StartTime < now && program.EndTime > end)
-            b.Style = (Style)Application.Current.Resources["MpButtonBoth"];
+            dataCell.ButtonStyle = (Style)Application.Current.Resources["MpButtonBoth"];
           else if (program.StartTime < now)
-            b.Style = (Style)Application.Current.Resources["MpButtonLeft"];
+            dataCell.ButtonStyle = (Style)Application.Current.Resources["MpButtonLeft"];
           else if (program.EndTime > end)
-            b.Style = (Style)Application.Current.Resources["MpButtonRight"];
+            dataCell.ButtonStyle = (Style)Application.Current.Resources["MpButtonRight"];
           else
-            b.Style = (Style)Application.Current.Resources["MpButton"];
+            dataCell.ButtonStyle = (Style)Application.Current.Resources["MpButton"];
 
         }
         if (bRecording)
         {
-          Uri uri;
           if (bConflict)
           {
             if (bSeries)
-              uri = new Uri(Thumbs.TvConflictRecordingSeriesIcon, UriKind.Relative);
+              dataCell.RecordingLogo = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.TvConflictRecordingSeriesIcon);
             else
-              uri = new Uri(Thumbs.TvConflictRecordingIcon, UriKind.Relative);
+              dataCell.RecordingLogo = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.TvConflictRecordingIcon);
           }
           else if (bSeries)
-            uri = new Uri(Thumbs.TvRecordingSeriesIcon, UriKind.Relative);
+            dataCell.RecordingLogo = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.TvRecordingSeriesIcon);
           else
-            uri = new Uri(Thumbs.TvRecordingIcon, UriKind.Relative);
+            dataCell.RecordingLogo = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.TvRecordingIcon);
 
-          Grid panel = new Grid();
-          panel.Margin = new Thickness(0.0d);
-          Image image = new Image();
-          PngBitmapDecoder decoder = new PngBitmapDecoder(uri, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-          image.Source = decoder.Frames[0];
-          image.Width = image.Height = 20;
-          image.VerticalAlignment = VerticalAlignment.Center;
-
-          Label label = new Label();
-          label.Margin = new Thickness(0.0d);
-          label.Content = program.Title;
-          label.VerticalAlignment = VerticalAlignment.Center;
-          label.Style = (Style)Application.Current.Resources["Label20Style"];
-          panel.Children.Add(label);
-          panel.Children.Add(image);
-          panel.OpacityMask = (Brush)Application.Current.Resources["fadeOpacityBrush"];
-          b.Content = panel;
         }
-        else
-        {
-          Grid panel = new Grid();
-          panel.ShowGridLines = true;
-          Label label = new Label();
-          label.Content = program.Title;
-          label.Style = (Style)Application.Current.Resources["Label20Style"];
-          panel.Children.Add(label);
-          panel.OpacityMask = (Brush)Application.Current.Resources["fadeOpacityBrush"];
-          b.Content = panel;
-        }
-
-        EpgGridCell dataCell = new EpgGridCell(cell, span);
         dataCell.ProgramModel = new ProgramModel(program);
-        dataCell.Content = b;
         dataRow.Cells.Add(dataCell);
         cell += span;
       }
