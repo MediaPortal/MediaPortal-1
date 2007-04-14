@@ -106,6 +106,7 @@ namespace MediaPortal.GUI.Music
 
     protected bool PlayAllOnSingleItemPlayNow = false;
     protected string m_strPlayListPath = string.Empty;
+    protected string _currentPlaying = string.Empty;  
 
     public GUIMusicBaseWindow()
     {
@@ -308,8 +309,10 @@ namespace MediaPortal.GUI.Music
     public override bool OnMessage(GUIMessage message)
     {
       if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
+      {
+        _currentPlaying = message.Label;
         facadeView.OnMessage(message);
-
+      }
       return base.OnMessage(message);
     }
 

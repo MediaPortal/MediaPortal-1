@@ -483,20 +483,15 @@ namespace MediaPortal.GUI.MusicVideos
         }
         iItem++;
       }
-
-      if (_currentPlaying != "")
+      for (int i = 0; i < facadeView.Count; ++i)
       {
-        for (int i = 0; i < facadeView.Count; ++i)
+        GUIListItem item = facadeView[i];
+        if (item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
         {
-          GUIListItem item = facadeView[i];
-          if (item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
-          {
-            item.Selected = true;
-            break;
-          }
+          item.Selected = true;
+          break;
         }
       }
-
       UpdateButtonStates();
       GUIWaitCursor.Hide();
     }

@@ -624,18 +624,13 @@ namespace MediaPortal.GUI.Music
           }
           iItem++;
         }
-
-        PlayListItem currentItem = playlistPlayer.GetCurrentItem();
-        if (currentItem != null)
+        for (int i = 0; i < facadeView.Count; ++i)
         {
-          for (int i = 0; i < facadeView.Count; ++i)
+          GUIListItem item = facadeView[i];
+          if (item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
           {
-            GUIListItem item = facadeView[i];
-            if (item.Path.Equals(currentItem.FileName, StringComparison.OrdinalIgnoreCase))
-            {
-              item.Selected = true;
-              break;
-            }
+            item.Selected = true;
+            break;
           }
         }
 

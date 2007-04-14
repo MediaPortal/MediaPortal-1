@@ -1898,7 +1898,6 @@ namespace MediaPortal.Player
     private void PlaybackEndProc(int handle, int stream, int data, int userData)
     {
       Log.Debug("BASS: PlaybackEndProc of stream {0}", stream);
-      _CrossFading = false;               // Ensure that HandleSongEnded() sets the state to Ended
 
       if (TrackPlaybackCompleted != null)
         TrackPlaybackCompleted(this, FilePath);
