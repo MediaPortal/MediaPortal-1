@@ -6,8 +6,8 @@
 
   <LinearGradientBrush x:Key="fadeOpacityBrush" EndPoint="1,1" StartPoint="0,0">
     <GradientStop Color="#FF000000" Offset="0"/>
-    <GradientStop Color="#91000000" Offset="0.6"/>
-    <GradientStop Color="#00000000" Offset="0.8"/>
+    <GradientStop Color="#91000000" Offset="0.8"/>
+    <GradientStop Color="#00000000" Offset="0.9"/>
   </LinearGradientBrush>
   <RadialGradientBrush x:Key="backGroundBrush" GradientOrigin="0.186,0.311">
     <RadialGradientBrush.RelativeTransform>

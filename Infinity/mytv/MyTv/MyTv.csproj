@@ -118,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helper classes\TvSettings.cs" />
+    <Compile Include="Models\EpgGridCell.cs" />
     <Compile Include="Models\ProgramModel.cs" />
     <Compile Include="Models\TvBaseViewModel.cs" />
     <Compile Include="Models\TvFullScreenModel.cs" />
