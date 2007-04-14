@@ -106,6 +106,16 @@ namespace ProjectInfinity.Controls
                                                                                                     (null));
     #endregion
 
+    public DataGrid()
+    {
+      this.Loaded += new RoutedEventHandler(DataGrid_Loaded);
+    }
+
+    void DataGrid_Loaded(object sender, RoutedEventArgs e)
+    {
+      UpdateGrid();
+    }
+
     /// <summary>
     /// Gets or sets the items source.
     /// </summary>
@@ -120,7 +130,7 @@ namespace ProjectInfinity.Controls
       {
         SetValue(ItemsSourceProperty, value);
         ItemsSource.DataGrid = this;
-        UpdateGrid();
+        //UpdateGrid();
       }
     }
 
