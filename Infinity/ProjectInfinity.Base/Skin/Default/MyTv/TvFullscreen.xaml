@@ -137,5 +137,6 @@
         </LinearGradientBrush>
       </Rectangle.Fill>
     </Rectangle>
+    <Image Source="{Binding Path=ZapChannelLogo}" Grid.ColumnSpan="6" Grid.RowSpan="3" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" Height="64" Width="64"/>
   </Grid>
 </Grid>
