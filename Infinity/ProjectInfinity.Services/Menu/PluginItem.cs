@@ -7,9 +7,9 @@ namespace ProjectInfinity.Menu
 {
   public class PluginItem : IPluginItem
   {
-    private IPluginInfo _pluginInfo;
+    private MenuCommand _pluginInfo;
 
-    public PluginItem(IPluginInfo pluginInfo)
+    public PluginItem(MenuCommand pluginInfo)
     {
       _pluginInfo = pluginInfo;
       
@@ -29,6 +29,11 @@ namespace ProjectInfinity.Menu
     public string ImagePath
     {
       get { return _pluginInfo.ImagePath; }
+    }
+
+    public void Execute()
+    {
+      _pluginInfo.Execute();
     }
 
     #endregion

@@ -6,6 +6,8 @@ namespace ProjectInfinity.Menu
 {
   public interface IPluginItem : IMenuItem
   {
+    void Execute();
+
     string Description { get;}
 
     string ImagePath { get; }

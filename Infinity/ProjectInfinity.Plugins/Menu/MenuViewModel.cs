@@ -64,7 +64,8 @@ namespace ProjectInfinity.Menu
       {
         IPluginItem pluginItem = _viewModel.Items.CurrentItem as IPluginItem;
         if (pluginItem != null)
-          ServiceScope.Get<IPluginManager>().Start(pluginItem.Text);
+          pluginItem.Execute();
+          //ServiceScope.Get<IPluginManager>().Start(pluginItem.Text);
 
       }
 

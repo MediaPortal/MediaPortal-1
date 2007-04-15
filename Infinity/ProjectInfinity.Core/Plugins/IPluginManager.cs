@@ -13,6 +13,8 @@ namespace ProjectInfinity.Plugins
   /// A plug-in manager is responsible for enumerating, starting and stopping plugins</remarks>
   public interface IPluginManager
   {
+    List<T> BuildItems<T>(string treePath);
+
     /// <summary>
     /// Gets an enumerable list of available plugins
     /// </summary>

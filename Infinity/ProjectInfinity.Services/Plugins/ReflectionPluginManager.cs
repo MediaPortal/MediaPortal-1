@@ -28,6 +28,11 @@ namespace ProjectInfinity.Plugins
     public event EventHandler<PluginStartStopEventArgs> PluginStarted;
     public event EventHandler<PluginStartStopEventArgs> PluginStopped;
 
+    public List<T> BuildItems<T>(string treePath)
+    {
+      //required for the tree PluginManager
+      return null;
+    }
 
     /// <summary>
     /// Gets an enumerable list of available plugins

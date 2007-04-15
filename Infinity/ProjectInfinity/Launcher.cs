@@ -26,7 +26,9 @@ namespace ProjectInfinity
       //register service implementations
       ServiceScope.Add<IMessageBroker>(new MessageBroker()); //Our messagebroker
       //A pluginmanager that uses reflection to enumerate available plugins
-      ServiceScope.Add<IPluginManager>(new ReflectionPluginManager());
+      //ServiceScope.Add<IPluginManager>(new ReflectionPluginManager());
+      // A plugin manager that uses a plugin tree
+      ServiceScope.Add<IPluginManager>(new PluginManager());
       ServiceScope.Add<IThemeManager>(new ThemeManager());
       ServiceScope.Add<IMenuManager>(new MenuManager());
       ServiceScope.Add<INavigationService>(new NavigationService());
