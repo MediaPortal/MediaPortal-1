@@ -40,7 +40,7 @@ namespace ProjectInfinity.Localisation
   public class StringId
   {
     string _section;
-      int _id;
+    int _id;
 
     public StringId(string section, int id)
     {
@@ -51,7 +51,7 @@ namespace ProjectInfinity.Localisation
     public StringId(string skinLabel)
     {
       // Parse string example @mytv#10
-      Regex label = new Regex("@(?<section>[a-z]+)#(?<id>[0-9]+)");
+      Regex label = new Regex("@(?<section>[a-z]+):(?<id>[0-9]+)");
 
       Match combineString = label.Match(skinLabel);
 
