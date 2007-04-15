@@ -1,0 +1,17 @@
+<Plugin name       = "Menu"
+       author      = "JoeDalton"
+       copyright   = "GPL"
+       description = "Home Menu">
+	
+	<Manifest>
+		<Identity name = "ProjectInfinity.Menu.MenuPlugin"/>
+	</Manifest>
+	
+	<Runtime>
+		<Import assembly = "../ProjectInfinity.Plugins.dll"/>
+	</Runtime>
+
+	<Path name = "/Infinity/AutoStart">
+		<Class id = "Menu" class = "ProjectInfinity.Menu.MenuPlugin"/>
+	</Path>
+</Plugin>

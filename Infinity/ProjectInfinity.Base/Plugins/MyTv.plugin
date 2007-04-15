@@ -1,0 +1,20 @@
+<Plugin name        = "MyTv"
+       author      = "Frodo"
+       copyright   = "GPL"
+       description = "TV">
+	
+	<Manifest>
+		<Identity name = "MyTv.TvPlugin"/>
+	</Manifest>
+	
+	<Runtime>
+		<Import assembly = "../mytv.dll"/>
+	</Runtime>
+
+	<Path name = "/Infinity/HomeMenu">
+		<MenuItem id    = "MyTv"
+		          label = "@mytv:133"
+                          image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
+		          class = "MyTv.TvPlugin"/>
+	</Path>
+</Plugin>
