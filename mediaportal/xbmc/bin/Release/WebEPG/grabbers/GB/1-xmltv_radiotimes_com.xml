@@ -106,7 +106,7 @@
     <Channel id="sports@extreme.com" siteId="582" />
     <Channel id="ftn.tv" siteId="921" />
     <Channel id="film4@channel4.com" siteId="160" />
-    <Channel id="film4p1@channel4.com" siteId="584" />
+    <Channel id="film4p1@channel4.com" siteId="2021" />
     <Channel id="film4w@channel4.com" siteId="1041" />
     <Channel id="five.tv" siteId="134" />
     <Channel id="us@five.tv" siteId="2008"/>
@@ -327,6 +327,7 @@
     <Channel id="2@vh1.co.uk" siteId="1482" />
     <Channel id="xtraview.co.uk" siteId="1885" />
     <Channel id="zeetv.co.uk" siteId="581" />
+    <Channel id="utv.co.uk" siteId="38" />
   </Channels>
   <Listing type="Data">
     <Site url="http://xmltv.radiotimes.com/xmltv/[ID].dat" post="" external="false" encoding="" />
