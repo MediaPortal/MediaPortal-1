@@ -47,6 +47,7 @@ namespace MyTv
     ScheduleDatabaseModel _dataModel;
     ViewType _viewMode = ViewType.Icon;
 
+    ICommand _stackCommand;
     ICommand _sortCommand;
     ICommand _viewCommand;
     ICommand _cleanUpCommand;
@@ -67,6 +68,7 @@ namespace MyTv
     ICommand _preRecordProgramCommand;
     ICommand _postRecordProgramCommand;
     int _selectedEpisodeIndex = -1;
+    bool _isStacked = false;
     #endregion
 
     #region ctor
@@ -386,6 +388,40 @@ namespace MyTv
     }
 
     /// <summary>
+    /// Gets or sets a value indicating whether this instance is stacked.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance is stacked; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsStacked
+    {
+      get
+      {
+        return _isStacked;
+      }
+      set
+      {
+        _isStacked=value;
+        _dataModel.IsStacked = value;
+        ChangeProperty("StackLabel");
+      }
+    }
+    /// <summary>
+    /// Gets the stack label.
+    /// </summary>
+    /// <value>The stack label.</value>
+    public string StackLabel
+    {
+      get
+      {
+        if (IsStacked)
+          return ServiceScope.Get<ILocalisation>().ToString("mytv", 136);//Unstack
+        else
+          return ServiceScope.Get<ILocalisation>().ToString("mytv", 135);//Stack
+      }
+    }
+
+    /// <summary>
     /// Gets or sets the view mode.
     /// </summary>
     /// <value>The view mode.</value>
@@ -667,6 +703,17 @@ namespace MyTv
           _episodesProgramCommand = new EpisodesProgramCommand(this);
         }
         return _episodesProgramCommand;
+      }
+    }
+    public ICommand Stack
+    {
+      get
+      {
+        if (_stackCommand == null)
+        {
+          _stackCommand = new StackCommand(this);
+        }
+        return _stackCommand;
       }
     }
     #endregion
@@ -1563,11 +1610,11 @@ namespace MyTv
           dlgLogoMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
           dlgLogoMenu.Owner = _viewModel.Window;
           dlgLogoMenu.Items.Clear();
-          dlgLogoMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv",129);//recording conflict
+          dlgLogoMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 129);//recording conflict
           dlgLogoMenu.SubTitle = "";
           foreach (Schedule conflict in conflicts)
           {
-            string logo=String.Format(@"{0}\{1}",System.IO.Directory.GetCurrentDirectory(),Thumbs.GetLogoFileName(conflict.ReferencedChannel().Name));
+            string logo = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.GetLogoFileName(conflict.ReferencedChannel().Name));
             DialogMenuItem menuItem = new DialogMenuItem(logo, conflict.ProgramName, conflict.ReferencedChannel().Name, "");
             dlgLogoMenu.Items.Add(menuItem);
           }
@@ -1577,7 +1624,7 @@ namespace MyTv
             case 1: return true;   // Skip new Recording
             case 0:                // Don't record the already scheduled one(s)
               {
-                for (int i=0; i < conflicts.Count;++i)
+                for (int i = 0; i < conflicts.Count; ++i)
                 {
                   Schedule schedule = (Schedule)conflicts[i];
                   schedule.Delete();
@@ -1978,6 +2025,35 @@ namespace MyTv
       }
     }
     #endregion
+
+    #region EpisodesProgramCommand class
+    /// <summary>
+    /// EpisodesProgramCommand
+    /// </summary> 
+    public class StackCommand : RecordedCommand
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="EpisodesProgramCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public StackCommand(TvScheduledViewModel viewModel)
+        : base(viewModel)
+      {
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public override void Execute(object parameter)
+      {
+        _viewModel.IsStacked = !_viewModel.IsStacked;
+        _viewModel.DataModel.Reload();
+        _viewModel.ChangeProperty("StackLabel");
+        _viewModel.ChangeProperty("IsStacked");
+      }
+    }
+    #endregion
     #endregion
 
     #region ScheduleDatabaseModel class
@@ -1993,6 +2069,7 @@ namespace MyTv
       ProgramModel _program;
       List<ScheduleModel> _listSchedules = new List<ScheduleModel>();
       List<ProgramModel> _listEpisodes = new List<ProgramModel>();
+      bool _stack = false;
       #endregion
 
       /// <summary>
@@ -2001,6 +2078,17 @@ namespace MyTv
       public ScheduleDatabaseModel()
       {
         Reload();
+      }
+      public bool IsStacked
+      {
+        get
+        {
+          return _stack;
+        }
+        set
+        {
+          _stack = value;
+        }
       }
       public void CancelSchedule(int idSchedule, DateTime cancelTime)
       {
@@ -2019,20 +2107,23 @@ namespace MyTv
       /// </summary>
       public void Delete(int idSchedule)
       {
-        TvServer server = new TvServer();
-        for (int i = 0; i < _listSchedules.Count; ++i)
+        try
         {
-          if (_listSchedules[i].Schedule.IdSchedule == idSchedule)
+          Schedule schedule = Schedule.Retrieve(idSchedule);
+          if (schedule != null)
           {
-            _listSchedules[i].Schedule.Delete();
-            server.OnNewSchedule();
-            _listSchedules.RemoveAt(i);
-            if (PropertyChanged != null)
-            {
-              PropertyChanged(this, new PropertyChangedEventArgs("Schedules"));
-            }
-            break;
+            schedule.Delete();
           }
+          TvServer server = new TvServer();
+          server.OnNewSchedule();
+        }
+        catch (Exception)
+        {
+        }
+        Reload();
+        if (PropertyChanged != null)
+        {
+          PropertyChanged(this, new PropertyChangedEventArgs("Schedules"));
         }
       }
 
@@ -2041,19 +2132,44 @@ namespace MyTv
       /// </summary>
       public void Reload()
       {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        DateTime dtDay = DateTime.Now;
         _listSchedules.Clear();
         IList schedules = Schedule.ListAll();
 
         foreach (Schedule schedule in schedules)
         {
-          ScheduleModel item = new ScheduleModel(schedule);
-          _listSchedules.Add(item);
+          bool added = false;
+          if (!IsStacked)
+          {
+            IList episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), schedule.ProgramName, null);
+            foreach (Program episode in episodes)
+            {
+              if (schedule.IsRecordingProgram(episode, true))
+              {
+                added = true;
+                Schedule s = schedule.Clone();
+                s.StartTime = episode.StartTime;
+                s.EndTime = episode.EndTime;
+                s.IdChannel = episode.IdChannel;
+                s.ProgramName = episode.Title;
+                ScheduleModel item = new ScheduleModel(s);
+                _listSchedules.Add(item);
+              }
+            }
+          }
+
+          if (!added)
+          {
+            ScheduleModel item = new ScheduleModel(schedule);
+            _listSchedules.Add(item);
+          }
         }
+
+
         _listEpisodes.Clear();
         if (_program != null)
         {
-          TvBusinessLayer layer = new TvBusinessLayer();
-          DateTime dtDay = DateTime.Now;
           IList episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(14), _program.Title, null);
           foreach (Program episode in episodes)
           {

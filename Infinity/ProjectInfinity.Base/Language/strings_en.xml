@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Language>
    <Section name="days">
-      <String id="0">Monday</String>
-      <String id="1">Tuesday</String>
-      <String id="2">Wednesday</String>
-      <String id="3">Thursday</String>
-      <String id="4">Friday</String>
-      <String id="5">Saturday</String>
-      <String id="6">Sunday</String>
+     <String id="0">Sunday</String>
+     <String id="1">Monday</String>
+     <String id="2">Tuesday</String>
+     <String id="3">Wednesday</String>
+     <String id="4">Thursday</String>
+     <String id="5">Friday</String>
+     <String id="6">Saturday</String>
    </Section>
    <Section name="months">
-      <String id="0">January</String>
-      <String id="1">February</String>
-      <String id="2">March</String>
-      <String id="3">Apirl</String>
-      <String id="4">May</String>
-      <String id="5">June</String>
-      <String id="6">July</String>
-      <String id="7">August</String>
-      <String id="8">September</String>
-      <String id="9">October</String>
-      <String id="10">November</String>
-      <String id="11">December</String>
+      <String id="1">January</String>
+      <String id="2">February</String>
+      <String id="3">March</String>
+      <String id="4">April</String>
+      <String id="5">May</String>
+      <String id="6">June</String>
+      <String id="7">July</String>
+      <String id="8">August</String>
+      <String id="9">September</String>
+      <String id="10">October</String>
+      <String id="11">November</String>
+      <String id="12">December</String>
    </Section>
   <Section name="mytv">
     <String id="0">Tv Guide</String>
@@ -157,6 +157,10 @@
     <String id="130">Skip new recording</String>
     <String id="131">Skip conflicting recording(s)</String>
     <String id="132">Keep conflict</String>
+    <String id="133">Today</String>
+    <String id="134">Tomorrow</String>
+    <String id="135">Stack</String>
+    <String id="136">Unstack</String>
   </Section>
   <Section name="myvideos">
     <String id="0">View</String>
