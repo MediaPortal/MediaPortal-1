@@ -54,6 +54,7 @@ namespace MyTv
     public TvFullScreenModel(Page page)
       : base(page)
     {
+      //get the seeking steps from the configuration file...
       TvSettings settings = new TvSettings();
       ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
       string[] steps=settings.SeekSteps.Split(new char[]{','});
@@ -61,6 +62,7 @@ namespace MyTv
       {
         _seekSteps.Add(Int32.Parse(steps[i]));
       }
+
       _zapChannel = "";
       _seekTimeoutTimer = new System.Windows.Threading.DispatcherTimer();
       _seekTimeoutTimer.Interval = new TimeSpan(0, 0, 1);

@@ -11,6 +11,11 @@ namespace MyTv
     int _currentChannelId;
     string _seekSteps;
 
+    /// <summary>
+    /// Gets or sets the  steps used for seeking forward/backward
+    /// steps are in seconds
+    /// </summary>
+    /// <value>The seek steps.</value>
     [Setting(SettingScope.Global, "0,15,30,60,180,300,600,900,1800,3600,7200")]
     public string SeekSteps
     {
@@ -24,6 +29,10 @@ namespace MyTv
       }
     }
 
+    /// <summary>
+    /// Gets or sets the hostname of the tvserver
+    /// </summary>
+    /// <value>The name of the host.</value>
     [Setting(SettingScope.Global, "")]
     public string HostName
     {
@@ -37,6 +46,10 @@ namespace MyTv
       }
     }
 
+    /// <summary>
+    /// Gets or sets the id of the current tv channel.
+    /// </summary>
+    /// <value>The id of the current tv channel.</value>
     [Setting(SettingScope.Global, "")]
     public int CurrentChannel
     {
