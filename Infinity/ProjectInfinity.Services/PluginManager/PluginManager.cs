@@ -169,6 +169,8 @@ namespace ProjectInfinity.Plugins
       _disabledPlugins = new List<string>();
       _pluginFiles.Add("Plugins/MyTv.plugin");
       _pluginFiles.Add("Plugins/Menu.plugin");
+      _pluginFiles.Add("Plugins/MyVideos.plugin");
+      _pluginFiles.Add("Plugins/MyPictures.plugin");
 
       _pluginTree = new PluginTree();
       _pluginTree.Load(_pluginFiles, _disabledPlugins);
