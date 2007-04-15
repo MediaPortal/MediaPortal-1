@@ -153,6 +153,10 @@
     <String id="126">Enter search text</String>
     <String id="127">Sort:Description</String>
     <String id="128">setup tv</String>
+    <String id="129">Recording conflict</String>
+    <String id="130">Skip new recording</String>
+    <String id="131">Skip conflicting recording(s)</String>
+    <String id="132">Keep conflict</String>
   </Section>
   <Section name="myvideos">
     <String id="0">View</String>

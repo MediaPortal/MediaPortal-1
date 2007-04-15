@@ -697,6 +697,45 @@ namespace MyTv
           this.CanExecuteChanged(this, EventArgs.Empty);
         }
       }
+      protected bool SkipForConflictingRecording(Schedule rec)
+      {
+
+        TvBusinessLayer layer = new TvBusinessLayer();
+        IList conflicts = layer.GetConflictingSchedules(rec);
+        if (conflicts.Count > 0)
+        {
+
+          TvConflictDialog dlgLogoMenu = new TvConflictDialog();
+          dlgLogoMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+          dlgLogoMenu.Owner = _viewModel.Window;
+          dlgLogoMenu.Items.Clear();
+          dlgLogoMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 129);//recording conflict
+          dlgLogoMenu.SubTitle = "";
+          foreach (Schedule conflict in conflicts)
+          {
+            string logo = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.GetLogoFileName(conflict.ReferencedChannel().Name));
+            DialogMenuItem menuItem = new DialogMenuItem(logo, conflict.ProgramName, conflict.ReferencedChannel().Name, "");
+            dlgLogoMenu.Items.Add(menuItem);
+          }
+          dlgLogoMenu.ShowDialog();
+          switch (dlgLogoMenu.SelectedIndex)
+          {
+            case 1: return true;   // Skip new Recording
+            case 0:                // Don't record the already scheduled one(s)
+              {
+                for (int i = 0; i < conflicts.Count; ++i)
+                {
+                  Schedule schedule = (Schedule)conflicts[i];
+                  schedule.Delete();
+                }
+                break;
+              }
+            case 2: return false;   // No Skipping new Recording
+            default: return true;   // Skipping new Recording
+          }
+        }
+        return false;
+      }
     }
     #endregion
 
@@ -1162,6 +1201,7 @@ namespace MyTv
         rec.StartTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);
         rec.EndTime = rec.StartTime.AddMinutes(duration);
         rec.ProgramName = "Manual" + " (" + rec.ReferencedChannel().Name + ")";
+        if (SkipForConflictingRecording(rec)) return;
         rec.Persist();
         TvServer server = new TvServer();
         server.OnNewSchedule();
@@ -1307,6 +1347,7 @@ namespace MyTv
         rec.StartTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);
         rec.EndTime = rec.StartTime.AddMinutes(duration);
         rec.ProgramName = "Manual" + " (" + rec.ReferencedChannel().Name + ")";
+        if (SkipForConflictingRecording(rec)) return;
         rec.Persist();
         TvServer server = new TvServer();
         server.OnNewSchedule();
