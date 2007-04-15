@@ -1721,7 +1721,10 @@ namespace MyTv
       public override void Execute(object parameter)
       {
         ProgramModel model = parameter as ProgramModel;
-        if (model == null) return;
+        if (model == null)
+        {
+          model = _viewModel.CurrentProgram;
+        }
         Program _program = model.Program;
         if (_program == null)
           return;

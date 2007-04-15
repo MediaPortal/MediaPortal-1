@@ -205,6 +205,14 @@ namespace MyTv
         return _model.Program;
       }
     }
+    public string NotifyLogo
+    {
+      get
+      {
+        if (_model == null) return null;
+        return _model.NotifyLogo;
+      }
+    }
     public string RecordingLogo
     {
       get

@@ -190,6 +190,33 @@ namespace MyTv
       }
     }
     /// <summary>
+    /// Gets the is notified.
+    /// </summary>
+    /// <value>The is notified.</value>
+    public bool? IsNotified
+    {
+      get
+      {
+        return _program.Notify;
+      }
+    }
+
+    /// <summary>
+    /// Gets the notify logo.
+    /// </summary>
+    /// <value>The notify logo.</value>
+    public string NotifyLogo
+    {
+      get
+      {
+        if (_program.Notify)
+        {
+          return String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.TvNotifyIcon);
+        }
+        return "";
+      }
+    }
+    /// <summary>
     /// Gets the recording logo.
     /// </summary>
     /// <value>The recording logo.</value>

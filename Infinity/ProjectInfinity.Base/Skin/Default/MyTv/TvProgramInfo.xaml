@@ -69,14 +69,14 @@
       </Grid>
     </StackPanel>
     <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
-      <controls:Button Name="buttonRecord" Command="{Binding Path=RecordProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}"  Content="{Binding Path=RecordLabel}" Style="{DynamicResource MpButton}" Height="32"   />
-      <controls:Button Name="buttonAdvancedRecord" Command="{Binding Path=RecordProgramAdvanced}" CommandParameter="{Binding Path=Episodes.CurrentItem}"  Content="{Binding Path=AdvancedRecordLabel}" Style="{DynamicResource MpButton}" Height="32"  />
-      <controls:Button Name="buttonKeepUntil" Command="{Binding Path=KeepUntilProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" Content="{Binding Path=KeepUntilLabel}" Style="{DynamicResource MpButton}" Height="32"   />
-      <controls:RadioButton  Name="buttonAlertMe" Command="{Binding Path=AlertMeProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" Content="{Binding Path=AlertMeLabel}" Style="{StaticResource MpRadioButton}" Height="32"  />
-      <controls:Button Name="buttonQuality" Command="{Binding Path=QualityProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" Content="{Binding Path=QualityLabel}" Style="{DynamicResource MpButton}" Height="32"   />
-      <controls:Button Name="buttonEpisodes" Command="{Binding Path=EpisodesProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" Content="{Binding Path=EpisodesLabel}" Style="{DynamicResource MpButton}" Height="32"  />
-      <controls:Button Name="buttonPreRecord" Command="{Binding Path=PreRecordProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" Content="{Binding Path=PreRecordLabel}" Style="{DynamicResource MpButton}" Height="32"  />
-      <controls:Button Name="buttonPostRecord" Command="{Binding Path=PostRecordProgram}" CommandParameter="{Binding Path=Episodes.CurrentItem}" Content="{Binding Path=PostRecordLabel}" Style="{DynamicResource MpButton}" Height="32"  />
+      <controls:Button Name="buttonRecord" Command="{Binding Path=RecordProgram}" CommandParameter="{Binding Path=CurrentProgram}"  Content="{Binding Path=RecordLabel}" Style="{DynamicResource MpButton}" Height="32"   />
+      <controls:Button Name="buttonAdvancedRecord" Command="{Binding Path=RecordProgramAdvanced}" CommandParameter="{Binding Path=CurrentProgram}"  Content="{Binding Path=AdvancedRecordLabel}" Style="{DynamicResource MpButton}" Height="32"  />
+      <controls:Button Name="buttonKeepUntil" Command="{Binding Path=KeepUntilProgram}" CommandParameter="{Binding Path=CurrentProgram}" Content="{Binding Path=KeepUntilLabel}" Style="{DynamicResource MpButton}" Height="32"   />
+      <controls:RadioButton  Name="buttonAlertMe" Command="{Binding Path=AlertMeProgram}" CommandParameter="{Binding Path=CurrentProgram}" IsChecked="{Binding Path=CurrentProgram.IsNotified,Mode=OneWay}" Content="{Binding Path=AlertMeLabel}" Style="{StaticResource MpRadioButton}" Height="32"  />
+      <controls:Button Name="buttonQuality" Command="{Binding Path=QualityProgram}" CommandParameter="{Binding Path=CurrentProgram}" Content="{Binding Path=QualityLabel}" Style="{DynamicResource MpButton}" Height="32"   />
+      <controls:Button Name="buttonEpisodes" Command="{Binding Path=EpisodesProgram}" CommandParameter="{Binding Path=CurrentProgram}" Content="{Binding Path=EpisodesLabel}" Style="{DynamicResource MpButton}" Height="32"  />
+      <controls:Button Name="buttonPreRecord" Command="{Binding Path=PreRecordProgram}" CommandParameter="{Binding Path=CurrentProgram}" Content="{Binding Path=PreRecordLabel}" Style="{DynamicResource MpButton}" Height="32"  />
+      <controls:Button Name="buttonPostRecord" Command="{Binding Path=PostRecordProgram}" CommandParameter="{Binding Path=CurrentProgram}" Content="{Binding Path=PostRecordLabel}" Style="{DynamicResource MpButton}" Height="32"  />
     </StackPanel>
 
     <StackPanel Margin="0,0,30,0">
