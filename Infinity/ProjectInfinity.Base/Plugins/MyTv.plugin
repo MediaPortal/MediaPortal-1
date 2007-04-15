@@ -13,7 +13,7 @@
 
 	<Path name = "/Infinity/HomeMenu">
 		<MenuItem id    = "MyTv"
-		          label = "@mytv:133"
+		          label = "@mytv:137"
                           image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
 		          class = "MyTv.TvPlugin"/>
 	</Path>
