@@ -36,10 +36,21 @@ namespace ProjectInfinity.Plugins
   /// </summary>
   public class ExtensionPath
   {
+    #region Variables
     string _name;
     Plugin _plugin;
     List<NodeItem> _items = new List<NodeItem>();
+    #endregion
 
+    #region Constructors/Destructors
+    public ExtensionPath(string name, Plugin plugin)
+    {
+      this._plugin = plugin;
+      this._name = name;
+    }
+    #endregion
+
+    #region Properties
     public Plugin Plugin
     {
       get
@@ -62,13 +73,9 @@ namespace ProjectInfinity.Plugins
         return _items;
       }
     }
+    #endregion
 
-    public ExtensionPath(string name, Plugin plugin)
-    {
-      this._plugin = plugin;
-      this._name = name;
-    }
-
+    #region Public static Methods
     public static void SetUp(ExtensionPath extensionPath, XmlReader reader, string endElement)
     {
       //Stack<ICondition> conditionStack = new Stack<ICondition>();
@@ -115,5 +122,6 @@ namespace ProjectInfinity.Plugins
         }
       }
     }
+    #endregion
   }
 }

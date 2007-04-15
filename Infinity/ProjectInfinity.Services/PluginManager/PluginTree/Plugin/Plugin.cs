@@ -34,64 +34,48 @@ using ProjectInfinity.Logging;
 
 namespace ProjectInfinity.Plugins
 {
-	public sealed class Plugin
-	{
-		Properties    _properties = new Properties();
-		List<PluginRuntime> _runtimes   = new List<PluginRuntime>();
+  public sealed class Plugin
+  {
+    #region Variables
+    Properties _properties = new Properties();
+    List<PluginRuntime> _runtimes = new List<PluginRuntime>();
+    string _fileName = null;
+    PluginManifest _manifest = new PluginManifest();
+    Dictionary<string, ExtensionPath> _paths = new Dictionary<string, ExtensionPath>();
+    bool _enabled;
+
+    //AddInAction _action = AddInAction.Disable;
     //List<string> bitmapResources = new List<string>();
     //List<string> stringResources = new List<string>();
-		
-		string        _fileName = null;
-		PluginManifest  _manifest = new PluginManifest();
-		Dictionary<string, ExtensionPath> _paths = new Dictionary<string, ExtensionPath>();
-		//AddInAction _action = AddInAction.Disable;
-		bool _enabled;
-		
-		//static bool hasShownErrorMessage = false;
+    //string customErrorMessage;
+    //static bool hasShownErrorMessage = false;
+    #endregion
 
-		public object CreateObject(string className)
-		{
-			foreach (PluginRuntime runtime in _runtimes) {
-				object o = runtime.CreateInstance(className);
-				if (o != null) {
-					return o;
-				}
-			}
-      ServiceScope.Get<ILogger>().Error("Cannot create object: " + className);
-      //if (hasShownErrorMessage) {
-      //  ServiceScope.Get<ILogger>().Error("Cannot create object: " + className);
-      //} else {
-      //  hasShownErrorMessage = true;
-      //  //MessageService.ShowError("Cannot create object: " + className + "\nFuture missing objects will not cause an error message.");
-      //}
-			return null;
-		}
-		
-		public override string ToString()
-		{
-			return "[Plugin: " + Name + "]";
-		}
-		
-		string customErrorMessage;
-		
-		/// <summary>
-		/// Gets the message of a custom load error. Used only when AddInAction is set to CustomError.
-		/// Settings this property to a non-null value causes Enabled to be set to false and
-		/// Action to be set to AddInAction.CustomError.
-		/// </summary>
-		public string CustomErrorMessage {
-			get {
-				return customErrorMessage;
-			}
-			internal set {
-				if (value != null) {
-					Enabled = false;
-          //Action = AddInAction.CustomError;
-				}
-				customErrorMessage = value;
-			}
-		}
-		
+
+    #region Constructors/Destructors
+    internal Plugin()
+    {
+    }
+    #endregion
+
+    ///// <summary>
+    ///// Gets the message of a custom load error. Used only when AddInAction is set to CustomError.
+    ///// Settings this property to a non-null value causes Enabled to be set to false and
+    ///// Action to be set to AddInAction.CustomError.
+    ///// </summary>
+    //public string CustomErrorMessage {
+    //  get {
+    //    return customErrorMessage;
+    //  }
+    //  internal set {
+    //    if (value != null) {
+    //      Enabled = false;
+    //      //Action = AddInAction.CustomError;
+    //    }
+    //    customErrorMessage = value;
+    //  }
+    //}
+
     ///// <summary>
     ///// Action to execute when the application is restarted.
     ///// </summary>
@@ -103,49 +87,65 @@ namespace ProjectInfinity.Plugins
     //    action = value;
     //  }
     //}
-		
-		public List<PluginRuntime> Runtimes {
-			get {
-				return _runtimes;
-			}
-		}
-		
-		public Version Version {
-			get {
-				return _manifest.PrimaryVersion;
-			}
-		}
-		
-		public string FileName {
-			get {
-				return _fileName;
-			}
-		}
-		
-		public string Name {
-			get {
-				return _properties["name"];
-			}
-		}
-		
-		public PluginManifest Manifest {
-			get {
-				return _manifest;
-			}
-		}
-		
-		public Dictionary<string, ExtensionPath> Paths {
-			get {
-				return _paths;
-			}
-		}
-		
-		public Properties Properties {
-			get {
-				return _properties;
-			}
-		}
-		
+
+    #region Properties
+    // Public Properties
+    public List<PluginRuntime> Runtimes
+    {
+      get
+      {
+        return _runtimes;
+      }
+    }
+
+    public Version Version
+    {
+      get
+      {
+        return _manifest.PrimaryVersion;
+      }
+    }
+
+    public string FileName
+    {
+      get
+      {
+        return _fileName;
+      }
+    }
+
+    public string Name
+    {
+      get
+      {
+        return _properties["name"];
+      }
+    }
+
+    public PluginManifest Manifest
+    {
+      get
+      {
+        return _manifest;
+      }
+    }
+
+    public Dictionary<string, ExtensionPath> Paths
+    {
+      get
+      {
+        return _paths;
+      }
+    }
+
+    public Properties Properties
+    {
+      get
+      {
+        return _properties;
+      }
+    }
+
     //public List<string> BitmapResources {
     //  get {
     //    return bitmapResources;
@@ -154,7 +154,7 @@ namespace ProjectInfinity.Plugins
     //    bitmapResources = value;
     //  }
     //}
-		
+
     //public List<string> StringResources {
     //  get {
     //    return stringResources;
@@ -163,34 +163,70 @@ namespace ProjectInfinity.Plugins
     //    stringResources = value;
     //  }
     //}
-		
-		public bool Enabled {
-			get {
-				return _enabled;
-			}
-			internal set {
-				_enabled = value;
+
+    public bool Enabled
+    {
+      get
+      {
+        return _enabled;
+      }
+      internal set
+      {
+        _enabled = value;
         //this.Action = value ? AddInAction.Enable : AddInAction.Disable;
-			}
-		}
-		
-		internal Plugin()
-		{
-		}
-		
-		static void SetupPlugin(XmlReader reader, Plugin plugin, string hintPath)
-		{
-			while (reader.Read()) {
-				if (reader.NodeType == XmlNodeType.Element && reader.IsStartElement()) {
-					switch (reader.LocalName) {
-						case "StringResources":
-						case "BitmapResources":
-							if (reader.AttributeCount != 1) {
-								throw new PluginLoadException("BitmapResources requires ONE attribute.");
-							}
+      }
+    }
+    #endregion
+
+    #region Public Methods
+    public object CreateObject(string className)
+    {
+      foreach (PluginRuntime runtime in _runtimes)
+      {
+        object o = runtime.CreateInstance(className);
+        if (o != null)
+        {
+          return o;
+        }
+      }
+      ServiceScope.Get<ILogger>().Error("Cannot create object: " + className);
+      //if (hasShownErrorMessage) {
+      //  ServiceScope.Get<ILogger>().Error("Cannot create object: " + className);
+      //} else {
+      //  hasShownErrorMessage = true;
+      //  //MessageService.ShowError("Cannot create object: " + className + "\nFuture missing objects will not cause an error message.");
+      //}
+      return null;
+    }
+
+    public ExtensionPath GetExtensionPath(string pathName)
+    {
+      if (!_paths.ContainsKey(pathName))
+      {
+        return _paths[pathName] = new ExtensionPath(pathName, this);
+      }
+      return _paths[pathName];
+    }
+    #endregion
+
+    #region Public static Methods
+    static void SetupPlugin(XmlReader reader, Plugin plugin, string hintPath)
+    {
+      while (reader.Read())
+      {
+        if (reader.NodeType == XmlNodeType.Element && reader.IsStartElement())
+        {
+          switch (reader.LocalName)
+          {
+            case "StringResources":
+            case "BitmapResources":
+              if (reader.AttributeCount != 1)
+              {
+                throw new PluginLoadException("BitmapResources requires ONE attribute.");
+              }
 
               string filename = reader.GetAttribute("file"); // StringParser.Parse(reader.GetAttribute("file"));
-							
+
               //if(reader.LocalName == "BitmapResources")
               //{
               //  addIn.BitmapResources.Add(filename);
@@ -199,93 +235,108 @@ namespace ProjectInfinity.Plugins
               //{
               //  addIn.StringResources.Add(filename);
               //}
-							break;
-						case "Runtime":
-							if (!reader.IsEmptyElement) {
-								PluginRuntime.ReadSection(reader, plugin, hintPath);
-							}
-							break;
-						case "Include":
-							if (reader.AttributeCount != 1) {
-								throw new PluginLoadException("Include requires ONE attribute.");
-							}
-							if (!reader.IsEmptyElement) {
-								throw new PluginLoadException("Include nodes must be empty!");
-							}
-							if (hintPath == null) {
-								throw new PluginLoadException("Cannot use include nodes when hintPath was not specified (e.g. when AddInManager reads a .addin file)!");
-							}
-							string fileName = Path.Combine(hintPath, reader.GetAttribute(0));
-							XmlReaderSettings xrs = new XmlReaderSettings();
-							xrs.ConformanceLevel = ConformanceLevel.Fragment;
-							using (XmlReader includeReader = XmlTextReader.Create(fileName, xrs)) {
-								SetupPlugin(includeReader, plugin, Path.GetDirectoryName(fileName));
-							}
-							break;
-						case "Path":
-							if (reader.AttributeCount != 1) {
-								throw new PluginLoadException("Import node requires ONE attribute.");
-							}
-							string pathName = reader.GetAttribute(0);
-							ExtensionPath extensionPath = plugin.GetExtensionPath(pathName);
-							if (!reader.IsEmptyElement) {
-								ExtensionPath.SetUp(extensionPath, reader, "Path");
-							}
-							break;
-						case "Manifest":
-							plugin.Manifest.ReadManifestSection(reader, hintPath);
-							break;
-						default:
-							throw new PluginLoadException("Unknown root path node:" + reader.LocalName);
-					}
-				}
-			}
-		}
-		
-		public ExtensionPath GetExtensionPath(string pathName)
-		{
-			if (!_paths.ContainsKey(pathName)) {
-				return _paths[pathName] = new ExtensionPath(pathName, this);
-			}
-			return _paths[pathName];
-		}
-		
-		public static Plugin Load(TextReader textReader)
-		{
-			return Load(textReader, null);
-		}
-		
-		public static Plugin Load(TextReader textReader, string hintPath)
-		{
-			Plugin plugin = new Plugin();
-			using (XmlTextReader reader = new XmlTextReader(textReader)) {
-				while (reader.Read()){
-					if (reader.IsStartElement()) {
-						switch (reader.LocalName) {
-							case "Plugin":    // addin -> plugin
-								plugin._properties = Properties.ReadFromAttributes(reader);
-								SetupPlugin(reader, plugin, hintPath);
-								break;
-							default:
-								throw new PluginLoadException("Unknown add-in file.");
-						}
-					}
-				}
-			}
-			return plugin;
-		}
-		
-		public static Plugin Load(string fileName)
-		{
-			try {
-				using (TextReader textReader = File.OpenText(fileName)) {
-					Plugin plugin = Load(textReader, Path.GetDirectoryName(fileName));
-					plugin._fileName = fileName;
-					return plugin;
-				}
-			} catch (Exception e) {
-				throw new PluginLoadException("Can't load " + fileName, e);
-			}
-		}
-	}
+              break;
+            case "Runtime":
+              if (!reader.IsEmptyElement)
+              {
+                PluginRuntime.ReadSection(reader, plugin, hintPath);
+              }
+              break;
+            case "Include":
+              if (reader.AttributeCount != 1)
+              {
+                throw new PluginLoadException("Include requires ONE attribute.");
+              }
+              if (!reader.IsEmptyElement)
+              {
+                throw new PluginLoadException("Include nodes must be empty!");
+              }
+              if (hintPath == null)
+              {
+                throw new PluginLoadException("Cannot use include nodes when hintPath was not specified (e.g. when AddInManager reads a .addin file)!");
+              }
+              string fileName = Path.Combine(hintPath, reader.GetAttribute(0));
+              XmlReaderSettings xrs = new XmlReaderSettings();
+              xrs.ConformanceLevel = ConformanceLevel.Fragment;
+              using (XmlReader includeReader = XmlTextReader.Create(fileName, xrs))
+              {
+                SetupPlugin(includeReader, plugin, Path.GetDirectoryName(fileName));
+              }
+              break;
+            case "Path":
+              if (reader.AttributeCount != 1)
+              {
+                throw new PluginLoadException("Import node requires ONE attribute.");
+              }
+              string pathName = reader.GetAttribute(0);
+              ExtensionPath extensionPath = plugin.GetExtensionPath(pathName);
+              if (!reader.IsEmptyElement)
+              {
+                ExtensionPath.SetUp(extensionPath, reader, "Path");
+              }
+              break;
+            case "Manifest":
+              plugin.Manifest.ReadManifestSection(reader, hintPath);
+              break;
+            default:
+              throw new PluginLoadException("Unknown root path node:" + reader.LocalName);
+          }
+        }
+      }
+    }
+
+    public static Plugin Load(TextReader textReader)
+    {
+      return Load(textReader, null);
+    }
+
+    public static Plugin Load(TextReader textReader, string hintPath)
+    {
+      Plugin plugin = new Plugin();
+      using (XmlTextReader reader = new XmlTextReader(textReader))
+      {
+        while (reader.Read())
+        {
+          if (reader.IsStartElement())
+          {
+            switch (reader.LocalName)
+            {
+              case "Plugin":    // addin -> plugin
+                plugin._properties = Properties.ReadFromAttributes(reader);
+                SetupPlugin(reader, plugin, hintPath);
+                break;
+              default:
+                throw new PluginLoadException("Unknown add-in file.");
+            }
+          }
+        }
+      }
+      return plugin;
+    }
+
+    public static Plugin Load(string fileName)
+    {
+      try
+      {
+        using (TextReader textReader = File.OpenText(fileName))
+        {
+          Plugin plugin = Load(textReader, Path.GetDirectoryName(fileName));
+          plugin._fileName = fileName;
+          return plugin;
+        }
+      }
+      catch (Exception e)
+      {
+        throw new PluginLoadException("Can't load " + fileName, e);
+      }
+    }
+    #endregion
+
+    #region <Base class> Overloads
+    public override string ToString()
+    {
+      return "[Plugin: " + Name + "]";
+    }
+    #endregion
+  }
 }

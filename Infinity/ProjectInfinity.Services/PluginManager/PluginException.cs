@@ -33,8 +33,10 @@ namespace ProjectInfinity.Plugins
 	/// </summary>
 	[Serializable()]
 	public class PluginException : Exception
-	{
-		public PluginException() : base()
+  {
+    #region Constructors/Destructors
+
+    public PluginException() : base()
 		{
 		}
 		
@@ -48,6 +50,8 @@ namespace ProjectInfinity.Plugins
 		
 		protected PluginException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
-		}
-	}
+    }
+
+    #endregion
+  }
 }

@@ -38,30 +38,31 @@ namespace ProjectInfinity.Plugins
   /// </summary>
   public class PluginTreeNode
   {
+    #region Variables
     Dictionary<string, PluginTreeNode> _childNodes = new Dictionary<string, PluginTreeNode>();
     List<NodeItem> _items = new List<NodeItem>();
     bool _isSorted = false;
+    #endregion
 
+    #region Constructors/Destructors
+    public PluginTreeNode()
+    {
+    }
+    #endregion
+
+    #region Properties
     public Dictionary<string, PluginTreeNode> ChildNodes
     {
-      get
-      {
-        return _childNodes;
-      }
+      get { return _childNodes; }
     }
 
     public List<NodeItem> Items
     {
-      get
-      {
-        return _items;
-      }
+      get { return _items; }
     }
+    #endregion
 
-    public PluginTreeNode()
-    {
-    }
-
+    #region Public Methods
     public List<T> BuildChildItems<T>(object caller)
     {
       List<T> items = new List<T>(_items.Count);
@@ -143,5 +144,6 @@ namespace ProjectInfinity.Plugins
       }
       throw new TreePathNotFoundException(childItemID);
     }
+    #endregion
   }
 }

@@ -32,170 +32,231 @@ using System.IO;
 
 namespace ProjectInfinity.Plugins
 {
-	/// <summary>
-	/// Represents a versioned reference to an Plugin. Used by <see cref="PluginManifest"/>.
-	/// </summary>
-	public class PluginReference : ICloneable
-	{
-		string name;
-		Version minimumVersion;
-		Version maximumVersion;
-		
-		public Version MinimumVersion {
-			get {
-				return minimumVersion;
-			}
-		}
-		
-		public Version MaximumVersion {
-			get {
-				return maximumVersion;
-			}
-		}
-		
-		public string Name {
-			get {
-				return name;
-			}
-			set {
-				if (value == null) throw new ArgumentNullException("name");
-				if (value.Length == 0) throw new ArgumentException("name cannot be an empty string", "name");
-				name = value;
-			}
-		}
-		
-		/// <returns>Returns true when the reference is valid.</returns>
-		public bool Check(Dictionary<string, Version> Plugins, out Version versionFound)
-		{
-			if (Plugins.TryGetValue(name, out versionFound)) {
-				return CompareVersion(versionFound, minimumVersion) >= 0
-					&& CompareVersion(versionFound, maximumVersion) <= 0;
-			} else {
-				return false;
-			}
-		}
-		
-		/// <summary>
-		/// Compares two versions and ignores unspecified fields (unlike Version.CompareTo)
-		/// </summary>
-		/// <returns>-1 if a &lt; b, 0 if a == b, 1 if a &gt; b</returns>
-		int CompareVersion(Version a, Version b)
-		{
-			if (a.Major != b.Major) {
-				return a.Major > b.Major ? 1 : -1;
-			}
-			if (a.Minor != b.Minor) {
-				return a.Minor > b.Minor ? 1 : -1;
-			}
-			if (a.Build < 0 || b.Build < 0)
-				return 0;
-			if (a.Build != b.Build) {
-				return a.Build > b.Build ? 1 : -1;
-			}
-			if (a.Revision < 0 || b.Revision < 0)
-				return 0;
-			if (a.Revision != b.Revision) {
-				return a.Revision > b.Revision ? 1 : -1;
-			}
-			return 0;
-		}
-		
-		public static PluginReference Create(Properties properties, string hintPath)
-		{
-			PluginReference reference = new PluginReference(properties["Plugin"]);
-			string version = properties["version"];
-			if (version != null && version.Length > 0) {
-				int pos = version.IndexOf('-');
-				if (pos > 0) {
-					reference.minimumVersion = ParseVersion(version.Substring(0, pos), hintPath);
-					reference.maximumVersion = ParseVersion(version.Substring(pos + 1), hintPath);
-				} else {
-					reference.maximumVersion = reference.minimumVersion = ParseVersion(version, hintPath);
-				}
-			}
-			return reference;
-		}
-		
-		static Version entryVersion;
-		
-		internal static Version ParseVersion(string version, string hintPath)
-		{
-			if (version == null || version.Length == 0)
-				return new Version(0,0,0,0);
-			if (version.StartsWith("@")) {
-				if (version == "@Infinity") {
-					if (entryVersion == null)
-						entryVersion = new Version(0,1,0,0);
-					return entryVersion;
-				}
-				if (hintPath != null) {
-					string fileName = Path.Combine(hintPath, version.Substring(1));
-					try {
-						FileVersionInfo info = FileVersionInfo.GetVersionInfo(fileName);
-						return new Version(info.FileMajorPart, info.FileMinorPart, info.FileBuildPart, info.FilePrivatePart);
-					} catch (FileNotFoundException ex) {
-						throw new PluginLoadException("Cannot get version '" + version + "': " + ex.Message);
-					}
-				}
-				return new Version(0,0,0,0);
-			} else {
-				return new Version(version);
-			}
-		}
-		
-		public PluginReference(string name) : this(name, new Version(0,0,0,0), new Version(int.MaxValue, int.MaxValue)) { }
-		
-		public PluginReference(string name, Version specificVersion) : this(name, specificVersion, specificVersion) { }
-		
-		public PluginReference(string name, Version minimumVersion, Version maximumVersion)
-		{
-			this.Name = name;
-			if (minimumVersion == null) throw new ArgumentNullException("minimumVersion");
-			if (maximumVersion == null) throw new ArgumentNullException("maximumVersion");
-			
-			this.minimumVersion = minimumVersion;
-			this.maximumVersion = maximumVersion;
-		}
-		
-		public override bool Equals(object obj)
-		{
-			if (!(obj is PluginReference)) return false;
-			PluginReference b = (PluginReference)obj;
-			return name == b.name && minimumVersion == b.minimumVersion && maximumVersion == b.maximumVersion;
-		}
-		
-		public override int GetHashCode()
-		{
-			return name.GetHashCode() ^ minimumVersion.GetHashCode() ^ maximumVersion.GetHashCode();
-		}
-		
-		public override string ToString()
-		{
-			if (minimumVersion.ToString() == "0.0.0.0") {
-				if (maximumVersion.Major == int.MaxValue) {
-					return name;
-				} else {
-					return name + ", version <" + maximumVersion.ToString();
-				}
-			} else {
-				if (maximumVersion.Major == int.MaxValue) {
-					return name + ", version >" + minimumVersion.ToString();
-				} else if (minimumVersion == maximumVersion) {
-					return name + ", version " + minimumVersion.ToString();
-				} else {
-					return name + ", version " + minimumVersion.ToString() + "-" + maximumVersion.ToString();
-				}
-			}
-		}
-		
-		public PluginReference Clone()
-		{
-			return new PluginReference(name, minimumVersion, maximumVersion);
-		}
-		
-		object ICloneable.Clone()
-		{
-			return Clone();
-		}
-	}
+  /// <summary>
+  /// Represents a versioned reference to an Plugin. Used by <see cref="PluginManifest"/>.
+  /// </summary>
+  public class PluginReference : ICloneable
+  {
+    #region Variables
+    string name;
+    Version minimumVersion;
+    Version maximumVersion;
+
+    static Version entryVersion;
+    #endregion
+
+    #region Constructors/Destructors
+    public PluginReference(string name)
+      : this(name, new Version(0, 0, 0, 0), new Version(int.MaxValue, int.MaxValue))
+    {
+    }
+
+    public PluginReference(string name, Version specificVersion)
+      : this(name, specificVersion, specificVersion)
+    {
+    }
+
+    public PluginReference(string name, Version minimumVersion, Version maximumVersion)
+    {
+      this.Name = name;
+      if (minimumVersion == null) throw new ArgumentNullException("minimumVersion");
+      if (maximumVersion == null) throw new ArgumentNullException("maximumVersion");
+
+      this.minimumVersion = minimumVersion;
+      this.maximumVersion = maximumVersion;
+    }
+    #endregion
+
+    #region Properties
+    public Version MinimumVersion
+    {
+      get
+      {
+        return minimumVersion;
+      }
+    }
+
+    public Version MaximumVersion
+    {
+      get
+      {
+        return maximumVersion;
+      }
+    }
+
+    public string Name
+    {
+      get
+      {
+        return name;
+      }
+      set
+      {
+        if (value == null) throw new ArgumentNullException("name");
+        if (value.Length == 0) throw new ArgumentException("name cannot be an empty string", "name");
+        name = value;
+      }
+    }
+    #endregion
+
+    #region Public Methods
+    /// <returns>Returns true when the reference is valid.</returns>
+    public bool Check(Dictionary<string, Version> Plugins, out Version versionFound)
+    {
+      if (Plugins.TryGetValue(name, out versionFound))
+      {
+        return CompareVersion(versionFound, minimumVersion) >= 0
+          && CompareVersion(versionFound, maximumVersion) <= 0;
+      }
+      else
+      {
+        return false;
+      }
+    }
+    #endregion
+
+    #region Private Methods
+    /// <summary>
+    /// Compares two versions and ignores unspecified fields (unlike Version.CompareTo)
+    /// </summary>
+    /// <returns>-1 if a &lt; b, 0 if a == b, 1 if a &gt; b</returns>
+    private int CompareVersion(Version a, Version b)
+    {
+      if (a.Major != b.Major)
+      {
+        return a.Major > b.Major ? 1 : -1;
+      }
+      if (a.Minor != b.Minor)
+      {
+        return a.Minor > b.Minor ? 1 : -1;
+      }
+      if (a.Build < 0 || b.Build < 0)
+        return 0;
+      if (a.Build != b.Build)
+      {
+        return a.Build > b.Build ? 1 : -1;
+      }
+      if (a.Revision < 0 || b.Revision < 0)
+        return 0;
+      if (a.Revision != b.Revision)
+      {
+        return a.Revision > b.Revision ? 1 : -1;
+      }
+      return 0;
+    }
+    #endregion
+
+    #region Public static Methods
+    public static PluginReference Create(Properties properties, string hintPath)
+    {
+      PluginReference reference = new PluginReference(properties["Plugin"]);
+      string version = properties["version"];
+      if (version != null && version.Length > 0)
+      {
+        int pos = version.IndexOf('-');
+        if (pos > 0)
+        {
+          reference.minimumVersion = ParseVersion(version.Substring(0, pos), hintPath);
+          reference.maximumVersion = ParseVersion(version.Substring(pos + 1), hintPath);
+        }
+        else
+        {
+          reference.maximumVersion = reference.minimumVersion = ParseVersion(version, hintPath);
+        }
+      }
+      return reference;
+    }
+    #endregion
+
+    #region internal static Methods
+    internal static Version ParseVersion(string version, string hintPath)
+    {
+      if (version == null || version.Length == 0)
+        return new Version(0, 0, 0, 0);
+      if (version.StartsWith("@"))
+      {
+        if (version == "@Infinity")
+        {
+          if (entryVersion == null)
+            entryVersion = new Version(0, 1, 0, 0);
+          return entryVersion;
+        }
+        if (hintPath != null)
+        {
+          string fileName = Path.Combine(hintPath, version.Substring(1));
+          try
+          {
+            FileVersionInfo info = FileVersionInfo.GetVersionInfo(fileName);
+            return new Version(info.FileMajorPart, info.FileMinorPart, info.FileBuildPart, info.FilePrivatePart);
+          }
+          catch (FileNotFoundException ex)
+          {
+            throw new PluginLoadException("Cannot get version '" + version + "': " + ex.Message);
+          }
+        }
+        return new Version(0, 0, 0, 0);
+      }
+      else
+      {
+        return new Version(version);
+      }
+    }
+    #endregion
+
+    #region <Base class> Overloads
+    public override bool Equals(object obj)
+    {
+      if (!(obj is PluginReference)) return false;
+      PluginReference b = (PluginReference)obj;
+      return name == b.name && minimumVersion == b.minimumVersion && maximumVersion == b.maximumVersion;
+    }
+
+    public override int GetHashCode()
+    {
+      return name.GetHashCode() ^ minimumVersion.GetHashCode() ^ maximumVersion.GetHashCode();
+    }
+
+    public override string ToString()
+    {
+      if (minimumVersion.ToString() == "0.0.0.0")
+      {
+        if (maximumVersion.Major == int.MaxValue)
+        {
+          return name;
+        }
+        else
+        {
+          return name + ", version <" + maximumVersion.ToString();
+        }
+      }
+      else
+      {
+        if (maximumVersion.Major == int.MaxValue)
+        {
+          return name + ", version >" + minimumVersion.ToString();
+        }
+        else if (minimumVersion == maximumVersion)
+        {
+          return name + ", version " + minimumVersion.ToString();
+        }
+        else
+        {
+          return name + ", version " + minimumVersion.ToString() + "-" + maximumVersion.ToString();
+        }
+      }
+    }
+    #endregion
+
+    #region <ICloneable> Implementations
+    public PluginReference Clone()
+    {
+      return new PluginReference(name, minimumVersion, maximumVersion);
+    }
+
+    object ICloneable.Clone()
+    {
+      return Clone();
+    }
+    #endregion
+  }
 }

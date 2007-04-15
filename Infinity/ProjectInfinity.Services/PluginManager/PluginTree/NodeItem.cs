@@ -32,85 +32,110 @@ using System.Collections.Generic;
 
 namespace ProjectInfinity.Plugins
 {
-	/// <summary>
-	/// Represents a node in the add in tree that can produce an item.
-	/// </summary>
-	public class NodeItem
-	{
-		Plugin      _plugin;
-		string      _name;
-		Properties  _properties;
-		
+  /// <summary>
+  /// Represents a node in the add in tree that can produce an item.
+  /// </summary>
+  public class NodeItem
+  {
+    #region Variables
+    Plugin _plugin;
+    string _name;
+    Properties _properties;
+
     //ICondition[] conditions;
-		
-		public string Name {
-			get {
-				return _name;
-			}
-		}
-		
-		public Plugin Plugin {
-			get {
-				return _plugin;
-			}
-		}
-		
-		public string Id {
-			get {
-				return _properties["id"];
-			}
-		}
-		
-		public string InsertAfter {
-			get {
-				if (!_properties.Contains("insertafter")) {
-					return "";
-				}
-				return _properties["insertafter"];
-			}
-			set {
-				_properties["insertafter"] = value;
-			}
-		}
-		
-		public string InsertBefore {
-			get {
-				if (!_properties.Contains("insertbefore")) {
-					return "";
-				}
-				return _properties["insertbefore"];
-			}
-			set {
-				_properties["insertbefore"] = value;
-			}
-		}
-		
-		public string this[string key] {
-			get {
-				return _properties[key];
-			}
-		}
-		
-		public Properties Properties {
-			get {
-				return _properties;
-			}
-		}
-		
+    #endregion
+
+    #region Constructors/Destructors
+    public NodeItem(Plugin plugin, string name, Properties properties) //, ICondition[] conditions)
+    {
+      this._plugin = plugin;
+      this._name = name;
+      this._properties = properties;
+      //this.conditions = conditions;
+    }
+    #endregion
+
+    #region Properties
+    public string Name
+    {
+      get
+      {
+        return _name;
+      }
+    }
+
+    public Plugin Plugin
+    {
+      get
+      {
+        return _plugin;
+      }
+    }
+
+    public string Id
+    {
+      get
+      {
+        return _properties["id"];
+      }
+    }
+
+    public string InsertAfter
+    {
+      get
+      {
+        if (!_properties.Contains("insertafter"))
+        {
+          return "";
+        }
+        return _properties["insertafter"];
+      }
+      set
+      {
+        _properties["insertafter"] = value;
+      }
+    }
+
+    public string InsertBefore
+    {
+      get
+      {
+        if (!_properties.Contains("insertbefore"))
+        {
+          return "";
+        }
+        return _properties["insertbefore"];
+      }
+      set
+      {
+        _properties["insertbefore"] = value;
+      }
+    }
+
+    public string this[string key]
+    {
+      get
+      {
+        return _properties[key];
+      }
+    }
+
+    public Properties Properties
+    {
+      get
+      {
+        return _properties;
+      }
+    }
+
     //public ICondition[] Conditions {
     //  get {
     //    return conditions;
     //  }
     //}
-		
-		public NodeItem(Plugin plugin, string name, Properties properties) //, ICondition[] conditions)
-		{
-			this._plugin      = plugin;
-			this._name       = name;
-			this._properties = properties;
-			//this.conditions = conditions;
-		}
-		
+    #endregion
+
+    #region Public Methods
     //public ConditionFailedAction GetFailedAction(object caller)
     //{
     //  return Condition.GetFailedAction(conditions, caller);
@@ -130,12 +155,15 @@ namespace ProjectInfinity.Plugins
       //}
       return builder.BuildItem(owner, this, subItems);
     }
-		
-		public override string ToString()
-		{
-			return String.Format("[NodeItem: name = {0}, addIn={1}]",
-			                     _name,
-			                     _plugin.FileName);
-		}
-	}
+    #endregion
+
+    #region <Base class> Overloads
+    public override string ToString()
+    {
+      return String.Format("[NodeItem: name = {0}, addIn={1}]",
+                           _name,
+                           _plugin.FileName);
+    }
+    #endregion
+  }
 }

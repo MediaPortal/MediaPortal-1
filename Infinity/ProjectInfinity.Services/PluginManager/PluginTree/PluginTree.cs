@@ -40,14 +40,16 @@ namespace ProjectInfinity.Plugins
   /// </summary>
   public class PluginTree : IPluginTree
   {
+    #region Variables
     List<Plugin> _plugins = new List<Plugin>();
     PluginTreeNode _rootNode = new PluginTreeNode();
-
     Dictionary<string, IBuilder> _builders = new Dictionary<string, IBuilder>();
-    
+
     // do we require conditions?
     //Dictionary<string, IConditionEvaluator> conditionEvaluators = new Dictionary<string, IConditionEvaluator>();
+    #endregion
 
+    #region Constructors/Destructors
     public PluginTree()
     {
       _builders.Add("Class", new ClassBuilder());
@@ -58,21 +60,17 @@ namespace ProjectInfinity.Plugins
       //conditionEvaluators.Add("Compare", new CompareConditionEvaluator());
       //conditionEvaluators.Add("Ownerstate", new OwnerStateConditionEvaluator());
     }
+    #endregion
 
+    #region Properties
     public IList<Plugin> Plugins
     {
-      get
-      {
-        return _plugins.AsReadOnly();
-      }
+      get { return _plugins.AsReadOnly(); }
     }
 
     public Dictionary<string, IBuilder> Builders
     {
-      get
-      {
-        return _builders;
-      }
+      get { return _builders; }
     }
 
     //public Dictionary<string, IConditionEvaluator> ConditionEvaluators
@@ -82,7 +80,9 @@ namespace ProjectInfinity.Plugins
     //    return conditionEvaluators;
     //  }
     //}
+    #endregion
 
+    #region Public Methods
     public bool IsTreeNode(string path)
     {
       if (path == null || path.Length == 0)
@@ -197,40 +197,6 @@ namespace ProjectInfinity.Plugins
         return node.BuildChildItems<T>(caller);
     }
 
-    PluginTreeNode CreatePath(PluginTreeNode localRoot, string path)
-    {
-      if (path == null || path.Length == 0)
-      {
-        return localRoot;
-      }
-      string[] splittedPath = path.Split('/');
-      PluginTreeNode curPath = localRoot;
-      int i = 0;
-      while (i < splittedPath.Length)
-      {
-        if (splittedPath[i] != string.Empty)
-        {
-          if (!curPath.ChildNodes.ContainsKey(splittedPath[i]))
-          {
-            curPath.ChildNodes[splittedPath[i]] = new PluginTreeNode();
-          }
-          curPath = curPath.ChildNodes[splittedPath[i]];
-        }
-        ++i;
-      }
-
-      return curPath;
-    }
-
-    void AddExtensionPath(ExtensionPath path)
-    {
-      PluginTreeNode treePath = CreatePath(_rootNode, path.Name);
-      foreach (NodeItem item in path.Items)
-      {
-        treePath.Items.Add(item);
-      }
-    }
-
     public void InsertPlugin(Plugin Plugin)
     {
       if (Plugin.Enabled)
@@ -319,14 +285,14 @@ namespace ProjectInfinity.Plugins
           ServiceScope.Get<ILogger>().Error(ex);
           if (ex.InnerException != null)
           {
-            ////MessageService.ShowError("Error loading Plugin " + fileName + ":\n" + ex.InnerException.Message);
+            ServiceScope.Get<ILogger>().Error("Error loading Plugin " + fileName + ":\n" + ex.InnerException.Message);
           }
           else
           {
-            ////MessageService.ShowError("Error loading Plugin " + fileName + ":\n" + ex.Message);
+            ServiceScope.Get<ILogger>().Error("Error loading Plugin " + fileName + ":\n" + ex.Message);
           }
           Plugin = new Plugin();
-          Plugin.CustomErrorMessage = ex.Message;
+          //Plugin.CustomErrorMessage = ex.Message;
         }
         //if (Plugin.Action == PluginAction.CustomError)
         //{
@@ -404,5 +370,42 @@ namespace ProjectInfinity.Plugins
         InsertPlugin(plugin);
       }
     }
+    #endregion
+
+    #region Private Methods
+    private PluginTreeNode CreatePath(PluginTreeNode localRoot, string path)
+    {
+      if (path == null || path.Length == 0)
+      {
+        return localRoot;
+      }
+      string[] splittedPath = path.Split('/');
+      PluginTreeNode curPath = localRoot;
+      int i = 0;
+      while (i < splittedPath.Length)
+      {
+        if (splittedPath[i] != string.Empty)
+        {
+          if (!curPath.ChildNodes.ContainsKey(splittedPath[i]))
+          {
+            curPath.ChildNodes[splittedPath[i]] = new PluginTreeNode();
+          }
+          curPath = curPath.ChildNodes[splittedPath[i]];
+        }
+        ++i;
+      }
+
+      return curPath;
+    }
+
+    private void AddExtensionPath(ExtensionPath path)
+    {
+      PluginTreeNode treePath = CreatePath(_rootNode, path.Name);
+      foreach (NodeItem item in path.Items)
+      {
+        treePath.Items.Add(item);
+      }
+    }
+    #endregion
   }
 }

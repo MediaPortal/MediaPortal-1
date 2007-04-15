@@ -37,16 +37,27 @@ namespace ProjectInfinity.Plugins
 {
   public class PluginRuntime
   {
+    #region Variables
     string _hintPath;
     string _assembly;
     Assembly _loadedAssembly = null;
+    bool _isActive = true;
+    bool _isAssemblyLoaded = false;
 
     //IList<LazyLoadDoozer> definedDoozers = new List<LazyLoadDoozer>();
     //IList<LazyConditionEvaluator> definedConditionEvaluators = new List<LazyConditionEvaluator>();
     //ICondition[] conditions;
-    bool _isActive = true;
-    bool _isAssemblyLoaded = false;
+    #endregion
 
+    #region Constructors/Destructors
+    public PluginRuntime(string assembly, string hintPath)
+    {
+      this._assembly = assembly;
+      this._hintPath = hintPath;
+    }
+    #endregion
+
+    #region Properties
     public bool IsActive
     {
       get
@@ -57,12 +68,6 @@ namespace ProjectInfinity.Plugins
         //}
         return _isActive;
       }
-    }
-
-    public PluginRuntime(string assembly, string hintPath)
-    {
-      this._assembly = assembly;
-      this._hintPath = hintPath;
     }
 
     public string Assembly
@@ -79,55 +84,7 @@ namespace ProjectInfinity.Plugins
       {
         if (!_isAssemblyLoaded)
         {
-          ServiceScope.Get<ILogger>().Info("Loading Plugin" + _assembly);
-
-          _isAssemblyLoaded = true;
-
-          try
-          {
-            if (_assembly[0] == ':')
-            {
-              _loadedAssembly = System.Reflection.Assembly.Load(_assembly.Substring(1));
-            }
-            else if (_assembly[0] == '$')
-            {
-              int pos = _assembly.IndexOf('/');
-              if (pos < 0)
-                throw new ApplicationException("Expected '/' in path beginning with '$'!");
-              string referencedPlugin = _assembly.Substring(1, pos - 1);
-              foreach (Plugin plugin in ServiceScope.Get<IPluginTree>().Plugins)
-              {
-                if (plugin.Enabled && plugin.Manifest.Identities.ContainsKey(referencedPlugin))
-                {
-                  string assemblyFile = Path.Combine(Path.GetDirectoryName(plugin.FileName),
-                                                     _assembly.Substring(pos + 1));
-                  _loadedAssembly = System.Reflection.Assembly.LoadFrom(assemblyFile);
-                  break;
-                }
-              }
-              if (_loadedAssembly == null)
-              {
-                throw new FileNotFoundException("Could not find referenced Plugin" + referencedPlugin);
-              }
-            }
-            else
-            {
-              _loadedAssembly = System.Reflection.Assembly.LoadFrom(Path.Combine(_hintPath, _assembly));
-            }
-
-#if DEBUG
-            // preload assembly to provoke FileLoadException if dependencies are missing
-            _loadedAssembly.GetExportedTypes();
-#endif
-          }
-          catch (FileNotFoundException ex)
-          {
-            //MessageService.ShowError("The Plugin'" + assembly + "' could not be loaded:\n" + ex.ToString());
-          }
-          catch (FileLoadException ex)
-          {
-            //MessageService.ShowError("The addin '" + assembly + "' could not be loaded:\n" + ex.ToString());
-          }
+          LoadAssembly();
         }
         return _loadedAssembly;
       }
@@ -144,7 +101,9 @@ namespace ProjectInfinity.Plugins
     //    return definedConditionEvaluators;
     //  }
     //}
+    #endregion
 
+    #region Public Methods
     public object CreateInstance(string instance)
     {
       if (IsActive)
@@ -159,7 +118,9 @@ namespace ProjectInfinity.Plugins
         return null;
       }
     }
+    #endregion
 
+    #region internal static Methods
     internal static void ReadSection(XmlReader reader, Plugin plugin, string hintPath)
     {
       //Stack<ICondition> conditionStack = new Stack<ICondition>();
@@ -253,5 +214,64 @@ namespace ProjectInfinity.Plugins
       //runtime.definedConditionEvaluators = (runtime.definedConditionEvaluators as List<LazyConditionEvaluator>).AsReadOnly();
       return runtime;
     }
+    #endregion
+
+    #region Private Methods
+    private void LoadAssembly()
+    {
+      if (!_isAssemblyLoaded)
+      {
+        ServiceScope.Get<ILogger>().Info("Loading Plugin" + _assembly);
+
+        _isAssemblyLoaded = true;
+
+        try
+        {
+          if (_assembly[0] == ':')
+          {
+            _loadedAssembly = System.Reflection.Assembly.Load(_assembly.Substring(1));
+          }
+          else if (_assembly[0] == '$')
+          {
+            int pos = _assembly.IndexOf('/');
+            if (pos < 0)
+              throw new ApplicationException("Expected '/' in path beginning with '$'!");
+            string referencedPlugin = _assembly.Substring(1, pos - 1);
+            foreach (Plugin plugin in ServiceScope.Get<IPluginTree>().Plugins)
+            {
+              if (plugin.Enabled && plugin.Manifest.Identities.ContainsKey(referencedPlugin))
+              {
+                string assemblyFile = Path.Combine(Path.GetDirectoryName(plugin.FileName),
+                                                   _assembly.Substring(pos + 1));
+                _loadedAssembly = System.Reflection.Assembly.LoadFrom(assemblyFile);
+                break;
+              }
+            }
+            if (_loadedAssembly == null)
+            {
+              throw new FileNotFoundException("Could not find referenced Plugin" + referencedPlugin);
+            }
+          }
+          else
+          {
+            _loadedAssembly = System.Reflection.Assembly.LoadFrom(Path.Combine(_hintPath, _assembly));
+          }
+
+#if DEBUG
+          // preload assembly to provoke FileLoadException if dependencies are missing
+          _loadedAssembly.GetExportedTypes();
+#endif
+        }
+        catch (FileNotFoundException ex)
+        {
+          ServiceScope.Get<ILogger>().Error("The Plugin'" + _assembly + "' could not be loaded:\n" + ex.ToString());
+        }
+        catch (FileLoadException ex)
+        {
+          ServiceScope.Get<ILogger>().Error("The addin '" + _assembly + "' could not be loaded:\n" + ex.ToString());
+        }
+      }
+    }
+    #endregion
   }
 }

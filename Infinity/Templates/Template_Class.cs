@@ -44,9 +44,6 @@ namespace ProjectInfinity
     #region Events
     #endregion
 
-    #region <skin> Variables
-    #endregion
-
     #region Variables
     // Private Variables
     // Protected Variables

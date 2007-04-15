@@ -34,8 +34,9 @@ namespace ProjectInfinity.Plugins
 	/// </summary>
 	[Serializable()]
 	public class TreePathNotFoundException : PluginException
-	{
-		/// <summary>
+  {
+    #region Constructors/Destructors
+    /// <summary>
 		/// Constructs a new <see cref="TreePathNotFoundException"/>
 		/// </summary>
 		public TreePathNotFoundException(string path) : base("Treepath not found: " + path)
@@ -53,6 +54,7 @@ namespace ProjectInfinity.Plugins
 		
 		protected TreePathNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
-		}
-	}
+    }
+    #endregion
+  }
 }

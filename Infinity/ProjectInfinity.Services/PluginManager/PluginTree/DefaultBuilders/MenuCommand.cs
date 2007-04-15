@@ -27,101 +27,22 @@
 
 using System;
 using ProjectInfinity.Localisation;
+using ProjectInfinity.Logging;
 
 namespace ProjectInfinity.Plugins
 {
   public class MenuCommand
   {
+    #region Variables
     object _caller;
     bool _visable;
     NodeItem _item;
     StringId _label;
     IPlugin _menuCommand = null;
     string _description = "";
+    #endregion
 
-    public string Description
-    {
-      get
-      {
-        return _description;
-      }
-      set
-      {
-        _description = value;
-      }
-    }
-
-    public string Name
-    {
-      get { return ServiceScope.Get<ILocalisation>().ToString(_label); }
-    }
-
-    public string ImagePath
-    {
-      get { return _item.Properties["image"]; }
-    }
-
-
-    public void Execute()
-    {
-
-      if (_menuCommand == null)
-      {
-        try
-        {
-          _menuCommand = (IPlugin)_item.Plugin.CreateObject(_item.Properties["class"]);
-        }
-        catch (Exception e)
-        {
-          //MessageService.ShowError(e, "Can't create menu command : " + codon.Id);
-          return;
-        }
-      }
-
-      _menuCommand.Initialize();
-    }
-
-    //public ICommand Command
-    //{
-    //  get
-    //  {
-    //    if (menuCommand == null)
-    //    {
-    //      CreateCommand();
-    //    }
-    //    return menuCommand;
-    //  }
-    //}
-
-    //// HACK: find a better way to allow the host app to process link commands
-    //public static Converter<string, ICommand> LinkCommandCreator;
-
-    //void CreateCommand()
-    //{
-    //  try
-    //  {
-    //    string link = codon.Properties["link"];
-    //    if (link != null && link.Length > 0)
-    //    {
-    //      if (LinkCommandCreator == null)
-    //        throw new NotSupportedException("MenuCommand.LinkCommandCreator is not set, cannot create LinkCommands.");
-    //      menuCommand = LinkCommandCreator(codon.Properties["link"]);
-    //    }
-    //    else
-    //    {
-    //      menuCommand = (ICommand)codon.AddIn.CreateObject(codon.Properties["class"]);
-    //    }
-    //    if (menuCommand != null)
-    //    {
-    //      menuCommand.Owner = caller;
-    //    }
-    //  }
-    //  catch (Exception e)
-    //  {
-    //    //MessageService.ShowError(e, "Can't create menu command : " + codon.Id);
-    //  }
-    //}
-
+    #region Constructors/Destructors
     public MenuCommand(NodeItem item, object caller)
       : this(item, caller, false)
     {
@@ -146,5 +67,51 @@ namespace ProjectInfinity.Plugins
       this._caller = null;
       this._label = new StringId(label);
     }
+    #endregion
+
+    #region Properties
+    public string Description
+    {
+      get
+      {
+        return _description;
+      }
+      set
+      {
+        _description = value;
+      }
+    }
+
+    public string Name
+    {
+      get { return ServiceScope.Get<ILocalisation>().ToString(_label); }
+    }
+
+    public string ImagePath
+    {
+      get { return _item.Properties["image"]; }
+    }
+    #endregion
+
+    #region Public Methods
+    public void Execute()
+    {
+
+      if (_menuCommand == null)
+      {
+        try
+        {
+          _menuCommand = (IPlugin)_item.Plugin.CreateObject(_item.Properties["class"]);
+        }
+        catch (Exception e)
+        {
+          ServiceScope.Get<ILogger>().Error(e.ToString() + "Can't create menu command : " + _item.Id);
+          return;
+        }
+      }
+
+      _menuCommand.Initialize();
+    }
+    #endregion
   }
 }

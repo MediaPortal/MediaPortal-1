@@ -38,15 +38,70 @@ namespace ProjectInfinity.Plugins
   /// </summary>
   public class PluginManager : IPluginManager
   {
+    #region Variables
     private List<string> _pluginFiles;
     private List<string> _disabledPlugins;
     private PluginTree _pluginTree;
+    #endregion
 
+    #region Constructors/Destructors
     public PluginManager()
     {
       ServiceScope.Get<IMessageBroker>().Register(this);
       LoadPlugins();
     }
+    #endregion
+
+    #region Protected Methods
+    /// <summary>
+    /// Triggers the PluginStarted message
+    /// </summary>
+    /// <param name="e"></param>
+    protected virtual void OnPluginStarted(PluginStartStopEventArgs e)
+    {
+      //if (PluginStarted != null)
+      //{
+      //  PluginStarted(this, e);
+      //}
+    }
+
+    /// <summary>
+    /// Triggers the PluginStopped message
+    /// </summary>
+    /// <param name="e"></param>
+    protected virtual void OnPluginStopped(PluginStartStopEventArgs e)
+    {
+      //if (PluginStopped != null)
+      //{
+      //  PluginStopped(this, e);
+      //}
+    }
+    #endregion
+
+    #region Private Methods
+    /// <summary>
+    /// Loads all the available plugins
+    /// </summary>
+    /// <remarks>
+    /// Note that by using an attribute to hold the plugin name and description, we 
+    /// do not need to actually start the plugin to get it's name and description
+    /// </remarks>
+    private void LoadPlugins()
+    {
+      //Test data -> get from config in future
+      _pluginFiles = new List<string>();
+      _disabledPlugins = new List<string>();
+      _pluginFiles.Add("Plugins/MyTv.plugin");
+      _pluginFiles.Add("Plugins/Menu.plugin");
+      _pluginFiles.Add("Plugins/MyVideos.plugin");
+      _pluginFiles.Add("Plugins/MyPictures.plugin");
+
+      _pluginTree = new PluginTree();
+      _pluginTree.Load(_pluginFiles, _disabledPlugins);
+
+      ServiceScope.Add<IPluginTree>(_pluginTree);
+    }
+    #endregion
 
     #region IPluginManager Members
 
@@ -129,53 +184,5 @@ namespace ProjectInfinity.Plugins
     }
 
     #endregion
-
-    /// <summary>
-    /// Triggers the PluginStarted message
-    /// </summary>
-    /// <param name="e"></param>
-    protected virtual void OnPluginStarted(PluginStartStopEventArgs e)
-    {
-      //if (PluginStarted != null)
-      //{
-      //  PluginStarted(this, e);
-      //}
-    }
-
-    /// <summary>
-    /// Triggers the PluginStopped message
-    /// </summary>
-    /// <param name="e"></param>
-    protected virtual void OnPluginStopped(PluginStartStopEventArgs e)
-    {
-      //if (PluginStopped != null)
-      //{
-      //  PluginStopped(this, e);
-      //}
-    }
-
-
-    /// <summary>
-    /// Loads all the available plugins
-    /// </summary>
-    /// <remarks>
-    /// Note that by using an attribute to hold the plugin name and description, we 
-    /// do not need to actually start the plugin to get it's name and description
-    /// </remarks>
-    private void LoadPlugins()
-    {
-      //Test data -> get from config in future
-      _pluginFiles = new List<string>();
-      _disabledPlugins = new List<string>();
-      _pluginFiles.Add("Plugins/MyTv.plugin");
-      _pluginFiles.Add("Plugins/Menu.plugin");
-      _pluginFiles.Add("Plugins/MyVideos.plugin");
-      _pluginFiles.Add("Plugins/MyPictures.plugin");
-
-      _pluginTree = new PluginTree();
-      _pluginTree.Load(_pluginFiles, _disabledPlugins);
-
-      ServiceScope.Add<IPluginTree>(_pluginTree);
-    }
   }
 }
