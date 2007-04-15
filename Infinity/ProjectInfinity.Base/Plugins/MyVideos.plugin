@@ -1,0 +1,20 @@
+<Plugin name        = "MyVideo"
+       author      = "Icanos"
+       copyright   = "GPL"
+       description = "Videos">
+	
+	<Manifest>
+		<Identity name = "MyVideos.VideoPlugin"/>
+	</Manifest>
+	
+	<Runtime>
+		<Import assembly = "../myvideos.dll"/>
+	</Runtime>
+
+	<Path name = "/Infinity/HomeMenu">
+		<MenuItem id    = "MyVideos"
+		          label = "@myvideos:34"
+                          image = "pack://siteoforigin:,,,/skin/default/gfx/Video.png"
+		          class = "MyVideos.VideoPlugin"/>
+	</Path>
+</Plugin>

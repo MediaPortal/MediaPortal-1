@@ -198,5 +198,9 @@
     <String id="31">Partymix</String>
     <String id="32">Next track</String>
     <String id="33">Previous track</String>
+    <String id="34">My Videos</String>
   </Section>
+  <Section name="mypictures">
+    <String id="0">My Pictures</String>
+   </Section>
 </Language>

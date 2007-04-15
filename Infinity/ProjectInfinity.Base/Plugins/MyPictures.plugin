@@ -1,0 +1,20 @@
+<Plugin name        = "MyPictures"
+       author      = "Joe"
+       copyright   = "GPL"
+       description = "Pictures">
+	
+	<Manifest>
+		<Identity name = "ProjectInfinity.Pictures.PicturePlugin"/>
+	</Manifest>
+	
+	<Runtime>
+		<Import assembly = "../ProjectInfinity.Plugins.dll"/>
+	</Runtime>
+
+	<Path name = "/Infinity/HomeMenu">
+		<MenuItem id    = "MyTv"
+		          label = "@mypictures:0"
+                          image = "pack://siteoforigin:,,,/skin/default/gfx/Pictures.png"
+		          class = "ProjectInfinity.Pictures.PicturePlugin"/>
+	</Path>
+</Plugin>
