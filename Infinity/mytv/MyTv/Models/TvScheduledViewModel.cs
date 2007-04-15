@@ -1483,7 +1483,7 @@ namespace MyTv
           Schedule rec = new Schedule(_program.IdChannel, _program.Title, _program.StartTime, _program.EndTime);
           rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
           rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-          //if (SkipForConflictingRecording(rec)) return;
+          if (SkipForConflictingRecording(rec)) return;
 
           rec.Persist();
           TvServer server = new TvServer();
@@ -1507,6 +1507,45 @@ namespace MyTv
         if (dlgMenu.DialogResult == DialogResult.Yes)
         {
           return true;
+        }
+        return false;
+      }
+      protected bool SkipForConflictingRecording(Schedule rec)
+      {
+
+        TvBusinessLayer layer = new TvBusinessLayer();
+        IList conflicts = layer.GetConflictingSchedules(rec);
+        if (conflicts.Count > 0)
+        {
+
+          TvConflictDialog dlgLogoMenu = new TvConflictDialog();
+          dlgLogoMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+          dlgLogoMenu.Owner = _viewModel.Window;
+          dlgLogoMenu.Items.Clear();
+          dlgLogoMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv",129);//recording conflict
+          dlgLogoMenu.SubTitle = "";
+          foreach (Schedule conflict in conflicts)
+          {
+            string logo=String.Format(@"{0}\{1}",System.IO.Directory.GetCurrentDirectory(),Thumbs.GetLogoFileName(conflict.ReferencedChannel().Name));
+            DialogMenuItem menuItem = new DialogMenuItem(logo, conflict.ProgramName, conflict.ReferencedChannel().Name, "");
+            dlgLogoMenu.Items.Add(menuItem);
+          }
+          dlgLogoMenu.ShowDialog();
+          switch (dlgLogoMenu.SelectedIndex)
+          {
+            case 1: return true;   // Skip new Recording
+            case 0:                // Don't record the already scheduled one(s)
+              {
+                for (int i=0; i < conflicts.Count;++i)
+                {
+                  Schedule schedule = (Schedule)conflicts[i];
+                  schedule.Delete();
+                }
+                break;
+              }
+            case 2: return false;   // No Skipping new Recording
+            default: return true;   // Skipping new Recording
+          }
         }
         return false;
       }
@@ -1580,7 +1619,7 @@ namespace MyTv
             rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
             break;
         }
-        //if (SkipForConflictingRecording(rec)) return;
+        if (SkipForConflictingRecording(rec)) return;
 
         TvBusinessLayer layer = new TvBusinessLayer();
         rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
@@ -1627,6 +1666,7 @@ namespace MyTv
       }
     }
     #endregion
+
     #region KeepUntilProgramCommand class
     /// <summary>
     /// KeepUntilProgramCommand
@@ -1654,9 +1694,9 @@ namespace MyTv
         if (_program == null)
           return;
         if (!model.IsRecorded) return;
-        
+
         Schedule rec;
-        if (false == model.IsRecordingProgram( out  rec, false)) return;
+        if (false == model.IsRecordingProgram(out  rec, false)) return;
 
         MpMenu dlgMenu = new MpMenu();
         dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -1879,7 +1919,7 @@ namespace MyTv
         dlgMenu.SubTitle = "";
         dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mytv", 76)/*All*/));
         for (int i = 1; i < 40; ++i)
-          dlgMenu.Items.Add(new DialogMenuItem(i.ToString() +" "+ ServiceScope.Get<ILocalisation>().ToString("mytv", 77)/*episodes*/));
+          dlgMenu.Items.Add(new DialogMenuItem(i.ToString() + " " + ServiceScope.Get<ILocalisation>().ToString("mytv", 77)/*episodes*/));
         if (schedule.MaxAirings == Int32.MaxValue)
           dlgMenu.SelectedIndex = 0;
         else

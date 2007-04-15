@@ -99,6 +99,7 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="TvConflictDialog.xaml" />
     <Page Include="TvFullscreen.xaml" />
     <Page Include="TvGuide.xaml" />
     <Page Include="TvHome.xaml" />
@@ -121,6 +122,7 @@
     <Compile Include="Models\EpgGridCell.cs" />
     <Compile Include="Models\ProgramModel.cs" />
     <Compile Include="Models\TvBaseViewModel.cs" />
+    <Compile Include="Models\TvConflictDialogViewModel.cs" />
     <Compile Include="Models\TvFullScreenModel.cs" />
     <Compile Include="Models\TvGuideModel.cs" />
     <Compile Include="Models\TvSetupModel.cs" />
@@ -155,6 +157,10 @@
     <Compile Include="Helper classes\Thumbs.cs" />
     <Compile Include="Helper classes\TsReaderCheck.cs" />
     <Compile Include="Models\TvRecordedViewModel.cs" />
+    <Compile Include="TvConflictDialog.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>TvConflictDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TvFullscreen.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>TvFullscreen.xaml</DependentUpon>

@@ -1,0 +1,21 @@
+﻿<Window x:Class="MyTv.TvConflictDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:MyTv;assembly=MyTv"
+    Title="Dialogs"  BorderThickness ="0" Width="530" Height="370" WindowStyle="None" Loaded="OnLoaded" Background="Transparent">
+
+  <Window.Resources>
+    <Storyboard x:Key="fadeIn">
+      <DoubleAnimation From="0" To="1" Duration="0:0:1" Storyboard.TargetName="gridMain" Storyboard.TargetProperty="(UIElement.Opacity)"/>
+    </Storyboard>
+  </Window.Resources>
+  <Window.Triggers>
+    <EventTrigger RoutedEvent="FrameworkElement.Loaded" SourceName="gridMain">
+      <BeginStoryboard Storyboard="{StaticResource fadeIn}"/>
+    </EventTrigger>
+  </Window.Triggers>
+
+  <Grid x:Name="gridMain" FocusManager.IsFocusScope="True" >
+  </Grid>
+
+</Window>
