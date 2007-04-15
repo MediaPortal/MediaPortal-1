@@ -116,6 +116,7 @@
     <Channel id="tv400.tv" siteId="199" />
     <Channel id="tv5.org" siteId="40" />
     <Channel id="tv6@viasat.se" siteId="42" />
+    <Channel id="tv7@aftonbladet.se" siteId="248" />
     <Channel id="tv8.se" siteId="43" />
     <Channel id="tvchile.cl" siteId="52" />
     <Channel id="tvdanmark1@tvdanmark.dk" siteId="105" />
@@ -161,4 +162,8 @@
       </Searches>
     </Html>
   </Listing>
+  <Actions>
+    <Modify channel="*" field="#TITLE" search="Bolibompa" action="Remove" />
+    <Modify channel="*" field="#TITLE" search="Bobster" action="Remove" />
+  </Actions>
 </Grabber>
