@@ -9,6 +9,20 @@ namespace MyTv
   {
     string _hostName;
     int _currentChannelId;
+    string _seekSteps;
+
+    [Setting(SettingScope.Global, "0,16,30,60,180,300,600,900,1800,3600,7200")]
+    public string SeekSteps
+    {
+      get
+      {
+        return _seekSteps;
+      }
+      set
+      {
+        _seekSteps = value;
+      }
+    }
 
     [Setting(SettingScope.Global, "")]
     public string HostName

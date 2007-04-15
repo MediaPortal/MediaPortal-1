@@ -18,6 +18,7 @@ using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
+using ProjectInfinity.Settings;
 
 namespace MyTv
 {
@@ -31,7 +32,7 @@ namespace MyTv
       Past,
       Future
     }
-    int[] _seekSteps = { 0, 15, 30, 60, 3 * 60, 5 * 60, 10 * 60, 15 * 60, 30 * 60, 60 * 60, 120 * 60 };
+    List<int> _seekSteps = new List<int>();
     int _currentSeekStep = 0;
 
     SeekDirection _seekDirection = SeekDirection.Unknown;
@@ -53,6 +54,13 @@ namespace MyTv
     public TvFullScreenModel(Page page)
       : base(page)
     {
+      TvSettings settings = new TvSettings();
+      ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+      string[] steps=settings.SeekSteps.Split(new char[]{','});
+      for (int i = 0; i < steps.Length; ++i)
+      {
+        _seekSteps.Add(Int32.Parse(steps[i]));
+      }
       _zapChannel = "";
       _seekTimeoutTimer = new System.Windows.Threading.DispatcherTimer();
       _seekTimeoutTimer.Interval = new TimeSpan(0, 0, 1);
@@ -527,7 +535,7 @@ namespace MyTv
         case SeekDirection.Past:
           if (key == Key.Left)
           {
-            if (_currentSeekStep + 1 < _seekSteps.Length)
+            if (_currentSeekStep + 1 < _seekSteps.Count)
             {
               TimeSpan ts = new TimeSpan(0, 0, -_seekSteps[_currentSeekStep + 1]);
               if (CanSeek(ts, ref _reachedStart, ref _reachedEnd))
@@ -563,7 +571,7 @@ namespace MyTv
         case SeekDirection.Future:
           if (key == Key.Right)
           {
-            if (_currentSeekStep + 1 < _seekSteps.Length)
+            if (_currentSeekStep + 1 < _seekSteps.Count)
             {
               TimeSpan ts = new TimeSpan(0, 0, _seekSteps[_currentSeekStep + 1]);
               if (CanSeek(ts, ref _reachedStart, ref _reachedEnd))
