@@ -394,7 +394,8 @@ namespace MediaPortal.GUI.Video
         btnSortBy.SortChanged += new SortEventHandler(SortChanged);
 
       // Check if mytrailers-plugin is enabled
-      btnTrailers.Visible = m_bShowTrailerButton;
+      if (btnTrailers != null)
+        btnTrailers.Visible = m_bShowTrailerButton;
       
       base.OnPageLoad();
     }
