@@ -158,7 +158,8 @@ namespace ProjectInfinity.Controls
     void LayoutMenu()
     {
       if (ItemsSource == null) return;
-      int maxRows = (int)(this.ActualHeight / ((double)BUTTONHEIGHT)); ;
+      int maxRows = (int)(this.ActualHeight / ((double)BUTTONHEIGHT));
+      maxRows--;
       if (_storyBoard != null)
       {
         _storyBoard.Seek(this, new TimeSpan(0), TimeSeekOrigin.BeginTime);

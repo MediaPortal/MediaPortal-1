@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Data;
 using System.Windows.Input;
+using ProjectInfinity;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.Localisation;
 using ProjectInfinity.Controls;
 
 namespace ProjectInfinity.Menu
@@ -29,6 +31,13 @@ namespace ProjectInfinity.Menu
       }
     }
 
+    public string HeaderLabel
+    {
+      get
+      {
+        return ServiceScope.Get<ILocalisation>().ToString("global", 0);//infinity
+      }
+    }
     public MenuCollection Items
     {
       get { return menuView; }
