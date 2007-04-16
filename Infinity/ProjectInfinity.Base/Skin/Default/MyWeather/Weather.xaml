@@ -1,0 +1,64 @@
+
+    <DockPanel 
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ns="clr-namespace:Dialogs;assembly=dialogs"
+      xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls"
+      FocusManager.FocusedElement="{Binding ElementName=buttonRefresh}">
+      <StackPanel DockPanel.Dock="Top" Height="100">
+        <DockPanel>
+          <StackPanel DockPanel.Dock="Left">
+            <Label Name="labelHeader" Content="{Binding Path=HeaderLabel}" Style="{StaticResource LabelHeaderStyle}" />
+          </StackPanel>
+          <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <Label x:Name="labelDate" Content="{Binding Path=DateLabel}" Style="{StaticResource LabelNormalStyle}" Margin="0,20,20,0" />
+            <Image Source="{Binding Path=IsRecordingLogo}" Margin="0,20,20,0" />
+          </StackPanel>
+        </DockPanel>
+      </StackPanel>
+      <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
+		  <controls:Button Name="buttonRefresh" Command="{Binding Path=UpdateWeather}" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=RefreshLabel}" />
+		  <controls:Button Name="buttonLocation" Command="{Binding Path=LocationChanged}" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=LocationLabel}" />
+      </StackPanel>
+
+
+      <Grid >
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition></ColumnDefinition>
+          <ColumnDefinition></ColumnDefinition>
+          <ColumnDefinition></ColumnDefinition>
+          <ColumnDefinition></ColumnDefinition>
+          <ColumnDefinition></ColumnDefinition>
+          <ColumnDefinition></ColumnDefinition>
+          <ColumnDefinition></ColumnDefinition>
+          <ColumnDefinition></ColumnDefinition>
+          <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+          <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Label Content="{Binding ProgramTitle}" Grid.Column="0" Grid.Row="13" Grid.ColumnSpan="9"  x:Name="labelTitle" Style="{StaticResource LabelNormalStyle}"/>
+        <Label Content="{Binding ProgramStartEnd}" Grid.Column="0" Grid.Row="14" Grid.ColumnSpan="6" x:Name="labelStart" Style="{StaticResource LabelNormalStyle}"/>
+        <Label Content="{Binding ProgramChannelName}" Grid.Column="6" Grid.Row="14" Grid.ColumnSpan="3" x:Name="labelChannel" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,0,50,0"/>
+        <TextBlock Text="{Binding ProgramDescription}" Grid.Column="0" Grid.Row="15" Grid.RowSpan="4" Grid.ColumnSpan="9" x:Name="labelDescription" Style="{StaticResource TextBlockNormalStyle}" />
+      </Grid>
+    </DockPanel>
