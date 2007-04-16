@@ -228,7 +228,9 @@ namespace MyTv
           program = (Program)programs[i];
         else
         {
-          program = new Program(_selectedChannel.IdChannel, now, now.AddMinutes(30), "No information", "", "", false,now,"","",0,"");
+          program = new Program(_selectedChannel.IdChannel, now, now.AddMinutes(30), 
+            ServiceScope.Get<ILocalisation>().ToString("mytv",138)/*No information*/, 
+            "", "", false,now,"","",0,"");
           now = now.AddMinutes(30);
         }
 
@@ -291,7 +293,7 @@ namespace MyTv
         }
         else
         {
-          Program p = new Program(channel.IdChannel, now, end, "No Information", "", "", false,now,"","",0,"");
+          Program p = new Program(channel.IdChannel, now, end, ServiceScope.Get<ILocalisation>().ToString("mytv", 138)/*No information*/, "", "", false, now, "", "", 0, "");
           List<Program> tmpProgs = new List<Program>();
           tmpProgs.Add(p);
           RenderMultiChannelRow(count + 1, now, end, channel, tmpProgs, (count == tvChannels.Count - 1));
