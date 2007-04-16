@@ -1834,9 +1834,8 @@ namespace MediaPortal.Visualization
                 g.DrawImageUnscaled(BackBuffer, 0, 0);
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
-              Log.Error("Exception Rendering the Vizualisation: {0}", ex);
             }
           }
 
@@ -1847,9 +1846,8 @@ namespace MediaPortal.Visualization
           sleepMS = Viz.RenderVisualization();
       }
 
-      catch (Exception ex)
+      catch (Exception)
       {
-        Console.WriteLine(ex.Message);
       }
 
       return sleepMS;
