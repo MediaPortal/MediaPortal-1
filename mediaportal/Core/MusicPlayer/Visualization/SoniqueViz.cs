@@ -68,7 +68,7 @@ namespace MediaPortal.Visualization
           return false;
         }
 
-        BassVis.BASS_SONIQUEVIS_SetConfig(BASSSONIQUEVISConfig.BASS_SONIQUEVIS_CONFIG_SLOWFADE, 0);
+        BassVis.BASS_SONIQUEVIS_SetConfig(BASSSONIQUEVISConfig.BASS_SONIQUEVIS_CONFIG_SLOWFADE, 25);
         bool result = SetOutputContext(VisualizationWindow.OutputContextType);
         _Initialized = result && VisChannel != 0;
       }
@@ -112,11 +112,6 @@ namespace MediaPortal.Visualization
           return 0;
         }
 
-        int stream = 0;
-
-        if (Bass != null)
-          stream = (int)Bass.GetCurrentVizStream();
-
         if (VisualizationWindow.OutputContextType == OutputContextType.DeviceContext)
           hdc = VisualizationWindow.CompatibleDC;
 
@@ -129,23 +124,31 @@ namespace MediaPortal.Visualization
         else
           return -1;
 
-        bool result = BassVis.BASS_SONIQUEVIS_Render(VisChannel, stream, hdc);
 
-        if (!result)
+        int stream = 0;
+        if (!_IsPreviewVisualization)
         {
-          int code = Un4seen.Bass.Bass.BASS_ErrorGetCode();
 
-          if (code != 0)
+          if (Bass != null)
+            stream = (int)Bass.GetCurrentVizStream();
+
+          if (stream != 0)
           {
-            //Console.WriteLine("BASS_SONIQUEVIS_Render() error: ");
+            // Now we need to get the sample FFT data from the channel for rendering purposes
+            float[] data = new float[1024 * 4];
+            float[] fftData = new float[512];  // to receive 512 byte of fft
+            Un4seen.Bass.Bass.BASS_ChannelGetData(stream, ref data[0], data.Length);
+            Un4seen.Bass.Bass.BASS_ChannelGetData(stream, ref fftData[0], (int)BASSData.BASS_DATA_FFT1024);
+
+            BassVis.BASS_SONIQUEVIS_Render2(VisChannel, ref data[0], ref fftData[0], hdc, BASSStream.BASS_SAMPLE_FLOAT, (int)Bass.CurrentPosition);
           }
         }
+        else
+          BassVis.BASS_SONIQUEVIS_Render(VisChannel, stream, hdc);
       }
 
       catch (Exception)
-      {
-        //Console.WriteLine("Sonique viz caused an exception: {0}", ex.Message);
-      }
+      { }
 
       finally
       {
