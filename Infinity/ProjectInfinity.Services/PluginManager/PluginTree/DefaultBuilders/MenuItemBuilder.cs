@@ -93,7 +93,7 @@ namespace ProjectInfinity.Plugins
         //  return new MenuCheckBox(codon, caller);
         case "Item":
         case "Command":
-          return new MenuCommand(item, caller, createCommand);
+          return new MenuItem(item, caller, createCommand);
         //case "Menu":
         //  return new Menu(codon, caller, subItems);
         //case "Builder":

@@ -7,7 +7,7 @@ using ProjectInfinity.Playlist;
 namespace MyVideos
 {
   [Plugin("My Video", "My Video", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Video.png")]
-  public class VideoPlugin : IPlugin
+  public class VideoPlugin : IPlugin, IMenuCommand
   {
     #region IPlugin Members
 
@@ -18,6 +18,15 @@ namespace MyVideos
       // Add playlist service
       IPlaylistManager playlist = new PlaylistManager();
       ServiceScope.Add<IPlaylistManager>(playlist);
+    }
+
+    #endregion
+
+    #region IMenuCommand Members
+
+    public void Run()
+    {
+      Initialize();
     }
 
     #endregion

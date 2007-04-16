@@ -31,25 +31,25 @@ using ProjectInfinity.Logging;
 
 namespace ProjectInfinity.Plugins
 {
-  public class MenuCommand
+  public class MenuItem
   {
     #region Variables
     object _caller;
     bool _visable;
     NodeItem _item;
     StringId _label;
-    IPlugin _menuCommand = null;
+    IMenuCommand _menuCommand = null;
     string _description = "";
     #endregion
 
     #region Constructors/Destructors
-    public MenuCommand(NodeItem item, object caller)
+    public MenuItem(NodeItem item, object caller)
       : this(item, caller, false)
     {
 
     }
 
-    public MenuCommand(NodeItem item, object caller, bool createCommand)
+    public MenuItem(NodeItem item, object caller, bool createCommand)
     {
       this._caller = caller;
       this._item = item;
@@ -61,7 +61,7 @@ namespace ProjectInfinity.Plugins
       //}
     }
 
-    public MenuCommand(string label)
+    public MenuItem(string label)
     {
       this._item = null;
       this._caller = null;
@@ -110,14 +110,14 @@ namespace ProjectInfinity.Plugins
     #endregion
 
     #region Public Methods
-    public void Execute()
+    public void Run()
     {
 
       if (_menuCommand == null)
       {
         try
         {
-          _menuCommand = (IPlugin)_item.Plugin.CreateObject(_item.Properties["class"]);
+          _menuCommand = (IMenuCommand)_item.Plugin.CreateObject(_item.Properties["class"]);
         }
         catch (Exception e)
         {
@@ -126,7 +126,7 @@ namespace ProjectInfinity.Plugins
         }
       }
 
-      _menuCommand.Initialize();
+      _menuCommand.Run();
     }
     #endregion
   }

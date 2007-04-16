@@ -10,7 +10,7 @@ namespace ProjectInfinity.Menu
     public IList<IMenuItem> GetMenu()
     {
       IList<IMenuItem> menus = new List<IMenuItem>();
-      foreach (MenuCommand menuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuCommand>("/Infinity/HomeMenu"))
+      foreach (MenuItem menuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuItem>("/Infinity/HomeMenu"))
       {
         menus.Add(new PluginItem(menuItem));
       }

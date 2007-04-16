@@ -58,7 +58,7 @@
     <Compile Include="PluginManager\PluginTree\PluginLoadException.cs" />
     <Compile Include="PluginManager\PluginTree\Plugin\PluginReference.cs" />
     <Compile Include="PluginManager\PluginTree\NodeItem.cs" />
-    <Compile Include="PluginManager\PluginTree\DefaultBuilders\MenuCommand.cs" />
+    <Compile Include="PluginManager\PluginTree\DefaultBuilders\MenuItem.cs" />
     <Compile Include="PluginManager\PluginTree\DefaultBuilders\MenuItemBuilder.cs" />
     <Compile Include="PluginManager\PluginTree\IBuilder.cs" />
     <Compile Include="PluginManager\PluginTree\Plugin\PluginManifest.cs" />
