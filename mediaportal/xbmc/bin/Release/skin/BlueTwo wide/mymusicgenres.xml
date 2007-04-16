@@ -43,7 +43,7 @@
       <control>
         <description>Search button</description>
         <type>button</type>
-        <id>12</id>
+        <id>9</id>
         <label>137</label>
         <onright>50</onright>
       </control>
@@ -58,8 +58,8 @@
       <control>
         <description>Play CD button</description>
         <type>button</type>
-        <id>9</id>
-        <label>890</label>  
+        <id>12</id>
+        <label>890</label>
         <onright>50</onright>
       </control>
       <control>
