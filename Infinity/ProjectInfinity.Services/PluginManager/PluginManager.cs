@@ -95,7 +95,7 @@ namespace ProjectInfinity.Plugins
       _pluginFiles.Add("Plugins/Menu.plugin");
       _pluginFiles.Add("Plugins/MyVideos.plugin");
       _pluginFiles.Add("Plugins/MyPictures.plugin");
-
+      _pluginFiles.Add("Plugins/MyWeather.plugin");
       _pluginTree = new PluginTree();
       _pluginTree.Load(_pluginFiles, _disabledPlugins);
 
