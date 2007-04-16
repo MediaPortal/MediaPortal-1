@@ -189,6 +189,13 @@ namespace MyTv
         return false;
       }
     }
+    public bool IsNotRecorded
+    {
+      get
+      {
+        return !IsRecorded;
+      }
+    }
     /// <summary>
     /// Gets the is notified.
     /// </summary>

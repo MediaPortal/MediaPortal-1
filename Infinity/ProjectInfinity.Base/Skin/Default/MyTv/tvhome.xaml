@@ -18,7 +18,7 @@
       </StackPanel>
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
         <controls:Button Name="buttonTvGuide" Command="{Binding Path=TvGuide}" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=TvGuideLabel}" />
-        <controls:Button Name="buttonRecordNow" Command="{Binding Path=RecordNow}" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=RecordNowLabel}" />
+        <controls:Button Name="buttonRecordNow" IsEnabled="{Binding Path=TvOnOff, Mode=OneWay}" Command="{Binding Path=RecordNow}" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=RecordNowLabel}" />
         <controls:Button Name="buttonChannel" Command="{Binding Path=MiniEpg}" Style="{DynamicResource MpButton}" Height="32" Content="{Binding Path=ChannelLabel}"  />
         <controls:Button Name="buttonTvStreams" Command="{Binding Path=TvStreams}" Style="{DynamicResource MpButton}" Height="32" Content="{Binding Path=TvStreamsLabel}"   />
         <controls:RadioButton x:Name="buttonTvOnOff" Command="{Binding Path=TurnTvOnOff}" Style="{StaticResource MpRadioButton}" Height="32"  IsChecked="{Binding Path=TvOnOff, Mode=OneWay}" Content="{Binding Path=TvOnOffLabel}"/>

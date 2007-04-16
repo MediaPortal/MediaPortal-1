@@ -106,6 +106,10 @@ namespace MyTv
       }
     }
 
+    /// <summary>
+    /// Gets or sets the current program.
+    /// </summary>
+    /// <value>The current program.</value>
     public ProgramModel CurrentProgram
     {
       get
@@ -118,6 +122,10 @@ namespace MyTv
       }
     }
 
+    /// <summary>
+    /// Gets or sets the index of the selected episode.
+    /// </summary>
+    /// <value>The index of the selected episode.</value>
     public int SelectedEpisodeIndex
     {
       get
@@ -1579,6 +1587,7 @@ namespace MyTv
         }
         _viewModel.DataModel.Reload();
         _viewModel.ChangeProperty("RecordLabel");
+        _viewModel.ChangeProperty("CurrentProgram");
       }
       protected bool CheckIfRecording(Schedule rec)
       {
@@ -1751,6 +1760,7 @@ namespace MyTv
         }
         _viewModel.DataModel.Reload();
         _viewModel.ChangeProperty("RecordLabel");
+        _viewModel.ChangeProperty("CurrentProgram");
       }
     }
     #endregion
@@ -1823,6 +1833,7 @@ namespace MyTv
           rec.Persist();
         }
         _viewModel.DataModel.Reload();
+        _viewModel.ChangeProperty("CurrentProgram");
       }
     }
     #endregion

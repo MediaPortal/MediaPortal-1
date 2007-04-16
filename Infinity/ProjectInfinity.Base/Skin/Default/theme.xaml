@@ -301,6 +301,14 @@
     </PointAnimationUsingKeyFrames>
   </Storyboard>
 
+  <Storyboard x:Key="disableStoryBoard" >
+    <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="shine" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+      <SplineColorKeyFrame KeyTime="00:00:00" Value="#6F2A5EB4"/>
+    </ColorAnimationUsingKeyFrames>
+    <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="shine" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+      <SplineColorKeyFrame KeyTime="00:00:00" Value="#6F2A5EB4"/>
+    </ColorAnimationUsingKeyFrames>
+  </Storyboard>
   <Style x:Key="MpButton" TargetType="Button">
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template">
@@ -327,6 +335,14 @@
               </Trigger.EnterActions>
               <Trigger.ExitActions>
                 <StopStoryboard BeginStoryboardName="Pressed_BeginStoryboard"/>
+              </Trigger.ExitActions>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Trigger.EnterActions>
+                <BeginStoryboard x:Name="notEnabledStoryBoard" Storyboard="{StaticResource disableStoryBoard}"/>
+              </Trigger.EnterActions>
+              <Trigger.ExitActions>
+                <StopStoryboard BeginStoryboardName="notEnabledStoryBoard"/>
               </Trigger.ExitActions>
             </Trigger>
           </ControlTemplate.Triggers>
