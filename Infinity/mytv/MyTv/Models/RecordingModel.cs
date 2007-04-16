@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TvDatabase;
+using ProjectInfinity;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Localisation;
 namespace MyTv
 {
   public class RecordingModel
@@ -138,7 +141,24 @@ namespace MyTv
     {
       get
       {
-        return String.Format("{0}-{1}", StartTime.ToString("HH:mm"), EndTime.ToString("HH:mm"));
+        string date = "";
+        if (StartTime.Date == DateTime.Now.Date)
+        {
+          date = ServiceScope.Get<ILocalisation>().ToString("mytv", 133);//today
+        }
+        else if (StartTime.Date == DateTime.Now.Date.AddDays(1))
+        {
+          date = ServiceScope.Get<ILocalisation>().ToString("mytv", 134);//tomorrow
+        }
+        else
+        {
+          int dayofWeek = (int)StartTime.DayOfWeek;
+          int month = StartTime.Month;
+          date = String.Format("{0} {1} {2}", ServiceScope.Get<ILocalisation>().ToString("days", dayofWeek),
+                                            StartTime.Day,
+                                            ServiceScope.Get<ILocalisation>().ToString("months", month));
+        }
+        return String.Format("{0} {1}-{2}", date, StartTime.ToString("HH:mm"), EndTime.ToString("HH:mm"));
       }
     }
     /// <summary>
