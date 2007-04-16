@@ -218,7 +218,7 @@ namespace ProjectInfinity.Controls
         LayoutMenu();
         _storyBoard = null;
       }
-      FrameworkElement element =(FrameworkElement) ((FrameworkElement)this.Parent).Parent;
+      FrameworkElement element = (FrameworkElement)((FrameworkElement)this.Parent).Parent;
       _storyBoard = (Storyboard)element.Resources["storyBoardScrollDown"];
       _storyBoard.Completed += new EventHandler(storyBoard_Completed);
       _storyBoard.Begin(this, true);
@@ -292,9 +292,21 @@ namespace ProjectInfinity.Controls
         return;
       }
     }
-    protected override void OnMouseDown(MouseButtonEventArgs e)
+    protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
     {
-      base.OnMouseDown(e);
+      if (Command != null)
+      {
+        RoutedCommand routedCommand = Command as RoutedCommand;
+        if (routedCommand != null)
+        {
+          routedCommand.Execute(CommandParameter, CommandTarget);
+        }
+        else
+        {
+          Command.Execute(CommandParameter);
+        }
+      }
+      base.OnPreviewMouseDown(e);
     }
     #endregion
 

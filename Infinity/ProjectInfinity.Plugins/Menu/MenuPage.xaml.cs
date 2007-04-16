@@ -28,6 +28,7 @@ namespace ProjectInfinity.Menu.View
   {
     public MenuPage()
     {
+      this.ShowsNavigationUI = false;
       InitializeComponent();
     }
     private void OnLoaded(object sender, RoutedEventArgs e)
