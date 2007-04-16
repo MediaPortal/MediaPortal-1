@@ -1,0 +1,20 @@
+<Plugin name        = "My Weather"
+       author      = "Mofux"
+       copyright   = "GPL"
+       description = "My Weather">
+
+  <Manifest>
+    <Identity name = "MyWeather.WeatherPlugin"/>
+  </Manifest>
+
+  <Runtime>
+    <Import assembly = "../MyWeather.dll"/>
+  </Runtime>
+
+  <Path name = "/Infinity/HomeMenu">
+    <MenuItem id    = "MyWeather"
+		          label = "@myweather:0"
+                          image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
+		          class = "MyWeather.WeatherPlugin"/>
+  </Path>
+</Plugin>
