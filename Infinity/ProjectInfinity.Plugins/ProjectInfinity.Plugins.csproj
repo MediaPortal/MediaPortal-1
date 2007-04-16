@@ -56,6 +56,7 @@
       <DependentUpon>MenuPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Menu\MenuPlugin.cs" />
+    <Compile Include="Menu\PluginMenuItem.cs" />
     <Compile Include="Pictures\Folder.cs" />
     <Compile Include="Pictures\FullScreenPictureView.xaml.cs">
       <SubType>Code</SubType>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Data;
 using System.Windows.Input;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.Controls;
 
 namespace ProjectInfinity.Menu
 {
@@ -15,16 +16,20 @@ namespace ProjectInfinity.Menu
   /// <seealso cref="http://blogs.sqlxml.org/bryantlikes/archive/2006/09/27/WPF-Patterns.aspx"/>
   public class MenuViewModel
   {
-    private CollectionView menuView;
+    private MenuCollection menuView;
     private ICommand _launchCommand;
 
     public MenuViewModel()
     {
       IList<IMenuItem> model = ServiceScope.Get<IMenuManager>().GetMenu();
-      menuView = new CollectionView(model);
+      menuView = new MenuCollection();
+      foreach (IMenuItem item in model)
+      {
+        menuView.Add(new PluginMenuItem(item));
+      }
     }
 
-    public CollectionView Items
+    public MenuCollection Items
     {
       get { return menuView; }
     }
@@ -62,7 +67,9 @@ namespace ProjectInfinity.Menu
       ///<param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
       public void Execute(object parameter)
       {
-        IPluginItem pluginItem = _viewModel.Items.CurrentItem as IPluginItem;
+        PluginMenuItem menuItem = parameter as PluginMenuItem;
+        if (menuItem == null) return;
+        IPluginItem pluginItem = menuItem.Menu as IPluginItem;
         if (pluginItem != null)
           pluginItem.Execute();
           //ServiceScope.Get<IPluginManager>().Start(pluginItem.Text);
