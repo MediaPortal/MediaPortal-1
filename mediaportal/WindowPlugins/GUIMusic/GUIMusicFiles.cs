@@ -553,7 +553,8 @@ namespace MediaPortal.GUI.Music
       LoadFolderSettings(currentFolder);
       LoadDirectory(currentFolder);
 
-      btnSearch.Disabled = true;
+      if (btnSearch != null)
+        btnSearch.Disabled = true;
     }
 
     protected override void OnPageDestroy(int newWindowId)
