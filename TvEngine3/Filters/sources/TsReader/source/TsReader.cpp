@@ -372,12 +372,15 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   if ((length > 5) && (_strcmpi(&url[length-4], ".tsp") == 0))
   {
     m_bTimeShifting=true;
+    
     FILE* fd=fopen(url,"rb");
     if (fd==NULL) return E_FAIL;
     fread(url,1,100,fd);
     int bytesRead=fread(url,1,sizeof(url),fd);
     if (bytesRead>=0) url[bytesRead]=0;
     fclose(fd);
+    
+    //strcpy(url,"rtsp://192.168.1.58/stream2.0");
     LogDebug("open rtsp:%s", url);
     if ( !m_rtspClient.OpenStream(url)) return E_FAIL;
     
@@ -588,7 +591,8 @@ void CTsReaderFilter::ThreadProc()
     }
     else if (m_rtspClient.IsRunning())
     {
-	    DWORD ticks=GetTickCount()-m_tickCount;
+      //char sztmp[256];
+	    DWORD ticks=(GetTickCount()-m_tickCount)/1000;
       double duration=m_rtspClient.Duration()/1000.0f;
       duration+=ticks;
       CPcr pcrstart,pcrEnd;
@@ -597,6 +601,8 @@ void CTsReaderFilter::ThreadProc()
       pcrEnd.FromClock(duration);
       m_duration.Set( pcrstart, pcrEnd);
       
+      //sprintf(sztmp,"%f %d %f\n", (m_rtspClient.Duration()/1000.0f), ticks, (((float)m_duration.Duration().Millisecs())/1000.0f) );
+      //::OutputDebugStringA(sztmp);
       NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
       SetDuration();
     }
