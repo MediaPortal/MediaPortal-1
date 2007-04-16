@@ -12,7 +12,20 @@ namespace ProjectInfinity.Menu
       IList<IMenuItem> menus = new List<IMenuItem>();
       foreach (MenuItem menuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuItem>("/Infinity/HomeMenu"))
       {
-        menus.Add(new PluginItem(menuItem));
+        if (menuItem.IsSubMenu)
+        {
+          IMenu submenu = new Menu(menuItem.Name);
+
+          foreach (MenuItem subMenuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuItem>(menuItem.SubMenuPath))
+          {
+            submenu.Items.Add(new PluginItem(subMenuItem));
+          }
+          menus.Add(submenu);
+        }
+        else
+        {
+          menus.Add(new PluginItem(menuItem));
+        }
       }
       return menus;
 
