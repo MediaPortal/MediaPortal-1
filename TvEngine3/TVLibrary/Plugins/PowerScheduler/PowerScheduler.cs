@@ -164,6 +164,12 @@ namespace TvEngine.PowerScheduler
       GlobalServiceProvider.Instance.Add<IPowerScheduler>(this);
       Log.Debug("PowerScheduler: Registered PowerScheduler service to GlobalServiceProvider");
     }
+    ~PowerScheduler()
+    {
+      // disable the wakeup timer
+      _wakeupTimer.SecondsToWait = -1;
+      _wakeupTimer.Close();
+    }
     #endregion
 
     #region Public methods
@@ -178,10 +184,6 @@ namespace TvEngine.PowerScheduler
     {
       _controller = controller;
 
-      // Create the default set of standby/resume handlers
-      if (_factory == null)
-        _factory = new PowerSchedulerFactory(controller);
-      _factory.CreateDefaultSet();
       Register(_clientStandbyHandler);
       Register(_clientWakeupHandler);
       Log.Debug("PowerScheduler: Registered default set of standby/resume handlers to PowerScheduler");
@@ -191,8 +193,11 @@ namespace TvEngine.PowerScheduler
 
       // Create the timer that will wakeup the system after a specific amount of time after the
       // system has been put into standby
-      _wakeupTimer = new WaitableTimer();
-      _wakeupTimer.OnTimerExpired += new WaitableTimer.TimerExpiredHandler(OnWakeupTimerExpired);
+      if (_wakeupTimer == null)
+      {
+        _wakeupTimer = new WaitableTimer();
+        _wakeupTimer.OnTimerExpired += new WaitableTimer.TimerExpiredHandler(OnWakeupTimerExpired);
+      }
 
       // start the timer responsible for standby checking and refreshing settings
       _timer = new System.Timers.Timer();
@@ -204,6 +209,11 @@ namespace TvEngine.PowerScheduler
       StartRemoting();
 
       LoadSettings();
+
+      // Create the default set of standby/resume handlers
+      if (_factory == null)
+        _factory = new PowerSchedulerFactory(controller);
+      _factory.CreateDefaultSet();
 
       SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
 
@@ -220,10 +230,6 @@ namespace TvEngine.PowerScheduler
       _timer.Elapsed -= new System.Timers.ElapsedEventHandler(OnTimerElapsed);
       _timer.Dispose();
       _timer = null;
-
-      // disable the wakeup timer
-      _wakeupTimer.SecondsToWait = -1;
-      _wakeupTimer.Close();
 
       // dereference the PowerManager instance
       _powerManager = null;
@@ -600,6 +606,7 @@ namespace TvEngine.PowerScheduler
             ReinitializeController();
           }
           ResetAndEnableTimer();
+          _lastIdleTime = DateTime.Now;
           if (!_controller.EpgGrabberEnabled)
             _controller.EpgGrabberEnabled = true;
           SendPowerSchedulerEvent(PowerSchedulerEventType.ResumedFromStandby);
@@ -660,6 +667,7 @@ namespace TvEngine.PowerScheduler
       SetWakeupTimer();
 
       // activate standby
+      _lastIdleTime = DateTime.MaxValue;
       RunExternalCommand(true);
       Log.Info("PowerScheduler: entering {0} ; forced: {1}", state, force);
       return Application.SetSuspendState(state, force, false);

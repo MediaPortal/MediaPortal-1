@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
 #endregion
 
@@ -34,8 +35,28 @@ namespace TvEngine.PowerScheduler.Handlers
   /// <summary>
   /// Handles wakeup of the system for scheduled recordings
   /// </summary>
-  public class ScheduledRecordingsHandler : IWakeupHandler
+  public class ScheduledRecordingsHandler : IWakeupHandler, IStandbyHandler
   {
+    #region Variables
+    int _idleTimeout = 5;
+    #endregion
+    #region Ctor
+    public ScheduledRecordingsHandler()
+    {
+      if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
+      {
+        IPowerScheduler ips = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
+        if (ips != null)
+        {
+          ips.OnPowerSchedulerEvent += new PowerSchedulerEventHandler(ScheduledRecordingsHandler_OnPowerSchedulerEvent);
+          if (ips.Settings != null)
+          {
+            _idleTimeout = ips.Settings.IdleTimeout;
+          }
+        }
+      }
+    }
+    #endregion
     #region IWakeupHandler implementation
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
@@ -68,7 +89,57 @@ namespace TvEngine.PowerScheduler.Handlers
     }
     #endregion
 
+    #region IStandbyHandler implementation
+    public bool DisAllowShutdown
+    {
+      get
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        DateTime almostDueTime;
+        foreach (Schedule schedule in Schedule.ListAll())
+        {
+          if (schedule.Canceled != Schedule.MinSchedule) continue;
+          List<Schedule> schedules = layer.GetRecordingTimes(schedule);
+          if (schedules.Count > 0)
+          {
+            // Take first occurrence of this schedule
+            Schedule recSchedule = schedules[0];
+            almostDueTime = recSchedule.StartTime.AddMinutes(-recSchedule.PreRecordInterval).AddMinutes(-_idleTimeout);
+          }
+          else
+          {
+            // manually determine schedule's wakeup time of no guide data is present
+            almostDueTime = GetWakeupTime(schedule).AddMinutes(-_idleTimeout);
+          }
+          if (almostDueTime <= DateTime.Now)
+          {
+            // This schedule is almost due, so disallow standby
+            return true;
+          }
+        }
+        return false;
+      }
+    }
+    #endregion
+
     #region Private methods
+    /// <summary>
+    /// Handles settings changed events
+    /// </summary>
+    /// <param name="args">PowerScheduler event arguments</param>
+    void ScheduledRecordingsHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
+    {
+      switch (args.EventType)
+      {
+        case PowerSchedulerEventType.SettingsChanged:
+          PowerSettings settings = args.GetData<PowerSettings>();
+          if (settings != null)
+          {
+            _idleTimeout = settings.IdleTimeout;
+          }
+          break;
+      }
+    }
     /// <summary>
     /// GetWakeupTime determines the wakeup time for a Schedule when no guide data is present
     /// Note that this obviously only works for the following ScheduleRecordingsType's:

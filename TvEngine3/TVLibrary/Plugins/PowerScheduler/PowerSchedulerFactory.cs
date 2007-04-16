@@ -67,7 +67,6 @@ namespace TvEngine.PowerScheduler
     public PowerSchedulerFactory(IController controller)
     {
       IStandbyHandler standbyHandler;
-      IWakeupHandler wakeupHandler;
 
       _standbyHandlers = new List<IStandbyHandler>();
       _wakeupHandlers = new List<IWakeupHandler>();
@@ -80,9 +79,11 @@ namespace TvEngine.PowerScheduler
       standbyHandler = new ProcessActiveHandler();
       _standbyHandlers.Add(standbyHandler);
 
+      ScheduledRecordingsHandler recHandler = new ScheduledRecordingsHandler();
+      _standbyHandlers.Add(recHandler);
+
       // Add handlers for resuming from standby
-      wakeupHandler = new ScheduledRecordingsHandler();
-      _wakeupHandlers.Add(wakeupHandler);
+      _wakeupHandlers.Add(recHandler);
 
       // Activate the EPG grabbing handler
       _epgHandler = new EpgGrabbingHandler(controller);
