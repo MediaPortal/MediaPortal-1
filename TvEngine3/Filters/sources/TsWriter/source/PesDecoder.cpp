@@ -53,6 +53,10 @@ void CPesDecoder::SetPid(int pid)
 	m_pid=pid;
 }
 
+bool  CPesDecoder::IsAc3()
+{
+	return (m_iStreamId>=0x80 && m_iStreamId<=0x89);
+}
 bool CPesDecoder::IsAudio()
 {
 	return (m_iStreamId>=0xc0 && m_iStreamId<=0xcf);

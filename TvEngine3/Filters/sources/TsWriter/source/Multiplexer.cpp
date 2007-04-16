@@ -102,7 +102,7 @@ void CMultiplexer::RemovePesStream(int pid)
   m_system_header_size=get_system_header_size();
 }
 
-void CMultiplexer::AddPesStream(int pid, bool isAudio, bool isVideo)
+void CMultiplexer::AddPesStream(int pid, bool isAc3, bool isAudio, bool isVideo)
 {
 	ivecPesDecoders it;
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
@@ -114,17 +114,24 @@ void CMultiplexer::AddPesStream(int pid, bool isAudio, bool isVideo)
 //	LogDebug("mux: add pes pid:%x", pid);
 	int audioStreamId=0xc0;
 	int videoStreamId=0xe0;
+	int ac3StreamId=0x80;
 
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
 		CPesDecoder* decoder=*it;
-		if (decoder->IsAudio()) audioStreamId++;
-		if (decoder->IsVideo()) videoStreamId++;
+		if (decoder->IsAc3()) ac3StreamId++;
+		else if (decoder->IsAudio()) audioStreamId++;
+		else if (decoder->IsVideo()) videoStreamId++;
 	}
 
 	CPesDecoder* decoder = new CPesDecoder(this);
 	decoder->SetPid(pid);
-	if (isAudio)
+	if (isAc3)
+	{
+		//LogDebug("mux pid:%x audio stream id:%x", pid,audioStreamId);
+		decoder->SetStreamId(ac3StreamId);
+	}
+	else if (isAudio)
 	{
 		//LogDebug("mux pid:%x audio stream id:%x", pid,audioStreamId);
 		decoder->SetStreamId(audioStreamId);

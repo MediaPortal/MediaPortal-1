@@ -67,7 +67,7 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 
 	
 	STDMETHOD(RecordSetPcrPid)(THIS_ int handle,int pcrPid)PURE;
-	STDMETHOD(RecordAddStream)(THIS_ int handle,int pid,bool isAudio,bool isVideo)PURE;
+	STDMETHOD(RecordAddStream)(THIS_ int handle,int pid,bool isAc3,bool isAudio,bool isVideo)PURE;
 	STDMETHOD(RecordRemoveStream)(THIS_ int handle,int pid)PURE;
   STDMETHOD(RecordSetRecordingFileName)(THIS_ int handle,char* pszFileName)PURE;
   STDMETHOD(RecordStartRecord)(THIS_ int handle)PURE;
@@ -189,7 +189,7 @@ public:
 
 		
 		STDMETHODIMP RecordSetPcrPid( int handle,int pcrPid);
-		STDMETHODIMP RecordAddStream( int handle,int pid,bool isAudio,bool isVideo);
+		STDMETHODIMP RecordAddStream( int handle,int pid,bool isAc3,bool isAudio,bool isVideo);
 		STDMETHODIMP RecordRemoveStream( int handle,int pid);
 		STDMETHODIMP RecordSetRecordingFileName( int handle,char* pszFileName);
 		STDMETHODIMP RecordStartRecord( int handle);

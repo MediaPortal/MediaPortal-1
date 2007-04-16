@@ -108,7 +108,7 @@ STDMETHODIMP CRecorder::SetPmtPid(int pmtPid)
 	return S_OK;
 }
 
-STDMETHODIMP CRecorder::AddStream(int pid,bool isAudio,bool isVideo)
+STDMETHODIMP CRecorder::AddStream(int pid,bool isAc3,bool isAudio,bool isVideo)
 {
 	CEnterCriticalSection enter(m_section);
 	if (isAudio)
@@ -119,7 +119,7 @@ STDMETHODIMP CRecorder::AddStream(int pid,bool isAudio,bool isVideo)
 		LogDebug("Recorder:add private stream pid:%x",pid);
 
   m_vecPids.push_back(pid);
-	m_multiPlexer.AddPesStream(pid,isAudio,isVideo);
+	m_multiPlexer.AddPesStream(pid,isAc3,isAudio,isVideo);
 	return S_OK;
 }
 

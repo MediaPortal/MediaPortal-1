@@ -1192,7 +1192,7 @@ namespace TvLibrary.Implementations.DVB
           if (addPid)
           {
             Log.Log.WriteFile("subch:{0} set record {1}", _subChannelId, info);
-            _tsFilterInterface.RecordAddStream(_subChannelIndex,info.pid, (info.isAC3Audio || info.isAudio), info.isVideo);
+            _tsFilterInterface.RecordAddStream(_subChannelIndex, info.pid, info.isAC3Audio,(info.isAC3Audio || info.isAudio), info.isVideo);
           }
         }
       }
@@ -1202,7 +1202,7 @@ namespace TvLibrary.Implementations.DVB
         if (atscChannel != null)
         {
           //VCT
-          _tsFilterInterface.RecordAddStream(_subChannelIndex, 0x1ffb, false, false);
+          _tsFilterInterface.RecordAddStream(_subChannelIndex, 0x1ffb, false,false, false);
         }
         if (dvbChannel.PmtPid > 0)
         {

@@ -48,7 +48,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="isVideo">if set to <c>true</c> [is video].</param>
     /// <returns></returns>
     [PreserveSig]
-    int AddStream(short pid, bool isAudio, bool isVideo);
+    int AddStream(short pid, bool isAc3,bool isAudio, bool isVideo);
     /// <summary>
     /// Removes the stream.
     /// </summary>

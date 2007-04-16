@@ -49,7 +49,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
 
 
     [PreserveSig] int RecordSetPcrPid(int handle, int pcrPid);
-    [PreserveSig] int RecordAddStream(int handle, int pid, bool isAudio, bool isVideo);
+    [PreserveSig] int RecordAddStream(int handle, int pid,bool isAc3, bool isAudio, bool isVideo);
     [PreserveSig] int RecordRemoveStream(int handle, int pid);
     [PreserveSig] int RecordSetRecordingFileName(int handle, [In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
     [PreserveSig] int RecordStartRecord(int handle);

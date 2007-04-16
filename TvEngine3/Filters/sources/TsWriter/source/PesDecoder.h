@@ -43,6 +43,7 @@ public:
 	bool					OnTsPacket(byte* tsPacket,CPcr& pcr);
 	void					Reset();
 	bool					IsAudio();
+	bool					IsAc3();
 	bool					IsVideo();
 	int						GetStreamId();
 	void					SetStreamId(int streamId);

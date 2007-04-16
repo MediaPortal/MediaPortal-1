@@ -639,11 +639,11 @@ STDMETHODIMP CMpTs::RecordSetPcrPid( int handle,int pcrPid)
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pRecorder->SetPcrPid( pcrPid);
 }
-STDMETHODIMP CMpTs::RecordAddStream( int handle,int pid,bool isAudio,bool isVideo)
+STDMETHODIMP CMpTs::RecordAddStream( int handle,int pid,bool isAc3,bool isAudio,bool isVideo)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pRecorder->AddStream( pid,isAudio,isVideo);
+	return pChannel->m_pRecorder->AddStream( pid,isAc3,isAudio,isVideo);
 }
 STDMETHODIMP CMpTs::RecordRemoveStream( int handle,int pid)
 {

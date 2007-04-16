@@ -44,7 +44,7 @@ public:
 	virtual ~CMultiplexer(void);
 	void SetPcrPid(int pcrPid);
 	int  GetPcrPid();
-	void AddPesStream(int pid, bool isAudio, bool isVideo);
+	void AddPesStream(int pid, bool isAc3,bool isAudio, bool isVideo);
 	void RemovePesStream(int pid);
 	void OnTsPacket(byte* tsPacket);
 	void Reset();

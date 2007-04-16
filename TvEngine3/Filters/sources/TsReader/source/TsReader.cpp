@@ -317,6 +317,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
         m_buffer.Clear();
         m_buffer.Run(true);
         m_rtspClient.Play(startTime);
+        m_tickCount=GetTickCount();
         LogDebug("  -- Pause()->client started");
 
         double duration=m_rtspClient.Duration()/1000.0f;
@@ -388,6 +389,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     m_demultiplexer.SetFileReader(m_fileReader);
     m_demultiplexer.Start();
     m_buffer.Run(false);
+    m_tickCount=GetTickCount();
     
     LogDebug("close rtsp:%s", url);
     m_rtspClient.Stop();
@@ -509,6 +511,7 @@ void CTsReaderFilter::Seek(CRefTime& seekTime)
     m_buffer.Clear();
     m_buffer.Run(true);
     m_rtspClient.Play(startTime);
+    m_tickCount=GetTickCount();
 
     double duration=m_rtspClient.Duration()/1000.0f;
     CPcr pcrstart,pcrEnd;
@@ -593,6 +596,7 @@ void CTsReaderFilter::ThreadProc()
       duration+=pcrstart.ToClock();
       pcrEnd.FromClock(duration);
       m_duration.Set( pcrstart, pcrEnd);
+      
       NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
       SetDuration();
     }

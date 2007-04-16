@@ -337,7 +337,10 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 			
 			LogDebug("Timeshifter:add audio stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
 			FAKE_AUDIO_PID++;
-			m_multiPlexer.AddPesStream(pid,true,false);
+      if (serviceType==SERVICE_TYPE_AUDIO_AC3)
+			  m_multiPlexer.AddPesStream(pid,true,false,false);
+      else
+			  m_multiPlexer.AddPesStream(pid,false,true,false);
     }
 		else if (serviceType==SERVICE_TYPE_VIDEO_MPEG1||serviceType==SERVICE_TYPE_VIDEO_MPEG2||serviceType==SERVICE_TYPE_VIDEO_MPEG4||serviceType==SERVICE_TYPE_VIDEO_H264)
     {
@@ -356,7 +359,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 			m_vecPids.push_back(info);
 			LogDebug("Timeshifter:add video stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
 			FAKE_VIDEO_PID++;
-			m_multiPlexer.AddPesStream(pid,false,true);
+			m_multiPlexer.AddPesStream(pid,false,false,true);
     }
 		else if (serviceType==SERVICE_TYPE_DVB_SUBTITLES1||serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
 		{
@@ -370,7 +373,7 @@ STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
 			m_vecPids.push_back(info);
 			LogDebug("Timeshifter:add subtitle stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
 			FAKE_SUBTITLE_PID++;
-			m_multiPlexer.AddPesStream(pid,false,true);
+			m_multiPlexer.AddPesStream(pid,false,false,true);
 		}
 		else 
     {
