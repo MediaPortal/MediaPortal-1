@@ -23,6 +23,9 @@
 		<String id="11">November</String>
 		<String id="12">December</String>
 	</Section>
+  <Section name="global">
+    <String id="0">infinity</String>
+  </Section>
 	<Section name="mytv">
 		<String id="0">Tv Guide</String>
 		<String id="1">Record Now</String>
