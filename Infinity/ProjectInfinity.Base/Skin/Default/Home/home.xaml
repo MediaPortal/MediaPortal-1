@@ -74,14 +74,18 @@
     <Storyboard x:Key="storyBoardScrollUp" >
       <ThicknessAnimationUsingKeyFrames BeginTime="00:00:00"  Storyboard.TargetProperty="Margin">
         <SplineThicknessKeyFrame KeyTime="00:00:00" Value="0,0,0,0"/>
-        <SplineThicknessKeyFrame KeyTime="00:00:00.2000000" Value="0,-40,0,40"/>
+        <SplineThicknessKeyFrame KeyTime="00:00:00.150000" Value="0,-40,0,40"/>
+        <SplineThicknessKeyFrame KeyTime="00:00:00.180000" Value="0,-48,0,48"/>
+        <SplineThicknessKeyFrame KeyTime="00:00:00.220000" Value="0,-40,0,40"/>
       </ThicknessAnimationUsingKeyFrames>
     </Storyboard>
 
     <Storyboard x:Key="storyBoardScrollDown" >
       <ThicknessAnimationUsingKeyFrames BeginTime="00:00:00"  Storyboard.TargetProperty="Margin">
         <SplineThicknessKeyFrame KeyTime="00:00:00" Value="0,0,0,0"/>
-        <SplineThicknessKeyFrame KeyTime="00:00:00.2000000" Value="0,+40,0,-40"/>
+        <SplineThicknessKeyFrame KeyTime="00:00:00.150000" Value="0,40,0,-40"/>
+        <SplineThicknessKeyFrame KeyTime="00:00:00.180000" Value="0,48,0,-48"/>
+        <SplineThicknessKeyFrame KeyTime="00:00:00.220000" Value="0,40,0,-40"/>
       </ThicknessAnimationUsingKeyFrames>
     </Storyboard>
   </Grid.Resources>
