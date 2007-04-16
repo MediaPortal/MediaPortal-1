@@ -31,6 +31,7 @@ namespace ProjectInfinity.Controls
                                                                                                new PropertyChangedCallback
                                                                                                  (FocusedMarginPropertyChanged)));
 
+
     public static readonly DependencyProperty ItemTemplateProperty = DependencyProperty.Register("ItemTemplate",
                                                                                             typeof(DataTemplate),
                                                                                             typeof(Menu),
@@ -79,6 +80,10 @@ namespace ProjectInfinity.Controls
     #region variables
     int _currentOffset;
     Storyboard _storyBoard;
+    bool _mouseEntered = false;
+    int _mouseSelectedItem = 0;
+    int _currentSelectedItem = 0;
+    bool _mouseEventsEnabled = true;
     #endregion
 
     #region ctor
@@ -89,12 +94,6 @@ namespace ProjectInfinity.Controls
     #endregion
 
 
-    #region event handlers
-    void Menu_Loaded(object sender, RoutedEventArgs e)
-    {
-      LayoutMenu();
-    }
-    #endregion
 
     #region property handlers
     private static void FocusedMarginPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
@@ -113,6 +112,8 @@ namespace ProjectInfinity.Controls
         SetValue(FocusedMarginProperty, value);
       }
     }
+
+
 
 
     private static void ItemsSourcePropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
@@ -155,8 +156,18 @@ namespace ProjectInfinity.Controls
     #endregion
 
     #region event handlers
+    void Menu_Loaded(object sender, RoutedEventArgs e)
+    {
+      LayoutMenu();
+    }
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+    {
+      base.OnRenderSizeChanged(sizeInfo);
+      LayoutMenu();
+    }
     void LayoutMenu()
     {
+      _mouseEventsEnabled = false;
       if (ItemsSource == null) return;
       int maxRows = (int)(this.ActualHeight / ((double)BUTTONHEIGHT));
       maxRows--;
@@ -170,6 +181,10 @@ namespace ProjectInfinity.Controls
       this.Margin = new Thickness(0, 0, 0, 0);
       double yoffset = -BUTTONHEIGHT;
       int selected = (maxRows) / 2;
+      if (_mouseEntered)
+        selected = _mouseSelectedItem;
+      _currentSelectedItem = selected;
+      _mouseSelectedItem = selected;
       for (int i = -1; i < maxRows + 2; ++i)
       {
         int itemNr = _currentOffset + i;
@@ -196,21 +211,13 @@ namespace ProjectInfinity.Controls
         yoffset += BUTTONHEIGHT;
       }
       Keyboard.Focus(this.Children[selected]);
+      _mouseEventsEnabled = true;
     }
-    protected override void OnMouseWheel(MouseWheelEventArgs e)
-    {
-      if (e.Delta < 0)
-      {
-        OnScrollUp();
-      }
-      else if (e.Delta > 0)
-      {
-        OnScrollDown();
-      }
-      base.OnMouseWheel(e);
-    }
+
+    #region keyboard
     void OnScrollDown()
     {
+      _mouseEventsEnabled = false;
       if (_storyBoard != null)
       {
         _storyBoard.Stop(this);
@@ -229,6 +236,7 @@ namespace ProjectInfinity.Controls
 
     void OnScrollUp()
     {
+      _mouseEventsEnabled = false;
       if (_storyBoard != null)
       {
         _storyBoard.Stop(this);
@@ -261,17 +269,6 @@ namespace ProjectInfinity.Controls
       }
     }
 
-    void storyBoard_Completed(object sender, EventArgs e)
-    {
-      LayoutMenu();
-    }
-
-    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
-    {
-      base.OnRenderSizeChanged(sizeInfo);
-      LayoutMenu();
-    }
-
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
       if (e.Key == Key.Enter)
@@ -293,7 +290,68 @@ namespace ProjectInfinity.Controls
         return;
       }
     }
+    void storyBoard_Completed(object sender, EventArgs e)
+    {
+      LayoutMenu();
+    }
+    #endregion
+
+
+    #region mouse
+    protected override void OnMouseWheel(MouseWheelEventArgs e)
+    {
+      if (e.Delta < 0)
+      {
+        OnScrollUp();
+      }
+      else if (e.Delta > 0)
+      {
+        OnScrollDown();
+      }
+      base.OnMouseWheel(e);
+    }
+    void ScrollSelectedItem()
+    {
+      LayoutMenu();
+    }
+    protected override void OnMouseMove(MouseEventArgs e)
+    {
+      if (_mouseEntered && _mouseEventsEnabled)
+      {
+        int selectedItemNr = -1;
+        foreach (FrameworkElement element in this.Children)
+        {
+          if (element.IsMouseOver)
+          {
+            _mouseSelectedItem = selectedItemNr;
+            if (selectedItemNr != _currentSelectedItem)
+            {
+              ScrollSelectedItem();
+            }
+            return;
+
+          }
+          selectedItemNr++;
+        }
+      }
+      base.OnMouseMove(e);
+    }
+    protected override void OnMouseEnter(MouseEventArgs e)
+    {
+      _mouseEntered = true;
+      base.OnMouseEnter(e);
+    }
+    protected override void OnMouseLeave(MouseEventArgs e)
+    {
+      _mouseEntered = false;
+     // LayoutMenu();
+      base.OnMouseLeave(e);
+    }
     protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+    {
+      base.OnPreviewMouseDown(e);
+    }
+    protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
     {
       if (Command != null)
       {
@@ -307,8 +365,9 @@ namespace ProjectInfinity.Controls
           Command.Execute(CommandParameter);
         }
       }
-      base.OnPreviewMouseDown(e);
+      base.OnPreviewMouseLeftButtonDown(e);
     }
+    #endregion
     #endregion
 
     #region command
