@@ -96,7 +96,7 @@ namespace ProjectInfinity.Plugins
     {
       get
       {
-        if (SubMenuPath != null)
+        if (SubMenuPath != String.Empty)
           return true;
         else
           return false;
