@@ -91,6 +91,22 @@ namespace ProjectInfinity.Plugins
     {
       get { return _item.Properties["image"]; }
     }
+
+    public bool IsSubMenu
+    {
+      get
+      {
+        if (SubMenuPath != null)
+          return true;
+        else
+          return false;
+      }
+    }
+
+    public string SubMenuPath
+    {
+      get { return _item.Properties["submenu"]; }
+    }
     #endregion
 
     #region Public Methods
