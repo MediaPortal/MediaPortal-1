@@ -19,6 +19,10 @@
               submenu="/MyTv"/>
 	</Path>
   <Path name = "/MyTv">
+    <MenuItem id    = "Home"
+		          label = "@mytv:137"
+              image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
+		          class = "MyTv.TvPlugin"/>
     <MenuItem id    = "TvGuide"
 		          label = "@mytv:0"
               image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
