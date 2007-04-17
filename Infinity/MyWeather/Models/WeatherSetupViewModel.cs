@@ -16,6 +16,10 @@ using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Settings;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using Dialogs;
+using System.Collections.Generic;
 
 namespace MyWeather
 {
@@ -24,21 +28,33 @@ namespace MyWeather
         #region variables
         string _labelError;
         ICommand _saveCommand;
-        ICommand _searchCommand;
-        string _location;
-        ArrayList _cities;
-        CollectionView _citiesCollView;
+        ICommand _searchCommand;            // Opens a Popup Menu
+        ICommand _searchCommandAlt;         // Does not open the Popup Menu
+        ICommand _addLocation;              // Adds the selected Location to a list (LocationsAdded)
+        string _searchLocation;             // the location we type in for searching
+        string _selectedLocation;           // the name of the selected found location
+        string _selectedLocationId;         // the id -"-
+        City _selectedLocationTyped;        // the selected found location as City type
+        Visibility _visibleAfterSelection;
+        LocationCollectionView _citiesCollView;
+        LocationCollectionView _citiesAddedView;
+        WeatherSetupDataModel _dataModel;
+        WeatherSetupSearchDataModel _dataModelSearch;
         #endregion
 
         #region ctor
         public WeatherSetupViewModel(Page page)
             : base(page)
         {
+            _visibleAfterSelection = Visibility.Hidden;
             _labelError = "";
-            _location = "";
-            _cities = new ArrayList();
-            _citiesCollView = new CollectionView(_cities);
+            _searchLocation = "";
+            _dataModelSearch = new WeatherSetupSearchDataModel();
+            _dataModel = new WeatherSetupDataModel();
+            _citiesCollView = new LocationCollectionView(_dataModelSearch);
+            _citiesAddedView = new LocationCollectionView(_dataModel);
         }
+
         #endregion
         #region properties
         /// <summary>
@@ -103,18 +119,147 @@ namespace MyWeather
             }
         }
         /// <summary>
-        /// holds a collection of found Locations
+        /// Gets or sets the label for the location to add
         /// </summary>
-        public CollectionView FoundLocations
+        /// <value>The location to be added label :).</value>
+        public string LabelAddLocation
         {
-            get {
+            get
+            {
+                return ServiceScope.Get<ILocalisation>().ToString("myweather.config", 5);
+            }
+        }
+        /// <summary>
+        /// Gets or sets the save label
+        /// </summary>
+        /// <value>The save label</value>
+        public string LabelSave
+        {
+            get
+            {
+                return ServiceScope.Get<ILocalisation>().ToString("myweather.config", 6);
+            }
+        }
+        /// <summary>
+        /// Returns the ListViewCollection containing the found cities
+        /// </summary>
+        /// <value>The Cities.</value>
+        public CollectionView Locations
+        {
+            get
+            {
+                if (_citiesCollView == null)
+                {
+                    _citiesCollView = new LocationCollectionView(_dataModelSearch);
+                }
                 return _citiesCollView;
-                //return _cities; 
             }
         }
 
+        /// <summary>
+        /// Returns the ListViewCollection containing the found cities
+        /// </summary>
+        /// <value>The Cities.</value>
+        public CollectionView LocationsAdded
+        {
+            get
+            {
+                if (_citiesAddedView == null)
+                {
+                    _citiesAddedView = new LocationCollectionView(_dataModel);
+                }
+                return _citiesAddedView;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the location to Search for
+        /// </summary>
+        /// <value>location name</value>
+        public string SearchLocation
+        {
+            get
+            {
+                return _searchLocation;
+            }
+            set
+            {
+                _searchLocation = value;
+                ChangeProperty("SearchLocation");
+            }
+        }
+        /// <summary>
+        /// Gets or sets the location id which has been
+        /// selected by the user
+        /// </summary>
+        /// <value>location name</value>
+        public string SelectedLocationId
+        {
+            get
+            {
+                return _selectedLocationId;
+            }
+            set
+            {
+                _selectedLocationId = value;
+                ChangeProperty("SelectedLocationId");
+            }
+        }
+        /// <summary>
+        /// Gets or sets the location which has been
+        /// selected by the user
+        /// </summary>
+        /// <value>location name</value>
+        public string SelectedLocation
+        {
+            get
+            {
+                return _selectedLocation;
+            }
+            set
+            {
+                _selectedLocation = value;
+                ChangeProperty("SelectedLocation");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the location which has been
+        /// selected by the user
+        /// </summary>
+        /// <value>location name</value>
+        public City SelectedLocationTyped
+        {
+            get
+            {
+                return _selectedLocationTyped;
+            }
+            set
+            {
+                _selectedLocationTyped = value;
+                ChangeProperty("SelectedLocationTyped");
+            }
+        }
+        /// <summary>
+        /// Gets or sets the location which has been
+        /// selected by the user
+        /// </summary>
+        /// <value>location name</value>
+        public Visibility VisibilityAfterSelection
+        {
+            get
+            {
+                return _visibleAfterSelection;
+            }
+            set
+            {
+                _visibleAfterSelection = value;
+                ChangeProperty("VisibilityAfterSelection");
+            }
+        }        
         #endregion
         #region commands
+
         /// <summary>
         /// Returns ICommand to save the settings
         /// </summary>
@@ -145,21 +290,39 @@ namespace MyWeather
                 return _searchCommand;
             }
         }
+
         /// <summary>
-        /// Gets or sets the location
+        /// Returns ICommand to search for LocationIDs
         /// </summary>
-        /// <value>location name</value>
-        public string Location
+        /// <value>The search</value>
+        public ICommand SearchAlt
         {
             get
             {
-                return _location;
-            }
-            set
-            {
-                _location = value;
+                if (_searchCommand == null)
+                {
+                    _searchCommand = new SearchCommandAlt(this);
+                }
+                return _searchCommand;
             }
         }
+
+        /// <summary>
+        /// Returns ICommand to search for LocationIDs
+        /// </summary>
+        /// <value>The search</value>
+        public ICommand AddLocation
+        {
+            get
+            {
+                if (_addLocation == null)
+                {
+                    _addLocation = new AddLocationCommand(this);
+                }
+                return _addLocation;
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -172,28 +335,18 @@ namespace MyWeather
                 //
                 // Perform actual search
                 //
-                WeatherChannel weather = new WeatherChannel();
-                _cities.Clear();
-                _cities = weather.SearchCity(Location);
-                System.Windows.MessageBox.Show("Input: " + Location);
-                //
-                // Clear previous results
-                //
-                int size = 0;
-                foreach (City city in _cities)
-                {
-                    System.Windows.MessageBox.Show(city.Name + ", " + city.Id);
-                    size++;
-                }
-                if(size==0)
+                WeatherSetupDataModel weather = new WeatherSetupDataModel();
+                _dataModelSearch.SearchCity(SearchLocation);
+
+                if(_dataModelSearch.Locations.Count==0)
                     LabelError = ServiceScope.Get<ILocalisation>().ToString("myweather.config",4);
 
-                //_citiesCollView.SourceCollection = _cities;
-                foreach (City c in _citiesCollView.SourceCollection)
-                {
-                    System.Windows.MessageBox.Show("in collection: " + c.Name);
-                }
-                ChangeProperty("FoundLocations");
+                // data bound to the LocationCollectionView updated
+                // so lets refresh that view as well
+                ChangeProperty("Locations");
+                // clear the search text
+                SearchLocation = "";
+
             }
             catch (Exception ex)
             {
@@ -201,6 +354,33 @@ namespace MyWeather
             }
         }
 
+        #region LocationCollectionView class
+        /// <summary>
+        /// This class represents the locations view
+        /// </summary>
+        public class LocationCollectionView : ListCollectionView
+        {
+            #region variables
+            private WeatherSetupDataModel _model;
+            #endregion
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="LocationCollectionView"/> class.
+            /// </summary>
+            /// <param name="model">The database model.</param>
+            public LocationCollectionView(WeatherSetupDataModel datamodel)
+                : base(datamodel.Locations)
+            {
+                _model = datamodel;
+                _model.PropertyChanged += new PropertyChangedEventHandler(OnDataChanged);
+            }
+
+            void OnDataChanged(object sender, PropertyChangedEventArgs e)
+            {
+                this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            }
+        }
+        #endregion
 
         #region command classes
         /// <summary>
@@ -229,23 +409,38 @@ namespace MyWeather
 
             public void Execute(object parameter)
             {
-                // Save Settings to xml file
+                // Save all locations to the Settings
+                WeatherSettings settings = new WeatherSettings();
+                settings.LocationsList.Clear();
+                List<City> l = (List<City>)_viewModel.LocationsAdded.SourceCollection;
 
+                foreach (City c in l)
+                {
+                    settings.LocationsList.Add(c.Id);
+                }
+                if (l.Count > 0)
+                    settings.LocationCode = l[0].Id;
+                // save
+                ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xml");
+
+                // navigate back to weather screen
+                ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyWeather;component/Weather.xaml", UriKind.Relative));
             }
 
             #endregion
         }
         /// <summary>
-        /// This command will save the location
+        /// This command will search the location
+        /// and update the databinding
         /// </summary>
-        public class SearchCommand : ICommand
+        public class SearchCommandAlt : ICommand
         {
             WeatherSetupViewModel _viewModel;
             /// <summary>
             /// Initializes a new instance of the <see cref="SaveCommand"/> class.
             /// </summary>
             /// <param name="model">The model.</param>
-            public SearchCommand(WeatherSetupViewModel model)
+            public SearchCommandAlt(WeatherSetupViewModel model)
             {
                 _viewModel = model;
             }
@@ -268,6 +463,89 @@ namespace MyWeather
             #endregion
         }
 
+        /// <summary>
+        /// search for a location and open a popupmenu to
+        /// select a location
+        /// </summary>
+        public class AddLocationCommand : ICommand
+        {
+            WeatherSetupViewModel _viewModel;
+
+            public AddLocationCommand(WeatherSetupViewModel viewModel)
+            {
+                _viewModel = viewModel;
+            }
+
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            public event EventHandler CanExecuteChanged;
+
+            public void Execute(object parameter)
+            {
+                if (_viewModel.SelectedLocationTyped == null) return;
+                // add the location to the dataModel
+                _viewModel._dataModel.AddCity(_viewModel.SelectedLocationTyped);
+                _viewModel.VisibilityAfterSelection = Visibility.Hidden;
+                _viewModel.ChangeProperty("LocationsAdded");
+                ListBox test;
+            }
+        }
+
+        /// <summary>
+        /// search for a location and open a popupmenu to
+        /// select a location
+        /// </summary>
+        public class SearchCommand : ICommand
+        {
+            WeatherSetupViewModel _viewModel;
+
+            public SearchCommand(WeatherSetupViewModel viewModel)
+            {
+                _viewModel = viewModel;
+            }
+
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            public event EventHandler CanExecuteChanged;
+
+            public void Execute(object parameter)
+            {
+                _viewModel.LabelError = "";
+                // Show a dialog with all sorting options
+                MpMenu dlgMenu = new MpMenu();
+                dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dlgMenu.Owner = _viewModel.Window;
+                dlgMenu.Items.Clear();
+                dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("myweather.config", 3);// "Please select your City";
+                dlgMenu.SubTitle = "";
+                _viewModel.SearchCities();
+                
+                // nothing found?
+                if (((List<City>)(_viewModel.Locations.SourceCollection)).Count == 0) return;
+
+                foreach (City c in _viewModel.Locations.SourceCollection)
+                {
+                    dlgMenu.Items.Add(new DialogMenuItem(c.Name + ", " + c.Id));
+                }
+
+                // show dialog menu
+                dlgMenu.ShowDialog();
+                if (dlgMenu.SelectedIndex < 0) return;    // no menu item selected
+
+                // get the id that belongs to the selected city and set the property
+                City buff = ((List<City>)(_viewModel.Locations.SourceCollection))[dlgMenu.SelectedIndex];
+                _viewModel.SelectedLocationId = buff.Id;
+                _viewModel.SelectedLocation = buff.Name;
+                _viewModel.SelectedLocationTyped = buff;
+                _viewModel.VisibilityAfterSelection = Visibility.Visible;
+            }
+        }
         #endregion
     }
 }
