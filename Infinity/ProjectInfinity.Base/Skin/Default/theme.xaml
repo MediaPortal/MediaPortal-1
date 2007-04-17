@@ -4,11 +4,14 @@
     >
 
 
+  <!-- fade brush -->
   <LinearGradientBrush x:Key="fadeOpacityBrush" EndPoint="1,1" StartPoint="0,0">
     <GradientStop Color="#FF000000" Offset="0"/>
     <GradientStop Color="#91000000" Offset="0.8"/>
     <GradientStop Color="#00000000" Offset="0.9"/>
   </LinearGradientBrush>
+
+  <!-- default brush used to paint the background of a page/window -->
   <RadialGradientBrush x:Key="backGroundBrush" GradientOrigin="0.186,0.311">
     <RadialGradientBrush.RelativeTransform>
       <TransformGroup>
@@ -21,6 +24,8 @@
     <GradientStop Color="#FF5C9AE6" Offset="0"/>
     <GradientStop Color="#FF1253A3" Offset="1"/>
   </RadialGradientBrush>
+
+  <!-- default brush used to paint the background of a dialog -->
   <RadialGradientBrush x:Key="dialogBackGroundBrush" GradientOrigin="0.186,0.311">
     <RadialGradientBrush.RelativeTransform>
       <TransformGroup>
@@ -33,6 +38,8 @@
     <GradientStop Color="#FF5BB0FF" Offset="0"/>
     <GradientStop Color="#FF238DFF" Offset="1"/>
   </RadialGradientBrush>
+
+  <!-- default brush for a normal button -->
   <RadialGradientBrush x:Key="MpButtonBrush" GradientOrigin="0.85,0.82">
     <RadialGradientBrush.RelativeTransform>
       <TransformGroup>
@@ -57,7 +64,36 @@
     <GradientStop Color="#FF2E3E88" Offset="0"/>
     <GradientStop Color="#FF2E3E88" Offset="1"/>
   </RadialGradientBrush>
+
+  <!-- default brush for a menu button -->
+  <RadialGradientBrush x:Key="MpMenuButtonBrush" GradientOrigin="0.85,0.82">
+    <RadialGradientBrush.RelativeTransform>
+      <TransformGroup>
+        <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.335" ScaleY="1.582"/>
+        <SkewTransform AngleX="0" AngleY="0" CenterX="0.5" CenterY="0.5"/>
+        <RotateTransform Angle="0" CenterX="0.5" CenterY="0.5"/>
+        <TranslateTransform X="0.027" Y="-0.006"/>
+      </TransformGroup>
+    </RadialGradientBrush.RelativeTransform>
+    <GradientStop Color="#002A5EB4" Offset="0"/>
+    <GradientStop Color="#002A5EB4" Offset="1"/>
+  </RadialGradientBrush>
+
+  <!-- default brush for a submenu button -->
+  <RadialGradientBrush x:Key="MpSubMenuButtonBrush" GradientOrigin="0.85,0.82">
+    <RadialGradientBrush.RelativeTransform>
+      <TransformGroup>
+        <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.335" ScaleY="1.582"/>
+        <SkewTransform AngleX="0" AngleY="0" CenterX="0.5" CenterY="0.5"/>
+        <RotateTransform Angle="0" CenterX="0.5" CenterY="0.5"/>
+        <TranslateTransform X="0.027" Y="-0.006"/>
+      </TransformGroup>
+    </RadialGradientBrush.RelativeTransform>
+    <GradientStop Color="#702A5EB4" Offset="0"/>
+    <GradientStop Color="#702A5EB4" Offset="1"/>
+  </RadialGradientBrush>
   
+  <!-- style for a close button (used on dialog windows -->
   <Style x:Key="MpCloseButton" BasedOn="{x:Null}" TargetType="{x:Type Button}">
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template">
@@ -150,6 +186,8 @@
       </Setter.Value>
     </Setter>
   </Style>
+
+  <!-- template for a green progressbar -->
   <ControlTemplate x:Key="MpProgressBar"  TargetType="{x:Type ProgressBar}">
     <Grid HorizontalAlignment="Stretch">
       <Rectangle HorizontalAlignment="Left"  Name="PART_Track" Height="20" Width="300" Fill="#FF8DA7CD" />
@@ -157,18 +195,23 @@
     </Grid>
   </ControlTemplate>
 
+  <!-- template for a orange progressbar -->
   <ControlTemplate x:Key="MpOrangeProgressBar"  TargetType="{x:Type ProgressBar}">
     <Grid HorizontalAlignment="Stretch">
       <Rectangle HorizontalAlignment="Stretch" Name="PART_Track" Height="20"  Fill="#FF8DA7CD" />
       <Rectangle HorizontalAlignment="Left"  Name="PART_Indicator" Height="20" Fill="Orange" />
     </Grid>
   </ControlTemplate>
+
+  <!-- template for a green progressbar -->
   <ControlTemplate x:Key="MpGreenProgressBar"  TargetType="{x:Type ProgressBar}">
     <Grid HorizontalAlignment="Stretch">
       <Rectangle HorizontalAlignment="Stretch" Name="PART_Track" Height="20"  Fill="Transparent" />
       <Rectangle HorizontalAlignment="Left"  Name="PART_Indicator" Height="20" Fill="Green" />
     </Grid>
   </ControlTemplate>
+  
+  <!-- template for a red progressbar -->
   <ControlTemplate x:Key="MpRedProgressBar"  TargetType="{x:Type ProgressBar}">
     <Grid HorizontalAlignment="Stretch">
       <Rectangle HorizontalAlignment="Stretch" Name="PART_Track" Height="20"  Fill="Transparent" />
@@ -176,7 +219,7 @@
     </Grid>
   </ControlTemplate>
 
-
+  <!-- styles for labels -->
   <Style x:Key="TextBlockLargeStyle"  TargetType="{x:Type TextBlock}">
     <Setter Property="FontFamily" Value="Segoe Media Center Semibold"/>
     <Setter Property="FontSize" Value="20"/>
@@ -232,6 +275,7 @@
     <Setter Property="Foreground" Value="red"/>
   </Style>
 
+  <!-- storyboard which shows the animation when a button has focus -->
   <Storyboard x:Key="focusedStoryBoard" >
     <PointAnimationUsingKeyFrames RepeatBehavior="Forever" AutoReverse="true" BeginTime="00:00:00" Storyboard.TargetName="shine" Storyboard.TargetProperty="(Shape.Fill).(RadialGradientBrush.GradientOrigin)">
       <SplinePointKeyFrame KeyTime="00:00:00" Value="0.5,1.709"/>
@@ -268,6 +312,8 @@
       <SplineDoubleKeyFrame KeyTime="00:00:04" Value="-0.006"/>
     </DoubleAnimationUsingKeyFrames>
   </Storyboard>
+  
+  <!-- storyboard which shows the animation when pressing a button  -->
   <Storyboard x:Key="pressedStoryBoard" >
     <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="shine" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
       <SplineColorKeyFrame KeyTime="00:00:00" Value="#FF045935"/>
@@ -301,6 +347,7 @@
     </PointAnimationUsingKeyFrames>
   </Storyboard>
 
+  <!-- storyboard whichs turns the background to be transparent. is used by buttons when they are not enabled  -->
   <Storyboard x:Key="disableStoryBoard" >
     <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="shine" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
       <SplineColorKeyFrame KeyTime="00:00:00" Value="#6F2A5EB4"/>
@@ -309,6 +356,8 @@
       <SplineColorKeyFrame KeyTime="00:00:00" Value="#6F2A5EB4"/>
     </ColorAnimationUsingKeyFrames>
   </Storyboard>
+
+  <!-- style for a normal button -->
   <Style x:Key="MpButton" TargetType="Button">
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template">
@@ -351,6 +400,8 @@
       </Setter.Value>
     </Setter>
   </Style>
+
+  <!-- style for a epg button which has a light-->
   <Style x:Key="MpButtonLight" TargetType="Button">
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template">
@@ -384,6 +435,8 @@
       </Setter.Value>
     </Setter>
   </Style>
+  
+  <!-- style for a epg button which has a dark color and a start box at the left side-->
   <Style x:Key="MpButtonLeft" TargetType="Button">
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template">
@@ -391,9 +444,9 @@
         <ControlTemplate  TargetType="{x:Type Button}">
           <Grid x:Name="grid" Margin="0,2,0,2">
             <Rectangle Fill="{StaticResource MpButtonBrush}" Stroke="#FF2866BD" RadiusX="4" RadiusY="4" HorizontalAlignment="Stretch" Margin="0,0,0,0" x:Name="shine" Width="Auto"/>
-             <Polygon x:Name="endLeft" Height="Auto"
-            Points="0,1, 20,1, 10,16, 20,30, 0,30" 
-            StrokeThickness="1">
+            <Polygon x:Name="endLeft" Height="Auto"
+           Points="0,1, 20,1, 10,16, 20,30, 0,30" 
+           StrokeThickness="1">
               <Polygon.Fill>
                 <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
                   <GradientStop Color="#FFDEE8EE" Offset="0.014"/>
@@ -428,6 +481,8 @@
       </Setter.Value>
     </Setter>
   </Style>
+
+  <!-- style for a epg button which has a light color and a start box at the left side-->
   <Style x:Key="MpButtonLightLeft" TargetType="Button">
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template">
@@ -471,7 +526,8 @@
       </Setter.Value>
     </Setter>
   </Style>
-
+  
+  <!-- style for a epg button which has a dark color and a end box at the right side-->
   <Style x:Key="MpButtonRight" TargetType="Button">
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template">
@@ -516,7 +572,8 @@
       </Setter.Value>
     </Setter>
   </Style>
-
+  
+  <!-- style for a epg button which has a light color and a end boxe at the right side-->
   <Style x:Key="MpButtonLightRight" TargetType="Button">
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template">
@@ -560,7 +617,8 @@
       </Setter.Value>
     </Setter>
   </Style>
-
+  
+  <!-- style for a epg button which has a dark color and start/end boxes at both left and right side-->
   <Style x:Key="MpButtonBoth" TargetType="Button">
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template">
@@ -615,7 +673,8 @@
       </Setter.Value>
     </Setter>
   </Style>
-
+  
+  <!-- style for a epg button which has a light color and start/end boxes at both left and right side-->
   <Style x:Key="MpButtonLightBoth" TargetType="Button">
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="Template">
@@ -670,6 +729,7 @@
     </Setter>
   </Style>
 
+  <!-- style for a radio toggle button-->
   <Style x:Key="MpRadioButton" TargetType="CheckBox">
 
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -711,7 +771,7 @@
       </Setter.Value>
     </Setter>
   </Style>
-
+  <!-- style for the listbox item container. Blue background which turns green when focused -->
   <Style x:Key="MpListViewItem" TargetType="ListBoxItem">
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -743,7 +803,41 @@
       </Setter.Value>
     </Setter>
   </Style>
+  
+  <!-- style for the menu-listbox item container. transparent background which turns green when focused -->
+  <Style x:Key="MpMenuListViewItem" TargetType="ListBoxItem">
+    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="KeyboardNavigation.TabNavigation" Value="Continue" />
+    <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Local" />
+    <Setter Property="Control.Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ListBoxItem">
 
+          <Grid x:Name="grid" Margin="0,2,0,2" >
+            <Rectangle Fill="{StaticResource MpSubMenuButtonBrush}" Stroke="Transparent" RadiusX="4" RadiusY="4" HorizontalAlignment="Stretch" Margin="0,0,0,0" x:Name="shine" Width="Auto"/>
+            <ContentPresenter FocusManager.IsFocusScope="False" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" Content="{TemplateBinding ContentControl.Content}" />
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+              <Trigger.EnterActions>
+                <BeginStoryboard  x:Name="onFocused" Storyboard="{StaticResource focusedStoryBoard}"/>
+              </Trigger.EnterActions>
+              <Trigger.ExitActions>
+                <StopStoryboard BeginStoryboardName="onFocused"/>
+              </Trigger.ExitActions>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+              <Setter Property="Foreground" Value="#40FFFFFF" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- style for a list box which is orientated vertically-->
   <Style x:Key="MpListView" TargetType="ListBox">
     <Setter Property="SnapsToDevicePixels" Value="true"/>
     <Setter Property="OverridesDefaultStyle" Value="true"/>
@@ -772,6 +866,8 @@
       </Setter.Value>
     </Setter>
   </Style>
+  <!-- style for a list box which is orientated horizontally-->
+  
   <Style x:Key="MpListViewHorizontal" TargetType="ListBox">
     <Setter Property="SnapsToDevicePixels" Value="true"/>
     <Setter Property="OverridesDefaultStyle" Value="true"/>
@@ -800,7 +896,7 @@
       </Setter.Value>
     </Setter>
   </Style>
-
+  <!-- data template for a dialog menu item in icon mode-->
   <DataTemplate x:Key="itemIconTemplate"  DataType="{x:Type local:DialogMenuItem}">
     <Grid Width="450">
       <Grid.ColumnDefinitions>
@@ -826,7 +922,9 @@
       <Label Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Label3}"/>
       <Image Grid.Row="0" Grid.Column="8" Grid.RowSpan="2"  Height="32" Width="32"  Source="{Binding RecordingLogo}" />
     </Grid>
-    </DataTemplate>
+  </DataTemplate>
+  
+  <!-- data template for a dialog menu item in list mode-->
   <DataTemplate x:Key="itemListTemplate" DataType="{x:Type local:DialogMenuItem}">
     <Grid Width="450">
       <Grid.ColumnDefinitions>
@@ -852,6 +950,7 @@
     </Grid>
   </DataTemplate>
 
+  <!-- style for a video button. shows video when present, otherwise a black rectangle -->
   <Style x:Key="buttonVideoWindow" BasedOn="{x:Null}" TargetType="{x:Type Button}">
     <Setter Property="Background" Value="Black"/>
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>

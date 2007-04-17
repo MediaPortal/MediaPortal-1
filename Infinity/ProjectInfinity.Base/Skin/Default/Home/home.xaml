@@ -4,18 +4,6 @@
     xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls" >
   <Grid.Resources>
 
-    <RadialGradientBrush x:Key="MpMenuButtonBrush" GradientOrigin="0.85,0.82">
-      <RadialGradientBrush.RelativeTransform>
-        <TransformGroup>
-          <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.335" ScaleY="1.582"/>
-          <SkewTransform AngleX="0" AngleY="0" CenterX="0.5" CenterY="0.5"/>
-          <RotateTransform Angle="0" CenterX="0.5" CenterY="0.5"/>
-          <TranslateTransform X="0.027" Y="-0.006"/>
-        </TransformGroup>
-      </RadialGradientBrush.RelativeTransform>
-      <GradientStop Color="#002A5EB4" Offset="0"/>
-      <GradientStop Color="#002A5EB4" Offset="1"/>
-    </RadialGradientBrush>
     <Style x:Key="MpMenuButton" TargetType="Button">
       <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
       <Setter Property="Template">
@@ -137,6 +125,6 @@
       </controls:Menu.OpacityMask>
     </controls:Menu>
   </Grid>
-  <controls:ListBox x:Name="subListBox"  Command="{Binding Path=Launch}" CommandParameter="{Binding ElementName=subListBox, Path=SelectedItem, Mode=OneWay}" Style="{StaticResource MpListViewHorizontal}" ItemContainerStyle="{StaticResource MpListViewItem}" ItemTemplate="{StaticResource subMenuTemplate}" ItemsSource="{Binding ElementName=menu, Path=SubMenu, Mode=OneWay}" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Center">
+  <controls:ListBox x:Name="subListBox"  Command="{Binding Path=Launch}" CommandParameter="{Binding ElementName=subListBox, Path=SelectedItem, Mode=OneWay}" Style="{StaticResource MpListViewHorizontal}" ItemContainerStyle="{StaticResource MpMenuListViewItem}" ItemTemplate="{StaticResource subMenuTemplate}" ItemsSource="{Binding ElementName=menu, Path=SubMenu, Mode=OneWay}" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Center">
   </controls:ListBox>
 </Grid>

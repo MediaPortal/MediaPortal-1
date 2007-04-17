@@ -21,11 +21,11 @@
   <Path name = "/MyTv">
     <MenuItem id    = "Home"
 		          label = "@mytv:137"
-              image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
+              image = "pack://siteoforigin:,,,/skin/default/gfx/mytv.png"
 		          class = "MyTv.TvPlugin"/>
     <MenuItem id    = "TvGuide"
 		          label = "@mytv:0"
-              image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
+              image = "pack://siteoforigin:,,,/skin/default/gfx/tvguide.png"
 		          class = "MyTv.TvGuide"/>
     <MenuItem id    = "Scheduled"
 		          label = "@mytv:5"
