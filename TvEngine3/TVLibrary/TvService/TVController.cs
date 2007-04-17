@@ -987,7 +987,6 @@ namespace TvService
         TvResult result = _cards[cardId].StartTimeShifting(ref user, ref fileName);
         if (result == TvResult.Succeeded)
         {
-          //_cards[cardId].Card.StartLinkageScanner();
           if (!isTimeShifting)
           {
             Log.Info("user:{0} card:{1} sub:{2} add stream:{3}", user.Name, user.CardId, user.SubChannel, fileName);
