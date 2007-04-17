@@ -8,6 +8,7 @@
   <define>#header.hover:hover_my music.png</define>
   <controls>
     <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>group element</description>
       <type>group</type>
@@ -91,12 +92,12 @@
         <description>Current Playlist button</description>
         <type>button</type>
         <id>8</id>
-        <label>136</label>
+        <label>4555</label>
         <action>33</action>
         <onright>50</onright>
       </control>
       <control>
-        <description>My Playlists button</description>
+        <description>My Playlists</description>
         <type>button</type>
         <id>14</id>
         <label>983</label>
