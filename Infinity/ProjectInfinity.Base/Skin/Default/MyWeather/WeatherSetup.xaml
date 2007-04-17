@@ -15,14 +15,20 @@
 		</DockPanel>
 	</StackPanel>
 	<StackPanel DockPanel.Dock="Bottom">
-		<Label Name="labelText" Content="{Binding Path=LabelText}" Style="{StaticResource LabelNormalStyle}"/>
+		<Label Name="labelText" Margin ="50,10,0,0" Content="{Binding Path=LabelText}" Style="{StaticResource Label20Style}"/>
 
 		<StackPanel Orientation='Horizontal'>
-			<l:SoftKeyboardTextBox Margin='5' Name='textboxSearch' Text="{Binding Path=Location}"></l:SoftKeyboardTextBox>
-			<controls:Button Name="buttonSearch" Command="{Binding Path=Search}" Style="{DynamicResource MpButton}" Height="32" Width="120" Content="{Binding Path=LabelSearch}" />
-			<!-- <ListBox Name="foundLocationsList" Height ="200" Width="500"  ItemsSource="{Binding FoundLocations}"></ListBox> -->
+			<l:SoftKeyboardTextBox Margin='50,5,10,10' Name='textboxSearch' Height='45' Text="{Binding Path=SearchLocation}"></l:SoftKeyboardTextBox>
+			<controls:Button Name="buttonSearch" Command="{Binding Path=Search}" Style="{DynamicResource MpButton}" Height="45" Width="120" FontSize="22" Content="{Binding Path=LabelSearch}" />
+		</StackPanel>
+		<StackPanel DockPanel.Dock ="Left">
+			<StackPanel Orientation ="Horizontal">
+				<Label Name="buttonResult" Margin="50,10,20,10" Style="{DynamicResource Label20Style}" Visibility="{Binding Path=VisibilityAfterSelection}"  Height="Auto" Width="Auto" FontSize="22" Content="{Binding Path=SelectedLocation}" />
+				<controls:Button Name="buttonAddCity" Command="{Binding Path=AddLocation}" Style="{DynamicResource MpButton}" Visibility="{Binding Path=VisibilityAfterSelection}" Height="35" Width="Auto" FontSize="22" Content="{Binding Path=LabelAddLocation}" />
+			</StackPanel>
+			<ListBox Name="addedLocationsList" Focusable="False"  Margin ="50,50,20,20" Height ="Auto" FontSize ="22" Foreground ="White" Width ="Auto" ItemsSource="{Binding Path=LocationsAdded}" ItemContainerStyle="{StaticResource MpListViewItem}" Style="{StaticResource MpListView}"/>
 		</StackPanel>
 		<Label Style="{StaticResource LabelErrorStyle}" Content="{Binding Path=LabelError}" Foreground="Red" Name="result1"></Label>
-
+		<controls:Button Name="buttonSave" Command="{Binding Path=Save}" Style="{DynamicResource MpButton}" Height="35" Width="Auto" FontSize="22" Content="{Binding Path=LabelSave}" />
 	</StackPanel>
 </DockPanel>
