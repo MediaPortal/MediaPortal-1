@@ -25,6 +25,7 @@ using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
+using ProjectInfinity.Plugins;
 
 namespace MyTv
 {
@@ -32,7 +33,7 @@ namespace MyTv
   /// Interaction logic for TvScheduled.xaml
   /// </summary>
 
-  public partial class TvScheduled : System.Windows.Controls.Page
+  public partial class TvScheduled : System.Windows.Controls.Page, IMenuCommand, IDisposable
   {
     TvScheduledViewModel _model;
     public TvScheduled()
@@ -40,6 +41,20 @@ namespace MyTv
       InitializeComponent();
     }
 
+    #region IMenuCommand Members
+
+    public void Run()
+    {
+      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvScheduled.xaml", UriKind.Relative));
+    }
+
+    #region IDisposable Members
+    public void Dispose()
+    {
+    }
+    #endregion
+
+    #endregion
     /// <summary>
     /// Called when screen is loaded
     /// </summary>

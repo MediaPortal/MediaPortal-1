@@ -46,6 +46,7 @@
     <Compile Include="DataGridCell.cs" />
     <Compile Include="DataGridCollection.cs" />
     <Compile Include="DataGridRow.cs" />
+    <Compile Include="ICurrentItem.cs" />
     <Compile Include="ItemActivatedEventArgs.cs" />
     <Compile Include="ListBox.cs" />
     <Compile Include="ListView.cs" />

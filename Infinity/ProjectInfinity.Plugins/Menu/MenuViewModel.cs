@@ -27,7 +27,22 @@ namespace ProjectInfinity.Menu
       menuView = new MenuCollection();
       foreach (IMenuItem item in model)
       {
-        menuView.Add(new PluginMenuItem(item));
+        Menu menu = item as Menu;
+        if (menu != null)
+        {
+          PluginMenuItem newItem = new PluginMenuItem(item);
+          MenuCollection subMenus = new MenuCollection();
+          for (int i = 0; i < menu.Items.Count; ++i)
+          {
+            subMenus.Add(new PluginMenuItem(menu.Items[i]));
+          }
+          newItem.SubMenus = subMenus;
+          menuView.Add(newItem);
+        }
+        else
+        {
+          menuView.Add(new PluginMenuItem(item));
+        }
       }
     }
 
@@ -81,7 +96,7 @@ namespace ProjectInfinity.Menu
         IPluginItem pluginItem = menuItem.Menu as IPluginItem;
         if (pluginItem != null)
           pluginItem.Execute();
-          //ServiceScope.Get<IPluginManager>().Start(pluginItem.Text);
+        //ServiceScope.Get<IPluginManager>().Start(pluginItem.Text);
 
       }
 

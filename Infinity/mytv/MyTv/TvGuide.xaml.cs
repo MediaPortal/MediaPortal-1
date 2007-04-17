@@ -24,13 +24,14 @@ using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Controls;
+using ProjectInfinity.Plugins;
 namespace MyTv
 {
   /// <summary>
   /// Interaction logic for TvGuide.xaml
   /// </summary>
 
-  public partial class TvGuide : System.Windows.Controls.Page
+  public partial class TvGuide : System.Windows.Controls.Page, IMenuCommand, IDisposable
   {
     #region variables
     private delegate void StartTimeShiftingDelegate(Channel channel);
@@ -44,6 +45,20 @@ namespace MyTv
     TvGuideViewModel _model;
     #endregion
 
+    #region IMenuCommand Members
+
+    public void Run()
+    {
+      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvGuide.xaml", UriKind.Relative));
+    }
+
+    #region IDisposable Members
+    public void Dispose()
+    {
+    }
+    #endregion
+
+    #endregion
     #region ctor
     public TvGuide()
     {

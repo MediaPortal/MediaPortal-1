@@ -23,6 +23,8 @@ using TvControl;
 using ProjectInfinity;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
+using ProjectInfinity.Plugins;
+using ProjectInfinity.Navigation;
 
 namespace MyTv
 {
@@ -30,7 +32,7 @@ namespace MyTv
   /// Interaction logic for TvRecorded.xaml
   /// </summary>
 
-  public partial class TvRecorded : System.Windows.Controls.Page
+  public partial class TvRecorded : System.Windows.Controls.Page, IMenuCommand, IDisposable
   {
     #region variables
     TvRecordedViewModel _model;
@@ -46,6 +48,20 @@ namespace MyTv
     }
     #endregion
 
+    #region IMenuCommand Members
+
+    public void Run()
+    {
+      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvRecorded.xaml", UriKind.Relative));
+    }
+
+    #region IDisposable Members
+    public void Dispose()
+    {
+    }
+    #endregion
+
+    #endregion
     #region event handlers
     /// <summary>
     /// Called when screen is loaded

@@ -31,6 +31,15 @@ namespace ProjectInfinity.Controls
                                                                                                new PropertyChangedCallback
                                                                                                  (FocusElementPropertyChanged)));
 
+    public static readonly DependencyProperty FocusedVisibleProperty = DependencyProperty.Register("FocusedVisible",
+                                                                                            typeof(object),
+                                                                                            typeof(Menu),
+                                                                                            new FrameworkPropertyMetadata
+                                                                                              (null,
+                                                                                               new PropertyChangedCallback
+                                                                                                 (FocusedVisiblePropertyChanged)));
+
+
 
     public static readonly DependencyProperty FocusedMarginProperty = DependencyProperty.Register("FocusedMargin",
                                                                                             typeof(object),
@@ -56,6 +65,14 @@ namespace ProjectInfinity.Controls
                                                                                               (null,
                                                                                                new PropertyChangedCallback
                                                                                                  (ItemsSourcePropertyChanged)));
+
+    public static readonly DependencyProperty SubMenuProperty = DependencyProperty.Register("SubMenu",
+                                                                                            typeof(MenuCollection),
+                                                                                            typeof(Menu),
+                                                                                            new FrameworkPropertyMetadata
+                                                                                              (null,
+                                                                                               new PropertyChangedCallback
+                                                                                                 (SubMenuPropertyChanged)));
 
     /// <summary>
     /// Identifies the <see cref="Command"/> property.
@@ -103,8 +120,23 @@ namespace ProjectInfinity.Controls
     #endregion
 
 
-
     #region property handlers
+    private static void FocusedVisiblePropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+      //(dependencyObject as Menu).FocusedVisible = (Visibility)(e.NewValue);
+    }
+
+    public object FocusedVisible
+    {
+      get
+      {
+        return (Visibility)GetValue(FocusedVisibleProperty);
+      }
+      set
+      {
+        SetValue(FocusedVisibleProperty, value);
+      }
+    }
     private static void FocusElementPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
     {
       (dependencyObject as Menu).FocusElement = (FrameworkElement)(e.NewValue);
@@ -160,6 +192,24 @@ namespace ProjectInfinity.Controls
     }
 
 
+    private static void SubMenuPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+      (dependencyObject as Menu).SubMenu = (e.NewValue as MenuCollection);
+    }
+
+    public MenuCollection SubMenu
+    {
+      get
+      {
+        return GetValue(SubMenuProperty) as MenuCollection;
+      }
+      set
+      {
+        SetValue(SubMenuProperty, value);
+      }
+    }
+
+
     private static void ItemTemplatePropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
     {
       (dependencyObject as Menu).ItemTemplate = (e.NewValue as DataTemplate);
@@ -182,6 +232,18 @@ namespace ProjectInfinity.Controls
     #endregion
 
     #region event handlers
+    protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+    {
+
+      FocusedVisible = Visibility.Visible;
+
+      base.OnGotKeyboardFocus(e);
+    }
+    protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
+    {
+      FocusedVisible = Visibility.Hidden;
+      base.OnLostKeyboardFocus(e);
+    }
     void Menu_Loaded(object sender, RoutedEventArgs e)
     {
       LayoutMenu();
@@ -230,6 +292,8 @@ namespace ProjectInfinity.Controls
         {
           ItemsSource.CurrentItem = menuItem;
           this.FocusedMargin = new Thickness(0, yoffset, 0, 0);
+
+          SubMenu = menuItem.SubMenus;
         }
 
         menuItem.Content.Width = this.ActualWidth;
@@ -293,6 +357,7 @@ namespace ProjectInfinity.Controls
         e.Handled = true;
         return;
       }
+      base.OnKeyDown(e);
     }
 
     protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -315,6 +380,7 @@ namespace ProjectInfinity.Controls
         e.Handled = true;
         return;
       }
+      base.OnPreviewKeyDown(e);
     }
     void storyBoard_Completed(object sender, EventArgs e)
     {
@@ -342,7 +408,7 @@ namespace ProjectInfinity.Controls
       double offsetCurrent = _currentSelectedItem * BUTTONHEIGHT;
       double offsetNext = _mouseSelectedItem * BUTTONHEIGHT;
       ThicknessAnimation animation = new ThicknessAnimation(new Thickness(0, offsetCurrent, 0, 0), new Thickness(0, offsetNext, 0, 0), new Duration(new TimeSpan(0, 0, 0, 0, 150)));
-      
+
       animation.Completed += new EventHandler(animation_Completed);
       FocusElement.BeginAnimation(FrameworkElement.MarginProperty, animation);
     }
@@ -381,7 +447,7 @@ namespace ProjectInfinity.Controls
     protected override void OnMouseLeave(MouseEventArgs e)
     {
       _mouseEntered = false;
-     // LayoutMenu();
+      // LayoutMenu();
       base.OnMouseLeave(e);
     }
     protected override void OnPreviewMouseDown(MouseButtonEventArgs e)

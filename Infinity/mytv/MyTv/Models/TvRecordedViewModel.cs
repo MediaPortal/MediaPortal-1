@@ -651,6 +651,10 @@ namespace MyTv
       public void Reload()
       {
         _listRecordings.Clear();
+        if (false == ServiceScope.Get<ITvChannelNavigator>().IsInitialized)
+        {
+          return;
+        }
         IList recordings = Recording.ListAll();
 
         foreach (Recording recording in recordings)

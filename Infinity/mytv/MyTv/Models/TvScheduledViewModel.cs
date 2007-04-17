@@ -2143,6 +2143,10 @@ namespace MyTv
       /// </summary>
       public void Reload()
       {
+        if (false == ServiceScope.Get<ITvChannelNavigator>().IsInitialized)
+        {
+          return;
+        }
         TvBusinessLayer layer = new TvBusinessLayer();
         DateTime dtDay = DateTime.Now;
         _listSchedules.Clear();

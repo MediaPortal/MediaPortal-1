@@ -15,6 +15,21 @@
 		<MenuItem id    = "MyTv"
 		          label = "@mytv:137"
                           image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
-		          class = "MyTv.TvPlugin"/>
+		          class = "MyTv.TvPlugin"
+              submenu="/MyTv"/>
 	</Path>
+  <Path name = "/MyTv">
+    <MenuItem id    = "TvGuide"
+		          label = "@mytv:0"
+              image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
+		          class = "MyTv.TvGuide"/>
+    <MenuItem id    = "Scheduled"
+		          label = "@mytv:5"
+              image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
+		          class = "MyTv.TvScheduled"/>
+    <MenuItem id    = "Recorded"
+		          label = "@mytv:6"
+              image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
+		          class = "MyTv.TvRecorded"/>
+  </Path>
 </Plugin>

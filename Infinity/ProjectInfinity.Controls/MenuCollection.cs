@@ -17,7 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 namespace ProjectInfinity.Controls
 {
-  public class MenuCollection : List<MenuItem>, INotifyPropertyChanged, INotifyCollectionChanged
+  public class MenuCollection : List<MenuItem>, INotifyPropertyChanged, INotifyCollectionChanged, ICurrentItem
   {
     MenuItem _currentItem;
     public event PropertyChangedEventHandler PropertyChanged;
@@ -28,7 +28,7 @@ namespace ProjectInfinity.Controls
     /// Gets or sets the current item.
     /// </summary>
     /// <value>The current item.</value>
-    public MenuItem CurrentItem
+    public object CurrentItem
     {
       get
       {
@@ -36,7 +36,7 @@ namespace ProjectInfinity.Controls
       }
       set
       {
-        _currentItem = value;
+        _currentItem = (MenuItem)value;
         if (PropertyChanged != null)
         {
           PropertyChanged(this, new PropertyChangedEventArgs("CurrentItem"));

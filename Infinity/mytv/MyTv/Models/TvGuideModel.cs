@@ -41,7 +41,7 @@ namespace MyTv
     public TvGuideViewModel(Page page)
       : base(page)
     {
-      Reload();
+        Reload();
     }
     #endregion
 
@@ -141,6 +141,10 @@ namespace MyTv
     #region tvguide datagrid renderer
     public void Reload()
     {
+      if (false==ServiceScope.Get<ITvChannelNavigator>().IsInitialized)
+      {
+        return;
+      }
       int selectedColumn = -1;
       int selectedRow = -1;
       if (_epgRows.CurrentItem != null)

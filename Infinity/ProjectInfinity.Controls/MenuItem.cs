@@ -12,7 +12,9 @@ namespace ProjectInfinity.Controls
   public class MenuItem
   {
     FrameworkElement _content;
+    MenuCollection _subMenus;
     string _label;
+    string _image;
 
     public MenuItem()
     {
@@ -21,6 +23,19 @@ namespace ProjectInfinity.Controls
     {
       Label = label;
     }
+
+    public MenuCollection SubMenus
+    {
+      get
+      {
+        return _subMenus;
+      }
+      set
+      {
+        _subMenus = value;
+      }
+    }
+
     /// <summary>
     /// Gets or sets the content.
     /// </summary>
@@ -46,6 +61,17 @@ namespace ProjectInfinity.Controls
       set
       {
         _label = value;
+      }
+    }
+    public string Image
+    {
+      get
+      {
+        return _image;
+      }
+      set
+      {
+        _image = value;
       }
     }
 

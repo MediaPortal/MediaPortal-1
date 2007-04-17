@@ -24,6 +24,7 @@ namespace MyTv
     public event PropertyChangedEventHandler PropertyChanged;
     System.Windows.Threading.DispatcherTimer _isRecordingTimer;
     bool _isRecording;
+    bool _initialized = false;
     #endregion
 
     #region ctors
@@ -156,10 +157,18 @@ namespace MyTv
       }
       ServiceScope.Get<ILogger>().Info("Navigator initialized");
       _isRecordingTimer.IsEnabled = true;
+      _initialized = true;
     }
     #endregion
 
     #region properties
+    public bool IsInitialized
+    {
+      get
+      {
+        return _initialized;
+      }
+    }
     /// <summary>
     /// Gets the currently active channel group.
     /// </summary>

@@ -13,6 +13,11 @@ namespace ProjectInfinity.Menu
     {
       _menu = menu;
       Label = _menu.Text;
+      IPluginItem item = menu as IPluginItem;
+      if (item != null)
+      {
+        Image = item.ImagePath;
+      }
     }
 
     public IMenuItem Menu

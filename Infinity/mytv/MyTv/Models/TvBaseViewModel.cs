@@ -18,6 +18,7 @@ using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
+using ProjectInfinity.Settings;
 
 namespace MyTv
 {
@@ -52,6 +53,22 @@ namespace MyTv
       //store page & window
       _page = page;
       _window = Window.GetWindow(_page);
+      if (!ServiceScope.IsRegistered<ITvChannelNavigator>())
+      {
+        try
+        {
+          TvSettings settings = new TvSettings();
+          ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+          RemoteControl.HostName = settings.HostName;
+          TvChannelNavigator.Instance.Initialize();
+          int cards = RemoteControl.Instance.Cards;
+        }
+        catch (Exception)
+        {
+          ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSetup.xaml", UriKind.Relative));
+          return;
+        }
+      }
       ServiceScope.Get<ITvChannelNavigator>().PropertyChanged += new PropertyChangedEventHandler(OnChannelChanged);
     }
 

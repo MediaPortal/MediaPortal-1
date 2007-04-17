@@ -6,10 +6,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Controls.Primitives;
+using System.ComponentModel;
 namespace ProjectInfinity.Controls
 {
-  public class ListBox : System.Windows.Controls.ListBox
+  public class ListBox : System.Windows.Controls.ListBox, INotifyPropertyChanged
   {
+    public event PropertyChangedEventHandler PropertyChanged;
     bool _firstTime = true;
     public static readonly DependencyProperty ViewModeProperty = DependencyProperty.Register(
                                                                                                   "ViewMode",
@@ -34,7 +36,9 @@ namespace ProjectInfinity.Controls
                                                                                                      typeof(object),
                                                                                                      typeof(ListBox),
                                                                                                      new FrameworkPropertyMetadata
-                                                                                                       (null));
+                                                                                                      (null,
+                                                                                                       new PropertyChangedCallback
+                                                                                                         (CommandParameterPropertyChanged)));
     /// <summary>
     /// Identifies the <see cref="CommandTarget"/> property.
     /// </summary>
@@ -44,14 +48,11 @@ namespace ProjectInfinity.Controls
                                                                                                   new FrameworkPropertyMetadata
                                                                                                     (null));
 
-
-
     public string ViewMode
     {
       get { return (string)GetValue(ViewModeProperty); }
       set { SetValue(ViewModeProperty, value); }
     }
-
     protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
     {
       FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
@@ -127,13 +128,10 @@ namespace ProjectInfinity.Controls
       e.Handled = true;
       return;
     }
-
-
     protected override void OnInitialized(EventArgs e)
     {
       ItemContainerGenerator.StatusChanged += new EventHandler(ItemContainerGenerator_StatusChanged);
     }
-
     void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
     {
       if (ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
@@ -156,7 +154,10 @@ namespace ProjectInfinity.Controls
     public ICommand Command
     {
       get { return GetValue(CommandProperty) as ICommand; }
-      set { SetValue(CommandProperty, value); }
+      set
+      {
+        SetValue(CommandProperty, value);
+      }
     }
 
     /// <summary>
@@ -164,8 +165,17 @@ namespace ProjectInfinity.Controls
     /// </summary>
     public object CommandParameter
     {
-      get { return GetValue(CommandParameterProperty); }
-      set { SetValue(CommandParameterProperty, value); }
+      get { 
+        return GetValue(CommandParameterProperty); 
+      }
+      set
+      {
+        SetValue(CommandParameterProperty, value);
+      }
+    }
+    private static void CommandParameterPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+      //(dependencyObject as ListBox).CommandParameter = (object)(e.NewValue);
     }
 
     /// <summary>
@@ -204,6 +214,19 @@ namespace ProjectInfinity.Controls
     private static void CommandPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
     {
       (dependencyObject as ListBox).HookUpCommand(e.OldValue as ICommand, e.NewValue as ICommand);
+    }
+    protected override void OnSelectionChanged(SelectionChangedEventArgs e)
+    {
+      ICurrentItem currentItem = ItemsSource as ICurrentItem;
+      if (currentItem != null)
+      {
+        currentItem.CurrentItem = SelectedItem;
+      }
+      base.OnSelectionChanged(e);
+      if (PropertyChanged != null)
+      {
+        PropertyChanged(this, new PropertyChangedEventArgs("SelectedItem"));
+      }
     }
   }
 }

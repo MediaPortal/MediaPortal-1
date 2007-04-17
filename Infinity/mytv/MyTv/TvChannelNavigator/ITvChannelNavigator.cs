@@ -35,5 +35,7 @@ namespace MyTv
     /// 	<c>true</c> if this instance is recording; otherwise, <c>false</c>.
     /// </value>
     bool IsRecording { get;}
+
+    bool IsInitialized { get;}
   }
 }
