@@ -33,13 +33,17 @@ namespace ProjectInfinity.Menu.View
     }
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      MenuViewModel viewModel = new MenuViewModel(this);
       gridMain.Children.Clear();
       using (FileStream steam = new FileStream(@"skin\default\Home\home.xaml", FileMode.Open, FileAccess.Read))
       {
-        gridMain.DataContext = new MenuViewModel();
+        gridMain.DataContext = viewModel;
         UIElement documentRoot = (UIElement)XamlReader.Load(steam);
         gridMain.Children.Add(documentRoot);
       }
+      this.InputBindings.Add(new KeyBinding(viewModel.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
+      this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
+
     }
   }
 }

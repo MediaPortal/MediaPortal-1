@@ -65,6 +65,7 @@
     <Compile Include="Plugins\PluginAttribute.cs" />
     <Compile Include="Plugins\PluginStartStopEventArgs.cs" />
     <Compile Include="ServiceNotFoundException.cs" />
+    <Compile Include="TaskBar\IWindowsTaskBar.cs" />
     <Compile Include="Themes\IThemeManager.cs" />
     <Compile Include="Windows\IMainWindow.cs" />
     <Compile Include="Logging\ILogger.cs" />

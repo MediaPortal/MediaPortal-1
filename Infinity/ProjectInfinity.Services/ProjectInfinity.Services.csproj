@@ -76,6 +76,7 @@
     <Compile Include="Settings\SettingsManager.cs" />
     <Compile Include="Settings\Xml\xmlNoNamespaceWriter.cs" />
     <Compile Include="Settings\Xml\XmlSettingsProvider.cs" />
+    <Compile Include="Taskbar\WindowsTaskBar.cs" />
     <Compile Include="Themes\ThemeManager.cs" />
   </ItemGroup>
   <ItemGroup>

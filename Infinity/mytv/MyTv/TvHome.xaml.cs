@@ -36,6 +36,7 @@ using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Settings;
+using ProjectInfinity.TaskBar;
 namespace MyTv
 {
   /// <summary>
@@ -58,7 +59,7 @@ namespace MyTv
     public TvHome()
     {
       this.ShowsNavigationUI = false;
-      WindowTaskbar.Show();
+      ServiceScope.Get<IWindowsTaskBar>().Show();
 
       InitializeComponent();
     }

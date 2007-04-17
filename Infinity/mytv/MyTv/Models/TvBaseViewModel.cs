@@ -19,6 +19,7 @@ using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Settings;
+using ProjectInfinity.TaskBar;
 
 namespace MyTv
 {
@@ -643,7 +644,7 @@ namespace MyTv
         if (window.WindowState == System.Windows.WindowState.Maximized)
         {
           window.ShowInTaskbar = true;
-          WindowTaskbar.Show(); ;
+          ServiceScope.Get<IWindowsTaskBar>().Show();
           window.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
           window.WindowState = System.Windows.WindowState.Normal;
         }
@@ -651,7 +652,7 @@ namespace MyTv
         {
           window.ShowInTaskbar = false;
           window.WindowStyle = System.Windows.WindowStyle.None;
-          WindowTaskbar.Hide(); ;
+          ServiceScope.Get<IWindowsTaskBar>().Hide();
           window.WindowState = System.Windows.WindowState.Maximized;
         }
       }

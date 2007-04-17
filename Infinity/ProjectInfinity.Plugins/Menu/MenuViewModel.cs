@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Controls;
 using ProjectInfinity;
 using ProjectInfinity.Plugins;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Controls;
+using ProjectInfinity.TaskBar;
 
 namespace ProjectInfinity.Menu
 {
@@ -20,9 +23,12 @@ namespace ProjectInfinity.Menu
   {
     private MenuCollection menuView;
     private ICommand _launchCommand;
+    ICommand _fullScreenCommand;
+    Page _page;
 
-    public MenuViewModel()
+    public MenuViewModel(Page page)
     {
+      _page = page;
       IList<IMenuItem> model = ServiceScope.Get<IMenuManager>().GetMenu();
       menuView = new MenuCollection();
       foreach (IMenuItem item in model)
@@ -46,6 +52,13 @@ namespace ProjectInfinity.Menu
       }
     }
 
+    public Window Window
+    {
+      get
+      {
+        return Window.GetWindow(_page);
+      }
+    }
     public string HeaderLabel
     {
       get
@@ -67,6 +80,21 @@ namespace ProjectInfinity.Menu
           _launchCommand = new LaunchCommand(this);
         }
         return _launchCommand;
+      }
+    }
+    /// <summary>
+    /// Returns a ICommand for toggeling between fullscreen mode and windowed mode
+    /// </summary>
+    /// <value>The command.</value>
+    public ICommand FullScreen
+    {
+      get
+      {
+        if (_fullScreenCommand == null)
+        {
+          _fullScreenCommand = new FullScreenCommand(this);
+        }
+        return _fullScreenCommand;
       }
     }
 
@@ -122,8 +150,61 @@ namespace ProjectInfinity.Menu
       {
         return true;
       }
-
     }
+
+    #region FullScreenCommand  class
+    /// <summary>
+    /// FullScreenCommand will toggle application between normal and fullscreen mode
+    /// </summary> 
+    public class FullScreenCommand : ICommand
+    {
+      public event EventHandler CanExecuteChanged;
+      MenuViewModel _viewModel;
+      /// <summary>
+      /// Initializes a new instance of the <see cref="FullScreenCommand"/> class.
+      /// </summary>
+      /// <param name="viewModel">The view model.</param>
+      public FullScreenCommand(MenuViewModel viewModel)
+      {
+        _viewModel = viewModel;
+      }
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public void Execute(object parameter)
+      {
+        Window window = _viewModel.Window;
+        if (window.WindowState == System.Windows.WindowState.Maximized)
+        {
+          window.ShowInTaskbar = true;
+          ServiceScope.Get<IWindowsTaskBar>().Show();
+          window.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
+          window.WindowState = System.Windows.WindowState.Normal;
+        }
+        else
+        {
+          window.ShowInTaskbar = false;
+          window.WindowStyle = System.Windows.WindowStyle.None;
+          ServiceScope.Get<IWindowsTaskBar>().Hide();
+          window.WindowState = System.Windows.WindowState.Maximized;
+        }
+      }
+
+      ///<summary>
+      ///Defines the method that determines whether the command can execute in its current state.
+      ///</summary>
+      ///<returns>
+      ///true if this command can be executed; otherwise, false.
+      ///</returns>
+      ///<param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+      public bool CanExecute(object parameter)
+      {
+        return true;
+      }
+    }
+    #endregion
 
   }
 }

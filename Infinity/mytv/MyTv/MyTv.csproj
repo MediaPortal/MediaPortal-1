@@ -198,7 +198,6 @@
       <DependentUpon>TvSetup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helper classes\WindowMediaPlayerCheck.cs" />
-    <Compile Include="Helper classes\WindowTaskbar.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>

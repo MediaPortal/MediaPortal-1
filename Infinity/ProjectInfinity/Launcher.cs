@@ -12,6 +12,7 @@ using ProjectInfinity.Windows;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Players;
 using ProjectInfinity.Settings;
+using ProjectInfinity.TaskBar;
 
 namespace ProjectInfinity
 {
@@ -35,6 +36,7 @@ namespace ProjectInfinity
       ServiceScope.Add<IPlayerCollectionService>(new PlayerCollectionService());
       ServiceScope.Add<ILocalisation>(new StringManager("Language", "en"));
       ServiceScope.Add<ISettingsManager>(new SettingsManager());
+      ServiceScope.Add<IWindowsTaskBar>(new WindowsTaskBar());
 
       ICommandLineOptions piArgs = new ProjectInfinityCommandLine();
 
