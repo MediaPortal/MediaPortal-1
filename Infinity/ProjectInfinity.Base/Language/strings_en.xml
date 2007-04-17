@@ -213,7 +213,7 @@
 		<String id="3">Please select your City...</String>
 		<String id="4">No cities found!</String>
 		<String id="5">Add</String>
-		<String id="5">Save</String>
+		<String id="6">Save</String>
 	</Section>
 	- <Section name="myweather">
 		<String id="0">My Weather</String>

@@ -29,6 +29,6 @@
 			<ListBox Name="addedLocationsList" Focusable="False"  Margin ="50,50,20,20" Height ="Auto" FontSize ="22" Foreground ="White" Width ="Auto" ItemsSource="{Binding Path=LocationsAdded}" ItemContainerStyle="{StaticResource MpListViewItem}" Style="{StaticResource MpListView}"/>
 		</StackPanel>
 		<Label Style="{StaticResource LabelErrorStyle}" Content="{Binding Path=LabelError}" Foreground="Red" Name="result1"></Label>
-		<controls:Button Name="buttonSave" Command="{Binding Path=Save}" Style="{DynamicResource MpButton}" Height="35" Width="Auto" FontSize="22" Content="{Binding Path=LabelSave}" />
+		<controls:Button Name="buttonSave" Command="{Binding Path=Save}" Style="{DynamicResource MpButton}" Height="35" Width="150" FontSize="22" Content="{Binding Path=LabelSave}" />
 	</StackPanel>
 </DockPanel>
