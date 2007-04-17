@@ -137,7 +137,7 @@ namespace MediaPortal.GUI.Alarm
     }
     #endregion
 
-    #region Private Properties
+    #region Public Properties
     public AlarmType AlarmOccurrenceType
     {
       get { return _AlarmType; }
@@ -235,8 +235,10 @@ namespace MediaPortal.GUI.Alarm
                 tmpNextAlarmTriggerTime = new DateTime(DateToCheck.Year, DateToCheck.Month, DateToCheck.Day, this.Time.Hour, this.Time.Minute, this.Time.Second);
 
                 //check to see if the alarm for this day has passed or not
-                //extra 5 seconds leeway for OnTimer to act before the next alarm trigger time is reported
-                if (DateTime.Compare(tmpNextAlarmTriggerTime.AddSeconds(5), DateTime.Now) >= 0)
+                //extra 15 seconds leeway for OnTimer to act before the next alarm trigger time is reported
+                //ensure the leeway time is MORE THAN the alarm timer interval, otherwise intermittent alarm
+                //not triggering issues will arise
+                if (DateTime.Compare(tmpNextAlarmTriggerTime.AddSeconds(15), DateTime.Now) >= 0)
                 {
                   //trigger time has not passed yet, therefore this is the next trigger time for this alarm
                   break;
