@@ -23,6 +23,15 @@ namespace ProjectInfinity.Controls
   {
     const int BUTTONHEIGHT = 40;
     #region properties
+    public static readonly DependencyProperty FocusElementProperty = DependencyProperty.Register("FocusElement",
+                                                                                            typeof(FrameworkElement),
+                                                                                            typeof(Menu),
+                                                                                            new FrameworkPropertyMetadata
+                                                                                              (null,
+                                                                                               new PropertyChangedCallback
+                                                                                                 (FocusElementPropertyChanged)));
+
+
     public static readonly DependencyProperty FocusedMarginProperty = DependencyProperty.Register("FocusedMargin",
                                                                                             typeof(object),
                                                                                             typeof(Menu),
@@ -96,6 +105,23 @@ namespace ProjectInfinity.Controls
 
 
     #region property handlers
+    private static void FocusElementPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+      (dependencyObject as Menu).FocusElement = (FrameworkElement)(e.NewValue);
+    }
+
+    public FrameworkElement FocusElement
+    {
+      get
+      {
+        return (FrameworkElement)GetValue(FocusElementProperty);
+      }
+      set
+      {
+        SetValue(FocusElementProperty, value);
+      }
+    }
+
     private static void FocusedMarginPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
     {
       //  (dependencyObject as Menu).FocusedMargin = (int)(e.NewValue);
@@ -310,7 +336,18 @@ namespace ProjectInfinity.Controls
       }
       base.OnMouseWheel(e);
     }
-    void ScrollSelectedItem()
+    void ScrollFocusedItemToMousePosition()
+    {
+      _mouseEventsEnabled = false;
+      double offsetCurrent = _currentSelectedItem * BUTTONHEIGHT;
+      double offsetNext = _mouseSelectedItem * BUTTONHEIGHT;
+      ThicknessAnimation animation = new ThicknessAnimation(new Thickness(0, offsetCurrent, 0, 0), new Thickness(0, offsetNext, 0, 0), new Duration(new TimeSpan(0, 0, 0, 0, 150)));
+      
+      animation.Completed += new EventHandler(animation_Completed);
+      FocusElement.BeginAnimation(FrameworkElement.MarginProperty, animation);
+    }
+
+    void animation_Completed(object sender, EventArgs e)
     {
       LayoutMenu();
     }
@@ -326,7 +363,7 @@ namespace ProjectInfinity.Controls
             _mouseSelectedItem = selectedItemNr;
             if (selectedItemNr != _currentSelectedItem)
             {
-              ScrollSelectedItem();
+              ScrollFocusedItemToMousePosition();
             }
             return;
 
