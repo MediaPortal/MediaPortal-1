@@ -107,7 +107,7 @@ namespace ProjectInfinity.Controls
     int _currentOffset;
     Storyboard _storyBoard;
     bool _mouseEntered = false;
-    int _mouseSelectedItem = 0;
+    int _mouseSelectedItem = -1;
     int _currentSelectedItem = 0;
     bool _mouseEventsEnabled = true;
     #endregion
@@ -116,6 +116,7 @@ namespace ProjectInfinity.Controls
     public Menu()
     {
       this.Loaded += new RoutedEventHandler(Menu_Loaded);
+      
     }
     #endregion
 
@@ -159,11 +160,11 @@ namespace ProjectInfinity.Controls
       //  (dependencyObject as Menu).FocusedMargin = (int)(e.NewValue);
     }
 
-    public Thickness FocusedMargin
+    public object FocusedMargin
     {
       get
       {
-        return (Thickness)GetValue(FocusedMarginProperty);
+        return GetValue(FocusedMarginProperty) ;
       }
       set
       {
@@ -270,6 +271,8 @@ namespace ProjectInfinity.Controls
       double yoffset = -BUTTONHEIGHT;
       int selected = (maxRows) / 2;
       if (_mouseEntered)
+        selected = _mouseSelectedItem;
+      else if (_mouseSelectedItem >= 0)
         selected = _mouseSelectedItem;
       _currentSelectedItem = selected;
       _mouseSelectedItem = selected;
@@ -427,7 +430,7 @@ namespace ProjectInfinity.Controls
           if (element.IsMouseOver)
           {
             _mouseSelectedItem = selectedItemNr;
-            if (selectedItemNr != _currentSelectedItem)
+            if (_mouseSelectedItem != _currentSelectedItem)
             {
               ScrollFocusedItemToMousePosition();
             }
