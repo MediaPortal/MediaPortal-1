@@ -2,22 +2,22 @@
        author      = "Frodo"
        copyright   = "GPL"
        description = "TV">
-	
-	<Manifest>
-		<Identity name = "MyTv.TvPlugin"/>
-	</Manifest>
-	
-	<Runtime>
-		<Import assembly = "../mytv.dll"/>
-	</Runtime>
 
-	<Path name = "/Infinity/HomeMenu">
-		<MenuItem id    = "MyTv"
+  <Manifest>
+    <Identity name = "MyTv.TvPlugin"/>
+  </Manifest>
+
+  <Runtime>
+    <Import assembly = "../mytv.dll"/>
+  </Runtime>
+
+  <Path name = "/Infinity/HomeMenu">
+    <MenuItem id    = "MyTv"
 		          label = "@mytv:137"
-                          image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
+              image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
 		          class = "MyTv.TvPlugin"
               submenu="/MyTv"/>
-	</Path>
+  </Path>
   <Path name = "/MyTv">
     <MenuItem id    = "Home"
 		          label = "@mytv:137"

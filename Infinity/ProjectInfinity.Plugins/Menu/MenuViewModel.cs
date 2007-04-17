@@ -92,10 +92,21 @@ namespace ProjectInfinity.Menu
       public void Execute(object parameter)
       {
         PluginMenuItem menuItem = parameter as PluginMenuItem;
-        if (menuItem == null) return;
-        IPluginItem pluginItem = menuItem.Menu as IPluginItem;
+        if (menuItem == null)
+          return;
+
+        IPluginItem pluginItem;
+
+        IMenu menu = menuItem.Menu as IMenu;
+        if (menu != null)
+          pluginItem = menu.MenuItem as IPluginItem;
+        else
+          pluginItem = menuItem.Menu as IPluginItem;
+
         if (pluginItem != null)
           pluginItem.Execute();
+
+
         //ServiceScope.Get<IPluginManager>().Start(pluginItem.Text);
 
       }

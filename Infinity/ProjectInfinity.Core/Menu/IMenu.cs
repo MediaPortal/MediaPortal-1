@@ -7,5 +7,6 @@ namespace ProjectInfinity.Menu
   public interface IMenu : IMenuItem
   {
     List<IMenuItem> Items { get;}
+    IMenuItem MenuItem { get;}
   }
 }

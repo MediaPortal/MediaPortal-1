@@ -14,7 +14,7 @@ namespace ProjectInfinity.Menu
       {
         if (menuItem.IsSubMenu)
         {
-          IMenu submenu = new Menu(menuItem.Name);
+          IMenu submenu = new Menu(new PluginItem(menuItem));
 
           foreach (MenuItem subMenuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuItem>(menuItem.SubMenuPath))
           {
