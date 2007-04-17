@@ -19,7 +19,8 @@
       <StackPanel DockPanel.Dock="Left" Width="180" Margin="30,0,10,0" >
 		  <controls:Button Name="buttonRefresh" Command="{Binding Path=UpdateWeather}" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=RefreshLabel}" />
 		  <controls:Button Name="buttonLocation" Command="{Binding Path=LocationChanged}" Style="{DynamicResource MpButton}" Height="32"  Content="{Binding Path=LocationLabel}" />
-      </StackPanel>
+		  <Image Source ="{Binding Path=WeatherCurrIcon}"  Width ="128" Height ="128" x:Name ="weatherIcon" />
+	  </StackPanel>
 
 
       <Grid >
@@ -56,9 +57,8 @@
           <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Label Content="{Binding ProgramTitle}" Grid.Column="0" Grid.Row="13" Grid.ColumnSpan="9"  x:Name="labelTitle" Style="{StaticResource LabelNormalStyle}"/>
-        <Label Content="{Binding ProgramStartEnd}" Grid.Column="0" Grid.Row="14" Grid.ColumnSpan="6" x:Name="labelStart" Style="{StaticResource LabelNormalStyle}"/>
-        <Label Content="{Binding ProgramChannelName}" Grid.Column="6" Grid.Row="14" Grid.ColumnSpan="3" x:Name="labelChannel" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,0,50,0"/>
-        <TextBlock Text="{Binding ProgramDescription}" Grid.Column="0" Grid.Row="15" Grid.RowSpan="4" Grid.ColumnSpan="9" x:Name="labelDescription" Style="{StaticResource TextBlockNormalStyle}" />
-      </Grid>
+        <Label Content="{Binding WeatherCurrLocation}" Grid.Column="0" Grid.Row="13" Grid.ColumnSpan="9"  x:Name="labelLocation" Style="{StaticResource LabelNormalStyle}"/>
+        <Label Content="{Binding WeatherCurrTemperature}" Grid.Column="0" Grid.Row="14" Grid.ColumnSpan="6" x:Name="labelTemperature" Style="{StaticResource LabelNormalStyle}"/>
+        <TextBlock Text="{Binding WeatherCurrCondition}" Grid.Column="0" Grid.Row="15" Grid.RowSpan="4" Grid.ColumnSpan="9" x:Name="labelCondition" Style="{StaticResource TextBlockNormalStyle}" />
+	  </Grid>
     </DockPanel>

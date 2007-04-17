@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--This document is intended only for use by authorized licensees of The Weather Channel. Unauthorized use is prohibited. Copyright 1995-2005, The Weather Channel Interactive, Inc. All Rights Reserved.-->
+<weather ver="2.0">
+  <head>
+    <locale>en_US</locale>
+    <form>MEDIUM</form>
+    <ut>C</ut>
+    <ud>km</ud>
+    <us>km/h</us>
+    <up>mb</up>
+    <ur>mm</ur>
+  </head>
+  <loc id="GMXX0025">
+    <dnam>Dresden, Germany</dnam>
+    <tm>3:52 AM</tm>
+    <lat>51.06</lat>
+    <lon>13.72</lon>
+    <sunr>7:09 AM</sunr>
+    <suns>5:30 PM</suns>
+    <zone>1</zone>
+  </loc>
+  <cc>
+    <lsup>2/20/07 3:20 AM Local Time</lsup>
+    <obst>Dresden, Germany</obst>
+    <tmp>3</tmp>
+    <flik>1</flik>
+    <t>Mostly Cloudy</t>
+    <icon>27</icon>
+    <bar>
+      <r>1010.8</r>
+      <d>steady</d>
+    </bar>
+    <wind>
+      <s>10</s>
+      <gust>N/A</gust>
+      <d>160</d>
+      <t>SSE</t>
+    </wind>
+    <hmid>75</hmid>
+    <vis>10.0</vis>
+    <uv>
+      <i>0</i>
+      <t>Low</t>
+    </uv>
+    <dewp>-1</dewp>
+    <moon>
+      <icon>2</icon>
+      <t>Waxing Crescent</t>
+    </moon>
+  </cc>
+  <dayf>
+    <lsup>2/19/07 3:36 PM Local Time</lsup>
+    <day d="0" t="Monday" dt="Feb 19">
+      <hi>N/A</hi>
+      <low>-1</low>
+      <sunr>7:11 AM</sunr>
+      <suns>5:28 PM</suns>
+      <part p="d">
+        <icon>44</icon>
+        <t>N/A</t>
+        <wind>
+          <s>N/A</s>
+          <gust>N/A</gust>
+          <d>N/A</d>
+          <t>N/A</t>
+        </wind>
+        <bt>N/A</bt>
+        <ppcp>20</ppcp>
+        <hmid>N/A</hmid>
+      </part>
+      <part p="n">
+        <icon>26</icon>
+        <t>Cloudy</t>
+        <wind>
+          <s>3</s>
+          <gust>N/A</gust>
+          <d>135</d>
+          <t>SE</t>
+        </wind>
+        <bt>Cloudy</bt>
+        <ppcp>20</ppcp>
+        <hmid>85</hmid>
+      </part>
+    </day>
+    <day d="1" t="Tuesday" dt="Feb 20">
+      <hi>8</hi>
+      <low>2</low>
+      <sunr>7:09 AM</sunr>
+      <suns>5:30 PM</suns>
+      <part p="d">
+        <icon>26</icon>
+        <t>Cloudy</t>
+        <wind>
+          <s>10</s>
+          <gust>N/A</gust>
+          <d>271</d>
+          <t>W</t>
+        </wind>
+        <bt>Cloudy</bt>
+        <ppcp>20</ppcp>
+        <hmid>72</hmid>
+      </part>
+      <part p="n">
+        <icon>11</icon>
+        <t>Showers</t>
+        <wind>
+          <s>5</s>
+          <gust>N/A</gust>
+          <d>105</d>
+          <t>ESE</t>
+        </wind>
+        <bt>Showers</bt>
+        <ppcp>50</ppcp>
+        <hmid>80</hmid>
+      </part>
+    </day>
+    <day d="2" t="Wednesday" dt="Feb 21">
+      <hi>6</hi>
+      <low>2</low>
+      <sunr>7:07 AM</sunr>
+      <suns>5:31 PM</suns>
+      <part p="d">
+        <icon>39</icon>
+        <t>AM Showers</t>
+        <wind>
+          <s>13</s>
+          <gust>N/A</gust>
+          <d>124</d>
+          <t>SE</t>
+        </wind>
+        <bt>AM Showers</bt>
+        <ppcp>50</ppcp>
+        <hmid>73</hmid>
+      </part>
+      <part p="n">
+        <icon>11</icon>
+        <t>Light Rain Late</t>
+        <wind>
+          <s>13</s>
+          <gust>N/A</gust>
+          <d>166</d>
+          <t>SSE</t>
+        </wind>
+        <bt>Rain Late</bt>
+        <ppcp>60</ppcp>
+        <hmid>78</hmid>
+      </part>
+    </day>
+    <day d="3" t="Thursday" dt="Feb 22">
+      <hi>7</hi>
+      <low>-2</low>
+      <sunr>7:05 AM</sunr>
+      <suns>5:33 PM</suns>
+      <part p="d">
+        <icon>11</icon>
+        <t>Light Rain</t>
+        <wind>
+          <s>13</s>
+          <gust>N/A</gust>
+          <d>295</d>
+          <t>WNW</t>
+        </wind>
+        <bt>Light Rain</bt>
+        <ppcp>60</ppcp>
+        <hmid>79</hmid>
+      </part>
+      <part p="n">
+        <icon>5</icon>
+        <t>Rain / Snow</t>
+        <wind>
+          <s>8</s>
+          <gust>N/A</gust>
+          <d>77</d>
+          <t>ENE</t>
+        </wind>
+        <bt>Rain/Snow</bt>
+        <ppcp>60</ppcp>
+        <hmid>90</hmid>
+      </part>
+    </day>
+  </dayf>
+</weather>
+

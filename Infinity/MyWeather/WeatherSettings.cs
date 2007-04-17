@@ -14,8 +14,6 @@ namespace MyWeather
         private int _refreshInterval;
         private List<string> _locationsList = new List<string>();
         private string _parseFileLocation;
-        private string _myString;
-        private string _anotherString;
         private string _temperatureFahrenheit;
         private string _windSpeed;
         private string _locationCode;
@@ -56,7 +54,7 @@ namespace MyWeather
             get { return this._windSpeed; }
             set { this._windSpeed = value; }
         }
-        [Setting(SettingScope.User, "")]
+        [Setting(SettingScope.User, "none")]
         public string LocationCode
         {
             get { return this._locationCode; }

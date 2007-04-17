@@ -54,7 +54,8 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="WeatherViewModel.cs" />
+    <Compile Include="Models\WeatherViewModel.cs" />
+    <Page Include="WeatherSetup.xaml" />
     <Page Include="Weather.xaml" />
     <Compile Include="Weather.xaml.cs">
       <DependentUpon>Weather.xaml</DependentUpon>
@@ -62,6 +63,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helper Classes\WeatherChannel.cs" />
+    <Compile Include="WeatherSetup.xaml.cs">
+      <DependentUpon>WeatherSetup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -82,9 +87,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="WeatherDataModel.cs" />
+    <Compile Include="Models\WeatherDataModel.cs" />
     <Compile Include="WeatherPlugin.cs" />
     <Compile Include="WeatherSettings.cs" />
+    <Compile Include="Models\WeatherSetupViewModel.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>

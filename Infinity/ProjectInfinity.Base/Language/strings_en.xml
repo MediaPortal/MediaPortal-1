@@ -23,9 +23,9 @@
 		<String id="11">November</String>
 		<String id="12">December</String>
 	</Section>
-  <Section name="global">
-    <String id="0">infinity</String>
-  </Section>
+	<Section name="global">
+		<String id="0">infinity</String>
+	</Section>
 	<Section name="mytv">
 		<String id="0">Tv Guide</String>
 		<String id="1">Record Now</String>
@@ -206,10 +206,18 @@
 	<Section name="mypictures">
 		<String id="0">My Pictures</String>
 	</Section>
+	- <Section name="myweather.config">
+		<String id="0">Setup Weather Location</String>
+		<String id="1">Search</String>
+		<String id="2">Please enter the name of your city</String>
+		<String id="3">Choose One...</String>
+		<String id="4">No cities found!</String>
+	</Section>
 	- <Section name="myweather">
 		<String id="0">My Weather</String>
 		<String id="1">Location</String>
 		<String id="2">Refresh</String>
+		<String id="3">weather</String>
 		<String id="370">T-Storms</String>
 		<String id="371">Partly</String>
 		<String id="372">Mostly</String>

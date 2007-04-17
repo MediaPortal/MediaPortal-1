@@ -14,8 +14,6 @@ using ProjectInfinity;
 using ProjectInfinity.Logging;
 using System.IO;
 using System.Windows.Markup;
-using ProjectInfinity.Navigation;
-using ProjectInfinity.Settings;
 
 namespace MyWeather
 {
@@ -23,11 +21,11 @@ namespace MyWeather
     /// Interaction logic for Weather.xaml
     /// </summary>
 
-    public partial class Weather : System.Windows.Controls.Page
+    public partial class WeatherSetup : System.Windows.Controls.Page
     {
-        WeatherViewModel _model;
+        WeatherSetupViewModel _model;
 
-        public Weather()
+        public WeatherSetup()
         {
             InitializeComponent();
         }
@@ -35,13 +33,13 @@ namespace MyWeather
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             gridMain.Children.Clear();
-            using (FileStream steam = new FileStream(@"skin\default\myweather\weather.xaml", FileMode.Open, FileAccess.Read))
+            using (FileStream steam = new FileStream(@"skin\default\myweather\weathersetup.xaml", FileMode.Open, FileAccess.Read))
             {
                 UIElement documentRoot = (UIElement)XamlReader.Load(steam);
                 gridMain.Children.Add(documentRoot);
             }
 
-            _model = new WeatherViewModel(this);
+            _model = new WeatherSetupViewModel(this);
             gridMain.DataContext = _model;
 
             // Add keybindings for "back" action
@@ -57,20 +55,6 @@ namespace MyWeather
             this.KeyDown += new KeyEventHandler(onKeyDown);
 
             Keyboard.Focus(gridMain);
-
-            // decide if we need to run the setup first...
-            WeatherSettings settings = new WeatherSettings();
-            ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
-            if(settings.LocationCode == "none")
-                OnFirstTimeSetup();
-        }
-
-        /// <summary>
-        /// called when no setup is found
-        /// </summary>
-        private void OnFirstTimeSetup()
-        {
-            ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyWeather;component/WeatherSetup.xaml", UriKind.Relative));
         }
 
         private void OnMouseButtonDownEvent(object sender, RoutedEventArgs e)
