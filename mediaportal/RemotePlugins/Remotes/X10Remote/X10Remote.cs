@@ -68,6 +68,12 @@ namespace MediaPortal.InputDevices
     #region Constructor
 
     public X10Remote()
+    { }
+   
+    #endregion
+
+    #region Init method
+    public void Init()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -89,6 +95,7 @@ namespace MediaPortal.InputDevices
           if (X10Inter == null)
           {
             Log.Info("X10 debug: Could not get interface");
+            _remotefound = false;
             return;
           }
           _remotefound = true;
@@ -101,9 +108,9 @@ namespace MediaPortal.InputDevices
           icp.Advise(this, out cookie);
         }
       }
-      catch (System.Runtime.InteropServices.COMException)
+      catch (System.Runtime.InteropServices.COMException cex)
       {
-        Log.Info("X10 Debug: Com error");
+        Log.Info("X10 Debug: Com error - " + cex.ToString());
       }
 
       if (_inputHandler == null)
@@ -140,17 +147,14 @@ namespace MediaPortal.InputDevices
         }
 
       }
-
-     
     }
-   
     #endregion
 
     #region _DIX10InterfaceEvents Members
 
     public void X10Command(string bszCommand, EX10Command eCommand, int lAddress, EX10Key EKeyState, int lSequence, EX10Comm eCommandType, object varTimestamp)
     {
-      if (EKeyState == X10.EX10Key.X10KEY_ON || EKeyState == X10.EX10Key.X10KEY_REPEAT)
+      if ((EKeyState == X10.EX10Key.X10KEY_ON || EKeyState == X10.EX10Key.X10KEY_REPEAT) && lSequence != 2)
       {
         int keypress = (int)Enum.Parse(typeof(X10.EX10Command), eCommand.ToString());
         if (X10KeyPressed != null)

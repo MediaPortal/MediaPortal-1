@@ -31,8 +31,6 @@ namespace MediaPortal.InputDevices
 {
   public static class InputDevices
   {
-    #region vars
-    #endregion
 
     #region Methods
 
@@ -51,12 +49,13 @@ namespace MediaPortal.InputDevices
 
       _initialized = true;
 
+      diRemote.Init();
+      X10Remote.Init();
       HidListener.Init(GUIGraphicsContext.ActiveForm);
       MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
       FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
       HCWRemote.Init(GUIGraphicsContext.ActiveForm);
       IrTrans.Init(GUIGraphicsContext.ActiveForm);
-      //Keyboard.Init(GUIGraphicsContext.ActiveForm);
     }
 
     public static void Stop()
@@ -72,7 +71,6 @@ namespace MediaPortal.InputDevices
       FireDTVRemote.DeInit();
       HCWRemote.DeInit();
       IrTrans.DeInit();
-      //Keyboard.DeInit();
       diRemote.Stop();
 
       _initialized = false;
@@ -83,9 +81,6 @@ namespace MediaPortal.InputDevices
       action = null;
       key = (char)0;
       keyCode = Keys.A;
-
-      //if (Keyboard.WndProc(msg))
-      //return true;
 
       if (HidListener.WndProc(ref msg, out action, out key, out keyCode))
         return true;
@@ -121,15 +116,15 @@ namespace MediaPortal.InputDevices
 
     #region Fields
 
-    static HidListener HidListener = new HidListener();
-    static MCE2005Remote MCE2005Remote = new MCE2005Remote();
-    static HcwRemote HCWRemote = new HcwRemote();
-    static X10Remote X10Remote = new X10Remote();
-    static DirectInputHandler diRemote = new DirectInputHandler();
-    static IrTrans IrTrans = new IrTrans();
-    //static Keyboard Keyboard = new Keyboard();
-    static FireDTVRemote FireDTVRemote = new FireDTVRemote();
-    static AppCommands _lastHidRequest;
+    static private HidListener HidListener = new HidListener();
+    static private MCE2005Remote MCE2005Remote = new MCE2005Remote();
+    static private HcwRemote HCWRemote = new HcwRemote();
+    static private X10Remote X10Remote = new X10Remote();
+    static private DirectInputHandler diRemote = new DirectInputHandler();
+    static private IrTrans IrTrans = new IrTrans();
+    static private FireDTVRemote FireDTVRemote = new FireDTVRemote();
+    static private AppCommands _lastHidRequest;
+    
     static int _lastHidRequestTick;
     static bool _initialized = false;
 

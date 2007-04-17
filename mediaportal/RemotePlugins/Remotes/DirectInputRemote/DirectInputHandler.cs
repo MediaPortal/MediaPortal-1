@@ -120,10 +120,17 @@ namespace MediaPortal.InputDevices
 
     public DirectInputHandler()
     {
+      
+    }
 
-      //
-      // TODO: Add constructor logic here
-      //
+    ~DirectInputHandler()
+    {
+      DetachHandlers();
+      FreeListener();
+    }
+
+    public void Init()
+    {
       CreateMapper();
       if (_inputHandler.IsLoaded)
       {
@@ -134,12 +141,7 @@ namespace MediaPortal.InputDevices
       }
       else
         Log.Info("DirectInput: Error loading default mapping file - please reinstall MediaPortal");
-    }
 
-    ~DirectInputHandler()
-    {
-      DetachHandlers();
-      FreeListener();
     }
 
     public void InitDeviceList()
