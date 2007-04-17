@@ -61,7 +61,8 @@ namespace TvEngine.PowerScheduler.Handlers
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      DateTime scheduleWakeupTime;
+      Schedule recSchedule = null;
+      DateTime scheduleWakeupTime = DateTime.MaxValue;
       DateTime nextWakeuptime = DateTime.MaxValue;
       foreach (Schedule schedule in Schedule.ListAll())
       {
@@ -69,11 +70,21 @@ namespace TvEngine.PowerScheduler.Handlers
         List<Schedule> schedules = layer.GetRecordingTimes(schedule);
         if (schedules.Count > 0)
         {
-          // Take first occurrence of this schedule
-          Schedule recSchedule = schedules[0];
-          scheduleWakeupTime = recSchedule.StartTime.AddMinutes(-recSchedule.PreRecordInterval);
+          int i = 0;
+          // Take first occurrence of this schedule if not a canceled serie
+          while (i < schedules.Count)
+          {
+            recSchedule = schedules[i];
+            if (!recSchedule.IsSerieIsCanceled(recSchedule.StartTime))
+              break;
+            i++;
+          }
+          if (recSchedule != null)
+          {
+            scheduleWakeupTime = recSchedule.StartTime.AddMinutes(-recSchedule.PreRecordInterval);
+          }
         }
-        else
+        if (recSchedule == null)
         {
           // manually determine schedule's wakeup time of no guide data is present
           scheduleWakeupTime = GetWakeupTime(schedule);
@@ -164,7 +175,7 @@ namespace TvEngine.PowerScheduler.Handlers
         case ScheduleRecordingType.Daily:
           // if schedule was already due today, then run tomorrow
           if (now > stop.AddMinutes(schedule.PostRecordInterval))
-            start.AddDays(1);
+            start = start.AddDays(1);
           return start.AddMinutes(-schedule.PreRecordInterval);
         case ScheduleRecordingType.Weekends:
           // check if it's a weekend currently
@@ -175,24 +186,24 @@ namespace TvEngine.PowerScheduler.Handlers
             {
               // if so, add appropriate days to wakeup time
               if (now.DayOfWeek == DayOfWeek.Saturday)
-                start.AddDays(1);
+                start = start.AddDays(1);
               else
-                start.AddDays(6);
+                start = start.AddDays(6);
             }
           }
           else
           {
             // it's not a weekend so calculate number of days to add to current time
             int days = (int)DayOfWeek.Saturday - (int)now.DayOfWeek;
-            start.AddDays(days);
+            start = start.AddDays(days);
           }
           return start.AddMinutes(-schedule.PreRecordInterval);
         case ScheduleRecordingType.WorkingDays:
           // check if current time is in weekend; if so add appropriate number of days
           if (now.DayOfWeek == DayOfWeek.Saturday)
-            start.AddDays(2);
+            start = start.AddDays(2);
           else if (now.DayOfWeek == DayOfWeek.Sunday)
-            start.AddDays(1);
+            start = start.AddDays(1);
           else
           {
             // current time is on a working days; check if schedule has already been due
@@ -200,9 +211,9 @@ namespace TvEngine.PowerScheduler.Handlers
             {
               // schedule has been due, so add appropriate number of days
               if (now.DayOfWeek < DayOfWeek.Friday)
-                start.AddDays(1);
+                start = start.AddDays(1);
               else
-                start.AddDays(3);
+                start = start.AddDays(3);
             }
           }
           return start.AddMinutes(-schedule.PreRecordInterval);
@@ -214,7 +225,7 @@ namespace TvEngine.PowerScheduler.Handlers
             if (now > stop.AddMinutes(schedule.PostRecordInterval))
             {
               // schedule has been due, so record again next week
-              start.AddDays(7);
+              start = start.AddDays(7);
             }
           }
           else
@@ -225,13 +236,13 @@ namespace TvEngine.PowerScheduler.Handlers
             {
               // schedule is due this week
               int days = schedule.StartTime.DayOfWeek - now.DayOfWeek;
-              start.AddDays(days);
+              start = start.AddDays(days);
             }
             else
             {
               // schedule should start next week
               int days = 7 - (now.DayOfWeek - schedule.StartTime.DayOfWeek);
-              start.AddDays(days);
+              start = start.AddDays(days);
             }
           }
           return start.AddMinutes(-schedule.PreRecordInterval);
