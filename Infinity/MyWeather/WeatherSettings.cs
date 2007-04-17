@@ -54,7 +54,7 @@ namespace MyWeather
             get { return this._windSpeed; }
             set { this._windSpeed = value; }
         }
-        [Setting(SettingScope.User, "none")]
+        [Setting(SettingScope.User, "<none>")]
         public string LocationCode
         {
             get { return this._locationCode; }
