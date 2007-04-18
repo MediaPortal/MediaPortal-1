@@ -154,6 +154,11 @@ namespace TvLibrary.Interfaces
     void GrabEpg(BaseEpgGrabber callback);
 
     /// <summary>
+    /// Aborts grabbing the epg. This also triggers the OnEpgReceived callback.
+    /// </summary>
+    void AbortGrabbing();
+
+    /// <summary>
     /// returns a list of all epg data for each channel found.
     /// </summary>
     /// <value>The epg.</value>

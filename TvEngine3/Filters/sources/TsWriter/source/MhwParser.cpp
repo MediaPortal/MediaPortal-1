@@ -86,6 +86,14 @@ void CMhwParser::Reset()
 	m_TimeOutTimer=time(NULL);
 }
 
+void CMhwParser::AbortGrabbing()
+{
+	LogDebug("mhw abort grabbing");
+	CEnterCriticalSection enter(m_section);
+	m_bGrabbing=false;
+	m_bDone=true;
+}
+
 
 void CMhwParser::OnTsPacket(CTsHeader& header,byte* tsPacket)
 {

@@ -365,7 +365,13 @@ namespace TvLibrary.Implementations.Hybrid
     {
       _cards[_currentCardIndex].GrabEpg(callback);
     }
-
+    /// <summary>
+    /// Aborts grabbing the epg
+    /// </summary>
+    public void AbortGrabbing()
+    {
+      _cards[_currentCardIndex].AbortGrabbing();
+    }
     /// <summary>
     /// returns a list of all epg data for each channel found.
     /// </summary>

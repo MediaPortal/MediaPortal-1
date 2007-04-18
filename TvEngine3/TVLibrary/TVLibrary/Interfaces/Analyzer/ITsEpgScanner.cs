@@ -188,6 +188,13 @@ namespace TvLibrary.Interfaces.Analyzer
     int Reset();
 
     /// <summary>
+    /// Aborts grabbing and calls the callback function
+    /// </summary>
+    /// <returns></returns>
+    [PreserveSig]
+    int AbortGrabbing();
+
+    /// <summary>
     /// Sets the call back which will be called when MHW has been received
     /// </summary>
     /// <param name="callback">The callback.</param>

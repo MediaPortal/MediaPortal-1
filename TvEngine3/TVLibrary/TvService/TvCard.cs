@@ -730,6 +730,31 @@ namespace TvService
     }
 
     /// <summary>
+    /// Aborts grabbing the epg. This also triggers the OnEpgReceived callback.
+    /// </summary>
+    public void AbortEPGGrabbing()
+    {
+      try
+      {
+        if (_dbsCard.Enabled == false) return;
+        if (IsLocal == false)
+        {
+          //RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
+          //RemoteControl.Instance.GrabEpg();
+          return ;
+        }
+        _card.AbortGrabbing();
+        return;
+
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+        return;
+      }
+    }
+
+    /// <summary>
     /// Gets the epg.
     /// </summary>
     /// <value>The epg.</value>

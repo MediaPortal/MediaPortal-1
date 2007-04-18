@@ -1145,6 +1145,14 @@ namespace TvService
       return _cards[cardId].GrabEpg(grabber);
     }
     /// <summary>
+    /// Aborts grabbing the epg. This also triggers the OnEpgReceived callback.
+    /// </summary>
+    public void AbortEPGGrabbing(int cardId)
+    {
+      if (cardId < 0) return;
+      _cards[cardId].AbortEPGGrabbing();
+    }
+    /// <summary>
     /// Epgs the specified card id.
     /// </summary>
     /// <param name="cardId">The card id.</param>

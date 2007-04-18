@@ -60,6 +60,7 @@ DECLARE_INTERFACE_(ITsEpgScanner, IUnknown)
 	STDMETHOD(GetMHWSummary)(THIS_ ULONG programId, char** summary)PURE;
 	STDMETHOD(GetMHWTheme)(THIS_ UINT themeId, char** theme)PURE;
 	STDMETHOD(Reset)(THIS_)PURE;
+	STDMETHOD(AbortGrabbing)(THIS_)PURE;
   
 	STDMETHOD(SetCallBack)(THIS_ IEpgCallback* callback)PURE;
 };
@@ -89,6 +90,7 @@ public:
 	STDMETHODIMP GetMHWSummary(ULONG programId, char** summary);
 	STDMETHODIMP GetMHWTheme(UINT themeId, char** theme);
 	STDMETHODIMP Reset();
+	STDMETHODIMP AbortGrabbing();
 	STDMETHODIMP SetCallBack(IEpgCallback* callback);
 
 	void OnTsPacket(byte* tsPacket);

@@ -241,7 +241,13 @@ namespace TvLibrary.Implementations.Analog
         return null;
       }
     }
-
+    /// <summary>
+    /// Aborts grabbing the epg
+    /// </summary>
+    public void AbortGrabbing()
+    {
+      return;
+    }
     /// <summary>
     /// Returns the EPG grabbed or null if epg grabbing is still busy
     /// </summary>

@@ -44,6 +44,7 @@ public:
 	void GetChannel(UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName);
 	void GetSummary(ULONG programId, char** summary);
 	void GetTheme(UINT themeId, char** theme);
+	void AbortGrabbing();
 
 	void	OnTsPacket(CTsHeader& header,byte* tsPacket);
 	void  OnNewSection(int pid, int tableId, CSection& section);

@@ -45,6 +45,7 @@ public:
 	void	GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
 	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre ,unsigned int* eventid    );
 	void    GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription    );
+	void	AbortGrabbing();
 
 	void	OnTsPacket(CTsHeader& header,byte* tsPacket);
 	void  OnNewSection(int pid, int tableId, CSection& section); 

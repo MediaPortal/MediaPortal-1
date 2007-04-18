@@ -850,3 +850,10 @@ void CEpgDecoder::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageInde
 	}
 }
 
+void CEpgDecoder::AbortGrabbing()
+{
+	CEnterCriticalSection lock (m_critSection);
+	m_bParseEPG=false;
+	m_bEpgDone=true;
+}
+

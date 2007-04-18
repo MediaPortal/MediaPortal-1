@@ -121,6 +121,12 @@ void  CEpgParser::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageInde
 	m_epgDecoder.GetEPGLanguage(channel, eventid,languageIndex,language, eventText, eventDescription    );
 }
 
+void CEpgParser::AbortGrabbing()
+{
+	CEnterCriticalSection enter(m_section);
+	m_epgDecoder.AbortGrabbing();
+}
+
 
 void CEpgParser::OnTsPacket(CTsHeader& header, byte* tsPacket)
 {

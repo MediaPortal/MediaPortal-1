@@ -2208,6 +2208,15 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// Aborts grabbing the epg
+    /// </summary>
+    public void AbortGrabbing()
+    {
+      Log.Log.Write("dvb:abort grabbing epg");
+      _interfaceEpgGrabber.AbortGrabbing();
+    }
+
+    /// <summary>
     /// Returns the EPG grabbed or null if epg grabbing is still busy
     /// </summary>
     public List<EpgChannel> Epg

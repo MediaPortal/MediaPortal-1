@@ -59,6 +59,16 @@ STDMETHODIMP CEpgScanner::Reset()
   m_mhwParser.Reset();
 	return S_OK;
 }
+
+STDMETHODIMP CEpgScanner::AbortGrabbing()
+{
+	CEnterCriticalSection enter(m_section);
+	LogDebug("epg: abort grabbing");
+	m_epgParser.AbortGrabbing();
+	m_mhwParser.AbortGrabbing();
+	return S_OK;
+}
+
 STDMETHODIMP CEpgScanner::GrabEPG()
 {
 	CEnterCriticalSection enter(m_section);

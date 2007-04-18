@@ -376,7 +376,8 @@ namespace TvService
             //epg grabber timed out. Update database
             //and go back to idle mode
             Log.Epg("Epg: card:{0} timeout after {1} mins", _user.CardId, ts.TotalMinutes);
-            if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
+            _tvController.AbortEPGGrabbing(_user.CardId);
+/*            if (_currentTransponderIndex >= 0 && _currentTransponderIndex < _transponders.Count)
             {
               Transponder transponder = _transponders[_currentTransponderIndex];
               transponder.OnTimeOut();
@@ -390,7 +391,7 @@ namespace TvService
 
             _grabStartTime = DateTime.MinValue;
             _state = EpgState.Idle;
-            _user.CardId = -1;
+            _user.CardId = -1;*/
           }
         }
       }
