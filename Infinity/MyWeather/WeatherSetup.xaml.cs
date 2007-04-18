@@ -14,6 +14,8 @@ using ProjectInfinity;
 using ProjectInfinity.Logging;
 using System.IO;
 using System.Windows.Markup;
+using ProjectInfinity.Plugins;
+using ProjectInfinity.Navigation;
 
 namespace MyWeather
 {
@@ -21,7 +23,7 @@ namespace MyWeather
     /// Interaction logic for Weather.xaml
     /// </summary>
 
-    public partial class WeatherSetup : System.Windows.Controls.Page
+    public partial class WeatherSetup : System.Windows.Controls.Page, IMenuCommand, IDisposable
     {
         WeatherSetupViewModel _model;
 
@@ -56,6 +58,17 @@ namespace MyWeather
 
             Keyboard.Focus(gridMain);
         }
+
+        public void Run()
+        {
+            ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyWeather;component/WeatherSetup.xaml", UriKind.Relative));
+        }
+
+        #region IDisposable Members
+        public void Dispose()
+        {
+        }
+        #endregion
 
         private void OnMouseButtonDownEvent(object sender, RoutedEventArgs e)
         {

@@ -219,7 +219,8 @@
 		<String id="0">My Weather</String>
 		<String id="1">Location</String>
 		<String id="2">Refresh</String>
-		<String id="3">weather</String>
+		<String id="3">Weather</String>
+		<String id="4">Setup</String>
 		<String id="370">T-Storms</String>
 		<String id="371">Partly</String>
 		<String id="372">Mostly</String>

@@ -8,7 +8,7 @@ using ProjectInfinity.Plugins;
 namespace MyWeather
 {
   [Plugin("My Weather", "My Weather", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/tv.png")]
-  public class WeatherPlugin : IPlugin, IMenuCommand
+  public class WeatherPlugin : IPlugin, IMenuCommand, IDisposable
   {
     #region IPlugin Members
 
