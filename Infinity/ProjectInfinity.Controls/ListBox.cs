@@ -142,7 +142,10 @@ namespace ProjectInfinity.Controls
           if (SelectedIndex >= 0)
           {
             DependencyObject obj = ItemContainerGenerator.ContainerFromIndex(SelectedIndex);
-            Keyboard.Focus((ListBoxItem)obj);
+            if (this.IsKeyboardFocused || this.IsKeyboardFocusWithin || this.IsFocused)
+            {
+              Keyboard.Focus((ListBoxItem)obj);
+            }
           }
         }
       }

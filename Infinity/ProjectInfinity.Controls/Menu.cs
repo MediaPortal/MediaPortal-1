@@ -170,11 +170,12 @@ namespace ProjectInfinity.Controls
     {
       get
       {
-        if (GetValue(FocusedVisibleProperty) == null) return null;
+        if (GetValue(FocusedVisibleProperty) == null) return Visibility.Hidden;
         return (Visibility)GetValue(FocusedVisibleProperty);
       }
       set
       {
+        //Trace.WriteLine("Set FocusedVisible");
         if (value != FocusedVisible)
         {
           Visibility vis = (Visibility)value;
@@ -203,11 +204,12 @@ namespace ProjectInfinity.Controls
     {
       get
       {
-        if (GetValue(FocusedHiddenProperty) == null) return null;
+        if (GetValue(FocusedHiddenProperty) == null) return Visibility.Hidden;
         return (Visibility)GetValue(FocusedHiddenProperty);
       }
       set
       {
+        //Trace.WriteLine("Set FocusedHidden");
         SetValue(FocusedHiddenProperty, value);
       }
     }
@@ -224,6 +226,7 @@ namespace ProjectInfinity.Controls
       }
       set
       {
+        //Trace.WriteLine("Set SelectedItem");
         SetValue(SelectedItemProperty, value);
       }
     }
@@ -240,6 +243,7 @@ namespace ProjectInfinity.Controls
       }
       set
       {
+        //Trace.WriteLine("Set FocusElement");
         SetValue(FocusElementProperty, value);
       }
     }
@@ -257,6 +261,7 @@ namespace ProjectInfinity.Controls
       }
       set
       {
+        //Trace.WriteLine("Set FocusedMargin");
         SetValue(FocusedMarginProperty, value);
       }
     }
@@ -277,6 +282,7 @@ namespace ProjectInfinity.Controls
       }
       set
       {
+        //Trace.WriteLine("Set ItemsSource");
         SetValue(ItemsSourceProperty, value);
       }
     }
@@ -295,6 +301,7 @@ namespace ProjectInfinity.Controls
       }
       set
       {
+        //Trace.WriteLine("Set SubMenu");
         SetValue(SubMenuProperty, value);
       }
     }
@@ -316,6 +323,7 @@ namespace ProjectInfinity.Controls
       }
       set
       {
+        //Trace.WriteLine("Set ItemTemplate");
         SetValue(ItemTemplateProperty, value);
       }
     }
@@ -323,6 +331,15 @@ namespace ProjectInfinity.Controls
 
 
     #region event handlers
+    protected override void OnGotFocus(RoutedEventArgs e)
+    {
+      //Trace.WriteLine("OnGotFocus");
+      if (!IsKeyboardFocusWithin)
+      {
+        Keyboard.Focus(this);
+      }
+      base.OnGotFocus(e);
+    }
 
     void onpreviewKeyboardLost(object sender, KeyboardFocusChangedEventArgs e)
     {
@@ -331,7 +348,7 @@ namespace ProjectInfinity.Controls
         return;
       }
       FocusedVisible = Visibility.Hidden;
-      Trace.WriteLine(String.Format("p lost {0} {1}->{2} {3}", this.IsKeyboardFocusWithin, e.OldFocus, e.NewFocus, e.RoutedEvent));
+      //Trace.WriteLine(String.Format("p lost {0} {1}->{2} {3}", this.IsKeyboardFocusWithin, e.OldFocus, e.NewFocus, e.RoutedEvent));
     }
     void onpreviewKeyboardGot(object sender, KeyboardFocusChangedEventArgs e)
     {
@@ -340,33 +357,38 @@ namespace ProjectInfinity.Controls
         return;
       }
       FocusedVisible = Visibility.Visible;
-      Trace.WriteLine(String.Format("p got {0} {1}->{2} {3}", this.IsKeyboardFocusWithin, e.OldFocus, e.NewFocus, e.RoutedEvent));
+      //Trace.WriteLine(String.Format("p got {0} {1}->{2} {3}", this.IsKeyboardFocusWithin, e.OldFocus, e.NewFocus, e.RoutedEvent));
     }
     protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
     {
-      Trace.WriteLine("OnGotKeyboardFocus");
+      //Trace.WriteLine("OnGotKeyboardFocus");
 
       base.OnGotKeyboardFocus(e);
     }
     protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
     {
-      Trace.WriteLine("OnLostKeyboardFocus");
+      //Trace.WriteLine("OnLostKeyboardFocus");
       base.OnLostKeyboardFocus(e);
     }
     void Menu_Loaded(object sender, RoutedEventArgs e)
     {
+      //Trace.WriteLine("Menu_Loaded");
       LayoutMenu();
     }
 
 
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
+      //Trace.WriteLine("OnRenderSizeChanged");
       base.OnRenderSizeChanged(sizeInfo);
 
-      LayoutMenu();
+      if (IsLoaded)
+        LayoutMenu();
     }
     void LayoutMenu()
     {
+      bool gotKeyboardFocus = IsFocused || IsKeyboardFocused || IsKeyboardFocusWithin;
+      //Trace.WriteLine("LayoutMenu");
       _mouseEventsEnabled = false;
 
       if (ItemsSource == null) return;
@@ -389,7 +411,7 @@ namespace ProjectInfinity.Controls
 
       if (selected >= maxRows + 2)
       {
-        selected=(maxRows) / 2;
+        selected = (maxRows) / 2;
       }
       _currentSelectedItem = selected;
       _mouseSelectedItem = selected;
@@ -421,7 +443,14 @@ namespace ProjectInfinity.Controls
         this.Children.Add((UIElement)menuItem.Content);
         yoffset += BUTTONHEIGHT;
       }
-      Keyboard.Focus(this.Children[selected]);
+      if (gotKeyboardFocus)
+      {
+        Keyboard.Focus(this.Children[selected]);
+      }
+      else
+      {
+        FocusedVisible = Visibility.Hidden;
+      }
       _mouseEventsEnabled = true;
       if (PropertyChanged != null)
       {
@@ -432,6 +461,7 @@ namespace ProjectInfinity.Controls
     #region keyboard
     void OnScrollDown()
     {
+      //Trace.WriteLine("OnScrollDown");
       _mouseEventsEnabled = false;
       if (_storyBoard != null)
       {
@@ -451,6 +481,7 @@ namespace ProjectInfinity.Controls
 
     void OnScrollUp()
     {
+      //Trace.WriteLine("OnScrollUp");
       _mouseEventsEnabled = false;
       if (_storyBoard != null)
       {
@@ -470,6 +501,7 @@ namespace ProjectInfinity.Controls
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
+      //Trace.WriteLine("OnKeyDown");
       if (e.Key == Key.Left || e.Key == Key.Right)
       {
         _waitForMouseMove = true;
@@ -492,6 +524,7 @@ namespace ProjectInfinity.Controls
 
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
+      //Trace.WriteLine("OnPreviewKeyDown");
       if (e.Key == Key.Enter)
       {
         //execute the command if there is one
@@ -514,6 +547,7 @@ namespace ProjectInfinity.Controls
     }
     void storyBoard_Completed(object sender, EventArgs e)
     {
+      //Trace.WriteLine("storyBoard_Completed");
       if (_storyBoard != null)
       {
         _storyBoard.Remove(this);
@@ -527,6 +561,7 @@ namespace ProjectInfinity.Controls
     #region mouse
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
+      //Trace.WriteLine("OnMouseWheel");
       if (e.Delta < 0)
       {
         OnScrollUp();
@@ -539,6 +574,7 @@ namespace ProjectInfinity.Controls
     }
     void ScrollFocusedItemToMousePosition()
     {
+      //Trace.WriteLine("ScrollFocusedItemToMousePosition");
       _mouseEventsEnabled = false;
       double offsetCurrent = _currentSelectedItem * BUTTONHEIGHT;
       double offsetNext = _mouseSelectedItem * BUTTONHEIGHT;
@@ -550,14 +586,16 @@ namespace ProjectInfinity.Controls
 
     void animation_Completed(object sender, EventArgs e)
     {
+      //Trace.WriteLine("animation_Completed");
       LayoutMenu();
     }
     protected override void OnMouseMove(MouseEventArgs e)
     {
+      //Trace.WriteLine("OnMouseMove");
       Point point = Mouse.GetPosition(Window.GetWindow(this));
-      if (_waitForMouseMove )
+      if (_waitForMouseMove)
       {
-        if (Math.Abs(point.X - _previousMousePoint.X) >= 10 || Math.Abs(point.Y - _previousMousePoint.Y)>=10)
+        if (Math.Abs(point.X - _previousMousePoint.X) >= 10 || Math.Abs(point.Y - _previousMousePoint.Y) >= 10)
         {
           _waitForMouseMove = false;
         }
@@ -590,6 +628,7 @@ namespace ProjectInfinity.Controls
     }
     protected override void OnMouseEnter(MouseEventArgs e)
     {
+      //Trace.WriteLine("OnMouseEnter");
       if (_waitForMouseMove)
       {
         e.Handled = true;
@@ -600,16 +639,19 @@ namespace ProjectInfinity.Controls
     }
     protected override void OnMouseLeave(MouseEventArgs e)
     {
+      //Trace.WriteLine("OnMouseLeave");
       _mouseEntered = false;
       // LayoutMenu();
       base.OnMouseLeave(e);
     }
     protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
     {
+      //Trace.WriteLine("OnPreviewMouseDown");
       base.OnPreviewMouseDown(e);
     }
     protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
     {
+      //Trace.WriteLine("OnPreviewMouseLeftButtonDown");
       if (Command != null)
       {
         RoutedCommand routedCommand = Command as RoutedCommand;

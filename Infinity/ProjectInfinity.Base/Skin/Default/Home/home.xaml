@@ -1,7 +1,8 @@
 <Grid xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:ProjectInfinity.Menu;assembly=ProjectInfinity.Services"
-    xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls" >
+    xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls" 
+   FocusManager.FocusedElement="{Binding ElementName=menu}">
   <Grid.Resources>
     <!-- style for the button used in the vertical menu's items-->
     <Style x:Key="MpMenuButton" TargetType="Button">
