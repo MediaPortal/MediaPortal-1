@@ -241,7 +241,7 @@ namespace MyWeather
         {
             get
             {
-                if (iconImageNameHigh == String.Empty)
+                if (iconImageNameHigh ==  String.Empty)
                     return new Uri(@"pack://siteoforigin:,,/Media/Weather/128x128/WEATHERALERT.png");
                 // return the data
                 return new Uri(@"pack://siteoforigin:,,/Media/Weather/128x128/" + iconImageNameHigh.Replace('\\', '/'));
