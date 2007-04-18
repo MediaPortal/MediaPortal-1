@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace ProjectInfinity.Controls
   public class Menu : System.Windows.Controls.Canvas
   {
     const int BUTTONHEIGHT = 40;
+
     #region properties
     public static readonly DependencyProperty FocusElementProperty = DependencyProperty.Register("FocusElement",
                                                                                             typeof(FrameworkElement),
@@ -103,6 +105,11 @@ namespace ProjectInfinity.Controls
                                                                                                     (null));
     #endregion
 
+    #region routed events
+    public static readonly RoutedEvent FocusVisibleEvent = EventManager.RegisterRoutedEvent("OnFocusVisible", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Menu));
+    public static readonly RoutedEvent FocusHiddenEvent = EventManager.RegisterRoutedEvent("OnFocusHidden", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Menu));
+    #endregion
+
     #region variables
     int _currentOffset;
     Storyboard _storyBoard;
@@ -116,10 +123,24 @@ namespace ProjectInfinity.Controls
     public Menu()
     {
       this.Loaded += new RoutedEventHandler(Menu_Loaded);
-      
+      Keyboard.AddPreviewLostKeyboardFocusHandler(this, new KeyboardFocusChangedEventHandler(onpreviewKeyboardLost));
+      Keyboard.AddPreviewGotKeyboardFocusHandler(this, new KeyboardFocusChangedEventHandler(onpreviewKeyboardGot));
     }
     #endregion
 
+
+    #region routed events handlers
+    public event RoutedEventHandler OnFocusVisible
+    {
+      add { AddHandler(FocusVisibleEvent, value); }
+      remove { RemoveHandler(FocusVisibleEvent, value); }
+    }
+    public event RoutedEventHandler OnFocusHidden
+    {
+      add { AddHandler(FocusHiddenEvent, value); }
+      remove { RemoveHandler(FocusHiddenEvent, value); }
+    }
+    #endregion
 
     #region property handlers
     private static void FocusedVisiblePropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
@@ -131,11 +152,22 @@ namespace ProjectInfinity.Controls
     {
       get
       {
+        if (GetValue(FocusedVisibleProperty) == null) return null;
         return (Visibility)GetValue(FocusedVisibleProperty);
       }
       set
       {
-        SetValue(FocusedVisibleProperty, value);
+        if (value != FocusedVisible)
+        {
+          SetValue(FocusedVisibleProperty, value);
+          RoutedEventArgs args = new RoutedEventArgs();
+          if (((Visibility)value) == Visibility.Visible)
+            args.RoutedEvent = Menu.FocusVisibleEvent;
+          else
+            args.RoutedEvent = Menu.FocusHiddenEvent;
+          args.Source = this;
+          RaiseEvent(args);
+        }
       }
     }
     private static void FocusElementPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
@@ -164,7 +196,7 @@ namespace ProjectInfinity.Controls
     {
       get
       {
-        return GetValue(FocusedMarginProperty) ;
+        return GetValue(FocusedMarginProperty);
       }
       set
       {
@@ -232,23 +264,44 @@ namespace ProjectInfinity.Controls
     }
     #endregion
 
+
     #region event handlers
+
+    void onpreviewKeyboardLost(object sender, KeyboardFocusChangedEventArgs e)
+    {
+      if (this.IsKeyboardFocusWithin == false)
+      {
+        return;
+      }
+      FocusedVisible = Visibility.Hidden;
+      Trace.WriteLine(String.Format("p lost {0} {1}->{2} {3}", this.IsKeyboardFocusWithin, e.OldFocus, e.NewFocus, e.RoutedEvent));
+    }
+    void onpreviewKeyboardGot(object sender, KeyboardFocusChangedEventArgs e)
+    {
+      if (this.IsKeyboardFocusWithin)
+      {
+        return;
+      }
+      FocusedVisible = Visibility.Visible;
+      Trace.WriteLine(String.Format("p got {0} {1}->{2} {3}", this.IsKeyboardFocusWithin, e.OldFocus, e.NewFocus, e.RoutedEvent));
+    }
     protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
     {
-
-      FocusedVisible = Visibility.Visible;
+      Trace.WriteLine("OnGotKeyboardFocus");
 
       base.OnGotKeyboardFocus(e);
     }
     protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
     {
-      FocusedVisible = Visibility.Hidden;
+      Trace.WriteLine("OnLostKeyboardFocus");
       base.OnLostKeyboardFocus(e);
     }
     void Menu_Loaded(object sender, RoutedEventArgs e)
     {
       LayoutMenu();
     }
+
+
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
       base.OnRenderSizeChanged(sizeInfo);
@@ -257,12 +310,13 @@ namespace ProjectInfinity.Controls
     void LayoutMenu()
     {
       _mouseEventsEnabled = false;
+
       if (ItemsSource == null) return;
       int maxRows = (int)(this.ActualHeight / ((double)BUTTONHEIGHT));
       maxRows--;
       if (_storyBoard != null)
       {
-        _storyBoard.Seek(this, new TimeSpan(0), TimeSeekOrigin.BeginTime);
+        _storyBoard.Stop(this);
         _storyBoard.Remove(this);
         _storyBoard = null;
       }
@@ -305,8 +359,8 @@ namespace ProjectInfinity.Controls
       }
       Keyboard.Focus(this.Children[selected]);
       _mouseEventsEnabled = true;
-    }
 
+    }
     #region keyboard
     void OnScrollDown()
     {
@@ -387,7 +441,12 @@ namespace ProjectInfinity.Controls
     }
     void storyBoard_Completed(object sender, EventArgs e)
     {
-      LayoutMenu();
+      if (_storyBoard != null)
+      {
+        _storyBoard.Remove(this);
+        _storyBoard = null;
+        LayoutMenu();
+      }
     }
     #endregion
 

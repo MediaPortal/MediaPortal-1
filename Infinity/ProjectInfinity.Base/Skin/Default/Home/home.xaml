@@ -3,7 +3,7 @@
     xmlns:local="clr-namespace:ProjectInfinity.Menu;assembly=ProjectInfinity.Services"
     xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls" >
   <Grid.Resources>
-
+    <!-- style for the button used in the vertical menu's items-->
     <Style x:Key="MpMenuButton" TargetType="Button">
       <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
       <Setter Property="Template">
@@ -19,6 +19,7 @@
         </Setter.Value>
       </Setter>
     </Style>
+    <!-- storyboard to which animates the focused item in the vertical menu-->
     <Storyboard x:Key="focusedMenuItemStoryBoard" >
       <PointAnimationUsingKeyFrames RepeatBehavior="Forever" AutoReverse="True" BeginTime="00:00:00" Storyboard.TargetName="rectFocusMenuItem" Storyboard.TargetProperty="(Shape.Fill).(RadialGradientBrush.GradientOrigin)">
         <SplinePointKeyFrame KeyTime="00:00:00" Value="0.5,1.709"/>
@@ -56,6 +57,7 @@
       </DoubleAnimationUsingKeyFrames>
     </Storyboard>
 
+    <!-- storyboard to scroll the vertical menu 1 entry up-->
     <Storyboard x:Key="storyBoardScrollUp" >
       <ThicknessAnimationUsingKeyFrames BeginTime="00:00:00"  Storyboard.TargetProperty="Margin">
         <SplineThicknessKeyFrame KeyTime="00:00:00" Value="0,0,0,0"/>
@@ -65,6 +67,7 @@
       </ThicknessAnimationUsingKeyFrames>
     </Storyboard>
 
+    <!-- storyboard to scroll the vertical menu 1 entry down-->
     <Storyboard x:Key="storyBoardScrollDown" >
       <ThicknessAnimationUsingKeyFrames BeginTime="00:00:00"  Storyboard.TargetProperty="Margin">
         <SplineThicknessKeyFrame KeyTime="00:00:00" Value="0,0,0,0"/>
@@ -74,10 +77,12 @@
       </ThicknessAnimationUsingKeyFrames>
     </Storyboard>
 
-
+    <!-- data template for the items in the vertical menu-->
     <DataTemplate x:Key="menuTemplate" >
       <Button x:Name="button"   ClipToBounds="True" Content="{Binding Path=Label}" Style="{StaticResource MpMenuButton}" HorizontalAlignment="Stretch"/>
     </DataTemplate>
+
+    <!-- data template for the item in the horizontal menu-->
     <DataTemplate x:Key="subMenuTemplate" >
       <Grid Width="128" Height="128" >
         <Grid.ColumnDefinitions>
@@ -90,11 +95,129 @@
         <Label Content="{Binding Path=Label}" Style="{StaticResource Label20Style}" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
       </Grid>
     </DataTemplate>
+
+    <!-- storyboard which fade outs and zooms out the vertical menu-->
+    <Storyboard x:Key="fadeOutVerticalMenu">
+      <PointAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="gridMenu" Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)">
+        <SplinePointKeyFrame KeyTime="00:00:00" Value="0,0"/>
+        <SplinePointKeyFrame KeyTime="00:00:00.20" Value="1,0"/>
+      </PointAnimationUsingKeyFrames>
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="gridMenu" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+        <SplineDoubleKeyFrame KeyTime="00:00:00.20" Value="0.9"/>
+      </DoubleAnimationUsingKeyFrames>
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="gridMenu" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+        <SplineDoubleKeyFrame KeyTime="00:00:00.20" Value="0.8"/>
+      </DoubleAnimationUsingKeyFrames>
+      <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="gridMenu" Storyboard.TargetProperty="(UIElement.OpacityMask).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+        <SplineColorKeyFrame KeyTime="00:00:00" Value="#FF000000"/>
+        <SplineColorKeyFrame KeyTime="00:00:00.20" Value="#C0000000"/>
+      </ColorAnimationUsingKeyFrames>
+      <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="gridMenu" Storyboard.TargetProperty="(UIElement.OpacityMask).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+        <SplineColorKeyFrame KeyTime="00:00:00" Value="#FFFFFFFF"/>
+        <SplineColorKeyFrame KeyTime="00:00:00.20" Value="#30FFFFFF"/>
+      </ColorAnimationUsingKeyFrames>
+    </Storyboard>
+
+    <!-- storyboard which fade in and zooms in the vertical menu-->
+    <Storyboard x:Key="fadeInVerticalMenu">
+      <PointAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="gridMenu" Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)">
+        <SplinePointKeyFrame KeyTime="00:00:00" Value="1,0"/>
+        <SplinePointKeyFrame KeyTime="00:00:00.20" Value="0,0"/>
+      </PointAnimationUsingKeyFrames>
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="gridMenu" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0.9"/>
+        <SplineDoubleKeyFrame KeyTime="00:00:00.20" Value="1"/>
+      </DoubleAnimationUsingKeyFrames>
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="gridMenu" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0.8"/>
+        <SplineDoubleKeyFrame KeyTime="00:00:00.20" Value="1"/>
+      </DoubleAnimationUsingKeyFrames>
+      <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="gridMenu" Storyboard.TargetProperty="(UIElement.OpacityMask).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+        <SplineColorKeyFrame KeyTime="00:00:00" Value="#C0000000"/>
+        <SplineColorKeyFrame KeyTime="00:00:00.20" Value="#FF000000"/>
+      </ColorAnimationUsingKeyFrames>
+      <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="gridMenu" Storyboard.TargetProperty="(UIElement.OpacityMask).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+        <SplineColorKeyFrame KeyTime="00:00:00" Value="#30FFFFFF"/>
+        <SplineColorKeyFrame KeyTime="00:00:00.20" Value="#FFFFFFFF"/>
+      </ColorAnimationUsingKeyFrames>
+    </Storyboard>
+
+
+    <!-- storyboard which fade outs and zooms out the vertical menu-->
+    <Storyboard x:Key="fadeOutHorizontalMenu">
+      <PointAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="subListBox" Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)">
+        <SplinePointKeyFrame KeyTime="00:00:00" Value="0,0"/>
+        <SplinePointKeyFrame KeyTime="00:00:00.20" Value="1,0"/>
+      </PointAnimationUsingKeyFrames>
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="subListBox" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+        <SplineDoubleKeyFrame KeyTime="00:00:00.20" Value="0.9"/>
+      </DoubleAnimationUsingKeyFrames>
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="subListBox" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+        <SplineDoubleKeyFrame KeyTime="00:00:00.20" Value="0.8"/>
+      </DoubleAnimationUsingKeyFrames>
+      <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="subListBox" Storyboard.TargetProperty="(UIElement.OpacityMask).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+        <SplineColorKeyFrame KeyTime="00:00:00" Value="#FF000000"/>
+        <SplineColorKeyFrame KeyTime="00:00:00.20" Value="#C0000000"/>
+      </ColorAnimationUsingKeyFrames>
+      <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="subListBox" Storyboard.TargetProperty="(UIElement.OpacityMask).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+        <SplineColorKeyFrame KeyTime="00:00:00" Value="#FFFFFFFF"/>
+        <SplineColorKeyFrame KeyTime="00:00:00.20" Value="#30FFFFFF"/>
+      </ColorAnimationUsingKeyFrames>
+    </Storyboard>
+
+    <!-- storyboard which fade in and zooms in the vertical menu-->
+    <Storyboard x:Key="fadeInHorizontalMenu">
+      <PointAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="subListBox" Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)">
+        <SplinePointKeyFrame KeyTime="00:00:00" Value="1,0"/>
+        <SplinePointKeyFrame KeyTime="00:00:00.20" Value="0,0"/>
+      </PointAnimationUsingKeyFrames>
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="subListBox" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0.9"/>
+        <SplineDoubleKeyFrame KeyTime="00:00:00.20" Value="1"/>
+      </DoubleAnimationUsingKeyFrames>
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="subListBox" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0.8"/>
+        <SplineDoubleKeyFrame KeyTime="00:00:00.20" Value="1"/>
+      </DoubleAnimationUsingKeyFrames>
+      <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="subListBox" Storyboard.TargetProperty="(UIElement.OpacityMask).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+        <SplineColorKeyFrame KeyTime="00:00:00" Value="#C0000000"/>
+        <SplineColorKeyFrame KeyTime="00:00:00.20" Value="#FF000000"/>
+      </ColorAnimationUsingKeyFrames>
+      <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="subListBox" Storyboard.TargetProperty="(UIElement.OpacityMask).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+        <SplineColorKeyFrame KeyTime="00:00:00" Value="#30FFFFFF"/>
+        <SplineColorKeyFrame KeyTime="00:00:00.20" Value="#FFFFFFFF"/>
+      </ColorAnimationUsingKeyFrames>
+    </Storyboard>
+
   </Grid.Resources>
   <Grid.Triggers>
+    <!-- trigger to start focusedMenuItemStoryBoard when window is loaded-->
     <EventTrigger RoutedEvent="FrameworkElement.Loaded">
       <BeginStoryboard Storyboard="{StaticResource focusedMenuItemStoryBoard}"/>
     </EventTrigger>
+    <!-- trigger to start fading out the vertical menu when it looses focus-->
+    <EventTrigger RoutedEvent="controls:Menu.OnFocusHidden" SourceName="menu">
+      <BeginStoryboard Storyboard="{StaticResource fadeOutVerticalMenu}"/>
+    </EventTrigger>
+    <!-- trigger to start fading in the vertical menu when it receives focus-->
+    <EventTrigger RoutedEvent="controls:Menu.OnFocusVisible" SourceName="menu">
+      <BeginStoryboard Storyboard="{StaticResource fadeInVerticalMenu}"/>
+    </EventTrigger>
+
+    <!-- trigger to start fading in the horizontal menu when it receives focus-->
+    <EventTrigger RoutedEvent="controls:Menu.OnFocusHidden" SourceName="menu">
+      <BeginStoryboard Storyboard="{StaticResource fadeInHorizontalMenu}"/>
+    </EventTrigger>
+    <!-- trigger to start fading out the vertical menu when it looses focus-->
+    <EventTrigger RoutedEvent="controls:Menu.OnFocusVisible" SourceName="menu">
+      <BeginStoryboard Storyboard="{StaticResource fadeOutHorizontalMenu}"/>
+    </EventTrigger>
+
+
   </Grid.Triggers>
   <Grid.ColumnDefinitions>
     <ColumnDefinition/>
@@ -113,7 +236,21 @@
   <Grid ClipToBounds="False" x:Name="gridFocusItem" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="{Binding ElementName=menu, Path=FocusedMargin, Mode=OneWay}">
     <Rectangle x:Name="rectFocusMenuItem" Width="200" Fill="{StaticResource MpButtonBrush}" Height="34" Stroke="#002866BD" RadiusX="4" RadiusY="4" HorizontalAlignment="Stretch" Visibility="{Binding ElementName=menu, Path=FocusedVisible, Mode=OneWay}"/>
   </Grid>
-  <Grid ClipToBounds="True"  Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Grid.RowSpan="2">
+  <Grid ClipToBounds="True" x:Name="gridMenu"   Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Grid.RowSpan="2">
+    <Grid.OpacityMask>
+      <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+        <GradientStop Color="#FF000000" Offset="0"/>
+        <GradientStop Color="#FFFFFFFF" Offset="1"/>
+      </LinearGradientBrush>
+    </Grid.OpacityMask>
+    <Grid.RenderTransform>
+      <TransformGroup>
+        <ScaleTransform ScaleX="1" ScaleY="1"/>
+        <SkewTransform AngleX="0" AngleY="0"/>
+        <RotateTransform Angle="0"/>
+        <TranslateTransform X="0" Y="0"/>
+      </TransformGroup>
+    </Grid.RenderTransform>
     <controls:Menu x:Name="menu" Width="200"  FocusElement="{Binding ElementName=gridFocusItem}"  ItemsSource="{Binding Path=Items}" Command="{Binding Path=Launch}" CommandParameter="{Binding Path=Items.CurrentItem}" ItemTemplate="{StaticResource menuTemplate}"  >
       <controls:Menu.OpacityMask>
         <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
@@ -126,5 +263,19 @@
     </controls:Menu>
   </Grid>
   <controls:ListBox x:Name="subListBox"  Command="{Binding Path=Launch}" CommandParameter="{Binding ElementName=subListBox, Path=SelectedItem, Mode=OneWay}" Style="{StaticResource MpListViewHorizontal}" ItemContainerStyle="{StaticResource MpMenuListViewItem}" ItemTemplate="{StaticResource subMenuTemplate}" ItemsSource="{Binding ElementName=menu, Path=SubMenu, Mode=OneWay}" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Center">
+    <controls:ListBox.OpacityMask>
+      <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+        <GradientStop Color="#FF000000" Offset="0"/>
+        <GradientStop Color="#FFFFFFFF" Offset="1"/>
+      </LinearGradientBrush>
+    </controls:ListBox.OpacityMask>
+    <controls:ListBox.RenderTransform>
+      <TransformGroup>
+        <ScaleTransform ScaleX="1" ScaleY="1"/>
+        <SkewTransform AngleX="0" AngleY="0"/>
+        <RotateTransform Angle="0"/>
+        <TranslateTransform X="0" Y="0"/>
+      </TransformGroup>
+    </controls:ListBox.RenderTransform>
   </controls:ListBox>
 </Grid>
