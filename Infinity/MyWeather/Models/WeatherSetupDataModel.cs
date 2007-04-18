@@ -35,54 +35,6 @@ using System.ComponentModel;
 
 namespace MyWeather
 {
-    #region City Class
-    /// <summary>
-    /// holds Information on the City
-    /// </summary>
-    public class City
-    {
-        private string _name;
-        private string _id;
-
-        public City(string name, string id)
-        {
-            this._name = name;
-            this._id = id;
-        }
-
-        /// <summary>
-        /// Get the Name of the City
-        /// </summary>
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
-
-        /// <summary>
-        /// Get the Location ID
-        /// </summary>
-        public string Id
-        {
-            get
-            {
-                return _id;
-            }
-        }
-        
-        /// <summary>
-        /// output
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
-    #endregion
-
     #region WeatherSetupDataModel
     /// <summary>
     /// Summary description for Weather.
@@ -109,6 +61,18 @@ namespace MyWeather
             {
                 return _locations;
             }
+            set
+            {
+                if (value != null)
+                {
+                    _locations = (List<City>)value;
+                    // update
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs("Locations"));
+                    }
+                }
+            }
         }
         
         /// <summary>
@@ -120,7 +84,7 @@ namespace MyWeather
             // add if not already added
             foreach (City c in _locations)
             {
-                if (c.Id.Equals(city.Id))
+                if (c!=null && c.Id.Equals(city.Id))
                     return;
             }
 

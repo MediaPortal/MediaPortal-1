@@ -50,7 +50,22 @@ namespace MyWeather
             _labelError = "";
             _searchLocation = "";
             _dataModelSearch = new WeatherSetupSearchDataModel();
+            // Load Settings and look if  there are any locations set already
+            WeatherSettings settings = new WeatherSettings();
+            ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
             _dataModel = new WeatherSetupDataModel();
+            if (settings.LocationsList != null)
+            {
+                foreach (City c in settings.LocationsList)
+                {
+                    if (c != null)
+                    {
+                        System.Windows.MessageBox.Show(c.Name);
+                        _dataModel.AddCity(c);
+                    }
+                }
+                ChangeProperty("LocationsAdded");
+            }
             _citiesCollView = new LocationCollectionView(_dataModelSearch);
             _citiesAddedView = new LocationCollectionView(_dataModel);
         }
@@ -426,7 +441,7 @@ namespace MyWeather
 
                 foreach (City c in l)
                 {
-                    settings.LocationsList.Add(c.Id);
+                    settings.LocationsList.Add(c);
                 }
                 if (l.Count > 0)
                     settings.LocationCode = l[0].Id;

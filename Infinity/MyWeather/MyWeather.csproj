@@ -63,6 +63,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helper Classes\City.cs" />
     <Compile Include="Helper Classes\Helper.cs" />
     <Compile Include="Models\WeatherSetupDataModel.cs" />
     <Compile Include="Models\WeatherSetupSearchDataModel.cs" />

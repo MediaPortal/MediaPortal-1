@@ -104,7 +104,7 @@ namespace MyWeather
 
         // Private Variables
         string _settingsPath = "configuration.xml";
-        List<string> _locationCodes;
+        List<City> _locationCodes;
         string _temperatureFarenheit = "C";
         string _windSpeed = "K";
         string unitTemperature = String.Empty;
@@ -138,10 +138,10 @@ namespace MyWeather
             // update variables from settings
             LoadSettings();
             // download weather for each location
-            foreach (string loc in _locationCodes)
+            foreach (City loc in _locationCodes)
             {
-                file = String.Format(_parsefileLocation, loc);
-                Download(loc, file);
+                file = String.Format(_parsefileLocation, loc.Id);
+                Download(loc.Id, file);
                 ParseFile(file);
             }
             return true;
