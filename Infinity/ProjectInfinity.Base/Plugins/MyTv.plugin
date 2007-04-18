@@ -29,11 +29,11 @@
 		          class = "MyTv.TvGuide"/>
     <MenuItem id    = "Scheduled"
 		          label = "@mytv:5"
-              image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
+              image = "pack://siteoforigin:,,,/skin/default/gfx/scheduledtv.png"
 		          class = "MyTv.TvScheduled"/>
     <MenuItem id    = "Recorded"
 		          label = "@mytv:6"
-              image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
+              image = "pack://siteoforigin:,,,/skin/default/gfx/recordedtv.png"
 		          class = "MyTv.TvRecorded"/>
   </Path>
 </Plugin>
