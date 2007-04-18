@@ -6,12 +6,13 @@
     <!-- style for the button used in the vertical menu's items-->
     <Style x:Key="MpMenuButton" TargetType="Button">
       <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+      <Setter Property="SnapsToDevicePixels" Value="False"/>
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate  TargetType="{x:Type Button}">
-            <Grid x:Name="grid" Margin="0,2,0,2" >
+            <Grid x:Name="grid" Margin="0,2,0,2" SnapsToDevicePixels="False">
               <Rectangle Fill="{StaticResource MpMenuButtonBrush}" Stroke="#002866BD" RadiusX="4" RadiusY="4" HorizontalAlignment="Stretch" Margin="0,0,0,0" x:Name="shine" Width="Auto"/>
-              <ContentPresenter  Margin="10,0,10,0"   HorizontalAlignment="Right" VerticalAlignment="Center"  x:Name="contentPresenter" TextElement.FontFamily="Segoe Media Center" TextElement.FontSize="26" TextElement.Foreground="White"  >
+              <ContentPresenter  Margin="10,0,10,0"  SnapsToDevicePixels="False" HorizontalAlignment="Right" VerticalAlignment="Center"  x:Name="contentPresenter" TextElement.FontFamily="Segoe Media Center" TextElement.FontSize="26" TextElement.Foreground="White"  >
               </ContentPresenter>
             </Grid>
           </ControlTemplate>
@@ -79,7 +80,7 @@
 
     <!-- data template for the items in the vertical menu-->
     <DataTemplate x:Key="menuTemplate" >
-      <Button x:Name="button"   ClipToBounds="True" Content="{Binding Path=Label}" Style="{StaticResource MpMenuButton}" HorizontalAlignment="Stretch"/>
+      <Button x:Name="button"  SnapsToDevicePixels="False"  ClipToBounds="True" Content="{Binding Path=Label}" Style="{StaticResource MpMenuButton}" HorizontalAlignment="Stretch"/>
     </DataTemplate>
 
     <!-- data template for the item in the horizontal menu-->

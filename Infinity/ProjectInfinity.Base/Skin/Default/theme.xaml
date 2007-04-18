@@ -831,7 +831,7 @@
 
           <Grid x:Name="grid" Margin="0,2,0,2" >
             <Rectangle Fill="{StaticResource MpSubMenuButtonBrush}" Stroke="Transparent" RadiusX="4" RadiusY="4" HorizontalAlignment="Stretch" Margin="0,0,0,0" x:Name="shine" Width="Auto"/>
-            <ContentPresenter FocusManager.IsFocusScope="False" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" Content="{TemplateBinding ContentControl.Content}" />
+            <ContentPresenter SnapsToDevicePixels="False" FocusManager.IsFocusScope="False" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" Content="{TemplateBinding ContentControl.Content}" />
           </Grid>
           <ControlTemplate.Triggers>
             <Trigger Property="IsKeyboardFocused" Value="True">
