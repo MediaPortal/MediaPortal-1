@@ -41,6 +41,7 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnimationBehaviors.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="DataGrid.cs" />
     <Compile Include="DataGridCell.cs" />
