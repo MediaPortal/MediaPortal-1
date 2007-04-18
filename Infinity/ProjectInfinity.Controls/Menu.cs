@@ -404,10 +404,7 @@ namespace ProjectInfinity.Controls
     {
       if (e.Key == Key.Left || e.Key == Key.Right)
       {
-        if (IsMouseOver)
-        {
           _mouseEntered = false;
-        }
       }
       if (e.Key == Key.Up)
       {
