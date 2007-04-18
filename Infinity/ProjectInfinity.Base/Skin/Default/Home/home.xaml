@@ -268,7 +268,7 @@
     </controls:Menu>
   </Grid>
   <!-- label showing selected item from main menu -->
-  <Label x:Name="labelSelectedItem" Visibility="{Binding ElementName=menu, Path=FocusedHidden, Mode=OneWay}" Content="{Binding ElementName=menu, Path=SelectedItem.Label, Mode=OneWay}" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource Label50Style}"/>
+  <Label x:Name="labelSelectedItem" Visibility="{Binding ElementName=menu, Path=FocusedHidden, Mode=OneWay}" Content="{Binding ElementName=menu, Path=SelectedItem.Label, Mode=OneWay}" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2"  HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource Label50Style}"/>
   <!-- horizontal menu -->
   <controls:ListBox x:Name="subListBox"  Command="{Binding Path=Launch}" CommandParameter="{Binding ElementName=subListBox, Path=SelectedItem, Mode=OneWay}" Style="{StaticResource MpListViewHorizontal}" ItemContainerStyle="{StaticResource MpMenuListViewItem}" ItemTemplate="{StaticResource subMenuTemplate}" ItemsSource="{Binding ElementName=menu, Path=SubMenu, Mode=OneWay}" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Center">
     <controls:ListBox.OpacityMask>
