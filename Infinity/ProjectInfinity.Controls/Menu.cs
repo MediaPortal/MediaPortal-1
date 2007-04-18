@@ -362,6 +362,7 @@ namespace ProjectInfinity.Controls
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
       base.OnRenderSizeChanged(sizeInfo);
+
       LayoutMenu();
     }
     void LayoutMenu()
@@ -385,6 +386,11 @@ namespace ProjectInfinity.Controls
         selected = _mouseSelectedItem;
       else if (_mouseSelectedItem >= 0)
         selected = _mouseSelectedItem;
+
+      if (selected >= maxRows + 2)
+      {
+        selected=(maxRows) / 2;
+      }
       _currentSelectedItem = selected;
       _mouseSelectedItem = selected;
       for (int i = -1; i < maxRows + 2; ++i)
@@ -548,7 +554,7 @@ namespace ProjectInfinity.Controls
     }
     protected override void OnMouseMove(MouseEventArgs e)
     {
-      Point point = Mouse.GetPosition(this);
+      Point point = Mouse.GetPosition(Window.GetWindow(this));
       if (_waitForMouseMove )
       {
         if (Math.Abs(point.X - _previousMousePoint.X) >= 10 || Math.Abs(point.Y - _previousMousePoint.Y)>=10)
