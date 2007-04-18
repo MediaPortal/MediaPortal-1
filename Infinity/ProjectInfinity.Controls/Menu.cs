@@ -402,6 +402,13 @@ namespace ProjectInfinity.Controls
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
+      if (e.Key == Key.Left || e.Key == Key.Right)
+      {
+        if (IsMouseOver)
+        {
+          _mouseEntered = false;
+        }
+      }
       if (e.Key == Key.Up)
       {
         OnScrollDown();
