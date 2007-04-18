@@ -362,10 +362,11 @@ namespace MyTv
     /// returns whether tv is turned on or off
     /// </summary>
     /// <value>The tv on off.</value>
-    public bool? TvOnOff
+    public bool TvOnOff
     {
       get
       {
+        ServiceScope.Get<ILogger>().Info("Get tvonOff enabled:{0}", (ServiceScope.Get<IPlayerCollectionService>().Count>0));
         return (ServiceScope.Get<IPlayerCollectionService>().Count > 0);
       }
     }
@@ -710,6 +711,7 @@ namespace MyTv
           _viewModel.ChangeProperty("TvOnOff");
         }
         _playParameter = parameter as PlayParameter;
+        ServiceScope.Get<ILogger>().Info("Playcommand:execute play {0}", _playParameter.FileName);
         TvMediaPlayer player = new TvMediaPlayer(_playParameter.Card, _playParameter.FileName);
         ServiceScope.Get<IPlayerCollectionService>().Add(player);
         player.MediaFailed += new EventHandler<MediaExceptionEventArgs>(_mediaPlayer_MediaFailed);
@@ -720,10 +722,12 @@ namespace MyTv
 
       void player_MediaOpened(object sender, EventArgs e)
       {
+        ServiceScope.Get<ILogger>().Info("Playcommand:media opened event");
         _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerOpenDelegate(OnMediaOpened));
       }
       void OnMediaOpened()
       {
+        ServiceScope.Get<ILogger>().Info("Playcommand:OnMediaOpened()");
         _viewModel.ChangeProperty("VideoBrush");
         _viewModel.ChangeProperty("FullScreen");
         _viewModel.ChangeProperty("IsVideoPresent");
@@ -736,10 +740,12 @@ namespace MyTv
       }
       void _mediaPlayer_MediaFailed(object sender, MediaExceptionEventArgs e)
       {
+        ServiceScope.Get<ILogger>().Info("Playcommand:media failed event");
         _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
       }
       void OnMediaPlayerError()
       {
+        ServiceScope.Get<ILogger>().Info("Playcommand:OnMediaPlayerError()");
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
           TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
@@ -784,6 +790,7 @@ namespace MyTv
       public override void Execute(object parameter)
       {
         Channel channel = parameter as Channel;
+        ServiceScope.Get<ILogger>().Info("TimeShiftCommand:timeshift:{0}", channel.Name);
         StartTimeShiftingDelegate starter = new StartTimeShiftingDelegate(this.StartTimeShiftingBackGroundWorker);
         starter.BeginInvoke(channel, null, null);
       }
@@ -802,7 +809,9 @@ namespace MyTv
         User user = new User();
         TvResult succeeded = TvResult.Succeeded;
         ServiceScope.Get<ITvChannelNavigator>().SelectedChannel = channel;
+        ServiceScope.Get<ILogger>().Info("TimeShiftCommand:start");
         succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+        ServiceScope.Get<ILogger>().Info("TimeShiftCommand:timeshifting started");
 
         // Schedule the update function in the UI thread.
         _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new EndTimeShiftingDelegate(OnStartTimeShiftingResult), succeeded, card);
@@ -1215,11 +1224,11 @@ namespace MyTv
           _viewModel.ChangeProperty("VideoBrush");
           _viewModel.ChangeProperty("FullScreen");
           _viewModel.ChangeProperty("IsVideoPresent");
-          _viewModel.ChangeProperty("TvOnOff");
           if (ServiceScope.Get<ITvChannelNavigator>().Card != null)
           {
             ServiceScope.Get<ITvChannelNavigator>().Card.StopTimeShifting();
           }
+          _viewModel.ChangeProperty("TvOnOff");
         }
         else
         {
@@ -1229,6 +1238,7 @@ namespace MyTv
             ICommand cmd = _viewModel.TimeShift;
             cmd.Execute(ServiceScope.Get<ITvChannelNavigator>().SelectedChannel);
           }
+          _viewModel.ChangeProperty("TvOnOff");
         }
       }
     }

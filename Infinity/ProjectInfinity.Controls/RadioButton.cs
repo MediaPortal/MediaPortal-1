@@ -16,11 +16,44 @@ namespace ProjectInfinity.Controls
     {
       if (e.Key == Key.Enter)
       {
+        if (Command != null)
+        {
+          RoutedCommand routedCommand = Command as RoutedCommand;
+          if (routedCommand != null)
+          {
+            routedCommand.Execute(CommandParameter, CommandTarget);
+          }
+          else
+          {
+            Command.Execute(CommandParameter);
+          }
+          e.Handled = true;
+          return;
+        }
         IsChecked = !IsChecked;
         e.Handled = true;
         return;
       }
       base.OnKeyDown(e);
+    }
+    protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
+    {
+      if (Command != null)
+      {
+        RoutedCommand routedCommand = Command as RoutedCommand;
+        if (routedCommand != null)
+        {
+          routedCommand.Execute(CommandParameter, CommandTarget);
+        }
+        else
+        {
+          Command.Execute(CommandParameter);
+        }
+        e.Handled = true;
+        return;
+      }
+
+      base.OnPreviewMouseLeftButtonDown(e);
     }
   }
 }
