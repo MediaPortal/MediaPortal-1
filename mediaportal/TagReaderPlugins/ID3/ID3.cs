@@ -360,7 +360,7 @@ namespace ID3
       int currentLength = 0;
       long startingStreamPosition = s.Position;
 
-      while (currentLength < ID3v2TagSize)
+      while (!frameReadException)
       {
         ID3Frame frame;
 
@@ -378,7 +378,6 @@ namespace ID3
 
         catch (Exception)
         {
-          Log.Warn("File contains invalid ID3 Tags. Please use a Tag Editor to correct the tags.: {0}", s.Name);
           frameReadException = true;
           break;
         }
