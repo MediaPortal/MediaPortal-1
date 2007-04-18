@@ -1790,6 +1790,7 @@ namespace MediaPortal.GUI.Music
                 tag.Title = song.Title;
                 tag.Track = song.Track;
                 tag.Rating = song.Rating;
+                tag.Year = song.Year;
               }
             }//if (strExtension!=".cda" )
             else // int_20h: if it is .cda then get info from freedb
