@@ -32,6 +32,7 @@ using ProjectInfinity.Settings;
 using ProjectInfinity.Logging;
 using ProjectInfinity;
 using ProjectInfinity.Localisation;
+using System.Collections.Generic;
 
 namespace MyWeather
 {
@@ -103,12 +104,13 @@ namespace MyWeather
 
         // Private Variables
         string _settingsPath = "configuration.xml";
-        string _locationCode = "";
+        List<string> _locationCodes;
         string _temperatureFarenheit = "C";
         string _windSpeed = "K";
         string unitTemperature = String.Empty;
         string unitSpeed = String.Empty;
-
+        string _parsefileLocation = String.Empty;
+        bool _skipConnectionTest;
 
         // Public Variables
         public LocInfo LocalInfo;
@@ -132,14 +134,17 @@ namespace MyWeather
         /// <returns>success state</returns>
         public bool Update()
         {
-            WeatherSettings setting = new WeatherSettings();
-            ServiceScope.Get<ISettingsManager>().Load(setting, _settingsPath);
-            string weatherFile = setting.ParsefileLocation;
-            if (Download(weatherFile))
+            string file;
+            // update variables from settings
+            LoadSettings();
+            // download weather for each location
+            foreach (string loc in _locationCodes)
             {
-                if (ParseFile(weatherFile)) return true;
+                file = String.Format(_parsefileLocation, loc);
+                Download(loc, file);
+                ParseFile(file);
             }
-            return false;
+            return true;
         }
         #endregion
 
@@ -154,26 +159,9 @@ namespace MyWeather
             ServiceScope.Get<ISettingsManager>().Load(settings, _settingsPath);
             _temperatureFarenheit = settings.TemperatureFahrenheit;
             _windSpeed = settings.WindSpeed;
-            _locationCode = settings.LocationCode;
-        }
-
-        /// <summary>
-        /// dll Import to check Internet Connection
-        /// </summary>
-        /// <param name="Description"></param>
-        /// <param name="ReservedValue"></param>
-        /// <returns></returns>
-        [DllImport("wininet.dll")]
-        private extern static bool InternetGetConnectedState(out int Description, int ReservedValue);
-
-        /// <summary>
-        /// check if we have an Internetconnection
-        /// </summary>
-        /// <param name="code"></param>
-        /// <returns>true if Internetconnection is available</returns>
-        public static bool IsConnectedToInternet(ref int code)
-        {
-            return InternetGetConnectedState(out code, 0);
+            _locationCodes = settings.LocationsList;
+            _skipConnectionTest = settings.SkipConnectionTest;
+            _parsefileLocation = settings.ParsefileLocation;
         }
 
         /// <summary>
@@ -181,25 +169,23 @@ namespace MyWeather
         /// </summary>
         /// <param name="weatherFile">xml file to be downloaded to</param>
         /// <returns>success status</returns>
-        bool Download(string weatherFile)
+        bool Download(string locationCode, string weatherFile)
         {
             string url;
+            // update variables from the settings
+            LoadSettings();
 
-            bool skipConnectionTest = false;
-            WeatherSettings settings = new WeatherSettings();
-            ServiceScope.Get<ISettingsManager>().Load(settings, _settingsPath);
-            skipConnectionTest = settings.SkipConnectionTest;
-            ServiceScope.Get<ILogger>().Info("WeatherForecast.SkipConnectionTest: {0}", skipConnectionTest);
+            ServiceScope.Get<ILogger>().Info("WeatherForecast.SkipConnectionTest: {0}", _skipConnectionTest);
 
             int code = 0;
             
-            if (!IsConnectedToInternet(ref code))
+            if (!Helper.IsConnectedToInternet(ref code))
             {
                 if (System.IO.File.Exists(weatherFile)) return true;
 
                 ServiceScope.Get<ILogger>().Info("WeatherForecast.Download: No internet connection {0}", code);
 
-                if (skipConnectionTest == false)
+                if (_skipConnectionTest == false)
                     return false;
             }
 
@@ -210,7 +196,7 @@ namespace MyWeather
                 c_units = 'm';
 
             url = String.Format("http://xoap.weather.com/weather/local/{0}?cc=*&unit={1}&dayf=4&prod=xoap&par={2}&key={3}",
-              _locationCode, c_units.ToString(), PARTNER_ID, PARTNER_KEY);
+                                locationCode, c_units.ToString(), PARTNER_ID, PARTNER_KEY);
 
             using (WebClient client = new WebClient())
             {
@@ -234,6 +220,7 @@ namespace MyWeather
         /// <returns>success state</returns>
         bool ParseFile(string weatherFile)
         {
+            if(!System.IO.File.Exists(weatherFile)) return false;
             XmlDocument doc = new XmlDocument();
             doc.Load(weatherFile);
             if (doc.DocumentElement == null) return false;

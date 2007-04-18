@@ -207,13 +207,13 @@
 		<String id="0">My Pictures</String>
 	</Section>
 	- <Section name="myweather.config">
-		<String id="0">Setup Weather Location</String>
+		<String id="0">setup weather</String>
 		<String id="1">Search</String>
 		<String id="2">Please enter the name of your city</String>
 		<String id="3">Please select your City...</String>
 		<String id="4">No cities found!</String>
 		<String id="5">Add</String>
-		<String id="6">Save</String>
+		<String id="6">OK</String>
 	</Section>
 	- <Section name="myweather">
 		<String id="0">My Weather</String>

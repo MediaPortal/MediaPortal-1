@@ -333,6 +333,16 @@ namespace MyWeather
             try
             {
                 //
+                // Check for Internetconnection
+                //
+                int code = 0;
+                if(!Helper.IsConnectedToInternet(ref code))
+                {
+                    LabelError = "Failed to perform city search, make sure you are connected to the internet.";
+                    return;
+                }
+
+                //
                 // Perform actual search
                 //
                 WeatherSetupDataModel weather = new WeatherSetupDataModel();
@@ -424,7 +434,7 @@ namespace MyWeather
                 ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xml");
 
                 // navigate back to weather screen
-                ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyWeather;component/Weather.xaml", UriKind.Relative));
+                ServiceScope.Get<INavigationService>().GoBack();
             }
 
             #endregion

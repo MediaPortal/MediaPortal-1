@@ -28,15 +28,15 @@ namespace MyWeather
         /// <summary>
         /// Scope and default value attribute
         /// </summary>
-        // RefreshInterval in Millisecs
-        [Setting(SettingScope.User, "60000")]
+        // RefreshInterval in Seconds
+        [Setting(SettingScope.User, "600")]
         public int RefreshInterval
         {
             get { return this._refreshInterval; }
             set { this._refreshInterval = value; }
         }
-        // Location of the XML file to parse to
-        [Setting(SettingScope.User, "c:\\xmlWeather.xml")]
+        // Location of the XML files to parse to
+        [Setting(SettingScope.User, "Media/Weather/location{0}.xml")]
         public string ParsefileLocation
         {
             get { return this._parseFileLocation; }

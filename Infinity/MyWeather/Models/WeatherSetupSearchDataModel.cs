@@ -112,7 +112,6 @@ namespace MyWeather
                 //
                 throw new ApplicationException("Failed to perform city search, make sure you are connected to the internet.");
             }
-
         }
 
         public string UrlEncode(string instring)

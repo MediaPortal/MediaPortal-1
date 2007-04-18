@@ -90,7 +90,7 @@ namespace MyWeather
         {
             if (e.Key == Key.Escape)
             {
-                NavigationService.GoBack();
+                ServiceScope.Get<INavigationService>().GoBack();
                 e.Handled = true;
                 return;
             }
