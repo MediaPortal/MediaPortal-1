@@ -20,11 +20,20 @@ using System.Windows.Shapes;
 
 namespace ProjectInfinity.Controls
 {
-  public class Menu : System.Windows.Controls.Canvas
+  public class Menu : System.Windows.Controls.Canvas, INotifyPropertyChanged
   {
     const int BUTTONHEIGHT = 40;
+    public event PropertyChangedEventHandler PropertyChanged;
 
     #region properties
+    public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register("SelectedItem",
+                                                                                            typeof(MenuItem),
+                                                                                            typeof(Menu),
+                                                                                            new FrameworkPropertyMetadata
+                                                                                              (null,
+                                                                                               new PropertyChangedCallback
+                                                                                                 (SelectedItemPropertyChanged)));
+
     public static readonly DependencyProperty FocusElementProperty = DependencyProperty.Register("FocusElement",
                                                                                             typeof(FrameworkElement),
                                                                                             typeof(Menu),
@@ -41,6 +50,13 @@ namespace ProjectInfinity.Controls
                                                                                                new PropertyChangedCallback
                                                                                                  (FocusedVisiblePropertyChanged)));
 
+    public static readonly DependencyProperty FocusedHiddenProperty = DependencyProperty.Register("FocusedHidden",
+                                                                                            typeof(object),
+                                                                                            typeof(Menu),
+                                                                                            new FrameworkPropertyMetadata
+                                                                                              (null,
+                                                                                               new PropertyChangedCallback
+                                                                                                 (FocusedHiddenPropertyChanged)));
 
 
     public static readonly DependencyProperty FocusedMarginProperty = DependencyProperty.Register("FocusedMargin",
@@ -117,6 +133,8 @@ namespace ProjectInfinity.Controls
     int _mouseSelectedItem = -1;
     int _currentSelectedItem = 0;
     bool _mouseEventsEnabled = true;
+    bool _waitForMouseMove = false;
+    Point _previousMousePoint;
     #endregion
 
     #region ctor
@@ -159,15 +177,54 @@ namespace ProjectInfinity.Controls
       {
         if (value != FocusedVisible)
         {
+          Visibility vis = (Visibility)value;
           SetValue(FocusedVisibleProperty, value);
           RoutedEventArgs args = new RoutedEventArgs();
-          if (((Visibility)value) == Visibility.Visible)
+          if (vis == Visibility.Visible)
             args.RoutedEvent = Menu.FocusVisibleEvent;
           else
             args.RoutedEvent = Menu.FocusHiddenEvent;
           args.Source = this;
           RaiseEvent(args);
+          if (vis == Visibility.Visible)
+            FocusedHidden = Visibility.Hidden;
+          else
+            FocusedHidden = Visibility.Visible;
         }
+      }
+    }
+
+    private static void FocusedHiddenPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+      //(dependencyObject as Menu).FocusedHidden = (Visibility)(e.NewValue);
+    }
+
+    public object FocusedHidden
+    {
+      get
+      {
+        if (GetValue(FocusedHiddenProperty) == null) return null;
+        return (Visibility)GetValue(FocusedHiddenProperty);
+      }
+      set
+      {
+        SetValue(FocusedHiddenProperty, value);
+      }
+    }
+    private static void SelectedItemPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+      //(dependencyObject as Menu).FocusElement = (MenuItem)(e.NewValue);
+    }
+
+    public MenuItem SelectedItem
+    {
+      get
+      {
+        return (MenuItem)GetValue(SelectedItemProperty);
+      }
+      set
+      {
+        SetValue(SelectedItemProperty, value);
       }
     }
     private static void FocusElementPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
@@ -348,6 +405,7 @@ namespace ProjectInfinity.Controls
         if (selected == i)
         {
           ItemsSource.CurrentItem = menuItem;
+          SelectedItem = menuItem;
           this.FocusedMargin = new Thickness(0, yoffset, 0, 0);
 
           SubMenu = menuItem.SubMenus;
@@ -359,6 +417,10 @@ namespace ProjectInfinity.Controls
       }
       Keyboard.Focus(this.Children[selected]);
       _mouseEventsEnabled = true;
+      if (PropertyChanged != null)
+      {
+        PropertyChanged(this, new PropertyChangedEventArgs("SelectedItem"));
+      }
 
     }
     #region keyboard
@@ -404,7 +466,8 @@ namespace ProjectInfinity.Controls
     {
       if (e.Key == Key.Left || e.Key == Key.Right)
       {
-          _mouseEntered = false;
+        _waitForMouseMove = true;
+        _mouseEntered = false;
       }
       if (e.Key == Key.Up)
       {
@@ -485,6 +548,20 @@ namespace ProjectInfinity.Controls
     }
     protected override void OnMouseMove(MouseEventArgs e)
     {
+      Point point = Mouse.GetPosition(this);
+      if (_waitForMouseMove )
+      {
+        if (Math.Abs(point.X - _previousMousePoint.X) >= 10 || Math.Abs(point.Y - _previousMousePoint.Y)>=10)
+        {
+          _waitForMouseMove = false;
+        }
+        else
+        {
+          e.Handled = true;
+          return;
+        }
+      }
+      _previousMousePoint = point;
       if (_mouseEntered && _mouseEventsEnabled)
       {
         int selectedItemNr = -1;
@@ -507,6 +584,11 @@ namespace ProjectInfinity.Controls
     }
     protected override void OnMouseEnter(MouseEventArgs e)
     {
+      if (_waitForMouseMove)
+      {
+        e.Handled = true;
+        return;
+      }
       _mouseEntered = true;
       base.OnMouseEnter(e);
     }
