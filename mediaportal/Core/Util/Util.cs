@@ -2111,6 +2111,11 @@ namespace MediaPortal.Util
               {
                 System.IO.File.Delete(fileName);
               }
+              //delete comskip txt file
+              if (fileName.ToLower().IndexOf(".txt") >= 0)
+              {
+                System.IO.File.Delete(fileName);
+              }
             }
           }
           catch (Exception) { }
