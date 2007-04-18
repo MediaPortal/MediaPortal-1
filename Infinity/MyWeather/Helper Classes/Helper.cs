@@ -26,5 +26,31 @@ namespace MyWeather
             return InternetGetConnectedState(out code, 0);
         }
 
+        /// <summary>
+        /// this will take the CityProviderInfo Object and turn it to a
+        /// City object by adding empty data
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public static City CityInfoToCityObject(CitySetupInfo info)
+        {
+            return new City(info);
+        }
+
+        /// <summary>
+        /// this will create a new list of cities, that
+        /// already hold the providerinformation
+        /// </summary>
+        /// <param name="cpiList"></param>
+        /// <returns></returns>
+        public static List<City> CityInfoListToCityObjectList(List<CitySetupInfo> cpiList)
+        {
+            List<City> cList = new List<City>();
+            foreach (CitySetupInfo cpi in cpiList)
+            {
+                cList.Add(new City(cpi));
+            }
+            return cList;
+        }
     }
 }

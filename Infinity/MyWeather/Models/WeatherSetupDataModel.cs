@@ -41,7 +41,7 @@ namespace MyWeather
     /// </summary>
     public class WeatherSetupDataModel : INotifyPropertyChanged
     {
-        protected List<City> _locations = new List<City>();
+        protected List<CitySetupInfo> _locations = new List<CitySetupInfo>();
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace MyWeather
             {
                 if (value != null)
                 {
-                    _locations = (List<City>)value;
+                    _locations = (List<CitySetupInfo>)value;
                     // update
                     if (PropertyChanged != null)
                     {
@@ -79,12 +79,12 @@ namespace MyWeather
         /// adds a new city to the model
         /// </summary>
         /// <param name="city"></param>
-        public void AddCity(City city)
+        public void AddCity(CitySetupInfo city)
         {
             // add if not already added
-            foreach (City c in _locations)
+            foreach (CitySetupInfo c in _locations)
             {
-                if (c!=null && c.Id.Equals(city.Id))
+                if (c!=null && c.id.Equals(city.id))
                     return;
             }
 
@@ -101,7 +101,7 @@ namespace MyWeather
         /// removes a city from the model
         /// </summary>
         /// <param name="city"></param>
-        public void RemoveCity(City city)
+        public void RemoveCity(CitySetupInfo city)
         {
             _locations.Remove(city);
             if (PropertyChanged != null)

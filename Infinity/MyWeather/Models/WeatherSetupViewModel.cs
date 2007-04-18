@@ -28,13 +28,13 @@ namespace MyWeather
         #region variables
         string _labelError;
         ICommand _saveCommand;
-        ICommand _searchCommand;            // Opens a Popup Menu
-        ICommand _searchCommandAlt;         // Does not open the Popup Menu
-        ICommand _addLocation;              // Adds the selected Location to a list (LocationsAdded)
-        string _searchLocation;             // the location we type in for searching
-        string _selectedLocation;           // the name of the selected found location
-        string _selectedLocationId;         // the id -"-
-        City _selectedLocationTyped;        // the selected found location as City type
+        ICommand _searchCommand;                        // Opens a Popup Menu
+        ICommand _searchCommandAlt;                     // Does not open the Popup Menu
+        ICommand _addLocation;                          // Adds the selected Location to a list (LocationsAdded)
+        string _searchLocation;                         // the location we type in for searching
+        string _selectedLocation;                       // the name of the selected found location
+        string _selectedLocationId;                     // the id -"-
+        CitySetupInfo _selectedLocationTyped;        // the selected found location as City type
         Visibility _visibleAfterSelection;
         LocationCollectionView _citiesCollView;
         LocationCollectionView _citiesAddedView;
@@ -50,22 +50,23 @@ namespace MyWeather
             _labelError = "";
             _searchLocation = "";
             _dataModelSearch = new WeatherSetupSearchDataModel();
-            // Load Settings and look if  there are any locations set already
+            // Load Settings and look if  there are any locations set already.
+            // if so, update the datamodel
             WeatherSettings settings = new WeatherSettings();
             ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
             _dataModel = new WeatherSetupDataModel();
             if (settings.LocationsList != null)
             {
-                foreach (City c in settings.LocationsList)
+                foreach (CitySetupInfo c in settings.LocationsList)
                 {
                     if (c != null)
                     {
-                        System.Windows.MessageBox.Show(c.Name);
                         _dataModel.AddCity(c);
                     }
                 }
                 ChangeProperty("LocationsAdded");
             }
+            // create Collectionviews...
             _citiesCollView = new LocationCollectionView(_dataModelSearch);
             _citiesAddedView = new LocationCollectionView(_dataModel);
         }
@@ -243,7 +244,7 @@ namespace MyWeather
         /// selected by the user
         /// </summary>
         /// <value>location name</value>
-        public City SelectedLocationTyped
+        public CitySetupInfo SelectedLocationTyped
         {
             get
             {
@@ -437,14 +438,14 @@ namespace MyWeather
                 // Save all locations to the Settings
                 WeatherSettings settings = new WeatherSettings();
                 settings.LocationsList.Clear();
-                List<City> l = (List<City>)_viewModel.LocationsAdded.SourceCollection;
+                List<CitySetupInfo> l = (List<CitySetupInfo>)_viewModel.LocationsAdded.SourceCollection;
 
-                foreach (City c in l)
+                foreach (CitySetupInfo c in l)
                 {
                     settings.LocationsList.Add(c);
                 }
                 if (l.Count > 0)
-                    settings.LocationCode = l[0].Id;
+                    settings.LocationCode = l[0].id;
                 // save
                 ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xml");
 
@@ -552,11 +553,11 @@ namespace MyWeather
                 _viewModel.SearchCities();
                 
                 // nothing found?
-                if (((List<City>)(_viewModel.Locations.SourceCollection)).Count == 0) return;
+                if (((List<CitySetupInfo>)(_viewModel.Locations.SourceCollection)).Count == 0) return;
 
-                foreach (City c in _viewModel.Locations.SourceCollection)
+                foreach (CitySetupInfo c in _viewModel.Locations.SourceCollection)
                 {
-                    dlgMenu.Items.Add(new DialogMenuItem(c.Name + ", " + c.Id));
+                    dlgMenu.Items.Add(new DialogMenuItem(c.name + ", " + c.id));
                 }
 
                 // show dialog menu
@@ -564,9 +565,9 @@ namespace MyWeather
                 if (dlgMenu.SelectedIndex < 0) return;    // no menu item selected
 
                 // get the id that belongs to the selected city and set the property
-                City buff = ((List<City>)(_viewModel.Locations.SourceCollection))[dlgMenu.SelectedIndex];
-                _viewModel.SelectedLocationId = buff.Id;
-                _viewModel.SelectedLocation = buff.Name;
+                CitySetupInfo buff = ((List<CitySetupInfo>)(_viewModel.Locations.SourceCollection))[dlgMenu.SelectedIndex];
+                _viewModel.SelectedLocationId = buff.id;
+                _viewModel.SelectedLocation = buff.name;
                 _viewModel.SelectedLocationTyped = buff;
                 _viewModel.VisibilityAfterSelection = Visibility.Visible;
             }

@@ -12,7 +12,7 @@ namespace MyWeather
     public class WeatherSettings
     {
         private int _refreshInterval;
-        private List<City> _locationsList = new List<City>();
+        private List<CitySetupInfo> _locationsList = new List<CitySetupInfo>();
         private string _parseFileLocation;
         private string _temperatureFahrenheit;
         private string _windSpeed;
@@ -67,7 +67,7 @@ namespace MyWeather
             set { this._skipConnectionTest = value; }
         }
         [Setting(SettingScope.User, "null")]
-        public List<City> LocationsList
+        public List<CitySetupInfo> LocationsList
         {
             get { return this._locationsList; }
             set { this._locationsList = value; }

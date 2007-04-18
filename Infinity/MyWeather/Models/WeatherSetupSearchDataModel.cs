@@ -97,7 +97,7 @@ namespace MyWeather
                         string name = node.InnerText;
                         string id = node.Attributes["id"].Value;
 
-                        _locations.Add(new City(name, id));
+                        _locations.Add(new CitySetupInfo(name, id));
                     }
                     if (SearchPropertyChanged != null)
                     {

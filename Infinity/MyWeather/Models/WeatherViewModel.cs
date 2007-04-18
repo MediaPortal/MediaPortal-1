@@ -15,17 +15,23 @@ using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
 using ProjectInfinity;
 using ProjectInfinity.Settings;
+using Dialogs;
 
 namespace MyWeather
 {
+    /// <summary>
+    /// ViewModel Class for Weather.xaml
+    /// </summary>
     public class WeatherViewModel : INotifyPropertyChanged
     {
         #region variables
         Window _window;
         Page _page;
         WeatherDataModel _dataModel;
+        City _currCity;
         ICommand _updateWeatherCommand;
-        ICommand _locationChangedCommand;
+        ICommand _changeLocationCommand;
+        List<City> _availableLocations;
 
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
@@ -42,30 +48,23 @@ namespace MyWeather
             _page = page;
             _window = Window.GetWindow(_page);
             // create the datamodel :)
-            _dataModel = new WeatherDataModel();
-            // update the data
-            _dataModel.Update();
-            // refresh the bindings
-            RefreshOnWeatherUpdate();
+            _dataModel = new WeatherDataModel(new WeatherDotComCatcher("configuration.xml"));
+            // load locations
+            LoadAvailableLocations();
         }
         #endregion
 
         /// <summary>
-        /// if the datamodel updates this can be called
-        /// to update the properties for the GUI
+        /// load all configured locations from settings
         /// </summary>
-        public void RefreshOnWeatherUpdate()
+        public void LoadAvailableLocations()
         {
-                ChangeProperty("WeatherCurrImage");
-                ChangeProperty("WeatherCurrTemperature");
-                ChangeProperty("WeatherCurrCondition");
-                ChangeProperty("WeatherCurrLocation");
-                ChangeProperty("WeatherCurrIcon");
+            _availableLocations = _dataModel.LoadLocationsData();
+            ChangeProperty("AvailableLocations");
+            ChangeProperty("CurrentLocation");
         }
 
         #region properties
-
-
 
         /// <summary>
         /// Notifies subscribers that property has been changed
@@ -78,58 +77,33 @@ namespace MyWeather
         }
 
 
-
         #region properties of the current location
-
         /// <summary>
-        /// Gets the current Condition
-        /// </summary>
-        /// <value>current condition</value>
-        public string WeatherCurrCondition
-        {
-            get
-            {
-                // return the condiition
-                return _dataModel.CurCondition.Condition;
-            }
-        }
-
-        /// <summary>
-        /// Gets the current Temperature 
-        /// </summary>
-        /// <value>current temperature</value>
-        public string WeatherCurrTemperature
-        {
-            get
-            {
-                // return the data
-                return _dataModel.CurCondition.Temperature;
-            }
-        }
-
-        /// <summary>
-        /// Gets the current Location 
+        /// Gets the current Location as Typed City object 
         /// </summary>
         /// <value>current location</value>
-        public string WeatherCurrLocation
+        public City CurrentLocation
         {
             get
             {
-                // return the data
-                return _dataModel.LocalInfo.City;
+                return _currCity;
+            }
+            set
+            {
+                _currCity = value;
+                ChangeProperty("CurrentLocation");
             }
         }
 
         /// <summary>
-        /// Gets the current Location 
+        /// Gets the all availbe locations
         /// </summary>
-        /// <value>current location</value>
-        public Uri WeatherCurrIcon
+        /// <value>list of locations</value>
+        public List<City> AvailableLocations
         {
             get
             {
-                // return the data
-                return new Uri(@"pack://siteoforigin:,,/Media/Weather/128x128/" + _dataModel.CurCondition.Icon.Replace('\\', '/'));
+                return _availableLocations;
             }
         }
         #endregion
@@ -231,15 +205,15 @@ namespace MyWeather
         /// Returns a ICommand for updating the Location
         /// </summary>
         /// <value>The command.</value>
-        public ICommand LocationChanged
+        public ICommand ChangeLocation
         {
             get
             {
-                if (_locationChangedCommand == null)
+                if (_changeLocationCommand == null)
                 {
-                    _locationChangedCommand = new LocationChangedCommand(this, _dataModel);
+                    _changeLocationCommand = new ChangeLocationCommand(this, _dataModel);
                 }
-                return _locationChangedCommand;
+                return _changeLocationCommand;
             }
         }
         #endregion
@@ -248,6 +222,10 @@ namespace MyWeather
 
         #region base command class
 
+        /// <summary>
+        /// This is the Basecommand class for
+        /// My Weather
+        /// </summary>
         public abstract class WeatherBaseCommand : ICommand
         {
             protected WeatherViewModel _viewModel;
@@ -279,15 +257,15 @@ namespace MyWeather
 
         #region LocationChangedCommand  class
         /// <summary>
-        /// LocationChangedCommand will set a new location
+        /// ChangeLocationCommand will set a new location
         /// </summary> 
-        public class LocationChangedCommand : WeatherBaseCommand
+        public class ChangeLocationCommand : WeatherBaseCommand
         {
             /// <summary>
             /// Initializes a new instance of the <see cref="LocationChangedCommand"/> class.
             /// </summary>
             /// <param name="viewModel">The view model.</param>
-            public LocationChangedCommand(WeatherViewModel viewModel, WeatherDataModel dataModel)
+            public ChangeLocationCommand(WeatherViewModel viewModel, WeatherDataModel dataModel)
                 : base(viewModel, dataModel)
             {
             }
@@ -299,6 +277,25 @@ namespace MyWeather
             public override void Execute(object parameter)
             {
                 // update weather data for new location and update labels go in here
+                if (_viewModel.AvailableLocations.Count == 0) return;
+                MpMenu menu = new MpMenu();
+                menu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                menu.Owner = _viewModel.Window;
+                menu.Items.Clear();
+                menu.Header = ServiceScope.Get<ILocalisation>().ToString("myweather.config", 3);// "Please select your City";
+                menu.SubTitle = "";
+                // add items to the menu
+                foreach (City c in _viewModel.AvailableLocations)
+                {
+                    menu.Items.Add(new DialogMenuItem(c.Name));
+                }
+
+                menu.ShowDialog();
+
+                if (menu.SelectedIndex < 0) return;    // no menu item selected
+
+                // get the id that belongs to the selected city and set the property
+                _viewModel.CurrentLocation = ((List<City>)(_viewModel.AvailableLocations))[menu.SelectedIndex];
             }
         }
         #endregion
@@ -325,13 +322,10 @@ namespace MyWeather
             public override void Execute(object parameter)
             {
                 // update weather data and labels go in here
-                _dataModel.Update();
-                _viewModel.RefreshOnWeatherUpdate();
+                _viewModel.LoadAvailableLocations();
             }
         }
         #endregion
-
-
         #endregion
         #endregion
         #endregion
