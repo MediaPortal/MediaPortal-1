@@ -440,7 +440,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("audioplayer", "streamOutputLevel", StreamOutputLevelNud.Value);
 
         // Visualization Settings
-        if (IVizMgr != null)
+        if (IVizMgr != null && enableVisualisation.Checked)
         {
           List<VisualizationInfo> vizPluginsInfo = IVizMgr.VisualizationPluginsInfo;
           int selIndex = VisualizationsCmbBox.SelectedIndex;
@@ -453,6 +453,14 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "path", vizPluginsInfo[selIndex].FilePath);
           xmlwriter.SetValue("musicvisualization", "clsid", vizPluginsInfo[selIndex].CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", vizPluginsInfo[selIndex].PresetIndex.ToString());
+        }
+        else
+        {
+          xmlwriter.SetValue("musicvisualization", "name", "");
+          xmlwriter.SetValue("musicvisualization", "vizType", 0);
+          xmlwriter.SetValue("musicvisualization", "path", "");
+          xmlwriter.SetValue("musicvisualization", "clsid", "");
+          xmlwriter.SetValue("musicvisualization", "preset", "");
         }
 
         xmlwriter.SetValue("musicvisualization", "fps", VisualizationFpsNud.Value);
@@ -540,7 +548,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         xmlwriter.SetValue("musicmisc", "lyrics", showLyrics);
-        xmlwriter.SetValueAsBool("musicmisc", "showVisInNowPlaying", ShowVizInNowPlayingChkBox.Checked);
+        xmlwriter.SetValueAsBool("musicmisc", "showVisInNowPlaying", ShowVizInNowPlayingChkBox.Checked && enableVisualisation.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmthumbs", !checkBoxDisableCoverLookups.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtopalbums", !checkBoxDisableAlbumLookups.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtracktags", !checkBoxDisableTagLookups.Checked);
