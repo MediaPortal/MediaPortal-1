@@ -628,6 +628,7 @@ namespace ProcessPlugins.ExternalDisplay
       Cursor = Cursors.WaitCursor;
       try
       {
+        lcd.Setup(Settings.Instance.Port,Settings.Instance.TextHeight,Settings.Instance.TextWidth,Settings.Instance.TextComDelay,Settings.Instance.GraphicHeight,Settings.Instance.GraphicWidth,Settings.Instance.GraphicComDelay,Settings.Instance.BackLight,Settings.Instance.Contrast);
         lcd.Configure();
       }
       finally
