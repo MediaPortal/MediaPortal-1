@@ -764,6 +764,11 @@ namespace TvService
       {
         return false;
       }
+      if (!channel.GrabEpg)
+      {
+        Log.Epg("Epg: card:{0} :{1} {2} not needed. Channel not configured to grab/store epg", _user.CardId, channelNr, channel.Name);
+        return false;
+      }
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");
       string epgLanguages = setting.Value;
