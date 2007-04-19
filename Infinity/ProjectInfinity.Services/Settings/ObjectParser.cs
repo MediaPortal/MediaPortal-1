@@ -243,7 +243,6 @@ namespace ProjectInfinity.Settings
            || (aType == typeof(double))
            || (aType == typeof(UInt32))
            || (aType == typeof(UInt64))
-           || (aType == typeof(UInt32))
            || (aType == typeof(UInt16))
            || (aType == typeof(System.DateTime))
            //|| (aType == typeof(string?))
@@ -252,8 +251,10 @@ namespace ProjectInfinity.Settings
            || (aType == typeof(double?))
            || (aType == typeof(UInt32?))
            || (aType == typeof(UInt64?))
-           || (aType == typeof(UInt32?))
-           || (aType == typeof(UInt16?)))
+           || (aType == typeof(UInt16?))
+           || (aType == typeof(Int32?))
+           || (aType == typeof(Int64?))
+           || (aType == typeof(Int16?)))
       {
         return true;
       }
