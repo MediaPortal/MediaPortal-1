@@ -43,6 +43,7 @@ namespace SetupTv.Sections
       this.mpButtonAllChannels = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonNoneChannels = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpCheckBoxStoreOnlySelected = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpButtonAllGrouped = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // mpListView1
@@ -145,7 +146,7 @@ namespace SetupTv.Sections
       // 
       this.mpButtonAllChannels.Location = new System.Drawing.Point(12, 406);
       this.mpButtonAllChannels.Name = "mpButtonAllChannels";
-      this.mpButtonAllChannels.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonAllChannels.Size = new System.Drawing.Size(61, 23);
       this.mpButtonAllChannels.TabIndex = 5;
       this.mpButtonAllChannels.Text = "All";
       this.mpButtonAllChannels.UseVisualStyleBackColor = true;
@@ -153,9 +154,9 @@ namespace SetupTv.Sections
       // 
       // mpButtonNoneChannels
       // 
-      this.mpButtonNoneChannels.Location = new System.Drawing.Point(93, 406);
+      this.mpButtonNoneChannels.Location = new System.Drawing.Point(160, 406);
       this.mpButtonNoneChannels.Name = "mpButtonNoneChannels";
-      this.mpButtonNoneChannels.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonNoneChannels.Size = new System.Drawing.Size(60, 23);
       this.mpButtonNoneChannels.TabIndex = 6;
       this.mpButtonNoneChannels.Text = "None";
       this.mpButtonNoneChannels.UseVisualStyleBackColor = true;
@@ -172,10 +173,21 @@ namespace SetupTv.Sections
       this.mpCheckBoxStoreOnlySelected.Text = "Store data only for selected channels";
       this.mpCheckBoxStoreOnlySelected.UseVisualStyleBackColor = true;
       // 
+      // mpButtonAllGrouped
+      // 
+      this.mpButtonAllGrouped.Location = new System.Drawing.Point(79, 406);
+      this.mpButtonAllGrouped.Name = "mpButtonAllGrouped";
+      this.mpButtonAllGrouped.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonAllGrouped.TabIndex = 8;
+      this.mpButtonAllGrouped.Text = "All Grouped";
+      this.mpButtonAllGrouped.UseVisualStyleBackColor = true;
+      this.mpButtonAllGrouped.Click += new System.EventHandler(this.mpButtonAllGrouped_Click);
+      // 
       // TvEpgGrabber
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpButtonAllGrouped);
       this.Controls.Add(this.mpCheckBoxStoreOnlySelected);
       this.Controls.Add(this.mpButtonNoneChannels);
       this.Controls.Add(this.mpButtonAllChannels);
@@ -207,6 +219,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonNoneChannels;
     private System.Windows.Forms.ImageList imageList1;
     private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxStoreOnlySelected;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonAllGrouped;
 
   }
 }
