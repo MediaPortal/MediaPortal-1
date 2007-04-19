@@ -1,0 +1,11 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ProjectInfinity.Pictures;assembly=ProjectInfinity.Plugins"
+    >
+    <DataTemplate DataType="{x:Type local:Folder}">
+      <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Name}" />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type local:Picture}">
+      <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Name}" />
+    </DataTemplate>
+</ResourceDictionary>

@@ -37,14 +37,13 @@ namespace ProjectInfinity.Menu.View
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       MenuViewModel viewModel = new MenuViewModel();
-      gridMain.Children.Clear();
+      DataContext = viewModel;
       try
       {
         using (FileStream steam = new FileStream(@"skin\default\Home\home.xaml", FileMode.Open, FileAccess.Read))
         {
-          gridMain.DataContext = viewModel;
           UIElement documentRoot = (UIElement)XamlReader.Load(steam);
-          gridMain.Children.Add(documentRoot);
+          Content = documentRoot;
         }
       }
       catch (Exception ex)

@@ -645,7 +645,7 @@ namespace MyVideos
       _listVideos.Clear();
 
       // Temporary code, needs to be replaced when we get a real media collector
-      string[] files = Directory.GetFiles("E:\\", "*.mpg");
+      string[] files = Directory.GetFiles("C:\\", "*.mpg");
 
       foreach (string file in files)
       {
