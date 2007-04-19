@@ -71,11 +71,19 @@ namespace MyTv
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-      gridMain.Children.Clear();
-      using (FileStream steam = new FileStream(@"skin\default\mytv\tvrecorded.xaml", FileMode.Open, FileAccess.Read))
+      try
       {
-        UIElement documentRoot = (UIElement)XamlReader.Load(steam);
-        gridMain.Children.Add(documentRoot);
+        gridMain.Children.Clear();
+        using (FileStream steam = new FileStream(@"skin\default\mytv\tvrecorded.xaml", FileMode.Open, FileAccess.Read))
+        {
+          UIElement documentRoot = (UIElement)XamlReader.Load(steam);
+          gridMain.Children.Add(documentRoot);
+        }
+      }
+      catch (Exception ex)
+      {
+        ServiceScope.Get<ILogger>().Error("error loading tvrecorded.xaml");
+        ServiceScope.Get<ILogger>().Error(ex);
       }
       //create new view model
       _model = new TvRecordedViewModel();

@@ -46,12 +46,20 @@ namespace MyTv
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       gridMain.Children.Clear();
-      using (FileStream steam = new FileStream(@"skin\default\mytv\TvProgramInfo.xaml", FileMode.Open, FileAccess.Read))
+      try
       {
-        UIElement documentRoot = (UIElement)XamlReader.Load(steam);
-        gridMain.Children.Add(documentRoot);
+        using (FileStream steam = new FileStream(@"skin\default\mytv\TvProgramInfo.xaml", FileMode.Open, FileAccess.Read))
+        {
+          UIElement documentRoot = (UIElement)XamlReader.Load(steam);
+          gridMain.Children.Add(documentRoot);
+        }
       }
-      _model =  ServiceScope.Get<TvScheduledViewModel>();
+      catch (Exception ex)
+      {
+        ServiceScope.Get<ILogger>().Error("error loading TvProgramInfo.xaml");
+        ServiceScope.Get<ILogger>().Error(ex);
+      }
+      _model = ServiceScope.Get<TvScheduledViewModel>();
       gridMain.DataContext = _model;
 
       // Sets keyboard focus on the first Button in the sample.

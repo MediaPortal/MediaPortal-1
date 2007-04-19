@@ -13,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ProjectInfinity;
+using ProjectInfinity.Logging;
 
 using Dialogs;
 
@@ -60,10 +62,18 @@ namespace MyTv
     protected virtual void LoadSkin()
     {
       gridMain.Children.Clear();
-      using (FileStream steam = new FileStream(@"skin\default\MyTv\TvConflictDialog.xaml", FileMode.Open, FileAccess.Read))
+      try
       {
-        UIElement documentRoot = (UIElement)XamlReader.Load(steam);
-        gridMain.Children.Add(documentRoot);
+        using (FileStream steam = new FileStream(@"skin\default\MyTv\TvConflictDialog.xaml", FileMode.Open, FileAccess.Read))
+        {
+          UIElement documentRoot = (UIElement)XamlReader.Load(steam);
+          gridMain.Children.Add(documentRoot);
+        }
+      }
+      catch (Exception ex)
+      {
+        ServiceScope.Get<ILogger>().Error("error loading TvConflictDialog.xaml");
+        ServiceScope.Get<ILogger>().Error(ex);
       }
     }
 

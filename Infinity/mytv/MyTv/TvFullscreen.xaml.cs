@@ -29,7 +29,7 @@ namespace MyTv
 
   public partial class TvFullscreen : System.Windows.Controls.Page
   {
-    TvFullScreenModel _model; 
+    TvFullScreenModel _model;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TvFullscreen"/> class.
@@ -47,10 +47,18 @@ namespace MyTv
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       gridMain.Children.Clear();
-      using (FileStream steam = new FileStream(@"skin\default\mytv\TvFullscreen.xaml", FileMode.Open, FileAccess.Read))
+      try
       {
-        UIElement documentRoot = (UIElement)XamlReader.Load(steam);
-        gridMain.Children.Add(documentRoot);
+        using (FileStream steam = new FileStream(@"skin\default\mytv\TvFullscreen.xaml", FileMode.Open, FileAccess.Read))
+        {
+          UIElement documentRoot = (UIElement)XamlReader.Load(steam);
+          gridMain.Children.Add(documentRoot);
+        }
+      }
+      catch (Exception ex)
+      {
+        ServiceScope.Get<ILogger>().Error("error loading TvFullscreen.xaml");
+        ServiceScope.Get<ILogger>().Error(ex);
       }
       _model = new TvFullScreenModel();
       gridMain.DataContext = _model;

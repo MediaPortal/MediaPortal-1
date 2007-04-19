@@ -18,7 +18,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Markup;
 using System.Windows.Shapes;
 using System.Diagnostics;
-
+using ProjectInfinity;
+using ProjectInfinity.Logging;
 namespace ProjectInfinity.Menu.View
 {
   /// <summary>
@@ -37,11 +38,19 @@ namespace ProjectInfinity.Menu.View
     {
       MenuViewModel viewModel = new MenuViewModel();
       gridMain.Children.Clear();
-      using (FileStream steam = new FileStream(@"skin\default\Home\home.xaml", FileMode.Open, FileAccess.Read))
+      try
       {
-        gridMain.DataContext = viewModel;
-        UIElement documentRoot = (UIElement)XamlReader.Load(steam);
-        gridMain.Children.Add(documentRoot);
+        using (FileStream steam = new FileStream(@"skin\default\Home\home.xaml", FileMode.Open, FileAccess.Read))
+        {
+          gridMain.DataContext = viewModel;
+          UIElement documentRoot = (UIElement)XamlReader.Load(steam);
+          gridMain.Children.Add(documentRoot);
+        }
+      }
+      catch (Exception ex)
+      {
+        ServiceScope.Get<ILogger>().Error("error loading home.xaml");
+        ServiceScope.Get<ILogger>().Error(ex);
       }
       this.InputBindings.Add(new KeyBinding(viewModel.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));

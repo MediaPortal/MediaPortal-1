@@ -47,10 +47,18 @@ namespace MyTv
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       gridMain.Children.Clear();
-      using (FileStream steam = new FileStream(@"skin\default\mytv\TvSetup.xaml", FileMode.Open, FileAccess.Read))
+      try
       {
-        UIElement documentRoot = (UIElement)XamlReader.Load(steam);
-        gridMain.Children.Add(documentRoot);
+        using (FileStream steam = new FileStream(@"skin\default\mytv\TvSetup.xaml", FileMode.Open, FileAccess.Read))
+        {
+          UIElement documentRoot = (UIElement)XamlReader.Load(steam);
+          gridMain.Children.Add(documentRoot);
+        }
+      }
+      catch (Exception ex)
+      {
+        ServiceScope.Get<ILogger>().Error("error loading TvSetup.xaml");
+        ServiceScope.Get<ILogger>().Error(ex);
       }
       _model = new TvSetupModel();
       gridMain.DataContext = _model;

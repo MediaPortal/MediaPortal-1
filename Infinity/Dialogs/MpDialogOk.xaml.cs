@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ProjectInfinity;
+using ProjectInfinity.Logging;
 
 namespace Dialogs
 {
@@ -38,10 +40,18 @@ namespace Dialogs
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       gridMain.Children.Clear();
-      using (FileStream steam = new FileStream(@"skin\default\Dialogs\DialogOk.xaml", FileMode.Open, FileAccess.Read))
+      try
       {
-        UIElement documentRoot = (UIElement)XamlReader.Load(steam);
-        gridMain.Children.Add(documentRoot);
+        using (FileStream steam = new FileStream(@"skin\default\Dialogs\DialogOk.xaml", FileMode.Open, FileAccess.Read))
+        {
+          UIElement documentRoot = (UIElement)XamlReader.Load(steam);
+          gridMain.Children.Add(documentRoot);
+        }
+      }
+      catch (Exception ex)
+      {
+        ServiceScope.Get<ILogger>().Error("error loading DialogOk.xaml");
+        ServiceScope.Get<ILogger>().Error(ex);
       }
       gridMain.DataContext = _model;
       this.InputBindings.Add(new KeyBinding(_model.Close, new KeyGesture(System.Windows.Input.Key.Escape)));
