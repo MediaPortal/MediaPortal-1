@@ -1,45 +1,61 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Data;
 using System.Windows.Input;
 using ProjectInfinity.Navigation;
+using ProjectInfinity.Settings;
 
 namespace ProjectInfinity.Pictures
 {
   public class PictureViewModel : INotifyPropertyChanged
   {
-    ///<summary>
-    ///Occurs when a property value changes.
-    ///</summary>
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    private List<MediaItem> _model = new List<MediaItem>();
+    private readonly PictureSettings settings;
+    private readonly List<MediaItem> _model = new List<MediaItem>();
     private LaunchCommand _launchCommand;
     private CollectionView _itemView;
     private Folder _currentFolder;
 
     public PictureViewModel()
     {
-      //TODO: read starting folder from configuration
-      Reload(new Folder(new DirectoryInfo(@"c:\")), false);
+      ISettingsManager settingMgr = ServiceScope.Get<ISettingsManager>();
+      settings = new PictureSettings();
+      settingMgr.Load(settings, "configuration.xml");
+      //we save the settings here, to make sure they are in the configuration file.
+      //because this plugin has no setup yet
+      //TODO: remove saving settings here
+      settingMgr.Save(settings, "configuration.xml");
+      Reload(new Folder(new DirectoryInfo(settings.PictureFolders[0])), false);
     }
 
-    public Folder CurrentFolder { get { return _currentFolder;}}
+    #region INotifyPropertyChanged Members
+
+    ///<summary>
+    ///Occurs when a property value changes.
+    ///</summary>
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    #endregion
+
+    public Folder CurrentFolder
+    {
+      get { return _currentFolder; }
+    }
 
     private void Reload(Folder dir, bool includeParent)
     {
       DirectoryInfo directoryInfo = dir.Info;
       DirectoryInfo parentInfo = directoryInfo.Parent;
       FileSystemInfo[] entries = directoryInfo.GetFileSystemInfos();
-      MediaFactory factory = new MediaFactory();
+      MediaFactory factory = new MediaFactory(settings);
       _currentFolder = dir;
       OnPropertyChanged(new PropertyChangedEventArgs("CurrentFolder"));
       _model.Clear();
       if (includeParent && parentInfo != null)
+      {
         _model.Add(new ParentFolder(parentInfo));
+      }
       foreach (FileSystemInfo entry in entries)
       {
         MediaItem item = factory.Create(entry);
@@ -84,11 +100,27 @@ namespace ProjectInfinity.Pictures
 
     private class LaunchCommand : ICommand, IMediaVisitor
     {
-      private PictureViewModel _viewModel;
+      private readonly PictureViewModel _viewModel;
 
       public LaunchCommand(PictureViewModel viewModel)
       {
         _viewModel = viewModel;
+      }
+
+      #region ICommand Members
+
+      ///<summary>
+      ///Defines the method that determines whether the command can execute in its current state.
+      ///</summary>
+      ///
+      ///<returns>
+      ///true if this command can be executed; otherwise, false.
+      ///</returns>
+      ///
+      ///<param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+      public bool CanExecute(object parameter)
+      {
+        return true;
       }
 
       ///<summary>
@@ -111,40 +143,31 @@ namespace ProjectInfinity.Pictures
         item.Accept(this); //GOF Visitor Pattern
       }
 
-      ///<summary>
-      ///Defines the method that determines whether the command can execute in its current state.
-      ///</summary>
-      ///
-      ///<returns>
-      ///true if this command can be executed; otherwise, false.
-      ///</returns>
-      ///
-      ///<param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
-      public bool CanExecute(object parameter)
-      {
-        return true;
-      }
+      #endregion
+
+      #region IMediaVisitor Members
 
       public void Visit(Folder folder)
       {
-        _viewModel.Reload(folder,true);
+        _viewModel.Reload(folder, true);
       }
 
       public void Visit(Picture picture)
       {
         ServiceScope.Get<INavigationService>().Navigate(new FullScreenPictureView(_viewModel));
       }
+
+      #endregion
     }
   }
 
   internal class MediaFactory
   {
-    private static readonly Collection<string> pictureExtensions;
+    private readonly PictureSettings _settings;
 
-    static MediaFactory()
+    public MediaFactory(PictureSettings settings)
     {
-      //TODO: read from configuration
-      pictureExtensions = new Collection<string>(new string[] {".jpg", ".gif"});
+      _settings = settings;
     }
 
     public MediaItem Create(FileSystemInfo fileSystemInfo)
@@ -168,14 +191,14 @@ namespace ProjectInfinity.Pictures
 
     private MediaItem Create(FileInfo fileInfo)
     {
-      if (pictureExtensions.Contains(fileInfo.Extension.ToLower()))
+      if (_settings.Extensions.Contains(fileInfo.Extension.ToLower()))
       {
         return new Picture(fileInfo);
       }
       return null;
     }
 
-    private MediaItem Create(DirectoryInfo directoryInfo)
+    private static MediaItem Create(DirectoryInfo directoryInfo)
     {
       return new Folder(directoryInfo);
     }

@@ -69,6 +69,7 @@
     <Compile Include="Pictures\ParentFolder.cs" />
     <Compile Include="Pictures\Picture.cs" />
     <Compile Include="Pictures\PicturePlugin.cs" />
+    <Compile Include="Pictures\PictureSettings.cs" />
     <Compile Include="Pictures\PictureViewModel.cs" />
     <Compile Include="Pictures\PictureView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
