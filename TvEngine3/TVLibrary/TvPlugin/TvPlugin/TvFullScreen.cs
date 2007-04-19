@@ -1772,7 +1772,7 @@ namespace TvPlugin
       _isDialogVisible = false;
       if (dlg.SelectedLabel < 0) return;
       ChannelLinkageMap lmap=(ChannelLinkageMap)linkages[dlg.SelectedLabel];
-      TVHome.Navigator.ZapToChannel(lmap.ReferringLinkedChannel(), true);
+      TVHome.Navigator.ZapToChannel(lmap.ReferringLinkedChannel(), false);
     }
 
     public override void Process()
