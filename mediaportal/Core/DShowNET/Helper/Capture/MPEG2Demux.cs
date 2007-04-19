@@ -350,7 +350,12 @@ namespace DShowNET.Helper
         if (hr != 0)
         {
           Log.Error("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
-          return false;
+          Log.Info("mpeg2:Trying non LPCM audio connection");
+          hr = _graphBuilderInterface.Render(_pinAudioOut);
+          if (hr != 0)
+          {
+            return false;
+          }
         }
         Log.Info("mpeg2:demux lpcm audio out connected ");
       }
@@ -555,7 +560,9 @@ namespace DShowNET.Helper
           Log.Info("mpeg2:demux lpcm audio out connected ");
         }
         else
-          Log.Error("mpeg2:FAILED to render mpeg2demux lpcm audio out:0x{0:X}", hr);
+          Log.Error("mpeg2:FAILED to render mpeg2demux LPCM audio out:0x{0:X}", hr);
+          Log.Info("mpeg2:Trying standard audio connection");
+          hr = _graphBuilderInterface.Render(_pinAudioOut);
       }
       _isRendered = true;
       if (_mediaControlInterface == null)
@@ -696,6 +703,22 @@ namespace DShowNET.Helper
           {
             Log.Error("mpeg2:FAILED to connect lpcm audio out to streambuffer:0x{0:X}", hr);
             return false;
+          }
+          Log.Info("mpeg2:lpcm audio out connected to streambuffer");
+        }
+        {
+          //Log.Info("mpeg2:Found Adaptec Capture Device");
+          Log.Info("mpeg2:demux lpcm audio out->stream buffer");
+          hr = _graphBuilderInterface.Connect(_pinLPCMOut, _pinStreamBufferIn1);
+          if (hr != 0)
+          {
+            Log.Error("mpeg2:FAILED to connect lpcm audio out to streambuffer:0x{0:X}", hr);
+            Log.Info("mpeg2:Trying non LPCM audio connection");
+            hr = _graphBuilderInterface.Connect(_pinAudioOut, _pinStreamBufferIn1);
+            if (hr != 0)
+            {
+              return false;
+            }
           }
           Log.Info("mpeg2:lpcm audio out connected to streambuffer");
         }
