@@ -76,19 +76,18 @@ non-infringement.
 */
 
 using System;
-using System.IO;
-using System.Net;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
-using System.Collections.Generic;
 using System.Windows.Threading;
 
 namespace ProjectInfinity.Controls
 {
+
   #region Behavior Enumerations
 
   /// <summary>
@@ -170,13 +169,123 @@ namespace ProjectInfinity.Controls
   public class AnimationBehaviorHost : Decorator
   {
     /// <summary>
+    /// LoadedBehaviorProperty is an attached property which allows decendant elements to run animations when the page is loaded
+    /// </summary>
+    public static readonly DependencyProperty LoadedBehaviorProperty =
+      DependencyProperty.RegisterAttached("LoadedBehavior",
+                                          typeof (LoadedBehavior),
+                                          typeof (AnimationBehaviorHost),
+                                          new PropertyMetadata(LoadedBehavior.None, LoadedBehaviorChanged));
+
+    /// <summary>
+    /// LoadedDurationProperty is an attached property used to control the duration of the LoadedBehavior animation.  It defaults to 1 second.
+    /// </summary>
+    public static readonly DependencyProperty LoadedDurationProperty =
+      DependencyProperty.RegisterAttached("LoadedDuration",
+                                          typeof (Duration),
+                                          typeof (AnimationBehaviorHost),
+                                          new PropertyMetadata(new Duration(TimeSpan.FromSeconds(1))));
+
+    /// <summary>
+    /// LoadedDelayProperty is an attached property used to the duration of the delay before the LoadedBehavior animation starts.  It defaults to 0 seconds.
+    /// </summary>
+    public static readonly DependencyProperty LoadedDelayProperty =
+      DependencyProperty.RegisterAttached("LoadedDelay",
+                                          typeof (Duration),
+                                          typeof (AnimationBehaviorHost),
+                                          new PropertyMetadata(new Duration(TimeSpan.Zero)));
+
+    /// <summary>
+    /// UnloadedBehaviorProperty is an attached property which allows decendant elements to run animations when the page is navigated away from
+    /// </summary>
+    public static readonly DependencyProperty UnloadedBehaviorProperty =
+      DependencyProperty.RegisterAttached("UnloadedBehavior",
+                                          typeof (UnloadedBehavior),
+                                          typeof (AnimationBehaviorHost),
+                                          new PropertyMetadata(UnloadedBehavior.None));
+
+    /// <summary>
+    /// UnloadedDurationProperty is an attached property used to control the duration of the UnloadedBehavior animation.  It defaults to 1 second.
+    /// </summary>
+    public static readonly DependencyProperty UnloadedDurationProperty =
+      DependencyProperty.RegisterAttached("UnloadedDuration",
+                                          typeof (Duration),
+                                          typeof (AnimationBehaviorHost),
+                                          new PropertyMetadata(new Duration(TimeSpan.FromSeconds(1))));
+
+    /// <summary>
+    /// UnloadedDelayProperty is an attached property used to the duration of the delay before the UnloadedBehavior animation starts.  It defaults to 0 seconds.
+    /// </summary>
+    public static readonly DependencyProperty UnloadedDelayProperty =
+      DependencyProperty.RegisterAttached("UnloadedDelay",
+                                          typeof (Duration),
+                                          typeof (AnimationBehaviorHost),
+                                          new PropertyMetadata(new Duration(TimeSpan.Zero)));
+
+    /// <summary>
+    /// ClickBehaviorProperty is an attached property which allows decendant elements to run animations when the element is clicked.
+    /// If the element is not a button the MouseUp event is used instead.
+    /// </summary>
+    public static readonly DependencyProperty ClickBehaviorProperty =
+      DependencyProperty.RegisterAttached("ClickBehavior",
+                                          typeof (ClickBehavior),
+                                          typeof (AnimationBehaviorHost),
+                                          new PropertyMetadata(ClickBehavior.None, ClickBehaviorChanged));
+
+    /// <summary>
+    /// ClickDurationProperty is an attached property used to control the duration of the ClickBehavior animation.  It defaults to 0.5 seconds.
+    /// </summary>
+    public static readonly DependencyProperty ClickDurationProperty =
+      DependencyProperty.RegisterAttached("ClickDuration",
+                                          typeof (Duration),
+                                          typeof (AnimationBehaviorHost),
+                                          new PropertyMetadata(new Duration(TimeSpan.FromMilliseconds(500))));
+
+    /// <summary>
+    /// LayoutBehaviorProperty is an attached property that can be set on an element to control how it responds to being layed out
+    /// </summary>
+    public static readonly DependencyProperty LayoutBehaviorProperty =
+      DependencyProperty.RegisterAttached("LayoutBehavior",
+                                          typeof (LayoutBehavior),
+                                          typeof (AnimationBehaviorHost),
+                                          new PropertyMetadata(LayoutBehavior.None, LayoutBehaviorChanged));
+
+    /// <summary>
+    /// LayoutDurationProperty is an attached property used to control the duration of the LayoutBehavior animation.  It defaults to 0.5 seconds.
+    /// </summary>
+    public static readonly DependencyProperty LayoutDurationProperty =
+      DependencyProperty.RegisterAttached("LayoutDuration",
+                                          typeof (Duration),
+                                          typeof (AnimationBehaviorHost),
+                                          new PropertyMetadata(new Duration(TimeSpan.FromMilliseconds(500))));
+
+    /// <summary>
+    /// When a navigation is canceled we hold on to the arguments so we can resume the navigation after UnloadBehavior animations have completed
+    /// </summary>
+    private NavigatingCancelEventArgs canceledNavigation = null;
+
+    /// <summary>
+    /// this dictionary associates elements with the last known position relative to the host
+    /// </summary>
+    private readonly Dictionary<FrameworkElement, Point?> layoutBehaviorElementPosition =
+      new Dictionary<FrameworkElement, Point?>();
+
+    /// <summary>
+    /// we remember how many elements need layout animations so that we can unsubscribe from the LayoutUpdated event when its not needed
+    /// </summary>
+    private int layoutBehaviorCount = 0;
+
+    /// <summary>
     /// AnimationBehaviorHost constructor
     /// </summary>
     public AnimationBehaviorHost()
     {
       //hook loaded because we need the navigation service and it's not available at this time
-      this.Loaded += new RoutedEventHandler(AnimationBehaviorHost_Loaded);
+      Loaded += AnimationBehaviorHost_Loaded;
     }
+
+    #region Event Handlers
+
     /// <summary>
     /// AnimationBehaviorHost_Loaded is called when this class is Loaded because the NavigationService is not available at construction time.
     /// </summary>
@@ -187,160 +296,36 @@ namespace ProjectInfinity.Controls
       //hook the Navigating event so we can cancel it to allow UnloadedBehavior animations to run first
       NavigationService ns = NavigationService.GetNavigationService(this);
       if (ns != null)
-        ns.Navigating += new NavigatingCancelEventHandler(CancelNavigating);
-    }
-
-    #region Loaded Behavior
-
-    #region Loaded Behavior Attached Properties
-    /// <summary>
-    /// LoadedBehaviorProperty is an attached property which allows decendant elements to run animations when the page is loaded
-    /// </summary>
-    public static readonly DependencyProperty LoadedBehaviorProperty =
-        DependencyProperty.RegisterAttached("LoadedBehavior",
-                                typeof(LoadedBehavior),
-                                typeof(AnimationBehaviorHost),
-                                new PropertyMetadata(LoadedBehavior.None, LoadedBehaviorChanged));
-    /// <summary>
-    /// Used to set an elements LoadedBehavior attached property
-    /// </summary>
-    /// <param name="element"></param>
-    /// <param name="b"></param>
-    public static void SetLoadedBehavior(DependencyObject element, LoadedBehavior b)
-    {
-      if (element == null)
       {
-        throw new ArgumentNullException("element");
+        ns.Navigating += CancelNavigating;
       }
-
-      element.SetValue(AnimationBehaviorHost.LoadedBehaviorProperty, b);
     }
 
     /// <summary>
-    /// Used to get an elements LoadedBehavior attached property
+    /// When a 'click' is initiated we apply an aninimation to the element based on it's ClickBehavior type.
     /// </summary>
-    /// <param name="element"></param>
-    /// <returns></returns>
-    public static LoadedBehavior GetLoadedBehavior(DependencyObject element)
-    {
-      if (element == null)
-      {
-        throw new ArgumentNullException("element");
-      }
-
-      return (LoadedBehavior)element.GetValue(AnimationBehaviorHost.LoadedBehaviorProperty);
-    }
-
-    /// <summary>
-    /// LoadedDurationProperty is an attached property used to control the duration of the LoadedBehavior animation.  It defaults to 1 second.
-    /// </summary>
-    public static readonly DependencyProperty LoadedDurationProperty =
-            DependencyProperty.RegisterAttached("LoadedDuration",
-                typeof(Duration),
-                typeof(AnimationBehaviorHost),
-                new PropertyMetadata(new Duration(TimeSpan.FromSeconds(1))));
-
-    /// <summary>
-    /// Used to set an elements LoadedBehavior attached property
-    /// </summary>
-    /// <param name="element"></param>
-    /// <param name="b"></param>
-    public static void SetLoadedDuration(DependencyObject element, Duration b)
-    {
-      if (element == null)
-      {
-        throw new ArgumentNullException("element");
-      }
-
-      element.SetValue(AnimationBehaviorHost.LoadedDurationProperty, b);
-    }
-
-    /// <summary>
-    /// Used to get an elements LoadedBehavior attached property
-    /// </summary>
-    /// <param name="element"></param>
-    /// <param name="b"></param>
-    public static Duration GetLoadedDuration(DependencyObject element)
-    {
-      if (element == null)
-      {
-        throw new ArgumentNullException("element");
-      }
-
-      return (Duration)element.GetValue(AnimationBehaviorHost.LoadedDurationProperty);
-    }
-
-    /// <summary>
-    /// LoadedDelayProperty is an attached property used to the duration of the delay before the LoadedBehavior animation starts.  It defaults to 0 seconds.
-    /// </summary>
-    public static readonly DependencyProperty LoadedDelayProperty =
-            DependencyProperty.RegisterAttached("LoadedDelay",
-                typeof(Duration),
-                typeof(AnimationBehaviorHost),
-                new PropertyMetadata(new Duration(TimeSpan.Zero)));
-
-    /// <summary>
-    /// Used to set an elements LoadedDelay attached property
-    /// </summary>
-    /// <param name="element"></param>
-    /// <param name="b"></param>
-    public static void SetLoadedDelay(DependencyObject element, Duration b)
-    {
-      if (element == null)
-      {
-        throw new ArgumentNullException("element");
-      }
-
-      element.SetValue(AnimationBehaviorHost.LoadedDelayProperty, b);
-    }
-
-    /// <summary>
-    /// Used to get an elements LoadedDelay attached property
-    /// </summary>
-    /// <param name="element"></param>
-    /// <param name="b"></param>
-    public static Duration GetLoadedDelay(DependencyObject element)
-    {
-      if (element == null)
-      {
-        throw new ArgumentNullException("element");
-      }
-
-      return (Duration)element.GetValue(AnimationBehaviorHost.LoadedDelayProperty);
-    }
-    #endregion
-
-    #region Loaded Behavior Realization
-    /// <summary>
-    /// This gets called when the LoadedBehavior attached property is set on an element.  We simply hook it's Loaded
-    /// event.
-    /// </summary>
-    /// <param name="d"></param>
+    /// <param name="sender"></param>
     /// <param name="e"></param>
-    private static void LoadedBehaviorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static void ApplyClickBehavior(object sender, RoutedEventArgs e)
     {
-      FrameworkElement element = (d as FrameworkElement);
-      if (element != null)
+      FrameworkElement element = (FrameworkElement) sender;
+      ClickBehavior behavior = GetClickBehavior(element);
+      Duration duration = GetClickDuration(element);
+
+      switch (behavior)
       {
-
-        LoadedBehavior newbehavior = (LoadedBehavior)e.NewValue;
-        LoadedBehavior oldbehavior = (LoadedBehavior)e.OldValue;
-
-        if (newbehavior == oldbehavior)
-          return;
-
-        //walk the tree to find the closes AnimationBehaviorHost
-        AnimationBehaviorHost host = FindHost(element);
-        if (host == null)
-          return;
-
-        //dont forget to remove the event if the user decides to set it to None form something else
-        if (newbehavior == LoadedBehavior.None)
-          element.Loaded -= host.ApplyLoadedBehavior;
-
-        //hook loaded if not None so we can apply the animation once it's on the page
-        if (oldbehavior == LoadedBehavior.None)
-          element.Loaded += host.ApplyLoadedBehavior;
+        case ClickBehavior.Jiggle:
+          ApplyJiggle(element, duration);
+          break;
+        case ClickBehavior.Throb:
+          ApplyThrob(element, duration);
+          break;
+        case ClickBehavior.Rotate:
+          ApplyRotate(element, duration);
+          break;
+        case ClickBehavior.Snap:
+          ApplySnap(element, duration);
+          break;
       }
     }
 
@@ -351,8 +336,8 @@ namespace ProjectInfinity.Controls
     /// <param name="e"></param>
     private void ApplyLoadedBehavior(object sender, RoutedEventArgs e)
     {
-      FrameworkElement element = (FrameworkElement)sender;
-      LoadedBehavior behavior = AnimationBehaviorHost.GetLoadedBehavior(element);
+      FrameworkElement element = (FrameworkElement) sender;
+      LoadedBehavior behavior = GetLoadedBehavior(element);
       Duration duration = GetLoadedDuration(element);
       Duration delay = GetLoadedDelay(element);
 
@@ -393,15 +378,249 @@ namespace ProjectInfinity.Controls
           break;
       }
     }
+
+    /// <summary>
+    /// This event handler is called when the NavigationService fires it's Navigating event.
+    /// We then cancel the event, run UnloadBehavior animations, and then resume the navigation once they are done
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void CancelNavigating(object sender, NavigatingCancelEventArgs e)
+    {
+      List<FrameworkElement> unloadedBehaviorElements = GetUnloadBehaviorElements();
+      if (unloadedBehaviorElements.Count > 0)
+      {
+        canceledNavigation = e;
+        UnloadBehaviorsComplete += ResumeNavigation;
+        ApplyUnloadedBehaviors(unloadedBehaviorElements);
+        e.Cancel = true;
+      }
+    }
+
+    /// <summary>
+    /// this gets called whenever ANY element is updated so we need to check that a specific elements position has changed
+    /// before adding animations.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnLayoutUpdated(object sender, EventArgs e)
+    {
+      //TODO: rewrite this method to clean it up and handle corner cases with layout
+      Dictionary<FrameworkElement, Point> updateDict = new Dictionary<FrameworkElement, Point>();
+      foreach (KeyValuePair<FrameworkElement, Point?> pair in layoutBehaviorElementPosition)
+      {
+        FrameworkElement fe = pair.Key;
+        Point? savedPosition = pair.Value;
+        Point currentPosition = fe.TransformToAncestor(this).Transform(new Point(0, 0));
+        if (savedPosition.HasValue)
+        {
+          if (!AreClose(currentPosition, savedPosition.Value))
+          {
+            LayoutBehavior behavior = GetLayoutBehavior(fe);
+            Duration duration = GetLayoutDuration(fe);
+            switch (behavior)
+            {
+              case LayoutBehavior.Smooth:
+                ApplySmoothLayout(fe, savedPosition.Value, currentPosition, duration);
+                break;
+              case LayoutBehavior.Springy:
+                ApplySpringyLayout(fe, savedPosition.Value, currentPosition, duration);
+                break;
+            }
+
+            //this is probably a shitty way to update the collection
+            updateDict[fe] = currentPosition;
+          }
+        }
+        else
+        {
+          //the first time it's layed out just remember where
+          updateDict[fe] = currentPosition;
+        }
+      }
+
+      //update layoutBehaviorElementPosition now that we're not iterating it
+        foreach (KeyValuePair<FrameworkElement, Point> pair in updateDict)
+        {
+          layoutBehaviorElementPosition[pair.Key] = new Point?(pair.Value);
+        }
+    }
+
+    /// <summary>
+    /// When a navigation is attempted we first cancel it then once UnloadBehavior animations have complete we resume the Navigation in this method
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void ResumeNavigation(object sender, EventArgs e)
+    {
+      UnloadBehaviorsComplete -= ResumeNavigation;
+      NavigationService ns = NavigationService.GetNavigationService(this);
+      if (ns != null)
+      {
+        ns.Navigating -= CancelNavigating; //we dont need to cancel next time around
+        if (canceledNavigation.NavigationMode == NavigationMode.Back)
+        {
+          ns.GoBack();
+        }
+        else if (canceledNavigation.NavigationMode == NavigationMode.Forward)
+        {
+          ns.GoForward();
+        }
+        else if (canceledNavigation.Content != null)
+        {
+          //Navigate to previously stored object
+          ns.Navigate(canceledNavigation.Content, canceledNavigation.ExtraData);
+        }
+        else
+        {
+          //Navigate to previously stored URI
+          ns.Navigate(canceledNavigation.Uri, canceledNavigation.ExtraData);
+        }
+      }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Used to set an elements LoadedBehavior attached property
+    /// </summary>
+    /// <param name="element"></param>
+    /// <param name="b"></param>
+    public static void SetLoadedBehavior(DependencyObject element, LoadedBehavior b)
+    {
+      if (element == null)
+      {
+        throw new ArgumentNullException("element");
+      }
+
+      element.SetValue(LoadedBehaviorProperty, b);
+    }
+
+    /// <summary>
+    /// Used to get an elements LoadedBehavior attached property
+    /// </summary>
+    /// <param name="element"></param>
+    /// <returns></returns>
+    public static LoadedBehavior GetLoadedBehavior(DependencyObject element)
+    {
+      if (element == null)
+      {
+        throw new ArgumentNullException("element");
+      }
+
+      return (LoadedBehavior) element.GetValue(LoadedBehaviorProperty);
+    }
+
+    /// <summary>
+    /// Used to set an elements LoadedBehavior attached property
+    /// </summary>
+    /// <param name="element"></param>
+    /// <param name="b"></param>
+    public static void SetLoadedDuration(DependencyObject element, Duration b)
+    {
+      if (element == null)
+      {
+        throw new ArgumentNullException("element");
+      }
+
+      element.SetValue(LoadedDurationProperty, b);
+    }
+
+    /// <summary>
+    /// Used to get an elements LoadedBehavior attached property
+    /// </summary>
+    /// <param name="element"></param>
+    public static Duration GetLoadedDuration(DependencyObject element)
+    {
+      if (element == null)
+      {
+        throw new ArgumentNullException("element");
+      }
+
+      return (Duration) element.GetValue(LoadedDurationProperty);
+    }
+
+    /// <summary>
+    /// Used to set an elements LoadedDelay attached property
+    /// </summary>
+    /// <param name="element"></param>
+    /// <param name="b"></param>
+    public static void SetLoadedDelay(DependencyObject element, Duration b)
+    {
+      if (element == null)
+      {
+        throw new ArgumentNullException("element");
+      }
+
+      element.SetValue(LoadedDelayProperty, b);
+    }
+
+    /// <summary>
+    /// Used to get an elements LoadedDelay attached property
+    /// </summary>
+    /// <param name="element"></param>
+    public static Duration GetLoadedDelay(DependencyObject element)
+    {
+      if (element == null)
+      {
+        throw new ArgumentNullException("element");
+      }
+
+      return (Duration) element.GetValue(LoadedDelayProperty);
+    }
+
+    #region Loaded Behavior Realization
+
+    /// <summary>
+    /// This gets called when the LoadedBehavior attached property is set on an element.  We simply hook it's Loaded
+    /// event.
+    /// </summary>
+    /// <param name="d"></param>
+    /// <param name="e"></param>
+    private static void LoadedBehaviorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+      FrameworkElement element = (d as FrameworkElement);
+      if (element != null)
+      {
+        LoadedBehavior newbehavior = (LoadedBehavior) e.NewValue;
+        LoadedBehavior oldbehavior = (LoadedBehavior) e.OldValue;
+
+        if (newbehavior == oldbehavior)
+        {
+          return;
+        }
+
+        //walk the tree to find the closes AnimationBehaviorHost
+        AnimationBehaviorHost host = FindHost(element);
+        if (host == null)
+        {
+          return;
+        }
+
+        //dont forget to remove the event if the user decides to set it to None form something else
+        if (newbehavior == LoadedBehavior.None)
+        {
+          element.Loaded -= host.ApplyLoadedBehavior;
+        }
+
+        //hook loaded if not None so we can apply the animation once it's on the page
+        if (oldbehavior == LoadedBehavior.None)
+        {
+          element.Loaded += host.ApplyLoadedBehavior;
+        }
+      }
+    }
+
     #endregion
 
     #region Loaded Behaviors Applied
-    private void ApplyFadeIn(FrameworkElement fe, Duration duration, Duration delay)
+
+    private static void ApplyFadeIn(IAnimatable fe, Duration duration, Duration delay)
     {
       if (delay.TimeSpan == TimeSpan.Zero)
       {
         DoubleAnimation da = new DoubleAnimation(0.0, 1.0, duration);
-        fe.BeginAnimation(FrameworkElement.OpacityProperty, da);
+        fe.BeginAnimation(OpacityProperty, da);
       }
       else
       {
@@ -410,16 +629,16 @@ namespace ProjectInfinity.Controls
         da.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, KeyTime.FromTimeSpan(delay.TimeSpan)));
         da.KeyFrames.Add(new LinearDoubleKeyFrame(1.0, KeyTime.FromTimeSpan(delay.TimeSpan + duration.TimeSpan)));
         da.Duration = delay + duration;
-        fe.BeginAnimation(FrameworkElement.OpacityProperty, da);
+        fe.BeginAnimation(OpacityProperty, da);
       }
     }
 
-    private void ApplyFadeOut(FrameworkElement fe, Duration duration, Duration delay)
+    private static void ApplyFadeOut(IAnimatable fe, Duration duration, Duration delay)
     {
       if (delay.TimeSpan == TimeSpan.Zero)
       {
         DoubleAnimation da = new DoubleAnimation(1.0, 0.0, duration);
-        fe.BeginAnimation(FrameworkElement.OpacityProperty, da);
+        fe.BeginAnimation(OpacityProperty, da);
       }
       else
       {
@@ -428,11 +647,11 @@ namespace ProjectInfinity.Controls
         da.KeyFrames.Add(new LinearDoubleKeyFrame(1.0, KeyTime.FromTimeSpan(delay.TimeSpan)));
         da.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, KeyTime.FromTimeSpan(delay.TimeSpan + duration.TimeSpan)));
         da.Duration = delay + duration;
-        fe.BeginAnimation(FrameworkElement.OpacityProperty, da);
+        fe.BeginAnimation(OpacityProperty, da);
       }
     }
 
-    private void ApplyZoomIn(FrameworkElement fe, Duration duration, Duration delay)
+    private static void ApplyZoomIn(UIElement fe, Duration duration, Duration delay)
     {
       if (delay.TimeSpan == TimeSpan.Zero)
       {
@@ -458,7 +677,7 @@ namespace ProjectInfinity.Controls
       }
     }
 
-    private void ApplyZoomInSpringy(FrameworkElement fe, Duration duration, Duration delay)
+    private static void ApplyZoomInSpringy(UIElement fe, Duration duration, Duration delay)
     {
       if (delay.TimeSpan == TimeSpan.Zero)
       {
@@ -506,7 +725,7 @@ namespace ProjectInfinity.Controls
       }
     }
 
-    private void ApplyZoomInRotate(FrameworkElement fe, Duration duration, Duration delay)
+    private static void ApplyZoomInRotate(UIElement fe, Duration duration, Duration delay)
     {
       if (delay.TimeSpan == TimeSpan.Zero)
       {
@@ -612,13 +831,11 @@ namespace ProjectInfinity.Controls
       }
     }
 
-    private void ApplySlideInFromRight(FrameworkElement fe, Duration duration, Duration delay)
+    private void ApplySlideInFromRight(UIElement fe, Duration duration, Duration delay)
     {
-      GeneralTransform transform = fe.TransformToAncestor(this);
-
       if (delay.TimeSpan == TimeSpan.Zero)
       {
-        DoubleAnimation da = new DoubleAnimation(this.ActualWidth, 0, duration);
+        DoubleAnimation da = new DoubleAnimation(ActualWidth, 0, duration);
         da.AccelerationRatio = da.DecelerationRatio = 0.2;
         fe.RenderTransformOrigin = new Point(0, 0);
         fe.RenderTransform = new TranslateTransform(0, 0);
@@ -627,8 +844,8 @@ namespace ProjectInfinity.Controls
       else
       {
         DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
-        da.KeyFrames.Add(new LinearDoubleKeyFrame(this.ActualWidth, KeyTime.FromTimeSpan(TimeSpan.Zero)));
-        da.KeyFrames.Add(new LinearDoubleKeyFrame(this.ActualWidth, KeyTime.FromTimeSpan(delay.TimeSpan)));
+        da.KeyFrames.Add(new LinearDoubleKeyFrame(ActualWidth, KeyTime.FromTimeSpan(TimeSpan.Zero)));
+        da.KeyFrames.Add(new LinearDoubleKeyFrame(ActualWidth, KeyTime.FromTimeSpan(delay.TimeSpan)));
         da.KeyFrames.Add(new LinearDoubleKeyFrame(0, KeyTime.FromTimeSpan(delay.TimeSpan + duration.TimeSpan)));
         da.Duration = delay + duration;
         da.AccelerationRatio = da.DecelerationRatio = 0.2;
@@ -638,13 +855,11 @@ namespace ProjectInfinity.Controls
       }
     }
 
-    private void ApplySlideInFromBottom(FrameworkElement fe, Duration duration, Duration delay)
+    private void ApplySlideInFromBottom(UIElement fe, Duration duration, Duration delay)
     {
-      GeneralTransform transform = fe.TransformToAncestor(this);
-
       if (delay.TimeSpan == TimeSpan.Zero)
       {
-        DoubleAnimation da = new DoubleAnimation(this.ActualHeight, 0, duration);
+        DoubleAnimation da = new DoubleAnimation(ActualHeight, 0, duration);
         da.AccelerationRatio = da.DecelerationRatio = 0.2;
         fe.RenderTransformOrigin = new Point(0, 0);
         fe.RenderTransform = new TranslateTransform(0, 0);
@@ -653,8 +868,8 @@ namespace ProjectInfinity.Controls
       else
       {
         DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
-        da.KeyFrames.Add(new LinearDoubleKeyFrame(this.ActualHeight, KeyTime.FromTimeSpan(TimeSpan.Zero)));
-        da.KeyFrames.Add(new LinearDoubleKeyFrame(this.ActualHeight, KeyTime.FromTimeSpan(delay.TimeSpan)));
+        da.KeyFrames.Add(new LinearDoubleKeyFrame(ActualHeight, KeyTime.FromTimeSpan(TimeSpan.Zero)));
+        da.KeyFrames.Add(new LinearDoubleKeyFrame(ActualHeight, KeyTime.FromTimeSpan(delay.TimeSpan)));
         da.KeyFrames.Add(new LinearDoubleKeyFrame(0, KeyTime.FromTimeSpan(delay.TimeSpan + duration.TimeSpan)));
         da.Duration = delay + duration;
         da.AccelerationRatio = da.DecelerationRatio = 0.2;
@@ -664,7 +879,7 @@ namespace ProjectInfinity.Controls
       }
     }
 
-    private void ApplyScaleInVertically(FrameworkElement fe, Duration duration, Duration delay)
+    private static void ApplyScaleInVertically(UIElement fe, Duration duration, Duration delay)
     {
       if (delay.TimeSpan == TimeSpan.Zero)
       {
@@ -688,7 +903,7 @@ namespace ProjectInfinity.Controls
       }
     }
 
-    private void ApplyScaleInHorizontally(FrameworkElement fe, Duration duration, Duration delay)
+    private static void ApplyScaleInHorizontally(UIElement fe, Duration duration, Duration delay)
     {
       if (delay.TimeSpan == TimeSpan.Zero)
       {
@@ -711,23 +926,12 @@ namespace ProjectInfinity.Controls
         fe.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, da);
       }
     }
-
-    #endregion
 
     #endregion
 
     #region Unloaded Behavior
 
     #region Unloaded Behavior Attached Properties
-
-    /// <summary>
-    /// UnloadedBehaviorProperty is an attached property which allows decendant elements to run animations when the page is navigated away from
-    /// </summary>
-    public static readonly DependencyProperty UnloadedBehaviorProperty =
-        DependencyProperty.RegisterAttached("UnloadedBehavior",
-                                typeof(UnloadedBehavior),
-                                typeof(AnimationBehaviorHost),
-                                new PropertyMetadata(UnloadedBehavior.None));
 
     /// <summary>
     /// Used to set an elements UnloadedBehavior attached property
@@ -741,14 +945,13 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      element.SetValue(AnimationBehaviorHost.UnloadedBehaviorProperty, b);
+      element.SetValue(UnloadedBehaviorProperty, b);
     }
 
     /// <summary>
     /// Used to get an elements UnloadedBehavior attached property
     /// </summary>
     /// <param name="element"></param>
-    /// <param name="b"></param>
     public static UnloadedBehavior GetUnloadedBehavior(DependencyObject element)
     {
       if (element == null)
@@ -756,18 +959,9 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      return (UnloadedBehavior)element.GetValue(AnimationBehaviorHost.UnloadedBehaviorProperty);
+      return (UnloadedBehavior) element.GetValue(UnloadedBehaviorProperty);
     }
 
-
-    /// <summary>
-    /// UnloadedDurationProperty is an attached property used to control the duration of the UnloadedBehavior animation.  It defaults to 1 second.
-    /// </summary>
-    public static readonly DependencyProperty UnloadedDurationProperty =
-          DependencyProperty.RegisterAttached("UnloadedDuration",
-                        typeof(Duration),
-                        typeof(AnimationBehaviorHost),
-                        new PropertyMetadata(new Duration(TimeSpan.FromSeconds(1))));
 
     /// <summary>
     /// Used to set an elements UnloadedDuration attached property
@@ -781,14 +975,13 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      element.SetValue(AnimationBehaviorHost.UnloadedDurationProperty, b);
+      element.SetValue(UnloadedDurationProperty, b);
     }
 
     /// <summary>
     /// Used to get an elements UnloadedDuration attached property
     /// </summary>
     /// <param name="element"></param>
-    /// <param name="b"></param>
     public static Duration GetUnloadedDuration(DependencyObject element)
     {
       if (element == null)
@@ -796,17 +989,8 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      return (Duration)element.GetValue(AnimationBehaviorHost.UnloadedDurationProperty);
+      return (Duration) element.GetValue(UnloadedDurationProperty);
     }
-
-    /// <summary>
-    /// UnloadedDelayProperty is an attached property used to the duration of the delay before the UnloadedBehavior animation starts.  It defaults to 0 seconds.
-    /// </summary>
-    public static readonly DependencyProperty UnloadedDelayProperty =
-            DependencyProperty.RegisterAttached("UnloadedDelay",
-                typeof(Duration),
-                typeof(AnimationBehaviorHost),
-                new PropertyMetadata(new Duration(TimeSpan.Zero)));
 
     /// <summary>
     /// Used to set an elements UnloadedDelay attached property
@@ -820,14 +1004,13 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      element.SetValue(AnimationBehaviorHost.UnloadedDelayProperty, b);
+      element.SetValue(UnloadedDelayProperty, b);
     }
 
     /// <summary>
     /// Used to get an elements UnloadedDelay attached property
     /// </summary>
     /// <param name="element"></param>
-    /// <param name="b"></param>
     public static Duration GetUnloadedDelay(DependencyObject element)
     {
       if (element == null)
@@ -835,21 +1018,17 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      return (Duration)element.GetValue(AnimationBehaviorHost.UnloadedDelayProperty);
+      return (Duration) element.GetValue(UnloadedDelayProperty);
     }
 
     #endregion
 
     #region Unloaded Behavior Realization
+
     /// <summary>
     /// This even is fired after UnloadBehavior animations have completed but before the page is navigated
     /// </summary>
     public event EventHandler UnloadBehaviorsComplete;
-
-    /// <summary>
-    /// When a navigation is canceled we hold on to the arguments so we can resume the navigation after UnloadBehavior animations have completed
-    /// </summary>
-    private NavigatingCancelEventArgs canceledNavigation = null;
 
     /// <summary>
     /// Walks the visual tree looking for FE's that have unload behaviors
@@ -869,10 +1048,12 @@ namespace ProjectInfinity.Controls
     /// </summary>
     /// <param name="fe"></param>
     /// <param name="list"></param>
-    private void GetUnloadBehaviorElementsRecursive(FrameworkElement fe, List<FrameworkElement> list)
+    private static void GetUnloadBehaviorElementsRecursive(FrameworkElement fe, List<FrameworkElement> list)
     {
       if (GetUnloadedBehavior(fe) != UnloadedBehavior.None)
+      {
         list.Add(fe);
+      }
 
       for (int i = 0; i < VisualTreeHelper.GetChildrenCount(fe); i++)
       {
@@ -885,49 +1066,10 @@ namespace ProjectInfinity.Controls
     }
 
     /// <summary>
-    /// This event handler is called when the NavigationService fires it's Navigating event.
-    /// We then cancel the event, run UnloadBehavior animations, and then resume the navigation once they are done
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void CancelNavigating(object sender, NavigatingCancelEventArgs e)
-    {
-      List<FrameworkElement> unloadedBehaviorElements = GetUnloadBehaviorElements();
-      if (unloadedBehaviorElements.Count > 0)
-      {
-        canceledNavigation = e;
-        this.UnloadBehaviorsComplete += ResumeNavigation;
-        ApplyUnloadedBehaviors(unloadedBehaviorElements);
-        e.Cancel = true;
-      }
-    }
-
-    /// <summary>
-    /// When a navigation is attempted we first cancel it then once UnloadBehavior animations have complete we resume the Navigation in this method
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void ResumeNavigation(object sender, EventArgs e)
-    {
-      this.UnloadBehaviorsComplete -= ResumeNavigation;
-      NavigationService ns = NavigationService.GetNavigationService(this);
-      if (ns != null)
-      {
-        ns.Navigating -= CancelNavigating; //we dont need to cancel next time around
-        if (canceledNavigation.NavigationMode == NavigationMode.Back)
-          ns.GoBack();
-        else if (canceledNavigation.NavigationMode == NavigationMode.Forward)
-          ns.GoForward();
-        else
-          ns.Navigate(canceledNavigation.Uri, canceledNavigation.ExtraData); //navigate using previously stored data
-      }
-    }
-
-    /// <summary>
     /// Given a list of elements with Unloaded Behaviors this method simply applies them and waits till they are done
     /// </summary>
     /// <param name="unloadedBehaviorElements"></param>
-    private void ApplyUnloadedBehaviors(List<FrameworkElement> unloadedBehaviorElements)
+    private void ApplyUnloadedBehaviors(IEnumerable<FrameworkElement> unloadedBehaviorElements)
     {
       TimeSpan longestUnload = TimeSpan.FromSeconds(0);
       //find the longest UnloadedBehavior so we can wait till it's done
@@ -936,9 +1078,11 @@ namespace ProjectInfinity.Controls
         ApplyUnloadedBehavior(fe);
         Duration dur = GetUnloadedDelay(fe) + GetUnloadedDuration(fe);
         if (dur.TimeSpan > longestUnload)
+        {
           longestUnload = dur.TimeSpan;
+        }
       }
-      DispatcherTimer unloadTimer = new DispatcherTimer(longestUnload, DispatcherPriority.Render, HandleUnloadedBehaviorComplete, Dispatcher.CurrentDispatcher);
+      new DispatcherTimer(longestUnload, DispatcherPriority.Render, HandleUnloadedBehaviorComplete, Dispatcher.CurrentDispatcher);
     }
 
     /// <summary>
@@ -949,11 +1093,12 @@ namespace ProjectInfinity.Controls
     /// <param name="args"></param>
     private void HandleUnloadedBehaviorComplete(object sender, EventArgs args)
     {
-      DispatcherTimer unloadTimer = (DispatcherTimer)sender;
+      DispatcherTimer unloadTimer = (DispatcherTimer) sender;
       unloadTimer.Stop();
       if (UnloadBehaviorsComplete != null)
+      {
         UnloadBehaviorsComplete(this, null);
-
+      }
     }
 
     /// <summary>
@@ -962,7 +1107,7 @@ namespace ProjectInfinity.Controls
     /// <param name="element"></param>
     private void ApplyUnloadedBehavior(FrameworkElement element)
     {
-      UnloadedBehavior behavior = AnimationBehaviorHost.GetUnloadedBehavior(element);
+      UnloadedBehavior behavior = GetUnloadedBehavior(element);
       Duration duration = GetUnloadedDuration(element);
       Duration delay = GetUnloadedDelay(element);
 
@@ -1005,7 +1150,7 @@ namespace ProjectInfinity.Controls
 
     #region UnloadedBehaviors Applied
 
-    private void ApplyZoomOut(FrameworkElement fe, Duration duration, Duration delay)
+    private static void ApplyZoomOut(UIElement fe, Duration duration, Duration delay)
     {
       if (delay.TimeSpan == TimeSpan.Zero)
       {
@@ -1028,10 +1173,9 @@ namespace ProjectInfinity.Controls
         fe.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, da);
         fe.RenderTransform.BeginAnimation(ScaleTransform.ScaleYProperty, da);
       }
-
     }
 
-    private void ApplyZoomOutRotate(FrameworkElement fe, Duration duration, Duration delay)
+    private static void ApplyZoomOutRotate(UIElement fe, Duration duration, Duration delay)
     {
       if (delay.TimeSpan == TimeSpan.Zero)
       {
@@ -1102,7 +1246,8 @@ namespace ProjectInfinity.Controls
         DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
         da.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, KeyTime.FromTimeSpan(TimeSpan.Zero)));
         da.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, KeyTime.FromTimeSpan(delay.TimeSpan)));
-        da.KeyFrames.Add(new LinearDoubleKeyFrame(-slidepoint.X, KeyTime.FromTimeSpan(delay.TimeSpan + duration.TimeSpan)));
+        da.KeyFrames.Add(
+          new LinearDoubleKeyFrame(-slidepoint.X, KeyTime.FromTimeSpan(delay.TimeSpan + duration.TimeSpan)));
         da.Duration = delay + duration;
         da.AccelerationRatio = da.DecelerationRatio = 0.2;
         fe.RenderTransformOrigin = new Point(0, 0);
@@ -1129,7 +1274,8 @@ namespace ProjectInfinity.Controls
         DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
         da.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, KeyTime.FromTimeSpan(TimeSpan.Zero)));
         da.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, KeyTime.FromTimeSpan(delay.TimeSpan)));
-        da.KeyFrames.Add(new LinearDoubleKeyFrame(-slidepoint.Y, KeyTime.FromTimeSpan(delay.TimeSpan + duration.TimeSpan)));
+        da.KeyFrames.Add(
+          new LinearDoubleKeyFrame(-slidepoint.Y, KeyTime.FromTimeSpan(delay.TimeSpan + duration.TimeSpan)));
         da.Duration = delay + duration;
         da.AccelerationRatio = da.DecelerationRatio = 0.2;
         fe.RenderTransformOrigin = new Point(0, 0);
@@ -1138,13 +1284,11 @@ namespace ProjectInfinity.Controls
       }
     }
 
-    private void ApplySlideOutToRight(FrameworkElement fe, Duration duration, Duration delay)
+    private void ApplySlideOutToRight(UIElement fe, Duration duration, Duration delay)
     {
-      GeneralTransform transform = fe.TransformToAncestor(this);
-
       if (delay.TimeSpan == TimeSpan.Zero)
       {
-        DoubleAnimation da = new DoubleAnimation(0, this.ActualWidth, duration);
+        DoubleAnimation da = new DoubleAnimation(0, ActualWidth, duration);
         da.AccelerationRatio = da.DecelerationRatio = 0.2;
         fe.RenderTransformOrigin = new Point(0, 0);
         fe.RenderTransform = new TranslateTransform(0, 0);
@@ -1155,7 +1299,7 @@ namespace ProjectInfinity.Controls
         DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
         da.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, KeyTime.FromTimeSpan(TimeSpan.Zero)));
         da.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, KeyTime.FromTimeSpan(delay.TimeSpan)));
-        da.KeyFrames.Add(new LinearDoubleKeyFrame(this.ActualWidth, KeyTime.FromTimeSpan(delay.TimeSpan + duration.TimeSpan)));
+        da.KeyFrames.Add(new LinearDoubleKeyFrame(ActualWidth, KeyTime.FromTimeSpan(delay.TimeSpan + duration.TimeSpan)));
         da.Duration = delay + duration;
         da.AccelerationRatio = da.DecelerationRatio = 0.2;
         fe.RenderTransformOrigin = new Point(0, 0);
@@ -1164,13 +1308,11 @@ namespace ProjectInfinity.Controls
       }
     }
 
-    private void ApplySlideOutToBottom(FrameworkElement fe, Duration duration, Duration delay)
+    private void ApplySlideOutToBottom(UIElement fe, Duration duration, Duration delay)
     {
-      GeneralTransform transform = fe.TransformToAncestor(this);
-
       if (delay.TimeSpan == TimeSpan.Zero)
       {
-        DoubleAnimation da = new DoubleAnimation(0, this.ActualHeight, duration);
+        DoubleAnimation da = new DoubleAnimation(0, ActualHeight, duration);
         da.AccelerationRatio = da.DecelerationRatio = 0.2;
         fe.RenderTransformOrigin = new Point(0, 0);
         fe.RenderTransform = new TranslateTransform(0, 0);
@@ -1181,7 +1323,8 @@ namespace ProjectInfinity.Controls
         DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
         da.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, KeyTime.FromTimeSpan(TimeSpan.Zero)));
         da.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, KeyTime.FromTimeSpan(delay.TimeSpan)));
-        da.KeyFrames.Add(new LinearDoubleKeyFrame(this.ActualHeight, KeyTime.FromTimeSpan(delay.TimeSpan + duration.TimeSpan)));
+        da.KeyFrames.Add(
+          new LinearDoubleKeyFrame(ActualHeight, KeyTime.FromTimeSpan(delay.TimeSpan + duration.TimeSpan)));
         da.Duration = delay + duration;
         da.AccelerationRatio = da.DecelerationRatio = 0.2;
         fe.RenderTransformOrigin = new Point(0, 0);
@@ -1190,7 +1333,7 @@ namespace ProjectInfinity.Controls
       }
     }
 
-    private void ApplyScaleOutVertically(FrameworkElement fe, Duration duration, Duration delay)
+    private static void ApplyScaleOutVertically(UIElement fe, Duration duration, Duration delay)
     {
       if (delay.TimeSpan == TimeSpan.Zero)
       {
@@ -1212,10 +1355,9 @@ namespace ProjectInfinity.Controls
         fe.RenderTransform = new ScaleTransform(1, 1);
         fe.RenderTransform.BeginAnimation(ScaleTransform.ScaleYProperty, da);
       }
-
     }
 
-    private void ApplyScaleOutHorizontally(FrameworkElement fe, Duration duration, Duration delay)
+    private static void ApplyScaleOutHorizontally(UIElement fe, Duration duration, Duration delay)
     {
       if (delay.TimeSpan == TimeSpan.Zero)
       {
@@ -1238,6 +1380,7 @@ namespace ProjectInfinity.Controls
         fe.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, da);
       }
     }
+
     #endregion
 
     #endregion
@@ -1245,15 +1388,6 @@ namespace ProjectInfinity.Controls
     #region Click Behavior
 
     #region Click Behavior Attached Properties
-    /// <summary>
-    /// ClickBehaviorProperty is an attached property which allows decendant elements to run animations when the element is clicked.
-    /// If the element is not a button the MouseUp event is used instead.
-    /// </summary>
-    public static readonly DependencyProperty ClickBehaviorProperty =
-        DependencyProperty.RegisterAttached("ClickBehavior" ,
-                                typeof(ClickBehavior),
-                                typeof(AnimationBehaviorHost),
-                                new PropertyMetadata(ClickBehavior.None, ClickBehaviorChanged));
 
     /// <summary>
     /// Used to set an elements ClickBehavior attached property
@@ -1267,7 +1401,7 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      element.SetValue(AnimationBehaviorHost.ClickBehaviorProperty, b);
+      element.SetValue(ClickBehaviorProperty, b);
     }
 
     /// <summary>
@@ -1282,17 +1416,8 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      return (ClickBehavior)element.GetValue(AnimationBehaviorHost.ClickBehaviorProperty);
+      return (ClickBehavior) element.GetValue(ClickBehaviorProperty);
     }
-
-    /// <summary>
-    /// ClickDurationProperty is an attached property used to control the duration of the ClickBehavior animation.  It defaults to 0.5 seconds.
-    /// </summary>
-    public static readonly DependencyProperty ClickDurationProperty =
-          DependencyProperty.RegisterAttached("ClickDuration" ,
-                        typeof(Duration),
-                        typeof(AnimationBehaviorHost),
-                        new PropertyMetadata(new Duration(TimeSpan.FromMilliseconds(500))));
 
     /// <summary>
     /// Used to set an elements ClickDuration attached property
@@ -1306,14 +1431,13 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      element.SetValue(AnimationBehaviorHost.ClickDurationProperty, b);
+      element.SetValue(ClickDurationProperty, b);
     }
 
     /// <summary>
     /// Used to get an elements ClickDuration attached property
     /// </summary>
     /// <param name="element"></param>
-    /// <param name="b"></param>
     public static Duration GetClickDuration(DependencyObject element)
     {
       if (element == null)
@@ -1321,12 +1445,13 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      return (Duration)element.GetValue(AnimationBehaviorHost.ClickDurationProperty);
+      return (Duration) element.GetValue(ClickDurationProperty);
     }
 
     #endregion
 
     #region Click Behavior Realization
+
     /// <summary>
     /// When the ClickBehavior attached property is changed we subscribe to the appropriate event on the element
     /// </summary>
@@ -1337,72 +1462,57 @@ namespace ProjectInfinity.Controls
       FrameworkElement element = (d as FrameworkElement);
       if (element != null)
       {
-        ClickBehavior newbehavior = (ClickBehavior)e.NewValue;
-        ClickBehavior oldbehavior = (ClickBehavior)e.OldValue;
+        ClickBehavior newbehavior = (ClickBehavior) e.NewValue;
+        ClickBehavior oldbehavior = (ClickBehavior) e.OldValue;
 
         if (newbehavior == oldbehavior)
+        {
           return;
+        }
 
         AnimationBehaviorHost host = FindHost(element);
         if (host == null)
+        {
           return;
+        }
 
         //use Click if it's a button, otherwise use MouseUp
-        System.Windows.Controls.Primitives.ButtonBase button =
-            element as System.Windows.Controls.Primitives.ButtonBase;
+        ButtonBase button =
+          element as ButtonBase;
         if (button != null)
         {
           //use click handler
           if (newbehavior == ClickBehavior.None)
-            button.Click -= host.ApplyClickBehavior;
+          {
+            button.Click -= ApplyClickBehavior;
+          }
 
           if (oldbehavior == ClickBehavior.None)
-            button.Click += host.ApplyClickBehavior;
+          {
+            button.Click += ApplyClickBehavior;
+          }
         }
         else
         {
           //no click handler, so fall back to mouse up
           if (newbehavior == ClickBehavior.None)
-            element.MouseUp -= host.ApplyClickBehavior;
+          {
+            element.MouseUp -= ApplyClickBehavior;
+          }
 
           if (oldbehavior == ClickBehavior.None)
-            element.MouseUp += host.ApplyClickBehavior;
+          {
+            element.MouseUp += ApplyClickBehavior;
+          }
         }
-
       }
     }
 
-    /// <summary>
-    /// When a 'click' is initiated we apply an aninimation to the element based on it's ClickBehavior type.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void ApplyClickBehavior(object sender, RoutedEventArgs e)
-    {
-      FrameworkElement element = (FrameworkElement)sender;
-      ClickBehavior behavior = AnimationBehaviorHost.GetClickBehavior(element);
-      Duration duration = GetClickDuration(element);
-
-      switch (behavior)
-      {
-        case ClickBehavior.Jiggle:
-          ApplyJiggle(element, duration);
-          break;
-        case ClickBehavior.Throb:
-          ApplyThrob(element, duration);
-          break;
-        case ClickBehavior.Rotate:
-          ApplyRotate(element, duration);
-          break;
-        case ClickBehavior.Snap:
-          ApplySnap(element, duration);
-          break;
-      }
-    }
     #endregion
 
     #region Click Behaviors Applied
-    private void ApplyJiggle(FrameworkElement fe, Duration duration)
+
+    private static void ApplyJiggle(UIElement fe, Duration duration)
     {
       DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
       da.KeyFrames.Add(new LinearDoubleKeyFrame(0, KeyTime.Paced));
@@ -1423,7 +1533,7 @@ namespace ProjectInfinity.Controls
       fe.RenderTransform.BeginAnimation(RotateTransform.AngleProperty, da);
     }
 
-    private void ApplyThrob(FrameworkElement fe, Duration duration)
+    private static void ApplyThrob(UIElement fe, Duration duration)
     {
       DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
       da.KeyFrames.Add(new LinearDoubleKeyFrame(1, KeyTime.Paced));
@@ -1445,7 +1555,7 @@ namespace ProjectInfinity.Controls
       fe.RenderTransform.BeginAnimation(ScaleTransform.ScaleYProperty, da);
     }
 
-    private void ApplyRotate(FrameworkElement fe, Duration duration)
+    private static void ApplyRotate(UIElement fe, Duration duration)
     {
       DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
       da.KeyFrames.Add(new LinearDoubleKeyFrame(0, KeyTime.Paced));
@@ -1466,7 +1576,7 @@ namespace ProjectInfinity.Controls
       fe.RenderTransform.BeginAnimation(RotateTransform.AngleProperty, da);
     }
 
-    private void ApplySnap(FrameworkElement fe, Duration duration)
+    private static void ApplySnap(UIElement fe, Duration duration)
     {
       DoubleAnimationUsingKeyFrames da = new DoubleAnimationUsingKeyFrames();
       da.KeyFrames.Add(new LinearDoubleKeyFrame(1, KeyTime.Paced));
@@ -1480,6 +1590,7 @@ namespace ProjectInfinity.Controls
       fe.RenderTransform = new ScaleTransform(1, 1);
       fe.RenderTransform.BeginAnimation(ScaleTransform.ScaleYProperty, da);
     }
+
     #endregion
 
     #endregion
@@ -1487,14 +1598,6 @@ namespace ProjectInfinity.Controls
     #region Layout Behavior
 
     #region Layout Behavior Attached Properties
-    /// <summary>
-    /// LayoutBehaviorProperty is an attached property that can be set on an element to control how it responds to being layed out
-    /// </summary>
-    public static readonly DependencyProperty LayoutBehaviorProperty =
-        DependencyProperty.RegisterAttached("LayoutBehavior" ,
-                                typeof(LayoutBehavior),
-                                typeof(AnimationBehaviorHost),
-                                new PropertyMetadata(LayoutBehavior.None, LayoutBehaviorChanged));
 
     /// <summary>
     /// sets the LayoutBehavior attached property
@@ -1508,7 +1611,7 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      element.SetValue(AnimationBehaviorHost.LayoutBehaviorProperty, b);
+      element.SetValue(LayoutBehaviorProperty, b);
     }
 
     /// <summary>
@@ -1523,16 +1626,8 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      return (LayoutBehavior)element.GetValue(AnimationBehaviorHost.LayoutBehaviorProperty);
+      return (LayoutBehavior) element.GetValue(LayoutBehaviorProperty);
     }
-    /// <summary>
-    /// LayoutDurationProperty is an attached property used to control the duration of the LayoutBehavior animation.  It defaults to 0.5 seconds.
-    /// </summary>
-    public static readonly DependencyProperty LayoutDurationProperty =
-          DependencyProperty.RegisterAttached("LayoutDuration" ,
-                        typeof(Duration),
-                        typeof(AnimationBehaviorHost),
-                        new PropertyMetadata(new Duration(TimeSpan.FromMilliseconds(500))));
 
     /// <summary>
     /// Used to set an elements LayoutDuration attached property
@@ -1546,14 +1641,13 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      element.SetValue(AnimationBehaviorHost.LayoutDurationProperty, b);
+      element.SetValue(LayoutDurationProperty, b);
     }
 
     /// <summary>
     /// Used to get an elements LayoutDuration attached property
     /// </summary>
     /// <param name="element"></param>
-    /// <param name="b"></param>
     public static Duration GetLayoutDuration(DependencyObject element)
     {
       if (element == null)
@@ -1561,11 +1655,13 @@ namespace ProjectInfinity.Controls
         throw new ArgumentNullException("element");
       }
 
-      return (Duration)element.GetValue(AnimationBehaviorHost.LayoutDurationProperty);
+      return (Duration) element.GetValue(LayoutDurationProperty);
     }
+
     #endregion
 
     #region Layout Behavior Realization
+
     /// <summary>
     /// called when an element changes it's LayoutBehavior.  Here we simply remember which elements require
     /// layout animations so that later when layout is updated we cant add animations as nessesary.
@@ -1577,21 +1673,23 @@ namespace ProjectInfinity.Controls
       FrameworkElement element = (d as FrameworkElement);
       if (element != null)
       {
-
-        LayoutBehavior newbehavior = (LayoutBehavior)e.NewValue;
-        LayoutBehavior oldbehavior = (LayoutBehavior)e.OldValue;
+        LayoutBehavior newbehavior = (LayoutBehavior) e.NewValue;
+        LayoutBehavior oldbehavior = (LayoutBehavior) e.OldValue;
 
         if (newbehavior == oldbehavior)
+        {
           return;
+        }
 
         AnimationBehaviorHost host = FindHost(element);
         if (host == null)
+        {
           return;
+        }
 
         if (oldbehavior == LayoutBehavior.None)
         {
           host.RegisterLayoutBehaviorElement(element);
-
         }
 
         if (newbehavior == LayoutBehavior.None)
@@ -1601,15 +1699,6 @@ namespace ProjectInfinity.Controls
       }
     }
 
-    /// <summary>
-    /// this dictionary associates elements with the last known position relative to the host
-    /// </summary>
-    private Dictionary<FrameworkElement, Point?> layoutBehaviorElementPosition = new Dictionary<FrameworkElement, Point?>();
-
-    /// <summary>
-    /// we remember how many elements need layout animations so that we can unsubscribe from the LayoutUpdated event when its not needed
-    /// </summary>
-    private int layoutBehaviorCount = 0;
     private int LayoutBehaviorCount
     {
       get { return layoutBehaviorCount; }
@@ -1618,9 +1707,13 @@ namespace ProjectInfinity.Controls
         int oldval = layoutBehaviorCount;
         layoutBehaviorCount = value;
         if (oldval == 0 && layoutBehaviorCount > 0)
-          this.LayoutUpdated += OnLayoutUpdated;
+        {
+          LayoutUpdated += OnLayoutUpdated;
+        }
         else if (oldval > 0 && layoutBehaviorCount == 0)
-          this.LayoutUpdated -= OnLayoutUpdated;
+        {
+          LayoutUpdated -= OnLayoutUpdated;
+        }
       }
     }
 
@@ -1636,61 +1729,11 @@ namespace ProjectInfinity.Controls
       layoutBehaviorElementPosition.Remove(element);
     }
 
-
-    /// <summary>
-    /// this gets called whenever ANY element is updated so we need to check that a specific elements position has changed
-    /// before adding animations.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    void OnLayoutUpdated(object sender, EventArgs e)
-    {
-      //TODO: rewrite this method to clean it up and handle corner cases with layout
-      Dictionary<FrameworkElement, Point> updateDict = new Dictionary<FrameworkElement, Point>();
-      foreach (KeyValuePair<FrameworkElement, Point?> pair in layoutBehaviorElementPosition)
-      {
-        FrameworkElement fe = pair.Key;
-        Point? savedPosition = pair.Value;
-        Point currentPosition = fe.TransformToAncestor(this).Transform(new Point(0, 0));
-        if (savedPosition.HasValue)
-        {
-          if (!AreClose(currentPosition, savedPosition.Value))
-          {
-            LayoutBehavior behavior = GetLayoutBehavior(fe);
-            Duration duration = GetLayoutDuration(fe);
-            switch (behavior)
-            {
-              case LayoutBehavior.Smooth:
-                ApplySmoothLayout(fe, savedPosition.Value, currentPosition, duration);
-                break;
-              case LayoutBehavior.Springy:
-                ApplySpringyLayout(fe, savedPosition.Value, currentPosition, duration);
-                break;
-            }
-
-            //this is probably a shitty way to update the collection
-            updateDict[fe] = currentPosition;
-          }
-        }
-        else
-        {
-          //the first time it's layed out just remember where
-          updateDict[fe] = currentPosition;
-        }
-      }
-
-      //update layoutBehaviorElementPosition now that we're not iterating it
-      if (updateDict != null)
-      {
-        foreach (KeyValuePair<FrameworkElement, Point> pair in updateDict)
-          layoutBehaviorElementPosition[pair.Key] = new Point?(pair.Value);
-      }
-    }
-
     #endregion
 
     #region Layout Behaviors Applied
-    private void ApplySmoothLayout(FrameworkElement fe, Point oldpoint, Point newpoint, Duration duration)
+
+    private static void ApplySmoothLayout(UIElement fe, Point oldpoint, Point newpoint, Duration duration)
     {
       fe.RenderTransform = new TranslateTransform();
       DoubleAnimation da1 = new DoubleAnimation(oldpoint.X - newpoint.X, 0.0, duration);
@@ -1701,7 +1744,7 @@ namespace ProjectInfinity.Controls
       fe.RenderTransform.BeginAnimation(TranslateTransform.YProperty, da2);
     }
 
-    private void ApplySpringyLayout(FrameworkElement fe, Point oldpoint, Point newpoint, Duration duration)
+    private static void ApplySpringyLayout(UIElement fe, Point oldpoint, Point newpoint, Duration duration)
     {
       fe.RenderTransform = new TranslateTransform();
       if (oldpoint.X != newpoint.X)
@@ -1711,10 +1754,10 @@ namespace ProjectInfinity.Controls
 
         DoubleAnimationUsingKeyFrames da1 = new DoubleAnimationUsingKeyFrames();
         da1.KeyFrames.Add(new LinearDoubleKeyFrame(startx, KeyTime.Paced));
-        da1.KeyFrames.Add(new LinearDoubleKeyFrame(startx + dx * 1.25, KeyTime.Paced));
-        da1.KeyFrames.Add(new LinearDoubleKeyFrame(startx + dx * 0.75, KeyTime.Paced));
-        da1.KeyFrames.Add(new LinearDoubleKeyFrame(startx + dx * 1.1, KeyTime.Paced));
-        da1.KeyFrames.Add(new LinearDoubleKeyFrame(startx + dx * 0.9, KeyTime.Paced));
+        da1.KeyFrames.Add(new LinearDoubleKeyFrame(startx + dx*1.25, KeyTime.Paced));
+        da1.KeyFrames.Add(new LinearDoubleKeyFrame(startx + dx*0.75, KeyTime.Paced));
+        da1.KeyFrames.Add(new LinearDoubleKeyFrame(startx + dx*1.1, KeyTime.Paced));
+        da1.KeyFrames.Add(new LinearDoubleKeyFrame(startx + dx*0.9, KeyTime.Paced));
         da1.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, KeyTime.Paced));
 
         da1.Duration = duration;
@@ -1730,10 +1773,10 @@ namespace ProjectInfinity.Controls
 
         DoubleAnimationUsingKeyFrames da2 = new DoubleAnimationUsingKeyFrames();
         da2.KeyFrames.Add(new LinearDoubleKeyFrame(starty, KeyTime.Paced));
-        da2.KeyFrames.Add(new LinearDoubleKeyFrame(starty + dy * 1.25, KeyTime.Paced));
-        da2.KeyFrames.Add(new LinearDoubleKeyFrame(starty + dy * 0.75, KeyTime.Paced));
-        da2.KeyFrames.Add(new LinearDoubleKeyFrame(starty + dy * 1.1, KeyTime.Paced));
-        da2.KeyFrames.Add(new LinearDoubleKeyFrame(starty + dy * 0.9, KeyTime.Paced));
+        da2.KeyFrames.Add(new LinearDoubleKeyFrame(starty + dy*1.25, KeyTime.Paced));
+        da2.KeyFrames.Add(new LinearDoubleKeyFrame(starty + dy*0.75, KeyTime.Paced));
+        da2.KeyFrames.Add(new LinearDoubleKeyFrame(starty + dy*1.1, KeyTime.Paced));
+        da2.KeyFrames.Add(new LinearDoubleKeyFrame(starty + dy*0.9, KeyTime.Paced));
         da2.KeyFrames.Add(new LinearDoubleKeyFrame(0.0, KeyTime.Paced));
 
         da2.Duration = duration;
@@ -1748,7 +1791,6 @@ namespace ProjectInfinity.Controls
 
     #endregion
 
-
     #region Utility Methods
 
     /// <summary>
@@ -1757,7 +1799,7 @@ namespace ProjectInfinity.Controls
     /// <param name="p1"></param>
     /// <param name="p2"></param>
     /// <returns></returns>
-    private bool AreClose(Point p1, Point p2)
+    private static bool AreClose(Point p1, Point p2)
     {
       return (Math.Abs(p1.X - p2.X) < .001 && Math.Abs(p1.Y - p2.Y) < .001);
     }
@@ -1777,7 +1819,9 @@ namespace ProjectInfinity.Controls
         AnimationBehaviorHost host = current as AnimationBehaviorHost;
 
         if (host != null)
+        {
           return host;
+        }
 
         current = VisualTreeHelper.GetParent(current) as FrameworkElement;
       }
