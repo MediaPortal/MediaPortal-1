@@ -30,10 +30,11 @@ namespace ProjectInfinity.Settings
       Dictionary<string, string> globalSettingsList = new Dictionary<string, string>();
       Dictionary<string, string> userSettingsList = new Dictionary<string, string>();
       XmlSettingsProvider xmlWriter = new XmlSettingsProvider(fileName);
+      bool isFirstSave = (!File.Exists(fileName));
       foreach (PropertyInfo property in obj.GetType().GetProperties())
       {
         Type thisType = property.PropertyType;
-        string defaultval="";
+        string defaultval = "";
         log.Debug("Got property name: {0}", property.Name);
 
         #region CLR Typed property
@@ -53,19 +54,22 @@ namespace ProjectInfinity.Settings
             defaultval = "";
           }
           string value = defaultval;
-          if (obj.GetType().GetProperty(property.Name).GetValue(obj, null) != null)
+          if (!isFirstSave) //else default value will be used if it exists
           {
-            value = obj.GetType().GetProperty(property.Name).GetValue(obj, null).ToString();
-          }
-          if (scope == SettingScope.User)
-          {
-            log.Debug("added property: {0}, value= {1} to user list", property.Name, obj.GetType().GetProperty(property.Name).GetValue(obj, null));
-            userSettingsList.Add(property.Name, value);
-          }
-          else
-          {
-            log.Debug("added property: {0}, value= {1} to global list", property.Name, obj.GetType().GetProperty(property.Name).GetValue(obj, null));
-            globalSettingsList.Add(property.Name, value);
+            if (obj.GetType().GetProperty(property.Name).GetValue(obj, null) != null)
+            {
+              value = obj.GetType().GetProperty(property.Name).GetValue(obj, null).ToString();
+            }
+            if (scope == SettingScope.User)
+            {
+              log.Debug("added property: {0}, value= {1} to user list", property.Name, obj.GetType().GetProperty(property.Name).GetValue(obj, null));
+              userSettingsList.Add(property.Name, value);
+            }
+            else
+            {
+              log.Debug("added property: {0}, value= {1} to global list", property.Name, obj.GetType().GetProperty(property.Name).GetValue(obj, null));
+              globalSettingsList.Add(property.Name, value);
+            }
           }
         }
         #endregion
@@ -78,7 +82,8 @@ namespace ProjectInfinity.Settings
           StringWriter strWriter = new StringWriter(sb);
           XmlTextWriter writer = new XmlNoNamespaceWriter(strWriter);
           writer.Formatting = System.Xml.Formatting.Indented;
-          xmlSerial.Serialize(writer, obj.GetType().GetProperty(property.Name).GetValue(obj, null));
+          object propertyValue = obj.GetType().GetProperty(property.Name).GetValue(obj, null);
+          xmlSerial.Serialize(writer, propertyValue);
           strWriter.Close();
           strWriter.Dispose();
           // remove unneeded encoding tag
@@ -96,14 +101,16 @@ namespace ProjectInfinity.Settings
             scope = SettingScope.Global;
             defaultval = "";
           }
-
+          string value = defaultval;
+          /// a changer
+          if (!isFirstSave || defaultval == "") value = sb.ToString();
           if (scope == SettingScope.User)
           {
-            userSettingsList.Add(property.Name, sb.ToString());
+            userSettingsList.Add(property.Name, value);
           }
           else
           {
-            globalSettingsList.Add(property.Name, sb.ToString());
+            globalSettingsList.Add(property.Name, value);
           }
         }
         #endregion
@@ -135,6 +142,9 @@ namespace ProjectInfinity.Settings
     public static void Deserialize(object obj, string fileName)
     {
       XmlSettingsProvider xmlreader = new XmlSettingsProvider(fileName);
+      // if xml file doesn't exist yet then create it
+      if (!File.Exists(fileName)) Serialize(obj, fileName);
+
       foreach (PropertyInfo property in obj.GetType().GetProperties())
       {
         Type thisType = property.PropertyType;
@@ -176,6 +186,17 @@ namespace ProjectInfinity.Settings
             if (thisType == typeof(Int16)) property.SetValue(obj, Int16.Parse(value), null);
             if (thisType == typeof(Int32)) property.SetValue(obj, Int32.Parse(value), null);
             if (thisType == typeof(DateTime)) property.SetValue(obj, DateTime.Parse(value), null);
+            if (thisType == typeof(bool?)) property.SetValue(obj, bool.Parse(value), null);
+            if (thisType == typeof(Int16?)) property.SetValue(obj, Int16.Parse(value), null);
+            if (thisType == typeof(Int32?)) property.SetValue(obj, Int32.Parse(value), null);
+            if (thisType == typeof(Int64?)) property.SetValue(obj, Int64.Parse(value), null);
+            if (thisType == typeof(UInt16?)) property.SetValue(obj, UInt16.Parse(value), null);
+            if (thisType == typeof(UInt32?)) property.SetValue(obj, UInt32.Parse(value), null);
+            if (thisType == typeof(UInt64?)) property.SetValue(obj, UInt64.Parse(value), null);
+            if (thisType == typeof(float?)) property.SetValue(obj, float.Parse(value), null);
+            if (thisType == typeof(double?)) property.SetValue(obj, double.Parse(value), null);
+            if (thisType == typeof(Int16?)) property.SetValue(obj, Int16.Parse(value), null);
+            if (thisType == typeof(Int32?)) property.SetValue(obj, Int32.Parse(value), null);
           }
           catch (Exception ex)
           {
@@ -188,7 +209,7 @@ namespace ProjectInfinity.Settings
         #region not CLR Typed property
         {
           XmlSerializer xmlSerial = new XmlSerializer(thisType);
-       
+
           string value = xmlreader.GetValue(obj.ToString(), property.Name, scope);
           if (value != null)
           {
@@ -224,7 +245,15 @@ namespace ProjectInfinity.Settings
            || (aType == typeof(UInt64))
            || (aType == typeof(UInt32))
            || (aType == typeof(UInt16))
-           || (aType == typeof(System.DateTime)))
+           || (aType == typeof(System.DateTime))
+           //|| (aType == typeof(string?))
+           || (aType == typeof(bool?))
+           || (aType == typeof(float?))
+           || (aType == typeof(double?))
+           || (aType == typeof(UInt32?))
+           || (aType == typeof(UInt64?))
+           || (aType == typeof(UInt32?))
+           || (aType == typeof(UInt16?)))
       {
         return true;
       }
