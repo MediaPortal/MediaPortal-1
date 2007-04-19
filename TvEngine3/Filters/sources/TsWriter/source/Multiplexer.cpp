@@ -114,7 +114,7 @@ void CMultiplexer::AddPesStream(int pid, bool isAc3, bool isAudio, bool isVideo)
 //	LogDebug("mux: add pes pid:%x", pid);
 	int audioStreamId=0xc0;
 	int videoStreamId=0xe0;
-	int ac3StreamId=0x80;
+	int ac3StreamId=0xbd;
 
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
@@ -379,8 +379,9 @@ int CMultiplexer::WriteSystemHeader(byte* buf)
 	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
 		CPesDecoder* decoder=*it;
-    if (decoder->GetStreamId() >= 0xc0 && decoder->GetStreamId() <= 0xcf) audioBound++;
-    if (decoder->GetStreamId() >= 0xe0 && decoder->GetStreamId() <= 0xef) videoBound++;
+    if (decoder->IsAc3()) audioBound++;
+    else if (decoder->GetStreamId() >= 0xc0 && decoder->GetStreamId() <= 0xcf) audioBound++;
+    else if (decoder->GetStreamId() >= 0xe0 && decoder->GetStreamId() <= 0xef) videoBound++;
   }
   buf[0]=0;
   buf[1]=0;
@@ -401,27 +402,33 @@ int CMultiplexer::WriteSystemHeader(byte* buf)
   // 76543210 76543210 76543210
   // iiiiiiii 11bsssss ssssssss
   int offset=SYSTEM_HEADER_SIZE_BASE;
-  int  private_stream_coded = 0;
-	for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
+  for (it=m_pesDecoders.begin(); it != m_pesDecoders.end();++it)
 	{
 		CPesDecoder* decoder=*it;
     int id=decoder->GetStreamId();
-    if (id < 0xc0)
-    {
-      if (private_stream_coded)
-          continue;
-      private_stream_coded = 1;
-      id = 0xbd;
-    }
     buf[offset]=id; offset++;
-    if (id < 0xe0)
+    if ( decoder->IsAc3() )
     {
-      /* audio */
+      /* ac3 */
+      ULONG size=0;//(MAX_INPUT_BUFFER_SIZE_AUDIO/128);
+      buf[offset]=id + ((size>>8)&0x1f);offset++;
+      buf[offset]=(size&0xff); offset++;
+    }
+    else if (id < 0xc0)
+    {
+      /* private stream */
+      ULONG size=0;//(MAX_INPUT_BUFFER_SIZE_AUDIO/128);
+      buf[offset]=id + ((size>>8)&0x1f);offset++;
+      buf[offset]=(size&0xff); offset++;
+    }
+    else if (id >=0xc0 && id <=0xcf)
+    {
+      /* mpeg audio */
       ULONG size=0;//(MAX_INPUT_BUFFER_SIZE_AUDIO/128);
       buf[offset]=0xc0 + ((size>>8)&0x1f);offset++;
       buf[offset]=(size&0xff); offset++;
     }
-    else
+    else if (id>=0xe0 && id <=0xef)
     {
       /* video */
       ULONG size=0;//(MAX_INPUT_BUFFER_SIZE_VIDEO/128);
