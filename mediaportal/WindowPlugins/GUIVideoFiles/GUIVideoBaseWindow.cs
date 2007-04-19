@@ -296,34 +296,13 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-
-      /*
-      if (control == btnPlaylistFolder)
-      {
-        if (_currentFolder != _playListPath)
-        {
-          _lastFolder = _currentFolder;
-          _currentFolder = _playListPath;
-        }
-        else
-        {
-          _currentFolder = _lastFolder;
-        }
-        LoadDirectory(_currentFolder);
-        return;
-
-      }
-      */
-
     protected void OnShowSavedPlaylists(string _directory)
     {
       VirtualDirectory _virtualDirectory = new VirtualDirectory();
-
-      //_Music.LoadSettings("music");
-      _virtualDirectory.LoadSettings("movies");
-      _virtualDirectory.AddDrives();
-      //_virtualDirectory.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
       _virtualDirectory.AddExtension(".m3u");
+      _virtualDirectory.AddExtension(".pls");
+      _virtualDirectory.AddExtension(".b4s");
+      _virtualDirectory.AddExtension(".wpl");
 
       List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(_directory);
       if (_directory == m_strPlayListPath)
@@ -352,7 +331,10 @@ namespace MediaPortal.GUI.Video
         OnShowSavedPlaylists(selectItem.Path);
         return;
       }
+
+      GUIWaitCursor.Show();
       LoadPlayList(selectItem.Path);
+      GUIWaitCursor.Hide();
     }
 
     protected void SelectCurrentItem()
@@ -701,7 +683,6 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-
       // clear current playlist
       playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Clear();
 
@@ -711,7 +692,6 @@ namespace MediaPortal.GUI.Video
         PlayListItem playListItem = playlist[i];
         playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playListItem);
       }
-
 
       // if we got a playlist
       if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Count > 0)

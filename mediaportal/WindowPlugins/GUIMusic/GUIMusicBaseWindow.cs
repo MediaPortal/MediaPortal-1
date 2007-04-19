@@ -93,7 +93,6 @@ namespace MediaPortal.GUI.Music
 
     [SkinControlAttribute(8)]     protected GUIButtonControl btnSearch = null;
     [SkinControlAttribute(12)]    protected GUIButtonControl btnPlayCd = null;
-    [SkinControlAttribute(9)]     protected GUIButtonControl btnPlaylist = null;
     [SkinControlAttribute(10)]    protected GUIButtonControl btnSavedPlaylists = null;
 
     const string defaultTrackTag = "[%track%. ][%artist% - ][%title%]";
@@ -636,7 +635,6 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-
       // clear current playlist
       playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
 
@@ -657,7 +655,6 @@ namespace MediaPortal.GUI.Music
         playListItem.MusicTag = tag;
         playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playListItem);
       }
-
 
       // if we got a playlist
       if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0)
@@ -1043,12 +1040,10 @@ namespace MediaPortal.GUI.Music
     protected void OnShowSavedPlaylists(string _directory)
     {
       VirtualDirectory _virtualDirectory = new VirtualDirectory();
-
-      //_Music.LoadSettings("music");
-      _virtualDirectory.LoadSettings("movies");
-      _virtualDirectory.AddDrives();
-      //_virtualDirectory.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
       _virtualDirectory.AddExtension(".m3u");
+      _virtualDirectory.AddExtension(".pls");
+      _virtualDirectory.AddExtension(".b4s");
+      _virtualDirectory.AddExtension(".wpl");
 
       List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(_directory);
       if (_directory == m_strPlayListPath)
@@ -1077,7 +1072,10 @@ namespace MediaPortal.GUI.Music
         OnShowSavedPlaylists(selectItem.Path);
         return;
       }
+
+      GUIWaitCursor.Show();
       LoadPlayList(selectItem.Path);
+      GUIWaitCursor.Hide();
     }
 
     protected virtual void LoadDirectory(string path)
