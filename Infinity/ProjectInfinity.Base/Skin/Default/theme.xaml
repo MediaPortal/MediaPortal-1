@@ -485,19 +485,16 @@
         <ControlTemplate  TargetType="{x:Type Button}">
           <Grid x:Name="grid" Margin="0,2,0,2">
             <Rectangle Fill="{StaticResource MpButtonBrush}" Stroke="#FF2866BD" RadiusX="4" RadiusY="4" HorizontalAlignment="Stretch" Margin="0,0,0,0" x:Name="shine" Width="Auto"/>
-            <Polygon x:Name="endLeft" Height="Auto"
-           Points="0,1, 20,1, 10,16, 20,30, 0,30" 
-           StrokeThickness="1">
-              <Polygon.Fill>
-                <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-                  <GradientStop Color="#FFDEE8EE" Offset="0.014"/>
-                  <GradientStop Color="#FF8EB7E0" Offset="1"/>
-                </LinearGradientBrush>
-              </Polygon.Fill>
-            </Polygon>
 
-            <ContentPresenter Margin="20,0,10,0" HorizontalAlignment="Left" VerticalAlignment="Center"  x:Name="contentPresenter" TextElement.FontFamily="Segoe Media Center" TextElement.FontSize="20" TextElement.Foreground="White"  >
-            </ContentPresenter>
+            <ContentPresenter Margin="20,0,10,0" HorizontalAlignment="Left" VerticalAlignment="Center"  x:Name="contentPresenter" TextElement.FontFamily="Segoe Media Center" TextElement.FontSize="20" TextElement.Foreground="White"  />
+          	<Path Stretch="Fill" Stroke="{x:Null}" StrokeThickness="1" HorizontalAlignment="Left" Margin="-0.017,-0.072,0,-0.062" x:Name="endLeft" Width="21.019" Data="M20.205638,0.45088392 L10.102458,15.512074 20.111731,30.535183 4.0920198,30.540718 C1.4467122,30.515833 0.18157769,29.159332 0.18636971,26.577582 L0.18636971,4.4818201 C0.2017941,1.8645471 1.475581,0.52372551 4.0920198,0.54485641 z">
+          		<Path.Fill>
+          			<LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+          				<GradientStop Color="#FFDEE8EE" Offset="0.014"/>
+          				<GradientStop Color="#FF8EB7E0" Offset="1"/>
+          			</LinearGradientBrush>
+          		</Path.Fill>
+          	</Path>
           </Grid>
           <ControlTemplate.Triggers>
             <EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
@@ -531,18 +528,16 @@
         <ControlTemplate  TargetType="{x:Type Button}">
           <Grid x:Name="grid" Margin="0,2,0,2">
             <Rectangle Fill="{StaticResource MpButtonBrushLight}" Stroke="#FF2866BD" RadiusX="4" RadiusY="4" HorizontalAlignment="Stretch" Margin="0,0,0,0" x:Name="shine" Width="Auto"/>
-            <Polygon x:Name="endLeft" Height="Auto"
-            Points="0,1, 20,1, 10,16, 20,30, 0,30" 
-            StrokeThickness="1">
-              <Polygon.Fill>
-                <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-                  <GradientStop Color="#FFDEE8EE" Offset="0.014"/>
-                  <GradientStop Color="#FF8EB7E0" Offset="1"/>
-                </LinearGradientBrush>
-              </Polygon.Fill>
-            </Polygon>
             <ContentPresenter Margin="20,0,10,0" HorizontalAlignment="Left" VerticalAlignment="Center"  x:Name="contentPresenter" TextElement.FontFamily="Segoe Media Center" TextElement.FontSize="20" TextElement.Foreground="White"  >
             </ContentPresenter>
+          	<Path Stretch="Fill" Stroke="{x:Null}" StrokeThickness="1" x:Name="endLeft" Width="21.019" Data="M20.205638,0.45088392 L10.102458,15.512074 20.111731,30.535183 4.0920198,30.540718 C1.4467122,30.515833 0.18157769,29.159332 0.18636971,26.577582 L0.18636971,4.4818201 C0.2017941,1.8645471 1.475581,0.52372551 4.0920198,0.54485641 z" HorizontalAlignment="Left" Margin="-0.017,-0.072,0,-0.062">
+          		<Path.Fill>
+          			<LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+          				<GradientStop Color="#FFDEE8EE" Offset="0.014"/>
+          				<GradientStop Color="#FF8EB7E0" Offset="1"/>
+          			</LinearGradientBrush>
+          		</Path.Fill>
+          	</Path>
           </Grid>
           <ControlTemplate.Triggers>
             <EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
@@ -578,16 +573,22 @@
             <Rectangle Fill="{StaticResource MpButtonBrush}" Stroke="#FF2866BD" RadiusX="4" RadiusY="4" HorizontalAlignment="Stretch" Margin="0,0,0,0" x:Name="shine" Width="Auto"/>
             <ContentPresenter Margin="10,0,20,0" HorizontalAlignment="Left" VerticalAlignment="Center"  x:Name="contentPresenter" TextElement.FontFamily="Segoe Media Center" TextElement.FontSize="20" TextElement.Foreground="White"  >
             </ContentPresenter>
-            <Polygon x:Name="endLeft" HorizontalAlignment="Right" Height="Auto"
-            Points="0,1, 20,1, 20,32, 0,32, 10,16, 0,1" 
-            StrokeThickness="1">
-              <Polygon.Fill>
-                <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-                  <GradientStop Color="#FFDEE8EE" Offset="0.014"/>
-                  <GradientStop Color="#FF8EB7E0" Offset="1"/>
-                </LinearGradientBrush>
-              </Polygon.Fill>
-            </Polygon>
+          	<Path Stretch="Fill" Stroke="{x:Null}" StrokeThickness="1" x:Name="endRight" Width="21.019" Data="M20.205638,0.45088392 L10.102458,15.512074 20.111731,30.535183 4.0920198,30.540718 C1.4467122,30.515833 0.18157769,29.159332 0.18636971,26.577582 L0.18636971,4.4818201 C0.2017941,1.8645471 1.475581,0.52372551 4.0920198,0.54485641 z" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Right" Margin="0,0.016,0.032,-0.028">
+          		<Path.Fill>
+          			<LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+          				<GradientStop Color="#FFDEE8EE" Offset="0.014"/>
+          				<GradientStop Color="#FF8EB7E0" Offset="1"/>
+          			</LinearGradientBrush>
+          		</Path.Fill>
+          		<Path.RenderTransform>
+          			<TransformGroup>
+          				<ScaleTransform ScaleX="1" ScaleY="1"/>
+          				<SkewTransform AngleX="0" AngleY="0"/>
+          				<RotateTransform Angle="-179.963"/>
+          				<TranslateTransform X="0" Y="0"/>
+          			</TransformGroup>
+          		</Path.RenderTransform>
+          	</Path>
 
           </Grid>
           <ControlTemplate.Triggers>
@@ -624,16 +625,22 @@
             <Rectangle  Fill="{StaticResource MpButtonBrushLight}" Stroke="#FF2866BD" RadiusX="4" RadiusY="4" HorizontalAlignment="Stretch" Margin="0,0,0,0" x:Name="shine" Width="Auto"/>
             <ContentPresenter Margin="10,0,20,0" HorizontalAlignment="Left" VerticalAlignment="Center"  x:Name="contentPresenter" TextElement.FontFamily="Segoe Media Center" TextElement.FontSize="20" TextElement.Foreground="White"  >
             </ContentPresenter>
-            <Polygon x:Name="endLeft" HorizontalAlignment="Right" Height="Auto"
-            Points="0,1, 20,1, 20,32, 0,32, 10,16, 0,1" 
-            StrokeThickness="1">
-              <Polygon.Fill>
-                <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-                  <GradientStop Color="#FFDEE8EE" Offset="0.014"/>
-                  <GradientStop Color="#FF8EB7E0" Offset="1"/>
-                </LinearGradientBrush>
-              </Polygon.Fill>
-            </Polygon>
+          	<Path Stretch="Fill" Stroke="{x:Null}" StrokeThickness="1" x:Name="endRight" Width="21.019" Data="M20.205638,0.45088392 L10.102458,15.512074 20.111731,30.535183 4.0920198,30.540718 C1.4467122,30.515833 0.18157769,29.159332 0.18636971,26.577582 L0.18636971,4.4818201 C0.2017941,1.8645471 1.475581,0.52372551 4.0920198,0.54485641 z" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Right" Margin="0,0.016,0.032,-0.028">
+          		<Path.Fill>
+          			<LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+          				<GradientStop Color="#FFDEE8EE" Offset="0.014"/>
+          				<GradientStop Color="#FF8EB7E0" Offset="1"/>
+          			</LinearGradientBrush>
+          		</Path.Fill>
+          		<Path.RenderTransform>
+          			<TransformGroup>
+          				<ScaleTransform ScaleX="1" ScaleY="1"/>
+          				<SkewTransform AngleX="0" AngleY="0"/>
+          				<RotateTransform Angle="-179.963"/>
+          				<TranslateTransform X="0" Y="0"/>
+          			</TransformGroup>
+          		</Path.RenderTransform>
+          	</Path>
           </Grid>
           <ControlTemplate.Triggers>
             <EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
@@ -667,28 +674,32 @@
         <ControlTemplate  TargetType="{x:Type Button}">
           <Grid x:Name="grid" Margin="0,2,0,2">
             <Rectangle  Fill="{StaticResource MpButtonBrush}" Stroke="#FF2866BD" RadiusX="4" RadiusY="4" HorizontalAlignment="Stretch" Margin="0,0,0,0" x:Name="shine" Width="Auto"/>
-            <Polygon x:Name="endLeft" Height="Auto"
-            Points="0,1, 20,1, 10,16, 20,30, 0,30" 
-            StrokeThickness="1">
-              <Polygon.Fill>
-                <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-                  <GradientStop Color="#FFDEE8EE" Offset="0.014"/>
-                  <GradientStop Color="#FF8EB7E0" Offset="1"/>
-                </LinearGradientBrush>
-              </Polygon.Fill>
-            </Polygon>
             <ContentPresenter Margin="20,0,20,0" HorizontalAlignment="Left" VerticalAlignment="Center"  x:Name="contentPresenter" TextElement.FontFamily="Segoe Media Center" TextElement.FontSize="20" TextElement.Foreground="White"  >
             </ContentPresenter>
-            <Polygon x:Name="endRight" HorizontalAlignment="Right" Height="Auto"
-            Points="0,1, 20,1, 20,32, 0,32, 10,16, 0,1" 
-            StrokeThickness="1">
-              <Polygon.Fill>
-                <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-                  <GradientStop Color="#FFDEE8EE" Offset="0.014"/>
-                  <GradientStop Color="#FF8EB7E0" Offset="1"/>
-                </LinearGradientBrush>
-              </Polygon.Fill>
-            </Polygon>
+          	<Path Stretch="Fill" Stroke="{x:Null}" StrokeThickness="1" x:Name="endRight" Width="21.019" Data="M20.205638,0.45088392 L10.102458,15.512074 20.111731,30.535183 4.0920198,30.540718 C1.4467122,30.515833 0.18157769,29.159332 0.18636971,26.577582 L0.18636971,4.4818201 C0.2017941,1.8645471 1.475581,0.52372551 4.0920198,0.54485641 z" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Right" Margin="0,0.016,0.032,-0.028">
+          		<Path.Fill>
+          			<LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+          				<GradientStop Color="#FFDEE8EE" Offset="0.014"/>
+          				<GradientStop Color="#FF8EB7E0" Offset="1"/>
+          			</LinearGradientBrush>
+          		</Path.Fill>
+          		<Path.RenderTransform>
+          			<TransformGroup>
+          				<ScaleTransform ScaleX="1" ScaleY="1"/>
+          				<SkewTransform AngleX="0" AngleY="0"/>
+          				<RotateTransform Angle="-179.963"/>
+          				<TranslateTransform X="0" Y="0"/>
+          			</TransformGroup>
+          		</Path.RenderTransform>
+          	</Path>
+          	<Path Stretch="Fill" Stroke="{x:Null}" StrokeThickness="1" x:Name="endLeft" Width="21.019" Data="M20.205638,0.45088392 L10.102458,15.512074 20.111731,30.535183 4.0920198,30.540718 C1.4467122,30.515833 0.18157769,29.159332 0.18636971,26.577582 L0.18636971,4.4818201 C0.2017941,1.8645471 1.475581,0.52372551 4.0920198,0.54485641 z" HorizontalAlignment="Left" Margin="-0.017,-0.072,0,-0.062">
+          		<Path.Fill>
+          			<LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+          				<GradientStop Color="#FFDEE8EE" Offset="0.014"/>
+          				<GradientStop Color="#FF8EB7E0" Offset="1"/>
+          			</LinearGradientBrush>
+          		</Path.Fill>
+          	</Path>
 
           </Grid>
           <ControlTemplate.Triggers>
@@ -723,28 +734,32 @@
         <ControlTemplate  TargetType="{x:Type Button}">
           <Grid x:Name="grid" Margin="0,2,0,2">
             <Rectangle Fill="{StaticResource MpButtonBrushLight}" Stroke="#FF2866BD" RadiusX="4" RadiusY="4" HorizontalAlignment="Stretch" Margin="0,0,0,0" x:Name="shine" Width="Auto"/>
-            <Polygon x:Name="endLeft" Height="Auto"
-            Points="0,1, 20,1, 10,16, 20,30, 0,30" 
-            StrokeThickness="1">
-              <Polygon.Fill>
-                <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-                  <GradientStop Color="#FFDEE8EE" Offset="0.014"/>
-                  <GradientStop Color="#FF8EB7E0" Offset="1"/>
-                </LinearGradientBrush>
-              </Polygon.Fill>
-            </Polygon>
             <ContentPresenter Margin="20,0,20,0" HorizontalAlignment="Left" VerticalAlignment="Center"  x:Name="contentPresenter" TextElement.FontFamily="Segoe Media Center" TextElement.FontSize="20" TextElement.Foreground="White"  >
             </ContentPresenter>
-            <Polygon x:Name="endRight" HorizontalAlignment="Right" Height="Auto"
-            Points="0,1, 20,1, 20,32, 0,32, 10,16, 0,1" 
-            StrokeThickness="1">
-              <Polygon.Fill>
-                <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-                  <GradientStop Color="#FFDEE8EE" Offset="0.014"/>
-                  <GradientStop Color="#FF8EB7E0" Offset="1"/>
-                </LinearGradientBrush>
-              </Polygon.Fill>
-            </Polygon>
+          	<Path Stretch="Fill" Stroke="{x:Null}" StrokeThickness="1" x:Name="endRight" Width="21.019" Data="M20.205638,0.45088392 L10.102458,15.512074 20.111731,30.535183 4.0920198,30.540718 C1.4467122,30.515833 0.18157769,29.159332 0.18636971,26.577582 L0.18636971,4.4818201 C0.2017941,1.8645471 1.475581,0.52372551 4.0920198,0.54485641 z" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Right" Margin="0,0.016,0.032,-0.028">
+          		<Path.Fill>
+          			<LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+          				<GradientStop Color="#FFDEE8EE" Offset="0.014"/>
+          				<GradientStop Color="#FF8EB7E0" Offset="1"/>
+          			</LinearGradientBrush>
+          		</Path.Fill>
+          		<Path.RenderTransform>
+          			<TransformGroup>
+          				<ScaleTransform ScaleX="1" ScaleY="1"/>
+          				<SkewTransform AngleX="0" AngleY="0"/>
+          				<RotateTransform Angle="-179.963"/>
+          				<TranslateTransform X="0" Y="0"/>
+          			</TransformGroup>
+          		</Path.RenderTransform>
+          	</Path>
+          	<Path Stretch="Fill" Stroke="{x:Null}" StrokeThickness="1" x:Name="endLeft" Width="21.019" Data="M20.205638,0.45088392 L10.102458,15.512074 20.111731,30.535183 4.0920198,30.540718 C1.4467122,30.515833 0.18157769,29.159332 0.18636971,26.577582 L0.18636971,4.4818201 C0.2017941,1.8645471 1.475581,0.52372551 4.0920198,0.54485641 z" HorizontalAlignment="Left" Margin="-0.017,-0.072,0,-0.062">
+          		<Path.Fill>
+          			<LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+          				<GradientStop Color="#FFDEE8EE" Offset="0.014"/>
+          				<GradientStop Color="#FF8EB7E0" Offset="1"/>
+          			</LinearGradientBrush>
+          		</Path.Fill>
+          	</Path>
           </Grid>
           <ControlTemplate.Triggers>
             <EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
