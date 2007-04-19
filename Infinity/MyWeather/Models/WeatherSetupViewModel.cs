@@ -32,9 +32,7 @@ namespace MyWeather
         ICommand _searchCommandAlt;                     // Does not open the Popup Menu
         ICommand _addLocation;                          // Adds the selected Location to a list (LocationsAdded)
         string _searchLocation;                         // the location we type in for searching
-        string _selectedLocation;                       // the name of the selected found location
-        string _selectedLocationId;                     // the id -"-
-        CitySetupInfo _selectedLocationTyped;        // the selected found location as City type
+        CitySetupInfo _selectedLocation;                // the selected found location as City type
         Visibility _visibleAfterSelection;
         LocationCollectionView _citiesCollView;
         LocationCollectionView _citiesAddedView;
@@ -205,28 +203,11 @@ namespace MyWeather
             }
         }
         /// <summary>
-        /// Gets or sets the location id which has been
-        /// selected by the user
-        /// </summary>
-        /// <value>location name</value>
-        public string SelectedLocationId
-        {
-            get
-            {
-                return _selectedLocationId;
-            }
-            set
-            {
-                _selectedLocationId = value;
-                ChangeProperty("SelectedLocationId");
-            }
-        }
-        /// <summary>
         /// Gets or sets the location which has been
         /// selected by the user
         /// </summary>
         /// <value>location name</value>
-        public string SelectedLocation
+        public CitySetupInfo SelectedLocation
         {
             get
             {
@@ -238,41 +219,6 @@ namespace MyWeather
                 ChangeProperty("SelectedLocation");
             }
         }
-
-        /// <summary>
-        /// Gets or sets the location which has been
-        /// selected by the user
-        /// </summary>
-        /// <value>location name</value>
-        public CitySetupInfo SelectedLocationTyped
-        {
-            get
-            {
-                return _selectedLocationTyped;
-            }
-            set
-            {
-                _selectedLocationTyped = value;
-                ChangeProperty("SelectedLocationTyped");
-            }
-        }
-        /// <summary>
-        /// Gets or sets the location which has been
-        /// selected by the user
-        /// </summary>
-        /// <value>location name</value>
-        public Visibility VisibilityAfterSelection
-        {
-            get
-            {
-                return _visibleAfterSelection;
-            }
-            set
-            {
-                _visibleAfterSelection = value;
-                ChangeProperty("VisibilityAfterSelection");
-            }
-        }        
         #endregion
         #region commands
 
@@ -511,12 +457,10 @@ namespace MyWeather
 
             public void Execute(object parameter)
             {
-                if (_viewModel.SelectedLocationTyped == null) return;
+                if (_viewModel.SelectedLocation == null) return;
                 // add the location to the dataModel
-                _viewModel._dataModel.AddCity(_viewModel.SelectedLocationTyped);
-                _viewModel.VisibilityAfterSelection = Visibility.Hidden;
+                _viewModel._dataModel.AddCity(_viewModel.SelectedLocation);
                 _viewModel.ChangeProperty("LocationsAdded");
-                ListBox test;
             }
         }
 
@@ -566,10 +510,10 @@ namespace MyWeather
 
                 // get the id that belongs to the selected city and set the property
                 CitySetupInfo buff = ((List<CitySetupInfo>)(_viewModel.Locations.SourceCollection))[dlgMenu.SelectedIndex];
-                _viewModel.SelectedLocationId = buff.id;
-                _viewModel.SelectedLocation = buff.name;
-                _viewModel.SelectedLocationTyped = buff;
-                _viewModel.VisibilityAfterSelection = Visibility.Visible;
+                _viewModel.SelectedLocation = buff;
+                // add location directly to the datamodel
+                _viewModel._dataModel.AddCity(_viewModel.SelectedLocation);
+                _viewModel.ChangeProperty("LocationsAdded");
             }
         }
         #endregion

@@ -27,7 +27,6 @@ namespace MyWeather
         string unitSpeed = String.Empty;
         string _parsefileLocation = String.Empty;
         bool _skipConnectionTest;
-        City _city = null;
         #endregion
 
         #region Constants

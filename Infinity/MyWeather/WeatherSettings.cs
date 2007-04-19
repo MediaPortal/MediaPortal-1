@@ -11,7 +11,7 @@ namespace MyWeather
     /// </summary>
     public class WeatherSettings
     {
-        private int _refreshInterval;
+        private int? _refreshInterval;
         private List<CitySetupInfo> _locationsList = new List<CitySetupInfo>();
         private string _parseFileLocation;
         private string _temperatureFahrenheit;
@@ -25,12 +25,13 @@ namespace MyWeather
         public WeatherSettings()
         {
         }
+
         /// <summary>
         /// Scope and default value attribute
         /// </summary>
         // RefreshInterval in Seconds
         [Setting(SettingScope.User, "600")]
-        public int RefreshInterval
+        public int? RefreshInterval
         {
             get { return this._refreshInterval; }
             set { this._refreshInterval = value; }
