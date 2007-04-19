@@ -38,7 +38,7 @@
       <posY>97</posY>
       <layout>StackLayout</layout>
       <control>
-        <description>View-As button</description>
+        <description>View-As</description>
         <type>button</type>
         <id>2</id>
         <label>100</label>
@@ -46,28 +46,28 @@
         <onup>17</onup>
       </control>
       <control>
-        <description>Sort button</description>
+        <description>Sort</description>
         <type>sortbutton</type>
         <id>3</id>
         <label>103</label>
         <onright>50</onright>
       </control>
       <control>
-        <description>Switch View button</description>
+        <description>Switch View</description>
         <type>button</type>
         <id>5</id>
         <label>457</label>
         <onright>50</onright>
       </control>
       <control>
-        <description>Play DVD button</description>
+        <description>Play DVD</description>
         <type>button</type>
         <id>6</id>
         <label>341</label>
         <onright>50</onright>
       </control>
       <control>
-        <description>Eject Disc button</description>
+        <description>Eject Disc</description>
         <type>button</type>
         <id>7</id>
         <label>654</label>
@@ -82,26 +82,23 @@
         <keepaspectratio>yes</keepaspectratio>
       </control>
       <control>
-        <description>Current Playlist button</description>
+        <description>Current Playlist</description>
         <type>button</type>
         <id>20</id>
-        <label>136</label>
+        <label>4555</label>
         <action>33</action>
         <onright>50</onright>
-        <ondown>8</ondown>
       </control>
-      <!-- would be more common layout, but does not work yet
       <control>
-        <description>My Playlists button</description>
+        <description>My Playlists</description>
         <type>button</type>
         <id>9</id>
         <label>983</label>
         <onright>50</onright>
         <ondown>8</ondown>
       </control>
-      -->
       <control>
-        <description>Trailers button</description>
+        <description>Trailers</description>
         <type>button</type>
         <id>8</id>
         <label>5906</label>

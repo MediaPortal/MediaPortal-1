@@ -78,13 +78,20 @@
         <onright>50</onright>
       </control>
       <control>
-        <description>Now Playing button</description>
+        <description>Now playing</description>
         <type>button</type>
         <id>26</id>
         <label>4540</label>
+        <hyperlink>510</hyperlink>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>My Playlists</description>
+        <type>button</type>
+        <id>10</id>
+        <label>983</label>
         <onright>50</onright>
         <ondown>99</ondown>
-        <hyperlink>510</hyperlink>
       </control>
     </control>
     <import>common.facade.music.xml</import>

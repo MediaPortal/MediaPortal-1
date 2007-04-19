@@ -577,12 +577,18 @@ namespace MediaPortal.GUI.Video
     }
     #endregion
 
+    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    {
+      base.OnClicked(controlId, control, actionType);
+    }
+
     protected override void OnClick(int iItem)
     {
       GUIListItem item = facadeView.SelectedListItem;
       if (item == null) return;
       bool isFolderAMovie = false;
       string path = item.Path;
+
       if (item.IsFolder && !item.IsRemote)
       {
         // Check if folder is actually a DVD. If so don't browse this folder, but play the DVD!
@@ -882,70 +888,6 @@ namespace MediaPortal.GUI.Video
           playlistItem.Duration = listItem.Duration;
           playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Video;
           playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playlistItem);
-        }
-      }
-    }
-
-    void LoadPlayList(string playListFileName)
-    {
-      IPlayListIO loader = PlayListFactory.CreateIO(playListFileName);
-      PlayList playlist = new PlayList();
-
-      if (!loader.Load(playlist, playListFileName))
-      {
-        GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-        if (dlgOK != null)
-        {
-          dlgOK.SetHeading(6);
-          dlgOK.SetLine(1, 477);
-          dlgOK.SetLine(2, String.Empty);
-          dlgOK.DoModal(GetID);
-        }
-        return;
-      }
-
-      if (playlist.Count == 1)
-      {
-        //TODO
-        Log.Info("GUIVideoFiles: play single playlist item - {0}", playlist[0].FileName);
-        if (g_Player.Play(playlist[0].FileName))
-        {
-          if (MediaPortal.Util.Utils.IsVideo(playlist[0].FileName))
-          {
-            GUIGraphicsContext.IsFullScreenVideo = true;
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-          }
-        }
-        return;
-      }
-
-      // clear current playlist
-      playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Clear();
-
-      // add each item of the playlist to the playlistplayer
-      for (int i = 0; i < playlist.Count; ++i)
-      {
-        PlayListItem playListItem = playlist[i];
-        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playListItem);
-      }
-
-
-      // if we got a playlist
-      if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Count > 0)
-      {
-        // then get 1st song
-        playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
-        PlayListItem item = playlist[0];
-
-        // and start playing it
-        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
-        playlistPlayer.Reset();
-        playlistPlayer.Play(0);
-
-        // and activate the playlist window if its not activated yet
-        if (GetID == GUIWindowManager.ActiveWindow)
-        {
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST);
         }
       }
     }

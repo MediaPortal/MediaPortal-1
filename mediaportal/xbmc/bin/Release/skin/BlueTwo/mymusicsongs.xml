@@ -20,7 +20,7 @@
       <posY>97</posY>
       <layout>StackLayout</layout>
       <control>
-        <description>View-As button</description>
+        <description>View-As</description>
         <type>button</type>
         <id>2</id>
         <label>100</label>
@@ -28,7 +28,7 @@
         <onup>17</onup>
       </control>
       <control>
-        <description>Sort button</description>
+        <description>Sort</description>
         <type>sortbutton</type>
         <id>3</id>
         <label>103</label>
@@ -41,13 +41,15 @@
         <label>457</label>
         <onright>50</onright>
       </control>
-<!--       <control>
-        <description>Search button</description>
+      <!--
+      <control>
+        <description>Search</description>
         <type>button</type>
-        <id>12</id>
+        <id>8</id>
         <label>137</label>
         <onright>50</onright>
-      </control> -->
+      </control>
+      -->
       <control>
         <description>Rotating Menu</description>
         <type>button</type>
@@ -59,12 +61,12 @@
       <control>
         <description>Play CD</description>
         <type>button</type>
-        <id>9</id>
+        <id>12</id>
         <label>890</label>  
         <onright>50</onright>
       </control>
       <control>
-        <description>Eject Disc button</description>
+        <description>Eject Disc</description>
         <type>button</type>
         <id>13</id>
         <label>654</label>
@@ -77,9 +79,9 @@
         <id>999</id>
         <texture>hbar1.png</texture>
         <keepaspectratio>yes</keepaspectratio>
-      </control>      
+      </control>
       <control>
-        <description>Now playing button</description>
+        <description>Now playing</description>
         <type>button</type>
         <id>11</id>
         <label>4540</label>
@@ -87,9 +89,9 @@
         <onright>50</onright>
       </control>
       <control>
-        <description>Current Playlist button</description>
+        <description>Current Playlist</description>
         <type>button</type>
-        <id>8</id>
+        <id>9</id>
         <label>4555</label>
         <action>33</action>
         <onright>50</onright>

@@ -79,8 +79,10 @@ namespace MediaPortal.GUI.Music
     protected MusicSort.SortMethod currentSortMethodRoot = MusicSort.SortMethod.Name;
     protected bool m_bSortAscending;
     protected bool m_bSortAscendingRoot;
+    protected string m_strPlayListPath = string.Empty;
     private bool m_bUseID3 = false;
     private bool _autoShuffleOnLoad = false;
+
 
     protected MusicViewHandler handler;
     protected MusicDatabase m_database;
@@ -88,6 +90,11 @@ namespace MediaPortal.GUI.Music
     [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
     [SkinControlAttribute(3)]     protected GUISortButtonControl btnSortBy = null;
     [SkinControlAttribute(6)]     protected GUIButtonControl btnViews = null;
+
+    [SkinControlAttribute(8)]     protected GUIButtonControl btnSearch = null;
+    [SkinControlAttribute(12)]    protected GUIButtonControl btnPlayCd = null;
+    [SkinControlAttribute(9)]     protected GUIButtonControl btnPlaylist = null;
+    [SkinControlAttribute(10)]    protected GUIButtonControl btnSavedPlaylists = null;
 
     const string defaultTrackTag = "[%track%. ][%artist% - ][%title%]";
     const string albumTrackTag = "[%track%. ][%artist% - ][%title%]";
@@ -105,7 +112,6 @@ namespace MediaPortal.GUI.Music
     protected bool UsingInternalMusicPlayer = false;
 
     protected bool PlayAllOnSingleItemPlayNow = false;
-    protected string m_strPlayListPath = string.Empty;
     protected string _currentPlaying = string.Empty;  
 
     public GUIMusicBaseWindow()
@@ -384,22 +390,16 @@ namespace MediaPortal.GUI.Music
       if (control == btnSortBy)
       {
         OnShowSort();
-
-        // bool shouldContinue = false;
-
-        //do
-        //{
-        //  shouldContinue = false;
-
-        //  if (!AllowSortMethod(CurrentSortMethod))
-        //    shouldContinue = true;
-        //} while (shouldContinue);
-
-      }//if (control==btnSortBy)
+      }
 
       if (control == btnViews)
       {
         OnShowViews();
+      }
+
+      if (control == btnSavedPlaylists)
+      {
+        OnShowSavedPlaylists(m_strPlayListPath);
       }
 
       if (control == facadeView)
@@ -610,7 +610,6 @@ namespace MediaPortal.GUI.Music
       IPlayListIO loader = PlayListFactory.CreateIO(strPlayList);
       if (loader == null)
         return;
-
       PlayList playlist = new PlayList();
 
       if (!loader.Load(playlist, strPlayList))
@@ -618,6 +617,7 @@ namespace MediaPortal.GUI.Music
         TellUserSomethingWentWrong();
         return;
       }
+
       if (_autoShuffleOnLoad)
       {
         Random r = new Random((int)DateTime.Now.Ticks);
@@ -631,10 +631,11 @@ namespace MediaPortal.GUI.Music
       playlistPlayer.CurrentPlaylistName = System.IO.Path.GetFileNameWithoutExtension(strPlayList);
       if (playlist.Count == 1)
       {
-        Log.Info("GUIMusicYears:Play:{0}", playlist[0].FileName);
+        Log.Info("GUIMusic:Play: play single playlist item - {0}", playlist[0].FileName);
         g_Player.Play(playlist[0].FileName);
         return;
       }
+
 
       // clear current playlist
       playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
@@ -1037,6 +1038,46 @@ namespace MediaPortal.GUI.Music
           }
         }
       }
+    }
+
+    protected void OnShowSavedPlaylists(string _directory)
+    {
+      VirtualDirectory _virtualDirectory = new VirtualDirectory();
+
+      //_Music.LoadSettings("music");
+      _virtualDirectory.LoadSettings("movies");
+      _virtualDirectory.AddDrives();
+      //_virtualDirectory.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
+      _virtualDirectory.AddExtension(".m3u");
+
+      List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(_directory);
+      if (_directory == m_strPlayListPath)
+        itemlist.RemoveAt(0);
+
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+        return;
+      dlg.Reset();
+      dlg.SetHeading(983); // Saved Playlists
+
+      foreach (GUIListItem item in itemlist)
+      {
+        MediaPortal.Util.Utils.SetDefaultIcons(item);
+        dlg.Add(item);
+      }
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedLabel == -1)
+        return;
+
+      GUIListItem selectItem = itemlist[dlg.SelectedLabel];
+      if (selectItem.IsFolder)
+      {
+        OnShowSavedPlaylists(selectItem.Path);
+        return;
+      }
+      LoadPlayList(selectItem.Path);
     }
 
     protected virtual void LoadDirectory(string path)

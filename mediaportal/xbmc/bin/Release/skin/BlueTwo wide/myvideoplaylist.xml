@@ -67,6 +67,13 @@
         <id>25</id>
         <label>210</label>
         <onright>50</onright>
+      </control>
+      <control>
+        <description>My Playlists</description>
+        <type>button</type>
+        <id>9</id>
+        <label>983</label>
+        <onright>50</onright>
         <ondown>99</ondown>
       </control>
     </control>

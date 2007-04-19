@@ -297,7 +297,6 @@ namespace MediaPortal.GUI.Music
     bool m_bScan = false;
     bool m_bAutoShuffle = true;
     string m_strDiscId = String.Empty;
-    new string m_strPlayListPath = String.Empty;
     string m_strCurrentFolder = String.Empty;
     int m_iSelectedAlbum = -1;
     static Freedb.CDInfoDetail m_musicCD = null;
@@ -309,15 +308,9 @@ namespace MediaPortal.GUI.Music
     static bool _createMissingFolderThumbs = false;
     static object _workerLock;
     static object _serializeWorker;
-    bool m_bPlaylistsViewMode = false;
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
-
-    [SkinControlAttribute(8)]     protected GUIButtonControl btnPlaylist;
-    [SkinControlAttribute(9)]     protected GUIButtonControl btnPlayCd;
-    [SkinControlAttribute(10)]    protected GUIButtonControl btnPlaylistFolder;
-    [SkinControlAttribute(12)]    protected GUIButtonControl btnSearch;
 
     #endregion
 
@@ -475,24 +468,8 @@ namespace MediaPortal.GUI.Music
         if (facadeView.Focus)
         {
           GUIListItem item = facadeView[0];
-
-          // It is possible that PlaylistsRoot is in a MusicShare,
-          // to prevent HidePlaylists when just browsing the share,
-          // first check PlaylistViewMode.
-          if (m_bPlaylistsViewMode)
-          {
-            if (IsSavedPlaylistsRoot())
-            {
-              HideSavedPlaylists();
-              return;
-            }
-            else if ((item != null) && item.IsFolder && (item.Label == ".."))
-            {
-              LoadDirectory(item.Path);
-              return;
-            }
-          }
-          else if ((item != null) && item.IsFolder && (item.Label == ".."))
+          
+          if ((item != null) && item.IsFolder && (item.Label == ".."))
           {
             LoadDirectory(item.Path);
             return;
@@ -503,29 +480,8 @@ namespace MediaPortal.GUI.Music
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
         GUIListItem item = facadeView[0];
-
-        // It is possible that PlaylistsRoot is in a MusicShare,
-        // to prevent HidePlaylists when just browsing the share,
-        // first check PlaylistViewMode.
-        if (m_bPlaylistsViewMode)
-        {
-          if (IsSavedPlaylistsRoot())
-          {
-            // When browsing SavedPlaylist there is no ParentDir in PlaylistsRoot,
-            // so no need for HideSavedPlaylist(), is done by ACTION_PREVIOUS_MENU
-            // The other side is, we still have [..] in FacadeView,
-            // so user can expect that ACTION_PARENT_DIR is working in this case, too.
-
-            //HideSavedPlaylists();
-            return;
-          }
-          else if ((item != null) && item.IsFolder && (item.Label == ".."))
-          {
-            LoadDirectory(item.Path);
-            return;
-          }
-        }
-        else if ((item != null) && item.IsFolder && (item.Label == ".."))
+        
+        if ((item != null) && item.IsFolder && (item.Label == ".."))
         {
           LoadDirectory(item.Path);
           return;
@@ -560,7 +516,6 @@ namespace MediaPortal.GUI.Music
     protected override void OnPageDestroy(int newWindowId)
     {
       m_iItemSelected = facadeView.SelectedListItemIndex;
-      m_bPlaylistsViewMode = false;
 
       SaveFolderSettings(currentFolder);
 
@@ -675,14 +630,6 @@ namespace MediaPortal.GUI.Music
             break;
           }
         }
-      }
-
-      if (control == btnPlaylistFolder)
-      {
-        if (m_bPlaylistsViewMode)
-          HideSavedPlaylists();
-        else
-          ShowSavedPlaylists();
       }
 
       base.OnClicked(controlId, control, actionType);
@@ -959,11 +906,8 @@ namespace MediaPortal.GUI.Music
       if (item.IsFolder)
       {
         m_iItemSelected = -1;
-
-        if (IsSavedPlaylistsRoot() && (item.Label == ".."))
-          HideSavedPlaylists();
-        else
-          LoadDirectory(item.Path);
+        
+        LoadDirectory(item.Path);
       }
       else
       {
@@ -1451,33 +1395,6 @@ namespace MediaPortal.GUI.Music
       {
         strLine = keyboard.Text;
       }
-    }
-
-    private void ShowSavedPlaylists()
-    {
-      m_strCurrentFolder = currentFolder;
-      currentFolder = m_strPlayListPath;
-
-      LoadDirectory(currentFolder);
-
-      m_bPlaylistsViewMode = true;
-    }
-
-    private void HideSavedPlaylists()
-    {
-      currentFolder = m_strCurrentFolder;
-
-      LoadDirectory(currentFolder);
-
-      m_bPlaylistsViewMode = false;
-    }
-
-    private bool IsSavedPlaylistsRoot()
-    {
-      if (currentFolder == m_strPlayListPath)
-        return true;
-      else
-        return false;
     }
 
     //static private void StartMissingThumbCreation(string filename)

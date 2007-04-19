@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Globalization;
 using MediaPortal.GUI.Library;
@@ -60,10 +61,11 @@ namespace MediaPortal.GUI.Video
     protected bool m_bSortAscending;
     protected bool m_bSortAscendingRoot;
     protected VideoViewHandler handler;
-    protected string _playListPath = String.Empty;
+    protected string m_strPlayListPath = String.Empty;
     protected string _currentFolder = String.Empty;
     protected string _lastFolder = String.Empty;
     protected bool m_bShowTrailerButton = false;
+    protected bool m_bPlaylistsViewMode = false;
 
 
     [SkinControlAttribute(50)]   protected GUIFacadeControl facadeView = null;
@@ -72,7 +74,7 @@ namespace MediaPortal.GUI.Video
     [SkinControlAttribute(5)]    protected GUIButtonControl btnViews = null;
     [SkinControlAttribute(6)]    protected GUIButtonControl btnPlayDVD = null;
     [SkinControlAttribute(8)]    protected GUIButtonControl btnTrailers = null;
-    [SkinControlAttribute(9)]    protected GUIButtonControl btnPlaylistFolder = null;
+    [SkinControlAttribute(9)]    protected GUIButtonControl btnSavedPlaylists = null;
 
     protected PlayListPlayer playlistPlayer;
 
@@ -127,8 +129,8 @@ namespace MediaPortal.GUI.Video
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
         m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", true);
 
-        _playListPath = xmlreader.GetValueAsString("movies", "playlists", String.Empty);
-        _playListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(_playListPath);
+        m_strPlayListPath = xmlreader.GetValueAsString("movies", "playlists", String.Empty);
+        m_strPlayListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(m_strPlayListPath);
 
         m_bShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", false);
       }
@@ -230,14 +232,17 @@ namespace MediaPortal.GUI.Video
       if (control == btnSortBy)
       {
         OnShowSortOptions();
-      }//if (control==btnSortBy)
-
+      }
 
       if (control == btnViews)
       {
         OnShowViews();
       }
 
+      if (control == btnSavedPlaylists)
+      {
+        OnShowSavedPlaylists(m_strPlayListPath);
+      }
 
       if (control == btnPlayDVD)
       {
@@ -278,7 +283,10 @@ namespace MediaPortal.GUI.Video
           OnQueueItem(iItem);
         }
       }
+    }
 
+
+      /*
       if (control == btnPlaylistFolder)
       {
         if (_currentFolder != _playListPath)
@@ -292,9 +300,50 @@ namespace MediaPortal.GUI.Video
         }
         LoadDirectory(_currentFolder);
         return;
+
       }
+      */
+
+    protected void OnShowSavedPlaylists(string _directory)
+    {
+      VirtualDirectory _virtualDirectory = new VirtualDirectory();
+
+      //_Music.LoadSettings("music");
+      _virtualDirectory.LoadSettings("movies");
+      _virtualDirectory.AddDrives();
+      //_virtualDirectory.SetExtensions(MediaPortal.Util.Utils.VideoExtensions);
+      _virtualDirectory.AddExtension(".m3u");
+
+      List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(_directory);
+      if (_directory == m_strPlayListPath)
+        itemlist.RemoveAt(0);
+
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+        return;
+      dlg.Reset();
+      dlg.SetHeading(983); // Saved Playlists
+
+      foreach (GUIListItem item in itemlist)
+      {
+        MediaPortal.Util.Utils.SetDefaultIcons(item);
+        dlg.Add(item);
+      }
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedLabel == -1)
+        return;
+
+      GUIListItem selectItem = itemlist[dlg.SelectedLabel];
+      if (selectItem.IsFolder)
+      {
+        OnShowSavedPlaylists(selectItem.Path);
+        return;
+      }
+      LoadPlayList(selectItem.Path);
     }
-    
+
     protected void SelectCurrentItem()
     {
       int iItem = facadeView.SelectedListItemIndex;
@@ -410,6 +459,9 @@ namespace MediaPortal.GUI.Video
         xmlwriter.SetValue("movies", "startWindow", VideoState.StartWindow.ToString());
         xmlwriter.SetValue("movies", "startview", VideoState.View);
       }
+
+      m_bPlaylistsViewMode = false;
+
       base.OnPageDestroy(newWindowId);
     }
 
@@ -602,6 +654,78 @@ namespace MediaPortal.GUI.Video
 
     protected virtual void LoadDirectory(string path)
     {
+    }
+
+    protected void LoadPlayList(string strPlayList)
+    {
+      IPlayListIO loader = PlayListFactory.CreateIO(strPlayList);
+      if (loader == null)
+        return;
+      PlayList playlist = new PlayList();
+
+      if (!loader.Load(playlist, strPlayList))
+      {
+        TellUserSomethingWentWrong();
+        return;
+      }
+
+      playlistPlayer.CurrentPlaylistName = System.IO.Path.GetFileNameWithoutExtension(strPlayList);
+      if (playlist.Count == 1)
+      {
+        Log.Info("GUIVideoFiles: play single playlist item - {0}", playlist[0].FileName);
+        if (g_Player.Play(playlist[0].FileName))
+        {
+          if (MediaPortal.Util.Utils.IsVideo(playlist[0].FileName))
+          {
+            GUIGraphicsContext.IsFullScreenVideo = true;
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+          }
+        }
+        return;
+      }
+
+
+      // clear current playlist
+      playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Clear();
+
+      // add each item of the playlist to the playlistplayer
+      for (int i = 0; i < playlist.Count; ++i)
+      {
+        PlayListItem playListItem = playlist[i];
+        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playListItem);
+      }
+
+
+      // if we got a playlist
+      if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Count > 0)
+      {
+        // then get 1st song
+        playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
+        PlayListItem item = playlist[0];
+
+        // and start playing it
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
+        playlistPlayer.Reset();
+        playlistPlayer.Play(0);
+
+        // and activate the playlist window if its not activated yet
+        if (GetID == GUIWindowManager.ActiveWindow)
+        {
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST);
+        }
+      }
+    }
+
+    private void TellUserSomethingWentWrong()
+    {
+      GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      if (dlgOK != null)
+      {
+        dlgOK.SetHeading(6);
+        dlgOK.SetLine(1, 477);
+        dlgOK.SetLine(2, String.Empty);
+        dlgOK.DoModal(GetID);
+      }
     }
 
     void OnInfoFile(GUIListItem item)
