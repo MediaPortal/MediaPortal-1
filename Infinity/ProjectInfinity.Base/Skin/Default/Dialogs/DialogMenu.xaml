@@ -8,8 +8,8 @@
   <Rectangle Stroke="{x:Null}" StrokeThickness="10" RadiusX="12.358" RadiusY="12.358" x:Name="Background" Width="510" Height="330" Canvas.Left="7.862" Canvas.Top="7.39">
     <Rectangle.Fill>
       <LinearGradientBrush EndPoint="0.493,-0.003" StartPoint="0.491,0.987">
-        <GradientStop Color="#E50F5DB8" Offset="0.01"/>
-        <GradientStop Color="#E51F6ECA" Offset="1"/>
+        <GradientStop Color="#F20F5DB8" Offset="0.01"/>
+        <GradientStop Color="#F21F6ECA" Offset="1"/>
       </LinearGradientBrush>
     </Rectangle.Fill>
   </Rectangle>
