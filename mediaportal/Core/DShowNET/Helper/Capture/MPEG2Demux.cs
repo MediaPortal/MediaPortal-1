@@ -345,7 +345,7 @@ namespace DShowNET.Helper
       }
       if (capture != null)
       {
-        //Log.Info("mpeg2:Found Adaptec Capture Device");
+        Log.Info("mpeg2:Found Adaptec Capture Device");
         hr = _graphBuilderInterface.Render(_pinLPCMOut);
         if (hr != 0)
         {
@@ -696,18 +696,7 @@ namespace DShowNET.Helper
         }
         if (capture != null)
         {
-          //Log.Info("mpeg2:Found Adaptec Capture Device");
-          Log.Info("mpeg2:demux lpcm audio out->stream buffer");
-          hr = _graphBuilderInterface.Connect(_pinLPCMOut, _pinStreamBufferIn1);
-          if (hr != 0)
-          {
-            Log.Error("mpeg2:FAILED to connect lpcm audio out to streambuffer:0x{0:X}", hr);
-            return false;
-          }
-          Log.Info("mpeg2:lpcm audio out connected to streambuffer");
-        }
-        {
-          //Log.Info("mpeg2:Found Adaptec Capture Device");
+          Log.Info("mpeg2:Found Adaptec Capture Device");
           Log.Info("mpeg2:demux lpcm audio out->stream buffer");
           hr = _graphBuilderInterface.Connect(_pinLPCMOut, _pinStreamBufferIn1);
           if (hr != 0)
