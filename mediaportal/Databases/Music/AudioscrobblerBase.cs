@@ -412,9 +412,10 @@ namespace MediaPortal.Music.Database
     private static void DoHandshake(bool forceNow_, HandshakeType ReasonForHandshake)
     {
       // Handle uninitialized username/password.
-      if (username == "" || password == "")
+      if (username.Length < 1 || password.Length < 1)
       {
         Log.Error("AudioscrobblerBase: {0}", "user or password not defined");
+        workerFailed(ReasonForHandshake, DateTime.MinValue, new Exception("Account details insufficent"));
         return;
       }
 
@@ -529,7 +530,7 @@ namespace MediaPortal.Music.Database
     public static void DoRadioHandshake(bool forceNow_)
     {
       // Handle uninitialized username/password.
-      if (username == "" || password == "")
+      if (username.Length < 1 || password.Length < 1)
       {
         Log.Error("AudioscrobblerBase: {0}", "user or password not defined for Last.FM Radio");
         RadioHandshakeError();
