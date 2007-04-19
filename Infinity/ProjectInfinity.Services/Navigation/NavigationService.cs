@@ -1,19 +1,48 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Navigation;
 
 namespace ProjectInfinity.Navigation
 {
-  public class NavigationService : NavigationWindow, INavigationService
+  public class NavigationService : NavigationWindow, INavigationService, INotifyPropertyChanged
   {
+    private bool _fullScreen = false;
+
     #region INavigationService Members
+
+    public bool FullScreen
+    {
+      get { return _fullScreen; }
+      set
+      {
+        if (_fullScreen == value)
+        {
+          return;
+        }
+        _fullScreen = value;
+        WindowStyle = _fullScreen ? WindowStyle.None : WindowStyle.ThreeDBorderWindow;
+        WindowState = _fullScreen ? WindowState.Maximized : WindowState.Normal;
+        if (PropertyChanged != null)
+        {
+          PropertyChanged(this, new PropertyChangedEventArgs("FullScreen"));
+        }
+      }
+    }
 
     public Window GetWindow()
     {
       return this;
     }
+
+    #endregion
+
+    #region INotifyPropertyChanged Members
+
+    ///<summary>
+    ///Occurs when a property value changes.
+    ///</summary>
+    ///
+    public event PropertyChangedEventHandler PropertyChanged;
 
     #endregion
   }

@@ -132,7 +132,7 @@ namespace ProjectInfinity.Pictures
 
       public void Visit(Picture picture)
       {
-        ServiceScope.Get<INavigationService>().Navigate(new Uri("/ProjectInfinity.Plugins;component/Pictures/FullScreenPictureView.xaml", UriKind.Relative));
+        ServiceScope.Get<INavigationService>().Navigate(new FullScreenPictureView(_viewModel));
       }
     }
   }

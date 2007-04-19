@@ -46,11 +46,16 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\ProjectInfinity.Base\Skin\Default\MyPictures\MyPictures.xaml">
+      <Link>Pictures\MyPictures.xaml</Link>
+    </None>
+    <None Include="..\ProjectInfinity.Base\Skin\Default\MyPictures\MyPictures_resources.xaml">
+      <Link>Pictures\MyPictures_resources.xaml</Link>
+    </None>
     <Page Include="Menu\MenuPage.xaml" />
-    <Page Include="Pictures\FullScreenPictureView.xaml" />
-    <Page Include="Pictures\PictureView.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Menu\MenuPage.cs" />
     <Compile Include="Menu\MenuViewModel.cs" />
     <Compile Include="Menu\MenuPage.xaml.cs">
       <DependentUpon>MenuPage.xaml</DependentUpon>
@@ -58,21 +63,14 @@
     <Compile Include="Menu\MenuPlugin.cs" />
     <Compile Include="Menu\PluginMenuItem.cs" />
     <Compile Include="Pictures\Folder.cs" />
-    <Compile Include="Pictures\FullScreenPictureView.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>FullScreenPictureView.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Pictures\FullScreenPictureView.cs" />
     <Compile Include="Pictures\IMediaVisitor.cs" />
     <Compile Include="Pictures\MediaItem.cs" />
     <Compile Include="Pictures\ParentFolder.cs" />
     <Compile Include="Pictures\Picture.cs" />
     <Compile Include="Pictures\PicturePlugin.cs" />
-    <Compile Include="Pictures\PictureView.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>PictureView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pictures\PictureViewHelper.cs" />
     <Compile Include="Pictures\PictureViewModel.cs" />
+    <Compile Include="Pictures\PictureView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

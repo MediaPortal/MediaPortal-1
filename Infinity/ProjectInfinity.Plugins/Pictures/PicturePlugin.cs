@@ -11,8 +11,7 @@ namespace ProjectInfinity.Pictures
   {
     public void Initialize()
     {
-      ServiceScope.Replace(new PictureViewModel());
-      ServiceScope.Get<INavigationService>().Navigate(new Uri("/ProjectInfinity.Plugins;component/Pictures/PictureView.xaml", UriKind.Relative));
+      ServiceScope.Get<INavigationService>().Navigate(new PictureView());
     }
 
     #region IMenuCommand Members

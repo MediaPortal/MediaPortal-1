@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Windows;
 
 namespace ProjectInfinity.Navigation
@@ -13,5 +11,6 @@ namespace ProjectInfinity.Navigation
     void GoBack();
     Window GetWindow();
     event CancelEventHandler Closing;
+    bool FullScreen { get; set; }
   }
 }

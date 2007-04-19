@@ -10,6 +10,7 @@ namespace ProjectInfinity.Pictures
     public ParentFolder(DirectoryInfo directoryInfo)
       : base(directoryInfo)
     {
+      
     }
 
     public override string Name
