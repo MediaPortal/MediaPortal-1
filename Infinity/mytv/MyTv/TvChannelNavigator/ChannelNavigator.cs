@@ -158,6 +158,10 @@ namespace MyTv
       ServiceScope.Get<ILogger>().Info("Navigator initialized");
       _isRecordingTimer.IsEnabled = true;
       _initialized = true;
+      if (PropertyChanged != null)
+      {
+        PropertyChanged(this, new PropertyChangedEventArgs("IsInitialized"));
+      }
     }
     #endregion
 

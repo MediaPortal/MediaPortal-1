@@ -62,6 +62,7 @@ namespace MyTv
     #endregion
 
     #endregion
+
     #region event handlers
     /// <summary>
     /// Called when screen is loaded
@@ -88,8 +89,8 @@ namespace MyTv
       //add some event handlers to keep mouse/keyboard focused together...
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onPreviewKeyDown));
 
-      Thread thumbNailThread = new Thread(new ThreadStart(CreateThumbnailsThread));
-      thumbNailThread.Start();
+      //Thread thumbNailThread = new Thread(new ThreadStart(CreateThumbnailsThread));
+      //thumbNailThread.Start();
     }
 
     protected void onPreviewKeyDown(object sender, KeyEventArgs e)

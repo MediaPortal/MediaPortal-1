@@ -30,10 +30,12 @@ namespace ProjectInfinity.Menu.View
     {
       this.ShowsNavigationUI = false;
       InitializeComponent();
+      this.Loaded += new RoutedEventHandler(OnLoaded);
     }
+
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-      MenuViewModel viewModel = new MenuViewModel(this);
+      MenuViewModel viewModel = new MenuViewModel();
       gridMain.Children.Clear();
       using (FileStream steam = new FileStream(@"skin\default\Home\home.xaml", FileMode.Open, FileAccess.Read))
       {

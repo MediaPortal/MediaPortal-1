@@ -91,6 +91,11 @@ namespace MyTv
     }
     #endregion
 
+    public override void Refresh()
+    {
+      base.Refresh();
+      DataModel.Reload();
+    }
     #region properties
 
     /// <summary>
@@ -408,7 +413,7 @@ namespace MyTv
       }
       set
       {
-        _isStacked=value;
+        _isStacked = value;
         _dataModel.IsStacked = value;
         ChangeProperty("StackLabel");
       }
@@ -2142,6 +2147,10 @@ namespace MyTv
       /// </summary>
       public void Reload()
       {
+        if (false == ServiceScope.IsRegistered<ITvChannelNavigator>())
+        {
+          return;
+        }
         if (false == ServiceScope.Get<ITvChannelNavigator>().IsInitialized)
         {
           return;
@@ -2192,6 +2201,11 @@ namespace MyTv
         }
         if (PropertyChanged != null)
           PropertyChanged(this, new PropertyChangedEventArgs("Episodes"));
+
+        if (PropertyChanged != null)
+        {
+          PropertyChanged(this, new PropertyChangedEventArgs("Schedules"));
+        }
       }
 
       public ProgramModel CurrentProgram

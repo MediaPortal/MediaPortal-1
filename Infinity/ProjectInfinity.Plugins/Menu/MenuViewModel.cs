@@ -9,6 +9,7 @@ using ProjectInfinity.Plugins;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Controls;
 using ProjectInfinity.TaskBar;
+using ProjectInfinity.Navigation;
 
 namespace ProjectInfinity.Menu
 {
@@ -24,11 +25,9 @@ namespace ProjectInfinity.Menu
     private MenuCollection menuView;
     private ICommand _launchCommand;
     ICommand _fullScreenCommand;
-    Page _page;
 
-    public MenuViewModel(Page page)
+    public MenuViewModel()
     {
-      _page = page;
       IList<IMenuItem> model = ServiceScope.Get<IMenuManager>().GetMenu();
       menuView = new MenuCollection();
       foreach (IMenuItem item in model)
@@ -56,7 +55,7 @@ namespace ProjectInfinity.Menu
     {
       get
       {
-        return Window.GetWindow(_page);
+        return ServiceScope.Get<INavigationService>().GetWindow();
       }
     }
     public string HeaderLabel

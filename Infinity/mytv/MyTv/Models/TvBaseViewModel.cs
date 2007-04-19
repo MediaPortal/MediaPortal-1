@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Xml;
 using TvDatabase;
 using TvControl;
 using Dialogs;
@@ -27,6 +28,7 @@ namespace MyTv
   public class TvBaseViewModel : DispatcherObject, INotifyPropertyChanged
   {
     #region variables
+    private delegate void ConnectToServerDelegate();
     ICommand _fullScreenTvCommand;
     ICommand _fullScreenCommand;
     ICommand _playCommand;
@@ -49,25 +51,10 @@ namespace MyTv
     /// <param name="page">The page.</param>
     public TvBaseViewModel() 
     {
-
-      //store page & window
       if (!ServiceScope.IsRegistered<ITvChannelNavigator>())
       {
-        try
-        {
-          TvSettings settings = new TvSettings();
-          ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
-          RemoteControl.HostName = settings.HostName;
-          TvChannelNavigator.Instance.Initialize();
-          int cards = RemoteControl.Instance.Cards;
-        }
-        catch (Exception)
-        {
-          ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSetup.xaml", UriKind.Relative));
-          return;
-        }
+        this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new ConnectToServerDelegate(ConnectToServer));
       }
-      ServiceScope.Get<ITvChannelNavigator>().PropertyChanged += new PropertyChangedEventHandler(OnChannelChanged);
     }
 
     void OnChannelChanged(object sender, PropertyChangedEventArgs e)
@@ -86,6 +73,14 @@ namespace MyTv
       {
         ChangeProperty("IsRecordingLogo");
       }
+      if (e.PropertyName == "IsInitialized")
+      {
+        Refresh();
+      }
+    }
+    public virtual void Refresh()
+    {
+      ServiceScope.Get<ILogger>().Info("mytv:refresh");
     }
     #endregion
 
@@ -209,6 +204,7 @@ namespace MyTv
     {
       get
       {
+        ServiceScope.Get<ILogger>().Info("mytv:ProgramChannelName");
         if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel == null) return "";
         Program program = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.CurrentProgram;
         if (program == null) return "";
@@ -387,6 +383,113 @@ namespace MyTv
       }
     }
     #endregion
+    #endregion
+
+    #region tvserver connection
+    /// <summary>
+    /// background worker. Connects to server.
+    /// on success call OnSucceededToConnectToServer() via dispatcher
+    /// if failed call OnFailedToConnectToServer() via dispatcher
+    /// </summary>
+    void ConnectToServer()
+    {
+      try
+      {
+        if (ServiceScope.IsRegistered<ITvChannelNavigator>())
+        {
+          return;
+        }
+        ServiceScope.Get<ILogger>().Info("mytv:ConnectToServer");
+
+        TvSettings settings = new TvSettings();
+        ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+        RemoteControl.HostName = settings.HostName;
+
+        ServiceScope.Get<ILogger>().Info("mytv:GetDatabaseConnectionString");
+        string connectionString, provider;
+        RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
+
+        ServiceScope.Get<ILogger>().Info("mytv:load gentle.config");
+        XmlDocument doc = new XmlDocument();
+        doc.Load("gentle.config");
+        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+        XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
+        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
+        node.InnerText = connectionString;
+        nodeProvider.InnerText = provider;
+        ServiceScope.Get<ILogger>().Info("mytv:save gentle.config");
+        doc.Save("gentle.config");
+        ServiceScope.Get<ILogger>().Info("mytv:SetDefaultProviderConnectionString");
+        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
+
+        ServiceScope.Get<ILogger>().Info("mytv:initialize channel navigator");
+        TvChannelNavigator.Instance.PropertyChanged += new PropertyChangedEventHandler(OnChannelChanged);
+        TvChannelNavigator.Instance.Initialize();
+        ServiceScope.Get<ILogger>().Info("mytv:get cards");
+
+        int cards = RemoteControl.Instance.Cards;
+        IList channels = Channel.ListAll();
+      }
+      catch (Exception ex)
+      {
+        ServiceScope.Get<ILogger>().Info("mytv:initialize connect failed");
+        ServiceScope.Get<ILogger>().Error(ex);
+        this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new ConnectToServerDelegate(OnFailedToConnectToServer));
+        return;
+      }
+      ServiceScope.Get<ILogger>().Info("mytv:initialize connect succeeded");
+      this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new ConnectToServerDelegate(OnSucceededToConnectToServer));
+    }
+
+    /// <summary>
+    /// Called when we failed to connect to server.
+    /// navigate to tv-setup window
+    /// </summary>
+    void OnFailedToConnectToServer()
+    {
+      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSetup.xaml", UriKind.Relative));
+    }
+
+    /// <summary>
+    /// Called when we succeeded in connecting to the tvserver
+    /// update infobox and show video
+    /// </summary>
+    void OnSucceededToConnectToServer()
+    {
+      ServiceScope.Get<ILogger>().Info("mytv:check wmp version");
+      WindowMediaPlayerCheck check = new WindowMediaPlayerCheck();
+      if (!check.IsInstalled)
+      {
+        MpDialogOk dlg = new MpDialogOk();
+        Window w = ServiceScope.Get<INavigationService>().GetWindow();
+        dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlg.Owner = w;
+        dlg.Title = "";
+        dlg.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);//Error
+        dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 11);//Infinity needs Windows Media Player 10 or higher to playback video!";
+        dlg.ShowDialog();
+        return;
+      }
+      ServiceScope.Get<ILogger>().Info("mytv:check tsreader.ax installed");
+      TsReaderCheck checkReader = new TsReaderCheck();
+      {
+        if (!checkReader.IsInstalled)
+        {
+          MpDialogOk dlg = new MpDialogOk();
+          Window w = ServiceScope.Get<INavigationService>().GetWindow();
+          dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+          dlg.Owner = w;
+          dlg.Title = "";
+          dlg.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);//Error
+          dlg.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 12);//Infinity needs TsReader.ax to be registered!
+          dlg.ShowDialog();
+          return;
+        }
+      }
+
+
+      ServiceScope.Get<ILogger>().Info("mytv:OnSucceededToConnectToServer done");
+    }
     #endregion
 
     #region commands

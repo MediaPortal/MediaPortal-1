@@ -73,6 +73,13 @@ namespace MyTv
     }
     #endregion
 
+    public override void Refresh()
+    {
+      base.Refresh();
+      _dataModel.Reload();
+      ChangeProperty("Recordings");
+    }
+
     #region properties
     /// <summary>
     /// Gets the data model.
@@ -650,6 +657,10 @@ namespace MyTv
       public void Reload()
       {
         _listRecordings.Clear();
+        if (false == ServiceScope.IsRegistered<ITvChannelNavigator>())
+        {
+          return;
+        }
         if (false == ServiceScope.Get<ITvChannelNavigator>().IsInitialized)
         {
           return;
@@ -660,6 +671,10 @@ namespace MyTv
         {
           RecordingModel item = new RecordingModel(recording);
           _listRecordings.Add(item);
+        }
+        if (PropertyChanged != null)
+        {
+          PropertyChanged(this, new PropertyChangedEventArgs("Recordings"));
         }
       }
 

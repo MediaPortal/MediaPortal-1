@@ -138,8 +138,17 @@ namespace MyTv
     #endregion
 
     #region tvguide datagrid renderer
+    public override void Refresh()
+    {
+      base.Refresh();
+      Reload();
+    }
     public void Reload()
     {
+      if (false == ServiceScope.IsRegistered<ITvChannelNavigator>())
+      {
+        return;
+      }
       if (false==ServiceScope.Get<ITvChannelNavigator>().IsInitialized)
       {
         return;

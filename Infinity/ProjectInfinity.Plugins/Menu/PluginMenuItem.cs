@@ -9,6 +9,9 @@ namespace ProjectInfinity.Menu
   {
     IMenuItem _menu;
 
+    public PluginMenuItem()
+    {
+    }
     public PluginMenuItem(IMenuItem menu)
     {
       _menu = menu;
