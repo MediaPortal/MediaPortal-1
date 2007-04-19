@@ -350,14 +350,14 @@ namespace DShowNET.Helper
         if (hr != 0)
         {
           Log.Error("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
-          Log.Info("mpeg2:Trying non LPCM audio connection");
+          Log.Info("mpeg2:Trying standard audio connection");
           hr = _graphBuilderInterface.Render(_pinAudioOut);
           if (hr != 0)
           {
             return false;
           }
         }
-        Log.Info("mpeg2:demux lpcm audio out connected ");
+        Log.Info("mpeg2:demux audio out connected ");
       }
 
       bool useOverlay = true;
@@ -709,7 +709,7 @@ namespace DShowNET.Helper
               return false;
             }
           }
-          Log.Info("mpeg2:lpcm audio out connected to streambuffer");
+          Log.Info("mpeg2:audio out connected to streambuffer");
         }
         //set mpeg2 demux as reference clock 
         (_graphBuilderInterface as IMediaFilter).SetSyncSource(_filterMpeg2Demultiplexer as IReferenceClock);
