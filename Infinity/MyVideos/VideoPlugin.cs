@@ -17,7 +17,7 @@ namespace MyVideos
 
       // Add playlist service
       IPlaylistManager playlist = new PlaylistManager();
-      ServiceScope.Add<IPlaylistManager>(playlist);
+      ServiceScope.Replace<IPlaylistManager>(playlist);
     }
 
     #endregion
