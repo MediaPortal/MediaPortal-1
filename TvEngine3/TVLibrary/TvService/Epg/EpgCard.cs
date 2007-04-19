@@ -75,6 +75,7 @@ namespace TvService
     bool _disposed = false;
     Card _card;
     User _user;
+    bool _storeOnlySelectedChannels;
     #endregion
 
     #region ctor
@@ -95,6 +96,9 @@ namespace TvService
       _epgTimer.Interval = 30000;
       _epgTimer.Elapsed += new System.Timers.ElapsedEventHandler(_epgTimer_Elapsed);
       _eventHandler = new TvServerEventHandler(controller_OnTvServerEvent);
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("epgStoreOnlySelected");
+      _storeOnlySelectedChannels = (setting.Value == "yes");
       controller.OnTvServerEvent += _eventHandler;
     }
 
@@ -765,10 +769,13 @@ namespace TvService
       {
         return false;
       }
-      if (!channel.GrabEpg)
+      if (_storeOnlySelectedChannels)
       {
-        Log.Epg("Epg: card:{0} :{1} {2} not needed. Channel not configured to grab/store epg", _user.CardId, channelNr, channel.Name);
-        return false;
+        if (!channel.GrabEpg)
+        {
+          Log.Epg("Epg: card:{0} :{1} {2} not needed. Channel not configured to grab/store epg", _user.CardId, channelNr, channel.Name);
+          return false;
+        }
       }
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("epgLanguages");

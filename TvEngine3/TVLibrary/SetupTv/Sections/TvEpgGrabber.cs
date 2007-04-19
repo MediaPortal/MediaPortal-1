@@ -98,6 +98,13 @@ namespace SetupTv.Sections
     }
     public override void OnSectionDeActivated()
     {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("epgStoreOnlySelected");
+      if (mpCheckBoxStoreOnlySelected.Checked)
+        setting.Value = "yes";
+      else
+        setting.Value = "no";
+      setting.Persist();
       base.OnSectionDeActivated();
       SaveSettings();
     }
@@ -106,6 +113,9 @@ namespace SetupTv.Sections
     {
       mpListView1.BeginUpdate();
       LoadLanguages();
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("epgStoreOnlySelected");
+      mpCheckBoxStoreOnlySelected.Checked = (setting.Value == "yes");
       CountryCollection countries = new CountryCollection();
       Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
       IList dbsCards = Card.ListAll();
@@ -275,6 +285,7 @@ namespace SetupTv.Sections
     private void mpListView2_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
     }
+
 
   }
 }

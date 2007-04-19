@@ -42,6 +42,7 @@ namespace SetupTv.Sections
       this.mpButtonNone = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonAllChannels = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonNoneChannels = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpCheckBoxStoreOnlySelected = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.SuspendLayout();
       // 
       // mpListView1
@@ -54,7 +55,7 @@ namespace SetupTv.Sections
             this.columnHeader3});
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.LargeImageList = this.imageList1;
-      this.mpListView1.Location = new System.Drawing.Point(11, 26);
+      this.mpListView1.Location = new System.Drawing.Point(12, 53);
       this.mpListView1.Name = "mpListView1";
       this.mpListView1.Size = new System.Drawing.Size(208, 347);
       this.mpListView1.SmallImageList = this.imageList1;
@@ -85,7 +86,7 @@ namespace SetupTv.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(8, 6);
+      this.mpLabel1.Location = new System.Drawing.Point(9, 33);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(119, 13);
       this.mpLabel1.TabIndex = 2;
@@ -98,7 +99,7 @@ namespace SetupTv.Sections
       this.mpListView2.CheckBoxes = true;
       this.mpListView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
-      this.mpListView2.Location = new System.Drawing.Point(255, 26);
+      this.mpListView2.Location = new System.Drawing.Point(256, 53);
       this.mpListView2.Name = "mpListView2";
       this.mpListView2.Size = new System.Drawing.Size(208, 347);
       this.mpListView2.TabIndex = 3;
@@ -114,7 +115,7 @@ namespace SetupTv.Sections
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(252, 6);
+      this.mpLabel2.Location = new System.Drawing.Point(253, 33);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(131, 13);
       this.mpLabel2.TabIndex = 4;
@@ -122,7 +123,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonAll
       // 
-      this.mpButtonAll.Location = new System.Drawing.Point(255, 379);
+      this.mpButtonAll.Location = new System.Drawing.Point(256, 406);
       this.mpButtonAll.Name = "mpButtonAll";
       this.mpButtonAll.Size = new System.Drawing.Size(75, 23);
       this.mpButtonAll.TabIndex = 5;
@@ -132,7 +133,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonNone
       // 
-      this.mpButtonNone.Location = new System.Drawing.Point(336, 379);
+      this.mpButtonNone.Location = new System.Drawing.Point(337, 406);
       this.mpButtonNone.Name = "mpButtonNone";
       this.mpButtonNone.Size = new System.Drawing.Size(75, 23);
       this.mpButtonNone.TabIndex = 6;
@@ -142,7 +143,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonAllChannels
       // 
-      this.mpButtonAllChannels.Location = new System.Drawing.Point(11, 379);
+      this.mpButtonAllChannels.Location = new System.Drawing.Point(12, 406);
       this.mpButtonAllChannels.Name = "mpButtonAllChannels";
       this.mpButtonAllChannels.Size = new System.Drawing.Size(75, 23);
       this.mpButtonAllChannels.TabIndex = 5;
@@ -152,7 +153,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonNoneChannels
       // 
-      this.mpButtonNoneChannels.Location = new System.Drawing.Point(92, 379);
+      this.mpButtonNoneChannels.Location = new System.Drawing.Point(93, 406);
       this.mpButtonNoneChannels.Name = "mpButtonNoneChannels";
       this.mpButtonNoneChannels.Size = new System.Drawing.Size(75, 23);
       this.mpButtonNoneChannels.TabIndex = 6;
@@ -160,10 +161,22 @@ namespace SetupTv.Sections
       this.mpButtonNoneChannels.UseVisualStyleBackColor = true;
       this.mpButtonNoneChannels.Click += new System.EventHandler(this.mpButtonNoneChannels_Click);
       // 
+      // mpCheckBoxStoreOnlySelected
+      // 
+      this.mpCheckBoxStoreOnlySelected.AutoSize = true;
+      this.mpCheckBoxStoreOnlySelected.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxStoreOnlySelected.Location = new System.Drawing.Point(12, 8);
+      this.mpCheckBoxStoreOnlySelected.Name = "mpCheckBoxStoreOnlySelected";
+      this.mpCheckBoxStoreOnlySelected.Size = new System.Drawing.Size(199, 17);
+      this.mpCheckBoxStoreOnlySelected.TabIndex = 7;
+      this.mpCheckBoxStoreOnlySelected.Text = "Store data only for selected channels";
+      this.mpCheckBoxStoreOnlySelected.UseVisualStyleBackColor = true;
+      // 
       // TvEpgGrabber
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpCheckBoxStoreOnlySelected);
       this.Controls.Add(this.mpButtonNoneChannels);
       this.Controls.Add(this.mpButtonAllChannels);
       this.Controls.Add(this.mpButtonNone);
@@ -173,7 +186,7 @@ namespace SetupTv.Sections
       this.Controls.Add(this.mpLabel1);
       this.Controls.Add(this.mpListView1);
       this.Name = "TvEpgGrabber";
-      this.Size = new System.Drawing.Size(474, 412);
+      this.Size = new System.Drawing.Size(474, 442);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -193,6 +206,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonAllChannels;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonNoneChannels;
     private System.Windows.Forms.ImageList imageList1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxStoreOnlySelected;
 
   }
 }
