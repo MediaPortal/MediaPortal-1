@@ -38,8 +38,7 @@ namespace MyTv
     #endregion
 
     #region ctor
-    public TvGuideViewModel(Page page)
-      : base(page)
+    public TvGuideViewModel()
     {
         Reload();
     }
@@ -488,7 +487,7 @@ namespace MyTv
             TvScheduledViewModel model;
             if (!ServiceScope.IsRegistered<TvScheduledViewModel>())
             {
-              model = new TvScheduledViewModel(_viewModel.Page);
+              model = new TvScheduledViewModel();
             }
             else
               model = ServiceScope.Get<TvScheduledViewModel>();

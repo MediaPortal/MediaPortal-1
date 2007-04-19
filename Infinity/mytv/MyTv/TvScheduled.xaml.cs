@@ -68,7 +68,7 @@ namespace MyTv
         UIElement documentRoot = (UIElement)XamlReader.Load(steam);
         gridMain.Children.Add(documentRoot);
       }
-      _model = new TvScheduledViewModel(this);
+      _model = new TvScheduledViewModel();
       gridMain.DataContext = _model;
 
       //this.InputBindings.Add(new KeyBinding(_model.FullScreenTv, new KeyGesture(System.Windows.Input.Key.X, ModifierKeys.None)));

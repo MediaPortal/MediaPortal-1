@@ -66,8 +66,7 @@ namespace MyTv
     /// Initializes a new instance of the <see cref="TvRecordedViewModel"/> class.
     /// </summary>
     /// <param name="page">The page.</param>
-    public TvRecordedViewModel(Page page)
-      : base(page)
+    public TvRecordedViewModel()
     {
       //create a new data model
       _dataModel = new RecordingDatabaseModel();

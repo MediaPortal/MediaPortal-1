@@ -76,8 +76,7 @@ namespace MyTv
     /// Initializes a new instance of the <see cref="TvScheduledViewModel"/> class.
     /// </summary>
     /// <param name="page">The page.</param>
-    public TvScheduledViewModel(Page page)
-      : base(page)
+    public TvScheduledViewModel()
     {
       //create a new data model
       _dataModel = new ScheduleDatabaseModel();

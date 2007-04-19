@@ -76,11 +76,10 @@ namespace MyTv
       }
       if (!ServiceScope.IsRegistered<TvGuideViewModel>())
       {
-        _model = new TvGuideViewModel(this);
+        _model = new TvGuideViewModel();
         ServiceScope.Add<TvGuideViewModel>(_model);
       }
       _model = ServiceScope.Get<TvGuideViewModel>();
-      _model.Page = this;
       _model.Reload();
       gridMain.DataContext = _model;
       this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));

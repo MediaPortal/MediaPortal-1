@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using TvDatabase;
 using TvControl;
 using Dialogs;
@@ -23,11 +24,9 @@ using ProjectInfinity.TaskBar;
 
 namespace MyTv
 {
-  public class TvBaseViewModel : INotifyPropertyChanged
+  public class TvBaseViewModel : DispatcherObject, INotifyPropertyChanged
   {
     #region variables
-    Window _window;
-    Page _page;
     ICommand _fullScreenTvCommand;
     ICommand _fullScreenCommand;
     ICommand _playCommand;
@@ -48,12 +47,10 @@ namespace MyTv
     /// Initializes a new instance of the <see cref="TvBaseViewModel"/> class.
     /// </summary>
     /// <param name="page">The page.</param>
-    public TvBaseViewModel(Page page)
+    public TvBaseViewModel() 
     {
 
       //store page & window
-      _page = page;
-      _window = Window.GetWindow(_page);
       if (!ServiceScope.IsRegistered<ITvChannelNavigator>())
       {
         try
@@ -125,23 +122,7 @@ namespace MyTv
     {
       get
       {
-        return _window;
-      }
-    }
-    /// <summary>
-    /// Gets the current Page.
-    /// </summary>
-    /// <value>The page.</value>
-    public Page Page
-    {
-      get
-      {
-        return _page;
-      }
-      set
-      {
-        _page = value;
-        _window = Window.GetWindow(_page);
+        return ServiceScope.Get<INavigationService>().GetWindow();
       }
     }
 
@@ -723,7 +704,7 @@ namespace MyTv
       void player_MediaOpened(object sender, EventArgs e)
       {
         ServiceScope.Get<ILogger>().Info("Playcommand:media opened event");
-        _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerOpenDelegate(OnMediaOpened));
+        _viewModel.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerOpenDelegate(OnMediaOpened));
       }
       void OnMediaOpened()
       {
@@ -741,7 +722,7 @@ namespace MyTv
       void _mediaPlayer_MediaFailed(object sender, MediaExceptionEventArgs e)
       {
         ServiceScope.Get<ILogger>().Info("Playcommand:media failed event");
-        _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
+        _viewModel.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
       }
       void OnMediaPlayerError()
       {
@@ -814,7 +795,7 @@ namespace MyTv
         ServiceScope.Get<ILogger>().Info("TimeShiftCommand:timeshifting started");
 
         // Schedule the update function in the UI thread.
-        _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new EndTimeShiftingDelegate(OnStartTimeShiftingResult), succeeded, card);
+        _viewModel.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new EndTimeShiftingDelegate(OnStartTimeShiftingResult), succeeded, card);
       }
       /// <summary>
       /// Called from dispatcher when StartTimeShiftingBackGroundWorker() has a result for us

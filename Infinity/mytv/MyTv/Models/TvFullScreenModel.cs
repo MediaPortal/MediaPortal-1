@@ -51,8 +51,7 @@ namespace MyTv
     /// Initializes a new instance of the <see cref="TvFullScreenModel"/> class.
     /// </summary>
     /// <param name="page">The page.</param>
-    public TvFullScreenModel(Page page)
-      : base(page)
+    public TvFullScreenModel()
     {
       //get the seeking steps from the configuration file...
       TvSettings settings = new TvSettings();

@@ -50,8 +50,7 @@ namespace MyTv
     #endregion
 
     #region ctor
-    public TvSearchViewModel(Page page)
-      : base(page)
+    public TvSearchViewModel()
     {
       _dataModel = new SearchDatabaseModel();
       _searchView=new SearchCollectionView(_dataModel);
@@ -334,7 +333,7 @@ namespace MyTv
 
         if (!ServiceScope.IsRegistered<TvScheduledViewModel>())
         {
-          ServiceScope.Add<TvScheduledViewModel>(new TvScheduledViewModel(_viewModel.Page));
+          ServiceScope.Add<TvScheduledViewModel>(new TvScheduledViewModel());
         }
         TvScheduledViewModel viewmodel = ServiceScope.Get<TvScheduledViewModel>();
         viewmodel.CurrentProgram = model;

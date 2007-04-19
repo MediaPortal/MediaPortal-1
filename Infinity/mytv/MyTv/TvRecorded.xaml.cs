@@ -77,7 +77,7 @@ namespace MyTv
         gridMain.Children.Add(documentRoot);
       }
       //create new view model
-      _model = new TvRecordedViewModel(this);
+      _model = new TvRecordedViewModel();
       //and set the gui's datacontext to our model
       gridMain.DataContext = _model;
       //this.InputBindings.Add(new KeyBinding(_model.FullScreenTv, new KeyGesture(System.Windows.Input.Key.X, ModifierKeys.None)));

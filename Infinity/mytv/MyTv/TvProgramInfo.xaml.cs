@@ -52,7 +52,6 @@ namespace MyTv
         gridMain.Children.Add(documentRoot);
       }
       _model =  ServiceScope.Get<TvScheduledViewModel>();
-      _model.Page = this;
       gridMain.DataContext = _model;
 
       // Sets keyboard focus on the first Button in the sample.

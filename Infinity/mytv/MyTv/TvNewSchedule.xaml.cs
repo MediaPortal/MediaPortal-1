@@ -48,7 +48,7 @@ namespace MyTv
         UIElement documentRoot = (UIElement)XamlReader.Load(steam);
         gridMain.Children.Add(documentRoot);
       }
-      _model = new TvScheduledViewModel(this);
+      _model = new TvScheduledViewModel();
       gridMain.DataContext = _model;
     }
   }

@@ -61,7 +61,7 @@ namespace MyTv
         UIElement documentRoot = (UIElement)XamlReader.Load(steam);
         gridMain.Children.Add(documentRoot);
       }
-      _model = new TvSearchViewModel(this);
+      _model = new TvSearchViewModel();
       gridMain.DataContext = _model;
       _model.SearchMode = _searchType;
       this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));

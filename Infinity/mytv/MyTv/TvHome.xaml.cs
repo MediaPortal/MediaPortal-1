@@ -78,7 +78,7 @@ namespace MyTv
         UIElement documentRoot = (UIElement)XamlReader.Load(steam);
         gridMain.Children.Add(documentRoot);
       }
-      _model = new TvBaseViewModel(this);
+      _model = new TvBaseViewModel();
       gridMain.DataContext = _model;
       this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));

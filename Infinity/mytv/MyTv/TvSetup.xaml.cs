@@ -52,7 +52,7 @@ namespace MyTv
         UIElement documentRoot = (UIElement)XamlReader.Load(steam);
         gridMain.Children.Add(documentRoot);
       }
-      _model = new TvSetupModel(this);
+      _model = new TvSetupModel();
       gridMain.DataContext = _model;
       ServiceScope.Get<ILogger>().Info("mytv:setuptv");
 
