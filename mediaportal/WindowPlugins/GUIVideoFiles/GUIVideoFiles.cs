@@ -281,6 +281,11 @@ namespace MediaPortal.GUI.Video
     #endregion
 
     #region BaseWindow Members
+    protected override bool AllowView(View view)
+    {
+      return base.AllowView(view);
+    }
+
     public override void OnAction(Action action)
     {
       if ((action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) && (facadeView.Focus))

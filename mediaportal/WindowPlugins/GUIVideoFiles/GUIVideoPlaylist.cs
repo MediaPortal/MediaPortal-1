@@ -93,6 +93,16 @@ namespace MediaPortal.GUI.Video
 
 
     #region BaseWindow Members
+
+    protected override bool AllowView(View view)
+    {
+      if (view == View.List)
+        return false;
+      if (view == View.FilmStrip)
+        return false;
+      return true;
+    }
+
     public override void OnAction(Action action)
     {
       switch (action.wID)

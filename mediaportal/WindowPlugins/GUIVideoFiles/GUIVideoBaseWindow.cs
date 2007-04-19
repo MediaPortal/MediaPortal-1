@@ -51,7 +51,8 @@ namespace MediaPortal.GUI.Video
       List = 0,
       Icons = 1,
       LargeIcons = 2,
-      FilmStrip = 3
+      FilmStrip = 3,
+      PlayList = 4
     }
 
     protected View currentView = View.List;
@@ -86,6 +87,8 @@ namespace MediaPortal.GUI.Video
 
     protected virtual bool AllowView(View view)
     {
+      if (view == View.PlayList)
+        return false;
       return true;
     }
     protected virtual bool AllowSortMethod(VideoSort.SortMethod method)
@@ -192,12 +195,21 @@ namespace MediaPortal.GUI.Video
           switch (CurrentView)
           {
             case View.List:
+              CurrentView = View.PlayList;
+              if (!AllowView(CurrentView) || facadeView.PlayListView == null)
+                shouldContinue = true;
+              else
+                facadeView.View = GUIFacadeControl.ViewMode.Playlist;
+              break;
+
+            case View.PlayList:
               CurrentView = View.Icons;
               if (!AllowView(CurrentView) || facadeView.ThumbnailView == null)
                 shouldContinue = true;
               else
                 facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
               break;
+
             case View.Icons:
               CurrentView = View.LargeIcons;
               if (!AllowView(CurrentView) || facadeView.ThumbnailView == null)
@@ -205,6 +217,7 @@ namespace MediaPortal.GUI.Video
               else
                 facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
               break;
+
             case View.LargeIcons:
               CurrentView = View.FilmStrip;
               if (!AllowView(CurrentView) || facadeView.FilmstripView == null)
@@ -212,15 +225,13 @@ namespace MediaPortal.GUI.Video
               else
                 facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
               break;
+
             case View.FilmStrip:
               CurrentView = View.List;
               if (!AllowView(CurrentView) || facadeView.ListView == null)
                 shouldContinue = true;
               else
-                if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST)
-                  facadeView.View = GUIFacadeControl.ViewMode.Playlist;
-                else
-                  facadeView.View = GUIFacadeControl.ViewMode.List;
+                facadeView.View = GUIFacadeControl.ViewMode.List;
               break;
           }
         } while (shouldContinue);
@@ -389,6 +400,9 @@ namespace MediaPortal.GUI.Video
         case View.FilmStrip:
           strLine = GUILocalizeStrings.Get(733);
           break;
+        case View.PlayList:
+          strLine = GUILocalizeStrings.Get(101);
+          break;
       }
       GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
 
@@ -535,6 +549,9 @@ namespace MediaPortal.GUI.Video
           break;
         case View.FilmStrip:
           facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
+          break;
+        case View.PlayList:
+          facadeView.View = GUIFacadeControl.ViewMode.Playlist;
           break;
       }
     }

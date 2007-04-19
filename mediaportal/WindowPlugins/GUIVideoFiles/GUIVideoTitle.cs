@@ -201,7 +201,7 @@ namespace MediaPortal.GUI.Video
 
     protected override bool AllowView(View view)
     {
-      return true;
+      return base.AllowView(view);
     }
 
     public override void OnAction(Action action)
