@@ -7184,7 +7184,7 @@
         <filter cat="encoder"  name="VideoMate H900 Encoder"		checkdevice="true"/>
       </filters>
       <connections>
-		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
@@ -19179,6 +19179,100 @@
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
 		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI TV Wonder VE" capturename="ATI TV Wonder Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_00031002&amp;rev_02">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="ATI TV Wonder TV Tuner"		        checkdevice="true"/>
+        <filter cat="tvaudio"		  name="ATI TV Wonder TV Audio"		        checkdevice="true"/>
+        <filter cat="crossbar"	  name="ATI TV Wonder AV Crossbar"	      checkdevice="true"/>
+        <filter cat="crossbar2"	  name="ATI TV Wonder BT Video Crossbar"  checkdevice="true"/>
+        <filter cat="capture"		  name="ATI TV Wonder Capture"  		      checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"						          checkdevice="true"/>
+        <filter cat="videncoder"	name="ATI Media Center Video Encoder"	  checkdevice="false"/>
+        <filter cat="audencoder"	name="ATI Media Center Audio Encoder" 	checkdevice="false"/>
+        <filter cat="mux"		      name="ATI Media Center Multiplexer"	    checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"   sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"	  sourcepin="1" sinkfilter="crossbar2"	sinkpin="1"/>
+        <connection sourcefilter="crossbar2"  sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV 3010iX (Digital)" capturename="Pinnacle PCTV 3010iX BDA Digital Capture DVBT" devid="ven_1131&amp;dev_7162&amp;subsys_010011bd&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"                checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Pinnacle PCTV 3010iX BDA DVBT Tuner"            checkdevice="true"/>
+        <filter cat="capture"         name="Pinnacle PCTV 3010iX BDA Digital Capture DVBT"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KWORLD Global TV Terminator" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_00001131&amp;rev_d1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="713x BDA Analog TV Tuner" checkdevice="true"/>
+        <filter cat="tvaudio"     name="713x BDA Analog TV Audio" checkdevice="true"/>
+        <filter cat="crossbar"    name="713x BDA Analog Xbar"     checkdevice="true"/>
+        <filter cat="capture"     name="713x BDA Analog Capture"  checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"           checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"           checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"                checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="crossbar"   sourcepin="1" sinkfilter="capture"	  sinkpin="1"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="2" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"	      sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"	      sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Compro VideoMate H900" capturename="VideoMate H900 Video Capture" devid="ven_14f1&amp;dev_5b7a&amp;subsys_e100185b&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="VideoMate H900 Tuner"			    checkdevice="true"/>
+        <filter cat="tvaudio"  name="VideoMate H900 TvAudio"		    checkdevice="true"/>
+        <filter cat="crossbar" name="VideoMate H900 Crossbar"		    checkdevice="true"/>
+        <filter cat="capture"  name="VideoMate H900 Video Capture"	checkdevice="true"/>
+        <filter cat="encoder"  name="VideoMate H900 Encoder"		    checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="4" sinkfilter="encoder"	sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
