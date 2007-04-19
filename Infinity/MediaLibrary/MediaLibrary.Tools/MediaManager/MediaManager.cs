@@ -327,5 +327,18 @@ namespace MediaManager
 
         #endregion
 
+        private void TestViewsToolStripButton_Click(object sender, EventArgs e)
+        {
+            if (SectionsListView.SelectedIndices.Count > 0)
+            {
+                MySystem.CurrentSection.RefreshViews();
+                ViewNavigatorDialog ViewNav = new ViewNavigatorDialog(MySystem.CurrentSection.GetViewNavigator());
+                ViewNav.ShowDialog();
+                MySystem.RefreshImports(ImportsListView);
+            }
+            
+
+        }
+
     }
 }

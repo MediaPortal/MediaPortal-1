@@ -117,6 +117,10 @@
       <DependentUpon>StringlistDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ViewNavigatorDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ViewNavigatorDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -139,6 +143,12 @@
     </Compile>
     <Compile Include="StringlistDialog.designer.cs">
       <DependentUpon>StringlistDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewNavigatorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewNavigatorDialog.Designer.cs">
+      <DependentUpon>ViewNavigatorDialog.cs</DependentUpon>
     </Compile>
     <None Include="Resources\Delete.Image.png" />
     <None Include="Resources\Up.Image.png" />

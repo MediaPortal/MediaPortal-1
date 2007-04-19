@@ -96,6 +96,7 @@ namespace MediaManager
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.DbPluginsListView = new System.Windows.Forms.ListView();
+            this.TestViewsToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -612,7 +613,8 @@ namespace MediaManager
             this.NewViewStepToolStripButton,
             this.DeleteViewStepToolStripButton,
             this.MoveViewStepUpToolStripButton,
-            this.MoveViewStepDownToolStripButton});
+            this.MoveViewStepDownToolStripButton,
+            this.TestViewsToolStripButton});
             this.toolStrip8.Location = new System.Drawing.Point(0, 0);
             this.toolStrip8.Name = "toolStrip8";
             this.toolStrip8.Size = new System.Drawing.Size(507, 25);
@@ -812,6 +814,16 @@ namespace MediaManager
             this.DbPluginsListView.View = System.Windows.Forms.View.List;
             this.DbPluginsListView.SelectedIndexChanged += new System.EventHandler(this.DbPluginsListView_SelectedIndexChanged);
             // 
+            // TestViewsToolStripButton
+            // 
+            this.TestViewsToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.TestViewsToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("TestViewsToolStripButton.Image")));
+            this.TestViewsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.TestViewsToolStripButton.Name = "TestViewsToolStripButton";
+            this.TestViewsToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.TestViewsToolStripButton.Text = "TestViews";
+            this.TestViewsToolStripButton.Click += new System.EventHandler(this.TestViewsToolStripButton_Click);
+            // 
             // MediaManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -927,6 +939,7 @@ namespace MediaManager
         private System.Windows.Forms.DataGridViewComboBoxColumn sortTagDataGridViewComboBoxColumn;
         private System.Windows.Forms.DataGridViewComboBoxColumn sortTypeDataGridViewComboBoxColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn sortAscendingDataGridViewCheckBoxColumn;
+        private System.Windows.Forms.ToolStripButton TestViewsToolStripButton;
 
     }
 }
