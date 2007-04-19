@@ -1352,46 +1352,6 @@ namespace MediaPortal.GUI.Music
         return false;
     }
 
-    protected void LoadPlaylistDirectory(string strNewDirectory)
-    {
-      GUIListItem SelectedItem = facadeView.SelectedListItem;
-      if (SelectedItem != null)
-      {
-        if (SelectedItem.IsFolder && SelectedItem.Label != "..")
-        {
-          m_history.Set(SelectedItem.Label, m_strDirectory);
-        }
-      }
-
-      m_strDirectory = strNewDirectory;
-      GUIControl.ClearControl(GetID, facadeView.GetID);
-
-      string strObjects = String.Empty;
-
-      List<GUIListItem> itemlist = m_directory.GetDirectoryExt(m_strDirectory);
-      //int iItem = 0;
-
-      foreach (GUIListItem item in itemlist)
-      {
-        facadeView.Add(item);
-      }
-
-      int iTotalItems = itemlist.Count;
-      if (itemlist.Count > 0)
-      {
-        GUIListItem rootItem = itemlist[0];
-        if (rootItem.Label == "..")
-          iTotalItems--;
-      }
-      strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
-
-      if (m_iItemSelected >= 0)
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
-      else if (itemlist.Count > 1)
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, 1);
-    }
-
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
