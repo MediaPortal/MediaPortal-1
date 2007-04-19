@@ -817,7 +817,7 @@ namespace TvPlugin
             {
               int newIndex = 0;
               int oldIndex = 0;
-              if (IsSingleSeat())
+              if (TVHome.IsSingleSeat())
               {
                 oldIndex = g_Player.CurrentAudioStream;
                 g_Player.SwitchToNextAudio();
@@ -1682,17 +1682,6 @@ namespace TvPlugin
 
     }
 
-    /// <summary>
-    /// check if we have a single seat environment
-    /// </summary>
-    /// <returns></returns>
-
-    bool IsSingleSeat()
-    {
-      Log.Debug("TvFullScreen: IsSingleSeat - RemoteControl.HostName = {0} / Environment.MachineName = {1}", RemoteControl.HostName, Environment.MachineName);
-      return (RemoteControl.HostName.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant());
-    }
-
     void ShowAudioLanguageMenu()
     {
       if (dlg == null) return;
@@ -1732,7 +1721,7 @@ namespace TvPlugin
       if ((dlg.SelectedLabel >= 0) && (dlg.SelectedLabel < streams.Length))
       {
         // Check if we have a single seat installation in which case we have to use the g_player method to switch the audio streams
-        if (IsSingleSeat())
+        if (TVHome.IsSingleSeat())
         {
           Log.Debug("TvFullScreen: ShowAudioLanguageMenu - single seat mode");
           g_Player.CurrentAudioStream = dlg.SelectedLabel;

@@ -76,6 +76,8 @@ namespace TvPlugin
     DateTime _dtlastTime = DateTime.Now;
     TvCropManager _cropManager = new TvCropManager();
     TvNotifyManager _notifyManager = new TvNotifyManager();
+    static string _preferredLanguages = "";
+    static bool _preferAC3 = false;
 
     [SkinControlAttribute(2)]
     protected GUIButtonControl btnTvGuide = null;
@@ -231,6 +233,8 @@ namespace TvPlugin
         if (strValue.Equals("original")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
         if (strValue.Equals("letterbox")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
         if (strValue.Equals("panscan")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+        _preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredlanguages", "");
+        _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
       }
     }
 
@@ -766,6 +770,15 @@ namespace TvPlugin
 
     #endregion
 
+    /// <summary>
+    /// check if we have a single seat environment
+    /// </summary>
+    /// <returns></returns>
+    public static bool IsSingleSeat()
+    {
+      Log.Debug("TvFullScreen: IsSingleSeat - RemoteControl.HostName = {0} / Environment.MachineName = {1}", RemoteControl.HostName, Environment.MachineName);
+      return (RemoteControl.HostName.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant());
+    }
     public static void UpdateTimeShift()
     {
     }
@@ -1158,6 +1171,46 @@ namespace TvPlugin
       Navigator.ZapToPreviousChannel(false);
     }
 
+    static private int GetPreferedAudioStreamIndex(string langCodes, bool preferAC3)
+    {
+      int idx = -1;
+      int idxNonAC3=-1;
+      int idxLastAC3 = -1;
+      IAudioStream [] streams=TVHome.Card.AvailableAudioStreams;
+      for (int i = 0; i < streams.Length; i++)
+      {
+        if ((preferAC3) && (streams[i].StreamType == AudioStreamType.AC3))
+          idxLastAC3 = i;
+        if (langCodes.Contains(streams[i].Language))
+        {
+          if (!preferAC3)
+          {
+            idx = i;
+            break;
+          }
+          else
+          {
+            if ((streams[i].StreamType == AudioStreamType.AC3))
+            {
+              idx = i;
+              break;
+            }
+            else
+              idxNonAC3 = i;
+          }
+        }
+      }
+      Log.Info("Preferred audio stream: idx={0}, idxNonAC3={1}, idxLastAC3={2}", idx, idxNonAC3,idxLastAC3);
+      if ((idx == -1) && (idxNonAC3 != -1))
+        idx = idxNonAC3;
+      else
+        if (idxLastAC3 != -1)
+          idx = idxLastAC3;
+      if (idx == -1)
+        idx = 0;
+      Log.Info("Preferred audio stream: switching to audio stream {0}", idx);
+      return idx;
+    }
     static public bool ViewChannelAndCheck(Channel channel)
     {
       if (channel == null)
@@ -1276,7 +1329,16 @@ namespace TvPlugin
         {
           SeekToEnd(true);
         }
-
+        int prefLangId = GetPreferedAudioStreamIndex(_preferredLanguages, _preferAC3);
+        if (IsSingleSeat())
+        {
+          g_Player.CurrentAudioStream = prefLangId;
+        }
+        else
+        {
+          IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
+          TVHome.Card.AudioStream = streams[prefLangId];
+        }
         return true;
       }
       else
@@ -1443,11 +1505,13 @@ namespace TvPlugin
 
     public bool HasSetup()
     {
-      return false;
+      return true;
     }
 
     public void ShowPlugin()
     {
+      TvSetupForm setup = new TvSetupForm();
+      setup.ShowDialog();
     }
 
     #endregion
