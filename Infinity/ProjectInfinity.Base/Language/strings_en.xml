@@ -25,6 +25,8 @@
 	</Section>
 	<Section name="global">
 		<String id="0">infinity</String>
+    <String id="1">Yes</String>
+    <String id="2">No</String>
 	</Section>
 	<Section name="mytv">
 		<String id="0">Tv Guide</String>

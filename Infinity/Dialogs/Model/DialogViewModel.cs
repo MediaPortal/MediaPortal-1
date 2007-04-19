@@ -124,14 +124,14 @@ namespace Dialogs
     {
       get
       {
-        return ServiceScope.Get<ILocalisation>().ToString("dialogs", 0);//Yes
+        return ServiceScope.Get<ILocalisation>().ToString("global", 1);//Yes
       }
     }
     public string NoLabel
     {
       get
       {
-        return ServiceScope.Get<ILocalisation>().ToString("dialogs", 1);//No
+        return ServiceScope.Get<ILocalisation>().ToString("global", 2);//No
       }
     }
     public DialogResult DialogResult
