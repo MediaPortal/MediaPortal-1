@@ -46,9 +46,7 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Menu\MenuPage.xaml.cs">
-      <DependentUpon>MenuPage.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Menu\MenuView.cs" />
     <Compile Include="Menu\MenuViewModel.cs" />
     <Compile Include="Menu\MenuPlugin.cs" />
     <Compile Include="Menu\PluginMenuItem.cs" />
@@ -97,9 +95,6 @@
       <Project>{4C45C46E-2ED2-4801-B3C3-FC2560E9FFE0}</Project>
       <Name>ProjectInfinity.Services</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Menu\MenuPage.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />

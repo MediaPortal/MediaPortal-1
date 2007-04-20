@@ -11,7 +11,7 @@ namespace ProjectInfinity.Menu
 
     public void Initialize()
     {
-      ServiceScope.Get<INavigationService>().Navigate(new Uri("/ProjectInfinity.Plugins;component/Menu/MenuPage.xaml", UriKind.Relative));
+      ServiceScope.Get<INavigationService>().Navigate(new MenuView());
     }
 
     #endregion

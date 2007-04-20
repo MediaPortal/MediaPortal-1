@@ -25,7 +25,7 @@
       </Style>
       <!-- storyboard to which animates the focused item in the vertical menu-->
       <Storyboard x:Key="focusedMenuItemStoryBoard" >
-        <PointAnimationUsingKeyFrames RepeatBehavior="Forever" AutoReverse="True" BeginTime="00:00:00" Storyboard.TargetName="rectFocusMenuItem" Storyboard.TargetProperty="(Shape.Fill).(RadialGradientBrush.GradientOrigin)">
+         <PointAnimationUsingKeyFrames RepeatBehavior="Forever" AutoReverse="True" BeginTime="00:00:00" Storyboard.TargetName="rectFocusMenuItem" Storyboard.TargetProperty="(Shape.Fill).(RadialGradientBrush.GradientOrigin)">
           <SplinePointKeyFrame KeyTime="00:00:00" Value="0.5,1.709"/>
           <SplinePointKeyFrame KeyTime="00:00:02" Value="0.5,0.899"/>
           <SplinePointKeyFrame KeyTime="00:00:04" Value="0.5,1.719"/>
@@ -58,7 +58,7 @@
         <DoubleAnimationUsingKeyFrames RepeatBehavior="Forever" AutoReverse="True"  BeginTime="00:00:00" Storyboard.TargetName="rectFocusMenuItem" Storyboard.TargetProperty="(Shape.Fill).(Brush.RelativeTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
           <SplineDoubleKeyFrame KeyTime="00:00:02" Value="0.119"/>
           <SplineDoubleKeyFrame KeyTime="00:00:04" Value="-0.006"/>
-        </DoubleAnimationUsingKeyFrames>
+        </DoubleAnimationUsingKeyFrames> 
       </Storyboard>
 
       <!-- storyboard to scroll the vertical menu 1 entry up-->
@@ -200,9 +200,10 @@
     </Grid.Resources>
     <Grid.Triggers>
       <!-- trigger to start focusedMenuItemStoryBoard when window is loaded-->
+      <!-- JoeDalton: Seems to crash new View-->
       <EventTrigger RoutedEvent="FrameworkElement.Loaded">
         <BeginStoryboard Storyboard="{StaticResource focusedMenuItemStoryBoard}"/>
-      </EventTrigger>
+      </EventTrigger> <!-- -->
       <!-- trigger to start fading out the vertical menu when it looses focus-->
       <EventTrigger RoutedEvent="controls:Menu.OnFocusHidden" SourceName="menu">
         <BeginStoryboard Storyboard="{StaticResource fadeOutVerticalMenu}"/>
