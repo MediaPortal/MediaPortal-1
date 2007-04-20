@@ -186,6 +186,9 @@ namespace TvService
         VirtualCard card;
         if (IsRecordingSchedule(schedule.IdSchedule, out card)) continue;
 
+        //check if this series is canceled
+        if (schedule.IsSerieIsCanceled(now)) continue;
+
         //check if its time to record this schedule.
         RecordingDetail newRecording;
         if (IsTimeToRecord(schedule, now, out newRecording))
