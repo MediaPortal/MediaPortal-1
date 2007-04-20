@@ -22,6 +22,7 @@ using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Settings;
 using ProjectInfinity.TaskBar;
+using System.Threading;
 
 namespace MyTv
 {
@@ -53,7 +54,9 @@ namespace MyTv
     {
       if (!ServiceScope.IsRegistered<ITvChannelNavigator>())
       {
-        this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new ConnectToServerDelegate(ConnectToServer));
+        Thread connectToServerThread = new Thread(new ThreadStart(ConnectToServer));
+        connectToServerThread.Priority = ThreadPriority.BelowNormal;
+        connectToServerThread.Start();
       }
     }
 
@@ -104,9 +107,14 @@ namespace MyTv
     {
       get
       {
+        if (!ServiceScope.IsRegistered<ITvChannelNavigator>()) return null;
         if (ServiceScope.Get<ITvChannelNavigator>().IsRecording)
-          return String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.TvRecordingIcon);
-        else return "";
+        {
+          string fileName=String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.TvRecordingIcon);
+          if (System.IO.File.Exists(fileName)) return fileName;
+          return null;
+        }
+        else return null;
       }
     }
     /// <summary>
@@ -130,6 +138,7 @@ namespace MyTv
     {
       get
       {
+        if (!ServiceScope.IsRegistered<ITvChannelNavigator>()) return 0;
         if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel == null) return 0;
         Program program = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.CurrentProgram;
         if (program == null) return 0;
@@ -148,6 +157,7 @@ namespace MyTv
     {
       get
       {
+        if (!ServiceScope.IsRegistered<ITvChannelNavigator>()) return "";
         if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel == null) return "";
         Program program = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.CurrentProgram;
         if (program == null) return "";
@@ -162,6 +172,7 @@ namespace MyTv
     {
       get
       {
+        if (!ServiceScope.IsRegistered<ITvChannelNavigator>()) return "";
         if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel == null) return "";
         Program program = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.CurrentProgram;
         if (program == null) return "";
@@ -176,6 +187,7 @@ namespace MyTv
     {
       get
       {
+        if (!ServiceScope.IsRegistered<ITvChannelNavigator>()) return "";
         if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel == null) return "";
         Program program = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.CurrentProgram;
         if (program == null) return "";
@@ -190,6 +202,7 @@ namespace MyTv
     {
       get
       {
+        if (!ServiceScope.IsRegistered<ITvChannelNavigator>()) return "";
         if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel == null) return "";
         Program program = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.CurrentProgram;
         if (program == null) return "";
@@ -204,6 +217,7 @@ namespace MyTv
     {
       get
       {
+        if (!ServiceScope.IsRegistered<ITvChannelNavigator>()) return "";
         ServiceScope.Get<ILogger>().Info("mytv:ProgramChannelName");
         if (ServiceScope.Get<ITvChannelNavigator>().SelectedChannel == null) return "";
         Program program = ServiceScope.Get<ITvChannelNavigator>().SelectedChannel.CurrentProgram;
