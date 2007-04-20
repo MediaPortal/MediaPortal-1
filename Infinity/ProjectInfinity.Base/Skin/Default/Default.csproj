@@ -118,6 +118,9 @@
     <Page Include="Dialogs\DialogOk.xaml" />
     <Page Include="Dialogs\DialogYesNo.xaml" />
     <Page Include="Home\home.xaml" />
+    <Page Include="MyPictures\MyPictures.xaml" />
+    <Page Include="MyPictures\MyPicturesFullScreen.xaml" />
+    <Page Include="MyPictures\MyPictures_resources.xaml" />
     <Page Include="MyTV\TvConflictDialog.xaml" />
     <Page Include="MyTV\TvFullscreen.xaml" />
     <Page Include="MyTV\TvGuide.xaml" />
