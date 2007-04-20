@@ -136,11 +136,13 @@ namespace ProjectInfinity.Controls
     bool _waitForMouseMove = false;
     Point _previousMousePoint;
     double _yOffset = 0;
+    Brush _originalOpacityMask;
     #endregion
 
     #region ctor
     public Menu()
     {
+      
       FocusedHidden = Visibility.Hidden;
       FocusedVisible = Visibility.Hidden;
       FocusedMargin = new Thickness(0);
@@ -377,6 +379,7 @@ namespace ProjectInfinity.Controls
     void Menu_Loaded(object sender, RoutedEventArgs e)
     {
       //Trace.WriteLine("Menu_Loaded");
+      _originalOpacityMask = this.OpacityMask;
       LayoutMenu();
     }
 
@@ -409,7 +412,14 @@ namespace ProjectInfinity.Controls
       double yoffset = -BUTTONHEIGHT;
       int maxItems = maxRows;
       if (maxItems >= ItemsSource.Count)
+      {
         maxItems = ItemsSource.Count;
+        this.OpacityMask = null;
+      }
+      else
+      {
+        this.OpacityMask = _originalOpacityMask;
+      }
       int selected = (maxItems) / 2;
       if (_mouseEntered)
         selected = _mouseSelectedItem;
