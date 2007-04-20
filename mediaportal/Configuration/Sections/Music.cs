@@ -180,7 +180,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonEnqueue;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPComboBox soundDeviceComboBox;
-    private CheckBox enableVisualisation;
     private CheckBox enableMixing;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseBassForCD;
     private MediaPortal.UserInterface.Controls.MPButton btWinampConfig;
@@ -233,7 +232,6 @@ namespace MediaPortal.Configuration.Sections
         // Player Settings
         audioPlayerComboBox.SelectedItem = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
         showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
-        enableVisualisation.Checked = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", true);
         enableMixing.Checked = xmlreader.GetValueAsBool("audioplayer", "mixing", false);
 
         // Get all available devices and add them to the combo box
@@ -430,7 +428,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("audioplayer", "player", audioPlayerComboBox.Text);
         xmlwriter.SetValue("audioplayer", "sounddevice", soundDeviceComboBox.Text);
         xmlwriter.SetValueAsBool("musicfiles", "showid3", showID3CheckBox.Checked);
-        xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", enableVisualisation.Checked);
         xmlwriter.SetValueAsBool("audioplayer", "mixing", enableMixing.Checked);
 
         xmlwriter.SetValue("audioplayer", "crossfade", hScrollBarCrossFade.Value);
@@ -440,7 +437,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("audioplayer", "streamOutputLevel", StreamOutputLevelNud.Value);
 
         // Visualization Settings
-        if (IVizMgr != null && enableVisualisation.Checked)
+        if (IVizMgr != null)
         {
           List<VisualizationInfo> vizPluginsInfo = IVizMgr.VisualizationPluginsInfo;
           int selIndex = VisualizationsCmbBox.SelectedIndex;
@@ -453,6 +450,7 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "path", vizPluginsInfo[selIndex].FilePath);
           xmlwriter.SetValue("musicvisualization", "clsid", vizPluginsInfo[selIndex].CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", vizPluginsInfo[selIndex].PresetIndex.ToString());
+          xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
         }
         else
         {
@@ -461,6 +459,7 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "path", "");
           xmlwriter.SetValue("musicvisualization", "clsid", "");
           xmlwriter.SetValue("musicvisualization", "preset", "");
+          xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", false);
         }
 
         xmlwriter.SetValue("musicvisualization", "fps", VisualizationFpsNud.Value);
@@ -548,7 +547,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         xmlwriter.SetValue("musicmisc", "lyrics", showLyrics);
-        xmlwriter.SetValueAsBool("musicmisc", "showVisInNowPlaying", ShowVizInNowPlayingChkBox.Checked && enableVisualisation.Checked);
+        xmlwriter.SetValueAsBool("musicmisc", "showVisInNowPlaying", ShowVizInNowPlayingChkBox.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmthumbs", !checkBoxDisableCoverLookups.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtopalbums", !checkBoxDisableAlbumLookups.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtracktags", !checkBoxDisableTagLookups.Checked);
@@ -614,7 +613,6 @@ namespace MediaPortal.Configuration.Sections
       this.PlayerTabPg = new System.Windows.Forms.TabPage();
       this.PlaybackSettingsGrpBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.enableMixing = new System.Windows.Forms.CheckBox();
-      this.enableVisualisation = new System.Windows.Forms.CheckBox();
       this.hScrollBarBuffering = new System.Windows.Forms.HScrollBar();
       this.hScrollBarCrossFade = new System.Windows.Forms.HScrollBar();
       this.GaplessPlaybackChkBox = new System.Windows.Forms.CheckBox();
@@ -724,7 +722,6 @@ namespace MediaPortal.Configuration.Sections
       // PlaybackSettingsGrpBox
       // 
       this.PlaybackSettingsGrpBox.Controls.Add(this.enableMixing);
-      this.PlaybackSettingsGrpBox.Controls.Add(this.enableVisualisation);
       this.PlaybackSettingsGrpBox.Controls.Add(this.hScrollBarBuffering);
       this.PlaybackSettingsGrpBox.Controls.Add(this.hScrollBarCrossFade);
       this.PlaybackSettingsGrpBox.Controls.Add(this.GaplessPlaybackChkBox);
@@ -754,17 +751,6 @@ namespace MediaPortal.Configuration.Sections
       this.enableMixing.Text = "Upmix Stereo to 5.1 /  7.1";
       this.enableMixing.UseVisualStyleBackColor = true;
       this.enableMixing.CheckedChanged += new System.EventHandler(this.enableMixing_CheckedChanged);
-      // 
-      // enableVisualisation
-      // 
-      this.enableVisualisation.AutoSize = true;
-      this.enableVisualisation.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.enableVisualisation.Location = new System.Drawing.Point(87, 23);
-      this.enableVisualisation.Name = "enableVisualisation";
-      this.enableVisualisation.Size = new System.Drawing.Size(202, 17);
-      this.enableVisualisation.TabIndex = 12;
-      this.enableVisualisation.Text = "Enable visualization (Bass player only)";
-      this.enableVisualisation.UseVisualStyleBackColor = true;
       // 
       // hScrollBarBuffering
       // 
