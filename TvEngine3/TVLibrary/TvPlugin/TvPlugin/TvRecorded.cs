@@ -638,7 +638,6 @@ namespace TvPlugin
       OnSort();
       //UpdateButtonStates(); done in on sort
       UpdateProperties();
-
     }
 
     void UpdateButtonStates()
@@ -856,12 +855,13 @@ namespace TvPlugin
       TvServer server = new TvServer();
       server.DeleteRecording(rec.IdRecording);
 
+      Gentle.Common.CacheManager.Clear();
+
       LoadDirectory();
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
       GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
     }
-
     void OnDeleteWatchedRecordings()
     {
       m_iSelectedItem = GetSelectedItemNo();
@@ -875,16 +875,17 @@ namespace TvPlugin
       dlgYesNo.DoModal(GetID);
 
       if (!dlgYesNo.IsConfirmed) return;
+
       IList itemlist = Recording.ListAll();
+      TvServer server = new TvServer();
       foreach (Recording rec in itemlist)
       {
         if (rec.TimesWatched > 0)
-        {
-          TvServer server = new TvServer();
           server.DeleteRecording(rec.IdRecording);
-        }
       }
 
+      Gentle.Common.CacheManager.Clear();
+        
       LoadDirectory();
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
