@@ -124,13 +124,13 @@
         "Entry"
         {
         "MsmKey" = "8:_5D0741D864D2D7DCFFC5D37B16A97186"
-        "OwnerKey" = "8:_725C31BE2B3503FE6CA0354404A92360"
+        "OwnerKey" = "8:_B23BEA038A297C8169A73E005A2FF181"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_5D0741D864D2D7DCFFC5D37B16A97186"
-        "OwnerKey" = "8:_B23BEA038A297C8169A73E005A2FF181"
+        "OwnerKey" = "8:_6CCB6764BA88C13BF84610E64C41ED11"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -153,7 +153,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_725C31BE2B3503FE6CA0354404A92360"
+        "MsmKey" = "8:_6CCB6764BA88C13BF84610E64C41ED11"
+        "OwnerKey" = "8:_91C69A1D9319483292529A8986F4215B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6CCB6764BA88C13BF84610E64C41ED11"
         "OwnerKey" = "8:_A987C233BAE14CE1A50509BEB71AD2A4"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -387,6 +393,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_EFAFFEA63DFF64073EA4E93E7FAF6204"
+        "OwnerKey" = "8:_91C69A1D9319483292529A8986F4215B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F8A1580A599E41CC95CA274BD8109061"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -437,12 +449,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_A987C233BAE14CE1A50509BEB71AD2A4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_725C31BE2B3503FE6CA0354404A92360"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -575,6 +581,24 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_FDCC05828E864E39085804A1BAE43F81"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_91C69A1D9319483292529A8986F4215B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_6CCB6764BA88C13BF84610E64C41ED11"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_EFAFFEA63DFF64073EA4E93E7FAF6204"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1046,14 +1070,14 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_725C31BE2B3503FE6CA0354404A92360"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_6CCB6764BA88C13BF84610E64C41ED11"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:TvControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_725C31BE2B3503FE6CA0354404A92360"
+                    "_6CCB6764BA88C13BF84610E64C41ED11"
                     {
                     "Name" = "8:TvControl.DLL"
                     "Attributes" = "3:512"
@@ -1208,6 +1232,11 @@
             "AssemblyAsmDisplayName" = "8:PowerSchedulerClientPlugin, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_91C69A1D9319483292529A8986F4215B"
+                    {
+                    "Name" = "8:PowerSchedulerClientPlugin.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:..\\..\\Plugins\\PowerScheduler\\ClientPlugin\\bin\\Release\\PowerSchedulerClientPlugin.dll"
             "TargetName" = "8:"
@@ -1625,6 +1654,37 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_EFAFFEA63DFF64073EA4E93E7FAF6204"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:PowerScheduler.Interfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_EFAFFEA63DFF64073EA4E93E7FAF6204"
+                    {
+                    "Name" = "8:PowerScheduler.Interfaces.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:PowerScheduler.Interfaces.DLL"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_C2F0F37686774BEB8C7DCDEAD47B6909"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
