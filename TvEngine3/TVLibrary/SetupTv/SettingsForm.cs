@@ -490,6 +490,12 @@ namespace SetupTv
       {
         e.Cancel = !treeNode.Section.CanActivate;
       }
+      if (!e.Cancel)
+        if (!ServiceHelper.IsRunning)
+        {
+          MessageBox.Show("TvService not started.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          e.Cancel = true;
+        }
     }
 
     /// <summary>

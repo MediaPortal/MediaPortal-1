@@ -189,12 +189,17 @@ namespace SetupTv.Sections
       if (!ServiceHelper.IsRunning)
       {
         buttonRestart.Text = "Start Service";
+        mpButtonTimeShift.Enabled = false;
+        mpButtonRec.Enabled = false;
+        mpButtonReGrabEpg.Enabled = false;
         return;
       }
       buttonRestart.Text = "Stop Service";
       if (!buttonRestart.Visible)
         buttonRestart.Visible = true;
-
+      mpButtonTimeShift.Enabled = true;
+      mpButtonRec.Enabled = true;
+      mpButtonReGrabEpg.Enabled = true;
       UpdateCardStatus();
 
       if (mpComboBoxChannels.SelectedItem != null)
