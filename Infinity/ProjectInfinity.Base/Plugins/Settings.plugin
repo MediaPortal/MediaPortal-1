@@ -1,0 +1,24 @@
+<Plugin name       = "Menu"
+        id         = "Settings"
+       author      = "JoeDalton"
+       copyright   = "GPL"
+       description = "Settings Menu">
+	
+	<Manifest>
+		<Identity name = "ProjectInfinity.Menu.MenuPlugin"/>
+	</Manifest>
+	
+	<Runtime>
+		<Import assembly = "../ProjectInfinity.Plugins.dll"/>
+	</Runtime>
+  <Path name = "/Menus/Home">
+    <MenuItem id    = "MyTv"
+		          label = "@settings:0"
+              image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
+		          class = "ProjectInfinity.Menu.MenuPlugin"/>
+  </Path>
+
+	<Path name = "/Menus">
+		<Menu id = "Settings" path="/Menus/Settings"/>
+	</Path>
+</Plugin>

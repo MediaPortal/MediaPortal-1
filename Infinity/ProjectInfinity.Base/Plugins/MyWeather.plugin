@@ -11,22 +11,27 @@
 		<Import assembly = "../MyWeather.dll"/>
 	</Runtime>
 
-	<Path name = "/Infinity/HomeMenu">
+	<Path name = "/Menus/Home">
 		<MenuItem id    = "MyWeather"
 					label = "@myweather:0"
 					image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
 					class = "MyWeather.WeatherPlugin"
-					submenu="/MyWeather"/>
+					submenu="/Menus/Home/MyWeather"/>
 	</Path>
-	<Path name = "/MyWeather">
+	<Path name = "/Menus/Home/MyWeather">
 		<MenuItem id = "Weather"
 					label = "@myweather:3"
 					image = "pack://siteoforigin:,,,/skin/default/gfx/mytv.png"
 					class = "MyWeather.WeatherPlugin"/>
-	</Path>
-	<Path name = "/MyWeather">
 		<MenuItem id = "Setup"
 					label = "@myweather:4"
+					image = "pack://siteoforigin:,,,/skin/default/gfx/mytv.png"
+					class = "MyWeather.WeatherSetup"/>
+	</Path>
+
+	<Path name = "/Menus/Settings">
+		<MenuItem id = "MyWeather"
+					label = "@myweather:0"
 					image = "pack://siteoforigin:,,,/skin/default/gfx/mytv.png"
 					class = "MyWeather.WeatherSetup"/>
 	</Path>

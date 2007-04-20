@@ -11,7 +11,7 @@
 		<Import assembly = "../ProjectInfinity.Plugins.dll"/>
 	</Runtime>
 
-	<Path name = "/Infinity/HomeMenu">
+	<Path name = "/Menus/Home">
 		<MenuItem id    = "MyTv"
 		          label = "@mypictures:0"
                           image = "pack://siteoforigin:,,,/skin/default/gfx/Pictures.png"

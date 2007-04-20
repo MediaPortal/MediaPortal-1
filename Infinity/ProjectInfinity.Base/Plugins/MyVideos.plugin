@@ -11,7 +11,7 @@
 		<Import assembly = "../myvideos.dll"/>
 	</Runtime>
 
-	<Path name = "/Infinity/HomeMenu">
+	<Path name = "/Menus/Home">
 		<MenuItem id    = "MyVideos"
 		          label = "@myvideos:34"
                           image = "pack://siteoforigin:,,,/skin/default/gfx/Video.png"
