@@ -437,7 +437,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("audioplayer", "streamOutputLevel", StreamOutputLevelNud.Value);
 
         // Visualization Settings
-        if (IVizMgr != null)
+        if (IVizMgr != null && VisualizationsCmbBox.SelectedIndex > 0)  // Something else than "None" selected
         {
           List<VisualizationInfo> vizPluginsInfo = IVizMgr.VisualizationPluginsInfo;
           int selIndex = VisualizationsCmbBox.SelectedIndex;
