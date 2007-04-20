@@ -135,6 +135,7 @@ namespace ProjectInfinity.Controls
     bool _mouseEventsEnabled = true;
     bool _waitForMouseMove = false;
     Point _previousMousePoint;
+    double _yOffset = 0;
     #endregion
 
     #region ctor
@@ -396,7 +397,7 @@ namespace ProjectInfinity.Controls
 
       if (ItemsSource == null) return;
       int maxRows = (int)(this.ActualHeight / ((double)BUTTONHEIGHT));
-      maxRows--;
+      //maxRows--;
       if (_storyBoard != null)
       {
         _storyBoard.Stop(this);
@@ -406,19 +407,34 @@ namespace ProjectInfinity.Controls
       this.Children.Clear();
       this.Margin = new Thickness(0, 0, 0, 0);
       double yoffset = -BUTTONHEIGHT;
-      int selected = (maxRows+1) / 2;
+      int maxItems = maxRows;
+      if (maxItems >= ItemsSource.Count)
+        maxItems = ItemsSource.Count;
+      int selected = (maxItems) / 2;
       if (_mouseEntered)
         selected = _mouseSelectedItem;
       else if (_mouseSelectedItem >= 0)
         selected = _mouseSelectedItem;
 
-      if (selected >= maxRows + 2)
+      if (selected >= maxItems + 2)
       {
-        selected = (maxRows + 1) / 2;
+        selected = (maxItems) / 2;
       }
       _currentSelectedItem = selected;
       _mouseSelectedItem = selected;
-      for (int i = -1; i < maxRows + 2; ++i)
+
+
+      int start = -1;
+      int end = maxRows + 2;
+      _yOffset = 0;
+      if (maxRows >= ItemsSource.Count)
+      {
+        start = 0;
+        end = ItemsSource.Count;
+        yoffset = _yOffset = ((maxRows - ItemsSource.Count) * BUTTONHEIGHT) / 2;
+      }
+
+      for (int i = start; i < end; ++i)
       {
         int itemNr = _currentOffset + i;
         while (itemNr < 0)
@@ -466,6 +482,15 @@ namespace ProjectInfinity.Controls
     {
       //Trace.WriteLine("OnScrollDown");
       _mouseEventsEnabled = false;
+
+      int maxRows = (int)(this.ActualHeight / ((double)BUTTONHEIGHT));
+      if (ItemsSource.Count < maxRows)
+      {
+        if (_currentSelectedItem >0)
+          _mouseSelectedItem = _currentSelectedItem - 1;
+        ScrollFocusedItemToMousePosition();
+        return;
+      }
       if (_storyBoard != null)
       {
         _storyBoard.Stop(this);
@@ -478,7 +503,8 @@ namespace ProjectInfinity.Controls
       _storyBoard = (Storyboard)element.Resources["storyBoardScrollDown"];
       _storyBoard.Completed += new EventHandler(storyBoard_Completed);
       _storyBoard.Begin(this, true);
-      _currentOffset--;
+
+        _currentOffset--;
       if (_currentOffset < 0) _currentOffset += ItemsSource.Count;
     }
 
@@ -486,6 +512,15 @@ namespace ProjectInfinity.Controls
     {
       //Trace.WriteLine("OnScrollUp");
       _mouseEventsEnabled = false;
+      int maxRows = (int)(this.ActualHeight / ((double)BUTTONHEIGHT));
+      if (ItemsSource.Count < maxRows)
+      {
+        if (_currentSelectedItem+1 < ItemsSource.Count)
+          _mouseSelectedItem = _currentSelectedItem + 1;
+        ScrollFocusedItemToMousePosition();
+        return;
+      }
+
       if (_storyBoard != null)
       {
         _storyBoard.Stop(this);
@@ -498,6 +533,7 @@ namespace ProjectInfinity.Controls
       _storyBoard = (Storyboard)element.Resources["storyBoardScrollUp"];
       _storyBoard.Completed += new EventHandler(storyBoard_Completed);
       _storyBoard.Begin(this, true);
+
       _currentOffset++;
       if (_currentOffset >= ItemsSource.Count) _currentOffset -= ItemsSource.Count;
     }
@@ -579,8 +615,8 @@ namespace ProjectInfinity.Controls
     {
       //Trace.WriteLine("ScrollFocusedItemToMousePosition");
       _mouseEventsEnabled = false;
-      double offsetCurrent = _currentSelectedItem * BUTTONHEIGHT;
-      double offsetNext = _mouseSelectedItem * BUTTONHEIGHT;
+      double offsetCurrent = _currentSelectedItem * BUTTONHEIGHT + _yOffset;
+      double offsetNext = _mouseSelectedItem * BUTTONHEIGHT + _yOffset;
       ThicknessAnimation animation = new ThicknessAnimation(new Thickness(0, offsetCurrent, 0, 0), new Thickness(0, offsetNext, 0, 0), new Duration(new TimeSpan(0, 0, 0, 0, 150)));
 
       animation.Completed += new EventHandler(animation_Completed);
@@ -612,6 +648,9 @@ namespace ProjectInfinity.Controls
       if (_mouseEntered && _mouseEventsEnabled)
       {
         int selectedItemNr = -1;
+        int maxRows = (int)(this.ActualHeight / ((double)BUTTONHEIGHT));
+        if (ItemsSource.Count < maxRows) selectedItemNr = 0;
+
         foreach (FrameworkElement element in this.Children)
         {
           if (element.IsMouseOver)
