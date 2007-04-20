@@ -14,9 +14,8 @@ namespace WindowPlugins.VideoEditor
 		public int audioQuality = 128;
 	}
 
-	internal class CompressSettings : MediaPortal.Dialogs.GUIDialogWindow
+	public class CompressSettings : MediaPortal.Dialogs.GUIDialogWindow
 	{
-		//private const int windowID = 170603;
 		bool result;
 
 		[SkinControlAttribute(302)]		protected GUISpinControl profilSelect = null;
@@ -28,17 +27,7 @@ namespace WindowPlugins.VideoEditor
 		[SkinControlAttribute(24)] 		protected GUIButtonControl abbortBtn = null;
 
 		CompressionSettings settings;
-
-		public CompressSettings(ref CompressionSettings settings)
-		{
-			this.settings = settings;
-			settings.resolutionX = 720;
-			settings.resolutionY = 576;
-			settings.videoQuality = 2200;
-			settings.audioQuality = 192;
-			GetID = (int)GUIWindow.Window.WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS;
-		}
-
+        		
 		public CompressSettings()
 		{
 			settings = new CompressionSettings();
@@ -48,7 +37,19 @@ namespace WindowPlugins.VideoEditor
 			settings.audioQuality = 192;
 			GetID = (int)GUIWindow.Window.WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS;
 		}
-		
+
+        public CompressionSettings Settings
+        {
+            get { return settings; }
+            set {
+                settings = value; 
+                //settings.resolutionX = 720;
+                //settings.resolutionY = 576;
+                //settings.videoQuality = 2200;
+                //settings.audioQuality = 192;
+            }
+        }
+
 		public override bool Init()
 		{
 			try
@@ -189,14 +190,17 @@ namespace WindowPlugins.VideoEditor
 				case 320:
 					resolution.IntValue = 1;
 					resolutionLbl.Label = "320 x 240";
+					settings.resolutionY = 240;
 					break;
 				case 640:
 					resolution.IntValue = 2;
 					resolutionLbl.Label = "640 x 480";
+					settings.resolutionY = 480;
 					break;
 				case 720:
 					resolution.IntValue = 3;
 					resolutionLbl.Label = "720 x 576";
+					settings.resolutionY = 576;
 					break;
 			}
 			resolution.SetRange(1, 3);

@@ -201,15 +201,9 @@ namespace WindowPlugins.VideoEditor
 					if (joinCutSpinCtrl.GetLabel() == GUILocalizeStrings.Get(2066)) // Mpeg to divx
 					{
 						CompressionSettings comprSettings = new CompressionSettings();
-						CompressSettings settingWindow = new CompressSettings(ref comprSettings);
-						settingWindow.Init();
-						if (GUIWindowManager.GetWindow(settingWindow.GetID) == null)
-						{
-							GUIWindow win = (GUIWindow)settingWindow;
-							GUIWindowManager.Add(ref win);
-						}
-						//else
-						//	GUIWindowManager.ActivateWindow(settingWindow.GetID);
+            CompressSettings settingWindow = (CompressSettings)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS);            
+						if (settingWindow == null) return;
+            //            settingWindow.Settings = comprSettings;   BAV: do you need this one here or only line 216
 						settingWindow.DoModal(this.GetID);
 						if (settingWindow.Result)
 						{
@@ -219,11 +213,7 @@ namespace WindowPlugins.VideoEditor
 							progressBar.Visible = true;
 							progressPercent.Visible = true;
 							videoListLct.Focusable = false;
-							//CompressionSettings comprSettings = new CompressionSettings();
-							//comprSettings.audioQuality = 192;
-							//comprSettings.resolutionX = 800;
-							//comprSettings.resolutionY = 640;
-							//comprSettings.videoQuality = 3000;
+              comprSettings = settingWindow.Settings;
 							EditSettings settings = new EditSettings(comprSettings);
 							settings.FileName = item.Path;
 							settings.DeleteAfter = false;
@@ -378,14 +368,17 @@ namespace WindowPlugins.VideoEditor
 			yesnoDialog.DoModal(GetID);
 			if (yesnoDialog.IsConfirmed)
 			{
-				System.IO.File.Delete(filetoConvert);
+				try
+				{
+					System.IO.File.Delete(filetoConvert);
+				}
+				catch { }
 			}
 			working = false;
 			progressBar.Visible = false;
 			progressPercent.Visible = false;
 			videoListLct.Focusable = true;
 			extensions.Clear();
-			extensions.Add(".dvr-ms");
 			extensions.Add(".mpeg");
 			extensions.Add(".mpg");
 			extensions.Add(".ts");
