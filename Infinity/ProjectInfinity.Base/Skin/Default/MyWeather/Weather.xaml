@@ -2,7 +2,7 @@
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                           xmlns:local="clr-namespace:ProjectInfinity.Menu;assembly=ProjectInfinity.Services"
                           xmlns:ns="clr-namespace:Dialogs;assembly=dialogs"
-                          xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls">
+                          xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls" xmlns:d="http://schemas.microsoft.com/expression/blend/2006" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" xmlns:MyWeather="clr-namespace:MyWeather;assembly=MyWeather">
 
 	<Grid
 	  Width="Auto" Height="Auto" Background="{DynamicResource backGroundBrush}"
@@ -14,13 +14,14 @@
 			<VisualBrush x:Key="imageBrush" Visual="{Binding ElementName=IconBig}" Stretch="Uniform"/>
 		</Grid.Resources>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="256"/>
-			<ColumnDefinition Width="232.832"/>
-			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="Auto" MinWidth="192"/>
+			<ColumnDefinition Width="Auto" MinWidth="264"/>
+			<ColumnDefinition Width="0.357*"/>
+			<ColumnDefinition Width="0.643*"/>
 		</Grid.ColumnDefinitions>
-		<Label x:Name="labelHeader" Content="{Binding Path=Localisation.Header}" Style="{StaticResource LabelHeaderStyle}" Margin="0,0,8,173" Grid.ColumnSpan="3" />
-		<Image x:Name ="IconBig" Source ="{Binding Path=CurrentLocation.Condition.Icon}"  Margin="24.666,64,28.166,0" VerticalAlignment="Top" Width="180" Height="180" Grid.Column="1"/>
-		<Label x:Name="labelLocation"  Style="{StaticResource LabelNormalStyle}" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="0,18,0,0" VerticalAlignment="Top" Width="300" Height="42.8" Content="{Binding Path=CurrentLocation.Name}" FontSize="30" FontWeight="Bold" Foreground="#FFFFFFFF" Grid.Column="2">
+		<Label x:Name="labelHeader" Content="{Binding Path=Localisation.Header}" Style="{StaticResource LabelHeaderStyle}" Margin="0,0,8,173" Grid.ColumnSpan="4" />
+		<Image x:Name ="IconBig" Source ="{Binding Path=CurrentLocation.Condition.Icon}"  Margin="0,64,161.3,0" VerticalAlignment="Top" Width="180" Height="180" Grid.Column="1" HorizontalAlignment="Right" Grid.ColumnSpan="2"/>
+		<Label x:Name="labelLocation"  Style="{StaticResource LabelNormalStyle}" RenderTransformOrigin="0.5,0.5" Margin="-120,18,0,0" VerticalAlignment="Top" Height="42.8" Content="{Binding Path=CurrentLocation.Name}" FontSize="30" FontWeight="Bold" Foreground="#FFFFFFFF" Grid.Column="3" HorizontalAlignment="Stretch">
 			<Label.RenderTransform>
 				<TransformGroup>
 					<ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -33,47 +34,47 @@
 				<DropShadowBitmapEffect/>
 			</Label.BitmapEffect>
 		</Label>
-		<Label x:Name="labelTemperature"  Content="{Binding Path=CurrentLocation.Condition.Temperature}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Left" Margin="8,97.2,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFD8D8D8" Grid.Column="2">
+		<Label x:Name="labelTemperature"  Content="{Binding Path=CurrentLocation.Condition.Temperature}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Stretch" Margin="8,97.2,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFFFFFFF" Grid.Column="3" d:LayoutOverrides="Width">
 			<Label.BitmapEffect>
 				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
 			</Label.BitmapEffect>
 		</Label>
-		<Label x:Name="labelFeelsLikeTemp"  Content="{Binding Path=CurrentLocation.Condition.FeelsLikeTemp}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Left" Margin="8,140,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFD8D8D8" Grid.Column="2">
+		<Label x:Name="labelFeelsLikeTemp"  Content="{Binding Path=CurrentLocation.Condition.FeelsLikeTemp}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Stretch" Margin="8,140,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFFFFFFF" Grid.Column="3" d:LayoutOverrides="Width">
 			<Label.BitmapEffect>
 				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
 			</Label.BitmapEffect>
 		</Label>
-		<Label x:Name="labelHumidity"  Content="{Binding Path=CurrentLocation.Condition.Humidity}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Left" Margin="8,182.8,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFD8D8D8" Grid.Column="2">
+		<Label x:Name="labelHumidity"  Content="{Binding Path=CurrentLocation.Condition.Humidity}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Stretch" Margin="8,182.8,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFFFFFFF" Grid.Column="3" d:LayoutOverrides="Width">
 			<Label.BitmapEffect>
 				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
 			</Label.BitmapEffect>
 		</Label>
-		<Label x:Name="labelDewPoint"  Content="{Binding Path=CurrentLocation.Condition.DewPoint}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Left" Margin="8,225.6,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFD8D8D8" Grid.Column="2">
+		<Label x:Name="labelDewPoint"  Content="{Binding Path=CurrentLocation.Condition.DewPoint}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Stretch" Margin="8,225.6,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFFFFFFF" Grid.Column="3" d:LayoutOverrides="Width">
 			<Label.BitmapEffect>
 				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
 			</Label.BitmapEffect>
 		</Label>
-		<Label x:Name="labelUVIndex"  Content="{Binding Path=CurrentLocation.Condition.UVIndex}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Left" Margin="8,268.4,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFD8D8D8" Grid.Column="2">
+		<Label x:Name="labelUVIndex"  Content="{Binding Path=CurrentLocation.Condition.UVIndex}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Stretch" Margin="8,268.4,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFFFFFFF" Grid.Column="3" d:LayoutOverrides="Width">
 			<Label.BitmapEffect>
 				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
 			</Label.BitmapEffect>
 		</Label>
-		<Label x:Name="labelSunRise"  Content="{Binding Path=CurrentLocation.LocationInfo.SunRise}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Left" Margin="8,311.2,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFD8D8D8" Grid.Column="2">
+		<Label x:Name="labelSunRise"  Content="{Binding Path=CurrentLocation.LocationInfo.SunRise}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Stretch" Margin="8,311.2,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFFFFFFF" Grid.Column="3" d:LayoutOverrides="Width">
 			<Label.BitmapEffect>
 				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
 			</Label.BitmapEffect>
 		</Label>
-		<Label x:Name="labelSunSet"  Content="{Binding Path=CurrentLocation.LocationInfo.SunSet}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Left" Margin="8,354,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFD8D8D8" Grid.Column="2">
+		<Label x:Name="labelSunSet"  Content="{Binding Path=CurrentLocation.LocationInfo.SunSet}" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Stretch" Margin="8,354,0,0" VerticalAlignment="Top" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFFFFFFF" Grid.Column="3" d:LayoutOverrides="Width">
 			<Label.BitmapEffect>
 				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
 			</Label.BitmapEffect>
 		</Label>
-		<Label x:Name="labelLastUpdate" Content="{Binding Path=CurrentLocation.Condition.LastUpdate}"  Style="{StaticResource LabelNormalStyle}" Margin="20,64,0,0" VerticalAlignment="Top" Width="Auto" Height="41.6" Grid.Column="2" HorizontalAlignment="Left">
+		<Label x:Name="labelLastUpdate" Content="{Binding Path=CurrentLocation.Condition.LastUpdate}"  Style="{StaticResource LabelNormalStyle}" Margin="-100,64,0,0" VerticalAlignment="Top" Width="Auto" Height="41.6" Grid.Column="3" HorizontalAlignment="Left">
 			<Label.BitmapEffect>
 				<DropShadowBitmapEffect Opacity="0.54" ShadowDepth="2" Softness="0.215"/>
 			</Label.BitmapEffect>
 		</Label>
-		<TextBlock x:Name="labelCondition" Text="{Binding Path=CurrentLocation.Condition.Condition}" Style="{StaticResource TextBlockNormalStyle}" Margin="0,347,0,0" Grid.Column="1" VerticalAlignment="Top" Height="60" FontFamily="Arial" FontSize="22" FontWeight="Bold" Foreground="#FFFFFFFF" TextAlignment="Center" >
+		<TextBlock x:Name="labelCondition" Text="{Binding Path=CurrentLocation.Condition.Condition}" Style="{StaticResource TextBlockNormalStyle}" Margin="0,347,160,0" Grid.Column="1" VerticalAlignment="Top" Height="60" FontFamily="Arial" FontSize="22" FontWeight="Bold" Foreground="#FFFFFFFF" TextAlignment="Center" HorizontalAlignment="Right" Width="180" Grid.ColumnSpan="2" >
 			<TextBlock.BitmapEffect>
 				<BlurBitmapEffect Radius="1"/>
 			</TextBlock.BitmapEffect>
@@ -84,12 +85,11 @@
 				</LinearGradientBrush>
 			</TextBlock.OpacityMask>
 		</TextBlock>
-		<Label x:Name="labelRefreshTime" Content="{Binding Path=CurrentLocation.LocationInfo.Time}"  Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,59,-1008,59" Width="10" Grid.Column="2"/>
-		<StackPanel HorizontalAlignment="Right" Margin="0,64,0,0" Width="200">
+		<StackPanel HorizontalAlignment="Right" Margin="0,124.2,0,0" Width="166">
 			<controls:Button x:Name="buttonRefresh" Command="{Binding Path=UpdateWeather}" Style="{DynamicResource MpButton}"  Content="{Binding Path=Localisation.Refresh}" Width="Auto" Height="40" />
 			<controls:Button x:Name="buttonLocation" Command="{Binding Path=ChangeLocation}" Style="{DynamicResource MpButton}"  Content="{Binding Path=Localisation.Location}" Margin="0,2,0,0" Width="Auto" Height="40" />
 		</StackPanel>
-		<Rectangle RenderTransformOrigin="0.5,0.5" Fill="{DynamicResource locationBrush}" Stroke="{x:Null}" Margin="0,47.8,0,0" VerticalAlignment="Top" Height="42.8" Grid.Column="2" HorizontalAlignment="Left" Width="300">
+		<Rectangle RenderTransformOrigin="0.5,0.5" Fill="{DynamicResource locationBrush}" Stroke="{x:Null}" Margin="-120,47.8,0,0" VerticalAlignment="Top" Height="42.8" Grid.Column="3" HorizontalAlignment="Stretch">
 			<Rectangle.OpacityMask>
 				<LinearGradientBrush EndPoint="0.441,2.327" StartPoint="0.448,0.364">
 					<GradientStop Color="#00000000" Offset="0"/>
@@ -105,13 +105,65 @@
 				</TransformGroup>
 			</Rectangle.RenderTransform>
 		</Rectangle>
-		<Rectangle Fill="{DynamicResource imageBrush}" Stroke="{x:Null}" Margin="24.666,227,28.166,0" VerticalAlignment="Top" Width="180" Height="180" Grid.Column="1">
+		<Rectangle Fill="{DynamicResource imageBrush}" Stroke="{x:Null}" Margin="0,227,161.3,0" VerticalAlignment="Top" Width="180" Height="180" Grid.Column="1" RenderTransformOrigin="0.5,0.5" d:LayoutOverrides="Width" HorizontalAlignment="Right" Grid.ColumnSpan="2">
 			<Rectangle.OpacityMask>
-				<LinearGradientBrush EndPoint="0.474,0.606" StartPoint="0.463,-1.028">
-					<GradientStop Color="#B2000000" Offset="0"/>
-					<GradientStop Color="#00FFFFFF" Offset="1"/>
+				<LinearGradientBrush EndPoint="0.446,1.706" StartPoint="0.457,0.261">
+					<GradientStop Color="#00000000" Offset="0"/>
+					<GradientStop Color="#B2FFFFFF" Offset="1"/>
 				</LinearGradientBrush>
 			</Rectangle.OpacityMask>
+			<Rectangle.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform ScaleX="1" ScaleY="-1"/>
+					<SkewTransform AngleX="0" AngleY="0"/>
+					<RotateTransform Angle="0"/>
+					<TranslateTransform X="0" Y="0"/>
+				</TransformGroup>
+			</Rectangle.RenderTransform>
 		</Rectangle>
+		<Label x:Name="labelTemperatureLoc"  Content="{Binding Path=Localisation.Temperature}" Style="{StaticResource LabelNormalStyle}" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFE4E4E4" d:LayoutOverrides="Width" HorizontalAlignment="Right" Margin="0,97.2,0,0" VerticalAlignment="Top" Grid.Column="2">
+			<Label.BitmapEffect>
+				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
+			</Label.BitmapEffect>
+		</Label>
+		<Label x:Name="labelFeelsLikeTempLoc"  Content="{Binding Path=Localisation.FeelsLike}" Style="{StaticResource LabelNormalStyle}" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFE4E4E4" d:LayoutOverrides="Width" HorizontalAlignment="Right" Margin="0,140,0,0" VerticalAlignment="Top" Grid.Column="2">
+			<Label.BitmapEffect>
+				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
+			</Label.BitmapEffect>
+		</Label>
+		<Label x:Name="labelHumidityLoc"  Content="{Binding Path=Localisation.Humidity}" Style="{StaticResource LabelNormalStyle}" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFE4E4E4" d:LayoutOverrides="Width" HorizontalAlignment="Right" Margin="0,182.8,0,0" VerticalAlignment="Top" Grid.Column="2">
+			<Label.BitmapEffect>
+				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
+			</Label.BitmapEffect>
+		</Label>
+		<Label x:Name="labelDewPointLoc"  Content="{Binding Path=Localisation.DewPoint}" Style="{StaticResource LabelNormalStyle}" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFE4E4E4" d:LayoutOverrides="Width" HorizontalAlignment="Right" Margin="0,225.6,0,0" VerticalAlignment="Top" Grid.Column="2">
+			<Label.BitmapEffect>
+				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
+			</Label.BitmapEffect>
+		</Label>
+		<Label x:Name="labelUVIndexLoc"  Content="{Binding Path=Localisation.UVIndex}" Style="{StaticResource LabelNormalStyle}" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFE4E4E4" d:LayoutOverrides="Width" HorizontalAlignment="Right" Margin="0,268.4,0,0" VerticalAlignment="Top" Grid.Column="2">
+			<Label.BitmapEffect>
+				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
+			</Label.BitmapEffect>
+		</Label>
+		<Label x:Name="labelSunRiseLoc"  Content="{Binding Path=Localisation.Sunrise}" Style="{StaticResource LabelNormalStyle}" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFE4E4E4" d:LayoutOverrides="Width" HorizontalAlignment="Right" Margin="0,311.2,0,0" VerticalAlignment="Top" Grid.Column="2">
+			<Label.BitmapEffect>
+				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
+			</Label.BitmapEffect>
+		</Label>
+		<Label x:Name="labelSunSetLoc"  Content="{Binding Path=Localisation.Sunset}" Style="{StaticResource LabelNormalStyle}" Width="Auto" Height="Auto" FontSize="24" Foreground="#FFE4E4E4" d:LayoutOverrides="Width" HorizontalAlignment="Right" Margin="0,354,0,0" VerticalAlignment="Top" Grid.Column="2">
+			<Label.BitmapEffect>
+				<DropShadowBitmapEffect Opacity="0.425" ShadowDepth="2" Softness="0.37"/>
+			</Label.BitmapEffect>
+		</Label>
+		<Path Fill="{x:Null}" Stretch="Fill" Stroke="#FFFFFFFF" StrokeThickness="4" HorizontalAlignment="Left" Margin="2.5,97,0,0" VerticalAlignment="Top" Width="4" Height="310" Grid.Column="3" Data="M469,116.5 L469,296.17155">
+			<Path.OpacityMask>
+				<LinearGradientBrush EndPoint="0.5,0.962" StartPoint="0.5,0.006">
+					<GradientStop Color="#FF000000" Offset="0.529"/>
+					<GradientStop Color="#00FFFFFF" Offset="1"/>
+					<GradientStop Color="#00F2F2F2" Offset="0"/>
+				</LinearGradientBrush>
+			</Path.OpacityMask>
+		</Path>
 	</Grid>
 </controls:AnimationBehaviorHost>
