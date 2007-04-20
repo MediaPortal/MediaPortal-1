@@ -46,14 +46,6 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\ProjectInfinity.Base\Skin\Default\MyPictures\MyPictures.xaml">
-      <Link>Pictures\MyPictures.xaml</Link>
-    </None>
-    <None Include="..\ProjectInfinity.Base\Skin\Default\MyPictures\MyPictures_resources.xaml">
-      <Link>Pictures\MyPictures_resources.xaml</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Menu\MenuPage.xaml.cs">
       <DependentUpon>MenuPage.xaml</DependentUpon>
     </Compile>
