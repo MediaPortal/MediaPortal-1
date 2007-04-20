@@ -965,7 +965,7 @@ namespace TvPlugin
       string strChannel = chan.Name;
       if (strChannel == null) return;
 
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
+      string strLogo = Utils.GetCoverArt(Thumbs.Radio, strChannel);
       if (!System.IO.File.Exists(strLogo))
       {
         strLogo = "defaultVideoBig.png";
@@ -1242,7 +1242,7 @@ namespace TvPlugin
 
     void RenderChannel(int iChannel, Channel channel, long iStart, long iEnd, bool selectCurrentShow)
     {
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Name);
+      string strLogo = Utils.GetCoverArt(Thumbs.Radio, channel.Name);
       if (System.IO.File.Exists(strLogo))
       {
         GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
