@@ -11,6 +11,11 @@ namespace ProjectInfinity.Navigation
     private bool _fullScreen = false;
     private Size originalSize = Size.Empty;
 
+    public NavigationService()
+    {
+      this.Width = 800;
+      this.Height = 600;
+    }
     #region INavigationService Members
 
     public bool FullScreen
