@@ -5,6 +5,7 @@ using System.Windows.Data;
 using System.Collections;
 using ProjectInfinity;
 using ProjectInfinity.Playlist;
+using System.ComponentModel;
 
 namespace MyVideos
 {
@@ -20,6 +21,12 @@ namespace MyVideos
       : base(model.VideoPlaylist)
     {
       _model = model;
+      _model.PropertyChanged += new PropertyChangedEventHandler(_model_PropertyChanged);
+    }
+
+    private void _model_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
     }
     #endregion
 
@@ -41,17 +48,20 @@ namespace MyVideos
 
   public class VideoPlaylistDatabaseModel
   {
-   /* #region variables
-    private List<VideoModel> _items = new List<VideoModel>();
+    #region variables
+    public event PropertyChangedEventHandler PropertyChanged;
     #endregion
 
     #region ctor
     public VideoPlaylistDatabaseModel()
     {
+
     }
     #endregion
 
-    #region public methods
+    
+
+    /*#region public methods
     /// <summary>
     /// Add a <see cref="VideoModel" /> to the collection.
     /// </summary>
@@ -83,7 +93,13 @@ namespace MyVideos
     #region properties
     public IList VideoPlaylist
     {
-      get { return ServiceScope.Get<IPlaylistManager>().PlaylistItems; }
+      get
+      {
+        if (PropertyChanged != null)
+          PropertyChanged(this, new PropertyChangedEventArgs("VideoPlaylist"));
+
+        return ServiceScope.Get<IPlaylistManager>().PlaylistItems;
+      }
     }
     #endregion
   }

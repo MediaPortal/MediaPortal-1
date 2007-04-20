@@ -57,6 +57,9 @@ namespace MyVideos
         gridMain.Children.Add(documentRoot);
       }
 
+      // Add a input binding for the "back"-command
+      this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
+
       // View Model
       _model = new VideoHomeViewModel(this);
       gridMain.DataContext = _model;
@@ -67,6 +70,7 @@ namespace MyVideos
 
       // Mouse
       Mouse.AddMouseMoveHandler(this, new MouseEventHandler(OnMouseMoveEvent));
+      Mouse.AddMouseDownHandler(this, new MouseButtonEventHandler(OnMouseButtonDownEvent));
 
       this.AddHandler(ListBoxItem.MouseDownEvent, new RoutedEventHandler(OnMouseButtonDownEvent), true);
       this.KeyDown += new KeyEventHandler(onKeyDown);
@@ -109,26 +113,7 @@ namespace MyVideos
 
         if ((e as MouseButtonEventArgs).RightButton == MouseButtonState.Pressed)
         {
-          Dialogs.MpMenu dlgMenu = new Dialogs.MpMenu();
-          dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-          dlgMenu.Owner = Window.GetWindow(this);
-          dlgMenu.Items.Clear();
-          dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68); // Menu
-          dlgMenu.SubTitle = (box.SelectedItem as VideoModel).Title;
-          dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 30))); // Add to playlist
-          dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 29))); // View information
-          dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 27))); // Download information
-          dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 28))); // Delete from disk
-          dlgMenu.ShowDialog();
-
-          switch (dlgMenu.SelectedIndex)
-          {
-            case 0:
-              // Add to playlist
-              ICommand addToPlaylist = new AddToPlaylistCommand(_model);
-              addToPlaylist.Execute((VideoModel)box.SelectedItem);
-              break;
-          }
+          
         }
         else
         {
@@ -172,7 +157,7 @@ namespace MyVideos
     protected void onKeyDown(object sender, KeyEventArgs e)
     {
       // If we've pressed enter, call for VideoItemClicked()
-      if ((e.Key == Key.Enter) &&
+      /*if ((e.Key == Key.Enter) &&
           (e.Source as ListBox) != null)
       {
         ListBox box = (ListBox)e.Source;
@@ -180,6 +165,35 @@ namespace MyVideos
         e.Handled = true;
 
         return;
+      }*/
+
+      if ((e.Key == Key.I) &&
+          (e.Source as ProjectInfinity.Controls.ListBox) != null)
+      {
+        // add the item to the playlist
+
+        ProjectInfinity.Controls.ListBox box = (ProjectInfinity.Controls.ListBox)e.Source;
+
+        Dialogs.MpMenu dlgMenu = new Dialogs.MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = Window.GetWindow(this);
+        dlgMenu.Items.Clear();
+        dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68); // Menu
+        dlgMenu.SubTitle = (box.SelectedItem as VideoModel).Title;
+        dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 30))); // Add to playlist
+        dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 29))); // View information
+        dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 27))); // Download information
+        dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 28))); // Delete from disk
+        dlgMenu.ShowDialog();
+
+        switch (dlgMenu.SelectedIndex)
+        {
+          case 0:
+            // Add to playlist
+            ICommand addToPlaylist = new AddToPlaylistCommand(_model);
+            addToPlaylist.Execute((VideoModel)box.SelectedItem);
+            break;
+        }
       }
     }
 

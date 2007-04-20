@@ -34,7 +34,7 @@ namespace MyVideos
       _dataModel = new VideoFullscreenViewModel(this);
       gridMain.DataContext = _dataModel;
 
-      // Add keybindings for "back" action
+      // Add a input binding for the "back"-command
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
 
       // Keyboard events

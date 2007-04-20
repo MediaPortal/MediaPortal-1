@@ -21,6 +21,7 @@ using ProjectInfinity.Logging;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using ProjectInfinity.Playlist;
+using MediaLibrary;
 
 namespace MyVideos
 {
@@ -56,6 +57,7 @@ namespace MyVideos
     ICommand _dvdCommand;
     ICommand _itemCommand;
     ICommand _fullscreenCommand;
+    ICommand _navfullscreenCommand;
 
     Window _window;
     Page _page;
@@ -136,6 +138,17 @@ namespace MyVideos
     #endregion
 
     #region ICommand Properties
+    public ICommand NavFullscreen
+    {
+      get
+      {
+        if (_navfullscreenCommand == null)
+          _navfullscreenCommand = new NavFullscreenCommand(this);
+
+        return _navfullscreenCommand;
+      }
+    }
+
     public ICommand Play
     {
       get
@@ -212,12 +225,12 @@ namespace MyVideos
         if (_viewType != value)
         {
           _viewType = value;
-          ChangeProperty("ViewTypeMode");
+          ChangeProperty("ViewModeType");
         }
       }
     }
 
-    public string ViewTypeMode
+    public string ViewModeType
     {
       get
       {
@@ -265,20 +278,6 @@ namespace MyVideos
           _videosView = new VideoCollectionView(_dataModel);
 
         return _videosView;
-      }
-    }
-
-    public DataTemplate ItemTemplate
-    {
-      get
-      {
-        switch (_viewType)
-        {
-          case ViewType.List:
-            return (DataTemplate)_page.Resources["videoItemListTemplate"];
-          default:
-            return (DataTemplate)_page.Resources["videoItemListTemplate"];
-        }
       }
     }
 
@@ -345,6 +344,21 @@ namespace MyVideos
   }
   #endregion
 
+  #region navigatefullscreen command class
+  public class NavFullscreenCommand : BaseCommand
+  {
+    public NavFullscreenCommand(VideoHomeViewModel viewModel)
+      : base(viewModel)
+    {
+    }
+
+    public override void Execute(object parameter)
+    {
+      _viewModel.Page.NavigationService.Navigate(new Uri("/MyVideos;component/VideoFullscreen.xaml", UriKind.Relative));
+    }
+  }
+  #endregion
+
   #region fullscreen command class
   class FullscreenCommand : BaseCommand
   {
@@ -386,10 +400,11 @@ namespace MyVideos
 
     public override void Execute(object parameter)
     {
+      if (parameter == null) return;  // if the parameter variable is null they have clicked outside an item
+
       // set the media to be played and then toggle fullscreen
       VideoModel videoModel = (VideoModel)parameter;
       string fileName = videoModel.Path;
-      //ServiceScope.Get<ILogger>().Info("Video:  path: " + fileName);
 
       if (!File.Exists(fileName))
       {
@@ -659,7 +674,7 @@ namespace MyVideos
       _listVideos.Clear();
 
       // Temporary code, needs to be replaced when we get a real media collector
-      string[] files = Directory.GetFiles("C:\\", "*.mpg");
+      string[] files = Directory.GetFiles(@"E:\-[ Film ]-\- Robert Gustavsson -", "*.avi");
 
       foreach (string file in files)
       {
@@ -667,7 +682,7 @@ namespace MyVideos
         VideoModel item = new VideoModel(fi.Name, (int)fi.Length, file);
 
         _listVideos.Add(item);
-      }
+      } 
     }
 
     /// <summary>

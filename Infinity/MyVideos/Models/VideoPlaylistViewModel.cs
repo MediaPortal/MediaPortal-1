@@ -6,12 +6,15 @@ using System.Windows.Controls;
 using System.Windows;
 using ProjectInfinity;
 using ProjectInfinity.Localisation;
+using System.ComponentModel;
 
 namespace MyVideos
 {
   public class VideoPlaylistViewModel
   {
     #region variables
+    public event PropertyChangedEventHandler PropertyChanged;
+
     VideoPlaylistCollectionView _playlistView;
     VideoPlaylistDatabaseModel _dataModel;
 
@@ -79,16 +82,29 @@ namespace MyVideos
       get { return DateTime.Now.ToString("dd-MM HH:mm"); }
     }
 
-    public DataTemplate ItemTemplate
+    public VideoHomeViewModel.ViewType ViewMode
+    {
+      get { return _viewType; }
+      set
+      {
+        if (_viewType != value)
+        {
+          _viewType = value;
+          ChangeProperty("ViewModeType");
+        }
+      }
+    }
+
+    public string ViewModeType
     {
       get
       {
         switch (_viewType)
         {
-          case VideoHomeViewModel.ViewType.List:
-            return (DataTemplate)_page.Resources["videoItemListTemplate"];
+          case VideoHomeViewModel.ViewType.Icon:
+            return "Icon";
           default:
-            return (DataTemplate)_page.Resources["videoItemListTemplate"];
+            return "List";
         }
       }
     }
@@ -104,5 +120,11 @@ namespace MyVideos
       }
     }
     #endregion
+
+    public void ChangeProperty(string propertyName)
+    {
+      if (PropertyChanged != null)
+        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+    }
   }
 }

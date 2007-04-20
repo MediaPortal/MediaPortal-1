@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
+using ProjectInfinity.Logging;
 
 namespace ProjectInfinity.Playlist
 {
@@ -30,6 +31,36 @@ namespace ProjectInfinity.Playlist
     public void Clear()
     {
       _items.Clear();
+    }
+
+    /// <summary>
+    /// Moves a specified item up in the playlist order
+    /// </summary>
+    /// <param name="item">item to move</param>
+    public void MovePlaylistItemUp(object item)
+    {
+      int currPos = _items.IndexOf((IPlaylistItem)item);
+      int newPos = currPos - 1;
+
+      if (newPos < 0) newPos = 0;
+
+      _items.Insert(newPos, (IPlaylistItem)item);
+      _items.RemoveAt(currPos + 1);
+    }
+
+    /// <summary>
+    /// Moves a specified item down in the playlist order
+    /// </summary>
+    /// <param name="item">item to move</param>
+    public void MovePlaylistItemDown(object item)
+    {
+      int currPos = _items.IndexOf((IPlaylistItem)item);
+      int newPos = currPos + 2;
+
+      if (newPos > _items.Count) newPos = _items.Count;
+
+      _items.Insert(newPos, (IPlaylistItem)item);
+      _items.RemoveAt(currPos);
     }
 
     public IPlaylistItem this[int index]
