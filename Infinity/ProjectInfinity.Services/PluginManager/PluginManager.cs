@@ -96,6 +96,7 @@ namespace ProjectInfinity.Plugins
       _pluginFiles.Add("Plugins/MyVideos.plugin");
       _pluginFiles.Add("Plugins/MyPictures.plugin");
       _pluginFiles.Add("Plugins/MyWeather.plugin");
+      _pluginFiles.Add("Plugins/Settings.plugin");
       _pluginTree = new PluginTree();
       _pluginTree.Load(_pluginFiles, _disabledPlugins);
 
@@ -105,12 +106,17 @@ namespace ProjectInfinity.Plugins
 
     #region IPluginManager Members
 
-    public event EventHandler<PluginStartStopEventArgs> PluginStarted;
-    public event EventHandler<PluginStartStopEventArgs> PluginStopped;
+    //public event EventHandler<PluginStartStopEventArgs> PluginStarted;
+    //public event EventHandler<PluginStartStopEventArgs> PluginStopped;
 
     public List<T> BuildItems<T>(string treePath)
     {
       return _pluginTree.BuildItems<T>(treePath, null, false);
+    }
+
+    public object BuildItem<T>(string treePath, string name)
+    {
+      return _pluginTree.BuildItem<T>(treePath, name, null, false);
     }
 
     /// <summary>
@@ -175,11 +181,11 @@ namespace ProjectInfinity.Plugins
     /// <summary>
     /// Starts all plug-ins that are activated by the user.
     /// </summary>
-    public void StartAll()
+    public void Startup()
     {
-      foreach (IPlugin plugin in _pluginTree.BuildItems<IPlugin>("/Infinity/AutoStart", null, false))
+      foreach (IAutoStart plugin in _pluginTree.BuildItems<IAutoStart>("/AutoStart", null, false))
       {
-        plugin.Initialize();
+        plugin.Startup();
       }
     }
 

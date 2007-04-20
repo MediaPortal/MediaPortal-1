@@ -6,6 +6,6 @@ namespace ProjectInfinity.Menu
 {
   public interface IMenuManager
   {
-    IList<IMenuItem> GetMenu();
+    IList<IMenuItem> GetMenu(string menuId);
   }
 }

@@ -35,7 +35,7 @@ namespace ProjectInfinity.Plugins
   {
     #region Variables
     object _caller;
-    bool _visable;
+    //bool _visable;
     NodeItem _item;
     StringId _label;
     IMenuCommand _menuCommand = null;
@@ -112,7 +112,6 @@ namespace ProjectInfinity.Plugins
     #region Public Methods
     public void Run()
     {
-
       if (_menuCommand == null)
       {
         try

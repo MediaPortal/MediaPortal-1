@@ -10,7 +10,7 @@ namespace TestPlugin
   {
     #region IPlugin Members
 
-    public void Initialize()
+    public void Initialize(string id)
     {
       ServiceScope.Get<INavigationService>().Navigate(new Uri("/TestPlugin;component/TestPage.xaml", UriKind.Relative));
     }

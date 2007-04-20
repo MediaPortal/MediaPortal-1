@@ -41,7 +41,6 @@ namespace ProjectInfinity.Plugins
     Plugin _plugin;
     string _name;
     Properties _properties;
-
     //ICondition[] conditions;
     #endregion
 
@@ -58,26 +57,17 @@ namespace ProjectInfinity.Plugins
     #region Properties
     public string Name
     {
-      get
-      {
-        return _name;
-      }
+      get { return _name; }
     }
 
     public Plugin Plugin
     {
-      get
-      {
-        return _plugin;
-      }
+      get { return _plugin; }
     }
 
     public string Id
     {
-      get
-      {
-        return _properties["id"];
-      }
+      get { return _properties["id"]; }
     }
 
     public string InsertAfter
@@ -114,18 +104,12 @@ namespace ProjectInfinity.Plugins
 
     public string this[string key]
     {
-      get
-      {
-        return _properties[key];
-      }
+      get { return _properties[key]; }
     }
 
     public Properties Properties
     {
-      get
-      {
-        return _properties;
-      }
+      get { return _properties; }
     }
 
     //public ICondition[] Conditions {
@@ -153,6 +137,7 @@ namespace ProjectInfinity.Plugins
       //    return null;
       //  }
       //}
+
       return builder.BuildItem(owner, this, subItems);
     }
     #endregion

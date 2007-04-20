@@ -37,52 +37,37 @@ namespace ProjectInfinity.Plugins
   public class PluginManifest
   {
     #region Variables
-    List<PluginReference> dependencies = new List<PluginReference>();
-    List<PluginReference> conflicts = new List<PluginReference>();
-    Dictionary<string, Version> identities = new Dictionary<string, Version>();
-    Version primaryVersion;
-    string primaryIdentity;
+    List<PluginReference> _dependencies = new List<PluginReference>();
+    List<PluginReference> _conflicts = new List<PluginReference>();
+    Dictionary<string, Version> _identities = new Dictionary<string, Version>();
+    Version _version;
+    string _identity;
     #endregion
 
     #region Properties
-    public string PrimaryIdentity
+    public string Identity
     {
-      get
-      {
-        return primaryIdentity;
-      }
+      get { return _identity; }
     }
 
-    public Version PrimaryVersion
+    public Version Version
     {
-      get
-      {
-        return primaryVersion;
-      }
+      get { return _version; }
     }
 
     public Dictionary<string, Version> Identities
     {
-      get
-      {
-        return identities;
-      }
+      get { return _identities; }
     }
 
     public List<PluginReference> Dependencies
     {
-      get
-      {
-        return dependencies;
-      }
+      get { return _dependencies; }
     }
 
     public List<PluginReference> Conflicts
     {
-      get
-      {
-        return conflicts;
-      }
+      get { return _conflicts; }
     }
     #endregion
 
@@ -116,10 +101,10 @@ namespace ProjectInfinity.Plugins
                 AddIdentity(properties["name"], properties["version"], hintPath);
                 break;
               case "Dependency":
-                dependencies.Add(PluginReference.Create(properties, hintPath));
+                _dependencies.Add(PluginReference.Create(properties, hintPath));
                 break;
               case "Conflict":
-                conflicts.Add(PluginReference.Create(properties, hintPath));
+                _conflicts.Add(PluginReference.Create(properties, hintPath));
                 break;
               default:
                 throw new PluginLoadException("Unknown node in Manifest section:" + nodeName);
@@ -143,15 +128,15 @@ namespace ProjectInfinity.Plugins
         }
       }
       Version v = PluginReference.ParseVersion(version, hintPath);
-      if (primaryVersion == null)
+      if (_version == null)
       {
-        primaryVersion = v;
+        _version = v;
       }
-      if (primaryIdentity == null)
+      if (_identity == null)
       {
-        primaryIdentity = name;
+        _identity = name;
       }
-      identities.Add(name, v);
+      //identities.Add(name, v);
     }
     #endregion
   }

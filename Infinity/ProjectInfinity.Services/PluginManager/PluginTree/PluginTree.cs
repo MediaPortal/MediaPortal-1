@@ -41,9 +41,9 @@ namespace ProjectInfinity.Plugins
   public class PluginTree : IPluginTree
   {
     #region Variables
-    List<Plugin> _plugins = new List<Plugin>();
-    PluginTreeNode _rootNode = new PluginTreeNode();
-    Dictionary<string, IBuilder> _builders = new Dictionary<string, IBuilder>();
+    List<Plugin> _plugins;
+    PluginTreeNode _rootNode;
+    Dictionary<string, IBuilder> _builders;
 
     // do we require conditions?
     //Dictionary<string, IConditionEvaluator> conditionEvaluators = new Dictionary<string, IConditionEvaluator>();
@@ -52,7 +52,14 @@ namespace ProjectInfinity.Plugins
     #region Constructors/Destructors
     public PluginTree()
     {
+      // initialise variables
+      _plugins = new List<Plugin>();
+      _rootNode = new PluginTreeNode();
+
+      // add default builders
+      _builders = new Dictionary<string, IBuilder>();
       _builders.Add("Class", new ClassBuilder());
+      _builders.Add("Menu", new MenuBuilder());
       _builders.Add("MenuItem", new MenuItemBuilder());
       //_builders.Add("Command", new CommandBuilder());
       //_builders.Add("Include", new IncludeBuilder());
@@ -197,6 +204,23 @@ namespace ProjectInfinity.Plugins
         return node.BuildChildItems<T>(caller);
     }
 
+    /// <summary>
+    /// Builds the items in the path. Ensures that all items have the type T.
+    /// </summary>
+    /// <param name="path">A path in the Plugin tree.</param>
+    /// <param name="caller">The owner used to create the objects.</param>
+    /// <param name="throwOnNotFound">If true, throws an TreePathNotFoundException
+    /// if the path is not found. If false, an empty ArrayList is returned when the
+    /// path is not found.</param>
+    public object BuildItem<T>(string path, string id, object caller, bool throwOnNotFound)
+    {
+      PluginTreeNode node = GetTreeNode(path, throwOnNotFound);
+      if (node == null)
+        return null;
+      else
+        return node.BuildChildItem<T>(id, caller);
+    }
+
     public void InsertPlugin(Plugin Plugin)
     {
       if (Plugin.Enabled)
@@ -206,28 +230,28 @@ namespace ProjectInfinity.Plugins
           AddExtensionPath(path);
         }
 
-        //foreach (PluginRuntime runtime in Plugin.Runtimes)
-        //{
-        //  if (runtime.IsActive)
-        //  {
-        //    foreach (LazyLoadDoozer doozer in runtime.DefinedDoozers)
-        //    {
-        //      if (PluginTree.Builder.ContainsKey(builder.Name))
-        //      {
-        //        throw new PluginLoadException("Duplicate builder: " + builder.Name);
-        //      }
-        //      PluginTree.Builders.Add(doozer.Name, builder);
-        //    }
-        //    //foreach (LazyConditionEvaluator condition in runtime.DefinedConditionEvaluators)
-        //    //{
-        //    //  if (PluginTree.ConditionEvaluators.ContainsKey(condition.Name))
-        //    //  {
-        //    //    throw new PluginLoadException("Duplicate condition evaluator: " + condition.Name);
-        //    //  }
-        //    //  PluginTree.ConditionEvaluators.Add(condition.Name, condition);
-        //    //}
-        //  }
-        //}
+        foreach (PluginRuntime runtime in Plugin.Runtimes)
+        {
+          if (runtime.IsActive)
+          {
+            foreach (LoadBuilder builder in runtime.DefinedBuilders)
+            {
+              if (_builders.ContainsKey(builder.Name))
+              {
+                throw new PluginLoadException("Duplicate builder: " + builder.Name);
+              }
+              _builders.Add(builder.Name, builder);
+            }
+            //foreach (LazyConditionEvaluator condition in runtime.DefinedConditionEvaluators)
+            //{
+            //  if (PluginTree.ConditionEvaluators.ContainsKey(condition.Name))
+            //  {
+            //    throw new PluginLoadException("Duplicate condition evaluator: " + condition.Name);
+            //  }
+            //  PluginTree.ConditionEvaluators.Add(condition.Name, condition);
+            //}
+          }
+        }
 
         //string PluginRoot = Path.GetDirectoryName(Plugin.FileName);
         //foreach(string bitmapResource in Plugin.BitmapResources)
@@ -254,18 +278,6 @@ namespace ProjectInfinity.Plugins
         throw new ArgumentException("Cannot remove enabled Plugins at runtime.");
       }
       Plugins.Remove(Plugin);
-    }
-
-    // used by Load(): disables a Plugin and removes it from the dictionaries.
-    void DisablePlugin(Plugin Plugin, Dictionary<string, Version> dict, Dictionary<string, Plugin> PluginDict)
-    {
-      Plugin.Enabled = false;
-      //Plugin.Action = PluginAction.DependencyError;
-      foreach (string name in Plugin.Manifest.Identities.Keys)
-      {
-        dict.Remove(name);
-        PluginDict.Remove(name);
-      }
     }
 
     public void Load(List<string> PluginFiles, List<string> disabledPlugins)
@@ -373,6 +385,19 @@ namespace ProjectInfinity.Plugins
     #endregion
 
     #region Private Methods
+    // used by Load(): disables a Plugin and removes it from the dictionaries.
+    private void DisablePlugin(Plugin Plugin, Dictionary<string, Version> dict, Dictionary<string, Plugin> PluginDict)
+    {
+      Plugin.Enabled = false;
+      //Plugin.Action = PluginAction.DependencyError;
+      foreach (string name in Plugin.Manifest.Identities.Keys)
+      {
+        dict.Remove(name);
+        PluginDict.Remove(name);
+      }
+    }
+
+
     private PluginTreeNode CreatePath(PluginTreeNode localRoot, string path)
     {
       if (path == null || path.Length == 0)

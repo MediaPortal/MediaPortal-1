@@ -47,6 +47,9 @@
     <Compile Include="Navigation\NavigationService.cs" />
     <Compile Include="PluginManager\PluginManager.cs" />
     <Compile Include="PluginManager\PluginTree\DefaultBuilders\ClassBuilder.cs" />
+    <Compile Include="PluginManager\PluginTree\DefaultBuilders\LoadBuilder.cs" />
+    <Compile Include="PluginManager\PluginTree\DefaultBuilders\Menu.cs" />
+    <Compile Include="PluginManager\PluginTree\DefaultBuilders\MenuBuilder.cs" />
     <Compile Include="PluginManager\PluginTree\IPluginTree.cs" />
     <Compile Include="PluginManager\PluginTree\ExtensionPath.cs" />
     <Compile Include="PluginManager\PluginTree\NodeItemSort.cs" />

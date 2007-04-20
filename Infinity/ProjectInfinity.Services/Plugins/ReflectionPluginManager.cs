@@ -11,7 +11,7 @@ namespace ProjectInfinity.Plugins
   /// A <see cref="IPluginManager"/> implementation that uses reflection to determine
   /// what plug-ins are available
   /// </summary>
-  public class ReflectionPluginManager : IPluginManager
+  public class ReflectionPluginManager //: IPluginManager
   {
     private IDictionary<string, Type> pluginTypes = new Dictionary<string, Type>();
     private IDictionary<string, IPluginInfo> pluginInfo = new Dictionary<string, IPluginInfo>();
@@ -84,7 +84,7 @@ namespace ProjectInfinity.Plugins
         throw new ArgumentException(string.Format("{0} Plug-in does not exist", pluginName), "pluginName");
       }
       IPlugin plugin = (IPlugin) Activator.CreateInstance(pluginTypes[pluginName]);
-      plugin.Initialize();
+      plugin.Initialize("");
       if (!runningPlugins.ContainsKey(pluginName))
       {
         runningPlugins.Add(pluginName, plugin);

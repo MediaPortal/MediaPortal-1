@@ -4,6 +4,6 @@ namespace ProjectInfinity.Plugins
 {
   public interface IPlugin : IDisposable
   {
-    void Initialize();
+    void Initialize(string id);
   }
 }

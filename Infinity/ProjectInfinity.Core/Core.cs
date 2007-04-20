@@ -81,7 +81,7 @@ namespace ProjectInfinity
 
       //Start the plugins
       ServiceScope.Get<IThemeManager>().SetDefaultTheme();
-      ServiceScope.Get<IPluginManager>().StartAll();
+      ServiceScope.Get<IPluginManager>().Startup();
       INavigationService navigation = ServiceScope.Get<INavigationService>();
 
       navigation.Closing += new CancelEventHandler(mainWindow_Closing);

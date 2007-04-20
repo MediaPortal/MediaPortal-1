@@ -39,14 +39,17 @@ namespace ProjectInfinity.Plugins
   public class PluginTreeNode
   {
     #region Variables
-    Dictionary<string, PluginTreeNode> _childNodes = new Dictionary<string, PluginTreeNode>();
-    List<NodeItem> _items = new List<NodeItem>();
-    bool _isSorted = false;
+    Dictionary<string, PluginTreeNode> _childNodes;
+    List<NodeItem> _items;
+    bool _isSorted;
     #endregion
 
     #region Constructors/Destructors
     public PluginTreeNode()
     {
+      _childNodes = new Dictionary<string, PluginTreeNode>();
+      _items = new List<NodeItem>();
+      _isSorted = false;
     }
     #endregion
 
@@ -97,6 +100,35 @@ namespace ProjectInfinity.Plugins
         }
       }
       return items;
+    }
+
+    public object BuildChildItem<T>(string id, object caller)
+    {
+      foreach (NodeItem item in _items)
+      {
+        if (item.Id == id)
+        {
+          object result = item.BuildItem(caller, null);
+          if (result == null)
+            continue;
+
+          //IBuildItemsModifier mod = result as IBuildItemsModifier;
+          //if (mod != null) {
+          //  mod.Apply(items);
+          //} else 
+          if (result is T)
+          {
+            return result;
+          }
+          else
+          {
+            throw new InvalidCastException("The PluginTreeNode <" + item.Name + " id='" + item.Id
+                                           + "' returned an instance of " + result.GetType().FullName
+                                           + " but the type " + typeof(T).FullName + " is expected.");
+          }
+        }
+      }
+      return null;
     }
 
     // Workaround for Boo compiler (it cannot distinguish between the generic and non-generic method)

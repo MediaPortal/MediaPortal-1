@@ -40,11 +40,11 @@ namespace ProjectInfinity.Plugins
     #region Variables
     string _hintPath;
     string _assembly;
-    Assembly _loadedAssembly = null;
-    bool _isActive = true;
-    bool _isAssemblyLoaded = false;
+    Assembly _loadedAssembly;
+    bool _isActive;
+    bool _isAssemblyLoaded;
+    IList<LoadBuilder> _definedBuilders;
 
-    //IList<LazyLoadDoozer> definedDoozers = new List<LazyLoadDoozer>();
     //IList<LazyConditionEvaluator> definedConditionEvaluators = new List<LazyConditionEvaluator>();
     //ICondition[] conditions;
     #endregion
@@ -54,6 +54,10 @@ namespace ProjectInfinity.Plugins
     {
       this._assembly = assembly;
       this._hintPath = hintPath;
+      _loadedAssembly = null;
+      _definedBuilders = new List<LoadBuilder>();
+      _isActive = true;
+      _isAssemblyLoaded = false;
     }
     #endregion
 
@@ -72,10 +76,7 @@ namespace ProjectInfinity.Plugins
 
     public string Assembly
     {
-      get
-      {
-        return _assembly;
-      }
+      get { return _assembly; }
     }
 
     public Assembly LoadedAssembly
@@ -90,11 +91,10 @@ namespace ProjectInfinity.Plugins
       }
     }
 
-    //public IList<LazyLoadDoozer> DefinedDoozers {
-    //  get {
-    //    return definedDoozers;
-    //  }
-    //}
+    public IList<LoadBuilder> DefinedBuilders
+    {
+      get { return _definedBuilders; }
+    }
 
     //public IList<LazyConditionEvaluator> DefinedConditionEvaluators {
     //  get {
@@ -195,7 +195,7 @@ namespace ProjectInfinity.Plugins
                   {
                     throw new PluginLoadException("Builder nodes must be empty!");
                   }
-                  //runtime.definedDoozers.Add(new LazyLoadDoozer(addIn, properties));
+                  runtime._definedBuilders.Add(new LoadBuilder(plugin, properties));
                   break;
                 //case "ConditionEvaluator":
                 //  if (!reader.IsEmptyElement) {

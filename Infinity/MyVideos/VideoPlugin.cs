@@ -11,10 +11,8 @@ namespace MyVideos
   {
     #region IPlugin Members
 
-    public void Initialize()
+    public void Initialize(string id)
     {
-      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyVideos;component/VideoHome.xaml", UriKind.Relative));
-
       // Add playlist service
       IPlaylistManager playlist = new PlaylistManager();
       ServiceScope.Replace<IPlaylistManager>(playlist);
@@ -26,7 +24,7 @@ namespace MyVideos
 
     public void Run()
     {
-      Initialize();
+      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyVideos;component/VideoHome.xaml", UriKind.Relative));
     }
 
     #endregion

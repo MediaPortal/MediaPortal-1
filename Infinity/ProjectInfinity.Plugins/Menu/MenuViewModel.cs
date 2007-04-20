@@ -26,9 +26,9 @@ namespace ProjectInfinity.Menu
     private ICommand _launchCommand;
     ICommand _fullScreenCommand;
 
-    public MenuViewModel()
+    public MenuViewModel(string id)
     {
-      IList<IMenuItem> model = ServiceScope.Get<IMenuManager>().GetMenu();
+      IList<IMenuItem> model = ServiceScope.Get<IMenuManager>().GetMenu(id);
       menuView = new MenuCollection();
       foreach (IMenuItem item in model)
       {

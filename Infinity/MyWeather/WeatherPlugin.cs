@@ -12,9 +12,8 @@ namespace MyWeather
   {
     #region IPlugin Members
 
-    public void Initialize()
+    public void Initialize(string id)
     {
-      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyWeather;component/Weather.xaml", UriKind.Relative));
     }
 
     #endregion
@@ -23,7 +22,7 @@ namespace MyWeather
 
     public void Run()
     {
-      Initialize();
+      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyWeather;component/Weather.xaml", UriKind.Relative));
     }
 
     #endregion

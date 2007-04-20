@@ -7,20 +7,26 @@ using ProjectInfinity.Plugins;
 namespace ProjectInfinity.Pictures
 {
   [Plugin("MyPictures", "Show Pictures", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Pictures.png")]
-  class PicturePlugin : IPlugin, IMenuCommand
+  class PicturePlugin : IPlugin, IAutoStart, IMenuCommand
   {
-    public void Initialize()
+    #region IPlugin Members
+    public void Initialize(string id)
+    {
+    }
+    #endregion
+
+    #region IAutoStart Members
+    public void Startup()
+    {
+      Run();
+    }
+    #endregion
+
+    #region IMenuCommand Members
+    public void Run()
     {
       ServiceScope.Get<INavigationService>().Navigate(new PictureView());
     }
-
-    #region IMenuCommand Members
-
-    public void Run()
-    {
-      Initialize();
-    }
-
     #endregion
 
     ///<summary>

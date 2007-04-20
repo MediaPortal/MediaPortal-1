@@ -8,7 +8,7 @@ namespace ProjectInfinity.Music
   /// <summary>
   /// Interface that all music players need to implement.
   /// </summary>
-  public interface IMusicPlayer : IPlugin
+  public interface IMusicPlayer
   {
     /// <summary>
     /// Start playing the given file.

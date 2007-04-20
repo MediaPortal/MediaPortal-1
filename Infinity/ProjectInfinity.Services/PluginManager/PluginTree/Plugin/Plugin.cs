@@ -37,11 +37,12 @@ namespace ProjectInfinity.Plugins
   public sealed class Plugin
   {
     #region Variables
-    Properties _properties = new Properties();
-    List<PluginRuntime> _runtimes = new List<PluginRuntime>();
-    string _fileName = null;
-    PluginManifest _manifest = new PluginManifest();
-    Dictionary<string, ExtensionPath> _paths = new Dictionary<string, ExtensionPath>();
+    Properties _properties;
+    List<PluginRuntime> _runtimes;
+    string _fileName;
+    PluginManifest _manifest;
+    Dictionary<string, ExtensionPath> _paths;
+    Dictionary<string, object> _instances;
     bool _enabled;
 
     //AddInAction _action = AddInAction.Disable;
@@ -55,6 +56,12 @@ namespace ProjectInfinity.Plugins
     #region Constructors/Destructors
     internal Plugin()
     {
+      _properties = new Properties();
+      _runtimes = new List<PluginRuntime>();
+      _fileName = null;
+      _manifest = new PluginManifest();
+      _paths = new Dictionary<string, ExtensionPath>();
+      _instances = new Dictionary<string,object>();
     }
     #endregion
 
@@ -92,58 +99,37 @@ namespace ProjectInfinity.Plugins
     // Public Properties
     public List<PluginRuntime> Runtimes
     {
-      get
-      {
-        return _runtimes;
-      }
+      get { return _runtimes; }
     }
 
     public Version Version
     {
-      get
-      {
-        return _manifest.PrimaryVersion;
-      }
+      get { return _manifest.Version; }
     }
 
     public string FileName
     {
-      get
-      {
-        return _fileName;
-      }
+      get { return _fileName; }
     }
 
     public string Name
     {
-      get
-      {
-        return _properties["name"];
-      }
+      get { return _properties["name"]; }
     }
 
     public PluginManifest Manifest
     {
-      get
-      {
-        return _manifest;
-      }
+      get { return _manifest; }
     }
 
     public Dictionary<string, ExtensionPath> Paths
     {
-      get
-      {
-        return _paths;
-      }
+      get { return _paths; }
     }
 
     public Properties Properties
     {
-      get
-      {
-        return _properties;
-      }
+      get { return _properties; }
     }
 
     //public List<string> BitmapResources {
@@ -181,6 +167,41 @@ namespace ProjectInfinity.Plugins
     #region Public Methods
     public object CreateObject(string className)
     {
+      if (!_instances.ContainsKey(_manifest.Identity))
+      {
+        ServiceScope.Get<ILogger>().Info("Creating plugin instance: " + _manifest.Identity);
+        IPlugin pluginInstance = CreateInstance(_manifest.Identity) as IPlugin;
+        if (pluginInstance != null)
+        { 
+          pluginInstance.Initialize(_properties["id"]);
+          _instances.Add(_manifest.Identity, (object) pluginInstance);
+        }
+      }
+
+      if(!_instances.ContainsKey(className))
+      {
+        ServiceScope.Get<ILogger>().Info("Creating plugin class instance: " + className);
+        object instance = CreateInstance(className);
+        if (instance != null)
+          _instances.Add(className, instance);
+      }
+
+      return _instances[className];
+    }
+
+    public ExtensionPath GetExtensionPath(string pathName)
+    {
+      if (!_paths.ContainsKey(pathName))
+      {
+        return _paths[pathName] = new ExtensionPath(pathName, this);
+      }
+      return _paths[pathName];
+    }
+    #endregion
+
+    #region Public static Methods
+    private object CreateInstance(string className)
+    {
       foreach (PluginRuntime runtime in _runtimes)
       {
         object o = runtime.CreateInstance(className);
@@ -199,17 +220,6 @@ namespace ProjectInfinity.Plugins
       return null;
     }
 
-    public ExtensionPath GetExtensionPath(string pathName)
-    {
-      if (!_paths.ContainsKey(pathName))
-      {
-        return _paths[pathName] = new ExtensionPath(pathName, this);
-      }
-      return _paths[pathName];
-    }
-    #endregion
-
-    #region Public static Methods
     static void SetupPlugin(XmlReader reader, Plugin plugin, string hintPath)
     {
       while (reader.Read())
@@ -218,24 +228,24 @@ namespace ProjectInfinity.Plugins
         {
           switch (reader.LocalName)
           {
-            case "StringResources":
-            case "BitmapResources":
-              if (reader.AttributeCount != 1)
-              {
-                throw new PluginLoadException("BitmapResources requires ONE attribute.");
-              }
+            //case "StringResources":
+            //case "BitmapResources":
+            //  if (reader.AttributeCount != 1)
+            //  {
+            //    throw new PluginLoadException("BitmapResources requires ONE attribute.");
+            //  }
 
-              string filename = reader.GetAttribute("file"); // StringParser.Parse(reader.GetAttribute("file"));
+            //  string filename = reader.GetAttribute("file"); // StringParser.Parse(reader.GetAttribute("file"));
 
-              //if(reader.LocalName == "BitmapResources")
-              //{
-              //  addIn.BitmapResources.Add(filename);
-              //}
-              //else
-              //{
-              //  addIn.StringResources.Add(filename);
-              //}
-              break;
+            //  //if(reader.LocalName == "BitmapResources")
+            //  //{
+            //  //  addIn.BitmapResources.Add(filename);
+            //  //}
+            //  //else
+            //  //{
+            //  //  addIn.StringResources.Add(filename);
+            //  //}
+            //  break;
             case "Runtime":
               if (!reader.IsEmptyElement)
               {
@@ -301,7 +311,7 @@ namespace ProjectInfinity.Plugins
           {
             switch (reader.LocalName)
             {
-              case "Plugin":    // addin -> plugin
+              case "Plugin":
                 plugin._properties = Properties.ReadFromAttributes(reader);
                 SetupPlugin(reader, plugin, hintPath);
                 break;
