@@ -57,6 +57,8 @@ namespace SetupTv.Sections
       this.comboBoxMovies = new System.Windows.Forms.ComboBox();
       this.tabPage3 = new System.Windows.Forms.TabPage();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpNumericTextBoxDiskQuota = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.labelQuota = new System.Windows.Forms.Label();
       this.trackBarDisk = new System.Windows.Forms.TrackBar();
       this.label14 = new System.Windows.Forms.Label();
@@ -391,6 +393,8 @@ namespace SetupTv.Sections
       // 
       // groupBox4
       // 
+      this.groupBox4.Controls.Add(this.mpLabel5);
+      this.groupBox4.Controls.Add(this.mpNumericTextBoxDiskQuota);
       this.groupBox4.Controls.Add(this.labelQuota);
       this.groupBox4.Controls.Add(this.trackBarDisk);
       this.groupBox4.Controls.Add(this.label14);
@@ -406,22 +410,43 @@ namespace SetupTv.Sections
       this.groupBox4.TabIndex = 0;
       this.groupBox4.TabStop = false;
       // 
+      // mpLabel5
+      // 
+      this.mpLabel5.AutoSize = true;
+      this.mpLabel5.Location = new System.Drawing.Point(300, 152);
+      this.mpLabel5.Name = "mpLabel5";
+      this.mpLabel5.Size = new System.Drawing.Size(23, 13);
+      this.mpLabel5.TabIndex = 10;
+      this.mpLabel5.Text = "MB";
+      // 
+      // mpNumericTextBoxDiskQuota
+      // 
+      this.mpNumericTextBoxDiskQuota.Location = new System.Drawing.Point(231, 149);
+      this.mpNumericTextBoxDiskQuota.Name = "mpNumericTextBoxDiskQuota";
+      this.mpNumericTextBoxDiskQuota.Size = new System.Drawing.Size(62, 20);
+      this.mpNumericTextBoxDiskQuota.TabIndex = 9;
+      this.mpNumericTextBoxDiskQuota.Text = "13";
+      this.mpNumericTextBoxDiskQuota.Value = 13;
+      this.mpNumericTextBoxDiskQuota.Leave += new System.EventHandler(this.mpNumericTextBoxDiskQuota_Leave);
+      // 
       // labelQuota
       // 
       this.labelQuota.AutoSize = true;
       this.labelQuota.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelQuota.Location = new System.Drawing.Point(233, 152);
+      this.labelQuota.Location = new System.Drawing.Point(218, 273);
       this.labelQuota.Name = "labelQuota";
       this.labelQuota.Size = new System.Drawing.Size(39, 13);
       this.labelQuota.TabIndex = 8;
       this.labelQuota.Text = "10MB";
+      this.labelQuota.Visible = false;
       // 
       // trackBarDisk
       // 
       this.trackBarDisk.Location = new System.Drawing.Point(30, 185);
       this.trackBarDisk.Name = "trackBarDisk";
-      this.trackBarDisk.Size = new System.Drawing.Size(391, 40);
+      this.trackBarDisk.Size = new System.Drawing.Size(391, 45);
       this.trackBarDisk.TabIndex = 7;
+      this.trackBarDisk.Visible = false;
       this.trackBarDisk.Scroll += new System.EventHandler(this.trackBarDisk_Scroll);
       // 
       // label14
@@ -858,5 +883,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ComboBox comboBoxRecordingFormat;
     private System.Windows.Forms.Label labelTSFolder;
     private System.Windows.Forms.Label labelRecFormat;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
+    private MediaPortal.UserInterface.Controls.MPNumericTextBox mpNumericTextBoxDiskQuota;
   }
 }

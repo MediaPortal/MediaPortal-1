@@ -202,7 +202,26 @@ namespace SetupTv.Sections
       labelTotalDiskSpace.Text = Utils.GetSize((long)totalSpace);
       if (labelTotalDiskSpace.Text == "0")
         labelTotalDiskSpace.Text = "Not available - WMI service not available";
-
+      if (save)
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting setting = layer.GetSetting("freediskspace" + drive[0].ToString());
+        if (mpNumericTextBoxDiskQuota.Value < 500)
+          mpNumericTextBoxDiskQuota.Value = 500;
+        long quota = mpNumericTextBoxDiskQuota.Value * 1024;
+        setting.Value = quota.ToString();
+        setting.Persist();
+      }
+      else
+      {
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting setting = layer.GetSetting("freediskspace" + drive[0].ToString());
+        long quota = Int64.Parse(setting.Value);
+        mpNumericTextBoxDiskQuota.Value=(int)quota / 1024;
+        if (mpNumericTextBoxDiskQuota.Value < 500)
+          mpNumericTextBoxDiskQuota.Value = 500;
+      }
+      /*
       if (save)
       {
         float percent = (float)trackBarDisk.Value;
@@ -258,7 +277,7 @@ namespace SetupTv.Sections
             trackBarDisk.Value = 0;
           }
         }
-      }
+      }*/
     }
 
     private void textBoxPreInterval_KeyPress(object sender, KeyPressEventArgs e)
@@ -391,6 +410,7 @@ namespace SetupTv.Sections
       }
       UpdateDriveInfo(true);
       */
+      UpdateDriveInfo(true);
     }
 
     private void comboBoxCards_SelectedIndexChanged(object sender, EventArgs e)
@@ -447,6 +467,7 @@ namespace SetupTv.Sections
       }
       if (comboBoxCards.Items.Count > 0)
         comboBoxCards.SelectedIndex = 0;
+      UpdateDriveInfo(false);
       base.OnSectionActivated();
     }
     public override void OnSectionDeActivated()
@@ -539,6 +560,11 @@ namespace SetupTv.Sections
         info.card.Persist();
         _needRestart = true;
       }
+    }
+
+    private void mpNumericTextBoxDiskQuota_Leave(object sender, EventArgs e)
+    {
+      UpdateDriveInfo(true);
     }
   }
 }
