@@ -258,11 +258,11 @@ namespace MyWeather
                     forecast.day = LocalizeDay(element.Attributes.GetNamedItem("t").InnerText);
 
                     forecast.high = GetString(element, "hi", String.Empty);	//string cause i've seen it return N/A
-                    if (forecast.high == "N/A") forecast.high = String.Empty;
+                    if (forecast.high == "N/A") forecast.high = "N/A";
                     else forecast.high = String.Format("{0}{1}{2}", forecast.high, DEGREE_CHARACTER, unitTemperature);
 
                     forecast.low = GetString(element, "low", String.Empty);
-                    if (forecast.low == "N/A") forecast.low = String.Empty;
+                    if (forecast.low == "N/A") forecast.low = "N/A";
                     else forecast.low = String.Format("{0}{1}{2}", forecast.low, DEGREE_CHARACTER, unitTemperature);
 
                     forecast.sunRise = GetString(element, "sunr", String.Empty);
@@ -419,8 +419,8 @@ namespace MyWeather
                 case "Tuesday": return ServiceScope.Get<ILocalisation>().ToString("days", 2);
                 case "Wednesday": return ServiceScope.Get<ILocalisation>().ToString("days", 3);
                 case "Thursday": return ServiceScope.Get<ILocalisation>().ToString("days", 4);
-                case "Frieday": return ServiceScope.Get<ILocalisation>().ToString("days", 5);
-                case "Satureday": return ServiceScope.Get<ILocalisation>().ToString("days", 6);
+                case "Friday": return ServiceScope.Get<ILocalisation>().ToString("days", 5);
+                case "Saturday": return ServiceScope.Get<ILocalisation>().ToString("days", 6);
                 default: return String.Empty;
             }
         }
