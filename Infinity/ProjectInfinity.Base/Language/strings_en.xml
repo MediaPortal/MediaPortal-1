@@ -224,6 +224,14 @@
 		<String id="3">Weather</String>
 		<String id="4">Setup</String>
 		<String id="5">no data</String>
+		<String id="6">Temp</String>
+		<String id="7">Feels Like</String>
+		<String id="8">UV Index</String>
+		<String id="9">Wind</String>
+		<String id="10">Humidity</String>
+		<String id="11">Dew Point</String>
+		<String id="12">Sunrise</String>
+		<String id="13">Sunset</String>
 		<String id="370">T-Storms</String>
 		<String id="371">Partly</String>
 		<String id="372">Mostly</String>

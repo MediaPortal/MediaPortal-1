@@ -32,6 +32,7 @@ namespace MyWeather
         ICommand _updateWeatherCommand;
         ICommand _changeLocationCommand;
         List<City> _availableLocations;
+        WeatherLocalizer _locals;
 
         public event PropertyChangedEventHandler PropertyChanged;
         #endregion
@@ -47,6 +48,8 @@ namespace MyWeather
             //store page & window
             _page = page;
             _window = Window.GetWindow(_page);
+            // create localisation instance
+            _locals = new WeatherLocalizer();
             // create the datamodel :)
             _dataModel = new WeatherDataModel(new WeatherDotComCatcher("configuration.xml"));
             // load locations
@@ -118,6 +121,18 @@ namespace MyWeather
                 return _availableLocations;
             }
         }
+
+        /// <summary>
+        /// Gets localized versions of the labels
+        /// </summary>
+        /// <value>WeatherLocalizer object</value>
+        public WeatherLocalizer Localisation
+        {
+            get
+            {
+                return _locals;
+            }
+        }
         #endregion
 
         /// <summary>
@@ -145,54 +160,6 @@ namespace MyWeather
             {
                 _page = value;
                 _window = Window.GetWindow(_page);
-            }
-        }
-
-        #region button label properties
-        /// <summary>
-        /// Gets the current date
-        /// </summary>
-        /// <value>The date label.</value>
-        public string DateLabel
-        {
-            get
-            {
-                return DateTime.Now.ToString("dd-MM HH:mm");
-            }
-        }
-        /// <summary>
-        /// Gets the localized version of the location label.
-        /// </summary>
-        /// <value>The location button label.</value>
-        public string LocationLabel
-        {
-            get
-            {
-                return ServiceScope.Get<ILocalisation>().ToString("myweather", 1);//Location
-            }
-        }
-
-        /// <summary>
-        /// Gets the localized version of the refresh label.
-        /// </summary>
-        /// <value>The refresh button label.</value>
-        public string RefreshLabel
-        {
-            get
-            {
-                return ServiceScope.Get<ILocalisation>().ToString("myweather", 2); //Refresh
-            }
-        }
-
-        /// <summary>
-        /// Gets the the localized version of the header label.
-        /// </summary>
-        /// <value>The header label.</value>
-        public virtual string HeaderLabel
-        {
-            get
-            {
-                return ServiceScope.Get<ILocalisation>().ToString("myweather", 3); //weather
             }
         }
 
@@ -342,7 +309,6 @@ namespace MyWeather
                 _viewModel.LoadAvailableLocations();
             }
         }
-        #endregion
         #endregion
         #endregion
         #endregion

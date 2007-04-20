@@ -18,10 +18,8 @@
 			<ColumnDefinition Width="232.832"/>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
-		<Label x:Name="labelHeader" Content="{Binding Path=HeaderLabel}" Style="{StaticResource LabelHeaderStyle}" Margin="0,0,8,173" Grid.ColumnSpan="3" />
-		<Image Source="{Binding Path=IsRecordingLogo}" HorizontalAlignment="Left" Margin="260.5,0,0,8" VerticalAlignment="Bottom" Width="42.5" Height="41" Grid.Column="2" />
+		<Label x:Name="labelHeader" Content="{Binding Path=Localisation.Header}" Style="{StaticResource LabelHeaderStyle}" Margin="0,0,8,173" Grid.ColumnSpan="3" />
 		<Image x:Name ="IconBig" Source ="{Binding Path=CurrentLocation.Condition.Icon}"  Margin="24.666,64,28.166,0" VerticalAlignment="Top" Width="180" Height="180" Grid.Column="1"/>
-
 		<Label x:Name="labelLocation"  Style="{StaticResource LabelNormalStyle}" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Margin="0,18,0,0" VerticalAlignment="Top" Width="300" Height="42.8" Content="{Binding Path=CurrentLocation.Name}" FontSize="30" FontWeight="Bold" Foreground="#FFFFFFFF" Grid.Column="2">
 			<Label.RenderTransform>
 				<TransformGroup>
@@ -88,8 +86,8 @@
 		</TextBlock>
 		<Label x:Name="labelRefreshTime" Content="{Binding Path=CurrentLocation.LocationInfo.Time}"  Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,59,-1008,59" Width="10" Grid.Column="2"/>
 		<StackPanel HorizontalAlignment="Right" Margin="0,64,0,0" Width="200">
-			<controls:Button x:Name="buttonRefresh" Command="{Binding Path=UpdateWeather}" Style="{DynamicResource MpButton}"  Content="{Binding Path=RefreshLabel}" Width="Auto" Height="40" />
-			<controls:Button x:Name="buttonLocation" Command="{Binding Path=ChangeLocation}" Style="{DynamicResource MpButton}"  Content="{Binding Path=LocationLabel}" Margin="0,2,0,0" Width="Auto" Height="40" />
+			<controls:Button x:Name="buttonRefresh" Command="{Binding Path=UpdateWeather}" Style="{DynamicResource MpButton}"  Content="{Binding Path=Localisation.Refresh}" Width="Auto" Height="40" />
+			<controls:Button x:Name="buttonLocation" Command="{Binding Path=ChangeLocation}" Style="{DynamicResource MpButton}"  Content="{Binding Path=Localisation.Location}" Margin="0,2,0,0" Width="Auto" Height="40" />
 		</StackPanel>
 		<Rectangle RenderTransformOrigin="0.5,0.5" Fill="{DynamicResource locationBrush}" Stroke="{x:Null}" Margin="0,47.8,0,0" VerticalAlignment="Top" Height="42.8" Grid.Column="2" HorizontalAlignment="Left" Width="300">
 			<Rectangle.OpacityMask>

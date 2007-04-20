@@ -67,6 +67,7 @@
     <Compile Include="Helper Classes\Helper.cs" />
     <Compile Include="Helper Classes\IWeatherCatcher.cs" />
     <Compile Include="Helper Classes\WeatherDotComCatcher.cs" />
+    <Compile Include="Helper Classes\WeatherLocalizer.cs" />
     <Compile Include="Models\WeatherSetupDataModel.cs" />
     <Compile Include="Models\WeatherSetupSearchDataModel.cs" />
     <Compile Include="WeatherSetup.xaml.cs">
