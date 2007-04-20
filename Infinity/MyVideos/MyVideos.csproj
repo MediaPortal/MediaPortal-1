@@ -46,6 +46,7 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Library\ImportMovies.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -66,25 +67,25 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Thumbs.cs" />
+    <Compile Include="Helper Classes\Thumbs.cs" />
     <Compile Include="VideoFullscreen.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>VideoFullscreen.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VideoFullscreenViewModel.cs" />
+    <Compile Include="Models\VideoFullscreenViewModel.cs" />
     <Compile Include="VideoHome.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>VideoHome.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VideoHomeViewModel.cs" />
-    <Compile Include="VideoModel.cs" />
+    <Compile Include="Models\VideoHomeViewModel.cs" />
+    <Compile Include="Models\VideoModel.cs" />
     <Compile Include="VideoPlayer.cs" />
-    <Compile Include="VideoPlaylistModel.cs" />
+    <Compile Include="Models\VideoPlaylistModel.cs" />
     <Compile Include="VideoPlaylist.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>VideoPlaylist.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VideoPlaylistViewModel.cs" />
+    <Compile Include="Models\VideoPlaylistViewModel.cs" />
     <Compile Include="VideoPlugin.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
@@ -96,6 +97,14 @@
     <ProjectReference Include="..\ExtendedMusicPlayer\ExtendedMusicPlayer.csproj">
       <Project>{7D7C667F-2839-429D-B45A-EA4CF0A244F2}</Project>
       <Name>ExtendedMusicPlayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MediaLibrary\MediaLibrary.Core\MediaLibrary.csproj">
+      <Project>{45C30FF9-A914-4F72-BA16-83426B9BF00B}</Project>
+      <Name>MediaLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ProjectInfinity.Controls\ProjectInfinity.Controls.csproj">
+      <Project>{D30415D7-E1FC-4C3F-9667-E6301E1A2F6A}</Project>
+      <Name>ProjectInfinity.Controls</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProjectInfinity.Core\ProjectInfinity.Core.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
