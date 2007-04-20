@@ -110,15 +110,16 @@ namespace SetupTv.Sections
       listView1.BeginUpdate();
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0) return;
+      if (listView1.Items.Count < 2) return;
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
-        if (index > 0 && index + 1 < listView1.Items.Count)
-        {
-          ListViewItem item = listView1.Items[index];
-          listView1.Items.RemoveAt(index);
+        ListViewItem item = listView1.Items[index];
+        listView1.Items.RemoveAt(index);
+        if (index + 1 < listView1.Items.Count)
           listView1.Items.Insert(index + 1, item);
-        }
+        else
+          listView1.Items.Add(item);
       }
       ReOrder();
       listView1.EndUpdate();

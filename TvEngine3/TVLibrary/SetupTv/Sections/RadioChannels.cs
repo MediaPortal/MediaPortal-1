@@ -282,15 +282,16 @@ namespace SetupTv.Sections
       mpListView1.BeginUpdate();
       ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
       if (indexes.Count == 0) return;
+      if (mpListView1.Items.Count < 2) return;
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
-        if (index > 0 && index + 1 < mpListView1.Items.Count)
-        {
-          ListViewItem item = mpListView1.Items[index];
-          mpListView1.Items.RemoveAt(index);
+        ListViewItem item = mpListView1.Items[index];
+        mpListView1.Items.RemoveAt(index);
+        if (index + 1 < mpListView1.Items.Count)
           mpListView1.Items.Insert(index + 1, item);
-        }
+        else
+          mpListView1.Items.Add(item);
       }
       ReOrder();
       mpListView1.EndUpdate();

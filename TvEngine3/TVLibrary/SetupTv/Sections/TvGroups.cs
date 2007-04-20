@@ -376,19 +376,20 @@ namespace SetupTv.Sections
         mpListViewGroups.BeginUpdate();
         ListView.SelectedIndexCollection indexes = mpListViewGroups.SelectedIndices;
         if (indexes.Count == 0) return;
+        if (mpListViewGroups.Items.Count < 2) return;
         for (int i = indexes.Count - 1; i >= 0; i--)
         {
           int index = indexes[i];
-          if (index > 0 && index + 1 < mpListViewGroups.Items.Count)
-          {
-            ListViewItem item = mpListViewGroups.Items[index];
-            mpListViewGroups.Items.RemoveAt(index);
+          ListViewItem item = mpListViewGroups.Items[index];
+          mpListViewGroups.Items.RemoveAt(index);
+          if (index + 1 < mpListViewGroups.Items.Count)
             mpListViewGroups.Items.Insert(index + 1, item);
-          }
+          else
+            mpListViewGroups.Items.Add(item);
         }
         ReOrderGroups();
         mpListViewGroups.EndUpdate();
-      }
+    }
     private void RenameGroup()
     {
       ListView.SelectedListViewItemCollection items = mpListViewGroups.SelectedItems;
