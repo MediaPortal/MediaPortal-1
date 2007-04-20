@@ -10,6 +10,11 @@ namespace ProjectInfinity.Controls
     public View()
     {
       ShowsNavigationUI = false;
+      Loaded += new RoutedEventHandler(View_Loaded);
+    }
+
+    void View_Loaded(object sender, RoutedEventArgs e)
+    {
       IThemeManager themeMgr = ServiceScope.Get<IThemeManager>();
       Resources = themeMgr.LoadResources(this);
       Background = Application.Current.Resources["backGroundBrush"] as Brush;
