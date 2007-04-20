@@ -140,6 +140,9 @@ namespace ProjectInfinity.Controls
     #region ctor
     public Menu()
     {
+      FocusedHidden = Visibility.Hidden;
+      FocusedVisible = Visibility.Hidden;
+      FocusedMargin = new Thickness(0);
       this.Loaded += new RoutedEventHandler(Menu_Loaded);
       Keyboard.AddPreviewLostKeyboardFocusHandler(this, new KeyboardFocusChangedEventHandler(onpreviewKeyboardLost));
       Keyboard.AddPreviewGotKeyboardFocusHandler(this, new KeyboardFocusChangedEventHandler(onpreviewKeyboardGot));
