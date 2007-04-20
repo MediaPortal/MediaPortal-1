@@ -65,7 +65,7 @@ namespace ImportTester
                         for (int trackCount = 0; trackCount < 10; trackCount++)
                         {
                             //Find the percent done to show progress
-                            int num = Convert.ToInt32((Convert.ToDouble(i++) / 50000) * 100);
+                            int num = Convert.ToInt32((Convert.ToDouble(i++) / 5000) * 100);
 
                             //Create a new item
                             IMLItem Item = Section.AddNewItem("item-" + trackCount, "blah");
