@@ -22,6 +22,8 @@ using ProjectInfinity.Menu;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Players;
+using System.IO;
+using System.Windows.Markup;
 
 namespace MyVideos
 {
@@ -48,13 +50,20 @@ namespace MyVideos
     /// <param name="e"></param>
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+      gridMain.Children.Clear();
+      using (FileStream steam = new FileStream(@"skin\default\myvideos\VideoHome.xaml", FileMode.Open, FileAccess.Read))
+      {
+        UIElement documentRoot = (UIElement)XamlReader.Load(steam);
+        gridMain.Children.Add(documentRoot);
+      }
+
       // View Model
       _model = new VideoHomeViewModel(this);
       gridMain.DataContext = _model;
 
       // Keyboard
       Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
-      Keyboard.Focus(buttonView);
+      //Keyboard.Focus(buttonView);
 
       // Mouse
       Mouse.AddMouseMoveHandler(this, new MouseEventHandler(OnMouseMoveEvent));
@@ -72,7 +81,7 @@ namespace MyVideos
         if (player.HasMedia)
         {
           gridMain.Background = _model.VideoBrush;
-          buttonVideo.Visibility = Visibility.Hidden;
+          //buttonVideo.Visibility = Visibility.Hidden;
         }
       }
     }

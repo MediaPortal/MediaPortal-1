@@ -6,48 +6,6 @@
     x:Class="MyVideos.VideoHome"
     Title="MyVideos" Loaded="OnLoaded" Background="{StaticResource backGroundBrush}" WindowWidth="800" WindowHeight="600">
 
-	<Page.Resources>
-		<DataTemplate x:Key="videoItemListTemplate" DataType="{x:Type local:VideoModel}">
-			<Grid Width="450">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-					<ColumnDefinition/>
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition/>
-					<RowDefinition/>
-				</Grid.RowDefinitions>
-				<Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="32" Width="32"  Source="{Binding Logo}" />
-				<Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="10" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Title}"/>
-				<Label Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Size}"/>
-			</Grid>
-		</DataTemplate>
-	</Page.Resources>
-
 	<Grid x:Name="gridMain">
-
-		<Label Name="labelHeader" Style="{StaticResource LabelHeaderStyle}" >
-			videos
-		</Label>
-
-		<Label x:Name="labelDate" Style="{StaticResource LabelNormalStyle}" HorizontalAlignment="Right" Margin="0,20,20,0" Content="{Binding Path=DateLabel}" />
-
-		<Button x:Name="buttonVideo" Style="{StaticResource buttonVideoWindow}" Click="OnVideoWindowClicked" Background="{Binding VideoBrush}" Width="160" Height="120" Margin="31,360,0,0" HorizontalAlignment="Left"  />
-		<Button Name="buttonView" Command="{Binding Path=View}" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" Margin="31,126,0,0" VerticalAlignment="Top" Width="176" Height="33" Style="{DynamicResource MpButton}" Content="{Binding Path=ViewLabel}"/>
-		<Button Name="buttonSort" Command="{Binding Path=Sort}" Grid.Column="0" Grid.Row="5" Width="176" Height="33" Content="{Binding Path=SortLabel}" Style="{DynamicResource MpButton}" HorizontalAlignment="Left" Margin="31,159,0,0" VerticalAlignment="Top"/>
-		<Button Name="buttonSwitch" Grid.Column="0" Grid.Row="6" Width="176" Height="33" Content="{Binding Path=SwitchLabel}" Style="{DynamicResource MpButton}" HorizontalAlignment="Left" Margin="31,192,0,0" VerticalAlignment="Top"/>
-		<Button Name="buttonPlaylist" Command="{Binding Path=Playlist}" Grid.Column="0" Grid.Row="7" Width="176" Height="33" Content="{Binding Path=PlaylistLabel}" Style="{DynamicResource MpButton}" HorizontalAlignment="Left" Margin="31,225,0,0" VerticalAlignment="Top"/>
-		<Button Name="buttonDVD" Command="{Binding Path=DVD}" Grid.Column="0" Grid.Row="8" Width="176" Height="33" Content="{Binding Path=DVDLabel}" Style="{DynamicResource MpButton}" HorizontalAlignment="Left" Margin="31,258,0,0" VerticalAlignment="Top"/>
-		<ListBox Name="itemList" Grid.Column="1" Grid.Row="4" ItemsSource="{Binding Videos}" ItemContainerStyle="{StaticResource MpListViewItem}" Style="{StaticResource MpListView}" ItemTemplate="{Binding ItemTemplate}" Margin="220,126,8,61" />
-
 	</Grid>
 </Page>

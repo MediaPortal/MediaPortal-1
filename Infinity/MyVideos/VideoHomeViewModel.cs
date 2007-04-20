@@ -212,7 +212,21 @@ namespace MyVideos
         if (_viewType != value)
         {
           _viewType = value;
-          ChangeProperty("ItemTemplate");
+          ChangeProperty("ViewTypeMode");
+        }
+      }
+    }
+
+    public string ViewTypeMode
+    {
+      get
+      {
+        switch (_viewType)
+        {
+          case ViewType.Icon:
+            return "Icon";
+          default:
+            return "List";
         }
       }
     }
