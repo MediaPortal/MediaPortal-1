@@ -52,14 +52,12 @@
     <None Include="..\ProjectInfinity.Base\Skin\Default\MyPictures\MyPictures_resources.xaml">
       <Link>Pictures\MyPictures_resources.xaml</Link>
     </None>
-    <Page Include="Menu\MenuPage.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Menu\MenuPage.cs" />
-    <Compile Include="Menu\MenuViewModel.cs" />
     <Compile Include="Menu\MenuPage.xaml.cs">
       <DependentUpon>MenuPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Menu\MenuViewModel.cs" />
     <Compile Include="Menu\MenuPlugin.cs" />
     <Compile Include="Menu\PluginMenuItem.cs" />
     <Compile Include="Pictures\Folder.cs" />
@@ -107,6 +105,9 @@
       <Project>{4C45C46E-2ED2-4801-B3C3-FC2560E9FFE0}</Project>
       <Name>ProjectInfinity.Services</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Menu\MenuPage.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
