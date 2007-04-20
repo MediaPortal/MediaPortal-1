@@ -51,15 +51,15 @@ namespace ProjectInfinity.Navigation
 
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
-      //base.OnRenderSizeChanged(sizeInfo);
-      //if (originalSize.Equals(Size.Empty))
-      //{
-      //  originalSize = sizeInfo.NewSize;
-      //  return;
-      //}
-      //double scaleX = sizeInfo.NewSize.Width/originalSize.Width;
-      //double scaleY = sizeInfo.NewSize.Height / originalSize.Height;
-      //((UIElement) this.Content).RenderTransform = new ScaleTransform(scaleX, scaleY);
+     base.OnRenderSizeChanged(sizeInfo);
+     if (originalSize.Equals(Size.Empty))
+     {
+       originalSize = sizeInfo.NewSize;
+       return;
+     }
+     double scaleX = sizeInfo.NewSize.Width/originalSize.Width;
+     double scaleY = sizeInfo.NewSize.Height / originalSize.Height;
+     ((FrameworkElement) this.Content).LayoutTransform  = new ScaleTransform(scaleX, scaleY);
     }
 
   }
