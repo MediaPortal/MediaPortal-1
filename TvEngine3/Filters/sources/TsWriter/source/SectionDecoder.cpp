@@ -102,6 +102,11 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 	{
     
 		int start=header.PayLoadStart;
+    if (header.AdaptionFieldLength > 0 && tsPacket[start]==0 && m_tableId != 0 && m_section.BufferPos == 0)
+    {
+      //skip pointer_field ??
+      start++;
+    }
     if (m_section.BufferPos > 0 /*&& m_section.SectionLength > 0*/ && start > 5)
 		{
       int len=start-5;
