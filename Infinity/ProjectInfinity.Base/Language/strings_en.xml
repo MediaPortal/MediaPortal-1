@@ -28,6 +28,9 @@
     <String id="1">Yes</String>
     <String id="2">No</String>
 	</Section>
+	<Section name="settings">
+		<String id="0">Settings</String>
+	</Section>
 	<Section name="mytv">
 		<String id="0">Tv Guide</String>
 		<String id="1">Record Now</String>
