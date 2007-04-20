@@ -51,6 +51,18 @@ namespace MyWeather
             _dataModel = new WeatherDataModel(new WeatherDotComCatcher("configuration.xml"));
             // load locations
             LoadAvailableLocations();
+            // get the last set city from configuration
+            WeatherSettings settings = new WeatherSettings();
+            ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+            foreach(City c in AvailableLocations)
+            {
+                if (c.Id.Equals(settings.LocationCode))
+                {
+                    // okay, we found it, so let's set it
+                    CurrentLocation = c;
+                    break;
+                }
+            }
         }
         #endregion
 
@@ -255,7 +267,7 @@ namespace MyWeather
         }
         #endregion
 
-        #region LocationChangedCommand  class
+        #region ChangeLocationCommand  class
         /// <summary>
         /// ChangeLocationCommand will set a new location
         /// </summary> 
@@ -296,6 +308,11 @@ namespace MyWeather
 
                 // get the id that belongs to the selected city and set the property
                 _viewModel.CurrentLocation = ((List<City>)(_viewModel.AvailableLocations))[menu.SelectedIndex];
+                // save the selected location code to settings
+                WeatherSettings settings = new WeatherSettings();
+                ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+                settings.LocationCode = _viewModel.CurrentLocation.Id;
+                ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xml");
             }
         }
         #endregion
