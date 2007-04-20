@@ -50,13 +50,11 @@ namespace MyTv
     /// Initializes a new instance of the <see cref="TvBaseViewModel"/> class.
     /// </summary>
     /// <param name="page">The page.</param>
-    public TvBaseViewModel() 
+    public TvBaseViewModel()
     {
       if (!ServiceScope.IsRegistered<ITvChannelNavigator>())
       {
-        Thread connectToServerThread = new Thread(new ThreadStart(ConnectToServer));
-        connectToServerThread.Priority = ThreadPriority.BelowNormal;
-        connectToServerThread.Start();
+        Dispatcher.BeginInvoke(DispatcherPriority.Normal, new ConnectToServerDelegate(ConnectToServer));
       }
     }
 
@@ -110,7 +108,7 @@ namespace MyTv
         if (!ServiceScope.IsRegistered<ITvChannelNavigator>()) return null;
         if (ServiceScope.Get<ITvChannelNavigator>().IsRecording)
         {
-          string fileName=String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.TvRecordingIcon);
+          string fileName = String.Format(@"{0}\{1}", System.IO.Directory.GetCurrentDirectory(), Thumbs.TvRecordingIcon);
           if (System.IO.File.Exists(fileName)) return fileName;
           return null;
         }
@@ -357,7 +355,7 @@ namespace MyTv
     {
       get
       {
-        ServiceScope.Get<ILogger>().Info("Get tvonOff enabled:{0}", (ServiceScope.Get<IPlayerCollectionService>().Count>0));
+        ServiceScope.Get<ILogger>().Info("Get tvonOff enabled:{0}", (ServiceScope.Get<IPlayerCollectionService>().Count > 0));
         return (ServiceScope.Get<IPlayerCollectionService>().Count > 0);
       }
     }
@@ -814,7 +812,7 @@ namespace MyTv
         ServiceScope.Get<IPlayerCollectionService>().Add(player);
         player.MediaFailed += new EventHandler<MediaExceptionEventArgs>(_mediaPlayer_MediaFailed);
         player.MediaOpened += new EventHandler(player_MediaOpened);
-        player.Open(PlayerMediaType.TvLive,_playParameter.FileName);
+        player.Open(PlayerMediaType.TvLive, _playParameter.FileName);
         player.Play();
       }
 

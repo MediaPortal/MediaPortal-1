@@ -63,6 +63,7 @@ namespace MyTv
     {
       try
       {
+        if (!IsInitialized) return;
         if (RemoteControl.IsConnected == false) return;
         IsRecording = RemoteControl.Instance.IsAnyCardRecording();
       }
