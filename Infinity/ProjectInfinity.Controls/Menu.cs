@@ -406,7 +406,7 @@ namespace ProjectInfinity.Controls
       this.Children.Clear();
       this.Margin = new Thickness(0, 0, 0, 0);
       double yoffset = -BUTTONHEIGHT;
-      int selected = (maxRows) / 2;
+      int selected = (maxRows+1) / 2;
       if (_mouseEntered)
         selected = _mouseSelectedItem;
       else if (_mouseSelectedItem >= 0)
@@ -414,7 +414,7 @@ namespace ProjectInfinity.Controls
 
       if (selected >= maxRows + 2)
       {
-        selected = (maxRows) / 2;
+        selected = (maxRows + 1) / 2;
       }
       _currentSelectedItem = selected;
       _mouseSelectedItem = selected;
