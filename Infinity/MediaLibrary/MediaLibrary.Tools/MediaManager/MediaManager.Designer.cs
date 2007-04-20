@@ -83,6 +83,7 @@ namespace MediaManager
             this.DeleteViewStepToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.MoveViewStepUpToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.MoveViewStepDownToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.TestViewsToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.ViewStepDataGridView = new System.Windows.Forms.DataGridView();
             this.RowCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupTagDataGridViewComboBoxColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -96,7 +97,6 @@ namespace MediaManager
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.DbPluginsListView = new System.Windows.Forms.ListView();
-            this.TestViewsToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -150,26 +150,26 @@ namespace MediaManager
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(144, 6);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(149, 6);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(144, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(149, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -661,6 +661,16 @@ namespace MediaManager
             this.MoveViewStepDownToolStripButton.Text = "toolStripButton11";
             this.MoveViewStepDownToolStripButton.Click += new System.EventHandler(this.MoveViewStepDownToolStripButton_Click);
             // 
+            // TestViewsToolStripButton
+            // 
+            this.TestViewsToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.TestViewsToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("TestViewsToolStripButton.Image")));
+            this.TestViewsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.TestViewsToolStripButton.Name = "TestViewsToolStripButton";
+            this.TestViewsToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.TestViewsToolStripButton.Text = "TestViews";
+            this.TestViewsToolStripButton.Click += new System.EventHandler(this.TestViewsToolStripButton_Click);
+            // 
             // ViewStepDataGridView
             // 
             this.ViewStepDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -813,16 +823,6 @@ namespace MediaManager
             this.DbPluginsListView.UseCompatibleStateImageBehavior = false;
             this.DbPluginsListView.View = System.Windows.Forms.View.List;
             this.DbPluginsListView.SelectedIndexChanged += new System.EventHandler(this.DbPluginsListView_SelectedIndexChanged);
-            // 
-            // TestViewsToolStripButton
-            // 
-            this.TestViewsToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.TestViewsToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("TestViewsToolStripButton.Image")));
-            this.TestViewsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.TestViewsToolStripButton.Name = "TestViewsToolStripButton";
-            this.TestViewsToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.TestViewsToolStripButton.Text = "TestViews";
-            this.TestViewsToolStripButton.Click += new System.EventHandler(this.TestViewsToolStripButton_Click);
             // 
             // MediaManager
             // 
