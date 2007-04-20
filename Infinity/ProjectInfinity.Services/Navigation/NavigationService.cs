@@ -1,5 +1,7 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Navigation;
 
 namespace ProjectInfinity.Navigation
@@ -7,6 +9,7 @@ namespace ProjectInfinity.Navigation
   public class NavigationService : NavigationWindow, INavigationService, INotifyPropertyChanged
   {
     private bool _fullScreen = false;
+    private Size originalSize = Size.Empty;
 
     #region INavigationService Members
 
@@ -45,5 +48,19 @@ namespace ProjectInfinity.Navigation
     public event PropertyChangedEventHandler PropertyChanged;
 
     #endregion
+
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+    {
+      //base.OnRenderSizeChanged(sizeInfo);
+      //if (originalSize.Equals(Size.Empty))
+      //{
+      //  originalSize = sizeInfo.NewSize;
+      //  return;
+      //}
+      //double scaleX = sizeInfo.NewSize.Width/originalSize.Width;
+      //double scaleY = sizeInfo.NewSize.Height / originalSize.Height;
+      //((UIElement) this.Content).RenderTransform = new ScaleTransform(scaleX, scaleY);
+    }
+
   }
 }
