@@ -25,9 +25,11 @@ namespace ProjectInfinity.Menu
     private MenuCollection menuView;
     private ICommand _launchCommand;
     ICommand _fullScreenCommand;
+    string _id;
 
     public MenuViewModel(string id)
     {
+      _id = id;
       IList<IMenuItem> model = ServiceScope.Get<IMenuManager>().GetMenu(id);
       menuView = new MenuCollection();
       foreach (IMenuItem item in model)
@@ -53,18 +55,14 @@ namespace ProjectInfinity.Menu
 
     public Window Window
     {
-      get
-      {
-        return ServiceScope.Get<INavigationService>().GetWindow();
-      }
+      get { return ServiceScope.Get<INavigationService>().GetWindow(); }
     }
+
     public string HeaderLabel
     {
-      get
-      {
-        return ServiceScope.Get<ILocalisation>().ToString("global", 0);//infinity
-      }
+      get { return ServiceScope.Get<IMenuManager>().GetMenuName(_id); }
     }
+
     public MenuCollection Items
     {
       get { return menuView; }

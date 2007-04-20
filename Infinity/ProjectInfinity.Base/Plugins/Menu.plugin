@@ -17,6 +17,6 @@
 	</Path>
 
 	<Path name = "/Menus">
-		<Menu id = "Home" path="/Menus/Home"/>
+		<Menu id = "Home" name="@global:0" path="/Menus/Home"/>
 	</Path>
 </Plugin>

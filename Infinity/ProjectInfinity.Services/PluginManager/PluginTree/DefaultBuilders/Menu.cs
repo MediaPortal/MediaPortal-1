@@ -35,12 +35,14 @@ namespace ProjectInfinity.Plugins
   {
     #region Variables
     string _menuPath;
+    StringId _name;
     #endregion
 
     #region Constructors/Destructors
     public Menu(NodeItem item)
     {
       this._menuPath = item.Properties["path"];
+      this._name = new StringId(item.Properties["name"]);
     }
     #endregion
 
@@ -48,6 +50,11 @@ namespace ProjectInfinity.Plugins
     public string Path
     {
       get { return _menuPath; }
+    }
+
+    public string Name
+    {
+      get { return ServiceScope.Get<ILocalisation>().ToString(_name); }
     }
     #endregion
   }

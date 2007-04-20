@@ -19,6 +19,6 @@
   </Path>
 
 	<Path name = "/Menus">
-		<Menu id = "Settings" path="/Menus/Settings"/>
+		<Menu id = "Settings" name= "@settings:0" path="/Menus/Settings"/>
 	</Path>
 </Plugin>

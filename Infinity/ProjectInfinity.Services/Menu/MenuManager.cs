@@ -46,6 +46,15 @@ namespace ProjectInfinity.Menu
       //return menus;
     }
 
+    public string GetMenuName(string id)
+    {
+      ProjectInfinity.Plugins.Menu menuInfo = (ProjectInfinity.Plugins.Menu)ServiceScope.Get<IPluginManager>().BuildItem<ProjectInfinity.Plugins.Menu>("/Menus", id);
+      if (menuInfo != null)
+      {
+        return menuInfo.Name;
+      }
+      return "";
+    }
     #endregion
   }
 }
