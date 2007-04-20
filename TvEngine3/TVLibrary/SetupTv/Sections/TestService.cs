@@ -80,6 +80,7 @@ namespace SetupTv.Sections
       timer1.Enabled = true;
 
       mpListView1.Items.Clear();
+      buttonRestart.Visible = false;
     }
 
     public override void OnSectionDeActivated()
@@ -191,6 +192,8 @@ namespace SetupTv.Sections
         return;
       }
       buttonRestart.Text = "Stop Service";
+      if (!buttonRestart.Visible)
+        buttonRestart.Visible = true;
 
       UpdateCardStatus();
 
