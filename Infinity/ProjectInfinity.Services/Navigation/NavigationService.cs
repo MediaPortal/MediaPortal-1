@@ -10,12 +10,18 @@ namespace ProjectInfinity.Navigation
   {
     private bool _fullScreen = false;
     private Size originalSize = Size.Empty;
+    double _scaleX = 1.0;
+    double _scaleY = 1.0;
 
     public NavigationService()
     {
       this.Width = 800;
       this.Height = 600;
+      
     }
+
+
+
     #region INavigationService Members
 
     public bool FullScreen
@@ -62,9 +68,14 @@ namespace ProjectInfinity.Navigation
        originalSize = sizeInfo.NewSize;
        return;
      }
-     double scaleX = sizeInfo.NewSize.Width/originalSize.Width;
-     double scaleY = sizeInfo.NewSize.Height / originalSize.Height;
-     ((FrameworkElement) this.Content).LayoutTransform  = new ScaleTransform(scaleX, scaleY);
+      _scaleX= sizeInfo.NewSize.Width/originalSize.Width;
+      _scaleY= sizeInfo.NewSize.Height / originalSize.Height;
+     ((FrameworkElement) this.Content).LayoutTransform  = new ScaleTransform(_scaleX, _scaleY);
+    }
+    protected override void OnContentChanged(object oldContent, object newContent)
+    {
+      base.OnContentChanged(oldContent, newContent);
+      ((FrameworkElement)this.Content).LayoutTransform = new ScaleTransform(_scaleX, _scaleY);
     }
 
   }
