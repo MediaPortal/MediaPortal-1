@@ -24,6 +24,18 @@ namespace ProjectInfinity.Navigation
 
     #region INavigationService Members
 
+    /// <summary>
+    /// Gets the current window scaling.
+    /// </summary>
+    /// <value>The current window scaling.</value>
+    public Size CurrentScaling 
+    {
+      get
+      {
+        return new Size(_scaleX, _scaleY);
+      }
+    }
+
     public bool FullScreen
     {
       get { return _fullScreen; }

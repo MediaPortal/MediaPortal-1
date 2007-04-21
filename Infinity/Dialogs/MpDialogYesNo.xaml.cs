@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ProjectInfinity;
 using ProjectInfinity.Logging;
+using ProjectInfinity.Navigation;
 
 namespace Dialogs
 {
@@ -28,17 +29,34 @@ namespace Dialogs
 
     public MpDialogYesNo()
     {
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+      this.LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
       this.WindowStyle = WindowStyle.None;
       this.ShowInTaskbar = false;
       this.ResizeMode = ResizeMode.NoResize;
       this.AllowsTransparency = true;//we need it so we can alphablend the dialog with the gui. However this causes s/w rendering in wpf
       InitializeComponent();
       _model = new DialogViewModel(this);
+      this.Width *= scaling.Width;
+      this.Height *= scaling.Height;
+      WindowStartupLocation = WindowStartupLocation.CenterOwner;
     }
     /// <summary>
     /// Shows this instance.
     /// </summary>
 
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+    {
+      base.OnRenderSizeChanged(sizeInfo);
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+      ((FrameworkElement)base.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
+    }
+    protected override void OnContentChanged(object oldContent, object newContent)
+    {
+      base.OnContentChanged(oldContent, newContent);
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+      ((FrameworkElement)base.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
+    }
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       gridMain.Children.Clear();

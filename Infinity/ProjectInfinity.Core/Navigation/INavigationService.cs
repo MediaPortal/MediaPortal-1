@@ -12,5 +12,11 @@ namespace ProjectInfinity.Navigation
     Window GetWindow();
     event CancelEventHandler Closing;
     bool FullScreen { get; set; }
+
+    /// <summary>
+    /// Gets the current window scaling.
+    /// </summary>
+    /// <value>The current window scaling.</value>
+    Size CurrentScaling { get;}
   }
 }

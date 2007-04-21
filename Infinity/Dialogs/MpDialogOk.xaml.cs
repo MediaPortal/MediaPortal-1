@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ProjectInfinity;
 using ProjectInfinity.Logging;
+using ProjectInfinity.Navigation;
 
 namespace Dialogs
 {
@@ -31,8 +32,24 @@ namespace Dialogs
       this.AllowsTransparency = true;//we need it so we can alphablend the dialog with the gui. However this causes s/w rendering in wpf
       InitializeComponent();
       _model = new DialogViewModel(this);
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+      this.Width *= scaling.Width;
+      this.Height *= scaling.Height;
+      WindowStartupLocation = WindowStartupLocation.CenterOwner;
     }
 
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+    {
+      base.OnRenderSizeChanged(sizeInfo);
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+      ((FrameworkElement)base.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
+    }
+    protected override void OnContentChanged(object oldContent, object newContent)
+    {
+      base.OnContentChanged(oldContent, newContent);
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+      ((FrameworkElement)base.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
+    }
     /// <summary>
     /// Shows this instance.
     /// </summary>

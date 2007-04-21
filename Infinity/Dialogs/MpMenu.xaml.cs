@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ProjectInfinity;
 using ProjectInfinity.Logging;
+using ProjectInfinity.Navigation;
 
 namespace Dialogs
 {
@@ -38,6 +39,10 @@ namespace Dialogs
       InitializeComponent();
       _menuItems = new DialogMenuItemCollection();
       _model = new DialogViewModel(this);
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+      this.Width *= scaling.Width;
+      this.Height *= scaling.Height;
+      WindowStartupLocation = WindowStartupLocation.CenterOwner;
     }
     public MpMenu(DialogMenuItemCollection items)
     {
@@ -48,6 +53,22 @@ namespace Dialogs
       this.AllowsTransparency = true;
       InitializeComponent();
       _model = new DialogViewModel(this);
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+      this.Width *= scaling.Width;
+      this.Height *= scaling.Height;
+      WindowStartupLocation = WindowStartupLocation.CenterOwner;
+    }
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+    {
+      base.OnRenderSizeChanged(sizeInfo);
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+      ((FrameworkElement)this.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
+    }
+    protected override void OnContentChanged(object oldContent, object newContent)
+    {
+      base.OnContentChanged(oldContent, newContent);
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+      ((FrameworkElement)this.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
     }
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
