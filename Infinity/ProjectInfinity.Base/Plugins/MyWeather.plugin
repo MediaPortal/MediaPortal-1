@@ -1,4 +1,4 @@
-<Plugin name        = "My Weather"
+<Plugin name       = "MyWeather"
        author      = "Mofux"
        copyright   = "GPL"
        description = "My Weather">

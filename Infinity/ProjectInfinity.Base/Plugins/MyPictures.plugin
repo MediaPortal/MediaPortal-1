@@ -1,4 +1,4 @@
-<Plugin name        = "MyPictures"
+<Plugin name       = "MyPictures"
        author      = "Joe"
        copyright   = "GPL"
        description = "Pictures">

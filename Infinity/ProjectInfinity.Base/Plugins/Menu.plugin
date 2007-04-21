@@ -1,4 +1,4 @@
-<Plugin name       = "Home Menu"
+<Plugin name       = "Menu"
         id         = "Home"
        author      = "JoeDalton"
        copyright   = "GPL"
