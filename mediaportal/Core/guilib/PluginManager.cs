@@ -165,12 +165,13 @@ namespace MediaPortal.GUI.Library
 
       Type[] foundInterfaces = null;
 
-      Log.Info("  Load plugins from :{0}", strFile);
+      Log.Info("  Load plugins from : {0}", strFile);
       try
       {
         Assembly assem = Assembly.LoadFrom(strFile);
         if (assem != null)
         {
+          Log.Info("  Assembly Version : {0}", assem.GetName().Version.ToString());
           Type[] types = assem.GetExportedTypes();
 
           foreach (Type t in types)
@@ -270,12 +271,13 @@ namespace MediaPortal.GUI.Library
       if (!IsPlugInEnabled(strFile))
         return;
 
-      Log.Info("  Load plugins from :{0}", strFile);
+      Log.Info("  Load plugins from : {0}", strFile);
       try
       {
         Assembly assem = Assembly.LoadFrom(strFile);
         if (assem != null)
         {
+          Log.Info("  Assembly Version : {0}", assem.GetName().Version.ToString());
           Type[] types = assem.GetExportedTypes();
           Type[] foundInterfaces = null;
 
