@@ -78,6 +78,7 @@ namespace MediaPortal.Configuration.Sections
 
       // TODO: Add any initialization after the InitializeComponent call
       diHandler = new DirectInputHandler();
+      diHandler.Init();
       diHandler.DoSendActions = false; // only debug/display actions
       diHandler.OnStateChangeText += new DirectInputHandler.diStateChangeText(StateChangeAsText);
     }

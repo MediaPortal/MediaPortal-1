@@ -367,7 +367,7 @@ namespace MediaPortal.Configuration.Sections
           if (X10Remote == null)
           {
             X10Remote = new X10Remote();
-         
+            X10Remote.Init();
           }
 
           if (X10Remote._remotefound == false)
