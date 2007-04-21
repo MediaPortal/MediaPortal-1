@@ -478,7 +478,7 @@ namespace MediaPortal.WebEPG
       {
         _log.Info(LogType.WebEPG, "WebEPG: Listing Count {0}", listingCount);
 
-        if (_reqBuilder.IsMaxListing(listingCount) || !_reqBuilder.IsLastPage())
+        if (_reqBuilder.IsMaxListing(listingCount) || !_reqBuilder.IsLastPage(listingCount))
           bMore = true;
 
         _discarded = 0;

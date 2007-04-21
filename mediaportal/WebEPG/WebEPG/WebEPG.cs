@@ -98,7 +98,7 @@ namespace MediaPortal.EPG
       _log = GlobalServiceProvider.Get<ILog>();
 
 
-      _log.Info(LogType.WebEPG, "Version: 2.4.5.0 Assemblies:");
+      _log.Info(LogType.WebEPG, "Version: 2.4.6.0 Assemblies:");
       _log.Info(LogType.WebEPG, this.GetType().Assembly.FullName);
       _log.Info(LogType.WebEPG, _log.GetType().Assembly.FullName);
       // set config directories and files.
