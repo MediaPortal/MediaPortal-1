@@ -1280,15 +1280,21 @@ namespace TvLibrary.Implementations.DVB
                 }
                 _channelInfo.pcr_pid = channel.PcrPid;
 
-                
-                if (_mdapiFilter != null)
+                if ((_mdapiFilter != null) && (_newCA))
                 {
-                  int catLength = _tsFilterInterface.CaGetCaData(_subChannelIndex, catMem);
-                  if (catLength > 0)
+                  try
                   {
-                    byte[] cat = new byte[catLength];
-                    Marshal.Copy(catMem, cat, 0, catLength);
-                    _channelInfo.DecodeCat(cat, catLength);
+                    int catLength = _tsFilterInterface.CaGetCaData(_subChannelIndex, catMem);
+                    if (catLength > 0)
+                    {
+                      byte[] cat = new byte[catLength];
+                      Marshal.Copy(catMem, cat, 0, catLength);
+                      _channelInfo.DecodeCat(cat, catLength);
+                    }
+                  }
+                  catch (Exception ex)
+                  {
+                    Log.Log.Write(ex); ;
                   }
                 }
                 
