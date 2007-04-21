@@ -2504,6 +2504,8 @@ namespace MediaPortal
         }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
           break;
+        // Suggested by gibman. Let's see if this works. Can't be bad
+        Thread.Sleep(10); // 10 milliseconds - fixes sluggish GUI due to 100% cpu usage when turning TV off in a multiseat client and returning to the home screen or any other screen.
       }
       while (AppStillIdle());
     }
