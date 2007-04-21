@@ -122,7 +122,7 @@ namespace TvEngine.PowerScheduler.Handlers
             // manually determine schedule's wakeup time of no guide data is present
             almostDueTime = GetWakeupTime(schedule).AddMinutes(-_idleTimeout);
           }
-          if (almostDueTime <= DateTime.Now)
+          if (almostDueTime <= DateTime.Now && almostDueTime > DateTime.Now.AddMinutes(-_idleTimeout))
           {
             // This schedule is almost due, so disallow standby
             return true;
