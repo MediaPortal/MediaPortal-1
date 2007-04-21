@@ -117,6 +117,7 @@ namespace SetupTv.Sections
     bool _isScanning = false;
     bool _stopScanning = false;
     bool _enableEvents = false;
+    bool _ignoreCheckBoxCreateGroupsClickEvent = false;
     #endregion
 
     #region ctors
@@ -442,6 +443,12 @@ namespace SetupTv.Sections
 
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
 
+      if (!checkBoxCreateGroups.Checked)
+      {
+        checkBoxCreateGroupsSat.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroupssat", "false").Value == "true");
+      }
+          
+
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
@@ -461,6 +468,10 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "false");
       setting.Value = checkBoxCreateGroups.Checked ? "true" : "false";
+      setting.Persist();
+
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroupssat", "false");
+      setting.Value = checkBoxCreateGroupsSat.Checked ? "true" : "false";
       setting.Persist();
 
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext1", "0");
@@ -790,7 +801,11 @@ namespace SetupTv.Sections
           }
           dbChannel.Persist();
 
-          if (checkBoxCreateGroups.Checked)
+          if (checkBoxCreateGroupsSat.Checked)
+          {
+              layer.AddChannelToGroup(dbChannel, context.Satelite.SatelliteName);
+          }
+          else if (checkBoxCreateGroups.Checked)
           {
             layer.AddChannelToGroup(dbChannel, channel.Provider);
           }
@@ -1302,5 +1317,31 @@ namespace SetupTv.Sections
       mpBand1_SelectedIndexChanged(sender, e);
     }
     #endregion
+
+      
+
+      private void checkBoxCreateGroupsSat_CheckedChanged(object sender, EventArgs e)
+      {
+          if (_ignoreCheckBoxCreateGroupsClickEvent) return;
+
+          _ignoreCheckBoxCreateGroupsClickEvent = true;
+          if (checkBoxCreateGroups.Checked)
+          {
+              checkBoxCreateGroups.Checked = false;
+          }
+          _ignoreCheckBoxCreateGroupsClickEvent = false;
+      }
+
+      private void checkBoxCreateGroups_CheckedChanged(object sender, EventArgs e)
+      {
+          if (_ignoreCheckBoxCreateGroupsClickEvent) return;
+
+          _ignoreCheckBoxCreateGroupsClickEvent = true;
+          if (checkBoxCreateGroupsSat.Checked)
+          {
+              checkBoxCreateGroupsSat.Checked = false;
+          }
+          _ignoreCheckBoxCreateGroupsClickEvent = false;
+      }
   }
 }
