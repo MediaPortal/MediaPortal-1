@@ -44,6 +44,9 @@ namespace MediaPortal.Visualization
   {
     #region Imports
     [DllImport("User32.dll", ExactSpelling = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("User32.dll", ExactSpelling = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
     private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int cx, int cy, bool repaint);
 
     [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto, EntryPoint = "GetWindow")]
@@ -255,6 +258,7 @@ namespace MediaPortal.Visualization
         if (hwndChild != IntPtr.Zero)
           MoveWindow(hwndChild, 0, 0, newSize.Width, newSize.Height, true);
       }
+      
       return true;
     }
 
@@ -297,6 +301,9 @@ namespace MediaPortal.Visualization
         BassVis.BASS_WINAMPVIS_SetGenHwndParent(genHwnd, VisualizationWindow.Handle, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height);
         BassVis.BASS_WINAMPVIS_Play((int)hwndWinAmp);
       }
+
+      // The Winamp Plugin has stolen focus on the MP window. Bring it back to froeground
+      SetForegroundWindow(GUIGraphicsContext.form.Handle);
 
       firstRun = false;
       _Initialized = visHandle != 0;
