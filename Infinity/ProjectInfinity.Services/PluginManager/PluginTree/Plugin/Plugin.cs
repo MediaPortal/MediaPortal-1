@@ -61,7 +61,7 @@ namespace ProjectInfinity.Plugins
       _fileName = null;
       _manifest = new PluginManifest();
       _paths = new Dictionary<string, ExtensionPath>();
-      _instances = new Dictionary<string,object>();
+      _instances = new Dictionary<string, object>();
     }
     #endregion
 
@@ -115,6 +115,11 @@ namespace ProjectInfinity.Plugins
     public string Name
     {
       get { return _properties["name"]; }
+    }
+
+    public string Id
+    {
+      get { return _properties["id"]; }
     }
 
     public PluginManifest Manifest
@@ -172,13 +177,13 @@ namespace ProjectInfinity.Plugins
         ServiceScope.Get<ILogger>().Info("Creating plugin instance: " + _manifest.Identity);
         IPlugin pluginInstance = CreateInstance(_manifest.Identity) as IPlugin;
         if (pluginInstance != null)
-        { 
+        {
           pluginInstance.Initialize(_properties["id"]);
-          _instances.Add(_manifest.Identity, (object) pluginInstance);
+          _instances.Add(_manifest.Identity, (object)pluginInstance);
         }
       }
 
-      if(!_instances.ContainsKey(className))
+      if (!_instances.ContainsKey(className))
       {
         ServiceScope.Get<ILogger>().Info("Creating plugin class instance: " + className);
         object instance = CreateInstance(className);
@@ -345,7 +350,10 @@ namespace ProjectInfinity.Plugins
     #region <Base class> Overloads
     public override string ToString()
     {
-      return "[Plugin: " + Name + "]";
+      if (Id != string.Empty)
+        return "[Plugin: " + Name + "." + Id + "]";
+      else
+        return "[Plugin: " + Name + "]";
     }
     #endregion
   }

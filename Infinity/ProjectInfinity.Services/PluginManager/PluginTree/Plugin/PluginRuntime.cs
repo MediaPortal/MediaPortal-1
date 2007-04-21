@@ -221,7 +221,7 @@ namespace ProjectInfinity.Plugins
     {
       if (!_isAssemblyLoaded)
       {
-        ServiceScope.Get<ILogger>().Info("Loading Plugin" + _assembly);
+        ServiceScope.Get<ILogger>().Info("Loading Plugin: " + _assembly);
 
         _isAssemblyLoaded = true;
 
@@ -270,6 +270,8 @@ namespace ProjectInfinity.Plugins
         {
           ServiceScope.Get<ILogger>().Error("The addin '" + _assembly + "' could not be loaded:\n" + ex.ToString());
         }
+
+        ServiceScope.Get<ILogger>().Info("Assembly Version: " + _loadedAssembly.GetName().Version.ToString());
       }
     }
     #endregion
