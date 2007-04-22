@@ -100,22 +100,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="TvConflictDialog.xaml" />
-    <Page Include="TvFullscreen.xaml" />
-    <Page Include="TvGuide.xaml" />
-    <Page Include="TvHome.xaml" />
-    <Page Include="TvNewSchedule.xaml" />
-    <Page Include="TvProgramInfo.xaml" />
-    <Page Include="TvRecorded.xaml">
-      <SubType>
-      </SubType>
-    </Page>
-    <Page Include="TvScheduled.xaml" />
-    <Page Include="TvSearch.xaml" />
-    <Page Include="TvSetup.xaml" />
-    <Compile Include="TvHome.xaml.cs">
-      <DependentUpon>TvHome.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helper classes\TvSettings.cs" />
@@ -161,42 +145,19 @@
       <SubType>Code</SubType>
       <DependentUpon>TvConflictDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TvFullscreen.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>TvFullscreen.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="TvGuide.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>TvGuide.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="TvFullscreen.cs" />
+    <Compile Include="TvGuide.cs" />
+    <Compile Include="TvHome.cs" />
     <Compile Include="TvMediaPlayer\TvMediaPlayer.cs" />
-    <Compile Include="TvNewSchedule.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>TvNewSchedule.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="TvNewSchedule.cs" />
     <Compile Include="TvPlugin.cs" />
-    <Compile Include="TvProgramInfo.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>TvProgramInfo.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="TvRecorded.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>TvRecorded.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="TvScheduled.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>TvScheduled.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="TvProgramInfo.cs" />
+    <Compile Include="TvRecorded.cs" />
+    <Compile Include="TvScheduled.cs" />
     <Compile Include="Models\TvScheduledViewModel.cs" />
-    <Compile Include="TvSearch.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>TvSearch.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="TvSearch.cs" />
     <Compile Include="Models\TvSearchViewModel.cs" />
-    <Compile Include="TvSetup.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>TvSetup.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="TvSetup.cs" />
     <Compile Include="Helper classes\WindowMediaPlayerCheck.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>

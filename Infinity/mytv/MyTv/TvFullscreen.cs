@@ -21,52 +21,28 @@ using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
+using ProjectInfinity.Controls;
 namespace MyTv
 {
   /// <summary>
   /// Interaction logic for TvFullscreen.xaml
   /// </summary>
 
-  public partial class TvFullscreen : System.Windows.Controls.Page
+  public partial class TvFullscreen : View
   {
-    TvFullScreenModel _model;
 
+    TvFullScreenModel _model;
     /// <summary>
     /// Initializes a new instance of the <see cref="TvFullscreen"/> class.
     /// </summary>
     public TvFullscreen()
     {
-      InitializeComponent();
-    }
-
-    /// <summary>
-    /// Called when [loaded].
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-    private void OnLoaded(object sender, RoutedEventArgs e)
-    {
-      gridMain.Children.Clear();
-      try
-      {
-        using (FileStream steam = new FileStream(@"skin\default\mytv\TvFullscreen.xaml", FileMode.Open, FileAccess.Read))
-        {
-          UIElement documentRoot = (UIElement)XamlReader.Load(steam);
-          gridMain.Children.Add(documentRoot);
-        }
-      }
-      catch (Exception ex)
-      {
-        ServiceScope.Get<ILogger>().Error("error loading TvFullscreen.xaml");
-        ServiceScope.Get<ILogger>().Error(ex);
-      }
-      _model = new TvFullScreenModel();
-      gridMain.DataContext = _model;
+      _model= new TvFullScreenModel();
+      DataContext = _model;
       this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
-      Keyboard.AddPreviewKeyDownHandler(this, new KeyEventHandler(onKeyDown));
+      this.KeyDown += new KeyEventHandler(onKeyDown);
     }
-
 
     protected void onKeyDown(object sender, KeyEventArgs e)
     {

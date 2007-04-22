@@ -970,7 +970,7 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvNewSchedule.xaml", UriKind.Relative));
+        ServiceScope.Get<INavigationService>().Navigate(new TvNewSchedule());
       }
     }
     #endregion
@@ -1063,7 +1063,7 @@ namespace MyTv
               if (rec.IsRecordingProgram(prog, false))
               {
                 _viewModel.CurrentProgram = new ProgramModel(prog);
-                ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvProgramInfo.xaml", UriKind.Relative));
+                ServiceScope.Get<INavigationService>().Navigate(new TvProgramInfo());
                 return;
               }
             }
@@ -1437,7 +1437,7 @@ namespace MyTv
       public override void Execute(object parameter)
       {
         TvSearch.SearchMode = TvSearchViewModel.SearchType.Title;
-        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
+        ServiceScope.Get<INavigationService>().Navigate(new TvSearch());
       }
     }
     #endregion
@@ -1464,7 +1464,7 @@ namespace MyTv
       public override void Execute(object parameter)
       {
         TvSearch.SearchMode = TvSearchViewModel.SearchType.Genre;
-        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
+        ServiceScope.Get<INavigationService>().Navigate(new TvSearch());
       }
     }
     #endregion
@@ -1491,7 +1491,7 @@ namespace MyTv
       public override void Execute(object parameter)
       {
         TvSearch.SearchMode = TvSearchViewModel.SearchType.Description;
-        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
+        ServiceScope.Get<INavigationService>().Navigate(new TvSearch());
       }
     }
     #endregion

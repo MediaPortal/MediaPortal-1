@@ -1,9 +1,0 @@
-﻿<Page x:Class="MyTv.TvGuide"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:MyTv;assembly=MyTv"
-    xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls"
-    Title="TvGuide" Background="{StaticResource backGroundBrush}" Loaded="OnLoaded" 
-    >
-  <Grid x:Name="gridMain"/>
-</Page>

@@ -501,7 +501,7 @@ namespace MyTv
             else
               model = ServiceScope.Get<TvScheduledViewModel>();
             model.CurrentProgram = cell.ProgramModel;
-            ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvProgramInfo.xaml", UriKind.Relative));
+            ServiceScope.Get<INavigationService>().Navigate(new TvProgramInfo());
           }
         }
       }

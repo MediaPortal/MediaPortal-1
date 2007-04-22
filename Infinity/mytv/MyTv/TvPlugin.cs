@@ -23,7 +23,7 @@ namespace MyTv
 
     public void Run()
     {
-      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvHome.xaml", UriKind.Relative));
+      ServiceScope.Get<INavigationService>().Navigate(new TvHome());
     }
 
     #endregion

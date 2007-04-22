@@ -459,7 +459,7 @@ namespace MyTv
     /// </summary>
     void OnFailedToConnectToServer()
     {
-      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSetup.xaml", UriKind.Relative));
+      ServiceScope.Get<INavigationService>().Navigate(new TvSetup());
     }
 
     /// <summary>
@@ -1455,7 +1455,7 @@ namespace MyTv
       public override void Execute(object parameter)
       {
         TvSearch.SearchMode = TvSearchViewModel.SearchType.Title;
-        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvSearch.xaml", UriKind.Relative));
+        ServiceScope.Get<INavigationService>().Navigate(new TvSearch());
       }
     }
     #endregion
@@ -1481,7 +1481,7 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvGuide.xaml", UriKind.Relative));
+        ServiceScope.Get<INavigationService>().Navigate(new TvGuide());
       }
     }
     #endregion
@@ -1507,7 +1507,7 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvRecorded.xaml", UriKind.Relative));
+        ServiceScope.Get<INavigationService>().Navigate(new TvRecorded());
       }
     }
     #endregion
@@ -1533,7 +1533,7 @@ namespace MyTv
       /// <param name="parameter">The parameter.</param>
       public override void Execute(object parameter)
       {
-        ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvScheduled.xaml", UriKind.Relative));
+        ServiceScope.Get<INavigationService>().Navigate(new TvScheduled());
       }
     }
     #endregion
@@ -1561,7 +1561,7 @@ namespace MyTv
       {
         if (ServiceScope.Get<IPlayerCollectionService>().Count != 0)
         {
-          ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyTv;component/TvFullScreen.xaml", UriKind.Relative));
+          ServiceScope.Get<INavigationService>().Navigate(new TvFullscreen());
         }
       }
     }
