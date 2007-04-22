@@ -248,7 +248,7 @@
     </Reference>
     <Reference Include="XihSolutions.DotMSN, Version=2.0.1.15051, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\XihSolutions.DotMSN.dll</HintPath>
+      <HintPath>..\MediaPortal.Base\plugins\Windows\XihSolutions.DotMSN.dll</HintPath>
     </Reference>
     <Reference Include="XPBurnComponent, Version=1.0.1.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>

@@ -243,6 +243,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="PostBuild.bat" />
     <Compile Include="CodecsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -311,6 +312,6 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>"$(ProjectDir)$(OutDir)PostBuild.bat"</PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)PostBuild.bat" "$(SolutionDir)" $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>
