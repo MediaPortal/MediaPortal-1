@@ -17,7 +17,9 @@ namespace ProjectInfinity.Settings
   /// </summary>
   class ObjectParser
   {
-    static ObjectParser() { }
+    static ObjectParser() 
+    { 
+    }
 
     /// <summary>
     /// Serialize public properties of a Settings object to a given xml file
@@ -27,6 +29,7 @@ namespace ProjectInfinity.Settings
     public static void Serialize(object obj, string fileName)
     {
       ILogger log = ServiceScope.Get<ILogger>();
+      log.Debug("Serialize({0},{1})", obj.ToString(), fileName);
       Dictionary<string, string> globalSettingsList = new Dictionary<string, string>();
       Dictionary<string, string> userSettingsList = new Dictionary<string, string>();
       XmlSettingsProvider xmlWriter = new XmlSettingsProvider(fileName);
@@ -35,7 +38,7 @@ namespace ProjectInfinity.Settings
       {
         Type thisType = property.PropertyType;
         string defaultval = "";
-        log.Debug("Got property name: {0}", property.Name);
+        log.Debug("Got property name: {0}, isCLR: {1}", property.Name, isCLRType(thisType));
 
         #region CLR Typed property
         if (isCLRType(thisType))
@@ -54,6 +57,7 @@ namespace ProjectInfinity.Settings
             defaultval = "";
           }
           string value = defaultval;
+
           if (!isFirstSave) //else default value will be used if it exists
           {
             if (obj.GetType().GetProperty(property.Name).GetValue(obj, null) != null)
@@ -71,6 +75,7 @@ namespace ProjectInfinity.Settings
               globalSettingsList.Add(property.Name, value);
             }
           }
+          else globalSettingsList.Add(property.Name, value);
         }
         #endregion
 
@@ -129,6 +134,7 @@ namespace ProjectInfinity.Settings
         log.Debug("Writing Xml setting: {0}, value= {1}", pair.Key, pair.Value);
         xmlWriter.SetValue(obj.ToString(), pair.Key, pair.Value, SettingScope.User);
       }
+      log.Debug("Save");
       xmlWriter.Save();
       #endregion
 
@@ -142,6 +148,8 @@ namespace ProjectInfinity.Settings
     public static void Deserialize(object obj, string fileName)
     {
       XmlSettingsProvider xmlreader = new XmlSettingsProvider(fileName);
+      ILogger log = ServiceScope.Get<ILogger>();
+      log.Debug("Deserialize({0},{1})", obj.ToString(), fileName);
       // if xml file doesn't exist yet then create it
       if (!File.Exists(fileName)) Serialize(obj, fileName);
 
