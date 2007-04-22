@@ -2,7 +2,7 @@
 <window>
   <id>35</id>
   <defaultcontrol>3</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <disabletopbar>no</disabletopbar>
   <controls>
 
@@ -1119,6 +1119,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
+    <!--
     <control>
       <description>music rectangle</description>
       <type>image</type>
@@ -1160,6 +1161,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <id>5</id>
     </control>
+    -->
     <control>
       <description>Date</description>
       <type>label</type>
