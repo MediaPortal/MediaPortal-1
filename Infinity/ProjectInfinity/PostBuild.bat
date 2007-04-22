@@ -19,10 +19,10 @@ REM Menu
 xcopy /y %1\Plugins\Menu\bin\%2\Menu.dll Plugins\Menu\
 
 REM MyPictures
-xcopy /y %1\Plugins\MyPictures\bin\%2\MyPictures.dll Plugins\Menu\
+xcopy /y %1\Plugins\MyPictures\bin\%2\MyPictures.dll Plugins\MyPictures\
 
 REM MyVideos
 xcopy /y %1\Plugins\MyVideos\bin\%2\MyVideos.dll .
 
-REM MyVideos
+REM MyWeather
 xcopy /y %1\Plugins\MyWeather\bin\%2\MyWeather.dll .
