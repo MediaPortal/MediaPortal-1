@@ -39,8 +39,8 @@ namespace ProjectInfinity
       ServiceScope.Add<IWindowsTaskBar>(new WindowsTaskBar());
       ServiceScope.Add<IMediaLibrary>(new MediaLibraryClass());
 
-
-      ICommandLineOptions piArgs = new ProjectInfinityCommandLine();
+      // Parse Command Line options
+      ICommandLineOptions piArgs = new CommandLineOptions();
 
       try
       {
@@ -51,8 +51,9 @@ namespace ProjectInfinity
         piArgs.DisplayOptions();
         return;
       }
-      Core.Start();
 
+      // Start Core
+      Core.Start();
     }
   }
 }
