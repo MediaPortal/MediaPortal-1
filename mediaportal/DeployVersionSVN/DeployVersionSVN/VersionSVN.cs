@@ -17,24 +17,33 @@ namespace DeployVersionSVN
 
     public string GetVerion(string directory)
     {
+      FileInfo file = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\TortoiseSVN\bin\SubWCRev.exe");
+
       ProcessStartInfo procInfo = new ProcessStartInfo();
       procInfo.RedirectStandardOutput = true;
       procInfo.UseShellExecute = false;
       procInfo.Arguments = directory;
-      procInfo.FileName = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\TortoiseSVN\bin\SubWCRev.exe";
+      procInfo.FileName = file.FullName;
 
-      Console.WriteLine("Running : {0}", procInfo.FileName);
+      Console.WriteLine("Running : {0}", file.FullName);
 
-      // Start process
-      Process proc;
-      proc = Process.Start(procInfo);
+      if (file.Exists)
+      {
 
-      // Get process output
-      string svn = proc.StandardOutput.ReadToEnd();
+        // Start process
+        Process proc;
+        proc = Process.Start(procInfo);
 
-      Regex tortoiseRegex = new Regex("Update.+ (?<version>[0-9]+)");
+        // Get process output
+        string svn = proc.StandardOutput.ReadToEnd();
 
-      return tortoiseRegex.Match(svn).Groups["version"].Value;
+        Regex tortoiseRegex = new Regex("Update.+ (?<version>[0-9]+)");
+
+        return tortoiseRegex.Match(svn).Groups["version"].Value;
+      }
+
+      Console.WriteLine("Not found!");
+      return string.Empty;
     }
   }
 }
