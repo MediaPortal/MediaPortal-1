@@ -144,14 +144,21 @@ namespace MediaPortal.TVGuideScheduler
             foreach (string s in grabberSingleDays)
             {
               FileInfo file = new FileInfo(grab.Output + "\\TVguide" + System.Convert.ToInt32(s) + ".xml");
-              if (file.Length > 250) //to indicate that it contains some data
+              if (file.Exists)
               {
-                XMLTVImport importSingle = new XMLTVImport();
-                importSingle.Import(grab.Output + "\\TVguide" + System.Convert.ToInt32(s) + ".xml", false);
+                if (file.Length > 250) //to indicate that it contains some data
+                {
+                  XMLTVImport importSingle = new XMLTVImport();
+                  importSingle.Import(grab.Output + "\\TVguide" + System.Convert.ToInt32(s) + ".xml", false);
+                }
+                else
+                {
+                  Log.Info("TVGuideScheduler: XML file is empty - " + file);
+                }
               }
               else
               {
-                Log.Info("TVGuideScheduler: XML file is empty - " + file);
+                Log.Error("TVGuideScheduler: No XML file is found in - " + grab.Output + "\\TVguide" + System.Convert.ToInt32(s) + ".xml");
               }
             }
           }
