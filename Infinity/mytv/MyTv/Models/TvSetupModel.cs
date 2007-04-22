@@ -32,7 +32,7 @@ namespace MyTv
     #endregion
 
     #region ctor
-    public TvSetupModel()
+    public TvSetupModel():base(false)
     {
       _labelError="";
       _hostName = "";

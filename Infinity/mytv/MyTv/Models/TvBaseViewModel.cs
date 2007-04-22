@@ -57,7 +57,16 @@ namespace MyTv
         Dispatcher.BeginInvoke(DispatcherPriority.Normal, new ConnectToServerDelegate(ConnectToServer));
       }
     }
-
+    public TvBaseViewModel(bool checkConnection)
+    {
+      if (checkConnection)
+      {
+        if (!ServiceScope.IsRegistered<ITvChannelNavigator>())
+        {
+          Dispatcher.BeginInvoke(DispatcherPriority.Normal, new ConnectToServerDelegate(ConnectToServer));
+        }
+      }
+    }
     void OnChannelChanged(object sender, PropertyChangedEventArgs e)
     {
       if (e.PropertyName == "SelectedChannel")
