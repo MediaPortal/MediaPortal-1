@@ -264,11 +264,19 @@
 				RelativePath=".\source\SubtitleInputPin.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\Source\TSThread.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
+			<File
+				RelativePath=".\Source\DemuxPinMapper.h"
+				>
+			</File>
 			<File
 				RelativePath=".\source\DVBSub.h"
 				>
@@ -279,6 +287,10 @@
 			</File>
 			<File
 				RelativePath=".\Source\PcrInputPin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\PidObserver.h"
 				>
 			</File>
 			<File
@@ -299,6 +311,10 @@
 			</File>
 			<File
 				RelativePath=".\source\dvbsubs\tables.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TSThread.h"
 				>
 			</File>
 		</Filter>
