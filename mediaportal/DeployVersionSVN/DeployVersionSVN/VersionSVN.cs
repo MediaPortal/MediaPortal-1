@@ -21,7 +21,7 @@ namespace DeployVersionSVN
       procInfo.RedirectStandardOutput = true;
       procInfo.UseShellExecute = false;
       procInfo.Arguments = directory;
-      procInfo.FileName = @"C:\Program Files\TortoiseSVN\bin\SubWCRev.exe";
+      procInfo.FileName = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\TortoiseSVN\bin\SubWCRev.exe";
 
       // Start process
       Process proc;
