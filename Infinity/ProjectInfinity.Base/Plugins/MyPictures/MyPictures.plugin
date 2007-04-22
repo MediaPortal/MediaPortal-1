@@ -8,7 +8,7 @@
 	</Manifest>
 	
 	<Runtime>
-		<Import assembly = "../ProjectInfinity.Plugins.dll"/>
+		<Import assembly = "MyPictures.dll"/>
 	</Runtime>
 
 	<Path name = "/Menus/Home">

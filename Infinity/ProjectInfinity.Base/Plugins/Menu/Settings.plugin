@@ -9,7 +9,7 @@
 	</Manifest>
 	
 	<Runtime>
-		<Import assembly = "../ProjectInfinity.Plugins.dll"/>
+		<Import assembly = "Menu.dll"/>
 	</Runtime>
   <Path name = "/Menus/Home">
     <MenuItem id    = "MyTv"
