@@ -32,6 +32,7 @@
         <id>4</id>
         <label>457</label>
         <onright>50</onright>
+        <ondown>3</ondown>
       </control>
       <control>
         <description>Refresh</description>
