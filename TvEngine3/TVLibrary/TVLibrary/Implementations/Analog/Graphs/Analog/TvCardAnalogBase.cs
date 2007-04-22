@@ -353,7 +353,7 @@ namespace TvLibrary.Implementations.Analog
           {
             _haupPauge = new Hauppauge(_filterCapture, string.Empty);
             _haupPauge.SetStream(103);
-            _haupPauge.SetAudioBitRate(192);
+            _haupPauge.SetAudioBitRate(224);
             _haupPauge.SetVideoBitRate(4000, 6000, true);
             
             int min, max;
