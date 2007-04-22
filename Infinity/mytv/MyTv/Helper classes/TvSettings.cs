@@ -50,7 +50,7 @@ namespace MyTv
     /// Gets or sets the id of the current tv channel.
     /// </summary>
     /// <value>The id of the current tv channel.</value>
-    [Setting(SettingScope.Global, "")]
+    [Setting(SettingScope.Global, "-1")]
     public int CurrentChannel
     {
       get
