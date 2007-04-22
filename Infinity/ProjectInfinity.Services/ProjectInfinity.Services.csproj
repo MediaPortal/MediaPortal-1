@@ -40,9 +40,6 @@
   <ItemGroup>
     <Compile Include="Localisation\StringManager.cs" />
     <Compile Include="Logging\FileLogger.cs" />
-    <Compile Include="Menu\Menu.cs" />
-    <Compile Include="Menu\MenuManager.cs" />
-    <Compile Include="Menu\PluginItem.cs" />
     <Compile Include="Music\WMPMusicPlayer.cs" />
     <Compile Include="Navigation\NavigationService.cs" />
     <Compile Include="PluginManager\PluginManager.cs" />

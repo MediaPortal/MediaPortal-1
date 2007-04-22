@@ -24,6 +24,8 @@ namespace ProjectInfinity.Menu
 
     public void Startup()
     {
+      ServiceScope.Add<IMenuManager>(new MenuManager());
+
       Run();
     }
 

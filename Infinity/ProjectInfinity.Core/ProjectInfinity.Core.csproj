@@ -41,8 +41,6 @@
     <Compile Include="Localisation\StringId.cs" />
     <Compile Include="Menu\IMenu.cs" />
     <Compile Include="Menu\IMenuItem.cs" />
-    <Compile Include="Menu\IMenuManager.cs" />
-    <Compile Include="Menu\IPluginItem.cs" />
     <Compile Include="Messaging\Message.cs" />
     <Compile Include="MusicMessages.cs" />
     <Compile Include="Navigation\INavigationService.cs" />
