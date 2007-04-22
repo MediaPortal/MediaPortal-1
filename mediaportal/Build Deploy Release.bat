@@ -1,3 +1,4 @@
+@ECHO OFF
 
 IF EXIST DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe GOTO BUILT
 
