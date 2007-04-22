@@ -265,6 +265,7 @@ namespace MediaPortal.GUI.Music
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+      currentView = View.PlayList;
       facadeView.View = GUIFacadeControl.ViewMode.Playlist;
 
       if (ScrobblerOn)
@@ -597,6 +598,7 @@ namespace MediaPortal.GUI.Music
     }
 
     #endregion
+
     void OnThreadMessage(GUIMessage message)
     {      
       switch (message.Message)
@@ -788,7 +790,6 @@ namespace MediaPortal.GUI.Music
           }
           UpdateButtonStates();
           GUIWaitCursor.Hide();
-
         }
         catch (Exception ex)
         {
