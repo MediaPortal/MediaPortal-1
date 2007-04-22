@@ -37,6 +37,7 @@
     <Optimize>true</Optimize>
     <OutputPath>.\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
+    <DebugType>none</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DirectShowLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
