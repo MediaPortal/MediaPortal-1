@@ -2,15 +2,28 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{53207A4F-93D4-49B6-BB72-508D3CF0999D}</ProjectGuid>
+    <ProjectGuid>{5A9B4F5E-5BF0-4190-8982-40B6A9D5AFE1}</ProjectGuid>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <RootNamespace>MyVideos</RootNamespace>
-    <AssemblyName>MyVideos</AssemblyName>
+    <RootNamespace>MyWeather</RootNamespace>
+    <AssemblyName>MyWeather</AssemblyName>
     <WarningLevel>4</WarningLevel>
-    <OutputType>library</OutputType>
-    <ApplicationVersion>1.0.0.*</ApplicationVersion>
-    <!-- Most people will use Publish dialog in Visual Studio to increment this -->
+    <OutputType>Library</OutputType>
     <MinFrameworkVersionRequired>3.0</MinFrameworkVersionRequired>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>false</MapFileExtensions>
+    <ApplicationVersion>1.0.0.*</ApplicationVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <PublishUrl>Publish\</PublishUrl>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,11 +39,6 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="PresentationDesignDeveloper, Version=0.0.4030.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\Microsoft Visual Studio 8\Common7\IDE\Cider\PresentationDesignDeveloper.DLL</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -46,7 +54,25 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Library\ImportMovies.cs" />
+    <Compile Include="Models\WeatherViewModel.cs" />
+    <Page Include="WeatherSetup.xaml" />
+    <Page Include="Weather.xaml" />
+    <Compile Include="Weather.xaml.cs">
+      <DependentUpon>Weather.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Helper Classes\City.cs" />
+    <Compile Include="Helper Classes\Helper.cs" />
+    <Compile Include="Helper Classes\IWeatherCatcher.cs" />
+    <Compile Include="Helper Classes\WeatherDotComCatcher.cs" />
+    <Compile Include="Helper Classes\WeatherLocalizer.cs" />
+    <Compile Include="Models\WeatherSetupDataModel.cs" />
+    <Compile Include="Models\WeatherSetupSearchDataModel.cs" />
+    <Compile Include="WeatherSetup.xaml.cs">
+      <DependentUpon>WeatherSetup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -67,58 +93,38 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Helper Classes\Thumbs.cs" />
-    <Compile Include="VideoFullscreen.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>VideoFullscreen.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Models\VideoFullscreenViewModel.cs" />
-    <Compile Include="VideoHome.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>VideoHome.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Models\VideoHomeViewModel.cs" />
-    <Compile Include="Models\VideoModel.cs" />
-    <Compile Include="VideoPlayer.cs" />
-    <Compile Include="Models\VideoPlaylistModel.cs" />
-    <Compile Include="VideoPlaylist.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>VideoPlaylist.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Models\VideoPlaylistViewModel.cs" />
-    <Compile Include="VideoPlugin.cs" />
+    <Compile Include="Models\WeatherDataModel.cs" />
+    <Compile Include="WeatherPlugin.cs" />
+    <Compile Include="WeatherSettings.cs" />
+    <Compile Include="Models\WeatherSetupViewModel.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dialogs\Dialogs.csproj">
+    <ProjectReference Include="..\..\Dialogs\Dialogs.csproj">
       <Project>{82284525-5023-452C-89E3-A8765590AAEA}</Project>
       <Name>Dialogs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ExtendedMusicPlayer\ExtendedMusicPlayer.csproj">
-      <Project>{7D7C667F-2839-429D-B45A-EA4CF0A244F2}</Project>
-      <Name>ExtendedMusicPlayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MediaLibrary\MediaLibrary.Core\MediaLibrary.csproj">
-      <Project>{45C30FF9-A914-4F72-BA16-83426B9BF00B}</Project>
-      <Name>MediaLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ProjectInfinity.Controls\ProjectInfinity.Controls.csproj">
+    <ProjectReference Include="..\..\ProjectInfinity.Controls\ProjectInfinity.Controls.csproj">
       <Project>{D30415D7-E1FC-4C3F-9667-E6301E1A2F6A}</Project>
       <Name>ProjectInfinity.Controls</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ProjectInfinity.Core\ProjectInfinity.Core.csproj">
+    <ProjectReference Include="..\..\ProjectInfinity.Core\ProjectInfinity.Core.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
       <Name>ProjectInfinity.Core</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="VideoFullscreen.xaml" />
-    <Page Include="VideoHome.xaml" />
-    <Page Include="VideoPlaylist.xaml" />
+    <ProjectReference Include="..\..\ProjectInfinity.Services\ProjectInfinity.Services.csproj">
+      <Project>{4C45C46E-2ED2-4801-B3C3-FC2560E9FFE0}</Project>
+      <Name>ProjectInfinity.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ProjectInfinity.Utilities\ProjectInfinity.Utilities.csproj">
+      <Project>{4FE7B8AE-1330-424A-91A1-C68D7ABF9CB8}</Project>
+      <Name>ProjectInfinity.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(TargetDir)MyVideos.dll" "$(SolutionDir)ProjectInfinity\bin\$(ConfigurationName)"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -67,8 +67,7 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="PostBuild-Debug.bat" />
-    <None Include="PostBuild-Release.bat" />
+    <None Include="PostBuild.bat" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -110,6 +109,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(ProjectDir)PostBuild-$(ConfigurationName).bat"</PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)PostBuild.bat" $(SolutionDir) $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>

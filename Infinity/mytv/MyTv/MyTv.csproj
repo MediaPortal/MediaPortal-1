@@ -221,8 +221,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(TargetDir)*.dll" "$(SolutionDir)ProjectInfinity\bin\$(ConfigurationName)"
-xcopy /y "$(TargetDir)gentle.config" "$(SolutionDir)ProjectInfinity\bin\$(ConfigurationName)"
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
