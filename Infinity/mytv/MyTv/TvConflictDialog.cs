@@ -25,7 +25,7 @@ namespace MyTv
   /// Interaction logic for TvConflictDialog.xaml
   /// </summary>
 
-  public partial class TvConflictDialog : System.Windows.Window
+  public partial class TvConflictDialog : ViewWindow
   {
     TvConflictDialogViewModel _model;
     DialogMenuItemCollection _menuItems;
@@ -34,48 +34,29 @@ namespace MyTv
     /// </summary>
     public TvConflictDialog()
     {
-      this.WindowStyle = WindowStyle.None;
-      this.ShowInTaskbar = false;
-      this.ResizeMode = ResizeMode.NoResize;
-      this.AllowsTransparency = true;//we need it so we can alphablend the dialog with the gui. However this causes s/w rendering in wpf
-      InitializeComponent();
+      //this.AllowsTransparency = true;//we need it so we can alphablend the dialog with the gui. However this causes s/w rendering in wpf
       _menuItems = new DialogMenuItemCollection();
       _model = new TvConflictDialogViewModel(this);
+      _model.SetItems(_menuItems);
+      DataContext = _model;
+      this.InputBindings.Add(new KeyBinding(_model.Close, new KeyGesture(System.Windows.Input.Key.Escape)));
+      this.Visibility = Visibility.Visible;
+      this.BorderThickness = new Thickness(0);
+      this.Width = 530;
+      this.Height = 370;
     }
     public TvConflictDialog(DialogMenuItemCollection items)
     {
       _menuItems = items;
-      this.WindowStyle = WindowStyle.None;
-      this.ShowInTaskbar = false;
-      this.ResizeMode = ResizeMode.NoResize;
-      this.AllowsTransparency = true;
-      InitializeComponent();
+      //this.AllowsTransparency = true;
       _model = new TvConflictDialogViewModel(this);
-    }
-    private void OnLoaded(object sender, RoutedEventArgs e)
-    {
-      LoadSkin();
       _model.SetItems(_menuItems);
-      gridMain.DataContext = _model;
+      DataContext = _model;
       this.InputBindings.Add(new KeyBinding(_model.Close, new KeyGesture(System.Windows.Input.Key.Escape)));
       this.Visibility = Visibility.Visible;
-    }
-    protected virtual void LoadSkin()
-    {
-      gridMain.Children.Clear();
-      try
-      {
-        using (FileStream steam = new FileStream(@"skin\default\MyTv\TvConflictDialog.xaml", FileMode.Open, FileAccess.Read))
-        {
-          UIElement documentRoot = (UIElement)XamlReader.Load(steam);
-          gridMain.Children.Add(documentRoot);
-        }
-      }
-      catch (Exception ex)
-      {
-        ServiceScope.Get<ILogger>().Error("error loading TvConflictDialog.xaml");
-        ServiceScope.Get<ILogger>().Error(ex);
-      }
+      this.BorderThickness = new Thickness(0);
+      this.Width = 530;
+      this.Height = 370;
     }
 
 

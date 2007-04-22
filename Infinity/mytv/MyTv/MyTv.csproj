@@ -99,9 +99,6 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="TvConflictDialog.xaml" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Helper classes\TvSettings.cs" />
     <Compile Include="Models\EpgGridCell.cs" />
     <Compile Include="Models\ProgramModel.cs" />
@@ -141,10 +138,7 @@
     <Compile Include="Helper classes\Thumbs.cs" />
     <Compile Include="Helper classes\TsReaderCheck.cs" />
     <Compile Include="Models\TvRecordedViewModel.cs" />
-    <Compile Include="TvConflictDialog.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>TvConflictDialog.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="TvConflictDialog.cs" />
     <Compile Include="TvFullscreen.cs" />
     <Compile Include="TvGuide.cs" />
     <Compile Include="TvHome.cs" />
