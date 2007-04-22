@@ -22,10 +22,18 @@
 
 #pragma once
 
-class MPidObserver
+class MSubtitlePidObserver
+{
+	public:
+
+		virtual void SetSubtitlePid( LONG pid ) = 0;
+};
+
+class MPCRPidObserver
 {
 	public:
 
 		virtual void SetPcrPid( LONG pid ) = 0;
-		virtual void SetSubtitlePid( LONG pid ) = 0;
 };
+
+

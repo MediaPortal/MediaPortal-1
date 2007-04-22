@@ -29,6 +29,8 @@
 #include <commctrl.h>
 #include <initguid.h>
 
+#include "SubtitleInputPin.h"
+#include "PCRInputPin.h"
 #include "PMTInputPin.h"
 #include "PidObserver.h"
 #include "PatParser\PatParser.h"
@@ -43,13 +45,14 @@ const ULONG PMT_PID = 0x0;
 //
 // Constructor
 //
-CPMTInputPin::CPMTInputPin( CDVBSub *m_pFilter,
+CPMTInputPin::CPMTInputPin( CDVBSub *pSubFilter,
 								LPUNKNOWN pUnk,
 								CBaseFilter *pFilter,
 								CCritSec *pLock,
 								CCritSec *pReceiveLock,
-								HRESULT *phr,
-                MPidObserver *pPidObserver ) :
+                HRESULT *phr,
+                CSubtitleInputPin *pSubtitlePin,
+                CPcrInputPin *pPCRPin ) :
 
     CBaseInputPin( NAME( "CPMTInputPin" ),
 					      pFilter,						// Filter
@@ -57,12 +60,14 @@ CPMTInputPin::CPMTInputPin( CDVBSub *m_pFilter,
 					      phr,							  // Return code
 					      L"PMT" ),						// Pin name
 					      m_pReceiveLock( pReceiveLock ),
-					      m_pTransform( m_pTransform ),
+					      m_pFilter( pSubFilter ),
   m_pDemuxerPin( NULL ),
-  m_pPidObserver( pPidObserver ),
+  m_pSubtitlePin( pSubtitlePin ),
+  m_pPCRPin( pPCRPin ),
   m_subtitlePid( -1 ),
   m_streamVideoPid( -1 ),
-  m_pcrPid( -1 )
+  m_pcrPid( -1 ),
+  m_sampleCount( 0 )
 {
 	m_pPatParser = new CPatParser();
   m_pPatParser->Reset();
@@ -101,17 +106,21 @@ HRESULT CPMTInputPin::CompleteConnect( IPin *pPin )
   m_pDemuxerPin = pPin;
 	HRESULT hr = CBasePin::CompleteConnect( pPin );
   
-  CAutoLock lock( m_pLock );
-
   if( hr == S_OK )
   {
-    hr = MapPidToDemuxer( PMT_PID, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
-
-    if( hr == S_OK )
-      hr = FindVideoPID();
+    hr = m_pFilter->SetPid( this, PMT_PID, MEDIA_TRANSPORT_PACKET );
   }
   LogDebug( "PMT input pin - CompleteConnect - done - hr = %i", hr);
   return hr;
+}
+
+
+//
+// GetDemuxerPin
+//
+IPin* CPMTInputPin::GetDemuxerPin()
+{
+  return m_pDemuxerPin;
 }
 
 
@@ -136,31 +145,22 @@ STDMETHODIMP CPMTInputPin::ReceiveCanBlock()
 //
 STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
 {
-  //LogDebug( "CPMTInputPin::Receive" );
+  CAutoLock lock( m_pReceiveLock );
+//  LogDebug( "CPMTInputPin::Receive" );
 
-  DWORD dwMSecs( 0 ); 
-  FILTER_STATE state;
-
-  m_pFilter->GetState( dwMSecs, &state );
-  if( state == State_Stopped || state == State_Paused )
+  HRESULT hr = CBaseInputPin::Receive( pSample );
+  if( hr != S_OK ) 
   {
-    LogDebug( "CPMTInputPin::Receive - filter state stopped/paused - done" );
-    return S_FALSE;
+    LogDebug( "CPMTInputPin::Receive - BaseInputPin ignored the sample!" ); 
+    return hr;
   }
 
-  CAutoLock lock( m_pReceiveLock );
   CheckPointer( pSample, E_POINTER );
 
-  if( m_bReset )
-  {
-    FindVideoPID();
-    m_bReset = false;
-  }
-  
-  PBYTE pbData=NULL;
-	long lDataLen=0;
+  PBYTE pbData = NULL;
+	long lDataLen = 0;
 
-  HRESULT hr = pSample->GetPointer( &pbData );
+  hr = pSample->GetPointer( &pbData );
   if( FAILED(hr) )
     return hr;
 
@@ -182,17 +182,17 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
         pidTable = m_pPatParser->m_pmtParsers[i]->GetPidInfo();
         videoPid = pidTable.VideoPid;
 
-        if( m_streamVideoPid == videoPid && m_pPidObserver != NULL )
+        if( m_streamVideoPid == videoPid )
         {
-          if( m_pcrPid == -1 && pidTable.PcrPid > 0)
+          if( m_pcrPid == -1 && pidTable.PcrPid > 0 && m_pPCRPin != NULL )
           {
             m_pcrPid = pidTable.PcrPid;
-            m_pPidObserver->SetPcrPid( m_pcrPid  );
+            m_pPCRPin->SetPcrPid( m_pcrPid  );
           }
-          if( m_subtitlePid == -1 && pidTable.SubtitlePid > 0)
+          if( m_subtitlePid == -1 && pidTable.SubtitlePid > 0 && m_pSubtitlePin != NULL )
           {
             m_subtitlePid = pidTable.SubtitlePid;
-            m_pPidObserver->SetSubtitlePid( m_subtitlePid );
+            m_pSubtitlePin->SetSubtitlePid( m_subtitlePid );
           }
           break; // correct PMT is found
         }
@@ -200,79 +200,6 @@ STDMETHODIMP CPMTInputPin::Receive( IMediaSample *pSample )
     }
   }
   //LogDebug( "CPMTInputPin::Receive - done" );
-  return hr;
-}
-
-
-//
-// FindVideoPID
-//
-HRESULT CPMTInputPin::FindVideoPID()
-{
-  LogDebug( "CPMTInputPin::FindVideoPID()" );
-
-  HRESULT hr;
-  IFilterGraph *pGraph = m_pFilter->GetFilterGraph();
-  IBaseFilter *pDemuxer = NULL;;
-
-  hr = pGraph->FindFilterByName( L"MPEG-2 Demultiplexer", &pDemuxer );
-
-  if( hr != S_OK )
-  {
-    LogDebug( "Unable to find demuxer!" );
-    return hr;
-  }
-  IPin* pPin;
-  PIN_DIRECTION  direction;
-  IEnumPins *pIEnumPins = NULL;
-  AM_MEDIA_TYPE *mediatype;
-  if( SUCCEEDED( pDemuxer->EnumPins( &pIEnumPins ) ) )
-  {
-    ULONG count(0);
-    while( pIEnumPins->Next( 1, &pPin, &count ) == S_OK )
-    {
-	    hr = pPin->QueryDirection( &direction );
-	    if( direction == PINDIR_OUTPUT )
-      {
-		    IEnumMediaTypes* ppEnum;
-		    if( SUCCEEDED( pPin->EnumMediaTypes( &ppEnum ) ) )
-        {
-			    ULONG fetched( 0 );
-			    while( ppEnum->Next( 1, &mediatype, &fetched ) == S_OK )
-			    {
-				    if( mediatype->majortype == MEDIATYPE_Video )
-            {
-              IMPEG2PIDMap* pMuxMapPid;
-              if( SUCCEEDED( pPin->QueryInterface( &pMuxMapPid ) ) )
-              {
-                IEnumPIDMap *pIEnumPIDMap;
-                if( SUCCEEDED( pMuxMapPid->EnumPIDMap( &pIEnumPIDMap ) ) )
-                {
-	                ULONG count = 0;
-	                PID_MAP pidMap;
-	                while( pIEnumPIDMap->Next( 1, &pidMap, &count ) == S_OK )
-                  {
-                    SetVideoPid( pidMap.ulPID );
-                    LogDebug( "  found video PID %d",  m_streamVideoPid );
-	                }
-                }
-              pMuxMapPid->Release();
-					    ppEnum->Release();
-					    return S_OK;
-              }
-				    }
-				    mediatype = NULL;
-			    }
-			    ppEnum->Release();
-			    ppEnum = NULL;
-		    }
-	    }
-	    pPin->Release();
-	    pPin = NULL;
-    }
-    pIEnumPins->Release();
-  }
-  LogDebug( "CPMTInputPin::FindVideoPID() - done" );
   return hr;
 }
 
@@ -316,7 +243,7 @@ void CPMTInputPin::OnTsPacket( byte* tsPacket )
 
         if( !alreadyMapped )
         {
-          MapPidToDemuxer( pid, m_pDemuxerPin, MEDIA_TRANSPORT_PACKET );
+          m_pFilter->SetPid( this, pid, MEDIA_TRANSPORT_PACKET );
           mappedPids.resize( mappedPids.size() + 1 );
           mappedPids[mappedPids.size() - 1] = pid;
         }
@@ -332,6 +259,7 @@ void CPMTInputPin::OnTsPacket( byte* tsPacket )
 void CPMTInputPin::Reset()
 {
   LogDebug( "CPMTInputPin - reset" );
+  m_sampleCount = 0;
   m_bReset = true;
   m_subtitlePid = -1;
   m_pcrPid = -1;
@@ -347,8 +275,11 @@ void CPMTInputPin::Reset()
 //
 STDMETHODIMP CPMTInputPin::BeginFlush( void )
 {
-	//Reset();
-	return CBaseInputPin::BeginFlush();
+  CAutoLock lock_it( m_pReceiveLock );
+  LogDebug( "CPMTInputPin::BeginFlush" );
+  HRESULT hr = CBaseInputPin::BeginFlush();
+  LogDebug( "CPMTInputPin::BeginFlush - done" );
+	return hr;
 }
 
 
@@ -357,6 +288,10 @@ STDMETHODIMP CPMTInputPin::BeginFlush( void )
 //
 STDMETHODIMP CPMTInputPin::EndFlush( void )
 {
-	Reset();
-	return CBaseInputPin::EndFlush();
+  CAutoLock lock_it( m_pReceiveLock );  
+  LogDebug( "CPMTInputPin::EndFlush" );
+  Reset();
+  HRESULT hr = CBaseInputPin::EndFlush();
+  LogDebug( "CPMTInputPin::EndFlush - done" );
+	return hr; 
 }

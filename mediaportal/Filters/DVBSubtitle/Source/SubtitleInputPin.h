@@ -23,13 +23,13 @@
 #pragma warning(disable: 4511 4512 4995)
 
 #include "DVBSub.h"
-#include "DemuxPinMapper.h"
 #include "dvbsubs\dvbsubdecoder.h"
 #include "PatParser\PacketSync.h"
 #include "PatParser\PesDecoder.h"
 #include <streams.h>
 
-class CSubtitleInputPin : public CRenderedInputPin, public CDemuxPinMapper, public CPacketSync, public CPesCallback
+class CSubtitleInputPin : public CBaseInputPin,  
+                          public CPacketSync, public CPesCallback
 {
 public:
 
@@ -45,7 +45,6 @@ public:
 
   // Do something with this media sample
   STDMETHODIMP Receive( IMediaSample *pSample );
-  STDMETHODIMP EndOfStream( void );
   STDMETHODIMP ReceiveCanBlock();
 
   STDMETHODIMP BeginFlush( void );
@@ -54,10 +53,10 @@ public:
   HRESULT CheckMediaType( const CMediaType * );
   HRESULT CompleteConnect( IPin *pPin );
   HRESULT BreakConnect();
-  STDMETHODIMP NewSegment( REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate );
 
 	void Reset();
   void SetSubtitlePid( LONG pPID );
+  IPin* GetDemuxerPin();
 
   // From CPacketSync
   void OnTsPacket( byte* tsPacket );
@@ -70,10 +69,10 @@ private:
 	CDVBSubDecoder*		m_pSubDecoder;
   CPesDecoder*      m_pesDecoder;
 	
-  IPin  *m_pPin;
+  IPin  *m_pDemuxerPin;
 	LONG  m_SubtitlePid;
 
   CDVBSub* const    m_pDVBSub;				// Main renderer object
-  CCritSec * const	m_pReceiveLock; // Sample critical section
+  CCritSec * const	m_pReceiveLock;   // Sample critical section
   bool				      m_bReset;
 };

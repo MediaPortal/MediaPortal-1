@@ -25,6 +25,7 @@
 #include <windows.h>
 #include <xprtdefs.h>
 #include <streams.h>
+#include <bdaiface.h>
 #include <initguid.h>
 #include <atlcomcli.h>
 
@@ -32,10 +33,13 @@
 #include "SubdecoderObserver.h"
 #include "PidObserver.h"
 #include "ITSFileSource.h"
+#include "TSThread.h"
+#include <vector>
 
 class CSubtitleInputPin;
 class CPcrInputPin;
 class CPMTInputPin;
+class CDVBFilterPin;
 
 class CDVBSubDecoder;
 
@@ -78,10 +82,24 @@ DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
   STDMETHOD(Test)(int status) PURE;
 };
 
+enum PinMappingState
+{
+  PidNotAvailable = 0,
+  PidAvailable,
+  PidMapped
+};
+
+struct PinMappingInfo
+{
+  PinMappingState mappingState;
+  ULONG pid;
+  MEDIA_SAMPLE_CONTENT sampleContent;
+};
+
 
 extern void LogDebug( const char *fmt, ... );
 
-class CDVBSub : public CBaseFilter, public MSubdecoderObserver, MPidObserver, IDVBSubtitle
+class CDVBSub : public CBaseFilter, public MSubdecoderObserver, IDVBSubtitle, TSThread
 {
 public:
   // Constructor & destructor
@@ -113,32 +131,42 @@ public:
 	void NotifySubtitle();
   void NotifyFirstPTS( ULONGLONG firstPTS );
 
-  // From MPidObserver
-  void SetPcrPid( LONG pid );
-	void SetSubtitlePid( LONG pid );
+  void SetSubtitlePid( LONG pid );
 
   static CUnknown * WINAPI CreateInstance( LPUNKNOWN pUnk, HRESULT *pHr );
 
   void SetPcr( ULONGLONG pcr );
   void NotifySeeking();
 
+  void Event();
+
+  // Worker thread related functions
+  void ThreadProc();
+  HRESULT SetPid( CBaseInputPin* pin, LONG pid, MEDIA_SAMPLE_CONTENT sampleContent );
+  HRESULT MapPidToDemuxer( CBaseInputPin* pPin, LONG pid, MEDIA_SAMPLE_CONTENT sampleContent );
 
 private:
+
   void Reset();
   void LogDebugMediaPosition( const char *text );
   HRESULT ConnectToTSFileSource();
+  HRESULT FindVideoPID();
+
+public:
+
+  CSubtitleInputPin*  m_pSubtitlePin;
+	CPcrInputPin*		    m_pPCRPin;
+  CPMTInputPin*       m_pPMTPin;
 
 private: // data
-
-  CSubtitleInputPin*  m_pSubtitleInputPin;
-	CPcrInputPin*		    m_pPcrPin;
-  CPMTInputPin*       m_pPMTPin;
 
   int m_VideoPid;
 
   CDVBSubDecoder*     m_pSubDecoder;      // Subtitle decoder
-	IMediaSeeking*      m_pIMediaSeeking;   // Media seeking interface
-
+	IMediaFilter*       m_pMediaFilter;     
+  IMediaSeeking*      m_pIMediaSeeking;   // Media seeking interface
+  IReferenceClock*    m_pReferenceClock;
+  CAMEvent            m_TimerEvent;       // Used to signal timer events
   CCritSec            m_Lock;				      // Main renderer critical section
   CCritSec            m_ReceiveLock;		  // Sublock for received samples
 
@@ -153,6 +181,10 @@ private: // data
   int                 (CALLBACK *m_pTimestampResetObserver) ();
 
   ITSFileSource*      m_pTSFileSource;
-  bool                m_bStopping;
+
   bool                m_bSeekingDone;
+
+  std::vector<PinMappingInfo> m_SubtitlePinMapping;
+  std::vector<PinMappingInfo> m_PCRPinMapping;
+  std::vector<PinMappingInfo> m_PMTPinMapping;
 };

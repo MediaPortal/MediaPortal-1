@@ -44,7 +44,7 @@ CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
 										CDVBSubDecoder* pSubDecoder,
 										HRESULT *phr ) :
 
-    CRenderedInputPin(NAME( "CSubtitleInputPin" ),
+    CBaseInputPin(NAME( "CSubtitleInputPin" ),
 					pFilter,						    // Filter
 					pLock,							    // Locking
 					phr,							      // Return code
@@ -53,7 +53,7 @@ CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
 					m_pDVBSub( pDVBSub ),
 					m_pSubDecoder( pSubDecoder ),
 					m_SubtitlePid( -1 ),
-          m_pPin( NULL )
+          m_pDemuxerPin( NULL )
 {
   m_pesDecoder = new CPesDecoder( this );
 
@@ -90,7 +90,7 @@ HRESULT CSubtitleInputPin::CheckMediaType( const CMediaType *pmt )
 //
 HRESULT CSubtitleInputPin::BreakConnect()
 {
-  return CRenderedInputPin::BreakConnect();
+  return CBaseInputPin::BreakConnect();
 }
 
 
@@ -100,12 +100,12 @@ HRESULT CSubtitleInputPin::BreakConnect()
 HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
 {
 	HRESULT hr = CBasePin::CompleteConnect( pPin );
-  m_pPin = pPin;
+  m_pDemuxerPin = pPin;
 
   if( m_SubtitlePid == -1 )
     return hr;  // PID is mapped later when we have it
 
-  hr = MapPidToDemuxer( m_SubtitlePid, m_pPin, MEDIA_TRANSPORT_PACKET );
+  hr = m_pDVBSub->SetPid( this, m_SubtitlePid, MEDIA_TRANSPORT_PACKET );
   m_pesDecoder->SetPid( m_SubtitlePid );
 
   return hr;
@@ -126,19 +126,15 @@ STDMETHODIMP CSubtitleInputPin::ReceiveCanBlock()
 //
 STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 {
-//	LogDebug( "CSubtitleInputPin::Receive" );
-  DWORD dwMSecs( 0 ); 
-  FILTER_STATE state;
-
-  m_pDVBSub->GetState( dwMSecs, &state );
-  if( state == State_Stopped || state == State_Paused )
-  {
-    LogDebug( "CSubtitleInputPin::Receive - filter state stopped/paused - done" );
-    return S_FALSE;
-  }
-
   CAutoLock lock( m_pReceiveLock );
-//  CAutoLock lock( m_pLock );
+  //	LogDebug( "CSubtitleInputPin::Receive" );
+
+  HRESULT hr = CBaseInputPin::Receive( pSample );
+  if( hr != S_OK ) 
+  {
+    LogDebug( "CSubtitleInputPin::Receive - BaseInputPin ignored the sample!" ); 
+    return hr;
+  }
 
 	if( m_SubtitlePid == -1 )
     return S_OK;  // Nothing to be done yet
@@ -154,7 +150,7 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 	REFERENCE_TIME tStart, tStop;
 	pSample->GetTime( &tStart, &tStop);
 	long lDataLen = 0;
-	HRESULT hr = pSample->GetPointer( &pbData );
+	hr = pSample->GetPointer( &pbData );
 
   if( FAILED( hr ) )
 	{
@@ -215,19 +211,21 @@ void CSubtitleInputPin::Reset()
 //
 void CSubtitleInputPin::SetSubtitlePid( LONG pPid )
 {
-	m_SubtitlePid = pPid;
-  MapPidToDemuxer( m_SubtitlePid, m_pPin, MEDIA_TRANSPORT_PACKET );
+  m_SubtitlePid = pPid;
+  
+  if( m_pDemuxerPin != NULL )
+  {
+    m_pDVBSub->SetPid( this, m_SubtitlePid, MEDIA_TRANSPORT_PACKET );
+  }
   m_pesDecoder->SetPid( m_SubtitlePid );
 }
 
-
 //
-// EndOfStream
+// GetDemuxerPin
 //
-STDMETHODIMP CSubtitleInputPin::EndOfStream( void )
+IPin* CSubtitleInputPin::GetDemuxerPin()
 {
-  CAutoLock lock( m_pReceiveLock );
-  return CRenderedInputPin::EndOfStream();
+  return m_pDemuxerPin;
 }
 
 
@@ -236,7 +234,11 @@ STDMETHODIMP CSubtitleInputPin::EndOfStream( void )
 //
 STDMETHODIMP CSubtitleInputPin::BeginFlush( void )
 {
-	return CRenderedInputPin::BeginFlush();
+	LogDebug( "CSubtitleInputPin::BeginFlush" );
+  CAutoLock lock_it( m_pReceiveLock );
+  HRESULT hr = CBaseInputPin::BeginFlush();
+  LogDebug( "CSubtitleInputPin::BeginFlush - done" );
+  return hr;
 }
 
 
@@ -245,16 +247,10 @@ STDMETHODIMP CSubtitleInputPin::BeginFlush( void )
 //
 STDMETHODIMP CSubtitleInputPin::EndFlush( void )
 {
+  CAutoLock lock_it( m_pReceiveLock );
+  LogDebug( "CSubtitleInputPin::BeginFlush" );
   m_pDVBSub->NotifySeeking();
-	return CRenderedInputPin::EndFlush();
-}
-
-//
-// NewSegment
-//
-STDMETHODIMP CSubtitleInputPin::NewSegment( REFERENCE_TIME tStart,
-											REFERENCE_TIME tStop,
-											double dRate )
-{
-  return CRenderedInputPin::NewSegment( tStart, tStop, dRate );
+  HRESULT hr = CBaseInputPin::EndFlush();
+  LogDebug( "CSubtitleInputPin::BeginFlush - done" );
+  return hr; 
 }

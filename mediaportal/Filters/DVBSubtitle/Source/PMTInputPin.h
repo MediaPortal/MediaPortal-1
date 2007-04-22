@@ -23,25 +23,26 @@
 #pragma warning( disable: 4995 )
 
 #include "DvbSub.h"
-#include "DemuxPinMapper.h"
 #include "PatParser\PacketSync.h"
 #include <streams.h>
 #include <vector>
 
+class CSubtitleInputPin;
+class CPcrInputPin;
 class CPatParser;
-class MPidObserver;
 
-class CPMTInputPin : public CBaseInputPin, CPacketSync, CDemuxPinMapper
+class CPMTInputPin : public CBaseInputPin, CPacketSync
 {
 public:
 
-  CPMTInputPin( CDVBSub *m_pFilter,
+  CPMTInputPin( CDVBSub *pSubFilter,
 				LPUNKNOWN pUnk,
 				CBaseFilter *pFilter,
 				CCritSec *pLock,
 				CCritSec *pReceiveLock,
 				HRESULT *phr,
-        MPidObserver *pPidObserver );
+        CSubtitleInputPin *pSubtitlePin,
+        CPcrInputPin *pPCRPin );
 
   ~CPMTInputPin();
 
@@ -57,7 +58,7 @@ public:
   void OnTsPacket( byte* tsPacket );
 
   void SetVideoPid( int videoPid );
-  HRESULT FindVideoPID();
+  IPin* GetDemuxerPin();
   void Reset();
 
 private:
@@ -67,7 +68,8 @@ private:
   CPatParser* m_pPatParser;
   IPin*       m_pDemuxerPin;
 
-  MPidObserver* m_pPidObserver;
+  CSubtitleInputPin*  m_pSubtitlePin;
+  CPcrInputPin*       m_pPCRPin;
 
   LONG m_streamVideoPid;
   LONG m_subtitlePid;
@@ -75,7 +77,8 @@ private:
 
   std::vector<int> mappedPids;
 
-  CDVBSub* const	  m_pTransform;		  	// Main renderer object
+  CDVBSub* const	  m_pFilter;		  	  // Main renderer object
   CCritSec * const  m_pReceiveLock;			// Sample critical section
   bool				      m_bReset;
+  int               m_sampleCount;
 };

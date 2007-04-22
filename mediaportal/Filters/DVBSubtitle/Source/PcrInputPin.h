@@ -22,16 +22,16 @@
 #pragma once
 #pragma warning( disable: 4511 4512 4995 )
 
+#include "PidObserver.h"
 #include "DvbSub.h"
-#include "DemuxPinMapper.h"
 #include "PatParser\PacketSync.h"
 #include <streams.h>
 
-class CPcrInputPin : public CRenderedInputPin, CDemuxPinMapper, CPacketSync
+class CPcrInputPin : public CBaseInputPin, CPacketSync, MPCRPidObserver
 {
 public:
 
-  CPcrInputPin( CDVBSub *m_pFilter,
+  CPcrInputPin( CDVBSub *pSubFilter,
 				          LPUNKNOWN pUnk,
 				          CBaseFilter *pFilter,
 				          CCritSec *pLock,
@@ -49,7 +49,7 @@ public:
   HRESULT CompleteConnect( IPin *pPin );
 
   void SetPcrPid( LONG pPid );
-
+  IPin* GetDemuxerPin();
 	void Reset();
 
 	ULONGLONG GetCurrentPCR();
@@ -63,7 +63,7 @@ private:
   CCritSec *const	m_pReceiveLock;		// Sample critical section
 
 	ULONGLONG m_currentPTS;
-  LONG m_pcrPid;
+  LONG      m_pcrPid;
 
-  IPin *m_pPin;
+  IPin      *m_pDemuxerPin;
 };

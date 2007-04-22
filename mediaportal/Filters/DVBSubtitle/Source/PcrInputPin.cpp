@@ -38,22 +38,22 @@ const int TSPacketSize = 188;
 //
 // Constructor
 //
-CPcrInputPin::CPcrInputPin( CDVBSub *m_pFilter,
+CPcrInputPin::CPcrInputPin( CDVBSub *pSubFilter,
 								LPUNKNOWN pUnk,
 								CBaseFilter *pFilter,
 								CCritSec *pLock,
 								CCritSec *pReceiveLock,
 								HRESULT *phr ) :
 
-    CRenderedInputPin(NAME( "CPcrInputPin" ),
+    CBaseInputPin(NAME( "CPcrInputPin" ),
 					pFilter,						// Filter
 					pLock,							// Locking
 					phr,							  // Return code
 					L"Pcr" ),					  // Pin name
 					m_pReceiveLock( pReceiveLock ),
-					m_pFilter( m_pFilter ),
+					m_pFilter( pSubFilter ),
           m_pcrPid( -1 ),
-          m_pPin( NULL )
+          m_pDemuxerPin( NULL )
 {
 	Reset();
 	LogDebug( "Pcr: Pin created" );
@@ -88,14 +88,24 @@ HRESULT CPcrInputPin::CheckMediaType( const CMediaType *pmt )
 HRESULT CPcrInputPin::CompleteConnect( IPin *pPin )
 {
 	HRESULT hr = CBasePin::CompleteConnect( pPin );
-  m_pPin = pPin;
+  m_pDemuxerPin = pPin;
   if( m_pcrPid == -1 )
     return hr;  // PID is mapped later when we have it
 
-  hr = MapPidToDemuxer( m_pcrPid, m_pPin, MEDIA_TRANSPORT_PACKET );
+  hr = m_pFilter->SetPid( this, m_pcrPid, MEDIA_TRANSPORT_PACKET );
 
   return hr;
 }
+
+
+//
+// GetDemuxerPin
+//
+IPin* CPcrInputPin::GetDemuxerPin()
+{
+  return m_pDemuxerPin;
+}
+
 
 //
 // ReceiveCanBlock
@@ -105,24 +115,21 @@ STDMETHODIMP CPcrInputPin::ReceiveCanBlock()
   return S_OK;
 }
 
+
 //
 // Receive
 //
 STDMETHODIMP CPcrInputPin::Receive( IMediaSample *pSample )
 {
-	//LogDebug( "CPcrInputPin::Receive" );
-
-  DWORD dwMSecs( 0 ); 
-  FILTER_STATE state;
-
-  m_pFilter->GetState( dwMSecs, &state );
-  if( state == State_Stopped || state == State_Paused )
-  {
-    LogDebug( "CPcrInputPin::Receive - filter state stopped/paused - done" );
-    return S_FALSE;
-  }
-
   CAutoLock lock( m_pReceiveLock );
+//  LogDebug( "CPcrInputPin::Receive" );
+
+  HRESULT hr = CBaseInputPin::Receive( pSample );
+  if( hr != S_OK ) 
+  {
+    LogDebug( "CPcrInputPin::Receive - BaseInputPin ignored the sample!" ); 
+    return hr;
+  }
 
   if( m_pcrPid == -1 )
     return S_OK;  // Nothing to be done yet
@@ -130,10 +137,9 @@ STDMETHODIMP CPcrInputPin::Receive( IMediaSample *pSample )
 	CheckPointer( pSample, E_POINTER );
 
 	PBYTE pbData = NULL;
-
 	long lDataLen = 0;
 
-	HRESULT hr = pSample->GetPointer( &pbData );
+	hr = pSample->GetPointer( &pbData );
 	if( FAILED(hr) )
 	{
 		LogDebug( "Pcr pin: Receive() err = %d", hr );
@@ -143,7 +149,7 @@ STDMETHODIMP CPcrInputPin::Receive( IMediaSample *pSample )
 
 	OnRawData( pbData, lDataLen );
 
-  //LogDebug( "CPcrInputPin::Receive - done" );
+//  LogDebug( "CPcrInputPin::Receive - done" );
   return S_OK;
 }
 
@@ -165,30 +171,41 @@ void CPcrInputPin::Reset()
 //
 void CPcrInputPin::SetPcrPid( LONG pPid )
 {
+  LogDebug( "CPcrInputPin::SetPcrPid" );
   m_pcrPid = pPid;
 
-  if( m_pPin != NULL )
-    MapPidToDemuxer( m_pcrPid, m_pPin, MEDIA_TRANSPORT_PACKET );
+  if( m_pDemuxerPin != NULL )
+  {
+    m_pFilter->SetPid( this, m_pcrPid, MEDIA_TRANSPORT_PACKET );
+  }
+  LogDebug( "CPcrInputPin::SetPcrPid - done" );
 }
 
 
 //
 // SetPcrPid
 //
-STDMETHODIMP CPcrInputPin::BeginFlush(void)
+STDMETHODIMP CPcrInputPin::BeginFlush( void )
 {
-//	Reset();
-	return CRenderedInputPin::BeginFlush();
+  CAutoLock lock_it( m_pReceiveLock );
+	LogDebug( "CPcrInputPin::BeginFlush" );
+  HRESULT hr = CBaseInputPin::BeginFlush();
+  LogDebug( "CPcrInputPin::BeginFlush - done" );
+  return hr;
 }
 
 
 //
 // EndFlush
 //
-STDMETHODIMP CPcrInputPin::EndFlush(void)
+STDMETHODIMP CPcrInputPin::EndFlush( void )
 {
-	Reset();
-	return CRenderedInputPin::EndFlush();
+  LogDebug( "CPcrInputPin::EndFlush" );
+  CAutoLock lock_it( m_pReceiveLock );
+  Reset();
+  HRESULT hr = CBaseInputPin::EndFlush();
+  LogDebug( "CPcrInputPin::EndFlush - done" );
+  return hr;
 }
 
 

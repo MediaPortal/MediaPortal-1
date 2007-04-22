@@ -21,6 +21,8 @@
 
 #pragma warning( disable: 4995 4996 )
 
+#include <streams.h>
+#include <bdaiface.h>
 #include "DVBSub.h"
 #include "SubtitleInputPin.h"
 #include "PcrInputPin.h"
@@ -83,17 +85,17 @@ const AMOVIESETUP_PIN sudPins[4] =
 //
 CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   CBaseFilter( NAME("MediaPortal DVBSub"), pUnk, &m_Lock, CLSID_DVBSub ),
-  m_pSubtitleInputPin( NULL ),
+  m_pSubtitlePin( NULL ),
 	m_pSubDecoder( NULL ),
   m_pSubtitleObserver( NULL ),
   m_pTimestampResetObserver( NULL ),
   m_pIMediaSeeking( NULL ),
   m_pTSFileSource( NULL ),
+  m_pMediaFilter( NULL ),
   m_basePCR( -1 ),
   m_firstPCR( -1 ),
   m_startTimestamp( -1 ),
   m_seekDifPCR( -1 ),
-  m_bStopping( false ),
   m_bSeekingDone( true )
 {
 	// Create subtitle decoder
@@ -109,7 +111,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   }
 
   // Create subtitle input pin
-	m_pSubtitleInputPin = new CSubtitleInputPin( this,
+	m_pSubtitlePin = new CSubtitleInputPin( this,
 								GetOwner(),
 								this,
 								&m_Lock,
@@ -117,7 +119,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
 								m_pSubDecoder,
 								phr );
 
-	if ( m_pSubtitleInputPin == NULL )
+	if ( m_pSubtitlePin == NULL )
 	{
     if( phr )
 		{
@@ -127,14 +129,14 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   }
 
 	// Create pcr input pin
-	m_pPcrPin = new CPcrInputPin( this,
+	m_pPCRPin = new CPcrInputPin( this,
 								GetOwner(),
 								this,
 								&m_Lock,
 								&m_ReceiveLock,
 								phr );
 
-	if ( m_pPcrPin == NULL )
+	if ( m_pPCRPin == NULL )
 	{
     if( phr )
 		{
@@ -150,7 +152,8 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
 								&m_Lock,
 								&m_ReceiveLock,
 								phr,
-                this ); // MPidObserver
+                m_pSubtitlePin, 
+                m_pPCRPin );
 
 	if ( m_pPMTPin == NULL )
 	{
@@ -182,8 +185,8 @@ CDVBSub::~CDVBSub()
     m_pSubDecoder->SetObserver( NULL );
   }
 	delete m_pSubDecoder;
-	delete m_pSubtitleInputPin;
-	delete m_pPcrPin;
+	delete m_pSubtitlePin;
+	delete m_pPCRPin;
   delete m_pPMTPin;
 
   LogDebug( "CDVBSub::~CDVBSub() - end" );
@@ -196,10 +199,10 @@ CDVBSub::~CDVBSub()
 CBasePin * CDVBSub::GetPin( int n )
 {
 	if( n == 0 )
-		return m_pSubtitleInputPin;
+		return m_pSubtitlePin;
 
   if( n == 1 )
-		return m_pPcrPin;
+		return m_pPCRPin;
 
   if( n == 2 )
 		return m_pPMTPin;
@@ -223,8 +226,21 @@ int CDVBSub::GetPinCount()
 STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 {
   CAutoLock cObjectLock( m_pLock );
-  m_bStopping = false;
+  LogDebug( "CDVBSub::Run" );
+  m_startTimestamp = tStart;
   
+  HRESULT hr = CBaseFilter::Run( tStart );
+
+  if( hr != S_OK )
+  {
+    LogDebug( "CDVBSub::Run - BaseFilter returned %i", hr );
+    return hr;
+  }
+
+  // Get the reference clock interface 
+  GetFilterGraph()->QueryInterface( IID_IMediaFilter, (void**)&m_pMediaFilter );
+  m_pMediaFilter->GetSyncSource( &m_pReferenceClock );
+
   // Get media seeking interface if missing
   if( !m_pIMediaSeeking )
   {
@@ -251,10 +267,11 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
     m_bSeekingDone = false;
     Reset();
   }
-
-  m_startTimestamp = tStart;
   
-	return CBaseFilter::Run( tStart );
+  FindVideoPID();
+
+  LogDebug( "CDVBSub::Run - done" );
+	return hr; 
 }
 
 
@@ -264,8 +281,16 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
 STDMETHODIMP CDVBSub::Pause()
 {
   CAutoLock cObjectLock( m_pLock );
-  LogDebugMediaPosition( "Pause - media seeking position" );
-  return CBaseFilter::Pause();
+  LogDebug( "CDVBSub::Pause" );
+  HRESULT hr = CBaseFilter::Pause();
+
+  if( !IsThreadRunning() )
+  {
+    StartThread();
+  }
+
+  LogDebug( "CDVBSub::Pause - done" );
+  return hr;
 }
 
 
@@ -274,24 +299,38 @@ STDMETHODIMP CDVBSub::Pause()
 //
 STDMETHODIMP CDVBSub::Stop()
 {
-  LogDebug("CDVBSub::Stop - beginning" );
   CAutoLock cObjectLock( m_pLock );
-  // Calling reset here seems to hang the whole graph (a deadlock with TSFileSource?)
-  // Filter state is reseted in ::Run() if needed
-  //Reset(); 
+  HRESULT hr = CBaseFilter::Stop();
 
-  m_bStopping = true;
+  LogDebug("CDVBSub::Stop - beginning" );
+
+  StopThread();
 
   // Make sure no further processing is done
   if( m_pSubDecoder ) m_pSubDecoder->Reset();
-	if( m_pSubtitleInputPin ) m_pSubtitleInputPin->Reset();
+	if( m_pSubtitlePin ) m_pSubtitlePin->Reset();
 
   LogDebug( "Release ITSFileSource" );
   if( m_pTSFileSource ) m_pTSFileSource->Release();
   m_pTSFileSource = NULL;
   LogDebug( "Release ITSFileSource - done" );
+  
+  LogDebug( "Release m_pMediaFilter" );
+  if( m_pMediaFilter )
+  {
+    m_pMediaFilter->Release();
+    m_pMediaFilter = NULL;
+  }
+  LogDebug( "Release m_pMediaFilter - done" );
 
-  HRESULT hr = CBaseFilter::Stop();
+  LogDebug( "Release m_pIMediaSeeking" );
+  if( m_pIMediaSeeking )
+  {
+    m_pIMediaSeeking->Release();
+    m_pIMediaSeeking = NULL;
+  }
+  LogDebug( "Release m_pIMediaSeeking - done" );
+
   LogDebug("CDVBSub::Stop - done" );
   return hr;
 }
@@ -302,12 +341,14 @@ STDMETHODIMP CDVBSub::Stop()
 //
 void CDVBSub::Reset()
 {
-  LogDebug( "CDVBSub::Reset()" );
   CAutoLock cObjectLock( m_pLock );
+  LogDebug( "CDVBSub::Reset()" );
 
 	m_pSubDecoder->Reset();
-	m_pSubtitleInputPin->Reset();
-  
+	m_pSubtitlePin->Reset();
+  m_pPCRPin->Reset();
+  m_pPMTPin->Reset();
+
   m_seekDifPCR = -1;
   //m_fixPCR = -1; // update this only in the beginning
   //m_firstPCR = -1;
@@ -317,6 +358,8 @@ void CDVBSub::Reset()
   {
     (*m_pTimestampResetObserver)();
   }
+
+  FindVideoPID();
 
   LogDebugMediaPosition( "CDVBSub::Reset - media seeking position" );  
 }
@@ -337,7 +380,7 @@ STDMETHODIMP CDVBSub::Test(int status)
 //
 void CDVBSub::NotifySubtitle()
 {
-  LogDebugMediaPosition( "subtitle arrived - media seeking position" );
+  LogDebug( "subtitle arrived" );
 
   // calculate the time stamp
   CSubtitle* pSubtitle( NULL );
@@ -386,28 +429,12 @@ void CDVBSub::NotifyFirstPTS( ULONGLONG /*firstPTS*/ )
 
 
 //
-// SetPcrPid
-//
-void CDVBSub::SetPcrPid( LONG pid )
-{
-  m_pPcrPin->SetPcrPid( pid );
-}
-
-
-//
-// SetSubtitlePid
-//
-void CDVBSub::SetSubtitlePid( LONG pid )
-{
-  m_pSubtitleInputPin->SetSubtitlePid( pid );
-}
-
-
-//
 // SetPcr
 //
 void CDVBSub::SetPcr( ULONGLONG pcr )
 {
+  //CAutoLock cObjectLock( m_pLock );
+  
   // This gets called from PcrInputPin
   m_curPCR = pcr;
 
@@ -437,16 +464,13 @@ void CDVBSub::SetPcr( ULONGLONG pcr )
   if( m_seekDifPCR < 0 )
   {
     // updated on every seek (reset)
-    LogDebugMediaPosition( "SetPCR - media seeking position" );  
-
     LONGLONG pos( 0 );
-	  if( m_pIMediaSeeking )
+	  if( m_pIMediaSeeking && m_State == State_Running )
 	  {
       m_pIMediaSeeking->GetCurrentPosition( &pos );
 		  if( pos > 0 )
 		  {
 			  pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
-		    LogDebugPTS( "Set PCR - MediaSeeking Pos : ", pos ); 
       }
 	  }  
 
@@ -470,8 +494,11 @@ void CDVBSub::NotifySeeking()
 HRESULT CDVBSub::ConnectToTSFileSource()
 {
 	// Already connected?
-	if( m_pTSFileSource || m_bStopping )
+	if( m_pTSFileSource )
 		return S_OK;
+  
+  if( m_State == State_Stopped )
+    return S_FALSE;
 
   LogDebug( "ConnectToTSFileSource - start");
 
@@ -510,6 +537,131 @@ HRESULT CDVBSub::ConnectToTSFileSource()
     m_fixPCR = 0;
     return S_FALSE;
   }
+}
+
+
+//
+// SetPid
+//
+HRESULT CDVBSub::SetPid( CBaseInputPin* pin, LONG pid, MEDIA_SAMPLE_CONTENT sampleContent )
+{
+  if( pin == m_pSubtitlePin )
+  {
+    LogDebug( "CDVBSub::SetPid - Subtitle pid - %x", pid );
+    int SubtitlePidCount( m_SubtitlePinMapping.size() );
+    for( int i( 0 ) ; i < SubtitlePidCount ; i++ )
+    {
+      if( m_SubtitlePinMapping[i].pid == pid )
+        return S_OK; 
+    }
+    m_SubtitlePinMapping.resize( SubtitlePidCount + 1 );
+    m_SubtitlePinMapping[SubtitlePidCount].pid = pid;
+    m_SubtitlePinMapping[SubtitlePidCount].mappingState = PidAvailable;
+    m_SubtitlePinMapping[SubtitlePidCount].sampleContent = sampleContent;
+  }
+  if( pin == m_pPCRPin )
+  {
+    LogDebug( "CDVBSub::SetPid - PCR pid - %x", pid );
+    int PCRPidCount( m_PCRPinMapping.size() );
+    for( int i( 0 ) ; i < PCRPidCount ; i++ )
+    {
+      if( m_PCRPinMapping[i].pid == pid )
+        return S_OK; 
+    }
+    m_PCRPinMapping.resize( PCRPidCount + 1 );
+    m_PCRPinMapping[PCRPidCount].pid = pid;
+    m_PCRPinMapping[PCRPidCount].mappingState = PidAvailable;
+    m_PCRPinMapping[PCRPidCount].sampleContent = sampleContent;
+  }
+  if( pin == m_pPMTPin )
+  {
+    LogDebug( "CDVBSub::SetPid - PMT pid - %x", pid );
+    int PMTPidCount( m_PMTPinMapping.size() );
+    for( int i( 0 ) ; i < PMTPidCount ; i++ )
+    {
+      if( m_PMTPinMapping[i].pid == pid )
+        return S_OK; 
+    }
+    m_PMTPinMapping.resize( PMTPidCount + 1 );
+    m_PMTPinMapping[PMTPidCount].pid = pid;
+    m_PMTPinMapping[PMTPidCount].mappingState = PidAvailable;
+    m_PMTPinMapping[PMTPidCount].sampleContent = sampleContent;
+  }
+
+  return S_OK;
+}
+
+
+//
+// FindVideoPID
+//
+HRESULT CDVBSub::FindVideoPID()
+{
+  LogDebug( "CDVBSub::FindVideoPID()" );
+
+  IFilterGraph *pGraph = GetFilterGraph();
+  IBaseFilter *pDemuxer = NULL;
+  HRESULT hr = pGraph->FindFilterByName( L"MPEG-2 Demultiplexer", &pDemuxer );
+  
+  if( hr != S_OK )
+  {
+    LogDebug( "  Unable to find demuxer!" );
+    return hr;
+  }
+
+  IPin* pPin;
+  PIN_DIRECTION  direction;
+  IEnumPins *pIEnumPins = NULL;
+  AM_MEDIA_TYPE *mediatype;
+
+  if( SUCCEEDED( pDemuxer->EnumPins( &pIEnumPins ) ) )
+  {
+    ULONG count(0);
+    while( pIEnumPins->Next( 1, &pPin, &count ) == S_OK )
+    {
+	    hr = pPin->QueryDirection( &direction );
+	    if( direction == PINDIR_OUTPUT )
+      {
+		    IEnumMediaTypes* ppEnum;
+		    if( SUCCEEDED( pPin->EnumMediaTypes( &ppEnum ) ) )
+        {
+			    ULONG fetched( 0 );
+			    while( ppEnum->Next( 1, &mediatype, &fetched ) == S_OK )
+			    {
+				    if( mediatype->majortype == MEDIATYPE_Video )
+            {
+              IMPEG2PIDMap* pMuxMapPid;
+              if( SUCCEEDED( pPin->QueryInterface( &pMuxMapPid ) ) )
+              {
+                IEnumPIDMap *pIEnumPIDMap;
+                if( SUCCEEDED( pMuxMapPid->EnumPIDMap( &pIEnumPIDMap ) ) )
+                {
+	                ULONG count = 0;
+	                PID_MAP pidMap;
+	                while( pIEnumPIDMap->Next( 1, &pidMap, &count ) == S_OK )
+                  {
+                    m_pPMTPin->SetVideoPid( pidMap.ulPID );
+                    LogDebug( "  found video PID %d", pidMap.ulPID );
+	                }
+                }
+              pMuxMapPid->Release();
+					    ppEnum->Release();
+					    return S_OK;
+              }
+				    }
+				    mediatype = NULL;
+			    }
+			    ppEnum->Release();
+			    ppEnum = NULL;
+		    }
+	    }
+	    pPin->Release();
+	    pPin = NULL;
+    }
+    pIEnumPins->Release();
+  }
+
+  return S_OK;
 }
 
 
@@ -607,6 +759,13 @@ STDMETHODIMP CDVBSub::DiscardOldestSubtitle()
 //
 void CDVBSub::LogDebugMediaPosition( const char *text )
 {
+  if( m_State == State_Stopped || m_State == State_Paused )
+  {
+    LogDebug( text );
+    LogDebug( "LogDebugMediaPosition - paused || stopped" );
+    return;
+  }
+  
   LONGLONG pos( 0 );
   if( m_pIMediaSeeking )
   {
@@ -668,4 +827,124 @@ STDMETHODIMP CDVBSub::NonDelegatingQueryInterface( REFIID riid, void** ppv )
 		}
 		return hr;
 	}
+}
+
+
+// Worker thread functions
+//
+// ThreadProc
+//
+void CDVBSub::ThreadProc()
+{
+  Sleep( 500 );
+  while( !ThreadIsStopping( 100 ) )
+  {
+    int SubtitlePidCount( m_SubtitlePinMapping.size() );
+    if( SubtitlePidCount > 0 )
+    {
+      for( int i( 0 ) ; i < SubtitlePidCount ; i++ )
+      {
+        if( m_SubtitlePinMapping[i].mappingState == PidAvailable )
+        {
+          if( S_OK == MapPidToDemuxer( m_pSubtitlePin, m_SubtitlePinMapping[i].pid, m_SubtitlePinMapping[i].sampleContent ) )
+          {
+            m_SubtitlePinMapping[i].mappingState = PidMapped;
+          }
+        }
+      }
+    }
+
+    int PCRPidCount( m_PCRPinMapping.size() );
+    if( PCRPidCount > 0 )
+    {
+      for( int i( 0 ) ; i < PCRPidCount ; i++ )
+      {
+        if( m_PCRPinMapping[i].mappingState == PidAvailable )
+        {
+          if( S_OK == MapPidToDemuxer( m_pPCRPin, m_PCRPinMapping[i].pid, m_PCRPinMapping[i].sampleContent ) )
+          {
+            m_PCRPinMapping[i].mappingState = PidMapped;
+          }
+        }
+      }
+    }
+
+    int PMTPidCount( m_PMTPinMapping.size() );
+    if( PMTPidCount > 0 )
+    {
+      for( int i( 0 ) ; i < PMTPidCount ; i++ )
+      {
+        if( m_PMTPinMapping[i].mappingState == PidAvailable )
+        {
+          if( S_OK == MapPidToDemuxer( m_pPMTPin, m_PMTPinMapping[i].pid, m_PMTPinMapping[i].sampleContent ) )
+          {
+            m_PMTPinMapping[i].mappingState = PidMapped;
+          }
+        }
+      }
+    }
+  }
+  Sleep( 1000 );
+}
+
+//
+// MapPidToDemuxer
+//
+HRESULT CDVBSub::MapPidToDemuxer( CBaseInputPin* pPin, LONG pid, MEDIA_SAMPLE_CONTENT sampleContent )
+{
+  IMPEG2PIDMap	*pMap( NULL );
+	IEnumPIDMap		*pPidEnum( NULL );
+	PID_MAP			  pm;
+	ULONG			    count;
+  HRESULT       hr( 0 );
+
+  if( m_State != State_Running )
+  {
+    return S_FALSE;
+  }
+
+  if( pPin == m_pSubtitlePin )
+  {
+    LogDebug( "CDVBSub::MapPidToDemuxer -Mapping subtitle pid - %x", pid );
+    hr = m_pSubtitlePin->GetDemuxerPin()->QueryInterface( IID_IMPEG2PIDMap, (void**)&pMap );
+  }
+  if( pPin == m_pPCRPin )
+  {
+    LogDebug( "CDVBSub::MapPidToDemuxer -Mapping PCR pid - %x", pid );
+    hr = m_pPCRPin->GetDemuxerPin()->QueryInterface( IID_IMPEG2PIDMap, (void**)&pMap );
+  }
+  if( pPin == m_pPMTPin )
+  {
+    LogDebug( "CDVBSub::MapPidToDemuxer -Mapping PMT pid - %x", pid );
+    hr = m_pPMTPin->GetDemuxerPin()->QueryInterface( IID_IMPEG2PIDMap, (void**)&pMap );
+  }
+
+	if( SUCCEEDED(hr) && pMap != NULL )
+	{
+		hr = pMap->EnumPIDMap( &pPidEnum );
+		if( SUCCEEDED(hr) && pPidEnum!=NULL )
+		{
+			while( pPidEnum->Next( 1, &pm, &count ) == S_OK )
+			{
+				if ( count != 1 )
+				{
+					break;
+				}
+			}
+      if( m_State != State_Running )
+      {
+        return S_FALSE;
+      }
+      hr = pMap->MapPID( 1, (ULONG*)&pid, sampleContent );
+			pPidEnum->Release();
+		}
+		pMap->Release();
+	}
+
+  if( hr != S_OK )
+  {
+    LogDebug( "CDVBSub::MapPidToDemuxer failed! - %d", hr );
+  }
+  
+  return hr;
 }
