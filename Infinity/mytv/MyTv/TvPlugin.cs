@@ -8,13 +8,22 @@ using ProjectInfinity.Plugins;
 namespace MyTv
 {
   [Plugin("My Tv", "My Tv", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/tv.png")]
-  public class TvPlugin : IPlugin, IMenuCommand
+  public class TvPlugin : IPlugin, IAutoStart, IMenuCommand
   {
     #region IPlugin Members
 
     public void Initialize(string id)
     {
 
+    }
+
+    #endregion
+
+    #region IAutoStart Members
+
+    public void Startup()
+    {
+      Run();
     }
 
     #endregion
