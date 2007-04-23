@@ -145,7 +145,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("scrollbartop")]        protected string _scrollbarTopName = "";
     [XMLSkinElement("scrollbarbottom")]     protected string _scrollbarBottomName = "";
 
-    [XMLSkinElement("spinColor")]           protected long _colorSpinColor;
+    [XMLSkinElement("spinColor")]           protected long _spinControlColor;
+    [XMLSkinElement("spinAlign")]           protected Alignment _spinControlAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("spinHeight")]          protected int _spinControlHeight;
     [XMLSkinElement("spinWidth")]           protected int _spinControlWidth;
     [XMLSkinElement("spinPosX")]            protected int _spinControlPositionX;
@@ -209,7 +210,7 @@ namespace MediaPortal.GUI.Library
       _downTextureName = strDown;
       _upTextureNameFocus = strUpFocus;
       _downTextureNameFocus = strDownFocus;
-      _colorSpinColor = dwSpinColor;
+      _spinControlColor = dwSpinColor;
       _spinControlPositionX = dwSpinX;
       _spinControlPositionY = dwSpinY;
       _fontName = strFont;
@@ -238,7 +239,7 @@ namespace MediaPortal.GUI.Library
       Font2 = _fontName2Name;
       Font3 = _fontName3Name;
 
-      _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
+      _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _spinControlColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, _spinControlAlignment);
       _upDownControl.ParentControl = this;
       _upDownControl.DimColor = DimColor;
 

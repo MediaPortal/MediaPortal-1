@@ -80,8 +80,11 @@ namespace MediaPortal.GUI.Library
     protected string _upTextureNameFocus = "";
     [XMLSkinElement("textureDownFocus")]
     protected string _downTextureNameFocus = "";
+
     [XMLSkinElement("spinColor")]
-    protected long _colorSpinColor;
+    protected long _spinControlColor;
+    [XMLSkinElement("spinAlign")]
+    protected Alignment _spinControlAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("spinHeight")]
     protected int _spinControlHeight;
     [XMLSkinElement("spinWidth")]
@@ -90,6 +93,7 @@ namespace MediaPortal.GUI.Library
     protected int _spinControlPositionX;
     [XMLSkinElement("spinPosY")]
     protected int _spinControlPositionY;
+
     [XMLSkinElement("itemHeight")]
     protected int _itemHeight;
     [XMLSkinElement("itemWidth")]
@@ -313,7 +317,7 @@ namespace MediaPortal.GUI.Library
 				_frameFocusControl.Add(anim);
       }
 
-      _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
+      _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _spinControlColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, _spinControlAlignment);
       _upDownControl.ParentControl = this;
       _upDownControl.DimColor = DimColor;
 
@@ -916,6 +920,7 @@ namespace MediaPortal.GUI.Library
         // Render the spin control
         if (_upDownControl != null)
         {
+          _upDownControl.HorizontalContentAlignment = MediaPortal.Drawing.HorizontalAlignment.Right;
           _upDownControl.Render(timePassed);
         }
 

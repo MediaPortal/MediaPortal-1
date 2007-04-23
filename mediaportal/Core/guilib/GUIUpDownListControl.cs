@@ -106,7 +106,7 @@ namespace MediaPortal.GUI.Library
 																										_spinControlWidth, _spinControlHeight, 
 																										_upTextureName, _downTextureName, 
 																										_upTextureNameFocus, _downTextureNameFocus, 
-																										_colorSpinColor, _spinControlPositionX, _spinControlPositionY);
+																										_spinControlColor, _spinControlPositionX, _spinControlPositionY);
 
         cntl.ParentControl = this;
 				cntl.AllocResources();
