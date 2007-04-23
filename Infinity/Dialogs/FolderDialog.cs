@@ -88,7 +88,7 @@ namespace Dialogs
     /// Gets the folders.
     /// </summary>
     /// <value>The folders.</value>
-    public List<Folder> Folders
+    public List<Folder> SelectedFolders
     {
       get
       {

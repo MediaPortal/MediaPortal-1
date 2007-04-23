@@ -21,6 +21,9 @@ using ProjectInfinity.Logging;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using ProjectInfinity.Playlist;
+using ProjectInfinity.Settings;
+using ProjectInfinity.Navigation;
+using Dialogs;
 using MediaLibrary;
 
 namespace MyVideos
@@ -673,16 +676,53 @@ namespace MyVideos
     {
       _listVideos.Clear();
 
-      // Temporary code, needs to be replaced when we get a real media collector
-      string[] files = Directory.GetFiles(@"d:\james\p", "*.mpeg");
+      
+      _listVideos.Clear();
 
-      foreach (string file in files)
+      //begin-just some testcode to show how you can ask the user to select 1 or more folders
+      VideoSettings settings = new VideoSettings();
+      ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xaml");
+      if (settings.Shares == null)
       {
-        FileInfo fi = new FileInfo(file);
-        VideoModel item = new VideoModel(fi.Name, (int)fi.Length, file);
+        settings.Shares = new List<string>();
+      }
+      if (settings.Shares.Count==0)
+      {
+        FolderDialog dlg = new FolderDialog();
+        Window w = ServiceScope.Get<INavigationService>().GetWindow();
+        dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlg.Owner = w;
+        dlg.Title = "";
+        dlg.Header = ServiceScope.Get<ILocalisation>().ToString("myvideos", 35);//Video folders
+        dlg.ShowDialog();
+        List<Folder> shares = dlg.SelectedFolders;
 
-        _listVideos.Add(item);
-      } 
+        foreach (Folder share in shares)
+        {
+          settings.Shares.Add(share.FullPath);
+        }
+        ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xaml");
+      }
+      //end-just some testcode to show how you can ask the user to select 1 or more folders
+
+      if (settings.Shares != null)
+      {
+        foreach (string share in settings.Shares)
+        {
+          string[] files = Directory.GetFiles(share);
+
+          foreach (string file in files)
+          {
+            string ext = System.IO.Path.GetExtension(file).ToLower();
+            if (settings.VideoExtensions.IndexOf(ext) >= 0)
+            {
+              FileInfo fi = new FileInfo(file);
+              VideoModel item = new VideoModel(fi.Name, (int)fi.Length, file);
+              _listVideos.Add(item);
+            }
+          }
+        }
+      }
     }
 
     /// <summary>

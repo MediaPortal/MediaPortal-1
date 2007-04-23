@@ -102,6 +102,18 @@ namespace Dialogs
     }
 
     /// <summary>
+    /// Gets the full path.
+    /// </summary>
+    /// <value>The full path.</value>
+    public string FullPath
+    {
+      get
+      {
+        return _path;
+      }
+    }
+
+    /// <summary>
     /// Gets or sets the folders.
     /// </summary>
     /// <value>The folders.</value>

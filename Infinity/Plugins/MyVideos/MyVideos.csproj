@@ -47,6 +47,7 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helper Classes\VideoSettings.cs" />
     <Compile Include="Library\ImportMovies.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
