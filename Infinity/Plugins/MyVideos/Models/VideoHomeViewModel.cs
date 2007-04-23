@@ -726,7 +726,7 @@ namespace MyVideos
 
       //begin-just some testcode to show how you can ask the user to select 1 or more folders
       VideoSettings settings = new VideoSettings();
-      ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xaml");
+      ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
       if (settings.Shares == null)
       {
         settings.Shares = new List<string>();
@@ -746,7 +746,7 @@ namespace MyVideos
         {
           settings.Shares.Add(share.FullPath);
         }
-        ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xaml");
+        ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xml");
       }
       //end-just some testcode to show how you can ask the user to select 1 or more folders
 
