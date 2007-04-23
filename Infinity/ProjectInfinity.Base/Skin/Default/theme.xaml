@@ -1991,7 +1991,7 @@
 						<EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
 						<Trigger Property="IsKeyboardFocused" Value="True">
 							<Trigger.EnterActions>
-								<BeginStoryboard x:Name="focusedStoryBoard_BeginStoryboard" Storyboard="{StaticResource iskeyboardfocused}"/>
+								<BeginStoryboard x:Name="focusedStoryBoard_BeginStoryboard" Storyboard="{StaticResource focusedStoryBoard}"/>
 								<BeginStoryboard Storyboard="{StaticResource focusedStoryBoard}"/>
 							</Trigger.EnterActions>
 							<Trigger.ExitActions>
@@ -2126,7 +2126,7 @@
 						<EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
 						<Trigger Property="IsKeyboardFocused" Value="True">
 							<Trigger.EnterActions>
-								<BeginStoryboard x:Name="focusedStoryBoard_BeginStoryboard" Storyboard="{StaticResource iskeyboardfocused}"/>
+								<BeginStoryboard x:Name="focusedStoryBoard_BeginStoryboard" Storyboard="{StaticResource focusedStoryBoard}"/>
 								<BeginStoryboard Storyboard="{StaticResource focusedStoryBoard}"/>
 							</Trigger.EnterActions>
 							<Trigger.ExitActions>
@@ -2261,7 +2261,7 @@
 						<EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
 						<Trigger Property="IsKeyboardFocused" Value="True">
 							<Trigger.EnterActions>
-								<BeginStoryboard x:Name="focusedStoryBoard_BeginStoryboard" Storyboard="{StaticResource iskeyboardfocused}"/>
+								<BeginStoryboard x:Name="focusedStoryBoard_BeginStoryboard" Storyboard="{StaticResource focusedStoryBoard}"/>
 								<BeginStoryboard Storyboard="{StaticResource focusedStoryBoard}"/>
 							</Trigger.EnterActions>
 							<Trigger.ExitActions>
@@ -2396,7 +2396,7 @@
 						<EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
 						<Trigger Property="IsKeyboardFocused" Value="True">
 							<Trigger.EnterActions>
-								<BeginStoryboard x:Name="focusedStoryBoard_BeginStoryboard" Storyboard="{StaticResource iskeyboardfocused}"/>
+								<BeginStoryboard x:Name="focusedStoryBoard_BeginStoryboard" Storyboard="{StaticResource focusedStoryBoard}"/>
 								<BeginStoryboard Storyboard="{StaticResource focusedStoryBoard}"/>
 							</Trigger.EnterActions>
 							<Trigger.ExitActions>
