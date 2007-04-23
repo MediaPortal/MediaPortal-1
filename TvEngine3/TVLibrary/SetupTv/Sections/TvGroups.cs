@@ -41,47 +41,6 @@ namespace SetupTv.Sections
 {
   public partial class TvGroups : SectionSettings
   {
-    public class ListViewColumnSorter : IComparer
-    {
-      public int SortColumn;
-      public SortOrder Order;
-      public int Compare(object x, object y)
-      {
-        int compareResult;
-        ListViewItem listviewX, listviewY;
-        // Cast the objects to be compared to ListViewItem objects
-        listviewX = (ListViewItem)x;
-        listviewY = (ListViewItem)y;
-        if (SortColumn == 0)
-        {
-          compareResult = String.Compare(listviewX.Text, listviewY.Text);
-        }
-        else
-        {
-          // Compare the two items
-          compareResult = String.Compare(listviewX.SubItems[SortColumn].Text,
-            listviewY.SubItems[SortColumn].Text);
-        }
-        // Calculate correct return value based on object comparison
-        if (Order == SortOrder.Ascending)
-        {
-          // Ascending sort is selected,
-          // return normal result of compare operation
-          return compareResult;
-        }
-        else if (Order == SortOrder.Descending)
-        {
-          // Descending sort is selected,
-          // return negative result of compare operation
-          return (-compareResult);
-        }
-        else
-        {
-          // Return '0' to indicate they are equal
-          return 0;
-        }
-      }
-    }
     struct ComboGroup
     {
       public ChannelGroup Group;
@@ -91,7 +50,8 @@ namespace SetupTv.Sections
       }
 
     }
-    private ListViewColumnSorter lvwColumnSorter;
+    private MPListViewStringColumnSorter lvwColumnSorter1;
+    private MPListViewStringColumnSorter lvwColumnSorter2;
 
     public TvGroups()
       : this("TV Groups")
@@ -102,8 +62,12 @@ namespace SetupTv.Sections
       : base(name)
     {
       InitializeComponent();
-      lvwColumnSorter = new ListViewColumnSorter();
-      this.mpListViewGroups.ListViewItemSorter = lvwColumnSorter;
+      lvwColumnSorter1 = new MPListViewStringColumnSorter();
+      lvwColumnSorter1.Order = SortOrder.None;
+      this.mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
+      lvwColumnSorter2 = new MPListViewStringColumnSorter();
+      lvwColumnSorter2.Order = SortOrder.None;
+      this.mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
     }
 
     public override void OnSectionActivated()
@@ -411,6 +375,56 @@ namespace SetupTv.Sections
     private void mpListViewGroups_MouseDoubleClick(object sender, MouseEventArgs e)
     {
       RenameGroup();
+    }
+
+    private void mpListViewChannels_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      if (e.Column == lvwColumnSorter1.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        if (lvwColumnSorter1.Order == SortOrder.Ascending)
+        {
+          lvwColumnSorter1.Order = SortOrder.Descending;
+        }
+        else
+        {
+          lvwColumnSorter1.Order = SortOrder.Ascending;
+        }
+      }
+      else
+      {
+        // Set the column number that is to be sorted; default to ascending.
+        lvwColumnSorter1.SortColumn = e.Column;
+        lvwColumnSorter1.Order = SortOrder.Ascending;
+      }
+
+      // Perform the sort with these new sort options.
+      this.mpListViewChannels.Sort();
+    }
+
+    private void mpListViewMapped_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      if (e.Column == lvwColumnSorter2.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        if (lvwColumnSorter2.Order == SortOrder.Ascending)
+        {
+          lvwColumnSorter2.Order = SortOrder.Descending;
+        }
+        else
+        {
+          lvwColumnSorter2.Order = SortOrder.Ascending;
+        }
+      }
+      else
+      {
+        // Set the column number that is to be sorted; default to ascending.
+        lvwColumnSorter2.SortColumn = e.Column;
+        lvwColumnSorter2.Order = SortOrder.Ascending;
+      }
+
+      // Perform the sort with these new sort options.
+      this.mpListViewMapped.Sort();
     }
 
   }

@@ -64,6 +64,9 @@ namespace SetupTv.Sections
       }
     }
 
+    private MPListViewStringColumnSorter lvwColumnSorter1;
+    private MPListViewStringColumnSorter lvwColumnSorter2;
+
     public RadioChannelMapping()
       : this("Radio Mapping")
     {
@@ -73,7 +76,13 @@ namespace SetupTv.Sections
       : base(name)
     {
       InitializeComponent();
-      mpListViewChannels.ListViewItemSorter = new MPListViewSortOnColumn(0);
+      lvwColumnSorter1 = new MPListViewStringColumnSorter();
+      lvwColumnSorter1.Order = SortOrder.None;
+      this.mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
+      lvwColumnSorter2 = new MPListViewStringColumnSorter();
+      lvwColumnSorter2.Order = SortOrder.None;
+      this.mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
+      //mpListViewChannels.ListViewItemSorter = new MPListViewSortOnColumn(0);
       //mpListViewMapped.ListViewItemSorter = new MPListViewSortOnColumn(0);
     }
 
@@ -210,6 +219,56 @@ namespace SetupTv.Sections
     private void mpListViewChannels_SelectedIndexChanged(object sender, EventArgs e)
     {
 
+    }
+
+    private void mpListViewChannels_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      if (e.Column == lvwColumnSorter1.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        if (lvwColumnSorter1.Order == SortOrder.Ascending)
+        {
+          lvwColumnSorter1.Order = SortOrder.Descending;
+        }
+        else
+        {
+          lvwColumnSorter1.Order = SortOrder.Ascending;
+        }
+      }
+      else
+      {
+        // Set the column number that is to be sorted; default to ascending.
+        lvwColumnSorter1.SortColumn = e.Column;
+        lvwColumnSorter1.Order = SortOrder.Ascending;
+      }
+
+      // Perform the sort with these new sort options.
+      this.mpListViewChannels.Sort();
+    }
+
+    private void mpListViewMapped_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      if (e.Column == lvwColumnSorter2.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        if (lvwColumnSorter2.Order == SortOrder.Ascending)
+        {
+          lvwColumnSorter2.Order = SortOrder.Descending;
+        }
+        else
+        {
+          lvwColumnSorter2.Order = SortOrder.Ascending;
+        }
+      }
+      else
+      {
+        // Set the column number that is to be sorted; default to ascending.
+        lvwColumnSorter2.SortColumn = e.Column;
+        lvwColumnSorter2.Order = SortOrder.Ascending;
+      }
+
+      // Perform the sort with these new sort options.
+      this.mpListViewMapped.Sort();
     }
 
   }

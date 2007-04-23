@@ -63,6 +63,7 @@ namespace SetupTv.Sections
       this.mpListView1.View = System.Windows.Forms.View.Details;
       this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
       this.mpListView1.SelectedIndexChanged += new System.EventHandler(this.mpListView1_SelectedIndexChanged);
+      this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
       // 
       // columnHeader1
       // 

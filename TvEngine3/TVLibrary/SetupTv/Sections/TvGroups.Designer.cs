@@ -32,6 +32,7 @@ namespace SetupTv.Sections
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvGroups));
       this.mpTabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.mpButtonRenameGroup = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonDown = new System.Windows.Forms.Button();
       this.buttonUtp = new System.Windows.Forms.Button();
       this.mpButtonAddGroup = new MediaPortal.UserInterface.Controls.MPButton();
@@ -50,7 +51,6 @@ namespace SetupTv.Sections
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.mpComboBoxGroup = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpButtonRenameGroup = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -83,6 +83,16 @@ namespace SetupTv.Sections
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Groups";
       this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // mpButtonRenameGroup
+      // 
+      this.mpButtonRenameGroup.Location = new System.Drawing.Point(272, 314);
+      this.mpButtonRenameGroup.Name = "mpButtonRenameGroup";
+      this.mpButtonRenameGroup.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonRenameGroup.TabIndex = 7;
+      this.mpButtonRenameGroup.Text = "Rename";
+      this.mpButtonRenameGroup.UseVisualStyleBackColor = true;
+      this.mpButtonRenameGroup.Click += new System.EventHandler(this.mpButtonRenameGroup_Click);
       // 
       // buttonDown
       // 
@@ -210,6 +220,7 @@ namespace SetupTv.Sections
       this.mpListViewMapped.View = System.Windows.Forms.View.Details;
       this.mpListViewMapped.DragEnter += new System.Windows.Forms.DragEventHandler(this.mpListViewMapped_DragEnter);
       this.mpListViewMapped.DragDrop += new System.Windows.Forms.DragEventHandler(this.mpListViewMapped_DragDrop);
+      this.mpListViewMapped.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListViewMapped_ColumnClick);
       this.mpListViewMapped.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListViewMapped_ItemDrag);
       // 
       // columnHeader2
@@ -249,6 +260,7 @@ namespace SetupTv.Sections
       this.mpListViewChannels.TabIndex = 10;
       this.mpListViewChannels.UseCompatibleStateImageBehavior = false;
       this.mpListViewChannels.View = System.Windows.Forms.View.Details;
+      this.mpListViewChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListViewChannels_ColumnClick);
       // 
       // columnHeader4
       // 
@@ -273,16 +285,6 @@ namespace SetupTv.Sections
       this.mpLabel1.Size = new System.Drawing.Size(39, 13);
       this.mpLabel1.TabIndex = 9;
       this.mpLabel1.Text = "Group:";
-      // 
-      // mpButtonRenameGroup
-      // 
-      this.mpButtonRenameGroup.Location = new System.Drawing.Point(272, 314);
-      this.mpButtonRenameGroup.Name = "mpButtonRenameGroup";
-      this.mpButtonRenameGroup.Size = new System.Drawing.Size(75, 23);
-      this.mpButtonRenameGroup.TabIndex = 7;
-      this.mpButtonRenameGroup.Text = "Rename";
-      this.mpButtonRenameGroup.UseVisualStyleBackColor = true;
-      this.mpButtonRenameGroup.Click += new System.EventHandler(this.mpButtonRenameGroup_Click);
       // 
       // TvGroups
       // 

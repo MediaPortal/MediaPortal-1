@@ -35,12 +35,18 @@ using TvLibrary;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
+using MediaPortal.UserInterface.Controls;
 
 namespace SetupTv.Sections
 {
+
+  
   public partial class TvEpgGrabber : SectionSettings
   {
+
     bool _loaded = false;
+    
+    private MPListViewStringColumnSorter lvwColumnSorter;
     public TvEpgGrabber()
       : this("TV Epg grabber")
     {
@@ -50,6 +56,9 @@ namespace SetupTv.Sections
       : base(name)
     {
       InitializeComponent();
+      lvwColumnSorter = new MPListViewStringColumnSorter();
+      lvwColumnSorter.Order = SortOrder.None;
+      this.mpListView1.ListViewItemSorter = lvwColumnSorter;
     }
 
     void LoadLanguages()
@@ -295,6 +304,31 @@ namespace SetupTv.Sections
         mpListView1.Items[i].Checked = (ch.ReferringGroupMap().Count > 1); // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
       }
       mpListView1.EndUpdate();
+    }
+
+    private void mpListView1_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      if (e.Column == lvwColumnSorter.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        if (lvwColumnSorter.Order == SortOrder.Ascending)
+        {
+          lvwColumnSorter.Order = SortOrder.Descending;
+        }
+        else
+        {
+          lvwColumnSorter.Order = SortOrder.Ascending;
+        }
+      }
+      else
+      {
+        // Set the column number that is to be sorted; default to ascending.
+        lvwColumnSorter.SortColumn = e.Column;
+        lvwColumnSorter.Order = SortOrder.Ascending;
+      }
+
+      // Perform the sort with these new sort options.
+      this.mpListView1.Sort();
     }
 
 

@@ -143,6 +143,7 @@ namespace SetupTv.Sections
       this.mpListViewMapped.UseCompatibleStateImageBehavior = false;
       this.mpListViewMapped.View = System.Windows.Forms.View.Details;
       this.mpListViewMapped.SelectedIndexChanged += new System.EventHandler(this.mpListViewMapped_SelectedIndexChanged);
+      this.mpListViewMapped.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListViewMapped_ColumnClick);
       // 
       // columnHeader8
       // 
@@ -187,6 +188,7 @@ namespace SetupTv.Sections
       this.mpListViewChannels.UseCompatibleStateImageBehavior = false;
       this.mpListViewChannels.View = System.Windows.Forms.View.Details;
       this.mpListViewChannels.SelectedIndexChanged += new System.EventHandler(this.mpListViewChannels_SelectedIndexChanged);
+      this.mpListViewChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListViewChannels_ColumnClick);
       // 
       // columnHeader6
       // 
