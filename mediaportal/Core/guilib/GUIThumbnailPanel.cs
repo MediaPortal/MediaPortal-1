@@ -635,6 +635,8 @@ namespace MediaPortal.GUI.Library
 
       dwPosY = _positionY + _rowCount * (_itemHeight);
 
+      RenderScrollbar(timePassed, dwPosY);
+
       if (Focus)
         GUIPropertyManager.SetProperty("#highlightedbutton", String.Empty);
       base.Render(timePassed);
@@ -646,7 +648,7 @@ namespace MediaPortal.GUI.Library
       if (_listItems.Count > iItemsPerPage)
       {
         // Render the spin control
-        //_controlUpDown.SetPosition(_controlUpDown.XPosition,dwPosY);
+        //_controlUpDown.SetPosition(_controlUpDown.XPosition,y);
         _controlUpDown.Render(timePassed);
 
         if (_scrollingDown || _scrollingUp)
