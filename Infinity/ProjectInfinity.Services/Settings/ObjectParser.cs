@@ -75,7 +75,12 @@ namespace ProjectInfinity.Settings
               globalSettingsList.Add(property.Name, value);
             }
           }
-          else globalSettingsList.Add(property.Name, value);
+          else
+          {
+            if (scope == SettingScope.Global) globalSettingsList.Add(property.Name, value);
+            if (scope == SettingScope.User) userSettingsList.Add(property.Name, value);
+          }
+            
         }
         #endregion
 
