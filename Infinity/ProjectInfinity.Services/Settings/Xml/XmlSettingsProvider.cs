@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml;
 using System.IO;
 using System.IO.IsolatedStorage;
+using ProjectInfinity.Logging;
 
 namespace ProjectInfinity.Settings
 {
@@ -53,19 +54,25 @@ namespace ProjectInfinity.Settings
 
     public void Save()
     {
+      ILogger log = ServiceScope.Get<ILogger>();
+      log.Debug("Saving({0},{1})", filename, modified.ToString());
       if (!modified) return;
+      Directory.CreateDirectory(String.Format(@"{0}\MediaPortal Infinity\Config\", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData))) ;
+      string fullFilename = String.Format(@"{0}\MediaPortal Infinity\Config\{1}", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),filename);
+      log.Debug("Saving {0}", fullFilename);
       if (document == null) return;
       if (document.DocumentElement == null) return;
       if (document.ChildNodes.Count == 0) return;
       if (document.DocumentElement.ChildNodes == null) return;
       try
       {
-        if (File.Exists(filename + ".bak")) File.Delete(filename + ".bak");
-        if (File.Exists(filename)) File.Move(filename, filename + ".bak");
+        if (File.Exists(fullFilename + ".bak")) File.Delete(fullFilename + ".bak");
+        if (File.Exists(fullFilename)) File.Move(fullFilename, fullFilename + ".bak");
       }
+      
       catch (Exception) { }
 
-      using (StreamWriter stream = new StreamWriter(filename, false))
+      using (StreamWriter stream = new StreamWriter(fullFilename, false))
       {
         document.Save(stream);
         stream.Flush();

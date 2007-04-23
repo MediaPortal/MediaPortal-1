@@ -12,23 +12,21 @@ namespace ProjectInfinity.Settings
   public class SettingsManager : ISettingsManager
   {
     /// <summary>
-    /// Retrieves an object's public properties from a given Xml file 
+    /// Retrieves an object's public properties from an Xml file 
     /// </summary>
     /// <param name="settingsObject">Object's instance</param>
-    /// <param name="filename">Xml file wich contains stored datas</param>
-    public void Load(object settingsObject, string filename)
+    public void Load(object settingsObject)
     {
-      ObjectParser.Deserialize(settingsObject, filename);
+      ObjectParser.Deserialize(settingsObject);
     }
 
     /// <summary>
-    /// Stores an object's public properties to a given Xml file 
+    /// Stores an object's public properties to an Xml file 
     /// </summary>
     /// <param name="settingsObject">Object's instance</param>
-    /// <param name="filename">Xml file where we wanna store datas</param>
-    public void Save(object settingsObject, string filename)
+    public void Save(object settingsObject)
     {
-      ObjectParser.Serialize(settingsObject, filename);
+      ObjectParser.Serialize(settingsObject);
     }
   }
 }

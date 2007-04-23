@@ -26,8 +26,9 @@ namespace ProjectInfinity.Settings
     /// </summary>
     /// <param name="obj">Setting Object to serialize</param>
     /// <param name="fileName">Xml file name</param>
-    public static void Serialize(object obj, string fileName)
+    public static void Serialize(object obj)
     {
+      string fileName = obj.ToString()+".xml";
       ILogger log = ServiceScope.Get<ILogger>();
       log.Debug("Serialize({0},{1})", obj.ToString(), fileName);
       Dictionary<string, string> globalSettingsList = new Dictionary<string, string>();
@@ -150,13 +151,14 @@ namespace ProjectInfinity.Settings
     /// </summary>
     /// <param name="obj">Setting Object to retrieve</param>
     /// <param name="fileName">Xml file name</param>
-    public static void Deserialize(object obj, string fileName)
+    public static void Deserialize(object obj)
     {
+      string fileName = obj.ToString() + ".xml";
       XmlSettingsProvider xmlreader = new XmlSettingsProvider(fileName);
       ILogger log = ServiceScope.Get<ILogger>();
       log.Debug("Deserialize({0},{1})", obj.ToString(), fileName);
       // if xml file doesn't exist yet then create it
-      if (!File.Exists(fileName)) Serialize(obj, fileName);
+      if (!File.Exists(fileName)) Serialize(obj);
 
       foreach (PropertyInfo property in obj.GetType().GetProperties())
       {
