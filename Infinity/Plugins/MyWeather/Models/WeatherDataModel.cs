@@ -80,7 +80,7 @@ namespace MyWeather
             // and create a new list full of data by downloading and setting
             // it...
             WeatherSettings settings = new WeatherSettings();
-            ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+            ServiceScope.Get<ISettingsManager>().Load(settings);
             // check if loading went well, if not return null
             if(settings.LocationsList == null) 
                 return null;

@@ -60,7 +60,7 @@ namespace MyWeather
 
             // decide if we need to run the setup first...
             WeatherSettings settings = new WeatherSettings();
-            ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+            ServiceScope.Get<ISettingsManager>().Load(settings);
             if(settings.LocationCode == "<none>")
                 OnFirstTimeSetup();
         }

@@ -96,7 +96,7 @@ namespace MyWeather
         void LoadSettings()
         {
             WeatherSettings settings = new WeatherSettings();
-            ServiceScope.Get<ISettingsManager>().Load(settings, _settingsPath);
+            ServiceScope.Get<ISettingsManager>().Load(settings);
             _temperatureFarenheit = settings.TemperatureFahrenheit;
             _windSpeed = settings.WindSpeed;
             _skipConnectionTest = settings.SkipConnectionTest;

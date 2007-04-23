@@ -51,7 +51,7 @@ namespace MyWeather
             // Load Settings and look if  there are any locations set already.
             // if so, update the datamodel
             WeatherSettings settings = new WeatherSettings();
-            ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+            ServiceScope.Get<ISettingsManager>().Load(settings);
             _dataModel = new WeatherSetupDataModel();
             if (settings.LocationsList != null)
             {
@@ -393,7 +393,7 @@ namespace MyWeather
                 if (l.Count > 0)
                     settings.LocationCode = l[0].id;
                 // save
-                ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xml");
+                ServiceScope.Get<ISettingsManager>().Save(settings);
 
                 // navigate back to weather screen
                 ServiceScope.Get<INavigationService>().GoBack();

@@ -56,7 +56,7 @@ namespace MyWeather
             LoadAvailableLocations();
             // get the last set city from configuration
             WeatherSettings settings = new WeatherSettings();
-            ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+            ServiceScope.Get<ISettingsManager>().Load(settings);
             foreach(City c in AvailableLocations)
             {
                 if (c.Id.Equals(settings.LocationCode))
@@ -277,9 +277,9 @@ namespace MyWeather
                 _viewModel.CurrentLocation = ((List<City>)(_viewModel.AvailableLocations))[menu.SelectedIndex];
                 // save the selected location code to settings
                 WeatherSettings settings = new WeatherSettings();
-                ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+                ServiceScope.Get<ISettingsManager>().Load(settings);
                 settings.LocationCode = _viewModel.CurrentLocation.Id;
-                ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xml");
+                ServiceScope.Get<ISettingsManager>().Save(settings);
             }
         }
         #endregion

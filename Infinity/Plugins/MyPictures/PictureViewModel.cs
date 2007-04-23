@@ -21,11 +21,11 @@ namespace ProjectInfinity.Pictures
     {
       ISettingsManager settingMgr = ServiceScope.Get<ISettingsManager>();
       settings = new PictureSettings();
-      settingMgr.Load(settings, "configuration.xml");
+      settingMgr.Load(settings);
       //we save the settings here, to make sure they are in the configuration file.
       //because this plugin has no setup yet
       //TODO: remove saving settings here
-      settingMgr.Save(settings, "configuration.xml");
+      settingMgr.Save(settings);
       Reload(new Folder(new DirectoryInfo(settings.PictureFolders[0])), false);
     }
 
