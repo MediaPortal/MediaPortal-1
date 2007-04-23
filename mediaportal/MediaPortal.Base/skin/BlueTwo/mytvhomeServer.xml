@@ -260,7 +260,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-    <control>
+<!--     <control>
       <description>rectangle</description>
       <type>image</type>
       <id>21</id>
@@ -273,7 +273,7 @@
       <colordiffuse>White</colordiffuse>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-    </control>
+    </control> -->
     <control>
       <description>Recording Channel</description>
       <type>image</type>
