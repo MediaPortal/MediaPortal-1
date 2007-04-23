@@ -32,6 +32,5 @@
 	</Rectangle>
 	<Label x:Name="labelDate" Width="78" Height="38.898" Content="{Binding Path=Title}" FontFamily="Segoe Media Center" FontSize="24" FontWeight="Bold" Foreground="#FF5995D7" Canvas.Left="371.102" Canvas.Top="5.957"/>
 	<ProjectInfinity_Controls:Button x:Name="buttonClose" Command="{Binding Path=Close}" Style="{DynamicResource MpCloseButton}" Width="48" Height="48"  Background="#FFFFFFFF" BorderBrush="{x:Null}" Foreground="{x:Null}"  Canvas.Left="461.77" Canvas.Top="14.71"  />
-	<ProjectInfinity_Controls:ListBox x:Name="gridContent" SelectedIndex="{Binding Path=SelectedIndex}" Command="{Binding Path=ItemSelected}" CommandParameter="{Binding Path=MenuItems.CurrentItem}" ItemsSource="{Binding Path=MenuItems}" ItemContainerStyle="{StaticResource MpListViewItem}"  Style="{StaticResource MpListView}" ItemTemplate="{StaticResource itemListTemplate}" Width="472" Height="251.446" Canvas.Left="27.102" Canvas.Top="62.656" />
-
+  <TextBlock x:Name="textBox" Text="{Binding Path=Content}" TextWrapping="WrapWithOverflow" FontFamily="Segoe" FontSize="28" FontWeight="Normal" Foreground="White" Width="472" Height="251.446" Canvas.Left="27.102" Canvas.Top="62.656" />
 </Canvas>
