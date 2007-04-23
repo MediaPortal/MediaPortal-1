@@ -117,10 +117,11 @@
     <Page Include="Dialogs\DialogMenuLogo.xaml" />
     <Page Include="Dialogs\DialogOk.xaml" />
     <Page Include="Dialogs\DialogYesNo.xaml" />
-    <Page Include="Home\home.xaml" />
-    <Page Include="MyPictures\MyPictures.xaml" />
-    <Page Include="MyPictures\MyPicturesFullScreen.xaml" />
-    <Page Include="MyPictures\MyPictures_resources.xaml" />
+    <Page Include="Menu\MenuView.xaml" />
+    <Page Include="MyVideos\VideoFullscreen.xaml" />
+    <Page Include="MyVideos\VideoHome.xaml" />
+    <Page Include="MyVideos\VideoPlaylist.xaml" />
+    <Page Include="Pictures\FullScreenPictureView.xaml" />
     <Page Include="MyTV\TvConflictDialog.xaml" />
     <Page Include="MyTV\TvFullscreen.xaml" />
     <Page Include="MyTV\TvGuide.xaml" />
@@ -133,6 +134,8 @@
     <Page Include="MyTV\TvSetup.xaml" />
     <Page Include="MyWeather\Weather.xaml" />
     <Page Include="MyWeather\WeatherSetup.xaml" />
+    <Page Include="Pictures\PictureView.xaml" />
+    <Page Include="Pictures\PictureView_resources.xaml" />
     <Page Include="theme.xaml" />
     <Resource Include="Gfx\arrow_round_down_nofocus.png" />
     <Resource Include="Gfx\arrow_round_up_nofocus.png" />
