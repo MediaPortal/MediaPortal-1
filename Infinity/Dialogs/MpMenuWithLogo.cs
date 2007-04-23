@@ -27,7 +27,6 @@ namespace Dialogs
   public partial class MpMenuWithLogo : ViewWindow
   {
     DialogViewModel _model;
-    DialogMenuItemCollection _menuItems;
     /// <summary>
     /// Initializes a new instance of the <see cref="MpImageMenu"/> class.
     /// </summary>
@@ -38,14 +37,13 @@ namespace Dialogs
       this.Width = 530;
       this.Height = 370;
 
-      _menuItems = new DialogMenuItemCollection();
       _model = new DialogViewModel(this);
+      _model.SetItems(new DialogMenuItemCollection());
       Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
       this.Width *= scaling.Width;
       this.Height *= scaling.Height;
       DataContext = _model;
       this.InputBindings.Add(new KeyBinding(_model.Close, new KeyGesture(System.Windows.Input.Key.Escape)));
-      this.Loaded += new RoutedEventHandler(MpMenu_Loaded);
     }
     public MpMenuWithLogo(DialogMenuItemCollection items)
     {
@@ -54,19 +52,13 @@ namespace Dialogs
       this.Width = 530;
       this.Height = 370;
 
-      _menuItems = items;
       _model = new DialogViewModel(this);
+      _model.SetItems(items);
       Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
       this.Width *= scaling.Width;
       this.Height *= scaling.Height;
       DataContext = _model;
       this.InputBindings.Add(new KeyBinding(_model.Close, new KeyGesture(System.Windows.Input.Key.Escape)));
-      this.Loaded += new RoutedEventHandler(MpMenu_Loaded);
-    }
-
-    void MpMenu_Loaded(object sender, RoutedEventArgs e)
-    {
-      _model.SetItems(_menuItems);
     }
 
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
@@ -109,10 +101,6 @@ namespace Dialogs
       }
     }
     /// <summary>
-    /// Shows this instance.
-    /// </summary>
-
-    /// <summary>
     /// Gets or sets the index of the selected.
     /// </summary>
     /// <value>The index of the selected.</value>
@@ -137,7 +125,7 @@ namespace Dialogs
       get
       {
         if (SelectedIndex < 0) return null;
-        return _menuItems[SelectedIndex];
+        return _model.Items[SelectedIndex];
       }
     }
 
@@ -149,13 +137,12 @@ namespace Dialogs
     {
       get
       {
-        return _menuItems;
+        return _model.Items;
       }
       set
       {
-        _menuItems = value;
+        _model.Items = value;
       }
     }
-
   }
 }

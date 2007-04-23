@@ -241,6 +241,7 @@ namespace MyVideos
         {
           _viewType = value;
           ChangeProperty("ViewModeType");
+          ChangeProperty("ViewLabel");
         }
       }
     }
@@ -621,6 +622,7 @@ namespace MyVideos
       dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 21)/*Film strip*/));
       dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 22)/*List*/));
       dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 23)/*Icon*/));
+      dlgMenu.SelectedIndex = (int)_viewModel.ViewMode;
       dlgMenu.ShowDialog();
       switch (dlgMenu.SelectedIndex)
       {
@@ -660,6 +662,7 @@ namespace MyVideos
       dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 15)/*Year*/));
       dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 16)/*Rating*/));
       dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 17)/*DVD*/));
+      dlgMenu.SelectedIndex = (int)(_viewModel.Videos as VideoCollectionView).SortMode;
       dlgMenu.ShowDialog();
 
       if (dlgMenu.SelectedIndex < 0) return;    // no menu item selected

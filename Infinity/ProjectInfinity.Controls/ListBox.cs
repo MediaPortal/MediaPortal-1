@@ -51,8 +51,8 @@ namespace ProjectInfinity.Controls
                                                                                                     (null));
 
 
-    
-    
+
+
     /// <summary>
     /// Identifies the <see cref="Command"/> property.
     /// </summary>
@@ -186,7 +186,7 @@ namespace ProjectInfinity.Controls
         }
         e.Handled = true;
         return;
-      } 
+      }
       if (e.RightButton == MouseButtonState.Pressed)
       {
         //execute the command if there is one
@@ -229,7 +229,16 @@ namespace ProjectInfinity.Controls
         }
       }
     }
-
+    protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+    {
+      base.OnGotKeyboardFocus(e);
+      if (SelectedIndex < 0) return;
+      DependencyObject obj = ItemContainerGenerator.ContainerFromIndex(SelectedIndex);
+      if (this.IsKeyboardFocused || this.IsKeyboardFocusWithin || this.IsFocused)
+      {
+        Keyboard.Focus((ListBoxItem)obj);
+      }
+    }
     protected override void OnSelectionChanged(SelectionChangedEventArgs e)
     {
       ICurrentItem currentItem = ItemsSource as ICurrentItem;
@@ -359,7 +368,7 @@ namespace ProjectInfinity.Controls
 
     private static void ContextMenuCommandPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
     {
-      (dependencyObject as ListBox).ContextMenuCommand = (e.NewValue as ICommand); 
+      (dependencyObject as ListBox).ContextMenuCommand = (e.NewValue as ICommand);
     }
     #endregion
   }

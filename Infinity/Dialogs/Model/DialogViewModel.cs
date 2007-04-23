@@ -69,12 +69,20 @@ namespace Dialogs
         return _menuCollection;
       }
     }
+    public DialogMenuItemCollection Items
+    {
+      get
+      {
+        return (DialogMenuItemCollection)_menuCollection.SourceCollection;
+      }
+      set
+      {
+        _menuCollection = new MenuCollectionView(value);
+      }
+    }
     public void SetItems(DialogMenuItemCollection items)
     {
-      ArrayList listItems = new ArrayList();
-      for (int i=0; i < items.Count;++i)
-        listItems.Add(items[i]);
-      _menuCollection = new MenuCollectionView(listItems);
+      _menuCollection = new MenuCollectionView(items);
     }
     /// <summary>
     /// Gets the window.
@@ -295,7 +303,7 @@ namespace Dialogs
       /// Initializes a new instance of the <see cref="MenuCollectionView"/> class.
       /// </summary>
       /// <param name="model">The database model.</param>
-      public MenuCollectionView(ArrayList items)
+      public MenuCollectionView(ObservableCollection<DialogMenuItem> items)
         :base(items)
       {
       }
