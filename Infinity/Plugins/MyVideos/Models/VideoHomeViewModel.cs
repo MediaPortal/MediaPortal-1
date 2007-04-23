@@ -622,6 +622,17 @@ namespace MyVideos
       dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 22)/*List*/));
       dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 23)/*Icon*/));
       dlgMenu.ShowDialog();
+      switch (dlgMenu.SelectedIndex)
+      {
+        case 0:
+          break;
+        case 1:
+          _viewModel.ViewMode = VideoHomeViewModel.ViewType.List;
+          break;
+        case 2:
+          _viewModel.ViewMode = VideoHomeViewModel.ViewType.Icon;
+          break;
+      }
     }
   }
   #endregion

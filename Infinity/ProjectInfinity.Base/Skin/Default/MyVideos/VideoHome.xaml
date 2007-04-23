@@ -22,9 +22,32 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
           <RowDefinition/>
-          <RowDefinition/>
         </Grid.RowDefinitions>
         <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="32" Width="32"  Source="{Binding Logo}" />
+        <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="10" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Title}"/>
+        <Label Grid.Row="0" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Size}"/>
+      </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="videoItemIconTemplate" DataType="{x:Type local:VideoModel}">
+      <Grid Width="450">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition/>
+          <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="64" Width="64"  Source="{Binding Logo}" />
         <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="10" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Title}"/>
         <Label Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Size}"/>
       </Grid>
@@ -59,7 +82,7 @@
                 <Setter Property="ItemTemplate" Value="{StaticResource videoItemListTemplate}"/>
               </Trigger>
               <Trigger Property="ViewMode" Value="Icon">
-                <Setter Property="ItemTemplate" Value="{StaticResource videoItemListTemplate}"/>
+                <Setter Property="ItemTemplate" Value="{StaticResource videoItemIconTemplate}"/>
               </Trigger>
             </ControlTemplate.Triggers>
 
