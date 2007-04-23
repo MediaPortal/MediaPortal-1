@@ -46,7 +46,9 @@
     <Compile Include="DialogMenuItem.cs" />
     <Compile Include="DialogMenuItemCollection.cs" />
     <Compile Include="DialogResult.cs" />
+    <Compile Include="FolderDialog.cs" />
     <Compile Include="Model\DialogViewModel.cs" />
+    <Compile Include="Model\FolderViewModel.cs" />
     <Compile Include="MpDialogOk.cs" />
     <Compile Include="MpDialogYesNo.cs" />
     <Compile Include="MpMenu.cs" />
