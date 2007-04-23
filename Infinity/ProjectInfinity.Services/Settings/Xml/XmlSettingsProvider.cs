@@ -18,7 +18,7 @@ namespace ProjectInfinity.Settings
     public XmlSettingsProvider(string xmlfilename)
     {
       filename = xmlfilename;
-      fullFileName = String.Format(@"{0}\MediaPortal Infinity\Config\{1}", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),xmlfilename);;
+      string fullFileName = String.Format(@"{0}\MediaPortal Infinity\Config\{1}", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),xmlfilename);;
       document = new XmlDocument();
       if (File.Exists(fullFileName))
       {
