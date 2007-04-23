@@ -2332,13 +2332,21 @@ namespace TvPlugin
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
 
         string displayedChannelName = string.Empty;
-        GroupMap map = (GroupMap)TVHome.Navigator.CurrentGroup.ReferringGroupMap()[Int32.Parse(_channelName) - 1];
+        
         if (_byIndex)
+        {
+          int channelNr;
+          if (!Int32.TryParse(_channelName,out channelNr))
+            return;
+          if (channelNr > TVHome.Navigator.CurrentGroup.ReferringGroupMap().Count)
+            return;
+          GroupMap map = (GroupMap)TVHome.Navigator.CurrentGroup.ReferringGroupMap()[channelNr - 1];
           displayedChannelName = map.ReferencedChannel().Name;
+        }
         else
           for (int ChannelCnt = 0; ChannelCnt < TVHome.Navigator.CurrentGroup.ReferringGroupMap().Count; ChannelCnt++)
           {
-            map = (GroupMap)TVHome.Navigator.CurrentGroup.ReferringGroupMap()[ChannelCnt];
+            GroupMap map = (GroupMap)TVHome.Navigator.CurrentGroup.ReferringGroupMap()[ChannelCnt];
             if (map.ReferencedChannel().SortOrder == Int32.Parse(_channelName))
             {
               displayedChannelName = map.ReferencedChannel().Name;
