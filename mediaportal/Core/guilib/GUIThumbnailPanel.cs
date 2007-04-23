@@ -485,17 +485,6 @@ namespace MediaPortal.GUI.Library
       }
       if (_sleeper > 0) _sleeper--;
 
-      if (_verticalScrollBar != null)
-      {
-        float fPercent = (float)_cursorY * _columnCount + _offset + _cursorX;
-        fPercent /= (float)(_listItems.Count);
-        fPercent *= 100.0f;
-        if ((int)fPercent != (int)_verticalScrollBar.Percentage)
-        {
-          _verticalScrollBar.Percentage = fPercent;
-        }
-      }
-
       int iScrollYOffset = 0;
       if (true == _scrollingDown)
       {
@@ -645,22 +634,40 @@ namespace MediaPortal.GUI.Library
       }
 
       dwPosY = _positionY + _rowCount * (_itemHeight);
-      //_controlUpDown.SetPosition(_controlUpDown.XPosition,dwPosY);
-      _controlUpDown.Render(timePassed);
-      if (_scrollingDown || _scrollingUp)
-      {
-        _refresh = true;
-      }
-      int iItemsPerPage = _rowCount * _columnCount;
-      if (_listItems.Count > iItemsPerPage)
-      {
-        _verticalScrollBar.Render(timePassed);
-      }
+
       if (Focus)
         GUIPropertyManager.SetProperty("#highlightedbutton", String.Empty);
       base.Render(timePassed);
     }
 
+    void RenderScrollbar(float timePassed, int y)
+    {
+      int iItemsPerPage = _rowCount * _columnCount;
+      if (_listItems.Count > iItemsPerPage)
+      {
+        // Render the spin control
+        //_controlUpDown.SetPosition(_controlUpDown.XPosition,dwPosY);
+        _controlUpDown.Render(timePassed);
+
+        if (_scrollingDown || _scrollingUp)
+        {
+          _refresh = true;
+        }
+
+        // Render the vertical scrollbar
+        if (_verticalScrollBar != null)
+        {
+          float fPercent = (float)_cursorY * _columnCount + _offset + _cursorX;
+          fPercent /= (float)(_listItems.Count);
+          fPercent *= 100.0f;
+          if ((int)fPercent != (int)_verticalScrollBar.Percentage)
+          {
+            _verticalScrollBar.Percentage = fPercent;
+          }
+          _verticalScrollBar.Render(timePassed);
+        }
+      }
+    }
 
     public override void OnAction(Action action)
     {
