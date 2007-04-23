@@ -4,7 +4,7 @@ namespace ProjectInfinity.Pictures
 {
   public class Folder : MediaItem
   {
-    private DirectoryInfo _info;
+    private readonly DirectoryInfo _info;
 
     public Folder(DirectoryInfo path) : base(path.FullName)
     {

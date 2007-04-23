@@ -66,4 +66,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>xcopy $(TargetDir)$(TargetName)$(TargetExt) $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(TargetName) /Y /D 
+xcopy $(TargetDir)$(TargetName).pdb $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(TargetName) /Y /D 
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

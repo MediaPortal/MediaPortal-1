@@ -74,6 +74,7 @@ namespace ProjectInfinity
       msgBroker.Register(this);
     }
 
+
     private void DoStart()
     {
       //notify our own subscribers (through the message broker)
@@ -84,7 +85,7 @@ namespace ProjectInfinity
       ServiceScope.Get<IPluginManager>().Startup();
       INavigationService navigation = ServiceScope.Get<INavigationService>();
 
-      navigation.Closing += new CancelEventHandler(mainWindow_Closing);
+      navigation.Closing += mainWindow_Closing;
       try
       {
         OnStartupComplete(EventArgs.Empty);
@@ -96,7 +97,7 @@ namespace ProjectInfinity
       }
       finally
       {
-        navigation.Closing -= new CancelEventHandler(mainWindow_Closing);
+        navigation.Closing -= mainWindow_Closing;
       }
       OnShutdownComplete(EventArgs.Empty);
     }
