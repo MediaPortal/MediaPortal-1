@@ -19,7 +19,7 @@ namespace MyVideos
       set { this._shares = value; }
     }
 
-    [Setting(SettingScope.User, ".mpeg;.mpg;.avi;.mkv;.ts")]
+    [Setting(SettingScope.User, ".mpeg;.mpg;.avi;.mkv;.ts;.wmv")]
     public string VideoExtensions
     {
       get { return this._videoExtensions; }
