@@ -1885,4 +1885,544 @@
       </Setter.Value>
     </Setter>
   </Style>
+	<Style x:Key="MpArrowButtonLeft" BasedOn="{x:Null}" TargetType="{x:Type Button}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Button}">
+					<ControlTemplate.Resources>
+						<Storyboard x:Key="focusedStoryBoard">
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF0B3A88"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FFE3E9F2"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FFE3F2E9"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF113F88"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FFCCCED1"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FFCCD1CD"/>
+							</ColorAnimationUsingKeyFrames>
+						</Storyboard>
+						<Storyboard x:Key="pressedStoryBoard">
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF19A05D"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF19A05D"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Offset)">
+								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+								<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+							</DoubleAnimationUsingKeyFrames>
+							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="arrow" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+								<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.8"/>
+							</DoubleAnimationUsingKeyFrames>
+							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="arrow" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+								<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.8"/>
+							</DoubleAnimationUsingKeyFrames>
+						</Storyboard>
+						<Storyboard x:Key="disabledStoryBoard">
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF2A5EB4"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF808080"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="arrow" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF213F9E"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF808080"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF113F88"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF808080"/>
+							</ColorAnimationUsingKeyFrames>
+						</Storyboard>
+					</ControlTemplate.Resources>
+					<Grid Width="40" Height="40">
+						<Rectangle x:Name="Body">
+							<Rectangle.Fill>
+								<RadialGradientBrush MappingMode="RelativeToBoundingBox" SpreadMethod="Pad" GradientOrigin="0.5,0.636">
+									<RadialGradientBrush.RelativeTransform>
+										<TransformGroup>
+											<ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.668" ScaleY="1.641"/>
+											<SkewTransform AngleX="0" AngleY="0" CenterX="0.5" CenterY="0.5"/>
+											<RotateTransform Angle="0" CenterX="0.5" CenterY="0.5"/>
+											<TranslateTransform X="0.036" Y="0.023"/>
+										</TransformGroup>
+									</RadialGradientBrush.RelativeTransform>
+									<GradientStop Color="#FFE3E9F2" Offset="0"/>
+									<GradientStop Color="#FF2A5EB4" Offset="1"/>
+								</RadialGradientBrush>
+							</Rectangle.Fill>
+							<Rectangle.Stroke>
+								<RadialGradientBrush>
+									<RadialGradientBrush.RelativeTransform>
+										<TransformGroup>
+											<ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.213" ScaleY="1.162"/>
+											<SkewTransform AngleX="0" AngleY="0" CenterX="0.5" CenterY="0.5"/>
+											<RotateTransform Angle="0" CenterX="0.5" CenterY="0.5"/>
+											<TranslateTransform X="0.003" Y="0.002"/>
+										</TransformGroup>
+									</RadialGradientBrush.RelativeTransform>
+									<GradientStop Color="#FFCCCED1" Offset="0"/>
+									<GradientStop Color="#FF113F88" Offset="1"/>
+								</RadialGradientBrush>
+							</Rectangle.Stroke>
+						</Rectangle>
+						<Path Fill="#FF213F9E" Stretch="Fill" Stroke="{x:Null}" Margin="9.169,7,9.691,7" x:Name="arrow" Data="M136.75,137.5 L136.765,158.5 120.40356,147.97876 z" RenderTransformOrigin="0.5,0.5">
+							<Path.RenderTransform>
+								<TransformGroup>
+									<ScaleTransform ScaleX="1" ScaleY="1"/>
+									<SkewTransform AngleX="0" AngleY="0"/>
+									<RotateTransform Angle="0"/>
+									<TranslateTransform X="0" Y="0"/>
+								</TransformGroup>
+							</Path.RenderTransform>
+						</Path>
+					</Grid>
+					<ControlTemplate.Triggers>
+						<EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
+						<Trigger Property="IsKeyboardFocused" Value="True">
+							<Trigger.EnterActions>
+								<BeginStoryboard x:Name="focusedStoryBoard_BeginStoryboard" Storyboard="{StaticResource iskeyboardfocused}"/>
+								<BeginStoryboard Storyboard="{StaticResource focusedStoryBoard}"/>
+							</Trigger.EnterActions>
+							<Trigger.ExitActions>
+								<StopStoryboard BeginStoryboardName="focusedStoryBoard_BeginStoryboard"/>
+								<BeginStoryboard Storyboard="{StaticResource focusedStoryBoard}"/>
+							</Trigger.ExitActions>
+						</Trigger>
+						<Trigger Property="IsPressed" Value="True">
+							<Trigger.EnterActions>
+								<BeginStoryboard x:Name="pressedStoryBoard_BeginStoryboard" Storyboard="{StaticResource pressedStoryBoard}"/>
+							</Trigger.EnterActions>
+							<Trigger.ExitActions>
+								<BeginStoryboard x:Name="pressedStoryBoard_BeginStoryboard1" Storyboard="{StaticResource pressedStoryBoard}"/>
+							</Trigger.ExitActions>
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Trigger.EnterActions>
+								<BeginStoryboard x:Name="disabledStoryBoard_BeginStoryboard" Storyboard="{StaticResource disabledStoryBoard}"/>
+							</Trigger.EnterActions>
+							<Trigger.ExitActions>
+								<BeginStoryboard x:Name="disabledStoryBoard_BeginStoryboard1" Storyboard="{StaticResource disabledStoryBoard}"/>
+							</Trigger.ExitActions>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="MpArrowButtonRight" BasedOn="{x:Null}" TargetType="{x:Type Button}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Button}">
+					<ControlTemplate.Resources>
+						<Storyboard x:Key="focusedStoryBoard">
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF0B3A88"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FFE3E9F2"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FFE3F2E9"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF113F88"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FFCCCED1"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FFCCD1CD"/>
+							</ColorAnimationUsingKeyFrames>
+						</Storyboard>
+						<Storyboard x:Key="pressedStoryBoard">
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF19A05D"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF19A05D"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Offset)">
+								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+								<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+							</DoubleAnimationUsingKeyFrames>
+							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="arrow" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+								<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.8"/>
+							</DoubleAnimationUsingKeyFrames>
+							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="arrow" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+								<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.8"/>
+							</DoubleAnimationUsingKeyFrames>
+						</Storyboard>
+						<Storyboard x:Key="disabledStoryBoard">
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF2A5EB4"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF808080"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="arrow" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF213F9E"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF808080"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF113F88"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF808080"/>
+							</ColorAnimationUsingKeyFrames>
+						</Storyboard>
+					</ControlTemplate.Resources>
+					<Grid Width="40" Height="40">
+						<Rectangle x:Name="Body">
+							<Rectangle.Fill>
+								<RadialGradientBrush MappingMode="RelativeToBoundingBox" SpreadMethod="Pad" GradientOrigin="0.5,0.636">
+									<RadialGradientBrush.RelativeTransform>
+										<TransformGroup>
+											<ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.668" ScaleY="1.641"/>
+											<SkewTransform AngleX="0" AngleY="0" CenterX="0.5" CenterY="0.5"/>
+											<RotateTransform Angle="0" CenterX="0.5" CenterY="0.5"/>
+											<TranslateTransform X="0.036" Y="0.023"/>
+										</TransformGroup>
+									</RadialGradientBrush.RelativeTransform>
+									<GradientStop Color="#FFE3E9F2" Offset="0"/>
+									<GradientStop Color="#FF2A5EB4" Offset="1"/>
+								</RadialGradientBrush>
+							</Rectangle.Fill>
+							<Rectangle.Stroke>
+								<RadialGradientBrush>
+									<RadialGradientBrush.RelativeTransform>
+										<TransformGroup>
+											<ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.213" ScaleY="1.162"/>
+											<SkewTransform AngleX="0" AngleY="0" CenterX="0.5" CenterY="0.5"/>
+											<RotateTransform Angle="0" CenterX="0.5" CenterY="0.5"/>
+											<TranslateTransform X="0.003" Y="0.002"/>
+										</TransformGroup>
+									</RadialGradientBrush.RelativeTransform>
+									<GradientStop Color="#FFCCCED1" Offset="0"/>
+									<GradientStop Color="#FF113F88" Offset="1"/>
+								</RadialGradientBrush>
+							</Rectangle.Stroke>
+						</Rectangle>
+						<Path Fill="#FF213F9E" Stretch="Fill" Stroke="{x:Null}" Margin="9.889,7,8.971,7" x:Name="arrow" Data="M136.75,137.5 L136.765,158.5 120.40356,147.97876 z" RenderTransformOrigin="0.5,0.5">
+							<Path.RenderTransform>
+								<TransformGroup>
+									<ScaleTransform ScaleX="1" ScaleY="1"/>
+									<SkewTransform AngleX="0" AngleY="0"/>
+									<RotateTransform Angle="180"/>
+									<TranslateTransform X="0" Y="0"/>
+								</TransformGroup>
+							</Path.RenderTransform>
+						</Path>
+					</Grid>
+					<ControlTemplate.Triggers>
+						<EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
+						<Trigger Property="IsKeyboardFocused" Value="True">
+							<Trigger.EnterActions>
+								<BeginStoryboard x:Name="focusedStoryBoard_BeginStoryboard" Storyboard="{StaticResource iskeyboardfocused}"/>
+								<BeginStoryboard Storyboard="{StaticResource focusedStoryBoard}"/>
+							</Trigger.EnterActions>
+							<Trigger.ExitActions>
+								<StopStoryboard BeginStoryboardName="focusedStoryBoard_BeginStoryboard"/>
+								<BeginStoryboard Storyboard="{StaticResource focusedStoryBoard}"/>
+							</Trigger.ExitActions>
+						</Trigger>
+						<Trigger Property="IsPressed" Value="True">
+							<Trigger.EnterActions>
+								<BeginStoryboard x:Name="pressedStoryBoard_BeginStoryboard" Storyboard="{StaticResource pressedStoryBoard}"/>
+							</Trigger.EnterActions>
+							<Trigger.ExitActions>
+								<BeginStoryboard x:Name="pressedStoryBoard_BeginStoryboard1" Storyboard="{StaticResource pressedStoryBoard}"/>
+							</Trigger.ExitActions>
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Trigger.EnterActions>
+								<BeginStoryboard x:Name="disabledStoryBoard_BeginStoryboard" Storyboard="{StaticResource disabledStoryBoard}"/>
+							</Trigger.EnterActions>
+							<Trigger.ExitActions>
+								<BeginStoryboard x:Name="disabledStoryBoard_BeginStoryboard1" Storyboard="{StaticResource disabledStoryBoard}"/>
+							</Trigger.ExitActions>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="MpArrowButtonUp" BasedOn="{x:Null}" TargetType="{x:Type Button}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Button}">
+					<ControlTemplate.Resources>
+						<Storyboard x:Key="focusedStoryBoard">
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF0B3A88"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FFE3E9F2"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FFE3F2E9"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF113F88"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FFCCCED1"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FFCCD1CD"/>
+							</ColorAnimationUsingKeyFrames>
+						</Storyboard>
+						<Storyboard x:Key="pressedStoryBoard">
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF19A05D"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF19A05D"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Offset)">
+								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+								<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+							</DoubleAnimationUsingKeyFrames>
+							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="arrow" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+								<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.8"/>
+							</DoubleAnimationUsingKeyFrames>
+							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="arrow" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+								<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.8"/>
+							</DoubleAnimationUsingKeyFrames>
+						</Storyboard>
+						<Storyboard x:Key="disabledStoryBoard">
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF2A5EB4"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF808080"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="arrow" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF213F9E"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF808080"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF113F88"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF808080"/>
+							</ColorAnimationUsingKeyFrames>
+						</Storyboard>
+					</ControlTemplate.Resources>
+					<Grid Width="40" Height="40">
+						<Rectangle x:Name="Body">
+							<Rectangle.Fill>
+								<RadialGradientBrush MappingMode="RelativeToBoundingBox" SpreadMethod="Pad" GradientOrigin="0.5,0.636">
+									<RadialGradientBrush.RelativeTransform>
+										<TransformGroup>
+											<ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.668" ScaleY="1.641"/>
+											<SkewTransform AngleX="0" AngleY="0" CenterX="0.5" CenterY="0.5"/>
+											<RotateTransform Angle="0" CenterX="0.5" CenterY="0.5"/>
+											<TranslateTransform X="0.036" Y="0.023"/>
+										</TransformGroup>
+									</RadialGradientBrush.RelativeTransform>
+									<GradientStop Color="#FFE3E9F2" Offset="0"/>
+									<GradientStop Color="#FF2A5EB4" Offset="1"/>
+								</RadialGradientBrush>
+							</Rectangle.Fill>
+							<Rectangle.Stroke>
+								<RadialGradientBrush>
+									<RadialGradientBrush.RelativeTransform>
+										<TransformGroup>
+											<ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.213" ScaleY="1.162"/>
+											<SkewTransform AngleX="0" AngleY="0" CenterX="0.5" CenterY="0.5"/>
+											<RotateTransform Angle="0" CenterX="0.5" CenterY="0.5"/>
+											<TranslateTransform X="0.003" Y="0.002"/>
+										</TransformGroup>
+									</RadialGradientBrush.RelativeTransform>
+									<GradientStop Color="#FFCCCED1" Offset="0"/>
+									<GradientStop Color="#FF113F88" Offset="1"/>
+								</RadialGradientBrush>
+							</Rectangle.Stroke>
+						</Rectangle>
+						<Path Fill="#FF213F9E" Stretch="Fill" Stroke="{x:Null}" Margin="9.529,7,9.331,7" x:Name="arrow" Data="M136.75,137.5 L136.765,158.5 120.40356,147.97876 z" RenderTransformOrigin="0.5,0.5">
+							<Path.RenderTransform>
+								<TransformGroup>
+									<ScaleTransform ScaleX="1" ScaleY="1"/>
+									<SkewTransform AngleX="0" AngleY="0"/>
+									<RotateTransform Angle="90"/>
+									<TranslateTransform X="0" Y="0"/>
+								</TransformGroup>
+							</Path.RenderTransform>
+						</Path>
+					</Grid>
+					<ControlTemplate.Triggers>
+						<EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
+						<Trigger Property="IsKeyboardFocused" Value="True">
+							<Trigger.EnterActions>
+								<BeginStoryboard x:Name="focusedStoryBoard_BeginStoryboard" Storyboard="{StaticResource iskeyboardfocused}"/>
+								<BeginStoryboard Storyboard="{StaticResource focusedStoryBoard}"/>
+							</Trigger.EnterActions>
+							<Trigger.ExitActions>
+								<StopStoryboard BeginStoryboardName="focusedStoryBoard_BeginStoryboard"/>
+								<BeginStoryboard Storyboard="{StaticResource focusedStoryBoard}"/>
+							</Trigger.ExitActions>
+						</Trigger>
+						<Trigger Property="IsPressed" Value="True">
+							<Trigger.EnterActions>
+								<BeginStoryboard x:Name="pressedStoryBoard_BeginStoryboard" Storyboard="{StaticResource pressedStoryBoard}"/>
+							</Trigger.EnterActions>
+							<Trigger.ExitActions>
+								<BeginStoryboard x:Name="pressedStoryBoard_BeginStoryboard1" Storyboard="{StaticResource pressedStoryBoard}"/>
+							</Trigger.ExitActions>
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Trigger.EnterActions>
+								<BeginStoryboard x:Name="disabledStoryBoard_BeginStoryboard" Storyboard="{StaticResource disabledStoryBoard}"/>
+							</Trigger.EnterActions>
+							<Trigger.ExitActions>
+								<BeginStoryboard x:Name="disabledStoryBoard_BeginStoryboard1" Storyboard="{StaticResource disabledStoryBoard}"/>
+							</Trigger.ExitActions>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="MpArrowButtonDown" BasedOn="{x:Null}" TargetType="{x:Type Button}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Button}">
+					<ControlTemplate.Resources>
+						<Storyboard x:Key="focusedStoryBoard">
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF0B3A88"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FFE3E9F2"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FFE3F2E9"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF113F88"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FFCCCED1"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FFCCD1CD"/>
+							</ColorAnimationUsingKeyFrames>
+						</Storyboard>
+						<Storyboard x:Key="pressedStoryBoard">
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF19A05D"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF19A05D"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF19A05D"/>
+							</ColorAnimationUsingKeyFrames>
+							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Offset)">
+								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+								<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1"/>
+							</DoubleAnimationUsingKeyFrames>
+							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="arrow" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+								<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.8"/>
+							</DoubleAnimationUsingKeyFrames>
+							<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="arrow" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+								<SplineDoubleKeyFrame KeyTime="00:00:00" Value="1"/>
+								<SplineDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.8"/>
+							</DoubleAnimationUsingKeyFrames>
+						</Storyboard>
+						<Storyboard x:Key="disabledStoryBoard">
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF2A5EB4"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF808080"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="arrow" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF213F9E"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF808080"/>
+							</ColorAnimationUsingKeyFrames>
+							<ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Body" Storyboard.TargetProperty="(Shape.Stroke).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+								<SplineColorKeyFrame KeyTime="00:00:00" Value="#FF113F88"/>
+								<SplineColorKeyFrame KeyTime="00:00:00.2000000" Value="#FF808080"/>
+							</ColorAnimationUsingKeyFrames>
+						</Storyboard>
+					</ControlTemplate.Resources>
+					<Grid Width="40" Height="40">
+						<Rectangle x:Name="Body">
+							<Rectangle.Fill>
+								<RadialGradientBrush MappingMode="RelativeToBoundingBox" SpreadMethod="Pad" GradientOrigin="0.5,0.636">
+									<RadialGradientBrush.RelativeTransform>
+										<TransformGroup>
+											<ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.668" ScaleY="1.641"/>
+											<SkewTransform AngleX="0" AngleY="0" CenterX="0.5" CenterY="0.5"/>
+											<RotateTransform Angle="0" CenterX="0.5" CenterY="0.5"/>
+											<TranslateTransform X="0.036" Y="0.023"/>
+										</TransformGroup>
+									</RadialGradientBrush.RelativeTransform>
+									<GradientStop Color="#FFE3E9F2" Offset="0"/>
+									<GradientStop Color="#FF2A5EB4" Offset="1"/>
+								</RadialGradientBrush>
+							</Rectangle.Fill>
+							<Rectangle.Stroke>
+								<RadialGradientBrush>
+									<RadialGradientBrush.RelativeTransform>
+										<TransformGroup>
+											<ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.213" ScaleY="1.162"/>
+											<SkewTransform AngleX="0" AngleY="0" CenterX="0.5" CenterY="0.5"/>
+											<RotateTransform Angle="0" CenterX="0.5" CenterY="0.5"/>
+											<TranslateTransform X="0.003" Y="0.002"/>
+										</TransformGroup>
+									</RadialGradientBrush.RelativeTransform>
+									<GradientStop Color="#FFCCCED1" Offset="0"/>
+									<GradientStop Color="#FF113F88" Offset="1"/>
+								</RadialGradientBrush>
+							</Rectangle.Stroke>
+						</Rectangle>
+						<Path Fill="#FF213F9E" Stretch="Fill" Stroke="{x:Null}" Margin="9.529,7.9,9.331,6.1" x:Name="arrow" Data="M136.75,137.5 L136.765,158.5 120.40356,147.97876 z" RenderTransformOrigin="0.5,0.5">
+							<Path.RenderTransform>
+								<TransformGroup>
+									<ScaleTransform ScaleX="1" ScaleY="1"/>
+									<SkewTransform AngleX="0" AngleY="0"/>
+									<RotateTransform Angle="-90"/>
+									<TranslateTransform X="0" Y="0"/>
+								</TransformGroup>
+							</Path.RenderTransform>
+						</Path>
+					</Grid>
+					<ControlTemplate.Triggers>
+						<EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
+						<Trigger Property="IsKeyboardFocused" Value="True">
+							<Trigger.EnterActions>
+								<BeginStoryboard x:Name="focusedStoryBoard_BeginStoryboard" Storyboard="{StaticResource iskeyboardfocused}"/>
+								<BeginStoryboard Storyboard="{StaticResource focusedStoryBoard}"/>
+							</Trigger.EnterActions>
+							<Trigger.ExitActions>
+								<StopStoryboard BeginStoryboardName="focusedStoryBoard_BeginStoryboard"/>
+								<BeginStoryboard Storyboard="{StaticResource focusedStoryBoard}"/>
+							</Trigger.ExitActions>
+						</Trigger>
+						<Trigger Property="IsPressed" Value="True">
+							<Trigger.EnterActions>
+								<BeginStoryboard x:Name="pressedStoryBoard_BeginStoryboard" Storyboard="{StaticResource pressedStoryBoard}"/>
+							</Trigger.EnterActions>
+							<Trigger.ExitActions>
+								<BeginStoryboard x:Name="pressedStoryBoard_BeginStoryboard1" Storyboard="{StaticResource pressedStoryBoard}"/>
+							</Trigger.ExitActions>
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Trigger.EnterActions>
+								<BeginStoryboard x:Name="disabledStoryBoard_BeginStoryboard" Storyboard="{StaticResource disabledStoryBoard}"/>
+							</Trigger.EnterActions>
+							<Trigger.ExitActions>
+								<BeginStoryboard x:Name="disabledStoryBoard_BeginStoryboard1" Storyboard="{StaticResource disabledStoryBoard}"/>
+							</Trigger.ExitActions>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
 </ResourceDictionary>
