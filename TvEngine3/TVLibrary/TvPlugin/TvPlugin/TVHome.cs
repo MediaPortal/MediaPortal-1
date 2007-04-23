@@ -81,7 +81,7 @@ namespace TvPlugin
 
     [SkinControlAttribute(2)]     protected GUIButtonControl btnTvGuide = null;
     [SkinControlAttribute(3)]     protected GUIButtonControl btnRecord = null;
-    [SkinControlAttribute(6)]     protected GUIButtonControl btnGroup = null;
+   // [SkinControlAttribute(6)]     protected GUIButtonControl btnGroup = null;
     [SkinControlAttribute(7)]     protected GUIButtonControl btnChannel = null;
     [SkinControlAttribute(8)]     protected GUIToggleButtonControl btnTvOnOff = null;
     [SkinControlAttribute(13)]    protected GUIButtonControl btnTeletext = null;
@@ -620,11 +620,11 @@ namespace TvPlugin
         UpdateStateOfButtons();
         UpdateProgressPercentageBar();
       }
-
+      /*
       if (control == btnGroup)
       {
         OnSelectGroup();
-      }
+      }*/
       if (control == btnTeletext)
       {
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
@@ -689,29 +689,23 @@ namespace TvPlugin
     {
       if (!TVHome.Connected) return;
       TimeSpan ts = DateTime.Now - _updateTimer;
-
       if (GUIGraphicsContext.InVmr9Render)
         return;
       if (ts.TotalMilliseconds < 1000)
         return;
       UpdateRecordingIndicator();
-
       if (btnChannel.Disabled != false)
         btnChannel.Disabled = false;
-
-      if (btnGroup.Disabled != false)
-        btnGroup.Disabled = false;
-
+      //if (btnGroup.Disabled != false)
+        //btnGroup.Disabled = false;
       if (btnRecord.Disabled != false)
         btnRecord.Disabled = false;
       //btnTeletext.Visible = false;
-
       bool isTimeShifting = TVHome.Card.IsTimeShifting;
       if (btnTvOnOff.Selected != isTimeShifting)
       {
         btnTvOnOff.Selected = isTimeShifting;
       }
-
       if (g_Player.Playing == false)
       {
         //if (btnTuningDetails!=null)
@@ -720,17 +714,16 @@ namespace TvPlugin
           btnTeletext.Visible = false;
         return;
       }
+      Log.Debug("Roy Issue Tag 7");
       //else
       //  if (btnTuningDetails!=null)
       //    btnTuningDetails.Visible = true;
-
       if (btnChannel.Disabled != false)
         btnChannel.Disabled = false;
-      if (btnGroup.Disabled != false)
-        btnGroup.Disabled = false;
+      //if (btnGroup.Disabled != false)
+       // btnGroup.Disabled = false;
       if (btnRecord.Disabled != false)
         btnRecord.Disabled = false;
-
 
       bool hasTeletext = TVHome.Card.HasTeletext;
       if (btnTeletext.IsVisible != hasTeletext)
@@ -739,7 +732,6 @@ namespace TvPlugin
       }
       // Let the navigator zap channel if needed
       Navigator.CheckChannelChange();
-
       // Update navigator with information from the Recorder
       // TODO: This should ideally be handled using events. Recorder should fire an event
       // when the current channel changes. This is a temporary workaround //Vic
@@ -750,11 +742,10 @@ namespace TvPlugin
       UpdateStateOfButtons();
       UpdateProgressPercentageBar();
       UpdateRecordingIndicator();
-
       GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
       GUIControl.HideControl(GetID, (int)Controls.IMG_REC_RECTANGLE);
       GUIControl.HideControl(GetID, (int)Controls.IMG_REC_CHANNEL);
-
+      Log.Debug("Roy Issue Tag 8");
       _updateTimer = DateTime.Now;
     }
 
