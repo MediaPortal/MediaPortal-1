@@ -6,7 +6,7 @@
     FocusManager.FocusedElement="{Binding ElementName=buttonView}">
   <Grid.Resources>
     <DataTemplate x:Key="videoItemListTemplate" DataType="{x:Type local:VideoModel}">
-      <Grid Width="450">
+      <Grid Width="500">
         <Grid.ColumnDefinitions>
           <ColumnDefinition/>
           <ColumnDefinition/>
@@ -29,27 +29,16 @@
       </Grid>
     </DataTemplate>
     <DataTemplate x:Key="videoItemIconTemplate" DataType="{x:Type local:VideoModel}">
-      <Grid Width="450">
+      <Grid Width="90" Margin="5,5,5,5">
         <Grid.ColumnDefinitions>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
           <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-          <RowDefinition/>
-          <RowDefinition/>
+          <RowDefinition Height="64"/>
+          <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Height="64" Width="64"  Source="{Binding Logo}" />
-        <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="10" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Title}"/>
-        <Label Grid.Row="1" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Size}"/>
+        <Image Grid.Row="0" Grid.Column="0" Height="64" Width="64"  Source="{Binding Logo}" />
+        <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Title}"/>
       </Grid>
     </DataTemplate>
 
@@ -64,7 +53,7 @@
       <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
       <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
       <Setter Property="IsSynchronizedWithCurrentItem" Value="True"/>
-      <Setter Property="MinWidth" Value="120"/>
+      <Setter Property="MinWidth" Value="32"/>
       <Setter Property="MinHeight" Value="32"/>
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -72,11 +61,12 @@
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="controls:ListBox">
-            <ScrollViewer FocusManager.IsFocusScope="False"  
-              Margin="0"
-              Focusable="False">
-              <VirtualizingStackPanel IsItemsHost="True" FocusManager.IsFocusScope="False"  />
+            <ScrollViewer FocusManager.IsFocusScope="False" Margin="0" Focusable="False">
+              <Grid>
+                <WrapPanel Width="{TemplateBinding ListBox.Width}" x:Name="wrapPanel" IsItemsHost="True" FocusManager.IsFocusScope="False"  />
+              </Grid>
             </ScrollViewer>
+
             <ControlTemplate.Triggers>
               <Trigger Property="ViewMode" Value="List">
                 <Setter Property="ItemTemplate" Value="{StaticResource videoItemListTemplate}"/>
@@ -105,6 +95,6 @@
   <controls:Button Name="buttonSwitch" Grid.Column="0" Grid.Row="6" Width="176" Height="33" Content="{Binding Path=SwitchLabel}" Style="{DynamicResource MpButton}" HorizontalAlignment="Left" Margin="31,192,0,0" VerticalAlignment="Top"/>
   <controls:Button Name="buttonPlaylist" Command="{Binding Path=Playlist}" Grid.Column="0" Grid.Row="7" Width="176" Height="33" Content="{Binding Path=PlaylistLabel}" Style="{DynamicResource MpButton}" HorizontalAlignment="Left" Margin="31,225,0,0" VerticalAlignment="Top"/>
   <controls:Button Name="buttonDVD" Command="{Binding Path=DVD}" Grid.Column="0" Grid.Row="8" Width="176" Height="33" Content="{Binding Path=DVDLabel}" Style="{DynamicResource MpButton}" HorizontalAlignment="Left" Margin="31,258,0,0" VerticalAlignment="Top"/>
-  <controls:ListBox x:Name="itemList" ViewMode="{Binding Path=ViewModeType}" ContextMenuCommand="{Binding Path=ContextMenu}" ContextMenuCommandParameter="{Binding Path=Videos.CurrentItem}"  Command="{Binding Path=Play}" CommandParameter="{Binding Path=Videos.CurrentItem}" Grid.Column="1" Grid.Row="4" ItemsSource="{Binding Videos}" ItemContainerStyle="{StaticResource MpListViewItem}" Style="{StaticResource videoListView}" Margin="220,126,8,61" />
+  <controls:ListBox x:Name="itemList" ViewMode="{Binding Path=ViewModeType}" ContextMenuCommand="{Binding Path=ContextMenu}" ContextMenuCommandParameter="{Binding Path=Videos.CurrentItem}"  Command="{Binding Path=Play}" CommandParameter="{Binding Path=Videos.CurrentItem}" Grid.Column="1" Grid.Row="4" ItemsSource="{Binding Videos}" ItemContainerStyle="{StaticResource MpListViewItem}" Style="{StaticResource videoListView}" Margin="220,126,8,61" Width="500"/>
 
 </Grid>
