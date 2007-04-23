@@ -22,7 +22,7 @@ namespace MyVideos
     /// Gets or sets the video folder shares.
     /// </summary>
     /// <value>The shares.</value>
-    [Setting(SettingScope.User, "null")]
+    [Setting(SettingScope.User, "")]
     public List<string> Shares
     {
       get { return this._shares; }
