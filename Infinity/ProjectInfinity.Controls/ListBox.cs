@@ -223,6 +223,7 @@ namespace ProjectInfinity.Controls
             DependencyObject obj = ItemContainerGenerator.ContainerFromIndex(SelectedIndex);
             if (this.IsKeyboardFocused || this.IsKeyboardFocusWithin || this.IsFocused)
             {
+              //Trace.WriteLine("Listbox:focus itemgen" + SelectedIndex.ToString());
               Keyboard.Focus((ListBoxItem)obj);
             }
           }
@@ -231,16 +232,28 @@ namespace ProjectInfinity.Controls
     }
     protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
     {
-      base.OnGotKeyboardFocus(e);
-      if (SelectedIndex < 0) return;
-      DependencyObject obj = ItemContainerGenerator.ContainerFromIndex(SelectedIndex);
-      if (this.IsKeyboardFocused || this.IsKeyboardFocusWithin || this.IsFocused)
+      if (e.NewFocus == this)
       {
-        Keyboard.Focus((ListBoxItem)obj);
+        e.Handled = true;
+        if (SelectedIndex >= 0)
+        {
+          DependencyObject obj = ItemContainerGenerator.ContainerFromIndex(SelectedIndex);
+          if (this.IsKeyboardFocused || this.IsKeyboardFocusWithin || this.IsFocused)
+          {
+            //Trace.WriteLine("Listbox:focus item" + SelectedIndex.ToString());
+            Keyboard.Focus((ListBoxItem)obj);
+          }
+        }
+        return;
+
       }
+      base.OnGotKeyboardFocus(e);
+      //Trace.WriteLine("Listbox:OnGotKeyboardFocus" + e.NewFocus);
     }
+
     protected override void OnSelectionChanged(SelectionChangedEventArgs e)
     {
+      //Trace.WriteLine("OnSelectionChanged "+SelectedIndex.ToString());
       ICurrentItem currentItem = ItemsSource as ICurrentItem;
       if (currentItem != null)
       {
