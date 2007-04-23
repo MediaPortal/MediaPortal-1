@@ -233,11 +233,11 @@ namespace MyTv
 
       _epgRows.Add(new DataGridRow());
 
-      for (int i = _singleRowOffset; i < _maxChannels; ++i)
+      for (int i = 0; i < _maxChannels; ++i)
       {
         Program program;
-        if (i < programs.Count)
-          program = (Program)programs[i];
+        if (i + _singleRowOffset < programs.Count)
+          program = (Program)programs[i + _singleRowOffset];
         else
         {
           program = new Program(_selectedChannel.IdChannel, now, now.AddMinutes(30), 
