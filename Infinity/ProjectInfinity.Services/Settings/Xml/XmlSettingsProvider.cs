@@ -17,16 +17,17 @@ namespace ProjectInfinity.Settings
 
     public XmlSettingsProvider(string xmlfilename)
     {
-      filename = String.Format(@"{0}\MediaPortal Infinity\Config\{1}", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),xmlfilename);;
+      filename = xmlfilename;
+      fullFileName = String.Format(@"{0}\MediaPortal Infinity\Config\{1}", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),xmlfilename);;
       document = new XmlDocument();
-      if (File.Exists(filename))
+      if (File.Exists(fullFileName))
       {
-        document.Load(filename);
+        document.Load(fullFileName);
         if (document.DocumentElement == null) document = null;
       }
-      else if (File.Exists(filename + ".bak"))
+      else if (File.Exists(fullFileName + ".bak"))
       {
-        document.Load(filename + ".bak");
+        document.Load(fullFileName + ".bak");
         if (document.DocumentElement == null) document = null;
       }
       if (document == null)
