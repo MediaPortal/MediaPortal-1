@@ -762,7 +762,11 @@ namespace MyVideos
             if (settings.VideoExtensions.IndexOf(ext) >= 0)
             {
               FileInfo fi = new FileInfo(file);
-              VideoModel item = new VideoModel(fi.Name, (int)fi.Length, file);
+              string fileName = fi.Name;
+              if (!settings.ShowExtensions)
+                fileName = fileName.Substring(0, fileName.Length - ext.Length);
+
+              VideoModel item = new VideoModel(fileName, (int)fi.Length, file);
               _listVideos.Add(item);
             }
           }
