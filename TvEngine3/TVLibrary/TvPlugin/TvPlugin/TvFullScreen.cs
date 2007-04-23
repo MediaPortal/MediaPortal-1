@@ -1422,10 +1422,12 @@ namespace TvPlugin
       {
         dlg.AddLocalizedString(492); // Audio language menu
       }
-      dlg.AddLocalizedString(11000); // Crop settings
-      dlg.AddLocalizedString(100748);// Program Information
-      dlg.AddLocalizedString(601); //Record Now
-      dlg.AddLocalizedString(970); // Previous window
+      dlg.AddLocalizedString(11000);  // Crop settings
+      dlg.AddLocalizedString(100748); // Program Information
+      if (File.Exists(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml"))
+        dlg.AddLocalizedString(200041); // tuning details
+      dlg.AddLocalizedString(601);    //Record Now
+      dlg.AddLocalizedString(970);    // Previous window
 
       _isDialogVisible = true;
 
@@ -1563,7 +1565,6 @@ namespace TvPlugin
       case 100748: // Show Program Info
           ShowProgramInfo();
           break;
-
           
       case 601: // RecordNow
          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORD, GUIWindowManager.ActiveWindow, 0, 0, 0, 0, null);
@@ -1574,6 +1575,9 @@ namespace TvPlugin
           ShowLinkedChannelsMenu(linkages);
           break;
 
+        case 200041: // tuning details
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_TUNING_DETAILS);
+          break;
       }
     }
 
