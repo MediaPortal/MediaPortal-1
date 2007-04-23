@@ -1,8 +1,45 @@
 ﻿<DockPanel
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:pictures="clr-namespace:ProjectInfinity.Pictures;assembly=MyPictures"
     xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls"
     LastChildFill ="True">
+  <DockPanel.Resources>
+    <DataTemplate DataType="{x:Type pictures:Folder}">
+      <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Name}" />
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type pictures:Picture}">
+      <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Name}" />
+    </DataTemplate>
+    <Style x:Key="pictureListView" TargetType="controls:ListBox">
+      <Setter Property="SnapsToDevicePixels" Value="true"/>
+      <Setter Property="OverridesDefaultStyle" Value="true"/>
+      <Setter Property="KeyboardNavigation.TabNavigation" Value="Continue" />
+      <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Local" />
+      <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
+      <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
+      <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+      <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+      <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
+      <Setter Property="IsSynchronizedWithCurrentItem" Value="True"/>
+      <Setter Property="MinWidth" Value="120"/>
+      <Setter Property="MinHeight" Value="32"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="VerticalAlignment" Value="Stretch"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="controls:ListBox">
+            <ScrollViewer FocusManager.IsFocusScope="False"
+              Margin="0"
+              Focusable="False">
+              <VirtualizingStackPanel IsItemsHost="True" FocusManager.IsFocusScope="False"  />
+            </ScrollViewer>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </DockPanel.Resources>
     <Label Name="labelHeader" Style="{DynamicResource LabelHeaderStyle}" DockPanel.Dock="Top">
       Pictures
     </Label>
@@ -22,7 +59,7 @@
           <Label DockPanel.Dock="Right"   Style="{DynamicResource LabelNormalStyleWhite}"  Content ="{Binding Items.Count}" Margin ="0,0,0,0"/>
           <Label Style="{StaticResource LabelNormalStyleWhite}"  Content="{Binding CurrentFolder.Path}"/>
         </DockPanel>
-        <controls:ListView ItemsSource ="{Binding Items}" IsSynchronizedWithCurrentItem="True" Background ="{x:Null}"  Command="{Binding Launch}" SelectionMode="Single" />
+        <controls:ListBox Command="{Binding Path=Launch}" ItemsSource="{Binding Items}"  ItemContainerStyle="{StaticResource MpListViewItem}" Style="{StaticResource pictureListView}"  Margin="30,0,30,0" />
       </DockPanel>
     </Grid>
   </DockPanel>
