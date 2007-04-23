@@ -40,36 +40,37 @@ namespace ProjectInfinity.Themes
       }
     }
 
-    /// <summary>
-    /// Loads the resource dictionary for the passed view
-    /// </summary>
-    /// <param name="view">An <see cref="object"/> representing the view to load the resources for.</param>
-    /// <returns>A <see cref="ResourceDictionary"/>, or <b>null</b> if the resource file could not be found.</returns>
-    public ResourceDictionary LoadResources(object view)
-    {
-      string resourceName = GetResourceName(view);
-      if (File.Exists(resourceName))
-      {
-        using (FileStream fileStream = new FileStream(resourceName, FileMode.Open, FileAccess.Read))
-        {
-          try
-          {
-            if (fileStream.CanRead)
-            {
-              return (ResourceDictionary) XamlReader.Load(fileStream);
-            }
-            else
-              ServiceScope.Get<ILogger>().Error("Resource file {0} could not be read", resourceName);
-          }
-          catch(Exception ex)
-          {
-            ServiceScope.Get<ILogger>().Error("Error while reading resource file {0}", ex,resourceName);
-          }
-        }
-      }
-      ServiceScope.Get<ILogger>().Warn("Resource file {0} could not be found",resourceName);
-      return null;
-    }
+    //JoeDalton: no longer necessary: resources can be embedded in the content control
+    ///// <summary>
+    ///// Loads the resource dictionary for the passed view
+    ///// </summary>
+    ///// <param name="view">An <see cref="object"/> representing the view to load the resources for.</param>
+    ///// <returns>A <see cref="ResourceDictionary"/>, or <b>null</b> if the resource file could not be found.</returns>
+    //public ResourceDictionary LoadResources(object view)
+    //{
+    //  string resourceName = GetResourceName(view);
+    //  if (File.Exists(resourceName))
+    //  {
+    //    using (FileStream fileStream = new FileStream(resourceName, FileMode.Open, FileAccess.Read))
+    //    {
+    //      try
+    //      {
+    //        if (fileStream.CanRead)
+    //        {
+    //          return (ResourceDictionary) XamlReader.Load(fileStream);
+    //        }
+    //        else
+    //          ServiceScope.Get<ILogger>().Error("Resource file {0} could not be read", resourceName);
+    //      }
+    //      catch(Exception ex)
+    //      {
+    //        ServiceScope.Get<ILogger>().Error("Error while reading resource file {0}", ex,resourceName);
+    //      }
+    //    }
+    //  }
+    //  ServiceScope.Get<ILogger>().Warn("Resource file {0} could not be found",resourceName);
+    //  return null;
+    //}
 
     /// <summary>
     /// Loads the content for the passed view
@@ -106,10 +107,11 @@ namespace ProjectInfinity.Themes
       return null;
     }
 
-    private string GetResourceName(object view)
-    {
-      return GetName(@"skin\{0}\{1}_resources.xaml", view);
-    }
+    //JoeDalton: no longer necessary
+    //private string GetResourceName(object view)
+    //{
+    //  return GetName(@"skin\{0}\{1}_resources.xaml", view);
+    //}
 
     private string GetViewName(object view)
     {

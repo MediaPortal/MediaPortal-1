@@ -5,7 +5,7 @@ namespace ProjectInfinity.Pictures
 {
   public class Picture : MediaItem
   {
-    private FileInfo _info;
+    private readonly FileInfo _info;
 
     public Picture(FileInfo path) : base(path.FullName)
     {

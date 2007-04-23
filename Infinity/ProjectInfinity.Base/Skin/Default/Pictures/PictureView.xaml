@@ -49,9 +49,9 @@
       <ColumnDefinition Width="2*" />
     </Grid.ColumnDefinitions>
       <DockPanel  Name="dockPanel1" VerticalAlignment="Top" LastChildFill ="False" Grid.Column="0">
-        <Button Content="View" DockPanel.Dock="Top"  />
-        <Button Content="Sort"  DockPanel.Dock="Top"  />
-        <Button Content="Slideshow" DockPanel.Dock="Top"  />
+        <Button Content="View" Style="{StaticResource MpButton}" Command="{Binding View}" DockPanel.Dock="Top"  />
+        <Button Content="Sort" Style="{StaticResource MpButton}" DockPanel.Dock="Top"  />
+        <Button Content="Slideshow" Style="{StaticResource MpButton}" DockPanel.Dock="Top"  />
       </DockPanel>
       <DockPanel Grid.Column ="1" LastChildFill ="True">
         <DockPanel LastChildFill ="True" DockPanel.Dock="Bottom">
@@ -59,7 +59,7 @@
           <Label DockPanel.Dock="Right"   Style="{DynamicResource LabelNormalStyleWhite}"  Content ="{Binding Items.Count}" Margin ="0,0,0,0"/>
           <Label Style="{StaticResource LabelNormalStyleWhite}"  Content="{Binding CurrentFolder.Path}"/>
         </DockPanel>
-        <controls:ListBox Command="{Binding Path=Launch}" ItemsSource="{Binding Items}"  ItemContainerStyle="{StaticResource MpListViewItem}" Style="{StaticResource pictureListView}"  Margin="30,0,30,0" />
+        <controls:ListBox Command="{Binding Path=Launch}" ItemsSource="{Binding Items}"  ItemContainerStyle="{StaticResource MpListViewItem}" Style="{StaticResource pictureListView}" IsSynchronizedWithCurrentItem="true"  Margin="30,0,30,0" />
       </DockPanel>
     </Grid>
   </DockPanel>

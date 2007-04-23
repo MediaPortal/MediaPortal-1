@@ -22,7 +22,8 @@ namespace ProjectInfinity.Controls
     void View_Loaded(object sender, RoutedEventArgs e)
     {
       IThemeManager themeMgr = ServiceScope.Get<IThemeManager>();
-      Resources = themeMgr.LoadResources(this);
+      //JoeDalton: no longer necessary: resources can be embedded in the content control
+      //Resources = themeMgr.LoadResources(this);
       Background = Application.Current.Resources["backGroundBrush"] as Brush;
       Content = themeMgr.LoadContent(this);
     }

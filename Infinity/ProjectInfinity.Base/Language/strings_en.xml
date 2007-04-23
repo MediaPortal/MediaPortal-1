@@ -207,12 +207,15 @@
 		<String id="32">Next track</String>
 		<String id="33">Previous track</String>
 		<String id="34">My Videos</String>
-    <String id="35">Video folders</String>
+  		<String id="35">Video folders</String>
 	</Section>
 	<Section name="mypictures">
 		<String id="0">My Pictures</String>
+		<String id="11">Menu</String>
+		<String id="22">List</String>
+		<String id="23">Icon</String>
 	</Section>
-	- <Section name="myweather.config">
+	<Section name="myweather.config">
 		<String id="0">setup weather</String>
 		<String id="1">Search</String>
 		<String id="2">Please enter the name of your city</String>
@@ -221,7 +224,7 @@
 		<String id="5">Add</String>
 		<String id="6">OK</String>
 	</Section>
-	- <Section name="myweather">
+	<Section name="myweather">
 		<String id="0">My Weather</String>
 		<String id="1">Location</String>
 		<String id="2">Refresh</String>

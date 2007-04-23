@@ -7,7 +7,7 @@
     <ProjectGuid>{1D845B9F-E067-4B29-AD0C-2E03965C7CCC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MyPictures</RootNamespace>
+    <RootNamespace>ProjectInfinity.Pictures</RootNamespace>
     <AssemblyName>MyPictures</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -36,6 +36,7 @@
     <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseCommand.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="FullScreenPictureView.cs" />
     <Compile Include="IMediaVisitor.cs" />
@@ -47,8 +48,13 @@
     <Compile Include="PictureView.cs" />
     <Compile Include="PictureViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewMode.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Dialogs\Dialogs.csproj">
+      <Project>{82284525-5023-452C-89E3-A8765590AAEA}</Project>
+      <Name>Dialogs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ProjectInfinity.Controls\ProjectInfinity.Controls.csproj">
       <Project>{D30415D7-E1FC-4C3F-9667-E6301E1A2F6A}</Project>
       <Name>ProjectInfinity.Controls</Name>

@@ -8,12 +8,13 @@ namespace ProjectInfinity.Themes
     /// Loads the default theme of the application
     /// </summary>
     void SetDefaultTheme();
-    /// <summary>
-    /// Loads the resource dictionary for the passed view
-    /// </summary>
-    /// <param name="view">An <see cref="object"/> representing the view to load the resources for.</param>
-    /// <returns>A <see cref="ResourceDictionary"/>, or <b>null</b> if the resource file could not be found.</returns>
-    ResourceDictionary LoadResources(object view);
+    //JoeDalton: no longer necessary: resources can be embedded in the content control
+    ///// <summary>
+    ///// Loads the resource dictionary for the passed view
+    ///// </summary>
+    ///// <param name="view">An <see cref="object"/> representing the view to load the resources for.</param>
+    ///// <returns>A <see cref="ResourceDictionary"/>, or <b>null</b> if the resource file could not be found.</returns>
+    //ResourceDictionary LoadResources(object view);
     /// <summary>
     /// Loads the content for the passed view
     /// </summary>

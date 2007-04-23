@@ -1,9 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using Dialogs;
+using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Settings;
 
@@ -16,6 +18,8 @@ namespace ProjectInfinity.Pictures
     private LaunchCommand _launchCommand;
     private CollectionView _itemView;
     private Folder _currentFolder;
+    private ViewMode _viewMode;
+    private ICommand _viewCommand;
 
     public PictureViewModel()
     {
@@ -90,6 +94,32 @@ namespace ProjectInfinity.Pictures
       }
     }
 
+    public ICommand View
+    {
+      get
+      {
+        if (_viewCommand == null)
+        {
+          _viewCommand = new ViewCommand(this);
+        }
+        return _viewCommand;
+      }
+    }
+
+    public ViewMode ViewMode
+    {
+      get { return _viewMode; }
+      set
+      {
+        if (_viewMode == value)
+        {
+          return;
+        }
+        _viewMode = value;
+        OnPropertyChanged(new PropertyChangedEventArgs("ViewMode"));
+      }
+    }
+
     protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
     {
       if (PropertyChanged != null)
@@ -98,52 +128,13 @@ namespace ProjectInfinity.Pictures
       }
     }
 
-    private class LaunchCommand : ICommand, IMediaVisitor
+    #region Commands
+
+    private class LaunchCommand : BaseCommand, IMediaVisitor
     {
-      private readonly PictureViewModel _viewModel;
-
-      public LaunchCommand(PictureViewModel viewModel)
+      public LaunchCommand(PictureViewModel model) : base(model)
       {
-        _viewModel = viewModel;
       }
-
-      #region ICommand Members
-
-      ///<summary>
-      ///Defines the method that determines whether the command can execute in its current state.
-      ///</summary>
-      ///
-      ///<returns>
-      ///true if this command can be executed; otherwise, false.
-      ///</returns>
-      ///
-      ///<param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
-      public bool CanExecute(object parameter)
-      {
-        return true;
-      }
-
-      ///<summary>
-      ///Occurs when changes occur which affect whether or not the command should execute.
-      ///</summary>
-      public event EventHandler CanExecuteChanged;
-
-      ///<summary>
-      ///Defines the method to be called when the command is invoked.
-      ///</summary>
-      ///
-      ///<param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
-      public void Execute(object parameter)
-      {
-        MediaItem item = _viewModel.Items.CurrentItem as MediaItem;
-        if (item == null)
-        {
-          return;
-        }
-        item.Accept(this); //GOF Visitor Pattern
-      }
-
-      #endregion
 
       #region IMediaVisitor Members
 
@@ -158,7 +149,47 @@ namespace ProjectInfinity.Pictures
       }
 
       #endregion
+
+      ///<summary>
+      ///Defines the method to be called when the command is invoked.
+      ///</summary>
+      ///<param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+      public override void Execute(object parameter)
+      {
+        MediaItem item = _viewModel.Items.CurrentItem as MediaItem;
+        if (item == null)
+        {
+          return;
+        }
+        item.Accept(this); //GOF Visitor Pattern
+      }
     }
+
+    private class ViewCommand : BaseCommand
+    {
+      public ViewCommand(PictureViewModel model) : base(model)
+      {
+      }
+
+
+      public override void Execute(object parameter)
+      {
+        // Show a dialog with all sorting options
+        MpMenu dlgMenu = new MpMenu();
+        dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlgMenu.Owner = ServiceScope.Get<INavigationService>().GetWindow();
+        dlgMenu.Items.Clear();
+        dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mypictures", 11); // "Menu";
+        dlgMenu.SubTitle = "";
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mypictures", 22) /*List*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mypictures", 23) /*Icon*/));
+        dlgMenu.SelectedIndex = (int) _viewModel.ViewMode;
+        dlgMenu.ShowDialog();
+        _viewModel.ViewMode = (ViewMode) dlgMenu.SelectedIndex;
+      }
+    }
+
+    #endregion
   }
 
   internal class MediaFactory
