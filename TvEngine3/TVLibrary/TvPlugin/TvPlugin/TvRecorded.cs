@@ -880,8 +880,13 @@ namespace TvPlugin
       TvServer server = new TvServer();
       foreach (Recording rec in itemlist)
       {
-        if (rec.TimesWatched > 0)
+        if (!server.IsRecordingValid(rec.IdRecording))
           server.DeleteRecording(rec.IdRecording);
+        else
+        {
+          if (rec.TimesWatched > 0)
+            server.DeleteRecording(rec.IdRecording);
+        }
       }
 
       Gentle.Common.CacheManager.Clear();

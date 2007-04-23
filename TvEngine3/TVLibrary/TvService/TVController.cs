@@ -1224,6 +1224,36 @@ namespace TvService
       }
     }
     /// <summary>
+    /// Checks if the files of a recording still exist
+    /// </summary>
+    /// <param name="idRecording">The id of the recording</param>
+    public bool IsRecordingValid(int idRecording)
+    {
+      try
+      {
+        Recording rec = Recording.Retrieve(idRecording);
+        if (rec == null) return false;
+        if (!IsLocal(rec.ReferencedServer().HostName))
+        {
+          try
+          {
+            RemoteControl.HostName = rec.ReferencedServer().HostName;
+            return RemoteControl.Instance.IsRecordingValid(rec.IdRecording);
+          }
+          catch (Exception)
+          {
+            Log.Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
+          }
+          return true;
+        }
+        return (System.IO.File.Exists(rec.FileName));
+      }
+      catch (Exception)
+      {
+        return true;
+      }
+    }
+    /// <summary>
     /// returns which schedule the card specified is currently recording
     /// </summary>
     /// <param name="cardId">card id</param>

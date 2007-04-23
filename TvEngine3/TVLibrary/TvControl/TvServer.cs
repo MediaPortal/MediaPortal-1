@@ -94,6 +94,21 @@ namespace TvControl
         HandleFailure(ex);
       }
     }
+    /// <summary>
+    /// Checks if the files of a recording still exist
+    /// </summary>
+    /// <param name="idRecording">The id of the recording</param>
+    public bool IsRecordingValid(int idRecording)
+    {
+      try
+      {
+        return RemoteControl.Instance.IsRecordingValid(idRecording);
+      }
+      catch (Exception)
+      {
+        return true;
+      }
+    }
 
     /// <summary>
     /// returns a virtual card for the specified index

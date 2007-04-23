@@ -281,6 +281,12 @@ namespace TvControl
     void DeleteRecording(int idRecording);
 
     /// <summary>
+    /// Checks if the files of a recording still exist
+    /// </summary>
+    /// <param name="idRecording">The id of the recording</param>
+    bool IsRecordingValid(int idRecording);
+
+    /// <summary>
     /// Gets the rtsp URL for file located on the tvserver.
     /// </summary>
     /// <param name="fileName">Name of the file.</param>
