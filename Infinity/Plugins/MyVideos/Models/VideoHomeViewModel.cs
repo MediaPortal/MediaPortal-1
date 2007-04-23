@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text;
 using System.Windows.Controls;
 using System.ComponentModel;
@@ -68,12 +69,13 @@ namespace MyVideos
     Page _page;
     ViewType _viewType = ViewType.List;
     SortType _sortType = SortType.Name;
+    string _currentFolder = null;
     #endregion
 
     #region ctor
     public VideoHomeViewModel()
     {
-      _dataModel = new VideoDatabaseModel();
+      _dataModel = new VideoDatabaseModel(this);
       _videosView = new VideoCollectionView(_dataModel);
 
     }
@@ -242,6 +244,18 @@ namespace MyVideos
         }
       }
     }
+    public string CurrentFolder
+    {
+      get
+      {
+        return _currentFolder;
+      }
+      set
+      {
+        _currentFolder = value;
+      }
+    }
+
 
     public string ViewModeType
     {
@@ -304,6 +318,10 @@ namespace MyVideos
       get { return ServiceScope.Get<INavigationService>().GetWindow(); }
     }
 
+    public void Reload()
+    {
+      _dataModel.Reload();
+    }
     #endregion
 
     public void ChangeProperty(string propertyName)
@@ -413,6 +431,12 @@ namespace MyVideos
 
       // set the media to be played and then toggle fullscreen
       VideoModel videoModel = (VideoModel)parameter;
+      if (videoModel.IsFolder)
+      {
+        _viewModel.CurrentFolder = videoModel.Path;
+        _viewModel.Reload();
+        return;
+      }
       string fileName = videoModel.Path;
 
       if (!File.Exists(fileName))
@@ -649,7 +673,7 @@ namespace MyVideos
       if (parameter == null) return;
       VideoModel model = parameter as VideoModel;
       if (model == null) return;
-      
+
       MpMenu dlgMenu = new Dialogs.MpMenu();
       dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
       dlgMenu.Owner = _viewModel.Window;
@@ -702,15 +726,18 @@ namespace MyVideos
   #endregion
 
   #region VideoDatabaseModel class
-  class VideoDatabaseModel
+  class VideoDatabaseModel : INotifyPropertyChanged
   {
+    public event PropertyChangedEventHandler PropertyChanged;
+    VideoHomeViewModel _viewModel;
     List<VideoModel> _listVideos = new List<VideoModel>();
 
     /// <summary>
     /// Initializes a new instance of <see cref="VideoDatabaseModel" /> class.
     /// </summary>
-    public VideoDatabaseModel()
+    public VideoDatabaseModel(VideoHomeViewModel model)
     {
+      _viewModel = model;
       Reload();
     }
 
@@ -722,55 +749,99 @@ namespace MyVideos
       _listVideos.Clear();
 
 
-      _listVideos.Clear();
-
-      //begin-just some testcode to show how you can ask the user to select 1 or more folders
       VideoSettings settings = new VideoSettings();
       ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
-      if (settings.Shares == null)
+      if (_viewModel.CurrentFolder == null)
       {
-        settings.Shares = new List<string>();
-      }
-      if (settings.Shares.Count == 0)
-      {
-        FolderDialog dlg = new FolderDialog();
-        Window w = ServiceScope.Get<INavigationService>().GetWindow();
-        dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        dlg.Owner = w;
-        dlg.Title = "";
-        dlg.Header = ServiceScope.Get<ILocalisation>().ToString("myvideos", 35);//Video folders
-        dlg.ShowDialog();
-        List<Folder> shares = dlg.SelectedFolders;
-
-        foreach (Folder share in shares)
+        //begin-just some testcode to show how you can ask the user to select 1 or more folders
+        if (settings.Shares == null)
         {
-          settings.Shares.Add(share.FullPath);
+          settings.Shares = new List<string>();
         }
-        ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xml");
-      }
-      //end-just some testcode to show how you can ask the user to select 1 or more folders
-
-      if (settings.Shares != null)
-      {
-        foreach (string share in settings.Shares)
+        if (settings.Shares.Count == 0)
         {
-          string[] files = Directory.GetFiles(share);
+          FolderDialog dlg = new FolderDialog();
+          Window w = ServiceScope.Get<INavigationService>().GetWindow();
+          dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+          dlg.Owner = w;
+          dlg.Title = "";
+          dlg.Header = ServiceScope.Get<ILocalisation>().ToString("myvideos", 35);//Video folders
+          dlg.ShowDialog();
+          List<Folder> shares = dlg.SelectedFolders;
 
-          foreach (string file in files)
+          foreach (Folder share in shares)
           {
-            string ext = System.IO.Path.GetExtension(file).ToLower();
-            if (settings.VideoExtensions.IndexOf(ext) >= 0)
-            {
-              FileInfo fi = new FileInfo(file);
-              string fileName = fi.Name;
-              if (!settings.ShowExtensions)
-                fileName = fileName.Substring(0, fileName.Length - ext.Length);
+            settings.Shares.Add(share.FullPath);
+          }
+          ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xml");
+        }
+        //end-just some testcode to show how you can ask the user to select 1 or more folders
 
-              VideoModel item = new VideoModel(fileName, (int)fi.Length, file);
-              _listVideos.Add(item);
-            }
+        if (settings.Shares != null)
+        {
+          foreach (string share in settings.Shares)
+          {
+            string pathName = share;
+            int pos = pathName.LastIndexOf(@"\");
+            if (pos >= 0)
+              pathName = pathName.Substring(1 + pos);
+            VideoModel item = new VideoModel(pathName, 0, share);
+            item.IsFolder = true;
+            _listVideos.Add(item);
           }
         }
+      }
+      else
+      {
+        bool reachedRoot = false;
+        foreach (string share in settings.Shares)
+        {
+          if (String.Compare(share, _viewModel.CurrentFolder, true) == 0) reachedRoot = true;
+        }
+        string pathName = _viewModel.CurrentFolder;
+        int pos = pathName.LastIndexOf(@"\");
+        if (pos >= 0)
+          pathName = pathName.Substring(0, pos);
+        VideoModel item = new VideoModel("..", 0, pathName);
+        if (reachedRoot)
+        {
+          item.Path = null;
+        }
+        item.IsFolder = true;
+        _listVideos.Add(item);
+
+        string[] folders = Directory.GetDirectories(_viewModel.CurrentFolder);
+        foreach (string folder in folders)
+        {
+           pathName = folder;
+          pos = folder.LastIndexOf(@"\");
+          if (pos >= 0)
+            pathName = pathName.Substring(1 + pos);
+
+          item = new VideoModel(pathName, 0, folder);
+          item.IsFolder = true;
+          _listVideos.Add(item);
+        }
+        string[] files = Directory.GetFiles(_viewModel.CurrentFolder);
+
+        foreach (string file in files)
+        {
+          string ext = System.IO.Path.GetExtension(file).ToLower();
+          if (settings.VideoExtensions.IndexOf(ext) >= 0)
+          {
+            FileInfo fi = new FileInfo(file);
+            string fileName = fi.Name;
+            if (!settings.ShowExtensions)
+              fileName = fileName.Substring(0, fileName.Length - ext.Length);
+
+            item = new VideoModel(fileName, (int)fi.Length, file);
+            _listVideos.Add(item);
+          }
+        }
+      }
+      if (PropertyChanged != null)
+      {
+        PropertyChanged(this, new PropertyChangedEventArgs("Videos"));
       }
     }
 
@@ -781,6 +852,7 @@ namespace MyVideos
     {
       get { return _listVideos; }
     }
+
   }
   #endregion
 
@@ -801,6 +873,12 @@ namespace MyVideos
       : base(model.Videos)
     {
       _model = model;
+      _model.PropertyChanged += new PropertyChangedEventHandler(_model_PropertyChanged);
+    }
+
+    void _model_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
     }
 
     /// <summary>

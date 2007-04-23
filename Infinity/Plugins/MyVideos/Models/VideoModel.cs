@@ -8,9 +8,11 @@ namespace MyVideos
   public class VideoModel : IPlaylistItem
   {
     #region variables
+    bool _isFolder;
     private string _name;
     private double _size;
     private string _path;
+    private string _parentFolder;
     private string _logo = null;
     #endregion
 
@@ -74,24 +76,44 @@ namespace MyVideos
     public string Path
     {
       get { return _path; }
+      set {  _path=value; }
     }
 
     /// <summary>
     /// Gets the movie size
     /// </summary>
+    /// <value></value>
     public string Size
     {
-      get { return _size.ToString() + " MB"; }
+      get 
+      {
+        if (IsFolder) return "";
+        return _size.ToString() + " MB"; 
+      }
     }
 
     /// <summary>
     /// Gets the movie size (mb) in double
     /// </summary>
+    /// <value></value>
     public double RealSize
     {
       get { return _size; }
     }
-
+    /// <summary>
+    /// Gets or sets a value indicating whether this instance is folder.
+    /// </summary>
+    /// <value><c>true</c> if this instance is folder; otherwise, <c>false</c>.</value>
+    public bool IsFolder
+    {
+      get { return _isFolder; }
+      set { _isFolder = value ; }
+    }
+    /// <summary>
+    /// If you want a custom icon beside the Title, set this to point
+    /// to the file (absolute/relative)
+    /// </summary>
+    /// <value></value>
     public string Logo
     {
       get

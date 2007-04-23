@@ -10,11 +10,9 @@ namespace MyVideos
   public class VideoFullscreenViewModel : VideoHomeViewModel
   {
 
-    private VideoDatabaseModel _dataModel;
-
+    
     public VideoFullscreenViewModel()
     {
-      _dataModel = new VideoDatabaseModel();
 
     }
   }
