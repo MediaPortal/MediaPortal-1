@@ -723,17 +723,6 @@ namespace MediaPortal.GUI.Library
         _imageBackground.Render(timePassed);
       }
 
-      if (_horizontalScrollbar != null)
-      {
-        float fPercent = (float)_offset + _cursorX;
-        fPercent /= (float)(_listItems.Count);
-        fPercent *= 100.0f;
-        if ((int)fPercent != (int)_horizontalScrollbar.Percentage)
-        {
-          _horizontalScrollbar.Percentage = fPercent;
-        }
-      }
-
       int _scrollPosititionXOffset = 0;
       if (true == _scrollingRight)
       {
@@ -907,22 +896,43 @@ namespace MediaPortal.GUI.Library
       }
 
       dwPosY = _positionY + (_itemHeight);
+      RenderScrollbar(timePassed, dwPosY);
 
-      if (_upDownControl != null) _upDownControl.Render(timePassed);
       if (_scrollingLeft || _scrollingRight)
       {
         _refresh = true;
       }
-      int iItemsPerPage = _columns;
-      if (_listItems.Count > iItemsPerPage && _horizontalScrollbar != null)
-      {
-        _horizontalScrollbar.Render(timePassed);
-      }
+
       if (Focus)
         GUIPropertyManager.SetProperty("#highlightedbutton", String.Empty);
       base.Render(timePassed);
     }
 
+    void RenderScrollbar(float timePassed, int y)
+    {
+      int iItemsPerPage = _columns;
+      if (_listItems.Count > iItemsPerPage)
+      {
+        // Render the spin control
+        if (_upDownControl != null)
+        {
+          _upDownControl.Render(timePassed);
+        }
+
+        // Render the vertical scrollbar
+        if (_horizontalScrollbar != null)
+        {
+          float fPercent = (float)_offset + _cursorX;
+          fPercent /= (float)(_listItems.Count);
+          fPercent *= 100.0f;
+          if ((int)fPercent != (int)_horizontalScrollbar.Percentage)
+          {
+            _horizontalScrollbar.Percentage = fPercent;
+          }
+          _horizontalScrollbar.Render(timePassed);
+        }
+      }
+    }
 
     public override void OnAction(Action action)
     {
