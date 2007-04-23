@@ -113,10 +113,10 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <ProjectReference Include="New Folder1\DefaultSkin.csproj" />
-    <Page Include="Dialogs\DialogMenu.xaml" />
-    <Page Include="Dialogs\DialogMenuLogo.xaml" />
-    <Page Include="Dialogs\DialogOk.xaml" />
-    <Page Include="Dialogs\DialogYesNo.xaml" />
+    <Page Include="Dialogs\MpDialogOk.xaml" />
+    <Page Include="Dialogs\MpDialogYesNo.xaml" />
+    <Page Include="Dialogs\MpMenu.xaml" />
+    <Page Include="Dialogs\MpMenuWithLogo.xaml" />
     <Page Include="Menu\MenuView.xaml" />
     <Page Include="MyVideos\VideoFullscreen.xaml" />
     <Page Include="MyVideos\VideoHome.xaml" />
