@@ -163,8 +163,9 @@
     <height>459</height>
     <spinWidth>26</spinWidth>
     <spinHeight>27</spinHeight>
-    <spinPosX>590</spinPosX>
+    <spinPosX>625</spinPosX>
     <spinPosY>530</spinPosY>
+    <spinAlign>Right</spinAlign>
     <spinColor>ffffffff</spinColor>
     <textureUp>page_up_nofocus.png</textureUp>
     <textureDown>page_down_nofocus.png</textureDown>
@@ -202,8 +203,9 @@
     <height>459</height>
     <spinWidth>26</spinWidth>
     <spinHeight>27</spinHeight>
-    <spinPosX>590</spinPosX>
+    <spinPosX>625</spinPosX>
     <spinPosY>530</spinPosY>
+    <spinAlign>Right</spinAlign>
     <spinColor>ffffffff</spinColor>
     <textureUp>page_up_nofocus.png</textureUp>
     <textureDown>page_down_nofocus.png</textureDown>
@@ -246,8 +248,9 @@
     <height>459</height>
     <spinWidth>26</spinWidth>
     <spinHeight>27</spinHeight>
-    <spinPosX>590</spinPosX>
+    <spinPosX>625</spinPosX>
     <spinPosY>530</spinPosY>
+    <spinAlign>Right</spinAlign>
     <spinColor>ffffffff</spinColor>
     <textureUp>page_up_nofocus.png</textureUp>
     <textureDown>page_down_nofocus.png</textureDown>
@@ -284,8 +287,9 @@
     <height>459</height>
     <spinWidth>26</spinWidth>
     <spinHeight>27</spinHeight>
-    <spinPosX>590</spinPosX>
+    <spinPosX>625</spinPosX>
     <spinPosY>530</spinPosY>
+    <spinAlign>Right</spinAlign>
     <spinColor>ffffffff</spinColor>
     <textureUp>page_up_nofocus.png</textureUp>
     <textureDown>page_down_nofocus.png</textureDown>
@@ -342,8 +346,9 @@
     <height>471</height>
     <spinWidth>26</spinWidth>
     <spinHeight>27</spinHeight>
-    <spinPosX>590</spinPosX>
+    <spinPosX>625</spinPosX>
     <spinPosY>530</spinPosY>
+    <spinAlign>Right</spinAlign>
     <spinColor>ffffffff</spinColor>
     <textureUp>page_up_nofocus.png</textureUp>
     <textureDown>page_down_nofocus.png</textureDown>
@@ -389,8 +394,9 @@
     <height>100</height>
     <spinWidth>26</spinWidth>
     <spinHeight>27</spinHeight>
-    <spinPosX>590</spinPosX>
+    <spinPosX>625</spinPosX>
     <spinPosY>530</spinPosY>
+    <spinAlign>Right</spinAlign>
     <spinColor>ffffffff</spinColor>
     <textureUp>page_up_nofocus.png</textureUp>
     <textureDown>page_down_nofocus.png</textureDown>

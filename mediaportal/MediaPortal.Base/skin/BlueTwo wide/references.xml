@@ -164,6 +164,7 @@
         <spinHeight>36</spinHeight>
         <spinPosX>1202</spinPosX>
         <spinPosY>706</spinPosY>
+        <spinAlign>Right</spinAlign>
         <spinColor>ffffffff</spinColor>
         <textureUp>page_up_nofocus.png</textureUp>
         <textureDown>page_down_nofocus.png</textureDown>
@@ -203,6 +204,7 @@
         <spinHeight>36</spinHeight>
         <spinPosX>1202</spinPosX>
         <spinPosY>706</spinPosY>
+        <spinAlign>Right</spinAlign>
         <spinColor>ffffffff</spinColor>
         <textureUp>page_up_nofocus.png</textureUp>
         <textureDown>page_down_nofocus.png</textureDown>
@@ -247,6 +249,7 @@
         <spinHeight>36</spinHeight>
         <spinPosX>1188</spinPosX>
         <spinPosY>706</spinPosY>
+        <spinAlign>Right</spinAlign>
         <spinColor>ffffffff</spinColor>
         <textureUp>page_up_nofocus.png</textureUp>
         <textureDown>page_down_nofocus.png</textureDown>
@@ -285,6 +288,7 @@
         <spinHeight>36</spinHeight>
         <spinPosX>1202</spinPosX>
         <spinPosY>706</spinPosY>
+        <spinAlign>Right</spinAlign>
         <spinColor>ffffffff</spinColor>
         <textureUp>page_up_nofocus.png</textureUp>
         <textureDown>page_down_nofocus.png</textureDown>
@@ -343,6 +347,7 @@
         <spinHeight>36</spinHeight>
         <spinPosX>1202</spinPosX>
         <spinPosY>706</spinPosY>
+        <spinAlign>Right</spinAlign>
         <spinColor>ffffffff</spinColor>
         <textureUp>page_up_nofocus.png</textureUp>
         <textureDown>page_down_nofocus.png</textureDown>
@@ -390,6 +395,7 @@
         <spinHeight>36</spinHeight>
         <spinPosX>1202</spinPosX>
         <spinPosY>706</spinPosY>
+        <spinAlign>Right</spinAlign>
         <spinColor>ffffffff</spinColor>
         <textureUp>page_up_nofocus.png</textureUp>
         <textureDown>page_down_nofocus.png</textureDown>
