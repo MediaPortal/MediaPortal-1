@@ -15,6 +15,7 @@ using ProjectInfinity.Localisation;
 using System.IO;
 using System.Collections;
 using System.Windows.Data;
+using System.Windows.Threading;
 using Dialogs;
 using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
@@ -28,7 +29,7 @@ using MediaLibrary;
 
 namespace MyVideos
 {
-  public class VideoHomeViewModel : INotifyPropertyChanged
+  public class VideoHomeViewModel : DispatcherObject, INotifyPropertyChanged
   {
     #region variables
     public event PropertyChangedEventHandler PropertyChanged;
@@ -61,6 +62,7 @@ namespace MyVideos
     ICommand _itemCommand;
     ICommand _fullscreenCommand;
     ICommand _navfullscreenCommand;
+    ICommand _contextMenuCommand;
 
     Window _window;
     Page _page;
@@ -69,13 +71,11 @@ namespace MyVideos
     #endregion
 
     #region ctor
-    public VideoHomeViewModel(Page page)
+    public VideoHomeViewModel()
     {
       _dataModel = new VideoDatabaseModel();
       _videosView = new VideoCollectionView(_dataModel);
 
-      _page = page;
-      _window = Window.GetWindow(_page);
     }
     #endregion
 
@@ -217,6 +217,16 @@ namespace MyVideos
         return _playlistCommand;
       }
     }
+    public ICommand ContextMenu
+    {
+      get
+      {
+        if (_contextMenuCommand == null)
+          _contextMenuCommand = new ContextMenuCommand(this);
+
+        return _contextMenuCommand;
+      }
+    }
     #endregion
 
     #region properties
@@ -291,13 +301,9 @@ namespace MyVideos
 
     public Window Window
     {
-      get { return _window; }
+      get { return ServiceScope.Get<INavigationService>().GetWindow(); }
     }
 
-    public Page Page
-    {
-      get { return _page; }
-    }
     #endregion
 
     public void ChangeProperty(string propertyName)
@@ -342,7 +348,7 @@ namespace MyVideos
 
     public override void Execute(object parameter)
     {
-      _viewModel.Page.NavigationService.Navigate(new Uri("/MyVideos;component/VideoPlaylist.xaml", UriKind.Relative));
+      ServiceScope.Get<INavigationService>().Navigate(new VideoPlaylist());
     }
   }
   #endregion
@@ -357,7 +363,7 @@ namespace MyVideos
 
     public override void Execute(object parameter)
     {
-      _viewModel.Page.NavigationService.Navigate(new Uri("/MyVideos;component/VideoFullscreen.xaml", UriKind.Relative));
+      ServiceScope.Get<INavigationService>().Navigate(new VideoFullscreen());
     }
   }
   #endregion
@@ -439,7 +445,7 @@ namespace MyVideos
 
     void player_MediaOpened(object sender, EventArgs e)
     {
-      _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerOpenDelegate(OnMediaOpened));
+      _viewModel.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerOpenDelegate(OnMediaOpened));
     }
 
     private void OnMediaOpened()
@@ -452,7 +458,7 @@ namespace MyVideos
     void player_MediaFailed(object sender, MediaExceptionEventArgs e)
     {
       ServiceScope.Get<ILogger>().Error("Video:  error while playing: " + e.ErrorException.Message);
-      _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
+      _viewModel.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
     }
 
     private void OnMediaPlayerError()
@@ -534,7 +540,7 @@ namespace MyVideos
 
     void player_MediaOpened(object sender, EventArgs e)
     {
-      _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerOpenDelegate(OnMediaOpened));
+      _viewModel.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerOpenDelegate(OnMediaOpened));
     }
 
     private void OnMediaOpened()
@@ -547,7 +553,7 @@ namespace MyVideos
     void player_MediaFailed(object sender, MediaExceptionEventArgs e)
     {
       ServiceScope.Get<ILogger>().Error("Video: error while playing DVD: " + e.ErrorException.Message);
-      _viewModel.Page.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
+      _viewModel.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
     }
 
     private void OnMediaPlayerError()
@@ -630,6 +636,45 @@ namespace MyVideos
   }
   #endregion
 
+  #region contextmenu command class
+  public class ContextMenuCommand : BaseCommand
+  {
+    public ContextMenuCommand(VideoHomeViewModel viewModel)
+      : base(viewModel)
+    {
+    }
+
+    public override void Execute(object parameter)
+    {
+      if (parameter == null) return;
+      VideoModel model = parameter as VideoModel;
+      if (model == null) return;
+      
+      MpMenu dlgMenu = new Dialogs.MpMenu();
+      dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+      dlgMenu.Owner = _viewModel.Window;
+      dlgMenu.Items.Clear();
+      dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 68); // Menu
+      dlgMenu.SubTitle = model.Title;
+      dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 30))); // Add to playlist
+      dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 29))); // View information
+      dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 27))); // Download information
+      dlgMenu.Items.Add(new Dialogs.DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("myvideos", 28))); // Delete from disk
+      dlgMenu.ShowDialog();
+
+      switch (dlgMenu.SelectedIndex)
+      {
+        case 0:
+          // Add to playlist
+          ICommand addToPlaylist = new AddToPlaylistCommand(_viewModel);
+          addToPlaylist.Execute(model);
+          break;
+      }
+      _viewModel.ChangeProperty("SortLabel");
+    }
+  }
+  #endregion
+
   #region base command class
   public abstract class BaseCommand : ICommand
   {
@@ -676,7 +721,7 @@ namespace MyVideos
     {
       _listVideos.Clear();
 
-      
+
       _listVideos.Clear();
 
       //begin-just some testcode to show how you can ask the user to select 1 or more folders
@@ -686,7 +731,7 @@ namespace MyVideos
       {
         settings.Shares = new List<string>();
       }
-      if (settings.Shares.Count==0)
+      if (settings.Shares.Count == 0)
       {
         FolderDialog dlg = new FolderDialog();
         Window w = ServiceScope.Get<INavigationService>().GetWindow();

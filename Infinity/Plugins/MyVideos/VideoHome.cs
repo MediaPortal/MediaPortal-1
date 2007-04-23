@@ -22,6 +22,7 @@ using ProjectInfinity.Menu;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Players;
+using ProjectInfinity.Controls;
 using System.IO;
 using System.Windows.Markup;
 
@@ -31,17 +32,20 @@ namespace MyVideos
   /// Interaction logic for TestPage.xaml
   /// </summary>
 
-  public partial class VideoHome : System.Windows.Controls.Page
+  public partial class VideoHome : View
   {
     VideoHomeViewModel _model;
 
     public VideoHome()
     {
-      InitializeComponent();
-
+      _model = new VideoHomeViewModel();
+      DataContext = _model;
+      this.InputBindings.Add(new KeyBinding(_model.Fullscreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
+      this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
       ServiceScope.Get<IMessageBroker>().Register(this);
     }
 
+#if NOTUSED
     /// <summary>
     /// When the page is loaded, this event is called to do some
     /// basic things like viewmodels, keybindings etc etc
@@ -210,5 +214,6 @@ namespace MyVideos
 
       OnVideoWindowClicked(null, new EventArgs());
     }
+#endif
   }
 }

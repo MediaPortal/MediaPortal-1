@@ -24,7 +24,7 @@ namespace MyVideos
 
     public void Run()
     {
-      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyVideos;component/VideoHome.xaml", UriKind.Relative));
+      ServiceScope.Get<INavigationService>().Navigate(new VideoHome());
     }
 
     #endregion

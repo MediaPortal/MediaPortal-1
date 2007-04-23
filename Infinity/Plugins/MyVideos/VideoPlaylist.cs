@@ -14,6 +14,7 @@ using ProjectInfinity;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Playlist;
+using ProjectInfinity.Controls;
 using System.IO;
 using System.Windows.Markup;
 
@@ -23,17 +24,21 @@ namespace MyVideos
   /// Interaction logic for VideoPlaylist.xaml
   /// </summary>
 
-  public partial class VideoPlaylist : System.Windows.Controls.Page
+  public partial class VideoPlaylist  : View
   {
     VideoPlaylistViewModel _model;
 
     public VideoPlaylist()
     {
-      InitializeComponent();
+      _model = new VideoPlaylistViewModel();
+      DataContext = _model;
+      //this.InputBindings.Add(new KeyBinding(_model.Fullscreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
+      this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
+      
 
       ServiceScope.Get<IMessageBroker>().Register(this);
     }
-
+#if NOTUSED
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
       // load the external xaml
@@ -120,5 +125,6 @@ namespace MyVideos
     {
       this.NavigationService.Navigate(new Uri("/MyVideos;component/VideoFullscreen.xaml", UriKind.Relative));
     }
+#endif
   }
 }

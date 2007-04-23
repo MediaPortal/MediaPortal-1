@@ -18,6 +18,41 @@ namespace ProjectInfinity.Controls
                                                                                                   typeof(string),
                                                                                                   typeof(ListBox),
                                                                                                   new FrameworkPropertyMetadata(null));
+
+
+    /// <summary>
+    /// Identifies the <see cref="ContextMenuCommand"/> property.
+    /// </summary>
+    public static readonly DependencyProperty ContextMenuCommandProperty = DependencyProperty.Register("ContextMenuCommand",
+                                                                                            typeof(ICommand),
+                                                                                            typeof(ListBox),
+                                                                                            new FrameworkPropertyMetadata
+                                                                                              (null,
+                                                                                               new PropertyChangedCallback
+                                                                                                 (ContextMenuCommandPropertyChanged)));
+
+    /// <summary>
+    /// Identifies the <see cref="ContextMenuCommandParameter"/> property.
+    /// </summary>
+    public static readonly DependencyProperty ContextMenuCommandParameterProperty = DependencyProperty.Register("ContextMenuCommandParameter",
+                                                                                                     typeof(object),
+                                                                                                     typeof(ListBox),
+                                                                                                     new FrameworkPropertyMetadata
+                                                                                                      (null,
+                                                                                                       new PropertyChangedCallback
+                                                                                                         (ContextMenuCommandParameterPropertyChanged)));
+    /// <summary>
+    /// Identifies the <see cref="ContextMenuCommandTarget"/> property.
+    /// </summary>
+    public static readonly DependencyProperty ContextMenuCommandTargetProperty = DependencyProperty.Register("ContextMenuCommandTarget",
+                                                                                                  typeof(IInputElement),
+                                                                                                  typeof(ListBox),
+                                                                                                  new FrameworkPropertyMetadata
+                                                                                                    (null));
+
+
+    
+    
     /// <summary>
     /// Identifies the <see cref="Command"/> property.
     /// </summary>
@@ -85,6 +120,7 @@ namespace ProjectInfinity.Controls
     protected override void OnKeyDown(System.Windows.Input.KeyEventArgs e)
     {
       if ((e.Source as ListBox) == null) return;
+
       if (e.Key == System.Windows.Input.Key.Enter)
       {
         ListBox box = e.Source as ListBox;
@@ -106,27 +142,70 @@ namespace ProjectInfinity.Controls
         e.Handled = true;
         return;
       }
+      if (e.Key == System.Windows.Input.Key.F9)
+      {
+        ListBox box = e.Source as ListBox;
+
+        //execute the command if there is one
+        if (ContextMenuCommand != null)
+        {
+          RoutedCommand routedCommand = ContextMenuCommand as RoutedCommand;
+
+          if (routedCommand != null)
+          {
+            routedCommand.Execute(ContextMenuCommandParameter, ContextMenuCommandTarget);
+          }
+          else
+          {
+            ContextMenuCommand.Execute(ContextMenuCommandParameter);
+          }
+        }
+        e.Handled = true;
+        return;
+      }
       base.OnKeyDown(e);
     }
+
     protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
     {
-
-      //execute the command if there is one
-      if (Command != null)
+      if (e.LeftButton == MouseButtonState.Pressed)
       {
-        RoutedCommand routedCommand = Command as RoutedCommand;
+        //execute the command if there is one
+        if (Command != null)
+        {
+          RoutedCommand routedCommand = Command as RoutedCommand;
 
-        if (routedCommand != null)
-        {
-          routedCommand.Execute(CommandParameter, CommandTarget);
+          if (routedCommand != null)
+          {
+            routedCommand.Execute(CommandParameter, CommandTarget);
+          }
+          else
+          {
+            Command.Execute(CommandParameter);
+          }
         }
-        else
+        e.Handled = true;
+        return;
+      } 
+      if (e.RightButton == MouseButtonState.Pressed)
+      {
+        //execute the command if there is one
+        if (ContextMenuCommand != null)
         {
-          Command.Execute(CommandParameter);
+          RoutedCommand routedCommand = ContextMenuCommand as RoutedCommand;
+
+          if (routedCommand != null)
+          {
+            routedCommand.Execute(ContextMenuCommandParameter, ContextMenuCommandTarget);
+          }
+          else
+          {
+            ContextMenuCommand.Execute(ContextMenuCommandParameter);
+          }
         }
+        e.Handled = true;
+        return;
       }
-      e.Handled = true;
-      return;
     }
     protected override void OnInitialized(EventArgs e)
     {
@@ -151,6 +230,21 @@ namespace ProjectInfinity.Controls
       }
     }
 
+    protected override void OnSelectionChanged(SelectionChangedEventArgs e)
+    {
+      ICurrentItem currentItem = ItemsSource as ICurrentItem;
+      if (currentItem != null)
+      {
+        currentItem.CurrentItem = SelectedItem;
+      }
+      base.OnSelectionChanged(e);
+      if (PropertyChanged != null)
+      {
+        PropertyChanged(this, new PropertyChangedEventArgs("SelectedItem"));
+      }
+    }
+
+    #region command
     /// <summary>
     /// Gets or sets the <see cref="ICommand"/> to execute whenever an item is activated.
     /// </summary>
@@ -168,8 +262,9 @@ namespace ProjectInfinity.Controls
     /// </summary>
     public object CommandParameter
     {
-      get { 
-        return GetValue(CommandParameterProperty); 
+      get
+      {
+        return GetValue(CommandParameterProperty);
       }
       set
       {
@@ -218,18 +313,54 @@ namespace ProjectInfinity.Controls
     {
       (dependencyObject as ListBox).HookUpCommand(e.OldValue as ICommand, e.NewValue as ICommand);
     }
-    protected override void OnSelectionChanged(SelectionChangedEventArgs e)
+    #endregion
+
+    #region context menucommand
+    /// <summary>
+    /// Gets or sets the <see cref="ICommand"/> to execute whenever an item is activated.
+    /// </summary>
+    public ICommand ContextMenuCommand
     {
-      ICurrentItem currentItem = ItemsSource as ICurrentItem;
-      if (currentItem != null)
+      get { return GetValue(ContextMenuCommandProperty) as ICommand; }
+      set
       {
-        currentItem.CurrentItem = SelectedItem;
-      }
-      base.OnSelectionChanged(e);
-      if (PropertyChanged != null)
-      {
-        PropertyChanged(this, new PropertyChangedEventArgs("SelectedItem"));
+        SetValue(ContextMenuCommandProperty, value);
       }
     }
+
+    /// <summary>
+    /// Gets or sets the parameter to be passed to the executed <see cref="Command"/>.
+    /// </summary>
+    public object ContextMenuCommandParameter
+    {
+      get
+      {
+        return GetValue(ContextMenuCommandParameterProperty);
+      }
+      set
+      {
+        SetValue(ContextMenuCommandParameterProperty, value);
+      }
+    }
+    private static void ContextMenuCommandParameterPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+      //(dependencyObject as ListBox).CommandParameter = (object)(e.NewValue);
+    }
+
+    /// <summary>
+    /// Gets or sets the element on which to raise the specified <see cref="Command"/>.
+    /// </summary>
+    public IInputElement ContextMenuCommandTarget
+    {
+      get { return GetValue(ContextMenuCommandTargetProperty) as IInputElement; }
+      set { SetValue(ContextMenuCommandTargetProperty, value); }
+    }
+
+
+    private static void ContextMenuCommandPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+      (dependencyObject as ListBox).ContextMenuCommand = (e.NewValue as ICommand); 
+    }
+    #endregion
   }
 }

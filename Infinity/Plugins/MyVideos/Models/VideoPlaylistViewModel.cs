@@ -18,20 +18,16 @@ namespace MyVideos
     VideoPlaylistCollectionView _playlistView;
     VideoPlaylistDatabaseModel _dataModel;
 
-    Window _window;
-    Page _page;
 
     VideoHomeViewModel.ViewType _viewType = VideoHomeViewModel.ViewType.List;
     #endregion
 
     #region ctor
-    public VideoPlaylistViewModel(Page page)
+    public VideoPlaylistViewModel()
     {
       _dataModel = new VideoPlaylistDatabaseModel();
       _playlistView = new VideoPlaylistCollectionView(_dataModel);
 
-      _page = page;
-      _window = Window.GetWindow(page);
     }
     #endregion
 
