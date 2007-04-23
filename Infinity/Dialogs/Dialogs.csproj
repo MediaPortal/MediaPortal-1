@@ -43,32 +43,14 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MpDialogOk.xaml" />
-    <Page Include="MpDialogYesNo.xaml" />
-    <Page Include="MpMenuWithLogo.xaml" />
-    <Page Include="MpMenu.xaml" />
-    <Compile Include="MpMenu.xaml.cs">
-      <DependentUpon>MpMenu.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="DialogMenuItem.cs" />
     <Compile Include="DialogMenuItemCollection.cs" />
     <Compile Include="DialogResult.cs" />
     <Compile Include="Model\DialogViewModel.cs" />
-    <Compile Include="MpDialogOk.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>MpDialogOk.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MpDialogYesNo.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>MpDialogYesNo.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MpMenuWithLogo.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>MpMenuWithLogo.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="MpDialogOk.cs" />
+    <Compile Include="MpDialogYesNo.cs" />
+    <Compile Include="MpMenu.cs" />
+    <Compile Include="MpMenuWithLogo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -92,6 +74,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ProjectInfinity.Controls\ProjectInfinity.Controls.csproj">
+      <Project>{D30415D7-E1FC-4C3F-9667-E6301E1A2F6A}</Project>
+      <Name>ProjectInfinity.Controls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ProjectInfinity.Core\ProjectInfinity.Core.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
       <Name>ProjectInfinity.Core</Name>

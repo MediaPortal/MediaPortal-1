@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using ProjectInfinity;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Controls;
+using ProjectInfinity.Navigation;
 
 using Dialogs;
 
@@ -44,6 +45,10 @@ namespace MyTv
       this.BorderThickness = new Thickness(0);
       this.Width = 530;
       this.Height = 370;
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+      this.Width *= scaling.Width;
+      this.Height *= scaling.Height;
+      WindowStartupLocation = WindowStartupLocation.CenterOwner;
     }
     public TvConflictDialog(DialogMenuItemCollection items)
     {
@@ -57,6 +62,25 @@ namespace MyTv
       this.BorderThickness = new Thickness(0);
       this.Width = 530;
       this.Height = 370;
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+      this.Width *= scaling.Width;
+      this.Height *= scaling.Height;
+      WindowStartupLocation = WindowStartupLocation.CenterOwner;
+    }
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+    {
+      base.OnRenderSizeChanged(sizeInfo);
+      if (base.Content != null)
+      {
+        Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+        ((FrameworkElement)base.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
+      }
+    }
+    protected override void OnContentChanged(object oldContent, object newContent)
+    {
+      base.OnContentChanged(oldContent, newContent);
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+      ((FrameworkElement)base.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
     }
 
 

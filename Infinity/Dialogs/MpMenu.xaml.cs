@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using ProjectInfinity;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Navigation;
+using ProjectInfinity.Controls;
 
 namespace Dialogs
 {
@@ -23,7 +24,7 @@ namespace Dialogs
   /// Interaction logic for UserControl1.xaml
   /// </summary>
 
-  public partial class MpMenu : System.Windows.Window
+  public partial class MpMenu : ViewWindow
   {
     DialogViewModel _model;
     DialogMenuItemCollection _menuItems;
@@ -32,69 +33,52 @@ namespace Dialogs
     /// </summary>
     public MpMenu()
     {
-      this.WindowStyle = WindowStyle.None;
-      this.ShowInTaskbar = false;
-      this.ResizeMode = ResizeMode.NoResize;
-      this.AllowsTransparency = true;//we need it so we can alphablend the dialog with the gui. However this causes s/w rendering in wpf
-      InitializeComponent();
+      this.Visibility = Visibility.Visible;
+      this.BorderThickness = new Thickness(0);
+      this.Width = 530;
+      this.Height = 370;
+
       _menuItems = new DialogMenuItemCollection();
       _model = new DialogViewModel(this);
       Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
       this.Width *= scaling.Width;
       this.Height *= scaling.Height;
-      WindowStartupLocation = WindowStartupLocation.CenterOwner;
+      DataContext = _model;
+      this.InputBindings.Add(new KeyBinding(_model.Close, new KeyGesture(System.Windows.Input.Key.Escape)));
     }
     public MpMenu(DialogMenuItemCollection items)
     {
       _menuItems = items;
-      this.WindowStyle = WindowStyle.None;
-      this.ShowInTaskbar = false;
-      this.ResizeMode = ResizeMode.NoResize;
-      this.AllowsTransparency = true;
-      InitializeComponent();
+      this.Visibility = Visibility.Visible;
+      this.BorderThickness = new Thickness(0);
+      this.Width = 530;
+      this.Height = 370;
+
       _model = new DialogViewModel(this);
       Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
       this.Width *= scaling.Width;
       this.Height *= scaling.Height;
-      WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+      DataContext = _model;
+      this.InputBindings.Add(new KeyBinding(_model.Close, new KeyGesture(System.Windows.Input.Key.Escape)));
     }
+
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
       base.OnRenderSizeChanged(sizeInfo);
-      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
-      ((FrameworkElement)this.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
+      if (base.Content != null)
+      {
+        Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+        ((FrameworkElement)base.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
+      }
     }
     protected override void OnContentChanged(object oldContent, object newContent)
     {
       base.OnContentChanged(oldContent, newContent);
       Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
-      ((FrameworkElement)this.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
+      ((FrameworkElement)base.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
     }
-    private void OnLoaded(object sender, RoutedEventArgs e)
-    {
-      LoadSkin();
-      _model.SetItems(_menuItems);
-      gridMain.DataContext = _model;
-      this.InputBindings.Add(new KeyBinding(_model.Close, new KeyGesture(System.Windows.Input.Key.Escape)));
-      this.Visibility = Visibility.Visible;
-    }
-    protected virtual void LoadSkin()
-    {
-      gridMain.Children.Clear();
-      try
-      {
-        using (FileStream steam = new FileStream(@"skin\default\Dialogs\DialogMenu.xaml", FileMode.Open, FileAccess.Read))
-        {
-          UIElement documentRoot = (UIElement)XamlReader.Load(steam);
-          gridMain.Children.Add(documentRoot);
-        }
-      }
-      catch (Exception ex)
-      {
-        ServiceScope.Get<ILogger>().Error("error loading DialogMenu.xaml");
-        ServiceScope.Get<ILogger>().Error(ex);
-      }
-    }
+    
 
 
     public string SubTitle

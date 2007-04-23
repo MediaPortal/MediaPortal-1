@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IdentityModel;
 using System.Text;
 using System.IO;
 using System.Windows;
@@ -15,41 +14,40 @@ using System.Windows.Shapes;
 using ProjectInfinity;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Navigation;
+using ProjectInfinity.Controls;
 
 namespace Dialogs
 {
   /// <summary>
-  /// Interaction logic for MpDialogYesNo.xaml
+  /// Interaction logic for MpDialogOk.xaml
   /// </summary>
 
-  public partial class MpDialogYesNo : System.Windows.Window
+  public partial class MpDialogOk : ViewWindow
   {
     DialogViewModel _model;
-    DialogResult _result = DialogResult.No;
-
-    public MpDialogYesNo()
+    public MpDialogOk()
     {
-      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
-      this.LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
-      this.WindowStyle = WindowStyle.None;
-      this.ShowInTaskbar = false;
-      this.ResizeMode = ResizeMode.NoResize;
-      this.AllowsTransparency = true;//we need it so we can alphablend the dialog with the gui. However this causes s/w rendering in wpf
-      InitializeComponent();
+      this.Visibility = Visibility.Visible;
+      this.BorderThickness = new Thickness(0);
+      this.Width = 530;
+      this.Height = 370;
       _model = new DialogViewModel(this);
+      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
       this.Width *= scaling.Width;
       this.Height *= scaling.Height;
       WindowStartupLocation = WindowStartupLocation.CenterOwner;
+      DataContext = _model;
+      this.InputBindings.Add(new KeyBinding(_model.Close, new KeyGesture(System.Windows.Input.Key.Escape)));
     }
-    /// <summary>
-    /// Shows this instance.
-    /// </summary>
 
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
       base.OnRenderSizeChanged(sizeInfo);
-      Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
-      ((FrameworkElement)base.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
+      if (base.Content != null)
+      {
+        Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
+        ((FrameworkElement)base.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
+      }
     }
     protected override void OnContentChanged(object oldContent, object newContent)
     {
@@ -57,35 +55,8 @@ namespace Dialogs
       Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
       ((FrameworkElement)base.Content).LayoutTransform = new ScaleTransform(scaling.Width, scaling.Height);
     }
-    private void OnLoaded(object sender, RoutedEventArgs e)
-    {
-      gridMain.Children.Clear();
-      try
-      {
-        using (FileStream steam = new FileStream(@"skin\default\Dialogs\DialogYesNo.xaml", FileMode.Open, FileAccess.Read))
-        {
-          UIElement documentRoot = (UIElement)XamlReader.Load(steam);
-          gridMain.Children.Add(documentRoot);
-        }
-      }
-      catch (Exception ex)
-      {
-        ServiceScope.Get<ILogger>().Error("error loading DialogYesNo.xaml");
-        ServiceScope.Get<ILogger>().Error(ex);
-      }
-      gridMain.DataContext = _model;
-      this.InputBindings.Add(new KeyBinding(_model.Close, new KeyGesture(System.Windows.Input.Key.Escape)));
+    
 
-
-    }
-
-    public DialogResult DialogResult
-    {
-      get
-      {
-        return _model.DialogResult;
-      }
-    }
     /// <summary>
     /// Gets or sets the title.
     /// </summary>
@@ -131,5 +102,6 @@ namespace Dialogs
         _model.Content = value;
       }
     }
+
   }
 }
