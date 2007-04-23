@@ -1,4 +1,4 @@
-﻿﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Language name="Hungarian" characters="512">
   <Section name="unmapped">
     <String id="0">Programok</String>
@@ -1292,7 +1292,7 @@
     <String id="2087">vissza</String>
     <String id="2088">Vágás lista:</String>
     <String id="2089">minőség beállítás</String>
-    <String id="2090">Dvr-Mpeg vágó</String>
+    <String id="2090">Videó szerkesztő</String>
     <String id="2091">A folyamat be lett zárva</String>
     <String id="2092">Kérlek, válassz fájlt a szerkesztéshez:</String>
     <String id="2093">hozzáad</String>
@@ -1597,9 +1597,23 @@
     <String id="1055">(csúsztatott felvétel)</String>
     <String id="1054">(felvétel)</String>
     <String id="1056">(nem elérhető)</String>
+    <String id="10105">Most</String>
     <String id="2062">alacsony</String>
     <String id="2063">közepes</String>
     <String id="2064">magas</String>
     <String id="108888">Zenei menü</String>
+    <String id="495">Rendezési opciók</String>
+    <String id="496">Opciók</String>
+    <String id="497">Felhasználó</String>
+    <String id="498">Műveletek</String>
+    <String id="499">Nézetek menü</String>
+    <String id="699">TV</String>
+    <String id="2055">Beállítások</String>
+    <String id="2056">Videóminőség</String>
+    <String id="2057">Hangminőség</String>
+    <String id="2058">Felbontás:</String>
+    <String id="2059">Comskip fájl találtam,</String>
+    <String id="2060">szeretné felhasználni?</String>
+    <String id="2061">A comskip fájl nem megfelelő.</String>
   </Section>
 </Language>
