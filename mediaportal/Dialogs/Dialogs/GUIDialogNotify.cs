@@ -44,14 +44,11 @@ namespace MediaPortal.Dialogs
     int m_dwParentWindowID = 0;
     GUIWindow m_pParentWindow = null;
     #endregion
-    [SkinControlAttribute(4)]
-    protected GUIButtonControl btnClose = null;
-    [SkinControlAttribute(3)]
-    protected GUILabelControl lblHeading = null;
-    [SkinControlAttribute(5)]
-    protected GUIImage imgLogo = null;
-    [SkinControlAttribute(6)]
-    protected GUITextControl txtArea = null;
+
+    [SkinControlAttribute(4)]   protected GUIButtonControl btnClose = null;
+    [SkinControlAttribute(3)]   protected GUILabelControl lblHeading = null;
+    [SkinControlAttribute(5)]   protected GUIImage imgLogo = null;
+    [SkinControlAttribute(6)]   protected GUITextControl txtArea = null;
 
     bool m_bPrevOverlay = false;
     int timeOutInSeconds = 8;
@@ -163,6 +160,8 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
+            lblHeading.Label = string.Empty;
+
             base.OnMessage(message);
             m_pParentWindow = null;
             m_bRunning = false;
@@ -200,6 +199,7 @@ namespace MediaPortal.Dialogs
       timeOutInSeconds = 5;
       logoUrl = string.Empty;
     }
+
     public void SetHeading(string strLine)
     {
       LoadSkin();
@@ -212,7 +212,6 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(int iString)
     {
-
       SetHeading(GUILocalizeStrings.Get(iString));
     }
 
@@ -220,6 +219,7 @@ namespace MediaPortal.Dialogs
     {
       txtArea.Label = text;
     }
+
     public void SetImage(string filename)
     {
       logoUrl = filename;
@@ -241,6 +241,7 @@ namespace MediaPortal.Dialogs
         }
       }
     }
+
     public void SetImageDimensions(Size size, bool keepAspectRatio,bool centered)
     {
       if (imgLogo == null) return;
@@ -262,6 +263,7 @@ namespace MediaPortal.Dialogs
       }
 
     }
+
     public override bool NeedRefresh()
     {
       if (m_bNeedRefresh)

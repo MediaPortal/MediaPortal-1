@@ -43,10 +43,9 @@ namespace MediaPortal.Dialogs
     GUIWindow m_pParentWindow = null;
     #endregion
 
-    [SkinControlAttribute(10)]
-    protected GUIButtonControl btnNo = null;
-    [SkinControlAttribute(11)]
-    protected GUIButtonControl btnYes = null;
+    [SkinControlAttribute(10)]    protected GUIButtonControl btnNo = null;
+    [SkinControlAttribute(11)]    protected GUIButtonControl btnYes = null;
+
     bool m_bConfirmed = false;
     bool m_bPrevOverlay = true;
     bool m_DefaultYes = false;
@@ -64,6 +63,7 @@ namespace MediaPortal.Dialogs
     {
       return Load(GUIGraphicsContext.Skin + @"\dialogYesNo.xml");
     }
+
     public override bool SupportsDelayedLoad
     {
       get { return true; }
@@ -165,6 +165,8 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
+            SetControlLabel(GetID, 1, string.Empty);
+
             base.OnMessage(message);
             m_pParentWindow = null;
             m_bRunning = false;
@@ -238,9 +240,11 @@ namespace MediaPortal.Dialogs
       AllocResources();
       InitControls();
 
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 1, 0, 0, null);
-      msg.Label = strLine;
-      OnMessage(msg);
+      SetControlLabel(GetID, 1, strLine);
+
+      //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 1, 0, 0, null);
+      //msg.Label = strLine;
+      //OnMessage(msg);
       SetLine(1, String.Empty);
       SetLine(2, String.Empty);
       SetLine(3, String.Empty);
@@ -270,6 +274,13 @@ namespace MediaPortal.Dialogs
     public void SetDefaultToYes(bool bYesNo)
     {
       m_DefaultYes = bYesNo;
+    }
+
+    void SetControlLabel(int iWindowId, int iControlId, string strText)
+    {
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, iWindowId, 0, iControlId, 0, 0, null);
+      msg.Label = strText;
+      OnMessage(msg);
     }
 
     #region IRenderLayer

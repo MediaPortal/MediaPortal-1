@@ -42,16 +42,12 @@ namespace MediaPortal.Dialogs
   {
     enum Controls
     {
-      CONTROL_BACKGROUND = 1
-      ,
-      CONTROL_NUMBEROFFILES = 2
-    ,
-      CONTROL_LIST = 3
-    ,
-      CONTROL_HEADING = 4
-    ,
-      CONTROL_BUTTON = 5
-    , CONTROL_BACKGROUNDDLG = 6
+      CONTROL_BACKGROUND = 1,
+      CONTROL_NUMBEROFFILES = 2,
+      CONTROL_LIST = 3,
+      CONTROL_HEADING = 4,
+      CONTROL_BUTTON = 5,
+      CONTROL_BACKGROUNDDLG = 6
     };
 
     #region Base Dialog Variables
@@ -146,6 +142,8 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
+            SetControlLabel(GetID, (int)Controls.CONTROL_HEADING, string.Empty);
+
             base.OnMessage(message);
             Reset();
             m_pParentWindow = null;
@@ -259,7 +257,6 @@ namespace MediaPortal.Dialogs
       SetHeading(GUILocalizeStrings.Get(iString));
     }
 
-
     public void EnableButton(bool bOnOff)
     {
       m_bButtonEnabled = bOnOff;
@@ -349,17 +346,20 @@ namespace MediaPortal.Dialogs
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, iWindowId, 0, iControlId, 0, 0, item);
       OnMessage(msg);
     }
+
     void SetControlLabel(int iWindowId, int iControlId, string strText)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, iWindowId, 0, iControlId, 0, 0, null);
       msg.Label = strText;
       OnMessage(msg);
     }
+
     void HideControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN, iWindowId, 0, iControlId, 0, 0, null);
       OnMessage(msg);
     }
+
     void ShowControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, iWindowId, 0, iControlId, 0, 0, null);
@@ -371,6 +371,7 @@ namespace MediaPortal.Dialogs
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, iWindowId, 0, iControlId, 0, 0, null);
       OnMessage(msg);
     }
+
     void EnableControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, iWindowId, 0, iControlId, 0, 0, null);

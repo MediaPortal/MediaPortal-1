@@ -40,12 +40,10 @@ namespace MediaPortal.Dialogs
   {
     enum Controls
     {
-      CONTROL_BACKGROUND = 1
-      ,
-      CONTROL_LIST = 3
-    ,
-      CONTROL_HEADING = 4
-    , CONTROL_BACKGROUNDDLG = 6
+      CONTROL_BACKGROUND = 1,
+      CONTROL_LIST = 3,
+      CONTROL_HEADING = 4,
+      CONTROL_BACKGROUNDDLG = 6
     };
 
     #region Base Dialog Variables
@@ -76,10 +74,10 @@ namespace MediaPortal.Dialogs
     {
       get { return true; }
     }
+
     public override void PreInit()
     {
     }
-
 
     public override void OnAction(Action action)
     {
@@ -142,6 +140,8 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
+            SetControlLabel(GetID, (int)Controls.CONTROL_HEADING, string.Empty);
+
             base.OnMessage(message);
             m_pParentWindow = null;
             m_bRunning = false;
@@ -181,7 +181,6 @@ namespace MediaPortal.Dialogs
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
-
             int iControl = message.SenderControlId;
             if ((int)Controls.CONTROL_LIST == iControl)
             {

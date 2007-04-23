@@ -138,6 +138,8 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
+            SetControlLabel(GetID, 1, string.Empty);
+
             base.OnMessage(message);
             m_bRunning = false;
 
@@ -193,9 +195,10 @@ namespace MediaPortal.Dialogs
       AllocResources();
       InitControls();
 
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 1, 0, 0, null);
-      msg.Label = strLine;
-      OnMessage(msg);
+      SetControlLabel(GetID, 1, strLine);
+      //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 1, 0, 0, null);
+      //msg.Label = strLine;
+      //OnMessage(msg);
       SetLine(1, String.Empty);
       SetLine(2, String.Empty);
       SetLine(3, String.Empty);
@@ -222,6 +225,12 @@ namespace MediaPortal.Dialogs
       SetLine(iLine, GUILocalizeStrings.Get(iString));
     }
 
+    void SetControlLabel(int iWindowId, int iControlId, string strText)
+    {
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, iWindowId, 0, iControlId, 0, 0, null);
+      msg.Label = strText;
+      OnMessage(msg);
+    }
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {
