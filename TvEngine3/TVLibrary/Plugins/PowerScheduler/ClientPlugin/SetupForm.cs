@@ -59,6 +59,7 @@ namespace MediaPortal.Plugins.Process
         idleNumericUpDown.Value = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
         forceCheckBox.Checked = reader.GetValueAsBool("psclientplugin", "forceshutdown", false);
         wakeupNumericUpDown.Value = reader.GetValueAsInt("psclientplugin", "prewakeup", 60);
+        noShutdownNumericUpDown.Value = reader.GetValueAsInt("psclientplugin", "prenoshutdown", 120);
       }
     }
 
@@ -73,6 +74,7 @@ namespace MediaPortal.Plugins.Process
         writer.SetValue("psclientplugin", "idletimeout", idleNumericUpDown.Value);
         writer.SetValueAsBool("psclientplugin", "forceshutdown", forceCheckBox.Checked);
         writer.SetValue("psclientplugin", "prewakeup", wakeupNumericUpDown.Value);
+        writer.SetValue("psclientplugin", "prenoshutdown", noShutdownNumericUpDown.Value);
       }
     }
     #endregion
@@ -81,6 +83,16 @@ namespace MediaPortal.Plugins.Process
     {
       SaveSettings();
       Close();
+    }
+
+    private void label1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+    {
+
     }
 
   }

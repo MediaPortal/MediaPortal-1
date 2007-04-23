@@ -43,7 +43,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// </summary>
     /// <param name="source">the source preventing standby</param>
     /// <param name="allowed">is standby allowed?</param>
-    void SetStandbyAllowed(object source, bool allowed);
+    void SetStandbyAllowed(object source, bool allowed, int timeout);
 
     /// <summary>
     /// Allows an external EPG source to set a preferred next wakeup time

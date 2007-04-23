@@ -60,13 +60,45 @@ namespace TvEngine.PowerScheduler.Interfaces
     void SetNextWakeupTime(DateTime nextWakeupTime, string handlerName);
 
     /// <summary>
+    /// Resets the idle timer of the PowerScheduler. When enough time has passed (IdleTimeout), the system
+    /// is suspended as soon as possible (no handler disallows shutdown).
+    /// Note that the idle timer is automatically reset to now when the user moves the mouse or touchs the keyboard.
+    /// </summary>
+    void UserActivityDetected( DateTime when );
+
+    /// <summary>
+    /// Register remote handlers. If an empty string or null is passed, no handler is registered for
+    /// that type. It returns a tag used to unregister the later. The returned tag is always not 0.
+    /// </summary>
+    /// <param name="standbyHandlerURI"></param>
+    /// <param name="wakeupHandlerURI"></param>
+    int RegisterRemote(String standbyHandlerURI, String wakeupHandlerURI);
+
+    /// <summary>
+    /// Unregister remote handlers.
+    /// </summary>
+    void UnregisterRemote(int tag);
+
+    /// <summary>
     /// Indicates whether or not we're connected to the PowerScheduler power control interfaces
     /// </summary>
     bool IsConnected { get; }
 
     /// <summary>
+    /// Get the current state. If refresh is true, the state is the most current state, otherwise the state could be some seconds old.
+    /// Special case: If shutdown is not allowed because an event is almost due, the handler name is "EVENT-DUE".
+    /// </summary>
+    /// <param name="refresh"></param>
+    /// <param name="disAllowShutdown"></param>
+    /// <param name="disAllowShutdownHandler"></param>
+    /// <param name="nextWakeupTime"></param>
+    /// <param name="nextWakeupHandler"></param>
+    void GetCurrentState(bool refresh, out bool disAllowShutdown, out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler);
+
+    /// <summary>
     /// Provides access to PowerScheduler's settings
     /// </summary>
     IPowerSettings PowerSettings { get; }
+
   }
 }

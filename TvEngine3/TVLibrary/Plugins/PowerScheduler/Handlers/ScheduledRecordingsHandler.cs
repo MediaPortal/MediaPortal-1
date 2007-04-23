@@ -35,7 +35,7 @@ namespace TvEngine.PowerScheduler.Handlers
   /// <summary>
   /// Handles wakeup of the system for scheduled recordings
   /// </summary>
-  public class ScheduledRecordingsHandler : IWakeupHandler, IStandbyHandler
+  public class ScheduledRecordingsHandler : IWakeupHandler
   {
     #region Variables
     int _idleTimeout = 5;
@@ -97,39 +97,6 @@ namespace TvEngine.PowerScheduler.Handlers
     public string HandlerName
     {
       get { return "ScheduledRecordingsHandler"; }
-    }
-    #endregion
-
-    #region IStandbyHandler implementation
-    public bool DisAllowShutdown
-    {
-      get
-      {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        DateTime almostDueTime;
-        foreach (Schedule schedule in Schedule.ListAll())
-        {
-          if (schedule.Canceled != Schedule.MinSchedule) continue;
-          List<Schedule> schedules = layer.GetRecordingTimes(schedule);
-          if (schedules.Count > 0)
-          {
-            // Take first occurrence of this schedule
-            Schedule recSchedule = schedules[0];
-            almostDueTime = recSchedule.StartTime.AddMinutes(-recSchedule.PreRecordInterval).AddMinutes(-_idleTimeout);
-          }
-          else
-          {
-            // manually determine schedule's wakeup time of no guide data is present
-            almostDueTime = GetWakeupTime(schedule).AddMinutes(-_idleTimeout);
-          }
-          if (almostDueTime <= DateTime.Now && almostDueTime > DateTime.Now.AddMinutes(-_idleTimeout))
-          {
-            // This schedule is almost due, so disallow standby
-            return true;
-          }
-        }
-        return false;
-      }
     }
     #endregion
 

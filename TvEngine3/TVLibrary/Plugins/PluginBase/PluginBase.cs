@@ -26,6 +26,17 @@ using TvControl;
 namespace TvEngine
 {
   /// <summary>
+  /// Interface for plugins that implement the StartedAll method.
+  /// </summary>
+  public interface ITvServerPluginStartedAll
+  {
+    /// <summary>
+    /// Called when all plugins where started.
+    /// </summary>
+    void StartedAll();
+  }
+
+  /// <summary>
   /// base class for tv-server plugins
   /// </summary>
   public interface ITvServerPlugin

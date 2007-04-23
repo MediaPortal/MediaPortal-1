@@ -254,6 +254,8 @@ namespace TvLibrary.Log
           {
             writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
             writer.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " ");
+            String log = String.Format("{0:X} ", System.Threading.Thread.CurrentThread.ManagedThreadId);
+            writer.Write( log );
             writer.WriteLine(format, arg);
             writer.Close();
           }

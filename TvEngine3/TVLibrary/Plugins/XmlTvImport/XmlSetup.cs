@@ -53,10 +53,13 @@ namespace SetupTv.Sections
       setting.Value = textBoxFolder.Text;
       setting.Persist();
       setting = layer.GetSetting("xmlTvUseTimeZone", "true");
-      if (checkBox1.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
+      setting.Value= checkBox1.Checked ? "true" : "false";
+      setting.Persist();
+      setting = layer.GetSetting("xmlTvImportXML", "true");
+      setting.Value = cbImportXML.Checked ? "true" : "false";
+      setting.Persist();
+      setting = layer.GetSetting("xmlTvImportLST", "true");
+      setting.Value = cbImportLST.Checked ? "true" : "false";
       setting.Persist();
       setting = layer.GetSetting("xmlTvTimeZoneHours", "0");
       setting.Value = textBoxHours.Text;
@@ -76,6 +79,8 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       textBoxFolder.Text = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
       checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "true").Value == "true";
+      cbImportXML.Checked = layer.GetSetting("xmlTvImportXML", "true").Value == "true";
+      cbImportLST.Checked = layer.GetSetting("xmlTvImportLST", "true").Value == "true";
       textBoxHours.Text = layer.GetSetting("xmlTvTimeZoneHours", "0").Value;
       textBoxMinutes.Text = layer.GetSetting("xmlTvTimeZoneMins", "0").Value;
       labelLastImport.Text = layer.GetSetting("xmlTvResultLastImport", "").Value;

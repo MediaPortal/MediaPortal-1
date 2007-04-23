@@ -74,10 +74,15 @@ namespace TvEngine.PowerScheduler
       this.checkBox1 = new System.Windows.Forms.CheckBox();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.button2 = new System.Windows.Forms.Button();
+      this.textBox2 = new System.Windows.Forms.TextBox();
+      this.label5 = new System.Windows.Forms.Label();
       this.checkBox5 = new System.Windows.Forms.CheckBox();
       this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+      this.label6 = new System.Windows.Forms.Label();
       this.label4 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
+      this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
       this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
       this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
       this.checkBox4 = new System.Windows.Forms.CheckBox();
@@ -100,10 +105,10 @@ namespace TvEngine.PowerScheduler
       this.button1 = new System.Windows.Forms.Button();
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      this.label5 = new System.Windows.Forms.Label();
-      this.textBox2 = new System.Windows.Forms.TextBox();
-      this.button2 = new System.Windows.Forms.Button();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.button3 = new System.Windows.Forms.Button();
+      this.tbEpgCmd = new System.Windows.Forms.TextBox();
+      this.label7 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -113,6 +118,7 @@ namespace TvEngine.PowerScheduler
       this.splitContainer1.Panel1.SuspendLayout();
       this.splitContainer1.Panel2.SuspendLayout();
       this.splitContainer1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
       this.tabPage3.SuspendLayout();
@@ -261,10 +267,37 @@ namespace TvEngine.PowerScheduler
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Advanced settings";
       // 
+      // button2
+      // 
+      this.button2.Location = new System.Drawing.Point(376, 205);
+      this.button2.Name = "button2";
+      this.button2.Size = new System.Drawing.Size(25, 23);
+      this.button2.TabIndex = 6;
+      this.button2.Text = "...";
+      this.button2.UseVisualStyleBackColor = true;
+      this.button2.Click += new System.EventHandler(this.button2_Click);
+      // 
+      // textBox2
+      // 
+      this.textBox2.Location = new System.Drawing.Point(38, 222);
+      this.textBox2.Name = "textBox2";
+      this.textBox2.Size = new System.Drawing.Size(329, 20);
+      this.textBox2.TabIndex = 5;
+      this.toolTip1.SetToolTip(this.textBox2, "Command will have \"standby\" and \"wakeup\" as argument for the appropriate action");
+      // 
+      // label5
+      // 
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(35, 206);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(225, 13);
+      this.label5.TabIndex = 4;
+      this.label5.Text = "Run command before standby / after wakeup:";
+      // 
       // checkBox5
       // 
       this.checkBox5.AutoSize = true;
-      this.checkBox5.Location = new System.Drawing.Point(39, 153);
+      this.checkBox5.Location = new System.Drawing.Point(39, 176);
       this.checkBox5.Name = "checkBox5";
       this.checkBox5.Size = new System.Drawing.Size(277, 17);
       this.checkBox5.TabIndex = 3;
@@ -273,31 +306,44 @@ namespace TvEngine.PowerScheduler
       // 
       // splitContainer1
       // 
-      this.splitContainer1.Location = new System.Drawing.Point(38, 88);
+      this.splitContainer1.IsSplitterFixed = true;
+      this.splitContainer1.Location = new System.Drawing.Point(35, 88);
+      this.splitContainer1.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
       this.splitContainer1.Name = "splitContainer1";
       // 
       // splitContainer1.Panel1
       // 
+      this.splitContainer1.Panel1.Controls.Add(this.label6);
       this.splitContainer1.Panel1.Controls.Add(this.label4);
       this.splitContainer1.Panel1.Controls.Add(this.label3);
       this.splitContainer1.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
       // 
       // splitContainer1.Panel2
       // 
+      this.splitContainer1.Panel2.Controls.Add(this.numericUpDown4);
       this.splitContainer1.Panel2.Controls.Add(this.numericUpDown3);
       this.splitContainer1.Panel2.Controls.Add(this.numericUpDown2);
-      this.splitContainer1.Size = new System.Drawing.Size(195, 55);
-      this.splitContainer1.SplitterDistance = 143;
+      this.splitContainer1.Size = new System.Drawing.Size(243, 82);
+      this.splitContainer1.SplitterDistance = 178;
       this.splitContainer1.TabIndex = 2;
+      // 
+      // label6
+      // 
+      this.label6.AutoSize = true;
+      this.label6.Location = new System.Drawing.Point(1, 55);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(129, 13);
+      this.label6.TabIndex = 2;
+      this.label6.Text = "Check interval in seconds";
       // 
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(11, 31);
+      this.label4.Location = new System.Drawing.Point(1, 31);
       this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(129, 13);
+      this.label4.Size = new System.Drawing.Size(163, 13);
       this.label4.TabIndex = 1;
-      this.label4.Text = "Check interval in seconds";
+      this.label4.Text = "Pre-no-shutdown time in seconds";
       // 
       // label3
       // 
@@ -308,16 +354,38 @@ namespace TvEngine.PowerScheduler
       this.label3.TabIndex = 0;
       this.label3.Text = "Pre-wakeup time in seconds";
       // 
+      // numericUpDown4
+      // 
+      this.numericUpDown4.Location = new System.Drawing.Point(3, 31);
+      this.numericUpDown4.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+      this.numericUpDown4.Name = "numericUpDown4";
+      this.numericUpDown4.Size = new System.Drawing.Size(41, 20);
+      this.numericUpDown4.TabIndex = 1;
+      // 
       // numericUpDown3
       // 
-      this.numericUpDown3.Location = new System.Drawing.Point(4, 29);
+      this.numericUpDown3.Location = new System.Drawing.Point(3, 53);
+      this.numericUpDown3.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
       this.numericUpDown3.Name = "numericUpDown3";
       this.numericUpDown3.Size = new System.Drawing.Size(41, 20);
-      this.numericUpDown3.TabIndex = 1;
+      this.numericUpDown3.TabIndex = 2;
       // 
       // numericUpDown2
       // 
-      this.numericUpDown2.Location = new System.Drawing.Point(4, 8);
+      this.numericUpDown2.Location = new System.Drawing.Point(3, 8);
+      this.numericUpDown2.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
       this.numericUpDown2.Name = "numericUpDown2";
       this.numericUpDown2.Size = new System.Drawing.Size(41, 20);
       this.numericUpDown2.TabIndex = 0;
@@ -354,13 +422,16 @@ namespace TvEngine.PowerScheduler
       // 
       // groupBox3
       // 
+      this.groupBox3.Controls.Add(this.button3);
+      this.groupBox3.Controls.Add(this.tbEpgCmd);
+      this.groupBox3.Controls.Add(this.label7);
       this.groupBox3.Controls.Add(this.panel1);
       this.groupBox3.Controls.Add(this.maskedTextBox1);
       this.groupBox3.Controls.Add(this.checkBox7);
       this.groupBox3.Controls.Add(this.checkBox6);
       this.groupBox3.Location = new System.Drawing.Point(7, 7);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(439, 192);
+      this.groupBox3.Size = new System.Drawing.Size(439, 311);
       this.groupBox3.TabIndex = 0;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "EPG standby/wakeup settings";
@@ -526,37 +597,37 @@ namespace TvEngine.PowerScheduler
       this.toolTip1.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
       this.toolTip1.ToolTipTitle = "Help";
       // 
-      // label5
-      // 
-      this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(38, 187);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(225, 13);
-      this.label5.TabIndex = 4;
-      this.label5.Text = "Run command before standby / after wakeup:";
-      // 
-      // textBox2
-      // 
-      this.textBox2.Location = new System.Drawing.Point(41, 205);
-      this.textBox2.Name = "textBox2";
-      this.textBox2.Size = new System.Drawing.Size(329, 20);
-      this.textBox2.TabIndex = 5;
-      this.toolTip1.SetToolTip(this.textBox2, "Command will have \"standby\" and \"wakeup\" as argument for the appropriate action");
-      // 
-      // button2
-      // 
-      this.button2.Location = new System.Drawing.Point(376, 203);
-      this.button2.Name = "button2";
-      this.button2.Size = new System.Drawing.Size(25, 23);
-      this.button2.TabIndex = 6;
-      this.button2.Text = "...";
-      this.button2.UseVisualStyleBackColor = true;
-      this.button2.Click += new System.EventHandler(this.button2_Click);
-      // 
       // openFileDialog1
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       this.openFileDialog1.Title = "Choose command";
+      // 
+      // button3
+      // 
+      this.button3.Location = new System.Drawing.Point(379, 179);
+      this.button3.Name = "button3";
+      this.button3.Size = new System.Drawing.Size(25, 23);
+      this.button3.TabIndex = 9;
+      this.button3.Text = "...";
+      this.button3.UseVisualStyleBackColor = true;
+      this.button3.Click += new System.EventHandler(this.button3_Click);
+      // 
+      // tbEpgCmd
+      // 
+      this.tbEpgCmd.Location = new System.Drawing.Point(41, 196);
+      this.tbEpgCmd.Name = "tbEpgCmd";
+      this.tbEpgCmd.Size = new System.Drawing.Size(329, 20);
+      this.tbEpgCmd.TabIndex = 8;
+      this.toolTip1.SetToolTip(this.tbEpgCmd, "Command will have \"epg\" as argument for the appropriate action");
+      // 
+      // label7
+      // 
+      this.label7.AutoSize = true;
+      this.label7.Location = new System.Drawing.Point(38, 180);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(254, 13);
+      this.label7.TabIndex = 7;
+      this.label7.Text = "Run command before internal handlers are triggered:";
       // 
       // PowerSchedulerMasterSetup
       // 
@@ -576,6 +647,7 @@ namespace TvEngine.PowerScheduler
       this.splitContainer1.Panel1.PerformLayout();
       this.splitContainer1.Panel2.ResumeLayout(false);
       this.splitContainer1.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
       this.tabPage3.ResumeLayout(false);
@@ -595,5 +667,10 @@ namespace TvEngine.PowerScheduler
     private System.Windows.Forms.TextBox textBox2;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
+    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.NumericUpDown numericUpDown4;
+    private System.Windows.Forms.Button button3;
+    private System.Windows.Forms.TextBox tbEpgCmd;
+    private System.Windows.Forms.Label label7;
   }
 }

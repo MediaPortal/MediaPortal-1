@@ -41,8 +41,34 @@ namespace TvPlugin
   /// </summary>
   public class TvOverlay : GUIOverlayWindow, IRenderLayer
   {
+    #region Properties (Skin)
+    [SkinControlAttribute(4)]
+    protected GUIImage imgRed = null;
+    [SkinControlAttribute(5)]
+    protected GUIImage imgYellow = null;
+    [SkinControlAttribute(6)]
+    protected GUILabelControl lblState = null;
+    #endregion
+
+    static TvOverlay _instance;
+
+    /// <summary>
+    /// returns an the <see cref="T:TvControl.IController"/> interface to the tv server
+    /// </summary>
+    /// <value>The instance.</value>
+    static public TvOverlay Instance
+    {
+      get
+      {
+        return _instance;
+      }
+    }
+
+
     DateTime _updateTimer = DateTime.Now;
     bool _lastStatus = false;
+    bool _forceRed = false;
+    int _lastMode = 0;
     bool _didRenderLastTime = false;
     public TvOverlay()
     {
@@ -61,7 +87,14 @@ namespace TvPlugin
       bool bResult = Load(GUIGraphicsContext.Skin + @"\tvOverlay.xml");
       GetID = (int)GUIWindow.Window.WINDOW_TV_OVERLAY;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.TvOverlay);
+      _instance = this;
       return bResult;
+    }
+
+    public virtual void DeInit()
+    {
+      _instance = null;
+      base.DeInit();
     }
 
     public override void PreInit()
@@ -93,6 +126,29 @@ namespace TvPlugin
         }
       }
     }
+
+    private void SetBulb()
+    {
+      if (imgRed != null) imgRed.Visible = _lastMode == 1 || _forceRed;
+      if (imgYellow != null) imgYellow.Visible = _lastMode == 2 && !_forceRed;
+    }
+
+    /// <summary>
+    /// mode= 0 : not visible
+    /// mode= 1 : red logo
+    /// mode= 2 : yellow logo
+    /// mode= 3 : no logo, text only
+    /// text: text for state
+    /// </summary>
+    /// <param name="mode"></param>
+    /// <param name="text"></param>
+    public void UpdateState(int mode, String text)
+    {
+      _lastMode = mode;
+      SetBulb();
+      if (lblState != null) lblState.Label = text == null ? "" : text;
+    }
+
     public bool ShouldRenderLayer()
     {
       if (GUIGraphicsContext.IsFullScreenVideo) return false;
@@ -103,16 +159,20 @@ namespace TvPlugin
 
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds < 1000) return _lastStatus;
+
+      // check TV-Server
       TvServer server = new TvServer();
+      bool recording = false;
       if (TVHome.Connected)
-      {
-        _lastStatus = server.IsAnyCardRecording();
-      }
-      else
-      {
-        _lastStatus = false;
-      }
+        recording= server.IsAnyCardRecording();
+
+      bool setBulb = _forceRed != recording;
+
+      _forceRed = recording;
+      _lastStatus= recording || _lastMode != 0;
       _updateTimer = DateTime.Now;
+
+      if (setBulb) SetBulb();
       OnUpdateState(_lastStatus);
       if (!_lastStatus) 
         return base.IsAnimating(AnimationType.WindowClose);

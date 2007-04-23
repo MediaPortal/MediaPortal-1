@@ -64,7 +64,7 @@ namespace TvEngine.PowerScheduler
     /// Creates a new PowerSchedulerFactory
     /// </summary>
     /// <param name="controller">Reference to tvservice's TVController</param>
-    public PowerSchedulerFactory(IController controller)
+    public PowerSchedulerFactory(IController controller,PowerScheduler powerScheduler)
     {
       IStandbyHandler standbyHandler;
 
@@ -80,7 +80,6 @@ namespace TvEngine.PowerScheduler
       _standbyHandlers.Add(standbyHandler);
 
       ScheduledRecordingsHandler recHandler = new ScheduledRecordingsHandler();
-      _standbyHandlers.Add(recHandler);
 
       // Add handlers for resuming from standby
       _wakeupHandlers.Add(recHandler);

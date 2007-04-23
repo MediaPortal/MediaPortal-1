@@ -35,56 +35,57 @@ using TvEngine.PowerScheduler.Interfaces;
 
 namespace TvEngine
 {
-  public class TvMovie : ITvServerPlugin
+  public class TvMovie : ITvServerPlugin, ITvServerPluginStartedAll
   {
     #region Members
     private TvMovieDatabase _database;
     private System.Timers.Timer _stateTimer;
     private bool _isImporting = false;
-    private bool _registeredWithPS = false;
     private const long _timerIntervall = 1800000;
     #endregion
 
     private void ImportThread()
     {
       SetStandbyAllowed(false);
-
-      _isImporting = true;
-
       try
       {
-        _database = new TvMovieDatabase();
-        _database.Connect();
-      }
-      catch (Exception)
-      {
-        Log.Error("TVMovie: Import enabled but the ClickFinder database was not found.");
-        return;
-      }
+        _isImporting = true;
 
-      //Log.Debug("TVMovie: Checking database");
-      try
-      {
-        if (_database.NeedsImport)
+        try
         {
-          _database.Import();
+          _database = new TvMovieDatabase();
+          _database.Connect();
+        }
+        catch (Exception)
+        {
+          Log.Error("TVMovie: Import enabled but the ClickFinder database was not found.");
+          return;
+        }
+
+        //Log.Debug("TVMovie: Checking database");
+        try
+        {
+          if (_database.NeedsImport)
+          {
+            _database.Import();
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("TvMovie plugin error:");
+          Log.Write(ex);
         }
       }
-      catch (Exception ex)
+      finally
       {
-        Log.Error("TvMovie plugin error:");
-        Log.Write(ex);
+        _isImporting = false;
+        SetStandbyAllowed(true);
       }
-
-      _isImporting = false;
-
-      SetStandbyAllowed(true);
     }
 
     private void StartImportThread(object source, ElapsedEventArgs e)
     {
       //TODO: check stateinfo
-      RegisterForEPGSchedule();
       SpawnImportThread();
     }
 
@@ -92,19 +93,17 @@ namespace TvEngine
     {
       // Register with the EPGScheduleDue event so we are informed when
       // the EPG wakeup schedule is due.
-      if (!_registeredWithPS)
+      if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
       {
-        if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
+        IEpgHandler handler = GlobalServiceProvider.Instance.Get<IEpgHandler>();
+        if (handler != null)
         {
-          IEpgHandler handler = GlobalServiceProvider.Instance.Get<IEpgHandler>();
-          if (handler != null)
-          {
-            handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
-            _registeredWithPS = true;
-            Log.Debug("TVMovie: registered with PowerScheduler EPG handler");
-          }
+          handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
+          Log.Debug("TVMovie: registered with PowerScheduler EPG handler");
+          return;
         }
       }
+      Log.Debug("TVMovie: NOT registered with PowerScheduler EPG handler");
     }
 
     private void EPGScheduleDue()
@@ -116,8 +115,8 @@ namespace TvEngine
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
       {
-        GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed);
-        Log.Debug("TVMovie: Telling PowerScheduler standby is allowed: {0}", allowed);
+        GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 3600);
+        Log.Debug("TVMovie: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
       }
     }
 
@@ -164,7 +163,6 @@ namespace TvEngine
         }
         _stateTimer.Start();
         _stateTimer.Enabled = true;
-        RegisterForEPGSchedule();
       }
       else
       {
@@ -199,6 +197,11 @@ namespace TvEngine
     public void Start(IController controller)
     {
       StartStopTimer(true);
+    }
+
+    public void StartedAll()
+    {
+      RegisterForEPGSchedule();
     }
 
     public void Stop()

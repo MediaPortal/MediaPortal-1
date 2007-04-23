@@ -30,6 +30,7 @@ using TvLibrary.Log;
 using TvDatabase;
 using TvControl;
 using TvEngine.Events;
+using System.Threading;
 
 namespace TvService
 {
@@ -167,7 +168,6 @@ namespace TvService
       }
     }
 
-
     /// <summary>
     /// DoSchedule() will start recording any schedule if its time todo so
     /// </summary>
@@ -247,6 +247,31 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// This function checks whether something should be recorded at the given time.
+    /// </summary>
+    public bool IsTimeToRecord(DateTime currentTime)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+
+      DateTime now = DateTime.Now;
+      IList schedules = Schedule.ListAll();
+      foreach (Schedule schedule in schedules)
+      {
+        //if schedule has been canceled then do nothing
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
+
+        //check if its time to record this schedule.
+        RecordingDetail newRecording;
+        if (IsTimeToRecord(schedule, now, out newRecording))
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    
     /// <summary>
     /// Method which checks if its time to record the schedule specified
     /// </summary>

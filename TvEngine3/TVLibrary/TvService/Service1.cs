@@ -46,6 +46,7 @@ using TvLibrary.Log;
 using TvControl;
 using TvEngine.Interfaces;
 using TvLibrary.Interfaces;
+using System.Reflection;
 
 namespace TvService
 {
@@ -62,6 +63,29 @@ namespace TvService
     /// </summary>
     public Service1()
     {
+      #region QuerySuspendHack the following hack allows to deny suspend queried in NET 2.0
+        // Find the initialisation routine - may break in later versions
+
+        MethodInfo init = typeof(ServiceBase).GetMethod("Initialize",
+          BindingFlags.NonPublic | BindingFlags.Instance);
+
+        // Call it to set up all members
+        init.Invoke(this, new object[] { false });
+
+        // Find the service callback handler
+        FieldInfo handlerEx = typeof(ServiceBase).GetField("commandCallbackEx",
+          BindingFlags.NonPublic | BindingFlags.Instance);
+
+        // Read the base class provided handler
+        _forward = (Delegate)handlerEx.GetValue(this);
+
+        // Create a new delegate to our handler
+        Delegate newDelegate= Delegate.CreateDelegate( _forward.GetType(), this, "ServiceCallbackEx" );
+
+        // Install our handler
+        handlerEx.SetValue(this, newDelegate );
+      #endregion
+
       string applicationPath = System.Windows.Forms.Application.ExecutablePath;
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
@@ -77,7 +101,7 @@ namespace TvService
         RemotingConfiguration.Configure(remotingFile, false);
       }
       catch (Exception ex)
-      {
+      {      
         Log.Write(ex);
       }
       InitializeComponent();
@@ -138,6 +162,32 @@ namespace TvService
       Log.WriteFile("TV service stopped");
     }
 
+    #region QuerySuspendHack part 2 of the hack
+      Delegate _forward;  // will get the default delegate
+
+      /// <summary>
+      ///   This is the hack stub function that allows to deny supend queries.
+      /// </summary>
+      /// <param name="command"></param>
+      /// <param name="eventType"></param>
+      /// <param name="eventData"></param>
+      /// <param name="eventContext"></param>
+      /// <returns></returns>
+      private int ServiceCallbackEx(int command, int eventType, IntPtr eventData,
+        IntPtr eventContext)
+      {
+        // Call the base class implementation which is fine for all but power and session management
+
+        if (13 != command) return (int) _forward.DynamicInvoke(command, eventType, eventData, eventContext);
+
+        // Process and forward success code
+        if (OnPowerEvent((PowerBroadcastStatus)eventType)) return 0;
+
+        // Abort power operation
+        return 0x424d5144;
+      }
+    #endregion
+
     /// <summary>
     /// When implemented in a derived class, executes when the computer's power status has changed. This applies to laptop computers when they go into suspended mode, which is not the same as a system shutdown.
     /// </summary>
@@ -151,6 +201,7 @@ namespace TvService
       bool accept = true;
       bool result;
       List<PowerEventHandler> powerEventPreventers = new List<PowerEventHandler>();
+      List<PowerEventHandler> powerEventAllowers = new List<PowerEventHandler>();
       foreach (PowerEventHandler handler in _powerEventHandlers)
       {
         result = handler(powerStatus);
@@ -159,6 +210,8 @@ namespace TvService
           accept = false;
           powerEventPreventers.Add(handler);
         }
+        else
+          powerEventAllowers.Add(handler);
       }
       result = base.OnPowerEvent(powerStatus);
       if (result == false)
@@ -170,6 +223,21 @@ namespace TvService
         if (powerEventPreventers.Count > 0)
           foreach (PowerEventHandler handler in powerEventPreventers)
             Log.Debug("PowerStatus:{0} rejected by {1}", powerStatus, handler.Target.ToString());
+
+        // if query suspend: 
+        // everybody that allowed the standby now must receive a deny event
+        // since we will not get a QuerySuspendFailed message by the OS when
+        // we return false to QuerySuspend
+        if (powerStatus == PowerBroadcastStatus.QuerySuspend )
+        {
+          if( result )
+            base.OnPowerEvent(PowerBroadcastStatus.QuerySuspendFailed);
+          foreach (PowerEventHandler handler in powerEventAllowers)
+          {
+            handler(PowerBroadcastStatus.QuerySuspendFailed);
+          }
+        }
+
         return false;
       }
     }

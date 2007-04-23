@@ -401,6 +401,7 @@ namespace TvService
           _scheduler.Start();
         }
 
+        // start plugins
         foreach (ITvServerPlugin plugin in _plugins.Plugins)
         {
           if (plugin.MasterOnly == false || _isMaster)
@@ -423,6 +424,24 @@ namespace TvService
             else
             {
               Log.Info("Plugin:{0} disabled", plugin.Name);
+            }
+          }
+        }
+
+        // fire off startedAll on plugins
+        foreach (ITvServerPlugin plugin in _pluginsStarted)
+        {
+          if (plugin is ITvServerPluginStartedAll)
+          {
+            Log.Info("Plugin:{0} started all", plugin.Name);
+            try
+            {
+              (plugin as ITvServerPluginStartedAll).StartedAll();
+            }
+            catch (Exception ex)
+            {
+              Log.Info("Plugin:{0} failed to startedAll", plugin.Name);
+              Log.Write(ex);
             }
           }
         }
@@ -2394,6 +2413,8 @@ namespace TvService
     {
       get
       {
+        //Log.Debug("TVController.CanSuspend: checking cards");
+
         Dictionary<int, TvCard>.Enumerator enumer = _cards.GetEnumerator();
         while (enumer.MoveNext())
         {
@@ -2405,11 +2426,25 @@ namespace TvService
             {
               if (_cards[cardId].IsRecording(ref users[i]) || _cards[cardId].IsTimeShifting(ref users[i]))
               {
+                //Log.Debug("TVController.CanSuspend: checking cards finished -> cannot suspend");
                 return false;
               }
             }
           }
         }
+
+        //Log.Debug("TVController.CanSuspend: IsTimeToRecord");
+
+        // check whether the scheduler would like to record something now, but there is no card recording
+        // this can happen if a recording is due, but the scheduler has not yet picked up recording (latency)
+        if (_scheduler.IsTimeToRecord(DateTime.Now))
+        {
+          //Log.Debug("TVController.CanSuspend: IsTimeToRecord finished -> cannot suspend" );
+          return false;
+        }
+
+        //Log.Debug("TVController.CanSuspend: finished, can suspend");
+
         return true;
       }
     }

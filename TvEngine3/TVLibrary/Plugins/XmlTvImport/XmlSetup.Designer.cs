@@ -40,14 +40,16 @@ namespace SetupTv.Sections
       this.label4 = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.label6 = new System.Windows.Forms.Label();
-      this.label7 = new System.Windows.Forms.Label();
-      this.label8 = new System.Windows.Forms.Label();
-      this.label9 = new System.Windows.Forms.Label();
-      this.labelLastImport = new System.Windows.Forms.Label();
-      this.labelChannels = new System.Windows.Forms.Label();
-      this.labelPrograms = new System.Windows.Forms.Label();
       this.labelStatus = new System.Windows.Forms.Label();
+      this.labelPrograms = new System.Windows.Forms.Label();
+      this.labelChannels = new System.Windows.Forms.Label();
+      this.labelLastImport = new System.Windows.Forms.Label();
+      this.label9 = new System.Windows.Forms.Label();
+      this.label8 = new System.Windows.Forms.Label();
+      this.label7 = new System.Windows.Forms.Label();
+      this.label6 = new System.Windows.Forms.Label();
+      this.cbImportXML = new System.Windows.Forms.CheckBox();
+      this.cbImportLST = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -80,7 +82,7 @@ namespace SetupTv.Sections
       // checkBox1
       // 
       this.checkBox1.AutoSize = true;
-      this.checkBox1.Location = new System.Drawing.Point(24, 92);
+      this.checkBox1.Location = new System.Drawing.Point(24, 153);
       this.checkBox1.Name = "checkBox1";
       this.checkBox1.Size = new System.Drawing.Size(288, 17);
       this.checkBox1.TabIndex = 8;
@@ -90,7 +92,7 @@ namespace SetupTv.Sections
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(47, 121);
+      this.label1.Location = new System.Drawing.Point(47, 182);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(38, 13);
       this.label1.TabIndex = 9;
@@ -99,7 +101,7 @@ namespace SetupTv.Sections
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(172, 121);
+      this.label2.Location = new System.Drawing.Point(172, 182);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(47, 13);
       this.label2.TabIndex = 10;
@@ -107,14 +109,14 @@ namespace SetupTv.Sections
       // 
       // textBoxHours
       // 
-      this.textBoxHours.Location = new System.Drawing.Point(91, 118);
+      this.textBoxHours.Location = new System.Drawing.Point(91, 179);
       this.textBoxHours.Name = "textBoxHours";
       this.textBoxHours.Size = new System.Drawing.Size(50, 20);
       this.textBoxHours.TabIndex = 11;
       // 
       // textBoxMinutes
       // 
-      this.textBoxMinutes.Location = new System.Drawing.Point(225, 118);
+      this.textBoxMinutes.Location = new System.Drawing.Point(225, 179);
       this.textBoxMinutes.Name = "textBoxMinutes";
       this.textBoxMinutes.Size = new System.Drawing.Size(50, 20);
       this.textBoxMinutes.TabIndex = 12;
@@ -122,16 +124,16 @@ namespace SetupTv.Sections
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(21, 169);
+      this.label3.Location = new System.Drawing.Point(21, 230);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(304, 13);
+      this.label3.Size = new System.Drawing.Size(357, 13);
       this.label3.TabIndex = 13;
-      this.label3.Text = "The server will check every minute if there is a new tvguide.xml";
+      this.label3.Text = "The server will check every minute if there is a new tvguide.xml/tvguide.lst";
       // 
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(21, 182);
+      this.label4.Location = new System.Drawing.Point(21, 243);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(405, 13);
       this.label4.TabIndex = 14;
@@ -158,39 +160,44 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.label8);
       this.groupBox1.Controls.Add(this.label7);
       this.groupBox1.Controls.Add(this.label6);
-      this.groupBox1.Location = new System.Drawing.Point(21, 220);
+      this.groupBox1.Location = new System.Drawing.Point(21, 281);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(426, 153);
       this.groupBox1.TabIndex = 16;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Import status report:";
       // 
-      // label6
+      // labelStatus
       // 
-      this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(17, 28);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(91, 13);
-      this.label6.TabIndex = 17;
-      this.label6.Text = "Last import run at:";
+      this.labelStatus.AutoSize = true;
+      this.labelStatus.Location = new System.Drawing.Point(163, 97);
+      this.labelStatus.Name = "labelStatus";
+      this.labelStatus.Size = new System.Drawing.Size(0, 13);
+      this.labelStatus.TabIndex = 24;
       // 
-      // label7
+      // labelPrograms
       // 
-      this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(17, 52);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(123, 13);
-      this.label7.TabIndex = 18;
-      this.label7.Text = "Total channels imported:";
+      this.labelPrograms.AutoSize = true;
+      this.labelPrograms.Location = new System.Drawing.Point(163, 75);
+      this.labelPrograms.Name = "labelPrograms";
+      this.labelPrograms.Size = new System.Drawing.Size(0, 13);
+      this.labelPrograms.TabIndex = 23;
       // 
-      // label8
+      // labelChannels
       // 
-      this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(17, 75);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(123, 13);
-      this.label8.TabIndex = 19;
-      this.label8.Text = "Total programs imported:";
+      this.labelChannels.AutoSize = true;
+      this.labelChannels.Location = new System.Drawing.Point(163, 52);
+      this.labelChannels.Name = "labelChannels";
+      this.labelChannels.Size = new System.Drawing.Size(0, 13);
+      this.labelChannels.TabIndex = 22;
+      // 
+      // labelLastImport
+      // 
+      this.labelLastImport.AutoSize = true;
+      this.labelLastImport.Location = new System.Drawing.Point(163, 28);
+      this.labelLastImport.Name = "labelLastImport";
+      this.labelLastImport.Size = new System.Drawing.Size(0, 13);
+      this.labelLastImport.TabIndex = 21;
       // 
       // label9
       // 
@@ -201,42 +208,59 @@ namespace SetupTv.Sections
       this.label9.TabIndex = 20;
       this.label9.Text = "Import status:";
       // 
-      // labelLastImport
+      // label8
       // 
-      this.labelLastImport.AutoSize = true;
-      this.labelLastImport.Location = new System.Drawing.Point(163, 28);
-      this.labelLastImport.Name = "labelLastImport";
-      this.labelLastImport.Size = new System.Drawing.Size(0, 13);
-      this.labelLastImport.TabIndex = 21;
+      this.label8.AutoSize = true;
+      this.label8.Location = new System.Drawing.Point(17, 75);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(123, 13);
+      this.label8.TabIndex = 19;
+      this.label8.Text = "Total programs imported:";
       // 
-      // labelChannels
+      // label7
       // 
-      this.labelChannels.AutoSize = true;
-      this.labelChannels.Location = new System.Drawing.Point(163, 52);
-      this.labelChannels.Name = "labelChannels";
-      this.labelChannels.Size = new System.Drawing.Size(0, 13);
-      this.labelChannels.TabIndex = 22;
+      this.label7.AutoSize = true;
+      this.label7.Location = new System.Drawing.Point(17, 52);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(123, 13);
+      this.label7.TabIndex = 18;
+      this.label7.Text = "Total channels imported:";
       // 
-      // labelPrograms
+      // label6
       // 
-      this.labelPrograms.AutoSize = true;
-      this.labelPrograms.Location = new System.Drawing.Point(163, 75);
-      this.labelPrograms.Name = "labelPrograms";
-      this.labelPrograms.Size = new System.Drawing.Size(0, 13);
-      this.labelPrograms.TabIndex = 23;
+      this.label6.AutoSize = true;
+      this.label6.Location = new System.Drawing.Point(17, 28);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(91, 13);
+      this.label6.TabIndex = 17;
+      this.label6.Text = "Last import run at:";
       // 
-      // labelStatus
+      // cbImportXML
       // 
-      this.labelStatus.AutoSize = true;
-      this.labelStatus.Location = new System.Drawing.Point(163, 97);
-      this.labelStatus.Name = "labelStatus";
-      this.labelStatus.Size = new System.Drawing.Size(0, 13);
-      this.labelStatus.TabIndex = 24;
+      this.cbImportXML.AutoSize = true;
+      this.cbImportXML.Location = new System.Drawing.Point(24, 93);
+      this.cbImportXML.Name = "cbImportXML";
+      this.cbImportXML.Size = new System.Drawing.Size(134, 17);
+      this.cbImportXML.TabIndex = 17;
+      this.cbImportXML.Text = "Import new tvguide.xml";
+      this.cbImportXML.UseVisualStyleBackColor = true;
+      // 
+      // cbImportLST
+      // 
+      this.cbImportLST.AutoSize = true;
+      this.cbImportLST.Location = new System.Drawing.Point(24, 116);
+      this.cbImportLST.Name = "cbImportLST";
+      this.cbImportLST.Size = new System.Drawing.Size(161, 17);
+      this.cbImportLST.TabIndex = 18;
+      this.cbImportLST.Text = "Import files in new tvguide.lst";
+      this.cbImportLST.UseVisualStyleBackColor = true;
       // 
       // XmlSetup
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.cbImportLST);
+      this.Controls.Add(this.cbImportXML);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.label5);
       this.Controls.Add(this.label4);
@@ -250,7 +274,7 @@ namespace SetupTv.Sections
       this.Controls.Add(this.label13);
       this.Controls.Add(this.textBoxFolder);
       this.Name = "XmlSetup";
-      this.Size = new System.Drawing.Size(467, 388);
+      this.Size = new System.Drawing.Size(467, 454);
       this.Load += new System.EventHandler(this.XmlSetup_Load);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
@@ -281,6 +305,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label labelPrograms;
     private System.Windows.Forms.Label labelChannels;
     private System.Windows.Forms.Label labelLastImport;
+    private System.Windows.Forms.CheckBox cbImportXML;
+    private System.Windows.Forms.CheckBox cbImportLST;
 
   }
 }

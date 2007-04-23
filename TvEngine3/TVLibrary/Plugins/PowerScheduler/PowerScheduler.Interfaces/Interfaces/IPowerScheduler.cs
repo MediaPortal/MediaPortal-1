@@ -91,6 +91,24 @@ namespace TvEngine.PowerScheduler.Interfaces
     bool SuspendSystem(string source, bool force);
 
     /// <summary>
+    /// Resets the idle timer of the PowerScheduler. When enough time has passed (IdleTimeout), the system
+    /// is suspended as soon as possible (no handler disallows shutdown).
+    /// Note that the idle timer is automatically reset to now when the user moves the mouse or touchs the keyboard.
+    /// </summary>
+    void UserActivityDetected(DateTime when);
+
+    /// <summary>
+    /// Get the current state. If refresh is true, the state is the most current state, otherwise the state could be some seconds old.
+    /// Special case: If shutdown is not allowed because an event is almost due, the handler name is "EVENT-DUE".
+    /// </summary>
+    /// <param name="refresh"></param>
+    /// <param name="disAllowShutdown"></param>
+    /// <param name="disAllowShutdownHandler"></param>
+    /// <param name="nextWakeupTime"></param>
+    /// <param name="nextWakeupHandler"></param>
+    void GetCurrentState(bool refresh, out bool disAllowShutdown, out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler);
+
+    /// <summary>
     /// Provides access to PowerScheduler's settings
     /// </summary>
     PowerSettings Settings { get; }

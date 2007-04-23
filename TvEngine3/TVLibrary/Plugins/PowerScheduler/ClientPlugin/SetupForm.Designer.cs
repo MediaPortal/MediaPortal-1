@@ -43,11 +43,14 @@ namespace MediaPortal.Plugins.Process
       this.forceCheckBox = new System.Windows.Forms.CheckBox();
       this.shutModeComboBox = new System.Windows.Forms.ComboBox();
       this.okButton = new System.Windows.Forms.Button();
+      this.noShutdownNumericUpDown = new System.Windows.Forms.NumericUpDown();
+      this.label1 = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.idleNumericUpDown)).BeginInit();
       this.generalGroupBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.checkNumericUpDown)).BeginInit();
       this.multiGroupBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.wakeupNumericUpDown)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.noShutdownNumericUpDown)).BeginInit();
       this.SuspendLayout();
       // 
       // modeLabel
@@ -70,7 +73,7 @@ namespace MediaPortal.Plugins.Process
       // 
       // idleNumericUpDown
       // 
-      this.idleNumericUpDown.Location = new System.Drawing.Point(188, 45);
+      this.idleNumericUpDown.Location = new System.Drawing.Point(202, 45);
       this.idleNumericUpDown.Maximum = new decimal(new int[] {
             120,
             0,
@@ -153,6 +156,8 @@ namespace MediaPortal.Plugins.Process
       // 
       // multiGroupBox
       // 
+      this.multiGroupBox.Controls.Add(this.noShutdownNumericUpDown);
+      this.multiGroupBox.Controls.Add(this.label1);
       this.multiGroupBox.Controls.Add(this.wakeupNumericUpDown);
       this.multiGroupBox.Controls.Add(this.preWakeupLabel);
       this.multiGroupBox.Controls.Add(this.forceCheckBox);
@@ -162,14 +167,19 @@ namespace MediaPortal.Plugins.Process
       this.multiGroupBox.Controls.Add(this.idleNumericUpDown);
       this.multiGroupBox.Location = new System.Drawing.Point(13, 111);
       this.multiGroupBox.Name = "multiGroupBox";
-      this.multiGroupBox.Size = new System.Drawing.Size(263, 124);
+      this.multiGroupBox.Size = new System.Drawing.Size(263, 145);
       this.multiGroupBox.TabIndex = 12;
       this.multiGroupBox.TabStop = false;
       this.multiGroupBox.Text = "Client/server local settings";
       // 
       // wakeupNumericUpDown
       // 
-      this.wakeupNumericUpDown.Location = new System.Drawing.Point(188, 91);
+      this.wakeupNumericUpDown.Location = new System.Drawing.Point(202, 91);
+      this.wakeupNumericUpDown.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
       this.wakeupNumericUpDown.Name = "wakeupNumericUpDown";
       this.wakeupNumericUpDown.Size = new System.Drawing.Size(46, 20);
       this.wakeupNumericUpDown.TabIndex = 11;
@@ -205,7 +215,7 @@ namespace MediaPortal.Plugins.Process
             "Suspend",
             "Hibernate",
             "Stay On"});
-      this.shutModeComboBox.Location = new System.Drawing.Point(124, 20);
+      this.shutModeComboBox.Location = new System.Drawing.Point(138, 20);
       this.shutModeComboBox.Name = "shutModeComboBox";
       this.shutModeComboBox.Size = new System.Drawing.Size(110, 21);
       this.shutModeComboBox.TabIndex = 6;
@@ -213,7 +223,7 @@ namespace MediaPortal.Plugins.Process
       // 
       // okButton
       // 
-      this.okButton.Location = new System.Drawing.Point(110, 241);
+      this.okButton.Location = new System.Drawing.Point(110, 262);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 12;
@@ -221,11 +231,39 @@ namespace MediaPortal.Plugins.Process
       this.okButton.UseVisualStyleBackColor = true;
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
       // 
+      // noShutdownNumericUpDown
+      // 
+      this.noShutdownNumericUpDown.Location = new System.Drawing.Point(202, 114);
+      this.noShutdownNumericUpDown.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+      this.noShutdownNumericUpDown.Name = "noShutdownNumericUpDown";
+      this.noShutdownNumericUpDown.Size = new System.Drawing.Size(46, 20);
+      this.noShutdownNumericUpDown.TabIndex = 13;
+      this.noShutdownNumericUpDown.Value = new decimal(new int[] {
+            120,
+            0,
+            0,
+            0});
+      this.noShutdownNumericUpDown.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(38, 117);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(163, 13);
+      this.label1.TabIndex = 12;
+      this.label1.Text = "Pre-no-shutdown time in seconds";
+      this.label1.Click += new System.EventHandler(this.label1_Click);
+      // 
       // SetupForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(288, 268);
+      this.ClientSize = new System.Drawing.Size(288, 310);
       this.Controls.Add(this.okButton);
       this.Controls.Add(this.multiGroupBox);
       this.Controls.Add(this.generalGroupBox);
@@ -238,6 +276,7 @@ namespace MediaPortal.Plugins.Process
       this.multiGroupBox.ResumeLayout(false);
       this.multiGroupBox.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.wakeupNumericUpDown)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.noShutdownNumericUpDown)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -259,5 +298,7 @@ namespace MediaPortal.Plugins.Process
     private System.Windows.Forms.Label checkIntervalLabel1;
     private System.Windows.Forms.NumericUpDown wakeupNumericUpDown;
     private System.Windows.Forms.Label preWakeupLabel;
+    private System.Windows.Forms.NumericUpDown noShutdownNumericUpDown;
+    private System.Windows.Forms.Label label1;
   }
 }

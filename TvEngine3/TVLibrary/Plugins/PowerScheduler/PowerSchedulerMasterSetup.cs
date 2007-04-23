@@ -70,6 +70,9 @@ namespace TvEngine.PowerScheduler
       setting = _layer.GetSetting("PowerSchedulerPreWakeupTime", "60");
       numericUpDown2.Value = Convert.ToDecimal(setting.Value);
 
+      setting = _layer.GetSetting("PowerSchedulerPreNoShutdownTime", "120");
+      numericUpDown4.Value = Convert.ToDecimal(setting.Value);
+
       setting = _layer.GetSetting("PowerSchedulerCheckInterval", "60");
       numericUpDown3.Value = Convert.ToDecimal(setting.Value);
 
@@ -124,6 +127,9 @@ namespace TvEngine.PowerScheduler
         mFormat = "{0}";
       maskedTextBox1.Text = String.Format(hFormat, config.Hour) + ":" + String.Format(mFormat, config.Minutes);
 
+      setting = _layer.GetSetting("PowerSchedulerEpgCommand", String.Empty);
+      tbEpgCmd.Text = setting.Value;
+
       setting = _layer.GetSetting("PowerSchedulerProcesses", "SetupTv, Configuration");
       textBox1.Text = setting.Value;
 
@@ -159,6 +165,10 @@ namespace TvEngine.PowerScheduler
 
       setting = _layer.GetSetting("PowerSchedulerPreWakeupTime", "60");
       setting.Value = numericUpDown2.Value.ToString();
+      setting.Persist();
+
+      setting = _layer.GetSetting("PowerSchedulerPreNoShutdownTime", "120");
+      setting.Value = numericUpDown4.Value.ToString();
       setting.Persist();
 
       setting = _layer.GetSetting("PowerSchedulerCheckInterval", "60");
@@ -204,6 +214,10 @@ namespace TvEngine.PowerScheduler
         setting.Persist();
       }
 
+      setting = _layer.GetSetting("PowerSchedulerEpgCommand", String.Empty);
+      setting.Value = tbEpgCmd.Text;
+      setting.Persist();
+
       setting = _layer.GetSetting("PowerSchedulerProcesses", "SetupTv, Configuration");
       setting.Value = textBox1.Text;
       setting.Persist();
@@ -241,6 +255,15 @@ namespace TvEngine.PowerScheduler
       if (r == DialogResult.OK)
       {
         textBox2.Text = openFileDialog1.FileName;
+      }
+    }
+
+    private void button3_Click(object sender, EventArgs e)
+    {
+      DialogResult r = openFileDialog1.ShowDialog();
+      if (r == DialogResult.OK)
+      {
+        tbEpgCmd.Text = openFileDialog1.FileName;
       }
     }
 

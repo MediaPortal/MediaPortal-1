@@ -390,21 +390,15 @@ namespace TvDatabase
       Remove();
     }
     /// <summary>
-    /// Checks if the program is running between the specified start and end time/dates
+    /// Checks if the program is running between the specified start and end time/dates, i.e. whether the intervals overlap
     /// </summary>
     /// <param name="tStartTime">Start date and time</param>
     /// <param name="tEndTime">End date and time</param>
     /// <returns>true if program is running between tStartTime-tEndTime</returns>
     public bool RunningAt(DateTime tStartTime, DateTime tEndTime)
     {
-      DateTime dtStart = StartTime;
-      DateTime dtEnd = EndTime;
-
-      bool bRunningAt = false;
-      if (dtEnd >= tStartTime && dtEnd <= tEndTime) bRunningAt = true;
-      if (dtStart >= tStartTime && dtStart <= tEndTime) bRunningAt = true;
-      if (dtStart <= tStartTime && dtEnd >= tEndTime) bRunningAt = true;
-      return bRunningAt;
+      // do NOT use <= >= since end-times are non-including
+      return tStartTime < EndTime && tEndTime > StartTime;
     }
 
     /// <summary>

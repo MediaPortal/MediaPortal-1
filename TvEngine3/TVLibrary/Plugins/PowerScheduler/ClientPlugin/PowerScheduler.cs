@@ -39,19 +39,30 @@ using MediaPortal.Configuration;
 using TvControl;
 using TvEngine.PowerScheduler;
 using TvEngine.PowerScheduler.Interfaces;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Http;
+using System.Runtime.Remoting;
+using System.Runtime.InteropServices;
+using TvPlugin;
 
 #endregion
 
+// TODO
+// - there are still some race conditions when a timer event is processed while the remote control is dettached (RemotePowerControl.Instance set to null)
+//  -> should either sync or build try-catchs around
+
 namespace MediaPortal.Plugins.Process
 {
-  public class PowerScheduler : IPowerScheduler, IStandbyHandler
+  public class PowerScheduler : MarshalByRefObject, IPowerScheduler, IStandbyHandler, IWakeupHandler
   {
-
     #region WndProc message constants
     private const int WM_POWERBROADCAST = 0x0218;
     private const int PBT_APMQUERYSUSPEND = 0x0000;
     private const int PBT_APMQUERYSTANDBY = 0x0001;
+    private const int PBT_APMQUERYSUSPENDFAILED = 0x0002;
+    private const int PBT_APMQUERYSTANDBYFAILED = 0x0003;
     private const int PBT_APMSUSPEND = 0x0004;
+    private const int PBT_APMSTANDBY = 0x0005;
     private const int PBT_APMRESUMECRITICAL = 0x0006;
     private const int PBT_APMRESUMESUSPEND = 0x0007;
     private const int PBT_APMRESUMESTANDBY = 0x0008;
@@ -69,15 +80,15 @@ namespace MediaPortal.Plugins.Process
 
     #region Variables
     private System.Timers.Timer _timer;
+    private System.Timers.Timer _fastTimer;
     private WaitableTimer _wakeupTimer;
     private bool _refreshSettings = false;
-    private DateTime _lastBusyTime = DateTime.Now;
+    private DateTime _lastUserTime = DateTime.Now;  // last time the user was doing sth (action/watching)
     private PowerSettings _settings;
     private PowerManager _powerManager;
     private List<IStandbyHandler> _standbyHandlers;
     private List<IWakeupHandler> _wakeupHandlers;
-    private bool _systemIdle = false;
-    private bool _standbyAllowed = true;
+    private bool _idle;
     private Action _lastAction;
     #endregion
 
@@ -86,9 +97,15 @@ namespace MediaPortal.Plugins.Process
     {
       _standbyHandlers = new List<IStandbyHandler>();
       _wakeupHandlers = new List<IWakeupHandler>();
+      _lastUserTime = DateTime.Now;
+      _idle = false;
 
       _timer = new System.Timers.Timer();
       _timer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimerElapsed);
+
+      _fastTimer = new System.Timers.Timer();
+      _fastTimer.Interval = 1000;
+      _fastTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnFastTimerElapsed);
     }
     #endregion
 
@@ -99,9 +116,8 @@ namespace MediaPortal.Plugins.Process
       if (!LoadSettings())
         return;
       _powerManager = new PowerManager();
-      Register(this);
+
       GUIWindowManager.OnNewAction += new OnActionHandler(this.OnAction);
-      _timer.Enabled = true;
       // Create the timer that will wakeup the system after a specific amount of time after the
       // system has been put into standby
       _wakeupTimer = new WaitableTimer();
@@ -110,18 +126,22 @@ namespace MediaPortal.Plugins.Process
         GlobalServiceProvider.Instance.Add<IPowerScheduler>(this);
       SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
       Log.Info("PowerScheduler client plugin started");
+
+      OnResume();
     }
     public void Stop()
     {
       Log.Info("Stopping PowerScheduler client plugin...");
+      
+      OnStandBy();
+
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
         GlobalServiceProvider.Instance.Remove<IPowerScheduler>();
-      _timer.Enabled = false;
       // disable the wakeup timer
       _wakeupTimer.SecondsToWait = -1;
       _wakeupTimer.Close();
       GUIWindowManager.OnNewAction -= new OnActionHandler(this.OnAction);
-      Unregister(this);
+      
       _powerManager.AllowStandby();
       _powerManager = null;
       SendPowerSchedulerEvent(PowerSchedulerEventType.Stopped);
@@ -174,12 +194,99 @@ namespace MediaPortal.Plugins.Process
     {
       get { return _settings; }
     }
+    /// <summary>
+    /// Resets the idle timer of the PowerScheduler. When enough time has passed (IdleTimeout), the system
+    /// is suspended as soon as possible (no handler disallows shutdown).
+    /// Note that the idle timer is automatically reset when the user moves the mouse or touchs the keyboard.
+    /// </summary>
+    public void UserActivityDetected(DateTime when)
+    {
+      if (when > _lastUserTime) _lastUserTime = when;
+    }
     #endregion
+
+    private DateTime _currentNextWakeupTime = DateTime.MaxValue;  // used only if multi-seat
+    private String _currentNextWakeupHandler = "";  // used only if multi-seat
+    private bool _currentDisAllowShutdown = false;  // used only if multi-seat
+    private String _currentDisAllowShutdownHandler = "";  // used only if multi-seat
+
+    public void GetCurrentState(bool refresh, out bool disAllowShutdown, out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler)
+    {
+      // check for singleseat or multiseat setup
+      if (_settings.GetSetting("SingleSeat").Get<bool>())
+      {
+        RemotePowerControl.Instance.GetCurrentState(refresh, out disAllowShutdown, out disAllowShutdownHandler, out nextWakeupTime, out nextWakeupHandler);
+        return;
+      }
+
+      if (refresh)
+      {
+        bool dummy= DisAllowShutdown;
+        _currentNextWakeupTime= GetNextWakeupTime(DateTime.Now);
+      }
+
+      // give state
+      disAllowShutdown = _currentDisAllowShutdown;
+      disAllowShutdownHandler = _currentDisAllowShutdownHandler;
+      nextWakeupTime = _currentNextWakeupTime;
+      nextWakeupHandler = _currentNextWakeupHandler;
+    }
 
     #region IStandbyHandler implementation
     public bool DisAllowShutdown
     {
-      get { return !_systemIdle; }
+      get {
+        if (!UserInterfaceIdle)
+        {
+          LogVerbose("System declared busy by the user (not idle)" );
+          _currentDisAllowShutdownHandler = "USER";
+          _currentDisAllowShutdown = true;
+          return true;
+        }
+
+        // check whether the next event is almost due, i.e. within PreNoShutdownTime seconds
+        DateTime nextWakeupTime = GetNextWakeupTime(DateTime.Now);
+        if (DateTime.Now >= nextWakeupTime.AddSeconds(-_settings.PreNoShutdownTime))
+        {
+          LogVerbose("PSClientPlugin.DisAllowShutdown: some event is almost due");
+          _currentDisAllowShutdownHandler = "EVENT-DUE";
+          _currentDisAllowShutdown = true;
+          return true;
+        }
+
+        // Check all registered ISTandbyHandlers
+        foreach (IStandbyHandler handler in _standbyHandlers)
+        {
+          if( handler != this )
+          {
+            if (handler.DisAllowShutdown)
+            {
+              LogVerbose("System declared busy by {0}", handler.HandlerName);
+              _currentDisAllowShutdownHandler = handler.HandlerName;
+              _currentDisAllowShutdown = true;
+              return true;
+            }
+          }
+        }
+        // Check all found IWakeable plugins
+        ArrayList wakeables = PluginManager.WakeablePlugins;
+        foreach (IWakeable wakeable in wakeables)
+        {
+          if (wakeable.DisallowShutdown())
+          {
+            LogVerbose("System declared busy by {0}", wakeable.PluginName());
+            _currentDisAllowShutdownHandler = wakeable.PluginName();
+            _currentDisAllowShutdown = true;
+            return true;
+          }
+        }
+
+        _currentDisAllowShutdown = false;
+
+        _powerManager.AllowStandby();
+
+        return false;
+      }
     }
     public string HandlerName
     {
@@ -244,6 +351,7 @@ namespace MediaPortal.Plugins.Process
           Log.Debug("Extensive logging enabled: {0}", boolSetting);
           changed = true;
         }
+
         // Check if we only should suspend in MP's home window
         boolSetting = reader.GetValueAsBool("psclientplugin", "homeonly", true);
         setting = _settings.GetSetting("HomeOnly");
@@ -262,28 +370,14 @@ namespace MediaPortal.Plugins.Process
           changed = true;
         }
         // Check configured PowerScheduler idle timeout
-        if (_settings.GetSetting("SingleSeat").Get<bool>())
+        intSetting = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
+        if (_settings.IdleTimeout != intSetting)
         {
-          // fetch setting from tvservice
-          intSetting = RemotePowerControl.Instance.PowerSettings.IdleTimeout;
-          if (_settings.IdleTimeout != intSetting)
-          {
-            _settings.IdleTimeout = intSetting;
-            LogVerbose("idle timeout set to: {0} minutes by tvserver", intSetting);
-            changed = true;
-          }
+          _settings.IdleTimeout = intSetting;
+          LogVerbose("idle timeout locally set to: {0} minutes", intSetting);
+          changed = true;
         }
-        else
-        {
-          // fetch local settings
-          intSetting = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
-          if (_settings.IdleTimeout != intSetting)
-          {
-            _settings.IdleTimeout = intSetting;
-            LogVerbose("idle timeout locally set to: {0} minutes", intSetting);
-            changed = true;
-          }
-        }
+
         // Check configured pre-wakeup time
         intSetting = reader.GetValueAsInt("psclientplugin", "prewakeup", 60);
         if (_settings.PreWakeupTime != intSetting)
@@ -292,6 +386,16 @@ namespace MediaPortal.Plugins.Process
           LogVerbose("pre-wakeup time set to: {0} seconds", intSetting);
           changed = true;
         }
+
+        // Check configured pre-wakeup time
+        intSetting = reader.GetValueAsInt("psclientplugin", "prenoshutdown", 120);
+        if (_settings.PreNoShutdownTime != intSetting)
+        {
+          _settings.PreNoShutdownTime = intSetting;
+          LogVerbose("pre-shutdown time set to: {0} seconds", intSetting);
+          changed = true;
+        }
+
         // Check with what interval the system status should be checked
         intSetting = reader.GetValueAsInt("psclientplugin", "checkinterval", 25);
         if (_settings.CheckInterval != intSetting)
@@ -353,8 +457,10 @@ namespace MediaPortal.Plugins.Process
     /// <param name="action">action message sent by the system</param>
     private void OnAction(Action action)
     {
-      _lastBusyTime = DateTime.Now;
+      _lastUserTime = DateTime.Now;
       _lastAction = action;
+      // TODO should check here if action is power-off and then set the _lastUserTime to Datime.MinValue
+      // since the user is going away
     }
 
     /// <summary>
@@ -366,9 +472,21 @@ namespace MediaPortal.Plugins.Process
       try
       {
         LoadSettings();
-        UpdateStandbyHandler();
-        CheckStandbyHandlers();
+
+        // check for singleseat or multiseat setup
+        if (_settings.GetSetting("SingleSeat").Get<bool>())
+        {
+          // tell the tvserver when we detected the real user the last time
+          RemotePowerControl.Instance.UserActivityDetected(_lastUserTime);
+        }
+        else
+        {
+          // check whether go to standby.
+          CheckForStandby();
+        }
         SendPowerSchedulerEvent(PowerSchedulerEventType.Elapsed);
+        
+        RefreshStateDisplay(false);
       }
       // explicitly catch exceptions and log them otherwise they are ignored by the Timer object
       catch (Exception ex)
@@ -378,149 +496,170 @@ namespace MediaPortal.Plugins.Process
     }
 
     /// <summary>
-    /// Updates the status of the PowerScheduler internal IStandbyHandler implementation
     /// This implementation only does the following basic checks:
-    /// - Checks if any actions are being received by the system. If so, resets the last busy time
     /// - Checks if the global player is playing. If not, then:
     ///   - (if configured) checks whether or not the system is at the home screen
     /// </summary>
-    private void UpdateStandbyHandler()
+    public bool UserInterfaceIdle
     {
-      if (!g_Player.Playing)
+      get
       {
-        // No media is playing, see if user is still active then
-        LogVerbose("player is not playing currently");
-
-        if (_settings.GetSetting("HomeOnly").Get<bool>())
+        if (!g_Player.Playing)
         {
-          int activeWindow = GUIWindowManager.ActiveWindow;
-          if (activeWindow == (int)GUIWindow.Window.WINDOW_HOME || activeWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME)
+          // No media is playing, see if user is still active then
+          LogVerbose("player is not playing currently");
+
+          if (_settings.GetSetting("HomeOnly").Get<bool>())
           {
-            LogVerbose("System is in (basic) home window so basic PSClientplugin says system is idle");
-            _systemIdle = true;
+            int activeWindow = GUIWindowManager.ActiveWindow;
+            if (activeWindow == (int)GUIWindow.Window.WINDOW_HOME || activeWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME)
+            {
+              LogVerbose("System is in (basic) home window so basic PSClientplugin says system is idle");
+              return true;
+            }
+            else
+            {
+              _lastUserTime = DateTime.Now;
+              return false;
+            }
           }
           else
           {
-            _systemIdle = false;
+            return true;
           }
         }
         else
         {
-          _systemIdle = true;
+          LogVerbose("player is playing currently");
+          _lastUserTime = DateTime.Now;
+          return false;
         }
-      }
-      else
-      {
-        LogVerbose("player is playing currently");
-        _systemIdle = false;
       }
     }
 
     /// <summary>
-    /// Checks if any of the registered IStandbyHandlers wants to prevent the system from entering standby.
-    /// Also takes care of resetting the last busy time on standby prevention status changes and setting the
-    /// appropriate thread execution state. Depending on the type of setup, the status is either forwarded to
-    /// the powerscheduler service on the tvserver, or (if idletimeout is expired) putting the system into standby.
-    /// Before the status changed is affected, a wakeup timer is fired in case any plugin wants to wakeup the
-    /// system at a particular time.
+    /// struct for GetLastInpoutInfo
     /// </summary>
-    private void CheckStandbyHandlers()
+    internal struct LASTINPUTINFO
     {
-      bool standbyAllowed = true;
-      string handlerName = "PowerSchedulerClientPlugin";
-      // Check all registered ISTandbyHandlers
-      foreach (IStandbyHandler handler in _standbyHandlers)
-      {
-        if (handler.DisAllowShutdown)
-        {
-          LogVerbose("System declared busy by {0}", handler.HandlerName);
-          handlerName += String.Format("{0} ", handler.HandlerName);
-          standbyAllowed = false;
-        }
-      }
-      // Check all found IWakeable plugins
-      ArrayList wakeables = PluginManager.WakeablePlugins;
-      foreach (IWakeable wakeable in wakeables)
-      {
-        if (wakeable.DisallowShutdown())
-        {
-          LogVerbose("System declared busy by {0}", wakeable.PluginName());
-          handlerName += String.Format("{0} ", wakeable.PluginName());
-          standbyAllowed = false;
-        }
-      }
-      // set thread executionstate accordingly
-      if (standbyAllowed)
-      {
-        // set last busy time if client was busy last time we checked
-        if (_standbyAllowed)
-          _lastBusyTime = DateTime.Now;
-        LogVerbose("System is allowed to enter standby by client");
-        _powerManager.AllowStandby();
-        SendPowerSchedulerEvent(PowerSchedulerEventType.SystemIdle);
-      }
-      else
-      {
-        LogVerbose("System is prevented to enter standby by client");
-        _powerManager.PreventStandby();
-        SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
-      }
-      // check for singleseat or multiseat setup
-      if (_settings.GetSetting("SingleSeat").Get<bool>())
-      {
-        // directly update status via RemotePowerControl (tvserver)
-        LogVerbose("updating client standby status on tvserver; standby allowed: {0}", standbyAllowed);
-        RemotePowerControl.Instance.SetStandbyAllowed(standbyAllowed, handlerName);
-        // if client is idle, fire off the wakeup timer
-        if (standbyAllowed)
-        {
-          CheckWakeupHandlers();
-        }
-      }
-      else
-      {
-        // multi-seat situation, so powerscheduler client plugin should initiate standby by itself
-        // so, check first if system indeed is idle
-        if (standbyAllowed)
-        {
-          // then check if idle timeout is expired
-          if (_settings.IdleTimeout > 0 && _lastBusyTime.AddMinutes(_settings.IdleTimeout) < DateTime.Now)
-          {
-            // it has expired, so activate wakeup timer & put the system into standby
-            LogVerbose("IdleTimeout is expired: timeout:{0}, last activity: {1}", _settings.IdleTimeout, _lastBusyTime);
-            CheckWakeupHandlers();
-            EnterSuspendOrHibernate(_settings.ForceShutdown);
-          }
-          else
-          {
-            LogVerbose("IdleTimeout not yet expired: timeout:{0}, last activity: {1}", _settings.IdleTimeout, _lastBusyTime);
-            if (_lastAction != null)
-              LogVerbose("Last action: ID:{0} {1}", _lastAction.wID, _lastAction.ToString());
-          }
-        }
-      }
-      _standbyAllowed = standbyAllowed;
+      public uint cbSize;
+      public uint dwTime;
     }
 
     /// <summary>
-    /// Checks if there are any IWakeuphandlers or IWakeable plugins who might want to wakeup the
-    /// system at a given time.
+    /// The GetLastInputInfo function retrieves the time of the last input event.
     /// </summary>
-    private void CheckWakeupHandlers()
+    /// <param name="plii"></param>
+    /// <returns></returns>
+    [DllImport("user32.dll")]
+    static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+
+    /// <summary>
+    /// Returns the current tick as uint (pref. over Environemt.TickCount which only uses int)
+    /// </summary>
+    /// <returns></returns>
+    [DllImport("kernel32.dll")]
+    static extern uint GetTickCount();
+
+    /// <summary>
+    /// This functions returns the time of the last user input recogniized,
+    /// i.e. mouse moves or keyboard inputs.
+    /// </summary>
+    /// <returns>Last time of user input</returns>
+    DateTime GetLastInputTime()
+    {
+      LASTINPUTINFO lastInputInfo = new LASTINPUTINFO();
+      lastInputInfo.cbSize = (uint)Marshal.SizeOf(lastInputInfo);
+
+      if (!GetLastInputInfo(ref lastInputInfo))
+      {
+        Log.Error("PowerScheduler: Unable to GetLastInputInfo!");
+        return DateTime.MinValue;
+      }
+
+      long lastKick = lastInputInfo.dwTime;
+      long tick = GetTickCount();
+
+      long delta = lastKick - tick;
+
+      if (delta > 0)
+      {
+        // there was an overflow (restart at 0) in the tick-counter!
+        delta = delta - uint.MaxValue - 1;
+      }
+
+      LogVerbose("PowerScheduler: Last user input is {0} s ago", -delta / 1000);
+
+      return DateTime.Now.AddMilliseconds(delta);
+    }
+
+
+    /// <summary>
+    /// Checks if the system should enter standby
+    /// </summary>
+    private void CheckForStandby()
+    {
+      if (!_settings.ShutdownEnabled)
+        return;
+
+      // adjust _lastUserTime by user activity
+      DateTime userInput = GetLastInputTime();
+      if (userInput > _lastUserTime)
+      {
+        _lastUserTime = userInput;
+        LogVerbose("PowerScheduler: User input detected at {0}", _lastUserTime);
+      }
+
+      // is anybody disallowing shutdown?
+      if (!DisAllowShutdown)
+      {
+        if (!_idle)
+        {
+          Log.Info("PowerScheduler: System changed from busy state to idle state");
+          _idle = true;
+          SendPowerSchedulerEvent(PowerSchedulerEventType.SystemIdle);
+        }
+
+        // long enough idle to go to sleep?
+        if (_lastUserTime <= DateTime.Now.AddMinutes(-_settings.IdleTimeout))
+        {
+          // Idle timeout expired - suspend/hibernate system
+          Log.Info("PowerScheduler: User idle since {0} - initiate suspend/hibernate", _lastUserTime);
+          EnterSuspendOrHibernate();
+        }
+      }
+      else
+      {
+        if (_idle)
+        {
+          Log.Info("PowerScheduler: System changed from idle state to busy state");
+          _idle = false;
+          SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
+        }
+      }
+    }
+
+
+
+    #region IWakeupHandler Members
+
+    public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
       string handlerName = String.Empty;
       DateTime nextWakeupTime = DateTime.MaxValue;
-      DateTime earliestWakeupTime = _lastBusyTime.AddMinutes(_settings.IdleTimeout);
-      Log.Debug("PSClientPlugin: earliest wakeup time: {0}", earliestWakeupTime);
+
       // Inspect all registered IWakeupHandlers
       foreach (IWakeupHandler handler in _wakeupHandlers)
       {
-        DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
-        if (nextTime < nextWakeupTime)
+        if (handler != this)
         {
-          Log.Debug("PSClientPlugin: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
-          nextWakeupTime = nextTime;
-          handlerName = handler.HandlerName;
+          DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
+          if (nextTime < nextWakeupTime)
+          {
+            Log.Debug("PSClientPlugin: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
+            nextWakeupTime = nextTime;
+            handlerName = handler.HandlerName;
+          }
         }
       }
       // Inspect all found IWakeable plugins from PluginManager
@@ -536,29 +675,60 @@ namespace MediaPortal.Plugins.Process
         }
       }
 
-      Log.Debug("PSClientPlugin: next wakeup time: {0}", nextWakeupTime);
+      _currentNextWakeupTime = nextWakeupTime;
+      _currentNextWakeupHandler = handlerName;
 
+      return nextWakeupTime;
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Sets the wakeup timer to the earliest desirable wakeup time
+    /// </summary>
+    private void SetWakeupTimer()
+    {
       if (_settings.GetSetting("SingleSeat").Get<bool>())
       {
-        // Pass earliest desired wakeup time to powerscheduler on tvserver
-        RemotePowerControl.Instance.SetNextWakeupTime(nextWakeupTime, HandlerName);
+        // no action required since handling is done by the remote scheduler
+        return;
       }
-      else
+
+      if (_settings.WakeupEnabled)
       {
-        // Use a local WaitableTimer to wakeup the system
-        nextWakeupTime = nextWakeupTime.AddSeconds(-_settings.PreWakeupTime);
-        if (nextWakeupTime < DateTime.MaxValue.AddSeconds(-_settings.PreWakeupTime) && nextWakeupTime > DateTime.Now)
+        // determine next wakeup time from IWakeupHandlers
+        DateTime nextWakeup = GetNextWakeupTime(DateTime.Now);
+        if (nextWakeup < DateTime.MaxValue )
         {
-          TimeSpan delta = nextWakeupTime.Subtract(DateTime.Now);
-          _wakeupTimer.SecondsToWait = delta.TotalSeconds;
-          Log.Debug("PSClientPlugin: Set wakeup timer to wakeup system in {0} minutes", delta.TotalMinutes);
+          nextWakeup = nextWakeup.AddSeconds(-_settings.PreWakeupTime);
+          double delta = nextWakeup.Subtract(DateTime.Now).TotalSeconds;
+          
+          if( delta < 45 )
+          {
+            // the wake up event is too near, when we set the timer and the suspend process takes to long, i.e. the timer gets fired
+            // while suspending, the system will NOT wake up!
+
+            // so, we will in any case set the wait time to 45 seconds
+            delta= 45;
+          }
+          _wakeupTimer.SecondsToWait = delta;
+          Log.Debug("PowerScheduler: Set wakeup timer to wakeup system in {0} minutes", delta/60);
         }
         else
         {
-          Log.Debug("PSClientPlugin: No pending events found in the future which should wakeup the system");
+          Log.Debug("PowerScheduler: No pending events found in the future which should wakeup the system");
           _wakeupTimer.SecondsToWait = -1;
         }
       }
+    }
+
+    /// <summary>
+    /// Puts the system into the configured standby mode (Suspend/Hibernate)
+    /// </summary>
+    /// <returns>bool indicating whether or not the request was honoured</returns>
+    private bool EnterSuspendOrHibernate()
+    {
+      return EnterSuspendOrHibernate(_settings.ForceShutdown);
     }
 
     /// <summary>
@@ -585,6 +755,9 @@ namespace MediaPortal.Plugins.Process
       }
       else
       {
+        // make sure we set the wakeup/resume timer before entering standby
+        SetWakeupTimer();
+
         switch (_settings.ShutdownMode)
         {
           case ShutdownMode.Suspend:
@@ -603,15 +776,199 @@ namespace MediaPortal.Plugins.Process
       }
     }
 
-    private void Reset()
+    private DateTime _lastStateUpdate= DateTime.MinValue;
+
+    private void RefreshStateDisplay(bool refresh)
     {
-      // unreference remoting singletons as they'll be reinitialized after suspend
-      LogVerbose("resetting PowerScheduler RemotePowerControl interface");
-      RemotePowerControl.Clear();
-      LogVerbose("resetting TVServer RemoteControl interface");
-      RemoteControl.Clear();
-      LogVerbose("resetting last busy time to {0}", DateTime.Now.ToString());
-      _lastBusyTime = DateTime.Now;
+      TvOverlay tvoverlay = TvOverlay.Instance;
+      if (tvoverlay != null)
+      {
+        bool disAllowShutdown;
+        String disAllowShutdownHandler;
+        DateTime nextWakeupTime;
+        String nextWakeupHandler;
+        GetCurrentState(refresh, out disAllowShutdown, out disAllowShutdownHandler, out nextWakeupTime, out nextWakeupHandler);
+
+        // todo: descriptions in skin?!
+        String text= "";
+
+        int mode;
+        if (!disAllowShutdown)
+        {
+          if (nextWakeupTime == DateTime.MaxValue) mode = 0;
+          else
+          {
+            mode = 3; // text only
+            text += "Wake up at " + nextWakeupTime + " for " + nextWakeupHandler;
+          }
+        }
+        else if (disAllowShutdownHandler.Equals("EVENT-DUE"))
+        {
+          mode = 2; // yellow
+          text += "Event is almost due at " + nextWakeupTime + " for " + nextWakeupHandler;
+        }
+        else
+        {
+          mode = 2; // yellow
+          text += "Busy by " + disAllowShutdownHandler;
+          if (nextWakeupTime < DateTime.MaxValue)
+          {
+            text += "; Wake up at " + nextWakeupTime + " for " + nextWakeupHandler;
+          }
+        }
+
+        tvoverlay.UpdateState(mode, text);
+      }
+    }
+
+    public delegate bool IECallBack(IntPtr hwnd, int lParam);
+
+    [DllImport("user32.Dll")]
+    public static extern int EnumWindows(IECallBack x, int y);
+
+    private const int GW_HWNDNEXT = 2;
+    private const int GW_OWNER = 4;
+    private const int GW_CHILD = 5;
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetWindow(IntPtr hWnd, int uCmd); 
+
+    [DllImport("user32")]
+    private static extern IntPtr GetParent(IntPtr hwnd);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint ProcessId);
+
+    [DllImport("user32.dll")]
+    private static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count); 
+
+    private bool EnumWindowCallBack(IntPtr hwnd, int lParam)
+    {
+      // find window:
+      // *class  #32770 (Dialog)
+      // *has static containing TVService
+      // *has no parent win
+      // *has no owner win
+      // *process is rundll32.exe
+
+      // check owner and parent
+      if (GetWindow(hwnd, GW_OWNER).Equals( IntPtr.Zero ) && GetParent(hwnd).Equals( IntPtr.Zero ) )
+      {
+        // this is a top-level window
+        
+        // check process
+        uint pid;
+        GetWindowThreadProcessId(hwnd, out pid);
+        if (pid != 0)
+        {
+          // find the process attached to the pid
+
+          System.Diagnostics.Process process = System.Diagnostics.Process.GetProcessById((int)pid);
+          if (process != null && process.ProcessName.Equals("rundll32"))
+          {
+            // this window is owned by a process called rundll32
+
+            // check for static
+            IntPtr child = GetWindow(hwnd, GW_CHILD);
+            while (!child.Equals(IntPtr.Zero))
+            {
+              StringBuilder sb = new StringBuilder(1024);
+              GetWindowText(child, sb, sb.Capacity);
+              string window = sb.ToString();
+              if (window.IndexOf("TVService") >= 0)
+              {
+                // gotcha!
+                process.CloseMainWindow();
+                Log.Info("PSClientPlugin: Closed nasty messagebox that said that TVService did not allow standby!");
+                RefreshStateDisplay(true);
+                return false;
+              }
+              child = GetWindow(child, GW_HWNDNEXT);
+            }
+          }
+        }
+      }
+
+      return true;
+    }
+
+    /// <summary>
+    /// Periodically checks whether this nasty msgbox saying that TVService service denied standby
+    /// popped up, closes it and refreshs the gui state.
+    /// </summary>
+    private void OnFastTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+      // find window:
+      // *class  #32770 (Dialog)
+      // *has static containing TVService
+      // *has no parent win
+      // *has no owner win
+      // *process is rundll32.exe
+
+      // go thru windows
+      IECallBack ewp = new IECallBack(EnumWindowCallBack);
+      EnumWindows(ewp, 0);
+    }
+
+    private String _remotingURI= null;
+    private int _remotingTag= 0;
+
+    #region MarshalByRefObject overrides
+    /// <summary>
+    /// Make sure SAO never expires
+    /// </summary>
+    /// <returns></returns>
+    public override object InitializeLifetimeService()
+    {
+      return null;
+    }
+    #endregion
+
+    private void OnResume()
+    {
+      if( _settings.GetSetting("SingleSeat").Get<bool>() )
+      {
+        if (_remotingURI == null)
+        {
+          ChannelServices.RegisterChannel(new HttpChannel(31458), false);
+
+          RemotingServices.Marshal(this);
+          _remotingURI= "http://localhost:31458" + RemotingServices.GetObjectUri(this);
+          Log.Debug("PSClientPlugin: marshalled handlers as {0}", _remotingURI);
+        }
+        if (_remotingTag == 0)
+        {
+          // register with the TVServer
+          _remotingTag = RemotePowerControl.Instance.RegisterRemote(_remotingURI, _remotingURI);
+          LogVerbose("PSClientPlugin: registered handlers with tvservice with tag {0}", _remotingTag);
+        }
+      }
+      LogVerbose("resetting last user time to {0}", DateTime.Now.ToString());
+      _lastUserTime = DateTime.Now;
+
+      _timer.Enabled = true;
+      _fastTimer.Enabled = true;
+    }
+
+    private void OnStandBy()
+    {
+      _timer.Enabled = false;
+      _fastTimer.Enabled = false;
+
+      if (_settings.GetSetting("SingleSeat").Get<bool>())
+      {
+        if (_remotingTag != 0)
+        {
+          LogVerbose("PSClientPlugin: unregister handlers with tvservice with tag {0}", _remotingTag);
+          RemotePowerControl.Instance.UnregisterRemote(_remotingTag);
+          _remotingTag = 0;
+        }
+        // unreference remoting singletons as they'll be reinitialized after suspend
+        LogVerbose("resetting PowerScheduler RemotePowerControl interface");
+        RemotePowerControl.Clear();
+        LogVerbose("resetting TVServer RemoteControl interface");
+        RemoteControl.Clear();
+      }
     }
 
     /// <summary>
@@ -634,7 +991,7 @@ namespace MediaPortal.Plugins.Process
 
     private void SendPowerSchedulerEvent(PowerSchedulerEventType eventType, bool sendAsync)
     {
-      PowerSchedulerEventArgs args = new PowerSchedulerEventArgs(eventType);
+     PowerSchedulerEventArgs args = new PowerSchedulerEventArgs(eventType);
       SendPowerSchedulerEvent(args, sendAsync);
     }
 
@@ -681,6 +1038,12 @@ namespace MediaPortal.Plugins.Process
     #region WndProc messagehandler
     public bool WndProc(ref System.Windows.Forms.Message msg)
     {
+      // we only need to handle PowerBroadcast if we're single seat
+      if (_settings.GetSetting("SingleSeat").Get<bool>())
+      {
+        return false;
+      }
+
       if (msg.Msg == WM_POWERBROADCAST)
       {
         switch (msg.WParam.ToInt32())
@@ -689,26 +1052,48 @@ namespace MediaPortal.Plugins.Process
           case PBT_APMRESUMECRITICAL:
           case PBT_APMRESUMESTANDBY:
           case PBT_APMRESUMESUSPEND:
-            Reset();
-            _timer.Enabled = true;
+          case PBT_APMQUERYSUSPENDFAILED:
+          case PBT_APMQUERYSTANDBYFAILED:
+            OnResume();
             SendPowerSchedulerEvent(PowerSchedulerEventType.ResumedFromStandby);
             break;
+          case PBT_APMQUERYSUSPEND:
+          case PBT_APMQUERYSTANDBY:
+            Log.Debug("PSClientPlugin: System wants to enter standby");
+            bool idle = !DisAllowShutdown;
+            Log.Debug("PSClientPlugin: System idle: {0}", idle);
+            if (!idle)
+            {
+              // scenario: User wants to standby the system, but we disallowed him to do
+              // so. We reset the user activity, so the system goes to standby as soon
+              // as possible.
+              _lastUserTime = DateTime.MinValue;
+            }
+
+            if (!idle)
+              msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
+            break;
           case PBT_APMSUSPEND:
-            CheckWakeupHandlers();
+          case PBT_APMSTANDBY:
+            OnStandBy();
+
+            SetWakeupTimer();
             SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
-            _timer.Enabled = false;
-            Reset();
             break;
         }
+        return true;
       }
       return false;
     }
     #endregion
 
+
     #region Logging wrapper methods
     private void LogVerbose(string msg)
     {
-      LogVerbose(msg, null);
+      //don't just do this: LogVerbose(msg, null);!!
+      if (_settings.ExtensiveLogging)
+        Log.Debug("PSClientPlugin: " + msg);
     }
     private void LogVerbose(string format, params object[] args)
     {
@@ -716,5 +1101,7 @@ namespace MediaPortal.Plugins.Process
         Log.Debug("PSClientPlugin: " + format, args);
     }
     #endregion
+
+    
   }
 }

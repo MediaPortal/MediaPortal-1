@@ -47,6 +47,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Utils, Version=1.0.2604.20221, Culture=neutral, processorArchitecture=MSIL">
@@ -69,6 +70,10 @@
     <ProjectReference Include="..\..\..\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
       <Name>TvControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\TvPlugin\TvPlugin\TvPlugin.csproj">
+      <Project>{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}</Project>
+      <Name>TvPlugin</Name>
     </ProjectReference>
     <ProjectReference Include="..\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj">
       <Project>{7701AA79-18D4-4A18-BB52-16774FB7943D}</Project>

@@ -29,10 +29,11 @@ using TvDatabase;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
+using System.Runtime.CompilerServices;
 
 namespace TvEngine
 {
-  public class XmlTvImporter : ITvServerPlugin
+  public class XmlTvImporter : ITvServerPlugin, ITvServerPluginStartedAll
   {
     #region variables
     bool _workerThreadRunning = false;
@@ -134,126 +135,260 @@ namespace TvEngine
       CheckNewTVGuide();
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     protected void CheckNewTVGuide()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
-      string lastTime = layer.GetSetting("xmlTvLastUpdate", "").Value;
+      DateTime lastTime;
+      try
+      {
+        lastTime = DateTime.Parse(layer.GetSetting("xmlTvLastUpdate", "").Value);
+      }
+      catch (Exception e)
+      {
+        lastTime = DateTime.MinValue;
+      }
+
+      bool importXML = false;
+      bool importLST = false;
+      DateTime importDate = DateTime.MinValue;  // gets the date of the newest file
+
       string fileName = folder + @"\tvguide.xml";
-      bool shouldImportTvGuide = false;
 
       if (System.IO.File.Exists(fileName))
       {
-        string strFileTime = System.IO.File.GetLastWriteTime(fileName).ToString();
-        if (lastTime != strFileTime)
+        DateTime fileTime = DateTime.Parse(System.IO.File.GetLastWriteTime(fileName).ToString()); // for rounding errors!!!
+        if (lastTime < fileTime)
         {
-          shouldImportTvGuide = true;
+          importXML = true;
+          importDate = fileTime;
         }
       }
-      if (shouldImportTvGuide)
+
+      fileName = folder + @"\tvguide.lst";
+
+      if (layer.GetSetting("xmlTvImportLST", "true").Value == "true" && System.IO.File.Exists(fileName))
       {
-        StartImportXML();
+        DateTime fileTime = DateTime.Parse(System.IO.File.GetLastWriteTime(fileName).ToString()); // for rounding errors!!!
+        if (lastTime  < fileTime)
+        {
+          importLST = true;
+          if (fileTime > importDate) importDate = fileTime;
+        }
+      }
+
+      if (importXML || importLST)
+      {
+        StartImport(importXML, importLST, importDate);
       }
     }
 
-    protected void StartImportXML()
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    protected void StartImport(bool importXML, bool importLST, DateTime importDate)
     {
+      if (_workerThreadRunning)
+        return;
+
       TvBusinessLayer layer = new TvBusinessLayer();
       string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
-      string fileName = folder + @"\tvguide.xml";
+
       Thread.Sleep(500); // give time to the external prog to close file handle
-      try
+
+      if (importXML)
       {
-        //check if file can be opened for reading....
-        Encoding fileEncoding = Encoding.Default;
-        FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-        StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true);
-        fileIn.Close();
-        streamIn.Close();
-      }
-      catch (Exception)
-      {
-        Log.Error(@"plugin:xmltv StartImportXML - Exception " + fileName);
-        return;
+        string fileName = folder + @"\tvguide.xml";
+        try
+        {
+          //check if file can be opened for reading....
+          Encoding fileEncoding = Encoding.Default;
+          FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+          StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true);
+          fileIn.Close();
+          streamIn.Close();
+        }
+        catch (Exception)
+        {
+          Log.Error(@"plugin:xmltv StartImport - Exception " + fileName);
+          return;
+        }
       }
 
-      if (!_workerThreadRunning)
+      if (importLST)
       {
-        _workerThreadRunning = true;
-        Thread workerThread = new Thread(new ThreadStart(ThreadFunctionImportTVGuide));
-        workerThread.Priority = ThreadPriority.Lowest;
-        workerThread.Start();
+        string fileName = folder + @"\tvguide.lst";
+        try
+        {
+          //check if file can be opened for reading....
+          Encoding fileEncoding = Encoding.Default;
+          FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+          StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true);
+          fileIn.Close();
+          streamIn.Close();
+        }
+        catch (Exception)
+        {
+          Log.Error(@"plugin:xmltv StartImport - Exception " + fileName);
+          return;
+        }
       }
+
+
+      _workerThreadRunning = true;
+      ThreadParams param = new ThreadParams();
+      param._importXML= importXML;
+      param._importLST= importLST;
+      param._importDate = importDate;
+      Thread workerThread = new Thread(new ParameterizedThreadStart(ThreadFunctionImportTVGuide));
+      workerThread.Priority = ThreadPriority.Lowest;
+      workerThread.Start( param );
     }
 
-    void ThreadFunctionImportTVGuide()
+    private class ThreadParams
+    {
+      public bool _importXML;
+      public bool _importLST;
+      public DateTime _importDate;
+    };
+
+    void ThreadFunctionImportTVGuide( object aparam )
     {
       SetStandbyAllowed(false);
-
-      TvBusinessLayer layer = new TvBusinessLayer();
-      string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
-      string fileName = folder + @"\tvguide.xml";
-      Log.WriteFile(@"plugin:xmltv detected new tvguide ->import new tvguide");
-      Thread.Sleep(500);
       try
       {
-        XMLTVImport import = new XMLTVImport(10);  // add 10 msec dely to the background thread
-        import.Import(fileName, false);
+        ThreadParams param = (ThreadParams)aparam;
 
-        Setting setting = layer.GetSetting("xmlTvResultLastImport", "");
-        setting.Value = DateTime.Now.ToString();
-        setting.Persist();
-        setting = layer.GetSetting("xmlTvResultChannels", "");
-        setting.Value = import.ImportStats.Channels.ToString();
-        setting.Persist();
-        setting = layer.GetSetting("xmlTvResultPrograms", "");
-        setting.Value = import.ImportStats.Programs.ToString();
-        setting.Persist();
-        setting = layer.GetSetting("xmlTvResultStatus", "");
-        setting.Value = import.ErrorMessage;
-        setting.Persist();
-        Log.Write("Xmltv: imported {0} channels, {1} programs status:{2}", import.ImportStats.Channels, import.ImportStats.Programs,import.ErrorMessage);
+        Setting setting;
+        TvBusinessLayer layer = new TvBusinessLayer();
+        string folder = layer.GetSetting("xmlTv", System.IO.Directory.GetCurrentDirectory()).Value;
 
-      }
-      catch (Exception ex)
-      {
-        Log.Error(@"plugin:xmltv import failed");
-        Log.Write(ex);
-      }
+        int numChannels = 0, numPrograms = 0;
+        string errors = "";
 
-      try
-      {
-        //
-        // Make sure the file exists before we try to do any processing, thus if the file doesn't
-        // exist we we'll save ourselves from getting a file not found exception.
-        //
-        if (File.Exists(fileName))
+        try
         {
-          Setting setting = layer.GetSetting("xmlTvLastUpdate", System.IO.Directory.GetCurrentDirectory());
+          if (param._importXML)
+          {
+            string fileName = folder + @"\tvguide.xml";
+            Log.Write("plugin:xmltv importing " + fileName);
 
-          string strFileTime = System.IO.File.GetLastWriteTime(fileName).ToString();
-          setting.Value = strFileTime;
+            XMLTVImport import = new XMLTVImport(10);  // add 10 msec dely to the background thread
+            import.Import(fileName, false);
+
+            numChannels += import.ImportStats.Channels;
+            numPrograms += import.ImportStats.Programs;
+
+            if (import.ErrorMessage.Length != 0)
+              errors += "tvguide.xml:" + import.ErrorMessage + "; ";
+          }
+
+          if (param._importLST)
+          {
+            string fileName = folder + @"\tvguide.lst";
+            Log.Write("plugin:xmltv importing files in " + fileName);
+
+            Encoding fileEncoding = Encoding.Default;
+            FileStream streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true);
+
+            while (!fileIn.EndOfStream)
+            {
+              string tvguideFileName = fileIn.ReadLine();
+              if (tvguideFileName.Length == 0) continue;
+
+              if (!System.IO.Path.IsPathRooted(tvguideFileName))
+              {
+                // extend by directory
+                tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
+              }
+
+              Log.WriteFile(@"plugin:xmltv importing " + tvguideFileName);
+
+              XMLTVImport import = new XMLTVImport(10);  // add 10 msec dely to the background thread
+              import.Import(tvguideFileName, false);
+
+              numChannels += import.ImportStats.Channels;
+              numPrograms += import.ImportStats.Programs;
+
+              if (import.ErrorMessage.Length != 0)
+                errors += tvguideFileName + ": " + import.ErrorMessage + "; ";
+            }
+          }
+
+          setting = layer.GetSetting("xmlTvResultLastImport", "");
+          setting.Value = DateTime.Now.ToString();
           setting.Persist();
+          setting = layer.GetSetting("xmlTvResultChannels", "");
+          setting.Value = numChannels.ToString();
+          setting.Persist();
+          setting = layer.GetSetting("xmlTvResultPrograms", "");
+          setting.Value = numPrograms.ToString();
+          setting.Persist();
+          setting = layer.GetSetting("xmlTvResultStatus", "");
+          setting.Value = errors;
+          setting.Persist();
+          Log.Write("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
+
+        }
+        catch (Exception ex)
+        {
+          Log.Error(@"plugin:xmltv import failed");
+          Log.Write(ex);
         }
 
+        setting = layer.GetSetting("xmlTvLastUpdate", "");
+        setting.Value = param._importDate.ToString();
+        setting.Persist();
       }
-      catch (Exception)
+      finally
       {
-      }
-      _workerThreadRunning = false;
-      Log.WriteFile(@"plugin:xmltv import done");
+        Log.WriteFile(@"plugin:xmltv import done");
 
-      SetStandbyAllowed(true);
+        _workerThreadRunning = false;
+        SetStandbyAllowed(true);
+      }
     }
+
+    private void EPGScheduleDue()
+    {
+      CheckNewTVGuide();
+    }
+
+    private void RegisterForEPGSchedule()
+    {
+      // Register with the EPGScheduleDue event so we are informed when
+      // the EPG wakeup schedule is due.
+      if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
+      {
+        IEpgHandler handler = GlobalServiceProvider.Instance.Get<IEpgHandler>();
+        if (handler != null)
+        {
+          handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
+          Log.Debug("XmlTvImporter: registered with PowerScheduler EPG handler");
+          return;
+        }
+      }
+      Log.Debug("XmlTvImporter: NOT registered with PowerScheduler EPG handler");
+    }
+
 
     private void SetStandbyAllowed(bool allowed)
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
       {
-        GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed);
-        Log.Debug("plugin:xmltv: Telling PowerScheduler standby is allowed: {0}", allowed);
+        Log.Debug("plugin:xmltv: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
+        GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 3600);
       }
     }
+    #endregion
+
+    #region ITvServerPluginStartedAll Members
+
+    public void StartedAll()
+    {
+      RegisterForEPGSchedule();
+    }
+
     #endregion
   }
 }
