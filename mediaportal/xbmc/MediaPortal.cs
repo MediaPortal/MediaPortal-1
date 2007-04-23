@@ -116,10 +116,10 @@ public class MediaPortalApp : D3DApp, IRender
 
   private const int PBT_APMQUERYSUSPEND = 0x0000;
   private const int PBT_APMQUERYSTANDBY = 0x0001;
-  //private const int PBT_APMQUERYSUSPENDFAILED = 0x0002;
-  //private const int PBT_APMQUERYSTANDBYFAILED = 0x0003;
+  private const int PBT_APMQUERYSUSPENDFAILED = 0x0002;
+  private const int PBT_APMQUERYSTANDBYFAILED = 0x0003;
   private const int PBT_APMSUSPEND = 0x0004;
-  //private const int PBT_APMSTANDBY = 0x0005;
+  private const int PBT_APMSTANDBY = 0x0005;
   private const int PBT_APMRESUMECRITICAL = 0x0006;
   private const int PBT_APMRESUMESUSPEND = 0x0007;
   private const int PBT_APMRESUMESTANDBY = 0x0008;
@@ -658,7 +658,7 @@ public class MediaPortalApp : D3DApp, IRender
           //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
           case PBT_APMQUERYSUSPEND:
             Log.Info("Main: Windows is requesting hibernate mode");
-            if (!OnSuspend(ref msg)) return;
+            if (!OnQuerySuspend(ref msg)) return;
             break;
 
           //The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
@@ -667,10 +667,35 @@ public class MediaPortalApp : D3DApp, IRender
           case PBT_APMQUERYSTANDBY:
             // Stop all media before suspending or hibernating
             Log.Info("Main: Windows is requesting standby mode");
-            if (!OnSuspend(ref msg)) return;
+            if (!OnQuerySuspend(ref msg)) return;
             break;
+
+          //The PBT_APMQUERYSUSPENDFAILED message is sent to notify the application that suspension was denied
+          //by some other application. However, this message is only sent when we receive PBT_APMQUERY* before.
+          case PBT_APMQUERYSUSPENDFAILED:
+            Log.Info("Main: Windows is denied to go to suspended mode");
+            // dero: IT IS NOT SAFE to rely on this message being sent! Sometimes it is not sent even if we
+            // processed PBT_AMQUERYSUSPEND/PBT_APMQUERYSTANDBY
+            // I observed this using TVService.PowerScheduler
+            break;
+
+          //The PBT_APMQUERYSTANDBYFAILED message is sent to notify the application that suspension was denied
+          //by some other application. However, this message is only sent when we receive PBT_APMQUERY* before.
+          case PBT_APMQUERYSTANDBYFAILED:
+            Log.Info("Main: Windows is denied to go to standby mode");
+            // dero: IT IS NOT SAFE to rely on this message being sent! Sometimes it is not sent even if we
+            // processed PBT_AMQUERYSUSPEND/PBT_APMQUERYSTANDBY
+            // I observed this using TVService.PowerScheduler
+            break;
+
+          case PBT_APMSTANDBY:
+            Log.Info("Main: Windows is standbying");
+            OnSuspend(ref msg);
+            break;
+
           case PBT_APMSUSPEND:
-            Log.Info("Main: Windows is suspending");
+            Log.Info("Main: Windows is hibernating");
+            OnSuspend(ref msg);
             break;
 
           //The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
@@ -689,7 +714,7 @@ public class MediaPortalApp : D3DApp, IRender
 
           //The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standby.
           case PBT_APMRESUMESTANDBY:
-            Log.Info("Main: Windows has resumed from standbye mode");
+            Log.Info("Main: Windows has resumed from standby mode");
             OnResume();
             break;
 
@@ -772,8 +797,8 @@ public class MediaPortalApp : D3DApp, IRender
 
   static object syncObj = new object();
 
-  //called when windows wants to hibernate or go into standbye mode
-  private bool OnSuspend(ref Message msg)
+  //called when windows asks permission to hibernate or standby
+  private bool OnQuerySuspend(ref Message msg)
   {
     lock (syncObj)
     {
@@ -787,6 +812,21 @@ public class MediaPortalApp : D3DApp, IRender
         msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
         Log.Info("Main: TVRecording running -> Suspend stopped");
         return false;
+      }
+
+      return true;
+    }
+  }
+
+
+  //called when windows hibernates or goes into standbye mode
+  private void  OnSuspend(ref Message msg)
+  {
+    lock (syncObj)
+    {
+      if (_suspended)
+      {
+        return;
       }
 
       //switch to windowed mode
@@ -808,7 +848,6 @@ public class MediaPortalApp : D3DApp, IRender
       AutoPlay.StopListening();
 
       Log.Info("Main: OnSuspend - Done");
-      return true;
     }
   }
 
