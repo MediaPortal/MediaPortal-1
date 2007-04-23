@@ -55,7 +55,7 @@ namespace MyTv
     {
       //get the seeking steps from the configuration file...
       TvSettings settings = new TvSettings();
-      ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+      ServiceScope.Get<ISettingsManager>().Load(settings);
       string[] steps=settings.SeekSteps.Split(new char[]{','});
       for (int i = 0; i < steps.Length; ++i)
       {

@@ -423,7 +423,7 @@ namespace MyTv
         ServiceScope.Get<ILogger>().Info("mytv:ConnectToServer");
 
         TvSettings settings = new TvSettings();
-        ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+        ServiceScope.Get<ISettingsManager>().Load(settings);
         RemoteControl.HostName = settings.HostName;
 
         ServiceScope.Get<ILogger>().Info("mytv:GetDatabaseConnectionString");

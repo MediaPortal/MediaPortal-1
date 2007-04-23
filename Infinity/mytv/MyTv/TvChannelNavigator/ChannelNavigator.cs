@@ -147,7 +147,7 @@ namespace MyTv
 
       ServiceScope.Get<ILogger>().Info("Navigator #5");
       TvSettings settings = new TvSettings();
-      ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+      ServiceScope.Get<ISettingsManager>().Load(settings);
       int channelId = settings.CurrentChannel;
       try
       {
@@ -206,12 +206,12 @@ namespace MyTv
         _selectedChannel = value;
 
         TvSettings settings = new TvSettings();
-        ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+        ServiceScope.Get<ISettingsManager>().Load(settings);
         if (_selectedChannel!=null)
           settings.CurrentChannel=_selectedChannel.IdChannel;
         else
           settings.CurrentChannel=-1;
-        ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xml");
+        ServiceScope.Get<ISettingsManager>().Save(settings);
         if (PropertyChanged != null)
         {
           PropertyChanged(this, new PropertyChangedEventArgs("SelectedChannel"));

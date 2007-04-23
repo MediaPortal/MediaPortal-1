@@ -215,9 +215,9 @@ namespace MyTv
             doc.Save("gentle.config");
             TvChannelNavigator.Instance.Initialize();
             TvSettings settings = new TvSettings();
-            ServiceScope.Get<ISettingsManager>().Load(settings, "configuration.xml");
+            ServiceScope.Get<ISettingsManager>().Load(settings);
             settings.HostName = RemoteControl.HostName;
-            ServiceScope.Get<ISettingsManager>().Save(settings, "configuration.xml");
+            ServiceScope.Get<ISettingsManager>().Save(settings);
 
             ServiceScope.Get<ILogger>().Info("mytv:setuptv->connected successfully");
             ServiceScope.Get<INavigationService>().GoBack();
