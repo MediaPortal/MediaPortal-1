@@ -2641,12 +2641,18 @@
               <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="shine" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
                 <SplineColorKeyFrame KeyTime="00:00:00" Value="#6F2A5EB4"/>
               </ColorAnimationUsingKeyFrames>
+            	<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="pathHorz" Storyboard.TargetProperty="(UIElement.Opacity)">
+            		<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0.5"/>
+            	</DoubleAnimationUsingKeyFrames>
+            	<DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Duration="00:00:00.0010000" Storyboard.TargetName="pathVert" Storyboard.TargetProperty="(UIElement.Opacity)">
+            		<SplineDoubleKeyFrame KeyTime="00:00:00" Value="0.5"/>
+            	</DoubleAnimationUsingKeyFrames>
             </Storyboard>
           </ControlTemplate.Resources>
           <Grid x:Name="grid" Margin="0,2,0,2">
             <Rectangle Fill="{StaticResource MpButtonBrush}" Stroke="#FF2866BD" RadiusX="4" RadiusY="4" HorizontalAlignment="Left" x:Name="shine" Width="32"/>
-          	<Path Fill="#FFFFFFFF" Stretch="Fill" Stroke="#FFFFFFFF" HorizontalAlignment="Left" Margin="12.062,13.75,0,0" x:Name="pathHorz" VerticalAlignment="Top" Width="7.334" Height="1" Data="M4.6666667,15 L26.666667,15"/>
-          	<Path Visibility="Visible" Fill="#FFFFFFFF" Stretch="Fill" Stroke="#FFFFFFFF" HorizontalAlignment="Left" Margin="15.165,9.286,0,0" x:Name="pathVert" Width="1" Data="M13.666667,5.6666667 L13.666667,25" VerticalAlignment="Top" Height="9.962"/>
+          	<Path Fill="#FFFFFFFF" Stretch="Fill" Stroke="#FFFFFFFF" HorizontalAlignment="Left" Margin="8.165,15.006,0,14.994" x:Name="pathHorz" VerticalAlignment="Stretch" Width="15" Height="Auto" Data="M4.6666667,15 L26.666667,15"/>
+          	<Path Visibility="Visible" Fill="#FFFFFFFF" Stretch="Fill" Stroke="#FFFFFFFF" HorizontalAlignment="Left" Margin="15.165,8.006,0,0" x:Name="pathVert" Width="1" Data="M13.666667,5.6666667 L13.666667,25" VerticalAlignment="Top" Height="15"/>
           </Grid>
           <ControlTemplate.Triggers>
             <EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
