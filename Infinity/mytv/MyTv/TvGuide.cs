@@ -65,7 +65,16 @@ namespace MyTv
       DataContext = model;
       this.InputBindings.Add(new KeyBinding(model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
+      this.Loaded += new RoutedEventHandler(TvGuide_Loaded);
     }
+
+    void TvGuide_Loaded(object sender, RoutedEventArgs e)
+    {
+      TvGuideViewModel model;
+      model = ServiceScope.Get<TvGuideViewModel>();
+      model.Reload();
+    }
+    
     #endregion
 
 
