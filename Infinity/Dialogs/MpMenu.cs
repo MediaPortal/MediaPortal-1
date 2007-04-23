@@ -27,7 +27,7 @@ namespace Dialogs
   public partial class MpMenu : ViewWindow
   {
     DialogViewModel _model;
-    DialogMenuItemCollection _menuItems;
+    DialogMenuItemCollection _menuItems= new DialogMenuItemCollection();
     /// <summary>
     /// Initializes a new instance of the <see cref="MpImageMenu"/> class.
     /// </summary>
@@ -38,14 +38,16 @@ namespace Dialogs
       this.Width = 530;
       this.Height = 370;
 
-      _menuItems = new DialogMenuItemCollection();
       _model = new DialogViewModel(this);
+      _model.SetItems(_menuItems);
       Size scaling = ServiceScope.Get<INavigationService>().CurrentScaling;
       this.Width *= scaling.Width;
       this.Height *= scaling.Height;
       DataContext = _model;
       this.InputBindings.Add(new KeyBinding(_model.Close, new KeyGesture(System.Windows.Input.Key.Escape)));
+      this.Loaded += new RoutedEventHandler(MpMenu_Loaded);
     }
+
     public MpMenu(DialogMenuItemCollection items)
     {
       _menuItems = items;
@@ -59,8 +61,14 @@ namespace Dialogs
       this.Width *= scaling.Width;
       this.Height *= scaling.Height;
 
+      _model.SetItems(_menuItems);
       DataContext = _model;
       this.InputBindings.Add(new KeyBinding(_model.Close, new KeyGesture(System.Windows.Input.Key.Escape)));
+      this.Loaded += new RoutedEventHandler(MpMenu_Loaded);
+    }
+    void MpMenu_Loaded(object sender, RoutedEventArgs e)
+    {
+      _model.SetItems(_menuItems);
     }
 
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
