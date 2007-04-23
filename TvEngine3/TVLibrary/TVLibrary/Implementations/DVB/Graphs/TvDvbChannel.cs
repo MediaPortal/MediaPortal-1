@@ -1639,6 +1639,8 @@ namespace TvLibrary.Implementations.DVB
 
       //did we already receive the pmt?
       if (_channelInfo == null) return; //nop, then return
+      if (_channelInfo.caPMT == null) return;
+      if (_channelInfo.caPMT.DescriptorsCat.Count == 0) return;
       DVBBaseChannel dvbChannel = _currentChannel as DVBBaseChannel;
       if (dvbChannel == null) //not a DVB channel??
         return;
