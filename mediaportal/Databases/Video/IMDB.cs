@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2007 Team MediaPortal
+?#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2007 Team MediaPortal
@@ -585,6 +585,19 @@ namespace MediaPortal.Video.Database
                 // END MovieMeter.nl support
                 break;
 
+              case "CSPV":
+                // CSPV support
+                line1 = GUILocalizeStrings.Get(984) + ":CSPV";
+                if (m_progress != null)
+                  m_progress.OnProgress(line1, line2, line3, percent);
+                strURL = "http://www.cspv.hu/cspv_film/_info.html?schwhat=&search=1&search_str=" + strSearch + "&submit.x=29&submit.y=9&submit=submit";
+                FindCspv(strURL, aLimits[i]);
+                percent += 100 / aDatabases.Length;
+                if (m_progress != null)
+                  m_progress.OnProgress(line1, line2, line3, percent);
+                // END CSPV support
+                break;
+
               default:
                 // unsupported database?
                 Log.Error("Movie database lookup - database not supported: {0}", aDatabases[i].ToUpper());
@@ -934,6 +947,8 @@ namespace MediaPortal.Video.Database
             return GetDetailsFilmAffinity(url, ref movieDetails);
           case "MovieMeter":
             return GetDetailsMovieMeter(url, ref movieDetails);
+          case "CSPV":
+            return GetDetailsCspv(url, ref movieDetails);
           default:
             // Not supported Database / Host
             Log.Error("Movie DB lookup GetDetails(): Unknown Database {0}", url.Database);
@@ -1174,7 +1189,7 @@ namespace MediaPortal.Video.Database
                 iEnd = strBody.IndexOf(" votes</a>)", iStart);
                 if (iEnd > 0)
                 {
-                  iStart+="(<a href=\"ratings\">".Length; // skip the parantese and link before votes
+                  iStart += "(<a href=\"ratings\">".Length; // skip the parantese and link before votes
                   movieDetails.Votes = strBody.Substring(iStart, iEnd - iStart).Trim();
                 }
               }
@@ -2160,21 +2175,21 @@ namespace MediaPortal.Video.Database
           iStart = strBody.IndexOf("../images/ratings/") + 18;
           iStop = strBody.IndexOf(".gif", iStart);
           string type = strBody.Substring(iStart, iStop - iStart);
-            if (type == "1") movieDetails.MPARating = "Tous Publics";
-            else
+          if (type == "1") movieDetails.MPARating = "Tous Publics";
+          else
             if (type == "2") movieDetails.MPARating = "Accord Parental";
             else
-            if (type == "3") movieDetails.MPARating = "Interdit aux moins de 12 ans";
-            else
-            if (type == "4") movieDetails.MPARating = "Interdit aux moins de 13 ans";
-            else
-            if (type == "5") movieDetails.MPARating = "Interdit aux moins de 16 ans";
-            else
-            if (type == "6") movieDetails.MPARating = "Interdit aux moins de 18 ans";
-            else
-            if (type == "7") movieDetails.MPARating = "X Interdit aux moins de 18 ans";
-            else
-                movieDetails.MPARating = "";
+              if (type == "3") movieDetails.MPARating = "Interdit aux moins de 12 ans";
+              else
+                if (type == "4") movieDetails.MPARating = "Interdit aux moins de 13 ans";
+                else
+                  if (type == "5") movieDetails.MPARating = "Interdit aux moins de 16 ans";
+                  else
+                    if (type == "6") movieDetails.MPARating = "Interdit aux moins de 18 ans";
+                    else
+                      if (type == "7") movieDetails.MPARating = "X Interdit aux moins de 18 ans";
+                      else
+                        movieDetails.MPARating = "";
         }
         catch { Log.Info("Info cd: movieDetails.MPARating"); }
 
@@ -2272,7 +2287,7 @@ namespace MediaPortal.Video.Database
         string strBody = GetPage(url.URL, "ISO-8859-1", out strAbsURL);
         if (strBody == null || strBody.Length == 0)
           return false;
-          
+
         HTMLParser parser = new HTMLParser(strBody);
         if (parser.skipToEndOfNoCase("<img src=\"http://www.filmaffinity.com/images/movie.gif\" border=\"0\">"))
         {
@@ -2604,7 +2619,202 @@ namespace MediaPortal.Video.Database
 
 
     #endregion
+    #region CSPV
+    private void FindCspv(string strURL, int iLimit)
+    {
+      int iCount = 0;
+      string strTitle = String.Empty;
+      try
+      {
+        string absoluteUri;
+        string strBody = GetPage(strURL, "ISO-8859-1", out absoluteUri);
 
+        // First try to find an Exact Match. If no exact match found, just look
+        // for any match and add all those to the list. This narrows it down more easily...
+
+        int iStartOfMovieList = strBody.IndexOf("találatok a filmcímek közt a");
+        if (iStartOfMovieList < 0)
+        {
+          HTMLParser p = new HTMLParser(strBody);
+          if (p.skipToEndOfNoCase("<span class='cim'>"))
+          {
+            p.extractTo("(", ref strTitle);
+            strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
+            HTMLUtil htmlUtil = new HTMLUtil();
+            htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
+            IMDBUrl url = new IMDBUrl(strURL, strTitle + " (cspv)", "CSPV");
+            elements.Add(url);
+            return;
+          }
+        }
+
+        HTMLParser parser = new HTMLParser(strBody);
+        parser.skipToEndOf("találatok a filmcímek közt a");
+        while ((parser.Position < strBody.Length) && (iCount < iLimit))
+        {
+          if (parser.skipToEndOfNoCase("<a href='") &&
+              parser.extractTo("'", ref strURL))
+          {
+            strURL = String.Format("http://www.cspv.hu/cspv_film/{0}", strURL);
+            if (parser.skipToEndOfNoCase(">") &&
+                parser.extractTo("</a><br>", ref strTitle))
+            {
+              HTMLUtil htmlUtil = new HTMLUtil();
+              htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
+              IMDBUrl url = new IMDBUrl(strURL, strTitle + " (cspv)", "CSPV");
+              elements.Add(url);
+              iCount++;
+            }
+          }
+          else
+          {
+            break;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("exception for cspv lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
+      }
+    }
+
+    private bool GetDetailsCspv(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
+    {
+      try
+      {
+        movieDetails.Reset();
+        // add databaseinfo
+        movieDetails.Database = "CSPV";
+        HTMLUtil htmlUtil = new HTMLUtil();
+        string strAbsURL;
+        string strBody = GetPage(url.URL, "ISO-8859-1", out strAbsURL);
+        if (strBody == null || strBody.Length == 0)
+          return false;
+
+        HTMLParser parser = new HTMLParser(strBody);
+        if (parser.skipToEndOfNoCase("<span class='cim'>"))
+        {
+          string strTitle = String.Empty;
+          string strYear = String.Empty;
+          string runtime = String.Empty;
+          string strDirector = String.Empty;
+          string strWriting = String.Empty;
+          string strCast = String.Empty;
+          string strGenre = String.Empty;
+          string strPlot = String.Empty;
+          string strNumber = String.Empty;
+          string strThumb = String.Empty;
+          string strRating = String.Empty;
+          string strVotes = String.Empty;
+          string strMpaa = String.Empty;
+          parser.extractTo("(", ref strTitle);
+          strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
+          movieDetails.Title = strTitle;
+          if (parser.extractTo(")", ref strYear))
+          {
+            try
+            {
+              movieDetails.Year = System.Int32.Parse(strYear);
+            }
+            catch (Exception)
+            {
+              movieDetails.Year = 1970;
+            }
+          }
+          if (parser.skipToEndOfNoCase("rendezte:") &&
+              parser.skipToEndOfNoCase("<a href='_info.php?") &&
+              parser.skipToEndOfNoCase(">") &&
+              parser.extractTo("</a>", ref strDirector))
+          {
+            //Log.Info("FilmAffinity:Director:{0}", strDirector);
+            movieDetails.Director = strDirector;
+          }
+
+          if (parser.skipToEndOfNoCase("írta:") &&
+              parser.skipToEndOfNoCase("<a href='_info.php?") &&
+              parser.skipToEndOfNoCase(">") &&
+              parser.extractTo("</a>", ref strWriting))
+          {
+            strWriting = HTMLParser.removeHtml(strWriting);
+            //Log.Info("FilmAffinity:Writing:{0}", strWriting);
+            movieDetails.WritingCredits = strWriting;
+          }
+          if (parser.skipToEndOfNoCase("<table") &&
+              parser.skipToEndOfNoCase("<tr>") &&
+              parser.skipToEndOfNoCase("<td align=") &&
+              parser.skipToEndOfNoCase("<img") &&
+              parser.skipToEndOfNoCase("<td align=") &&
+              parser.skipToEndOfNoCase(">") &&
+              parser.extractTo("</td>", ref strRating))
+          {
+            try
+            {
+              movieDetails.Rating = (float)System.Double.Parse(strRating);
+            }
+            catch (Exception)
+            {
+              movieDetails.Rating = 0;
+            }
+          }
+          if (parser.skipToEndOfNoCase("hossza:&nbsp;") &&
+              parser.skipToEndOfNoCase("<span ") &&
+              parser.skipToEndOfNoCase(">") &&
+              parser.extractTo(" perc<", ref runtime))
+          {
+            //Log.Info("FilmAffinity:Runtime:{0}", runtime);
+            try
+            {
+              movieDetails.RunTime = Int32.Parse(runtime);
+            }
+            catch (Exception)
+            {
+              movieDetails.RunTime = 0;
+            }
+          }
+
+          if (parser.skipToEndOfNoCase("faj:&nbsp;") &&
+              parser.skipToEndOfNoCase("<span") &&
+              parser.skipToEndOfNoCase(">") &&
+              parser.extractTo("</span>", ref strGenre))
+          {
+            strGenre = strGenre.Replace(",", "/");
+            Log.Info("Genre : {0}", strGenre);
+            movieDetails.Genre = strGenre;
+          }
+
+          if (parser.skipToEndOfNoCase("korhatár") &&
+              parser.skipToEndOfNoCase("<span ") &&
+              parser.skipToEndOfNoCase(">") &&
+              parser.extractTo("</span>", ref strMpaa))
+          {
+            movieDetails.MPARating = strMpaa;
+          }
+
+          if (parser.skipToEndOfNoCase("<span class='leiras'>") &&
+           parser.skipToEndOfNoCase("<br") &&
+           parser.skipToEndOfNoCase(">") &&
+           parser.extractTo("</span>", ref strPlot))
+          {
+            strPlot = HTMLParser.removeHtml(strPlot);
+            movieDetails.Plot = strPlot;
+          }
+          if (parser.skipToEndOfNoCase("<span class='stabcredit'>") &&
+              parser.skipToEndOfNoCase("</span><br>") &&
+              parser.extractTo("</table>", ref strCast))
+          {
+            strCast = strCast.Replace("...", " as ");
+            strCast = HTMLParser.removeHtml(strCast);
+            movieDetails.Cast = strCast;
+          }
+        }
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("exception for CSPV lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
+      }
+      return false;
+    }
+    #endregion
   } // END class IMDB
-
 }// END namespace

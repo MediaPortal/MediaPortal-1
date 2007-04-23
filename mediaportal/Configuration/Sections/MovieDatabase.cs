@@ -2598,6 +2598,7 @@ namespace MediaPortal.Configuration.Sections
         bool frdbFound = false;
         bool filmAffinityFound = false;
         bool movieMeterFound = false;
+        bool cspvFound = false;
         if (iNumber > 0)
         {
           string strLimit = "";
@@ -2624,6 +2625,8 @@ namespace MediaPortal.Configuration.Sections
                 filmAffinityFound = true;
               else if (strDatabase == "MovieMeter")
                 movieMeterFound = true;
+              else if (strDatabase == "CSPV")
+                cspvFound = true;
             }
           }
         }
@@ -2642,6 +2645,9 @@ namespace MediaPortal.Configuration.Sections
         if (!movieMeterFound)
           mpComboBox1.Items.Add(new ComboBoxItemDatabase("MovieMeter", "dutch", "20"));
 
+        if (!cspvFound)
+          mpComboBox1.Items.Add(new ComboBoxItemDatabase("CSPV", "hungarian", "20"));
+        
         if (mpComboBox1.Items.Count > 0)
           mpComboBox1.SelectedIndex = 0;
 
