@@ -4,6 +4,7 @@ using System.Text;
 using ProjectInfinity;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.Settings;
 
 namespace MyWeather
 {
@@ -22,7 +23,19 @@ namespace MyWeather
 
     public void Run()
     {
-      ServiceScope.Get<INavigationService>().Navigate(new Uri("/MyWeather;component/Weather.xaml", UriKind.Relative));
+        // Check if there are any settings available already
+        WeatherSettings settings = new WeatherSettings();
+        ServiceScope.Get<ISettingsManager>().Load(settings);
+        if (settings.LocationCode.Equals("<none>"))
+        {
+            // No Settings found, navigate to Settings first!
+            ServiceScope.Get<INavigationService>().Navigate(new WeatherSetup());
+        }
+        else
+        {
+            // We already have settings, so lets go to Weather directly
+            ServiceScope.Get<INavigationService>().Navigate(new Weather());
+        }
     }
 
     #endregion

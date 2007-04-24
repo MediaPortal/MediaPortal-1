@@ -41,8 +41,8 @@ namespace MyWeather
         #endregion
 
         #region ctor
-        public WeatherSetupViewModel(Page page)
-            : base(page)
+        public WeatherSetupViewModel()
+            : base()
         {
             _visibleAfterSelection = Visibility.Hidden;
             _labelError = "";
@@ -394,8 +394,7 @@ namespace MyWeather
                     settings.LocationCode = l[0].id;
                 // save
                 ServiceScope.Get<ISettingsManager>().Save(settings);
-
-                // navigate back to weather screen
+                // navigate back
                 ServiceScope.Get<INavigationService>().GoBack();
             }
 
@@ -487,17 +486,18 @@ namespace MyWeather
             public void Execute(object parameter)
             {
                 _viewModel.LabelError = "";
-                // Show a dialog with all sorting options
+                _viewModel.SearchCities();
+                
+                // nothing found?
+                if (((List<CitySetupInfo>)(_viewModel.Locations.SourceCollection)).Count <= 0) return;
+
+                // Setup the Dialog Menu we wanna show (Containing the found locations)
                 MpMenu dlgMenu = new MpMenu();
                 dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 dlgMenu.Owner = _viewModel.Window;
                 dlgMenu.Items.Clear();
                 dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("myweather.config", 3);// "Please select your City";
                 dlgMenu.SubTitle = "";
-                _viewModel.SearchCities();
-                
-                // nothing found?
-                if (((List<CitySetupInfo>)(_viewModel.Locations.SourceCollection)).Count == 0) return;
 
                 foreach (CitySetupInfo c in _viewModel.Locations.SourceCollection)
                 {

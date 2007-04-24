@@ -16,17 +16,16 @@ using ProjectInfinity.Navigation;
 using ProjectInfinity;
 using ProjectInfinity.Settings;
 using Dialogs;
+using System.Windows.Threading;
 
 namespace MyWeather
 {
     /// <summary>
     /// ViewModel Class for Weather.xaml
     /// </summary>
-    public class WeatherViewModel : INotifyPropertyChanged
+    public class WeatherViewModel : DispatcherObject, INotifyPropertyChanged
     {
         #region variables
-        Window _window;
-        Page _page;
         WeatherDataModel _dataModel;
         City _currCity;
         ICommand _updateWeatherCommand;
@@ -42,12 +41,8 @@ namespace MyWeather
         /// Initializes a new instance of the <see cref="WeatherViewModel"/> class.
         /// </summary>
         /// <param name="page">The page.</param>
-        public WeatherViewModel(Page page)
+        public WeatherViewModel()
         {
-
-            //store page & window
-            _page = page;
-            _window = Window.GetWindow(_page);
             // create localisation instance
             _locals = new WeatherLocalizer();
             // create the datamodel :)
@@ -91,6 +86,17 @@ namespace MyWeather
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        /// Gets the window.
+        /// </summary>
+        /// <value>The window.</value>
+        public Window Window
+        {
+            get
+            {
+                return ServiceScope.Get<INavigationService>().GetWindow();
+            }
+        }
 
         #region properties of the current location
         /// <summary>
@@ -134,34 +140,6 @@ namespace MyWeather
             }
         }
         #endregion
-
-        /// <summary>
-        /// Gets the window.
-        /// </summary>
-        /// <value>The window.</value>
-        public Window Window
-        {
-            get
-            {
-                return _window;
-            }
-        }
-        /// <summary>
-        /// Gets the current Page.
-        /// </summary>
-        /// <value>The page.</value>
-        public Page Page
-        {
-            get
-            {
-                return _page;
-            }
-            set
-            {
-                _page = value;
-                _window = Window.GetWindow(_page);
-            }
-        }
 
         #region commands
         /// <summary>
