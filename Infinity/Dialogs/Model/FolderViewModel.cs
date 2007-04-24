@@ -24,6 +24,7 @@ namespace Dialogs
     bool _isSelected;
     string _path;
     List<Folder> _subFolders = new List<Folder>();
+    int _nested = 0;
     #endregion
 
     /// <summary>
@@ -112,7 +113,29 @@ namespace Dialogs
         return _path;
       }
     }
+    /// <summary>
+    /// Gets the nested.
+    /// </summary>
+    /// <value>The nested.</value>
+    public int Nested
+    {
+      get
+      {
+        return _nested;
+      }
+      set
+      {
+        _nested = value;
+      }
+    }
 
+    public Thickness ItemMargin
+    {
+      get
+      {
+        return new Thickness(-Nested * 32, 0, 0, 0);
+      }
+    }
     /// <summary>
     /// Gets or sets the folders.
     /// </summary>
@@ -129,6 +152,7 @@ namespace Dialogs
             string path = subFolders[i];
             if (path == "." || path == "..") continue;
             Folder subFolder = new Folder(path, IsSelected);
+            subFolder.Nested = (_nested + 1);
             _subFolders.Add(subFolder);
           }
         }
@@ -139,12 +163,13 @@ namespace Dialogs
         _subFolders = value;
       }
     }
+
     public List<Folder> SelectedFolders
     {
       get
       {
         List<Folder> selected = new List<Folder>();
-        if (IsSelected) 
+        if (IsSelected)
         {
           selected.Add(this);
           return selected;
@@ -168,7 +193,7 @@ namespace Dialogs
     public FolderViewModel(Window window)
       : base(window)
     {
-      string[] drives=System.IO.Directory.GetLogicalDrives();
+      string[] drives = System.IO.Directory.GetLogicalDrives();
       for (int i = 0; i < drives.Length; ++i)
       {
         _folders.Add(new Folder(drives[i]));

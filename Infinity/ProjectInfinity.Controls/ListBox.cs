@@ -259,6 +259,7 @@ namespace ProjectInfinity.Controls
       {
         currentItem.CurrentItem = SelectedItem;
       }
+      
       base.OnSelectionChanged(e);
       if (PropertyChanged != null)
       {
