@@ -714,7 +714,6 @@ namespace TvPlugin
           btnTeletext.Visible = false;
         return;
       }
-      Log.Debug("Roy Issue Tag 7");
       //else
       //  if (btnTuningDetails!=null)
       //    btnTuningDetails.Visible = true;
@@ -745,7 +744,6 @@ namespace TvPlugin
       GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
       GUIControl.HideControl(GetID, (int)Controls.IMG_REC_RECTANGLE);
       GUIControl.HideControl(GetID, (int)Controls.IMG_REC_CHANNEL);
-      Log.Debug("Roy Issue Tag 8");
       _updateTimer = DateTime.Now;
     }
 
