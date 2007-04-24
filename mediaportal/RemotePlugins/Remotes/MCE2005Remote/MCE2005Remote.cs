@@ -81,6 +81,7 @@ namespace MediaPortal.InputDevices
       {
         Remote.LogVerbose = logVerbose;
         // Register Device
+        Remote.Click = null;
         Remote.Click += new RemoteEventHandler(OnRemoteClick);
         Remote.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
       }
