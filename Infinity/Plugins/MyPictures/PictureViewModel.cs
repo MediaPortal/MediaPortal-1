@@ -117,7 +117,13 @@ namespace ProjectInfinity.Pictures
         }
         _viewMode = value;
         OnPropertyChanged(new PropertyChangedEventArgs("ViewMode"));
+        OnPropertyChanged(new PropertyChangedEventArgs("ViewLabel"));
       }
+    }
+
+    public string ViewLabel
+    {
+      get { return "View: " + ViewMode; }
     }
 
     protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)

@@ -49,6 +49,14 @@ namespace ProjectInfinity.Pictures
       }
     }
 
+    public long  Size
+    {
+      get
+      {
+        return _info.Length;
+      }
+    }
+
     public override void Accept(IMediaVisitor visitor)
     {
       visitor.Visit(this);
