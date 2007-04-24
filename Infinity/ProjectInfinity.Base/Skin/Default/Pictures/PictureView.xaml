@@ -9,7 +9,10 @@
       <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Name}" />
     </DataTemplate>
     <DataTemplate DataType="{x:Type pictures:Picture}">
-      <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Name}" />
+        <WrapPanel>
+          <Image Source="{Binding Thumbnail}" Width="30" Height="30"/>
+          <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Name}"/>
+        </WrapPanel>
     </DataTemplate>
     <Style x:Key="pictureListView" TargetType="controls:ListBox">
       <Setter Property="SnapsToDevicePixels" Value="true"/>
