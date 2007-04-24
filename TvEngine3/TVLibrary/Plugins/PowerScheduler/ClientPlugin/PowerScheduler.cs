@@ -654,6 +654,7 @@ namespace MediaPortal.Plugins.Process
         if (handler != this)
         {
           DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
+          if (nextTime < earliestWakeupTime) nextTime = DateTime.MaxValue;
           if (nextTime < nextWakeupTime)
           {
             Log.Debug("PSClientPlugin: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
@@ -780,7 +781,7 @@ namespace MediaPortal.Plugins.Process
 
     private void RefreshStateDisplay(bool refresh)
     {
-      TvOverlay tvoverlay = TvOverlay.Instance;
+      /*TvOverlay tvoverlay = TvOverlay.Instance;
       if (tvoverlay != null)
       {
         bool disAllowShutdown;
@@ -818,7 +819,7 @@ namespace MediaPortal.Plugins.Process
         }
 
         tvoverlay.UpdateState(mode, text);
-      }
+      }*/
     }
 
     public delegate bool IECallBack(IntPtr hwnd, int lParam);

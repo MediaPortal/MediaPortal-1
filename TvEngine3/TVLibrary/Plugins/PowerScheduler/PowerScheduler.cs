@@ -1084,6 +1084,7 @@ namespace TvEngine.PowerScheduler
         foreach (IWakeupHandler handler in _wakeupHandlers)
         {
           DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
+          if (nextTime < earliestWakeupTime) nextTime = DateTime.MaxValue;
           LogVerbose("PowerScheduler.NextWakeupTime: inspecting handler:{0} time:{1}", handler.HandlerName, nextTime);
           if (nextTime < nextWakeupTime && nextTime >= earliestWakeupTime)
           {
