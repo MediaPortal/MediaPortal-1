@@ -64,7 +64,7 @@ namespace TvEngine.PowerScheduler
     /// Creates a new PowerSchedulerFactory
     /// </summary>
     /// <param name="controller">Reference to tvservice's TVController</param>
-    public PowerSchedulerFactory(IController controller,PowerScheduler powerScheduler)
+    public PowerSchedulerFactory(IController controller)
     {
       IStandbyHandler standbyHandler;
 

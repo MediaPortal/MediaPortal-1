@@ -668,6 +668,7 @@ namespace MediaPortal.Plugins.Process
       foreach (IWakeable wakeable in wakeables)
       {
         DateTime nextTime = wakeable.GetNextEvent(earliestWakeupTime);
+        if (nextTime < earliestWakeupTime) nextTime = DateTime.MaxValue;
         if (nextTime < nextWakeupTime)
         {
           Log.Debug("PSClientPlugin: found next wakeup time {0} by {1}", nextTime, wakeable.PluginName());

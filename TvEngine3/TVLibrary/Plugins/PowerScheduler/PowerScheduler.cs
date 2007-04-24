@@ -210,7 +210,7 @@ namespace TvEngine.PowerScheduler
 
       // Create the default set of standby/resume handlers
       if (_factory == null)
-        _factory = new PowerSchedulerFactory(controller,this);
+        _factory = new PowerSchedulerFactory(controller);
       _factory.CreateDefaultSet();
 
       SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
