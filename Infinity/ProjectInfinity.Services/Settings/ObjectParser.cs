@@ -158,7 +158,8 @@ namespace ProjectInfinity.Settings
       ILogger log = ServiceScope.Get<ILogger>();
       log.Debug("Deserialize({0},{1})", obj.ToString(), fileName);
       // if xml file doesn't exist yet then create it
-      if (!File.Exists(fileName)) Serialize(obj);
+      string fullFileName = String.Format(@"{0}\MediaPortal Infinity\Config\{1}", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), fileName); ;
+      if (!File.Exists(fullFileName)) Serialize(obj);
 
       foreach (PropertyInfo property in obj.GetType().GetProperties())
       {
