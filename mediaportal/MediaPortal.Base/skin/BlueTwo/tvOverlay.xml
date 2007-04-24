@@ -4,7 +4,7 @@
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <control>
+    <control> 
       <description>rec logo</description>
       <type>image</type>
       <id>4</id>
@@ -13,29 +13,6 @@
       <texture>remote_red.png</texture>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <visible>no</visible>	
-    </control>
-    <control>
-      <description>rec logo</description>
-      <type>image</type>
-      <id>5</id>
-      <posX>20</posX>
-      <posY>10</posY>
-      <texture>remote_yellow.png</texture>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <visible>no</visible>
-    </control>
-  <control>
-      <description>State</description>
-      <type>label</type>
-      <id>6</id>
-      <posX>50</posX>
-      <posY>10</posY>
-      <label></label>
-      <align>left</align>
-      <font>font13</font>
-      <textcolor>ffa9d0f7</textcolor>
     </control>
   </controls>
 </window>
