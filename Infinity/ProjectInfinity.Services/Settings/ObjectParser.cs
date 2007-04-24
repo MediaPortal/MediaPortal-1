@@ -34,7 +34,9 @@ namespace ProjectInfinity.Settings
       Dictionary<string, string> globalSettingsList = new Dictionary<string, string>();
       Dictionary<string, string> userSettingsList = new Dictionary<string, string>();
       XmlSettingsProvider xmlWriter = new XmlSettingsProvider(fileName);
-      bool isFirstSave = (!File.Exists(fileName));
+      string fullFileName = String.Format(@"{0}\MediaPortal Infinity\Config\{1}", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), fileName); ;
+
+      bool isFirstSave = (!File.Exists(fullFileName));
       foreach (PropertyInfo property in obj.GetType().GetProperties())
       {
         Type thisType = property.PropertyType;
