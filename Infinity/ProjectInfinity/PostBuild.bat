@@ -18,9 +18,6 @@ xcopy /y %1\mytv\MyTv\bin\%2\gentle.config .
 REM Menu
 xcopy /y %1\Plugins\Menu\bin\%2\Menu.* Plugins\Menu\
 
-REM MyPictures
-xcopy /y %1\Plugins\MyPictures\bin\%2\MyPictures.* Plugins\MyPictures\
-
 REM MyVideos
 xcopy /y %1\Plugins\MyVideos\bin\%2\MyVideos.* .
 

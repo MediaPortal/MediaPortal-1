@@ -8,11 +8,17 @@
     <DataTemplate DataType="{x:Type pictures:Folder}">
       <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Name}" />
     </DataTemplate>
-    <DataTemplate DataType="{x:Type pictures:Picture}">
+    <DataTemplate x:Key="pictureListTemplate">
         <WrapPanel>
           <Image Source="{Binding Thumbnail}" Width="30" Height="30"/>
           <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Name}"/>
         </WrapPanel>
+    </DataTemplate>
+    <DataTemplate x:Key="pictureIconTemplate">
+      <StackPanel>
+        <Image Source="{Binding Thumbnail}" Width="150" Height="150"/>
+        <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Name}"/>
+      </StackPanel>
     </DataTemplate>
     <Style x:Key="pictureListView" TargetType="controls:ListBox">
       <Setter Property="SnapsToDevicePixels" Value="true"/>
@@ -38,6 +44,14 @@
               Focusable="False">
               <VirtualizingStackPanel IsItemsHost="True" FocusManager.IsFocusScope="False"  />
             </ScrollViewer>
+            <ControlTemplate.Triggers>
+              <DataTrigger Binding="{Binding ViewMode}" Value="List">
+                <Setter Property="ItemTemplate" Value="{StaticResource pictureListTemplate}"/>
+              </DataTrigger>
+              <DataTrigger Binding="{Binding ViewMode}" Value="Icon">
+                <Setter Property="ItemTemplate" Value="{StaticResource pictureIconTemplate}"/>
+              </DataTrigger>
+            </ControlTemplate.Triggers>
           </ControlTemplate>
         </Setter.Value>
       </Setter>
@@ -52,7 +66,16 @@
       <ColumnDefinition Width="2*" />
     </Grid.ColumnDefinitions>
       <DockPanel  Name="dockPanel1" VerticalAlignment="Top" LastChildFill ="False" Grid.Column="0">
-        <Button Content="View" Style="{StaticResource MpButton}" Command="{Binding View}" DockPanel.Dock="Top"  />
+        <Button Style="{StaticResource MpButton}" Command="{Binding View}" DockPanel.Dock="Top" >
+          <ContentPresenter  TextElement.FontFamily="Segoe Media Center" TextElement.FontSize="20" TextElement.Foreground="White">
+            <ContentPresenter.Content>
+            <WrapPanel>
+              <TextBlock Text="View:" Margin="0,0,5,0"/>
+              <TextBlock Text="{Binding ViewMode}"/>
+            </WrapPanel>
+            </ContentPresenter.Content>
+          </ContentPresenter>
+        </Button>
         <Button Content="Sort" Style="{StaticResource MpButton}" DockPanel.Dock="Top"  />
         <Button Content="Slideshow" Style="{StaticResource MpButton}" DockPanel.Dock="Top"  />
       </DockPanel>
@@ -62,7 +85,7 @@
           <Label DockPanel.Dock="Right"   Style="{DynamicResource LabelNormalStyleWhite}"  Content ="{Binding Items.Count}" Margin ="0,0,0,0"/>
           <Label Style="{StaticResource LabelNormalStyleWhite}"  Content="{Binding CurrentFolder.Path}"/>
         </DockPanel>
-        <controls:ListBox Command="{Binding Path=Launch}" ItemsSource="{Binding Items}"  ItemContainerStyle="{StaticResource MpListViewItem}" Style="{StaticResource pictureListView}" IsSynchronizedWithCurrentItem="true"  Margin="30,0,30,0" />
+        <controls:ListBox Command="{Binding Path=Launch}" ViewMode="{Binding Path=ViewMode}" ItemsSource="{Binding Items}"  ItemContainerStyle="{StaticResource MpListViewItem}" Style="{StaticResource pictureListView}" IsSynchronizedWithCurrentItem="true"  Margin="30,0,30,0" />
       </DockPanel>
     </Grid>
   </DockPanel>

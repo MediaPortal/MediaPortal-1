@@ -177,7 +177,8 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>xcopy $(TargetDir)*$(TargetExt) $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(TargetName) /Y /D /I
+xcopy $(TargetDir)*.pdb $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(TargetName) /Y /D /I
+</PostBuildEvent>
   </PropertyGroup>
 </Project>
