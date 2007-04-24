@@ -157,19 +157,19 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Dialogs\Dialogs.csproj">
+    <ProjectReference Include="..\..\..\Dialogs\Dialogs.csproj">
       <Project>{82284525-5023-452C-89E3-A8765590AAEA}</Project>
       <Name>Dialogs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Keyboard\Keyboard.csproj">
+    <ProjectReference Include="..\..\..\Keyboard\Keyboard.csproj">
       <Project>{452B2155-B622-4246-90C3-4900B8DB06D9}</Project>
       <Name>Keyboard</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ProjectInfinity.Controls\ProjectInfinity.Controls.csproj">
+    <ProjectReference Include="..\..\..\ProjectInfinity.Controls\ProjectInfinity.Controls.csproj">
       <Project>{D30415D7-E1FC-4C3F-9667-E6301E1A2F6A}</Project>
       <Name>ProjectInfinity.Controls</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ProjectInfinity.Core\ProjectInfinity.Core.csproj">
+    <ProjectReference Include="..\..\..\ProjectInfinity.Core\ProjectInfinity.Core.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
       <Name>ProjectInfinity.Core</Name>
     </ProjectReference>

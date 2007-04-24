@@ -38,6 +38,7 @@ namespace MyTv
       _hostName = "";
     }
     #endregion
+
     #region properties
     /// <summary>
     /// Gets the localized label header.
@@ -101,6 +102,7 @@ namespace MyTv
       }
     }
     #endregion
+
     #region commands
     /// <summary>
     /// Returns ICommand to save the settings
@@ -133,6 +135,7 @@ namespace MyTv
       }
     }
     #endregion
+
     #region command classes
     /// <summary>
     /// This command will save the hostname
