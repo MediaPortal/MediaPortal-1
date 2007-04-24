@@ -113,6 +113,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <ProjectReference Include="New Folder1\DefaultSkin.csproj" />
+    <Page Include="Dialogs\FolderDialog.xaml" />
     <Page Include="Dialogs\MpDialogOk.xaml" />
     <Page Include="Dialogs\MpDialogYesNo.xaml" />
     <Page Include="Dialogs\MpMenu.xaml" />
@@ -135,7 +136,6 @@
     <Page Include="MyWeather\Weather.xaml" />
     <Page Include="MyWeather\WeatherSetup.xaml" />
     <Page Include="Pictures\PictureView.xaml" />
-    <Page Include="Pictures\PictureView_resources.xaml" />
     <Page Include="theme.xaml" />
     <Resource Include="Gfx\arrow_round_down_nofocus.png" />
     <Resource Include="Gfx\arrow_round_up_nofocus.png" />
