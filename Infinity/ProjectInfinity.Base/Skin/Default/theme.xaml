@@ -2659,9 +2659,7 @@
                 </RadialGradientBrush>
               </Rectangle.Fill>
             </Rectangle>
-            <Path x:Name="check1" Visibility="Hidden" Fill="#FFFFFFFF" Stretch="Fill" Stroke="#FFFFFFFF" HorizontalAlignment="Left" Margin="6.25,11.75,0,6" Width="9.25" Data="M2.75,12.25 L11,24.5"/>
-            <Path x:Name="check2" Visibility="Hidden" Fill="#FFFFFFFF" Stretch="Fill" Stroke="#FFFFFFFF" HorizontalAlignment="Left" Margin="14.25,4.25,0,6.25" Width="14.25" Data="M11,24.25 L28.25,4.75"/>
-            <Path Fill="#FFFFFFFF" Stretch="Fill" Stroke="#FFFFFFFF" HorizontalAlignment="Right" Margin="0,0,-53.167,-42.167" VerticalAlignment="Bottom" Width="1" Height="1" Data="M177.66667,72.666667"/>
+          	<Path Visibility="Hidden" Fill="#FFFFFFFF" Stretch="Fill" Stroke="#FFFFFFFF" StrokeThickness="2" HorizontalAlignment="Left" Margin="11.382,12.079,0,6.635" x:Name="check" Width="12.016" Data="M22.645977,12.578536 L14.858618,23.864771 12.139105,20.117524 14.858041,23.864623 z"/>
           </Grid>
           <ControlTemplate.Triggers>
             <EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
@@ -2682,9 +2680,9 @@
               </Trigger.ExitActions>
             </Trigger>
             <Trigger Property="IsChecked" Value="True">
-              <Setter TargetName="check1" Property="Visibility" Value="Visible" />
-              <Setter TargetName="check2" Property="Visibility" Value="Visible" />
+            	<Setter Property="Visibility" TargetName="check" Value="Visible"/>
             </Trigger>
+          	<Trigger Property="MinWidth" Value="0"/>
           </ControlTemplate.Triggers>
         </ControlTemplate>
 
