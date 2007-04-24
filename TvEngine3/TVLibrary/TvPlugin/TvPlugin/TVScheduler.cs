@@ -642,7 +642,11 @@ namespace TvPlugin
             if (System.IO.File.Exists(fileName))
             {
               g_Player.Play(fileName, g_Player.MediaType.Recording);
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              //dero: mantis #976
+              if (g_Player.IsTimeShifting)
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              else
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
               return;
             }
             else
@@ -672,7 +676,11 @@ namespace TvPlugin
             {
               g_Player.Play(fileName, g_Player.MediaType.Recording);
               g_Player.SeekAbsolute(g_Player.Duration);
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              //dero: mantis #976
+              if( g_Player.IsTimeShifting )
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              else
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
               return;
             }
             else
