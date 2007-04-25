@@ -219,6 +219,7 @@ namespace SetupTv.Sections
       }
       mpListViewMapped.Sort();
       mpListViewChannels.Sort();
+      ReOrderMap();
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
     }
