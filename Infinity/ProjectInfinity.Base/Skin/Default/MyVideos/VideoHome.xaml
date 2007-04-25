@@ -38,7 +38,7 @@
           <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Image Grid.Row="0" Grid.Column="0" Height="64" Width="64"  Source="{Binding Logo}" />
-        <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Title}"/>
+        <controls:ScrollingLabel ScrollSpeed="Medium" Height="32" Grid.Row="1" Grid.Column="0" StartElement="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Mode=OneWay}" TextStyle="{StaticResource TextNormalStyleWhite}" Text="{Binding Title}"/>
       </Grid>
     </DataTemplate>
 

@@ -55,6 +55,8 @@
     <Compile Include="Menu.cs" />
     <Compile Include="MenuCollection.cs" />
     <Compile Include="MenuItem.cs" />
+    <Compile Include="ScrollingLabel.cs" />
+    <Compile Include="ScrollSpeed.cs" />
     <Compile Include="View.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
