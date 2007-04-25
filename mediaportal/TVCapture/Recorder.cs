@@ -175,9 +175,6 @@ namespace MediaPortal.TV.Recording
         if (_commandProcessor != null) _commandProcessor.Paused = true;
       }
 
-
-      //subscribe to window change notifications
-      GUIWindowManager.OnActivateWindow += new GUIWindowManager.WindowActivationHandler(GUIWindowManager_OnActivateWindow);
       GUIWindowManager.Receivers += new SendMessageHandler(Recorder.OnMessage);
       _state = State.Initialized;
 
@@ -222,7 +219,6 @@ namespace MediaPortal.TV.Recording
       if (!Running) return;
       Log.Info("Recorder: stop");
       //unsubscribe from events
-      GUIWindowManager.OnActivateWindow -= new GUIWindowManager.WindowActivationHandler(GUIWindowManager_OnActivateWindow);
       GUIWindowManager.Receivers -= new SendMessageHandler(Recorder.OnMessage);
       RecorderProperties.Clean();
 
@@ -254,19 +250,16 @@ namespace MediaPortal.TV.Recording
     #endregion
 
     /// <summary>
-    /// This callback gets called by the window manager when user switches to another window (plugin)
-    /// When the users enters the My TV plugin we want to enable Direct3d exclusive mode to prevent
-    /// any tearing. And when the users leaves the My Tv plugin we want to disable Direct3d exclusive mode 
-    /// again
+    /// Controls toggling between regular & exclusive DirectX mode.
     /// </summary>
-    /// <param name="windowId">id of the window which is about to be activated</param>
-    static void GUIWindowManager_OnActivateWindow(int windowId)
+    /// <param name="enable">indicator if we want to enable or disable exclusive DirectX</param>
+    static void SwitchDXExclusive(bool enable)
     {
       //Note, because of a direct3d limitation we cannot switch between
       //normal / exclusive mode when a file is playing
       if (!Running) return;
       if (g_Player.Playing) return;
-      if (GUIGraphicsContext.IsTvWindow(windowId))
+      if (enable)
       {
         // we enter my tv, enable exclusive mode
         Log.WriteFile(LogType.Recorder, "Recorder: Enabling DX9 exclusive mode");
@@ -280,8 +273,7 @@ namespace MediaPortal.TV.Recording
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
-    }//static public void GUIWindowManager_OnActivateWindow()
-
+    }
 
 
     /// <summary>
@@ -890,13 +882,6 @@ namespace MediaPortal.TV.Recording
     static bool reEntrantStopViewing = false;
     static public void StopViewing()
     {
-      if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
-      {
-        Log.Info("Recorder: Disabling DX9 exclusive mode");
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendMessage(msg);
-      }
-
       if (!Running) return;
       if (reEntrantStopViewing) return;
       try
@@ -911,6 +896,7 @@ namespace MediaPortal.TV.Recording
         //send Recorder command to process thread to stop viewing
         StopTvCommand cmd = new StopTvCommand();
         _commandProcessor.Execute(cmd);
+        SwitchDXExclusive(false);
       }
       finally
       {
@@ -963,11 +949,11 @@ namespace MediaPortal.TV.Recording
         {
           if (IsViewing() && IsTimeShifting() == timeshift && TVChannelName == channel) return true;
           g_Player.Stop();
+          SwitchDXExclusive(true);
         }
         else
         {
           g_Player.Stop();
-          if (IsViewing() == false) return true;
         }
         if (_commandProcessor.Paused)
         {
@@ -997,9 +983,13 @@ namespace MediaPortal.TV.Recording
           cmd = new StopTvCommand();
         }
         //wait till thread finished this command
-        if (wait)
+        if (wait || !TVOnOff)
         {
           _commandProcessor.Execute(cmd);
+          if (!TVOnOff)
+          {
+            SwitchDXExclusive(false);
+          }
           if (cmd.Succeeded) return true;
           errorMessage = cmd.ErrorMessage;
           return false;

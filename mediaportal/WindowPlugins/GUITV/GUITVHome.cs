@@ -774,7 +774,7 @@ namespace MediaPortal.GUI.TV
       if (_isTvOn)
         Log.Info("GUITVHome.ViewChannelAndCheck(): View channel={0} ts:{1}", channel, _isTimeShifting);
       else
-        Log.Info("GUITVHome.ViewChannelAndCheckl(): _isTvOn = off - autostart doesn't apply");
+        Log.Info("GUITVHome.ViewChannelAndCheck(): _isTvOn = off - autostart doesn't apply");
 
       if (channel != Navigator.CurrentChannel)
         Navigator.LastViewedChannel = Navigator.CurrentChannel;
