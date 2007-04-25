@@ -163,6 +163,8 @@ namespace TvPlugin
 
     void Update()
     {
+      GUIListItem lastSelectedItem=lstUpcomingEpsiodes.SelectedListItem;
+      int itemToSelect = -1;
       lstUpcomingEpsiodes.Clear();
       if (currentProgram == null) return;
 
@@ -259,9 +261,15 @@ namespace TvPlugin
                                   Utils.GetShortDayString(episode.StartTime),
                                   episode.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                   episode.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat)); ;
-
+        if (lastSelectedItem != null)
+        {
+          if ((item.Label == lastSelectedItem.Label) && (item.Label2 == lastSelectedItem.Label2))
+            itemToSelect = lstUpcomingEpsiodes.Count;
+        }
         lstUpcomingEpsiodes.Add(item);
       }
+      if (itemToSelect != -1)
+        lstUpcomingEpsiodes.SelectedListItemIndex = itemToSelect;
     }
     bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
     {
@@ -390,6 +398,7 @@ namespace TvPlugin
           schedule.Persist();
           TvServer server = new TvServer();
           server.OnNewSchedule();
+
           Update();
         }
         else
