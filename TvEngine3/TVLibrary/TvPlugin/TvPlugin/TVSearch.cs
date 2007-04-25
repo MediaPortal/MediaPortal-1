@@ -232,6 +232,7 @@ namespace TvPlugin
         currentSearchMode = SearchMode.Title;
         currentLevel = 0;
         //currentSearchKind=-1;
+        filterLetter = "";
         Update();
         GUIControl.FocusControl(GetID, btnSearchByTitle.GetID);
       }
