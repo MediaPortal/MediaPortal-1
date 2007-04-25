@@ -12,11 +12,20 @@ xcopy /y %1\ProjectInfinity.Utilities\bin\%2\ProjectInfinity.Utilities.* .
 
 REM Copy Plugins
 REM MyTv
-xcopy /y %1\mytv\MyTv\bin\%2\*.dll .
+xcopy /y %1\dialogs\bin\%2\dialogs.* .
+xcopy /y %1\keyboard\bin\%2\keyboard.* .
+xcopy /y %1\mytv\MyTv\bin\%2\mytv.* .
+xcopy /y %1\mytv\MyTv\bin\%2\gentle*.* .
+xcopy /y %1\mytv\MyTv\bin\%2\log4net.* .
+xcopy /y %1\mytv\MyTv\bin\%2\MySql.Data.* .
+xcopy /y %1\mytv\MyTv\bin\%2\TvControl.* .
+xcopy /y %1\mytv\MyTv\bin\%2\TVDatabase.* .
+xcopy /y %1\mytv\MyTv\bin\%2\TvBusinessLayer.* .
+xcopy /y %1\mytv\MyTv\bin\%2\TvLibrary.Interfaces.* .
 xcopy /y %1\mytv\MyTv\bin\%2\gentle.config .
 
 REM Menu
-xcopy /y %1\Plugins\Menu\bin\%2\Menu.* Plugins\Menu\
+xcopy /y %1\Plugins\Menu\bin\%2\Menu.dll Plugins\Menu\
 
 REM MyVideos
 xcopy /y %1\Plugins\MyVideos\bin\%2\MyVideos.* .
