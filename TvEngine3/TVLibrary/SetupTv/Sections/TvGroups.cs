@@ -428,5 +428,44 @@ namespace SetupTv.Sections
       this.mpListViewMapped.Sort();
     }
 
+    private void btnUp_Click(object sender, EventArgs e)
+    {
+      mpListViewMapped.BeginUpdate();
+      ListView.SelectedIndexCollection indexes = mpListViewMapped.SelectedIndices;
+      if (indexes.Count == 0) return;
+      for (int i = 0; i < indexes.Count; ++i)
+      {
+        int index = indexes[i];
+        if (index > 0)
+        {
+          ListViewItem item = mpListViewMapped.Items[index];
+          mpListViewMapped.Items.RemoveAt(index);
+          mpListViewMapped.Items.Insert(index - 1, item);
+        }
+      }
+      ReOrderMap();
+      mpListViewMapped.EndUpdate();
+    }
+
+    private void btnDown_Click(object sender, EventArgs e)
+    {
+      mpListViewMapped.BeginUpdate();
+      ListView.SelectedIndexCollection indexes = mpListViewMapped.SelectedIndices;
+      if (indexes.Count == 0) return;
+      if (mpListViewMapped.Items.Count < 2) return;
+      for (int i = indexes.Count - 1; i >= 0; i--)
+      {
+        int index = indexes[i];
+        ListViewItem item = mpListViewMapped.Items[index];
+        mpListViewMapped.Items.RemoveAt(index);
+        if (index + 1 < mpListViewMapped.Items.Count)
+          mpListViewMapped.Items.Insert(index + 1, item);
+        else
+          mpListViewMapped.Items.Add(item);
+      }
+      ReOrderMap();
+      mpListViewMapped.EndUpdate();
+    }
+
   }
 }

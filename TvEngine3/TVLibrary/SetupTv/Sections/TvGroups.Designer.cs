@@ -51,6 +51,8 @@ namespace SetupTv.Sections
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.mpComboBoxGroup = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.btnDown = new System.Windows.Forms.Button();
+      this.btnUp = new System.Windows.Forms.Button();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -63,7 +65,7 @@ namespace SetupTv.Sections
       this.mpTabControl1.Location = new System.Drawing.Point(3, 3);
       this.mpTabControl1.Name = "mpTabControl1";
       this.mpTabControl1.SelectedIndex = 0;
-      this.mpTabControl1.Size = new System.Drawing.Size(461, 382);
+      this.mpTabControl1.Size = new System.Drawing.Size(461, 385);
       this.mpTabControl1.TabIndex = 0;
       this.mpTabControl1.TabIndexChanged += new System.EventHandler(this.mpTabControl1_TabIndexChanged);
       this.mpTabControl1.SelectedIndexChanged += new System.EventHandler(this.mpTabControl1_SelectedIndexChanged);
@@ -79,7 +81,7 @@ namespace SetupTv.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(453, 356);
+      this.tabPage1.Size = new System.Drawing.Size(453, 359);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Groups";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -159,6 +161,8 @@ namespace SetupTv.Sections
       // 
       // tabPage2
       // 
+      this.tabPage2.Controls.Add(this.btnDown);
+      this.tabPage2.Controls.Add(this.btnUp);
       this.tabPage2.Controls.Add(this.mpButtonUnmap);
       this.tabPage2.Controls.Add(this.mpButtonMap);
       this.tabPage2.Controls.Add(this.mpLabel3);
@@ -170,7 +174,7 @@ namespace SetupTv.Sections
       this.tabPage2.Location = new System.Drawing.Point(4, 22);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(453, 356);
+      this.tabPage2.Size = new System.Drawing.Size(453, 359);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Mapping";
       this.tabPage2.UseVisualStyleBackColor = true;
@@ -286,6 +290,26 @@ namespace SetupTv.Sections
       this.mpLabel1.TabIndex = 9;
       this.mpLabel1.Text = "Group:";
       // 
+      // btnDown
+      // 
+      this.btnDown.Location = new System.Drawing.Point(207, 211);
+      this.btnDown.Name = "btnDown";
+      this.btnDown.Size = new System.Drawing.Size(44, 23);
+      this.btnDown.TabIndex = 17;
+      this.btnDown.Text = "Down";
+      this.btnDown.UseVisualStyleBackColor = true;
+      this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
+      // 
+      // btnUp
+      // 
+      this.btnUp.Location = new System.Drawing.Point(207, 185);
+      this.btnUp.Name = "btnUp";
+      this.btnUp.Size = new System.Drawing.Size(44, 23);
+      this.btnUp.TabIndex = 16;
+      this.btnUp.Text = "Up";
+      this.btnUp.UseVisualStyleBackColor = true;
+      this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
+      // 
       // TvGroups
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -324,5 +348,7 @@ namespace SetupTv.Sections
       private System.Windows.Forms.Button buttonDown;
       private System.Windows.Forms.Button buttonUtp;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonRenameGroup;
+    private System.Windows.Forms.Button btnDown;
+    private System.Windows.Forms.Button btnUp;
   }
 }
