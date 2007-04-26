@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ProjectInfinity;
 using ProjectInfinity.Thumbnails;
+using ProjectInfinity.Settings;
 using ProjectInfinity.Playlist;
 using System.ComponentModel;
 
@@ -23,7 +24,7 @@ namespace MyVideos
     #region ctors
     public VideoModel()
     {
-      ServiceScope.Get<IThumbnailBuilder>().OnThumbnailGenerated += new ThumbNailGenerateHandler(VideoModel_OnThumbnailGenerated);
+      Init();
     }
 
     /// <summary>
@@ -32,8 +33,8 @@ namespace MyVideos
     /// <param name="movieName">video name</param>
     public VideoModel(string movieName)
     {
-      ServiceScope.Get<IThumbnailBuilder>().OnThumbnailGenerated += new ThumbNailGenerateHandler(VideoModel_OnThumbnailGenerated);
       _name = movieName;
+      Init();
     }
 
     /// <summary>
@@ -48,8 +49,11 @@ namespace MyVideos
 
       int tmpSize = (movieSize / 1024) / 1024;
       _size = Math.Round((double)tmpSize, 2);
+      Init();
+    }
+    void Init()
+    {
       ServiceScope.Get<IThumbnailBuilder>().OnThumbnailGenerated += new ThumbNailGenerateHandler(VideoModel_OnThumbnailGenerated);
-
     }
 
     /// <summary>
@@ -137,7 +141,12 @@ namespace MyVideos
           if (!Thumbs.Exists(Path))
           {
             _logo = Thumbs.MyVideoIconPath;
-            ServiceScope.Get<IThumbnailBuilder>().Generate(Path);
+            VideoSettings settings = new VideoSettings();
+            ServiceScope.Get<ISettingsManager>().Load(settings);
+            if (settings.AutoCreateThumbnails)
+            {
+              ServiceScope.Get<IThumbnailBuilder>().Generate(Path);
+            }
           }
           else
           {

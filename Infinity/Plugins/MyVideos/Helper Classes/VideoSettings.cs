@@ -10,6 +10,7 @@ namespace MyVideos
     bool _showExtensions;
     List<string> _shares;
     string _videoExtensions;
+    bool _createThumbnails;
     #endregion
 
     /// <summary>
@@ -45,6 +46,12 @@ namespace MyVideos
     {
       get { return this._showExtensions; }
       set { this._showExtensions = value; }
+    }
+    [Setting(SettingScope.User, "True")]
+    public bool AutoCreateThumbnails
+    {
+      get { return this._createThumbnails; }
+      set { this._createThumbnails = value; }
     }
   }
 }

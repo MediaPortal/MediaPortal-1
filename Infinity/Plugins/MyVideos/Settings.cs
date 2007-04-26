@@ -11,41 +11,32 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ProjectInfinity;
-using ProjectInfinity.Logging;
-using System.IO;
-using System.Windows.Markup;
-using ProjectInfinity.Plugins;
 using ProjectInfinity.Navigation;
+using ProjectInfinity.Players;
+using ProjectInfinity.Logging;
 using ProjectInfinity.Controls;
+using ProjectInfinity.Plugins;
 
-namespace MyWeather
+namespace MyVideos
 {
   /// <summary>
-  /// Interaction logic for WeatherSetup.xaml
+  /// Interaction logic for VideoFullscreen.xaml
   /// </summary>
 
-  public class WeatherSetup : View, IMenuCommand, IDisposable
+  public partial class Settings : View, IMenuCommand, IDisposable
   {
-    WeatherSetupViewModel _model;
-
-    public WeatherSetup()
+    public Settings()
     {
-      WeatherSetupViewModel _model = new WeatherSetupViewModel();
-      DataContext = _model;
+      DataContext = new SettingsViewModel();
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
     }
-
     public void Run()
     {
-      ServiceScope.Get<INavigationService>().Navigate(new WeatherSetup());
+      ServiceScope.Get<INavigationService>().Navigate(new Settings());
     }
-
-    #region IDisposable Members
 
     public void Dispose()
     {
     }
-
-    #endregion
   }
 }
