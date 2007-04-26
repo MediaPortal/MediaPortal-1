@@ -31,6 +31,7 @@ namespace Dialogs
     DialogResult _result;
     int _selectedIndex;
     MenuCollectionView _menuCollection;
+    string _text = "";
     #endregion
 
     #region ctor
@@ -93,6 +94,18 @@ namespace Dialogs
       get
       {
         return _window;
+      }
+    }
+    public string Text
+    {
+      get
+      {
+        return _text;
+      }
+      set
+      {
+        _text = value;
+        ChangeProperty("Text");
       }
     }
     public string Title

@@ -43,6 +43,7 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DialogTextInput.cs" />
     <Compile Include="DialogMenuItem.cs" />
     <Compile Include="DialogMenuItemCollection.cs" />
     <Compile Include="DialogResult.cs" />
