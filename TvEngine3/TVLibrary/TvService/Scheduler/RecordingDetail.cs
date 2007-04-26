@@ -229,8 +229,8 @@ namespace TvService
       strInput = Utils.ReplaceTag(strInput, "%channel%", Utils.MakeFileName(_schedule.ReferencedChannel().Name), "unknown");
       strInput = Utils.ReplaceTag(strInput, "%title%", Utils.MakeFileName(Program.Title), "unknown");
       //strInput = Utils.ReplaceTag(strInput, "%name%", Utils.MakeFileName(Program.Episode), "unknown");
-      //strInput = Utils.ReplaceTag(strInput, "%series%", Utils.MakeFileName(Program.SeriesNum), "unknown");
-      //strInput = Utils.ReplaceTag(strInput, "%episode%", Utils.MakeFileName(Program.EpisodeNum), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%series%", Utils.MakeFileName(Program.SeriesNum), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%episode%", Utils.MakeFileName(Program.EpisodeNum), "unknown");
       //strInput = Utils.ReplaceTag(strInput, "%part%", Utils.MakeFileName(Program.EpisodePart), "unknown");
       strInput = Utils.ReplaceTag(strInput, "%date%", Utils.MakeFileName(Program.StartTime.ToString("yyyy-MM-dd")), "unknown");
       strInput = Utils.ReplaceTag(strInput, "%start%", Utils.MakeFileName(Program.StartTime.ToShortTimeString()), "unknown");
