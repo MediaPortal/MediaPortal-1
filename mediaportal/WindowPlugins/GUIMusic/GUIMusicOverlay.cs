@@ -79,6 +79,7 @@ namespace MediaPortal.GUI.Music
     bool _didRenderLastTime    = false;
     bool _visualisationEnabled = true;
     bool _useID3               = false;
+    bool _settingVisEnabled    = true;
     PlayListPlayer playlistPlayer;
     #endregion
 
@@ -90,7 +91,8 @@ namespace MediaPortal.GUI.Music
       _useBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _visualisationEnabled = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", true) && _useBassEngine;
+        _settingVisEnabled = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", true) && _useBassEngine;
+        _visualisationEnabled = _settingVisEnabled;
         _useID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
       }
     }
@@ -145,13 +147,29 @@ namespace MediaPortal.GUI.Music
         OnUpdateState(false);
         return base.IsAnimating(AnimationType.WindowClose);
       }
-      
-      if ((g_Player.Playing) && (g_Player.CurrentFile != _fileName))
-      {
-        _fileName = g_Player.CurrentFile;
-        SetCurrentFile(_fileName);
-      }
 
+      if (g_Player.Playing) 
+      {
+        if (g_Player.CurrentFile.Contains(".tsbuffer")) // timeshifting via TVServer ?
+        {
+          PlayListItem pitem=playlistPlayer.GetCurrentItem();
+          if (pitem.FileName!=_fileName)
+          {
+            _fileName=pitem.FileName;
+            _visualisationEnabled=false;
+            SetCurrentFile(_fileName);
+          }
+        }
+        else
+          if (g_Player.CurrentFile!=_fileName)
+          {
+            _fileName=g_Player.CurrentFile;
+            if (_settingVisEnabled)
+              _visualisationEnabled = true;
+            SetCurrentFile(_fileName);
+          }
+      }
+      
       if ((Recorder.IsRadio()) && (Recorder.RadioStationName() != _fileName))
       {
         _fileName = Recorder.RadioStationName();
@@ -179,7 +197,6 @@ namespace MediaPortal.GUI.Music
         }
         return false;   // no final animation when the video window has changed, this happens most likely when a new window opens
       }
-      
       OnUpdateState(true);
       return true;
     }
@@ -285,7 +302,7 @@ namespace MediaPortal.GUI.Music
       // last.fm radio sets properties manually therefore do not overwrite them.
       if (fileName.Contains(@"/last.mp3?"))
         return;
-
+     
       GUIPropertyManager.RemovePlayerProperties();
       GUIPropertyManager.SetProperty("#Play.Current.Title", MediaPortal.Util.Utils.GetFilename(fileName));
       GUIPropertyManager.SetProperty("#Play.Current.File", System.IO.Path.GetFileName(fileName));
@@ -436,35 +453,54 @@ namespace MediaPortal.GUI.Music
       {
         // then check which radio station we're playing
         tag = new MusicTag();
-        ArrayList stations = new ArrayList();
-        RadioDatabase.GetStations(ref stations);
         string strFName = g_Player.CurrentFile;
-        foreach (RadioStation station in stations)
+        string coverart;
+        // check if radio via TVPlugin
+        if (strFName.EndsWith(".tsbuffer",StringComparison.InvariantCultureIgnoreCase))
         {
-          string coverart;
-          if (strFName.IndexOf(".radio") > 0)
+          // yes
+          if (fileName.IndexOf(".radio") > 0)
           {
-            string strChan = System.IO.Path.GetFileNameWithoutExtension(strFName);
-            if (station.Frequency.ToString().Equals(strChan))
-            {
-              // got it, check if it has a thumbnail
-              tag.Title = station.Name;
-              coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
-              if (coverart != String.Empty)
-                thumb = coverart;
-            }
+            string strChan = System.IO.Path.GetFileNameWithoutExtension(fileName);
+            tag.Title = strChan;
+            coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, strChan);
+            if (coverart != String.Empty)
+              thumb = coverart;
+            else
+              thumb = String.Empty;
           }
-          else
+        }
+        else
+        {
+          //no, radio via MediaPortal TVEngine2
+          ArrayList stations = new ArrayList();
+          RadioDatabase.GetStations(ref stations);
+          foreach (RadioStation station in stations)
           {
-            if (station.URL.Equals(strFName))
+            if (strFName.IndexOf(".radio") > 0)
             {
-              tag.Title = station.Name;
-              coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
-              if (coverart != String.Empty)
-                thumb = coverart;
+              string strChan = System.IO.Path.GetFileNameWithoutExtension(strFName);
+              if (station.Frequency.ToString().Equals(strChan))
+              {
+                // got it, check if it has a thumbnail
+                tag.Title = station.Name;
+                coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
+                if (coverart != String.Empty)
+                  thumb = coverart;
+              }
             }
-          }
-        } //foreach (RadioStation station in stations)
+            else
+            {
+              if (station.URL.Equals(strFName))
+              {
+                tag.Title = station.Name;
+                coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
+                if (coverart != String.Empty)
+                  thumb = coverart;
+              }
+            }
+          } //foreach (RadioStation station in stations)
+        }  // if (strFName.Contains(".tsbuffer"))
       } //if (g_Player.IsRadio)
 
 
