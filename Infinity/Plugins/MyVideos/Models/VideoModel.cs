@@ -135,7 +135,11 @@ namespace MyVideos
         if (IsFolder && Title == "..")
           _logo = Thumbs.ParentFolder;
         else if (IsFolder)
+        {
+          if (Thumbs.ExistsFolder(Path))
+            return Thumbs.GetFolder(Path);
           _logo = Thumbs.Folder;
+        }
         else
         {
           if (!Thumbs.Exists(Path))

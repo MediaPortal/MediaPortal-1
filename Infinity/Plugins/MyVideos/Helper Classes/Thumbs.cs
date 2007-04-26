@@ -27,5 +27,18 @@ namespace MyVideos
     {
       return (System.IO.File.Exists(Get(mediaFile)));
     }
+
+    public static string GetFolder(string folder)
+    {
+      if (folder.EndsWith(@"\") )
+        return folder + @"folder.jpg";
+      else
+        return folder + @"\folder.jpg";
+    }
+
+    public static bool ExistsFolder(string folder)
+    {
+      return (System.IO.File.Exists(GetFolder(folder)));
+    }
   }
 }

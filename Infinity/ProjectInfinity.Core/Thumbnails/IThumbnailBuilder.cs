@@ -12,5 +12,8 @@ namespace ProjectInfinity.Thumbnails
     event ThumbNailGenerateHandler OnThumbnailGenerated;
     void Generate(string mediaFile);
     void Generate(List<string> mediaFiles);
+
+    void Generate(string mediaFile, Size size, string destinationFolder);
+    void Generate(List<string> mediaFiles, Size size, string destinationFolder);
   }
 }
