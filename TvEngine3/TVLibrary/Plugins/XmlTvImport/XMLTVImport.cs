@@ -227,7 +227,7 @@ namespace TvEngine
                       {
                         case "display-name":
                         case "Display-Name":
-                          displayName = xmlChannel.ReadElementContentAsString();
+                          if( displayName == null ) displayName = xmlChannel.ReadInnerXml(); else xmlChannel.Skip(); 
                           break;
                         // could read more stuff here, like icon...
                         default:
@@ -372,18 +372,22 @@ namespace TvEngine
                   {
                     switch (xmlProg.Name)
                     {
-                      case "title": nodeTitle = xmlProg.ReadElementContentAsString(); break;
-                      case "category": nodeCategory = xmlProg.ReadElementContentAsString(); break;
-                      case "desc": nodeDescription = xmlProg.ReadElementContentAsString(); break;
-                      case "sub-title": nodeEpisode = xmlProg.ReadElementContentAsString(); break;
-                      case "previously-shown": nodeRepeat = xmlProg.ReadElementContentAsString(); break;
+                      case "title": if (nodeTitle == null) nodeTitle = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
+                      case "category": if (nodeCategory == null) nodeCategory = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
+                      case "desc": if (nodeDescription == null) nodeDescription = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
+                      case "sub-title": if (nodeEpisode == null) nodeEpisode = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
+                      case "previously-shown": if (nodeRepeat == null) nodeRepeat = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
                       case "episode-num":
-                        nodeEpisodeNumSystem = xmlProg.GetAttribute("system");
-                        nodeEpisodeNum = xmlProg.ReadElementContentAsString();
+                        if (nodeEpisodeNum == null)
+                        {
+                          nodeEpisodeNumSystem = xmlProg.GetAttribute("system");
+                          nodeEpisodeNum = xmlProg.ReadInnerXml();
+                        }
+                        else xmlProg.Skip(); 
                         break;
-                      case "date": nodeDate = xmlProg.ReadElementContentAsString(); break;
-                      case "star-rating": nodeStarRating = xmlProg.ReadElementContentAsString(); break;
-                      case "rating": nodeClassification = xmlProg.ReadElementContentAsString(); break;
+                      case "date": if (nodeDate == null) nodeDate = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
+                      case "star-rating": if (nodeStarRating == null) nodeStarRating = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
+                      case "rating": if (nodeClassification == null) nodeClassification = xmlProg.ReadInnerXml(); else xmlProg.Skip();  break;
                       default:
                         // unknown, skip entire node
                         xmlProg.Skip();
