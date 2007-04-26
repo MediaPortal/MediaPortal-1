@@ -13,6 +13,7 @@ using ProjectInfinity.Localisation;
 using ProjectInfinity.Players;
 using ProjectInfinity.Settings;
 using ProjectInfinity.TaskBar;
+using ProjectInfinity.Thumbnails;
 using MediaLibrary;
 
 namespace ProjectInfinity
@@ -38,6 +39,7 @@ namespace ProjectInfinity
       ServiceScope.Add<ISettingsManager>(new SettingsManager());
       ServiceScope.Add<IWindowsTaskBar>(new WindowsTaskBar());
       ServiceScope.Add<IMediaLibrary>(new MediaLibraryClass());
+      ServiceScope.Add<IThumbnailBuilder>(new ThumbnailBuilder());
 
       // Parse Command Line options
       ICommandLineOptions piArgs = new CommandLineOptions();

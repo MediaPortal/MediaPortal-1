@@ -7,10 +7,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using System.Text;
 
-namespace MyTv
+namespace ProjectInfinity.Thumbnails
 {
   public class ThumbnailGenerator
   {
+
+    public event ThumbNailGenerateHandler OnThumbnailGenerated;
+
     /// <summary>
     /// Generates a thumbnail for a video file.
     /// </summary>

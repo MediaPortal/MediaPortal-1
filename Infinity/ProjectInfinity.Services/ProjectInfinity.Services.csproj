@@ -78,6 +78,7 @@
     <Compile Include="Settings\Xml\XmlSettingsProvider.cs" />
     <Compile Include="Taskbar\WindowsTaskBar.cs" />
     <Compile Include="Themes\ThemeManager.cs" />
+    <Compile Include="Thumbnails\ThumbnailBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProjectInfinity.Core\ProjectInfinity.Core.csproj">

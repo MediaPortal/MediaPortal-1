@@ -66,6 +66,8 @@
     <Compile Include="ServiceNotFoundException.cs" />
     <Compile Include="TaskBar\IWindowsTaskBar.cs" />
     <Compile Include="Themes\IThemeManager.cs" />
+    <Compile Include="Thumbnails\IThumbnailBuilder.cs" />
+    <Compile Include="Thumbnails\ThumbnailEventArgs.cs" />
     <Compile Include="Windows\IMainWindow.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\LogLevel.cs" />

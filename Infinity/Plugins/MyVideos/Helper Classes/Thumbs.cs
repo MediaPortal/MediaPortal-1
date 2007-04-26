@@ -18,5 +18,14 @@ namespace MyVideos
 
       return _uri.LocalPath;
     }
+
+    public static string Get(string mediaFile)
+    {
+      return System.IO.Path.ChangeExtension(mediaFile, ".png");
+    }
+    public static bool Exists(string mediaFile)
+    {
+      return (System.IO.File.Exists(Get(mediaFile)));
+    }
   }
 }

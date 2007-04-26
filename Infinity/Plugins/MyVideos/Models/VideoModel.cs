@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ProjectInfinity;
+using ProjectInfinity.Thumbnails;
 using ProjectInfinity.Playlist;
+using System.ComponentModel;
 
 namespace MyVideos
 {
-  public class VideoModel : IPlaylistItem
+  public class VideoModel : IPlaylistItem, INotifyPropertyChanged
   {
     #region variables
     bool _isFolder;
@@ -14,11 +17,13 @@ namespace MyVideos
     private string _path;
     private string _parentFolder;
     private string _logo = null;
+    public event PropertyChangedEventHandler PropertyChanged;
     #endregion
 
     #region ctors
     public VideoModel()
     {
+      ServiceScope.Get<IThumbnailBuilder>().OnThumbnailGenerated += new ThumbNailGenerateHandler(VideoModel_OnThumbnailGenerated);
     }
 
     /// <summary>
@@ -27,6 +32,7 @@ namespace MyVideos
     /// <param name="movieName">video name</param>
     public VideoModel(string movieName)
     {
+      ServiceScope.Get<IThumbnailBuilder>().OnThumbnailGenerated += new ThumbNailGenerateHandler(VideoModel_OnThumbnailGenerated);
       _name = movieName;
     }
 
@@ -42,6 +48,8 @@ namespace MyVideos
 
       int tmpSize = (movieSize / 1024) / 1024;
       _size = Math.Round((double)tmpSize, 2);
+      ServiceScope.Get<IThumbnailBuilder>().OnThumbnailGenerated += new ThumbNailGenerateHandler(VideoModel_OnThumbnailGenerated);
+
     }
 
     /// <summary>
@@ -58,6 +66,8 @@ namespace MyVideos
       _size = Math.Round((double)tmpSize, 2);
 
       _path = moviePath;
+      ServiceScope.Get<IThumbnailBuilder>().OnThumbnailGenerated += new ThumbNailGenerateHandler(VideoModel_OnThumbnailGenerated);
+
     }
     #endregion
 
@@ -122,10 +132,33 @@ namespace MyVideos
           _logo = Thumbs.ParentFolder;
         else if (IsFolder)
           _logo = Thumbs.Folder;
-        else if (_logo == null)
-          _logo = Thumbs.MyVideoIconPath;
-
+        else
+        {
+          if (!Thumbs.Exists(Path))
+          {
+            _logo = Thumbs.MyVideoIconPath;
+            ServiceScope.Get<IThumbnailBuilder>().Generate(Path);
+          }
+          else
+          {
+            _logo = Thumbs.Get(Path);
+          }
+        }
         return _logo;
+      }
+    }
+
+    void VideoModel_OnThumbnailGenerated(object sender, ThumbnailEventArgs e)
+    {
+      if (e.Succeeded)
+      {
+        if (e.MediaFile == Path)
+        {
+          if (PropertyChanged != null)
+          {
+            PropertyChanged(this, new PropertyChangedEventArgs("Logo"));
+          }
+        }
       }
     }
     #endregion
