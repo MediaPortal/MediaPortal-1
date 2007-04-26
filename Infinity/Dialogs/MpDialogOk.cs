@@ -24,7 +24,9 @@ namespace Dialogs
 
   public partial class MpDialogOk : ViewWindow
   {
+    #region variables
     DialogViewModel _model;
+    #endregion
     public MpDialogOk()
     {
       this.Visibility = Visibility.Visible;
