@@ -469,6 +469,12 @@ namespace MediaPortal.GUI.Alarm
     /// </summary>
     public void ShowAlarmTriggeredDialog_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
     {
+      if (GUILayerManager.GetLayer(GUILayerManager.LayerType.Dialog) != null)   // Don't show two dialogs at the same time
+       {
+        e.Result = 1;  // try it once again in 1 minute
+        return;
+      }
+
       GUIDialogMenu dlgAlarmOpts = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       dlgAlarmOpts.Reset();
 
