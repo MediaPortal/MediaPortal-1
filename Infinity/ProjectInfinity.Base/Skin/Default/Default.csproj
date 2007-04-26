@@ -139,6 +139,8 @@
     <Page Include="theme.xaml" />
     <Resource Include="Gfx\arrow_round_down_nofocus.png" />
     <Resource Include="Gfx\arrow_round_up_nofocus.png" />
+    <Resource Include="Gfx\defaultFolder.png" />
+    <Resource Include="Gfx\DefaultFolderBack.png" />
     <Resource Include="Gfx\defaultVideo.png" />
     <Resource Include="Gfx\Music.png" />
     <Resource Include="Gfx\mytv.PNG" />
