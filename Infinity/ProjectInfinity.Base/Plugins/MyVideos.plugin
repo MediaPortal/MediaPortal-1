@@ -17,4 +17,10 @@
                           image = "pack://siteoforigin:,,,/skin/default/gfx/Video.png"
 		          class = "MyVideos.VideoPlugin"/>
 	</Path>
+  <Path name = "/Menus/Settings">
+    <MenuItem id = "MyVideosSettings"
+					label = "@myvideos:34"
+					image = "pack://siteoforigin:,,,/skin/default/gfx/Video.png"
+					class = "MyVideos.Settings"/>
+  </Path>
 </Plugin>
