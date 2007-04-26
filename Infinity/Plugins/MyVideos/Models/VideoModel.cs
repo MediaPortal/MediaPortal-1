@@ -76,7 +76,7 @@ namespace MyVideos
     public string Path
     {
       get { return _path; }
-      set {  _path=value; }
+      set { _path = value; }
     }
 
     /// <summary>
@@ -85,10 +85,10 @@ namespace MyVideos
     /// <value></value>
     public string Size
     {
-      get 
+      get
       {
         if (IsFolder) return "";
-        return _size.ToString() + " MB"; 
+        return _size.ToString() + " MB";
       }
     }
 
@@ -107,7 +107,7 @@ namespace MyVideos
     public bool IsFolder
     {
       get { return _isFolder; }
-      set { _isFolder = value ; }
+      set { _isFolder = value; }
     }
     /// <summary>
     /// If you want a custom icon beside the Title, set this to point
@@ -118,7 +118,11 @@ namespace MyVideos
     {
       get
       {
-        if (_logo == null)
+        if (IsFolder && Title == "..")
+          _logo = Thumbs.ParentFolder;
+        else if (IsFolder)
+          _logo = Thumbs.Folder;
+        else if (_logo == null)
           _logo = Thumbs.MyVideoIconPath;
 
         return _logo;
