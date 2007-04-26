@@ -38,6 +38,13 @@ namespace ProjectInfinity.Controls
                                                                                               (null,
                                                                                                new PropertyChangedCallback
                                                                                                  (TextPropertyChanged)));
+    public static readonly DependencyProperty ScrollMaskProperty = DependencyProperty.Register("ScrollMask",
+                                                                                            typeof(object),
+                                                                                            typeof(ScrollingLabel),
+                                                                                            new FrameworkPropertyMetadata
+                                                                                              (null,
+                                                                                               new PropertyChangedCallback
+                                                                                                 (ScrollMaskPropertyChanged)));
 
     public static readonly DependencyProperty StartElementProperty = DependencyProperty.Register("StartElement",
                                                                                             typeof(object),
@@ -57,8 +64,28 @@ namespace ProjectInfinity.Controls
     public ScrollingLabel()
     {
       this.Loaded += new RoutedEventHandler(ScrollingLabel_Loaded);
+      this.LayoutUpdated += new EventHandler(ScrollingLabel_LayoutUpdated);
     }
 
+    void ScrollingLabel_LayoutUpdated(object sender, EventArgs e)
+    {
+      SetMask();
+    }
+
+
+    void SetMask()
+    {
+      if (_block1 == null || _block2 == null || ScrollMask == null) return;
+      double tickerSize = _block1.ActualWidth;
+      if (tickerSize < this.ActualWidth)
+      {
+        this.OpacityMask = null;
+      }
+      else
+      {
+        this.OpacityMask = ScrollMask as Brush ;
+      }
+    }
     public void StartScrolling()
     {
       double tickerSize = _block1.ActualWidth;
@@ -106,7 +133,6 @@ namespace ProjectInfinity.Controls
       _board = new Storyboard();
 
     }
-
     void ScrollingLabel_Loaded(object sender, RoutedEventArgs e)
     {
       ClipToBounds = true;
@@ -136,6 +162,7 @@ namespace ProjectInfinity.Controls
 
       this.RegisterName(_block1.Name, _block1);
       this.RegisterName(_block2.Name, _block2);
+      SetMask();
     }
 
 
@@ -157,6 +184,7 @@ namespace ProjectInfinity.Controls
           _block1.Style = (Style)TextStyle;
         if (_block2 != null)
           _block2.Style = (Style)TextStyle;
+        SetMask();
       }
     }
 
@@ -174,11 +202,31 @@ namespace ProjectInfinity.Controls
       set
       {
         SetValue(TextProperty, value);
-        FrameworkElement element = value as FrameworkElement;
         if (_block1 != null)
           _block2.Text = value as string;
         if (_block1 != null)
           _block2.Text = value as string;
+        SetMask();
+      }
+    }
+
+
+
+    private static void ScrollMaskPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+      (dependencyObject as ScrollingLabel).ScrollMask = (e.NewValue as object);
+    }
+
+    public object ScrollMask
+    {
+      get
+      {
+        return GetValue(ScrollMaskProperty) as object;
+      }
+      set
+      {
+        SetValue(ScrollMaskProperty, value);
+        SetMask();
       }
     }
 

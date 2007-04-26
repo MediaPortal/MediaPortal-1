@@ -24,7 +24,7 @@
           <RowDefinition/>
         </Grid.RowDefinitions>
         <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Margin="0,5,0,5" Height="32" Width="32"  Source="{Binding Logo}" />
-        <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="10" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Title}"/>
+        <controls:ScrollingLabel ScrollMask="{StaticResource fadeOpacityBrush}" ScrollSpeed="Medium" Height="32" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="9" StartElement="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Mode=OneWay}" TextStyle="{StaticResource TextNormalStyleWhite}" Text="{Binding Title}"/>
         <Label Grid.Row="0" Grid.Column="7" Grid.ColumnSpan="4" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Size}"/>
       </Grid>
     </DataTemplate>
@@ -95,6 +95,7 @@
   <controls:Button Name="buttonSwitch" Grid.Column="0" Grid.Row="6" Width="176" Height="33" Content="{Binding Path=SwitchLabel}" Style="{DynamicResource MpButton}" HorizontalAlignment="Left" Margin="31,192,0,0" VerticalAlignment="Top"/>
   <controls:Button Name="buttonPlaylist" Command="{Binding Path=Playlist}" Grid.Column="0" Grid.Row="7" Width="176" Height="33" Content="{Binding Path=PlaylistLabel}" Style="{DynamicResource MpButton}" HorizontalAlignment="Left" Margin="31,225,0,0" VerticalAlignment="Top"/>
   <controls:Button Name="buttonDVD" Command="{Binding Path=DVD}" Grid.Column="0" Grid.Row="8" Width="176" Height="33" Content="{Binding Path=DVDLabel}" Style="{DynamicResource MpButton}" HorizontalAlignment="Left" Margin="31,258,0,0" VerticalAlignment="Top"/>
+  <Label  Margin="220,100,40,61" HorizontalAlignment="Right" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Path=Videos.CurrentItem.Title,Mode=OneWay}"/>
   <controls:ListBox x:Name="itemList" ViewMode="{Binding Path=ViewModeType}" ContextMenuCommand="{Binding Path=ContextMenu}" ContextMenuCommandParameter="{Binding Path=Videos.CurrentItem}"  Command="{Binding Path=Play}" CommandParameter="{Binding Path=Videos.CurrentItem}" Grid.Column="1" Grid.Row="4" ItemsSource="{Binding Videos}" ItemContainerStyle="{StaticResource MpListViewItem}" Style="{StaticResource videoListView}" Margin="220,126,8,61" Width="500"/>
 
 </Grid>
