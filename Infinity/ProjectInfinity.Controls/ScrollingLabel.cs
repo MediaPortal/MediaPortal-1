@@ -72,7 +72,11 @@ namespace ProjectInfinity.Controls
       SetMask();
     }
 
-
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+    {
+      base.OnRenderSizeChanged(sizeInfo);
+      SetMask();
+    }
     void SetMask()
     {
       if (_block1 == null || _block2 == null || ScrollMask == null) return;

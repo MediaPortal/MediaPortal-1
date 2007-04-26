@@ -270,6 +270,11 @@
     <Setter Property="FontSize" Value="16"/>
     <Setter Property="Foreground" Value="#80FFFFFF"/>
   </Style>
+  <Style x:Key="Text20Style"  TargetType="{x:Type TextBlock}">
+    <Setter Property="FontFamily" Value="Segoe Media Center Semibold"/>
+    <Setter Property="FontSize" Value="20"/>
+    <Setter Property="Foreground" Value="#FFFFFFFF"/>
+  </Style>
   <Style x:Key="Label20Style"  TargetType="{x:Type Label}">
     <Setter Property="FontFamily" Value="Segoe Media Center Semibold"/>
     <Setter Property="FontSize" Value="20"/>
