@@ -270,6 +270,11 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
   
   FindVideoPID();
 
+  if( !IsThreadRunning() )
+  {
+    StartThread();
+  }
+
   LogDebug( "CDVBSub::Run - done" );
 	return hr; 
 }
@@ -284,9 +289,9 @@ STDMETHODIMP CDVBSub::Pause()
   LogDebug( "CDVBSub::Pause" );
   HRESULT hr = CBaseFilter::Pause();
 
-  if( !IsThreadRunning() )
+  if( IsThreadRunning() )
   {
-    StartThread();
+    StopThread();
   }
 
   LogDebug( "CDVBSub::Pause - done" );
@@ -836,7 +841,6 @@ STDMETHODIMP CDVBSub::NonDelegatingQueryInterface( REFIID riid, void** ppv )
 //
 void CDVBSub::ThreadProc()
 {
-  Sleep( 500 );
   while( !ThreadIsStopping( 100 ) )
   {
     int SubtitlePidCount( m_SubtitlePinMapping.size() );
@@ -884,7 +888,7 @@ void CDVBSub::ThreadProc()
       }
     }
   }
-  Sleep( 1000 );
+  Sleep( 10 );
 }
 
 //
@@ -900,7 +904,7 @@ HRESULT CDVBSub::MapPidToDemuxer( CBaseInputPin* pPin, LONG pid, MEDIA_SAMPLE_CO
 
   if( m_State != State_Running )
   {
-    return S_FALSE;
+    //return S_FALSE;
   }
 
   if( pPin == m_pSubtitlePin )
@@ -933,7 +937,7 @@ HRESULT CDVBSub::MapPidToDemuxer( CBaseInputPin* pPin, LONG pid, MEDIA_SAMPLE_CO
 			}
       if( m_State != State_Running )
       {
-        return S_FALSE;
+//        return S_FALSE;
       }
       hr = pMap->MapPID( 1, (ULONG*)&pid, sampleContent );
 			pPidEnum->Release();
@@ -948,3 +952,57 @@ HRESULT CDVBSub::MapPidToDemuxer( CBaseInputPin* pPin, LONG pid, MEDIA_SAMPLE_CO
   
   return hr;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
