@@ -859,30 +859,34 @@ namespace MediaPortal.GUI.TV
           break;
 
         case 979: // Play recording from beginning
-          Recorder.StopViewing();
-          string filename = Recorder.GetRecordingFileName(rec);
-          if (filename != String.Empty)
           {
-            g_Player.Play(filename);
-            if (g_Player.Playing)
+            Recorder.StopViewing();
+            string filename = Recorder.GetRecordingFileName(rec);
+            if (filename != String.Empty)
             {
-              g_Player.ShowFullScreenWindow();
-              return;
+              g_Player.Play(filename);
+              if (g_Player.Playing)
+              {
+                g_Player.ShowFullScreenWindow();
+                return;
+              }
             }
           }
           break;
-
         case 980: // Play recording from live point
-          GUITVHome.IsTVOn = true;
-          GUITVHome.ViewChannel(rec.Channel);
-          if (Recorder.IsViewing())
           {
-            if (g_Player.Playing)
+            Recorder.StopViewing();
+            string filename = Recorder.GetRecordingFileName(rec);
+            if (filename != String.Empty)
             {
-              g_Player.SeekAsolutePercentage(99);
+              g_Player.Play(filename);
+              if (g_Player.Playing)
+              {
+                g_Player.SeekAsolutePercentage(99);
+                g_Player.ShowFullScreenWindow();
+                return;
+              }
             }
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-            return;
           }
           break;
       }
