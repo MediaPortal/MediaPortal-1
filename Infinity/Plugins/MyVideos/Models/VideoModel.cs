@@ -132,12 +132,19 @@ namespace MyVideos
     {
       get
       {
+        VideoSettings settings = new VideoSettings();
+        ServiceScope.Get<ISettingsManager>().Load(settings);
         if (IsFolder && Title == "..")
           _logo = Thumbs.ParentFolder;
         else if (IsFolder)
         {
           if (Thumbs.ExistsFolder(Path))
             return Thumbs.GetFolder(Path);
+
+          if (settings.AutoCreateThumbnails)
+          {
+            ServiceScope.Get<IThumbnailBuilder>().Generate(Path);
+          }
           _logo = Thumbs.Folder;
         }
         else
@@ -145,8 +152,6 @@ namespace MyVideos
           if (!Thumbs.Exists(Path))
           {
             _logo = Thumbs.MyVideoIconPath;
-            VideoSettings settings = new VideoSettings();
-            ServiceScope.Get<ISettingsManager>().Load(settings);
             if (settings.AutoCreateThumbnails)
             {
               ServiceScope.Get<IThumbnailBuilder>().Generate(Path);

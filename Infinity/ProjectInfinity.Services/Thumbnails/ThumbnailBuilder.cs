@@ -19,18 +19,42 @@ namespace ProjectInfinity.Thumbnails
       public Size Size = new Size(320, 240);
       public string MediaFile;
       public string DestinationFolder;
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ThumbNail"/> class.
+      /// </summary>
+      /// <param name="mediaFile">The media file.</param>
       public ThumbNail(string mediaFile)
       {
         MediaFile = mediaFile;
       }
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ThumbNail"/> class.
+      /// </summary>
+      /// <param name="mediaFile">The media file.</param>
+      /// <param name="size">The size.</param>
+      /// <param name="destinationFolder">The destination folder.</param>
       public ThumbNail(string mediaFile, Size size, string destinationFolder)
       {
         MediaFile = mediaFile;
         Size = size;
         DestinationFolder = destinationFolder;
       }
+
+      /// <summary>
+      /// Gets a value indicating whether the media file is a folder or a file
+      /// </summary>
+      /// <value><c>true</c> if this media file  is folder; otherwise, <c>false</c>.</value>
+      public bool IsFolder
+      {
+        get
+        {
+          return System.IO.Directory.Exists(MediaFile);
+        }
+      }
     }
     #endregion
+
     #region variables
     public event ThumbNailGenerateHandler OnThumbnailGenerated;
     List<ThumbNail> _workTodo = new List<ThumbNail>();
@@ -131,7 +155,15 @@ namespace ProjectInfinity.Thumbnails
         if (thumb != null)
         {
           string thumbNail;
-          bool result = Create(thumb, out thumbNail);
+          bool result;
+          if (thumb.IsFolder)
+          {
+            result = CreateThumbnailForFolder(thumb, out thumbNail);
+          }
+          else
+          {
+            result = CreateThumbnailForFile(thumb, out thumbNail);
+          }
           if (OnThumbnailGenerated != null)
           {
             OnThumbnailGenerated(this, new ThumbnailEventArgs(thumb.MediaFile, thumbNail, result));
@@ -142,61 +174,149 @@ namespace ProjectInfinity.Thumbnails
     }
 
     /// <summary>
-    /// Creates a thumbnail for the media file name.
+    /// Creates the thumbnail for a folder.
     /// </summary>
-    /// <param name="mediaFileName">Name of the media file.</param>
-    /// <param name="thumbNail">The thumb nail created.</param>
-    /// <returns>true if succeeded, else false</returns>
-    bool Create(ThumbNail thumb, out string thumbnailFileName)
+    /// <param name="thumb">The thumb.</param>
+    /// <param name="thumbnailFileName">Name of the thumbnail file.</param>
+    /// <returns></returns>
+    bool CreateThumbnailForFolder(ThumbNail thumb, out string thumbnailFileName)
     {
       thumbnailFileName = null;
       try
       {
-        if (thumb.DestinationFolder == null)
+        thumbnailFileName = thumb.MediaFile;
+        if (!thumbnailFileName.EndsWith(@"\")) thumbnailFileName += @"\";
+        thumbnailFileName += "folder.jpg";
+        if (System.IO.File.Exists(thumbnailFileName))
         {
-          thumbnailFileName = System.IO.Path.ChangeExtension(thumb.MediaFile, ".png");
+          return true;
         }
-        else
+
+        //find media files within the folder
+        string[] subNails = new string[4];
+        int currentThumb = 0;
+        string[] files = System.IO.Directory.GetFiles(thumb.MediaFile);
+        for (int i = 0; i < files.Length; ++i)
         {
-          thumbnailFileName =String.Format(@"{0}\{1}.png",thumb.DestinationFolder, System.IO.Path.GetFileNameWithoutExtension(thumb.MediaFile));
-        }
-        if (!System.IO.File.Exists(thumbnailFileName))
-        {
-          if (System.IO.File.Exists(thumb.MediaFile))
+          string ext = System.IO.Path.GetExtension(files[i]).ToLower();
+          if (ext == ".wmv" || ext == ".mpg" || ext == ".mpeg" || ext == ".avi" || ext == ".mkv" || ext == ".dvr-ms" || ext == ".ts")
           {
-            try
+            //media file found, create a thumbnail for this media file
+            ThumbNail sub = new ThumbNail(files[i], thumb.Size, thumb.MediaFile);
+            string subNail;
+            if (CreateThumbnailForFile(sub, out subNail))
             {
-              MediaPlayer player = new MediaPlayer();
-              player.Open(new Uri(thumb.MediaFile, UriKind.Absolute));
-              player.ScrubbingEnabled = true;
-              player.Play();
-              player.Pause();
-              player.Position = new TimeSpan(0, 0, 20);
-              System.Threading.Thread.Sleep(4000);
-              RenderTargetBitmap rtb = new RenderTargetBitmap((int)thumb.Size.Width, (int)thumb.Size.Height, 1 / 200, 1 / 200, PixelFormats.Pbgra32);
-              DrawingVisual dv = new DrawingVisual();
-              DrawingContext dc = dv.RenderOpen();
-              dc.DrawVideo(player, new Rect(0, 0, thumb.Size.Width, thumb.Size.Height));
-              dc.Close();
-              rtb.Render(dv);
-              PngBitmapEncoder encoder = new PngBitmapEncoder();
-              encoder.Frames.Add(BitmapFrame.Create(rtb));
-              using (FileStream stream = new FileStream(thumbnailFileName, FileMode.OpenOrCreate))
-              {
-                encoder.Save(stream);
-              }
-              player.Stop();
-              player.Close();
-              return true;
+              subNails[currentThumb] = subNail;
+              currentThumb++;
             }
-            catch (Exception)
-            {
-            }
+            if (currentThumb >= 4) break;
           }
         }
+
+        //no media files found?
+        if (currentThumb <= 0) return false;
+
+        //create folder thumb 
+        RenderTargetBitmap rtb = new RenderTargetBitmap((int)thumb.Size.Width, (int)thumb.Size.Height, 1 / 200, 1 / 200, PixelFormats.Pbgra32);
+        DrawingVisual dv = new DrawingVisual();
+        DrawingContext dc = dv.RenderOpen();
+        for (int i = 0; i < currentThumb; ++i)
+        {
+          double width = ((thumb.Size.Width - 20) / 2);
+          double height = ((thumb.Size.Height - 20) / 2);
+          PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(subNails[i], UriKind.Absolute), BitmapCreateOptions.None, BitmapCacheOption.OnDemand);
+          BitmapFrame frame = decoder.Frames[0];
+          Rect rect = new Rect();
+          rect.X = (i / 2) * width + 10;
+          rect.Y = (i % 2) * height + 10;
+          rect.Width = width;
+          rect.Height = height; ;
+          dc.DrawImage(frame, rect);
+        }
+
+        dc.Close();
+        rtb.Render(dv);
+        JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(rtb));
+        using (FileStream stream = new FileStream(thumbnailFileName, FileMode.OpenOrCreate))
+        {
+          encoder.Save(stream);
+        }
+        return true;
       }
       catch (Exception)
       {
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Creates a thumbnail for file.
+    /// </summary>
+    /// <param name="thumb">The thumb.</param>
+    /// <param name="thumbnailFileName">Name of the thumbnail file.</param>
+    /// <returns></returns>
+    bool CreateThumbnailForFile(ThumbNail thumb, out string thumbnailFileName)
+    {
+      thumbnailFileName = null;
+      string ext = System.IO.Path.GetExtension(thumb.MediaFile).ToLower();
+      if (ext == ".wmv" || ext == ".mpg" || ext == ".mpeg" || ext == ".avi" || ext == ".mkv" || ext == ".dvr-ms" || ext == ".ts")
+      {
+        try
+        {
+          if (thumb.DestinationFolder == null)
+          {
+            thumbnailFileName = System.IO.Path.ChangeExtension(thumb.MediaFile, ".png");
+          }
+          else
+          {
+            thumbnailFileName = String.Format(@"{0}\{1}.png", thumb.DestinationFolder, System.IO.Path.GetFileNameWithoutExtension(thumb.MediaFile));
+          }
+          if (!System.IO.File.Exists(thumbnailFileName))
+          {
+            if (System.IO.File.Exists(thumb.MediaFile))
+            {
+              try
+              {
+                MediaPlayer player = new MediaPlayer();
+                player.Open(new Uri(thumb.MediaFile, UriKind.Absolute));
+                player.ScrubbingEnabled = true;
+                player.Play();
+                player.Pause();
+                player.Position = new TimeSpan(0, 0, 20);
+                System.Threading.Thread.Sleep(4000);
+                RenderTargetBitmap rtb = new RenderTargetBitmap((int)thumb.Size.Width, (int)thumb.Size.Height, 1 / 200, 1 / 200, PixelFormats.Pbgra32);
+                DrawingVisual dv = new DrawingVisual();
+                DrawingContext dc = dv.RenderOpen();
+                dc.DrawVideo(player, new Rect(0, 0, thumb.Size.Width, thumb.Size.Height));
+                dc.Close();
+                rtb.Render(dv);
+                PngBitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(rtb));
+                using (FileStream stream = new FileStream(thumbnailFileName, FileMode.OpenOrCreate))
+                {
+                  encoder.Save(stream);
+                }
+                player.Stop();
+                player.Close();
+                GC.Collect();
+                GC.Collect();
+                GC.Collect();
+                return true;
+              }
+              catch (Exception)
+              {
+              }
+            }
+          }
+          else
+          {
+            return true;
+          }
+        }
+        catch (Exception)
+        {
+        }
       }
       return false;
     }
