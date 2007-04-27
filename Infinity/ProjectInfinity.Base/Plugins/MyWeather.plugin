@@ -14,25 +14,25 @@
 	<Path name = "/Menus/Home">
 		<MenuItem id    = "MyWeather"
 					label = "@myweather:0"
-					image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
+					image = "pack://siteoforigin:,,,/skin/default/gfx/myWeather.png"
 					class = "MyWeather.WeatherPlugin"
 					submenu="/Menus/Home/MyWeather"/>
 	</Path>
 	<Path name = "/Menus/Home/MyWeather">
 		<MenuItem id = "Weather"
 					label = "@myweather:3"
-					image = "pack://siteoforigin:,,,/skin/default/gfx/mytv.png"
+					image = "pack://siteoforigin:,,,/skin/default/gfx/myWeather.png"
 					class = "MyWeather.WeatherPlugin"/>
 		<MenuItem id = "Setup"
 					label = "@myweather:4"
-					image = "pack://siteoforigin:,,,/skin/default/gfx/mytv.png"
+					image = "pack://siteoforigin:,,,/skin/default/gfx/mySettings.png"
 					class = "MyWeather.WeatherSetup"/>
 	</Path>
 
 	<Path name = "/Menus/Settings">
 		<MenuItem id = "MyWeather"
 					label = "@myweather:0"
-					image = "pack://siteoforigin:,,,/skin/default/gfx/mytv.png"
+					image = "pack://siteoforigin:,,,/skin/default/gfx/myWeather.png"
 					class = "MyWeather.WeatherSetup"/>
 	</Path>
 </Plugin>
