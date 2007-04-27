@@ -224,14 +224,26 @@ namespace ProjectInfinity.Thumbnails
         {
           double width = ((thumb.Size.Width - 20) / 2);
           double height = ((thumb.Size.Height - 20) / 2);
+          if (currentThumb == 2)
+          {
+            width = (thumb.Size.Width - 20)/2;
+            height = (thumb.Size.Height - 20);
+          }
+          if (currentThumb == 1)
+          {
+            height = (thumb.Size.Height - 20) ;
+            width = (thumb.Size.Width - 20) ;
+          }
           PngBitmapDecoder decoder = new PngBitmapDecoder(new Uri(subNails[i], UriKind.Absolute), BitmapCreateOptions.None, BitmapCacheOption.OnDemand);
           BitmapFrame frame = decoder.Frames[0];
           Rect rect = new Rect();
-          rect.X = (i / 2) * width + 10;
-          rect.Y = (i % 2) * height + 10;
+          rect.X = (i % 2) * width + 10;
+          rect.Y = (i / 2) * height + 10;
           rect.Width = width;
-          rect.Height = height; ;
-          dc.DrawImage(frame, rect);
+          rect.Height = height;
+          dc.DrawRectangle(new ImageBrush(frame), null, rect);
+          //dc.DrawImage(frame, rect);
+          
         }
 
         dc.Close();
