@@ -145,26 +145,6 @@ namespace TvPlugin
 
     public override void OnAction(Action action)
     {
-
-      switch (action.wID)
-      {
-        case Action.ActionType.ACTION_SHOW_GUI:
-          if (!g_Player.Playing && TVHome.Card.IsTimeShifting)
-          {
-            //if we're watching tv
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          }
-          else if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording)
-          {
-            //if we're watching a tv recording
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          }
-          else if (g_Player.Playing && g_Player.HasVideo)
-          {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-          }
-          break;
-      }
       base.OnAction(action);
     }
     protected override void OnPageLoad()
@@ -642,11 +622,7 @@ namespace TvPlugin
             if (System.IO.File.Exists(fileName))
             {
               g_Player.Play(fileName, g_Player.MediaType.Recording);
-              //dero: mantis #976
-              if (g_Player.IsTimeShifting)
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-              else
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+              g_Player.ShowFullScreenWindow();
               return;
             }
             else
@@ -661,7 +637,7 @@ namespace TvPlugin
                 {
                   g_Player.SeekAbsolute(0);
                   g_Player.SeekAbsolute(0);
-                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                  g_Player.ShowFullScreenWindow();
                   return;
                 }
               }
@@ -676,11 +652,7 @@ namespace TvPlugin
             {
               g_Player.Play(fileName, g_Player.MediaType.Recording);
               g_Player.SeekAbsolute(g_Player.Duration);
-              //dero: mantis #976
-              if( g_Player.IsTimeShifting )
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-              else
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+              g_Player.ShowFullScreenWindow(); 
               return;
             }
             else
@@ -695,7 +667,7 @@ namespace TvPlugin
                 {
                   g_Player.SeekAbsolute(g_Player.Duration);
                   g_Player.SeekAbsolute(g_Player.Duration);
-                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                  g_Player.ShowFullScreenWindow();
                   return;
                 }
               }

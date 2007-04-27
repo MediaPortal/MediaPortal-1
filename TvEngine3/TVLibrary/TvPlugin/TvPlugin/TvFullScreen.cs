@@ -1324,6 +1324,8 @@ namespace TvPlugin
             _lastSpeed = g_Player.Speed;
             ///Log.Debug("start fullscreen channel:{0}", Recorder.TVChannelName);
             Log.Debug("TvFullScreen:init->OSD:Off");
+            Log.Debug("TvFullScreen: init, playing {0}, player.CurrentFile {1}, TVHome.Card.TimeShiftFileName {2}", g_Player.Playing, g_Player.CurrentFile, TVHome.Card.TimeShiftFileName);
+
             _isOsdVisible = false;
             GUIWindowManager.IsOsdVisible = false;
             _channelInputVisible = false;

@@ -133,6 +133,10 @@ namespace TvPlugin
     public override void OnAdded()
     {
       MediaPortal.GUI.Library.Log.Info("TVHome:OnAdded");
+      
+      // replace g_player's ShowFullScreenWindowTV
+      g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
+
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TV, this);
       Restore();
       PreInit();
@@ -416,19 +420,6 @@ namespace TvPlugin
             GUIWindowManager.ShowPreviousWindow();
             return;
           }
-
-        case Action.ActionType.ACTION_SHOW_GUI:
-          if (g_Player.Playing && g_Player.CurrentFile == TVHome.Card.TimeShiftFileName)
-          {
-            //if we're watching a tv recording
-            MediaPortal.GUI.Library.Log.Info("switch to fullscreen tv:{0}", (int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-            GUIWindowManager.ActivateWindow((int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          }
-          else if (g_Player.Playing && g_Player.HasVideo)
-          {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-          }
-          break;
 
         case Action.ActionType.ACTION_KEY_PRESSED:
           {
@@ -750,6 +741,27 @@ namespace TvPlugin
     #endregion
 
     /// <summary>
+    /// This function replaces g_player.ShowFullScreenWindowTV
+    /// </summary>
+    /// <returns></returns>
+    private static bool ShowFullScreenWindowTVHandler()
+    {
+      if (!g_Player.Playing && Card.IsTimeShifting)
+      {
+        // watching TV
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+          return true;
+        Log.Info("TVHome: ShowFullScreenWindow switching to fullscreen tv");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+        GUIGraphicsContext.IsFullScreenVideo = true;
+        return true;
+      }
+
+      return g_Player.ShowFullScreenWindowTVDefault();
+    }
+
+
+    /// <summary>
     /// check if we have a single seat environment
     /// </summary>
     /// <returns></returns>
@@ -839,7 +851,7 @@ namespace TvPlugin
         {
           g_Player.Play(fileName, g_Player.MediaType.Recording);
           g_Player.SeekAbsolute(g_Player.Duration);
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+          g_Player.ShowFullScreenWindow();
         }
         else
         {
@@ -853,7 +865,7 @@ namespace TvPlugin
             {
               g_Player.SeekAbsolute(g_Player.Duration);
               g_Player.SeekAbsolute(g_Player.Duration);
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              g_Player.ShowFullScreenWindow();
             }
           }
         }

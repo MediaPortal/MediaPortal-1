@@ -273,23 +273,6 @@ namespace TvPlugin
       }
       switch (action.wID)
       {
-        case Action.ActionType.ACTION_SHOW_GUI:
-          if (!g_Player.Playing && TVHome.Card.IsTimeShifting)
-          {
-            //if we're watching tv
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          }
-          else if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording)
-          {
-            //if we're watching a tv recording
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          }
-          else if (g_Player.Playing && g_Player.HasVideo)
-          {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-          }
-          break;
-
         case Action.ActionType.ACTION_DELETE_ITEM:
           {
             int item = GetSelectedItemNo();
@@ -816,8 +799,7 @@ namespace TvPlugin
       {
         if (Utils.IsVideo(fileName))
         {
-          GUIGraphicsContext.IsFullScreenVideo = true;
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+          g_Player.ShowFullScreenWindow();
         }
         if (stoptime > 0)
         {

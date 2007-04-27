@@ -93,7 +93,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// <param name="disAllowShutdownHandler"></param>
     /// <param name="nextWakeupTime"></param>
     /// <param name="nextWakeupHandler"></param>
-    void GetCurrentState(bool refresh, out bool disAllowShutdown, out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler);
+    void GetCurrentState(bool refresh, out bool unattended, out bool disAllowShutdown, out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler);
 
     /// <summary>
     /// Provides access to PowerScheduler's settings

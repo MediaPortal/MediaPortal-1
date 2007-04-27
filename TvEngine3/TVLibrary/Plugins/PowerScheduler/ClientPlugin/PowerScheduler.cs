@@ -81,9 +81,14 @@ namespace MediaPortal.Plugins.Process
     #region Variables
     private System.Timers.Timer _timer;
     private System.Timers.Timer _fastTimer;
+    private System.Timers.Timer _notifyTimer;
     private WaitableTimer _wakeupTimer;
     private bool _refreshSettings = false;
     private DateTime _lastUserTime = DateTime.Now;  // last time the user was doing sth (action/watching)
+    /// <summary>
+    /// If this is true, the station is unattended.
+    /// </summary>
+    private bool _unattended;
     private PowerSettings _settings;
     private PowerManager _powerManager;
     private List<IStandbyHandler> _standbyHandlers;
@@ -99,6 +104,7 @@ namespace MediaPortal.Plugins.Process
       _wakeupHandlers = new List<IWakeupHandler>();
       _lastUserTime = DateTime.Now;
       _idle = false;
+      _unattended = false;
 
       _timer = new System.Timers.Timer();
       _timer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimerElapsed);
@@ -201,7 +207,11 @@ namespace MediaPortal.Plugins.Process
     /// </summary>
     public void UserActivityDetected(DateTime when)
     {
-      if (when > _lastUserTime) _lastUserTime = when;
+      if (when > _lastUserTime)
+      {
+        _lastUserTime = when;
+        _unattended = false;
+      }
     }
     #endregion
 
@@ -210,12 +220,12 @@ namespace MediaPortal.Plugins.Process
     private bool _currentDisAllowShutdown = false;  // used only if multi-seat
     private String _currentDisAllowShutdownHandler = "";  // used only if multi-seat
 
-    public void GetCurrentState(bool refresh, out bool disAllowShutdown, out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler)
+    public void GetCurrentState(bool refresh, out bool unattended, out bool disAllowShutdown, out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler)
     {
       // check for singleseat or multiseat setup
       if (_settings.GetSetting("SingleSeat").Get<bool>())
       {
-        RemotePowerControl.Instance.GetCurrentState(refresh, out disAllowShutdown, out disAllowShutdownHandler, out nextWakeupTime, out nextWakeupHandler);
+        RemotePowerControl.Instance.GetCurrentState(refresh, out unattended, out disAllowShutdown, out disAllowShutdownHandler, out nextWakeupTime, out nextWakeupHandler);
         return;
       }
 
@@ -223,13 +233,29 @@ namespace MediaPortal.Plugins.Process
       {
         bool dummy= DisAllowShutdown;
         _currentNextWakeupTime= GetNextWakeupTime(DateTime.Now);
+        dummy = Unattended;
       }
 
       // give state
+      unattended = _unattended;
       disAllowShutdown = _currentDisAllowShutdown;
       disAllowShutdownHandler = _currentDisAllowShutdownHandler;
       nextWakeupTime = _currentNextWakeupTime;
       nextWakeupHandler = _currentNextWakeupHandler;
+    }
+
+    /// <summary>
+    /// Checks whether the system is unattended, i.e. the user was idle some time. (Only for multi-seat!)
+    /// </summary>
+    private bool Unattended
+    {
+      [MethodImpl(MethodImplOptions.Synchronized)]
+      get
+      {
+        if (!_unattended && _lastUserTime <= DateTime.Now.AddMinutes(-_settings.IdleTimeout))
+          _unattended = true;
+        return _unattended;
+      }
     }
 
     #region IStandbyHandler implementation
@@ -459,6 +485,7 @@ namespace MediaPortal.Plugins.Process
     {
       _lastUserTime = DateTime.Now;
       _lastAction = action;
+      _unattended = false;
       // TODO should check here if action is power-off and then set the _lastUserTime to Datime.MinValue
       // since the user is going away
     }
@@ -520,6 +547,7 @@ namespace MediaPortal.Plugins.Process
             else
             {
               _lastUserTime = DateTime.Now;
+              _unattended = false;
               return false;
             }
           }
@@ -532,6 +560,7 @@ namespace MediaPortal.Plugins.Process
         {
           LogVerbose("player is playing currently");
           _lastUserTime = DateTime.Now;
+          _unattended = false;
           return false;
         }
       }
@@ -607,8 +636,12 @@ namespace MediaPortal.Plugins.Process
       if (userInput > _lastUserTime)
       {
         _lastUserTime = userInput;
+        _unattended = false;
         LogVerbose("PowerScheduler: User input detected at {0}", _lastUserTime);
       }
+
+      // update _unattended
+      bool dummy = Unattended;
 
       // is anybody disallowing shutdown?
       if (!DisAllowShutdown)
@@ -620,11 +653,9 @@ namespace MediaPortal.Plugins.Process
           SendPowerSchedulerEvent(PowerSchedulerEventType.SystemIdle);
         }
 
-        // long enough idle to go to sleep?
-        if (_lastUserTime <= DateTime.Now.AddMinutes(-_settings.IdleTimeout))
+        if (_unattended)
         {
-          // Idle timeout expired - suspend/hibernate system
-          Log.Info("PowerScheduler: User idle since {0} - initiate suspend/hibernate", _lastUserTime);
+          Log.Info("PowerScheduler: System is unattended and idle - initiate suspend/hibernate");
           EnterSuspendOrHibernate();
         }
       }
@@ -778,10 +809,15 @@ namespace MediaPortal.Plugins.Process
       }
     }
 
-    private DateTime _lastStateUpdate= DateTime.MinValue;
-
     private void RefreshStateDisplay(bool refresh)
     {
+      bool unattended;
+      bool disAllowShutdown;
+      String disAllowShutdownHandler;
+      DateTime nextWakeupTime;
+      String nextWakeupHandler;
+      GetCurrentState(refresh, out unattended, out disAllowShutdown, out disAllowShutdownHandler, out nextWakeupTime, out nextWakeupHandler);
+
       /*TvOverlay tvoverlay = TvOverlay.Instance;
       if (tvoverlay != null)
       {
@@ -947,9 +983,12 @@ namespace MediaPortal.Plugins.Process
       }
       LogVerbose("resetting last user time to {0}", DateTime.Now.ToString());
       _lastUserTime = DateTime.Now;
+      _unattended = false;
 
       _timer.Enabled = true;
       _fastTimer.Enabled = true;
+
+      RefreshStateDisplay(true);
     }
 
     private void OnStandBy()
@@ -1064,14 +1103,13 @@ namespace MediaPortal.Plugins.Process
             Log.Debug("PSClientPlugin: System wants to enter standby");
             bool idle = !DisAllowShutdown;
             Log.Debug("PSClientPlugin: System idle: {0}", idle);
-            if (!idle)
+            if (!_unattended)
             {
               // scenario: User wants to standby the system, but we disallowed him to do
-              // so. We reset the user activity, so the system goes to standby as soon
-              // as possible.
-              _lastUserTime = DateTime.MinValue;
+              // so. We go to unattended mode.
+              Log.Info("PowerScheduler: User tries to standby, system is unattended");
+              _unattended = true;
             }
-
             if (!idle)
               msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
             break;

@@ -90,22 +90,6 @@ namespace TvPlugin
     {
       switch (action.wID)
       {
-        case Action.ActionType.ACTION_SHOW_GUI:
-          if (!g_Player.Playing && TVHome.Card.IsTimeShifting)
-          {
-            //if we're watching tv
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          }
-          else if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording)
-          {
-            //if we're watching a tv recording
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          }
-          else if (g_Player.Playing && g_Player.HasVideo)
-          {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-          }
-          break;
       }
       base.OnAction(action);
     }
@@ -509,7 +493,7 @@ namespace TvPlugin
           g_Player.SeekAbsolute(0);
           if (TVHome.Card.IsTimeShifting)
           {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+            g_Player.ShowFullScreenWindow();
             return;
           }
           break;
@@ -523,7 +507,7 @@ namespace TvPlugin
             {
               g_Player.SeekAsolutePercentage(99);
             }
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+            g_Player.ShowFullScreenWindow();
             return;
           }
           break;

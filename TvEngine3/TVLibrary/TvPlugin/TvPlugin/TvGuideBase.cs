@@ -466,19 +466,6 @@ namespace TvPlugin
             SetFocus();
           }
           break;
-
-        case Action.ActionType.ACTION_SHOW_GUI:
-
-          if (TVHome.Card.IsTimeShifting)
-          {
-            //if we're watching tv
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          }
-          else if (g_Player.Playing && g_Player.HasVideo)
-          {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-          }
-          break;
       }
       base.OnAction(action);
     }
@@ -2410,7 +2397,7 @@ namespace TvPlugin
             TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
             if (TVHome.Card.IsTimeShifting && TVHome.Card.IdChannel == _currentProgram.ReferencedChannel().IdChannel)
             {
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              g_Player.ShowFullScreenWindow();
             }
             return;
 
@@ -2516,7 +2503,7 @@ namespace TvPlugin
                           if (System.IO.File.Exists(fileName))
                           {
                             g_Player.Play(fileName, g_Player.MediaType.Recording);
-                            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                            g_Player.ShowFullScreenWindow();
                             return;
                           }
                           else
@@ -2531,7 +2518,7 @@ namespace TvPlugin
                               {
                                 g_Player.SeekAbsolute(0);
                                 g_Player.SeekAbsolute(0);
-                                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                                g_Player.ShowFullScreenWindow();
                                 return;
                               }
                             }
@@ -2547,7 +2534,7 @@ namespace TvPlugin
                           {
                             g_Player.Play(fileName, g_Player.MediaType.Recording);
                             g_Player.SeekAbsolute(g_Player.Duration);
-                            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                            g_Player.ShowFullScreenWindow();
                             return;
                           }
                           else
@@ -2562,7 +2549,7 @@ namespace TvPlugin
                               {
                                 g_Player.SeekAbsolute(g_Player.Duration);
                                 g_Player.SeekAbsolute(g_Player.Duration);
-                                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                                g_Player.ShowFullScreenWindow();
                                 return;
                               }
                             }
@@ -2580,7 +2567,7 @@ namespace TvPlugin
                 TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
                 if (g_Player.Playing)
                 {
-                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                  g_Player.ShowFullScreenWindow();
                 }
               }
             }
@@ -2613,7 +2600,7 @@ namespace TvPlugin
                     Log.Debug("TVGuide: switch currently running show to fullscreen");
                     TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
                     if (g_Player.Playing)
-                      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                      g_Player.ShowFullScreenWindow();
                     else
                       Log.Debug("TVGuide: no show currently running to switch to fullscreen");
                     break;
@@ -2625,7 +2612,7 @@ namespace TvPlugin
                 TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
                 if (g_Player.Playing)
                 {
-                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                  g_Player.ShowFullScreenWindow();
                 }
               }
             }
