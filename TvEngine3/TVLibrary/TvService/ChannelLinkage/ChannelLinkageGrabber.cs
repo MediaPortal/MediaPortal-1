@@ -57,23 +57,10 @@ namespace TvService
     public override int OnLinkageReceived()
     {
       Log.Info("OnLinkageReceived()");
-      List<PortalChannel> linkages=_card.ChannelLinkages;
-      Log.Info("ChannelLinkage received. {0} portal channels read", linkages.Count);
-      foreach (PortalChannel pChannel in linkages)
-      {
-        PortalChannel cachedPChannel = GetCachedPortalChannel(pChannel);
-        if (cachedPChannel == null)
-        {
-          _cashedLinkages.Add(pChannel);
-          PersistPortalChannel(pChannel);
-          continue;
-        }
-        if (!CompareLinkedChannels(cachedPChannel.LinkedChannels, pChannel.LinkedChannels))
-        {
-          cachedPChannel.LinkedChannels = pChannel.LinkedChannels;
-          PersistPortalChannel(pChannel);
-        }
-      }
+      Thread workerThread = new Thread(new ThreadStart(UpdateDatabaseThread));
+      workerThread.IsBackground = true;
+      workerThread.Name = "Channel linkage update thread";
+      workerThread.Start();
       return 0;
     }
     #endregion
@@ -158,6 +145,33 @@ namespace TvService
           return false;
       }
       return true;
+    }
+    private void UpdateDatabaseThread()
+    {
+      System.Threading.Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+
+      List<PortalChannel> linkages=_card.ChannelLinkages;
+      Log.Info("ChannelLinkage received. {0} portal channels read", linkages.Count);
+      bool anyChanges = false;
+      foreach (PortalChannel pChannel in linkages)
+      {
+        PortalChannel cachedPChannel = GetCachedPortalChannel(pChannel);
+        if (cachedPChannel == null)
+        {
+          _cashedLinkages.Add(pChannel);
+          PersistPortalChannel(pChannel);
+          anyChanges = true;
+          continue;
+        }
+        if (!CompareLinkedChannels(cachedPChannel.LinkedChannels, pChannel.LinkedChannels))
+        {
+          cachedPChannel.LinkedChannels = pChannel.LinkedChannels;
+          PersistPortalChannel(pChannel);
+          anyChanges = true;
+        }
+      }
+      if (anyChanges)
+        Gentle.Common.CacheManager.Clear();
     }
     #endregion
   }
