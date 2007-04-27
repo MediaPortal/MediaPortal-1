@@ -1984,45 +1984,19 @@ public class MediaPortalApp : D3DApp, IRender
             }
           }
           break;
+        case Action.ActionType.ACTION_SHOW_GUI:
+          {
+            // can we handle the switch to fullscreen?
+            if( !GUIGraphicsContext.IsFullScreenVideo && g_Player.ShowFullScreenWindow() )
+              return;
+          }
+          break;
       }
 
       if (g_Player.Playing || Recorder.IsRadio())
       {
         switch (action.wID)
         {
-          //switch between GUI and fullscreen video/tv
-          case Action.ActionType.ACTION_SHOW_GUI:
-            if (!GUIGraphicsContext.IsFullScreenVideo)
-            {
-              GUIWindow win = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-              if (win.FullScreenVideoAllowed)
-              {
-                if (!g_Player.IsTV || g_Player.IsTVRecording)
-                {
-                  if (g_Player.HasVideo)
-                  {
-                    //SV
-                    //GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-                    if (g_Player.IsMusic && BassMusicPlayer.IsDefaultMusicPlayer)
-                      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC);                      //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-
-                    else
-                      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-
-                    GUIGraphicsContext.IsFullScreenVideo = true;
-                    return;
-                  }
-                }
-                else
-                {
-                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-                  GUIGraphicsContext.IsFullScreenVideo = true;
-                  return;
-                }
-              }
-            }
-            break;
-
           //play previous item from playlist;
           case Action.ActionType.ACTION_PREV_ITEM:
             if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
@@ -2181,7 +2155,7 @@ public class MediaPortalApp : D3DApp, IRender
     if (key.KeyChar == '|' && g_Player.Playing == false)
     {
       g_Player.Play("rtsp://localhost/stream0");
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+      g_Player.ShowFullScreenWindow();
       return;
     }
     if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))

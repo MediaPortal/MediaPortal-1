@@ -560,14 +560,14 @@ namespace MediaPortal.VideoLanPlugin
           {
             vlcControl.Location = location;
             vlcControl.Player.Location = location;
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+            g_Player.ShowFullScreenWindow();
+
           }
           if (vlcControl.Size != size)
           {
             vlcControl.ClientSize = size;
             vlcControl.Player.ClientSize = size;
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-
+            g_Player.ShowFullScreenWindow();
           }
 
         }

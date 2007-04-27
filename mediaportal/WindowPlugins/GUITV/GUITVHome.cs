@@ -91,8 +91,10 @@ namespace MediaPortal.GUI.TV
 
     public GUITVHome()
     {
-
       GetID = (int)GUIWindow.Window.WINDOW_TV;
+
+      // replace g_player's ShowFullScreenWindowTV
+      g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
     }
 
 
@@ -251,23 +253,6 @@ namespace MediaPortal.GUI.TV
             GUIWindowManager.ShowPreviousWindow();
             return;
           }
-
-        case Action.ActionType.ACTION_SHOW_GUI:
-          if (!g_Player.Playing && Recorder.IsViewing())
-          {
-            //if we're watching tv
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          }
-          else if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording)
-          {
-            //if we're watching a tv recording
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          }
-          else if (g_Player.Playing && g_Player.HasVideo)
-          {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-          }
-          break;
 
         case Action.ActionType.ACTION_KEY_PRESSED:
           {
@@ -567,6 +552,27 @@ namespace MediaPortal.GUI.TV
     }
 
     #endregion
+
+    /// <summary>
+    /// This function replaces g_player.ShowFullScreenWindowTV
+    /// </summary>
+    /// <returns></returns>
+    public static bool ShowFullScreenWindowTVHandler()
+    {
+      if (!g_Player.Playing && Recorder.IsViewing())
+      {
+        // watching TV
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+          return true;
+        Log.Info("TVHome: ShowFullScreenWindow switching to fullscreen tv");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+        GUIGraphicsContext.IsFullScreenVideo = true;
+        return true;
+      }
+
+      return g_Player.ShowFullScreenWindowTVDefault();
+    }
+
 
     public static void UpdateTimeShift()
     {

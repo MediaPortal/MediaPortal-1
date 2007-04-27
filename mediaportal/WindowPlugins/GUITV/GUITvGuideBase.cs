@@ -471,23 +471,6 @@ namespace MediaPortal.GUI.TV
             SetFocus();
           }
           break;
-
-        case Action.ActionType.ACTION_SHOW_GUI:
-          if (!g_Player.Playing && Recorder.IsViewing())
-          {
-            //if we're watching tv
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          }
-          else if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording)
-          {
-            //if we're watching a tv recording
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-          }
-          else if (g_Player.Playing && g_Player.HasVideo)
-          {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-          }
-          break;
       }
       base.OnAction(action);
     }
@@ -2576,7 +2559,7 @@ namespace MediaPortal.GUI.TV
                           g_Player.Play(filename);
                           if (g_Player.Playing)
                           {
-                            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                            g_Player.ShowFullScreenWindow();
                             return;
                           }
                         }

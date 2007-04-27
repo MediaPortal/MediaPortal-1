@@ -49,6 +49,7 @@ namespace MediaPortal.Playlists
       double CurrentPosition { get; }
       void SeekAbsolute(double dTime);
       bool HasVideo { get; }
+      bool ShowFullScreenWindow();
     }
 
     private class FakePlayer : IPlayer
@@ -101,6 +102,11 @@ namespace MediaPortal.Playlists
       public bool HasVideo
       {
         get { return MediaPortal.Player.g_Player.HasVideo; }
+      }
+
+      public bool ShowFullScreenWindow()
+      {
+        return MediaPortal.Player.g_Player.ShowFullScreenWindow();
       }
     }
 
@@ -451,8 +457,7 @@ namespace MediaPortal.Playlists
           {
             if (g_Player.HasVideo)
             {
-              GUIGraphicsContext.IsFullScreenVideo = true;
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+              g_Player.ShowFullScreenWindow();
             }
           }
         }

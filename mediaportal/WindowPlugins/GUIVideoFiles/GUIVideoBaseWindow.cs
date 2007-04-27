@@ -676,8 +676,7 @@ namespace MediaPortal.GUI.Video
         {
           if (MediaPortal.Util.Utils.IsVideo(playlist[0].FileName))
           {
-            GUIGraphicsContext.IsFullScreenVideo = true;
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+            g_Player.ShowFullScreenWindow();
           }
         }
         return;

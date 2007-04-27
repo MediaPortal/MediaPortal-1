@@ -1149,8 +1149,7 @@ namespace MediaPortal.GUI.MusicVideos
       if (g_Player.Playing)
       {
         Log.Info("GUIMusicVideo: Playing: {0} with Bitrate: {1}", video.songName, moSettings.msDefaultBitRate);
-        GUIGraphicsContext.IsFullScreenVideo = true;
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+        g_Player.ShowFullScreenWindow();
         moCurrentPlayingVideo = video;
       }
       else

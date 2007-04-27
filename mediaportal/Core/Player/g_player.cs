@@ -1900,5 +1900,155 @@ namespace MediaPortal.Player
 
     #endregion
 
+    #region FullScreenWindow
+
+    public delegate bool ShowFullScreenWindowHandler();
+
+    private static ShowFullScreenWindowHandler _showFullScreenWindowTV = ShowFullScreenWindowTVDefault;
+    private static ShowFullScreenWindowHandler _showFullScreenWindowVideo = ShowFullScreenWindowVideoDefault;
+    private static ShowFullScreenWindowHandler _showFullScreenWindowOther = ShowFullScreenWindowOtherDefault;
+
+    /// <summary>
+    /// This handler gets called by ShowFullScreenWindow.
+    /// It should handle Fullscreen-TV.
+    /// By default, it is set to ShowFullScreenWindowTVDefault.
+    /// </summary>
+    public static ShowFullScreenWindowHandler ShowFullScreenWindowTV
+    {
+      get { return _showFullScreenWindowTV; }
+      set 
+      {
+        _showFullScreenWindowTV = value;
+        Log.Debug("g_player: Setting ShowFullScreenWindowTV to {0}", value);
+      }
+    }
+
+    /// <summary>
+    /// This handler gets called by ShowFullScreenWindow.
+    /// It should handle general Fullscreen-Video.
+    /// By default, it is set to ShowFullScreenWindowVideoDefault.
+    /// </summary>
+    public static ShowFullScreenWindowHandler ShowFullScreenWindowVideo
+    {
+      get { return _showFullScreenWindowVideo; }
+      set
+      {
+        _showFullScreenWindowVideo = value;
+        Log.Debug("g_player: Setting ShowFullScreenWindowVideo to {0}", value);
+      }
+    }
+
+    /// <summary>
+    /// This handler gets called by ShowFullScreenOther.
+    /// It should handle general Fullscreen.
+    /// By default, it is set to ShowFullScreenWindowOtherDefault.
+    /// </summary>
+    public static ShowFullScreenWindowHandler ShowFullScreenWindowOther
+    {
+      get { return _showFullScreenWindowOther; }
+      set
+      {
+        _showFullScreenWindowOther = value;
+        Log.Debug("g_player: Setting ShowFullScreenWindowOther to {0}", value);
+      }
+    }
+
+    /// <summary>
+    /// The default handler does only work if a player is active.
+    /// However, GUITVHome and TvPlugin.TVHOME, both set their
+    /// own hook to enable fullscreen tv for non-player live
+    /// TV.
+    /// </summary>
+    /// <returns></returns>
+    public static bool ShowFullScreenWindowTVDefault()
+    {
+      if (Playing && IsTV && !IsTVRecording)
+      {
+        // watching TV
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+          return true;
+        Log.Info("g_Player: ShowFullScreenWindow switching to fullscreen tv");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+        GUIGraphicsContext.IsFullScreenVideo = true;
+        return true;
+      }
+
+      return false;
+    }
+
+    public static bool ShowFullScreenWindowVideoDefault()
+    {
+      // If current player has no video, then fail
+      if (!HasVideo) return false;
+
+      // are we playing music and got the fancy BassMusicPlayer?
+      if (g_Player.IsMusic && BassMusicPlayer.IsDefaultMusicPlayer)
+      {
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC)
+          return true;
+        Log.Info("g_Player: ShowFullScreenWindow switching to fullscreen music");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC);
+      }
+      else
+      {
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+          return true;
+        Log.Info("g_Player: ShowFullScreenWindow switching to fullscreen video");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+      }
+
+      GUIGraphicsContext.IsFullScreenVideo = true;
+      return true;
+    }
+
+    public static bool ShowFullScreenWindowOtherDefault()
+    {
+      return false;
+    }
+
+    /// <summary>
+    /// This function opens a fullscreen window for the current
+    /// player. It returns whether a fullscreen window could
+    /// be opened.
+    /// 
+    /// It tries the three handlers in this order:
+    ///  - ShowFullScreenWindowTV
+    ///  - ShowFullScreenWindowVideo
+    ///  - ShowFullScreenWindowOther
+    /// 
+    /// The idea is to have a central location for deciding what window to
+    /// open for fullscreen.
+    /// </summary>
+    /// <returns></returns>
+    public static bool ShowFullScreenWindow()
+    {
+      Log.Debug( "g_Player: ShowFullScreenWindow" );
+      // does window allow switch to fullscreen?
+      GUIWindow win = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+      if (!win.FullScreenVideoAllowed)
+      {
+        Log.Error( "g_Player: ShowFullScreenWindow not allowed by current window" );
+        return false;      
+      }
+
+      // try TV
+      if (_showFullScreenWindowTV != null && _showFullScreenWindowTV())
+        return true;
+
+      // try Video
+      if (_showFullScreenWindowVideo != null && _showFullScreenWindowVideo())
+        return true;
+
+      // try Other
+      if (_showFullScreenWindowOther != null && _showFullScreenWindowOther())
+        return true;
+
+      Log.Debug("g_Player: ShowFullScreenWindow cannot switch to fullscreen");
+      return false;
+    }
+
+    #endregion
+
   }
+
 }

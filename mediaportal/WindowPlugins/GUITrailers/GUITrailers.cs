@@ -603,8 +603,7 @@ namespace MediaPortal.GUI.Video
         else
         {
           //Play VOD
-          GUIGraphicsContext.IsFullScreenVideo = true;
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+          g_Player.ShowFullScreenWindow();
           g_Player.FullScreen = true;
           g_Player.Play(TSRVodTrailers.SubMenuURL[itemindex - 1]);
         }
@@ -791,8 +790,7 @@ namespace MediaPortal.GUI.Video
           playOk = g_Player.PlayAudioStream(MMSUrl);
       if (playOk)
       {
-        GUIGraphicsContext.IsFullScreenVideo = true;
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+        g_Player.ShowFullScreenWindow();
         g_Player.FullScreen = true;
       }
       else

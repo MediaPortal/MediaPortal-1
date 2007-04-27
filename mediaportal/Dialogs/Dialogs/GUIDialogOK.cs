@@ -136,7 +136,7 @@ namespace MediaPortal.Dialogs
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT :
           {
             SetControlLabel(GetID, 1, string.Empty);
 

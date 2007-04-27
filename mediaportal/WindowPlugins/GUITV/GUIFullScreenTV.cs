@@ -299,7 +299,6 @@ namespace MediaPortal.GUI.TV
 
     public override void OnAction(Action action)
     {
-
       _needToClearScreen = true;
 
       if (action.wID == Action.ActionType.ACTION_SHOW_VOLUME)

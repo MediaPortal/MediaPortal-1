@@ -225,8 +225,7 @@ namespace ProgramsDatabase
       }
       if (MediaPortal.Util.Utils.IsVideo(filename))
       {
-        GUIGraphicsContext.IsFullScreenVideo = true;
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+        g_Player.ShowFullScreenWindow();
       }
       return;
     }
