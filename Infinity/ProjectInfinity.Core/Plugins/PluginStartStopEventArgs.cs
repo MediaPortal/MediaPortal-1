@@ -1,12 +1,33 @@
-using System;
+using ProjectInfinity.Messaging;
 
 namespace ProjectInfinity.Plugins
 {
-  public class PluginStartStopEventArgs : EventArgs
+  public class PluginStarted : Message
   {
-    private string _pluginName;
+    private readonly string _pluginName;
 
-    public PluginStartStopEventArgs(string pluginName)
+    public PluginStarted(string pluginName)
+    {
+      _pluginName = pluginName;
+    }
+
+    public string PluginName
+    {
+      get { return _pluginName; }
+    }
+
+    public override string ToString()
+    {
+      return string.Format("PluginName={0}", _pluginName);
+    }
+  }
+
+
+  public class PluginStopped : Message
+  {
+    private readonly string _pluginName;
+
+    public PluginStopped(string pluginName)
     {
       _pluginName = pluginName;
     }

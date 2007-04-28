@@ -13,7 +13,7 @@ namespace ProjectInfinity.Tests.Messaging.Mocks
     }
 
     [MessageSubscription(typeof (MockMessage))]
-    private void Receive(object sender, MockMessage e)
+    private void Receive(MockMessage e)
     {
       received = true;
       ServiceScope.Get<ILogger>().Debug("Subscriber received " + e.Argument);

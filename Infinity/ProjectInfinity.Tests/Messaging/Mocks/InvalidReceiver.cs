@@ -5,7 +5,7 @@ namespace ProjectInfinity.Tests.Messaging.Mocks
   public class InvalidReceiver
   {
     [MessageSubscription(typeof (MockMessage))]
-    private void Receive(object sender, string e)
+    private void Receive(string e)
     {
     }
   }

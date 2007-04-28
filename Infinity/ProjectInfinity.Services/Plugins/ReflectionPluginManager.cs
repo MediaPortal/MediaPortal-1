@@ -13,8 +13,8 @@ namespace ProjectInfinity.Plugins
   /// </summary>
   public class ReflectionPluginManager //: IPluginManager
   {
-    private IDictionary<string, Type> pluginTypes = new Dictionary<string, Type>();
-    private IDictionary<string, IPluginInfo> pluginInfo = new Dictionary<string, IPluginInfo>();
+    private readonly IDictionary<string, Type> pluginTypes = new Dictionary<string, Type>();
+    private readonly IDictionary<string, IPluginInfo> pluginInfo = new Dictionary<string, IPluginInfo>();
     protected IDictionary<string, IPlugin> runningPlugins = new Dictionary<string, IPlugin>();
 
     public ReflectionPluginManager()
@@ -25,8 +25,8 @@ namespace ProjectInfinity.Plugins
 
     #region IPluginManager Members
 
-    public event EventHandler<PluginStartStopEventArgs> PluginStarted;
-    public event EventHandler<PluginStartStopEventArgs> PluginStopped;
+    public event MessageHandler<PluginStarted> PluginStarted;
+    public event MessageHandler<PluginStopped> PluginStopped;
 
     public List<T> BuildItems<T>(string treePath)
     {
@@ -57,7 +57,7 @@ namespace ProjectInfinity.Plugins
       IPlugin plugin = runningPlugins[pluginName];
       runningPlugins.Remove(pluginName);
       plugin.Dispose();
-      OnPluginStopped(new PluginStartStopEventArgs(pluginName));
+      OnPluginStopped(new PluginStopped(pluginName));
     }
 
     /// <summary>
@@ -89,7 +89,7 @@ namespace ProjectInfinity.Plugins
       {
         runningPlugins.Add(pluginName, plugin);
       }
-      OnPluginStarted(new PluginStartStopEventArgs(pluginName));
+      OnPluginStarted(new PluginStarted(pluginName));
     }
 
 
@@ -111,11 +111,11 @@ namespace ProjectInfinity.Plugins
     /// Triggers the PluginStarted message
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnPluginStarted(PluginStartStopEventArgs e)
+    protected virtual void OnPluginStarted(PluginStarted e)
     {
       if (PluginStarted != null)
       {
-        PluginStarted(this, e);
+        PluginStarted(e);
       }
     }
 
@@ -123,11 +123,11 @@ namespace ProjectInfinity.Plugins
     /// Triggers the PluginStopped message
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnPluginStopped(PluginStartStopEventArgs e)
+    protected virtual void OnPluginStopped(PluginStopped e)
     {
       if (PluginStopped != null)
       {
-        PluginStopped(this, e);
+        PluginStopped(e);
       }
     }
 

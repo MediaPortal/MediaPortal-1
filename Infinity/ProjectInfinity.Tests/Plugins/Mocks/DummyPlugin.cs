@@ -52,7 +52,7 @@ namespace ProjectInfinity.Tests.Plugins.Mocks
 
     public void Initialize(string id)
     {
-      throw new System.NotImplementedException();
+      _isInitialized = true;
     }
   }
 }

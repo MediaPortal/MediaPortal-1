@@ -46,10 +46,10 @@ namespace ProjectInfinity.Plugins
     /// </summary>
     void Startup();
 
-    //[MessagePublication(typeof (PluginStart))]
-    //event EventHandler<PluginStartStopEventArgs> PluginStarted;
+    [MessagePublication(typeof(PluginStart))]
+    event MessageHandler<PluginStarted> PluginStarted;
 
-    //[MessagePublication(typeof (PluginStop))]
-    //event EventHandler<PluginStartStopEventArgs> PluginStopped;
+    [MessagePublication(typeof(PluginStop))]
+    event MessageHandler<PluginStopped> PluginStopped;
   }
 }

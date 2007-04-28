@@ -23,11 +23,8 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using ProjectInfinity.Messaging;
 
 namespace ProjectInfinity.Plugins
@@ -38,47 +35,89 @@ namespace ProjectInfinity.Plugins
   /// </summary>
   public class PluginManager : IPluginManager
   {
-    #region Variables
     private List<string> _pluginFiles;
     private List<string> _disabledPlugins;
     private PluginTree _pluginTree;
-    #endregion
 
-    #region Constructors/Destructors
     public PluginManager()
     {
       ServiceScope.Get<IMessageBroker>().Register(this);
       LoadPlugins();
     }
+
+    #region IPluginManager Members
+
+    public object BuildItem<T>(string treePath, string name)
+    {
+      return _pluginTree.BuildItem<T>(treePath, name, null, false);
+    }
+
+    public List<T> BuildItems<T>(string treePath)
+    {
+      return _pluginTree.BuildItems<T>(treePath, null, false);
+    }
+
+    /// <summary>
+    /// Gets an enumerable list of available plugins
+    /// </summary>
+    /// <returns>An <see cref="IEnumerable<IPlugin>"/> list.</returns>
+    /// <remarks>A configuration program can use this list to present the user a list of available plugins that he can (de)activate.</remarks>
+    public IEnumerable<IPluginInfo> GetAvailablePlugins()
+    {
+      return null; // pluginInfo.Values;
+    }
+
+    /// <summary>
+    /// Starts all plug-ins that are activated by the user.
+    /// </summary>
+    public void Startup()
+    {
+      foreach (IAutoStart plugin in _pluginTree.BuildItems<IAutoStart>("/AutoStart", null, false))
+      {
+        plugin.Startup();
+      }
+    }
+
+    /// <summary>
+    /// Stops all plug-ins
+    /// </summary>
+    public void StopAll()
+    {
+      //foreach (IPlugin plugin in runningPlugins.Values)
+      //{
+      //  plugin.Dispose();
+      //}
+      //runningPlugins.Clear();
+    }
+
     #endregion
 
-    #region Protected Methods
     /// <summary>
     /// Triggers the PluginStarted message
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnPluginStarted(PluginStartStopEventArgs e)
+    protected virtual void OnPluginStarted(PluginStarted e)
     {
-      //if (PluginStarted != null)
-      //{
-      //  PluginStarted(this, e);
-      //}
+      if (PluginStarted != null)
+      {
+        PluginStarted(e);
+      }
     }
 
     /// <summary>
     /// Triggers the PluginStopped message
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnPluginStopped(PluginStartStopEventArgs e)
+    protected virtual void OnPluginStopped(PluginStopped e)
     {
-      //if (PluginStopped != null)
-      //{
-      //  PluginStopped(this, e);
-      //}
+      if (PluginStopped != null)
+      {
+        PluginStopped(e);
+      }
     }
-    #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Loads all the available plugins
     /// </summary>
@@ -102,32 +141,13 @@ namespace ProjectInfinity.Plugins
 
       ServiceScope.Add<IPluginTree>(_pluginTree);
     }
+
     #endregion
 
     #region IPluginManager Members
 
-    //public event EventHandler<PluginStartStopEventArgs> PluginStarted;
-    //public event EventHandler<PluginStartStopEventArgs> PluginStopped;
-
-    public List<T> BuildItems<T>(string treePath)
-    {
-      return _pluginTree.BuildItems<T>(treePath, null, false);
-    }
-
-    public object BuildItem<T>(string treePath, string name)
-    {
-      return _pluginTree.BuildItem<T>(treePath, name, null, false);
-    }
-
-    /// <summary>
-    /// Gets an enumerable list of available plugins
-    /// </summary>
-    /// <returns>An <see cref="IEnumerable<IPlugin>"/> list.</returns>
-    /// <remarks>A configuration program can use this list to present the user a list of available plugins that he can (de)activate.</remarks>
-    public IEnumerable<IPluginInfo> GetAvailablePlugins()
-    {
-      return null; // pluginInfo.Values;
-    }
+    public event MessageHandler<PluginStarted> PluginStarted;
+    public event MessageHandler<PluginStopped> PluginStopped;
 
     /// <summary>
     /// Stops the given plug-in.
@@ -143,18 +163,6 @@ namespace ProjectInfinity.Plugins
       //runningPlugins.Remove(pluginName);
       //plugin.Dispose();
       //OnPluginStopped(new PluginStartStopEventArgs(pluginName));
-    }
-
-    /// <summary>
-    /// Stops all plug-ins
-    /// </summary>
-    public void StopAll()
-    {
-      //foreach (IPlugin plugin in runningPlugins.Values)
-      //{
-      //  plugin.Dispose();
-      //}
-      //runningPlugins.Clear();
     }
 
     /// <summary>
@@ -175,18 +183,6 @@ namespace ProjectInfinity.Plugins
       //  runningPlugins.Add(pluginName, plugin);
       //}
       //OnPluginStarted(new PluginStartStopEventArgs(pluginName));
-    }
-
-
-    /// <summary>
-    /// Starts all plug-ins that are activated by the user.
-    /// </summary>
-    public void Startup()
-    {
-      foreach (IAutoStart plugin in _pluginTree.BuildItems<IAutoStart>("/AutoStart", null, false))
-      {
-        plugin.Startup();
-      }
     }
 
     #endregion

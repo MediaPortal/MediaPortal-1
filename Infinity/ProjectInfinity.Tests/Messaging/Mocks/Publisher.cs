@@ -6,13 +6,13 @@ namespace ProjectInfinity.Tests.Messaging.Mocks
   public class Publisher
   {
     [MessagePublication(typeof (MockMessage))]
-    public event EventHandler<MockMessage> Publish;
+    public event MessageHandler<MockMessage> Publish;
 
     public void DoPublish()
     {
       if (Publish != null)
       {
-        Publish(this, new MockMessage("Hello"));
+        Publish(new MockMessage("Hello"));
       }
     }
   }
