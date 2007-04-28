@@ -41,8 +41,7 @@ namespace MyTv
       DataContext = _model;
       this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
-      this.KeyDown += new KeyEventHandler(onKeyDown);
-      this.Loaded += new RoutedEventHandler(TvFullscreen_Loaded);
+      
     }
 
     void TvFullscreen_Loaded(object sender, RoutedEventArgs e)
@@ -50,7 +49,7 @@ namespace MyTv
       this.Background = _model.VideoBrush;
     }
 
-    protected void onKeyDown(object sender, KeyEventArgs e)
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
       if (e.Key == Key.Up)
       {

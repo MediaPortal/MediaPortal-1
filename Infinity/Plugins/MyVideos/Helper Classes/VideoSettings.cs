@@ -11,6 +11,7 @@ namespace MyVideos
     List<string> _shares;
     string _videoExtensions;
     bool _createThumbnails;
+    string _seekSteps;
     #endregion
 
     /// <summary>
@@ -52,6 +53,24 @@ namespace MyVideos
     {
       get { return this._createThumbnails; }
       set { this._createThumbnails = value; }
+    }
+
+    /// <summary>
+    /// Gets or sets the  steps used for seeking forward/backward
+    /// steps are in seconds
+    /// </summary>
+    /// <value>The seek steps.</value>
+    [Setting(SettingScope.Global, "0,15,30,60,180,300,600,900,1800,3600,7200")]
+    public string SeekSteps
+    {
+      get
+      {
+        return _seekSteps;
+      }
+      set
+      {
+        _seekSteps = value;
+      }
     }
   }
 }
