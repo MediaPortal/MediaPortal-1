@@ -337,6 +337,7 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#Play.Current.Track", strTrack);
         GUIPropertyManager.SetProperty("#Play.Current.Year", strYear);
         GUIPropertyManager.SetProperty("#Play.Current.Duration", strDuration);
+        GUIPropertyManager.SetProperty("#duration", MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration));
       }
 
       // Show Information of Next File in Playlist
