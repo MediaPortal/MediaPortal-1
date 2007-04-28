@@ -19183,7 +19183,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="ATI TV Wonder VE" capturename="ATI TV Wonder Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_00031002&amp;rev_02">
+  <capturecard commercialname="ATI TV Wonder VE" capturename="ATI TV Wonder Capture" devid="ven_109e&amp;dev_036e&amp;subsys_00031002&amp;rev_02">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
@@ -19194,20 +19194,21 @@
         <filter cat="crossbar2"	  name="ATI TV Wonder BT Video Crossbar"  checkdevice="true"/>
         <filter cat="capture"		  name="ATI TV Wonder Capture"  		      checkdevice="true"/>
         <filter cat="audcapture"	name="%soundcard%"						          checkdevice="true"/>
-        <filter cat="videncoder"	name="ATI Media Center Video Encoder"	  checkdevice="false"/>
-        <filter cat="audencoder"	name="ATI Media Center Audio Encoder" 	checkdevice="false"/>
-        <filter cat="mux"		      name="ATI Media Center Multiplexer"	    checkdevice="false"/>
+        <filter cat="videncoder"	name="%videoencoder%"	                  checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%" 	                checkdevice="false"/>
+        <filter cat="mux"		      name="%mpegmux%"	                      checkdevice="false"/>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"   sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"   sinkpin="1"/>
         <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"	  sinkpin="2"/>
         <connection sourcefilter="crossbar"	  sourcepin="1" sinkfilter="crossbar2"	sinkpin="1"/>
+        <connection sourcefilter="crossbar"	  sourcepin="2" sinkfilter="audcapture"	sinkpin="3"/>
         <connection sourcefilter="crossbar2"  sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
         <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -19228,7 +19229,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KWORLD Global TV Terminator" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_00001131&amp;rev_d1">
+  <capturecard commercialname="KWORLD Global TV Terminator" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_00001131&amp;rev_d1">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
@@ -19357,7 +19358,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="4"/>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"                    checkdevice="false"/>
-        <filter cat="tunerdevice"     name="Hauppauge WinTV MOD7700 DVB-T Tuner (Dev1 Path0)"   checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Hauppauge WinTV MOD7700 DVB-T Tuner (Dev1 Path0) "  checkdevice="false"/>
         <filter cat="capture"         name="Hauppauge WinTV MOD7700 DVB-T Capture (Dev1 Path0)" checkdevice="false"/>
       </filters>
       <connections>
@@ -19406,6 +19407,22 @@
         <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
         <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"	      sinkpin="0"/>
         <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"	      sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Kworld ATSC 115" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_735017de&amp;rev_d1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="713x BDA ATSC Tuner"	            checkdevice="false"/>
+        <filter cat="capture"         name="713x BDA Digital Capture"	        checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
