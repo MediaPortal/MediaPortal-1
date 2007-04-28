@@ -38,7 +38,6 @@ namespace ProjectInfinity.Tests.Messaging
 
       messageBroker.Register(publisher);
       messageBroker.Register(subscriber);
-      messageBroker.Register(subscriber);
       publisher.DoPublish();
       Assert.IsTrue(subscriber.Received);
     }
@@ -139,5 +138,20 @@ namespace ProjectInfinity.Tests.Messaging
       InvalidPublisher invalidPublisher = new InvalidPublisher();
       messageBroker.Register(invalidPublisher);
     }
+
+    /// <summary>
+    /// Tests manual triggering of messages.
+    /// </summary>
+    [Test]
+    public void TestManualMessage()
+    {
+      MessageBroker messageBroker = new MessageBroker();
+      Subscriber subscriber = new Subscriber();
+
+      messageBroker.Register(subscriber);
+      messageBroker.Send("ProjectInfinity.Tests.Messaging.Mocks.MockMessage","hello");
+      Assert.IsTrue(subscriber.Received);
+    }
+
   }
 }

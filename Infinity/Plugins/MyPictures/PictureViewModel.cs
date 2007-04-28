@@ -20,6 +20,7 @@ namespace ProjectInfinity.Pictures
     private Folder _currentFolder;
     private ViewMode _viewMode;
     private ICommand _viewCommand;
+    private ICommand _startSlideshowCommand;
 
     public PictureViewModel()
     {
@@ -33,43 +34,9 @@ namespace ProjectInfinity.Pictures
       Reload(new Folder(new DirectoryInfo(settings.PictureFolders[0])), false);
     }
 
-    #region INotifyPropertyChanged Members
-
-    ///<summary>
-    ///Occurs when a property value changes.
-    ///</summary>
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    #endregion
-
     public Folder CurrentFolder
     {
       get { return _currentFolder; }
-    }
-
-    private void Reload(Folder dir, bool includeParent)
-    {
-      DirectoryInfo directoryInfo = dir.Info;
-      DirectoryInfo parentInfo = directoryInfo.Parent;
-      FileSystemInfo[] entries = directoryInfo.GetFileSystemInfos();
-      MediaFactory factory = new MediaFactory(settings);
-      _currentFolder = dir;
-      OnPropertyChanged(new PropertyChangedEventArgs("CurrentFolder"));
-      _model.Clear();
-      if (includeParent && parentInfo != null)
-      {
-        _model.Add(new ParentFolder(parentInfo));
-      }
-      foreach (FileSystemInfo entry in entries)
-      {
-        MediaItem item = factory.Create(entry);
-        if (item == null)
-        {
-          continue;
-        }
-        _model.Add(item);
-      }
-      Items = new CollectionView(_model);
     }
 
     public CollectionView Items
@@ -126,6 +93,41 @@ namespace ProjectInfinity.Pictures
       get { return "View: " + ViewMode; }
     }
 
+    #region INotifyPropertyChanged Members
+
+    ///<summary>
+    ///Occurs when a property value changes.
+    ///</summary>
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    #endregion
+
+    private void Reload(Folder dir, bool includeParent)
+    {
+      DirectoryInfo directoryInfo = dir.Info;
+      DirectoryInfo parentInfo = directoryInfo.Parent;
+      FileSystemInfo[] entries = directoryInfo.GetFileSystemInfos();
+      MediaFactory factory = new MediaFactory(settings);
+      _currentFolder = dir;
+      OnPropertyChanged(new PropertyChangedEventArgs("CurrentFolder"));
+      _model.Clear();
+      if (includeParent && parentInfo != null)
+      {
+        _model.Add(new ParentFolder(parentInfo));
+      }
+      foreach (FileSystemInfo entry in entries)
+      {
+        MediaItem item = factory.Create(entry);
+        if (item == null)
+        {
+          continue;
+        }
+        _model.Add(item);
+      }
+      Items = new CollectionView(_model);
+    }
+
+
     protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
     {
       if (PropertyChanged != null)
@@ -133,8 +135,6 @@ namespace ProjectInfinity.Pictures
         PropertyChanged(this, e);
       }
     }
-
-    #region Commands
 
     private class LaunchCommand : BaseCommand, IMediaVisitor
     {
@@ -189,13 +189,16 @@ namespace ProjectInfinity.Pictures
         dlgMenu.SubTitle = "";
         dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mypictures", 22) /*List*/));
         dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mypictures", 23) /*Icon*/));
+        dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mypictures", 24) /*Details*/));
         dlgMenu.SelectedIndex = (int) _viewModel.ViewMode;
         dlgMenu.ShowDialog();
+        if (dlgMenu.SelectedIndex < 0)
+        {
+          return;
+        }
         _viewModel.ViewMode = (ViewMode) dlgMenu.SelectedIndex;
       }
     }
-
-    #endregion
   }
 
   internal class MediaFactory

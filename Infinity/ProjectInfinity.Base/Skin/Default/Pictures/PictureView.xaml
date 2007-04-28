@@ -15,6 +15,24 @@
         <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Name}"/>
       </DockPanel>
     </DataTemplate>
+    <DataTemplate x:Key="pictureDetailsTemplate">
+      <DockPanel Width="500">
+        <Image DockPanel.Dock ="Left" Margin="0,5,0,5" Height="100" Width="100"  Source="{Binding Thumbnail}" />
+        <DockPanel DockPanel.Dock="Top"   LastChildFill="True">
+          <Label DockPanel.Dock="Right" Style="{StaticResource LabelSmallStyleWhite}" HorizontalAlignment="Right" Content="{Binding Size}"/>
+          <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Name}"/>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Top" LastChildFill="True">
+          <Label Style="{StaticResource LabelNormalStyleWhite}" Content="Camera:" DockPanel.Dock ="Left" Margin="0,0,5,0"/>
+          <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding CameraManufacturer}"/>
+          <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding CameraModel}"/>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Top" LastChildFill="True">
+          <Label Style="{StaticResource LabelNormalStyleWhite}" Content="Date taken:" DockPanel.Dock ="Left" Margin="0,0,5,0"/>
+          <Label Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding DateTaken}"/>
+        </DockPanel>
+      </DockPanel>
+    </DataTemplate>
     <DataTemplate x:Key="pictureIconTemplate">
       <StackPanel Width ="160">
         <Image Height="150" Width="150"  Source="{Binding Thumbnail}" />
@@ -51,6 +69,9 @@
               </Trigger>
               <Trigger Property="ViewMode" Value="Icon">
                 <Setter Property="ItemTemplate" Value="{StaticResource pictureIconTemplate}"/>
+              </Trigger>
+              <Trigger Property="ViewMode" Value="Details">
+                <Setter Property="ItemTemplate" Value="{StaticResource pictureDetailsTemplate}"/>
               </Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>

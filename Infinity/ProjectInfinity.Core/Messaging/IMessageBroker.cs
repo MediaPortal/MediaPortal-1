@@ -20,5 +20,12 @@ namespace ProjectInfinity.Messaging
     /// </summary>
     /// <param name="item"></param>
     void Unregister(object item);
+
+    /// <summary>
+    /// Triggers the given message in the system.
+    /// </summary>
+    /// <param name="message">The message to trigger.</param>
+    /// <param name="args">The arguments to pass to the message constructor</param>
+    void Send(string message, params object[] args);
   }
 }

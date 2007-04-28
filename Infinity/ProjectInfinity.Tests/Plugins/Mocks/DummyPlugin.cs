@@ -49,5 +49,10 @@ namespace ProjectInfinity.Tests.Plugins.Mocks
     }
 
     #endregion
+
+    public void Initialize(string id)
+    {
+      throw new System.NotImplementedException();
+    }
   }
 }

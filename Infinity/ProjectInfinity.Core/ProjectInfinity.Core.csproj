@@ -41,7 +41,11 @@
     <Compile Include="Localisation\StringId.cs" />
     <Compile Include="Menu\IMenu.cs" />
     <Compile Include="Menu\IMenuItem.cs" />
+    <Compile Include="Messages.cs" />
+    <Compile Include="Messaging\CancelMessage.cs" />
+    <Compile Include="Messaging\CancelMessageHandler.cs" />
     <Compile Include="Messaging\Message.cs" />
+    <Compile Include="Messaging\MessageHandler.cs" />
     <Compile Include="MusicMessages.cs" />
     <Compile Include="Navigation\INavigationService.cs" />
     <Compile Include="Players\IPlayer.cs" />
@@ -55,7 +59,6 @@
     <Compile Include="Plugins\IMenuCommand.cs" />
     <Compile Include="Settings\ISettingsManager.cs" />
     <Compile Include="Settings\SettingAttribute.cs" />
-    <Compile Include="SystemMessages.cs" />
     <Compile Include="Music\IMusicPlayer.cs" />
     <Compile Include="Music\MusicStartMessage.cs" />
     <Compile Include="Plugins\IPlugin.cs" />

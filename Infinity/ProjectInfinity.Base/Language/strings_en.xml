@@ -219,6 +219,7 @@
     <String id="11">Menu</String>
     <String id="22">List</String>
     <String id="23">Icon</String>
+    <String id="24">Details</String>
   </Section>
   <Section name="myweather.config">
     <String id="0">setup weather</String>

@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using ProjectInfinity.Messaging;
-using ProjectInfinity.Messaging.SystemMessages;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
 using ProjectInfinity.Themes;
@@ -20,14 +19,14 @@ namespace ProjectInfinity
     /// Occurs when ProjectInfinity is starting up.
     /// </summary>
     [MessagePublication(typeof (Startup))]
-    public new event EventHandler Startup;
+    public new event MessageHandler<Startup> Startup;
 
     /// <summary>
     /// Occurs when the ProjectInfinity core has finished starting up and is ready to show the
     /// main screen.
     /// </summary>
     [MessagePublication(typeof (StartupComplete))]
-    public event EventHandler StartupComplete;
+    public event MessageHandler<StartupComplete>	StartupComplete;
 
     /// <summary>
     /// <para>Occurs when the operating system is about to end the users' session (and thus shut down ProjectInfinity)</para>
@@ -35,32 +34,32 @@ namespace ProjectInfinity
     /// </summary>
     /// <remarks>This is a cancelable event.</remarks>
     [MessagePublication(typeof (SessionEnding))]
-    public new event SessionEndingCancelEventHandler SessionEnding;
+    public new event CancelMessageHandler<SessionEnding> SessionEnding;
 
     /// <summary>
     /// Occurs when ProjectInfinity is about to shutdown.
     /// </summary>
     /// <remarks>This is a cancelable event.</remarks>
     [MessagePublication(typeof (BeforeShutdown))]
-    public event CancelEventHandler BeforeShutdown;
+    public event CancelMessageHandler<BeforeShutdown>	BeforeShutdown;
 
-    [MessagePublication(typeof (Shutdown))]
-    public new event EventHandler Shutdown;
+    [MessagePublication(typeof (ShuttingDown))]
+    public event MessageHandler<ShuttingDown> ShuttingDown;
 
     [MessagePublication(typeof (ShutdownComplete))]
-    public event EventHandler ShutdownComplete;
+    public event MessageHandler<ShutdownComplete> ShutdownComplete;
 
     /// <summary>
     /// Occurs when ProjectInfinity becomes the foreground application.
     /// </summary>
     [MessagePublication(typeof (Activated))]
-    public new event EventHandler Activated;
+    public new event MessageHandler<Activated> Activated;
 
     /// <summary>
     /// Occurs when ProjectInfinity stops being the foreground application.
     /// </summary>
     [MessagePublication(typeof (Deactivated))]
-    public new event EventHandler Deactivated;
+    public new event MessageHandler<Deactivated> Deactivated;
 
     #endregion
 
@@ -78,7 +77,7 @@ namespace ProjectInfinity
     private void DoStart()
     {
       //notify our own subscribers (through the message broker)
-      OnStartup(new EventArgs());
+      OnStartup(new Startup());
 
       //Start the plugins
       ServiceScope.Get<IThemeManager>().SetDefaultTheme();
@@ -88,59 +87,59 @@ namespace ProjectInfinity
       navigation.Closing += mainWindow_Closing;
       try
       {
-        OnStartupComplete(EventArgs.Empty);
+        OnStartupComplete(new StartupComplete());
 
 
         //navigation.Navigate(startupUri);
         Run(navigation.GetWindow());
-        OnShutdown(EventArgs.Empty);
+        OnShuttingDown(new ShuttingDown());
       }
       finally
       {
         navigation.Closing -= mainWindow_Closing;
       }
-      OnShutdownComplete(EventArgs.Empty);
+      OnShutdownComplete(new ShutdownComplete());
     }
 
-    protected virtual void OnStartup(EventArgs e)
+    protected virtual void OnStartup(Startup e)
     {
       if (Startup != null)
       {
-        Startup(this, e);
+        Startup(e);
       }
     }
 
     #region Message Sending
 
-    protected virtual void OnStartupComplete(EventArgs e)
+    protected virtual void OnStartupComplete(StartupComplete e)
     {
       if (StartupComplete != null)
       {
-        StartupComplete(this, e);
+        StartupComplete(e);
       }
     }
 
-    protected virtual void OnBeforeShutdown(CancelEventArgs e)
+    protected virtual void OnBeforeShutdown(BeforeShutdown e)
     {
       if (BeforeShutdown != null)
       {
-        BeforeShutdown(this, e);
+        BeforeShutdown(e);
       }
     }
 
-    protected virtual void OnShutdown(EventArgs e)
+    protected virtual void OnShuttingDown(ShuttingDown e)
     {
-      if (Shutdown != null)
+      if (ShuttingDown != null)
       {
-        Shutdown(this, e);
+        ShuttingDown(e);
       }
     }
 
-    protected virtual void OnShutdownComplete(EventArgs e)
+    protected virtual void OnShutdownComplete(ShutdownComplete e)
     {
       if (ShutdownComplete != null)
       {
-        ShutdownComplete(this, e);
+        ShutdownComplete(e);
       }
     }
 
@@ -149,7 +148,7 @@ namespace ProjectInfinity
       base.OnSessionEnding(e);
       if (SessionEnding != null)
       {
-        SessionEnding(this, e);
+        SessionEnding(new SessionEnding(e));
       }
     }
 
@@ -158,7 +157,7 @@ namespace ProjectInfinity
       base.OnActivated(e);
       if (Activated != null)
       {
-        Activated(this, e);
+        Activated(new Activated());
       }
     }
 
@@ -167,7 +166,7 @@ namespace ProjectInfinity
       base.OnDeactivated(e);
       if (Deactivated != null)
       {
-        Deactivated(this, e);
+        Deactivated(new Deactivated());
       }
     }
 
@@ -177,7 +176,16 @@ namespace ProjectInfinity
 
     private void mainWindow_Closing(object sender, CancelEventArgs e)
     {
-      OnBeforeShutdown(e);
+      OnBeforeShutdown(new BeforeShutdown(e));
+    }
+
+    [MessageSubscription(typeof(Shutdown))]
+    private void Shutdown(Shutdown e)
+    {
+      if (e.Force)
+        Shutdown();
+      else
+      ServiceScope.Get<INavigationService>().Close();
     }
 
     #endregion

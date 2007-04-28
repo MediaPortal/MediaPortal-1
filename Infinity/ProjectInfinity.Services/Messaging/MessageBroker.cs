@@ -37,6 +37,49 @@ namespace ProjectInfinity.Messaging
     }
 
     /// <summary>
+    /// Triggers the given message in the system.
+    /// </summary>
+    /// <param name="messageId">The message to trigger.</param>
+    /// <param name="args">The arguments to pass to the message constructor</param>
+    public void Send(string messageId, params object[] args)
+    {
+      ILogger logger = ServiceScope.Get<ILogger>();
+      logger.Debug("MessageBroker: Manual triggering of {0} message", messageId);
+      //Check if we know the message type
+      if (!topics.Contains(messageId))
+      {
+        logger.Warn("MessageBroker: message {0} is not (yet) registered");
+        return;
+      }
+      MessageTopic messageTopic = topics[messageId];
+      //Try to get the Type of the message
+      if (messageTopic.MessageType==null)
+      {
+        logger.Warn("MessageBroker: could not get type for message {0}",messageId);
+        return;
+      }
+      Message message = null;
+      //Try to create an instance of the message (passing the arguments)
+      //try
+      //{
+      message = Activator.CreateInstance(messageTopic.MessageType, args) as Message;
+      //}
+      //catch(Exception ex)
+      //{
+      //  logger.Error(ex);
+      //}
+      //Actually trigger the message
+      //try
+      //{
+        messageTopic.DoRaise(message);
+      //}
+      //catch(Exception ex)
+      //{
+      //  logger.Error(ex);
+      //}
+    }
+
+    /// <summary>
     /// Deletes all registered objects and resets the <see cref="MessageBroker"/> to its
     /// initial state.
     /// </summary>
@@ -96,8 +139,9 @@ namespace ProjectInfinity.Messaging
       MessageTopic topic = topics[attr.Topic];
       if (register)
       {
+        if (topic.MessageType == null)
+          topic.MessageType = attr.GetTopic();
         Type eventHandlerType = info.EventHandlerType;
-        Type messageType = attr.GetTopic();
         //TODO: check event type
         //if (!messageType.IsAssignableFrom(eventHandlerType))
         //  throw new ArgumentException(
@@ -117,13 +161,15 @@ namespace ProjectInfinity.Messaging
       MessageTopic topic = topics[attr.Topic];
       if (register)
       {
+        if (topic.MessageType == null)
+          topic.MessageType = attr.GetTopic();
         ParameterInfo[] parameters = info.GetParameters();
-        if (parameters.Length != 2)
+        if (parameters.Length != 1)
         {
           throw new ArgumentException(
             string.Format("Incorrect number of parameters for message handler method {0}", info.Name));
         }
-        ParameterInfo parameter = parameters[1];
+        ParameterInfo parameter = parameters[0];
         if (!parameter.ParameterType.IsAssignableFrom(attr.GetTopic()))
         {
           throw new ArgumentException(

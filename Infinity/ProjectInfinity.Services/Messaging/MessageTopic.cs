@@ -7,15 +7,23 @@ namespace ProjectInfinity.Messaging
 {
   internal sealed class MessageTopic
   {
-    private string id;
-    private List<KeyValuePair<object, MethodInfo>> handlers = new List<KeyValuePair<object, MethodInfo>>();
+    private readonly string id;
+    private Type _messageType;
+    private readonly List<KeyValuePair<object, MethodInfo>> handlers = new List<KeyValuePair<object, MethodInfo>>();
 
-    private static MethodInfo raiseMethodInfo =
+    private static readonly MethodInfo raiseMethodInfo =
       typeof (MessageTopic).GetMethod("DoRaise", BindingFlags.Instance | BindingFlags.NonPublic);
+
 
     public string Id
     {
       get { return id; }
+    }
+
+    public Type MessageType
+    {
+      get { return _messageType; }
+      set { _messageType = value; }
     }
 
     public MessageTopic(string id)
@@ -32,19 +40,13 @@ namespace ProjectInfinity.Messaging
     /// <summary>
     /// This method passes the event that is raised by the publisher through to the subscribers
     /// </summary>
-    /// <param name="sender"></param>
     /// <param name="e"></param>
-    /// <remarks>
-    /// DO NOT DELETE THIS METHOD!!!
-    /// Resharper marks this method as "never used" because it is private and it is only called through
-    /// reflection.
-    /// </remarks>
-    private void DoRaise(object sender, EventArgs e)
+    internal void DoRaise(Message e)
     {
       ServiceScope.Get<ILogger>().Debug("MessageBroker: sending {0}({1}) message", id, e);
       foreach (KeyValuePair<object, MethodInfo> pair in handlers)
       {
-        pair.Value.Invoke(pair.Key, new object[] {sender, e});
+        pair.Value.Invoke(pair.Key, new object[] {e});
       }
     }
 

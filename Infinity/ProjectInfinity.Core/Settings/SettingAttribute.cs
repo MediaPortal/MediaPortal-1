@@ -14,7 +14,7 @@ namespace ProjectInfinity.Settings
     User = 2    // per user setting : allows per user storage
   }
 
-  [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false)]
+  [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
   public class SettingAttribute : Attribute
   {
     private SettingScope _settingScope;

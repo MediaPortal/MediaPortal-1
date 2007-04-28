@@ -4,14 +4,14 @@ namespace ProjectInfinity.Messaging
 {
   internal class MessageTopicCollection
   {
-    private Dictionary<string, MessageTopic> topics = new Dictionary<string, MessageTopic>();
+    private readonly Dictionary<string, MessageTopic> topics = new Dictionary<string, MessageTopic>();
 
     internal MessageTopic this[string id]
     {
       get
       {
         MessageTopic topic;
-        if (!topics.ContainsKey(id))
+        if (!Contains(id))
         {
           topic = new MessageTopic(id);
           topics.Add(id, topic);
@@ -22,6 +22,11 @@ namespace ProjectInfinity.Messaging
         }
         return topic;
       }
+    }
+
+    internal bool Contains(string id)
+    {
+      return topics.ContainsKey(id);
     }
   }
 }

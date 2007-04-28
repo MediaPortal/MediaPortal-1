@@ -18,5 +18,7 @@ namespace ProjectInfinity.Navigation
     /// </summary>
     /// <value>The current window scaling.</value>
     Size CurrentScaling { get;}
+
+    void Close();
   }
 }
