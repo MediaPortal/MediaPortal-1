@@ -25,6 +25,7 @@ namespace ProjectInfinity.Menu
     public MenuViewModel(string id)
     {
       _id = id;
+      //TODO: ideally the IMenuManager.GetMenu method should directly return the collection we need. (this means a list of IMenuItem implementations of the correct type (IMenu, IPluginItem, IMessageItem, ...)
       IList<IMenuItem> model = ServiceScope.Get<IMenuManager>().GetMenu(id);
       menuView = new MenuCollection();
       foreach (IMenuItem item in model)
@@ -39,10 +40,12 @@ namespace ProjectInfinity.Menu
             subMenus.Add(new PluginMenuItem(menu.Items[i]));
           }
           newItem.SubMenus = subMenus;
+          //TODO: we should add an IMenu implementation here
           menuView.Add(newItem);
         }
         else
         {
+          //TODO: we should add an IPluginItem implementation here
           menuView.Add(new PluginMenuItem(item));
         }
       }
@@ -132,6 +135,9 @@ namespace ProjectInfinity.Menu
         //{
         //  return;
         //}
+        ////Visitor Pattern
+        ////We pass ourselves to the item and the item will call the correct overload
+        ////of our Visit method.  Look ma, no Casting ;-)
         //menuItem.Accept(this);
         //END TODO
 
@@ -159,6 +165,8 @@ namespace ProjectInfinity.Menu
 
       #region IMenuItemVisitor Members
 
+
+      //User clicked on a Menu
       public void Visit(IMenu menu)
       {
         if (menu.DefaultItem != null)
@@ -167,12 +175,14 @@ namespace ProjectInfinity.Menu
         }
       }
 
+      //User clicked on Plugin
       public void Visit(IPluginItem plugin)
       {
         plugin.Execute();
         //ServiceScope.Get<IPluginManager>().Start(pluginItem.Text);
       }
 
+      //User clicked on a Message
       public void Visit(IMessageItem message)
       {
         throw new NotImplementedException();

@@ -11,7 +11,7 @@ namespace ProjectInfinity.Menu
     {
       IList<IMenuItem> menus = new List<IMenuItem>();
 
-      ProjectInfinity.Plugins.Menu menuInfo = (ProjectInfinity.Plugins.Menu)ServiceScope.Get<IPluginManager>().BuildItem<ProjectInfinity.Plugins.Menu>("/Menus", id);
+      Plugins.Menu menuInfo = (Plugins.Menu) ServiceScope.Get<IPluginManager>().BuildItem<Plugins.Menu>("/Menus", id);
       if (menuInfo != null)
       {
         foreach (MenuItem menuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuItem>(menuInfo.Path))
@@ -20,14 +20,18 @@ namespace ProjectInfinity.Menu
           {
             IMenu submenu = new Menu(new PluginItem(menuItem));
 
-            foreach (MenuItem subMenuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuItem>(menuItem.SubMenuPath))
+            foreach (
+              MenuItem subMenuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuItem>(menuItem.SubMenuPath))
             {
+              //TODO: should be an IMenuItem implementation
               submenu.Items.Add(new PluginItem(subMenuItem));
             }
+            //TODO: should be an IMenu implementation
             menus.Add(submenu);
           }
           else
           {
+            //TODO: should be an IPluginItem or IMessageItem implementation
             menus.Add(new PluginItem(menuItem));
           }
         }
@@ -48,13 +52,14 @@ namespace ProjectInfinity.Menu
 
     public string GetMenuName(string id)
     {
-      ProjectInfinity.Plugins.Menu menuInfo = (ProjectInfinity.Plugins.Menu)ServiceScope.Get<IPluginManager>().BuildItem<ProjectInfinity.Plugins.Menu>("/Menus", id);
+      Plugins.Menu menuInfo = (Plugins.Menu) ServiceScope.Get<IPluginManager>().BuildItem<Plugins.Menu>("/Menus", id);
       if (menuInfo != null)
       {
         return menuInfo.Name;
       }
       return "";
     }
+
     #endregion
   }
 }
