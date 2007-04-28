@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Controls;
-using ProjectInfinity;
-using ProjectInfinity.Plugins;
-using ProjectInfinity.Localisation;
 using ProjectInfinity.Controls;
-using ProjectInfinity.TaskBar;
 using ProjectInfinity.Navigation;
+using ProjectInfinity.TaskBar;
 
 namespace ProjectInfinity.Menu
 {
@@ -22,10 +17,10 @@ namespace ProjectInfinity.Menu
   /// <seealso cref="http://blogs.sqlxml.org/bryantlikes/archive/2006/09/27/WPF-Patterns.aspx"/>
   public class MenuViewModel
   {
-    private MenuCollection menuView;
+    private readonly MenuCollection menuView;
     private ICommand _launchCommand;
-    ICommand _fullScreenCommand;
-    string _id;
+    private ICommand _fullScreenCommand;
+    private readonly string _id;
 
     public MenuViewModel(string id)
     {
@@ -79,6 +74,7 @@ namespace ProjectInfinity.Menu
         return _launchCommand;
       }
     }
+
     /// <summary>
     /// Returns a ICommand for toggeling between fullscreen mode and windowed mode
     /// </summary>
@@ -95,13 +91,27 @@ namespace ProjectInfinity.Menu
       }
     }
 
-    private class LaunchCommand : ICommand
+    private class LaunchCommand : ICommand, IMenuItemVisitor
     {
       private MenuViewModel _viewModel;
 
       public LaunchCommand(MenuViewModel viewModel)
       {
         _viewModel = viewModel;
+      }
+
+      #region ICommand Members
+
+      ///<summary>
+      ///Defines the method that determines whether the command can execute in its current state.
+      ///</summary>
+      ///<returns>
+      ///true if this command can be executed; otherwise, false.
+      ///</returns>
+      ///<param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
+      public bool CanExecute(object parameter)
+      {
+        return true;
       }
 
       ///<summary>
@@ -116,6 +126,15 @@ namespace ProjectInfinity.Menu
       ///<param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
       public void Execute(object parameter)
       {
+        //TODO: reactivate this block and delete all the rest of this method
+        //IMenuItem menuItem = parameter as IMenuItem;
+        //if (menuItem == null)
+        //{
+        //  return;
+        //}
+        //menuItem.Accept(this);
+        //END TODO
+
         PluginMenuItem menuItem = parameter as PluginMenuItem;
         if (menuItem == null)
           return;
@@ -124,7 +143,7 @@ namespace ProjectInfinity.Menu
 
         IMenu menu = menuItem.Menu as IMenu;
         if (menu != null)
-          pluginItem = menu.MenuItem as IPluginItem;
+          pluginItem = menu.DefaultItem as IPluginItem;
         else
           pluginItem = menuItem.Menu as IPluginItem;
 
@@ -136,27 +155,41 @@ namespace ProjectInfinity.Menu
 
       }
 
-      ///<summary>
-      ///Defines the method that determines whether the command can execute in its current state.
-      ///</summary>
-      ///<returns>
-      ///true if this command can be executed; otherwise, false.
-      ///</returns>
-      ///<param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
-      public bool CanExecute(object parameter)
+      #endregion
+
+      #region IMenuItemVisitor Members
+
+      public void Visit(IMenu menu)
       {
-        return true;
+        if (menu.DefaultItem != null)
+        {
+          menu.DefaultItem.Accept(this);
+        }
       }
+
+      public void Visit(IPluginItem plugin)
+      {
+        plugin.Execute();
+        //ServiceScope.Get<IPluginManager>().Start(pluginItem.Text);
+      }
+
+      public void Visit(IMessageItem message)
+      {
+        throw new NotImplementedException();
+      }
+
+      #endregion
     }
 
     #region FullScreenCommand  class
+
     /// <summary>
     /// FullScreenCommand will toggle application between normal and fullscreen mode
     /// </summary> 
     public class FullScreenCommand : ICommand
     {
-      public event EventHandler CanExecuteChanged;
-      MenuViewModel _viewModel;
+      private readonly MenuViewModel _viewModel;
+
       /// <summary>
       /// Initializes a new instance of the <see cref="FullScreenCommand"/> class.
       /// </summary>
@@ -166,28 +199,7 @@ namespace ProjectInfinity.Menu
         _viewModel = viewModel;
       }
 
-      /// <summary>
-      /// Executes the command.
-      /// </summary>
-      /// <param name="parameter">The parameter.</param>
-      public void Execute(object parameter)
-      {
-        Window window = _viewModel.Window;
-        if (window.WindowState == System.Windows.WindowState.Maximized)
-        {
-          window.ShowInTaskbar = true;
-          ServiceScope.Get<IWindowsTaskBar>().Show();
-          window.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
-          window.WindowState = System.Windows.WindowState.Normal;
-        }
-        else
-        {
-          window.ShowInTaskbar = false;
-          window.WindowStyle = System.Windows.WindowStyle.None;
-          ServiceScope.Get<IWindowsTaskBar>().Hide();
-          window.WindowState = System.Windows.WindowState.Maximized;
-        }
-      }
+      #region ICommand Members
 
       ///<summary>
       ///Defines the method that determines whether the command can execute in its current state.
@@ -200,8 +212,35 @@ namespace ProjectInfinity.Menu
       {
         return true;
       }
-    }
-    #endregion
 
+      public event EventHandler CanExecuteChanged;
+
+      /// <summary>
+      /// Executes the command.
+      /// </summary>
+      /// <param name="parameter">The parameter.</param>
+      public void Execute(object parameter)
+      {
+        Window window = _viewModel.Window;
+        if (window.WindowState == WindowState.Maximized)
+        {
+          window.ShowInTaskbar = true;
+          ServiceScope.Get<IWindowsTaskBar>().Show();
+          window.WindowStyle = WindowStyle.SingleBorderWindow;
+          window.WindowState = WindowState.Normal;
+        }
+        else
+        {
+          window.ShowInTaskbar = false;
+          window.WindowStyle = WindowStyle.None;
+          ServiceScope.Get<IWindowsTaskBar>().Hide();
+          window.WindowState = WindowState.Maximized;
+        }
+      }
+
+      #endregion
+    }
+
+    #endregion
   }
 }

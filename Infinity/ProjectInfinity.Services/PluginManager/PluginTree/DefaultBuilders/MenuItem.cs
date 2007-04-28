@@ -31,7 +31,7 @@ using ProjectInfinity.Logging;
 
 namespace ProjectInfinity.Plugins
 {
-  public class MenuItem
+  public class MenuItem 
   {
     #region Variables
     object _caller;

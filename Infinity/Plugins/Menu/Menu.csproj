@@ -7,7 +7,7 @@
     <ProjectGuid>{57F96D38-B30D-492B-91FB-61986586BD13}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Menu</RootNamespace>
+    <RootNamespace>ProjectInfinity.Menu</RootNamespace>
     <AssemblyName>Menu</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -37,7 +37,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IMenuManager.cs" />
-    <Compile Include="IPluginItem.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="MenuManager.cs" />
     <Compile Include="MenuPlugin.cs" />

@@ -6,12 +6,12 @@ namespace ProjectInfinity.Menu
 {
   public class Menu : IMenu
   {
-    private List<IMenuItem> _items = new List<IMenuItem>();
-    private IMenuItem _menuItem;
+    private readonly List<IMenuItem> _items = new List<IMenuItem>();
+    private readonly IMenuItem _DefaultItem;
 
     public Menu(IMenuItem menuItem)
     {
-      _menuItem = menuItem;
+      _DefaultItem = menuItem;
     }
 
     #region IMenu Members
@@ -21,9 +21,9 @@ namespace ProjectInfinity.Menu
       get { return _items; }
     }
 
-    public IMenuItem MenuItem
+    public IMenuItem DefaultItem
     {
-      get { return _menuItem; }
+      get { return _DefaultItem; }
     }
 
     #endregion
@@ -32,7 +32,12 @@ namespace ProjectInfinity.Menu
 
     public string Text
     {
-      get { return _menuItem.Text; }
+      get { return _DefaultItem.Text; }
+    }
+
+    public void Accept(IMenuItemVisitor visitor)
+    {
+      visitor.Visit(this);
     }
 
     #endregion

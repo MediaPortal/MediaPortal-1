@@ -21,6 +21,11 @@ namespace ProjectInfinity.Menu
       get { return _pluginInfo.Name; }
     }
 
+    public void Accept(IMenuItemVisitor visitor)
+    {
+      visitor.Visit(this);
+    }
+
     public string Description
     {
       get { return _pluginInfo.Description;}
