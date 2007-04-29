@@ -44,6 +44,9 @@
     <Compile Include="Navigation\NavigationService.cs" />
     <Compile Include="PluginManager\PluginManager.cs" />
     <Compile Include="PluginManager\PluginTree\DefaultBuilders\ClassBuilder.cs" />
+    <Compile Include="PluginManager\PluginTree\DefaultBuilders\CommandMenuItem.cs" />
+    <Compile Include="PluginManager\PluginTree\DefaultBuilders\MessageMenuItem.cs" />
+    <Compile Include="PluginManager\PluginTree\DefaultBuilders\SubMenuItem.cs" />
     <Compile Include="PluginManager\PluginTree\DefaultBuilders\LoadBuilder.cs" />
     <Compile Include="PluginManager\PluginTree\DefaultBuilders\Menu.cs" />
     <Compile Include="PluginManager\PluginTree\DefaultBuilders\MenuBuilder.cs" />

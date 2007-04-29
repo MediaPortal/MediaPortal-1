@@ -13,10 +13,11 @@
 
   <Path name = "/Menus/Home">
     <MenuItem id    = "MyTv"
+              type = "SubMenu"
 		          label = "@mytv:137"
               image = "pack://siteoforigin:,,,/skin/default/gfx/tv.png"
 		          class = "MyTv.TvPlugin"
-              submenu="/Menus/Home/MyTv"/>
+              path ="/Menus/Home/MyTv"/>
   </Path>
   <Path name = "/Menus/Home/MyTv">
     <MenuItem id    = "Home"

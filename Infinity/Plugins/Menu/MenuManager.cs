@@ -16,23 +16,21 @@ namespace ProjectInfinity.Menu
       {
         foreach (MenuItem menuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuItem>(menuInfo.Path))
         {
-          if (menuItem.IsSubMenu)
+          if (menuItem is SubMenuItem)
           {
-            IMenu submenu = new Menu(new PluginItem(menuItem));
+            IMenu submenu = new Menu(menuItem);
 
-            foreach (
-              MenuItem subMenuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuItem>(menuItem.SubMenuPath))
+            foreach (MenuItem subMenuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuItem>(((SubMenuItem)menuItem).SubMenuPath))
             {
-              //TODO: should be an IMenuItem implementation
-              submenu.Items.Add(new PluginItem(subMenuItem));
+
+              submenu.Items.Add(subMenuItem);
             }
             //TODO: should be an IMenu implementation
             menus.Add(submenu);
           }
           else
           {
-            //TODO: should be an IPluginItem or IMessageItem implementation
-            menus.Add(new PluginItem(menuItem));
+            menus.Add(menuItem);
           }
         }
       }

@@ -5,6 +5,7 @@ using ProjectInfinity.Plugins;
 
 namespace ProjectInfinity.Menu
 {
+  [Obsolete("This class is being replaced with MenuItem in the plugin manager", true)]
   public class PluginItem : IPluginItem
   {
     private MenuItem _pluginInfo;
@@ -18,7 +19,7 @@ namespace ProjectInfinity.Menu
 
     public string Text
     {
-      get { return _pluginInfo.Name; }
+      get { return ""; } //_pluginInfo.Name; }
     }
 
     public void Accept(IMenuItemVisitor visitor)
@@ -38,7 +39,7 @@ namespace ProjectInfinity.Menu
 
     public void Execute()
     {
-      _pluginInfo.Run();
+      //_pluginInfo.Run();
     }
 
     #endregion

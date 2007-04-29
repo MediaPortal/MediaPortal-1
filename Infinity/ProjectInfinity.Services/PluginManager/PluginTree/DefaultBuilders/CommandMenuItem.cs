@@ -28,60 +28,40 @@
 using System;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Logging;
-using ProjectInfinity.Menu;
 
 namespace ProjectInfinity.Plugins
 {
-  public class MenuItem : IMenuItem
+  public class CommandMenuItem : MenuItem
   {
     #region Variables
-    protected object _caller;
-    //bool _visable;
-    protected NodeItem _item;
-    protected StringId _label;
-    protected string _description = "";
+    IMenuCommand _menuCommand = null;
     #endregion
 
     #region Constructors/Destructors
-    public MenuItem(NodeItem item, object caller)
+    public CommandMenuItem(NodeItem item, object caller)
+      : base(item, caller)
     {
-      this._caller = caller;
-      this._item = item;
-      this._label = new StringId(item.Properties["label"]);
-    }
-    #endregion
 
-    #region Properties
-    public string Description
-    {
-      get { return _description; }
-      set { _description = value; }
-    }
-
-    public string Text
-    {
-      get { return ServiceScope.Get<ILocalisation>().ToString(_label); }
-    }
-
-    //public string Name
-    //{
-    //  get { return ServiceScope.Get<ILocalisation>().ToString(_label); }
-    //}
-
-    public string ImagePath
-    {
-      get { return _item.Properties["image"]; }
     }
     #endregion
 
     #region Public Methods
-    public virtual void Execute()
+    public override void Execute()
     {
-    }
+      if (_menuCommand == null)
+      {
+        try
+        {
+          _menuCommand = (IMenuCommand)base._item.Plugin.CreateObject(base._item.Properties["class"]);
+        }
+        catch (Exception e)
+        {
+          ServiceScope.Get<ILogger>().Error(e.ToString() + "Can't create menu command : " + base._item.Id);
+          return;
+        }
+      }
 
-    public void Accept(IMenuItemVisitor visitor)
-    {
-      // visitor.Visit(this);
+      _menuCommand.Run();
     }
     #endregion
   }

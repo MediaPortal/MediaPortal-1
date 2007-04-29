@@ -84,16 +84,16 @@ namespace ProjectInfinity.Plugins
 		{
 			string type = item.Properties.Contains("type") ? item.Properties["type"] : "Command";
 			
-			bool createCommand = item.Properties["loadclasslazy"] == "false";
+			//bool createCommand = item.Properties["loadclasslazy"] == "false";
 			
 			switch (type) {
-        //case "Separator":
-        //  return new MenuSeparator(codon, caller);
-        //case "CheckBox":
-        //  return new MenuCheckBox(codon, caller);
+        case "SubMenu":
+          return new SubMenuItem(item, caller);  //, createCommand);
+        case "Message":
+          return new MessageMenuItem(item, caller);  //, createCommand);
         case "Item":
         case "Command":
-          return new MenuItem(item, caller, createCommand);
+          return new CommandMenuItem(item, caller); //, createCommand);
         //case "Menu":
         //  return new Menu(codon, caller, subItems);
         //case "Builder":

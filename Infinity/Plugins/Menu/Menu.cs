@@ -30,6 +30,11 @@ namespace ProjectInfinity.Menu
 
     #region IMenuItem Members
 
+    public string ImagePath
+    {
+      get { return _DefaultItem.ImagePath; }
+    }
+
     public string Text
     {
       get { return _DefaultItem.Text; }

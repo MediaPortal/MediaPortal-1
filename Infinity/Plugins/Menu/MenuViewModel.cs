@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
+using ProjectInfinity.Plugins;
 using ProjectInfinity.Controls;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.TaskBar;
@@ -141,20 +142,20 @@ namespace ProjectInfinity.Menu
         //menuItem.Accept(this);
         //END TODO
 
-        PluginMenuItem menuItem = parameter as PluginMenuItem;
-        if (menuItem == null)
+        PluginMenuItem pluginMenuItem = parameter as PluginMenuItem;
+        if (pluginMenuItem == null)
           return;
 
-        IPluginItem pluginItem;
+        ProjectInfinity.Plugins.MenuItem menuItem;
 
-        IMenu menu = menuItem.Menu as IMenu;
+        IMenu menu = pluginMenuItem.Menu as IMenu;
         if (menu != null)
-          pluginItem = menu.DefaultItem as IPluginItem;
+          menuItem = menu.DefaultItem as ProjectInfinity.Plugins.MenuItem;
         else
-          pluginItem = menuItem.Menu as IPluginItem;
+          menuItem = pluginMenuItem.Menu as ProjectInfinity.Plugins.MenuItem;
 
-        if (pluginItem != null)
-          pluginItem.Execute();
+        if (menuItem != null)
+          menuItem.Execute();
 
 
         //ServiceScope.Get<IPluginManager>().Start(pluginItem.Text);
