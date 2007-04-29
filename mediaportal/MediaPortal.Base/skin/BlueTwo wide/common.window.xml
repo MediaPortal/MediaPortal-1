@@ -63,6 +63,7 @@
       <width>217</width>
       <height>213</height>
       <texture>#header.hover</texture>
+      <visible>!videoplayer.usingoverlays</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

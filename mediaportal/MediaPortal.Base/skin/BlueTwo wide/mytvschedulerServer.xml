@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>601</id>
   <defaultcontrol>2</defaultcontrol>
@@ -154,21 +154,21 @@
         <type>listcontrol</type>
         <id>10</id>
         <width>818</width>
-        <height>493</height>
+        <height>450</height>
         <textXOff>94</textXOff>
         <textYOff>2</textYOff>
         <textXOff2>796</textXOff2>
-        <textYOff2>38</textYOff2>
+        <textYOff2>2</textYOff2>
         <textXOff3>189</textXOff3>
         <textYOff3>38</textYOff3>
         <IconXOff>22</IconXOff>
         <IconYOff>10</IconYOff>
         <PinIconXOff>45</PinIconXOff>
-        <PinIconYOff>19</PinIconYOff>
+        <PinIconYOff>10</PinIconYOff>
         <spinPosX>1149</spinPosX>
         <spinPosY>557</spinPosY>
         <itemWidth>46</itemWidth>
-        <itemHeight>46</itemHeight>
+        <itemHeight>30</itemHeight>
         <textureFocus>recording_background_focus.png</textureFocus>
         <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
         <spaceBetweenItems>5</spaceBetweenItems>

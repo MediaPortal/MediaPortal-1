@@ -1,11 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
     <control>
       <description>Date</description>
       <type>label</type>
       <id>200</id>
-      <posX>1165</posX>
+      <posX>1130</posX>
       <posY>40</posY>
       <label>#date</label>
       <align>right</align>
