@@ -1588,10 +1588,6 @@ namespace MediaPortal.GUI.Library
       else
       {
         _controlUpDown.OnAction(action);
-        if (!this.Focus && _controlUpDown.Focus)  //Thumbnail lost focus but _controlUpDown still has it
-        {
-          _controlUpDown.Focus = false;
-        }
         if (!_controlUpDown.Focus)
         {
           m_iSelect = GUIListControl.ListType.CONTROL_LIST;

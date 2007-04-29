@@ -132,6 +132,11 @@ namespace MediaPortal.Tests.Core.Playlists
       hasPlayBeenCalled = true;
       return true;
     }
+
+    public bool ShowFullScreenWindow()
+    {
+      return false;
+    }
     #endregion
   }
 }

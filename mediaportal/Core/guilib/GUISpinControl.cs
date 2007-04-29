@@ -444,60 +444,67 @@ namespace MediaPortal.GUI.Library
           PageDown();
         return;
       }
-      bool bUp=false;
-      bool bDown=false;
-      if (Orientation==eOrientation.Horizontal && action.wID == Action.ActionType.ACTION_MOVE_LEFT)
-        bUp=true;
-      if (Orientation==eOrientation.Vertical && action.wID == Action.ActionType.ACTION_MOVE_DOWN)
-        bUp=true;
-      if (bUp)
+      if (action.wID == Action.ActionType.ACTION_MOVE_UP ||
+          action.wID == Action.ActionType.ACTION_MOVE_DOWN ||
+          action.wID == Action.ActionType.ACTION_MOVE_LEFT ||
+          action.wID == Action.ActionType.ACTION_MOVE_RIGHT)
       {
-        if (_spinSelect==SpinSelect.SPIN_BUTTON_UP)
+        bool bUp = false;
+        bool bDown = false;
+        if (Orientation == eOrientation.Horizontal && action.wID == Action.ActionType.ACTION_MOVE_LEFT)
+          bUp = true;
+        if (Orientation == eOrientation.Vertical && action.wID == Action.ActionType.ACTION_MOVE_DOWN)
+          bUp = true;
+        if (bUp)
         {
-          if (_reverse)
+          if (_spinSelect == SpinSelect.SPIN_BUTTON_UP)
           {
-            if (CanMoveUp() )
+            if (_reverse)
             {
-              _spinSelect=SpinSelect.SPIN_BUTTON_DOWN;
-              return;
+              if (CanMoveUp())
+              {
+                _spinSelect = SpinSelect.SPIN_BUTTON_DOWN;
+                return;
+              }
             }
-          }
-          else
-          {
-            if (CanMoveDown() )
+            else
             {
-              _spinSelect=SpinSelect.SPIN_BUTTON_DOWN;
-              return;
+              if (CanMoveDown())
+              {
+                _spinSelect = SpinSelect.SPIN_BUTTON_DOWN;
+                return;
+              }
             }
           }
         }
-      }
-      if (Orientation==eOrientation.Horizontal && action.wID == Action.ActionType.ACTION_MOVE_RIGHT)
-        bDown=true;
-      if (Orientation==eOrientation.Vertical && action.wID == Action.ActionType.ACTION_MOVE_UP)
-        bDown=true;
+        if (Orientation == eOrientation.Horizontal && action.wID == Action.ActionType.ACTION_MOVE_RIGHT)
+          bDown = true;
+        if (Orientation == eOrientation.Vertical && action.wID == Action.ActionType.ACTION_MOVE_UP)
+          bDown = true;
 
-      if (bDown)
-      {
-        if (_spinSelect==SpinSelect.SPIN_BUTTON_DOWN)
+        if (bDown)
         {
-          if (_reverse)
+          if (_spinSelect == SpinSelect.SPIN_BUTTON_DOWN)
           {
-            if (CanMoveDown() )
+            if (_reverse)
             {
-              _spinSelect=SpinSelect.SPIN_BUTTON_UP;
-              return;
+              if (CanMoveDown())
+              {
+                _spinSelect = SpinSelect.SPIN_BUTTON_UP;
+                return;
+              }
             }
-          }
-          else
-          {
-            if (CanMoveUp() )
+            else
             {
-              _spinSelect=SpinSelect.SPIN_BUTTON_UP;
-              return;
+              if (CanMoveUp())
+              {
+                _spinSelect = SpinSelect.SPIN_BUTTON_UP;
+                return;
+              }
             }
           }
         }
+        Focus = false;   // if not handeled before -> loose focus to go back to main list
       }
       if (Focus)
       {
