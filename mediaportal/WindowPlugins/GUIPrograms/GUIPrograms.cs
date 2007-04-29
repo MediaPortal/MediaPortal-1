@@ -454,13 +454,24 @@ namespace WindowPlugins.GUIPrograms
       DeInitMyPrograms();
       base.OnPageDestroy(newWindowId);
     }
+    
+    public override void AllocResources()
+    {
+      base.AllocResources();
+      if (screenShotImage != null) screenShotImage.AllocResources();
+    }
+    public override void FreeResources()
+    {
+      base.FreeResources();
+      if (screenShotImage != null) screenShotImage.FreeResources();
+    }
 
     public override void Render(float timePassed)
     {
       base.Render(timePassed);
       RenderFilmStrip();
-      RenderScreenShot();
-    }
+      RenderScreenShot(timePassed);
+   }
 
     void OnInfo()
     {
@@ -798,10 +809,9 @@ namespace WindowPlugins.GUIPrograms
     }
 
 
-    void RenderScreenShot()
+    void RenderScreenShot(float timePassed)
     {
-      if (mapSettings == null)
-        return;
+      if ((mapSettings == null) || (screenShotImage == null)) return;
       if (mapSettings.ViewAs == (int) View.VIEW_AS_LIST)
       {
         // does the thumb needs replacing??
@@ -812,33 +822,7 @@ namespace WindowPlugins.GUIPrograms
           RefreshScreenShot();
           // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
         }
-
-        if ((screenShotImage != null) && (curTexture != null))
-        {
-          float x = (float) screenShotImage.XPosition;
-          float y = (float) screenShotImage.YPosition;
-          int curWidth;
-          int curHeight;
-          GUIGraphicsContext.Correct(ref x, ref y);
-
-          int maxWidth = screenShotImage.Width;
-          int maxHeight = screenShotImage.Height;
-          GUIGraphicsContext.GetOutputRect(textureWidth, textureHeight, maxWidth, maxHeight, out curWidth, out curHeight);
-          GUIFontManager.Present();
-          int deltaX = ((screenShotImage.Width - curWidth)/2);
-          if (deltaX < 0)
-          {
-            deltaX = 0;
-          }
-          int deltaY = ((screenShotImage.Height - curHeight)/2);
-          if (deltaY < 0)
-          {
-            deltaY = 0;
-          }
-          x = x + deltaX;
-          y = y + deltaY;
-          Picture.RenderImage(curTexture, (int)x, (int)y, curWidth, curHeight, textureWidth, textureHeight, 0, 0, true);
-        }
+        screenShotImage.Render(timePassed);
       }
     }
 
@@ -871,11 +855,7 @@ namespace WindowPlugins.GUIPrograms
     {
       AppItem appWithImg = lastApp;
       GUIListItem item = GetSelectedItem();
-      if (curTexture != null)
-      {
-        curTexture.Dispose();
-        curTexture = null;
-      }
+      
       // some preconditions...
       if (appWithImg == null)
       {
@@ -891,11 +871,11 @@ namespace WindowPlugins.GUIPrograms
       string thumbFilename = appWithImg.GetCurThumb(item); // some modes look for thumbs differently
       if (File.Exists(thumbFilename))
       {
-        curTexture = Picture.Load(thumbFilename, 0, 512, 512, true, false, out textureWidth, out textureHeight);
+        screenShotImage.FileName = thumbFilename;
       }
       else if(File.Exists(appWithImg.Imagefile))
       {
-        curTexture = Picture.Load(appWithImg.Imagefile, 0, 512, 512, true, false, out textureWidth, out textureHeight);
+        screenShotImage.FileName = appWithImg.Imagefile;
       }
       appWithImg.NextThumb(); // try to find a next thumbnail
       slideTime = (DateTime.Now.Ticks/10000); // reset timer!
