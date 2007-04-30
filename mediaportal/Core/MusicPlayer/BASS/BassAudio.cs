@@ -431,7 +431,6 @@ namespace MediaPortal.Player
       get { return _BufferingMS; }
       set
       {
-        _BufferingMS = value;
         if (_BufferingMS == value)
           return;
 
@@ -713,7 +712,11 @@ namespace MediaPortal.Player
 
         BassRegistration.BassRegistration.Register();
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_GVOL_STREAM, _StreamVolume);
-        Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, _BufferingMS);
+        if (_Mixing)
+          // In case of mixing use a Buffer of 500ms only, because the Mixer plays the complete bufer, before for example skipping
+          BufferingMS = 500;
+        else
+          Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, _BufferingMS);
 
         for (int i = 0; i < MAXSTREAMS; i++)
           Streams.Add(0);
@@ -820,8 +823,6 @@ namespace MediaPortal.Player
           if (_Mixing && _mixer == 0)
           {
             _mixer = BassMix.BASS_Mixer_StreamCreate(44100, 8, BASSStream.BASS_MIXER_NONSTOP | BASSStream.BASS_STREAM_AUTOFREE);
-            // In case of mixing use a Buffer of 500ms only, because the Mixer plays the complete bufer, before for example skipping
-            Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, 500);
           }
 
           Log.Info("BASS: Initialization done.");
