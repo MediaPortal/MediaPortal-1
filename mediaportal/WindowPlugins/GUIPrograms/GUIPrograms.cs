@@ -652,7 +652,6 @@ namespace WindowPlugins.GUIPrograms
       {
         mapSettings.SwitchToNextView();
         ShowThumbPanel();
-        GUIControl.FocusControl(GetID, control.GetID);
       }
       else if (control == btnRefresh)
       {
@@ -784,27 +783,30 @@ namespace WindowPlugins.GUIPrograms
 
     void ShowThumbPanel()
     {
-      int itemIndex = GetSelectedItemNo();
-      if (mapSettings.ViewAs == (int) View.VIEW_AS_LARGEICONS)
-      {
-        facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
-      }
-      else if (mapSettings.ViewAs == (int) View.VIEW_AS_ICONS)
-      {
-        facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
-      }
-      else if (mapSettings.ViewAs == (int) View.VIEW_AS_LIST)
+      int itemIndex = facadeView.SelectedListItemIndex;
+
+      if (mapSettings.ViewAs == (int)View.VIEW_AS_LIST)
       {
         facadeView.View = GUIFacadeControl.ViewMode.List;
+        screenShotImage.Visible = true;
       }
-      else if (mapSettings.ViewAs == (int) View.VIEW_AS_FILMSTRIP)
+      else if (mapSettings.ViewAs == (int)View.VIEW_AS_ICONS)
+      {
+        facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
+        screenShotImage.Visible = false;
+      }
+      else if (mapSettings.ViewAs == (int)View.VIEW_AS_LARGEICONS)
+      {
+        facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
+        screenShotImage.Visible = false;
+      }
+      else if (mapSettings.ViewAs == (int)View.VIEW_AS_FILMSTRIP)
       {
         facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
+        screenShotImage.Visible = false;
       }
-      if (itemIndex > - 1)
-      {
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, itemIndex);
-      }
+
+      facadeView.SelectedListItemIndex = itemIndex;
       UpdateButtons();
     }
 
