@@ -81,7 +81,6 @@ namespace MediaPortal.Plugins.Process
     #region Variables
     private System.Timers.Timer _timer;
     private System.Timers.Timer _fastTimer;
-    private System.Timers.Timer _notifyTimer;
     private WaitableTimer _wakeupTimer;
     private bool _refreshSettings = false;
     private DateTime _lastUserTime = DateTime.Now;  // last time the user was doing sth (action/watching)
@@ -944,8 +943,9 @@ namespace MediaPortal.Plugins.Process
       // *process is rundll32.exe
 
       // go thru windows
-      IECallBack ewp = new IECallBack(EnumWindowCallBack);
-      EnumWindows(ewp, 0);
+      /* disabled for now, seems to slow down the machine too much...
+       IECallBack ewp = new IECallBack(EnumWindowCallBack);
+      EnumWindows(ewp, 0);*/
     }
 
     private String _remotingURI= null;
