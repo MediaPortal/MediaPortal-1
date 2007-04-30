@@ -420,11 +420,13 @@ namespace MediaPortal.Configuration.Sections
         //individual columns   
         GridColumnStylesCollection colStyle;
         colStyle = dataGrid1.TableStyles[0].GridColumnStyles;
-        colStyle[0].Width = 90;
+        colStyle[0].Width = 80;
         colStyle[1].Width = 60;
-        colStyle[2].Width = 80;
-        colStyle[3].Width = 50;
+        colStyle[2].Width = 78;
+        colStyle[3].Width = 48;
         colStyle[4].Width = 30;
+        colStyle[5].Width = 55;
+        colStyle[6].Width = 55;
         colStyle[7].Width = 30;
 
         // Set an eventhandler to be fired, when entering something in the action column
