@@ -818,7 +818,7 @@ namespace MediaPortal.Plugins.Process
     }
 
     private void RefreshStateDisplay()
-    {
+    {/*
       if (Unattended)
       {
         _fastTimer.Interval = 300;
@@ -833,7 +833,7 @@ namespace MediaPortal.Plugins.Process
         _fastTimer.Interval = 2000;
         Log.Info("PSClientPlugin: Deshowing unattended window.");
         GUIWindowManager.ShowPreviousWindow();
-      }
+      }*/
     }
 
     private bool _reentrant = false;
