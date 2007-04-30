@@ -616,7 +616,7 @@ namespace MediaPortal.Plugins.Process
         delta = delta - uint.MaxValue - 1;
       }
 
-      LogVerbose("PowerScheduler: Last user input is {0} s ago", -delta / 1000);
+      LogVerbose("PowerScheduler: Last mouse move / keyboard input is {0} s ago", -delta / 1000);
 
       return DateTime.Now.AddMilliseconds(delta);
     }
@@ -943,7 +943,8 @@ namespace MediaPortal.Plugins.Process
       // *process is rundll32.exe
 
       // go thru windows
-      /* disabled for now, seems to slow down the machine too much...
+      // disabled for now, seems to slow down the machine too much...
+      /*
        IECallBack ewp = new IECallBack(EnumWindowCallBack);
       EnumWindows(ewp, 0);*/
     }

@@ -47,6 +47,7 @@ using TvControl;
 using TvEngine.Interfaces;
 using TvLibrary.Interfaces;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace TvService
 {
@@ -63,6 +64,7 @@ namespace TvService
     /// </summary>
     public Service1()
     {
+      /* not needed anymore
       #region QuerySuspendHack the following hack allows to deny suspend queried in NET 2.0
         // Find the initialisation routine - may break in later versions
 
@@ -85,6 +87,7 @@ namespace TvService
         // Install our handler
         handlerEx.SetValue(this, newDelegate );
       #endregion
+      */
 
       string applicationPath = System.Windows.Forms.Application.ExecutablePath;
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
@@ -123,6 +126,8 @@ namespace TvService
       Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
       Process currentProcess = Process.GetCurrentProcess();
+      _powerEventThread = new Thread(PowerEventThread);
+      _powerEventThread.Start();
       //currentProcess.PriorityClass = ProcessPriorityClass.High;
       _controller = new TVController();
       try
@@ -154,6 +159,16 @@ namespace TvService
         _controller.Dispose();
         _controller = null;
       }
+
+      if (_powerEventThreadId != 0 )
+      {
+        Log.Debug("TVService OnStop asking PowerEventThread to exit");
+        PostThreadMessage(_powerEventThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+        _powerEventThread.Join();
+      }
+      _powerEventThreadId = 0;
+      _powerEventThread = null;
+
       GC.Collect();
       GC.Collect();
       GC.Collect();
@@ -162,6 +177,168 @@ namespace TvService
       Log.WriteFile("TV service stopped");
     }
 
+    #region PowerEvent window handling
+
+    Thread _powerEventThread;
+    uint _powerEventThreadId;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MSG
+    {
+      public IntPtr hwnd;
+      public int message;
+      public IntPtr wParam;
+      public IntPtr lParam;
+      public int time;
+      public int pt_x;
+      public int pt_y;
+    }
+
+    [DllImport("user32.dll", CharSet = CharSet.Ansi, ExactSpelling = true)]
+    private static extern bool GetMessageA([In, Out] ref MSG msg, IntPtr hWnd, int uMsgFilterMin, int uMsgFilterMax);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+    private static extern bool TranslateMessage([In, Out] ref MSG msg);
+
+    [DllImport("user32.dll", CharSet = CharSet.Ansi, ExactSpelling = true)]
+    private static extern IntPtr DispatchMessageA([In] ref MSG msg);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    private static extern IntPtr CreateWindowEx( uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y,
+      int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
+
+    [DllImport("user32.dll")]
+    private static extern bool PostThreadMessage(uint idThread, uint Msg, IntPtr wParam, IntPtr lParam);
+
+    [DllImport("kernel32.dll")]
+    static extern uint GetCurrentThreadId();
+
+    private delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+    [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto)]
+    struct WNDCLASS
+    {
+      public uint style;
+      public WndProc lpfnWndProc;
+      public int cbClsExtra;
+      public int cbWndExtra;
+      public IntPtr hInstance;
+      public IntPtr hIcon;
+      public IntPtr hCursor;
+      public IntPtr hbrBackground;
+      public string lpszMenuName;
+      public string lpszClassName;
+    }
+
+    [DllImport("user32", CharSet=CharSet.Auto)]
+    private static extern int RegisterClass(ref WNDCLASS wndclass);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr DefWindowProc( IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam );
+
+    #region WndProc message constants
+    private const int WM_QUIT = 0x0012;
+    private const int WM_POWERBROADCAST = 0x0218;
+    private const int PBT_APMQUERYSUSPEND = 0x0000;
+    private const int PBT_APMQUERYSTANDBY = 0x0001;
+    private const int PBT_APMQUERYSUSPENDFAILED = 0x0002;
+    private const int PBT_APMQUERYSTANDBYFAILED = 0x0003;
+    private const int PBT_APMSUSPEND = 0x0004;
+    private const int PBT_APMSTANDBY = 0x0005;
+    private const int PBT_APMRESUMECRITICAL = 0x0006;
+    private const int PBT_APMRESUMESUSPEND = 0x0007;
+    private const int PBT_APMRESUMESTANDBY = 0x0008;
+    private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
+    private const int BROADCAST_QUERY_DENY = 0x424D5144;
+    #endregion
+
+
+    IntPtr PowerEventThreadWndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    {
+      if( msg == WM_POWERBROADCAST )
+      {
+        switch (wParam.ToInt32())
+        {
+          case PBT_APMQUERYSUSPENDFAILED:
+          case PBT_APMQUERYSTANDBYFAILED:
+            OnPowerEventDo(PowerBroadcastStatus.QuerySuspendFailed);
+            break;
+          case PBT_APMQUERYSUSPEND:
+          case PBT_APMQUERYSTANDBY:
+            if( !OnPowerEventDo(PowerBroadcastStatus.QuerySuspend))
+              return new IntPtr(BROADCAST_QUERY_DENY);
+            break;
+        }
+      }
+      return DefWindowProc(hWnd,msg,wParam,lParam);
+    }
+
+    private void PowerEventThread()
+    {
+      //Log.Debug( "Service1.PowerEventThread started" );
+
+      Thread.BeginThreadAffinity();
+      try
+      {
+        _powerEventThreadId = GetCurrentThreadId();
+
+        WNDCLASS wndclass;
+        wndclass.style = 0;
+        wndclass.lpfnWndProc = PowerEventThreadWndProc;
+        wndclass.cbClsExtra = 0;
+        wndclass.cbWndExtra = 0;
+        wndclass.hInstance = Process.GetCurrentProcess().Handle;
+        wndclass.hIcon = IntPtr.Zero;
+        wndclass.hCursor = IntPtr.Zero;
+        wndclass.hbrBackground = IntPtr.Zero;
+        wndclass.lpszMenuName = null;
+        wndclass.lpszClassName = "TVServicePowerEventThreadWndClass";
+
+        RegisterClass(ref wndclass);
+
+        IntPtr handle= CreateWindowEx(0x80, wndclass.lpszClassName, "", 0x80000000, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, wndclass.hInstance, IntPtr.Zero);
+
+        if (handle.Equals(IntPtr.Zero))
+        {
+          Log.Error("TV service PowerEventThread cannot create window handle, exiting thread");
+          return;
+        }
+        else
+        {
+          //Log.Debug("TV service PowerEventThread window handle created");
+        }
+
+        // this thread needs an message loop
+        Log.Debug("TV service PowerEventThread message loop is running");
+        while (true)
+        {
+          try
+          {
+            MSG msgApi = new MSG();
+
+            if (!GetMessageA(ref msgApi, IntPtr.Zero, 0, 0)) // returns false on WM_QUIT
+              return;
+
+            Log.Debug("TV service PowerEventThread {0}", msgApi.message);
+
+            TranslateMessage(ref msgApi);
+            DispatchMessageA(ref msgApi);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("TV service PowerEventThread: Exception: {0}", ex.ToString());
+          }
+        }
+      }
+      finally
+      {
+        Thread.EndThreadAffinity();
+        Log.Debug("TV service PowerEventThread finished");
+      }
+    }
+    #endregion
+
+    /* not needed anymore!
     #region QuerySuspendHack part 2 of the hack
       Delegate _forward;  // will get the default delegate
 
@@ -187,6 +364,7 @@ namespace TvService
         return 0x424d5144;
       }
     #endregion
+    */
 
     /// <summary>
     /// When implemented in a derived class, executes when the computer's power status has changed. This applies to laptop computers when they go into suspended mode, which is not the same as a system shutdown.
@@ -197,6 +375,20 @@ namespace TvService
     /// </returns>
     [MethodImpl(MethodImplOptions.Synchronized)]
     protected override bool OnPowerEvent(PowerBroadcastStatus powerStatus)
+    {
+      if (powerStatus != PowerBroadcastStatus.QuerySuspend && powerStatus != PowerBroadcastStatus.QuerySuspendFailed)
+        return OnPowerEventDo(powerStatus);
+      return true;
+    }
+    
+
+    /// <summary>
+    /// Handles the power event.
+    /// </summary>
+    /// <param name="powerStatus"></param>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    protected bool OnPowerEventDo(PowerBroadcastStatus powerStatus)
     {
       bool accept = true;
       bool result;
