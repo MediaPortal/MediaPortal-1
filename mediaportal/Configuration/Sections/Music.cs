@@ -744,7 +744,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.enableMixing.AutoSize = true;
       this.enableMixing.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.enableMixing.Location = new System.Drawing.Point(87, 50);
+      this.enableMixing.Location = new System.Drawing.Point(87, 35);
       this.enableMixing.Name = "enableMixing";
       this.enableMixing.Size = new System.Drawing.Size(146, 17);
       this.enableMixing.TabIndex = 13;
@@ -757,7 +757,7 @@ namespace MediaPortal.Configuration.Sections
       this.hScrollBarBuffering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarBuffering.LargeChange = 500;
-      this.hScrollBarBuffering.Location = new System.Drawing.Point(84, 173);
+      this.hScrollBarBuffering.Location = new System.Drawing.Point(84, 158);
       this.hScrollBarBuffering.Maximum = 8499;
       this.hScrollBarBuffering.Minimum = 1000;
       this.hScrollBarBuffering.Name = "hScrollBarBuffering";
@@ -772,7 +772,7 @@ namespace MediaPortal.Configuration.Sections
       this.hScrollBarCrossFade.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarCrossFade.LargeChange = 500;
-      this.hScrollBarCrossFade.Location = new System.Drawing.Point(84, 149);
+      this.hScrollBarCrossFade.Location = new System.Drawing.Point(84, 134);
       this.hScrollBarCrossFade.Maximum = 16499;
       this.hScrollBarCrossFade.Name = "hScrollBarCrossFade";
       this.hScrollBarCrossFade.Size = new System.Drawing.Size(248, 17);
@@ -785,7 +785,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.GaplessPlaybackChkBox.AutoSize = true;
       this.GaplessPlaybackChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.GaplessPlaybackChkBox.Location = new System.Drawing.Point(87, 124);
+      this.GaplessPlaybackChkBox.Location = new System.Drawing.Point(87, 109);
       this.GaplessPlaybackChkBox.Name = "GaplessPlaybackChkBox";
       this.GaplessPlaybackChkBox.Size = new System.Drawing.Size(108, 17);
       this.GaplessPlaybackChkBox.TabIndex = 3;
@@ -795,7 +795,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // BufferingSecondsLbl
       // 
-      this.BufferingSecondsLbl.Location = new System.Drawing.Point(341, 176);
+      this.BufferingSecondsLbl.Location = new System.Drawing.Point(341, 161);
       this.BufferingSecondsLbl.Name = "BufferingSecondsLbl";
       this.BufferingSecondsLbl.Size = new System.Drawing.Size(80, 13);
       this.BufferingSecondsLbl.TabIndex = 9;
@@ -804,7 +804,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // CrossFadeSecondsLbl
       // 
-      this.CrossFadeSecondsLbl.Location = new System.Drawing.Point(341, 152);
+      this.CrossFadeSecondsLbl.Location = new System.Drawing.Point(341, 137);
       this.CrossFadeSecondsLbl.Name = "CrossFadeSecondsLbl";
       this.CrossFadeSecondsLbl.Size = new System.Drawing.Size(80, 13);
       this.CrossFadeSecondsLbl.TabIndex = 6;
@@ -813,7 +813,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // StreamOutputLevelNud
       // 
-      this.StreamOutputLevelNud.Location = new System.Drawing.Point(87, 76);
+      this.StreamOutputLevelNud.Location = new System.Drawing.Point(87, 61);
       this.StreamOutputLevelNud.Name = "StreamOutputLevelNud";
       this.StreamOutputLevelNud.Size = new System.Drawing.Size(52, 20);
       this.StreamOutputLevelNud.TabIndex = 1;
@@ -827,7 +827,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.FadeOnStartStopChkbox.AutoSize = true;
       this.FadeOnStartStopChkbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(87, 103);
+      this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(87, 88);
       this.FadeOnStartStopChkbox.Name = "FadeOnStartStopChkbox";
       this.FadeOnStartStopChkbox.Size = new System.Drawing.Size(185, 17);
       this.FadeOnStartStopChkbox.TabIndex = 2;
@@ -837,7 +837,7 @@ namespace MediaPortal.Configuration.Sections
       // label12
       // 
       this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(31, 176);
+      this.label12.Location = new System.Drawing.Point(31, 161);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(52, 13);
       this.label12.TabIndex = 7;
@@ -846,7 +846,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(16, 78);
+      this.mpLabel1.Location = new System.Drawing.Point(16, 63);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(67, 13);
       this.mpLabel1.TabIndex = 0;
@@ -855,7 +855,7 @@ namespace MediaPortal.Configuration.Sections
       // CrossFadingLbl
       // 
       this.CrossFadingLbl.AutoSize = true;
-      this.CrossFadingLbl.Location = new System.Drawing.Point(15, 152);
+      this.CrossFadingLbl.Location = new System.Drawing.Point(15, 137);
       this.CrossFadingLbl.Name = "CrossFadingLbl";
       this.CrossFadingLbl.Size = new System.Drawing.Size(68, 13);
       this.CrossFadingLbl.TabIndex = 4;
