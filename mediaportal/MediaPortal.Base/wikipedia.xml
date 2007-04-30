@@ -41,8 +41,8 @@
   </section>
   <section name="Italian">
 	<entry name="url">http://it.wikipedia.org/wiki/Speciale:Export/</entry>
-	<entry name="imagepattern">Bild</entry>
-	<entry name="imageurl">http://it.wikipedia.org/wiki/Image:</entry>
+	<entry name="imagepattern">Immagine</entry>
+	<entry name="imageurl">http://it.wikipedia.org/wiki/Immagine:</entry>
 	<entry name="string">2605</entry>
   </section>
   <section name="Spanish">
