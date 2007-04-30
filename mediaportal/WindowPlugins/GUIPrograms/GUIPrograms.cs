@@ -883,7 +883,7 @@ namespace WindowPlugins.GUIPrograms
       slideTime = (DateTime.Now.Ticks/10000); // reset timer!
     }
 
-    void RefreshFilmstripThumb(GUIFilmstripControl pControl)
+    void RefreshFilmstripThumb(GUIFilmstripControl filmstrip)
     {
       GUIListItem item = GetSelectedItem();
       // some preconditions...
@@ -898,7 +898,7 @@ namespace WindowPlugins.GUIPrograms
       string thumbFilename = lastApp.GetCurThumb(curFile);
       if (File.Exists(thumbFilename))
       {
-        pControl.InfoImageFileName = thumbFilename;
+        filmstrip.InfoImageFileName = thumbFilename;
       }
       lastApp.NextThumb(); // try to find a next thumbnail
       slideTime = (DateTime.Now.Ticks/10000); // reset timer!
@@ -1246,16 +1246,23 @@ namespace WindowPlugins.GUIPrograms
     void OnItemSelected(GUIListItem item, GUIControl parent)
     {
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
-      if (filmstrip == null)
-        return;
-      string thumbName = "";
-      if ((item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png") && (item.ThumbnailImage != "") &&
-        item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultAlbum.png")
+      if (filmstrip != null)
       {
-        // only show big thumb if there is really one....
-        thumbName = item.ThumbnailImage;
+        string thumbName = "";
+        if ((item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png") && (item.ThumbnailImage != "") &&
+          item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultAlbum.png")
+        {
+          // only show big thumb if there is really one....
+          thumbName = item.ThumbnailImage;
+        }
+        filmstrip.InfoImageFileName = thumbName;
       }
-      filmstrip.InfoImageFileName = thumbName;
+      
+      GUIListControl list = parent as GUIListControl;
+      if (list != null)
+      {
+        RefreshScreenShot();
+      }
     }
 
 
