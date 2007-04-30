@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Language name="German" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Meine ">Anwendungen</String>
@@ -1468,6 +1468,9 @@
     <String id="34053">Wiedergabe dieses Streams fehlgeschlagen</String>
     <String id="34054">Radiostart fehlgeschlagen!</String>
     <String id="34055">Wiedergabe temporär nicht möglich</String>
+    <String id="40001">Standby in Kürze</String>
+    <String id="40002">MediaPortal ist unbenutzt, aber noch beschäftigt.</String>
+    <String id="40003">Wenn alle aktuellen Aufgaben erledigt wurden, geht MediaPortal in den Standby-Modus.</String>
     <String id="100000">Hauptmenü</String>
     <String id="100001" prefix="Mein ">Fernsehen</String>
     <String id="100002" prefix="Meine ">Bilder</String>

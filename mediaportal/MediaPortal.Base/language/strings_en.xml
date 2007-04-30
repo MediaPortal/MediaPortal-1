@@ -1468,6 +1468,9 @@
     <String id="34053">Playback of selected stream failed</String>
     <String id="34054">Radio handshake failed!</String>
     <String id="34055">Streams might be temporarily unavailable</String>
+    <String id="40001">Waiting for Standby</String>
+    <String id="40002">MediaPortal is unattended, but still busy.</String>
+    <String id="40003">When all current tasks are finished, MediaPortal will go to standby mode.</String>
     <String id="100000">Home</String>
     <String id="100001" prefix="My ">TV</String>
     <String id="100002" prefix="My ">Pictures</String>
@@ -1607,6 +1610,7 @@
     <String id="103011" prefix="My ">TV/Crop settings</String>
     <String id="104711" prefix="My ">Wikipedia</String>
     <String id="105900" prefix="My ">Trailers</String>
+    <String id="106666">Power Scheduler Waiting</String>
     <String id="107700" prefix="My ">TV/Teletext</String>
     <String id="107701" prefix="My ">TV/Teletext</String>
     <String id="107777" prefix="My ">Sudoku</String>
