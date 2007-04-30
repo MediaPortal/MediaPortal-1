@@ -651,8 +651,6 @@ namespace TvEngine.PowerScheduler
         delta = delta - uint.MaxValue - 1;
       }
 
-      LogVerbose("PowerScheduler: Last mouse move / keyboard input is {0} s ago", -delta / 1000);
-
       return DateTime.Now.AddMilliseconds( delta );
     }
 

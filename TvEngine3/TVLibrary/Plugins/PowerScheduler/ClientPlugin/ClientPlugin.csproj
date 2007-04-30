@@ -65,6 +65,7 @@
     <Compile Include="SetupForm.Designer.cs">
       <DependentUpon>SetupForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="UnattendedWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\TvControl\TvControl.csproj">

@@ -109,7 +109,7 @@ namespace MediaPortal.Plugins.Process
       _timer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimerElapsed);
 
       _fastTimer = new System.Timers.Timer();
-      _fastTimer.Interval = 1000;
+      _fastTimer.Interval = 2000;
       _fastTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnFastTimerElapsed);
     }
     #endregion
@@ -120,6 +120,22 @@ namespace MediaPortal.Plugins.Process
       Log.Info("Starting PowerScheduler client plugin...");
       if (!LoadSettings())
         return;
+
+      if( GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)==null)
+      {
+        GUIWindow win= new UnattendedWindow();
+        try
+        {
+          win.Init();
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Error initializing window:{0} {1} {2} {3}", win.ToString(), ex.Message, ex.Source, ex.StackTrace);
+        }
+        GUIWindowManager.Add(ref win);
+      }
+
+
       _powerManager = new PowerManager();
 
       GUIWindowManager.OnNewAction += new OnActionHandler(this.OnAction);
@@ -251,6 +267,20 @@ namespace MediaPortal.Plugins.Process
       [MethodImpl(MethodImplOptions.Synchronized)]
       get
       {
+        // adjust _lastUserTime by user activity
+        DateTime userInput = GetLastInputTime();
+        if (userInput > _lastUserTime)
+        {
+          _lastUserTime = userInput;
+          _unattended = false;
+        }
+
+        if (!UserInterfaceIdle)
+        {
+          _lastUserTime = DateTime.Now;
+          _unattended = false;
+        }
+
         if (!_unattended && _lastUserTime <= DateTime.Now.AddMinutes(-_settings.IdleTimeout))
           _unattended = true;
         return _unattended;
@@ -503,6 +533,7 @@ namespace MediaPortal.Plugins.Process
         if (_settings.GetSetting("SingleSeat").Get<bool>())
         {
           // tell the tvserver when we detected the real user the last time
+          bool dummy = Unattended;    // this will update _lastUserTime in case a player was running
           RemotePowerControl.Instance.UserActivityDetected(_lastUserTime);
         }
         else
@@ -511,8 +542,6 @@ namespace MediaPortal.Plugins.Process
           CheckForStandby();
         }
         SendPowerSchedulerEvent(PowerSchedulerEventType.Elapsed);
-        
-        RefreshStateDisplay(false);
       }
       // explicitly catch exceptions and log them otherwise they are ignored by the Timer object
       catch (Exception ex)
@@ -533,20 +562,17 @@ namespace MediaPortal.Plugins.Process
         if (!g_Player.Playing)
         {
           // No media is playing, see if user is still active then
-          LogVerbose("player is not playing currently");
 
           if (_settings.GetSetting("HomeOnly").Get<bool>())
           {
             int activeWindow = GUIWindowManager.ActiveWindow;
-            if (activeWindow == (int)GUIWindow.Window.WINDOW_HOME || activeWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME)
+            if (activeWindow == (int)GUIWindow.Window.WINDOW_HOME || activeWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME ||
+              activeWindow == (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED )
             {
-              LogVerbose("System is in (basic) home window so basic PSClientplugin says system is idle");
               return true;
             }
             else
             {
-              _lastUserTime = DateTime.Now;
-              _unattended = false;
               return false;
             }
           }
@@ -557,9 +583,6 @@ namespace MediaPortal.Plugins.Process
         }
         else
         {
-          LogVerbose("player is playing currently");
-          _lastUserTime = DateTime.Now;
-          _unattended = false;
           return false;
         }
       }
@@ -616,8 +639,6 @@ namespace MediaPortal.Plugins.Process
         delta = delta - uint.MaxValue - 1;
       }
 
-      LogVerbose("PowerScheduler: Last mouse move / keyboard input is {0} s ago", -delta / 1000);
-
       return DateTime.Now.AddMilliseconds(delta);
     }
 
@@ -630,18 +651,6 @@ namespace MediaPortal.Plugins.Process
       if (!_settings.ShutdownEnabled)
         return;
 
-      // adjust _lastUserTime by user activity
-      DateTime userInput = GetLastInputTime();
-      if (userInput > _lastUserTime)
-      {
-        _lastUserTime = userInput;
-        _unattended = false;
-        LogVerbose("PowerScheduler: User input detected at {0}", _lastUserTime);
-      }
-
-      // update _unattended
-      bool dummy = Unattended;
-
       // is anybody disallowing shutdown?
       if (!DisAllowShutdown)
       {
@@ -652,7 +661,7 @@ namespace MediaPortal.Plugins.Process
           SendPowerSchedulerEvent(PowerSchedulerEventType.SystemIdle);
         }
 
-        if (_unattended)
+        if (Unattended)
         {
           Log.Info("PowerScheduler: System is unattended and idle - initiate suspend/hibernate");
           EnterSuspendOrHibernate();
@@ -808,145 +817,40 @@ namespace MediaPortal.Plugins.Process
       }
     }
 
-    private void RefreshStateDisplay(bool refresh)
+    private void RefreshStateDisplay()
     {
-      bool unattended;
-      bool disAllowShutdown;
-      String disAllowShutdownHandler;
-      DateTime nextWakeupTime;
-      String nextWakeupHandler;
-      GetCurrentState(refresh, out unattended, out disAllowShutdown, out disAllowShutdownHandler, out nextWakeupTime, out nextWakeupHandler);
-
-      /*TvOverlay tvoverlay = TvOverlay.Instance;
-      if (tvoverlay != null)
+      if (Unattended)
       {
-        bool disAllowShutdown;
-        String disAllowShutdownHandler;
-        DateTime nextWakeupTime;
-        String nextWakeupHandler;
-        GetCurrentState(refresh, out disAllowShutdown, out disAllowShutdownHandler, out nextWakeupTime, out nextWakeupHandler);
-
-        // todo: descriptions in skin?!
-        String text= "";
-
-        int mode;
-        if (!disAllowShutdown)
+        _fastTimer.Interval = 300;
+        if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
         {
-          if (nextWakeupTime == DateTime.MaxValue) mode = 0;
-          else
-          {
-            mode = 3; // text only
-            text += "Wake up at " + nextWakeupTime + " for " + nextWakeupHandler;
-          }
-        }
-        else if (disAllowShutdownHandler.Equals("EVENT-DUE"))
-        {
-          mode = 2; // yellow
-          text += "Event is almost due at " + nextWakeupTime + " for " + nextWakeupHandler;
-        }
-        else
-        {
-          mode = 2; // yellow
-          text += "Busy by " + disAllowShutdownHandler;
-          if (nextWakeupTime < DateTime.MaxValue)
-          {
-            text += "; Wake up at " + nextWakeupTime + " for " + nextWakeupHandler;
-          }
-        }
-
-        tvoverlay.UpdateState(mode, text);
-      }*/
-    }
-
-    public delegate bool IECallBack(IntPtr hwnd, int lParam);
-
-    [DllImport("user32.Dll")]
-    public static extern int EnumWindows(IECallBack x, int y);
-
-    private const int GW_HWNDNEXT = 2;
-    private const int GW_OWNER = 4;
-    private const int GW_CHILD = 5;
-
-    [DllImport("user32.dll")]
-    public static extern IntPtr GetWindow(IntPtr hWnd, int uCmd); 
-
-    [DllImport("user32")]
-    private static extern IntPtr GetParent(IntPtr hwnd);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint ProcessId);
-
-    [DllImport("user32.dll")]
-    private static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count); 
-
-    private bool EnumWindowCallBack(IntPtr hwnd, int lParam)
-    {
-      // find window:
-      // *class  #32770 (Dialog)
-      // *has static containing TVService
-      // *has no parent win
-      // *has no owner win
-      // *process is rundll32.exe
-
-      // check owner and parent
-      if (GetWindow(hwnd, GW_OWNER).Equals( IntPtr.Zero ) && GetParent(hwnd).Equals( IntPtr.Zero ) )
-      {
-        // this is a top-level window
-        
-        // check process
-        uint pid;
-        GetWindowThreadProcessId(hwnd, out pid);
-        if (pid != 0)
-        {
-          // find the process attached to the pid
-
-          System.Diagnostics.Process process = System.Diagnostics.Process.GetProcessById((int)pid);
-          if (process != null && process.ProcessName.Equals("rundll32"))
-          {
-            // this window is owned by a process called rundll32
-
-            // check for static
-            IntPtr child = GetWindow(hwnd, GW_CHILD);
-            while (!child.Equals(IntPtr.Zero))
-            {
-              StringBuilder sb = new StringBuilder(1024);
-              GetWindowText(child, sb, sb.Capacity);
-              string window = sb.ToString();
-              if (window.IndexOf("TVService") >= 0)
-              {
-                // gotcha!
-                process.CloseMainWindow();
-                Log.Info("PSClientPlugin: Closed nasty messagebox that said that TVService did not allow standby!");
-                RefreshStateDisplay(true);
-                return false;
-              }
-              child = GetWindow(child, GW_HWNDNEXT);
-            }
-          }
+          Log.Info("PSClientPlugin: Showing unattended window.");
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED);
         }
       }
-
-      return true;
+      else if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
+      {
+        _fastTimer.Interval = 2000;
+        Log.Info("PSClientPlugin: Deshowing unattended window.");
+        GUIWindowManager.ShowPreviousWindow();
+      }
     }
 
+    private bool _reentrant = false;
     /// <summary>
-    /// Periodically checks whether this nasty msgbox saying that TVService service denied standby
-    /// popped up, closes it and refreshs the gui state.
     /// </summary>
     private void OnFastTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-      // find window:
-      // *class  #32770 (Dialog)
-      // *has static containing TVService
-      // *has no parent win
-      // *has no owner win
-      // *process is rundll32.exe
-
-      // go thru windows
-      // disabled for now, seems to slow down the machine too much...
-      /*
-       IECallBack ewp = new IECallBack(EnumWindowCallBack);
-      EnumWindows(ewp, 0);*/
+      if (_reentrant) return;
+      _reentrant = true;
+      try
+      {
+        RefreshStateDisplay();
+      }
+      finally
+      {
+        _reentrant = false;
+      }
     }
 
     private String _remotingURI= null;
@@ -989,7 +893,7 @@ namespace MediaPortal.Plugins.Process
       _timer.Enabled = true;
       _fastTimer.Enabled = true;
 
-      RefreshStateDisplay(true);
+      RefreshStateDisplay();
     }
 
     private void OnStandBy()
@@ -1080,9 +984,28 @@ namespace MediaPortal.Plugins.Process
     #region WndProc messagehandler
     public bool WndProc(ref System.Windows.Forms.Message msg)
     {
-      // we only need to handle PowerBroadcast if we're single seat
+      // we only need to truely handle PowerBroadcast if we're multi seat
+
       if (_settings.GetSetting("SingleSeat").Get<bool>())
       {
+        // only need to check for query to set system to unattended
+        if (msg.Msg == WM_POWERBROADCAST)
+        {
+          switch (msg.WParam.ToInt32())
+          {
+            case PBT_APMQUERYSUSPEND:
+            case PBT_APMQUERYSTANDBY:
+              Log.Debug("PSClientPlugin: System wants to enter standby");
+              if (!_unattended)
+              {
+                // scenario: User wants to standby the system, but we disallowed him to do
+                // so. We go to unattended mode.
+                _unattended = UserInterfaceIdle;
+                Log.Info("PowerScheduler: User tries to standby, system is unattended if user interface is idle, which is {0}", _unattended);
+              }
+              break;
+          }
+        }
         return false;
       }
 
@@ -1108,8 +1031,8 @@ namespace MediaPortal.Plugins.Process
             {
               // scenario: User wants to standby the system, but we disallowed him to do
               // so. We go to unattended mode.
-              Log.Info("PowerScheduler: User tries to standby, system is unattended");
-              _unattended = true;
+              Log.Info("PowerScheduler: User tries to standby, system is unattended if user interface is idle");
+              _unattended = UserInterfaceIdle;
             }
             if (!idle)
               msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
