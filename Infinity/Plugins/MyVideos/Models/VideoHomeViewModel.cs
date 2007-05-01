@@ -70,6 +70,7 @@ namespace MyVideos
     ViewType _viewType = ViewType.List;
     SortType _sortType = SortType.Name;
     string _currentFolder = null;
+    bool _isBusy = false;
     #endregion
 
     #region ctor
@@ -293,6 +294,18 @@ namespace MyVideos
       }
     }
 
+    public Visibility IsBusy
+    {
+      get
+      {
+        return _isBusy ? Visibility.Visible : Visibility.Hidden;
+      }
+    }
+    public void SetBusy(bool busy)
+    {
+      _isBusy = busy;
+      ChangeProperty("IsBusy");
+    }
     public Visibility IsVideoPresent
     {
       get { return (ServiceScope.Get<IPlayerCollectionService>().Count != 0) ? Visibility.Visible : Visibility.Collapsed; }
@@ -459,7 +472,7 @@ namespace MyVideos
         _viewModel.ChangeProperty("Fullscreen");
         _viewModel.ChangeProperty("IsVideoPresent");
       }
-
+      _viewModel.SetBusy(true);
       VideoPlayer player = new VideoPlayer(fileName);
       ServiceScope.Get<IPlayerCollectionService>().Add(player);
       player.MediaFailed += new EventHandler<MediaExceptionEventArgs>(player_MediaFailed);
@@ -478,6 +491,8 @@ namespace MyVideos
       _viewModel.ChangeProperty("VideoBrush");
       _viewModel.ChangeProperty("Fullscreen");
       _viewModel.ChangeProperty("IsVideoPresent");
+      _viewModel.SetBusy(false);
+      ServiceScope.Get<INavigationService>().Navigate(new VideoFullscreen());
     }
 
     void player_MediaFailed(object sender, MediaExceptionEventArgs e)
@@ -488,6 +503,7 @@ namespace MyVideos
 
     private void OnMediaPlayerError()
     {
+      _viewModel.SetBusy(false);
       if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
       {
         VideoPlayer player = (VideoPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];

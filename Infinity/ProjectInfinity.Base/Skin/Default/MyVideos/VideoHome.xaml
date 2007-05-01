@@ -4,6 +4,7 @@
     xmlns:local="clr-namespace:MyVideos;assembly=MyVideos"
     xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls"
     FocusManager.FocusedElement="{Binding ElementName=buttonView}">
+<Grid>
   <Grid.Resources>
     <DataTemplate x:Key="videoItemListTemplate" DataType="{x:Type local:VideoModel}">
       <Grid Width="500">
@@ -98,4 +99,6 @@
   <Label  Margin="220,100,40,61" HorizontalAlignment="Right" Style="{StaticResource LabelNormalStyleWhite}" Content="{Binding Path=Videos.CurrentItem.Title,Mode=OneWay}"/>
   <controls:ListBox x:Name="itemList" ViewMode="{Binding Path=ViewModeType}" ContextMenuCommand="{Binding Path=ContextMenu}" ContextMenuCommandParameter="{Binding Path=Videos.CurrentItem}"  Command="{Binding Path=Play}" CommandParameter="{Binding Path=Videos.CurrentItem}" Grid.Column="1" Grid.Row="4" ItemsSource="{Binding Videos}" ItemContainerStyle="{StaticResource MpListViewItem}" Style="{StaticResource videoListView}" Margin="220,126,8,61" Width="500"/>
 
+</Grid>
+  <Button Visibility="{Binding IsBusy}" Style="{StaticResource MpCursorBusy}" VerticalAlignment="Center" HorizontalAlignment="Center" IsEnabled="False"/>
 </Grid>
