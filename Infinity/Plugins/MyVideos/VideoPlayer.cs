@@ -169,7 +169,7 @@ namespace MyVideos
 
     public TimeSpan Duration
     {
-      get { return _underlyingPlayer.Position; }
+      get { return _underlyingPlayer.NaturalDuration.TimeSpan; }
     }
 
     public object UnderlyingPlayer

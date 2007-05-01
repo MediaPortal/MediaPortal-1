@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Markup;
 using Dialogs;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;

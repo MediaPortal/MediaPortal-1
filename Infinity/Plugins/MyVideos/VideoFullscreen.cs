@@ -49,25 +49,6 @@ namespace MyVideos
 
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
-      
-      if (e.Key == Key.Up)
-      {
-        _model.OnChannelUp();
-        e.Handled = true;
-        return;
-      }
-      if (e.Key == Key.Down)
-      {
-        _model.OnChannelDown();
-        e.Handled = true;
-        return;
-      }
-      if (e.Key >= Key.D0 && e.Key <= Key.D9)
-      {
-        _model.OnChannelKey(e.Key);
-        e.Handled = true;
-        return;
-      }
       if (e.Key == Key.Left || e.Key == Key.Right)
       {
         _model.OnSeek(e.Key);
