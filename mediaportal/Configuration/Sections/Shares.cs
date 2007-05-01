@@ -152,12 +152,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxRemember
       // 
+      this.checkBoxRemember.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxRemember.AutoSize = true;
       this.checkBoxRemember.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxRemember.Location = new System.Drawing.Point(16, 378);
       this.checkBoxRemember.Name = "checkBoxRemember";
-      this.checkBoxRemember.Size = new System.Drawing.Size(149, 17);
-      this.checkBoxRemember.TabIndex = 4;
+      this.checkBoxRemember.Size = new System.Drawing.Size(152, 17);
+      this.checkBoxRemember.TabIndex = 1;
       this.checkBoxRemember.Text = "Remember last used folder";
       this.checkBoxRemember.UseVisualStyleBackColor = true;
       // 
@@ -168,7 +169,7 @@ namespace MediaPortal.Configuration.Sections
       this.deleteButton.Location = new System.Drawing.Point(384, 376);
       this.deleteButton.Name = "deleteButton";
       this.deleteButton.Size = new System.Drawing.Size(72, 22);
-      this.deleteButton.TabIndex = 3;
+      this.deleteButton.TabIndex = 4;
       this.deleteButton.Text = "Delete";
       this.deleteButton.UseVisualStyleBackColor = true;
       this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
@@ -180,7 +181,7 @@ namespace MediaPortal.Configuration.Sections
       this.editButton.Location = new System.Drawing.Point(304, 376);
       this.editButton.Name = "editButton";
       this.editButton.Size = new System.Drawing.Size(72, 22);
-      this.editButton.TabIndex = 2;
+      this.editButton.TabIndex = 3;
       this.editButton.Text = "Edit";
       this.editButton.UseVisualStyleBackColor = true;
       this.editButton.Click += new System.EventHandler(this.editButton_Click);
@@ -191,13 +192,15 @@ namespace MediaPortal.Configuration.Sections
       this.addButton.Location = new System.Drawing.Point(224, 376);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(72, 22);
-      this.addButton.TabIndex = 1;
+      this.addButton.TabIndex = 2;
       this.addButton.Text = "Add";
       this.addButton.UseVisualStyleBackColor = true;
       this.addButton.Click += new System.EventHandler(this.addButton_Click);
       // 
       // sharesListView
       // 
+      this.sharesListView.AllowDrop = true;
+      this.sharesListView.AllowRowReorder = true;
       this.sharesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
