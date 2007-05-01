@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using ProjectInfinity;
 using ProjectInfinity.Plugins;
 using ProjectInfinity.Controls;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.TaskBar;
+using ProjectInfinity.Players;
 
 namespace ProjectInfinity.Menu
 {
@@ -52,6 +56,54 @@ namespace ProjectInfinity.Menu
       }
     }
 
+    public Brush VideoBrush
+    {
+      get
+      {
+        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
+        {
+          MediaPlayer player = (MediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0].UnderlyingPlayer;
+
+          VideoDrawing videoDrawing = new VideoDrawing();
+          videoDrawing.Player = player;
+          videoDrawing.Rect = new Rect(0, 0, 800,600);
+          DrawingBrush videoBrush = new DrawingBrush();
+          videoBrush.Stretch = Stretch.Fill;
+          videoBrush.Drawing = videoDrawing;
+          return videoBrush;
+        }
+
+        return null;
+      }
+    }
+    public double MenuOffset
+    {
+      get
+      {
+        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
+        {
+          return 350;
+        }
+        return 150;
+      }
+    }
+    public Brush VideoOpacityMask
+    {
+      get
+      {
+
+        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
+        {
+          return Application.Current.Resources["VideoOpacityMask"] as Brush;
+        }
+        return null;
+      }
+    }
+    public Visibility IsVideoPresent
+    {
+      get { return (ServiceScope.Get<IPlayerCollectionService>().Count != 0) ? Visibility.Visible : Visibility.Collapsed; }
+    }
+
     public Window Window
     {
       get { return ServiceScope.Get<INavigationService>().GetWindow(); }
@@ -60,6 +112,11 @@ namespace ProjectInfinity.Menu
     public string HeaderLabel
     {
       get { return ServiceScope.Get<IMenuManager>().GetMenuName(_id); }
+    }
+
+    public Visibility HeaderLabelVisibility
+    {
+      get { return (ServiceScope.Get<IPlayerCollectionService>().Count == 0) ? Visibility.Visible : Visibility.Collapsed; }
     }
 
     public MenuCollection Items

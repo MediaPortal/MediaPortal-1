@@ -318,11 +318,13 @@ namespace MyTv
 
     void TvMediaPlayer_MediaOpened(object sender, EventArgs e)
     {
+
+      ServiceScope.Get<ILogger>().Info("MyTv: media opened {0}x{1} {2}", _underLyingPlayer.NaturalVideoWidth, _underLyingPlayer.NaturalVideoHeight, Duration);
       if (MediaOpened != null)
       {
         MediaOpened(this, e);
       }
-      if (!IsStream )
+      if (!IsStream)
       {
         SeekToEnd();
       }

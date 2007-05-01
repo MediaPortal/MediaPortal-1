@@ -11,7 +11,13 @@
     <GradientStop Color="#91000000" Offset="0.8"/>
     <GradientStop Color="#00000000" Offset="0.9"/>
   </LinearGradientBrush>
-
+  
+  <!-- video gradient brush-->
+  <LinearGradientBrush x:Key="VideoOpacityMask" EndPoint="0.5,0" StartPoint="0.5,0.6">
+    <GradientStop Color="#00000000" Offset="0"/>
+    <GradientStop Color="#FF000000" Offset="1"/>
+  </LinearGradientBrush>
+  
   <!-- default brush used to paint the background of a page/window -->
   <RadialGradientBrush x:Key="backGroundBrush" GradientOrigin="0.186,0.311">
     <RadialGradientBrush.RelativeTransform>
@@ -1921,7 +1927,7 @@
     <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Local" />
     <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
     <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
-    <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+    <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
     <Setter Property="IsSynchronizedWithCurrentItem" Value="True"/>

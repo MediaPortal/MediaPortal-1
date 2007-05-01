@@ -8,7 +8,7 @@
 	</Manifest>
 
 	<Runtime>
-		<Import assembly = "../MyWeather.dll"/>
+		<Import assembly = "MyWeather.dll"/>
 	</Runtime>
 
 	<Path name = "/Menus/Home">

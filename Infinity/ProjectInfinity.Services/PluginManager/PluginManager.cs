@@ -130,11 +130,11 @@ namespace ProjectInfinity.Plugins
       //Test data -> get from config in future
       _pluginFiles = new List<string>();
       _disabledPlugins = new List<string>();
-      _pluginFiles.Add("Plugins/MyTv.plugin");
+      _pluginFiles.Add("Plugins/MyTv/MyTv.plugin");
       _pluginFiles.Add("Plugins/Menu/Home.plugin");
-      _pluginFiles.Add("Plugins/MyVideos.plugin");
+      _pluginFiles.Add("Plugins/MyVideo/MyVideos.plugin");
       _pluginFiles.Add("Plugins/MyPictures/MyPictures.plugin");
-      _pluginFiles.Add("Plugins/MyWeather.plugin");
+      _pluginFiles.Add("Plugins/MyWeather/MyWeather.plugin");
       _pluginFiles.Add("Plugins/Menu/Settings.plugin");
       _pluginTree = new PluginTree();
       _pluginTree.Load(_pluginFiles, _disabledPlugins);

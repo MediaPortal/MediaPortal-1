@@ -12,6 +12,7 @@ namespace ProjectInfinity.Controls
       ShowsNavigationUI = false;
       //Load XAML code.  See remark below
       Loaded += View_Loaded;
+      Unloaded+=View_Unloaded;
     }
 
     /// <remarks>
@@ -26,6 +27,11 @@ namespace ProjectInfinity.Controls
       //Resources = themeMgr.LoadResources(this);
       Background = Application.Current.Resources["backGroundBrush"] as Brush;
       Content = themeMgr.LoadContent(this);
+    }
+    void View_Unloaded(object sender, RoutedEventArgs e)
+    {
+      Background = null;
+      Content = null;
     }
   }
 }

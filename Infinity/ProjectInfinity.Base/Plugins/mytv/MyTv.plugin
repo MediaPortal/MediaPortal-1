@@ -8,7 +8,7 @@
   </Manifest>
 
   <Runtime>
-    <Import assembly = "../mytv.dll"/>
+    <Import assembly = "mytv.dll"/>
   </Runtime>
 
   <Path name = "/Menus/Home">

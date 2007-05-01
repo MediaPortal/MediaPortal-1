@@ -8,7 +8,7 @@
 	</Manifest>
 	
 	<Runtime>
-		<Import assembly = "../myvideos.dll"/>
+		<Import assembly = "myvideos.dll"/>
 	</Runtime>
 
 	<Path name = "/Menus/Home">

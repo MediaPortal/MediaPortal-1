@@ -73,8 +73,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetDir)*$(TargetExt) $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(TargetName) /Y /D /I
-xcopy $(TargetDir)*.pdb $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(TargetName) /Y /D /I
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
