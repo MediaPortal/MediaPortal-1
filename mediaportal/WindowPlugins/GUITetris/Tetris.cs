@@ -680,7 +680,10 @@ namespace Tetris
 
 			for(int i = 0; i < 4; i++)
 			{
-				game.Block[(int)x[i], (int)(y[i])] = m_nColor;
+        if ((x[i] < Game.Width) && (y[i] < Game.Height))
+        {
+          game.Block[(int) x[i], (int) (y[i])] = m_nColor;
+        }
 			}
 
 			game.Score += ((24 + (3 * game.Level)) - m_nFreefalls);
