@@ -138,7 +138,6 @@ namespace WindowPlugins.GUIPrograms
     private MediaPortal.UserInterface.Controls.MPComboBox cbViews;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private System.Windows.Forms.DataGrid dataGrid1;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -166,6 +165,7 @@ namespace WindowPlugins.GUIPrograms
       "genre4",
       "genre5"
     };
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
     string[] sqloperators = new string[]
     {
         "",
@@ -240,96 +240,113 @@ namespace WindowPlugins.GUIPrograms
       this.cbViews = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.dataGrid1 = new System.Windows.Forms.DataGrid();
-      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
+      this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // tbViewName
       // 
-      this.tbViewName.Location = new System.Drawing.Point(72, 80);
+      this.tbViewName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbViewName.BorderColor = System.Drawing.Color.Empty;
+      this.tbViewName.Location = new System.Drawing.Point(62, 47);
       this.tbViewName.Name = "tbViewName";
+      this.tbViewName.Size = new System.Drawing.Size(254, 21);
       this.tbViewName.TabIndex = 20;
-      this.tbViewName.Text = "";
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(16, 77);
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(6, 50);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(40, 23);
+      this.label2.Size = new System.Drawing.Size(38, 13);
       this.label2.TabIndex = 19;
       this.label2.Text = "Name:";
       // 
       // btnDelete
       // 
       this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnDelete.Location = new System.Drawing.Point(264, 376);
+      this.btnDelete.Location = new System.Drawing.Point(244, 374);
       this.btnDelete.Name = "btnDelete";
-      this.btnDelete.Size = new System.Drawing.Size(48, 23);
+      this.btnDelete.Size = new System.Drawing.Size(72, 22);
       this.btnDelete.TabIndex = 18;
       this.btnDelete.Text = "Delete";
+      this.btnDelete.UseVisualStyleBackColor = true;
       this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
       // 
       // btnSave
       // 
       this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnSave.Location = new System.Drawing.Point(208, 376);
+      this.btnSave.Location = new System.Drawing.Point(166, 374);
       this.btnSave.Name = "btnSave";
-      this.btnSave.Size = new System.Drawing.Size(48, 23);
+      this.btnSave.Size = new System.Drawing.Size(72, 22);
       this.btnSave.TabIndex = 17;
       this.btnSave.Text = "Save";
+      this.btnSave.UseVisualStyleBackColor = true;
       this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
       // 
       // cbViews
       // 
-      this.cbViews.Location = new System.Drawing.Point(72, 48);
+      this.cbViews.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbViews.BorderColor = System.Drawing.Color.Empty;
+      this.cbViews.Location = new System.Drawing.Point(62, 20);
       this.cbViews.Name = "cbViews";
-      this.cbViews.Size = new System.Drawing.Size(168, 21);
+      this.cbViews.Size = new System.Drawing.Size(254, 21);
       this.cbViews.TabIndex = 16;
       this.cbViews.SelectedIndexChanged += new System.EventHandler(this.cbViews_SelectedIndexChanged);
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 53);
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(6, 23);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(56, 16);
+      this.label1.Size = new System.Drawing.Size(33, 13);
       this.label1.TabIndex = 15;
       this.label1.Text = "View:";
       // 
       // dataGrid1
       // 
       this.dataGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.dataGrid1.DataMember = "";
       this.dataGrid1.FlatMode = true;
       this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-      this.dataGrid1.Location = new System.Drawing.Point(8, 112);
+      this.dataGrid1.Location = new System.Drawing.Point(6, 74);
       this.dataGrid1.Name = "dataGrid1";
-      this.dataGrid1.Size = new System.Drawing.Size(312, 256);
+      this.dataGrid1.Size = new System.Drawing.Size(310, 294);
       this.dataGrid1.TabIndex = 14;
       // 
-      // label3
+      // mpGroupBox1
       // 
-      this.label3.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.label3.Location = new System.Drawing.Point(8, 8);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(216, 32);
-      this.label3.TabIndex = 82;
-      this.label3.Text = "Program Views";
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.btnDelete);
+      this.mpGroupBox1.Controls.Add(this.tbViewName);
+      this.mpGroupBox1.Controls.Add(this.btnSave);
+      this.mpGroupBox1.Controls.Add(this.label1);
+      this.mpGroupBox1.Controls.Add(this.dataGrid1);
+      this.mpGroupBox1.Controls.Add(this.label2);
+      this.mpGroupBox1.Controls.Add(this.cbViews);
+      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox1.Location = new System.Drawing.Point(3, 3);
+      this.mpGroupBox1.Name = "mpGroupBox1";
+      this.mpGroupBox1.Size = new System.Drawing.Size(322, 402);
+      this.mpGroupBox1.TabIndex = 83;
+      this.mpGroupBox1.TabStop = false;
+      this.mpGroupBox1.Text = "Program Views";
       // 
       // ProgramViews
       // 
-      this.Controls.Add(this.label3);
-      this.Controls.Add(this.tbViewName);
-      this.Controls.Add(this.label2);
-      this.Controls.Add(this.btnDelete);
-      this.Controls.Add(this.btnSave);
-      this.Controls.Add(this.cbViews);
-      this.Controls.Add(this.label1);
-      this.Controls.Add(this.dataGrid1);
+      this.Controls.Add(this.mpGroupBox1);
       this.Name = "ProgramViews";
       this.Size = new System.Drawing.Size(328, 408);
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).EndInit();
+      this.mpGroupBox1.ResumeLayout(false);
+      this.mpGroupBox1.PerformLayout();
       this.ResumeLayout(false);
 
     }
