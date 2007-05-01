@@ -77,4 +77,5 @@
       </Grid>
     </DockPanel>
   </controls:AnimationBehaviorHost>
+  <Button Visibility="{Binding IsBusy}" Style="{StaticResource MpCursorBusy}" VerticalAlignment="Center" HorizontalAlignment="Center" IsEnabled="False"/>
 </Grid>

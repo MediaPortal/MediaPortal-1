@@ -42,6 +42,7 @@ namespace MyTv
     ICommand _searchCommand;
     ICommand _turnTvOnOffCommand;
     ICommand _recordNowCommand;
+    bool _isBusy = false;
     public event PropertyChangedEventHandler PropertyChanged;
     #endregion
 
@@ -54,6 +55,7 @@ namespace MyTv
     {
       if (!ServiceScope.IsRegistered<ITvChannelNavigator>())
       {
+        SetBusy(true);
         Dispatcher.BeginInvoke(DispatcherPriority.Normal, new ConnectToServerDelegate(ConnectToServer));
       }
     }
@@ -371,6 +373,19 @@ namespace MyTv
     #endregion
 
     #region video properties
+
+    public Visibility IsBusy
+    {
+      get
+      {
+        return _isBusy ? Visibility.Visible : Visibility.Hidden;
+      }
+    }
+    public void SetBusy(bool busy)
+    {
+      _isBusy = busy;
+      ChangeProperty("IsBusy");
+    }
     /// <summary>
     /// Returns whether video is present or not.
     /// </summary>
@@ -468,6 +483,7 @@ namespace MyTv
     /// </summary>
     void OnFailedToConnectToServer()
     {
+      SetBusy(false);
       ServiceScope.Get<INavigationService>().Navigate(new TvSetup());
     }
 
@@ -509,6 +525,7 @@ namespace MyTv
       }
 
 
+      SetBusy(false);
       ServiceScope.Get<ILogger>().Info("mytv:OnSucceededToConnectToServer done");
     }
     #endregion
@@ -807,6 +824,7 @@ namespace MyTv
       /// <param name="parameter">reference to PlayParameter.</param>
       public override void Execute(object parameter)
       {
+        _viewModel.SetBusy(true);
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
           ServiceScope.Get<IPlayerCollectionService>().Clear();
@@ -822,7 +840,7 @@ namespace MyTv
         player.MediaFailed += new EventHandler<MediaExceptionEventArgs>(_mediaPlayer_MediaFailed);
         player.MediaOpened += new EventHandler(player_MediaOpened);
         player.Open(PlayerMediaType.TvLive, _playParameter.FileName);
-        player.Play();
+        player.Play(); 
       }
 
       void player_MediaOpened(object sender, EventArgs e)
@@ -842,6 +860,7 @@ namespace MyTv
           IPlayer player = ServiceScope.Get<IPlayerCollectionService>()[0];
           player.Position = new TimeSpan(0, 0, 0, 0);
         }
+        _viewModel.SetBusy(false);
       }
       void _mediaPlayer_MediaFailed(object sender, MediaExceptionEventArgs e)
       {
@@ -850,6 +869,7 @@ namespace MyTv
       }
       void OnMediaPlayerError()
       {
+        _viewModel.SetBusy(false);
         ServiceScope.Get<ILogger>().Info("Playcommand:OnMediaPlayerError()");
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
@@ -894,6 +914,7 @@ namespace MyTv
       /// <param name="parameter">reference to a Channel.</param>
       public override void Execute(object parameter)
       {
+        _viewModel.SetBusy(true);
         Channel channel = parameter as Channel;
         ServiceScope.Get<ILogger>().Info("TimeShiftCommand:timeshift:{0}", channel.Name);
         StartTimeShiftingDelegate starter = new StartTimeShiftingDelegate(this.StartTimeShiftingBackGroundWorker);
@@ -951,6 +972,7 @@ namespace MyTv
           {
             TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
             player.SeekToEnd();
+            _viewModel.SetBusy(false);
             return;
           }
 
@@ -968,7 +990,7 @@ namespace MyTv
             _viewModel.ChangeProperty("TvOnOff");
             ServiceScope.Get<IPlayerCollectionService>().Clear();
           }
-
+          _viewModel.SetBusy(false);
           //show error to user
           MpDialogOk dlg = new MpDialogOk();
           dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
