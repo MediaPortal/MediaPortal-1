@@ -288,6 +288,24 @@ namespace ProjectInfinity.Thumbnails
           {
             if (System.IO.File.Exists(thumb.MediaFile))
             {
+              //first try via IShell
+              try
+              {
+                using (ThumbnailCreator creator = new ThumbnailCreator())
+                {
+                  using (System.Drawing.Bitmap bmp = creator.GetThumbNail_Mine(thumb.MediaFile))
+                  {
+                    if (bmp != null)
+                    {
+                      bmp.Save(thumbnailFileName,System.Drawing.Imaging.ImageFormat.Png);
+                      return true;
+                    }
+                  }
+                }
+              }
+              catch (Exception)
+              {
+              }
               try
               {
                 MediaPlayer player = new MediaPlayer();

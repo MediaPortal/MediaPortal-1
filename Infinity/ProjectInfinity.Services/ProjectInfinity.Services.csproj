@@ -33,6 +33,7 @@
     <Reference Include="PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="UIAutomationProvider, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -82,6 +83,7 @@
     <Compile Include="Taskbar\WindowsTaskBar.cs" />
     <Compile Include="Themes\ThemeManager.cs" />
     <Compile Include="Thumbnails\ThumbnailBuilder.cs" />
+    <Compile Include="Thumbnails\ThumbnailCreator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ProjectInfinity.Core\ProjectInfinity.Core.csproj">
