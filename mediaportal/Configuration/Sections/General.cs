@@ -249,52 +249,52 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.Location = new System.Drawing.Point(0, 3);
       this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
       this.groupBoxGeneralSettings.Size = new System.Drawing.Size(472, 397);
-      this.groupBoxGeneralSettings.TabIndex = 1;
+      this.groupBoxGeneralSettings.TabIndex = 0;
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General Settings";
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(229, 363);
+      this.label1.Location = new System.Drawing.Point(13, 341);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(57, 13);
-      this.label1.TabIndex = 5;
+      this.label1.Size = new System.Drawing.Size(58, 13);
+      this.label1.TabIndex = 1;
       this.label1.Text = "MP Priority";
       // 
       // mpThreadPriority
       // 
-      this.mpThreadPriority.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpThreadPriority.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpThreadPriority.BorderColor = System.Drawing.Color.Empty;
+      this.mpThreadPriority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpThreadPriority.FormattingEnabled = true;
       this.mpThreadPriority.Items.AddRange(new object[] {
             "High",
             "AboveNormal",
             "Normal",
             "BelowNormal"});
-      this.mpThreadPriority.Location = new System.Drawing.Point(304, 360);
+      this.mpThreadPriority.Location = new System.Drawing.Point(89, 338);
+      this.mpThreadPriority.MinimumSize = new System.Drawing.Size(100, 0);
       this.mpThreadPriority.Name = "mpThreadPriority";
-      this.mpThreadPriority.Size = new System.Drawing.Size(152, 21);
-      this.mpThreadPriority.TabIndex = 3;
+      this.mpThreadPriority.Size = new System.Drawing.Size(367, 21);
+      this.mpThreadPriority.TabIndex = 2;
       // 
       // lbDebug
       // 
-      this.lbDebug.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.lbDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.lbDebug.AutoSize = true;
-      this.lbDebug.Location = new System.Drawing.Point(13, 363);
+      this.lbDebug.Location = new System.Drawing.Point(13, 368);
       this.lbDebug.Name = "lbDebug";
-      this.lbDebug.Size = new System.Drawing.Size(57, 13);
+      this.lbDebug.Size = new System.Drawing.Size(56, 13);
       this.lbDebug.TabIndex = 3;
       this.lbDebug.Text = "Log Level:";
       // 
       // cbDebug
       // 
-      this.cbDebug.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.cbDebug.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cbDebug.BorderColor = System.Drawing.Color.Empty;
       this.cbDebug.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbDebug.FormattingEnabled = true;
@@ -303,10 +303,11 @@ namespace MediaPortal.Configuration.Sections
             "Warning",
             "Information",
             "Debug"});
-      this.cbDebug.Location = new System.Drawing.Point(74, 360);
+      this.cbDebug.Location = new System.Drawing.Point(89, 365);
+      this.cbDebug.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbDebug.Name = "cbDebug";
-      this.cbDebug.Size = new System.Drawing.Size(121, 21);
-      this.cbDebug.TabIndex = 2;
+      this.cbDebug.Size = new System.Drawing.Size(367, 21);
+      this.cbDebug.TabIndex = 4;
       // 
       // settingsCheckedListBox
       // 
@@ -337,7 +338,7 @@ namespace MediaPortal.Configuration.Sections
             "Use VRM9 for playback of web streams"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 304);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 308);
       this.settingsCheckedListBox.TabIndex = 0;
       // 
       // General

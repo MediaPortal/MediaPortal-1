@@ -167,7 +167,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxZapTimeout.BorderColor = System.Drawing.Color.Empty;
       this.textBoxZapTimeout.Location = new System.Drawing.Point(160, 44);
       this.textBoxZapTimeout.Name = "textBoxZapTimeout";
-      this.textBoxZapTimeout.Size = new System.Drawing.Size(256, 20);
+      this.textBoxZapTimeout.Size = new System.Drawing.Size(256, 21);
       this.textBoxZapTimeout.TabIndex = 3;
       // 
       // labelZapTimeOut
@@ -175,7 +175,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelZapTimeOut.AutoSize = true;
       this.labelZapTimeOut.Location = new System.Drawing.Point(16, 48);
       this.labelZapTimeOut.Name = "labelZapTimeOut";
-      this.labelZapTimeOut.Size = new System.Drawing.Size(95, 13);
+      this.labelZapTimeOut.Size = new System.Drawing.Size(99, 13);
       this.labelZapTimeOut.TabIndex = 2;
       this.labelZapTimeOut.Text = "Zap timeout (sec.):";
       // 
@@ -186,7 +186,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxZapDelay.BorderColor = System.Drawing.Color.Empty;
       this.textBoxZapDelay.Location = new System.Drawing.Point(160, 20);
       this.textBoxZapDelay.Name = "textBoxZapDelay";
-      this.textBoxZapDelay.Size = new System.Drawing.Size(256, 20);
+      this.textBoxZapDelay.Size = new System.Drawing.Size(256, 21);
       this.textBoxZapDelay.TabIndex = 1;
       // 
       // labelZapDelay
@@ -194,7 +194,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelZapDelay.AutoSize = true;
       this.labelZapDelay.Location = new System.Drawing.Point(16, 24);
       this.labelZapDelay.Name = "labelZapDelay";
-      this.labelZapDelay.Size = new System.Drawing.Size(86, 13);
+      this.labelZapDelay.Size = new System.Drawing.Size(89, 13);
       this.labelZapDelay.TabIndex = 0;
       this.labelZapDelay.Text = "Zap delay (sec.):";
       // 
@@ -219,7 +219,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxDisplayTimeout.BorderColor = System.Drawing.Color.Empty;
       this.textBoxDisplayTimeout.Location = new System.Drawing.Point(160, 20);
       this.textBoxDisplayTimeout.Name = "textBoxDisplayTimeout";
-      this.textBoxDisplayTimeout.Size = new System.Drawing.Size(256, 20);
+      this.textBoxDisplayTimeout.Size = new System.Drawing.Size(256, 21);
       this.textBoxDisplayTimeout.TabIndex = 1;
       // 
       // labelDisplayTimeout
@@ -227,7 +227,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelDisplayTimeout.AutoSize = true;
       this.labelDisplayTimeout.Location = new System.Drawing.Point(16, 24);
       this.labelDisplayTimeout.Name = "labelDisplayTimeout";
-      this.labelDisplayTimeout.Size = new System.Drawing.Size(110, 13);
+      this.labelDisplayTimeout.Size = new System.Drawing.Size(115, 13);
       this.labelDisplayTimeout.TabIndex = 0;
       this.labelDisplayTimeout.Text = "Display timeout (sec.):";
       // 

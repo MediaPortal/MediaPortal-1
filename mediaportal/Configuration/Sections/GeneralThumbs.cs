@@ -216,6 +216,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControlThumbnailSettings
       // 
+      this.tabControlThumbnailSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlThumbnailSettings.Controls.Add(this.tabPageThumbQuality);
       this.tabControlThumbnailSettings.Location = new System.Drawing.Point(0, 0);
       this.tabControlThumbnailSettings.Name = "tabControlThumbnailSettings";
@@ -239,6 +242,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxTVThumbs
       // 
+      this.groupBoxTVThumbs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.groupBoxTVThumbs.Controls.Add(this.buttonClearTVThumbs);
       this.groupBoxTVThumbs.Controls.Add(this.checkBoxTVThumbs);
       this.groupBoxTVThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -254,7 +258,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonClearTVThumbs.Location = new System.Drawing.Point(13, 46);
       this.buttonClearTVThumbs.Name = "buttonClearTVThumbs";
       this.buttonClearTVThumbs.Size = new System.Drawing.Size(178, 23);
-      this.buttonClearTVThumbs.TabIndex = 3;
+      this.buttonClearTVThumbs.TabIndex = 1;
       this.buttonClearTVThumbs.Text = "Clear recorded TV thumbs";
       this.buttonClearTVThumbs.UseVisualStyleBackColor = true;
       this.buttonClearTVThumbs.Click += new System.EventHandler(this.buttonClearTVThumbs_Click);
@@ -267,13 +271,14 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxTVThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxTVThumbs.Location = new System.Drawing.Point(13, 23);
       this.checkBoxTVThumbs.Name = "checkBoxTVThumbs";
-      this.checkBoxTVThumbs.Size = new System.Drawing.Size(180, 17);
+      this.checkBoxTVThumbs.Size = new System.Drawing.Size(186, 17);
       this.checkBoxTVThumbs.TabIndex = 0;
       this.checkBoxTVThumbs.Text = "Auto-create thumbs of recordings";
       this.checkBoxTVThumbs.UseVisualStyleBackColor = true;
       // 
       // groupBoxPictureThumbs
       // 
+      this.groupBoxPictureThumbs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxPictureThumbs.Controls.Add(this.buttonClearPictureThumbs);
       this.groupBoxPictureThumbs.Controls.Add(this.checkBoxPicThumbOnDemand);
       this.groupBoxPictureThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -289,7 +294,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonClearPictureThumbs.Location = new System.Drawing.Point(14, 46);
       this.buttonClearPictureThumbs.Name = "buttonClearPictureThumbs";
       this.buttonClearPictureThumbs.Size = new System.Drawing.Size(178, 23);
-      this.buttonClearPictureThumbs.TabIndex = 3;
+      this.buttonClearPictureThumbs.TabIndex = 1;
       this.buttonClearPictureThumbs.Text = "Clear picture cache";
       this.buttonClearPictureThumbs.UseVisualStyleBackColor = true;
       this.buttonClearPictureThumbs.Click += new System.EventHandler(this.buttonClearPictureThumbs_Click);
@@ -300,13 +305,14 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxPicThumbOnDemand.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxPicThumbOnDemand.Location = new System.Drawing.Point(14, 23);
       this.checkBoxPicThumbOnDemand.Name = "checkBoxPicThumbOnDemand";
-      this.checkBoxPicThumbOnDemand.Size = new System.Drawing.Size(164, 17);
+      this.checkBoxPicThumbOnDemand.Size = new System.Drawing.Size(169, 17);
       this.checkBoxPicThumbOnDemand.TabIndex = 0;
       this.checkBoxPicThumbOnDemand.Text = "Auto-create only small thumbs";
       this.checkBoxPicThumbOnDemand.UseVisualStyleBackColor = true;
       // 
       // groupBoxMusicThumbs
       // 
+      this.groupBoxMusicThumbs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.groupBoxMusicThumbs.Controls.Add(this.buttonClearMusicCache);
       this.groupBoxMusicThumbs.Controls.Add(this.checkBoxFolderThumbOnDemand);
       this.groupBoxMusicThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -322,7 +328,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonClearMusicCache.Location = new System.Drawing.Point(13, 46);
       this.buttonClearMusicCache.Name = "buttonClearMusicCache";
       this.buttonClearMusicCache.Size = new System.Drawing.Size(178, 23);
-      this.buttonClearMusicCache.TabIndex = 2;
+      this.buttonClearMusicCache.TabIndex = 1;
       this.buttonClearMusicCache.Text = "Clear folder cache";
       this.buttonClearMusicCache.UseVisualStyleBackColor = true;
       this.buttonClearMusicCache.Click += new System.EventHandler(this.buttonClearMusicCache_Click);
@@ -333,13 +339,16 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxFolderThumbOnDemand.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxFolderThumbOnDemand.Location = new System.Drawing.Point(13, 23);
       this.checkBoxFolderThumbOnDemand.Name = "checkBoxFolderThumbOnDemand";
-      this.checkBoxFolderThumbOnDemand.Size = new System.Drawing.Size(173, 17);
-      this.checkBoxFolderThumbOnDemand.TabIndex = 1;
+      this.checkBoxFolderThumbOnDemand.Size = new System.Drawing.Size(175, 17);
+      this.checkBoxFolderThumbOnDemand.TabIndex = 0;
       this.checkBoxFolderThumbOnDemand.Text = "Create folder cache on demand";
       this.checkBoxFolderThumbOnDemand.UseVisualStyleBackColor = true;
       // 
       // groupBoxThumbQuality
       // 
+      this.groupBoxThumbQuality.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxThumbQuality.Controls.Add(this.labelRecommendedCurrent);
       this.groupBoxThumbQuality.Controls.Add(this.labelRecommendedHint);
       this.groupBoxThumbQuality.Controls.Add(this.labelCurrentSmoothing);
@@ -364,136 +373,150 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelRecommendedCurrent
       // 
+      this.labelRecommendedCurrent.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelRecommendedCurrent.AutoSize = true;
       this.labelRecommendedCurrent.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelRecommendedCurrent.Location = new System.Drawing.Point(10, 155);
       this.labelRecommendedCurrent.Name = "labelRecommendedCurrent";
       this.labelRecommendedCurrent.Size = new System.Drawing.Size(141, 13);
-      this.labelRecommendedCurrent.TabIndex = 13;
+      this.labelRecommendedCurrent.TabIndex = 2;
       this.labelRecommendedCurrent.Text = "Large wide CRTs, small TFT";
       // 
       // labelRecommendedHint
       // 
+      this.labelRecommendedHint.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelRecommendedHint.AutoSize = true;
       this.labelRecommendedHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelRecommendedHint.Location = new System.Drawing.Point(10, 133);
       this.labelRecommendedHint.Name = "labelRecommendedHint";
       this.labelRecommendedHint.Size = new System.Drawing.Size(113, 13);
-      this.labelRecommendedHint.TabIndex = 12;
+      this.labelRecommendedHint.TabIndex = 1;
       this.labelRecommendedHint.Text = "Recommended for:";
       // 
       // labelCurrentSmoothing
       // 
+      this.labelCurrentSmoothing.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelCurrentSmoothing.AutoSize = true;
       this.labelCurrentSmoothing.Location = new System.Drawing.Point(317, 134);
       this.labelCurrentSmoothing.Name = "labelCurrentSmoothing";
-      this.labelCurrentSmoothing.Size = new System.Drawing.Size(41, 13);
-      this.labelCurrentSmoothing.TabIndex = 11;
+      this.labelCurrentSmoothing.Size = new System.Drawing.Size(42, 13);
+      this.labelCurrentSmoothing.TabIndex = 13;
       this.labelCurrentSmoothing.Text = "Default";
       // 
       // labelCurrentInterpolation
       // 
+      this.labelCurrentInterpolation.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelCurrentInterpolation.AutoSize = true;
       this.labelCurrentInterpolation.Location = new System.Drawing.Point(317, 102);
       this.labelCurrentInterpolation.Name = "labelCurrentInterpolation";
-      this.labelCurrentInterpolation.Size = new System.Drawing.Size(41, 13);
-      this.labelCurrentInterpolation.TabIndex = 10;
+      this.labelCurrentInterpolation.Size = new System.Drawing.Size(42, 13);
+      this.labelCurrentInterpolation.TabIndex = 11;
       this.labelCurrentInterpolation.Text = "Default";
       // 
       // labelCurrentCompositing
       // 
+      this.labelCurrentCompositing.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelCurrentCompositing.AutoSize = true;
       this.labelCurrentCompositing.Location = new System.Drawing.Point(317, 71);
       this.labelCurrentCompositing.Name = "labelCurrentCompositing";
-      this.labelCurrentCompositing.Size = new System.Drawing.Size(41, 13);
+      this.labelCurrentCompositing.Size = new System.Drawing.Size(42, 13);
       this.labelCurrentCompositing.TabIndex = 9;
       this.labelCurrentCompositing.Text = "Default";
       // 
       // labelCurrentResolution
       // 
+      this.labelCurrentResolution.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelCurrentResolution.AutoSize = true;
       this.labelCurrentResolution.Location = new System.Drawing.Point(317, 41);
       this.labelCurrentResolution.Name = "labelCurrentResolution";
-      this.labelCurrentResolution.Size = new System.Drawing.Size(55, 13);
-      this.labelCurrentResolution.TabIndex = 8;
+      this.labelCurrentResolution.Size = new System.Drawing.Size(57, 13);
+      this.labelCurrentResolution.TabIndex = 7;
       this.labelCurrentResolution.Text = "128 + 512";
       // 
       // labelSmoothing
       // 
+      this.labelSmoothing.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelSmoothing.AutoSize = true;
       this.labelSmoothing.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelSmoothing.Location = new System.Drawing.Point(235, 133);
       this.labelSmoothing.Name = "labelSmoothing";
       this.labelSmoothing.Size = new System.Drawing.Size(66, 13);
-      this.labelSmoothing.TabIndex = 7;
+      this.labelSmoothing.TabIndex = 12;
       this.labelSmoothing.Text = "Smoothing";
       // 
       // labelInterpolation
       // 
+      this.labelInterpolation.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelInterpolation.AutoSize = true;
       this.labelInterpolation.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelInterpolation.Location = new System.Drawing.Point(235, 101);
       this.labelInterpolation.Name = "labelInterpolation";
       this.labelInterpolation.Size = new System.Drawing.Size(78, 13);
-      this.labelInterpolation.TabIndex = 6;
+      this.labelInterpolation.TabIndex = 10;
       this.labelInterpolation.Text = "Interpolation";
       // 
       // labelCompositing
       // 
+      this.labelCompositing.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelCompositing.AutoSize = true;
       this.labelCompositing.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelCompositing.Location = new System.Drawing.Point(235, 70);
       this.labelCompositing.Name = "labelCompositing";
       this.labelCompositing.Size = new System.Drawing.Size(75, 13);
-      this.labelCompositing.TabIndex = 5;
+      this.labelCompositing.TabIndex = 8;
       this.labelCompositing.Text = "Compositing";
       // 
       // labelResolution
       // 
+      this.labelResolution.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelResolution.AutoSize = true;
       this.labelResolution.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelResolution.Location = new System.Drawing.Point(235, 40);
       this.labelResolution.Name = "labelResolution";
       this.labelResolution.Size = new System.Drawing.Size(67, 13);
-      this.labelResolution.TabIndex = 4;
+      this.labelResolution.TabIndex = 6;
       this.labelResolution.Text = "Resolution";
       // 
       // labelHigh
       // 
+      this.labelHigh.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelHigh.AutoSize = true;
       this.labelHigh.Location = new System.Drawing.Point(177, 18);
       this.labelHigh.Name = "labelHigh";
-      this.labelHigh.Size = new System.Drawing.Size(39, 13);
+      this.labelHigh.Size = new System.Drawing.Size(41, 13);
       this.labelHigh.TabIndex = 3;
       this.labelHigh.Text = "Quality";
       // 
       // labelLow
       // 
+      this.labelLow.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelLow.AutoSize = true;
       this.labelLow.Location = new System.Drawing.Point(177, 155);
       this.labelLow.Name = "labelLow";
-      this.labelLow.Size = new System.Drawing.Size(38, 13);
-      this.labelLow.TabIndex = 2;
+      this.labelLow.Size = new System.Drawing.Size(37, 13);
+      this.labelLow.TabIndex = 5;
       this.labelLow.Text = "Speed";
       // 
       // labelQualityHint
       // 
+      this.labelQualityHint.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.labelQualityHint.Location = new System.Drawing.Point(10, 28);
       this.labelQualityHint.Name = "labelQualityHint";
       this.labelQualityHint.Size = new System.Drawing.Size(163, 76);
-      this.labelQualityHint.TabIndex = 1;
+      this.labelQualityHint.TabIndex = 0;
       this.labelQualityHint.Text = "Depending on your display size \r\nyou might want to decrease \r\nthumbnail quality f" +
           "or faster \r\nthumbnail generation and \r\nbetter browsing / scrolling";
       // 
       // trackBarQuality
       // 
+      this.trackBarQuality.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.trackBarQuality.LargeChange = 2;
       this.trackBarQuality.Location = new System.Drawing.Point(180, 35);
       this.trackBarQuality.Maximum = 4;
       this.trackBarQuality.Name = "trackBarQuality";
       this.trackBarQuality.Orientation = System.Windows.Forms.Orientation.Vertical;
-      this.trackBarQuality.Size = new System.Drawing.Size(40, 116);
-      this.trackBarQuality.TabIndex = 0;
+      this.trackBarQuality.Size = new System.Drawing.Size(42, 116);
+      this.trackBarQuality.TabIndex = 4;
       this.trackBarQuality.Value = 2;
       this.trackBarQuality.ValueChanged += new System.EventHandler(this.trackBarQuality_ValueChanged);
       // 

@@ -187,6 +187,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControlSkipSteps
       // 
+      this.tabControlSkipSteps.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlSkipSteps.Controls.Add(this.tabPageSteps);
       this.tabControlSkipSteps.Location = new System.Drawing.Point(0, 0);
       this.tabControlSkipSteps.Name = "tabControlSkipSteps";
@@ -209,12 +212,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxTimeout
       // 
+      this.groupBoxTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxTimeout.Controls.Add(this.numericUpDownSkipTimeout);
       this.groupBoxTimeout.Controls.Add(this.labelSkipTimeout);
       this.groupBoxTimeout.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxTimeout.Location = new System.Drawing.Point(16, 274);
       this.groupBoxTimeout.Name = "groupBoxTimeout";
-      this.groupBoxTimeout.Size = new System.Drawing.Size(424, 64);
+      this.groupBoxTimeout.Size = new System.Drawing.Size(428, 64);
       this.groupBoxTimeout.TabIndex = 1;
       this.groupBoxTimeout.TabStop = false;
       this.groupBoxTimeout.Text = "Timeout";
@@ -233,7 +238,7 @@ namespace MediaPortal.Configuration.Sections
             0,
             0});
       this.numericUpDownSkipTimeout.Name = "numericUpDownSkipTimeout";
-      this.numericUpDownSkipTimeout.Size = new System.Drawing.Size(56, 20);
+      this.numericUpDownSkipTimeout.Size = new System.Drawing.Size(56, 21);
       this.numericUpDownSkipTimeout.TabIndex = 1;
       this.numericUpDownSkipTimeout.Value = new decimal(new int[] {
             1500,
@@ -246,22 +251,25 @@ namespace MediaPortal.Configuration.Sections
       this.labelSkipTimeout.AutoSize = true;
       this.labelSkipTimeout.Location = new System.Drawing.Point(12, 27);
       this.labelSkipTimeout.Name = "labelSkipTimeout";
-      this.labelSkipTimeout.Size = new System.Drawing.Size(195, 13);
+      this.labelSkipTimeout.Size = new System.Drawing.Size(198, 13);
       this.labelSkipTimeout.TabIndex = 0;
       this.labelSkipTimeout.Text = "Timeout before skipping occurs (msec.):";
       // 
       // buttonResetSkipSteps
       // 
+      this.buttonResetSkipSteps.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonResetSkipSteps.Location = new System.Drawing.Point(368, 344);
       this.buttonResetSkipSteps.Name = "buttonResetSkipSteps";
       this.buttonResetSkipSteps.Size = new System.Drawing.Size(75, 23);
-      this.buttonResetSkipSteps.TabIndex = 49;
+      this.buttonResetSkipSteps.TabIndex = 2;
       this.buttonResetSkipSteps.Text = "Defaults";
       this.buttonResetSkipSteps.UseVisualStyleBackColor = true;
       this.buttonResetSkipSteps.Click += new System.EventHandler(this.buttonResetSkipSteps_Click);
       // 
       // groupBoxSkipSteps
       // 
+      this.groupBoxSkipSteps.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxSkipSteps.Controls.Add(this.labelError);
       this.groupBoxSkipSteps.Controls.Add(this.textBoxManualSkipSteps);
       this.groupBoxSkipSteps.Controls.Add(this.label1);
@@ -298,11 +306,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxManualSkipSteps
       // 
+      this.textBoxManualSkipSteps.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxManualSkipSteps.BorderColor = System.Drawing.Color.Empty;
       this.textBoxManualSkipSteps.Location = new System.Drawing.Point(158, 222);
       this.textBoxManualSkipSteps.Name = "textBoxManualSkipSteps";
-      this.textBoxManualSkipSteps.Size = new System.Drawing.Size(264, 20);
-      this.textBoxManualSkipSteps.TabIndex = 52;
+      this.textBoxManualSkipSteps.Size = new System.Drawing.Size(264, 21);
+      this.textBoxManualSkipSteps.TabIndex = 17;
       this.textBoxManualSkipSteps.Text = "15,30,60,180,300,600,900,1800,3600,7200";
       this.textBoxManualSkipSteps.TextChanged += new System.EventHandler(this.textBoxManualSkipSteps_TextChanged);
       // 
@@ -311,8 +321,8 @@ namespace MediaPortal.Configuration.Sections
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(17, 225);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(135, 13);
-      this.label1.TabIndex = 51;
+      this.label1.Size = new System.Drawing.Size(137, 13);
+      this.label1.TabIndex = 16;
       this.label1.Text = "Define skip steps manually:";
       // 
       // checkBoxStep16
@@ -321,8 +331,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep16.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep16.Location = new System.Drawing.Point(210, 98);
       this.checkBoxStep16.Name = "checkBoxStep16";
-      this.checkBoxStep16.Size = new System.Drawing.Size(56, 17);
-      this.checkBoxStep16.TabIndex = 50;
+      this.checkBoxStep16.Size = new System.Drawing.Size(58, 17);
+      this.checkBoxStep16.TabIndex = 15;
       this.checkBoxStep16.Text = "+/- 3 h";
       this.checkBoxStep16.UseVisualStyleBackColor = true;
       this.checkBoxStep16.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -333,8 +343,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep4.Location = new System.Drawing.Point(15, 98);
       this.checkBoxStep4.Name = "checkBoxStep4";
-      this.checkBoxStep4.Size = new System.Drawing.Size(73, 17);
-      this.checkBoxStep4.TabIndex = 48;
+      this.checkBoxStep4.Size = new System.Drawing.Size(74, 17);
+      this.checkBoxStep4.TabIndex = 3;
       this.checkBoxStep4.Text = "+/- 45 sec";
       this.checkBoxStep4.UseVisualStyleBackColor = true;
       this.checkBoxStep4.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -347,8 +357,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep15.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep15.Location = new System.Drawing.Point(210, 75);
       this.checkBoxStep15.Name = "checkBoxStep15";
-      this.checkBoxStep15.Size = new System.Drawing.Size(56, 17);
-      this.checkBoxStep15.TabIndex = 47;
+      this.checkBoxStep15.Size = new System.Drawing.Size(58, 17);
+      this.checkBoxStep15.TabIndex = 14;
       this.checkBoxStep15.Text = "+/- 2 h";
       this.checkBoxStep15.UseVisualStyleBackColor = true;
       this.checkBoxStep15.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -359,8 +369,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep12.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep12.Location = new System.Drawing.Point(113, 190);
       this.checkBoxStep12.Name = "checkBoxStep12";
-      this.checkBoxStep12.Size = new System.Drawing.Size(72, 17);
-      this.checkBoxStep12.TabIndex = 46;
+      this.checkBoxStep12.Size = new System.Drawing.Size(74, 17);
+      this.checkBoxStep12.TabIndex = 11;
       this.checkBoxStep12.Text = "+/- 45 min";
       this.checkBoxStep12.UseVisualStyleBackColor = true;
       this.checkBoxStep12.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -373,8 +383,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep11.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep11.Location = new System.Drawing.Point(113, 167);
       this.checkBoxStep11.Name = "checkBoxStep11";
-      this.checkBoxStep11.Size = new System.Drawing.Size(72, 17);
-      this.checkBoxStep11.TabIndex = 45;
+      this.checkBoxStep11.Size = new System.Drawing.Size(74, 17);
+      this.checkBoxStep11.TabIndex = 10;
       this.checkBoxStep11.Text = "+/- 30 min";
       this.checkBoxStep11.UseVisualStyleBackColor = true;
       this.checkBoxStep11.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -387,8 +397,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep10.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep10.Location = new System.Drawing.Point(113, 144);
       this.checkBoxStep10.Name = "checkBoxStep10";
-      this.checkBoxStep10.Size = new System.Drawing.Size(72, 17);
-      this.checkBoxStep10.TabIndex = 44;
+      this.checkBoxStep10.Size = new System.Drawing.Size(74, 17);
+      this.checkBoxStep10.TabIndex = 9;
       this.checkBoxStep10.Text = "+/- 15 min";
       this.checkBoxStep10.UseVisualStyleBackColor = true;
       this.checkBoxStep10.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -401,8 +411,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep9.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep9.Location = new System.Drawing.Point(113, 121);
       this.checkBoxStep9.Name = "checkBoxStep9";
-      this.checkBoxStep9.Size = new System.Drawing.Size(72, 17);
-      this.checkBoxStep9.TabIndex = 43;
+      this.checkBoxStep9.Size = new System.Drawing.Size(74, 17);
+      this.checkBoxStep9.TabIndex = 8;
       this.checkBoxStep9.Text = "+/- 10 min";
       this.checkBoxStep9.UseVisualStyleBackColor = true;
       this.checkBoxStep9.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -415,8 +425,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep5.Location = new System.Drawing.Point(113, 29);
       this.checkBoxStep5.Name = "checkBoxStep5";
-      this.checkBoxStep5.Size = new System.Drawing.Size(66, 17);
-      this.checkBoxStep5.TabIndex = 42;
+      this.checkBoxStep5.Size = new System.Drawing.Size(68, 17);
+      this.checkBoxStep5.TabIndex = 4;
       this.checkBoxStep5.Text = "+/- 1 min";
       this.checkBoxStep5.UseVisualStyleBackColor = true;
       this.checkBoxStep5.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -429,8 +439,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep6.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep6.Location = new System.Drawing.Point(113, 52);
       this.checkBoxStep6.Name = "checkBoxStep6";
-      this.checkBoxStep6.Size = new System.Drawing.Size(66, 17);
-      this.checkBoxStep6.TabIndex = 41;
+      this.checkBoxStep6.Size = new System.Drawing.Size(68, 17);
+      this.checkBoxStep6.TabIndex = 5;
       this.checkBoxStep6.Text = "+/- 3 min";
       this.checkBoxStep6.UseVisualStyleBackColor = true;
       this.checkBoxStep6.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -441,8 +451,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep14.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep14.Location = new System.Drawing.Point(210, 52);
       this.checkBoxStep14.Name = "checkBoxStep14";
-      this.checkBoxStep14.Size = new System.Drawing.Size(65, 17);
-      this.checkBoxStep14.TabIndex = 40;
+      this.checkBoxStep14.Size = new System.Drawing.Size(68, 17);
+      this.checkBoxStep14.TabIndex = 13;
       this.checkBoxStep14.Text = "+/- 1,5 h";
       this.checkBoxStep14.UseVisualStyleBackColor = true;
       this.checkBoxStep14.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -453,8 +463,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep8.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep8.Location = new System.Drawing.Point(113, 98);
       this.checkBoxStep8.Name = "checkBoxStep8";
-      this.checkBoxStep8.Size = new System.Drawing.Size(66, 17);
-      this.checkBoxStep8.TabIndex = 39;
+      this.checkBoxStep8.Size = new System.Drawing.Size(68, 17);
+      this.checkBoxStep8.TabIndex = 7;
       this.checkBoxStep8.Text = "+/- 7 min";
       this.checkBoxStep8.UseVisualStyleBackColor = true;
       this.checkBoxStep8.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -467,8 +477,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep13.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep13.Location = new System.Drawing.Point(210, 29);
       this.checkBoxStep13.Name = "checkBoxStep13";
-      this.checkBoxStep13.Size = new System.Drawing.Size(56, 17);
-      this.checkBoxStep13.TabIndex = 38;
+      this.checkBoxStep13.Size = new System.Drawing.Size(58, 17);
+      this.checkBoxStep13.TabIndex = 12;
       this.checkBoxStep13.Text = "+/- 1 h";
       this.checkBoxStep13.UseVisualStyleBackColor = true;
       this.checkBoxStep13.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -481,8 +491,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep7.Location = new System.Drawing.Point(113, 75);
       this.checkBoxStep7.Name = "checkBoxStep7";
-      this.checkBoxStep7.Size = new System.Drawing.Size(66, 17);
-      this.checkBoxStep7.TabIndex = 37;
+      this.checkBoxStep7.Size = new System.Drawing.Size(68, 17);
+      this.checkBoxStep7.TabIndex = 6;
       this.checkBoxStep7.Text = "+/- 5 min";
       this.checkBoxStep7.UseVisualStyleBackColor = true;
       this.checkBoxStep7.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -495,8 +505,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep3.Location = new System.Drawing.Point(15, 75);
       this.checkBoxStep3.Name = "checkBoxStep3";
-      this.checkBoxStep3.Size = new System.Drawing.Size(73, 17);
-      this.checkBoxStep3.TabIndex = 36;
+      this.checkBoxStep3.Size = new System.Drawing.Size(74, 17);
+      this.checkBoxStep3.TabIndex = 2;
       this.checkBoxStep3.Text = "+/- 30 sec";
       this.checkBoxStep3.UseVisualStyleBackColor = true;
       this.checkBoxStep3.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -509,8 +519,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep2.Location = new System.Drawing.Point(15, 52);
       this.checkBoxStep2.Name = "checkBoxStep2";
-      this.checkBoxStep2.Size = new System.Drawing.Size(73, 17);
-      this.checkBoxStep2.TabIndex = 35;
+      this.checkBoxStep2.Size = new System.Drawing.Size(74, 17);
+      this.checkBoxStep2.TabIndex = 1;
       this.checkBoxStep2.Text = "+/- 15 sec";
       this.checkBoxStep2.UseVisualStyleBackColor = true;
       this.checkBoxStep2.Click += new System.EventHandler(this.checkBoxStep_Click);
@@ -521,8 +531,8 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxStep1.Location = new System.Drawing.Point(15, 29);
       this.checkBoxStep1.Name = "checkBoxStep1";
-      this.checkBoxStep1.Size = new System.Drawing.Size(67, 17);
-      this.checkBoxStep1.TabIndex = 34;
+      this.checkBoxStep1.Size = new System.Drawing.Size(68, 17);
+      this.checkBoxStep1.TabIndex = 0;
       this.checkBoxStep1.Text = "+/- 5 sec";
       this.checkBoxStep1.UseVisualStyleBackColor = true;
       this.checkBoxStep1.Click += new System.EventHandler(this.checkBoxStep_Click);
