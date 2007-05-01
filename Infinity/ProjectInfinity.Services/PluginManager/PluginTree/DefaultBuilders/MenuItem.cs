@@ -27,41 +27,33 @@
 
 using System;
 using ProjectInfinity.Localisation;
-using ProjectInfinity.Logging;
 using ProjectInfinity.Menu;
 
 namespace ProjectInfinity.Plugins
 {
   public class MenuItem : IMenuItem
   {
-    #region Variables
     protected object _caller;
     //bool _visable;
     protected NodeItem _item;
     protected StringId _label;
     protected string _description = "";
-    #endregion
 
-    #region Constructors/Destructors
     public MenuItem(NodeItem item, object caller)
     {
-      this._caller = caller;
-      this._item = item;
-      this._label = new StringId(item.Properties["label"]);
+      _caller = caller;
+      _item = item;
+      _label = new StringId(item.Properties["label"]);
     }
-    #endregion
 
-    #region Properties
     public string Description
     {
       get { return _description; }
       set { _description = value; }
     }
 
-    public string Text
-    {
-      get { return ServiceScope.Get<ILocalisation>().ToString(_label); }
-    }
+    #region IMenuItem Members
+
 
     //public string Name
     //{
@@ -72,17 +64,23 @@ namespace ProjectInfinity.Plugins
     {
       get { return _item.Properties["image"]; }
     }
-    #endregion
 
-    #region Public Methods
-    public virtual void Execute()
+    public virtual void Accept(IMenuItemVisitor visitor)
     {
+      throw new NotSupportedException();
     }
 
-    public void Accept(IMenuItemVisitor visitor)
+    public string Text
     {
-      // visitor.Visit(this);
+      get { return ServiceScope.Get<ILocalisation>().ToString(_label); }
     }
+
     #endregion
+
+    [Obsolete]
+    void IMenuItem.Execute()
+    {
+      throw new NotSupportedException();
+    }
   }
 }

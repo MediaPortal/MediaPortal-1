@@ -39,6 +39,7 @@
     <Compile Include="Core.cs" />
     <Compile Include="Localisation\ILocalisaton.cs" />
     <Compile Include="Localisation\StringId.cs" />
+    <Compile Include="Menu\ICommandItem.cs" />
     <Compile Include="Menu\IMenu.cs" />
     <Compile Include="Menu\IMenuItem.cs" />
     <Compile Include="Menu\IMenuItemVisitor.cs" />

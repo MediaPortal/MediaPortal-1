@@ -46,5 +46,11 @@ namespace ProjectInfinity.Menu
     }
 
     #endregion
+
+    [Obsolete("This method will disappear very soon",true)]
+    void IMenuItem.Execute()
+    {
+      throw new NotSupportedException();
+    }
   }
 }

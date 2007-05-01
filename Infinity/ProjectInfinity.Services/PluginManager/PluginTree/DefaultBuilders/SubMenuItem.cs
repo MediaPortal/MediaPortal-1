@@ -28,10 +28,11 @@
 using System;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Logging;
+using ProjectInfinity.Menu;
 
 namespace ProjectInfinity.Plugins
 {
-  public class SubMenuItem : MenuItem
+  public class SubMenuItem : MenuItem, IMenuItem
   {
     #region Variables
     IMenuCommand _menuCommand = null;
@@ -52,8 +53,9 @@ namespace ProjectInfinity.Plugins
     }
     #endregion
 
-    #region Public Methods
-    public override void Execute()
+ 
+    [Obsolete("This method will disappear very soon")]
+    void IMenuItem.Execute()
     {
       if (_menuCommand == null)
       {
@@ -70,6 +72,10 @@ namespace ProjectInfinity.Plugins
 
       _menuCommand.Run();
     }
-    #endregion
+
+    void IMenuItem.Accept(IMenuItemVisitor visitor)
+    {
+      visitor.Visit(this);
+    }
   }
 }

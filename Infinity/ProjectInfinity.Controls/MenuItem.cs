@@ -52,7 +52,7 @@ namespace ProjectInfinity.Controls
       }
     }
 
-    public string Label
+    public virtual string Label
     {
       get
       {
@@ -63,7 +63,7 @@ namespace ProjectInfinity.Controls
         _label = value;
       }
     }
-    public string Image
+    public virtual string Image
     {
       get
       {

@@ -4,11 +4,8 @@ using System.Text;
 
 namespace ProjectInfinity.Menu
 {
-  public interface IPluginItem : IMenuItem
+  public interface ICommandItem : IMenuItem
   {
     void Execute();
-
-    string Description { get;}
-
   }
 }

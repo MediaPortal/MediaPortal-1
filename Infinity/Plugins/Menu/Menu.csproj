@@ -36,14 +36,15 @@
     <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandMenuItem.cs" />
     <Compile Include="IMenuManager.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="MenuManager.cs" />
+    <Compile Include="MenuMenuItem.cs" />
     <Compile Include="MenuPlugin.cs" />
     <Compile Include="MenuView.cs" />
+    <Compile Include="MenuViewCreator.cs" />
     <Compile Include="MenuViewModel.cs" />
-    <Compile Include="PluginItem.cs" />
-    <Compile Include="PluginMenuItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

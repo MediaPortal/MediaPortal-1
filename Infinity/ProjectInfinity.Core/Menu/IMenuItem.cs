@@ -1,3 +1,5 @@
+using System;
+
 namespace ProjectInfinity.Menu
 {
   public interface IMenuItem
@@ -5,5 +7,7 @@ namespace ProjectInfinity.Menu
     string Text { get; }
     string ImagePath { get; }
     void Accept(IMenuItemVisitor visitor);
+    [Obsolete]
+    void Execute();
   }
 }

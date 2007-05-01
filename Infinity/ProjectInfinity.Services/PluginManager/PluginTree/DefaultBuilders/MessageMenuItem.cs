@@ -25,48 +25,40 @@
 
 #endregion
 
-using System;
-using ProjectInfinity.Localisation;
-using ProjectInfinity.Logging;
+using ProjectInfinity.Menu;
 
 namespace ProjectInfinity.Plugins
 {
-  public class MessageMenuItem : MenuItem
+  public class MessageMenuItem : MenuItem, IMessageItem
   {
+    private string _message;
+
     #region Variables
+
     //IMenuCommand _menuCommand = null;
     // Message 
+
     #endregion
 
-    #region Constructors/Destructors
     public MessageMenuItem(NodeItem item, object caller)
       : base(item, caller)
     {
-
+      _message = item.Properties["message"];
     }
-    #endregion
 
-    #region Public Methods
-    public override void Execute()
+    public string Message
     {
-      // Send message
-
-
-      //if (_menuCommand == null)
-      //{
-      //  try
-      //  {
-      //    _menuCommand = (IMenuCommand)base._item.Plugin.CreateObject(base._item.Properties["class"]);
-      //  }
-      //  catch (Exception e)
-      //  {
-      //    ServiceScope.Get<ILogger>().Error(e.ToString() + "Can't create menu command : " + base._item.Id);
-      //    return;
-      //  }
-      //}
-
-      //_menuCommand.Run();
+      get { return _message; }
     }
+
+    #region IMessageItem Members
+
+    public override void Accept(IMenuItemVisitor visitor)
+    {
+      visitor.Visit(this);
+    }
+
     #endregion
+
   }
 }

@@ -14,7 +14,7 @@ namespace ProjectInfinity.Menu
       Plugins.Menu menuInfo = (Plugins.Menu) ServiceScope.Get<IPluginManager>().BuildItem<Plugins.Menu>("/Menus", id);
       if (menuInfo != null)
       {
-        foreach (MenuItem menuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuItem>(menuInfo.Path))
+        foreach (IMenuItem menuItem in ServiceScope.Get<IPluginManager>().BuildItems<IMenuItem>(menuInfo.Path))
         {
           if (menuItem is SubMenuItem)
           {

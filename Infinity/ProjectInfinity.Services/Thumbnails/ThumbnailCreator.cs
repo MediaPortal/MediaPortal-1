@@ -527,11 +527,7 @@ namespace ProjectInfinity.Thumbnails
 			{
 				throw new Exception(ex.ToString());
 			}
-			catch
-			{
-				throw new Exception("EMPTY CATCH");
-			}
-			return thumbNail;
+  		return thumbNail;
 		}
 
 		/*
@@ -738,10 +734,6 @@ namespace ProjectInfinity.Thumbnails
 			{
 				throw new Exception(ex.ToString());			
 			}
-			catch
-			{
-				throw new Exception("EMPTY CATCH");
-			}
 			finally
 			{
 				try
@@ -759,9 +751,6 @@ namespace ProjectInfinity.Thumbnails
 				{
 				}
 				catch(Exception) //ex
-				{
-				}
-				catch
 				{
 				}
 			}

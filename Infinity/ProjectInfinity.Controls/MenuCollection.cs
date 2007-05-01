@@ -1,28 +1,26 @@
-using System;
-using System.ComponentModel;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Globalization;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.ComponentModel;
+
 namespace ProjectInfinity.Controls
 {
   public class MenuCollection : List<MenuItem>, INotifyPropertyChanged, INotifyCollectionChanged, ICurrentItem
   {
-    MenuItem _currentItem;
+    private MenuItem _currentItem;
+
+    #region INotifyPropertyChanged Members
+
     public event PropertyChangedEventHandler PropertyChanged;
+
+    #endregion
+
+    #region INotifyCollectionChanged Members
+
     public event NotifyCollectionChangedEventHandler CollectionChanged;
 
+    #endregion
+
+    #region ICurrentItem Members
 
     /// <summary>
     /// Gets or sets the current item.
@@ -30,19 +28,18 @@ namespace ProjectInfinity.Controls
     /// <value>The current item.</value>
     public object CurrentItem
     {
-      get
-      {
-        return _currentItem;
-      }
+      get { return _currentItem; }
       set
       {
-        _currentItem = (MenuItem)value;
+        _currentItem = (MenuItem) value;
         if (PropertyChanged != null)
         {
           PropertyChanged(this, new PropertyChangedEventArgs("CurrentItem"));
         }
       }
     }
+
+    #endregion
 
     /// <summary>
     /// Called when collection changed

@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using ProjectInfinity;
-using ProjectInfinity.Plugins;
 using ProjectInfinity.Controls;
+using ProjectInfinity.Messaging;
 using ProjectInfinity.Navigation;
-using ProjectInfinity.TaskBar;
 using ProjectInfinity.Players;
+using ProjectInfinity.TaskBar;
 
 namespace ProjectInfinity.Menu
 {
@@ -23,37 +22,19 @@ namespace ProjectInfinity.Menu
   public class MenuViewModel
   {
     private readonly MenuCollection menuView;
+    private readonly string _id;
     private ICommand _launchCommand;
     private ICommand _fullScreenCommand;
-    private readonly string _id;
 
     public MenuViewModel(string id)
     {
       _id = id;
-      //TODO: ideally the IMenuManager.GetMenu method should directly return the collection we need. (this means a list of IMenuItem implementations of the correct type (IMenu, IPluginItem, IMessageItem, ...)
+      //The IMenuManager.GetMenu method returns a list of IMenuItem implementations of the 
+      //correct type (IMenu, ICommandItem, IMessageItem, ...)
       IList<IMenuItem> model = ServiceScope.Get<IMenuManager>().GetMenu(id);
-      menuView = new MenuCollection();
-      foreach (IMenuItem item in model)
-      {
-        Menu menu = item as Menu;
-        if (menu != null)
-        {
-          PluginMenuItem newItem = new PluginMenuItem(item);
-          MenuCollection subMenus = new MenuCollection();
-          for (int i = 0; i < menu.Items.Count; ++i)
-          {
-            subMenus.Add(new PluginMenuItem(menu.Items[i]));
-          }
-          newItem.SubMenus = subMenus;
-          //TODO: we should add an IMenu implementation here
-          menuView.Add(newItem);
-        }
-        else
-        {
-          //TODO: we should add an IPluginItem implementation here
-          menuView.Add(new PluginMenuItem(item));
-        }
-      }
+      //We translate this list to a list of menu items that the menu control can use by means
+      //of the MenuViewCreator
+      menuView = MenuViewCreator.Build(model);
     }
 
     public Brush VideoBrush
@@ -62,11 +43,11 @@ namespace ProjectInfinity.Menu
       {
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
-          MediaPlayer player = (MediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0].UnderlyingPlayer;
+          MediaPlayer player = (MediaPlayer) ServiceScope.Get<IPlayerCollectionService>()[0].UnderlyingPlayer;
 
           VideoDrawing videoDrawing = new VideoDrawing();
           videoDrawing.Player = player;
-          videoDrawing.Rect = new Rect(0, 0, 800,600);
+          videoDrawing.Rect = new Rect(0, 0, 800, 600);
           DrawingBrush videoBrush = new DrawingBrush();
           videoBrush.Stretch = Stretch.Fill;
           videoBrush.Drawing = videoDrawing;
@@ -76,6 +57,7 @@ namespace ProjectInfinity.Menu
         return null;
       }
     }
+
     public double MenuOffset
     {
       get
@@ -87,11 +69,11 @@ namespace ProjectInfinity.Menu
         return 150;
       }
     }
+
     public Brush VideoOpacityMask
     {
       get
       {
-
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
           return Application.Current.Resources["VideoOpacityMask"] as Brush;
@@ -99,6 +81,7 @@ namespace ProjectInfinity.Menu
         return null;
       }
     }
+
     public Visibility IsVideoPresent
     {
       get { return (ServiceScope.Get<IPlayerCollectionService>().Count != 0) ? Visibility.Visible : Visibility.Collapsed; }
@@ -152,6 +135,12 @@ namespace ProjectInfinity.Menu
       }
     }
 
+    /// <summary>
+    /// Launches the current selected <see cref="IMenuItem"/>
+    /// </summary>
+    /// <remarks>
+    /// This class implements the Visitor Pattern <seealso Visitor Pattern cref="http://www.dofactory.com/Patterns/PatternVisitor.aspx"/>
+    /// </remarks>
     private class LaunchCommand : ICommand, IMenuItemVisitor
     {
       private MenuViewModel _viewModel;
@@ -172,7 +161,7 @@ namespace ProjectInfinity.Menu
       ///<param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
       public bool CanExecute(object parameter)
       {
-        return true;
+        return parameter != null;
       }
 
       ///<summary>
@@ -187,44 +176,25 @@ namespace ProjectInfinity.Menu
       ///<param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.</param>
       public void Execute(object parameter)
       {
-        //TODO: reactivate this block and delete all the rest of this method
-        //IMenuItem menuItem = parameter as IMenuItem;
-        //if (menuItem == null)
-        //{
-        //  return;
-        //}
-        ////Visitor Pattern
-        ////We pass ourselves to the item and the item will call the correct overload
-        ////of our Visit method.  Look ma, no Casting ;-)
-        //menuItem.Accept(this);
-        //END TODO
-
-        PluginMenuItem pluginMenuItem = parameter as PluginMenuItem;
-        if (pluginMenuItem == null)
+        MenuMenuItem item = parameter as MenuMenuItem;
+        if (item == null)
+        {
           return;
-
-        ProjectInfinity.Plugins.MenuItem menuItem;
-
-        IMenu menu = pluginMenuItem.Menu as IMenu;
-        if (menu != null)
-          menuItem = menu.DefaultItem as ProjectInfinity.Plugins.MenuItem;
-        else
-          menuItem = pluginMenuItem.Menu as ProjectInfinity.Plugins.MenuItem;
-
-        if (menuItem != null)
-          menuItem.Execute();
-
-
-        //ServiceScope.Get<IPluginManager>().Start(pluginItem.Text);
-
+        }
+        IMenuItem menuItem = item.GetIMenuItem();
+        Debug.Assert(menuItem != null);
+        //Visitor Pattern:
+        //We pass ourselves to the item and the item will call the correct overload
+        //of our Visit method.  Look ma, no Casting ;-)
+        menuItem.Accept(this);
       }
 
       #endregion
 
+      //User clicked on a Menu
+
       #region IMenuItemVisitor Members
 
-
-      //User clicked on a Menu
       public void Visit(IMenu menu)
       {
         if (menu.DefaultItem != null)
@@ -243,7 +213,24 @@ namespace ProjectInfinity.Menu
       //User clicked on a Message
       public void Visit(IMessageItem message)
       {
-        throw new NotImplementedException();
+        IMessageBroker broker = ServiceScope.Get<IMessageBroker>(false);
+        if (broker == null)
+        {
+          return;
+        }
+        broker.Send(message.Message);
+      }
+
+      //User clicked on a Command
+      public void Visit(ICommandItem command)
+      {
+        command.Execute();
+      }
+
+      [Obsolete("This overload should not be used. Use one of the specified overloads instead")]
+      public void Visit(IMenuItem item)
+      {
+        item.Execute();
       }
 
       #endregion

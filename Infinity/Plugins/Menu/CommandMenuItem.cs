@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ProjectInfinity.Controls;
 
 namespace ProjectInfinity.Menu
 {
-  public interface IPluginItem : IMenuItem
+  class CommandMenuItem : MenuItem
   {
-    void Execute();
-
-    string Description { get;}
-
   }
 }

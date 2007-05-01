@@ -1,12 +1,27 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ProjectInfinity.Menu
 {
+  /// <summary>
+  /// Represents a (sub)menu.
+  /// </summary>
   public interface IMenu : IMenuItem
   {
-    List<IMenuItem> Items { get;}
-    IMenuItem DefaultItem { get;}
+    /// <summary>
+    /// The list of items in the menu.
+    /// </summary>
+    List<IMenuItem> Items { get; }
+
+    /// <summary>
+    /// The default item in the menu.
+    /// </summary>
+    /// <remarks>
+    /// If a DefaultItem is set, a click on the (sub)menu item is redirected to that item.
+    /// </remarks>
+    /// <example>
+    /// In Infinity, when the user clicks on the My TV menu, the first item
+    /// (also called My TV) in the submenu is started.
+    /// </example>
+    IMenuItem DefaultItem { get; }
   }
 }

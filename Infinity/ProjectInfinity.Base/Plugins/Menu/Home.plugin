@@ -19,4 +19,9 @@
 	<Path name = "/Menus">
 		<Menu id = "Home" name="@global:0" path="/Menus/Home"/>
 	</Path>
+
+        <Path name = "/Menus/Home">
+           <MenuItem type="Message" message = "ProjectInfinity.Shutdown" label = "@system:0" />
+
+        </Path>
 </Plugin>

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Language>
+  <Section name="system">
+    <String id="0">Exit</String>
+  </Section>
   <Section name="days">
     <String id="0">Sunday</String>
     <String id="1">Monday</String>
