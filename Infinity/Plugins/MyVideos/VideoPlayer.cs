@@ -5,14 +5,16 @@ using System.Windows.Media;
 using ProjectInfinity.Players;
 using ProjectInfinity;
 using ProjectInfinity.Logging;
+using ProjectInfinity.Messaging;
 using System.IO;
 
 namespace MyVideos
 {
   public class VideoPlayer : IPlayer
   {
-    public event EventHandler<MediaExceptionEventArgs> MediaFailed;
-    public event EventHandler MediaOpened;
+    public event MessageHandler<PlayerStartFailedMessage> MediaFailed;
+    public event MessageHandler<PlayerStartMessage> MediaOpened;
+    public event MessageHandler<PlayerEndedMessage> MediaEnded;
 
     private MediaPlayer _underlyingPlayer;
     private PlayerMediaType _mediaType = PlayerMediaType.Movie;
@@ -28,6 +30,7 @@ namespace MyVideos
       _underlyingPlayer = new MediaPlayer();
 
       _hasMedia = true;
+      ServiceScope.Get<IMessageBroker>().Register(this);
     }
 
     public void Open(PlayerMediaType mediaType, string fileName)
@@ -50,6 +53,7 @@ namespace MyVideos
       _isStream = isStream;
       _underlyingPlayer.MediaFailed += new EventHandler<ExceptionEventArgs>(_underlyingPlayer_MediaFailed);
       _underlyingPlayer.MediaOpened += new EventHandler(_underlyingPlayer_MediaOpened);
+      _underlyingPlayer.MediaEnded += new EventHandler(_underlyingPlayer_MediaEnded);
       if (_mediaType != PlayerMediaType.DVD)
         _underlyingPlayer.Open(new Uri(fileName, UriKind.Absolute));
       else
@@ -57,6 +61,15 @@ namespace MyVideos
       ServiceScope.Get<ILogger>().Info("Video:  player opened");
 
       _hasMedia = true;
+    }
+
+    void _underlyingPlayer_MediaEnded(object sender, EventArgs e)
+    {
+
+      if (MediaEnded != null)
+      {
+        MediaEnded( new PlayerEndedMessage());
+      }
     }
 
     public void Close()
@@ -81,7 +94,7 @@ namespace MyVideos
     {
       if (MediaOpened != null)
       {
-        MediaOpened(this, e);
+        MediaOpened( new PlayerStartMessage());
       }
     }
 
@@ -90,7 +103,7 @@ namespace MyVideos
       _exception = e.ErrorException;
       if (MediaFailed != null)
       {
-        MediaFailed(this, new MediaExceptionEventArgs(e.ErrorException));
+        MediaFailed( new PlayerStartFailedMessage(e.ErrorException));
         _hasMedia = false;
       }
     }
@@ -168,6 +181,7 @@ namespace MyVideos
     {
       Stop();
       Close();
+      ServiceScope.Get<IMessageBroker>().Unregister(this);
     }
   }
 }

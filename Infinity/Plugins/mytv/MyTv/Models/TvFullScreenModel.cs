@@ -19,6 +19,7 @@ using ProjectInfinity.Logging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Settings;
+using ProjectInfinity.Messaging;
 
 namespace MyTv
 {

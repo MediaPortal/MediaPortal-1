@@ -9,6 +9,8 @@ using Microsoft.Win32;
 using ProjectInfinity;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Players;
+using ProjectInfinity.Messaging;
+
 namespace MyTv
 {
   public class TvMediaPlayer : IPlayer, IDisposable
@@ -17,11 +19,15 @@ namespace MyTv
     //
     // Summary:
     //     Occurs when an error is encountered
-    public event EventHandler<MediaExceptionEventArgs> MediaFailed;
+    public event MessageHandler<PlayerStartFailedMessage> MediaFailed;
     //
     // Summary:
     //     Occurs when the media is opened.
-    public event EventHandler MediaOpened;
+    public event MessageHandler<PlayerStartMessage> MediaOpened;
+    //
+    // Summary:
+    //     Occurs when the media has ended.
+    public event MessageHandler<PlayerEndedMessage> MediaEnded;
     #endregion
 
     #region delegates
@@ -50,6 +56,8 @@ namespace MyTv
       _card = card;
       _exception = null;
       _underLyingPlayer = new MediaPlayer();
+      ServiceScope.Get<IMessageBroker>().Register(this);
+
     }
 
     #endregion
@@ -109,8 +117,17 @@ namespace MyTv
       _isStream = isStream;
       _underLyingPlayer.MediaFailed += new EventHandler<ExceptionEventArgs>(TvMediaPlayer_MediaFailed);
       _underLyingPlayer.MediaOpened += new EventHandler(TvMediaPlayer_MediaOpened);
+      _underLyingPlayer.MediaEnded += new EventHandler(_underLyingPlayer_MediaEnded);
       _underLyingPlayer.Open(new Uri(fname, UriKind.Absolute));
       ServiceScope.Get<ILogger>().Info("Tv:  player opened");
+    }
+
+    void _underLyingPlayer_MediaEnded(object sender, EventArgs e)
+    {
+      if (MediaEnded != null)
+      {
+        MediaEnded( new PlayerEndedMessage());
+      }
     }
 
 
@@ -312,7 +329,7 @@ namespace MyTv
       _exception = e.ErrorException;
       if (MediaFailed != null)
       {
-        MediaFailed(this, new MediaExceptionEventArgs(e.ErrorException));
+        MediaFailed( new PlayerStartFailedMessage(e.ErrorException));
       }
     }
 
@@ -322,7 +339,7 @@ namespace MyTv
       ServiceScope.Get<ILogger>().Info("MyTv: media opened {0}x{1} {2}", _underLyingPlayer.NaturalVideoWidth, _underLyingPlayer.NaturalVideoHeight, Duration);
       if (MediaOpened != null)
       {
-        MediaOpened(this, e);
+        MediaOpened( new PlayerStartMessage());
       }
       if (!IsStream)
       {
@@ -347,6 +364,7 @@ namespace MyTv
     {
       Stop();
       Close();
+      ServiceScope.Get<IMessageBroker>().Unregister(this);
     }
     public void SeekToEnd()
     {

@@ -35,17 +35,30 @@ namespace MyTv
 
   public partial class TvRecorded : View, IMenuCommand, IDisposable
   {
-
+    TvRecordedViewModel model;
     #region ctor
     /// <summary>
     /// Initializes a new instance of the <see cref="TvRecorded"/> class.
     /// </summary>
     public TvRecorded()
     {
-      TvRecordedViewModel model = new TvRecordedViewModel();
+      this.Loaded += new RoutedEventHandler(TvRecorded_Loaded);
+      this.Unloaded += new RoutedEventHandler(TvRecorded_Unloaded);
+    }
+
+    void TvRecorded_Unloaded(object sender, RoutedEventArgs e)
+    {
+      model.Dispose();
+      model = null;
+    }
+
+    void TvRecorded_Loaded(object sender, RoutedEventArgs e)
+    {
+      model = new TvRecordedViewModel();
       DataContext = model;
       this.InputBindings.Add(new KeyBinding(model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
+
     }
     #endregion
 

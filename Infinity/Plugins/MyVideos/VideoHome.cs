@@ -38,11 +38,22 @@ namespace MyVideos
 
     public VideoHome()
     {
+      this.Unloaded += new RoutedEventHandler(VideoHome_Unloaded);
+      this.Loaded += new RoutedEventHandler(VideoHome_Loaded);
+    }
+
+    void VideoHome_Loaded(object sender, RoutedEventArgs e)
+    {
       _model = new VideoHomeViewModel();
       DataContext = _model;
       this.InputBindings.Add(new KeyBinding(_model.Fullscreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
-      ServiceScope.Get<IMessageBroker>().Register(this);
+    }
+
+    void VideoHome_Unloaded(object sender, RoutedEventArgs e)
+    {
+      _model.Dispose();
+      _model = null;
     }
 
   }

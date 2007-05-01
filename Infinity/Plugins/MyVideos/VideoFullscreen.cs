@@ -27,16 +27,22 @@ namespace MyVideos
     VideoFullscreenViewModel _model;
     public VideoFullscreen()
     {
-      _model = new VideoFullscreenViewModel(); ;
-      DataContext = _model;
-      this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
       this.Loaded += new RoutedEventHandler(VideoFullscreen_Loaded);
-      
+      this.Unloaded += new RoutedEventHandler(VideoFullscreen_Unloaded);
 
+    }
+
+    void VideoFullscreen_Unloaded(object sender, RoutedEventArgs e)
+    {
+      _model.Dispose();
+      _model = null;
     }
 
     void VideoFullscreen_Loaded(object sender, RoutedEventArgs e)
     {
+      _model = new VideoFullscreenViewModel(); ;
+      DataContext = _model;
+      this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
       this.Background = _model.VideoBrush;
     }
 

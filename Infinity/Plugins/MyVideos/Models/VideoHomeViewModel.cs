@@ -25,14 +25,16 @@ using System.Windows.Navigation;
 using ProjectInfinity.Playlist;
 using ProjectInfinity.Settings;
 using ProjectInfinity.Navigation;
+using ProjectInfinity.Messaging;
 using Dialogs;
 using MediaLibrary;
 
 namespace MyVideos
 {
-  public class VideoHomeViewModel : DispatcherObject, INotifyPropertyChanged
+  public class VideoHomeViewModel : DispatcherObject, INotifyPropertyChanged, IDisposable
   {
     #region variables
+    private delegate void MediaPlayerErrorDelegate();
     public event PropertyChangedEventHandler PropertyChanged;
 
     public enum SortType
@@ -78,10 +80,68 @@ namespace MyVideos
     {
       _dataModel = new VideoDatabaseModel(this);
       _videosView = new VideoCollectionView(_dataModel);
+      ServiceScope.Get<IMessageBroker>().Register(this);
 
     }
     #endregion
 
+    #region messaging
+
+    [MessageSubscription(typeof(PlayerEndedMessage))]
+    protected void OnPlaybackEnded(PlayerEndedMessage e)
+    {
+      ServiceScope.Get<ILogger>().Info("video home: player ended msg received");
+      Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerEnded));
+    }
+    [MessageSubscription(typeof(PlayerStartMessage))]
+    protected void OnPlaybackStarted(PlayerStartMessage e)
+    {
+      ServiceScope.Get<ILogger>().Info("video home: player started msg received");
+      Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerStarted));
+    }
+
+    [MessageSubscription(typeof(PlayerStartFailedMessage))]
+    protected void OnPlaybackFailed(PlayerStartFailedMessage e)
+    {
+      ServiceScope.Get<ILogger>().Info("video home: player start failed msg received");
+      Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
+    }
+    protected virtual void OnMediaPlayerEnded()
+    {
+      ServiceScope.Get<IPlayerCollectionService>().Clear();
+      ChangeProperty("VideoBrush");
+      ChangeProperty("Fullscreen");
+      ChangeProperty("IsVideoPresent");
+    }
+    protected virtual void OnMediaPlayerStarted()
+    {
+      ChangeProperty("VideoBrush");
+      ChangeProperty("Fullscreen");
+      ChangeProperty("IsVideoPresent");
+      SetBusy(false);
+      ServiceScope.Get<INavigationService>().Navigate(new VideoFullscreen());
+    }
+
+    protected virtual void OnMediaPlayerError()
+    {
+      SetBusy(false);
+      if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
+      {
+        VideoPlayer player = (VideoPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
+        if (player.HasError)
+        {
+          MpDialogOk dlgError = new MpDialogOk();
+          dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+          dlgError.Owner = Window;
+          dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
+          dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
+          dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("myvideos", 26)/*Unable to open the file*/+ "\r\n" + player.ErrorMessage;
+          dlgError.ShowDialog();
+        }
+      }
+      ServiceScope.Get<IPlayerCollectionService>().Clear();
+    }
+    #endregion
     #region ILocalisation Properties
 
     public string SortLabel
@@ -343,6 +403,15 @@ namespace MyVideos
       if (PropertyChanged != null)
         PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
     }
+
+    #region IDisposable Members
+
+    public void Dispose()
+    {
+      ServiceScope.Get<IMessageBroker>().Unregister(this);
+    }
+
+    #endregion
   }
 
   #region add to playlist command class
@@ -475,16 +544,10 @@ namespace MyVideos
       _viewModel.SetBusy(true);
       VideoPlayer player = new VideoPlayer(fileName);
       ServiceScope.Get<IPlayerCollectionService>().Add(player);
-      player.MediaFailed += new EventHandler<MediaExceptionEventArgs>(player_MediaFailed);
-      player.MediaOpened += new EventHandler(player_MediaOpened);
       player.Open(PlayerMediaType.Movie, fileName);
       player.Play();
     }
 
-    void player_MediaOpened(object sender, EventArgs e)
-    {
-      _viewModel.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerOpenDelegate(OnMediaOpened));
-    }
 
     private void OnMediaOpened()
     {
@@ -495,7 +558,7 @@ namespace MyVideos
       ServiceScope.Get<INavigationService>().Navigate(new VideoFullscreen());
     }
 
-    void player_MediaFailed(object sender, MediaExceptionEventArgs e)
+    void player_MediaFailed(object sender, PlayerStartFailedMessage e)
     {
       ServiceScope.Get<ILogger>().Error("Video:  error while playing: " + e.ErrorException.Message);
       _viewModel.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
@@ -573,48 +636,13 @@ namespace MyVideos
 
       VideoPlayer player = new VideoPlayer(dlgMenu.SelectedItem.Label1);
       ServiceScope.Get<IPlayerCollectionService>().Add(player);
-      player.MediaFailed += new EventHandler<MediaExceptionEventArgs>(player_MediaFailed);
-      player.MediaOpened += new EventHandler(player_MediaOpened);
+      //player.MediaFailed += new EventHandler<PlayerStartFailedMessage>(player_MediaFailed);
+      //player.MediaOpened += new EventHandler<PlayerStartMessage>(player_MediaOpened);
       player.Open(PlayerMediaType.DVD, dlgMenu.SelectedItem.Label1);
       player.Play();
     }
 
-    void player_MediaOpened(object sender, EventArgs e)
-    {
-      _viewModel.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerOpenDelegate(OnMediaOpened));
-    }
 
-    private void OnMediaOpened()
-    {
-      _viewModel.ChangeProperty("VideoBrush");
-      _viewModel.ChangeProperty("Fullscreen");
-      _viewModel.ChangeProperty("IsVideoPresent");
-    }
-
-    void player_MediaFailed(object sender, MediaExceptionEventArgs e)
-    {
-      ServiceScope.Get<ILogger>().Error("Video: error while playing DVD: " + e.ErrorException.Message);
-      _viewModel.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
-    }
-
-    private void OnMediaPlayerError()
-    {
-      if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
-      {
-        VideoPlayer player = (VideoPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
-        if (player.HasError)
-        {
-          MpDialogOk dlgError = new MpDialogOk();
-          dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-          dlgError.Owner = _viewModel.Window;
-          dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
-          dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
-          dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("myvideos", 26)/*Unable to open the file*/+ "\r\n" + player.ErrorMessage;
-          dlgError.ShowDialog();
-        }
-      }
-      ServiceScope.Get<IPlayerCollectionService>().Clear();
-    }
   }
   #endregion
 
@@ -843,7 +871,7 @@ namespace MyVideos
         string[] folders = Directory.GetDirectories(_viewModel.CurrentFolder);
         foreach (string folder in folders)
         {
-           pathName = folder;
+          pathName = folder;
           pos = folder.LastIndexOf(@"\");
           if (pos >= 0)
             pathName = pathName.Substring(1 + pos);

@@ -32,10 +32,24 @@ namespace MyTv
 
   public partial class TvSearch : View
   {
+    TvSearchViewModel model;
     static TvSearchViewModel.SearchType _searchType = TvSearchViewModel.SearchType.Title;
     public TvSearch()
     {
-      TvSearchViewModel model = new TvSearchViewModel();
+      this.Unloaded += new RoutedEventHandler(TvSearch_Unloaded);
+      this.Loaded += new RoutedEventHandler(TvSearch_Loaded);
+
+    }
+
+    void TvSearch_Unloaded(object sender, RoutedEventArgs e)
+    {
+      model.Dispose();
+      model = null;
+    }
+
+    void TvSearch_Loaded(object sender, RoutedEventArgs e)
+    {
+      model = new TvSearchViewModel();
       DataContext = model;
       model.SearchMode = _searchType;
       this.InputBindings.Add(new KeyBinding(model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));

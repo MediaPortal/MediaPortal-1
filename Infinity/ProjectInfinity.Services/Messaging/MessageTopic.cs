@@ -12,7 +12,7 @@ namespace ProjectInfinity.Messaging
     private readonly List<KeyValuePair<object, MethodInfo>> handlers = new List<KeyValuePair<object, MethodInfo>>();
 
     private static readonly MethodInfo raiseMethodInfo =
-      typeof (MessageTopic).GetMethod("DoRaise", BindingFlags.Instance | BindingFlags.NonPublic);
+      typeof(MessageTopic).GetMethod("DoRaise", BindingFlags.Instance | BindingFlags.NonPublic);
 
 
     public string Id
@@ -44,9 +44,11 @@ namespace ProjectInfinity.Messaging
     internal void DoRaise(Message e)
     {
       ServiceScope.Get<ILogger>().Debug("MessageBroker: sending {0}({1}) message", id, e);
-      foreach (KeyValuePair<object, MethodInfo> pair in handlers)
+      for (int i = 0; i < handlers.Count; ++i)
       {
-        pair.Value.Invoke(pair.Key, new object[] {e});
+        if (i >= handlers.Count) break;
+        KeyValuePair<object, MethodInfo> pair = handlers[i];
+        pair.Value.Invoke(pair.Key, new object[] { e });
       }
     }
 

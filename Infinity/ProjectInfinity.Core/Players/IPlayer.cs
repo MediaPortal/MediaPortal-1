@@ -1,9 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ProjectInfinity.Messaging;
 
 namespace ProjectInfinity.Players
 {
+  public class PlayerStartMessage : Message
+  {
+  };
+
+  public class PlayerStartFailedMessage : Message
+  {
+    Exception _exception;
+    public PlayerStartFailedMessage(Exception exception)
+    {
+      _exception = exception;
+    }
+    public Exception ErrorException
+    {
+      get
+      {
+        return _exception;
+      }
+    }
+  };
+  public class PlayerEndedMessage : Message
+  {
+  };
+
   public enum PlayerMediaType
   {
     Music,
@@ -12,36 +36,25 @@ namespace ProjectInfinity.Players
     TvLive,
     DVD
   };
-
-  // Summary:
-  //     Provides error exception data for media events.
-  public class MediaExceptionEventArgs : EventArgs
-  {
-    Exception _exception;
-    public MediaExceptionEventArgs(Exception exception)
-    {
-      _exception = exception;
-    }
-
-    public Exception ErrorException 
-    {
-      get
-      {
-        return _exception;
-      }
-    }
-  }
+   
   public interface IPlayer : IDisposable
   {
 
     //
     // Summary:
     //     Occurs when an error is encountered
-    event EventHandler<MediaExceptionEventArgs> MediaFailed;
+    [MessagePublication(typeof(PlayerStartFailedMessage))]
+    event MessageHandler<PlayerStartFailedMessage> MediaFailed;
     //
     // Summary:
     //     Occurs when the media is opened.
-    event EventHandler MediaOpened;
+    [MessagePublication(typeof(PlayerStartMessage))]
+    event MessageHandler<PlayerStartMessage> MediaOpened;
+    //
+    // Summary:
+    //     Occurs when the media has ended.
+    [MessagePublication(typeof(PlayerEndedMessage))]
+    event MessageHandler<PlayerEndedMessage> MediaEnded;
 
     /// <summary>
     /// Opens the specified file name.

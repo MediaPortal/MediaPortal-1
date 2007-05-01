@@ -32,9 +32,22 @@ namespace MyTv
 
   public partial class TvProgramInfo : View
   {
+    TvScheduledViewModel model;
     public TvProgramInfo()
     {
-      TvScheduledViewModel model= ServiceScope.Get<TvScheduledViewModel>();
+      this.Loaded += new RoutedEventHandler(TvProgramInfo_Loaded);
+      this.Unloaded += new RoutedEventHandler(TvProgramInfo_Unloaded);
+    }
+
+    void TvProgramInfo_Unloaded(object sender, RoutedEventArgs e)
+    {
+      model.Dispose();
+      model = null;
+    }
+
+    void TvProgramInfo_Loaded(object sender, RoutedEventArgs e)
+    {
+      model = ServiceScope.Get<TvScheduledViewModel>();
       DataContext = model;
 
       // Sets keyboard focus on the first Button in the sample.

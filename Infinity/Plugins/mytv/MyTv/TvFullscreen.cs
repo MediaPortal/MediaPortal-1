@@ -37,15 +37,23 @@ namespace MyTv
     /// </summary>
     public TvFullscreen()
     {
-      _model= new TvFullScreenModel();
-      DataContext = _model;
-      this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
-      this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
-      
+      this.Loaded+=new RoutedEventHandler(TvFullscreen_Loaded);
+      this.Unloaded += new RoutedEventHandler(TvFullscreen_Unloaded);
+    }
+
+    void TvFullscreen_Unloaded(object sender, RoutedEventArgs e)
+    {
+      _model.Dispose();
+      _model = null;
     }
 
     void TvFullscreen_Loaded(object sender, RoutedEventArgs e)
     {
+      _model = new TvFullScreenModel();
+      DataContext = _model;
+      this.InputBindings.Add(new KeyBinding(_model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
+      this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
+      
       this.Background = _model.VideoBrush;
     }
 

@@ -11,6 +11,7 @@ using ProjectInfinity.Localisation;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Settings;
 using ProjectInfinity.Players;
+using ProjectInfinity.Messaging;
 
 namespace MyVideos
 {
@@ -45,6 +46,7 @@ namespace MyVideos
     /// </summary>
     /// <param name="page">The page.</param>
     public VideoFullscreenViewModel()
+      :base()
     {
       //get the seeking steps from the configuration file...
       VideoSettings settings = new VideoSettings();
@@ -71,6 +73,12 @@ namespace MyVideos
       _reachedStart = false;
     }
     #endregion
+
+    protected override void OnMediaPlayerEnded()
+    {
+      base.OnMediaPlayerEnded();
+      ServiceScope.Get<INavigationService>().GoBack();
+    }
 
     #region properties
     /// <summary>

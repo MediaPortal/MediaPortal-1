@@ -48,6 +48,7 @@ namespace MyTv
     #endregion
 
     #endregion
+
     #region ctor
     public TvGuide()
     {

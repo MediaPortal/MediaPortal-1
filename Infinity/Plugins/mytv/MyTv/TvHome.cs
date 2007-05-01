@@ -46,9 +46,22 @@ namespace MyTv
 
   public partial class TvHome : View
   {
+    TvBaseViewModel model;
     public TvHome()
     {
-      TvBaseViewModel model = new TvBaseViewModel();
+      this.Loaded += new RoutedEventHandler(TvHome_Loaded);
+      this.Unloaded += new RoutedEventHandler(TvHome_Unloaded);
+    }
+
+    void TvHome_Unloaded(object sender, RoutedEventArgs e)
+    {
+      model.Dispose();
+      model = null;
+    }
+
+    void TvHome_Loaded(object sender, RoutedEventArgs e)
+    {
+      model = new TvBaseViewModel();
       DataContext = model;
       this.InputBindings.Add(new KeyBinding(model.FullScreen, new KeyGesture(System.Windows.Input.Key.Enter, ModifierKeys.Alt)));
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));

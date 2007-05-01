@@ -22,14 +22,16 @@ using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Settings;
 using ProjectInfinity.TaskBar;
+using ProjectInfinity.Messaging;
 using System.Threading;
 
 namespace MyTv
 {
-  public class TvBaseViewModel : DispatcherObject, INotifyPropertyChanged
+  public class TvBaseViewModel : DispatcherObject, INotifyPropertyChanged, IDisposable
   {
     #region variables
     private delegate void ConnectToServerDelegate();
+    private delegate void MediaPlayerErrorDelegate();
     ICommand _fullScreenTvCommand;
     ICommand _fullScreenCommand;
     ICommand _playCommand;
@@ -53,12 +55,14 @@ namespace MyTv
     /// <param name="page">The page.</param>
     public TvBaseViewModel()
     {
+      ServiceScope.Get<IMessageBroker>().Register(this);
       if (!ServiceScope.IsRegistered<ITvChannelNavigator>())
       {
         SetBusy(true);
         Dispatcher.BeginInvoke(DispatcherPriority.Normal, new ConnectToServerDelegate(ConnectToServer));
       }
     }
+
     public TvBaseViewModel(bool checkConnection)
     {
       if (checkConnection)
@@ -68,7 +72,73 @@ namespace MyTv
           Dispatcher.BeginInvoke(DispatcherPriority.Normal, new ConnectToServerDelegate(ConnectToServer));
         }
       }
+      ServiceScope.Get<IMessageBroker>().Register(this);
     }
+    #region messaging
+
+    [MessageSubscription(typeof(PlayerEndedMessage))]
+    protected void OnPlaybackEnded(PlayerEndedMessage e)
+    {
+      ServiceScope.Get<ILogger>().Info("video home: player ended msg received");
+      Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerEnded));
+    }
+    [MessageSubscription(typeof(PlayerStartMessage))]
+    protected void OnPlaybackStarted(PlayerStartMessage e)
+    {
+      ServiceScope.Get<ILogger>().Info("video home: player started msg received");
+      Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerStarted));
+    }
+
+    [MessageSubscription(typeof(PlayerStartFailedMessage))]
+    protected void OnPlaybackFailed(PlayerStartFailedMessage e)
+    {
+      ServiceScope.Get<ILogger>().Info("video home: player start failed msg received");
+      Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
+    }
+    protected virtual void OnMediaPlayerEnded()
+    {
+      ServiceScope.Get<IPlayerCollectionService>().Clear();
+      ChangeProperty("VideoBrush");
+      ChangeProperty("Fullscreen");
+      ChangeProperty("IsVideoPresent");
+    }
+    protected virtual void OnMediaPlayerStarted()
+    {
+      ChangeProperty("VideoBrush");
+      ChangeProperty("FullScreen");
+      ChangeProperty("IsVideoPresent");
+      ChangeProperty("TvOnOff");
+      /*
+      if (_playParameter.StartAtBeginning)
+      {
+        IPlayer player = ServiceScope.Get<IPlayerCollectionService>()[0];
+        player.Position = new TimeSpan(0, 0, 0, 0);
+      }*/
+      SetBusy(false);
+    }
+
+    protected virtual void OnMediaPlayerError()
+    {
+      SetBusy(false);
+      ServiceScope.Get<ILogger>().Info("Playcommand:OnMediaPlayerError()");
+      if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
+      {
+        TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
+        if (player.HasError)
+        {
+          MpDialogOk dlgError = new MpDialogOk();
+          dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+          dlgError.Owner = Window;
+          dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
+          dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
+          dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/+ " " + player.ErrorMessage;
+          dlgError.ShowDialog();
+        }
+      }
+      ServiceScope.Get<IPlayerCollectionService>().Clear();
+    }
+    #endregion
+
     void OnChannelChanged(object sender, PropertyChangedEventArgs e)
     {
       if (e.PropertyName == "SelectedChannel")
@@ -836,56 +906,9 @@ namespace MyTv
         _playParameter = parameter as PlayParameter;
         ServiceScope.Get<ILogger>().Info("Playcommand:execute play {0}", _playParameter.FileName);
         TvMediaPlayer player = new TvMediaPlayer(_playParameter.Card, _playParameter.FileName);
-        ServiceScope.Get<IPlayerCollectionService>().Add(player);
-        player.MediaFailed += new EventHandler<MediaExceptionEventArgs>(_mediaPlayer_MediaFailed);
-        player.MediaOpened += new EventHandler(player_MediaOpened);
+        ServiceScope.Get<IPlayerCollectionService>().Add(player); 
         player.Open(PlayerMediaType.TvLive, _playParameter.FileName);
         player.Play(); 
-      }
-
-      void player_MediaOpened(object sender, EventArgs e)
-      {
-        ServiceScope.Get<ILogger>().Info("Playcommand:media opened event");
-        _viewModel.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerOpenDelegate(OnMediaOpened));
-      }
-      void OnMediaOpened()
-      {
-        ServiceScope.Get<ILogger>().Info("Playcommand:OnMediaOpened()");
-        _viewModel.ChangeProperty("VideoBrush");
-        _viewModel.ChangeProperty("FullScreen");
-        _viewModel.ChangeProperty("IsVideoPresent");
-        _viewModel.ChangeProperty("TvOnOff");
-        if (_playParameter.StartAtBeginning)
-        {
-          IPlayer player = ServiceScope.Get<IPlayerCollectionService>()[0];
-          player.Position = new TimeSpan(0, 0, 0, 0);
-        }
-        _viewModel.SetBusy(false);
-      }
-      void _mediaPlayer_MediaFailed(object sender, MediaExceptionEventArgs e)
-      {
-        ServiceScope.Get<ILogger>().Info("Playcommand:media failed event");
-        _viewModel.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerError));
-      }
-      void OnMediaPlayerError()
-      {
-        _viewModel.SetBusy(false);
-        ServiceScope.Get<ILogger>().Info("Playcommand:OnMediaPlayerError()");
-        if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
-        {
-          TvMediaPlayer player = (TvMediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0];
-          if (player.HasError)
-          {
-            MpDialogOk dlgError = new MpDialogOk();
-            dlgError.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            dlgError.Owner = _viewModel.Window;
-            dlgError.Title = ServiceScope.Get<ILocalisation>().ToString("mytv", 37);// "Cannot open file";
-            dlgError.Header = ServiceScope.Get<ILocalisation>().ToString("mytv", 10);// "Error";
-            dlgError.Content = ServiceScope.Get<ILocalisation>().ToString("mytv", 38)/*Unable to open the file*/+ " " + player.ErrorMessage;
-            dlgError.ShowDialog();
-          }
-        }
-        ServiceScope.Get<IPlayerCollectionService>().Clear();
       }
     }
     #endregion
@@ -1599,6 +1622,15 @@ namespace MyTv
     #endregion
 
     #endregion
+    #endregion
+
+    #region IDisposable Members
+
+    public void Dispose()
+    {
+      ServiceScope.Get<IMessageBroker>().Unregister(this);
+    }
+
     #endregion
   }
 }
