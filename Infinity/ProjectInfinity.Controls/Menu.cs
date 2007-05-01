@@ -548,7 +548,7 @@ namespace ProjectInfinity.Controls
       _mouseEventsEnabled = false;
 
       int maxRows = (int) (ActualHeight/BUTTONHEIGHT);
-      if (ItemsSource.Count < maxRows)
+      if (ItemsSource.Count <= maxRows)
       {
         if (_currentSelectedItem > 0)
         {
@@ -582,7 +582,7 @@ namespace ProjectInfinity.Controls
       //Trace.WriteLine("OnScrollUp");
       _mouseEventsEnabled = false;
       int maxRows = (int) (ActualHeight/BUTTONHEIGHT);
-      if (ItemsSource.Count < maxRows)
+      if (ItemsSource.Count <= maxRows)
       {
         if (_currentSelectedItem + 1 < ItemsSource.Count)
         {
@@ -712,7 +712,7 @@ namespace ProjectInfinity.Controls
       {
         int selectedItemNr = -1;
         int maxRows = (int) (ActualHeight/BUTTONHEIGHT);
-        if (ItemsSource.Count < maxRows)
+        if (ItemsSource.Count <= maxRows)
         {
           selectedItemNr = 0;
         }
