@@ -74,7 +74,7 @@ namespace MyTv
         }
         UInt32 permission = 1;
         UInt32 runtime = 1;
-        subkey.SetValue("Permission", permission,RegistryValueKind.DWord);
+        subkey.SetValue("Permissions", permission,RegistryValueKind.DWord);
         subkey.SetValue("Runtime", runtime, RegistryValueKind.DWord);
         subkey.Close();
       }
