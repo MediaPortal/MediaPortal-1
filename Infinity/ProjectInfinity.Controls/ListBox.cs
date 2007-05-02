@@ -13,6 +13,7 @@ namespace ProjectInfinity.Controls
   {
     public event PropertyChangedEventHandler PropertyChanged;
     bool _firstTime = true;
+    private Point _previousMousePoint;
     public static readonly DependencyProperty ViewModeProperty = DependencyProperty.Register(
                                                                                                   "ViewMode",
                                                                                                   typeof(string),
@@ -88,8 +89,22 @@ namespace ProjectInfinity.Controls
       get { return (string)GetValue(ViewModeProperty); }
       set { SetValue(ViewModeProperty, value); }
     }
+
+    bool DidMouseMove
+    {
+      get
+      {
+        Point point = Mouse.GetPosition(Window.GetWindow(this));
+        if (Math.Abs(point.X - _previousMousePoint.X) >= 10 || Math.Abs(point.Y - _previousMousePoint.Y) >= 10)
+          return true;
+        return false;
+      }
+    }
+
     protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
     {
+      if (DidMouseMove == false) return;
+      _previousMousePoint = Mouse.GetPosition(Window.GetWindow(this)); 
       FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
       while (element != null)
       {
@@ -209,6 +224,7 @@ namespace ProjectInfinity.Controls
     }
     protected override void OnInitialized(EventArgs e)
     {
+
       ItemContainerGenerator.StatusChanged += new EventHandler(ItemContainerGenerator_StatusChanged);
     }
     void ItemContainerGenerator_StatusChanged(object sender, EventArgs e)
