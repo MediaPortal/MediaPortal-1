@@ -615,7 +615,7 @@ namespace ProjectInfinity.Controls
     protected override void OnKeyDown(KeyEventArgs e)
     {
       //Trace.WriteLine("OnKeyDown");
-      if (e.Key == Key.Left || e.Key == Key.Right)
+      if (e.Key == Key.Left || e.Key == Key.Right || e.Key==Key.Up || e.Key==Key.Down)
       {
         _waitForMouseMove = true;
         _mouseEntered = false;
