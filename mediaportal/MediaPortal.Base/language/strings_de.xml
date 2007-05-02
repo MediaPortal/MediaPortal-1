@@ -994,12 +994,12 @@
     <String id="2056">Videoqualität:</String>
     <String id="2057">Audioqualität:</String>
     <String id="2058">Auflösung:</String>
-	<String id="2059">Comskip Datei gefunden, </String>
-	<String id="2060">soll diese verwendet werden?</String>
-	<String id="2061">Die Comskip-Datei ist nicht kompatibel.</String>
-		<String id="2062">schlecht</String>
-		<String id="2063">mittel</String>
-		<String id="2064">gut</String>
+    <String id="2059">Comskip Datei gefunden, </String>
+    <String id="2060">soll diese verwendet werden?</String>
+    <String id="2061">Die Comskip-Datei ist nicht kompatibel.</String>
+    <String id="2062">schlecht</String>
+    <String id="2063">mittel</String>
+    <String id="2064">gut</String>
     <String id="2065">Welche mpeg Datei soll nach divx konvertiert werden:</String>
     <String id="2066">Mpeg nach divx</String>
     <String id="2067">Welche dvr-ms Datei soll nach divx konvertiert werden:</String>
@@ -1136,8 +1136,8 @@
     <String id="2608">Portugiesisch</String>
     <String id="2609">Dänisch</String>
     <String id="2610">Polnisch</String>
-	<String id="2611">Tschechisch</String>
-	<String id="2612">Ungarisch</String>
+    <String id="2611">Tschechisch</String>
+    <String id="2612">Ungarisch</String>
     <String id="2997">Std</String>
     <String id="2998">Min</String>
     <String id="2999">Sek</String>
@@ -1339,6 +1339,9 @@
     <String id="13016">Sortiere: Veröffentlichung</String>
     <String id="13017">Sortiere: Letzte</String>
     <String id="13018">Sortiere: Wertung</String>
+    <String id="13031">Hersteller</String>
+    <String id="13032">Meist gestartet</String>
+    <String id="13033">Zuletzt gestartet</String>
     <String id="16001">Partymix</String>
     <String id="19001" prefix="Mein ">Tetris</String>
     <String id="19002">Neues Spiel</String>
@@ -1656,6 +1659,6 @@
     <String id="200039">Skip Stufe hinzufügen</String>
     <String id="200040">Skip Stufe entfernen</String>
     <String id="200041">Empfangs Details</String>
-	<String id="200042">Unterkanäle</String>
+    <String id="200042">Unterkanäle</String>
   </Section>
 </Language>

@@ -592,17 +592,19 @@ namespace WindowPlugins.GUIPrograms
 
     protected void OnShowViews()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return;
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+        return;
       dlg.Reset();
-      dlg.SetHeading(499); // menu
-      dlg.Add("Files");
+      dlg.SetHeading(499); // Actions
+      dlg.Add(GUILocalizeStrings.Get(100000 + GetID)); // Files
       foreach (ViewDefinition view in ProgramSettings.viewHandler.Views)
       {
-        dlg.Add(view.Name); //play
+        dlg.Add(view.LocalizedName);
       }
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1) return;
+      if (dlg.SelectedLabel == -1)
+        return;
       if (dlg.SelectedLabel == 0)
       {
         int nNewWindow = (int) Window.WINDOW_FILES;
@@ -619,7 +621,7 @@ namespace WindowPlugins.GUIPrograms
         ViewDefinition selectedView = (ViewDefinition) ProgramSettings.viewHandler.Views[dlg.SelectedLabel - 1];
         ProgramSettings.viewHandler.CurrentView = selectedView.Name;
         ProgramState.View = selectedView.Name;
-        int nNewWindow = (int) Window.WINDOW_FILES;
+        int nNewWindow = (int)GUIWindow.Window.WINDOW_FILES;
         if (GetID != nNewWindow)
         {
           ProgramState.StartWindow = nNewWindow;
@@ -643,7 +645,6 @@ namespace WindowPlugins.GUIPrograms
       UpdateButtons();
       UpdateListControl();
     }
-
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
@@ -677,7 +678,6 @@ namespace WindowPlugins.GUIPrograms
         }
       }
     }
-
 
     public override bool OnMessage(GUIMessage message)
     {
@@ -717,7 +717,6 @@ namespace WindowPlugins.GUIPrograms
       return base.OnMessage(message);
     }
 
-
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR  || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
@@ -750,7 +749,7 @@ namespace WindowPlugins.GUIPrograms
 
     void UpdateButtons()
     {
-      GUIPropertyManager.SetProperty("#view", ProgramSettings.viewHandler.CurrentView);
+      GUIPropertyManager.SetProperty("#view", ProgramSettings.viewHandler.LocalizedCurrentView);
       btnRefresh.IsVisible = RefreshButtonVisible();
 
       // display apptitle if available.....
@@ -758,7 +757,7 @@ namespace WindowPlugins.GUIPrograms
       {
         if ((ProgramSettings.viewHandler.CurrentView != null) && (ProgramSettings.viewHandler.MaxLevels > 0))
         {
-          GUIPropertyManager.SetProperty("#curheader", ProgramState.View);
+          GUIPropertyManager.SetProperty("#curheader", ProgramSettings.viewHandler.LocalizedCurrentView);
         }
         else
         {

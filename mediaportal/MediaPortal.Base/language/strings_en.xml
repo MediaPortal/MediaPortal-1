@@ -994,12 +994,12 @@
     <String id="2056">Videoquality:</String>
     <String id="2057">Audioquality:</String>
     <String id="2058">Resolution:</String>
-	<String id="2059">Comskip file found, </String>
-	<String id="2060">would you like to use it?</String>
-	<String id="2061">The Comskip file is incompatible</String>
-		<String id="2062">low</String>
-		<String id="2063">medium</String>
-		<String id="2064">high</String>
+    <String id="2059">Comskip file found, </String>
+    <String id="2060">would you like to use it?</String>
+    <String id="2061">The Comskip file is incompatible</String>
+    <String id="2062">low</String>
+    <String id="2063">medium</String>
+    <String id="2064">high</String>
     <String id="2065">Please, choose the mpeg file you would like to convert to divx:</String>
     <String id="2066">Mpeg to divx</String>
     <String id="2067">Please, choose the dvr-ms file you would like to convert to divx:</String>
@@ -1136,8 +1136,8 @@
     <String id="2608">Portuguese</String>
     <String id="2609">Danish</String>
     <String id="2610">Polish</String>
-	<String id="2611">Czech</String>
-	<String id="2612">Hungarian</String>
+    <String id="2611">Czech</String>
+    <String id="2612">Hungarian</String>
     <String id="2997">h</String>
     <String id="2998">min</String>
     <String id="2999">sec</String>
@@ -1339,6 +1339,9 @@
     <String id="13016">Sort by: Launches</String>
     <String id="13017">Sort by: Recent</String>
     <String id="13018">Sort by: Rating</String>
+    <String id="13031">Manufacturer</String>
+    <String id="13032">Most Launched</String>
+    <String id="13033">Most Recently Launched</String>
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="My ">Tetris</String>
     <String id="19002">New Game</String>
@@ -1657,6 +1660,6 @@
     <String id="200039">Add skip step</String>
     <String id="200040">Remove skip step</String>
     <String id="200041">Tuning details</String>
-    <String id="200042">Linked channels</String>	
+    <String id="200042">Linked channels</String>
   </Section>
 </Language>

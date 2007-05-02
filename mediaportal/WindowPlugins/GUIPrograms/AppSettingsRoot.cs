@@ -34,11 +34,10 @@ namespace WindowPlugins.GUIPrograms
 {
   public class AppSettingsRoot : AppSettings
   {
-    private Label label3;
-    private Label rootItemLabel;
-    private TextBox PluginTitle;
-    private Button ResetButton;
+    private MediaPortal.UserInterface.Controls.MPTextBox PluginTitle;
+    private MediaPortal.UserInterface.Controls.MPButton ResetButton;
     private IContainer components = null;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
 
     bool Loaded = false;
 
@@ -72,57 +71,57 @@ namespace WindowPlugins.GUIPrograms
     /// </summary>
     private void InitializeComponent()
     {
-      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.rootItemLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.PluginTitle = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.ResetButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // label3
-      // 
-      this.label3.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.label3.Location = new System.Drawing.Point(8, 8);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(216, 32);
-      this.label3.TabIndex = 81;
-      this.label3.Text = "my Programs root";
-      // 
-      // rootItemLabel
-      // 
-      this.rootItemLabel.Location = new System.Drawing.Point(8, 51);
-      this.rootItemLabel.Name = "rootItemLabel";
-      this.rootItemLabel.Size = new System.Drawing.Size(64, 16);
-      this.rootItemLabel.TabIndex = 82;
-      this.rootItemLabel.Text = "Plugin title";
       // 
       // PluginTitle
       // 
-      this.PluginTitle.Location = new System.Drawing.Point(72, 48);
+      this.PluginTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.PluginTitle.BorderColor = System.Drawing.Color.Empty;
+      this.PluginTitle.Location = new System.Drawing.Point(6, 20);
       this.PluginTitle.Name = "PluginTitle";
-      this.PluginTitle.Size = new System.Drawing.Size(171, 20);
+      this.PluginTitle.Size = new System.Drawing.Size(243, 21);
       this.PluginTitle.TabIndex = 85;
-      this.PluginTitle.Text = "";
       this.toolTip.SetToolTip(this.PluginTitle, "This text will appear in the MP home screen.");
       // 
       // ResetButton
       // 
-      this.ResetButton.Location = new System.Drawing.Point(249, 46);
+      this.ResetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.ResetButton.Location = new System.Drawing.Point(255, 20);
       this.ResetButton.Name = "ResetButton";
-      this.ResetButton.Size = new System.Drawing.Size(72, 24);
+      this.ResetButton.Size = new System.Drawing.Size(72, 22);
       this.ResetButton.TabIndex = 86;
       this.ResetButton.Text = "Reset";
       this.toolTip.SetToolTip(this.ResetButton, "Reset to the default localized plugin title");
+      this.ResetButton.UseVisualStyleBackColor = true;
       this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
+      // 
+      // mpGroupBox1
+      // 
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.PluginTitle);
+      this.mpGroupBox1.Controls.Add(this.ResetButton);
+      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox1.Location = new System.Drawing.Point(3, 3);
+      this.mpGroupBox1.Name = "mpGroupBox1";
+      this.mpGroupBox1.Size = new System.Drawing.Size(333, 54);
+      this.mpGroupBox1.TabIndex = 87;
+      this.mpGroupBox1.TabStop = false;
+      this.mpGroupBox1.Text = "Plugin Title";
       // 
       // AppSettingsRoot
       // 
-      this.Controls.Add(this.ResetButton);
-      this.Controls.Add(this.PluginTitle);
-      this.Controls.Add(this.rootItemLabel);
-      this.Controls.Add(this.label3);
+      this.Controls.Add(this.mpGroupBox1);
       this.Name = "AppSettingsRoot";
       this.Size = new System.Drawing.Size(336, 248);
       this.Load += new System.EventHandler(this.AppSettingsRoot_Load);
+      this.mpGroupBox1.ResumeLayout(false);
+      this.mpGroupBox1.PerformLayout();
       this.ResumeLayout(false);
 
     }
