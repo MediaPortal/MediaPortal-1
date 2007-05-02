@@ -96,7 +96,10 @@ namespace ProjectInfinity.Controls
       {
         Point point = Mouse.GetPosition(Window.GetWindow(this));
         if (Math.Abs(point.X - _previousMousePoint.X) >= 10 || Math.Abs(point.Y - _previousMousePoint.Y) >= 10)
+        {
+          _previousMousePoint = point; 
           return true;
+        }
         return false;
       }
     }
@@ -104,7 +107,6 @@ namespace ProjectInfinity.Controls
     protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
     {
       if (DidMouseMove == false) return;
-      _previousMousePoint = Mouse.GetPosition(Window.GetWindow(this)); 
       FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
       while (element != null)
       {
