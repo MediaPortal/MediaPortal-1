@@ -446,11 +446,11 @@ INSERT INTO `version` VALUES  (1,26);
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 
 
-CREATE INDEX idProgramStart ON Program (startTime);
+CREATE INDEX idProgramStart ON program (startTime);
 #
-CREATE INDEX idxChannel ON Channel (isTv,sortOrder);
+CREATE INDEX idxChannel ON channel (isTv,sortOrder);
 #
-CREATE INDEX idProgramChannel ON Program (idChannel);
+CREATE INDEX idProgramChannel ON program (idChannel);
 #
-CREATE INDEX idProgramBeginEnd ON Program (idChannel,startTime,endTime);
+CREATE INDEX idProgramBeginEnd ON program (idChannel,startTime,endTime);
 #
