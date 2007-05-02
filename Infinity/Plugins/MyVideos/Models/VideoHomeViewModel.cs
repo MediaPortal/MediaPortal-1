@@ -78,6 +78,11 @@ namespace MyVideos
     #region ctor
     public VideoHomeViewModel()
     {
+      VideoSettings settings = new VideoSettings();
+      ServiceScope.Get<ISettingsManager>().Load(settings);
+      CurrentFolder = settings.CurrentFolder;
+      ViewMode = (ViewType)settings.ViewMode;
+
       _dataModel = new VideoDatabaseModel(this);
       _videosView = new VideoCollectionView(_dataModel);
       ServiceScope.Get<IMessageBroker>().Register(this);
@@ -302,7 +307,11 @@ namespace MyVideos
         {
           _viewType = value;
           ChangeProperty("ViewModeType");
-          ChangeProperty("ViewLabel");
+          ChangeProperty("ViewLabel"); ;
+          VideoSettings settings = new VideoSettings();
+          ServiceScope.Get<ISettingsManager>().Load(settings);
+          settings.ViewMode = (int)value;
+          ServiceScope.Get<ISettingsManager>().Save(settings);
         }
       }
     }
@@ -314,7 +323,14 @@ namespace MyVideos
       }
       set
       {
-        _currentFolder = value;
+        if (_currentFolder != value)
+        {
+          _currentFolder = value;
+          VideoSettings settings = new VideoSettings();
+          ServiceScope.Get<ISettingsManager>().Load(settings);
+          settings.CurrentFolder = value;
+          ServiceScope.Get<ISettingsManager>().Save(settings);
+        }
       }
     }
 
@@ -809,7 +825,7 @@ namespace MyVideos
 
       VideoSettings settings = new VideoSettings();
       ServiceScope.Get<ISettingsManager>().Load(settings);
-      if (_viewModel.CurrentFolder == null)
+      if (_viewModel.CurrentFolder == null || _viewModel.CurrentFolder=="")
       {
         //begin-just some testcode to show how you can ask the user to select 1 or more folders
         if (settings.Shares == null)
@@ -936,7 +952,9 @@ namespace MyVideos
 
     void _model_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
+      this.CustomSort = new VideoComparer(_sortMode);
       this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+
     }
 
     /// <summary>
@@ -975,7 +993,15 @@ namespace MyVideos
     {
       VideoModel model1 = (VideoModel)x;
       VideoModel model2 = (VideoModel)y;
-
+      if (model1.IsFolder != model2.IsFolder)
+      {
+        if (model1.IsFolder) return -1;
+        if (model2.IsFolder) return 1;
+      }
+      if (model2.IsFolder && model1.IsFolder)
+      {
+        return String.Compare(model1.Title, model2.Title);
+      }
       switch (_sortMode)
       {
         case VideoHomeViewModel.SortType.Date:

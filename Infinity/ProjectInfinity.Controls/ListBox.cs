@@ -106,6 +106,7 @@ namespace ProjectInfinity.Controls
 
     protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
     {
+      if (!IsInitialized || !IsLoaded) return;
       if (DidMouseMove == false) return;
       FrameworkElement element = Mouse.DirectlyOver as FrameworkElement;
       while (element != null)
@@ -137,6 +138,7 @@ namespace ProjectInfinity.Controls
     protected override void OnKeyDown(System.Windows.Input.KeyEventArgs e)
     {
       if ((e.Source as ListBox) == null) return;
+      if (!IsInitialized || !IsLoaded) return;
 
       if (e.Key == System.Windows.Input.Key.Enter)
       {

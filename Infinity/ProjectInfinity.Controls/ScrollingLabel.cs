@@ -19,6 +19,7 @@ namespace ProjectInfinity.Controls
     TextBlock _block1;
     TextBlock _block2;
 
+    bool _started = false;
     Storyboard _board;
     DoubleAnimation _animation1;
     DoubleAnimation _animation2;
@@ -125,6 +126,7 @@ namespace ProjectInfinity.Controls
       Storyboard.SetTargetName(_animation1, _block1.Name);
       Storyboard.SetTargetName(_animation2, _block2.Name);
 
+      _started = true;
       _board.Children.Add(_animation1);
       _board.Children.Add(_animation2);
       _board.Begin(this, true);
@@ -132,9 +134,13 @@ namespace ProjectInfinity.Controls
 
     public void StopScrolling()
     {
-      _board.Stop(this);
-      _board.Remove(this);
-      _board = new Storyboard();
+      if (_started)
+      {
+        _board.Stop(this);
+        _board.Remove(this);
+        _board = new Storyboard();
+        _started = false;
+      }
 
     }
     void ScrollingLabel_Loaded(object sender, RoutedEventArgs e)

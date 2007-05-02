@@ -21,8 +21,6 @@ namespace MyVideos
     private bool _reachedEnd = false;
     private bool _reachedStart = false;
     private readonly DispatcherTimer _seekTimeoutTimer;
-    private readonly DispatcherTimer _zapTimeoutTimer;
-    private readonly string _zapChannel;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="VideoFullscreenViewModel"/> class.
@@ -38,16 +36,10 @@ namespace MyVideos
         _seekSteps.Add(Int32.Parse(steps[i]));
       }
 
-      _zapChannel = "";
       _seekTimeoutTimer = new DispatcherTimer();
       _seekTimeoutTimer.Interval = new TimeSpan(0, 0, 1);
       _seekTimeoutTimer.IsEnabled = false;
       _seekTimeoutTimer.Tick += seekTimeoutEvent;
-
-      _zapTimeoutTimer = new DispatcherTimer();
-      _zapTimeoutTimer.Interval = new TimeSpan(0, 0, 3);
-      _zapTimeoutTimer.IsEnabled = false;
-      _zapTimeoutTimer.Tick += zapTimeoutEvent;
       _currentSeekStep = 0;
       _seekDirection = SeekDirection.Unknown;
       _reachedEnd = false;
@@ -115,7 +107,11 @@ namespace MyVideos
         VideoPlayer player = (VideoPlayer) ServiceScope.Get<IPlayerCollectionService>()[0];
 
         string endTime;
-        if (player.Duration.Minutes < 10)
+        if (player.Duration.Minutes < 1)
+        {
+          endTime = String.Format("{0} {1}", player.Duration.Seconds, ServiceScope.Get<ILocalisation>().ToString("mytv",118));//secs
+        }
+        else if (player.Duration.Minutes < 10)
         {
           endTime = String.Format("{0}:0{1}", player.Duration.Hours, player.Duration.Minutes);
         }
@@ -270,19 +266,7 @@ namespace MyVideos
       ChangeProperty("TopProgressBarGreen");
     }
 
-    #region zapping
-
-    /// <summary>
-    /// Timer callback
-    /// When occurs, this method will do the actual zapping
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-    public void zapTimeoutEvent(object sender, EventArgs e)
-    {}
-
-    #endregion
-
+    
     protected override void OnMediaPlayerEnded()
     {
       base.OnMediaPlayerEnded();
@@ -332,10 +316,6 @@ namespace MyVideos
     /// <param name="key">The key.</param>
     public void OnSeek(Key key)
     {
-      if (_zapChannel != "")
-      {
-        return;
-      }
       if (_seekDirection == SeekDirection.Unknown)
       {
         if (key == Key.Right)
@@ -435,6 +415,10 @@ namespace MyVideos
         player.Pause();
         ChangeProperty("TopOsdVisibility");
         ChangeProperty("LabelState");
+        ChangeProperty("EndTime");
+        ChangeProperty("TopProgressBarOrange");
+        ChangeProperty("TopProgressBarRed");
+        ChangeProperty("TopProgressBarGreen");
       }
     }
 

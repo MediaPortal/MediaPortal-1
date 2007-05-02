@@ -12,6 +12,8 @@ namespace MyVideos
     string _videoExtensions;
     bool _createThumbnails;
     string _seekSteps;
+    string _currentFolder;
+    int _currentViewType;
     #endregion
 
     /// <summary>
@@ -48,6 +50,7 @@ namespace MyVideos
       get { return this._showExtensions; }
       set { this._showExtensions = value; }
     }
+
     [Setting(SettingScope.User, "True")]
     public bool AutoCreateThumbnails
     {
@@ -70,6 +73,30 @@ namespace MyVideos
       set
       {
         _seekSteps = value;
+      }
+    }
+    [Setting(SettingScope.User, "")]
+    public string CurrentFolder
+    {
+      get
+      {
+        return _currentFolder;
+      }
+      set
+      {
+        _currentFolder = value;
+      }
+    }
+    [Setting(SettingScope.User, "1")]
+    public int ViewMode
+    {
+      get
+      {
+        return _currentViewType;
+      }
+      set
+      {
+        _currentViewType = value;
       }
     }
   }
