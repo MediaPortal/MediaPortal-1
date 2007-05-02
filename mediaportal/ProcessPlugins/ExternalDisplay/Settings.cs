@@ -32,9 +32,8 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using ExternalDisplay.Setting;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 using ProcessPlugins.ExternalDisplay.Drivers;
 using ProcessPlugins.ExternalDisplay.Setting;
 
@@ -52,9 +51,85 @@ namespace ProcessPlugins.ExternalDisplay
   [Serializable]
   public class Settings
   {
-    #region Singleton implementation
+    #region Static Fields
 
     private static Settings m_Instance; //Reference to the single instance of this task
+
+    #endregion
+
+    #region Fields
+
+    /// <summary>
+    /// String representation of the selected display type.  Used for (de)serializing
+    /// </summary>
+    [XmlAttribute] public string Type = null;
+
+
+    private bool m_ShowPropertyBrowser = false;
+
+    private string m_Port = "378"; //LPT1:0x378 LPT2:0x278 LPT3:3BC LPT4:178
+
+    private int m_TextWidth = 16;
+
+    private int m_TextHeight = 2;
+
+    private int m_GraphicWidth = 320;
+
+    private int m_GraphicHeight = 240;
+
+    private int m_TextComDelay = 1;
+
+    private int m_GraphicComDelay = 1;
+
+    private bool m_BackLight = false;
+
+    private int m_Contrast = 127;
+
+    //        private string m_FontFile = "f8x11.fnt";
+    //        [XmlAttribute]
+    //        [DefaultValue("")]
+    //        public string FontFile
+    //        {
+    //            get
+    //            {
+    //                if (m_Type!=DisplayType.SED133x)
+    //                    return "";
+    //                return m_FontFile;
+    //            }
+    //            set { m_FontFile = value; }
+    //        }
+    //
+
+    private int m_ScrollDelay = 300;
+
+    private int m_CharsToScroll = 1;
+
+    private bool m_ExtensiveLogging = false;
+
+    private string m_Font = "Arial Black";
+
+    private int m_FontSize = 10;
+
+    private bool m_ForceGraphicText = false;
+
+    private int m_PixelsToScroll = 10;
+
+    /// <summary>
+    /// List of message rules
+    /// </summary>
+    [XmlElement("Message", typeof (Message))] public List<Message> Messages = new List<Message>();
+
+    private List<IDisplay> m_Drivers = null;
+
+    private string[] m_TranslateFrom;
+
+    private string[] m_TranslateTo;
+
+    private int[][] m_CustomCharacters = new int[0][];
+
+    #endregion
+
+    #region Properties
 
     /// <summary>
     /// Gets the single instance
@@ -71,17 +146,6 @@ namespace ProcessPlugins.ExternalDisplay
         return m_Instance;
       }
     }
-
-    #endregion
-
-    #region Properties
-
-    /// <summary>
-    /// String representation of the selected display type.  Used for (de)serializing
-    /// </summary>
-    [XmlAttribute]
-    public string Type = null;
-
 
     /// <summary>
     /// The selected display type
@@ -127,8 +191,6 @@ namespace ProcessPlugins.ExternalDisplay
       set { Type = value.Name; }
     }
 
-    private bool m_ShowPropertyBrowser = false;
-
     /// <summary>
     /// Show the PropertyBrowser?
     /// </summary>
@@ -138,8 +200,6 @@ namespace ProcessPlugins.ExternalDisplay
       get { return m_ShowPropertyBrowser; }
       set { m_ShowPropertyBrowser = value; }
     }
-
-    private string m_Port = "378"; //LPT1:0x378 LPT2:0x278 LPT3:3BC LPT4:178
 
     /// <summary>
     /// The port the display is attached to
@@ -194,8 +254,6 @@ namespace ProcessPlugins.ExternalDisplay
       }
     }
 
-    private int m_TextWidth = 16;
-
     /// <summary>
     /// Number of columns of display in text mode
     /// </summary>
@@ -205,8 +263,6 @@ namespace ProcessPlugins.ExternalDisplay
       get { return m_TextWidth; }
       set { m_TextWidth = value; }
     }
-
-    private int m_TextHeight = 2;
 
     /// <summary>
     /// Number of rows of display in text mode
@@ -218,8 +274,6 @@ namespace ProcessPlugins.ExternalDisplay
       set { m_TextHeight = value; }
     }
 
-    private int m_GraphicWidth = 320;
-
     /// <summary>
     /// Display width in pixels in graphic mode
     /// </summary>
@@ -229,8 +283,6 @@ namespace ProcessPlugins.ExternalDisplay
       get { return m_GraphicWidth; }
       set { m_GraphicWidth = value; }
     }
-
-    private int m_GraphicHeight = 240;
 
     /// <summary>
     /// Display height in pixels in graphic mode
@@ -242,8 +294,6 @@ namespace ProcessPlugins.ExternalDisplay
       set { m_GraphicHeight = value; }
     }
 
-    private int m_TextComDelay = 1;
-
     /// <summary>
     /// Communication delay in text mode
     /// </summary>
@@ -253,8 +303,6 @@ namespace ProcessPlugins.ExternalDisplay
       get { return m_TextComDelay; }
       set { m_TextComDelay = value; }
     }
-
-    private int m_GraphicComDelay = 1;
 
     /// <summary>
     /// Communication delay in graphic mode
@@ -266,8 +314,6 @@ namespace ProcessPlugins.ExternalDisplay
       set { m_GraphicComDelay = value; }
     }
 
-    private bool m_BackLight = false;
-
     /// <summary>
     /// Backlight on?
     /// </summary>
@@ -277,8 +323,6 @@ namespace ProcessPlugins.ExternalDisplay
       get { return m_BackLight; }
       set { m_BackLight = value; }
     }
-
-    private int m_Contrast = 127;
 
     /// <summary>
     /// Contrast
@@ -290,23 +334,6 @@ namespace ProcessPlugins.ExternalDisplay
       set { m_Contrast = value; }
     }
 
-    //        private string m_FontFile = "f8x11.fnt";
-    //        [XmlAttribute]
-    //        [DefaultValue("")]
-    //        public string FontFile
-    //        {
-    //            get
-    //            {
-    //                if (m_Type!=DisplayType.SED133x)
-    //                    return "";
-    //                return m_FontFile;
-    //            }
-    //            set { m_FontFile = value; }
-    //        }
-    //
-
-    private int m_ScrollDelay = 300;
-
     /// <summary>
     /// Scrolling delay
     /// </summary>
@@ -317,8 +344,6 @@ namespace ProcessPlugins.ExternalDisplay
       set { m_ScrollDelay = value; }
     }
 
-    private int m_CharsToScroll = 1;
-
     [XmlAttribute]
     public int CharsToScroll
     {
@@ -326,16 +351,12 @@ namespace ProcessPlugins.ExternalDisplay
       set { m_CharsToScroll = value; }
     }
 
-    private bool m_ExtensiveLogging = false;
-
     [XmlAttribute]
     public bool ExtensiveLogging
     {
       get { return m_ExtensiveLogging; }
       set { m_ExtensiveLogging = value; }
     }
-
-    private string m_Font = "Arial Black";
 
     [XmlAttribute]
     public string Font
@@ -349,8 +370,6 @@ namespace ProcessPlugins.ExternalDisplay
       }
     }
 
-    private int m_FontSize = 10;
-
     [XmlAttribute]
     public int FontSize
     {
@@ -363,8 +382,6 @@ namespace ProcessPlugins.ExternalDisplay
       }
     }
 
-    private bool m_ForceGraphicText = false;
-
     [XmlAttribute]
     public bool ForceGraphicText
     {
@@ -372,22 +389,12 @@ namespace ProcessPlugins.ExternalDisplay
       set { m_ForceGraphicText = value; }
     }
 
-    private int m_PixelsToScroll = 10;
-
     [XmlAttribute]
     public int PixelsToScroll
     {
       get { return m_PixelsToScroll; }
       set { m_PixelsToScroll = value; }
     }
-
-    /// <summary>
-    /// List of message rules
-    /// </summary>
-    [XmlElement("Message", typeof(Message))]
-    public List<Message> Messages = new List<Message>();
-
-    private List<IDisplay> m_Drivers = null;
 
     /// <summary>
     /// List of display drivers
@@ -405,8 +412,6 @@ namespace ProcessPlugins.ExternalDisplay
       }
     }
 
-    private string[] m_TranslateFrom;
-
     [XmlArray]
     public string[] TranslateFrom
     {
@@ -414,16 +419,12 @@ namespace ProcessPlugins.ExternalDisplay
       set { m_TranslateFrom = value; }
     }
 
-    private string[] m_TranslateTo;
-
     [XmlArray]
     public string[] TranslateTo
     {
       get { return m_TranslateTo; }
       set { m_TranslateTo = value; }
     }
-
-    private int[][] m_CustomCharacters = new int[0][];
 
     [XmlArray]
     [XmlArrayItem("CustomCharacter")]
@@ -435,8 +436,6 @@ namespace ProcessPlugins.ExternalDisplay
 
     #endregion
 
-    #region (De)Serializing
-
     /// <summary>
     /// Loads the settings from XML
     /// </summary>
@@ -446,7 +445,7 @@ namespace ProcessPlugins.ExternalDisplay
       Settings settings;
       if (File.Exists(Config.GetFile(Config.Dir.Config, "ExternalDisplay.xml")))
       {
-        XmlSerializer ser = new XmlSerializer(typeof(Settings));
+        XmlSerializer ser = new XmlSerializer(typeof (Settings));
         XmlTextReader rdr = new XmlTextReader(Config.GetFile(Config.Dir.Config, "ExternalDisplay.xml"));
         settings = (Settings) ser.Deserialize(rdr);
         rdr.Close();
@@ -465,15 +464,13 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public static void Save()
     {
-      XmlSerializer ser = new XmlSerializer(typeof(Settings));
+      XmlSerializer ser = new XmlSerializer(typeof (Settings));
       XmlTextWriter w = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "ExternalDisplay.xml"), Encoding.UTF8);
       w.Formatting = Formatting.Indented;
       w.Indentation = 2;
       ser.Serialize(w, Instance);
       w.Close();
     }
-
-    #endregion
 
     /// <summary>
     /// Creates wrapper classes for-, and loads all display drivers
@@ -537,6 +534,11 @@ namespace ProcessPlugins.ExternalDisplay
         Log.Debug("ExternalDisplay: Loading NoritakeGU7000...");
       }
       list.Add(new NoritakeGU7000());
+      if (ExtensiveLogging)
+      {
+        Log.Debug("ExternalDisplay: Loading ScaleoEV...");
+      }
+      list.Add(new ScaleoEV());
       DirectoryInfo dinfo = new DirectoryInfo(Config.GetSubFolder(Config.Dir.Plugins, @"process\LCDDrivers"));
       if (!dinfo.Exists)
       {
@@ -728,7 +730,6 @@ namespace ProcessPlugins.ExternalDisplay
       line.values.Add(new Text(" (#112)", new NotNullCondition("#paused")));
       msg.Lines.Add(line);
       _settings.Messages.Add(msg);
-      //TODO: Radio playing
       //
       // TV Guide
       //

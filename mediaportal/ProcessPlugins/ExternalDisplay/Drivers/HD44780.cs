@@ -46,7 +46,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     private int data = 0x378;
     private int control;
     private bool use2Controllers;
-    private bool alternateAddressing = false;
+    private readonly bool alternateAddressing = false;
     private Controller controller = Controller.All;
 
     /// <summary>
@@ -69,7 +69,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       Wait(DELAY_LONG);
       SetEntryMode();
       Wait(DELAY_MEDIUM);
-      DisplayControl(Display.On, Cursor.Off, Blink.No); //TODO: remove cursor
+      DisplayControl(Display.On, Cursor.Off, Blink.No);
       Wait(DELAY_LONG);
       Home();
     }

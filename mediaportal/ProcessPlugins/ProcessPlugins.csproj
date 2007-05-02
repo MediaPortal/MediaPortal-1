@@ -304,6 +304,7 @@
     <Compile Include="ExternalDisplay\DisplayHandler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ExternalDisplay\Drivers\ScaleoEV.cs" />
     <Compile Include="ExternalDisplay\ExternalDisplay.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -392,6 +393,14 @@
     <Compile Include="DiskManagement\DiskManagement.cs" />
     <Compile Include="DiskManagement\EpisodeManagement.cs" />
     <Compile Include="DiskManagement\RecordingManagement.cs" />
+    <Compile Include="ExternalDisplay\VFD_Control\Debugging.cs" />
+    <Compile Include="ExternalDisplay\VFD_Control\DebuggingDeclarations.cs" />
+    <Compile Include="ExternalDisplay\VFD_Control\DeviceManagement.cs" />
+    <Compile Include="ExternalDisplay\VFD_Control\DeviceManagementDeclarations.cs" />
+    <Compile Include="ExternalDisplay\VFD_Control\FileIODeclarations.cs" />
+    <Compile Include="ExternalDisplay\VFD_Control\Hid.cs" />
+    <Compile Include="ExternalDisplay\VFD_Control\HidDeclarations.cs" />
+    <Compile Include="ExternalDisplay\VFD_Control\VFD_Control.cs" />
     <Compile Include="ExternalDreamboxTV\Dreambox\BoxInfo.cs" />
     <Compile Include="ExternalDreamboxTV\Dreambox\ChannelInfo.cs" />
     <Compile Include="ExternalDreamboxTV\Dreambox\Core.cs" />
