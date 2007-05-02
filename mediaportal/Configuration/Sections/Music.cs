@@ -451,6 +451,15 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "preset", vizPluginsInfo[selIndex].PresetIndex.ToString());
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
         }
+        else if (VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)  // This is the case, when we started Config without activating the Vis Tab
+        {
+          xmlwriter.SetValue("musicvisualization", "name", VizPluginInfo.Name);
+          xmlwriter.SetValue("musicvisualization", "vizType", ((int)VizPluginInfo.VisualizationType).ToString());
+          xmlwriter.SetValue("musicvisualization", "path", VizPluginInfo.FilePath);
+          xmlwriter.SetValue("musicvisualization", "clsid", VizPluginInfo.CLSID);
+          xmlwriter.SetValue("musicvisualization", "preset", VizPluginInfo.PresetIndex.ToString());
+          xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
+        }
         else
         {
           xmlwriter.SetValue("musicvisualization", "name", "");
