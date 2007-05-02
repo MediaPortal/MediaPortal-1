@@ -124,6 +124,7 @@ namespace TvPlugin
     bool _createRecordedThumbs = true;
     int m_iSelectedItem = 0;
     string currentShow = String.Empty;
+    string _currentRTSPFilename = String.Empty;
     //bool _creatingThumbNails = false;
     RecordingThumbCacher thumbworker = null;
 
@@ -792,6 +793,7 @@ namespace TvPlugin
       string fileName = rec.FileName;
       if (!System.IO.File.Exists(fileName))
       {
+        _currentRTSPFilename = fileName;
         fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
       }
       Log.Info("TvRecorded Play:{0}", fileName);
@@ -1116,6 +1118,8 @@ namespace TvPlugin
     {
       Log.Info("TvRecorded:OnStopped {0} {1}", type, filename);
       if (type != g_Player.MediaType.Recording) return;
+
+      if (filename.Substring(0,4) == "rtsp" ) { filename = _currentRTSPFilename; };
       TvBusinessLayer layer = new TvBusinessLayer();
       Recording rec = layer.GetRecordingByFileName(filename);
       if (rec != null)
@@ -1135,7 +1139,10 @@ namespace TvPlugin
     {
       if (type != g_Player.MediaType.Recording) return;
 
+      if (filename.Substring(0,4) == "rtsp" ) { filename = _currentRTSPFilename; };
+
       g_Player.Stop();
+
       
       TvBusinessLayer layer = new TvBusinessLayer();
       Recording rec = layer.GetRecordingByFileName(filename);

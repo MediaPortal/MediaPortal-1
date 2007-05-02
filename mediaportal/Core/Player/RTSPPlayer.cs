@@ -585,7 +585,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        return (_mediaType == g_Player.MediaType.TV);
+          return (_mediaType == g_Player.MediaType.TV || _mediaType == g_Player.MediaType.Recording);
       }
     }
     public override bool IsRadio
