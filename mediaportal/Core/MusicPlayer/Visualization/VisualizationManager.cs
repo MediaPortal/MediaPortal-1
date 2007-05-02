@@ -300,6 +300,7 @@ namespace MediaPortal.Visualization
           }
         }
       }
+      BassVis.BASS_WINAMPVIS_Quit();
       return _VisualizationPluginsInfo;
     }
 

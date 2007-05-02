@@ -182,7 +182,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox soundDeviceComboBox;
     private CheckBox enableMixing;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseBassForCD;
-    private MediaPortal.UserInterface.Controls.MPButton btWinampConfig;
     private MediaPortal.UserInterface.Controls.MPComboBox autoPlayComboBox;
 
     #endregion
@@ -631,7 +630,6 @@ namespace MediaPortal.Configuration.Sections
       this.audioPlayerComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.VisualizationsTabPg = new System.Windows.Forms.TabPage();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.btWinampConfig = new MediaPortal.UserInterface.Controls.MPButton();
       this.SoundSpectrumLnkLbl = new System.Windows.Forms.LinkLabel();
       this.EnableStatusOverlaysChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.ShowTrackInfoChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -945,7 +943,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
-      this.mpGroupBox3.Controls.Add(this.btWinampConfig);
       this.mpGroupBox3.Controls.Add(this.SoundSpectrumLnkLbl);
       this.mpGroupBox3.Controls.Add(this.EnableStatusOverlaysChkBox);
       this.mpGroupBox3.Controls.Add(this.ShowTrackInfoChkBox);
@@ -964,18 +961,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.Size = new System.Drawing.Size(432, 343);
       this.mpGroupBox3.TabIndex = 0;
       this.mpGroupBox3.TabStop = false;
-      // 
-      // btWinampConfig
-      // 
-      this.btWinampConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btWinampConfig.Enabled = false;
-      this.btWinampConfig.Location = new System.Drawing.Point(389, 25);
-      this.btWinampConfig.Name = "btWinampConfig";
-      this.btWinampConfig.Size = new System.Drawing.Size(37, 22);
-      this.btWinampConfig.TabIndex = 12;
-      this.btWinampConfig.Text = "Cfg.";
-      this.btWinampConfig.UseVisualStyleBackColor = true;
-      this.btWinampConfig.Click += new System.EventHandler(this.btWinampConfig_Click);
       // 
       // SoundSpectrumLnkLbl
       // 
@@ -1593,39 +1578,50 @@ namespace MediaPortal.Configuration.Sections
       if (VizPluginInfo == null || VizPluginInfo.IsDummyPlugin)
         return;
 
-      btWinampConfig.Enabled = (VizPluginInfo.VisualizationType == VisualizationInfo.PluginType.Winamp);
-
-      bool vizCreated = IVizMgr.CreatePreviewVisualization(VizPluginInfo);
-
-      if (!vizCreated)
+      // For Winamp Plugins we use our own form to do the preview, because in some installations, we found problems
+      if (VizPluginInfo.VisualizationType == VisualizationInfo.PluginType.Winamp)
       {
-        string msg = string.Format("Unable to load the following visualization:\r\nName:{0}\r\nCLSID:{1}\r\nType:{2}\r\nPreset Count:{3}",
-            VizPluginInfo.Name, VizPluginInfo.CLSID, VizPluginInfo.VisualizationType, VizPluginInfo.PresetCount);
+        VizWindow.Run = false;
+        VizWindow.Hide();
 
-        MessageBox.Show(this, msg, "Visualization Load Failed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        return;
+        MusicWinampPreview dlgWinamp = new MusicWinampPreview(VizPluginInfo);
+        dlgWinamp.Text = String.Format("{0} Preview", VizPluginInfo.Name);
+        dlgWinamp.ShowDialog();
       }
-
       else
       {
-        VizPresetsCmbBox.Items.Clear();
+        VizWindow.Show();
+        bool vizCreated = IVizMgr.CreatePreviewVisualization(VizPluginInfo);
 
-        if (VizPluginInfo.HasPresets)
+        if (!vizCreated)
         {
-          VizPresetsCmbBox.Items.AddRange(VizPluginInfo.PresetNames.ToArray());
-          SuppressVisualizationRestart = true;
-          VizPresetsCmbBox.SelectedIndex = VizPluginInfo.PresetIndex;
-          VizPresetsCmbBox.Enabled = VizPresetsCmbBox.Items.Count > 1;
-          SuppressVisualizationRestart = false;
+          string msg = string.Format("Unable to load the following visualization:\r\nName:{0}\r\nCLSID:{1}\r\nType:{2}\r\nPreset Count:{3}",
+              VizPluginInfo.Name, VizPluginInfo.CLSID, VizPluginInfo.VisualizationType, VizPluginInfo.PresetCount);
+
+          MessageBox.Show(this, msg, "Visualization Load Failed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          return;
         }
 
         else
-          VizPresetsCmbBox.Enabled = false;
+        {
+          VizPresetsCmbBox.Items.Clear();
 
-        IVizMgr.InitWinampVis();
-        // Force a Resize event to ensure the viz engine is notified of window size
-        IVizMgr.ResizeVisualizationWindow(VizWindow.Size);
-        VizWindow.Run = true;
+          if (VizPluginInfo.HasPresets)
+          {
+            VizPresetsCmbBox.Items.AddRange(VizPluginInfo.PresetNames.ToArray());
+            SuppressVisualizationRestart = true;
+            VizPresetsCmbBox.SelectedIndex = VizPluginInfo.PresetIndex;
+            VizPresetsCmbBox.Enabled = VizPresetsCmbBox.Items.Count > 1;
+            SuppressVisualizationRestart = false;
+          }
+
+          else
+            VizPresetsCmbBox.Enabled = false;
+
+          // Force a Resize event to ensure the viz engine is notified of window size
+          IVizMgr.ResizeVisualizationWindow(VizWindow.Size);
+          VizWindow.Run = true;
+        }
       }
     }
 
@@ -1652,13 +1648,6 @@ namespace MediaPortal.Configuration.Sections
         SuppressVisualizationRestart = false;
         VizWindow.Run = true;
       }
-    }
-
-
-    private void btWinampConfig_Click(object sender, EventArgs e)
-    {
-      VizWindow.Run = false;
-      IVizMgr.ConfigWinampViz();
     }
 
     private void SoundSpectrumLnkLbl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
