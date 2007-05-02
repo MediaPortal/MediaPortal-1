@@ -168,7 +168,6 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-
     void SaveSettings()
     {
       using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -218,6 +217,12 @@ namespace WindowPlugins.GUIPrograms
 
     void LoadSettings()
     {
+      string _slideSpeed = ProgramSettings.ReadSetting(ProgramUtils.cSLIDESPEED);
+      if ((_slideSpeed != "") && (_slideSpeed != null))
+      {
+        slideSpeed = int.Parse(_slideSpeed);
+      }
+
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string curText = "";
@@ -263,7 +268,6 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-
     void LoadLastAppIDFromSettings()
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -307,18 +311,16 @@ namespace WindowPlugins.GUIPrograms
       VIEW_AS_FILMSTRIP = 3,
     }
 
-
     // Buttons
     [SkinControl(2)] protected GUIButtonControl btnViewAs = null;
     [SkinControl(3)] protected GUIButtonControl btnRefresh = null;
     [SkinControl(4)] protected GUIButtonControl btnViews = null;
 
-    //Images                     
+    // Images                     
     [SkinControl(6)] protected GUIImage screenShotImage = null;
 
     // FacadeView
-    const int cFacadeID = 50;
-    [SkinControl(cFacadeID)] protected GUIFacadeControl facadeView = null;
+    [SkinControl(50)] protected GUIFacadeControl facadeView = null;
 
     #endregion 
 
@@ -345,11 +347,6 @@ namespace WindowPlugins.GUIPrograms
     void DeInitMyPrograms()
     {
       SaveSettings();
-      if (curTexture != null)
-      {
-        curTexture.Dispose();
-        curTexture = null;
-      }
       // make sure the selected index wasn't reseted already
       // and save the index only if it's non-zero
       // otherwise: DXDevice.Reset clears selection 
@@ -385,7 +382,6 @@ namespace WindowPlugins.GUIPrograms
       }
       UpdateListControl();
       ShowThumbPanel();
-      curTexture = null;
       skipInit = false;
     }
 
@@ -399,16 +395,31 @@ namespace WindowPlugins.GUIPrograms
     AppItem lastApp = null;
     string lastFilepath = "";
     int selectedItemIndex = - 1;
-    int slideSpeed = 3; // speed in seconds between two slides
+    int slideSpeed = 3000; // speed in milliseconds between two slides
     long slideTime = 0;
-    Texture curTexture = null;
-    int textureWidth = 0;
-    int textureHeight = 0;
     bool skipInit = false;
+
+    static string _thumbnailPath = string.Empty;
+    static string _lastThumbnailPath = string.Empty;
 
     #endregion 
 
     #region Properties / Helper Routines
+
+    public static string ThumbnailPath
+    {
+      get
+      {
+        return _thumbnailPath;
+      }
+      set
+      {
+        if (value == "")
+          _thumbnailPath = "";
+        else if (File.Exists(value))
+          _thumbnailPath = value;
+      }
+    }
 
     GUIListItem GetSelectedItem()
     {
@@ -455,22 +466,20 @@ namespace WindowPlugins.GUIPrograms
       base.OnPageDestroy(newWindowId);
     }
     
-    public override void AllocResources()
-    {
-      base.AllocResources();
-      if (screenShotImage != null) screenShotImage.AllocResources();
-    }
-    public override void FreeResources()
-    {
-      base.FreeResources();
-      if (screenShotImage != null) screenShotImage.FreeResources();
-    }
-
     public override void Render(float timePassed)
     {
       base.Render(timePassed);
-      RenderFilmStrip();
-      RenderScreenShot(timePassed);
+
+      if (ThumbnailPath != _lastThumbnailPath)
+      {
+        screenShotImage.FileName = ThumbnailPath;
+        facadeView.FilmstripView.InfoImageFileName = ThumbnailPath;
+        facadeView.FilmstripView.NeedRefresh();
+
+        _lastThumbnailPath = ThumbnailPath;
+      }
+
+      RenderThumbnail(timePassed);
    }
 
     void OnInfo()
@@ -649,12 +658,14 @@ namespace WindowPlugins.GUIPrograms
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
+
       if (control == btnViewAs)
       {
         mapSettings.SwitchToNextView();
         ShowThumbPanel();
       }
-      else if (control == btnRefresh)
+
+      if (control == btnRefresh)
       {
         if (lastApp != null)
         {
@@ -665,13 +676,14 @@ namespace WindowPlugins.GUIPrograms
           UpdateListControl();
         }
       }
-      else if (control == btnViews)
+
+      if (control == btnViews)
       {
         OnShowViews();
       }
-      else if (control == facadeView)
+
+      if (control == facadeView)
       {
-        // application or file-item was clicked....
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
           OnClick();
@@ -686,7 +698,7 @@ namespace WindowPlugins.GUIPrograms
         case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED:
           {
             int iControl = message.SenderControlId;
-            if (iControl == cFacadeID)
+            if (iControl == facadeView.GetID)
             {
               if (lastApp != null)
               {
@@ -695,6 +707,7 @@ namespace WindowPlugins.GUIPrograms
             }
           }
           break;
+
         case GUIMessage.MessageType.GUI_MSG_GET_PASSWORD:
           // Only one window should act on this.
           if (GetID != (int)GUIWindow.Window.WINDOW_FILES)
@@ -712,7 +725,6 @@ namespace WindowPlugins.GUIPrograms
           }
           else message.Label = "";
           break;
-
       }
       return base.OnMessage(message);
     }
@@ -741,6 +753,45 @@ namespace WindowPlugins.GUIPrograms
         return;
       }
       base.OnAction(action);
+    }
+
+    protected override void OnShowContextMenu()
+    {
+      GUIListItem item = facadeView.SelectedListItem;
+      int itemNo = facadeView.SelectedListItemIndex;
+      if (item == null)
+        return;
+
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+        return;
+      dlg.Reset();
+      dlg.SetHeading(498); // menu
+
+      if (!item.IsFolder)
+      {
+        dlg.AddLocalizedString(13041);    //Show File Info
+        //dlg.AddLocalizedString(930);    //Add to favorites
+        //dlg.AddLocalizedString(931);    //Rating
+      }
+
+      dlg.DoModal(GetID);
+      if (dlg.SelectedId == -1)
+        return;
+      switch (dlg.SelectedId)
+      {
+        case 4521: // Show album info
+          OnInfo();
+          break;
+
+        case 930: // add to favorites
+          //AddSongToFavorites(item);
+          break;
+
+        case 931:// Rating
+          //OnSetRating(facadeView.SelectedListItemIndex);
+          break;
+      }
     }
 
     #endregion 
@@ -809,54 +860,23 @@ namespace WindowPlugins.GUIPrograms
       UpdateButtons();
     }
 
-
-    void RenderScreenShot(float timePassed)
+    void RenderThumbnail(float timePassed)
     {
-      if ((mapSettings == null) || (screenShotImage == null)) return;
-      if (mapSettings.ViewAs == (int) View.VIEW_AS_LIST)
+      // does the thumb needs replacing??
+      long now = (DateTime.Now.Ticks/10000);
+      long timeElapsed = now - slideTime;
+      if (timeElapsed >= (slideSpeed))
       {
-        // does the thumb needs replacing??
-        long now = (DateTime.Now.Ticks/10000);
-        long timeElapsed = now - slideTime;
-        if (timeElapsed >= (slideSpeed*1000))
-        {
-          RefreshScreenShot();
-          // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
-        }
-        screenShotImage.Render(timePassed);
+        RefreshThumbnail();
+        // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
       }
     }
 
-    void RenderFilmStrip()
-    {
-      // in filmstrip mode, start a slideshow if more than one
-      // pic is available for the selected item
-      if (facadeView == null)
-        return;
-      if (facadeView.FilmstripView == null)
-        return;
-      if (facadeView.FilmstripView.InfoImageFileName == "")
-        return;
-      if (mapSettings == null)
-        return;
-      if (mapSettings.ViewAs == (int) View.VIEW_AS_FILMSTRIP)
-      {
-        // does the thumb needs replacing??
-        long timeElapsed = (DateTime.Now.Ticks/10000) - slideTime;
-        if (timeElapsed >= (slideSpeed*1000))
-        {
-          RefreshFilmstripThumb(facadeView.FilmstripView);
-          // only refresh the picture, don't refresh the other data otherwise scrolling of labels is interrupted!
-        }
-      }
-    }
-
-
-    void RefreshScreenShot()
+    void RefreshThumbnail()
     {
       AppItem appWithImg = lastApp;
       GUIListItem item = GetSelectedItem();
-      
+
       // some preconditions...
       if (appWithImg == null)
       {
@@ -869,37 +889,18 @@ namespace WindowPlugins.GUIPrograms
           return;
         }
       }
-      string thumbFilename = appWithImg.GetCurThumb(item); // some modes look for thumbs differently
-      if (File.Exists(thumbFilename))
-      {
-        screenShotImage.FileName = thumbFilename;
-      }
-      else if(File.Exists(appWithImg.Imagefile))
-      {
-        screenShotImage.FileName = appWithImg.Imagefile;
-      }
-      appWithImg.NextThumb(); // try to find a next thumbnail
-      slideTime = (DateTime.Now.Ticks/10000); // reset timer!
-    }
 
-    void RefreshFilmstripThumb(GUIFilmstripControl filmstrip)
-    {
-      GUIListItem item = GetSelectedItem();
-      // some preconditions...
-      if (lastApp == null)
-        return;
-      if (item.MusicTag == null)
-        return;
-      if (!(item.MusicTag is FileItem))
-        return;
-      FileItem curFile = item.MusicTag as FileItem;
-      // ok... let's get a filename
-      string thumbFilename = lastApp.GetCurThumb(curFile);
-      if (File.Exists(thumbFilename))
+      ThumbnailPath = "";
+      if (item.ThumbnailImage != ""
+        && item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png"
+        && item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultAlbum.png"
+        )
       {
-        filmstrip.InfoImageFileName = thumbFilename;
+        // only show big thumb if there is really one....
+        ThumbnailPath = appWithImg.GetCurThumb(item); // some modes look for thumbs differently
       }
-      lastApp.NextThumb(); // try to find a next thumbnail
+
+      appWithImg.NextThumb(); // try to find a next thumbnail
       slideTime = (DateTime.Now.Ticks/10000); // reset timer!
     }
 
@@ -971,7 +972,6 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-
     int DisplayFiles()
     {
       int totalFiles = 0;
@@ -1015,7 +1015,7 @@ namespace WindowPlugins.GUIPrograms
           }
           item.MusicTag = app;
           item.IsFolder = (app.SourceType != myProgSourceType.APPEXEC); // pseudo-folder for all but appexec
-          item.OnItemSelected += new GUIListItem.ItemSelectedHandler(OnItemSelected);
+          item.OnItemSelected += new GUIListItem.ItemSelectedHandler(OnAppItemSelected);
           facadeView.Add(item);
         }
       }
@@ -1055,7 +1055,6 @@ namespace WindowPlugins.GUIPrograms
         }
       }
     }
-    
 
     #endregion 
 
@@ -1242,28 +1241,23 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-    void OnItemSelected(GUIListItem item, GUIControl parent)
+    void OnAppItemSelected(GUIListItem item, GUIControl parent)
     {
+      ThumbnailPath = "";
+      if (item.ThumbnailImage != ""
+        && item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png"
+        && item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultAlbum.png")
+      {
+        // only show big thumb if there is really one....
+        ThumbnailPath = item.ThumbnailImage;
+      }
+
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
       if (filmstrip != null)
       {
-        string thumbName = "";
-        if ((item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png") && (item.ThumbnailImage != "") &&
-          item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultAlbum.png")
-        {
-          // only show big thumb if there is really one....
-          thumbName = item.ThumbnailImage;
-        }
-        filmstrip.InfoImageFileName = thumbName;
-      }
-      
-      GUIListControl list = parent as GUIListControl;
-      if (list != null)
-      {
-        RefreshScreenShot();
+        filmstrip.InfoImageFileName = ThumbnailPath;
       }
     }
-
 
     void OnClick()
     {

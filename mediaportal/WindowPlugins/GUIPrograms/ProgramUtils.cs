@@ -82,8 +82,9 @@ namespace Programs.Utils
     public const string cGAMEBASE = "GAMEBASE";
     public const string cAPPEXEC = "APPEXEC";
 
-//    public const string cMIGRATIONKEY = "V1_V2MIGRATION";
+    //    public const string cMIGRATIONKEY = "V1_V2MIGRATION";
     public const string cPLUGINTITLE = "PLUGINTITLE";
+    public const string cSLIDESPEED = "SLIDESPEED";
     public const string cCONTENT_PATCH = "CONTENTPATCH";
     public const string cGENRE_PATCH = "GENREPATCH";
     public const string cPREPOST_PATCH = "PREPOSTPATCH";
@@ -357,10 +358,7 @@ namespace Programs.Utils
 
     static private void gliBack_OnItemSelected(GUIListItem item, GUIControl parent)
     {
-      GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
-      if (filmstrip == null)
-        return ;
-      filmstrip.InfoImageFileName = ""; // clear filmstrip image if back button is selected
+      GUIPrograms.ThumbnailPath = "";
     }
 
 

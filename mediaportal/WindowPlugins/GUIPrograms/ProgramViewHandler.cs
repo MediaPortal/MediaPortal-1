@@ -48,9 +48,7 @@ namespace WindowPlugins.GUIPrograms
 
     ViewDefinition currentView;
     int currentLevel = 0;
-    ProgramDatabase database;
     List<ViewDefinition> views = new List<ViewDefinition>();
-    int restrictionLength = 0;   // used to sum up the length of all restrictions
 
     #endregion
 
@@ -144,12 +142,6 @@ namespace WindowPlugins.GUIPrograms
 
     #region Properties / Helper Routines
 
-    public ViewDefinition View
-    {
-      get { return currentView; }
-      set { currentView = value; }
-    }
-
     public List<ViewDefinition> Views
     {
       get { return views; }
@@ -176,22 +168,13 @@ namespace WindowPlugins.GUIPrograms
       }
       set
       {
-        bool done = false;
+        currentView = null;
         foreach (ViewDefinition definition in views)
         {
           if (definition.Name == value)
           {
             currentView = definition;
             CurrentLevel = 0;
-            done = true;
-            break;
-          }
-        }
-        if (!done)
-        {
-          if (views.Count > 0)
-          {
-            currentView = (ViewDefinition)views[0];
           }
         }
       }
@@ -202,6 +185,11 @@ namespace WindowPlugins.GUIPrograms
       get { return currentLevel; }
       set
       {
+        if (currentView == null)
+        {
+          currentLevel = 0;
+          return;
+        }
         if (value < 0 || value >= currentView.Filters.Count) return;
         currentLevel = value;
       }
@@ -209,7 +197,17 @@ namespace WindowPlugins.GUIPrograms
 
     public int MaxLevels
     {
-      get { return currentView.Filters.Count; }
+      get
+      {
+        if (currentView == null)
+        {
+          return 0;
+        }
+        else
+        {
+          return currentView.Filters.Count;
+        }
+      }
     }
 
     public void Restore(ViewDefinition view, int level)
@@ -438,13 +436,6 @@ namespace WindowPlugins.GUIPrograms
       if (where == "rating") return "rating";
       if (where == "launchcount") return "launchcount";
       if (where == "lastTimeLaunched") return "lastTimeLaunched";
-      return null;
-    }
-
-    string GetFieldNameValue(FileItem file, string where)
-    {
-      if (where == "title") return file.Title;
-      if (where == "genre") return file.Genre;
       return null;
     }
 

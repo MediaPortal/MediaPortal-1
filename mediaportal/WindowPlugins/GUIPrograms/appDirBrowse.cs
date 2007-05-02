@@ -132,27 +132,27 @@ namespace ProgramsDatabase
       ArrayList curFiles = curDirectory.GetDirectory(newDirectory);
 
       int totalItems = 0;
-      foreach (GUIListItem file in curFiles)
+      foreach (GUIListItem item in curFiles)
       {
-        MediaPortal.Util.Utils.SetDefaultIcons(file);
-        if (file.IsFolder)
+        MediaPortal.Util.Utils.SetDefaultIcons(item);
+        if (item.IsFolder)
         {
-          file.ThumbnailImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png";
-          file.IconImageBig = GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png";
-          file.IconImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderNF.png";
+          item.ThumbnailImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png";
+          item.IconImageBig = GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png";
+          item.IconImage = GUIGraphicsContext.Skin + @"\media\DefaultFolderNF.png";
         }
         else
         {
-          string folderThumb = GetFolderThumb(file.Label);
-          file.ThumbnailImage = folderThumb;
-          file.IconImageBig = folderThumb;
-          file.IconImage = folderThumb;
+          string folderThumb = GetFolderThumb(item.Label);
+          item.ThumbnailImage = folderThumb;
+          item.IconImageBig = folderThumb;
+          item.IconImage = folderThumb;
         }
 
-        if (file.Label != ProgramUtils.cBackLabel)
+        if (item.Label != ProgramUtils.cBackLabel)
         {
-          file.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(file_OnItemSelected);
-          facadeView.Add(file);
+          item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnFileItemSelected);
+          facadeView.Add(item);
           totalItems++;
         }
       }
@@ -160,20 +160,18 @@ namespace ProgramsDatabase
       return totalItems;
     }
 
-    private void file_OnItemSelected(GUIListItem item, GUIControl parent)
+    private void OnFileItemSelected(GUIListItem item, GUIControl parent)
     {
-      GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
-      if (filmstrip == null)
-        return;
-      string thumbName = "";
-      if ((item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png") && (item.ThumbnailImage != ""))
+      GUIPrograms.ThumbnailPath = "";
+      if (item.ThumbnailImage != ""
+        && item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png"
+        && item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultAlbum.png"
+        )
       {
         // only show big thumb if there is really one....
-        thumbName = item.ThumbnailImage;
+        GUIPrograms.ThumbnailPath = item.ThumbnailImage;
       }
-      filmstrip.InfoImageFileName = thumbName;
     }
-
 
     override public int DisplayFiles(string Filepath, GUIFacadeControl facadeView)
     {

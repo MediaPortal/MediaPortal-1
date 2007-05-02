@@ -161,7 +161,6 @@ namespace ProgramsDatabase
       set { SetCurrentSortIsAscending(value); }
     }
 
-
     public FileItem PrevFile(FileItem curFile)
     {
       if (Files == null)
@@ -479,27 +478,27 @@ namespace ProgramsDatabase
         if (obj is FileItem)
         {
           FileItem curFile = obj as FileItem;
-          GUIListItem gli = new GUIListItem(curFile.Title);
-          gli.Label2 = curFile.Title2;
-          gli.MusicTag = curFile;
-          gli.IsFolder = curFile.IsFolder;
-          gli.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-          gli.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnItemSelected);
-          facadeView.Add(gli);
+          GUIListItem item = new GUIListItem(curFile.Title);
+          item.Label2 = curFile.Title2;
+          item.MusicTag = curFile;
+          item.IsFolder = curFile.IsFolder;
+          item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+          item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnFileItemSelected);
+          facadeView.Add(item);
         }
         else if (obj is ProgramFilterItem)
         {
           ProgramFilterItem curFilter = obj as ProgramFilterItem;
-          GUIListItem gli = new GUIListItem(curFilter.Title);
-          gli.Label2 = curFilter.Title2; // some filters may have more than one text
-          gli.MusicTag = curFilter;
-          gli.IsFolder = true;
-          facadeView.Add(gli);
+          GUIListItem item = new GUIListItem(curFilter.Title);
+          item.Label2 = curFilter.Title2; // some filters may have more than one text
+          item.MusicTag = curFilter;
+          item.IsFolder = true;
+          item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnFileItemSelected);
+          facadeView.Add(item);
         }
       }
       return totalItems;
     }
-
 
     void OnRetrieveCoverArt(GUIListItem gli)
     {
@@ -521,21 +520,18 @@ namespace ProgramsDatabase
       }
     }
 
-    private void OnItemSelected(GUIListItem item, GUIControl parent)
+    private void OnFileItemSelected(GUIListItem item, GUIControl parent)
     {
-      GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
-      if (filmstrip == null) return;
-      if (item == null) return;
-      if ((item.MusicTag != null) && (item.MusicTag is FileItem) && (!item.IsFolder))
+      GUIPrograms.ThumbnailPath = "";
+      if (item.ThumbnailImage != ""
+        && item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png"
+        && item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultAlbum.png"
+        )
       {
-        filmstrip.InfoImageFileName = item.ThumbnailImage;
-      }
-      else
-      {
-        filmstrip.InfoImageFileName = "";
+        // only show big thumb if there is really one....
+        GUIPrograms.ThumbnailPath = item.ThumbnailImage;
       }
     }
-
 
     public virtual void OnSort(GUIFacadeControl view, bool doSwitchState)
     {
@@ -625,7 +621,6 @@ namespace ProgramsDatabase
     {
       // descendant classes do that!
     }
-
 
     public virtual void OnInfo(GUIListItem item, ref bool isOverviewVisible, ref ProgramInfoAction modalResult, ref int selectedFileID)
     {
@@ -794,7 +789,6 @@ namespace ProgramsDatabase
       set { waitForExit = value; }
     }
 
-
     public bool GUIRefreshPossible
     {
       get { return RefreshButtonVisible(); }
@@ -830,7 +824,6 @@ namespace ProgramsDatabase
       set { postLaunch = value; }
     }
 
-
     public Filelist Files
     {
       // load on demand....
@@ -844,7 +837,6 @@ namespace ProgramsDatabase
       }
     }
 
-
     public FilelinkList Filelinks
     {
       // load on demand....
@@ -857,7 +849,6 @@ namespace ProgramsDatabase
         return fileLinks;
       }
     }
-
 
     private int GetNewAppID()
     {
@@ -976,7 +967,6 @@ namespace ProgramsDatabase
 
     }
 
-
     protected void DeleteFiles()
     {
       if ((AppID >= 0) && (sqlDB != null))
@@ -1006,7 +996,6 @@ namespace ProgramsDatabase
         }
       }
     }
-
 
     public virtual void LoadFiles()
     {
@@ -1088,7 +1077,6 @@ namespace ProgramsDatabase
 
     }
 
-
     public void Write()
     {
       if (appID == -1)
@@ -1105,7 +1093,6 @@ namespace ProgramsDatabase
     {
       return this.FileDirectory;
     }
-
 
     public void Assign(AppItem sourceApp)
     {
@@ -1213,7 +1200,6 @@ namespace ProgramsDatabase
       }
     }
 
-
     public string GetCurThumb(FileItem fileItem)
     {
       string curThumb = "";
@@ -1260,7 +1246,6 @@ namespace ProgramsDatabase
     {
       thumbIndex++;
     }
-
 
     public void LoadFromXmlProfile(XmlNode node)
     {
@@ -1312,7 +1297,5 @@ namespace ProgramsDatabase
         this.ValidExtensions = fileExtensioneNode.InnerText;
       }
     }
-
   }
-
 }
