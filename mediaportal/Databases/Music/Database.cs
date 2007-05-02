@@ -2780,7 +2780,6 @@ namespace MediaPortal.Music.Database
         OnDatabaseReorgChanged(MyArgs);
 
         int AddMissingFilesResult = AddMissingFiles(8, 36, ref fileCount);
-        //int AddMissingFilesResult = AddMissingFiles(8, 50);
         Log.Info("Musicdatabasereorg: Addmissingfiles: {0} files added", AddMissingFilesResult);
 
         /// Update the tags
@@ -2884,56 +2883,53 @@ namespace MediaPortal.Music.Database
 
     int UpdateTags(int StartProgress, int EndProgress)
     {
+      SQLiteResultSet results;
       string strSQL;
       int NumRecordsUpdated = 0;
-      int NumRecordsSkipped = 0;
+      string MusicFileName, MusicFilePath;
+
       Log.Info("Musicdatabasereorg: starting Tag update");
-
-      SQLiteResultSet FileList;
-      strSQL = String.Format("select * from song, path where song.idPath=path.idPath");
-
-      try
-      {
-        FileList = m_db.Execute(strSQL);
-        if (FileList == null)
-        {
-          Log.Info("Musicdatabasereorg: UpdateTags: Select from failed");
-          return (int)Errors.ERROR_REORG_SONGS;
-        }
-      }
-      catch (Exception)
-      {
-        Log.Error("Musicdatabasereorg: query for tag update could not be executed.");
-        //m_db.Execute("rollback");
-        return (int)Errors.ERROR_REORG_SONGS;
-      }
-
-      //	songs cleanup
-
-      Log.Info("Going to check tags of {0} files", FileList.Rows.Count);
+      Log.Info("Musicdatabasereorg: Going to check tags of {0} files", availableFiles.Count);
 
       DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
       int ProgressRange = EndProgress - StartProgress;
-      int TotalSongs = FileList.Rows.Count;
+      int TotalSongs = availableFiles.Count;
       int SongCounter = 0;
 
       double NewProgress;
       currentDate = System.DateTime.Now;
 
-      for (int i = 0; i < FileList.Rows.Count; ++i)
+      foreach (string MusicFile in availableFiles)
       {
-        string strFileName = DatabaseUtility.Get(FileList, i, "path.strPath");
-        strFileName += DatabaseUtility.Get(FileList, i, "song.strFileName");
-        //Log.Info("Musicdatabasereorg: starting Tag update 1 for {0} ", strFileName);
+        DatabaseUtility.Split(MusicFile, out MusicFilePath, out MusicFileName);
 
-        // Check the file date, if it was created before the last import, we can ignore it
-        if (System.IO.File.Exists(strFileName) && System.IO.File.GetLastWriteTime(strFileName) > _lastImport)
+        /// Convert.ToChar(34) wil give you a "
+        /// This is handy in building strings for SQL
+        strSQL = String.Format("select * from song,path where song.idPath=path.idPath and strFileName={1}{0}{1} and strPath like {1}{2}{1}", MusicFileName, Convert.ToChar(34), MusicFilePath);
+
+        try
+        {
+          results = m_db.Execute(strSQL);
+          if (results == null)
+          {
+            Log.Info("Musicdatabasereorg: UpdateTags finished with error (results == null)");
+            return (int)Errors.ERROR_REORG_SONGS;
+          }
+        }
+
+        catch (Exception)
+        {
+          Log.Error("Musicdatabasereorg: UpdateTags finished with error (exception for select)");
+          return (int)Errors.ERROR_REORG_SONGS;
+        }
+
+        if (results.Rows.Count >= 1)
         {
           // The song will be updated, tags from the file will be checked against the tags in the database
-          int idSong = Int32.Parse(DatabaseUtility.Get(FileList, i, "song.idSong"));
-          if (!UpdateSong(strFileName, idSong))
+          int idSong = Int32.Parse(DatabaseUtility.Get(results, 0, "song.idSong"));
+          if (!UpdateSong(MusicFile, idSong))
           {
-            Log.Info("Musicdatabasereorg: Song update after tag update failed for: {0}", strFileName);
+            Log.Info("Musicdatabasereorg: Song update after tag update failed for: {0}", MusicFile);
             //m_db.Execute("rollback"); 
             return (int)Errors.ERROR_REORG_SONGS;
           }
@@ -2942,20 +2938,17 @@ namespace MediaPortal.Music.Database
             NumRecordsUpdated++;
           }
         }
-        else
-          NumRecordsSkipped++;
-
-        if ((i % 10) == 0)
+        if ((SongCounter % 10) == 0)
         {
           NewProgress = StartProgress + ((ProgressRange * SongCounter) / TotalSongs);
           MyArgs.progress = Convert.ToInt32(NewProgress);
-          MyArgs.phase = String.Format("Updating tags {0}/{1}", i, FileList.Rows.Count);
+          MyArgs.phase = String.Format("Updating tags {0}/{1}", SongCounter, availableFiles.Count);
           OnDatabaseReorgChanged(MyArgs);
         }
         SongCounter++;
-      }//for (int i=0; i < results.Rows.Count;++i)
+      }
+   
       Log.Info("Musicdatabasereorg: UpdateTags completed for {0} songs", (int)NumRecordsUpdated);
-      Log.Info("Musicdatabasereorg: Skipped {0} songs because of no updates after last import", (int)NumRecordsSkipped);
       return (int)Errors.ERROR_OK;
     }
 
@@ -3536,9 +3529,9 @@ namespace MediaPortal.Music.Database
       int totalFiles = 0;
 
       int ProgressRange = EndProgress - StartProgress;
-      int TotalSongs;
       int SongCounter = 0;
       int AddedCounter = 0;
+      int TotalSongs = 0;
       string MusicFilePath, MusicFileName;
       double NewProgress;
 
@@ -3557,65 +3550,61 @@ namespace MediaPortal.Music.Database
         ///
         SongCounter++;
 
-        // Check the file date, if it was created before the last import, we can ignore it
-        if (System.IO.File.GetCreationTime(MusicFile) > _lastImport)
+        DatabaseUtility.Split(MusicFile, out MusicFilePath, out MusicFileName);
+
+        dwCRC = crc.calc(MusicFile);
+
+        /// Convert.ToChar(34) wil give you a "
+        /// This is handy in building strings for SQL
+        strSQL = String.Format("select * from song,path where song.idPath=path.idPath and strFileName={1}{0}{1} and strPath like {1}{2}{1}", MusicFileName, Convert.ToChar(34), MusicFilePath);
+        //Log.Write (strSQL);
+        //Log.Write (MusicFilePath);
+        //Log.Write (MusicFile);
+        //Log.Write (MusicFileName);
+
+        try
         {
-          DatabaseUtility.Split(MusicFile, out MusicFilePath, out MusicFileName);
-
-          dwCRC = crc.calc(MusicFile);
-
-          /// Convert.ToChar(34) wil give you a "
-          /// This is handy in building strings for SQL
-          strSQL = String.Format("select * from song,path where song.idPath=path.idPath and strFileName={1}{0}{1} and strPath like {1}{2}{1}", MusicFileName, Convert.ToChar(34), MusicFilePath);
-          //Log.Write (strSQL);
-          //Log.Write (MusicFilePath);
-          //Log.Write (MusicFile);
-          //Log.Write (MusicFileName);
-
-          try
+          results = m_db.Execute(strSQL);
+          if (results == null)
           {
-            results = m_db.Execute(strSQL);
-            if (results == null)
-            {
-              Log.Info("Musicdatabasereorg: AddMissingFiles finished with error (results == null)");
-              return (int)Errors.ERROR_REORG_SONGS;
-            }
-          }
-
-          catch (Exception)
-          {
-            Log.Error("Musicdatabasereorg: AddMissingFiles finished with error (exception for select)");
-            //m_db.Execute("rollback");
+            Log.Info("Musicdatabasereorg: AddMissingFiles finished with error (results == null)");
             return (int)Errors.ERROR_REORG_SONGS;
           }
-
-          if (results.Rows.Count >= 1)
-          {
-            /// The song exists
-            /// Log.Write ("Song {0} exists, dont do a thing",MusicFileName);
-            /// string strFileName = DatabaseUtility.Get(results,0,"path.strPath") ;
-            /// strFileName += DatabaseUtility.Get(results,0,"song.strFileName") ;
-          }
-          else
-          {
-            //The song does not exist, we will add it.
-            AddSong(MusicFileName, MusicFilePath);
-            AddedCounter++;
-          }
         }
+
+        catch (Exception)
+        {
+          Log.Error("Musicdatabasereorg: AddMissingFiles finished with error (exception for select)");
+          //m_db.Execute("rollback");
+          return (int)Errors.ERROR_REORG_SONGS;
+        }
+
+        if (results.Rows.Count >= 1)
+        {
+          /// The song exists
+          /// Log.Write ("Song {0} exists, dont do a thing",MusicFileName);
+          /// string strFileName = DatabaseUtility.Get(results,0,"path.strPath") ;
+          /// strFileName += DatabaseUtility.Get(results,0,"song.strFileName") ;
+        }
+        else
+        {
+          //The song does not exist, we will add it.
+          AddSong(MusicFileName, MusicFilePath);
+          AddedCounter++;
+        }
+
         if ((SongCounter % 10) == 0)
         {
           NewProgress = StartProgress + ((ProgressRange * SongCounter) / TotalSongs);
           MyArgs.progress = Convert.ToInt32(NewProgress);
-          MyArgs.phase = String.Format("Checking for new files {0}/{1} - new: {2}", SongCounter, availableFiles.Count, AddedCounter);
+          MyArgs.phase = String.Format("Adding new files {0}/{1}", SongCounter, availableFiles.Count);
           OnDatabaseReorgChanged(MyArgs);
         }
       } //end for-each
-      Log.Info("Musicdatabasereorg: AddMissingFiles finished with SongCounter = {0}", SongCounter);
-      Log.Info("Musicdatabasereorg: AddMissingFiles finished with AddedCounter = {0}", AddedCounter);
-      Log.Info("Musicdatabasereorg: {0} skipped because of creation before the last import", SongCounter - AddedCounter);
+      Log.Info("Musicdatabasereorg: Checked {0} files.", totalFiles);
+      Log.Info("Musicdatabasereorg: {0} skipped because of creation before the last import", totalFiles - AddedCounter);
 
-      fileCount = SongCounter;
+      fileCount = TotalSongs;
       return SongCounter;
     }
 
@@ -3710,7 +3699,11 @@ namespace MediaPortal.Music.Database
               continue;
             if ((File.GetAttributes(files[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
               continue;
-            availableFiles.Add(files[i]);
+
+            // Only Add files to the list, if they have been Created / Updated after the Last Import date
+            if (System.IO.File.GetCreationTime(files[i]) > _lastImport || System.IO.File.GetLastWriteTime(files[i]) > _lastImport)
+              availableFiles.Add(files[i]);
+
             totalFiles++;
           }
         }
