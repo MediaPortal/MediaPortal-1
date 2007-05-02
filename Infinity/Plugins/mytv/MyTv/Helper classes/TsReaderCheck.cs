@@ -64,7 +64,7 @@ namespace MyTv
     }
     void SetPermission(string extension)
     {
-      using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\MediaPlayer\Extensions", true))
+      using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\MediaPlayer\Player\Extensions", true))
       {
         RegistryKey subkey = key.OpenSubKey(extension, true);
         if (subkey == null)
