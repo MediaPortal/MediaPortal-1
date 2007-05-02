@@ -42,43 +42,60 @@ namespace MyTv
     }
     void SetExtension(string extension, string clsid)
     {
-      using (RegistryKey key = Registry.ClassesRoot.OpenSubKey(@"Media Type\Extensions", true))
+      try
       {
-        RegistryKey subkey = key.OpenSubKey(extension, true);
-        if (subkey == null)
+        using (RegistryKey key = Registry.ClassesRoot.OpenSubKey(@"Media Type\Extensions", true))
         {
-          subkey = key.CreateSubKey(extension);
+          RegistryKey subkey = key.OpenSubKey(extension, true);
+          if (subkey == null)
+          {
+            subkey = key.CreateSubKey(extension);
+          }
+          subkey.SetValue("Source Filter", clsid);
+          subkey.Close();
         }
-        subkey.SetValue("Source Filter", clsid);
-        subkey.Close();
       }
-      using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"Software\Classes\Media Type\Extensions", true))
+      catch (Exception)
       {
-        RegistryKey subkey = key.OpenSubKey(extension, true);
-        if (subkey == null)
+      }
+      try
+      {
+        using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"Software\Classes\Media Type\Extensions", true))
         {
-          subkey = key.CreateSubKey(extension);
+          RegistryKey subkey = key.OpenSubKey(extension, true);
+          if (subkey == null)
+          {
+            subkey = key.CreateSubKey(extension);
+          }
+          subkey.SetValue("Source Filter", clsid);
+          subkey.Close();
         }
-        subkey.SetValue("Source Filter", clsid);
-        subkey.Close();
+      }
+      catch (Exception)
+      {
       }
     }
     void SetPermission(string extension)
     {
-      using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\MediaPlayer\Player\Extensions", true))
+      try
       {
-        RegistryKey subkey = key.OpenSubKey(extension, true);
-        if (subkey == null)
+        using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\MediaPlayer\Player\Extensions", true))
         {
-          subkey = key.CreateSubKey(extension);
+          RegistryKey subkey = key.OpenSubKey(extension, true);
+          if (subkey == null)
+          {
+            subkey = key.CreateSubKey(extension);
+          }
+          UInt32 permission = 1;
+          UInt32 runtime = 1;
+          subkey.SetValue("Permissions", permission, RegistryValueKind.DWord);
+          subkey.SetValue("Runtime", runtime, RegistryValueKind.DWord);
+          subkey.Close();
         }
-        UInt32 permission = 1;
-        UInt32 runtime = 1;
-        subkey.SetValue("Permissions", permission,RegistryValueKind.DWord);
-        subkey.SetValue("Runtime", runtime, RegistryValueKind.DWord);
-        subkey.Close();
       }
-
+      catch (Exception)
+      {
+      }
     }
   }
 }
