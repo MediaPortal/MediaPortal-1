@@ -117,6 +117,18 @@ namespace MediaPortal.Configuration.Sections
         else if (_useCustomLevel.Checked)
           writer.SetValue("volume", "startupstyle", 2);
 
+        // When Upmixing has selected, we need to use Master Volume, regardless, what has checked here
+        SectionSettings section = SectionSettings.GetSection("Music");
+
+        if (section != null)
+        {
+          bool mixing = (bool)section.GetSetting("mixing");
+          if (mixing)
+          {
+            _useMasterVolume.Checked = true;
+          }
+        }
+
         writer.SetValueAsBool("volume", "digital", _useWave.Checked);
         writer.SetValue("volume", "table", _customText);
         writer.SetValue("volume", "startuplevel", _customLevel);
@@ -260,7 +272,7 @@ namespace MediaPortal.Configuration.Sections
       this._customTextbox.Enabled = false;
       this._customTextbox.Location = new System.Drawing.Point(168, 92);
       this._customTextbox.Name = "_customTextbox";
-      this._customTextbox.Size = new System.Drawing.Size(288, 21);
+      this._customTextbox.Size = new System.Drawing.Size(288, 20);
       this._customTextbox.TabIndex = 4;
       this._customTextbox.Validating += new System.ComponentModel.CancelEventHandler(this.OnValidateCustomTable);
       // 
@@ -270,7 +282,7 @@ namespace MediaPortal.Configuration.Sections
       this._useCustomHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this._useCustomHandler.Location = new System.Drawing.Point(16, 96);
       this._useCustomHandler.Name = "_useCustomHandler";
-      this._useCustomHandler.Size = new System.Drawing.Size(64, 17);
+      this._useCustomHandler.Size = new System.Drawing.Size(62, 17);
       this._useCustomHandler.TabIndex = 3;
       this._useCustomHandler.Text = "C&ustom:";
       this._useCustomHandler.UseVisualStyleBackColor = true;
@@ -294,7 +306,7 @@ namespace MediaPortal.Configuration.Sections
       this._useWindowsHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this._useWindowsHandler.Location = new System.Drawing.Point(16, 24);
       this._useWindowsHandler.Name = "_useWindowsHandler";
-      this._useWindowsHandler.Size = new System.Drawing.Size(104, 17);
+      this._useWindowsHandler.Size = new System.Drawing.Size(103, 17);
       this._useWindowsHandler.TabIndex = 0;
       this._useWindowsHandler.Text = "&Windows default";
       this._useWindowsHandler.UseVisualStyleBackColor = true;
@@ -306,7 +318,7 @@ namespace MediaPortal.Configuration.Sections
       this._useClassicHandler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this._useClassicHandler.Location = new System.Drawing.Point(16, 48);
       this._useClassicHandler.Name = "_useClassicHandler";
-      this._useClassicHandler.Size = new System.Drawing.Size(56, 17);
+      this._useClassicHandler.Size = new System.Drawing.Size(57, 17);
       this._useClassicHandler.TabIndex = 1;
       this._useClassicHandler.Text = "&Classic";
       this._useClassicHandler.UseVisualStyleBackColor = true;
@@ -336,7 +348,7 @@ namespace MediaPortal.Configuration.Sections
       this._levelTextbox.Enabled = false;
       this._levelTextbox.Location = new System.Drawing.Point(168, 72);
       this._levelTextbox.Name = "_levelTextbox";
-      this._levelTextbox.Size = new System.Drawing.Size(288, 21);
+      this._levelTextbox.Size = new System.Drawing.Size(288, 20);
       this._levelTextbox.TabIndex = 3;
       this._levelTextbox.Validating += new System.ComponentModel.CancelEventHandler(this.OnValidateCustomLevel);
       // 
@@ -347,7 +359,7 @@ namespace MediaPortal.Configuration.Sections
       this._useCustomLevel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this._useCustomLevel.Location = new System.Drawing.Point(16, 72);
       this._useCustomLevel.Name = "_useCustomLevel";
-      this._useCustomLevel.Size = new System.Drawing.Size(60, 17);
+      this._useCustomLevel.Size = new System.Drawing.Size(59, 17);
       this._useCustomLevel.TabIndex = 2;
       this._useCustomLevel.Text = "Custom";
       this._useCustomLevel.UseVisualStyleBackColor = true;
@@ -360,7 +372,7 @@ namespace MediaPortal.Configuration.Sections
       this._useSystemCurrent.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this._useSystemCurrent.Location = new System.Drawing.Point(16, 48);
       this._useSystemCurrent.Name = "_useSystemCurrent";
-      this._useSystemCurrent.Size = new System.Drawing.Size(198, 17);
+      this._useSystemCurrent.Size = new System.Drawing.Size(194, 17);
       this._useSystemCurrent.TabIndex = 1;
       this._useSystemCurrent.Text = "Use the current system volume level";
       this._useSystemCurrent.UseVisualStyleBackColor = true;
@@ -373,7 +385,7 @@ namespace MediaPortal.Configuration.Sections
       this._useLastKnownLevel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this._useLastKnownLevel.Location = new System.Drawing.Point(16, 24);
       this._useLastKnownLevel.Name = "_useLastKnownLevel";
-      this._useLastKnownLevel.Size = new System.Drawing.Size(140, 17);
+      this._useLastKnownLevel.Size = new System.Drawing.Size(141, 17);
       this._useLastKnownLevel.TabIndex = 0;
       this._useLastKnownLevel.Text = "Last known volume level";
       this._useLastKnownLevel.UseVisualStyleBackColor = true;
@@ -399,7 +411,7 @@ namespace MediaPortal.Configuration.Sections
       this._useWave.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this._useWave.Location = new System.Drawing.Point(16, 56);
       this._useWave.Name = "_useWave";
-      this._useWave.Size = new System.Drawing.Size(52, 17);
+      this._useWave.Size = new System.Drawing.Size(53, 17);
       this._useWave.TabIndex = 1;
       this._useWave.Text = "&Wave";
       this._useWave.UseVisualStyleBackColor = true;
@@ -414,7 +426,6 @@ namespace MediaPortal.Configuration.Sections
       this._useMasterVolume.TabIndex = 0;
       this._useMasterVolume.Text = "&Master Volume";
       this._useMasterVolume.UseVisualStyleBackColor = true;
-      this._useMasterVolume.CheckedChanged += new System.EventHandler(this._useMasterVolume_CheckedChanged);
       // 
       // mpGroupBox1
       // 
@@ -435,7 +446,7 @@ namespace MediaPortal.Configuration.Sections
       this._useVolumeOSD.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this._useVolumeOSD.Location = new System.Drawing.Point(16, 35);
       this._useVolumeOSD.Name = "_useVolumeOSD";
-      this._useVolumeOSD.Size = new System.Drawing.Size(243, 17);
+      this._useVolumeOSD.Size = new System.Drawing.Size(242, 17);
       this._useVolumeOSD.TabIndex = 0;
       this._useVolumeOSD.Text = "Show default Volume OSD for fullscreen video";
       this._useVolumeOSD.UseVisualStyleBackColor = true;
@@ -485,12 +496,5 @@ namespace MediaPortal.Configuration.Sections
       private MPCheckBox _useVolumeOSD;
 
     private MPRadioButton _useSystemCurrent;
-
-
-    private void _useMasterVolume_CheckedChanged(object sender, System.EventArgs e)
-    {
-
-
-    }
   }
 }
