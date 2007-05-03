@@ -65,6 +65,9 @@ namespace MediaPortal.Player
     static bool driveSpeedLoaded = false;
     static bool driveSpeedReduced = false;
     static bool driveSpeedControlEnabled = false;
+    static string _currentTitle = ""; //actual program metadata - usefull for tv - avoids extra DB lookups
+    static string _currentDescription = ""; //actual program metadata - usefull for tv - avoids extra DB Lookups. 
+    static string _currentFileName = ""; //holds the actual file being played. Usefull for rtsp streams. 
     static double[] _chapters = null;
     #endregion
 
@@ -95,6 +98,24 @@ namespace MediaPortal.Player
     {
       get { return _factory; }
       set { _factory = value; }
+    }
+
+    public static string currentTitle
+    {
+        get { return _currentTitle; }
+        set { _currentTitle = value; }
+    }
+    
+    public static string currentFileName
+    {
+        get { return _currentFileName; }
+        set { _currentFileName = value; }
+    }
+
+    public static string currentDescription
+    {
+        get { return _currentDescription; }
+        set { _currentDescription = value; }
     }
     #endregion
 
@@ -330,7 +351,7 @@ namespace MediaPortal.Player
         {
           _currentMedia = MediaType.TV;
           if (!_player.IsTimeShifting)
-            _currentMedia = MediaType.Recording;
+              _currentMedia = MediaType.Recording;
         }
         else if (_player.IsRadio)
         {

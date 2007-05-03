@@ -87,9 +87,7 @@ namespace TvPlugin
     }
   }
   #endregion
-  /// <summary>
-  /// 
-  /// </summary>
+ 
   public class TvRecorded : GUIWindow, IComparer<GUIListItem>
   {
     #region variables
@@ -124,7 +122,6 @@ namespace TvPlugin
     bool _createRecordedThumbs = true;
     int m_iSelectedItem = 0;
     string currentShow = String.Empty;
-    string _currentRTSPFilename = String.Empty;
     //bool _creatingThumbNails = false;
     RecordingThumbCacher thumbworker = null;
 
@@ -161,6 +158,7 @@ namespace TvPlugin
         return true;
       }
     }
+    
 
     #region Serialisation
     void LoadSettings()
@@ -791,9 +789,15 @@ namespace TvPlugin
               }
       */
       string fileName = rec.FileName;
+
+      //populates recording metadata to g_player;
+      g_Player.currentFileName = fileName;
+      g_Player.currentTitle = rec.Title;
+      g_Player.currentDescription = rec.Description;
+
+
       if (!System.IO.File.Exists(fileName))
       {
-        _currentRTSPFilename = fileName;
         fileName = TVHome.TvServer.GetStreamUrlForFileName(rec.IdRecording);
       }
       Log.Info("TvRecorded Play:{0}", fileName);
@@ -1119,9 +1123,10 @@ namespace TvPlugin
       Log.Info("TvRecorded:OnStopped {0} {1}", type, filename);
       if (type != g_Player.MediaType.Recording) return;
 
-      if (filename.Substring(0,4) == "rtsp" ) { filename = _currentRTSPFilename; };
+      if (filename.Substring(0, 4) == "rtsp") { filename = g_Player.currentFileName; };
       TvBusinessLayer layer = new TvBusinessLayer();
       Recording rec = layer.GetRecordingByFileName(filename);
+      if (stoptime >= g_Player.Duration) { stoptime = 0;}; //temporary workaround before end of stream get's properly implemented
       if (rec != null)
       {
         rec.StopTime = stoptime;
@@ -1139,7 +1144,7 @@ namespace TvPlugin
     {
       if (type != g_Player.MediaType.Recording) return;
 
-      if (filename.Substring(0,4) == "rtsp" ) { filename = _currentRTSPFilename; };
+      if (filename.Substring(0, 4) == "rtsp") { filename = g_Player.currentFileName; };
 
       g_Player.Stop();
 
@@ -1207,5 +1212,7 @@ namespace TvPlugin
     {
       TVHome.UpdateProgressPercentageBar();
     }
+    
+
   }
 }

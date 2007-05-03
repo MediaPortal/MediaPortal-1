@@ -291,6 +291,14 @@ namespace MediaPortal.GUI.Video
         }
       }
 
+      if (fileName.Substring(0, 4) == "rtsp")
+      {
+          GUIPropertyManager.SetProperty("#Play.Current.Title", g_Player.currentTitle);
+          GUIPropertyManager.SetProperty("#Play.Current.Plot", g_Player.currentTitle + "\n" + g_Player.currentDescription);
+          GUIPropertyManager.SetProperty("#Play.Current.PlotOutline", g_Player.currentDescription);
+      }
+
+
       IMDBMovie movieDetails = new IMDBMovie();
       bool bMovieInfoFound = false;
 
