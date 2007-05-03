@@ -13,7 +13,7 @@
   </LinearGradientBrush>
   
   <!-- video gradient brush-->
-  <LinearGradientBrush x:Key="VideoOpacityMask" EndPoint="0.5,0" StartPoint="0.5,0.6">
+  <LinearGradientBrush x:Key="VideoOpacityMask" EndPoint="0.5,0" StartPoint="0.5,1.0">
     <GradientStop Color="#00000000" Offset="0"/>
     <GradientStop Color="#FF000000" Offset="1"/>
   </LinearGradientBrush>

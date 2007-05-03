@@ -3,6 +3,7 @@
                           xmlns:local="clr-namespace:ProjectInfinity.Menu;assembly=ProjectInfinity.Services"
                           xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls">
   <Grid>
+    <Grid Background="{Binding VideoBrush}" OpacityMask="{Binding VideoOpacityMask}"/>
     <Grid controls:AnimationBehaviorHost.LoadedBehavior="ZoomIn" controls:AnimationBehaviorHost.LoadedDuration="00:00:00.700"
           controls:AnimationBehaviorHost.UnloadedBehavior="FadeOut" controls:AnimationBehaviorHost.UnloadedDuration="00:00:00.300"
           FocusManager.FocusedElement="{Binding ElementName=menu}" >
@@ -292,6 +293,5 @@
         </controls:ListBox.RenderTransform>
       </controls:ListBox>
     </Grid>
-    <Grid Background="{Binding VideoBrush}" OpacityMask="{Binding VideoOpacityMask}"/>
   </Grid>
 </controls:AnimationBehaviorHost>
