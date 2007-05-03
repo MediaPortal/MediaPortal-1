@@ -105,10 +105,11 @@ namespace TvService
 
     #region IComparable<CardInfo> Members
 
+    // higher priority means that this one should be more to the front of the list
     public int CompareTo(CardDetail other)
     {
-      if (other.Priority > Priority) return -1;
-      if (other.Priority < Priority) return 1;
+      if (Priority > other.Priority) return -1;
+      if (Priority < other.Priority) return 1;
       return 0;
     }
 

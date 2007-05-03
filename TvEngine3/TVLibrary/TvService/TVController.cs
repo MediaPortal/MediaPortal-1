@@ -1978,7 +1978,7 @@ namespace TvService
         foreach (IChannel tuningDetail in tuningDetails)
         {
           number++;
-          //Log.Write("Controller:   tuning detail #{0} {1} ", number, tuningDetail.ToString());
+          Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
           Dictionary<int, TvCard>.Enumerator enumerator = _cards.GetEnumerator();
 
           //for each card...
@@ -2008,7 +2008,6 @@ namespace TvService
               continue;
             }
 
-            //check if card is able to tune to the channel
             if (CanTune(keyPair.Value.DataBaseCard.IdCard, tuningDetail) == false)
             {
               //card cannot tune to this channel, so skip it
@@ -2140,7 +2139,7 @@ namespace TvService
               //then set this cards priority as very low...
               if (nrOfOtherUsers > 0 && !sameTransponder)
               {
-                cardInfo.Priority += 100;
+                cardInfo.Priority -= 100;
               }
               Log.Info("Controller:    card:{0} type:{1} is available priority:{2} #users:{3} same transponder:{4}",
                             cardInfo.Id, Type(cardInfo.Id), cardInfo.Priority, nrOfOtherUsers, sameTransponder);
@@ -2167,6 +2166,8 @@ namespace TvService
           else
             result = TvResult.AllCardsBusy;
         }
+        Log.Info("Controller: found {0} available", cardsAvailable.Count);
+
         return cardsAvailable;
       }
       catch (Exception ex)
