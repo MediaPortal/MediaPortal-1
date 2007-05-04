@@ -30,12 +30,20 @@
     <String id="0">infinity</String>
     <String id="1">Yes</String>
     <String id="2">No</String>
+    <String id="3">Restart</String>
+    <String id="4">Delete</String>
+    <String id="5">Resume</String>
+    <String id="6">Done</String>
+    <String id="7">Finished</String>
   </Section>
   <Section name="settings">
     <String id="0">Settings</String>
     <String id="1">Folders</String>
     <String id="2">Extensions</String>
     <String id="3">Thumbnails</String>
+  </Section>
+  <Section name="nowplaying">
+    <String id="0">Now Playing</String>
   </Section>
   <Section name="mytv">
     <String id="0">Tv Guide</String>

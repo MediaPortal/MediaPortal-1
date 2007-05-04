@@ -9,14 +9,13 @@ using ProjectInfinity.Players;
 
 namespace NowPlaying
 {
-  [Plugin("NowPlaying", "NowPlaying", AutoStart=true,ListInMenu = false, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Video.png")]
-  public class NowPlayingPlugin: IPlugin, IAutoStart
+  [Plugin("NowPlaying", "NowPlaying", AutoStart = true, ListInMenu = false, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Video.png")]
+  public class NowPlayingPlugin : IPlugin, IAutoStart
   {
     #region IPlugin Members
 
     public void Initialize(string id)
     {
-      ServiceScope.Get<IMessageBroker>().Register(this);
     }
 
     #endregion
@@ -44,6 +43,7 @@ namespace NowPlaying
     [MessageSubscription(typeof(PlayerEndedMessage))]
     protected void OnPlaybackEnded(PlayerEndedMessage e)
     {
+      ServiceScope.Get<INavigationService>().Navigate(new PlaybackEnded());
     }
 
     [MessageSubscription(typeof(PlayerStartMessage))]
@@ -60,6 +60,7 @@ namespace NowPlaying
 
     public void Startup()
     {
+      ServiceScope.Get<IMessageBroker>().Register(this);
     }
 
     #endregion

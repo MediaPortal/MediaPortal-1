@@ -95,8 +95,8 @@ namespace MyVideos
     [MessageSubscription(typeof(PlayerEndedMessage))]
     protected void OnPlaybackEnded(PlayerEndedMessage e)
     {
-      ServiceScope.Get<ILogger>().Info("video home: player ended msg received");
-      Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerEnded));
+      // ServiceScope.Get<ILogger>().Info("video home: player ended msg received");
+     // Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new MediaPlayerErrorDelegate(OnMediaPlayerEnded));
     }
     [MessageSubscription(typeof(PlayerStartMessage))]
     protected void OnPlaybackStarted(PlayerStartMessage e)

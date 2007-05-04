@@ -34,12 +34,20 @@ namespace MyVideos
 
     void VideoFullscreen_Unloaded(object sender, RoutedEventArgs e)
     {
-      _model.Dispose();
-      _model = null;
+      if (_model != null)
+      {
+        _model.Dispose();
+        _model = null;
+      }
     }
 
     void VideoFullscreen_Loaded(object sender, RoutedEventArgs e)
     {
+      if (ServiceScope.Get<IPlayerCollectionService>().Count == 0)
+      {
+        ServiceScope.Get<INavigationService>().GoBack();
+        return;
+      }
       _model = new VideoFullscreenViewModel(); ;
       DataContext = _model;
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
