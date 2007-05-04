@@ -197,7 +197,7 @@ namespace TvPlugin
           bool stop = true;
           if (value != null)
           {
-            if (value.Id == _card.Id) stop = false;
+            if (value.Id == _card.Id || value.Id == -1) stop = false; 
           }
           if (stop)
           {
@@ -1266,8 +1266,28 @@ namespace TvPlugin
       bool _return = false;
 
       User user = new User();
+      
+      TvBusinessLayer layer = new TvBusinessLayer();
+      int newCardId = -1;
+      foreach (Card c in layer.Cards)
+      {
+          foreach (ChannelMap map in c.ReferringChannelMap())
+          {
+              if (map.IdChannel == channel.IdChannel)
+              {
+                 newCardId = c.IdCard;
+                  break;
+              }
+          }
+          if (newCardId > -1) break;
+      }
+      if (newCardId != _card.Id && newCardId > -1) g_Player.Stop();
+
+
       succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
-      if ( !wasPlaying || (succeeded == TvResult.Succeeded )) //added by joboehl - Doesn't destroy card info unless we might not needit to continue playing something
+
+      
+      if ( !wasPlaying || (succeeded == TvResult.Succeeded )) //added by joboehl - Doesn't destroy card info unless we might not need it to continue playing something
           TVHome.Card = card; //Moved by joboehl - Only touch the card if it did not work. 
            
       MediaPortal.GUI.Library.Log.Info("succeeded:{0} ", succeeded);
@@ -1644,6 +1664,7 @@ namespace TvPlugin
     private IList channels = new ArrayList();
     private bool reentrant = false;
 
+
     #endregion
 
     #region Constructors
@@ -1852,6 +1873,7 @@ namespace TvPlugin
         return ((ChannelGroup)m_groups[m_zapgroup]).GroupName;
       }
     }
+
     #endregion
 
     #region Public methods
