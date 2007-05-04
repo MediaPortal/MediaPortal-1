@@ -699,6 +699,7 @@ namespace TvPlugin
       }
       if (g_Player.Playing == false)
       {
+          UpdateProgressPercentageBar();
         //if (btnTuningDetails!=null)
         //  btnTuningDetails.Visible = false;
         if (btnTeletext.Visible)
@@ -1036,6 +1037,24 @@ namespace TvPlugin
             g_Player.Stop();
           }
         }
+      }
+      if (g_Player.IsTVRecording || !g_Player.Playing) 
+      {
+          GUIPropertyManager.SetProperty("#TV.View.channel", "");
+          GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
+          if (g_Player.Playing)
+          {
+              GUIPropertyManager.SetProperty("#TV.View.title", g_Player.currentTitle);
+              GUIPropertyManager.SetProperty("#TV.View.description", g_Player.currentDescription);
+          }
+          else
+          {
+              GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
+              GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
+          }
+
+          return;
       }
 
       if (Navigator.Channel == null) return;
