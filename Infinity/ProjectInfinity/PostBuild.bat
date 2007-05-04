@@ -37,3 +37,7 @@ xcopy /y %1\Plugins\MyWeather\bin\%2\MyWeather.* Plugins\MyWeather\
 REM MyPictures
 xcopy /y %1\Plugins\MyPictures\bin\%2\MyPictures.* Plugins\MyPictures\
 
+
+REM NowPlaying
+xcopy /y %1\Plugins\NowPlaying\bin\%2\NowPlaying.* Plugins\NowPlaying\
+
