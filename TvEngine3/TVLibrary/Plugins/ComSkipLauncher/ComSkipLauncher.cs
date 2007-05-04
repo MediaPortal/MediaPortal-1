@@ -130,7 +130,7 @@ namespace TvEngine
           
           Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, channel.Name, _program, parameters);
 
-          LaunchProcess(_program, parameters, Path.GetDirectoryName(tvEvent.Recording.FileName), ProcessWindowStyle.Hidden);
+          LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
         }
         else if (tvEvent.EventType == TvServerEventType.RecordingEnded && !_runAtStart)
         {
@@ -140,7 +140,7 @@ namespace TvEngine
 
           Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, channel.Name, _program, parameters);
 
-          LaunchProcess(_program, parameters, Path.GetDirectoryName(tvEvent.Recording.FileName), ProcessWindowStyle.Hidden);
+          LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
         }
       }
       catch (Exception ex)
