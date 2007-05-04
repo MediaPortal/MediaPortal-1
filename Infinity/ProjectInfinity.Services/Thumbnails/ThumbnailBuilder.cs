@@ -7,6 +7,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using System.Text;
 using System.Threading;
+using ProjectInfinity.Messaging;
+using ProjectInfinity.Messaging.Files;
 
 namespace ProjectInfinity.Thumbnails
 {
@@ -61,6 +63,26 @@ namespace ProjectInfinity.Thumbnails
     Thread _workerThread;
     #endregion
 
+    public ThumbnailBuilder()
+    {
+      ServiceScope.Get<IMessageBroker>().Register(this);
+    }
+
+    [MessageSubscription(typeof(FileDeleteMessage))]
+    protected void OnFileDelete(FileDeleteMessage e)
+    {
+      try
+      {
+        string thumbNail = System.IO.Path.ChangeExtension(e.FileName, ".png");
+        if (System.IO.File.Exists(thumbNail))
+        {
+          System.IO.File.Delete(thumbNail);
+        }
+      }
+      catch (Exception)
+      {
+      }
+    }
     /// <summary>
     /// Generates a thumbnail for the specified media file
     /// </summary>

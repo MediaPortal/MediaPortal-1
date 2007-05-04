@@ -6,6 +6,7 @@ using ProjectInfinity.Messaging;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
 using ProjectInfinity.Players;
+using ProjectInfinity.Messaging.Files;
 
 namespace NowPlaying
 {

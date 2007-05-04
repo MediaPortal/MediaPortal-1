@@ -35,6 +35,7 @@
     <String id="5">Resume</String>
     <String id="6">Done</String>
     <String id="7">Finished</String>
+    <String id="8">Are you sure to delete this file?</String>
   </Section>
   <Section name="settings">
     <String id="0">Settings</String>

@@ -199,22 +199,22 @@ namespace Dialogs
     {
       get
       {
-        if (_closeCommand == null)
+        if (_yesCommand == null)
         {
-          _closeCommand = new YesCommand(this);
+          _yesCommand = new YesCommand(this);
         }
-        return _closeCommand;
+        return _yesCommand;
       }
     }
     public ICommand No
     {
       get
       {
-        if (_closeCommand == null)
+        if (_noCommand == null)
         {
-          _closeCommand = new NoCommand(this);
+          _noCommand = new NoCommand(this);
         }
-        return _closeCommand;
+        return _noCommand;
       }
     }
     public ICommand ItemSelected
