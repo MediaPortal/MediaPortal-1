@@ -113,7 +113,7 @@ namespace ProcessPlugins.ComSkipLauncher
           parameters
         );
 
-        LaunchProcess(_program, parameters, Path.GetDirectoryName(recordingFilename), ProcessWindowStyle.Hidden);
+        LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
       }
       catch (Exception ex)
       {
@@ -139,7 +139,7 @@ namespace ProcessPlugins.ComSkipLauncher
           parameters
         );
 
-        LaunchProcess(_program, parameters, Path.GetDirectoryName(recordingFilename), ProcessWindowStyle.Hidden);
+        LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
       }
       catch (Exception ex)
       {
