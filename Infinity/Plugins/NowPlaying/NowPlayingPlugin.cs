@@ -44,7 +44,7 @@ namespace NowPlaying
     [MessageSubscription(typeof(PlayerEndedMessage))]
     protected void OnPlaybackEnded(PlayerEndedMessage e)
     {
-      ServiceScope.Get<INavigationService>().Navigate(new PlaybackEnded());
+  //    ServiceScope.Get<INavigationService>().Navigate(new PlaybackEnded());
     }
 
     [MessageSubscription(typeof(PlayerStartMessage))]

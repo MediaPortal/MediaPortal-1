@@ -41,7 +41,6 @@
     <Reference Include="System.IdentityModel" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\BaseViewModel.cs" />
     <Compile Include="NowPlayingPlugin.cs" />
     <Compile Include="PlaybackEnded.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -77,6 +76,9 @@
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
       <Name>ProjectInfinity.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
