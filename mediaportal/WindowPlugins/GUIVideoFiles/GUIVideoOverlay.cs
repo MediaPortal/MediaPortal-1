@@ -263,7 +263,7 @@ namespace MediaPortal.GUI.Video
 
       bool isLive = g_Player.IsTimeShifting;
       string extension = System.IO.Path.GetExtension(fileName).ToLower();
-      if (extension.Equals(".sbe") || extension.Equals(".dvr-ms") || (extension.Equals(".ts") && !isLive))
+      if (extension.Equals(".sbe") || extension.Equals(".dvr-ms") || (extension.Equals(".ts") && !isLive || g_Player.IsTVRecording ))
       {
         // this is a recorded movie.
         // check the TVDatabase for the description,genre,title,...
@@ -288,15 +288,21 @@ namespace MediaPortal.GUI.Video
           GUIPropertyManager.SetProperty("#Play.Current.Thumb", logo);
           _thumbLogo = logo;
           return;
-        }
       }
-
-      if (fileName.Substring(0, 4) == "rtsp")
+      else if (g_Player.currentTitle != "")
       {
           GUIPropertyManager.SetProperty("#Play.Current.Title", g_Player.currentTitle);
           GUIPropertyManager.SetProperty("#Play.Current.Plot", g_Player.currentTitle + "\n" + g_Player.currentDescription);
           GUIPropertyManager.SetProperty("#Play.Current.PlotOutline", g_Player.currentDescription);
       }
+      }
+
+      /*if (fileName.Substring(0, 4) == "rtsp")
+      {
+          GUIPropertyManager.SetProperty("#Play.Current.Title", g_Player.currentTitle);
+          GUIPropertyManager.SetProperty("#Play.Current.Plot", g_Player.currentTitle + "\n" + g_Player.currentDescription);
+          GUIPropertyManager.SetProperty("#Play.Current.PlotOutline", g_Player.currentDescription);
+      }*/
 
 
       IMDBMovie movieDetails = new IMDBMovie();
