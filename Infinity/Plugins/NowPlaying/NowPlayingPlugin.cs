@@ -9,8 +9,8 @@ using ProjectInfinity.Players;
 
 namespace NowPlaying
 {
-  [Plugin("NowPlaying", "NowPlaying", ListInMenu = false, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Video.png")]
-  public class NowPlaying
+  [Plugin("NowPlaying", "NowPlaying", AutoStart=true,ListInMenu = false, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Video.png")]
+  public class NowPlayingPlugin: IPlugin, IAutoStart
   {
     #region IPlugin Members
 
@@ -55,5 +55,13 @@ namespace NowPlaying
     protected void OnPlaybackFailed(PlayerStartFailedMessage e)
     {
     }
+
+    #region IAutoStart Members
+
+    public void Startup()
+    {
+    }
+
+    #endregion
   }
 }
