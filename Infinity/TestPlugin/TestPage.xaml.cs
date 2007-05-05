@@ -56,14 +56,14 @@ namespace TestPlugin
     }
 
     [MessageSubscription(typeof(MusicStartMessage))]
-    private void MusicStarted(object sender, MusicStartMessage args)
+    private void MusicStarted(MusicStartMessage msg)
     {
       musicLabel.Content =
-        string.Format("Playing {0} from {1}: track {2} from the album {3}", args.Title, args.Artist, args.TrackNo,
-                      args.Album);
+        string.Format("Playing {0} from {1}: track {2} from the album {3}", msg.Title, msg.Artist, msg.TrackNo,
+                      msg.Album);
       //Check if the message was sent by the ExtendedPlayer.  We know that it passes an 
       //ExtendedMusicStartEventArgs instance (which inherits from MusicStartEventArgs)
-      ExtendedMusicStartMessage extended = args as ExtendedMusicStartMessage;
+      ExtendedMusicStartMessage extended = msg as ExtendedMusicStartMessage;
       if (extended != null)
       {
         ratingLabel.Content = "Rating = " + extended.Rating;
@@ -75,7 +75,7 @@ namespace TestPlugin
     }
 
     [MessageSubscription(typeof(Stop))]
-    private void MusicStopped(object sender, EventArgs args)
+    private void MusicStopped(Stop msg)
     {
       musicLabel.Content = null;
       ratingLabel.Content = null;

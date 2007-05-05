@@ -5,14 +5,12 @@ using ProjectInfinity.Plugins;
 
 namespace TestPlugin
 {
-  [Plugin("Test", "Plugin for testing purposes", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Music.png")]
-  public class TestPlugin : IPlugin
+  public class TestPlugin : IPlugin, IMenuCommand
   {
     #region IPlugin Members
 
     public void Initialize(string id)
     {
-      ServiceScope.Get<INavigationService>().Navigate(new Uri("/TestPlugin;component/TestPage.xaml", UriKind.Relative));
     }
 
     #endregion
@@ -25,9 +23,13 @@ namespace TestPlugin
     ///<filterpriority>2</filterpriority>
     public void Dispose()
     {
-      throw new NotImplementedException();
     }
 
     #endregion
+
+    public void Run()
+    {
+      ServiceScope.Get<INavigationService>().Navigate(new Uri("/TestPlugin;component/TestPage.xaml", UriKind.Relative));
+    }
   }
 }
