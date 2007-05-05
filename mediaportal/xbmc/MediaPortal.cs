@@ -856,6 +856,11 @@ public class MediaPortalApp : D3DApp, IRender
   static object syncResume = new object();
   private void OnResume()
   {
+    if (_onResumeRunning == true)
+    {
+      Log.Info("Main: OnResume - already running -> return without further action");
+      return;
+    }
     Log.Debug("Main: OnResume - set lock for syncronous inits");
     lock (syncResume)
     {
@@ -865,6 +870,7 @@ public class MediaPortalApp : D3DApp, IRender
         return;
       }
 
+      _onResumeRunning = true;
       EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
       bool turnMonitorOn;
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -880,9 +886,8 @@ public class MediaPortalApp : D3DApp, IRender
       }
 
       Recorder.Stop();  // bug fix from Powerscheduler
-      if (!Recorder.Running && !_onResumeRunning)
+      if (!Recorder.Running)
       {
-        _onResumeRunning = true;
         Log.Info("Main: OnResume - Starting recorder");
         Recorder.Start();
         if (turnMonitorOn)
@@ -896,7 +901,7 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("Main: OnResume - init InputDevices");
       InputDevices.Init();
 
-      _onResumeRunning = false;
+//      _onResumeRunning = false;
 
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
       if (_startWithBasicHome)
@@ -909,6 +914,7 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: OnResume - Switch to home screen");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
       }
+      _onResumeRunning = false;
       _suspended = false;
       Log.Info("Main: OnResume - Done");
     }
