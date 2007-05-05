@@ -85,6 +85,7 @@ namespace MediaPortal.GUI.Library
 			if(_showCount <= 0)
 				return;
 
+      GUIGraphicsContext.SetScalingResolution(0, 0, false);
 			_animation.Render(GUIGraphicsContext.TimePassed);
 		}
 
