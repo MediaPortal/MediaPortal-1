@@ -12,7 +12,7 @@ namespace Clock2C
     /// This plugin sends the current time in a message.
     /// </summary>
     [Plugin("Clock2C", "Sends the current time in a message.", AutoStart = true, ListInMenu = false)]
-    public class Clock2CPlugin : IPlugin
+    public class Clock2CPlugin : IPlugin, IAutoStart
     {
         private System.Timers.Timer Timer;
         private Clock2CConfig cc;
@@ -32,24 +32,17 @@ namespace Clock2C
 
         #region IPlugin Member
 
-        public void Initialize()        // TODO: why the hell is this not a message?
+        public void Initialize(string id)        // TODO: why the hell is this not a message?
         {
-            logger = ServiceScope.Get<ProjectInfinity.Logging.ILogger>();
-            logger.Debug("* Clock2C created.");
+            if (logger == null)
+            {
+                logger = ServiceScope.Get<ProjectInfinity.Logging.ILogger>();
+            }
+            logger.Debug("* Clock2C initialized with id=" + id);
 
-            ServiceScope.Get<IMessageBroker>().Register(this);  // why that?
-            ServiceScope.Add<Clock2CPlugin>(this);                    // why this?
+            // ServiceScope.Get<IMessageBroker>().Register(this); crashes here!
 
-            if (cc.Interval == 0)
-                cc.Interval = 1000;
-
-            Timer = new System.Timers.Timer();
-            Timer.AutoReset = true;
-            Timer.Interval = cc.Interval;
-            Timer.Elapsed += new ElapsedEventHandler(OnTimer);
-            Timer.Enabled = false;
-
-            logger.Debug("* Clock2C initialized.");
+            logger.Debug("* Clock2C initialization successful.");
         }
 
         #endregion
@@ -65,13 +58,42 @@ namespace Clock2C
         #endregion
 
 
+        #region IAutoStart Member
+
+        public void Startup()
+        {
+            if (logger == null)
+            {
+                logger = ServiceScope.Get<ProjectInfinity.Logging.ILogger>();
+            }
+            logger.Debug("* Clock2C autostarted");
+
+            ServiceScope.Get<IMessageBroker>().Register(this);
+            logger.Debug("* Clock2C: IMessageBroker.Register(this)");
+            //ServiceScope.Add<Clock2CPlugin>(this);
+            //logger.Debug("* Clock2C: ServiceScope.Add<Clock2CPlugin>(this)");
+
+            if (cc.Interval == 0)
+                cc.Interval = 1000;
+
+            Timer = new System.Timers.Timer();
+            Timer.AutoReset = true;
+            Timer.Interval = cc.Interval;
+            Timer.Elapsed += new ElapsedEventHandler(OnTimer);
+            Timer.Enabled = true;
+
+            logger.Debug("* Clock2C autostart successful.");
+        }
+
+        #endregion
 
 
         #region Receiving foreign messages
 
 
         [MessageSubscription(typeof(ProjectInfinity.Messaging.PluginMessages.PluginStart))]
-        private void PluginStart(object Sender, object e)
+        private void PluginStart(ProjectInfinity.Messaging.PluginMessages.PluginStart e)
+        //private void PluginStart(object Sender, object e)
         {
             // TODO: e is of type ProjectInfinity.Plugins.PluginStartStopEventArgs, 
             // but using this as argument raises an exception.
@@ -94,7 +116,7 @@ namespace Clock2C
 
 
         [MessageSubscription(typeof(ProjectInfinity.Messaging.PluginMessages.PluginStop))]
-        private void PluginStop(object Sender, object e)
+        private void PluginStop(ProjectInfinity.Messaging.PluginMessages.PluginStop e)
         {
             // TODO: This is not received!
             logger.Debug("* Clock2C received PluginStop.");
@@ -113,7 +135,7 @@ namespace Clock2C
         #region Receiving self defined messages
 
         [MessageSubscription(typeof(Clock2C.Add))]
-        private void Add(object Sender, Clock2C.Add e)
+        private void Add(Clock2C.Add e)
         {
             string k;
 
@@ -141,14 +163,13 @@ namespace Clock2C
         #region Sending messages
 
         [MessagePublication(typeof(Clock2C.Time))]
-        private event EventHandler<Clock2C.Time> Time; // TODO: why may this be private????
+        public event MessageHandler<Clock2C.Time> Time;
 
         #endregion
 
         private void OnTimer(object source, ElapsedEventArgs e)
         {
             DateTime dt;
-
 
             if (source != null && Timer.Interval != cc.Interval) // since setting the timer resets its counter to zero,
                 Timer.Interval = cc.Interval;   // we reset only if needed (more accuracy)
@@ -161,7 +182,6 @@ namespace Clock2C
 
             foreach (KeyValuePair<string, string> kvp in cc.KVPairs)
             {
-
                 try
                 {
                     // TODO: This is possibly a bug
@@ -175,7 +195,7 @@ namespace Clock2C
                 }
             }
 
-            Time(this, timee);
+            Time(timee);
         }
     }
 }
