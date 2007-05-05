@@ -1339,6 +1339,10 @@
     <String id="13016">Sorter etter: Kjøringer</String>
     <String id="13017">Sorter etter: Nyeste</String>
     <String id="13018">Sorter etter: Poeng</String>
+    <String id="13031">Produsent</String>
+    <String id="13032">Mest brukt</String>
+    <String id="13033">Siste mest brukt</String>
+    <String id="13041">Vis fil informasjon</String>
     <String id="16001">Festmiks</String>
     <String id="19001" prefix="Min ">Tetris</String>
     <String id="19002">Nytt spill</String>
@@ -1468,6 +1472,9 @@
     <String id="34053">Avspilling av valgte stream feilet</String>
     <String id="34054">Radio handshake feilet!</String>
     <String id="34055">Stream midlertidig utilgjengelig</String>
+    <String id="40001">Venter på hvilemodus</String>
+    <String id="40002">MediaPortal er ikke i bruk, men fortsatt opptatt.</String>
+    <String id="40003">Når alle oppgaver er ferdige, vil MediaPortal gå over i hvilemodus.</String>
     <String id="99845">TV.com sjekk</String>
     <String id="100000">Hjem</String>
     <String id="100001" prefix="Min ">TV</String>
@@ -1608,6 +1615,7 @@
     <String id="103011" prefix="Min ">TV/Beskjær-innstillinger</String>
     <String id="104711" prefix="Min ">Wikipedia</String>
     <String id="105900" prefix="Mine ">Trailere</String>
+    <String id="106666">Power Scheduler Venter</String>
     <String id="107700" prefix="Min ">TV/Tekst-TV</String>
     <String id="107701" prefix="Min ">TV/Tekst-TV</String>
     <String id="107777" prefix="Min ">Sudoku</String>
