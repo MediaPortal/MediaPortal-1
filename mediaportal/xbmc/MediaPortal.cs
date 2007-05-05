@@ -614,6 +614,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIFont font = GUIFontManager.GetFont(0);
       if (font != null)
       {
+        GUIGraphicsContext.SetScalingResolution(0, 0, false);
         font.DrawText(80, 40, 0xffffffff, frameStats, GUIControl.Alignment.ALIGN_LEFT, -1);
         region[0].X = m_ixpos;
         region[0].Y = 0;
