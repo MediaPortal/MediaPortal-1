@@ -64,7 +64,7 @@ namespace WindowPlugins.GUIPrograms
 
       try
       {
-        using (FileStream fileStream = new FileInfo(customViews).OpenRead())
+        using (FileStream fileStream = new System.IO.FileInfo(customViews).OpenRead())
         {
           SoapFormatter formatter = new SoapFormatter();
           ArrayList viewlist = (ArrayList)formatter.Deserialize(fileStream);
