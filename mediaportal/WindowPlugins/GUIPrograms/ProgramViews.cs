@@ -147,6 +147,9 @@ namespace WindowPlugins.GUIPrograms
     private bool updating = false;
     private bool settingsChanged = false;
 
+    string defaultViews = Config.GetFile(Config.Dir.Base, "defaultProgramViews.xml");
+    string customViews = Config.GetFile(Config.Dir.Config, "ProgramViews.xml");
+
     string[] selections = new string[]
     {
       "title",
@@ -209,32 +212,27 @@ namespace WindowPlugins.GUIPrograms
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
+
+      if (!File.Exists(customViews))
+      {
+        File.Copy(defaultViews, customViews);
+      }
+
       views = new ArrayList();
-      FileInfo fi = new FileInfo(Config.GetFile(Config.Dir.Config, "programViews.xml"));
-      if (fi.Exists)
+
+      try
       {
-        try
+        using (FileStream fileStream = new FileInfo(customViews).OpenRead())
         {
-          using (FileStream fileStream = fi.OpenRead())
-          {
-            try
-            {
-              SoapFormatter formatter = new SoapFormatter();
-              views = (ArrayList)formatter.Deserialize(fileStream);
-            }
-            finally
-            {
-              fileStream.Close();
-            }
-          }
+          SoapFormatter formatter = new SoapFormatter();
+          views = (ArrayList)formatter.Deserialize(fileStream);
+          fileStream.Close();
         }
-        catch
-        { }
       }
-      else
+      catch (Exception)
       {
-        Log.Info("programViews.xml not found. No Program Views will be available...");
       }
+
       LoadViews();
     }
 

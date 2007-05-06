@@ -46,6 +46,9 @@ namespace WindowPlugins.GUIPrograms
   {
     #region variables
 
+    string defaultViews = Config.GetFile(Config.Dir.Base, "defaultProgramViews.xml");
+    string customViews = Config.GetFile(Config.Dir.Config, "ProgramViews.xml");
+
     ViewDefinition currentView;
     int currentLevel = 0;
     List<ViewDefinition> views = new List<ViewDefinition>();
@@ -54,77 +57,14 @@ namespace WindowPlugins.GUIPrograms
 
     public ProgramViewHandler()
     {
-      if (!System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "programViews.xml")))
+      if (!File.Exists(customViews))
       {
-        FilterDefinition filter1, filter2;
-
-        //manufacturer
-        ViewDefinition viewManufacturer = new ViewDefinition();
-        viewManufacturer.Name = "13031";
-        filter1 = new FilterDefinition(); filter1.Where = "manufacturer"; filter1.SortAscending = true;
-        filter2 = new FilterDefinition(); filter2.Where = "title"; filter2.SortAscending = true;
-        viewManufacturer.Filters.Add(filter1);
-        viewManufacturer.Filters.Add(filter2);
-
-        //genres
-        ViewDefinition viewGenre = new ViewDefinition();
-        viewGenre.Name = "135";
-        filter1 = new FilterDefinition(); filter1.Where = "genre"; filter1.SortAscending = true;
-        filter2 = new FilterDefinition(); filter2.Where = "title"; filter2.SortAscending = true;
-        viewGenre.Filters.Add(filter1);
-        viewGenre.Filters.Add(filter2);
-
-        //rating
-        ViewDefinition viewRating = new ViewDefinition();
-        viewRating.Name = "931";
-        filter1 = new FilterDefinition(); filter1.Where = "rating"; filter1.SortAscending = false;
-        filter2 = new FilterDefinition(); filter2.Where = "title"; filter2.SortAscending = true;
-        viewRating.Filters.Add(filter1);
-        viewRating.Filters.Add(filter2);
-        
-        //years
-        ViewDefinition viewYears = new ViewDefinition();
-        viewYears.Name = "987";
-        filter1 = new FilterDefinition(); filter1.Where = "year"; filter1.SortAscending = true;
-        filter2 = new FilterDefinition(); filter2.Where = "title"; filter2.SortAscending = true;
-        viewYears.Filters.Add(filter1);
-        viewYears.Filters.Add(filter2);
-
-        //most launched
-        ViewDefinition viewMostLaunched = new ViewDefinition();
-        viewMostLaunched.Name = "13032";
-        filter1 = new FilterDefinition(); filter1.Where = "launchcount"; filter1.SqlOperator = ">"; filter1.Restriction = "0"; filter1.SortAscending = false;
-        viewMostLaunched.Filters.Add(filter1);
-
-        //most recently launched
-        ViewDefinition viewMostRecentlyLaunched = new ViewDefinition();
-        viewMostRecentlyLaunched.Name = "13033";
-        filter1 = new FilterDefinition(); filter1.Where = "lastTimeLaunched"; filter1.SortAscending = false;
-        viewMostRecentlyLaunched.Filters.Add(filter1);
-
-        List<ViewDefinition> listViews = new List<ViewDefinition>();
-        listViews.Add(viewManufacturer);
-        listViews.Add(viewGenre);
-        listViews.Add(viewRating);
-        listViews.Add(viewYears);
-        listViews.Add(viewMostLaunched);
-        listViews.Add(viewMostRecentlyLaunched);
-
-        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "programViews.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
-        {
-          ArrayList list = new ArrayList();
-          foreach (ViewDefinition view in listViews)
-            list.Add(view);
-          SoapFormatter formatter = new SoapFormatter();
-          formatter.Serialize(fileStream, list);
-          fileStream.Close();
-        }
+        File.Copy(defaultViews, customViews);
       }
 
-      //database = new ProgramDatabase();
-      using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "programViews.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+      try
       {
-        try
+        using (FileStream fileStream = new FileInfo(customViews).OpenRead())
         {
           SoapFormatter formatter = new SoapFormatter();
           ArrayList viewlist = (ArrayList)formatter.Deserialize(fileStream);
@@ -134,10 +74,12 @@ namespace WindowPlugins.GUIPrograms
           }
           fileStream.Close();
         }
-        catch
-        {
-        }
       }
+      catch (Exception)
+      {
+      }
+
+      //database = new ProgramDatabase();
     }
 
     #region Properties / Helper Routines
