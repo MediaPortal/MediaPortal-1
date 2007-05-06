@@ -40,6 +40,9 @@ namespace MediaPortal.Configuration.Sections
 {
   public class MusicViews : MediaPortal.Configuration.Sections.Views
   {
+    string defaultMusicViews = Config.GetFile(Config.Dir.Base, "defaultMusicViews.xml");
+    string customMusicViews = Config.GetFile(Config.Dir.Config, "MusicViews.xml");
+
     private System.ComponentModel.IContainer components = null;
 
     private string[] selections = new string[]
@@ -119,31 +122,24 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      views = new ArrayList();
-      FileInfo fi = new FileInfo(Config.GetFile(Config.Dir.Config, "MusicViews.xml"));
-      if (fi.Exists)
+      if (!File.Exists(customMusicViews))
       {
-        try
-        {
-          using (FileStream fileStream = fi.OpenRead())
-          {
-            try
-            {
-              SoapFormatter formatter = new SoapFormatter();
-              views = (ArrayList)formatter.Deserialize(fileStream);
-            }
-            finally
-            {
-              fileStream.Close();
-            }
-          }
-        }
-        catch
-        { }
+        File.Copy(defaultMusicViews, customMusicViews);
       }
-      else
+
+      views = new ArrayList();
+
+      try
       {
-        Log.Info("MusicViews.xml not found.  No Music Views will be available...");
+        using (FileStream fileStream = new FileInfo(customMusicViews).OpenRead())
+        {
+          SoapFormatter formatter = new SoapFormatter();
+          views = (ArrayList)formatter.Deserialize(fileStream);
+          fileStream.Close();
+        }
+      }
+      catch (Exception)
+      {
       }
 
       LoadViews();
@@ -154,7 +150,7 @@ namespace MediaPortal.Configuration.Sections
       if (settingsChanged)
         try
         {
-          using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "MusicViews.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
+          using (FileStream fileStream = new FileInfo(customMusicViews).OpenWrite())
           {
             SoapFormatter formatter = new SoapFormatter();
             formatter.Serialize(fileStream, views);
@@ -162,7 +158,8 @@ namespace MediaPortal.Configuration.Sections
           }
         }
         catch (Exception)
-        { }
+        {
+        }
     }
 
     #region Designer generated code

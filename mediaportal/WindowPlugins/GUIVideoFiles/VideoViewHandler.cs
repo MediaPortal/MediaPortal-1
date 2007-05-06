@@ -37,83 +37,37 @@ namespace MediaPortal.GUI.Video
 	/// Summary description for VideoViewHandler.
 	/// </summary>
 	public class VideoViewHandler
-	{
+  {
+    string defaultVideoViews = Config.GetFile(Config.Dir.Base, "defaultVideoViews.xml");
+    string customVideoViews = Config.GetFile(Config.Dir.Config, "VideoViews.xml");
+
 		ViewDefinition currentView;
-		int						 currentLevel=0;
+    int currentLevel = 0;
     List<ViewDefinition> views = new List<ViewDefinition>();
 
 		public VideoViewHandler()
-		{
-      if (!System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "videoViews.xml")))
-			{
-				//genres
-				FilterDefinition filter1,filter2;
-				ViewDefinition viewGenre = new ViewDefinition();
-				viewGenre.Name="135";
-				filter1 = new FilterDefinition();filter1.Where="genre";;filter1.SortAscending=true;
-				filter2 = new FilterDefinition();filter2.Where="title";;filter2.SortAscending=true;
-				viewGenre.Filters.Add(filter1);
-				viewGenre.Filters.Add(filter2);
+    {
+      if (!File.Exists(customVideoViews))
+      {
+        File.Copy(defaultVideoViews, customVideoViews);
+      }
 
-				//artists
-				ViewDefinition viewArtists = new ViewDefinition();
-				viewArtists.Name="344";
-				filter1 = new FilterDefinition();filter1.Where="actor";;filter1.SortAscending=true;
-				filter2 = new FilterDefinition();filter2.Where="title";;filter2.SortAscending=true;
-				viewArtists.Filters.Add(filter1);
-				viewArtists.Filters.Add(filter2);
-
-				//title
-				ViewDefinition viewTitles = new ViewDefinition();
-				viewTitles.Name="369";
-				filter1 = new FilterDefinition();filter1.Where="title";;filter1.SortAscending=true;
-				viewTitles.Filters.Add(filter1);
-
-				//years
-				ViewDefinition viewYears = new ViewDefinition();
-				viewYears.Name="987";
-				filter1 = new FilterDefinition();filter1.Where="year";;filter1.SortAscending=true;
-				filter2 = new FilterDefinition();filter2.Where="title";;filter2.SortAscending=true;
-				viewYears.Filters.Add(filter1);
-				viewYears.Filters.Add(filter2);
-
-				ArrayList listViews = new ArrayList();
-				listViews.Add(viewGenre);
-				listViews.Add(viewArtists);
-				listViews.Add(viewTitles);
-				listViews.Add(viewYears);
-
-        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "videoViews.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
+      try
+      {
+        using (FileStream fileStream = new FileInfo(customVideoViews).OpenRead())
         {
-          ArrayList list = new ArrayList();
-          foreach (ViewDefinition view in listViews)
-            list.Add(view);
           SoapFormatter formatter = new SoapFormatter();
-          formatter.Serialize(fileStream, list);
+          ArrayList viewlist = (ArrayList)formatter.Deserialize(fileStream);
+          foreach (ViewDefinition view in viewlist)
+          {
+            views.Add(view);
+          }
           fileStream.Close();
-				}
-			}
-
-			try
-			{
-        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "videoViews.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-				{
-					try
-					{
-						SoapFormatter formatter = new SoapFormatter();
-            ArrayList viewlist = (ArrayList)formatter.Deserialize(fileStream);
-            foreach (ViewDefinition view in viewlist)
-            {
-              views.Add(view);
-            }
-            fileStream.Close();
-					}
-					catch
-					{
-					}
-				}
-			}
-			catch(Exception){}
+        }
+      }
+      catch (Exception)
+      {
+      }
 		}
 
 		public ViewDefinition View

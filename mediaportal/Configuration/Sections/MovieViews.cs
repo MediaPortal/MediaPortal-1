@@ -40,9 +40,12 @@ namespace MediaPortal.Configuration.Sections
 {
   public class MovieViews : MediaPortal.Configuration.Sections.Views
   {
+    string defaultVideoViews = Config.GetFile(Config.Dir.Base, "defaultVideoViews.xml");
+    string customVideoViews = Config.GetFile(Config.Dir.Config, "VideoViews.xml");
+
     private System.ComponentModel.IContainer components = null;
 
-    public string[] selections = new string[]
+    private string[] selections = new string[]
       {
         "actor",
         "title",
@@ -110,33 +113,26 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      views = new ArrayList();
-      FileInfo fi = new FileInfo(Config.GetFile(Config.Dir.Config, "VideoViews.xml"));
-      if (fi.Exists)
+      if (!File.Exists(customVideoViews))
       {
-        try
-        {
-          using (FileStream fileStream = fi.OpenRead())
-          {
-            try
-            {
-              SoapFormatter formatter = new SoapFormatter();
-              views = (ArrayList)formatter.Deserialize(fileStream);
-            }
-            finally
-            {
-              fileStream.Close();
-            }
-          }
-        }
-        catch
-        { }
+        File.Copy(defaultVideoViews, customVideoViews);
       }
-      else
-      {
 
-        Log.Warn("VideoViews.xml not found.  No Video Views will be available...");
+      views = new ArrayList();
+
+      try
+      {
+        using (FileStream fileStream = new FileInfo(customVideoViews).OpenRead())
+        {
+          SoapFormatter formatter = new SoapFormatter();
+          views = (ArrayList)formatter.Deserialize(fileStream);
+          fileStream.Close();
+        }
       }
+      catch (Exception)
+      {
+      }
+
       LoadViews();
     }
 
@@ -145,7 +141,7 @@ namespace MediaPortal.Configuration.Sections
       if (settingsChanged)
         try
         {
-          using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "VideoViews.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
+          using (FileStream fileStream = new FileInfo(customVideoViews).OpenWrite())
           {
             SoapFormatter formatter = new SoapFormatter();
             formatter.Serialize(fileStream, views);
@@ -153,7 +149,8 @@ namespace MediaPortal.Configuration.Sections
           }
         }
         catch (Exception)
-        { }
+        {
+        }
     }
 
     #region Designer generated code

@@ -43,97 +43,26 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class MusicViewHandler
   {
-
+    string defaultMusicViews = Config.GetFile(Config.Dir.Base, "defaultMusicViews.xml");
+    string customMusicViews = Config.GetFile(Config.Dir.Config, "MusicViews.xml");
 
     ViewDefinition currentView;
     int currentLevel = 0;
-    MusicDatabase database;
     List<ViewDefinition> views = new List<ViewDefinition>();
+
+    MusicDatabase database;
     int restrictionLength = 0;   // used to sum up the length of all restrictions
 
     public MusicViewHandler()
     {
-      if (!System.IO.File.Exists(Config.GetFile(Config.Dir.Config, "musicviews.xml")))
+      if (!File.Exists(customMusicViews))
       {
-        //genres
-        FilterDefinition filter1, filter2, filter3;
-        ViewDefinition viewGenre = new ViewDefinition();
-        viewGenre.Name = "135";
-        filter1 = new FilterDefinition(); filter1.Where = "genre"; filter1.SortAscending = true;
-        filter2 = new FilterDefinition(); filter2.Where = "title"; filter2.SortAscending = true;
-        viewGenre.Filters.Add(filter1);
-        viewGenre.Filters.Add(filter2);
-
-        //top100
-        ViewDefinition viewTop100 = new ViewDefinition();
-        viewTop100.Name = "271";
-        filter1 = new FilterDefinition(); filter1.Where = "timesplayed"; filter1.SortAscending = false; filter1.Limit = 100;
-        filter1.SqlOperator = ">";
-        filter1.Restriction = "0";
-        viewTop100.Filters.Add(filter1);
-
-        //artists
-        ViewDefinition viewArtists = new ViewDefinition();
-        viewArtists.Name = "133";
-        filter1 = new FilterDefinition(); filter1.Where = "artist"; ; filter1.SortAscending = true;
-        filter2 = new FilterDefinition(); filter2.Where = "album"; ; filter2.SortAscending = true;
-        filter3 = new FilterDefinition(); filter3.Where = "title"; ; filter3.SortAscending = true;
-        viewArtists.Filters.Add(filter1);
-        viewArtists.Filters.Add(filter2);
-        viewArtists.Filters.Add(filter3);
-
-        //albums
-        ViewDefinition viewAlbums = new ViewDefinition();
-        viewAlbums.Name = "132";
-        filter1 = new FilterDefinition(); filter1.Where = "album"; ; filter1.SortAscending = true;
-        filter2 = new FilterDefinition(); filter2.Where = "title"; ; filter2.SortAscending = true;
-        viewAlbums.Filters.Add(filter1);
-        viewAlbums.Filters.Add(filter2);
-
-        //years
-        ViewDefinition viewYears = new ViewDefinition();
-        viewYears.Name = "987";
-        filter1 = new FilterDefinition(); filter1.Where = "year"; ; filter1.SortAscending = true;
-        filter2 = new FilterDefinition(); filter2.Where = "title"; ; filter2.SortAscending = true;
-        viewYears.Filters.Add(filter1);
-        viewYears.Filters.Add(filter2);
-
-        //favorites
-        ViewDefinition viewFavorites = new ViewDefinition();
-        viewFavorites.Name = "932";
-        filter1 = new FilterDefinition(); filter1.Where = "favorites"; filter1.SqlOperator = "="; filter1.Restriction = "1"; filter1.SortAscending = true;
-        viewFavorites.Filters.Add(filter1);
-
-        //all songs
-        ViewDefinition viewAllSongs = new ViewDefinition();
-        viewAllSongs.Name = "1052";
-        filter1 = new FilterDefinition(); filter1.Where = "title"; filter1.SqlOperator = ""; filter1.Restriction = ""; filter1.SortAscending = true;
-        viewAllSongs.Filters.Add(filter1);
-
-        List<ViewDefinition> listViews = new List<ViewDefinition>();
-        listViews.Add(viewGenre);
-        listViews.Add(viewTop100);
-        listViews.Add(viewArtists);
-        listViews.Add(viewAlbums);
-        listViews.Add(viewYears);
-        listViews.Add(viewFavorites);
-        listViews.Add(viewAllSongs);
-
-        using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "musicViews.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
-        {
-          ArrayList list = new ArrayList();
-          foreach (ViewDefinition view in listViews)
-            list.Add(view);
-          SoapFormatter formatter = new SoapFormatter();
-          formatter.Serialize(fileStream, list);
-          fileStream.Close();
-        }
+        File.Copy(defaultMusicViews, customMusicViews);
       }
 
-      database = new MusicDatabase();
-      using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "musicViews.xml"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+      try
       {
-        try
+        using (FileStream fileStream = new FileInfo(customMusicViews).OpenRead())
         {
           SoapFormatter formatter = new SoapFormatter();
           ArrayList viewlist = (ArrayList)formatter.Deserialize(fileStream);
@@ -143,10 +72,12 @@ namespace MediaPortal.GUI.Music
           }
           fileStream.Close();
         }
-        catch
-        {
-        }
       }
+      catch (Exception)
+      {
+      }
+
+      database = new MusicDatabase();
     }
 
     public ViewDefinition View
