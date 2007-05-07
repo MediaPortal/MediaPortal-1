@@ -61,7 +61,14 @@ namespace NowPlaying
         IMediaLibrary library = ServiceScope.Get<IMediaLibrary>();
         IMLSection section = library.FindSection("Videos", true);
         IMLItem item1 = section.FindItemByLocation(player.FileName);
-        if (item1 != null) return;
+        if (item1 != null)
+        {
+          item1.Tags["Duration"] = player.Duration.TotalSeconds;
+          item1.Tags["Width"] = player.Width;
+          item1.Tags["Height"] = player.Height;
+          item1.SaveTags();
+          return;
+        }
 
         IMLItem newItem = section.AddNewItem(player.FileName, player.FileName);
         newItem.Tags["Watched"] = 0;
