@@ -45,7 +45,7 @@ namespace MediaPortal.Configuration.Sections
 
     private System.ComponentModel.IContainer components = null;
 
-    private string[] selections = new string[]
+    private string[] _selections = new string[]
       {
         "album",
         "artist",
@@ -58,7 +58,7 @@ namespace MediaPortal.Configuration.Sections
         "favorites"
       };
 
-    private string[] sqloperators = new string[]
+    private string[] _sqloperators = new string[]
       {
         "",
         "=",
@@ -71,7 +71,7 @@ namespace MediaPortal.Configuration.Sections
         "group",
       };
 
-    private string[] viewsAs = new string[]
+    private string[] _viewsAs = new string[]
 			{
 				"List",
 				"Icons",
@@ -80,7 +80,7 @@ namespace MediaPortal.Configuration.Sections
         "Albums",
 		  };
 
-    private string[] sortBy = new string[]
+    private string[] _sortBy = new string[]
 			{
         "Name",
         "Date",
@@ -122,6 +122,11 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
+      selections = _selections;
+      sqloperators = _sqloperators;
+      viewsAs = _viewsAs;
+      sortBy = _sortBy;
+
       if (!File.Exists(customMusicViews))
       {
         File.Copy(defaultMusicViews, customMusicViews);

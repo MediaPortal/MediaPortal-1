@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -137,6 +138,11 @@ namespace MediaPortal.Configuration.Sections
     private bool updating = false;
     public bool settingsChanged = false;
 
+    private List<string> _selections = new List<string>();
+    private List<string> _sqloperators = new List<string>();
+    private List<string> _viewsAs = new List<string>();
+    private List<string> _sortBy = new List<string>();
+
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPComboBox cbViews;
     private MediaPortal.UserInterface.Controls.MPButton btnSave;
@@ -146,21 +152,57 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private IContainer components = null;
 
-    private string[] selections = new string[]
+    public string[] selections
+    {
+      get
       {
-      };
-
-    private string[] sqloperators = new string[]
+        return _selections.ToArray();
+      }
+      set
       {
-      };
-
-    private string[] viewsAs = new string[]
-			{
-		  };
-
-    private string[] sortBy = new string[]
-			{
-      };
+        _selections.Clear();
+        _selections.AddRange(value);
+      }
+    }
+    
+    public string[] sqloperators
+    {
+      get
+      {
+        return _sqloperators.ToArray();
+      }
+      set
+      {
+        _sqloperators.Clear();
+        _sqloperators.AddRange(value);
+      }
+    }
+    
+    public string[] viewsAs
+    {
+      get
+      {
+        return _viewsAs.ToArray();
+      }
+      set
+      {
+        _viewsAs.Clear();
+        _viewsAs.AddRange(value);
+      }
+    }
+    
+    public string[] sortBy
+    {
+      get
+      {
+        return _sortBy.ToArray();
+      }
+      set
+      {
+        _sortBy.Clear();
+        _sortBy.AddRange(value);
+      }
+    }
 
     public Views()
       : base("<Unknown>")

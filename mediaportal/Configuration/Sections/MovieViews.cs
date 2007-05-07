@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -43,19 +44,18 @@ namespace MediaPortal.Configuration.Sections
     string defaultVideoViews = Config.GetFile(Config.Dir.Base, "defaultVideoViews.xml");
     string customVideoViews = Config.GetFile(Config.Dir.Config, "VideoViews.xml");
 
-    private System.ComponentModel.IContainer components = null;
+    public System.ComponentModel.IContainer components = null;
 
-    private string[] selections = new string[]
-      {
+    private string[] _selections = new string[]
+      {"watched",
         "actor",
         "title",
         "genre",
         "year",
         "rating",
-        "watched",
       };
 
-    private string[] sqloperators = new string[]
+    private string[] _sqloperators = new string[]
       {
         "",
         "=",
@@ -67,7 +67,7 @@ namespace MediaPortal.Configuration.Sections
         "like",
       };
 
-    private string[] viewsAs = new string[]
+    private string[] _viewsAs = new string[]
 			{
 				"List",
 				"Icons",
@@ -75,7 +75,7 @@ namespace MediaPortal.Configuration.Sections
 				"Filmstrip",
 		  };
 
-    private string[] sortBy = new string[]
+    private string[] _sortBy = new string[]
 			{
         "Name",
         "Date",
@@ -113,6 +113,11 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
+      selections = _selections;
+      sqloperators = _sqloperators;
+      viewsAs = _viewsAs;
+      sortBy = _sortBy;
+
       if (!File.Exists(customVideoViews))
       {
         File.Copy(defaultVideoViews, customVideoViews);
