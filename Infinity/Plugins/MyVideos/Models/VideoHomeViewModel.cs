@@ -947,7 +947,7 @@ namespace MyVideos
             if (!settings.ShowExtensions)
               fileName = fileName.Substring(0, fileName.Length - ext.Length);
 
-            item = new VideoModel(fileName, (int)fi.Length, file);
+            item = new VideoModel(fileName, fi.Length, file);
             if (section != null)
             {
               item.LibraryItem = section.FindItemByLocation(file);

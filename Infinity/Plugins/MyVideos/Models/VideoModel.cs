@@ -44,12 +44,12 @@ namespace MyVideos
     /// </summary>
     /// <param name="movieName">video name</param>
     /// <param name="movieSize">video size</param>
-    public VideoModel(string movieName, int movieSize)
+    public VideoModel(string movieName, long movieSize)
     {
       _name = movieName;
       //_size = Math.Round((double)(((movieSize / 1024) / 1024)), 2);
 
-      int tmpSize = (movieSize / 1024) / 1024;
+      long tmpSize = (movieSize / 1024) / 1024;
       _size = Math.Round((double)tmpSize, 2);
       Init();
     }
@@ -64,11 +64,11 @@ namespace MyVideos
     /// <param name="movieName">video name</param>
     /// <param name="movieSize">video size in bytes</param>
     /// <param name="moviePath">video path</param>
-    public VideoModel(string movieName, int movieSize, string moviePath)
+    public VideoModel(string movieName, long movieSize, string moviePath)
     {
       _name = movieName;
       //_size = Math.Round(((movieSize / 1024) / 1024), 2);
-      int tmpSize = (movieSize / 1024) / 1024;
+      long tmpSize = (movieSize / 1024) / 1024;
       _size = Math.Round((double)tmpSize, 2);
 
       _path = moviePath;
