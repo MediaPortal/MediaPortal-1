@@ -2947,7 +2947,7 @@ namespace MediaPortal.Music.Database
         }
         SongCounter++;
       }
-   
+
       Log.Info("Musicdatabasereorg: UpdateTags completed for {0} songs", (int)NumRecordsUpdated);
       return (int)Errors.ERROR_OK;
     }
@@ -3511,12 +3511,18 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
-    ArrayList Extensions = MediaPortal.Util.Utils.AudioExtensions;
+    string Extensions;
 
     ArrayList availableFiles;
 
     private int AddMissingFiles(int StartProgress, int EndProgress, ref int fileCount)
     {
+      /// Get Audio Extensions
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        Extensions = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
+      }
+
       /// This seems to clear the arraylist and make it valid
       availableFiles = new ArrayList();
 
@@ -3679,16 +3685,13 @@ namespace MediaPortal.Music.Database
       //
       // Count the files in the current directory
       //
-      //Log.Info("Musicdatabasereorg: Counting files in {0}", path );
-
       try
       {
-        foreach (string extension in Extensions)
+        foreach (string dir in Directory.GetDirectories(path))
         {
-          string[] files = Directory.GetFiles(path, String.Format("*{0}", extension));
-          for (int i = 0; i < files.Length; ++i)
+          foreach (string file in Directory.GetFiles(dir, "*.*"))
           {
-            string ext = System.IO.Path.GetExtension(files[i]).ToLower();
+            string ext = System.IO.Path.GetExtension(file).ToLower();
             if (ext == ".m3u")
               continue;
             if (ext == ".pls")
@@ -3697,38 +3700,27 @@ namespace MediaPortal.Music.Database
               continue;
             if (ext == ".b4s")
               continue;
-            if ((File.GetAttributes(files[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
+            if ((File.GetAttributes(file) & FileAttributes.Hidden) == FileAttributes.Hidden)
+              continue;
+
+            // Only get files with the required extension
+            if (Extensions.IndexOf(ext) == -1)
               continue;
 
             // Only Add files to the list, if they have been Created / Updated after the Last Import date
-            if (System.IO.File.GetCreationTime(files[i]) > _lastImport || System.IO.File.GetLastWriteTime(files[i]) > _lastImport)
-              availableFiles.Add(files[i]);
+            if (System.IO.File.GetCreationTime(file) > _lastImport || System.IO.File.GetLastWriteTime(file) > _lastImport)
+              availableFiles.Add(file);
 
             totalFiles++;
+            if ((totalFiles % 10) == 0)
+            {
+              DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
+              MyArgs.progress = 4;
+              MyArgs.phase = String.Format("Adding new files: {0} files found", totalFiles);
+              OnDatabaseReorgChanged(MyArgs);
+            }
           }
-        }
-      }
-      catch
-      {
-        // Ignore
-      }
-      if ((totalFiles % 10) == 0)
-      {
-        DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
-        MyArgs.progress = 4;
-        MyArgs.phase = String.Format("Adding new files: {0} files found", totalFiles);
-        OnDatabaseReorgChanged(MyArgs);
-      }
-      //
-      // Count files in subdirectories
-      //
-      try
-      {
-        string[] directories = Directory.GetDirectories(path);
-
-        foreach (string directory in directories)
-        {
-          CountFilesInPath(directory, ref totalFiles);
+          CountFilesInPath(dir, ref totalFiles);
         }
       }
       catch
