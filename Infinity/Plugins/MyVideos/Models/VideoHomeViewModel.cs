@@ -934,6 +934,9 @@ namespace MyVideos
         }
         string[] files = Directory.GetFiles(_viewModel.CurrentFolder);
 
+        IMediaLibrary library = ServiceScope.Get<IMediaLibrary>();
+        IMLSection section = library.FindSection("Videos", false);
+
         foreach (string file in files)
         {
           string ext = System.IO.Path.GetExtension(file).ToLower();
@@ -945,6 +948,22 @@ namespace MyVideos
               fileName = fileName.Substring(0, fileName.Length - ext.Length);
 
             item = new VideoModel(fileName, (int)fi.Length, file);
+            if (section != null)
+            {
+              item.LibraryItem = section.FindItemByLocation(file);
+              if (null == item.LibraryItem)
+              {
+                IMLItem newItem = section.AddNewItem(file, file);
+                newItem.Tags["DateAdded"] = DateTime.Now;
+                newItem.Tags["Watched"] = 0;
+                newItem.Tags["ResumeTime"] = "";
+                newItem.Tags["Duration"] = "";
+                newItem.Tags["Width"] = "";
+                newItem.Tags["Height"] = "";
+                newItem.SaveTags();
+                item.LibraryItem = newItem;
+              }
+            }
             _listVideos.Add(item);
           }
         }

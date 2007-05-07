@@ -5,6 +5,7 @@ using ProjectInfinity;
 using ProjectInfinity.Thumbnails;
 using ProjectInfinity.Settings;
 using ProjectInfinity.Playlist;
+using MediaLibrary;
 using System.ComponentModel;
 
 namespace MyVideos
@@ -19,6 +20,7 @@ namespace MyVideos
     private string _parentFolder;
     private string _logo = null;
     public event PropertyChangedEventHandler PropertyChanged;
+    IMLItem _mediaLibraryItem;
     #endregion
 
     #region ctors
@@ -76,6 +78,55 @@ namespace MyVideos
     #endregion
 
     #region properties
+    /// <summary>
+    /// Gets or sets the media library item.
+    /// </summary>
+    /// <value>The library item.</value>
+    public IMLItem LibraryItem
+    {
+      get
+      {
+        return _mediaLibraryItem;
+      }
+      set
+      {
+        _mediaLibraryItem = value;
+      }
+    }
+
+    public string Duration
+    {
+      get
+      {
+        if (_mediaLibraryItem == null) return "";
+        return _mediaLibraryItem.Tags["Duration"] as string;
+      }
+    }
+    public string DateAdded
+    {
+      get
+      {
+        if (_mediaLibraryItem == null) return "";
+        return _mediaLibraryItem.Tags["DateAdded"] as string;
+      }
+    }
+    public string Resolution
+    {
+      get
+      {
+        if (_mediaLibraryItem == null) return "";
+        return String.Format("{0}x{1}", _mediaLibraryItem.Tags["Width"], _mediaLibraryItem.Tags["Height"]);
+      }
+    }
+    public string Watched
+    {
+      get
+      {
+        if (_mediaLibraryItem == null) return "";
+        return _mediaLibraryItem.Tags["Watched"] as string;
+      }
+    }
+
     /// <summary>
     /// Gets the movie name
     /// </summary>
