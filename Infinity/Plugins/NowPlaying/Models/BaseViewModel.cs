@@ -71,6 +71,7 @@ namespace NowPlaying
         }
 
         IMLItem newItem = section.AddNewItem(player.FileName, player.FileName);
+        newItem.Tags["DateAdded"] = DateTime.Now;
         newItem.Tags["Watched"] = 0;
         newItem.Tags["ResumeTime"] = "";
         newItem.Tags["Duration"] = player.Duration.TotalSeconds;
