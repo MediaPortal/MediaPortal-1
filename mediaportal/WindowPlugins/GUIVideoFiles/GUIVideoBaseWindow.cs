@@ -46,6 +46,8 @@ namespace MediaPortal.GUI.Video
   public abstract class GUIVideoBaseWindow : GUIWindow
   {
 
+    #region enums
+
     public enum View
     {
       List = 0,
@@ -54,6 +56,10 @@ namespace MediaPortal.GUI.Video
       FilmStrip = 3,
       PlayList = 4
     }
+
+    #endregion
+
+    #region Base variables
 
     protected View currentView = View.List;
     protected View currentViewRoot = View.List;
@@ -67,7 +73,11 @@ namespace MediaPortal.GUI.Video
     protected string _lastFolder = String.Empty;
     protected bool m_bShowTrailerButton = false;
     protected bool m_bPlaylistsViewMode = false;
+    protected PlayListPlayer playlistPlayer;
 
+    #endregion
+
+    #region SkinControls
 
     [SkinControlAttribute(50)]   protected GUIFacadeControl facadeView = null;
     [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
@@ -77,48 +87,19 @@ namespace MediaPortal.GUI.Video
     [SkinControlAttribute(8)]    protected GUIButtonControl btnTrailers = null;
     [SkinControlAttribute(9)]    protected GUIButtonControl btnSavedPlaylists = null;
 
-    protected PlayListPlayer playlistPlayer;
+    #endregion
+
+    #region Constructor / Destructor
 
     public GUIVideoBaseWindow()
     {
       playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
-    protected virtual bool AllowView(View view)
-    {
-      if (view == View.PlayList)
-        return false;
-      return true;
-    }
-    protected virtual bool AllowSortMethod(VideoSort.SortMethod method)
-    {
-      return true;
-    }
-    protected virtual View CurrentView
-    {
-      get { return currentView; }
-      set { currentView = value; }
-    }
+    #endregion 
 
-    protected virtual VideoSort.SortMethod CurrentSortMethod
-    {
-      get { return currentSortMethod; }
-      set { currentSortMethod = value; }
-    }
-    protected virtual bool CurrentSortAsc
-    {
-      get { return m_bSortAscending; }
-      set { m_bSortAscending = value; }
-    }
-
-    protected virtual string SerializeName
-    {
-      get
-      {
-        return String.Empty;
-      }
-    }
     #region Serialisation
+
     protected virtual void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -131,7 +112,10 @@ namespace MediaPortal.GUI.Video
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
         m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", true);
 
-        m_strPlayListPath = xmlreader.GetValueAsString("movies", "playlists", String.Empty);
+        string playListFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+        playListFolder += @"\My Playlists";
+
+        m_strPlayListPath = xmlreader.GetValueAsString("movies", "playlists", playListFolder);
         m_strPlayListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(m_strPlayListPath);
 
         m_bShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", false);
@@ -152,7 +136,46 @@ namespace MediaPortal.GUI.Video
         xmlwriter.SetValueAsBool(SerializeName, "sortascroot", m_bSortAscendingRoot);
       }
     }
+
     #endregion
+
+    protected virtual bool AllowView(View view)
+    {
+      if (view == View.PlayList)
+        return false;
+      return true;
+    }
+
+    protected virtual bool AllowSortMethod(VideoSort.SortMethod method)
+    {
+      return true;
+    }
+
+    protected virtual View CurrentView
+    {
+      get { return currentView; }
+      set { currentView = value; }
+    }
+
+    protected virtual VideoSort.SortMethod CurrentSortMethod
+    {
+      get { return currentSortMethod; }
+      set { currentSortMethod = value; }
+    }
+
+    protected virtual bool CurrentSortAsc
+    {
+      get { return m_bSortAscending; }
+      set { m_bSortAscending = value; }
+    }
+
+    protected virtual string SerializeName
+    {
+      get
+      {
+        return String.Empty;
+      }
+    }
 
     protected bool ViewByIcon
     {
@@ -173,6 +196,7 @@ namespace MediaPortal.GUI.Video
         return false;
       }
     }
+
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
@@ -387,7 +411,6 @@ namespace MediaPortal.GUI.Video
       }
       GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
 
-
       switch (CurrentSortMethod)
       {
         case VideoSort.SortMethod.Name:
@@ -424,7 +447,6 @@ namespace MediaPortal.GUI.Video
     protected virtual void OnQueueItem(int item)
     {
     }
-
 
     protected override void OnPageLoad()
     {
@@ -464,6 +486,7 @@ namespace MediaPortal.GUI.Video
     }
 
     #region Sort Members
+
     protected virtual void OnSort()
     {
       SetLabels();
@@ -472,7 +495,6 @@ namespace MediaPortal.GUI.Video
     }
 
     #endregion
-
 
     protected virtual void SetLabels()
     {
@@ -540,7 +562,6 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-
     protected bool GetKeyboard(ref string strLine)
     {
       VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
@@ -556,7 +577,6 @@ namespace MediaPortal.GUI.Video
       }
       return false;
     }
-
 
     protected void OnShowViews()
     {

@@ -364,9 +364,6 @@ namespace MediaPortal.GUI.Music
         m_bFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         m_strFileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
 
-        m_strPlayListPath = xmlreader.GetValueAsString("music", "playlists", String.Empty);
-        m_strPlayListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(m_strPlayListPath);
-
         m_bAutoShuffle = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", true);
 
         string strDefault = xmlreader.GetValueAsString("music", "default", String.Empty);

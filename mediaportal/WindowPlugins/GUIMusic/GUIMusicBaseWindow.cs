@@ -47,11 +47,14 @@ namespace MediaPortal.GUI.Music
   public class GUIMusicBaseWindow : GUIWindow
   {
 
+    #region enums
+
     protected enum Level
     {
       Root,
       Sub
     }
+
     public enum View
     {
       List = 0,
@@ -73,6 +76,10 @@ namespace MediaPortal.GUI.Music
       FullscreenIfVizEnabledMultipleItems,
     }
 
+    #endregion
+
+    #region Base variables
+
     protected View currentView = View.List;
     protected View currentViewRoot = View.List;
     protected MusicSort.SortMethod currentSortMethod = MusicSort.SortMethod.Name;
@@ -83,17 +90,8 @@ namespace MediaPortal.GUI.Music
     private bool m_bUseID3 = false;
     private bool _autoShuffleOnLoad = false;
 
-
     protected MusicViewHandler handler;
     protected MusicDatabase m_database;
-    [SkinControlAttribute(50)]    protected GUIFacadeControl facadeView = null;
-    [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]     protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]     protected GUIButtonControl btnViews = null;
-
-    [SkinControlAttribute(8)]     protected GUIButtonControl btnSearch = null;
-    [SkinControlAttribute(12)]    protected GUIButtonControl btnPlayCd = null;
-    [SkinControlAttribute(10)]    protected GUIButtonControl btnSavedPlaylists = null;
 
     const string defaultTrackTag = "[%track%. ][%artist% - ][%title%]";
     const string albumTrackTag = "[%track%. ][%artist% - ][%title%]";
@@ -111,7 +109,24 @@ namespace MediaPortal.GUI.Music
     protected bool UsingInternalMusicPlayer = false;
 
     protected bool PlayAllOnSingleItemPlayNow = false;
-    protected string _currentPlaying = string.Empty;  
+    protected string _currentPlaying = string.Empty;
+
+    #endregion
+
+    #region SkinControls
+
+    [SkinControlAttribute(50)]    protected GUIFacadeControl facadeView = null;
+    [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]     protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(6)]     protected GUIButtonControl btnViews = null;
+
+    [SkinControlAttribute(8)]     protected GUIButtonControl btnSearch = null;
+    [SkinControlAttribute(12)]    protected GUIButtonControl btnPlayCd = null;
+    [SkinControlAttribute(10)]    protected GUIButtonControl btnSavedPlaylists = null;
+
+    #endregion
+
+    #region Constructor / Destructor
 
     public GUIMusicBaseWindow()
     {
@@ -173,13 +188,58 @@ namespace MediaPortal.GUI.Music
             break;
         }
 
-        m_strPlayListPath = xmlreader.GetValueAsString("music", "playlists", String.Empty);
         _autoShuffleOnLoad = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", false);
       }
 
       UsingInternalMusicPlayer = BassMusicPlayer.IsDefaultMusicPlayer;
     }
 
+    #endregion 
+
+    #region Serialisation
+
+    protected virtual void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", (int)View.List);
+        currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", (int)View.List);
+
+        currentSortMethod = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", (int)MusicSort.SortMethod.Name);
+        currentSortMethodRoot = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", (int)MusicSort.SortMethod.Name);
+        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
+        m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", true);
+        m_bUseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
+
+        for (int i = 0; i < _sortModes.Length; ++i)
+        {
+          _sortTags1[i] = xmlreader.GetValueAsString("mymusic", _sortModes[i] + "1", _defaultSortTags1[i]);
+          _sortTags2[i] = xmlreader.GetValueAsString("mymusic", _sortModes[i] + "2", _defaultSortTags2[i]);
+        }
+
+        string playListFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+        playListFolder += @"\My Playlists";
+
+        m_strPlayListPath = xmlreader.GetValueAsString("music", "playlists", playListFolder);
+        m_strPlayListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(m_strPlayListPath);
+      }
+      SwitchView();
+    }
+
+    protected virtual void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValue(SerializeName, "view", (int)currentView);
+        xmlwriter.SetValue(SerializeName, "viewroot", (int)currentViewRoot);
+        xmlwriter.SetValue(SerializeName, "sortmethod", (int)currentSortMethod);
+        xmlwriter.SetValue(SerializeName, "sortmethodroot", (int)currentSortMethodRoot);
+        xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
+        xmlwriter.SetValueAsBool(SerializeName, "sortascroot", m_bSortAscendingRoot);
+      }
+    }
+
+    #endregion
 
     protected bool UseID3
     {
@@ -224,44 +284,6 @@ namespace MediaPortal.GUI.Music
         return "musicbase";
       }
     }
-
-    #region Serialisation
-
-    protected virtual void LoadSettings()
-    {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", (int)View.List);
-        currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", (int)View.List);
-
-        currentSortMethod = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", (int)MusicSort.SortMethod.Name);
-        currentSortMethodRoot = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", (int)MusicSort.SortMethod.Name);
-        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
-        m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", true);
-        m_bUseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
-
-        for (int i = 0; i < _sortModes.Length; ++i)
-        {
-          _sortTags1[i] = xmlreader.GetValueAsString("mymusic", _sortModes[i] + "1", _defaultSortTags1[i]);
-          _sortTags2[i] = xmlreader.GetValueAsString("mymusic", _sortModes[i] + "2", _defaultSortTags2[i]);
-        }
-      }
-      SwitchView();
-    }
-
-    protected virtual void SaveSettings()
-    {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        xmlwriter.SetValue(SerializeName, "view", (int)currentView);
-        xmlwriter.SetValue(SerializeName, "viewroot", (int)currentViewRoot);
-        xmlwriter.SetValue(SerializeName, "sortmethod", (int)currentSortMethod);
-        xmlwriter.SetValue(SerializeName, "sortmethodroot", (int)currentSortMethodRoot);
-        xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
-        xmlwriter.SetValueAsBool(SerializeName, "sortascroot", m_bSortAscendingRoot);
-      }
-    }
-    #endregion
 
     protected bool ViewByIcon
     {
@@ -339,7 +361,6 @@ namespace MediaPortal.GUI.Music
                 facadeView.View = GUIFacadeControl.ViewMode.Playlist;
               break;
 
-
             case View.PlayList:
               CurrentView = View.Icons;
               if (!AllowView(CurrentView) || facadeView.ThumbnailView == null)
@@ -371,6 +392,7 @@ namespace MediaPortal.GUI.Music
               else
                 facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
               break;
+
             case View.FilmStrip:
               CurrentView = View.List;
               if (!AllowView(CurrentView) || facadeView.ListView == null)
@@ -446,7 +468,6 @@ namespace MediaPortal.GUI.Music
       facadeView.IsVisible = false;
       facadeView.IsVisible = true;
       GUIControl.FocusControl(GetID, facadeView.GetID);
-
 
       string strLine = String.Empty;
       View view = CurrentView;
@@ -875,7 +896,6 @@ namespace MediaPortal.GUI.Music
       }
       return false;
     }
-
 
     protected virtual void OnRetrieveCoverArt(GUIListItem item)
     {
