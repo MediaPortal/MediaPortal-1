@@ -9,6 +9,7 @@ using ProjectInfinity.Messaging;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Players;
 using ProjectInfinity.TaskBar;
+using ProjectInfinity.Plugins;
 
 namespace ProjectInfinity.Menu
 {
@@ -29,9 +30,20 @@ namespace ProjectInfinity.Menu
     public MenuViewModel(string id)
     {
       _id = id;
+
+      IList<IMenuItem> model;
+
       //The IMenuManager.GetMenu method returns a list of IMenuItem implementations of the 
       //correct type (IMenu, ICommandItem, IMessageItem, ...)
-      IList<IMenuItem> model = ServiceScope.Get<IMenuManager>().GetMenu(id);
+      Plugins.Menu menuInfo = (Plugins.Menu)ServiceScope.Get<IPluginManager>().BuildItem<Plugins.Menu>("/Menus", id);
+      if (menuInfo != null)
+      {
+        model = ServiceScope.Get<IMenuManager>().GetMenu(menuInfo.Path);
+      }
+      else
+      {
+        model = new List<IMenuItem>();
+      }
       //We translate this list to a list of menu items that the menu control can use by means
       //of the MenuViewCreator
       menuView = MenuViewCreator.Build(model);
@@ -43,7 +55,7 @@ namespace ProjectInfinity.Menu
       {
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
-          MediaPlayer player = (MediaPlayer) ServiceScope.Get<IPlayerCollectionService>()[0].UnderlyingPlayer;
+          MediaPlayer player = (MediaPlayer)ServiceScope.Get<IPlayerCollectionService>()[0].UnderlyingPlayer;
 
           VideoDrawing videoDrawing = new VideoDrawing();
           videoDrawing.Player = player;
@@ -94,7 +106,16 @@ namespace ProjectInfinity.Menu
 
     public string HeaderLabel
     {
-      get { return ServiceScope.Get<IMenuManager>().GetMenuName(_id); }
+      get
+      {
+
+        Plugins.Menu menuInfo = (Plugins.Menu)ServiceScope.Get<IPluginManager>().BuildItem<Plugins.Menu>("/Menus", _id);
+        if (menuInfo != null)
+        {
+          return menuInfo.Name;
+        }
+        return String.Empty;
+      }
     }
 
     public Visibility HeaderLabelVisibility

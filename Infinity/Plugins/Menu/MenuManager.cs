@@ -7,33 +7,30 @@ namespace ProjectInfinity.Menu
   {
     #region IMenuManager Members
 
-    public IList<IMenuItem> GetMenu(string id)
+    public IList<IMenuItem> GetMenu(string menuPath)
     {
       IList<IMenuItem> menus = new List<IMenuItem>();
 
-      Plugins.Menu menuInfo = (Plugins.Menu) ServiceScope.Get<IPluginManager>().BuildItem<Plugins.Menu>("/Menus", id);
-      if (menuInfo != null)
+      foreach (IMenuItem menuItem in ServiceScope.Get<IPluginManager>().BuildItems<IMenuItem>(menuPath))
       {
-        foreach (IMenuItem menuItem in ServiceScope.Get<IPluginManager>().BuildItems<IMenuItem>(menuInfo.Path))
+        if (menuItem is SubMenuItem)
         {
-          if (menuItem is SubMenuItem)
-          {
-            IMenu submenu = new Menu(menuItem);
+          IMenu submenu = new Menu(menuItem);
 
-            foreach (MenuItem subMenuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuItem>(((SubMenuItem)menuItem).SubMenuPath))
-            {
-
-              submenu.Items.Add(subMenuItem);
-            }
-            //TODO: should be an IMenu implementation
-            menus.Add(submenu);
-          }
-          else
+          foreach (MenuItem subMenuItem in ServiceScope.Get<IPluginManager>().BuildItems<MenuItem>(((SubMenuItem)menuItem).SubMenuPath))
           {
-            menus.Add(menuItem);
+
+            submenu.Items.Add(subMenuItem);
           }
+          //TODO: should be an IMenu implementation
+          menus.Add(submenu);
+        }
+        else
+        {
+          menus.Add(menuItem);
         }
       }
+
       return menus;
 
       ////TODO: call configuration to build up menu tree
@@ -46,16 +43,6 @@ namespace ProjectInfinity.Menu
       //  }
       //}
       //return menus;
-    }
-
-    public string GetMenuName(string id)
-    {
-      Plugins.Menu menuInfo = (Plugins.Menu) ServiceScope.Get<IPluginManager>().BuildItem<Plugins.Menu>("/Menus", id);
-      if (menuInfo != null)
-      {
-        return menuInfo.Name;
-      }
-      return "";
     }
 
     #endregion
