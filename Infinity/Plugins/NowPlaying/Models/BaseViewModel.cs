@@ -28,6 +28,10 @@ namespace NowPlaying
     {
     }
 
+    /// <summary>
+    /// Called when playback of a video has been stopped.
+    /// The stop-time is put in the media library so user can resume playback later on.
+    /// </summary>
     public void OnPlaybackStopped()
     {
       IPlayer player = ServiceScope.Get<IPlayerCollectionService>()[0];
@@ -45,6 +49,10 @@ namespace NowPlaying
       }
     }
 
+    /// <summary>
+    /// Called when playback of a movie started. If movie file is not yet in the media library, then we add it
+    /// and fill in a few tags
+    /// </summary>
     public void OnPlaybackStarted()
     {
       IPlayer player = ServiceScope.Get<IPlayerCollectionService>()[0];
@@ -65,6 +73,10 @@ namespace NowPlaying
       }
     }
 
+    /// <summary>
+    /// Called when playback has ended (movie end has been reached)
+    /// Resets the resume time in the media library and increased the number of times we watched the entire movie.
+    /// </summary>
     public void OnPlaybackEnded()
     {
       IPlayer player = ServiceScope.Get<IPlayerCollectionService>()[0];

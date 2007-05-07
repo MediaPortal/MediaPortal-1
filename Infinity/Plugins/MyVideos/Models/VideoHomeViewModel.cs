@@ -550,7 +550,8 @@ namespace MyVideos
         return;
       }
 
-
+      //check if there is a resume time in the media library for this movie
+      //Ifso, then ask the user if he wants to resume playback or restart the movie from the beginning
       double resumeTime = -1;
       IMediaLibrary library = ServiceScope.Get<IMediaLibrary>();
       IMLSection section = library.FindSection("Videos", false);
