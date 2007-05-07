@@ -295,7 +295,9 @@ namespace MediaPortal.Visualization
                 presets.Add(BassVis.BASS_WINAMPVIS_GetModuleName(visPlugin, j));
             }
             VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.Winamp, filePath, name, string.Empty, presets);
-            _VisualizationPluginsInfo.Add(vizInfo);
+            if (!vizInfo.IsBlackListed)
+              _VisualizationPluginsInfo.Add(vizInfo);
+            
             BassVis.BASS_WINAMPVIS_Free(visPlugin);
           }
         }
