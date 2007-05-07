@@ -1574,6 +1574,8 @@ namespace TvPlugin
           break;
 
         case 200042: // Linked channels
+          Gentle.Common.CacheManager.Clear();
+          linkages = layer.GetLinkagesForChannel(TVHome.Navigator.Channel);
           ShowLinkedChannelsMenu(linkages);
           break;
 
