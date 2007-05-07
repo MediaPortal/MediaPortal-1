@@ -25,6 +25,7 @@ namespace MyVideos
   public partial class VideoFullscreen : View
   {
     VideoFullscreenViewModel _model;
+
     public VideoFullscreen()
     {
       this.Loaded += new RoutedEventHandler(VideoFullscreen_Loaded);

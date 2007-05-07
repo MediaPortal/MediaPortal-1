@@ -147,6 +147,7 @@ namespace MyVideos
       ServiceScope.Get<IPlayerCollectionService>().Clear();
     }
     #endregion
+
     #region ILocalisation Properties
 
     public string SortLabel
