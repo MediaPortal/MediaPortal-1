@@ -806,6 +806,7 @@ namespace TvPlugin
         if (Utils.IsVideo(fileName))
         {
           g_Player.ShowFullScreenWindow();
+          g_Player.SeekAbsolute(0);
         }
         if (stoptime > 0)
         {

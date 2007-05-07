@@ -26,6 +26,7 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Threading;
 using System.Runtime.InteropServices;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
@@ -676,6 +677,12 @@ namespace MediaPortal.Player
 
         OnInitialized();
       }
+        
+      // Wait for a while to wait VMR9 to get ready.
+      // Implemented due to problems starting to play before VMR9 was ready resulting in black screen.
+      Thread.Sleep(200);
+
+
       return true;
     }
 

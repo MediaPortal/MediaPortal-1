@@ -1479,6 +1479,7 @@ namespace MediaPortal.Player
       _currentStep = 0;
       _currentStepIndex = -1;
       _seekTimer = DateTime.MinValue;
+      Speed = Speed;
     }
 
     static public void SeekAsolutePercentage(int iPercentage)
