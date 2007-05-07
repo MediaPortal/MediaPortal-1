@@ -15,6 +15,7 @@ namespace MyVideos
     public event MessageHandler<PlayerStartFailedMessage> MediaFailed;
     public event MessageHandler<PlayerStartMessage> MediaOpened;
     public event MessageHandler<PlayerEndedMessage> MediaEnded;
+    public event MessageHandler<PlayerStopMessage> MediaStopped;
 
     private MediaPlayer _underlyingPlayer;
     private PlayerMediaType _mediaType = PlayerMediaType.Movie;
@@ -22,6 +23,7 @@ namespace MyVideos
     private bool _paused = false;
     private bool _isStream = false;
     private bool _hasMedia = false;
+    private bool _isPlaying = false;
     private Exception _exception;
 
     public VideoPlayer(string fileName)
@@ -65,7 +67,7 @@ namespace MyVideos
 
     void _underlyingPlayer_MediaEnded(object sender, EventArgs e)
     {
-
+      _isPlaying = false;
       if (MediaEnded != null)
       {
         MediaEnded( new PlayerEndedMessage());
@@ -74,6 +76,15 @@ namespace MyVideos
 
     public void Close()
     {
+      if (_isPlaying)
+      {
+        _isPlaying = false;
+
+        if (MediaStopped != null)
+        {
+          MediaStopped(new PlayerStopMessage());
+        }
+      }
       _underlyingPlayer.Stop();
       _underlyingPlayer.Close();
 
@@ -83,15 +94,26 @@ namespace MyVideos
     public void Play()
     {
       _underlyingPlayer.Play();
+      _isPlaying = true;
     }
 
     public void Stop()
     {
+      if (_isPlaying)
+      {
+        _isPlaying = false;
+
+        if (MediaStopped != null)
+        {
+          MediaStopped(new PlayerStopMessage());
+        }
+      }
       _underlyingPlayer.Stop();
     }
 
     private void _underlyingPlayer_MediaOpened(object sender, EventArgs e)
     {
+      _isPlaying = true;
       if (MediaOpened != null)
       {
         MediaOpened( new PlayerStartMessage());
@@ -151,6 +173,29 @@ namespace MyVideos
     {
       get { return _underlyingPlayer.Position; }
       set { _underlyingPlayer.Position = value; }
+    }
+    /// <summary>
+    /// Gets the width.
+    /// </summary>
+    /// <value>The width.</value>
+    public int Width
+    {
+      get
+      {
+        return _underlyingPlayer.NaturalVideoWidth;
+      }
+    }
+
+    /// <summary>
+    /// Gets the height.
+    /// </summary>
+    /// <value>The height.</value>
+    public int Height
+    {
+      get
+      {
+        return _underlyingPlayer.NaturalVideoHeight;
+      }
     }
 
     /// <summary>

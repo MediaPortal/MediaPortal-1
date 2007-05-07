@@ -550,6 +550,36 @@ namespace MyVideos
         return;
       }
 
+
+      double resumeTime = -1;
+      IMediaLibrary library = ServiceScope.Get<IMediaLibrary>();
+      IMLSection section = library.FindSection("Videos", false);
+      if (section != null)
+      {
+        IMLItem item = section.FindItemByLocation(fileName);
+        if (item != null)
+        {
+          if (Double.TryParse(item.Tags["ResumeTime"] as string, out resumeTime))
+          {
+            if (resumeTime > 0)
+            {
+              MpMenu dlgMenu = new MpMenu();
+              dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+              dlgMenu.Owner = _viewModel.Window;
+              dlgMenu.Items.Clear();
+              dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("global", 5);// "Resume";
+              TimeSpan ts = new TimeSpan(0,0,(int)resumeTime);
+              string resume=String.Format(ServiceScope.Get<ILocalisation>().ToString("global", 9), ts.ToString());
+              dlgMenu.Items.Add(new DialogMenuItem(resume));
+              dlgMenu.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("global", 3)));//Restart
+              dlgMenu.ShowDialog();
+              if (dlgMenu.SelectedIndex != 0) resumeTime = -1;
+            }
+          }
+        }
+      }
+
+
       if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
       {
         ServiceScope.Get<IPlayerCollectionService>().Clear();
@@ -562,6 +592,10 @@ namespace MyVideos
       ServiceScope.Get<IPlayerCollectionService>().Add(player);
       player.Open(PlayerMediaType.Movie, fileName);
       player.Play();
+      if (resumeTime > 0)
+      {
+        player.Position = new TimeSpan(0, 0, (int)resumeTime);
+      }
     }
 
 

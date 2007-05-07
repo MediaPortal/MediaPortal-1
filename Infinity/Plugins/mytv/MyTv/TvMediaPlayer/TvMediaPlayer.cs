@@ -28,6 +28,10 @@ namespace MyTv
     // Summary:
     //     Occurs when the media has ended.
     public event MessageHandler<PlayerEndedMessage> MediaEnded;
+    //
+    // Summary:
+    //     Occurs when the media has ended.
+    public event MessageHandler<PlayerStopMessage> MediaStopped;
     #endregion
 
     #region delegates
@@ -36,11 +40,12 @@ namespace MyTv
 
     #region variables
     PlayerMediaType _mediaType;
-    MediaPlayer _underLyingPlayer;
+    MediaPlayer _underlyingPlayer;
     VirtualCard _card;
     Exception _exception;
     bool _paused = false;
     bool _isStream = false;
+    bool _isPlaying = false;
     string _fileName;
     #endregion
 
@@ -55,7 +60,7 @@ namespace MyTv
       _fileName = fileName;
       _card = card;
       _exception = null;
-      _underLyingPlayer = new MediaPlayer();
+      _underlyingPlayer = new MediaPlayer();
       ServiceScope.Get<IMessageBroker>().Register(this);
 
     }
@@ -115,29 +120,62 @@ namespace MyTv
 
       ServiceScope.Get<ILogger>().Info("Tv:  open :{0}", fname);
       _isStream = isStream;
-      _underLyingPlayer.MediaFailed += new EventHandler<ExceptionEventArgs>(TvMediaPlayer_MediaFailed);
-      _underLyingPlayer.MediaOpened += new EventHandler(TvMediaPlayer_MediaOpened);
-      _underLyingPlayer.MediaEnded += new EventHandler(_underLyingPlayer_MediaEnded);
-      _underLyingPlayer.Open(new Uri(fname, UriKind.Absolute));
+      _underlyingPlayer.MediaFailed += new EventHandler<ExceptionEventArgs>(TvMediaPlayer_MediaFailed);
+      _underlyingPlayer.MediaOpened += new EventHandler(TvMediaPlayer_MediaOpened);
+      _underlyingPlayer.MediaEnded += new EventHandler(_underlyingPlayer_MediaEnded);
+      _underlyingPlayer.Open(new Uri(fname, UriKind.Absolute));
       ServiceScope.Get<ILogger>().Info("Tv:  player opened");
     }
 
-    void _underLyingPlayer_MediaEnded(object sender, EventArgs e)
+    void _underlyingPlayer_MediaEnded(object sender, EventArgs e)
     {
+      _isPlaying = false;
       if (MediaEnded != null)
       {
         MediaEnded( new PlayerEndedMessage());
       }
     }
 
+    /// <summary>
+    /// Gets the width.
+    /// </summary>
+    /// <value>The width.</value>
+    public int Width
+    {
+      get
+      {
+        return _underlyingPlayer.NaturalVideoWidth;
+      }
+    }
+
+    /// <summary>
+    /// Gets the height.
+    /// </summary>
+    /// <value>The height.</value>
+    public int Height
+    {
+      get
+      {
+        return _underlyingPlayer.NaturalVideoHeight;
+      }
+    }
 
     /// <summary>
     /// Closes the player.
     /// </summary>
     public void Close()
     {
-      _underLyingPlayer.Stop();
-      _underLyingPlayer.Close();
+      if (_isPlaying)
+      {
+        _isPlaying = false;
+
+        if (MediaStopped != null)
+        {
+          MediaStopped(new PlayerStopMessage());
+        }
+      }
+      _underlyingPlayer.Stop();
+      _underlyingPlayer.Close();
       if (_card != null)
       {
         StopTimeshiftingDelegate starter = new StopTimeshiftingDelegate(this.DoStopTimeshifting);
@@ -153,11 +191,11 @@ namespace MyTv
       _paused = !_paused;
       if (_paused)
       {
-        _underLyingPlayer.Pause();
+        _underlyingPlayer.Pause();
       }
       else
       {
-        _underLyingPlayer.Play();
+        _underlyingPlayer.Play();
       }
     }
 
@@ -166,7 +204,16 @@ namespace MyTv
     /// </summary>
     public void Stop()
     {
-      _underLyingPlayer.Stop();
+      if (_isPlaying)
+      {
+        _isPlaying = false;
+
+        if (MediaStopped != null)
+        {
+          MediaStopped(new PlayerStopMessage());
+        }
+      }
+      _underlyingPlayer.Stop();
     }
 
     /// <summary>
@@ -174,7 +221,8 @@ namespace MyTv
     /// </summary>
     public void Play()
     {
-      _underLyingPlayer.Play();
+      _isPlaying = true;
+      _underlyingPlayer.Play();
     }
 
     /// <summary>
@@ -211,7 +259,7 @@ namespace MyTv
             }
           }
         }
-        if (_underLyingPlayer.NaturalDuration.HasTimeSpan) return _underLyingPlayer.NaturalDuration.TimeSpan;
+        if (_underlyingPlayer.NaturalDuration.HasTimeSpan) return _underlyingPlayer.NaturalDuration.TimeSpan;
         return new TimeSpan(0, 0, 0, 0);
       }
     }
@@ -224,11 +272,11 @@ namespace MyTv
     {
       get
       {
-        return _underLyingPlayer.Position;
+        return _underlyingPlayer.Position;
       }
       set
       {
-        _underLyingPlayer.Position = value;
+        _underlyingPlayer.Position = value;
       }
     }
 
@@ -318,7 +366,7 @@ namespace MyTv
     {
       get
       {
-        return _underLyingPlayer;
+        return _underlyingPlayer;
       }
     }
     #endregion
@@ -336,7 +384,8 @@ namespace MyTv
     void TvMediaPlayer_MediaOpened(object sender, EventArgs e)
     {
 
-      ServiceScope.Get<ILogger>().Info("MyTv: media opened {0}x{1} {2}", _underLyingPlayer.NaturalVideoWidth, _underLyingPlayer.NaturalVideoHeight, Duration);
+      _isPlaying = true;
+      ServiceScope.Get<ILogger>().Info("MyTv: media opened {0}x{1} {2}", _underlyingPlayer.NaturalVideoWidth, _underlyingPlayer.NaturalVideoHeight, Duration);
       if (MediaOpened != null)
       {
         MediaOpened( new PlayerStartMessage());

@@ -17,6 +17,7 @@ using ProjectInfinity.Localisation;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Messaging.Files;
 using Dialogs;
+using MediaLibrary;
 
 namespace NowPlaying
 {
@@ -25,7 +26,63 @@ namespace NowPlaying
 
     public BaseViewModel()
     {
+    }
 
+    public void OnPlaybackStopped()
+    {
+      IPlayer player = ServiceScope.Get<IPlayerCollectionService>()[0];
+
+      if (player.MediaType == PlayerMediaType.DVD || player.MediaType == PlayerMediaType.Movie)
+      {
+        IMediaLibrary library = ServiceScope.Get<IMediaLibrary>();
+        IMLSection section = library.FindSection("Videos", false);
+        if (section == null) return;
+        IMLItem item = section.FindItemByLocation(player.FileName);
+        if (item == null) return;
+
+        item.Tags["ResumeTime"] = player.Position.TotalSeconds;
+        item.SaveTags();
+      }
+    }
+
+    public void OnPlaybackStarted()
+    {
+      IPlayer player = ServiceScope.Get<IPlayerCollectionService>()[0];
+      if (player.MediaType == PlayerMediaType.DVD || player.MediaType == PlayerMediaType.Movie)
+      {
+        IMediaLibrary library = ServiceScope.Get<IMediaLibrary>();
+        IMLSection section = library.FindSection("Videos", true);
+        IMLItem item1 = section.FindItemByLocation(player.FileName);
+        if (item1 != null) return;
+
+        IMLItem newItem = section.AddNewItem(player.FileName, player.FileName);
+        newItem.Tags["Watched"] = 0;
+        newItem.Tags["ResumeTime"] = "";
+        newItem.Tags["Duration"] = player.Duration.TotalSeconds;
+        newItem.Tags["Width"] = player.Width;
+        newItem.Tags["Height"] = player.Height;
+        newItem.SaveTags();
+      }
+    }
+
+    public void OnPlaybackEnded()
+    {
+      IPlayer player = ServiceScope.Get<IPlayerCollectionService>()[0];
+
+      if (player.MediaType == PlayerMediaType.DVD || player.MediaType == PlayerMediaType.Movie)
+      {
+        IMediaLibrary library = ServiceScope.Get<IMediaLibrary>();
+        IMLSection section = library.FindSection("Videos", false);
+        if (section == null) return;
+        IMLItem item = section.FindItemByLocation(player.FileName);
+        if (item == null) return;
+
+        int watched = Int32.Parse((string)item.Tags["Watched"]);
+        watched++;
+        item.Tags["Watched"] = watched;
+        item.Tags["ResumeTime"] = "";
+        item.SaveTags();
+      }
     }
     #region properties
     public string NowPlayingLabel
@@ -81,7 +138,7 @@ namespace NowPlaying
         if (ServiceScope.Get<IPlayerCollectionService>().Count > 0)
         {
           string fileName = ServiceScope.Get<IPlayerCollectionService>()[0].FileName;
-          int pos =fileName.LastIndexOf(@"\");
+          int pos = fileName.LastIndexOf(@"\");
           if (pos >= 0) fileName = fileName.Substring(pos + 1);
           return fileName;
         }
@@ -223,6 +280,20 @@ namespace NowPlaying
         catch (Exception)
         {
         }
+        if (player.MediaType == PlayerMediaType.DVD || player.MediaType == PlayerMediaType.Movie)
+        {
+          IMediaLibrary library = ServiceScope.Get<IMediaLibrary>();
+          IMLSection section = library.FindSection("Videos", false);
+          if (section != null)
+          {
+            IMLItem item1 = section.FindItemByLocation(player.FileName);
+            if (item1 != null)
+            {
+              section.DeleteItem(item1);
+            }
+          }
+        }
+
         ServiceScope.Get<IMessageBroker>().Register(this);
         if (OnFileDelete != null)
         {

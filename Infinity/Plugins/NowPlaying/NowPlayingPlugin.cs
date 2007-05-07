@@ -44,12 +44,23 @@ namespace NowPlaying
     [MessageSubscription(typeof(PlayerEndedMessage))]
     protected void OnPlaybackEnded(PlayerEndedMessage e)
     {
+      BaseViewModel model = new BaseViewModel();
+      model.OnPlaybackEnded();
       ServiceScope.Get<INavigationService>().Navigate(new PlaybackEnded());
     }
 
     [MessageSubscription(typeof(PlayerStartMessage))]
     protected void OnPlaybackStarted(PlayerStartMessage e)
     {
+      BaseViewModel model = new BaseViewModel();
+      model.OnPlaybackStarted();
+    }
+
+    [MessageSubscription(typeof(PlayerStopMessage))]
+    protected void OnPlaybackStopped(PlayerStopMessage e)
+    {
+      BaseViewModel model = new BaseViewModel();
+      model.OnPlaybackStopped();
     }
 
     [MessageSubscription(typeof(PlayerStartFailedMessage))]

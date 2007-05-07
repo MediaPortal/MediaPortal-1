@@ -5,6 +5,9 @@ using ProjectInfinity.Messaging;
 
 namespace ProjectInfinity.Players
 {
+  public class PlayerStopMessage : Message
+  {
+  };
   public class PlayerStartMessage : Message
   {
   };
@@ -55,6 +58,12 @@ namespace ProjectInfinity.Players
     //     Occurs when the media has ended.
     [MessagePublication(typeof(PlayerEndedMessage))]
     event MessageHandler<PlayerEndedMessage> MediaEnded;
+
+    //
+    // Summary:
+    //     Occurs when the media has stopped.
+    [MessagePublication(typeof(PlayerStopMessage))]
+    event MessageHandler<PlayerStopMessage> MediaStopped;
 
     /// <summary>
     /// Opens the specified file name.
@@ -114,5 +123,17 @@ namespace ProjectInfinity.Players
     /// </summary>
     /// <value>The underlying media player.</value>
     object UnderlyingPlayer { get;}
+
+    /// <summary>
+    /// Gets the width.
+    /// </summary>
+    /// <value>The width.</value>
+    int Width { get;}
+
+    /// <summary>
+    /// Gets the height.
+    /// </summary>
+    /// <value>The height.</value>
+    int Height { get;}
   }
 }
