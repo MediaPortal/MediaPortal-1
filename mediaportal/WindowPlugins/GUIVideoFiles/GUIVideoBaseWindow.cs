@@ -94,6 +94,9 @@ namespace MediaPortal.GUI.Video
     public GUIVideoBaseWindow()
     {
       playlistPlayer = PlayListPlayer.SingletonPlayer;
+
+      if (handler == null)
+        handler = new VideoViewHandler();
     }
 
     #endregion 
@@ -453,9 +456,6 @@ namespace MediaPortal.GUI.Video
       GUIVideoOverlay videoOverlay = (GUIVideoOverlay)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY);
       if ((videoOverlay != null) && (videoOverlay.Focused))
         videoOverlay.Focused = false;
-
-      if (handler == null)
-        handler = new VideoViewHandler();
 
       LoadSettings();
 
