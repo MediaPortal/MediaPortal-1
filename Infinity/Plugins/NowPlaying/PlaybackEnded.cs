@@ -15,7 +15,7 @@ namespace NowPlaying
     public PlaybackEnded()
     {
 
-      //DataContext = new BaseViewModel() ;
+      DataContext = new BaseViewModel();
     }
   }
 }
