@@ -242,7 +242,7 @@ namespace MediaPortal.Configuration.Sections
       this.defaultAudioLanguagelabel.AutoSize = true;
       this.defaultAudioLanguagelabel.Location = new System.Drawing.Point(16, 72);
       this.defaultAudioLanguagelabel.Name = "defaultAudioLanguagelabel";
-      this.defaultAudioLanguagelabel.Size = new System.Drawing.Size(129, 13);
+      this.defaultAudioLanguagelabel.Size = new System.Drawing.Size(133, 13);
       this.defaultAudioLanguagelabel.TabIndex = 3;
       this.defaultAudioLanguagelabel.Text = "Preferred audio language:";
       // 
@@ -251,7 +251,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(16, 48);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(136, 13);
+      this.label1.Size = new System.Drawing.Size(142, 13);
       this.label1.TabIndex = 1;
       this.label1.Text = "Preferred subtitle language:";
       // 
@@ -285,7 +285,7 @@ namespace MediaPortal.Configuration.Sections
       this.showSubtitlesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.showSubtitlesCheckBox.Location = new System.Drawing.Point(168, 20);
       this.showSubtitlesCheckBox.Name = "showSubtitlesCheckBox";
-      this.showSubtitlesCheckBox.Size = new System.Drawing.Size(206, 17);
+      this.showSubtitlesCheckBox.Size = new System.Drawing.Size(213, 17);
       this.showSubtitlesCheckBox.TabIndex = 0;
       this.showSubtitlesCheckBox.Text = "Force subtitles (overrides disc defaults)";
       this.showSubtitlesCheckBox.UseVisualStyleBackColor = true;
@@ -312,7 +312,7 @@ namespace MediaPortal.Configuration.Sections
       this.displayModeLabel.AutoSize = true;
       this.displayModeLabel.Location = new System.Drawing.Point(16, 72);
       this.displayModeLabel.Name = "displayModeLabel";
-      this.displayModeLabel.Size = new System.Drawing.Size(73, 13);
+      this.displayModeLabel.Size = new System.Drawing.Size(74, 13);
       this.displayModeLabel.TabIndex = 3;
       this.displayModeLabel.Text = "Display mode:";
       // 
@@ -353,7 +353,7 @@ namespace MediaPortal.Configuration.Sections
       this.aspectRatioLabel.AutoSize = true;
       this.aspectRatioLabel.Location = new System.Drawing.Point(16, 48);
       this.aspectRatioLabel.Name = "aspectRatioLabel";
-      this.aspectRatioLabel.Size = new System.Drawing.Size(145, 13);
+      this.aspectRatioLabel.Size = new System.Drawing.Size(149, 13);
       this.aspectRatioLabel.TabIndex = 1;
       this.aspectRatioLabel.Text = "Aspect ratio correction mode:";
       // 
@@ -363,7 +363,7 @@ namespace MediaPortal.Configuration.Sections
       this.pixelRatioCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.pixelRatioCheckBox.Location = new System.Drawing.Point(168, 20);
       this.pixelRatioCheckBox.Name = "pixelRatioCheckBox";
-      this.pixelRatioCheckBox.Size = new System.Drawing.Size(140, 17);
+      this.pixelRatioCheckBox.Size = new System.Drawing.Size(143, 17);
       this.pixelRatioCheckBox.TabIndex = 0;
       this.pixelRatioCheckBox.Text = "Use pixel ratio correction";
       this.pixelRatioCheckBox.UseVisualStyleBackColor = true;
@@ -393,6 +393,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // autoPlayComboBox
       // 
+      this.autoPlayComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.autoPlayComboBox.BorderColor = System.Drawing.Color.Empty;
       this.autoPlayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.autoPlayComboBox.Location = new System.Drawing.Point(168, 24);

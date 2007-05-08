@@ -309,10 +309,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Controls.Add(this.textBoxTimeShiftBuffer);
       this.groupBox4.Controls.Add(this.label7);
       this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox4.Location = new System.Drawing.Point(0, 214);
+      this.groupBox4.Location = new System.Drawing.Point(192, 211);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(263, 75);
-      this.groupBox4.TabIndex = 1;
+      this.groupBox4.Size = new System.Drawing.Size(280, 75);
+      this.groupBox4.TabIndex = 3;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Timeshifting";
       // 
@@ -322,8 +322,8 @@ namespace MediaPortal.Configuration.Sections
       this.cbTurnOnTimeShift.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbTurnOnTimeShift.Location = new System.Drawing.Point(16, 19);
       this.cbTurnOnTimeShift.Name = "cbTurnOnTimeShift";
-      this.cbTurnOnTimeShift.Size = new System.Drawing.Size(230, 17);
-      this.cbTurnOnTimeShift.TabIndex = 1;
+      this.cbTurnOnTimeShift.Size = new System.Drawing.Size(236, 17);
+      this.cbTurnOnTimeShift.TabIndex = 0;
       this.cbTurnOnTimeShift.Text = "Auto turn timeshift on when entering My TV ";
       this.cbTurnOnTimeShift.UseVisualStyleBackColor = true;
       this.cbTurnOnTimeShift.CheckedChanged += new System.EventHandler(this.cbTurnOnTimeShift_CheckedChanged);
@@ -335,8 +335,8 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxTimeShiftBuffer.BorderColor = System.Drawing.Color.Empty;
       this.textBoxTimeShiftBuffer.Location = new System.Drawing.Point(168, 43);
       this.textBoxTimeShiftBuffer.Name = "textBoxTimeShiftBuffer";
-      this.textBoxTimeShiftBuffer.Size = new System.Drawing.Size(54, 20);
-      this.textBoxTimeShiftBuffer.TabIndex = 3;
+      this.textBoxTimeShiftBuffer.Size = new System.Drawing.Size(71, 21);
+      this.textBoxTimeShiftBuffer.TabIndex = 2;
       this.textBoxTimeShiftBuffer.Text = "30";
       this.textBoxTimeShiftBuffer.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
@@ -345,7 +345,7 @@ namespace MediaPortal.Configuration.Sections
       this.label7.Location = new System.Drawing.Point(16, 46);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(136, 16);
-      this.label7.TabIndex = 2;
+      this.label7.TabIndex = 1;
       this.label7.Text = "Timeshift buffer (minutes):";
       // 
       // groupBox3
@@ -354,10 +354,10 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.byIndexCheckBox);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox3.Location = new System.Drawing.Point(0, 295);
+      this.groupBox3.Location = new System.Drawing.Point(192, 292);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(263, 53);
-      this.groupBox3.TabIndex = 2;
+      this.groupBox3.Size = new System.Drawing.Size(280, 53);
+      this.groupBox3.TabIndex = 4;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Misc";
       // 
@@ -367,7 +367,7 @@ namespace MediaPortal.Configuration.Sections
       this.byIndexCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.byIndexCheckBox.Location = new System.Drawing.Point(16, 24);
       this.byIndexCheckBox.Name = "byIndexCheckBox";
-      this.byIndexCheckBox.Size = new System.Drawing.Size(182, 17);
+      this.byIndexCheckBox.Size = new System.Drawing.Size(183, 17);
       this.byIndexCheckBox.TabIndex = 0;
       this.byIndexCheckBox.Text = "Select channel by index (non-US)";
       this.byIndexCheckBox.UseVisualStyleBackColor = true;
@@ -378,10 +378,10 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox5.Controls.Add(this.cbTurnOnTv);
       this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox5.Location = new System.Drawing.Point(0, 161);
+      this.groupBox5.Location = new System.Drawing.Point(192, 158);
       this.groupBox5.Name = "groupBox5";
-      this.groupBox5.Size = new System.Drawing.Size(263, 47);
-      this.groupBox5.TabIndex = 3;
+      this.groupBox5.Size = new System.Drawing.Size(280, 47);
+      this.groupBox5.TabIndex = 2;
       this.groupBox5.TabStop = false;
       this.groupBox5.Text = "Auto on";
       // 
@@ -391,7 +391,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbTurnOnTv.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbTurnOnTv.Location = new System.Drawing.Point(16, 19);
       this.cbTurnOnTv.Name = "cbTurnOnTv";
-      this.cbTurnOnTv.Size = new System.Drawing.Size(206, 17);
+      this.cbTurnOnTv.Size = new System.Drawing.Size(207, 17);
       this.cbTurnOnTv.TabIndex = 0;
       this.cbTurnOnTv.Text = "Auto turn TV on when entering My TV ";
       this.cbTurnOnTv.UseVisualStyleBackColor = true;
@@ -406,10 +406,10 @@ namespace MediaPortal.Configuration.Sections
       this.gAllowedModes.Controls.Add(this.cbAllowStretch);
       this.gAllowedModes.Controls.Add(this.cbAllowPanScan);
       this.gAllowedModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.gAllowedModes.Location = new System.Drawing.Point(286, 161);
+      this.gAllowedModes.Location = new System.Drawing.Point(0, 158);
       this.gAllowedModes.Name = "gAllowedModes";
       this.gAllowedModes.Size = new System.Drawing.Size(186, 187);
-      this.gAllowedModes.TabIndex = 7;
+      this.gAllowedModes.TabIndex = 1;
       this.gAllowedModes.TabStop = false;
       this.gAllowedModes.Text = "Allowed Zoom Modes";
       // 
@@ -420,7 +420,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowNormal.Location = new System.Drawing.Point(17, 22);
       this.cbAllowNormal.Name = "cbAllowNormal";
       this.cbAllowNormal.Size = new System.Drawing.Size(57, 17);
-      this.cbAllowNormal.TabIndex = 6;
+      this.cbAllowNormal.TabIndex = 0;
       this.cbAllowNormal.Text = "Normal";
       this.cbAllowNormal.UseVisualStyleBackColor = true;
       // 
@@ -441,8 +441,8 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowOriginal.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbAllowOriginal.Location = new System.Drawing.Point(17, 45);
       this.cbAllowOriginal.Name = "cbAllowOriginal";
-      this.cbAllowOriginal.Size = new System.Drawing.Size(131, 17);
-      this.cbAllowOriginal.TabIndex = 5;
+      this.cbAllowOriginal.Size = new System.Drawing.Size(133, 17);
+      this.cbAllowOriginal.TabIndex = 1;
       this.cbAllowOriginal.Text = "Original Source Format";
       this.cbAllowOriginal.UseVisualStyleBackColor = true;
       // 
@@ -452,8 +452,8 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowZoom.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbAllowZoom.Location = new System.Drawing.Point(17, 68);
       this.cbAllowZoom.Name = "cbAllowZoom";
-      this.cbAllowZoom.Size = new System.Drawing.Size(51, 17);
-      this.cbAllowZoom.TabIndex = 0;
+      this.cbAllowZoom.Size = new System.Drawing.Size(50, 17);
+      this.cbAllowZoom.TabIndex = 2;
       this.cbAllowZoom.Text = "Zoom";
       this.cbAllowZoom.UseVisualStyleBackColor = true;
       // 
@@ -463,8 +463,8 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowLetterbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbAllowLetterbox.Location = new System.Drawing.Point(17, 160);
       this.cbAllowLetterbox.Name = "cbAllowLetterbox";
-      this.cbAllowLetterbox.Size = new System.Drawing.Size(86, 17);
-      this.cbAllowLetterbox.TabIndex = 4;
+      this.cbAllowLetterbox.Size = new System.Drawing.Size(90, 17);
+      this.cbAllowLetterbox.TabIndex = 6;
       this.cbAllowLetterbox.Text = "4:3 Letterbox";
       this.cbAllowLetterbox.UseVisualStyleBackColor = true;
       // 
@@ -474,8 +474,8 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowStretch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbAllowStretch.Location = new System.Drawing.Point(17, 114);
       this.cbAllowStretch.Name = "cbAllowStretch";
-      this.cbAllowStretch.Size = new System.Drawing.Size(58, 17);
-      this.cbAllowStretch.TabIndex = 1;
+      this.cbAllowStretch.Size = new System.Drawing.Size(59, 17);
+      this.cbAllowStretch.TabIndex = 4;
       this.cbAllowStretch.Text = "Stretch";
       this.cbAllowStretch.UseVisualStyleBackColor = true;
       // 
@@ -485,8 +485,8 @@ namespace MediaPortal.Configuration.Sections
       this.cbAllowPanScan.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbAllowPanScan.Location = new System.Drawing.Point(17, 137);
       this.cbAllowPanScan.Name = "cbAllowPanScan";
-      this.cbAllowPanScan.Size = new System.Drawing.Size(110, 17);
-      this.cbAllowPanScan.TabIndex = 2;
+      this.cbAllowPanScan.Size = new System.Drawing.Size(108, 17);
+      this.cbAllowPanScan.TabIndex = 5;
       this.cbAllowPanScan.Text = "4:3 Pan and Scan";
       this.cbAllowPanScan.UseVisualStyleBackColor = true;
       // 
