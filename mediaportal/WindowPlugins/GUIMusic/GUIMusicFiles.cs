@@ -2067,9 +2067,7 @@ namespace MediaPortal.GUI.Music
       {
         AddItemToPlayList(pItem, ref playList);
       }
-
-      //if (playList.Count > 0)
-      if (playList.Count > 1)
+      else if (playList.Count > 1)
       {
         PlayList tempPlayList = new PlayList();
 
