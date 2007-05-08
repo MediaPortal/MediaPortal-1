@@ -579,11 +579,6 @@ namespace Tag.MP3
     {
       get
       {
-        int length = GetFrameValueInt(FrameNames.TLEN);
-
-        if (length > 0)
-          return length;
-
         return Id3Tag.Duration * 1000;
       }
     }
