@@ -272,6 +272,20 @@ STDMETHODIMP CEpgScanner::GetMHWTheme(UINT themeId, char** theme)
 	return S_OK;
 }
 
+bool CEpgScanner::IsEPG_PID(int pid)
+{
+	return (pid==PID_EPG || pid==PID_DISH_EPG || pid==PID_EPG_PREMIERE_DIREKT || pid==PID_EPG_PREMIERE_SPORT);
+}
+
+bool CEpgScanner::IsMHW_PID(int pid)
+{
+	return (pid==PID_MHW1 || pid==PID_MHW2);
+}
+
+bool CEpgScanner::IsEIT_PID(int pid)
+{
+	return (IsEPG_PID(pid) || IsMHW_PID(pid));
+}
 
 void CEpgScanner::OnTsPacket(byte* tsPacket)
 {
@@ -296,11 +310,11 @@ void CEpgScanner::OnTsPacket(byte* tsPacket)
 		if (m_bGrabbing)
 		{
       int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
-      if (pid!=PID_EPG && pid!=PID_DISH_EPG && pid!=PID_MHW1 && pid != PID_MHW2) return;
+      if (!IsEIT_PID(pid)) return;
       {
         m_header.Decode(tsPacket);
 			  CEnterCriticalSection enter(m_section);
-        if (pid==PID_EPG || pid==PID_DISH_EPG)
+        if (IsEPG_PID(pid))
 			    m_epgParser.OnTsPacket(m_header,tsPacket);
         else
 			    m_mhwParser.OnTsPacket(m_header,tsPacket);

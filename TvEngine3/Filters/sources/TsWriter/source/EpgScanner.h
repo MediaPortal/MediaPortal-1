@@ -98,6 +98,10 @@ protected:
 	CEpgParser m_epgParser;
 	CMhwParser m_mhwParser;
   IEpgCallback* m_pCallBack;
+
+  	bool IsEPG_PID(int pid);
+	bool IsMHW_PID(int pid);
+	bool IsEIT_PID(int pid);
 private:
 	bool m_bGrabbing;
 	CCriticalSection m_section;

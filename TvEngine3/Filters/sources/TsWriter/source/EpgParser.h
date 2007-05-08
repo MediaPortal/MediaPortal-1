@@ -30,6 +30,8 @@ using namespace std;
 
 #define PID_EPG			0x12
 #define PID_DISH_EPG	0x300 // DISH Network 9-day epg
+#define PID_EPG_PREMIERE_DIREKT	0x0b11 
+#define PID_EPG_PREMIERE_SPORT	0x0b12
 
 class CEpgParser :  public ISectionCallback
 {
@@ -50,7 +52,7 @@ public:
 	void	OnTsPacket(CTsHeader& header,byte* tsPacket);
 	void  OnNewSection(int pid, int tableId, CSection& section); 
 
-
+    void AddSectionDecoder(int pid,int tableId);
 private:
   vector<CSectionDecoder*> m_vecDecoders;
 	CEpgDecoder m_epgDecoder;

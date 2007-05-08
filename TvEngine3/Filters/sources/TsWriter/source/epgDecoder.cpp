@@ -64,13 +64,12 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 		int segment_last_section_number=buf[12];
 		int last_table_id=buf[13];
 
-
-    unsigned long lNetworkId=network_id;
-    unsigned long lTransport_id=transport_id;
-    unsigned long lServiceId=service_id;
+		unsigned long lNetworkId=network_id;
+		unsigned long lTransport_id=transport_id;
+		unsigned long lServiceId=service_id;
 		unsigned long key=(unsigned long)(lNetworkId<<32UL);
-    key+=(lTransport_id<<16);
-    key+=lServiceId;
+		key+=(lTransport_id<<16);
+		key+=lServiceId;
 		imapEPG it=m_mapEPG.find(key);
 		if (it==m_mapEPG.end())
 		{
@@ -81,10 +80,11 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 			newChannel.allSectionsReceived=false;
 			m_mapEPG[key]=newChannel;
 			it=m_mapEPG.find(key);
-		}
+		}	
 		if (it==m_mapEPG.end()) 
-      return E_FAIL;
+			return E_FAIL;
 		EPGChannel& channel=it->second; 
+
 
 		//did we already receive this section ?
 		key=crc32 ((char*)buf,len);
@@ -104,6 +104,7 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 			unsigned int running_status=buf[start+10]>>5;
 			unsigned int free_CA_mode=(buf[start+10]>>4) & 0x1;
 			int descriptors_len=((buf[start+10]&0xf)<<8) + buf[start+11];
+
 			EPGChannel::imapEvents itEvent=channel.mapEvents.find(event_id);
 			if (itEvent==channel.mapEvents.end())
 			{
@@ -186,6 +187,153 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 		LogDebug("mpsaa: unhandled exception in Sections::DecodeEPG()");
 	}	
 	return S_OK;
+}
+
+HRESULT CEpgDecoder::DecodePremierePrivateEPG(byte* buf,int len)
+{
+	CEnterCriticalSection lock (m_critSection);
+	try
+	{
+		if (!m_bParseEPG) 
+      return E_FAIL;
+		if (m_bEpgDone) 
+      return E_FAIL;
+		if (buf==NULL)
+      return E_FAIL;
+
+		time_t currentTime=time(NULL);
+		time_t timespan=currentTime-m_epgTimeout;
+		if (timespan>60)
+		{
+			m_bParseEPG=false;
+			m_bEpgDone=true;
+			return S_FINISHED;
+		}
+		if (len<=8) 
+			return E_FAIL;
+
+
+		int section_length = ((buf[1]& 0xF)<<8) + buf[2];
+		int service_id = (buf[3]<<8)+buf[4];
+		int version_number = (buf[5]>>1) & 0x1f;
+		int current_next_indicator = buf[5]&1;
+		int section_number=buf[6];
+		int last_section_number=buf[7];
+
+		//did we already receive this section ?
+		unsigned long key=crc32 ((char*)buf,len);
+		m_imapSectionsReceived itSec=m_mapSectionsReceived.find(key);
+		if (itSec!=m_mapSectionsReceived.end())
+			return S_FINISHED; //yes
+		m_mapSectionsReceived[key]=true;
+
+		m_epgTimeout=time(NULL);
+	    EPGEvent epgEvent;
+		int start=8;
+		while (start+8 <= len)
+		{
+			unsigned int event_id=(buf[start]<<24) | (buf[start+1]<<16) | (buf[start+2]<< 8) |  buf[start+3];
+			unsigned long duration=(buf[start+4]<<16)+(buf[start+5]<<8)+buf[6];
+			int descriptors_len=((buf[start+7]&0xf)<<8) + buf[start+8];
+			epgEvent.eventid=event_id;
+			epgEvent.duration=duration;
+
+			start=start+9;
+			int off=0;
+			while (off < descriptors_len)
+			{
+				if (start+off+1>len) 
+					return  E_FAIL;
+				int descriptor_tag = buf[start+off];
+				int descriptor_len = buf[start+off+1];
+				if (descriptor_len>0) 
+				{
+					if (start+off+descriptor_len+2>len) 
+					{
+						//LogDebug("epg:     DecodeEPG check1 %d %d %d %d",start,off,descriptor_len,len);
+						return E_FAIL;
+					}
+					if (descriptor_tag ==0x4d)
+					{
+						//					LogDebug("epg:     short event descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+						DecodeShortEventDescriptor( &buf[start+off],epgEvent);
+					}
+					else if (descriptor_tag ==0x54)
+					{
+						//					LogDebug("epg:     genre descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+						DecodeContentDescription( &buf[start+off],epgEvent);
+					}
+					else if (descriptor_tag ==0x4e)
+					{
+						//					LogDebug("epg:     description descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+						DecodeExtendedEvent(&buf[start+off],epgEvent);
+					}
+					else if (descriptor_tag ==0xF0)
+					{
+						//					LogDebug("epg:  premiere content order   descriptor:0x%x len:%d start:%d %s",descriptor_tag,descriptor_len,start+off,&buf[start+off+2]);
+					}
+					else if (descriptor_tag ==0xF1)
+					{
+						//					LogDebug("epg:  premiere parental information   descriptor:0x%x len:%d start:%d %s",descriptor_tag,descriptor_len,start+off,&buf[start+off+2]);
+					}
+					else if (descriptor_tag ==0xF2)
+					{
+						//					LogDebug("epg:  premiere content transmission   descriptor:0x%x len:%d start:%d %s",descriptor_tag,descriptor_len,start+off,&buf[start+off+2]);
+						DecodePremiereContentTransmissionDescriptor(&buf[start+off],epgEvent);
+					}
+					else
+					{
+						//					LogDebug("epg:     descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+					}
+
+				}
+				off   +=(descriptor_len+2);
+			}
+			start +=descriptors_len;
+		}
+	}
+	catch(...)
+	{
+		LogDebug("mpsaa: unhandled exception in Sections::DecodePremierePrivateEPG()");
+	}	
+	return S_OK;
+}
+
+void CEpgDecoder::DecodePremiereContentTransmissionDescriptor(byte* data, EPGEvent epgEvent)
+{
+	int tid=(data[2]<<8)+data[3];
+	int nid=(data[4]<<8)+data[5];
+	int sid=(data[6]<<8)+data[7];
+	unsigned long dateMJD=(data[8]<<8)+data[9];
+	unsigned int transmission_count=data[10];
+	
+	unsigned long lNetworkId=nid;
+	unsigned long lTransport_id=tid;
+	unsigned long lServiceId=sid;
+	unsigned long key=(unsigned long)(lNetworkId<<32UL);
+	key+=(lTransport_id<<16);
+	key+=lServiceId;
+	imapEPG it=m_mapEPG.find(key);
+	if (it==m_mapEPG.end())
+	{
+		EPGChannel newChannel;
+		newChannel.original_network_id=nid;
+		newChannel.service_id=sid;
+		newChannel.transport_id=tid;
+		newChannel.allSectionsReceived=false;
+		m_mapEPG[key]=newChannel;
+		it=m_mapEPG.find(key);
+	}
+	EPGChannel& channel=it->second;
+	epgEvent.dateMJD=dateMJD;
+	for (int i=0;i<transmission_count;i++)
+	{
+		unsigned long timeUTC=(data[11+(i*3)]<<16)+(data[12+(i*3)]<<8)+data[13+(i*3)];
+		epgEvent.timeUTC=timeUTC;
+		channel.mapEvents[m_pseudo_event_id]=epgEvent;
+		m_pseudo_event_id++;
+	}
+	//LogDebug("epg: premiere content tid=%d nid=%d sid=%d dateMJD=%d timeUTC=%d",tid,nid,sid,dateMJD,timeUTC);
 }
 
 void CEpgDecoder::DecodeDishShortDescription(byte* data, EPGEvent& epgEvent, int tnum)
@@ -338,7 +486,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 					lang.event+=item;
 				if (text.size()>0)
 					lang.text+=text;
-				//			LogDebug("epg grab ext:[%s][%s]", lang.event.c_str(),lang.text.c_str());
+							//LogDebug("epg grab ext:[%s][%s]", lang.event.c_str(),lang.text.c_str());
 				return;
 			}
 		}
@@ -349,7 +497,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 			lang.event+=item;
 		if (text.size()>0)
 			lang.text+=text;
-		//	LogDebug("epg grab ext:[%s][%s]", lang.event.c_str(),lang.text.c_str());
+			//LogDebug("epg grab ext:[%s][%s]", lang.event.c_str(),lang.text.c_str());
 		epgEvent.vecLanguages.push_back(lang);
 
 	}
@@ -690,6 +838,7 @@ void CEpgDecoder::GrabEPG()
 	m_bParseEPG=true;
 	m_bEpgDone=false;
   m_bSorted=false;
+    m_pseudo_event_id=0;
 	m_epgTimeout=time(NULL);
 }
 bool CEpgDecoder::IsEPGGrabbing()
@@ -805,7 +954,7 @@ void CEpgDecoder::GetEPGEvent( ULONG channel,  ULONG eventIndex,ULONG* languageC
 	m_prevEventIndex=eventIndex;
 	m_prevEvent=epgEvent;
 
-  *eventid=epgEvent.eventid;
+	*eventid=epgEvent.eventid;
 	*languageCount=(ULONG)epgEvent.vecLanguages.size();
 	*dateMJD=epgEvent.dateMJD;
 	*timeUTC=epgEvent.timeUTC;

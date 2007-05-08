@@ -72,6 +72,7 @@ public:
 	void    GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription    );
 	void	AbortGrabbing();
 	HRESULT	DecodeEPG(byte* pbData,int len);
+	HRESULT	DecodePremierePrivateEPG(byte* pbData,int len);
 
 private:
 	bool GetChannelByindex(ULONG channel, EPGChannel& epgChannel);
@@ -92,6 +93,10 @@ private:
 	EPGChannel m_prevChannel;
 	EPGEvent   m_prevEvent;
   bool       m_bSorted;
+	map<int,bool> m_mapSectionsReceived;
+	unsigned long m_pseudo_event_id; // premiere sends one epg event with multiple start times, so we need to make seperate events for this
+	typedef map<int,bool>::iterator m_imapSectionsReceived;
+	void DecodePremiereContentTransmissionDescriptor(byte* data, EPGEvent epgEvent);
 	CCriticalSection m_critSection;
 };
 

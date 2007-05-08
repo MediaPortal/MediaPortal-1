@@ -26,27 +26,16 @@
 extern void LogDebug(const char *fmt, ...) ;
 CEpgParser::CEpgParser(void)
 {
-	CEnterCriticalSection enter(m_section);
-	m_bGrabbing=false;
-  for (int i=0x4e; i <=0x6f;++i)
-  {
-    CSectionDecoder* pDecoder= new CSectionDecoder();
-    pDecoder->SetPid(PID_EPG);
-    pDecoder->SetTableId(i);
-    pDecoder->EnableCrcCheck(false);
-    m_vecDecoders.push_back(pDecoder);
-	pDecoder->SetCallBack(this);
-  }
-  // we need to set the filter to allow grabbing the 9 day DISH Network epg too
-  for (int i=0x80; i <=0xfe;++i)
-  {
-    CSectionDecoder* pDecoder= new CSectionDecoder();
-    pDecoder->SetPid(PID_DISH_EPG);
-    pDecoder->SetTableId(i);
-    pDecoder->EnableCrcCheck(false);
-    m_vecDecoders.push_back(pDecoder);
-	pDecoder->SetCallBack(this);
-  }
+	// standard epg
+	for (int i=0x4e; i <=0x6f;++i)
+		AddSectionDecoder(PID_EPG,i);
+	// DISH / BEV epg
+	for (int i=0x80; i <=0xfe;++i)
+		AddSectionDecoder(PID_DISH_EPG,i);
+	// Premiere DIREKT Portal
+	AddSectionDecoder(PID_EPG_PREMIERE_DIREKT,0xA0);
+	// Premiere SPORT Portal
+	AddSectionDecoder(PID_EPG_PREMIERE_SPORT,0xA0);
 }
 
 CEpgParser::~CEpgParser(void)
@@ -151,7 +140,10 @@ void CEpgParser::OnNewSection(int pid, int tableId, CSection& sections)
 		int sectionLength=sections.SectionLength;
 		if (sectionLength>0)
 		{
-			m_epgDecoder.DecodeEPG(section,	sectionLength);
+			if (pid==PID_EPG_PREMIERE_DIREKT || pid==PID_EPG_PREMIERE_SPORT)
+				m_epgDecoder.DecodePremierePrivateEPG(section, sectionLength);
+			else
+				m_epgDecoder.DecodeEPG(section,	sectionLength);
 		}
     else
     {
@@ -162,4 +154,14 @@ void CEpgParser::OnNewSection(int pid, int tableId, CSection& sections)
 	{
 		LogDebug("exception in CEpgParser::OnNewSection");
 	}
+}
+
+void CEpgParser::AddSectionDecoder(int pid,int tableId)
+{
+	CSectionDecoder* pDecoder= new CSectionDecoder();
+    pDecoder->SetPid(pid);
+    pDecoder->SetTableId(tableId);
+    pDecoder->EnableCrcCheck(false);
+    m_vecDecoders.push_back(pDecoder);
+	pDecoder->SetCallBack(this);
 }
