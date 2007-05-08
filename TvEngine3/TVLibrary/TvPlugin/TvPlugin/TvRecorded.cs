@@ -389,7 +389,7 @@ namespace TvPlugin
 
       if (control == btnCleanup)
       {
-        OnDeleteWatchedRecordings();
+        OnCleanup();
       }
 
 
@@ -851,39 +851,49 @@ namespace TvPlugin
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
       GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
     }
-    void OnDeleteWatchedRecordings()
+    void OnCleanup()
     {
       m_iSelectedItem = GetSelectedItemNo();
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-      if (null == dlgYesNo) return;
-      dlgYesNo.SetHeading(GUILocalizeStrings.Get(676));//delete watched recordings?
-      dlgYesNo.SetLine(1, String.Empty);
-      dlgYesNo.SetLine(2, String.Empty);
-      dlgYesNo.SetLine(3, String.Empty);
-      dlgYesNo.SetDefaultToYes(true);
-      dlgYesNo.DoModal(GetID);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      dlg.SetHeading(GUILocalizeStrings.Get(200043));//Cleanup recordings?
 
-      if (!dlgYesNo.IsConfirmed) return;
+      dlg.Add(new GUIListItem(GUILocalizeStrings.Get(676))); // Only watched recordings?
+      dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200044))); // Only invalid recordings?
+      dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200045))); // Both?
+      dlg.Add(new GUIListItem(GUILocalizeStrings.Get(222))); // Cancel?
+      dlg.DoModal(GetID);
+      if (dlg.SelectedLabel < 0) return;
+      if (dlg.SelectedLabel > 3) return;
 
+      if ((dlg.SelectedLabel==0) || (dlg.SelectedLabel==2))
+        DeleteWatchedRecordings();
+      if ((dlg.SelectedLabel == 1) || (dlg.SelectedLabel == 2))
+        DeleteInvalidRecordings();
+      Gentle.Common.CacheManager.Clear();
+      LoadDirectory();
+      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
+      GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
+      GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
+    }
+    void DeleteWatchedRecordings()
+    {
+      IList itemlist = Recording.ListAll();
+      TvServer server = new TvServer();
+      foreach (Recording rec in itemlist)
+      {
+        if (rec.TimesWatched > 0)
+          server.DeleteRecording(rec.IdRecording);
+      }
+    }
+    void DeleteInvalidRecordings()
+    {
       IList itemlist = Recording.ListAll();
       TvServer server = new TvServer();
       foreach (Recording rec in itemlist)
       {
         if (!server.IsRecordingValid(rec.IdRecording))
           server.DeleteRecording(rec.IdRecording);
-        else
-        {
-          if (rec.TimesWatched > 0)
-            server.DeleteRecording(rec.IdRecording);
-        }
       }
-
-      Gentle.Common.CacheManager.Clear();
-        
-      LoadDirectory();
-      while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
-      GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
-      GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
     }
 
     void UpdateProperties()
