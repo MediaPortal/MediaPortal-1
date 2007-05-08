@@ -55,6 +55,7 @@ namespace MediaPortal.Configuration.Sections
     #region Private Methods
     private void useASIOCheckBox_CheckedChanged(object sender, EventArgs e)
     {
+      asioDeviceComboBox.Items.Clear();
       asioDeviceComboBox.Enabled = useASIOCheckBox.Checked;
       if (useASIOCheckBox.Checked)
       {
