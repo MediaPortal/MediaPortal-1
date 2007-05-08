@@ -1662,5 +1662,8 @@
     <String id="200040">Remove skip step</String>
     <String id="200041">Tuning details</String>
     <String id="200042">Linked channels</String>
+	<String id="200043">Cleanup Recordings</String>
+	<String id="200044">Invalid recordings</String>
+	<String id="200045">Both</String>
   </Section>
 </Language>

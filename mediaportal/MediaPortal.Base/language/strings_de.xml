@@ -563,7 +563,7 @@
     <String id="673">Textlauf-Geschwindigkeit</String>
     <String id="674">Oberflächen Einstellungen</String>
     <String id="675">Beispiel:</String>
-    <String id="676">Aufnahmen löschen?</String>
+    <String id="676">Gesehene Aufnahmen löschen?</String>
     <String id="677">mal</String>
     <String id="678">Sortiere: Genre</String>
     <String id="679">Wöchentlich</String>
@@ -1661,5 +1661,8 @@
     <String id="200040">Skip Stufe entfernen</String>
     <String id="200041">Empfangs Details</String>
     <String id="200042">Unterkanäle</String>
+	<String id="200043">Aufnahmen aufräumen</String>
+	<String id="200044">Ungültige Aufnahem</String>
+	<String id="200045">Beide</String>	
   </Section>
 </Language>
