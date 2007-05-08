@@ -68,6 +68,7 @@ namespace MediaPortal.Configuration.Sections
         "<=",
         "<>",
         "like",
+        "not like",
         "group",
       };
 
