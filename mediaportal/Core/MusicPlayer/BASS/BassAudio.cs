@@ -1378,16 +1378,6 @@ namespace MediaPortal.Player
 
             return result;
           }
-
-          else
-          {
-            // Don't do anything with the stream, when ASIO or Mixing is selected. Handle it as if started again
-            if (!_useASIO && !_Mixing)
-            {
-              result = Bass.BASS_ChannelPlay(stream, true);
-              return result;
-            }
-          }
         }
 
         if (stream != 0 && StreamIsPlaying(stream))
