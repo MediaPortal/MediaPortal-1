@@ -33,65 +33,14 @@
 #include "SubdecoderObserver.h"
 #include <vector>
 
-class CSubtitleInputPin;
-class CPcrInputPin;
-class CPMTInputPin;
-class CDVBFilterPin;
+#include "IDVBSub.h"
 
+
+
+class CSubtitleInputPin;
 class CDVBSubDecoder;
 
 typedef __int64 int64_t;
-
-// {1CF3606B-6F89-4813-9D05-F9CA324CF2EA}
-DEFINE_GUID(CLSID_DVBSub2, 
-  0x1cf3606b, 0x6f89, 0x4813, 0x9d, 0x5, 0xf9, 0xca, 0x32, 0x4c, 0xf2, 0xea);
-
-// {901C9084-246A-47c9-BBCD-F8F398D30AB0}
-DEFINE_GUID(IID_IDVBSubtitle2, 
-  0x901c9084, 0x246a, 0x47c9, 0xbb, 0xcd, 0xf8, 0xf3, 0x98, 0xd3, 0xa, 0xb0);
-
-
-// structure used to communicate subtitles to MediaPortal's managed code
-struct SUBTITLE
-{
-  // Subtitle bitmap
-  LONG        bmType;
-  LONG        bmWidth;
-  LONG        bmHeight;
-  LONG        bmWidthBytes;
-  WORD        bmPlanes;
-  WORD        bmBitsPixel;
-  LPVOID      bmBits;
-
-  unsigned    __int64 timestamp;
-  unsigned    __int64 timeOut;
-  int         firstScanLine;
-};
-
-DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
-{
-  //STDMETHOD(GetSubtitle) ( int place, SUBTITLE* pSubtitle ) PURE;
-  //STDMETHOD(GetSubtitleCount) ( int* count ) PURE;
-  STDMETHOD(SetCallback) ( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) ) PURE;
-  STDMETHOD(SetTimestampResetCallback)( int (CALLBACK *pSubtitleObserver)() ) PURE;
-  //STDMETHOD(DiscardOldestSubtitle) () PURE;
-  STDMETHOD(Test)(int status) PURE;
-};
-
-enum PinMappingState
-{
-  PidNotAvailable = 0,
-  PidAvailable,
-  PidMapped
-};
-
-struct PinMappingInfo
-{
-  PinMappingState mappingState;
-  ULONG pid;
-  MEDIA_SAMPLE_CONTENT sampleContent;
-};
-
 
 extern void LogDebug( const char *fmt, ... );
 
@@ -116,7 +65,8 @@ public:
   // IDVBSubtitle
   virtual HRESULT STDMETHODCALLTYPE SetCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) );
   virtual HRESULT STDMETHODCALLTYPE SetTimestampResetCallback( int (CALLBACK *pTimestampResetObserver)() );
-  virtual HRESULT STDMETHODCALLTYPE Test(int status);
+  virtual HRESULT STDMETHODCALLTYPE Test( int status );
+  virtual HRESULT STDMETHODCALLTYPE SetSubtitlePid( LONG pPid );
 
   // IUnknown
   DECLARE_IUNKNOWN;
@@ -127,7 +77,7 @@ public:
 	void NotifySubtitle();
   void NotifyFirstPTS( ULONGLONG firstPTS );
 
-  void SetSubtitlePid( LONG pid );
+//  void SetSubtitlePid( LONG pid );
 
   static CUnknown * WINAPI CreateInstance( LPUNKNOWN pUnk, HRESULT *pHr );
 

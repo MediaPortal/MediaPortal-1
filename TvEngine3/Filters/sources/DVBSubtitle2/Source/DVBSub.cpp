@@ -265,6 +265,21 @@ STDMETHODIMP CDVBSub::Test(int status)
 	return S_OK;
 }
 
+//
+// SetSubtitlePid
+//
+STDMETHODIMP CDVBSub::SetSubtitlePid( LONG pPid )
+{
+  if( m_pSubtitlePin )
+  {
+    m_pSubtitlePin->SetSubtitlePid( pPid );
+    return S_OK;
+  }
+  else
+  {
+    return S_FALSE;
+  }
+}
 
 //
 // NotifySubtitle

@@ -49,11 +49,11 @@ CSubtitleInputPin::CSubtitleInputPin( CDVBSub *pDVBSub,
 					m_pReceiveLock( pReceiveLock ),
 					m_pDVBSub( pDVBSub ),
 					m_pSubDecoder( pSubDecoder ),
-					m_SubtitlePid( 0xfbb ),
+					m_SubtitlePid( -1 ),
           m_Lock( pLock )
 {
   m_pesDecoder = new CPesDecoder( this );
-  m_pesDecoder->SetPid( 0xfbb );
+  m_pesDecoder->SetPid( -1 );
 
   Reset();
 	LogDebug( "Subtitle: Input pin created" );
