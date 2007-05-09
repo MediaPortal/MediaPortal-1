@@ -304,9 +304,7 @@ void CEpgDecoder::DecodePremiereContentTransmissionDescriptor(byte* data, EPGEve
 	int tid=(data[2]<<8)+data[3];
 	int nid=(data[4]<<8)+data[5];
 	int sid=(data[6]<<8)+data[7];
-	unsigned long dateMJD=(data[8]<<8)+data[9];
-	unsigned int transmission_count=data[10];
-	
+
 	unsigned long lNetworkId=nid;
 	unsigned long lTransport_id=tid;
 	unsigned long lServiceId=sid;
@@ -325,13 +323,21 @@ void CEpgDecoder::DecodePremiereContentTransmissionDescriptor(byte* data, EPGEve
 		it=m_mapEPG.find(key);
 	}
 	EPGChannel& channel=it->second;
-	epgEvent.dateMJD=dateMJD;
-	for (int i=0;i<transmission_count;i++)
+	byte *buf=data+8;
+	while ((buf+6) <= (data+2+data[1]))
 	{
-		unsigned long timeUTC=(data[11+(i*3)]<<16)+(data[12+(i*3)]<<8)+data[13+(i*3)];
-		epgEvent.timeUTC=timeUTC;
-		channel.mapEvents[m_pseudo_event_id]=epgEvent;
-		m_pseudo_event_id++;
+		unsigned int starttime_no = *(buf+2);
+        for (int i=0; i < starttime_no; i+=3)
+        {
+			unsigned long dateMJD=(buf[0]<<8)+buf[1];
+            unsigned long timeUTC=(buf[3+i]<<16)+(buf[4+i]<<8)+data[5+i];
+			epgEvent.dateMJD=dateMJD;
+			epgEvent.timeUTC=timeUTC;
+			//LogDebug("%d %d %s nid %d tid %d sid %d",dateMJD,timeUTC,epgEvent.vecLanguages[0].event.c_str(),nid,tid,sid);
+			channel.mapEvents[m_pseudo_event_id]=epgEvent;
+			m_pseudo_event_id++;
+        }
+        buf += 3 + starttime_no;
 	}
 	//LogDebug("epg: premiere content tid=%d nid=%d sid=%d dateMJD=%d timeUTC=%d",tid,nid,sid,dateMJD,timeUTC);
 }
