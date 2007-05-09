@@ -3545,6 +3545,12 @@ namespace MediaPortal.Music.Database
       {
         ///Here we can check if the Path has an existing share
         CountFilesInPath(Share, ref totalFiles);
+
+        // Now get the files from the root directory, which we missed in the above search
+        foreach (string file in Directory.GetFiles(Share, "*.*"))
+        {
+          CheckFileForInclusion(file, ref totalFiles);
+        }
       }
       TotalSongs = totalFiles;
       Log.Info("Musicdatabasereorg: Found {0} files to check if they are new", (int)totalFiles);
@@ -3691,27 +3697,7 @@ namespace MediaPortal.Music.Database
         {
           foreach (string file in Directory.GetFiles(dir, "*.*"))
           {
-            string ext = System.IO.Path.GetExtension(file).ToLower();
-            if (ext == ".m3u")
-              continue;
-            if (ext == ".pls")
-              continue;
-            if (ext == ".wpl")
-              continue;
-            if (ext == ".b4s")
-              continue;
-            if ((File.GetAttributes(file) & FileAttributes.Hidden) == FileAttributes.Hidden)
-              continue;
-
-            // Only get files with the required extension
-            if (Extensions.IndexOf(ext) == -1)
-              continue;
-
-            // Only Add files to the list, if they have been Created / Updated after the Last Import date
-            if (System.IO.File.GetCreationTime(file) > _lastImport || System.IO.File.GetLastWriteTime(file) > _lastImport)
-              availableFiles.Add(file);
-
-            totalFiles++;
+            CheckFileForInclusion(file, ref totalFiles);
             if ((totalFiles % 10) == 0)
             {
               DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
@@ -3727,6 +3713,31 @@ namespace MediaPortal.Music.Database
       {
         // Ignore
       }
+    }
+
+    private void CheckFileForInclusion(string file, ref int totalFiles)
+    {
+      string ext = System.IO.Path.GetExtension(file).ToLower();
+      if (ext == ".m3u")
+        return;
+      if (ext == ".pls")
+        return;
+      if (ext == ".wpl")
+        return;
+      if (ext == ".b4s")
+        return;
+      if ((File.GetAttributes(file) & FileAttributes.Hidden) == FileAttributes.Hidden)
+        return;
+
+      // Only get files with the required extension
+      if (Extensions.IndexOf(ext) == -1)
+        return;
+
+      // Only Add files to the list, if they have been Created / Updated after the Last Import date
+      if (System.IO.File.GetCreationTime(file) > _lastImport || System.IO.File.GetLastWriteTime(file) > _lastImport)
+        availableFiles.Add(file);
+
+      totalFiles++;
     }
 
     public void UpdateAlbumArtistsCounts(int startProgress, int endProgress)
