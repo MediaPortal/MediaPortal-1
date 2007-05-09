@@ -279,17 +279,6 @@ namespace WindowPlugins.GUIPrograms
 
     void BuildWhere(FilterDefinition filter, SQLSelectBuilder sqlSelect)
     {
-      if (filter.Where == "launchcount")
-      {
-        sqlSelect.AddWhereCond("launchcount <> ''");
-        sqlSelect.AddWhereCond("launchcount IS NOT NULL");
-        sqlSelect.AddWhereCond("launchcount > 0");
-      }
-      if (filter.Where == "lastTimeLaunched")
-      {
-        sqlSelect.AddWhereCond("lastTimeLaunched <> ''");
-        sqlSelect.AddWhereCond("lastTimeLaunched IS NOT NULL");
-      }
       if (filter.WhereValue != "*")
       {
         sqlSelect.AddWhereCond(String.Format(" {0}='{1}'", GetField(filter.Where), ProgramUtils.Encode(filter.WhereValue)));
@@ -314,7 +303,7 @@ namespace WindowPlugins.GUIPrograms
 
     void BuildOrder(FilterDefinition filter, SQLSelectBuilder sqlSelect)
     {
-      string orderClause = GetField(filter.Where);
+      string orderClause = GetField(filter.DefaultSort);
       if (orderClause != "")
       {
         if (!filter.SortAscending) orderClause += " desc";

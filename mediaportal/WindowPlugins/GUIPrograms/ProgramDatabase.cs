@@ -50,16 +50,25 @@ namespace ProgramsDatabase
 
     static ProgramDatabase()
     {
+      Open();
 
+      viewHandler = new ProgramViewHandler();
+      ProgramSettings.viewHandler = viewHandler;
+      mAppList = new Applist(sqlDB, new AppItem.FilelinkLaunchEventHandler(LaunchFilelink));
+    }
 
+    private static void Open()
+    {
+      Log.Info("Opening ProgramDatabase");
       try
       {
         // Open database
         try
         {
-          Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
+          System.IO.Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
-        catch (Exception){}
+        catch (Exception) { }
+
         sqlDB = new SQLiteClient(Config.GetFile(Config.Dir.Database, "ProgramDatabaseV4.db3"));
 
         MediaPortal.Database.DatabaseUtility.SetPragmas(sqlDB);
@@ -69,6 +78,8 @@ namespace ProgramsDatabase
         CreateObjects();
         // patch old ContentID values...
         PatchContentID();
+        // patch old values, which were made empty by old versions...
+        PatchEmptyValues();
         // patch genre-values
         PatchGenreValues();
         // remove trigger
@@ -78,13 +89,11 @@ namespace ProgramsDatabase
         // dirty hack: propagate the sqlDB to the singleton objects...
         ProgramSettings.sqlDB = sqlDB;
       }
-      catch (SQLiteException ex)
+      catch (Exception ex)
       {
-        Log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Info("ProgramDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
-      viewHandler = new ProgramViewHandler();
-      ProgramSettings.viewHandler = viewHandler;
-      mAppList = new Applist(sqlDB, new AppItem.FilelinkLaunchEventHandler(LaunchFilelink));
+      Log.Info("ProgramDatabase opened");
     }
 
     static void LaunchFilelink(FilelinkItem curLink, bool MPGUIMode)
@@ -172,8 +181,19 @@ namespace ProgramsDatabase
         Log.Info("myPrograms: applying contentID-patch");
         sqlDB.Execute("update application set contentID = 100 where contentID IS NULL");
         sqlDB.Execute("update application set contentID = 100 where contentID <= 0");
-        ProgramSettings.WriteSetting(ProgramUtils.cCONTENT_PATCH, "DONE") ;
+        ProgramSettings.WriteSetting(ProgramUtils.cCONTENT_PATCH, "DONE");
       }
+    }
+
+    static void PatchEmptyValues()
+    {
+      if (sqlDB == null)
+        return;
+
+      Log.Info("myPrograms: applying empty-value-patch");
+      sqlDB.Execute("update tblfile set launchcount = 0 where launchcount = ''");
+      sqlDB.Execute("update tblfile set launchcount = 0 where launchcount <= 0");
+      sqlDB.Execute("update tblfile set lastTimeLaunched = '01.01.0001 00:00:00' where lastTimeLaunched = ''");
     }
 
     static void PatchGenreValues()

@@ -329,19 +329,33 @@ namespace Programs.Utils
 
     static public void RemoveInvalidChars(ref string strTxt)
     {
-      string strReturn = "";
-      for (int i = 0; i < strTxt.Length; ++i)
+      if (strTxt == null)
+      {
+        strTxt = Strings.Unknown;
+        return;
+      }
+      if (strTxt.Length == 0)
+      {
+        strTxt = Strings.Unknown;
+        return;
+      }
+      string strReturn = String.Empty;
+      for (int i = 0; i < (int)strTxt.Length; ++i)
       {
         char k = strTxt[i];
         if (k == '\'')
         {
           strReturn += "'";
         }
+        if ((byte)k == 0)// remove 0-bytes from the string
+          k = (char)32;
+
         strReturn += k;
       }
-      if (strReturn == "")
+      strReturn = strReturn.Trim();
+      if (strReturn == String.Empty)
         strReturn = Strings.Unknown;
-      strTxt = strReturn.Trim();
+      strTxt = strReturn;
     }
 
     static public void AddBackButton(GUIFacadeControl facadeView)

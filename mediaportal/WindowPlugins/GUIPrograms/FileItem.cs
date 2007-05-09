@@ -581,14 +581,11 @@ namespace ProgramsDatabase
       string strLastLaunch = "";
       string strLaunchCount = "";
       string strYear = "";
-      if (LastTimeLaunched != DateTime.MinValue)
-      {
-        strLastLaunch = String.Format("{0}", LastTimeLaunched);
-      }
-      if (LaunchCount > 0)
-      {
-        strLaunchCount = String.Format("{0}", LaunchCount); // poor man's inttostr :-)
-      }
+      
+      strLastLaunch = String.Format("{0}", LastTimeLaunched);
+      
+      strLaunchCount = String.Format("{0}", LaunchCount); // poor man's inttostr :-)
+
       if (Year > 0)
       {
         strYear = String.Format("{0}", Year);

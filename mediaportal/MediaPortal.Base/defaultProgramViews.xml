@@ -40,38 +40,38 @@
 <a1:ArrayList id="ref-10" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-22"/>
 <_size>2</_size>
-<_version>17</_version>
+<_version>38</_version>
 </a1:ArrayList>
 <a1:ArrayList id="ref-12" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-23"/>
 <_size>2</_size>
-<_version>34</_version>
+<_version>2</_version>
 </a1:ArrayList>
 <a1:ArrayList id="ref-14" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-24"/>
 <_size>2</_size>
-<_version>8</_version>
+<_version>2</_version>
 </a1:ArrayList>
 <a1:ArrayList id="ref-16" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-25"/>
 <_size>2</_size>
-<_version>8</_version>
+<_version>2</_version>
 </a1:ArrayList>
 <a1:ArrayList id="ref-18" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-26"/>
 <_size>1</_size>
-<_version>5</_version>
+<_version>59</_version>
 </a1:ArrayList>
 <a1:ArrayList id="ref-20" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-27"/>
 <_size>1</_size>
-<_version>5</_version>
+<_version>7</_version>
 </a1:ArrayList>
 <SOAP-ENC:Array id="ref-22" SOAP-ENC:arrayType="xsd:anyType[4]">
 <item href="#ref-28"/>
 <item href="#ref-29"/>
 </SOAP-ENC:Array>
-<SOAP-ENC:Array id="ref-23" SOAP-ENC:arrayType="xsd:anyType[8]">
+<SOAP-ENC:Array id="ref-23" SOAP-ENC:arrayType="xsd:anyType[4]">
 <item href="#ref-30"/>
 <item href="#ref-31"/>
 </SOAP-ENC:Array>
@@ -120,10 +120,10 @@
 <sortAscending>true</sortAscending>
 <restriction href="#ref-38"/>
 <whereClause id="ref-45">genre</whereClause>
-<fromStatement href="#ref-40"/>
+<fromStatement href="#ref-38"/>
 <sqloperator href="#ref-38"/>
-<whereValue href="#ref-41"/>
-<selectedValue href="#ref-40"/>
+<whereValue id="ref-46">*</whereValue>
+<selectedValue href="#ref-38"/>
 <defaultView href="#ref-42"/>
 <defaultSort href="#ref-43"/>
 <limit>-1</limit>
@@ -133,10 +133,10 @@
 <sortAscending>true</sortAscending>
 <restriction href="#ref-38"/>
 <whereClause href="#ref-44"/>
-<fromStatement href="#ref-40"/>
+<fromStatement href="#ref-38"/>
 <sqloperator href="#ref-38"/>
-<whereValue href="#ref-41"/>
-<selectedValue href="#ref-40"/>
+<whereValue href="#ref-46"/>
+<selectedValue href="#ref-38"/>
 <defaultView href="#ref-42"/>
 <defaultSort href="#ref-43"/>
 <limit>-1</limit>
@@ -145,11 +145,11 @@
 <distinct>false</distinct>
 <sortAscending>false</sortAscending>
 <restriction href="#ref-38"/>
-<whereClause id="ref-46">rating</whereClause>
-<fromStatement href="#ref-40"/>
+<whereClause id="ref-47">rating</whereClause>
+<fromStatement href="#ref-38"/>
 <sqloperator href="#ref-38"/>
-<whereValue href="#ref-41"/>
-<selectedValue href="#ref-40"/>
+<whereValue href="#ref-46"/>
+<selectedValue href="#ref-38"/>
 <defaultView href="#ref-42"/>
 <defaultSort href="#ref-43"/>
 <limit>-1</limit>
@@ -159,10 +159,10 @@
 <sortAscending>true</sortAscending>
 <restriction href="#ref-38"/>
 <whereClause href="#ref-44"/>
-<fromStatement href="#ref-40"/>
+<fromStatement href="#ref-38"/>
 <sqloperator href="#ref-38"/>
-<whereValue href="#ref-41"/>
-<selectedValue href="#ref-40"/>
+<whereValue href="#ref-46"/>
+<selectedValue href="#ref-38"/>
 <defaultView href="#ref-42"/>
 <defaultSort href="#ref-43"/>
 <limit>-1</limit>
@@ -171,11 +171,11 @@
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-38"/>
-<whereClause id="ref-47">year</whereClause>
-<fromStatement href="#ref-40"/>
+<whereClause id="ref-48">year</whereClause>
+<fromStatement href="#ref-38"/>
 <sqloperator href="#ref-38"/>
-<whereValue href="#ref-41"/>
-<selectedValue href="#ref-40"/>
+<whereValue href="#ref-46"/>
+<selectedValue href="#ref-38"/>
 <defaultView href="#ref-42"/>
 <defaultSort href="#ref-43"/>
 <limit>-1</limit>
@@ -184,11 +184,11 @@
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-38"/>
-<whereClause id="ref-48">title</whereClause>
-<fromStatement href="#ref-40"/>
+<whereClause href="#ref-44"/>
+<fromStatement href="#ref-38"/>
 <sqloperator href="#ref-38"/>
-<whereValue href="#ref-41"/>
-<selectedValue href="#ref-40"/>
+<whereValue href="#ref-46"/>
+<selectedValue href="#ref-38"/>
 <defaultView href="#ref-42"/>
 <defaultSort href="#ref-43"/>
 <limit>-1</limit>
@@ -202,22 +202,22 @@
 <sqloperator id="ref-51">&#62;</sqloperator>
 <whereValue href="#ref-41"/>
 <selectedValue href="#ref-40"/>
-<defaultView href="#ref-42"/>
-<defaultSort href="#ref-43"/>
-<limit>-1</limit>
+<defaultView id="ref-52">List</defaultView>
+<defaultSort id="ref-53">launchcount</defaultSort>
+<limit>100</limit>
 </a3:FilterDefinition>
 <a3:FilterDefinition id="ref-37" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D0.2.2.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>false</sortAscending>
-<restriction href="#ref-38"/>
-<whereClause id="ref-52">lastTimeLaunched</whereClause>
+<restriction id="ref-54">01.01.0001 00:00:00</restriction>
+<whereClause id="ref-55">lastTimeLaunched</whereClause>
 <fromStatement href="#ref-40"/>
-<sqloperator href="#ref-38"/>
+<sqloperator id="ref-56">&#62;</sqloperator>
 <whereValue href="#ref-41"/>
 <selectedValue href="#ref-40"/>
 <defaultView href="#ref-42"/>
-<defaultSort href="#ref-43"/>
-<limit>-1</limit>
+<defaultSort id="ref-57">lastTimeLaunched</defaultSort>
+<limit>100</limit>
 </a3:FilterDefinition>
 </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
