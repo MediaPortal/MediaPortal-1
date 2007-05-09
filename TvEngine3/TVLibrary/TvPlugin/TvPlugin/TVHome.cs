@@ -529,7 +529,7 @@ namespace TvPlugin
       base.OnPageDestroy(newWindowId);
     }
 
-    void OnSelectGroup()
+    static public void OnSelectGroup()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
@@ -546,7 +546,7 @@ namespace TvPlugin
         }
       }
       dlg.SelectedLabel = selected;
-      dlg.DoModal(this.GetID);
+      dlg.DoModal(GUIWindowManager.ActiveWindow);
       if (dlg.SelectedLabel < 0) return;
       Navigator.SetCurrentGroup(dlg.SelectedLabelText);
       if (Navigator.CurrentGroup != null)
@@ -1221,6 +1221,7 @@ namespace TvPlugin
       Log.Info("Preferred audio stream: switching to audio stream {0}", idx);
       return idx;
     }
+
     static public bool ViewChannelAndCheck(Channel channel)
     {
       if (channel == null)

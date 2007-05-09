@@ -2370,15 +2370,16 @@ namespace TvPlugin
         switch (dlg.SelectedId)
         {
           case 971: //group
-            dlg.Reset();
-            dlg.SetHeading(GUILocalizeStrings.Get(971));//Group
-            foreach (ChannelGroup group in TVHome.Navigator.Groups)
-            {
-              dlg.Add(group.GroupName);
-            }
-            dlg.DoModal(GetID);
-            if (dlg.SelectedLabel == -1) return;
-            TVHome.Navigator.SetCurrentGroup(dlg.SelectedLabelText);
+            TVHome.OnSelectGroup();
+            //dlg.Reset();
+            //dlg.SetHeading(GUILocalizeStrings.Get(971));//Group
+            //foreach (ChannelGroup group in TVHome.Navigator.Groups)
+            //{
+            //  dlg.Add(group.GroupName);
+            //}
+            //dlg.DoModal(GetID);
+            //if (dlg.SelectedLabel == -1) return;
+            //TVHome.Navigator.SetCurrentGroup(dlg.SelectedLabelText);
             
             GetChannels(true);
             Update(false);
