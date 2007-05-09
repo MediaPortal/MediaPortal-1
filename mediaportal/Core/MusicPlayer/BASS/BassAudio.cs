@@ -1227,7 +1227,7 @@ namespace MediaPortal.Player
       }
 
       // VST Plugins
-      string vstPluginDir = Settings.Instance.VSTPluginDirectory;
+      string vstPluginDir = Path.Combine(Application.StartupPath, @"musicplayer\plugins\dsp");
       int vstHandle = 0;
       foreach (VSTPlugin plugins in Settings.Instance.VSTPlugins)
       {

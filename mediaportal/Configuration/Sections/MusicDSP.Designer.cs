@@ -59,46 +59,28 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxCompressor = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.trackBarCompressor = new System.Windows.Forms.TrackBar();
       this.MusicDSPTabCtl = new MediaPortal.UserInterface.Controls.MPTabControl();
-      this.VSTTagPg = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.PluginTabPg = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.labelVSTWarning = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.buttonVSTSearch = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonSelectVSTDir = new MediaPortal.UserInterface.Controls.MPButton();
-      this.textBoxVSTPluginDir = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.buttonVSTRemove = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonVSTAdd = new MediaPortal.UserInterface.Controls.MPButton();
-      this.listBoxSelectedVSTPlugins = new System.Windows.Forms.ListBox();
-      this.listBoxFoundVSTPlugins = new System.Windows.Forms.ListBox();
-      this.WinampTabPg = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.label7 = new System.Windows.Forms.Label();
-      this.label8 = new System.Windows.Forms.Label();
-      this.label9 = new System.Windows.Forms.Label();
-      this.buttonWARemove = new System.Windows.Forms.Button();
-      this.buttonWAAdd = new System.Windows.Forms.Button();
-      this.listBoxSelectedWAPlugins = new System.Windows.Forms.ListBox();
-      this.listBoxFoundWAPlugins = new System.Windows.Forms.ListBox();
-      this.buttonWASearch = new System.Windows.Forms.Button();
-      this.buttonSelectWADir = new System.Windows.Forms.Button();
-      this.textBoxWAPluginDir = new System.Windows.Forms.TextBox();
-      this.label6 = new System.Windows.Forms.Label();
+      this.buttonPluginRemove = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonPluginAdd = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listBoxSelectedPlugins = new System.Windows.Forms.ListBox();
+      this.listBoxFoundPlugins = new System.Windows.Forms.ListBox();
       this.btFileselect = new MediaPortal.UserInterface.Controls.MPButton();
       this.textBoxMusicFile = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.btStop = new MediaPortal.UserInterface.Controls.MPButton();
       this.btPlay = new MediaPortal.UserInterface.Controls.MPButton();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-      this.labelVSTWarning = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelWinampWarning = new MediaPortal.UserInterface.Controls.MPLabel();
       this.DSPTabPg.SuspendLayout();
       this.groupBoxGain.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarGain)).BeginInit();
       this.groupBoxCompressor.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarCompressor)).BeginInit();
       this.MusicDSPTabCtl.SuspendLayout();
-      this.VSTTagPg.SuspendLayout();
-      this.WinampTabPg.SuspendLayout();
+      this.PluginTabPg.SuspendLayout();
       this.SuspendLayout();
       // 
       // DSPTabPg
@@ -213,7 +195,7 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarGain.Minimum = -16000;
       this.trackBarGain.Name = "trackBarGain";
       this.trackBarGain.Orientation = System.Windows.Forms.Orientation.Vertical;
-      this.trackBarGain.Size = new System.Drawing.Size(40, 143);
+      this.trackBarGain.Size = new System.Drawing.Size(45, 143);
       this.trackBarGain.SmallChange = 10;
       this.trackBarGain.TabIndex = 65;
       this.trackBarGain.TickFrequency = 2000;
@@ -289,7 +271,7 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarCompressor.Minimum = -250;
       this.trackBarCompressor.Name = "trackBarCompressor";
       this.trackBarCompressor.Orientation = System.Windows.Forms.Orientation.Vertical;
-      this.trackBarCompressor.Size = new System.Drawing.Size(40, 143);
+      this.trackBarCompressor.Size = new System.Drawing.Size(45, 143);
       this.trackBarCompressor.TabIndex = 73;
       this.trackBarCompressor.TickFrequency = 25;
       this.trackBarCompressor.Value = -60;
@@ -298,36 +280,41 @@ namespace MediaPortal.Configuration.Sections
       // MusicDSPTabCtl
       // 
       this.MusicDSPTabCtl.Controls.Add(this.DSPTabPg);
-      this.MusicDSPTabCtl.Controls.Add(this.VSTTagPg);
-      this.MusicDSPTabCtl.Controls.Add(this.WinampTabPg);
+      this.MusicDSPTabCtl.Controls.Add(this.PluginTabPg);
       this.MusicDSPTabCtl.Location = new System.Drawing.Point(3, 3);
       this.MusicDSPTabCtl.Name = "MusicDSPTabCtl";
       this.MusicDSPTabCtl.SelectedIndex = 0;
       this.MusicDSPTabCtl.Size = new System.Drawing.Size(466, 331);
       this.MusicDSPTabCtl.TabIndex = 0;
       // 
-      // VSTTagPg
+      // PluginTabPg
       // 
-      this.VSTTagPg.BackColor = System.Drawing.Color.Transparent;
-      this.VSTTagPg.Controls.Add(this.labelVSTWarning);
-      this.VSTTagPg.Controls.Add(this.label5);
-      this.VSTTagPg.Controls.Add(this.label4);
-      this.VSTTagPg.Controls.Add(this.label3);
-      this.VSTTagPg.Controls.Add(this.buttonVSTSearch);
-      this.VSTTagPg.Controls.Add(this.buttonSelectVSTDir);
-      this.VSTTagPg.Controls.Add(this.textBoxVSTPluginDir);
-      this.VSTTagPg.Controls.Add(this.label2);
-      this.VSTTagPg.Controls.Add(this.buttonVSTRemove);
-      this.VSTTagPg.Controls.Add(this.buttonVSTAdd);
-      this.VSTTagPg.Controls.Add(this.listBoxSelectedVSTPlugins);
-      this.VSTTagPg.Controls.Add(this.listBoxFoundVSTPlugins);
-      this.VSTTagPg.Location = new System.Drawing.Point(4, 22);
-      this.VSTTagPg.Name = "VSTTagPg";
-      this.VSTTagPg.Padding = new System.Windows.Forms.Padding(3);
-      this.VSTTagPg.Size = new System.Drawing.Size(458, 305);
-      this.VSTTagPg.TabIndex = 2;
-      this.VSTTagPg.Text = "VST";
-      this.VSTTagPg.UseVisualStyleBackColor = true;
+      this.PluginTabPg.BackColor = System.Drawing.Color.Transparent;
+      this.PluginTabPg.Controls.Add(this.labelVSTWarning);
+      this.PluginTabPg.Controls.Add(this.label5);
+      this.PluginTabPg.Controls.Add(this.label4);
+      this.PluginTabPg.Controls.Add(this.label3);
+      this.PluginTabPg.Controls.Add(this.buttonPluginRemove);
+      this.PluginTabPg.Controls.Add(this.buttonPluginAdd);
+      this.PluginTabPg.Controls.Add(this.listBoxSelectedPlugins);
+      this.PluginTabPg.Controls.Add(this.listBoxFoundPlugins);
+      this.PluginTabPg.Location = new System.Drawing.Point(4, 22);
+      this.PluginTabPg.Name = "PluginTabPg";
+      this.PluginTabPg.Padding = new System.Windows.Forms.Padding(3);
+      this.PluginTabPg.Size = new System.Drawing.Size(458, 305);
+      this.PluginTabPg.TabIndex = 2;
+      this.PluginTabPg.Text = "VST / Winamp";
+      this.PluginTabPg.UseVisualStyleBackColor = true;
+      // 
+      // labelVSTWarning
+      // 
+      this.labelVSTWarning.AutoSize = true;
+      this.labelVSTWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelVSTWarning.Location = new System.Drawing.Point(12, 15);
+      this.labelVSTWarning.Name = "labelVSTWarning";
+      this.labelVSTWarning.Size = new System.Drawing.Size(412, 13);
+      this.labelVSTWarning.TabIndex = 21;
+      this.labelVSTWarning.Text = "EXPERIMENTAL: Some plugins might be outdated or not working at all!";
       // 
       // label5
       // 
@@ -341,7 +328,7 @@ namespace MediaPortal.Configuration.Sections
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(250, 79);
+      this.label4.Location = new System.Drawing.Point(250, 42);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(181, 13);
       this.label4.TabIndex = 19;
@@ -350,214 +337,51 @@ namespace MediaPortal.Configuration.Sections
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(12, 79);
+      this.label3.Location = new System.Drawing.Point(12, 42);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(86, 13);
       this.label3.TabIndex = 18;
       this.label3.Text = "Available plugins";
       // 
-      // buttonVSTSearch
+      // buttonPluginRemove
       // 
-      this.buttonVSTSearch.Location = new System.Drawing.Point(292, 40);
-      this.buttonVSTSearch.Name = "buttonVSTSearch";
-      this.buttonVSTSearch.Size = new System.Drawing.Size(156, 23);
-      this.buttonVSTSearch.TabIndex = 17;
-      this.buttonVSTSearch.Text = "Search for plugins";
-      this.buttonVSTSearch.UseVisualStyleBackColor = true;
-      this.buttonVSTSearch.Click += new System.EventHandler(this.buttonVSTSearch_Click);
+      this.buttonPluginRemove.Location = new System.Drawing.Point(218, 178);
+      this.buttonPluginRemove.Name = "buttonPluginRemove";
+      this.buttonPluginRemove.Size = new System.Drawing.Size(28, 23);
+      this.buttonPluginRemove.TabIndex = 13;
+      this.buttonPluginRemove.Text = "<";
+      this.buttonPluginRemove.UseVisualStyleBackColor = true;
+      this.buttonPluginRemove.Click += new System.EventHandler(this.buttonPluginRemove_Click);
       // 
-      // buttonSelectVSTDir
+      // buttonPluginAdd
       // 
-      this.buttonSelectVSTDir.Location = new System.Drawing.Point(252, 40);
-      this.buttonSelectVSTDir.Name = "buttonSelectVSTDir";
-      this.buttonSelectVSTDir.Size = new System.Drawing.Size(25, 23);
-      this.buttonSelectVSTDir.TabIndex = 16;
-      this.buttonSelectVSTDir.Text = "...";
-      this.buttonSelectVSTDir.UseVisualStyleBackColor = true;
-      this.buttonSelectVSTDir.Click += new System.EventHandler(this.buttonSelectVSTDir_Click);
+      this.buttonPluginAdd.Location = new System.Drawing.Point(218, 127);
+      this.buttonPluginAdd.Name = "buttonPluginAdd";
+      this.buttonPluginAdd.Size = new System.Drawing.Size(28, 23);
+      this.buttonPluginAdd.TabIndex = 12;
+      this.buttonPluginAdd.Text = ">";
+      this.buttonPluginAdd.UseVisualStyleBackColor = true;
+      this.buttonPluginAdd.Click += new System.EventHandler(this.buttonPluginAdd_Click);
       // 
-      // textBoxVSTPluginDir
+      // listBoxSelectedPlugins
       // 
-      this.textBoxVSTPluginDir.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxVSTPluginDir.Location = new System.Drawing.Point(71, 42);
-      this.textBoxVSTPluginDir.Name = "textBoxVSTPluginDir";
-      this.textBoxVSTPluginDir.Size = new System.Drawing.Size(175, 20);
-      this.textBoxVSTPluginDir.TabIndex = 15;
+      this.listBoxSelectedPlugins.FormattingEnabled = true;
+      this.listBoxSelectedPlugins.HorizontalScrollbar = true;
+      this.listBoxSelectedPlugins.Location = new System.Drawing.Point(253, 72);
+      this.listBoxSelectedPlugins.Name = "listBoxSelectedPlugins";
+      this.listBoxSelectedPlugins.Size = new System.Drawing.Size(195, 199);
+      this.listBoxSelectedPlugins.TabIndex = 11;
+      this.listBoxSelectedPlugins.DoubleClick += new System.EventHandler(this.listBoxSelectedPlugins_DoubleClick);
       // 
-      // label2
+      // listBoxFoundPlugins
       // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(12, 45);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(53, 13);
-      this.label2.TabIndex = 14;
-      this.label2.Text = "Plugin dir:";
-      // 
-      // buttonVSTRemove
-      // 
-      this.buttonVSTRemove.Location = new System.Drawing.Point(218, 178);
-      this.buttonVSTRemove.Name = "buttonVSTRemove";
-      this.buttonVSTRemove.Size = new System.Drawing.Size(28, 23);
-      this.buttonVSTRemove.TabIndex = 13;
-      this.buttonVSTRemove.Text = "<";
-      this.buttonVSTRemove.UseVisualStyleBackColor = true;
-      this.buttonVSTRemove.Click += new System.EventHandler(this.buttonVSTRemove_Click);
-      // 
-      // buttonVSTAdd
-      // 
-      this.buttonVSTAdd.Location = new System.Drawing.Point(218, 127);
-      this.buttonVSTAdd.Name = "buttonVSTAdd";
-      this.buttonVSTAdd.Size = new System.Drawing.Size(28, 23);
-      this.buttonVSTAdd.TabIndex = 12;
-      this.buttonVSTAdd.Text = ">";
-      this.buttonVSTAdd.UseVisualStyleBackColor = true;
-      this.buttonVSTAdd.Click += new System.EventHandler(this.buttonVSTAdd_Click);
-      // 
-      // listBoxSelectedVSTPlugins
-      // 
-      this.listBoxSelectedVSTPlugins.FormattingEnabled = true;
-      this.listBoxSelectedVSTPlugins.HorizontalScrollbar = true;
-      this.listBoxSelectedVSTPlugins.Location = new System.Drawing.Point(253, 98);
-      this.listBoxSelectedVSTPlugins.Name = "listBoxSelectedVSTPlugins";
-      this.listBoxSelectedVSTPlugins.Size = new System.Drawing.Size(195, 173);
-      this.listBoxSelectedVSTPlugins.TabIndex = 11;
-      this.listBoxSelectedVSTPlugins.DoubleClick += new System.EventHandler(this.listBoxSelectedVSTPlugins_DoubleClick);
-      // 
-      // listBoxFoundVSTPlugins
-      // 
-      this.listBoxFoundVSTPlugins.FormattingEnabled = true;
-      this.listBoxFoundVSTPlugins.HorizontalScrollbar = true;
-      this.listBoxFoundVSTPlugins.Location = new System.Drawing.Point(11, 98);
-      this.listBoxFoundVSTPlugins.Name = "listBoxFoundVSTPlugins";
-      this.listBoxFoundVSTPlugins.Size = new System.Drawing.Size(195, 173);
-      this.listBoxFoundVSTPlugins.Sorted = true;
-      this.listBoxFoundVSTPlugins.TabIndex = 10;
-      // 
-      // WinampTabPg
-      // 
-      this.WinampTabPg.BackColor = System.Drawing.Color.Transparent;
-      this.WinampTabPg.Controls.Add(this.labelWinampWarning);
-      this.WinampTabPg.Controls.Add(this.label7);
-      this.WinampTabPg.Controls.Add(this.label8);
-      this.WinampTabPg.Controls.Add(this.label9);
-      this.WinampTabPg.Controls.Add(this.buttonWARemove);
-      this.WinampTabPg.Controls.Add(this.buttonWAAdd);
-      this.WinampTabPg.Controls.Add(this.listBoxSelectedWAPlugins);
-      this.WinampTabPg.Controls.Add(this.listBoxFoundWAPlugins);
-      this.WinampTabPg.Controls.Add(this.buttonWASearch);
-      this.WinampTabPg.Controls.Add(this.buttonSelectWADir);
-      this.WinampTabPg.Controls.Add(this.textBoxWAPluginDir);
-      this.WinampTabPg.Controls.Add(this.label6);
-      this.WinampTabPg.Location = new System.Drawing.Point(4, 22);
-      this.WinampTabPg.Name = "WinampTabPg";
-      this.WinampTabPg.Padding = new System.Windows.Forms.Padding(3);
-      this.WinampTabPg.Size = new System.Drawing.Size(458, 305);
-      this.WinampTabPg.TabIndex = 3;
-      this.WinampTabPg.Text = "Winamp";
-      this.WinampTabPg.UseVisualStyleBackColor = true;
-      // 
-      // label7
-      // 
-      this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(249, 277);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(203, 13);
-      this.label7.TabIndex = 29;
-      this.label7.Text = "Double click to change plugin parameters";
-      // 
-      // label8
-      // 
-      this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(250, 79);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(181, 13);
-      this.label8.TabIndex = 28;
-      this.label8.Text = "Selected plugins in ascending priority";
-      // 
-      // label9
-      // 
-      this.label9.AutoSize = true;
-      this.label9.Location = new System.Drawing.Point(12, 79);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(86, 13);
-      this.label9.TabIndex = 27;
-      this.label9.Text = "Available plugins";
-      // 
-      // buttonWARemove
-      // 
-      this.buttonWARemove.Location = new System.Drawing.Point(218, 178);
-      this.buttonWARemove.Name = "buttonWARemove";
-      this.buttonWARemove.Size = new System.Drawing.Size(28, 23);
-      this.buttonWARemove.TabIndex = 26;
-      this.buttonWARemove.Text = "<";
-      this.buttonWARemove.UseVisualStyleBackColor = true;
-      this.buttonWARemove.Click += new System.EventHandler(this.buttonWARemove_Click);
-      // 
-      // buttonWAAdd
-      // 
-      this.buttonWAAdd.Location = new System.Drawing.Point(218, 127);
-      this.buttonWAAdd.Name = "buttonWAAdd";
-      this.buttonWAAdd.Size = new System.Drawing.Size(28, 23);
-      this.buttonWAAdd.TabIndex = 25;
-      this.buttonWAAdd.Text = ">";
-      this.buttonWAAdd.UseVisualStyleBackColor = true;
-      this.buttonWAAdd.Click += new System.EventHandler(this.buttonWAAdd_Click);
-      // 
-      // listBoxSelectedWAPlugins
-      // 
-      this.listBoxSelectedWAPlugins.FormattingEnabled = true;
-      this.listBoxSelectedWAPlugins.HorizontalScrollbar = true;
-      this.listBoxSelectedWAPlugins.Location = new System.Drawing.Point(253, 98);
-      this.listBoxSelectedWAPlugins.Name = "listBoxSelectedWAPlugins";
-      this.listBoxSelectedWAPlugins.Size = new System.Drawing.Size(195, 173);
-      this.listBoxSelectedWAPlugins.TabIndex = 24;
-      this.listBoxSelectedWAPlugins.DoubleClick += new System.EventHandler(this.listBoxSelectedWAPlugins_DoubleClick);
-      // 
-      // listBoxFoundWAPlugins
-      // 
-      this.listBoxFoundWAPlugins.FormattingEnabled = true;
-      this.listBoxFoundWAPlugins.HorizontalScrollbar = true;
-      this.listBoxFoundWAPlugins.Location = new System.Drawing.Point(11, 98);
-      this.listBoxFoundWAPlugins.Name = "listBoxFoundWAPlugins";
-      this.listBoxFoundWAPlugins.Size = new System.Drawing.Size(195, 173);
-      this.listBoxFoundWAPlugins.Sorted = true;
-      this.listBoxFoundWAPlugins.TabIndex = 23;
-      // 
-      // buttonWASearch
-      // 
-      this.buttonWASearch.Location = new System.Drawing.Point(292, 40);
-      this.buttonWASearch.Name = "buttonWASearch";
-      this.buttonWASearch.Size = new System.Drawing.Size(156, 23);
-      this.buttonWASearch.TabIndex = 22;
-      this.buttonWASearch.Text = "Search for plugins";
-      this.buttonWASearch.UseVisualStyleBackColor = true;
-      this.buttonWASearch.Click += new System.EventHandler(this.buttonWASearch_Click);
-      // 
-      // buttonSelectWADir
-      // 
-      this.buttonSelectWADir.Location = new System.Drawing.Point(252, 40);
-      this.buttonSelectWADir.Name = "buttonSelectWADir";
-      this.buttonSelectWADir.Size = new System.Drawing.Size(25, 23);
-      this.buttonSelectWADir.TabIndex = 21;
-      this.buttonSelectWADir.Text = "...";
-      this.buttonSelectWADir.UseVisualStyleBackColor = true;
-      this.buttonSelectWADir.Click += new System.EventHandler(this.buttonSelectWADir_Click);
-      // 
-      // textBoxWAPluginDir
-      // 
-      this.textBoxWAPluginDir.Location = new System.Drawing.Point(71, 42);
-      this.textBoxWAPluginDir.Name = "textBoxWAPluginDir";
-      this.textBoxWAPluginDir.Size = new System.Drawing.Size(175, 20);
-      this.textBoxWAPluginDir.TabIndex = 20;
-      // 
-      // label6
-      // 
-      this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(12, 45);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(53, 13);
-      this.label6.TabIndex = 19;
-      this.label6.Text = "Plugin dir:";
+      this.listBoxFoundPlugins.FormattingEnabled = true;
+      this.listBoxFoundPlugins.HorizontalScrollbar = true;
+      this.listBoxFoundPlugins.Location = new System.Drawing.Point(11, 72);
+      this.listBoxFoundPlugins.Name = "listBoxFoundPlugins";
+      this.listBoxFoundPlugins.Size = new System.Drawing.Size(195, 199);
+      this.listBoxFoundPlugins.Sorted = true;
+      this.listBoxFoundPlugins.TabIndex = 10;
       // 
       // btFileselect
       // 
@@ -607,26 +431,6 @@ namespace MediaPortal.Configuration.Sections
       this.btPlay.UseVisualStyleBackColor = true;
       this.btPlay.Click += new System.EventHandler(this.btPlay_Click);
       // 
-      // labelVSTWarning
-      // 
-      this.labelVSTWarning.AutoSize = true;
-      this.labelVSTWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelVSTWarning.Location = new System.Drawing.Point(12, 15);
-      this.labelVSTWarning.Name = "labelVSTWarning";
-      this.labelVSTWarning.Size = new System.Drawing.Size(412, 13);
-      this.labelVSTWarning.TabIndex = 21;
-      this.labelVSTWarning.Text = "EXPERIMENTAL: Some plugins might be outdated or not working at all!";
-      // 
-      // labelWinampWarning
-      // 
-      this.labelWinampWarning.AutoSize = true;
-      this.labelWinampWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelWinampWarning.Location = new System.Drawing.Point(12, 15);
-      this.labelWinampWarning.Name = "labelWinampWarning";
-      this.labelWinampWarning.Size = new System.Drawing.Size(412, 13);
-      this.labelWinampWarning.TabIndex = 30;
-      this.labelWinampWarning.Text = "EXPERIMENTAL: Some plugins might be outdated or not working at all!";
-      // 
       // MusicDSP
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -648,10 +452,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxCompressor.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarCompressor)).EndInit();
       this.MusicDSPTabCtl.ResumeLayout(false);
-      this.VSTTagPg.ResumeLayout(false);
-      this.VSTTagPg.PerformLayout();
-      this.WinampTabPg.ResumeLayout(false);
-      this.WinampTabPg.PerformLayout();
+      this.PluginTabPg.ResumeLayout(false);
+      this.PluginTabPg.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -661,8 +463,7 @@ namespace MediaPortal.Configuration.Sections
 
     private MediaPortal.UserInterface.Controls.MPTabPage DSPTabPg;
     private MediaPortal.UserInterface.Controls.MPTabControl MusicDSPTabCtl;
-    private MediaPortal.UserInterface.Controls.MPTabPage VSTTagPg;
-    private MediaPortal.UserInterface.Controls.MPTabPage WinampTabPg;
+    private MediaPortal.UserInterface.Controls.MPTabPage PluginTabPg;
     private MediaPortal.UserInterface.Controls.MPButton btFileselect;
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxMusicFile;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
@@ -679,14 +480,10 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDAmp;
     private MediaPortal.UserInterface.Controls.MPLabel label4;
     private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPButton buttonVSTSearch;
-    private MediaPortal.UserInterface.Controls.MPButton buttonSelectVSTDir;
-    private MediaPortal.UserInterface.Controls.MPTextBox textBoxVSTPluginDir;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPButton buttonVSTRemove;
-    private MediaPortal.UserInterface.Controls.MPButton buttonVSTAdd;
-    private System.Windows.Forms.ListBox listBoxSelectedVSTPlugins;
-    private System.Windows.Forms.ListBox listBoxFoundVSTPlugins;
+    private MediaPortal.UserInterface.Controls.MPButton buttonPluginRemove;
+    private MediaPortal.UserInterface.Controls.MPButton buttonPluginAdd;
+    private System.Windows.Forms.ListBox listBoxSelectedPlugins;
+    private System.Windows.Forms.ListBox listBoxFoundPlugins;
     private MediaPortal.UserInterface.Controls.MPLabel label5;
     private MediaPortal.UserInterface.Controls.MPLabel label22;
     private MediaPortal.UserInterface.Controls.MPLabel label13;
@@ -695,20 +492,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelCompThreshold;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCompressor;
     private System.Windows.Forms.TrackBar trackBarCompressor;
-    private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.Label label8;
-    private System.Windows.Forms.Label label9;
-    private System.Windows.Forms.Button buttonWARemove;
-    private System.Windows.Forms.Button buttonWAAdd;
-    private System.Windows.Forms.ListBox listBoxSelectedWAPlugins;
-    private System.Windows.Forms.ListBox listBoxFoundWAPlugins;
-    private System.Windows.Forms.Button buttonWASearch;
-    private System.Windows.Forms.Button buttonSelectWADir;
-    private System.Windows.Forms.TextBox textBoxWAPluginDir;
-    private System.Windows.Forms.Label label6;
     private System.Windows.Forms.ToolTip toolTip;
     private MediaPortal.UserInterface.Controls.MPLabel labelVSTWarning;
-    private MediaPortal.UserInterface.Controls.MPLabel labelWinampWarning;
 
   }
 }

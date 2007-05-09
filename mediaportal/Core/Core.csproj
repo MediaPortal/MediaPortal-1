@@ -276,6 +276,7 @@
     <Compile Include="DShowNET\Helper\IksPropertyUtils2.cs" />
     <Compile Include="DShowNET\TsFileSource\ITSFileSink.cs" />
     <Compile Include="DShowNET\TsFileSource\ITSFileSource.cs" />
+    <Compile Include="MusicPlayer\DSP\DSPPluginInfo.cs" />
     <Compile Include="MusicPlayer\Visualization\WinampViz.cs" />
     <Compile Include="Player\FrameGrabber.cs" />
     <Compile Include="guilib\Animations.cs" />

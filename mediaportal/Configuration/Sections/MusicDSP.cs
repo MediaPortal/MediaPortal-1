@@ -47,7 +47,9 @@ namespace MediaPortal.Configuration.Sections
   {
     #region Variables
     // Private Variables
+    private string pluginPath = Path.Combine(Application.StartupPath, @"musicplayer\plugins\dsp");
     private int _stream;
+    private string _initialMusicDirectory;
     // BASS DSP / FX variables
     private DSP_Stacker _stacker;
     private DSP_Gain _gain = null;
@@ -105,12 +107,9 @@ namespace MediaPortal.Configuration.Sections
       toolTip.SetToolTip(groupBoxCompressor, "Compressors are commonly used to control the level, by making loud passages quieter, and quiet passages louder.");
       toolTip.SetToolTip(checkBoxCompressor, "Turn on the Compressor.\r\nCompressors are commonly used to control the level, by making loud passages quieter, and quiet passages louder.");
       toolTip.SetToolTip(trackBarCompressor, "Changes the threshold for the Compressor.");
-      // VST Page
-      toolTip.SetToolTip(listBoxFoundVSTPlugins, "Lists all VST compatible plugins found in the Plugin directory.");
-      toolTip.SetToolTip(listBoxSelectedVSTPlugins, "Lists all enabled VST plugins.\r\nDouble click to open the VST editor.\r\n(If the plugin offers one)");
-      // WinAmp Page
-      toolTip.SetToolTip(listBoxFoundWAPlugins, "Lists all Winamp DSP plugins found in the Plugin directory.");
-      toolTip.SetToolTip(listBoxSelectedWAPlugins, "Lists all enabled Winamp DSP plugins.\r\nDouble click to open the plugin editor.\r\n(If the plugin offers one)");
+      // VST / Winamp Page
+      toolTip.SetToolTip(listBoxFoundPlugins, "Lists all VST / Winamp compatible plugins found in the Plugin directory.");
+      toolTip.SetToolTip(listBoxSelectedPlugins, "Lists all enabled VST /Winamp plugins.\r\nDouble click to open the Config dialogue.\r\n(If the plugin offers one)");
     }
 
     /// <summary>
@@ -121,9 +120,11 @@ namespace MediaPortal.Configuration.Sections
     private void btFileselect_Click(object sender, EventArgs e)
     {
       OpenFileDialog ofd = new OpenFileDialog();
+      ofd.InitialDirectory = _initialMusicDirectory;
       if (ofd.ShowDialog() == DialogResult.OK)
       {
         textBoxMusicFile.Text = ofd.FileName;
+        _initialMusicDirectory = Path.GetDirectoryName(ofd.FileName);
       }
     }
 
@@ -138,7 +139,9 @@ namespace MediaPortal.Configuration.Sections
       {
         // Init BASS
         MediaPortal.Player.BassAudioEngine bassEngine = MediaPortal.Player.BassMusicPlayer.Player;
-        
+        if (bassEngine.BassFreed)
+          bassEngine.InitBass();
+
         _stream = Bass.BASS_StreamCreateFile(textBoxMusicFile.Text, 0, 0, BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE | BASSStream.BASS_SAMPLE_SOFTWARE);
         if (_stream != 0)
         {
@@ -161,28 +164,27 @@ namespace MediaPortal.Configuration.Sections
             BassFx.BASS_FX_DSP_SetParameters(_stream, _comp);
           }
 
-
-          // Attach VST plugins to Stream
-          foreach (string item in listBoxSelectedVSTPlugins.Items)
+          // Attach the plugins to the stream
+          foreach (DSPPluginInfo dsp in listBoxSelectedPlugins.Items)
           {
-            string plugin = String.Format(@"{0}\{1}", textBoxVSTPluginDir.Text, item);
-            _vstHandle = BassVst.BASS_VST_ChannelSetDSP(_stream, plugin, BASSVSTDsp.BASS_VST_DEFAULT, 1);
-            // Copy the parameters of the old handle
-            int vstold = _vstHandles[item];
-            BassVst.BASS_VST_SetParamCopyParams(vstold, _vstHandle); 
-            // Now find out to which stream the old handle was assigned and free it
-            BASS_VST_INFO bassvstinfo = new BASS_VST_INFO();
-            BassVst.BASS_VST_GetInfo(vstold, bassvstinfo);
-            BassVst.BASS_VST_ChannelRemoveDSP(bassvstinfo.channelHandle, vstold);
-            _vstHandles[item] = _vstHandle;
-          }
-
-          // Attach WinAmp handles to Stream
-          foreach (WINAMP_DSP dsp in listBoxSelectedWAPlugins.Items)
-          {
-            _waDspPlugin = _waDspPlugins[dsp.file];
-            BassWa.BASS_WADSP_Start(_waDspPlugin, 0, 0);
-            BassWa.BASS_WADSP_ChannelSetDSP(_waDspPlugin, _stream, 1);
+            if (dsp.DSPPluginType == DSPPluginInfo.PluginType.VST)
+            {
+              _vstHandle = BassVst.BASS_VST_ChannelSetDSP(_stream, dsp.FilePath, BASSVSTDsp.BASS_VST_DEFAULT, 1);
+              // Copy the parameters of the old handle
+              int vstold = _vstHandles[dsp.Name];
+              BassVst.BASS_VST_SetParamCopyParams(vstold, _vstHandle);
+              // Now find out to which stream the old handle was assigned and free it
+              BASS_VST_INFO bassvstinfo = new BASS_VST_INFO();
+              BassVst.BASS_VST_GetInfo(vstold, bassvstinfo);
+              BassVst.BASS_VST_ChannelRemoveDSP(bassvstinfo.channelHandle, vstold);
+              _vstHandles[dsp.Name] = _vstHandle;
+            }
+            else
+            {
+              _waDspPlugin = _waDspPlugins[dsp.FilePath];
+              BassWa.BASS_WADSP_Start(_waDspPlugin, 0, 0);
+              BassWa.BASS_WADSP_ChannelSetDSP(_waDspPlugin, _stream, 1);
+            }
           }
           btPlay.Enabled = false;
           btStop.Enabled = true;
@@ -211,21 +213,24 @@ namespace MediaPortal.Configuration.Sections
       // Stop the DSP Stacker
       if (_stacker != null)
         _stacker.Stop();
-      // Save the VST plugin parameters before freeing the stream
-      foreach (string item in listBoxSelectedVSTPlugins.Items)
+
+      foreach (DSPPluginInfo dsp in listBoxSelectedPlugins.Items)
       {
-        string plugin = String.Format(@"{0}\{1}", textBoxVSTPluginDir.Text, item);
-        _vstHandle = BassVst.BASS_VST_ChannelSetDSP(0, plugin, BASSVSTDsp.BASS_VST_DEFAULT, 1);
-        // Copy the parameters of the old handle
-        int vstold = _vstHandles[item];
-        BassVst.BASS_VST_SetParamCopyParams(vstold, _vstHandle);
-        _vstHandles[item] = _vstHandle;
-      }
-      // Stop the WinAmp DSP
-      foreach (WINAMP_DSP dsp in listBoxSelectedWAPlugins.Items)
-      {
-        _waDspPlugin = _waDspPlugins[dsp.file];
-        BassWa.BASS_WADSP_Stop(_waDspPlugin);
+        // Save the VST plugin parameters before freeing the stream
+        if (dsp.DSPPluginType == DSPPluginInfo.PluginType.VST)
+        {
+          _vstHandle = BassVst.BASS_VST_ChannelSetDSP(0, dsp.FilePath, BASSVSTDsp.BASS_VST_DEFAULT, 1);
+          // Copy the parameters of the old handle
+          int vstold = _vstHandles[dsp.Name];
+          BassVst.BASS_VST_SetParamCopyParams(vstold, _vstHandle);
+          _vstHandles[dsp.Name] = _vstHandle;
+        }
+        else
+        {
+          // Stop the WinAmp DSP
+          _waDspPlugin = _waDspPlugins[dsp.FilePath];
+          BassWa.BASS_WADSP_Stop(_waDspPlugin);
+        }
       }
       Bass.BASS_ChannelStop(_stream);
     }
@@ -250,7 +255,7 @@ namespace MediaPortal.Configuration.Sections
             trackBarGain.Value = (int)(gainDB * 1000d);
           }
           break;
-        
+
         case "DynAmp":
           if (name == "Preset")
           {
@@ -270,87 +275,50 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    #region VSTPlugins
-    /// <summary>
-    /// Select the Directory, where VST plugins are located
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void buttonSelectVSTDir_Click(object sender, EventArgs e)
-    {
-      FolderBrowserDialog fbd = new FolderBrowserDialog();
-      fbd.Description = "Select VST Plugin folder";
-      fbd.SelectedPath = Application.StartupPath;
-      if (fbd.ShowDialog() == DialogResult.OK)
-      {
-        textBoxVSTPluginDir.Text = fbd.SelectedPath;
-      }
-    }
-
-    /// <summary>
-    /// Scan the selected directory for VST Plugins and add them to the list box
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void buttonVSTSearch_Click(object sender, EventArgs e)
-    {
-      listBoxFoundVSTPlugins.Items.Clear();
-      if (Directory.Exists(textBoxVSTPluginDir.Text))
-      {
-        DirectoryInfo di = new DirectoryInfo(textBoxVSTPluginDir.Text);
-        FileInfo[] fi = di.GetFiles("*.dll", SearchOption.AllDirectories);
-        foreach (FileInfo vstplugin in fi)
-        {
-          try
-          {
-            BASS_VST_INFO vstInfo = new BASS_VST_INFO();
-            _vstHandle = BassVst.BASS_VST_ChannelSetDSP(0, vstplugin.FullName, BASSVSTDsp.BASS_VST_DEFAULT, 1);
-            // When Handle > 0 this Vst Plugin is a DSP Plugin
-            if (_vstHandle > 0)
-            {
-              listBoxFoundVSTPlugins.Items.Add(vstplugin.Name);
-            }
-            BassVst.BASS_VST_ChannelRemoveDSP(0, _vstHandle);
-          }
-          catch (Exception ex)
-          {
-            Log.Error("Error reading VST Plugin Information: {0}", ex.Message);
-          }
-        }
-        // And now remove the plugins already selected
-        foreach (string selitem in listBoxSelectedVSTPlugins.Items)
-        {
-          for (int i = 0; i < listBoxFoundVSTPlugins.Items.Count; i++)
-          {
-            if (selitem == (string)listBoxFoundVSTPlugins.Items[i])
-            {
-              listBoxFoundVSTPlugins.Items.RemoveAt(i);
-            }
-          }
-        }
-      }
-    }
-
+    #region VST / Winamp Plugins
     /// <summary>
     /// Add the selected VST plugin(s) to the Selected Plugin Listbox
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void buttonVSTAdd_Click(object sender, EventArgs e)
+    private void buttonPluginAdd_Click(object sender, EventArgs e)
     {
-      // Get the vst handle and enable it
-      string plugin = String.Format(@"{0}\{1}", textBoxVSTPluginDir.Text, listBoxFoundVSTPlugins.SelectedItem);
-      _vstHandle = BassVst.BASS_VST_ChannelSetDSP(0, plugin, BASSVSTDsp.BASS_VST_DEFAULT, 1);
-      if (_vstHandle > 0)
+      DSPPluginInfo pluginInfo = (DSPPluginInfo)listBoxFoundPlugins.SelectedItem;
+
+      if (pluginInfo == null)
+        return;
+
+      if (pluginInfo.DSPPluginType == DSPPluginInfo.PluginType.VST)
       {
-        _vstHandles[listBoxFoundVSTPlugins.Text] = _vstHandle;
-        listBoxSelectedVSTPlugins.Items.Add(listBoxFoundVSTPlugins.SelectedItem);
-        listBoxFoundVSTPlugins.Items.RemoveAt(listBoxFoundVSTPlugins.SelectedIndex);
+        // Get the VST handle and enable it
+        _vstHandle = BassVst.BASS_VST_ChannelSetDSP(0, pluginInfo.FilePath, BASSVSTDsp.BASS_VST_DEFAULT, 1);
+        if (_vstHandle > 0)
+        {
+          _vstHandles[pluginInfo.Name] = _vstHandle;
+          listBoxSelectedPlugins.Items.Add(listBoxFoundPlugins.SelectedItem);
+          listBoxFoundPlugins.Items.RemoveAt(listBoxFoundPlugins.SelectedIndex);
+        }
+        else
+        {
+          MessageBox.Show("Error loading VST Plugin. Probably not valid", "VST Plugin", MessageBoxButtons.OK);
+          Log.Debug("Couldn't load VST Plugin {0}. Error code: {1}", pluginInfo.Name, Bass.BASS_ErrorGetCode());
+        }
       }
       else
       {
-        MessageBox.Show("Error loading VST Plugin. Probably not valid", "VST Plugin", MessageBoxButtons.OK);
-        Log.Debug("Couldn't load VST Plugin {0}. Error code: {1}", plugin, Bass.BASS_ErrorGetCode());
+        // Get the winamp handle and enable it
+        _waDspPlugin = BassWa.BASS_WADSP_Load(pluginInfo.FilePath, 5, 5, 100, 100, null);
+        if (_waDspPlugin > 0)
+        {
+          _waDspPlugins[pluginInfo.FilePath] = _waDspPlugin;
+          listBoxSelectedPlugins.Items.Add(listBoxFoundPlugins.SelectedItem);
+          listBoxFoundPlugins.Items.RemoveAt(listBoxFoundPlugins.SelectedIndex);
+        }
+        else
+        {
+          MessageBox.Show("Error loading WinAmp Plugin. Probably not valid", "WinAmp Plugin", MessageBoxButtons.OK);
+          Log.Debug("Couldn't load WinAmp Plugin {0}. Error code: {1}", pluginInfo.FilePath, Bass.BASS_ErrorGetCode());
+        }
       }
     }
 
@@ -359,13 +327,27 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void buttonVSTRemove_Click(object sender, EventArgs e)
+    private void buttonPluginRemove_Click(object sender, EventArgs e)
     {
-      // Remove VST Handle
-      BassVst.BASS_VST_ChannelRemoveDSP(0, _vstHandles[listBoxSelectedVSTPlugins.Text]);
-      _vstHandles.Remove(listBoxSelectedVSTPlugins.Text);
-      listBoxFoundVSTPlugins.Items.Add(listBoxSelectedVSTPlugins.SelectedItem);
-      listBoxSelectedVSTPlugins.Items.RemoveAt(listBoxSelectedVSTPlugins.SelectedIndex);
+      DSPPluginInfo pluginInfo = (DSPPluginInfo)listBoxSelectedPlugins.SelectedItem;
+
+      if (pluginInfo == null)
+        return;
+
+      if (pluginInfo.DSPPluginType == DSPPluginInfo.PluginType.VST)
+      {
+        // Remove VST Handle
+        BassVst.BASS_VST_ChannelRemoveDSP(0, _vstHandles[pluginInfo.Name]);
+        _vstHandles.Remove(pluginInfo.Name);
+      }
+      else
+      {
+        // Remove Winamp Handle
+        BassWa.BASS_WADSP_FreeDSP(_waDspPlugins[pluginInfo.FilePath]);
+        _waDspPlugins.Remove(pluginInfo.Name);
+      }
+      listBoxFoundPlugins.Items.Add(listBoxSelectedPlugins.SelectedItem);
+      listBoxSelectedPlugins.Items.RemoveAt(listBoxSelectedPlugins.SelectedIndex);
     }
 
     /// <summary>
@@ -373,27 +355,41 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void listBoxSelectedVSTPlugins_DoubleClick(object sender, EventArgs e)
+    private void listBoxSelectedPlugins_DoubleClick(object sender, EventArgs e)
     {
-      _vstHandle = _vstHandles[listBoxSelectedVSTPlugins.Text];
-      BASS_VST_INFO vstInfo = new BASS_VST_INFO();
-      if (BassVst.BASS_VST_GetInfo(_vstHandle, vstInfo) && vstInfo.hasEditor)
+      DSPPluginInfo pluginInfo = (DSPPluginInfo)listBoxSelectedPlugins.SelectedItem;
+
+      if (pluginInfo == null)
+        return;
+
+      if (pluginInfo.DSPPluginType == DSPPluginInfo.PluginType.VST)
       {
-        // Set a handle to the callback procedure
-        _vstProc = new VSTPROC(vstEditorCallBack);
-        BassVst.BASS_VST_SetCallback(_vstHandle, _vstProc, 0);
-        // create a new System.Windows.Forms.Form
-        Form f = new Form();
-        f.Width = vstInfo.editorWidth + 4;
-        f.Height = vstInfo.editorHeight + 34;
-        f.Closing += new CancelEventHandler(f_Closing);
-        f.Text = vstInfo.effectName;
-        f.Show();
-        BassVst.BASS_VST_EmbedEditor(_vstHandle, f.Handle);
+        _vstHandle = _vstHandles[pluginInfo.Name];
+        BASS_VST_INFO vstInfo = new BASS_VST_INFO();
+        if (BassVst.BASS_VST_GetInfo(_vstHandle, vstInfo) && vstInfo.hasEditor)
+        {
+          // Set a handle to the callback procedure
+          _vstProc = new VSTPROC(vstEditorCallBack);
+          BassVst.BASS_VST_SetCallback(_vstHandle, _vstProc, 0);
+          // create a new System.Windows.Forms.Form
+          Form f = new Form();
+          f.Width = vstInfo.editorWidth + 4;
+          f.Height = vstInfo.editorHeight + 34;
+          f.Closing += new CancelEventHandler(f_Closing);
+          f.Text = vstInfo.effectName;
+          BassVst.BASS_VST_EmbedEditor(_vstHandle, f.Handle);
+          f.ShowDialog();
+        }
+        else
+        {
+          MessageBox.Show("Plugin has no Configuration");
+        }
       }
       else
       {
-        MessageBox.Show("Plugin has no Editor");
+        _waDspPlugin = _waDspPlugins[pluginInfo.FilePath];
+        BassWa.BASS_WADSP_Start(_waDspPlugin, 0, 0);
+        BassWa.BASS_WADSP_Config(_waDspPlugin, 0);
       }
     }
 
@@ -438,85 +434,14 @@ namespace MediaPortal.Configuration.Sections
       }
       return 0;
     }
-    #endregion VSTPlugins
+    #endregion
 
-    #region WinAmpPlugins
-    private void buttonSelectWADir_Click(object sender, EventArgs e)
-    {
-      FolderBrowserDialog fbd = new FolderBrowserDialog();
-      fbd.Description = "Select Winamp Plugin folder";
-      fbd.SelectedPath = Application.StartupPath;
-      if (fbd.ShowDialog() == DialogResult.OK)
-      {
-        textBoxWAPluginDir.Text = fbd.SelectedPath;
-      }
-    }
-
-    private void buttonWASearch_Click(object sender, EventArgs e)
-    {
-      listBoxFoundWAPlugins.Items.Clear();
-      if (Directory.Exists(textBoxWAPluginDir.Text))
-      {
-        _dsps = BassWa.BASS_WADSP_FindPlugins(textBoxWAPluginDir.Text);
-        listBoxFoundWAPlugins.Items.AddRange(_dsps);
-        // If plugins are already selected, remove them from the found plugin list
-        foreach (WINAMP_DSP dspSelected in listBoxSelectedWAPlugins.Items)
-        {
-          for (int i = 0; i < listBoxFoundWAPlugins.Items.Count; i++)
-          {
-            WINAMP_DSP dspFound = (WINAMP_DSP)listBoxFoundWAPlugins.Items[i];
-            if (dspSelected.file == dspFound.file)
-            {
-              listBoxFoundWAPlugins.Items.RemoveAt(i);
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    private void buttonWAAdd_Click(object sender, EventArgs e)
-    {
-      // Get the winamp handle and enable it
-      WINAMP_DSP dsp = (WINAMP_DSP)listBoxFoundWAPlugins.SelectedItem;
-      _waDspPlugin = BassWa.BASS_WADSP_Load(dsp.file, 5, 5, 100, 100, null);
-      if (_waDspPlugin > 0)
-      {
-        _waDspPlugins[dsp.file] = _waDspPlugin;
-        listBoxSelectedWAPlugins.Items.Add(listBoxFoundWAPlugins.SelectedItem);
-        listBoxFoundWAPlugins.Items.RemoveAt(listBoxFoundWAPlugins.SelectedIndex);
-      }
-      else
-      {
-        MessageBox.Show("Error loading WinAmp Plugin. Probably not valid", "WinAmp Plugin", MessageBoxButtons.OK);
-        Log.Debug("Couldn't load WinAmp Plugin {0}. Error code: {1}", listBoxFoundWAPlugins.SelectedItem, Bass.BASS_ErrorGetCode());
-      }
-    }
-
-    private void buttonWARemove_Click(object sender, EventArgs e)
-    {
-      // Remove Winamp Handle
-      WINAMP_DSP dsp = (WINAMP_DSP)listBoxSelectedWAPlugins.SelectedItem;
-      BassWa.BASS_WADSP_FreeDSP(_waDspPlugins[dsp.file]);
-      _waDspPlugins.Remove(listBoxSelectedWAPlugins.Text);
-      listBoxFoundWAPlugins.Items.Add(listBoxSelectedWAPlugins.SelectedItem);
-      listBoxSelectedWAPlugins.Items.RemoveAt(listBoxSelectedWAPlugins.SelectedIndex);
-    }
-
-    private void listBoxSelectedWAPlugins_DoubleClick(object sender, EventArgs e)
-    {
-      WINAMP_DSP dsp = (WINAMP_DSP)listBoxSelectedWAPlugins.SelectedItem;
-      _waDspPlugin = _waDspPlugins[dsp.file];
-      BassWa.BASS_WADSP_Config(_waDspPlugin, 0);
-    }
-    #endregion WinAmpPlugins
-
-    #region DSP Gain
+     #region DSP Gain
     private void buttonSetGain_Click(object sender, System.EventArgs e)
     {
       if (_gain == null)
         _gain = new DSP_Gain();
-      
+
       try
       {
         double gainDB = double.Parse(this.textBoxGainDBValue.Text);
@@ -563,7 +488,7 @@ namespace MediaPortal.Configuration.Sections
       comboBoxDynamicAmplification.Enabled = checkBoxDAmp.Checked;
       if (comboBoxDynamicAmplification.SelectedIndex == -1)
         comboBoxDynamicAmplification.SelectedIndex = 0;
-      
+
       if (_stream == 0)
         return;
 
@@ -664,6 +589,8 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
+      _initialMusicDirectory = Settings.Instance.MusicDirectory;
+
       // BASS DSP/FX
       foreach (BassEffect basseffect in Settings.Instance.BassEffects)
       {
@@ -673,16 +600,41 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
+      DirectoryInfo di = new DirectoryInfo(pluginPath);
+      FileInfo[] fi = di.GetFiles("*.dll", SearchOption.AllDirectories);
+      foreach (FileInfo vstplugin in fi)
+      {
+        try
+        {
+          BASS_VST_INFO vstInfo = new BASS_VST_INFO();
+          _vstHandle = BassVst.BASS_VST_ChannelSetDSP(0, vstplugin.FullName, BASSVSTDsp.BASS_VST_DEFAULT, 1);
+          // When Handle > 0 this Vst Plugin is a DSP Plugin
+          if (_vstHandle > 0)
+          {
+            DSPPluginInfo pluginInfo = new DSPPluginInfo(DSPPluginInfo.PluginType.VST, vstplugin.FullName, vstplugin.Name);
+            if (pluginInfo.IsBlackListed)
+              Log.Info("DSP Plugin {0} may not be used, as it is known for causing problems.", vstplugin.Name);
+            else
+              listBoxFoundPlugins.Items.Add(pluginInfo);
+          }
+          BassVst.BASS_VST_ChannelRemoveDSP(0, _vstHandle);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Error reading VST Plugin Information: {0}", ex.Message);
+        }
+      }
+
       // VST Plugins
-      textBoxVSTPluginDir.Text = Settings.Instance.VSTPluginDirectory;
       foreach (VSTPlugin plugins in Settings.Instance.VSTPlugins)
       {
         // Get the vst handle and enable it
-        string plugin = String.Format(@"{0}\{1}", textBoxVSTPluginDir.Text, plugins.PluginDll);
+        string plugin = String.Format(@"{0}\{1}", pluginPath, plugins.PluginDll);
         _vstHandle = BassVst.BASS_VST_ChannelSetDSP(0, plugin, BASSVSTDsp.BASS_VST_DEFAULT, 1);
         if (_vstHandle > 0)
         {
-          listBoxSelectedVSTPlugins.Items.Add(plugins.PluginDll);
+          DSPPluginInfo pluginInfo = new DSPPluginInfo(DSPPluginInfo.PluginType.VST, plugin, plugins.PluginDll);
+          listBoxSelectedPlugins.Items.Add(pluginInfo);
           _vstHandles[plugins.PluginDll] = _vstHandle;
           // Set all parameters for the plugin
           foreach (VSTPluginParm paramter in plugins.Parameter)
@@ -702,35 +654,50 @@ namespace MediaPortal.Configuration.Sections
           Log.Debug("Couldn't load VST Plugin {0}. Error code: {1}", plugin, Bass.BASS_ErrorGetCode());
         }
       }
+      // Now remove those already selected from the found listbox
+      foreach (VSTPlugin plugins in Settings.Instance.VSTPlugins)
+      {
+        for (int i = 0; i < listBoxFoundPlugins.Items.Count; i++)
+        {
+          DSPPluginInfo dsp = (DSPPluginInfo)listBoxFoundPlugins.Items[i];
+          if (dsp.DSPPluginType == DSPPluginInfo.PluginType.VST && dsp.Name == plugins.PluginDll)
+          {
+            listBoxFoundPlugins.Items.RemoveAt(i);
+          }
+        }
+      }
 
       // WinAmp Plugins
-      textBoxWAPluginDir.Text = Settings.Instance.WinAmpPluginDirectory;
 
       // Get the available plugins in the directory and fill the found listbox
-      if (Directory.Exists(textBoxWAPluginDir.Text))
-      {       
-        WINAMP_DSP[] dsps = BassWa.BASS_WADSP_FindPlugins(Settings.Instance.WinAmpPluginDirectory);
-        listBoxFoundWAPlugins.Items.AddRange(dsps);
-        // Now remove those already selected from the found listbox
-        foreach (WinAmpPlugin plugins in Settings.Instance.WinAmpPlugins)
+      WINAMP_DSP[] dsps = BassWa.BASS_WADSP_FindPlugins(pluginPath);
+      foreach (WINAMP_DSP winampPlugin in dsps)
+      {
+        DSPPluginInfo pluginInfo = new DSPPluginInfo(DSPPluginInfo.PluginType.Winamp, winampPlugin.file, winampPlugin.description);
+        if (pluginInfo.IsBlackListed)
+          Log.Info("DSP Plugin {0} may not be used, as it is known for causing problems.", pluginInfo.FilePath);
+        else
+          listBoxFoundPlugins.Items.Add(pluginInfo);
+      }
+      // Now remove those already selected from the found listbox
+      foreach (WinAmpPlugin plugins in Settings.Instance.WinAmpPlugins)
+      {
+        for (int i = 0; i < listBoxFoundPlugins.Items.Count; i++)
         {
-          for (int i = 0; i < listBoxFoundWAPlugins.Items.Count; i++)
+          DSPPluginInfo dsp = (DSPPluginInfo)listBoxFoundPlugins.Items[i];
+          if (dsp.DSPPluginType == DSPPluginInfo.PluginType.Winamp && dsp.FilePath == plugins.PluginDll)
           {
-            WINAMP_DSP dsp = (WINAMP_DSP)listBoxFoundWAPlugins.Items[i];
-            if (dsp.file == plugins.PluginDll)
+            listBoxFoundPlugins.Items.RemoveAt(i);
+            _waDspPlugin = BassWa.BASS_WADSP_Load(plugins.PluginDll, 5, 5, 100, 100, null);
+            if (_waDspPlugin > 0)
             {
-              listBoxFoundWAPlugins.Items.RemoveAt(i);
-              _waDspPlugin = BassWa.BASS_WADSP_Load(plugins.PluginDll, 5, 5, 100, 100, null);
-              if (_waDspPlugin > 0)
-              {
-                listBoxSelectedWAPlugins.Items.Add(dsp);
-                _waDspPlugins[plugins.PluginDll] = _waDspPlugin;
-                break;
-              }
-              else
-              {
-                Log.Debug("Couldn't load WinAmp Plugin {0}. Error code: {1}", plugins.PluginDll, Bass.BASS_ErrorGetCode());
-              }
+              listBoxSelectedPlugins.Items.Add(dsp);
+              _waDspPlugins[plugins.PluginDll] = _waDspPlugin;
+              break;
+            }
+            else
+            {
+              Log.Debug("Couldn't load WinAmp Plugin {0}. Error code: {1}", plugins.PluginDll, Bass.BASS_ErrorGetCode());
             }
           }
         }
@@ -742,6 +709,8 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
+      Settings.Instance.MusicDirectory = _initialMusicDirectory;
+
       // Settings for BASS DSP/FX
       Settings.Instance.BassEffects.Clear();
       BassEffect basseffect;
@@ -763,7 +732,7 @@ namespace MediaPortal.Configuration.Sections
         basseffect.Parameter.Add(new BassEffectParm("Preset", comboBoxDynamicAmplification.SelectedIndex.ToString()));
         Settings.Instance.BassEffects.Add(basseffect);
       }
- 
+
       // Compressor
       if (checkBoxCompressor.Checked)
       {
@@ -774,9 +743,6 @@ namespace MediaPortal.Configuration.Sections
       }
 
       // Settings for VST Plugings
-      Settings.Instance.VSTPluginDirectory = textBoxVSTPluginDir.Text;
-
-      // Clear all Settings first
       Settings.Instance.VSTPlugins.Clear();
       VSTPlugin vstplugin;
       foreach (string plugindll in _vstHandles.Keys)
@@ -795,16 +761,18 @@ namespace MediaPortal.Configuration.Sections
       }
 
       // Settings for WinAmpPlugins
-      Settings.Instance.WinAmpPluginDirectory = textBoxWAPluginDir.Text;
       WinAmpPlugin winampplugin;
 
       // Clear all settings first
       Settings.Instance.WinAmpPlugins.Clear();
-      foreach (WINAMP_DSP wadsp in listBoxSelectedWAPlugins.Items)
+      foreach (DSPPluginInfo pluginInfo in listBoxSelectedPlugins.Items)
       {
-        winampplugin = new WinAmpPlugin();
-        winampplugin.PluginDll = wadsp.file;
-        Settings.Instance.WinAmpPlugins.Add(winampplugin);
+        if (pluginInfo.DSPPluginType == DSPPluginInfo.PluginType.Winamp)
+        {
+          winampplugin = new WinAmpPlugin();
+          winampplugin.PluginDll = pluginInfo.FilePath;
+          Settings.Instance.WinAmpPlugins.Add(winampplugin);
+        }
       }
       Settings.SaveSettings();
     }

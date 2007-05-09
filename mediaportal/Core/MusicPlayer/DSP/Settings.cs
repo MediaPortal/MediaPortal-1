@@ -52,9 +52,7 @@ namespace MediaPortal.Player.DSP
 
     #region Variables
     // Private Variables
-    private string m_VSTPluginDirectory = "";
-    private string m_WinAmpPluginDirectory = "";
-
+    private string m_MusicDirectory = "C:\\";
 
     // Protected Variables
 
@@ -84,36 +82,26 @@ namespace MediaPortal.Player.DSP
 
     #region Properties
     /// <summary>
+    /// The Initial Music Directory
+    /// </summary>
+    [XmlAttribute]
+    public string MusicDirectory
+    {
+      get { return m_MusicDirectory; }
+      set { m_MusicDirectory = value; }
+    }
+
+    /// <summary>
     /// List of Bass Effects
     /// </summary>
     [XmlElement("BASS", typeof(BassEffect))]
     public List<BassEffect> BassEffects = new List<BassEffect>();
 
-    /// <summary>
-    /// The VST Plugin Directory
-    /// </summary>
-    [XmlAttribute]
-    public string VSTPluginDirectory
-    {
-      get { return m_VSTPluginDirectory; }
-      set { m_VSTPluginDirectory = value; }
-    }
-
-    /// <summary>
+     /// <summary>
     /// List of enabled VST Plugins
     /// </summary>
     [XmlElement("VST", typeof(VSTPlugin))]
     public List<VSTPlugin> VSTPlugins = new List<VSTPlugin>();
-
-    /// <summary>
-    /// The WinAmp Plugin Directory
-    /// </summary>
-    [XmlAttribute]
-    public string WinAmpPluginDirectory
-    {
-      get { return m_WinAmpPluginDirectory; }
-      set { m_WinAmpPluginDirectory = value; }
-    }
 
     /// <summary>
     /// List of enabled WinAMp Plugins
