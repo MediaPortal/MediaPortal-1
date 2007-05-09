@@ -166,43 +166,42 @@ namespace WindowPlugins.GUIPrograms
       "genre4",
       "genre5"
     };
-
+    
     string[] sqloperators = new string[]
-      {
-        "",
-        "=",
-        ">",
-        "<",
-        ">=",
-        "<=",
-        "<>",
-        "like",
-        //"group",
-      };
-
+    {
+      "",
+      "=",
+      ">",
+      "<",
+      ">=",
+      "<=",
+      "<>",
+      "like",
+      //"group",
+    };
+    
     string[] viewsAs = new string[]
-			{
-				"List",
-				"Icons",
-				"Big Icons",
-				"Filmstrip",
-        "Albums",
-		  };
+    {
+      "List",
+      "Icons",
+      "Big Icons",
+      "Filmstrip",
+      //"Albums",
+    };
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
 
     string[] sortBy = new string[]
-			{
-        "Name",
-        "Date",
-        "Size",
-        "Track",
-        "Duration",
-        "Title",
-        "Artist",
-        "Album",
-        "Filename",
-        "Rating"
-      };
+    {
+      "title",
+      "filename",
+      "country",
+      "genre",
+      "year",
+      "manufacturer",
+      "rating",
+      "launchcount",
+      "lastTimeLaunched",
+    };
 
     public ProgramViews()
       : this("Program Views")
@@ -279,7 +278,7 @@ namespace WindowPlugins.GUIPrograms
       this.tbViewName.BorderColor = System.Drawing.Color.Empty;
       this.tbViewName.Location = new System.Drawing.Point(137, 47);
       this.tbViewName.Name = "tbViewName";
-      this.tbViewName.Size = new System.Drawing.Size(179, 21);
+      this.tbViewName.Size = new System.Drawing.Size(185, 21);
       this.tbViewName.TabIndex = 20;
       // 
       // label2
@@ -294,7 +293,7 @@ namespace WindowPlugins.GUIPrograms
       // btnDelete
       // 
       this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnDelete.Location = new System.Drawing.Point(244, 344);
+      this.btnDelete.Location = new System.Drawing.Point(250, 380);
       this.btnDelete.Name = "btnDelete";
       this.btnDelete.Size = new System.Drawing.Size(72, 22);
       this.btnDelete.TabIndex = 18;
@@ -305,7 +304,7 @@ namespace WindowPlugins.GUIPrograms
       // btnSave
       // 
       this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnSave.Location = new System.Drawing.Point(166, 344);
+      this.btnSave.Location = new System.Drawing.Point(172, 380);
       this.btnSave.Name = "btnSave";
       this.btnSave.Size = new System.Drawing.Size(72, 22);
       this.btnSave.TabIndex = 17;
@@ -321,7 +320,7 @@ namespace WindowPlugins.GUIPrograms
       this.cbViews.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbViews.Location = new System.Drawing.Point(137, 20);
       this.cbViews.Name = "cbViews";
-      this.cbViews.Size = new System.Drawing.Size(179, 21);
+      this.cbViews.Size = new System.Drawing.Size(185, 21);
       this.cbViews.TabIndex = 16;
       this.cbViews.SelectedIndexChanged += new System.EventHandler(this.cbViews_SelectedIndexChanged);
       // 
@@ -344,7 +343,7 @@ namespace WindowPlugins.GUIPrograms
       this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
       this.dataGrid1.Location = new System.Drawing.Point(6, 74);
       this.dataGrid1.Name = "dataGrid1";
-      this.dataGrid1.Size = new System.Drawing.Size(310, 264);
+      this.dataGrid1.Size = new System.Drawing.Size(316, 270);
       this.dataGrid1.TabIndex = 14;
       // 
       // mpGroupBox1
@@ -352,6 +351,7 @@ namespace WindowPlugins.GUIPrograms
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.mpLabel1);
       this.mpGroupBox1.Controls.Add(this.btnDelete);
       this.mpGroupBox1.Controls.Add(this.tbViewName);
       this.mpGroupBox1.Controls.Add(this.btnSave);
@@ -360,9 +360,9 @@ namespace WindowPlugins.GUIPrograms
       this.mpGroupBox1.Controls.Add(this.label2);
       this.mpGroupBox1.Controls.Add(this.cbViews);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(3, 3);
+      this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(322, 372);
+      this.mpGroupBox1.Size = new System.Drawing.Size(328, 408);
       this.mpGroupBox1.TabIndex = 83;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Program Views";
@@ -371,17 +371,16 @@ namespace WindowPlugins.GUIPrograms
       // 
       this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel1.Location = new System.Drawing.Point(3, 378);
+      this.mpLabel1.Location = new System.Drawing.Point(9, 347);
       this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(322, 30);
-      this.mpLabel1.TabIndex = 84;
+      this.mpLabel1.Size = new System.Drawing.Size(313, 30);
+      this.mpLabel1.TabIndex = 85;
       this.mpLabel1.Text = "Actions Codes in last column: a = Insert line after, b = Insert line before, d = " +
           "delete line";
-      this.mpLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      this.mpLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       // 
       // ProgramViews
       // 
-      this.Controls.Add(this.mpLabel1);
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "ProgramViews";
       this.Size = new System.Drawing.Size(328, 408);

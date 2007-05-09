@@ -34,9 +34,9 @@ namespace WindowPlugins.GUIPrograms
 {
   public class AppSettingsRoot : AppSettings
   {
+    private IContainer components = null;
     private MediaPortal.UserInterface.Controls.MPTextBox txtTitle;
     private MediaPortal.UserInterface.Controls.MPButton btnTitleReset;
-    private IContainer components = null;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
     private MediaPortal.UserInterface.Controls.MPButton btnSlideSpeedReset;
@@ -94,14 +94,14 @@ namespace WindowPlugins.GUIPrograms
       this.txtTitle.BorderColor = System.Drawing.Color.Empty;
       this.txtTitle.Location = new System.Drawing.Point(6, 20);
       this.txtTitle.Name = "txtTitle";
-      this.txtTitle.Size = new System.Drawing.Size(240, 21);
+      this.txtTitle.Size = new System.Drawing.Size(246, 21);
       this.txtTitle.TabIndex = 0;
       this.toolTip.SetToolTip(this.txtTitle, "This text will appear in the MP home screen.");
       // 
       // btnTitleReset
       // 
       this.btnTitleReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnTitleReset.Location = new System.Drawing.Point(252, 20);
+      this.btnTitleReset.Location = new System.Drawing.Point(258, 20);
       this.btnTitleReset.Name = "btnTitleReset";
       this.btnTitleReset.Size = new System.Drawing.Size(72, 22);
       this.btnTitleReset.TabIndex = 1;
@@ -117,9 +117,9 @@ namespace WindowPlugins.GUIPrograms
       this.mpGroupBox1.Controls.Add(this.txtTitle);
       this.mpGroupBox1.Controls.Add(this.btnTitleReset);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(3, 3);
+      this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(330, 54);
+      this.mpGroupBox1.Size = new System.Drawing.Size(336, 54);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Plugin Title";
@@ -132,9 +132,9 @@ namespace WindowPlugins.GUIPrograms
       this.mpGroupBox2.Controls.Add(this.numSlideSpeed);
       this.mpGroupBox2.Controls.Add(this.mpLabel1);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(3, 63);
+      this.mpGroupBox2.Location = new System.Drawing.Point(0, 60);
       this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(330, 56);
+      this.mpGroupBox2.Size = new System.Drawing.Size(336, 56);
       this.mpGroupBox2.TabIndex = 1;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "Slideshow";
@@ -142,7 +142,7 @@ namespace WindowPlugins.GUIPrograms
       // btnSlideSpeedReset
       // 
       this.btnSlideSpeedReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnSlideSpeedReset.Location = new System.Drawing.Point(252, 20);
+      this.btnSlideSpeedReset.Location = new System.Drawing.Point(258, 20);
       this.btnSlideSpeedReset.Name = "btnSlideSpeedReset";
       this.btnSlideSpeedReset.Size = new System.Drawing.Size(72, 22);
       this.btnSlideSpeedReset.TabIndex = 2;
@@ -172,7 +172,7 @@ namespace WindowPlugins.GUIPrograms
             0,
             0});
       this.numSlideSpeed.Name = "numSlideSpeed";
-      this.numSlideSpeed.Size = new System.Drawing.Size(92, 21);
+      this.numSlideSpeed.Size = new System.Drawing.Size(98, 21);
       this.numSlideSpeed.TabIndex = 1;
       this.numSlideSpeed.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
       this.numSlideSpeed.Value = new decimal(new int[] {

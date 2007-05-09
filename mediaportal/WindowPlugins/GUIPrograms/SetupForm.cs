@@ -199,16 +199,16 @@ namespace WindowPlugins.GUIPrograms
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("whazzz up");
-      System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("my Programs", new System.Windows.Forms.TreeNode[] {
-            treeNode1});
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SetupForm));
+      System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("whazzz up");
+      System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("my Programs", new System.Windows.Forms.TreeNode[] {
+            treeNode5});
       this.appTree = new System.Windows.Forms.TreeView();
       this.toolBarMenu = new System.Windows.Forms.ToolBar();
       this.buttonAddChild = new System.Windows.Forms.ToolBarButton();
       this.popupAddChild = new System.Windows.Forms.ContextMenu();
       this.menuDirCache = new System.Windows.Forms.MenuItem();
       this.menuFileLauncher = new System.Windows.Forms.MenuItem();
+      this.appLauncherMenuItem = new System.Windows.Forms.MenuItem();
       this.menuGrouper = new System.Windows.Forms.MenuItem();
       this.menuMyFile = new System.Windows.Forms.MenuItem();
       this.menuDirBrowse = new System.Windows.Forms.MenuItem();
@@ -235,7 +235,6 @@ namespace WindowPlugins.GUIPrograms
       this.menuItemReadFromProfile = new System.Windows.Forms.MenuItem();
       this.menuItem2 = new System.Windows.Forms.MenuItem();
       this.sep5 = new System.Windows.Forms.ToolBarButton();
-      this.appLauncherMenuItem = new System.Windows.Forms.MenuItem();
       this.detailsTabControl = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.detailsPage = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.holderPanel = new System.Windows.Forms.Panel();
@@ -259,15 +258,15 @@ namespace WindowPlugins.GUIPrograms
       this.appTree.Indent = 19;
       this.appTree.ItemHeight = 16;
       this.appTree.LabelEdit = true;
-      this.appTree.Location = new System.Drawing.Point(8, 40);
+      this.appTree.Location = new System.Drawing.Point(8, 43);
       this.appTree.Name = "appTree";
-      treeNode1.Name = "";
-      treeNode1.Text = "whazzz up";
-      treeNode2.Name = "";
-      treeNode2.Text = "my Programs";
+      treeNode5.Name = "";
+      treeNode5.Text = "whazzz up";
+      treeNode6.Name = "";
+      treeNode6.Text = "my Programs";
       this.appTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode2});
-      this.appTree.Size = new System.Drawing.Size(224, 447);
+            treeNode6});
+      this.appTree.Size = new System.Drawing.Size(224, 443);
       this.appTree.TabIndex = 8;
       this.appTree.DragDrop += new System.Windows.Forms.DragEventHandler(this.appTree_DragDrop);
       this.appTree.DragOver += new System.Windows.Forms.DragEventHandler(this.appTree_DragOver);
@@ -333,6 +332,12 @@ namespace WindowPlugins.GUIPrograms
       this.menuFileLauncher.Index = 1;
       this.menuFileLauncher.Text = "Filelauncher";
       this.menuFileLauncher.Click += new System.EventHandler(this.menuFileLauncher_Click);
+      // 
+      // appLauncherMenuItem
+      // 
+      this.appLauncherMenuItem.Index = 2;
+      this.appLauncherMenuItem.Text = "Application launcher";
+      this.appLauncherMenuItem.Click += new System.EventHandler(this.appLauncherMenuItem_Click);
       // 
       // menuGrouper
       // 
@@ -494,12 +499,6 @@ namespace WindowPlugins.GUIPrograms
       this.sep5.Name = "sep5";
       this.sep5.Style = System.Windows.Forms.ToolBarButtonStyle.Separator;
       // 
-      // appLauncherMenuItem
-      // 
-      this.appLauncherMenuItem.Index = 2;
-      this.appLauncherMenuItem.Text = "Application launcher";
-      this.appLauncherMenuItem.Click += new System.EventHandler(this.appLauncherMenuItem_Click);
-      // 
       // detailsTabControl
       // 
       this.detailsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -508,10 +507,10 @@ namespace WindowPlugins.GUIPrograms
       this.detailsTabControl.Controls.Add(this.detailsPage);
       this.detailsTabControl.Controls.Add(this.filesPage);
       this.detailsTabControl.Controls.Add(this.viewsPage);
-      this.detailsTabControl.Location = new System.Drawing.Point(240, 40);
+      this.detailsTabControl.Location = new System.Drawing.Point(240, 43);
       this.detailsTabControl.Name = "detailsTabControl";
       this.detailsTabControl.SelectedIndex = 0;
-      this.detailsTabControl.Size = new System.Drawing.Size(416, 447);
+      this.detailsTabControl.Size = new System.Drawing.Size(416, 443);
       this.detailsTabControl.TabIndex = 14;
       this.detailsTabControl.SelectedIndexChanged += new System.EventHandler(this.DetailsTabControl_SelectedIndexChanged);
       // 
@@ -520,7 +519,7 @@ namespace WindowPlugins.GUIPrograms
       this.detailsPage.Controls.Add(this.holderPanel);
       this.detailsPage.Location = new System.Drawing.Point(4, 22);
       this.detailsPage.Name = "detailsPage";
-      this.detailsPage.Size = new System.Drawing.Size(408, 421);
+      this.detailsPage.Size = new System.Drawing.Size(408, 417);
       this.detailsPage.TabIndex = 0;
       this.detailsPage.Text = "Details";
       this.detailsPage.UseVisualStyleBackColor = true;
@@ -530,9 +529,9 @@ namespace WindowPlugins.GUIPrograms
       this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.holderPanel.Location = new System.Drawing.Point(3, 3);
+      this.holderPanel.Location = new System.Drawing.Point(0, 0);
       this.holderPanel.Name = "holderPanel";
-      this.holderPanel.Size = new System.Drawing.Size(397, 415);
+      this.holderPanel.Size = new System.Drawing.Size(408, 417);
       this.holderPanel.TabIndex = 12;
       // 
       // filesPage
@@ -540,7 +539,7 @@ namespace WindowPlugins.GUIPrograms
       this.filesPage.Controls.Add(this.holderPanelFiles);
       this.filesPage.Location = new System.Drawing.Point(4, 22);
       this.filesPage.Name = "filesPage";
-      this.filesPage.Size = new System.Drawing.Size(408, 442);
+      this.filesPage.Size = new System.Drawing.Size(408, 417);
       this.filesPage.TabIndex = 1;
       this.filesPage.Text = "Files";
       this.filesPage.UseVisualStyleBackColor = true;
@@ -550,9 +549,9 @@ namespace WindowPlugins.GUIPrograms
       this.holderPanelFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.holderPanelFiles.Location = new System.Drawing.Point(6, 3);
+      this.holderPanelFiles.Location = new System.Drawing.Point(0, 0);
       this.holderPanelFiles.Name = "holderPanelFiles";
-      this.holderPanelFiles.Size = new System.Drawing.Size(397, 436);
+      this.holderPanelFiles.Size = new System.Drawing.Size(408, 417);
       this.holderPanelFiles.TabIndex = 13;
       // 
       // viewsPage
@@ -560,7 +559,7 @@ namespace WindowPlugins.GUIPrograms
       this.viewsPage.Controls.Add(this.holderPanelViews);
       this.viewsPage.Location = new System.Drawing.Point(4, 22);
       this.viewsPage.Name = "viewsPage";
-      this.viewsPage.Size = new System.Drawing.Size(408, 442);
+      this.viewsPage.Size = new System.Drawing.Size(408, 417);
       this.viewsPage.TabIndex = 2;
       this.viewsPage.Text = "Views";
       this.viewsPage.UseVisualStyleBackColor = true;
@@ -570,21 +569,22 @@ namespace WindowPlugins.GUIPrograms
       this.holderPanelViews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.holderPanelViews.Location = new System.Drawing.Point(6, 3);
+      this.holderPanelViews.Location = new System.Drawing.Point(0, 0);
       this.holderPanelViews.Name = "holderPanelViews";
-      this.holderPanelViews.Size = new System.Drawing.Size(397, 436);
+      this.holderPanelViews.Size = new System.Drawing.Size(408, 417);
       this.holderPanelViews.TabIndex = 14;
       // 
       // SetupForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 14);
       this.ClientSize = new System.Drawing.Size(666, 493);
       this.Controls.Add(this.detailsTabControl);
       this.Controls.Add(this.toolBarMenu);
       this.Controls.Add(this.appTree);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "SetupForm";
-      this.Text = "my Programs Setup";
+      this.ShowIcon = false;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "My Programs - Setup";
       this.Closing += new System.ComponentModel.CancelEventHandler(this.SetupForm_Closing);
       this.Load += new System.EventHandler(this.SetupForm_Load);
       this.detailsTabControl.ResumeLayout(false);
