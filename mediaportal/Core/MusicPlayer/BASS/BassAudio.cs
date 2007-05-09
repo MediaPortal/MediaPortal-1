@@ -1554,7 +1554,7 @@ namespace MediaPortal.Player
             _streamcopy = new DSP_StreamCopy();
             _streamcopy.ChannelHandle = stream;
             _streamcopy.StreamDevice = 0;                            // Use the No output device to prevent playback of the cloned stream.
-            _streamcopy.StreamFlags = BASSStream.BASS_STREAM_DECODE; // decode the channel, so that we have a Streamcopy
+            _streamcopy.StreamFlags = BASSStream.BASS_STREAM_DECODE | BASSStream.BASS_SAMPLE_FLOAT; // decode the channel, so that we have a Streamcopy
 
             // assign ASIO and assume the ASIO format, samplerate and number of channels from the BASS stream
             _asioHandler = new BassAsioHandler(0, 0, stream);
