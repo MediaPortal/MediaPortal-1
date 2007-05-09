@@ -355,7 +355,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void listBoxSelectedPlugins_DoubleClick(object sender, EventArgs e)
+    private void ShowConfigWindow()
     {
       DSPPluginInfo pluginInfo = (DSPPluginInfo)listBoxSelectedPlugins.SelectedItem;
 
@@ -433,6 +433,21 @@ namespace MediaPortal.Configuration.Sections
           break;
       }
       return 0;
+    }
+
+    private void listBoxFoundPlugins_DoubleClick(object sender, EventArgs e)
+    {
+      buttonPluginAdd_Click(sender, e);
+    }
+
+    private void listBoxSelectedPlugins_DoubleClick(object sender, EventArgs e)
+    {
+      buttonPluginRemove_Click(sender, e);
+    }
+
+    private void btnConfig_Click(object sender, EventArgs e)
+    {
+      ShowConfigWindow();
     }
     #endregion
 
@@ -802,6 +817,5 @@ namespace MediaPortal.Configuration.Sections
       base.Dispose(disposing);
     }
     #endregion
-
   }
 }

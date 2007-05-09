@@ -61,7 +61,6 @@ namespace MediaPortal.Configuration.Sections
       this.MusicDSPTabCtl = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.PluginTabPg = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.labelVSTWarning = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonPluginRemove = new MediaPortal.UserInterface.Controls.MPButton();
@@ -74,6 +73,7 @@ namespace MediaPortal.Configuration.Sections
       this.btStop = new MediaPortal.UserInterface.Controls.MPButton();
       this.btPlay = new MediaPortal.UserInterface.Controls.MPButton();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+      this.btnConfig = new MediaPortal.UserInterface.Controls.MPButton();
       this.DSPTabPg.SuspendLayout();
       this.groupBoxGain.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarGain)).BeginInit();
@@ -161,7 +161,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxGainDBValue.BorderColor = System.Drawing.Color.Empty;
       this.textBoxGainDBValue.Location = new System.Drawing.Point(11, 236);
       this.textBoxGainDBValue.Name = "textBoxGainDBValue";
-      this.textBoxGainDBValue.Size = new System.Drawing.Size(40, 20);
+      this.textBoxGainDBValue.Size = new System.Drawing.Size(40, 21);
       this.textBoxGainDBValue.TabIndex = 66;
       this.textBoxGainDBValue.Text = "0";
       this.textBoxGainDBValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -195,7 +195,7 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarGain.Minimum = -16000;
       this.trackBarGain.Name = "trackBarGain";
       this.trackBarGain.Orientation = System.Windows.Forms.Orientation.Vertical;
-      this.trackBarGain.Size = new System.Drawing.Size(45, 143);
+      this.trackBarGain.Size = new System.Drawing.Size(42, 143);
       this.trackBarGain.SmallChange = 10;
       this.trackBarGain.TabIndex = 65;
       this.trackBarGain.TickFrequency = 2000;
@@ -258,7 +258,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxCompressor.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCompressor.Location = new System.Drawing.Point(15, 23);
       this.checkBoxCompressor.Name = "checkBoxCompressor";
-      this.checkBoxCompressor.Size = new System.Drawing.Size(79, 17);
+      this.checkBoxCompressor.Size = new System.Drawing.Size(81, 17);
       this.checkBoxCompressor.TabIndex = 72;
       this.checkBoxCompressor.Text = "Compressor";
       this.checkBoxCompressor.UseVisualStyleBackColor = true;
@@ -271,7 +271,7 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarCompressor.Minimum = -250;
       this.trackBarCompressor.Name = "trackBarCompressor";
       this.trackBarCompressor.Orientation = System.Windows.Forms.Orientation.Vertical;
-      this.trackBarCompressor.Size = new System.Drawing.Size(45, 143);
+      this.trackBarCompressor.Size = new System.Drawing.Size(42, 143);
       this.trackBarCompressor.TabIndex = 73;
       this.trackBarCompressor.TickFrequency = 25;
       this.trackBarCompressor.Value = -60;
@@ -290,8 +290,8 @@ namespace MediaPortal.Configuration.Sections
       // PluginTabPg
       // 
       this.PluginTabPg.BackColor = System.Drawing.Color.Transparent;
+      this.PluginTabPg.Controls.Add(this.btnConfig);
       this.PluginTabPg.Controls.Add(this.labelVSTWarning);
-      this.PluginTabPg.Controls.Add(this.label5);
       this.PluginTabPg.Controls.Add(this.label4);
       this.PluginTabPg.Controls.Add(this.label3);
       this.PluginTabPg.Controls.Add(this.buttonPluginRemove);
@@ -316,21 +316,12 @@ namespace MediaPortal.Configuration.Sections
       this.labelVSTWarning.TabIndex = 21;
       this.labelVSTWarning.Text = "EXPERIMENTAL: Some plugins might be outdated or not working at all!";
       // 
-      // label5
-      // 
-      this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(249, 277);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(176, 13);
-      this.label5.TabIndex = 20;
-      this.label5.Text = "Double click for plugin configuration";
-      // 
       // label4
       // 
       this.label4.AutoSize = true;
       this.label4.Location = new System.Drawing.Point(250, 42);
       this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(181, 13);
+      this.label4.Size = new System.Drawing.Size(183, 13);
       this.label4.TabIndex = 19;
       this.label4.Text = "Selected plugins in ascending priority";
       // 
@@ -382,6 +373,7 @@ namespace MediaPortal.Configuration.Sections
       this.listBoxFoundPlugins.Size = new System.Drawing.Size(195, 199);
       this.listBoxFoundPlugins.Sorted = true;
       this.listBoxFoundPlugins.TabIndex = 10;
+      this.listBoxFoundPlugins.DoubleClick += new System.EventHandler(this.listBoxFoundPlugins_DoubleClick);
       // 
       // btFileselect
       // 
@@ -398,7 +390,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxMusicFile.BorderColor = System.Drawing.Color.Empty;
       this.textBoxMusicFile.Location = new System.Drawing.Point(68, 340);
       this.textBoxMusicFile.Name = "textBoxMusicFile";
-      this.textBoxMusicFile.Size = new System.Drawing.Size(342, 20);
+      this.textBoxMusicFile.Size = new System.Drawing.Size(342, 21);
       this.textBoxMusicFile.TabIndex = 9;
       // 
       // label1
@@ -406,7 +398,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(15, 343);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(47, 13);
+      this.label1.Size = new System.Drawing.Size(49, 13);
       this.label1.TabIndex = 8;
       this.label1.Text = "Test file:";
       // 
@@ -430,6 +422,16 @@ namespace MediaPortal.Configuration.Sections
       this.btPlay.Text = "Play";
       this.btPlay.UseVisualStyleBackColor = true;
       this.btPlay.Click += new System.EventHandler(this.btPlay_Click);
+      // 
+      // btnConfig
+      // 
+      this.btnConfig.Location = new System.Drawing.Point(296, 276);
+      this.btnConfig.Name = "btnConfig";
+      this.btnConfig.Size = new System.Drawing.Size(152, 23);
+      this.btnConfig.TabIndex = 22;
+      this.btnConfig.Text = "Plugin configuration";
+      this.btnConfig.UseVisualStyleBackColor = true;
+      this.btnConfig.Click += new System.EventHandler(this.btnConfig_Click);
       // 
       // MusicDSP
       // 
@@ -484,7 +486,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton buttonPluginAdd;
     private System.Windows.Forms.ListBox listBoxSelectedPlugins;
     private System.Windows.Forms.ListBox listBoxFoundPlugins;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
     private MediaPortal.UserInterface.Controls.MPLabel label22;
     private MediaPortal.UserInterface.Controls.MPLabel label13;
     private MediaPortal.UserInterface.Controls.MPLabel label11;
@@ -494,6 +495,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.TrackBar trackBarCompressor;
     private System.Windows.Forms.ToolTip toolTip;
     private MediaPortal.UserInterface.Controls.MPLabel labelVSTWarning;
+    private MediaPortal.UserInterface.Controls.MPButton btnConfig;
 
   }
 }
