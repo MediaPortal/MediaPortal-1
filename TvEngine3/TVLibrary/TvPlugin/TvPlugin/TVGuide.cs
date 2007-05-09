@@ -53,10 +53,8 @@ namespace TvPlugin
   /// </summary>
   public class TVGuide : TvGuideBase
   {
-    [SkinControlAttribute(98)]
-    protected GUIImage videoBackground;
-    [SkinControlAttribute(99)]
-    protected GUIVideoControl videoWindow;
+    [SkinControlAttribute(98)]    protected GUIImage videoBackground;
+    [SkinControlAttribute(99)]    protected GUIVideoControl videoWindow;
 
     public TVGuide()
       : base()

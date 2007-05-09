@@ -624,6 +624,9 @@ namespace TvPlugin
                   cntlDay.AddLabel(day, iDay);
                 }
               }
+              else
+                Log.Debug("TvGuideBase: SpinControl cntlDay is null!");
+
               GUISpinControl cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
               if (cntlTimeInterval != null)
               {
@@ -631,11 +634,16 @@ namespace TvPlugin
                   cntlTimeInterval.AddLabel(String.Empty, i);
                 cntlTimeInterval.Value = 1;
               }
+              else
+                Log.Debug("TvGuideBase: SpinControl cntlTimeInterval is null!");
+
               if (message.Param1 != (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO)
                 Update(true);
               else
                 Update(false);
+
               SetFocus();
+
               if (_currentProgram != null)
               {
                 m_dtStartTime = _currentProgram.StartTime;
@@ -2148,6 +2156,7 @@ namespace TvPlugin
         GUIControl.UnfocusControl(GetID, iControlId);
       }
     }
+
     void SetFocus()
     {
       if (_cursorX < 0)

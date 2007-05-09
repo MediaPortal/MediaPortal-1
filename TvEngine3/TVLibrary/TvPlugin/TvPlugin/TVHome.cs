@@ -1301,11 +1301,12 @@ namespace TvPlugin
           }
           if (newCardId > -1) break;
       }
+
+      // by gibman - comment from rtv: if there's a timing issue which causes no AvailableAudioStreams then please
+      //                               add a callback and wait for that (suggested by tourettes)
       if (newCardId != _card.Id && newCardId > -1) g_Player.Stop();
 
-
       succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
-
       
       if ( !wasPlaying || (succeeded == TvResult.Succeeded )) //added by joboehl - Doesn't destroy card info unless we might not need it to continue playing something
           TVHome.Card = card; //Moved by joboehl - Only touch the card if it did not work. 
@@ -1352,19 +1353,15 @@ namespace TvPlugin
             }
           }
         }
-        if (!g_Player.Playing)
-        {
+        if (!g_Player.Playing)       
           StartPlay();
-        }
-        else if (wasPlaying)
-        {
+        
+        else if (wasPlaying)        
           SeekToEnd(true);
-        }
+        
         int prefLangId = GetPreferedAudioStreamIndex(_preferredLanguages, _preferAC3);
-        if (IsSingleSeat())
-        {
-          g_Player.CurrentAudioStream = prefLangId;
-        }
+        if (IsSingleSeat())        
+          g_Player.CurrentAudioStream = prefLangId;        
         else
         {
           IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
@@ -1375,8 +1372,8 @@ namespace TvPlugin
       else
       {
         //timeshifting new channel failed. 
-          if (g_Player.Duration == 0 ) //Added by joboehl - Only stops if stream is empty. Otherwise, a message is displaying but everything stays as before.  
-          { g_Player.Stop(); };
+        if (g_Player.Duration == 0) //Added by joboehl - Only stops if stream is empty. Otherwise, a message is displaying but everything stays as before.  
+          g_Player.Stop();
       }
 
 
