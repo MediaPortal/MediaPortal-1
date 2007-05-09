@@ -228,7 +228,8 @@ namespace TvService
         Log.WriteFile(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
         string connectionString, provider;
         GetDatabaseConnectionString(out connectionString, out provider);
-        Log.Info("database connection:{0} {1}", provider, connectionString);
+        string ConnectionLog = connectionString.Remove(connectionString.IndexOf(@"Password=") + 8);
+        Log.Info("Controller: using {0} database connection: {1}", provider, ConnectionLog);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
 
         _cards = new Dictionary<int, TvCard>();
