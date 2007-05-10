@@ -1304,7 +1304,11 @@ namespace TvPlugin
 
       // by gibman - comment from rtv: if there's a timing issue which causes no AvailableAudioStreams then please
       //                               add a callback and wait for that (suggested by tourettes)
-      if (newCardId != _card.Id && newCardId > -1) g_Player.Stop();
+      if (newCardId != _card.Id && newCardId > -1)
+      {
+          Log.Debug("TvPlugin: Stop player. File changed:{0}-{1}", g_Player.CurrentFile, TVHome.Card.TimeShiftFileName);
+          g_Player.Stop();
+      }
 
       succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
       
