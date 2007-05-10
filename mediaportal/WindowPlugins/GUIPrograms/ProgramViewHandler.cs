@@ -303,7 +303,7 @@ namespace WindowPlugins.GUIPrograms
 
     void BuildOrder(FilterDefinition filter, SQLSelectBuilder sqlSelect)
     {
-      string orderClause = GetField(filter.DefaultSort);
+      string orderClause = GetField(filter.Where);
       if (orderClause != "")
       {
         if (!filter.SortAscending) orderClause += " desc";
