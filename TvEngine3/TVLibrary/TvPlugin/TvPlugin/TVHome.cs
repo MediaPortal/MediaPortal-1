@@ -1028,6 +1028,14 @@ namespace TvPlugin
       TimeSpan ts = DateTime.Now - _updateProgressTimer;
       if (ts.TotalMilliseconds < 1000) return;
       _updateProgressTimer = DateTime.MinValue;
+
+      //make sure no garbage is left in the tvhome area. Ideally, every stop method should do it. 
+      GUIPropertyManager.SetProperty("#TV.View.channel", "");
+      GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
+
       if (g_Player.Playing && g_Player.IsTimeShifting)
       {
         if (TVHome.Card != null)
@@ -1038,22 +1046,11 @@ namespace TvPlugin
           }
         }
       }
-      if (g_Player.IsTVRecording || !g_Player.Playing) 
+      if (g_Player.IsTVRecording ) 
       {
-          GUIPropertyManager.SetProperty("#TV.View.channel", "");
-          GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
-          if (g_Player.Playing)
-          {
-              GUIPropertyManager.SetProperty("#TV.View.title", g_Player.currentTitle);
-              GUIPropertyManager.SetProperty("#TV.View.description", g_Player.currentDescription);
-          }
-          else
-          {
-              GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
-              GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
-          }
-
+          GUIPropertyManager.SetProperty("#TV.View.channel", "Recorded");
+          GUIPropertyManager.SetProperty("#TV.View.title", g_Player.currentTitle);
+          GUIPropertyManager.SetProperty("#TV.View.description", g_Player.currentDescription);
           return;
       }
 
