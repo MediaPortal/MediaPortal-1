@@ -170,23 +170,26 @@ namespace MediaPortal.Playlists
           }
           break;
 
-      // SV Allows BassMusicPlayer to continuously play
-      case GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING:
+        // SV Allows BassMusicPlayer to continuously play
+        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING:
           {
+            // This message is only sent by BASS in gapless/crossfading mode
             PlayNext();
-            if (!g_Player.Playing)
-            {
-              g_Player.Release();
-            }
           }
           break;
 
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
           {
+            // This message is sent by both the internal and BASS player
+            // In case of gapless/crossfading it is only sent after the last song
             PlayNext();
             if (!g_Player.Playing)
             {
               g_Player.Release();
+
+              // Clear focus when playback ended
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, -1, 0, null);
+              GUIGraphicsContext.SendMessage(msg);
             }
           }
           break;

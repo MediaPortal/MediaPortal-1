@@ -238,7 +238,7 @@ namespace MediaPortal.Player
     private System.Timers.Timer UpdateTimer = new System.Timers.Timer();
     private VisualizationWindow VizWindow = null;
     private VisualizationManager VizManager = null;
-    private bool _CrossFading = false;
+    private bool _CrossFading = false;          /* true if crossfading has started */
     private bool _Mixing = false;
     private int _playBackType;
 
@@ -623,31 +623,34 @@ namespace MediaPortal.Player
           }
         case Action.ActionType.ACTION_TOGGLE_MUSIC_GAP:
           {
-            _playBackType++;
-            if (_playBackType > 2)
-              _playBackType = 0;
-
-            VizWindow.SelectedPlaybackType = _playBackType;
-
-            string type = "";
-            switch (_playBackType)
+            if (!_useASIO)
             {
-              case (int)PlayBackType.NORMAL:
-                _CrossFadeIntervalMS = 0;
-                type = "Normal";
-                break;
+              _playBackType++;
+              if (_playBackType > 2)
+                _playBackType = 0;
 
-              case (int)PlayBackType.GAPLESS:
-                _CrossFadeIntervalMS = 200;
-                type = "Gapless";
-                break;
+              VizWindow.SelectedPlaybackType = _playBackType;
 
-              case (int)PlayBackType.CROSSFADE:
-                _CrossFadeIntervalMS = _DefaultCrossFadeIntervalMS;
-                type = "Crossfading";
-                break;
+              string type = "";
+              switch (_playBackType)
+              {
+                case (int)PlayBackType.NORMAL:
+                  _CrossFadeIntervalMS = 0;
+                  type = "Normal";
+                  break;
+
+                case (int)PlayBackType.GAPLESS:
+                  _CrossFadeIntervalMS = 200;
+                  type = "Gapless";
+                  break;
+
+                case (int)PlayBackType.CROSSFADE:
+                  _CrossFadeIntervalMS = _DefaultCrossFadeIntervalMS;
+                  type = "Crossfading";
+                  break;
+              }
+              Log.Info("BASS: Playback changed to {0}", type);
             }
-            Log.Info("BASS: Playback changed to {0}", type);
             break;
           }
       }
@@ -949,24 +952,6 @@ namespace MediaPortal.Player
 
         _DefaultCrossFadeIntervalMS = _CrossFadeIntervalMS;
 
-        bool doGaplessPlayback = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
-
-        if (doGaplessPlayback)
-        {
-          _CrossFadeIntervalMS = 200;
-          _playBackType = (int)PlayBackType.GAPLESS;
-        }
-        else
-        {
-          if (_CrossFadeIntervalMS == 0)
-          {
-            _playBackType = (int)PlayBackType.NORMAL;
-            _CrossFadeIntervalMS = 0;
-          }
-          else
-            _playBackType = (int)PlayBackType.CROSSFADE;
-        }
-
         _SoftStop = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
 
         _Mixing = xmlreader.GetValueAsBool("audioplayer", "mixing", false);
@@ -974,6 +959,32 @@ namespace MediaPortal.Player
         _useASIO = xmlreader.GetValueAsBool("audioplayer", "asio", false);
         _asioDevice = xmlreader.GetValueAsString("audioplayer", "asiodevice", "None");
         _asioBalance = (double)xmlreader.GetValueAsInt("audioplayer", "asiobalance", 0) / 100.00;
+
+        bool doGaplessPlayback = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
+
+        if (_useASIO)
+        {
+          _playBackType = (int)PlayBackType.NORMAL;
+          _CrossFadeIntervalMS = 0;
+        }
+        else
+        {
+          if (doGaplessPlayback)
+          {
+            _CrossFadeIntervalMS = 200;
+            _playBackType = (int)PlayBackType.GAPLESS;
+          }
+          else
+          {
+            if (_CrossFadeIntervalMS == 0)
+            {
+              _playBackType = (int)PlayBackType.NORMAL;
+              _CrossFadeIntervalMS = 0;
+            }
+            else
+              _playBackType = (int)PlayBackType.CROSSFADE;
+          }
+        }
       }
     }
 
@@ -1407,7 +1418,8 @@ namespace MediaPortal.Player
 
         if (stream != 0)
         {
-          Stop();
+          if (!Stopped)       // Check if stopped already to avoid that Stop() is called two or three times
+            Stop();
           FreeStream(stream);
         }
 
@@ -1458,7 +1470,7 @@ namespace MediaPortal.Player
           {
             // Do an upmix of the stereo according to the matrix. 
             // Now Plugin the stream to the mixer and set the mixing matrix
-            BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream, BASSStream.BASS_MIXER_MATRIX);
+            BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream, BASSStream.BASS_MIXER_MATRIX | BASSStream.BASS_STREAM_AUTOFREE);
             BassMix.BASS_Mixer_ChannelSetMatrix(stream, ref _MixingMatrix[0, 0]);
           }
 
@@ -1698,6 +1710,7 @@ namespace MediaPortal.Player
       if (syncHandle == 0)
       {
         int error = Bass.BASS_ErrorGetCode();
+        Log.Debug("BASS: RegisterPlaybackFadeOutEvent of stream {0} failed with error {1}", stream, error);
       }
 
       return syncHandle;
@@ -1721,6 +1734,7 @@ namespace MediaPortal.Player
       if (syncHandle == 0)
       {
         int error = Bass.BASS_ErrorGetCode();
+        Log.Debug("BASS: RegisterPlaybackEndEvent of stream {0} failed with error {1}", stream, error);
       }
 
       return syncHandle;
@@ -1740,6 +1754,7 @@ namespace MediaPortal.Player
       if (syncHandle == 0)
       {
         int error = Bass.BASS_ErrorGetCode();
+        Log.Debug("BASS: RegisterStreamFreedEvent of stream {0} failed with error {1}", stream, error);
       }
 
       return syncHandle;
@@ -1866,9 +1881,13 @@ namespace MediaPortal.Player
     private void PlaybackFadeOutProc(int handle, int stream, int data, int userData)
     {
       Log.Debug("BASS: PlaybackFadeOutProc of stream {0}", stream);
-      _CrossFading = true;
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0, 0, 0, 0, null);
-      GUIWindowManager.SendThreadMessage(msg);
+
+      if (_CrossFadeIntervalMS > 0)
+      {
+        // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendThreadMessage(msg);
+      }
 
       if (CrossFade != null)
         CrossFade(this, FilePath);
@@ -1893,17 +1912,15 @@ namespace MediaPortal.Player
       if (TrackPlaybackCompleted != null)
         TrackPlaybackCompleted(this, FilePath);
 
-      PlayState oldState = _State;
-      _State = PlayState.Ended;
-
-      if (oldState != _State && PlaybackStateChanged != null)
-        PlaybackStateChanged(this, oldState, _State);
-
       bool removed = Bass.BASS_ChannelRemoveSync(stream, handle);
       if (removed)
         Log.Debug("BassAudio: *** BASS_ChannelRemoveSync in PlaybackEndProc");
 
-      HandleSongEnded(false);
+      if (_useASIO)
+        // Not all methods registered via RegisterPlaybackEvent are called in each play mode
+        // When ASIO is used PlayBackEndProc is called but PlaybackStreamFreedProc is not
+        // therefore HandleSongEnded is called here if ASIO is used
+        HandleSongEnded(false);
     }
 
     /// <summary>
@@ -1918,12 +1935,13 @@ namespace MediaPortal.Player
       //Console.WriteLine("PlaybackStreamFreedProc");
       Log.Debug("BASS: PlaybackStreamFreedProc of stream {0}", stream);
 
+      HandleSongEnded(false);
+
       for (int i = 0; i < Streams.Count; i++)
       {
         if (stream == Streams[i])
         {
           Streams[i] = 0;
-          _CrossFading = false;
           break;
         }
       }
@@ -1940,8 +1958,6 @@ namespace MediaPortal.Player
 
       if (!MediaPortal.Util.Utils.IsAudio(FilePath))
         GUIGraphicsContext.IsFullScreenVideo = false;
-
-      //FilePath = "";
 
       if (bManualStop)
         ShowVisualizationWindow(false);
@@ -1965,6 +1981,8 @@ namespace MediaPortal.Player
 
       if (oldState != _State && PlaybackStateChanged != null)
         PlaybackStateChanged(this, oldState, _State);
+
+      _CrossFading = false;       // Set crossfading to false, Play() will update it when the next song starts
     }
 
     /// <summary>
@@ -1974,7 +1992,6 @@ namespace MediaPortal.Player
     private void FadeOutStop(int stream)
     {
       Log.Debug("BASS: FadeOutStop of stream {0}", stream);
-      _CrossFading = false;
 
       if (!StreamIsPlaying(stream))
         return;
@@ -2100,8 +2117,6 @@ namespace MediaPortal.Player
         catch (Exception)
         { }
 
-        PlayState oldState = _State;
-        _State = PlayState.Ended;
         stream = 0;
 
         if (PlaybackStop != null)
@@ -2468,7 +2483,8 @@ namespace MediaPortal.Player
       if (VizWindow != null)
         VizWindow.Visible = false;
 
-      Stop();
+      if (!Stopped)         // Check if stopped already to avoid that Stop() is called two or three times
+        Stop();
     }
     #endregion
   }
