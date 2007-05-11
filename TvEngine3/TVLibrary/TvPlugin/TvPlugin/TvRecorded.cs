@@ -860,28 +860,33 @@ namespace TvPlugin
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(676))); // Only watched recordings?
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200044))); // Only invalid recordings?
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200045))); // Both?
+      if ( currentShow != "" ) dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200046))); // Only watched recordings from this folder. 
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(222))); // Cancel?
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel < 0) return;
-      if (dlg.SelectedLabel > 3) return;
+      if (dlg.SelectedLabel > 4) return;
 
       if ((dlg.SelectedLabel==0) || (dlg.SelectedLabel==2))
-        DeleteWatchedRecordings();
+        DeleteWatchedRecordings(null);
       if ((dlg.SelectedLabel == 1) || (dlg.SelectedLabel == 2))
         DeleteInvalidRecordings();
+      if (dlg.SelectedLabel == 3 && currentShow !="" ) 
+        DeleteWatchedRecordings(currentShow);
       Gentle.Common.CacheManager.Clear();
+      dlg.Reset();
       LoadDirectory();
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);
       GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
     }
-    void DeleteWatchedRecordings()
+    void DeleteWatchedRecordings(string _currentTitle)
     {
       IList itemlist = Recording.ListAll();
       TvServer server = new TvServer();
       foreach (Recording rec in itemlist)
       {
         if (rec.TimesWatched > 0)
+            if (_currentTitle == null || _currentTitle == rec.Title )
           server.DeleteRecording(rec.IdRecording);
       }
     }
