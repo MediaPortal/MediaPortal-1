@@ -188,35 +188,11 @@ namespace MediaPortal.GUI.Music
       }
 
       _usingBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
-
-      if (_usingBassEngine)
-        BassMusicPlayer.Player.PlaybackStateChanged += new BassAudioEngine.PlaybackStateChangedDelegate(BassPlayer_PlaybackStateChanged);
-    }
-
-    void BassPlayer_PlaybackStateChanged(object sender, BassAudioEngine.PlayState oldState, BassAudioEngine.PlayState newState)
-    {
-      Log.Debug("GUIMusicPlayingNow: BassPlayer_PlaybackStateChanged from {0} to {1}", oldState.ToString(), newState.ToString());
-      if (!ControlsInitialized)
-        return;
-
-      if (GUIWindowManager.ActiveWindow == GetID)
-      {
-        // due to crossfading options we sometimes won't get g_Player_PlayBackEnded
-        if (oldState == BassAudioEngine.PlayState.Playing && newState == BassAudioEngine.PlayState.Ended)
-        {
-          if (!g_Player.Playing && NextTrackTag == null)
-          {
-            Action action = new Action();
-            action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
-            GUIGraphicsContext.OnAction(action);
-          }
-        }
-      }
     }
 
     void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
     {
-      if (!ControlsInitialized || _usingBassEngine || type != g_Player.MediaType.Music)
+      if (!ControlsInitialized || type != g_Player.MediaType.Music)
         return;
 
       if (GUIWindowManager.ActiveWindow == GetID)
