@@ -1051,10 +1051,10 @@
       <description>Zap to last viewed Channel</description>
     </action>
     <action>
-      <id>122</id>
+      <id>68</id>
       <key>P</key>
       <sound />
-      <description>Start autozap</description>
+      <description>Play/Unpause</description>
     </action>
   </window>
   <window>
