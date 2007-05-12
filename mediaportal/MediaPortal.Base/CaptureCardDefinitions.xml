@@ -19870,4 +19870,18 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Twinhan AD-SP400 CI DVB-S2" capturename="DTV-DVB Mantis Virtual BDA Receiver" devid="ven_1822&amp;dev_4e35&amp;subsys_00311822&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="DTV-DVB Mantis DVBS BDA Receiver"	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
