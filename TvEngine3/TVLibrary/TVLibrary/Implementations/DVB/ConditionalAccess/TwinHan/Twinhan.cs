@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -442,14 +442,19 @@ namespace TvLibrary.Implementations.DVB
       {
         turnon22Khz = 1;
       }
+      Int32 Modulation = 0;
+      if (channel.ModulationType == ModulationType.ModQpsk) Modulation = 20;
+      if (channel.ModulationType == ModulationType.Mod8Vsb) Modulation = 23;
+      if (channel.ModulationType == ModulationType.Mod16Apsk) Modulation = 24;
+      if (channel.ModulationType == ModulationType.Mod32Apsk) Modulation = 22;
 
-      SetLnbData(true, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, turnon22Khz, disEqcPort);
+      SetLnbData(true, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, turnon22Khz, disEqcPort, Modulation);
       SendDiseqcCommandTest(parameters, channel);
     }
 
-    void SetLnbData(bool lnbPower, int LNBLOFLowBand, int LNBLOFHighBand, int LNBLOFHiLoSW, int turnon22Khz, int disEqcPort)
+    void SetLnbData(bool lnbPower, int LNBLOFLowBand, int LNBLOFHighBand, int LNBLOFHiLoSW, int turnon22Khz, int disEqcPort, int Modulation)
     {
-      Log.Log.WriteFile("Twinhan: SetLnb diseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4} power:{5}", disEqcPort, turnon22Khz, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, lnbPower);
+      Log.Log.WriteFile("Twinhan: SetLnb diseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4} power:{5} modulation{6}", disEqcPort, turnon22Khz, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, lnbPower, Modulation);
       int thbdaLen = 0x28;
       int disEqcLen = 20;
       Marshal.WriteByte(_ptrDiseqc, 0, (byte)(lnbPower ? 1 : 0));              // 0: LNB_POWER
@@ -461,7 +466,7 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteInt32(_ptrDiseqc, 12, LNBLOFHiLoSW); //12: ulLNBLOFHiLoSW   LNBLOF HiLoSW MHz
       Marshal.WriteByte(_ptrDiseqc, 16, (byte)turnon22Khz);   //16: f22K_Output (F22K_Output_HiLo:0 | F22K_Output_Off:1 | F22K_Output_On:2
       Marshal.WriteByte(_ptrDiseqc, 17, (byte)disEqcPort);    //17: DiSEqC_Port
-      Marshal.WriteByte(_ptrDiseqc, 18, 0);
+      Marshal.WriteInt32(_ptrDiseqc, 18, Modulation);    //18: Modulation type (for DVB-S2)
       Marshal.WriteByte(_ptrDiseqc, 19, 0);
 
       Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );

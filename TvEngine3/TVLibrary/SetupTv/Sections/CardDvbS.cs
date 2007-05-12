@@ -252,6 +252,8 @@ namespace SetupTv.Sections
                   tpdata[3] = tpdata[3].ToLower();
                   if (tpdata[3] == "8psk") transponder.Modulation = ModulationType.Mod8Vsb;
                   if (tpdata[3] == "qpsk") transponder.Modulation = ModulationType.ModQpsk;
+                  if (tpdata[3] == "16apsk") transponder.Modulation = ModulationType.Mod16Apsk;//not supported by BDA yet...
+                  if (tpdata[3] == "32apsk") transponder.Modulation = ModulationType.Mod32Apsk;//not supported by BDA yet...
 
                   if (tpdata.Length >= 5)
                   {
