@@ -23,63 +23,51 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+
+using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Utils.Web;
 
 namespace ProgramsDatabase
 {
   /// <summary>
   /// Summary description for FileInfo.
   /// </summary>
-  public class FileInfo
+  public class FileInfo : IParserData
   {
+    #region Variables
+    private string mRelevance = string.Empty;
+    private int mRelevanceNorm = 0;
+    private string mTitle = string.Empty;
+    private string mYear = string.Empty;
+    private string mGameURL = string.Empty;
+    private string mGenre = string.Empty;
+    private string mGenre2 = string.Empty;
+    private string mGenre3 = string.Empty;
+    private string mGenre4 = string.Empty;
+    private string mGenre5 = string.Empty;
+    private string mStyle = string.Empty;
+    private string mPlatform = string.Empty;
+    private string mRating = string.Empty;
+    private int mRatingNorm = 0;
+    private string mImageURLs = string.Empty;
+    private string mManufacturer = string.Empty;
+    private string mOverview = string.Empty;
+    private bool bLoaded = false;
+    #endregion
 
-    string mRelevance;
-    int mRelevanceNorm;
-    string mYear;
-    string mGameURL;
-    string mTitle;
-    string mGenre;
-    string mGenre2;
-    string mGenre3;
-    string mGenre4;
-    string mGenre5;
-    string mStyle;
-    string mPlatform;
-    string mRating;
-    int mRatingNorm;
-    string mImageURLs;
-    string mManufacturer;
-    string mOverview;
-    bool bLoaded;
-
+    #region Constructors/Destructors
     public FileInfo()
     {
-      //
-      // TODO: Add constructor logic here
-      //
-      mRelevance = "";
-      mRelevanceNorm = 0;
-      mYear = "";
-      mGameURL = "";
-      mTitle = "";
-      mGenre = "";
-      mGenre2 = "";
-      mGenre3 = "";
-      mGenre4 = "";
-      mGenre5 = "";
-      mStyle = "";
-      mPlatform = "";
-      mRating = "";
-      mRatingNorm = 0;
-      mImageURLs = "";
-      mManufacturer = "";
-      mOverview = "";
-      bLoaded = false;
-
     }
+    #endregion
+
+    #region Properties
+    // Public Properties
     public string RelevanceOrig
     {
       get
@@ -303,7 +291,9 @@ namespace ProgramsDatabase
         bLoaded = value;
       }
     }
+    #endregion
 
+    #region Public Methods
     public void LaunchURL()
     {
       if (GameURL == null)
@@ -372,5 +362,105 @@ namespace ProgramsDatabase
         }
       }
     }
+    #endregion
+
+    #region Private Methods
+    #endregion
+
+    #region IParserData Member
+
+    public void SetElement(string tag, string value)
+    {
+      try
+      {
+        switch (tag)
+        {
+          case "#RELEVANCE":
+            RelevanceOrig = value;
+            RelevanceNorm = GetNumber(value);
+            break;
+          case "#TITLE":
+            Title = value.Trim(' ', '\n', '\t');
+            break;
+          case "#URL":
+            GameURL = value.Trim(' ', '\n', '\t');
+            break;
+          case "#YEAR":
+            Year = value.Trim(' ', '\n', '\t');
+            break;
+          case "#GENRE":
+            Genre = value.Trim(' ', '\n', '\t');
+            break;
+          case "#STYLE":
+            Style = value.Trim(' ', '\n', '\t');
+            break;
+          case "#PLATFORM":
+            Platform = value.Trim(' ', '\n', '\t');
+            break;
+          case "#RATING":
+            RatingOrig = value;
+            RatingNorm = GetNumber(value) + 1;
+            break;
+          case "#OVERVIEW":
+            Overview = value.Trim(' ', '\n', '\t');
+            break;
+          case "#DEVELOPER":
+            Manufacturer = value.Trim(' ', '\n', '\t');
+            break;
+          case "#PUBLISHER":
+            //Manufacturer = value.Trim(' ', '\n', '\t');
+            break;
+          default:
+            break;
+        }
+      }
+      catch (Exception)
+      {
+        Log.Error("MyPrograms: Parsing error {0} : {1}", tag, value);
+      }
+    }
+
+    private int GetNumber(string value)
+    {
+      string number = string.Empty;
+      int numberValue;
+      bool found = false;
+
+      for (int i = 0; i < value.Length; i++)
+      {
+        if (!found)
+        {
+          if (Char.IsDigit(value[i]))
+          {
+            number += value[i];
+            found = true;
+          }
+        }
+        else
+        {
+          if (Char.IsDigit(value[i]))
+          {
+            number += value[i];
+          }
+          else
+          {
+            break;
+          }
+        }
+      }
+
+      try
+      {
+        numberValue = Int32.Parse(number);
+      }
+      catch (Exception)
+      {
+        numberValue = 0;
+      }
+
+      return numberValue;
+    }
+
+    #endregion
   }
 }

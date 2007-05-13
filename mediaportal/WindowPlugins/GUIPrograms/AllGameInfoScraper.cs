@@ -24,28 +24,88 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Collections.Generic;
+
+using MediaPortal.Profile;
+using MediaPortal.Services;
+
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Utils.Web;
+
 using Programs.Utils;
 
 namespace ProgramsDatabase
 {
   /// <summary>
   /// Summary description for AllGameInfoScraper.
-  /// Heavily inspired by Frodo's MusicInfoScraper..... :-)
+  /// old version: Heavily inspired by Frodo's MusicInfoScraper..... :-)
+  /// new version: Heavily inspired by James' WebEPG grabber..... :-)
   /// </summary>
   public class AllGameInfoScraper
   {
-    ArrayList gameList = new ArrayList();
+    #region Base & Content Variables
+
+    List<FileInfo> gameList = new List<FileInfo>();
+
+    string templateSearch = String.Empty;
+    string templateSearchTags = String.Empty;
+
+    string tValue = String.Empty;
+    string tValueTags = String.Empty;
+    string tValueList = String.Empty;
+    string tValueListTags = String.Empty;
+    string tText = String.Empty;
+    string tTextTags = String.Empty;
+
+    #endregion
+
+    #region Constructor / Destructor
 
     public AllGameInfoScraper()
     {
       //
       // TODO: Add constructor logic here
       //
+
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
+      {
+        templateSearch = xmlreader.GetValue("templateSearch", "template");
+        templateSearchTags = xmlreader.GetValue("templateSearch", "tags");
+        tValue = xmlreader.GetValue("templateValue", "template");
+        tValueTags = xmlreader.GetValue("templateValue", "tags");
+        tValueList = xmlreader.GetValue("templateValueList", "template");
+        tValueListTags = xmlreader.GetValue("templateValueList", "tags");
+        tText = xmlreader.GetValue("templateText", "template");
+        tTextTags = xmlreader.GetValue("templateText", "tags");
+      }
+    }
+
+    #endregion
+
+    #region Properties / Helper Routines
+    
+    public string BaseURL
+    {
+      get
+      {
+        return "http://www.allgame.com";
+      }
+    }
+
+    public string GetSearchURL(string gameTitle)
+    {
+      return String.Format("{0}/cg/agg.dll?sql={1}&P=agg&opt1=31", BaseURL, gameTitle.Replace(' ', '+'));
+    }
+
+    public string MakeURL(string url)
+    {
+      url = url.Replace("&amp;", "&"); ;
+      return url;
     }
 
     public int Count
@@ -56,15 +116,7 @@ namespace ProgramsDatabase
       }
     }
 
-    public FileInfo this[int index]
-    {
-      get
-      {
-        return (FileInfo)gameList[index];
-      }
-    }
-
-    public ArrayList FileInfos
+    public List<FileInfo> FileInfos
     {
       get
       {
@@ -72,196 +124,199 @@ namespace ProgramsDatabase
       }
     }
 
-    string AddMissingRowTags(string htmlTableText)
+    #endregion
+
+    private void WriteFileToLog(FileInfo file)
     {
-      // poor man's replace.... let's try:
-      string origText = "</TD>\r\n<TR";
-      string replaceText = "</TD>\r\n</TR>\r\n<TR";
-      htmlTableText = htmlTableText.Replace(origText, replaceText);
-      return htmlTableText;
+      Log.Info("MyPrograms FileItem:" +
+        "\n   Title:    " + file.Title +
+        "\n   Year:     " + file.Year +
+        "\n   Platform: " + file.Platform +
+        "\n   Genre:    " + file.Genre +
+        "\n   Style:    " + file.Style +
+        "\n   Manufacturer:    " + file.Manufacturer +
+        "\n   URL:      " + file.GameURL +
+        "\n   RelOrig:  " + file.RelevanceOrig +
+        "\n   RelNorm:  " + file.RelevanceNorm.ToString() +
+        "\n   RatOrig:  " + file.RatingOrig +
+        "\n   RatNorm:  " + file.RatingNorm.ToString() +
+        "\n   Overview: " + file.Overview
+        );
     }
 
     public bool FindGameinfo(string gameTitle)
     {
       gameList.Clear();
 
-      // make request
-      // type is 
-      // http://www.allgame.com/cg/agg.dll?p=agg&type=1&SRCH=SuperMario64
+      // Create a template - can be loaded from xml config file
+      HtmlParserTemplate template = new HtmlParserTemplate();
+      template.SectionTemplate = new HtmlSectionTemplate();
 
-      string httpPostLine = String.Format("P=agg&TYPE=1&SRCH={0}", gameTitle);
+      /*
+       <tr class="visible" id="trlink" onclick="z('1:23413')">
+       <td class="sorted-cell"><div class="bar" style="width: 56px;">&nbsp;</div></td>
+       <td class="cell">&nbsp;</td>
+       <td class="cell" style="width: 214px;"><a href="/cg/agg.dll?p=agg&amp;sql=1:23413">Mario Kart 64 <i>European</i></a></td>
+       <td class="cell">&nbsp;</td>
+       <td class="cell" style="width: 40px;">1997</td>
+       <td class="cell" style="width: 60px;">Racing</td>
+       <td class="cell" style="width: 70px;">Go-Kart Racing</td>
+       <td class="cell" style="width: 180px;">Nintendo 64</td>
+       <td class="cell-img"><img src="/img/stars/st_r7.gif" alt="4 Stars" title="4 Stars"></td>
+       */
 
-      string htmlText = PostHTTP("http://www.allgame.com/cg/agg.dll", httpPostLine);
-      if (htmlText.Length == 0)
-        return false;
+      // ok here we cycle throuh the 8 columns of one table row:
+      // col 0: "Relevance" => see width of the picture to measure this
+      // col 1: "Year" 
+      // col 2: "buy it"-link
+      // col 3: "Title" => includes the detail URL
+      // col 4: "Genre"
+      // col 5: "Style"
+      // col 6: "Platform"
+      // col 7: "Rating" => use imagename to get rating: "st_gt1.gif" to "st_gt9.gif"
 
-      string htmlLowText = htmlText;
-      htmlLowText = htmlLowText.ToLower();
-      int startOfTable = htmlLowText.IndexOf(">games with titles matching");
-      if (startOfTable < 0)
-        return false;
-      startOfTable = htmlLowText.IndexOf("<table", startOfTable);
-      if (startOfTable < 0)
-        return false;
+      // setup the template
+      template.SectionTemplate.Tags = templateSearchTags;
+      Log.Info("MyPrograms templateSearchTags {0}", templateSearchTags);
+      template.SectionTemplate.Template = templateSearch;
+      Log.Info("MyPrograms templateSearch {0}", templateSearch);
 
-      HTMLUtil util = new HTMLUtil();
-      HTMLTable table = new HTMLTable();
-      string htmlTableText = htmlText.Substring(startOfTable);
+      HtmlParser parser = new HtmlParser(template, typeof(FileInfo), null);
 
-      // now the allgame thing is that <tr> tags are not closed
-      // for the decisive rows.... so I add them manually
-      // otherwise the parser doesn't split up the string correctly
-      htmlTableText = AddMissingRowTags(htmlTableText);
-      table.Parse(htmlTableText); // call frodo's html parser
-      for (int i = 1; i < table.Rows; ++i)
-      // skip first row (contains table header)
+      // Build a request of the site to parse
+      Log.Info("MyPrograms parsing URL: {0}", GetSearchURL(gameTitle));
+      HTTPRequest request = new HTTPRequest(GetSearchURL(gameTitle));
+
+      // Load the site and see how many times the template occurs
+      int count = parser.ParseUrl(request);
+      Log.Info("MyPrograms template was found on url {0} times", count.ToString());
+
+      // now we can get the data for each occurance
+      for (int i = 0; i < count; i++)
       {
-        FileInfo newGame = new FileInfo();
+        FileInfo file = (FileInfo)parser.GetData(i);
+        // and here we do something with the data - display it, store it, etc
 
-        //							FileItem newGameInfo = new FileItem(null);  // todo: initSqlDB necessary????
-        //							util.ConvertHTMLToAnsi(strAlbumName, out strAlbumNameStripped);
-        //							newGameInfo.Title2=strAlbumNameStripped;
-        //							newGameInfo.URL=strAlbumURL;
-        //							m_games.Add(newGameInfo);
+        // <td class="sorted-cell"><div class="bar" style="width: 56px;">&nbsp;</div></td>
+        // the WIDTH attribute is the relevance: maximum value is 56, negative values are possible
+        file.RelevanceNorm += 44;
+
+        // <td class="cell" style="width: 214px;"><a href="/cg/agg.dll?p=agg&amp;sql=1:23413">Mario Kart 64 <i>European</i></a></td>
+        file.GameURL = String.Format("{0}{1}", BaseURL, file.GameURL);
+        file.GameURL = MakeURL(file.GameURL);
+
+        WriteFileToLog(file);
+
+        gameList.Add(file);
+      }
 
 
-        HTMLTable.HTMLRow row = table.GetRow(i);
-        for (int column = 0; column < row.Columns; ++column)
+
+
+
+      /*
+        string gameRelevance = "";
+        int startOfWidthTag = -1;
+        int endOfWidthTag = -1;
+        startOfWidthTag = columnHTML.IndexOf("width=\"");
+        if (startOfWidthTag != -1)
         {
-          string columnHTML = row.GetColumValue(column);
-
-          // ok here we cycle throuh the 8 columns of one table row:
-          // col 0: "Relevance" => see width of the picture to measure this
-          // col 1: "Year" 
-          // col 2: "buy it"-link
-          // col 3: "Title" => includes the detail URL
-          // col 4: "Genre"
-          // col 5: "Style"
-          // col 6: "Platform"
-          // col 7: "Rating" => use imagename to get rating: "st_gt1.gif" to "st_gt9.gif" 
-
-          if (column == 0)
+          startOfWidthTag = columnHTML.IndexOf("\"", startOfWidthTag);
+          if (startOfWidthTag != -1)
           {
-            string gameRelevance = "";
-            int startOfWidthTag =  - 1;
-            int endOfWidthTag =  - 1;
-            // ex:
-            // "<img src="/im/agg/red_dot.jpg" valign=center width="56" height=5 border=0>&nbsp;"
-            // the WIDTH attribute is the relevance: maximum value is 56, negative values are possible
-            startOfWidthTag = columnHTML.IndexOf("width=\"");
-            if (startOfWidthTag !=  - 1)
+            endOfWidthTag = columnHTML.IndexOf("\"", startOfWidthTag + 1);
+            if ((endOfWidthTag != -1) && (endOfWidthTag > startOfWidthTag))
             {
-              startOfWidthTag = columnHTML.IndexOf("\"", startOfWidthTag);
-              if (startOfWidthTag !=  - 1)
-              {
-                endOfWidthTag = columnHTML.IndexOf("\"", startOfWidthTag + 1);
-                if ((endOfWidthTag !=  - 1) && (endOfWidthTag > startOfWidthTag))
-                {
-                  gameRelevance = columnHTML.Substring(startOfWidthTag + 1, endOfWidthTag - startOfWidthTag - 1);
-                }
-              }
+              gameRelevance = columnHTML.Substring(startOfWidthTag + 1, endOfWidthTag - startOfWidthTag - 1);
             }
-            newGame.RelevanceOrig = gameRelevance;
-            newGame.RelevanceNorm = (ProgramUtils.StrToIntDef(gameRelevance,  - 1) + 44);
           }
-          else if (column == 1)
-          {
-            string gameYear = "";
-            util.RemoveTags(ref columnHTML);
-            gameYear = columnHTML.Replace("&nbsp;", "");
-            newGame.Year = gameYear;
-          }
-          else if (column == 2)
-          {
-            // NOTHING TO DO, skip the bloody "buy-it" link ;-)
-          }
-          else if (column == 3)
-          {
-            // ex:
-            // "<FONT SIZE=-1><A HREF=/cg/agg.dll?p=agg&SQL=GIH|||||1002>Super Mario 64</A></FONT>"
-            string gameURL = "";
-            int startOfURLTag =  - 1;
-            int endOfURLTag =  - 1;
-            startOfURLTag = columnHTML.ToLower().IndexOf("<a href");
-            if (startOfURLTag !=  - 1)
-            {
-              startOfURLTag = columnHTML.IndexOf("/", startOfURLTag);
-              if (startOfURLTag !=  - 1)
-              {
-                endOfURLTag = columnHTML.IndexOf(">", startOfURLTag + 1);
-                if ((endOfURLTag !=  - 1) && (endOfURLTag > startOfURLTag))
-                {
-                  gameURL = columnHTML.Substring(startOfURLTag, endOfURLTag - startOfURLTag);
-                  // and add the prefix!
-                  gameURL = "http://www.allgame.com" + gameURL;
-                }
-              }
-            }
+        }
+        newGame.RelevanceOrig = gameRelevance;
+        newGame.RelevanceNorm = (ProgramUtils.StrToIntDef(gameRelevance, -1) + 44);
+        */
 
-            string gameTitleHTML = "";
-            util.RemoveTags(ref columnHTML);
-            gameTitleHTML = columnHTML.Replace("&nbsp;", "");
-            newGame.Title = gameTitleHTML;
-            newGame.GameURL = gameURL;
 
-          }
-          else if (column == 4)
+      /*
+      // ex:
+      // "<FONT SIZE=-1><A HREF=/cg/agg.dll?p=agg&SQL=GIH|||||1002>Super Mario 64</A></FONT>"
+      string gameURL = "";
+      int startOfURLTag = -1;
+      int endOfURLTag = -1;
+      startOfURLTag = columnHTML.ToLower().IndexOf("<a href");
+      if (startOfURLTag != -1)
+      {
+        startOfURLTag = columnHTML.IndexOf("/", startOfURLTag);
+        if (startOfURLTag != -1)
+        {
+          endOfURLTag = columnHTML.IndexOf(">", startOfURLTag + 1);
+          if ((endOfURLTag != -1) && (endOfURLTag > startOfURLTag))
           {
-            string strGenre = "";
-            util.RemoveTags(ref columnHTML);
-            strGenre = columnHTML.Replace("&nbsp;", "");
-            newGame.Genre = strGenre;
-          }
-          else if (column == 5)
-          {
-            string strStyle = "";
-            util.RemoveTags(ref columnHTML);
-            strStyle = columnHTML.Replace("&nbsp;", "");
-            newGame.Style = strStyle;
-          }
-          else if (column == 6)
-          {
-            string strPlatform = "";
-            util.RemoveTags(ref columnHTML);
-            strPlatform = columnHTML.Replace("&nbsp;", "");
-            newGame.Platform = strPlatform;
-          }
-          else if (column == 7)
-          {
-            string strRating = "";
-            // ex.
-            // <A HREF=/cg/agg.dll?p=agg&SQL=GRH|||||1002><IMG SRC=/im/agg/st_gt9.gif BORDER=0 WIDTH=75 HEIGHT=15 VSPACE=2></A>
-            // the rating is coded in the gif - filename
-            // st_gt1.gif is the worst rating
-            // st_gt9.gif is the best rating
-            strRating = "";
-            int startOfRatingTag =  - 1;
-            int endOfRatingTag =  - 1;
-            startOfRatingTag = columnHTML.ToLower().IndexOf("<img src=");
-            if (startOfRatingTag !=  - 1)
-            {
-              startOfRatingTag = columnHTML.IndexOf("/st_gt", startOfRatingTag);
-              if (startOfRatingTag !=  - 1)
-              {
-                endOfRatingTag = columnHTML.IndexOf(".gif", startOfRatingTag);
-                if ((endOfRatingTag !=  - 1) && (endOfRatingTag > startOfRatingTag))
-                {
-                  strRating = columnHTML.Substring(startOfRatingTag + 6, 1); // 6 is the length of the IndexOf searchstring...
-                }
-              }
-            }
-            newGame.RatingOrig = strRating;
-            newGame.RatingNorm = (ProgramUtils.StrToIntDef(strRating, 4) + 1); // add 1 to get a max rating of 10!
-            gameList.Add(newGame);
+            gameURL = columnHTML.Substring(startOfURLTag, endOfURLTag - startOfURLTag);
+            // and add the prefix!
+            gameURL = "http://www.allgame.com" + gameURL;
           }
         }
       }
-      return true;
-    }
+      */
 
+
+      /*
+      string strRating = "";
+      // ex.
+      // <A HREF=/cg/agg.dll?p=agg&SQL=GRH|||||1002><IMG SRC=/im/agg/st_gt9.gif BORDER=0 WIDTH=75 HEIGHT=15 VSPACE=2></A>
+      // the rating is coded in the gif - filename
+      // st_gt1.gif is the worst rating
+      // st_gt9.gif is the best rating
+      strRating = "";
+      int startOfRatingTag = -1;
+      int endOfRatingTag = -1;
+      startOfRatingTag = columnHTML.ToLower().IndexOf("<img src=");
+      if (startOfRatingTag != -1)
+      {
+        startOfRatingTag = columnHTML.IndexOf("/st_gt", startOfRatingTag);
+        if (startOfRatingTag != -1)
+        {
+          endOfRatingTag = columnHTML.IndexOf(".gif", startOfRatingTag);
+          if ((endOfRatingTag != -1) && (endOfRatingTag > startOfRatingTag))
+          {
+            strRating = columnHTML.Substring(startOfRatingTag + 6, 1); // 6 is the length of the IndexOf searchstring...
+          }
+        }
+      }
+      */
+      if (count > 0)
+        return true;
+      else
+        return false;
+    }
 
     public bool FindGameinfoDetail(AppItem curApp, FileItem curItem, FileInfo curGame, ScraperSaveType saveType)
     {
+      try
+      {
+        // Again we build a request with site URL
+        Log.Info("MyPrograms parsing URL: {0}", curGame.GameURL);
+        HTTPRequest request = new HTTPRequest(curGame.GameURL);
+
+        //but instead of calling HtmlParser we will first get the source
+        HTMLPage page = new HTMLPage(request);
+        string source = page.GetPage();
+
+
+        curGame = ParseValues(curGame, source);
+        curGame = ParseValueLists(curGame, source);
+        curGame = ParseTexts(curGame, source);
+
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("MyPrograms error: {0} - {1}", ex.Message, ex.StackTrace);
+        return false;
+      }
+
+      #region oldstuff
+      /*
       if (curItem == null)
         return false;
       if (curGame == null)
@@ -292,7 +347,7 @@ namespace ProgramsDatabase
       // 1) get MANUFACTURER
       string strManufacturer = "";
       int startOfManuTag =  - 1;
-      int endOfManuTag =  - 1;
+     int endOfManuTag =  - 1;
       // ex:
       // <TR><TD ALIGN=RIGHT BGCOLOR="#FF9933" WIDTH=122><FONT COLOR="#000000" SIZE=-1>Developer</FONT></TD>
       // <TD WIDTH=482 BGCOLOR="#D8D8D8" VALIGN=bottom><TABLE WIDTH=484 BGCOLOR="#D8D8D8" BORDER=0 CELLSPACING=0 CELLPADDING=0><TR>
@@ -402,60 +457,206 @@ namespace ProgramsDatabase
         curGame.DownloadImages(curApp, curItem);
       }
       return true;
+      */
+#endregion
     }
 
-
-    string PostHTTP(string strURL, string strData)
+    private FileInfo ParseValues(FileInfo curGame, string source)
     {
-      try
+
+      // VALUES
+
+      // now that we have the source we can work on it before going to the parser
+
+      // To parser the source we need again a template  
+      // This time only a section template and not a parser template
+      HtmlSectionTemplate templateValue = new HtmlSectionTemplate();
+
+      templateValue.Tags = tValueTags;
+      templateValue.Template = tValue;
+      Log.Info("MyPrograms template tags: {0}", tValueTags);
+      Log.Info("MyPrograms template \n{0}", tValue);
+
+      // With the template we create a profiler
+      HtmlProfiler profilerValue = new HtmlProfiler(templateValue);
+
+      // and use this to get the number of times the template occurs in our source
+      int countValue = profilerValue.MatchCount(source);
+      Log.Info("MyPrograms template was found on url {0} times", countValue.ToString());
+
+      for (int i = 0; i < countValue; i++)
       {
-        string strBody;
-        WebRequest req = WebRequest.Create(strURL);
-        req.Method = "POST";
-        req.ContentType = "application/x-www-form-urlencoded";
+        // Here we can get the source of each section
+        Log.Info("MyPrograms template ::: {0}", profilerValue.GetSource(i));
+        string sectionSource = profilerValue.GetSource(i);
 
-        byte[] bytes = null;
-        // Get the data that is being posted (or sent) to the server
-        bytes = Encoding.ASCII.GetBytes(strData);
-        req.ContentLength = bytes.Length;
-        // 1. Get an output stream from the request object
-        Stream outputStream = req.GetRequestStream();
+        // we must also create a place for the parsed data
+        ParserData data = new ParserData();
 
-        // 2. Post the data out to the stream
-        outputStream.Write(bytes, 0, bytes.Length);
+        IParserData iData = data;
 
-        // 3. Close the output stream and send the data out to the web server
-        outputStream.Close();
+        // to parse each section we use a section parser
+        HtmlSectionParser parser = new HtmlSectionParser(templateValue);
 
+        // Finally we can parse the section source
+        parser.ParseSection(sectionSource, ref iData);
 
-        WebResponse result = req.GetResponse();
-        Stream ReceiveStream = result.GetResponseStream();
-        Encoding encode = Encoding.GetEncoding("utf-8");
-        StreamReader sr = new StreamReader(ReceiveStream, encode);
-        strBody = sr.ReadToEnd();
+        for (int j = 0; j < data.Count; j++)
+        {
+          Log.Info("MyPrograms DATA: {0} --- {1}", data.GetElementName(j), data.GetElementValue(j));
+        }
 
-        outputStream.Close();
-        ReceiveStream.Close();
-        sr.Close();
-        result.Close();
-
-
-        req = null;
-        outputStream = null;
-        result = null;
-        ReceiveStream = null;
-        sr = null;
-
-        return strBody;
+        switch (data.GetElement("#KEY"))
+        {
+          case "Title":
+            curGame.Title = data.GetElement("#VALUE");
+            break;
+          case "Platform":
+            //curGame.Platform = data.GetElement("#VALUE");
+            break;
+          case "Developer":
+            curGame.Manufacturer = data.GetElement("#VALUE");
+            break;
+          case "Publisher":
+            //curGame.Manufacturer = data.GetElement("#VALUE");
+            break;
+          default:
+            break;
+        }
       }
-      //			catch(Exception ex)
-      catch (Exception)
+
+      WriteFileToLog(curGame);
+
+      return curGame;
+    }
+
+    private FileInfo ParseValueLists(FileInfo curGame, string source)
+    {
+
+      // VALUES LISTS
+
+      // now that we have the source we can work on it before going to the parser
+
+      // To parser the source we need again a template  
+      // This time only a section template and not a parser template
+      HtmlSectionTemplate templateValueList = new HtmlSectionTemplate();
+
+      templateValueList.Tags = tValueListTags;
+      templateValueList.Template = tValueList;
+      Log.Info("MyPrograms template tags: {0}", tValueListTags);
+      Log.Info("MyPrograms template \n{0}", tValueList);
+
+      // With the template we create a profiler
+      HtmlProfiler profilerValueList = new HtmlProfiler(templateValueList);
+
+      // and use this to get the number of times the template occurs in our source
+      int countValueList = profilerValueList.MatchCount(source);
+      Log.Info("MyPrograms template was found on url {0} times", countValueList.ToString());
+
+      for (int i = 0; i < countValueList; i++)
       {
-        //				Log.Info("AllGameInfoScraper exception: {0}", ex.ToString());
+        // Here we can get the source of each section
+        Log.Info("MyPrograms template ::: {0}", profilerValueList.GetSource(i));
+        string sectionSource = profilerValueList.GetSource(i);
+
+        // we must also create a place for the parsed data
+        ParserData data = new ParserData();
+
+        IParserData iData = data;
+
+        // to parse each section we use a section parser
+        HtmlSectionParser parser = new HtmlSectionParser(templateValueList);
+
+        // Finally we can parse the section source
+        parser.ParseSection(sectionSource, ref iData);
+
+        for (int j = 0; j < data.Count; j++)
+        {
+          Log.Info("MyPrograms DATA: {0} --- {1}", data.GetElementName(j), data.GetElementValue(j));
+        }
+
+        switch (data.GetElement("#KEY"))
+        {
+          case "Title":
+            curGame.Title = data.GetElement("#VALUE");
+            break;
+          case "Platform":
+            //curGame.Platform = data.GetElement("#VALUE");
+            break;
+          case "Developer":
+            curGame.Manufacturer = data.GetElement("#VALUE");
+            break;
+          case "Publisher":
+            //curGame.Manufacturer = data.GetElement("#VALUE");
+            break;
+          default:
+            break;
+        }
       }
 
-      return "";
+      WriteFileToLog(curGame);
+
+      return curGame;
+    }
+
+    private FileInfo ParseTexts(FileInfo curGame, string source)
+    {
+
+      // TEXTS
+
+      // now that we have the source we can work on it before going to the parser
+
+      // To parser the source we need again a template  
+      // This time only a section template and not a parser template
+      HtmlSectionTemplate templateText = new HtmlSectionTemplate();
+
+      templateText.Tags = tTextTags;
+      templateText.Template = tText;
+      Log.Info("MyPrograms template tags: {0}", tTextTags);
+      Log.Info("MyPrograms template \n{0}", tText);
+
+      // With the template we create a profiler
+      HtmlProfiler profilerText = new HtmlProfiler(templateText);
+
+      // and use this to get the number of times the template occurs in our source
+      int countText = profilerText.MatchCount(source);
+      Log.Info("MyPrograms template was found on url {0} times", countText.ToString());
+
+      for (int i = 0; i < countText; i++)
+      {
+        // Here we can get the source of each section
+        Log.Info("MyPrograms template ::: {0}", profilerText.GetSource(i));
+        string sectionSource = profilerText.GetSource(i);
+
+        // we must also create a place for the parsed data
+        ParserData data = new ParserData();
+
+        IParserData iData = data;
+
+        // to parse each section we use a section parser
+        HtmlSectionParser parser = new HtmlSectionParser(templateText);
+
+        // Finally we can parse the section source
+        parser.ParseSection(sectionSource, ref iData);
+
+        for (int j = 0; j < data.Count; j++)
+        {
+          Log.Info("MyPrograms DATA: {0} --- {1}", data.GetElementName(j), data.GetElementValue(j));
+        }
+
+        switch (data.GetElement("#KEY"))
+        {
+          case "Synopsis":
+            curGame.Overview = data.GetElement("#TEXT");
+            break;
+          default:
+            break;
+        }
+      }
+
+      WriteFileToLog(curGame);
+
+      return curGame;
     }
   }
-
 }
