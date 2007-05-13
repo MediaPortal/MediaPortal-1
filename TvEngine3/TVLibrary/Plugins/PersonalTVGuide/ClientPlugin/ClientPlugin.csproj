@@ -1,0 +1,109 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{997D2DED-4E5E-4816-9468-C7F92288BD67}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ClientPlugin</RootNamespace>
+    <AssemblyName>ClientPlugin</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Core, Version=1.0.2620.39239, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\MediaPortal\xbmc\bin\Release\Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Dialogs, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\MediaPortal\xbmc\bin\Release\plugins\windows\Dialogs.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TVDatabase\references\Gentle.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Framework, Version=1.2.9.1286, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TVDatabase\references\Gentle.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Provider.MySQL, Version=1.2.9.1288, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TVDatabase\references\Gentle.Provider.MySQL.dll</HintPath>
+    </Reference>
+    <Reference Include="Gentle.Provider.SQLServer, Version=1.2.9.1289, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TVDatabase\references\Gentle.Provider.SQLServer.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.9.0, Culture=neutral, PublicKeyToken=b32731d11ce58905">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TVDatabase\references\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=1.0.7.30072, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TVDatabase\references\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TvBusinessLayer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TVDatabase\TvBusinessLayer\bin\Debug\TvBusinessLayer.dll</HintPath>
+    </Reference>
+    <Reference Include="TvControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TvControl\bin\Debug\TvControl.dll</HintPath>
+    </Reference>
+    <Reference Include="TVDatabase, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TVDatabase\bin\Debug\TVDatabase.dll</HintPath>
+    </Reference>
+    <Reference Include="TvPlugin, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TvPlugin\TvPlugin\bin\Debug\TvPlugin.dll</HintPath>
+    </Reference>
+    <Reference Include="Utils, Version=2.1.2.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\MediaPortal\xbmc\bin\Release\Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowPlugins, Version=0.2.2.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\MediaPortal\xbmc\bin\Release\plugins\windows\WindowPlugins.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DatabaseManager.cs" />
+    <Compile Include="IWishItem.cs" />
+    <Compile Include="IWishList.cs" />
+    <Compile Include="PTGEditWishItem.cs" />
+    <Compile Include="PTGMain.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TVServerWishItem.cs" />
+    <Compile Include="TVServerWishList.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
