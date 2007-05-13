@@ -91,6 +91,7 @@ namespace SetupTv
     public static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
     {
       Log.Write("Exception in setuptv");
+      Log.Write(e.ToString());
       Log.Write(e.Exception);
     }
     [STAThread]

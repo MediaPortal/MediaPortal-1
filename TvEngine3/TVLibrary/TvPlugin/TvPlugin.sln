@@ -30,6 +30,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerScheduler.Interfaces",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientPlugin", "..\Plugins\PowerScheduler\ClientPlugin\ClientPlugin.csproj", "{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PersonalTVGuidePlugin", "PersonalTVGuidePlugin", "{DD807911-80D4-470B-9C67-4BCDB7CC28EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientPlugin", "..\Plugins\PersonalTVGuide\ClientPlugin\ClientPlugin.csproj", "{997D2DED-4E5E-4816-9468-C7F92288BD67}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Tests", "..\Plugins\Plugin.Tests\Plugin.Tests.csproj", "{E978C885-78BD-488E-8A7D-C45E31E0AFB4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +73,14 @@ Global
 		{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC77F438-DBD3-4D9C-80B1-C86BA50CF635}.Release|Any CPU.Build.0 = Release|Any CPU
+		{997D2DED-4E5E-4816-9468-C7F92288BD67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{997D2DED-4E5E-4816-9468-C7F92288BD67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{997D2DED-4E5E-4816-9468-C7F92288BD67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{997D2DED-4E5E-4816-9468-C7F92288BD67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E978C885-78BD-488E-8A7D-C45E31E0AFB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E978C885-78BD-488E-8A7D-C45E31E0AFB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E978C885-78BD-488E-8A7D-C45E31E0AFB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E978C885-78BD-488E-8A7D-C45E31E0AFB4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,5 +92,6 @@ Global
 		{58C35C9D-F18D-40F2-8024-24E50D01E9C5} = {1960E444-2C4E-46BE-A84C-8D9DC2231062}
 		{7701AA79-18D4-4A18-BB52-16774FB7943D} = {4CE67A64-49D9-4B3F-9F86-2E51B1436B80}
 		{CC77F438-DBD3-4D9C-80B1-C86BA50CF635} = {4CE67A64-49D9-4B3F-9F86-2E51B1436B80}
+		{997D2DED-4E5E-4816-9468-C7F92288BD67} = {DD807911-80D4-470B-9C67-4BCDB7CC28EF}
 	EndGlobalSection
 EndGlobal

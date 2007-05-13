@@ -216,8 +216,15 @@ namespace SetupTv.Sections
       {
         TvBusinessLayer layer = new TvBusinessLayer();
         Setting setting = layer.GetSetting("freediskspace" + drive[0].ToString());
-        long quota = Int64.Parse(setting.Value);
-        mpNumericTextBoxDiskQuota.Value=(int)quota / 1024;
+        try
+        {
+          long quota = Int64.Parse(setting.Value);
+          mpNumericTextBoxDiskQuota.Value = (int) quota/1024;
+        }
+        catch (Exception e)
+        {
+          mpNumericTextBoxDiskQuota.Value = 0;
+        }
         if (mpNumericTextBoxDiskQuota.Value < 500)
           mpNumericTextBoxDiskQuota.Value = 500;
       }
