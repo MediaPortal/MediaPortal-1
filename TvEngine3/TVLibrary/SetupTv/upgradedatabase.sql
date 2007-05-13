@@ -67,5 +67,8 @@ ALTER TABLE KeywordMap  WITH CHECK ADD  CONSTRAINT FK_KeywordMap_ChannelGroup FO
 REFERENCES ChannelGroup (idGroup)
 GO
 
+delete from version
+GO
+
 insert into version(versionNumber) values(27)
 GO
