@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="templateSearch">
+    <entry name="tags">TDA</entry>
+    <entry name="template">
+        &lt;tr&gt;
+        &lt;td&gt;&lt;div class="bar" style="width:&lt;#RELEVANCE&gt;px;"&gt;&lt;/div&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;a href="&lt;#URL&gt;"&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;#YEAR&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;#STYLE&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;#PLATFORM&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;img src="/img/stars/st_gt1.gif"&lt;/td&gt;
+        &lt;/tr&gt;
+        </entry>
+  </section>
+  <section name="templateGameGenre">
+    <entry name="tags">T!</entry>
+    <entry name="template">
+         &lt;!--Begin Genre Listing--&gt;
+         &lt;td class="list-cell" style="width: 86px;"&gt;
+         &lt;#GENRE&gt;
+         &lt;/td&gt;
+         &lt;!--Genre Listing--&gt;
+        </entry>
+  </section>
+  <section name="templateValue">
+    <entry name="tags">T</entry>
+    <entry name="template">
+&lt;tr&gt;&lt;td&gt;&lt;div id="left-sidebar-title"&gt;&lt;span&gt;&lt;#KEY&gt;&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src="/i/spacer.gif" height="1" width="1"&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="sub-text" style="padding-left: 5px;"&gt;&lt;pre&gt;&lt;#VALUE&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;
+        </entry>
+  </section>
+  <section name="templateValueList">
+    <entry name="tags">T!U</entry>
+    <entry name="template">
+&lt;td class="list-cell" style="width: 86px;"&gt;
+&lt;div id="left-sidebar-list" style="padding-bottom: 5px;"&gt;
+&lt;ul&gt;&lt;li&gt;
+&lt;#VALUE&gt;
+&lt;/li&gt;&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/td&gt;
+&lt;!--&lt;#KEY&gt; Listing--&gt;
+        </entry>
+  </section>
+  <section name="templateText">
+    <entry name="tags">T</entry>
+    <entry name="template">
+&lt;tr&gt;
+&lt;td class="title" align="left"&gt;&lt;#KEY&gt;&lt;/td&gt;
+&lt;td class="author" align="right"&gt;&lt;#AUTHOR&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td colspan="2"&gt;
+&lt;#TEXT&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+        </entry>
+  </section>
+</profile>
