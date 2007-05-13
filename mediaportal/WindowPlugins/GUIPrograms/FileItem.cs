@@ -740,24 +740,45 @@ namespace ProgramsDatabase
       return bSuccess;
     }
 
+    public void ToFileInfoFavourite()
+    {
+      FileInfo info = new FileInfo();
+
+      info.Title = this.Title;
+      info.Genre = this.Genre;
+      info.Genre2 = this.Genre2;
+      info.Genre3 = this.Genre3;
+      info.Genre4 = this.Genre4;
+      info.Genre5 = this.Genre5;
+      info.Manufacturer = this.Manufacturer;
+      info.Year = this.Year.ToString();
+      info.Overview = this.Overview;
+      info.RatingNorm = this.Rating;
+      info.Platform = this.System_;
+
+      FileInfoFavourite = info;
+    }
+
     public void SaveFromFileInfoFavourite()
     {
-      if (this.FileInfoFavourite != null)
-      {
-        // DON'T overwrite title!
-        this.Title = FileInfoFavourite.Title;
-        this.Genre = FileInfoFavourite.Genre;
-        this.Genre2 = FileInfoFavourite.Genre2;
-        this.Genre3 = FileInfoFavourite.Genre3;
-        this.Genre4 = FileInfoFavourite.Genre4;
-        this.Genre5 = FileInfoFavourite.Genre5;
-        this.Manufacturer = FileInfoFavourite.Manufacturer;
-        this.Year = ProgramUtils.StrToIntDef(FileInfoFavourite.Year,  - 1);
-        this.Overview = FileInfoFavourite.Overview;
-        this.Rating = FileInfoFavourite.RatingNorm;
-        this.System_ = FileInfoFavourite.Platform;
-        this.Write();
-      }
+      if (this.FileInfoFavourite == null)
+        return;
+
+      if (this.FileInfoFavourite.Loaded == false)
+        return;
+        
+      this.Title = FileInfoFavourite.Title;
+      this.Genre = FileInfoFavourite.Genre;
+      this.Genre2 = FileInfoFavourite.Genre2;
+      this.Genre3 = FileInfoFavourite.Genre3;
+      this.Genre4 = FileInfoFavourite.Genre4;
+      this.Genre5 = FileInfoFavourite.Genre5;
+      this.Manufacturer = FileInfoFavourite.Manufacturer;
+      this.Year = ProgramUtils.StrToIntDef(FileInfoFavourite.Year, -1);
+      this.Overview = FileInfoFavourite.Overview;
+      this.Rating = FileInfoFavourite.RatingNorm;
+      this.System_ = FileInfoFavourite.Platform;
+      this.Write();
     }
 
     public string GetNewImageFile(AppItem curApp, string strExtension)

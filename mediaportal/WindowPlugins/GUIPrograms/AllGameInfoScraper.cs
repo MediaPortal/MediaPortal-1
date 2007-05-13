@@ -49,19 +49,10 @@ namespace ProgramsDatabase
   public class AllGameInfoScraper
   {
     #region Base & Content Variables
-
     List<FileInfo> gameList = new List<FileInfo>();
 
     string templateSearch = String.Empty;
     string templateSearchTags = String.Empty;
-
-    string tValue = String.Empty;
-    string tValueTags = String.Empty;
-    string tValueList = String.Empty;
-    string tValueListTags = String.Empty;
-    string tText = String.Empty;
-    string tTextTags = String.Empty;
-
     #endregion
 
     #region Constructor / Destructor
@@ -76,12 +67,6 @@ namespace ProgramsDatabase
       {
         templateSearch = xmlreader.GetValue("templateSearch", "template");
         templateSearchTags = xmlreader.GetValue("templateSearch", "tags");
-        tValue = xmlreader.GetValue("templateValue", "template");
-        tValueTags = xmlreader.GetValue("templateValue", "tags");
-        tValueList = xmlreader.GetValue("templateValueList", "template");
-        tValueListTags = xmlreader.GetValue("templateValueList", "tags");
-        tText = xmlreader.GetValue("templateText", "template");
-        tTextTags = xmlreader.GetValue("templateText", "tags");
       }
     }
 
@@ -99,7 +84,23 @@ namespace ProgramsDatabase
 
     public string GetSearchURL(string gameTitle)
     {
-      return String.Format("{0}/cg/agg.dll?sql={1}&P=agg&opt1=31", BaseURL, gameTitle.Replace(' ', '+'));
+      string cleanTitle = String.Empty;
+      
+      gameTitle = gameTitle.ToLower();     
+ 
+      for (int i = 0; i < gameTitle.Length; i++)
+      {
+        if (gameTitle[i] >= 'a' && gameTitle[i] <= 'z')
+          cleanTitle += gameTitle[i];
+        else if (gameTitle[i] >= 'A' && gameTitle[i] <= 'Z')
+          cleanTitle += gameTitle[i];
+        else if (gameTitle[i] >= '0' && gameTitle[i] <= '9')
+          cleanTitle += gameTitle[i];
+        else if (!cleanTitle.EndsWith("+"))
+            cleanTitle += '+';
+      }
+
+      return String.Format("{0}/cg/agg.dll?sql={1}&P=agg&opt1=31", BaseURL, cleanTitle);
     }
 
     public string MakeURL(string url)
@@ -210,7 +211,7 @@ namespace ProgramsDatabase
         gameList.Add(file);
       }
 
-
+      
 
 
 
@@ -304,8 +305,10 @@ namespace ProgramsDatabase
 
 
         curGame = ParseValues(curGame, source);
+        curGame = ParseValueRating(curGame, source);
         curGame = ParseValueLists(curGame, source);
         curGame = ParseTexts(curGame, source);
+        curGame.Loaded = true;
 
         return true;
       }
@@ -463,6 +466,14 @@ namespace ProgramsDatabase
 
     private FileInfo ParseValues(FileInfo curGame, string source)
     {
+      string tValue = String.Empty;
+      string tValueTags = String.Empty;
+
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
+      {
+        tValue = xmlreader.GetValue("templateValue", "template");
+        tValueTags = xmlreader.GetValue("templateValue", "tags");
+      }
 
       // VALUES
 
@@ -530,8 +541,85 @@ namespace ProgramsDatabase
       return curGame;
     }
 
+    private FileInfo ParseValueRating(FileInfo curGame, string source)
+    {
+      string tValue = String.Empty;
+      string tValueTags = String.Empty;
+
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
+      {
+        tValue = xmlreader.GetValue("templateValueRating", "template");
+        tValueTags = xmlreader.GetValue("templateValueRating", "tags");
+      }
+
+      // VALUES
+
+      // now that we have the source we can work on it before going to the parser
+
+      // To parser the source we need again a template  
+      // This time only a section template and not a parser template
+      HtmlSectionTemplate templateValue = new HtmlSectionTemplate();
+
+      templateValue.Tags = tValueTags;
+      templateValue.Template = tValue;
+      Log.Info("MyPrograms template tags: {0}", tValueTags);
+      Log.Info("MyPrograms template \n{0}", tValue);
+
+      // With the template we create a profiler
+      HtmlProfiler profilerValue = new HtmlProfiler(templateValue);
+
+      // and use this to get the number of times the template occurs in our source
+      int countValue = profilerValue.MatchCount(source);
+      Log.Info("MyPrograms template was found on url {0} times", countValue.ToString());
+
+      for (int i = 0; i < countValue; i++)
+      {
+        // Here we can get the source of each section
+        Log.Info("MyPrograms template ::: {0}", profilerValue.GetSource(i));
+        string sectionSource = profilerValue.GetSource(i);
+
+        // we must also create a place for the parsed data
+        ParserData data = new ParserData();
+
+        IParserData iData = data;
+
+        // to parse each section we use a section parser
+        HtmlSectionParser parser = new HtmlSectionParser(templateValue);
+
+        // Finally we can parse the section source
+        parser.ParseSection(sectionSource, ref iData);
+
+        for (int j = 0; j < data.Count; j++)
+        {
+          Log.Info("MyPrograms DATA: {0} --- {1}", data.GetElementName(j), data.GetElementValue(j));
+        }
+
+        switch (data.GetElement("#KEY"))
+        {
+          case "AMG Rating":
+            curGame.RatingOrig = data.GetElement("#VALUE");
+            curGame.RatingNorm = curGame.GetNumber(data.GetElement("#VALUE")) + 1;
+            break;
+          default:
+            break;
+        }
+      }
+
+      WriteFileToLog(curGame);
+
+      return curGame;
+    }
+
     private FileInfo ParseValueLists(FileInfo curGame, string source)
     {
+      string tValueList = String.Empty;
+      string tValueListTags = String.Empty;
+
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
+      {
+        tValueList = xmlreader.GetValue("templateValueList", "template");
+        tValueListTags = xmlreader.GetValue("templateValueList", "tags");
+      }
 
       // VALUES LISTS
 
@@ -601,6 +689,14 @@ namespace ProgramsDatabase
 
     private FileInfo ParseTexts(FileInfo curGame, string source)
     {
+      string tText = String.Empty;
+      string tTextTags = String.Empty;
+
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
+      {
+        tText = xmlreader.GetValue("templateText", "template");
+        tTextTags = xmlreader.GetValue("templateText", "tags");
+      }
 
       // TEXTS
 

@@ -397,10 +397,6 @@ namespace ProgramsDatabase
           case "#PLATFORM":
             Platform = value.Trim(' ', '\n', '\t');
             break;
-          case "#RATING":
-            RatingOrig = value;
-            RatingNorm = GetNumber(value) + 1;
-            break;
           case "#OVERVIEW":
             Overview = value.Trim(' ', '\n', '\t');
             break;
@@ -420,7 +416,7 @@ namespace ProgramsDatabase
       }
     }
 
-    private int GetNumber(string value)
+    public int GetNumber(string value)
     {
       string number = string.Empty;
       int numberValue;

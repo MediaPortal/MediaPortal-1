@@ -731,6 +731,9 @@ namespace WindowPlugins.GUIPrograms
         FileItem file = (FileItem)curItem.Tag;
         if (file == null)
           continue;
+
+        file.ToFileInfoFavourite();
+
         if (file.FileInfoList != null)
           if (file.FileInfoList.Count > 0)
             continue;
@@ -1022,6 +1025,12 @@ namespace WindowPlugins.GUIPrograms
           }
           else
           {
+            if (info.GameURL == file.FileInfoFavourite.GameURL)
+            {
+              file.FileInfoFavourite = info;
+              break;
+            }
+
             // file has already a favourite
             // is info's relevance better than current favourite's relevance
             if (info.RelevanceNorm > file.FileInfoFavourite.RelevanceNorm)

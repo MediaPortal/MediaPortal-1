@@ -3,27 +3,19 @@
   <section name="templateSearch">
     <entry name="tags">TDA</entry>
     <entry name="template">
-        &lt;tr&gt;
-        &lt;td&gt;&lt;div class="bar" style="width:&lt;#RELEVANCE&gt;px;"&gt;&lt;/div&gt;&lt;/td&gt;
-        &lt;td&gt;&lt;/td&gt;
-        &lt;td&gt;&lt;a href="&lt;#URL&gt;"&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/td&gt;
-        &lt;td&gt;&lt;/td&gt;
-        &lt;td&gt;&lt;#YEAR&gt;&lt;/td&gt;
-        &lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
-        &lt;td&gt;&lt;#STYLE&gt;&lt;/td&gt;
-        &lt;td&gt;&lt;#PLATFORM&gt;&lt;/td&gt;
-        &lt;td&gt;&lt;img src="/img/stars/st_gt1.gif"&lt;/td&gt;
-        &lt;/tr&gt;
-        </entry>
-  </section>
-  <section name="templateGameGenre">
-    <entry name="tags">T!</entry>
-    <entry name="template">
-         &lt;!--Begin Genre Listing--&gt;
-         &lt;td class="list-cell" style="width: 86px;"&gt;
-         &lt;#GENRE&gt;
-         &lt;/td&gt;
-         &lt;!--Genre Listing--&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;div class="bar" style="width:&lt;#RELEVANCE&gt;px;"&gt;&lt;/div&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;
+&lt;a href="&lt;#URL&gt;"&gt;&lt;#TITLE&gt;&lt;/a&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#YEAR&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#STYLE&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#PLATFORM&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
         </entry>
   </section>
   <section name="templateValue">
@@ -31,7 +23,19 @@
     <entry name="template">
 &lt;tr&gt;&lt;td&gt;&lt;div id="left-sidebar-title"&gt;&lt;span&gt;&lt;#KEY&gt;&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;tr&gt;&lt;td&gt;&lt;img src="/i/spacer.gif" height="1" width="1"&gt;&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td class="sub-text" style="padding-left: 5px;"&gt;&lt;pre&gt;&lt;#VALUE&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="sub-text" style="padding-left: 5px;"&gt;
+&lt;pre&gt;&lt;#VALUE&gt;&lt;/pre&gt;
+&lt;/td&gt;&lt;/tr&gt;
+        </entry>
+  </section>
+  <section name="templateValueRating">
+    <entry name="tags">TI</entry>
+    <entry name="template">
+&lt;tr&gt;&lt;td&gt;&lt;div id="left-sidebar-title"&gt;&lt;span&gt;&lt;#KEY&gt;&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;img src="/i/spacer.gif" height="1" width="1"&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td class="rating-stars"&gt;
+&lt;img src="/img/stars/st_r&lt;#VALUE&gt;.gif" alt="game rating"&gt;
+&lt;/td&gt;&lt;/tr&gt;
         </entry>
   </section>
   <section name="templateValueList">

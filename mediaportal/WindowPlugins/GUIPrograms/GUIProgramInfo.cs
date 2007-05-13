@@ -121,6 +121,7 @@ namespace WindowPlugins.GUIPrograms
     #endregion 
 
     #region Properties / Helper Routines
+
     public ProgramInfoAction ModalResult
     {
       get {return modalResult;}
@@ -234,7 +235,6 @@ namespace WindowPlugins.GUIPrograms
       Refresh();
     }
 
-
     protected override void OnPageDestroy(int newWindowId)
     {
       curFile = null;
@@ -245,7 +245,6 @@ namespace WindowPlugins.GUIPrograms
       }
       base.OnPageDestroy(newWindowId);
     }
-
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
@@ -281,11 +280,10 @@ namespace WindowPlugins.GUIPrograms
       else if (control == this.btnRefreshData)
       {
         Close(ProgramInfoAction.LookupFileInfo);
-//        RefreshData();
-//        Refresh();
+        RefreshData();
+        Refresh();
       }
     }
-
 
     public override void OnAction(Action action)
     {
@@ -364,7 +362,6 @@ namespace WindowPlugins.GUIPrograms
       isRunning = false;
     }
 
-
     public void DoModal(int parentId)
     {
       parentWindowID = parentId;
@@ -411,13 +408,24 @@ namespace WindowPlugins.GUIPrograms
       slideTime = (DateTime.Now.Ticks / 10000); // reset timer!
     }
 
+    void RefreshData()
+    {
+      if (curFile == null)
+        return;
+
+      curFile.ToFileInfoFavourite();
+
+      if (curFile.FindFileInfoDetail(curApp, curFile.FileInfoFavourite, myProgScraperType.ALLGAME, ScraperSaveType.Data))
+      {
+        curFile.SaveFromFileInfoFavourite();
+      }
+    }
 
     void Refresh()
     {
       RefreshPicture();
       Update();
     }
-
 
     void Update()
     {
@@ -494,7 +502,6 @@ namespace WindowPlugins.GUIPrograms
       }
 
     }
-
 
     void ReadContent()
     {
