@@ -353,7 +353,10 @@ namespace MediaPortal.GUI.Video
             {
               string temporaryFilename = "temp";
               temporaryFilename += imageExtension;
+              string temporaryFilenameLarge = "tempL";
+              temporaryFilenameLarge += imageExtension;
               MediaPortal.Util.Utils.FileDelete(temporaryFilename);
+              MediaPortal.Util.Utils.FileDelete(temporaryFilenameLarge);
 
               if (imageUrl.Length > 7 && imageUrl.Substring(0, 7).Equals("file://"))
               {
@@ -367,9 +370,15 @@ namespace MediaPortal.GUI.Video
               if (System.IO.File.Exists(temporaryFilename))
               {
                 MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-                MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-              }
 
+                if (System.IO.File.Exists(temporaryFilenameLarge))
+                {
+                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+                }else 
+                {
+                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);                
+                }
+              }
               MediaPortal.Util.Utils.FileDelete(temporaryFilename);
             }//if ( strExtension.Length>0)
             else
