@@ -35,6 +35,7 @@ namespace ProgramsDatabase
 {
   public class FileItem
   {
+    #region Variables
     protected static SQLiteClient sqlDB = null;
 
     int mFileID;
@@ -65,7 +66,9 @@ namespace ProgramsDatabase
     bool mIsFolder;
     List<FileInfo> mFileInfoList = null;
     FileInfo mFileInfoFavourite = null;
+    #endregion
 
+    #region Constructors/Destructors
     public FileItem(SQLiteClient initSqlDB)
     {
 
@@ -73,53 +76,9 @@ namespace ProgramsDatabase
       sqlDB = initSqlDB;
       Clear();
     }
+    #endregion
 
-
-    public virtual void Clear()
-    {
-      mFileID =  - 1;
-      mAppID =  - 1;
-      mTitle = "";
-      mTitle2 = "";
-      mTitleOptimized = "";
-      mFilename = "";
-      mFilepath = "";
-      mImagefile = "";
-      mGenre = "";
-      mGenre2 = "";
-      mGenre3 = "";
-      mGenre4 = "";
-      mGenre5 = "";
-      mCountry = "";
-      mManufacturer = "";
-      mYear =  - 1;
-      mRating =  - 1;
-      mOverview = "";
-      mSystem = "";
-      mManualFilename = "";
-      mIsFolder = false;
-      mLastTimeLaunched = DateTime.MinValue;
-      mLaunchCount = 0;
-      mExtFileID =  - 1;
-      mTagData = "";
-      mCategoryData = "";
-    }
-
-    private string GetYearManu()
-    {
-      string result = "";
-      if (mYear <= 0)
-      {
-        result = mManufacturer;
-      }
-      else
-      {
-        result = mManufacturer + " [" + mYear + "]";
-      }
-      return (result.Trim());
-    }
-
-
+    #region Properties
     public int FileID
     {
       get
@@ -336,6 +295,51 @@ namespace ProgramsDatabase
         mSystem = value;
       }
     }
+    #endregion
+
+    public virtual void Clear()
+    {
+      mFileID = -1;
+      mAppID = -1;
+      mTitle = "";
+      mTitle2 = "";
+      mTitleOptimized = "";
+      mFilename = "";
+      mFilepath = "";
+      mImagefile = "";
+      mGenre = "";
+      mGenre2 = "";
+      mGenre3 = "";
+      mGenre4 = "";
+      mGenre5 = "";
+      mCountry = "";
+      mManufacturer = "";
+      mYear = -1;
+      mRating = -1;
+      mOverview = "";
+      mSystem = "";
+      mManualFilename = "";
+      mIsFolder = false;
+      mLastTimeLaunched = DateTime.MinValue;
+      mLaunchCount = 0;
+      mExtFileID = -1;
+      mTagData = "";
+      mCategoryData = "";
+    }
+
+    private string GetYearManu()
+    {
+      string result = "";
+      if (mYear <= 0)
+      {
+        result = mManufacturer;
+      }
+      else
+      {
+        result = mManufacturer + " [" + mYear + "]";
+      }
+      return (result.Trim());
+    }
 
     public string ManualFilename
     {
@@ -437,7 +441,6 @@ namespace ProgramsDatabase
       }
     }
 
-
     public FileInfo FileInfoFavourite
     {
       get
@@ -504,7 +507,6 @@ namespace ProgramsDatabase
 
     }
 
-
     public string ExtractDirectory(string curFilename)
     {
       string strRes = "";
@@ -541,8 +543,6 @@ namespace ProgramsDatabase
       }
       return strRes;
     }
-
-
 
     public string ExtractArguments()
     {
@@ -604,7 +604,6 @@ namespace ProgramsDatabase
         Log.Info("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
     }
-
 
     private void Update()
     {
@@ -670,7 +669,6 @@ namespace ProgramsDatabase
         }
       }
     }
-
 
     string GetTitleNormalized()
     {
@@ -742,12 +740,12 @@ namespace ProgramsDatabase
       return bSuccess;
     }
 
-
     public void SaveFromFileInfoFavourite()
     {
       if (this.FileInfoFavourite != null)
       {
-        // DON'T overwrite title! this.Title = FileInfoFavourite.Title;
+        // DON'T overwrite title!
+        this.Title = FileInfoFavourite.Title;
         this.Genre = FileInfoFavourite.Genre;
         this.Genre2 = FileInfoFavourite.Genre2;
         this.Genre3 = FileInfoFavourite.Genre3;
@@ -937,7 +935,5 @@ namespace ProgramsDatabase
       result = result.TrimEnd('\"');
       return result;
     }
-
   }
-
 }
