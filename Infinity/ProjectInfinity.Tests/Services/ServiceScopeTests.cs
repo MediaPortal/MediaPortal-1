@@ -1,4 +1,6 @@
 using NUnit.Framework;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Settings;
 using ProjectInfinity.Tests.Services.Mocks;
 
 namespace ProjectInfinity.Tests.Services
@@ -97,5 +99,17 @@ namespace ProjectInfinity.Tests.Services
       //IDummy is now again of type Service1
       Assert.IsInstanceOfType(typeof (Service1), ServiceScope.Get<IDummy>(), "service is not of the correct type");
     }
+
+    [Test]
+    public void TestDefaultServices()
+    {
+      ILogger log = ServiceScope.Get<ILogger>();
+      Assert.IsNotNull(log);
+      log.Debug("Test");
+      ISettingsManager mgr = ServiceScope.Get<ISettingsManager>();
+      Assert.IsNotNull(mgr);
+      mgr.Save("hello");
+    }
+
   }
 }

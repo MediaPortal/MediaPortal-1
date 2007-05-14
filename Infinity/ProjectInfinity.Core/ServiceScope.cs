@@ -1,5 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using ProjectInfinity.Localisation;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Settings;
 
 namespace ProjectInfinity
 {
@@ -65,17 +69,19 @@ namespace ProjectInfinity
     /// to be able to restore the previous ServiceScope when the <see cref="Dispose()"/>
     /// method is called, and to ask it for services that we do not contain ourselves.
     /// </summary>
-    private ServiceScope oldInstance;
+    private readonly ServiceScope oldInstance;
 
     /// <summary>
     /// Holds the list of services.
     /// </summary>
-    private Dictionary<Type, object> services;
+    private readonly Dictionary<Type, object> services;
 
     /// <summary>
     /// Keeps track whether the instance is already disposed
     /// </summary>
     private bool isDisposed = false;
+
+    private static bool isRunning= false;
 
     /// <summary>
     /// Gets or sets the current <see cref="ServiceScope"/>
@@ -87,20 +93,60 @@ namespace ProjectInfinity
         if (current == null)
         {
           current = new ServiceScope();
+          current.services.Add(typeof(ILogger), new ServiceCreatorCallback<ILogger>(LoggerRequested));
+          current.services.Add(typeof(ISettingsManager), new ServiceCreatorCallback<ISettingsManager>(SettingsManagerRequested));
+          current.services.Add(typeof(ILocalisation), new ServiceCreatorCallback<ILocalisation>(LocalisationRequested));
         }
         return current;
       }
       set { current = value; }
     }
 
-    /// <summary>
-    /// Creates a new <see cref="ServiceScope"/> instance and initialize it.
-    /// </summary>
-    public ServiceScope()
+    internal static bool IsRunning
+    {
+      get
+      {
+        return isRunning;
+      }
+    }
+
+
+
+    private static ILocalisation LocalisationRequested(ServiceScope scope)
+    {
+      ILocalisation loc = new NoLocalisation();
+      scope.ReplaceService<ILocalisation>(loc);
+      return loc;
+    }
+
+    private static ILogger LoggerRequested(ServiceScope scope)
+    {
+      ILogger logger = new NoLogger();
+      scope.ReplaceService<ILogger>(logger);
+      return logger;
+    }
+
+    private static ISettingsManager SettingsManagerRequested(ServiceScope scope)
+    {
+      ISettingsManager mgr = new NoSettingsManager();
+      scope.ReplaceService<ISettingsManager>(mgr);
+      return mgr;
+    }
+
+    public ServiceScope(bool isFirst)
     {
       oldInstance = current;
       services = new Dictionary<Type, object>();
       current = this;
+      if (isFirst)
+        isRunning = true;
+    }
+    
+    /// <summary>
+    /// Creates a new <see cref="ServiceScope"/> instance and initialize it.
+    /// </summary>
+    public ServiceScope() : this(false)
+    {
     }
 
     ~ServiceScope()
@@ -115,7 +161,7 @@ namespace ProjectInfinity
     /// <param name="service">The service implementation to add.</param>
     public static void Add<T>(T service)
     {
-      Current.AddService(service);
+      Current.AddService<T>(service);
     }
 
     public static void Replace<T>(T service)
@@ -161,7 +207,7 @@ namespace ProjectInfinity
 
     private void AddService<T>(T service)
     {
-      services.Add(typeof (T), service);
+      services[typeof (T)]= service;
     }
 
     private void RemoveService<T>()
@@ -183,6 +229,11 @@ namespace ProjectInfinity
       Type type = typeof (T);
       if (services.ContainsKey(type))
       {
+        ServiceCreatorCallback<T> callback = services[type] as ServiceCreatorCallback<T>;
+        if (callback!=null)
+        {
+          return callback(this);
+        }
         return (T) services[type];
       }
       if (oldInstance == null)

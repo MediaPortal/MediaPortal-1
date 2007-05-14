@@ -39,7 +39,9 @@
     <Compile Include="Core.cs" />
     <Compile Include="Files\FileDeleteMessage.cs" />
     <Compile Include="Localisation\ILocalisaton.cs" />
+    <Compile Include="Localisation\NoLocalisation.cs" />
     <Compile Include="Localisation\StringId.cs" />
+    <Compile Include="Logging\NoLogger.cs" />
     <Compile Include="Menu\ICommandItem.cs" />
     <Compile Include="Menu\IMenu.cs" />
     <Compile Include="Menu\IMenuItem.cs" />
@@ -62,7 +64,9 @@
     <Compile Include="PluginMessages.cs" />
     <Compile Include="Plugins\IAutoStart.cs" />
     <Compile Include="Plugins\IMenuCommand.cs" />
+    <Compile Include="ServiceCreatorCallback.cs" />
     <Compile Include="Settings\ISettingsManager.cs" />
+    <Compile Include="Settings\NoSettingsManager.cs" />
     <Compile Include="Settings\SettingAttribute.cs" />
     <Compile Include="Music\IMusicPlayer.cs" />
     <Compile Include="Music\MusicStartMessage.cs" />

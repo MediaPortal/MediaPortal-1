@@ -2,7 +2,7 @@ namespace ProjectInfinity.Pictures
 {
   public abstract class MediaItem
   {
-    private string _path;
+    private readonly string _path;
 
     public MediaItem(string path)
     {
@@ -12,7 +12,6 @@ namespace ProjectInfinity.Pictures
     public string Path
     {
       get { return _path; }
-      set { _path = value; }
     }
 
     public abstract string Name { get; }

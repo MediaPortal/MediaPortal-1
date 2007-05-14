@@ -25,6 +25,15 @@ namespace ProjectInfinity.Pictures
 
     public PictureViewModel()
     {
+      //if (Core.IsDesignMode)
+      //{
+      //  settings = new PictureSettings();
+      //  _model.Clear();
+      //  _model.Add(new Folder(@"c:\temp\Beach",5));
+      //  _model.Add(new );
+      //  Reload(new Folder(new DirectoryInfo(@"skin\default\gfx")),false);
+      //  return;
+      //}
       ISettingsManager settingMgr = ServiceScope.Get<ISettingsManager>();
       settings = new PictureSettings();
       settingMgr.Load(settings);
@@ -105,7 +114,7 @@ namespace ProjectInfinity.Pictures
 
     private void Reload(Folder dir, bool includeParent)
     {
-      DirectoryInfo directoryInfo = dir.Info;
+      DirectoryInfo directoryInfo = new DirectoryInfo(dir.Path);
       DirectoryInfo parentInfo = directoryInfo.Parent;
       FileSystemInfo[] entries = directoryInfo.GetFileSystemInfos();
       MediaFactory factory = new MediaFactory(settings);

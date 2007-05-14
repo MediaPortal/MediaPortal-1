@@ -109,6 +109,11 @@ namespace ProjectInfinity
       }
     }
 
+    public static bool IsDesignMode
+    {
+      get { return !ServiceScope.IsRunning; }
+    }
+
     #region Message Sending
 
     protected virtual void OnStartupComplete(StartupComplete e)
