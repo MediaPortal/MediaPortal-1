@@ -615,22 +615,22 @@ CREATE TABLE Timespan(
 GO
 
 
-CREATE TABLE PersoanlTVGuideMap(
+CREATE TABLE PersonalTVGuideMap(
 	idPersonalTVGuideMap int IDENTITY(1,1) NOT NULL,
 	idKeyword int NOT NULL,
 	idProgram int NOT NULL,
-	CONSTRAINT PK_PersoanlTVGuideMap PRIMARY KEY  
+	CONSTRAINT PK_PersonalTVGuideMap PRIMARY KEY  
 (
 	idPersonalTVGuideMap ASC
 )
 ) 
 GO
 
-ALTER TABLE PersoanlTVGuideMap  WITH CHECK ADD  CONSTRAINT FK_PersoanlTVGuideMap_Keyword FOREIGN KEY(idKeyword)
+ALTER TABLE PersonalTVGuideMap  WITH CHECK ADD  CONSTRAINT FK_PersonalTVGuideMap_Keyword FOREIGN KEY(idKeyword)
 REFERENCES Keyword (idKeyword)
 GO
 
-ALTER TABLE PersoanlTVGuideMap  WITH CHECK ADD  CONSTRAINT FK_PersoanlTVGuideMap_Progrm FOREIGN KEY(idProgram)
+ALTER TABLE PersonalTVGuideMap  WITH CHECK ADD  CONSTRAINT FK_PersonalTVGuideMap_Progrm FOREIGN KEY(idProgram)
 REFERENCES Program (idProgram)
 GO
 
@@ -657,5 +657,5 @@ GO
 delete from version
 GO
 
-insert into version(versionNumber) values(27)
+insert into version(versionNumber) values(28)
 GO

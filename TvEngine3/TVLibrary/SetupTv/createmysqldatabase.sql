@@ -414,6 +414,61 @@ CREATE TABLE `History`(
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 #
 
+--
+-- Definition of table `Keyword`
+--
+
+DROP TABLE IF EXISTS `Keyword`;
+CREATE TABLE `Keyword`(
+	`idKeyword` int NOT NULL auto_increment,
+  `keywordName` varchar(200) NOT NULL,  
+	`rating` int NOT NULL,
+	`autoRecord` bit(1) NOT NULL,
+	`searchIn` int NOT NULL,
+  PRIMARY KEY  (`idKeyword`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+#
+
+--
+-- Definition of table `Timespan`
+--
+
+DROP TABLE IF EXISTS `Timespan`;
+CREATE TABLE `Timespan`(
+	`idTimespan` int NOT NULL auto_increment,
+	`startTime` datetime NOT NULL,
+	`endTime` datetime NOT NULL, 
+	`dayOfWeek` int NOT NULL,
+  PRIMARY KEY  (`idTimespan`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+#
+
+--
+-- Definition of table `PersonalTVGuideMap`
+--
+
+DROP TABLE IF EXISTS `PersonalTVGuideMap`;
+CREATE TABLE `PersonalTVGuideMap`(
+	`idPersonalTVGuideMap` int NOT NULL auto_increment,
+	`idKeyword` int NOT NULL,
+  `idProgram` int NOT NULL,
+  PRIMARY KEY  (`idPersonalTVGuideMap`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+#
+
+--
+-- Definition of table `KeywordMap`
+--
+
+DROP TABLE IF EXISTS `KeywordMap`;
+CREATE TABLE `KeywordMap`(
+	`idKeywordMap` int NOT NULL auto_increment,
+	`idKeyword` int NOT NULL,
+  `idChannelGroup` int NOT NULL,
+  PRIMARY KEY  (`idKeywordMap`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+#
+
 
 --
 -- Definition of table `version`
@@ -431,7 +486,7 @@ CREATE TABLE `version` (
 --
 
 /*!40000 ALTER TABLE `version` DISABLE KEYS */;
-INSERT INTO `version` VALUES  (1,26);
+INSERT INTO `version` VALUES  (1,28);
 /*!40000 ALTER TABLE `version` ENABLE KEYS */;
 #
 

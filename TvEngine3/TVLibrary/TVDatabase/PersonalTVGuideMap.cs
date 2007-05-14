@@ -11,10 +11,10 @@ using Gentle.Framework;
 namespace TvDatabase
 {
 	/// <summary>
-	/// Instances of this class represent the properties and methods of a row in the table <b>PersoanlTVGuideMap</b>.
+	/// Instances of this class represent the properties and methods of a row in the table <b>PersonalTVGuideMap</b>.
 	/// Database used by PersonalTVGuide plugin
 	/// </summary>
-	[TableName("PersoanlTVGuideMap")]
+	[TableName("PersonalTVGuideMap")]
 	public class PersonalTVGuideMap : Persistent
 	{
 		#region Members
@@ -60,7 +60,7 @@ namespace TvDatabase
 		}
 
 		/// <summary>
-		/// Property relating to database column idPersoanlTVGuideMap
+		/// Property relating to database column idPersonalTVGuideMap
 		/// </summary>
 		public int IdPersonalTVGuideMap
 		{
@@ -106,7 +106,7 @@ namespace TvDatabase
 			{
 				return null;
 			}
-			Key key = new Key(typeof(PersonalTVGuideMap), true, "idPersoanlTVGuideMap", id);
+			Key key = new Key(typeof(PersonalTVGuideMap), true, "idPersonalTVGuideMap", id);
 			return Broker.RetrieveInstance(typeof(PersonalTVGuideMap), key) as PersonalTVGuideMap;
 		}
 
@@ -163,7 +163,7 @@ namespace TvDatabase
 
 		#region Relations
 		/// <summary>
-		/// Get a list of all PersoanlTVGuideMap referring to the current IdKeyword.
+		/// Get a list of all PersonalTVGuideMap referring to the current IdKeyword.
 		/// </summary>
 		public IList ReferencedKeyword()
 		{
