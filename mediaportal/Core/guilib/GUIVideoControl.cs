@@ -152,8 +152,8 @@ namespace MediaPortal.GUI.Library
 						//image.Height=_videoWindows[0].Height;
             if (GUIGraphicsContext.VideoWindow.Width < 1)
               thumbImage.Render(timePassed);
-            else
-              blackImage.Render(timePassed);
+            //else
+              //blackImage.Render(timePassed);  // causes flickering in fullscreen
 						//GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target|ClearFlags.Target, Color.FromArgb(255,1,1,1), 1.0f, 0,_videoWindows);
 					}
 				}
