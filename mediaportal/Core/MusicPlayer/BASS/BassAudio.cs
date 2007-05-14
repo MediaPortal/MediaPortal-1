@@ -760,7 +760,10 @@ namespace MediaPortal.Player
           BassAsio.BASS_ASIO_Free();
         }
         if (_mixer != 0)
+        {
           Bass.BASS_ChannelStop(_mixer);
+          _mixer = 0;
+        }
 
         Bass.BASS_Free();
         _BassFreed = true;
@@ -1452,7 +1455,9 @@ namespace MediaPortal.Player
             if (stream == 0)
               Log.Error("BASS: CD: {0}.", Enum.GetName(typeof(BASSErrorCode), Bass.BASS_ErrorGetCode()));
           }
-          else if (filePath.Contains(@"http://"))
+          else if (filePath.Contains(@"http://") || filePath.Contains(@"HTTP://") ||
+                   filePath.Contains(@"https://") || filePath.Contains(@"HTTPS://") ||
+                   filePath.StartsWith("mms") || filePath.StartsWith("MMS"))
           {
             // Create an Internet Stream
             stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, null, 0);

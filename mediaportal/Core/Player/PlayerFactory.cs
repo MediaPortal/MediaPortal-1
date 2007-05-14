@@ -155,6 +155,9 @@ namespace MediaPortal.Player
 
     public IPlayer Create(string fileName)
     {
+      string strAudioPlayer = String.Empty;
+      int streamPlayer = 0;
+
       // Free BASS to avoid problems with Digital Audio, when watching movies
       if (BassMusicPlayer.IsDefaultMusicPlayer)
       {
@@ -247,13 +250,13 @@ namespace MediaPortal.Player
         return newPlayer;
       }
 
-      
+
       if (MediaPortal.Util.Utils.IsCDDA(fileName))
       {
         // Check if, we should use BASS for CD Playback
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
+          strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
           bool useBass = xmlreader.GetValueAsBool("musicmisc", "playBackAudioCDwithBass", false);
           if (String.Compare(strAudioPlayer, "BASS engine", true) == 0 && useBass)
           {
@@ -266,55 +269,70 @@ namespace MediaPortal.Player
         newPlayer = new Player.AudioPlayerWMP9();
         return newPlayer;
       }
-      
+
+
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
+        streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
+
+      }
 
       if (MediaPortal.Util.Utils.IsAudio(fileName))
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        // choose player for Internet radio streams 
+        if (fileName.IndexOf(@"/last.mp3?") > 0)
         {
-          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
-          int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
-
-          // choose player for Internet radio streams 
-          if (fileName.IndexOf(@"/last.mp3?") > 0)
+          switch (streamPlayer)
           {
-            switch (streamPlayer)
-            {
-              case 0:
-                if (BassMusicPlayer.BassFreed)
-                  BassMusicPlayer.Player.InitBass();
-                return BassMusicPlayer.Player;
-              case 1:
-                return new Player.AudioPlayerWMP9();
-              case 2:
-                return new Player.AudioPlayerVMR7();
-              case 3:
-                return new RTSPPlayer();
-              default:
-                if (BassMusicPlayer.BassFreed)
-                  BassMusicPlayer.Player.InitBass();
-                return BassMusicPlayer.Player;
-            }
+            case 0:
+              if (BassMusicPlayer.BassFreed)
+                BassMusicPlayer.Player.InitBass();
+              return BassMusicPlayer.Player;
+            case 1:
+              return new Player.AudioPlayerWMP9();
+            case 2:
+              return new Player.AudioPlayerVMR7();
+            case 3:
+              return new RTSPPlayer();
+            default:
+              if (BassMusicPlayer.BassFreed)
+                BassMusicPlayer.Player.InitBass();
+              return BassMusicPlayer.Player;
           }
+        }
 
-          if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
-          {
-            if (BassMusicPlayer.BassFreed)
-              BassMusicPlayer.Player.InitBass();
+        if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
+        {
+          if (BassMusicPlayer.BassFreed)
+            BassMusicPlayer.Player.InitBass();
 
-            return BassMusicPlayer.Player;
-          }
+          return BassMusicPlayer.Player;
+        }
 
-          else if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
-          {
-            newPlayer = new Player.AudioPlayerWMP9();
-            return newPlayer;
-          }
-          newPlayer = new Player.AudioPlayerVMR7();
+        else if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
+        {
+          newPlayer = new Player.AudioPlayerWMP9();
           return newPlayer;
+        }
+        newPlayer = new Player.AudioPlayerVMR7();
+        return newPlayer;
+      }
+
+      // Is it a Webstream / Internet Radio
+      if (fileName.StartsWith("http") || fileName.StartsWith("HTTP") ||
+          fileName.StartsWith("mms") || fileName.StartsWith("MMS"))
+      {
+        if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
+        {
+          if (BassMusicPlayer.BassFreed)
+            BassMusicPlayer.Player.InitBass();
+
+          return BassMusicPlayer.Player;
         }
       }
 
+      // Use WMP Player as Default
       newPlayer = new Player.AudioPlayerWMP9();
       return newPlayer;
 
