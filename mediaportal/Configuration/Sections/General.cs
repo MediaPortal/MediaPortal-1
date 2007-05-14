@@ -112,10 +112,10 @@ namespace MediaPortal.Configuration.Sections
 	  new string[] { "general", "startbasichome", "false" },
       new string[] { "general", "turnmonitoronafterresume", "false" },
       new string[] { "general", "enables3trick","true" },
-      new string[] { "general", "autosize", "true" },
+      new string[] { "general", "autosize", "false" },
       // new string[] { "general", "userenderthread", "true" }
       //new string[] { "general", "allowfocus", "false" }
-      new string[] { "general","usevrm9forwebstreams","true" }
+      new string[] { "general","usevrm9forwebstreams","false" }
       };
 
     // PLEASE NOTE: when adding items, adjust the box so it doesn't get scrollbars

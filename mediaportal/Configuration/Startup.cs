@@ -90,6 +90,9 @@ namespace MediaPortal.Configuration
         Log.Info("{0} - {1}", options, Config.GetFolder((Config.Dir)Enum.Parse(typeof(Config.Dir), options)));
       }
 
+      // rtv: disabled Wizard due to frequent bug reports on serveral sections.
+      // please fix those before re-enabling.
+      //
       //if (!File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       //  startupMode = StartupMode.Wizard;
       //else
