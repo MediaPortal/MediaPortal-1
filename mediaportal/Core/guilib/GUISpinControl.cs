@@ -504,7 +504,8 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-        Focus = false;   // if not handeled before -> loose focus to go back to main list
+// causes issues with tvguide date control
+//        Focus = false;   // if not handeled before -> loose focus to go back to main list
       }
       if (Focus)
       {
