@@ -41,6 +41,7 @@ namespace ProgramsDatabase
     int mFileID;
     int mAppID;
     string mTitle;
+    string mGameURL;
     string mTitle2;
     string mTitleOptimized;
     string mFilename;
@@ -110,6 +111,17 @@ namespace ProgramsDatabase
       set
       {
         mTitle = value;
+      }
+    }
+    public string GameURL
+    {
+      get
+      {
+        return mGameURL;
+      }
+      set
+      {
+        mGameURL = value;
       }
     }
     public string Title2
@@ -302,6 +314,7 @@ namespace ProgramsDatabase
       mFileID = -1;
       mAppID = -1;
       mTitle = "";
+      mGameURL = "";
       mTitle2 = "";
       mTitleOptimized = "";
       mFilename = "";
@@ -595,7 +608,23 @@ namespace ProgramsDatabase
       try
       {
         string strSQL = String.Format(
-          "insert into tblfile (fileid, appid, title, filename, filepath, imagefile, genre, genre2, genre3, genre4, genre5, country, manufacturer, year, rating, overview, system, manualfilename, lastTimeLaunched, launchcount, isfolder, external_id, uppertitle, tagdata, categorydata) values (null, '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}', '{22}', '{23}')", AppID, ProgramUtils.Encode(Title), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Filepath), ProgramUtils.Encode(Imagefile), ProgramUtils.Encode(Genre), ProgramUtils.Encode(Genre2), ProgramUtils.Encode(Genre3), ProgramUtils.Encode(Genre4), ProgramUtils.Encode(Genre5), Country, ProgramUtils.Encode(Manufacturer), strYear, Rating, ProgramUtils.Encode(Overview), ProgramUtils.Encode(System_), ProgramUtils.Encode(ManualFilename), strLastLaunch, strLaunchCount, ProgramUtils.BooleanToStr(IsFolder), ExtFileID, ProgramUtils.Encode(Title.ToUpper()), ProgramUtils.Encode(TagData), ProgramUtils.Encode(CategoryData));
+          "insert into tblfile (fileid, " +
+          "appid, title, filename, filepath, gameurl, " +
+          "imagefile, genre, genre2, genre3, genre4, " +
+          "genre5, country, manufacturer, year, rating, " +
+          "overview, system, manualfilename, lastTimeLaunched, launchcount, " +
+          "isfolder, external_id, uppertitle, tagdata, categorydata" +
+          ") values (null, " +
+          " '{0}',  '{1}',  '{2}',  '{3}',  '{4}', " +
+          " '{5}',  '{6}',  '{7}',  '{8}',  '{9}', " +
+          "'{10}', '{11}', '{12}', '{13}', '{14}', " +
+          "'{15}', '{16}', '{17}', '{18}', '{19}', " +
+          "'{20}', '{21}', '{22}', '{23}', '{24}')",
+          AppID, ProgramUtils.Encode(Title), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Filepath), ProgramUtils.Encode(GameURL),
+          ProgramUtils.Encode(Imagefile), ProgramUtils.Encode(Genre), ProgramUtils.Encode(Genre2), ProgramUtils.Encode(Genre3), ProgramUtils.Encode(Genre4),
+          ProgramUtils.Encode(Genre5), Country, ProgramUtils.Encode(Manufacturer), strYear, Rating,
+          ProgramUtils.Encode(Overview), ProgramUtils.Encode(System_), ProgramUtils.Encode(ManualFilename), strLastLaunch, strLaunchCount,
+          ProgramUtils.BooleanToStr(IsFolder), ExtFileID, ProgramUtils.Encode(Title.ToUpper()), ProgramUtils.Encode(TagData), ProgramUtils.Encode(CategoryData));
         // Log.Info("dw sql\n{0}", strSQL);
         sqlDB.Execute(strSQL);
       }
@@ -616,7 +645,28 @@ namespace ProgramsDatabase
       try
       {
         string strSQL = String.Format(
-          "update tblfile set title = '{1}', filename = '{2}', filepath = '{3}', imagefile = '{4}', genre = '{5}', genre2 = '{6}', genre3 = '{7}', genre4 = '{8}', genre5 = '{9}', country = '{10}', manufacturer = '{11}', year = '{12}', rating = '{13}', overview = '{14}', system = '{15}', uppertitle = '{16}', tagdata = '{17}', categorydata = '{18}' where  fileid = {0}", FileID, ProgramUtils.Encode(Title), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Filepath), ProgramUtils.Encode(Imagefile), ProgramUtils.Encode(Genre), ProgramUtils.Encode(Genre2), ProgramUtils.Encode(Genre3), ProgramUtils.Encode(Genre4), ProgramUtils.Encode(Genre5), ProgramUtils.Encode(Country), ProgramUtils.Encode(Manufacturer), strYear, Rating, ProgramUtils.Encode(Overview), ProgramUtils.Encode(System_), ProgramUtils.Encode(Title.ToUpper()), ProgramUtils.Encode(TagData), ProgramUtils.Encode(CategoryData));
+          "update tblfile set " +
+          "title = '" + ProgramUtils.Encode(Title) +
+          "', filename = '" + ProgramUtils.Encode(Filename) +
+          "', filepath = '" + ProgramUtils.Encode(Filepath) +
+          "', gameurl = '" + ProgramUtils.Encode(GameURL) +
+          "', imagefile = '" + ProgramUtils.Encode(Imagefile) +
+          "', genre = '" + ProgramUtils.Encode(Genre) +
+          "', genre2 = '" + ProgramUtils.Encode(Genre2) +
+          "', genre3 = '" + ProgramUtils.Encode(Genre3) +
+          "', genre4 = '" + ProgramUtils.Encode(Genre4) +
+          "', genre5 = '" + ProgramUtils.Encode(Genre5) +
+          "', country = '" + ProgramUtils.Encode(Country) +
+          "', manufacturer = '" + ProgramUtils.Encode(Manufacturer) +
+          "', year = '" + strYear +
+          "', rating = '" + Rating +
+          "', overview = '" + ProgramUtils.Encode(Overview) +
+          "', system = '" + ProgramUtils.Encode(System_) +
+          "', uppertitle = '" + ProgramUtils.Encode(Title.ToUpper()) +
+          "', tagdata = '" + ProgramUtils.Encode(TagData) +
+          "', categorydata = '" + ProgramUtils.Encode(CategoryData)) +
+          "' where  fileid = " + FileID;
+
         sqlDB.Execute(strSQL);
       }
       catch (SQLiteException ex)
@@ -742,21 +792,20 @@ namespace ProgramsDatabase
 
     public void ToFileInfoFavourite()
     {
-      FileInfo info = new FileInfo();
+      FileInfoFavourite = new FileInfo();
 
-      info.Title = this.Title;
-      info.Genre = this.Genre;
-      info.Genre2 = this.Genre2;
-      info.Genre3 = this.Genre3;
-      info.Genre4 = this.Genre4;
-      info.Genre5 = this.Genre5;
-      info.Manufacturer = this.Manufacturer;
-      info.Year = this.Year.ToString();
-      info.Overview = this.Overview;
-      info.RatingNorm = this.Rating;
-      info.Platform = this.System_;
-
-      FileInfoFavourite = info;
+      FileInfoFavourite.Title = this.Title;
+      FileInfoFavourite.GameURL = this.mGameURL;
+      FileInfoFavourite.Genre = this.Genre;
+      FileInfoFavourite.Genre2 = this.Genre2;
+      FileInfoFavourite.Genre3 = this.Genre3;
+      FileInfoFavourite.Genre4 = this.Genre4;
+      FileInfoFavourite.Genre5 = this.Genre5;
+      FileInfoFavourite.Manufacturer = this.Manufacturer;
+      FileInfoFavourite.Year = this.Year.ToString();
+      FileInfoFavourite.Overview = this.Overview;
+      FileInfoFavourite.RatingNorm = this.Rating;
+      FileInfoFavourite.Platform = this.System_;
     }
 
     public void SaveFromFileInfoFavourite()
@@ -766,8 +815,10 @@ namespace ProgramsDatabase
 
       if (this.FileInfoFavourite.Loaded == false)
         return;
-        
+
+      // DON'T overwrite title!
       this.Title = FileInfoFavourite.Title;
+      this.mGameURL = FileInfoFavourite.GameURL;
       this.Genre = FileInfoFavourite.Genre;
       this.Genre2 = FileInfoFavourite.Genre2;
       this.Genre3 = FileInfoFavourite.Genre3;

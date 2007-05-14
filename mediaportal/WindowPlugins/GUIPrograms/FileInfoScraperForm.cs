@@ -651,6 +651,7 @@ namespace WindowPlugins.GUIPrograms
         foreach (FileItem file in m_CurApp.Files)
         {
           ListViewItem curItem = new ListViewItem(file.Title);
+          file.ToFileInfoFavourite();
           curItem.Tag = file;
           if (!file.IsFolder)
           {
@@ -732,8 +733,6 @@ namespace WindowPlugins.GUIPrograms
         if (file == null)
           continue;
 
-        file.ToFileInfoFavourite();
-
         if (file.FileInfoList != null)
           if (file.FileInfoList.Count > 0)
             continue;
@@ -764,6 +763,15 @@ namespace WindowPlugins.GUIPrograms
         curItem.Font = new Font(curItem.Font, curItem.Font.Style | FontStyle.Bold);
         System.Windows.Forms.Application.DoEvents();
         bSuccess = file.FindFileInfo(myProgScraperType.ALLGAME);
+        foreach (FileInfo info in file.FileInfoList)
+        {
+          if (file.GameURL == info.GameURL)
+          {
+            file.FileInfoFavourite = info;
+            break;
+          }
+        }
+
         curItem.SubItems[1].Text = String.Format("{0} matches", file.FileInfoList.Count);
         StepProgressBar();
         buttonSelectBestMatch.Enabled = true;
@@ -1022,20 +1030,19 @@ namespace WindowPlugins.GUIPrograms
           if (file.FileInfoFavourite == null)
           {
             file.FileInfoFavourite = info;
+            continue;
           }
-          else
-          {
-            if (info.GameURL == file.FileInfoFavourite.GameURL)
-            {
-              file.FileInfoFavourite = info;
-              break;
-            }
 
-            // file has already a favourite
-            // is info's relevance better than current favourite's relevance
-            if (info.RelevanceNorm > file.FileInfoFavourite.RelevanceNorm)
-              file.FileInfoFavourite = info;
+          if (file.FileInfoFavourite.GameURL == info.GameURL)
+          {
+            file.FileInfoFavourite = info;
+            break;
           }
+          
+          // file has already a favourite
+          // is info's relevance better than current favourite's relevance
+          if (info.RelevanceNorm > file.FileInfoFavourite.RelevanceNorm)
+            file.FileInfoFavourite = info;
 
           btnSaveSearch.Enabled = true;
         }

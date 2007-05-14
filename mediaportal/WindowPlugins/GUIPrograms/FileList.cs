@@ -77,6 +77,7 @@ namespace ProgramsDatabase
       newFile.Title = ProgramUtils.Get(results, iRecord, "title");
       newFile.Filename = ProgramUtils.Get(results, iRecord, "filename");
       newFile.Filepath = ProgramUtils.Get(results, iRecord, "filepath");
+      newFile.GameURL = ProgramUtils.Get(results, iRecord, "gameurl");
       newFile.Imagefile = ProgramUtils.Get(results, iRecord, "imagefile");
       newFile.Genre = ProgramUtils.Get(results, iRecord, "genre");
       newFile.Genre2 = ProgramUtils.Get(results, iRecord, "genre2");
@@ -176,6 +177,7 @@ namespace ProgramsDatabase
           else
           {
             FileItem curFile = DBGetFileItem(results, curRow);
+            curFile.ToFileInfoFavourite();
             Add(curFile);
           }
         }

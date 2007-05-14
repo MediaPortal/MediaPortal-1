@@ -319,6 +319,7 @@ namespace WindowPlugins.GUIPrograms
     string GetField(string where)
     {
       if (where == "title") return "title";
+      if (where == "gameurl") return "gameurl";
       if (where == "genre") return "genre";
       if (where == "genre2") return "genre2";
       if (where == "genre3") return "genre3";
@@ -336,6 +337,7 @@ namespace WindowPlugins.GUIPrograms
     string GetFieldId(string where)
     {
       if (where == "title") return "title";
+      if (where == "gameurl") return "gameurl";
       if (where == "genre") return "genre";
       if (where == "genre2") return "genre2";
       if (where == "genre3") return "genre3";
@@ -356,6 +358,7 @@ namespace WindowPlugins.GUIPrograms
       // maps WHERE-fieldname to a SQL-fieldname
       // and the MAY be different in the future.....
       if (where == "title") return "title";
+      if (where == "gameurl") return "gameurl";
       if (where == "genre") return "genre";
       if (where == "genre2") return "genre2";
       if (where == "genre3") return "genre3";
@@ -417,6 +420,7 @@ namespace WindowPlugins.GUIPrograms
     string GetFieldTypeForSelect(string where)
     {
       if (where == "title") return "'STR' as fieldtype"; // watch quotes... these are SQL-strings!
+      else if (where == "gameurl") return "'STR' as fieldtype";
       else if (where == "genre") return "'STR' as fieldtype";
       else if (where == "genre2") return "'STR' as fieldtype";
       else if (where == "genre3") return "'STR' as fieldtype";
@@ -442,6 +446,7 @@ namespace WindowPlugins.GUIPrograms
     bool GetDistinct(string where)
     {
       if (where == "title") return false;
+      else if (where == "gameurl") return true;
       else if (where == "genre") return true;
       else if (where == "genre2") return true;
       else if (where == "genre3") return true;
