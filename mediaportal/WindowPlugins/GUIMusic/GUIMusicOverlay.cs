@@ -278,7 +278,7 @@ namespace MediaPortal.GUI.Music
             if (!dummyRect.Equals(GUIGraphicsContext.VideoWindow))
               GUIGraphicsContext.VideoWindow = dummyRect;
 
-            //_videoWindow.SetVideoWindow = false;  // avoid flickering if visualization is turned off
+            if (_videoWindow != null) _videoWindow.SetVideoWindow = false;  // avoid flickering if visualization is turned off
           }
       }
       base.Render(timePassed);
