@@ -181,8 +181,8 @@
         <height>470</height>
         <onleft>2</onleft>
         <onright>11</onright>
-        <onup>2</onup>
-        <ondown>2</ondown>
+<!--         <onup>2</onup>
+        <ondown>2</ondown> -->
         <font>font14</font>        
         <font2>font12</font2>
         <font3>font12</font3>

@@ -180,8 +180,8 @@
         <width>550</width>
         <onleft>2</onleft>
         <onright>11</onright>
-        <onup>2</onup>
-        <ondown>2</ondown>
+<!--         <onup>2</onup>
+        <ondown>2</ondown> -->
         <font>font12</font>
         <font2>font10</font2>
         <font3>font10</font3>

@@ -152,8 +152,8 @@
         <height>493</height>
         <onleft>3</onleft>
         <onright>11</onright>
-        <onup>3</onup>
-        <ondown>3</ondown>
+<!--         <onup>3</onup>
+        <ondown>3</ondown> -->
         <!-- 				<textcolor>ffffffff</textcolor>
 				<downloadColor>ff80ff80</downloadColor>
 				<remoteColor>ffFFA075</remoteColor>  -->
