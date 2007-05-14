@@ -47,6 +47,7 @@ namespace MediaPortal.Configuration
       Normal,
       Wizard
     }
+
     StartupMode startupMode = StartupMode.Normal;
 
     string sectionsConfiguration = String.Empty;
@@ -88,10 +89,11 @@ namespace MediaPortal.Configuration
       {
         Log.Info("{0} - {1}", options, Config.GetFolder((Config.Dir)Enum.Parse(typeof(Config.Dir), options)));
       }
-      if (!File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
-        startupMode = StartupMode.Wizard;
 
-      else if (arguments != null)
+      //if (!File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      //  startupMode = StartupMode.Wizard;
+      //else
+      if (arguments != null)
       {
         foreach (string argument in arguments)
         {
@@ -99,7 +101,8 @@ namespace MediaPortal.Configuration
 
           if (trimmedArgument.StartsWith("/wizard"))
           {
-            startupMode = StartupMode.Wizard;
+            //startupMode = StartupMode.Wizard;
+            Log.Debug("Startup: Argument did request Wizard mode - {0}", trimmedArgument);
           }
 
           if (trimmedArgument.StartsWith("/section"))
