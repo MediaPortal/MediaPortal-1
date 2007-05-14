@@ -1663,5 +1663,8 @@
     <String id="200040">Fjern stegvis</String>
     <String id="200041">Tuner informasjon</String>
     <String id="200042">Sammenkoblede signaler</String>
+    <String id="200043">Rensk opp i TV-opptak</String>
+    <String id="200044">Ugykdige TV-opptak</String>
+    <String id="200045">Begge</String>
   </Section>
 </Language>
