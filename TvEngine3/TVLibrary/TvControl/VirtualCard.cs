@@ -965,6 +965,66 @@ namespace TvControl
       }
       return -1;
     }
+    
+    /// <summary>
+    /// Gets the teletext pagenumber for the red button
+    /// </summary>
+    /// <returns>Teletext pagenumber for the red button</returns>
+    public int GetTeletextRedPageNumber() {
+      try {
+        if (User.CardId < 0) return -1;
+          RemoteControl.HostName = _server;
+          return RemoteControl.Instance.GetTeletextRedPageNumber(User);
+      } catch (Exception ex) {
+        HandleFailure(ex);
+      }
+      return -1;
+    }
+
+    /// <summary>
+    /// Gets the teletext pagenumber for the green button
+    /// </summary>
+    /// <returns>Teletext pagenumber for the green button</returns>
+    public int GetTeletextGreenPageNumber() {
+      try {
+        if (User.CardId < 0) return -1;
+          RemoteControl.HostName = _server;
+        return RemoteControl.Instance.GetTeletextGreenPageNumber(User);
+      } catch (Exception ex) {
+        HandleFailure(ex);
+      }
+      return -1;
+    }
+
+    /// <summary>
+    /// Gets the teletext pagenumber for the yellow button
+    /// </summary>
+    /// <returns>Teletext pagenumber for the yellow button</returns>
+    public int GetTeletextYellowPageNumber() {
+      try {
+        if (User.CardId < 0) return -1;
+          RemoteControl.HostName = _server;
+        return RemoteControl.Instance.GetTeletextYellowPageNumber(User);
+      } catch (Exception ex) {
+        HandleFailure(ex);
+      }
+      return -1;
+    }
+
+    /// <summary>
+    /// Gets the teletext pagenumber for the blue button
+    /// </summary>
+    /// <returns>Teletext pagenumber for the blue button</returns>
+    public int GetTeletextBluePageNumber() {
+      try {
+        if (User.CardId < 0) return -1;
+          RemoteControl.HostName = _server;
+        return RemoteControl.Instance.GetTeletextBluePageNumber(User);
+      } catch (Exception ex) {
+        HandleFailure(ex);
+      }
+      return -1;
+    }
 
     /// <summary>f
     /// Returns the rotation time for a specific teletext page

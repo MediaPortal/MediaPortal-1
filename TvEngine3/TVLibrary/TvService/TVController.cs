@@ -971,6 +971,46 @@ namespace TvService
     }
 
     /// <summary>
+    /// Gets the teletext pagenumber for the red button
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>Teletext pagenumber for the red button</returns>
+    public int GetTeletextRedPageNumber(User user){
+        if (user.CardId < 0) return -1;
+        return _cards[user.CardId].GetTeletextRedPageNumber(user);
+    }
+
+    /// <summary>
+    /// Gets the teletext pagenumber for the green button
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>Teletext pagenumber for the green button</returns>
+    public int GetTeletextGreenPageNumber(User user){
+        if (user.CardId < 0) return -1;
+        return _cards[user.CardId].GetTeletextGreenPageNumber(user);
+    }
+
+    /// <summary>
+    /// Gets the teletext pagenumber for the yellow button
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>Teletext pagenumber for the yellow button</returns>
+    public int GetTeletextYellowPageNumber(User user){
+        if (user.CardId < 0) return -1;
+        return _cards[user.CardId].GetTeletextYellowPageNumber(user);
+    }
+
+    /// <summary>
+    /// Gets the teletext pagenumber for the blue button
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>Teletext pagenumber for the blue button</returns>
+    public int GetTeletextBluePageNumber(User user){
+        if (user.CardId < 0) return -1;
+        return _cards[user.CardId].GetTeletextBluePageNumber(user);
+    }
+
+    /// <summary>
     /// Start timeshifting.
     /// </summary>
     /// <param name="user"></param>

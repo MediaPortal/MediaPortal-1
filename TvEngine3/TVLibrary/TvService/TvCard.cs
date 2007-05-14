@@ -1606,6 +1606,126 @@ namespace TvService
     }
 
     /// <summary>
+    /// Gets the teletext pagenumber for the red button
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>Teletext pagenumber for the red button</returns>
+    public int GetTeletextRedPageNumber(User user) {
+        try {
+            if (_dbsCard.Enabled == false) return -1;
+            if (IsLocal == false) {
+                try {
+                    RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
+                    return RemoteControl.Instance.GetTeletextRedPageNumber(user);
+                } catch (Exception) {
+                    Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+                    return -1;
+                }
+            }
+            TvCardContext context = _card.Context as TvCardContext;
+            if (context == null) return -1;
+            context.GetUser(ref user);
+            ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
+            if (subchannel == null) return -1;
+            if (subchannel.TeletextDecoder == null) return -1;
+            return subchannel.TeletextDecoder.PageRed;
+        } catch (Exception ex) {
+            Log.Write(ex);
+            return -1;
+        }
+    }
+
+    /// <summary>
+    /// Gets the teletext pagenumber for the green button
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>Teletext pagenumber for the green button</returns>
+    public int GetTeletextGreenPageNumber(User user) {
+        try {
+            if (_dbsCard.Enabled == false) return -1;
+            if (IsLocal == false) {
+                try {
+                    RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
+                    return RemoteControl.Instance.GetTeletextGreenPageNumber(user);
+                } catch (Exception) {
+                    Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+                    return -1;
+                }
+            }
+            TvCardContext context = _card.Context as TvCardContext;
+            if (context == null) return -1;
+            context.GetUser(ref user);
+            ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
+            if (subchannel == null) return -1;
+            if (subchannel.TeletextDecoder == null) return -1;
+            return subchannel.TeletextDecoder.PageGreen;
+        } catch (Exception ex) {
+            Log.Write(ex);
+            return -1;
+        }
+    }
+
+    /// <summary>
+    /// Gets the teletext pagenumber for the yellow button
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>Teletext pagenumber for the yellow button</returns>
+    public int GetTeletextYellowPageNumber(User user) {
+        try {
+            if (_dbsCard.Enabled == false) return -1;
+            if (IsLocal == false) {
+                try {
+                    RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
+                    return RemoteControl.Instance.GetTeletextYellowPageNumber(user);
+                } catch (Exception) {
+                    Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+                    return -1;
+                }
+            }
+            TvCardContext context = _card.Context as TvCardContext;
+            if (context == null) return -1;
+            context.GetUser(ref user);
+            ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
+            if (subchannel == null) return -1;
+            if (subchannel.TeletextDecoder == null) return -1;
+            return subchannel.TeletextDecoder.PageYellow;
+        } catch (Exception ex) {
+            Log.Write(ex);
+            return -1;
+        }
+    }
+
+    /// <summary>
+    /// Gets the teletext pagenumber for the blue button
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>Teletext pagenumber for the blue button</returns>
+    public int GetTeletextBluePageNumber(User user) {
+        try {
+            if (_dbsCard.Enabled == false) return -1;
+            if (IsLocal == false) {
+                try {
+                    RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
+                    return RemoteControl.Instance.GetTeletextBluePageNumber(user);
+                } catch (Exception) {
+                    Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+                    return -1;
+                }
+            }
+            TvCardContext context = _card.Context as TvCardContext;
+            if (context == null) return -1;
+            context.GetUser(ref user);
+            ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
+            if (subchannel == null) return -1;
+            if (subchannel.TeletextDecoder == null) return -1;
+            return subchannel.TeletextDecoder.PageBlue;
+        } catch (Exception ex) {
+            Log.Write(ex);
+            return -1;
+        }
+    }
+
+    /// <summary>
     /// Start timeshifting.
     /// </summary>
     /// <param name="cardId">id of the card.</param>
@@ -1652,6 +1772,7 @@ namespace TvService
 
             return TvResult.ChannelIsScrambled;
           }
+
           bool result = subchannel.StartTimeShifting(fileName);
           if (result == false)
           {
@@ -1659,6 +1780,7 @@ namespace TvService
             return TvResult.UnableToStartGraph;
           }
           fileName += ".tsbuffer";
+          
           if (!WaitForTimeShiftFile(ref user, fileName))
           {
             if (IsScrambled(ref user))
@@ -1670,8 +1792,10 @@ namespace TvService
             return TvResult.NoVideoAudioDetected;
           }
           context.OnZap(user);
+          
           if (_linkageScannerEnabled)
             _card.StartLinkageScanner(_linkageGrabber);
+            
           return TvResult.Succeeded;
         }
       }

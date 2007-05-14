@@ -278,24 +278,21 @@ namespace TvPlugin
         chKey == 'H' || chKey == 'J' || chKey == 'K' || chKey == 'L')
       {
 
-        TvLibrary.Teletext.FastTextDecoder decoder = new TvLibrary.Teletext.FastTextDecoder();
-        byte[] page = TVHome.Card.GetTeletextPage(currentPageNumber, currentSubPageNumber);
-        decoder.Decode(page);
         int hexPage = 0;
         string topButton = new string(chKey, 1);
         switch (topButton.ToLower())
         {
           case "h":
-            hexPage = decoder.Red;
+            hexPage = TVHome.Card.GetTeletextRedPageNumber();
             break;
           case "j":
-            hexPage = decoder.Green;
+            hexPage = TVHome.Card.GetTeletextGreenPageNumber();
             break;
           case "k":
-            hexPage = decoder.Yellow;
+            hexPage = TVHome.Card.GetTeletextYellowPageNumber();
             break;
           case "l":
-            hexPage = decoder.Blue;
+            hexPage = TVHome.Card.GetTeletextBluePageNumber();
             break;
         }
 

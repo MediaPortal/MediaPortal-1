@@ -541,6 +541,34 @@ namespace TvControl
     int SubPageCount(User user, int pageNumber);
 
     /// <summary>
+    /// Gets the teletext pagenumber for the red button
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>Teletext pagenumber for the red button</returns>
+    int GetTeletextRedPageNumber(User user);
+
+    /// <summary>
+    /// Gets the teletext pagenumber for the green button
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>Teletext pagenumber for the green button</returns>
+    int GetTeletextGreenPageNumber(User user);
+
+    /// <summary>
+    /// Gets the teletext pagenumber for the yellow button
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>Teletext pagenumber for the yellow button</returns>
+    int GetTeletextYellowPageNumber(User user);
+
+    /// <summary>
+    /// Gets the teletext pagenumber for the blue button
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <returns>Teletext pagenumber for the blue button</returns>
+    int GetTeletextBluePageNumber(User user);
+
+    /// <summary>
     /// returns the date/time when timeshifting has been started for the card specified
     /// </summary>
     /// <param name="user">The user.</param>
