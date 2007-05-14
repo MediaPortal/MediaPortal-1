@@ -1998,6 +1998,30 @@ namespace MediaPortal.Player
 
       int level = Bass.BASS_ChannelGetLevel(stream);
       Bass.BASS_ChannelSlideAttributes(stream, -1, -2, -101, _CrossFadeIntervalMS);
+
+      // When a Channel added to the Mixer is stopped by the above slide command, the end sync proc is not invoked.
+      // This causes the song to continue with Volume 0 to be played until it ends, hich causes the next song to be interupted as well
+      if (_Mixing)
+      {
+        System.Threading.ThreadPool.QueueUserWorkItem(new System.Threading.WaitCallback(CheckForFadeOutEnded), stream);
+      }
+    }
+
+    /// <summary>
+    /// Checks, if the channel slided to Volume 0.
+    /// Then the stream should be freed and the syncprocs unregistered.
+    /// </summary>
+    /// <param name="fadeoutstream"></param>
+    private void CheckForFadeOutEnded(object fadeoutstream)
+    {
+      int stream = (int)fadeoutstream;
+      // Wait until the slide is done
+      while ((Bass.BASS_ChannelIsSliding(stream) & (int)BASSSlide.BASS_SLIDE_VOL) != 0)
+        System.Threading.Thread.Sleep(20);
+
+      // Let the EndProc first do it's job
+      System.Threading.Thread.Sleep(1500);
+      FreeStream(stream);
     }
 
     /// <summary>
