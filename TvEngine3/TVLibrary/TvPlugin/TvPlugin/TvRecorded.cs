@@ -855,6 +855,7 @@ namespace TvPlugin
     {
       m_iSelectedItem = GetSelectedItemNo();
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      dlg.Reset();
       dlg.SetHeading(GUILocalizeStrings.Get(200043));//Cleanup recordings?
 
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(676))); // Only watched recordings?
