@@ -623,34 +623,31 @@ namespace MediaPortal.Player
           }
         case Action.ActionType.ACTION_TOGGLE_MUSIC_GAP:
           {
-            if (!_useASIO)
+            _playBackType++;
+            if (_playBackType > 2)
+              _playBackType = 0;
+
+            VizWindow.SelectedPlaybackType = _playBackType;
+
+            string type = "";
+            switch (_playBackType)
             {
-              _playBackType++;
-              if (_playBackType > 2)
-                _playBackType = 0;
+              case (int)PlayBackType.NORMAL:
+                _CrossFadeIntervalMS = 0;
+                type = "Normal";
+                break;
 
-              VizWindow.SelectedPlaybackType = _playBackType;
+              case (int)PlayBackType.GAPLESS:
+                _CrossFadeIntervalMS = 200;
+                type = "Gapless";
+                break;
 
-              string type = "";
-              switch (_playBackType)
-              {
-                case (int)PlayBackType.NORMAL:
-                  _CrossFadeIntervalMS = 0;
-                  type = "Normal";
-                  break;
-
-                case (int)PlayBackType.GAPLESS:
-                  _CrossFadeIntervalMS = 200;
-                  type = "Gapless";
-                  break;
-
-                case (int)PlayBackType.CROSSFADE:
-                  _CrossFadeIntervalMS = _DefaultCrossFadeIntervalMS;
-                  type = "Crossfading";
-                  break;
-              }
-              Log.Info("BASS: Playback changed to {0}", type);
+              case (int)PlayBackType.CROSSFADE:
+                _CrossFadeIntervalMS = _DefaultCrossFadeIntervalMS;
+                type = "Crossfading";
+                break;
             }
+            Log.Info("BASS: Playback changed to {0}", type);
             break;
           }
       }
@@ -715,7 +712,7 @@ namespace MediaPortal.Player
 
         BassRegistration.BassRegistration.Register();
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_GVOL_STREAM, _StreamVolume);
-        if (_Mixing)
+        if (_Mixing || _useASIO)
           // In case of mixing use a Buffer of 500ms only, because the Mixer plays the complete bufer, before for example skipping
           BufferingMS = 500;
         else
@@ -829,6 +826,13 @@ namespace MediaPortal.Player
           if (_Mixing && _mixer == 0)
           {
             _mixer = BassMix.BASS_Mixer_StreamCreate(44100, 8, BASSStream.BASS_MIXER_NONSTOP | BASSStream.BASS_STREAM_AUTOFREE);
+          }
+          else if (_useASIO && _mixer == 0)
+          {
+            // For ASIO we neeed an Decoding Mixer with the number of Channels equals the ASIO Channels
+            _mixer = BassMix.BASS_Mixer_StreamCreate(44100, _asioNumberChannels, BASSStream.BASS_MIXER_NONSTOP | BASSStream.BASS_STREAM_AUTOFREE | BASSStream.BASS_STREAM_DECODE);
+            // assign ASIO and assume the ASIO format, samplerate and number of channels from the BASS stream
+            _asioHandler = new BassAsioHandler(0, 0, _mixer);
           }
 
           Log.Info("BASS: Initialization done.");
@@ -965,28 +969,20 @@ namespace MediaPortal.Player
 
         bool doGaplessPlayback = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
 
-        if (_useASIO)
+        if (doGaplessPlayback)
         {
-          _playBackType = (int)PlayBackType.NORMAL;
-          _CrossFadeIntervalMS = 0;
+          _CrossFadeIntervalMS = 200;
+          _playBackType = (int)PlayBackType.GAPLESS;
         }
         else
         {
-          if (doGaplessPlayback)
+          if (_CrossFadeIntervalMS == 0)
           {
-            _CrossFadeIntervalMS = 200;
-            _playBackType = (int)PlayBackType.GAPLESS;
+            _playBackType = (int)PlayBackType.NORMAL;
+            _CrossFadeIntervalMS = 0;
           }
           else
-          {
-            if (_CrossFadeIntervalMS == 0)
-            {
-              _playBackType = (int)PlayBackType.NORMAL;
-              _CrossFadeIntervalMS = 0;
-            }
-            else
-              _playBackType = (int)PlayBackType.CROSSFADE;
-          }
+            _playBackType = (int)PlayBackType.CROSSFADE;
         }
       }
     }
@@ -1379,9 +1375,6 @@ namespace MediaPortal.Player
 
             result = Bass.BASS_Start();
 
-            if (_useASIO)
-              result = BassAsio.BASS_ASIO_Start(0);
-
             if (result)
             {
               _State = PlayState.Playing;
@@ -1443,7 +1436,6 @@ namespace MediaPortal.Player
           if (_useASIO || _Mixing)
             streamFlags = BASSStream.BASS_STREAM_DECODE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE;
           else
-            //streamFlags = BASSStream.BASS_SAMPLE_SOFTWARE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE;
             streamFlags = BASSStream.BASS_STREAM_AUTOFREE;
 
           FilePath = filePath;
@@ -1470,8 +1462,8 @@ namespace MediaPortal.Player
             // Create a Standard Stream
             stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, streamFlags);
 
-          // Is Mixing enabled, then we create a mixer channel and assign the stream to the mixer
-          if (_Mixing && stream != 0)
+          // Is Mixing / ASIO enabled, then we create a mixer channel and assign the stream to the mixer
+          if ((_Mixing || _useASIO) && stream != 0)
           {
             // Do an upmix of the stereo according to the matrix. 
             // Now Plugin the stream to the mixer and set the mixing matrix
@@ -1573,9 +1565,6 @@ namespace MediaPortal.Player
             _streamcopy.StreamDevice = 0;                            // Use the No output device to prevent playback of the cloned stream.
             _streamcopy.StreamFlags = BASSStream.BASS_STREAM_DECODE | BASSStream.BASS_SAMPLE_FLOAT; // decode the channel, so that we have a Streamcopy
 
-            // assign ASIO and assume the ASIO format, samplerate and number of channels from the BASS stream
-            _asioHandler = new BassAsioHandler(0, 0, stream);
-
             // Set the Volume
             _asioHandler.Volume = (double)_StreamVolume / 100.00;
             _asioHandler.Pan = _asioBalance;
@@ -1585,9 +1574,14 @@ namespace MediaPortal.Player
             // try to set the device rate too (saves resampling)
             BassAsio.BASS_ASIO_SetRate((double)info.freq);
 
-            BassAsio.BASS_ASIO_Stop();
             _streamcopy.Start();   // start the cloned stream
-            playbackStarted = BassAsio.BASS_ASIO_Start(0);
+            if (BassAsio.BASS_ASIO_IsStarted())
+              playbackStarted = true;
+            else
+            {
+              BassAsio.BASS_ASIO_Stop();
+              playbackStarted = BassAsio.BASS_ASIO_Start(0);
+            }
           }
           else
             playbackStarted = Bass.BASS_ChannelPlay(stream, false);
@@ -1920,12 +1914,6 @@ namespace MediaPortal.Player
       bool removed = Bass.BASS_ChannelRemoveSync(stream, handle);
       if (removed)
         Log.Debug("BassAudio: *** BASS_ChannelRemoveSync in PlaybackEndProc");
-
-      if (_useASIO)
-        // Not all methods registered via RegisterPlaybackEvent are called in each play mode
-        // When ASIO is used PlayBackEndProc is called but PlaybackStreamFreedProc is not
-        // therefore HandleSongEnded is called here if ASIO is used
-        HandleSongEnded(false);
     }
 
     /// <summary>
@@ -2006,7 +1994,7 @@ namespace MediaPortal.Player
 
       // When a Channel added to the Mixer is stopped by the above slide command, the end sync proc is not invoked.
       // This causes the song to continue with Volume 0 to be played until it ends, hich causes the next song to be interupted as well
-      if (_Mixing)
+      if (_Mixing || _useASIO)
       {
         System.Threading.ThreadPool.QueueUserWorkItem(new System.Threading.WaitCallback(CheckForFadeOutEnded), stream);
       }
@@ -2113,7 +2101,7 @@ namespace MediaPortal.Player
       Log.Debug("BASS: Stop of stream {0}", stream);
       try
       {
-        
+
         if (_SoftStop)
         {
           Bass.BASS_ChannelSlideAttributes(stream, -1, 0, -101, 500);
@@ -2200,7 +2188,7 @@ namespace MediaPortal.Player
           pos = BassMix.BASS_Mixer_ChannelGetPosition(stream);
         else
           pos = Bass.BASS_ChannelGetPosition(stream);
-        
+
         float timePos = Bass.BASS_ChannelBytes2Seconds(stream, pos);
         float offsetSecs = (float)ms / 1000f;
 
