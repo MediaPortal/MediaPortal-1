@@ -693,27 +693,6 @@
     <Compile Include="GUIRSSFeed\SetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUIScript\ExpressionEval.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIScript\FunctionEval.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIScript\GUIScript.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIScript\MPScript.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIScript\RegexObjects.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIScript\ScriptHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <None Include="GUIScript\SetupForm.cs">
-      <SubType>Form</SubType>
-    </None>
     <Compile Include="GUISettings\DVD\GUISettingsDVD.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1124,9 +1103,6 @@
     <EmbeddedResource Include="GUIRSSFeed\GUIRSSFeed.DetailsForm.resources" />
     <EmbeddedResource Include="GUIRSSFeed\GUIRSSFeed.SetupForm.resources" />
     <EmbeddedResource Include="GUIRSSFeed\SetupForm.resx">
-      <DependentUpon>SetupForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUIScript\SetupForm.resx">
       <DependentUpon>SetupForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUITopbar\TopBarSetupForm.resx">
