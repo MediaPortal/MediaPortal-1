@@ -34,74 +34,82 @@ using MediaPortal.Drawing;
 
 namespace MediaPortal.GUI.Library
 {
-	public sealed class GUIWaitCursor : GUIControl
-	{
-		#region Constructors
+  public sealed class GUIWaitCursor : GUIControl
+  {
+    #region Constructors
 
-		private GUIWaitCursor()
-		{
-		}
+    private GUIWaitCursor()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public static void Dispose()
-		{
-			if(_animation != null)
-				_animation.FreeResources();
-			
-			_animation = null;
-		}
+    public static void Dispose()
+    {
+      if (_animation != null)
+        _animation.FreeResources();
 
-		public static void Hide()
-		{
-			Interlocked.Decrement(ref _showCount);
-		}
+      _animation = null;
+    }
 
-		public static void Init()
-		{
-			if (_animation != null)
-				return;
-			_animation = new GUIAnimation();
+    public static void Hide()
+    {
+      Interlocked.Decrement(ref _showCount);
+    }
 
-			foreach(string filename in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", "common.waiting.*.png"))
-				_animation.Filenames.Add(Path.GetFileName(filename));
+    public static void Init()
+    {
+      if (_animation != null)
+        return;
+      _animation = new GUIAnimation();
 
-			_animation.HorizontalAlignment = HorizontalAlignment.Center;
-			_animation.VerticalAlignment = VerticalAlignment.Center;
-			_animation.SetPosition(GUIGraphicsContext.Width / 2, GUIGraphicsContext.Height / 2);
-			_animation.AllocResources();
-			_animation.Duration = new Duration(800);
-			_animation.RepeatBehavior = RepeatBehavior.Forever;
-		}
+      foreach (string filename in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", "common.waiting.*.png"))
+        _animation.Filenames.Add(Path.GetFileName(filename));
 
-		public override void Render(float timePassed)
-		{
-		}
+      // dirty hack because the files are 96x96 - unfortunately no property gives the correct size at runtime when init is called :S
+      int scaleWidth = (GUIGraphicsContext.Width / 2) - 48;
+      int scaleHeigth = (GUIGraphicsContext.Height / 2) - 48;
 
-		public static void Render()
-		{
-			if(_showCount <= 0)
-				return;
+      _animation.SetPosition(scaleWidth, scaleHeigth);
+
+      // broken!?
+      _animation.HorizontalAlignment = HorizontalAlignment.Center;
+      _animation.VerticalAlignment = VerticalAlignment.Center;
+
+      Log.Debug("GUIWaitCursor: init at position {0}:{1}", scaleWidth, scaleHeigth);
+      _animation.AllocResources();
+      _animation.Duration = new Duration(800);
+      _animation.RepeatBehavior = RepeatBehavior.Forever;
+    }
+
+    public override void Render(float timePassed)
+    {
+    }
+
+    public static void Render()
+    {
+      if (_showCount <= 0)
+        return;
 
       GUIGraphicsContext.SetScalingResolution(0, 0, false);
-			_animation.Render(GUIGraphicsContext.TimePassed);
-		}
+      _animation.Render(GUIGraphicsContext.TimePassed);
+    }
 
-		public static void Show()
-		{
-			if(Interlocked.Increment(ref _showCount) == 1)
-				_animation.Begin();
-		}
+    public static void Show()
+    {
+      if (Interlocked.Increment(ref _showCount) == 1)
+        _animation.Begin();
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Fields
+    #region Fields
 
-		static GUIAnimation				_animation;
-		static int						_showCount;
+    static GUIAnimation _animation;
+    static int _showCount;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }
