@@ -42,6 +42,7 @@ using ProjectInfinity.Settings;
 using Dialogs;
 using System.Windows.Threading;
 
+
 namespace MyWeather
 {
     /// <summary>
@@ -50,14 +51,15 @@ namespace MyWeather
     public class WeatherViewModel : DispatcherObject, INotifyPropertyChanged
     {
         #region variables
+        bool _isBusy = false;           // used for the wait cursor
+        City _currCity;                 // holds the currently selected city
+        WeatherLocalizer _locals;       // databinding source for the localisations
         WeatherDataModel _dataModel;
-        City _currCity;
-        ICommand _updateWeatherCommand;
-        ICommand _changeLocationCommand;
-        List<City> _availableLocations;
-        WeatherLocalizer _locals;
-
+        ICommand _updateWeatherCommand; // command to refresh the data of all cities
+        ICommand _changeLocationCommand;// command to change to a new location (changes _currCity)
+        List<City> _availableLocations; // list of all available locations + data
         public event PropertyChangedEventHandler PropertyChanged;
+        
         #endregion
 
         #region ctor
@@ -72,19 +74,8 @@ namespace MyWeather
             // create the datamodel :)
             _dataModel = new WeatherDataModel(new WeatherDotComCatcher());
             // load locations
-            LoadAvailableLocations();
-            // get the last set city from configuration
-            WeatherSettings settings = new WeatherSettings();
-            ServiceScope.Get<ISettingsManager>().Load(settings);
-            foreach(City c in AvailableLocations)
-            {
-                if (c.Id.Equals(settings.LocationCode))
-                {
-                    // okay, we found it, so let's set it
-                    CurrentLocation = c;
-                    break;
-                }
-            }
+            UpdateWeatherCommand updateCmd = new UpdateWeatherCommand(this, _dataModel);
+            updateCmd.Execute(null);
         }
         #endregion
 
@@ -121,7 +112,34 @@ namespace MyWeather
                 return ServiceScope.Get<INavigationService>().GetWindow();
             }
         }
-
+        
+        /// <summary>
+        /// Sets/Gets the busy Status
+        /// </summary>
+        /// <param name="busy"></param>
+        public bool IsBusy
+        {
+            get
+            {
+                return _isBusy;
+            }
+            set
+            {
+                _isBusy = value;
+                ChangeProperty("IsBusy");
+                ChangeProperty("IsLoadingCursor");
+            }
+        }
+        /// <summary>
+        /// gets the visiblity status of the loading cursor
+        /// </summary>
+        public Visibility IsLoadingCursor
+        {
+            get
+            {
+                return _isBusy ? Visibility.Visible : Visibility.Hidden;
+            }
+        }
         #region properties of the current location
         /// <summary>
         /// Gets the current Location as Typed City object 
@@ -292,6 +310,8 @@ namespace MyWeather
         /// </summary> 
         public class UpdateWeatherCommand : WeatherBaseCommand
         {
+            private delegate void UpdateWeatherDelegate();
+
             /// <summary>
             /// Initializes a new instance of the <see cref="LocationChangedCommand"/> class.
             /// </summary>
@@ -307,8 +327,37 @@ namespace MyWeather
             /// <param name="parameter">The parameter.</param>
             public override void Execute(object parameter)
             {
+                // set to busy state
+                _viewModel.IsBusy = true;
+                // update weather data and labels go in here
+                // _viewModel.LoadAvailableLocations();
+                UpdateWeatherDelegate starter = new UpdateWeatherDelegate(this.UpdateBackGroundWorker);
+                starter.BeginInvoke(null, null);
+            }
+
+            /// <summary>
+            /// Starts the timeshifting 
+            /// this is done in the background so the GUI stays responsive
+            /// </summary>
+            /// <param name="channel">The channel.</param>
+            private void UpdateBackGroundWorker()
+            {
                 // update weather data and labels go in here
                 _viewModel.LoadAvailableLocations();
+                // get all cities from the settings
+                WeatherSettings settings = new WeatherSettings();
+                ServiceScope.Get<ISettingsManager>().Load(settings);
+                foreach (City c in _viewModel.AvailableLocations)
+                {
+                    if (c.Id.Equals(settings.LocationCode))
+                    {
+                        // okay, we found it, so let's set it
+                        _viewModel.CurrentLocation = c;
+                        break;
+                    }
+                }
+                // Schedule the update function in the UI thread.
+                _viewModel.IsBusy = false;
             }
         }
         #endregion

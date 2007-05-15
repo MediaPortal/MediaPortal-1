@@ -247,5 +247,6 @@
 				</LinearGradientBrush>
 			</TextBlock.OpacityMask>
 		</TextBlock>
+		<Button Visibility="{Binding IsLoadingCursor}" Style="{StaticResource MpCursorBusy}" VerticalAlignment="Center" HorizontalAlignment="Center" IsEnabled="False"/>
 	</Grid>
 </controls:AnimationBehaviorHost>
