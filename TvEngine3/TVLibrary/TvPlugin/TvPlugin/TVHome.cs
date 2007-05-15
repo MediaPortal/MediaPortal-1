@@ -79,11 +79,11 @@ namespace TvPlugin
     TvNotifyManager _notifyManager = new TvNotifyManager();
     static string _preferredLanguages = "";
     static bool _preferAC3 = false;
-      Stopwatch benchClock = null;
+    Stopwatch benchClock = null;
 
     [SkinControlAttribute(2)]     protected GUIButtonControl btnTvGuide = null;
     [SkinControlAttribute(3)]     protected GUIButtonControl btnRecord = null;
-   // [SkinControlAttribute(6)]     protected GUIButtonControl btnGroup = null;
+    // [SkinControlAttribute(6)]     protected GUIButtonControl btnGroup = null;
     [SkinControlAttribute(7)]     protected GUIButtonControl btnChannel = null;
     [SkinControlAttribute(8)]     protected GUIToggleButtonControl btnTvOnOff = null;
     [SkinControlAttribute(13)]    protected GUIButtonControl btnTeletext = null;
@@ -135,7 +135,7 @@ namespace TvPlugin
     public override void OnAdded()
     {
       MediaPortal.GUI.Library.Log.Info("TVHome:OnAdded");
-      
+
       // replace g_player's ShowFullScreenWindowTV
       g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
 
@@ -199,7 +199,7 @@ namespace TvPlugin
           bool stop = true;
           if (value != null)
           {
-            if (value.Id == _card.Id || value.Id == -1) stop = false; 
+            if (value.Id == _card.Id || value.Id == -1) stop = false;
           }
           if (stop)
           {
@@ -219,7 +219,7 @@ namespace TvPlugin
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_navigator.LoadSettings(xmlreader);
-        _autoswitchTVon   = xmlreader.GetValueAsBool ("mytv", "autoswitchTVon", false ); //Added by joboehl
+        _autoswitchTVon = xmlreader.GetValueAsBool("mytv", "autoswitchTVon", false); //Added by joboehl
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
 
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
@@ -274,25 +274,25 @@ namespace TvPlugin
       GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
       return bResult;
     }
-      
+
     static public void OnGlobalMessage(GUIMessage message)
     {
-        switch (message.Message)
-        {
-            case GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO:
-                {
-                    TvBusinessLayer layer = new TvBusinessLayer();
-                    Channel channel = layer.GetChannelByName(message.Label);
-                    if (channel != null)
-                        TVHome.ViewChannelAndCheck(channel);
-                    break;
-                }
-            case GUIMessage.MessageType.GUI_MSG_STOP_SERVER_TIMESHIFTING:
-                {
-                    TVHome.Card.StopTimeShifting();
-                    break;
-                }
-        }
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO:
+          {
+            TvBusinessLayer layer = new TvBusinessLayer();
+            Channel channel = layer.GetChannelByName(message.Label);
+            if (channel != null)
+              TVHome.ViewChannelAndCheck(channel);
+            break;
+          }
+        case GUIMessage.MessageType.GUI_MSG_STOP_SERVER_TIMESHIFTING:
+          {
+            TVHome.Card.StopTimeShifting();
+            break;
+          }
+      }
     }
 
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
@@ -352,7 +352,7 @@ namespace TvPlugin
                                                   Navigator.Channel.CurrentProgram.StartTime, Navigator.Channel.CurrentProgram.EndTime);
                       newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                       newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                      
+
                       newSchedule.RecommendedCard = TVHome.Card.Id;
 
                       newSchedule.Persist();
@@ -432,6 +432,7 @@ namespace TvPlugin
       }
       base.OnAction(action);
     }
+
     protected override void OnPageLoad()
     {
       btnActiveStreams.Label = GUILocalizeStrings.Get(692);
@@ -477,7 +478,6 @@ namespace TvPlugin
         GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
       }
 
-
       // start viewing tv... 
       GUIGraphicsContext.IsFullScreenVideo = false;
       Channel channel = Navigator.Channel;
@@ -486,6 +486,7 @@ namespace TvPlugin
         if (Navigator.CurrentGroup != null && Navigator.Groups.Count > 0)
         {
           Navigator.SetCurrentGroup(Navigator.Groups[0].GroupName);
+          GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.Groups[0].GroupName);
         }
         if (Navigator.CurrentGroup != null)
         {
@@ -549,8 +550,12 @@ namespace TvPlugin
       }
       dlg.SelectedLabel = selected;
       dlg.DoModal(GUIWindowManager.ActiveWindow);
-      if (dlg.SelectedLabel < 0) return;
+      if (dlg.SelectedLabel < 0)
+        return;
+
       Navigator.SetCurrentGroup(dlg.SelectedLabelText);
+      GUIPropertyManager.SetProperty("#TV.Guide.Group", dlg.SelectedLabelText);
+
       if (Navigator.CurrentGroup != null)
       {
         if (Navigator.CurrentGroup.ReferringGroupMap().Count > 0)
@@ -562,8 +567,8 @@ namespace TvPlugin
 
     void OnSelectChannel()
     {
-        Stopwatch benchClock = null;
-        benchClock = Stopwatch.StartNew();
+      Stopwatch benchClock = null;
+      benchClock = Stopwatch.StartNew();
 
       TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MINI_GUIDE);
       miniGuide.AutoZap = false;
@@ -572,21 +577,21 @@ namespace TvPlugin
 
       //Only change the channel if the channel selectd is actually different. 
       //Without this, a ChannelChange might occur even when MiniGuide is canceled. 
-      if (miniGuide.SelectedChannel.IdChannel != TVHome.Navigator.Channel.IdChannel || !g_Player.Playing || !g_Player.IsTV ) 
+      if (miniGuide.SelectedChannel.IdChannel != TVHome.Navigator.Channel.IdChannel || !g_Player.Playing || !g_Player.IsTV)
       {
-          ViewChannelAndCheck(miniGuide.SelectedChannel);
+        ViewChannelAndCheck(miniGuide.SelectedChannel);
       }
 
       benchClock.Stop();
-      Log.Debug ("TVHome.OnSelecChannel(): Total Time {0} ms", benchClock.ElapsedMilliseconds.ToString());
+      Log.Debug("TVHome.OnSelecChannel(): Total Time {0} ms", benchClock.ElapsedMilliseconds.ToString());
 
 
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
-        Stopwatch benchClock = null;
-        benchClock = Stopwatch.StartNew();
+      Stopwatch benchClock = null;
+      benchClock = Stopwatch.StartNew();
 
       if (control == btnActiveStreams)
       {
@@ -597,13 +602,13 @@ namespace TvPlugin
         if (TVHome.Card.IsTimeShifting)
         {
           //tv off
-          Log.Info ("TVHome:turn tv off");
+          Log.Info("TVHome:turn tv off");
           SaveSettings();
           g_Player.Stop();
           TVHome.Card.User.Name = new User().Name;
           TVHome.Card.StopTimeShifting();
           benchClock.Stop();
-          Log.Debug ("TVHome.OnClicked(): EndTvOff {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          Log.Debug("TVHome.OnClicked(): EndTvOff {0} ms", benchClock.ElapsedMilliseconds.ToString());
 
           return;
         }
@@ -621,8 +626,8 @@ namespace TvPlugin
             }
             else
             {
-             
-             Log.Debug ("TVHome.OnClicked: Stop Called - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+
+              Log.Debug("TVHome.OnClicked: Stop Called - {0} ms", benchClock.ElapsedMilliseconds.ToString());
 
               g_Player.Stop();
             }
@@ -635,7 +640,7 @@ namespace TvPlugin
         UpdateStateOfButtons();
         UpdateProgressPercentageBar();
         benchClock.Stop();
-        Log.Debug ("TVHome.OnClicked(): Total Time - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+        Log.Debug("TVHome.OnClicked(): Total Time - {0} ms", benchClock.ElapsedMilliseconds.ToString());
 
       }
       /*
@@ -715,7 +720,7 @@ namespace TvPlugin
       if (btnChannel.Disabled != false)
         btnChannel.Disabled = false;
       //if (btnGroup.Disabled != false)
-        //btnGroup.Disabled = false;
+      //btnGroup.Disabled = false;
       if (btnRecord.Disabled != false)
         btnRecord.Disabled = false;
       //btnTeletext.Visible = false;
@@ -726,7 +731,7 @@ namespace TvPlugin
       }
       if (g_Player.Playing == false)
       {
-          UpdateProgressPercentageBar();
+        UpdateProgressPercentageBar();
         //if (btnTuningDetails!=null)
         //  btnTuningDetails.Visible = false;
         if (btnTeletext.Visible)
@@ -739,7 +744,7 @@ namespace TvPlugin
       if (btnChannel.Disabled != false)
         btnChannel.Disabled = false;
       //if (btnGroup.Disabled != false)
-       // btnGroup.Disabled = false;
+      // btnGroup.Disabled = false;
       if (btnRecord.Disabled != false)
         btnRecord.Disabled = false;
 
@@ -798,9 +803,11 @@ namespace TvPlugin
       Log.Debug("TvFullScreen: IsSingleSeat - RemoteControl.HostName = {0} / Environment.MachineName = {1}", RemoteControl.HostName, Environment.MachineName);
       return (RemoteControl.HostName.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant());
     }
+
     public static void UpdateTimeShift()
     {
     }
+
     void OnActiveStreams()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
@@ -905,6 +912,7 @@ namespace TvPlugin
       }
       TVHome.Card.User.Name = new User().Name;
     }
+
     void OnRecord()
     {
       //record now.
@@ -946,7 +954,7 @@ namespace TvPlugin
                                               DateTime.Now, DateTime.Now.AddDays(1));
                   newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                  newSchedule.RecommendedCard = TVHome.Card.Id ; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
+                  newSchedule.RecommendedCard = TVHome.Card.Id; //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
 
                   newSchedule.Persist();
                   server.OnNewSchedule();
@@ -1073,12 +1081,12 @@ namespace TvPlugin
           }
         }
       }
-      if (g_Player.IsTVRecording ) 
+      if (g_Player.IsTVRecording)
       {
-          GUIPropertyManager.SetProperty("#TV.View.channel", "Recorded");
-          GUIPropertyManager.SetProperty("#TV.View.title", g_Player.currentTitle);
-          GUIPropertyManager.SetProperty("#TV.View.description", g_Player.currentDescription);
-          return;
+        GUIPropertyManager.SetProperty("#TV.View.channel", "Recorded");
+        GUIPropertyManager.SetProperty("#TV.View.title", g_Player.currentTitle);
+        GUIPropertyManager.SetProperty("#TV.View.description", g_Player.currentDescription);
+        return;
       }
 
       if (Navigator.Channel == null) return;
@@ -1208,9 +1216,9 @@ namespace TvPlugin
     static private int GetPreferedAudioStreamIndex(string langCodes, bool preferAC3)
     {
       int idx = -1;
-      int idxNonAC3=-1;
+      int idxNonAC3 = -1;
       int idxLastAC3 = -1;
-      IAudioStream [] streams=TVHome.Card.AvailableAudioStreams;
+      IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
       for (int i = 0; i < streams.Length; i++)
       {
         if ((preferAC3) && (streams[i].StreamType == AudioStreamType.AC3))
@@ -1234,7 +1242,7 @@ namespace TvPlugin
           }
         }
       }
-      Log.Info("Preferred audio stream: idx={0}, idxNonAC3={1}, idxLastAC3={2}", idx, idxNonAC3,idxLastAC3);
+      Log.Info("Preferred audio stream: idx={0}, idxNonAC3={1}, idxLastAC3={2}", idx, idxNonAC3, idxLastAC3);
       if ((idx == -1) && (idxNonAC3 != -1))
         idx = idxNonAC3;
       else
@@ -1246,278 +1254,278 @@ namespace TvPlugin
       return idx;
     }
 
-      static public bool ViewChannelAndCheck(Channel channel)
+    static public bool ViewChannelAndCheck(Channel channel)
+    {
+      try
       {
-          try
+        Stopwatch benchClock = null;
+        benchClock = Stopwatch.StartNew();
+        if (channel == null)
+        {
+          MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): channel==null");
+          return false;
+        }
+        MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.Name);
+        if (g_Player.Playing && !_autoswitchTVon) //- Changed by joboehl - Enable TV to autoturnon on channel selection. 
+        {
+          if (g_Player.IsTVRecording) return true;
+          if (g_Player.IsVideo) return true;
+          //if (g_Player.IsTV) return true;
+          if (g_Player.IsDVD) return true;
+          if ((g_Player.IsMusic && g_Player.HasVideo)) return true;
+        }
+        if (Navigator.Channel != null)
+        {
+          if (channel.IdChannel != Navigator.Channel.IdChannel)
+            Navigator.LastViewedChannel = Navigator.Channel;
+        }
+        else
+        {
+          MediaPortal.GUI.Library.Log.Info("Navigator.Channel==null");
+        }
+        string errorMessage;
+        TvResult succeeded;
+        if (TVHome.Card != null)
+        {
+          //if (g_Player.Playing )
+          if (g_Player.Playing && g_Player.IsTV) //modified by joboehl. Avoids other video being played instead of TV. 
+            //if we're already watching this channel, then simply return
+            if (TVHome.Card.IsTimeShifting == true && TVHome.Card.IdChannel == channel.IdChannel)
+            {
+              return true;
+            }
+        }
+        /*
+        //check if we are currently watching a tv channel with AC3
+        IAudioStream[] audioStreams;
+        bool hadAc3 = false;
+        if (g_Player.Playing && TVHome.Card != null)
+        {
+            audioStreams = TVHome.Card.AvailableAudioStreams;
+            foreach (IAudioStream stream in audioStreams)
+            {
+              if (stream.StreamType == AudioStreamType.AC3)
+                  {
+                      hadAc3 = true;
+                  }
+            }
+        }  
+        */
+        benchClock.Stop();
+        Log.Debug("TVHome.ViewChannelAndCheck(): Fase 1 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+        benchClock.Reset();
+        benchClock.Start();
+
+        GUIWaitCursor.Show();
+        bool wasPlaying = g_Player.Playing && g_Player.IsTimeShifting && g_Player.IsTV;
+
+        //Start timeshifting the new tv channel
+        TvServer server = new TvServer();
+        VirtualCard card;
+        bool _return = false;
+
+        User user = new User();
+        /*
+        TvBusinessLayer layer = new TvBusinessLayer();
+        int newCardId = -1;
+        foreach (Card c in layer.Cards)
+        {
+            foreach (ChannelMap map in c.ReferringChannelMap())
+            {
+                if (map.IdChannel == channel.IdChannel)
+                {
+                   newCardId = c.IdCard;
+                    break;
+                }
+            }
+            if (newCardId > -1) break;
+        }
+
+        // by gibman - comment from rtv: if there's a timing issue which causes no AvailableAudioStreams then please
+        //                               add a callback and wait for that (suggested by tourettes)
+        if (newCardId != _card.Id && newCardId > -1)
+        {
+            Log.Debug("TvPlugin: Stop player. newCard {0} <> _CardID {1} and newCard is Valid" , newCardId, _card.Id);
+            g_Player.Stop();
+        } 
+        Log.Debug("TvPlugin: Continuing player. NewCard is {0} and oldCard was {1}", newCardId, _card.Id); */
+
+        benchClock.Stop();
+        MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 2 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+        benchClock.Reset();
+        benchClock.Start();
+
+        succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+
+        benchClock.Stop();
+        MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 3 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+        benchClock.Reset();
+        benchClock.Start();
+
+        if (succeeded == TvResult.Succeeded)
+        {
+          //timeshifting succeeded
+          /*
+          //check if we the new tvchannel has AC3
+          audioStreams = TVHome.Card.AvailableAudioStreams;
+          bool hasAc3 = false;
+          foreach (IAudioStream stream in audioStreams)
           {
-              Stopwatch benchClock = null;
-              benchClock = Stopwatch.StartNew();
-              if (channel == null)
-              {
-                  MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): channel==null");
-                  return false;
-              }
-              MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.Name);
-              if (g_Player.Playing && !_autoswitchTVon) //- Changed by joboehl - Enable TV to autoturnon on channel selection. 
-              {
-                  if (g_Player.IsTVRecording) return true;
-                  if (g_Player.IsVideo) return true;
-                  //if (g_Player.IsTV) return true;
-                  if (g_Player.IsDVD) return true;
-                  if ((g_Player.IsMusic && g_Player.HasVideo)) return true;
-              }
-              if (Navigator.Channel != null)
-              {
-                  if (channel.IdChannel != Navigator.Channel.IdChannel)
-                      Navigator.LastViewedChannel = Navigator.Channel;
-              }
-              else
-              {
-                  MediaPortal.GUI.Library.Log.Info("Navigator.Channel==null");
-              }
-              string errorMessage;
-              TvResult succeeded;
-              if (TVHome.Card != null)
-              {
-                  //if (g_Player.Playing )
-                  if (g_Player.Playing && g_Player.IsTV) //modified by joboehl. Avoids other video being played instead of TV. 
-                      //if we're already watching this channel, then simply return
-                      if (TVHome.Card.IsTimeShifting == true && TVHome.Card.IdChannel == channel.IdChannel)
-                      {
-                          return true;
-                      }
-              }
-              /*
-              //check if we are currently watching a tv channel with AC3
-              IAudioStream[] audioStreams;
-              bool hadAc3 = false;
-              if (g_Player.Playing && TVHome.Card != null)
-              {
-                  audioStreams = TVHome.Card.AvailableAudioStreams;
-                  foreach (IAudioStream stream in audioStreams)
-                  {
-                    if (stream.StreamType == AudioStreamType.AC3)
-                        {
-                            hadAc3 = true;
-                        }
-                  }
-              }  
-              */
-              benchClock.Stop();
-              Log.Debug("TVHome.ViewChannelAndCheck(): Fase 1 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
-              benchClock.Reset();
-              benchClock.Start();
-
-              GUIWaitCursor.Show();
-              bool wasPlaying = g_Player.Playing && g_Player.IsTimeShifting && g_Player.IsTV;
-
-              //Start timeshifting the new tv channel
-              TvServer server = new TvServer();
-              VirtualCard card;
-              bool _return = false;
-
-              User user = new User();
-              /*
-              TvBusinessLayer layer = new TvBusinessLayer();
-              int newCardId = -1;
-              foreach (Card c in layer.Cards)
-              {
-                  foreach (ChannelMap map in c.ReferringChannelMap())
-                  {
-                      if (map.IdChannel == channel.IdChannel)
-                      {
-                         newCardId = c.IdCard;
-                          break;
-                      }
-                  }
-                  if (newCardId > -1) break;
-              }
-
-              // by gibman - comment from rtv: if there's a timing issue which causes no AvailableAudioStreams then please
-              //                               add a callback and wait for that (suggested by tourettes)
-              if (newCardId != _card.Id && newCardId > -1)
-              {
-                  Log.Debug("TvPlugin: Stop player. newCard {0} <> _CardID {1} and newCard is Valid" , newCardId, _card.Id);
-                  g_Player.Stop();
-              } 
-              Log.Debug("TvPlugin: Continuing player. NewCard is {0} and oldCard was {1}", newCardId, _card.Id); */
-
-              benchClock.Stop();
-              MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 2 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
-              benchClock.Reset();
-              benchClock.Start();
-
-              succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
-
-              benchClock.Stop();
-              MediaPortal.GUI.Library.Log.Debug ("TVHome.ViewChannelAndCheck(): Fase 3 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
-              benchClock.Reset();
-              benchClock.Start();
-
-              if (succeeded == TvResult.Succeeded)
-              {
-                  //timeshifting succeeded
-                  /*
-                  //check if we the new tvchannel has AC3
-                  audioStreams = TVHome.Card.AvailableAudioStreams;
-                  bool hasAc3 = false;
-                  foreach (IAudioStream stream in audioStreams)
-                  {
-                    if (stream.StreamType == AudioStreamType.AC3)
-                    {
-                      hasAc3 = true;
-                    }
-                  }
-                  // when we switch from mpeg-2 <-> ac3, then recreate the playing graph
-                  if (hadAc3 != hasAc3)
-                  {
-                    Log.Info("stop player: ac3 changed:{0}-{1}", hadAc3, hasAc3);
-                    g_Player.Stop();
-                  }
+            if (stream.StreamType == AudioStreamType.AC3)
+            {
+              hasAc3 = true;
+            }
+          }
+          // when we switch from mpeg-2 <-> ac3, then recreate the playing graph
+          if (hadAc3 != hasAc3)
+          {
+            Log.Info("stop player: ac3 changed:{0}-{1}", hadAc3, hasAc3);
+            g_Player.Stop();
+          }
         
-                  //Removed code since it's functions were replaced by previous check
-                  bool useRtsp = System.IO.File.Exists("usertsp.txt");
-                  if (g_Player.Playing)
-                  {
-                    if (System.IO.File.Exists(TVHome.Card.TimeShiftFileName) && !useRtsp)
-                    {
-                      if (g_Player.CurrentFile != TVHome.Card.TimeShiftFileName)
-                      {
-                        Log.Info("stop player: file changed:{0}-{1}", g_Player.CurrentFile, TVHome.Card.TimeShiftFileName);
-                        g_Player.Stop();
-                      }
-                      Log.Debug("TvPlugin: Continuing player. File not changed :{0}-{1}", g_Player.CurrentFile, TVHome.Card.TimeShiftFileName);
-                    }
-                    else
-                    {
-                      if (g_Player.CurrentFile != TVHome.Card.RTSPUrl)
-                      {
-                        Log.Info("stop player: url changed:{0}-{1}", g_Player.CurrentFile, TVHome.Card.RTSPUrl);
-                        g_Player.Stop();
-                      }
-                      Log.Debug("TvPlugin: Continuing player. URL  not changed :{0}-{1}", g_Player.CurrentFile, TVHome.Card.RTSPUrl);
-                    }
-                  }*/
-
-                  //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player. 
-                  if (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName)
-                  { if (wasPlaying)  g_Player.Stop(); }
-
-                  TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
-
-                  MediaPortal.GUI.Library.Log.Info("succeeded:{0} ", succeeded);
-
-
-                  benchClock.Stop();
-                  MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 4 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
-                  benchClock.Reset();
-                  benchClock.Start();
-
-
-
-                  if (!g_Player.Playing)
-                      StartPlay();
-
-                  else if (wasPlaying)
-                      SeekToEnd(true);
-
-                  benchClock.Stop();
-                  MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 5- {0} ms", benchClock.ElapsedMilliseconds.ToString());
-                  benchClock.Reset();
-                  benchClock.Start();
-
-                  int prefLangId = GetPreferedAudioStreamIndex(_preferredLanguages, _preferAC3);
-                  if (IsSingleSeat())
-                      g_Player.CurrentAudioStream = prefLangId;
-                  else
-                  {
-                      IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
-                      TVHome.Card.AudioStream = streams[prefLangId];
-                  }
-
-                  GUIWaitCursor.Hide();
-
-                  benchClock.Stop();
-                  MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 6 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
-                  benchClock.Reset();
-                  benchClock.Start();
-
-                  return true;
-
-              }
-              else
-              {
-                  //timeshifting new channel failed. 
-                  benchClock.Stop();
-                  MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 4 failed - {0} ms", benchClock.ElapsedMilliseconds.ToString());
-                  benchClock.Reset();
-                  benchClock.Start();
-
-                  if (g_Player.Duration == 0) //Added by joboehl - Only stops if stream is empty. Otherwise, a message is displaying but everything stays as before.  
-                      g_Player.Stop();
-              }
-
-              GUIWaitCursor.Hide();
-              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-              if (pDlgOK != null)
-              {
-                  errorMessage = GUILocalizeStrings.Get(1500);
-                  switch (succeeded)
-                  {
-                      case TvResult.CardIsDisabled:
-                          errorMessage += "\r" + GUILocalizeStrings.Get(1501) + "\r";
-                          break;
-                      case TvResult.AllCardsBusy:
-                          errorMessage += "\r" + GUILocalizeStrings.Get(1502) + "\r";
-                          break;
-                      case TvResult.ChannelIsScrambled:
-                          errorMessage += "\r" + GUILocalizeStrings.Get(1503) + "\r";
-                          break;
-                      case TvResult.NoVideoAudioDetected:
-                          errorMessage += "\r" + GUILocalizeStrings.Get(1504) + "\r";
-                          break;
-                      case TvResult.UnableToStartGraph:
-                          errorMessage += "\r" + GUILocalizeStrings.Get(1505) + "\r";
-                          break;
-                      case TvResult.UnknownError:
-                          errorMessage += "\r" + GUILocalizeStrings.Get(1506) + "\r";
-                          break;
-                      case TvResult.UnknownChannel:
-                          errorMessage += "\r" + GUILocalizeStrings.Get(1507) + "\r";
-                          break;
-                      case TvResult.ChannelNotMappedToAnyCard:
-                          errorMessage += "\r" + GUILocalizeStrings.Get(1508) + "\r";
-                          break;
-                      case TvResult.NoTuningDetails:
-                          errorMessage += "\r" + GUILocalizeStrings.Get(1509) + "\r";
-                          break;
-                      default:
-                          errorMessage += "\r" + GUILocalizeStrings.Get(1506) + "\r";
-                          break;
-                  }
-                  string[] lines = errorMessage.Split('\r');
-                  pDlgOK.SetHeading(605);//my tv
-                  pDlgOK.SetLine(1, lines[0]);
-                  if (lines.Length > 1)
-                      pDlgOK.SetLine(2, lines[1]);
-                  else
-                      pDlgOK.SetLine(2, "");
-
-                  if (lines.Length > 2)
-                      pDlgOK.SetLine(3, lines[2]);
-                  else
-                      pDlgOK.SetLine(3, "");
-                  pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
-              }
-              return false;
-          }
-          catch (Exception ex)
+          //Removed code since it's functions were replaced by previous check
+          bool useRtsp = System.IO.File.Exists("usertsp.txt");
+          if (g_Player.Playing)
           {
-              Log.Debug("TvPlugin:ViewChannelandCheck Exception {0}", ex.ToString());
-              GUIWaitCursor.Hide();
-              return false;
+            if (System.IO.File.Exists(TVHome.Card.TimeShiftFileName) && !useRtsp)
+            {
+              if (g_Player.CurrentFile != TVHome.Card.TimeShiftFileName)
+              {
+                Log.Info("stop player: file changed:{0}-{1}", g_Player.CurrentFile, TVHome.Card.TimeShiftFileName);
+                g_Player.Stop();
+              }
+              Log.Debug("TvPlugin: Continuing player. File not changed :{0}-{1}", g_Player.CurrentFile, TVHome.Card.TimeShiftFileName);
+            }
+            else
+            {
+              if (g_Player.CurrentFile != TVHome.Card.RTSPUrl)
+              {
+                Log.Info("stop player: url changed:{0}-{1}", g_Player.CurrentFile, TVHome.Card.RTSPUrl);
+                g_Player.Stop();
+              }
+              Log.Debug("TvPlugin: Continuing player. URL  not changed :{0}-{1}", g_Player.CurrentFile, TVHome.Card.RTSPUrl);
+            }
+          }*/
+
+          //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player. 
+          if (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName)
+          { if (wasPlaying)  g_Player.Stop(); }
+
+          TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
+
+          MediaPortal.GUI.Library.Log.Info("succeeded:{0} ", succeeded);
+
+
+          benchClock.Stop();
+          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 4 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          benchClock.Reset();
+          benchClock.Start();
+
+
+
+          if (!g_Player.Playing)
+            StartPlay();
+
+          else if (wasPlaying)
+            SeekToEnd(true);
+
+          benchClock.Stop();
+          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 5- {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          benchClock.Reset();
+          benchClock.Start();
+
+          int prefLangId = GetPreferedAudioStreamIndex(_preferredLanguages, _preferAC3);
+          if (IsSingleSeat())
+            g_Player.CurrentAudioStream = prefLangId;
+          else
+          {
+            IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
+            TVHome.Card.AudioStream = streams[prefLangId];
           }
+
+          GUIWaitCursor.Hide();
+
+          benchClock.Stop();
+          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 6 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          benchClock.Reset();
+          benchClock.Start();
+
+          return true;
+
+        }
+        else
+        {
+          //timeshifting new channel failed. 
+          benchClock.Stop();
+          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 4 failed - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          benchClock.Reset();
+          benchClock.Start();
+
+          if (g_Player.Duration == 0) //Added by joboehl - Only stops if stream is empty. Otherwise, a message is displaying but everything stays as before.  
+            g_Player.Stop();
+        }
+
+        GUIWaitCursor.Hide();
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+        if (pDlgOK != null)
+        {
+          errorMessage = GUILocalizeStrings.Get(1500);
+          switch (succeeded)
+          {
+            case TvResult.CardIsDisabled:
+              errorMessage += "\r" + GUILocalizeStrings.Get(1501) + "\r";
+              break;
+            case TvResult.AllCardsBusy:
+              errorMessage += "\r" + GUILocalizeStrings.Get(1502) + "\r";
+              break;
+            case TvResult.ChannelIsScrambled:
+              errorMessage += "\r" + GUILocalizeStrings.Get(1503) + "\r";
+              break;
+            case TvResult.NoVideoAudioDetected:
+              errorMessage += "\r" + GUILocalizeStrings.Get(1504) + "\r";
+              break;
+            case TvResult.UnableToStartGraph:
+              errorMessage += "\r" + GUILocalizeStrings.Get(1505) + "\r";
+              break;
+            case TvResult.UnknownError:
+              errorMessage += "\r" + GUILocalizeStrings.Get(1506) + "\r";
+              break;
+            case TvResult.UnknownChannel:
+              errorMessage += "\r" + GUILocalizeStrings.Get(1507) + "\r";
+              break;
+            case TvResult.ChannelNotMappedToAnyCard:
+              errorMessage += "\r" + GUILocalizeStrings.Get(1508) + "\r";
+              break;
+            case TvResult.NoTuningDetails:
+              errorMessage += "\r" + GUILocalizeStrings.Get(1509) + "\r";
+              break;
+            default:
+              errorMessage += "\r" + GUILocalizeStrings.Get(1506) + "\r";
+              break;
+          }
+          string[] lines = errorMessage.Split('\r');
+          pDlgOK.SetHeading(605);//my tv
+          pDlgOK.SetLine(1, lines[0]);
+          if (lines.Length > 1)
+            pDlgOK.SetLine(2, lines[1]);
+          else
+            pDlgOK.SetLine(2, "");
+
+          if (lines.Length > 2)
+            pDlgOK.SetLine(3, lines[2]);
+          else
+            pDlgOK.SetLine(3, "");
+          pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+        }
+        return false;
       }
+      catch (Exception ex)
+      {
+        Log.Debug("TvPlugin:ViewChannelandCheck Exception {0}", ex.ToString());
+        GUIWaitCursor.Hide();
+        return false;
+      }
+    }
 
     static public void ViewChannel(Channel channel)
     {
@@ -1714,7 +1722,7 @@ namespace TvPlugin
           double duration = g_Player.Duration;
           double position = g_Player.CurrentPosition;
           if (duration > 0 || position > 0)
-          g_Player.SeekAbsolute(duration - 10);
+            g_Player.SeekAbsolute(duration - 10);
         }
       }
     }
