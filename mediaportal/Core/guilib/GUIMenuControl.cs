@@ -70,12 +70,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("horizontal")]                protected bool    _horizontal           = false;
     [XMLSkinElement("showAllHover")]              protected bool    _showAllHover         = false;
 
-    [XMLSkinAttribute("hover", "flipX")]
-    protected bool _flipX = false;
-    [XMLSkinAttribute("hover", "flipY")]
-    protected bool _flipY = false;
-    [XMLSkinAttribute("hover", "diffuse")]
-    protected string _diffuseFileName = "";
+    [XMLSkinAttribute("hover", "flipX")]          protected bool    _flipX                = false;
+    [XMLSkinAttribute("hover", "flipY")]          protected bool    _flipY                = false;
+    [XMLSkinAttribute("hover", "diffuse")]        protected string  _diffuseFileName      = "";
     #endregion
 
     #region Enums

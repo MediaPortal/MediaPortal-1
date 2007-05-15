@@ -1546,11 +1546,13 @@ namespace MediaPortal.GUI.Library
       //  if (visible != m_visible)
       //    CLog::DebugLog("UpdateControlState of control id %i - now %s (type=%d, process=%d, state=%d)", m_dwControlID, m_visible ? "visible" : "hidden", type, currentProcess, currentState);
     }
+
     public virtual void GetCenter(ref float centerX, ref float centerY)
     {
       centerX = (float)(XPosition + (Width / 2));
       centerY = (float)(YPosition + (Height / 2));
     }
+
     protected void Animate(uint currentTime)
     {
       if (false == GUIGraphicsContext.Animations) return;
@@ -1629,6 +1631,7 @@ namespace MediaPortal.GUI.Library
         QueueAnimation(AnimationType.Hidden);
       }
     }
+
     public virtual void SetInitialVisibility()
     {
       if (_visibleCondition == 0)
@@ -1642,6 +1645,7 @@ namespace MediaPortal.GUI.Library
       if (_visibleCondition == GUIInfoManager.SYSTEM_ALWAYS_TRUE || _visibleCondition == GUIInfoManager.SYSTEM_ALWAYS_FALSE)
         _visibleCondition = 0;
     }
+
     public virtual void UpdateEffectState(uint currentTime)
     {
       if (_visibleCondition != 0)
@@ -1654,8 +1658,7 @@ namespace MediaPortal.GUI.Library
       _visibleCondition = visible;
       _allowHiddenFocus = allowHiddenFocus;
     }
-
-
+    
     protected virtual void OnFocus()
     {
     }

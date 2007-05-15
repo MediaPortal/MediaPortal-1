@@ -1156,21 +1156,25 @@ namespace MediaPortal.GUI.Library
       get { return presentParameters; }
       set { presentParameters = value; }
     }
+
     static public bool VMR9Allowed
     {
       get { return vmr9Allowed; }
       set { vmr9Allowed = value; }
     }
+
     static public Size VideoSize
     {
       get { return videoSize; }
       set { videoSize = value; }
     }
+
     static public bool HasFocus
     {
       get { return hasFocus; }
       set { hasFocus = value; }
     }
+
     /// <summary>
     /// Returns true if the specified window belongs to the my tv plugin
     /// </summary>
@@ -1202,6 +1206,7 @@ namespace MediaPortal.GUI.Library
 
       return false;
     }
+
     static public TransformMatrix ControlTransform
     {
       get
@@ -1218,10 +1223,12 @@ namespace MediaPortal.GUI.Library
     {
       _finalWindowTransform = _guiTransform.multiply(matrix);
     }
+
     static public void SetControlTransform(TransformMatrix matrix)
     {
       _finalTransform = _finalWindowTransform.multiply(matrix);
     }
+
     static public void SetScalingResolution(/*RESOLUTION res,*/ int posX, int posY, bool needsScaling)
     {
       //m_windowResolution = res;
@@ -1267,22 +1274,27 @@ namespace MediaPortal.GUI.Library
       _finalWindowTransform = _guiTransform;
       _finalTransform = _guiTransform;
     }
+
     static public void GetScaling(out  float m00, out  float m01, out  float m02, out  float m10, out  float m11, out  float m12)
     {
       _finalTransform.GetScaling(out   m00, out   m01, out   m02, out   m10, out   m11, out   m12);
     }
+
     static public void ScaleFinalCoords(ref float x, ref float y)
     {
       _finalTransform.TransformPosition(ref x, ref y);
     }
+
     static public float ScaleFinalXCoord(float x, float y)
     {
       return _finalTransform.TransformXCoord(x, y);
     }
+
     static public float ScaleFinalYCoord(float x, float y)
     {
       return _finalTransform.TransformYCoord(x, y);
     }
+
     static public uint MergeAlpha(uint color)
     {
       uint alpha = _finalTransform.TransformAlpha((color >> 24) & 0xff);

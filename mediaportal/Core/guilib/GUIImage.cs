@@ -1511,6 +1511,7 @@ namespace MediaPortal.GUI.Library
       _positionY = dwPosY;
       _reCalculate = true;
     }
+
     public override void Animate(float timePassed, Animator animator)
     {
       base.Animate(timePassed, animator);
@@ -1527,11 +1528,13 @@ namespace MediaPortal.GUI.Library
       get { return _flipY; }
       set { _flipY = value; }
     }
+
     public bool FlipX
     {
       get { return _flipX; }
       set { _flipX = value; }
     }
+
     public string DiffuseFileName
     {
       get { return _diffuseFileName; }
@@ -1542,6 +1545,7 @@ namespace MediaPortal.GUI.Library
 
       }
     }
+
     public RepeatBehavior RepeatBehavior
     {
       get { return _repeatBehavior; }

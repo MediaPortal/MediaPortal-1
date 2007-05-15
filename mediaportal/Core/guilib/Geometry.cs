@@ -44,6 +44,7 @@ namespace MediaPortal.GUI.Library
       PanScan43, // Pan&Scan 4:3
       Zoom14to9 // 4:3 on 16:9 screens
     }
+
     int _imageWidth = 100;				// width of the video window or image
     int _imageHeight = 100;				// height of the height window or image
     int m_ScreenWidth = 100;				// width of the screen

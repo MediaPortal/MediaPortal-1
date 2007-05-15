@@ -42,8 +42,8 @@ namespace MediaPortal.GUI.Library
     protected bool _flipX = false;
     protected bool _flipY = false;
     protected string _diffuseFileName = "";
-    #region Constructors
 
+    #region Constructors
     public GUIAnimation()
     {
     }
@@ -86,7 +86,6 @@ namespace MediaPortal.GUI.Library
       _textureNames = strTextureNames;
       InitTriggerList();
     }
-
     #endregion Constructors
 
     public bool FlipY
@@ -104,6 +103,7 @@ namespace MediaPortal.GUI.Library
       get { return _diffuseFileName; }
       set { _diffuseFileName = value; }
     }
+
     #region Methods
 
     protected void InitTriggerList()
@@ -236,7 +236,9 @@ namespace MediaPortal.GUI.Library
     public override void SetPosition(int dwPosX, int dwPosY)
     {
       base.SetPosition(dwPosX, dwPosY);
-      if (_images == null) return;
+
+      if (_images == null)
+        return;
       for (int index = 0; index < _images.Length; index++)
         _images[index].SetPosition(dwPosX, dwPosY);
     }
