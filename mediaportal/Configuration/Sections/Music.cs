@@ -181,7 +181,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPComboBox soundDeviceComboBox;
     private CheckBox enableMixing;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseBassForCD;
     private MediaPortal.UserInterface.Controls.MPComboBox autoPlayComboBox;
 
     #endregion
@@ -414,8 +413,6 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDisableTagLookups.Checked = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true) ? false : true;
         radioButtonEnqueue.Checked = EnqueueNext = xmlreader.GetValueAsBool("musicmisc", "enqueuenext", true);
         radioButtonAddFile.Checked = !EnqueueNext;
-
-        checkBoxUseBassForCD.Checked = xmlreader.GetValueAsBool("musicmisc", "playBackAudioCDwithBass", false);
       }
     }
 
@@ -560,8 +557,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtopalbums", !checkBoxDisableAlbumLookups.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtracktags", !checkBoxDisableTagLookups.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "enqueuenext", radioButtonEnqueue.Checked);
-
-        xmlwriter.SetValueAsBool("musicmisc", "playBackAudioCDwithBass", checkBoxUseBassForCD.Checked);
       }
 
       // Make sure we shut down the viz engine
@@ -677,7 +672,6 @@ namespace MediaPortal.Configuration.Sections
       this.PlayNowJumpToCmbBox = new System.Windows.Forms.ComboBox();
       this.label8 = new System.Windows.Forms.Label();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxUseBassForCD = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.labelAutoPlay = new MediaPortal.UserInterface.Controls.MPLabel();
       this.autoPlayComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -1360,7 +1354,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox2.Controls.Add(this.PlayNowJumpToCmbBox);
       this.groupBox2.Controls.Add(this.label8);
-      this.groupBox2.Location = new System.Drawing.Point(16, 115);
+      this.groupBox2.Location = new System.Drawing.Point(16, 100);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(432, 64);
       this.groupBox2.TabIndex = 1;
@@ -1371,7 +1365,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.PlayNowJumpToCmbBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.PlayNowJumpToCmbBox.FormattingEnabled = true;
-      this.PlayNowJumpToCmbBox.Location = new System.Drawing.Point(114, 24);
+      this.PlayNowJumpToCmbBox.Location = new System.Drawing.Point(114, 23);
       this.PlayNowJumpToCmbBox.Name = "PlayNowJumpToCmbBox";
       this.PlayNowJumpToCmbBox.Size = new System.Drawing.Size(293, 21);
       this.PlayNowJumpToCmbBox.TabIndex = 1;
@@ -1379,7 +1373,7 @@ namespace MediaPortal.Configuration.Sections
       // label8
       // 
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(6, 28);
+      this.label8.Location = new System.Drawing.Point(6, 27);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(106, 13);
       this.label8.TabIndex = 0;
@@ -1390,27 +1384,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox2.Controls.Add(this.checkBoxUseBassForCD);
       this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
       this.mpGroupBox2.Controls.Add(this.autoPlayComboBox);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox2.Location = new System.Drawing.Point(16, 16);
       this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(432, 93);
+      this.mpGroupBox2.Size = new System.Drawing.Size(432, 69);
       this.mpGroupBox2.TabIndex = 0;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "Audio CD";
-      // 
-      // checkBoxUseBassForCD
-      // 
-      this.checkBoxUseBassForCD.AutoSize = true;
-      this.checkBoxUseBassForCD.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUseBassForCD.Location = new System.Drawing.Point(114, 62);
-      this.checkBoxUseBassForCD.Name = "checkBoxUseBassForCD";
-      this.checkBoxUseBassForCD.Size = new System.Drawing.Size(184, 17);
-      this.checkBoxUseBassForCD.TabIndex = 2;
-      this.checkBoxUseBassForCD.Text = "Use BASS for Audio CD Playback";
-      this.checkBoxUseBassForCD.UseVisualStyleBackColor = true;
       // 
       // labelAutoPlay
       // 
