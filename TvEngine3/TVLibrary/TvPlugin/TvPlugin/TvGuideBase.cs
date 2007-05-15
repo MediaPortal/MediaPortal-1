@@ -1107,6 +1107,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.Guide.Duration", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Guide.thumb", strLogo);
+        
         _currentStartTime = 0;
         _currentEndTime = 0;
         _currentTitle = String.Empty;

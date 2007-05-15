@@ -472,6 +472,7 @@ namespace TvPlugin
         m_navigator = new ChannelNavigator();			// Create the channel navigator (it will load groups and channels)
       }
       base.OnPageLoad();
+
       //set video window position
       if (videoWindow != null)
       {
@@ -513,6 +514,7 @@ namespace TvPlugin
         {
           ViewChannelAndCheck(channel);
         }
+        GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.Groups[0].GroupName);
         MediaPortal.GUI.Library.Log.Info("tv home init:{0} done", channel.Name);
       }
     }
