@@ -50,7 +50,6 @@ namespace MyWeather
 
   public class WeatherSetup : View, IMenuCommand, IDisposable
   {
-    WeatherSetupViewModel _model;
 
     public WeatherSetup()
     {
