@@ -122,23 +122,23 @@
     <Search maxlistings="30" />
     <Html>
       <Template name="default">
-        <SectionTemplate tags="TA">
+        <SectionTemplate tags="TASB">
           <TemplateText>
             &lt;tr valign="top"&gt;
-            &lt;td width="45" style="border-right: 2px solid white; border-bottom: 2px solid white; border-left: 2px solid white;"&gt;
-            &lt;span class="tv-sendung-uhrzeit"&gt;&lt;#START&gt;&lt;/span&gt;
+            &lt;td&gt;
+            &lt;span class="tv-sendung-uhrzeit"&gt;&lt;#START&gt;&lt;br/&gt;-&lt;br/&gt;&lt;#END&gt;&lt;/span&gt;
             &lt;/td&gt;
-            &lt;td width="50" align="center" style="border-right: 2px solid white; border-bottom: 2px solid white;"&gt;
-            &lt;img src="http://www.tvtoday.de/img/program/logos/zdf.gif" id="channel_logo_zdf" alt="zdf" class="channel_logo" /&gt;
+            &lt;td&gt;
+            &lt;img/&gt;
             &lt;script language="Javascript"&gt;
             &lt;/script&gt;
             &lt;/td&gt;
-            &lt;td style="border-bottom: 2px solid white;"&gt;&lt;a href="javascript: detailPopup('10435331');" class="tv-sendung-titel"&gt;&lt;#TITLE&gt;&lt;/a&gt;
+            &lt;td&gt;&lt;a&gt;&lt;#TITLE&gt;&lt;/a&gt;
             &lt;br/&gt;
-            &lt;span class="tv-sendung-info"&gt;(&lt;a href&gt;&lt;b&gt;ZDF&lt;/b&gt;&lt;/a&gt;bis&lt;#END&gt;Showview&lt;#SHOWVIEW&gt;&lt;br&gt;&lt;#GENRE&gt;&lt;/span&gt;
+            &lt;span class="tv-sendung-info"&gt;(&lt;a&gt;&lt;b&gt;Arte&lt;/b&gt;&lt;/a&gt;) &lt;#DURATION&gt; Min. Showview &lt;#SHOWVIEW&gt;&lt;br/&gt;&lt;#GENRE&gt;&lt;img/&gt;&lt;img/&gt;&lt;/span&gt;
             &lt;/td&gt;
             &lt;td&gt;
-            &lt;a href="javascript: addToMyTv('mytv_10435331');"&gt;&lt;img src="http://www.tvtoday.de/img/program/zu_my_tv.gif" width="24" height="24" vspace="5" border="0" class="icon_mytv" id="mytv_10435331" /&gt;&lt;/a&gt;&lt;br/&gt;
+            &lt;a&gt;&lt;img/&gt;&lt;/a&gt;&lt;br/&gt;
             &lt;/td&gt;
             &lt;/tr&gt;
           </TemplateText>
@@ -152,7 +152,7 @@
             &lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-            &lt;td align="left" class="tv-sendung-info"&gt;&lt;#DESCRIPTION&gt;&lt;br/&gt;
+            &lt;td align="left" class="tv-sendung-info"&gt;&lt;#DESCRIPTION&gt;&lt;br/&gt;&gt; &lt;#END&gt;|
             &lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
