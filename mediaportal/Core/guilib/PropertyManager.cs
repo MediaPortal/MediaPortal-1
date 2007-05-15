@@ -129,7 +129,7 @@ namespace MediaPortal.GUI.Library
       _properties["#TV.Guide.Date"] = String.Empty;
       _properties["#TV.Guide.StarRating"] = String.Empty;
       _properties["#TV.Guide.Classification"] = String.Empty;
-
+      _properties["#TV.Guide.Group"] = String.Empty;
 
       _properties["#Radio.Guide.Day"] = String.Empty;
       _properties["#Radio.Guide.thumb"] = String.Empty;

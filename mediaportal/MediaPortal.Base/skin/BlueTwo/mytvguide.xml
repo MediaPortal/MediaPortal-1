@@ -7,13 +7,13 @@
     <control>
       <description>BG</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <width>720</width>
       <height>576</height>
     </control>
     <control>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>60</posX>
       <posY>20</posY>
       <texture>television_logo.png</texture>
@@ -22,7 +22,7 @@
     </control>
     <control>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>77</posX>
       <posY>400</posY>
       <width>161</width>
@@ -34,7 +34,7 @@
     <control>
       <description>Date</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>700</posX>
       <posY>30</posY>
       <label>#date</label>
@@ -47,7 +47,7 @@
     <control>
       <description>Time</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>700</posX>
       <posY>48</posY>
       <label>#time</label>
@@ -58,12 +58,13 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-      <description>Guide Text Label</description>
+      <description>Guide Group Label</description>
       <type>label</type>
-      <id>1</id>
+      <id>11</id>
       <posX>250</posX>
       <posY>70</posY>
-      <label>4</label>
+      <!-- <label>4</label> -->
+      <label>#TV.Guide.Group</label>
       <font>font16</font>
       <align>right</align>
       <textcolor>FFFFFFFF</textcolor>
