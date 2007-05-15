@@ -38,7 +38,10 @@ namespace MyWeather
 {
     #region WeatherSetupDataModel
     /// <summary>
-    /// Summary description for Weather.
+    /// Datamodel which holds a list of locations,
+    /// either for the Cities that have been found while searching
+    /// for a specific location or for the list of the cities
+    /// that are being added by the setup
     /// </summary>
     public class WeatherSetupDataModel : INotifyPropertyChanged
     {
