@@ -11,7 +11,7 @@ namespace MyWeather
     /// </summary>
     public class CitySetupInfo
     {
-        public string name, id;
+        private string name, id;
 
         public CitySetupInfo(string name, string id)
         {
@@ -20,6 +20,36 @@ namespace MyWeather
         }
 
         public CitySetupInfo() { }
+
+        /// <summary>
+        /// Get the Name of the City
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+            }
+        }
+
+        /// <summary>
+        /// Get the Location ID
+        /// </summary>
+        public string Id
+        {
+            get
+            {
+                return id;
+            }
+            set
+            {
+                id = value;
+            }
+        }
 
         public override string ToString()
         {
@@ -31,9 +61,8 @@ namespace MyWeather
     /// <summary>
     /// holds Information on the City
     /// </summary>
-    public class City
+    public class City : CitySetupInfo
     {
-        private CitySetupInfo _cityInfo;
         public LocInfo locationInfo;
         public CurrentCondition currCondition;
         public List<DayForeCast> forecast;
@@ -44,36 +73,25 @@ namespace MyWeather
         /// </summary>
         public City() 
         {
-            _cityInfo = new CitySetupInfo();
             _updateSuccessful = false;
             
         }
 
         public City(CitySetupInfo info)
         {
-            _cityInfo = info;
+            Name = info.Name;
+            Id = info.Id;
             _updateSuccessful = false;
         }
 
         public City(string name, string id)
         {
-            _cityInfo = new CitySetupInfo();
-            _cityInfo.name = name;
-            _cityInfo.id = id;
+            this.Name = name;
+            this.Id = id;
             _updateSuccessful = false;
         }
 
         #region properties
-        /// <summary>
-        /// Get the Name of the City
-        /// </summary>
-        public string Name
-        {
-            get
-            {
-                return _cityInfo.name;
-            }
-        }
 
         /// <summary>
         /// LocationInfo
@@ -105,16 +123,6 @@ namespace MyWeather
                 return forecast;
             }
         }
-        /// <summary>
-        /// Get the Location ID
-        /// </summary>
-        public string Id
-        {
-            get
-            {
-                return _cityInfo.id;
-            }
-        }
 
         /// <summary>
         /// Identifies if the update was successful
@@ -131,15 +139,6 @@ namespace MyWeather
             }
         }
         #endregion
-
-        /// <summary>
-        /// output
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return Name;
-        }
     }
     #endregion
 

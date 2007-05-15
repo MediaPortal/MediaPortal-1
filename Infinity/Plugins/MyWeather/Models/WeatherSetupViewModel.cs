@@ -29,44 +29,43 @@ namespace MyWeather
         string _labelError;
         ICommand _saveCommand;
         ICommand _searchCommand;                        // Opens a Popup Menu
-        ICommand _searchCommandAlt;                     // Does not open the Popup Menu
-        ICommand _addLocation;                          // Adds the selected Location to a list (LocationsAdded)
         string _searchLocation;                         // the location we type in for searching
         CitySetupInfo _selectedLocation;                // the selected found location as City type
-        Visibility _visibleAfterSelection;
         LocationCollectionView _citiesCollView;
         LocationCollectionView _citiesAddedView;
         WeatherSetupDataModel _dataModel;
-        WeatherSetupSearchDataModel _dataModelSearch;
+        WeatherSetupDataModel _dataModelAddedLocs;
+        IWeatherCatcher _catcher;
         #endregion
 
         #region ctor
         public WeatherSetupViewModel()
             : base()
         {
-            _visibleAfterSelection = Visibility.Hidden;
             _labelError = "";
             _searchLocation = "";
-            _dataModelSearch = new WeatherSetupSearchDataModel();
             // Load Settings and look if  there are any locations set already.
             // if so, update the datamodel
             WeatherSettings settings = new WeatherSettings();
             ServiceScope.Get<ISettingsManager>().Load(settings);
-            _dataModel = new WeatherSetupDataModel();
+            _catcher = new WeatherDotComCatcher();
+            _dataModel = new WeatherSetupDataModel(_catcher);
+            _dataModelAddedLocs = new WeatherSetupDataModel(_catcher);
+
             if (settings.LocationsList != null)
             {
                 foreach (CitySetupInfo c in settings.LocationsList)
                 {
                     if (c != null)
                     {
-                        _dataModel.AddCity(c);
+                        _dataModelAddedLocs.AddCity(c);
                     }
                 }
                 ChangeProperty("LocationsAdded");
             }
             // create Collectionviews...
-            _citiesCollView = new LocationCollectionView(_dataModelSearch);
-            _citiesAddedView = new LocationCollectionView(_dataModel);
+            _citiesCollView = new LocationCollectionView(_dataModel);
+            _citiesAddedView = new LocationCollectionView(_dataModelAddedLocs);
         }
 
         #endregion
@@ -164,7 +163,7 @@ namespace MyWeather
             {
                 if (_citiesCollView == null)
                 {
-                    _citiesCollView = new LocationCollectionView(_dataModelSearch);
+                    _citiesCollView = new LocationCollectionView(_dataModel);
                 }
                 return _citiesCollView;
             }
@@ -180,7 +179,7 @@ namespace MyWeather
             {
                 if (_citiesAddedView == null)
                 {
-                    _citiesAddedView = new LocationCollectionView(_dataModel);
+                    _citiesAddedView = new LocationCollectionView(_dataModelAddedLocs);
                 }
                 return _citiesAddedView;
             }
@@ -252,39 +251,6 @@ namespace MyWeather
                 return _searchCommand;
             }
         }
-
-        /// <summary>
-        /// Returns ICommand to search for LocationIDs
-        /// </summary>
-        /// <value>The search</value>
-        public ICommand SearchAlt
-        {
-            get
-            {
-                if (_searchCommand == null)
-                {
-                    _searchCommand = new SearchCommandAlt(this);
-                }
-                return _searchCommand;
-            }
-        }
-
-        /// <summary>
-        /// Returns ICommand to search for LocationIDs
-        /// </summary>
-        /// <value>The search</value>
-        public ICommand AddLocation
-        {
-            get
-            {
-                if (_addLocation == null)
-                {
-                    _addLocation = new AddLocationCommand(this);
-                }
-                return _addLocation;
-            }
-        }
-
         #endregion
 
         /// <summary>
@@ -307,10 +273,9 @@ namespace MyWeather
                 //
                 // Perform actual search
                 //
-                WeatherSetupDataModel weather = new WeatherSetupDataModel();
-                _dataModelSearch.SearchCity(SearchLocation);
+                _dataModel.SearchCity(SearchLocation);
 
-                if(_dataModelSearch.Locations.Count==0)
+                if(_dataModel.Locations.Count==0)
                     LabelError = ServiceScope.Get<ILocalisation>().ToString("myweather.config",4);
 
                 // data bound to the LocationCollectionView updated
@@ -391,7 +356,7 @@ namespace MyWeather
                     settings.LocationsList.Add(c);
                 }
                 if (l.Count > 0)
-                    settings.LocationCode = l[0].id;
+                    settings.LocationCode = l[0].Id;
                 // save
                 ServiceScope.Get<ISettingsManager>().Save(settings);
                 // navigate back
@@ -399,68 +364,6 @@ namespace MyWeather
             }
 
             #endregion
-        }
-        /// <summary>
-        /// This command will search the location
-        /// and update the databinding
-        /// </summary>
-        public class SearchCommandAlt : ICommand
-        {
-            WeatherSetupViewModel _viewModel;
-            /// <summary>
-            /// Initializes a new instance of the <see cref="SaveCommand"/> class.
-            /// </summary>
-            /// <param name="model">The model.</param>
-            public SearchCommandAlt(WeatherSetupViewModel model)
-            {
-                _viewModel = model;
-            }
-
-            #region ICommand Members
-
-            public bool CanExecute(object parameter)
-            {
-                return true;
-            }
-
-            public event EventHandler CanExecuteChanged;
-
-            public void Execute(object parameter)
-            {
-                // Search for locations
-                _viewModel.SearchCities();
-            }
-
-            #endregion
-        }
-
-        /// <summary>
-        /// search for a location and open a popupmenu to
-        /// select a location
-        /// </summary>
-        public class AddLocationCommand : ICommand
-        {
-            WeatherSetupViewModel _viewModel;
-
-            public AddLocationCommand(WeatherSetupViewModel viewModel)
-            {
-                _viewModel = viewModel;
-            }
-
-            public bool CanExecute(object parameter)
-            {
-                return true;
-            }
-
-            public event EventHandler CanExecuteChanged;
-
-            public void Execute(object parameter)
-            {
-                if (_viewModel.SelectedLocation == null) return;
-                // add the location to the dataModel
-                _viewModel._dataModel.AddCity(_viewModel.SelectedLocation);
-                _viewModel.ChangeProperty("LocationsAdded");
-            }
         }
 
         /// <summary>
@@ -489,7 +392,7 @@ namespace MyWeather
                 _viewModel.SearchCities();
                 
                 // nothing found?
-                if (((List<CitySetupInfo>)(_viewModel.Locations.SourceCollection)).Count <= 0) return;
+                if (((List<CitySetupInfo>)(_viewModel.Locations.SourceCollection)).Count <= 0) { MessageBox.Show("no cities in collection"); return; }
 
                 // Setup the Dialog Menu we wanna show (Containing the found locations)
                 MpMenu dlgMenu = new MpMenu();
@@ -501,7 +404,7 @@ namespace MyWeather
 
                 foreach (CitySetupInfo c in _viewModel.Locations.SourceCollection)
                 {
-                    dlgMenu.Items.Add(new DialogMenuItem(c.name + ", " + c.id));
+                    dlgMenu.Items.Add(new DialogMenuItem(c.Name + ", " + c.Id));
                 }
 
                 // show dialog menu
@@ -512,7 +415,7 @@ namespace MyWeather
                 CitySetupInfo buff = ((List<CitySetupInfo>)(_viewModel.Locations.SourceCollection))[dlgMenu.SelectedIndex];
                 _viewModel.SelectedLocation = buff;
                 // add location directly to the datamodel
-                _viewModel._dataModel.AddCity(_viewModel.SelectedLocation);
+                _viewModel._dataModelAddedLocs.AddCity(_viewModel.SelectedLocation);
                 _viewModel.ChangeProperty("LocationsAdded");
             }
         }

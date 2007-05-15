@@ -27,6 +27,6 @@ namespace MyWeather
         /// </summary>
         /// <param name="name">name of the location to search for</param>
         /// <returns>new City List</returns>
-        List<City> FindLocationsByName(string name);
+        List<CitySetupInfo> FindLocationsByName(string name);
     }
 }

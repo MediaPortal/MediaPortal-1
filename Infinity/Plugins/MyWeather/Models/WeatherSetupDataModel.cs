@@ -32,6 +32,7 @@ using System.Xml;
 using System.Web;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows;
 
 namespace MyWeather
 {
@@ -42,13 +43,15 @@ namespace MyWeather
     public class WeatherSetupDataModel : INotifyPropertyChanged
     {
         protected List<CitySetupInfo> _locations = new List<CitySetupInfo>();
+        protected IWeatherCatcher _catcher;
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public WeatherSetupDataModel()
+        public WeatherSetupDataModel(IWeatherCatcher catcher)
         {
+            _catcher = catcher;
         }
 
         /// <summary>
@@ -84,7 +87,7 @@ namespace MyWeather
             // add if not already added
             foreach (CitySetupInfo c in _locations)
             {
-                if (c!=null && c.id.Equals(city.id))
+                if (c!=null && c.Id.Equals(city.Id))
                     return;
             }
 
@@ -105,6 +108,28 @@ namespace MyWeather
         {
             _locations.Remove(city);
             if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs("Locations"));
+            }
+        }
+        /// <summary>
+        /// searches online for available cities
+        /// with the given name and lists them up
+        /// </summary>
+        /// <param name="searchString">city name to search for</param>
+        /// <returns></returns>
+        public void SearchCity(string searchString)
+        {
+            // find the possible cities through the weather catcher
+            _locations.Clear();
+            // search for the cities
+            List<CitySetupInfo> tempList = new List<CitySetupInfo>();
+            tempList = _catcher.FindLocationsByName(searchString);
+            // add them to the list
+            foreach (CitySetupInfo c in tempList)
+                _locations.Add(c);
+            // Update the Gui that the locations list might have changed
+            if(PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs("Locations"));
             }

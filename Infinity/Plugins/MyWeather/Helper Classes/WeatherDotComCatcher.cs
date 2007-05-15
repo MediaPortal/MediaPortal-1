@@ -8,6 +8,8 @@ using ProjectInfinity.Settings;
 using System.Net;
 using ProjectInfinity.Localisation;
 using System.Globalization;
+using System.IO;
+using System.Windows;
 
 namespace MyWeather
 {
@@ -20,7 +22,6 @@ namespace MyWeather
     {
         #region Private Variables
         // Private Variables
-        string _settingsPath = "configuration.xml";
         string _temperatureFarenheit = "C";
         string _windSpeed = "K";
         string unitTemperature = String.Empty;
@@ -42,9 +43,8 @@ namespace MyWeather
         /// constructor
         /// </summary>
         /// <param name="settingsFile"></param>
-        public WeatherDotComCatcher(string settingsFile)
+        public WeatherDotComCatcher()
         {
-            _settingsPath = settingsFile;
         }
         #endregion
 
@@ -81,9 +81,60 @@ namespace MyWeather
         /// </summary>
         /// <param name="name">name of the location to search for</param>
         /// <returns>new City List</returns>
-        public List<City> FindLocationsByName(string name)
+        public List<CitySetupInfo> FindLocationsByName(string locationName)
         {
-            return null;
+            // create list that will hold all found cities
+            List<CitySetupInfo> locations = new List<CitySetupInfo>();
+
+            try
+            {
+                string searchURI = String.Format("http://xoap.weather.com/search/search?where={0}", Helper.UrlEncode(locationName));
+
+                //
+                // Create the request and fetch the response
+                //
+                WebRequest request = WebRequest.Create(searchURI);
+                WebResponse response = request.GetResponse();
+
+                //
+                // Read data from the response stream
+                //
+                Stream responseStream = response.GetResponseStream();
+                Encoding iso8859 = System.Text.Encoding.GetEncoding("iso-8859-1");
+                StreamReader streamReader = new StreamReader(responseStream, iso8859);
+
+                //
+                // Fetch information from our stream
+                //
+                string data = streamReader.ReadToEnd();
+
+                XmlDocument document = new XmlDocument();
+                document.LoadXml(data);
+
+                XmlNodeList nodes = document.DocumentElement.SelectNodes("/search/loc");
+
+                if (nodes != null)
+                {
+                    //
+                    // Iterate through our results
+                    //
+                    foreach (XmlNode node in nodes)
+                    {
+                        string name = node.InnerText;
+                        string id = node.Attributes["id"].Value;
+
+                        locations.Add(new CitySetupInfo(name, id));
+                    }
+                }
+                return locations;
+            }
+            catch (Exception)
+            {
+                //
+                // Failed to perform search
+                //
+                throw new ApplicationException("Failed to perform city search, make sure you are connected to the internet.");
+            }
         }
         #endregion
 

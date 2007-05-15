@@ -46,7 +46,7 @@ namespace MyWeather
             // create localisation instance
             _locals = new WeatherLocalizer();
             // create the datamodel :)
-            _dataModel = new WeatherDataModel(new WeatherDotComCatcher("configuration.xml"));
+            _dataModel = new WeatherDataModel(new WeatherDotComCatcher());
             // load locations
             LoadAvailableLocations();
             // get the last set city from configuration
