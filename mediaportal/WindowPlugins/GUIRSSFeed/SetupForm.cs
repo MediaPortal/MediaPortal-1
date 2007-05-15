@@ -39,7 +39,6 @@ namespace GUIRSSFeed
   /// </summary>
   public class SetupForm : System.Windows.Forms.Form, ISetupForm, IShowPlugin
   {
-    private MediaPortal.UserInterface.Controls.MPLabel label;
     private MediaPortal.UserInterface.Controls.MPButton buttonAdd;
     private System.Windows.Forms.ListBox listBox;
     private MediaPortal.UserInterface.Controls.MPButton buttonEdit;
@@ -48,6 +47,8 @@ namespace GUIRSSFeed
     private MediaPortal.UserInterface.Controls.MPCheckBox checkAutoRefresh;
     private MediaPortal.UserInterface.Controls.MPLabel labelRefresh;
     private MediaPortal.UserInterface.Controls.MPTextBox textRefreshInterval;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
     private DetailsForm form;
 
     public SetupForm()
@@ -217,7 +218,6 @@ namespace GUIRSSFeed
       this.Close();
     }
 
-
     #region ISetup Interface methods
     /// <summary>
     /// See ISetupForm interface
@@ -314,18 +314,22 @@ namespace GUIRSSFeed
       this.buttonEdit = new MediaPortal.UserInterface.Controls.MPButton();
       this.listBox = new System.Windows.Forms.ListBox();
       this.buttonAdd = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label = new MediaPortal.UserInterface.Controls.MPLabel();
       this.button3 = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkAutoRefresh = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.labelRefresh = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textRefreshInterval = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpGroupBox1.SuspendLayout();
+      this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // buttonDelete
       // 
-      this.buttonDelete.Location = new System.Drawing.Point(264, 172);
+      this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonDelete.Location = new System.Drawing.Point(368, 176);
       this.buttonDelete.Name = "buttonDelete";
-      this.buttonDelete.Size = new System.Drawing.Size(88, 23);
+      this.buttonDelete.Size = new System.Drawing.Size(88, 24);
       this.buttonDelete.TabIndex = 3;
       this.buttonDelete.Text = "Delete Site";
       this.buttonDelete.UseVisualStyleBackColor = true;
@@ -333,9 +337,10 @@ namespace GUIRSSFeed
       // 
       // buttonEdit
       // 
-      this.buttonEdit.Location = new System.Drawing.Point(147, 172);
+      this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonEdit.Location = new System.Drawing.Point(274, 176);
       this.buttonEdit.Name = "buttonEdit";
-      this.buttonEdit.Size = new System.Drawing.Size(88, 23);
+      this.buttonEdit.Size = new System.Drawing.Size(88, 24);
       this.buttonEdit.TabIndex = 2;
       this.buttonEdit.Text = "Edit Site";
       this.buttonEdit.UseVisualStyleBackColor = true;
@@ -343,34 +348,31 @@ namespace GUIRSSFeed
       // 
       // listBox
       // 
-      this.listBox.Location = new System.Drawing.Point(24, 32);
+      this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listBox.Location = new System.Drawing.Point(6, 20);
       this.listBox.Name = "listBox";
-      this.listBox.Size = new System.Drawing.Size(328, 134);
+      this.listBox.Size = new System.Drawing.Size(450, 147);
       this.listBox.TabIndex = 5;
       // 
       // buttonAdd
       // 
-      this.buttonAdd.Location = new System.Drawing.Point(24, 172);
+      this.buttonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonAdd.Location = new System.Drawing.Point(180, 176);
       this.buttonAdd.Name = "buttonAdd";
-      this.buttonAdd.Size = new System.Drawing.Size(88, 23);
+      this.buttonAdd.Size = new System.Drawing.Size(88, 24);
       this.buttonAdd.TabIndex = 1;
       this.buttonAdd.Text = "Add Site";
       this.buttonAdd.UseVisualStyleBackColor = true;
       this.buttonAdd.Click += new System.EventHandler(this.addSite);
       // 
-      // label
-      // 
-      this.label.Location = new System.Drawing.Point(24, 8);
-      this.label.Name = "label";
-      this.label.Size = new System.Drawing.Size(328, 23);
-      this.label.TabIndex = 4;
-      this.label.Text = "Add news sites here and edit their options";
-      // 
       // button3
       // 
-      this.button3.Location = new System.Drawing.Point(280, 256);
+      this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.button3.Location = new System.Drawing.Point(402, 277);
       this.button3.Name = "button3";
-      this.button3.Size = new System.Drawing.Size(72, 23);
+      this.button3.Size = new System.Drawing.Size(72, 24);
       this.button3.TabIndex = 12;
       this.button3.Text = "Done";
       this.button3.UseVisualStyleBackColor = true;
@@ -380,49 +382,81 @@ namespace GUIRSSFeed
       // 
       this.checkAutoRefresh.AutoSize = true;
       this.checkAutoRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkAutoRefresh.Location = new System.Drawing.Point(24, 235);
+      this.checkAutoRefresh.Location = new System.Drawing.Point(6, 20);
       this.checkAutoRefresh.Name = "checkAutoRefresh";
-      this.checkAutoRefresh.Size = new System.Drawing.Size(81, 17);
+      this.checkAutoRefresh.Size = new System.Drawing.Size(126, 17);
       this.checkAutoRefresh.TabIndex = 4;
-      this.checkAutoRefresh.Text = "Auto refresh";
+      this.checkAutoRefresh.Text = "Auto refresh enabled";
       this.checkAutoRefresh.UseVisualStyleBackColor = true;
       // 
       // labelRefresh
       // 
       this.labelRefresh.AutoSize = true;
-      this.labelRefresh.Location = new System.Drawing.Point(24, 261);
+      this.labelRefresh.Location = new System.Drawing.Point(21, 46);
       this.labelRefresh.Name = "labelRefresh";
-      this.labelRefresh.Size = new System.Drawing.Size(109, 13);
+      this.labelRefresh.Size = new System.Drawing.Size(115, 13);
       this.labelRefresh.TabIndex = 13;
       this.labelRefresh.Text = "Refresh interval (min):";
+      this.labelRefresh.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // textRefreshInterval
       // 
       this.textRefreshInterval.BorderColor = System.Drawing.Color.Empty;
-      this.textRefreshInterval.Location = new System.Drawing.Point(137, 258);
+      this.textRefreshInterval.Location = new System.Drawing.Point(142, 43);
       this.textRefreshInterval.Name = "textRefreshInterval";
-      this.textRefreshInterval.Size = new System.Drawing.Size(31, 20);
+      this.textRefreshInterval.Size = new System.Drawing.Size(53, 21);
       this.textRefreshInterval.TabIndex = 14;
       this.textRefreshInterval.Text = "15";
+      this.textRefreshInterval.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      // 
+      // mpGroupBox1
+      // 
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.listBox);
+      this.mpGroupBox1.Controls.Add(this.buttonAdd);
+      this.mpGroupBox1.Controls.Add(this.buttonEdit);
+      this.mpGroupBox1.Controls.Add(this.buttonDelete);
+      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox1.Location = new System.Drawing.Point(12, 12);
+      this.mpGroupBox1.Name = "mpGroupBox1";
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 206);
+      this.mpGroupBox1.TabIndex = 15;
+      this.mpGroupBox1.TabStop = false;
+      this.mpGroupBox1.Text = "Add news sites here and edit their options";
+      // 
+      // mpGroupBox2
+      // 
+      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpGroupBox2.Controls.Add(this.labelRefresh);
+      this.mpGroupBox2.Controls.Add(this.checkAutoRefresh);
+      this.mpGroupBox2.Controls.Add(this.textRefreshInterval);
+      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox2.Location = new System.Drawing.Point(12, 224);
+      this.mpGroupBox2.Name = "mpGroupBox2";
+      this.mpGroupBox2.Size = new System.Drawing.Size(215, 77);
+      this.mpGroupBox2.TabIndex = 16;
+      this.mpGroupBox2.TabStop = false;
+      this.mpGroupBox2.Text = "Auto refresh settings";
       // 
       // SetupForm
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(376, 294);
-      this.Controls.Add(this.textRefreshInterval);
-      this.Controls.Add(this.labelRefresh);
-      this.Controls.Add(this.checkAutoRefresh);
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 14);
+      this.ClientSize = new System.Drawing.Size(486, 313);
+      this.Controls.Add(this.mpGroupBox2);
+      this.Controls.Add(this.mpGroupBox1);
       this.Controls.Add(this.button3);
-      this.Controls.Add(this.listBox);
-      this.Controls.Add(this.label);
-      this.Controls.Add(this.buttonDelete);
-      this.Controls.Add(this.buttonEdit);
-      this.Controls.Add(this.buttonAdd);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
       this.Name = "SetupForm";
-      this.Text = "My News Settings";
+      this.ShowIcon = false;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+      this.Text = "MyNews - Setup";
       this.Load += new System.EventHandler(this.SetupForm_Load);
+      this.mpGroupBox1.ResumeLayout(false);
+      this.mpGroupBox2.ResumeLayout(false);
+      this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
-      this.PerformLayout();
 
     }
     #endregion
