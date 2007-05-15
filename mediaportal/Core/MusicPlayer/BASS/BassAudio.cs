@@ -1813,6 +1813,8 @@ namespace MediaPortal.Player
 
       Bass.BASS_StreamFree(stream);
       stream = 0;
+
+      _CrossFading = false;       // Set crossfading to false, Play() will update it when the next song starts
     }
 
     /// <summary>
