@@ -572,7 +572,7 @@ namespace ProcessPlugins.AutoCropper
     {
       try
       {
-        System.Diagnostics.Process.Start("IExplore", "http://wiki.team-mediaportal.com/MediaPortal_Setup_Plugins_AutoCropper");
+          System.Diagnostics.Process.Start("IExplore", "http://wiki.team-mediaportal.com/MediaPortalSetup_Plugins/AutoCropper");
       }
       catch(Exception ex)
       {
