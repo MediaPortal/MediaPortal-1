@@ -15,96 +15,112 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <ItemGroup>
-    <Reference Include="TvLibrary.Interfaces.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\TvLibrary.Interfaces.dll</HintPath>
+    <Reference Include="Menu.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\Plugins\Menu\Menu.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="TVDatabase.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\TVDatabase.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="TvControl.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\TvControl.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="TvBusinessLayer.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\TvBusinessLayer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="TestPlugin.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\TestPlugin.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ProjectInfinity.Utilities.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\ProjectInfinity.Utilities.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ProjectInfinity.Services.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\ProjectInfinity.Services.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ProjectInfinity.Plugins.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\ProjectInfinity.Plugins.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ProjectInfinity.Core.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\ProjectInfinity.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ProjectInfinity.Controls.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\ProjectInfinity.Controls.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MyWeather.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\MyWeather.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MyVideos.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\MyVideos.dll</HintPath>
+    <Reference Include="MyPictures.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\Plugins\MyPictures\MyPictures.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MyTv.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\MyTv.dll</HintPath>
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\Plugins\mytv\MyTv.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MyVideos.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\Plugins\MyVideo\MyVideos.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MyWeather.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\Plugins\MyWeather\MyWeather.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NowPlaying.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\Plugins\NowPlaying\NowPlaying.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TvLibrary.Interfaces.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\TvLibrary.Interfaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TVDatabase.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\TVDatabase.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TvControl.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\TvControl.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TvBusinessLayer.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\TvBusinessLayer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TestPlugin.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\TestPlugin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="taglib-sharp.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\taglib-sharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.SQLite.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ProjectInfinity.Utilities.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\ProjectInfinity.Utilities.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ProjectInfinity.Services.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\ProjectInfinity.Services.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ProjectInfinity.Core.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\ProjectInfinity.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ProjectInfinity.Controls.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\ProjectInfinity.Controls.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MySql.Data.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\MySql.Data.dll</HintPath>
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MediaLibrary.dll">
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\MediaLibrary.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="log4net.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\log4net.dll</HintPath>
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Keyboard.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\Keyboard.dll</HintPath>
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\Keyboard.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Gentle.Provider.SQLServer.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\Gentle.Provider.SQLServer.dll</HintPath>
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\Gentle.Provider.SQLServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Gentle.Provider.MySQL.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\Gentle.Provider.MySQL.dll</HintPath>
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\Gentle.Provider.MySQL.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Gentle.Framework.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\Gentle.Framework.dll</HintPath>
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\Gentle.Framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Gentle.Common.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\Gentle.Common.dll</HintPath>
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\Gentle.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ExtendedMusicPlayer.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\ExtendedMusicPlayer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="DirectShowLib.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\DirectShowLib.dll</HintPath>
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\ExtendedMusicPlayer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Dialogs.dll">
-      <HintPath>..\..\..\ProjectInfinity\bin\Debug\Dialogs.dll</HintPath>
+      <HintPath>..\..\..\ProjectInfinity\bin\Release\Dialogs.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />

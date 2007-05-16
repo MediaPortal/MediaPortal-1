@@ -173,6 +173,17 @@ namespace MyWeather
     /// </summary>
     public struct LocInfo  // <loc>
     {
+        public void FillWithDummyData()
+        {
+            cityCode = "DUMMY002351";
+            city = "Dummytown, Dummyland";
+            time = "23:15";
+            lat = "49.02";
+            lon = "12.1";
+            sunRise = "7:14 AM";
+            sunSet = "5:38 PM";
+            zone = "1";
+        }
         public string cityCode;  // <loc id="GMXX0223">
         public string city;      // <dnam>Regensburg, Germany</dnam>
         public string time;      // <tm>1:12 AM</tm>
@@ -199,6 +210,19 @@ namespace MyWeather
     /// </summary>
     public struct CurrentCondition
     {
+        public void FillWithDummyData()
+        {
+            city = "Dummytown, Dummyland";
+            lastUpdate = "Friday, 12 May 2007";
+            temperature = "12";
+            feelsLikeTemp = "16";
+            condition = "Partly \n Cloudy";
+            icon = "30.png";
+            humidity = "70%";
+            wind = "200 mph";
+            uVindex = "10";
+            dewPoint = "30%";
+        }
         public string city;              // <obst>
         public string lastUpdate;        // <lsup>
         public string temperature;       // <temp> 
@@ -249,6 +273,139 @@ namespace MyWeather
         public string precipitation;
         public string humidity;
         public string wind;
+
+
+        /// <summary>
+        /// constructor for designer
+        /// </summary>
+        /// <param name="day"></param>
+        public DayForeCast(int day)
+        {
+            if (day == 0)
+            {
+                iconImageNameLow = "16.png";
+                iconImageNameHigh = "16.png";
+                overview = "this is an overview";
+                this.day = "Monday";
+                high = "13";
+                low = "8";
+                sunRise = "5:00 AM";
+                sunSet = "7:00 PM";
+                precipitation = "Partly\nCloudy";
+                humidity = "54%";
+                wind = "30 mph";
+            }
+            else if (day == 1)
+            {
+                iconImageNameLow = "36.png";
+                iconImageNameHigh = "36.png";
+                overview = "this is an overview";
+                this.day = "Tuesday";
+                high = "25";
+                low = "20";
+                sunRise = "5:10 AM";
+                sunSet = "7:10 PM";
+                precipitation = "Sunny";
+                humidity = "30%";
+                wind = "0 mph";
+            }
+            else if (day == 2)
+            {
+                iconImageNameLow = "34.png";
+                iconImageNameHigh = "34.png";
+                overview = "this is an overview";
+                this.day = "Wednesday";
+                high = "20";
+                low = "11";
+                sunRise = "5:20 AM";
+                sunSet = "7:20 PM";
+                precipitation = "Fog";
+                humidity = "84%";
+                wind = "55 mph";
+            }
+            else
+            {
+                iconImageNameLow = "38.png";
+                iconImageNameHigh = "38.png";
+                overview = "this is an overview";
+                this.day = "Thursday";
+                high = "12";
+                low = "0";
+                sunRise = "5:40 AM";
+                sunSet = "7:40 PM";
+                precipitation = "Storm and\nThunder";
+                humidity = "89%";
+                wind = "100 mph";
+            }
+        }
+
+        #region Dummy Data for Designer
+        /// <summary>
+        /// fills up some dummy data
+        /// </summary>
+        /// <param name="day"></param>
+        public void FillWithDummyData(int day)
+        {
+            if (day == 0)
+            {
+                iconImageNameLow = "16.png";
+                iconImageNameHigh = "16.png";
+                overview = "this is an overview";
+                this.day = "Monday";
+                high = "13";
+                low = "8";
+                sunRise = "5:00 AM";
+                sunSet = "7:00 PM";
+                precipitation = "Partly\nCloudy";
+                humidity = "54%";
+                wind = "30 mph";
+            }
+            else if (day == 1)
+            {
+                iconImageNameLow = "36.png";
+                iconImageNameHigh = "36.png";
+                overview = "this is an overview";
+                this.day = "Tuesday";
+                high = "25";
+                low = "20";
+                sunRise = "5:10 AM";
+                sunSet = "7:10 PM";
+                precipitation = "Sunny";
+                humidity = "30%";
+                wind = "0 mph";
+            }
+            else if (day == 2)
+            {
+                iconImageNameLow = "34.png";
+                iconImageNameHigh = "34.png";
+                overview = "this is an overview";
+                this.day = "Wednesday";
+                high = "20";
+                low = "11";
+                sunRise = "5:20 AM";
+                sunSet = "7:20 PM";
+                precipitation = "Fog";
+                humidity = "84%";
+                wind = "55 mph";
+            }
+            else
+            {
+                iconImageNameLow = "38.png";
+                iconImageNameHigh = "38.png";
+                overview = "this is an overview";
+                this.day = "Thursday";
+                high = "12";
+                low = "0";
+                sunRise = "5:40 AM";
+                sunSet = "7:40 PM";
+                precipitation = "Storm and\nThunder";
+                humidity = "89%";
+                wind = "100 mph";
+            }
+
+        }
+        #endregion
+
         // Getters :P
         public Uri IconImageNameLow
         {

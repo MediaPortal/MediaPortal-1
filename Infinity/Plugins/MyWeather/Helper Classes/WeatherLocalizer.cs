@@ -44,6 +44,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Monday, 3th May 2007";
                 return DateTime.Now.ToString("dd-MM HH:mm");
             }
         }
@@ -55,6 +56,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Location";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather", 1);//Location
             }
         }
@@ -67,6 +69,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Refresh";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather", 2); //Refresh
             }
         }
@@ -79,6 +82,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "weather";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather", 3); //weather
             }
         }
@@ -89,6 +93,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Temp";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather", 6); //Temp
             }
         }
@@ -99,6 +104,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Feels Like";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather", 7); //Feels Like
             }
         }
@@ -109,6 +115,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "UV Index";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather", 8); //UVIndex
             }
         }
@@ -119,6 +126,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Wind";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather", 9); //Wind
             }
         }
@@ -129,6 +137,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Humidity";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather", 10); //Humidity
             }
         }
@@ -139,6 +148,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Dew Point";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather", 11); //Dew Point
             }
         }
@@ -149,6 +159,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Sunrise";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather", 12); //Sunrise
             }
         }
@@ -159,9 +170,9 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Sunset";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather", 13); //Sunset
             }
         }
-
     }
 }

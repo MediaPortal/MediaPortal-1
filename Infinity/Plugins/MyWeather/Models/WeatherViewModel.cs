@@ -70,6 +70,12 @@ namespace MyWeather
         /// <param name="page">The page.</param>
         public WeatherViewModel()
         {
+            // we are in design mode, call a method
+            // to fill up some dummy data :)
+            if (Core.IsDesignMode)
+            {
+                CreateDummyData();
+            }
             // create localisation instance
             _locals = new WeatherLocalizer();
             // create the datamodel :)
@@ -80,6 +86,40 @@ namespace MyWeather
         }
         #endregion
 
+        /// <summary>
+        /// creates some Dummydata for the Designer
+        /// </summary>
+        public void CreateDummyData()
+        {
+            // Create lists
+            _availableLocations = new List<City>();
+            // Create 2 City Objects
+            City city1 = new City("Dummytown, Dummyland", "DUM200512");
+            City city2 = new City("Amsterdam, Netherlands", "NL3005132");
+            city1.currCondition = new CurrentCondition();
+            city1.currCondition.FillWithDummyData();
+            city1.locationInfo = new LocInfo();
+            city1.locationInfo.FillWithDummyData();
+            city1.forecast = new List<DayForeCast>();
+            city1.forecast.Add(new DayForeCast(0));
+            city1.forecast.Add(new DayForeCast(1));
+            city1.forecast.Add(new DayForeCast(2));
+            city1.forecast.Add(new DayForeCast(3));
+            city2.currCondition = new CurrentCondition();
+            city2.currCondition.FillWithDummyData();
+            city2.locationInfo = new LocInfo();
+            city2.locationInfo.FillWithDummyData();
+            city2.forecast = new List<DayForeCast>();
+            city2.forecast.Add(new DayForeCast(0));
+            city2.forecast.Add(new DayForeCast(1));
+            city2.forecast.Add(new DayForeCast(2));
+            city2.forecast.Add(new DayForeCast(3));
+            _availableLocations.Add(city1);
+            _availableLocations.Add(city2);
+            _currCity = city1;
+            ChangeProperty("AvailableLocations");
+            ChangeProperty("CurrentLocation");
+        }
         /// <summary>
         /// load all configured locations from settings
         /// </summary>
