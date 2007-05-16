@@ -93,33 +93,30 @@ namespace TvPlugin
       base.OnPageDestroy(new_windowId);
       m_bRunning = false;
     }
+
     #region Base Dialog Members
     public void DoModal(int dwParentId)
     {
-
       GUIWindow parentWindow = GUIWindowManager.GetWindow(dwParentId); ;
       if (null == parentWindow)
-      {
         return;
-      }
+      
       bool wasRouted = GUIWindowManager.IsRouted;
       IRenderLayer prevLayer = GUILayerManager.GetLayer(GUILayerManager.LayerType.Dialog);
 
       GUIWindowManager.IsSwitchingToNewWindow = true;
       GUIWindowManager.RouteToWindow(GetID);
 
-
       // active this window...
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, -1, 0, null);
+      Log.Debug("GUITVGuideDialog: OnMessage - GetID: {0}", Convert.ToString(GetID));
       OnMessage(msg);
 
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
       GUIWindowManager.IsSwitchingToNewWindow = false;
       m_bRunning = true;
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
         GUIWindowManager.Process();
-      }
 
       GUIWindowManager.IsSwitchingToNewWindow = true;
       GUIWindowManager.UnRoute();
@@ -135,6 +132,7 @@ namespace TvPlugin
       }
     }
     #endregion
+
     public override bool OnMessage(GUIMessage message)
     {
       //      needRefresh = true;
@@ -142,13 +140,14 @@ namespace TvPlugin
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
-            Log.Debug("tvguidedlg:GUI_MSG_WINDOW_DEINIT");
+            Log.Debug("tvguidedlg: GUI_MSG_WINDOW_DEINIT");
             m_bRunning = false;
             return true;
           }
       }
       return base.OnMessage(message);
     }
+
     public override void OnAction(Action action)
     {
       switch (action.wID)
@@ -160,12 +159,19 @@ namespace TvPlugin
             return;
           }
           break;
+        case Action.ActionType.ACTION_CLOSE_DIALOG:
+          m_bRunning = false;
+          return;
+        case Action.ActionType.ACTION_SHOW_FULLSCREEN:
+          m_bRunning = false;
+          return;
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           m_bRunning = false;
           return;
       }
       base.OnAction(action);
     }
+
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {
