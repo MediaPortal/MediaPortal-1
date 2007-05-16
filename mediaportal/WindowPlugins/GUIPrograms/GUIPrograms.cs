@@ -707,24 +707,6 @@ namespace WindowPlugins.GUIPrograms
             }
           }
           break;
-
-        case GUIMessage.MessageType.GUI_MSG_GET_PASSWORD:
-          // Only one window should act on this.
-          if (GetID != (int)GUIWindow.Window.WINDOW_FILES)
-            break;
-
-          VirtualKeyboard keyboard2 = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-          if (null == keyboard2) return base.OnMessage(message);
-          keyboard2.Reset();
-          keyboard2.Password = true;
-          keyboard2.Text = message.Label;
-          keyboard2.DoModal(GUIWindowManager.ActiveWindow);
-          if (keyboard2.IsConfirmed)
-          {
-            message.Label = keyboard2.Text;
-          }
-          else message.Label = "";
-          break;
       }
       return base.OnMessage(message);
     }

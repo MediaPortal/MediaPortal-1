@@ -282,10 +282,6 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_GET_PASSWORD:
-          // Only one window should act on this.
-          if (GetID != (int)GUIWindow.Window.WINDOW_HOME)
-            break;
-
           VirtualKeyboard keyboard2 = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
           if (null == keyboard2) return;
           keyboard2.Reset();
@@ -300,10 +296,6 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD:
-          // Only one window should act on this.
-          if (GetID != (int)GUIWindow.Window.WINDOW_HOME)
-            break;
-
           using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             if (!xmlreader.GetValueAsBool("general", "hidewrongpin", false))
