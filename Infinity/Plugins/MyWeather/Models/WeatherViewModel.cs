@@ -51,6 +51,7 @@ namespace MyWeather
     public class WeatherViewModel : DispatcherObject, INotifyPropertyChanged
     {
         #region variables
+
         bool _isBusy = false;           // used for the wait cursor
         City _currCity;                 // holds the currently selected city
         WeatherLocalizer _locals;       // databinding source for the localisations
@@ -73,7 +74,7 @@ namespace MyWeather
             _locals = new WeatherLocalizer();
             // create the datamodel :)
             _dataModel = new WeatherDataModel(new WeatherDotComCatcher());
-            // load locations
+            // load locations and data (threaded)
             UpdateWeatherCommand updateCmd = new UpdateWeatherCommand(this, _dataModel);
             updateCmd.Execute(null);
         }
@@ -276,6 +277,7 @@ namespace MyWeather
             public override void Execute(object parameter)
             {
                 // update weather data for new location and update labels go in here
+                if (_viewModel.AvailableLocations == null) return;      // may happen when the threading failed or the user made an input too early
                 if (_viewModel.AvailableLocations.Count == 0) return;
                 MpMenu menu = new MpMenu();
                 menu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
