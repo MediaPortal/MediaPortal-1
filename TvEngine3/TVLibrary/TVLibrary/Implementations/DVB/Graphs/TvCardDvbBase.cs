@@ -269,8 +269,10 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     protected ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest)
     {
+      Log.Log.Info("dvb:Submiting tunerequest Channel:{0} subChannel:{1} ", channel.Name,subChannelId );
       if (_mapSubChannels.ContainsKey(subChannelId) == false)
       {
+        Log.Log.Info("dvb:Getting new subchannel");
         subChannelId = GetNewSubChannel(channel);
       }
       else
