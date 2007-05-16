@@ -23,7 +23,7 @@ namespace ProjectInfinity
     [STAThread]
     public static void Main(params string[] args)
     {
-      using (new ServiceScope())
+      using (new ServiceScope(true))
       {
         ILogger logger = new FileLogger("ProjectInfinity.log", LogLevel.Debug);
         ServiceScope.Add(logger);
