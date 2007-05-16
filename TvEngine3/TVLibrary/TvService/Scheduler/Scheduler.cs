@@ -321,7 +321,7 @@ namespace TvService
         {
           if (currentTime >= next.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= next.EndTime.AddMinutes(schedule.PostRecordInterval))
           {
-            if (schedule.IsInFuzzyTimeSlot(next.IdChannel, next.Title, current.StartTime))
+            if (schedule.IsInFuzzyTimeSlot(next.IdChannel, next.Title, next.StartTime))
             {
               if (!schedule.IsSerieIsCanceled(next.StartTime))
               {
