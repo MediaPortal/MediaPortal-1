@@ -311,7 +311,6 @@ namespace MediaPortal.Player
     }
     #endregion
 
-
     #region public members
 
     //called when current playing file is stopped
@@ -1986,6 +1985,10 @@ namespace MediaPortal.Player
     {
       if (Playing && IsTV && !IsTVRecording)
       {
+        // close e.g. the tv guide dialog (opened from context menu)
+        Action actionCloseDialog = new Action(Action.ActionType.ACTION_CLOSE_DIALOG, 0, 0);
+        GUIGraphicsContext.OnAction(actionCloseDialog);
+
         // watching TV
         if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
           return true;
