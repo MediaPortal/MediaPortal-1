@@ -338,6 +338,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
+    
     <control>
       <description>Horizontal scrollbar</description>
       <type>hscrollbar</type>
@@ -375,4 +376,3 @@
     </control>
   </controls>
 </window>
-

@@ -64,39 +64,39 @@ namespace MediaPortal.GUI.TV
     {
       return Load(GUIGraphicsContext.Skin + @"\dialogTvGuide.xml");
     }
+
     protected override void OnPageDestroy(int new_windowId)
     {
       base.OnPageDestroy(new_windowId);
       m_bRunning = false;
     }
+
     #region Base Dialog Members
     public void DoModal(int dwParentId)
     {
-
       GUIWindow parentWindow = GUIWindowManager.GetWindow(dwParentId); ;
-      if (null == parentWindow)
-      {
+      if (null == parentWindow)      
         return;
-      }
+      
       bool wasRouted = GUIWindowManager.IsRouted;
+      //Log.Debug("GUITVGuideDialog: GetLayer");
       IRenderLayer prevLayer = GUILayerManager.GetLayer(GUILayerManager.LayerType.Dialog);
 
       GUIWindowManager.IsSwitchingToNewWindow = true;
       GUIWindowManager.RouteToWindow(GetID);
 
-
       // active this window...
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, -1, 0, null);
+      Log.Debug("GUITVGuideDialog: OnMessage - GetID: {0}", Convert.ToString(GetID));
       OnMessage(msg);
 
+      Log.Debug("GUITVGuideDialog: RegisterLayer now");
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
       GUIWindowManager.IsSwitchingToNewWindow = false;
       m_bRunning = true;
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
+      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)      
         GUIWindowManager.Process();
-      }
-
+      
       GUIWindowManager.IsSwitchingToNewWindow = true;
       GUIWindowManager.UnRoute();
       GUIWindowManager.IsSwitchingToNewWindow = false;
@@ -111,6 +111,7 @@ namespace MediaPortal.GUI.TV
       }
     }
     #endregion
+
     public override bool OnMessage(GUIMessage message)
     {
       //      needRefresh = true;
@@ -125,6 +126,7 @@ namespace MediaPortal.GUI.TV
       }
       return base.OnMessage(message);
     }
+
     public override void OnAction(Action action)
     {
       switch (action.wID)
@@ -136,12 +138,19 @@ namespace MediaPortal.GUI.TV
             return;
           }
           break;
-        case Action.ActionType.ACTION_PREVIOUS_MENU:
+        case Action.ActionType.ACTION_CLOSE_DIALOG:
           m_bRunning = false;
           return;
+        case Action.ActionType.ACTION_SHOW_FULLSCREEN:
+          m_bRunning = false;
+          return;
+        case Action.ActionType.ACTION_PREVIOUS_MENU:
+          m_bRunning = false;
+          return;          
       }
       base.OnAction(action);
     }
+
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {
