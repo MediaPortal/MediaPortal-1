@@ -7,15 +7,9 @@ namespace ProjectInfinity.Menu
   {
     private readonly IMenuItem _menuItem;
 
-    public MenuMenuItem(IMenuItem menuItem)
+    public MenuMenuItem(IMenuItem menuItem) : base(menuItem.Text)
     {
       _menuItem = menuItem;
-    }
-
-    public override string Label
-    {
-      get { return _menuItem.Text; }
-      set { throw new NotSupportedException(); }
     }
 
     public override string Image

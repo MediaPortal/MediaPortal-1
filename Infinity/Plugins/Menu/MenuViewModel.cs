@@ -10,6 +10,7 @@ using ProjectInfinity.Navigation;
 using ProjectInfinity.Players;
 using ProjectInfinity.TaskBar;
 using ProjectInfinity.Plugins;
+using MenuItem=ProjectInfinity.Controls.MenuItem;
 
 namespace ProjectInfinity.Menu
 {
@@ -27,26 +28,43 @@ namespace ProjectInfinity.Menu
     private ICommand _launchCommand;
     private ICommand _fullScreenCommand;
 
+    /// <summary>
+    /// Parameterless constructor to be used from Microsoft Blend and other XAML design tools
+    /// </summary>
+    public MenuViewModel() : this("dummy")
+    {
+    }
+
     public MenuViewModel(string id)
     {
       _id = id;
 
-      IList<IMenuItem> model;
-
-      //The IMenuManager.GetMenu method returns a list of IMenuItem implementations of the 
-      //correct type (IMenu, ICommandItem, IMessageItem, ...)
-      Plugins.Menu menuInfo = (Plugins.Menu)ServiceScope.Get<IPluginManager>().BuildItem<Plugins.Menu>("/Menus", id);
-      if (menuInfo != null)
+      if (Core.IsDesignMode)
       {
-        model = ServiceScope.Get<IMenuManager>().GetMenu(menuInfo.Path);
+        menuView = new MenuCollection();
+        MenuItem cmd1 = new MenuItem("Item 1");
+        cmd1.SubMenus = new MenuCollection();
+        CommandMenuItem cmd1a = new CommandMenuItem("Item 1a");
+        cmd1a.Image = "http://tell.fll.purdue.edu/JapanProj/FLClipart/Nouns/Things/music.gif";
+        cmd1.SubMenus.Add(cmd1a);
+        CommandMenuItem cmd1b = new CommandMenuItem("Item 1b");
+        cmd1b.Image = "http://www.pars-av.nl/images/Canon-cam.jpg";
+        cmd1.SubMenus.Add(cmd1b);
+        menuView.Add(cmd1);
+        CommandMenuItem cmd2 = new CommandMenuItem("Item 2");
+        menuView.Add(cmd2);
+        menuView.Add(new CommandMenuItem("Item 3"));
+        menuView.Add(new CommandMenuItem("Item 4"));
       }
       else
       {
-        model = new List<IMenuItem>();
+        //The IMenuManager.GetMenu method returns a list of IMenuItem implementations of the 
+        //correct type (IMenu, ICommandItem, IMessageItem, ...)
+          IList<IMenuItem> model = ServiceScope.Get<IMenuManager>().GetMenu("/Menus/" + id);
+        //We translate this list to a list of menu items that the menu control can use by means
+        //of the MenuViewCreator
+        menuView = MenuViewCreator.Build(model);
       }
-      //We translate this list to a list of menu items that the menu control can use by means
-      //of the MenuViewCreator
-      menuView = MenuViewCreator.Build(model);
     }
 
     public Brush VideoBrush
@@ -134,7 +152,7 @@ namespace ProjectInfinity.Menu
       {
         if (_launchCommand == null)
         {
-          _launchCommand = new LaunchCommand(this);
+          _launchCommand = new LaunchCommand();
         }
         return _launchCommand;
       }
@@ -164,13 +182,6 @@ namespace ProjectInfinity.Menu
     /// </remarks>
     private class LaunchCommand : ICommand, IMenuItemVisitor
     {
-      private MenuViewModel _viewModel;
-
-      public LaunchCommand(MenuViewModel viewModel)
-      {
-        _viewModel = viewModel;
-      }
-
       #region ICommand Members
 
       ///<summary>

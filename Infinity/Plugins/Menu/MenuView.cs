@@ -7,8 +7,9 @@ namespace ProjectInfinity.Menu
   {
     public MenuView(string id)
     {
-      DataContext = new MenuViewModel(id);
-      InputBindings.Add(new KeyBinding(new MenuViewModel(id).FullScreen, new KeyGesture(Key.Enter, ModifierKeys.Alt)));
+      MenuViewModel model = new MenuViewModel(id);
+      DataContext = model;
+      InputBindings.Add(new KeyBinding(model.FullScreen, new KeyGesture(Key.Enter, ModifierKeys.Alt)));
       InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(Key.Escape)));
     }
   }

@@ -7,5 +7,7 @@ namespace ProjectInfinity.Menu
 {
   class CommandMenuItem : MenuItem
   {
+    public CommandMenuItem(string label) : base(label)
+    {}
   }
 }

@@ -16,12 +16,9 @@ namespace ProjectInfinity.Controls
     string _label;
     string _image;
 
-    public MenuItem()
-    {
-    }
     public MenuItem(string label)
     {
-      Label = label;
+      _label = label;
     }
 
     public MenuCollection SubMenus
