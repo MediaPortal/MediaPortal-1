@@ -187,6 +187,11 @@ namespace TvLibrary.Implementations.DVB
         _mapSubChannels[id].Decompose();
         _mapSubChannels.Remove(id);
       }
+      if ( id == 0 && _mapSubChannels.Count > 0)
+      {
+          for (int i = 0; i <= _mapSubChannels.Count; i++)
+              if (_mapSubChannels.ContainsKey(i)) _mapSubChannels[0] = _mapSubChannels[i];
+      }
       if (_mapSubChannels.Count == 0)
       {
         _subChannelId = 0;
