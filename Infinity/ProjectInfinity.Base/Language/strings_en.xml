@@ -313,4 +313,7 @@
     <String id="559">in the vicinity</String>
     <String id="560">Clearing</String>
   </Section>
+  <Section name="mediamodule">
+    <String id="0">Media Module</String>
+  </Section>
 </Language>
