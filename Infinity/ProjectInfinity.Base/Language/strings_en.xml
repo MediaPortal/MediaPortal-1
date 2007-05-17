@@ -315,5 +315,7 @@
   </Section>
   <Section name="mediamodule">
     <String id="0">Media Module</String>
+    <String id="1">Media</String>
+    <String id="2">Settings</String>
   </Section>
 </Language>

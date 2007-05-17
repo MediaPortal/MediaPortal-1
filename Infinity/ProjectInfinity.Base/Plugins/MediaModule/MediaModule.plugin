@@ -12,9 +12,27 @@
 	</Runtime>
 
 	<Path name = "/Menus/Home">
-		<MenuItem id    = "MediaModule"
-		          label = "@mediamodule:0"
-                          image = "pack://siteoforigin:,,,/skin/default/gfx/Video.png"
-		          class = "MediaModule.MediaModulePlugin"/>
+		<MenuItem 	id    = "MediaModule"
+				type  = "SubMenu"
+		          	label = "@mediamodule:0"
+                          	image = "pack://siteoforigin:,,,/skin/default/gfx/Video.png"
+		          	class = "MediaModule.MediaModulePlugin"
+				path  = "/Menus/Home/MediaModule"/>
 	</Path>
+	<Path name = "/Menus/Home/MediaModule">
+		<MenuItem id = "Media"
+					label = "@mediamodule:1"
+					image = "pack://siteoforigin:,,,/skin/default/gfx/Video.png"
+					class = "MediaModule.MediaModulePlugin"/>
+		<MenuItem id = "Setup"
+					label = "@mediamodule:2"
+					image = "pack://siteoforigin:,,,/skin/default/gfx/mySettings.png"
+					class = "MediaModule.MediaModuleSettings"/>
+	</Path>
+  	<Path name = "/Menus/Settings">
+    		<MenuItem 	id = "MediaModuleSettings"
+				label = "@mediamodule:2"
+				image = "pack://siteoforigin:,,,/skin/default/gfx/Video.png"
+				class = "MediaModule.MediaModuleSettings"/>
+  	</Path>
 </Plugin>

@@ -43,10 +43,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MediaHome.cs" />
+    <Compile Include="MediaModuleSettings.cs" />
     <Compile Include="Models\MediaModel.cs" />
     <Compile Include="MediaModulePlugin.cs" />
     <Compile Include="Models\MediaViewModel.cs" />
+    <Compile Include="Models\SettingsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="MediaSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Dialogs\Dialogs.csproj">

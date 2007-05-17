@@ -191,7 +191,14 @@ namespace MediaModule
         {
             _viewModel = model;
             Library = ServiceScope.Get<IMediaLibrary>();
-            Section = Library.FindSection("Music", true);
+            MediaSettings settings = new MediaSettings();
+            ServiceScope.Get<ISettingsManager>().Load(settings);
+            if (string.IsNullOrEmpty(settings.Section))
+            {
+                settings.Section = "NewSection";
+                ServiceScope.Get<ISettingsManager>().Save(settings);
+            }
+            Section = Library.FindSection(settings.Section, true);
             Navigator = Section.GetViewNavigator();
             Refresh();
         }
