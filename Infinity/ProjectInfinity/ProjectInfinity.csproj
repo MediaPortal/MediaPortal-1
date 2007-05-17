@@ -94,7 +94,7 @@
     </ProjectReference>
     <ProjectReference Include="..\MediaLibrary\MediaLibrary.Core\MediaLibrary.csproj">
       <Project>{45C30FF9-A914-4F72-BA16-83426B9BF00B}</Project>
-      <Name>MediaLibrary</Name>
+      <Name>MediaLibrary %28MediaLibrary\Core\MediaLibrary%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProjectInfinity.Core\ProjectInfinity.Core.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>

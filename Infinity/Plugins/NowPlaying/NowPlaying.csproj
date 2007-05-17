@@ -71,7 +71,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\MediaLibrary\MediaLibrary.Core\MediaLibrary.csproj">
       <Project>{45C30FF9-A914-4F72-BA16-83426B9BF00B}</Project>
-      <Name>MediaLibrary</Name>
+      <Name>MediaLibrary %28MediaLibrary\Core\MediaLibrary%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ProjectInfinity.Controls\ProjectInfinity.Controls.csproj">
       <Project>{D30415D7-E1FC-4C3F-9667-E6301E1A2F6A}</Project>

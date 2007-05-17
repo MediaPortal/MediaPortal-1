@@ -4,6 +4,13 @@ REM %2 = $(ConfigurationName) Debug/Release
 REM Copy All new files from base
 xcopy %1\ProjectInfinity.Base\*.* . /E /R /Y /D
 
+REM Controls Copy of Media Library files
+xcopy /y %1\MediaLibrary\bin\MediaLibrary.dll .
+xcopy /y %1\MediaLibrary\bin\MediaManager.exe* .
+
+REM Copy All Media Library plugins
+xcopy %1\MediaLibrary\bin\Plugins\*.* Plugins /E /R /Y /D
+
 REM Controls
 xcopy /y %1\ProjectInfinity.Controls\bin\%2\ProjectInfinity.Controls.* .
 

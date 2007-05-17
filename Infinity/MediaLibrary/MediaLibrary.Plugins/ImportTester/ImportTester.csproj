@@ -14,7 +14,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\ProjectInfinity\bin\Debug\Plugins\import\ImportTester\</OutputPath>
+    <OutputPath>..\..\bin\Plugins\Import\ImportTester\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -39,7 +39,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\MediaLibrary.Core\MediaLibrary.csproj">
       <Project>{45C30FF9-A914-4F72-BA16-83426B9BF00B}</Project>
-      <Name>MediaLibrary</Name>
+      <Name>MediaLibrary %28MediaLibrary\Core\MediaLibrary%29</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
