@@ -41,3 +41,5 @@ xcopy /y %1\Plugins\MyPictures\bin\%2\MyPictures.* Plugins\MyPictures\
 REM NowPlaying
 xcopy /y %1\Plugins\NowPlaying\bin\%2\NowPlaying.* Plugins\NowPlaying\
 
+REM MyVideos
+xcopy /y %1\Plugins\MediaModule\bin\%2\MediaModule.* Plugins\MediaModule\
