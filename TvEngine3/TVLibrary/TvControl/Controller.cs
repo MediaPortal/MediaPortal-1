@@ -259,7 +259,7 @@ namespace TvControl
     /// </summary>
     /// <param name="cardId">card id</param>
     /// <returns>id of Schedule or -1 if  card not recording</returns>
-    int GetRecordingSchedule(int cardId);
+    int GetRecordingSchedule(int cardId, int channelId);
 
     /// <summary>
     /// Clears the cache.

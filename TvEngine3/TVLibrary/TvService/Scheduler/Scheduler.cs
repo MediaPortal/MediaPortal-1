@@ -688,11 +688,11 @@ namespace TvService
     /// </summary>
     /// <param name="cardId">id of the card</param>
     /// <returns>id of schedule the card is recording or -1 if its not recording</returns>
-    public int GetRecordingScheduleForCard(int cardId)
+    public int GetRecordingScheduleForCard(int cardId, int ChannelId)
     {
       foreach (RecordingDetail rec in _recordingsInProgressList)
       {
-        if (rec.CardInfo.Id == cardId)
+        if (rec.CardInfo.Id == cardId && rec.Channel.IdChannel == ChannelId)
         {
           return rec.Schedule.IdSchedule;
         }

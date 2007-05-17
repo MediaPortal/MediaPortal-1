@@ -1320,13 +1320,13 @@ namespace TvService
     /// <returns>
     /// id of Schedule or -1 if  card not recording
     /// </returns>
-    public int GetRecordingSchedule(int cardId)
+    public int GetRecordingSchedule(int cardId, int ChannelId)
     {
       try
       {
         if (_isMaster == false) return -1;
         if (_cards[cardId].DataBaseCard.Enabled == false) return -1;
-        return _scheduler.GetRecordingScheduleForCard(cardId);
+        return _scheduler.GetRecordingScheduleForCard(cardId, ChannelId);
       }
       catch (Exception ex)
       {

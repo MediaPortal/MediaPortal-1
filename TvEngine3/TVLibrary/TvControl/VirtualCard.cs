@@ -358,7 +358,7 @@ namespace TvControl
         {
           if (User.CardId < 0) return -1;
           RemoteControl.HostName = _server;
-          return RemoteControl.Instance.GetRecordingSchedule(User.CardId);
+          return RemoteControl.Instance.GetRecordingSchedule(User.CardId, User.IdChannel);
         }
         catch (Exception ex)
         {
