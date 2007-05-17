@@ -1,0 +1,20 @@
+<Plugin name        = "Media Module"
+       author      = "Kairos"
+       copyright   = "GPL"
+       description = "Browse your media">
+	
+	<Manifest>
+		<Identity name = "MediaModule.MediaModulePlugin"/>
+	</Manifest>
+	
+	<Runtime>
+		<Import assembly = "MediaModule.dll"/>
+	</Runtime>
+
+	<Path name = "/Menus/Home">
+		<MenuItem id    = "MediaModule"
+		          label = "@mediamodule:35"
+                          image = "pack://siteoforigin:,,,/skin/default/gfx/Video.png"
+		          class = "MediaModule.MediaModulePlugin"/>
+	</Path>
+</Plugin>

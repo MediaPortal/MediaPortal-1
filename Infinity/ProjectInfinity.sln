@@ -68,6 +68,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyWeather", "Plugins\MyWeat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NowPlaying", "Plugins\NowPlaying\NowPlaying.csproj", "{A52739F2-7E58-4451-BEE4-A4CEAB3123B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaModule", "Plugins\MediaModule\MediaModule.csproj", "{11850A2A-7E65-47D5-BB18-778B226EC356}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -160,6 +162,10 @@ Global
 		{A52739F2-7E58-4451-BEE4-A4CEAB3123B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A52739F2-7E58-4451-BEE4-A4CEAB3123B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A52739F2-7E58-4451-BEE4-A4CEAB3123B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11850A2A-7E65-47D5-BB18-778B226EC356}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11850A2A-7E65-47D5-BB18-778B226EC356}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11850A2A-7E65-47D5-BB18-778B226EC356}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11850A2A-7E65-47D5-BB18-778B226EC356}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -171,5 +177,6 @@ Global
 		{53207A4F-93D4-49B6-BB72-508D3CF0999D} = {31984FAD-5B8C-4273-ACB0-764B62403295}
 		{5A9B4F5E-5BF0-4190-8982-40B6A9D5AFE1} = {31984FAD-5B8C-4273-ACB0-764B62403295}
 		{A52739F2-7E58-4451-BEE4-A4CEAB3123B5} = {31984FAD-5B8C-4273-ACB0-764B62403295}
+		{11850A2A-7E65-47D5-BB18-778B226EC356} = {31984FAD-5B8C-4273-ACB0-764B62403295}
 	EndGlobalSection
 EndGlobal
