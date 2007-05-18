@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Language name="English" characters="255">
     <Section name="unmapped">
         <String id="0" prefix="My ">Programs</String>
@@ -1665,5 +1665,8 @@
         <String id="200043">Cleanup Recordings</String>
         <String id="200044">Invalid recordings</String>
         <String id="200045">Both</String>
+        <String id="200046">Generate Thumbnails</String>
+        <String id="200047">Recursively Generate Thumbnails</String>
+        <String id="200048">Rebuild Thumbnails</String>
     </Section>
 </Language>

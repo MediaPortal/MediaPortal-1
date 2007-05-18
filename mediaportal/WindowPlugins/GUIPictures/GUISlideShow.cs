@@ -94,7 +94,7 @@ namespace MediaPortal.GUI.Pictures
 
     public SlidePicture(string strFilePath, bool useActualSizeTexture)
     {
-      _filePath = strFilePath;      
+      _filePath = strFilePath;
 
       using (PictureDatabase dbs = new PictureDatabase())
       {
@@ -2276,7 +2276,7 @@ namespace MediaPortal.GUI.Pictures
       // to make it possibel to reach a 100% zoom level without changing the slideshow code, this condition are used
       if (_isSlideShow) _isPictureZoomed = _userZoomLevel == 1.0f ? false : true;
       else _isPictureZoomed = _userZoomLevel == _defaultZoomFactor ? false : true;
-            
+
       // Load raw picture when zooming
       if (!_backgroundSlide.TrueSizeTexture && _isPictureZoomed)
       {
