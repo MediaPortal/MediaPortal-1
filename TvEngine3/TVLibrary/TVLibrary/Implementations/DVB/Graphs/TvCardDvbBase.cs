@@ -187,11 +187,11 @@ namespace TvLibrary.Implementations.DVB
         _mapSubChannels[id].Decompose();
         _mapSubChannels.Remove(id);
       }
-      if ( id == 0 && _mapSubChannels.Count > 0)
-      {
-          for (int i = 0; i <= _mapSubChannels.Count; i++)
-              if (_mapSubChannels.ContainsKey(i)) _mapSubChannels[0] = _mapSubChannels[i];
-      }
+      //if ( id == 0 && _mapSubChannels.Count > 0)
+      //{
+      //    for (int i = 0; i <= _mapSubChannels.Count; i++)
+      //        if (_mapSubChannels.ContainsKey(i)) _mapSubChannels[0] = _mapSubChannels[i];
+      // }
       if (_mapSubChannels.Count == 0)
       {
         _subChannelId = 0;
@@ -1471,6 +1471,27 @@ namespace TvLibrary.Implementations.DVB
       }
     }
     /// <summary>
+    /// Gets the first subchannel being used.
+    /// </summary>
+    /// <value>The current channel.</value>
+    public int firstSubchannel
+    {
+        get
+        {
+            foreach ( int i in _mapSubChannels.Keys ) 
+            {
+                if (_mapSubChannels.ContainsKey(i))
+                {
+                    return i;
+                }
+            }
+            return 0;
+        }
+    }
+
+    
+
+    /// <summary>
     /// Gets or sets the current channel.
     /// </summary>
     /// <value>The current channel.</value>
@@ -1480,7 +1501,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].CurrentChannel;
+            return _mapSubChannels[firstSubchannel].CurrentChannel;
         }
         return null;
       }
@@ -1488,7 +1509,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          _mapSubChannels[0].CurrentChannel = value;
+            _mapSubChannels[firstSubchannel].CurrentChannel = value;
         }
       }
     }
@@ -1534,7 +1555,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].GrabTeletext;
+            return _mapSubChannels[firstSubchannel].GrabTeletext;
         }
         return false;
       }
@@ -1542,7 +1563,8 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          _mapSubChannels[0].GrabTeletext = value;
+
+            _mapSubChannels[firstSubchannel].GrabTeletext = value;
         }
       }
     }
@@ -1556,7 +1578,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].HasTeletext;
+            return _mapSubChannels[firstSubchannel].HasTeletext;
         }
         return false;
       }
@@ -1571,7 +1593,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].TeletextDecoder;
+            return _mapSubChannels[firstSubchannel].TeletextDecoder;
         }
         return null;
       }
@@ -1587,7 +1609,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].TeletextCallback;
+            return _mapSubChannels[firstSubchannel].TeletextCallback;
         }
         return null;
       }
@@ -1595,7 +1617,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          _mapSubChannels[0].TeletextCallback = value;
+            _mapSubChannels[firstSubchannel].TeletextCallback = value;
         }
       }
     }
@@ -1657,7 +1679,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].CurrentChannel;
+            return _mapSubChannels[firstSubchannel].CurrentChannel;
         }
         return null;
       }
@@ -1683,7 +1705,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].TimeShiftFileName;
+            return _mapSubChannels[firstSubchannel].TimeShiftFileName;
         }
         return "";
       }
@@ -1754,7 +1776,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].StartOfTimeShift;
+            return _mapSubChannels[firstSubchannel].StartOfTimeShift;
         }
         return DateTime.MinValue;
       }
@@ -1769,7 +1791,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].RecordingStarted;
+            return _mapSubChannels[firstSubchannel].RecordingStarted;
         }
         return DateTime.MinValue;
       }
@@ -1799,7 +1821,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].IsRecordingTransportStream;
+            return _mapSubChannels[firstSubchannel].IsRecordingTransportStream;
         }
         return false;
       }
@@ -1844,7 +1866,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].IsReceivingAudioVideo;
+            return _mapSubChannels[firstSubchannel].IsReceivingAudioVideo;
         }
         return false;
       }
@@ -1860,7 +1882,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].RecordingFileName;
+            return _mapSubChannels[firstSubchannel].RecordingFileName;
         }
         return "";
       }
@@ -1961,7 +1983,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (_mapSubChannels.Count > 0)
           {
-            _mapSubChannels[0].SetTimeShiftFileName(fileName); ;
+              _mapSubChannels[firstSubchannel].SetTimeShiftFileName(fileName); ;
           }
         }
         _graphState = GraphState.TimeShifting;
@@ -2068,7 +2090,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_mapSubChannels.Count > 0)
       {
-        _mapSubChannels[0].StartRecording(transportStream, fileName);
+          _mapSubChannels[firstSubchannel].StartRecording(transportStream, fileName);
       }
     }
 
@@ -2080,7 +2102,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_mapSubChannels.Count > 0)
       {
-        _mapSubChannels[0].StopRecording();
+          _mapSubChannels[firstSubchannel].StopRecording();
       }
     }
     #endregion
@@ -2480,7 +2502,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].AvailableAudioStreams;
+            return _mapSubChannels[firstSubchannel].AvailableAudioStreams;
         }
         return new List<IAudioStream>();
       }
@@ -2495,7 +2517,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[0].CurrentAudioStream;
+            return _mapSubChannels[firstSubchannel].CurrentAudioStream;
         }
         return null;
       }
@@ -2503,7 +2525,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_mapSubChannels.Count > 0)
         {
-          _mapSubChannels[0].CurrentAudioStream = value;
+            _mapSubChannels[firstSubchannel].CurrentAudioStream = value;
         }
       }
     }
