@@ -317,7 +317,7 @@ namespace TvPlugin
         if ((byte)chKey == 0x2B && currentPageNumber < 0x899) // +
         {
           currentPageNumber++;
-          while ((currentPageNumber % 0xf) > 9) currentSubPageNumber++;
+          while ((currentPageNumber % 0x10) > 9) currentPageNumber++;
           currentSubPageNumber = 0;
           {
             GetNewPage();
@@ -332,7 +332,7 @@ namespace TvPlugin
         if ((byte)chKey == 0x2D && currentPageNumber > 0x100) // -
         {
           currentPageNumber--;
-          while ((currentPageNumber % 0xf) > 9) currentSubPageNumber--;
+          while ((currentPageNumber % 0x10) > 9) currentPageNumber--;
           currentSubPageNumber = 0;
           {
             GetNewPage();
