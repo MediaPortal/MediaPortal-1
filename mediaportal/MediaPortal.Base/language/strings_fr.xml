@@ -1339,6 +1339,10 @@
     <String id="13016">Trier par: Lancements</String>
     <String id="13017">Trier par: Récents</String>
     <String id="13018">Trier par: Note</String>
+    <String id="13031">Fabricant</String>
+    <String id="13032">Les plus lancés</String>
+    <String id="13033">Les lancés récemment</String>
+    <String id="13041">Affiche Infos</String>
     <String id="16001">Mixage de soirée</String>
     <String id="19001">Tetris</String>
     <String id="19002">Nouvelle partie</String>
@@ -1468,6 +1472,9 @@
     <String id="34053">Erreur visu du flux sélectionné </String>
     <String id="34054">Poignée de main échouée</String>
     <String id="34055">Les flux peuvent être indisponibles</String>
+    <String id="40001">Attente de mise en veille</String>
+    <String id="40002">MediaPortal ne répond pas car il est encore occupé</String>
+    <String id="40003">Quand toutes les taches seront terminées, MediaPortal passera en veille.</String>
     <String id="100000">Accueil</String>
     <String id="100001">Télé</String>
     <String id="100002">Photos</String>
@@ -1607,6 +1614,7 @@
     <String id="103011">TV/Réglages Crop</String>
     <String id="104711">Wikipedia</String>
     <String id="105900">Bandes Annonces</String>
+    <String id="106666">Attente mise en veille</String>
     <String id="107700">TV/Télétexte</String>
     <String id="107701">TV/Télétexte</String>
     <String id="107777">Sudoku</String>
@@ -1654,5 +1662,8 @@
     <String id="200040">Enlève étape</String>
     <String id="200041">Détails Tuning</String>
     <String id="200042">Canaux liés</String>
+    <String id="200043">Nettoyer enregistrements</String>
+    <String id="200044">Enregistrements invalides</String>
+    <String id="200045">Les deux</String>
   </Section>
 </Language>
