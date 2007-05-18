@@ -214,8 +214,8 @@ namespace MyWeather
         {
             city = "Dummytown, Dummyland";
             lastUpdate = "Friday, 12 May 2007";
-            temperature = "12";
-            feelsLikeTemp = "16";
+            temperature = "12°C";
+            feelsLikeTemp = "16°C";
             condition = "Partly \n Cloudy";
             icon = "30.png";
             humidity = "70%";
@@ -285,10 +285,10 @@ namespace MyWeather
             {
                 iconImageNameLow = "16.png";
                 iconImageNameHigh = "16.png";
-                overview = "this is an overview";
+                overview = "Partly\nCloudy";
                 this.day = "Monday";
-                high = "13";
-                low = "8";
+                high = "13°C";
+                low = "8°C";
                 sunRise = "5:00 AM";
                 sunSet = "7:00 PM";
                 precipitation = "Partly\nCloudy";
@@ -299,10 +299,10 @@ namespace MyWeather
             {
                 iconImageNameLow = "36.png";
                 iconImageNameHigh = "36.png";
-                overview = "this is an overview";
+                overview = "Sunny";
                 this.day = "Tuesday";
-                high = "25";
-                low = "20";
+                high = "25°C";
+                low = "20°C";
                 sunRise = "5:10 AM";
                 sunSet = "7:10 PM";
                 precipitation = "Sunny";
@@ -313,10 +313,10 @@ namespace MyWeather
             {
                 iconImageNameLow = "34.png";
                 iconImageNameHigh = "34.png";
-                overview = "this is an overview";
+                overview = "Fog";
                 this.day = "Wednesday";
-                high = "20";
-                low = "11";
+                high = "20°C";
+                low = "11°C";
                 sunRise = "5:20 AM";
                 sunSet = "7:20 PM";
                 precipitation = "Fog";
@@ -327,10 +327,10 @@ namespace MyWeather
             {
                 iconImageNameLow = "38.png";
                 iconImageNameHigh = "38.png";
-                overview = "this is an overview";
+                overview = "Storm and\nThunder";
                 this.day = "Thursday";
-                high = "12";
-                low = "0";
+                high = "12°C";
+                low = "0°C";
                 sunRise = "5:40 AM";
                 sunSet = "7:40 PM";
                 precipitation = "Storm and\nThunder";
@@ -352,8 +352,8 @@ namespace MyWeather
                 iconImageNameHigh = "16.png";
                 overview = "this is an overview";
                 this.day = "Monday";
-                high = "13";
-                low = "8";
+                high = "13°C";
+                low = "8°C";
                 sunRise = "5:00 AM";
                 sunSet = "7:00 PM";
                 precipitation = "Partly\nCloudy";
@@ -366,8 +366,8 @@ namespace MyWeather
                 iconImageNameHigh = "36.png";
                 overview = "this is an overview";
                 this.day = "Tuesday";
-                high = "25";
-                low = "20";
+                high = "25°C";
+                low = "20°C";
                 sunRise = "5:10 AM";
                 sunSet = "7:10 PM";
                 precipitation = "Sunny";
@@ -380,8 +380,8 @@ namespace MyWeather
                 iconImageNameHigh = "34.png";
                 overview = "this is an overview";
                 this.day = "Wednesday";
-                high = "20";
-                low = "11";
+                high = "20°C";
+                low = "11°C";
                 sunRise = "5:20 AM";
                 sunSet = "7:20 PM";
                 precipitation = "Fog";
@@ -394,8 +394,8 @@ namespace MyWeather
                 iconImageNameHigh = "38.png";
                 overview = "this is an overview";
                 this.day = "Thursday";
-                high = "12";
-                low = "0";
+                high = "12°C";
+                low = "0°C";
                 sunRise = "5:40 AM";
                 sunSet = "7:40 PM";
                 precipitation = "Storm and\nThunder";
