@@ -384,8 +384,9 @@ namespace TvService
             tvcard.IsLocal = true;
           }
           else
-          {
-            tvcard.Card = null;
+          { 
+            // fix by misterd_sf for slave server usage
+            //tvcard.Card = null;
             tvcard.IsLocal = false;
           }
           _cards[card.IdCard] = tvcard;
@@ -2493,3 +2494,5 @@ namespace TvService
 
   }
 }
+
+ 	  	 
