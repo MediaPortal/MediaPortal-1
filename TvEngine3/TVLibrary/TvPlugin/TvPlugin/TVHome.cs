@@ -510,7 +510,7 @@ namespace TvPlugin
           }
         }
         MediaPortal.GUI.Library.Log.Info("tv home init:{0}", channel.Name);
-        if (_autoTurnOnTv || TVHome.Card.IsTimeShifting)
+        if (_autoTurnOnTv)
         {
           ViewChannelAndCheck(channel);
         }
@@ -601,7 +601,7 @@ namespace TvPlugin
       }
       if (control == btnTvOnOff)
       {
-        if (TVHome.Card.IsTimeShifting)
+        if (TVHome.Card.IsTimeShifting && g_Player.IsTV && g_Player.Playing)
         {
           //tv off
           Log.Info("TVHome:turn tv off");
@@ -727,9 +727,9 @@ namespace TvPlugin
         btnRecord.Disabled = false;
       //btnTeletext.Visible = false;
       bool isTimeShifting = TVHome.Card.IsTimeShifting;
-      if (btnTvOnOff.Selected != isTimeShifting)
+      if (btnTvOnOff.Selected != ( g_Player.Playing && g_Player.IsTV && isTimeShifting ))
       {
-        btnTvOnOff.Selected = isTimeShifting;
+          btnTvOnOff.Selected = (g_Player.Playing && g_Player.IsTV && isTimeShifting);
       }
       if (g_Player.Playing == false)
       {
@@ -995,9 +995,9 @@ namespace TvPlugin
     void UpdateStateOfButtons()
     {
       bool isTimeShifting = TVHome.Card.IsTimeShifting;
-      if (btnTvOnOff.Selected != isTimeShifting)
+      if (btnTvOnOff.Selected != (g_Player.Playing && g_Player.IsTV && isTimeShifting ))
       {
-        btnTvOnOff.Selected = isTimeShifting;
+          btnTvOnOff.Selected = (g_Player.Playing && g_Player.IsTV && isTimeShifting );
       }
       bool hasTeletext = TVHome.Card.HasTeletext;
       if (btnTeletext.IsVisible != hasTeletext)
@@ -1410,8 +1410,15 @@ namespace TvPlugin
           }*/
 
           //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player. 
-          if (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName)
-          { if (wasPlaying)  g_Player.Stop(); }
+            if (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName)
+            {
+                if (wasPlaying)
+                {
+                    MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}/{3}", TVHome.Card.Id ,card.Id ,TVHome.Card.RTSPUrl, card.RTSPUrl);
+                    MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}/{1}", TVHome.Card.TimeShiftFileName,Card.TimeShiftFileName);
+                    g_Player.Stop();
+                }
+            }
 
           TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
