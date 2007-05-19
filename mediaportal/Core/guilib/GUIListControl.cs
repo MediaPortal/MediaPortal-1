@@ -1796,7 +1796,6 @@ namespace MediaPortal.GUI.Library
       action.wID = Action.ActionType.ACTION_MOVE_LEFT;
       if (_listType == ListType.CONTROL_LIST)
       {
-        Log.Error("Action left 1 {0}",this.Focus.ToString());
         base.OnAction(action);
         if (!_upDownControl.Focus)
         {
