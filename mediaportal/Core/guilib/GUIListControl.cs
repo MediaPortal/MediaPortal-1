@@ -1796,6 +1796,7 @@ namespace MediaPortal.GUI.Library
       action.wID = Action.ActionType.ACTION_MOVE_LEFT;
       if (_listType == ListType.CONTROL_LIST)
       {
+        Log.Error("Action left 1 {0}",this.Focus.ToString());
         base.OnAction(action);
         if (!_upDownControl.Focus)
         {
@@ -2838,7 +2839,8 @@ namespace MediaPortal.GUI.Library
         int selectedIndex = _cursorX + _offset;
 
         if (selectedIndex == -1 || selectedIndex >= _listItems.Count)
-          return System.Drawing.Rectangle.Empty;
+           return new System.Drawing.Rectangle(this.XPosition, this.YPosition, this.Width, this.Height);
+          //return System.Drawing.Rectangle.Empty;
 
         GUIControl btn = _listButtons[_cursorX];
 
