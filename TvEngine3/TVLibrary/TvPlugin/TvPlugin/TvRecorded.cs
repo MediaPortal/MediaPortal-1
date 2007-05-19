@@ -861,7 +861,7 @@ namespace TvPlugin
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(676))); // Only watched recordings?
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200044))); // Only invalid recordings?
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200045))); // Both?
-      if ( currentShow != "" ) dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200046))); // Only watched recordings from this folder. 
+      if ( currentShow != "" ) dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200049))); // Only watched recordings from this folder. 
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(222))); // Cancel?
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel < 0) return;

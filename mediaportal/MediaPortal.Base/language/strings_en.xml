@@ -1664,9 +1664,11 @@
         <String id="200042">Linked channels</String>
         <String id="200043">Cleanup Recordings</String>
         <String id="200044">Invalid recordings</String>
-        <String id="200045">Both</String>
+        <String id="200045">Watched and Invalid Recordings</String>
+        <String id="200045">Only Watched Recordings for this show</String>
         <String id="200046">Generate Thumbnails</String>
         <String id="200047">Recursively Generate Thumbnails</String>
         <String id="200048">Rebuild Thumbnails</String>
+        <String id="200049">Only watched recording for this show</String>
     </Section>
 </Language>
