@@ -145,7 +145,6 @@ namespace MyWeather
         {
             get
             {
-                if (Core.IsDesignMode) return "Monday, 13th May 2007";
                 return DateTime.Now.ToString("dd-MM HH:mm");
             }
         }

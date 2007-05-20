@@ -1,14 +1,20 @@
-<controls:AnimationBehaviorHost
+﻿<controls:AnimationBehaviorHost
 	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2006"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:weather="clr-namespace:MyWeather;assembly=MyWeather"
 	  mc:Ignorable="d"
 	  xmlns:MCEControls="clr-namespace:MCEControls;assembly=Keyboard"
-	  xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls">
+	  xmlns:controls="clr-namespace:ProjectInfinity.Controls;assembly=ProjectInfinity.Controls" Width="800" Height="600">
+	<controls:AnimationBehaviorHost.Resources>
+		<ResourceDictionary>
+			<ObjectDataProvider x:Key="WeatherSetupViewModelDS" d:IsDataSource="True" ObjectType="{x:Type weather:WeatherSetupViewModel}"/>
+		</ResourceDictionary>
+	</controls:AnimationBehaviorHost.Resources>
 	<Grid Width="Auto" Height="Auto" Background="{DynamicResource backGroundBrush}" FocusManager.FocusedElement="{Binding ElementName=textboxSearch}"
 		  controls:AnimationBehaviorHost.LoadedBehavior="FadeIn" controls:AnimationBehaviorHost.LoadedDuration="00:00:00.700"
-          controls:AnimationBehaviorHost.UnloadedBehavior="FadeOut" controls:AnimationBehaviorHost.UnloadedDuration="00:00:00.300">
+          controls:AnimationBehaviorHost.UnloadedBehavior="FadeOut" controls:AnimationBehaviorHost.UnloadedDuration="00:00:00.300" DataContext="{Binding Mode=OneWay, Source={StaticResource WeatherSetupViewModelDS}}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="89.731"/>
 			<ColumnDefinition Width="*"/>
@@ -27,4 +33,4 @@
 		<ListBox x:Name="addedLocationsList" Focusable="False" IsEnabled="False" FontSize ="22" Foreground ="White" ItemsSource="{Binding Path=LocationsAdded}" ItemContainerStyle="{StaticResource MpListViewItem}" Style="{StaticResource MpListView}" d:LayoutOverrides="HorizontalAlignment" Margin="8,123.6,0,152" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="1"/>
 		<controls:Button x:Name="buttonSave" Command="{Binding Path=Save}" Style="{DynamicResource MpButton}" FontSize="22" Content="{Binding Path=LabelSave}" Margin="8,0,0,96" VerticalAlignment="Bottom" Height="40" Grid.Row="1" d:LayoutOverrides="GridBox" Grid.Column="1" />
 	</Grid>
-</controls:AnimationBehaviorHost >
+</controls:AnimationBehaviorHost>

@@ -33,6 +33,7 @@ using System.Web;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using ProjectInfinity;
 
 namespace MyWeather
 {
@@ -48,7 +49,7 @@ namespace MyWeather
         protected List<CitySetupInfo> _locations = new List<CitySetupInfo>();
         protected IWeatherCatcher _catcher;
         public event PropertyChangedEventHandler PropertyChanged;
-
+        
         /// <summary>
         /// Constructor
         /// </summary>
