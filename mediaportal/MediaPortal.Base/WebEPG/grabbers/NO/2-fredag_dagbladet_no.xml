@@ -2,6 +2,12 @@
 <Grabber>
   <Info language="no" availableDays="7" timezone="W. Europe Standard Time" />
   <Channels>
+    <Channel id="sport2@canalplus.no" siteId="88" /> 
+    <Channel id="mix@canalplus.no" siteId="87" />
+    <Channel id="nyhetskanalen@tv2.no" siteId="94" />
+    <Channel id="hd@canalplus.no" siteId="91" />
+    <Channel id="film@tv2.no" siteId="93" />
+    <Channel id="sport@tv2.no" siteId="95" />
     <Channel id="nrk1@nrk.no" siteId="1" />
     <Channel id="nrk2@nrk.no" siteId="2" />
     <Channel id="tv2.no" siteId="3" />
@@ -23,22 +29,21 @@
     <Channel id="tcm.com" siteId="31" />
     <Channel id="TCM_CARTOONNETWORK" siteId="32" />
     <Channel id="tv1000@tv1000.no" siteId="34" />
-    <Channel id="canalplus@canalplus.no" siteId="39" />
     <Channel id="hallmarkchannel.com" siteId="59" />
     <Channel id="realitychannel.tv" siteId="61" />
     <Channel id="film1@canalplus.no" siteId="69" />
     <Channel id="film2@canalplus.no" siteId="70" />
-    <Channel id="cmorefilm@canalplus.no" siteId="71" />
+    <Channel id="film3@canalplus.no" siteId="92" /> 
     <Channel id="nickelodeon.no" siteId="20" />
     <Channel id="cartoonnetwork.no" siteId="41" />
     <Channel id="disneychannel.no" siteId="67" />
     <Channel id="dsf.de" siteId="11" />
     <Channel id="extremesports.tv" siteId="49" />
     <Channel id="sport@viasatsport.no" siteId="55" />
-    <Channel id="sport@canalplus.no" siteId="72" />
+    <Channel id="sport1@canalplus.no" siteId="72" /> 
     <Channel id="sport2@viasatsport.no" siteId="73" />
     <Channel id="sport3@viasatsport.no" siteId="74" />
-    <Channel id="tv2xtra.no" siteId="75" />
+    <Channel id="zebra@tv2.no" siteId="75" /> 
     <Channel id="eurosport@eurosport.com" siteId="15" />
     <Channel id="mtv@mtve.com" siteId="17" />
     <Channel id="vh1.com" siteId="29" />
@@ -65,7 +70,6 @@
     <Channel id="bbcprime.com" siteId="19" />
     <Channel id="club" siteId="50" />
     <Channel id="star" siteId="77" />
-
     <Channel id="nordic@tv1000.no" siteId="76" />
     <Channel id="explorer@viasat.no" siteId="66" />
     <Channel id="nationalgeographic.com" siteId="81" />

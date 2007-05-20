@@ -2,11 +2,18 @@
 <Grabber>
   <Info language="no" availableDays="12" timezone="W. Europe Standard Time" />
   <Channels>
+    <Channel id="sportn@viasat.no" siteId="sportn" />  
+    <Channel id="film@tv2.no" siteId="tv2film" />  
+    <Channel id="nyhetskanalen@tv2.no" siteId="tv2nyhet" /> 
+    <Channel id="sport@tv2.no" siteId="tv2sport" /> 
+    <Channel id="mix@canalplus.no" siteId="canplmix" /> 
+    <Channel id="sport2@canalplus.no" siteId="canplspo2" />
+    <Channel id="hd@canalplus.no" siteId="canplhd" /> 
     <Channel id="Showtime" siteId="showtime" />
     <Channel id="nrk1@nrk.no" siteId="nrktv1" />
     <Channel id="nrk2@nrk.no" siteId="nrktv2" />
     <Channel id="tv2.no" siteId="tv2" />
-    <Channel id="tv2xtra.no" siteId="tv2xtra" />
+    <Channel id="zebra@tv2.no" siteId="tv2xtra" /> 
     <Channel id="tvnorge.no" siteId="tvn" />
     <Channel id="tv3.no" siteId="tv3" />
     <Channel id="ztv.no" siteId="ztvnor" />
@@ -15,14 +22,10 @@
     <Channel id="animalplanet.com" siteId="animal" />
     <Channel id="bbcprime.com" siteId="bbcprime" />
     <Channel id="bbcworld.com" siteId="bbcworld" />
-    <Channel id="canalplus@canalplus.no" siteId="canalpl" />
-    <Channel id="cmorefilm@canalplus.no" siteId="cmorefilm" />
-    <Channel id="cmorefilm2@canalplus.no" siteId="cmorefilm2" />
-    <Channel id="cmorehd@canalplus.no" siteId="cmorehd" />
     <Channel id="film1@canalplus.no" siteId="canplfilm1" />
     <Channel id="film2@canalplus.no" siteId="canplfilm2" />
     <Channel id="film3@canalplus.no" siteId="canplfilm3" />
-    <Channel id="sport@canalplus.no" siteId="canplspo" />
+    <Channel id="sport1@canalplus.no" siteId="canplspo" /> 
     <Channel id="cartoonnetwork.no" siteId="cartoon" />
     <Channel id="club" siteId="club" />
     <Channel id="cnbc@msn.com" siteId="cnbc" />
