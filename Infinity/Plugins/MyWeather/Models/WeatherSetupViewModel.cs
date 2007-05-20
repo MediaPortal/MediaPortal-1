@@ -75,7 +75,7 @@ namespace MyWeather
             _catcher = new WeatherDotComCatcher();
             _dataModel = new WeatherSetupDataModel(_catcher);
             _dataModelAddedLocs = new WeatherSetupDataModel(_catcher);
-
+            // add already configured cities from the settings to our datamodel
             if (settings.LocationsList != null)
             {
                 foreach (CitySetupInfo c in settings.LocationsList)
@@ -90,9 +90,40 @@ namespace MyWeather
             // create Collectionviews...
             _citiesCollView = new LocationCollectionView(_dataModel);
             _citiesAddedView = new LocationCollectionView(_dataModelAddedLocs);
+            // generate some sample data for the designer if
+            // this is run in design mode
+            if (Core.IsDesignMode) GenerateSampleData();
         }
 
         #endregion
+
+
+        /// <summary>
+        /// generate some dummy data for the designer when we are
+        /// in design mode.
+        /// </summary>
+        public void GenerateSampleData()
+        {
+            // add data to the found locations
+            _dataModel.AddCity("Amsterdam, Netherlands", "AX2005");
+            _dataModel.AddCity("Dresden, Germany", "UL1235005");
+            _dataModel.AddCity("Hamburg, Germany", "UL55335");
+            _dataModel.AddCity("New York, United States", "US99625");
+            // add data to the added locations
+            _dataModelAddedLocs.AddCity("Dresden, Germany", "UL1235005");
+            _dataModelAddedLocs.AddCity("Berlin, Germany", "UL12005");
+            _dataModelAddedLocs.AddCity("Cologne, Germany", "UL212625");
+            _dataModelAddedLocs.AddCity("Helsinki, Sweden", "SW881273");
+            // selected location
+            _selectedLocation = (CitySetupInfo)_dataModelAddedLocs.Locations[0];
+            _searchLocation = "Dummytown";
+            // update properties
+            ChangeProperty("Locations");
+            ChangeProperty("LocationsAdded");
+            ChangeProperty("SelectedLocation");
+            ChangeProperty("SearchLocation");
+        }
+
         #region properties
         /// <summary>
         /// Gets the localized label header.
@@ -102,6 +133,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "setup weather";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather.config", 0);//setup weather location;
             }
         }
@@ -113,6 +145,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Monday, 13th May 2007";
                 return DateTime.Now.ToString("dd-MM HH:mm");
             }
         }
@@ -124,6 +157,7 @@ namespace MyWeather
         {
             get
             {
+                if(Core.IsDesignMode) return "Search";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather.config", 1);//Search
             }
         }
@@ -135,6 +169,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Please enter the name of your city";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather.config", 2);//Please enter the name of your city
             }
         }
@@ -146,6 +181,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "this is the error label";
                 return _labelError;
             }
             set
@@ -163,6 +199,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Add";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather.config", 5);
             }
         }
@@ -174,6 +211,7 @@ namespace MyWeather
         {
             get
             {
+                if (Core.IsDesignMode) return "Save";
                 return ServiceScope.Get<ILocalisation>().ToString("myweather.config", 6);
             }
         }

@@ -104,6 +104,16 @@ namespace MyWeather
         }
 
         /// <summary>
+        /// adds a new city to the datamodel
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="id"></param>
+        public void AddCity(string location, string id)
+        {
+            AddCity(new CitySetupInfo(location, id));
+        }
+
+        /// <summary>
         /// removes a city from the model
         /// </summary>
         /// <param name="city"></param>
