@@ -388,6 +388,9 @@ namespace MediaPortal.GUI.Library
       float croppedSourceAspect = (rSource.Width - cropSettings.Right - cropSettings.Left) / (float)(rSource.Height - cropSettings.Top - cropSettings.Bottom);
       float originalAspectChange = destAspect / sourceAspect;
 
+      if (( Math.Abs( destAspect - sourceAspect ) < 0.001 ))
+        return;
+
       float newDestAspect = croppedSourceAspect * originalAspectChange;
 
       //Log.Debug("newDestAspect: " + newDestAspect);
