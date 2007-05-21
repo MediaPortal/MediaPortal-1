@@ -23,7 +23,7 @@ xcopy /y %1\TVGuideScheduler\bin\%2\TVGuideScheduler.* .
 REM Core
 xcopy /y %1\core\bin\%2\DirectShowLib.* .
 xcopy /y %1\core\bin\%2\Core.* .
-xcopy /y %1\core\directshowhelper\directshowhelper\%2\dshowhelper.dll .
+xcopy /y %1\core\directshowhelper\directshowhelper\Release\dshowhelper.dll .
 xcopy /y %1\core\DXUtil\%2\DXUtil.dll .
 xcopy /y %1\core\fontengine\fontengine\%2\fontengine.* .
 
