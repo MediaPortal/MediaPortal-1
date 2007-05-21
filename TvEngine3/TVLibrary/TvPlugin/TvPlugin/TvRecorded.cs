@@ -854,6 +854,15 @@ namespace TvPlugin
     void OnCleanup()
     {
       m_iSelectedItem = GetSelectedItemNo();
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      if (null == dlgYesNo) return;
+      dlgYesNo.SetHeading(GUILocalizeStrings.Get(200043));//Cleanup recordings?
+      dlgYesNo.SetLine(1, GUILocalizeStrings.Get(200050));//This will delete your recordings from harddisc
+      dlgYesNo.SetLine(2, GUILocalizeStrings.Get(506)); // Are you sure?
+      dlgYesNo.SetLine(3, String.Empty);
+      if (!dlgYesNo.IsConfirmed)
+        return;
+
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       dlg.Reset();
       dlg.SetHeading(GUILocalizeStrings.Get(200043));//Cleanup recordings?
