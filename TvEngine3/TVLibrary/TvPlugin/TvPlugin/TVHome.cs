@@ -1066,13 +1066,6 @@ namespace TvPlugin
       if (ts.TotalMilliseconds < 1000) return;
       _updateProgressTimer = DateTime.MinValue;
 
-      //make sure no garbage is left in the tvhome area. Ideally, every stop method should do it. 
-      GUIPropertyManager.SetProperty("#TV.View.channel", "");
-      GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
-
       if (g_Player.Playing && g_Player.IsTimeShifting)
       {
         if (TVHome.Card != null)
@@ -1081,6 +1074,14 @@ namespace TvPlugin
           {
             g_Player.Stop();
           }
+        }
+        if ((g_Player.currentDescription.Length == 0) && (GUIPropertyManager.GetProperty("#TV.View.description").Length != 0))
+        {
+            GUIPropertyManager.SetProperty("#TV.View.channel", "");
+            GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
         }
       }
       if (g_Player.IsTVRecording)
@@ -1528,7 +1529,10 @@ namespace TvPlugin
 
           // If failed and wasPlaying TV, fallback to the last viewed channel. 
           if (!g_Player.IsTimeShifting && wasPlaying)
-          { ViewChannelAndCheck(Navigator.Channel); }
+          {
+              ViewChannelAndCheck(Navigator.Channel);
+              GUIWaitCursor.Hide();
+          }
         }
         return false;
       }
