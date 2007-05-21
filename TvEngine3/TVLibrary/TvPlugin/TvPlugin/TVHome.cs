@@ -579,7 +579,7 @@ namespace TvPlugin
 
       //Only change the channel if the channel selectd is actually different. 
       //Without this, a ChannelChange might occur even when MiniGuide is canceled. 
-      if (miniGuide.SelectedChannel.IdChannel != TVHome.Navigator.Channel.IdChannel || !g_Player.Playing || !g_Player.IsTV)
+      if (!miniGuide.Canceled)
       {
         ViewChannelAndCheck(miniGuide.SelectedChannel);
       }

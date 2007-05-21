@@ -56,6 +56,7 @@ namespace TvPlugin
     [SkinControlAttribute(35)]    protected GUIListControl lstChannels = null;
     [SkinControlAttribute(36)]    protected GUISpinControl spinGroup = null;
 
+      bool _canceled = false;
     bool _running = false;    
     int _parentWindowID = 0;
     GUIWindow _parentWindow = null;
@@ -102,6 +103,18 @@ namespace TvPlugin
     }
 
     /// <summary>
+    /// Gets a value indicating whether the dialog was canceled. 
+    /// </summary>
+    /// <value><c>true</c> if dialog was canceled without a selection</value>
+    public  bool Canceled
+    {
+        get
+        {
+            return _canceled;
+        }
+    }
+
+    /// <summary>
     /// Gets or sets the selected channel.
     /// </summary>
     /// <value>The selected channel.</value>
@@ -143,6 +156,7 @@ namespace TvPlugin
 
       GetID = (int)GUIWindow.Window.WINDOW_MINI_GUIDE;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
+      _canceled = true;
       return bResult;
     }
 
@@ -200,6 +214,7 @@ namespace TvPlugin
                     TVHome.Navigator.ZapNow();
                   }
                 }
+                _canceled = false;
                 Close();
               }
             }
