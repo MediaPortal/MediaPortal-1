@@ -1525,6 +1525,10 @@ namespace TvPlugin
           else
             pDlgOK.SetLine(3, "");
           pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+
+          // If failed and wasPlaying TV, fallback to the last viewed channel. 
+          if (!g_Player.IsTimeShifting && wasPlaying)
+          { ViewChannelAndCheck(Navigator.Channel); }
         }
         return false;
       }

@@ -1758,19 +1758,20 @@ namespace TvService
           context.GetUser(ref user);
           ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
           if (subchannel == null) return TvResult.UnknownChannel;
-          if (subchannel.IsTimeShifting)
-          {
-            context.OnZap(user);
-            if (_linkageScannerEnabled)
-              _card.StartLinkageScanner(_linkageGrabber);
-            return TvResult.Succeeded;
-          }
           if (WaitForUnScrambledSignal(ref user) == false)
           {
             Log.Write("card: channel is scrambled");
             RemoveUser(user);
 
             return TvResult.ChannelIsScrambled;
+          }
+
+          if (subchannel.IsTimeShifting)
+          {
+              context.OnZap(user);
+              if (_linkageScannerEnabled)
+                  _card.StartLinkageScanner(_linkageGrabber);
+              return TvResult.Succeeded;
           }
 
           bool result = subchannel.StartTimeShifting(fileName);
