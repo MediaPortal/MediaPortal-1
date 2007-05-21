@@ -3547,9 +3547,16 @@ namespace MediaPortal.Music.Database
         CountFilesInPath(Share, ref totalFiles);
 
         // Now get the files from the root directory, which we missed in the above search
-        foreach (string file in Directory.GetFiles(Share, "*.*"))
+        try
         {
-          CheckFileForInclusion(file, ref totalFiles);
+          foreach (string file in Directory.GetFiles(Share, "*.*"))
+          {
+            CheckFileForInclusion(file, ref totalFiles);
+          }
+        }
+        catch (Exception)
+        {
+          // ignore exception that we get on CD / DVD shares
         }
       }
       TotalSongs = totalFiles;
