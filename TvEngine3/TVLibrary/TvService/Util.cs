@@ -728,5 +728,15 @@ namespace TvService
 
       return (Application.SetSuspendState(state, forceShutDown, false));
     }
+    static public string BlurConnectionStringPassword(string connStr)
+    {
+      if (connStr.IndexOf("Password", StringComparison.InvariantCultureIgnoreCase) != -1)
+      {
+        int start = connStr.IndexOf("Password=", StringComparison.InvariantCultureIgnoreCase);
+        connStr = connStr.Remove(start + 9, connStr.IndexOf(';', start) - start);
+        connStr = connStr.Insert(start + 9, "xxxxxx;");
+      }
+      return connStr;
+    }
   }
 }

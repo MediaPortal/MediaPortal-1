@@ -257,8 +257,8 @@ namespace TvService
         catch (Exception ex)
         {
           Log.Error("!!!Controller:Unable to connect to database!!!");
-          Log.Error("Controller: database connection string:{0}", Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString);
-          Log.Error("Sql error:{0}", ex.Message);
+          Log.Error("Controller: database connection string:{0}",Utils.BlurConnectionStringPassword(Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString));
+          Log.Error("Sql error:{0}",Utils.BlurConnectionStringPassword(ex.Message));
           return false;
         }
 
