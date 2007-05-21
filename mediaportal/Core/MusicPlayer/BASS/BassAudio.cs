@@ -1451,6 +1451,7 @@ namespace MediaPortal.Player
                    filePath.Contains(@"https://") || filePath.Contains(@"HTTPS://") ||
                    filePath.StartsWith("mms") || filePath.StartsWith("MMS"))
           {
+            Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_WMA_ASX, 1);   // Turn on parsing of ASX files
             // Create an Internet Stream
             stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, null, 0);
             Log.Debug("BASSAudio: Webstream found - trying to fetch stream {0}", Convert.ToString(stream));
