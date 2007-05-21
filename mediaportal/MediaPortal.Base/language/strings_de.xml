@@ -1663,9 +1663,11 @@
         <String id="200042">Unterkanäle</String>
         <String id="200043">Aufnahmen aufräumen</String>
         <String id="200044">Ungültige Aufnahmen</String>
-        <String id="200045">Beide</String>
+        <String id="200045">Gesehene und ungültige Aufnahmen</String>
         <String id="200046">Vorschaubilder erstellen (dieser Ordner)</String>
         <String id="200047">Vorschaubilder erstellen (incl. Unterordner)</String>
-        <String id="200048">Alle Vorschaubilder neu erstellen</String>        
+        <String id="200048">Alle Vorschaubilder neu erstellen</String>     
+        <String id="200049">Nur bereits gesehene Aufnahmen</String>
+        <String id="200050">Die Aufnahmen werden auch von Ihrer Festplatte gelöscht</String>				
     </Section>
 </Language>

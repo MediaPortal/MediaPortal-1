@@ -1665,10 +1665,10 @@
         <String id="200043">Cleanup Recordings</String>
         <String id="200044">Invalid recordings</String>
         <String id="200045">Watched and Invalid Recordings</String>
-        <String id="200045">Only Watched Recordings for this show</String>
         <String id="200046">Create thumbnails (this directory)</String>
         <String id="200047">Create thumbnails (incl. subfolders)</String>
         <String id="200048">Re-create all thumbnails</String>
         <String id="200049">Only watched recording for this show</String>
+        <String id="200050">This will delete your recordings from harddisc</String>		
     </Section>
 </Language>
