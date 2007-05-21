@@ -68,24 +68,15 @@ namespace MediaPortal.GUI.TV
     bool _settingsLoaded = false;
     DateTime _dtlastTime = DateTime.Now;
 
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnTvGuide = null;
-    [SkinControlAttribute(3)]
-    protected GUIButtonControl btnRecord = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnGroup = null;
-    [SkinControlAttribute(7)]
-    protected GUIButtonControl btnChannel = null;
-    [SkinControlAttribute(8)]
-    protected GUIToggleButtonControl btnTvOnOff = null;
-    [SkinControlAttribute(9)]
-    protected GUIToggleButtonControl btnTimeshiftingOnOff = null;
-    [SkinControlAttribute(13)]
-    protected GUIButtonControl btnTeletext = null;
-    [SkinControlAttribute(24)]
-    protected GUIImage imgRecordingIcon = null;
-    [SkinControlAttribute(99)]
-    protected GUIVideoControl videoWindow = null;
+    [SkinControlAttribute(2)]    protected GUIButtonControl btnTvGuide = null;
+    [SkinControlAttribute(3)]    protected GUIButtonControl btnRecord = null;
+    [SkinControlAttribute(6)]    protected GUIButtonControl btnGroup = null;
+    [SkinControlAttribute(7)]    protected GUIButtonControl btnChannel = null;
+    [SkinControlAttribute(8)]    protected GUIToggleButtonControl btnTvOnOff = null;
+    [SkinControlAttribute(9)]    protected GUIToggleButtonControl btnTimeshiftingOnOff = null;
+    [SkinControlAttribute(13)]   protected GUIButtonControl btnTeletext = null;
+    [SkinControlAttribute(24)]   protected GUIImage imgRecordingIcon = null;
+    [SkinControlAttribute(99)]   protected GUIVideoControl videoWindow = null;
 
     #endregion
 
@@ -285,7 +276,7 @@ namespace MediaPortal.GUI.TV
       //set video window position
       if (videoWindow != null)
       {
-        GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
+          GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width, videoWindow.Height);
       }
 
       // start viewing tv... 
@@ -322,9 +313,9 @@ namespace MediaPortal.GUI.TV
       UpdateStateOfButtons();
       UpdateProgressPercentageBar();
     }
+
     protected override void OnPageDestroy(int newWindowId)
     {
-
       //if we're switching to another plugin
       if (!GUIGraphicsContext.IsTvWindow(newWindowId))
       {
@@ -339,7 +330,6 @@ namespace MediaPortal.GUI.TV
           }
         }
       }
-
 
       SaveSettings();
       base.OnPageDestroy(newWindowId);

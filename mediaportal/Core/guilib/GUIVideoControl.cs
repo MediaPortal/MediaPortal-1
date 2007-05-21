@@ -124,7 +124,9 @@ namespace MediaPortal.GUI.Library
       _videoWindows[0].Height=base.Height;
       if (!GUIGraphicsContext.Calibrating )
       {
-        if (_setVideoWindow) GUIGraphicsContext.VideoWindow=_videoWindows[0];
+        if (_setVideoWindow)
+          GUIGraphicsContext.VideoWindow = _videoWindows[0];
+
 				if (GUIGraphicsContext.ShowBackground)
 				{
           if (Focus)

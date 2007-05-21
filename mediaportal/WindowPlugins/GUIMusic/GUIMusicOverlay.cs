@@ -254,17 +254,18 @@ namespace MediaPortal.GUI.Music
 
         if (_videoRectangle != null)
         {
-					if (g_Player.Playing)
+          if (g_Player.Playing) // && !_videoWindow.SetVideoWindow)
             _videoRectangle.Visible = GUIGraphicsContext.ShowBackground;
           else
             _videoRectangle.Visible = false;
         }
-
-
+        
+        // this is called serveral times per second!
         if (_videoWindow != null)
-        {
+        {          
           SetVideoWindow(new Rectangle(_videoWindow.XPosition, _videoWindow.YPosition, _videoWindow.Width, _videoWindow.Height));
         }
+        // still needed?
         else
           if (_videoRectangle != null)// to be compatible to the old version
           {

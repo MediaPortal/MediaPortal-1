@@ -161,7 +161,7 @@ namespace MediaPortal.GUI.Music
     private bool _doAlbumLookups = true;
     private bool _doTrackTagLookups = true;
     private bool _usingBassEngine = false;
-    private bool _showVisualization = false;
+    private bool _showVisualization = false;    
     private bool _enqueueDefault = true;
     private object _imageMutex = null;
 
@@ -175,16 +175,34 @@ namespace MediaPortal.GUI.Music
 
       g_Player.PlayBackStarted += new g_Player.StartedHandler(g_Player_PlayBackStarted);
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
-      g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);      
+      g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
 
+      LoadSettings();
+    }
+
+    void LoadSettings()
+    {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        UseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
-        _showVisualization = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
+        string VizName = "None";
+        bool ShowViz = false;
+        VizName = xmlreader.GetValueAsString("musicvisualization", "name", "None");
+        ShowViz = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
+
+        UseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);       
+        
         _doArtistLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);
         _doAlbumLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true);
         _doTrackTagLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true);
         _enqueueDefault = xmlreader.GetValueAsBool("musicmisc", "enqueuenext", true);
+
+        if (ShowViz && VizName != "None")
+          _showVisualization = true;
+        else
+        {
+          _showVisualization = false;
+          Log.Debug("GUIMusicPlayingNow: Viz disabled - ShowViz {0}, VizName {1}", Convert.ToString(ShowViz), VizName);          
+        }
       }
 
       _usingBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
