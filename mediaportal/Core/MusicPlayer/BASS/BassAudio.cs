@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.IO;
 using System.Drawing;
@@ -208,11 +209,15 @@ namespace MediaPortal.Player
     public delegate void PlaybackStateChangedDelegate(object sender, PlayState oldState, PlayState newState);
     public event PlaybackStateChangedDelegate PlaybackStateChanged;
 
+    public delegate void InternetStreamSongChangedDelegate(object sender);
+    public event InternetStreamSongChangedDelegate InternetStreamSongChanged;
+
     private delegate void InitializeControlsDelegate();
 
     private SYNCPROC PlaybackFadeOutProcDelegate = null;
     private SYNCPROC PlaybackEndProcDelegate = null;
     private SYNCPROC PlaybackStreamFreedProcDelegate = null;
+    private SYNCPROC MetaTagSyncProcDelegate = null;
     #endregion
 
     #region Variables
@@ -724,6 +729,7 @@ namespace MediaPortal.Player
         PlaybackFadeOutProcDelegate = new SYNCPROC(PlaybackFadeOutProc);
         PlaybackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
         PlaybackStreamFreedProcDelegate = new SYNCPROC(PlaybackStreamFreedProc);
+        MetaTagSyncProcDelegate = new SYNCPROC(MetaTagSyncProc);
 
         StreamEventSyncHandles.Add(new List<int>());
         StreamEventSyncHandles.Add(new List<int>());
@@ -910,7 +916,7 @@ namespace MediaPortal.Player
 
       GUIGraphicsContext.form.Disposed += new EventHandler(OnAppFormDisposed);
 
-      VizWindow = new VisualizationWindow();
+      VizWindow = new VisualizationWindow(this);
       VizManager = new Visualization.VisualizationManager(this, VizWindow);
       TargetFPS = VizFPS;
 
@@ -1447,13 +1453,19 @@ namespace MediaPortal.Player
             if (stream == 0)
               Log.Error("BASS: CD: {0}.", Enum.GetName(typeof(BASSErrorCode), Bass.BASS_ErrorGetCode()));
           }
-          else if (filePath.Contains(@"http://") || filePath.Contains(@"HTTP://") ||
-                   filePath.Contains(@"https://") || filePath.Contains(@"HTTPS://") ||
-                   filePath.StartsWith("mms") || filePath.StartsWith("MMS"))
+          else if (filePath.ToLower().Contains(@"http://") || filePath.ToLower().Contains(@"https://") ||
+                   filePath.ToLower().StartsWith("mms"))
           {
             Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_WMA_ASX, 1);   // Turn on parsing of ASX files
             // Create an Internet Stream
             stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, null, 0);
+            if (stream != 0)
+            {
+              // Get the Tags and set the Meta Tag SyncProc
+              SetStreamTags(stream);
+              GetMetaTags(Bass.BASS_ChannelGetTags(stream, BASSTag.BASS_TAG_META));
+              Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_META, 0, MetaTagSyncProcDelegate, 0);
+            }
             Log.Debug("BASSAudio: Webstream found - trying to fetch stream {0}", Convert.ToString(stream));
           }
           else if (IsMODFile(filePath))
@@ -1941,6 +1953,83 @@ namespace MediaPortal.Player
           break;
         }
       }
+    }
+
+    /// <summary>
+    /// Gets the tags from the Internet Stream.
+    /// </summary>
+    /// <param name="buffer"></param>
+    /// <param name="length"></param>
+    /// <param name="user"></param>
+    private void SetStreamTags(int stream)
+    {
+      string[] tags = Bass.BASS_ChannelGetTagsICY(stream);
+      if (tags != null)
+      {
+        foreach (string item in tags)
+        {
+          if (item.ToLower().StartsWith("icy-name:"))
+            GUIPropertyManager.SetProperty("#Play.Current.Album", item.Substring(9));
+
+          if (item.ToLower().StartsWith("icy-genre:"))
+            GUIPropertyManager.SetProperty("#Play.Current.Genre", item.Substring(10));
+
+          Log.Debug("BASS: Connection Information: {0}", item);
+        }
+      }
+    }
+
+    /// <summary>
+    /// This Callback Procedure is called by BASS, once a song changes.
+    /// </summary>
+    /// <param name="handle"></param>
+    /// <param name="channel"></param>
+    /// <param name="data"></param>
+    /// <param name="user"></param>
+    private void MetaTagSyncProc(int handle, int channel, int data, int user)
+    {
+      // BASS_SYNC_META delivers a pointer to the metadata in data parameter...
+      if (data != 0)
+      {
+        GetMetaTags(new IntPtr(data));
+      }
+    }
+
+    /// <summary>
+    /// Set the Properties out of the Tags
+    /// </summary>
+    /// <param name="tagPtr"></param>
+    private void GetMetaTags(IntPtr tagPtr)
+    {
+      string tag = Marshal.PtrToStringAnsi(tagPtr);
+      string title = string.Empty;
+      string artist = string.Empty;
+      if (tag != null)
+      {
+        Regex r = new Regex("StreamTitle='(.+?)';StreamUrl=", RegexOptions.IgnoreCase);
+        Match m = r.Match(tag);
+        if (m.Success)
+        {
+          Group g1 = m.Groups[1];
+          CaptureCollection captures = g1.Captures;
+          Capture c = captures[0];
+          Regex r1 = new Regex("( - )");
+          string[] s = r1.Split(c.ToString());
+          if (s != null)
+          {
+            artist = s[0];
+            title = s[2];
+          }
+          else
+            title = c.ToString();   // Set the Title as sent via the stream
+        }
+      }
+      Log.Info("BASS: Title sent via Stream: {0}", tag);
+      GUIPropertyManager.SetProperty("#Play.Current.Title", title);
+      GUIPropertyManager.SetProperty("#Play.Current.Artist", artist);
+
+      if (InternetStreamSongChanged != null)
+        InternetStreamSongChanged(this);
     }
 
     /// <summary>

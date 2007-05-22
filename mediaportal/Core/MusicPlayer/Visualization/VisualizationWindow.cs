@@ -115,7 +115,7 @@ namespace MediaPortal.Visualization
     #endregion
 
     #region Variables
-
+    private BassAudioEngine Bass = null;
     private IVisualization Viz = null;
     private IntPtr _CompatibleDC = IntPtr.Zero;
     private IntPtr hNativeMemDCBmp = IntPtr.Zero;
@@ -462,13 +462,15 @@ namespace MediaPortal.Visualization
     }
     #endregion
 
-    public VisualizationWindow()
+    public VisualizationWindow(BassAudioEngine bass)
     {
+      Bass = bass;
       InitializeComponent();
       CheckForIllegalCrossThreadCalls = false;
       PlaylistPlayer = PlayListPlayer.SingletonPlayer;
 
       g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
+      Bass.InternetStreamSongChanged += new BassAudioEngine.InternetStreamSongChangedDelegate(InternetStreamSongChanged);
 
       //if (GUIGraphicsContext.form != null)
       //    GUIGraphicsContext.form.Resize += new EventHandler(OnAppFormResize);
@@ -1175,11 +1177,20 @@ namespace MediaPortal.Visualization
       return (float)alphaVal / 255f;
     }
 
+    /// <summary>
+    /// Called when the Meta Data Tags of an Internet Stream changed
+    /// </summary>
+    /// <param name="sender"></param>
+    void InternetStreamSongChanged(object sender)
+    {
+      OnPlayBackStarted(g_Player.MediaType.Music, "http");
+    }
+
     void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
       try
       {
-        if (CurrentFilePath != filename)
+        if (CurrentFilePath != filename || filename.ToLower().StartsWith("http") || filename.ToLower().StartsWith("mms") )
         {
           if (type != g_Player.MediaType.Music)
             return;
@@ -1189,6 +1200,19 @@ namespace MediaPortal.Visualization
           if (curPlaylistItem == null)
             return;
 
+          bool IsInternetStream = false;
+
+          // When playing an Internet Stream, we need to clear the Coverart image, that is maybe there when music was played before
+          if (CurrentFilePath.ToLower().StartsWith("http") || CurrentFilePath.ToLower().StartsWith("mms"))
+          {
+            IsInternetStream = true;
+            if (CurrentThumbImage != null)
+            {
+              CurrentThumbImage.Dispose();
+              CurrentThumbImage = null;
+            }
+          }
+
           CurrentTrackTag = (MusicTag)curPlaylistItem.MusicTag;
 
           // Make sure that Status Overlay gets displayed for new tracks
@@ -1197,10 +1221,10 @@ namespace MediaPortal.Visualization
           // We only need to get this data if we're going to display
           if (_EnableStatusOverlays)
           {
-            Label1ValueString = GetPropertyStringValue(Label1PropertyString);
-            Label2ValueString = GetPropertyStringValue(Label2PropertyString);
-            Label3ValueString = GetPropertyStringValue(Label3PropertyString);
-            Label4ValueString = GetPropertyStringValue(Label4PropertyString);
+            Label1ValueString = GetPropertyStringValue(Label1PropertyString, IsInternetStream);
+            Label2ValueString = GetPropertyStringValue(Label2PropertyString, IsInternetStream);
+            Label3ValueString = GetPropertyStringValue(Label3PropertyString, IsInternetStream);
+            Label4ValueString = GetPropertyStringValue(Label4PropertyString, IsInternetStream);
           }
 
           if (TrackInfoImage != null)
@@ -1224,6 +1248,29 @@ namespace MediaPortal.Visualization
               CoverArtNeedsRefresh = true;
             }
           }
+
+          // Get Coverart for the played internet Stream
+          if (IsInternetStream)
+          {
+            string StationName = GetPropertyStringValue("#Play.Current.ArtistThumb", IsInternetStream);
+            string thumbnail = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, StationName);
+            if (System.IO.File.Exists(thumbnail))
+            {
+              CurrentThumbPath = thumbnail.ToLower();
+              CoverArtNeedsRefresh = true;
+            }
+            else
+            {
+              // try with the name returned inside the "icy-name" tag, which we stored in the Album property
+              StationName = GetPropertyStringValue("#Play.Current.Album", IsInternetStream);
+              thumbnail = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, StationName);
+              if (System.IO.File.Exists(thumbnail))
+              {
+                CurrentThumbPath = thumbnail.ToLower();
+                CoverArtNeedsRefresh = true;
+              }
+            }
+          }
         }
       }
 
@@ -1233,14 +1280,18 @@ namespace MediaPortal.Visualization
       }
     }
 
-    private string GetPropertyStringValue(string propertyString)
+    private string GetPropertyStringValue(string propertyString, bool IsInternetStream)
     {
       try
       {
-        if (CurrentTrackTag == null || propertyString == null || propertyString.Length == 0 || propertyString[0] != '#')
+        if (propertyString == null || propertyString.Length == 0 || propertyString[0] != '#')
           return string.Empty;
 
-        string propertyVal = GUIPropertyManager.GetProperty(propertyString);
+        if (IsInternetStream)
+          return GUIPropertyManager.GetProperty(propertyString);
+
+        if (CurrentTrackTag == null)
+          return String.Empty;
 
         // There's a potential timing issue here; if we call GUIPropertyManager.GetProperty right after
         // a g_Player.PlayBackStarted event, sometimes the properties haven't been set yet.  To avoid this 

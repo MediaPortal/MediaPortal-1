@@ -303,6 +303,10 @@ namespace MediaPortal.GUI.Music
       // last.fm radio sets properties manually therefore do not overwrite them.
       if (fileName.Contains(@"/last.mp3?"))
         return;
+
+      // When Playing an Internet Stream, via BASS, we set the properties inside the BASS audio engine to be able to detect track changes
+      if (BassMusicPlayer.IsDefaultMusicPlayer && (fileName.ToLower().StartsWith("http") || fileName.ToLower().StartsWith("http")))
+        return;
      
       GUIPropertyManager.RemovePlayerProperties();
       GUIPropertyManager.SetProperty("#Play.Current.Title", MediaPortal.Util.Utils.GetFilename(fileName));

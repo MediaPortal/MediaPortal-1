@@ -865,6 +865,10 @@ namespace MediaPortal.GUI.Radio
       }
       else
       {
+        // We have the Station Name in there to retrieve the correct Coverart for the station in the Vis Window
+        GUIPropertyManager.RemovePlayerProperties();
+        GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", item.Label);
+        GUIPropertyManager.SetProperty("#Play.Current.Album", item.Label);
         if (currentPlayList != null)
         {
           // add current playlist->playlist and play selected item

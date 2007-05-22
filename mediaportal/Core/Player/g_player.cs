@@ -345,7 +345,7 @@ namespace MediaPortal.Player
       if (_player.Playing)
       {
         //yes, then raise event 
-        _currentMedia = MediaType.Music;
+        _currentMedia = MediaType.Video;
         if (_player.IsTV)
         {
           _currentMedia = MediaType.TV;
@@ -358,10 +358,10 @@ namespace MediaPortal.Player
         }
         else if (_player.HasVideo)
         {
-          if (!MediaPortal.Util.Utils.IsAudio(_currentFilePlaying))
-          {
-            _currentMedia = MediaType.Video;
-          }
+          if (MediaPortal.Util.Utils.IsAudio(_currentFilePlaying) ||
+              _currentFilePlaying.ToLower().StartsWith("http") || 
+              _currentFilePlaying.ToLower().StartsWith("mms"))
+                _currentMedia = MediaType.Music;
         }
         Log.Info("g_Player.OnStarted() {0} media:{1}", _currentFilePlaying, _currentMedia.ToString());
         if (PlayBackStarted != null)
