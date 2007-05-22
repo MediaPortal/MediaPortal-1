@@ -97,32 +97,18 @@ namespace TvPlugin
       Panel2 = 150
     };
 
-    [SkinControlAttribute(36)]
-    protected GUITextControl tbOnTvNow = null;
-    [SkinControlAttribute(37)]
-    protected GUITextControl tbOnTvNext = null;
-    [SkinControlAttribute(100)]
-    protected GUILabelControl lblCurrentTime = null;
-    [SkinControlAttribute(35)]
-    protected GUILabelControl lblCurrentChannel = null;
-    [SkinControlAttribute(39)]
-    protected GUIImage imgRecIcon = null;
-    [SkinControlAttribute(10)]
-    protected GUIImage imgTvChannelLogo = null;
-    [SkinControlAttribute(31)]
-    protected GUIButtonControl btnChannelUp = null;
-    [SkinControlAttribute(32)]
-    protected GUIButtonControl btnChannelDown = null;
-    [SkinControlAttribute(33)]
-    protected GUIButtonControl btnPreviousProgram = null;
-    [SkinControlAttribute(34)]
-    protected GUIButtonControl btnNextProgram = null;
-    [SkinControlAttribute(38)]
-    protected GUITextScrollUpControl tbProgramDescription = null;
-
-    // SUB AUDIO OSD
-    [SkinControlAttribute(501)]
-    protected GUIListControl lstAudioStreamList = null;
+    [SkinControlAttribute(36)]     protected GUITextControl tbOnTvNow = null;
+    [SkinControlAttribute(37)]     protected GUITextControl tbOnTvNext = null;
+    [SkinControlAttribute(100)]    protected GUILabelControl lblCurrentTime = null;
+    [SkinControlAttribute(35)]     protected GUILabelControl lblCurrentChannel = null;
+    [SkinControlAttribute(39)]     protected GUIImage imgRecIcon = null;
+    [SkinControlAttribute(10)]     protected GUIImage imgTvChannelLogo = null;
+    [SkinControlAttribute(31)]     protected GUIButtonControl btnChannelUp = null;
+    [SkinControlAttribute(32)]     protected GUIButtonControl btnChannelDown = null;
+    [SkinControlAttribute(33)]     protected GUIButtonControl btnPreviousProgram = null;
+    [SkinControlAttribute(34)]     protected GUIButtonControl btnNextProgram = null;
+    [SkinControlAttribute(38)]     protected GUITextScrollUpControl tbProgramDescription = null;
+    [SkinControlAttribute(501)]    protected GUIListControl lstAudioStreamList = null;
 
     bool isSubMenuVisible = false;
     int m_iActiveMenu = 0;
