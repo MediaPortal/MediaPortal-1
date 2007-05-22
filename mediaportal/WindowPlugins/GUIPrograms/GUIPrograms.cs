@@ -482,44 +482,6 @@ namespace WindowPlugins.GUIPrograms
       RenderThumbnail(timePassed);
    }
 
-    void OnInfo()
-    {
-      // <F3> keypress
-      if (null != lastApp)
-      {
-        selectedItemIndex = GetSelectedItemNo();
-        GUIListItem item = GetSelectedItem();
-        FileItem curFile = null;
-        if (!item.Label.Equals(ProgramUtils.cBackLabel) && (!item.IsFolder))
-        {
-          if ((item.MusicTag != null) && (item.MusicTag is FileItem))
-          {
-            curFile = (FileItem)item.MusicTag;
-          }
-          // show file info but only if the selected item is not the back button
-          bool ovVisible = mapSettings.OverviewVisible;
-          ProgramInfoAction modalResult = ProgramInfoAction.LookupFileInfo;
-          int selectedFileID = -1;
-          lastApp.OnInfo(item, ref ovVisible, ref modalResult, ref selectedFileID); 
-          if ((null != curFile) && (modalResult == ProgramInfoAction.LookupFileInfo))
-          {
-            FileItem scrapeFile = lastApp.Files.GetFileByID(selectedFileID);
-            if (null != scrapeFile)
-            {
-              int scrapeIndex = lastApp.Files.IndexOf(scrapeFile);
-              if (-1 != scrapeIndex)
-              {
-                GUIControl.SelectItemControl(GetID, facadeView.GetID, scrapeIndex + 1);
-              }
-              ScrapeFileInfo(scrapeFile);
-            }
-          }
-          mapSettings.OverviewVisible = ovVisible;
-          UpdateListControl();
-        }
-      }
-    }
-
     void ScrapeFileInfo(FileItem curFile)
     {
       int minRelevance = 30;
@@ -762,7 +724,7 @@ namespace WindowPlugins.GUIPrograms
         return;
       switch (dlg.SelectedId)
       {
-        case 4521: // Show album info
+        case 13041: // Show album info
           OnInfo();
           break;
 
@@ -770,13 +732,99 @@ namespace WindowPlugins.GUIPrograms
           //AddSongToFavorites(item);
           break;
 
-        case 931:// Rating
-          //OnSetRating(facadeView.SelectedListItemIndex);
+        case 931: // Rating
+          OnSetRating(facadeView.SelectedListItemIndex);
           break;
       }
     }
 
-    #endregion 
+    void OnInfo()
+    {
+      if (null != lastApp)
+      {
+        selectedItemIndex = GetSelectedItemNo();
+        GUIListItem item = GetSelectedItem();
+        FileItem curFile = null;
+        if (!item.Label.Equals(ProgramUtils.cBackLabel) && (!item.IsFolder))
+        {
+          if ((item.MusicTag != null) && (item.MusicTag is FileItem))
+          {
+            curFile = (FileItem)item.MusicTag;
+          }
+          // show file info but only if the selected item is not the back button
+          bool ovVisible = mapSettings.OverviewVisible;
+          ProgramInfoAction modalResult = ProgramInfoAction.LookupFileInfo;
+          int selectedFileID = -1;
+          lastApp.OnInfo(item, ref ovVisible, ref modalResult, ref selectedFileID);
+          if ((null != curFile) && (modalResult == ProgramInfoAction.LookupFileInfo))
+          {
+            FileItem scrapeFile = lastApp.Files.GetFileByID(selectedFileID);
+            if (null != scrapeFile)
+            {
+              int scrapeIndex = lastApp.Files.IndexOf(scrapeFile);
+              if (-1 != scrapeIndex)
+              {
+                GUIControl.SelectItemControl(GetID, facadeView.GetID, scrapeIndex + 1);
+              }
+              ScrapeFileInfo(scrapeFile);
+            }
+          }
+          mapSettings.OverviewVisible = ovVisible;
+          UpdateListControl();
+        }
+      }
+    }
+
+    protected void OnSetRating(int itemNumber)
+    {
+      GUIListItem item = facadeView[itemNumber];
+      if (item == null)
+        return;
+      FileItem curFile = item.MusicTag as FileItem;
+      if (curFile == null)
+        return;
+
+      GUIDialogSetRating dialog = (GUIDialogSetRating)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_RATING);
+
+      dialog.Rating = curFile.Rating;
+      dialog.SetTitle(String.Format("{0}", curFile.Title));
+
+      dialog.DoModal(GetID);
+
+      facadeView[itemNumber].MusicTag = curFile;
+      curFile.Rating = dialog.Rating;
+      curFile.Write();
+
+      if (dialog.Result == GUIDialogSetRating.ResultCode.Previous)
+      {
+        while (itemNumber > 0)
+        {
+          itemNumber--;
+          item = facadeView[itemNumber];
+          if (!item.IsFolder && !item.IsRemote)
+          {
+            OnSetRating(itemNumber);
+            return;
+          }
+        }
+      }
+
+      if (dialog.Result == GUIDialogSetRating.ResultCode.Next)
+      {
+        while (itemNumber + 1 < facadeView.Count)
+        {
+          itemNumber++;
+          item = facadeView[itemNumber];
+          if (!item.IsFolder && !item.IsRemote)
+          {
+            OnSetRating(itemNumber);
+            return;
+          }
+        }
+      }
+    }
+
+    #endregion
 
     #region Display
 
