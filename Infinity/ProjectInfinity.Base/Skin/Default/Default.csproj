@@ -129,6 +129,10 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <ProjectReference Include="New Folder1\DefaultSkin.csproj" />
+    <ApplicationDefinition Include="App.xaml" />
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Page Include="Dialogs\FolderDialog.xaml" />
     <Page Include="Dialogs\MpDialogOk.xaml" />
     <Page Include="Dialogs\MpDialogYesNo.xaml" />
