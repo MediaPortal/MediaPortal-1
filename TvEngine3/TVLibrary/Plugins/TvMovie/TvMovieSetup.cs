@@ -333,37 +333,45 @@ namespace SetupTv.Sections
         {
           foreach (TvMovieMapping mapping in mappingDb)
           {
-            string channelName = Channel.Retrieve(mapping.IdChannel).Name;
-            TreeNode channelNode = FindChannel(channelName);
-            if (channelNode != null)
+            string channelName = string.Empty;
+            try
             {
-              string stationName = mapping.StationName;
-              if (FindStation(stationName) != null)
+              channelName = Channel.Retrieve(mapping.IdChannel).Name;
+              TreeNode channelNode = FindChannel(channelName);
+              if (channelNode != null)
               {
-                TreeNode stationNode = (TreeNode)FindStation(stationName).Clone();
-                ChannelInfo channelInfo = new ChannelInfo();
-                if (stationNode != null)
+                string stationName = mapping.StationName;
+                if (FindStation(stationName) != null)
                 {
-                  string start = mapping.TimeSharingStart;
-                  string end = mapping.TimeSharingEnd;
+                  TreeNode stationNode = (TreeNode)FindStation(stationName).Clone();
+                  ChannelInfo channelInfo = new ChannelInfo();
+                  if (stationNode != null)
+                  {
+                    string start = mapping.TimeSharingStart;
+                    string end = mapping.TimeSharingEnd;
 
-                  if (start != "00:00" || end != "00:00")
-                    stationNode.Text = string.Format("{0} ({1}-{2})", stationName, start, end);
-                  else
-                    stationNode.Text = string.Format("{0}", stationName);
+                    if (start != "00:00" || end != "00:00")
+                      stationNode.Text = string.Format("{0} ({1}-{2})", stationName, start, end);
+                    else
+                      stationNode.Text = string.Format("{0}", stationName);
 
-                  channelInfo.Start = start;
-                  channelInfo.End = end;
-                  channelInfo.Name = stationName;
+                    channelInfo.Start = start;
+                    channelInfo.End = end;
+                    channelInfo.Name = stationName;
 
-                  stationNode.Tag = channelInfo;
+                    stationNode.Tag = channelInfo;
 
-                  channelNode.Nodes.Add(stationNode);
-                  channelNode.Expand();
+                    channelNode.Nodes.Add(stationNode);
+                    channelNode.Expand();
+                  }
                 }
+                else
+                  Log.Debug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
               }
-              else
-                Log.Debug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
+            }
+            catch (Exception exInner)
+            {
+              Log.Debug("TVMovie plugin: Mapping of station {0} failed; maybe it has been deleted / changed ({1})", channelName, exInner.Message);
             }
           }
         }

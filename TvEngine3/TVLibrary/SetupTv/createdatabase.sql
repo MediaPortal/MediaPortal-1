@@ -338,9 +338,6 @@ REFERENCES Channel (idChannel)
 GO
 ALTER TABLE Schedule CHECK CONSTRAINT FK_Schedule_Channel
 GO
-ALTER TABLE TvMovieMapping  WITH CHECK ADD  CONSTRAINT FK_TvMovieMapping_Channel FOREIGN KEY(idChannel)
-REFERENCES Channel (idChannel)
-GO
 ALTER TABLE TvMovieMapping CHECK CONSTRAINT FK_TvMovieMapping_Channel
 GO
 
