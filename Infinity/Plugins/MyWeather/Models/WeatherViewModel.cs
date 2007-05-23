@@ -81,8 +81,7 @@ namespace MyWeather
             // create the datamodel :)
             _dataModel = new WeatherDataModel(new WeatherDotComCatcher());
             // load locations and data (threaded)
-            UpdateWeatherCommand updateCmd = new UpdateWeatherCommand(this, _dataModel);
-            updateCmd.Execute(null);
+            UpdateWeather.Execute(null);
         }
         #endregion
 
@@ -117,8 +116,7 @@ namespace MyWeather
             _availableLocations.Add(city1);
             _availableLocations.Add(city2);
             _currCity = city1;
-            ChangeProperty("AvailableLocations");
-            ChangeProperty("CurrentLocation");
+            LocationPropertiesUpdated();
         }
         /// <summary>
         /// load all configured locations from settings
@@ -126,8 +124,7 @@ namespace MyWeather
         public void LoadAvailableLocations()
         {
             _availableLocations = _dataModel.LoadLocationsData();
-            ChangeProperty("AvailableLocations");
-            ChangeProperty("CurrentLocation");
+            LocationPropertiesUpdated();
         }
 
         #region properties
@@ -142,6 +139,14 @@ namespace MyWeather
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        /// Tells the GUI that our properties have been updated
+        /// </summary>
+        public void LocationPropertiesUpdated()
+        {
+            ChangeProperty("AvailableLocations");
+            ChangeProperty("CurrentLocation");
+        }
         /// <summary>
         /// Gets the window.
         /// </summary>
@@ -375,6 +380,7 @@ namespace MyWeather
                 // _viewModel.LoadAvailableLocations();
                 UpdateWeatherDelegate starter = new UpdateWeatherDelegate(this.UpdateBackGroundWorker);
                 starter.BeginInvoke(null, null);
+                _viewModel.LocationPropertiesUpdated();
             }
 
             /// <summary>
@@ -399,6 +405,7 @@ namespace MyWeather
                     }
                 }
                 // Schedule the update function in the UI thread.
+                _viewModel.LocationPropertiesUpdated();
                 _viewModel.IsBusy = false;
             }
         }
