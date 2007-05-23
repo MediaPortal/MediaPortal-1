@@ -166,18 +166,22 @@ namespace WindowPlugins.GUIPrograms
     {
       return "My Programs";
     }
+
     public string Description()
     {
       return "Launches external documents and applications";
     }
+
     public string Author()
     {
       return "waeberd";
     }
+
     public void ShowPlugin()
     {
       ShowDialog();
     }
+
     public bool DefaultEnabled()
     {
       return false;
@@ -694,7 +698,6 @@ namespace WindowPlugins.GUIPrograms
       return res;
     }
 
-
     private void AttachChildren(TreeNode Parent, int FatherID)
     {
       foreach (AppItem app in apps.appsOfFatherID(FatherID))
@@ -704,7 +707,6 @@ namespace WindowPlugins.GUIPrograms
         Parent.Nodes.Add(curNode);
         AttachChildren(curNode, app.AppID); // recursive call
       }
-
     }
 
     private void updateTree()
@@ -729,7 +731,6 @@ namespace WindowPlugins.GUIPrograms
         appTree.SelectedNode = appTree.Nodes[0];
       }
     }
-
 
     private void DoDelete()
     {
@@ -808,8 +809,6 @@ namespace WindowPlugins.GUIPrograms
       return res;
     }
 
-
-
     private void AttachFilesView()
     {
       holderPanelFiles.Controls.Clear();
@@ -847,44 +846,46 @@ namespace WindowPlugins.GUIPrograms
       AppItem curApp = GetSelectedAppItem();
       AppItem prevApp = GetPrevAppItem();
       int n = -1;
-      if ((curApp != null) && (prevApp != null))
+      if (curApp == null)
+        return;
+      if (prevApp == null)
+        return;
+
+      n = curApp.Position;
+      curApp.Position = prevApp.Position;
+      prevApp.Position = n;
+      curApp.Write();
+      prevApp.Write();
+      apps.LoadAll(); // poor man's refresh.... Load all and display all.....
+      updateTree();
+      if (appTree.SelectedNode.PrevNode != null)
       {
-        n = curApp.Position;
-        curApp.Position = prevApp.Position;
-        prevApp.Position = n;
-        curApp.Write();
-        prevApp.Write();
-        apps.LoadAll(); // poor man's refresh.... Load all and display all.....
-        updateTree();
-        if (appTree.SelectedNode.PrevNode != null)
-        {
-          appTree.SelectedNode = appTree.SelectedNode.PrevNode;
-        }
+        appTree.SelectedNode = appTree.SelectedNode.PrevNode;
       }
     }
-
 
     private void DoDown()
     {
       AppItem curApp = GetSelectedAppItem();
       AppItem nextApp = GetNextAppItem();
       int n = -1;
-      if ((curApp != null) && (nextApp != null))
+      if (curApp == null)
+        return;
+      if (nextApp == null)
+        return;
+
+      n = curApp.Position;
+      curApp.Position = nextApp.Position;
+      nextApp.Position = n;
+      curApp.Write();
+      nextApp.Write();
+      apps.LoadAll(); // poor man's refresh.... Load all and display all.....
+      updateTree();
+      if (appTree.SelectedNode.NextNode != null)
       {
-        n = curApp.Position;
-        curApp.Position = nextApp.Position;
-        nextApp.Position = n;
-        curApp.Write();
-        nextApp.Write();
-        apps.LoadAll(); // poor man's refresh.... Load all and display all.....
-        updateTree();
-        if (appTree.SelectedNode.NextNode != null)
-        {
-          appTree.SelectedNode = appTree.SelectedNode.NextNode;
-        }
+        appTree.SelectedNode = appTree.SelectedNode.NextNode;
       }
     }
-
 
     private void RefreshClick(object sender, EventArgs e)
     {
@@ -901,14 +902,11 @@ namespace WindowPlugins.GUIPrograms
       DoDown();
     }
 
-
-
     private void BlockControls()
     {
       appTree.Enabled = false;
       toolBarMenu.Enabled = false;
     }
-
 
     private void UnblockControls()
     {
@@ -1007,6 +1005,7 @@ namespace WindowPlugins.GUIPrograms
       }
       return res;
     }
+
     private void AddFilesPage(AppItem curApp)
     {
       if (!TabIsDisplayed(filesPage))
@@ -1041,7 +1040,6 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-
     private void SyncPanel(AppSettings pageSettings)
     {
       holderPanel.Controls.Clear();
@@ -1072,7 +1070,6 @@ namespace WindowPlugins.GUIPrograms
         }
       }
     }
-
 
     private void appTree_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
     {
@@ -1139,7 +1136,6 @@ namespace WindowPlugins.GUIPrograms
       return res;
     }
 
-
     private void sectionTree_AfterSelect(object sender, TreeViewEventArgs e)
     {
       SyncDetails();
@@ -1190,9 +1186,7 @@ namespace WindowPlugins.GUIPrograms
           buttonDown.Enabled = (GetNextAppItem() != null);
           buttonDelete.Enabled = true;
         }
-
     }
-
 
     private bool NodeAcceptsChildren(TreeNode node)
     {
@@ -1315,8 +1309,6 @@ namespace WindowPlugins.GUIPrograms
       return ContainsNode(node1, node2.Parent);
     }
 
-
-
     private void toolBarMenu_ButtonClick(object sender, ToolBarButtonClickEventArgs e)
     {
       switch (toolBarMenu.Buttons.IndexOf(e.Button))
@@ -1337,10 +1329,8 @@ namespace WindowPlugins.GUIPrograms
         case 8:
           popupTools.Show(toolBarMenu, new Point(buttonTools.Rectangle.Left, toolBarMenu.Height));
           break;
-
       }
     }
-
 
     private void menuDirBrowse_Click(object sender, EventArgs e)
     {
@@ -1435,7 +1425,6 @@ namespace WindowPlugins.GUIPrograms
           FillProfileMenu();
         }
       }
-
     }
 
     private void SourceTypeToDirBrowse_Click(object sender, EventArgs e)
@@ -1467,7 +1456,6 @@ namespace WindowPlugins.GUIPrograms
     {
       this.DoModifySourceType(myProgSourceType.FILELAUNCHER);
     }
-
 
     private void MenuItemChangeSourceType_Select(object sender, EventArgs e)
     {
@@ -1552,7 +1540,6 @@ namespace WindowPlugins.GUIPrograms
         m_ProfilesLoaded = true;
       }
     }
-
 
     private void ProfileItem_Click(object sender, EventArgs e)
     {
