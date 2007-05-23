@@ -233,17 +233,16 @@ namespace ProgramsDatabase
     {
       string curFilename = curFile.Filename;
       if (curFilename == "")
-      {
         return;
-      }
 
       // Launch File by item
       if (mpGuiMode)
       {
         curFile.UpdateLaunchInfo();
       }
+
       ProcessStartInfo procStart = new ProcessStartInfo();
-      if (Filename != "")
+      if (this.Filename != "")
       {
         // use the APPLICATION launcher and add current file information
         procStart.FileName = Filename; // filename of the application
@@ -252,7 +251,7 @@ namespace ProgramsDatabase
         if (UseQuotes)
         {
           // avoid double quotes around the filename-argument.....
-          curFilename = "\"" + (curFile.Filename.TrimStart('\"')).TrimEnd('\"') + "\"";
+          curFilename = "\"" + curFile.Filename.Trim('\"') + "\"";
         }
 
         if (procStart.Arguments.IndexOf("%FILEnoPATHnoEXT%") >= 0)
@@ -261,7 +260,7 @@ namespace ProgramsDatabase
           // winkawaks.exe alpham2
           // => filename without path and extension is necessary!
           string filenameNoPathNoExt = curFile.ExtractFileName();
-          filenameNoPathNoExt = (filenameNoPathNoExt.TrimStart('\"')).TrimEnd('\"');
+          filenameNoPathNoExt = filenameNoPathNoExt.Trim('\"');
           filenameNoPathNoExt = Path.GetFileNameWithoutExtension(filenameNoPathNoExt);
           procStart.Arguments = procStart.Arguments.Replace("%FILEnoPATHnoEXT%", filenameNoPathNoExt);
         }
@@ -284,7 +283,6 @@ namespace ProgramsDatabase
         {
           procStart.WorkingDirectory = procStart.WorkingDirectory.Replace("%FILEDIR%", Path.GetDirectoryName(curFile.Filename));
         }
-        procStart.UseShellExecute = UseShellExecute;
       }
       else
       {
@@ -298,10 +296,9 @@ namespace ProgramsDatabase
           guessedFilename = procStart.Arguments;
         }
         procStart.WorkingDirectory = curFile.ExtractDirectory(guessedFilename);
-        procStart.UseShellExecute = UseShellExecute;
       }
+      procStart.UseShellExecute = this.UseShellExecute;
       procStart.WindowStyle = this.WindowStyle;
-
 
       bool useGenericPlayer = (procStart.FileName.ToUpper() == "%PLAY%") ||
         (procStart.FileName.ToUpper() == "%PLAYAUDIOSTREAM%") ||
@@ -433,14 +430,10 @@ namespace ProgramsDatabase
       // Launch File by GUILISTITEM
       // => look for FileItem and launch it using the found object
       if (item.MusicTag == null)
-      {
         return;
-      }
-      FileItem curFile = (FileItem)item.MusicTag;
+      FileItem curFile = item.MusicTag as FileItem;
       if (curFile == null)
-      {
         return;
-      }
       this.LaunchFile(curFile, true);
     }
 
