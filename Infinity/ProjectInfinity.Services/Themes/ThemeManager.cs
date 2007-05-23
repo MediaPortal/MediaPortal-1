@@ -21,8 +21,12 @@ namespace ProjectInfinity.Themes
       {
         try
         {
-          using (FileStream theme = file.OpenRead())
-            themes.Add(file.Name.Replace(file.Extension, ""), (ResourceDictionary)XamlReader.Load(theme));
+            if (!file.Name.ToLower().Equals("app.xaml"))
+            {
+                using (FileStream theme = file.OpenRead())
+                    themes.Add(file.Name.Replace(file.Extension, ""), (ResourceDictionary)XamlReader.Load(theme));
+            }
+            else ServiceScope.Get<ILogger>().Warn("ThemeManager: App.xaml was found, but we shouldn't use that one - App.xaml was prevented from loading");
         }
         catch (Exception ex)
         {
