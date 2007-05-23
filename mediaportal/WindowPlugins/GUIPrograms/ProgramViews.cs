@@ -26,8 +26,8 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Windows.Forms;
@@ -43,11 +43,11 @@ namespace WindowPlugins.GUIPrograms
   /// </summary>
   public class ProgramViews : System.Windows.Forms.UserControl
   {
-    // two classes ripped from frodos MusicViews.cs
     public class SyncedCheckBox : CheckBox
     {
-      DataGrid grid;
-      int cell;
+      private DataGrid grid;
+      private int cell;
+
       public int Cell
       {
         get { return cell; }
@@ -59,6 +59,7 @@ namespace WindowPlugins.GUIPrograms
         get { return grid; }
         set { grid = value; }
       }
+
       protected override void OnLayout(LayoutEventArgs levent)
       {
         DataGridCell currentCell = Grid.CurrentCell;
@@ -81,8 +82,18 @@ namespace WindowPlugins.GUIPrograms
 
     public class SyncedComboBox : ComboBox
     {
-      DataGrid grid;
-      int cell;
+      private DataGrid grid;
+      private int cell;
+      
+      public SyncedComboBox(string name)
+      {
+        this.Cursor = Cursors.Arrow;
+        this.DropDownStyle = ComboBoxStyle.DropDownList;
+        this.Dock = DockStyle.Fill;
+        this.DisplayMember = name;
+        this.MaxDropDownItems = 10;
+      }
+      
       public int Cell
       {
         get { return cell; }
@@ -94,30 +105,28 @@ namespace WindowPlugins.GUIPrograms
         get { return grid; }
         set { grid = value; }
       }
+
       protected override void OnLayout(LayoutEventArgs levent)
       {
         try
         {
-          //if (true||SelectedIndex<0)
-          {
-            DataGridCell currentCell = Grid.CurrentCell;
+          DataGridCell currentCell = Grid.CurrentCell;
 
-            if (currentCell.ColumnNumber == Cell)
+          if (currentCell.ColumnNumber == Cell)
+          {
+            DataTable ds = Grid.DataSource as DataTable;
+            if (ds != null)
             {
-              DataTable ds = Grid.DataSource as DataTable;
-              if (ds != null)
+              foreach (string item in Items)
               {
-                foreach (string item in Items)
+                if (currentCell.RowNumber < ds.Rows.Count)
                 {
-                  if (currentCell.RowNumber < ds.Rows.Count)
+                  DataRow row = ds.Rows[currentCell.RowNumber];
+                  string currentValue = (string)row.ItemArray[Cell];
+                  if (currentValue == item)
                   {
-                    DataRow row = ds.Rows[currentCell.RowNumber];
-                    string currentValue = (string)row.ItemArray[Cell];
-                    if (currentValue == item)
-                    {
-                      SelectedItem = item;
-                      break;
-                    }
+                    SelectedItem = item;
+                    break;
                   }
                 }
               }
@@ -131,16 +140,7 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbViewName;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPButton btnDelete;
-    private MediaPortal.UserInterface.Controls.MPButton btnSave;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbViews;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private IContainer components = null;
-
-    private DataGrid dataGrid1;
+    private DataGrid dataGrid;
     private DataTable datasetFilters;
     private ViewDefinition currentView;
     private ArrayList views;
@@ -149,6 +149,17 @@ namespace WindowPlugins.GUIPrograms
 
     string defaultViews = Config.GetFile(Config.Dir.Base, "defaultProgramViews.xml");
     string customViews = Config.GetFile(Config.Dir.Config, "ProgramViews.xml");
+
+
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbViews;
+    private MediaPortal.UserInterface.Controls.MPLabel lblViewName;
+    private MediaPortal.UserInterface.Controls.MPTextBox tbViewName;
+    private MediaPortal.UserInterface.Controls.MPLabel lblActionCodes;
+    private MediaPortal.UserInterface.Controls.MPButton btnSave;
+    private MediaPortal.UserInterface.Controls.MPButton btnDelete;
+    private MediaPortal.UserInterface.Controls.MPLabel lblViews;
+    private IContainer components = null;
 
     string[] selections = new string[]
     {
@@ -166,7 +177,7 @@ namespace WindowPlugins.GUIPrograms
       "genre4",
       "genre5"
     };
-    
+
     string[] sqloperators = new string[]
     {
       "",
@@ -179,7 +190,7 @@ namespace WindowPlugins.GUIPrograms
       "like",
       //"group",
     };
-    
+
     string[] viewsAs = new string[]
     {
       "List",
@@ -188,7 +199,6 @@ namespace WindowPlugins.GUIPrograms
       "Filmstrip",
       //"Albums",
     };
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
 
     string[] sortBy = new string[]
     {
@@ -235,7 +245,7 @@ namespace WindowPlugins.GUIPrograms
       LoadViews();
     }
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     protected override void Dispose(bool disposing)
@@ -252,65 +262,54 @@ namespace WindowPlugins.GUIPrograms
 
     #region Designer generated code
 
-    /// <summary> 
-    /// Required method for Designer support - do not modify 
+    /// <summary>
+    /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
     private void InitializeComponent()
     {
-      this.tbViewName = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
-      this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
+      this.groupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.lblViews = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbViews = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.dataGrid1 = new System.Windows.Forms.DataGrid();
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
-      this.mpGroupBox1.SuspendLayout();
+      this.lblViewName = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbViewName = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.dataGrid = new System.Windows.Forms.DataGrid();
+      this.lblActionCodes = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
+      this.groupBox.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).BeginInit();
       this.SuspendLayout();
       // 
-      // tbViewName
+      // groupBox
       // 
-      this.tbViewName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.tbViewName.BorderColor = System.Drawing.Color.Empty;
-      this.tbViewName.Location = new System.Drawing.Point(137, 47);
-      this.tbViewName.Name = "tbViewName";
-      this.tbViewName.Size = new System.Drawing.Size(185, 21);
-      this.tbViewName.TabIndex = 20;
+      this.groupBox.Controls.Add(this.lblViews);
+      this.groupBox.Controls.Add(this.cbViews);
+      this.groupBox.Controls.Add(this.lblViewName);
+      this.groupBox.Controls.Add(this.tbViewName);
+      this.groupBox.Controls.Add(this.dataGrid);
+      this.groupBox.Controls.Add(this.lblActionCodes);
+      this.groupBox.Controls.Add(this.btnSave);
+      this.groupBox.Controls.Add(this.btnDelete);
+      this.groupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox.Location = new System.Drawing.Point(0, 0);
+      this.groupBox.Name = "groupBox";
+      this.groupBox.Size = new System.Drawing.Size(328, 408);
+      this.groupBox.TabIndex = 0;
+      this.groupBox.TabStop = false;
+      this.groupBox.Text = "Program Views";
       // 
-      // label2
+      // lblViews
       // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(6, 50);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(125, 13);
-      this.label2.TabIndex = 19;
-      this.label2.Text = "Name or Localized Code:";
-      // 
-      // btnDelete
-      // 
-      this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnDelete.Location = new System.Drawing.Point(250, 380);
-      this.btnDelete.Name = "btnDelete";
-      this.btnDelete.Size = new System.Drawing.Size(72, 22);
-      this.btnDelete.TabIndex = 18;
-      this.btnDelete.Text = "Delete";
-      this.btnDelete.UseVisualStyleBackColor = true;
-      this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-      // 
-      // btnSave
-      // 
-      this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnSave.Location = new System.Drawing.Point(172, 380);
-      this.btnSave.Name = "btnSave";
-      this.btnSave.Size = new System.Drawing.Size(72, 22);
-      this.btnSave.TabIndex = 17;
-      this.btnSave.Text = "Save";
-      this.btnSave.UseVisualStyleBackColor = true;
-      this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+      this.lblViews.AutoSize = true;
+      this.lblViews.Location = new System.Drawing.Point(6, 23);
+      this.lblViews.Name = "lblViews";
+      this.lblViews.Size = new System.Drawing.Size(33, 13);
+      this.lblViews.TabIndex = 0;
+      this.lblViews.Text = "View:";
       // 
       // cbViews
       // 
@@ -321,79 +320,89 @@ namespace WindowPlugins.GUIPrograms
       this.cbViews.Location = new System.Drawing.Point(137, 20);
       this.cbViews.Name = "cbViews";
       this.cbViews.Size = new System.Drawing.Size(185, 21);
-      this.cbViews.TabIndex = 16;
+      this.cbViews.TabIndex = 1;
       this.cbViews.SelectedIndexChanged += new System.EventHandler(this.cbViews_SelectedIndexChanged);
       // 
-      // label1
+      // lblViewName
       // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(6, 23);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(33, 13);
-      this.label1.TabIndex = 15;
-      this.label1.Text = "View:";
+      this.lblViewName.AutoSize = true;
+      this.lblViewName.Location = new System.Drawing.Point(6, 50);
+      this.lblViewName.Name = "lblViewName";
+      this.lblViewName.Size = new System.Drawing.Size(125, 13);
+      this.lblViewName.TabIndex = 2;
+      this.lblViewName.Text = "Name or Localized Code:";
       // 
-      // dataGrid1
+      // tbViewName
       // 
-      this.dataGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.tbViewName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbViewName.BorderColor = System.Drawing.Color.Empty;
+      this.tbViewName.Location = new System.Drawing.Point(137, 47);
+      this.tbViewName.Name = "tbViewName";
+      this.tbViewName.Size = new System.Drawing.Size(185, 21);
+      this.tbViewName.TabIndex = 3;
+      // 
+      // dataGrid
+      // 
+      this.dataGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.dataGrid1.DataMember = "";
-      this.dataGrid1.FlatMode = true;
-      this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-      this.dataGrid1.Location = new System.Drawing.Point(6, 74);
-      this.dataGrid1.Name = "dataGrid1";
-      this.dataGrid1.Size = new System.Drawing.Size(316, 270);
-      this.dataGrid1.TabIndex = 14;
+      this.dataGrid.DataMember = "";
+      this.dataGrid.FlatMode = true;
+      this.dataGrid.HeaderForeColor = System.Drawing.SystemColors.ControlText;
+      this.dataGrid.Location = new System.Drawing.Point(6, 74);
+      this.dataGrid.Name = "dataGrid";
+      this.dataGrid.Size = new System.Drawing.Size(316, 270);
+      this.dataGrid.TabIndex = 4;
       // 
-      // mpGroupBox1
+      // lblActionCodes
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
+      this.lblActionCodes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this.mpLabel1);
-      this.mpGroupBox1.Controls.Add(this.btnDelete);
-      this.mpGroupBox1.Controls.Add(this.tbViewName);
-      this.mpGroupBox1.Controls.Add(this.btnSave);
-      this.mpGroupBox1.Controls.Add(this.label1);
-      this.mpGroupBox1.Controls.Add(this.dataGrid1);
-      this.mpGroupBox1.Controls.Add(this.label2);
-      this.mpGroupBox1.Controls.Add(this.cbViews);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
-      this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(328, 408);
-      this.mpGroupBox1.TabIndex = 83;
-      this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "Program Views";
-      // 
-      // mpLabel1
-      // 
-      this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpLabel1.Location = new System.Drawing.Point(9, 347);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(313, 30);
-      this.mpLabel1.TabIndex = 85;
-      this.mpLabel1.Text = "Actions Codes in last column: a = Insert line after, b = Insert line before, d = " +
+      this.lblActionCodes.Location = new System.Drawing.Point(9, 347);
+      this.lblActionCodes.Name = "lblActionCodes";
+      this.lblActionCodes.Size = new System.Drawing.Size(313, 30);
+      this.lblActionCodes.TabIndex = 7;
+      this.lblActionCodes.Text = "Actions Codes in last column: a = Insert line after, b = Insert line before, d = " +
           "delete line";
-      this.mpLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+      this.lblActionCodes.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+      // 
+      // btnSave
+      // 
+      this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnSave.Location = new System.Drawing.Point(172, 380);
+      this.btnSave.Name = "btnSave";
+      this.btnSave.Size = new System.Drawing.Size(72, 22);
+      this.btnSave.TabIndex = 5;
+      this.btnSave.Text = "Save";
+      this.btnSave.UseVisualStyleBackColor = true;
+      this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+      // 
+      // btnDelete
+      // 
+      this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnDelete.Location = new System.Drawing.Point(250, 380);
+      this.btnDelete.Name = "btnDelete";
+      this.btnDelete.Size = new System.Drawing.Size(72, 22);
+      this.btnDelete.TabIndex = 6;
+      this.btnDelete.Text = "Delete";
+      this.btnDelete.UseVisualStyleBackColor = true;
+      this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
       // 
       // ProgramViews
       // 
-      this.Controls.Add(this.mpGroupBox1);
+      this.Controls.Add(this.groupBox);
       this.Name = "ProgramViews";
       this.Size = new System.Drawing.Size(328, 408);
-      ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).EndInit();
-      this.mpGroupBox1.ResumeLayout(false);
-      this.mpGroupBox1.PerformLayout();
+      this.groupBox.ResumeLayout(false);
+      this.groupBox.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).EndInit();
       this.ResumeLayout(false);
-
     }
 
     #endregion
 
-    void LoadViews()
+    public void LoadViews()
     {
       updating = true;
       cbViews.Items.Clear();
@@ -416,7 +425,7 @@ namespace WindowPlugins.GUIPrograms
       updating = false;
     }
 
-    void UpdateView()
+    private void UpdateView()
     {
       updating = true;
       currentView = (ViewDefinition)cbViews.SelectedItem;
@@ -426,54 +435,64 @@ namespace WindowPlugins.GUIPrograms
       }
       tbViewName.Text = currentView.Name;
 
-      //Declare and initialize local variables used
+      // Declare and initialize local variables used
       DataColumn dtCol = null; //Data Column variable
       string[] arrColumnNames = null; //string array variable
-      SyncedComboBox cbSelection, cbOperators; //combo box var              
-      //DataTable datasetFilters; //Data Table var
 
-      //Create the combo box object and set its properties
-      cbSelection = new SyncedComboBox();
-      cbSelection.Cursor = Cursors.Arrow;
-      cbSelection.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbSelection.Dock = DockStyle.Fill;
-      cbSelection.DisplayMember = "Selection";
-      cbSelection.MaxDropDownItems = 10;
+
+      // Create the combo box object and set its properties
+      SyncedComboBox cbSelection = new SyncedComboBox("Selection");
       foreach (string strText in selections)
       {
         cbSelection.Items.Add(strText);
       }
-      cbSelection.Grid = dataGrid1;
+      cbSelection.Grid = dataGrid;
       cbSelection.Cell = 0;
       //Event that will be fired when selected index in the combo box is changed
-      cbSelection.SelectionChangeCommitted += new EventHandler(cbSelection_SelectionChangeCommitted);
+      cbSelection.SelectionChangeCommitted += new EventHandler(ComboBox_SelectionChangeCommitted);
 
-      //Create the combo box object and set its properties
-      cbOperators = new SyncedComboBox();
-      cbOperators.Cursor = Cursors.Arrow;
-      cbOperators.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbOperators.Dock = DockStyle.Fill;
-      cbOperators.DisplayMember = "Operator";
-      cbOperators.MaxDropDownItems = 10;
+      SyncedComboBox cbOperators = new SyncedComboBox("Operator");
       foreach (string strText in sqloperators)
       {
         cbOperators.Items.Add(strText);
       }
-      cbOperators.Grid = dataGrid1;
+      cbOperators.Grid = dataGrid;
       cbOperators.Cell = 1;
-      cbOperators.SelectionChangeCommitted += new EventHandler(cbOperators_SelectionChangeCommitted);
+      cbOperators.SelectionChangeCommitted += new EventHandler(ComboBox_SelectionChangeCommitted);
+
+      SyncedComboBox cbView = new SyncedComboBox("ViewAs");
+      foreach (string strText in viewsAs)
+      {
+        cbView.Items.Add(strText);
+      }
+      cbView.Grid = dataGrid;
+      cbView.Cell = 4;
+      cbView.SelectionChangeCommitted += new EventHandler(ComboBox_SelectionChangeCommitted);
+
+      SyncedComboBox cbSort = new SyncedComboBox("SortBy");
+      foreach (string strText in sortBy)
+      {
+        cbSort.Items.Add(strText);
+      }
+      cbSort.Grid = dataGrid;
+      cbSort.Cell = 5;
+      cbSort.SelectionChangeCommitted += new EventHandler(ComboBox_SelectionChangeCommitted);
+
 
       //Create the String array object, initialize the array with the column
       //names to be displayed
-      arrColumnNames = new string[4];
+      arrColumnNames = new string[6];
       arrColumnNames[0] = "Selection";
       arrColumnNames[1] = "Operator";
       arrColumnNames[2] = "Restriction";
       arrColumnNames[3] = "Limit";
+      arrColumnNames[4] = "ViewAs";
+      arrColumnNames[5] = "SortBy";
 
       //Create the Data Table object which will then be used to hold
       //columns and rows
       datasetFilters = new DataTable("Selection");
+
       //Add the string array of columns to the DataColumn object       
       for (int i = 0; i < arrColumnNames.Length; i++)
       {
@@ -484,52 +503,13 @@ namespace WindowPlugins.GUIPrograms
         datasetFilters.Columns.Add(dtCol);
       }
 
-      //Add a Column with checkbox at last in the Grid     
+      // Add a Column with checkbox at last in the Grid     
       DataColumn dtcCheck = new DataColumn("Sort Ascending"); //create the data          //column object with the name 
       dtcCheck.DataType = Type.GetType("System.Boolean"); //Set its //data Type
       dtcCheck.DefaultValue = false; //Set the default value
       dtcCheck.AllowDBNull = false;
       dtcCheck.ColumnName = "Asc";
       datasetFilters.Columns.Add(dtcCheck); //Add the above column to the //Data Table
-
-      // Add the ViewAs column
-      dtCol = new DataColumn("ViewAs");
-      dtCol.DataType = Type.GetType("System.String");
-      dtCol.DefaultValue = "";
-      datasetFilters.Columns.Add(dtCol);
-
-      SyncedComboBox cbView = new SyncedComboBox();
-      cbView.Cursor = Cursors.Arrow;
-      cbView.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbView.Dock = DockStyle.Fill;
-      cbView.DisplayMember = "ViewAs";
-      foreach (string strText in viewsAs)
-      {
-        cbView.Items.Add(strText);
-      }
-      cbView.Grid = dataGrid1;
-      cbView.Cell = 1;
-      cbView.SelectionChangeCommitted += new EventHandler(cbView_SelectionChangeCommitted);
-
-      // Add the SortBy column
-      dtCol = new DataColumn("SortBy");
-      dtCol.DataType = Type.GetType("System.String");
-      dtCol.DefaultValue = "";
-      datasetFilters.Columns.Add(dtCol);
-
-      SyncedComboBox cbSort = new SyncedComboBox();
-      cbSort.Cursor = Cursors.Arrow;
-      cbSort.DropDownStyle = ComboBoxStyle.DropDownList;
-      cbSort.Dock = DockStyle.Fill;
-      cbSort.DisplayMember = "SortBy";
-      cbSort.MaxDropDownItems = 10;
-      foreach (string strText in sortBy)
-      {
-        cbSort.Items.Add(strText);
-      }
-      cbSort.Grid = dataGrid1;
-      cbSort.Cell = 1;
-      cbSort.SelectionChangeCommitted += new EventHandler(cbSort_SelectionChangeCommitted);
 
       // Add the Action column
       dtCol = new DataColumn("Act");
@@ -547,25 +527,31 @@ namespace WindowPlugins.GUIPrograms
           limit = "";
         }
         datasetFilters.Rows.Add(
-            new object[] {
-													 def.Where, def.SqlOperator, def.Restriction, limit, def.SortAscending,
-													 def.DefaultView, def.DefaultSort, ""
-												 }
-                               );
+          new object[] {
+            def.Where,
+            def.SqlOperator,
+            def.Restriction,
+            limit,
+            def.DefaultView,
+            def.DefaultSort,
+            def.SortAscending,
+            ""
+          }
+          );
       }
 
       //Set the Data Grid Source as the Data Table created above
-      dataGrid1.CaptionText = String.Empty;
-      dataGrid1.DataSource = datasetFilters;
+      dataGrid.CaptionText = String.Empty;
+      dataGrid.DataSource = datasetFilters;
 
       //set style property when first time the grid loads, next time onwards it //will maintain its property
-      if (!dataGrid1.TableStyles.Contains("Selection"))
+      if (!dataGrid.TableStyles.Contains("Selection"))
       {
         //Create a DataGridTableStyle object     
         DataGridTableStyle dgdtblStyle = new DataGridTableStyle();
         //Set its properties
         dgdtblStyle.MappingName = datasetFilters.TableName; //its table name of dataset
-        dataGrid1.TableStyles.Add(dgdtblStyle);
+        dataGrid.TableStyles.Add(dgdtblStyle);
         dgdtblStyle.RowHeadersVisible = false;
         dgdtblStyle.HeaderBackColor = Color.LightSteelBlue;
         dgdtblStyle.AllowSorting = false;
@@ -575,19 +561,19 @@ namespace WindowPlugins.GUIPrograms
         dgdtblStyle.HeaderFont = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold, GraphicsUnit.Point, ((Byte)(0)));
         dgdtblStyle.GridLineColor = Color.DarkGray;
         dgdtblStyle.PreferredRowHeight = 22;
-        dataGrid1.BackgroundColor = Color.White;
+        dataGrid.BackgroundColor = Color.White;
 
         //Take the columns in a GridColumnStylesCollection object and set //the size of the
         //individual columns   
         GridColumnStylesCollection colStyle;
-        colStyle = dataGrid1.TableStyles[0].GridColumnStyles;
+        colStyle = dataGrid.TableStyles[0].GridColumnStyles;
         colStyle[0].Width = 80;
         colStyle[1].Width = 60;
         colStyle[2].Width = 78;
         colStyle[3].Width = 48;
-        colStyle[4].Width = 30;
+        colStyle[4].Width = 55;
         colStyle[5].Width = 55;
-        colStyle[6].Width = 55;
+        colStyle[6].Width = 30;
         colStyle[7].Width = 30;
 
         // Set an eventhandler to be fired, when entering something in the action column
@@ -602,32 +588,103 @@ namespace WindowPlugins.GUIPrograms
 				dgdtblStyle.GridColumnStyles.Add(boolCol);
 				*/
       }
-      DataGridTextBoxColumn dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[0];
+      DataGridTextBoxColumn dgtb = (DataGridTextBoxColumn)dataGrid.TableStyles[0].GridColumnStyles[0];
       //Add the combo box to the text box taken in the above step 
       dgtb.TextBox.Controls.Add(cbSelection);
 
-      dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[1];
+      dgtb = (DataGridTextBoxColumn)dataGrid.TableStyles[0].GridColumnStyles[1];
       dgtb.TextBox.Controls.Add(cbOperators);
 
-      DataGridBoolColumn boolColumn = (DataGridBoolColumn)dataGrid1.TableStyles[0].GridColumnStyles[4];
-      boolColumn.AllowNull = false;
-
-      dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[5];
+      dgtb = (DataGridTextBoxColumn)dataGrid.TableStyles[0].GridColumnStyles[4];
       dgtb.TextBox.Controls.Add(cbView);
 
-      dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[6];
+      dgtb = (DataGridTextBoxColumn)dataGrid.TableStyles[0].GridColumnStyles[5];
       dgtb.TextBox.Controls.Add(cbSort);
+
+      DataGridBoolColumn boolColumn = (DataGridBoolColumn)dataGrid.TableStyles[0].GridColumnStyles[6];
+      boolColumn.AllowNull = false;
 
       updating = false;
     }
 
-    void StoreGridInView()
+    private void cbViews_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (updating)
       {
         return;
       }
-      if (dataGrid1.DataSource == null)
+      StoreGridInView();
+      dataGrid.DataSource = null;
+      UpdateView();
+    }
+
+    private void ComboBox_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (updating)
+      {
+        return;
+      }
+      SyncedComboBox box = sender as SyncedComboBox;
+      if (box == null)
+      {
+        return;
+      }
+      DataGridCell currentCell = dataGrid.CurrentCell;
+      DataTable table = dataGrid.DataSource as DataTable;
+
+      if (currentCell.RowNumber == table.Rows.Count)
+      {
+        table.Rows.Add(new object[] { "", "", "", "" });
+      }
+      table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
+    }
+
+    void tbAction_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      int rowSelected;
+      DataRow row = datasetFilters.NewRow();
+      row[0] = row[1] = row[2] = row[3] = row[5] = row[6] = row[7] = "";
+      row[4] = false;
+      rowSelected = dataGrid.CurrentRowIndex;
+      if (e.KeyChar == 'a')
+      {
+        datasetFilters.Rows.InsertAt(row, rowSelected + 1);
+      }
+      else if (e.KeyChar == 'b')
+      {
+        datasetFilters.Rows.InsertAt(row, rowSelected);
+      }
+      else if (e.KeyChar == 'd')
+      {
+        datasetFilters.Rows.RemoveAt(rowSelected);
+      }
+      e.Handled = true;
+    }
+
+    private void btnSave_Click(object sender, EventArgs e)
+    {
+      StoreGridInView();
+      if (settingsChanged)
+        try
+        {
+          using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "programViews.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
+          {
+            SoapFormatter formatter = new SoapFormatter();
+            formatter.Serialize(fileStream, views);
+            fileStream.Close();
+          }
+        }
+        catch (Exception)
+        { }
+    }
+
+    private void StoreGridInView()
+    {
+      if (updating)
+      {
+        return;
+      }
+      if (dataGrid.DataSource == null)
       {
         return;
       }
@@ -637,7 +694,7 @@ namespace WindowPlugins.GUIPrograms
       }
       settingsChanged = true;
       ViewDefinition view = currentView;
-      DataTable dt = dataGrid1.DataSource as DataTable;
+      DataTable dt = dataGrid.DataSource as DataTable;
       if (view.Name == "new...")
       {
         if (dt.Rows.Count == 0)
@@ -686,129 +743,14 @@ namespace WindowPlugins.GUIPrograms
         {
           def.Limit = -1;
         }
-        def.SortAscending = (bool)row[4];
-        def.DefaultView = row[5].ToString();
-        def.DefaultSort = row[6].ToString();
+        def.DefaultView = row[4].ToString();
+        def.DefaultSort = row[5].ToString();
+        def.SortAscending = (bool)row[6];
         view.Filters.Add(def);
       }
     }
-    
-    void cbViews_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-      if (updating)
-      {
-        return;
-      }
-      StoreGridInView();
-      dataGrid1.DataSource = null;
-      UpdateView();
-    }
-    
-    void cbSelection_SelectionChangeCommitted(object sender, EventArgs e)
-    {
-      if (updating)
-      {
-        return;
-      }
-      SyncedComboBox box = sender as SyncedComboBox;
-      if (box == null)
-      {
-        return;
-      }
-      DataGridCell currentCell = dataGrid1.CurrentCell;
-      DataTable table = dataGrid1.DataSource as DataTable;
 
-      if (currentCell.RowNumber == table.Rows.Count)
-      {
-        table.Rows.Add(new object[] { "", "", "", "" });
-      }
-      table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
-    }
-
-    void cbOperators_SelectionChangeCommitted(object sender, EventArgs e)
-    {
-      if (updating)
-      {
-        return;
-      }
-      SyncedComboBox box = sender as SyncedComboBox;
-      if (box == null)
-      {
-        return;
-      }
-      DataGridCell currentCell = dataGrid1.CurrentCell;
-      DataTable table = dataGrid1.DataSource as DataTable;
-
-      if (currentCell.RowNumber == table.Rows.Count)
-      {
-        table.Rows.Add(new object[] { "", "", "", "" });
-      }
-      table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
-
-    }
-
-    void cbView_SelectionChangeCommitted(object sender, EventArgs e)
-    {
-      if (updating)
-      {
-        return;
-      }
-      SyncedComboBox box = sender as SyncedComboBox;
-      if (box == null)
-      {
-        return;
-      }
-      DataGridCell currentCell = dataGrid1.CurrentCell;
-      DataTable table = dataGrid1.DataSource as DataTable;
-
-      if (currentCell.RowNumber == table.Rows.Count)
-      {
-        table.Rows.Add(new object[] { "", "", "", "" });
-      }
-      table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
-
-    }
-
-    void cbSort_SelectionChangeCommitted(object sender, EventArgs e)
-    {
-      if (updating)
-      {
-        return;
-      }
-      SyncedComboBox box = sender as SyncedComboBox;
-      if (box == null)
-      {
-        return;
-      }
-      DataGridCell currentCell = dataGrid1.CurrentCell;
-      DataTable table = dataGrid1.DataSource as DataTable;
-
-      if (currentCell.RowNumber == table.Rows.Count)
-      {
-        table.Rows.Add(new object[] { "", "", "", "" });
-      }
-      table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
-
-    }
-
-    void btnSave_Click(object sender, System.EventArgs e)
-    {
-      StoreGridInView();
-      if (settingsChanged)
-        try
-        {
-          using (FileStream fileStream = new FileStream(Config.GetFile(Config.Dir.Config, "programViews.xml"), FileMode.Create, FileAccess.Write, FileShare.Read))
-          {
-            SoapFormatter formatter = new SoapFormatter();
-            formatter.Serialize(fileStream, views);
-            fileStream.Close();
-          }
-        }
-        catch (Exception)
-        { }
-    }
-
-    void btnDelete_Click(object sender, System.EventArgs e)
+    private void btnDelete_Click(object sender, EventArgs e)
     {
       ViewDefinition viewSelected = cbViews.SelectedItem as ViewDefinition;
       if (viewSelected == null)
@@ -825,28 +767,6 @@ namespace WindowPlugins.GUIPrograms
         }
       }
       LoadViews();
-    }
-
-    void tbAction_KeyPress(object sender, KeyPressEventArgs e)
-    {
-      int rowSelected;
-      DataRow row = datasetFilters.NewRow();
-      row[0] = row[1] = row[2] = row[3] = row[5] = row[6] = row[7] = "";
-      row[4] = false;
-      rowSelected = dataGrid1.CurrentRowIndex;
-      if (e.KeyChar == 'a')
-      {
-        datasetFilters.Rows.InsertAt(row, rowSelected + 1);
-      }
-      else if (e.KeyChar == 'b')
-      {
-        datasetFilters.Rows.InsertAt(row, rowSelected);
-      }
-      else if (e.KeyChar == 'd')
-      {
-        datasetFilters.Rows.RemoveAt(rowSelected);
-      }
-      e.Handled = true;
     }
   }
 }
