@@ -195,7 +195,7 @@ namespace TvEngine
       if (cmDebug) Log.Debug("Calling assignSchedulestoCards with {0} schedules", scheduleList.Count);
       List<Schedule>[] assignedList = AssignSchedulesToCards(scheduleList);
       TimeSpan ts = DateTime.Now - startUpdate;
-      Log.Info("ConflictManager: Update done within {0} ms"),ts.TotalMilliseconds;
+      Log.Info("ConflictManager: Update done within {0} ms",ts.TotalMilliseconds);
       //List<Conflict> _conflicts = new List<Conflict>();
     }
 
