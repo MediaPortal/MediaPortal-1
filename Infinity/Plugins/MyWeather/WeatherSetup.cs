@@ -53,14 +53,12 @@ namespace MyWeather
 
     public WeatherSetup()
     {
-      WeatherSetupViewModel _model = new WeatherSetupViewModel();
-      DataContext = _model;
       this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
     }
 
     public void Run()
     {
-      ServiceScope.Get<INavigationService>().Navigate(new WeatherSetup());
+        ServiceScope.Get<INavigationService>().Navigate(new WeatherSetup());
     }
 
     #region IDisposable Members

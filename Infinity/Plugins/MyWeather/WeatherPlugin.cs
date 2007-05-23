@@ -29,6 +29,7 @@ using ProjectInfinity;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
 using ProjectInfinity.Settings;
+using System.Windows;
 
 namespace MyWeather
 {
