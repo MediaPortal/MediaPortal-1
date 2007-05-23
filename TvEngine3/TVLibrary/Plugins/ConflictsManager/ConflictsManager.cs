@@ -147,6 +147,7 @@ namespace TvEngine
     public void UpdateConflicts()
     {
       Log.Info("ConflictManager: Updating conflicts list");
+      DateTime startUpdate = DateTime.Now;
       // hmm... 
       ClearConflictTable();
       // Gets schedules from db
@@ -193,7 +194,8 @@ namespace TvEngine
 
       if (cmDebug) Log.Debug("Calling assignSchedulestoCards with {0} schedules", scheduleList.Count);
       List<Schedule>[] assignedList = AssignSchedulesToCards(scheduleList);
-
+      TimeSpan ts = DateTime.Now - startUpdate;
+      Log.Info("ConflictManager: Update done within {0} ms"),ts.TotalMilliseconds;
       //List<Conflict> _conflicts = new List<Conflict>();
     }
 
