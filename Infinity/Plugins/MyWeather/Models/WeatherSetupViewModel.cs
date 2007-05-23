@@ -47,7 +47,7 @@ using System.Collections.Generic;
 
 namespace MyWeather
 {
-    public class WeatherSetupViewModel : WeatherViewModel
+    public class WeatherSetupViewModel
     {
         #region variables
         string _labelError;
@@ -60,6 +60,8 @@ namespace MyWeather
         WeatherSetupDataModel _dataModel;
         WeatherSetupDataModel _dataModelAddedLocs;
         IWeatherCatcher _catcher;
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #endregion
 
         #region ctor
@@ -97,6 +99,15 @@ namespace MyWeather
 
         #endregion
 
+        /// <summary>
+        /// Notifies subscribers that property has been changed
+        /// </summary>
+        /// <param name="propertyName">Name of the property.</param>
+        public void ChangeProperty(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         /// <summary>
         /// generate some dummy data for the designer when we are
@@ -277,6 +288,18 @@ namespace MyWeather
             {
                 _selectedLocation = value;
                 ChangeProperty("SelectedLocation");
+            }
+        }
+
+        /// <summary>
+        /// Gets the window.
+        /// </summary>
+        /// <value>The window.</value>
+        public Window Window
+        {
+            get
+            {
+                return ServiceScope.Get<INavigationService>().GetWindow();
             }
         }
         #endregion

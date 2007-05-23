@@ -58,6 +58,7 @@ namespace MyWeather
         else
         {
             // We already have settings, so lets go to Weather directly
+            Weather weatherInstance = new Weather();
             ServiceScope.Get<INavigationService>().Navigate(new Weather());
         }
     }

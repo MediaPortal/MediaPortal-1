@@ -58,6 +58,7 @@ namespace MyWeather
         WeatherDataModel _dataModel;
         ICommand _updateWeatherCommand; // command to refresh the data of all cities
         ICommand _changeLocationCommand;// command to change to a new location (changes _currCity)
+        ICommand _hyperlinkCommand;     // command to guide to another screen (class needs to be given as string parameter)
         List<City> _availableLocations; // list of all available locations + data
         public event PropertyChangedEventHandler PropertyChanged;
         
@@ -80,7 +81,6 @@ namespace MyWeather
             _locals = new WeatherLocalizer();
             // create the datamodel :)
             _dataModel = new WeatherDataModel(new WeatherDotComCatcher());
-            // load locations and data (threaded)
             UpdateWeather.Execute(null);
         }
         #endregion
@@ -261,6 +261,23 @@ namespace MyWeather
                 return _changeLocationCommand;
             }
         }
+
+        /// <summary>
+        /// Returns a ICommand for updating the Location
+        /// </summary>
+        /// <value>The command.</value>
+        public ICommand Hyperlink
+        {
+            get
+            {
+                if (_hyperlinkCommand == null)
+                {
+                    _hyperlinkCommand = new HyperlinkCommand();
+                }
+                return _hyperlinkCommand;
+            }
+        }
+
         #endregion
 
         #region Commands subclasses
@@ -347,6 +364,9 @@ namespace MyWeather
                 ServiceScope.Get<ISettingsManager>().Load(settings);
                 settings.LocationCode = _viewModel.CurrentLocation.Id;
                 ServiceScope.Get<ISettingsManager>().Save(settings);
+                // if the city doesn't have information yet, try to download them again
+                if (_viewModel.CurrentLocation.HasData == false)
+                    _viewModel.UpdateWeather.Execute(null);
             }
         }
         #endregion
@@ -409,6 +429,50 @@ namespace MyWeather
                 _viewModel.IsBusy = false;
             }
         }
+        #endregion
+
+        #region HyperlinkCommand  class
+        /// <summary>
+        /// UpdateWeatherCommand will fetch new weather data
+        /// </summary> 
+        public class HyperlinkCommand : ICommand
+        {
+            public event EventHandler CanExecuteChanged;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="LocationChangedCommand"/> class.
+            /// </summary>
+            /// <param name="viewModel">The view model.</param>
+            public HyperlinkCommand()
+            {
+            }
+
+            /// <summary>
+            /// Executes the command.
+            /// </summary>
+            /// <param name="parameter">The parameter.</param>
+            public void Execute(object parameter)
+            {
+                ServiceScope.Get<INavigationService>().Navigate(parameter);
+            }
+
+            #region ICommand Members
+            public virtual bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            protected void OnCanExecuteChanged()
+            {
+                if (this.CanExecuteChanged != null)
+                {
+                    this.CanExecuteChanged(this, EventArgs.Empty);
+                }
+            }
+
+            #endregion
+        }
+
         #endregion
         #endregion
         #endregion

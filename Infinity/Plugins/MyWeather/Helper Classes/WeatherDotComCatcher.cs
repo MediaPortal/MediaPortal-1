@@ -92,8 +92,19 @@ namespace MyWeather
             string file;
             city.HasData = false;
             file = String.Format(_parsefileLocation, city.Id);
-            if(!Download(city.Id, file)) return false;
-            if(!ParseFile(city, file)) return false;
+            // download the xml file to the given location
+            if(!Download(city.Id, file))
+            {
+                ServiceScope.Get<ILogger>().Info("MyWeather.WeatherDotComCatcher: Could not Download Data for {0}.", city.Name);
+                return false;
+            }
+            // try to parse the file
+            if (!ParseFile(city, file))
+            {
+                ServiceScope.Get<ILogger>().Info("MyWeather.WeatherDotComCatcher: Could not Parse Data from {0} for City {1}.", file, city.Name);
+                return false;
+            }
+            ServiceScope.Get<ILogger>().Info("MyWeather.WeatherDotComCatcher: Fetching of weather data was successful for {0}.", city.Name);
             city.HasData = true;
             return true;
         }
@@ -189,15 +200,13 @@ namespace MyWeather
             // update variables from the settings
             LoadSettings();
 
-            ServiceScope.Get<ILogger>().Info("WeatherForecast.SkipConnectionTest: {0}", _skipConnectionTest);
-
             int code = 0;
             
             if (!Helper.IsConnectedToInternet(ref code))
             {
                 if (System.IO.File.Exists(weatherFile)) return true;
 
-                ServiceScope.Get<ILogger>().Info("WeatherForecast.Download: No internet connection {0}", code);
+                ServiceScope.Get<ILogger>().Info("MyWeather.WeatherDotComCatcher.Download: No internet connection {0}", code);
 
                 if (_skipConnectionTest == false)
                     return false;
@@ -221,7 +230,7 @@ namespace MyWeather
                 }
                 catch (Exception ex)
                 {
-                    ServiceScope.Get<ILogger>().Info("WeatherForecast: Failed to download weather:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+                    ServiceScope.Get<ILogger>().Info("WeatherDotComCatcher: Failed to download weather:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
                 }
             }
             return false;

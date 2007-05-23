@@ -36,8 +36,6 @@ namespace MyWeather
     {
         public Weather()
         {
-            WeatherViewModel _model = new WeatherViewModel();
-            DataContext = _model;
             this.InputBindings.Add(new KeyBinding(NavigationCommands.BrowseBack, new KeyGesture(System.Windows.Input.Key.Escape)));
         }
     }
