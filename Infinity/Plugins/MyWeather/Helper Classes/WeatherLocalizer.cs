@@ -78,7 +78,7 @@ namespace MyWeather
         /// Gets the the localized version of the header label.
         /// </summary>
         /// <value>The header label.</value>
-        public virtual string Header
+        public string Header
         {
             get
             {
@@ -89,7 +89,7 @@ namespace MyWeather
         /// <summary>
         /// Gets the the localized version of the temperature label.
         /// </summary>
-        public virtual string Temperature
+        public string Temperature
         {
             get
             {
@@ -100,7 +100,7 @@ namespace MyWeather
         /// <summary>
         /// Gets the the localized version of the feelslike label.
         /// </summary>
-        public virtual string FeelsLike
+        public string FeelsLike
         {
             get
             {
@@ -111,7 +111,7 @@ namespace MyWeather
         /// <summary>
         /// Gets the the localized version of the uvindex label.
         /// </summary>
-        public virtual string UVIndex
+        public string UVIndex
         {
             get
             {
@@ -122,7 +122,7 @@ namespace MyWeather
         /// <summary>
         /// Gets the the localized version of the wind label.
         /// </summary>
-        public virtual string Wind
+        public string Wind
         {
             get
             {
@@ -133,7 +133,7 @@ namespace MyWeather
         /// <summary>
         /// Gets the the localized version of the humidity label.
         /// </summary>
-        public virtual string Humidity
+        public string Humidity
         {
             get
             {
@@ -144,7 +144,7 @@ namespace MyWeather
         /// <summary>
         /// Gets the the localized version of the dewpoint label.
         /// </summary>
-        public virtual string DewPoint
+        public string DewPoint
         {
             get
             {
@@ -155,7 +155,7 @@ namespace MyWeather
         /// <summary>
         /// Gets the the localized version of the sunrise label.
         /// </summary>
-        public virtual string Sunrise
+        public string Sunrise
         {
             get
             {
@@ -166,7 +166,7 @@ namespace MyWeather
         /// <summary>
         /// Gets the the localized version of the sunset label.
         /// </summary>
-        public virtual string Sunset
+        public string Sunset
         {
             get
             {
