@@ -102,20 +102,20 @@ namespace MediaPortal.Player
 
     public static string currentTitle
     {
-        get { return _currentTitle; }
-        set { _currentTitle = value; }
+      get { return _currentTitle; }
+      set { _currentTitle = value; }
     }
-    
+
     public static string currentFileName
     {
-        get { return _currentFileName; }
-        set { _currentFileName = value; }
+      get { return _currentFileName; }
+      set { _currentFileName = value; }
     }
 
     public static string currentDescription
     {
-        get { return _currentDescription; }
-        set { _currentDescription = value; }
+      get { return _currentDescription; }
+      set { _currentDescription = value; }
     }
     #endregion
 
@@ -350,7 +350,7 @@ namespace MediaPortal.Player
         {
           _currentMedia = MediaType.TV;
           if (!_player.IsTimeShifting)
-              _currentMedia = MediaType.Recording;
+            _currentMedia = MediaType.Recording;
         }
         else if (_player.IsRadio)
         {
@@ -359,9 +359,9 @@ namespace MediaPortal.Player
         else if (_player.HasVideo)
         {
           if (MediaPortal.Util.Utils.IsAudio(_currentFilePlaying) ||
-              _currentFilePlaying.ToLower().StartsWith("http") || 
+              _currentFilePlaying.ToLower().StartsWith("http") ||
               _currentFilePlaying.ToLower().StartsWith("mms"))
-                _currentMedia = MediaType.Music;
+            _currentMedia = MediaType.Music;
         }
         Log.Info("g_Player.OnStarted() {0} media:{1}", _currentFilePlaying, _currentMedia.ToString());
         if (PlayBackStarted != null)
@@ -635,6 +635,11 @@ namespace MediaPortal.Player
     {
       try
       {
+        string strAudioPlayer = String.Empty;
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
+        }
         Starting = true;
         //stop radio
         GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO, 0, 0, 0, 0, 0, null);
@@ -659,7 +664,17 @@ namespace MediaPortal.Player
           GUIGraphicsContext.form.Invalidate(true);
           _player = null;
         }
-        _player = new AudioPlayerWMP9();
+        
+        if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
+        {
+          if (BassMusicPlayer.BassFreed)
+            BassMusicPlayer.Player.InitBass();
+
+          _player = BassMusicPlayer.Player;
+        }
+        else
+          _player = new AudioPlayerWMP9();
+        
         _player = CachePreviousPlayer(_player);
 
         bool bResult = _player.Play(strURL);
@@ -688,9 +703,9 @@ namespace MediaPortal.Player
     //Added by juvinious 19/02/2005
     public static bool PlayVideoStream(string strURL)
     {
-        return PlayVideoStream(strURL, "");
+      return PlayVideoStream(strURL, "");
     }
-    
+
     public static bool PlayVideoStream(string strURL, string streamName)
     {
       try
@@ -731,13 +746,13 @@ namespace MediaPortal.Player
 
         _player = CachePreviousPlayer(_player);
         bool isPlaybackPossible;
-        if (streamName!=null)
-            if (streamName != "")
-                isPlaybackPossible=_player.PlayStream(strURL, streamName);
-            else
-                isPlaybackPossible=_player.Play(strURL);
+        if (streamName != null)
+          if (streamName != "")
+            isPlaybackPossible = _player.PlayStream(strURL, streamName);
+          else
+            isPlaybackPossible = _player.Play(strURL);
         else
-            isPlaybackPossible = _player.Play(strURL);	
+          isPlaybackPossible = _player.Play(strURL);
         if (!isPlaybackPossible)
         {
           Log.Info("player:ended");
@@ -911,6 +926,7 @@ namespace MediaPortal.Player
       }
       return false;
     }
+
     public static bool Play(string strFile)
     {
       try
@@ -1505,9 +1521,9 @@ namespace MediaPortal.Player
       get
       {
         if (_player == null) return false;
-        if (_currentMedia == MediaType.Video) 
+        if (_currentMedia == MediaType.Video)
           return true;
-        
+
         return false;
       }
     }
@@ -1548,7 +1564,7 @@ namespace MediaPortal.Player
       if (_player == null) return;
       _player.Process();
       if (_player.Initializing)
-          return;	 	
+        return;
       if (!_player.Playing)
       {
         Log.Info("g_Player.Process() player stopped...");
@@ -1937,7 +1953,7 @@ namespace MediaPortal.Player
     public static ShowFullScreenWindowHandler ShowFullScreenWindowTV
     {
       get { return _showFullScreenWindowTV; }
-      set 
+      set
       {
         _showFullScreenWindowTV = value;
         Log.Debug("g_player: Setting ShowFullScreenWindowTV to {0}", value);
@@ -2047,13 +2063,13 @@ namespace MediaPortal.Player
     /// <returns></returns>
     public static bool ShowFullScreenWindow()
     {
-      Log.Debug( "g_Player: ShowFullScreenWindow" );
+      Log.Debug("g_Player: ShowFullScreenWindow");
       // does window allow switch to fullscreen?
       GUIWindow win = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
       if (!win.FullScreenVideoAllowed)
       {
-        Log.Error( "g_Player: ShowFullScreenWindow not allowed by current window" );
-        return false;      
+        Log.Error("g_Player: ShowFullScreenWindow not allowed by current window");
+        return false;
       }
 
       // try TV

@@ -43,6 +43,7 @@ namespace MediaPortal.Playlists
       void Release();
       bool Play(string strFile);
       bool PlayVideoStream(string strURL, string streamName);
+      bool PlayAudioStream(string strURL);
       void Stop();
       void SeekAsolutePercentage(int iPercentage);
       double Duration { get; }
@@ -68,10 +69,15 @@ namespace MediaPortal.Playlists
       {
         return MediaPortal.Player.g_Player.Play(strFile);
       }
-      
-      bool IPlayer.PlayVideoStream(string strURL,string streamName)
+
+      bool IPlayer.PlayVideoStream(string strURL, string streamName)
       {
-        return MediaPortal.Player.g_Player.PlayVideoStream(strURL,streamName);
+        return MediaPortal.Player.g_Player.PlayVideoStream(strURL, streamName);
+      }
+
+      bool IPlayer.PlayAudioStream(string strURL)
+      {
+        return MediaPortal.Player.g_Player.PlayAudioStream(strURL);
       }
 
       public void Stop()
@@ -164,8 +170,8 @@ namespace MediaPortal.Playlists
                 _currentPlayList = PlayListType.PLAYLIST_NONE;
               }
             }
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, -1, 0, null);
-						GUIGraphicsContext.SendMessage(msg);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, -1, 0, null);
+            GUIGraphicsContext.SendMessage(msg);
 
           }
           break;
@@ -382,7 +388,7 @@ namespace MediaPortal.Playlists
         }
       }
     }
-    
+
     public bool Play(int iSong)
     {
       // if play returns false PlayNext is called but this does not help against selecting an invalid track
@@ -431,12 +437,14 @@ namespace MediaPortal.Playlists
           item.Played = true;
           return true;
         }
-        
-        bool playResult=false;
-        if (_currentPlayList==PlayListType.PLAYLIST_MUSIC_VIDEO)
-            playResult = g_Player.PlayVideoStream(item.FileName, item.Description);
+
+        bool playResult = false;
+        if (_currentPlayList == PlayListType.PLAYLIST_MUSIC_VIDEO)
+          playResult = g_Player.PlayVideoStream(item.FileName, item.Description);
+        else if (item.Type == PlayListItem.PlayListItemType.AudioStream)  // Internet Radio
+          playResult = g_Player.PlayAudioStream(item.FileName);
         else
-            playResult = g_Player.Play(item.FileName);
+          playResult = g_Player.Play(item.FileName);
         if (!playResult)
         {
           //	Count entries in current playlist
@@ -524,12 +532,12 @@ namespace MediaPortal.Playlists
     {
       switch (nPlayList)
       {
-        case PlayListType.PLAYLIST_MUSIC:          return _musicPlayList;
+        case PlayListType.PLAYLIST_MUSIC: return _musicPlayList;
 
-        case PlayListType.PLAYLIST_MUSIC_TEMP:     return _tempMusicPlayList;
-        case PlayListType.PLAYLIST_VIDEO:          return _videoPlayList;
-        case PlayListType.PLAYLIST_VIDEO_TEMP:     return _tempVideoPlayList;
-          case PlayListType.PLAYLIST_MUSIC_VIDEO:  return _musicVideoPlayList;
+        case PlayListType.PLAYLIST_MUSIC_TEMP: return _tempMusicPlayList;
+        case PlayListType.PLAYLIST_VIDEO: return _videoPlayList;
+        case PlayListType.PLAYLIST_VIDEO_TEMP: return _tempVideoPlayList;
+        case PlayListType.PLAYLIST_MUSIC_VIDEO: return _musicVideoPlayList;
         default:
           _emptyPlayList.Clear();
           return _emptyPlayList;

@@ -318,19 +318,6 @@ namespace MediaPortal.Player
         return newPlayer;
       }
 
-      // Is it a Webstream / Internet Radio
-      if (fileName.StartsWith("http") || fileName.StartsWith("HTTP") ||
-          fileName.StartsWith("mms") || fileName.StartsWith("MMS"))
-      {
-        if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
-        {
-          if (BassMusicPlayer.BassFreed)
-            BassMusicPlayer.Player.InitBass();
-
-          return BassMusicPlayer.Player;
-        }
-      }
-
       // Use WMP Player as Default
       newPlayer = new Player.AudioPlayerWMP9();
       return newPlayer;

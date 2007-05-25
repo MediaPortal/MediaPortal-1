@@ -133,6 +133,12 @@ namespace MediaPortal.Tests.Core.Playlists
       return true;
     }
 
+    public bool PlayAudioStream(string strURL)
+    {
+      hasPlayBeenCalled = true;
+      return true;
+    }
+
     public bool ShowFullScreenWindow()
     {
       return false;
