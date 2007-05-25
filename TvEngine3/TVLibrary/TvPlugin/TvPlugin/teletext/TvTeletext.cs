@@ -189,7 +189,6 @@ namespace TvPlugin
     }
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
-      base.OnClicked(controlId, control, actionType);
       if (control == btnPage100)
       {
         currentPageNumber = 0x100;
@@ -231,8 +230,12 @@ namespace TvPlugin
       }
       if (control == btnFullscreen)
       {
+        Log.Info("TvTeletext: Fullscreen-Button pressed");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+        GUIGraphicsContext.IsFullScreenVideo = true;
       }
+
+      base.OnClicked(controlId, control, actionType);
     }
 
     void GetNewPage()
@@ -248,7 +251,7 @@ namespace TvPlugin
         bitmapTeletextPage = _renderer.RenderPage(page, currentPageNumber, sub);
         Redraw();
         _waiting = false;
-        Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, sub);
+        Log.Info("TvTeletext select page {0:X} / subpage {1:X}", currentPageNumber, sub);
       }
       else
       {
@@ -302,7 +305,7 @@ namespace TvPlugin
           currentSubPageNumber = 0;
           GetNewPage();
           Redraw();
-          Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
+          Log.Info("TvTeletext select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
           inputLine = "";
           return;
         }
@@ -322,7 +325,7 @@ namespace TvPlugin
           {
             GetNewPage();
             Redraw();
-            Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
+            Log.Info("TvTeletext select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
             inputLine = "";
             return;
           }
@@ -337,7 +340,7 @@ namespace TvPlugin
           {
             GetNewPage();
             Redraw();
-            Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
+            Log.Info("TvTeletext select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
             inputLine = "";
             return;
           }
@@ -367,7 +370,7 @@ namespace TvPlugin
             GetNewPage();
             Redraw();
           }
-          Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
+          Log.Info("TvTeletext select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
           inputLine = "";
 
         }

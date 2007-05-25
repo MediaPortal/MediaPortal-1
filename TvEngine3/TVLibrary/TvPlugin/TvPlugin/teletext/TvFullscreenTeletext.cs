@@ -31,6 +31,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Globalization;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
@@ -39,6 +40,7 @@ using MediaPortal.GUI.Pictures;
 using MediaPortal.Configuration;
 
 using TvDatabase;
+
 using Gentle.Common;
 using Gentle.Framework;
 
@@ -49,10 +51,8 @@ namespace TvPlugin
   /// </summary>
   public class TVTeletextFullScreen : GUIWindow, IRenderLayer
   {
-    [SkinControlAttribute(27)]
-    protected GUILabelControl lblMessage = null;
-    [SkinControlAttribute(500)]
-    protected GUIImage imgTeletext = null;
+    [SkinControlAttribute(27)]     protected GUILabelControl lblMessage = null;
+    [SkinControlAttribute(500)]    protected GUIImage imgTeletext = null;
 
     Bitmap bmpTeletextPage;
     string inputLine = String.Empty;
@@ -75,6 +75,7 @@ namespace TvPlugin
     {
       return Load(GUIGraphicsContext.Skin + @"\myfsteletext.xml");
     }
+
     public override void OnAdded()
     {
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT, this);
@@ -82,6 +83,7 @@ namespace TvPlugin
       PreInit();
       ResetAllControls();
     }
+
     public override bool IsTv
     {
       get
@@ -148,7 +150,6 @@ namespace TvPlugin
     {
       TVHome.Card.GrabTeletext = false;
 
-
       if (!GUIGraphicsContext.IsTvWindow(newWindowId))
       {
         if (TVHome.Card.IsTimeShifting && !(TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording))
@@ -180,8 +181,6 @@ namespace TvPlugin
 
       ShowMessage(actualPageNumber, actualSubPageNumber);
 
-
-
       if (imgTeletext != null)
       {
         imgTeletext.Width = GUIGraphicsContext.OverScanWidth;
@@ -206,6 +205,7 @@ namespace TvPlugin
         Redraw();
       }
     }
+
     void SubpageDown()
     {
       if (actualSubPageNumber > 0)
@@ -230,7 +230,7 @@ namespace TvPlugin
         bmpTeletextPage = _renderer.RenderPage(page, actualPageNumber, sub);
         Redraw();
         _waiting = false;
-        Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", actualPageNumber, actualSubPageNumber);
+        Log.Info("TvFullscreenTeletext: select page {0:X} / subpage {1:X}", actualPageNumber, actualSubPageNumber);
       }
       else
       {
@@ -240,11 +240,11 @@ namespace TvPlugin
 
     void OnKeyPressed(char chKey)
     {
-
       if (chKey == 'f' || chKey == 'F')
       {
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
       }
+
       if (chKey == 'c' || chKey == 'C')
       {
         _renderer.PageSelectText = "";
@@ -281,7 +281,7 @@ namespace TvPlugin
           actualSubPageNumber = 0;
           GetNewPage();
           Redraw();
-          Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", actualPageNumber, actualSubPageNumber);
+          Log.Info("TvFullscreenTeletext: select page {0:X} / subpage {1:X}", actualPageNumber, actualSubPageNumber);
           inputLine = "";
           return;
         }
@@ -301,7 +301,7 @@ namespace TvPlugin
           {
             GetNewPage();
             Redraw();
-            Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", actualPageNumber, actualSubPageNumber);
+            Log.Info("TvFullscreenTeletext: select page {0:X} / subpage {1:X}", actualPageNumber, actualSubPageNumber);
             inputLine = "";
             return;
           }
@@ -316,7 +316,7 @@ namespace TvPlugin
           {
             GetNewPage();
             Redraw();
-            Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", actualPageNumber, actualSubPageNumber);
+            Log.Info("TvFullscreenTeletext: select page {0:X} / subpage {1:X}", actualPageNumber, actualSubPageNumber);
             inputLine = "";
             return;
           }
@@ -346,7 +346,7 @@ namespace TvPlugin
             GetNewPage();
             Redraw();
           }
-          Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", actualPageNumber, actualSubPageNumber);
+          Log.Info("TvFullscreenTeletext: select page {0:X} / subpage {1:X}", actualPageNumber, actualSubPageNumber);
           inputLine = "";
 
         }
@@ -372,8 +372,7 @@ namespace TvPlugin
       lblMessage.Label = String.Format(GUILocalizeStrings.Get(596), pageNr, subPageNr); // Waiting for Page {0}/{1}...
       lblMessage.IsVisible = true;
     }
-
-
+    
     public override void Process()
     {
       TimeSpan ts = DateTime.Now - _startTime;
@@ -402,16 +401,16 @@ namespace TvPlugin
       if (actualSubPageNumber >  NumberOfSubpages)
         actualSubPageNumber = 0;
 
-      Log.Info("dvb-teletext page updated. {0:X}/{1:X} total:{2} rotspeed:{3}", actualPageNumber, actualSubPageNumber, NumberOfSubpages, tsRotation.TotalMilliseconds);
+      Log.Info("TvFullscreenTeletext page updated. {0:X}/{1:X} total:{2} rotspeed:{3}", actualPageNumber, actualSubPageNumber, NumberOfSubpages, tsRotation.TotalMilliseconds);
       GetNewPage();
       Redraw();
     }
+
     void Redraw()
     {
-      Log.Info("dvb-teletext redraw()");
+      Log.Info("TvFullscreenTeletext redraw()");
       try
       {
-
         if (bmpTeletextPage == null)
         {
           ShowMessage(actualPageNumber, actualSubPageNumber);
@@ -422,7 +421,6 @@ namespace TvPlugin
         }
         if (lblMessage != null)
           lblMessage.IsVisible = false;
-
 
         lock (imgTeletext)
         {
@@ -459,6 +457,7 @@ namespace TvPlugin
         imgTeletext.Render(timePassed);
       }
     }
+
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {
