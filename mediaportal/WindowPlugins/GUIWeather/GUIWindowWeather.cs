@@ -579,7 +579,7 @@ namespace MediaPortal.GUI.Weather
         _locationCode = xmlreader.GetValueAsString("weather", "location", String.Empty);
         _temperatureFarenheit = xmlreader.GetValueAsString("weather", "temperature", "C");
         _windSpeed = xmlreader.GetValueAsString("weather", "speed", "K");
-        _refreshIntercal = xmlreader.GetValueAsInt("weather", "refresh", 30);
+        _refreshIntercal = xmlreader.GetValueAsInt("weather", "refresh", 60);
         _refreshTimer = DateTime.Now.AddMinutes(-(_refreshIntercal + 1));
 
         bool bFound = false;
@@ -604,7 +604,9 @@ namespace MediaPortal.GUI.Weather
           if (city.Length > 0 && strCode.Length > 0)
           {
             if (strSatURL.Length == 0)
-              strSatURL = "http://www.zdf.de/ZDFde/wetter/showpicture/0,2236,161,00.gif";
+              //strSatURL = "http://www.zdf.de/ZDFde/wetter/showpicture/0,2236,161,00.gif";
+              strSatURL = "http://www.heute.de/CMO/frontend/subsystem_we/WeShowPicture/0,6008,161,00.gif";
+
             LocationInfo loc = new LocationInfo();
             loc.City = city;
             loc.CityCode = strCode;
