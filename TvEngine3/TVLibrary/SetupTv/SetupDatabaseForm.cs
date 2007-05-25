@@ -374,7 +374,7 @@ namespace SetupTv
 
       string ServerName = ParseServerHostName(mpTextBoxServer.Text);
       bool LocalServer = IsDatabaseOnLocalMachine(ServerName);
-      TvLibrary.Log.Log.Info("SetupDatabaseForm: Is server {0} local = {1}", ServerName, Convert.ToString(LocalServer));
+      TvLibrary.Log.Log.Info("---- SetupDatabaseForm: server = {0}, local = {1}", ServerName, Convert.ToString(LocalServer));
       CheckServiceName();
 
       doc.Save(fname);
@@ -509,7 +509,7 @@ namespace SetupTv
         string ConfiguredServiceName = textBoxServiceName.Text;
         if (ServiceHelper.IsInstalled(ConfiguredServiceName))
         {
-          textBoxServiceName.BackColor = Color.DimGray;
+          textBoxServiceName.BackColor = Color.GreenYellow;
         }
         else
         {
@@ -521,7 +521,7 @@ namespace SetupTv
           if (ServiceHelper.GetDBServiceName(ref DBSearchPattern))
           {
             textBoxServiceName.Text = DBSearchPattern;
-            textBoxServiceName.BackColor = Color.DimGray;
+            textBoxServiceName.BackColor = Color.GreenYellow;
 
             if (ServiceHelper.AddDependencyByName(DBSearchPattern))
               TvLibrary.Log.Log.Info("SetupDatabaseForm: Added dependency for TvService - {0}", DBSearchPattern);
@@ -544,6 +544,7 @@ namespace SetupTv
           mpTextBoxUserId.Text = "root";
           mpTextBoxServer.Text = Dns.GetHostName();
           textBoxServiceName.Enabled = true;
+          textBoxServiceName.BackColor = mpTextBoxServer.BackColor;
           textBoxServiceName.Text = @"MySQL5";          
         }
       }
@@ -558,6 +559,7 @@ namespace SetupTv
           mpTextBoxUserId.Text = "sa";
           mpTextBoxServer.Text = Dns.GetHostName() + @"\SQLEXPRESS";
           textBoxServiceName.Enabled = true;
+          textBoxServiceName.BackColor = mpTextBoxServer.BackColor;
           textBoxServiceName.Text = @"MSSQL$SQLEXPRESS";
         }
       }

@@ -156,21 +156,19 @@ namespace SetupTv
     {
       try
       {
-        using (RegistryKey pRegKey = Registry.LocalMachine)
+        using (RegistryKey rKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\TVService", true))
         {
-          using (RegistryKey subkey = pRegKey.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\TVService"))
+          if (rKey != null)
           {
-            if (subkey != null)
-            {
-              //dependencyKey = subkey.CreateSubKey()
-              subkey.SetValue("DependOnService", dependsOnService, RegistryValueKind.MultiString);
-            }
-            //else
-            //{
-            //  MessageBox.Show("TvService is not installed on your system!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //}
+            //dependencyKey = rKey.CreateSubKey()
+            rKey.SetValue("DependOnService", new string[] { dependsOnService, "Netman" }, RegistryValueKind.MultiString);
           }
+          //else
+          //{
+          //  MessageBox.Show("TvService is not installed on your system!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          //}
         }
+
         return true;
       }
       catch (Exception)
