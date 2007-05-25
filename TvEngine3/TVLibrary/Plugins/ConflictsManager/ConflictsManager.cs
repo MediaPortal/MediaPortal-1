@@ -191,7 +191,7 @@ namespace TvEngine
       ts = DateTime.Now - startUpdate;
       Log.Info("Schedules List built {0} ms", ts.TotalMilliseconds);
       // try to assign all schedules to existing cards
-      if (cmDebug) Log.Debug("Calling assignSchedulestoCards with {0} schedules", scheduleList.Count);
+      if (cmDebug) Log.Debug("Calling assignSchedulestoCards with {0} schedules", scheduleListToParse.Count);
       List<Schedule>[] assignedList = AssignSchedulesToCards(scheduleListToParse);
       ts = DateTime.Now - startUpdate;
       Log.Info("ConflictManager: Update done within {0} ms",ts.TotalMilliseconds);
