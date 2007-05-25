@@ -148,21 +148,26 @@ namespace TvEngine
     {
       Log.Info("ConflictManager: Updating conflicts list");
       DateTime startUpdate = DateTime.Now;
+      TimeSpan ts;
       // hmm... 
       ClearConflictTable();
       // Gets schedules from db
       IList scheduleList = Schedule.ListAll();
+      IList scheduleListToParse = new List<Schedule>();
       // parses all schedules and add the calculated incoming schedules 
-      IList scheduleOnceList = getRecordOnceSchedules(scheduleList);
-      IList scheduleDailyList = getDailySchedules(scheduleList);
-      IList scheduleWeeklyList = getWeeklySchedules(scheduleList);
-      IList scheduleWeekendsList = getWeekendsSchedules(scheduleList);
-      IList scheduleWorkingDaysList = getWorkingDaysSchedules(scheduleList);
-      IList scheduleEveryTimeEveryChannelList = getEveryTimeOnEveryChannelSchedules(scheduleList);
-      IList scheduleEveryTimeThisChannelList = getEveryTimeOnThisChannelSchedules(scheduleList);
+      getRecordOnceSchedules(scheduleList, scheduleListToParse);
+      getDailySchedules(scheduleList, scheduleListToParse);
+      getWeeklySchedules(scheduleList, scheduleListToParse);
+      getWeekendsSchedules(scheduleList, scheduleListToParse);
+      getWorkingDaysSchedules(scheduleList, scheduleListToParse);
+      getEveryTimeOnEveryChannelSchedules(scheduleList, scheduleListToParse);
+      getEveryTimeOnThisChannelSchedules(scheduleList, scheduleListToParse);
+
       // test section
       bool cmDebug = cmLayer.GetSetting("CMDebugMode", "false").Value == "true";// activate debug mode
+
       #region debug informations
+      /*
       if (cmDebug)
       {
         foreach (Schedule schedule in scheduleOnceList) Log.Debug("Record Once schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
@@ -179,22 +184,16 @@ namespace TvEngine
         Log.Debug("------------------------------------------------");
         foreach (Schedule schedule in scheduleEveryTimeThisChannelList) Log.Debug("Evry time on this chan. schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
         Log.Debug("------------------------------------------------");
-      }
+       * 
+      }*/
       #endregion
-      // Rebuilds a list with all schedules to parse
       scheduleList.Clear();
-      foreach (Schedule schedule in scheduleOnceList) scheduleList.Add(schedule);
-      foreach (Schedule schedule in scheduleDailyList) scheduleList.Add(schedule);
-      foreach (Schedule schedule in scheduleWeeklyList) scheduleList.Add(schedule);
-      foreach (Schedule schedule in scheduleWeekendsList) scheduleList.Add(schedule);
-      foreach (Schedule schedule in scheduleWorkingDaysList) scheduleList.Add(schedule);
-      foreach (Schedule schedule in scheduleEveryTimeEveryChannelList) scheduleList.Add(schedule);
-      foreach (Schedule schedule in scheduleEveryTimeThisChannelList) scheduleList.Add(schedule);
+      ts = DateTime.Now - startUpdate;
+      Log.Info("Schedules List built {0} ms", ts.TotalMilliseconds);
       // try to assign all schedules to existing cards
-
       if (cmDebug) Log.Debug("Calling assignSchedulestoCards with {0} schedules", scheduleList.Count);
-      List<Schedule>[] assignedList = AssignSchedulesToCards(scheduleList);
-      TimeSpan ts = DateTime.Now - startUpdate;
+      List<Schedule>[] assignedList = AssignSchedulesToCards(scheduleListToParse);
+      ts = DateTime.Now - startUpdate;
       Log.Info("ConflictManager: Update done within {0} ms",ts.TotalMilliseconds);
       //List<Conflict> _conflicts = new List<Conflict>();
     }
@@ -370,17 +369,16 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">a IList contaning the schedules to parse</param>
     /// <returns>a collection containing the "record once" schedules</returns>
-    private IList getRecordOnceSchedules(IList schedulesList)
+    private void getRecordOnceSchedules(IList schedulesList, IList refFillList)
     {
-      IList recordOnceSchedules = new List<Schedule>();
       foreach (Schedule schedule in schedulesList)
       {
         ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
         if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.Once) continue;
-        recordOnceSchedules.Add(schedule);
+        refFillList.Add(schedule);
       }
-      return recordOnceSchedules;
+      foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
     }
 
     /// <summary>
@@ -389,9 +387,8 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">a IList contaning the schedules to parse</param>
     /// <returns>a collection containing the Daily schedules</returns>
-    private IList getDailySchedules(IList schedulesList)
+    private void getDailySchedules(IList schedulesList, IList refFillList)
     {
-      IList incomingSchedules = new List<Schedule>();
       foreach (Schedule schedule in schedulesList)
       {
         ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
@@ -423,11 +420,11 @@ namespace TvEngine
             Schedule incomingSchedule = baseSchedule.Clone();
             incomingSchedule.StartTime = incomingSchedule.StartTime.AddDays(i);
             incomingSchedule.EndTime = incomingSchedule.EndTime.AddDays(i);
-            incomingSchedules.Add(incomingSchedule);
+            refFillList.Add(incomingSchedule);
           }//if (_tempDate>=_Schedule.StartTime)
         }//for (int i = 0; i <= 30; i++)
       }
-      return incomingSchedules;
+      foreach (Schedule sched in refFillList) schedulesList.Remove(sched);  
     }
 
     /// <summary>
@@ -436,9 +433,8 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">a IList contaning the schedules to parse</param>
     /// <returns>a collection containing the Weekly schedules</returns>
-    private IList getWeeklySchedules(IList schedulesList)
+    private void getWeeklySchedules(IList schedulesList, IList refFillList)
     {
-      IList incomingSchedules = new List<Schedule>();
       foreach (Schedule schedule in schedulesList)
       {
         ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
@@ -466,11 +462,11 @@ namespace TvEngine
               tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour, tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
             }
             #endregion
-            incomingSchedules.Add(tempSchedule);
+            refFillList.Add(tempSchedule);
           }//if (_tempDate.DayOfWeek == _Schedule.StartTime.DayOfWeek && _tempDate >= _Schedule.StartTime)
         }//for (int i = 0; i < 30; i++)
       }//foreach (Schedule _Schedule in schedulesList)
-      return incomingSchedules;
+      foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
     }
 
     /// <summary>
@@ -479,9 +475,8 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">a IList contaning the schedules to parse</param>
     /// <returns>a collection containing the Weekends schedules</returns>
-    private IList getWeekendsSchedules(IList schedulesList)
+    private void getWeekendsSchedules(IList schedulesList, IList refFillList)
     {
-      IList incomingSchedules = new List<Schedule>();
       foreach (Schedule schedule in schedulesList)
       {
         ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
@@ -509,11 +504,11 @@ namespace TvEngine
               tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour, tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
             }
             #endregion
-            incomingSchedules.Add(tempSchedule);
+            refFillList.Add(tempSchedule);
           }//if (_tempDate.DayOfWeek == _Schedule.StartTime.DayOfWeek && _tempDate >= _Schedule.StartTime)
         }//for (int i = 0; i < 30; i++)
       }//foreach (Schedule _Schedule in schedulesList)
-      return incomingSchedules;
+      foreach (Schedule sched in refFillList) schedulesList.Remove(sched); 
     }
 
     /// <summary>
@@ -522,9 +517,8 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">a IList contaning the schedules to parse</param>
     /// <returns>a collection containing the WorkingDays schedules</returns>
-    private IList getWorkingDaysSchedules(IList schedulesList)
+    private void getWorkingDaysSchedules(IList schedulesList, IList refFillList)
     {
-      IList incomingSchedules = new List<Schedule>();
       foreach (Schedule schedule in schedulesList)
       {
         ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
@@ -552,23 +546,11 @@ namespace TvEngine
               tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour, tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
             }
             #endregion
-            incomingSchedules.Add(tempSchedule);
+            refFillList.Add(tempSchedule);
           }//if (_tempDate.DayOfWeek == _Schedule.StartTime.DayOfWeek && _tempDate >= _Schedule.StartTime)
         }//for (int i = 0; i < 30; i++)
       }//foreach (Schedule _Schedule in schedulesList)
-      return incomingSchedules;
-    }
-
-    /// <summary>
-    /// checks if the decryptLimit for a card, regarding to a list of assigned shedules
-    /// has been reached or not
-    /// </summary>
-    /// <param name="card">card we wanna use</param>
-    /// <param name="assignedSchedules">List of schedules assigned to this card</param>
-    /// <returns></returns>
-    private bool cardLimitReached(Card card, IList<Schedule> assignedSchedules)
-    {
-      return false;
+      foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
     }
 
     /// <summary>
@@ -577,9 +559,8 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">a IList contaning the schedules to parse</param>
     /// <returns>a collection containing the schedules</returns>
-    private IList getEveryTimeOnEveryChannelSchedules(IList schedulesList)
+    private void getEveryTimeOnEveryChannelSchedules(IList schedulesList, IList refFillList)
     {
-      IList incomingSchedules = new List<Schedule>();
       IList programsList = Program.ListAll();
       foreach (Schedule schedule in schedulesList)
       {
@@ -597,11 +578,11 @@ namespace TvEngine
             incomingSchedule.EndTime = program.EndTime;
             incomingSchedule.PreRecordInterval = schedule.PreRecordInterval;
             incomingSchedule.PostRecordInterval = schedule.PostRecordInterval;
-            incomingSchedules.Add(incomingSchedule);
+            refFillList.Add(incomingSchedule);
           }
         }//foreach (Program _program in _programsList)
       }//foreach (Schedule _Schedule in schedulesList)
-      return incomingSchedules;
+      foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
     }
 
     /// <summary>
@@ -609,17 +590,16 @@ namespace TvEngine
     /// </summary>
     /// <param name="schedulesList">The schedules list.</param>
     /// <returns></returns>
-    private IList getEveryTimeOnThisChannelSchedules(IList schedulesList)
+    private void getEveryTimeOnThisChannelSchedules(IList schedulesList, IList refFillList)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      IList incomingSchedules = new List<Schedule>();
       foreach (Schedule schedule in schedulesList)
       {
         ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
         if (schedule.Canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.EveryTimeOnThisChannel) continue;
         Channel channel = Channel.Retrieve(schedule.IdChannel);
-        IList programsList = layer.SearchMinimalPrograms(DateTime.Now, DateTime.Now.AddYears(1), schedule.ProgramName, channel);
+        IList programsList = layer.SearchMinimalPrograms(DateTime.Now, DateTime.Now.AddMonths(1), schedule.ProgramName, channel);
         if (programsList != null)
         {
           foreach (Program program in programsList)
@@ -632,11 +612,24 @@ namespace TvEngine
 
             incomingSchedule.PreRecordInterval = schedule.PreRecordInterval;
             incomingSchedule.PostRecordInterval = schedule.PostRecordInterval;
-            incomingSchedules.Add(incomingSchedule);
+            refFillList.Add(incomingSchedule);
           }
         }//foreach (Program _program in _programsList)
       }//foreach (Schedule _Schedule in schedulesList)
-      return incomingSchedules;
+      layer = null;
+      foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
+    }
+
+    /// <summary>
+    /// checks if the decryptLimit for a card, regarding to a list of assigned shedules
+    /// has been reached or not
+    /// </summary>
+    /// <param name="card">card we wanna use</param>
+    /// <param name="assignedSchedules">List of schedules assigned to this card</param>
+    /// <returns></returns>
+    private bool cardLimitReached(Card card, IList<Schedule> assignedSchedules)
+    {
+      return false;
     }
 
     #endregion
