@@ -14,10 +14,8 @@ namespace TvPlugin
   public class TvSetup : GUIWindow
   {
     string _hostName;
-    [SkinControlAttribute(24)]
-    protected GUIButtonControl btnChange = null;
-    [SkinControlAttribute(30)]
-    protected GUILabelControl lblHostName = null;
+    [SkinControlAttribute(24)]    protected GUIButtonControl btnChange = null;
+    [SkinControlAttribute(30)]    protected GUILabelControl lblHostName = null;
 
     public TvSetup()
     {
@@ -57,6 +55,7 @@ namespace TvPlugin
       }
       base.OnAction(action);
     }
+
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       if (control == btnChange)

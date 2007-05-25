@@ -66,17 +66,43 @@ namespace TvControl
       {
         try
         {
-          if (_tvControl != null) return _tvControl;
+          if (_tvControl != null)
+            return _tvControl;
+
           _tvControl = (IController)Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
-          int card=_tvControl.Cards;
+          int card = _tvControl.Cards;
           return _tvControl;
         }
-        catch (Exception)
+        catch (RemotingTimeoutException exrt)
         {
+          try
+          {
+            Log.Error("RemoteControl: Timeout getting server Instance; retrying in 5 seconds - {0}", exrt.Message);
+            // maybe the DB wasn't up yet - 2nd try...
+            System.Threading.Thread.Sleep(5000);
+            _tvControl = (IController)Activator.GetObject(typeof(IController), String.Format("tcp://{0}:31456/TvControl", _hostName));
+            int card = _tvControl.Cards;
+            return _tvControl;
+
+          }
+          // didn't help - do nothing
+          catch (Exception)
+          {
+          }
         }
+        catch (RemotingException exr)
+        {
+          Log.Error("RemoteControl: Error getting server Instance - {0}", exr.Message);
+        }
+        catch (Exception exg)
+        {
+          Log.Error("RemoteControl: Error getting server Instance - {0}", exg.Message);
+        }
+
         return _tvControl;
       }
     }
+
     /// <summary>
     /// Gets a value indicating whether this instance is connected with the tv server
     /// </summary>
