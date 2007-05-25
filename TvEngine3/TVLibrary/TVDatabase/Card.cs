@@ -276,12 +276,12 @@ namespace TvDatabase
     /// <param name="_card">Card object</param>
     /// <param name="_channelId">Channel id</param>
     /// <returns>true/false</returns>
-    public bool canViewTvChannel(int _channelId)
+    public bool canViewTvChannel(int channelId)
     {
       IList _cardChannels = this.ReferringChannelMap();
       foreach (ChannelMap _cmap in _cardChannels)
       {
-        if (_channelId == _cmap.IdChannel) return true;
+        if (channelId == _cmap.IdChannel) return true;
       }
       return false;
     }
@@ -294,20 +294,14 @@ namespace TvDatabase
     /// <returns>true/false</returns>
     public bool supportsSubChannels()
     {
-      IList allChan = Channel.ListAll();
       IList refChan = this.ReferringChannelMap();
-      
-      foreach (ChannelMap map in refChan)
-      {
-        foreach (Channel chan in allChan)
-        {
-          IList tuninfos = chan.ReferringTuningDetail();
-          foreach (TuningDetail tuninfo in tuninfos)
-          {
-            if (tuninfo.ChannelType != 0) return true; // then referring card must be Not Analog
-          }
-        }
-      }    
+      // the first channelmap is enough to know about the card's tuning details
+      ChannelMap map = (ChannelMap)refChan[0];
+      Channel chan = Channel.Retrieve(map.IdChannel);
+      IList tuninfos = chan.ReferringTuningDetail();
+      // whatever the # of tuningdetails , one is enough to know about the channel's Type
+      TuningDetail tuninfo = (TuningDetail)tuninfos[0];
+      if (tuninfo.ChannelType != 0) return true; // then referring card must be Not Analog
       return false;
     }
 
