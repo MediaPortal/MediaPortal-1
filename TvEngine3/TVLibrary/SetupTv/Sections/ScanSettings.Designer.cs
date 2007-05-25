@@ -62,8 +62,8 @@ namespace SetupTv.Sections
       this.textBoxMinfiles = new System.Windows.Forms.TextBox();
       this.label18 = new System.Windows.Forms.Label();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
-      this.label21 = new System.Windows.Forms.Label();
       this.checkBoxEnableLinkageScanner = new System.Windows.Forms.CheckBox();
+      this.label21 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -169,7 +169,7 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.label6);
       this.groupBox1.Location = new System.Drawing.Point(22, 15);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(325, 161);
+      this.groupBox1.Size = new System.Drawing.Size(325, 153);
       this.groupBox1.TabIndex = 11;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Scanning";
@@ -228,9 +228,9 @@ namespace SetupTv.Sections
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.label7);
       this.groupBox2.Controls.Add(this.textBoxEpgTimeOut);
-      this.groupBox2.Location = new System.Drawing.Point(22, 183);
+      this.groupBox2.Location = new System.Drawing.Point(22, 174);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(325, 90);
+      this.groupBox2.Size = new System.Drawing.Size(325, 77);
       this.groupBox2.TabIndex = 12;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "EPG Grabber";
@@ -297,9 +297,9 @@ namespace SetupTv.Sections
       this.groupBox3.Controls.Add(this.textBoxMaxFileSize);
       this.groupBox3.Controls.Add(this.textBoxMinfiles);
       this.groupBox3.Controls.Add(this.label18);
-      this.groupBox3.Location = new System.Drawing.Point(22, 279);
+      this.groupBox3.Location = new System.Drawing.Point(22, 257);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(325, 100);
+      this.groupBox3.Size = new System.Drawing.Size(325, 97);
       this.groupBox3.TabIndex = 13;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Timeshifting";
@@ -384,21 +384,12 @@ namespace SetupTv.Sections
       // 
       this.groupBox4.Controls.Add(this.checkBoxEnableLinkageScanner);
       this.groupBox4.Controls.Add(this.label21);
-      this.groupBox4.Location = new System.Drawing.Point(22, 385);
+      this.groupBox4.Location = new System.Drawing.Point(22, 360);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(325, 52);
+      this.groupBox4.Size = new System.Drawing.Size(325, 46);
       this.groupBox4.TabIndex = 14;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Linkage Scanner";
-      // 
-      // label21
-      // 
-      this.label21.AutoSize = true;
-      this.label21.Location = new System.Drawing.Point(14, 25);
-      this.label21.Name = "label21";
-      this.label21.Size = new System.Drawing.Size(46, 13);
-      this.label21.TabIndex = 16;
-      this.label21.Text = "Enabled";
       // 
       // checkBoxEnableLinkageScanner
       // 
@@ -408,6 +399,15 @@ namespace SetupTv.Sections
       this.checkBoxEnableLinkageScanner.Size = new System.Drawing.Size(15, 14);
       this.checkBoxEnableLinkageScanner.TabIndex = 17;
       this.checkBoxEnableLinkageScanner.UseVisualStyleBackColor = true;
+      // 
+      // label21
+      // 
+      this.label21.AutoSize = true;
+      this.label21.Location = new System.Drawing.Point(14, 25);
+      this.label21.Name = "label21";
+      this.label21.Size = new System.Drawing.Size(46, 13);
+      this.label21.TabIndex = 16;
+      this.label21.Text = "Enabled";
       // 
       // ScanSettings
       // 

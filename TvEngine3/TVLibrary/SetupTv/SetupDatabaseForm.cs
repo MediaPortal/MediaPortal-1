@@ -295,6 +295,8 @@ namespace SetupTv
 
     private void mpButtonTest_Click(object sender, EventArgs e)
     {
+      CheckServiceName();
+
       if (radioButton1.Checked)
       {
         _provider = ProviderType.SqlServer;
@@ -336,11 +338,29 @@ namespace SetupTv
       }
     }
 
+    /// <summary>
+    /// Gets the server name from the config field (strips MSSQL instance name)
+    /// </summary>
+    /// <param name="ServerConfigText">The server config value from the connection string</param>
+    /// <returns>Hostname of Server</returns>
+    public string ParseServerHostName(string ServerConfigText)
+    {
+      string ServerName = string.Empty;
+
+      int delimiterPos = ServerConfigText.IndexOf(@"\");
+      if (delimiterPos > 0)
+        ServerName = ServerConfigText.Remove(delimiterPos);
+      else
+        ServerName = ServerConfigText;
+
+      return ServerName;
+    }
+
     void Save()
     {
       string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
 
-      string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "TvLibrary",true);
+      string connectionString = ComposeConnectionString(mpTextBoxServer.Text, mpTextBoxUserId.Text, mpTextBoxPassword.Text, "TvLibrary", true);
       XmlDocument doc = new XmlDocument();
       doc.Load(fname);
       XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
@@ -351,6 +371,11 @@ namespace SetupTv
       else
         nodeName.InnerText = "MySQL";
       node.InnerText = connectionString;
+
+      string ServerName = ParseServerHostName(mpTextBoxServer.Text);
+      bool LocalServer = IsDatabaseOnLocalMachine(ServerName);
+      TvLibrary.Log.Log.Info("SetupDatabaseForm: Is server {0} local = {1}", ServerName, Convert.ToString(LocalServer));
+
       doc.Save(fname);
     }
 
@@ -358,12 +383,12 @@ namespace SetupTv
     {
       if (mpTextBoxServer.Text.ToLower().IndexOf("localhost") >= 0)
       {
-        MessageBox.Show(this, "Please specify the hostname or ipadress for the server. not Localhost");
+        MessageBox.Show(this, "Please specify the hostname or ip-address for the server. Not Localhost!");
         return;
       }
       if (mpTextBoxServer.Text.ToLower().IndexOf("127.0.0.1") >= 0)
       {
-        MessageBox.Show(this, "Please specify the hostname or ipadress for the server. not 127.0.0.1");
+        MessageBox.Show(this, "Please specify the hostname or ip-address for the server. Not 127.0.0.1!");
         return;
       }
       Save();
@@ -407,7 +432,7 @@ namespace SetupTv
                 }
               }
             }
-          break;
+          
           case ProviderType.MySql:
             {
               using (MySqlConnection connect = new MySqlConnection(connectionString))
@@ -435,8 +460,7 @@ namespace SetupTv
                   }
                 }
               }
-            }
-          break;
+            }          
         }
         return false;
       }
@@ -454,6 +478,60 @@ namespace SetupTv
       }
     }
 
+    /// <summary>
+    /// Checks whether the supplied Database server is installed locally.
+    /// </summary>
+    /// <param name="DBServerName"></param>
+    /// <returns></returns>
+    public bool IsDatabaseOnLocalMachine(string DBServerName)
+    {
+      // please add better check if needed
+      if (DBServerName.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant())
+        return true;
+      else
+        return false;
+    }
+
+    private void CheckServiceName()
+    {
+      // only query service names of local machine
+      if (!IsDatabaseOnLocalMachine(ParseServerHostName(mpTextBoxServer.Text)))
+      {
+        textBoxServiceName.Enabled = false;
+        return;
+      }
+      else
+      {
+        textBoxServiceName.Enabled = true;
+
+        // first try the quick method and assume the user is right or using defaults
+        string ConfiguredServiceName = textBoxServiceName.Text;
+        if (ServiceHelper.GetDBServiceName(ref ConfiguredServiceName))
+        {
+          textBoxServiceName.BackColor = Color.Green;
+        }
+        else
+        {
+          string DBSearchPattern = @"MySQL";
+          // MSSQL
+          if (radioButton1.Checked)
+            DBSearchPattern = @"MSSQL$";
+
+          if (ServiceHelper.GetDBServiceName(ref DBSearchPattern))
+          {
+            textBoxServiceName.Text = DBSearchPattern;
+            textBoxServiceName.BackColor = Color.GreenYellow;
+          }
+          else
+          {
+            TvLibrary.Log.Log.Info("SetupDatabaseForm: DB service name not recognized - using defaults");
+            textBoxServiceName.BackColor = Color.Red;
+          }
+        }
+      }
+    }
+
+
     private void radioButton2_CheckedChanged(object sender, EventArgs e)
     {
       if (radioButton2.Checked)
@@ -462,6 +540,8 @@ namespace SetupTv
         {
           mpTextBoxUserId.Text = "root";
           mpTextBoxServer.Text = Dns.GetHostName();
+          textBoxServiceName.Enabled = true;
+          textBoxServiceName.Text = @"MySQL5";          
         }
       }
     }
@@ -474,6 +554,8 @@ namespace SetupTv
         {
           mpTextBoxUserId.Text = "sa";
           mpTextBoxServer.Text = Dns.GetHostName() + @"\SQLEXPRESS";
+          textBoxServiceName.Enabled = true;
+          textBoxServiceName.Text = @"MSSQL$SQLEXPRESS";
         }
       }
     }

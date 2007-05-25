@@ -78,6 +78,7 @@ namespace SetupTv
         return false;
       }
     }
+
     static public bool Stop()
     {
       ServiceController[] services = ServiceController.GetServices();
@@ -128,6 +129,25 @@ namespace SetupTv
         System.Threading.Thread.Sleep(300);
       }
       return true;
+    }
+
+    /// <summary>
+    /// Looks up the database service name for tvengine 3
+    /// </summary>
+    /// <param name="partOfSvcNameToComplete">Supply a (possibly unique) search term to indentify the service</param>
+    /// <returns>true when search was successfull - modifies the search pattern to return the correct full name</returns>
+    static public bool GetDBServiceName(ref string partOfSvcNameToComplete)
+    {
+      ServiceController[] services = ServiceController.GetServices();
+      foreach (ServiceController service in services)
+      {
+        if (service.ServiceName.Contains(partOfSvcNameToComplete))
+        {
+          partOfSvcNameToComplete = service.ServiceName;
+          return true;
+        }
+      }
+      return false;
     }
 
   }

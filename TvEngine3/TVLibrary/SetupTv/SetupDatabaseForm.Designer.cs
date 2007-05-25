@@ -40,6 +40,8 @@ namespace SetupTv
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.radioButton2 = new System.Windows.Forms.RadioButton();
       this.radioButton1 = new System.Windows.Forms.RadioButton();
+      this.labelServiceName = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxServiceName = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -56,14 +58,14 @@ namespace SetupTv
       // 
       this.mpTextBoxServer.Location = new System.Drawing.Point(77, 80);
       this.mpTextBoxServer.Name = "mpTextBoxServer";
-      this.mpTextBoxServer.Size = new System.Drawing.Size(174, 20);
+      this.mpTextBoxServer.Size = new System.Drawing.Size(204, 20);
       this.mpTextBoxServer.TabIndex = 2;
       this.mpTextBoxServer.Text = "localhost\\SQLEXPRESS";
       // 
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(16, 119);
+      this.mpLabel2.Location = new System.Drawing.Point(16, 155);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(33, 13);
       this.mpLabel2.TabIndex = 2;
@@ -72,7 +74,7 @@ namespace SetupTv
       // mpLabel3
       // 
       this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(16, 146);
+      this.mpLabel3.Location = new System.Drawing.Point(16, 182);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(56, 13);
       this.mpLabel3.TabIndex = 3;
@@ -80,22 +82,22 @@ namespace SetupTv
       // 
       // mpTextBoxUserId
       // 
-      this.mpTextBoxUserId.Location = new System.Drawing.Point(77, 116);
+      this.mpTextBoxUserId.Location = new System.Drawing.Point(77, 152);
       this.mpTextBoxUserId.Name = "mpTextBoxUserId";
-      this.mpTextBoxUserId.Size = new System.Drawing.Size(100, 20);
+      this.mpTextBoxUserId.Size = new System.Drawing.Size(204, 20);
       this.mpTextBoxUserId.TabIndex = 3;
       this.mpTextBoxUserId.Text = "sa";
       // 
       // mpTextBoxPassword
       // 
-      this.mpTextBoxPassword.Location = new System.Drawing.Point(77, 143);
+      this.mpTextBoxPassword.Location = new System.Drawing.Point(77, 179);
       this.mpTextBoxPassword.Name = "mpTextBoxPassword";
-      this.mpTextBoxPassword.Size = new System.Drawing.Size(100, 20);
+      this.mpTextBoxPassword.Size = new System.Drawing.Size(204, 20);
       this.mpTextBoxPassword.TabIndex = 4;
       // 
       // mpButtonSave
       // 
-      this.mpButtonSave.Location = new System.Drawing.Point(208, 219);
+      this.mpButtonSave.Location = new System.Drawing.Point(236, 247);
       this.mpButtonSave.Name = "mpButtonSave";
       this.mpButtonSave.Size = new System.Drawing.Size(75, 23);
       this.mpButtonSave.TabIndex = 1;
@@ -105,7 +107,7 @@ namespace SetupTv
       // 
       // mpButtonTest
       // 
-      this.mpButtonTest.Location = new System.Drawing.Point(127, 219);
+      this.mpButtonTest.Location = new System.Drawing.Point(155, 247);
       this.mpButtonTest.Name = "mpButtonTest";
       this.mpButtonTest.Size = new System.Drawing.Size(75, 23);
       this.mpButtonTest.TabIndex = 0;
@@ -124,6 +126,8 @@ namespace SetupTv
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.textBoxServiceName);
+      this.groupBox1.Controls.Add(this.labelServiceName);
       this.groupBox1.Controls.Add(this.radioButton2);
       this.groupBox1.Controls.Add(this.mpLabel4);
       this.groupBox1.Controls.Add(this.radioButton1);
@@ -134,7 +138,7 @@ namespace SetupTv
       this.groupBox1.Controls.Add(this.mpTextBoxUserId);
       this.groupBox1.Location = new System.Drawing.Point(12, 12);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(270, 201);
+      this.groupBox1.Size = new System.Drawing.Size(299, 216);
       this.groupBox1.TabIndex = 9;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Database Server settings";
@@ -163,11 +167,28 @@ namespace SetupTv
       this.radioButton1.UseVisualStyleBackColor = true;
       this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
       // 
+      // labelServiceName
+      // 
+      this.labelServiceName.AutoSize = true;
+      this.labelServiceName.Location = new System.Drawing.Point(16, 112);
+      this.labelServiceName.Name = "labelServiceName";
+      this.labelServiceName.Size = new System.Drawing.Size(46, 13);
+      this.labelServiceName.TabIndex = 9;
+      this.labelServiceName.Text = "Service:";
+      // 
+      // textBoxServiceName
+      // 
+      this.textBoxServiceName.Location = new System.Drawing.Point(77, 109);
+      this.textBoxServiceName.Name = "textBoxServiceName";
+      this.textBoxServiceName.Size = new System.Drawing.Size(204, 20);
+      this.textBoxServiceName.TabIndex = 10;
+      this.textBoxServiceName.Text = "MSSQL$SQLEXPRESS";
+      // 
       // SetupDatabaseForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(312, 270);
+      this.ClientSize = new System.Drawing.Size(323, 282);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.mpButtonTest);
       this.Controls.Add(this.mpButtonSave);
@@ -196,5 +217,7 @@ namespace SetupTv
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.RadioButton radioButton1;
     private System.Windows.Forms.RadioButton radioButton2;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxServiceName;
+    private MediaPortal.UserInterface.Controls.MPLabel labelServiceName;
   }
 }
