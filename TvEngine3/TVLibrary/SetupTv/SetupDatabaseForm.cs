@@ -375,6 +375,7 @@ namespace SetupTv
       string ServerName = ParseServerHostName(mpTextBoxServer.Text);
       bool LocalServer = IsDatabaseOnLocalMachine(ServerName);
       TvLibrary.Log.Log.Info("SetupDatabaseForm: Is server {0} local = {1}", ServerName, Convert.ToString(LocalServer));
+      CheckServiceName();
 
       doc.Save(fname);
     }
@@ -506,9 +507,9 @@ namespace SetupTv
 
         // first try the quick method and assume the user is right or using defaults
         string ConfiguredServiceName = textBoxServiceName.Text;
-        if (ServiceHelper.GetDBServiceName(ref ConfiguredServiceName))
+        if (ServiceHelper.IsInstalled(ConfiguredServiceName))
         {
-          textBoxServiceName.BackColor = Color.Green;
+          textBoxServiceName.BackColor = Color.DimGray;
         }
         else
         {
@@ -520,7 +521,10 @@ namespace SetupTv
           if (ServiceHelper.GetDBServiceName(ref DBSearchPattern))
           {
             textBoxServiceName.Text = DBSearchPattern;
-            textBoxServiceName.BackColor = Color.GreenYellow;
+            textBoxServiceName.BackColor = Color.DimGray;
+
+            if (ServiceHelper.AddDependencyByName(DBSearchPattern))
+              TvLibrary.Log.Log.Info("SetupDatabaseForm: Added dependency for TvService - {0}", DBSearchPattern);
           }
           else
           {
@@ -529,8 +533,7 @@ namespace SetupTv
           }
         }
       }
-    }
-
+    }  
 
     private void radioButton2_CheckedChanged(object sender, EventArgs e)
     {

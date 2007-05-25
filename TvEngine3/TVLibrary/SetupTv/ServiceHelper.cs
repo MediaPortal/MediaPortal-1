@@ -22,28 +22,25 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ServiceProcess;
+using Microsoft.Win32;
 
 namespace SetupTv
 {
   public class ServiceHelper
   {
 
-    static public bool IsInstalled
+    static public bool IsInstalled(string serviceToFind)
     {
-      get
+      ServiceController[] services = ServiceController.GetServices();
+      foreach (ServiceController service in services)
       {
-        ServiceController[] services = ServiceController.GetServices();
-        foreach (ServiceController service in services)
+        if (String.Compare(service.ServiceName, serviceToFind, true) == 0)
         {
-          if (String.Compare(service.ServiceName, "TvService", true) == 0)
-          {
-            return true;
-          }
+          return true;
         }
-        return false;
       }
+      return false;
     }
-
 
     static public bool IsRunning
     {
@@ -115,7 +112,7 @@ namespace SetupTv
 
     static public bool Restart()
     {
-      if (!IsInstalled) return false;
+      if (!IsInstalled(@"TvService")) return false;
 
       Stop();
       while (!IsStopped)
@@ -148,6 +145,39 @@ namespace SetupTv
         }
       }
       return false;
+    }
+
+    /// <summary>
+    /// Write dependency info for TvService.exe to registry
+    /// </summary>
+    /// <param name="dependsOnService">the database service that needs to be started</param>
+    /// <returns>true if dependency was added successfully</returns>
+    static public bool AddDependencyByName(string dependsOnService)
+    {
+      try
+      {
+        using (RegistryKey pRegKey = Registry.LocalMachine)
+        {
+          using (RegistryKey subkey = pRegKey.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\TVService"))
+          {
+            if (subkey != null)
+            {
+              //dependencyKey = subkey.CreateSubKey()
+              subkey.SetValue("DependOnService", dependsOnService, RegistryValueKind.MultiString);
+            }
+            //else
+            //{
+            //  MessageBox.Show("TvService is not installed on your system!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
+          }
+        }
+        return true;
+      }
+      catch (Exception)
+      {
+        // Log?
+        return false;
+      }
     }
 
   }
