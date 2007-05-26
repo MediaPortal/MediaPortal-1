@@ -615,7 +615,11 @@ namespace TvPlugin
     void OnNotify()
     {
       currentProgram.Notify = !currentProgram.Notify;
-      currentProgram.Persist();
+      // get the right db instance of current prog before we store it
+      // currentProgram is not a ref to the real entity
+      Program modifiedProg = Program.Retrieve(currentProgram.IdProgram);
+      modifiedProg.Notify = !currentProgram.Notify;
+      modifiedProg.Persist();
       Update();
       TvNotifyManager.OnNotifiesChanged();
     }
