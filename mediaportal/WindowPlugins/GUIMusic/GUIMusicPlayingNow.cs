@@ -1116,10 +1116,26 @@ namespace MediaPortal.GUI.Music
         PreviousTrackTag = CurrentTrackTag;
 
       if (!isCurSongCdTrack)
+      {
         CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName, UseID3);
 
+        if (CurrentTrackTag == null)
+        {
+          // Track is not in database, use tag reader
+          CurrentTrackTag = TagReader.TagReader.ReadTag(CurrentTrackFileName);
+        }
+      }
+
       if (!isNextSongCdTrack)
+      {
         NextTrackTag = GetTrackTag(dbs, NextTrackFileName, UseID3);
+
+        if (NextTrackTag == null)
+        {
+          // Track is not in database, use tag reader
+          NextTrackTag = TagReader.TagReader.ReadTag(NextTrackFileName);
+        }
+      }
 
       if (isCurSongCdTrack || isNextSongCdTrack)
       {
