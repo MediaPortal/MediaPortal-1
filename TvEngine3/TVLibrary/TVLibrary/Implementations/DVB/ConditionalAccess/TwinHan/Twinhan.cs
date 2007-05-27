@@ -466,7 +466,7 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteInt32(_ptrDiseqc, 12, LNBLOFHiLoSW); //12: ulLNBLOFHiLoSW   LNBLOF HiLoSW MHz
       Marshal.WriteByte(_ptrDiseqc, 16, (byte)turnon22Khz);   //16: f22K_Output (F22K_Output_HiLo:0 | F22K_Output_Off:1 | F22K_Output_On:2
       Marshal.WriteByte(_ptrDiseqc, 17, (byte)disEqcPort);    //17: DiSEqC_Port
-      Marshal.WriteInt32(_ptrDiseqc, 18, Modulation);    //18: Modulation type (for DVB-S2)
+      Marshal.WriteByte(_ptrDiseqc, 18, (byte)Modulation);    //18: Modulation type (for DVB-S2)
       Marshal.WriteByte(_ptrDiseqc, 19, 0);
 
       Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
