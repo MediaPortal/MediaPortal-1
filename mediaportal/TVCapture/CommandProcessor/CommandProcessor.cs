@@ -157,8 +157,28 @@ namespace MediaPortal.TV.Recording
           }
 
           //its a series, so we need to check start/end times of the current episode
-          if (rec.StartTime <= DateTime.Now && rec.EndTime >= rec.StartTime)
+          if (rec.StartTime.AddMinutes(-rec.PreRecord) <= DateTime.Now && rec.EndTime.AddMinutes(rec.PostRecord) >= DateTime.Now)
           {
+            // we need to know if we want to record 2 back 2 back  programs with same title 
+            // eg : everytimeonthischannel : 12:45-13:30 Smallville / 13:30-14:15 SmallVille
+            TVChannel recChannel = new TVChannel(rec.Channel);
+            TVProgram nextProg = recChannel.GetProgramAt(rec.EndTime.AddMinutes(1));
+            bool isRecordingNextProgram = false;
+            if (nextProg != null) isRecordingNextProgram = rec.IsRecordingProgramAtTime(nextProg.StartTime.AddMinutes(1), nextProg, rec.PreRecord, rec.PostRecord);
+            if (isRecordingNextProgram)
+            {
+              // clone the currentrec and set its start end to next program ones
+              TVRecording nextrec = new TVRecording(rec);
+              nextrec.StartTime = nextProg.StartTime;
+              nextrec.Start = nextProg.Start;
+              nextrec.EndTime = nextProg.EndTime;
+              nextrec.End = nextProg.End;
+              nextrec.ID = -1;
+              TVDatabase.AddRecording(ref nextrec);
+              // set current rec type to once
+              dev.CurrentTVRecording.RecType = TVRecording.RecordingType.Once;
+              TVDatabase.UpdateRecording(dev.CurrentTVRecording, TVDatabase.RecordingChange.PriorityChange);
+            }
             //yep, we're recording this episode, so return true
             card = i;
             return true;
@@ -269,25 +289,25 @@ namespace MediaPortal.TV.Recording
           TVCards[i].CreateGraph();
         }
       }
-        Log.Info("Commandprocessor:running");
-        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
-        
-        while (_isRunning)
-        {
-          try
-          {
-            _waitMutex.WaitOne(500, true);
-            if (_isPaused) continue;
+      Log.Info("Commandprocessor:running");
+      System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
 
-            ProcessCommands();
-            ProcessCards();
-            ProcessScheduler();
-            _epgProcessor.Process(this);
-          }
-          catch (Exception ex)
-          {
-            Log.Error(ex);
-          }
+      while (_isRunning)
+      {
+        try
+        {
+          _waitMutex.WaitOne(500, true);
+          if (_isPaused) continue;
+
+          ProcessCommands();
+          ProcessCards();
+          ProcessScheduler();
+          _epgProcessor.Process(this);
+        }
+        catch (Exception ex)
+        {
+          Log.Error(ex);
+        }
       }
       StopAllCards();
       _isStopped = true;
