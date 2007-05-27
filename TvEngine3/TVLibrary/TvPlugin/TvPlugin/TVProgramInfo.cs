@@ -44,20 +44,34 @@ namespace TvPlugin
   /// </summary>
   public class TVProgramInfo : GUIWindow
   {
-    [SkinControlAttribute(17)]     protected GUILabelControl lblProgramGenre = null;
-    [SkinControlAttribute(15)]     protected GUITextScrollUpControl lblProgramDescription = null;
-    [SkinControlAttribute(14)]     protected GUILabelControl lblProgramTime = null;
-    [SkinControlAttribute(13)]     protected GUIFadeLabel lblProgramTitle = null;
-    [SkinControlAttribute(16)]     protected GUIFadeLabel lblProgramChannel = null;
-    [SkinControlAttribute(2)]      protected GUIButtonControl btnRecord = null;
-    [SkinControlAttribute(3)]      protected GUIButtonControl btnAdvancedRecord = null;
-    [SkinControlAttribute(4)]      protected GUIButtonControl btnKeep = null;
-    [SkinControlAttribute(5)]      protected GUIToggleButtonControl btnNotify = null;
-    [SkinControlAttribute(10)]     protected GUIListControl lstUpcomingEpsiodes = null;
-    [SkinControlAttribute(6)]      protected GUIButtonControl btnQuality = null;
-    [SkinControlAttribute(7)]      protected GUIButtonControl btnEpisodes = null;
-    [SkinControlAttribute(8)]      protected GUIButtonControl btnPreRecord = null;
-    [SkinControlAttribute(9)]      protected GUIButtonControl btnPostRecord = null;
+    [SkinControlAttribute(17)]
+    protected GUILabelControl lblProgramGenre = null;
+    [SkinControlAttribute(15)]
+    protected GUITextScrollUpControl lblProgramDescription = null;
+    [SkinControlAttribute(14)]
+    protected GUILabelControl lblProgramTime = null;
+    [SkinControlAttribute(13)]
+    protected GUIFadeLabel lblProgramTitle = null;
+    [SkinControlAttribute(16)]
+    protected GUIFadeLabel lblProgramChannel = null;
+    [SkinControlAttribute(2)]
+    protected GUIButtonControl btnRecord = null;
+    [SkinControlAttribute(3)]
+    protected GUIButtonControl btnAdvancedRecord = null;
+    [SkinControlAttribute(4)]
+    protected GUIButtonControl btnKeep = null;
+    [SkinControlAttribute(5)]
+    protected GUIToggleButtonControl btnNotify = null;
+    [SkinControlAttribute(10)]
+    protected GUIListControl lstUpcomingEpsiodes = null;
+    [SkinControlAttribute(6)]
+    protected GUIButtonControl btnQuality = null;
+    [SkinControlAttribute(7)]
+    protected GUIButtonControl btnEpisodes = null;
+    [SkinControlAttribute(8)]
+    protected GUIButtonControl btnPreRecord = null;
+    [SkinControlAttribute(9)]
+    protected GUIButtonControl btnPostRecord = null;
     static Program currentProgram = null;
 
     public TVProgramInfo()
@@ -163,7 +177,7 @@ namespace TvPlugin
 
     void Update()
     {
-      GUIListItem lastSelectedItem=lstUpcomingEpsiodes.SelectedListItem;
+      GUIListItem lastSelectedItem = lstUpcomingEpsiodes.SelectedListItem;
       int itemToSelect = -1;
       lstUpcomingEpsiodes.Clear();
       if (currentProgram == null) return;
@@ -234,7 +248,7 @@ namespace TvPlugin
         string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.ReferencedChannel().Name);
         if (!System.IO.File.Exists(logo))
         {
-          item.Label = String.Format("{0} {1}", episode.ReferencedChannel().Name,episode.Title);
+          item.Label = String.Format("{0} {1}", episode.ReferencedChannel().Name, episode.Title);
           logo = "defaultVideoBig.png";
         }
         Schedule recordingSchedule;
@@ -617,8 +631,8 @@ namespace TvPlugin
       currentProgram.Notify = !currentProgram.Notify;
       // get the right db instance of current prog before we store it
       // currentProgram is not a ref to the real entity
-      Program modifiedProg = Program.Retrieve(currentProgram.IdProgram);
-      modifiedProg.Notify = !currentProgram.Notify;
+      Program modifiedProg = Program.RetrieveByTitleAndTimes(currentProgram.Title, currentProgram.StartTime, currentProgram.EndTime);
+      modifiedProg.Notify = currentProgram.Notify;
       modifiedProg.Persist();
       Update();
       TvNotifyManager.OnNotifiesChanged();
@@ -702,37 +716,37 @@ namespace TvPlugin
       Log.Info("SkipForConflictingRecording: Schedule = " + rec.ToString());
 
       TvBusinessLayer layer = new TvBusinessLayer();
+
+      /*			Setting setting = layer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
+            string lastUpdate = setting.Value;
+            Log.Info("SkipForConflictingRecording: LastUpDateTime = " + setting.Value);
 			
-/*			Setting setting = layer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
-			string lastUpdate = setting.Value;
-			Log.Info("SkipForConflictingRecording: LastUpDateTime = " + setting.Value);
-			
-			rec.Persist();            // save it for the ConflictManager
-			TvServer server = new TvServer();
-			server.OnNewSchedule();   // inform ConflictManger
+            rec.Persist();            // save it for the ConflictManager
+            TvServer server = new TvServer();
+            server.OnNewSchedule();   // inform ConflictManger
 
-			int counter = 0;
-			while ((lastUpdate.Equals(setting.Value)) && (counter++ < 20)) // wait until Conflict Manager has done his job
-			{
-				Thread.Sleep(500);
-				setting = layer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
-				Log.Info("SkipForConflictingRecording: LastUpDateTime = " + setting.Value);
-			}
-			Log.Info("SkipForConflictingRecording: rec.IdSchedule = " + rec.IdSchedule.ToString());
-			IList conflicts = rec.ConflictingSchedules();
-			Log.Info("SkipForConflictingRecording: 1.Conflicts.Count = " + conflicts.Count.ToString());
+            int counter = 0;
+            while ((lastUpdate.Equals(setting.Value)) && (counter++ < 20)) // wait until Conflict Manager has done his job
+            {
+              Thread.Sleep(500);
+              setting = layer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
+              Log.Info("SkipForConflictingRecording: LastUpDateTime = " + setting.Value);
+            }
+            Log.Info("SkipForConflictingRecording: rec.IdSchedule = " + rec.IdSchedule.ToString());
+            IList conflicts = rec.ConflictingSchedules();
+            Log.Info("SkipForConflictingRecording: 1.Conflicts.Count = " + conflicts.Count.ToString());
 
-			rec.Delete();           // for testing -> toDo: add Schedule handling in the functions below
-			server.OnNewSchedule(); // inform Conflict Manager
+            rec.Delete();           // for testing -> toDo: add Schedule handling in the functions below
+            server.OnNewSchedule(); // inform Conflict Manager
 
-			if (conflicts.Count < 1)
-			{
-				Log.Info("SkipForConflictingRecording: Start 2nd try");
-				conflicts = layer.GetConflictingSchedules(rec);
-				Log.Info("SkipForConflictingRecording: 2.Conflicts.Count = " + conflicts.Count.ToString());
-			}
-*/
-			IList conflicts = layer.GetConflictingSchedules(rec);
+            if (conflicts.Count < 1)
+            {
+              Log.Info("SkipForConflictingRecording: Start 2nd try");
+              conflicts = layer.GetConflictingSchedules(rec);
+              Log.Info("SkipForConflictingRecording: 2.Conflicts.Count = " + conflicts.Count.ToString());
+            }
+      */
+      IList conflicts = layer.GetConflictingSchedules(rec);
       if (conflicts.Count > 0)
       {
         GUIDialogTVConflict dlg = (GUIDialogTVConflict)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVCONFLICT);
@@ -759,7 +773,7 @@ namespace TvPlugin
                 foreach (Schedule conflict in conflicts)
                 {
                   Program prog = new Program(conflict.IdChannel, conflict.StartTime, conflict.EndTime, conflict.ProgramName, "-", "-", false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty);
-                  OnRecordProgram(prog); 
+                  OnRecordProgram(prog);
                 }
                 break;
               }
