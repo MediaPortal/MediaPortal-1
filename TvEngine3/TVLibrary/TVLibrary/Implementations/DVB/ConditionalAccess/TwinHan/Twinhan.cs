@@ -444,7 +444,7 @@ namespace TvLibrary.Implementations.DVB
       }
       Int32 Modulation = 0;
       if (channel.ModulationType == ModulationType.ModQpsk) Modulation = 20;
-      if (channel.ModulationType == ModulationType.Mod8Vsb) Modulation = 23;
+      if (channel.ModulationType == ModulationType.Mod8psk) Modulation = 23;
       if (channel.ModulationType == ModulationType.Mod16Apsk) Modulation = 24;
       if (channel.ModulationType == ModulationType.Mod32Apsk) Modulation = 22;
 

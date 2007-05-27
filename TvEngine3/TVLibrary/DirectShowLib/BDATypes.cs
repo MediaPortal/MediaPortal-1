@@ -180,11 +180,12 @@ namespace DirectShowLib.BDA
         Mod1024Qam,
         ModQpsk,
         ModBpsk,
+        Mod32Apsk, //DVB-S2 Not in the BDA Network Provider
+        Mod8psk, //DVB-S2 Not in the BDA Network Provider
+        Mod16Apsk, //DVB-S2 Not in the BDA Network Provider
         ModOqpsk,
         Mod8Vsb,
-        Mod16Vsb,
-        Mod16Apsk, //DVB-S2 Not in the BDA Network Provider
-        Mod32Apsk, //DVB-S2 Not in the BDA Network Provider
+        Mod16Vsb,      
         ModAnalogAmplitude, // std am
         ModAnalogFrequency, // std fm
         ModMax
