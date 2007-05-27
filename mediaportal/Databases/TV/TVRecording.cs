@@ -1060,7 +1060,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public bool Series
     {
-      get { return _isSeries; }
+      get { return (this.RecType != RecordingType.Once); }
       set { _isSeries = value; }
     }
 
