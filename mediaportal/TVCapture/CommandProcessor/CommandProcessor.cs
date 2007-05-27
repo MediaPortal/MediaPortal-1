@@ -155,10 +155,24 @@ namespace MediaPortal.TV.Recording
             card = i;
             return true;
           }
-
           //its a series, so we need to check start/end times of the current episode
-          if (rec.StartTime.AddMinutes(-rec.PreRecord) <= DateTime.Now && rec.EndTime.AddMinutes(rec.PostRecord) >= DateTime.Now)
+          if (rec.StartTime <= DateTime.Now && rec.EndTime >= rec.StartTime)
           {
+            // if the shedule is a 'everytimeon...' type
+            // we set the rec start/endtimes to the current program ones if needed 
+            // required for this test in scheduler.Process() :
+            // if (rec.StartTime==prog.StartTime && rec.IsRecordingProgramAtTime(dtCurrentTime, prog, rec.PreRecord, rec.PostRecord))
+            // (used for fixing back2back recordings with same title issue )
+            if ((rec.RecType == TVRecording.RecordingType.EveryTimeOnEveryChannel 
+              || rec.RecType == TVRecording.RecordingType.EveryTimeOnThisChannel)
+              && rec.StartTime != dev.CurrentProgramRecording.StartTime)
+            {
+              dev.CurrentTVRecording.StartTime = dev.CurrentProgramRecording.StartTime;
+              dev.CurrentTVRecording.Start = dev.CurrentProgramRecording.Start;
+              dev.CurrentTVRecording.EndTime = dev.CurrentProgramRecording.EndTime;
+              dev.CurrentTVRecording.End = dev.CurrentProgramRecording.End;
+              TVDatabase.UpdateRecording(dev.CurrentTVRecording, TVDatabase.RecordingChange.Modified);
+            }
             // we need to know if we want to record 2 back 2 back  programs with same title 
             // eg : everytimeonthischannel : 12:45-13:30 Smallville / 13:30-14:15 SmallVille
             TVChannel recChannel = new TVChannel(rec.Channel);
@@ -177,7 +191,7 @@ namespace MediaPortal.TV.Recording
               TVDatabase.AddRecording(ref nextrec);
               // set current rec type to once
               dev.CurrentTVRecording.RecType = TVRecording.RecordingType.Once;
-              TVDatabase.UpdateRecording(dev.CurrentTVRecording, TVDatabase.RecordingChange.PriorityChange);
+              TVDatabase.UpdateRecording(dev.CurrentTVRecording, TVDatabase.RecordingChange.Modified);
             }
             //yep, we're recording this episode, so return true
             card = i;

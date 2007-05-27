@@ -463,7 +463,7 @@ namespace MediaPortal.TV.Recording
     /// 
     public bool IsRecordingAt(int minutes)
     {
-      if(_currentTvRecording == null) 
+      if (_currentTvRecording == null)
         return false;
       if (_currentTvRecording.IsRecordingAtTime(DateTime.Now.AddMinutes(minutes), _currentTvProgramRecording, _preRecordInterval, _postRecordInterval))
         return true;
@@ -852,13 +852,13 @@ namespace MediaPortal.TV.Recording
 
     public bool Supports5vAntennae
     {
-        get
-        {
-            if (_currentGraph == null) return false;
-            return _currentGraph.Supports5vAntennae();
-        }
+      get
+      {
+        if (_currentGraph == null) return false;
+        return _currentGraph.Supports5vAntennae();
+      }
     }
-      
+
     public bool SupportsTV
     {
       get { return _supportsTv; }
@@ -936,8 +936,8 @@ namespace MediaPortal.TV.Recording
 
     public int PostRecord
     {
-      set {_postRecordInterval = value;}
-      get { return _postRecordInterval;}
+      set { _postRecordInterval = value; }
+      get { return _postRecordInterval; }
     }
 
     /// <summary>
@@ -1098,7 +1098,7 @@ namespace MediaPortal.TV.Recording
           else
           {
             //recording ended
-            Log.Info("TVCapture.Proces() Card:{0} recording has ended '{1}' on channel:{2} from {3}-{4} id:{5} _cardPriority:{6} quality:{7}",
+            Log.Info("TVCapture.Process() Card:{0} recording has ended '{1}' on channel:{2} from {3}-{4} id:{5} _cardPriority:{6} quality:{7}",
               ID,
               _currentTvRecording.Title, _currentTvRecording.Channel,
               _currentTvRecording.StartTime.ToLongTimeString(), _currentTvRecording.EndTime.ToLongTimeString(),
@@ -1209,7 +1209,7 @@ namespace MediaPortal.TV.Recording
         return true;
       }
       Log.Info("TVCapture.StartTimeShifting() Card:{0} :{1}", ID, channelName);
-      TVChannel channel = GetChannel(channelName);      
+      TVChannel channel = GetChannel(channelName);
 
       if (_currentGraphState == State.Timeshifting)
       {
@@ -1220,16 +1220,16 @@ namespace MediaPortal.TV.Recording
 
           if (!_currentGraph.ShouldRebuildGraph(channel))
           {
-              //_timeTimeshiftingStarted = DateTime.Now; rtv: replaced for mantis 745 (progressbar wrong)
-              _currentGraph.TuneChannel(channel);
-              _currentTvChannelName = channelName;
-              return true;
+            //_timeTimeshiftingStarted = DateTime.Now; rtv: replaced for mantis 745 (progressbar wrong)
+            _currentGraph.TuneChannel(channel);
+            _currentTvChannelName = channelName;
+            return true;
           }
           // Broceliande: Mantis 788 fix test 
           else
           {
-              RebuildGraph();
-              return true;
+            RebuildGraph();
+            return true;
           }
         }
         else return true;
@@ -1852,7 +1852,7 @@ namespace MediaPortal.TV.Recording
         new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLANESCENE_CROP, 0, 0, 0, 0, 0, _cropSettings)
         );
     }
-    
+
     #endregion
 
   }

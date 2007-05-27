@@ -51,12 +51,12 @@ namespace MediaPortal.TV.Recording
   public class Scheduler
   {
     // flag indicating that recordings have been added/changed/removed
-    bool _recordingsListChanged ;
+    bool _recordingsListChanged;
 
     //list of all scheduled recordings
     List<TVRecording> _recordingsList;
     //list of all tv channels present in tv database
-    List<TVChannel> _tvChannelsList ;
+    List<TVChannel> _tvChannelsList;
 
     DateTime _scheduleTimer;
 
@@ -184,9 +184,8 @@ namespace MediaPortal.TV.Recording
               // no, then check if its time to record it
               // check which program is current running on this channel
               TVProgram prog = chan.GetProgramAt(dtCurrentTime.AddMinutes(1 + rec.PreRecord));
-
-              // if the recording should record the tv program
-              if (rec.IsRecordingProgramAtTime(dtCurrentTime, prog, rec.PreRecord, rec.PostRecord))
+              // if the recording corresponds to current program and should record the tv program
+              if (rec.StartTime==prog.StartTime && rec.IsRecordingProgramAtTime(dtCurrentTime, prog, rec.PreRecord, rec.PostRecord))
               {
                 // yes, then record it
                 if (Record(handler, dtCurrentTime, rec, prog, rec.PreRecord, rec.PostRecord))
@@ -306,7 +305,7 @@ namespace MediaPortal.TV.Recording
     ///	is watching channel A, and then when the recording starts on channel B the user suddenly 
     ///	sees channel B
     /// </remarks>
-    private int FindFreeCardForRecording(CommandProcessor handler,string recordingChannel, bool stopRecordingsWithLowerPriority, int recordingPrio)
+    private int FindFreeCardForRecording(CommandProcessor handler, string recordingChannel, bool stopRecordingsWithLowerPriority, int recordingPrio)
     {
       // if we are viewing a tv channel, and we want to record the program on this channel
       // then just use the same card 
@@ -334,9 +333,9 @@ namespace MediaPortal.TV.Recording
         highestPrio = -1;
         highestCard = -1;
         cardNo = 0;
-        for (int counter=0; counter < handler.TVCards.Count;counter++)
+        for (int counter = 0; counter < handler.TVCards.Count; counter++)
         {
-          TVCaptureDevice dev =handler.TVCards[counter];
+          TVCaptureDevice dev = handler.TVCards[counter];
           //if we may use the  card for recording tv?
           if (dev.UseForRecording)
           {
@@ -419,14 +418,14 @@ namespace MediaPortal.TV.Recording
     /// <param name="iPreRecordInterval">Pre record interval in minutes</param>
     /// <param name="iPostRecordInterval">Post record interval in minutes</param>
     /// <returns>true if recording has been started</returns>
-    bool Record(CommandProcessor handler,  DateTime currentTime, TVRecording rec, TVProgram currentProgram, int iPreRecordInterval, int iPostRecordInterval)
+    bool Record(CommandProcessor handler, DateTime currentTime, TVRecording rec, TVProgram currentProgram, int iPreRecordInterval, int iPostRecordInterval)
     {
       if (rec == null) return false;
       if (iPreRecordInterval < 0) iPreRecordInterval = 0;
       if (iPostRecordInterval < 0) iPostRecordInterval = 0;
 
       // Check if we're already recording this...
-      for (int i=0; i < handler.TVCards.Count;++i)
+      for (int i = 0; i < handler.TVCards.Count; ++i)
       {
         TVCaptureDevice dev = handler.TVCards[i];
         if (dev.IsRecording)
@@ -447,13 +446,13 @@ namespace MediaPortal.TV.Recording
       }
 
       // find free card we can use for recording
-      int cardNo = FindFreeCardForRecording(handler,rec.Channel, false, rec.Priority);
+      int cardNo = FindFreeCardForRecording(handler, rec.Channel, false, rec.Priority);
       if (cardNo < 0)
       {
         // no card found. 
         //check if this recording has a higher priority then any recordings currently busy
         Log.WriteFile(LogType.Recorder, "Recorder:  No card found, check if a card is recording a show which has a lower priority then priority:{0}", rec.Priority);
-        cardNo = FindFreeCardForRecording(handler,rec.Channel, true, rec.Priority);
+        cardNo = FindFreeCardForRecording(handler, rec.Channel, true, rec.Priority);
         if (cardNo < 0)
         {
           //no, other recordings have higher priority...
@@ -513,7 +512,7 @@ namespace MediaPortal.TV.Recording
                            dev.CurrentTVRecording.ToString(),
                            dev.CurrentTVRecording.Priority,
                            dev.CommercialName);
-            StopRecording(handler,dev.CurrentTVRecording);
+            StopRecording(handler, dev.CurrentTVRecording);
           }
           else
           {
@@ -532,7 +531,7 @@ namespace MediaPortal.TV.Recording
                       dev.CurrentTVRecording.ToString(),
                       dev.CurrentTVRecording.Priority,
                       dev.CommercialName);
-                    StopRecording(handler,dev.CurrentTVRecording);
+                    StopRecording(handler, dev.CurrentTVRecording);
                     break;
                   }
                   count++;
@@ -589,7 +588,7 @@ namespace MediaPortal.TV.Recording
       return true;
     }//bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
 
-    void StopRecording(CommandProcessor handler,TVRecording rec)
+    void StopRecording(CommandProcessor handler, TVRecording rec)
     {
       CancelRecordingCommand cmd = new CancelRecordingCommand(rec);
       cmd.Execute(handler);
