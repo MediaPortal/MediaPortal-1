@@ -65,6 +65,7 @@
     <Compile Include="Plugins\IAutoStart.cs" />
     <Compile Include="Plugins\IMenuCommand.cs" />
     <Compile Include="ServiceCreatorCallback.cs" />
+    <Compile Include="Settings\INamedSettings.cs" />
     <Compile Include="Settings\ISettingsManager.cs" />
     <Compile Include="Settings\NoSettingsManager.cs" />
     <Compile Include="Settings\SettingAttribute.cs" />
