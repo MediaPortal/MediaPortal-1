@@ -212,7 +212,7 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
 
             // Keep looking until we find the device or there are no more left to examine.
             MemberIndex = MemberIndex + 1;
-          } while (!(_MyDeviceDetected | (MemberIndex == DevicePathName.Length + 1)));
+          } while (!(_MyDeviceDetected | (MemberIndex == DevicePathName.Length)));
         }
 
         if (_MyDeviceDetected)
