@@ -29,7 +29,8 @@ namespace ProjectInfinity.Settings
     public static void Serialize(object obj)
     {
       string fileName="";
-      if (obj.GetType() == typeof(INamedSettings))
+      INamedSettings namedSettings = obj as INamedSettings;
+      if (namedSettings != null)
       {
         string customName = (string)obj.GetType().GetProperty("Name").GetValue(obj,null);
         fileName = obj.ToString() +"."+ customName + ".xml";
@@ -165,7 +166,8 @@ namespace ProjectInfinity.Settings
     public static void Deserialize(object obj)
     {
       string fileName = "";
-      if (obj.GetType() == typeof(INamedSettings))
+      INamedSettings namedSettings = obj as INamedSettings;
+      if (namedSettings!=null)
       {
         string customName = (string)obj.GetType().GetProperty("Name").GetValue(obj, null);
         fileName = obj.ToString() + "." + customName + ".xml";
