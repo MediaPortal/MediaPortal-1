@@ -628,8 +628,8 @@ namespace MediaPortal.Configuration.Sections
     {
       int rowSelected;
       DataRow row = datasetFilters.NewRow();
-      row[0] = row[1] = row[2] = row[3] = row[5] = row[6] = row[7] = "";
-      row[4] = false;
+      row[0] = row[1] = row[2] = row[3] = row[4] = row[5] = row[7] = "";
+      row[6] = false;
       rowSelected = dataGrid.CurrentRowIndex;
       if (e.KeyChar == 'a')
       {
