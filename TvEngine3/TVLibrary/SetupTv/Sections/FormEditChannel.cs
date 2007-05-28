@@ -225,10 +225,21 @@ namespace SetupTv.Sections
                         dvbsChannel.SymbolRate = symbolrate;
                         dvbsChannel.SwitchingFrequency = switchfreq;
                         dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
-                        if (comboBoxModulation.SelectedIndex == 1)
-                          dvbsChannel.ModulationType = ModulationType.Mod8Vsb;
-                        else
-                          dvbsChannel.ModulationType = ModulationType.ModQpsk;
+                        switch (comboBoxPol.SelectedIndex)
+                        {
+                          case 0:
+                            dvbsChannel.ModulationType = ModulationType.ModQpsk;
+                            break;
+                          case 1:
+                            dvbsChannel.ModulationType = ModulationType.Mod8psk;
+                            break;
+                          case 2:
+                            dvbsChannel.ModulationType = ModulationType.Mod16Apsk;
+                            break;
+                          case 3:
+                            dvbsChannel.ModulationType = ModulationType.Mod32Apsk;
+                            break;
+                        }
                         switch (comboBoxPol.SelectedIndex)
                         {
                           case 0:

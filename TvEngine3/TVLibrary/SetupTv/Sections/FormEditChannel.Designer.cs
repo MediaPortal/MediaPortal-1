@@ -495,7 +495,9 @@ namespace SetupTv.Sections
       this.comboBoxModulation.FormattingEnabled = true;
       this.comboBoxModulation.Items.AddRange(new object[] {
             "QPSK",
-            "8PSK"});
+            "8PSK",
+            "16APSK",
+            "32APSK"});
       this.comboBoxModulation.Location = new System.Drawing.Point(98, 241);
       this.comboBoxModulation.Name = "comboBoxModulation";
       this.comboBoxModulation.Size = new System.Drawing.Size(146, 21);
