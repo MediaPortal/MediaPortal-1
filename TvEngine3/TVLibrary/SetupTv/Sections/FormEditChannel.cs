@@ -225,7 +225,7 @@ namespace SetupTv.Sections
                         dvbsChannel.SymbolRate = symbolrate;
                         dvbsChannel.SwitchingFrequency = switchfreq;
                         dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
-                        switch (comboBoxPol.SelectedIndex)
+                        switch (comboBoxModulation.SelectedIndex)
                         {
                           case 0:
                             dvbsChannel.ModulationType = ModulationType.ModQpsk;
