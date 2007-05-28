@@ -25,6 +25,7 @@
 
 using System;
 using System.IO;
+using System.Collections;
 using System.Xml.Serialization;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
@@ -47,6 +48,18 @@ namespace WindowPlugins.GUIPrograms
   /// 
   public class GUIPrograms : GUIWindow
   {
+    #region enums
+
+    enum View
+    {
+      List = 0,
+      Icons = 1,
+      LargeIcons = 2,
+      FilmStrip = 3,
+    }
+
+    #endregion
+
     #region Serialisation
 
     [Serializable]
@@ -131,17 +144,17 @@ namespace WindowPlugins.GUIPrograms
       {
         switch ((View) ViewAs)
         {
-          case View.VIEW_AS_LIST:
-            ViewAs = (int) View.VIEW_AS_ICONS;
+          case View.List:
+            ViewAs = (int) View.Icons;
             break;
-          case View.VIEW_AS_ICONS:
-            ViewAs = (int) View.VIEW_AS_LARGEICONS;
+          case View.Icons:
+            ViewAs = (int) View.LargeIcons;
             break;
-          case View.VIEW_AS_LARGEICONS:
-            ViewAs = (int) View.VIEW_AS_FILMSTRIP;
+          case View.LargeIcons:
+            ViewAs = (int) View.FilmStrip;
             break;
-          case View.VIEW_AS_FILMSTRIP:
-            ViewAs = (int) View.VIEW_AS_LIST;
+          case View.FilmStrip:
+            ViewAs = (int) View.List;
             break;
         }
       }
@@ -151,16 +164,16 @@ namespace WindowPlugins.GUIPrograms
         string result = "";
         switch ((View) ViewAs)
         {
-          case View.VIEW_AS_LIST:
+          case View.List:
             result = GUILocalizeStrings.Get(101);
             break;
-          case View.VIEW_AS_ICONS:
+          case View.Icons:
             result = GUILocalizeStrings.Get(100);
             break;
-          case View.VIEW_AS_LARGEICONS:
+          case View.LargeIcons:
             result = GUILocalizeStrings.Get(417);
             break;
-          case View.VIEW_AS_FILMSTRIP:
+          case View.FilmStrip:
             result = GUILocalizeStrings.Get(733);
             break;
         }
@@ -174,16 +187,16 @@ namespace WindowPlugins.GUIPrograms
       {
         switch ((View) mapSettings.ViewAs)
         {
-          case View.VIEW_AS_LIST:
+          case View.List:
             xmlwriter.SetValue("myprograms", "viewby", "list");
             break;
-          case View.VIEW_AS_ICONS:
+          case View.Icons:
             xmlwriter.SetValue("myprograms", "viewby", "icons");
             break;
-          case View.VIEW_AS_LARGEICONS:
+          case View.LargeIcons:
             xmlwriter.SetValue("myprograms", "viewby", "largeicons");
             break;
-          case View.VIEW_AS_FILMSTRIP:
+          case View.FilmStrip:
             xmlwriter.SetValue("myprograms", "viewby", "filmstrip");
             break;
         }
@@ -191,24 +204,8 @@ namespace WindowPlugins.GUIPrograms
         //        xmlwriter.SetValue("myprograms", "lastViewLevel", mapSettings.LastViewLevel.ToString());
         xmlwriter.SetValue("myprograms", "lastViewLevel", ProgramSettings.viewHandler.CurrentLevel);
         xmlwriter.SetValue("myprograms", "sortby", mapSettings.SortBy);
-        // avoid bool conversion...... don't wanna know why it doesn't work! :-(
-        if (mapSettings.SortAscending)
-        {
-          xmlwriter.SetValue("myprograms", "sortasc", "yes");
-        }
-        else
-        {
-          xmlwriter.SetValue("myprograms", "sortasc", "no");
-        }
-
-        if (mapSettings.OverviewVisible)
-        {
-          xmlwriter.SetValue("myprograms", "overviewvisible", "yes");
-        }
-        else
-        {
-          xmlwriter.SetValue("myprograms", "overviewvisible", "no");
-        }
+        xmlwriter.SetValueAsBool("myprograms", "sortasc", mapSettings.SortAscending);
+        xmlwriter.SetValueAsBool("myprograms", "overviewvisible", mapSettings.OverviewVisible);
 
         xmlwriter.SetValue("myprograms", "startWindow", ProgramState.StartWindow.ToString());
         xmlwriter.SetValue("myprograms", "startview", ProgramState.View);
@@ -225,46 +222,30 @@ namespace WindowPlugins.GUIPrograms
 
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string curText = "";
-        curText = xmlreader.GetValue("myprograms", "viewby");
-        if (curText != null)
+        switch (xmlreader.GetValueAsString("myprograms", "viewby", "list"))
         {
-          if (curText == "list")
-            mapSettings.ViewAs = (int) View.VIEW_AS_LIST;
-          else if (curText == "icons")
-            mapSettings.ViewAs = (int) View.VIEW_AS_ICONS;
-          else if (curText == "largeicons")
-            mapSettings.ViewAs = (int) View.VIEW_AS_LARGEICONS;
-          else if (curText == "filmstrip")
-            mapSettings.ViewAs = (int) View.VIEW_AS_FILMSTRIP;
+          case "list":
+            mapSettings.ViewAs = (int)View.List;
+            break;
+          case "icons":
+            mapSettings.ViewAs = (int)View.Icons;
+            break;
+          case "largeicons":
+            mapSettings.ViewAs = (int)View.LargeIcons;
+            break;
+          case "filmstrip":
+            mapSettings.ViewAs = (int)View.FilmStrip;
+            break;
         }
 
         mapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", - 1);
         mapSettings.LastViewLevel = xmlreader.GetValueAsInt("myprograms", "lastViewLevel", - 1);
         mapSettings.SortBy = xmlreader.GetValueAsInt("myprograms", "sortby", 0);
-        curText = xmlreader.GetValue("myprograms", "sortasc");
-        if (curText != null)
-        {
-          mapSettings.SortAscending = (curText.ToLower() == "yes");
-        }
-        else
-        {
-          mapSettings.SortAscending = true;
-        }
-
-        curText = xmlreader.GetValue("myprograms", "overviewvisible");
-        if (curText != null)
-        {
-          mapSettings.OverviewVisible = (curText.ToLower() == "yes");
-        }
-        else
-        {
-          mapSettings.OverviewVisible = true;
-        }
+        mapSettings.SortAscending = xmlreader.GetValueAsBool("myprograms", "sortasc", true);
+        mapSettings.OverviewVisible = xmlreader.GetValueAsBool("myprograms", "overviewvisible", true);
 
         ProgramState.StartWindow = xmlreader.GetValueAsInt("myprograms", "startWindow", GetID);
         ProgramState.View = xmlreader.GetValueAsString("myprograms", "startview", String.Empty);
-
       }
     }
 
@@ -302,14 +283,6 @@ namespace WindowPlugins.GUIPrograms
     #endregion 
 
     #region SkinControls
-
-    enum View
-    {
-      VIEW_AS_LIST = 0,
-      VIEW_AS_ICONS = 1,
-      VIEW_AS_LARGEICONS = 2,
-      VIEW_AS_FILMSTRIP = 3,
-    }
 
     // Buttons
     [SkinControl(2)] protected GUIButtonControl btnViewAs = null;
@@ -381,7 +354,7 @@ namespace WindowPlugins.GUIPrograms
         lastFilepath = "";
       }
       UpdateListControl();
-      ShowThumbPanel();
+      SwitchView();
       skipInit = false;
     }
 
@@ -398,6 +371,10 @@ namespace WindowPlugins.GUIPrograms
     int slideSpeed = 3000; // speed in milliseconds between two slides
     long slideTime = 0;
     bool skipInit = false;
+
+    View[,] views;
+    bool[,] sortasc;
+    ProgramSort.SortMethod[,] sortby;
 
     static string _thumbnailPath = string.Empty;
     static string _lastThumbnailPath = string.Empty;
@@ -440,6 +417,122 @@ namespace WindowPlugins.GUIPrograms
       else
       {
         return - 1; // root
+      }
+    }
+
+    ProgramViewHandler ViewHandler
+    {
+      get { return ProgramSettings.viewHandler; }
+    }
+
+    View CurrentView
+    {
+      get
+      {
+        if (ViewHandler.View == null)
+          return View.List;
+
+        if (views == null)
+        {
+          views = new View[ViewHandler.Views.Count, 50];
+
+          ArrayList viewStrings = new ArrayList();
+          viewStrings.Add("List");
+          viewStrings.Add("Icons");
+          viewStrings.Add("Big Icons");
+          viewStrings.Add("Filmstrip");
+
+          for (int i = 0; i < ViewHandler.Views.Count; ++i)
+          {
+            for (int j = 0; j < ViewHandler.Views[i].Filters.Count; ++j)
+            {
+              FilterDefinition def = (FilterDefinition)ViewHandler.Views[i].Filters[j];
+              int defaultView = viewStrings.IndexOf(def.DefaultView);
+
+              if (defaultView != -1)
+                views[i, j] = (View)defaultView;
+              else
+                views[i, j] = View.List;
+            }
+          }
+        }
+
+        return views[ViewHandler.Views.IndexOf(ViewHandler.View), ViewHandler.CurrentLevel];
+      }
+      set
+      {
+        views[ViewHandler.Views.IndexOf(ViewHandler.View), ViewHandler.CurrentLevel] = value;
+      }
+    }
+
+    bool CurrentSortAsc
+    {
+      get
+      {
+        if (ViewHandler.View == null)
+          return true;
+
+        if (sortasc == null)
+        {
+          sortasc = new bool[ViewHandler.Views.Count, 50];
+
+          for (int i = 0; i < ViewHandler.Views.Count; ++i)
+          {
+            for (int j = 0; j < ViewHandler.Views[i].Filters.Count; ++j)
+            {
+              FilterDefinition def = (FilterDefinition)ViewHandler.Views[i].Filters[j];
+              sortasc[i, j] = def.SortAscending;
+            }
+          }
+        }
+
+        return sortasc[ViewHandler.Views.IndexOf(ViewHandler.View), ViewHandler.CurrentLevel];
+      }
+      set
+      {
+        sortasc[ViewHandler.Views.IndexOf(ViewHandler.View), ViewHandler.CurrentLevel] = value;
+      }
+    }
+
+    ProgramSort.SortMethod CurrentSortMethod
+    {
+      get
+      {
+        if (ViewHandler.View == null)
+          return ProgramSort.SortMethod.Name;
+
+        if (sortby == null)
+        {
+          sortby = new ProgramSort.SortMethod[ViewHandler.Views.Count, 50];
+
+          ArrayList sortStrings = new ArrayList();
+          sortStrings.Add("Name");
+          sortStrings.Add("Title");
+          sortStrings.Add("Filename");
+          sortStrings.Add("Rating");
+          sortStrings.Add("LaunchCount");
+          sortStrings.Add("LastTimeLaunched");
+
+          for (int i = 0; i < ViewHandler.Views.Count; ++i)
+          {
+            for (int j = 0; j < ViewHandler.Views[i].Filters.Count; ++j)
+            {
+              FilterDefinition def = (FilterDefinition)ViewHandler.Views[i].Filters[j];
+              int defaultSort = sortStrings.IndexOf(def.DefaultSort);
+
+              if (defaultSort != -1)
+                sortby[i, j] = (ProgramSort.SortMethod)defaultSort;
+              else
+                sortby[i, j] = ProgramSort.SortMethod.Name;
+            }
+          }
+        }
+
+        return sortby[ViewHandler.Views.IndexOf(ViewHandler.View), ViewHandler.CurrentLevel];
+      }
+      set
+      {
+        sortby[ViewHandler.Views.IndexOf(ViewHandler.View), ViewHandler.CurrentLevel] = value;
       }
     }
 
@@ -574,8 +667,10 @@ namespace WindowPlugins.GUIPrograms
         dlg.Add(view.LocalizedName);
       }
       dlg.DoModal(GetID);
+
       if (dlg.SelectedLabel == -1)
         return;
+
       if (dlg.SelectedLabel == 0)
       {
         int nNewWindow = (int) Window.WINDOW_FILES;
@@ -589,7 +684,7 @@ namespace WindowPlugins.GUIPrograms
       }
       else
       {
-        ViewDefinition selectedView = (ViewDefinition) ProgramSettings.viewHandler.Views[dlg.SelectedLabel - 1];
+        ViewDefinition selectedView = ProgramSettings.viewHandler.Views[dlg.SelectedLabel - 1];
         ProgramSettings.viewHandler.CurrentView = selectedView.Name;
         ProgramState.View = selectedView.Name;
         int nNewWindow = (int)GUIWindow.Window.WINDOW_FILES;
@@ -613,7 +708,7 @@ namespace WindowPlugins.GUIPrograms
       {
         lastApp.LoadFiles();
       }
-      UpdateButtons();
+      UpdateButtonStates();
       UpdateListControl();
     }
 
@@ -624,7 +719,7 @@ namespace WindowPlugins.GUIPrograms
       if (control == btnViewAs)
       {
         mapSettings.SwitchToNextView();
-        ShowThumbPanel();
+        SwitchView();
       }
 
       if (control == btnRefresh)
@@ -634,7 +729,7 @@ namespace WindowPlugins.GUIPrograms
           lastApp.Refresh(true);
           lastFilepath = lastApp.DefaultFilepath();
           // todo: reset viewHandler
-          UpdateButtons();
+          UpdateButtonStates();
           UpdateListControl();
         }
       }
@@ -679,7 +774,7 @@ namespace WindowPlugins.GUIPrograms
       {
         // <U> keypress
         BackItemClicked();
-        UpdateButtons();
+        UpdateButtonStates();
         return;
       }
 
@@ -828,7 +923,7 @@ namespace WindowPlugins.GUIPrograms
 
     #region Display
 
-    void UpdateButtons()
+    void UpdateButtonStates()
     {
       GUIPropertyManager.SetProperty("#view", ProgramSettings.viewHandler.LocalizedCurrentView);
       btnRefresh.IsVisible = RefreshButtonVisible();
@@ -861,33 +956,32 @@ namespace WindowPlugins.GUIPrograms
       btnViewAs.Label = mapSettings.ViewAsText;
     }
 
-    void ShowThumbPanel()
+    void SwitchView()
     {
       int itemIndex = facadeView.SelectedListItemIndex;
 
-      if (mapSettings.ViewAs == (int)View.VIEW_AS_LIST)
+      switch ((View)mapSettings.ViewAs)
       {
-        facadeView.View = GUIFacadeControl.ViewMode.List;
-        screenShotImage.Visible = true;
-      }
-      else if (mapSettings.ViewAs == (int)View.VIEW_AS_ICONS)
-      {
-        facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
-        screenShotImage.Visible = false;
-      }
-      else if (mapSettings.ViewAs == (int)View.VIEW_AS_LARGEICONS)
-      {
-        facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
-        screenShotImage.Visible = false;
-      }
-      else if (mapSettings.ViewAs == (int)View.VIEW_AS_FILMSTRIP)
-      {
-        facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
-        screenShotImage.Visible = false;
+        case View.List:
+          facadeView.View = GUIFacadeControl.ViewMode.List;
+          screenShotImage.Visible = true;
+          break;
+        case View.Icons:
+          facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
+          screenShotImage.Visible = false;
+          break;
+        case View.LargeIcons:
+          facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
+          screenShotImage.Visible = false;
+          break;
+        case View.FilmStrip:
+          facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
+          screenShotImage.Visible = false;
+          break;
       }
 
       facadeView.SelectedListItemIndex = itemIndex;
-      UpdateButtons();
+      UpdateButtonStates();
     }
 
     void RenderThumbnail(float timePassed)
@@ -972,6 +1066,7 @@ namespace WindowPlugins.GUIPrograms
     {
       int TotalItems = 0;
       GUIControl.ClearControl(GetID, facadeView.GetID);
+
       if (IsBackButtonNecessary())
       {
         ProgramUtils.AddBackButton(facadeView);
@@ -989,7 +1084,7 @@ namespace WindowPlugins.GUIPrograms
 
       if (lastApp != null)
       {
-        lastApp.OnSort(facadeView, false);
+        facadeView.Sort(new ProgramSort(CurrentSortMethod, CurrentSortAsc));
       }
 
 
@@ -1229,7 +1324,7 @@ namespace WindowPlugins.GUIPrograms
             }
           }
         }
-        UpdateButtons();
+        UpdateButtonStates();
         UpdateListControl();
         RestoreItemIndex(lastApp, lastFilepath);
       }
@@ -1305,13 +1400,13 @@ namespace WindowPlugins.GUIPrograms
         if (item.Label.Equals(ProgramUtils.cBackLabel))
         {
           BackItemClicked();
-          UpdateButtons();
+          UpdateButtonStates();
         }
         else
         {
           // application-item or subfolder
           FolderItemClicked(item);
-          UpdateButtons();
+          UpdateButtonStates();
         }
       }
     }

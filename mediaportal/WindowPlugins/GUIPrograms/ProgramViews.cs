@@ -197,20 +197,16 @@ namespace WindowPlugins.GUIPrograms
       "Icons",
       "Big Icons",
       "Filmstrip",
-      //"Albums",
     };
 
     string[] sortBy = new string[]
     {
-      "title",
-      "filename",
-      "country",
-      "genre",
-      "year",
-      "manufacturer",
-      "rating",
-      "launchcount",
-      "lastTimeLaunched",
+      "Name",
+      "Title",
+      "Filename",
+      "Rating",
+      "LaunchCount",
+      "LastTimeLaunched",
     };
 
     public ProgramViews()
@@ -641,24 +637,30 @@ namespace WindowPlugins.GUIPrograms
 
     void tbAction_KeyPress(object sender, KeyPressEventArgs e)
     {
-      int rowSelected;
       DataRow row = datasetFilters.NewRow();
-      row[0] = row[1] = row[2] = row[3] = row[5] = row[6] = row[7] = "";
-      row[4] = false;
-      rowSelected = dataGrid.CurrentRowIndex;
-      if (e.KeyChar == 'a')
-      {
-        datasetFilters.Rows.InsertAt(row, rowSelected + 1);
-      }
-      else if (e.KeyChar == 'b')
-      {
-        datasetFilters.Rows.InsertAt(row, rowSelected);
-      }
-      else if (e.KeyChar == 'd')
-      {
-        datasetFilters.Rows.RemoveAt(rowSelected);
-      }
+      row[0] = row[1] = row[2] = row[3] = row[4] = row[5] = row[7] = "";
+      row[6] = false;
+
       e.Handled = true;
+
+      int rowSelected = dataGrid.CurrentRowIndex;
+      if (rowSelected == -1)
+        return;
+      if (rowSelected == datasetFilters.Rows.Count)
+        return;
+
+      switch (e.KeyChar)
+      {
+        case 'a':
+          datasetFilters.Rows.InsertAt(row, rowSelected + 1);
+          break;
+        case 'b':
+          datasetFilters.Rows.InsertAt(row, rowSelected);
+          break;
+        case 'd':
+          datasetFilters.Rows.RemoveAt(rowSelected);
+          break;
+      }
     }
 
     private void btnSave_Click(object sender, EventArgs e)

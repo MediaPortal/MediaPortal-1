@@ -158,9 +158,10 @@ namespace WindowPlugins.GUIPrograms
       currentLevel = level;
     }
 
-    public ViewDefinition GetView()
+    public ViewDefinition View
     {
-      return currentView;
+      get { return currentView; }
+      set { currentView = value; }
     }
 
     #endregion
