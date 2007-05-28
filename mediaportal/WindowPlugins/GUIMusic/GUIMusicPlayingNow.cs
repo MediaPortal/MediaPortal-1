@@ -608,6 +608,7 @@ namespace MediaPortal.GUI.Music
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+
       facadeAlbumInfo.Clear();
       facadeTagInfo.Clear();
       ImagePathContainer.Clear();
@@ -641,6 +642,8 @@ namespace MediaPortal.GUI.Music
         ImageChangeTimer.Start();
       }
 
+      UpdateImagePathContainer();
+
       if (g_Player.Playing)
       {
         g_Player_PlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
@@ -649,6 +652,10 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
+        CurrentTrackTag = null;
+        NextTrackTag = null;
+        UpdateTrackInfo();
+        ClearVisualizationImages();
         // notify user what he's lost here?
       }
     }
@@ -1052,7 +1059,12 @@ namespace MediaPortal.GUI.Music
         {
           GUIPropertyManager.SetProperty("#Play.Current.Title", GUILocalizeStrings.Get(4543));
           GUIPropertyManager.SetProperty("#Play.Current.Track", string.Empty);
-          GUIPropertyManager.SetProperty("#duration", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.Album", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.Artist", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.Genre", string.Empty);
+          GUIPropertyManager.SetProperty("#duration", "0");
+          GUIPropertyManager.SetProperty("#Play.Current.Rating", "0");
+          GUIPropertyManager.SetProperty("#Play.Current.Year", string.Empty);
 
           if (PlaylistPlayer == null)
             if (PlaylistPlayer.GetCurrentItem() == null)
@@ -1089,7 +1101,7 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Next.Artist", string.Empty);
           GUIPropertyManager.SetProperty("#Play.Next.Genre", string.Empty);
           GUIPropertyManager.SetProperty("#Play.Next.Year", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Next.Rating", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Next.Rating", "0");
         }
         _trackChanged = false;
       }
@@ -1097,13 +1109,16 @@ namespace MediaPortal.GUI.Music
 
     private void UpdateTrackPosition()
     {
-      double trackDuration = g_Player.Duration;
-      double curTrackPostion = g_Player.CurrentPosition;
+      if (g_Player.Playing)
+      {
+        double trackDuration = g_Player.Duration;
+        double curTrackPostion = g_Player.CurrentPosition;
 
-      int progPrecent = (int)(curTrackPostion / trackDuration * 100d);
+        int progPrecent = (int)(curTrackPostion / trackDuration * 100d);
 
-      this.ProgTrack.Percentage = progPrecent;
-      ProgTrack.Visible = ProgTrack.Percentage > 0;
+        this.ProgTrack.Percentage = progPrecent;
+        ProgTrack.Visible = ProgTrack.Percentage > 0;
+      }
     }
 
     private void GetTrackTags()
@@ -1117,24 +1132,17 @@ namespace MediaPortal.GUI.Music
 
       if (!isCurSongCdTrack)
       {
-        CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName, UseID3);
-
-        if (CurrentTrackTag == null)
-        {
-          // Track is not in database, use tag reader
-          CurrentTrackTag = TagReader.TagReader.ReadTag(CurrentTrackFileName);
-        }
+        // CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName, UseID3);
+        // always use the tagreader now if the info is not in the database
+        // since some people use settings which do not represent the results they expect
+        CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName, true);
       }
 
       if (!isNextSongCdTrack)
       {
-        NextTrackTag = GetTrackTag(dbs, NextTrackFileName, UseID3);
-
-        if (NextTrackTag == null)
-        {
-          // Track is not in database, use tag reader
-          NextTrackTag = TagReader.TagReader.ReadTag(NextTrackFileName);
-        }
+        // NextTrackTag = GetTrackTag(dbs, NextTrackFileName, UseID3);
+        // see above..
+        NextTrackTag = GetTrackTag(dbs, NextTrackFileName, true);
       }
 
       if (isCurSongCdTrack || isNextSongCdTrack)
@@ -1208,13 +1216,20 @@ namespace MediaPortal.GUI.Music
       if (!bFound)
       {
         if (useID3)
+        {
           tag = TagReader.TagReader.ReadTag(strFile);
+          if (tag != null && tag.Title != GUILocalizeStrings.Get(4543)) // Track information not available
+            return tag;
+        }
+        // tagreader failed or not using it
+        song.Title = strFile;
+        song.Artist = string.Empty;
+        song.Album = string.Empty;
       }
-      else
-      {
-        tag = new MusicTag();
-        tag = BuildMusicTagFromSong(song);
-      }
+
+      tag = new MusicTag();
+      tag = BuildMusicTagFromSong(song);
+
       return tag;
     }
 
