@@ -32,8 +32,7 @@ namespace ProjectInfinity.Settings
       INamedSettings namedSettings = obj as INamedSettings;
       if (namedSettings != null)
       {
-        string customName = (string)obj.GetType().GetProperty("Name").GetValue(obj,null);
-        fileName = obj.ToString() +"."+ customName + ".xml";
+        fileName = obj.ToString() + "." + namedSettings.Name + ".xml";
       }
       else
       {
@@ -169,8 +168,7 @@ namespace ProjectInfinity.Settings
       INamedSettings namedSettings = obj as INamedSettings;
       if (namedSettings!=null)
       {
-        string customName = (string)obj.GetType().GetProperty("Name").GetValue(obj, null);
-        fileName = obj.ToString() + "." + customName + ".xml";
+        fileName = obj.ToString() + "." + namedSettings.Name + ".xml";
       }
       else
       {
