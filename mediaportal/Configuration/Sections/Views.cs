@@ -626,14 +626,13 @@ namespace MediaPortal.Configuration.Sections
 
     void tbAction_KeyPress(object sender, KeyPressEventArgs e)
     {
-      int rowSelected;
       DataRow row = datasetFilters.NewRow();
       row[0] = row[1] = row[2] = row[3] = row[4] = row[5] = row[7] = "";
       row[6] = false;
 
       e.Handled = true;
 
-      rowSelected = dataGrid.CurrentRowIndex;
+      int rowSelected = dataGrid.CurrentRowIndex;
       if (rowSelected == -1)
         return;
       if (rowSelected == datasetFilters.Rows.Count)
