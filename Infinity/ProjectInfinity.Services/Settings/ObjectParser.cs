@@ -28,7 +28,16 @@ namespace ProjectInfinity.Settings
     /// <param name="fileName">Xml file name</param>
     public static void Serialize(object obj)
     {
-      string fileName = obj.ToString()+".xml";
+      string fileName="";
+      if (obj.GetType() == typeof(INamedSettings))
+      {
+        string customName = (string)obj.GetType().GetProperty("Name").GetValue(obj,null);
+        fileName = obj.ToString() +"."+ customName + ".xml";
+      }
+      else
+      {
+        fileName = obj.ToString() + ".xml";
+      }
       ILogger log = ServiceScope.Get<ILogger>();
       log.Debug("Serialize({0},{1})", obj.ToString(), fileName);
       Dictionary<string, string> globalSettingsList = new Dictionary<string, string>();
@@ -155,7 +164,16 @@ namespace ProjectInfinity.Settings
     /// <param name="fileName">Xml file name</param>
     public static void Deserialize(object obj)
     {
-      string fileName = obj.ToString() + ".xml";
+      string fileName = "";
+      if (obj.GetType() == typeof(INamedSettings))
+      {
+        string customName = (string)obj.GetType().GetProperty("Name").GetValue(obj, null);
+        fileName = obj.ToString() + "." + customName + ".xml";
+      }
+      else
+      {
+        fileName = obj.ToString() + ".xml";
+      }
       XmlSettingsProvider xmlreader = new XmlSettingsProvider(fileName);
       ILogger log = ServiceScope.Get<ILogger>();
       log.Debug("Deserialize({0},{1})", obj.ToString(), fileName);
