@@ -728,14 +728,8 @@ namespace WindowPlugins.GUIPrograms
 
       if (control == btnRefresh)
       {
-        if (lastApp != null)
-        {
-          lastApp.Refresh(true);
-          lastFilepath = lastApp.DefaultFilepath();
-          // todo: reset viewHandler
-          UpdateButtonStates();
-          UpdateListControl();
-        }
+        if (lastApp == null) return;
+        OnAppItemRefresh(lastApp);
       }
 
       if (control == btnViews)
@@ -800,10 +794,44 @@ namespace WindowPlugins.GUIPrograms
 
     protected override void OnShowContextMenu()
     {
+      if (!facadeView.Focus) return;
       GUIListItem item = facadeView.SelectedListItem;
-      int itemNo = facadeView.SelectedListItemIndex;
-      if (item == null)
+      if (item == null) return;
+      if (item.MusicTag == null) return;
+
+      FileItem fileItem = item.MusicTag as FileItem;
+      AppItem appItem = item.MusicTag as AppItem;
+      if (appItem != null)
+        OnShowAppItemContextMenu(appItem);
+      else if (fileItem != null)
+        OnShowFileItemContextMenu();
+    }
+
+    void OnShowAppItemContextMenu(AppItem appItem)
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
         return;
+      dlg.Reset();
+      dlg.SetHeading(498); // menu
+
+      if (appItem.GUIRefreshPossible && appItem.EnableGUIRefresh)
+        dlg.AddLocalizedString(184);    // Refresh
+
+      dlg.DoModal(GetID);
+      if (dlg.SelectedId == -1)
+        return;
+      switch (dlg.SelectedId)
+      {
+        case 184: // Refresh
+          OnAppItemRefresh(appItem);
+          break;
+      }
+    }
+
+    void OnShowFileItemContextMenu()
+    {
+      int itemNo = facadeView.SelectedListItemIndex;
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
@@ -811,12 +839,9 @@ namespace WindowPlugins.GUIPrograms
       dlg.Reset();
       dlg.SetHeading(498); // menu
 
-      if (!item.IsFolder)
-      {
-        dlg.AddLocalizedString(13041);    //Show File Info
-        //dlg.AddLocalizedString(930);    //Add to favorites
-        //dlg.AddLocalizedString(931);    //Rating
-      }
+      dlg.AddLocalizedString(13041);    //Show File Info
+      //dlg.AddLocalizedString(930);    //Add to favorites
+      //dlg.AddLocalizedString(931);    //Rating
 
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
@@ -835,6 +860,15 @@ namespace WindowPlugins.GUIPrograms
           OnSetRating(facadeView.SelectedListItemIndex);
           break;
       }
+    }
+
+    void OnAppItemRefresh(AppItem appItem)
+    {
+      appItem.Refresh(true);
+      lastFilepath = appItem.DefaultFilepath();
+      // todo: reset viewHandler
+      UpdateButtonStates();
+      UpdateListControl();
     }
 
     void OnInfo()
@@ -930,22 +964,13 @@ namespace WindowPlugins.GUIPrograms
     void UpdateButtonStates()
     {
       GUIPropertyManager.SetProperty("#view", ViewHandler.LocalizedCurrentView);
-      btnRefresh.IsVisible = RefreshButtonVisible();
+      btnViewAs.Label = mapSettings.ViewAsText;
 
-      // display apptitle if available.....
-      if (lastApp != null)
+      if (lastApp == null)
       {
-        if ((ViewHandler.CurrentView != null) && (ViewHandler.MaxLevels > 0))
-        {
-          GUIPropertyManager.SetProperty("#curheader", ViewHandler.LocalizedCurrentView);
-        }
-        else
-        {
-          GUIPropertyManager.SetProperty("#curheader", lastApp.Title);
-        }
-      }
-      else
-      {
+        btnViews.IsEnabled = false;
+        btnRefresh.IsVisible = false;
+
         string strText = ProgramSettings.ReadSetting(ProgramUtils.cPLUGINTITLE);
         if ((strText != "") && (strText != null))
         {
@@ -956,8 +981,20 @@ namespace WindowPlugins.GUIPrograms
           GUIPropertyManager.SetProperty("#curheader", GUILocalizeStrings.Get(0));
         }
       }
-
-      btnViewAs.Label = mapSettings.ViewAsText;
+      else
+      {
+        btnViews.IsEnabled = true;
+        btnRefresh.IsVisible = lastApp.GUIRefreshPossible && lastApp.EnableGUIRefresh;
+        
+        if ((ViewHandler.CurrentView != null) && (ViewHandler.MaxLevels > 0))
+        {
+          GUIPropertyManager.SetProperty("#curheader", ViewHandler.LocalizedCurrentView);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#curheader", lastApp.Title);
+        }
+      }
     }
 
     void SwitchView()
@@ -1030,18 +1067,6 @@ namespace WindowPlugins.GUIPrograms
 
       appWithImg.NextThumb(); // try to find a next thumbnail
       slideTime = (DateTime.Now.Ticks/10000); // reset timer!
-    }
-
-    bool RefreshButtonVisible()
-    {
-      if (lastApp == null)
-      {
-        return false;
-      }
-      else
-      {
-        return (lastApp.RefreshButtonVisible() && lastApp.GUIRefreshPossible && lastApp.EnableGUIRefresh);
-      }
     }
 
     bool ThereAreAppsToDisplay()
