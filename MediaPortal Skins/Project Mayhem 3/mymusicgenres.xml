@@ -35,113 +35,93 @@
 			<posX>5</posX>
 			<posY>125</posY>
 			<layout>StackLayout</layout>
-			<control>
-				<description>View-As button</description>
-				<type>button</type>
-				<id>2</id>
-				<label>100</label>
-				<onleft>2</onleft>
-				<onright>50</onright>
-				<onup>17</onup>
-				<ondown>3</ondown>
-				<textXOff>17</textXOff>
-				<alignY>center</alignY>
-			</control>
-			<control>
-				<type>sortbutton</type>
-				<id>3</id>
-				<label>103</label>
-				<onleft>3</onleft>
-				<onright>50</onright>
-				<onup>2</onup>
-				<ondown>6</ondown>
-				<textXOff>17</textXOff>
-				<alignY>center</alignY>
-			</control>
-			<control>
-				<description>Albums/Artists/Songs/Genres button</description>
-				<type>button</type>
-				<id>6</id>
-				<label>457</label>
-				<onleft>7</onleft>
-				<onright>50</onright>
-				<onup>3</onup>
-				<ondown>8</ondown>
-				<textXOff>17</textXOff>
-				<alignY>center</alignY>
-			</control>
-			<control>
-				<description>Playlist button</description>
-				<type>button</type>
-				<id>8</id>
-				<label>4555</label>
-				<action>33</action>
-				<onleft>8</onleft>
-				<onright>50</onright>
-				<onup>6</onup>
-				<ondown>9</ondown>
-				<textXOff>17</textXOff>
-				<alignY>center</alignY>
-			</control>
-			<control>
-				<description>Search button</description>
-				<type>button</type>
-				<id>9</id>
-				<label>137</label>
-				<onleft>9</onleft>
-				<onright>50</onright>
-				<onup>8</onup>
-				<ondown>10</ondown>
-				<textXOff>17</textXOff>
-				<alignY>center</alignY>
-			</control>
-			<control>
-				<description>Eject Disc</description>
-				<type>button</type>
-				<id>10</id>
-				<label>654</label>
-				<onleft>10</onleft>
-				<onright>50</onright>
-				<onup>9</onup>
-				<ondown>11</ondown>
-				<action>100</action>
-				<textXOff>17</textXOff>
-				<alignY>center</alignY>
-			</control>
-			<control>
-				<description>Now playing button</description>
-				<type>button</type>
-				<id>11</id>
-				<label>4540</label>
-				<onleft>11</onleft>
-				<onright>50</onright>
-				<onup>10</onup>
-				<ondown>14</ondown>
-				<hyperlink>510</hyperlink>
-			</control>
-			<control>
-				<description>My Playlists</description>
-				<type>button</type>
-				<id>14</id>
-				<label>983</label>
-				<onleft>14</onleft>
-				<onright>50</onright>
-				<onup>11</onup>
-				<ondown>85</ondown>
-			</control>
-			<control>
-				<description>Radio Button</description>
-				<type>button</type>
-				<id>85</id>
-				<label>Radio</label>
-				<onleft>85</onleft>
-				<onright>50</onright>
-				<onup>14</onup>
-				<ondown>99</ondown>
-				<hyperlink>30</hyperlink>
-				<textXOff>17</textXOff>
-				<alignY>center</alignY>
-			</control>
+			 <control>
+        <description>View-As</description>
+        <type>button</type>
+        <id>2</id>
+        <label>100</label>
+        <onright>50</onright>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>Sort</description>
+        <type>sortbutton</type>
+        <id>3</id>
+        <label>103</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Switch View</description>
+        <type>button</type>
+        <id>6</id>
+        <label>457</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Search</description>
+        <type>button</type>
+        <id>8</id>
+        <label>137</label>
+        <onright>50</onright>
+      </control>
+      <!--
+      <control>
+        <description>Rotating Menu</description>
+        <type>button</type>
+        <id>1337</id>
+        <label>Music Menu</label>
+        <hyperlink>8888</hyperlink>
+        <onright>50</onright>
+      </control>
+      -->
+      <control>
+        <description>Play CD</description>
+        <type>button</type>
+        <id>12</id>
+        <label>890</label>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Eject Disc</description>
+        <type>button</type>
+        <id>13</id>
+        <label>654</label>
+        <action>100</action>
+        <onright>50</onright>
+      </control>
+      <!--
+      <control>
+        <type>image</type>
+        <description>Divider image</description>
+        <id>999</id>
+        <texture>hbar1.png</texture>
+        <keepaspectratio>yes</keepaspectratio>
+      </control>
+      -->
+      <control>
+        <description>Now playing</description>
+        <type>button</type>
+        <id>11</id>
+        <label>4540</label>
+        <hyperlink>510</hyperlink>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>Current Playlist</description>
+        <type>button</type>
+        <id>9</id>
+        <label>4555</label>
+        <action>33</action>
+        <onright>50</onright>
+      </control>
+      <control>
+        <description>My Playlists</description>
+        <type>button</type>
+        <id>10</id>
+        <label>983</label>
+        <onright>50</onright>
+        <ondown>99</ondown>
+      </control>
 		</control>
 		<control>
 			<type>group</type>

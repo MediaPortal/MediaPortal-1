@@ -27,7 +27,7 @@
       <control>
          <type>image</type>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>         
+      <animation effect="fade" time="200">WindowClose</animation>
 
          <id>0</id>
 
@@ -41,6 +41,19 @@
 
          <texture>context_background.png</texture>
       </control>
+    <control>
+      <description>GFX-Heading "menu" text label</description>
+      <type>label</type>
+      <id>5</id>
+      <posX>201</posX>
+      <posY>100</posY>
+      <width>240</width>
+      <label>924</label>
+      <font>font14</font>
+      <textcolor>white</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
 
       <control>
          <description>Heading text label</description>
@@ -59,7 +72,7 @@
 
          <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>         
+      <animation effect="fade" time="200">WindowClose</animation>
       </control>
 
       <control>
@@ -91,7 +104,7 @@
 
          <ondown>3</ondown>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>         
+      <animation effect="fade" time="200">WindowClose</animation>
       </control>
 
       <control>
@@ -121,7 +134,7 @@
 
          <spinPosY>387</spinPosY>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>         
+      <animation effect="fade" time="200">WindowClose</animation>
       </control>
    </controls>
 </window>

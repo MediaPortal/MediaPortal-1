@@ -21,7 +21,7 @@
 		<align>right</align>
 		<textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>		
+      <animation effect="fade" time="500">WindowClose</animation>
 	</control>
 	<control>
 		<type>image</type>
@@ -33,7 +33,7 @@
 		<height>120</height>
 		<texture>top.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>		
+      <animation effect="fade" time="500">WindowClose</animation>
 	</control>
 	<control>
 		<type>image</type>
@@ -45,7 +45,7 @@
 		<height>70</height>
 		<texture>defaultAudio.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>		
+      <animation effect="fade" time="500">WindowClose</animation>
 	</control>
 
       <control>
@@ -58,7 +58,7 @@
          <height>126</height>
          <texture>music.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>         
+      <animation effect="fade" time="500">WindowClose</animation>
       </control>
 
       <control>
@@ -69,7 +69,7 @@
          <posY>20</posY>
          <texture>radio_logo.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>         
+      <animation effect="fade" time="500">WindowClose</animation>
       </control>
 	<control>
 		<type>image</type>
@@ -81,7 +81,7 @@
 		<height>398</height>
 		<texture>nowplaying_background.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>		
+      <animation effect="fade" time="500">WindowClose</animation>
 	</control>
 
 	<control>
@@ -96,7 +96,7 @@
 		<onup>666</onup>
 		<ondown>20</ondown>
 	</control>
-	
+
 	<control>
 		<description>chose tag</description>
 		<type>button</type>
@@ -108,7 +108,7 @@
 		<onright>50</onright>
 		<onup>10</onup>
 		<ondown>30</ondown>
-	</control>			
+	</control>
 
 	<control>
 		<description>choose friend</description>
@@ -120,27 +120,43 @@
 		<onleft>30</onleft>
 		<onright>50</onright>
 		<onup>20</onup>
-		<ondown>40</ondown> 
-         <animation effect="fade" time="250">WindowOpen</animation> 
-         <animation effect="fade" time="500">WindowClose</animation> 
-       </control> 
+		<ondown>40</ondown>
+         <animation effect="fade" time="250">WindowOpen</animation>
+         <animation effect="fade" time="500">WindowClose</animation>
+       </control>
+       
+        <control>
+            <description>toggle submit mode</description>
+            <type>togglebutton</type>
+            <id>35</id>
+            <posX>60</posX>
+            <posY>226</posY>
+            <label>34014</label>
+            <onleft>35</onleft>
+            <onright>35</onright>
+            <onup>30</onup>
+            <ondown>40</ondown>
+            <visible>true</visible>
+            <animation effect="fade" time="250">WindowOpen</animation>
+            <animation effect="fade" time="500">WindowClose</animation>
+        </control>
 
-       <control> 
-         	<description>toggle discovery mode</description> 
-        	<type>togglebutton</type> 
-        	<id>40</id> 
-         	<posX>60</posX> 
-         	<posY>246</posY> 
-          	<label>34013</label> 
-          	<onleft>40</onleft> 
-          	<onright>50</onright> 
-          	<onup>30</onup> 
-          	<ondown>40</ondown> 
-          	<visible>false</visible> 
-	<animation effect="fade" time="250">WindowOpen</animation> 
-        <animation effect="fade" time="500">WindowClose</animation> 
+       <control>
+         	<description>toggle discovery mode</description>
+        	<type>togglebutton</type>
+        	<id>40</id>
+         	<posX>60</posX>
+         	<posY>246</posY>
+          	<label>34013</label>
+          	<onleft>40</onleft>
+          	<onright>50</onright>
+          	 <onup>35</onup>
+            <ondown>50</ondown>
+          	<visible>false</visible>
+	<animation effect="fade" time="250">WindowOpen</animation>
+        <animation effect="fade" time="500">WindowClose</animation>
 	</control>
-			
+
 	<control>
 		<type>fadelabel</type>
 		<description>track label</description>
@@ -154,7 +170,7 @@
 		<align>left</align>
 		<disabledcolor>ff808080</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>		
+      <animation effect="fade" time="500">WindowClose</animation>
 	</control>
 
 	<control>
@@ -170,21 +186,21 @@
 		<align>left</align>
 		<disabledcolor>ff808080</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>		
+      <animation effect="fade" time="500">WindowClose</animation>
 	</control>
 
  	<control>
-  		<type>image</type> 
-  		<description>album art image</description> 
-  		<id>112</id> 
-  		<posX>415</posX> 
-  		<posY>140</posY> 
-  		<width>250</width> 
-  		<height>250</height> 
+  		<type>image</type>
+  		<description>album art image</description>
+  		<id>112</id>
+  		<posX>415</posX>
+  		<posY>140</posY>
+  		<width>250</width>
+  		<height>250</height>
   		<texture>-</texture>
-		<texture>#Play.Current.ArtistThumb</texture> 
- 	  <!--  <texture>F:\\Quellen\\Mediaportal-trunk\\xbmc\\bin\\Debug\\skin\\BlueTwo\\media\\missing_coverart.png</texture>  --> 
-  		<centered>yes</centered> 
+		<texture>#Play.Current.ArtistThumb</texture>
+ 	  <!--  <texture>F:\\Quellen\\Mediaportal-trunk\\xbmc\\bin\\Debug\\skin\\BlueTwo\\media\\missing_coverart.png</texture>  -->
+  		<centered>yes</centered>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
   	</control>
@@ -201,9 +217,9 @@
 		<align>left</align>
 		<textcolor>ffffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>		
+      <animation effect="fade" time="500">WindowClose</animation>
 	</control>
-	
+
 	<control>
 		<type>label</type>
 		<description>track progress label</description>
@@ -215,7 +231,7 @@
 		<align>right</align>
 		<textcolor>80ffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>		
+      <animation effect="fade" time="500">WindowClose</animation>
 	</control>
 	<control>
          <type>label</type>
@@ -228,7 +244,7 @@
           <align>right</align>
          <textcolor>80ffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>         
+      <animation effect="fade" time="500">WindowClose</animation>
       </control>
 
       	<control>
@@ -243,7 +259,7 @@
          	<textcolor>80ffffff</textcolor>
          	<disabledcolor>80ffffff</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>         	
+      <animation effect="fade" time="500">WindowClose</animation>
       	</control>
 	<control>
          	<type>fadelabel</type>
@@ -257,7 +273,7 @@
          	<textcolor>80ffffff</textcolor>
          	<disabledcolor>80ffffff</disabledcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>         	
+      <animation effect="fade" time="500">WindowClose</animation>
       	</control>
 
 <!--
@@ -272,7 +288,7 @@
          <posY>333</posY>
          <width>250</width>
          <height>100</height>
-	 <itemWidth>35</itemWidth>  
+	 <itemWidth>35</itemWidth>
 	 <itemHeight>15</itemHeight>
 	 <spaceBetweenItems>2</spaceBetweenItems>
 	 <textureHeight>14</textureHeight>
