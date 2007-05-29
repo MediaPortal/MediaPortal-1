@@ -146,6 +146,7 @@ namespace MediaPortal.TV.Recording
       {
         TVCaptureDevice dev = _tvcards[i];
         // us it recording the schedule specified in 'rec'?
+        
         if (dev.IsRecording && dev.CurrentTVRecording != null && dev.CurrentTVRecording.ID == rec.ID)
         {
           //seems so, is the recording a series
@@ -156,42 +157,31 @@ namespace MediaPortal.TV.Recording
             return true;
           }
           //its a series, so we need to check start/end times of the current episode
-          if (rec.StartTime <= DateTime.Now && rec.EndTime >= rec.StartTime)
+          if (rec.StartTime.AddMinutes(-rec.PreRecord) <= DateTime.Now && DateTime.Now <= rec.EndTime.AddMinutes(rec.PostRecord))
           {
-            // if the shedule is a 'everytimeon...' type
-            // we set the rec start/endtimes to the current program ones if needed 
-            // required for this test in scheduler.Process() :
-            // if (rec.StartTime==prog.StartTime && rec.IsRecordingProgramAtTime(dtCurrentTime, prog, rec.PreRecord, rec.PostRecord))
-            // (used for fixing back2back recordings with same title issue )
-            if ((rec.RecType == TVRecording.RecordingType.EveryTimeOnEveryChannel 
-              || rec.RecType == TVRecording.RecordingType.EveryTimeOnThisChannel)
-              && rec.StartTime != dev.CurrentProgramRecording.StartTime)
+            // make sure we will get the right next program
+            if (rec.StartTime < DateTime.Now && DateTime.Now < rec.EndTime)
             {
-              dev.CurrentTVRecording.StartTime = dev.CurrentProgramRecording.StartTime;
-              dev.CurrentTVRecording.Start = dev.CurrentProgramRecording.Start;
-              dev.CurrentTVRecording.EndTime = dev.CurrentProgramRecording.EndTime;
-              dev.CurrentTVRecording.End = dev.CurrentProgramRecording.End;
-              TVDatabase.UpdateRecording(dev.CurrentTVRecording, TVDatabase.RecordingChange.Modified);
-            }
-            // we need to know if we want to record 2 back 2 back  programs with same title 
-            // eg : everytimeonthischannel : 12:45-13:30 Smallville / 13:30-14:15 SmallVille
-            TVChannel recChannel = new TVChannel(rec.Channel);
-            TVProgram nextProg = recChannel.GetProgramAt(rec.EndTime.AddMinutes(1));
-            bool isRecordingNextProgram = false;
-            if (nextProg != null) isRecordingNextProgram = rec.IsRecordingProgramAtTime(nextProg.StartTime.AddMinutes(1), nextProg, rec.PreRecord, rec.PostRecord);
-            if (isRecordingNextProgram)
-            {
-              // clone the currentrec and set its start end to next program ones
-              TVRecording nextrec = new TVRecording(rec);
-              nextrec.StartTime = nextProg.StartTime;
-              nextrec.Start = nextProg.Start;
-              nextrec.EndTime = nextProg.EndTime;
-              nextrec.End = nextProg.End;
-              nextrec.ID = -1;
-              TVDatabase.AddRecording(ref nextrec);
-              // set current rec type to once
-              dev.CurrentTVRecording.RecType = TVRecording.RecordingType.Once;
-              TVDatabase.UpdateRecording(dev.CurrentTVRecording, TVDatabase.RecordingChange.Modified);
+              // we need to know if we want to record 2 back 2 back  programs with same title 
+              // eg : everytimeonthischannel : 12:45-13:30 Smallville / 13:30-14:15 SmallVille
+              TVChannel recChannel = new TVChannel(rec.Channel);
+              TVProgram nextProg = recChannel.GetProgramAt(rec.EndTime.AddMinutes(1));
+              bool isRecordingNextProgram = false;
+              if (nextProg != null) isRecordingNextProgram = rec.IsRecordingProgramAtTime(nextProg.StartTime.AddMinutes(1), nextProg, rec.PreRecord, rec.PostRecord);
+              if (isRecordingNextProgram)
+              {
+                // clone the currentrec and set its start end to next program ones
+                TVRecording nextrec = new TVRecording(rec);
+                nextrec.StartTime = nextProg.StartTime;
+                nextrec.Start = nextProg.Start;
+                nextrec.EndTime = nextProg.EndTime;
+                nextrec.End = nextProg.End;
+                nextrec.ID = -1;
+                TVDatabase.AddRecording(ref nextrec);
+                // set current rec type to once
+                dev.CurrentTVRecording.RecType = TVRecording.RecordingType.Once;
+                TVDatabase.UpdateRecording(dev.CurrentTVRecording, TVDatabase.RecordingChange.Modified);
+              }
             }
             //yep, we're recording this episode, so return true
             card = i;

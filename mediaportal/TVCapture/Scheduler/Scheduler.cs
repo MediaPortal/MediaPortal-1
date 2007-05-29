@@ -182,9 +182,12 @@ namespace MediaPortal.TV.Recording
             if (!handler.IsRecordingSchedule(rec, out cardNo))
             {
               // no, then check if its time to record it
+              Log.Debug("Sheduler : check which program is current running on this channel");
               // check which program is current running on this channel
               TVProgram prog = chan.GetProgramAt(dtCurrentTime.AddMinutes(1 + rec.PreRecord));
+              Log.Debug("Scheduler : current Program ={0}", prog.Title);
               // if the recording corresponds to current program and should record the tv program
+              Log.Debug("rec.StartTime={0}, prog.StartTime={1}",rec.StartTime, prog.StartTime);
               if (rec.StartTime==prog.StartTime && rec.IsRecordingProgramAtTime(dtCurrentTime, prog, rec.PreRecord, rec.PostRecord))
               {
                 // yes, then record it
@@ -206,6 +209,16 @@ namespace MediaPortal.TV.Recording
                   // if the recording should record the tv program
                   if (rec.IsRecordingProgramAtTime(dtTime, prog2Min, rec.PreRecord, rec.PostRecord))
                   {
+                    // if the shedule is a 'everytimeon...' type
+                    // we set the rec start/endtimes to the current program ones if needed 
+                    // required for this test in scheduler.Process() :
+                    // if (rec.StartTime==prog.StartTime && rec.IsRecordingProgramAtTime(dtCurrentTime, prog, rec.PreRecord, rec.PostRecord))
+                    // (used for fixing back2back recordings with same title issue )
+                    rec.StartTime = prog2Min.StartTime;
+                    rec.Start = prog2Min.Start;
+                    rec.EndTime = prog2Min.EndTime;
+                    rec.End = prog2Min.End;
+                    TVDatabase.UpdateRecording(rec, TVDatabase.RecordingChange.Modified);
                     //then send the announcement that we are about to record this recording in 2 minutes from now
                     Log.WriteFile(LogType.Recorder, "Recorder: Send announcement for recording:{0}", rec.ToString());
                     rec.IsAnnouncementSend = true;
@@ -266,6 +279,7 @@ namespace MediaPortal.TV.Recording
             {
               //yes, then send the announcement
               rec.IsAnnouncementSend = true;
+              Log.Debug("Scheduler : Manual rec");
               Log.WriteFile(LogType.Recorder, "Recorder: Send announcement for recording:{0}", rec.ToString());
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING, 0, 0, 0, 0, 0, null);
               msg.Object = rec;
