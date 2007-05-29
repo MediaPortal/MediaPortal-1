@@ -873,39 +873,39 @@ namespace WindowPlugins.GUIPrograms
 
     void OnInfo()
     {
-      if (null != lastApp)
+      if (lastApp == null) return;
+
+      selectedItemIndex = GetSelectedItemNo();
+      GUIListItem item = GetSelectedItem();
+      FileItem curFile = null;
+
+      if (item.Label.Equals(ProgramUtils.cBackLabel)) return;
+      if (item.IsFolder) return;
+
+      if ((item.MusicTag != null) && (item.MusicTag is FileItem))
       {
-        selectedItemIndex = GetSelectedItemNo();
-        GUIListItem item = GetSelectedItem();
-        FileItem curFile = null;
-        if (!item.Label.Equals(ProgramUtils.cBackLabel) && (!item.IsFolder))
+        curFile = (FileItem)item.MusicTag;
+      }
+
+      bool ovVisible = mapSettings.OverviewVisible;
+      ProgramInfoAction modalResult = ProgramInfoAction.LookupFileInfo;
+      int selectedFileID = -1;
+      lastApp.OnInfo(item, ref ovVisible, ref modalResult, ref selectedFileID);
+      if ((null != curFile) && (modalResult == ProgramInfoAction.LookupFileInfo))
+      {
+        FileItem scrapeFile = lastApp.Files.GetFileByID(selectedFileID);
+        if (null != scrapeFile)
         {
-          if ((item.MusicTag != null) && (item.MusicTag is FileItem))
+          int scrapeIndex = lastApp.Files.IndexOf(scrapeFile);
+          if (-1 != scrapeIndex)
           {
-            curFile = (FileItem)item.MusicTag;
+            GUIControl.SelectItemControl(GetID, facadeView.GetID, scrapeIndex + 1);
           }
-          // show file info but only if the selected item is not the back button
-          bool ovVisible = mapSettings.OverviewVisible;
-          ProgramInfoAction modalResult = ProgramInfoAction.LookupFileInfo;
-          int selectedFileID = -1;
-          lastApp.OnInfo(item, ref ovVisible, ref modalResult, ref selectedFileID);
-          if ((null != curFile) && (modalResult == ProgramInfoAction.LookupFileInfo))
-          {
-            FileItem scrapeFile = lastApp.Files.GetFileByID(selectedFileID);
-            if (null != scrapeFile)
-            {
-              int scrapeIndex = lastApp.Files.IndexOf(scrapeFile);
-              if (-1 != scrapeIndex)
-              {
-                GUIControl.SelectItemControl(GetID, facadeView.GetID, scrapeIndex + 1);
-              }
-              ScrapeFileInfo(scrapeFile);
-            }
-          }
-          mapSettings.OverviewVisible = ovVisible;
-          UpdateListControl();
+          ScrapeFileInfo(scrapeFile);
         }
       }
+      mapSettings.OverviewVisible = ovVisible;
+      UpdateListControl();
     }
 
     protected void OnSetRating(int itemNumber)

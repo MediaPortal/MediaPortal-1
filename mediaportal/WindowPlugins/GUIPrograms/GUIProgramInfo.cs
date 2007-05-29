@@ -237,6 +237,13 @@ namespace WindowPlugins.GUIPrograms
 
     protected override void OnPageDestroy(int newWindowId)
     {
+      if (isRunning)
+      {
+        //ugly workaround, same like in AlbumInfo
+        GUIWindowManager.UnRoute();
+        parentWindow = null;
+        isRunning = false;
+      }
       curFile = null;
       if (curTexture != null)
       {
