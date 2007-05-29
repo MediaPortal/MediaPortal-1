@@ -54,13 +54,6 @@
         <id>7</id>
         <label>361</label>
         <onright>50</onright>
-      </control>
-      <control>
-        <description>Rotate</description>
-        <type>button</type>
-        <id>9</id>
-        <label>735</label>
-        <onright>50</onright>
         <ondown>99</ondown>
       </control>
     </control>

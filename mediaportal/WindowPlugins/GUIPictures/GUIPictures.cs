@@ -202,13 +202,12 @@ namespace MediaPortal.GUI.Pictures
       Files = 0,
       Date = 1
     }
-
+    
     [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
     [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
     [SkinControlAttribute(4)]    protected GUIButtonControl btnSwitchView = null;
     [SkinControlAttribute(6)]    protected GUIButtonControl btnSlideShow = null;
-    [SkinControlAttribute(7)]    protected GUIButtonControl btnSlideShowRecursive = null;    
-    [SkinControlAttribute(9)]    protected GUIButtonControl btnRotate = null;
+    [SkinControlAttribute(7)]    protected GUIButtonControl btnSlideShowRecursive = null;
     [SkinControlAttribute(50)]   protected GUIFacadeControl facadeView = null;
 
     const int MAX_PICS_PER_DATE = 1000;
@@ -480,11 +479,6 @@ namespace MediaPortal.GUI.Pictures
       {
         OnSwitchView();
       }
-      else if (control == btnRotate) // Rotate Pic
-      {
-        OnRotatePicture();
-        return;
-      }
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -689,7 +683,6 @@ namespace MediaPortal.GUI.Pictures
       View view = (View)mapSettings.ViewAs;
       SortMethod method = (SortMethod)mapSettings.SortBy;
       bool sortAsc = mapSettings.SortAscending;
-      btnRotate.IsVisible = false;
       switch (view)
       {
         case View.List:
@@ -706,17 +699,6 @@ namespace MediaPortal.GUI.Pictures
           break;
         case View.Filmstrip:
           textLine = GUILocalizeStrings.Get(733);
-
-          btnRotate.IsVisible = true;
-          btnRotate.Disabled = true;
-          GUIListItem item = GetSelectedItem();
-          if (item != null)
-          {
-            if (!item.IsFolder)
-            {
-              btnRotate.Disabled = false;
-            }
-          }
           break;
       }
       GUIControl.SetControlLabel(GetID, btnViewAs.GetID, textLine);
