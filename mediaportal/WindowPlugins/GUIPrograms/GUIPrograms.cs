@@ -1042,17 +1042,12 @@ namespace WindowPlugins.GUIPrograms
       AppItem appWithImg = lastApp;
       GUIListItem item = GetSelectedItem();
 
-      // some preconditions...
+      if (item == null) return;
       if (appWithImg == null)
       {
-        if ((item != null) && (item.MusicTag != null) && (item.MusicTag is AppItem))
-        {
-          appWithImg = (AppItem)(item.MusicTag);
-        }
-        else
-        {
-          return;
-        }
+        if (item.MusicTag == null) return;
+        appWithImg = item.MusicTag as AppItem;
+        if (appWithImg == null) return;
       }
 
       ThumbnailPath = "";
@@ -1227,6 +1222,8 @@ namespace WindowPlugins.GUIPrograms
         mapSettings.LastAppID = lastApp.AppID;
         lastFilepath = lastApp.DefaultFilepath();
         lastApp.LaunchFile(item);
+        lastApp.LoadFiles();
+        UpdateListControl();
       }
       else
       {
