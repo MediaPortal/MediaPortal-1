@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using SQLite.NET;
 using MediaPortal.Util;
@@ -75,5 +76,30 @@ namespace MediaPortal.Picture.Database
     {
       return _database.EXIFOrientationToRotation(orientation);
     }
+
+		public int ListYears(ref List<string> Years)
+		{
+			return _database.ListYears(ref Years);
+		}
+
+		public int ListMonths(string Year, ref List<string> Months)
+		{
+			return _database.ListMonths(Year, ref Months);
+		}
+
+		public int ListDays(string Month, string Year, ref List<string> Days)
+		{
+			return _database.ListDays(Month, Year, ref Days);
+		}
+
+		public int ListPicsByDate(string Date, ref List<string> Pics)
+		{
+			return _database.ListPicsByDate(Date, ref Pics);
+		}
+
+		public int CountPicsByDate(string Date)
+		{
+			return _database.CountPicsByDate(Date);
+		}
   }
 }

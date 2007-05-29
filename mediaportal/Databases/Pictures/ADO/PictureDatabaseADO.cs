@@ -276,5 +276,30 @@ namespace MediaPortal.Picture.Database
 
       return 0;
     }
-  }
+
+		public int ListYears(ref List<string> Years)
+		{
+			throw(new NotImplementedException("List Years not yet implemented for ADO Database"));
+		}
+
+		public int ListMonths(string Year, ref List<string> Months)
+		{
+			throw (new NotImplementedException("List Months not yet implemented for ADO Database"));
+		}
+
+		public int ListDays(string Month, string Year, ref List<string> Days)
+		{
+			throw (new NotImplementedException("List Days not yet implemented for ADO Database"));
+		}
+
+		public int ListPicsByDate(string Date, ref List<string> Pics)
+		{
+			throw (new NotImplementedException("List Pics by Date not yet implemented for ADO Database"));
+		}
+
+		public int CountPicsByDate(string Date)
+		{
+			throw (new NotImplementedException("Count Pics by Date not yet implemented for ADO Database"));
+		}
+	}
 }

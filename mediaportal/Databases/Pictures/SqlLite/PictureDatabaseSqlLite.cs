@@ -33,6 +33,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
 using MediaPortal.Database;
 using MediaPortal.Configuration;
+using System.Collections.Generic;
 
 namespace MediaPortal.Picture.Database
 {
@@ -342,6 +343,135 @@ namespace MediaPortal.Picture.Database
 
       return 0;
     }
+
+		public int ListYears(ref List<string> Years)
+		{
+			int Count = 0;
+			lock (typeof(PictureDatabase))
+			{
+				if (m_db == null) return 0;
+				string strSQL = "select distinct substr(strDateTaken,1,4) from picture order by 1";
+				SQLiteResultSet result;
+				try
+				{
+					result = m_db.Execute(strSQL);
+					if (result != null)
+					{
+						for (Count = 0; Count < result.Rows.Count; Count++)
+							Years.Add(DatabaseUtility.Get(result,Count,0));
+					}
+				}
+				catch (Exception ex)
+				{
+					Log.Error("MediaPortal.Picture.Database exception getting Years err:{0} stack:{1}", ex.Message, ex.StackTrace);
+					Open();
+				}
+				return Count;				
+			}
+		}
+
+		public int ListMonths(string Year, ref List<string> Months)
+		{
+			int Count = 0;
+			lock (typeof(PictureDatabase))
+			{
+				if (m_db == null) return 0;
+				string strSQL = "select distinct substr(strDateTaken,6,2) from picture where strDateTaken like '" + Year + "%' order by 1";
+				SQLiteResultSet result;
+				try
+				{
+					result = m_db.Execute(strSQL);
+					if (result != null)
+					{
+						for (Count = 0; Count < result.Rows.Count; Count++)
+							Months.Add(DatabaseUtility.Get(result,Count,0));
+					}
+				}
+				catch (Exception ex)
+				{
+					Log.Error("MediaPortal.Picture.Database exception getting Months err:{0} stack:{1}", ex.Message, ex.StackTrace);
+					Open();
+				}
+				return Count;				
+			}
+		}
+
+		public int ListDays(string Month, string Year, ref List<string> Days)
+		{
+			int Count = 0;
+			lock (typeof(PictureDatabase))
+			{
+				if (m_db == null) return 0;
+				string strSQL = "select distinct substr(strDateTaken,9,2) from picture where strDateTaken like '" + Year + "-" + Month + "%' order by 1";
+				SQLiteResultSet result;
+				try
+				{
+					result = m_db.Execute(strSQL);
+					if (result != null)
+					{
+						for (Count = 0; Count < result.Rows.Count; Count++)
+							Days.Add(DatabaseUtility.Get(result, Count, 0));
+					}
+				}
+				catch (Exception ex)
+				{
+					Log.Error("MediaPortal.Picture.Database exception getting Days err:{0} stack:{1}", ex.Message, ex.StackTrace);
+					Open();
+				}
+				return Count;
+			}
+		}
+
+		public int ListPicsByDate(string Date, ref List<string> Pics)
+		{
+			int Count = 0;
+			lock (typeof(PictureDatabase))
+			{
+				if (m_db == null) return 0;
+				string strSQL = "select strFile from picture where strDateTaken like '" + Date + "%' order by 1";
+				SQLiteResultSet result;
+				try
+				{
+					result = m_db.Execute(strSQL);
+					if (result != null)
+					{
+						for (Count = 0; Count < result.Rows.Count; Count++)
+							Pics.Add(DatabaseUtility.Get(result, Count, 0));
+					}
+				}
+				catch (Exception ex)
+				{
+					Log.Error("MediaPortal.Picture.Database exception getting Picture by Date err:{0} stack:{1}", ex.Message, ex.StackTrace);
+					Open();
+				}
+				return Count;
+			}
+		}
+
+		public int CountPicsByDate(string Date)
+		{
+			int Count = 0;
+			lock (typeof(PictureDatabase))
+			{
+				if (m_db == null) return 0;
+				string strSQL = "select count(strFile) from picture where strDateTaken like '" + Date + "%' order by 1";
+				SQLiteResultSet result;
+				try
+				{
+					result = m_db.Execute(strSQL);
+					if (result != null)
+					{
+						Count = DatabaseUtility.GetAsInt(result, 0, 0);
+					}
+				}
+				catch (Exception ex)
+				{
+					Log.Error("MediaPortal.Picture.Database exception getting Picture by Date err:{0} stack:{1}", ex.Message, ex.StackTrace);
+					Open();
+				}
+				return Count;
+			}
+		}
 
     #region IDisposable Members
 

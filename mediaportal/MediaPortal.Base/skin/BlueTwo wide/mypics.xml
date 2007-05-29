@@ -35,6 +35,13 @@
         <onright>50</onright>
       </control>
       <control>
+        <description>Switch View</description>
+        <type>button</type>
+        <id>4</id>
+        <label>457</label>
+        <onright>50</onright>
+      </control>      
+      <control>
         <description>SlideShow button</description>
         <type>button</type>
         <id>6</id>
@@ -48,14 +55,6 @@
         <label>361</label>
         <onright>50</onright>
       </control>
-<!--       <control>
-        <description>Create Thumbnails</description>
-        <type>button</type>
-        <id>8</id>
-        <label>109</label>
-        <onright>50</onright>
-        <ondown>9</ondown>
-      </control> -->
       <control>
         <description>Rotate</description>
         <type>button</type>
