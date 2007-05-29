@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
@@ -9,6 +10,11 @@ namespace ProjectInfinity.Pictures
   [Plugin("MyPictures", "Show Pictures", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Pictures.png")]
   class PicturePlugin : IPlugin, IAutoStart, IMenuCommand
   {
+    public PicturePlugin()
+    {
+      Debug.WriteLine("MyPictures started");
+    }
+
     #region IPlugin Members
     public void Initialize(string id)
     {

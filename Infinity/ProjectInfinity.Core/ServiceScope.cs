@@ -1,32 +1,40 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Logging;
+using ProjectInfinity.Messaging;
 using ProjectInfinity.Settings;
 
 namespace ProjectInfinity
 {
   /// <summary>
   /// The Service Scope class.  It is used to keep track of the scope of services.
-  /// The moment you create a new ServiceScope instance, any service instances you add
-  /// to it will be automtically used by code that is called while the the ServiceScope
-  /// instance remains in scope (i.e. is not Disposed)
+  /// The moment you create a new ServiceScope instance, any service instances you
+  /// add to it will be automtically used by code that is called while the the 
+  /// ServiceScope instance remains in scope (i.e. is not Disposed)
   /// </summary>
   /// <remarks>
+  /// <para>A ServiceScope is some kind of repository that holds a reference to 
+  /// services that other components could need.</para><para>Instead of making
+  /// this class a static with static properties for all types of services we 
+  /// choose to create a mechanism that is more flexible.  The biggest advantage of
+  /// this implemtentation is that you can create different ServiceScope instances
+  /// that will be "stacked" upon one another.</para><para>This way you can (temporarily) 
+  /// override a certain service by adding another implementation of the service
+  /// interface, which fits you better.  While your new ServiceScope instance 
+  /// remains in scope, all code that is executed will automatically (if it is
+  /// written correctly of course) use this new service implementation.</para>
   /// <para>
   /// <b>A service scope is only valid in the same thread it was created.</b> 
   /// </para>
-  /// <para>A ServiceScope is really some kind of repository that holds a reference
-  /// to services that other parts of PI could need.</para><para>Instead of making
-  /// this class a static with static properties for all types of services we choose
-  /// to create a mechanism that is more flexible.  This implementation can contain
-  /// all kinds of services (including the ones we can't imagine right now).</para>
-  /// <para>Another advantage of this implemtentation is that you can create different
-  /// ServiceScope instances that will be "stacked" upon one another.  This way
-  /// you can (temporarily) override a certain service by another implementation that
-  /// fits you better.  All code that you call from that moment on will automatically
-  /// (if it is written correctly of course) use this new service implementation</para>
+  /// The recommended way of passing the current <see cref="ServiceScope"/> to 
+  /// another thread is by passing <see cref="ServiceScope.Current"/> with the 
+  /// delegate used to start the thread and then use 
+  /// <code>ServiceContect.Current = passedContect;</code> to restore it in the 
+  /// thread.</para><para>If you do not pass the current ServiceScope to the 
+  /// background thread, it will automatically fallback to the <b>global</b> 
+  /// ServiceScope.  This is the current ServiceScope of the application thread.
+  /// This ServiceScope can be another instance than the one you expect... </para>
   /// </remarks>
   /// <example> This example creates a new ServiceScope and adds its own implementation
   /// of a certain service to it.
@@ -50,19 +58,38 @@ namespace ProjectInfinity
   ///    logger.Debug("Logging to whatever file our calling method decides");
   /// }
   /// </code></example>
-  public class ServiceScope : IDisposable
+  /// <example>This is an example of how to pass the current ServiceScope to a
+  /// timer thread.
+  /// <code>
+  /// using(Timer timer = new Timer(TimerTick, ServiceScope.Current, 0000, 3000))
+  /// {
+  ///   //do something useful here while the timer is busy
+  /// }
+  /// .
+  /// .
+  /// .
+  /// private void TimerTick(object passedScope)
+  /// {
+  ///   ServiceScope.Current = passedScope as ServiceScope;
+  ///   ServiceScope.Get&lt;ILogger&gt;().Info("Timer tick");
+  /// }
+  /// </code>
+  /// </example>
+  public sealed class ServiceScope : IDisposable
   {
+    private static readonly object syncObject = new object();
     /// <summary>
     /// Pointer to the current <see cref="ServiceScope"/>.
     /// </summary>
     /// <remarks>
-    /// This pointer is only static for the current thread.  If you want to pass the 
-    /// context to another thread you must pass <see cref="ServiceScope.Current"/>
-    /// with the delegate used to start the thread and then use
-    /// <b>ServiceContect.Current = passedContect</b> to override the current context
-    /// with the passed one.
+    /// This pointer is only static for the current thread.
     /// </remarks>
-    /*[ThreadStatic]*/ private static ServiceScope current;
+    [ThreadStatic] private static ServiceScope current;
+    /// <summary>
+    /// Pointer to the global <see cref="ServiceScope"/>.  This is the 
+    /// </summary>
+    private static ServiceScope global;
+    private static bool isRunning = false;
 
     /// <summary>
     /// Pointer to the previous <see cref="ServiceScope"/>.  We need this pointer 
@@ -81,7 +108,58 @@ namespace ProjectInfinity
     /// </summary>
     private bool isDisposed = false;
 
-    private static bool isRunning= false;
+    private static ILocalisation LocalisationRequested(ServiceScope scope)
+    {
+      ILocalisation loc = new NoLocalisation();
+      scope.ReplaceService(loc);
+      return loc;
+    }
+
+    private static IMessageBroker MessageBrokerRequested(ServiceScope scope)
+    {
+      IMessageBroker messageBroker = new NoMessageBroker();
+      scope.ReplaceService(messageBroker);
+      return messageBroker;
+    }
+
+    private static ILogger LoggerRequested(ServiceScope scope)
+    {
+      ILogger logger = new NoLogger();
+      scope.ReplaceService(logger);
+      return logger;
+    }
+
+    private static ISettingsManager SettingsManagerRequested(ServiceScope scope)
+    {
+      ISettingsManager mgr = new NoSettingsManager();
+      scope.ReplaceService(mgr);
+      return mgr;
+    }
+
+    public ServiceScope(bool isFirst)
+    {
+      lock (syncObject)
+      {
+        bool updateGlobal = global == current;
+        oldInstance = current;
+        services = new Dictionary<Type, object>();
+        current = this;
+        if (updateGlobal)
+        {
+          global = this;
+        }
+        if (isFirst)
+        {
+          isRunning = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="ServiceScope"/> instance and initialize it.
+    /// </summary>
+    public ServiceScope() : this(false)
+    {}
 
     /// <summary>
     /// Gets or sets the current <see cref="ServiceScope"/>
@@ -92,7 +170,12 @@ namespace ProjectInfinity
       {
         if (current == null)
         {
-          current = new ServiceScope();
+          if (global == null)
+          {
+            new ServiceScope();
+          }
+          current = global;
+          current.services.Add(typeof(IMessageBroker), new ServiceCreatorCallback<IMessageBroker>(MessageBrokerRequested));
           current.services.Add(typeof(ILogger), new ServiceCreatorCallback<ILogger>(LoggerRequested));
           current.services.Add(typeof(ISettingsManager), new ServiceCreatorCallback<ISettingsManager>(SettingsManagerRequested));
           current.services.Add(typeof(ILocalisation), new ServiceCreatorCallback<ILocalisation>(LocalisationRequested));
@@ -104,50 +187,27 @@ namespace ProjectInfinity
 
     internal static bool IsRunning
     {
-      get
-      {
-        return isRunning;
-      }
+      get { return isRunning; }
     }
 
+    #region IDisposable Members
 
-
-    private static ILocalisation LocalisationRequested(ServiceScope scope)
-    {
-      ILocalisation loc = new NoLocalisation();
-      scope.ReplaceService<ILocalisation>(loc);
-      return loc;
-    }
-
-    private static ILogger LoggerRequested(ServiceScope scope)
-    {
-      ILogger logger = new NoLogger();
-      scope.ReplaceService<ILogger>(logger);
-      return logger;
-    }
-
-    private static ISettingsManager SettingsManagerRequested(ServiceScope scope)
-    {
-      ISettingsManager mgr = new NoSettingsManager();
-      scope.ReplaceService<ISettingsManager>(mgr);
-      return mgr;
-    }
-
-    public ServiceScope(bool isFirst)
-    {
-      oldInstance = current;
-      services = new Dictionary<Type, object>();
-      current = this;
-      if (isFirst)
-        isRunning = true;
-    }
-    
     /// <summary>
-    /// Creates a new <see cref="ServiceScope"/> instance and initialize it.
+    /// Restores the previous service context.
     /// </summary>
-    public ServiceScope() : this(false)
+    /// <remarks>
+    /// Use the using keyword to automatically call this method when the 
+    /// service context goes out of scope.
+    /// </remarks>
+    public void Dispose()
     {
+      Dispose(true);
+      //Tell the CLR not to call the finalizer, preventing the Dispose(bool)
+      //method to be called a second time when this instance is destroyed.
+      GC.SuppressFinalize(this);
     }
+
+    #endregion
 
     ~ServiceScope()
     {
@@ -173,10 +233,12 @@ namespace ProjectInfinity
     {
       Current.RemoveService<T>();
     }
+
     public static bool IsRegistered<T>()
     {
       return Current.IsServiceRegistered<T>();
     }
+
     /// <summary>
     /// Gets a service from the current <see cref="ServiceScope"/>
     /// </summary>
@@ -207,12 +269,12 @@ namespace ProjectInfinity
 
     private void AddService<T>(T service)
     {
-      services[typeof (T)]= service;
+      services[typeof(T)] = service;
     }
 
     private void RemoveService<T>()
     {
-      services.Remove(typeof (T));
+      services.Remove(typeof(T));
     }
 
     private bool IsServiceRegistered<T>()
@@ -224,17 +286,18 @@ namespace ProjectInfinity
       }
       return false;
     }
+
     private T GetService<T>(bool throwIfNotFound)
     {
-      Type type = typeof (T);
+      Type type = typeof(T);
       if (services.ContainsKey(type))
       {
         ServiceCreatorCallback<T> callback = services[type] as ServiceCreatorCallback<T>;
-        if (callback!=null)
+        if (callback != null)
         {
           return callback(this);
         }
-        return (T) services[type];
+        return (T)services[type];
       }
       if (oldInstance == null)
       {
@@ -243,14 +306,14 @@ namespace ProjectInfinity
           throw new ServiceNotFoundException(type);
         }
         object o = null;
-        return (T) (o);
+        return (T)(o);
       }
       return oldInstance.GetService<T>(throwIfNotFound);
     }
 
     #region IDisposable implementation
 
-    protected virtual void Dispose(bool alsoManaged)
+    private void Dispose(bool alsoManaged)
     {
       if (isDisposed) //already disposed?
       {
@@ -258,24 +321,14 @@ namespace ProjectInfinity
       }
       if (alsoManaged)
       {
+        bool updateGlobal = current == global;
         current = oldInstance; //set current scope to previous one
+        if (updateGlobal)
+        {
+          global = current;
+        }
       }
       isDisposed = true;
-    }
-
-    /// <summary>
-    /// Restores the previous service context.
-    /// </summary>
-    /// <remarks>
-    /// Use the using keyword to automatically call this method when the 
-    /// service context goes out of scope.
-    /// </remarks>
-    public void Dispose()
-    {
-      Dispose(true);
-      //Tell the CLR not to call the finalizer, preventing the Dispose(bool)
-      //method to be called a second time when this instance is destroyed.
-      GC.SuppressFinalize(this);
     }
 
     #endregion
@@ -284,6 +337,13 @@ namespace ProjectInfinity
     {
       RemoveService<T>();
       AddService<T>(service);
+    }
+
+    internal static void Reset()
+    {
+      current = null;
+      global = null;
+      isRunning = false;
     }
   }
 }

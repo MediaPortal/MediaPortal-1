@@ -3,7 +3,6 @@ using NUnit.Framework;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Plugins;
-using ProjectInfinity.Tests.Mocks;
 using ProjectInfinity.Tests.Plugins.Mocks;
 
 namespace ProjectInfinity.Tests.Plugins
@@ -11,17 +10,11 @@ namespace ProjectInfinity.Tests.Plugins
   [TestFixture]
   public class ReflectionPluginManagerTest
   {
-    [TestFixtureSetUp]
-    public void Setup()
-    {
-      ServiceScope.Add<IMessageBroker>(new MessageBroker());
-      ServiceScope.Add<ILogger>(new NoLogger());
-    }
 
     [TestFixtureTearDown]
     public void TearDown()
     {
-      ServiceScope.Current.Dispose();
+      ServiceScope.Reset();
     }
 
     /// <summary>

@@ -3,7 +3,6 @@ using NUnit.Framework;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Tests.Messaging.Mocks;
-using ProjectInfinity.Tests.Mocks;
 
 namespace ProjectInfinity.Tests.Messaging
 {

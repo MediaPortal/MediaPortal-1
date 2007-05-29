@@ -36,6 +36,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\ProjectInfinity.Core\Localisation\NoLocalisation.cs">
+      <Link>Services\Mocks\NoLocalisation.cs</Link>
+    </Compile>
+    <Compile Include="..\ProjectInfinity.Core\Logging\NoLogger.cs">
+      <Link>Services\Mocks\NoLogger.cs</Link>
+    </Compile>
+    <Compile Include="..\ProjectInfinity.Core\Messaging\NoMessageBroker.cs">
+      <Link>Services\Mocks\NoMessageBroker.cs</Link>
+    </Compile>
+    <Compile Include="..\ProjectInfinity.Core\ServiceCreatorCallback.cs">
+      <Link>Services\ServiceCreatorCallback.cs</Link>
+    </Compile>
+    <Compile Include="..\ProjectInfinity.Core\ServiceScope.cs">
+      <Link>Services\ServiceScope.cs</Link>
+    </Compile>
+    <Compile Include="..\ProjectInfinity.Core\Settings\NoSettingsManager.cs">
+      <Link>Services\Mocks\NoSettingsManager.cs</Link>
+    </Compile>
     <Compile Include="Configuration\ConfigurationTests.cs" />
     <Compile Include="Messaging\MessageBrokerTest.cs" />
     <Compile Include="Messaging\Mocks\InvalidPublisher.cs" />
@@ -43,7 +61,6 @@
     <Compile Include="Messaging\Mocks\MockMessages.cs" />
     <Compile Include="Messaging\Mocks\Publisher.cs" />
     <Compile Include="Messaging\Mocks\Subscriber.cs" />
-    <Compile Include="Mocks\NoLogger.cs" />
     <Compile Include="Plugins\Mocks\DummyPlugin.cs" />
     <Compile Include="Plugins\Mocks\TestReflectionPluginManager.cs" />
     <Compile Include="Plugins\ReflectionPluginManagerTest.cs" />
@@ -63,6 +80,9 @@
       <Project>{4C45C46E-2ED2-4801-B3C3-FC2560E9FFE0}</Project>
       <Name>ProjectInfinity.Services</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mocks\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

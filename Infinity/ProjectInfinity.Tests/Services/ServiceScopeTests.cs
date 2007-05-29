@@ -17,7 +17,7 @@ namespace ProjectInfinity.Tests.Services
     [SetUp]
     public void Reset()
     {
-      ServiceScope.Current = null;
+      ServiceScope.Reset();
     }
 
     /// <summary>

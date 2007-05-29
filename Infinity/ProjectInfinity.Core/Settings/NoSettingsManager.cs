@@ -3,6 +3,8 @@ namespace ProjectInfinity.Settings
   /// <summary>
   /// Default <see cref="ISettingsManager"/> implementation that does absolutely nothing
   /// </summary>
+  /// <remarks>
+  /// </remarks>
   internal class NoSettingsManager : ISettingsManager
   {
     #region ISettingsManager Members

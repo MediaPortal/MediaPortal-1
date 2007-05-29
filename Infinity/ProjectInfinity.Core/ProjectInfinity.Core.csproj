@@ -53,6 +53,7 @@
     <Compile Include="Messaging\CancelMessageHandler.cs" />
     <Compile Include="Messaging\Message.cs" />
     <Compile Include="Messaging\MessageHandler.cs" />
+    <Compile Include="Messaging\NoMessageBroker.cs" />
     <Compile Include="MusicMessages.cs" />
     <Compile Include="Navigation\INavigationService.cs" />
     <Compile Include="Players\IPlayer.cs" />
