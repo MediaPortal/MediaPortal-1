@@ -78,6 +78,8 @@ namespace MediaPortal.GUI.TV
       OSD_CONTRASTLABEL = 753,
       OSD_GAMMA = 706,
       OSD_GAMMALABEL = 754,
+      OSD_SUBTITLE_DELAY = 800,
+      OSD_SUBTITLE_DELAY_LABEL = 850,
       OSD_SUBTITLE_ONOFF = 801,
       OSD_SUBTITLE_LIST = 802,
       OSD_TIMEINFO = 100,
@@ -538,8 +540,12 @@ namespace MediaPortal.GUI.TV
                 //SetSliderValue(-10.0f, 10.0f, g_application.m_pPlayer.GetSubTitleDelay(), Controls.OSD_SUBTITLE_DELAY);
                 SetCheckmarkValue(g_Player.EnableSubtitle, (int)Controls.OSD_SUBTITLE_ONOFF);
                 // show the controls on this sub menu
+                ShowControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY);
+                ShowControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY_LABEL);
                 ShowControl(GetID, (int)Controls.OSD_SUBTITLE_ONOFF);
                 ShowControl(GetID, (int)Controls.OSD_SUBTITLE_LIST);
+
+                FocusControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY, 0);	// set focus to the first control in our group
                 PopulateSubTitles();	// populate the list control with subtitles for this video
               }
             }
@@ -752,6 +758,8 @@ namespace MediaPortal.GUI.TV
       HideControl(GetID, (int)Controls.OSD_BOOKMARKS_LIST);
       HideControl(GetID, (int)Controls.OSD_BOOKMARKS_LIST_LABEL);
       HideControl(GetID, (int)Controls.OSD_CLEARBOOKMARKS);
+      HideControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY);
+      HideControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY_LABEL);
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_ONOFF);
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_LIST);
 
@@ -943,6 +951,17 @@ namespace MediaPortal.GUI.TV
                     VideoDatabase.ClearBookMarksOfMovie(strMovie);					// empty the bookmarks table for this movie
                     m_iCurrentBookmark=0;									// reset current bookmark
                     PopulateBookmarks();									// refresh our list control
+                  }
+                  break;
+
+                  case Controls.OSD_SUBTITLE_DELAY:
+                  {
+                    GUISliderControl pControl=(GUISliderControl)GetControl(iControlID);
+                    if (pControl)
+                    {
+                      // Set the subtitle delay
+                      g_application.m_pPlayer.SetSubTittleDelay(pControl.GetFloatValue());
+                    }
                   }
                   break;
         */
@@ -1147,6 +1166,8 @@ namespace MediaPortal.GUI.TV
       HideControl(GetID, (int)Controls.OSD_BOOKMARKS_LIST);
       HideControl(GetID, (int)Controls.OSD_BOOKMARKS_LIST_LABEL);
       HideControl(GetID, (int)Controls.OSD_CLEARBOOKMARKS);
+      HideControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY);
+      HideControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY_LABEL);
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_ONOFF);
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_LIST);
 
