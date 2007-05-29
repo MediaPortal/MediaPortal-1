@@ -1,7 +1,7 @@
-#region Copyright (C) 2006 Team MediaPortal
+#region Copyright (C) 2006-2007 Team MediaPortal
 
 /* 
- *	Copyright (C) 2006 Team MediaPortal
+ *	Copyright (C) 2006-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -295,14 +295,25 @@ namespace SetupTv.Sections
 
       foreach (TreeNode channel in treeViewChannels.Nodes)
       {
+        Log.Debug("TvMovieSetup: Processing channel {0}", channel.Text);
         foreach (TreeNode station in channel.Nodes)
-        {
+        {          
           ChannelInfo channelInfo = (ChannelInfo)station.Tag;
-          TvMovieMapping mapping = new TvMovieMapping(layer.GetChannelByName(channel.Text).IdChannel,
-            channelInfo.Name, channelInfo.Start, channelInfo.End);
+          Log.Debug("TvMovieSetup: Processing channelInfo {0}", channelInfo.Name);
+          TvMovieMapping mapping = null;
+          try
+          {
+            mapping = new TvMovieMapping(layer.GetChannelByName(channel.Text).IdChannel,
+              channelInfo.Name, channelInfo.Start, channelInfo.End);
+          }
+          catch (Exception exm)
+          {
+            Log.Error("TvMovieSetup: Error on new TvMovieMapping for channel {0} - {1}", channel.Text, exm.Message);
+          }
           //Log.Write("TvMovieSetup: SaveMapping - new mapping for {0}/{1}", channel.Text, channelInfo.Name);
           try
           {
+            Log.Debug("TvMovieSetup: Persisting TvMovieMapping for channel {0}", channel.Text);
             mapping.Persist();
           }
           catch (Exception ex)
