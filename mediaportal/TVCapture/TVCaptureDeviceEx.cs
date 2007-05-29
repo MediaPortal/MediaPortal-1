@@ -953,6 +953,7 @@ namespace MediaPortal.TV.Recording
       _currentGraph.StopRecording();
 
       _recordedTvObject.End = MediaPortal.Util.Utils.datetolong(DateTime.Now);
+      
       TVDatabase.AddRecordedTV(_recordedTvObject);
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
