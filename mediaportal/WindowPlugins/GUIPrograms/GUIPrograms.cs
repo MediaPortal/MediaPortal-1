@@ -202,7 +202,7 @@ namespace WindowPlugins.GUIPrograms
         }
         xmlwriter.SetValue("myprograms", "lastAppID", mapSettings.LastAppID.ToString());
         //        xmlwriter.SetValue("myprograms", "lastViewLevel", mapSettings.LastViewLevel.ToString());
-        xmlwriter.SetValue("myprograms", "lastViewLevel", ProgramSettings.viewHandler.CurrentLevel);
+        xmlwriter.SetValue("myprograms", "lastViewLevel", ViewHandler.CurrentLevel);
         xmlwriter.SetValue("myprograms", "sortby", mapSettings.SortBy);
         xmlwriter.SetValueAsBool("myprograms", "sortasc", mapSettings.SortAscending);
         xmlwriter.SetValueAsBool("myprograms", "overviewvisible", mapSettings.OverviewVisible);
@@ -347,7 +347,7 @@ namespace WindowPlugins.GUIPrograms
         lastFilepath = lastApp.DefaultFilepath();
         lastApp.CurrentSortIndex = mapSettings.SortBy;
         lastApp.CurrentSortIsAscending = mapSettings.SortAscending;
-        ProgramSettings.viewHandler.CurrentLevel = mapSettings.LastViewLevel;
+        ViewHandler.CurrentLevel = mapSettings.LastViewLevel;
       }
       else
       {
@@ -547,9 +547,13 @@ namespace WindowPlugins.GUIPrograms
 
     protected override void OnPageLoad()
     {
-      string view = ProgramState.View;
-      ProgramSettings.viewHandler.CurrentView = view;
       base.OnPageLoad();
+
+      string view = ProgramState.View;
+      if (view == String.Empty)
+        view = ((ViewDefinition)ViewHandler.Views[0]).Name;
+      ViewHandler.CurrentView = view;
+
       InitMyPrograms();
     }
 
@@ -662,7 +666,7 @@ namespace WindowPlugins.GUIPrograms
       dlg.Reset();
       dlg.SetHeading(499); // Actions
       dlg.Add(GUILocalizeStrings.Get(100000 + GetID)); // Files
-      foreach (ViewDefinition view in ProgramSettings.viewHandler.Views)
+      foreach (ViewDefinition view in ViewHandler.Views)
       {
         dlg.Add(view.LocalizedName);
       }
@@ -676,7 +680,7 @@ namespace WindowPlugins.GUIPrograms
         int nNewWindow = (int) Window.WINDOW_FILES;
         ProgramState.StartWindow = nNewWindow;
         ProgramState.View = "";
-        ProgramSettings.viewHandler.CurrentView = null;
+        ViewHandler.CurrentView = null;
         if (nNewWindow != GetID)
         {
           GUIWindowManager.ReplaceWindow(nNewWindow);
@@ -684,9 +688,9 @@ namespace WindowPlugins.GUIPrograms
       }
       else
       {
-        ViewDefinition selectedView = ProgramSettings.viewHandler.Views[dlg.SelectedLabel - 1];
-        ProgramSettings.viewHandler.CurrentView = selectedView.Name;
+        ViewDefinition selectedView = ViewHandler.Views[dlg.SelectedLabel - 1];
         ProgramState.View = selectedView.Name;
+        ViewHandler.CurrentView = selectedView.Name;
         int nNewWindow = (int)GUIWindow.Window.WINDOW_FILES;
         if (GetID != nNewWindow)
         {
@@ -925,15 +929,15 @@ namespace WindowPlugins.GUIPrograms
 
     void UpdateButtonStates()
     {
-      GUIPropertyManager.SetProperty("#view", ProgramSettings.viewHandler.LocalizedCurrentView);
+      GUIPropertyManager.SetProperty("#view", ViewHandler.LocalizedCurrentView);
       btnRefresh.IsVisible = RefreshButtonVisible();
 
       // display apptitle if available.....
       if (lastApp != null)
       {
-        if ((ProgramSettings.viewHandler.CurrentView != null) && (ProgramSettings.viewHandler.MaxLevels > 0))
+        if ((ViewHandler.CurrentView != null) && (ViewHandler.MaxLevels > 0))
         {
-          GUIPropertyManager.SetProperty("#curheader", ProgramSettings.viewHandler.LocalizedCurrentView);
+          GUIPropertyManager.SetProperty("#curheader", ViewHandler.LocalizedCurrentView);
         }
         else
         {
@@ -1104,6 +1108,11 @@ namespace WindowPlugins.GUIPrograms
       {
         return totalFiles;
       }
+      if (ProgramState.View != lastApp.CurrentView)
+      {
+        lastApp.LoadFiles();
+        lastApp.CurrentView = ProgramState.View;
+      }
       totalFiles = lastApp.DisplayFiles(this.lastFilepath, facadeView);
       return (totalFiles);
     }
@@ -1163,13 +1172,13 @@ namespace WindowPlugins.GUIPrograms
 
     void SaveItemIndex(string value, AppItem app, string pathSub)
     {
-      string key = BuildHistoryKey(app, ProgramSettings.viewHandler.CurrentLevel, pathSub);
+      string key = BuildHistoryKey(app, ViewHandler.CurrentLevel, pathSub);
       itemHistory.Set(value, key);
     }
 
     void RestoreItemIndex(AppItem app, string pathSub)
     {
-      string key = BuildHistoryKey(app, ProgramSettings.viewHandler.CurrentLevel, pathSub);
+      string key = BuildHistoryKey(app, ViewHandler.CurrentLevel, pathSub);
       string itemHist = itemHistory.Get(key);
       if (itemHist != "")
       {
@@ -1234,7 +1243,7 @@ namespace WindowPlugins.GUIPrograms
             lastApp = candidate;
             mapSettings.LastAppID = lastApp.AppID;
             lastFilepath = lastApp.DefaultFilepath();
-            ProgramSettings.viewHandler.CurrentLevel = 0;
+            ViewHandler.CurrentLevel = 0;
           }
         }
         else if (item.MusicTag is FileItem)
@@ -1281,14 +1290,14 @@ namespace WindowPlugins.GUIPrograms
         }
         else
         {
-          if (ProgramSettings.viewHandler.RemoveFilterItem())
+          if (ViewHandler.RemoveFilterItem())
           {
             ProgramFilterItem curFilter;
             // force reload, this will load the next filter-level.....
             lastApp.LoadFiles();
             // auto-remove filters if there is only ONE EMPTY Filteritem
             // displaying
-            bool doAutoRemove = ((lastApp.Files.Count == 1) && (ProgramSettings.viewHandler.IsFilterQuery));
+            bool doAutoRemove = ((lastApp.Files.Count == 1) && (ViewHandler.IsFilterQuery));
             while (doAutoRemove)
             {
               doAutoRemove = false;
@@ -1297,10 +1306,10 @@ namespace WindowPlugins.GUIPrograms
                 curFilter = lastApp.Files[0] as ProgramFilterItem;
                 if ((curFilter.Title == "") && (curFilter.Title2 == ""))
                 {
-                  if (ProgramSettings.viewHandler.RemoveFilterItem())
+                  if (ViewHandler.RemoveFilterItem())
                   {
                     lastApp.LoadFiles();
-                    doAutoRemove = ((lastApp.Files.Count == 1) && (ProgramSettings.viewHandler.IsFilterQuery));
+                    doAutoRemove = ((lastApp.Files.Count == 1) && (ViewHandler.IsFilterQuery));
                   }
                 }
               }
@@ -1341,14 +1350,14 @@ namespace WindowPlugins.GUIPrograms
     {
       ProgramFilterItem curFilter;
       SaveItemIndex(GetSelectedItemNo().ToString(), lastApp, lastFilepath);
-      ProgramSettings.viewHandler.AddFilterItem(item.MusicTag as ProgramFilterItem);
+      ViewHandler.AddFilterItem(item.MusicTag as ProgramFilterItem);
       if (lastApp != null)
       {
         // force reload, this will load the next filter-level.....
         lastApp.LoadFiles();
         // check if the next filter is only displaying ONE EMPTY item
         // if yes, autoselect this filteritem
-        bool doAutoSelect = ((lastApp.Files.Count == 1) && (ProgramSettings.viewHandler.IsFilterQuery));
+        bool doAutoSelect = ((lastApp.Files.Count == 1) && (ViewHandler.IsFilterQuery));
         while (doAutoSelect)
         {
           doAutoSelect = false;
@@ -1357,9 +1366,9 @@ namespace WindowPlugins.GUIPrograms
             curFilter = lastApp.Files[0] as ProgramFilterItem;
             if ((curFilter.Title == "") && (curFilter.Title2 == ""))
             {
-              ProgramSettings.viewHandler.AddFilterItem(curFilter);
+              ViewHandler.AddFilterItem(curFilter);
               lastApp.LoadFiles();
-              doAutoSelect = ((lastApp.Files.Count == 1) && (ProgramSettings.viewHandler.IsFilterQuery));
+              doAutoSelect = ((lastApp.Files.Count == 1) && (ViewHandler.IsFilterQuery));
             }
           }
         }

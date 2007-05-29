@@ -94,6 +94,8 @@ namespace ProgramsDatabase
     public bool linksAreLoaded = false;
     protected FilelinkList fileLinks = null;
 
+    string _currentView = "";
+
     // event: read new file
     public delegate void RefreshInfoEventHandler(string curLine);
 
@@ -1289,6 +1291,12 @@ namespace ProgramsDatabase
       {
         this.ValidExtensions = fileExtensioneNode.InnerText;
       }
+    }
+
+    public string CurrentView
+    {
+      get { return _currentView; }
+      set { _currentView = value; }
     }
   }
 }
