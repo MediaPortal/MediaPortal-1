@@ -234,7 +234,7 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.ScaleVertical(ref ioffy);
           GUIGraphicsContext.ScaleHorizontal(ref ixoff);
           string wszText1 = String.Format("{0}", strLabel1);
-          int dMaxWidth = _width - ixoff;
+          int dMaxWidth = _width + ixoff;
           float x = dwPosX;
           if (strLabel2.Length > 0)
           {
