@@ -433,27 +433,27 @@ namespace MediaPortal.Video.Database
       // (still includes the " dvd" etc. strings) is send to the IMDB causing wrong lookups
       // By changing the line, everything is working MUCH better now ;-)
 
-      RemoveAllAfter(ref strTmp, " divx");
-      RemoveAllAfter(ref strTmp, " xvid");
-      RemoveAllAfter(ref strTmp, " dvd");
-      //RemoveAllAfter(ref strTmp," dvdrip"); already done by " dvd" i think
-      RemoveAllAfter(ref strTmp, " svcd");
-      RemoveAllAfter(ref strTmp, " mvcd");
-      RemoveAllAfter(ref strTmp, " vcd");
-      RemoveAllAfter(ref strTmp, " cd");
-      RemoveAllAfter(ref strTmp, " ac3");
-      RemoveAllAfter(ref strTmp, " ogg");
-      RemoveAllAfter(ref strTmp, " ogm");
-      RemoveAllAfter(ref strTmp, " internal");
-      RemoveAllAfter(ref strTmp, " fragment");
-      RemoveAllAfter(ref strTmp, " proper");
-      RemoveAllAfter(ref strTmp, " limited");
-      RemoveAllAfter(ref strTmp, " rerip");
+      RemoveAllAfter(ref strTmp, "divx");
+      RemoveAllAfter(ref strTmp, "xvid");
+      RemoveAllAfter(ref strTmp, "dvd");
+      RemoveAllAfter(ref strTmp," dvdrip");
+      RemoveAllAfter(ref strTmp, "svcd");
+      RemoveAllAfter(ref strTmp, "mvcd");
+      RemoveAllAfter(ref strTmp, "vcd");
+      RemoveAllAfter(ref strTmp, "cd");
+      RemoveAllAfter(ref strTmp, "ac3");
+      RemoveAllAfter(ref strTmp, "ogg");
+      RemoveAllAfter(ref strTmp, "ogm");
+      RemoveAllAfter(ref strTmp, "internal");
+      RemoveAllAfter(ref strTmp, "fragment");
+      RemoveAllAfter(ref strTmp, "proper");
+      RemoveAllAfter(ref strTmp, "limited");
+      RemoveAllAfter(ref strTmp, "rerip");
 
       RemoveAllAfter(ref strTmp, "+divx");
       RemoveAllAfter(ref strTmp, "+xvid");
       RemoveAllAfter(ref strTmp, "+dvd");
-      //RemoveAllAfter(ref strTmp,"+dvdrip"); already done by " dvd" i think
+      RemoveAllAfter(ref strTmp,"+dvdrip");
       RemoveAllAfter(ref strTmp, "+svcd");
       RemoveAllAfter(ref strTmp, "+mvcd");
       RemoveAllAfter(ref strTmp, "+vcd");

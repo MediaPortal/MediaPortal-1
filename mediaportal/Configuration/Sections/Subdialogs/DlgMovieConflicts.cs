@@ -153,14 +153,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxTitle
       // 
-      this.textBoxTitle.Location = new System.Drawing.Point(72, 240);
+      this.textBoxTitle.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxTitle.Location = new System.Drawing.Point(77, 238);
       this.textBoxTitle.Name = "textBoxTitle";
       this.textBoxTitle.Size = new System.Drawing.Size(192, 20);
       this.textBoxTitle.TabIndex = 6;
       // 
       // buttonFind
       // 
-      this.buttonFind.Location = new System.Drawing.Point(288, 239);
+      this.buttonFind.Location = new System.Drawing.Point(312, 235);
       this.buttonFind.Name = "buttonFind";
       this.buttonFind.Size = new System.Drawing.Size(40, 23);
       this.buttonFind.TabIndex = 7;
@@ -215,7 +216,7 @@ namespace MediaPortal.Configuration.Sections
       movieDetails.Path = path;
       movieDetails.File = filename;
       movieDetails.SearchString = textBoxTitle.Text;
-      if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false))
+      if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false, false))
       {
         if (movieDetails != null)
         {
@@ -436,5 +437,6 @@ namespace MediaPortal.Configuration.Sections
         listView1.SelectedIndices.Add(0);
       }
     }
+
   }
 }

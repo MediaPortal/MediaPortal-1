@@ -190,7 +190,7 @@ namespace MediaPortal.GUI.Video
       base.OnClicked(controlId, control, actionType);
       if (control == btnRefresh)
       {
-        if (IMDBFetcher.RefreshIMDB(this, ref currentMovie, false))
+        if (IMDBFetcher.RefreshIMDB(this, ref currentMovie, false, false))
         {
           if ((imageSearchThread != null) && (imageSearchThread.IsAlive))
           {

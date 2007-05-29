@@ -117,6 +117,7 @@ namespace MediaPortal.GUI.Video
     int scanningFileTotal = 1;
     bool _isFuzzyMatching = false;
     bool _scanSkipExisting = false;
+    bool _getActors = true;
     bool _markWatchedFiles = true;
     ArrayList conflictFiles = new ArrayList();
 
@@ -191,6 +192,7 @@ namespace MediaPortal.GUI.Video
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _scanSkipExisting = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
+        _getActors = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
         _markWatchedFiles = xmlreader.GetValueAsBool("movies", "markwatched", true);
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         fileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
@@ -1020,7 +1022,7 @@ namespace MediaPortal.GUI.Video
           movieDetails.Path = strFile.Substring(0, strFile.IndexOf(movieDetails.File) - 1);
         }
         Log.Info("GUIVideoFiles: IMDB search: {0}, file:{1}, path:{2}", movieDetails.SearchString, movieDetails.File, movieDetails.Path);
-        if (!IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false))
+        if (!IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false, _getActors))
         {
           return;
         }
@@ -1565,7 +1567,7 @@ namespace MediaPortal.GUI.Video
           }
           ArrayList availablePaths = new ArrayList();
           availablePaths.Add(item.Path);
-          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting);
+          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors);
           LoadDirectory(_currentFolder);
           break;
 
@@ -2410,7 +2412,7 @@ namespace MediaPortal.GUI.Video
             if (searchText != string.Empty)
             {
               movieDetails.SearchString = searchText;
-              if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false))
+              if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false, _getActors))
               {
                 if (movieDetails != null)
                 {

@@ -232,7 +232,8 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             lblHeading.Label = string.Empty;
-            lblGFXHeading.Label = string.Empty;
+            if (lblGFXHeading != null)
+              lblGFXHeading.Label = string.Empty;
 
             base.OnMessage(message);
             m_bRunning = false;            

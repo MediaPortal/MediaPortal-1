@@ -44,6 +44,7 @@ namespace MediaPortal.Video.Database
     private Thread actorsThread;
     private IMDB.IProgress progress;
     private bool disableCancel = false;
+    private bool getActors;
 
     static IMDBFetcher()
     {
@@ -162,7 +163,11 @@ namespace MediaPortal.Video.Database
           MediaPortal.Util.Utils.FileDelete(coverArt);
           line1 = GUILocalizeStrings.Get(1009);
           OnProgress(line1, movieDetails.Title, string.Empty, -1);
-          _fetchActorsInMovie();
+         //Only get actors if we really want to.
+          if (getActors)
+          {
+            _fetchActorsInMovie();
+          }
           OnDisableCancel(this);
           DownloadCoverArt(Thumbs.MovieTitle, movieDetails.ThumbURL, movieDetails.Title);
           VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
@@ -559,7 +564,7 @@ namespace MediaPortal.Video.Database
     /// <summary>
     /// Download IMDB info for a movie
     /// </summary>
-    public static bool RefreshIMDB(IMDB.IProgress progress, ref IMDBMovie currentMovie, bool fuzzyMatching)
+    public static bool RefreshIMDB(IMDB.IProgress progress, ref IMDBMovie currentMovie, bool fuzzyMatching, bool getActors)
     {
       Log.Info("Refreshing IMDB for {0}-{1}", currentMovie.Title, currentMovie.SearchString);
       string strMovieName = currentMovie.SearchString;
@@ -625,6 +630,7 @@ namespace MediaPortal.Video.Database
         if (!Util.Win32API.IsConnectedToInternet()) return false;
         IMDBFetcher fetcher = new IMDBFetcher(progress);
         fetcher.Movie = currentMovie;
+        fetcher.getActors = getActors;
         int selectedMovie = -1;
         do
         {
@@ -745,7 +751,7 @@ namespace MediaPortal.Video.Database
     /// <summary>
     /// Download IMDB info for all movies in a collection of paths
     /// </summary>
-    public static bool ScanIMDB(IMDB.IProgress progress, ArrayList paths, bool fuzzyMatching, bool skipExisting)
+    public static bool ScanIMDB(IMDB.IProgress progress, ArrayList paths, bool fuzzyMatching, bool skipExisting, bool getActors)
     {
       bool success = true;
       ArrayList availableFiles = new ArrayList();
@@ -775,7 +781,7 @@ namespace MediaPortal.Video.Database
           MediaPortal.Util.Utils.Split(file, out path, out filename);
           movieDetails.Path = path;
           movieDetails.File = filename;
-          GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching);
+          GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching, getActors);
         }
         if ((progress != null) && (!progress.OnScanIterated(count++)))
         {
@@ -833,7 +839,7 @@ namespace MediaPortal.Video.Database
         // Ignore
       }
     }
-    public static bool GetInfoFromIMDB(IMDB.IProgress progress, ref IMDBMovie movieDetails, bool isFuzzyMatching)
+    public static bool GetInfoFromIMDB(IMDB.IProgress progress, ref IMDBMovie movieDetails, bool isFuzzyMatching, bool getActors)
     {
       string file, path, filename;
       path = movieDetails.Path;
@@ -881,7 +887,7 @@ namespace MediaPortal.Video.Database
         }
         movieDetails.ID = id;
       }
-      if (IMDBFetcher.RefreshIMDB(progress, ref movieDetails, isFuzzyMatching))
+      if (IMDBFetcher.RefreshIMDB(progress, ref movieDetails, isFuzzyMatching, getActors))
       {
         if (movieDetails != null)
         {

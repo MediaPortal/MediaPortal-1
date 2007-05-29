@@ -206,6 +206,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPTextBox tbLocalImage;
     private CheckBox skipCheckBox;
+    private CheckBox actorsCheckBox;
     ArrayList conflictFiles = new ArrayList();
 
     public MovieDatabase()
@@ -389,6 +390,7 @@ namespace MediaPortal.Configuration.Sections
       this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxPictureURL = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
+      this.actorsCheckBox = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage8.SuspendLayout();
@@ -414,6 +416,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.actorsCheckBox);
       this.groupBox1.Controls.Add(this.skipCheckBox);
       this.groupBox1.Controls.Add(this.mpButton2);
       this.groupBox1.Controls.Add(this.startButton);
@@ -432,7 +435,7 @@ namespace MediaPortal.Configuration.Sections
       this.skipCheckBox.AutoSize = true;
       this.skipCheckBox.Location = new System.Drawing.Point(16, 140);
       this.skipCheckBox.Name = "skipCheckBox";
-      this.skipCheckBox.Size = new System.Drawing.Size(165, 17);
+      this.skipCheckBox.Size = new System.Drawing.Size(163, 17);
       this.skipCheckBox.TabIndex = 1;
       this.skipCheckBox.Text = "Skip files already in database";
       this.skipCheckBox.UseVisualStyleBackColor = true;
@@ -467,7 +470,7 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListBox.CheckOnClick = true;
       this.sharesListBox.Location = new System.Drawing.Point(16, 24);
       this.sharesListBox.Name = "sharesListBox";
-      this.sharesListBox.Size = new System.Drawing.Size(416, 100);
+      this.sharesListBox.Size = new System.Drawing.Size(416, 94);
       this.sharesListBox.TabIndex = 0;
       this.sharesListBox.SelectedIndexChanged += new System.EventHandler(this.sharesListBox_SelectedIndexChanged);
       this.sharesListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListBox_ItemCheck);
@@ -527,7 +530,7 @@ namespace MediaPortal.Configuration.Sections
       this._fuzzyMatchingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this._fuzzyMatchingCheckBox.Location = new System.Drawing.Point(16, 20);
       this._fuzzyMatchingCheckBox.Name = "_fuzzyMatchingCheckBox";
-      this._fuzzyMatchingCheckBox.Size = new System.Drawing.Size(210, 17);
+      this._fuzzyMatchingCheckBox.Size = new System.Drawing.Size(205, 17);
       this._fuzzyMatchingCheckBox.TabIndex = 0;
       this._fuzzyMatchingCheckBox.Text = "Automatically select the nearest match";
       this._fuzzyMatchingCheckBox.UseVisualStyleBackColor = true;
@@ -560,7 +563,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel1.AutoSize = true;
       this.mpLabel1.Location = new System.Drawing.Point(13, 198);
       this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(107, 13);
+      this.mpLabel1.Size = new System.Drawing.Size(105, 13);
       this.mpLabel1.TabIndex = 4;
       this.mpLabel1.Text = "Available databases:";
       // 
@@ -631,7 +634,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewTextBox.BorderColor = System.Drawing.Color.Empty;
       this.listViewTextBox.Location = new System.Drawing.Point(136, 76);
       this.listViewTextBox.Name = "listViewTextBox";
-      this.listViewTextBox.Size = new System.Drawing.Size(94, 21);
+      this.listViewTextBox.Size = new System.Drawing.Size(94, 20);
       this.listViewTextBox.TabIndex = 8;
       this.listViewTextBox.Visible = false;
       this.listViewTextBox.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.listViewTextBox_KeyPress);
@@ -735,7 +738,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbDiscNr.BorderColor = System.Drawing.Color.Empty;
       this.tbDiscNr.Location = new System.Drawing.Point(88, 309);
       this.tbDiscNr.Name = "tbDiscNr";
-      this.tbDiscNr.Size = new System.Drawing.Size(96, 21);
+      this.tbDiscNr.Size = new System.Drawing.Size(96, 20);
       this.tbDiscNr.TabIndex = 30;
       // 
       // label2
@@ -776,7 +779,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbWritingCredits.BorderColor = System.Drawing.Color.Empty;
       this.tbWritingCredits.Location = new System.Drawing.Point(88, 140);
       this.tbWritingCredits.Name = "tbWritingCredits";
-      this.tbWritingCredits.Size = new System.Drawing.Size(336, 21);
+      this.tbWritingCredits.Size = new System.Drawing.Size(336, 20);
       this.tbWritingCredits.TabIndex = 12;
       // 
       // label18
@@ -794,7 +797,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbPlotOutline.BorderColor = System.Drawing.Color.Empty;
       this.tbPlotOutline.Location = new System.Drawing.Point(88, 68);
       this.tbPlotOutline.Name = "tbPlotOutline";
-      this.tbPlotOutline.Size = new System.Drawing.Size(336, 21);
+      this.tbPlotOutline.Size = new System.Drawing.Size(336, 20);
       this.tbPlotOutline.TabIndex = 6;
       // 
       // label17
@@ -811,7 +814,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbVotes.BorderColor = System.Drawing.Color.Empty;
       this.tbVotes.Location = new System.Drawing.Point(88, 276);
       this.tbVotes.Name = "tbVotes";
-      this.tbVotes.Size = new System.Drawing.Size(96, 21);
+      this.tbVotes.Size = new System.Drawing.Size(96, 20);
       this.tbVotes.TabIndex = 24;
       // 
       // label16
@@ -852,7 +855,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbTagline.BorderColor = System.Drawing.Color.Empty;
       this.tbTagline.Location = new System.Drawing.Point(88, 92);
       this.tbTagline.Name = "tbTagline";
-      this.tbTagline.Size = new System.Drawing.Size(336, 21);
+      this.tbTagline.Size = new System.Drawing.Size(336, 20);
       this.tbTagline.TabIndex = 8;
       // 
       // label4
@@ -869,10 +872,10 @@ namespace MediaPortal.Configuration.Sections
       this.cbWatched.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cbWatched.AutoSize = true;
       this.cbWatched.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbWatched.Location = new System.Drawing.Point(244, 279);
+      this.cbWatched.Location = new System.Drawing.Point(243, 279);
       this.cbWatched.Name = "cbWatched";
       this.cbWatched.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-      this.cbWatched.Size = new System.Drawing.Size(97, 17);
+      this.cbWatched.Size = new System.Drawing.Size(98, 17);
       this.cbWatched.TabIndex = 25;
       this.cbWatched.Text = "Watched          ";
       this.cbWatched.UseVisualStyleBackColor = true;
@@ -924,7 +927,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbMPAARating.BorderColor = System.Drawing.Color.Empty;
       this.tbMPAARating.Location = new System.Drawing.Point(328, 252);
       this.tbMPAARating.Name = "tbMPAARating";
-      this.tbMPAARating.Size = new System.Drawing.Size(96, 21);
+      this.tbMPAARating.Size = new System.Drawing.Size(96, 20);
       this.tbMPAARating.TabIndex = 22;
       // 
       // label11
@@ -951,7 +954,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbYear.BorderColor = System.Drawing.Color.Empty;
       this.tbYear.Location = new System.Drawing.Point(88, 228);
       this.tbYear.Name = "tbYear";
-      this.tbYear.Size = new System.Drawing.Size(96, 21);
+      this.tbYear.Size = new System.Drawing.Size(96, 20);
       this.tbYear.TabIndex = 16;
       // 
       // label10
@@ -969,7 +972,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbDirector.BorderColor = System.Drawing.Color.Empty;
       this.tbDirector.Location = new System.Drawing.Point(88, 116);
       this.tbDirector.Name = "tbDirector";
-      this.tbDirector.Size = new System.Drawing.Size(336, 21);
+      this.tbDirector.Size = new System.Drawing.Size(336, 20);
       this.tbDirector.TabIndex = 10;
       // 
       // label9
@@ -986,7 +989,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbDuration.BorderColor = System.Drawing.Color.Empty;
       this.tbDuration.Location = new System.Drawing.Point(88, 252);
       this.tbDuration.Name = "tbDuration";
-      this.tbDuration.Size = new System.Drawing.Size(96, 21);
+      this.tbDuration.Size = new System.Drawing.Size(96, 20);
       this.tbDuration.TabIndex = 20;
       // 
       // label1
@@ -1012,7 +1015,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbRating.BorderColor = System.Drawing.Color.Empty;
       this.tbRating.Location = new System.Drawing.Point(328, 228);
       this.tbRating.Name = "tbRating";
-      this.tbRating.Size = new System.Drawing.Size(96, 21);
+      this.tbRating.Size = new System.Drawing.Size(96, 20);
       this.tbRating.TabIndex = 18;
       // 
       // tbTitle
@@ -1022,7 +1025,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbTitle.BorderColor = System.Drawing.Color.Empty;
       this.tbTitle.Location = new System.Drawing.Point(88, 44);
       this.tbTitle.Name = "tbTitle";
-      this.tbTitle.Size = new System.Drawing.Size(256, 21);
+      this.tbTitle.Size = new System.Drawing.Size(256, 20);
       this.tbTitle.TabIndex = 3;
       // 
       // tabPage6
@@ -1126,7 +1129,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxNewActor.BorderColor = System.Drawing.Color.Empty;
       this.textBoxNewActor.Location = new System.Drawing.Point(16, 270);
       this.textBoxNewActor.Name = "textBoxNewActor";
-      this.textBoxNewActor.Size = new System.Drawing.Size(152, 21);
+      this.textBoxNewActor.Size = new System.Drawing.Size(152, 20);
       this.textBoxNewActor.TabIndex = 4;
       // 
       // buttonDeleteActor
@@ -1252,7 +1255,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxNewGenre.BorderColor = System.Drawing.Color.Empty;
       this.textBoxNewGenre.Location = new System.Drawing.Point(16, 270);
       this.textBoxNewGenre.Name = "textBoxNewGenre";
-      this.textBoxNewGenre.Size = new System.Drawing.Size(152, 21);
+      this.textBoxNewGenre.Size = new System.Drawing.Size(152, 20);
       this.textBoxNewGenre.TabIndex = 4;
       // 
       // btnDeleteGenre
@@ -1394,7 +1397,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbLocalImage.BorderColor = System.Drawing.Color.Empty;
       this.tbLocalImage.Location = new System.Drawing.Point(136, 71);
       this.tbLocalImage.Name = "tbLocalImage";
-      this.tbLocalImage.Size = new System.Drawing.Size(208, 21);
+      this.tbLocalImage.Size = new System.Drawing.Size(208, 20);
       this.tbLocalImage.TabIndex = 35;
       // 
       // btnAmazon
@@ -1447,7 +1450,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxPictureURL.BorderColor = System.Drawing.Color.Empty;
       this.textBoxPictureURL.Location = new System.Drawing.Point(136, 20);
       this.textBoxPictureURL.Name = "textBoxPictureURL";
-      this.textBoxPictureURL.Size = new System.Drawing.Size(208, 21);
+      this.textBoxPictureURL.Size = new System.Drawing.Size(208, 20);
       this.textBoxPictureURL.TabIndex = 1;
       // 
       // pictureBox1
@@ -1462,6 +1465,16 @@ namespace MediaPortal.Configuration.Sections
       this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
       this.pictureBox1.TabIndex = 33;
       this.pictureBox1.TabStop = false;
+      // 
+      // actorsCheckBox
+      // 
+      this.actorsCheckBox.AutoSize = true;
+      this.actorsCheckBox.Location = new System.Drawing.Point(16, 163);
+      this.actorsCheckBox.Name = "actorsCheckBox";
+      this.actorsCheckBox.Size = new System.Drawing.Size(106, 17);
+      this.actorsCheckBox.TabIndex = 4;
+      this.actorsCheckBox.Text = "Download actors";
+      this.actorsCheckBox.UseVisualStyleBackColor = true;
       // 
       // MovieDatabase
       // 
@@ -1545,7 +1558,7 @@ namespace MediaPortal.Configuration.Sections
         availablePaths.Add(path);
       }
       conflictFiles = new ArrayList();
-      IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked);
+      IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, actorsCheckBox.Checked);
     }
 
     private void clearButton_Click(object sender, System.EventArgs e)
@@ -2224,7 +2237,7 @@ namespace MediaPortal.Configuration.Sections
         VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
         movieDetails.SearchString = searchString;
       }
-      if (IMDBFetcher.RefreshIMDB(this, ref movieDetails, fuzzyMatch))
+      if (IMDBFetcher.RefreshIMDB(this, ref movieDetails, fuzzyMatch, false))
       {
         if (movieDetails != null)
         {
@@ -2594,6 +2607,7 @@ namespace MediaPortal.Configuration.Sections
         // Load settings for Database
         int iNumber = xmlreader.GetValueAsInt("moviedatabase", "number", 0);
         skipCheckBox.Checked = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
+        actorsCheckBox.Checked = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
         bool imdbFound = false;
         bool ofdbFound = false;
         bool frdbFound = false;
@@ -2668,6 +2682,7 @@ namespace MediaPortal.Configuration.Sections
         // Database
         xmlwriter.SetValue("moviedatabase", "number", this.lvDatabase.Items.Count);
         xmlwriter.SetValueAsBool("moviedatabase", "scanskipexisting", skipCheckBox.Checked);
+        xmlwriter.SetValueAsBool("moviedatabase", "getactors", actorsCheckBox.Checked);
         for (int i = 0; i < this.lvDatabase.Items.Count; i++)
         {
           xmlwriter.SetValue("moviedatabase", "database" + i.ToString(), this.lvDatabase.Items[i].SubItems[0].Text);
