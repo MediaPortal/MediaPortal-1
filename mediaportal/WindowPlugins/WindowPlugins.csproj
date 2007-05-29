@@ -332,6 +332,7 @@
     <Compile Include="GUIPrograms\AppSettingsAppExec.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="GUIPrograms\ProgramSort.cs" />
     <Compile Include="GUIVideoFiles\SelectDVDHandler.cs" />
     <Compile Include="Home\GUIHome.cs" />
     <Compile Include="Home\GUIHomeBaseWindow.cs" />
