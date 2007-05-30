@@ -130,45 +130,61 @@
   <data name="btnPrePost.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         Qk3CAQAAAAAAADYAAAAoAAAACwAAAAsAAAABABgAAAAAAAAAAADEDgAAxA4AAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBCgICA////////////////////////////////////
-        AAAAABBCgICA////////////AAAA////////////////////AAAAABBCgICA////////AAAA////////
-        ////////////////AAAAABBCgICA////////AAAAAAAA////////////////////AAAAABBCgICA////
-        ////AAAAAAAAAAAA////AAAA////////AAAAABBCgICA////////////AAAAAAAAAAAAAAAA////////
-        AAAAABBCgICA////////////////AAAAAAAAAAAA////////AAAAABBCgICA////////////AAAAAAAA
-        AAAAAAAA////////AAAAABBCgICA////////////////////////////////////AAAAABBCgICAgICA
-        gICAgICAgICAgICAgICAgICAgICAgICAAAAAABBC
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE5DgICA////////////////////////////////////
+        AAAAAE5DgICA////////////AAAA////////////////////AAAAAE5DgICA////////AAAA////////
+        ////////////////AAAAAE5DgICA////////AAAAAAAA////////////////////AAAAAE5DgICA////
+        ////AAAAAAAAAAAA////AAAA////////AAAAAE5DgICA////////////AAAAAAAAAAAAAAAA////////
+        AAAAAE5DgICA////////////////AAAAAAAAAAAA////////AAAAAE5DgICA////////////AAAAAAAA
+        AAAAAAAA////////AAAAAE5DgICA////////////////////////////////////AAAAAE5DgICAgICA
+        gICAgICAgICAgICAgICAgICAgICAgICAAAAAAE5D
 </value>
   </data>
   <data name="btnStartup.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         Qk2mAgAAAAAAADYAAAAoAAAADwAAAA0AAAABABgAAAAAAAAAAADEDgAAxA4AAAAAAAAAAAAA////AAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQGBAICAQMDAQMDAQMDAQMDAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAAQGBAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
-        gMD/gMD/gMD/QMDAAAAAAQGBAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
-        AAAAAQGBAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAAQGBAICA////
-        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAAQGBAICA////gP//gP//gP//gP//
-        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAAQGBAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
-        gP//gMD/gP//QMDAAAAAAQGBAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
-        AAAAAQGBAICA////////////////////////////////////////////gP//QMDAAAAAAQGBAICAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////AQGB////AICA////////////gP//
-        gP//AICAAAAA////////////////////////AQGB////////AICAAICAAICAAICAAICAAAAA////////
-        ////////////////////AQGB
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAQMDAQMDAQMDAQMDAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAAAAAAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
+        gMD/gMD/gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
+        AAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////
+        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//
+        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
+        gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
+        AAAAAAAAAICA////////////////////////////////////////////gP//QMDAAAAAAAAAAICAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////AAAA////AICA////////////gP//
+        gP//AICAAAAA////////////////////////AAAA////////AICAAICAAICAAICAAICAAAAA////////
+        ////////////////////AAAA
 </value>
   </data>
   <data name="buttonLaunchingApp.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         Qk2mAgAAAAAAADYAAAAoAAAADwAAAA0AAAABABgAAAAAAAAAAADEDgAAxA4AAAAAAAAAAAAA////AAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQGBAICAQMDAQMDAQMDAQMDAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAAQGBAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
-        gMD/gMD/gMD/QMDAAAAAAQGBAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
-        AAAAAQGBAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAAQGBAICA////
-        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAAQGBAICA////gP//gP//gP//gP//
-        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAAQGBAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
-        gP//gMD/gP//QMDAAAAAAQGBAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
-        AAAAAQGBAICA////////////////////////////////////////////gP//QMDAAAAAAQGBAICAQMDA
-        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////AQGB////AICA////////////gP//
-        gP//AICAAAAA////////////////////////AQGB////////AICAAICAAICAAICAAICAAAAA////////
-        ////////////////////AQGB
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAQMDAQMDAQMDAQMDAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAAAAAAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
+        gMD/gMD/gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
+        AAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////
+        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//
+        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
+        gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
+        AAAAAAAAAICA////////////////////////////////////////////gP//QMDAAAAAAAAAAICAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////AAAA////AICA////////////gP//
+        gP//AICAAAAA////////////////////////AAAA////////AICAAICAAICAAICAAICAAAAA////////
+        ////////////////////AAAA
+</value>
+  </data>
+  <data name="buttonImageFile.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk2mAgAAAAAAADYAAAAoAAAADwAAAA0AAAABABgAAAAAAAAAAADEDgAAxA4AAAAAAAAAAAAA////AAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAQMDAQMDAQMDAQMDAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAQMDAQMDAAAAAAAAAAICA////gMD/gP//gMD/gP//gMD/gP//gMD/gP//
+        gMD/gMD/gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//gMD/gMD/QMDA
+        AAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////
+        gP//gP//gP//gP//gP//gMD/gP//gMD/gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//
+        gP//gP//gP//gP//gMD/gP//gMD/QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gMD/
+        gP//gMD/gP//QMDAAAAAAAAAAICA////gP//gP//gP//gP//gP//gP//gP//gP//gP//gP//gMD/QMDA
+        AAAAAAAAAICA////////////////////////////////////////////gP//QMDAAAAAAAAAAICAQMDA
+        QMDAQMDAQMDAQMDAQMDAQMDAAICAAICAAICAAICAAICAAICA////AAAA////AICA////////////gP//
+        gP//AICAAAAA////////////////////////AAAA////////AICAAICAAICAAICAAICAAAAA////////
+        ////////////////////AAAA
 </value>
   </data>
 </root>

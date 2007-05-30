@@ -31,6 +31,9 @@ namespace WindowPlugins.GUIPrograms
     private MediaPortal.UserInterface.Controls.MPButton buttonLaunchingApp;
     private MediaPortal.UserInterface.Controls.MPLabel label3;
     private MediaPortal.UserInterface.Controls.MPTextBox txtFilename;
+    private MediaPortal.UserInterface.Controls.MPLabel lblImageFile;
+    private MediaPortal.UserInterface.Controls.MPButton buttonImageFile;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtImageFile;
     private IContainer components = null;
 
     /// <summary>
@@ -75,6 +78,9 @@ namespace WindowPlugins.GUIPrograms
       this.lblFilename = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonLaunchingApp = new MediaPortal.UserInterface.Controls.MPButton();
       this.txtFilename = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.lblImageFile = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.buttonImageFile = new MediaPortal.UserInterface.Controls.MPButton();
+      this.txtImageFile = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.SuspendLayout();
       // 
       // label3
@@ -88,8 +94,9 @@ namespace WindowPlugins.GUIPrograms
       // 
       // btnPrePost
       // 
+      this.btnPrePost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnPrePost.Image = ((System.Drawing.Image)(resources.GetObject("btnPrePost.Image")));
-      this.btnPrePost.Location = new System.Drawing.Point(367, 80);
+      this.btnPrePost.Location = new System.Drawing.Point(367, 83);
       this.btnPrePost.Name = "btnPrePost";
       this.btnPrePost.Size = new System.Drawing.Size(20, 20);
       this.btnPrePost.TabIndex = 56;
@@ -99,39 +106,46 @@ namespace WindowPlugins.GUIPrograms
       // 
       // chkbWaitForExit
       // 
+      this.chkbWaitForExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.chkbWaitForExit.AutoSize = true;
       this.chkbWaitForExit.Checked = true;
       this.chkbWaitForExit.CheckState = System.Windows.Forms.CheckState.Checked;
       this.chkbWaitForExit.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.chkbWaitForExit.Location = new System.Drawing.Point(271, 83);
+      this.chkbWaitForExit.Location = new System.Drawing.Point(277, 86);
       this.chkbWaitForExit.Name = "chkbWaitForExit";
-      this.chkbWaitForExit.Size = new System.Drawing.Size(80, 17);
+      this.chkbWaitForExit.Size = new System.Drawing.Size(84, 17);
       this.chkbWaitForExit.TabIndex = 54;
       this.chkbWaitForExit.Text = "Wait for exit";
+      this.chkbWaitForExit.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.chkbWaitForExit.UseVisualStyleBackColor = true;
       // 
       // LblPinCode
       // 
-      this.LblPinCode.Location = new System.Drawing.Point(5, 107);
+      this.LblPinCode.AutoSize = true;
+      this.LblPinCode.Location = new System.Drawing.Point(5, 112);
       this.LblPinCode.Name = "LblPinCode";
-      this.LblPinCode.Size = new System.Drawing.Size(96, 16);
+      this.LblPinCode.Size = new System.Drawing.Size(50, 13);
       this.LblPinCode.TabIndex = 44;
       this.LblPinCode.Text = "Pin-Code";
+      this.LblPinCode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // txtPinCode
       // 
+      this.txtPinCode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtPinCode.BorderColor = System.Drawing.Color.Empty;
-      this.txtPinCode.Location = new System.Drawing.Point(121, 107);
+      this.txtPinCode.Location = new System.Drawing.Point(121, 109);
       this.txtPinCode.MaxLength = 4;
       this.txtPinCode.Name = "txtPinCode";
-      this.txtPinCode.Size = new System.Drawing.Size(64, 20);
+      this.txtPinCode.Size = new System.Drawing.Size(64, 21);
       this.txtPinCode.TabIndex = 45;
       this.txtPinCode.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPinCode_KeyPress);
       // 
       // btnStartup
       // 
+      this.btnStartup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnStartup.Image = ((System.Drawing.Image)(resources.GetObject("btnStartup.Image")));
-      this.btnStartup.Location = new System.Drawing.Point(367, 179);
+      this.btnStartup.Location = new System.Drawing.Point(367, 237);
       this.btnStartup.Name = "btnStartup";
       this.btnStartup.Size = new System.Drawing.Size(20, 20);
       this.btnStartup.TabIndex = 52;
@@ -140,22 +154,28 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtStartupDir
       // 
+      this.txtStartupDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtStartupDir.BorderColor = System.Drawing.Color.Empty;
-      this.txtStartupDir.Location = new System.Drawing.Point(121, 179);
+      this.txtStartupDir.Location = new System.Drawing.Point(121, 237);
       this.txtStartupDir.Name = "txtStartupDir";
-      this.txtStartupDir.Size = new System.Drawing.Size(240, 20);
+      this.txtStartupDir.Size = new System.Drawing.Size(240, 21);
       this.txtStartupDir.TabIndex = 51;
       // 
       // label5
       // 
-      this.label5.Location = new System.Drawing.Point(5, 179);
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(4, 241);
       this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(100, 23);
+      this.label5.Size = new System.Drawing.Size(94, 13);
       this.label5.TabIndex = 50;
       this.label5.Text = "Startup Directory:";
+      this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // cbWindowStyle
       // 
+      this.cbWindowStyle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cbWindowStyle.BorderColor = System.Drawing.Color.Empty;
       this.cbWindowStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbWindowStyle.Items.AddRange(new object[] {
@@ -163,37 +183,44 @@ namespace WindowPlugins.GUIPrograms
             "Minimized",
             "Maximized",
             "Hidden"});
-      this.cbWindowStyle.Location = new System.Drawing.Point(121, 155);
+      this.cbWindowStyle.Location = new System.Drawing.Point(121, 213);
       this.cbWindowStyle.Name = "cbWindowStyle";
       this.cbWindowStyle.Size = new System.Drawing.Size(240, 21);
       this.cbWindowStyle.TabIndex = 49;
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(5, 155);
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(5, 216);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(100, 23);
+      this.label1.Size = new System.Drawing.Size(77, 13);
       this.label1.TabIndex = 48;
       this.label1.Text = "Window-Style:";
+      this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // txtArguments
       // 
+      this.txtArguments.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtArguments.BorderColor = System.Drawing.Color.Empty;
-      this.txtArguments.Location = new System.Drawing.Point(121, 131);
+      this.txtArguments.Location = new System.Drawing.Point(121, 189);
       this.txtArguments.Name = "txtArguments";
-      this.txtArguments.Size = new System.Drawing.Size(240, 20);
+      this.txtArguments.Size = new System.Drawing.Size(240, 21);
       this.txtArguments.TabIndex = 47;
       // 
       // lblArg
       // 
-      this.lblArg.Location = new System.Drawing.Point(5, 131);
+      this.lblArg.AutoSize = true;
+      this.lblArg.Location = new System.Drawing.Point(5, 192);
       this.lblArg.Name = "lblArg";
-      this.lblArg.Size = new System.Drawing.Size(100, 23);
+      this.lblArg.Size = new System.Drawing.Size(63, 13);
       this.lblArg.TabIndex = 46;
       this.lblArg.Text = "Arguments:";
+      this.lblArg.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // chkbEnabled
       // 
+      this.chkbEnabled.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.chkbEnabled.AutoSize = true;
       this.chkbEnabled.Checked = true;
       this.chkbEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -209,33 +236,40 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtTitle
       // 
+      this.txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtTitle.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.txtTitle.BorderColor = System.Drawing.Color.Empty;
       this.txtTitle.Location = new System.Drawing.Point(121, 32);
       this.txtTitle.Name = "txtTitle";
-      this.txtTitle.Size = new System.Drawing.Size(240, 20);
+      this.txtTitle.Size = new System.Drawing.Size(240, 21);
       this.txtTitle.TabIndex = 41;
       // 
       // lblTitle
       // 
+      this.lblTitle.AutoSize = true;
       this.lblTitle.Location = new System.Drawing.Point(5, 35);
       this.lblTitle.Name = "lblTitle";
-      this.lblTitle.Size = new System.Drawing.Size(100, 23);
+      this.lblTitle.Size = new System.Drawing.Size(31, 13);
       this.lblTitle.TabIndex = 40;
       this.lblTitle.Text = "Title:";
+      this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // lblFilename
       // 
-      this.lblFilename.Location = new System.Drawing.Point(5, 59);
+      this.lblFilename.AutoSize = true;
+      this.lblFilename.Location = new System.Drawing.Point(5, 63);
       this.lblFilename.Name = "lblFilename";
-      this.lblFilename.Size = new System.Drawing.Size(120, 20);
+      this.lblFilename.Size = new System.Drawing.Size(110, 13);
       this.lblFilename.TabIndex = 42;
       this.lblFilename.Text = "Application to launch:";
+      this.lblFilename.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // buttonLaunchingApp
       // 
+      this.buttonLaunchingApp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonLaunchingApp.Image = ((System.Drawing.Image)(resources.GetObject("buttonLaunchingApp.Image")));
-      this.buttonLaunchingApp.Location = new System.Drawing.Point(367, 56);
+      this.buttonLaunchingApp.Location = new System.Drawing.Point(367, 59);
       this.buttonLaunchingApp.Name = "buttonLaunchingApp";
       this.buttonLaunchingApp.Size = new System.Drawing.Size(20, 20);
       this.buttonLaunchingApp.TabIndex = 43;
@@ -244,15 +278,51 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtFilename
       // 
+      this.txtFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtFilename.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
       this.txtFilename.BorderColor = System.Drawing.Color.Empty;
-      this.txtFilename.Location = new System.Drawing.Point(121, 56);
+      this.txtFilename.Location = new System.Drawing.Point(121, 59);
       this.txtFilename.Name = "txtFilename";
-      this.txtFilename.Size = new System.Drawing.Size(240, 20);
+      this.txtFilename.Size = new System.Drawing.Size(240, 21);
       this.txtFilename.TabIndex = 57;
+      // 
+      // lblImageFile
+      // 
+      this.lblImageFile.AutoSize = true;
+      this.lblImageFile.Location = new System.Drawing.Point(5, 141);
+      this.lblImageFile.Name = "lblImageFile";
+      this.lblImageFile.Size = new System.Drawing.Size(55, 13);
+      this.lblImageFile.TabIndex = 58;
+      this.lblImageFile.Text = "Imagefile:";
+      this.lblImageFile.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // buttonImageFile
+      // 
+      this.buttonImageFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonImageFile.Image = ((System.Drawing.Image)(resources.GetObject("buttonImageFile.Image")));
+      this.buttonImageFile.Location = new System.Drawing.Point(367, 137);
+      this.buttonImageFile.Name = "buttonImageFile";
+      this.buttonImageFile.Size = new System.Drawing.Size(20, 20);
+      this.buttonImageFile.TabIndex = 60;
+      this.buttonImageFile.UseVisualStyleBackColor = true;
+      this.buttonImageFile.Click += new System.EventHandler(this.buttonImageFile_Click);
+      // 
+      // txtImageFile
+      // 
+      this.txtImageFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtImageFile.BorderColor = System.Drawing.Color.Empty;
+      this.txtImageFile.Location = new System.Drawing.Point(121, 136);
+      this.txtImageFile.Name = "txtImageFile";
+      this.txtImageFile.Size = new System.Drawing.Size(240, 21);
+      this.txtImageFile.TabIndex = 59;
       // 
       // AppSettingsAppExec
       // 
+      this.Controls.Add(this.lblImageFile);
+      this.Controls.Add(this.buttonImageFile);
+      this.Controls.Add(this.txtImageFile);
       this.Controls.Add(this.txtFilename);
       this.Controls.Add(this.btnPrePost);
       this.Controls.Add(this.chkbWaitForExit);
@@ -272,7 +342,7 @@ namespace WindowPlugins.GUIPrograms
       this.Controls.Add(this.buttonLaunchingApp);
       this.Controls.Add(this.label3);
       this.Name = "AppSettingsAppExec";
-      this.Size = new System.Drawing.Size(398, 220);
+      this.Size = new System.Drawing.Size(398, 273);
       this.Load += new System.EventHandler(this.AppSettingsAppExec_Load_1);
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -288,6 +358,7 @@ namespace WindowPlugins.GUIPrograms
       SetWindowStyle(curApp.WindowStyle);
       this.txtStartupDir.Text = curApp.Startupdir;
       this.chkbWaitForExit.Checked = (curApp.WaitForExit);
+      this.txtImageFile.Text = curApp.Imagefile;
       if (curApp.Pincode > 0)
       {
         this.txtPinCode.Text = String.Format("{0}", curApp.Pincode);
@@ -311,6 +382,7 @@ namespace WindowPlugins.GUIPrograms
       curApp.Startupdir = this.txtStartupDir.Text;
       curApp.WaitForExit = (this.chkbWaitForExit.Checked);
       curApp.SourceType = myProgSourceType.APPEXEC;
+      curApp.Imagefile = this.txtImageFile.Text;
       curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text, -1);
     }
 
@@ -431,6 +503,17 @@ namespace WindowPlugins.GUIPrograms
       toolTip.SetToolTip(txtArguments, "Optional arguments that are needed to launch the program \r\n\r\n(Enter a filename to open a file with the specified application)");
       toolTip.SetToolTip(chkbEnabled, "Only enabled items will appear in MediaPortal");
       toolTip.SetToolTip(txtFilename, "Program you wish to execute, include the full path (mandatory)");
+      toolTip.SetToolTip(txtImageFile, "Optional filename for an image to display in MediaPortal");
+    }
+
+    private void buttonImageFile_Click(object sender, EventArgs e)
+    {
+      dialogFile.FileName = txtImageFile.Text;
+      dialogFile.RestoreDirectory = true;
+      if (dialogFile.ShowDialog(null) == DialogResult.OK)
+      {
+        txtImageFile.Text = dialogFile.FileName;
+      }
     }
   }
 }
