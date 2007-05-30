@@ -287,7 +287,7 @@
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
 	<country name="Austria - Tirol">
-		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
 	</country>
 	<country name="Austria - Wien">
 		<carrier frequency="794000" bandwidth="8" />
