@@ -76,6 +76,7 @@ namespace MediaPortal.GUI.Video
 					selectDVDHandler = new SelectDVDHandler();
 					GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
 				}
+
 				string dvdToPlay = selectDVDHandler.ShowSelectDVDDialog(GetID);
         if (dvdToPlay == null || !selectDVDHandler.OnPlayDVD(dvdToPlay, GetID))
         {
@@ -88,6 +89,14 @@ namespace MediaPortal.GUI.Video
           g_Player.ShowFullScreenWindow();
 				return true;
 			}
+
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT)
+      {
+        Log.Info("DVDFullscreen: Show previous window");
+        GUIGraphicsContext.IsFullScreenVideo = false;
+        GUIWindowManager.ShowPreviousWindow();
+      }
+
 			return base.OnMessage(message);
 		}
 
