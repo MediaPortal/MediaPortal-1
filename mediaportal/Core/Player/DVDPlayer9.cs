@@ -87,7 +87,7 @@ namespace MediaPortal.Player
         if (displayMode == "4:3 pan scan") _videoPref = DvdPreferredDisplayMode.Display4x3PanScanPreferred;
         if (displayMode == "4:3 letterbox") _videoPref = DvdPreferredDisplayMode.Display4x3LetterBoxPreferred;
 
-        turnoffDXVA = xmlreader.GetValueAsBool("dvdplayer", "turnoffdxva", false);
+        turnoffDXVA = xmlreader.GetValueAsBool("dvdplayer", "turnoffdxva", true);
         Log.Info("DVDPlayer9:Turn off DXVA value = {0}", turnoffDXVA);
         if (turnoffDXVA == true)
         {
@@ -138,7 +138,6 @@ namespace MediaPortal.Player
 
       try
       {
-
         _vmr9 = new VMR9Util();
         _dvdGraph = (IDvdGraphBuilder)new DvdGraphBuilder();
 
@@ -154,7 +153,6 @@ namespace MediaPortal.Player
         }*/
 
         _vmr9.AddVMR9(_graphBuilder);
-
 
         try
         {
@@ -212,7 +210,6 @@ namespace MediaPortal.Player
           else
             Log.Error("Dvdplayer9: FAILED TO get get IDvdControl2");
         }
-
 
         _mediaCtrl = (IMediaControl)_graphBuilder;
         _mediaEvt = (IMediaEventEx)_graphBuilder;
@@ -339,8 +336,7 @@ namespace MediaPortal.Player
           _vmr9.Dispose();
         }
         _vmr9 = null;
-
-
+        
         if (_videoCodecFilter != null)
         {
           while ((hr = Marshal.ReleaseComObject(_videoCodecFilter)) > 0) ;
@@ -367,7 +363,6 @@ namespace MediaPortal.Player
             }
             customFilters[i] = null;
         }
-
 
         if (_cmdOption != null)
           Marshal.ReleaseComObject(_cmdOption);
@@ -442,8 +437,6 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.InVmr9Render) return;
       HandleMouseMessages();
       OnProcess();
-
-
     }
 
     void HandleMouseMessages()
@@ -474,7 +467,6 @@ namespace MediaPortal.Player
           x /= arx;
           y /= ary;
 
-
           pt = new System.Drawing.Point((int)x, (int)y);
 
           if (m.Msg == WM_MOUSEMOVE)
@@ -492,7 +484,6 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-
         Log.Error("DVDPlayer9:HandleMouseMessages() {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
       _mouseMsg.Clear();
