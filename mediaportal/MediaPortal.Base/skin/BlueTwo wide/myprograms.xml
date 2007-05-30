@@ -8,6 +8,7 @@
   <define>#header.hover:hover_my programs.png</define>
   <controls>
     <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>group element</description>
       <type>group</type>
