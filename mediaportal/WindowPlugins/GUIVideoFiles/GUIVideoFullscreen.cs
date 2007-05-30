@@ -1084,8 +1084,14 @@ namespace MediaPortal.GUI.Video
 
       dlg.AddLocalizedString(941); // Change aspect ratio
 
-      // Add audio stream selection to be able to switch audio streams in .ts recordings
-      dlg.AddLocalizedString(492); // Audio stream selection
+      // Audio stream selection, show only when more than one streams exists
+      if (g_Player.AudioStreams > 1)
+        dlg.AddLocalizedString(492);
+
+      // SubTitle stream selection, show only when there exists any streams,
+      //    dialog shows then the streams and an item to disable them
+      if (g_Player.SubtitleStreams > 0)
+        dlg.AddLocalizedString(462);
 
       if (PluginManager.IsPluginNameEnabled("MSN Messenger"))
       {
@@ -1117,6 +1123,9 @@ namespace MediaPortal.GUI.Video
         // Add audio stream selection to be able to switch audio streams in .ts recordings
         case 492:
           ShowAudioStreamsMenu();
+          break;
+        case 462:
+          ShowSubtitleStreamsMenu();
           break;
         case 974: // DVD root menu
           Action actionMenu = new Action(Action.ActionType.ACTION_DVD_MENU, 0, 0);
@@ -1182,6 +1191,52 @@ namespace MediaPortal.GUI.Video
 
       if (dlg.SelectedLabel != g_Player.CurrentAudioStream)
         g_Player.CurrentAudioStream = dlg.SelectedLabel;
+    }
+
+    void ShowSubtitleStreamsMenu()
+    {
+      if (dlg == null)
+        return;
+      dlg.Reset();
+      dlg.SetHeading(462); // SubTitle Streams
+
+      // get the number of subtitles in the current movie
+      int count = g_Player.SubtitleStreams;
+      
+      dlg.AddLocalizedString(519); // disable Subtitles
+
+      // cycle through each subtitle and add it to our list control
+      int currentSubtitleStream = g_Player.CurrentSubtitleStream;
+      for (int i = 0; i < count; ++i)
+      {
+        string strLang = g_Player.SubtitleLanguage(i);
+        int ipos = strLang.IndexOf("(");
+        if (ipos > 0)
+          strLang = strLang.Substring(0, ipos);
+
+        dlg.Add(strLang);
+      }
+
+      if (g_Player.EnableSubtitle)
+        dlg.SelectedLabel = g_Player.CurrentSubtitleStream + 1;
+      else
+        dlg.SelectedLabel = 0;
+
+      _IsDialogVisible = true;
+      dlg.DoModal(GetID);
+      _IsDialogVisible = false;
+
+      if (dlg.SelectedId == -1)
+        return;
+
+      if (dlg.SelectedLabel == 0)
+        g_Player.EnableSubtitle = false;
+      else
+      {
+        if (dlg.SelectedLabel != g_Player.CurrentSubtitleStream + 1)
+          g_Player.CurrentSubtitleStream = dlg.SelectedLabel - 1;
+        g_Player.EnableSubtitle = true;
+      }
     }
 
     void ShowAspectRatioMenu()
