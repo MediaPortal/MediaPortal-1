@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- changed : 20.03.2007    -->
-<!-- contains:                     -->
-<!--   - Australia                 -->
-<!--   - Austria                   -->
-<!--   - Belgium                   -->
-<!--   - Croatia                   -->
-<!--   - Czech Republic      -->
-<!--   - Danmmark               -->
-<!--   - Europe                    -->
-<!--   - Finland                   -->
-<!--   - France                    -->
-<!--   - Germany                   -->
-<!--   - Italy                     -->
-<!-- Luxembourg -->
-<!--   - Netherlands               -->
-<!--   - New Zealand               -->
-<!--   - Norway                    -->
-<!--   - Singapore                 -->
-<!--   - Spain                     -->
-<!--   - Sweden                    -->
-<!--   - Taiwan                    -->
-<!--   - UK                        -->
+<!-- changed : 30.05.2007   -->
+<!-- contains:   -->
+<!--   - Australia   -->
+<!--   - Austria   -->
+<!--   - Belgium   -->
+<!--   - Croatia   -->
+<!--   - Czech Republic   -->
+<!--   - Danmmark   -->
+<!--   - Europe   -->
+<!--   - Finland   -->
+<!--   - France   -->
+<!--   - Germany   -->
+<!--   - Italy   -->
+<!--   - Luxembourg   -->
+<!--   - Netherlands   -->
+<!--   - New Zealand   -->
+<!--   - Norway   -->
+<!--   - Singapore   -->
+<!--   - Spain   -->
+<!--   - Sweden   -->
+<!--   - Taiwan   -->
+<!--   - UK   -->
 <dvbt>
 	<country name="Australia - All Regions" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
@@ -1474,6 +1474,15 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
+	<country name="Italy - Verona" offset="125">
+		<carrier frequency="186000" bandwidth="7" />
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="742000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+	</country>
 	<country name="Luxembourg - All Regions" offset="125">
 		<carrier frequency="191500" bandwidth="7" />
 		<carrier frequency="498000" bandwidth="8" />
@@ -2808,26 +2817,26 @@
 		<carrier frequency="786000" bandwidth="8" />
 	</country>
 	<country name="Sweden - Sundsvall S Stadsberget" offset="125">
-		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="546000" bandwidth="8" />
 		<carrier frequency="650000" bandwidth="8" />
 		<carrier frequency="522000" bandwidth="8" />
 	</country>
 	<country name="Sweden - Sundsvall S Stadsberget - Harnosand Harnon" offset="125">
-		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="546000" bandwidth="8" />
 		<carrier frequency="650000" bandwidth="8" />
 	</country>
 	<country name="Sweden - Sundsvall S Stadsberget - Matfors" offset="125">
-		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="546000" bandwidth="8" />
 		<carrier frequency="650000" bandwidth="8" />
 	</country>
 	<country name="Sweden - Sundsvall S Stadsberget - Sundsbruk" offset="125">
-		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="546000" bandwidth="8" />
 		<carrier frequency="650000" bandwidth="8" />
