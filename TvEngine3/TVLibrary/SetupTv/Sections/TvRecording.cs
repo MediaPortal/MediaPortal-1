@@ -310,6 +310,7 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
       checkBoxAddToDatabase.Checked = (layer.GetSetting("addrecordingstomoviedbs", "no").Value == "yes");
+      checkboxSchedulerPriority.Checked = (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes");
       formatString[0] = "";
       formatString[1] = "";
 
@@ -401,6 +402,18 @@ namespace SetupTv.Sections
       }
       setting.Persist();
 
+      setting = layer.GetSetting("scheduleroverlivetv", "yes");
+      if (checkboxSchedulerPriority.Checked)
+      {
+          setting.Value = "yes";
+      }
+      else
+      {
+          setting.Value = "no";
+      }
+      setting.Persist();
+
+   
 
       //DatabaseManager.Instance.SaveChanges();
       /*

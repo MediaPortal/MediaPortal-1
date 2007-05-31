@@ -519,15 +519,18 @@ namespace TvService
       if (cardInfo == null)
       {
         //all cards in use, no card tuned to the channel, use the first one.
+        TvBusinessLayer layer = new TvBusinessLayer();
         User tmpUser = new User();
         tmpUser.CardId = freeCards[0].Id;
-        if (_tvController.IsRecording(ref tmpUser) == false)
+        if ((_tvController.IsRecording(ref tmpUser) == false) && (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes" ))
         {
+          if (_tvController.IsTimeShifting ( ref tmpUser )) { _tvController.StopTimeShifting ( ref tmpUser ); }
           cardInfo = freeCards[0];
           Log.Write("Scheduler : no card is tuned to the correct channel. record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
         }
         else
         {
+          Log.Write("Scheduler : no card was found and scheduler not allowed to stop other users LiveTV or recordings. ");
           return false;
         }
       }
