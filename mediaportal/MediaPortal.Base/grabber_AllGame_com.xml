@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <profile>
+  <section name="general">
+    <entry name="extendedLogging">no</entry>
+  </section>
   <section name="templateSearch">
     <entry name="tags">TDA</entry>
     <entry name="template">
@@ -63,6 +66,27 @@
 &lt;#TEXT&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
+        </entry>
+  </section>
+  <section name="packshot">
+    <entry name="tags">TI!</entry>
+    <entry name="template">
+&lt;!--Begin Album Photo--&gt;
+&lt;table border="0" cellpadding="0" cellspacing="0"&gt;&lt;tr&gt;&lt;td align="center" valign="middle" width="200" class="order"&gt;
+&lt;table border="0" cellpadding="0" cellspacing="0"&gt;&lt;tr&gt;&lt;td valign="top"&gt;
+&lt;img src="&lt;#URL&gt;"&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;!--BIGGERTEASER--&gt;&lt;!--/BIGGERTEASER--&gt;&lt;/table&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;!--End Album Photo--&gt;
+        </entry>
+  </section>
+  <section name="screenshots">
+    <entry name="KeyName">#KEY</entry>
+    <entry name="KeyString">screen shot</entry>
+    <entry name="ValueName">#URL</entry>
+    <entry name="tags">I</entry>
+    <entry name="template">
+&lt;img src="&lt;#URL&gt;" alt="&lt;#KEY&gt;
         </entry>
   </section>
 </profile>
