@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -54,7 +55,7 @@ namespace ProgramsDatabase
     private string mPlatform = string.Empty;
     private string mRating = string.Empty;
     private int mRatingNorm = 0;
-    private string mImageURLs = string.Empty;
+    private List<string> mImageURLs = new List<string>();
     private string mManufacturer = string.Empty;
     private string mOverview = string.Empty;
     private bool bLoaded = false;
@@ -268,15 +269,11 @@ namespace ProgramsDatabase
       }
     }
 
-    public string ImageURLs
+    public List<string> ImageURLs
     {
       get
       {
         return mImageURLs;
-      }
-      set
-      {
-        mImageURLs = value;
       }
     }
 
@@ -322,23 +319,10 @@ namespace ProgramsDatabase
       return result;
     }
 
-    public void AddImageURL(string strURL)
-    {
-      if (mImageURLs != "")
-      {
-        mImageURLs = mImageURLs + "\n" + strURL;
-      }
-      else
-      {
-        mImageURLs = strURL;
-      }
-    }
-
     public void DownloadImages(AppItem curApp, FileItem curFile)
     {
-      if (curFile == null)
-        return ;
-      ArrayList mImgUrls = new ArrayList(this.ImageURLs.Split('\n'));
+      if (curFile == null) return;
+
       int i = 0;
       string strFile = "";
 
@@ -347,7 +331,7 @@ namespace ProgramsDatabase
       curFile.Imagefile = "";
 
       // download all images
-      foreach (string strImgUrl in mImgUrls)
+      foreach (string strImgUrl in ImageURLs)
       {
         // strImgUrl contains a full URL with one picture to download
 
@@ -373,6 +357,9 @@ namespace ProgramsDatabase
     {
       try
       {
+        if (tag == null) return;
+        if (value == null) return;
+
         switch (tag)
         {
           case "#RELEVANCE":

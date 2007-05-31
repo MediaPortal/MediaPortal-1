@@ -60,7 +60,6 @@ namespace WindowPlugins.GUIPrograms
     private MediaPortal.UserInterface.Controls.MPButton checkAllButton;
     private ToolTip toolTip1;
     private MediaPortal.UserInterface.Controls.MPButton uncheckAllButton;
-    private MediaPortal.UserInterface.Controls.MPButton buttonSelectBestMatch;
     private MediaPortal.UserInterface.Controls.MPLabel filterLabel;
     private MediaPortal.UserInterface.Controls.MPComboBox filterComboBox;
     private MediaPortal.UserInterface.Controls.MPButton ResetFilterButton;
@@ -155,7 +154,6 @@ namespace WindowPlugins.GUIPrograms
       this.ResetFilterButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.filterComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.filterLabel = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.buttonSelectBestMatch = new MediaPortal.UserInterface.Controls.MPButton();
       this.allGameLink = new System.Windows.Forms.LinkLabel();
       this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnSaveSearch = new MediaPortal.UserInterface.Controls.MPButton();
@@ -200,7 +198,6 @@ namespace WindowPlugins.GUIPrograms
       this.bottomPanel.Controls.Add(this.ResetFilterButton);
       this.bottomPanel.Controls.Add(this.filterComboBox);
       this.bottomPanel.Controls.Add(this.filterLabel);
-      this.bottomPanel.Controls.Add(this.buttonSelectBestMatch);
       this.bottomPanel.Controls.Add(this.allGameLink);
       this.bottomPanel.Controls.Add(this.btnCancel);
       this.bottomPanel.Controls.Add(this.btnSaveSearch);
@@ -338,19 +335,6 @@ namespace WindowPlugins.GUIPrograms
       this.filterLabel.Size = new System.Drawing.Size(80, 18);
       this.filterLabel.TabIndex = 21;
       this.filterLabel.Text = "Platform:";
-      // 
-      // buttonSelectBestMatch
-      // 
-      this.buttonSelectBestMatch.Enabled = false;
-      this.buttonSelectBestMatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.buttonSelectBestMatch.Location = new System.Drawing.Point(168, 34);
-      this.buttonSelectBestMatch.Name = "buttonSelectBestMatch";
-      this.buttonSelectBestMatch.Size = new System.Drawing.Size(160, 35);
-      this.buttonSelectBestMatch.TabIndex = 20;
-      this.buttonSelectBestMatch.Text = "2) Select Best Match";
-      this.toolTip1.SetToolTip(this.buttonSelectBestMatch, "Select the best match for all checked files (");
-      this.buttonSelectBestMatch.UseVisualStyleBackColor = true;
-      this.buttonSelectBestMatch.Click += new System.EventHandler(this.buttonSelectBestMatch_Click);
       // 
       // allGameLink
       // 
@@ -584,7 +568,6 @@ namespace WindowPlugins.GUIPrograms
       // 
       // menuDataAndImages
       // 
-      this.menuDataAndImages.Enabled = false;
       this.menuDataAndImages.Index = 0;
       this.menuDataAndImages.Text = "Save Data and download images";
       this.menuDataAndImages.Click += new System.EventHandler(this.menuDataAndImages_Click);
@@ -602,7 +585,6 @@ namespace WindowPlugins.GUIPrograms
       // 
       // menuImages
       // 
-      this.menuImages.Enabled = false;
       this.menuImages.Index = 3;
       this.menuImages.Text = "Download images only";
       this.menuImages.Click += new System.EventHandler(this.menuImages_Click);
@@ -725,17 +707,13 @@ namespace WindowPlugins.GUIPrograms
       InitProgressBar("Starting search");
       foreach (ListViewItem curItem in FileList.CheckedItems)
       {
-        if (stopSearching)
-          break;
+        if (stopSearching) break;
+        if (curItem.Tag == null) continue;
+
+        FileItem file = curItem.Tag as FileItem;
+        if (file == null) continue;
 
         ListViewItem nextItem = null;
-        FileItem file = (FileItem)curItem.Tag;
-        if (file == null)
-          continue;
-
-        if (file.FileInfoList != null)
-          if (file.FileInfoList.Count > 0)
-            continue;
 
         if (curItem.Index < FileList.Items.Count - 1)
         {
@@ -763,18 +741,10 @@ namespace WindowPlugins.GUIPrograms
         curItem.Font = new Font(curItem.Font, curItem.Font.Style | FontStyle.Bold);
         System.Windows.Forms.Application.DoEvents();
         bSuccess = file.FindFileInfo(myProgScraperType.ALLGAME);
-        foreach (FileInfo info in file.FileInfoList)
-        {
-          if (file.GameURL == info.GameURL)
-          {
-            file.FileInfoFavourite = info;
-            break;
-          }
-        }
 
-        curItem.SubItems[1].Text = String.Format("{0} matches", file.FileInfoList.Count);
+        SelectBestMatch(curItem);
+
         StepProgressBar();
-        buttonSelectBestMatch.Enabled = true;
         System.Windows.Forms.Application.DoEvents();
       }
       ChangeFileSelection();
@@ -790,34 +760,23 @@ namespace WindowPlugins.GUIPrograms
     }
 
 
+
     private FileItem GetSelectedFileItem()
     {
-      FileItem res = null;
-      if (FileList.FocusedItem != null)
-      {
-        if (FileList.FocusedItem.Tag != null)
-        {
-          res = (FileItem)FileList.FocusedItem.Tag;
-        }
-      }
-      return res;
+      if (FileList.FocusedItem == null) return null;
+      if (FileList.FocusedItem.Tag == null) return null;
+
+      return FileList.FocusedItem.Tag as FileItem;
     }
 
     private FileInfo GetSelectedMatchItem()
     {
-      FileInfo res = null;
+      if (MatchList.CheckedItems == null) return null;
+      if (MatchList.CheckedItems[0] == null) return null;
+      if (MatchList.CheckedItems[0].Tag == null) return null;
 
-      if (MatchList.CheckedItems == null)
-        return res;
-      if (MatchList.CheckedItems[0] == null)
-        return res;
-      if (MatchList.CheckedItems[0].Tag == null)
-        return res;
-
-      res = (FileInfo)MatchList.CheckedItems[0].Tag;
-      return res;
+      return MatchList.CheckedItems[0].Tag as FileInfo;
     }
-
 
     private bool IsGoodMatch(FileInfo info)
     {
@@ -837,97 +796,82 @@ namespace WindowPlugins.GUIPrograms
       {
         MatchList.Items.Clear();
 
-        if (file == null)
-          return;
-        if (file.FileInfoList == null)
-          return;
+        if (file == null) return;
+        if (file.FileInfoList == null) return;
 
         foreach (FileInfo item in file.FileInfoList)
         {
-          if (IsGoodMatch(item))
-          {
-            ListViewItem curItem = new ListViewItem(String.Format("{0} ({1})", item.Title, item.Platform));
-            curItem.SubItems.Add(String.Format("{0}%", item.RelevanceNorm));
-            //							curItem.SubItems[1].Text = String.Format("{0}%", item.Relevance);
-            curItem.Tag = item;
+          if (!IsGoodMatch(item)) continue;
 
-            // selected item?
-            if ((file.FileInfoFavourite != null) && (file.FileInfoFavourite == item))
+          ListViewItem curItem = new ListViewItem(String.Format("{0} ({1})", item.Title, item.Platform));
+          curItem.SubItems.Add(String.Format("{0}%", item.RelevanceNorm));
+          curItem.Tag = item;
+
+          // selected item?
+          if (file.FileInfoFavourite != null)
+            if (file.FileInfoFavourite == item)
             {
               curItem.Checked = true;
               LaunchURLButton.Enabled = true;
             }
 
-            curItem = MatchList.Items.Add(curItem);
-          }
+          MatchList.Items.Add(curItem);
         }
       }
       finally
       {
         MatchList.EndUpdate();
       }
-
     }
-
 
     private void ChangeFileSelection()
     {
-      FileItem file = GetSelectedFileItem();
-      SyncMatchesList(file);
+      SyncMatchesList(GetSelectedFileItem());
     }
 
-    private void allGameLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    void SelectBestMatch(ListViewItem curItem)
     {
-      if (allGameLink.Text == null)
-        return;
-      if (allGameLink.Text.Length > 0)
+      if (curItem.Tag == null) return;
+
+      FileItem file = curItem.Tag as FileItem;
+      if (file == null) return;
+      if (file.FileInfoList == null) return;
+
+      foreach (FileInfo info in file.FileInfoList)
       {
-        ProcessStartInfo sInfo = new ProcessStartInfo(allGameLink.Text);
-        Process.Start(sInfo);
+        // check if 
+        //   - info is from platform, which is set in combobox
+        //   - has minimum relevance
+        if (!IsGoodMatch(info)) continue;
+
+        // if file has no favourite yet
+        if (file.FileInfoFavourite == null)
+        {
+          file.FileInfoFavourite = info;
+          continue;
+        }
+
+        // prevously selected infoitem
+        if (file.GameURL == info.GameURL)
+        {
+          file.FileInfoFavourite = info;
+          continue;
+        }
+
+        // file has already a favourite
+        // is info's relevance better than current favourite's relevance
+        if (info.RelevanceNorm > file.FileInfoFavourite.RelevanceNorm)
+          file.FileInfoFavourite = info;
       }
-    }
 
-    private void LaunchSelectedMatchURL()
-    {
-      /*
-      FileInfo info = GetSelectedMatchItem();
-      if (info == null)
-        return;
-      info.LaunchURL();
-      */
-    }
-
-
-    private void MatchList_DoubleClick(object sender, EventArgs e)
-    {
-      //LaunchSelectedMatchURL();
-    }
-
-    private void checkAllButton_Click(object sender, EventArgs e)
-    {
-      foreach (ListViewItem curItem in FileList.Items)
+      if (file.FileInfoFavourite != null)
       {
-        curItem.Checked = true;
+        curItem.SubItems[1].Text = String.Format("best: {0}%", file.FileInfoFavourite.RelevanceNorm);
       }
-      btnStartSearch.Enabled = (FileList.CheckedItems.Count > 0);
-      SyncFileLabel();
-    }
-
-    private void uncheckAllButton_Click(object sender, EventArgs e)
-    {
-      foreach (ListViewItem curItem in FileList.Items)
+      else
       {
-        curItem.Checked = false;
+        curItem.SubItems[1].Text = "no match";
       }
-      btnStartSearch.Enabled = false;
-      buttonSelectBestMatch.Enabled = false;
-      btnSaveSearch.Enabled = false;
-      SyncFileLabel();
-    }
-
-    private void btnSaveSearch_Click(object sender, EventArgs e)
-    {
-      menuSaveDetails.Show(btnSaveSearch, new Point(0, btnSaveSearch.Height));
     }
 
     void SaveSearch(ScraperSaveType saveType)
@@ -988,6 +932,62 @@ namespace WindowPlugins.GUIPrograms
       stopSearching = false;
     }
 
+
+
+
+    private void allGameLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      if (allGameLink.Text == null)
+        return;
+      if (allGameLink.Text.Length > 0)
+      {
+        ProcessStartInfo sInfo = new ProcessStartInfo(allGameLink.Text);
+        Process.Start(sInfo);
+      }
+    }
+
+    private void LaunchSelectedMatchURL()
+    {
+      /*
+      FileInfo info = GetSelectedMatchItem();
+      if (info == null)
+        return;
+      info.LaunchURL();
+      */
+    }
+
+
+    private void MatchList_DoubleClick(object sender, EventArgs e)
+    {
+      //LaunchSelectedMatchURL();
+    }
+
+    private void checkAllButton_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem curItem in FileList.Items)
+      {
+        curItem.Checked = true;
+      }
+      btnStartSearch.Enabled = (FileList.CheckedItems.Count > 0);
+      SyncFileLabel();
+    }
+
+    private void uncheckAllButton_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem curItem in FileList.Items)
+      {
+        curItem.Checked = false;
+      }
+      btnStartSearch.Enabled = false;
+      btnSaveSearch.Enabled = false;
+      SyncFileLabel();
+    }
+
+    private void btnSaveSearch_Click(object sender, EventArgs e)
+    {
+      menuSaveDetails.Show(btnSaveSearch, new Point(0, btnSaveSearch.Height));
+    }
+
     private void filterComboBox_SelectedIndexChanged(object sender, EventArgs e)
     {
       ChangeFileSelection();
@@ -1004,58 +1004,6 @@ namespace WindowPlugins.GUIPrograms
     private void ResetFilterButton_Click(object sender, EventArgs e)
     {
       filterComboBox.Text = "";
-      ChangeFileSelection();
-    }
-
-    private void buttonSelectBestMatch_Click(object sender, EventArgs e)
-    {
-      foreach (ListViewItem curItem in FileList.CheckedItems)
-      {
-        FileItem file = (FileItem)curItem.Tag;
-
-        if (file == null)
-          continue;
-        if (file.FileInfoList == null)
-          continue;
-
-        foreach (FileInfo info in file.FileInfoList)
-        {
-          // check if 
-          //   - info is from platform, which is set in combobox
-          //   - has minimum relevance
-          if (!IsGoodMatch(info))
-            continue;
-
-          // if file has no favourite yet
-          if (file.FileInfoFavourite == null)
-          {
-            file.FileInfoFavourite = info;
-            continue;
-          }
-
-          if (file.FileInfoFavourite.GameURL == info.GameURL)
-          {
-            file.FileInfoFavourite = info;
-            break;
-          }
-          
-          // file has already a favourite
-          // is info's relevance better than current favourite's relevance
-          if (info.RelevanceNorm > file.FileInfoFavourite.RelevanceNorm)
-            file.FileInfoFavourite = info;
-
-          btnSaveSearch.Enabled = true;
-        }
-
-        if (file.FileInfoFavourite != null)
-        {
-          curItem.SubItems[1].Text = String.Format("best: {0}%", file.FileInfoFavourite.RelevanceNorm);
-        }
-        else
-        {
-          curItem.SubItems[1].Text = "no match";
-        }
-      }
       ChangeFileSelection();
     }
 
@@ -1076,7 +1024,6 @@ namespace WindowPlugins.GUIPrograms
         btnStartSearch.Enabled = (FileList.CheckedItems.Count > 0);
         if (!btnStartSearch.Enabled)
         {
-          buttonSelectBestMatch.Enabled = false;
           btnSaveSearch.Enabled = false;
         }
         SyncFileLabel();
@@ -1165,29 +1112,30 @@ namespace WindowPlugins.GUIPrograms
 
     private void MatchList_ItemCheck(object sender, ItemCheckEventArgs e)
     {
-      foreach (ListViewItem item in MatchList.CheckedItems)
-        item.Checked = false;
-
-      if (e.CurrentValue == CheckState.Checked)
+      if (e.NewValue == CheckState.Checked)
       {
-        e.NewValue = CheckState.Checked;
+        if (MatchList.CheckedItems == null) return;
+        foreach (ListViewItem item in MatchList.CheckedItems)
+          if (item.Index != e.Index)
+            item.Checked = false;
       }
     }
 
     private void MatchList_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
-      if (e.Item.Checked == true)
-      {
-        FileItem file = GetSelectedFileItem();
-        if (file == null)
-          return;
+      if (e.Item.Checked == false) return;
 
-        FileInfo info = (FileInfo)e.Item.Tag;
-        file.FileInfoFavourite = info;
-        LaunchURLButton.Enabled = true;
-        btnSaveSearch.Enabled = true;
-        FileList.FocusedItem.SubItems[1].Text = String.Format("best: {0}%", file.FileInfoFavourite.RelevanceNorm);
-      }
+      FileItem file = GetSelectedFileItem();
+      if (file == null) return;
+
+      if (e.Item.Tag == null) return;
+      FileInfo info = e.Item.Tag as FileInfo;
+      if (info == null) return;
+
+      file.FileInfoFavourite = info;
+      LaunchURLButton.Enabled = true;
+      btnSaveSearch.Enabled = true;
+      FileList.FocusedItem.SubItems[1].Text = String.Format("best: {0}%", file.FileInfoFavourite.RelevanceNorm);
     }
   }
 }
