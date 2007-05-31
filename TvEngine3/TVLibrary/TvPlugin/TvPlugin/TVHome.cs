@@ -289,7 +289,8 @@ namespace TvPlugin
           }
         case GUIMessage.MessageType.GUI_MSG_STOP_SERVER_TIMESHIFTING:
           {
-            TVHome.Card.StopTimeShifting();
+            User user = new User();
+            if (user.Name == TVHome.Card.User.Name) { TVHome.Card.StopTimeShifting(); };
             break;
           }
       }
