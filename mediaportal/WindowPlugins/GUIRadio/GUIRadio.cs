@@ -42,12 +42,18 @@ namespace MediaPortal.GUI.Radio
 {
   public class GUIRadio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
-    [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(6)]    protected GUIButtonControl btnPrevious = null;
-    [SkinControlAttribute(7)]    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(50)]   protected GUIListControl listView = null;
-    [SkinControlAttribute(51)]   protected GUIThumbnailPanel thumbnailView = null;
+    [SkinControlAttribute(2)]
+    protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]
+    protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(6)]
+    protected GUIButtonControl btnPrevious = null;
+    [SkinControlAttribute(7)]
+    protected GUIButtonControl btnNext = null;
+    [SkinControlAttribute(50)]
+    protected GUIListControl listView = null;
+    [SkinControlAttribute(51)]
+    protected GUIThumbnailPanel thumbnailView = null;
 
 
     enum SortMethod
@@ -768,6 +774,16 @@ namespace MediaPortal.GUI.Radio
       }
     }
 
+    bool IsUrl(string fileName)
+    {
+      if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
+      fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
+      {
+        return true;
+      }
+      return false;
+    }
+
     void FillPlayList()
     {
       playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
@@ -780,7 +796,12 @@ namespace MediaPortal.GUI.Radio
         for (int i = 0; i < currentPlayList.Count; ++i)
         {
           PlayListItem playlistItem = new Playlists.PlayListItem();
-          playlistItem.Type = currentPlayList[i].Type;
+          // If we got a Url, we should set the type to AudioStream
+          if (IsUrl(currentPlayList[i].FileName))
+            playlistItem.Type = PlayListItem.PlayListItemType.AudioStream;
+          else
+            playlistItem.Type = currentPlayList[i].Type;
+
           playlistItem.FileName = currentPlayList[i].FileName;
           playlistItem.Description = currentPlayList[i].Description;
           playlistItem.Duration = currentPlayList[i].Duration;
@@ -811,7 +832,12 @@ namespace MediaPortal.GUI.Radio
               playlistItem.FileName = playlist[0].FileName;
               playlistItem.Description = playlist[0].Description;
               playlistItem.Duration = playlist[0].Duration;
-              playlistItem.Type = playlist[0].Type;
+              // If we got a Url, we should set the type to AudioStream
+              if (IsUrl(playlist[0].FileName))
+                playlistItem.Type = PlayListItem.PlayListItemType.AudioStream;
+              else
+                playlistItem.Type = currentPlayList[0].Type;
+              
               playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
             }
           }

@@ -142,8 +142,8 @@ namespace MediaPortal.Playlists
             if (tmp.IndexOf("http:") < 0 && tmp.IndexOf("mms:") < 0 && tmp.IndexOf("rtp:") < 0)
             {
               MediaPortal.Util.Utils.GetQualifiedFilename(basePath, ref fileName);
-            }
-            newItem.Type = PlayListItem.PlayListItemType.AudioStream;
+              newItem.Type = PlayListItem.PlayListItemType.AudioStream;
+            }           
             playlist.Add(newItem);
             fileName = "";
             infoLine = "";

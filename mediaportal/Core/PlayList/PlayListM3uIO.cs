@@ -134,9 +134,17 @@ namespace MediaPortal.Playlists
       if (fileName == null || fileName.Length == 0)
         return false;
 
-      MediaPortal.Util.Utils.GetQualifiedFilename(basePath, ref fileName);
       PlayListItem newItem = new PlayListItem(songName, fileName, duration);
-      newItem.Type = PlayListItem.PlayListItemType.Audio;
+      if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
+          fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
+      {
+        newItem.Type = PlayListItem.PlayListItemType.AudioStream;
+      }
+      else
+      {
+        MediaPortal.Util.Utils.GetQualifiedFilename(basePath, ref fileName);
+        newItem.Type = PlayListItem.PlayListItemType.Audio;
+      }
       if (songName.Length == 0)
       {
         newItem.Description = Path.GetFileName(fileName);
