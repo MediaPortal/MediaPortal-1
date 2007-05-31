@@ -160,10 +160,10 @@ namespace MediaPortal.TV.Recording
 
         // get all programs running for this TV channel
         // between  (now-4 hours) - (now+PostRecordInterval+3 hours)
-        DateTime dtStart = dtCurrentTime.AddHours(-4);
+        /*DateTime dtStart = dtCurrentTime.AddHours(-4);
         DateTime dtEnd = dtCurrentTime.AddMinutes(PrePostRecord.Instance.DefaultPostRecord + 3 * 60);
         long iStartTime = MediaPortal.Util.Utils.datetolong(dtStart);
-        long iEndTime = MediaPortal.Util.Utils.datetolong(dtEnd);
+        long iEndTime = MediaPortal.Util.Utils.datetolong(dtEnd);*/
 
         // for each TV recording scheduled
         for (int j = 0; j < _recordingsList.Count; ++j)
@@ -185,12 +185,15 @@ namespace MediaPortal.TV.Recording
               // check which program is current running on this channel
               TVProgram prog = chan.GetProgramAt(dtCurrentTime.AddMinutes(1 + rec.PreRecord));
               // if the recording  should record the tv program
-              if (rec.StartTime<=prog.StartTime && rec.IsRecordingProgramAtTime(dtCurrentTime, prog, rec.PreRecord, rec.PostRecord))
+              if (prog != null)
               {
-                // yes, then record it
-                if (Record(handler, dtCurrentTime, rec, prog, rec.PreRecord, rec.PostRecord))
+                if (rec.StartTime <= prog.StartTime && rec.IsRecordingProgramAtTime(dtCurrentTime, prog, rec.PreRecord, rec.PostRecord))
                 {
-                  break;
+                  // yes, then record it
+                  if (Record(handler, dtCurrentTime, rec, prog, rec.PreRecord, rec.PostRecord))
+                  {
+                    break;
+                  }
                 }
               }
               else
@@ -206,14 +209,18 @@ namespace MediaPortal.TV.Recording
                   // if the recording should record the tv program
                   if (rec.IsRecordingProgramAtTime(dtTime, prog2Min, rec.PreRecord, rec.PostRecord))
                   {
-                    // we set the rec start/endtimes to the current program ones if needed 
-                    // required for getting a right value for CommandProcessor.IsRecording
-                    // (used in fixing back2back recordings with 2 cards & same title issue )
-                    rec.StartTime = prog2Min.StartTime;
-                    rec.Start = prog2Min.Start;
-                    rec.EndTime = prog2Min.EndTime;
-                    rec.End = prog2Min.End;
-                    TVDatabase.UpdateRecording(rec, TVDatabase.RecordingChange.Modified);
+                    if (rec.RecType == TVRecording.RecordingType.EveryTimeOnThisChannel
+                      || rec.RecType == TVRecording.RecordingType.EveryTimeOnEveryChannel
+                      && (prog2Min != null))
+                    {
+                      // we set the rec start/endtimes to the current program ones if needed 
+                      // (used in fixing back2back recordings with 2 cards & same title issue )
+                      rec.StartTime = prog2Min.StartTime;
+                      rec.Start = prog2Min.Start;
+                      rec.EndTime = prog2Min.EndTime;
+                      rec.End = prog2Min.End;
+                      TVDatabase.UpdateRecording(rec, TVDatabase.RecordingChange.Modified);
+                    }
                     //then send the announcement that we are about to record this recording in 2 minutes from now
                     Log.WriteFile(LogType.Recorder, "Recorder: Send announcement for recording:{0}", rec.ToString());
                     rec.IsAnnouncementSend = true;

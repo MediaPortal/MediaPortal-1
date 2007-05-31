@@ -146,7 +146,7 @@ namespace MediaPortal.TV.Recording
       {
         TVCaptureDevice dev = _tvcards[i];
         // us it recording the schedule specified in 'rec'?
-        
+
         if (dev.IsRecording && dev.CurrentTVRecording != null && dev.CurrentTVRecording.ID == rec.ID)
         {
           //seems so, is the recording a series
@@ -157,10 +157,12 @@ namespace MediaPortal.TV.Recording
             return true;
           }
           //its a series, so we need to check start/end times of the current episode
-          if (rec.StartTime.AddMinutes(-rec.PreRecord) <= DateTime.Now && DateTime.Now <= rec.EndTime.AddMinutes(rec.PostRecord))
+          if (rec.StartTime.AddMinutes(-rec.PreRecord) <= DateTime.Now && rec.EndTime >= rec.StartTime)
           {
-            // make sure we will get the right next program
-            if (rec.StartTime < DateTime.Now && DateTime.Now < rec.EndTime)
+            // do everytime on ... specific stuff
+            if (rec.StartTime < DateTime.Now && DateTime.Now < rec.EndTime // make sure we will get the right next program
+              && (rec.RecType == TVRecording.RecordingType.EveryTimeOnEveryChannel // only needed
+              || rec.RecType == TVRecording.RecordingType.EveryTimeOnThisChannel)) // for "every..." types
             {
               // we need to know if we want to record 2 back 2 back  programs with same title 
               // eg : everytimeonthischannel : 12:45-13:30 Smallville / 13:30-14:15 SmallVille
@@ -176,7 +178,7 @@ namespace MediaPortal.TV.Recording
                 nextrec.Start = nextProg.Start;
                 nextrec.EndTime = nextProg.EndTime;
                 nextrec.End = nextProg.End;
-                nextrec.ID = -1;
+                nextrec.ID = -1; // a new schedule will be created in db
                 TVDatabase.AddRecording(ref nextrec);
                 // set current rec type to once
                 dev.CurrentTVRecording.RecType = TVRecording.RecordingType.Once;
