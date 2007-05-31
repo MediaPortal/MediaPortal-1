@@ -1279,7 +1279,11 @@ namespace TvLibrary.Implementations.DVB
                   channel.PcrPid = _channelInfo.pcr_pid;
                 }
                 _channelInfo.pcr_pid = channel.PcrPid;
-
+                // update any service scrambled / unscambled changes
+                if (_channelInfo.scrambled = channel.FreeToAir)
+                {
+                  channel.FreeToAir = !_channelInfo.scrambled;
+                }
                 if ((_mdapiFilter != null) && (_newCA))
                 {
                   try
