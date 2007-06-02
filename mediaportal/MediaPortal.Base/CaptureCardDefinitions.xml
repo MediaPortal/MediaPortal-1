@@ -7599,32 +7599,32 @@
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP" capturename="WinFast TV2000 XP WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_6609107d&amp;rev_11">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP WDM TVTuner"		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP WDM TVAudio"		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"				checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP WDM TVTuner"		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP WDM TVAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							            checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			      checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"				        checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"					          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
-
+  
   <capturecard commercialname="WinFast TV2000 XP" capturename="WinFast TV2000 XP WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_660a107d&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
@@ -7653,273 +7653,273 @@
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP" capturename="WinFast TV2000 XP WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_660b107d&amp;rev_11">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP WDM TVTuner"		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP WDM TVAudio"		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"				checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP WDM TVTuner"		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP WDM TVAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							            checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			      checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"				        checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"					          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP" capturename="WinFast TV2000 XP WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_660c107d&amp;rev_11">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP WDM TVTuner"		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP WDM TVAudio"		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"				checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP WDM TVTuner"		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP WDM TVAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							            checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			      checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"				        checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"					          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP" capturename="WinFast TV2000 XP WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_660d107d&amp;rev_11">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP WDM TVTuner"		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP WDM TVAudio"		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"				checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP WDM TVTuner"		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP WDM TVAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							            checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			      checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"				        checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"					          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP" capturename="WinFast TV2000 XP WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_660e107d&amp;rev_11">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP WDM TVTuner"		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP WDM TVAudio"		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"				checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP WDM TVTuner"		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP WDM TVAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							            checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			      checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"				        checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"					          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP" capturename="WinFast TV2000 XP WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_660f107d&amp;rev_11">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP WDM TVTuner"		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP WDM TVAudio"		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"				checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP WDM TVTuner"		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP WDM TVAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							            checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			      checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"				        checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"					          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP" capturename="WinFast TV2000 XP WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_6616107d&amp;rev_11">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP WDM TVTuner"		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP WDM TVAudio"		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"				checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP WDM TVTuner"		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP WDM TVAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							            checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			      checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"				        checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"					          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP" capturename="WinFast TV2000 XP WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_6619107d&amp;rev_11">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP WDM TVTuner"		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP WDM TVAudio"		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"				checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP WDM TVTuner"		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP WDM TVAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							            checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			      checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"				        checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"					          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP" capturename="WinFast TV2000 XP WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_6605107d&amp;rev_11">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP WDM TVTuner"		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP WDM TVAudio"		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"				checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP WDM TVTuner"		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP WDM TVAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							            checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			      checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"				        checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"					          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP" capturename="WinFast TV2000 XP WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_217d6606&amp;rev_02">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP WDM TVTuner"		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP WDM TVAudio"		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"				checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP WDM TVTuner"		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP WDM TVAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							            checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			      checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"				        checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"					          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP" capturename="WinFast TV2000 XP WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_3002144f&amp;rev_02">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP WDM TVTuner"		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP WDM TVAudio"		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"				checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP WDM TVTuner"		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP WDM TVAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP WDM Crossbar"		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"							            checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			      checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"				        checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"					          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="LifeView FlyDVB-T DUO Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_03065168&amp;rev_f0">
@@ -7927,13 +7927,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"/>
-        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"/>
-        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"/>
+        <filter cat="tvtuner"		  name="713x BDA Analog Tv Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="713x BDA Analog TV Audio"		  checkdevice="true"/>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			    checkdevice="true"/>
+        <filter cat="capture"		  name="713x BDA Analog Capture"		  checkdevice="true"/>
         <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"/>
-        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -7943,8 +7943,8 @@
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -7954,13 +7954,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"/>
-        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"/>
-        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"/>
+        <filter cat="tvtuner"		  name="713x BDA Analog Tv Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="713x BDA Analog TV Audio"		  checkdevice="true"/>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			    checkdevice="true"/>
+        <filter cat="capture"		  name="713x BDA Analog Capture"		  checkdevice="true"/>
         <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"/>
-        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -7970,8 +7970,8 @@
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -7981,13 +7981,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"/>
-        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"/>
-        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"/>
+        <filter cat="tvtuner"		  name="713x BDA Analog Tv Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="713x BDA Analog TV Audio"		  checkdevice="true"/>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			    checkdevice="true"/>
+        <filter cat="capture"		  name="713x BDA Analog Capture"		  checkdevice="true"/>
         <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"/>
-        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -7997,8 +7997,8 @@
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -8008,13 +8008,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"/>
-        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"/>
-        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"/>
+        <filter cat="tvtuner"		  name="713x BDA Analog Tv Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="713x BDA Analog TV Audio"		  checkdevice="true"/>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			    checkdevice="true"/>
+        <filter cat="capture"		  name="713x BDA Analog Capture"		  checkdevice="true"/>
         <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"/>
-        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -8024,8 +8024,8 @@
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -8035,13 +8035,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"/>
-        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"/>
-        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"/>
+        <filter cat="tvtuner"		  name="713x BDA Analog Tv Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="713x BDA Analog TV Audio"		  checkdevice="true"/>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			    checkdevice="true"/>
+        <filter cat="capture"		  name="713x BDA Analog Capture"		  checkdevice="true"/>
         <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"/>
-        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -8051,8 +8051,8 @@
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -8062,13 +8062,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"/>
-        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"/>
-        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"/>
+        <filter cat="tvtuner"		  name="713x BDA Analog Tv Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="713x BDA Analog TV Audio"     checkdevice="true"/>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			    checkdevice="true"/>
+        <filter cat="capture"		  name="713x BDA Analog Capture"		  checkdevice="true"/>
         <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"/>
-        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -8078,8 +8078,8 @@
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -8089,13 +8089,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"/>
-        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"/>
-        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"/>
+        <filter cat="tvtuner"		  name="713x BDA Analog Tv Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="713x BDA Analog TV Audio"		  checkdevice="true"/>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			    checkdevice="true"/>
+        <filter cat="capture"		  name="713x BDA Analog Capture"		  checkdevice="true"/>
         <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"/>
-        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -8105,8 +8105,8 @@
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -8116,13 +8116,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"/>
-        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"/>
-        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"/>
+        <filter cat="tvtuner"		  name="713x BDA Analog Tv Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="713x BDA Analog TV Audio"		  checkdevice="true"/>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			    checkdevice="true"/>
+        <filter cat="capture"		  name="713x BDA Analog Capture"		  checkdevice="true"/>
         <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"/>
-        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -8132,8 +8132,8 @@
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -8143,13 +8143,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"/>
-        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"/>
-        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"/>
+        <filter cat="tvtuner"		  name="713x BDA Analog Tv Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="713x BDA Analog TV Audio"		  checkdevice="true"/>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			    checkdevice="true"/>
+        <filter cat="capture"		  name="713x BDA Analog Capture"		  checkdevice="true"/>
         <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"/>
-        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -8159,8 +8159,8 @@
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -8170,13 +8170,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"/>
-        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"/>
-        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"/>
-        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"/>
+        <filter cat="tvtuner"		  name="713x BDA Analog Tv Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="713x BDA Analog TV Audio"		  checkdevice="true"/>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			    checkdevice="true"/>
+        <filter cat="capture"		  name="713x BDA Analog Capture"		  checkdevice="true"/>
         <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"/>
-        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"/>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="CyberLink MPEG Muxer"			    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -8186,8 +8186,8 @@
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -8213,8 +8213,8 @@
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -8225,8 +8225,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	checkdevice="false"/>
-        <filter cat="tunerdevice"		name="713x BDA DVBT Tuner"				checkdevice="true"/>
-        <filter cat="capture"			name="713x BDA Digital Capture"			checkdevice="true"/>
+        <filter cat="tunerdevice"		  name="713x BDA DVBT Tuner"				      checkdevice="true"/>
+        <filter cat="capture"			    name="713x BDA Digital Capture"			    checkdevice="true"/>
       </filters>
       <connections>
          <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
@@ -8236,30 +8236,30 @@
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP Expert" capturename="WinFast TV2000 XP Expert WDM Video Capture." devid="ven_14f1&amp;dev_8800&amp;subsys_6611107d&amp;rev_05">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP Expert WDM TVTuner."		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP Expert WDM TV Audio."		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP Expert WDM Crossbar."		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"									checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"					checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"							checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP Expert WDM TVTuner."		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP Expert WDM TV Audio."		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP Expert WDM Crossbar."		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"									                checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					          checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"					              checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"							              checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP Expert" capturename="WinFast TV2000 XP Expert WDM Video Capture." devid="ven_14f1&amp;dev_8800&amp;subsys_6613107d&amp;rev_05">
@@ -8290,111 +8290,111 @@
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP Expert" capturename="WinFast TV2000 XP Expert WDM Video Capture." devid="ven_14f1&amp;dev_8800&amp;subsys_661a107d&amp;rev_05">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP Expert WDM TVTuner."		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP Expert WDM TV Audio."		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP Expert WDM Crossbar."		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"									checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"					checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"							checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP Expert WDM TVTuner."		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP Expert WDM TV Audio."		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP Expert WDM Crossbar."		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"									                checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					          checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"					              checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"							              checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP Expert" capturename="WinFast TV2000 XP Expert WDM Video Capture." devid="ven_14f1&amp;dev_8800&amp;subsys_661b107d&amp;rev_05">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP Expert WDM TVTuner."		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP Expert WDM TV Audio."		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP Expert WDM Crossbar."		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"									checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"					checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"							checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP Expert WDM TVTuner."		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP Expert WDM TV Audio."		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP Expert WDM Crossbar."		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"									                checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					          checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"					              checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"							              checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP Expert" capturename="WinFast TV2000 XP Expert WDM Video Capture." devid="ven_14f1&amp;dev_8800&amp;subsys_661c107d&amp;rev_05">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP Expert WDM TVTuner."		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP Expert WDM TV Audio."		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP Expert WDM Crossbar."		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"									checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"					checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"							checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP Expert WDM TVTuner."		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP Expert WDM TV Audio."		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP Expert WDM Crossbar."		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"									                checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					          checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"					              checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"							              checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="WinFast TV2000 XP Global" capturename="WinFast TV2000 XP Global WDM Video Capture." devid="ven_14f1&amp;dev_8800&amp;subsys_6f18107d&amp;rev_05">
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-	<tv>
-	  <interface cat="mux" video="" audio="" mpeg2="0"/>
-	  <filters>
-		<filter cat="tvtuner"		name="WinFast TV2000 XP Global WDM TVTuner."		checkdevice="true"/>
-		<filter cat="tvaudio"		name="WinFast TV2000 XP Global WDM TV Audio."		checkdevice="true"/>
-		<filter cat="crossbar"		name="WinFast TV2000 XP Global WDM Crossbar."		checkdevice="true"/>
-		<filter cat="capture"		name="WinFast TV2000 XP Global WDM Video Capture."	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"									checkdevice="true"/>
-		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"					checkdevice="false"/>
-		<filter cat="mux"			name="Leadtek MPEG Muxer"							checkdevice="false"/>
-	  </filters>
-	  <connections>
-		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
-		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-	  </connections>
-	</tv>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast TV2000 XP Global WDM TVTuner."		    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast TV2000 XP Global WDM TV Audio."		    checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast TV2000 XP Global WDM Crossbar."		    checkdevice="true"/>
+        <filter cat="capture"		  name="WinFast TV2000 XP Global WDM Video Capture."	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"									                checkdevice="true"/>
+        <filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					          checkdevice="false"/>
+        <filter cat="audencoder"	name="LeadTek Audio Encoder"					              checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"							              checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 
   <capturecard commercialname="LeadTek WinFast DTV2000H Analogue" capturename="WinFast DTV2000 WDM Video Capture." devid="ven_14f1&amp;dev_8800&amp;subsys_6651107d&amp;rev_05">
@@ -8509,25 +8509,25 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="ATI TV Wonder Pro Tuner"			checkdevice="true"/>
-        <filter cat="tvaudio"		name="ATI TV Wonder Pro TV Audio"		checkdevice="true"/>
+        <filter cat="tvtuner"     name="ATI TV Wonder Pro Tuner"			  checkdevice="true"/>
+        <filter cat="tvaudio"     name="ATI TV Wonder Pro TV Audio"		  checkdevice="true"/>
         <filter cat="crossbar"		name="ATI TV Wonder Pro A/V Crossbar"	checkdevice="true"/>
-        <filter cat="capture"  		name="ATI TV Wonder Pro A/V Capture"  	checkdevice="true"/>
-		<filter cat="audcapture"	name="%soundcard%"						checkdevice="true"/>
+        <filter cat="capture"  		name="ATI TV Wonder Pro A/V Capture"  checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"						        checkdevice="true"/>
         <filter cat="videncoder"	name="ATI Media Center Video Encoder"	checkdevice="false"/>
-        <filter cat="audencoder"	name="ATI Media Center Audio Encoder" 	checkdevice="false"/>
+        <filter cat="audencoder"	name="ATI Media Center Audio Encoder" checkdevice="false"/>
         <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"/>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvaudio%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvaudio%"/>
         <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
-        <connection sourcefilter="capture"      sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -17882,7 +17882,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Pinnacle PCTV 310c DVB-T/Analog Tuner" capturename="DVB-T Digital TV Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_178812ab&amp;rev_05">
+  <capturecard commercialname="Pinnacle PCTV 310c (DVB-T)" capturename="DVB-T Digital TV Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_178812ab&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
@@ -19897,6 +19897,260 @@
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle Dazzle 71e" capturename="AF9015 BDA Filter" devid="vid_2304&amp;pid_022b">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="AF9015 BDA Filter"                checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hercules SmartTV Stereo" capturename="Conexant Capture" devid="ven_109e&amp;dev_036e&amp;subsys_00000000&amp;rev_11">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="Hercules TvTuner"   checkdevice="true"/>
+        <filter cat="tvaudio"     name="Hercules TvAudio"   checkdevice="true"/>
+        <filter cat="crossbar"    name="Hercules Crossbar"  checkdevice="true"/>
+        <filter cat="capture"     name="Conexant Capture"   checkdevice="true"/>
+        <filter cat="audcapture"  name="%soundcard%"        checkdevice="true"/>
+        <filter cat="videncoder"  name="%videoencoder%"     checkdevice="false"/>
+        <filter cat="audencoder"  name="%audioencoder%"     checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"    sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"    sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder" sinkpin="0"/>
+        <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="audencoder" sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AVerMedia M780 PCIe (ATSC)" capturename="AverMedia M780 PCIe Digital Video Capture 2" devid="ven_18c3&amp;dev_0720&amp;subsys_062e1461&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"              checkdevice="false"/>
+        <filter cat="tunerdevice"     name="AverMedia M780 PCIe BDA ATSC Tuner 2"	        checkdevice="true"/>
+        <filter cat="capture"         name="AverMedia M780 PCIe Digital Video Capture 2"	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AVerMedia M780 PCIe (NTSC)" capturename="AverMedia M780 PCIe Audio/Video Capture 1" devid="ven_18c3&amp;dev_0720&amp;subsys_062e1461&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="tvtuner"  name="AverMedia M780 PCIe TV-Tuner 1"            checkdevice="true"/>
+        <filter cat="tvaudio"  name="AverMedia M780 PCIe Audio Decoder 1"       checkdevice="true"/>
+        <filter cat="crossbar" name="AverMedia M780 PCIe Crossbar 1"            checkdevice="true"/>
+        <filter cat="capture"  name="AverMedia M780 PCIe Audio/Video Capture 1" checkdevice="true"/>
+        <filter cat="encoder"  name="AverMedia M780 PCIe Encoder 1"             checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0"	sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"	sourcepin="1"	sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"	sourcepin="0"	sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"	sourcepin="0"	sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar"	sourcepin="1"	sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"	sourcepin="3"	sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"	sourcepin="4"	sinkfilter="encoder"	sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Terratec Cinergy 800e PVR" capturename="Cinergy 800e PVR, Capture" devid="vid_0ccd&amp;pid_003a">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="tvtuner"  name="Cinergy 800e PVR, TVTuner"   checkdevice="true"/>
+        <filter cat="tvaudio"  name="Cinergy 800e PVR, TVAudio"   checkdevice="true"/>
+        <filter cat="crossbar" name="Cinergy 800e PVR, Crossbar"  checkdevice="true"/>
+        <filter cat="capture"  name="Cinergy 800e PVR, Capture"   checkdevice="true"/>
+        <filter cat="encoder"  name="Cinergy 800e PVR, Encoder"   checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0"	sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"	sourcepin="1"	sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"	sourcepin="0"	sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"	sourcepin="0"	sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar"	sourcepin="1"	sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"	sourcepin="0"	sinkfilter="encoder"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI TV Wonder Pro" capturename="ATI TV Wonder Pro A/V Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_00f91002&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="ATI TV Wonder Pro Tuner"			  checkdevice="true"/>
+        <filter cat="tvaudio"     name="ATI TV Wonder Pro TV Audio"		  checkdevice="true"/>
+        <filter cat="crossbar"		name="ATI TV Wonder Pro A/V Crossbar"	checkdevice="true"/>
+        <filter cat="capture"  		name="ATI TV Wonder Pro A/V Capture"  checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"						        checkdevice="true"/>
+        <filter cat="videncoder"	name="ATI Media Center Video Encoder"	checkdevice="false"/>
+        <filter cat="audencoder"	name="ATI Media Center Audio Encoder" checkdevice="false"/>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvaudio%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV 310c (Analogue)" capturename="Analog Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_178812ab&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="Analog TV Tuner"      checkdevice="true"/>
+        <filter cat="tvaudio"     name="Tuner Card TvAudio"   checkdevice="true"/>
+        <filter cat="crossbar"    name="Tuner Card Crossbar"  checkdevice="true"/>
+        <filter cat="capture"     name="Analog Video Capture" checkdevice="true"/>
+        <filter cat="videncoder"  name="%videoencoder%"       checkdevice="false"/>
+        <filter cat="audencoder"  name="%audioencoder%"       checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"            checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"   sinkpin="0"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"    sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"   sinkpin="3"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"    sinkpin="0"/>
+        <connection sourcefilter="crossbar"   sourcepin="1" sinkfilter="capture"    sinkpin="1"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder" sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="1" sinkfilter="audencoder" sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KWorld DVB-T 355U" capturename="USB 2870 Device" devid="vid_eb1a&amp;pid_e355">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"/>
+        <filter cat="tunerdevice"     name="BDA 2870 TVTuner"					        checkdevice="true"/>
+        <filter cat="capture"         name="USB 2870 Device"		              checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="DiBcom DIB7700 based TV tuner device" capturename="DiBcom BDA Digital Capture (Dev1 Path0)" devid="vid_10b8&amp;pid_1e78">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"          checkdevice="false"/>
+        <filter cat="tunerdevice"     name="DiBcom BDA Digital Tuner (Dev1 Path0) "   checkdevice="true"/>
+        <filter cat="capture"         name="DiBcom BDA Digital Capture (Dev1 Path0)"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Dvico FusionHDTV DVB-T Plus (3.60+)" capturename="FusionHDTV, Transport Stream Capture1" devid="ven_14f1&amp;dev_8800&amp;subsys_db1018ac&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="4"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"/>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner1"                 checkdevice="true"/>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture1"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"    sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"        sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Compro VideoMate H900" capturename="VideoMate H900 Video Capture" devid="ven_14f1&amp;dev_5b7a&amp;subsys_fbbbffa0&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="VideoMate H900 Tuner"			    checkdevice="true"/>
+        <filter cat="tvaudio"  name="VideoMate H900 TvAudio"		    checkdevice="true"/>
+        <filter cat="crossbar" name="VideoMate H900 Crossbar"		    checkdevice="true"/>
+        <filter cat="capture"  name="VideoMate H900 Video Capture"	checkdevice="true"/>
+        <filter cat="encoder"  name="VideoMate H900 Encoder"		    checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="4" sinkfilter="encoder"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Kozumi KTV-01C TV Card" capturename="Bt878 TV Card" devid="ven_109e&amp;dev_036e&amp;subsys_00000000&amp;rev_11">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="Bt878 TV Tuner" checkdevice="true"/>
+        <filter cat="tvaudio"     name="Bt878 TV Audio" checkdevice="true"/>
+        <filter cat="crossbar"    name="Bt878 Crossbar" checkdevice="true"/>
+        <filter cat="capture"     name="Bt878 TV Card"  checkdevice="true"/>
+        <filter cat="audcapture"  name="%soundcard%"    checkdevice="true"/>
+        <filter cat="videncoder"  name="%videoencoder%" checkdevice="false"/>
+        <filter cat="audencoder"  name="%audioencoder%" checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"      checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"    sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"    sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder" sinkpin="0"/>
+        <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="audencoder" sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
