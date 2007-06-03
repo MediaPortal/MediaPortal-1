@@ -15,7 +15,7 @@
   </Runtime>
 
   <Path name = "/AutoStart">
-    <Class id = "Menu" class = "ProjectInfinity.Menu.MenuPlugin"/>
+    <Class id = "Menu" class = "ProjectInfinity.Menu.MenuPlugin" insertafter = "MenuManager" />
   </Path>
 
   <Path name = "/Menus">

@@ -71,7 +71,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy "$(ProjectDir)"MenuManager.plugin $(SolutionDir)$(SolutionName)\$(OutDir)\Plugins\MenuManager
-copy $(TargetPath)  $(SolutionDir)$(SolutionName)\$(OutDir)\Plugins\MenuManager</PostBuildEvent>
+    <PostBuildEvent>xcopy /Y "$(ProjectDir)"MenuManager.plugin $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\MenuManager\
+xcopy /Y $(TargetPath)  $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\MenuManager</PostBuildEvent>
   </PropertyGroup>
 </Project>
