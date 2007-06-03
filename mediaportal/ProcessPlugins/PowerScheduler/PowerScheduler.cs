@@ -315,7 +315,7 @@ namespace MediaPortal.PowerScheduler
           Log.Info("PowerScheduler: Hibernate system -> WakeUp at {0}", _wakeupTime);
           MediaPortal.Util.Utils.HibernateSystem(_forceShutDown);
           break;
-        case "shutdown":
+        case "shutdown (no wakeup)":
           Log.Info("PowerScheduler: ShutDown system");
           WindowsController.ExitWindows(RestartOptions.ShutDown, _forceShutDown);
           break;
