@@ -9,7 +9,9 @@
   </Manifest>
 
   <Runtime>
-    <Import assembly = "Menu.dll"/>
+    <Import assembly = "Menu.dll">
+       <Builder name='Menu' class = 'ProjectInfinity.Menu.MenuBuilder'/>  
+    </Import>
   </Runtime>
 
   <Path name = "/AutoStart">

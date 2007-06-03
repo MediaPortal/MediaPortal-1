@@ -4,11 +4,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{57F96D38-B30D-492B-91FB-61986586BD13}</ProjectGuid>
+    <ProjectGuid>{90E7C7F5-5CF8-48AF-8E70-6331259BC96C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ProjectInfinity.Menu</RootNamespace>
-    <AssemblyName>Menu</AssemblyName>
+    <RootNamespace>MenuManager</RootNamespace>
+    <AssemblyName>MenuManager</AssemblyName>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,7 +22,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -28,41 +30,37 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=x86" />
-    <Reference Include="PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandMenuItem.cs" />
-    <Compile Include="Menu.cs" />
-    <Compile Include="MenuBuilder.cs" />
-    <Compile Include="MenuMenuItem.cs" />
-    <Compile Include="MenuPlugin.cs" />
-    <Compile Include="MenuView.cs" />
-    <Compile Include="MenuViewCreator.cs" />
-    <Compile Include="MenuViewModel.cs" />
+    <Compile Include="Service\CommandMenuItem.cs" />
+    <Compile Include="Service\Menu.cs" />
+    <Compile Include="Service\MenuItem.cs" />
+    <Compile Include="Builders\MenuItemBuilder.cs" />
+    <Compile Include="Service\MessageMenuItem.cs" />
+    <Compile Include="Service\SubMenuItem.cs" />
+    <Compile Include="Interfaces\ICommandItem.cs" />
+    <Compile Include="Interfaces\IMenu.cs" />
+    <Compile Include="Interfaces\IMenuCommand.cs" />
+    <Compile Include="Interfaces\IMenuItem.cs" />
+    <Compile Include="Interfaces\IMenuItemVisitor.cs" />
+    <Compile Include="Interfaces\IMenuManager.cs" />
+    <Compile Include="Interfaces\IMessageItem.cs" />
+    <Compile Include="Interfaces\IPluginItem.cs" />
+    <Compile Include="MenuManagerPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\MenuManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ProjectInfinity.Controls\ProjectInfinity.Controls.csproj">
-      <Project>{D30415D7-E1FC-4C3F-9667-E6301E1A2F6A}</Project>
-      <Name>ProjectInfinity.Controls</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\ProjectInfinity.Core\ProjectInfinity.Core.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
       <Name>ProjectInfinity.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ProjectInfinity.Services\ProjectInfinity.Services.csproj">
-      <Project>{4C45C46E-2ED2-4801-B3C3-FC2560E9FFE0}</Project>
-      <Name>ProjectInfinity.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MenuManager\MenuManager.csproj">
-      <Project>{90E7C7F5-5CF8-48AF-8E70-6331259BC96C}</Project>
-      <Name>MenuManager</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MenuManager.plugin" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -73,7 +71,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>copy "$(ProjectDir)"MenuManager.plugin $(SolutionDir)$(SolutionName)\$(OutDir)\Plugins\MenuManager
+copy $(TargetPath)  $(SolutionDir)$(SolutionName)\$(OutDir)\Plugins\MenuManager</PostBuildEvent>
   </PropertyGroup>
 </Project>

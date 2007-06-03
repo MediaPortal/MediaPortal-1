@@ -4,10 +4,11 @@ using System.Diagnostics;
 using System.Text;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.MenuManager;
 
 namespace ProjectInfinity.Pictures
 {
-  [Plugin("MyPictures", "Show Pictures", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Pictures.png")]
+  //[Plugin("MyPictures", "Show Pictures", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Pictures.png")]
   class PicturePlugin : IPlugin, IAutoStart, IMenuCommand
   {
     public PicturePlugin()

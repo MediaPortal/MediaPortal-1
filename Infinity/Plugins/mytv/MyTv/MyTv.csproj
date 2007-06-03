@@ -173,6 +173,10 @@
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
       <Name>ProjectInfinity.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\MenuManager\MenuManager.csproj">
+      <Project>{90E7C7F5-5CF8-48AF-8E70-6331259BC96C}</Project>
+      <Name>MenuManager</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />

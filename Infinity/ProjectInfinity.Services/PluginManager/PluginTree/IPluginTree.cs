@@ -40,7 +40,7 @@ namespace ProjectInfinity.Plugins
   /// </summary>
   public interface IPluginTree
   {
-    IList<Plugin> Plugins
+    IList<PluginInfo> Plugins
     {
       get;
     }

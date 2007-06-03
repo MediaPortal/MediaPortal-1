@@ -25,29 +25,54 @@
 
 #endregion
 
+
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ProjectInfinity.Plugins
 {
   /// <summary>
-  /// Create a menu from a location in the plugin tree.
+  /// Represents a node in the add in tree that can produce an item.
   /// </summary>
-  public class MenuBuilder : IBuilder
+  public interface INodeItem
   {
-    ///// <summary>
-    ///// Gets if the doozer handles codon conditions on its own.
-    ///// If this property return false, the item is excluded when the condition is not met.
-    ///// </summary>
-    //public bool HandleConditions {
-    //  get {
-    //    return true;
-    //  }
-    //}
-
-    public object BuildItem(object caller, NodeItem item, ArrayList subItems)
+    #region Properties
+    string Name
     {
-      return new Menu(item);
+      get;
     }
+
+    IPluginInfo Plugin
+    {
+      get; 
+    }
+
+    string Id
+    {
+      get;
+    }
+
+    string InsertAfter
+    {
+      get;
+    }
+
+    string InsertBefore
+    {
+      get;
+    }
+
+    string this[string key]
+    {
+      get;
+    }
+    #endregion
+
+    #region Public Methods
+    bool Contains(string key);
+    object CreateObject(string className);
+    object BuildItem(object owner, ArrayList subItems);
+    #endregion
   }
 }

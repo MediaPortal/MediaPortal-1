@@ -27,35 +27,60 @@
 
 using System;
 using ProjectInfinity.Localisation;
-using ProjectInfinity.Logging;
+using ProjectInfinity.Plugins;
 
-namespace ProjectInfinity.Plugins
+namespace ProjectInfinity.MenuManager
 {
-  public class Menu
+  public class MenuItem : IMenuItem
   {
-    #region Variables
-    string _menuPath;
-    StringId _name;
-    #endregion
+    protected object _caller;
+    //bool _visable;
+    protected INodeItem _item;
+    protected StringId _label;
+    protected string _description = "";
 
-    #region Constructors/Destructors
-    public Menu(NodeItem item)
+    public MenuItem(INodeItem item, object caller)
     {
-      this._menuPath = item.Properties["path"];
-      this._name = new StringId(item.Properties["name"]);
-    }
-    #endregion
-
-    #region Properties
-    public string Path
-    {
-      get { return _menuPath; }
+      _caller = caller;
+      _item = item;
+      _label = new StringId(item["label"]);
     }
 
-    public string Name
+    public string Description
     {
-      get { return ServiceScope.Get<ILocalisation>().ToString(_name); }
+      get { return _description; }
+      set { _description = value; }
     }
+
+    #region IMenuItem Members
+
+
+    //public string Name
+    //{
+    //  get { return ServiceScope.Get<ILocalisation>().ToString(_label); }
+    //}
+
+    public string ImagePath
+    {
+      get { return _item["image"]; }
+    }
+
+    public virtual void Accept(IMenuItemVisitor visitor)
+    {
+      throw new NotSupportedException();
+    }
+
+    public string Text
+    {
+      get { return ServiceScope.Get<ILocalisation>().ToString(_label); }
+    }
+
     #endregion
+
+    [Obsolete]
+    void IMenuItem.Execute()
+    {
+      throw new NotSupportedException();
+    }
   }
 }

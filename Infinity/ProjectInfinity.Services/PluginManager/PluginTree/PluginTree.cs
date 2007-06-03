@@ -41,7 +41,7 @@ namespace ProjectInfinity.Plugins
   public class PluginTree : IPluginTree
   {
     #region Variables
-    List<Plugin> _plugins;
+    List<PluginInfo> _plugins;
     PluginTreeNode _rootNode;
     Dictionary<string, IBuilder> _builders;
 
@@ -53,14 +53,14 @@ namespace ProjectInfinity.Plugins
     public PluginTree()
     {
       // initialise variables
-      _plugins = new List<Plugin>();
+      _plugins = new List<PluginInfo>();
       _rootNode = new PluginTreeNode();
 
       // add default builders
       _builders = new Dictionary<string, IBuilder>();
       _builders.Add("Class", new ClassBuilder());
-      _builders.Add("Menu", new MenuBuilder());
-      _builders.Add("MenuItem", new MenuItemBuilder());
+      //_builders.Add("Menu", new MenuBuilder());
+      //_builders.Add("MenuItem", new MenuItemBuilder());
       //_builders.Add("Command", new CommandBuilder());
       //_builders.Add("Include", new IncludeBuilder());
 
@@ -70,7 +70,7 @@ namespace ProjectInfinity.Plugins
     #endregion
 
     #region Properties
-    public IList<Plugin> Plugins
+    public IList<PluginInfo> Plugins
     {
       get { return _plugins.AsReadOnly(); }
     }
@@ -221,7 +221,7 @@ namespace ProjectInfinity.Plugins
         return node.BuildChildItem<T>(id, caller);
     }
 
-    public void InsertPlugin(Plugin Plugin)
+    public void InsertPlugin(PluginInfo Plugin)
     {
       if (Plugin.Enabled)
       {
@@ -271,7 +271,7 @@ namespace ProjectInfinity.Plugins
       _plugins.Add(Plugin);
     }
 
-    public void RemovePlugin(Plugin Plugin)
+    public void RemovePlugin(PluginInfo Plugin)
     {
       if (Plugin.Enabled)
       {
@@ -280,17 +280,17 @@ namespace ProjectInfinity.Plugins
       Plugins.Remove(Plugin);
     }
 
-    public void Load(List<string> PluginFiles, List<string> disabledPlugins)
+    public void Load(List<string> pluginFiles, List<string> disabledPlugins)
     {
-      List<Plugin> list = new List<Plugin>();
+      List<PluginInfo> list = new List<PluginInfo>();
       Dictionary<string, Version> dict = new Dictionary<string, Version>();
-      Dictionary<string, Plugin> PluginDict = new Dictionary<string, Plugin>();
-      foreach (string fileName in PluginFiles)
+      Dictionary<string, PluginInfo> pluginDict = new Dictionary<string, PluginInfo>();
+      foreach (string fileName in pluginFiles)
       {
-        Plugin Plugin;
+        PluginInfo plugin;
         try
         {
-          Plugin = Plugin.Load(fileName);
+          plugin = PluginInfo.Load(fileName);
         }
         catch (PluginLoadException ex)
         {
@@ -303,7 +303,7 @@ namespace ProjectInfinity.Plugins
           {
             ServiceScope.Get<ILogger>().Error("Error loading Plugin " + fileName + ":\n" + ex.Message);
           }
-          Plugin = new Plugin();
+          plugin = new PluginInfo();
           //Plugin.CustomErrorMessage = ex.Message;
         }
         //if (Plugin.Action == PluginAction.CustomError)
@@ -311,56 +311,56 @@ namespace ProjectInfinity.Plugins
         //  list.Add(Plugin);
         //  continue;
         //}
-        Plugin.Enabled = true;
+        plugin.Enabled = true;
         if (disabledPlugins != null && disabledPlugins.Count > 0)
         {
-          foreach (string name in Plugin.Manifest.Identities.Keys)
+          foreach (string name in plugin.Manifest.Identities.Keys)
           {
             if (disabledPlugins.Contains(name))
             {
-              Plugin.Enabled = false;
+              plugin.Enabled = false;
               break;
             }
           }
         }
-        if (Plugin.Enabled)
+        if (plugin.Enabled)
         {
-          foreach (KeyValuePair<string, Version> pair in Plugin.Manifest.Identities)
+          foreach (KeyValuePair<string, Version> pair in plugin.Manifest.Identities)
           {
             if (dict.ContainsKey(pair.Key))
             {
               //MessageService.ShowError("Name '" + pair.Key + "' is used by " + "'" + PluginDict[pair.Key].FileName + "' and '" + fileName + "'");
-              Plugin.Enabled = false;
+              plugin.Enabled = false;
               //Plugin.Action = PluginAction.InstalledTwice;
               break;
             }
             else
             {
               dict.Add(pair.Key, pair.Value);
-              PluginDict.Add(pair.Key, Plugin);
+              pluginDict.Add(pair.Key, plugin);
             }
           }
         }
-        list.Add(Plugin);
+        list.Add(plugin);
       }
     checkDependencies:
       for (int i = 0; i < list.Count; i++)
       {
-        Plugin Plugin = list[i];
-        if (!Plugin.Enabled) continue;
+        PluginInfo plugin = list[i];
+        if (!plugin.Enabled) continue;
 
         Version versionFound;
 
-        foreach (PluginReference reference in Plugin.Manifest.Conflicts)
+        foreach (PluginReference reference in plugin.Manifest.Conflicts)
         {
           if (reference.Check(dict, out versionFound))
           {
             //MessageService.ShowError(Plugin.Name + " conflicts with " + reference.ToString() + " and has been disabled.");
-            DisablePlugin(Plugin, dict, PluginDict);
+            DisablePlugin(plugin, dict, pluginDict);
             goto checkDependencies; // after removing one Plugin, others could break
           }
         }
-        foreach (PluginReference reference in Plugin.Manifest.Dependencies)
+        foreach (PluginReference reference in plugin.Manifest.Dependencies)
         {
           if (!reference.Check(dict, out versionFound))
           {
@@ -372,12 +372,12 @@ namespace ProjectInfinity.Plugins
             {
               //MessageService.ShowError(Plugin.Name + " has not been loaded because it requires " + reference.ToString() + ".");
             }
-            DisablePlugin(Plugin, dict, PluginDict);
+            DisablePlugin(plugin, dict, pluginDict);
             goto checkDependencies; // after removing one Plugin, others could break
           }
         }
       }
-      foreach (Plugin plugin in list)
+      foreach (PluginInfo plugin in list)
       {
         InsertPlugin(plugin);
       }
@@ -386,7 +386,7 @@ namespace ProjectInfinity.Plugins
 
     #region Private Methods
     // used by Load(): disables a Plugin and removes it from the dictionaries.
-    private void DisablePlugin(Plugin Plugin, Dictionary<string, Version> dict, Dictionary<string, Plugin> PluginDict)
+    private void DisablePlugin(PluginInfo Plugin, Dictionary<string, Version> dict, Dictionary<string, PluginInfo> PluginDict)
     {
       Plugin.Enabled = false;
       //Plugin.Action = PluginAction.DependencyError;

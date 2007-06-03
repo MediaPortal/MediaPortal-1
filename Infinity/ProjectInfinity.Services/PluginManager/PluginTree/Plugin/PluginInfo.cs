@@ -34,7 +34,7 @@ using ProjectInfinity.Logging;
 
 namespace ProjectInfinity.Plugins
 {
-  public sealed class Plugin
+  public sealed class PluginInfo : IPluginInfo
   {
     #region Variables
     Properties _properties;
@@ -54,7 +54,7 @@ namespace ProjectInfinity.Plugins
 
 
     #region Constructors/Destructors
-    internal Plugin()
+    internal PluginInfo()
     {
       _properties = new Properties();
       _runtimes = new List<PluginRuntime>();
@@ -225,7 +225,7 @@ namespace ProjectInfinity.Plugins
       return null;
     }
 
-    static void SetupPlugin(XmlReader reader, Plugin plugin, string hintPath)
+    static void SetupPlugin(XmlReader reader, PluginInfo plugin, string hintPath)
     {
       while (reader.Read())
       {
@@ -300,14 +300,14 @@ namespace ProjectInfinity.Plugins
       }
     }
 
-    public static Plugin Load(TextReader textReader)
+    public static PluginInfo Load(TextReader textReader)
     {
       return Load(textReader, null);
     }
 
-    public static Plugin Load(TextReader textReader, string hintPath)
+    public static PluginInfo Load(TextReader textReader, string hintPath)
     {
-      Plugin plugin = new Plugin();
+      PluginInfo plugin = new PluginInfo();
       using (XmlTextReader reader = new XmlTextReader(textReader))
       {
         while (reader.Read())
@@ -329,13 +329,13 @@ namespace ProjectInfinity.Plugins
       return plugin;
     }
 
-    public static Plugin Load(string fileName)
+    public static PluginInfo Load(string fileName)
     {
       try
       {
         using (TextReader textReader = File.OpenText(fileName))
         {
-          Plugin plugin = Load(textReader, Path.GetDirectoryName(fileName));
+          PluginInfo plugin = Load(textReader, Path.GetDirectoryName(fileName));
           plugin._fileName = fileName;
           return plugin;
         }

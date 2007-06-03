@@ -2,6 +2,7 @@ using System;
 using ProjectInfinity;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.MenuManager;
 
 namespace TestPlugin
 {

@@ -1,4 +1,4 @@
-namespace ProjectInfinity.Menu
+namespace ProjectInfinity.MenuManager
 {
   public interface IMessageItem : IMenuItem
   {

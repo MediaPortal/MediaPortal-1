@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using ProjectInfinity.Controls;
+using ProjectInfinity.MenuManager;
+using MenuItem = ProjectInfinity.Controls.MenuItem;
 
 namespace ProjectInfinity.Menu
 {

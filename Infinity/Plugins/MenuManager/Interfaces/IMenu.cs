@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ProjectInfinity.Menu
+namespace ProjectInfinity.MenuManager
 {
   /// <summary>
   /// Represents a (sub)menu.

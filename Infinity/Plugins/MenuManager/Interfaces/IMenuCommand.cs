@@ -1,6 +1,6 @@
 using System;
 
-namespace ProjectInfinity.Plugins
+namespace ProjectInfinity.MenuManager
 {
   public interface IMenuCommand : IDisposable
   {

@@ -25,9 +25,9 @@
 
 #endregion
 
-using ProjectInfinity.Menu;
+using ProjectInfinity.Plugins;
 
-namespace ProjectInfinity.Plugins
+namespace ProjectInfinity.MenuManager
 {
   public class MessageMenuItem : MenuItem, IMessageItem
   {
@@ -40,10 +40,10 @@ namespace ProjectInfinity.Plugins
 
     #endregion
 
-    public MessageMenuItem(NodeItem item, object caller)
+    public MessageMenuItem(INodeItem item, object caller)
       : base(item, caller)
     {
-      _message = item.Properties["message"];
+      _message = item["message"];
     }
 
     public string Message

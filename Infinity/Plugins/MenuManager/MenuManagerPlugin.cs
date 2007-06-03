@@ -1,21 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ProjectInfinity;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
-using ProjectInfinity.MenuManager;
 
-namespace MyTv
+namespace ProjectInfinity.MenuManager
 {
-  //[Plugin("My Tv", "My Tv", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/tv.png")]
-  public class TvPlugin : IPlugin, IAutoStart, IMenuCommand
+  public class MenuManagerPlugin : IPlugin, IAutoStart
   {
     #region IPlugin Members
 
     public void Initialize(string id)
     {
-
     }
 
     #endregion
@@ -24,16 +18,7 @@ namespace MyTv
 
     public void Startup()
     {
-      Run();
-    }
-
-    #endregion
-
-    #region IMenuCommand Members
-
-    public void Run()
-    {
-      ServiceScope.Get<INavigationService>().Navigate(new TvHome());
+      ServiceScope.Add<IMenuManager>(new MenuManager());
     }
 
     #endregion
@@ -47,6 +32,7 @@ namespace MyTv
     public void Dispose()
     {
     }
+
     #endregion
   }
 }

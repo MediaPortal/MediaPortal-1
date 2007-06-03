@@ -11,7 +11,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ProjectInfinity;
-using ProjectInfinity.Menu;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Messaging.MusicMessages;
 using ProjectInfinity.Music;

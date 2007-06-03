@@ -42,12 +42,6 @@
     <Compile Include="Localisation\NoLocalisation.cs" />
     <Compile Include="Localisation\StringId.cs" />
     <Compile Include="Logging\NoLogger.cs" />
-    <Compile Include="Menu\ICommandItem.cs" />
-    <Compile Include="Menu\IMenu.cs" />
-    <Compile Include="Menu\IMenuItem.cs" />
-    <Compile Include="Menu\IMenuItemVisitor.cs" />
-    <Compile Include="Menu\IMessageItem.cs" />
-    <Compile Include="Menu\IPluginItem.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Messaging\CancelMessage.cs" />
     <Compile Include="Messaging\CancelMessageHandler.cs" />
@@ -64,7 +58,8 @@
     <Compile Include="Playlist\PlaylistManager.cs" />
     <Compile Include="PluginMessages.cs" />
     <Compile Include="Plugins\IAutoStart.cs" />
-    <Compile Include="Plugins\IMenuCommand.cs" />
+    <Compile Include="Plugins\IBuilder.cs" />
+    <Compile Include="Plugins\INodeItem.cs" />
     <Compile Include="ServiceCreatorCallback.cs" />
     <Compile Include="Settings\INamedSettings.cs" />
     <Compile Include="Settings\ISettingsManager.cs" />
@@ -75,7 +70,6 @@
     <Compile Include="Plugins\IPlugin.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />
     <Compile Include="Plugins\IPluginInfo.cs" />
-    <Compile Include="Plugins\PluginAttribute.cs" />
     <Compile Include="Plugins\PluginStartStopEventArgs.cs" />
     <Compile Include="ServiceNotFoundException.cs" />
     <Compile Include="TaskBar\IWindowsTaskBar.cs" />

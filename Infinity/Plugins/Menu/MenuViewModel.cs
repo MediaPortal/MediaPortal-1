@@ -10,6 +10,7 @@ using ProjectInfinity.Navigation;
 using ProjectInfinity.Players;
 using ProjectInfinity.TaskBar;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.MenuManager;
 using MenuItem=ProjectInfinity.Controls.MenuItem;
 
 namespace ProjectInfinity.Menu
@@ -127,7 +128,7 @@ namespace ProjectInfinity.Menu
       get
       {
 
-        Plugins.Menu menuInfo = (Plugins.Menu)ServiceScope.Get<IPluginManager>().BuildItem<Plugins.Menu>("/Menus", _id);
+        MenuInfo menuInfo = (MenuInfo)ServiceScope.Get<IPluginManager>().BuildItem<MenuInfo>("/Menus", _id);
         if (menuInfo != null)
         {
           return menuInfo.Name;

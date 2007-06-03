@@ -35,17 +35,17 @@ namespace ProjectInfinity.Plugins
   /// <summary>
   /// Represents a node in the add in tree that can produce an item.
   /// </summary>
-  public class NodeItem
+  public class NodeItem : INodeItem
   {
     #region Variables
-    Plugin _plugin;
+    PluginInfo _plugin;
     string _name;
     Properties _properties;
     //ICondition[] conditions;
     #endregion
 
     #region Constructors/Destructors
-    public NodeItem(Plugin plugin, string name, Properties properties) //, ICondition[] conditions)
+    public NodeItem(PluginInfo plugin, string name, Properties properties) //, ICondition[] conditions)
     {
       this._plugin = plugin;
       this._name = name;
@@ -60,7 +60,7 @@ namespace ProjectInfinity.Plugins
       get { return _name; }
     }
 
-    public Plugin Plugin
+    public IPluginInfo Plugin
     {
       get { return _plugin; }
     }
@@ -120,10 +120,20 @@ namespace ProjectInfinity.Plugins
     #endregion
 
     #region Public Methods
+    public bool Contains(string key)
+    {
+      return _properties.Contains(key);
+    }
+
     //public ConditionFailedAction GetFailedAction(object caller)
     //{
     //  return Condition.GetFailedAction(conditions, caller);
     //}
+
+    public object CreateObject(string className)
+    {
+      return _plugin.CreateObject(className);
+    }
 
     public object BuildItem(object owner, ArrayList subItems)
     {
@@ -138,7 +148,7 @@ namespace ProjectInfinity.Plugins
       //  }
       //}
 
-      return builder.BuildItem(owner, this, subItems);
+      return builder.BuildItem(owner, (INodeItem) this, subItems);
     }
     #endregion
 

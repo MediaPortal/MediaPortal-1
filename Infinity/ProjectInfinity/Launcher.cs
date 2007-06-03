@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ProjectInfinity.Logging;
-using ProjectInfinity.Menu;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;

@@ -27,8 +27,9 @@
 
 using System;
 using System.Collections;
+using ProjectInfinity.Plugins;
 
-namespace ProjectInfinity.Plugins
+namespace ProjectInfinity.MenuManager
 {
 	/// <summary>
 	/// Creates menu items from a location in the addin tree.
@@ -80,9 +81,9 @@ namespace ProjectInfinity.Plugins
     //  }
     //}
 		
-		public object BuildItem(object caller, NodeItem item, ArrayList subItems)
+		public object BuildItem(object caller, INodeItem item, ArrayList subItems)
 		{
-			string type = item.Properties.Contains("type") ? item.Properties["type"] : "Command";
+			string type = item.Contains("type") ? item["type"] : "Command";
 			
 			//bool createCommand = item.Properties["loadclasslazy"] == "false";
 			

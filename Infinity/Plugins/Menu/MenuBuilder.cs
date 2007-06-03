@@ -18,27 +18,23 @@
  *  along with GNU Make; see the file COPYING.  If not, write to
  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
  *  http://www.gnu.org/copyleft/gpl.html
- * 
+ *
+ *  Code modified from SharpDevelop AddIn code
+ *  Thanks goes to: Mike Krüger
  */
 
 #endregion
 
 using System;
 using System.Collections;
+using ProjectInfinity.Plugins;
 
-namespace ProjectInfinity.Plugins
+namespace ProjectInfinity.Menu
 {
   /// <summary>
-  /// Creates menu items from a location in the addin tree.
+  /// Create a menu from a location in the plugin tree.
   /// </summary>
-  /// <attribute name="class" use="optional">
-  /// Command class that is run when item is clicked.
-  /// </attribute>
-  /// <attribute name="shortcut" use="optional">
-  /// Shortcut that activates the command (e.g. "Control|S").
-  /// </attribute>
-  /// <conditions>Conditions are handled by the item, "Exclude" maps to "Visible = false", "Disable" to "Enabled = false"</conditions>
-  public class ClassBuilder : IBuilder
+  public class MenuBuilder : IBuilder
   {
     ///// <summary>
     ///// Gets if the doozer handles codon conditions on its own.
@@ -52,7 +48,7 @@ namespace ProjectInfinity.Plugins
 
     public object BuildItem(object caller, INodeItem item, ArrayList subItems)
     {
-      return item.CreateObject(item["class"]);
+      return new MenuInfo(item);
     }
   }
 }

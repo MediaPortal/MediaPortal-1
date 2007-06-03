@@ -38,7 +38,7 @@ using ProjectInfinity;
 using ProjectInfinity.Logging;
 using System.IO;
 using System.Windows.Markup;
-using ProjectInfinity.Plugins;
+using ProjectInfinity.MenuManager;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Controls;
 

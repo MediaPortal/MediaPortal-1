@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using ProjectInfinity.Plugins;
 
-namespace ProjectInfinity.Menu
+namespace ProjectInfinity.MenuManager
 {
   public class MenuManager : IMenuManager
   {

@@ -26,21 +26,49 @@
 #endregion
 
 using System;
-using System.Collections;
+using ProjectInfinity.Localisation;
+using ProjectInfinity.Logging;
+using ProjectInfinity.Plugins;
 
-namespace ProjectInfinity.Plugins
+namespace ProjectInfinity.MenuManager
 {
-	/// <summary>
-	/// Interface for classes that can build objects out of NodeItems.
-	/// </summary>
-	public interface IBuilder
-	{
-    ///// <summary>
-    ///// Gets if the doozer handles codon conditions on its own.
-    ///// If this property return false, the item is excluded when the condition is not met.
-    ///// </summary>
-    //bool HandleConditions { get; }
-		
-		object BuildItem(object caller, NodeItem item, ArrayList subItems);
-	}
+  public class CommandMenuItem : MenuItem, ICommandItem
+  {
+    #region Variables
+    IMenuCommand _menuCommand = null;
+    #endregion
+
+    #region Constructors/Destructors
+    public CommandMenuItem(INodeItem item, object caller)
+      : base(item, caller)
+    {
+
+    }
+    #endregion
+
+    #region Public Methods
+    public void Execute()
+    {
+      if (_menuCommand == null)
+      {
+        try
+        {
+          _menuCommand = (IMenuCommand)base._item.CreateObject(base._item["class"]);
+        }
+        catch (Exception e)
+        {
+          ServiceScope.Get<ILogger>().Error(e.ToString() + "Can't create menu command : " + base._item.Id);
+          return;
+        }
+      }
+
+      _menuCommand.Run();
+    }
+    #endregion
+
+    public override void Accept(IMenuItemVisitor visitor)
+    {
+      visitor.Visit(this);
+    }
+  }
 }

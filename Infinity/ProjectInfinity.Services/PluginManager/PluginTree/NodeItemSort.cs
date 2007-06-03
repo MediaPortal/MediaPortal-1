@@ -63,12 +63,12 @@ namespace ProjectInfinity.Plugins
       for (int i = 0; i < _items.Count; ++i)
       {
         string before = _items[i].InsertBefore;
-        if (before != null && before != "")
+        if (before != null && before != string.Empty)
         {
           if (_indexOfName.ContainsKey(before))
           {
             string after = _items[_indexOfName[before]].InsertAfter;
-            if (after == null || after == "")
+            if (after == null || after == string.Empty)
             {
               _items[_indexOfName[before]].InsertAfter = _items[i].Id;
             }

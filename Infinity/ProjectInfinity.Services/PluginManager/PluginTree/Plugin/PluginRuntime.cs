@@ -121,7 +121,7 @@ namespace ProjectInfinity.Plugins
     #endregion
 
     #region internal static Methods
-    internal static void ReadSection(XmlReader reader, Plugin plugin, string hintPath)
+    internal static void ReadSection(XmlReader reader, PluginInfo plugin, string hintPath)
     {
       //Stack<ICondition> conditionStack = new Stack<ICondition>();
       while (reader.Read())
@@ -163,7 +163,7 @@ namespace ProjectInfinity.Plugins
       }
     }
 
-    internal static PluginRuntime Read(Plugin plugin, XmlReader reader, string hintPath) //, Stack<ICondition> conditionStack)
+    internal static PluginRuntime Read(PluginInfo plugin, XmlReader reader, string hintPath) //, Stack<ICondition> conditionStack)
     {
       if (reader.AttributeCount != 1)
       {
@@ -237,7 +237,7 @@ namespace ProjectInfinity.Plugins
             if (pos < 0)
               throw new ApplicationException("Expected '/' in path beginning with '$'!");
             string referencedPlugin = _assembly.Substring(1, pos - 1);
-            foreach (Plugin plugin in ServiceScope.Get<IPluginTree>().Plugins)
+            foreach (PluginInfo plugin in ServiceScope.Get<IPluginTree>().Plugins)
             {
               if (plugin.Enabled && plugin.Manifest.Identities.ContainsKey(referencedPlugin))
               {

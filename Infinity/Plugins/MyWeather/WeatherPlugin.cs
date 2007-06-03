@@ -28,12 +28,13 @@ using System.Text;
 using ProjectInfinity;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.MenuManager;
 using ProjectInfinity.Settings;
 using System.Windows;
 
 namespace MyWeather
 {
-  [Plugin("My Weather", "My Weather", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/tv.png")]
+  //[Plugin("My Weather", "My Weather", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/tv.png")]
   public class WeatherPlugin : IPlugin, IMenuCommand, IDisposable
   {
     #region IPlugin Members

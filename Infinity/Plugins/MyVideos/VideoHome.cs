@@ -18,7 +18,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using ProjectInfinity;
-using ProjectInfinity.Menu;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Players;

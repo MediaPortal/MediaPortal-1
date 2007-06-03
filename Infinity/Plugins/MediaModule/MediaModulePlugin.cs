@@ -2,10 +2,11 @@ using System;
 using ProjectInfinity;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.MenuManager;
 
 namespace MediaModule
 {
-    [Plugin("Media Module", "Media Module", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Video.png")]
+    //[Plugin("Media Module", "Media Module", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Video.png")]
     public class MediaModulePlugin : IPlugin, IMenuCommand, IDisposable
     {
 

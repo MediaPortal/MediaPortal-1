@@ -38,12 +38,12 @@ namespace ProjectInfinity.Plugins
   {
     #region Variables
     string _name;
-    Plugin _plugin;
+    PluginInfo _plugin;
     List<NodeItem> _items = new List<NodeItem>();
     #endregion
 
     #region Constructors/Destructors
-    public ExtensionPath(string name, Plugin plugin)
+    public ExtensionPath(string name, PluginInfo plugin)
     {
       this._plugin = plugin;
       this._name = name;
@@ -51,7 +51,7 @@ namespace ProjectInfinity.Plugins
     #endregion
 
     #region Properties
-    public Plugin Plugin
+    public PluginInfo Plugin
     {
       get
       {

@@ -25,6 +25,8 @@ using ProjectInfinity.Localisation;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Controls;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.MenuManager;
+
 namespace MyTv
 {
   /// <summary>

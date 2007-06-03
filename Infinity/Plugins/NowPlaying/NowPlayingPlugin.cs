@@ -10,7 +10,7 @@ using ProjectInfinity.Messaging.Files;
 
 namespace NowPlaying
 {
-  [Plugin("NowPlaying", "NowPlaying", AutoStart = true, ListInMenu = false, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Video.png")]
+  //[Plugin("NowPlaying", "NowPlaying", AutoStart = true, ListInMenu = false, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Video.png")]
   public class NowPlayingPlugin : IPlugin, IAutoStart
   {
     #region IPlugin Members

@@ -28,9 +28,9 @@
 using System;
 using ProjectInfinity.Localisation;
 using ProjectInfinity.Logging;
-using ProjectInfinity.Menu;
+using ProjectInfinity.Plugins;
 
-namespace ProjectInfinity.Plugins
+namespace ProjectInfinity.MenuManager
 {
   public class SubMenuItem : MenuItem, IMenuItem
   {
@@ -39,7 +39,7 @@ namespace ProjectInfinity.Plugins
     #endregion
 
     #region Constructors/Destructors
-    public SubMenuItem(NodeItem item, object caller)
+    public SubMenuItem(INodeItem item, object caller)
       : base(item, caller)
     {
 
@@ -49,7 +49,7 @@ namespace ProjectInfinity.Plugins
     #region Properties
     public string SubMenuPath
     {
-      get { return base._item.Properties["path"]; }
+      get { return base._item["path"]; }
     }
     #endregion
 
@@ -61,7 +61,7 @@ namespace ProjectInfinity.Plugins
       {
         try
         {
-          _menuCommand = (IMenuCommand)base._item.Plugin.CreateObject(base._item.Properties["class"]);
+          _menuCommand = (IMenuCommand)base._item.CreateObject(base._item["class"]);
         }
         catch (Exception e)
         {

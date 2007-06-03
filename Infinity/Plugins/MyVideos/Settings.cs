@@ -15,7 +15,7 @@ using ProjectInfinity.Navigation;
 using ProjectInfinity.Players;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Controls;
-using ProjectInfinity.Plugins;
+using ProjectInfinity.MenuManager;
 
 namespace MyVideos
 {

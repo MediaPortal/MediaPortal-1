@@ -1,9 +1,10 @@
 using System;
 using ProjectInfinity.Controls;
+using ProjectInfinity.MenuManager;
 
 namespace ProjectInfinity.Menu
 {
-  internal class MenuMenuItem : MenuItem
+  internal class MenuMenuItem : ProjectInfinity.Controls.MenuItem
   {
     private readonly IMenuItem _menuItem;
 

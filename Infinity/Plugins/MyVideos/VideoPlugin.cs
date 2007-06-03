@@ -3,10 +3,11 @@ using ProjectInfinity;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
 using ProjectInfinity.Playlist;
+using ProjectInfinity.MenuManager;
 
 namespace MyVideos
 {
-  [Plugin("My Video", "My Video", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Video.png")]
+  //[Plugin("My Video", "My Video", ListInMenu = true, ImagePath = @"pack://siteoforigin:,,,/skin/default/gfx/Video.png")]
   public class VideoPlugin : IPlugin, IMenuCommand
   {
     #region IPlugin Members

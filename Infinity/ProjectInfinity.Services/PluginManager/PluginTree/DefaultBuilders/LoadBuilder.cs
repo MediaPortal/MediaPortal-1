@@ -37,12 +37,12 @@ namespace ProjectInfinity.Plugins
   public class LoadBuilder : IBuilder
   {
     #region Variables
-    Plugin _plugin;
+    IPluginInfo _plugin;
     string _name;
     string _className;
     #endregion
 
-    public LoadBuilder(Plugin plugin, Properties properties)
+    public LoadBuilder(IPluginInfo plugin, Properties properties)
     {
       this._plugin = plugin;
       this._name = properties["name"];
@@ -77,7 +77,7 @@ namespace ProjectInfinity.Plugins
     //  }
     //}
 
-    public object BuildItem(object caller, NodeItem item, ArrayList subItems)
+    public object BuildItem(object caller, INodeItem item, ArrayList subItems)
     {
       IBuilder builder = (IBuilder)_plugin.CreateObject(_className);
       if (builder == null)

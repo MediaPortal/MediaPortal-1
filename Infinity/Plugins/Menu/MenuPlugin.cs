@@ -1,10 +1,11 @@
 using System;
 using ProjectInfinity.Navigation;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.MenuManager;
 
 namespace ProjectInfinity.Menu
 {
-  [Plugin("Menu", "Project Infinity's main menu", AutoStart=true)]
+  //[Plugin("Menu", "Project Infinity's main menu", AutoStart=true)]
   public class MenuPlugin : IPlugin, IAutoStart, IMenuCommand
   {
     #region Variables
@@ -24,8 +25,6 @@ namespace ProjectInfinity.Menu
 
     public void Startup()
     {
-      ServiceScope.Add<IMenuManager>(new MenuManager());
-
       Run();
     }
 
