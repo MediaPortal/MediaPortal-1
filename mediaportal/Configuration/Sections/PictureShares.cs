@@ -77,6 +77,15 @@ namespace MediaPortal.Configuration.Sections
           string sharePathData = xmlreader.GetValueAsString("pictures", sharePath, "");
           string sharePinData = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("pictures", sharePin, ""));
 
+          // provide one default share
+          if (index == 0 && shareNameData == string.Empty)
+          {
+            string PicturesProfilePath = Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYPICTURES);
+            shareNameData = Util.VirtualDirectory.GetShareNameDefault(PicturesProfilePath);
+            sharePathData = PicturesProfilePath;
+            sharePinData = string.Empty;
+          }
+
           bool shareTypeData = xmlreader.GetValueAsBool("pictures", shareType, false);
           string shareServerData = xmlreader.GetValueAsString("pictures", shareServer, "");
           string shareLoginData = xmlreader.GetValueAsString("pictures", shareLogin, "");

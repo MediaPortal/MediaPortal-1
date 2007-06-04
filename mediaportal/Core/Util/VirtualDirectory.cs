@@ -50,6 +50,7 @@ namespace MediaPortal.Util
     const int LocalDisk = 3;
     const int Network = 4;
     const int CD = 5;
+    const int MaximumShares = 20;
 
     List<Share> m_shares = new List<Share>();
     List<string> m_extensions = null;
@@ -65,64 +66,64 @@ namespace MediaPortal.Util
     public VirtualDirectory()
     {
     }
-    
+
     public void LoadSettings(string section)
     {
-        Clear();
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      Clear();
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        string strDefault = xmlreader.GetValueAsString(section, "default", String.Empty);
+        for (int i = 0; i < 20; i++)
         {
-          string strDefault = xmlreader.GetValueAsString(section, "default", String.Empty);
-          for (int i = 0; i < 20; i++)
+          string strShareName = String.Format("sharename{0}", i);
+          string strSharePath = String.Format("sharepath{0}", i);
+          string strPincode = String.Format("pincode{0}", i);
+
+          string shareType = String.Format("sharetype{0}", i);
+          string shareServer = String.Format("shareserver{0}", i);
+          string shareLogin = String.Format("sharelogin{0}", i);
+          string sharePwd = String.Format("sharepassword{0}", i);
+          string sharePort = String.Format("shareport{0}", i);
+          string remoteFolder = String.Format("shareremotepath{0}", i);
+          string shareViewPath = String.Format("shareview{0}", i);
+
+          Share share = new Share();
+          share.Name = xmlreader.GetValueAsString(section, strShareName, String.Empty);
+          share.Path = xmlreader.GetValueAsString(section, strSharePath, String.Empty);
+          string pinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString(section, strPincode, string.Empty));
+          if (pinCode != string.Empty)
+            share.Pincode = Convert.ToInt32(pinCode);
+          else
+            share.Pincode = -1;
+
+          share.IsFtpShare = xmlreader.GetValueAsBool(section, shareType, false);
+          share.FtpServer = xmlreader.GetValueAsString(section, shareServer, String.Empty);
+          share.FtpLoginName = xmlreader.GetValueAsString(section, shareLogin, String.Empty);
+          share.FtpPassword = xmlreader.GetValueAsString(section, sharePwd, String.Empty);
+          share.FtpPort = xmlreader.GetValueAsInt(section, sharePort, 21);
+          share.FtpFolder = xmlreader.GetValueAsString(section, remoteFolder, "/");
+          share.DefaultView = (Share.Views)xmlreader.GetValueAsInt(section, shareViewPath, (int)Share.Views.List);
+
+          if (share.Name.Length > 0)
           {
-            string strShareName = String.Format("sharename{0}", i);
-            string strSharePath = String.Format("sharepath{0}", i);
-            string strPincode = String.Format("pincode{0}", i);
-
-            string shareType = String.Format("sharetype{0}", i);
-            string shareServer = String.Format("shareserver{0}", i);
-            string shareLogin = String.Format("sharelogin{0}", i);
-            string sharePwd = String.Format("sharepassword{0}", i);
-            string sharePort = String.Format("shareport{0}", i);
-            string remoteFolder = String.Format("shareremotepath{0}", i);
-            string shareViewPath = String.Format("shareview{0}", i);
-
-            Share share = new Share();
-            share.Name = xmlreader.GetValueAsString(section, strShareName, String.Empty);
-            share.Path = xmlreader.GetValueAsString(section, strSharePath, String.Empty);
-            string pinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString(section, strPincode, string.Empty));
-            if (pinCode != string.Empty)
-              share.Pincode = Convert.ToInt32(pinCode);
-            else
-              share.Pincode = -1;
-
-            share.IsFtpShare = xmlreader.GetValueAsBool(section, shareType, false);
-            share.FtpServer = xmlreader.GetValueAsString(section, shareServer, String.Empty);
-            share.FtpLoginName = xmlreader.GetValueAsString(section, shareLogin, String.Empty);
-            share.FtpPassword = xmlreader.GetValueAsString(section, sharePwd, String.Empty);
-            share.FtpPort = xmlreader.GetValueAsInt(section, sharePort, 21);
-            share.FtpFolder = xmlreader.GetValueAsString(section, remoteFolder, "/");
-            share.DefaultView = (Share.Views)xmlreader.GetValueAsInt(section, shareViewPath, (int)Share.Views.List);
-
-            if (share.Name.Length > 0)
+            if (strDefault == share.Name)
             {
-              if (strDefault == share.Name)
+              share.Default = true;
+              if (defaultshare == null)
               {
-                share.Default = true;
-                if (defaultshare == null)
-                {
-                  defaultshare = share;
-                }
+                defaultshare = share;
               }
-              Add(share);
             }
-            else break;
+            Add(share);
           }
+          else break;
         }
+      }
     }
 
     public Share DefaultShare
     {
-      get { return defaultshare;}
+      get { return defaultshare; }
     }
 
     public string CurrentShare
@@ -203,10 +204,10 @@ namespace MediaPortal.Util
     public void SetExtensions(ArrayList extensions)
     {
       if (extensions == null) return;
-			if (m_extensions == null)
-				m_extensions = new List<string>();
-			else
-				m_extensions.Clear();
+      if (m_extensions == null)
+        m_extensions = new List<string>();
+      else
+        m_extensions.Clear();
 
       foreach (string ext in extensions)
       {
@@ -286,7 +287,7 @@ namespace MediaPortal.Util
         if (share.IsFtpShare)
         {
           //item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-            //    share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+          //    share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
           item.Path = GetShareRemoteURL(share);
           item.IsRemote = true;
         }
@@ -422,6 +423,7 @@ namespace MediaPortal.Util
       }
       return false;
     }
+
     public void SetCurrentShare(string strDir)
     {
       //Setting current share;
@@ -442,6 +444,7 @@ namespace MediaPortal.Util
         CurrentShare = share.Path;
       }
     }
+
     public Share GetShare(string strDir)
     {
       if (strDir == null) return null;
@@ -2169,16 +2172,155 @@ namespace MediaPortal.Util
 
       return items;
     }
+
     private void _startListening()
     {
       System.Threading.Thread.Sleep(5000);
       AutoPlay.StartListening();
       Log.Info("*****Start listening to drives");
     }
+
+    static public void SetInitialDefaultShares(bool addOptical, bool addMusic, bool addPictures, bool addVideos)
+    {
+      ArrayList sharesVideos = new ArrayList();
+      ArrayList sharesMusic = new ArrayList();
+      ArrayList sharesPhotos = new ArrayList();
+
+      // add optical drive letters
+      if (addOptical)
+      {
+        string[] drives = Environment.GetLogicalDrives();
+        foreach (string drive in drives)
+        {
+          int driveType = Util.Utils.getDriveType(drive);
+          if (driveType == (int)DriveType.CDRom)
+          {
+            string driveName = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpper());
+            Share share = new Share(driveName, drive, -1);
+            sharesMusic.Add(share);
+            sharesPhotos.Add(share);
+            sharesVideos.Add(share);
+          }
+        }
+      }
+
+      // add user profile dirs
+      string MusicProfilePath = Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYMUSIC);
+      if (addMusic)
+      {        
+        Share MusicShare = new Share(GetShareNameDefault(MusicProfilePath), MusicProfilePath, -1);
+        sharesMusic.Add(MusicShare);        
+      }
+
+      string PicturesProfilePath = Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYPICTURES);
+      if (addPictures)
+      {        
+        Share PicShare = new Share(GetShareNameDefault(PicturesProfilePath), PicturesProfilePath, -1);
+        sharesPhotos.Add(PicShare);        
+      }
+
+      string VideoProfilePath = Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYVIDEO);
+      if (addVideos)
+      {        
+        Share VidShare = new Share(GetShareNameDefault(VideoProfilePath), VideoProfilePath, -1);
+        sharesVideos.Add(VidShare);
+      }
+
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        if (addMusic)
+        {
+          xmlwriter.SetValue("music", "default", MusicProfilePath);
+          SaveShare(sharesMusic, "music");
+        }
+        if (addPictures)
+        {
+          xmlwriter.SetValue("pictures", "default", PicturesProfilePath);
+          SaveShare(sharesPhotos, "pictures");
+        }
+        if (addVideos)
+        {
+          xmlwriter.SetValue("movies", "default", VideoProfilePath);
+          SaveShare(sharesVideos, "movies");
+        }
+      }
+    }
+
+    static public string GetShareNameDefault(string folder)
+    {
+      string name = folder;
+      int pos = folder.LastIndexOf(@"\");
+      if (pos > 0)
+      {
+        name = name.Substring(pos + 1);
+      }
+      return name;
+    }
+
+    static void SaveShare(ArrayList sharesList, string mediaType)
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        for (int index = 0; index < MaximumShares; index++)
+        {
+          string shareName = String.Format("sharename{0}", index);
+          string sharePath = String.Format("sharepath{0}", index);
+          string sharePin = String.Format("pincode{0}", index);
+
+          string shareType = String.Format("sharetype{0}", index);
+          string shareServer = String.Format("shareserver{0}", index);
+          string shareLogin = String.Format("sharelogin{0}", index);
+          string sharePwd = String.Format("sharepassword{0}", index);
+          string sharePort = String.Format("shareport{0}", index);
+          string shareRemotePath = String.Format("shareremotepath{0}", index);
+
+          string shareNameData = String.Empty;
+          string sharePathData = String.Empty;
+          int sharePinData = -1;
+
+          bool shareTypeData = false;
+          string shareServerData = String.Empty;
+          string shareLoginData = String.Empty;
+          string sharePwdData = String.Empty;
+          int sharePortData = 21;
+          string shareRemotePathData = String.Empty;
+
+          if (sharesList != null && sharesList.Count > index)
+          {
+            Share shareData = sharesList[index] as Share;
+
+            if (shareData != null)
+            {
+              shareNameData = shareData.Name;
+              sharePathData = shareData.Path;
+              sharePinData = shareData.Pincode;
+
+              shareTypeData = shareData.IsFtpShare;
+              shareServerData = shareData.FtpServer;
+              shareLoginData = shareData.FtpLoginName;
+              sharePwdData = shareData.FtpPassword;
+              sharePortData = shareData.FtpPort;
+              shareRemotePathData = shareData.FtpFolder;
+            }
+          }
+
+          xmlwriter.SetValue(mediaType, shareName, shareNameData);
+          xmlwriter.SetValue(mediaType, sharePath, sharePathData);
+          xmlwriter.SetValue(mediaType, sharePin, sharePinData);
+
+          xmlwriter.SetValueAsBool(mediaType, shareType, shareTypeData);
+          xmlwriter.SetValue(mediaType, shareServer, shareServerData);
+          xmlwriter.SetValue(mediaType, shareLogin, shareLoginData);
+          xmlwriter.SetValue(mediaType, sharePwd, sharePwdData);
+          xmlwriter.SetValue(mediaType, sharePort, sharePortData.ToString());
+          xmlwriter.SetValue(mediaType, shareRemotePath, shareRemotePathData);
+        }
+
+      }
+    }
+  }
     #endregion
 
-
-  }
   /// <summary>
   /// Singleton class that returns instances to the diffrent kind
   /// of virtual directories music, movies ..
@@ -2235,6 +2377,7 @@ namespace MediaPortal.Util
         return _Movies;
       }
     }
+
     public VirtualDirectory Pictures
     {
       get
@@ -2247,7 +2390,6 @@ namespace MediaPortal.Util
         return _Pictures;
       }
     }
-
 
   }
 }

@@ -728,6 +728,7 @@ namespace MediaPortal.Configuration
           MessageBox.Show("No music folders specified", "MediaPortal Settings", MessageBoxButtons.OK,
                           MessageBoxIcon.Exclamation);
           return false;
+          // MediaPortal.Util.VirtualDirectory.SetInitialDefaultShares(false, true, false, false);
         }
 
         added = false;
@@ -745,6 +746,7 @@ namespace MediaPortal.Configuration
           MessageBox.Show("No movie folders specified", "MediaPortal Settings", MessageBoxButtons.OK,
                           MessageBoxIcon.Exclamation);
           return false;
+          //MediaPortal.Util.VirtualDirectory.SetInitialDefaultShares(false, false, false, true);
         }
 
         added = false;
@@ -762,6 +764,7 @@ namespace MediaPortal.Configuration
           MessageBox.Show("No pictures folders specified", "MediaPortal Settings", MessageBoxButtons.OK,
                           MessageBoxIcon.Exclamation);
           return false;
+          //MediaPortal.Util.VirtualDirectory.SetInitialDefaultShares(false, false, true, false);
         }
       }
       return true;

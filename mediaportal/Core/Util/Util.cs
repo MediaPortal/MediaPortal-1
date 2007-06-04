@@ -162,10 +162,12 @@ namespace MediaPortal.Util
     {
       get { return m_AudioExtensions; }
     }
+
     public static ArrayList PictureExtensions
     {
       get { return m_PictureExtensions; }
     }
+
     static public string GetDriveSerial(string drive)
     {
       if (drive == null) return String.Empty;
@@ -186,6 +188,7 @@ namespace MediaPortal.Util
       }
       else return "";
     }
+
     static public string GetDriveName(string drive)
     {
       if (drive == null) return String.Empty;
@@ -206,6 +209,7 @@ namespace MediaPortal.Util
       }
       else return "";
     }
+
     static public int getDriveType(string drive)
     {
       if (drive == null) return 2;
@@ -216,6 +220,7 @@ namespace MediaPortal.Util
       if ((GetDriveType(drive) & 6) == 6) return 6;//ram disk
       return 0;
     }
+
     static public long GetDiskSize(string drive)
     {
       long diskSize = 0;

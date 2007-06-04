@@ -29,11 +29,12 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
+using System.Reflection;
+using System.IO;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
 using MediaPortal.Util;
-using System.Reflection;
-using System.IO;
 
 namespace MediaPortal.Configuration
 {
@@ -80,7 +81,7 @@ namespace MediaPortal.Configuration
       GC.Collect();
       Thread.CurrentThread.Name = "Config Main";
       Thread.CurrentThread.Priority = ThreadPriority.Highest;
-  
+
       // Logger should write into Configuration.log
       Log.SetConfigurationMode();
       Log.BackupLogFile(LogType.Config);
@@ -119,7 +120,7 @@ namespace MediaPortal.Configuration
           }
         }
       }
-      GC.Collect(); 
+      GC.Collect();
     }
 
     /// <summary>
@@ -136,7 +137,6 @@ namespace MediaPortal.Configuration
       {
         string processName = "MediaPortal";
 
-        
         foreach (Process process in Process.GetProcesses())
         {
           if (process.ProcessName.Equals(processName))
@@ -198,10 +198,8 @@ namespace MediaPortal.Configuration
           break;
       }
 
-
       if (applicationForm != null)
       {
-
         Log.Info("start application");
         System.Windows.Forms.Application.Run(applicationForm);
       }
@@ -212,9 +210,6 @@ namespace MediaPortal.Configuration
     {
       try
       {
-
-        
-
         AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
         System.Windows.Forms.Application.EnableVisualStyles();
         System.Windows.Forms.Application.DoEvents();

@@ -78,6 +78,15 @@ namespace MediaPortal.Configuration.Sections
           string sharePathData = xmlreader.GetValueAsString("movies", sharePath, "");
           string sharePinData = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("movies", sharePin, ""));
 
+          // provide one default share
+          if (index == 0 && shareNameData == string.Empty)
+          {
+            string VideoProfilePath = Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYVIDEO);
+            shareNameData = Util.VirtualDirectory.GetShareNameDefault(VideoProfilePath);
+            sharePathData = VideoProfilePath;
+            sharePinData = string.Empty;
+          }
+
           bool shareTypeData = xmlreader.GetValueAsBool("movies", shareType, false);
           string shareServerData = xmlreader.GetValueAsString("movies", shareServer, "");
           string shareLoginData = xmlreader.GetValueAsString("movies", shareLogin, "");

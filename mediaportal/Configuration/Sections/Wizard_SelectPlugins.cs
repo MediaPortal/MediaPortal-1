@@ -321,29 +321,30 @@ namespace MediaPortal.Configuration.Sections
 
     void SetDefaultShares()
     {
-      string[] drives = Environment.GetLogicalDrives();
-      foreach (string drive in drives)
-      {
-        int driveType = Util.Utils.getDriveType(drive);
-        if (driveType == (int)DriveType.DVD)
-        {
-          string driveName = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpper());
-          Shares.ShareData share = new Shares.ShareData(driveName, drive, "");
-          sharesMusic.Add(share);
-          sharesPhotos.Add(share);
-          sharesVideos.Add(share);
-        }
-      }
+      //string[] drives = Environment.GetLogicalDrives();
+      //foreach (string drive in drives)
+      //{
+      //  int driveType = Util.Utils.getDriveType(drive);
+      //  if (driveType == (int)DriveType.DVD)
+      //  {
+      //    string driveName = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpper());
+      //    Shares.ShareData share = new Shares.ShareData(driveName, drive, "");
+      //    sharesMusic.Add(share);
+      //    sharesPhotos.Add(share);
+      //    sharesVideos.Add(share);
+      //  }
+      //}
 
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        xmlwriter.SetValue("music", "default", AddAudioShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYMUSIC)));
-        xmlwriter.SetValue("pictures", "default", AddPhotoShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYPICTURES)));
-        xmlwriter.SetValue("movies", "default", AddVideoShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYVIDEO)));
-      }
-      SaveShare(sharesMusic, "music");
-      SaveShare(sharesPhotos, "pictures");
-      SaveShare(sharesVideos, "movies");
+      //using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      //{
+      //  xmlwriter.SetValue("music", "default", AddAudioShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYMUSIC)));
+      //  xmlwriter.SetValue("pictures", "default", AddPhotoShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYPICTURES)));
+      //  xmlwriter.SetValue("movies", "default", AddVideoShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYVIDEO)));
+      //}
+      //SaveShare(sharesMusic, "music");
+      //SaveShare(sharesPhotos, "pictures");
+      //SaveShare(sharesVideos, "movies");
+      MediaPortal.Util.VirtualDirectory.SetInitialDefaultShares(true, true, true, true);
     }
 
     void DoScan()

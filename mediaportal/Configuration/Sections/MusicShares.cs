@@ -56,10 +56,11 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
+        bool added = false;
         string defaultShare = xmlreader.GetValueAsString("music", "default", "");
         RememberLastFolder = xmlreader.GetValueAsBool("music", "rememberlastfolder", false);
 
-        for (int index = 0; index < MaximumShares; index++)
+        for (int index = 0; index < MaximumShares; index++)        
         {
           string shareName = String.Format("sharename{0}", index);
           string sharePath = String.Format("sharepath{0}", index);
@@ -77,6 +78,15 @@ namespace MediaPortal.Configuration.Sections
           string shareNameData = xmlreader.GetValueAsString("music", shareName, "");
           string sharePathData = xmlreader.GetValueAsString("music", sharePath, "");
           string sharePinData = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("music", sharePin, ""));
+
+          // provide one default share
+          if (index == 0 && shareNameData == string.Empty)
+          {
+            string MusicProfilePath = Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYMUSIC);
+            shareNameData = Util.VirtualDirectory.GetShareNameDefault(MusicProfilePath);
+            sharePathData = MusicProfilePath;
+            sharePinData = string.Empty;
+          }
 
           bool shareTypeData = xmlreader.GetValueAsBool("music", shareType, false);
           string shareServerData = xmlreader.GetValueAsString("music", shareServer, "");

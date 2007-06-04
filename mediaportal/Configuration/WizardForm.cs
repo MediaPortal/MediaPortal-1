@@ -69,11 +69,14 @@ namespace MediaPortal.Configuration
     {
       get { return wizardPages; }
     }
+
     static ArrayList wizardPages = new ArrayList();
+
     public static WizardForm Form
     {
-        get { return wizardForm; }
+      get { return wizardForm; }
     }
+
     static WizardForm wizardForm;
 
     string wizardCaption = String.Empty;
@@ -100,21 +103,19 @@ namespace MediaPortal.Configuration
       wizardPages.Add(new SectionHolder(settings, topic, information, expression));
     }
 
-      public void DisableBack(bool disabled)
-      {
-          backButton.Enabled = !disabled;
-      }
+    public void DisableBack(bool disabled)
+    {
+      backButton.Enabled = !disabled;
+    }
 
-      public void DisableNext(bool disabled)
-      {
-          nextButton.Enabled = !disabled;
-      }
+    public void DisableNext(bool disabled)
+    {
+      nextButton.Enabled = !disabled;
+    }
 
     public WizardForm(string sectionConfiguration)
     {
-
-
-        wizardForm = this;
+      wizardForm = this;
       //
       // Required for Windows Form Designer support
       //
@@ -149,13 +150,13 @@ namespace MediaPortal.Configuration
         Log.Info("found {0} tv cards", sect.captureCards.Count);
         foreach (TVCaptureDevice dev in sect.captureCards)
         {
-/*
-          if (dev.VideoDevice == "B2C2 MPEG-2 Source" ||
-              dev.VideoDevice == "TechnoTrend SAA7146 Capture (WDM)")
-          {
-            dev.CreateGraph();
-          }
-*/
+          /*
+                    if (dev.VideoDevice == "B2C2 MPEG-2 Source" ||
+                        dev.VideoDevice == "TechnoTrend SAA7146 Capture (WDM)")
+                    {
+                      dev.CreateGraph();
+                    }
+          */
           if (dev.Network == NetworkType.Analog)
           {
             Log.Info("Analog TV Card:{0}", dev.CommercialName);
@@ -178,44 +179,46 @@ namespace MediaPortal.Configuration
           }
           if (dev.Network == NetworkType.ATSC)
           {
-              Log.Info("Digital ATSC Card:{0}", dev.CommercialName);
-              ATSCCard = true;
+            Log.Info("Digital ATSC Card:{0}", dev.CommercialName);
+            ATSCCard = true;
           }
-/*
-          if (dev.VideoDevice == "B2C2 MPEG-2 Source" || 
-              dev.VideoDevice == "TechnoTrend SAA7146 Capture (WDM)")
-          {
-            dev.DeleteGraph();
-          }
-*/
+          /*
+                    if (dev.VideoDevice == "B2C2 MPEG-2 Source" || 
+                        dev.VideoDevice == "TechnoTrend SAA7146 Capture (WDM)")
+                    {
+                      dev.DeleteGraph();
+                    }
+          */
         }
 
         AddSection(new Sections.Wizard_Welcome(), "Welcome to MediaPortal", "");
         AddSection(new Sections.General(), "General", "General information...");
         AddSection(new Sections.Skin(), "Skin", "Skin settings...");
         AddSection(new Sections.Wizard_SelectPlugins(), "Media", "Let MediaPortal find your media (music, movies, pictures) on your harddisk");
-        if (analogCard)
-        {
-          AddSection(new Sections.Wizard_AnalogTV(), "TV - Analog", "Analog TV configuration", "");
-          AddSection(new Sections.Wizard_AnalogRadio(), "Radio - Analog", "Analog Radio configuration", "");
-        }
-        if (DVBTCard)
-        {
-          AddSection(new Sections.Wizard_DVBTTV(), "TV - DVB-T", "Digital TV Terrestrial configuration", "");
-        }
-        if (DVBCCard)
-        {
-          AddSection(new Sections.Wizard_DVBCTV(), "TV - DVB-C", "Digital TV Cable configuration", "");
-        }
-        if (DVBSCard)
-        {
-          AddSection(new Sections.Wizard_DVBSTV(), "TV - DVB-S", "Digital TV Satellite configuration", "");
-        }
-        if (ATSCCard)
-        {
-            AddSection(new Sections.Wizard_ATSCTV(), "TV - ATSC", "Digital TV ATSC configuration", "");
-        }
-        AddSection(new Sections.TVProgramGuide(), "Television Program Guide", "Configure the Electronic Program Guide using XMLTV listings", "");
+        //if (analogCard)
+        //{
+        //  AddSection(new Sections.Wizard_AnalogTV(), "TV - Analog", "Analog TV configuration", "");
+        //  AddSection(new Sections.Wizard_AnalogRadio(), "Radio - Analog", "Analog Radio configuration", "");
+        //}
+        //if (DVBTCard)
+        //{
+        //  AddSection(new Sections.Wizard_DVBTTV(), "TV - DVB-T", "Digital TV Terrestrial configuration", "");
+        //}
+        //if (DVBCCard)
+        //{
+        //  AddSection(new Sections.Wizard_DVBCTV(), "TV - DVB-C", "Digital TV Cable configuration", "");
+        //}
+        //if (DVBSCard)
+        //{
+        //  AddSection(new Sections.Wizard_DVBSTV(), "TV - DVB-S", "Digital TV Satellite configuration", "");
+        //}
+        //if (ATSCCard)
+        //{
+        //  AddSection(new Sections.Wizard_ATSCTV(), "TV - ATSC", "Digital TV ATSC configuration", "");
+        //}
+        
+        // AddSection(new Sections.TVProgramGuide(), "Television Program Guide", "Configure the Electronic Program Guide using XMLTV listings", "");
+
         if (Sections.Remote.IsMceRemoteInstalled(this.Handle))
         {
           AddSection(new Sections.Remote(), "Remote Control", "Configure MCE Remote control", "");
