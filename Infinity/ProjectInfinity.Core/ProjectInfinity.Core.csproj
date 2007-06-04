@@ -68,7 +68,7 @@
     <Compile Include="Plugins\IAutoStart.cs" />
     <Compile Include="Plugins\IBuilder.cs" />
     <Compile Include="Plugins\INodeItem.cs" />
-    <Compile Include="ServiceScope\ServiceCreatorCallback.cs" />
+    <Compile Include="ServiceCallback\ServiceCreatorCallback.cs" />
     <Compile Include="Settings\INamedSettings.cs" />
     <Compile Include="Settings\ISettingsManager.cs" />
     <Compile Include="Settings\NoSettingsManager.cs" />
@@ -79,7 +79,7 @@
     <Compile Include="Plugins\IPluginManager.cs" />
     <Compile Include="Plugins\IPluginInfo.cs" />
     <Compile Include="Plugins\PluginStartStopEventArgs.cs" />
-    <Compile Include="ServiceScope\ServiceNotFoundException.cs" />
+    <Compile Include="ServiceNotFoundException.cs" />
     <Compile Include="TaskBar\IWindowsTaskBar.cs" />
     <Compile Include="Themes\IThemeManager.cs" />
     <Compile Include="Thumbnails\IThumbnailBuilder.cs" />
@@ -91,7 +91,7 @@
     <Compile Include="Messaging\MessagePublicationAttribute.cs" />
     <Compile Include="Messaging\MessageSubscriptionAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceScope\ServiceScope.cs" />
+    <Compile Include="ServiceScope.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
