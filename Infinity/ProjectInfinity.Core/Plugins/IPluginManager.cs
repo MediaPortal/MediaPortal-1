@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using ProjectInfinity.Messaging;
-using ProjectInfinity.Messaging.PluginMessages;
+using ProjectInfinity.Plugins.Messages;
 
 namespace ProjectInfinity.Plugins
 {

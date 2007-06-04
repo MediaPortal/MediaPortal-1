@@ -1,6 +1,6 @@
 using System;
 using ProjectInfinity.Messaging;
-using ProjectInfinity.Messaging.MusicMessages;
+using ProjectInfinity.Music.Messages;
 using ProjectInfinity.Plugins;
 
 namespace ProjectInfinity.Music

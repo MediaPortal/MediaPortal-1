@@ -1,4 +1,6 @@
-namespace ProjectInfinity.Messaging.PluginMessages
+using ProjectInfinity.Messaging;
+
+namespace ProjectInfinity.Plugins.Messages
 {
   public class PluginStart : Message
   {

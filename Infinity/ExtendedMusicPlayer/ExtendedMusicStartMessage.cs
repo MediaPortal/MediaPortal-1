@@ -1,4 +1,4 @@
-namespace ProjectInfinity.Music
+namespace ProjectInfinity.Music.Messages
 {
   public class ExtendedMusicStartMessage : MusicStartMessage
   {

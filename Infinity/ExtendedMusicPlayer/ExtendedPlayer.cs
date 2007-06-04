@@ -4,6 +4,7 @@ using System.Windows.Media;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Plugins;
+using ProjectInfinity.Music.Messages;
 
 namespace ProjectInfinity.Music
 {

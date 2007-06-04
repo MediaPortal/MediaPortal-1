@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows.Media;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Messaging;
+using ProjectInfinity.Music.Messages;
 
 namespace ProjectInfinity.Music
 {

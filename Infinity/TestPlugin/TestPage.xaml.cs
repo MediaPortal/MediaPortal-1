@@ -12,7 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ProjectInfinity;
 using ProjectInfinity.Messaging;
-using ProjectInfinity.Messaging.MusicMessages;
+using ProjectInfinity.Music.Messages;
 using ProjectInfinity.Music;
 
 namespace TestPlugin

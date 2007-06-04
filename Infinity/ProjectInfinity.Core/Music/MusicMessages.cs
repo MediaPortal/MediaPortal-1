@@ -1,4 +1,6 @@
-namespace ProjectInfinity.Messaging.MusicMessages
+using ProjectInfinity.Messaging;
+
+namespace ProjectInfinity.Music.Messages
 {
   public class Stop : Message
   {

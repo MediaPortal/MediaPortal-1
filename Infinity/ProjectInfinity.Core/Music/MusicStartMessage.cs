@@ -1,6 +1,6 @@
 using ProjectInfinity.Messaging;
 
-namespace ProjectInfinity.Music
+namespace ProjectInfinity.Music.Messages
 {
   /// <summary>
   /// Arguments for the MusicStart message
