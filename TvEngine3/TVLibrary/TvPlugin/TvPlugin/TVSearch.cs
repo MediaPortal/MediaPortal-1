@@ -752,8 +752,8 @@ namespace TvPlugin
       GUIListItem item = GetSelectedItem();
       if (item == null) return;
       string currentFolder = String.Format("{0}.{1}.{2}.{3}.{4}.{5}",
-        (int)prevcurrentSearchMode, prevcurrentLevel, prevcurrentGenre,
-        prevfilterLetter, prevfilterShow, prevfilterEpisode);
+        (int)currentSearchMode, currentLevel, currentGenre,
+        filterLetter, filterShow, filterEpisode);
       prevcurrentSearchMode = currentSearchMode;
       prevcurrentLevel = currentLevel;
       prevcurrentGenre = currentGenre;
