@@ -41,14 +41,6 @@
     <Compile Include="Builders\MenuItemBuilder.cs" />
     <Compile Include="Service\MessageMenuItem.cs" />
     <Compile Include="Service\SubMenuItem.cs" />
-    <Compile Include="Interfaces\ICommandItem.cs" />
-    <Compile Include="Interfaces\IMenu.cs" />
-    <Compile Include="Interfaces\IMenuCommand.cs" />
-    <Compile Include="Interfaces\IMenuItem.cs" />
-    <Compile Include="Interfaces\IMenuItemVisitor.cs" />
-    <Compile Include="Interfaces\IMenuManager.cs" />
-    <Compile Include="Interfaces\IMessageItem.cs" />
-    <Compile Include="Interfaces\IPluginItem.cs" />
     <Compile Include="MenuManagerPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\MenuManager.cs" />

@@ -59,10 +59,6 @@
       <Project>{4C45C46E-2ED2-4801-B3C3-FC2560E9FFE0}</Project>
       <Name>ProjectInfinity.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MenuManager\MenuManager.csproj">
-      <Project>{90E7C7F5-5CF8-48AF-8E70-6331259BC96C}</Project>
-      <Name>MenuManager</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

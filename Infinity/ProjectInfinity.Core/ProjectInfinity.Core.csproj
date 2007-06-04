@@ -42,6 +42,14 @@
     <Compile Include="Localisation\NoLocalisation.cs" />
     <Compile Include="Localisation\StringId.cs" />
     <Compile Include="Logging\NoLogger.cs" />
+    <Compile Include="MenuManager\ICommandItem.cs" />
+    <Compile Include="MenuManager\IMenu.cs" />
+    <Compile Include="MenuManager\IMenuCommand.cs" />
+    <Compile Include="MenuManager\IMenuItem.cs" />
+    <Compile Include="MenuManager\IMenuItemVisitor.cs" />
+    <Compile Include="MenuManager\IMenuManager.cs" />
+    <Compile Include="MenuManager\IMessageItem.cs" />
+    <Compile Include="MenuManager\IPluginItem.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Messaging\CancelMessage.cs" />
     <Compile Include="Messaging\CancelMessageHandler.cs" />

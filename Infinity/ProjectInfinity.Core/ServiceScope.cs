@@ -30,7 +30,7 @@ namespace ProjectInfinity
   /// The recommended way of passing the current <see cref="ServiceScope"/> to 
   /// another thread is by passing <see cref="ServiceScope.Current"/> with the 
   /// delegate used to start the thread and then use 
-  /// <code>ServiceContect.Current = passedContect;</code> to restore it in the 
+  /// <code>ServiceScope.Current = passedContect;</code> to restore it in the 
   /// thread.</para><para>If you do not pass the current ServiceScope to the 
   /// background thread, it will automatically fallback to the <b>global</b> 
   /// ServiceScope.  This is the current ServiceScope of the application thread.
@@ -173,12 +173,12 @@ namespace ProjectInfinity
           if (global == null)
           {
             new ServiceScope();
+            current.services.Add(typeof(IMessageBroker), new ServiceCreatorCallback<IMessageBroker>(MessageBrokerRequested));
+            current.services.Add(typeof(ILogger), new ServiceCreatorCallback<ILogger>(LoggerRequested));
+            current.services.Add(typeof(ISettingsManager), new ServiceCreatorCallback<ISettingsManager>(SettingsManagerRequested));
+            current.services.Add(typeof(ILocalisation), new ServiceCreatorCallback<ILocalisation>(LocalisationRequested));
           }
           current = global;
-          current.services.Add(typeof(IMessageBroker), new ServiceCreatorCallback<IMessageBroker>(MessageBrokerRequested));
-          current.services.Add(typeof(ILogger), new ServiceCreatorCallback<ILogger>(LoggerRequested));
-          current.services.Add(typeof(ISettingsManager), new ServiceCreatorCallback<ISettingsManager>(SettingsManagerRequested));
-          current.services.Add(typeof(ILocalisation), new ServiceCreatorCallback<ILocalisation>(LocalisationRequested));
         }
         return current;
       }

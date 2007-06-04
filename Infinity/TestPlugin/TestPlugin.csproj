@@ -76,10 +76,6 @@
       <Project>{7D7C667F-2839-429D-B45A-EA4CF0A244F2}</Project>
       <Name>ExtendedMusicPlayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Plugins\MenuManager\MenuManager.csproj">
-      <Project>{90E7C7F5-5CF8-48AF-8E70-6331259BC96C}</Project>
-      <Name>MenuManager</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ProjectInfinity.Core\ProjectInfinity.Core.csproj">
       <Project>{8EE03F5A-F21C-4B88-BED3-D4B25CFA0A5F}</Project>
       <Name>ProjectInfinity.Core</Name>

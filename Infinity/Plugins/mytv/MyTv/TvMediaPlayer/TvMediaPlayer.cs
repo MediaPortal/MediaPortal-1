@@ -251,6 +251,8 @@ namespace MyTv
           {
             using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Mediaportal\TsReader"))
             {
+              if (subkey == null)
+                return TimeSpan.Zero;
               int totalMilliSecs = (int)subkey.GetValue("duration");
               TimeSpan ts = new TimeSpan(0, 0, 0, 0, totalMilliSecs);
               //this.NaturalDuration = new System.Windows.Duration(ts);
@@ -260,7 +262,7 @@ namespace MyTv
           }
         }
         if (_underlyingPlayer.NaturalDuration.HasTimeSpan) return _underlyingPlayer.NaturalDuration.TimeSpan;
-        return new TimeSpan(0, 0, 0, 0);
+        return TimeSpan.Zero;
       }
     }
 
