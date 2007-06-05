@@ -633,6 +633,13 @@ namespace MediaPortal.Player
 
     public static bool PlayAudioStream(string strURL)
     {
+      return PlayAudioStream(strURL, false);
+    }
+
+    // GUIMusicVideos and GUITRailer called this function, altough they want to play a Video.
+    // When BASS is enabled this resulted in no Picture being shown. they should now indicate that a Video is to be played.
+    public static bool PlayAudioStream(string strURL, bool isMusicVideo)
+    {
       try
       {
         string strAudioPlayer = String.Empty;
@@ -665,7 +672,7 @@ namespace MediaPortal.Player
           _player = null;
         }
         
-        if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
+        if (strAudioPlayer == "BASS engine" && !isMusicVideo)
         {
           if (BassMusicPlayer.BassFreed)
             BassMusicPlayer.Player.InitBass();

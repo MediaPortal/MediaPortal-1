@@ -787,7 +787,7 @@ namespace MediaPortal.GUI.Video
       if (useVMR9)
           playOk = g_Player.PlayVideoStream(MMSUrl,videoName);
       else
-          playOk = g_Player.PlayAudioStream(MMSUrl);
+          playOk = g_Player.PlayAudioStream(MMSUrl, true);
       if (playOk)
       {
         g_Player.ShowFullScreenWindow();

@@ -1144,7 +1144,7 @@ namespace MediaPortal.GUI.MusicVideos
       if (moSettings.mbUseVMR9)
           g_Player.PlayVideoStream(lsVideoLink, video.artistName + " - " + video.songName);
       else
-        g_Player.PlayAudioStream(lsVideoLink);
+        g_Player.PlayAudioStream(lsVideoLink, true);
 
       if (g_Player.Playing)
       {
