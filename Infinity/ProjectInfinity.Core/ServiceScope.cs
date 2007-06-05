@@ -4,7 +4,7 @@ using ProjectInfinity.Localisation;
 using ProjectInfinity.Logging;
 using ProjectInfinity.Messaging;
 using ProjectInfinity.Settings;
-using ProjectInfinity.ServiceCallback;
+using ProjectInfinity.Services;
 
 namespace ProjectInfinity
 {

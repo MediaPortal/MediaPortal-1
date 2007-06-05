@@ -68,7 +68,7 @@
     <Compile Include="Plugins\IAutoStart.cs" />
     <Compile Include="Plugins\IBuilder.cs" />
     <Compile Include="Plugins\INodeItem.cs" />
-    <Compile Include="ServiceCallback\ServiceCreatorCallback.cs" />
+    <Compile Include="Services\ServiceCreatorCallback.cs" />
     <Compile Include="Settings\INamedSettings.cs" />
     <Compile Include="Settings\ISettingsManager.cs" />
     <Compile Include="Settings\NoSettingsManager.cs" />

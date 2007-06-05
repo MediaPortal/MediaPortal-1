@@ -5,7 +5,6 @@ namespace ProjectInfinity.Tests.Plugins.Mocks
   /// <summary>
   /// Dummy plug-in for testing purposes
   /// </summary>
-  [Plugin("DummyPlugin", "Dummy plug-in for testing purposes")]
   public class DummyPlugin : IPlugin
   {
     private bool _isInitialized = false;
