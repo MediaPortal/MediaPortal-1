@@ -1578,8 +1578,6 @@ namespace MediaPortal.Player
             _streamcopy.StreamDevice = 0;                            // Use the No output device to prevent playback of the cloned stream.
             _streamcopy.StreamFlags = BASSStream.BASS_STREAM_DECODE | BASSStream.BASS_SAMPLE_FLOAT; // decode the channel, so that we have a Streamcopy
 
-            // Set the Volume
-            _asioHandler.Volume = (double)_StreamVolume / 100.00;
             _asioHandler.Pan = _asioBalance;
 
             // Set the Sample Rate from the strea
