@@ -127,6 +127,29 @@ namespace TvDatabase
     }
 
     /// <summary> 
+    /// Create a new schedule from an existing one (except the auto-generated primary key field). 
+    /// </summary> 
+    public Schedule(Schedule schedule)
+    {
+      isChanged = true;
+      this.idChannel = schedule.idChannel;
+      this.scheduleType = schedule.scheduleType;
+      this.programName = schedule.programName;
+      this.startTime = schedule.startTime;
+      this.endTime = schedule.endTime;
+      this.maxAirings = schedule.maxAirings;
+      this.priority = schedule.priority;
+      this.directory = schedule.directory;
+      this.quality = schedule.quality;
+      this.keepMethod = schedule.keepMethod;
+      this.keepDate = schedule.keepDate;
+      this.preRecordInterval = schedule.preRecordInterval;
+      this.postRecordInterval = schedule.postRecordInterval;
+      this.canceled = schedule.canceled;
+      this.recommendedCard = -1;
+    }
+
+    /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
     /// </summary> 
@@ -454,9 +477,9 @@ namespace TvDatabase
     /// </summary>
     /// <param name="program">TVProgram to check</param>
     /// <returns>true if the specified tvprogram should be recorded</returns>
-    /// <param name="filterCanceledRecordings">(true/false)
-    /// if true then  we'll return false if recording has been canceled for this program
-    /// if false then we'll return true if recording has been not for this program</param>
+    /// <returns>filterCanceledRecordings (true/false)
+    /// if true then  we'll return false if recording has been canceled for this program</returns>
+    /// if false then we'll return true if recording has been not for this program</returns>
     /// <seealso cref="MediaPortal.TV.Database.TVProgram"/>
     public bool IsRecordingProgram(Program program, bool filterCanceledRecordings)
     {
@@ -490,18 +513,88 @@ namespace TvDatabase
           }
           break;
         case ScheduleRecordingType.Daily:
-        case ScheduleRecordingType.WorkingDays:
-        case ScheduleRecordingType.Weekends:
-        case ScheduleRecordingType.Weekly:
-          if (IsInFuzzyTimeSlot(program.IdChannel, program.Title, program.StartTime))
+          if (program.IdChannel == IdChannel)
           {
-            if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime)) return false;
-            return true;
+            int iHourProg = program.StartTime.Hour;
+            int iMinProg = program.StartTime.Minute;
+            if (iHourProg == StartTime.Hour && iMinProg == StartTime.Minute)
+            {
+              iHourProg = program.EndTime.Hour;
+              iMinProg = program.EndTime.Minute;
+              if (iHourProg == EndTime.Hour && iMinProg == EndTime.Minute)
+              {
+                if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime)) return false;
+                return true;
+              }
+            }
+          }
+          break;
+        case ScheduleRecordingType.WorkingDays:
+          if (program.StartTime.DayOfWeek >= DayOfWeek.Monday && program.StartTime.DayOfWeek <= DayOfWeek.Friday)
+          {
+            if (program.IdChannel == IdChannel)
+            {
+              int iHourProg = program.StartTime.Hour;
+              int iMinProg = program.StartTime.Minute;
+              if (iHourProg == StartTime.Hour && iMinProg == StartTime.Minute)
+              {
+                iHourProg = program.EndTime.Hour;
+                iMinProg = program.EndTime.Minute;
+                if (iHourProg == EndTime.Hour && iMinProg == EndTime.Minute)
+                {
+                  if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime)) return false;
+                  return true;
+                }
+              }
+            }
+          }
+          break;
+
+        case ScheduleRecordingType.Weekends:
+          if (program.StartTime.DayOfWeek == DayOfWeek.Saturday || program.StartTime.DayOfWeek == DayOfWeek.Sunday)
+          {
+            if (program.IdChannel == IdChannel)
+            {
+              int iHourProg = program.StartTime.Hour;
+              int iMinProg = program.StartTime.Minute;
+              if (iHourProg == StartTime.Hour && iMinProg == StartTime.Minute)
+              {
+                iHourProg = program.EndTime.Hour;
+                iMinProg = program.EndTime.Minute;
+                if (iHourProg == EndTime.Hour && iMinProg == EndTime.Minute)
+                {
+                  if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime)) return false;
+                  return true;
+                }
+              }
+            }
+          }
+          break;
+
+        case ScheduleRecordingType.Weekly:
+          if (program.IdChannel == IdChannel)
+          {
+            int iHourProg = program.StartTime.Hour;
+            int iMinProg = program.StartTime.Minute;
+            if (iHourProg == StartTime.Hour && iMinProg == StartTime.Minute)
+            {
+              iHourProg = program.EndTime.Hour;
+              iMinProg = program.EndTime.Minute;
+              if (iHourProg == EndTime.Hour && iMinProg == EndTime.Minute)
+              {
+                if (StartTime.DayOfWeek == program.StartTime.DayOfWeek)
+                {
+                  if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime)) return false;
+                  return true;
+                }
+              }
+            }
           }
           break;
       }
       return false;
-    }
+    }//IsRecordingProgram(TVProgram program, bool filterCanceledRecordings)
+
 
     public bool DoesUseEpisodeManagement
     {
@@ -604,101 +697,6 @@ namespace TvDatabase
       
     }
 
-    /// <summary>
-    /// Get the schedule's start and end-times nearest to the specified time.
-    /// </summary>
-    /// <param name="date">The date to get the recording times on.</param>
-    /// <returns>False if the schedule is not valid for the given date.</returns>
-    public bool GetTimesNearestTo(DateTime time, out DateTime recStartTime, out DateTime recEndTime)
-    {
-      // Get the schedule's times on the date of the requested time, the day before and the day after.
-      DateTime recToday = new DateTime(time.Year, time.Month, time.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
-      DateTime recYesterday = recToday.AddDays(-1);
-      DateTime recTomorrow = recToday.AddDays(1);
-
-      // Now find the schedule time that is closest to the requested time.
-      double todayDiff = Math.Abs(time.Subtract(recToday).TotalMinutes);
-      double yesterdayDiff = Math.Abs(time.Subtract(recYesterday).TotalMinutes);
-      double tomorrowDiff = Math.Abs(time.Subtract(recTomorrow).TotalMinutes);
-      if (tomorrowDiff < todayDiff)
-      {
-        recStartTime = recTomorrow;
-      }
-      else if (yesterdayDiff < todayDiff)
-      {
-        recStartTime = recYesterday;
-      }
-      else
-      {
-        recStartTime = recToday;
-      }
-
-      // Finally check if the schedule is valid on this day.
-      bool recordOnDate = false;
-      if (this.ScheduleType == (int)ScheduleRecordingType.Daily)
-      {
-        recordOnDate = true;
-      }
-      else if (this.ScheduleType == (int)ScheduleRecordingType.Weekends)
-      {
-        recordOnDate = (recStartTime.DayOfWeek == DayOfWeek.Saturday || recStartTime.DayOfWeek == DayOfWeek.Sunday);
-      }
-      else if (this.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
-      {
-        recordOnDate = (recStartTime.DayOfWeek >= DayOfWeek.Monday && recStartTime.DayOfWeek <= DayOfWeek.Friday);
-      }
-      else if (this.ScheduleType == (int)ScheduleRecordingType.Weekly)
-      {
-        recordOnDate = (this.StartTime.DayOfWeek == recStartTime.DayOfWeek);
-      }
-      else
-      {
-        throw new ArgumentException("GetTimesNearestTo(): ScheduleRecordingType must be Daily, Weekly, Weekends or WorkingDays");
-      }
-      if (recordOnDate)
-      {
-        // We found a valid schedule. Calculate the end time and return success.
-        recEndTime = recStartTime.Add(this.EndTime - this.StartTime);
-        return true;
-      }
-      else
-      {
-        recStartTime = DateTime.MinValue;
-        recEndTime = DateTime.MinValue;
-        return false;
-      }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="channel"></param>
-    /// <param name="programTitle"></param>
-    /// <param name="programTime"></param>
-    /// <returns></returns>
-    public bool IsInFuzzyTimeSlot(int channelId, string programTitle, DateTime programTime)
-    {
-      DateTime recStartTime;
-      DateTime recEndTime;
-      if (GetTimesNearestTo(programTime, out recStartTime, out recEndTime))
-      {
-        if (this.IdChannel == channelId
-            && this.programName == programTitle)
-        {
-          TimeSpan diffSpan = recStartTime.Subtract(programTime);
-          TimeSpan recordingLength = this.EndTime - this.StartTime;
-          // Check as far as one minute below running time.
-          int maxMinutesDiff = Math.Max((int)recordingLength.TotalMinutes - 1, 1);
-          // Don't go overboard and never check more than an approx hour out of sync.
-          maxMinutesDiff = Math.Min(maxMinutesDiff, 59);
-          if (Math.Abs(diffSpan.TotalMinutes) <= maxMinutesDiff)
-          {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
 
     public override string ToString()
     {

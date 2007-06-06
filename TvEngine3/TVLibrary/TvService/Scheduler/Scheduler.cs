@@ -54,8 +54,8 @@ namespace TvService
       // ES_USER_PRESENT   = 0x00000004,
       ES_CONTINUOUS = 0x80000000,
     }
-    
-    [DllImport("Kernel32.DLL", CharSet = CharSet.Auto,SetLastError = true)]
+
+    [DllImport("Kernel32.DLL", CharSet = CharSet.Auto, SetLastError = true)]
     private extern static EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
     #endregion
 
@@ -271,7 +271,7 @@ namespace TvService
       return false;
     }
 
-    
+
     /// <summary>
     /// Method which checks if its time to record the schedule specified
     /// </summary>
@@ -288,70 +288,90 @@ namespace TvService
         if (currentTime >= schedule.StartTime.AddMinutes(-schedule.PreRecordInterval) &&
             currentTime <= schedule.EndTime.AddMinutes(schedule.PostRecordInterval))
         {
+
           newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.StartTime, schedule.EndTime);
           return true;
         }
         return false;
       }
 
-      if (type == ScheduleRecordingType.Daily
-        || type == ScheduleRecordingType.Weekends
-        || type == ScheduleRecordingType.WorkingDays
-        || type == ScheduleRecordingType.Weekly)
+      if (type == ScheduleRecordingType.Daily)
       {
-        // Get the current and next programs and check if either of them is supposed to be recording (using
-        // the fuzzy algorithm to detect a schedule's timeslot).
-        TvDatabase.Program current = schedule.ReferencedChannel().CurrentProgram;
-        TvDatabase.Program next = schedule.ReferencedChannel().NextProgram;
-        if (current != null)
+        DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
+        DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
+        if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
+            currentTime <= end.AddMinutes(schedule.PostRecordInterval))
         {
-          if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= current.EndTime.AddMinutes(schedule.PostRecordInterval))
+          if (!schedule.IsSerieIsCanceled(start))
           {
-            if (schedule.IsInFuzzyTimeSlot(current.IdChannel, current.Title, current.StartTime))
+            newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
+            return true;
+          }
+        }
+        return false;
+      }
+
+      if (type == ScheduleRecordingType.Weekends)
+      {
+        if (currentTime.DayOfWeek == DayOfWeek.Saturday || currentTime.DayOfWeek == DayOfWeek.Sunday)
+        {
+          DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
+          DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
+          if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
+              currentTime <= end.AddMinutes(schedule.PostRecordInterval))
+          {
+
+            if (!schedule.IsSerieIsCanceled(start))
             {
-              if (!schedule.IsSerieIsCanceled(current.StartTime))
-              {
-                newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
-                return true;
-              }
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
+              return true;
             }
           }
         }
-        if (next != null)
+        return false;
+      }
+      if (type == ScheduleRecordingType.WorkingDays)
+      {
+        if (currentTime.DayOfWeek != DayOfWeek.Saturday && currentTime.DayOfWeek != DayOfWeek.Sunday)
         {
-          if (currentTime >= next.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= next.EndTime.AddMinutes(schedule.PostRecordInterval))
+          DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
+          DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
+          if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
+              currentTime <= end.AddMinutes(schedule.PostRecordInterval))
           {
-            if (schedule.IsInFuzzyTimeSlot(next.IdChannel, next.Title, next.StartTime))
+            if (!schedule.IsSerieIsCanceled(start))
             {
-              if (!schedule.IsSerieIsCanceled(next.StartTime))
-              {
-                newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), next.StartTime, next.EndTime);
-                return true;
-              }
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
+              return true;
             }
           }
         }
-        if (current == null)
+        return false;
+      }
+
+      if (type == ScheduleRecordingType.Weekly)
+      {
+        if (currentTime.DayOfWeek == schedule.StartTime.DayOfWeek)
         {
-          // If there is no guide information available, simply check the schedule's set time.
-          DateTime recStartTime;
-          DateTime recEndTime;
-          if (schedule.GetTimesNearestTo(currentTime, out recStartTime, out recEndTime))
+          DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
+          DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
+          if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
+              currentTime <= end.AddMinutes(schedule.PostRecordInterval))
           {
-            if (currentTime >= recStartTime.AddMinutes(-schedule.PreRecordInterval) &&
-                currentTime <= recEndTime.AddMinutes(schedule.PostRecordInterval))
+            if (!schedule.IsSerieIsCanceled(start))
             {
-                newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), recStartTime, recEndTime);
-                return true;
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
+              return true;
             }
           }
         }
+        return false;
       }
 
       if (type == ScheduleRecordingType.EveryTimeOnThisChannel)
       {
         TvDatabase.Program current = schedule.ReferencedChannel().CurrentProgram;
-        TvDatabase.Program next = schedule.ReferencedChannel().NextProgram;
+        TvDatabase.Program next = schedule.ReferencedChannel().GetProgramAt(current.EndTime.AddMinutes(1));
         if (current != null)
         {
           if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= current.EndTime.AddMinutes(schedule.PostRecordInterval))
@@ -360,22 +380,27 @@ namespace TvService
             {
               if (!schedule.IsSerieIsCanceled(current.StartTime))
               {
-                newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
-                return true;
-              }
-            }
-          }
-        }
-        if (next != null)
-        {
-          if (currentTime >= next.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= next.EndTime.AddMinutes(schedule.PostRecordInterval))
-          {
-            if (String.Compare(next.Title, schedule.ProgramName, true) == 0)
-            {
-              if (!schedule.IsSerieIsCanceled(next.StartTime))
-              {
-                newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), next.StartTime, next.EndTime);
-                return true;
+                if (next != null)
+                {
+                  if (next.Title == schedule.ProgramName && schedule.StartTime.AddMinutes(-schedule.PreRecordInterval) <= current.StartTime) // next prog must be recorded
+                  {
+                    Schedule newSchedule = new Schedule(schedule);
+                    newSchedule.StartTime = next.StartTime;
+                    newSchedule.EndTime = next.EndTime;
+                    newSchedule.Persist();
+                    //
+                    schedule.ScheduleType = 0;
+                    schedule.StartTime = current.StartTime;
+                    schedule.EndTime = current.EndTime;
+                    schedule.Persist();
+                    return false; // changes will apply to next call
+                  }
+                }
+                else
+                {
+                  newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
+                  return true;
+                }
               }
             }
           }
@@ -387,7 +412,7 @@ namespace TvService
         foreach (Channel channel in _channels)
         {
           TvDatabase.Program current = channel.CurrentProgram;
-          TvDatabase.Program next = channel.NextProgram;
+          //TvDatabase.Program next = channel.GetProgramAt(current.EndTime.AddMinutes(1));
           if (current != null)
           {
             if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= current.EndTime.AddMinutes(schedule.PostRecordInterval))
@@ -396,29 +421,34 @@ namespace TvService
               {
                 if (!schedule.IsSerieIsCanceled(current.StartTime))
                 {
-                  newRecording = new RecordingDetail(schedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
-                  return true;
-                }
-              }
-            }
-          }
-          if (next != null)
-          {
-            if (currentTime >= next.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= next.EndTime.AddMinutes(schedule.PostRecordInterval))
-            {
-              if (String.Compare(next.Title, schedule.ProgramName, true) == 0)
-              {
-                if (!schedule.IsSerieIsCanceled(next.StartTime))
-                {
-                  newRecording = new RecordingDetail(schedule, next.ReferencedChannel(), next.StartTime, next.EndTime);
-                  return true;
+                  bool currentProgramRecordingDetailCreated = false;
+                  foreach (RecordingDetail rec in _recordingsInProgressList)
+                  {
+                    if (rec.Program.IdProgram == current.IdProgram)
+                    {
+                      currentProgramRecordingDetailCreated = true;
+                      break;
+                    }
+                  }
+                  if (!currentProgramRecordingDetailCreated)
+                  {
+                    Schedule newSchedule = new Schedule(schedule);
+                    newSchedule.IdChannel = channel.IdChannel;
+                    newSchedule.StartTime = current.StartTime;
+                    newSchedule.EndTime = current.EndTime;
+                    newSchedule.ScheduleType = 0; // type Once
+                    newSchedule.Persist();
+                    newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
+                    return true;
+                  }
+
                 }
               }
             }
           }
         }
       }
-      return false;
+      return false;      
     }
 
     /// <summary>
@@ -522,9 +552,9 @@ namespace TvService
         TvBusinessLayer layer = new TvBusinessLayer();
         User tmpUser = new User();
         tmpUser.CardId = freeCards[0].Id;
-        if ((_tvController.IsRecording(ref tmpUser) == false) && (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes" ))
+        if ((_tvController.IsRecording(ref tmpUser) == false) && (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes"))
         {
-          if (_tvController.IsTimeShifting ( ref tmpUser )) { _tvController.StopTimeShifting ( ref tmpUser ); }
+          if (_tvController.IsTimeShifting(ref tmpUser)) { _tvController.StopTimeShifting(ref tmpUser); }
           cardInfo = freeCards[0];
           Log.Write("Scheduler : no card is tuned to the correct channel. record on card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
         }
@@ -538,7 +568,7 @@ namespace TvService
       try
       {
         _user.CardId = cardInfo.Id;
-        
+
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.StartRecording, new VirtualCard(_user), _user, recording.Schedule, null));
 
         if (cardInfo.Card.RecordingFolder == String.Empty)
@@ -660,7 +690,7 @@ namespace TvService
           User user = new User();
           user.Name = string.Format("scheduler{0}", rec.Schedule.IdSchedule);
           user.CardId = rec.CardInfo.Id;
-          card= new VirtualCard(user);
+          card = new VirtualCard(user);
           return true;
         }
       }
