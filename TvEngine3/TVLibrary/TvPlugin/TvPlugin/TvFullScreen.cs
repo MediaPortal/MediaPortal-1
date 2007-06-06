@@ -1775,12 +1775,11 @@ namespace TvPlugin
     public override void Process()
     {
       TimeSpan ts = DateTime.Now - _updateTimer;
-      if (ts.TotalMilliseconds < 500)
+      if (ts.TotalMilliseconds < 800)
       {
         return;
       }
       _updateTimer = DateTime.Now; // reset timer
-      TVHome.UpdateProgressPercentageBar();
       CheckTimeOuts();
       if (ScreenStateChanged())
       {
