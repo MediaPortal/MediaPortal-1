@@ -45,8 +45,7 @@ namespace TvEngine
     #endregion
 
     private void ImportThread()
-    {
-      SetStandbyAllowed(false);
+    {      
       try
       {
         _isImporting = true;
@@ -67,6 +66,7 @@ namespace TvEngine
         {
           if (_database.NeedsImport)
           {
+            SetStandbyAllowed(false);
             _database.Import();
           }
         }
