@@ -1065,7 +1065,7 @@ namespace TvPlugin
 
       TimeSpan ts = DateTime.Now - _updateProgressTimer;
       if (ts.TotalMilliseconds < 1000) return;
-      _updateProgressTimer = DateTime.MinValue;
+      _updateProgressTimer = DateTime.Now;
 
       if (g_Player.Playing && g_Player.IsTimeShifting)
       {

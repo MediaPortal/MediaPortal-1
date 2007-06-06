@@ -129,7 +129,7 @@ namespace TvPlugin
     bool _isStartingTSForRecording = false;
     private bool _autoZapMode = false;
     private System.Timers.Timer _autoZapTimer = new System.Timers.Timer();
-
+    private DateTime _updateTimer = DateTime.Now; 
     [SkinControlAttribute(500)]
     protected GUIImage imgVolumeMuteIcon;
     [SkinControlAttribute(501)]
@@ -943,7 +943,7 @@ namespace TvPlugin
                   rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
                   rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                  rec.RecommendedCard = TVHome.Card.Id;  
+                  rec.RecommendedCard = TVHome.Card.Id;
 
                   rec.Persist();
                   server.OnNewSchedule();
@@ -956,7 +956,7 @@ namespace TvPlugin
                   rec = new Schedule(TVHome.Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.Name + ")", DateTime.Now, DateTime.Now.AddDays(1));
                   rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-                  rec.RecommendedCard = TVHome.Card.Id;  
+                  rec.RecommendedCard = TVHome.Card.Id;
 
                   rec.Persist();
                   server.OnNewSchedule();
@@ -973,7 +973,7 @@ namespace TvPlugin
             Schedule rec = new Schedule(TVHome.Navigator.Channel.IdChannel, (int)ScheduleRecordingType.Once, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.Name + ")", DateTime.Now, DateTime.Now.AddDays(1), 1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
             rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
             rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-            rec.RecommendedCard = TVHome.Card.Id;  
+            rec.RecommendedCard = TVHome.Card.Id;
 
             rec.Persist();
             server.OnNewSchedule();
@@ -1564,13 +1564,13 @@ namespace TvPlugin
           _isDialogVisible = false;
           break;
 
-      case 100748: // Show Program Info
+        case 100748: // Show Program Info
           ShowProgramInfo();
           break;
-          
-      case 601: // RecordNow
-         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORD, GUIWindowManager.ActiveWindow, 0, 0, 0, 0, null);
-         this.OnMessage(msg);
+
+        case 601: // RecordNow
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORD, GUIWindowManager.ActiveWindow, 0, 0, 0, 0, null);
+          this.OnMessage(msg);
           break;
 
         case 200042: // Linked channels
@@ -1587,13 +1587,13 @@ namespace TvPlugin
 
     void ShowProgramInfo()
     {
-        Program currentProgram = TVHome.Navigator.GetChannel(TVHome.Card.ChannelName).CurrentProgram;
-        
-        if (currentProgram == null)
-            return;
+      Program currentProgram = TVHome.Navigator.GetChannel(TVHome.Card.ChannelName).CurrentProgram;
 
-        TVProgramInfo.CurrentProgram = currentProgram;
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
+      if (currentProgram == null)
+        return;
+
+      TVProgramInfo.CurrentProgram = currentProgram;
+      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
     }
 
     void ShowAspectRatioMenu()
@@ -1744,7 +1744,7 @@ namespace TvPlugin
           Thread.Sleep(50);
           g_Player.Pause();
         }
-      }        
+      }
     }
 
     void ShowLinkedChannelsMenu(IList linkages)
@@ -1752,7 +1752,7 @@ namespace TvPlugin
       if (dlg == null) return;
       dlg.Reset();
       dlg.SetHeading(200042); // Linked channels menu
-      int selected=0;
+      int selected = 0;
       int counter = 0;
       foreach (ChannelLinkageMap map in linkages)
       {
@@ -1768,12 +1768,18 @@ namespace TvPlugin
       dlg.DoModal(GetID);
       _isDialogVisible = false;
       if (dlg.SelectedLabel < 0) return;
-      ChannelLinkageMap lmap=(ChannelLinkageMap)linkages[dlg.SelectedLabel];
+      ChannelLinkageMap lmap = (ChannelLinkageMap)linkages[dlg.SelectedLabel];
       TVHome.Navigator.ZapToChannel(lmap.ReferringLinkedChannel(), false);
     }
 
     public override void Process()
     {
+      TimeSpan ts = DateTime.Now - _updateTimer;
+      if (ts.TotalMilliseconds < 500)
+      {
+        return;
+      }
+      _updateTimer = DateTime.Now; // reset timer
       TVHome.UpdateProgressPercentageBar();
       CheckTimeOuts();
       if (ScreenStateChanged())
@@ -2340,11 +2346,11 @@ namespace TvPlugin
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
 
         string displayedChannelName = string.Empty;
-        
+
         if (_byIndex)
         {
           int channelNr;
-          if (!Int32.TryParse(_channelName,out channelNr))
+          if (!Int32.TryParse(_channelName, out channelNr))
             return;
           if (channelNr > TVHome.Navigator.CurrentGroup.ReferringGroupMap().Count)
             return;
