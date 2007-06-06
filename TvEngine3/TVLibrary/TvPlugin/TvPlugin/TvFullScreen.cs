@@ -129,7 +129,6 @@ namespace TvPlugin
     bool _isStartingTSForRecording = false;
     private bool _autoZapMode = false;
     private System.Timers.Timer _autoZapTimer = new System.Timers.Timer();
-    private DateTime _updateTimer = DateTime.Now; 
     [SkinControlAttribute(500)]
     protected GUIImage imgVolumeMuteIcon;
     [SkinControlAttribute(501)]
