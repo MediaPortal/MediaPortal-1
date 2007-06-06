@@ -1319,16 +1319,18 @@ namespace TvPlugin
         Log.Debug("TVHome.ViewChannelAndCheck(): Fase 1 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
         benchClock.Reset();
         benchClock.Start();
+        User user = new User();
 
         GUIWaitCursor.Show();
         bool wasPlaying = g_Player.Playing && g_Player.IsTimeShifting && g_Player.IsTV;
+
+        int OldVideoStream = TVHome.Card.GetCurrentVideoStream(TVHome.Card.User);
 
         //Start timeshifting the new tv channel
         TvServer server = new TvServer();
         VirtualCard card;
         bool _return = false;
 
-        User user = new User();
         /*
         TvBusinessLayer layer = new TvBusinessLayer();
         int newCardId = -1;
@@ -1412,7 +1414,7 @@ namespace TvPlugin
           }*/
 
           //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player. 
-            if (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName)
+          if (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName || OldVideoStream != TVHome.Card.GetCurrentVideoStream(card.User))
             {
                 if (wasPlaying)
                 {
@@ -1421,6 +1423,7 @@ namespace TvPlugin
                     g_Player.Stop();
                 }
             }
+            
 
           TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 

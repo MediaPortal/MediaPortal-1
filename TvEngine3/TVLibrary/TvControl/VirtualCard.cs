@@ -346,6 +346,25 @@ namespace TvControl
     }
 
     /// <summary>
+    /// Gets the current video stream format.
+    /// </summary>
+    /// <value>The available audio streams.</value>
+    public int GetCurrentVideoStream ( User user )
+    {
+        if (User.CardId < 0) return -1;
+        try
+        {
+          RemoteControl.HostName = _server;
+          return RemoteControl.Instance.GetCurrentVideoStream ( user );
+        }
+        catch (Exception ex)
+        {
+          HandleFailure(ex);
+        }
+        return -1;
+    }
+
+    /// <summary>
     /// returns which schedule is currently being recorded
     /// </summary>
     /// <returns>id of Schedule or -1 if  card not recording</returns>

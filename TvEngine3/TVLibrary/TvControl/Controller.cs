@@ -338,6 +338,7 @@ namespace TvControl
     /// </summary>
     bool EpgGrabberEnabled { get;set;}
 
+
     /// <summary>
     /// Returns the SQl connection string to the database
     /// </summary>
@@ -484,7 +485,6 @@ namespace TvControl
     /// </returns>
     bool IsRecording(ref User user);
 
-
     /// <summary>
     /// Returns if the card is currently grabbing teletext or not
     /// </summary>
@@ -594,6 +594,7 @@ namespace TvControl
     /// <returns>List containing all audio streams</returns>
     IAudioStream[] AvailableAudioStreams(User user);
 
+
     /// <summary>
     /// returns the current selected audio stream for the card specified
     /// </summary>
@@ -609,6 +610,14 @@ namespace TvControl
     /// <param name="stream">audio stream</param>
     void SetCurrentAudioStream(User user, IAudioStream stream);
     #endregion
+
+        /// <summary>
+    /// returns the current video stream on the virtual card. 
+    /// </summary>
+    /// <param name="cardId">card id</param>
+    /// <returns>List containing all audio streams</returns>
+    int GetCurrentVideoStream(User user);
+
 
     /// <summary>
     /// Start timeshifting.

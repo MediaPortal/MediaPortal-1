@@ -93,6 +93,13 @@ namespace TvLibrary.Interfaces
     bool IsRecordingTransportStream { get;}
     #endregion
 
+    /// <summary>
+    /// returns true if we record in transport stream mode
+    /// false we record in program stream mode
+    /// </summary>
+    /// <value>true for transport stream, false for program stream.</value>
+    int GetCurrentVideoStream { get; }
+
     #region teletext
     /// <summary>
     /// Turn on/off teletext grabbing
@@ -144,6 +151,7 @@ namespace TvLibrary.Interfaces
     /// <returns>true if succeeded else false</returns>
     bool StopRecording();
     #endregion
+
 
     #region audio streams
     /// <summary>

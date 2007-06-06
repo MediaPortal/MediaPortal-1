@@ -78,6 +78,18 @@ namespace TvLibrary.Implementations.Analog
     }
 
     /// <summary>
+    /// Retursn the video format (always returns MPEG2). 
+    /// </summary>
+    /// <value>The number of channels decrypting.</value>
+    public int GetCurrentVideoStream
+    {
+      get
+      {
+        return 2;
+      }
+    }
+
+    /// <summary>
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>

@@ -2027,6 +2027,35 @@ namespace TvService
       return false;
     }
 
+    /// <summary>
+    /// Gets the current audio stream.
+    /// </summary>
+    /// <returns></returns>
+    public int GetCurrentVideoStream ( User user )
+    {
+        if (_dbsCard.Enabled == false) return -1;
+        if (IsLocal == false)
+        {
+          try
+          {
+            RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
+            return RemoteControl.Instance.GetCurrentVideoStream (user);
+          }
+          catch (Exception)
+          {
+            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            return -1;
+          }
+        }
+        TvCardContext context = _card.Context as TvCardContext;
+        if (context == null) return -1;
+        context.GetUser(ref user);
+        ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
+        if (subchannel == null) return -1;
+        return subchannel.GetCurrentVideoStream;
+    }
+
+
     #region audio streams
     /// <summary>
     /// Gets the available audio streams.

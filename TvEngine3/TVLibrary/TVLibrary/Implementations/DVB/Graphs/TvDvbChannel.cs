@@ -706,6 +706,24 @@ namespace TvLibrary.Implementations.DVB
         SendPmtToCam(out updatePids);
       }
     }
+
+    public int GetCurrentVideoStream
+    {
+      get
+      {
+        if (_channelInfo == null) return -1;
+        foreach (PidInfo info in _channelInfo.pids)
+        {
+          if (info.isVideo)
+          {
+            return info.stream_type;
+          }
+        }
+        return -1;
+      }
+    }
+
+
     #endregion
     #endregion
 

@@ -730,6 +730,18 @@ namespace TvService
     }
 
     /// <summary>
+    /// Returns the video stream currently associated with the card. 
+    /// </summary>
+    /// <returns>stream_type</returns>
+    public int GetCurrentVideoStream ( User user )
+    {
+        if (user.CardId < 0) return -1;
+        return _cards[user.CardId].GetCurrentVideoStream ( user );
+    }
+
+
+
+    /// <summary>
     /// Determines if any card is currently busy recording
     /// </summary>
     /// <returns>
