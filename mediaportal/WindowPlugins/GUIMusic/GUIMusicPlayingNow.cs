@@ -1222,7 +1222,7 @@ namespace MediaPortal.GUI.Music
             return tag;
         }
         // tagreader failed or not using it
-        song.Title = strFile;
+        song.Title = System.IO.Path.GetFileNameWithoutExtension(strFile);
         song.Artist = string.Empty;
         song.Album = string.Empty;
       }
