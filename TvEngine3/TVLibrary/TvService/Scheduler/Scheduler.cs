@@ -370,7 +370,7 @@ namespace TvService
 
       if (type == ScheduleRecordingType.EveryTimeOnThisChannel)
       {
-        TvDatabase.Program current = schedule.ReferencedChannel().GetProgramAt(DateTime.Now.AddMinutes(schedule.PreRecordInterval));
+        TvDatabase.Program current = schedule.ReferencedChannel().GetProgramAt(currentTime.AddMinutes(schedule.PreRecordInterval));
         TvDatabase.Program next = schedule.ReferencedChannel().GetProgramAt(current.EndTime.AddMinutes(1));
         if (current != null)
         {
@@ -382,7 +382,7 @@ namespace TvService
               {
                 if (next != null)
                 {
-                  if (next.Title == schedule.ProgramName && schedule.StartTime.AddMinutes(-schedule.PreRecordInterval) <= current.StartTime) // next prog must be recorded
+                  if (next.Title == schedule.ProgramName && schedule.StartTime < current.StartTime) // next prog must be recorded
                   {
                     Schedule newSchedule = new Schedule(schedule);
                     newSchedule.StartTime = next.StartTime;
