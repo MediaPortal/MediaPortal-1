@@ -76,6 +76,15 @@ namespace MyWeather
         #region IWeatherCatcher Members
 
         /// <summary>
+        /// returns the name of the service used to fetch the data,
+        /// f.e. weather.com
+        /// </summary>
+        /// <returns></returns>
+        public string GetServiceName()
+        {
+            return "www.weather.com";
+        }
+        /// <summary>
         /// downloads data from the internet and populates
         /// the city object with it.
         /// the searchId is the unique Id at the special
@@ -163,12 +172,13 @@ namespace MyWeather
                 }
                 return locations;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 //
                 // Failed to perform search
                 //
-                throw new ApplicationException("Failed to perform city search, make sure you are connected to the internet.");
+                ServiceScope.Get<ILogger>().Error("Failed to perform city search, make sure you are connected to the internet... Error: {0}", e.Message);
+                return locations;
             }
         }
         #endregion

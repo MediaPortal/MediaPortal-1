@@ -52,5 +52,11 @@ namespace MyWeather
         /// <param name="name">name of the location to search for</param>
         /// <returns>new City List</returns>
         List<CitySetupInfo> FindLocationsByName(string name);
+        /// <summary>
+        /// returns the name of the service used to fetch the data,
+        /// f.e. weather.com (used in configuration)
+        /// </summary>
+        /// <returns></returns>
+        string GetServiceName();
     }
 }
