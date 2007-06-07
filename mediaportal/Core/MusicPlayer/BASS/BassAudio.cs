@@ -105,7 +105,7 @@ namespace MediaPortal.Player
         {
           using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
-            string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
+            string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "BASS engine");
             _IsDefaultMusicPlayer = String.Compare(strAudioPlayer, "BASS engine", true) == 0;
             SettingsLoaded = true;
           }

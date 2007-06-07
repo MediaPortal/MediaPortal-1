@@ -61,7 +61,7 @@ namespace MediaPortal.Configuration.Sections
 
     string[] JumpToValues = new string[] { 
             JumpToValue0,
-	        JumpToValue1,
+	          JumpToValue1,
             JumpToValue2,
             JumpToValue3,
             JumpToValue4,
@@ -228,7 +228,7 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         // Player Settings
-        audioPlayerComboBox.SelectedItem = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
+        audioPlayerComboBox.SelectedItem = xmlreader.GetValueAsString("audioplayer", "player", "BASS engine");
         showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
         enableMixing.Checked = xmlreader.GetValueAsBool("audioplayer", "mixing", false);
 
@@ -332,7 +332,7 @@ namespace MediaPortal.Configuration.Sections
 
 
         // Misc Settings
-        string autoPlayText = xmlreader.GetValueAsString("audioplayer", "autoplay", "Yes");
+        string autoPlayText = xmlreader.GetValueAsString("audioplayer", "autoplay", "Ask");
 
         switch (autoPlayText)
         {
