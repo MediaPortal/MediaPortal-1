@@ -40,13 +40,12 @@
       <id>4</id>
       <posX>160</posX>
       <posY>150</posY>
-      <label></label>
+      <label />
       <font>font16</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-        
     <control>
       <description>options listcontrol</description>
       <type>listcontrol</type>
@@ -55,9 +54,7 @@
       <posY>203</posY>
       <width>400</width>
       <height>160</height>
-      
       <textXOff>25</textXOff>
-      <textYOff>2</textYOff>
       <textXOff2>380</textXOff2>
       <textYOff2>29</textYOff2>
       <textXOff3>70</textXOff3>
@@ -76,12 +73,10 @@
       <keepaspectratio>no</keepaspectratio>
       <font2>font10</font2>
       <font3>font10</font3>
-
       <ondown>11</ondown>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-
     <control>
       <description>Skip new Recording</description>
       <type>button</type>
@@ -93,7 +88,6 @@
       <onup>3</onup>
       <ondown>12</ondown>
     </control>
-
     <control>
       <description>Skip conflicting Recording</description>
       <type>button</type>
@@ -105,7 +99,6 @@
       <onup>11</onup>
       <ondown>13</ondown>
     </control>
-
     <control>
       <description>Keep Conflict</description>
       <type>button</type>
@@ -117,6 +110,5 @@
       <onup>12</onup>
       <ondown>3</ondown>
     </control>
-
   </controls>
 </window>

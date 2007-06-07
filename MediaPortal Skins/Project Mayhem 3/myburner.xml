@@ -1,243 +1,188 @@
-﻿<window>
-   <id>760</id>
-   <defaultcontrol>3</defaultcontrol>
-   <allowoverlay>yes</allowoverlay>
-   <controls>
-       <control>
-         <description>background image</description>
-
-         <type>image</type>
-
-         <id>1</id>
-
-         <posX>0</posX>
-
-         <posY>0</posY>
-
-         <width>720</width>
-
-         <height>576</height>
-
-         <texture>background3.png</texture>
-      </control>
-      <control>
-         <description>background image</description>
-
-         <type>image</type>
-
-         <id>1</id>
-
-         <posX>0</posX>
-
-         <posY>0</posY>
-
-         <width>720</width>
-
-         <height>107</height>
-
-         <texture>Back_recorder.png</texture>
-      </control>
-      <control>
-         <type>label</type>
-         <description>My burner File Size label</description>
-         <id>1</id>
-         <posX>60</posX>
-         <posY>510</posY>
-         <label>#burner_size</label>
-         <font>font16</font>
-         <textcolor>ffffffff</textcolor>
-      </control>
-      <control>
-         <type>label</type>
-         <description>DVR Convert Info Label</description>
-         <id>1</id>
-         <posX>60</posX>
-         <posY>475</posY>
-         <label>#convert_info</label>
-         <font>font16</font>
-         <textcolor>ffffffff</textcolor>
-      </control>
-      <control>
-         <type>label</type>
-         <description>My burner Info Label</description>
-         <id>1</id>
-         <posX>60</posX>
-         <posY>490</posY>
-         <label>#burner_info</label>
-         <font>font16</font>
-         <textcolor>ffffffff</textcolor>
-      </control>
-      <control>
-         <type>statusbar</type>
-         <description>Status Bar</description>
-         <id>1</id>
-         <posX>60</posX>
-         <posY>530</posY>
-         <width>420</width>
-         <height>22</height>
-         <colordiffuse>ffffffff</colordiffuse>
-         <lefttexture>statusbar_left.png</lefttexture>
-         <righttexture>statusbar_right.png</righttexture>
-         <texturebg>statusbar_back.png</texturebg>
-         <posYTop>500</posYTop>
-         <midtexture>statusbar_mid.png</midtexture>
-         <label>#burner_perc</label>
-      </control>
-      <control>
-         <type>textbox</type>
-         <description>CD Detail Panel</description>
-         <id>50</id>
-         <posX>260</posX>
-         <posY>120</posY>
-         <height>377</height>
-         <onleft>2</onleft>
-         <onright>3</onright>
-         <onup>3</onup>
-         <ondown>3</ondown>
-         <image>icon-folder.png</image>
-         <label>-</label>
-         <width>410</width>
-         <text>6</text>
-         <SpinPosX>260</SpinPosX>
-         <SpinPosY>497</SpinPosY>
-         <textureUp>-</textureUp>
-         <textureUpFocus>-</textureUpFocus>
-         <textureDown>-</textureDown>
-         <textureDownFocus>-</textureDownFocus>
-      </control>
-      <control>
-  	 <type>group</type>
-  	 <description>group element</description>
-   	 <animation>FlyInFromLeft</animation>
-  	 <posX>5</posX>
-  	 <posY>125</posY>
-  	 <layout>StackLayout</layout>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>760</id>
+  <defaultcontrol>3</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
     <control>
-	 <description>Video</description> 
- 	  <type>button</type> 
-  	 <id>2</id> 
-  	 <label>2101</label> 
-  	 <onleft>2</onleft> 
-  	 <onright>20</onright> 
-  	 <onup>17</onup> 
-  	 <ondown>3</ondown> 
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>576</height>
+      <texture>background3.png</texture>
     </control>
-     <control>
-            <type>button</type>
-            <description>Audio</description>
-            <id>3</id>
-            <posX>300</posX>
-            <posY>200</posY>
-            <onup>17</onup>
-            <alignY>center</alignY>
-            <label>2102</label>
-            <textXOff>17</textXOff>
-         </control>
-         <control>
-            <type>button</type>
-            <description>Data</description>
-            <id>4</id>
-            <posX>300</posX>
-            <posY>200</posY>
-            <alignY>center</alignY>
-            <label>2103</label>
-            <textXOff>17</textXOff>
-         </control>
-         <control>
-            <type>button</type>
-            <description>cd info</description>
-            <id>5</id>
-            <posX>300</posX>
-            <posY>200</posY>
-            <alignY>center</alignY>
-            <label>2123</label>
-            <textXOff>17</textXOff>
-         </control>
-         <control>
-            <type>button</type>
-            <description>rw format</description>
-            <id>6</id>
-            <posX>300</posX>
-            <posY>200</posY>
-            <alignY>center</alignY>
-            <label>2114</label>
-            <textXOff>17</textXOff>
-         </control>
-         <control>
-            <type>button</type>
-            <description>cd eject</description>
-            <id>7</id>
-            <posX>300</posX>
-            <posY>200</posY>
-            <ondown>3</ondown>
-            <alignY>center</alignY>
-            <label>2126</label>
-            <textXOff>17</textXOff>
-         </control>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>107</height>
+      <texture>Back_recorder.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <description>My burner File Size label</description>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>510</posY>
+      <label>#burner_size</label>
+      <font>font16</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>DVR Convert Info Label</description>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>475</posY>
+      <label>#convert_info</label>
+      <font>font16</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>My burner Info Label</description>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>490</posY>
+      <label>#burner_info</label>
+      <font>font16</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>statusbar</type>
+      <description>Status Bar</description>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>530</posY>
+      <width>420</width>
+      <height>22</height>
+      <colordiffuse>ffffffff</colordiffuse>
+      <lefttexture>statusbar_left.png</lefttexture>
+      <righttexture>statusbar_right.png</righttexture>
+      <texturebg>statusbar_back.png</texturebg>
+      <posYTop>500</posYTop>
+      <midtexture>statusbar_mid.png</midtexture>
+      <label>#burner_perc</label>
+    </control>
+    <control>
+      <type>textbox</type>
+      <description>CD Detail Panel</description>
+      <id>50</id>
+      <posX>260</posX>
+      <posY>120</posY>
+      <height>377</height>
+      <onleft>2</onleft>
+      <onright>3</onright>
+      <onup>3</onup>
+      <ondown>3</ondown>
+      <label>-</label>
+      <text>6</text>
+      <SpinPosX>260</SpinPosX>
+      <SpinPosY>497</SpinPosY>
+      <textureUp>-</textureUp>
+      <textureUpFocus>-</textureUpFocus>
+      <textureDown>-</textureDown>
+      <textureDownFocus>-</textureDownFocus>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation>FlyInFromLeft</animation>
+      <posX>5</posX>
+      <posY>125</posY>
+      <layout>StackLayout</layout>
+      <control>
+        <description>Video</description>
+        <type>button</type>
+        <id>2</id>
+        <label>2101</label>
+        <onleft>2</onleft>
+        <onright>20</onright>
+        <onup>17</onup>
+        <ondown>3</ondown>
       </control>
       <control>
-         <type>listcontrol</type>
-         <description>file listcontrol</description>
-         <id>20</id>
-         <posX>270</posX>
-         <posY>120</posY>
-         <height>227</height>
-         <onleft>3</onleft>
-         <onright>3</onright>
-         <onup>3</onup>
-         <ondown>3</ondown>
-         <textxoff2>5</textxoff2>
-         <textureDown>page_down_nofocus.png</textureDown>
-         <spinWidth>18</spinWidth>
-         <textureHeight>26</textureHeight>
-         <font>font13</font>
-         <textureFocus>blue-rectangle.png</textureFocus>
-         <spinColor>ffffffff</spinColor>
-         <suffix>|</suffix>
-         <textureUp>page_up_nofocus.png</textureUp>
-         <spinHeight>16</spinHeight>
-         <textcolor2>60ffffff</textcolor2>
-         <selectedcolor>FFffffff</selectedcolor>
-         <textxoff>5</textxoff>
-         <textureNofocus>blue-rectangleNF.png</textureNofocus>
-         <textureDownFocus>page_down_focus.png</textureDownFocus>
-         <spinPosX>585</spinPosX>
-         <textureUpFocus>page_up_focus.png</textureUpFocus>
-         <spinPosY>310</spinPosY>
-         <spinfont>font10</spinfont>
-         <alignY>center</alignY>
+        <type>button</type>
+        <description>Audio</description>
+        <id>3</id>
+        <onup>17</onup>
+        <alignY>center</alignY>
+        <label>2102</label>
       </control>
       <control>
-         <type>listcontrol</type>
-         <description>copy listcontrol</description>
-         <id>30</id>
-         <posX>270</posX>
-         <posY>345</posY>
-         <height>168</height>
-         <onleft>3</onleft>
-         <onright>3</onright>
-         <onup>3</onup>
-         <ondown>3</ondown>
-         <textxoff2>5</textxoff2>
-         <textureDown>page_down_nofocus.png</textureDown>
-         <spinWidth>18</spinWidth>
-         <textureHeight>26</textureHeight>
-         <font>font13</font>
-         <textureFocus>blue-rectangle.png</textureFocus>
-         <spinColor>ffffffff</spinColor>
-         <suffix>|</suffix>
-         <textureUp>page_up_nofocus.png</textureUp>
-         <spinHeight>16</spinHeight>
-         <textcolor2>60ffffff</textcolor2>
-         <selectedcolor>FFffffff</selectedcolor>
-         <textxoff>5</textxoff>
-         <textureNofocus>blue-rectangleNF.png</textureNofocus>
-         <textureDownFocus>page_down_focus.png</textureDownFocus>
-         <spinPosX>620</spinPosX>
-         <textureUpFocus>page_up_focus.png</textureUpFocus>
-         <spinPosY>530</spinPosY>
-         <spinfont>font10</spinfont>
-         <alignY>center</alignY>
+        <type>button</type>
+        <description>Data</description>
+        <id>4</id>
+        <alignY>center</alignY>
+        <label>2103</label>
       </control>
-   </controls>
+      <control>
+        <type>button</type>
+        <description>cd info</description>
+        <id>5</id>
+        <alignY>center</alignY>
+        <label>2123</label>
+      </control>
+      <control>
+        <type>button</type>
+        <description>rw format</description>
+        <id>6</id>
+        <alignY>center</alignY>
+        <label>2114</label>
+      </control>
+      <control>
+        <type>button</type>
+        <description>cd eject</description>
+        <id>7</id>
+        <ondown>3</ondown>
+        <alignY>center</alignY>
+        <label>2126</label>
+      </control>
+    </control>
+    <control>
+      <type>listcontrol</type>
+      <description>file listcontrol</description>
+      <id>20</id>
+      <posX>270</posX>
+      <height>227</height>
+      <onleft>3</onleft>
+      <onright>3</onright>
+      <onup>3</onup>
+      <ondown>3</ondown>
+      <textxoff2>5</textxoff2>
+      <textureFocus>blue-rectangle.png</textureFocus>
+      <textcolor2>60ffffff</textcolor2>
+      <selectedcolor>FFffffff</selectedcolor>
+      <textxoff>5</textxoff>
+      <textureNofocus>blue-rectangleNF.png</textureNofocus>
+      <spinPosX>585</spinPosX>
+      <spinPosY>310</spinPosY>
+      <spinfont>font10</spinfont>
+      <alignY>center</alignY>
+    </control>
+    <control>
+      <type>listcontrol</type>
+      <description>copy listcontrol</description>
+      <id>30</id>
+      <posX>270</posX>
+      <posY>345</posY>
+      <height>168</height>
+      <onleft>3</onleft>
+      <onright>3</onright>
+      <onup>3</onup>
+      <ondown>3</ondown>
+      <textxoff2>5</textxoff2>
+      <textureFocus>blue-rectangle.png</textureFocus>
+      <textcolor2>60ffffff</textcolor2>
+      <selectedcolor>FFffffff</selectedcolor>
+      <textxoff>5</textxoff>
+      <textureNofocus>blue-rectangleNF.png</textureNofocus>
+      <spinPosX>620</spinPosX>
+      <spinPosY>530</spinPosY>
+      <spinfont>font10</spinfont>
+      <alignY>center</alignY>
+    </control>
+  </controls>
 </window>

@@ -1,154 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-   <id>2</id>
-
-   <defaultcontrol>2</defaultcontrol>
-
-   <allowoverlay>yes</allowoverlay>
-
-   <define>#header.label:1</define>
-
-   <controls>
-      <import>common.window.xml</import>
-
-      <control>
-         <description>BG</description>
-
-         <type>image</type>
-
-         <id>1</id>
-
-         <posX>0</posX>
-
-         <posY>0</posY>
-
-         <width>720</width>
-
-         <height>576</height>
-
-         <texture>background3.png</texture>
-      </control>
-       <control>
-         <description>BG</description>
-
-         <type>image</type>
-
-         <id>1</id>
-
-         <posX>0</posX>
-
-         <posY>0</posY>
-
-         <width>720</width>
-
-         <height>107</height>
-
-         <texture>Back_pics.png</texture>
-      </control>
-
-      <control>
-        <type>group</type>
-			<description>group element</description>
+  <id>2</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:1</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>576</height>
+      <texture>background3.png</texture>
+    </control>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>107</height>
+      <texture>Back_pics.png</texture>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="500" end="0,-300" >WindowClose</animation>
-
-         <layout>StackLayout</layout>
-          <dimColor>ffffffff</dimColor>
-
-         <posX>5</posX>
-
-         <posY>125</posY>
-
-         <control>
-            <description>View-As button</description>
-
-            <type>button</type>
-
-            <id>2</id>
-
-            <label>100</label>
-
-            <onup>17</onup>
-
-            <onright>50</onright>
-
-            <textXOff>17</textXOff>
-
-            <alignY>center</alignY>
-         </control>
-
-         <control>
-            <type>sortbutton</type>
-
-            <id>3</id>
-
-            <label>103</label>
-
-            <textXOff>17</textXOff>
-
-            <alignY>center</alignY>
-         </control>
-
-         <control>
-            <description>SlideShow button</description>
-
-            <type>button</type>
-
-            <id>6</id>
-
-            <label>108</label>
-
-            <textXOff>17</textXOff>
-
-            <alignY>center</alignY>
-         </control>
-
-         <control>
-            <description>Recursive Slideshow</description>
-
-            <type>button</type>
-
-            <id>7</id>
-
-            <label>361</label>
-
-            <textXOff>17</textXOff>
-
-            <alignY>center</alignY>
-         </control>
-
-         <control>
-            <description>Create Thumbnails</description>
-
-            <type>button</type>
-
-            <id>8</id>
-
-            <label>109</label>
-
-            <textXOff>17</textXOff>
-
-            <alignY>center</alignY>
-         </control>
-
-         <control>
-            <description>Rotate</description>
-
-            <type>button</type>
-
-            <id>9</id>
-
-            <label>735</label>
-
-            <ondown>99</ondown>
-
-            <textXOff>17</textXOff>
-
-            <alignY>center</alignY>
-         </control>
+      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+      <layout>StackLayout</layout>
+      <posX>5</posX>
+      <posY>125</posY>
+      <control>
+        <description>View-As button</description>
+        <type>button</type>
+        <id>2</id>
+        <label>100</label>
+        <onup>17</onup>
+        <onright>50</onright>
+        <alignY>center</alignY>
       </control>
-
-      <import>common.facade.xml</import>
-   </controls>
+      <control>
+        <type>sortbutton</type>
+        <id>3</id>
+        <label>103</label>
+        <alignY>center</alignY>
+      </control>
+      <control>
+        <description>Switch View</description>
+        <type>button</type>
+        <id>4</id>
+        <label>457</label>
+        <alignY>center</alignY>
+      </control>
+      <control>
+        <description>SlideShow button</description>
+        <type>button</type>
+        <id>6</id>
+        <label>108</label>
+        <alignY>center</alignY>
+      </control>
+      <control>
+        <description>Recursive Slideshow</description>
+        <type>button</type>
+        <id>7</id>
+        <label>361</label>
+        <alignY>center</alignY>
+      </control>
+      <!--             <control>
+                <description>Rotate</description>
+                <type>button</type>
+                <id>9</id>
+                <label>735</label>
+                <ondown>99</ondown>
+                <textXOff>17</textXOff>
+                <alignY>center</alignY>
+            </control> -->
+    </control>
+    <import>common.facade.xml</import>
+  </controls>
 </window>

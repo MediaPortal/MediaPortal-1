@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>614</id>
   <defaultcontrol>3</defaultcontrol>
@@ -7,11 +8,8 @@
       <description>background image</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
-      <texture>background.png</texture>
     </control>
     <control>
       <type>image</type>
@@ -27,7 +25,6 @@
       <posX>100</posX>
       <posY>100</posY>
       <label>493</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
     </control>
     <control>
@@ -39,7 +36,6 @@
       <width>400</width>
       <label>#Actor.Name</label>
       <font>font16</font>
-      <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -49,7 +45,6 @@
       <posX>100</posX>
       <posY>120</posY>
       <label>686</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
     </control>
     <control>
@@ -60,7 +55,6 @@
       <posY>120</posY>
       <width>400</width>
       <label>#Actor.DateOfBirth #Actor.PlaceOfBirth</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -76,10 +70,6 @@
       <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
       <textureFocus>togglebutton-on-focus.png</textureFocus>
       <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-      <textcolor>ffffffff</textcolor>
-      <colordiffuse>ffffffff</colordiffuse>
-      <disabledcolor>60ffffff</disabledcolor>
-      <font>font13</font>
       <onleft>22</onleft>
       <onright>22</onright>
       <onup>2</onup>
@@ -98,10 +88,6 @@
       <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
       <textureFocus>togglebutton-on-focus.png</textureFocus>
       <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-      <textcolor>ffffffff</textcolor>
-      <colordiffuse>ffffffff</colordiffuse>
-      <disabledcolor>60ffffff</disabledcolor>
-      <font>font13</font>
       <onleft>22</onleft>
       <onright>22</onright>
       <onup>3</onup>
@@ -116,7 +102,6 @@
       <width>410</width>
       <height>400</height>
       <label>#Actor.Biography</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -136,9 +121,7 @@
       <description>textarea</description>
       <type>textbox</type>
       <id>22</id>
-      <posX>220</posX>
       <posY>150</posY>
-      <width>410</width>
       <height>400</height>
       <onleft>4</onleft>
       <onright>4</onright>

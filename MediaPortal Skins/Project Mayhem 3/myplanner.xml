@@ -1,145 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-   <id>5333</id>
-   <defaultcontrol>2</defaultcontrol>
-   <allowoverlay>yes</allowoverlay>
-   <define>#header.hover:hover_my planner.png</define>
-   <controls>
-     <control>
-        <description>BackGround</description>
-        <type>image</type>
-        <id>1</id>
-        <posX>0</posX>
-        <posY>0</posY>
-        <width>720</width>
-        <height>576</height>
-        <texture>background3.png</texture>
-     </control>
-	<control>
-			<description>BG</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>720</width>
-			<height>107</height>
-			<texture>Back_planner.png</texture>
-		</control>
-     <control>
-	  <type>image</type>
-	  <id>1</id>
-	  <posX>40</posX>
-	  <posY>20</posY>
-	  <texture>planner_logo.png</texture>
-     </control>
-
-     <control>
-        <description>text label</description>
+  <id>5333</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.hover:hover_my planner.png</define>
+  <controls>
+    <control>
+      <description>BackGround</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>576</height>
+      <texture>background3.png</texture>
+    </control>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>107</height>
+      <texture>Back_planner.png</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>40</posX>
+      <posY>20</posY>
+      <texture>planner_logo.png</texture>
+    </control>
+    <control>
+      <description>text label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>265</posX>
+      <label>My Planner</label>
+      <font>font16</font>
+      <align>right</align>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>group</type>
+      <id>71</id>
+      <description>group element</description>
+      <animation>FlyInFromLeft</animation>
+      <control>
+        <description>Next Month</description>
+        <type>button</type>
+        <id>2</id>
+        <posX>5</posX>
+        <posY>176</posY>
+        <label>209</label>
+        <onleft>13</onleft>
+        <onright>7</onright>
+        <onup>45</onup>
+        <ondown>3</ondown>
+      </control>
+      <control>
+        <description>Previous Month</description>
+        <type>button</type>
+        <id>3</id>
+        <posX>5</posX>
+        <posY>210</posY>
+        <label>210</label>
+        <onleft>13</onleft>
+        <onright>7</onright>
+        <onup>2</onup>
+        <ondown>44</ondown>
+      </control>
+      <control>
+        <description>Today Button</description>
+        <type>button</type>
+        <id>44</id>
+        <posX>5</posX>
+        <posY>244</posY>
+        <label>Today</label>
+        <onleft>13</onleft>
+        <onright>7</onright>
+        <onup>3</onup>
+        <ondown>45</ondown>
+      </control>
+      <control>
+        <description>ShowDates-Button</description>
+        <type>togglebutton</type>
+        <id>45</id>
+        <posX>5</posX>
+        <posY>278</posY>
+        <label>Show dates</label>
+        <textXOff>10</textXOff>
+        <onleft>13</onleft>
+        <onright>7</onright>
+        <onup>44</onup>
+        <ondown>43</ondown>
+        <width>190</width>
+        <height>32</height>
+        <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
+        <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
+        <textureFocus>togglebutton-on-focus.png</textureFocus>
+        <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
+      </control>
+    </control>
+    <control>
+      <type>group</type>
+      <id>5</id>
+      <description>group element</description>
+      <animation>FlyInFromBottom</animation>
+      <control>
         <type>label</type>
-        <id>1</id>
-        <posX>265</posX>
-        <posY>60</posY>
-        <label>My Planner</label>
-        <font>font16</font>
-        <align>right</align>
-        <textcolor>ffffffff</textcolor>
-     </control>
-     
-     <control>
-	<type>group</type>
-	<id>71</id>
-	<description>group element</description>
-	<animation>FlyInFromLeft</animation>
-     	<control>
-        	<description>Next Month</description>
-	        <type>button</type>
-        	<id>2</id>
-	        <posX>5</posX>
-        	<posY>176</posY>
-	        <label>209</label>
-        	<onleft>13</onleft>
-	        <onright>7</onright>
-        	<onup>45</onup>
-	        <ondown>3</ondown>
-	</control>
-     	<control>
-        	<description>Previous Month</description>
-	        <type>button</type>
-	       	<id>3</id>
-        	<posX>5</posX>
-	        <posY>210</posY>
-        	<label>210</label>
-	        <onleft>13</onleft>
-        	<onright>7</onright>
-	        <onup>2</onup>
-        	<ondown>44</ondown>
-	</control>
-     	<control>
-        	<description>Today Button</description>
-	        <type>button</type>
-        	<id>44</id>
-	        <posX>5</posX>
-        	<posY>244</posY>
-	        <label>Today</label>
-        	<onleft>13</onleft>
-	        <onright>7</onright>
-        	<onup>3</onup>
-	        <ondown>45</ondown>
-     	</control>	 
-     <control>
-	<description>ShowDates-Button</description>
-	<type>togglebutton</type>
-	<id>45</id>
-	<posX>5</posX>
-	<posY>278</posY>
-	<label>Show dates</label>
-	<textXOff>10</textXOff>
-	<textYOff>5</textYOff>
-	<font>font13</font>
-	<textcolor>ffffffff</textcolor>
-	<colordiffuse>ffffffff</colordiffuse>
-	<disabledcolor>60ffffff</disabledcolor>
-	<onleft>13</onleft>
-	<onright>7</onright>
-	<onup>44</onup>
-	<ondown>43</ondown>
-	<width>190</width>
-	<height>32</height>
-	<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-	<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-	<textureFocus>togglebutton-on-focus.png</textureFocus>
-	<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>		
-     </control>	
-   </control>
-
-<control>
-	<type>group</type>
-	<id>5</id>
-	<description>group element</description>
-	<animation>FlyInFromBottom</animation>
-      <control>
-         <type>label</type>
-         <description>Aktueller Monat</description>
-         <id>4</id>
-         <posX>420</posX>
-         <posY>192</posY>
-         <colordiffuse>ffe0e0e0</colordiffuse>
-		 <label>November</label>
-         <font>font18</font>
+        <description>Aktueller Monat</description>
+        <id>4</id>
+        <posX>420</posX>
+        <posY>192</posY>
+        <colordiffuse>ffe0e0e0</colordiffuse>
+        <label>November</label>
+        <font>font18</font>
       </control>
       <control>
-         <type>label</type>
-         <description>label</description>
-         <id>6</id>
-         <posX>300</posX>
-         <posY>230</posY>
-         <label>  S    M    T    W    T    F    S</label>
-         <font>font18</font>
+        <type>label</type>
+        <description>label</description>
+        <id>6</id>
+        <posX>300</posX>
+        <posY>230</posY>
+        <label>  S    M    T    W    T    F    S</label>
+        <font>font18</font>
       </control>
-
-     <control>
+      <control>
         <type>button</type>
         <id>7</id>
-        <posX>300</posX>
         <posY>260</posY>
         <label>01.</label>
         <onleft>3</onleft>
@@ -147,9 +133,8 @@
         <onup>3</onup>
         <ondown>14</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>8</id>
         <posX>350</posX>
@@ -160,9 +145,8 @@
         <onup>3</onup>
         <ondown>15</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>9</id>
         <posX>400</posX>
@@ -173,9 +157,8 @@
         <onup>3</onup>
         <ondown>16</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>10</id>
         <posX>450</posX>
@@ -186,9 +169,8 @@
         <onup>3</onup>
         <ondown>17</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>11</id>
         <posX>500</posX>
@@ -199,9 +181,8 @@
         <onup>3</onup>
         <ondown>18</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>12</id>
         <posX>550</posX>
@@ -212,9 +193,8 @@
         <onup>3</onup>
         <ondown>19</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>13</id>
         <posX>600</posX>
@@ -225,12 +205,10 @@
         <onup>3</onup>
         <ondown>20</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>14</id>
-        <posX>300</posX>
         <posY>295</posY>
         <label>08.</label>
         <onleft>3</onleft>
@@ -238,9 +216,8 @@
         <onup>7</onup>
         <ondown>21</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>15</id>
         <posX>350</posX>
@@ -251,9 +228,8 @@
         <onup>8</onup>
         <ondown>22</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>16</id>
         <posX>400</posX>
@@ -264,9 +240,8 @@
         <onup>9</onup>
         <ondown>23</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>17</id>
         <posX>450</posX>
@@ -277,9 +252,8 @@
         <onup>10</onup>
         <ondown>24</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>18</id>
         <posX>500</posX>
@@ -290,9 +264,8 @@
         <onup>11</onup>
         <ondown>25</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>19</id>
         <posX>550</posX>
@@ -303,9 +276,8 @@
         <onup>12</onup>
         <ondown>26</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>20</id>
         <posX>600</posX>
@@ -316,12 +288,10 @@
         <onup>13</onup>
         <ondown>27</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>21</id>
-        <posX>300</posX>
         <posY>330</posY>
         <label>15.</label>
         <onleft>3</onleft>
@@ -329,9 +299,8 @@
         <onup>14</onup>
         <ondown>28</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>22</id>
         <posX>350</posX>
@@ -342,9 +311,8 @@
         <onup>15</onup>
         <ondown>29</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>23</id>
         <posX>400</posX>
@@ -355,9 +323,8 @@
         <onup>16</onup>
         <ondown>30</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>24</id>
         <posX>450</posX>
@@ -368,9 +335,8 @@
         <onup>17</onup>
         <ondown>31</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>25</id>
         <posX>500</posX>
@@ -381,9 +347,8 @@
         <onup>18</onup>
         <ondown>32</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>26</id>
         <posX>550</posX>
@@ -394,9 +359,8 @@
         <onup>19</onup>
         <ondown>33</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>27</id>
         <posX>600</posX>
@@ -407,12 +371,10 @@
         <onup>20</onup>
         <ondown>34</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>28</id>
-        <posX>300</posX>
         <posY>365</posY>
         <label>23.</label>
         <onleft>3</onleft>
@@ -420,9 +382,8 @@
         <onup>21</onup>
         <ondown>35</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>29</id>
         <posX>350</posX>
@@ -433,9 +394,8 @@
         <onup>22</onup>
         <ondown>36</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>30</id>
         <posX>400</posX>
@@ -446,9 +406,8 @@
         <onup>23</onup>
         <ondown>37</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>31</id>
         <posX>450</posX>
@@ -459,9 +418,8 @@
         <onup>24</onup>
         <ondown>38</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>32</id>
         <posX>500</posX>
@@ -472,9 +430,8 @@
         <onup>25</onup>
         <ondown>39</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>33</id>
         <posX>550</posX>
@@ -485,9 +442,8 @@
         <onup>26</onup>
         <ondown>40</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>34</id>
         <posX>600</posX>
@@ -498,12 +454,10 @@
         <onup>27</onup>
         <ondown>41</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>35</id>
-        <posX>300</posX>
         <posY>400</posY>
         <label>29.</label>
         <onleft>3</onleft>
@@ -511,9 +465,8 @@
         <onup>28</onup>
         <ondown>42</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>36</id>
         <posX>350</posX>
@@ -524,9 +477,8 @@
         <onup>29</onup>
         <ondown>43</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>37</id>
         <posX>400</posX>
@@ -537,9 +489,8 @@
         <onup>30</onup>
         <ondown>42</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>38</id>
         <posX>450</posX>
@@ -550,9 +501,8 @@
         <onup>31</onup>
         <ondown>42</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>39</id>
         <posX>500</posX>
@@ -563,9 +513,8 @@
         <onup>32</onup>
         <ondown>42</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>40</id>
         <posX>550</posX>
@@ -576,9 +525,8 @@
         <onup>33</onup>
         <ondown>42</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>41</id>
         <posX>600</posX>
@@ -589,12 +537,10 @@
         <onup>34</onup>
         <ondown>42</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>42</id>
-        <posX>300</posX>
         <posY>435</posY>
         <label>36.</label>
         <onleft>3</onleft>
@@ -602,9 +548,8 @@
         <onup>35</onup>
         <ondown>2</ondown>
         <width>40</width>
-     </control>
-
-     <control>
+      </control>
+      <control>
         <type>button</type>
         <id>43</id>
         <posX>350</posX>
@@ -615,48 +560,45 @@
         <onup>36</onup>
         <ondown>2</ondown>
         <width>40</width>
-     </control>
-	 
-	 <control>
-		<description>OKButton</description>
-		<type>button</type>
-		<id>46</id>
-		<posX>325</posX>
-		<posY>525</posY>
-		<label>OK</label>
-		<width>100</width>
-	</control>
-		
-     <control>
-		<description>CancelButton</description>
-		<type>button</type>
-		<id>47</id>
-		<posX>500</posX>
-		<posY>525</posY>
-		<label>Cancel</label>
-		<width>100</width>
-     </control>		 
-	 
-      <control>
-         <type>label</type>
-         <description>Date</description>
-         <id>69</id>
-         <posX>575</posX>
-         <posY>470</posY>
-         <animation>FlyInFromLeft</animation>
-         <label>#date</label>
-         <align>right</align>
       </control>
       <control>
-         <type>image</type>
-         <description>MenuBackgroundImage</description>
-         <id>70</id>
-         <posX>270</posX>
-         <posY>176</posY>
-         <width>400</width>
-         <height>340</height>
-         <texture>background_glass_menu_area.png</texture>
-     </control>
-  </control>
-</controls>
+        <description>OKButton</description>
+        <type>button</type>
+        <id>46</id>
+        <posX>325</posX>
+        <posY>525</posY>
+        <label>OK</label>
+        <width>100</width>
+      </control>
+      <control>
+        <description>CancelButton</description>
+        <type>button</type>
+        <id>47</id>
+        <posX>500</posX>
+        <posY>525</posY>
+        <label>Cancel</label>
+        <width>100</width>
+      </control>
+      <control>
+        <type>label</type>
+        <description>Date</description>
+        <id>69</id>
+        <posX>575</posX>
+        <posY>470</posY>
+        <animation>FlyInFromLeft</animation>
+        <label>#date</label>
+        <align>right</align>
+      </control>
+      <control>
+        <type>image</type>
+        <description>MenuBackgroundImage</description>
+        <id>70</id>
+        <posX>270</posX>
+        <posY>176</posY>
+        <width>400</width>
+        <height>340</height>
+        <texture>background_glass_menu_area.png</texture>
+      </control>
+    </control>
+  </controls>
 </window>

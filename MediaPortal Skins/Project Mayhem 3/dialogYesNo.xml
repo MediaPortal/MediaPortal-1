@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>100</id>
   <defaultcontrol>10</defaultcontrol>
@@ -6,13 +7,10 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
       <texture>black.bmp</texture>
       <colordiffuse>60ffffff</colordiffuse>
-
     </control>
     <control>
       <type>image</type>
@@ -23,7 +21,7 @@
       <height>202</height>
       <texture>dialog_background.png</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>dialog Heading</description>
@@ -32,10 +30,9 @@
       <posX>210</posX>
       <posY>250</posY>
       <label>0</label>
-      <font>font13</font>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>dialog line 1</description>
@@ -44,10 +41,9 @@
       <posX>210</posX>
       <posY>280</posY>
       <label>0</label>
-      <font>font13</font>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>dialog line 2</description>
@@ -56,7 +52,6 @@
       <posX>210</posX>
       <posY>300</posY>
       <label>0</label>
-      <font>font13</font>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -68,10 +63,9 @@
       <posX>210</posX>
       <posY>320</posY>
       <label>0</label>
-      <font>font13</font>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>No button</description>
@@ -91,7 +85,7 @@
       <onup>10</onup>
       <ondown>10</ondown>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Yes button</description>
@@ -111,7 +105,7 @@
       <onup>11</onup>
       <ondown>11</ondown>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
   </controls>
 </window>

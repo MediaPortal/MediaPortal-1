@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2013</id>
   <defaultcontrol>10</defaultcontrol>
@@ -6,8 +7,6 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
       <texture>black.bmp</texture>
@@ -29,7 +28,6 @@
       <posX>215</posX>
       <posY>230</posY>
       <label>934</label>
-      <font>font13</font>
       <textcolor>ffffffff</textcolor>
     </control>
     <control>
@@ -39,7 +37,6 @@
       <posX>215</posX>
       <posY>270</posY>
       <label>204</label>
-      <font>font13</font>
       <textcolor>ffffffff</textcolor>
     </control>
     <control>
@@ -52,7 +49,7 @@
       <height>27</height>
       <textureFocus>arrow_round_right_focus.gif</textureFocus>
       <textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
-      <label></label>
+      <label />
       <onleft>11</onleft>
       <onright>10</onright>
       <onup>13</onup>
@@ -68,7 +65,7 @@
       <height>27</height>
       <textureFocus>arrow_round_left_focus.gif</textureFocus>
       <textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
-      <label></label>
+      <label />
       <onleft>11</onleft>
       <onright>10</onright>
       <onup>13</onup>
@@ -102,7 +99,7 @@
       <height>27</height>
       <textureFocus>arrow_round_right_focus.gif</textureFocus>
       <textureNoFocus>arrow_round_right_nofocus.png</textureNoFocus>
-      <label></label>
+      <label />
       <onleft>14</onleft>
       <onright>12</onright>
       <onup>10</onup>
@@ -135,7 +132,7 @@
       <height>27</height>
       <textureFocus>arrow_round_left_focus.gif</textureFocus>
       <textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
-      <label></label>
+      <label />
       <onleft>15</onleft>
       <onright>14</onright>
       <onup>10</onup>
@@ -148,7 +145,6 @@
       <posX>215</posX>
       <posY>335</posY>
       <label>204</label>
-      <font>font13</font>
       <textcolor>ffffffff</textcolor>
     </control>
     <control>

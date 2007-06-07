@@ -1,234 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-   <id>4734</id>
-   <defaultcontrol>1000</defaultcontrol>
-   <allowoverlay>yes</allowoverlay>
-   <define>#header.label:30000</define>
-   <controls>
-   <import>common.window.xml</import>
-      <control>
-         <description>BG</description>
-
-         <type>image</type>
-
-         <id>1</id>
-
-         <posX>0</posX>
-
-         <posY>0</posY>
-
-         <width>720</width>
-
-         <height>576</height>
-
-         <texture>background3.png</texture>
-      </control>
-       <control>
-         <description>BG</description>
-
-         <type>image</type>
-
-         <id>1</id>
-
-         <posX>0</posX>
-
-         <posY>0</posY>
-
-         <width>720</width>
-
-         <height>107</height>
-
-         <texture>Back_music.png</texture>
-   	   </control>
-       <control>
-         <type>button</type>
-         <description>Top Videos button</description>
-         <id>2</id>
-         <posX>5</posX>
-         <posY>125</posY>
-         <onleft>2</onleft>
-         <onright>50</onright>
-         <onup>39</onup>
-         <ondown>7</ondown>
-         <label>30001</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>New Videos button</description>
-         <id>7</id>
-         <posX>5</posX>
-         <posY>159</posY>
-         <onleft>7</onleft>
-         <onright>50</onright>
-         <onup>2</onup>
-         <ondown>37</ondown>
-         <label>30002</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>Genre button</description>
-         <id>37</id>
-         <posX>5</posX>
-         <posY>193</posY>
-         <onleft>24</onleft>
-         <onright>50</onright>
-         <onup>7</onup>
-         <ondown>3</ondown>
-         <label>725</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>Search button</description>
-         <id>3</id>
-         <posX>5</posX>
-         <posY>227</posY>
-         <onleft>3</onleft>
-         <onright>50</onright>
-         <onup>37</onup>
-         <ondown>6</ondown>
-         <label>137</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>favorite button</description>
-         <id>6</id>
-         <posX>5</posX>
-         <posY>261</posY>
-         <onleft>6</onleft>
-         <onright>50</onright>
-         <onup>3</onup>
-         <ondown>38</ondown>
-         <label>932</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>country button</description>
-         <id>38</id>
-         <posX>5</posX>
-         <posY>295</posY>
-         <onleft>24</onleft>
-         <onright>50</onright>
-         <onup>6</onup>
-         <ondown>25</ondown>
-         <label>200026</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>Playlist Button</description>
-         <id>25</id>
-         <posX>5</posX>
-         <posY>329</posY>
-         <onleft>50</onleft>
-         <onright>50</onright>
-         <onup>38</onup>
-         <ondown>39</ondown>
-         <label>136</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>my playlist button</description>
-         <id>39</id>
-         <posX>5</posX>
-         <posY>363</posY>
-         <onleft>24</onleft>
-         <onright>50</onright>
-         <onup>25</onup>
-         <ondown>2</ondown>
-         <label>983</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>back button</description>
-         <id>9</id>
-         <posX>5</posX>
-         <posY>125</posY>
-         <onleft>50</onleft>
-         <onright>50</onright>
-         <onup>39</onup>
-         <ondown>34</ondown>
-         <label>712</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>list nav Button</description>
-         <id>34</id>
-         <posX>5</posX>
-         <posY>159</posY>
-         <onleft>50</onleft>
-         <onright>50</onright>
-         <onup>9</onup>
-         <ondown>35</ondown>
-         <label>30005</label>
-       </control>
-       <control>
-         <type>button</type>
-         <description>list nav Button</description>
-         <id>35</id>
-         <posX>5</posX>
-         <posY>193</posY>
-         <onleft>50</onleft>
-         <onright>50</onright>
-         <onup>34</onup>
-         <ondown>8</ondown>
-         <label>30004</label>
-      </control>
-      <control>
-         <type>button</type>
-         <description>Play all button</description>
-         <id>8</id>
-         <posX>5</posX>
-         <posY>227</posY>
-         <onleft>50</onleft>
-         <onright>50</onright>
-         <onup>35</onup>
-         <ondown>25</ondown>
-         <label>30003</label>
-      </control>
-      <control>
-         <type>listcontrol</type>
-         <description>listcontrol</description>
-         <id>50</id>
-         <posX>225</posX>
-		<posY>120</posY>
-		<width>450</width>
-		<height>415</height>
-		<spinWidth>18</spinWidth>
-		<spinHeight>16</spinHeight>
-		<spinPosX>630</spinPosX>
-		<spinPosY>525</spinPosY>
-		<spinColor>ffffffff</spinColor>
-		<textureUp>page_up_nofocus.png</textureUp>
-		<textureDown>page_down_nofocus.png</textureDown>
-		<textureUpFocus>page_up_focus.png</textureUpFocus>
-		<textureDownFocus>page_down_focus.png</textureDownFocus>
-		<textureFocus>menu_list_focus.png</textureFocus>
-		<textureNoFocus>list-nofocus.png</textureNoFocus>
-		<textureHeight>26</textureHeight>
-		<image>folder_focus.png</image>
-		<font>font13</font>
-		<dimColor>ffffffff</dimColor>
-		<shadedColor>20ffffff</shadedColor>
-		<selectedColor>FFF8BC70</selectedColor>
-		<textcolor>ffffffff</textcolor>
-		<textcolor2>ffffffff</textcolor2>
-		<textcolor3>ffffffff</textcolor3>
-		<colordiffuse>ffffffff</colordiffuse>
-		<remoteColor>ffFFA075</remoteColor>
-		<downloadColor>ff80ff80</downloadColor>
-		<textXOff>5</textXOff>
-		<textYOff>4</textYOff>
-		<textXOff2>0</textXOff2>
-		<textYOff2>4</textYOff2>
-		<IconXOff>8</IconXOff>
-		<IconYOff>8</IconYOff>
-		<suffix>|</suffix>
-		<unfocusedAlpha>170</unfocusedAlpha>
-      </control>
-      <control>
-         <type>image</type>
-         <id>36</id>
-         <posX>62</posX>
-         <posY>412</posY>
-         <texture></texture>
-      </control>
-   </controls>
+  <id>4734</id>
+  <defaultcontrol>1000</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:30000</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>576</height>
+      <texture>background3.png</texture>
+    </control>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>107</height>
+      <texture>Back_music.png</texture>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Top Videos button</description>
+      <id>2</id>
+      <posX>5</posX>
+      <posY>125</posY>
+      <onleft>2</onleft>
+      <onright>50</onright>
+      <onup>39</onup>
+      <ondown>7</ondown>
+      <label>30001</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>New Videos button</description>
+      <id>7</id>
+      <posX>5</posX>
+      <posY>159</posY>
+      <onleft>7</onleft>
+      <onright>50</onright>
+      <onup>2</onup>
+      <ondown>37</ondown>
+      <label>30002</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Genre button</description>
+      <id>37</id>
+      <posX>5</posX>
+      <posY>193</posY>
+      <onleft>24</onleft>
+      <onright>50</onright>
+      <onup>7</onup>
+      <ondown>3</ondown>
+      <label>725</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Search button</description>
+      <id>3</id>
+      <posX>5</posX>
+      <posY>227</posY>
+      <onleft>3</onleft>
+      <onright>50</onright>
+      <onup>37</onup>
+      <ondown>6</ondown>
+      <label>137</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>favorite button</description>
+      <id>6</id>
+      <posX>5</posX>
+      <posY>261</posY>
+      <onleft>6</onleft>
+      <onright>50</onright>
+      <onup>3</onup>
+      <ondown>38</ondown>
+      <label>932</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>country button</description>
+      <id>38</id>
+      <posX>5</posX>
+      <posY>295</posY>
+      <onleft>24</onleft>
+      <onright>50</onright>
+      <onup>6</onup>
+      <ondown>25</ondown>
+      <label>200026</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Playlist Button</description>
+      <id>25</id>
+      <posX>5</posX>
+      <posY>329</posY>
+      <onleft>50</onleft>
+      <onright>50</onright>
+      <onup>38</onup>
+      <ondown>39</ondown>
+      <label>136</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>my playlist button</description>
+      <id>39</id>
+      <posX>5</posX>
+      <posY>363</posY>
+      <onleft>24</onleft>
+      <onright>50</onright>
+      <onup>25</onup>
+      <ondown>2</ondown>
+      <label>983</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>back button</description>
+      <id>9</id>
+      <posX>5</posX>
+      <posY>125</posY>
+      <onleft>50</onleft>
+      <onright>50</onright>
+      <onup>39</onup>
+      <ondown>34</ondown>
+      <label>712</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>list nav Button</description>
+      <id>34</id>
+      <posX>5</posX>
+      <posY>159</posY>
+      <onleft>50</onleft>
+      <onright>50</onright>
+      <onup>9</onup>
+      <ondown>35</ondown>
+      <label>30005</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>list nav Button</description>
+      <id>35</id>
+      <posX>5</posX>
+      <posY>193</posY>
+      <onleft>50</onleft>
+      <onright>50</onright>
+      <onup>34</onup>
+      <ondown>8</ondown>
+      <label>30004</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Play all button</description>
+      <id>8</id>
+      <posX>5</posX>
+      <posY>227</posY>
+      <onleft>50</onleft>
+      <onright>50</onright>
+      <onup>35</onup>
+      <ondown>25</ondown>
+      <label>30003</label>
+    </control>
+    <control>
+      <type>listcontrol</type>
+      <description>listcontrol</description>
+      <id>50</id>
+      <textYOff>4</textYOff>
+      <textYOff2>4</textYOff2>
+      <IconXOff>8</IconXOff>
+      <IconYOff>8</IconYOff>
+    </control>
+    <control>
+      <type>image</type>
+      <id>36</id>
+      <posX>62</posX>
+      <posY>412</posY>
+      <texture />
+    </control>
+  </controls>
 </window>

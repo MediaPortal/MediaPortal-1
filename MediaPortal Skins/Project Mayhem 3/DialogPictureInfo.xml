@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2014</id>
   <defaultcontrol>6</defaultcontrol>
@@ -7,11 +8,8 @@
       <description>background image</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
-      <texture>background.png</texture>
     </control>
     <control>
       <type>image</type>
@@ -20,7 +18,7 @@
       <posY>20</posY>
       <texture>info_logo.png</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Image Title value</description>
@@ -33,7 +31,7 @@
       <align>right</align>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Dimensions txt</description>
@@ -42,10 +40,9 @@
       <posX>60</posX>
       <posY>100</posY>
       <label>9000</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Resolution txt</description>
@@ -54,10 +51,9 @@
       <posX>60</posX>
       <posY>120</posY>
       <label>9001</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Flash txt</description>
@@ -66,10 +62,9 @@
       <posX>60</posX>
       <posY>140</posY>
       <label>9002</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Metering mode txt</description>
@@ -78,10 +73,9 @@
       <posX>60</posX>
       <posY>160</posY>
       <label>9003</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Exposure Compensation txt</description>
@@ -90,10 +84,9 @@
       <posX>60</posX>
       <posY>180</posY>
       <label>9004</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Shutterspeed txt</description>
@@ -102,10 +95,9 @@
       <posX>60</posX>
       <posY>200</posY>
       <label>9005</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Date Taken txt</description>
@@ -114,10 +106,9 @@
       <posX>340</posX>
       <posY>180</posY>
       <label>9006</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Fstop txt</description>
@@ -126,10 +117,9 @@
       <posX>340</posX>
       <posY>200</posY>
       <label>9007</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Exposure Time txt</description>
@@ -138,11 +128,10 @@
       <posX>340</posX>
       <posY>100</posY>
       <label>9008</label>
-      <font>font13</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Camera Model txt</description>
@@ -151,10 +140,9 @@
       <posX>340</posX>
       <posY>120</posY>
       <label>9009</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Equipment make txt</description>
@@ -163,10 +151,9 @@
       <posX>340</posX>
       <posY>140</posY>
       <label>9010</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>View Comment txt</description>
@@ -175,10 +162,9 @@
       <posX>340</posX>
       <posY>160</posY>
       <label>9011</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Image Dimensions value</description>
@@ -187,10 +173,9 @@
       <posX>200</posX>
       <posY>100</posY>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Resolutions value</description>
@@ -199,10 +184,9 @@
       <posX>200</posX>
       <posY>120</posY>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Flash value</description>
@@ -212,10 +196,9 @@
       <posY>140</posY>
       <width>130</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Metering Mode value</description>
@@ -225,10 +208,9 @@
       <posY>160</posY>
       <width>130</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Exposure Compensation value</description>
@@ -238,10 +220,9 @@
       <posY>180</posY>
       <width>400</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Shutter Speed value</description>
@@ -251,10 +232,9 @@
       <posY>200</posY>
       <width>400</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Date Taken value</description>
@@ -263,10 +243,9 @@
       <posX>480</posX>
       <posY>180</posY>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Fstop value</description>
@@ -275,10 +254,9 @@
       <posX>480</posX>
       <posY>200</posY>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Exposure Time value</description>
@@ -287,10 +265,9 @@
       <posX>480</posX>
       <posY>100</posY>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Camera Model value</description>
@@ -300,10 +277,9 @@
       <posY>120</posY>
       <width>200</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Equipment Make value</description>
@@ -313,10 +289,9 @@
       <posY>140</posY>
       <width>200</width>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>View Comments value</description>
@@ -325,10 +300,9 @@
       <posX>480</posX>
       <posY>160</posY>
       <label>-</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>Image</description>
@@ -343,7 +317,7 @@
       <colordiffuse>FFFFFFFF</colordiffuse>
       <keepaspectratio>yes</keepaspectratio>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
   </controls>
 </window>

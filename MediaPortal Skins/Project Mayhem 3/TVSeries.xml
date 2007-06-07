@@ -1,44 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>9811</id>
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:</define>
-    
-<controls>
-	<import>common.window.xml</import>
+  <controls>
+    <import>common.window.xml</import>
     <control>
       <type>image</type>
       <description>BG</description>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <texture>background_tvseries.png</texture>
     </control>
-	 <control>
-         <description>BG</description>
-         <type>image</type>
-         <id>1</id>
-         <posX>0</posX>
-         <posY>0</posY>
-         <width>720</width>
-         <height>107</height>
-         <texture>Back_tvseries.png</texture>
-      </control>
-		<control>
-			<description>Import Animation</description>
-			<type>animation</type>
-    	<id>51</id>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>107</height>
+      <texture>Back_tvseries.png</texture>
+    </control>
+    <control>
+      <description>Import Animation</description>
+      <type>animation</type>
+      <id>51</id>
       <posX>20</posX>
       <posY>530</posY>
       <width>32</width>
       <height>32</height>
-			<textures>common.waiting.1.png;common.waiting.2.png;common.waiting.3.png;common.waiting.4.png;common.waiting.5.png;common.waiting.6.png;common.waiting.7.png;common.waiting.8.png</textures>
-			<Duration>0:0:01</Duration>
-	  <keepaspectratio>yes</keepaspectratio>
-		</control>
-	  
-	  <!-- Standard Navigation -->
-	  <control>
+      <textures>common.waiting.1.png;common.waiting.2.png;common.waiting.3.png;common.waiting.4.png;common.waiting.5.png;common.waiting.6.png;common.waiting.7.png;common.waiting.8.png</textures>
+      <Duration>0:0:01</Duration>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <!-- Standard Navigation -->
+    <control>
       <type>group</type>
       <layout>StackLayout</layout>
       <description>group element</description>
@@ -63,13 +58,11 @@
         <label>100</label>
       </control>
     </control>
-
     <!-- Shows Navigation -->
     <control>
       <type>group</type>
       <description>group element list</description>
       <id>28</id>
-     
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>
@@ -81,121 +74,114 @@
           <posX>5</posX>
           <posY>125</posY>
           <height>420</height>
-		  		<width>315</width>
+          <width>315</width>
           <spaceBetweenItems>2</spaceBetweenItems>
-          <remoteColor>60A0A0A0</remoteColor>       <!-- watched color -->
-          <downloadColor>FFFFFFFF</downloadColor>   <!-- not watched color -->
-          <textcolor>60505050</textcolor>						<!-- local file not present color -->
-          <textcolor2>60505050</textcolor2>						<!-- local file not present color  column 2-->
-          <textcolor3>60505050</textcolor3>						<!-- local file not present color column 3-->
+          <remoteColor>60A0A0A0</remoteColor>
+          <!-- watched color -->
+          <downloadColor>FFFFFFFF</downloadColor>
+          <!-- not watched color -->
+          <textcolor>60505050</textcolor>
+          <!-- local file not present color -->
+          <textcolor2>60505050</textcolor2>
+          <!-- local file not present color  column 2-->
+          <textcolor3>60505050</textcolor3>
+          <!-- local file not present color column 3-->
         </control>
         <control>
-	        <description>graphical list (series and seasons if set)</description>
-	        <type>listcontrol</type>
-	        <subtype>album</subtype>
-	        <id>50</id>
-	        <posX>5</posX>
-	        <posY>125</posY>
-	        <height>420</height>
-		  		<width>315</width>
-					<IconXOff>2</IconXOff>
-					<IconYOff>2</IconYOff>
-	        <spaceBetweenItems>2</spaceBetweenItems>
-		  		<textureFocus>tvguide_button_light_middle.png</textureFocus>
-		  		<textureNoFocus></textureNoFocus>
-	        <remoteColor>60A0A0A0</remoteColor>       <!-- watched color -->
-	        <downloadColor>FFFFFFFF</downloadColor>   <!-- not watched color -->
-	        <textcolor>60505050</textcolor>						<!-- local file not present color -->
-	        <textcolor2>60505050</textcolor2>						<!-- local file not present color  column 2-->
-	        <textcolor3>60505050</textcolor3>						<!-- local file not present color column 3-->
-	      </control>
-			</control>
-		</control>
-	  
+          <description>graphical list (series and seasons if set)</description>
+          <type>listcontrol</type>
+          <subtype>album</subtype>
+          <id>50</id>
+          <posX>5</posX>
+          <posY>125</posY>
+          <height>420</height>
+          <width>315</width>
+          <IconXOff>2</IconXOff>
+          <IconYOff>2</IconYOff>
+          <spaceBetweenItems>2</spaceBetweenItems>
+          <textureFocus>tvguide_button_light_middle.png</textureFocus>
+          <textureNoFocus />
+          <remoteColor>60A0A0A0</remoteColor>
+          <!-- watched color -->
+          <downloadColor>FFFFFFFF</downloadColor>
+          <!-- not watched color -->
+          <textcolor>60505050</textcolor>
+          <!-- local file not present color -->
+          <textcolor2>60505050</textcolor2>
+          <!-- local file not present color  column 2-->
+          <textcolor3>60505050</textcolor3>
+          <!-- local file not present color column 3-->
+        </control>
+      </control>
+    </control>
     <control>
       <type>group</type>
       <description>group element description</description>
       <id>52</id>
-	  
-	  	 <!-- TV.com Banner -->
-		 <control>
-	      <type>image</type>
-	      <description>Series Logo</description>
-	      <id>30</id>
-	      <posX>0</posX>
-	      <posY>0</posY>
-	      <width>565</width>
-	      <height>107</height>
-		  	<centered>no</centered>
-		  	<keepaspectratio>no</keepaspectratio>
-	      <texture></texture>
-	    </control>
-		
-		<!-- Image Overlay for Fade Effect -->
-		<control>
-	      <type>image</type>
-	      <description>BG</description>
-	      <id>1</id>
-	      <posX>0</posX>
-	      <posY>0</posY>
-	      <texture>Back_tvseries_seriesOverlay.png</texture>
-	    </control>
-		
-		<control>
-			<type>textboxscrollup</type>
-			<description>Title</description>
-			<id>40</id>
-			<posX>6000</posX>
-			<posY>2100</posY>
-			<width>1</width>
-			<textcolor>FFFFFFFF</textcolor>
-			<font>font16</font>
-		</control>
-	  
-
-		<!-- season image background -->
-		 <control>
-	      <type>image</type>
-	      <description>Season image</description>
-	      <id>46</id>
-	      <posX>0</posX>
-	      <posY>110</posY>
-	      <width>325</width>
-	      <height>460</height>
-		  	<centered>yes</centered>
-		  	<keepaspectratio>yes</keepaspectratio>
-		  	<colordiffuse>35FFFFFF</colordiffuse>
-	      <texture></texture>
-	    </control>
-				
-	
-	    <!-- Genre text below Banner -->
-	    <control>
-	      <type>textboxscrollup</type>
-	      <description>Subtitle</description>
-	      <id>33</id>
-	      <posX>345</posX>
-	      <posY>115</posY>
-	      <width>330</width>
-	      <height>40</height>
-	      <textcolor>FFA9D0F7</textcolor>
-	      <font>font10</font>
-	    </control>
-	    
-			<!-- Description -->
-			<control>
-	      <type>textboxscrollup</type>
-	      <description>Description</description>
-	      <id>31</id>
-	      <posX>345</posX>
-	      <posY>130</posY>
-	      <width>330</width>
-	      <height>380</height>
-	      <colordiffuse>ffffffff</colordiffuse>
-	      <textcolor>FFFFFFFF</textcolor>
-	      <font>font13</font>
-				<seperator>-----------------------------------------------------------------------------------------------------------------------</seperator>
-	    </control>
-	</control>
+      <!-- TV.com Banner -->
+      <control>
+        <type>image</type>
+        <description>Series Logo</description>
+        <id>30</id>
+        <width>565</width>
+        <height>107</height>
+        <texture />
+      </control>
+      <!-- Image Overlay for Fade Effect -->
+      <control>
+        <type>image</type>
+        <description>BG</description>
+        <id>1</id>
+        <texture>Back_tvseries_seriesOverlay.png</texture>
+      </control>
+      <control>
+        <type>textboxscrollup</type>
+        <description>Title</description>
+        <id>40</id>
+        <posX>6000</posX>
+        <posY>2100</posY>
+        <width>1</width>
+        <textcolor>FFFFFFFF</textcolor>
+        <font>font16</font>
+      </control>
+      <!-- season image background -->
+      <control>
+        <type>image</type>
+        <description>Season image</description>
+        <id>46</id>
+        <posY>110</posY>
+        <width>325</width>
+        <height>460</height>
+        <centered>yes</centered>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>35FFFFFF</colordiffuse>
+        <texture />
+      </control>
+      <!-- Genre text below Banner -->
+      <control>
+        <type>textboxscrollup</type>
+        <description>Subtitle</description>
+        <id>33</id>
+        <posX>345</posX>
+        <posY>115</posY>
+        <width>330</width>
+        <height>40</height>
+        <textcolor>FFA9D0F7</textcolor>
+        <font>font10</font>
+      </control>
+      <!-- Description -->
+      <control>
+        <type>textboxscrollup</type>
+        <description>Description</description>
+        <id>31</id>
+        <posX>345</posX>
+        <posY>130</posY>
+        <width>330</width>
+        <height>380</height>
+        <textcolor>FFFFFFFF</textcolor>
+        <font>font13</font>
+        <seperator>-----------------------------------------------------------------------------------------------------------------------</seperator>
+      </control>
+    </control>
   </controls>
 </window>

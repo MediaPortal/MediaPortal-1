@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>500</id>
   <defaultcontrol>2</defaultcontrol>
@@ -7,29 +8,18 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
       <texture>background3.png</texture>
     </control>
-     <control>
-         <description>background image</description>
-
-         <type>image</type>
-
-         <id>1</id>
-
-         <posX>0</posX>
-
-         <posY>0</posY>
-
-         <width>720</width>
-
-         <height>107</height>
-
-         <texture>Back_music.png</texture>
-      </control>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>107</height>
+      <texture>Back_music.png</texture>
+    </control>
     <control>
       <type>image</type>
       <id>1</id>
@@ -66,8 +56,6 @@
       <posY>45</posY>
       <width>400</width>
       <label>#selecteditem</label>
-      <font>font13</font>
-      <align>left</align>
       <textcolor>7A7979</textcolor>
     </control>
     <control>
@@ -75,9 +63,8 @@
       <description>group element</description>
       <animation>FlyInFromLeft</animation>
       <posX>5</posX>
-	  <posY>125</posY>
-	  <dimColor>ffffffff</dimColor>
-	  <layout>StackLayout</layout>
+      <posY>125</posY>
+      <layout>StackLayout</layout>
       <control>
         <description>Shuffle button</description>
         <type>button</type>
@@ -160,7 +147,6 @@
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>
         <id>50</id>
-
         <control>
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>
@@ -175,15 +161,11 @@
           <type>listcontrol</type>
           <subtype>album</subtype>
           <id>52</id>
-          <font>font13</font>
           <font2>font13</font2>
           <selectedColor>FFFF6600</selectedColor>
           <textcolor>FFB2D4F5</textcolor>
           <selectedColor2>FFFF6600</selectedColor2>
           <textcolor2>FFB2D4F5</textcolor2>
-          <colordiffuse>ffffffff</colordiffuse>
-          <suffix>|</suffix>
-          <textXOff>5</textXOff>
           <textYOff>4</textYOff>
           <textXOff2>420</textXOff2>
           <textYOff2>60</textYOff2>

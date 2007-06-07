@@ -45,7 +45,6 @@
       <posX>260</posX>
       <posY>530</posY>
       <label>#itemcount</label>
-      <font>font13</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -59,9 +58,7 @@
       <posY>70</posY>
       <width>400</width>
       <label>#selecteditem</label>
-      <font>font13</font>
       <align>right</align>
-      <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -155,7 +152,6 @@
         <id>10</id>
         <height>370</height>
         <textXOff>50</textXOff>
-        <textYOff>2</textYOff>
         <textXOff2>420</textXOff2>
         <textYOff2>29</textYOff2>
         <textXOff3>100</textXOff3>
@@ -188,7 +184,6 @@
       <posY>440</posY>
       <width>250</width>
       <label>#TV.Scheduled.Title</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -201,7 +196,6 @@
       <posY>460</posY>
       <label>#TV.Scheduled.Time</label>
       <align>left</align>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -215,7 +209,6 @@
       <width>430</width>
       <height>65</height>
       <label>#TV.Scheduled.Description</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -228,7 +221,6 @@
       <posY>460</posY>
       <label>#TV.Scheduled.Channel</label>
       <align>right</align>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>

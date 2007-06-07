@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2008</id>
   <defaultcontrol>1</defaultcontrol>
@@ -17,7 +18,7 @@
       <onleft>20</onleft>
       <onright>2</onright>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>CD2</description>
@@ -33,7 +34,7 @@
       <onright>3</onright>
       <onleft>1</onleft>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>CD3</description>
@@ -49,7 +50,7 @@
       <onright>4</onright>
       <onleft>2</onleft>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>CD4</description>
@@ -65,7 +66,7 @@
       <onright>5</onright>
       <onleft>3</onleft>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>CD5</description>
@@ -81,7 +82,7 @@
       <onright>6</onright>
       <onleft>4</onleft>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>CD6</description>
@@ -94,11 +95,10 @@
       <label>-</label>
       <textureFocus>button-cd-focus.png</textureFocus>
       <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
-      
       <onright>7</onright>
       <onleft>5</onleft>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>CD7</description>
@@ -114,7 +114,7 @@
       <onright>8</onright>
       <onleft>6</onleft>
       <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>      
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>CD8</description>

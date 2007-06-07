@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>2003</id>
   <defaultcontrol>2</defaultcontrol>
@@ -7,11 +8,8 @@
       <description>background image</description>
       <type>image</type>
       <id>1</id>
-      <posX>0</posX>
-      <posY>0</posY>
       <width>720</width>
       <height>576</height>
-      <texture>background.png</texture>
     </control>
     <control>
       <type>image</type>
@@ -29,7 +27,6 @@
       <width>400</width>
       <label>#title</label>
       <font>font18</font>
-      <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -41,7 +38,6 @@
       <width>400</width>
       <label>(#mpaarating)</label>
       <font>font12</font>
-      <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -51,11 +47,9 @@
       <posX>5</posX>
       <posY>117</posY>
       <width>120</width>
-      <height>32</height>
       <textureFocus>button_small_imdb_focus.png</textureFocus>
       <textureNoFocus>button_small_imdb_nofocus.png</textureNoFocus>
       <label>208</label>
-      <font>font13</font>
       <onleft>22</onleft>
       <onright>22</onright>
       <onup>7</onup>
@@ -74,10 +68,6 @@
       <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
       <textureFocus>togglebutton-on-focus.png</textureFocus>
       <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-      <textcolor>ffffffff</textcolor>
-      <colordiffuse>ffffffff</colordiffuse>
-      <disabledcolor>60ffffff</disabledcolor>
-      <font>font13</font>
       <onleft>22</onleft>
       <onright>22</onright>
       <onup>2</onup>
@@ -96,16 +86,11 @@
       <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
       <textureFocus>togglebutton-on-focus.png</textureFocus>
       <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-      <textcolor>ffffffff</textcolor>
-      <colordiffuse>ffffffff</colordiffuse>
-      <disabledcolor>60ffffff</disabledcolor>
-      <font>font13</font>
       <onleft>22</onleft>
       <onright>22</onright>
       <onup>3</onup>
       <ondown>5</ondown>
     </control>
-
     <control>
       <description>Refresh</description>
       <type>button</type>
@@ -113,7 +98,6 @@
       <posX>5</posX>
       <posY>219</posY>
       <width>120</width>
-      <height>32</height>
       <textureFocus>button_small_imdb_focus.png</textureFocus>
       <textureNoFocus>button_small_imdb_nofocus.png</textureNoFocus>
       <label>184</label>
@@ -122,7 +106,6 @@
       <onup>4</onup>
       <ondown>6</ondown>
     </control>
-
     <control>
       <description>Watched</description>
       <type>togglebutton</type>
@@ -135,17 +118,12 @@
       <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
       <textureFocus>togglebutton-on-focus.png</textureFocus>
       <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-      <textcolor>ffffffff</textcolor>
-      <colordiffuse>ffffffff</colordiffuse>
-      <disabledcolor>60ffffff</disabledcolor>
       <label>1010</label>
       <onleft>22</onleft>
       <onright>22</onright>
       <onup>5</onup>
       <ondown>10</ondown>
     </control>
-
-
     <control>
       <description>image title:</description>
       <type>label</type>
@@ -153,7 +131,6 @@
       <posX>60</posX>
       <posY>290</posY>
       <label>734</label>
-      <font>font13</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
     </control>
@@ -173,7 +150,6 @@
       <posX>60</posX>
       <posY>335</posY>
       <label>427</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
     </control>
     <control>
@@ -182,7 +158,6 @@
       <id>11</id>
       <posX>60</posX>
       <posY>357</posY>
-      <reverse>yes</reverse>
       <onup>10</onup>
       <ondown>2</ondown>
       <onleft>5</onleft>
@@ -215,7 +190,6 @@
       <posX>400</posX>
       <posY>125</posY>
       <label>205</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
     </control>
     <control>
@@ -225,7 +199,6 @@
       <posX>400</posX>
       <posY>140</posY>
       <label>#votes</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -235,7 +208,6 @@
       <posX>400</posX>
       <posY>170</posY>
       <label>174</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
     </control>
     <control>
@@ -245,7 +217,6 @@
       <posX>400</posX>
       <posY>185</posY>
       <label>#genre</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -255,7 +226,6 @@
       <posX>400</posX>
       <posY>215</posY>
       <label>199</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
     </control>
     <control>
@@ -265,7 +235,6 @@
       <posX>400</posX>
       <posY>230</posY>
       <label>#director</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -275,7 +244,6 @@
       <posX>400</posX>
       <posY>260</posY>
       <label>201</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
     </control>
     <control>
@@ -285,7 +253,6 @@
       <posX>400</posX>
       <posY>275</posY>
       <label>#year</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -295,7 +262,6 @@
       <posX>400</posX>
       <posY>305</posY>
       <label>299</label>
-      <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
     </control>
     <control>
@@ -305,7 +271,6 @@
       <posX>400</posX>
       <posY>320</posY>
       <label>#runtime</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -317,7 +282,6 @@
       <width>420</width>
       <height>120</height>
       <label>#plot</label>
-      <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>

@@ -2,7 +2,7 @@
 	<skin>
 		<width>720</width>
 		<height>576</height>
-		<version>0.2.2.1</version>
+		<version>0.2.3.0</version>
 	</skin>
 	<control>
 		<description>default image</description>
@@ -179,11 +179,11 @@
 		<remoteColor>ffFFA075</remoteColor>
 		<downloadColor>ff80ff80</downloadColor>
 		<textXOff>5</textXOff>
-		<textYOff>4</textYOff>
+		<textYOff>2</textYOff>
 		<textXOff2>0</textXOff2>
-		<textYOff2>4</textYOff2>
-		<IconXOff>8</IconXOff>
-		<IconYOff>8</IconYOff>
+		<textYOff2>2</textYOff2>
+		<IconXOff>6</IconXOff>
+		<IconYOff>6</IconYOff>
 		<suffix>|</suffix>
 		<unfocusedAlpha>170</unfocusedAlpha>
 	</control>
@@ -341,8 +341,8 @@
 		<textureDown>page_down_nofocus.png</textureDown>
 		<textureUpFocus>page_up_focus.png</textureUpFocus>
 		<textureDownFocus>page_down_focus.png</textureDownFocus>
-		<itemWidth>102</itemWidth>
-		<itemHeight>102</itemHeight>
+		<itemWidth>110</itemWidth>
+		<itemHeight>100</itemHeight>
 		<textureWidth>75</textureWidth>
 		<textureHeight>75</textureHeight>
 		<thumbWidth>57</thumbWidth>
@@ -359,14 +359,14 @@
 		<remoteColor>ffFFA075</remoteColor>
 		<downloadColor>ff80ff80</downloadColor>
 		<suffix>|</suffix>
-		<textureWidthBig>103</textureWidthBig>
-		<textureHeightBig>103</textureHeightBig>
-		<itemWidthBig>133</itemWidthBig>
+		<textureWidthBig>100</textureWidthBig>
+		<textureHeightBig>100</textureHeightBig>
+		<itemWidthBig>150</itemWidthBig>
 		<itemHeightBig>133</itemHeightBig>
-		<thumbWidthBig>81</thumbWidthBig>
-		<thumbHeightBig>81</thumbHeightBig>
-		<thumbPosXBig>12</thumbPosXBig>
-		<thumbPosYBig>12</thumbPosYBig>
+		<thumbWidthBig>80</thumbWidthBig>
+		<thumbHeightBig>80</thumbHeightBig>
+		<thumbPosXBig>10</thumbPosXBig>
+		<thumbPosYBig>10</thumbPosYBig>
 		<thumbZoom>no</thumbZoom>
 		<unfocusedAlpha>170</unfocusedAlpha>
 	</control>

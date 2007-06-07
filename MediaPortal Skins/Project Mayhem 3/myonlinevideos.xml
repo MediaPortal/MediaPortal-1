@@ -1,45 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-   <id>4755</id>
-   <defaultcontrol>50</defaultcontrol>
-   <allowoverlay>yes</allowoverlay>  
-   <define>#header.label:MyOnlineVideos</define>
-   <controls>
+  <id>4755</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:MyOnlineVideos</define>
+  <controls>
+    <control>
+      <type>image</type>
+      <description>BackGround</description>
+      <id>1</id>
+      <width>720</width>
+      <height>576</height>
+      <texture>background3.png</texture>
+    </control>
+    <import>common.facade.xml</import>
+    <import>common.window.xml</import>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation>FlyInFromLeft</animation>
+      <posX>5</posX>
+      <posY>125</posY>
+      <layout>StackLayout</layout>
       <control>
-         <type>image</type>
-         <description>BackGround</description>
-         <id>1</id>
-         <posX>0</posX>
-         <posY>0</posY>
-	 <width>720</width>
-         <height>576</height>
-         <texture>background3.png</texture>
+        <type>button</type>
+        <description>View button</description>
+        <id>2</id>
+        <onleft>4</onleft>
+        <onright>50</onright>
+        <onup>3</onup>
+        <ondown>2</ondown>
+        <label>View As</label>
       </control>
-      <import>common.facade.xml</import> 
-      <import>common.window.xml</import> 
-      <control>
-         <type>group</type>
-
-         <description>group element</description>
-
-         <animation>FlyInFromLeft</animation>
-
-         <posX>5</posX>
-
-         <posY>125</posY>
-
-         <dimColor>ffffffff</dimColor>
-
-         <layout>StackLayout</layout>
-      <control>         
-               <type>button</type>
-              <description>View button</description>
-               <id>2</id>
-               <onleft>4</onleft>
-               <onright>50</onright>
-               <onup>3</onup>
-               <ondown>2</ondown>
-               <label>View As</label>
-      </control>      
-      </control>      
-   </controls>
+    </control>
+  </controls>
 </window>
