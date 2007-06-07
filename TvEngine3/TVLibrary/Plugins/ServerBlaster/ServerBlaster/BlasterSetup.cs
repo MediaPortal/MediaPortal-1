@@ -36,6 +36,9 @@ namespace SetupTv.Sections
             setting = layer.GetSetting("SrvBlasterLog");
             setting.Value = Convert.ToString(checkBox1.Checked == true);
             setting.Persist();
+            setting = layer.GetSetting("SrvBlasterSendSelect");
+            setting.Value = Convert.ToString(checkSendSelect.Checked == true);
+            setting.Persist();
 
             base.OnSectionDeActivated();
         }
@@ -61,6 +64,7 @@ namespace SetupTv.Sections
             comboBox3.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlaster1Card", "0").Value);
             comboBox4.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlaster2Card", "0").Value);
             checkBox1.Checked = (layer.GetSetting("SrvBlasterLog").Value == "True");
+            checkSendSelect.Checked = (layer.GetSetting("SrvBlasterSendSelect").Value == "True");
         }
 
         private void label1_Click(object sender, EventArgs e)

@@ -51,7 +51,7 @@ namespace TvEngine
         {
             get
             {
-                return "Julio - based on smirnuff code";
+                return "joboehl";
             }
         }
         /// <summary>
@@ -142,14 +142,14 @@ namespace TvEngine
                 }
 
                 TvBusinessLayer layer = new TvBusinessLayer();
-                _sendSelect = false;//xmlreader.GetValueAsBool("ServerBlaster", "confirm", false);
+                _sendSelect = (layer.GetSetting("SrvBlasterSendSelect", "False").Value == "True");
                 _sleepTime = 100; //xmlreader.GetValueAsInt("ServerBlaster", "delay", 100);
                 _sendPort = 1; //xmlreader.GetValueAsInt("ServerBlaster", "forceport", 1);
                 _blaster1Card = Convert.ToInt16(layer.GetSetting("SrvBlaster1Card", "0").Value);
                 _blaster2Card = Convert.ToInt16(layer.GetSetting("SrvBlaster2Card", "0").Value);
                 _deviceType = Convert.ToInt16(layer.GetSetting("SrvBlasterType", "0").Value);
                 _deviceSpeed = Convert.ToInt16(layer.GetSetting("SrvBlasterSpeed", "0").Value);
-                _advandeLogging = (layer.GetSetting("SrvBlasterLog", "False").ToString() == "True");
+                _advandeLogging = (layer.GetSetting("SrvBlasterLog", "False").Value == "True");
                 _sendPort = Math.Max(1, Math.Min(2, _sendPort));
 
                 Log.WriteFile("ServerBlaster.LoadRemoteCodes: Default port {0}", _sendPort);
@@ -158,6 +158,8 @@ namespace TvEngine
                 Log.WriteFile("ServerBlaster.Blaster1Card {0}", _blaster1Card);
                 Log.WriteFile("ServerBlaster.Blaster2Card {0}", _blaster2Card);
                 Log.WriteFile("ServerBlaster.Type {0}", _deviceType);
+                Log.WriteFile("ServerBlaster.AdvancedLogging {0}", _advandeLogging );
+                Log.WriteFile("ServerBlaster.SendSelect {0}", _sendSelect);
             }
             catch (Exception e)
             {
@@ -215,7 +217,7 @@ namespace TvEngine
         bool _sendSelect;
         int _blaster1Card = -1;
         int _blaster2Card = 1;
-        bool _advandeLogging = false;
+        bool _advandeLogging;
         int _deviceType = 1;
         int _deviceSpeed = 0;
 
