@@ -99,6 +99,8 @@ namespace MyWeather
 
         #endregion
 
+        #region methods
+
         /// <summary>
         /// Notifies subscribers that property has been changed
         /// </summary>
@@ -134,6 +136,44 @@ namespace MyWeather
             ChangeProperty("SelectedLocation");
             ChangeProperty("SearchLocation");
         }
+        /// <summary>
+        /// searches for cities and populates the cities list
+        /// </summary>
+        protected void SearchCities()
+        {
+            try
+            {
+                //
+                // Check for Internetconnection
+                //
+                int code = 0;
+                if (!Helper.IsConnectedToInternet(ref code))
+                {
+                    LabelError = "Failed to perform city search, make sure you are connected to the internet.";
+                    return;
+                }
+
+                //
+                // Perform actual search
+                //
+                _dataModel.SearchCity(SearchLocation);
+
+                if (_dataModel.Locations.Count == 0)
+                    LabelError = ServiceScope.Get<ILocalisation>().ToString("myweather.config", 4);
+
+                // data bound to the LocationCollectionView updated
+                // so lets refresh that view as well
+                ChangeProperty("Locations");
+                // clear the search text
+                SearchLocation = "";
+
+            }
+            catch (Exception ex)
+            {
+                ServiceScope.Get<ILogger>().Error(ex);
+            }
+        } 
+        #endregion
 
         #region properties
         /// <summary>
@@ -303,6 +343,7 @@ namespace MyWeather
             }
         }
         #endregion
+
         #region commands
 
         /// <summary>
@@ -336,44 +377,6 @@ namespace MyWeather
             }
         }
         #endregion
-
-        /// <summary>
-        /// searches for cities and populates the cities list
-        /// </summary>
-        protected void SearchCities()
-        {
-            try
-            {
-                //
-                // Check for Internetconnection
-                //
-                int code = 0;
-                if(!Helper.IsConnectedToInternet(ref code))
-                {
-                    LabelError = "Failed to perform city search, make sure you are connected to the internet.";
-                    return;
-                }
-
-                //
-                // Perform actual search
-                //
-                _dataModel.SearchCity(SearchLocation);
-
-                if(_dataModel.Locations.Count==0)
-                    LabelError = ServiceScope.Get<ILocalisation>().ToString("myweather.config",4);
-
-                // data bound to the LocationCollectionView updated
-                // so lets refresh that view as well
-                ChangeProperty("Locations");
-                // clear the search text
-                SearchLocation = "";
-
-            }
-            catch (Exception ex)
-            {
-                ServiceScope.Get<ILogger>().Error(ex);
-            }
-        }
 
         #region LocationCollectionView class
         /// <summary>

@@ -85,6 +85,7 @@ namespace MyWeather
         }
         #endregion
 
+        #region methods
         /// <summary>
         /// creates some Dummydata for the Designer
         /// </summary>
@@ -125,7 +126,8 @@ namespace MyWeather
         {
             _availableLocations = _dataModel.LoadLocationsData();
             LocationPropertiesUpdated();
-        }
+        } 
+        #endregion
 
         #region properties
 
