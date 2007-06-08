@@ -382,7 +382,7 @@ namespace TvService
               {
                 if (next != null)
                 {
-                  if (next.Title == schedule.ProgramName && schedule.StartTime < current.StartTime) // next prog must be recorded
+                  if (next.Title == schedule.ProgramName && schedule.StartTime <= current.StartTime) // next prog must be recorded
                   {
                     Schedule newSchedule = new Schedule(schedule);
                     newSchedule.StartTime = next.StartTime;
