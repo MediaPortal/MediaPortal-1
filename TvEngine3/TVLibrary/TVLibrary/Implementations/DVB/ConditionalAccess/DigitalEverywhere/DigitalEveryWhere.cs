@@ -285,6 +285,7 @@ namespace TvLibrary.Implementations.DVB
       //  UCHAR uData[MAX_PMT_SIZE];        //10....
       //}FIRESAT_CA_DATA, *PFIRESAT_CA_DATA;
 
+      if (!IsCamPresent()) return true;
       if (PMT == null) return false;
       if (pmtLength == 0) return false;
 
