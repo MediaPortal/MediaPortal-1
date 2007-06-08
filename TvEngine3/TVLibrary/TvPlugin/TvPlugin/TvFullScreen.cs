@@ -714,6 +714,12 @@ namespace TvPlugin
           {
             if (g_Player.IsTimeShifting)
             {
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+                ScreenStateChanged();
+                UpdateGUI();
+              }
               _stepSeekVisible = true;
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekStep(false);
@@ -731,6 +737,12 @@ namespace TvPlugin
           {
             if (g_Player.IsTimeShifting)
             {
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+                ScreenStateChanged();
+                UpdateGUI();
+              }
               _stepSeekVisible = true;
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekStep(true);
@@ -748,6 +760,12 @@ namespace TvPlugin
           {
             if (g_Player.IsTimeShifting)
             {
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+                ScreenStateChanged();
+                UpdateGUI();
+              }
               _statusVisible = true;
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekRelativePercentage(-10);
@@ -761,6 +779,12 @@ namespace TvPlugin
           {
             if (g_Player.IsTimeShifting)
             {
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+                ScreenStateChanged();
+                UpdateGUI();
+              }
               _statusVisible = true;
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekRelativePercentage(10);
