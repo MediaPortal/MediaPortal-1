@@ -686,13 +686,6 @@ namespace MediaPortal.Player
             ;
           _fileSource = null;
         }
-
-        if (_vmr9 != null)
-        {
-          Log.Info("TSStreamBufferPlayer9: vmr9 dispose");
-          _vmr9.Dispose();
-          _vmr9 = null;
-        }
         if (_pinAudio != null)
         {
           Marshal.ReleaseComObject(_pinAudio);
@@ -748,6 +741,13 @@ namespace MediaPortal.Player
         }
 
         DirectShowUtil.RemoveFilters(_graphBuilder);
+
+        if (_vmr9 != null)
+        {
+          Log.Info("TSStreamBufferPlayer9: vmr9 dispose");
+          _vmr9.Dispose();
+          _vmr9 = null;
+        }
 
         if (_rotEntry != null)
         {
