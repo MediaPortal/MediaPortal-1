@@ -122,7 +122,14 @@ namespace DirectShowLib.BDA
         Rate5_6, // 5/6
         Rate5_11,
         Rate7_8, // 7/8
-        RateMax
+        RateMax,
+        HCW_BCC_RATE_1_4, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        HCW_BCC_RATE_1_3, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        HCW_BCC_RATE_2_5, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        HCW_BCC_RATE_6_7, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        HCW_BCC_RATE_8_9, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        HCW_BCC_RATE_9_10, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        HCW_BCC_RATE_MAX //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
     }
 
     /// <summary>
@@ -188,7 +195,12 @@ namespace DirectShowLib.BDA
         Mod16Vsb,      
         ModAnalogAmplitude, // std am
         ModAnalogFrequency, // std fm
-        ModMax
+        ModMax,
+        HCW_MOD_16APSK, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        HCW_MOD_32APSK, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        HCW_MOD_NBC_QPSK, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        HCW_MOD_NBC_8PSK, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        HCW_MOD_DIRECTV  //DIRECTV DSS
     }
 
     /// <summary>
