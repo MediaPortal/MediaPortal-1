@@ -371,7 +371,6 @@ namespace TvService
       if (type == ScheduleRecordingType.EveryTimeOnThisChannel)
       {
         TvDatabase.Program current = schedule.ReferencedChannel().GetProgramAt(currentTime.AddMinutes(schedule.PreRecordInterval));
-        TvDatabase.Program next = schedule.ReferencedChannel().GetProgramAt(current.EndTime.AddMinutes(1));
         if (current != null)
         {
           if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= current.EndTime.AddMinutes(schedule.PostRecordInterval))
