@@ -76,6 +76,7 @@
       <height>346</height>
       <onleft>2</onleft>
       <onright>2</onright>
+      <textXOff2>576</textXOff2>
       <spinPosX>857</spinPosX>
       <spinPosY>570</spinPosY>
       <animation effect="fade" time="200">WindowOpen</animation>

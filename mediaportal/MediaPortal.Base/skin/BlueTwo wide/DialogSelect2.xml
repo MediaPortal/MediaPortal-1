@@ -58,8 +58,9 @@
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
+      <!-- <textXOff2>576</textXOff2> -->
       <spinPosX>853</spinPosX>
-      <spinPosY>493</spinPosY>
+      <spinPosY>493</spinPosY>      
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
