@@ -93,7 +93,7 @@ HRESULT MemReader::SetFileName(LPCOLESTR pszFileName)
 //
 HRESULT MemReader::OpenFile()
 {
-	TCHAR *pFileName = NULL;
+	WCHAR *pFileName = NULL;
 
 	// Is the file already opened
 	if (m_hFile != INVALID_HANDLE_VALUE) {
@@ -110,21 +110,21 @@ HRESULT MemReader::OpenFile()
 
 	// Convert the UNICODE filename if necessary
 
-#if defined(WIN32) && !defined(UNICODE)
-	char convert[MAX_PATH];
-
-	if(!WideCharToMultiByte(CP_ACP,0,m_pFileName,-1,convert,MAX_PATH,0,0))
-		return ERROR_INVALID_NAME;
-
-	pFileName = convert;
-#else
+//#if defined(WIN32) && !defined(UNICODE)
+//	char convert[MAX_PATH];
+//
+//	if(!WideCharToMultiByte(CP_ACP,0,m_pFileName,-1,convert,MAX_PATH,0,0))
+//		return ERROR_INVALID_NAME;
+//
+//	pFileName = convert;
+//#else
 	pFileName = m_pFileName;
-#endif
+//#endif
 
 	m_bReadOnly = FALSE;
 
 	// Try to open the file
-	m_hFile = m_pSharedMemory->CreateFile((LPCTSTR) pFileName,   // The filename
+	m_hFile = m_pSharedMemory->CreateFile(pFileName,   // The filename
 						 (DWORD) GENERIC_READ,          // File access
 						 (DWORD) FILE_SHARE_READ,       // Share access
 						 NULL,                  // Security
@@ -135,7 +135,7 @@ HRESULT MemReader::OpenFile()
 	if (m_hFile == INVALID_HANDLE_VALUE) {
 
 		//Test incase file is being recorded to
-		m_hFile = m_pSharedMemory->CreateFile((LPCTSTR) pFileName,		// The filename
+		m_hFile = m_pSharedMemory->CreateFile(pFileName,		// The filename
 							(DWORD) GENERIC_READ,				// File access
 							(DWORD) (FILE_SHARE_READ |
 							FILE_SHARE_WRITE),   // Share access
@@ -157,11 +157,11 @@ HRESULT MemReader::OpenFile()
 		m_bReadOnly = TRUE;
 	}
 
-	TCHAR infoName[512];
-	strcpy(infoName, pFileName);
-	strcat(infoName, ".info");
+	WCHAR infoName[512];
+	wcscpy(infoName, pFileName);
+	wcscat(infoName, L".info");
 
-	m_hInfoFile = m_pSharedMemory->CreateFile((LPCTSTR) infoName, // The filename
+	m_hInfoFile = m_pSharedMemory->CreateFile(infoName, // The filename
 			(DWORD) GENERIC_READ,    // File access
 			(DWORD) (FILE_SHARE_READ |
 			FILE_SHARE_WRITE),   // Share access

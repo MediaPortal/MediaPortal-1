@@ -491,7 +491,7 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length)
 	length = 0;
 
 	// Try to open the file
-	HANDLE hFile = m_pSharedMemory->CreateFile(W2T(pFilename),   // The filename
+	HANDLE hFile = m_pSharedMemory->CreateFile(pFilename,   // The filename
 						 (DWORD) GENERIC_READ,          // File access
 						 (DWORD) (FILE_SHARE_READ |
 						 FILE_SHARE_WRITE),       // Share access

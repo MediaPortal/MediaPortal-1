@@ -92,7 +92,7 @@ HRESULT FileReader::SetFileName(LPCOLESTR pszFileName)
 //
 HRESULT FileReader::OpenFile()
 {
-	TCHAR *pFileName = NULL;
+	WCHAR *pFileName = NULL;
 
 	// Is the file already opened
 	if (m_hFile != INVALID_HANDLE_VALUE) {
@@ -109,21 +109,22 @@ HRESULT FileReader::OpenFile()
 
 	// Convert the UNICODE filename if necessary
 
-#if defined(WIN32) && !defined(UNICODE)
-	char convert[MAX_PATH];
+//#if defined(WIN32) && !defined(UNICODE)
+//	char convert[MAX_PATH];
+//
+//	if(!WideCharToMultiByte(CP_ACP,0,m_pFileName,-1,convert,MAX_PATH,0,0))
+//		return ERROR_INVALID_NAME;
+//
+//	pFileName = convert;
+//#else
 
-	if(!WideCharToMultiByte(CP_ACP,0,m_pFileName,-1,convert,MAX_PATH,0,0))
-		return ERROR_INVALID_NAME;
-
-	pFileName = convert;
-#else
 	pFileName = m_pFileName;
-#endif
+//#endif
 
 	m_bReadOnly = FALSE;
 
 	// Try to open the file
-	m_hFile = m_pSharedMemory->CreateFile((LPCTSTR) pFileName,   // The filename
+	m_hFile = m_pSharedMemory->CreateFile(pFileName,   // The filename
 						 (DWORD) GENERIC_READ,          // File access
 						 (DWORD) FILE_SHARE_READ,       // Share access
 						 NULL,                  // Security
@@ -134,7 +135,7 @@ HRESULT FileReader::OpenFile()
 	if (m_hFile == INVALID_HANDLE_VALUE) {
 
 		//Test incase file is being recorded to
-		m_hFile = m_pSharedMemory->CreateFile((LPCTSTR) pFileName,		// The filename
+		m_hFile = m_pSharedMemory->CreateFile(pFileName,		// The filename
 							(DWORD) GENERIC_READ,				// File access
 							(DWORD) (FILE_SHARE_READ |
 							FILE_SHARE_WRITE),   // Share access
@@ -156,11 +157,11 @@ HRESULT FileReader::OpenFile()
 		m_bReadOnly = TRUE;
 	}
 
-	TCHAR infoName[512];
-	strcpy(infoName, pFileName);
-	strcat(infoName, ".info");
+	WCHAR infoName[512];
+	wcscpy(infoName, pFileName);
+	wcscat(infoName, L".info");
 
-	m_hInfoFile = m_pSharedMemory->CreateFile((LPCTSTR) infoName, // The filename
+	m_hInfoFile = m_pSharedMemory->CreateFile(infoName, // The filename
 			(DWORD) GENERIC_READ,    // File access
 			(DWORD) (FILE_SHARE_READ |
 			FILE_SHARE_WRITE),   // Share access
@@ -420,7 +421,7 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 
 	// If the file has already been closed, don't continue
 	if (m_hFile == INVALID_HANDLE_VALUE)
-		return S_FALSE;
+		return E_FAIL;
 
 //	BoostThread Boost;
 
@@ -428,6 +429,11 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 	LARGE_INTEGER li;
 	li.QuadPart = 0;
 	li.LowPart = m_pSharedMemory->SetFilePointer(m_hFile, 0, &li.HighPart, FILE_CURRENT);
+	DWORD dwErr = ::GetLastError();
+	if ((DWORD)li.LowPart == (DWORD)0xFFFFFFFF && dwErr)
+	{
+		return E_FAIL;
+	}
 	__int64 m_filecurrent = li.QuadPart;
 
 	if (m_hInfoFile != INVALID_HANDLE_VALUE)
@@ -443,20 +449,24 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 
 			if (length < (__int64)(m_filecurrent + (__int64)lDataLength) && m_filecurrent > startPos)
 			{
-
-				hr = m_pSharedMemory->ReadFile(m_hFile, (PVOID)pbData, (DWORD)(length - m_filecurrent), dwReadBytes, NULL);
-				if (FAILED(hr))
-					return hr;
+				hr = m_pSharedMemory->ReadFile(m_hFile, (PVOID)pbData, (DWORD)max(0,(length - m_filecurrent)), dwReadBytes, NULL);
+				if (!hr)
+					return E_FAIL;
 
 				LARGE_INTEGER li;
 				li.QuadPart = 0;
-				m_pSharedMemory->SetFilePointer(m_hFile, li.LowPart, &li.HighPart, FILE_BEGIN);
+				hr = m_pSharedMemory->SetFilePointer(m_hFile, li.LowPart, &li.HighPart, FILE_BEGIN);
+				DWORD dwErr = ::GetLastError();
+				if ((DWORD)hr == (DWORD)0xFFFFFFFF && dwErr)
+				{
+					return E_FAIL;
+				}
 
 				ULONG dwRead = 0;
 
 				hr = m_pSharedMemory->ReadFile(m_hFile,
-					(PVOID)(pbData + (DWORD)(length - m_filecurrent)),
-					(DWORD)((__int64)lDataLength -(__int64)((__int64)length - (__int64)m_filecurrent)),
+					(PVOID)(pbData + (DWORD)max(0,(length - m_filecurrent))),
+					(DWORD)max(0,((__int64)lDataLength -(__int64)(length - m_filecurrent))),
 					&dwRead,
 					NULL);
 
@@ -464,16 +474,18 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 
 			}
 			else if (startPos < (__int64)(m_filecurrent + (__int64)lDataLength) && m_filecurrent < startPos)
-				hr = m_pSharedMemory->ReadFile(m_hFile, (PVOID)pbData, (DWORD)(startPos - m_filecurrent), dwReadBytes, NULL);
+				hr = m_pSharedMemory->ReadFile(m_hFile, (PVOID)pbData, (DWORD)max(0,(startPos - m_filecurrent)), dwReadBytes, NULL);
 
 			else
 				hr = m_pSharedMemory->ReadFile(m_hFile, (PVOID)pbData, (DWORD)lDataLength, dwReadBytes, NULL);
 
-			if (FAILED(hr))
-				return hr;
+			if (!hr)
+				return S_FALSE;
 
 			if (*dwReadBytes < (ULONG)lDataLength)
-				return S_FALSE;
+			{
+				return E_FAIL;
+			}
 
 			return S_OK;
 		}
@@ -482,15 +494,18 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 		__int64 length = 0;
 		GetFileSize(&start, &length);
 		if (length < (__int64)(m_filecurrent + (__int64)lDataLength))
-			hr = m_pSharedMemory->ReadFile(m_hFile, (PVOID)pbData, (DWORD)(length - m_filecurrent), dwReadBytes, NULL);
+			hr = m_pSharedMemory->ReadFile(m_hFile, (PVOID)pbData, (DWORD)max(0,(length - m_filecurrent)), dwReadBytes, NULL);
 		else
 			hr = m_pSharedMemory->ReadFile(m_hFile, (PVOID)pbData, (DWORD)lDataLength, dwReadBytes, NULL);
 	}
 	else
 		hr = m_pSharedMemory->ReadFile(m_hFile, (PVOID)pbData, (DWORD)lDataLength, dwReadBytes, NULL);//Read file data into buffer
 
-	if (FAILED(hr))
-		return hr;
+	if (!hr)
+	{
+		return E_FAIL;
+	}
+
 	if (*dwReadBytes < (ULONG)lDataLength)
 		return S_FALSE;
 

@@ -24,7 +24,7 @@
 *    http://forums.dvbowners.com/
 */
 
-#include "stdafx.h"
+#include <streams.h>
 #include "SharedMemory.h"
 #include <atlbase.h>
 #include <Math.h>
@@ -40,6 +40,7 @@ SharedMemoryItem::SharedMemoryItem()
 	pShared_Memory = NULL;
 	sharedFilePosition = 0;
 	shareMode = 0;
+	desiredAccess = 0;
 }
 
 SharedMemoryItem::~SharedMemoryItem()
@@ -50,7 +51,7 @@ SharedMemoryItem::~SharedMemoryItem()
 	if (pShared_Memory)
 		::UnmapViewOfFile(pShared_Memory);
 
-	if (hFile != INVALID_HANDLE_VALUE)
+	if (hFile && hFile != INVALID_HANDLE_VALUE)
 		::CloseHandle(hFile);
 }
 
@@ -79,6 +80,7 @@ HRESULT SharedMemory::Destroy()
 	{
 		if (*it)
 		{
+			ViewClearAccess((*it)->pShared_Memory, (*it)->desiredAccess);
 			UpdateViewCount((*it)->pShared_Memory, -1);
 			delete *it;
 		}
@@ -135,10 +137,10 @@ void SharedMemory::SetShareMode(BOOL bShareMode)
 	return;
 }
 
-BOOL IsSameName(LPCSTR lpName1, LPCSTR lpName2)
+BOOL IsSameName(LPCWSTR lpName1, LPCWSTR lpName2)
 {
 	if (lpName1 && lpName2)
-		if (!strcmp(lpName1, lpName2))
+		if (!wcscmp(lpName1, lpName2))
 			return TRUE;
 
 	return FALSE;
@@ -208,17 +210,17 @@ CAutoLock memLock(&m_MemoryLock);
 	pMemParmLocal->lock = FALSE;
 }
 
-int SharedMemory::FindHandleCount(LPCSTR lpFileName)
+int SharedMemory::FindHandleCount(LPCWSTR lpFileName)
 {
 	//clear any previous errors
 	::SetLastError(NO_ERROR);
 
-	TCHAR *name = GetSharedFileName(lpFileName);
+	WCHAR *name = GetSharedFileName(lpFileName);
 	if (!name)
 		return -1;
 
 	CAutoLock memLock(&m_MemoryLock);
-	HANDLE hFile = ::OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, name);
+	HANDLE hFile = ::OpenFileMappingW(FILE_MAP_ALL_ACCESS, FALSE, name);
 	delete[] name;
 
 	if (hFile == NULL)
@@ -260,12 +262,12 @@ int SharedMemory::FindHandleCount(LPCSTR lpFileName)
 	return count;
 }
 
-BOOL SharedMemory::UpdateHandleCount(LPCSTR lpFileName, int method)
+BOOL SharedMemory::UpdateHandleCount(LPCWSTR lpFileName, int method)
 {
 	//clear any previous errors
 	::SetLastError(NO_ERROR);
 
-	TCHAR *name = GetSharedFileName(lpFileName);
+	WCHAR *name = GetSharedFileName(lpFileName);
 	if (!name)
 	{
 		::SetLastError(ERROR_BAD_FORMAT);
@@ -273,7 +275,7 @@ BOOL SharedMemory::UpdateHandleCount(LPCSTR lpFileName, int method)
 	}
 
 	CAutoLock memLock(&m_MemoryLock);
-	HANDLE hFile = ::OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, name);
+	HANDLE hFile = ::OpenFileMappingW(FILE_MAP_ALL_ACCESS, FALSE, name);
 	delete[] name;
 
 	if (hFile == NULL)
@@ -361,20 +363,56 @@ CAutoLock memLock(&m_MemoryLock);
 	return handleCount;
 }
 
-TCHAR* SharedMemory::GetSharedFileName(LPCSTR lpFileName)
+DWORD SharedMemory::ViewClearAccess(LPVOID pShared_Memory, int accessMode)
 {
-	TCHAR *filename = new CHAR[strlen(lpFileName)+1];
-	for (ULONG i = 0; i < strlen(lpFileName)+1; i++)
+	//clear any previous errors
+	::SetLastError(NO_ERROR);
+
+	if (!pShared_Memory)
+	{
+		::SetLastError(E_POINTER);
+		PrintError(TEXT("SharedMemory::ViewClearAccess()::Pointer Error: "));
+		return -1;
+	}
+
+	DWORD desiredAccess = 0;
+CAutoLock memLock(&m_MemoryLock);
+
+	SharedMemParam* pMemParm = GetSharedMemParam(pShared_Memory);
+	if (pMemParm == NULL)
+	{
+		PrintError(TEXT("SharedMemory::ViewClearAccess()::GetSharedMemParam Error: "));
+		return -1;
+	}
+
+	if (accessMode && (pMemParm->dwDesiredAccess&accessMode))
+	{
+		//change the file param to null
+		pMemParm->dwDesiredAccess -= accessMode;
+		PrintError(TEXT("SharedMemory::UpdateViewCount()::File Is Write Free: "));
+	}
+
+	desiredAccess = pMemParm->dwDesiredAccess;
+	PutSharedMemParam(pMemParm, pShared_Memory);
+	delete pMemParm;
+
+	return desiredAccess;
+}
+
+WCHAR* SharedMemory::GetSharedFileName(LPCWSTR lpFileName)
+{
+	WCHAR *filename = new WCHAR[wcslen(lpFileName)+1];
+	for (ULONG i = 0; i < wcslen(lpFileName)+1; i++)
 	{
 		if (lpFileName[i] == '\\')//92)
 			filename[i] = '*';
 		else
 			filename[i] = lpFileName[i];
 	}
-	return strlwr(filename);
+	return _wcslwr(filename);
 }
 
-HANDLE  SharedMemory::openFileMapping(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCSTR lpName)
+HANDLE  SharedMemory::openFileMapping(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCWSTR lpName)
 {
 	//clear any previous errors
 	::SetLastError(NO_ERROR);
@@ -386,7 +424,7 @@ HANDLE  SharedMemory::openFileMapping(DWORD dwDesiredAccess, BOOL bInheritHandle
 	}
 
 	//convert the file name to a format that would be allowed in sharing
-	TCHAR *name = GetSharedFileName(lpName);
+	WCHAR *name = GetSharedFileName(lpName);
 	if (!name)
 	{
 		::SetLastError(ERROR_BAD_FORMAT);
@@ -394,7 +432,7 @@ HANDLE  SharedMemory::openFileMapping(DWORD dwDesiredAccess, BOOL bInheritHandle
 	}
 
 CAutoLock memLock(&m_MemoryLock);
-	HANDLE hFile = ::OpenFileMapping(dwDesiredAccess, bInheritHandle, name);
+	HANDLE hFile = ::OpenFileMappingW(dwDesiredAccess, bInheritHandle, name);
 	delete[] name;
 
 	if (!hFile)
@@ -412,7 +450,7 @@ HANDLE SharedMemory::createFileMapping(HANDLE hFile,
 						DWORD flProtect,
 						DWORD dwMaximumSizeHigh,
 						DWORD dwMaximumSizeLow,
-						LPCSTR lpName)
+						LPCWSTR lpName)
 {
 	//clear any previous errors
 	::SetLastError(NO_ERROR);
@@ -424,7 +462,7 @@ HANDLE SharedMemory::createFileMapping(HANDLE hFile,
 	}
 
 	//convert the file name to a format that would be allowed in sharing
-	TCHAR *name = GetSharedFileName(lpName);
+	WCHAR *name = GetSharedFileName(lpName);
 	if (!name)
 	{
 		::SetLastError(ERROR_BAD_FORMAT);
@@ -432,7 +470,7 @@ HANDLE SharedMemory::createFileMapping(HANDLE hFile,
 	}
 
 CAutoLock memLock(&m_MemoryLock);
-	HANDLE hfile = ::CreateFileMapping(hFile, lpFileMappingAttributes, flProtect, dwMaximumSizeHigh, dwMaximumSizeLow, name);
+	HANDLE hfile = ::CreateFileMappingW(hFile, lpFileMappingAttributes, flProtect, dwMaximumSizeHigh, dwMaximumSizeLow, name);
 	delete[] name;
 
 	if (!hfile)
@@ -446,7 +484,7 @@ CAutoLock memLock(&m_MemoryLock);
 }
 
 HANDLE SharedMemory::OpenExistingFile(
-						LPCSTR lpFileName,
+						LPCWSTR lpFileName,
 						DWORD dwDesiredAccess,
 						DWORD dwShareMode,
 						LPSECURITY_ATTRIBUTES lpSecurityAttributes,
@@ -497,6 +535,7 @@ HANDLE SharedMemory::OpenExistingFile(
 				item->name = GetSharedFileName(pMemParm->memID);
 				item->hFile = hFile;
 				item->pShared_Memory = pShared_Memory;
+				item->desiredAccess = dwDesiredAccess;
 				pMemParm->handleCount = pMemParm->handleCount + 1;
 				PutSharedMemParam(pMemParm, pShared_Memory);
 				delete pMemParm;
@@ -534,6 +573,7 @@ HANDLE SharedMemory::OpenExistingFile(
 					//create our storage item
 					SharedMemoryItem *item = new SharedMemoryItem();
 					item->hFile = hFile;
+					item->desiredAccess = dwDesiredAccess;
 					item->pShared_Memory = pShared_Memory;
 					item->name = GetSharedFileName(pMemParm->memID);
 					pMemParm->handleCount = pMemParm->handleCount + 1;
@@ -606,7 +646,7 @@ HANDLE SharedMemory::OpenExistingFile(
 	return hFile;
 }
 
-HANDLE SharedMemory::CreateFile(LPCSTR lpFileName,
+HANDLE SharedMemory::CreateFile(LPCWSTR lpFileName,
 								DWORD dwDesiredAccess,
 								DWORD dwShareMode,
 								LPSECURITY_ATTRIBUTES lpSecurityAttributes,
@@ -617,7 +657,7 @@ HANDLE SharedMemory::CreateFile(LPCSTR lpFileName,
 {
 	//if shared memory is disabled
 	if (!m_bSharedMemory)
-		return ::CreateFile(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,                  
+		return ::CreateFileW(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,                  
 								dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 	
 	//clear any previous errors
@@ -644,7 +684,7 @@ CAutoLock memLock(&m_MemoryLock);//6/1/07
 		if (hFile && !dwErr)
 		{
 			//check if we hold a reference in the create list
-			TCHAR *sz = GetSharedFileName(lpFileName);
+			WCHAR *sz = GetSharedFileName(lpFileName);
 			SharedMemoryItem *item = NULL;
 			CAutoLock memLock(&m_MemoryLock);
 			std::vector<SharedMemoryItem *>::iterator it = m_CreateList.begin();
@@ -668,7 +708,7 @@ CAutoLock memLock(&m_MemoryLock);//6/1/07
 			SECURITY_ATTRIBUTES SA_ShMem;
 			PSECURITY_DESCRIPTOR pSD_ShMem;
 
-			if (lpSecurityAttributes != NULL)
+			if (lpSecurityAttributes == NULL)
 			{
 				//create null security descriptor
 
@@ -699,7 +739,7 @@ CAutoLock memLock(&m_MemoryLock);//6/1/07
 			//convert the file name to a format that would be allowed in sharing
 			Item->name = GetSharedFileName(lpFileName);
 
-			if (lpSecurityAttributes != NULL)//it's in just in case
+			if (lpSecurityAttributes == NULL)//it's in just in case
 				Item->hFile = createFileMapping(INVALID_HANDLE_VALUE, &SA_ShMem, PAGE_READWRITE, 0, (ULONG)m_maxFileSize, Item->name);
 			else
 				Item->hFile = createFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, (ULONG)m_maxFileSize, Item->name);
@@ -730,6 +770,131 @@ CAutoLock memLock(&m_MemoryLock);//6/1/07
 	}
 
 	//
+	//Check if file already exists for writing return handle if already created by this source.
+	//
+
+	//return fail now if were just after a read as these are always writing
+	if (dwDesiredAccess == (DWORD)GENERIC_WRITE && dwShareMode == (DWORD)(FILE_SHARE_READ | FILE_SHARE_WRITE))
+	{
+		//check if we hold a reference in the create list
+		WCHAR *sz = GetSharedFileName(lpFileName);
+		SharedMemoryItem *item = NULL;
+		CAutoLock memLock(&m_MemoryLock);
+		std::vector<SharedMemoryItem *>::iterator it = m_CreateList.begin();
+		for ( ; it < m_CreateList.end() ; it++ )
+		{
+			item = *it;
+			if (IsSameName(item->name, sz))
+			{
+				//check if the file already exists
+				HANDLE hFile = OpenExistingFile(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,
+												dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
+
+				//get the error and return if abnormal fail
+				DWORD dwErr = ::GetLastError();
+				if (hFile && !dwErr)
+				{
+					delete[] sz;
+					return hFile;
+				}
+				else
+					item = NULL;
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+	//
+	//Check if file already exists for writing, return fail if already open by another source.
+	//
+
+	//return fail now if were just after a read as these are always writing
+	if (dwDesiredAccess == (DWORD)GENERIC_WRITE && dwShareMode == (DWORD)(FILE_SHARE_READ | FILE_SHARE_WRITE))
+	{
+		//check if the file already exists
+		HANDLE hFile = OpenExistingFile(lpFileName, (DWORD)GENERIC_READ, dwShareMode, lpSecurityAttributes,
+										dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
+
+		//get the error and return if abnormal fail
+		DWORD dwErr = ::GetLastError();
+		if (hFile && !dwErr)
+		{
+			//check if we hold a reference in the create list
+			WCHAR *sz = GetSharedFileName(lpFileName);
+			SharedMemoryItem *item = NULL;
+			CAutoLock memLock(&m_MemoryLock);
+			std::vector<SharedMemoryItem *>::iterator it = m_ViewList.begin();
+			for ( ; it < m_ViewList.end() ; it++ )
+			{
+				item = *it;
+				if (IsSameName(item->name, sz))
+				{
+					DWORD writeflag = 0;
+					delete[] sz;
+					SharedMemParam* pMemParm = GetSharedMemParam(item->pShared_Memory);
+					if (pMemParm == NULL)
+					{
+						PrintError(TEXT("SharedMemory::CreateFile()::GetSharedMemParam Error: "));
+					}
+					else
+					{
+						writeflag = pMemParm->dwDesiredAccess & (DWORD)GENERIC_WRITE;
+						PutSharedMemParam(pMemParm, item->pShared_Memory);
+						delete pMemParm;
+					}
+					hFile = INVALID_HANDLE_VALUE;
+					delete item;
+					m_ViewList.erase(it);
+					//Is the file already open for writing
+					if (writeflag)
+					{
+						PrintError(TEXT("SharedMemory::CreateFile()::File already open for Writing.: "));
+						::SetLastError(ERROR_OPEN_FILES);
+						return INVALID_HANDLE_VALUE;
+					}
+					break;
+				}
+				item = NULL;
+			};
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	//
 	//if the file does not already exist then make a new file
 	//
 
@@ -737,7 +902,7 @@ CAutoLock memLock(&m_MemoryLock);//6/1/07
 	SECURITY_ATTRIBUTES SA_ShMem;
 	PSECURITY_DESCRIPTOR pSD_ShMem;
 
-	if (lpSecurityAttributes != NULL)
+	if (lpSecurityAttributes == NULL)
 	{
 		//create null security descriptor
 
@@ -770,13 +935,15 @@ CAutoLock memLock(&m_MemoryLock);//6/1/07
 
 	//convert the file name to a format that would be allowed in sharing
 	item->name = GetSharedFileName(lpFileName);
+	item->desiredAccess = dwDesiredAccess;
 
 	//populate a file header with the file creation info.
 	memParm.memStartOffset = sizeof(SharedMemParam);
 	memParm.version = (__int64)2280;
 	memParm.lock = FALSE;
 	memParm.handleCount = 0;
-	sprintf(memParm.memID,"%s", lpFileName);
+	//sprintf(memParm.memID,"%s", lpFileName);
+	wcscpy(memParm.memID, lpFileName);
 	memParm.dwShareMode = dwShareMode;
 	memParm.dwCreationDisposition = dwCreationDisposition;
 	memParm.dwDesiredAccess = dwDesiredAccess;
@@ -784,7 +951,7 @@ CAutoLock memLock(&m_MemoryLock);//6/1/07
 	memParm.memMaxSize = m_maxFileSize - sizeof(SharedMemParam);
 	memParm.memSize = 0;
 
-	if (lpSecurityAttributes != NULL)//it's in just in case
+	if (lpSecurityAttributes == NULL)//it's in just in case
 		item->hFile = createFileMapping(INVALID_HANDLE_VALUE, &SA_ShMem, PAGE_READWRITE, 0, (ULONG)m_maxFileSize, item->name);
 	else
 		item->hFile = createFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, (ULONG)m_maxFileSize, item->name);
@@ -816,6 +983,7 @@ CAutoLock memLock(&m_MemoryLock);//6/1/07
 
 		//save our share mode
 		item->shareMode = dwShareMode;
+		item->desiredAccess = dwDesiredAccess;
 
 		//store in storage array
 		CAutoLock memLock(&m_MemoryLock);
@@ -995,6 +1163,13 @@ BOOL SharedMemory::WriteFile(HANDLE hFile,
 
 	::SetLastError(NO_ERROR);
 
+	if (lpBuffer == NULL)
+	{
+		PrintError(TEXT("SharedMemory::WriteFile()::Pointer Error: "));
+		::SetLastError(E_POINTER);
+		return FALSE;
+	}
+
 	if (lpNumberOfBytesWritten)
 		*lpNumberOfBytesWritten = 0;
 
@@ -1070,6 +1245,13 @@ BOOL SharedMemory::ReadFile(HANDLE hFile,
 
 	::SetLastError(NO_ERROR);
 
+	if (lpBuffer == NULL)
+	{
+		PrintError(TEXT("SharedMemory::ReadFile()::Pointer Error: "));
+		::SetLastError(E_POINTER);
+		return FALSE;
+	}
+
 	if (lpNumberOfBytesRead)
 		*lpNumberOfBytesRead = 0;
 
@@ -1118,7 +1300,7 @@ BOOL SharedMemory::ReadFile(HANDLE hFile,
 	PBYTE mem = (BYTE*) item->pShared_Memory;
 	mem += pMemParm->memStartOffset;
 	mem += item->sharedFilePosition;
-	memcpy(lpBuffer, mem, (UINT)(*lpNumberOfBytesRead));
+	memmove(lpBuffer, mem, (UINT)(*lpNumberOfBytesRead));
 
 	item->sharedFilePosition += (__int64)(*lpNumberOfBytesRead);
 
@@ -1192,6 +1374,7 @@ BOOL SharedMemory::CloseHandle(HANDLE hObject)
 		item = *it;
 		if (item->hFile == hObject)
 		{
+			ViewClearAccess((*it)->pShared_Memory, (*it)->desiredAccess);
 			UpdateViewCount(item->pShared_Memory, -1);
 			PrintError(TEXT("SharedMemory::CloseHandle()::Removing File From View List: "));
 			delete item;
@@ -1231,14 +1414,14 @@ BOOL SharedMemory::FindClose(HANDLE hFindFile)
 	return FALSE;
 }
 
-HANDLE SharedMemory::FindFirstFile(LPCSTR lpFileName, LPWIN32_FIND_DATAA lpFindFileData)
+HANDLE SharedMemory::FindFirstFile(LPCWSTR lpFileName, LPWIN32_FIND_DATAW lpFindFileData)
 {
 	if (!m_bSharedMemory)
-		return ::FindFirstFile(lpFileName, lpFindFileData);
+		return ::FindFirstFileW(lpFileName, lpFindFileData);
 
 	::SetLastError(NO_ERROR);
 
-	TCHAR *sz = GetSharedFileName(lpFileName);
+	WCHAR *sz = GetSharedFileName(lpFileName);
 
 	SharedMemoryItem *item = NULL;
 	CAutoLock memLock(&m_MemoryLock);
@@ -1264,14 +1447,14 @@ HANDLE SharedMemory::FindFirstFile(LPCSTR lpFileName, LPWIN32_FIND_DATAA lpFindF
 
 }
 
-BOOL SharedMemory::DeleteFile(LPCSTR lpFileName)
+BOOL SharedMemory::DeleteFile(LPCWSTR lpFileName)
 {
 	if (!m_bSharedMemory)
-		return ::DeleteFile(lpFileName);
+		return ::DeleteFileW(lpFileName);
 
 	::SetLastError(NO_ERROR);
 
-	TCHAR *sz = GetSharedFileName(lpFileName);
+	WCHAR *sz = GetSharedFileName(lpFileName);
 
 	SharedMemoryItem *item = NULL;
 	CAutoLock memLock(&m_MemoryLock);
@@ -1368,7 +1551,7 @@ void SharedMemory::PrintError(LPCTSTR lstring)
 	if (!lstring)
 		return;
 
-	TCHAR sz[MAX_PATH];
+	CHAR sz[MAX_PATH];
 	LPVOID pMsg;
 	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | 
 					FORMAT_MESSAGE_FROM_SYSTEM | 
@@ -1389,7 +1572,7 @@ void SharedMemory::PrintError(LPCTSTR lstring)
 
 void SharedMemory::PrintLongLong(LPCTSTR lstring, __int64 value)
 {
-	TCHAR sz[100];
+	CHAR sz[100];
 	double dVal = (double)value;
 	double len = log10(dVal);
 	int pos = (int)len;
@@ -1401,7 +1584,7 @@ void SharedMemory::PrintLongLong(LPCTSTR lstring, __int64 value)
 		value /= 10;
 		pos--;
 	}
-	TCHAR szout[100];
+	CHAR szout[100];
 	wsprintf(szout, TEXT("%05i - %s %s\n"), debugcount, lstring, sz);
 	::OutputDebugString(szout);
 	debugcount++;

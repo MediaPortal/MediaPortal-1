@@ -70,7 +70,7 @@ HRESULT MultiMemWriter::GetFileName(LPOLESTR *lpszFileName)
 
 HRESULT MultiMemWriter::OpenFile(LPCWSTR pszFileName)
 {
-	USES_CONVERSION;
+	//USES_CONVERSION;
 
 	// Is the file already opened
 	if (m_hTSBufferFile != INVALID_HANDLE_VALUE)
@@ -103,7 +103,7 @@ HRESULT MultiMemWriter::OpenFile(LPCWSTR pszFileName)
 	TCHAR *pFileName = NULL;
 
 	// Try to open the file
-	m_hTSBufferFile = m_pSharedMemory->CreateFile(W2T(m_pTSBufferFileName),  // The filename
+	m_hTSBufferFile = m_pSharedMemory->CreateFile(m_pTSBufferFileName,  // The filename
 													 (DWORD) GENERIC_WRITE,             // File access
 													 (DWORD) FILE_SHARE_READ,           // Share access
 													 NULL,                      // Security
@@ -283,7 +283,7 @@ HRESULT MultiMemWriter::CreateNewTSFile()
 	HRESULT hr;
 
 	LPWSTR pFilename = new wchar_t[MAX_PATH];
-	WIN32_FIND_DATA findData;
+	WIN32_FIND_DATAW findData;
 	HANDLE handleFound = INVALID_HANDLE_VALUE;
 
 	while (TRUE)
@@ -293,7 +293,7 @@ HRESULT MultiMemWriter::CreateNewTSFile()
 		swprintf(pFilename, L"%s%i.ts", m_pTSBufferFileName, m_currentFilenameId);
 
 		// Check if file already exists
-		handleFound = m_pSharedMemory->FindFirstFile(W2T(pFilename), &findData);
+		handleFound = m_pSharedMemory->FindFirstFile(pFilename, &findData);
 		if (handleFound == INVALID_HANDLE_VALUE)
 			break;
 
@@ -350,9 +350,9 @@ HRESULT MultiMemWriter::ReuseTSFile()
 		// Check if file is being read by something.
 		if (IsFileLocked(pFilename) != TRUE)
 		{
-			TCHAR sz[MAX_PATH];
-			sprintf(sz, "%S", pFilename);
-			if (!m_pSharedMemory->DeleteFile(sz))
+			//TCHAR sz[MAX_PATH];
+			//sprintf(sz, "%S", pFilename);
+			if (!m_pSharedMemory->DeleteFile(pFilename))
 				continue;
 
 			// Check if we are above the minimun buffer size
@@ -363,12 +363,12 @@ HRESULT MultiMemWriter::ReuseTSFile()
 				if (IsFileLocked(pFilename) != TRUE)
 				{
 					//If the next file is free then drop the first excess file and set the next to be re-used 
-					sprintf(sz, "%S", pFilename);
-					if (m_pSharedMemory->DeleteFile(sz))
+					//sprintf(sz, "%S", pFilename);
+					if (m_pSharedMemory->DeleteFile(pFilename))
 					{
 						// if deleted ok then then delete the first on the list and move to the next filename
 						pFilename = m_tsFileNames.at(0);
-						sprintf(sz, "%S", pFilename);
+						//sprintf(sz, "%S", pFilename);
 						delete[] pFilename;
 						m_tsFileNames.erase(m_tsFileNames.begin());
 						m_filesRemoved++;
@@ -496,7 +496,7 @@ HRESULT MultiMemWriter::CleanupFiles()
 
 	for (it = m_tsFileNames.begin() ; it < m_tsFileNames.end() ; it++ )
 	{
-		if (m_pSharedMemory->DeleteFile(W2T(*it)) == FALSE)
+		if (m_pSharedMemory->DeleteFile(*it) == FALSE)
 		{
 			wchar_t msg[MAX_PATH];
 			swprintf((LPWSTR)&msg, L"Failed to delete file %s : 0x%x\n", *it, GetLastError());
@@ -506,7 +506,7 @@ HRESULT MultiMemWriter::CleanupFiles()
 	}
 	m_tsFileNames.clear();
 
-	if (m_pSharedMemory->DeleteFile(W2T(m_pTSBufferFileName)) == FALSE)
+	if (m_pSharedMemory->DeleteFile(m_pTSBufferFileName) == FALSE)
 	{
 		wchar_t msg[MAX_PATH];
 		swprintf((LPWSTR)&msg, L"Failed to delete tsbuffer file : 0x%x\n", GetLastError());
@@ -521,10 +521,10 @@ HRESULT MultiMemWriter::CleanupFiles()
 
 BOOL MultiMemWriter::IsFileLocked(LPWSTR pFilename)
 {
-	USES_CONVERSION;
+	//USES_CONVERSION;
 
 	HANDLE hFile;
-	hFile = m_pSharedMemory->CreateFile(W2T(pFilename),        // The filename
+	hFile = m_pSharedMemory->CreateFile(pFilename,        // The filename
 											   (DWORD) GENERIC_READ,          // File access
 											   (DWORD) NULL,                  // Share access
 											   NULL,                  // Security

@@ -44,7 +44,7 @@ typedef struct
 	DWORD dwShareMode;
 	DWORD dwCreationDisposition;
 	DWORD dwFlagsAndAttributes;
-	TCHAR memID[MAX_PATH];
+	WCHAR memID[MAX_PATH];
 	__int64 version;
 } SharedMemParam;
 
@@ -59,9 +59,10 @@ public:
 	SharedMemoryItem();
 	virtual ~SharedMemoryItem();
 
-	TCHAR *name;
+	WCHAR *name;
 	HANDLE hFile;
 	DWORD shareMode;
+	DWORD desiredAccess;
 	void * pShared_Memory;
 	__int64	sharedFilePosition;
 };
@@ -84,24 +85,25 @@ public:
 	BOOL GetShareMode();
 	void SetShareMode(BOOL bShareMode);
 
-	BOOL IsSame(LPCSTR lpName1, LPCSTR lpName2);
-	int FindHandleCount(LPCSTR lpFileName);
-	BOOL UpdateHandleCount(LPCSTR lpFileName, int method);
+	BOOL IsSame(LPCWSTR lpName1, LPCWSTR lpName2);
+	int FindHandleCount(LPCWSTR lpFileName);
+	BOOL UpdateHandleCount(LPCWSTR lpFileName, int method);
 	int UpdateViewCount(LPVOID pShared_Memory, int method);
+	DWORD ViewClearAccess(LPVOID pShared_Memory, int accessMode);
 	SharedMemParam* GetSharedMemParam(LPVOID pShared_Memory);
 	void PutSharedMemParam(SharedMemParam* pMemParm, LPVOID pShared_Memory);
-	TCHAR* GetSharedFileName(LPCSTR lpFileName);
+	WCHAR* GetSharedFileName(LPCWSTR lpFileName);
 
-	HANDLE openFileMapping(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCSTR lpName);
+	HANDLE openFileMapping(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCWSTR lpName);
 	HANDLE createFileMapping(HANDLE hFile,
 							LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
 							DWORD flProtect,
 							DWORD dwMaximumSizeHigh,
 							DWORD dwMaximumSizeLow,
-							LPCSTR lpName);
+							LPCWSTR lpName);
 
 	HANDLE SharedMemory::OpenExistingFile(
-							LPCSTR lpFileName,
+							LPCWSTR lpFileName,
 							DWORD dwDesiredAccess,
 							DWORD dwShareMode,
 							LPSECURITY_ATTRIBUTES lpSecurityAttributes,
@@ -112,7 +114,7 @@ public:
 
 	//WIN32 API for shared memory
 	HANDLE CreateFile(
-				LPCSTR lpFileName,
+				LPCWSTR lpFileName,
 				DWORD dwDesiredAccess,
 				DWORD dwShareMode,
 				LPSECURITY_ATTRIBUTES lpSecurityAttributes,
@@ -147,8 +149,8 @@ public:
 	DWORD GetFileSize(HANDLE hFile, LPDWORD lpFileSizeHigh);
 	BOOL CloseHandle(HANDLE hObject);
 	BOOL FindClose(HANDLE hFindFile);
-	HANDLE FindFirstFile(LPCSTR lpFileName, LPWIN32_FIND_DATAA lpFindFileData);
-	BOOL DeleteFile(LPCSTR lpFileName);
+	HANDLE FindFirstFile(LPCWSTR lpFileName, LPWIN32_FIND_DATAW lpFindFileData);
+	BOOL DeleteFile(LPCWSTR lpFileName);
 	BOOL FlushFileBuffers(HANDLE hFile);
 
 	BOOL GetDiskFreeSpaceEx(LPCSTR lpDirectoryName,
