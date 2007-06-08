@@ -664,8 +664,8 @@ namespace MediaPortal.Player
         while (GUIGraphicsContext.InVmr9Render)
         {
           counter++;
-          System.Threading.Thread.Sleep(1);
-          if (counter > 200)
+          System.Threading.Thread.Sleep(100);
+          if (counter > 5)
             break;
         }
 
