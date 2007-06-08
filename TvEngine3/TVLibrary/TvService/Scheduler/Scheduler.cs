@@ -379,15 +379,16 @@ namespace TvService
             {
               if (!schedule.IsSerieIsCanceled(current.StartTime))
               {
-                if (!isInRecordingsList(current))
+                Schedule dbSchedule = Schedule.RetrieveOnce(current.IdChannel,current.Title, current.StartTime, current.EndTime);
+                if (dbSchedule == null) // not created yet
                 {
-                  Schedule newSchedule = new Schedule(schedule);
-                  newSchedule.StartTime = current.StartTime;
-                  newSchedule.EndTime = current.EndTime;
-                  newSchedule.ScheduleType = 0; // type Once
-                  newSchedule.Persist();
-                  newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
-                  return true;
+                    Schedule newSchedule = new Schedule(schedule);
+                    newSchedule.StartTime = current.StartTime;
+                    newSchedule.EndTime = current.EndTime;
+                    newSchedule.ScheduleType = 0; // type Once
+                    newSchedule.Persist();
+                    newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
+                    return true;
                 }
               }
             }
@@ -399,7 +400,7 @@ namespace TvService
       {
         foreach (Channel channel in _channels)
         {
-          TvDatabase.Program current = schedule.ReferencedChannel().GetProgramAt(DateTime.Now.AddMinutes(schedule.PreRecordInterval));
+          TvDatabase.Program current = channel.GetProgramAt(DateTime.Now.AddMinutes(schedule.PreRecordInterval));
           //TvDatabase.Program next = channel.GetProgramAt(current.EndTime.AddMinutes(1));
           if (current != null)
           {
@@ -409,8 +410,9 @@ namespace TvService
               {
                 if (!schedule.IsSerieIsCanceled(current.StartTime))
                 {
-                  if (!isInRecordingsList(current))
-                  {
+                Schedule dbSchedule = Schedule.RetrieveOnce(channel.IdChannel,current.Title, current.StartTime, current.EndTime);
+                if (dbSchedule == null) // not created yet
+                {
                     Schedule newSchedule = new Schedule(schedule);
                     newSchedule.IdChannel = channel.IdChannel;
                     newSchedule.StartTime = current.StartTime;
@@ -428,24 +430,6 @@ namespace TvService
         }
       }
       return false;      
-    }
-
-    /// <summary>
-    /// Check if a program is in the recordings in progress ' s list
-    /// </summary>
-    /// <param name="prog">program we wanna look for</param>
-    /// <returns>false/true</returns>
-    private bool isInRecordingsList(TvDatabase.Program prog)
-    {
-      foreach (RecordingDetail rec in _recordingsInProgressList)
-      {
-        if (rec.Program.IdProgram == prog.IdProgram)
-        {
-          return true;
-          break;
-        }
-      }
-      return false;
     }
 
     /// <summary>
