@@ -294,7 +294,7 @@ namespace MediaPortal.GUI.Video
     }
 
     public override void OnAction(Action action)
-    {
+    {     
       _needToClearScreen = true;
       //switch back to menu on right-click
       if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
@@ -582,6 +582,13 @@ namespace MediaPortal.GUI.Video
               }
               else
               {
+                if (g_Player.Paused)
+                {
+                  g_Player.Pause();
+                  ScreenStateChanged();
+                  UpdateGUI();
+                }
+
                 _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
                 _showStep = true;
                 g_Player.SeekStep(false);
@@ -596,7 +603,7 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_MOVE_RIGHT:
         case Action.ActionType.ACTION_STEP_FORWARD:
-          {
+          {            
             if (g_Player.CanSeek)
             {
               if (g_Player.IsDVD && g_Player.Paused)
@@ -606,7 +613,13 @@ namespace MediaPortal.GUI.Video
                 RenderForbidden(true);
               }
               else
-              {
+              {                                
+                if (g_Player.Paused)
+                {
+                  g_Player.Pause();
+                  ScreenStateChanged();
+                  UpdateGUI();                  
+                }
                 _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
                 _showStep = true;
                 g_Player.SeekStep(true);
@@ -632,6 +645,13 @@ namespace MediaPortal.GUI.Video
               }
               else
               {
+                if (g_Player.Paused)
+                {
+                  g_Player.Pause();
+                  ScreenStateChanged();
+                  UpdateGUI();
+                }
+
                 double currentpos = g_Player.CurrentPosition;
                 double duration = g_Player.Duration;
                 double percent = (currentpos / duration) * 100d;
@@ -658,6 +678,13 @@ namespace MediaPortal.GUI.Video
               }
               else
               {
+                if (g_Player.Paused)
+                {
+                  g_Player.Pause();
+                  ScreenStateChanged();
+                  UpdateGUI();
+                }
+
                 double currentpos = g_Player.CurrentPosition;
                 double duration = g_Player.Duration;
                 double percent = (currentpos / duration) * 100d;
@@ -769,6 +796,9 @@ namespace MediaPortal.GUI.Video
             {
               if (g_Player.CanSeek && !g_Player.IsDVD)
               {
+                g_Player.Pause();
+                ScreenStateChanged();
+                UpdateGUI();
                 double dPos = g_Player.CurrentPosition;
                 if (dPos > 1)
                 {
@@ -794,6 +824,9 @@ namespace MediaPortal.GUI.Video
             {
               if (g_Player.CanSeek && !g_Player.IsDVD)
               {
+                g_Player.Pause();
+                ScreenStateChanged();
+                UpdateGUI();
                 double dPos = g_Player.CurrentPosition;
                 if (g_Player.Duration - dPos > 1)
                 {
