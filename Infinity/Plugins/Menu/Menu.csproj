@@ -73,8 +73,8 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y "$(ProjectDir)"Home.plugin $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\Menu\
-xcopy /Y "$(ProjectDir)"Settings.plugin $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\Menu\
-xcopy /Y $(TargetPath)  $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\Menu</PostBuildEvent>
+    <PostBuildEvent>xcopy /Y "$(ProjectDir)Home.plugin" "$(SolutionDir)$(SolutionName)\$(OutDir)Plugins\Menu\"
+xcopy /Y "$(ProjectDir)Settings.plugin" "$(SolutionDir)$(SolutionName)\$(OutDir)Plugins\Menu\"
+xcopy /Y "$(TargetPath)"  "$(SolutionDir)$(SolutionName)\$(OutDir)Plugins\Menu"</PostBuildEvent>
   </PropertyGroup>
 </Project>
