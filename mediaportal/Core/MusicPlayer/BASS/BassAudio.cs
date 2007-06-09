@@ -1581,7 +1581,7 @@ namespace MediaPortal.Player
             _asioHandler.Pan = _asioBalance;
 
             // Volume always set to 1.0 as it causes stuttering otherwise
-            _asioHandler.Volume = 1.0;
+            _asioHandler.Volume = 0.5;
 
             // Set the Sample Rate from the strea
             _asioHandler.SampleRate = (double)info.freq;
