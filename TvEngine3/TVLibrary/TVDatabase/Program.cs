@@ -327,6 +327,60 @@ namespace TvDatabase
     }
 
     /// <summary>
+    /// Retreives the first found instance of a Program given its Title,Start and End Times 
+    /// </summary>
+    /// <param name="title">Title we wanna look for</param>
+    /// <param name="startTime">StartTime</param>
+    /// <param name="endTime">EndTime</param>
+    /// <returns></returns>
+    public static Program RetrieveByTitleAndTimes(string title, DateTime startTime, DateTime endTime)
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "Title", title);
+      sb.AddConstraint(Operator.Equals, "StartTime", startTime);
+      sb.AddConstraint(Operator.Equals, "EndTime", endTime);
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      return (Program)ObjectFactory.GetCollection(typeof(Program), stmt.Execute())[0];
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(ChannelMap), this );
+    }
+
+    /// <summary>
+    /// Retreives the programs with a given title and starting between given Start and End Times 
+    /// </summary>
+    /// <param name="title">Title we wanna look for</param>
+    /// <param name="startTime">StartTime</param>
+    /// <param name="endTime">EndTime</param>
+    /// <returns></returns>
+    public static IList RetrieveByTitleAndTimesInterval(string title, DateTime startTime, DateTime endTime)
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "Title", title);
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "StartTime", startTime);
+      sb.AddConstraint(Operator.LessThanOrEquals, "StartTime", endTime);
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(ChannelMap), this );
+    }
+
+    /// <summary>
     /// Retrieves an entity given it's id, using Gentle.Framework.Key class.
     /// This allows retrieval based on multi-column keys.
     /// </summary>
