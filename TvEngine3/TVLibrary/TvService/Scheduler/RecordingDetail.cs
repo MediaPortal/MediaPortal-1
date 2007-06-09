@@ -60,7 +60,7 @@ namespace TvService
       _endTime = endTime;
 
       //find which program we are recording
-      _program = schedule.ReferencedChannel().GetProgramAt(schedule.StartTime.AddMinutes(-schedule.PreRecordInterval));
+      _program = schedule.ReferencedChannel().GetProgramAt(schedule.StartTime.AddMinutes(schedule.PreRecordInterval));
       //no program? then treat this as a manual recording
       if (_program == null)
       {
