@@ -119,6 +119,7 @@
     <Content Include="Gentle.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="MyTv.plugin" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -178,15 +179,15 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /Y "$(ProjectDir)"$(ProjectName).plugin $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(ProjectName)\
-xcopy /Y $(TargetPath)\mytv.*  $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(ProjectName)\
+xcopy /Y $(TargetDir)mytv.*  $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(ProjectName)\
 
-xcopy /y  $(TargetPath)\gentle*.* $(SolutionDir)$(SolutionName)\$(OutDir)
-xcopy /y  $(TargetPath)\log4net.* $(SolutionDir)$(SolutionName)\$(OutDir)
-xcopy /y  $(TargetPath)\MySql.Data.* $(SolutionDir)$(SolutionName)\$(OutDir)
-xcopy /y  $(TargetPath)\TvControl.* $(SolutionDir)$(SolutionName)\$(OutDir)
-xcopy /y  $(TargetPath)\TVDatabase.* $(SolutionDir)$(SolutionName)\$(OutDir)
-xcopy /y  $(TargetPath)\TvBusinessLayer.* $(SolutionDir)$(SolutionName)\$(OutDir)
-xcopy /y  $(TargetPath)\TvLibrary.Interfaces.* $(SolutionDir)$(SolutionName)\$(OutDir)
-xcopy /y  $(TargetPath)\gentle.config $(SolutionDir)$(SolutionName)\$(OutDir)</PostBuildEvent>
+xcopy /y  $(TargetDir)gentle*.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetDir)log4net.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetDir)MySql.Data.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetDir)TvControl.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetDir)TVDatabase.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetDir)TvBusinessLayer.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetDir)TvLibrary.Interfaces.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetDir)gentle.config $(SolutionDir)$(SolutionName)\$(OutDir)</PostBuildEvent>
   </PropertyGroup>
 </Project>
