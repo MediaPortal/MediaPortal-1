@@ -54,6 +54,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Resource Include="NowPlaying.plugin" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.cs</LastGenOutput>
@@ -84,4 +85,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Y "$(ProjectDir)"$(ProjectName).plugin $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(ProjectName)\
+xcopy /Y $(TargetPath)  $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(ProjectName)\</PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -64,6 +64,9 @@
       <Name>ProjectInfinity.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="MyPictures.plugin" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -73,7 +76,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>xcopy /Y "$(ProjectDir)"$(ProjectName).plugin $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(ProjectName)\
+xcopy /Y $(TargetPath)  $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(ProjectName)\</PostBuildEvent>
   </PropertyGroup>
 </Project>
