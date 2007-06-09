@@ -177,7 +177,16 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.WinFX.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>xcopy /Y "$(ProjectDir)"$(ProjectName).plugin $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(ProjectName)\
+xcopy /Y $(TargetPath)\mytv.*  $(SolutionDir)$(SolutionName)\$(OutDir)Plugins\$(ProjectName)\
+
+xcopy /y  $(TargetPath)\gentle*.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetPath)\log4net.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetPath)\MySql.Data.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetPath)\TvControl.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetPath)\TVDatabase.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetPath)\TvBusinessLayer.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetPath)\TvLibrary.Interfaces.* $(SolutionDir)$(SolutionName)\$(OutDir)
+xcopy /y  $(TargetPath)\gentle.config $(SolutionDir)$(SolutionName)\$(OutDir)</PostBuildEvent>
   </PropertyGroup>
 </Project>
