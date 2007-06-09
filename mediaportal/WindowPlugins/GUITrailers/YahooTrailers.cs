@@ -149,22 +149,24 @@ namespace MediaPortal.GUI.Video
           bool found_700 = false;
           if (GUITrailers.bitrate.Equals("300") == false)
           {
-            if (m.Value.IndexOf("700-p") != -1)
+            if (m.Value.IndexOf("700-wmv-p") != -1)
             {
-              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/trailers/(?<movienumber>\d*)/.*id=.*wmv-700-p.(?<id>\d*)-(?<segment>\d*).");
+              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/trailers/(?<movienumber>\d*)/.*,(?<segment>\d*)-700-wmv-p.(?<id>\d*).");
               TrailersUrl[t] = "http://playlist.yahoo.com/makeplaylist.dll?id=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"] + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
-
-              Match m2 = Regex.Match(m.Value, @".(?<trailername>.*)</a>");
+              Match m2 = Regex.Match(m.Value, "[\"']>.(?<trailername>.*)</a>");
               Trailers[t] = m2.Groups["trailername"].Value;
               found_700 = true;
               t++;
             }
-            else if (m.Value.IndexOf("700-s") != -1)
+            else if (m.Value.IndexOf("700-wmv-s") != -1)
             {
-              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/trailers/(?<movienumber>\d*)/.*id=.*wmv-700-s.(?<id>\d*)-(?<segment>\d*).");
+              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/trailers/(?<movienumber>\d*)/.*,(?<segment>\d*)-700-wmv-s.(?<id>\d*).");
               TrailersUrl[t] = "http://playlist.yahoo.com/makeplaylist.dll?sid=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"] + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
-
-              Match m2 = Regex.Match(m.Value, @".(?<trailername>.*)</a>");
+              Log.Info(m1.Groups["id"].Value);
+              Log.Info(m1.Groups["segment"].Value);
+              Log.Info(m1.Groups["movienumber"].Value);
+              Log.Info(TrailersUrl[t]);
+              Match m2 = Regex.Match(m.Value, "[\"']>.(?<trailername>.*)</a>");
               Trailers[t] = m2.Groups["trailername"].Value;
               found_700 = true;
               t++;
@@ -173,30 +175,30 @@ namespace MediaPortal.GUI.Video
           // if there is no 700 kbit stream then get 300 kbit stream
           if (GUITrailers.bitrate.Equals("300") == true | found_700 == false)
           {
-            if (m.Value.IndexOf("300-p") != -1)
+            if (m.Value.IndexOf("300-wmv-p") != -1)
             {
 
-              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/trailers/(?<movienumber>\d*)/.*id=.*wmv-300-p.(?<id>\d*)-(?<segment>\d*).");
+              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/trailers/(?<movienumber>\d*)/.*,(?<segment>\d*)-300-wmv-p.(?<id>\d*).");
               TrailersUrl[t] = "http://playlist.yahoo.com/makeplaylist.dll?id=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"].Value + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
               Log.Info(m1.Groups["id"].Value);
               Log.Info(m1.Groups["segment"].Value);
               Log.Info(m1.Groups["movienumber"].Value);
 
-              Match m2 = Regex.Match(m.Value, @".(?<trailername>.*)</a>");
+              Match m2 = Regex.Match(m.Value, "[\"']>.(?<trailername>.*)</a>");
               Trailers[t] = m2.Groups["trailername"].Value;
               Log.Info(m2.Groups["trailername"].Value);
               t++;
             }
 
-            else if (m.Value.IndexOf("300-s") != -1)
+            else if (m.Value.IndexOf("300-wmv-s") != -1)
             {
-              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/trailers/(?<movienumber>\d*)/.*id=.*wmv-300-s.(?<id>\d*)-(?<segment>\d*).");
+              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/trailers/(?<movienumber>\d*)/.*,(?<segment>\d*)-300-wmv-s.(?<id>\d*).");
               TrailersUrl[t] = "http://playlist.yahoo.com/makeplaylist.dll?ids=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"].Value + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
               Log.Info(m1.Groups["id"].Value);
               Log.Info(m1.Groups["segment"].Value);
               Log.Info(m1.Groups["movienumber"].Value);
 
-              Match m2 = Regex.Match(m.Value, @".(?<trailername>.*)</a>");
+              Match m2 = Regex.Match(m.Value, "[\"']>.(?<trailername>.*)</a>");
               Trailers[t] = m2.Groups["trailername"].Value;
               Log.Info(m2.Groups["trailername"].Value);
               t++;
@@ -212,19 +214,22 @@ namespace MediaPortal.GUI.Video
           if (GUITrailers.bitrate.Equals("300") == false)
           {
             // search for 700 kbit stream
-            if (m.Value.IndexOf("700-p") != -1)
+            if (m.Value.IndexOf("700-wmv-p") != -1)
             {
-              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/clips/(?<movienumber>\d*)/.*id=.*wmv-700-p.(?<id>\d*)-(?<segment>\d*)..*>.(?<clipsname>.*).</");
+              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/clips/(?<movienumber>\d*)/.*,(?<segment>\d*)-700-wmv-p.(?<id>\d*).");
               ClipsUrl[c] = "http://playlist.yahoo.com/makeplaylist.dll?id=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"] + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
-              Clips[c] = m1.Groups["clipsname"].Value;
+              Match m2 = Regex.Match(m.Value, "[\"']>.(?<clipsname>.*)</A>");
+              Clips[c] = m2.Groups["clipsname"].Value;
               found_700 = true;
               c++;
             }
-            else if (m.Value.IndexOf("700-s") != -1)
+            else if (m.Value.IndexOf("700-wmv-s") != -1)
             {
-              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/clips/(?<movienumber>\d*)/.*id=.*wmv-700-s.(?<id>\d*)-(?<segment>\d*)..*>.(?<clipsname>.*).</");
+              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/clips/(?<movienumber>\d*)/.*,(?<segment>\d*)-700-wmv-s.(?<id>\d*).");
               ClipsUrl[c] = "http://playlist.yahoo.com/makeplaylist.dll?sid=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"] + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
-              Clips[c] = m1.Groups["clipsname"].Value;
+
+              Match m2 = Regex.Match(m.Value, "[\"']>.(?<clipsname>.*)</A>");
+              Clips[c] = m2.Groups["clipsname"].Value;
               found_700 = true;
               c++;
             }
@@ -233,18 +238,20 @@ namespace MediaPortal.GUI.Video
           // if there is no 700 kbit stream then get 300 kbit stream
           if (GUITrailers.bitrate.Equals("300") == true | found_700 == false)
           {
-            if (m.Value.IndexOf("300-p") != -1)
+            if (m.Value.IndexOf("300-wmv-p") != -1)
             {
-              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/clips/(?<movienumber>\d*)/.*id=.*wmv-300-p.(?<id>\d*)-(?<segment>\d*)..*>.(?<clipsname>.*).</");
+              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/clips/(?<movienumber>\d*)/.*,(?<segment>\d*)-300-wmv-p.(?<id>\d*).");
               ClipsUrl[c] = "http://playlist.yahoo.com/makeplaylist.dll?id=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"] + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
-              Clips[c] = m1.Groups["clipsname"].Value;
+              Match m2 = Regex.Match(m.Value, "[\"']>.(?<clipsname>.*)</A>");
+              Clips[c] = m2.Groups["clipsname"].Value;
               c++;
             }
-            else if (m.Value.IndexOf("300-s") != -1)
+            else if (m.Value.IndexOf("300-wmv-s") != -1)
             {
-              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/clips/(?<movienumber>\d*)/.*id=.*wmv-300-s.(?<id>\d*)-(?<segment>\d*)..*>.(?<clipsname>.*).</");
+              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/clips/(?<movienumber>\d*)/.*,(?<segment>\d*)-300-wmv-s.(?<id>\d*).");
               ClipsUrl[c] = "http://playlist.yahoo.com/makeplaylist.dll?sid=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"] + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
-              Clips[c] = m1.Groups["clipsname"].Value;
+              Match m2 = Regex.Match(m.Value, "[\"']>.(?<clipsname>.*)</A>");
+              Clips[c] = m2.Groups["clipsname"].Value;
               c++;
             }
           }
@@ -258,17 +265,17 @@ namespace MediaPortal.GUI.Video
           if (GUITrailers.bitrate.Equals("300") == false)
           {
             // search for 700 kbit stream
-            if (m.Value.IndexOf("700-p") != -1)
+            if (m.Value.IndexOf("700-wmv-p") != -1)
             {
-              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/more/(?<movienumber>\d*)/.*id=.*wmv-700-p.(?<id>\d*)-(?<segment>\d*)..*>.(?<clipsname>.*).</");
+              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/more/(?<movienumber>\d*)/.*,(?<segment>\d*)-700-wmv-p.(?<id>\d*)..*>.(?<clipsname>.*).</");
               MoreUrl[mo] = "http://playlist.yahoo.com/makeplaylist.dll?id=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"] + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
               More[mo] = m1.Groups["clipsname"].Value;
               found_700 = true;
               mo++;
             }
-            else if (m.Value.IndexOf("700-s") != -1)
+            else if (m.Value.IndexOf("700-wmv-s") != -1)
             {
-              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/more/(?<movienumber>\d*)/.*id=.*wmv-700-s.(?<id>\d*)-(?<segment>\d*)..*>.(?<clipsname>.*).</");
+              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/more/(?<movienumber>\d*)/.*,(?<segment>\d*)-700-wmv-s.(?<id>\d*)..*>.(?<clipsname>.*).</");
               MoreUrl[mo] = "http://playlist.yahoo.com/makeplaylist.dll?sid=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"] + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
               More[mo] = m1.Groups["clipsname"].Value;
               found_700 = true;
@@ -279,16 +286,16 @@ namespace MediaPortal.GUI.Video
           if (GUITrailers.bitrate.Equals("300") == true | found_700 == false)
           {
 
-            if (m.Value.IndexOf("300-p") != -1)
+            if (m.Value.IndexOf("300-wmv-p") != -1)
             {
-              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/more/(?<movienumber>\d*)/.*id=.*wmv-300-p.(?<id>\d*)-(?<segment>\d*)..*>.(?<clipsname>.*).</");
+              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/more/(?<movienumber>\d*)/.*,(?<segment>\d*)-300-wmv-p.(?<id>\d*)..*>.(?<clipsname>.*).</");
               MoreUrl[mo] = "http://playlist.yahoo.com/makeplaylist.dll?id=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"] + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
               More[mo] = m1.Groups["clipsname"].Value;
               mo++;
             }
-            else if (m.Value.IndexOf("300-s") != -1)
+            else if (m.Value.IndexOf("300-wmv-s") != -1)
             {
-              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/more/(?<movienumber>\d*)/.*id=.*wmv-300-s.(?<id>\d*)-(?<segment>\d*)..*>.(?<clipsname>.*).</");
+              Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/more/(?<movienumber>\d*)/.*,(?<segment>\d*)-300-wmv-s.(?<id>\d*)..*>.(?<clipsname>.*).</");
               MoreUrl[mo] = "http://playlist.yahoo.com/makeplaylist.dll?sid=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"] + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
               More[mo] = m1.Groups["clipsname"].Value;
               mo++;
