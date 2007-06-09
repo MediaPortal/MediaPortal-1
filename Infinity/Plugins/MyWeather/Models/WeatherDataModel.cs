@@ -41,30 +41,23 @@ namespace MyWeather
     /// </summary>
     public class WeatherDataModel
     {
-        private IWeatherCatcher _weatherCatcher;
-
         /// <summary>
         /// construct the datamodel
         /// </summary>
         /// <param name="catcher"></param>
-        public WeatherDataModel(IWeatherCatcher catcher)
+        public WeatherDataModel()
         {
-            _weatherCatcher = catcher;
         }
 
         /// <summary>
-        /// sets or gets the weathercatcher 
+        /// gets the weathercatcher 
         /// for this datamodel
         /// </summary>
         public IWeatherCatcher WeatherCatcher
         {
             get
             {
-                return _weatherCatcher;
-            }
-            set
-            {
-                _weatherCatcher = value;
+                return ServiceScope.Get<IWeatherCatcher>();
             }
         }
 
@@ -90,7 +83,7 @@ namespace MyWeather
 
             foreach (City c in citiesList)
             {
-                WeatherCatcher.GetLocationData(c);
+                ServiceScope.Get<IWeatherCatcher>().GetLocationData(c);
             }
             // nice, we should have it now... cities with none-successful update
             // will have the City.HasData attribute set to false

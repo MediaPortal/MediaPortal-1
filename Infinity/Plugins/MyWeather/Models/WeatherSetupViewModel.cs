@@ -59,7 +59,6 @@ namespace MyWeather
         LocationCollectionView _citiesAddedView;
         WeatherSetupDataModel _dataModel;
         WeatherSetupDataModel _dataModelAddedLocs;
-        IWeatherCatcher _catcher;
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
@@ -74,9 +73,8 @@ namespace MyWeather
             // if so, update the datamodel
             WeatherSettings settings = new WeatherSettings();
             ServiceScope.Get<ISettingsManager>().Load(settings);
-            _catcher = new WeatherDotComCatcher();
-            _dataModel = new WeatherSetupDataModel(_catcher);
-            _dataModelAddedLocs = new WeatherSetupDataModel(_catcher);
+            _dataModel = new WeatherSetupDataModel();
+            _dataModelAddedLocs = new WeatherSetupDataModel();
             // add already configured cities from the settings to our datamodel
             if (settings.LocationsList != null)
             {

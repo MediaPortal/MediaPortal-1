@@ -47,15 +47,13 @@ namespace MyWeather
     public class WeatherSetupDataModel : INotifyPropertyChanged
     {
         protected List<CitySetupInfo> _locations = new List<CitySetupInfo>();
-        protected IWeatherCatcher _catcher;
         public event PropertyChangedEventHandler PropertyChanged;
         
         /// <summary>
         /// Constructor
         /// </summary>
-        public WeatherSetupDataModel(IWeatherCatcher catcher)
+        public WeatherSetupDataModel()
         {
-            _catcher = catcher;
         }
 
         /// <summary>
@@ -138,7 +136,7 @@ namespace MyWeather
             _locations.Clear();
             // search for the cities
             List<CitySetupInfo> tempList = new List<CitySetupInfo>();
-            tempList = _catcher.FindLocationsByName(searchString);
+            tempList = ServiceScope.Get<IWeatherCatcher>().FindLocationsByName(searchString);
             // add them to the list
             foreach (CitySetupInfo c in tempList)
                 _locations.Add(c);

@@ -80,7 +80,7 @@ namespace MyWeather
             // create localisation instance
             _locals = new WeatherLocalizer();
             // create the datamodel :)
-            _dataModel = new WeatherDataModel(new WeatherDotComCatcher());
+            _dataModel = new WeatherDataModel();
             UpdateWeather.Execute(null);
         }
         #endregion
@@ -406,7 +406,6 @@ namespace MyWeather
             }
 
             /// <summary>
-            /// Starts the timeshifting 
             /// this is done in the background so the GUI stays responsive
             /// </summary>
             /// <param name="channel">The channel.</param>
@@ -414,7 +413,7 @@ namespace MyWeather
             {
                 // update weather data and labels go in here
                 _viewModel.LoadAvailableLocations();
-                // get all cities from the settings
+                // get the selected city from the settings
                 WeatherSettings settings = new WeatherSettings();
                 ServiceScope.Get<ISettingsManager>().Load(settings);
                 foreach (City c in _viewModel.AvailableLocations)

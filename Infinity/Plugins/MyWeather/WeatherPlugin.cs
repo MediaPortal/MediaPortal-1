@@ -41,6 +41,10 @@ namespace MyWeather
 
     public void Initialize(string id)
     {
+        // TODO:
+        // this is temporary and should depend on the settings which service to use
+        // to grab the weather data...
+        ServiceScope.Add<IWeatherCatcher>(new WeatherDotComCatcher());
     }
 
     #endregion
@@ -60,7 +64,6 @@ namespace MyWeather
         else
         {
             // We already have settings, so lets go to Weather directly
-            Weather weatherInstance = new Weather();
             ServiceScope.Get<INavigationService>().Navigate(new Weather());
         }
     }
