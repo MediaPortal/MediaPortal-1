@@ -130,13 +130,13 @@ namespace MyWeather
         /// </summary>
         /// <param name="searchString">city name to search for</param>
         /// <returns></returns>
-        public void SearchCity(string searchString)
+        public void SearchCity(string searchString, IWeatherCatcher grabber)
         {
             // find the possible cities through the weather catcher
             _locations.Clear();
             // search for the cities
             List<CitySetupInfo> tempList = new List<CitySetupInfo>();
-            tempList = ServiceScope.Get<IWeatherCatcher>().FindLocationsByName(searchString);
+            tempList = grabber.FindLocationsByName(searchString);
             // add them to the list
             foreach (CitySetupInfo c in tempList)
                 _locations.Add(c);

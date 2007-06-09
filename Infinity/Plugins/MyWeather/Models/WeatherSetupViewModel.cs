@@ -44,6 +44,8 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using Dialogs;
 using System.Collections.Generic;
+using ProjectInfinity.Plugins;
+using MyWeather.Grabbers;
 
 namespace MyWeather
 {
@@ -51,10 +53,12 @@ namespace MyWeather
     {
         #region variables
         string _labelError;
+        ICommand _changeGrabberCommand;                 // Opens a Popup Menu with all available grabbers
         ICommand _saveCommand;
         ICommand _searchCommand;                        // Opens a Popup Menu
         string _searchLocation;                         // the location we type in for searching
         CitySetupInfo _selectedLocation;                // the selected found location as City type
+        IWeatherCatcher _selectedGrabber;               // the selected grabber
         LocationCollectionView _citiesCollView;
         LocationCollectionView _citiesAddedView;
         WeatherSetupDataModel _dataModel;
@@ -87,6 +91,8 @@ namespace MyWeather
                 }
                 ChangeProperty("LocationsAdded");
             }
+            // set default grabber which should always be available
+            SelectedGrabber = new WeatherDotComCatcher();
             // create Collectionviews...
             _citiesCollView = new LocationCollectionView(_dataModel);
             _citiesAddedView = new LocationCollectionView(_dataModelAddedLocs);
@@ -154,7 +160,7 @@ namespace MyWeather
                 //
                 // Perform actual search
                 //
-                _dataModel.SearchCity(SearchLocation);
+                _dataModel.SearchCity(SearchLocation, SelectedGrabber);
 
                 if (_dataModel.Locations.Count == 0)
                     LabelError = ServiceScope.Get<ILocalisation>().ToString("myweather.config", 4);
@@ -264,6 +270,19 @@ namespace MyWeather
             }
         }
         /// <summary>
+        /// Gets the selected Grabber label
+        /// </summary>
+        /// <value>The save label</value>
+        public string LabelSelectedGrabber
+        {
+            get
+            {
+                if (Core.IsDesignMode) return "Weather.com";
+                return _selectedGrabber.GetServiceName();
+            }
+        }
+
+        /// <summary>
         /// Returns the ListViewCollection containing the found cities
         /// </summary>
         /// <value>The Cities.</value>
@@ -328,7 +347,23 @@ namespace MyWeather
                 ChangeProperty("SelectedLocation");
             }
         }
-
+        /// <summary>
+        /// Gets or sets the location which has been
+        /// selected by the user
+        /// </summary>
+        /// <value>location name</value>
+        public IWeatherCatcher SelectedGrabber
+        {
+            get
+            {
+                return _selectedGrabber;
+            }
+            set
+            {
+                _selectedGrabber = value;
+                ChangeProperty("SelectedGrabber");
+            }
+        }
         /// <summary>
         /// Gets the window.
         /// </summary>
@@ -372,6 +407,21 @@ namespace MyWeather
                     _searchCommand = new SearchCommand(this);
                 }
                 return _searchCommand;
+            }
+        }
+        /// <summary>
+        /// Returns ICommand to select a Grabbing service
+        /// </summary>
+        /// <value>The search</value>
+        public ICommand ChangeGrabber
+        {
+            get
+            {
+                if (_changeGrabberCommand == null)
+                {
+                    _changeGrabberCommand = new ChangeGrabberCommand(this);
+                }
+                return _changeGrabberCommand;
             }
         }
         #endregion
@@ -477,7 +527,11 @@ namespace MyWeather
                 _viewModel.SearchCities();
                 
                 // nothing found?
-                if (((List<CitySetupInfo>)(_viewModel.Locations.SourceCollection)).Count <= 0) { MessageBox.Show("no cities in collection"); return; }
+                if (((List<CitySetupInfo>)(_viewModel.Locations.SourceCollection)).Count <= 0) 
+                {
+                    _viewModel.LabelError = ServiceScope.Get<ILocalisation>().ToString("myweather.config", 4); // "no cities found"
+                    return; 
+                }
 
                 // Setup the Dialog Menu we wanna show (Containing the found locations)
                 MpMenu dlgMenu = new MpMenu();
@@ -498,10 +552,65 @@ namespace MyWeather
 
                 // get the id that belongs to the selected city and set the property
                 CitySetupInfo buff = ((List<CitySetupInfo>)(_viewModel.Locations.SourceCollection))[dlgMenu.SelectedIndex];
+                // set the grabber we used to find that city
+                buff.Grabber = _viewModel.SelectedGrabber.GetServiceName();
                 _viewModel.SelectedLocation = buff;
                 // add location directly to the datamodel
                 _viewModel._dataModelAddedLocs.AddCity(_viewModel.SelectedLocation);
                 _viewModel.ChangeProperty("LocationsAdded");
+            }
+        }
+
+        /// <summary>
+        /// search for all available grabbers and open a popupmenu to
+        /// select a grabber
+        /// </summary>
+        public class ChangeGrabberCommand : ICommand
+        {
+            WeatherSetupViewModel _viewModel;
+
+            public ChangeGrabberCommand(WeatherSetupViewModel viewModel)
+            {
+                _viewModel = viewModel;
+            }
+
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            public event EventHandler CanExecuteChanged;
+
+            public void Execute(object parameter)
+            {
+                // get a list of all grabbers that are attached to the plugin tree
+                List<IWeatherCatcher> grabbers = ServiceScope.Get<IPluginManager>().BuildItems<IWeatherCatcher>("/MyWeather/Grabbers");                
+                // nothing found?
+                if (grabbers.Count == 0)
+                {
+                    _viewModel.LabelError = ServiceScope.Get<ILocalisation>().ToString("myweather.config", 8); // "No grabbing services found!"
+                    return;
+                }
+                // Setup the Dialog Menu we wanna show (Containing the found grabbers)
+                MpMenu dlgMenu = new MpMenu();
+                dlgMenu.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                dlgMenu.Owner = _viewModel.Window;
+                dlgMenu.Items.Clear();
+                dlgMenu.Header = ServiceScope.Get<ILocalisation>().ToString("myweather.config", 7);// "Please select your City";
+                dlgMenu.SubTitle = "";
+
+                foreach (IWeatherCatcher c in grabbers)
+                {
+                    dlgMenu.Items.Add(new DialogMenuItem(c.GetServiceName()));
+                }
+
+                // show dialog menu
+                dlgMenu.ShowDialog();
+                if (dlgMenu.SelectedIndex < 0) return;    // no menu item selected
+
+                // get the id that belongs to the selected city and set the property
+                IWeatherCatcher buff = grabbers[dlgMenu.SelectedIndex];
+                _viewModel.SelectedGrabber = buff;
             }
         }
         #endregion

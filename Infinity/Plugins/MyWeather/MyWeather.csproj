@@ -58,10 +58,11 @@
     <Compile Include="Models\WeatherViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Grabbers\TestCatcher.cs" />
     <Compile Include="Helper Classes\City.cs" />
     <Compile Include="Helper Classes\Helper.cs" />
     <Compile Include="Helper Classes\IWeatherCatcher.cs" />
-    <Compile Include="Helper Classes\WeatherDotComCatcher.cs" />
+    <Compile Include="Grabbers\WeatherDotComCatcher.cs" />
     <Compile Include="Helper Classes\WeatherLocalizer.cs" />
     <Compile Include="Models\WeatherSetupDataModel.cs" />
     <Compile Include="Weather.cs" />

@@ -33,6 +33,7 @@ using ProjectInfinity.Logging;
 using ProjectInfinity;
 using ProjectInfinity.Localisation;
 using System.Collections.Generic;
+using ProjectInfinity.Plugins;
 
 namespace MyWeather
 {
@@ -47,18 +48,6 @@ namespace MyWeather
         /// <param name="catcher"></param>
         public WeatherDataModel()
         {
-        }
-
-        /// <summary>
-        /// gets the weathercatcher 
-        /// for this datamodel
-        /// </summary>
-        public IWeatherCatcher WeatherCatcher
-        {
-            get
-            {
-                return ServiceScope.Get<IWeatherCatcher>();
-            }
         }
 
         /// <summary>
@@ -80,10 +69,21 @@ namespace MyWeather
             // now we got the provider info with id and name already filled in... lets get the
             // rest of the data! first turn the CityProviderInfo List into a City List
             List<City> citiesList = Helper.CityInfoListToCityObjectList(settings.LocationsList);
-
+            // Get the WeatherCatchers that should be used from the Plugins (if availale)
+            List<IWeatherCatcher> catchers = ServiceScope.Get<IPluginManager>().BuildItems<IWeatherCatcher>("/MyWeather/Grabbers");
+            // do this for all cities
             foreach (City c in citiesList)
             {
-                ServiceScope.Get<IWeatherCatcher>().GetLocationData(c);
+                // get the correct weather catcher for this town
+                foreach(IWeatherCatcher grabber in catchers)
+                {
+                    // look if we have the right catcher for this town
+                    if (grabber.GetServiceName().Equals(c.Grabber))
+                    {
+                        grabber.GetLocationData(c);
+                        break;
+                    }
+                }
             }
             // nice, we should have it now... cities with none-successful update
             // will have the City.HasData attribute set to false

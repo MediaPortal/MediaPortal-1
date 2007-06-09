@@ -35,12 +35,20 @@ namespace MyWeather
     /// </summary>
     public class CitySetupInfo
     {
-        private string name, id;
+        private string name, id, grabber;
+
+        public CitySetupInfo(string name, string id, string grabber)
+        {
+            this.name = name;
+            this.id = id;
+            this.grabber = grabber;
+        }
 
         public CitySetupInfo(string name, string id)
         {
             this.name = name;
             this.id = id;
+            this.grabber = "Weather.com";
         }
 
         public CitySetupInfo() { }
@@ -74,6 +82,21 @@ namespace MyWeather
                 id = value;
             }
         }
+        /// <summary>
+        /// Get the Grabber Service that should
+        /// be used to fetch data for this town
+        /// </summary>
+        public string Grabber
+        {
+            get
+            {
+                return grabber;
+            }
+            set
+            {
+                grabber = value;
+            }
+        }
 
         public override string ToString()
         {
@@ -105,6 +128,7 @@ namespace MyWeather
         {
             Name = info.Name;
             Id = info.Id;
+            Grabber = info.Grabber;
             _updateSuccessful = false;
         }
 

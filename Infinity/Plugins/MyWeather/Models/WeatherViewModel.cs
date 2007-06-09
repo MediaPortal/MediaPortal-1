@@ -41,6 +41,7 @@ using ProjectInfinity;
 using ProjectInfinity.Settings;
 using Dialogs;
 using System.Windows.Threading;
+using ProjectInfinity.Plugins;
 
 
 namespace MyWeather
@@ -82,6 +83,11 @@ namespace MyWeather
             // create the datamodel :)
             _dataModel = new WeatherDataModel();
             UpdateWeather.Execute(null);
+            List<IWeatherCatcher> catchers = ServiceScope.Get<IPluginManager>().BuildItems<IWeatherCatcher>("/MyWeather/Grabbers");
+
+            foreach (IWeatherCatcher c in catchers)
+                MessageBox.Show(c.GetServiceName());
+
         }
         #endregion
 
@@ -352,7 +358,7 @@ namespace MyWeather
                 // add items to the menu
                 foreach (City c in _viewModel.AvailableLocations)
                 {
-                    menu.Items.Add(new DialogMenuItem(c.Name));
+                    menu.Items.Add(new DialogMenuItem(c.Name + " - " + c.Grabber));
                 }
 
                 menu.ShowDialog();

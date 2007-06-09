@@ -31,6 +31,7 @@ using ProjectInfinity.Plugins;
 using ProjectInfinity.MenuManager;
 using ProjectInfinity.Settings;
 using System.Windows;
+using MyWeather.Grabbers;
 
 namespace MyWeather
 {

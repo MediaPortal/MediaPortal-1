@@ -41,6 +41,7 @@ namespace MyWeather
         private string _temperatureFahrenheit;
         private string _windSpeed;
         private string _locationCode;
+        private string _grabber;
         private bool _skipConnectionTest;
 
         /// <summary>
