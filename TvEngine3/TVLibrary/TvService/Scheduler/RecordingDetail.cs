@@ -60,20 +60,7 @@ namespace TvService
       _endTime = endTime;
 
       //find which program we are recording
-      _program = schedule.ReferencedChannel().CurrentProgram;
-      if (_program != null)
-      {
-        if (startTime >= _program.EndTime)
-        {
-          TvDatabase.Program next = schedule.ReferencedChannel().NextProgram;
-          if (next != null)
-          {
-            //then we are not recording the current program, but the next one
-            _program = next;
-          }
-        }
-      }
-
+      _program = schedule.ReferencedChannel().GetProgramAt(schedule.StartTime.AddMinutes(-schedule.PreRecordInterval));
       //no program? then treat this as a manual recording
       if (_program == null)
       {
