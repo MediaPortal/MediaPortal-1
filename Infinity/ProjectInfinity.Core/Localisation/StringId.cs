@@ -55,8 +55,18 @@ namespace ProjectInfinity.Localisation
 
       Match combineString = label.Match(skinLabel);
 
-      _section = combineString.Groups["section"].Value;
-      _id = Int32.Parse(combineString.Groups["id"].Value);
+      if (combineString.Success)
+      {
+        _section = combineString.Groups["section"].Value;
+        _id = Int32.Parse(combineString.Groups["id"].Value);
+      }
+      else
+      {
+        // invalid string
+        ServiceScope.Get<ILogger>().Error("String Manager - Invalid string Id: {0}", skinLabel);
+        _section = "system";
+        _id = 1;
+      }
     }
 
     public string Section

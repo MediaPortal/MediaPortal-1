@@ -2,6 +2,7 @@
 <Language>
 	<Section name="system">
 		<String id="0">Exit</String>
+                <String id="1">Invalid string</String>
 	</Section>
 	<Section name="days">
 		<String id="0">Sunday</String>
