@@ -83,11 +83,6 @@ namespace MyWeather
             // create the datamodel :)
             _dataModel = new WeatherDataModel();
             UpdateWeather.Execute(null);
-            List<IWeatherCatcher> catchers = ServiceScope.Get<IPluginManager>().BuildItems<IWeatherCatcher>("/MyWeather/Grabbers");
-
-            foreach (IWeatherCatcher c in catchers)
-                MessageBox.Show(c.GetServiceName());
-
         }
         #endregion
 

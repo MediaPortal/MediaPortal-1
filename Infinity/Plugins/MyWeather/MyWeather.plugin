@@ -1,7 +1,7 @@
-<Plugin name       = "MyWeather"
-       author      = "Mofux"
-       copyright   = "GPL"
-       description = "My Weather">
+<Plugin name   = "MyWeather"
+   author      = "mofux"
+   copyright   = "GPL"
+   description = "My Weather">
 
 	<Manifest>
 		<Identity name = "MyWeather.WeatherPlugin"/>
@@ -35,5 +35,17 @@
 					label = "@myweather:0"
 					image = "pack://siteoforigin:,,,/skin/default/gfx/myWeather.png"
 					class = "MyWeather.WeatherSetup"/>
+	</Path>
+
+	
+	<!-- Attach different Weather Grabbers here to /MyWeather/Grabbers -->
+	
+	<!-- Weather.com grabber -->
+	<Path name = "/MyWeather/Grabbers">
+		<Class id = "Weather.com" class = "MyWeather.Grabbers.WeatherDotComCatcher"/>
+	</Path>
+	<!-- Test grabber (fills things with dummy data) -->
+	<Path name = "/MyWeather/Grabbers">
+		<Class id = "TestCatcher.de" class = "MyWeather.Grabbers.TestCatcher"/>
 	</Path>
 </Plugin>

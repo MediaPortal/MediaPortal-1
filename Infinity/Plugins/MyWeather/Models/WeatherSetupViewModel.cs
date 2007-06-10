@@ -59,6 +59,7 @@ namespace MyWeather
         string _searchLocation;                         // the location we type in for searching
         CitySetupInfo _selectedLocation;                // the selected found location as City type
         IWeatherCatcher _selectedGrabber;               // the selected grabber
+        string _selectedGrabberLabel;
         LocationCollectionView _citiesCollView;
         LocationCollectionView _citiesAddedView;
         WeatherSetupDataModel _dataModel;
@@ -278,7 +279,12 @@ namespace MyWeather
             get
             {
                 if (Core.IsDesignMode) return "Weather.com";
-                return _selectedGrabber.GetServiceName();
+                return _selectedGrabberLabel;
+            }
+            set
+            {
+                _selectedGrabberLabel = value;
+                ChangeProperty("LabelSelectedGrabber");
             }
         }
 
@@ -361,6 +367,7 @@ namespace MyWeather
             set
             {
                 _selectedGrabber = value;
+                LabelSelectedGrabber = value.GetServiceName();
                 ChangeProperty("SelectedGrabber");
             }
         }

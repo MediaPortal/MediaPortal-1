@@ -42,10 +42,6 @@ namespace MyWeather
 
     public void Initialize(string id)
     {
-        // TODO:
-        // this is temporary and should depend on the settings which service to use
-        // to grab the weather data...
-        ServiceScope.Add<IWeatherCatcher>(new WeatherDotComCatcher());
     }
 
     #endregion
