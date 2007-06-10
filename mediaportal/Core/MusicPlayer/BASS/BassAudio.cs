@@ -243,7 +243,7 @@ namespace MediaPortal.Player
     private System.Timers.Timer UpdateTimer = new System.Timers.Timer();
     private VisualizationWindow VizWindow = null;
     private VisualizationManager VizManager = null;
-    private bool _CrossFading = false;          /* true if crossfading has started */
+    private bool _CrossFading = false;          // true if crossfading has started
     private bool _Mixing = false;
     private int _playBackType;
 
@@ -1381,6 +1381,9 @@ namespace MediaPortal.Player
 
             result = Bass.BASS_Start();
 
+            if (_useASIO)
+              result = BassAsio.BASS_ASIO_Start(0);
+
             if (result)
             {
               _State = PlayState.Playing;
@@ -2203,7 +2206,7 @@ namespace MediaPortal.Player
           while ((Bass.BASS_ChannelIsSliding(stream) & (int)BASSSlide.BASS_SLIDE_VOL) != 0)
             System.Threading.Thread.Sleep(20);
         }
-        if (_Mixing)
+        if (_Mixing || _useASIO)
         {
           Bass.BASS_ChannelStop(stream);
           BassMix.BASS_Mixer_ChannelRemove(stream);
