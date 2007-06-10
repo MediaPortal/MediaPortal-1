@@ -754,6 +754,12 @@ namespace MediaPortal.GUI.TV
           {
             if (g_Player.IsTimeShifting)
             {
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+                ScreenStateChanged();
+                UpdateGUI();
+              }
               _stepSeekVisible = true;
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekStep(false);
@@ -770,6 +776,12 @@ namespace MediaPortal.GUI.TV
           {
             if (g_Player.IsTimeShifting)
             {
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+                ScreenStateChanged();
+                UpdateGUI();
+              }
               _stepSeekVisible = true;
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekStep(true);
@@ -786,6 +798,12 @@ namespace MediaPortal.GUI.TV
           {
             if (g_Player.IsTimeShifting)
             {
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+                ScreenStateChanged();
+                UpdateGUI();
+              }
               _statusVisible = true;
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekRelativePercentage(-10);
@@ -798,6 +816,12 @@ namespace MediaPortal.GUI.TV
           {
             if (g_Player.IsTimeShifting)
             {
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+                ScreenStateChanged();
+                UpdateGUI();
+              }
               _statusVisible = true;
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekRelativePercentage(10);
