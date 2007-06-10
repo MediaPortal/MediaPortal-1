@@ -26,6 +26,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using ProjectInfinity.Messaging;
+using ProjectInfinity.Logging;
 
 namespace ProjectInfinity.Plugins
 {
@@ -41,8 +42,6 @@ namespace ProjectInfinity.Plugins
 
     public PluginManager()
     {
-      ServiceScope.Get<IMessageBroker>().Register(this);
-      LoadPlugins();
     }
 
     #region IPluginManager Members
@@ -72,6 +71,11 @@ namespace ProjectInfinity.Plugins
     /// </summary>
     public void Startup()
     {
+      ServiceScope.Get<ILogger>().Info("Plugin Manager Startup");
+      ServiceScope.Get<IMessageBroker>().Register(this);
+      LoadPlugins();
+
+      ServiceScope.Get<ILogger>().Info("Autostart plugins");
       foreach (IAutoStart plugin in _pluginTree.BuildItems<IAutoStart>("/AutoStart", null, false))
       {
         plugin.Startup();
