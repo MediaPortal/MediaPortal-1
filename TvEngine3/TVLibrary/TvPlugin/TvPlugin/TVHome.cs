@@ -1299,7 +1299,7 @@ namespace TvPlugin
               return true;
             }
         }
-        /*
+        
         //check if we are currently watching a tv channel with AC3
         IAudioStream[] audioStreams;
         bool hadAc3 = false;
@@ -1314,7 +1314,7 @@ namespace TvPlugin
                   }
             }
         }  
-        */
+        
         benchClock.Stop();
         Log.Debug("TVHome.ViewChannelAndCheck(): Fase 1 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
         benchClock.Reset();
@@ -1325,6 +1325,10 @@ namespace TvPlugin
         bool wasPlaying = g_Player.Playing && g_Player.IsTimeShifting && g_Player.IsTV;
 
         int OldVideoStream = TVHome.Card.GetCurrentVideoStream(TVHome.Card.User);
+
+        // QuickHack to test AC3 functionality. 
+        int OldAudioStream;
+
 
         //Start timeshifting the new tv channel
         TvServer server = new TvServer();
@@ -1371,9 +1375,9 @@ namespace TvPlugin
         if (succeeded == TvResult.Succeeded)
         {
           //timeshifting succeeded
-          /*
+          
           //check if we the new tvchannel has AC3
-          audioStreams = TVHome.Card.AvailableAudioStreams;
+          audioStreams = card.AvailableAudioStreams;
           bool hasAc3 = false;
           foreach (IAudioStream stream in audioStreams)
           {
@@ -1383,12 +1387,12 @@ namespace TvPlugin
             }
           }
           // when we switch from mpeg-2 <-> ac3, then recreate the playing graph
-          if (hadAc3 != hasAc3)
-          {
-            Log.Info("stop player: ac3 changed:{0}-{1}", hadAc3, hasAc3);
-            g_Player.Stop();
-          }
-        
+          //if (hadAc3 != hasAc3)
+          //{
+          //  Log.Info("stop player: ac3 changed:{0}-{1}", hadAc3, hasAc3);
+          //  g_Player.Stop();
+          //}
+          /*
           //Removed code since it's functions were replaced by previous check
           bool useRtsp = System.IO.File.Exists("usertsp.txt");
           if (g_Player.Playing)
@@ -1414,7 +1418,7 @@ namespace TvPlugin
           }*/
 
           //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player. 
-          if (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName || OldVideoStream != TVHome.Card.GetCurrentVideoStream(card.User))
+          if (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName || OldVideoStream != TVHome.Card.GetCurrentVideoStream(card.User) || hadAc3 != hasAc3 )
             {
                 if (wasPlaying)
                 {

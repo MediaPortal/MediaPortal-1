@@ -1352,7 +1352,8 @@ namespace TvPlugin
     void UpdateProgressBar()
     {
       double fPercent;
-      Program prog = TVHome.Navigator.GetChannel(GetChannelName()).CurrentProgram;
+      Program  prog = TVHome.Navigator.GetChannel(GetChannelName()).CurrentProgram; 
+
       if (prog == null)
       {
         GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
