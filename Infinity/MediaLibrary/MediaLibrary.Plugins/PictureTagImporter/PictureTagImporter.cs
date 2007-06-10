@@ -15,6 +15,7 @@ namespace PictureTagImporter
     String stringFileMasksToInclude;
     String stringFileMasksToExclude;
     bool boolIncludeSystemAndHiddenFiles;
+    bool boolUseExifInfo;
     int intExcludeFilesSmallerThan;
 
 
@@ -64,11 +65,19 @@ namespace PictureTagImporter
         Prop.HelpText = "Enter a KB size to exclude any files smaller than that. Leave as zero to ignore file size.\r\n\r\nWARNING: Enabling this option will negatively impact performance.";
         Prop.IsMandatory = false;
       }
+      Prop = Properties.AddNew("boolUseExifInfo");
+      {
+        Prop.CanTypeChoices = false;
+        Prop.Caption = "Use EXIF information";
+        Prop.DataType = "bool";
+        Prop.DefaultValue = true;
+        Prop.HelpText = "Set to true if you wish to use embeded exif information.\r\n\r\nWARNING: Enabling this option will negatively impact performance.";
+        Prop.IsMandatory = false;
+      }
       return true;
     }
     public bool SetProperties(IMLHashItem Properties, out string ErrorText)
     {
-      ErrorText = "";
                   ErrorText = "";
                   try
                   {
@@ -96,6 +105,11 @@ namespace PictureTagImporter
                     {
                       intExcludeFilesSmallerThan = (int)Properties["intExcludeFilesSmallerThan"];
                     }
+                    if (Properties["boolUseExifInfo"] != null)
+                    {
+                      boolUseExifInfo = (bool)Properties["boolUseExifInfo"];
+                    }
+
                   }
                   catch (Exception exception)
                   {
@@ -148,10 +162,50 @@ namespace PictureTagImporter
         if (item == null)
         {
           item = Section.AddNewItem(file.Name.Substring(0, file.Name.LastIndexOf(".")), file.FullName);
-          added++;
           boolAdded = true;
         }
 
+        if (boolAdded || (item.DateChanged < new FileInfo(file.FullName).LastWriteTime))
+        {
+          if (boolAdded)
+          {
+            added++;
+          }
+          else
+          {
+            updated++;
+          }
+          string dir = file.DirectoryName;
+          item.Tags["Album"] = dir.Substring(dir.LastIndexOf('\\')+1);
+          if (boolUseExifInfo)
+          {
+            ExifMetadata metadatareader = new ExifMetadata();
+            ExifMetadata.Metadata metaData = metadatareader.GetExifMetadata(file.FullName);
+            item.Tags["DatePictureTaken"] = metaData.DatePictureTaken.DisplayValue;
+            item.Tags["Resolution"] = metaData.Resolution.DisplayValue;
+            item.Tags["ImageDimensions"] = metaData.ImageDimensions.DisplayValue;
+            item.Tags["Rotation"] = "0";
+            item.Tags["Orientation"] = metaData.Orientation.DisplayValue;
+            item.Tags["CameraModel"] = metaData.CameraModel.DisplayValue;
+            item.Tags["EquipmentMake"] = metaData.EquipmentMake.DisplayValue;
+            item.Tags["Flash"] = metaData.Flash.DisplayValue;
+          }
+          else
+          {
+            item.Tags["DatePictureTaken"] = "";
+            item.Tags["Resolution"] = "";
+            item.Tags["ImageDimensions"] = "";
+            item.Tags["Rotation"] = "0";
+            item.Tags["Orientation"] = "";
+            item.Tags["CameraModel"] = "";
+            item.Tags["EquipmentMake"] = "";
+            item.Tags["Flash"] = "";
+          }
+        }
+        else
+        {
+          skipped++;
+        }
         item.SaveTags();
       }
 
