@@ -1582,11 +1582,9 @@ namespace MediaPortal.Player
             _streamcopy.StreamFlags = BASSStream.BASS_STREAM_DECODE | BASSStream.BASS_SAMPLE_FLOAT; // decode the channel, so that we have a Streamcopy
 
             _asioHandler.Pan = _asioBalance;
+            _asioHandler.Volume = (double)_StreamVolume / 100;
 
-            // Volume always set to 1.0 as it causes stuttering otherwise
-            _asioHandler.Volume = 0.5;
-
-            // Set the Sample Rate from the strea
+            // Set the Sample Rate from the stream
             _asioHandler.SampleRate = (double)info.freq;
             // try to set the device rate too (saves resampling)
             BassAsio.BASS_ASIO_SetRate((double)info.freq);
