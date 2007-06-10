@@ -79,8 +79,9 @@ namespace ProjectInfinity
       //notify our own subscribers (through the message broker)
       OnStartup(new Startup());
 
-      //Start the plugins
       ServiceScope.Get<IThemeManager>().SetDefaultTheme();
+
+      //Start the plugins
       ServiceScope.Get<IPluginManager>().Startup();
       INavigationService navigation = ServiceScope.Get<INavigationService>();
 

@@ -27,17 +27,21 @@ namespace ProjectInfinity
         ILogger logger = new FileLogger("ProjectInfinity.log", LogLevel.Debug);
         ServiceScope.Add(logger);
         logger.Critical("ProjectInfinity is starting...");
-        //register service implementations
+
+        //register core service implementations
+        logger.Info("Registering Message Broker");
         ServiceScope.Add<IMessageBroker>(new MessageBroker()); //Our messagebroker
-        //A pluginmanager that uses reflection to enumerate available plugins
-        //ServiceScope.Add<IPluginManager>(new ReflectionPluginManager());
-        // A plugin manager that uses a plugin tree
+
+        logger.Info("Registering Plugin Manager");
         ServiceScope.Add<IPluginManager>(new PluginManager());
+
+        logger.Info("Registering Settings Manager");
+        ServiceScope.Add<ISettingsManager>(new SettingsManager());
+        
         ServiceScope.Add<IThemeManager>(new ThemeManager());
         ServiceScope.Add<INavigationService>(new NavigationService());
         ServiceScope.Add<IPlayerCollectionService>(new PlayerCollectionService());
         ServiceScope.Add<ILocalisation>(new StringManager("Language", "en"));
-        ServiceScope.Add<ISettingsManager>(new SettingsManager());
         ServiceScope.Add<IWindowsTaskBar>(new WindowsTaskBar());
         ServiceScope.Add<IMediaLibrary>(new MediaLibraryClass());
         ServiceScope.Add<IThumbnailBuilder>(new ThumbnailBuilder());

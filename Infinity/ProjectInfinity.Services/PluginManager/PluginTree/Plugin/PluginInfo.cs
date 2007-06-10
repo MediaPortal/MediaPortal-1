@@ -178,7 +178,9 @@ namespace ProjectInfinity.Plugins
         IPlugin pluginInstance = CreateInstance(_manifest.Identity) as IPlugin;
         if (pluginInstance != null)
         {
+          ServiceScope.Get<ILogger>().Debug("Initialising plugin: {0}, id {1}", className, _properties["id"]);
           pluginInstance.Initialize(_properties["id"]);
+          
           _instances.Add(_manifest.Identity, (object)pluginInstance);
         }
       }
@@ -204,7 +206,7 @@ namespace ProjectInfinity.Plugins
     }
     #endregion
 
-    #region Public static Methods
+    #region Private Methods
     private object CreateInstance(string className)
     {
       foreach (PluginRuntime runtime in _runtimes)
@@ -224,7 +226,9 @@ namespace ProjectInfinity.Plugins
       //}
       return null;
     }
+    #endregion
 
+    #region Public static Methods
     static void SetupPlugin(XmlReader reader, PluginInfo plugin, string hintPath)
     {
       while (reader.Read())

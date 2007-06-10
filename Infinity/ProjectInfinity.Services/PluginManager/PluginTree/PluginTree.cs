@@ -285,8 +285,11 @@ namespace ProjectInfinity.Plugins
       List<PluginInfo> list = new List<PluginInfo>();
       Dictionary<string, Version> dict = new Dictionary<string, Version>();
       Dictionary<string, PluginInfo> pluginDict = new Dictionary<string, PluginInfo>();
+
+      ServiceScope.Get<ILogger>().Info("Loading Plugin files...");
       foreach (string fileName in pluginFiles)
       {
+        ServiceScope.Get<ILogger>().Debug(".Plugin: {0}", fileName);
         PluginInfo plugin;
         try
         {
