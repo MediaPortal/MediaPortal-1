@@ -218,6 +218,7 @@ namespace MediaPortal.Player
     private SYNCPROC PlaybackEndProcDelegate = null;
     private SYNCPROC PlaybackStreamFreedProcDelegate = null;
     private SYNCPROC MetaTagSyncProcDelegate = null;
+    private DOWNLOADPROC LastFmDownloadProcDelegate = null;   // Download Proc, when playing a last.fm stream
     #endregion
 
     #region Variables
@@ -247,6 +248,11 @@ namespace MediaPortal.Player
     private bool _Mixing = false;
     private int _playBackType;
     private string _prevMetaTag;
+
+    private bool _isLastFMRadio = false;
+    private long _lastFMSongStartPosition = 0;
+    private long _bufferOffset = 0;             // The buffer offset in byte. used for last.fm stream calculation
+    private byte[] _dataDownloaded;             // local data buffer for downloadproc
 
     private bool _IsFullScreen = false;
     private int _VideoPositionX = 10;
@@ -326,6 +332,11 @@ namespace MediaPortal.Player
           return 0;
 
         long pos = Bass.BASS_ChannelGetPosition(stream);           // position in bytes
+
+        // In case of last.fm subtract the starting time
+        if (_isLastFMRadio)
+          pos -= _lastFMSongStartPosition;
+
         double curPosition = (double)Bass.BASS_ChannelBytes2Seconds(stream, pos); // the elapsed time length
         return curPosition;
       }
@@ -731,6 +742,7 @@ namespace MediaPortal.Player
         PlaybackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
         PlaybackStreamFreedProcDelegate = new SYNCPROC(PlaybackStreamFreedProc);
         MetaTagSyncProcDelegate = new SYNCPROC(MetaTagSyncProc);
+        LastFmDownloadProcDelegate = new DOWNLOADPROC(LastFmDownload);
 
         StreamEventSyncHandles.Add(new List<int>());
         StreamEventSyncHandles.Add(new List<int>());
@@ -1460,9 +1472,20 @@ namespace MediaPortal.Player
           else if (filePath.ToLower().Contains(@"http://") || filePath.ToLower().Contains(@"https://") ||
                    filePath.ToLower().StartsWith("mms"))
           {
+            _isLastFMRadio = false;
+            _lastFMSongStartPosition = 0;
             Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_WMA_ASX, 1);   // Turn on parsing of ASX files
             // Create an Internet Stream
-            stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, null, 0);
+            if (filePath.IndexOf(@"/last.mp3?") > 0)
+            {
+              // we got a last.fm radio stream, so we need to setup a download proc to detect the SYNC between track changes
+              _isLastFMRadio = true;
+              _bufferOffset = Bass.BASS_ChannelSeconds2Bytes(stream, _BufferingMS / 1000.0f);
+              stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, LastFmDownloadProcDelegate, 0);
+            }
+            else
+              stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, null, 0);
+
             if (stream != 0)
             {
               // Get the Tags and set the Meta Tag SyncProc
@@ -2047,6 +2070,59 @@ namespace MediaPortal.Player
         InternetStreamSongChanged(this);
     }
 
+
+    /// <summary>
+    /// This Procedure is automatically called whenever BASS plays Last.FM Radio. it detects song changes, which are
+    /// notified by Last.FM in sending a "SYNC" message.
+    /// </summary>
+    /// <param name="buffer"></param>
+    /// <param name="length"></param>
+    /// <param name="user"></param>
+    private void LastFmDownload(IntPtr buffer, int length, int user)
+    {
+      try
+      {
+        if (buffer != IntPtr.Zero)
+        {
+          // increase the data buffer as needed
+          if (_dataDownloaded == null || _dataDownloaded.Length < length)
+            _dataDownloaded = new byte[length];
+          // copy from managed to unmanaged memory
+          Marshal.Copy(buffer, _dataDownloaded, 0, length);
+          System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
+          string str = enc.GetString(_dataDownloaded);
+          int syncpos = str.IndexOf("SYNC");
+          if (syncpos > -1)
+          {
+            Log.Info("BASS: last.fm song changed");
+            int stream = GetCurrentStream();
+            // Get the Current Position and add the buffer to calc the wait time
+            long currentpos = Bass.BASS_ChannelGetPosition(stream);
+            long newpos = currentpos + syncpos + _bufferOffset;
+            float waittime = Bass.BASS_ChannelBytes2Seconds(stream, newpos) - Bass.BASS_ChannelBytes2Seconds(stream, currentpos);
+            System.Threading.ThreadPool.QueueUserWorkItem(new System.Threading.WaitCallback(SetLastFmStreamPosition), waittime);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("BASS: Exception in Downloadproc: {0} {1}", ex.Message, ex.StackTrace);
+      }
+    }
+
+    /// <summary>
+    /// Waits the specified time before setting the LastFN Stream Position on song change
+    /// </summary>
+    /// <param name="fadeoutstream"></param>
+    private void SetLastFmStreamPosition(object waittime)
+    {
+      int wait = (int)((float)waittime * 1000.0f);
+      System.Threading.Thread.Sleep(wait);
+
+      // Now set the Stream Position
+      _lastFMSongStartPosition = Bass.BASS_ChannelGetPosition(GetCurrentStream());
+    }
+
     /// <summary>
     /// Handle Stop of a song
     /// </summary>
@@ -2573,7 +2649,8 @@ namespace MediaPortal.Player
         _sourceRectangle = _videoRectangle;
       }
 
-      if (!GUIWindowManager.IsRouted) VizWindow.Visible = _State == PlayState.Playing;
+      if (!GUIWindowManager.IsRouted) 
+        VizWindow.Visible = _State == PlayState.Playing;
     }
 
     private delegate void ShowVisualizationWindowDelegate(bool visible);
