@@ -1970,7 +1970,10 @@ namespace TvService
           context.GetUser(ref user);
           ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
           if (subchannel == null) return false;
-          if (subchannel.IsRecordingTransportStream || (_dbsCard.RecordingFormat == 1))
+          //gibman 
+          // RecordingFormat 0 = ts
+          // RecordingFormat 1 = mpeg
+          if (subchannel.IsRecordingTransportStream || (_dbsCard.RecordingFormat == 0))
           {
             fileName = System.IO.Path.ChangeExtension(fileName, ".ts");
           }
@@ -1980,7 +1983,7 @@ namespace TvService
           }
 
           Log.Write("card: StartRecording {0} {1}", _dbsCard.IdCard, fileName);
-          bool result = subchannel.StartRecording((_dbsCard.RecordingFormat == 1), fileName);
+          bool result = subchannel.StartRecording((_dbsCard.RecordingFormat == 0), fileName);
           if (result)
           {
             fileName = subchannel.RecordingFileName;
