@@ -1316,7 +1316,7 @@ namespace TvPlugin
         }  
         
         benchClock.Stop();
-        Log.Debug("TVHome.ViewChannelAndCheck(): Fase 1 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+        Log.Debug("TVHome.ViewChannelAndCheck(): Phase 1 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
         benchClock.Reset();
         benchClock.Start();
         User user = new User();
@@ -1361,14 +1361,14 @@ namespace TvPlugin
         Log.Debug("TvPlugin: Continuing player. NewCard is {0} and oldCard was {1}", newCardId, _card.Id); */
 
         benchClock.Stop();
-        MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 2 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+        MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Phase 2 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
         benchClock.Reset();
         benchClock.Start();
 
         succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
 
         benchClock.Stop();
-        MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 3 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+        MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Phase 3 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
         benchClock.Reset();
         benchClock.Start();
 
@@ -1435,7 +1435,7 @@ namespace TvPlugin
 
 
           benchClock.Stop();
-          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 4 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Phase 4 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
           benchClock.Reset();
           benchClock.Start();
 
@@ -1448,7 +1448,7 @@ namespace TvPlugin
             SeekToEnd(true);
 
           benchClock.Stop();
-          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 5- {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Phase 5- {0} ms", benchClock.ElapsedMilliseconds.ToString());
           benchClock.Reset();
           benchClock.Start();
 
@@ -1464,7 +1464,7 @@ namespace TvPlugin
           GUIWaitCursor.Hide();
 
           benchClock.Stop();
-          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 6 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Phase 6 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
           benchClock.Reset();
           benchClock.Start();
 
@@ -1475,7 +1475,7 @@ namespace TvPlugin
         {
           //timeshifting new channel failed. 
           benchClock.Stop();
-          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Fase 4 failed - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Phase 4 failed - {0} ms", benchClock.ElapsedMilliseconds.ToString());
           benchClock.Reset();
           benchClock.Start();
 

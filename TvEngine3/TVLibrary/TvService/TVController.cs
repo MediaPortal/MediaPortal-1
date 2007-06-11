@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 using System;
 using System.IO;
 using System.Collections;
@@ -257,8 +258,8 @@ namespace TvService
         catch (Exception ex)
         {
           Log.Error("!!!Controller:Unable to connect to database!!!");
-          Log.Error("Controller: database connection string:{0}",Utils.BlurConnectionStringPassword(Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString));
-          Log.Error("Sql error:{0}",Utils.BlurConnectionStringPassword(ex.Message));
+          Log.Error("Controller: database connection string:{0}", Utils.BlurConnectionStringPassword(Gentle.Framework.ProviderFactory.GetDefaultProvider().ConnectionString));
+          Log.Error("Sql error:{0}", Utils.BlurConnectionStringPassword(ex.Message));
           return false;
         }
 
@@ -384,7 +385,7 @@ namespace TvService
             tvcard.IsLocal = true;
           }
           else
-          { 
+          {
             // fix by misterd_sf for slave server usage
             //tvcard.Card = null;
             tvcard.IsLocal = false;
@@ -733,10 +734,10 @@ namespace TvService
     /// Returns the video stream currently associated with the card. 
     /// </summary>
     /// <returns>stream_type</returns>
-    public int GetCurrentVideoStream ( User user )
+    public int GetCurrentVideoStream(User user)
     {
-        if (user.CardId < 0) return -1;
-        return _cards[user.CardId].GetCurrentVideoStream ( user );
+      if (user.CardId < 0) return -1;
+      return _cards[user.CardId].GetCurrentVideoStream(user);
     }
 
 
@@ -988,9 +989,10 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>Teletext pagenumber for the red button</returns>
-    public int GetTeletextRedPageNumber(User user){
-        if (user.CardId < 0) return -1;
-        return _cards[user.CardId].GetTeletextRedPageNumber(user);
+    public int GetTeletextRedPageNumber(User user)
+    {
+      if (user.CardId < 0) return -1;
+      return _cards[user.CardId].GetTeletextRedPageNumber(user);
     }
 
     /// <summary>
@@ -998,9 +1000,10 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>Teletext pagenumber for the green button</returns>
-    public int GetTeletextGreenPageNumber(User user){
-        if (user.CardId < 0) return -1;
-        return _cards[user.CardId].GetTeletextGreenPageNumber(user);
+    public int GetTeletextGreenPageNumber(User user)
+    {
+      if (user.CardId < 0) return -1;
+      return _cards[user.CardId].GetTeletextGreenPageNumber(user);
     }
 
     /// <summary>
@@ -1008,9 +1011,10 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>Teletext pagenumber for the yellow button</returns>
-    public int GetTeletextYellowPageNumber(User user){
-        if (user.CardId < 0) return -1;
-        return _cards[user.CardId].GetTeletextYellowPageNumber(user);
+    public int GetTeletextYellowPageNumber(User user)
+    {
+      if (user.CardId < 0) return -1;
+      return _cards[user.CardId].GetTeletextYellowPageNumber(user);
     }
 
     /// <summary>
@@ -1018,9 +1022,10 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>Teletext pagenumber for the blue button</returns>
-    public int GetTeletextBluePageNumber(User user){
-        if (user.CardId < 0) return -1;
-        return _cards[user.CardId].GetTeletextBluePageNumber(user);
+    public int GetTeletextBluePageNumber(User user)
+    {
+      if (user.CardId < 0) return -1;
+      return _cards[user.CardId].GetTeletextBluePageNumber(user);
     }
 
     /// <summary>
@@ -2257,8 +2262,28 @@ namespace TvService
       while (enumerator.MoveNext())
       {
         KeyValuePair<int, TvCard> key = enumerator.Current;
-        if (key.Key == cardId) continue;
+        if (key.Key == cardId)
+        {
+          if (key.Value.IsLocal == false) continue;
+        }
         key.Value.RemoveUser(user);
+      }
+      IList servers;
+      try
+      {
+        servers = Server.ListAll();
+      }
+      catch (Exception ex)
+      {
+        return;
+      }
+      foreach (Server server in servers)
+      {
+        if (!IsLocal(server.HostName))
+        {
+          RemoteControl.HostName = server.HostName;
+          RemoteControl.Instance.RemoveUserFromOtherCards(cardId, user);
+        }
       }
     }
 
@@ -2506,5 +2531,3 @@ namespace TvService
 
   }
 }
-
- 	  	 
