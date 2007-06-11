@@ -203,6 +203,8 @@ namespace MediaPortal.GUI.Music
 
     public override void PostRender(float timePassed, int iLayer)
     {
+      if (GUIWindowManager.IsRouted)
+        return;
       if (iLayer != 2) return;
       if (!base.IsAnimating(AnimationType.WindowClose))
       {

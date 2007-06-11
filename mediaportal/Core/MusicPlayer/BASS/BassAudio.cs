@@ -2510,7 +2510,7 @@ namespace MediaPortal.Player
         }
       }
 
-      else if (!VizWindow.Visible)
+      else if (!VizWindow.Visible && !GUIWindowManager.IsRouted)
       {
         NeedUpdate = true;
         SetVideoWindow();
@@ -2573,7 +2573,7 @@ namespace MediaPortal.Player
         _sourceRectangle = _videoRectangle;
       }
 
-      VizWindow.Visible = _State == PlayState.Playing;
+      if (!GUIWindowManager.IsRouted) VizWindow.Visible = _State == PlayState.Playing;
     }
 
     private delegate void ShowVisualizationWindowDelegate(bool visible);

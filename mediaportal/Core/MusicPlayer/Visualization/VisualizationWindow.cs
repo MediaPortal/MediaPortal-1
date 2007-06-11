@@ -588,7 +588,6 @@ namespace MediaPortal.Visualization
 
     ~VisualizationWindow()
     {
-      Console.WriteLine("In VisualizationWindow DTOR");
       Dispose();
     }
 
@@ -1711,13 +1710,17 @@ namespace MediaPortal.Visualization
             if (GUIWindowManager.IsRouted)
             {
               DialogWindowIsActive = true;
+              this.Hide();    // Hide the Vis, so it doesn't overlay the Dialogue
               Invalidate();
               System.Threading.Thread.Sleep(VisualizationRenderInterval);
             }
 
             else
             {
-              DialogWindowIsActive = false;
+              if (DialogWindowIsActive)
+                this.Show();
+
+              DialogWindowIsActive = false;              
               Graphics g = Graphics.FromHwnd(Handle);
               int sleepMS = RenderVisualization(g);
 
@@ -1788,6 +1791,9 @@ namespace MediaPortal.Visualization
       {
         if (_EnableStatusOverlays || !FullScreen)
         {
+          if (DialogWindowIsActive)
+            return 10;
+
           if (Width <= 1 || Height <= 1)
           {
             return 5;
@@ -2129,6 +2135,9 @@ namespace MediaPortal.Visualization
         if (UpdatingCoverArtImage)
           return;
 
+        if (DialogWindowIsActive)
+          return;
+
         float fStep = 1.0f / (float)(FadeFrameCount - 1);
         bool paused = g_Player.Paused;
         // show a static thumb instead of the idle viz..
@@ -2191,6 +2200,9 @@ namespace MediaPortal.Visualization
       try
       {
         if (UpdatingCoverArtImage || UpdatingCoverArtImageList)
+          return;
+
+        if (DialogWindowIsActive)
           return;
 
         if (CurrentThumbImage == null && _CoverArtImages.Count == 0)
@@ -2476,6 +2488,9 @@ namespace MediaPortal.Visualization
       if (img == null)
         return;
 
+      if (DialogWindowIsActive)
+          return;
+
       Rectangle rect = new Rectangle(xPos, yPos, width, height);
 
       float[][] matrixItems = { 
@@ -2518,6 +2533,9 @@ namespace MediaPortal.Visualization
       if (Viz == null || !Viz.Initialized)
         return;
 
+      if (DialogWindowIsActive)
+          return;
+
       // If the status overlay option is disabled we render directly to the viz window
       // only when we're in fullscreen mode.  The music overlay is alway rendered to 
       // an off-screen context.  This allows us to do the album fade-in/out transition
@@ -2536,9 +2554,6 @@ namespace MediaPortal.Visualization
 
     public bool AddImage(string imagePath)
     {
-      Console.WriteLine(Path.GetFileName(imagePath));
-      /////////////////////////////
-
       bool result = false;
       imagePath = imagePath.ToLower();
 
