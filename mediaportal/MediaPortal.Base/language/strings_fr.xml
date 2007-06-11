@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Language name="French" characters="512">
   <Section name="unmapped">
-    <String id="0">Programmes</String>
-    <String id="1">Photos</String>
-    <String id="2">Musique</String>
-    <String id="3">Vidéos</String>
+    <String id="0" prefix="Mes ">Programmes</String>
+    <String id="1" prefix="Mes ">Photos</String>
+    <String id="2" prefix="Ma ">Musique</String>
+    <String id="3" prefix="Mes ">Vidéos</String>
     <String id="4">Guide TV</String>
     <String id="5">Réglages</String>
     <String id="6">Texte manquant</String>
-    <String id="7">Fichiers</String>
-    <String id="8">Météo</String>
-    <String id="9">Informations</String>
-    <String id="10">Recettes</String>
+    <String id="7" prefix="Mes ">Fichiers</String>
+    <String id="8" prefix="Ma ">Météo</String>
+    <String id="9" prefix="Mes ">Informations</String>
+    <String id="10" prefix="Mes ">Recettes</String>
     <String id="11">Lundi</String>
     <String id="12">Mardi</String>
     <String id="13">Mercredi</String>
@@ -31,7 +31,7 @@
     <String id="30">Octobre</String>
     <String id="31">Novembre</String>
     <String id="32">Décembre</String>
-    <String id="50">DVD</String>
+    <String id="50" prefix="Mes ">DVD</String>
     <String id="100">Vue : Icônes</String>
     <String id="101">Vue : Liste</String>
     <String id="102">Analyser</String>
@@ -45,8 +45,8 @@
     <String id="110">Créer les vignettes</String>
     <String id="111">Raccourcis</String>
     <String id="112">PAUSE</String>
-    <String id="113">Mes Fichiers : Source</String>
-    <String id="114">Mes Fichiers : Destination</String>
+    <String id="113" prefix="Mes ">Fichiers : Source</String>
+    <String id="114" prefix="Mes ">Fichiers : Destination</String>
     <String id="115">Copier</String>
     <String id="116">Déplacer</String>
     <String id="117">Effacer</String>
@@ -346,10 +346,10 @@
     <String id="415">Téléchargement des vignettes...</String>
     <String id="416">Indisponible</String>
     <String id="417">Vue : Grandes icônes</String>
-    <String id="418">Vidéos/Genres</String>
-    <String id="419">Vidéos/Acteurs</String>
-    <String id="420">Vidéos/Années</String>
-    <String id="421">Vidéos/Titres</String>
+    <String id="418" prefix="Mes ">Vidéos/Genres</String>
+    <String id="419" prefix="Mes ">Vidéos/Acteurs</String>
+    <String id="420" prefix="Mes ">Vidéos/Années</String>
+    <String id="421" prefix="Mes ">Vidéos/Titres</String>
     <String id="422">Effacer les infos d'album</String>
     <String id="423">Effacer les infos CDDB</String>
     <String id="424">Sélectionnez</String>
@@ -492,7 +492,7 @@
     <String id="602">Chaîne</String>
     <String id="603">Programmé</String>
     <String id="604">TV enregistrée</String>
-    <String id="605">TV</String>
+    <String id="605" prefix="Ma ">TV</String>
     <String id="606">Chargement du nouveau guide TV</String>
     <String id="607">Chargement</String>
     <String id="608">Echec lors de l'importation du guide TV</String>
@@ -552,7 +552,7 @@
     <String id="662">Sam</String>
     <String id="663">Dim</String>
     <String id="664">Effacer cette photo ?</String>
-    <String id="665">Radio</String>
+    <String id="665" prefix="Ma ">Radio</String>
     <String id="666">Stations</String>
     <String id="667">Recherche auto.</String>
     <String id="668">Tri par Type</String>
@@ -680,7 +680,7 @@
     <String id="810">Carte</String>
     <String id="820">Supprimer l'enregistrement non vu ?</String>
     <String id="830">Enlever statut déjà vu</String>
-    <String id="850">Réveil</String>
+    <String id="850" prefix="Mon ">Réveil</String>
     <String id="851">Liste</String>
     <String id="852">Alarme active</String>
     <String id="853">Nom :</String>
@@ -743,7 +743,7 @@
     <String id="910">Connexion...</String>
     <String id="911">Pas de chaînes</String>
     <String id="912">Impossible de télécharger les informations</String>
-    <String id="913">Plugins</String>
+    <String id="913" prefix="Mes ">Plugins</String>
     <String id="914">Enregistrements</String>
     <String id="915">Chaînes TV</String>
     <String id="916">Fichier distant</String>
@@ -805,7 +805,7 @@
     <String id="980">Lire l'enregistrement depuis le direct</String>
     <String id="981">Annuler ce programme</String>
     <String id="982">Supprimer la totalité de cet enregistrement</String>
-    <String id="983">Listes de lecture</String>
+    <String id="983" prefix="Mes ">Listes de lecture</String>
     <String id="984">Récupération de la liste de films</String>
     <String id="985">Récupération des informations sur les films</String>
     <String id="986">Récupération des acteurs</String>
@@ -849,7 +849,7 @@
     <String id="1024">De</String>
     <String id="1025">Une erreur est survenue.</String>
     <String id="1026">Regarder le fichier de log pour les détails.</String>
-    <String id="1027">DVD</String>
+    <String id="1027" prefix="Mes ">DVD</String>
     <String id="1028">Ville</String>
     <String id="1029">Langue des sous-titres</String>
     <String id="1030">Arrêt</String>
@@ -859,7 +859,7 @@
     <String id="1034">Pas de signal détecté !</String>
     <String id="1035">La chaine TV est cryptée !</String>
     <String id="1036">Pas de vidéo trouvée</String>
-    <String id="1037">TV - Programme TV</String>
+    <String id="1037" prefix="Ma ">TV - Programme TV</String>
     <String id="1038">Enregistrement avancé</String>
     <String id="1039">Ne pas enregistrer</String>
     <String id="1040">Prévenez-moi</String>
@@ -890,7 +890,7 @@
     <String id="1112">Laisser conflit</String>
     <String id="1190">Zoom 14:9</String>
     <String id="1200">Installation rapide</String>
-    <String id="1440">Télétexte</String>
+    <String id="1440" prefix="Mon ">Télétexte</String>
     <String id="1441">Télétexte</String>
     <String id="1442">Vitesse de défilement (hor.)</String>
     <String id="1443">Vitesse de défilement (ver.)</String>
@@ -911,7 +911,7 @@
     <String id="1507">Chaîne inconnue</String>
     <String id="1508">Chaîne définie sur aucune carte</String>
     <String id="1509">Pas de fréquence pour cette chaîne</String>
-    <String id="1950">Etat</String>
+    <String id="1950" prefix="Mon ">Etat</String>
     <String id="1951">Disque dur</String>
     <String id="1952">Ventilateur</String>
     <String id="1953">Libre</String>
@@ -1025,7 +1025,7 @@
     <String id="2087">vers l'arrière</String>
     <String id="2088">Liste de Coupe :</String>
     <String id="2089">ajuster la qualité</String>
-    <String id="2090">Editeur Video</String>
+    <String id="2090" prefix="Mon ">Editeur Video</String>
     <String id="2091">Le processus a été annulé</String>
     <String id="2092">Choisissez le fichier que vous voulez éditer:</String>
     <String id="2093">ajouter</String>
@@ -1034,7 +1034,7 @@
     <String id="2097">Ancienne durée:</String>
     <String id="2098">Nouvelle durée:</String>
     <String id="2099">position actuelle :</String>
-    <String id="2100">Graver</String>
+    <String id="2100" prefix="Mon ">Graveur</String>
     <String id="2101">Copier CD/DVD</String>
     <String id="2102">Créer CD-Audio</String>
     <String id="2103">Créer CD-Vidéo</String>
@@ -1082,7 +1082,7 @@
     <String id="2145">Import playlist courante</String>
     <String id="2146">Pas assez de place sur le CD</String>
     <String id="2147">Pas assez de place sur le DVD</String>
-    <String id="2200">Explorateur</String>
+    <String id="2200" prefix="Mon ">Explorateur</String>
     <String id="2201">Sélectionner source</String>
     <String id="2202">Sélectionner destination</String>
     <String id="2203">Copier les données</String>
@@ -1124,7 +1124,7 @@
     <String id="2513">Regardez le fichier de logs.</String>
     <String id="2514">Retour au texte</String>
     <String id="2515">Images</String>
-    <String id="2516">Wikipedia</String>
+    <String id="2516" prefix="Mon ">Wikipedia</String>
     <String id="2600">Anglais</String>
     <String id="2601">Allemand</String>
     <String id="2602">Français</String>
@@ -1202,7 +1202,7 @@
     <String id="4554">Consulter les infos du CD</String>
     <String id="4555">Playlist actuelle</String>
     <String id="4557">Ajouter tout à playlist</String>
-    <String id="5900">Bandes Annonces</String>
+    <String id="5900" prefix="Mes ">Bandes Annonces</String>
     <String id="5901">Voir les bandes annonces</String>
     <String id="5902">Quelles bandes annonces ?</String>
     <String id="5903">Les dernières ajoutées</String>
@@ -1264,7 +1264,7 @@
     <String id="6033">Recherche par mot-clé</String>
     <String id="6034">Recherche par genre</String>
     <String id="6035">Ajouter programme</String>
-    <String id="8000">Messages</String>
+    <String id="8000" prefix="Mes ">Messages</String>
     <String id="8001">Vérifier boîte aux lettres</String>
     <String id="8002">Vérification auto. inactive</String>
     <String id="8003">Vérification auto. active</String>
@@ -1311,7 +1311,7 @@
     <String id="10100">Mines cachées</String>
     <String id="10101">Temps de jeu</String>
     <String id="10102">Meilleur temps</String>
-    <String id="10103">Démineur</String>
+    <String id="10103" prefix="Mon ">Démineur</String>
     <String id="10104">Mini EPG</String>
     <String id="10105">Maintenant</String>
     <String id="11000">Crop settings</String>
@@ -1342,9 +1342,10 @@
     <String id="13031">Fabricant</String>
     <String id="13032">Les plus lancés</String>
     <String id="13033">Les lancés récemment</String>
+    <String id="13034">Titre</String>
     <String id="13041">Affiche Infos</String>
     <String id="16001">Mixage de soirée</String>
-    <String id="19001">Tetris</String>
+    <String id="19001" prefix="Mon ">Tetris</String>
     <String id="19002">Nouvelle partie</String>
     <String id="19003">Musique</String>
     <String id="19004">Sons</String>
@@ -1357,7 +1358,7 @@
     <String id="19011">En pause</String>
     <String id="19012">Game Over</String>
     <String id="19100">Geoclock</String>
-    <String id="19101">Sudoku</String>
+    <String id="19101" prefix="Mon ">Sudoku</String>
     <String id="19102">Nouvelle partie</String>
     <String id="19103">Résoudre</String>
     <String id="19104">Effacer</String>
@@ -1409,7 +1410,7 @@
     <String id="19150">Candidats</String>
     <String id="19151">Ajout/Supprime candidats</String>
     <String id="25001">En attente de la page {0:X}...!</String>
-    <String id="30000">Clips vidéos</String>
+    <String id="30000" prefix="Mes ">Clips vidéos</String>
     <String id="30001">Les plus regardés</String>
     <String id="30002">Nouveau sur Yahoo</String>
     <String id="30003">Jouer tous</String>
@@ -1443,7 +1444,7 @@
     <String id="33031">Autres pistes tagguées avec : </String>
     <String id="33040">Copier joué maintenant spam au presse-papier</String>
     <String id="33041">Ajouter cet album à la playlist</String>
-    <String id="34000">Last.fm</String>
+    <String id="34000" prefix="Mon ">Last.fm</String>
     <String id="34001">Départ/Change flux</String>
     <String id="34002">Ami : </String>
     <String id="34003">Voisin :</String>
@@ -1476,12 +1477,12 @@
     <String id="40002">MediaPortal ne répond pas car il est encore occupé</String>
     <String id="40003">Quand toutes les taches seront terminées, MediaPortal passera en veille.</String>
     <String id="100000">Accueil</String>
-    <String id="100001">Télé</String>
-    <String id="100002">Photos</String>
-    <String id="100003">Fichiers</String>
+    <String id="100001" prefix="Ma ">Télé</String>
+    <String id="100002" prefix="Mes ">Photos</String>
+    <String id="100003" prefix="Mes ">Fichiers</String>
     <String id="100004">Réglages</String>
-    <String id="100005">Musique</String>
-    <String id="100006">Vidéos</String>
+    <String id="100005" prefix="Ma ">Musique</String>
+    <String id="100006" prefix="Mes ">Vidéos</String>
     <String id="100007">Informations système</String>
     <String id="100008">Réglages-&gt;Général</String>
     <String id="100009">Réglages-&gt;Ecran</String>
@@ -1494,20 +1495,20 @@
     <String id="100016">Réglages-&gt;Ecran-&gt;Economiseur d'écran</String>
     <String id="100017">Réglages-&gt;Météo</String>
     <String id="100020">Réglages-&gt;Scripts</String>
-    <String id="100021">Vidéos/genre</String>
-    <String id="100022">Vidéos/acteur</String>
-    <String id="100023">Vidéos/année</String>
+    <String id="100021" prefix="Mes ">Vidéos/genre</String>
+    <String id="100022" prefix="Mes ">Vidéos/acteur</String>
+    <String id="100023" prefix="Mes ">Vidéos/année</String>
     <String id="100024">Réglages-&gt;Programmes</String>
-    <String id="100025">Vidéos/titre</String>
+    <String id="100025" prefix="Mes ">Vidéos/titre</String>
     <String id="100026">Réglages-&gt;Général-&gt;Cache</String>
     <String id="100027">Réglages-&gt;Général-&gt;Lanceur auto</String>
-    <String id="100028">Vidéos/playlist</String>
+    <String id="100028" prefix="Mes ">Vidéos/playlist</String>
     <String id="100029">Réglages-&gt;Général-&gt;LCD</String>
-    <String id="100030">Radio</String>
+    <String id="100030" prefix="Ma ">Radio</String>
     <String id="100031">Réglages-&gt;Ecran-&gt;Vitesse défilement</String>
     <String id="100032">MSN Messenger</String>
     <String id="100033">Chat MSN Messenger</String>
-    <String id="100034">Plugins</String>
+    <String id="100034" prefix="Mes ">Plugins</String>
     <String id="100035">Basic home</String>
     <String id="100100">Boîte Oui/Non</String>
     <String id="100101">Boîte de progression</String>
@@ -1585,13 +1586,13 @@
     <String id="100770">Explorateur</String>
     <String id="101000">Clavier</String>
     <String id="102000">Boîte de sélection</String>
-    <String id="102001">Musique/info</String>
+    <String id="102001" prefix="Ma ">Musique/info</String>
     <String id="102002">Boîte OK</String>
-    <String id="102003">Vidéos/Info</String>
-    <String id="102004">Scripts/Infos</String>
+    <String id="102003" prefix="Mes ">Vidéos/Info</String>
+    <String id="102004" prefix="Mes ">Scripts/Infos</String>
     <String id="102005">Vidéo plein écran</String>
     <String id="102006">Visualisation Audio</String>
-    <String id="102007">Photos/diaporama</String>
+    <String id="102007" prefix="Mes ">Photos/diaporama</String>
     <String id="102008">Boîte Empiler</String>
     <String id="102009">Boîte de sélection</String>
     <String id="102010">Date/heure</String>
@@ -1601,24 +1602,24 @@
     <String id="102014">Info sur l'image</String>
     <String id="102015">Mini menu</String>
     <String id="102016">Notification</String>
-    <String id="102600">Météo</String>
-    <String id="102700">Informations</String>
+    <String id="102600" prefix="Ma ">Météo</String>
+    <String id="102700" prefix="Mes ">Informations</String>
     <String id="102900">Economiseur d'écran</String>
     <String id="102901">OSD plein écran</String>
-    <String id="102959">Editeur video</String>
-    <String id="103001">DVD</String>
-    <String id="103003">TV/OSD</String>
-    <String id="103006">TV/MSN OSD</String>
-    <String id="103007">TV/Zap OSD</String>
-    <String id="103009">TV/Mini EPG</String>
-    <String id="103011">TV/Réglages Crop</String>
-    <String id="104711">Wikipedia</String>
-    <String id="105900">Bandes Annonces</String>
+    <String id="102959" prefix="Mon ">Editeur video</String>
+    <String id="103001" prefix="Mon ">DVD</String>
+    <String id="103003" prefix="Mon ">TV/OSD</String>
+    <String id="103006" prefix="Mon ">TV/MSN OSD</String>
+    <String id="103007" prefix="Mon ">TV/Zap OSD</String>
+    <String id="103009" prefix="Mon ">TV/Mini EPG</String>
+    <String id="103011" prefix="Mes ">TV/Réglages Crop</String>
+    <String id="104711" prefix="Mon ">Wikipedia</String>
+    <String id="105900" prefix="Mes ">Bandes Annonces</String>
     <String id="106666">Attente mise en veille</String>
-    <String id="107700">TV/Télétexte</String>
-    <String id="107701">TV/Télétexte</String>
-    <String id="107777">Sudoku</String>
-    <String id="107890">Last.fm radio</String>
+    <String id="107700" prefix="Mon ">TV/Télétexte</String>
+    <String id="107701" prefix="Mon ">TV/Télétexte</String>
+    <String id="107777" prefix="Mon ">Sudoku</String>
+    <String id="107890" prefix="Ma ">Last.fm radio</String>
     <String id="108888">Menu Musique</String>
     <String id="200000">Sélectionnez le logiciel de récupération des programmes TV. Note : Si votre pays n'est</String>
     <String id="200001">pas dans la liste, il vous faudra remplir manuellement le fichier tvguide.xml.</String>
@@ -1665,5 +1666,10 @@
     <String id="200043">Nettoyer enregistrements</String>
     <String id="200044">Enregistrements invalides</String>
     <String id="200045">Les deux</String>
+    <String id="200046">Créer vignettes (ce dossier)</String>
+    <String id="200047">Créer vignettes (avec sous-dossiers)</String>
+    <String id="200048">Re-créer toutes les vignettes</String>
+    <String id="200049">Seulement les enregs déjà vus</String>
+    <String id="200050">Cela supprimera les enregs du disque dur</String>		
   </Section>
 </Language>
