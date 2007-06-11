@@ -423,6 +423,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   D3DVIEWPORT9 viewport;
 	m_pDevice->GetViewport(&viewport);
  
+	if ((x+nw <= viewport.X) || (y+nh <=viewport.Y) || (x >= viewport.X+viewport.Width) || (y >= viewport.Y+viewport.Height)) return;  // nothing to do everthing outside the view
 
 	if (needRedraw)
 	{
