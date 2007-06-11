@@ -1418,13 +1418,20 @@ namespace TvPlugin
           }*/
 
           //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player. 
-          if (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName || OldVideoStream != TVHome.Card.GetCurrentVideoStream(card.User) || hadAc3 != hasAc3 )
+          int newVideoStream = TVHome.Card.GetCurrentVideoStream(card.User);
+          if (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName || OldVideoStream != newVideoStream || hadAc3 != hasAc3 )
             {
+                MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): old videostream {0}, new videostream {1}", OldVideoStream, newVideoStream);
+                MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): had ac3 {0}, has ac3 {1}", hadAc3, hasAc3);
                 if (wasPlaying)
                 {
                     MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}/{3}", TVHome.Card.Id ,card.Id ,TVHome.Card.RTSPUrl, card.RTSPUrl);
                     MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}/{1}", TVHome.Card.TimeShiftFileName,Card.TimeShiftFileName);
                     g_Player.Stop();
+                    // gibman; when we issue a stop command we also have to restart the channel again.
+                    // this also fixed the problems with "array out of bounds" on some of the audiostreams code below.                  
+                    MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): restarting player.");
+                    ViewChannelAndCheck(channel);                    
                 }
             }
             
@@ -1453,14 +1460,22 @@ namespace TvPlugin
           benchClock.Start();
 
           int prefLangId = GetPreferedAudioStreamIndex(_preferredLanguages, _preferAC3);
-          if (IsSingleSeat())
-            g_Player.CurrentAudioStream = prefLangId;
-          else
-          {
-            IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
-            TVHome.Card.AudioStream = streams[prefLangId];
-          }
 
+          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): preferred langId:{0}", prefLangId);
+
+          if (IsSingleSeat())
+          {            
+            g_Player.CurrentAudioStream = prefLangId;
+          }
+          else
+          {            
+            IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;           
+            MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): streams length:{0}", streams.Length);
+            if (streams.Length > prefLangId) // guard; avoid index out of bounds errors.
+            {              
+              TVHome.Card.AudioStream = streams[prefLangId];             
+            }
+          }          
           GUIWaitCursor.Hide();
 
           benchClock.Stop();
