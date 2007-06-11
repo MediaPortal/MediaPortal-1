@@ -58,9 +58,42 @@ namespace TvService
       _schedule = schedule;
       _channel = channel;
       _endTime = endTime;
+      _program = null;
+
+      TvDatabase.Program _current = schedule.ReferencedChannel().CurrentProgram; // current running program
+      TvDatabase.Program _next = schedule.ReferencedChannel().NextProgram; // next running one
 
       //find which program we are recording
-      _program = schedule.ReferencedChannel().GetProgramAt(schedule.StartTime.AddMinutes(schedule.PreRecordInterval));
+      if (schedule.ScheduleType == (int)ScheduleRecordingType.Daily ||
+          schedule.ScheduleType == (int)ScheduleRecordingType.Weekends ||
+          schedule.ScheduleType == (int)ScheduleRecordingType.Weekly ||
+          schedule.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
+      {
+        if (_current != null)
+        {
+          if (schedule.StartTime.Hour == _current.StartTime.Hour &&
+              schedule.StartTime.Minute == _current.StartTime.Minute)
+          // the program we wanna record is the current running show?
+          {
+            _program = _current;
+          }
+        }
+        if (_next != null)
+        {
+          // maybe the next then ...
+          {
+            if (schedule.StartTime.Hour == _next.StartTime.Hour &&
+            schedule.StartTime.Minute == _next.StartTime.Minute)
+            {
+              _program = _next;
+            }
+          }
+        }
+      }
+      else
+      {
+        _program = schedule.ReferencedChannel().GetProgramAt(schedule.StartTime.AddMinutes(schedule.PreRecordInterval));
+      }
       //no program? then treat this as a manual recording
       if (_program == null)
       {
@@ -266,7 +299,7 @@ namespace TvService
       if (DoesFileExist(fullPath + "\\" + fileName))
       {
         int i = 1;
-        while (DoesFileExist(fullPath + "\\" + fileName + "_" + i.ToString() ))
+        while (DoesFileExist(fullPath + "\\" + fileName + "_" + i.ToString()))
           ++i;
         fileName += "_" + i.ToString();
       }
