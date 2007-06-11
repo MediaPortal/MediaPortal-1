@@ -140,6 +140,7 @@ namespace MyWeather
             ChangeProperty("LocationsAdded");
             ChangeProperty("SelectedLocation");
             ChangeProperty("SearchLocation");
+            ChangeProperty("LabelSelectedGrabber");
         }
         /// <summary>
         /// searches for cities and populates the cities list

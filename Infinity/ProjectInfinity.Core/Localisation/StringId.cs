@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using ProjectInfinity.Logging;
 
 namespace ProjectInfinity.Localisation
 {
