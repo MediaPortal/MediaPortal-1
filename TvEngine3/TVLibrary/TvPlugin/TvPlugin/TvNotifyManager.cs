@@ -28,7 +28,9 @@ using System.Text;
 using System.Windows.Forms;
 
 using MediaPortal.GUI.Library;
+using MediaPortal.Dialogs;
 using MediaPortal.Util;
+using MediaPortal.Player;
 using MediaPortal.Configuration;
 
 using Gentle.Common;
@@ -48,6 +50,7 @@ namespace TvPlugin
     int _preNotifyConfig;
     //list of all notifies (alert me n minutes before program starts)
     IList _notifiesList;
+    IList _notifiedRecordings;
 
     public TvNotifyManager()
     {
@@ -76,12 +79,13 @@ namespace TvPlugin
         sb.AddConstraint(Operator.Equals, "notify", 1);
         SqlStatement stmt = sb.GetStatement(true);
         _notifiesList = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+        _notifiedRecordings = new ArrayList();
         if (_notifiesList != null)
         {
           Log.Info("TvNotify: {0} notifies", _notifiesList.Count);
         }
       }
-      catch (Exception )
+      catch (Exception)
       {
       }
     }
@@ -94,33 +98,73 @@ namespace TvPlugin
         LoadNotifies();
         _notifiesListChanged = false;
       }
-      if (_notifiesList == null) return;
-      if (_notifiesList.Count == 0) return;
       DateTime preNotifySecs = DateTime.Now.AddSeconds(_preNotifyConfig);
-      foreach (Program program in _notifiesList)
+      if (_notifiesList != null && _notifiesList.Count > 0)
       {
-        if (preNotifySecs > program.StartTime)
+        foreach (Program program in _notifiesList)
         {
-          Log.Info("Notify {0} on {1} start {2}", program.Title, program.ReferencedChannel().Name, program.StartTime);
-          program.Notify = false;
-          program.Persist();
+          if (preNotifySecs > program.StartTime)
+          {
+            Log.Info("Notify {0} on {1} start {2}", program.Title, program.ReferencedChannel().Name, program.StartTime);
+            program.Notify = false;
+            program.Persist();
 
-          MediaPortal.TV.Database.TVProgram tvProg = new MediaPortal.TV.Database.TVProgram();
-          tvProg.Channel = program.ReferencedChannel().Name;
-          tvProg.Title = program.Title;
-          tvProg.Description = program.Description;
-          tvProg.Genre = program.Genre;
-          tvProg.Start = Utils.datetolong(program.StartTime);
-          tvProg.End = Utils.datetolong(program.EndTime);
+            MediaPortal.TV.Database.TVProgram tvProg = new MediaPortal.TV.Database.TVProgram();
+            tvProg.Channel = program.ReferencedChannel().Name;
+            tvProg.Title = program.Title;
+            tvProg.Description = program.Description;
+            tvProg.Genre = program.Genre;
+            tvProg.Start = Utils.datetolong(program.StartTime);
+            tvProg.End = Utils.datetolong(program.EndTime);
 
-          _notifiesList.Remove(program);
-          Log.Info("send notify");
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM, 0, 0, 0, 0, 0, null);
-          msg.Object = tvProg;
-          GUIGraphicsContext.SendMessage(msg);
-          msg = null;
-          Log.Info("send notify done");
-          return;
+            _notifiesList.Remove(program);
+            Log.Info("send notify");
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM, 0, 0, 0, 0, 0, null);
+            msg.Object = tvProg;
+            GUIGraphicsContext.SendMessage(msg);
+            msg = null;
+            Log.Info("send notify done");
+            return;
+          }
+        }
+      }
+
+      if (g_Player.IsTV && g_Player.Playing)
+      {
+        IList schedulesList = Schedule.ListAll();
+        foreach (Schedule rec in schedulesList)
+        {
+          //Check if alerady notified user
+          foreach (Schedule notifiedRec in _notifiedRecordings)
+          {
+            if (rec == notifiedRec)
+            {
+              return;
+
+            }
+          }
+          //Check if timing it's time 
+          DateTime start = rec.StartTime.AddMinutes(-rec.PreRecordInterval);
+          DateTime preNotifyRec = preNotifySecs;
+          if ( preNotifySecs < start ) { preNotifyRec = start; };
+          if (preNotifySecs > start && rec.StartTime > DateTime.Now)
+          {
+            //check if freecard is available. 
+            if ((int)TVHome.TvServer.GetChannelState(rec.IdChannel) == 0) //not tunnable
+            {
+              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+              if (pDlgOK != null)
+              {
+                _notifiedRecordings.Add(rec);
+                pDlgOK.SetHeading(605);//my tv
+                pDlgOK.SetLine(1, rec.ProgramName);
+                pDlgOK.SetLine(2, "is scheduled to begin recording shortly.");
+                pDlgOK.SetLine(3, "Your TV Viewing might be disrupted");
+                pDlgOK.SetLine(4, "since no free card is available.");
+                pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+              }
+            }
+          }
         }
       }
     }
