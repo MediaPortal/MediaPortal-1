@@ -305,6 +305,7 @@ namespace TvPlugin
     void Update()
     {
       SetHistory();
+      int currentItemId = 0;
       listView.Clear();
       titleView.Clear();
       if (currentLevel == 0 && currentSearchMode == SearchMode.Genre)
@@ -415,6 +416,8 @@ namespace TvPlugin
               item.IsFolder = true;
               item.Label = genre;
               item.Path = genre;
+              item.ItemId = currentItemId;
+              currentItemId++;
               Utils.SetDefaultIcons(item);
               listView.Add(item);
               itemCount++;
@@ -481,6 +484,8 @@ namespace TvPlugin
               item.Label2 = strTime;
               item.Path = program.Title;
               item.MusicTag = program;
+              item.ItemId = currentItemId;
+              currentItemId++;
               bool isSerie;
               if (IsRecording(program, out isSerie))
               {
@@ -592,6 +597,8 @@ namespace TvPlugin
                 item.Label2 = strTime;
               item.Path = program.Title;
               item.MusicTag = program;
+              item.ItemId = currentItemId;
+              currentItemId++;
               bool isSerie;
               if (IsRecording(program, out isSerie))
               {
@@ -677,6 +684,8 @@ namespace TvPlugin
               item.Label2 = strTime;
               item.Path = program.Title;
               item.MusicTag = program;
+              item.ItemId = currentItemId;
+              currentItemId++;
               bool isSerie;
               if (IsRecording(program, out isSerie))
               {
@@ -698,7 +707,11 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#itemcount", strObjects);
 
       btnShow.Clear();
-      programs.Sort();
+      try
+      {
+          programs.Sort();
+      }
+      catch (Exception) {}
       int selItem = 0;
       int count = 0;
       foreach (Program prog in programs)
@@ -752,8 +765,7 @@ namespace TvPlugin
       GUIListItem item = GetSelectedItem();
       if (item == null) return;
       string currentFolder = String.Format("{0}.{1}.{2}.{3}.{4}.{5}",
-        (int)currentSearchMode, currentLevel, currentGenre,
-        filterLetter, filterShow, filterEpisode);
+        (int)prevcurrentSearchMode, prevcurrentLevel, prevcurrentGenre,prevfilterLetter, prevfilterShow, prevfilterEpisode);
       prevcurrentSearchMode = currentSearchMode;
       prevcurrentLevel = currentLevel;
       prevcurrentGenre = currentGenre;
@@ -762,7 +774,8 @@ namespace TvPlugin
       prevfilterEpisode = filterEpisode;
       if (item.Label == "..") return;
 
-      history.Set(item.Label, currentFolder);
+      history.Set(item.ItemId.ToString(), currentFolder);
+      //Log.Info("history.Set({0},{1}", item.ItemId.ToString(), currentFolder);
     }
 
     void RestoreHistory()
@@ -770,13 +783,16 @@ namespace TvPlugin
       string currentFolder = String.Format("{0}.{1}.{2}.{3}.{4}.{5}",
                           (int)currentSearchMode, currentLevel, currentGenre,
                           filterLetter, filterShow, filterEpisode);
+      //Log.Info("history.Get({0})", currentFolder);
       string selectedItemLabel = history.Get(currentFolder);
       if (selectedItemLabel == null) return;
       if (selectedItemLabel.Length == 0) return;
       for (int i = 0; i < listView.Count; ++i)
       {
         GUIListItem item = listView[i];
-        if (item.Label == selectedItemLabel)
+        //if (item.Label == selectedItemLabel)
+        Log.Info(item.ItemId.ToString() + "==" + selectedItemLabel); 
+        if (item.ItemId.ToString()==selectedItemLabel)
         {
           listView.SelectedListItemIndex = i;
           titleView.SelectedListItemIndex = i;
@@ -808,16 +824,16 @@ namespace TvPlugin
       switch (currentSortMethod)
       {
         case SortMethod.Name:
-          if (sortAscending)
-          {
-            iComp = String.Compare(item1.Label, item2.Label, true);
-          }
-          else
-          {
+            if (sortAscending)
+            {
+              iComp = String.Compare(item1.Label, item2.Label, true);
+            }
+            else
+            {
 
-            iComp = String.Compare(item2.Label, item1.Label, true);
-          }
-          return iComp;
+              iComp = String.Compare(item2.Label, item1.Label, true);
+            }
+            return iComp;
 
         case SortMethod.Channel:
           if (prog1 != null && prog2 != null)
