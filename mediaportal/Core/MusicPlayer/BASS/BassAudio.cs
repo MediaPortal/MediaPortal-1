@@ -246,6 +246,7 @@ namespace MediaPortal.Player
     private bool _CrossFading = false;          // true if crossfading has started
     private bool _Mixing = false;
     private int _playBackType;
+    private string _prevMetaTag;
 
     private bool _IsFullScreen = false;
     private int _VideoPositionX = 10;
@@ -1465,6 +1466,7 @@ namespace MediaPortal.Player
             if (stream != 0)
             {
               // Get the Tags and set the Meta Tag SyncProc
+              _prevMetaTag = String.Empty;
               SetStreamTags(stream);
               GetMetaTags(Bass.BASS_ChannelGetTags(stream, BASSTag.BASS_TAG_META));
               Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_META, 0, MetaTagSyncProcDelegate, 0);
@@ -2003,30 +2005,41 @@ namespace MediaPortal.Player
     /// <param name="tagPtr"></param>
     private void GetMetaTags(IntPtr tagPtr)
     {
-      string tag = Marshal.PtrToStringAnsi(tagPtr);
       string title = string.Empty;
       string artist = string.Empty;
-      if (tag != null)
+      try
       {
-        Regex r = new Regex("StreamTitle='(.+?)';StreamUrl=", RegexOptions.IgnoreCase);
-        Match m = r.Match(tag);
-        if (m.Success)
+        string tag = Marshal.PtrToStringAnsi(tagPtr);
+        if (tag != null)
         {
-          Group g1 = m.Groups[1];
-          CaptureCollection captures = g1.Captures;
-          Capture c = captures[0];
-          Regex r1 = new Regex("( - )");
-          string[] s = r1.Split(c.ToString());
-          if (s != null)
+          if (tag == _prevMetaTag)
+            return;
+
+          _prevMetaTag = tag;
+          Log.Info("BASS: Title sent via Stream: {0}", tag);
+          Regex r = new Regex("StreamTitle='(.+?)';StreamUrl=", RegexOptions.IgnoreCase);
+          Match m = r.Match(tag);
+          if (m.Success)
           {
-            artist = s[0];
-            title = s[2];
+            Group g1 = m.Groups[1];
+            CaptureCollection captures = g1.Captures;
+            Capture c = captures[0];
+            Regex r1 = new Regex("( - )");
+            string[] s = r1.Split(c.ToString());
+            if (s != null)
+            {
+              artist = s[0];
+              title = s[2];
+            }
+            else
+              title = c.ToString();   // Set the Title as sent via the stream
           }
-          else
-            title = c.ToString();   // Set the Title as sent via the stream
         }
       }
-      Log.Info("BASS: Title sent via Stream: {0}", tag);
+      catch (Exception)
+      {
+        // No need to do anything, just leave the title and artist empty.
+      }
       GUIPropertyManager.SetProperty("#Play.Current.Title", title);
       GUIPropertyManager.SetProperty("#Play.Current.Artist", artist);
 
@@ -2549,8 +2562,6 @@ namespace MediaPortal.Player
 
         VizWindow.Size = new System.Drawing.Size(_VideoWidth, _VideoHeight);
         VizWindow.Visible = true;
-        Log.Debug("BASS:  Done");
-
         return;
       }
       else
