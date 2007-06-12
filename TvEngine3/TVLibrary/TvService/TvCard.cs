@@ -136,9 +136,8 @@ namespace TvService
       {
         try
         {
-          //          sf #1734436 by krazer
-          //          RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
-          //          RemoteControl.Instance.RemoveUserFromOtherCards(_dbsCard.IdCard, user);
+          RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
+          RemoteControl.Instance.RemoveUserFromOtherCards(_dbsCard.IdCard, user);
           return;
         }
         catch (Exception)

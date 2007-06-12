@@ -2262,28 +2262,8 @@ namespace TvService
       while (enumerator.MoveNext())
       {
         KeyValuePair<int, TvCard> key = enumerator.Current;
-        if (key.Key == cardId)
-        {
-          if (key.Value.IsLocal == false) continue;
-        }
+        if (key.Key == cardId) continue;
         key.Value.RemoveUser(user);
-      }
-      IList servers;
-      try
-      {
-        servers = Server.ListAll();
-      }
-      catch (Exception ex)
-      {
-        return;
-      }
-      foreach (Server server in servers)
-      {
-        if (!IsLocal(server.HostName))
-        {
-          RemoteControl.HostName = server.HostName;
-          RemoteControl.Instance.RemoveUserFromOtherCards(cardId, user);
-        }
       }
     }
 
