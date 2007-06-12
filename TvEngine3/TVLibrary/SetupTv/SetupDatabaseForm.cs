@@ -513,6 +513,7 @@ namespace SetupTv
         if (ServiceHelper.IsInstalled(ConfiguredServiceName))
         {
           textBoxServiceName.BackColor = clAllOkay;
+          DBSearchPattern = ConfiguredServiceName;
         }
         else
         {          
