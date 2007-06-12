@@ -1480,8 +1480,8 @@ namespace MediaPortal.Player
             {
               // we got a last.fm radio stream, so we need to setup a download proc to detect the SYNC between track changes
               _isLastFMRadio = true;
-              _bufferOffset = Bass.BASS_ChannelSeconds2Bytes(stream, _BufferingMS / 1000.0f);
               stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, LastFmDownloadProcDelegate, 0);
+              _bufferOffset = Bass.BASS_ChannelSeconds2Bytes(stream, (float)(_BufferingMS / 1000));
             }
             else
               stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, null, 0);
