@@ -507,13 +507,14 @@ namespace SetupTv
 
         // first try the quick method and assume the user is right or using defaults
         string ConfiguredServiceName = textBoxServiceName.Text;
+        string DBSearchPattern = @"MySQL";
+
         if (ServiceHelper.IsInstalled(ConfiguredServiceName))
         {
           textBoxServiceName.BackColor = Color.GreenYellow;
         }
         else
-        {
-          string DBSearchPattern = @"MySQL";
+        {          
           // MSSQL
           if (radioButton1.Checked)
             DBSearchPattern = @"MSSQL$";
@@ -521,16 +522,20 @@ namespace SetupTv
           if (ServiceHelper.GetDBServiceName(ref DBSearchPattern))
           {
             textBoxServiceName.Text = DBSearchPattern;
-            textBoxServiceName.BackColor = Color.GreenYellow;
-
-            if (ServiceHelper.AddDependencyByName(DBSearchPattern))
-              TvLibrary.Log.Log.Info("SetupDatabaseForm: Added dependency for TvService - {0}", DBSearchPattern);
+            textBoxServiceName.BackColor = Color.GreenYellow;            
           }
           else
           {
             TvLibrary.Log.Log.Info("SetupDatabaseForm: DB service name not recognized - using defaults");
             textBoxServiceName.BackColor = Color.Red;
           }
+        }
+
+        // if a matching service name is available - add it now
+        if (textBoxServiceName.BackColor == Color.Red && textBoxServiceName.Enabled)
+        {
+          if (ServiceHelper.AddDependencyByName(DBSearchPattern))
+            TvLibrary.Log.Log.Info("SetupDatabaseForm: Added dependency for TvService - {0}", DBSearchPattern);
         }
       }
     }  
