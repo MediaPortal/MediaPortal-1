@@ -76,6 +76,8 @@ namespace MediaPortal.GUI.Music
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
 
+    private bool m_useGlobalSearch = false;
+    private bool m_foundGlobalSearch = false;
     #endregion
 
     public GUIMusicGenres()
@@ -96,6 +98,14 @@ namespace MediaPortal.GUI.Music
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string strDefault = xmlreader.GetValueAsString("music", "default", String.Empty);
+        
+        m_useGlobalSearch = xmlreader.GetValueAsBool("musicmisc", "useglobalsearch", false);
+        if (m_useGlobalSearch)
+        {
+          if (PluginManager.IsWindowPlugInEnabled("MediaPortal.GUI.GlobalSearch.GUIGlobalMusicSearch"))
+            m_foundGlobalSearch = true;
+        }
+
         _shareList.Clear();
         for (int i = 0; i < 20; i++)
         {
@@ -313,44 +323,6 @@ namespace MediaPortal.GUI.Music
             LoadDirectory((handler.CurrentLevel + 1).ToString());
             return;
           }
-
-          // 2007-04-12 --chefkoch
-          // commented the following code and used just the lines above of it for testing
-          // if now problems occured anymore, it can be removed
-          /*
-          else if (item != null && item.IsFolder)
-          {
-            if (item.Label == ".." && item.Path != String.Empty)
-            {
-              // Remove selection
-              m_iItemSelected = -1;
-              LoadDirectory(m_strDirectory);
-            }
-            else
-            {
-              if (item.Label == "..")
-              {
-                handler.CurrentLevel--;
-              }
-              else
-              {
-                handler.Select(item.AlbumInfoTag as Song);
-              }
-
-              m_iItemSelected = -1;
-              //set level if no path is set
-              if (item.Path == "")
-              {
-                LoadDirectory((handler.CurrentLevel + 1).ToString());
-              }
-              else
-              {
-                LoadDirectory(item.Path);
-              }
-            }
-          }
-          */
-
         }
       }
 
@@ -365,42 +337,6 @@ namespace MediaPortal.GUI.Music
           LoadDirectory((handler.CurrentLevel + 1).ToString());
           return;
         }
-
-        // 2007-04-12 --chefkoch
-        // commented the following code and used just the lines above of it for testing
-        // if now problems occured anymore, it can be removed
-        /*
-      else if (item != null && item.IsFolder)
-      {
-        if (item.Label == ".." && item.Path != String.Empty)
-        {
-          // Remove selection
-          m_iItemSelected = -1;
-          LoadDirectory(m_strDirectory);
-        }
-        else
-        {
-          if (item.Label == "..")
-          {
-            handler.CurrentLevel--;
-          }
-          else
-            handler.Select(item.AlbumInfoTag as Song);
-
-          m_iItemSelected = -1;
-          //set level if no path is set
-          if (item.Path == "")
-          {
-            LoadDirectory((handler.CurrentLevel + 1).ToString());
-          }
-          else
-          {
-            LoadDirectory(item.Path);
-          }
-        }
-        return;
-      }
-        */
       }
 
       base.OnAction(action);
@@ -466,17 +402,24 @@ namespace MediaPortal.GUI.Music
     {
       if (control == btnSearch)
       {
-        int activeWindow = (int)GUIWindowManager.ActiveWindow;
-        VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-        if (null == keyboard) return;
-        keyboard.IsSearchKeyboard = true;
-        keyboard.Text = String.Empty;
-        keyboard.Reset();
-        //keyBoard.KindOfSearch=(int)MediaPortal.Dialogs.VirtualSearchKeyboard.SearchKinds.SEARCH_STARTS_WITH;
-        keyboard_TextChanged(0, "");
-        keyboard.TextChanged += new MediaPortal.Dialogs.VirtualKeyboard.TextChangedEventHandler(keyboard_TextChanged); // add the event handler
-        keyboard.DoModal(activeWindow); // show it...
-        keyboard.TextChanged -= new MediaPortal.Dialogs.VirtualKeyboard.TextChangedEventHandler(keyboard_TextChanged);	// remove the handler			
+        if (m_useGlobalSearch && m_foundGlobalSearch)
+        {
+          GUIWindowManager.ActivateWindow(30885);   // Check in GlobalSerach source
+        }
+        else
+        {
+          int activeWindow = (int)GUIWindowManager.ActiveWindow;
+          VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+          if (null == keyboard) return;
+          keyboard.IsSearchKeyboard = true;
+          keyboard.Text = String.Empty;
+          keyboard.Reset();
+          //keyBoard.KindOfSearch=(int)MediaPortal.Dialogs.VirtualSearchKeyboard.SearchKinds.SEARCH_STARTS_WITH;
+          keyboard_TextChanged(0, "");
+          keyboard.TextChanged += new MediaPortal.Dialogs.VirtualKeyboard.TextChangedEventHandler(keyboard_TextChanged); // add the event handler
+          keyboard.DoModal(activeWindow); // show it...
+          keyboard.TextChanged -= new MediaPortal.Dialogs.VirtualKeyboard.TextChangedEventHandler(keyboard_TextChanged);	// remove the handler			
+        }
       }
 
       if (control == btnPlayCd)
