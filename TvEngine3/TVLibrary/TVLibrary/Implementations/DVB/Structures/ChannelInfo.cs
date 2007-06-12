@@ -407,6 +407,10 @@ namespace TvLibrary.Implementations.DVB.Structures
           case 0x4://MPEG-3 AUDIO ISO/IEC 13818-3 
             pidInfo.isAudio = true;
             break;
+          case 0x81://AC3 AUDIO
+            pidInfo.isAudio = true;
+            pidInfo.isAC3Audio = true;
+            break;
         }
         pointer += 5;
         len1 -= 5;
