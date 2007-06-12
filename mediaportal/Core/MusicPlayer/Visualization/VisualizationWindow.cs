@@ -2135,7 +2135,7 @@ namespace MediaPortal.Visualization
         if (UpdatingCoverArtImage)
           return;
 
-        if (DialogWindowIsActive)
+        if (GUIWindowManager.IsRouted)
           return;
 
         float fStep = 1.0f / (float)(FadeFrameCount - 1);
@@ -2202,8 +2202,13 @@ namespace MediaPortal.Visualization
         if (UpdatingCoverArtImage || UpdatingCoverArtImageList)
           return;
 
-        if (DialogWindowIsActive)
+        if (GUIWindowManager.IsRouted)
+        {
+          this.Hide();
           return;
+        }
+        else
+          this.Show();
 
         if (CurrentThumbImage == null && _CoverArtImages.Count == 0)
           return;
@@ -2488,7 +2493,7 @@ namespace MediaPortal.Visualization
       if (img == null)
         return;
 
-      if (DialogWindowIsActive)
+      if (GUIWindowManager.IsRouted)
           return;
 
       Rectangle rect = new Rectangle(xPos, yPos, width, height);
@@ -2533,7 +2538,7 @@ namespace MediaPortal.Visualization
       if (Viz == null || !Viz.Initialized)
         return;
 
-      if (DialogWindowIsActive)
+      if (GUIWindowManager.IsRouted)
           return;
 
       // If the status overlay option is disabled we render directly to the viz window
