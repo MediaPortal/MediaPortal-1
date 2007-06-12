@@ -65,7 +65,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         xmlwriter.SetValueAsBool("audioscrobbler", "showballontips", checkBoxShowBallonTips.Checked);
         xmlwriter.SetValueAsBool("audioscrobbler", "submitradiotracks", checkBoxSubmitToProfile.Checked);
         xmlwriter.SetValue("audioscrobbler", "listentrycount", numericUpDownListEntries.Value);
-        xmlwriter.SetValue("audioscrobbler", "streamplayertype", comboBoxStreamPlayerType.SelectedIndex);
+        xmlwriter.SetValue("audioscrobbler", "streamplayertype", 0);// comboBoxStreamPlayerType.SelectedIndex);
       }
     }
     #endregion

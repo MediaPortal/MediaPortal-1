@@ -212,6 +212,9 @@ namespace MediaPortal.Player
     public delegate void InternetStreamSongChangedDelegate(object sender);
     public event InternetStreamSongChangedDelegate InternetStreamSongChanged;
 
+    public delegate void LastFMSyncReceived(object sender, DateTime syncTime);
+    public event LastFMSyncReceived LastFMSync;
+
     private delegate void InitializeControlsDelegate();
 
     private SYNCPROC PlaybackFadeOutProcDelegate = null;
@@ -2094,7 +2097,7 @@ namespace MediaPortal.Player
           int syncpos = str.IndexOf("SYNC");
           if (syncpos > -1)
           {
-            Log.Info("BASS: last.fm song changed");
+            Log.Debug("BASS: last.fm song changed");
             int stream = GetCurrentStream();
             // Get the Current Position and add the buffer to calc the wait time
             long currentpos = Bass.BASS_ChannelGetPosition(stream);
@@ -2121,6 +2124,9 @@ namespace MediaPortal.Player
 
       // Now set the Stream Position
       _lastFMSongStartPosition = Bass.BASS_ChannelGetPosition(GetCurrentStream());
+
+      if (LastFMSync != null)
+        LastFMSync(this, DateTime.Now);
     }
 
     /// <summary>

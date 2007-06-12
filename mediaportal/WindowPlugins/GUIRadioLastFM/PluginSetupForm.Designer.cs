@@ -57,6 +57,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.panelBannerAlign = new System.Windows.Forms.Panel();
       this.pictureBoxBanner = new System.Windows.Forms.PictureBox();
       this.groupBoxSettings = new System.Windows.Forms.GroupBox();
+      this.labelEngine = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxStreamPlayerType = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.labelListEntries = new MediaPortal.UserInterface.Controls.MPLabel();
       this.numericUpDownListEntries = new System.Windows.Forms.NumericUpDown();
       this.checkBoxShowBallonTips = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -64,8 +66,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.checkBoxUseTrayIcon = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonCancel = new System.Windows.Forms.Button();
       this.buttonSave = new System.Windows.Forms.Button();
-      this.comboBoxStreamPlayerType = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.labelEngine = new MediaPortal.UserInterface.Controls.MPLabel();
       this.panelBannerAlign.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBanner)).BeginInit();
       this.groupBoxSettings.SuspendLayout();
@@ -101,10 +101,34 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.groupBoxSettings.Controls.Add(this.checkBoxUseTrayIcon);
       this.groupBoxSettings.Location = new System.Drawing.Point(12, 81);
       this.groupBoxSettings.Name = "groupBoxSettings";
-      this.groupBoxSettings.Size = new System.Drawing.Size(370, 186);
+      this.groupBoxSettings.Size = new System.Drawing.Size(370, 142);
       this.groupBoxSettings.TabIndex = 1;
       this.groupBoxSettings.TabStop = false;
       this.groupBoxSettings.Text = "Settings";
+      // 
+      // labelEngine
+      // 
+      this.labelEngine.AutoSize = true;
+      this.labelEngine.Location = new System.Drawing.Point(78, 135);
+      this.labelEngine.Name = "labelEngine";
+      this.labelEngine.Size = new System.Drawing.Size(142, 13);
+      this.labelEngine.TabIndex = 6;
+      this.labelEngine.Text = "Audio player type for streams";
+      this.labelEngine.Visible = false;
+      // 
+      // comboBoxStreamPlayerType
+      // 
+      this.comboBoxStreamPlayerType.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxStreamPlayerType.FormattingEnabled = true;
+      this.comboBoxStreamPlayerType.Items.AddRange(new object[] {
+            "BASS",
+            "WMP"});
+      this.comboBoxStreamPlayerType.Location = new System.Drawing.Point(15, 132);
+      this.comboBoxStreamPlayerType.Name = "comboBoxStreamPlayerType";
+      this.comboBoxStreamPlayerType.Size = new System.Drawing.Size(58, 21);
+      this.comboBoxStreamPlayerType.TabIndex = 5;
+      this.comboBoxStreamPlayerType.Text = "BASS";
+      this.comboBoxStreamPlayerType.Visible = false;
       // 
       // labelListEntries
       // 
@@ -168,7 +192,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Location = new System.Drawing.Point(307, 283);
+      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.Location = new System.Drawing.Point(307, 237);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 2;
@@ -178,7 +203,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       // buttonSave
       // 
-      this.buttonSave.Location = new System.Drawing.Point(226, 283);
+      this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonSave.Location = new System.Drawing.Point(226, 237);
       this.buttonSave.Name = "buttonSave";
       this.buttonSave.Size = new System.Drawing.Size(75, 23);
       this.buttonSave.TabIndex = 3;
@@ -186,33 +212,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.buttonSave.UseVisualStyleBackColor = true;
       this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
       // 
-      // comboBoxStreamPlayerType
-      // 
-      this.comboBoxStreamPlayerType.BorderColor = System.Drawing.Color.Empty;
-      this.comboBoxStreamPlayerType.FormattingEnabled = true;
-      this.comboBoxStreamPlayerType.Items.AddRange(new object[] {
-            "BASS",
-            "WMP"});
-      this.comboBoxStreamPlayerType.Location = new System.Drawing.Point(15, 145);
-      this.comboBoxStreamPlayerType.Name = "comboBoxStreamPlayerType";
-      this.comboBoxStreamPlayerType.Size = new System.Drawing.Size(58, 21);
-      this.comboBoxStreamPlayerType.TabIndex = 5;
-      this.comboBoxStreamPlayerType.Text = "BASS";
-      // 
-      // labelEngine
-      // 
-      this.labelEngine.AutoSize = true;
-      this.labelEngine.Location = new System.Drawing.Point(78, 148);
-      this.labelEngine.Name = "labelEngine";
-      this.labelEngine.Size = new System.Drawing.Size(142, 13);
-      this.labelEngine.TabIndex = 6;
-      this.labelEngine.Text = "Audio player type for streams";
-      // 
       // PluginSetupForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(394, 318);
+      this.ClientSize = new System.Drawing.Size(394, 272);
       this.Controls.Add(this.buttonSave);
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.groupBoxSettings);

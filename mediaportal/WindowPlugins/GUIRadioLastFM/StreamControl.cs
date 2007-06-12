@@ -93,13 +93,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private bool _isInit = false;
 
     private MusicTag CurrentSongTag;
-    private System.Timers.Timer _nowPlayingTimer;
+
     private StreamPlaybackState _currentState = StreamPlaybackState.offline;
     private StreamType _currentTuneType = StreamType.Recommended;
 
     private DateTime _lastConnectAttempt = DateTime.MinValue;
     private TimeSpan _minConnectWaitTime = new TimeSpan(0, 0, 1);
-    private int _retryFetchCount = 0;
+
     private Object BadLock = null;
 
     private AsyncGetRequest httpcommand = null;
@@ -109,6 +109,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       AudioscrobblerBase.RadioHandshakeSuccess += new AudioscrobblerBase.RadioHandshakeCompleted(OnRadioLoginSuccess);
       AudioscrobblerBase.RadioHandshakeError += new AudioscrobblerBase.RadioHandshakeFailed(OnRadioLoginFailed);
+      BassMusicPlayer.Player.LastFMSync += new BassAudioEngine.LastFMSyncReceived(OnLastFMSyncReceived);
     }
 
     #region Examples
@@ -146,9 +147,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       BadLock = new object();
 
       CurrentSongTag = new MusicTag();
-      _nowPlayingTimer = new System.Timers.Timer();
-      _nowPlayingTimer.Interval = 180000;
-      _nowPlayingTimer.Elapsed += new ElapsedEventHandler(OnTimerTick);
 
       //InfoScrobbler = AudioscrobblerUtils.Instance;
       httpcommand = new AsyncGetRequest();
@@ -317,9 +315,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
           _currentState = StreamPlaybackState.streaming;
           ToggleRecordToProfile(_recordToProfile);
           ToggleDiscoveryMode(_discoveryMode);
-          _nowPlayingTimer.Start();
-          SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
 
+          SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
           return true;
         }
       }
@@ -327,59 +324,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       _currentState = StreamPlaybackState.initialized;
       return false;
     }
-
-    //public override bool Playing
-    //{
-    //  get
-    //  {
-    //    return _currentState == StreamPlaybackState.streaming;
-    //  }
-    //}
-
-    //public override string CurrentFile
-    //{
-    //  get
-    //  {
-    //    return _currentRadioURL;
-    //  }
-    //}
-
-    //public override double Duration
-    //{
-    //  get
-    //  {
-    //    double tmpDuration = 0;
-    //    if (CurrentSongTag != null)
-    //    {
-    //      tmpDuration = Convert.ToDouble(CurrentSongTag.Duration);
-    //    }
-    //    return tmpDuration;
-    //  }
-    //}
-
-    //public override bool HasVideo
-    //{
-    //  get
-    //  {
-    //    return false;
-    //  }
-    //}
-
-    //public override bool IsRadio
-    //{
-    //  get
-    //  {
-    //    return true;
-    //  }
-    //}
-
-    //public override bool Paused
-    //{
-    //  get
-    //  {
-    //    return _currentState == StreamPlaybackState.paused;
-    //  }
-    //}
 
     public void LoadConfig()
     {
@@ -675,7 +619,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (formerRequest_.Contains(@"&command=skip"))
       {
         Log.Info("StreamControl: Successfully send skip command");
-        UpdateNowPlaying();
         return;
       }
 
@@ -688,7 +631,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (formerRequest_.Contains(@"&command=ban"))
       {
         Log.Info("StreamControl: Track added to banned tracks list");
-        UpdateNowPlaying();
         return;
       }
     }
@@ -737,13 +679,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
             {
               int trackLength = Convert.ToInt32(token.Substring(14));
               CurrentSongTag.Duration = trackLength;
-
-              if (trackLength > 0)
-              {
-                _nowPlayingTimer.Stop();
-                _nowPlayingTimer.Interval = (trackLength) * 1000 - 750;
-                _nowPlayingTimer.Start();
-              }
             }
           }
         }
@@ -753,8 +688,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
           if (StreamSongChanged != null)
             StreamSongChanged(CurrentSongTag, DateTime.Now);
 
-          _retryFetchCount = 0;
-
           // Send msg for Ballon Tip on song change
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_BALLONTIP_SONGCHANGE, 0, 0, 0, 0, 0, null);
           msg.Label = GUIPropertyManager.GetProperty("#Play.Current.Title");
@@ -762,19 +695,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
           msg.Param1 = 5;
           GUIGraphicsContext.SendMessage(msg);
           msg = null;
-        }
-        else // maybe we asked to early - try again
-        {
-          //Thread.Sleep(2000);
-          _retryFetchCount++;
-          if (_retryFetchCount < 3)
-          {
-            Log.Debug("StreamControl: Same title found ({0}) - trying again now..", _retryFetchCount);
-            UpdateNowPlaying();
-          }
-        }
 
-        Log.Info("StreamControl: Current track: {0} [{1}] - {2} ({3})", CurrentSongTag.Artist, CurrentSongTag.Album, CurrentSongTag.Title, Util.Utils.SecondsToHMSString(CurrentSongTag.Duration));
+          Log.Info("StreamControl: Current track: {0} [{1}] - {2} ({3})", CurrentSongTag.Artist, CurrentSongTag.Album, CurrentSongTag.Title, Util.Utils.SecondsToHMSString(CurrentSongTag.Duration));
+        }
+ 
       }
       catch (Exception ex)
       {
@@ -784,12 +708,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
     
     #region Utils
-    private void OnTimerTick(object trash_, ElapsedEventArgs args_)
+    private void OnLastFMSyncReceived(object trash, DateTime syncTime)
     {
-      // call without delay
       SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
     }
-
     #endregion
 
   }

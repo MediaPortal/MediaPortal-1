@@ -108,8 +108,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(PlayBackStoppedHandler);
       g_Player.PlayBackEnded += new g_Player.EndedHandler(PlayBackEndedHandler);
 
-      LastFMStation.RadioSettingsSuccess +=new StreamControl.RadioSettingsLoaded(OnRadioSettingsSuccess);
-      LastFMStation.RadioSettingsError +=new StreamControl.RadioSettingsFailed(OnRadioSettingsError);
+      LastFMStation.RadioSettingsSuccess += new StreamControl.RadioSettingsLoaded(OnRadioSettingsSuccess);
+      LastFMStation.RadioSettingsError += new StreamControl.RadioSettingsFailed(OnRadioSettingsError);
 
       LastFMStation.StreamSongChanged += new StreamControl.SongChangedHandler(OnLastFMStation_StreamSongChanged);
       
