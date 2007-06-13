@@ -461,12 +461,7 @@ namespace TvEngine
         return 0;
 
       // UNUSED: F16zu9 , live , untertitel , Dauer , Wiederholung
-      sqlb.Append("SELECT TVDaten.Beginn, TVDaten.Ende, TVDaten.Sendung, TVDaten.Genre, TVDaten.Kurzkritik");
-
-      if (_useShortProgramDesc)
-        sqlb.Append(", TVDaten.KurzBeschreibung");
-      else
-        sqlb.Append(", TVDaten.Beschreibung");
+      sqlb.Append("SELECT TVDaten.Beginn, TVDaten.Ende, TVDaten.Sendung, TVDaten.Genre, TVDaten.Kurzkritik, TVDaten.KurzBeschreibung, TVDaten.Beschreibung");
 
       if (_showAudioFormat)
         sqlb.Append(", TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton");
@@ -543,11 +538,16 @@ namespace TvEngine
         }
 
         string title = guideEntry["Sendung"].ToString();
+        string shortDescription = guideEntry["KurzBeschreibung"].ToString();
         string description;
-        if (_useShortProgramDesc)
-          description = guideEntry["KurzBeschreibung"].ToString();
+        if (_useShortProgramDesc)  
+          description = shortDescription;
         else
+        {
           description = guideEntry["Beschreibung"].ToString();
+          if (description.Length < shortDescription.Length)
+            description = shortDescription;
+        }
         
         string genre = guideEntry["Genre"].ToString();
         string shortCritic = guideEntry["Kurzkritik"].ToString();
