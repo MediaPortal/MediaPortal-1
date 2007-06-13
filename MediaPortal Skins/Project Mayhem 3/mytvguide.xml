@@ -7,7 +7,7 @@
     <control>
       <description>BG</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <width>720</width>
       <height>576</height>
       <texture>background_epg.png</texture>
@@ -15,10 +15,10 @@
     <control>
       <description>Guide Text Label</description>
       <type>label</type>
-      <id>1</id>
+      <id>11</id>
       <posX>154</posX>
       <posY>40</posY>
-      <label>4</label>
+      <label>#TV.Guide.Group</label>
       <font>font16</font>
       <align>right</align>
       <textcolor>FFFFFFFF</textcolor>
