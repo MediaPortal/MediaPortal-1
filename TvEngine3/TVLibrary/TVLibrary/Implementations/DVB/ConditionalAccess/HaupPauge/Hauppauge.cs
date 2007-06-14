@@ -1,3 +1,23 @@
+/* 
+ *	Copyright (C) 2005-2007 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +33,7 @@ namespace TvLibrary.Implementations.DVB
   public class Hauppauge : IDiSEqCController
   {
     #region enums
-    enum BdaModes
+    enum BdaNodes
     {
       BDA_TUNER_NODE = 0,
       BDA_DEMODULATOR_NODE
@@ -49,7 +69,7 @@ namespace TvLibrary.Implementations.DVB
       HCW_ROLL_OFF_NOT_DEFINED = 0,
       HCW_ROLL_OFF_20 = 1,         // .20 Roll Off (DVB-S2 Only)
       HCW_ROLL_OFF_25,             // .25 Roll Off (DVB-S2 Only)
-      HCW_ROLL_OFF_35,             // .35 Roll Off (DVB-S2 Only)
+      HCW_ROLL_OFF_35,             // .35 Roll Off (DVB-S2 Only) (Default for DVB-S2)
       HCW_ROLL_OFF_MAX
     };
     enum Pilot
@@ -57,7 +77,7 @@ namespace TvLibrary.Implementations.DVB
       HCW_PILOT_NOT_SET = -1,
       HCW_PILOT_NOT_DEFINED = 0,
       HCW_PILOT_OFF = 1,           // Pilot Off (DVB-S2 Only)
-      HCW_PILOT_ON,                // Pilot On  (DVB-S2 Only)
+      HCW_PILOT_ON,                // Pilot On  (DVB-S2 Only) (Default for DVB-S2)
       HCW_PILOT_MAX
     }
     #endregion
@@ -89,7 +109,11 @@ namespace TvLibrary.Implementations.DVB
     #region variables
     Guid BdaTunerExtentionProperties = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0, 0xc9, 0xf2, 0x1f, 0xc7);
     bool _isHauppauge = false;
+    bool _isHauppaugeDVBS2 = false;
     IntPtr _ptrDiseqc = IntPtr.Zero;
+    IntPtr _pilotOnOff = IntPtr.Zero; //Marshal.AllocCoTaskMem(1024);
+    IntPtr _rollOff = IntPtr.Zero; //Marshal.AllocCoTaskMem(1024);
+    //IntPtr _bdaNode = Marshal.AllocCoTaskMem(1024);
     DirectShowLib.IKsPropertySet _propertySet = null;
     #endregion
 
@@ -112,6 +136,18 @@ namespace TvLibrary.Implementations.DVB
           {
             _isHauppauge = true;
             _ptrDiseqc = Marshal.AllocCoTaskMem(1024);
+            _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, out supported);
+            if ((supported & KSPropertySupport.Set) != 0)
+            {
+              _pilotOnOff = Marshal.AllocCoTaskMem(1024);
+              _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, out supported);
+              if ((supported & KSPropertySupport.Set) != 0)
+              {
+                _rollOff = Marshal.AllocCoTaskMem(1024);
+                Log.Log.Info("Hauppauge: card supports dvb-s2");
+                _isHauppaugeDVBS2 = true;
+              }
+            }
           }
         }
       }
@@ -131,13 +167,26 @@ namespace TvLibrary.Implementations.DVB
       }
     }
     /// <summary>
+    /// Gets a value indicating whether this instance is hauppauge dvb-s2 tuning capable.
+    /// </summary>
+    /// <value>
+    /// 	<c>true</c> if this instance is hauppaugeDVBS2; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsHauppaugeDVBS2
+    {
+      get
+      {
+        return _isHauppaugeDVBS2;
+      }
+    }
+    /// <summary>
     /// Sends the diseq command.
     /// </summary>
     /// <param name="channel">The channel.</param>
     public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
       if (_isHauppauge == false) return;
-      bool hiBand = BandTypeConverter.IsHiBand(channel,parameters);
+      bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
       int antennaNr = BandTypeConverter.GetAntennaNr(channel);
 
       //bit 0	(1)	: 0=low band, 1 = hi band
@@ -173,7 +222,8 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message
 
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
-      Log.Log.Info("hauppauge: setdiseqc returned:{0:X}", hr);
+      Log.Log.Info("Hauppauge: _ptrDiseqc = {0}", _ptrDiseqc);
+      Log.Log.Info("Hauppauge: setdiseqc returned:{0:X}", hr);
     }
 
     #region IDiSEqCController Members
@@ -197,6 +247,7 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message
 
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
+      Log.Log.Info("Hauppauge: _ptrDiseqc = {0}", _ptrDiseqc);
       Log.Log.Info("hauppauge: setdiseqc returned:{0:X}", hr);
       return (hr == 0);
     }
@@ -213,5 +264,29 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #endregion
+
+    /// <summary>
+    /// sets the dvb-s2 pilot / roll-off
+    /// </summary>
+    //public void SetDVBS2Modulation(ScanParameters parameters, DVBSChannel channel)
+    public void SetDVBS2Modulation()
+    {
+      int len = 8;
+      //Log.Log.WriteFile("Hauppauge: SetDVBS2Modulation for channel: {0}", channel);
+      //if (_isHauppaugeDVBS2 == false) return;
+      Marshal.WriteInt32(_pilotOnOff, (Int32)Pilot.HCW_PILOT_OFF);
+      //Marshal.WriteInt64(_bdaNode, (Int64)BdaNodes.BDA_TUNER_NODE);
+      Marshal.WriteInt32(_rollOff, (Int32)RollOff.HCW_ROLL_OFF_35);
+      //Log.Log.Info("Hauppauge: Pilot = {0} & RollOff = {1} & _bdaNode = {2}", _pilotOnOff, _rollOff, _bdaNode);
+      Log.Log.Info("Hauppauge: Pilot = {0} & RollOff = {1}", _pilotOnOff, _rollOff);
+      
+      //Set the Pilot
+      int pilot = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _pilotOnOff, len, _pilotOnOff, len);
+      Log.Log.Info("Hauppauge: Set BDA Pilot returned:{0:X}", pilot);
+      
+      //Set the Roll-off
+      int rolloff = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _rollOff, len, _rollOff, len);
+      Log.Log.Info("Hauppauge: Set BDA Roll-Off returned:{0:X}", rolloff);
+    }
   }
 }

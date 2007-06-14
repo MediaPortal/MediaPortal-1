@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -161,8 +161,7 @@ namespace TvLibrary.Implementations.DVB
             _previousChannel.DisEqc == channel.DisEqc &&
             _previousChannel.Polarisation == channel.Polarisation)
         {
-          Log.Log.WriteFile("Technotrend: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}",
-              channel.DisEqc, channel.Frequency, channel.Polarisation);
+          Log.Log.WriteFile("Technotrend: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}",channel.DisEqc, channel.Frequency, channel.Polarisation);
           return;
         }
       }
@@ -184,8 +183,7 @@ namespace TvLibrary.Implementations.DVB
       // 3        B         A
       // 4        B         B
       bool hiBand = BandTypeConverter.IsHiBand(channel,parameters);
-      Log.Log.WriteFile("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, polarisation:{3} hiband:{4}",
-              channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
+      Log.Log.WriteFile("TechnoTrend SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, polarisation:{3} hiband:{4}", channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
 
 
       bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));

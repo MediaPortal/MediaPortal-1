@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -27,6 +27,7 @@ using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Interfaces;
+using DirectShowLib.BDA;
 
 
 namespace TvLibrary.Implementations.DVB
@@ -104,6 +105,8 @@ namespace TvLibrary.Implementations.DVB
         if (_hauppauge.IsHauppauge)
         {
           Log.Log.WriteFile("Hauppauge card detected");
+          Log.Log.WriteFile("Hauppauge try DVB-S2 pilot & roll-off");
+          _hauppauge.SetDVBS2Modulation();
           _diSEqCMotor = new DiSEqCMotor(_hauppauge);
           return;
         }
@@ -381,6 +384,46 @@ namespace TvLibrary.Implementations.DVB
           isDvbs = ((channel as DVBSChannel) != null);
           isAtsc = ((channel as ATSCChannel) != null);
           _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, isDvbs, isAtsc, pids);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
+    }
+    public void SetDVBS2Modulation(ScanParameters parameters, DVBSChannel channel)
+    {
+      Log.Log.WriteFile("Trying to set DVB-S2 modulation...");
+      try
+      {
+        if (_twinhan != null)
+        {
+          //Any DVB-S2 modulation parameters for Twinhan we set to 8psk regardless of ini tuning settings
+          if (channel.ModulationType == ModulationType.ModQpsk) channel.ModulationType = ModulationType.Mod8Vsb;
+          if (channel.ModulationType == ModulationType.Mod8psk) channel.ModulationType = ModulationType.Mod8Vsb;
+          if (channel.ModulationType == ModulationType.Mod16Apsk) channel.ModulationType = ModulationType.Mod16Vsb;
+          if (channel.ModulationType == ModulationType.Mod32Apsk) channel.ModulationType = ModulationType.ModOqpsk;
+          Log.Log.WriteFile("Twinhan DVB-S2 modulation set");
+        }
+        if (_hauppauge != null)
+        {
+          //Set Hauppauge pilot, roll-off settings - need to query if supported first.
+          /*if (_hauppauge.IsHauppaugeDVBS2 != null)
+          {
+            _hauppauge.SetDVBS2Modulation(); // Currently calling this earlier as a test.
+          }*/
+          //Set the Modulation
+          if (channel.ModulationType == ModulationType.ModQpsk) channel.ModulationType = ModulationType.ModQpsk2;
+          Log.Log.WriteFile("Hauppauge DVB-S2 modulation set");
+        }
+        if (_technoTrend != null)
+        {
+          //Set TechnoTrend modulation tuning settings
+          if (channel.ModulationType == ModulationType.ModQpsk) channel.ModulationType = ModulationType.Mod8Vsb;
+          if (channel.ModulationType == ModulationType.Mod8psk) channel.ModulationType = ModulationType.Mod8Vsb;
+          if (channel.ModulationType == ModulationType.Mod16Apsk) channel.ModulationType = ModulationType.Mod16Vsb;
+          if (channel.ModulationType == ModulationType.Mod32Apsk) channel.ModulationType = ModulationType.ModOqpsk;
+          Log.Log.WriteFile("Technotrend DVB-S2 modulation set");
         }
       }
       catch (Exception ex)

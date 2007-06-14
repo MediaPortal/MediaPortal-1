@@ -122,14 +122,13 @@ namespace DirectShowLib.BDA
         Rate5_6, // 5/6
         Rate5_11,
         Rate7_8, // 7/8
-        RateMax,
-        HCW_BCC_RATE_1_4, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        HCW_BCC_RATE_1_3, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        HCW_BCC_RATE_2_5, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        HCW_BCC_RATE_6_7, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        HCW_BCC_RATE_8_9, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        HCW_BCC_RATE_9_10, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        HCW_BCC_RATE_MAX //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        Rate1_4, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        Rate1_3, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        Rate2_5, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        Rate6_7, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        Rate8_9, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        Rate9_10, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        RateMax
     }
 
     /// <summary>
@@ -187,21 +186,18 @@ namespace DirectShowLib.BDA
         Mod1024Qam,
         ModQpsk,
         ModBpsk,
-        Mod32Apsk, //DVB-S2 Not in the BDA Network Provider
-        Mod8psk, //DVB-S2 Not in the BDA Network Provider
-        Mod16Apsk, //DVB-S2 Not in the BDA Network Provider
-        ModOqpsk,
-        Mod8Vsb,
-        Mod16Vsb,      
+        ModOqpsk, //Twinhan uses ModOqpsk for Mod32Apsk when DVB-S2 tuning
+        Mod8Vsb, //Twinhan & TechnoTrend uses Mod8Vsb for Mod8psk & Modqpsk when DVB-S2 tuning
+        Mod16Vsb, //Twinhan uses Mod16Vsb for Mod16Apsk when DVB-S2 tuning
         ModAnalogAmplitude, // std am
         ModAnalogFrequency, // std fm
-        ModMax,
-        HCW_MOD_16APSK, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        HCW_MOD_32APSK, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        HCW_MOD_NBC_QPSK, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        HCW_MOD_NBC_8PSK, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        HCW_MOD_DIRECTV  //DIRECTV DSS
-    }
+        Mod16Apsk, //enum location ofr Hauppauge DVB-S2 (Not in the BDA Network Provider)
+        Mod32Apsk, //enum location ofr Hauppauge DVB-S2 (Not in the BDA Network Provider)
+        ModQpsk2, //enum location ofr Hauppauge DVB-S2 Not in the BDA Network Provider)
+        Mod8psk, //enum location ofr Hauppauge DVB-S2 (Not in the BDA Network Provider)
+        ModDirectTV,  //For Hauppauge DIRECTV DSS (Not in the BDA Network Provider)
+        ModMax
+    } 
 
     /// <summary>
     /// From DVBSystemType
@@ -316,11 +312,10 @@ namespace DirectShowLib.BDA
     [StructLayout(LayoutKind.Sequential)]
     public struct BDATemplateConnection
     {
-        public int FromNodeType;
-        public int FromNodePinType;
-        public int ToNodeType;
-        public int ToNodePinType;
+      public int FromNodeType;
+      public int FromNodePinType;
+      public int ToNodeType;
+      public int ToNodePinType;
     }
-
     #endregion
 }

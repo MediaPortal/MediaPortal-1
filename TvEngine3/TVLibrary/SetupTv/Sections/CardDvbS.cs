@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -255,12 +255,6 @@ namespace SetupTv.Sections
                   if (tpdata[3] == "16apsk") transponder.Modulation = ModulationType.Mod16Apsk; //not supported by BDA yet...
                   if (tpdata[3] == "32apsk") transponder.Modulation = ModulationType.Mod32Apsk; //not supported by BDA yet...
 
-                  //Quick Hauppauge test
-                  /*if (tpdata[3] == "8psk") transponder.Modulation = ModulationType.HCW_MOD_NBC_8PSK; //not supported by BDA yet...
-                  if (tpdata[3] == "qpsk") transponder.Modulation = ModulationType.HCW_MOD_NBC_QPSK; //not supported by BDA yet...
-                  if (tpdata[3] == "16apsk") transponder.Modulation = ModulationType.HCW_MOD_16APSK; //not supported by BDA yet...
-                  if (tpdata[3] == "32apsk") transponder.Modulation = ModulationType.HCW_MOD_32APSK; //not supported by BDA yet...*/
-
                   if (tpdata.Length >= 5)
                   {
                     tpdata[4] = tpdata[4].ToLower();
@@ -272,7 +266,14 @@ namespace SetupTv.Sections
                     if (tpdata[4] == "5/11") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
                     if (tpdata[4] == "5/6") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
                     if (tpdata[4] == "7/8") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
-                    if (tpdata[4] == "9/10") transponder.InnerFecRate = BinaryConvolutionCodeRate.RateNotDefined;
+                    //if (tpdata[4] == "9/10") transponder.InnerFecRate = BinaryConvolutionCodeRate.RateNotDefined;
+                    if (tpdata[4] == "1/4") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4; //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+                    if (tpdata[4] == "1/3") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3; //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+                    if (tpdata[4] == "2/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5; //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+                    if (tpdata[4] == "6/7") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7; //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+                    if (tpdata[4] == "8/9") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9; //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+                    if (tpdata[4] == "9/10") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10; //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+                    //Optional RateMax;
                   }
                 }
                 _transponders.Add(transponder);

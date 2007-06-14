@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -91,7 +91,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_graphState != GraphState.Idle)
         {
-          throw new TvException("Graph alreayd build");
+          throw new TvException("Graph already build");
         }
         Log.Log.WriteFile("BuildGraph");
 
@@ -148,7 +148,6 @@ namespace TvLibrary.Implementations.DVB
         hiOsc = _parameters.LnbHighFrequency;
         lnbSwitch = _parameters.LnbSwitchFrequency;
       }
-
       ITuneRequest request;
       int fetched;
       container.get_EnumTuningSpaces(out enumTuning);
@@ -163,10 +162,10 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.WriteFile("Found correct tuningspace {0}", name);
           _tuningSpace = (IDVBSTuningSpace)spaces[0];
-          /// GagReflex
-          /// _tuningSpace.put_LNBSwitch(11700000);
+          // GagReflex
+          // _tuningSpace.put_LNBSwitch(11700000);
           _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-          /// End GagReflex
+          // End GagReflex
           _tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
           _tuningSpace.put_LowOscillator(lowOsc * 1000);
           _tuningSpace.put_HighOscillator(hiOsc * 1000);
@@ -188,10 +187,10 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace.put_SystemType(DVBSystemType.Satellite);
 
       _tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
-      /// GagReflex
-      /// _tuningSpace.put_LNBSwitch(11700000);
+      // GagReflex
+      // _tuningSpace.put_LNBSwitch(11700000);
       _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-      /// End GagReflex
+      // End GagReflex
       _tuningSpace.put_LowOscillator(lowOsc * 1000);
       _tuningSpace.put_HighOscillator(hiOsc * 1000);
 
@@ -225,7 +224,6 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
-
       DVBSChannel dvbsChannel = channel as DVBSChannel;
 
       if (dvbsChannel == null)
@@ -261,17 +259,26 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
       _tuningSpace.put_LowOscillator(lowOsc * 1000);
       _tuningSpace.put_HighOscillator(hiOsc * 1000);
+
       ITuneRequest request;
       _tuningSpace.CreateTuneRequest(out request);
       _tuneRequest = (IDVBTuneRequest)request;
 
       _tuningSpace.get_DefaultLocator(out locator);
       IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
-      int hr = dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
-      hr = dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
+      
+      int hr = dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
+      hr = dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
       dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
+      Log.Log.WriteFile("Channel FECRate is set to {0}", dvbsChannel.InnerFecRate);
+      //DVB-S2 specific modulation class call here if DVB-S2 card detected
+      if (_conditionalAccess != null)
+      {
+        Log.Log.WriteFile("Set DVB-S2 modulation...");
+        _conditionalAccess.SetDVBS2Modulation(_parameters, dvbsChannel);
+      }
       dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
-
+      Log.Log.WriteFile("Channel modulation is set to {0}", dvbsChannel.ModulationType);
       hr = _tuneRequest.put_ONID(dvbsChannel.NetworkId);
       hr = _tuneRequest.put_SID(dvbsChannel.ServiceId);
       hr = _tuneRequest.put_TSID(dvbsChannel.TransportId);

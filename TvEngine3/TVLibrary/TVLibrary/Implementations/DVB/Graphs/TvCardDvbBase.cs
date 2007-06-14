@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -143,6 +143,7 @@ namespace TvLibrary.Implementations.DVB
     protected int _subChannelId = 0;
     protected Dictionary<int, TvDvbChannel> _mapSubChannels;
     protected ScanParameters _parameters;
+    protected Hauppauge _hauppauge;
     #endregion
 
     #endregion
