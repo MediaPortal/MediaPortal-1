@@ -230,6 +230,7 @@
 	</Section>
 	<Section name="mypictures">
 		<String id="0">My Pictures</String>
+		<String id="1">Setup</String>
 		<String id="11">Menu</String>
 		<String id="22">List</String>
 		<String id="23">Icon</String>
