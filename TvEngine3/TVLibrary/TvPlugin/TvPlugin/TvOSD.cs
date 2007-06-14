@@ -1389,6 +1389,7 @@ namespace TvPlugin
       }
       if (updateProperties)
       {
+        GUIPropertyManager.SetProperty("#TV.View.channel", prog.ReferencedChannel().Name);
         GUIPropertyManager.SetProperty("#TV.View.start", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         GUIPropertyManager.SetProperty("#TV.View.stop", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
