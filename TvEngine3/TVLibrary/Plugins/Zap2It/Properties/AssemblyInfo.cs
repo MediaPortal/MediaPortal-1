@@ -1,4 +1,4 @@
-﻿/*  Copyright (C) 2006 Team MediaPortal
+﻿/*  Copyright (C) 2006-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *  Written by Jonathan Bradshaw <jonathan@nrgup.net>
  * 
