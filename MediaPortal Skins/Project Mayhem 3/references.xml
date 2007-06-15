@@ -374,7 +374,7 @@
 		<description>default filmstrip</description>
 		<type>filmstrip</type>
 		<id>11</id>
-		<posX>260</posX>
+		<posX>230</posX>
 		<posY>410</posY>
 		<width>500</width>
 		<height>100</height>
@@ -396,8 +396,8 @@
 		<thumbHeight>62</thumbHeight>
 		<thumbPosX>9</thumbPosX>
 		<thumbPosY>9</thumbPosY>
-		<imageFolder>icon_empty_nofocus.png</imageFolder>
-		<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
+		<imageFolder>icon_empty_nofocus_music.png</imageFolder>
+    	<imageFolderFocus>icon_empty_focus_music.png</imageFolderFocus>
 		<font>font13</font>
 		<selectedColor>ffffffff</selectedColor>
 		<textcolor>ffffffff</textcolor>

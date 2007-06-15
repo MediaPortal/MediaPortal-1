@@ -28,7 +28,7 @@
           <!--onup>2</onup>
                     <ondown>2</ondown-->
         </control>
-        <control>
+         <control>
           <description>Filmstrip view</description>
           <type>filmstrip</type>
           <id>50</id>
@@ -36,15 +36,35 @@
           <onright>2</onright>
           <onup>2</onup>
           <ondown>2</ondown>
-          <thumbs flipY="true" diffuse="Thumb_Mask.png"></thumbs>
-          <InfoImage flipY="true" diffuse="Thumb_Mask.png"></InfoImage>
+          <itemWidth>80</itemWidth>
+          <itemHeight>76</itemHeight>
+          <textureWidth>73</textureWidth>
+          <textureHeight>69</textureHeight>
+          <thumbWidth>61</thumbWidth>
+          <thumbHeight>61</thumbHeight>
+          <thumbPosX>8</thumbPosX>
+          <thumbPosY>4</thumbPosY>
+          <imageFolder>icon_empty_nofocus_music.png</imageFolder>
+          <imageFolderFocus>icon_empty_focus_music.png</imageFolderFocus>
+          <frame>icon_empty_nofocus_music.png</frame>
+          <frameFocus>-</frameFocus>
+          <backgroundx>270</backgroundx>
+          <backgroundy>99</backgroundy>
+          <backgroundwidth>402</backgroundwidth>
+          <backgroundheight>315</backgroundheight>
+          <InfoImagex>359</InfoImagex>
+          <InfoImagey>97</InfoImagey>
+          <InfoImagewidth>200</InfoImagewidth>
+          <InfoImageheight>265</InfoImageheight>
+          <thumbs flipY="true" diffuse="Thumb_Mask.png"/>
+          <InfoImage flipY="true" diffuse="Thumb_Mask.png"/>
           <showFrame>yes</showFrame>
           <showFolder>yes</showFolder>
           <showBackGround>no</showBackGround>
           <showInfoImage>yes</showInfoImage>
           <enableFocusZoom>no</enableFocusZoom>
-          <thumbAnimation effect="zoom" start="100,100" end="110,110" time="300">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="110,110" end="100,100" time="300">unfocus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="100,100" end="130,130" time="300">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="130,130" end="100,100" time="300">unfocus</thumbAnimation>
         </control>
         <control>
           <description>playlist listcontrol</description>
