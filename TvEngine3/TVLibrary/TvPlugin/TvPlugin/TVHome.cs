@@ -515,7 +515,7 @@ namespace TvPlugin
         {
           ViewChannelAndCheck(channel);
         }
-        GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.Groups[0].GroupName);
+        GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
         MediaPortal.GUI.Library.Log.Info("tv home init:{0} done", channel.Name);
       }
     }
