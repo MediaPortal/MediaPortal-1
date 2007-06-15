@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006 Team MediaPortal
+ *	Copyright (C) 2006-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -47,7 +47,7 @@ class CBuffer
     CPcr  m_dts;
     CPcr  m_pts;
 };
-#define MAX_BUFFERS 3000
+#define MAX_BUFFERS 6000 //doubled to test Mantis #1053
 class CPesPacket
 {
   public:

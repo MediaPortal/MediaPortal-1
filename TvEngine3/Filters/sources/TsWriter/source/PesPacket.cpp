@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006 Team MediaPortal
+ *	Copyright (C) 2006-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -190,29 +190,29 @@ bool CPesPacket::HasSequenceHeader()
 }
 
 void CPesPacket::Skip()
-{			
+{
 	m_totalSize-=m_buffers[m_iCurrentReadBuffer].Size();
-  m_iCurrentReadBuffer++;
-  if (m_iCurrentReadBuffer>=MAX_BUFFERS) m_iCurrentReadBuffer=0;
+	m_iCurrentReadBuffer++;
+	if (m_iCurrentReadBuffer>=MAX_BUFFERS) m_iCurrentReadBuffer=0;
 }
 
 void CPesPacket::Write(byte* data, int len, bool isStart,CPcr& pcr)
 {
 	if (len<0) return;
 	if (data==NULL) return;
-  m_inUse++;
-  //if (m_inUse>m_maxInUse)
-  //{
-    //m_maxInUse=m_inUse;
-    //printf("inuse:%d\n",m_maxInUse);
-  //}
-  m_totalSize+=m_buffers[m_iCurrentWriteBuffer].Write(data, len, isStart,pcr);
-  m_iCurrentWriteBuffer++;
-  if (m_iCurrentWriteBuffer>=MAX_BUFFERS) m_iCurrentWriteBuffer=0;
-  if (m_iCurrentWriteBuffer==m_iCurrentReadBuffer)
-  {
+	m_inUse++;
+	//if (m_inUse>m_maxInUse)
+	//{
+	//m_maxInUse=m_inUse;
+	//printf("inuse:%d\n",m_maxInUse);
+	//}
+	m_totalSize+=m_buffers[m_iCurrentWriteBuffer].Write(data, len, isStart,pcr);
+	m_iCurrentWriteBuffer++;
+	if (m_iCurrentWriteBuffer>=MAX_BUFFERS) m_iCurrentWriteBuffer=0;
+	if (m_iCurrentWriteBuffer==m_iCurrentReadBuffer)
+	{
 		LogDebug("CPesPacket::Fullbuffer %d %d",m_iCurrentWriteBuffer,m_iCurrentReadBuffer);
-  }
+	}
 }
 
 int CPesPacket::InUse()
