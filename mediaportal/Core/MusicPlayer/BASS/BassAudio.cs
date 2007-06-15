@@ -266,6 +266,7 @@ namespace MediaPortal.Player
     bool NeedUpdate = true;
     bool NotifyPlaying = true;
 
+    private bool _isCDDAFile = false;
     private bool _useASIO = false;
     private string _asioDevice = String.Empty;
     private int _asioDeviceNumber = -1;
@@ -1466,8 +1467,10 @@ namespace MediaPortal.Player
           FilePath = filePath;
 
           // create the stream
+          _isCDDAFile = false;
           if (MediaPortal.Util.Utils.IsCDDA(filePath))
           {
+            _isCDDAFile = true;
             stream = BassCd.BASS_CD_StreamCreateFile(filePath, streamFlags);
             if (stream == 0)
               Log.Error("BASS: CD: {0}.", Enum.GetName(typeof(BASSErrorCode), Bass.BASS_ErrorGetCode()));
@@ -2322,6 +2325,16 @@ namespace MediaPortal.Player
         }
         catch (Exception)
         { }
+
+        // If we did a playback of a Audio CD, release the CD, as we might have problems with other CD related functions
+        if (_isCDDAFile)
+        {
+          int driveCount = BassCd.BASS_CD_GetDriveCount();
+          for (int i = 0; i < driveCount; i++)
+          {
+            BassCd.BASS_CD_Release(i);
+          }
+        }
 
         stream = 0;
 
