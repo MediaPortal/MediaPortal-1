@@ -196,7 +196,7 @@
     <String id="263">HTTP palvelin:</String>
     <String id="264">Tallenna</String>
     <String id="265">Lopeta tallennus</String>
-    <String id="266">Järjestä: Raita</String>
+    <String id="266">Järjestä: Kappale</String>
     <String id="267">Järjestä: Aika</String>
     <String id="268">Järjestä: Nimi</String>
     <String id="269">Järjestä: Artisti</String>
@@ -361,7 +361,7 @@
     <String id="432">Poista elokuva tietokannasta</String>
     <String id="433">Haluatko varmasti poistaa</String>
     <String id="434">elokuvan?</String>
-    <String id="435">Raita:</String>
+    <String id="435">Kappale:</String>
     <String id="436">Vuosi:</String>
     <String id="437">Kesto:</String>
     <String id="438">Avaa tiedosto</String>
