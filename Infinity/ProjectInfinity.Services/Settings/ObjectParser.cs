@@ -7,7 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
 using System.Collections;
 using System.Xml;
-using ProjectInfinity.Settings.Xml;
+using ProjectInfinity.Utilities.Xml;
 using ProjectInfinity.Logging;
 
 namespace ProjectInfinity.Settings

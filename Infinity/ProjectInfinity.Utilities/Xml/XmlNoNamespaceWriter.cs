@@ -27,7 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ProjectInfinity.Settings.Xml
+namespace ProjectInfinity.Utilities.Xml
 {
   /// <summary>
   /// Xml Writer that doesn't write the Namespace attributes when they are standard.
