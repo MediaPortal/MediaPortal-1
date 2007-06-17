@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Utilities.Localisation;
+using ProjectInfinity.Settings;
 
 namespace ProjectInfinity.Localisation
 {
@@ -40,6 +41,23 @@ namespace ProjectInfinity.Localisation
   public class StringManager : ILocalisation
   {
     LocalisationProvider _stringProvider;
+
+    public StringManager()
+    {
+      RegionSettings settings = new RegionSettings();
+      ServiceScope.Get<ISettingsManager>().Load(settings);
+
+      if (settings.Culture == string.Empty)
+      {
+        _stringProvider = new LocalisationProvider("Language", null);
+        settings.Culture = _stringProvider.CurrentCulture.Name;
+        ServiceScope.Get<ISettingsManager>().Save(settings);
+      }
+      else
+      {
+        _stringProvider = new LocalisationProvider("Language", settings.Culture);
+      }
+    }
 
     public StringManager(string directory, string cultureName)
     {

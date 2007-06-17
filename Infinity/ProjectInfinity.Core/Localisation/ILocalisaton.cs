@@ -38,6 +38,7 @@ namespace ProjectInfinity.Localisation
   /// </summary>
   public interface ILocalisation
   {
+    #region Properties
     CultureInfo CurrentCulture
     {
       get;
@@ -47,7 +48,9 @@ namespace ProjectInfinity.Localisation
     {
       get;
     }
+    #endregion
 
+    #region Methods
     /// <summary>
     /// Changes the language.
     /// </summary>
@@ -81,5 +84,6 @@ namespace ProjectInfinity.Localisation
     CultureInfo[] AvailableLanguages();
 
     CultureInfo GetBestLanguage();
+    #endregion
   }
 }

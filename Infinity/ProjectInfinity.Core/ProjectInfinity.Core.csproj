@@ -41,6 +41,7 @@
     <Compile Include="Localisation\ILocalisaton.cs" />
     <Compile Include="Localisation\NoLocalisation.cs" />
     <Compile Include="Localisation\StringId.cs" />
+    <Compile Include="Localisation\RegionSettings.cs" />
     <Compile Include="Logging\NoLogger.cs" />
     <Compile Include="MenuManager\ICommandItem.cs" />
     <Compile Include="MenuManager\IMenu.cs" />

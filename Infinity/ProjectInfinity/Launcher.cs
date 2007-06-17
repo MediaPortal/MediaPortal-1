@@ -37,11 +37,13 @@ namespace ProjectInfinity
 
         logger.Info("Registering Settings Manager");
         ServiceScope.Add<ISettingsManager>(new SettingsManager());
-        
+
+        //Start Localisation
+        ServiceScope.Add<ILocalisation>(new StringManager());
+
         ServiceScope.Add<IThemeManager>(new ThemeManager());
         ServiceScope.Add<INavigationService>(new NavigationService());
         ServiceScope.Add<IPlayerCollectionService>(new PlayerCollectionService());
-        ServiceScope.Add<ILocalisation>(new StringManager("Language", "en"));
         ServiceScope.Add<IWindowsTaskBar>(new WindowsTaskBar());
         ServiceScope.Add<IMediaLibrary>(new MediaLibraryClass());
         ServiceScope.Add<IThumbnailBuilder>(new ThumbnailBuilder());
