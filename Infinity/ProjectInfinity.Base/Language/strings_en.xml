@@ -235,6 +235,9 @@
 		<String id="22">List</String>
 		<String id="23">Icon</String>
 		<String id="24">Details</String>
+		<String id="35">Pictures folders</String>
+		<String id="36">Create thumbnails</String>
+		<String id="37">Dont create thumbnails</String>
 	</Section>
 	<Section name="myweather.config">
 		<String id="0">setup weather</String>

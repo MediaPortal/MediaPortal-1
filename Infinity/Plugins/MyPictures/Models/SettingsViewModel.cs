@@ -118,23 +118,28 @@ namespace ProjectInfinity.Pictures
 
       public void Execute(object parameter)
       {
+        PictureSettings settings = new PictureSettings();
+        ServiceScope.Get<ISettingsManager>().Load(settings);
+        FolderDialog dlg = new FolderDialog();
+        Window w = ServiceScope.Get<INavigationService>().GetWindow();
 
-        //PictureSettings settings = new PictureSettings();
-        //ServiceScope.Get<ISettingsManager>().Load(settings);
-        //FolderDialog dlg = new FolderDialog();
-        //Window w = ServiceScope.Get<INavigationService>().GetWindow();
-        //dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        //dlg.Owner = w;
-        //dlg.Title = "";
-        //dlg.Header = ServiceScope.Get<ILocalisation>().ToString("mypictures", 35);//Video folders
-        //dlg.ShowDialog();
-        //List<Folder> shares = dlg.SelectedFolders;
-
-        //foreach (Folder share in shares)
-        //{
-        //  settings.PictureFolders.Add(share.FullPath);
-        //}
-        //ServiceScope.Get<ISettingsManager>().Save(settings);
+        foreach (string folder in settings.PictureFolders)
+        {
+          dlg.SelectedFolders.Add(new Dialogs.Folder(folder));
+        }
+        
+        dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dlg.Owner = w;
+        dlg.Title = "";
+        dlg.Header = ServiceScope.Get<ILocalisation>().ToString("mypictures", 35);//Pictures folders
+        dlg.ShowDialog();
+        List<Dialogs.Folder> shares = dlg.SelectedFolders;
+        settings.PictureFolders.Clear();
+        foreach (Dialogs.Folder share in shares)
+        {
+          settings.PictureFolders.Add(share.FullPath);
+        }
+        ServiceScope.Get<ISettingsManager>().Save(settings);
       }
  
     }
@@ -159,9 +164,9 @@ namespace ProjectInfinity.Pictures
         dlg.Owner = w;
         dlg.Title = "";
         dlg.Header = ServiceScope.Get<ILocalisation>().ToString("settings", 2);//extensions
-        //dlg.InputText = settings.Extensions;
+        dlg.InputText = settings.Extensions;
         dlg.ShowDialog();
-        //settings.Extensions = dlg.InputText;
+        settings.Extensions = dlg.InputText;
         ServiceScope.Get<ISettingsManager>().Save(settings);
       }
     }
@@ -185,15 +190,15 @@ namespace ProjectInfinity.Pictures
         dlg.Owner = w;
         dlg.Title = "";
         dlg.Header = ServiceScope.Get<ILocalisation>().ToString("settings", 3);//thumbnails
-        //dlg.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mypictures", 36)));//Create thumbnails
-        //dlg.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mypictures", 37)));//Dont create thumbnails
-        //if (settings.AutoCreateThumbnails)
-        //  dlg.SelectedIndex = 0;
-        //else
-        //  dlg.SelectedIndex = 1;
+        dlg.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mypictures", 36)));//Create thumbnails
+        dlg.Items.Add(new DialogMenuItem(ServiceScope.Get<ILocalisation>().ToString("mypictures", 37)));//Dont create thumbnails
+        if (settings.AutoCreateThumbnails)
+          dlg.SelectedIndex = 0;
+        else
+          dlg.SelectedIndex = 1;
         dlg.ShowDialog();
         if (dlg.SelectedIndex < 0) return;
-        //settings.AutoCreateThumbnails = (dlg.SelectedIndex == 0);
+        settings.AutoCreateThumbnails = (dlg.SelectedIndex == 0);
         ServiceScope.Get<ISettingsManager>().Save(settings);
       }
     }

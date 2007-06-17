@@ -6,11 +6,11 @@ namespace ProjectInfinity.Pictures
   public class PictureSettings
   {
     private Collection<string> _pictureFolders = new Collection<string>(new string[] { @"c:\"});
+    private string _extensions ;
+    bool _createThumbnails;
 
-    private Collection<string> _extensions = new Collection<string>(new string[] {".jpg",".gif",".png"});
-
-    [Setting(SettingScope.Global, "")]
-    public Collection<string> Extensions
+    [Setting(SettingScope.Global, ".jpg,.gif,.png")]
+    public string Extensions
     {
       get { return _extensions; }
       set { _extensions = value; }
@@ -22,5 +22,13 @@ namespace ProjectInfinity.Pictures
       get { return _pictureFolders; }
       set { _pictureFolders = value; }
     }
+
+    [Setting(SettingScope.User, "True")]
+    public bool AutoCreateThumbnails
+    {
+      get { return this._createThumbnails; }
+      set { this._createThumbnails = value; }
+    }
+
   }
 }

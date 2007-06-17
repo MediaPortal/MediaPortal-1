@@ -40,8 +40,15 @@ namespace ProjectInfinity.Pictures
       //we save the settings here, to make sure they are in the configuration file.
       //because this plugin has no setup yet
       //TODO: remove saving settings here
-      settingMgr.Save(settings);
-      Reload(new Folder(new DirectoryInfo(settings.PictureFolders[0])), false);
+      //settingMgr.Save(settings);
+      if (settings.PictureFolders.Count > 0)
+      {
+        Reload(new Folder(new DirectoryInfo(settings.PictureFolders[0])), false);
+      }
+      else
+      {
+        Reload(new Folder(new DirectoryInfo("c:\\")), false);
+      }
     }
 
     public Folder CurrentFolder
