@@ -3467,13 +3467,13 @@ HRESULT Demux::GetH264Media(AM_MEDIA_TYPE *pintype)
 	pintype->bFixedSizeSamples = FALSE;
 	pintype->bTemporalCompression = TRUE;
 	pintype->lSampleSize = 1;
-	//pintype->formattype = FORMAT_VideoInfo;
-	pintype->formattype = FORMAT_MPEG2Video;
+	//pintype->formattype = FORMAT_VideoInfo; //old
+	pintype->formattype = FORMAT_MPEG2Video; //DMAN, we use MPEG2Video for CoreAVC pin compatibility
 	pintype->pUnk = NULL;
-	//pintype->cbFormat = sizeof(H264VideoFormat);
+	//pintype->cbFormat = sizeof(H264VideoFormat); 
 	//pintype->pbFormat = H264VideoFormat;
-	pintype->cbFormat = sizeof(g_Mpeg2ProgramVideo);
-	pintype->pbFormat = g_Mpeg2ProgramVideo;
+	pintype->cbFormat = sizeof(g_Mpeg2ProgramVideo); //DMAN, for CoreAVC pin compatibility
+	pintype->pbFormat = g_Mpeg2ProgramVideo; //DMAN, for CoreAVC pin compatibility
 	
 	return S_OK;
 }
