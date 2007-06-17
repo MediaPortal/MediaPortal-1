@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2004</id>
+  <defaultcontrol>2</defaultcontrol>
+  <controls>
+    <control>
+      <description>play time label</description>
+      <type>label</type>
+      <id>2</id>
+      <posX>197</posX>
+      <posY>707</posY>
+      <label>#currentplaytime</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+		<description>music rectangle</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>48</posX>
+		<posY>515</posY>
+		<width>330</width>
+		<height>195</height>
+		  <texture flipY="true" diffuse="Thumb_Mask.png">playback_background.png</texture>
+		 <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+	</control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>160</posX>
+      <posY>548</posY>
+      <width>160</width>
+      <height>124</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <texture>-</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>play logo</description>
+      <type>image</type>
+      <id>3</id>
+      <posX>28</posX>
+      <posY>605</posY>
+      <texture>logo_play.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>Pause logo</description>
+      <type>image</type>
+      <id>4</id>
+      <posX>28</posX>
+      <posY>605</posY>
+      <texture>logo_pause.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>FF logo</description>
+      <type>image</type>
+      <id>7</id>
+      <posX>28</posX>
+      <posY>605</posY>
+      <texture>logo_fastforward.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>RW logo</description>
+      <type>image</type>
+      <id>8</id>
+      <posX>28</posX>
+      <posY>605</posY>
+      <texture>logo_rewind.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+   <control>
+			<type>fadelabel</type>
+			<posX>370</posX>
+			<posY>580</posY>
+			 <width>275</width>
+			<label>#Play.Current.Artist</label>
+			<align>left</align>
+			<font>font16</font>
+			<textcolor>black</textcolor>
+			<animation effect="fade" time="800" delay="250">WindowOpen</animation>
+			<animation effect="fade" time="800" delay="250">WindowClose</animation>
+		</control>
+		<control>
+			<type>fadelabel</type>
+			<posX>370</posX>
+			<posY>615</posY>
+			 <width>275</width>
+			<label>#Play.Current.Album</label>
+			<align>left</align>
+			<font>font13</font>
+			 <textcolor>white</textcolor>
+			<animation effect="fade" time="800" delay="250">WindowOpen</animation>
+			<animation effect="fade" time="800" delay="250">WindowClose</animation>
+		</control>
+		<control>
+			<type>fadelabel</type>
+			<posX>370</posX>
+			<posY>640</posY>
+			 <width>275</width>
+			<label>#Play.Current.Title</label>
+			<align>left</align>
+			<font>font13</font>
+			 <textcolor>ff969696</textcolor>
+			<animation effect="fade" time="800" delay="250">WindowOpen</animation>
+			<animation effect="fade" time="800" delay="250">WindowClose</animation>
+		</control>
+		<control>
+			<type>label</type>
+			<posX>370</posX>
+			<posY>665</posY>
+			<label>#Play.Current.Duration</label>
+			<align>left</align>
+			<font>font13</font>
+			 <textcolor>ff969696</textcolor>
+			<animation effect="fade" time="800" delay="250">WindowOpen</animation>
+			<animation effect="fade" time="800" delay="250">WindowClose</animation>
+		</control>
+    <control>
+			<description>video preview window</description>
+			<type>videowindow</type>
+			<id>9</id>
+			<posX>100</posX>
+			<posY>543</posY>
+			<width>234</width>
+			<height>131</height>
+			<keepaspectratio>yes</keepaspectratio>
+			<centered>yes</centered>
+			 <action>18</action>
+			<textureFocus>tv_green_border.png</textureFocus>
+		</control>
+		
+  </controls>
+</window>

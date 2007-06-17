@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>3004</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <description>Back button</description>
+      <type>button</type>
+      <id>10</id>
+      <posX>810</posX>
+      <posY>60</posY>
+      <width>56</width>
+      <height>74</height>
+      <textureFocus>button_shutdown_focus.png</textureFocus>
+      <textureNoFocus>button_shutdown_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <action>99</action>
+      <onleft>13</onleft>
+      <onright>11</onright>
+      <onup>10</onup>
+      <ondown>2</ondown>
+    </control>
+    <control>
+      <description>videowallpaper button</description>
+      <type>button</type>
+      <id>11</id>
+      <posX>880</posX>
+      <posY>60</posY>
+      <width>56</width>
+      <height>81</height>
+      <textureFocus>button_tvdesktop_focus.png</textureFocus>
+      <textureNoFocus>button_tvdesktop_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <action>101</action>
+      <onleft>10</onleft>
+      <onright>12</onright>
+      <onup>11</onup>
+      <ondown>2</ondown>
+    </control>
+    <control>
+      <description>basichome button button</description>
+      <type>button</type>
+      <id>12</id>
+      <posX>950</posX>
+      <posY>60</posY>
+      <width>56</width>
+      <height>77</height>
+      <textureFocus>Basic_focus.png</textureFocus>
+      <textureNoFocus>Basic_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <action>115</action>
+      <onleft>11</onleft>
+      <onright>13</onright>
+      <onup>12</onup>
+      <ondown>2</ondown>
+    </control>
+    <control>
+      <description>Exit button</description>
+      <type>button</type>
+      <id>13</id>
+      <posX>1020</posX>
+      <posY>60</posY>
+      <width>56</width>
+      <height>77</height>
+      <textureFocus>button_close_focus.png</textureFocus>
+      <textureNoFocus>button_close_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <action>97</action>
+      <onleft>12</onleft>
+      <onright>10</onright>
+      <onup>13</onup>
+      <ondown>2</ondown>
+    </control>
+  </controls>
+</window>

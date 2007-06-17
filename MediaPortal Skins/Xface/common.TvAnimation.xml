@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>TvAnimation</description>
+      <type>animation</type>
+      <textures>Animations\TV1.png;Animations\TV11.png;Animations\TV2.png;Animations\TV22.png;Animations\TV3.png;Animations\TV22.png;Animations\TV2.png;Animations\TV11.png;Animations\TV1.png;Animations\TV2.png;Animations\TV22.png;Animations\TV3.png</textures>
+      <Duration>0:0:01</Duration>
+      <RepeatBehavior>1</RepeatBehavior>
+      <FillBehavior>HoldEnd</FillBehavior>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
+  </controls>
+</window>
