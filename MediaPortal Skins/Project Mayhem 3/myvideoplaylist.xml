@@ -130,8 +130,8 @@
           <id>50</id>
           <onleft>2</onleft>
           <onright>2</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
+<!--           <onup>2</onup>
+          <ondown>2</ondown> -->
         </control>
         <control>
           <description>Thumbnail Panel</description>
@@ -139,8 +139,8 @@
           <id>50</id>
           <onleft>2</onleft>
           <onright>2</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
+<!--           <onup>2</onup>
+          <ondown>2</ondown> -->
         </control>
         <control>
           <description>Filmstrip view</description>
@@ -148,8 +148,8 @@
           <id>50</id>
           <onleft>2</onleft>
           <onright>2</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
+<!--           <onup>2</onup>
+          <ondown>2</ondown> -->
         </control>
       </control>
     </control>

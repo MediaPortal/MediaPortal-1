@@ -101,8 +101,8 @@
           <id>50</id>
           <onleft>2</onleft>
           <onright>51</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
+<!--           <onup>2</onup>
+          <ondown>2</ondown> -->
           <image>video-focus.png</image>
           <textcolor>FFFFFFFF</textcolor>
         </control>
@@ -112,8 +112,8 @@
           <id>51</id>
           <onleft>2</onleft>
           <onright>52</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
+<!--           <onup>2</onup>
+          <ondown>2</ondown> -->
           <image>video-focus.png</image>
         </control>
         <control>
@@ -122,8 +122,8 @@
           <id>50</id>
           <onleft>2</onleft>
           <onright>2</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
+<!--           <onup>2</onup>
+          <ondown>2</ondown> -->
         </control>
       </control>
     </control>

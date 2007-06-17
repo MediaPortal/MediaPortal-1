@@ -128,9 +128,9 @@
       <type>fadelabel</type>
       <description>year label</description>
       <id>114</id>
-      <posX>670</posX>
+      <posX>660</posX>
       <posY>109</posY>
-      <width>80</width>
+      <width>90</width>
       <label>#Play.Current.Year</label>
       <font>font14</font>
       <align>right</align>
@@ -287,7 +287,7 @@
       <type>imagelist</type>
       <id>77</id>
       <posX>245</posX>
-      <posY>144</posY>
+      <posY>142</posY>
       <width>80</width>
       <height>32</height>
       <textureWidth>16</textureWidth>
@@ -306,7 +306,7 @@
       <type>imagelist</type>
       <id>78</id>
       <posX>245</posX>
-      <posY>177</posY>
+      <posY>171</posY>
       <width>80</width>
       <height>32</height>
       <textureWidth>16</textureWidth>
@@ -325,7 +325,7 @@
       <type>imagelist</type>
       <id>79</id>
       <posX>245</posX>
-      <posY>211</posY>
+      <posY>200</posY>
       <width>80</width>
       <height>32</height>
       <textureWidth>16</textureWidth>
@@ -344,7 +344,7 @@
       <type>imagelist</type>
       <id>80</id>
       <posX>245</posX>
-      <posY>144</posY>
+      <posY>142</posY>
       <width>80</width>
       <height>32</height>
       <textureWidth>16</textureWidth>
@@ -363,7 +363,7 @@
       <type>imagelist</type>
       <id>81</id>
       <posX>245</posX>
-      <posY>177</posY>
+      <posY>171</posY>
       <width>80</width>
       <height>32</height>
       <textureWidth>16</textureWidth>
@@ -382,7 +382,7 @@
       <type>imagelist</type>
       <id>82</id>
       <posX>245</posX>
-      <posY>211</posY>
+      <posY>200</posY>
       <width>80</width>
       <height>32</height>
       <textureWidth>16</textureWidth>
@@ -401,7 +401,7 @@
       <type>imagelist</type>
       <id>83</id>
       <posX>245</posX>
-      <posY>144</posY>
+      <posY>142</posY>
       <width>80</width>
       <height>32</height>
       <textureWidth>16</textureWidth>
@@ -420,7 +420,7 @@
       <type>imagelist</type>
       <id>84</id>
       <posX>245</posX>
-      <posY>177</posY>
+      <posY>171</posY>
       <width>80</width>
       <height>32</height>
       <textureWidth>16</textureWidth>
@@ -439,7 +439,7 @@
       <type>imagelist</type>
       <id>85</id>
       <posX>245</posX>
-      <posY>211</posY>
+      <posY>200</posY>
       <width>80</width>
       <height>32</height>
       <textureWidth>16</textureWidth>
@@ -458,7 +458,7 @@
       <type>imagelist</type>
       <id>87</id>
       <posX>245</posX>
-      <posY>144</posY>
+      <posY>142</posY>
       <width>80</width>
       <height>32</height>
       <textureWidth>16</textureWidth>
@@ -477,7 +477,7 @@
       <type>imagelist</type>
       <id>88</id>
       <posX>245</posX>
-      <posY>177</posY>
+      <posY>171</posY>
       <width>80</width>
       <height>32</height>
       <textureWidth>16</textureWidth>
@@ -496,7 +496,7 @@
       <type>imagelist</type>
       <id>89</id>
       <posX>245</posX>
-      <posY>211</posY>
+      <posY>200</posY>
       <width>80</width>
       <height>32</height>
       <textureWidth>16</textureWidth>

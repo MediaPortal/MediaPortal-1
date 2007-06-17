@@ -105,8 +105,8 @@
         <keepaspectratio>no</keepaspectratio>
         <onleft>3</onleft>
         <onright>11</onright>
-        <onup>3</onup>
-        <ondown>3</ondown>
+<!--         <onup>3</onup>
+        <ondown>3</ondown> -->
       </control>
       <control>
         <description>listcontrol</description>
@@ -115,8 +115,8 @@
         <onleft>3</onleft>
         <onright>10</onright>
         <onup>10</onup>
-        <onup>3</onup>
-        <ondown>3</ondown>
+<!--         <onup>3</onup>
+        <ondown>3</ondown> -->
         <textcolor>FFFFFFFF</textcolor>
       </control>
     </control>

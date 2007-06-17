@@ -74,10 +74,10 @@
         <onleft>22</onleft>
         <onright>50</onright>
         <onup>21</onup>
-        <ondown>23</ondown>
+        <ondown>28</ondown>
         <alignY>center</alignY>
       </control>
-      <control>
+<!--       <control>
         <description>Play button</description>
         <type>button</type>
         <id>23</id>
@@ -87,7 +87,7 @@
         <onup>22</onup>
         <ondown>28</ondown>
         <alignY>center</alignY>
-      </control>
+      </control> -->
       <control>
         <description>scrobble mode button</description>
         <type>button</type>
@@ -96,7 +96,7 @@
         <alignY>center</alignY>
         <onleft>28</onleft>
         <onright>50</onright>
-        <onup>23</onup>
+        <onup>22</onup>
         <ondown>29</ondown>
       </control>
       <control>
@@ -155,8 +155,8 @@
           <id>51</id>
           <onleft>2</onleft>
           <onright>52</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
+<!--           <onup>2</onup>
+          <ondown>2</ondown> -->
         </control>
         <control>
           <description>album view listcontrol</description>
@@ -178,8 +178,8 @@
           <textureHeight>90</textureHeight>
           <onleft>2</onleft>
           <onright>52</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
+<!--           <onup>2</onup>
+          <ondown>2</ondown> -->
         </control>
         <control>
           <description>playlist control</description>
@@ -187,8 +187,8 @@
           <id>53</id>
           <onleft>2</onleft>
           <onright>53</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
+<!--           <onup>2</onup>
+          <ondown>2</ondown> -->
           <textcolor>FFFFFFFF</textcolor>
           <height>420</height>
         </control>
