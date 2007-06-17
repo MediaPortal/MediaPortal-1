@@ -1216,7 +1216,7 @@ namespace WebEPG_conf
       {
         _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Loading Existing channels.xml");
         MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(startDirectory + "\\channels\\channels.xml");
-        int channelCount = xmlreader.GetValueAsInt("ChannelConfigInfo", "TotalChannels", 0);
+        int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);
 
         for (int i = 0; i < channelCount; i++)
         {
