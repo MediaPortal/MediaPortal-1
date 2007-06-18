@@ -67,7 +67,7 @@
       <id>200</id>
       <posX>630</posX>
       <posY>198</posY>
-      <label>#homedate</label>
+      <label>#date</label>
       <align>right</align>
       <font>font14</font>
       <textcolor>ffa9d0f7</textcolor>
