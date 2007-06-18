@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- changed : 30.05.2007   -->
+<!-- changed : 18.06.2007   -->
 <!-- contains:   -->
 <!--   - Australia   -->
 <!--   - Austria   -->
@@ -1315,7 +1315,7 @@
 		<carrier frequency="746000" bandwidth="8" />
 	</country>
 
-	<country name="Germany - Duesseldorf/Ruhrgebiet" offset="125">
+	<country name="Germany - Düsseldorf/Ruhrgebiet" offset="125">
 		<carrier frequency="506000" bandwidth="8" />
 		<carrier frequency="538000" bandwidth="8" />
 		<carrier frequency="586000" bandwidth="8" />
@@ -1372,6 +1372,11 @@
 		<carrier frequency="690000" bandwidth="10" />
 		<carrier frequency="754000" bandwidth="10" />
 		<carrier frequency="834000" bandwidth="10" />
+	</country>
+	<country name="Germany - Münster" offset="125">
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
 	</country>
 	<country name="Germany - Nürnberg" offset="125">
 		<carrier frequency="184500" bandwidth="10" />
