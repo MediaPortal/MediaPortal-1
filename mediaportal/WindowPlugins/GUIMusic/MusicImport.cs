@@ -150,7 +150,7 @@ namespace MediaPortal.MusicImport
     public void EncodeTrack(GUIFacadeControl facadeView, int getID)
     {
       GetID = getID;
-      if (File.Exists("lame_enc.dll"))
+      if (File.Exists(Config.GetFile(Config.Dir.Base, "lame_enc.dll")))
       {
         GUIListItem item = facadeView.SelectedListItem;
         char[] Drives = CDDrive.GetCDDriveLetters();
@@ -500,7 +500,7 @@ namespace MediaPortal.MusicImport
               }
               finally
               {
-                m_Drive.UnLockCD();
+                m_Drive.Close();
               }
           }
           finally
@@ -514,7 +514,7 @@ namespace MediaPortal.MusicImport
         {
           if (File.Exists(trackInfo.TempFileName))
             File.Delete(trackInfo.TempFileName);
-          m_Drive.UnLockCD();
+          m_Drive.Close();
         }
       }
     }
