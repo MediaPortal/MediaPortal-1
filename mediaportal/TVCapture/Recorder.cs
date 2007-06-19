@@ -358,14 +358,26 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        //no tvguide data, just record the next 2 hours
-        Log.WriteFile(LogType.Recorder, "Recorder:record now:{0} for next 4 hours", channelName);
-        tmpRec.Start = MediaPortal.Util.Utils.datetolong(DateTime.Now);
-        tmpRec.End = MediaPortal.Util.Utils.datetolong(DateTime.Now.AddHours(4));
-        tmpRec.Title = GUILocalizeStrings.Get(413);
-        if (program != null)
+        if (program != null && manualStop)
+        {
+          //record current playing program for the next 4 hours
+          tmpRec.Start = program.Start;
+          tmpRec.End = MediaPortal.Util.Utils.datetolong(DateTime.Now.AddHours(4));
           tmpRec.Title = program.Title;
-        tmpRec.IsContentRecording = true;//make a content recording! (record from now)
+          tmpRec.IsContentRecording = false;//make a reference recording! (record from timeshift buffer)
+          Log.WriteFile(LogType.Recorder, "Recorder:record now:{0} program:{1}", channelName, program.Title);
+        }
+        else
+        {
+          //no tvguide data, just record the next 4 hours
+          Log.WriteFile(LogType.Recorder, "Recorder:record now:{0} for next 4 hours", channelName);
+          tmpRec.Start = MediaPortal.Util.Utils.datetolong(DateTime.Now);
+          tmpRec.End = MediaPortal.Util.Utils.datetolong(DateTime.Now.AddHours(4));
+          tmpRec.Title = GUILocalizeStrings.Get(413);
+          if (program != null)
+            tmpRec.Title = program.Title;
+          tmpRec.IsContentRecording = true;//make a content recording! (record from now)
+        }
       }
 
       Log.WriteFile(LogType.Recorder, "Recorder:   start: {0} {1}", tmpRec.StartTime.ToShortDateString(), tmpRec.StartTime.ToShortTimeString());

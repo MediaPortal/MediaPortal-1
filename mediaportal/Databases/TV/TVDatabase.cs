@@ -2111,8 +2111,8 @@ namespace MediaPortal.TV.Database
               rec.Quality = (TVRecording.QualityType)DatabaseUtility.GetAsInt(results, i, "recording.quality");
               rec.Priority = DatabaseUtility.GetAsInt(results, i, "recording.priority");
               rec.EpisodesToKeep = DatabaseUtility.GetAsInt(results, i, "recording.episodesToKeep");
-              int iContectRec = DatabaseUtility.GetAsInt(results, i, "recording.bContentRecording");
-              if (iContectRec == 1) rec.IsContentRecording = true;
+              int iContentRec = DatabaseUtility.GetAsInt(results, i, "recording.bContentRecording");
+              if (iContentRec == 1) rec.IsContentRecording = true;
               else rec.IsContentRecording = false;
               rec.KeepRecordingMethod = (TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results, i, "recording.keepMethod");
               long date = DatabaseUtility.GetAsInt64(results, i, "recording.keepDate");
