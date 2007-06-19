@@ -1637,7 +1637,11 @@ namespace MediaPortal.GUI.Music
         if (m_bScan && strExtension.ToLower().Equals(".cda"))
           continue;
         if (m_bScan && dlg != null)
-          dlg.ProgressKeys();
+        {
+          dlg.SetPercentage((int)((double)i / (double)items.Count * 100.00));
+          dlg.Progress();
+          dlg.ShowProgressBar(true);
+        }
 
         // dont try reading id3tags for folders or playlists
         if (!pItem.IsFolder && !PlayListFactory.IsPlayList(pItem.Path))
