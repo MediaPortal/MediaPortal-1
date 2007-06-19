@@ -289,7 +289,7 @@ namespace TvService
             currentTime <= schedule.EndTime.AddMinutes(schedule.PostRecordInterval))
         {
 
-          newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.StartTime, schedule.EndTime);
+          newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.StartTime, schedule.EndTime, false);
           return true;
         }
         return false;
@@ -304,7 +304,7 @@ namespace TvService
         {
           if (!schedule.IsSerieIsCanceled(start))
           {
-            newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
+            newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end, true);
             return true;
           }
         }
@@ -323,7 +323,7 @@ namespace TvService
 
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end, true);
               return true;
             }
           }
@@ -341,7 +341,7 @@ namespace TvService
           {
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end, true);
               return true;
             }
           }
@@ -360,7 +360,7 @@ namespace TvService
           {
             if (!schedule.IsSerieIsCanceled(start))
             {
-              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end);
+              newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), start, end, true);
               return true;
             }
           }
@@ -387,7 +387,7 @@ namespace TvService
                     newSchedule.EndTime = current.EndTime;
                     newSchedule.ScheduleType = 0; // type Once
                     newSchedule.Persist();
-                    newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
+                    newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.StartTime, current.EndTime, true);
                     return true;
                 }
               }
@@ -419,7 +419,7 @@ namespace TvService
                     newSchedule.EndTime = current.EndTime;
                     newSchedule.ScheduleType = 0; // type Once
                     newSchedule.Persist();
-                    newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.StartTime, current.EndTime);
+                    newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.StartTime, current.EndTime, true);
                     return true;
                   }
 
@@ -633,6 +633,8 @@ namespace TvService
         if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
         {
           recording.Schedule.Delete();
+          // even for Once type , the schedule can initially be a serie
+          if (recording.IsSerie) _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
           _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ScheduleDeleted, new VirtualCard(_user), _user, recording.Schedule, null));
         }
         else

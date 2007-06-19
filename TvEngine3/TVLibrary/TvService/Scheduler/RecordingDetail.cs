@@ -43,6 +43,7 @@ namespace TvService
     CardDetail _cardInfo;
     DateTime _dateTimeRecordingStarted;
     Recording _recording;
+    bool _isSerie = false;
     #endregion
 
     #region ctor
@@ -53,12 +54,13 @@ namespace TvService
     /// <param name="channel">Channel on which the recording is done</param>
     /// <param name="endTime">Date/Time the recording should start without pre-record interval</param>
     /// <param name="endTime">Date/Time the recording should stop with post record interval</param>
-    public RecordingDetail(Schedule schedule, Channel channel, DateTime startTime, DateTime endTime)
+    public RecordingDetail(Schedule schedule, Channel channel, DateTime startTime, DateTime endTime, bool isSerie)
     {
       _schedule = schedule;
       _channel = channel;
       _endTime = endTime;
       _program = null;
+      _isSerie = isSerie;
 
       TvDatabase.Program _current = schedule.ReferencedChannel().CurrentProgram; // current running program
       TvDatabase.Program _next = schedule.ReferencedChannel().NextProgram; // next running one
@@ -212,6 +214,15 @@ namespace TvService
         return true;
       }
     }
+
+    /// <summary>
+    /// Property wich returns true if the recording detail is a serie
+    /// </summary>
+    public bool IsSerie
+    {
+      get { return _isSerie; }
+    }
+
     #endregion
 
     #region private members
@@ -223,7 +234,7 @@ namespace TvService
     {
       Setting setting;
       TvBusinessLayer layer = new TvBusinessLayer();
-      if ((ScheduleRecordingType)_schedule.ScheduleType == ScheduleRecordingType.Once)
+      if (!_isSerie)
       {
         setting = layer.GetSetting("moviesformat", "%title%");
       }
