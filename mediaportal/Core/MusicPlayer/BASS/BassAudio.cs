@@ -2145,7 +2145,10 @@ namespace MediaPortal.Player
         GUIGraphicsContext.IsFullScreenVideo = false;
 
       if (bManualStop)
+      {
         ShowVisualizationWindow(false);
+        VizWindow.Run = false;
+      }
 
       GUIGraphicsContext.IsPlaying = false;
 
