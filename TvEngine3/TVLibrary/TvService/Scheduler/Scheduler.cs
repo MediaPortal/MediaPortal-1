@@ -299,6 +299,7 @@ namespace TvService
       {
         DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
         DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
+        if (start > end) end = end.AddDays(1);
         if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
             currentTime <= end.AddMinutes(schedule.PostRecordInterval))
         {
@@ -317,6 +318,7 @@ namespace TvService
         {
           DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
           DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
+          if (start > end) end = end.AddDays(1);
           if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
               currentTime <= end.AddMinutes(schedule.PostRecordInterval))
           {
@@ -336,6 +338,7 @@ namespace TvService
         {
           DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
           DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
+          if (start > end) end = end.AddDays(1);
           if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
               currentTime <= end.AddMinutes(schedule.PostRecordInterval))
           {
@@ -355,6 +358,7 @@ namespace TvService
         {
           DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
           DateTime end = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
+          if (start > end) end = end.AddDays(1);
           if (currentTime >= start.AddMinutes(-schedule.PreRecordInterval) &&
               currentTime <= end.AddMinutes(schedule.PostRecordInterval))
           {
