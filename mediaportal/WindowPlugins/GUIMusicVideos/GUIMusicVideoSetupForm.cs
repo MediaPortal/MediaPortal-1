@@ -74,6 +74,11 @@ namespace MediaPortal.GUI.MusicVideos
             bitrate300.Checked = true;
             break;
           }
+        case "512":
+          {
+            bitrate512.Checked = true;
+            break;
+          }
         case "768":
           {
             bitrate768.Checked = true;
