@@ -42,6 +42,7 @@ namespace MediaPortal.Player
   {
     #region enums
     public enum MediaType { Video, TV, Radio, Music, Recording };
+    public enum DriveType { CD, DVD };
     #endregion
 
     #region variables
@@ -59,7 +60,10 @@ namespace MediaPortal.Player
     static ArrayList _seekStepList = new ArrayList();
     static int _seekStepTimeout;
     static public bool configLoaded = false;
-    static string[] _driveSpeeds;
+    static string[] _driveSpeedCD;
+    static string[] _driveSpeedDVD;
+    static string[] _disableCDSpeed;
+    static string[] _disableDVDSpeed;
     static int _driveCount = 0;
     static string _driveLetters;
     static bool driveSpeedLoaded = false;
@@ -125,11 +129,17 @@ namespace MediaPortal.Player
     /// </summary>
     public static void LoadDriveSpeed()
     {
-      string speedTable = String.Empty;
+      string speedTableCD = String.Empty;
+      string speedTableDVD = String.Empty;
+      string disableCD = String.Empty;
+      string disableDVD = String.Empty;
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        speedTable = xmlreader.GetValueAsString("cdspeed", "drivespeed", String.Empty);
+        speedTableCD = xmlreader.GetValueAsString("cdspeed", "drivespeedCD", String.Empty);
+        disableCD = xmlreader.GetValueAsString("cdspeed", "disableCD", String.Empty);
+        speedTableDVD = xmlreader.GetValueAsString("cdspeed", "drivespeedDVD", String.Empty);
+        disableDVD = xmlreader.GetValueAsString("cdspeed", "disableDVD", String.Empty);
         driveSpeedControlEnabled = xmlreader.GetValueAsBool("cdspeed", "enabled", false);
       }
 
@@ -159,21 +169,34 @@ namespace MediaPortal.Player
       }
       _driveLetters = builderDriveLetter.ToString();
 
-      if (speedTable == String.Empty)
+      if (speedTableCD == String.Empty || speedTableDVD == String.Empty)
       {
+        BASS_CD_INFO cdinfo = new BASS_CD_INFO();
         StringBuilder builder = new StringBuilder();
+        StringBuilder builderDisable = new StringBuilder();
         for (int i = 0; i < _driveCount; i++)
         {
           if (builder.Length != 0)
             builder.Append(",");
 
-          float maxspeed = BassCd.BASS_CD_GetSpeedFactor(i);
+          if (builderDisable.Length != 0)
+            builderDisable.Append(", ");
+
+          BassCd.BASS_CD_GetInfo(i, cdinfo);
+          int maxspeed = (int)(cdinfo.maxspeed / 176.4);
           builder.Append(Convert.ToInt32(maxspeed).ToString());
+          builderDisable.Append("N");
         }
-        speedTable = builder.ToString();
+        speedTableCD = builder.ToString();
+        speedTableDVD = builder.ToString();
+        disableCD = builderDisable.ToString();
+        disableDVD = builderDisable.ToString();
       }
 
-      _driveSpeeds = speedTable.Split(',');
+      _driveSpeedCD = speedTableCD.Split(',');
+      _driveSpeedDVD = speedTableDVD.Split(',');
+      _disableCDSpeed = disableCD.Split(',');
+      _disableDVDSpeed = disableDVD.Split(',');
 
       driveSpeedLoaded = true;
     }
@@ -280,7 +303,7 @@ namespace MediaPortal.Player
     /// Changes the speed of a drive to the value set in configuration
     /// </summary>
     /// <param name="strFile"></param>
-    private static void ChangeDriveSpeed(string strFile)
+    private static void ChangeDriveSpeed(string strFile, DriveType drivetype)
     {
       if (!driveSpeedLoaded)
         LoadDriveSpeed();
@@ -292,14 +315,23 @@ namespace MediaPortal.Player
       {
         // is the DVD inserted in a Drive for which we need to control the speed
         string rootPath = System.IO.Path.GetPathRoot(strFile);
+        string speed = String.Empty;
         if (rootPath != null)
         {
           if (rootPath.Length > 1)
           {
             int driveindex = _driveLetters.IndexOf(rootPath.Substring(0, 1));
-            if (driveindex > -1 && driveindex < _driveSpeeds.Length)
+            if (driveindex > -1 && driveindex < _driveSpeedCD.Length)
             {
-              BassCd.BASS_CD_SetSpeed(driveindex, Convert.ToSingle(_driveSpeeds[driveindex]));
+              if (drivetype == DriveType.CD && _disableCDSpeed[driveindex] == "N")
+                speed = _driveSpeedCD[driveindex];
+              else if (drivetype == DriveType.DVD && _disableDVDSpeed[driveindex] == "N")
+                speed = _driveSpeedDVD[driveindex];
+              else
+                return;
+
+              BassCd.BASS_CD_SetSpeed(driveindex, Convert.ToSingle(speed));
+              Log.Info("g_player: Playback Speed on Drive {0} reduced to {1}", rootPath.Substring(0, 1), speed);
 
               driveSpeedReduced = true;
             }
@@ -558,7 +590,7 @@ namespace MediaPortal.Player
         // Stop the BASS engine to avoid problems with Digital Audio
         BassMusicPlayer.Player.FreeBass();
 
-        ChangeDriveSpeed(strPath);
+        ChangeDriveSpeed(strPath, DriveType.DVD);
 
         //stop playing radio
 
@@ -826,7 +858,7 @@ namespace MediaPortal.Player
       {
         Starting = true;
 
-        ChangeDriveSpeed(strFile);
+        ChangeDriveSpeed(strFile, DriveType.CD);
 
         //stop radio
         if (!MediaPortal.Util.Utils.IsLiveRadio(strFile))
@@ -940,7 +972,7 @@ namespace MediaPortal.Player
       {
         Starting = true;
 
-        ChangeDriveSpeed(strFile);
+        ChangeDriveSpeed(strFile, DriveType.CD);
 
         //stop radio
         if (!MediaPortal.Util.Utils.IsLiveRadio(strFile))

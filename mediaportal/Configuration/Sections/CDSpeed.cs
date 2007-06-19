@@ -88,8 +88,48 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    public class SyncedCheckBox : CheckBox
+    {
+      private DataGrid grid;
+      private int cell;
+
+      public int Cell
+      {
+        get { return cell; }
+        set { cell = value; }
+      }
+
+      public DataGrid Grid
+      {
+        get { return grid; }
+        set { grid = value; }
+      }
+
+      protected override void OnLayout(LayoutEventArgs levent)
+      {
+        DataGridCell currentCell = Grid.CurrentCell;
+
+        if (currentCell.ColumnNumber == Cell)
+        {
+          DataTable ds = Grid.DataSource as DataTable;
+          if (ds != null)
+          {
+            if (currentCell.RowNumber < ds.Rows.Count)
+            {
+              DataRow row = ds.Rows[currentCell.RowNumber];
+              this.Checked = (bool)row.ItemArray[Cell];
+            }
+          }
+        }
+        base.OnLayout(levent);
+      }
+    }
+
     private DataTable datasetFilters;
-    private string _speedTable;
+    private string _speedTableCD;
+    private string _disableCD;
+    private string _speedTableDVD;
+    private string _disableDVD;
     private int _driveCount;
     private bool updating = false;
 
@@ -137,50 +177,87 @@ namespace MediaPortal.Configuration.Sections
         updating = true;
         //Declare and initialize local variables used
         DataColumn dtCol = null;                  //Data Column variable
-        string[] arrColumnNames = null;           //string array variable
         SyncedComboBox cbSpeed;                   //combo box var         
-
-        //Create the String array object, initialize the array with the column
-        //names to be displayed
-        arrColumnNames = new string[3];
-        arrColumnNames[0] = "Drive";
-        arrColumnNames[1] = "Name";
-        arrColumnNames[2] = "Speed";
+        SyncedComboBox cbSpeedDVD;                //combo box var  
+        SyncedCheckBox ckDisableDVD;              
 
         //Create the Data Table object which will then be used to hold
         //columns and rows
         datasetFilters = new DataTable("Drive");
-        //Add the string array of columns to the DataColumn object       
-        for (int i = 0; i < arrColumnNames.Length; i++)
-        {
-          string str = arrColumnNames[i];
-          dtCol = new DataColumn(str);
-          dtCol.DataType = Type.GetType("System.String");
-          dtCol.DefaultValue = "";
-          datasetFilters.Columns.Add(dtCol);
-        }
+        //Add the columns to the DataColumn object
+        dtCol = new DataColumn("Drive");
+        dtCol.DataType = Type.GetType("System.String");
+        dtCol.DefaultValue = "";
+        datasetFilters.Columns.Add(dtCol);
+
+        dtCol = new DataColumn("Name");
+        dtCol.DataType = Type.GetType("System.String");
+        dtCol.DefaultValue = "";
+        datasetFilters.Columns.Add(dtCol);
+
+        dtCol = new DataColumn("CD");
+        dtCol.DataType = Type.GetType("System.String");
+        dtCol.DefaultValue = "";
+        datasetFilters.Columns.Add(dtCol);
+
+        dtCol = new DataColumn("DisableCD");
+        dtCol.DataType = Type.GetType("System.Boolean");
+        dtCol.DefaultValue = false;
+        dtCol.AllowDBNull = false;
+        datasetFilters.Columns.Add(dtCol);
+
+        dtCol = new DataColumn("DVD");
+        dtCol.DataType = Type.GetType("System.String");
+        dtCol.DefaultValue = "";
+        datasetFilters.Columns.Add(dtCol);
+
+        dtCol = new DataColumn("DisableDVD");
+        dtCol.DataType = Type.GetType("System.Boolean");
+        dtCol.DefaultValue = false;
+        dtCol.AllowDBNull = false;
+        datasetFilters.Columns.Add(dtCol);
 
         cbSpeed = new SyncedComboBox();
         cbSpeed.Cursor = Cursors.Arrow;
         cbSpeed.DropDownStyle = ComboBoxStyle.DropDownList;
         cbSpeed.Dock = DockStyle.Fill;
-        cbSpeed.DisplayMember = "Speed";
+        cbSpeed.DisplayMember = "CD";
         cbSpeed.Grid = dataGrid1;
         cbSpeed.Cell = 1;
         cbSpeed.Items.AddRange(speeds);
 
+        cbSpeedDVD = new SyncedComboBox();
+        cbSpeedDVD.Cursor = Cursors.Arrow;
+        cbSpeedDVD.DropDownStyle = ComboBoxStyle.DropDownList;
+        cbSpeedDVD.Dock = DockStyle.Fill;
+        cbSpeedDVD.DisplayMember = "DVD";
+        cbSpeedDVD.Grid = dataGrid1;
+        cbSpeedDVD.Cell = 1;
+        cbSpeedDVD.Items.AddRange(speeds);
+
+        ckDisableDVD = new SyncedCheckBox();
+        ckDisableDVD.Cursor = Cursors.Arrow;
+        ckDisableDVD.Cell = 1;
+        ckDisableDVD.Grid = dataGrid1;
+        
         //Event that will be fired when selected index in the combo box is changed
         cbSpeed.SelectionChangeCommitted += new EventHandler(cbSpeed_SelectionChangeCommitted);
+        cbSpeedDVD.SelectionChangeCommitted += new EventHandler(cbSpeed_SelectionChangeCommitted);
 
 
         //fill in all rows...
-        string[] drivespeed = _speedTable.Split(',');
+        string[] drivespeedCD = _speedTableCD.Split(',');
+        string[] drivespeedDVD = _speedTableDVD.Split(',');
+        string[] disableCD = _disableCD.Split(',');
+        string[] disableDVD = _disableDVD.Split(',');
         for (int i = 0; i < _driveCount; ++i)
         {
+          bool disCD = (disableCD[i] == "Y");
+          bool disDVD = (disableDVD[i] == "Y");
           datasetFilters.Rows.Add(
               new object[] {
                            BassCd.BASS_CD_GetDriveLetterChar(i), BassCd.BASS_CD_GetDriveDescription(i),
-                           drivespeed[i]
+                           drivespeedCD[i], disCD, drivespeedDVD[i], disDVD
 												 }
                                  );
         }
@@ -212,15 +289,20 @@ namespace MediaPortal.Configuration.Sections
           //individual columns   
           GridColumnStylesCollection colStyle;
           colStyle = dataGrid1.TableStyles[0].GridColumnStyles;
-          colStyle[0].Width = 60;
+          colStyle[0].Width = 40;
           colStyle[0].ReadOnly = true;
-          colStyle[1].Width = 300;
+          colStyle[1].Width = 265;
           colStyle[1].ReadOnly = true;
-          colStyle[2].Width = 60;
+          colStyle[2].Width = 50;
+          colStyle[3].Width = 15;
+          colStyle[4].Width = 50;
+          colStyle[5].Width = 15;
         }
         DataGridTextBoxColumn dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[2];
         //Add the combo box to the text box taken in the above step 
         dgtb.TextBox.Controls.Add(cbSpeed);
+        dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[4];
+        dgtb.TextBox.Controls.Add(cbSpeedDVD);
         updating = false;
       }
       catch (Exception ex)
@@ -253,21 +335,35 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         ckEnableCDSpeed.Checked = reader.GetValueAsBool("cdspeed", "enabled", false);
-        _speedTable = reader.GetValueAsString("cdspeed", "drivespeed", String.Empty);
+        _speedTableCD = reader.GetValueAsString("cdspeed", "drivespeedCD", String.Empty);
+        _disableCD = reader.GetValueAsString("cdspeed", "disableCD", String.Empty);
+        _speedTableDVD = reader.GetValueAsString("cdspeed", "drivespeedDVD", String.Empty);
+        _disableDVD = reader.GetValueAsString("cdspeed", "disableDVD", String.Empty);
       }
 
-      if (_speedTable == String.Empty)
+      // On first use, the table are empty and need to be filled with the max speed
+      if (_speedTableCD == String.Empty || _speedTableDVD == String.Empty)
       {
+        BASS_CD_INFO cdinfo = new BASS_CD_INFO();
         StringBuilder builder = new StringBuilder();
+        StringBuilder builderDisable = new StringBuilder();
         for (int i = 0; i < _driveCount; i++)
         {
           if (builder.Length != 0)
             builder.Append(", ");
 
-          float maxspeed = BassCd.BASS_CD_GetSpeedFactor(i);
+          if (builderDisable.Length != 0)
+            builderDisable.Append(", ");
+
+          BassCd.BASS_CD_GetInfo(i, cdinfo);
+          int maxspeed = (int)(cdinfo.maxspeed / 176.4);
           builder.Append(Convert.ToString(maxspeed));
+          builderDisable.Append("N");
         }
-        _speedTable = builder.ToString();
+        _speedTableCD = builder.ToString();
+        _speedTableDVD = builder.ToString();
+        _disableCD = builderDisable.ToString();
+        _disableDVD = builderDisable.ToString();
       }
       FillGrid();
     }
@@ -276,7 +372,10 @@ namespace MediaPortal.Configuration.Sections
     {
       DataTable dt = dataGrid1.DataSource as DataTable;
 
-      StringBuilder builder = new StringBuilder();
+      StringBuilder builderCD = new StringBuilder();
+      StringBuilder builderDVD = new StringBuilder();
+      StringBuilder builderDisableCD = new StringBuilder();
+      StringBuilder builderDisableDVD = new StringBuilder();
       BASS_CD_INFO cdinfo = new BASS_CD_INFO();
 
       int i = 0;
@@ -284,17 +383,38 @@ namespace MediaPortal.Configuration.Sections
       {
         foreach (DataRow row in dt.Rows)
         {
-          if (builder.Length != 0)
-            builder.Append(",");
+          if (builderCD.Length != 0)
+            builderCD.Append(",");
+
+          if (builderDVD.Length != 0)
+            builderDVD.Append(",");
+
+          if (builderDisableCD.Length != 0)
+            builderDisableCD.Append(",");
+
+          if (builderDisableDVD.Length != 0)
+            builderDisableDVD.Append(",");
 
           BassCd.BASS_CD_GetInfo(i, cdinfo);
-          int selectedSpeed = int.Parse((row[2].ToString()));
           int maxspeed = (int)(cdinfo.maxspeed / 176.4);
+          int selectedSpeedCD = int.Parse((row[2].ToString()));
+          int selectedSpeedDVD = int.Parse((row[4].ToString()));
 
-          if (selectedSpeed > maxspeed)
-            selectedSpeed = maxspeed;
+          if (selectedSpeedCD > maxspeed)
+            selectedSpeedCD = maxspeed;
 
-          builder.Append(selectedSpeed.ToString());
+          if (selectedSpeedDVD > maxspeed)
+            selectedSpeedDVD = maxspeed;
+
+          builderCD.Append(selectedSpeedCD.ToString());
+          builderDVD.Append(selectedSpeedDVD.ToString());
+
+          string sel = (bool)row[3] ? "Y" : "N";
+          builderDisableCD.Append(sel);
+
+          sel = (bool)row[5] ? "Y" : "N";
+          builderDisableDVD.Append(sel);
+
           i++;
         }
       }
@@ -305,7 +425,10 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings writer = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         writer.SetValueAsBool("cdspeed", "enabled", ckEnableCDSpeed.Checked);
-        writer.SetValue("cdspeed", "drivespeed", builder.ToString());
+        writer.SetValue("cdspeed", "drivespeedCD", builderCD.ToString());
+        writer.SetValue("cdspeed", "drivespeedDVD", builderDVD.ToString());
+        writer.SetValue("cdspeed", "disableCD", builderDisableCD.ToString());
+        writer.SetValue("cdspeed", "disableDVD", builderDisableDVD.ToString());
       }
     }
   }
