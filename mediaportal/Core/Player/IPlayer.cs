@@ -289,6 +289,13 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Method to stop playing but at the same time keep timeshifting on server
+    /// </summary>
+    public virtual void StopAndKeepTimeShifting()
+    {
+    }
+
+    /// <summary>
     /// Property which indicates if the playback is paused or not
     /// </summary>
     public virtual bool Paused

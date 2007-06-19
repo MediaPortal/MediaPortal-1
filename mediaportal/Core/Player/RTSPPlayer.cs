@@ -948,6 +948,18 @@ namespace MediaPortal.Player
       get { return m_strCurrentFile; }
     }
 
+    public override void StopAndKeepTimeShifting()
+    {
+      if (_state != PlayState.Init)
+      {
+        Log.Info("RTSPPlayer:ended - keep timeshifting {0}", m_strCurrentFile);
+        m_strCurrentFile = "";
+        CloseInterfaces();
+        _state = PlayState.Init;
+        GUIGraphicsContext.IsPlaying = false;        
+      }
+    }
+
     public override void Stop()
     {
       if (_state != PlayState.Init)

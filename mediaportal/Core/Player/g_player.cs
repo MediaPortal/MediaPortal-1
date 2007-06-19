@@ -417,7 +417,7 @@ namespace MediaPortal.Player
       }
     }
 
-    public static void Stop()
+    private static void doStop(bool keepTimeShifting)
     {
       if (driveSpeedReduced)
       {
@@ -434,10 +434,18 @@ namespace MediaPortal.Player
 
       if (_player != null)
       {
-        Log.Info("g_Player.Stop()");
+        Log.Info("g_Player.Stop() keepTimeShifting = {0}", keepTimeShifting);
         OnStopped();
         GUIGraphicsContext.ShowBackground = true;
-        _player.Stop();
+        if (!keepTimeShifting)
+        {
+          _player.Stop();
+        }
+        else
+        {
+          _player.StopAndKeepTimeShifting();
+        }
+        
         if (GUIGraphicsContext.form != null)
         {
           GUIGraphicsContext.form.Invalidate(true);
@@ -453,6 +461,17 @@ namespace MediaPortal.Player
         _chapters = null;
       }
     }
+
+    public static void StopAndKeepTimeShifting()
+    {
+      doStop (true);
+    }
+
+    public static void Stop()
+    {            
+      doStop (false);
+    }
+          
 
     static void CachePlayer()
     {
