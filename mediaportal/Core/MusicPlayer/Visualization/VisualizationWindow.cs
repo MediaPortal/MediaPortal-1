@@ -141,6 +141,8 @@ namespace MediaPortal.Visualization
     private bool NewPlay = false;
     private bool PlayBackTypeChanged = false;
 
+    private bool IsSoundSpectrumViz = false;
+
     #region Overlay Image Variables
 
     private Image CurrentTrackInfoImage = null;
@@ -1615,6 +1617,12 @@ namespace MediaPortal.Visualization
       Refresh();
       Application.DoEvents();
 
+      // Soundspectrum Viz need special handling on Render
+      if (Viz.IsEngineInstalled())
+        IsSoundSpectrumViz = true;
+      else
+        IsSoundSpectrumViz = false;
+
       // The first Render call can take quite a long time to return so we use a seperate worker thread 
       // for the first call.  Once the call returns we let the main render thread handle the rendering
       if (!Viz.PreRenderRequired)
@@ -1647,7 +1655,6 @@ namespace MediaPortal.Visualization
 
         while (VizRenderThread.IsAlive)
         {
-          Console.WriteLine("Sleeping while visualization thread shuts down.  Max shutdown time remaining:{0}ms", maxWaitMS);
           System.Threading.Thread.Sleep(sleepMS);
           maxWaitMS -= sleepMS;
 
@@ -1728,8 +1735,12 @@ namespace MediaPortal.Visualization
                 sleepMS = 0;
 
               g.Dispose();
-              //System.Threading.Thread.Sleep(VisualizationRenderInterval + sleepMS);
-              System.Threading.Thread.Sleep(VisualizationRenderInterval);
+
+              // Is it a Soundspectrum Viz, then we use, what their render returned in sleepMS
+              if (IsSoundSpectrumViz)
+                System.Threading.Thread.Sleep(sleepMS);
+              else
+                System.Threading.Thread.Sleep(VisualizationRenderInterval);
             }
           }
         }
