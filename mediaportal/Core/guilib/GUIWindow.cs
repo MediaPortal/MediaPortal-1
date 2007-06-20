@@ -211,6 +211,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_ACTIONMENU = 3010,
       WINDOW_TV_CROP_SETTINGS = 3011,
       WINDOW_TV_TUNING_DETAILS = 3012, // gemx 
+      WINDOW_WEBBROWSER = 5500,
       WINDOW_PSCLIENTPLUGIN_UNATTENDED = 6666, // dero
       WINDOW_WIKIPEDIA = 4711,
       WINDOW_TELETEXT = 7700,
@@ -783,6 +784,7 @@ namespace MediaPortal.GUI.Library
     {
       this.instance = obj;
     }
+
     void SetControlVisibility()
     {
       // reset our info manager caches
@@ -793,11 +795,11 @@ namespace MediaPortal.GUI.Library
           control.SetInitialVisibility();
       }
     }
+
     protected virtual void PreLoadPage()
-    {
-
-
+    {      
     }
+
     protected virtual void OnPageLoad()
     {
       if (_isSkinLoaded && (_lastSkin != GUIGraphicsContext.Skin))
@@ -806,6 +808,7 @@ namespace MediaPortal.GUI.Library
       SetControlVisibility();
       QueueAnimation(AnimationType.WindowOpen);
     }
+
     protected virtual void OnPageDestroy(int new_windowId)
     {
       if (GUIGraphicsContext.IsFullScreenVideo == false)
@@ -840,19 +843,24 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
     protected virtual void OnShowContextMenu()
     {
     }
+
     protected virtual void OnPreviousWindow()
     {
       GUIWindowManager.ShowPreviousWindow();
     }
+
     protected virtual void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
     }
+
     protected virtual void OnClickedUp(int controlId, GUIControl control, Action.ActionType actionType)
     {
     }
+
     protected virtual void OnClickedDown(int controlId, GUIControl control, Action.ActionType actionType)
     {
     }
@@ -953,7 +961,6 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     protected virtual void OnWindowLoaded()
     {
-
       _listPositions = new List<CPosition>();
 
       for (int i = 0; i < Children.Count; ++i)
@@ -1066,13 +1073,13 @@ namespace MediaPortal.GUI.Library
 
       AllocResources();
     }
+
     /// <summary>
     /// Render() method. This method draws the window by asking every control
     /// of the window to render itself
     /// </summary>
     public virtual void Render(float timePassed)
     {
-
       if (_shouldRestore)
       {
         DoRestoreSkin();

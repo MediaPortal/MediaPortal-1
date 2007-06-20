@@ -86,6 +86,7 @@ namespace MediaPortal.GUI.Video
                 ////    break;
 
                 case Action.ActionType.ACTION_PREVIOUS_MENU:
+                case Action.ActionType.ACTION_MOUSE_CLICK:
                 case Action.ActionType.ACTION_SHOW_GUI:
                     {
                         GUIGraphicsContext.IsFullScreenVideo = false;
