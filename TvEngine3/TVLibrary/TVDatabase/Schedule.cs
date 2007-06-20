@@ -348,7 +348,7 @@ namespace TvDatabase
         return null;
       }
       Key key = new Key(typeof(Schedule), true, "id_Schedule", id);
-      return Broker.RetrieveInstance(typeof(Schedule), key) as Schedule;
+      return Broker.TryRetrieveInstance(typeof(Schedule), key) as Schedule;
     }
 
     /// <summary>
@@ -357,7 +357,7 @@ namespace TvDatabase
     /// </summary>
     public static Schedule Retrieve(Key key)
     {
-      return Broker.RetrieveInstance(typeof(Schedule), key) as Schedule;
+      return Broker.TryRetrieveInstance(typeof(Schedule), key) as Schedule;
     }
 
     /// <summary>
@@ -665,7 +665,14 @@ namespace TvDatabase
       list = ReferringCanceledSchedule();
       foreach (CanceledSchedule schedule in list)
         schedule.Remove();
-      Remove();
+
+      // does the schedule still exist ?
+      // if yes then remove it, if no leave it.
+      Schedule schedExists = Retrieve(this.idSchedule);
+      if (schedExists != null)
+      {
+        Remove();
+      }
     }
 
     public bool Series
