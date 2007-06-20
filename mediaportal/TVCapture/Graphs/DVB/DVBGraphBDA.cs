@@ -1956,7 +1956,7 @@ namespace MediaPortal.TV.Recording
 
               if (_cardProperties.SupportsDiseqCommand() && (diseqcUsed != 0))
               {
-                _cardProperties.SendDiseqCommand(diseqcUsed, _currentTuningObject.Frequency, ch.LnbSwitchFrequency, _currentTuningObject.Polarity, diseqcUsed);
+                _cardProperties.SendDiseqCommand(diseqcUsed, _currentTuningObject.Frequency, ch.LnbSwitchFrequency, _currentTuningObject.Polarity, diseqcUsed, lowOsc, hiOsc);
               }
               else
               {
