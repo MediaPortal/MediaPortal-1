@@ -8,15 +8,44 @@
   <define>#header.hover:-</define>
   <controls>
     <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+			<defaultcontrol>2</defaultcontrol>
+			<onexit>50</onexit>
+			<buttonX>0</buttonX>
+			<buttonY>0</buttonY>
+			<buttonwidth>100</buttonwidth>
+			<buttonheight>720</buttonheight>
+			<textureFocus>-</textureFocus>
+			<textureNoFocus>-</textureNoFocus>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>320</width>
+			<height>720</height>
+			<dimColor>00ffffff</dimColor>
+			<control>
+				<type>image</type>
+				<posY>64</posY>
+			<width>385</width>
+			<height>515</height>
+				<texture>Backslide.png</texture>
+			<colorDiffuse>fffffffff</colorDiffuse>
+			<visible>!Control.HasFocus(50)</visible>
+			<animation effect="slide" time="350" start="-300,0">visible</animation>
+			<animation effect="slide" time="350" end="-300,0">hidden</animation>
+			</control>
 
-	  <control>
+    <control>
       <type>group</type>
       <description>group element</description>
       <posX>69</posX>
       <posY>89</posY>
       <layout>StackLayout</layout>
-      <animation effect="slide" time="350" end="-500,0">hidden</animation>
-	  <animation effect="slide" time="450" start="-500,0">visible</animation>
+      <visible>!Control.HasFocus(50)</visible>
+      <animation effect="slide" time="350" end="-300,0">hidden</animation>
+	  <animation effect="slide" time="450" start="-300,0">visible</animation>
       <control>
         <description>View-As</description>
         <type>button</type>
@@ -31,6 +60,8 @@
         <id>3</id>
         <label>103</label>
         <onright>50</onright>
+         <onup>2</onup>
+        <ondown>5</ondown>
       </control>
       <control>
         <description>Switch View</description>
@@ -38,6 +69,8 @@
         <id>5</id>
         <label>457</label>
         <onright>50</onright>
+         <onup>3</onup>
+        <ondown>6</ondown>
       </control>
       <control>
         <description>Play DVD</description>
@@ -45,6 +78,8 @@
         <id>6</id>
         <label>341</label>
         <onright>50</onright>
+         <onup>5</onup>
+        <ondown>7</ondown>
       </control>
       <control>
         <description>Eject Disc</description>
@@ -53,6 +88,8 @@
         <label>654</label>
         <action>100</action>
         <onright>50</onright>
+         <onup>6</onup>
+        <ondown>20</ondown>
       </control>
       <control>
         <type>image</type>
@@ -68,6 +105,8 @@
         <label>4555</label>
         <action>33</action>
         <onright>50</onright>
+        <onup>7</onup>
+        <ondown>9</ondown>
       </control>
       <control>
         <description>My Playlists</description>
@@ -75,6 +114,7 @@
         <id>9</id>
         <label>983</label>
         <onright>50</onright>
+         <onup>20</onup>
         <ondown>8</ondown>
       </control>
       <control>
@@ -84,8 +124,10 @@
         <label>5906</label>
         <hyperlink>5900</hyperlink>
         <onright>50</onright>
+         <onup>9</onup>
         <ondown>99</ondown>
       </control>
+       </control>
     </control>
     <import>common.facade.video.xml</import>
   </controls>
