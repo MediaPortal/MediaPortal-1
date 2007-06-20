@@ -42,7 +42,6 @@ namespace SetupTv.Sections
   public partial class TvMovieSetup : SectionSettings
   {
     #region Membervariables
-    string TVMoviePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"TV Movie\TV Movie ClickFinder");
     #endregion
 
     class ChannelInfo
@@ -177,8 +176,7 @@ namespace SetupTv.Sections
       checkBoxShowRatings.Checked = layer.GetSetting("TvMovieShowRatings", "false").Value == "true";
       checkBoxShowAudioFormat.Checked = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
       checkBoxSlowImport.Checked = layer.GetSetting("TvMovieSlowImport", "false").Value == "true";
-      SetRestPeriod(layer.GetSetting("TvMovieRestPeriod", "24").Value);
-      SetTVMoviePath(layer.GetSetting("TvMovieInstallPath", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"TV Movie\TV Movie ClickFinder")).Value);
+      SetRestPeriod(layer.GetSetting("TvMovieRestPeriod", "24").Value);    
 
       base.OnSectionActivated();
     }
@@ -552,18 +550,6 @@ namespace SetupTv.Sections
       }
     }
 
-    private bool SetTVMoviePath(string PathToInstallation)
-    {
-      if (File.Exists(Path.Combine(PathToInstallation, @"tvuptodate.exe")))
-      {
-        TVMoviePath = Path.GetDirectoryName(PathToInstallation);
-        Log.Info("TVMovie: Using TvMovieInstallPath {0}", TVMoviePath);
-        return true;
-      }
-      else
-        return false;
-    }
-
     private void tabControlTvMovie_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (!checkBoxEnableImport.Checked)
@@ -634,47 +620,12 @@ namespace SetupTv.Sections
       }
     }
 
-    private void LaunchTVMUpdater()
-    {
-      string UpdaterPath = Path.Combine(TVMoviePath, @"tvuptodate.exe");
-      if (File.Exists(UpdaterPath))
-      {
-        Stopwatch BenchClock = new Stopwatch();
-        
-        try
-        {
-          BenchClock.Start();
-          ProcessStartInfo startInfo = new ProcessStartInfo("tvuptodate.exe");
-          //startInfo.Arguments = "";
-          startInfo.FileName = UpdaterPath;
-          startInfo.WindowStyle = ProcessWindowStyle.Normal;
-          startInfo.WorkingDirectory = Path.GetDirectoryName(UpdaterPath);
-
-          Process UpdateProcess = Process.Start(startInfo);
-          //UpdateProcess.PriorityBoostEnabled = true;
-
-          UpdateProcess.WaitForExit(600000); // do not wait longer than 10 minutes for the internet update
-
-          BenchClock.Stop();
-          Log.Info("TVMovie: tvuptodate finished internet update in {0} seconds", Convert.ToString((BenchClock.ElapsedMilliseconds / 1000)));
-        }
-        catch (Exception ex)
-        {
-          BenchClock.Stop();
-          Log.Error("TVMovie: LaunchTVMUpdater failed: {0}", ex.Message);
-        }
-      }
-      else
-        Log.Info("TVMovie: tvuptodate.exe not found in default location: {0}", UpdaterPath);
-    }
-
     private void ManualImportThread()
-    {
-      LaunchTVMUpdater();
-
+    {      
       TvMovieDatabase _database = new TvMovieDatabase();
       try
       {
+        _database.LaunchTVMUpdater();
         _database.OnProgramsChanged += new TvMovieDatabase.ProgramsChanged(_database_OnProgramsChanged);
         _database.OnStationsChanged += new TvMovieDatabase.StationsChanged(_database_OnStationsChanged);
         _database.Connect();

@@ -67,6 +67,7 @@ namespace TvEngine
           if (_database.NeedsImport)
           {
             SetStandbyAllowed(false);
+            _database.LaunchTVMUpdater();
             _database.Import();
           }
         }

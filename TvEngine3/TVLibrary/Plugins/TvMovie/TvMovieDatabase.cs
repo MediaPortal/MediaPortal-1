@@ -143,6 +143,27 @@ namespace TvEngine
       get { return _programsCounter; }
     }
 
+    public static string TVMovieProgramPath
+    {
+      get
+      {
+        string path = string.Empty;
+        string mpPath = string.Empty;
+
+        using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
+          if (rkey != null)
+            path = string.Format("{0}", rkey.GetValue("ProgrammPath"));
+
+        TvBusinessLayer layer = new TvBusinessLayer();
+        mpPath = layer.GetSetting("TvMovieInstallPath", path).Value;
+
+        if (File.Exists(mpPath))
+          return mpPath;
+
+        return path;
+      }
+    }
+
     public static string DatabasePath
     {
       get
@@ -221,20 +242,6 @@ namespace TvEngine
     //  }
 
     //  updateProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
-
-    //  updateProcess.Start();
-    //  updateProcess.WaitForExit();
-    //}
-
-    //private void UpdateTvMovie()
-    //{
-    //  Process updateProcess = new Process();
-
-    //  using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
-    //    if (rkey != null)
-    //      updateProcess.StartInfo.FileName = string.Format("{0}\\tvupdate.exe", rkey.GetValue("ProgrammPath"));
-    //    else
-    //      return;
 
     //  updateProcess.Start();
     //  updateProcess.WaitForExit();
@@ -389,7 +396,6 @@ namespace TvEngine
           //  }
 
           setting = layer.GetSetting("TvMovieLastUpdate");
-          Log.Debug("TVMovie: Last import was done at {0} - setting to current time", LastUpdate.ToString());
           setting.Value = DateTime.Now.ToString();
           setting.Persist();
 
@@ -416,9 +422,7 @@ namespace TvEngine
           DateTime lastUpdated = Convert.ToDateTime(layer.GetSetting("TvMovieLastUpdate", "0").Value);
           //        if (Convert.ToInt64(layer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
           if (lastUpdated >= (DateTime.Now - restTime))
-          {
-            //DateTime NewImportTime = lastUpdated + restTime;
-            //Log.Debug("TVMovie: Last update was at {0} - waiting at least until {1} for next import", Convert.ToString(lastUpdated), Convert.ToString(NewImportTime));
+          {            
             return false;
           }
           else
@@ -893,39 +897,40 @@ namespace TvEngine
       return detailedRating;
     }
 
-    private DateTime LastUpdate
-    {
-      get
-      {
-        DateTime lastUpdate = DateTime.MinValue;
-        try
-        {
-          //TvBusinessLayer layer = new TvBusinessLayer();
-          //if (layer.GetSetting("TvMovieUseDatabaseDate", "true").Value == "true")
-          //{
-          FileInfo mpFi = new FileInfo(DatabasePath);
-          lastUpdate = mpFi.LastWriteTime;
-          //lastUpdate = Convert.ToInt64(string.Format("{0:D4}{1:D2}{2:D2}{3:D2}{4:D2}{5:D2}", dbUpdate.Year, dbUpdate.Month, dbUpdate.Day, dbUpdate.Hour, dbUpdate.Minute, dbUpdate.Second));
-          //}
-          //else
-          //{
-          //  // OBSOLETE
-          //  using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
-          //    if (rkey != null)
-          //    {
-          //      string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
-          //      lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
-          //    }
-          //}
-        }
-        catch (Exception ex)
-        {
-          Log.Error("TVMovie: Error getting database age {0}", ex.Message);
-          return lastUpdate;
-        }
-        return lastUpdate;
-      }
-    }
+    // obsolete
+    //private DateTime LastUpdate
+    //{
+    //  get
+    //  {
+    //    DateTime lastUpdate = DateTime.MinValue;
+    //    try
+    //    {
+    //      //TvBusinessLayer layer = new TvBusinessLayer();
+    //      //if (layer.GetSetting("TvMovieUseDatabaseDate", "true").Value == "true")
+    //      //{
+    //      FileInfo mpFi = new FileInfo(DatabasePath);
+    //      lastUpdate = mpFi.LastWriteTime;
+    //      //lastUpdate = Convert.ToInt64(string.Format("{0:D4}{1:D2}{2:D2}{3:D2}{4:D2}{5:D2}", dbUpdate.Year, dbUpdate.Month, dbUpdate.Day, dbUpdate.Hour, dbUpdate.Minute, dbUpdate.Second));
+    //      //}
+    //      //else
+    //      //{
+    //      //  // OBSOLETE
+    //      //  using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
+    //      //    if (rkey != null)
+    //      //    {
+    //      //      string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
+    //      //      lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
+    //      //    }
+    //      //}
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //      Log.Error("TVMovie: Error getting database age {0}", ex.Message);
+    //      return lastUpdate;
+    //    }
+    //    return lastUpdate;
+    //  }
+    //}
 
     private long datetolong(DateTime dt)
     {
@@ -969,6 +974,51 @@ namespace TvEngine
       sb.AddConstraint(String.Format("idChannel = '{0}'", progChannel.IdChannel));
       SqlStatement stmt = sb.GetStatement(true);
       ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+    }
+
+    public void LaunchTVMUpdater()
+    {
+      string UpdaterPath = Path.Combine(TVMovieProgramPath, @"tvuptodate.exe");
+      if (File.Exists(UpdaterPath))
+      {
+        Stopwatch BenchClock = new Stopwatch();
+
+        try
+        {
+          BenchClock.Start();
+
+          // check whether e.g. tv movie itself already started an update
+          Process[] processes = Process.GetProcessesByName("tvuptodate");
+          if (processes.Length > 0)
+          {
+            processes[0].WaitForExit(600000);
+            BenchClock.Stop();
+            Log.Info("TVMovie: tvuptodate was already running - waited {0} seconds for internet update to finish", Convert.ToString((BenchClock.ElapsedMilliseconds / 1000)));
+            return;
+          }
+
+          ProcessStartInfo startInfo = new ProcessStartInfo("tvuptodate.exe");
+          //startInfo.Arguments = "";
+          startInfo.FileName = UpdaterPath;
+          startInfo.WindowStyle = ProcessWindowStyle.Normal;
+          startInfo.WorkingDirectory = Path.GetDirectoryName(UpdaterPath);
+
+          Process UpdateProcess = Process.Start(startInfo);
+          //UpdateProcess.PriorityBoostEnabled = true;
+
+          UpdateProcess.WaitForExit(600000); // do not wait longer than 10 minutes for the internet update
+
+          BenchClock.Stop();
+          Log.Info("TVMovie: tvuptodate finished internet update in {0} seconds", Convert.ToString((BenchClock.ElapsedMilliseconds / 1000)));
+        }
+        catch (Exception ex)
+        {
+          BenchClock.Stop();
+          Log.Error("TVMovie: LaunchTVMUpdater failed: {0}", ex.Message);
+        }
+      }
+      else
+        Log.Info("TVMovie: tvuptodate.exe not found in default location: {0}", UpdaterPath);
     }
     #endregion
 
