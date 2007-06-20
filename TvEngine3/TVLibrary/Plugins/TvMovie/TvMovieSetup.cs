@@ -296,11 +296,11 @@ namespace SetupTv.Sections
 
       foreach (TreeNode channel in treeViewChannels.Nodes)
       {
-        Log.Debug("TvMovieSetup: Processing channel {0}", channel.Text);
+        //Log.Debug("TvMovieSetup: Processing channel {0}", channel.Text);
         foreach (TreeNode station in channel.Nodes)
         {          
           ChannelInfo channelInfo = (ChannelInfo)station.Tag;
-          Log.Debug("TvMovieSetup: Processing channelInfo {0}", channelInfo.Name);
+          //Log.Debug("TvMovieSetup: Processing channelInfo {0}", channelInfo.Name);
           TvMovieMapping mapping = null;
           try
           {
@@ -554,7 +554,7 @@ namespace SetupTv.Sections
 
     private bool SetTVMoviePath(string PathToInstallation)
     {
-      if (File.Exists(PathToInstallation))
+      if (File.Exists(Path.Combine(PathToInstallation, @"tvuptodate.exe")))
       {
         TVMoviePath = Path.GetDirectoryName(PathToInstallation);
         Log.Info("TVMovie: Using TvMovieInstallPath {0}", TVMoviePath);
