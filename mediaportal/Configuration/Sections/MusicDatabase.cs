@@ -447,12 +447,33 @@ namespace MediaPortal.Configuration.Sections
     private void startButton_Click(object sender, System.EventArgs e)
     {
       ArrayList shares = new ArrayList();
-      for (int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
+      for (int index = 0 ; index < sharesListBox.CheckedIndices.Count ; index++)
       {
         string path = sharesListBox.Items[(int)sharesListBox.CheckedIndices[index]].ToString();
         if (Directory.Exists(path))
         {
-          shares.Add(path);
+          try
+          {
+            DriveInfo[] allDrives = DriveInfo.GetDrives();
+            foreach (DriveInfo d in allDrives)
+            {
+              if (path.StartsWith(d.Name))
+              {
+                long DiskSpace = d.AvailableFreeSpace / 1048576;
+                if (DiskSpace > 100) // > 100MB left for creation of thumbs, etc
+                {
+                  Log.Info("MusicDatabase: adding share {0} for scanning - available disk space: {1} MB", path, DiskSpace.ToString());
+                  shares.Add(path);
+                }
+                else
+                  Log.Warn("MusicDatabase: NOT scanning share {0} because of low disk space: {1} MB", path, DiskSpace.ToString());
+              }
+            }
+          }
+          catch (Exception)
+          {
+            // Drive not ready, etc
+          }
         }
       }
       MediaPortal.Music.Database.MusicDatabase.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent);
