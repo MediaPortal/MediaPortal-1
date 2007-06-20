@@ -152,6 +152,8 @@ namespace MediaPortal.MusicImport
       GetID = getID;
       if (File.Exists(Config.GetFile(Config.Dir.Base, "lame_enc.dll")))
       {
+        // Release the drives first for CDDRIVE to be able to open them
+        MediaPortal.Player.BassMusicPlayer.ReleaseCDDrives();
         GUIListItem item = facadeView.SelectedListItem;
         char[] Drives = CDDrive.GetCDDriveLetters();
         if ((!item.IsFolder) && (Array.IndexOf(Drives, item.Path[0]) > -1))
@@ -185,6 +187,8 @@ namespace MediaPortal.MusicImport
       GetID = getID;
       if (File.Exists(Config.GetFile(Config.Dir.Base, "lame_enc.dll")))
       {
+        // Release the drives first for CDDRIVE to be able to open them
+        MediaPortal.Player.BassMusicPlayer.ReleaseCDDrives();
         char[] Drives = CDDrive.GetCDDriveLetters();
         for (int i = 1; i < facadeView.Count; ++i)
         {

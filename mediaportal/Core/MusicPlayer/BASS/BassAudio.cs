@@ -148,6 +148,15 @@ namespace MediaPortal.Player
 
       _Player.FreeBass();
     }
+
+    public static void ReleaseCDDrives()
+    {
+      int driveCount = BassCd.BASS_CD_GetDriveCount();
+      for (int i = 0; i < driveCount; i++)
+      {
+        BassCd.BASS_CD_Release(i);
+      }
+    }
     #endregion
 
     #region Private Methods

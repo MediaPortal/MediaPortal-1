@@ -28,6 +28,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Collections;
+using Un4seen.Bass.AddOn.Cd;
 
 using MediaPortal.Ripper;
 
@@ -48,17 +49,17 @@ namespace MediaPortal.Freedb
 
 		public FreeDBHttpImpl()
 		{
-      /*
-      System.String hostName;
-      try
+      // if BASS is not the default audio engine, we need to load the CD Plugin first
+      if (!MediaPortal.Player.BassMusicPlayer.IsDefaultMusicPlayer)
       {
-        hostName = System.Net.Dns.GetHostName();
+        // Load the CD Plugin
+        string appPath = System.Windows.Forms.Application.StartupPath;       
+        string decoderFolderPath = System.IO.Path.Combine(appPath, @"musicplayer\plugins\audio decoders");
+
+        BassRegistration.BassRegistration.Register();
+        int pluginHandle = Un4seen.Bass.Bass.BASS_PluginLoad(decoderFolderPath + "\\basscd.dll");
       }
-      catch (System.Exception e)
-      {
-        hostName = "localhost";
-      }
-      */
+
       StringBuilder buff = new StringBuilder(512);
       buff.Append("&hello=");
       buff.Append(Environment.UserName.Replace(" ", "_"));
@@ -374,6 +375,46 @@ namespace MediaPortal.Freedb
       return (string[])strarray.ToArray(typeof(string));
     }
 
+    private int Drive2BassID(char driveLetter)
+    {
+      for (int i = 0; i < 25; i++)
+      {
+        if (BassCd.BASS_CD_GetDriveLetterChar(i) == driveLetter)
+          return i;
+      }
+      return -1;
+    }
+
+    public string GetCDDBDiscIDInfo(char driveLetter, char separator)
+    {
+      string retval = null;
+      int drive = Drive2BassID(driveLetter);
+      if (drive > -1)
+      {
+        string id = BassCd.BASS_CD_GetID(drive, BASSCDId.BASS_CDID_CDDB);
+        retval = id.Replace(' ', separator);
+        BassCd.BASS_CD_Release(drive);
+      }
+      return retval;
+    }
+
+    public string GetCDDBDiscID(char driveLetter)
+    {
+      string retval = null;
+      int drive = Drive2BassID(driveLetter);
+      if (drive > -1)
+      {
+        retval = BassCd.BASS_CD_GetID(drive, BASSCDId.BASS_CDID_CDDB);
+        retval.Substring(0, 8);
+        BassCd.BASS_CD_Release(drive);
+      }
+
+      return retval;
+    }
+
+    // hwahrmann 20/06/2007
+    // The following Code got replaced by using BASS CD, cause it was interfering with BASS Audio CD Playback
+    /*
     public string GetCDDBDiscIDInfo (char driveLetter, char separator)
     {   
       string retval = null;
@@ -422,6 +463,7 @@ namespace MediaPortal.Freedb
 			}
 			return retval;
 		}
+    */
 
 	}
 }

@@ -842,10 +842,18 @@ namespace MediaPortal.GUI.Music
           break;
 
         case 1100: // Import CD
+          // Stop playback before importing
+          if (g_Player.Playing)
+            g_Player.Stop();
+
           OnAction(new Action(Action.ActionType.ACTION_IMPORT_DISC, 0, 0));
           break;
 
         case 1101: // Import seltected track
+          // Stop playback before importing
+          if (g_Player.Playing)
+            g_Player.Stop();
+
           OnAction(new Action(Action.ActionType.ACTION_IMPORT_TRACK, 0, 0));
           break;
 
