@@ -162,10 +162,8 @@ namespace MediaPortal.MusicImport
             TagReader.MusicTag musicTag = new TagReader.MusicTag();
             musicTag.Artist = "Unknown Artist";
             musicTag.Album = "Unknown Album";
-            string track = item.Label.Substring(5);
-            track = track.Substring(0, track.IndexOf('.'));
-            musicTag.Title = "Track " + track;
-            musicTag.Track = Convert.ToInt16(track);
+            musicTag.Track = Convert.ToInt16(item.Label.Substring(5));
+            musicTag.Title = string.Format("Track {0:00}", musicTag.Track);
             item.MusicTag = musicTag;
           }
           trackInfo.MusicTag = (TagReader.MusicTag)item.MusicTag;
