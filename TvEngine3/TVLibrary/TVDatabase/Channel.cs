@@ -455,6 +455,7 @@ namespace TvDatabase
         return _nextProgram;
       }
     }
+
     public Program CurrentProgram
     {
       get
@@ -470,6 +471,7 @@ namespace TvDatabase
       if (provider == "mysql") return "yyyy-MM-dd HH:mm:ss";
       return "yyyyMMdd HH:mm:ss";
     }
+
     public Program GetProgramAt(DateTime date)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
@@ -487,6 +489,7 @@ namespace TvDatabase
       }
       return (Program)programs[0];
     }
+
     void UpdateNowAndNext()
     {
       if (_currentProgram != null)
@@ -571,6 +574,7 @@ namespace TvDatabase
       }
       return null;
     }
+
     public bool ContainsChannelType(int channelType)
     {
       foreach (TuningDetail detail in ReferringTuningDetail())
