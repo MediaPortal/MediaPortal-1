@@ -404,8 +404,8 @@ namespace MediaPortal.Freedb
       int drive = Drive2BassID(driveLetter);
       if (drive > -1)
       {
-        retval = BassCd.BASS_CD_GetID(drive, BASSCDId.BASS_CDID_CDDB);
-        retval.Substring(0, 8);
+        string id = BassCd.BASS_CD_GetID(drive, BASSCDId.BASS_CDID_CDDB);
+        retval = id.Substring(0, 8);
         BassCd.BASS_CD_Release(drive);
       }
 
