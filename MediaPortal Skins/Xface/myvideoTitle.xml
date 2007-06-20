@@ -78,6 +78,8 @@
         <id>3</id>
         <label>103</label>
         <onright>50</onright>
+        <onup>2</onup>
+        <ondown>5</ondown>
       </control>
       <control>
         <description>Switch View</description>
@@ -85,6 +87,8 @@
         <id>5</id>
         <label>457</label>
         <onright>50</onright>
+        <onup>3</onup>
+        <ondown>6</ondown>
       </control>
       <control>
         <description>Play DVD</description>
@@ -92,6 +96,8 @@
         <id>6</id>
         <label>341</label>
         <onright>50</onright>
+        <onup>5</onup>
+        <ondown>7</ondown>
       </control>
       <control>
         <description>Eject Disc</description>
@@ -100,6 +106,8 @@
         <label>654</label>
         <action>100</action>
         <onright>50</onright>
+        <onup>6</onup>
+        <ondown>20</ondown>
       </control>
       <control>
         <type>image</type>
@@ -115,6 +123,8 @@
         <label>4555</label>
         <action>33</action>
         <onright>50</onright>
+        <onup>7</onup>
+        <ondown>9</ondown>
       </control>
       <control>
         <description>My Playlists</description>
@@ -122,6 +132,7 @@
         <id>9</id>
         <label>983</label>
         <onright>50</onright>
+        <onup>20</onup>
         <ondown>8</ondown>
       </control>
       <control>
@@ -131,6 +142,7 @@
         <label>5906</label>
         <hyperlink>5900</hyperlink>
         <onright>50</onright>
+        <onup>9</onup>
         <ondown>99</ondown>
       </control>
             </control>
