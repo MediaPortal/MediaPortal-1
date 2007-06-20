@@ -5,7 +5,7 @@
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:#view</define>
   <define>#header.image:videos_logo.png</define>
-  <define>#header.hover:-</define>
+  <define>#header.hover:hover_my videos.png</define>
   <controls>
     <import>common.window.xml</import>
     <control>
@@ -27,14 +27,16 @@
       <align>right</align>
       <percentage>#rating</percentage>
     </control>
-	  <control>
+    <control>
+      <description>button group</description>
       <type>group</type>
-      <description>group element</description>
-      <posX>69</posX>
-      <posY>89</posY>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
+      <posX>113</posX>
+      <posY>129</posY>
       <layout>StackLayout</layout>
-      <animation effect="slide" time="350" end="-300,0">hidden</animation>
-	  <animation effect="slide" time="450" start="-300,0">visible</animation>
       <control>
         <description>View-As</description>
         <type>button</type>
