@@ -266,9 +266,9 @@ namespace MediaPortal.Util
         item.Path = share.Path;
         if (Utils.IsRemovable(item.Path) && Directory.Exists(item.Path))
         {
-          string strDriveName = Utils.GetDriveName(item.Path);
-          if (strDriveName == "") strDriveName = "Removable";
-          item.Label = String.Format("{1} {0}", item.Path, strDriveName);
+          string driveName = Utils.GetDriveName(item.Path);
+          if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
+          item.Label = String.Format("({0}) {1}", item.Path, driveName);
         }
         if (Utils.IsDVD(item.Path))
         {
@@ -317,7 +317,7 @@ namespace MediaPortal.Util
           bool driveFound = false;
           string driveName = Util.Utils.GetDriveName(drive);
           string driveLetter = drive.Substring(0, 1).ToUpper() + ":";
-          if (driveName == "") driveName = "Removable";
+          if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
 
           //
           // Check if the share already exists
@@ -335,7 +335,7 @@ namespace MediaPortal.Util
           {
             GUIListItem item = new GUIListItem();
             item.Path = driveLetter;
-            item.Label = String.Format("{0} {1}", driveName, driveLetter);
+            item.Label = String.Format("({0}) {1}", item.Path, driveName);
             item.IsFolder = true;
 
             Utils.SetDefaultIcons(item);
@@ -2086,9 +2086,9 @@ namespace MediaPortal.Util
         item.Path = share.Path;
         if (Utils.IsRemovable(item.Path) && Directory.Exists(item.Path))
         {
-          string strDriveName = Utils.GetDriveName(item.Path);
-          if (strDriveName == "") strDriveName = "Removable";
-          item.Label = String.Format("{1} {0}", item.Path, strDriveName);
+          string driveName = Utils.GetDriveName(item.Path);
+          if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
+          item.Label = String.Format("({0}) {1}", item.Path, driveName);
         }
         if (Utils.IsDVD(item.Path))
         {
@@ -2137,7 +2137,7 @@ namespace MediaPortal.Util
           bool driveFound = false;
           string driveName = Util.Utils.GetDriveName(drive);
           string driveLetter = drive.Substring(0, 1).ToUpper() + ":";
-          if (driveName == "") driveName = "Removable";
+          if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
 
           //
           // Check if the share already exists
@@ -2155,7 +2155,7 @@ namespace MediaPortal.Util
           {
             GUIListItem item = new GUIListItem();
             item.Path = driveLetter;
-            item.Label = String.Format("{0} {1}", driveName, driveLetter);
+            item.Label = String.Format("({0}) {1}", item.Path, driveName);
             item.IsFolder = true;
 
             Utils.SetDefaultIcons(item);

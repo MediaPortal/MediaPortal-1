@@ -879,6 +879,7 @@
         <String id="1054">(recording)</String>
         <String id="1055">(timeshifting)</String>
         <String id="1056">(unavailable)</String>
+        <String id="1061">Removable</String>
         <String id="1100">Import CD</String>
         <String id="1101">Import selected track</String>
         <String id="1102">Cancel CD import</String>
