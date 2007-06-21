@@ -1419,7 +1419,7 @@ namespace TvPlugin
 
           //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player. 
           int newVideoStream = TVHome.Card.GetCurrentVideoStream(card.User);
-          if (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName)
+          if (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName || OldVideoStream != newVideoStream || hadAc3 != hasAc3)
           {
               MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): old videostream {0}, new videostream {1}", OldVideoStream, newVideoStream);
               MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): had ac3 {0}, has ac3 {1}", hadAc3, hasAc3);
@@ -1427,20 +1427,10 @@ namespace TvPlugin
               {
                   MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}/{3}", TVHome.Card.Id ,card.Id ,TVHome.Card.RTSPUrl, card.RTSPUrl);
                   MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}/{1}", TVHome.Card.TimeShiftFileName,Card.TimeShiftFileName);
-                  g_Player.Stop(); // stop timeshifting on server (cards have changed), we also want to recreate the graph on the client
-                  // gibman; when we issue a stop command we also have to restart the channel again.
-                  // this also fixed the problems with "array out of bounds" on some of the audiostreams code below.                  
-                  MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): slow restarting player - restarting timeshifting.");
-                  ViewChannelAndCheck(channel);                    
+                  g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client                                    
+                  MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): quick restarting player - keeping timeshifting."); 
               }
-          }
-          // if video or audio specs have changed since the last channel, we can keep timeshifting on the server, while client recreates the graph (faster than before).
-          else if (OldVideoStream != newVideoStream || hadAc3 != hasAc3)
-          {
-            g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
-            MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): quick restarting player - keeping timeshifting.");                 
-          }
-            
+          }                      
 
           TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
