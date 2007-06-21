@@ -120,15 +120,15 @@
         <onleft>11</onleft>
         <onright>50</onright>
         <onup>13</onup>
-        <ondown>8</ondown>
+        <ondown>33</ondown>
         <hyperlink>510</hyperlink>
       </control>
       <control>
         <description>Playlists button</description>
         <type>button</type>
-        <id>8</id>
+        <id>33</id>
         <label>4555</label>
-        <onleft>8</onleft>
+        <onleft>33</onleft>
         <onright>50</onright>
         <onup>11</onup>
         <ondown>10</ondown>
@@ -141,7 +141,7 @@
         <label>983</label>
         <onleft>10</onleft>
         <onright>50</onright>
-        <onup>8</onup>
+        <onup>33</onup>
         <ondown>99</ondown>
       </control>
        </control>

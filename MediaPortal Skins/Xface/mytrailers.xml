@@ -5,15 +5,15 @@
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:5900</define>
   <define>#header.image:trailers_logo.png</define>
-  <define>#header.hover:hover_my trailers.png</define>
+  <define>#header.hover:-</define>
   <controls>
     <import>common.window.xml</import>
     <control>
       <type>togglebutton</type>
       <description>Plot</description>
       <id>5</id>
-      <posX>113</posX>
-      <posY>176</posY>
+      <posX>69</posX>
+      <posY>132</posY>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>3</onup>
@@ -24,8 +24,8 @@
       <type>togglebutton</type>
       <description>Cast</description>
       <id>6</id>
-      <posX>113</posX>
-      <posY>222</posY>
+      <posX>69</posX>
+      <posY>177</posY>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>5</onup>
@@ -61,10 +61,10 @@
       <type>label</type>
       <description>cast txt</description>
       <id>56</id>
-      <posX>474</posX>
+      <posX>454</posX>
       <posY>406</posY>
       <label>Cast:</label>
-      <textcolor>ffb2d4f5</textcolor>
+       <textcolor>ff969696</textcolor>
     </control>
     <control>
       <type>label</type>
@@ -80,10 +80,10 @@
       <type>label</type>
       <description>Runtime txt</description>
       <id>54</id>
-      <posX>474</posX>
+      <posX>454</posX>
       <posY>340</posY>
       <label>172</label>
-      <textcolor>ffb2d4f5</textcolor>
+       <textcolor>ff969696</textcolor>
     </control>
     <control>
       <type>label</type>
@@ -99,36 +99,36 @@
       <type>label</type>
       <description>Runtime txt</description>
       <id>52</id>
-      <posX>474</posX>
+      <posX>454</posX>
       <posY>306</posY>
       <label>299</label>
-      <textcolor>ffb2d4f5</textcolor>
+      <textcolor>ff969696</textcolor>
     </control>
     <control>
       <type>label</type>
       <description>Genre txt</description>
       <id>50</id>
-      <posX>474</posX>
+      <posX>454</posX>
       <posY>373</posY>
       <label>174</label>
-      <textcolor>ffb2d4f5</textcolor>
+       <textcolor>ff969696</textcolor>
     </control>
     <control>
       <type>label</type>
       <description>Plot txt</description>
       <id>58</id>
-      <posX>474</posX>
+      <posX>454</posX>
       <posY>406</posY>
       <visible>no</visible>
       <label>Plot:</label>
-      <textcolor>ffb2d4f5</textcolor>
+      <textcolor>ff969696</textcolor>
     </control>
     <control>
       <type>selectbutton</type>
       <description>Letter button</description>
       <id>3</id>
-      <posX>113</posX>
-      <posY>129</posY>
+      <posX>69</posX>
+      <posY>89</posY>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>17</onup>
@@ -142,10 +142,10 @@
       <type>textboxscrollup</type>
       <description>Plot value</description>
       <id>59</id>
-      <posX>474</posX>
+      <posX>454</posX>
       <posY>437</posY>
-      <width>586</width>
-      <height>266</height>
+      <width>686</width>
+      <height>136</height>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>no</visible>
       <font>font13</font>
@@ -156,20 +156,21 @@
       <type>fadelabel</type>
       <description>Movie Title value</description>
       <id>1</id>
-      <posX>485</posX>
-      <posY>58</posY>
+      <posX>455</posX>
+      <posY>85</posY>
       <width>585</width>
       <label>#title</label>
-      <font>font18</font>
+      <font>font16</font>
       <disabledcolor>ff808080</disabledcolor>
     </control>
     <control>
       <type>listcontrol</type>
       <description>listview</description>
       <id>4</id>
-      <posX>474</posX>
-      <width>586</width>
-      <height>576</height>
+      <posX>424</posX>
+      <posY>122</posY>
+      <width>686</width>
+      <height>506</height>
       <onleft>3</onleft>
       <onright>3</onright>
       <onup>3</onup>
@@ -188,20 +189,21 @@
       <type>image</type>
       <description>movie border</description>
       <id>0</id>
-      <posX>178</posX>
+      <posX>128</posX>
       <posY>277</posY>
       <width>160</width>
       <height>245</height>
       <texture>playback_background.png</texture>
     </control>
-    <control>
+     <control>
       <type>image</type>
       <description>movie poster</description>
       <id>24</id>
-      <posX>188</posX>
-      <posY>296</posY>
-      <width>136</width>
-      <height>200</height>
+      <posX>155</posX>
+      <posY>312</posY>
+      <width>110</width>
+      <height>162</height>
     </control>
+
   </controls>
 </window>

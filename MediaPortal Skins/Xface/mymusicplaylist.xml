@@ -15,8 +15,8 @@
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
-      <posX>113</posX>
-      <posY>129</posY>
+      <posX>69</posX>
+      <posY>89</posY>
       <layout>StackLayout</layout>
       <control>
         <description>View-As button</description>
