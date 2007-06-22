@@ -407,9 +407,10 @@ namespace MediaPortal.TV.Recording
         }
       }
       SetFrameRateAndSize();
-      _mpeg2DemuxHelper.Record(attribtutes, strFileName, bContentRecording, timeProgStart, _startTime);
+      if (!_mpeg2DemuxHelper.Record(attribtutes, strFileName, bContentRecording, timeProgStart, _startTime))
+        return false;
       _graphState = State.Recording;
-      return true;
+     return true;
     }
 
     /// <summary>

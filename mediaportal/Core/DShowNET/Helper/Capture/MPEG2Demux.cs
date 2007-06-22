@@ -1210,7 +1210,7 @@ namespace DShowNET.Helper
     /// <param name="isContentRecording">
     /// when true it will make a content recording. A content recording writes the data to a new permanent file. 
     /// when false it will make a reference recording. A reference recording creates a stub file that refers to the existing backing files, which are made permanent. Create a reference recording if you want to save data that has already been captured.</param>
-    public void Record(Hashtable attribtutes, string fileName, bool isContentRecording, DateTime timeProgStart, DateTime timeFirstMoment)
+    public bool Record(Hashtable attribtutes, string fileName, bool isContentRecording, DateTime timeProgStart, DateTime timeFirstMoment)
     {
       //      fileName=@"C:\media\movies\test.dvr-ms";
       Log.Info("mpeg2: Record : {0} {1} {2}", fileName, _isRendered, isContentRecording);
@@ -1220,11 +1220,10 @@ namespace DShowNET.Helper
       else
         recordingType = 1;
 
-      bool success = DvrMsCreate(out _recorderId, (IBaseFilter)_streamBufferSink3Interface, fileName, recordingType);
-      if (!success)
+      if (!DvrMsCreate(out _recorderId, (IBaseFilter)_streamBufferSink3Interface, fileName, recordingType))
       {
         Log.Error("mpeg2:StartRecording() FAILED to create recording");
-        return;
+        return false;
       }
       long startTime = 0;
 
@@ -1273,6 +1272,7 @@ namespace DShowNET.Helper
             }
       */
       DvrMsStart(_recorderId, (uint)startTime);
+      return true;
     }
 
     public void StopRecording()
