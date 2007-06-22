@@ -1447,7 +1447,8 @@ namespace TvPlugin
           if (!g_Player.Playing)
             StartPlay();
 
-          else if (wasPlaying)
+          //else if (wasPlaying)
+          //by gemx: Always seek to the end of buffer. Fixes some issues with TsFilesource filter
             SeekToEnd(true);
 
           benchClock.Stop();
