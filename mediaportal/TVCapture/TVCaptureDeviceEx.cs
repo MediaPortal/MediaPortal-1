@@ -1695,8 +1695,13 @@ namespace MediaPortal.TV.Recording
       }
 
       Hashtable attribtutes = GetRecordingAttributes();
-      if (timeProgStart < _lastChannelChange) timeProgStart = _lastChannelChange;
-      bool bResult = _currentGraph.StartRecording(attribtutes, recording, channel, ref fullFileName, recording.IsContentRecording, timeProgStart);
+      if (timeProgStart < _lastChannelChange) 
+        timeProgStart = _lastChannelChange;
+      if (!_currentGraph.StartRecording(attribtutes, recording, channel, ref fullFileName, recording.IsContentRecording, timeProgStart))
+      {
+        Log.Info("Recorder: StartRecording FAILED");
+        return false;
+      }
       _recordedTvObject.FileName = fullFileName;
 
       _timeRecordingStarted = DateTime.Now;
@@ -1707,7 +1712,7 @@ namespace MediaPortal.TV.Recording
       {
         OnTvRecordingStarted(RecordingFileName, _currentTvRecording, _currentTvProgramRecording);
       }
-      return bResult;
+      return true;
     }
 
     string GetFirstChannel()
