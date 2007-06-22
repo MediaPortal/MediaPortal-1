@@ -41,8 +41,12 @@ namespace MediaPortal.Player
     static ArrayList _externalPlayerList = new ArrayList();
     static bool _externalPlayersLoaded = false;
 
+    // Just for testing
+    static bool _useTSReader = System.IO.File.Exists("C:\\useTsReader.txt");
+
     public PlayerFactory()
     {
+
     }
 
     public enum StreamingPlayers : int
@@ -232,9 +236,16 @@ namespace MediaPortal.Player
         if (mpgGood)
         {
           if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
-            return new Player.BaseTStreamBufferPlayer();
-
-          newPlayer = new Player.TStreamBufferPlayer9();
+          {
+            if (_useTSReader)
+              return new Player.BaseTSReaderPlayer();
+            else
+              return new Player.BaseTStreamBufferPlayer();
+          }
+          if (_useTSReader)
+            newPlayer = new Player.TSReaderPlayer();
+          else
+            newPlayer = new Player.TStreamBufferPlayer9();
           return newPlayer;
         }
       }
@@ -377,12 +388,20 @@ namespace MediaPortal.Player
         {
           mpgGood = CheckMpgFile(fileName);
         }
+        mpgGood = true;
         if (mpgGood)
         {
           if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
-            return new Player.BaseTStreamBufferPlayer(type);
-
-          newPlayer = new Player.TStreamBufferPlayer9(type);
+          {
+            if (_useTSReader)
+              return new Player.BaseTSReaderPlayer();
+            else
+              return new Player.BaseTStreamBufferPlayer();
+          }
+          if (_useTSReader)
+            newPlayer = new Player.TSReaderPlayer();
+          else
+            newPlayer = new Player.TStreamBufferPlayer9();
           return newPlayer;
         }
       }
