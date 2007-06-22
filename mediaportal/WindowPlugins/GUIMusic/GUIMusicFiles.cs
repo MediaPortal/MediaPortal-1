@@ -623,8 +623,12 @@ namespace MediaPortal.GUI.Music
         {
           if ((MediaPortal.Util.Utils.GetDriveType(c + ":") & 5) == 5)
           {
-            OnPlayCD(c + ":", false);
-            break;
+            // Only try to play a CD if we got a valid Serial Number, which means a CD is inserted.
+            if (MediaPortal.Util.Utils.GetDriveSerial(c + ":") != String.Empty)
+            {
+              OnPlayCD(c + ":", false);
+              break;
+            }
           }
         }
       }
