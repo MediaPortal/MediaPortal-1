@@ -1143,6 +1143,9 @@ STDMETHODIMP CTSFileSourcePin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFla
 	if(!m_rtDuration)
 		return E_FAIL;
 
+	if (pCurrent==0)
+		return S_OK;
+
 	BOOL bFileWasOpen = TRUE;
 	if (m_pTSFileSourceFilter->m_pFileReader->IsFileInvalid())
 	{
@@ -1152,6 +1155,8 @@ STDMETHODIMP CTSFileSourcePin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFla
 
 		bFileWasOpen = FALSE;
 	}
+
+
 
 	if (pCurrent)
 	{

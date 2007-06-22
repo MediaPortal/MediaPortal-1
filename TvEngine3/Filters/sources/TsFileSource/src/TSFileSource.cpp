@@ -761,7 +761,7 @@ STDMETHODIMP  CTSFileSourceFilter::Enable(long lIndex, DWORD dwFlags) //IAMStrea
 	Profiler profile(L"CTSFileSourceFilter::Enable");
 
 	CAutoLock SelectLock(&m_SelectLock);
-
+	RefreshPids();
 	//Test if ready
 	if (!m_pStreamParser->StreamArray.Count() ||
 		!m_pPidParser->pidArray.Count() ||
