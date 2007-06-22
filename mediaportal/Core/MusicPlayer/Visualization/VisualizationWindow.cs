@@ -142,6 +142,7 @@ namespace MediaPortal.Visualization
     private bool PlayBackTypeChanged = false;
 
     private bool IsSoundSpectrumViz = false;
+    private bool IsCursorMovedBottomRight = false;
 
     #region Overlay Image Variables
 
@@ -1191,7 +1192,7 @@ namespace MediaPortal.Visualization
     {
       try
       {
-        if (CurrentFilePath != filename || filename.ToLower().StartsWith("http") || filename.ToLower().StartsWith("mms") )
+        if (CurrentFilePath != filename || filename.ToLower().StartsWith("http") || filename.ToLower().StartsWith("mms"))
         {
           if (type != g_Player.MediaType.Music)
             return;
@@ -1371,7 +1372,6 @@ namespace MediaPortal.Visualization
       if (!NeedsResize())
         return;
 
-      //OldSize = Size;
       DoResize();
     }
 
@@ -1400,13 +1400,28 @@ namespace MediaPortal.Visualization
       FullScreen = GUIGraphicsContext.IsFullScreenVideo;
       OutputContextNeedsUpdating = true;
 
-      // Make sure we always start at a fade-in frame when we go to fullscreen mode
       if (FullScreen)
+      {
+        // Make sure we always start at a fade-in frame when we go to fullscreen mode
         CurrentFrame = 0;
-
-    // Make sure we always start at a coverart frame when return from fullscreen mode
+        if (GUIGraphicsContext.Fullscreen)
+        {
+          // Move the cursor to bottom right, as some vis don't allow to hide the cursor
+          Cursor.Position = new Point(GUIGraphicsContext.form.Bounds.Width, GUIGraphicsContext.form.Bounds.Height);
+          IsCursorMovedBottomRight = true;
+        }
+      }
       else
+      {
+        // Make sure we always start at a coverart frame when return from fullscreen mode
         CurrentFrame = FadeFrameCount;
+        if (IsCursorMovedBottomRight)
+        {
+          // Set the cursor back to the old position
+          Cursor.Position = new Point(GUIGraphicsContext.form.Bounds.Width / 2, GUIGraphicsContext.form.Bounds.Height / 2);
+          IsCursorMovedBottomRight = false;
+        }
+      }
 
       try
       {
@@ -1612,7 +1627,7 @@ namespace MediaPortal.Visualization
     {
       if (VisualizationRunning)
         return;
-    
+
       Visible = true;
       Refresh();
       Application.DoEvents();
@@ -1727,7 +1742,7 @@ namespace MediaPortal.Visualization
               if (DialogWindowIsActive)
                 this.Show();
 
-              DialogWindowIsActive = false;              
+              DialogWindowIsActive = false;
               Graphics g = Graphics.FromHwnd(Handle);
               int sleepMS = RenderVisualization(g);
 
@@ -1882,6 +1897,7 @@ namespace MediaPortal.Visualization
             {
               gBackBuf.ReleaseHdc(hBackBufDC);
             }
+
             if (!FullScreen && CurrentThumbImage != null)
               DoThumbnailOverlayFading(gBackBuf);
 
@@ -2505,7 +2521,7 @@ namespace MediaPortal.Visualization
         return;
 
       if (GUIWindowManager.IsRouted)
-          return;
+        return;
 
       Rectangle rect = new Rectangle(xPos, yPos, width, height);
 
@@ -2550,7 +2566,7 @@ namespace MediaPortal.Visualization
         return;
 
       if (GUIWindowManager.IsRouted)
-          return;
+        return;
 
       // If the status overlay option is disabled we render directly to the viz window
       // only when we're in fullscreen mode.  The music overlay is alway rendered to 
