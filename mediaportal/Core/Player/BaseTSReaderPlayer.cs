@@ -167,17 +167,7 @@ namespace MediaPortal.Player
         IAMStreamSelect pStrm = _interfaceTSReader as IAMStreamSelect;
         if (pStrm != null)
         {
-          int streamsTotal = 0;
-          pStrm.Count(out streamsTotal);
-          for (int i = 0; i < streamsTotal; i++)
-          {
-            AMMediaType sType; AMStreamSelectInfoFlags sFlag;
-            int sPDWGroup, sPLCid; string sName;
-            object pppunk, ppobject;
-            pStrm.Info(i, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
-            if ((sType.majorType == MediaType.Audio) || (sType.majorType == MediaType.AnalogAudio))
-              streamCount++;
-          }
+          pStrm.Count(out streamCount);
           pStrm = null;
         }
         return streamCount;
@@ -210,8 +200,7 @@ namespace MediaPortal.Player
         IAMStreamSelect pStrm = _interfaceTSReader as IAMStreamSelect;
         if (pStrm != null)
         {
-          // The offset +2 is necessary because the first 2 streams are always non-audio and the following are the audio streams
-          pStrm.Enable(value + 2, AMStreamSelectEnableFlags.Enable);
+          pStrm.Enable(value , AMStreamSelectEnableFlags.Enable);
           _curAudioStream = value;
         }
         else
