@@ -394,14 +394,14 @@ namespace MediaPortal.Player
           if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
           {
             if (_useTSReader)
-              return new Player.BaseTSReaderPlayer();
+              return new Player.BaseTSReaderPlayer(type);
             else
-              return new Player.BaseTStreamBufferPlayer();
+              return new Player.BaseTStreamBufferPlayer(type);
           }
           if (_useTSReader)
-            newPlayer = new Player.TSReaderPlayer();
+            newPlayer = new Player.TSReaderPlayer(type);
           else
-            newPlayer = new Player.TStreamBufferPlayer9();
+            newPlayer = new Player.TStreamBufferPlayer9(type);
           return newPlayer;
         }
       }
