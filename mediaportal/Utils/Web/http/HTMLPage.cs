@@ -64,7 +64,7 @@ namespace MediaPortal.Utils.Web
     /// Initializes a new instance of the <see cref="HTMLPage"/> class.
     /// </summary>
     /// <param name="page">The page request.</param>
-    public HTMLPage(HTTPRequest page)
+    public HTMLPage(HTTPRequest page) : this()
     {
       _encoding = page.Encoding;
       LoadPage(page);
@@ -75,7 +75,7 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     /// <param name="page">The page request.</param>
     /// <param name="encoding">The encoding.</param>
-    public HTMLPage(HTTPRequest page, string encoding)
+    public HTMLPage(HTTPRequest page, string encoding) : this()
     {
       _encoding = encoding;
       LoadPage(page);

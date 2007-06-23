@@ -47,6 +47,7 @@
     <Channel id="Guld@tv4.se" siteId="252" />
     <Channel id="hallmarkchannel.com" siteId="13" />
     <Channel id="HD@canalplus.se" siteId="229" />
+    <Channel id="hd@svt.se" siteId="264" />
     <Channel id="history@viasat.se" siteId="215" />
     <Channel id="hrt1@hrt.hr" siteId="50" />
     <Channel id="int@ort.ru" siteId="139" />
@@ -96,7 +97,7 @@
     <Channel id="sport2@viasatsport.se" siteId="197" />
     <Channel id="sport3@viasatsport.se" siteId="198" />
     <Channel id="star" siteId="114" />
-    <Channel id="stockholm@kanalokal.se" siteId="238" />
+    <Channel id="stockholm@kanallokal.se" siteId="238" />
     <Channel id="svt1@svt.se" siteId="21" />
     <Channel id="svt2@svt.se" siteId="22" />
     <Channel id="tcm.tv" siteId="24" />
@@ -137,21 +138,30 @@
   <Listing type="Html">
     <Site url="http://www.dagenstv.com/se/chart/?dat=[YYYY]-[MM]-[DD]&amp;cha=[ID]" post="" external="false" encoding="" />
     <Html>
-      <Template name="default" start="&lt;!-- Indrag --&gt;">
-        <SectionTemplate tags="T">
+      <Template name="default" start="&lt;!-- Start">
+        <SectionTemplate tags="TS">
           <TemplateText>
-            &lt;tr&gt;
-            &lt;td&gt;&lt;#START&gt;&lt;/td&gt;
-            &lt;td&gt;&lt;/td&gt;
-            &lt;td&gt;&lt;#TITLE&gt;&lt;br&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
-            &lt;td&gt;&lt;/td&gt;
-            &lt;td&gt;&lt;/td&gt;
-            &lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span&gt;&lt;#START&gt;&lt;/span&gt;
+&lt;z(&gt;&lt;span&gt;&lt;#END&gt;&lt;/span&gt;&lt;/z)?&gt;
+&lt;span&gt;&lt;#TITLE&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;span&gt;&lt;#DESCRIPTION&gt;&lt;/span&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
       <Searches>
-        <Search match="\([0-9:]{5}\)" field="#END" remove="true" />
         <Search match="\[[0-9]{3,}\]" field="#SHOWVIEW" remove="true" />
         <Search match="Repris fr&amp;#229;n [0-9/]{3,}." field="#REPEATNOTFALSE" remove="true" />
         <Search match="Del [0-9]{1,} av [0-9]{1,}.|- del [0-9]{1,}|Del [0-9]{1,}.|del [0-9]{1,}." field="#EPISODE" remove="true" />
