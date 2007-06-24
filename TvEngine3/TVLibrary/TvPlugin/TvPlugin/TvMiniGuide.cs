@@ -277,7 +277,7 @@ namespace TvPlugin
     /// Page gets loaded
     /// </summary>
     protected override void OnPageLoad()
-    {
+    {      
       benchClock = Stopwatch.StartNew();      
       Log.Debug("miniguide: onpageload");
       // following line should stay. Problems with OSD not
@@ -289,14 +289,16 @@ namespace TvPlugin
       Log.Debug("miniguide: all controls are reset after {0}ms", benchClock.ElapsedMilliseconds.ToString());
       FillChannelList();
       FillGroupList();
-      base.OnPageLoad();
+      base.OnPageLoad();      
     }
 
     private void OnGroupChanged()
-    {      
+    {
+      GUIWaitCursor.Show();
       TVHome.Navigator.SetCurrentGroup(spinGroup.Value);
       lstChannels.Clear();
       FillChannelList();
+      GUIWaitCursor.Hide();
     }
 
     /// <summary>
