@@ -260,6 +260,7 @@ namespace MediaPortal.Player
     private bool _Mixing = false;
     private int _playBackType;
     private string _prevMetaTag;
+    private bool _isRadio = false;
 
     private bool _isLastFMRadio = false;
     private long _lastFMSongStartPosition = 0;
@@ -477,6 +478,13 @@ namespace MediaPortal.Player
       get { return VizManager; }
     }
 
+    public override bool IsRadio
+    {
+      get
+      {
+        return _isRadio;
+      }
+    }
 
     public override bool HasVideo
     {
@@ -1477,6 +1485,7 @@ namespace MediaPortal.Player
 
           // create the stream
           _isCDDAFile = false;
+          _isRadio = false;
           if (MediaPortal.Util.Utils.IsCDDA(filePath))
           {
             _isCDDAFile = true;
@@ -1487,6 +1496,7 @@ namespace MediaPortal.Player
           else if (filePath.ToLower().Contains(@"http://") || filePath.ToLower().Contains(@"https://") ||
                    filePath.ToLower().StartsWith("mms"))
           {
+            _isRadio = true;  // We're playing Internet Radio Stream
             _isLastFMRadio = false;
             _lastFMSongStartPosition = 0;
             Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_WMA_ASX, 1);   // Turn on parsing of ASX files
