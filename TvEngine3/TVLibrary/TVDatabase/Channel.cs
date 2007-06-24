@@ -474,12 +474,13 @@ namespace TvDatabase
 
     public Program GetProgramAt(DateTime date)
     {
-      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
-      DateTime startTime = DateTime.Now;
+      //IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+      //DateTime startTime = DateTime.Now;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       sb.AddConstraint(Operator.Equals, "idChannel", IdChannel);
-      sb.AddConstraint(String.Format("endTime >= '{0}'", date.ToString(GetDateTimeString(), mmddFormat)));
-      sb.AddOrderByField(true, "starttime");
+      sb.AddConstraint(Operator.GreaterThan,"endTime", date);
+      sb.AddConstraint(Operator.LessThanOrEquals,"startTime", date);
+      sb.AddOrderByField(true, "startTime");
       sb.SetRowLimit(1);
       SqlStatement stmt = sb.GetStatement(true);
       IList programs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
@@ -507,8 +508,8 @@ namespace TvDatabase
       DateTime date = DateTime.Now;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       sb.AddConstraint(Operator.Equals, "idChannel", IdChannel);
-      sb.AddConstraint(String.Format("endTime >= '{0}'", date.ToString(GetDateTimeString(), mmddFormat)));
-      sb.AddOrderByField(true, "starttime");
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "endTime", date);
+      sb.AddOrderByField(true, "startTime");
       sb.SetRowLimit(2);
       SqlStatement stmt = sb.GetStatement(true);
       IList programs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
@@ -517,9 +518,17 @@ namespace TvDatabase
         return;
       }
       _currentProgram = (Program)programs[0];
-      if (programs.Count == 2)
+      if (_currentProgram.StartTime >= date)
       {
-        _nextProgram = (Program)programs[1];
+        _nextProgram = _currentProgram;
+        _currentProgram = null;
+      }
+      else
+      {
+        if (programs.Count == 2)
+        {
+          _nextProgram = (Program)programs[1];
+        }
       }
     }
 
