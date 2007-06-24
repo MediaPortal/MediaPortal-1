@@ -575,12 +575,11 @@ namespace TvPlugin
     void OnSelectChannel()
     {
       Stopwatch benchClock = null;
-      benchClock = Stopwatch.StartNew();
-
-      TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MINI_GUIDE);
+      benchClock = Stopwatch.StartNew();      
+      TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MINI_GUIDE);      
       miniGuide.AutoZap = false;
       miniGuide.SelectedChannel = Navigator.Channel;
-      miniGuide.DoModal(GetID);
+      miniGuide.DoModal(GetID);      
 
       //Only change the channel if the channel selectd is actually different. 
       //Without this, a ChannelChange might occur even when MiniGuide is canceled. 
@@ -2427,6 +2426,29 @@ namespace TvPlugin
           }
         }
       }
+
+      //check if the channel does indeed belong to the group read from the XML setup file ?
+
+      bool foundMatchingGroupName = false;
+      foreach (GroupMap groupMap in m_currentChannel.ReferringGroupMap())
+      {
+        if (groupMap.ReferencedChannelGroup().GroupName == groupname)
+        {
+          foundMatchingGroupName = true;
+          break;
+        }
+      }
+
+      // if the groupname does not match any of the groups assigned to the channel, then find the last group avail. (avoiding the all "channels group") for that channel and set is as the new currentgroup
+      if (!foundMatchingGroupName && m_currentChannel.ReferringGroupMap().Count > 0)
+      {
+        GroupMap groupMap = (GroupMap)m_currentChannel.ReferringGroupMap()[m_currentChannel.ReferringGroupMap().Count-1];
+        m_currentgroup = GetGroupIndex(groupMap.ReferencedChannelGroup().GroupName);
+        if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count)		// Group no longer exists?
+          m_currentgroup = 0;
+      }
+            
+
     }
 
     public void SaveSettings(MediaPortal.Profile.Settings xmlwriter)
