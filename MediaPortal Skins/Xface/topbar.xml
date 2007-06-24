@@ -173,7 +173,7 @@
     <control>
       <description>Exit button</description>
       <type>button</type>
-      <id>31</id>
+      <id>310</id>
       <posX>867</posX>
       <posY>18</posY>
       <width>23</width>
@@ -321,7 +321,7 @@
 				<posX>820</posX>
 				<posY>20</posY>
 				<onleft>103</onleft>
-				<onright>31</onright>
+				<onright>310</onright>
 				<onup>50</onup>
 				<ondown>2</ondown>
 				<label></label>
