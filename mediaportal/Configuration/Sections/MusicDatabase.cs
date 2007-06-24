@@ -447,27 +447,30 @@ namespace MediaPortal.Configuration.Sections
     private void startButton_Click(object sender, System.EventArgs e)
     {
       ArrayList shares = new ArrayList();
-      for (int index = 0 ; index < sharesListBox.CheckedIndices.Count ; index++)
+      for (int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
       {
         string path = sharesListBox.Items[(int)sharesListBox.CheckedIndices[index]].ToString();
         if (Directory.Exists(path))
         {
           try
           {
-            DriveInfo[] allDrives = DriveInfo.GetDrives();
-            foreach (DriveInfo d in allDrives)
+            string driveName = path.Substring(0, 1);
+            if (path.StartsWith(@"\\"))
+              // we have the path in unc notation
+              driveName = path;
+
+            ulong FreeBytesAvailable = MediaPortal.Util.Utils.GetFreeDiskSpace(driveName);
+
+            if (FreeBytesAvailable > 0)
             {
-              if (path.StartsWith(d.Name))
+              ulong DiskSpace = FreeBytesAvailable / 1048576;
+              if (DiskSpace > 100) // > 100MB left for creation of thumbs, etc
               {
-                long DiskSpace = d.AvailableFreeSpace / 1048576;
-                if (DiskSpace > 100) // > 100MB left for creation of thumbs, etc
-                {
-                  Log.Info("MusicDatabase: adding share {0} for scanning - available disk space: {1} MB", path, DiskSpace.ToString());
-                  shares.Add(path);
-                }
-                else
-                  Log.Warn("MusicDatabase: NOT scanning share {0} because of low disk space: {1} MB", path, DiskSpace.ToString());
+                Log.Info("MusicDatabase: adding share {0} for scanning - available disk space: {1} MB", path, DiskSpace.ToString());
+                shares.Add(path);
               }
+              else
+                Log.Warn("MusicDatabase: NOT scanning share {0} because of low disk space: {1} MB", path, DiskSpace.ToString());
             }
           }
           catch (Exception)
@@ -511,7 +514,7 @@ namespace MediaPortal.Configuration.Sections
       //Not yet an option to stop rebuildin the database
       //stopRebuild = true;
     }
-    
+
     private void clearButton_Click(object sender, System.EventArgs e)
     {
       DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the entire music database?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);

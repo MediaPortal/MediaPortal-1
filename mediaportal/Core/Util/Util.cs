@@ -2008,9 +2008,17 @@ namespace MediaPortal.Util
       ulong freeBytesAvailable = 0;
       ulong totalNumberOfBytes = 0;
       ulong totalNumberOfFreeBytes = 0;
+      string driveName = String.Empty;
+
+      if (drive.StartsWith(@"\\"))
+        // We've got unc notation
+        driveName = drive;
+      else
+        // We've got a drove letter only
+        driveName = drive[0] + @":\";
 
       GetDiskFreeSpaceEx(
-         drive[0] + @":\",
+         driveName,
          out freeBytesAvailable,
          out totalNumberOfBytes,
          out totalNumberOfFreeBytes);
