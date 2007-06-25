@@ -1251,7 +1251,8 @@ namespace TvLibrary.Implementations.DVB
           DVBBaseChannel chan = _currentChannel as DVBBaseChannel;
           if (chan != null)
           {
-            if (!chan.FreeToAir)
+            //HACK: Currently Premiere Direkt Feeds (nid=133) have the free_ca flag in SDT set to true (means not scrambled), so we have to override this
+            if ((!chan.FreeToAir) || (chan.NetworkId==133))
             {
               if (_newCA == false)
               {
