@@ -32,209 +32,175 @@ using DirectShowLib;
 #pragma warning disable 618
 namespace DShowNET.Helper
 {
-	public class FilterHelper
-	{
+  public class FilterHelper
+  {
     public static ArrayList GetVideoCompressors()
     {
       ArrayList compressors = new ArrayList();
-
-
       foreach (Filter compressor in Filters.VideoCompressors)
       {
         compressors.Add(compressor.Name);
       }
-
       return compressors;
     }
 
     public static ArrayList GetAudioCompressors()
     {
       ArrayList compressors = new ArrayList();
-
-
       foreach (Filter compressor in Filters.AudioCompressors)
       {
         compressors.Add(compressor.Name);
       }
-
       return compressors;
     }
 
     public static ArrayList GetAudioInputDevices()
     {
       ArrayList devices = new ArrayList();
-
-
       foreach (Filter device in Filters.AudioInputDevices)
       {
         devices.Add(device.Name);
       }
-
       return devices;
     }
 
-		/// <summary>
-		/// #MW#.
-		/// Dirty, but simple hack to get the monikernames of the videoinput devices
-		/// The other call already gets me the friendly names, but I DO need the
-		/// monikers also, as many cards have the same friendly name (PVR150/250/350 etc.)
-		/// </summary>
-		/// <returns></returns>
-		public static ArrayList GetVideoInputDeviceMonikers()
-		{
-			ArrayList devices = new ArrayList();
-
-
+    /// <summary>
+    /// #MW#.
+    /// Dirty, but simple hack to get the monikernames of the videoinput devices
+    /// The other call already gets me the friendly names, but I DO need the
+    /// monikers also, as many cards have the same friendly name (PVR150/250/350 etc.)
+    /// </summary>
+    /// <returns></returns>
+    public static ArrayList GetVideoInputDeviceMonikers()
+    {
+      ArrayList devices = new ArrayList();
       foreach (Filter device in Filters.VideoInputDevices)
-			{
-				devices.Add(device.MonikerString);
-			}
-			//b2c2
+      {
+        devices.Add(device.MonikerString);
+      }
+      //b2c2
       foreach (Filter device in Filters.LegacyFilters)
-			{
-				if(device.Name=="B2C2 MPEG-2 Source")
-					devices.Add(device.MonikerString);
-			}
-
+      {
+        if (device.Name == "B2C2 MPEG-2 Source")
+          devices.Add(device.MonikerString);
+      }
       foreach (Filter device in Filters.BDAReceivers)
-			{
-				if (device.Name.ToLower() =="bda slip de-framer") continue;
-				if (device.Name.ToLower() =="bda mpe filter") continue;	
-				if (device.Name.ToLower() =="bda mpe-filter") continue;	
-				devices.Add(device.MonikerString);
-			}
-			
+      {
+        if (device.Name.ToLower() == "bda slip de-framer") continue;
+        if (device.Name.ToLower() == "bda mpe filter") continue;
+        if (device.Name.ToLower() == "bda mpe-filter") continue;
+        devices.Add(device.MonikerString);
+      }
+      return devices;
+    }
 
-			return devices;
-		}
-
-		public static ArrayList GetVideoInputDevices()
-		{
-			ArrayList devices = new ArrayList();
-
+    public static ArrayList GetVideoInputDevices()
+    {
+      ArrayList devices = new ArrayList();
       foreach (Filter device in Filters.VideoInputDevices)
-			{
-				devices.Add(device.Name);
-			}
-			//b2c2
+      {
+        devices.Add(device.Name);
+      }
+      //b2c2
       foreach (Filter device in Filters.LegacyFilters)
-			{
-				if(device.Name=="B2C2 MPEG-2 Source")
-					devices.Add(device.Name);
-			}
-
+      {
+        if (device.Name == "B2C2 MPEG-2 Source")
+          devices.Add(device.Name);
+      }
       foreach (Filter device in Filters.BDAReceivers)
-			{
-				if (device.Name.ToLower() =="bda slip de-framer") continue;	
-				if (device.Name.ToLower() =="bda mpe filter") continue;	
-				if (device.Name.ToLower() =="bda mpe-filter") continue;	
-				devices.Add(device.Name);
-			}
-			
-			
-			return devices;
-		}
+      {
+        if (device.Name.ToLower() == "bda slip de-framer") continue;
+        if (device.Name.ToLower() == "bda mpe filter") continue;
+        if (device.Name.ToLower() == "bda mpe-filter") continue;
+        devices.Add(device.Name);
+      }
+      return devices;
+    }
 
-		public static ArrayList GetAudioRenderers()
-		{
-			ArrayList renderers = new ArrayList();
+    public static ArrayList GetAudioRenderers()
+    {
+      ArrayList renderers = new ArrayList();
+      foreach (Filter audioRenderer in Filters.AudioRenderers)
+      {
+        renderers.Add(audioRenderer.Name);
+      }
+      return renderers;
+    }
 
-
-      foreach (Filter audioRenderer in Filters.AudioRenderers) 
-			{
-				renderers.Add(audioRenderer.Name);
-			}
-
-			return renderers;
-		}
-
-		public static ArrayList GetDVDNavigators()
-		{
-			ArrayList navigators = new ArrayList();
+    public static ArrayList GetDVDNavigators()
+    {
+      ArrayList navigators = new ArrayList();
       navigators.Add("DVD Navigator");
       return navigators;
     }
 
     public static void GetMPEG2AudioEncoders(ArrayList list)
     {
-
-      foreach (Filter filter in Filters.LegacyFilters) 
+      foreach (Filter filter in Filters.LegacyFilters)
       {
-        
-        bool add=false;
+        bool add = false;
         //Cyberlink MPEG Audio encoder
-        if (filter.MonikerString==@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{A3D70AC0-9023-11D2-8D55-0080C84E9C68}") add=true;
+        if (filter.MonikerString == @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{A3D70AC0-9023-11D2-8D55-0080C84E9C68}") add = true;
         if (add)
         {
-          list.Add(filter.Name);      
+          list.Add(filter.Name);
         }
       }
     }
 
     public static void GetMPEG2VideoEncoders(ArrayList list)
     {
-
-      foreach (Filter filter in Filters.LegacyFilters) 
+      foreach (Filter filter in Filters.LegacyFilters)
       {
-        
-        bool add=false;
+        bool add = false;
         //Cyberlink MPEG Video encoder
-        if (filter.MonikerString==@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{36B46E60-D240-11D2-8F3F-0080C84E9806}") add=true;
+        if (filter.MonikerString == @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{36B46E60-D240-11D2-8F3F-0080C84E9806}") add = true;
         if (add)
         {
-          list.Add(filter.Name);      
+          list.Add(filter.Name);
         }
       }
     }
 
-		public static ArrayList GetFilters(Guid mediaType, Guid mediaSubType)
-		{
-			ArrayList filters = new ArrayList();
-
-			IEnumMoniker enumMoniker = null;
+    public static ArrayList GetFilters(Guid mediaType, Guid mediaSubType)
+    {
+      ArrayList filters = new ArrayList();
+      IEnumMoniker enumMoniker = null;
       IMoniker[] moniker = new IMoniker[1];
-
-      IFilterMapper2 mapper = (IFilterMapper2) new FilterMapper2();
-
-			if(mapper != null)
-			{						
-				int hResult = mapper.EnumMatchingFilters(
-					 out enumMoniker,
-					0,
-					true,
-					(Merit)0x080001,
-					true,
-					1,
-					new Guid[] {mediaType, mediaSubType},
-					null,
+      IFilterMapper2 mapper = (IFilterMapper2)new FilterMapper2();
+      if (mapper != null)
+      {
+        int hResult = mapper.EnumMatchingFilters(
+           out enumMoniker,
+          0,
+          true,
+          (Merit)0x080001,
+          true,
+          1,
+          new Guid[] { mediaType, mediaSubType },
           null,
-					false,
-					true,
-					0,
-					new Guid[0],
+          null,
+          false,
+          true,
+          0,
+          new Guid[0],
           null,
           null);
-
         IntPtr fetched = IntPtr.Zero;
-				do
-				{
-          hResult = enumMoniker.Next(1, moniker,  fetched);
-
-					if((moniker[0] == null))
-					{
-						break;
-					}
-					
-					string filterName = DirectShowUtil.GetFriendlyName(moniker[0]);
-					filters.Add(filterName);
-					
-					moniker[0] = null;
-				}
-				while(true);
-			}
-
-			return filters;
-			
-		}
-	}
+        do
+        {
+          hResult = enumMoniker.Next(1, moniker, fetched);
+          if ((moniker[0] == null))
+          {
+            break;
+          }
+          string filterName = DirectShowUtil.GetFriendlyName(moniker[0]);
+          filters.Add(filterName);
+          moniker[0] = null;
+        }
+        while (true);
+      }
+      return filters;
+    }
+  }
 }
