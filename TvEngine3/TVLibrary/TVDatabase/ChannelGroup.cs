@@ -91,7 +91,10 @@ namespace TvDatabase
     /// </summary>
     public static IList ListAll()
     {
-      return Broker.RetrieveList(typeof(ChannelGroup));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
+      sb.AddOrderByField(true, "sortOrder");
+      SqlStatement stmt = sb.GetStatement(true);
+      return ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
     }
 
     /// <summary>
