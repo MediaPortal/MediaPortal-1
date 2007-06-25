@@ -583,7 +583,7 @@ void CTsReaderFilter::ThreadProc()
         {
           float secs=(float)duration.Duration().Millisecs();
           secs/=1000.0f;
-          LogDebug("notify length change:%f",secs);
+          //LogDebug("notify length change:%f",secs);
           NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
           SetDuration();
         }
