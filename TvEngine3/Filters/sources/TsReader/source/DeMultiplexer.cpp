@@ -177,6 +177,7 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
 
 void CDeMultiplexer::Flush()
 {
+	CAutoLock lock (&m_section);
 //  LogDebug("demux:flushing");
   delete m_pCurrentVideoBuffer;
   delete m_pCurrentAudioBuffer;
@@ -394,8 +395,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
           int headerLen=9+tsPacket[pos+8];
           pos+=headerLen;
         }
-        m_pCurrentAudioBuffer->SetPcr(m_streamPcr,m_duration.StartPcr());
-        m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos);
+				if (pos>0 && pos < 188)
+				{
+					m_pCurrentAudioBuffer->SetPcr(m_streamPcr,m_duration.StartPcr());
+					m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos);
+				}
       }
       else if (m_pCurrentAudioBuffer->Length()>0)
       {
@@ -411,7 +415,10 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
           m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
           m_pCurrentAudioBuffer = new CBuffer();
         }
-        m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos); 
+				if (pos>0 && pos < 188)
+				{
+					m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos); 
+				}
       }
     }
   }
@@ -446,8 +453,11 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
             int headerLen=9+tsPacket[pos+8];
             pos+=headerLen;
           }
-          m_pCurrentVideoBuffer->SetPcr(m_streamPcr,m_duration.StartPcr());
-          m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos);
+					if (pos>0 && pos < 188)
+					{
+						m_pCurrentVideoBuffer->SetPcr(m_streamPcr,m_duration.StartPcr());
+						m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos);
+					}
         }
         else if (m_pCurrentVideoBuffer->Length()>0)
         {
@@ -463,7 +473,10 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
             m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
             m_pCurrentVideoBuffer = new CBuffer();
           }
-          m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos); 
+					if (pos>0 && pos < 188)
+					{
+						m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos); 
+					}
         }
       }
     }
