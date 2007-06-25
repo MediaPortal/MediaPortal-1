@@ -56,7 +56,10 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox videoCodecComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel label6;
     private System.ComponentModel.IContainer components = null;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MediaPortal.UserInterface.Controls.MPComboBox h264videoCodecComboBox;
     bool _init = false;
+    
     public MoviePlayer()
       : this("Movie Player")
     {
@@ -67,7 +70,6 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
     }
 
     public override void OnSectionActivated()
@@ -84,14 +86,25 @@ namespace MediaPortal.Configuration.Sections
         //
         ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
-
+        ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264Video);
+        //Remove Cyberlink Muxer from the list to avoid confusion.
+        if (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
+        {
+          availableVideoFilters.Remove("CyberLink MPEG Muxer");
+        }
         videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
+        if (availableAudioFilters.Contains("CyberLink MPEG Muxer"))
+        {
+          availableAudioFilters.Remove("CyberLink MPEG Muxer");
+        }
         audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
+        h264videoCodecComboBox.Items.AddRange(availableH264VideoFilters.ToArray());
         audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
         _init = true;
         LoadSettings();
       }
     }
+
     /// <summary>
     /// 
     /// </summary>
@@ -102,19 +115,14 @@ namespace MediaPortal.Configuration.Sections
       {
         fileNameTextBox.Text = xmlreader.GetValueAsString("movieplayer", "path", "");
         parametersTextBox.Text = xmlreader.GetValueAsString("movieplayer", "arguments", "");
-
         externalPlayerCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "internal", true);
         externalPlayerCheckBox.Checked = !externalPlayerCheckBox.Checked;
-
         audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
-
         useTsFileSourceForMpegs=xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
-
-        //
         // Set codecs
         string videoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
+        string h264videoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
         string audioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
-
         if (audioCodec == String.Empty)
         {
           ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
@@ -138,7 +146,6 @@ namespace MediaPortal.Configuration.Sections
             else if (DScalerFilterFound) audioCodec = "DScaler Audio Decoder";
           }
         }
-
         if (videoCodec == String.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
@@ -162,9 +169,26 @@ namespace MediaPortal.Configuration.Sections
             else if (DScalerFilterFound) videoCodec = "DScaler Mpeg2 Video Decoder";
           }
         }
-
+        if (h264videoCodec == String.Empty)
+        {
+          ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264Video);
+          bool H264DecFilterFound = true;
+          if (availableH264VideoFilters.Count > 0)
+          {
+            h264videoCodec = (string)availableH264VideoFilters[0];
+            foreach (string filter in availableH264VideoFilters)
+            {
+              if (filter.Equals("CoreAVC Video Decoder"))
+              {
+                H264DecFilterFound = true;
+              }
+            }
+            if (H264DecFilterFound) videoCodec = "CoreAVC Video Decoder";
+          }
+        }
         audioCodecComboBox.SelectedItem = audioCodec;
         videoCodecComboBox.SelectedItem = videoCodec;
+        h264videoCodecComboBox.SelectedItem = h264videoCodec;
       }
     }
 
@@ -178,9 +202,7 @@ namespace MediaPortal.Configuration.Sections
       {
         xmlwriter.SetValue("movieplayer", "path", fileNameTextBox.Text);
         xmlwriter.SetValue("movieplayer", "arguments", parametersTextBox.Text);
-
         xmlwriter.SetValueAsBool("movieplayer", "internal", !externalPlayerCheckBox.Checked);
-
         xmlwriter.SetValue("movieplayer", "audiorenderer", audioRendererComboBox.Text);
 
         xmlwriter.SetValueAsBool("movieplayer", "useTsFileSourceForMpegs", useTsFileSourceForMpegs);
@@ -188,9 +210,9 @@ namespace MediaPortal.Configuration.Sections
 
         //
         // Set codecs
-        //
         xmlwriter.SetValue("movieplayer", "mpeg2audiocodec", audioCodecComboBox.Text);
         xmlwriter.SetValue("movieplayer", "mpeg2videocodec", videoCodecComboBox.Text);
+        xmlwriter.SetValue("movieplayer", "h264videocodec", h264videoCodecComboBox.Text);
       }
     }
 
@@ -232,6 +254,8 @@ namespace MediaPortal.Configuration.Sections
       this.videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.h264videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -329,6 +353,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.mpLabel1);
+      this.mpGroupBox1.Controls.Add(this.h264videoCodecComboBox);
       this.mpGroupBox1.Controls.Add(this.audioRendererComboBox);
       this.mpGroupBox1.Controls.Add(this.label3);
       this.mpGroupBox1.Controls.Add(this.label6);
@@ -366,9 +392,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label6.Location = new System.Drawing.Point(16, 24);
       this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(72, 16);
+      this.label6.Size = new System.Drawing.Size(146, 16);
       this.label6.TabIndex = 0;
-      this.label6.Text = "Video codec:";
+      this.label6.Text = "MPEG-2 video decoder:";
       // 
       // audioCodecComboBox
       // 
@@ -376,7 +402,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioCodecComboBox.Location = new System.Drawing.Point(168, 44);
+      this.audioCodecComboBox.Location = new System.Drawing.Point(168, 68);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
       this.audioCodecComboBox.Size = new System.Drawing.Size(288, 21);
       this.audioCodecComboBox.TabIndex = 3;
@@ -394,11 +420,30 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label5
       // 
-      this.label5.Location = new System.Drawing.Point(16, 48);
+      this.label5.Location = new System.Drawing.Point(16, 72);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(80, 16);
       this.label5.TabIndex = 2;
-      this.label5.Text = "Audio codec:";
+      this.label5.Text = "Audio decoder:";
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(16, 48);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(146, 16);
+      this.mpLabel1.TabIndex = 8;
+      this.mpLabel1.Text = "H.264 video decoder:";
+      // 
+      // h264videoCodecComboBox
+      // 
+      this.h264videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.h264videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.h264videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.h264videoCodecComboBox.Location = new System.Drawing.Point(168, 44);
+      this.h264videoCodecComboBox.Name = "h264videoCodecComboBox";
+      this.h264videoCodecComboBox.Size = new System.Drawing.Size(288, 21);
+      this.h264videoCodecComboBox.TabIndex = 9;
       // 
       // MoviePlayer
       // 
@@ -439,9 +484,7 @@ namespace MediaPortal.Configuration.Sections
         openFileDialog.Filter = "exe files (*.exe)|*.exe";
         openFileDialog.FilterIndex = 0;
         openFileDialog.Title = "Select movie player";
-
         DialogResult dialogResult = openFileDialog.ShowDialog();
-
         if (dialogResult == DialogResult.OK)
         {
           fileNameTextBox.Text = openFileDialog.FileName;
@@ -457,9 +500,7 @@ namespace MediaPortal.Configuration.Sections
     private void parametersButton_Click(object sender, System.EventArgs e)
     {
       ParameterForm parameters = new ParameterForm();
-
       parameters.AddParameter("%filename%", "Will be replaced by currently selected media file");
-
       if (parameters.ShowDialog(parametersButton) == DialogResult.OK)
       {
         parametersTextBox.Text += parameters.SelectedParameter;
@@ -467,4 +508,3 @@ namespace MediaPortal.Configuration.Sections
     }
   }
 }
-
