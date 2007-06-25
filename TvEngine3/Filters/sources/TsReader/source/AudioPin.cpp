@@ -123,6 +123,7 @@ HRESULT CAudioPin::GetMediaType(CMediaType *pmt)
 HRESULT CAudioPin::CheckConnect(IPin *pReceivePin)
 {
   HRESULT hr;
+  /*
 #ifndef DEBUG
   PIN_INFO pinInfo;
   FILTER_INFO filterInfo;
@@ -136,6 +137,7 @@ HRESULT CAudioPin::CheckConnect(IPin *pReceivePin)
     return E_FAIL;
   }
 #endif
+  */
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
 
@@ -186,7 +188,10 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
 
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    m_rtDuration=CRefTime(MAX_TIME);
+    //m_rtDuration=CRefTime(MAX_TIME);
+    REFERENCE_TIME refTime;
+    m_pTsReaderFilter->GetDuration(&refTime);
+    m_rtDuration=CRefTime(refTime);
   }
   else
   {
@@ -208,7 +213,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    m_rtDuration=CRefTime(MAX_TIME);
+    //m_rtDuration=CRefTime(MAX_TIME);
+    REFERENCE_TIME refTime;
+    m_pTsReaderFilter->GetDuration(&refTime);
+    m_rtDuration=CRefTime(refTime);
   }
   else
   {
@@ -404,7 +412,7 @@ void CAudioPin::UpdateFromSeek()
 
 STDMETHODIMP CAudioPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 {
-  LogDebug("aud:GetAvailable");
+//  LogDebug("aud:GetAvailable");
   return CSourceSeeking::GetAvailable( pEarliest, pLatest );
 }
 
@@ -413,7 +421,10 @@ STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
  // LogDebug("aud:GetDuration");
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    m_rtDuration=CRefTime(MAX_TIME);
+    //m_rtDuration=CRefTime(MAX_TIME);
+    REFERENCE_TIME refTime;
+    m_pTsReaderFilter->GetDuration(&refTime);
+    m_rtDuration=CRefTime(refTime);
   }
   else
   {

@@ -216,6 +216,7 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
 {
   HRESULT hr;
+  /*
 #ifndef DEBUG
   PIN_INFO pinInfo;
   FILTER_INFO filterInfo;
@@ -233,6 +234,7 @@ HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
     return E_FAIL;
   }
 #endif
+  */
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
 HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
@@ -251,7 +253,10 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    m_rtDuration=CRefTime(MAX_TIME);
+    //m_rtDuration=CRefTime(MAX_TIME);
+    REFERENCE_TIME refTime;
+    m_pTsReaderFilter->GetDuration(&refTime);
+    m_rtDuration=CRefTime(refTime);
   }
   else
   {
@@ -274,7 +279,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 //	::OutputDebugStringA("CVideoPin::FillBuffer()\n");
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    m_rtDuration=CRefTime(MAX_TIME);
+    //m_rtDuration=CRefTime(MAX_TIME);
+    REFERENCE_TIME refTime;
+    m_pTsReaderFilter->GetDuration(&refTime);
+    m_rtDuration=CRefTime(refTime);
   }
   else
   {
@@ -473,7 +481,7 @@ void CVideoPin::UpdateFromSeek()
 
 STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 {
-  LogDebug("vid:GetAvailable");
+//  LogDebug("vid:GetAvailable");
   return CSourceSeeking::GetAvailable( pEarliest, pLatest );
 }
 
@@ -481,7 +489,10 @@ STDMETHODIMP CVideoPin::GetDuration(LONGLONG *pDuration)
 {
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    m_rtDuration=CRefTime(MAX_TIME);
+    //m_rtDuration=CRefTime(MAX_TIME);
+    REFERENCE_TIME refTime;
+    m_pTsReaderFilter->GetDuration(&refTime);
+    m_rtDuration=CRefTime(refTime);
   }
   else
   {
