@@ -78,6 +78,9 @@
       <onright>2</onright>
       <spinPosX>500</spinPosX>
       <spinPosY>370</spinPosY>
+      <textXOff>50</textXOff>
+      <PinIconXOff>45</PinIconXOff>
+      <PinIconYOff>7</PinIconYOff>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>

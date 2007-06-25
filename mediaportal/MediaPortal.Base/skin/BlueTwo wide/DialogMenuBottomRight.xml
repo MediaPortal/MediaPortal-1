@@ -22,7 +22,7 @@
         <id>0</id>
         <posX>607</posX>
         <posY>533</posY>
-        <width>466</width>
+        <width>640</width>
         <height>200</height>
         <texture>dialog_background.png</texture>
       </control>
