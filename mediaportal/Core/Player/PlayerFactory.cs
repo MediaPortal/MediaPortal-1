@@ -230,7 +230,7 @@ namespace MediaPortal.Player
       bool bUseTsFileSourceForMpegs = true;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
+        bUseTsFileSourceForMpegs=xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
       }
       bool playWithTsFileSource = false;
       if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
