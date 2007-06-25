@@ -221,6 +221,7 @@ namespace MediaPortal.Player
         Log.Info("TSStreamBufferPlayer9: add codecs");
         // add preferred video & audio codecs
         string strVideoCodec = "";
+        string strH264VideoCodec = "";
         string strAudioCodec = "";
         string strAudioRenderer = "";
         int intFilters = 0; // FlipGer: count custom filters
@@ -239,6 +240,7 @@ namespace MediaPortal.Player
             intCount++;
           }
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
+          strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
           strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
           enableDvbSubtitles = xmlreader.GetValueAsBool("mytv", "dvbsubtitles", false);
@@ -257,13 +259,14 @@ namespace MediaPortal.Player
             GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
           if (strValue.Equals("zoom149"))
             GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
-
         }
         if (_isRadio == false)
         {
           if (strVideoCodec.Length > 0)
             _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
         }
+        if (strH264VideoCodec.Length > 0)
+          _h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
         if (strAudioCodec.Length > 0)
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
         if (strAudioRenderer.Length > 0)
@@ -280,9 +283,7 @@ namespace MediaPortal.Player
           {
             Log.Error(e);
           }
-
         }
-
         Log.Debug("Is subtitle fitler null? {0}",(_subtitleFilter == null));
         // FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
@@ -291,7 +292,6 @@ namespace MediaPortal.Player
         {
           customFilters[i] = DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
         }
-
         #endregion
 
         bool demuxControl = true;     // let tsfilesource control demux 
@@ -701,13 +701,16 @@ namespace MediaPortal.Player
           while ((hr = Marshal.ReleaseComObject(_videoCodecFilter)) > 0) ;
           _videoCodecFilter = null;
         }
+        if (_h264videoCodecFilter != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_h264videoCodecFilter)) > 0) ;
+          _h264videoCodecFilter = null;
+        }
         if (_audioCodecFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_audioCodecFilter)) > 0)
-            ;
+          while ((hr = Marshal.ReleaseComObject(_audioCodecFilter)) > 0) ;
           _audioCodecFilter = null;
         }
-
         if (_audioRendererFilter != null)
         {
           while ((hr = Marshal.ReleaseComObject(_audioRendererFilter)) > 0)

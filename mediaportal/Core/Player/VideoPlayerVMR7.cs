@@ -154,6 +154,7 @@ namespace MediaPortal.Player
     protected IBasicVideo2 basicVideo;
     /// <summary> interface to single-step video. </summary>
     protected IBaseFilter videoCodecFilter = null;
+    protected IBaseFilter h264videoCodecFilter = null;
     protected IBaseFilter audioCodecFilter = null;
     protected IBaseFilter audioRendererFilter = null;
     protected IBaseFilter[] customFilters; // FlipGer: array for custom directshow filters
@@ -282,12 +283,12 @@ namespace MediaPortal.Player
 
     public override bool PlayStream(string strFile, string streamName)
     {
-        bool isPlaybackPossible = Play(strFile);
-        if (isPlaybackPossible)
-            if (streamName != null)
-                if (streamName != "")
-                    m_strCurrentFile = streamName;
-        return isPlaybackPossible;
+      bool isPlaybackPossible = Play(strFile);
+      if (isPlaybackPossible)
+        if (streamName != null)
+          if (streamName != "")
+            m_strCurrentFile = streamName;
+      return isPlaybackPossible;
     }
 
     public override void SetVideoWindow()
@@ -721,7 +722,7 @@ namespace MediaPortal.Player
       get { return m_iVolume; }
       set
       {
-        
+
         if (m_iVolume != value)
         {
           m_iVolume = value;
@@ -734,8 +735,8 @@ namespace MediaPortal.Player
               int iVolume = (int)(5000.0f * fPercent);
               basicAudio.put_Volume((iVolume - 5000));
             }
-         
-          
+
+
           }
         }
       }
@@ -833,13 +834,13 @@ namespace MediaPortal.Player
 
     public override bool HasVideo
     {
-      get 
-      { 
-        return (_mediaType==g_Player.MediaType.TV||_mediaType==g_Player.MediaType.Recording||_mediaType==g_Player.MediaType.Video); 
+      get
+      {
+        return (_mediaType == g_Player.MediaType.TV || _mediaType == g_Player.MediaType.Recording || _mediaType == g_Player.MediaType.Video);
       }
     }
 
-  
+
 
     public override bool Ended
     {
@@ -859,6 +860,7 @@ namespace MediaPortal.Player
         vmr7.AddVMR7(graphBuilder);
         // add preferred video & audio codecs
         string strVideoCodec = "";
+        string strH264VideoCodec = "";
         string strAudioCodec = "";
         string strAudiorenderer = "";
         int intFilters = 0; // FlipGer: count custom filters
@@ -867,6 +869,7 @@ namespace MediaPortal.Player
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
+          strH264VideoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
           strAudiorenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
           defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
@@ -889,6 +892,11 @@ namespace MediaPortal.Player
           if (strVideoCodec.Length > 0) videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
           if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
         }
+        if (extension.Equals(".mp4") || extension.Equals(".mkv"))
+        {
+          if (strH264VideoCodec.Length > 0) h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
+          if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+        }
         // FlipGer: add custom filters to graph
         customFilters = new IBaseFilter[intFilters];
         string[] arrFilters = strFilters.Split(';');
@@ -903,7 +911,7 @@ namespace MediaPortal.Player
           Marshal.ThrowExceptionForHR(hr);
 
 
-        
+
         ushort b;
         unchecked
         {
@@ -961,7 +969,7 @@ namespace MediaPortal.Player
             }
           }
         }
-        
+
 
         mediaCtrl = (IMediaControl)graphBuilder;
         mediaEvt = (IMediaEventEx)graphBuilder;
@@ -1015,9 +1023,10 @@ namespace MediaPortal.Player
         basicAudio = null;
 
         if (videoCodecFilter != null) Marshal.ReleaseComObject(videoCodecFilter); videoCodecFilter = null;
+        if (h264videoCodecFilter != null) Marshal.ReleaseComObject(h264videoCodecFilter); h264videoCodecFilter = null;
         if (audioCodecFilter != null) Marshal.ReleaseComObject(audioCodecFilter); audioCodecFilter = null;
         if (audioRendererFilter != null) Marshal.ReleaseComObject(audioRendererFilter); audioRendererFilter = null;
-        
+
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)
         {
@@ -1437,7 +1446,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        return (_mediaType == g_Player.MediaType.TV||_mediaType == g_Player.MediaType.Recording);
+        return (_mediaType == g_Player.MediaType.TV || _mediaType == g_Player.MediaType.Recording);
       }
     }
 
