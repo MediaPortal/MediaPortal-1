@@ -1287,6 +1287,9 @@ namespace DirectShowLib
 
         /// <summary> MEDIASUBTYPE_None </summary>
         public static readonly Guid None = new Guid(0xe436eb8e, 0x524f, 0x11ce, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
+
+        /// <summary> MEDIASUBTYPE_H264Video </summary>
+      public static readonly Guid H264Video = new Guid(0x34363248, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
     }
 
     public class FormatType
@@ -1325,6 +1328,8 @@ namespace DirectShowLib
 
         /// <summary> FORMAT_MPEG2Audio </summary>
         public static readonly Guid Mpeg2Audio = new Guid(0xe06d80e5, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x5f, 0x6c, 0xbb, 0xea);
+
+
     }
 
     public class PropSetID
