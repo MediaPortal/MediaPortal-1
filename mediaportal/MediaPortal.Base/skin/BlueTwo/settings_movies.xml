@@ -19,11 +19,17 @@
       <posY>151</posY>
       <layout>GridLayout(0, 6, 52, 8, 1)</layout>
       <control>
-        <description>Video Codecs</description>
+        <description>MPEG-2 Video Codecs</description>
         <type>button</type>
         <id>24</id>
         <label>6000</label>
         <onup>17</onup>
+      </control>
+      <control>
+        <description>H.264 Video Codecs</description>
+        <type>button</type>
+        <id>29</id>
+        <label>6036</label>
       </control>
       <control>
         <description>Audio Codecs</description>

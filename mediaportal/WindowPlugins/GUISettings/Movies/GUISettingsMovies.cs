@@ -49,6 +49,9 @@ namespace WindowPlugins.GUISettings.TV
     protected GUIButtonControl btnAudioRenderer = null;
     [SkinControlAttribute(28)]
     protected GUIButtonControl btnAspectRatio = null;
+    [SkinControlAttribute(29)]
+    protected GUIButtonControl btnH264VideoCodec = null;
+    
     public GUISettingsMovies()
     {
       GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_MOVIES;
@@ -58,13 +61,14 @@ namespace WindowPlugins.GUISettings.TV
     {
       return Load(GUIGraphicsContext.Skin + @"\settings_movies.xml");
     }
+
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       if (control == btnVideoCodec) OnVideoCodec();
       if (control == btnAudioCodec) OnAudioCodec();
-      //if (control==btnVideoRenderer) OnVideoRenderer();
       if (control == btnAspectRatio) OnAspectRatio();
       if (control == btnAudioRenderer) OnAudioRenderer();
+      if (control == btnH264VideoCodec) OnH264VideoCodec();
       base.OnClicked(controlId, control, actionType);
     }
 
@@ -76,7 +80,10 @@ namespace WindowPlugins.GUISettings.TV
         strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
       }
       ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-
+      if (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
+      {
+        availableVideoFilters.Remove("CyberLink MPEG Muxer");
+      }
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
@@ -101,6 +108,38 @@ namespace WindowPlugins.GUISettings.TV
       }
     }
 
+    void OnH264VideoCodec()
+    {
+      string strH264VideoCodec = "";
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        strH264VideoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
+      }
+      ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264Video);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg != null)
+      {
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
+        int selected = 0;
+        int count = 0;
+        foreach (string codec in availableH264VideoFilters)
+        {
+          dlg.Add(codec);//delete
+          if (codec == strH264VideoCodec)
+            selected = count;
+          count++;
+        }
+        dlg.SelectedLabel = selected;
+      }
+      dlg.DoModal(GetID);
+      if (dlg.SelectedLabel < 0) return;
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValue("movieplayer", "h264videocodec", (string)availableH264VideoFilters[dlg.SelectedLabel]);
+      }
+    }
+
     void OnAudioCodec()
     {
       string strAudioCodec = "";
@@ -109,7 +148,10 @@ namespace WindowPlugins.GUISettings.TV
         strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
       }
       ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
-
+      if (availableAudioFilters.Contains("CyberLink MPEG Muxer"))
+      {
+        availableAudioFilters.Remove("CyberLink MPEG Muxer");
+      }
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
@@ -132,41 +174,16 @@ namespace WindowPlugins.GUISettings.TV
       {
         xmlwriter.SetValue("movieplayer", "mpeg2audiocodec", (string)availableAudioFilters[dlg.SelectedLabel]);
       }
-    }/*
-		void OnVideoRenderer()
-		{
-			int vmr9Index=0;
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
-			{
-				vmr9Index= xmlreader.GetValueAsInt("movieplayer", "vmr9", 0);
-			}
+    }
 
-			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-			if (dlg!=null)
-			{
-				dlg.Reset();
-				dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
-				dlg.Add("Video Mixing Renderer 7");
-				dlg.Add("Video Mixing Renderer 9");
-				dlg.SelectedLabel=vmr9Index;
-				dlg.DoModal(GetID);
-				if (dlg.SelectedLabel<0) return;
-				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-				{
-					xmlwriter.SetValue("movieplayer", "vmr9", dlg.SelectedLabel.ToString());
-				}
-			}
-		}*/
     void OnAspectRatio()
     {
-      //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
       string[] aspectRatio = { "normal", "original", "stretch", "zoom149", "zoom", "letterbox", "panscan" };
       string defaultAspectRatio = "";
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         defaultAspectRatio = xmlreader.GetValueAsString("movieplayer", "defaultar", "normal");
       }
-
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
@@ -190,6 +207,7 @@ namespace WindowPlugins.GUISettings.TV
         }
       }
     }
+
     void OnAudioRenderer()
     {
       string strAudioRenderer = "";
@@ -198,7 +216,6 @@ namespace WindowPlugins.GUISettings.TV
         strAudioRenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
       }
       ArrayList availableAudioFilters = FilterHelper.GetAudioRenderers();
-
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
@@ -221,8 +238,6 @@ namespace WindowPlugins.GUISettings.TV
       {
         xmlwriter.SetValue("movieplayer", "audiorenderer", (string)availableAudioFilters[dlg.SelectedLabel]);
       }
-
     }
-
   }
 }

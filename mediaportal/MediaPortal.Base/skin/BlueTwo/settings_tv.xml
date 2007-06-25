@@ -19,11 +19,17 @@
       <posY>151</posY>
       <layout>GridLayout(2, 6, 52, 8, 1)</layout>
       <control>
-        <description>Video Codecs</description>
+        <description>MPEG-2 Video Codecs</description>
         <type>button</type>
         <id>24</id>
         <label>6000</label>
         <onup>17</onup>
+      </control>
+      <control>
+        <description>H.264 Video Codecs</description>
+        <type>button</type>
+        <id>35</id>
+        <label>6036</label>
       </control>
       <control>
         <description>Audio Codecs</description>
@@ -48,6 +54,7 @@
         <type>button</type>
         <id>28</id>
         <label>6004</label>
+        <ondown>31</ondown>
       </control>
       <control>
         <description>Rendering Options</description>
@@ -55,14 +62,13 @@
         <id>31</id>
         <label>6007</label>
         <hyperlink>701</hyperlink>
-        <ondown>99</ondown>
+        <onup>17</onup>
       </control>
       <control>
         <description>Automatically turn TV on</description>
         <type>button</type>
         <id>30</id>
         <label>6006</label>
-        <onup>17</onup>
       </control>
       <control>
         <description>Timeshift usage mode</description>
@@ -88,16 +94,17 @@
         <type>button</type>
         <id>34</id>
         <label>6009</label>
+        <ondown>36</ondown>
         <hyperlink>706</hyperlink>
       </control>
       <!-- last control needs ondown to itself, else it jumps to last button in first column -->
       <control>
         <description>XMLTV EPG Grabber</description>
         <type>button</type>
-        <id>35</id>
+        <id>36</id>
         <label>6010</label>
         <hyperlink>707</hyperlink>
-        <ondown>99</ondown>
+        <ondown>24</ondown>
       </control>
     </control>
   </controls>

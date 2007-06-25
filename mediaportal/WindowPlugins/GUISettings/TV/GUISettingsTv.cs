@@ -40,15 +40,27 @@ namespace WindowPlugins.GUISettings.TV
   /// </summary>
   public class GUISettingsTv : GUIWindow
   {
-    [SkinControlAttribute(24)]    protected GUIButtonControl btnVideoCodec = null;
-    [SkinControlAttribute(25)]    protected GUIButtonControl btnAudioCodec = null;
-    [SkinControlAttribute(27)]    protected GUIButtonControl btnDeinterlace = null;
-    [SkinControlAttribute(28)]    protected GUIButtonControl btnAspectRatio = null;
-    [SkinControlAttribute(29)]    protected GUIButtonControl btnTimeshiftBuffer = null;
-    [SkinControlAttribute(30)]    protected GUIButtonControl btnAutoTurnOnTv = null;
-    [SkinControlAttribute(26)]    protected GUIButtonControl btnAutoTurnOnTS = null;
-    [SkinControlAttribute(33)]    protected GUIButtonControl btnAudioRenderer = null;
-    [SkinControlAttribute(34)]    protected GUIButtonControl btnEpg = null;
+    [SkinControlAttribute(24)]
+    protected GUIButtonControl btnVideoCodec = null;
+    [SkinControlAttribute(25)]
+    protected GUIButtonControl btnAudioCodec = null;
+    [SkinControlAttribute(27)]
+    protected GUIButtonControl btnDeinterlace = null;
+    [SkinControlAttribute(28)]
+    protected GUIButtonControl btnAspectRatio = null;
+    [SkinControlAttribute(29)]
+    protected GUIButtonControl btnTimeshiftBuffer = null;
+    [SkinControlAttribute(30)]
+    protected GUIButtonControl btnAutoTurnOnTv = null;
+    [SkinControlAttribute(26)]
+    protected GUIButtonControl btnAutoTurnOnTS = null;
+    [SkinControlAttribute(33)]
+    protected GUIButtonControl btnAudioRenderer = null;
+    [SkinControlAttribute(34)]
+    protected GUIButtonControl btnEpg = null;
+    [SkinControlAttribute(35)]
+    protected GUIButtonControl btnH264VideoCodec = null;
+    
     public GUISettingsTv()
     {
       GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_TV;
@@ -58,24 +70,27 @@ namespace WindowPlugins.GUISettings.TV
     {
       return Load(GUIGraphicsContext.Skin + @"\settings_tv.xml");
     }
-    protected override void OnClicked( int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType )
+
+    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
-      if ( control == btnAudioRenderer )
+      if (control == btnAudioRenderer)
         OnAudioRenderer();
-      if ( control == btnVideoCodec )
+      if (control == btnVideoCodec)
         OnVideoCodec();
-      if ( control == btnAudioCodec )
+      if (control == btnAudioCodec)
         OnAudioCodec();
-      if ( control == btnAspectRatio )
+      if (control == btnAspectRatio)
         OnAspectRatio();
-      if ( control == btnTimeshiftBuffer )
+      if (control == btnTimeshiftBuffer)
         OnTimeshiftBuffer();
-      if ( control == btnDeinterlace )
+      if (control == btnDeinterlace)
         OnDeinterlace();
-      if ( control == btnAutoTurnOnTv )
+      if (control == btnAutoTurnOnTv)
         OnAutoTurnOnTv();
-      if ( control == btnAutoTurnOnTS )
+      if (control == btnAutoTurnOnTS)
         OnAutoTurnOnTS();
+      if (control == btnH264VideoCodec)
+        OnH264VideoCodec();
       base.OnClicked(controlId, control, actionType);
     }
 
@@ -87,29 +102,66 @@ namespace WindowPlugins.GUISettings.TV
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
       }
       ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-
+      //Remove Cyberlink Muxer from the list to avoid confusion.
+      if (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
+      {
+        availableVideoFilters.Remove("CyberLink MPEG Muxer");
+      }
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if ( dlg != null )
+      if (dlg != null)
       {
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
         int count = 0;
-        foreach ( string codec in availableVideoFilters )
+        foreach (string codec in availableVideoFilters)
         {
           dlg.Add(codec);//delete
-          if ( codec == strVideoCodec )
+          if (codec == strVideoCodec)
             selected = count;
           count++;
         }
         dlg.SelectedLabel = selected;
       }
       dlg.DoModal(GetID);
-      if ( dlg.SelectedLabel < 0 )
+      if (dlg.SelectedLabel < 0)
         return;
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("mytv", "videocodec", (string)availableVideoFilters[dlg.SelectedLabel]);
+      }
+    }
+
+    void OnH264VideoCodec()
+    {
+      string strH264VideoCodec = "";
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
+      }
+      ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264Video);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg != null)
+      {
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
+        int selected = 0;
+        int count = 0;
+        foreach (string codec in availableH264VideoFilters)
+        {
+          dlg.Add(codec);//delete
+          if (codec == strH264VideoCodec)
+            selected = count;
+          count++;
+        }
+        dlg.SelectedLabel = selected;
+      }
+      dlg.DoModal(GetID);
+      if (dlg.SelectedLabel < 0)
+        return;
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlwriter.SetValue("mytv", "h264videocodec", (string)availableH264VideoFilters[dlg.SelectedLabel]);
       }
     }
 
@@ -121,75 +173,52 @@ namespace WindowPlugins.GUISettings.TV
         strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
       }
       ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
-
+      if (availableAudioFilters.Contains("CyberLink MPEG Muxer"))
+      {
+        availableAudioFilters.Remove("CyberLink MPEG Muxer");
+      }
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if ( dlg != null )
+      if (dlg != null)
       {
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
         int count = 0;
-        foreach ( string codec in availableAudioFilters )
+        foreach (string codec in availableAudioFilters)
         {
           dlg.Add(codec);//delete
-          if ( codec == strAudioCodec )
+          if (codec == strAudioCodec)
             selected = count;
           count++;
         }
         dlg.SelectedLabel = selected;
       }
       dlg.DoModal(GetID);
-      if ( dlg.SelectedLabel < 0 )
+      if (dlg.SelectedLabel < 0)
         return;
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("mytv", "audiocodec", (string)availableAudioFilters[dlg.SelectedLabel]);
       }
-    }/*
-		void OnVideoRenderer()
-		{
-			int vmr9Index=0;
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
-			{
-				vmr9Index= xmlreader.GetValueAsInt("mytv", "vmr9", 0);
-			}
-
-			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-			if (dlg!=null)
-			{
-				dlg.Reset();
-				dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
-				dlg.Add("Video Mixing Renderer 7");
-				dlg.Add("Video Mixing Renderer 9");
-				dlg.SelectedLabel=vmr9Index;
-				dlg.DoModal(GetID);
-				if (dlg.SelectedLabel<0) return;
-				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-				{
-						xmlwriter.SetValue("mytv", "vmr9", dlg.SelectedLabel.ToString());
-				}
-			}
-		}*/
+    }
 
     void OnAspectRatio()
     {
-      //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
       string[] aspectRatio = { "normal", "original", "stretch", "zoom149", "zoom", "letterbox", "panscan" };
       string defaultAspectRatio = "";
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         defaultAspectRatio = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
       }
-
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if ( dlg != null )
+      if (dlg != null)
       {
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
-        for ( int index = 0; index < aspectRatio.Length; index++ )
+        for (int index = 0; index < aspectRatio.Length; index++)
         {
-          if ( aspectRatio[index].Equals(defaultAspectRatio) )
+          if (aspectRatio[index].Equals(defaultAspectRatio))
           {
             selected = index;
           }
@@ -197,7 +226,7 @@ namespace WindowPlugins.GUISettings.TV
         }
         dlg.SelectedLabel = selected;
         dlg.DoModal(GetID);
-        if ( dlg.SelectedLabel < 0 )
+        if (dlg.SelectedLabel < 0)
           return;
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
@@ -214,16 +243,16 @@ namespace WindowPlugins.GUISettings.TV
         buflen = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
       }
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if ( dlg != null )
+      if (dlg != null)
       {
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
         int count = 0;
-        for ( int i = 30; i <= 180; i += 30 )
+        for (int i = 30; i <= 180; i += 30)
         {
           dlg.Add(String.Format("{0} min", i.ToString()));
-          if ( i == buflen )
+          if (i == buflen)
           {
             selected = count;
           }
@@ -231,11 +260,11 @@ namespace WindowPlugins.GUISettings.TV
         }
         dlg.SelectedLabel = selected;
         dlg.DoModal(GetID);
-        if ( dlg.SelectedLabel < 0 )
+        if (dlg.SelectedLabel < 0)
           return;
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          buflen = ( dlg.SelectedLabel * 30 ) + 30;
+          buflen = (dlg.SelectedLabel * 30) + 30;
           xmlwriter.SetValue("capture", "timeshiftbuffer", buflen.ToString());
         }
       }
@@ -249,20 +278,18 @@ namespace WindowPlugins.GUISettings.TV
       {
         deInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 1);
       }
-
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if ( dlg != null )
+      if (dlg != null)
       {
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
-
-        for ( int index = 0; index < deinterlaceModes.Length; index++ )
+        for (int index = 0; index < deinterlaceModes.Length; index++)
         {
           dlg.Add(deinterlaceModes[index]);
         }
         dlg.SelectedLabel = deInterlaceMode;
         dlg.DoModal(GetID);
-        if ( dlg.SelectedLabel < 0 )
+        if (dlg.SelectedLabel < 0)
           return;
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
@@ -278,9 +305,8 @@ namespace WindowPlugins.GUISettings.TV
       {
         autoTurnOn = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
       }
-
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if ( dlg != null )
+      if (dlg != null)
       {
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
@@ -288,11 +314,11 @@ namespace WindowPlugins.GUISettings.TV
         dlg.Add(GUILocalizeStrings.Get(776));       //Do not start / switch to TV automatically
         dlg.SelectedLabel = autoTurnOn ? 0 : 1;
         dlg.DoModal(GetID);
-        if ( dlg.SelectedLabel < 0 )
+        if (dlg.SelectedLabel < 0)
           return;
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          xmlwriter.SetValueAsBool("mytv", "autoturnontv", ( dlg.SelectedLabel == 0 ));
+          xmlwriter.SetValueAsBool("mytv", "autoturnontv", (dlg.SelectedLabel == 0));
         }
       }
     }
@@ -304,9 +330,8 @@ namespace WindowPlugins.GUISettings.TV
       {
         autoTurnOnTS = xmlreader.GetValueAsBool("mytv", "autoturnontimeshifting", true);
       }
-
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if ( dlg != null )
+      if (dlg != null)
       {
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
@@ -314,11 +339,11 @@ namespace WindowPlugins.GUISettings.TV
         dlg.Add(GUILocalizeStrings.Get(779));       //Timeshift must be enabled manually
         dlg.SelectedLabel = autoTurnOnTS ? 0 : 1;
         dlg.DoModal(GetID);
-        if ( dlg.SelectedLabel < 0 )
+        if (dlg.SelectedLabel < 0)
           return;
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          if ( dlg.SelectedLabel == 0 )
+          if (dlg.SelectedLabel == 0)
             autoTurnOnTS = true;
           else
             autoTurnOnTS = false;
@@ -337,25 +362,24 @@ namespace WindowPlugins.GUISettings.TV
         strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
       }
       ArrayList availableAudioFilters = FilterHelper.GetAudioRenderers();
-
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if ( dlg != null )
+      if (dlg != null)
       {
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
         int selected = 0;
         int count = 0;
-        foreach ( string codec in availableAudioFilters )
+        foreach (string codec in availableAudioFilters)
         {
           dlg.Add(codec);//delete
-          if ( codec == strAudioRenderer )
+          if (codec == strAudioRenderer)
             selected = count;
           count++;
         }
         dlg.SelectedLabel = selected;
       }
       dlg.DoModal(GetID);
-      if ( dlg.SelectedLabel < 0 )
+      if (dlg.SelectedLabel < 0)
         return;
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {

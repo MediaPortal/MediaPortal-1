@@ -1229,7 +1229,7 @@
         <String id="5923">New on DVD this week</String>
         <String id="5924">New on DVD next week</String>
         <String id="5925">DVD pre-orders</String>
-        <String id="6000">Video Codec</String>
+        <String id="6000">MPEG-2 Video Codec</String>
         <String id="6001">Audio Codec</String>
         <String id="6002">Audio Renderer</String>
         <String id="6003">De-interlacing</String>
@@ -1265,6 +1265,7 @@
         <String id="6033">Search by keyword</String>
         <String id="6034">Search by genre</String>
         <String id="6035">Add Schedule</String>
+        <String id="6036">H.264 Video Codec</String>
         <String id="8000" prefix="My ">Mail</String>
         <String id="8001">Check Mailbox</String>
         <String id="8002">Auto-check off</String>

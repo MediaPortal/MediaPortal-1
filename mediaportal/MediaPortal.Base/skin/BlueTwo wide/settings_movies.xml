@@ -14,9 +14,16 @@
       <posY>201</posY>
       <control>
         <type>button</type>
+        <description>MPEG-2 Video Codecs</description>
         <id>24</id>
         <label>6000</label>
         <onup>17</onup>
+      </control>
+      <control>
+        <description>H.264 Video Codecs</description>
+        <type>button</type>
+        <id>29</id>
+        <label>6036</label>
       </control>
       <control>
         <type>button</type>
