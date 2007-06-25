@@ -18,6 +18,7 @@ namespace TvPlugin
     private bool _preferAC3;
     private bool _rebuildGraphOnNewCard;
     private bool _rebuildGraphOnNewAVSpecs;
+    private bool _avoidSeeking;
     private List<String> languagesAvail;
     private List<String> languageCodes;
     #endregion
@@ -32,6 +33,7 @@ namespace TvPlugin
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         _rebuildGraphOnNewAVSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewAVSpecs", true);
         _rebuildGraphOnNewCard = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewCard", true);
+        _avoidSeeking = xmlreader.GetValueAsBool("tvservice", "avoidSeeking", false);
       }
     }
     void SaveSettings()
@@ -42,7 +44,8 @@ namespace TvPlugin
         xmlreader.SetValue("tvservice","preferredlanguages",_preferredLanguages);
         xmlreader.SetValueAsBool("tvservice","preferac3",_preferAC3);
         xmlreader.SetValueAsBool("tvservice", "rebuildgraphOnNewAVSpecs", _rebuildGraphOnNewAVSpecs);
-        xmlreader.SetValueAsBool("tvservice", "rebuildgraphOnNewCard", _rebuildGraphOnNewCard);        
+        xmlreader.SetValueAsBool("tvservice", "rebuildgraphOnNewCard", _rebuildGraphOnNewCard);
+        xmlreader.SetValueAsBool("tvservice", "avoidSeeking", _avoidSeeking );        
       }
     }
     #endregion
@@ -63,6 +66,7 @@ namespace TvPlugin
       mpCheckBoxPrefAC3.Checked = _preferAC3;
       mpCheckBoxPrefRebuildGraphOnNewCard.Checked = _rebuildGraphOnNewCard;
       mpCheckBoxPrefRebuildGraphOnNewAVSpecs.Checked = _rebuildGraphOnNewAVSpecs;
+      mpCheckBoxavoidSeekingonChannelChange.Checked = _avoidSeeking;
 
       string toolTip =  "Use this option to make sure that the graph" + Environment.NewLine; 
       toolTip += "is rebuilt when changing to a channel that" + Environment.NewLine; 
@@ -115,6 +119,11 @@ namespace TvPlugin
     private void mpCheckBoxPrefRebuildGraphOnNewAVSpecs_CheckedChanged(object sender, EventArgs e)
     {
       _rebuildGraphOnNewAVSpecs = mpCheckBoxPrefRebuildGraphOnNewAVSpecs.Checked;
+    }
+
+    private void mpCheckBoxavoidSeekingonChannelChange_CheckedChanged(object sender, EventArgs e)
+    {
+      _avoidSeeking = mpCheckBoxavoidSeekingonChannelChange.Checked;
     }
 
   }

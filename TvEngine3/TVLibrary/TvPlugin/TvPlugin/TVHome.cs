@@ -81,6 +81,7 @@ namespace TvPlugin
     static bool _preferAC3 = false;
     static bool _rebuildGraphOnNewCard = false;
     static bool _rebuildGraphOnNewAVSpecs = false;
+    static bool _avoidSeeking = false;
     Stopwatch benchClock = null;
 
     [SkinControlAttribute(2)]     protected GUIButtonControl btnTvGuide = null;
@@ -235,6 +236,7 @@ namespace TvPlugin
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         _rebuildGraphOnNewAVSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewAVSpecs", true);
         _rebuildGraphOnNewCard = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewCard", true);
+        _avoidSeeking = xmlreader.GetValueAsBool("tvservice", "avoidSeeking", false);
       }
     }
 
@@ -614,7 +616,7 @@ namespace TvPlugin
           TVHome.Card.User.Name = new User().Name;
           TVHome.Card.StopTimeShifting();
           benchClock.Stop();
-          Log.Debug("TVHome.OnClicked(): EndTvOff {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          Log.Warn("TVHome.OnClicked(): EndTvOff {0} ms", benchClock.ElapsedMilliseconds.ToString());
 
           return;
         }
@@ -633,7 +635,7 @@ namespace TvPlugin
             else
             {
 
-              Log.Debug("TVHome.OnClicked: Stop Called - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+              Log.Warn("TVHome.OnClicked: Stop Called - {0} ms", benchClock.ElapsedMilliseconds.ToString());
 
               g_Player.Stop();
             }
@@ -646,7 +648,7 @@ namespace TvPlugin
         UpdateStateOfButtons();
         UpdateProgressPercentageBar();
         benchClock.Stop();
-        Log.Debug("TVHome.OnClicked(): Total Time - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+        Log.Warn("TVHome.OnClicked(): Total Time - {0} ms", benchClock.ElapsedMilliseconds.ToString());
 
       }
       /*
@@ -1319,7 +1321,7 @@ namespace TvPlugin
         }  
         
         benchClock.Stop();
-        Log.Debug("TVHome.ViewChannelAndCheck(): Phase 1 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+        Log.Warn ("TVHome.ViewChannelAndCheck(): Phase 1 - {0} ms - Done method initialization", benchClock.ElapsedMilliseconds.ToString());
         benchClock.Reset();
         benchClock.Start();
         User user = new User();
@@ -1364,14 +1366,14 @@ namespace TvPlugin
         Log.Debug("TvPlugin: Continuing player. NewCard is {0} and oldCard was {1}", newCardId, _card.Id); */
 
         benchClock.Stop();
-        MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Phase 2 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+        MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 2 - {0} ms. Done previous state management.", benchClock.ElapsedMilliseconds.ToString());
         benchClock.Reset();
         benchClock.Start();
 
         succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
 
         benchClock.Stop();
-        MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Phase 3 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+        MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 3 - {0} ms. Done statring timeshif.", benchClock.ElapsedMilliseconds.ToString());
         benchClock.Reset();
         benchClock.Start();
 
@@ -1453,21 +1455,21 @@ namespace TvPlugin
 
 
           benchClock.Stop();
-          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Phase 4 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 4 - {0} ms. Done handling stream changes. ", benchClock.ElapsedMilliseconds.ToString());
           benchClock.Reset();
           benchClock.Start();
-
-
 
           if (!g_Player.Playing)
             StartPlay();
 
-          //else if (wasPlaying)
-          //by gemx: Always seek to the end of buffer. Fixes some issues with TsFilesource filter
-            SeekToEnd(true);
+          else if (wasPlaying)
+            if ( _avoidSeeking && ((g_Player.CurrentPosition + 15) > g_Player.Duration) ) 
+              Log.Warn("TvHome.ViewChannelandCheck(): Seeking avoided. Current position {0}, Duration {1}", g_Player.CurrentPosition, g_Player.Duration);
+            else
+              SeekToEnd(true); 
 
           benchClock.Stop();
-          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Phase 5- {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 5- {0} ms. Done startplaying or seeking. ", benchClock.ElapsedMilliseconds.ToString());
           benchClock.Reset();
           benchClock.Start();
 
@@ -1491,7 +1493,7 @@ namespace TvPlugin
           GUIWaitCursor.Hide();
 
           benchClock.Stop();
-          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Phase 6 - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 6 - {0} ms. Done audiostream management. Method finished. ", benchClock.ElapsedMilliseconds.ToString());
           benchClock.Reset();
           benchClock.Start();
 
@@ -1502,7 +1504,7 @@ namespace TvPlugin
         {
           //timeshifting new channel failed. 
           benchClock.Stop();
-          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Phase 4 failed - {0} ms", benchClock.ElapsedMilliseconds.ToString());
+          MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 4 failed - {0} ms. Starting error handling.", benchClock.ElapsedMilliseconds.ToString());
           benchClock.Reset();
           benchClock.Start();
 
@@ -1703,6 +1705,8 @@ namespace TvPlugin
 
     static void StartPlay()
     {
+      Stopwatch benchClock = null;
+      benchClock = Stopwatch.StartNew();
       if (TVHome.Card == null)
       {
         MediaPortal.GUI.Library.Log.Info("tvhome:startplay card=null");
@@ -1728,19 +1732,34 @@ namespace TvPlugin
         mediaType = g_Player.MediaType.Radio;
 
       bool useRtsp = System.IO.File.Exists("usertsp.txt");
+      benchClock.Stop();
+      Log.Warn("tvhome:startplay.  Phase 1 - {0} ms - Done method initialization", benchClock.ElapsedMilliseconds.ToString());
+      benchClock.Reset();
+      benchClock.Start();
       if (System.IO.File.Exists(timeshiftFileName) && !useRtsp)
       {
         MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);
         g_Player.Play(timeshiftFileName, mediaType);
+        benchClock.Stop();
+        Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
+        benchClock.Reset();
+        benchClock.Start();
         SeekToEnd(false);
+        Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString());
       }
       else
       {
         timeshiftFileName = TVHome.Card.RTSPUrl;
         MediaPortal.GUI.Library.Log.Info("tvhome:startplay:{0}", timeshiftFileName);
         g_Player.Play(timeshiftFileName, mediaType);
+        benchClock.Stop();
+        Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
+        benchClock.Reset();
+        benchClock.Start();
         SeekToEnd(true);
+        Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString()); SeekToEnd(true);
       }
+      benchClock.Stop();
     }
     static void SeekToEnd(bool zapping)
     {

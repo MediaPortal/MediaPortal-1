@@ -29,6 +29,7 @@ namespace TvPlugin
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvSetupForm));
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpButtonSelectLanguages = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpTextBoxPreferredLanguages = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -47,6 +48,9 @@ namespace TvPlugin
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.toolTipChannelChangeOnNewCard = new System.Windows.Forms.ToolTip(this.components);
       this.toolTipChannelChangeOnNewAVSpecs = new System.Windows.Forms.ToolTip(this.components);
+      this.mpLabel6 = new System.Windows.Forms.Label();
+      this.mpCheckBoxavoidSeekingonChannelChange = new System.Windows.Forms.CheckBox();
+      this.toolSeeking = new System.Windows.Forms.ToolTip(this.components);
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
@@ -149,7 +153,7 @@ namespace TvPlugin
       // mpButtonOk
       // 
       this.mpButtonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.mpButtonOk.Location = new System.Drawing.Point(35, 300);
+      this.mpButtonOk.Location = new System.Drawing.Point(32, 323);
       this.mpButtonOk.Name = "mpButtonOk";
       this.mpButtonOk.Size = new System.Drawing.Size(75, 23);
       this.mpButtonOk.TabIndex = 6;
@@ -160,7 +164,7 @@ namespace TvPlugin
       // mpButtonCancel
       // 
       this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.mpButtonCancel.Location = new System.Drawing.Point(165, 300);
+      this.mpButtonCancel.Location = new System.Drawing.Point(173, 323);
       this.mpButtonCancel.Name = "mpButtonCancel";
       this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
       this.mpButtonCancel.TabIndex = 7;
@@ -169,6 +173,8 @@ namespace TvPlugin
       // 
       // mpGroupBox3
       // 
+      this.mpGroupBox3.Controls.Add(this.mpCheckBoxavoidSeekingonChannelChange);
+      this.mpGroupBox3.Controls.Add(this.mpLabel6);
       this.mpGroupBox3.Controls.Add(this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs);
       this.mpGroupBox3.Controls.Add(this.mpLabel5);
       this.mpGroupBox3.Controls.Add(this.mpCheckBoxPrefRebuildGraphOnNewCard);
@@ -176,7 +182,7 @@ namespace TvPlugin
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox3.Location = new System.Drawing.Point(13, 183);
       this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(290, 96);
+      this.mpGroupBox3.Size = new System.Drawing.Size(290, 125);
       this.mpGroupBox3.TabIndex = 8;
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Channel change preference";
@@ -186,7 +192,7 @@ namespace TvPlugin
       this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.AutoSize = true;
       this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.BackColor = System.Drawing.SystemColors.ButtonFace;
       this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.Location = new System.Drawing.Point(262, 59);
+      this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.Location = new System.Drawing.Point(263, 59);
       this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.Name = "mpCheckBoxPrefRebuildGraphOnNewAVSpecs";
       this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.Size = new System.Drawing.Size(13, 12);
       this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.TabIndex = 9;
@@ -239,12 +245,36 @@ namespace TvPlugin
       this.toolTipChannelChangeOnNewAVSpecs.ReshowDelay = 100;
       this.toolTipChannelChangeOnNewAVSpecs.ShowAlways = true;
       // 
+      // mpLabel6
+      // 
+      this.mpLabel6.AutoSize = true;
+      this.mpLabel6.Location = new System.Drawing.Point(16, 90);
+      this.mpLabel6.Name = "mpLabel6";
+      this.mpLabel6.Size = new System.Drawing.Size(217, 13);
+      this.mpLabel6.TabIndex = 10;
+      this.mpLabel6.Text = "Try avoiding seeking during channel change";
+      this.toolSeeking.SetToolTip(this.mpLabel6, resources.GetString("mpLabel6.ToolTip"));
+      // 
+      // mpCheckBoxavoidSeekingonChannelChange
+      // 
+      this.mpCheckBoxavoidSeekingonChannelChange.AutoSize = true;
+      this.mpCheckBoxavoidSeekingonChannelChange.Location = new System.Drawing.Point(263, 90);
+      this.mpCheckBoxavoidSeekingonChannelChange.Name = "mpCheckBoxavoidSeekingonChannelChange";
+      this.mpCheckBoxavoidSeekingonChannelChange.Size = new System.Drawing.Size(15, 14);
+      this.mpCheckBoxavoidSeekingonChannelChange.TabIndex = 11;
+      this.mpCheckBoxavoidSeekingonChannelChange.UseVisualStyleBackColor = true;
+      this.mpCheckBoxavoidSeekingonChannelChange.CheckedChanged += new System.EventHandler(this.mpCheckBoxavoidSeekingonChannelChange_CheckedChanged);
+      // 
+      // toolSeeking
+      // 
+      this.toolSeeking.ToolTipTitle = "Avoid Seeking";
+      // 
       // TvSetupForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.mpButtonCancel;
-      this.ClientSize = new System.Drawing.Size(317, 335);
+      this.ClientSize = new System.Drawing.Size(317, 369);
       this.Controls.Add(this.mpGroupBox3);
       this.Controls.Add(this.mpButtonCancel);
       this.Controls.Add(this.mpButtonOk);
@@ -285,6 +315,9 @@ namespace TvPlugin
     private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxPrefRebuildGraphOnNewAVSpecs;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
     private System.Windows.Forms.ToolTip toolTipChannelChangeOnNewAVSpecs;
+    private System.Windows.Forms.CheckBox mpCheckBoxavoidSeekingonChannelChange;
+    private System.Windows.Forms.Label mpLabel6;
+    private System.Windows.Forms.ToolTip toolSeeking;
 
 
   }

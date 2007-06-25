@@ -117,6 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="toolSeeking.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>482, 17</value>
+  </metadata>
+  <data name="mpLabel6.ToolTip" xml:space="preserve">
+    <value>Allows the client to avoid doing a seek to the end of the stream 
+during a channel change if the client is already watching LivePoint. 
+
+This reduces the time necessary to do the change, but might allow the user
+to view the channel changing process (for example, the blasting of the channel
+numbers in the STB). 
+
+Seekingi s always done if the user is not at or close to Live Point. </value>
+  </data>
   <metadata name="toolTipChannelChangeOnNewCard.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
