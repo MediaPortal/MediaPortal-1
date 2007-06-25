@@ -183,7 +183,7 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValue("movieplayer", "audiorenderer", audioRendererComboBox.Text);
 
-        xmlwriter.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", useTsFileSourceForMpegs);
+        xmlwriter.SetValueAsBool("movieplayer", "useTsFileSourceForMpegs", useTsFileSourceForMpegs);
 
 
         //
