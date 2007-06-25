@@ -1072,46 +1072,54 @@ STDMETHODIMP CTSFileSourcePin::GetPositions(LONGLONG *pCurrent, LONGLONG *pStop)
 		{
 			if (m_bGetAvailableMode)
 			{
-				*pCurrent = max(0, (__int64)positionFunctions.SubConvertPCRtoRT(m_IntCurrentTimePCR, m_IntBaseTimePCR));
-				*pStop = max(0, (__int64)positionFunctions.SubConvertPCRtoRT(m_IntEndTimePCR, m_IntBaseTimePCR));
+				// GEMX: Disabled. Resulted in wrong positions sometimes
+				//*pCurrent = max(0, (__int64)positionFunctions.SubConvertPCRtoRT(m_IntCurrentTimePCR, m_IntBaseTimePCR));
+				//*pStop = max(0, (__int64)positionFunctions.SubConvertPCRtoRT(m_IntEndTimePCR, m_IntBaseTimePCR));
 
 #ifdef DEBUG_POSITIONS
 				positionFunctions.PrintTime(TEXT("GetPositions Current"), (__int64) *pCurrent, 10000, &debugcount);
 				positionFunctions.PrintTime(TEXT("GetPositions Stop                            "), (__int64) *pStop, 10000, &debugcount);
 #endif
 
-				REFERENCE_TIME current, stop;
-				HRESULT hr = CSourceSeeking::GetPositions(&current, &stop);
+				// GEMX: We use the GetPositions from here as it is more accurate
+				//REFERENCE_TIME current, stop;
+				//HRESULT hr = CSourceSeeking::GetPositions(&current, &stop);
+				HRESULT hr = CSourceSeeking::GetPositions(pCurrent, pStop);
 
+				/*
 				if ((*pCurrent != current) && (*pStop != stop))
 					::OutputDebugString(TEXT("GetPositions - Calculated current and stop times differ from CSourceSeeking::GetPositions\n"));
 				else if (*pCurrent != current)
 					::OutputDebugString(TEXT("GetPositions - Calculated current time differs from CSourceSeeking::GetPositions\n"));
 				else if (*pStop != stop)
 					::OutputDebugString(TEXT("GetPositions - Calculated stop time differs from CSourceSeeking::GetPositions\n"));
-
+				*/
 				return hr;
 			}
 			else
 			{
-				*pCurrent = max(0, (__int64)positionFunctions.SubConvertPCRtoRT(m_IntCurrentTimePCR, m_IntStartTimePCR));
-				*pStop = max(0, (__int64)positionFunctions.SubConvertPCRtoRT(m_IntEndTimePCR, m_IntStartTimePCR));
+				// GEMX: Disabled. Resulted in wrong positions sometimes
+				//*pCurrent = max(0, (__int64)positionFunctions.SubConvertPCRtoRT(m_IntCurrentTimePCR, m_IntStartTimePCR));
+				//*pStop = max(0, (__int64)positionFunctions.SubConvertPCRtoRT(m_IntEndTimePCR, m_IntStartTimePCR));
 
 #ifdef DEBUG_POSITIONS
 				positionFunctions.PrintTime(TEXT("GetPositions Current"), (__int64) *pCurrent, 10000, &debugcount);
 				positionFunctions.PrintTime(TEXT("GetPositions Stop                            "), (__int64) *pStop, 10000, &debugcount);
 #endif
 
-				REFERENCE_TIME current, stop;
-				HRESULT hr = CSourceSeeking::GetPositions(&current, &stop);
+				// GEMX: We use the GetPositions from here as it is more accurate
+				//REFERENCE_TIME current, stop;
+				//HRESULT hr = CSourceSeeking::GetPositions(&current, &stop);
+				HRESULT hr = CSourceSeeking::GetPositions(pCurrent, pStop);
 
+				/*
 				if ((*pCurrent != current) && (*pStop != stop))
 					::OutputDebugString(TEXT("GetPositions - Calculated current and stop times differ from CSourceSeeking::GetPositions\n"));
 				else if (*pCurrent != current)
 					::OutputDebugString(TEXT("GetPositions - Calculated current time differs from CSourceSeeking::GetPositions\n"));
 				else if (*pStop != stop)
 					::OutputDebugString(TEXT("GetPositions - Calculated stop time differs from CSourceSeeking::GetPositions\n"));
-
+				*/
 				return hr;
 			}
 		}
@@ -1143,9 +1151,6 @@ STDMETHODIMP CTSFileSourcePin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFla
 	if(!m_rtDuration)
 		return E_FAIL;
 
-	if (pCurrent==0)
-		return S_OK;
-
 	BOOL bFileWasOpen = TRUE;
 	if (m_pTSFileSourceFilter->m_pFileReader->IsFileInvalid())
 	{
@@ -1155,8 +1160,6 @@ STDMETHODIMP CTSFileSourcePin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFla
 
 		bFileWasOpen = FALSE;
 	}
-
-
 
 	if (pCurrent)
 	{
