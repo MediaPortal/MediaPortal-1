@@ -38,6 +38,7 @@ namespace MediaPortal.Configuration.Sections
 {
   public class MoviePlayer : MediaPortal.Configuration.SectionSettings
   {
+    private bool useTsFileSourceForMpegs;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPButton parametersButton;
     private MediaPortal.UserInterface.Controls.MPTextBox parametersTextBox;
@@ -106,6 +107,8 @@ namespace MediaPortal.Configuration.Sections
         externalPlayerCheckBox.Checked = !externalPlayerCheckBox.Checked;
 
         audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
+
+        useTsFileSourceForMpegs=xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
 
         //
         // Set codecs
@@ -179,6 +182,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("movieplayer", "internal", !externalPlayerCheckBox.Checked);
 
         xmlwriter.SetValue("movieplayer", "audiorenderer", audioRendererComboBox.Text);
+
+        xmlwriter.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", useTsFileSourceForMpegs);
 
 
         //

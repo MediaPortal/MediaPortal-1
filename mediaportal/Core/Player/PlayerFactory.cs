@@ -223,10 +223,25 @@ namespace MediaPortal.Player
         }
       }
 
-      //use tsfilesource for .mpg playback
-      //reason: default file reader does not support mpeg-1 audio
-      //resulting in video, but no audio!!
+      // Don't use TsFilesource for mpegs as a test since TvEngine3 now generates better MPEG files which can be played back
+      // with the MS MPEG filter
+      // currently switchable via a hidden flag.
+
+      bool bUseTsFileSourceForMpegs = true;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
+      }
+      bool playWithTsFileSource = false;
       if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
+      {
+        if (extension == ".mpg" || extension == ".mpeg")
+          playWithTsFileSource = bUseTsFileSourceForMpegs;
+        else
+          playWithTsFileSource = true;
+      }
+
+      if (playWithTsFileSource)
       {
         bool mpgGood = true;
         if (extension == ".mpg" || extension == ".mpeg")
@@ -378,10 +393,26 @@ namespace MediaPortal.Player
           return newPlayer;
         }
       }
-      //use tsfilesource for .mpg playback
-      //reason: default file reader does not support mpeg-1 audio
-      //resulting in video, but no audio!!
+
+      // Don't use TsFilesource for mpegs as a test since TvEngine3 now generates better MPEG files which can be played back
+      // with the MS MPEG filter
+      // currently switchable via a hidden flag.
+
+      bool bUseTsFileSourceForMpegs = true;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
+      }
+      bool playWithTsFileSource = false;
       if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
+      {
+        if (extension == ".mpg" || extension == ".mpeg")
+          playWithTsFileSource = bUseTsFileSourceForMpegs;
+        else
+          playWithTsFileSource = true;
+      }
+
+      if (playWithTsFileSource)
       {
         bool mpgGood = true;
         if (extension == ".mpg" || extension == ".mpeg")
