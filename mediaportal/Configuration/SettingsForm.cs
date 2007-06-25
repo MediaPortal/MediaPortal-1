@@ -261,6 +261,10 @@ namespace MediaPortal.Configuration
           {
             AddChildSection(filterSection, new PowerDVD6DecoderFilters());
           }
+          if (filter.Equals("CyberLink Audio Decoder (PDVD7)"))
+          {
+            AddChildSection(filterSection, new PowerDVD7DecoderFilters());
+          }
           if (filter.Equals("MPA Decoder Filter"))
           {
             AddChildSection(filterSection, new MPEG2DecAudioFilter());
