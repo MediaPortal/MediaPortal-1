@@ -1028,13 +1028,11 @@ namespace MediaPortal.TV.Recording
           while ((hr = Marshal.ReleaseComObject(_pinAC3Out)) > 0) ;
           _pinAC3Out = null;
         }
-
         if (_pinDemuxerVideoMPEG4 != null)
         {
           while ((hr = Marshal.ReleaseComObject(_pinDemuxerVideoMPEG4)) > 0) ;
           _pinDemuxerVideoMPEG4 = null;
         }
-
         if (_filterInfTee != null)
         {
           while ((hr = Marshal.ReleaseComObject(_filterInfTee)) > 0) ;
@@ -1050,56 +1048,46 @@ namespace MediaPortal.TV.Recording
           while ((hr = Marshal.ReleaseComObject(_pinDemuxerTS)) > 0) ;
           _pinDemuxerTS = null;
         }
-
         if (_pinDemuxerAudio != null)
         {
           while ((hr = Marshal.ReleaseComObject(_pinDemuxerAudio)) > 0) ;
           _pinDemuxerAudio = null;
         }
-
         if (_pinDemuxerEPG != null)
         {
           while ((hr = Marshal.ReleaseComObject(_pinDemuxerEPG)) > 0) ;
           _pinDemuxerEPG = null;
         }
-
         if (_pinDemuxerMHWd2 != null)
         {
           while ((hr = Marshal.ReleaseComObject(_pinDemuxerMHWd2)) > 0) ;
           _pinDemuxerMHWd2 = null;
         }
-
         if (_pinDemuxerMHWd3 != null)
         {
           while ((hr = Marshal.ReleaseComObject(_pinDemuxerMHWd3)) > 0) ;
           _pinDemuxerMHWd3 = null;
         }
-
         if (_pinDemuxerSections != null)
         {
           while ((hr = Marshal.ReleaseComObject(_pinDemuxerSections)) > 0) ;
           _pinDemuxerSections = null;
         }
-
         if (_pinDemuxerVideo != null)
         {
           while ((hr = Marshal.ReleaseComObject(_pinDemuxerVideo)) > 0) ;
           _pinDemuxerVideo = null;
         }
-
         if (_pinMPG1Out != null)
         {
           while ((hr = Marshal.ReleaseComObject(_pinMPG1Out)) > 0) ;
           _pinMPG1Out = null;
         }
-
         if (_pinTeletext != null)
         {
           while ((hr = Marshal.ReleaseComObject(_pinTeletext)) > 0) ;
           _pinTeletext = null;
         }
-
-
         if (_filterDvbAnalyzer != null)
         {
           //Log.Info("free dvbanalyzer");
