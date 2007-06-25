@@ -79,6 +79,14 @@ namespace TvEngine
             Blaster.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
             LoadRemoteCodes();
 
+            Log.WriteFile("RTSP: start streamer");
+            Thread thread = new Thread(new ThreadStart(Sender));
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.IsBackground = true;
+            thread.Name = "Blaster";
+            _running = true;
+            thread.Start();
+            
 
             Log.WriteFile("ServerBlaster.Start: Started");
         }
@@ -86,6 +94,7 @@ namespace TvEngine
         public void Stop()
         {
             Log.WriteFile("ServerBlaster.Stop: Stopping");
+            _running = false;
             ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
             events.OnTvServerEvent -= new TvServerEventHandler(events_OnTvServerEvent);
             Log.WriteFile("ServerBlaster.Stop: Stopped");
@@ -111,7 +120,10 @@ namespace TvEngine
             if (tvEvent.EventType == TvServerEventType.StartZapChannel)
             {
                 Log.WriteFile("ServerBlaster - CardId: {0}, Channel: {1} - Channel:{2}", tvEvent.Card.Id, analogChannel.ChannelNumber, analogChannel.Name);
-                Send(analogChannel.ChannelNumber, tvEvent.Card.Id);
+                _send = true;
+                _channel = analogChannel.ChannelNumber;
+                _card = tvEvent.Card.Id;
+                Log.WriteFile("ServerBlaster - Done");
 
             }
         }
@@ -169,6 +181,26 @@ namespace TvEngine
             return false;
         }
 
+      void Sender()
+      {
+        while (_running)
+        {
+          if (_sending || !_send)
+          {
+            Thread.Sleep(50);
+            continue;
+          }
+          _sending = true;
+          Log.WriteFile("Blaster Sending: {0}, {1}", _channel, _card);
+          Send(_channel, _card);
+          _sending = false;
+          _send = false;
+        }
+
+      }
+
+
+
         void Send(int externalChannel, int card)
         {
             if (_blaster1Card == card) _sendPort = 1;
@@ -220,6 +252,11 @@ namespace TvEngine
         bool _advandeLogging;
         int _deviceType = 1;
         int _deviceSpeed = 0;
+        int _channel;
+        int _card;
+        bool _send = false;
+        bool _sending = false;
+      bool _running = false;
 
         #endregion Members
 
