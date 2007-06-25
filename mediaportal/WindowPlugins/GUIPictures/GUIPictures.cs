@@ -1161,6 +1161,7 @@ namespace MediaPortal.GUI.Pictures
             dlgProgress.SetLine(2, String.Format(GUILocalizeStrings.Get(8033) + ": {0}/{1}", ++Count, itemlist.Count));
             dlgProgress.SetPercentage((100 * Count) / itemlist.Count);
             dlgProgress.Progress();
+            dlgProgress.ShowProgressBar(true);
             if (dlgProgress.IsCanceled)
               return;
           }
