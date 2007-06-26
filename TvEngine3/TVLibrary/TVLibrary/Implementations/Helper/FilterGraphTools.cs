@@ -119,7 +119,7 @@ namespace TvLibrary.Implementations.DVB
 	    0x40, 0x02, 0x00, 0x00,                         //  .hdr.bmiHeader.biHeight         = 0x00000240
 	    0x00, 0x00,                                     //  .hdr.bmiHeader.biPlanes         = 0x0001
 	    0x00, 0x00,                                     //  .hdr.bmiHeader.biBitCount       = 0x0018
-	    0x68, 0x32, 0x36, 0x34,                         //  .hdr.bmiHeader.biCompression    = "h264"
+	    0x48, 0x32, 0x36, 0x34,                         //  .hdr.bmiHeader.biCompression    = "H264"
 	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biSizeImage      = 0x00000000
 	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biXPelsPerMeter  = 0x00000000
 	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biYPelsPerMeter  = 0x00000000
@@ -388,22 +388,11 @@ namespace TvLibrary.Implementations.DVB
 
         while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
         {
-          FilterInfo filterInfo;
-
-          hr = filters[0].QueryFilterInfo(out filterInfo);
-          if (hr == 0)
+          if (GetFilterName(filters[0]).Equals(filterName))
           {
-            if (filterInfo.pGraph != null)
-              Marshal.ReleaseComObject(filterInfo.pGraph);
-
-            if (filterInfo.achName.Equals(filterName))
-            {
-              filter = filters[0];
-              break;
-            }
+            filter = filters[0];
+            break;
           }
-
-          Marshal.ReleaseComObject(filters[0]);
         }
         Marshal.ReleaseComObject(enumFilters);
       }
@@ -1110,17 +1099,120 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// increment the ComObject referencecount of the object.
+    /// </summary>
+    /// <param name="o">The object.</param>
+    static private object incRefCountCOM(object o)
+    {
+      IntPtr pUnk = Marshal.GetIUnknownForObject(o);
+      object oCom = Marshal.GetObjectForIUnknown(pUnk);
+      Marshal.Release(pUnk);
+      return oCom;
+    }
+
+    /// <summary>
+    /// get the referencecount of the object.
+    /// </summary>
+    /// <param name="o">The object.</param>
+    /// <returns>referencecount</returns>
+    static public int getRefCount(object o)
+    {
+      if (o == null)
+        return -1;
+      int refcount = Marshal.Release(Marshal.GetIUnknownForObject(o));
+      return refcount;
+    }
+
+    /// <summary>
+    /// get the ComObject referencecount of the filter.
+    /// </summary>
+    /// <param name="filter">The filter.</param>
+    /// <returns>referencecount</returns>
+    static public int getRefCountCOM(object filter)
+    {
+      if (filter == null)
+        return -1;
+      object o = incRefCountCOM(filter);
+      int refcount = Marshal.ReleaseComObject(o);
+      return refcount;
+    }
+
+    /// <summary>
     /// Logs the pin info.
     /// </summary>
     /// <param name="pin">The pin.</param>
     /// <returns></returns>
     static public string LogPinInfo(IPin pin)
     {
+      if (pin == null)
+        return " pin==null ";
       PinInfo pinInfo;
-      pin.QueryPinInfo(out pinInfo);
-      if (pinInfo.filter != null)
-        Release.ComObject("LogPinInfo", pinInfo.filter);
-      return String.Format("name:{0} Direction:{1}", pinInfo.name, pinInfo.dir);
+      IPin connectedToPin;
+      if (pin.ConnectedTo(out connectedToPin) != 0)
+        connectedToPin = null;
+
+      bool connected = connectedToPin != null;
+      if (connected)
+        Marshal.ReleaseComObject(connectedToPin);
+
+      int hr = pin.QueryPinInfo(out pinInfo);
+      if (hr == 0)
+      {
+        if (pinInfo.filter != null)
+          Marshal.ReleaseComObject(pinInfo.filter);
+      }
+      return String.Format("name:{0} [{3}/{4}] Direction:{1} Connected:{2}", pinInfo.name, pinInfo.dir, connected, getRefCount(pin), getRefCountCOM(pin));
+    }
+    
+    /// <summary>
+    /// Logs the filter info.
+    /// </summary>
+    /// <param name="filter">The filter.</param>
+    /// <returns></returns>
+    static public string LogFilterInfo(IBaseFilter filter)
+    {
+      if (filter == null)
+        return " filter==null ";
+      return String.Format("name:{0} [{1}/{2}]", GetFilterName(filter), getRefCount(filter), getRefCountCOM(filter));
+    }
+
+    /// <summary>
+    /// Gets the filter name.
+    /// </summary>
+    /// <param name="filter">The filter.</param>
+    /// <returns>FilterName</returns>
+    static public string GetFilterName(IBaseFilter filter)
+    {
+      FilterInfo filterInfo;
+      int hr = filter.QueryFilterInfo(out filterInfo);
+      if (hr == 0)
+      {
+        if (filterInfo.pGraph != null)
+          Marshal.ReleaseComObject(filterInfo.pGraph);
+      }
+      return String.Format(filterInfo.achName);
+    }
+
+    /// <summary>
+    /// Gets the pin name.
+    /// </summary>
+    /// <param name="pin">The pin.</param>
+    /// <returns>PinName</returns>
+    static public string GetPinName(IPin pin)
+    {
+      if (pin == null)
+        return "";
+      else
+      {
+        PinInfo pinInfo;
+        int hr = pin.QueryPinInfo(out pinInfo);
+        if (hr == 0)
+        {
+          if (pinInfo.filter != null)
+            Marshal.ReleaseComObject(pinInfo.filter);
+        }
+        return String.Format(pinInfo.name);
+      }
     }
 
     /// <summary>
