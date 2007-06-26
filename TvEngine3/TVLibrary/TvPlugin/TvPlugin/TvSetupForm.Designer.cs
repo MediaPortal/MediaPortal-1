@@ -43,13 +43,13 @@ namespace TvPlugin
       this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpCheckBoxPrefRebuildGraphAudioChanged = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBoxavoidSeekingonChannelChange = new System.Windows.Forms.CheckBox();
+      this.mpLabel6 = new System.Windows.Forms.Label();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpCheckBoxPrefRebuildGraphVideoChanged = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.toolTipChannelChangeVideoChanged = new System.Windows.Forms.ToolTip(this.components);
       this.toolTipChannelChangeAudioChanged = new System.Windows.Forms.ToolTip(this.components);
-      this.mpLabel6 = new System.Windows.Forms.Label();
-      this.mpCheckBoxavoidSeekingonChannelChange = new System.Windows.Forms.CheckBox();
       this.toolSeeking = new System.Windows.Forms.ToolTip(this.components);
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
@@ -173,10 +173,9 @@ namespace TvPlugin
       // 
       // mpGroupBox3
       // 
-
       this.mpGroupBox3.Controls.Add(this.mpCheckBoxPrefRebuildGraphAudioChanged);
       this.mpGroupBox3.Controls.Add(this.mpCheckBoxavoidSeekingonChannelChange);
-      this.mpGroupBox3.Controls.Add(this.mpLabel6);      
+      this.mpGroupBox3.Controls.Add(this.mpLabel6);
       this.mpGroupBox3.Controls.Add(this.mpLabel5);
       this.mpGroupBox3.Controls.Add(this.mpCheckBoxPrefRebuildGraphVideoChanged);
       this.mpGroupBox3.Controls.Add(this.mpLabel4);
@@ -199,7 +198,26 @@ namespace TvPlugin
       this.mpCheckBoxPrefRebuildGraphAudioChanged.TabIndex = 9;
       this.mpCheckBoxPrefRebuildGraphAudioChanged.UseVisualStyleBackColor = false;
       this.mpCheckBoxPrefRebuildGraphAudioChanged.CheckedChanged += new System.EventHandler(this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs_CheckedChanged);
-
+      // 
+      // mpCheckBoxavoidSeekingonChannelChange
+      // 
+      this.mpCheckBoxavoidSeekingonChannelChange.AutoSize = true;
+      this.mpCheckBoxavoidSeekingonChannelChange.Location = new System.Drawing.Point(263, 90);
+      this.mpCheckBoxavoidSeekingonChannelChange.Name = "mpCheckBoxavoidSeekingonChannelChange";
+      this.mpCheckBoxavoidSeekingonChannelChange.Size = new System.Drawing.Size(15, 14);
+      this.mpCheckBoxavoidSeekingonChannelChange.TabIndex = 11;
+      this.mpCheckBoxavoidSeekingonChannelChange.UseVisualStyleBackColor = true;
+      this.mpCheckBoxavoidSeekingonChannelChange.CheckedChanged += new System.EventHandler(this.mpCheckBoxavoidSeekingonChannelChange_CheckedChanged);
+      // 
+      // mpLabel6
+      // 
+      this.mpLabel6.AutoSize = true;
+      this.mpLabel6.Location = new System.Drawing.Point(16, 90);
+      this.mpLabel6.Name = "mpLabel6";
+      this.mpLabel6.Size = new System.Drawing.Size(217, 13);
+      this.mpLabel6.TabIndex = 10;
+      this.mpLabel6.Text = "Try avoiding seeking during channel change";
+      this.toolSeeking.SetToolTip(this.mpLabel6, resources.GetString("mpLabel6.ToolTip"));
       // 
       // mpLabel5
       // 
@@ -220,7 +238,7 @@ namespace TvPlugin
       this.mpCheckBoxPrefRebuildGraphVideoChanged.Size = new System.Drawing.Size(13, 12);
       this.mpCheckBoxPrefRebuildGraphVideoChanged.TabIndex = 7;
       this.mpCheckBoxPrefRebuildGraphVideoChanged.UseVisualStyleBackColor = false;
-      this.mpCheckBoxPrefRebuildGraphVideoChanged.CheckedChanged += new System.EventHandler(this.mpCheckBoxPrefRebuildGraphOnNewCard_CheckedChanged);
+      this.mpCheckBoxPrefRebuildGraphVideoChanged.CheckedChanged += new System.EventHandler(this.mpCheckBoxPrefRebuildGraphVideoChanged_CheckedChanged);
       // 
       // mpLabel4
       // 
@@ -246,26 +264,6 @@ namespace TvPlugin
       this.toolTipChannelChangeAudioChanged.InitialDelay = 500;
       this.toolTipChannelChangeAudioChanged.ReshowDelay = 100;
       this.toolTipChannelChangeAudioChanged.ShowAlways = true;
-      // 
-      // mpLabel6
-      // 
-      this.mpLabel6.AutoSize = true;
-      this.mpLabel6.Location = new System.Drawing.Point(16, 90);
-      this.mpLabel6.Name = "mpLabel6";
-      this.mpLabel6.Size = new System.Drawing.Size(217, 13);
-      this.mpLabel6.TabIndex = 10;
-      this.mpLabel6.Text = "Try avoiding seeking during channel change";
-      this.toolSeeking.SetToolTip(this.mpLabel6, resources.GetString("mpLabel6.ToolTip"));
-      // 
-      // mpCheckBoxavoidSeekingonChannelChange
-      // 
-      this.mpCheckBoxavoidSeekingonChannelChange.AutoSize = true;
-      this.mpCheckBoxavoidSeekingonChannelChange.Location = new System.Drawing.Point(263, 90);
-      this.mpCheckBoxavoidSeekingonChannelChange.Name = "mpCheckBoxavoidSeekingonChannelChange";
-      this.mpCheckBoxavoidSeekingonChannelChange.Size = new System.Drawing.Size(15, 14);
-      this.mpCheckBoxavoidSeekingonChannelChange.TabIndex = 11;
-      this.mpCheckBoxavoidSeekingonChannelChange.UseVisualStyleBackColor = true;
-      this.mpCheckBoxavoidSeekingonChannelChange.CheckedChanged += new System.EventHandler(this.mpCheckBoxavoidSeekingonChannelChange_CheckedChanged);
       // 
       // toolSeeking
       // 

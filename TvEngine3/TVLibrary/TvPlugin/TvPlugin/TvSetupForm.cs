@@ -32,7 +32,7 @@ namespace TvPlugin
         _preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredlanguages", "");
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         _rebuildGraphOnNewAudioSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewAudioSpecs", true);
-        _rebuildGraphOnNewVideoSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewAudioSpecs", true);
+        _rebuildGraphOnNewVideoSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewVideoSpecs", true);
         _avoidSeeking = xmlreader.GetValueAsBool("tvservice", "avoidSeeking", false);
       }
     }
@@ -45,7 +45,7 @@ namespace TvPlugin
         xmlreader.SetValueAsBool("tvservice","preferac3",_preferAC3);
 
         xmlreader.SetValueAsBool("tvservice", "rebuildgraphOnNewAudioSpecs", _rebuildGraphOnNewAudioSpecs);
-        xmlreader.SetValueAsBool("tvservice", "rebuildgraphOnNewAudioSpecs", _rebuildGraphOnNewVideoSpecs);                
+        xmlreader.SetValueAsBool("tvservice", "rebuildgraphOnNewVideoSpecs", _rebuildGraphOnNewVideoSpecs);                
         xmlreader.SetValueAsBool("tvservice", "avoidSeeking", _avoidSeeking );        
       }
     }
@@ -113,11 +113,7 @@ namespace TvPlugin
         mpTextBoxPreferredLanguages.Text = _preferredLanguages;
       }
     }
-
-    private void mpCheckBoxPrefRebuildGraphOnNewCard_CheckedChanged(object sender, EventArgs e)
-    {
-      _rebuildGraphOnNewVideoSpecs = mpCheckBoxPrefRebuildGraphVideoChanged.Checked;
-    }
+  
 
     private void mpCheckBoxPrefRebuildGraphOnNewAVSpecs_CheckedChanged(object sender, EventArgs e)
     {
@@ -127,6 +123,11 @@ namespace TvPlugin
     private void mpCheckBoxavoidSeekingonChannelChange_CheckedChanged(object sender, EventArgs e)
     {
       _avoidSeeking = mpCheckBoxavoidSeekingonChannelChange.Checked;
+    }
+
+    private void mpCheckBoxPrefRebuildGraphVideoChanged_CheckedChanged(object sender, EventArgs e)
+    {
+      _rebuildGraphOnNewVideoSpecs = mpCheckBoxPrefRebuildGraphVideoChanged.Checked;
     }
 
   }
