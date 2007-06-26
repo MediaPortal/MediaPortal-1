@@ -79,8 +79,8 @@ namespace TvPlugin
     TvNotifyManager _notifyManager = new TvNotifyManager();
     static string _preferredLanguages = "";
     static bool _preferAC3 = false;
-    static bool _rebuildGraphOnNewCard = false;
-    static bool _rebuildGraphOnNewAVSpecs = false;
+    static bool _rebuildGraphOnNewVideoSpecs = true;
+    static bool _rebuildGraphOnNewAudioSpecs = true;
     static bool _avoidSeeking = false;
     Stopwatch benchClock = null;
 
@@ -234,8 +234,8 @@ namespace TvPlugin
         if (strValue.Equals("panscan")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
         _preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredlanguages", "");
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
-        _rebuildGraphOnNewAVSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewAVSpecs", true);
-        _rebuildGraphOnNewCard = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewCard", true);
+        _rebuildGraphOnNewVideoSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewVideoSpecs", true);
+        _rebuildGraphOnNewAudioSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewAudioSpecs", true);
         _avoidSeeking = xmlreader.GetValueAsBool("tvservice", "avoidSeeking", false);
       }
     }
@@ -1425,12 +1425,13 @@ namespace TvPlugin
           //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player. 
           int newVideoStream = TVHome.Card.GetCurrentVideoStream(card.User);
           bool cardChanged = (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName);
-          bool avSpecsChanged = (OldVideoStream != newVideoStream || hadAc3 != hasAc3) && (_rebuildGraphOnNewAVSpecs);
+          bool videoSpecsChanged = (OldVideoStream != newVideoStream);
+          bool audioSpecsChanged = (hadAc3 != hasAc3);
 
           MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): old videostream {0}, new videostream {1}", OldVideoStream, newVideoStream);
           MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): had ac3 {0}, has ac3 {1}", hadAc3, hasAc3);
 
-          if (cardChanged && _rebuildGraphOnNewCard)
+          if (cardChanged)
           {              
               if (wasPlaying)
               {
@@ -1440,14 +1441,19 @@ namespace TvPlugin
                   MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (card changed) - timeshifting continueing."); 
               }
           }
-          else if (avSpecsChanged && _rebuildGraphOnNewAVSpecs)
+          else if ((videoSpecsChanged && _rebuildGraphOnNewVideoSpecs) || (audioSpecsChanged && _rebuildGraphOnNewAudioSpecs))
           {
             if (wasPlaying)
             {
               g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
-              MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (AV specs changed) - timeshifting continueing."); 
+              MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (video specs changed={0}, audio specs changed={1}) - timeshifting continueing.", videoSpecsChanged, audioSpecsChanged); 
             }
           }
+          else if ((videoSpecsChanged || audioSpecsChanged) && wasPlaying)
+          {
+            MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): keeping graph (video specs changed={0}, audio specs changed={1}) - timeshifting continueing.", videoSpecsChanged, audioSpecsChanged); 
+          }
+
 
           TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
