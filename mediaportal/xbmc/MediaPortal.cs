@@ -113,6 +113,8 @@ public class MediaPortalApp : D3DApp, IRender
   private const int WM_SYSCOMMAND = 0x0112;
   //private const int WM_CLOSE = 0x0010;
   private const int WM_POWERBROADCAST = 0x0218;
+  private const int WM_ENDSESSION = 0x0016;
+  private const int WM_QUERYENDSESSION = 0x0011;
 
   private const int PBT_APMQUERYSUSPEND = 0x0000;
   private const int PBT_APMQUERYSTANDBY = 0x0001;
@@ -411,6 +413,7 @@ public class MediaPortalApp : D3DApp, IRender
           splashScreen = null;
         }
 #endif
+        
         Settings.SaveCache();
         Log.Info("Main: MediaPortal done");
         Win32API.EnableStartBar(true);
@@ -420,6 +423,7 @@ public class MediaPortalApp : D3DApp, IRender
           Log.Info("Main: Exiting Windows - {0}", restartOptions);
           WindowsController.ExitWindows(restartOptions, true);
         }
+         
       }
     }
     else
@@ -653,7 +657,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         Log.Info("Main: WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
         switch (msg.WParam.ToInt32())
-        {
+        {          
           //The PBT_APMQUERYSUSPEND message is sent to request permission to suspend the computer.
           //An application that grants permission should carry out preparations for the suspension before returning.
           //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
@@ -727,7 +731,36 @@ public class MediaPortalApp : D3DApp, IRender
             break;
         }
       }
-
+           
+      else if (msg.Msg == WM_QUERYENDSESSION)
+      {        
+        Log.Info("Main: Windows is requesting shutdown mode");
+        base.WndProc(ref msg);
+        if (!OnQueryShutDown(ref msg))
+        {
+          Log.Info("Main: shutdown mode denied");
+          return;
+        }
+        else
+        {
+          Log.Info("Main: shutdown mode granted");
+          msg.Result = (IntPtr) 1; //tell windows we are ready to shutdown
+          
+        }
+      }
+      // gibman - http://mantis.team-mediaportal.com/view.php?id=1073
+      else if (msg.Msg == WM_ENDSESSION)
+      {
+        Log.Info("Main: shutdown mode executed");        
+        msg.Result = (IntPtr) 0; // tell windows it's ok to shutdown
+                
+        tMouseClickTimer.Stop();
+        tMouseClickTimer.Dispose();
+        Application.ExitThread();        
+        Application.Exit();
+        base.WndProc(ref msg);        
+      }
+       
       if (!PluginManager.WndProc(ref msg))
       {
         Action action;
@@ -797,6 +830,22 @@ public class MediaPortalApp : D3DApp, IRender
   }
 
   static object syncObj = new object();
+
+  //called when windows asks permission to restart, shutdown or logout
+  private bool OnQueryShutDown(ref Message msg)
+  {
+    lock (syncObj)
+    {      
+      if (Recorder.IsAnyCardRecording()) // if we are recording then deny request
+      {
+        msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
+        Log.Info("Main: TVRecording running -> Shutdown stopped");
+        return false;
+      }
+
+      return true;
+    }
+  }
 
   //called when windows asks permission to hibernate or standby
   private bool OnQuerySuspend(ref Message msg)
