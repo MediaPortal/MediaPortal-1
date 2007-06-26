@@ -735,6 +735,12 @@ namespace DirectShowLib.BDA
 
         [PreserveSig]
         new int Clone([Out] out ILocator NewLocator);
+      
+        [PreserveSig]
+        new int get_SpectralInversion([Out] out SpectralInversion Inversion);
+
+        [PreserveSig]
+        new int put_SpectralInversion([In] SpectralInversion Inversion);
 
         #endregion
 
