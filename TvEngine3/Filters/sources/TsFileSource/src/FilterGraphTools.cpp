@@ -1678,26 +1678,18 @@ HRESULT FilterGraphTools::GetH264Media(AM_MEDIA_TYPE *pintype)
 
 {
 	HRESULT hr = E_INVALIDARG;
-
 	if(pintype == NULL)
 		return hr;
-
 	ZeroMemory(pintype, sizeof(AM_MEDIA_TYPE));
 	pintype->majortype = MEDIATYPE_Video;
-//	pintype->subtype = FOURCCMap(MAKEFOURCC('h','2','6','4'));
 	pintype->subtype = H264_SubType;
 	pintype->bFixedSizeSamples = FALSE;
 	pintype->bTemporalCompression = TRUE;
 	pintype->lSampleSize = 1;
-
-	//pintype->formattype = FORMAT_VideoInfo; //old
-	pintype->formattype = FORMAT_MPEG2Video; //DMAN, we use MPEG2Video for CoreAVC pin compatibility
+	pintype->formattype = FORMAT_VideoInfo;
 	pintype->pUnk = NULL;
-	//pintype->cbFormat = sizeof(H264VideoFormat); //old
-	//pintype->pbFormat = H264VideoFormat; //old
-	pintype->cbFormat = sizeof(g_Mpeg2ProgramVideo); //DMAN, for CoreAVC pin compatibility
-	pintype->pbFormat = g_Mpeg2ProgramVideo; //DMAN, for CoreAVC pin compatibility
-
+	pintype->cbFormat = sizeof(H264VideoFormat); //This should be determined by the stream for CoreAVC. Other codecs are fine.
+	pintype->pbFormat = H264VideoFormat;
 	return S_OK;
 }
 

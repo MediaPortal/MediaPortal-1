@@ -167,11 +167,13 @@ static BYTE H264VideoFormat [] = {
 //	0x80, 0x1a, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //  .hdr.AvgTimePerFrame            = 0x0000000000061a80
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //  .hdr.AvgTimePerFrame            = 0x0000000000061a80
 	0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biSize           = 0x00000028
-	0xD0, 0x02, 0x00, 0x00,                         //  .hdr.bmiHeader.biWidth          = 0x000002d0
-	0x40, 0x02, 0x00, 0x00,                         //  .hdr.bmiHeader.biHeight         = 0x00000240
+	//0xD0, 0x02, 0x00, 0x00,                         //  .hdr.bmiHeader.biWidth          = 0x000002d0 //720
+	//0x40, 0x02, 0x00, 0x00,                         //  .hdr.bmiHeader.biHeight         = 0x00000240 //576
+	0x80, 0x07, 0x00, 0x00,                         //  .hdr.bmiHeader.biWidth          = 0x000002d0 //Force 1920 until width can be determined by the stream for CoreAVC. Other codecs are fine.
+	0x40, 0x04, 0x00, 0x00,                         //  .hdr.bmiHeader.biHeight         = 0x00000240 //Force 1088 until height can be determined by the stream for CoreAVC. Other codecs are fine.
 	0x00, 0x00,                                     //  .hdr.bmiHeader.biPlanes         = 0x0001
 	0x00, 0x00,                                     //  .hdr.bmiHeader.biBitCount       = 0x0018
-	0x68, 0x32, 0x36, 0x34,                         //  .hdr.bmiHeader.biCompression    = "h264"
+	0x48, 0x32, 0x36, 0x34,                         //  .hdr.bmiHeader.biCompression    = "H264"
 	0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biSizeImage      = 0x00000000
 	0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biXPelsPerMeter  = 0x00000000
 	0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biYPelsPerMeter  = 0x00000000
@@ -253,8 +255,5 @@ static BYTE DTSAudioFormat [] = {
 };
 // {000000FF-0000-0010-8000-00AA00389B71}
 static GUID MEDIASUBTYPE_AAC = {0x00000FF, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71};
-//H.264 is Major Type: Video, Subtype: 8D2D71CB-243F-45E3-B2D8-5FD7967EC09B, Format:  MPEG2Video
-//static GUID H264_SubType = {0x8D2D71CB, 0x243F, 0x45E3, {0xB2, 0xD8, 0x5F, 0xD7, 0x96, 0x7E, 0xC0, 0x9B}};
-//However we use this GUID instead...
-static GUID H264_SubType = {0x31435641, 0x0000, 0x0010, {0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71}}; //Compatible with CoreAVC as well as standard H.264 decoders.
+static GUID H264_SubType = {0x34363248, 0x0000, 0x0010, {0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71}};
 
