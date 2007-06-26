@@ -16,8 +16,8 @@ namespace TvPlugin
     private string _serverHostName;
     private string _preferredLanguages;
     private bool _preferAC3;
-    private bool _rebuildGraphOnNewCard;
-    private bool _rebuildGraphOnNewAVSpecs;
+    private bool _rebuildGraphOnNewVideoSpecs = true;
+    private bool _rebuildGraphOnNewAudioSpecs = true;
     private bool _avoidSeeking;
     private List<String> languagesAvail;
     private List<String> languageCodes;
@@ -31,8 +31,8 @@ namespace TvPlugin
         _serverHostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
         _preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredlanguages", "");
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
-        _rebuildGraphOnNewAVSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewAVSpecs", true);
-        _rebuildGraphOnNewCard = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewCard", true);
+        _rebuildGraphOnNewAudioSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewAudioSpecs", true);
+        _rebuildGraphOnNewVideoSpecs = xmlreader.GetValueAsBool("tvservice", "rebuildgraphOnNewAudioSpecs", true);
         _avoidSeeking = xmlreader.GetValueAsBool("tvservice", "avoidSeeking", false);
       }
     }
@@ -43,8 +43,9 @@ namespace TvPlugin
         xmlreader.SetValue("tvservice", "hostname", _serverHostName);
         xmlreader.SetValue("tvservice","preferredlanguages",_preferredLanguages);
         xmlreader.SetValueAsBool("tvservice","preferac3",_preferAC3);
-        xmlreader.SetValueAsBool("tvservice", "rebuildgraphOnNewAVSpecs", _rebuildGraphOnNewAVSpecs);
-        xmlreader.SetValueAsBool("tvservice", "rebuildgraphOnNewCard", _rebuildGraphOnNewCard);
+
+        xmlreader.SetValueAsBool("tvservice", "rebuildgraphOnNewAudioSpecs", _rebuildGraphOnNewAudioSpecs);
+        xmlreader.SetValueAsBool("tvservice", "rebuildgraphOnNewAudioSpecs", _rebuildGraphOnNewVideoSpecs);                
         xmlreader.SetValueAsBool("tvservice", "avoidSeeking", _avoidSeeking );        
       }
     }
@@ -64,25 +65,27 @@ namespace TvPlugin
       mpTextBoxHostname.Text = _serverHostName;
       mpTextBoxPreferredLanguages.Text = _preferredLanguages;
       mpCheckBoxPrefAC3.Checked = _preferAC3;
-      mpCheckBoxPrefRebuildGraphOnNewCard.Checked = _rebuildGraphOnNewCard;
-      mpCheckBoxPrefRebuildGraphOnNewAVSpecs.Checked = _rebuildGraphOnNewAVSpecs;
+      mpCheckBoxPrefRebuildGraphVideoChanged.Checked = _rebuildGraphOnNewVideoSpecs;
+      mpCheckBoxPrefRebuildGraphAudioChanged.Checked = _rebuildGraphOnNewAudioSpecs;
       mpCheckBoxavoidSeekingonChannelChange.Checked = _avoidSeeking;
 
-      string toolTip =  "Use this option to make sure that the graph" + Environment.NewLine; 
-      toolTip += "is rebuilt when changing to a channel that" + Environment.NewLine; 
-      toolTip += "belongs on another card" + Environment.NewLine; 
-      toolTip += "This can cause a slightly slower channel" + Environment.NewLine;
-      toolTip += "change speed. Should only be used if you are" + Environment.NewLine;
-      toolTip += "having problems when changing channels across cards.";
-      toolTipChannelChangeOnNewCard.SetToolTip(mpCheckBoxPrefRebuildGraphOnNewCard, toolTip);
+      string toolTip = "";
 
       toolTip = "Use this option to make sure that the graph" + Environment.NewLine;
       toolTip += "is rebuilt when changing to a channel that" + Environment.NewLine;
-      toolTip += "contains different A/V specs than the previous" + Environment.NewLine;
-      toolTip += "channel. This can cause a slightly slower channel" + Environment.NewLine;
+      toolTip += "contains different video specifications than the previous" + Environment.NewLine;
+      toolTip += "channel (ex. mpeg2 to h264). This can cause a slightly slower channel" + Environment.NewLine;
       toolTip += "change speed. Should only be used if you are" + Environment.NewLine;
-      toolTip += "having problems with ac3 or video codec on channel change.";
-      toolTipChannelChangeOnNewAVSpecs.SetToolTip(mpCheckBoxPrefRebuildGraphOnNewAVSpecs, toolTip);      
+      toolTip += "having problems with video codec/drivers (blank screen) on channel change.";
+      toolTipChannelChangeVideoChanged.SetToolTip(mpCheckBoxPrefRebuildGraphVideoChanged, toolTip);      
+
+      toolTip = "Use this option to make sure that the graph" + Environment.NewLine;
+      toolTip += "is rebuilt when changing to a channel that" + Environment.NewLine;
+      toolTip += "contains different audio specifications than the previous" + Environment.NewLine;
+      toolTip += "channel (ex. mpeg1 to ac3). This can cause a slightly slower channel" + Environment.NewLine;
+      toolTip += "change speed. Should only be used if you are" + Environment.NewLine;
+      toolTip += "having problems with audio codec/drivers (no sound) on channel change.";
+      toolTipChannelChangeAudioChanged.SetToolTip(mpCheckBoxPrefRebuildGraphAudioChanged, toolTip);      
     }
 
     private void mpTextBoxHostname_TextChanged(object sender, EventArgs e)
@@ -113,12 +116,12 @@ namespace TvPlugin
 
     private void mpCheckBoxPrefRebuildGraphOnNewCard_CheckedChanged(object sender, EventArgs e)
     {
-      _rebuildGraphOnNewCard = mpCheckBoxPrefRebuildGraphOnNewCard.Checked;
+      _rebuildGraphOnNewVideoSpecs = mpCheckBoxPrefRebuildGraphVideoChanged.Checked;
     }
 
     private void mpCheckBoxPrefRebuildGraphOnNewAVSpecs_CheckedChanged(object sender, EventArgs e)
     {
-      _rebuildGraphOnNewAVSpecs = mpCheckBoxPrefRebuildGraphOnNewAVSpecs.Checked;
+      _rebuildGraphOnNewAudioSpecs = mpCheckBoxPrefRebuildGraphAudioChanged.Checked;
     }
 
     private void mpCheckBoxavoidSeekingonChannelChange_CheckedChanged(object sender, EventArgs e)

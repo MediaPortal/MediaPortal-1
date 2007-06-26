@@ -42,12 +42,12 @@ namespace TvPlugin
       this.mpButtonOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBoxPrefRebuildGraphAudioChanged = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpCheckBoxPrefRebuildGraphOnNewCard = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBoxPrefRebuildGraphVideoChanged = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.toolTipChannelChangeOnNewCard = new System.Windows.Forms.ToolTip(this.components);
-      this.toolTipChannelChangeOnNewAVSpecs = new System.Windows.Forms.ToolTip(this.components);
+      this.toolTipChannelChangeVideoChanged = new System.Windows.Forms.ToolTip(this.components);
+      this.toolTipChannelChangeAudioChanged = new System.Windows.Forms.ToolTip(this.components);
       this.mpLabel6 = new System.Windows.Forms.Label();
       this.mpCheckBoxavoidSeekingonChannelChange = new System.Windows.Forms.CheckBox();
       this.toolSeeking = new System.Windows.Forms.ToolTip(this.components);
@@ -173,11 +173,12 @@ namespace TvPlugin
       // 
       // mpGroupBox3
       // 
+
+      this.mpGroupBox3.Controls.Add(this.mpCheckBoxPrefRebuildGraphAudioChanged);
       this.mpGroupBox3.Controls.Add(this.mpCheckBoxavoidSeekingonChannelChange);
-      this.mpGroupBox3.Controls.Add(this.mpLabel6);
-      this.mpGroupBox3.Controls.Add(this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs);
+      this.mpGroupBox3.Controls.Add(this.mpLabel6);      
       this.mpGroupBox3.Controls.Add(this.mpLabel5);
-      this.mpGroupBox3.Controls.Add(this.mpCheckBoxPrefRebuildGraphOnNewCard);
+      this.mpGroupBox3.Controls.Add(this.mpCheckBoxPrefRebuildGraphVideoChanged);
       this.mpGroupBox3.Controls.Add(this.mpLabel4);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox3.Location = new System.Drawing.Point(13, 183);
@@ -187,63 +188,64 @@ namespace TvPlugin
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Channel change preference";
       // 
-      // mpCheckBoxPrefRebuildGraphOnNewAVSpecs
+      // mpCheckBoxPrefRebuildGraphAudioChanged
       // 
-      this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.AutoSize = true;
-      this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.BackColor = System.Drawing.SystemColors.ButtonFace;
-      this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.Location = new System.Drawing.Point(263, 59);
-      this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.Name = "mpCheckBoxPrefRebuildGraphOnNewAVSpecs";
-      this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.Size = new System.Drawing.Size(13, 12);
-      this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.TabIndex = 9;
-      this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.UseVisualStyleBackColor = false;
-      this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs.CheckedChanged += new System.EventHandler(this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs_CheckedChanged);
+      this.mpCheckBoxPrefRebuildGraphAudioChanged.AutoSize = true;
+      this.mpCheckBoxPrefRebuildGraphAudioChanged.BackColor = System.Drawing.SystemColors.ButtonFace;
+      this.mpCheckBoxPrefRebuildGraphAudioChanged.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxPrefRebuildGraphAudioChanged.Location = new System.Drawing.Point(262, 59);
+      this.mpCheckBoxPrefRebuildGraphAudioChanged.Name = "mpCheckBoxPrefRebuildGraphAudioChanged";
+      this.mpCheckBoxPrefRebuildGraphAudioChanged.Size = new System.Drawing.Size(13, 12);
+      this.mpCheckBoxPrefRebuildGraphAudioChanged.TabIndex = 9;
+      this.mpCheckBoxPrefRebuildGraphAudioChanged.UseVisualStyleBackColor = false;
+      this.mpCheckBoxPrefRebuildGraphAudioChanged.CheckedChanged += new System.EventHandler(this.mpCheckBoxPrefRebuildGraphOnNewAVSpecs_CheckedChanged);
+
       // 
       // mpLabel5
       // 
       this.mpLabel5.AutoSize = true;
       this.mpLabel5.Location = new System.Drawing.Point(16, 59);
       this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(170, 13);
+      this.mpLabel5.Size = new System.Drawing.Size(204, 13);
       this.mpLabel5.TabIndex = 8;
-      this.mpLabel5.Text = "Rebuild graph on new A/V specs.:";
+      this.mpLabel5.Text = "Rebuild graph when audio specs change:";
       // 
-      // mpCheckBoxPrefRebuildGraphOnNewCard
+      // mpCheckBoxPrefRebuildGraphVideoChanged
       // 
-      this.mpCheckBoxPrefRebuildGraphOnNewCard.AutoSize = true;
-      this.mpCheckBoxPrefRebuildGraphOnNewCard.BackColor = System.Drawing.SystemColors.ButtonFace;
-      this.mpCheckBoxPrefRebuildGraphOnNewCard.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxPrefRebuildGraphOnNewCard.Location = new System.Drawing.Point(263, 24);
-      this.mpCheckBoxPrefRebuildGraphOnNewCard.Name = "mpCheckBoxPrefRebuildGraphOnNewCard";
-      this.mpCheckBoxPrefRebuildGraphOnNewCard.Size = new System.Drawing.Size(13, 12);
-      this.mpCheckBoxPrefRebuildGraphOnNewCard.TabIndex = 7;
-      this.mpCheckBoxPrefRebuildGraphOnNewCard.UseVisualStyleBackColor = false;
-      this.mpCheckBoxPrefRebuildGraphOnNewCard.CheckedChanged += new System.EventHandler(this.mpCheckBoxPrefRebuildGraphOnNewCard_CheckedChanged);
+      this.mpCheckBoxPrefRebuildGraphVideoChanged.AutoSize = true;
+      this.mpCheckBoxPrefRebuildGraphVideoChanged.BackColor = System.Drawing.SystemColors.ButtonFace;
+      this.mpCheckBoxPrefRebuildGraphVideoChanged.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxPrefRebuildGraphVideoChanged.Location = new System.Drawing.Point(263, 24);
+      this.mpCheckBoxPrefRebuildGraphVideoChanged.Name = "mpCheckBoxPrefRebuildGraphVideoChanged";
+      this.mpCheckBoxPrefRebuildGraphVideoChanged.Size = new System.Drawing.Size(13, 12);
+      this.mpCheckBoxPrefRebuildGraphVideoChanged.TabIndex = 7;
+      this.mpCheckBoxPrefRebuildGraphVideoChanged.UseVisualStyleBackColor = false;
+      this.mpCheckBoxPrefRebuildGraphVideoChanged.CheckedChanged += new System.EventHandler(this.mpCheckBoxPrefRebuildGraphOnNewCard_CheckedChanged);
       // 
       // mpLabel4
       // 
       this.mpLabel4.AutoSize = true;
       this.mpLabel4.Location = new System.Drawing.Point(17, 24);
       this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new System.Drawing.Size(138, 13);
+      this.mpLabel4.Size = new System.Drawing.Size(204, 13);
       this.mpLabel4.TabIndex = 6;
-      this.mpLabel4.Text = "Rebuild graph on new card:";
+      this.mpLabel4.Text = "Rebuild graph when video specs change:";
       // 
-      // toolTipChannelChangeOnNewCard
+      // toolTipChannelChangeVideoChanged
       // 
-      this.toolTipChannelChangeOnNewCard.AutomaticDelay = 0;
-      this.toolTipChannelChangeOnNewCard.AutoPopDelay = 20000;
-      this.toolTipChannelChangeOnNewCard.InitialDelay = 500;
-      this.toolTipChannelChangeOnNewCard.ReshowDelay = 100;
-      this.toolTipChannelChangeOnNewCard.ShowAlways = true;
+      this.toolTipChannelChangeVideoChanged.AutomaticDelay = 0;
+      this.toolTipChannelChangeVideoChanged.AutoPopDelay = 20000;
+      this.toolTipChannelChangeVideoChanged.InitialDelay = 500;
+      this.toolTipChannelChangeVideoChanged.ReshowDelay = 100;
+      this.toolTipChannelChangeVideoChanged.ShowAlways = true;
       // 
-      // toolTipChannelChangeOnNewAVSpecs
+      // toolTipChannelChangeAudioChanged
       // 
-      this.toolTipChannelChangeOnNewAVSpecs.AutomaticDelay = 0;
-      this.toolTipChannelChangeOnNewAVSpecs.AutoPopDelay = 20000;
-      this.toolTipChannelChangeOnNewAVSpecs.InitialDelay = 500;
-      this.toolTipChannelChangeOnNewAVSpecs.ReshowDelay = 100;
-      this.toolTipChannelChangeOnNewAVSpecs.ShowAlways = true;
+      this.toolTipChannelChangeAudioChanged.AutomaticDelay = 0;
+      this.toolTipChannelChangeAudioChanged.AutoPopDelay = 20000;
+      this.toolTipChannelChangeAudioChanged.InitialDelay = 500;
+      this.toolTipChannelChangeAudioChanged.ReshowDelay = 100;
+      this.toolTipChannelChangeAudioChanged.ShowAlways = true;
       // 
       // mpLabel6
       // 
@@ -309,12 +311,12 @@ namespace TvPlugin
     private MediaPortal.UserInterface.Controls.MPButton mpButtonSelectLanguages;
     private MediaPortal.UserInterface.Controls.MPTextBox mpTextBoxPreferredLanguages;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
-    private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxPrefRebuildGraphOnNewCard;
+    private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxPrefRebuildGraphVideoChanged;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
-    private System.Windows.Forms.ToolTip toolTipChannelChangeOnNewCard;
-    private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxPrefRebuildGraphOnNewAVSpecs;
+    private System.Windows.Forms.ToolTip toolTipChannelChangeVideoChanged;
+    private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxPrefRebuildGraphAudioChanged;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
-    private System.Windows.Forms.ToolTip toolTipChannelChangeOnNewAVSpecs;
+    private System.Windows.Forms.ToolTip toolTipChannelChangeAudioChanged;
     private System.Windows.Forms.CheckBox mpCheckBoxavoidSeekingonChannelChange;
     private System.Windows.Forms.Label mpLabel6;
     private System.Windows.Forms.ToolTip toolSeeking;
