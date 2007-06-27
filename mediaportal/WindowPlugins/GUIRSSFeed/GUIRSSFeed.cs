@@ -423,9 +423,9 @@ namespace MediaPortal.GUI.RSS
         iTotalItems++;
       }
 
-      string strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
-
+      //set object count label
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+      
       GUIControl.FocusControl(GetID, (int)Controls.CONTROL_LIST);
       GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STORYTEXT, m_feed_details[0].m_description);
     }

@@ -686,10 +686,10 @@ namespace MediaPortal.GUI.MSN
           }
         }
       }
-      string strObjects = String.Format("{0} {1}", iContacts, GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
-      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, strObjects);
 
+      //set object count label
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iContacts));
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, Util.Utils.GetObjectCountLabel(iContacts));
 
       OnSort();
       UpdateStatusButton();

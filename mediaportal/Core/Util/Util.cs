@@ -759,6 +759,31 @@ namespace MediaPortal.Util
       return false;
     }
 
+    static public string GetObjectCountLabel(int iTotalItems)
+    {
+      string strObjects = String.Empty;
+
+      if (iTotalItems == 1)
+        strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(1062)); //Object
+      else
+        strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632)); //Objects
+
+      return strObjects;
+    }
+    static public string GetSongCountLabel(int iTotalItems, int iTotalSeconds)
+    {
+      string strObjects = String.Empty;
+
+      if (iTotalItems == 1)
+        strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1063),
+          MediaPortal.Util.Utils.SecondsToHMSString(iTotalSeconds)); //Song
+      else
+        strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
+          MediaPortal.Util.Utils.SecondsToHMSString(iTotalSeconds)); //Songs
+      
+      return strObjects;
+    }
+
     static public bool GetDVDLabel(string strFile, out string strLabel)
     {
       strLabel = "";

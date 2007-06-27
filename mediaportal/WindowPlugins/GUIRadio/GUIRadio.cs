@@ -560,8 +560,10 @@ namespace MediaPortal.GUI.Radio
       }
 
       OnSort();
-      objectCount = String.Format("{0} {1}", totalItems, GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", objectCount);
+
+      //set object count label
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(totalItems));
+
       ShowThumbPanel();
 
       if (selectedItemIndex >= 0)

@@ -341,15 +341,15 @@ namespace MediaPortal.GUI.Alarm
 					break;
 
 				}
-			
-			((GUIImage)GetControl((int)Controls.MediaTypeImage)).SetFileName(_CurrentAlarm.GetIcon);
+      ((GUIImage)GetControl((int)Controls.MediaTypeImage)).SetFileName(_CurrentAlarm.GetIcon);
 
-			//set object count label & selected item
-			string strObjects = String.Format("{0} {1}",GUIControl.GetItemCount(GetID,(int)Controls.SoundList).ToString(), GUILocalizeStrings.Get(632));
-			GUIPropertyManager.SetProperty("#itemcount",strObjects);
+      //set object count label
+      int iTotalItems = GUIControl.GetItemCount(GetID, (int)Controls.SoundList);
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+
+      //set selected item label
 			if(_CurrentAlarm.SelectedItem != null)
 				GUIPropertyManager.SetProperty("#selecteditem",_CurrentAlarm.SelectedItem.Label);
-				
 		}
 		
 

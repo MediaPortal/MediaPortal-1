@@ -459,10 +459,11 @@ namespace MediaPortal.GUI.Video
         GUIListItem rootItem = (GUIListItem)itemlist[0];
         if (rootItem.Label == "..") itemCount--;
       }
-      objectCount = String.Format("{0} {1}", itemCount, GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", objectCount);
-      SetIMDBThumbs(itemlist);
 
+      //set object count label
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(itemCount));
+
+      SetIMDBThumbs(itemlist);
       SetLabels();
       OnSort();
 

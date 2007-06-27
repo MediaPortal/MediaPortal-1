@@ -597,8 +597,9 @@ namespace MediaPortal.GUI.TV
           listViews.Add(item);
         }
 
-        string strObjects = String.Format("{0} {1}", itemlist.Count, GUILocalizeStrings.Get(632));
-        GUIPropertyManager.SetProperty("#itemcount", strObjects);
+        //set object count label
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(itemlist.Count));
+
         GUIControl cntlLabel = GetControl(12);
 
         if (currentViewMethod == ViewAs.Album)

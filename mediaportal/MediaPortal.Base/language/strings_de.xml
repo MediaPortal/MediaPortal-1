@@ -880,6 +880,8 @@
         <String id="1055">(puffern)</String>
         <String id="1056">(nicht verfügbar)</String>
         <String id="1061">Wechseldatenspeicher</String>
+        <String id="1062">Objekt</String>
+        <String id="1063">Titel</String>
         <String id="1100">CD importieren</String>
         <String id="1101">Gewählten Titel importieren</String>
         <String id="1102">CD-Import abbrechen</String>

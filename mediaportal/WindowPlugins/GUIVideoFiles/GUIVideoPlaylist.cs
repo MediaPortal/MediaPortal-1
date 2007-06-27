@@ -367,8 +367,10 @@ namespace MediaPortal.GUI.Video
             GUIListItem rootItem = (GUIListItem)itemlist[0];
             if (rootItem.Label == "..") iTotalItems--;
           }
-          strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
-          GUIPropertyManager.SetProperty("#itemcount", strObjects);
+
+          //set object count label
+          GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+
           if (currentSelectedItem >= 0)
           {
             GUIControl.SelectItemControl(GetID, facadeView.GetID, currentSelectedItem);

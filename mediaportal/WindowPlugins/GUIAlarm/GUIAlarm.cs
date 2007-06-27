@@ -181,9 +181,11 @@ namespace MediaPortal.GUI.Alarm
 				item.IconImage = objAlarm.GetIcon;
 				
 				GUIControl.AddListItemControl(GetID,(int)Controls.AlarmList,item);
-			}
-			string strObjects =String.Format("{0} {1}",GUIControl.GetItemCount(GetID,(int)Controls.AlarmList).ToString(), GUILocalizeStrings.Get(632));
-			GUIPropertyManager.SetProperty("#itemcount",strObjects);
+      }
+
+      //set object count label
+      int iTotalItems = GUIControl.GetItemCount(GetID, (int)Controls.AlarmList);
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
 		}
 
 		void OnClick(int iItem)

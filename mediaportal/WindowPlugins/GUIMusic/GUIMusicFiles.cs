@@ -544,7 +544,6 @@ namespace MediaPortal.GUI.Music
         currentFolder = strNewDirectory;
         GUIControl.ClearControl(GetID, facadeView.GetID);
 
-        string strObjects = String.Empty;
         TimeSpan totalPlayingTime = new TimeSpan();
 
         List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
@@ -594,18 +593,17 @@ namespace MediaPortal.GUI.Music
           if (rootItem.Label == "..")
             iTotalItems--;
         }
-        strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
-        if (totalPlayingTime.Seconds > 0)
-        {
-          strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
-                      MediaPortal.Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));//songs
-        }
-        GUIPropertyManager.SetProperty("#itemcount", strObjects);
 
+        //set object count label
+        if (totalPlayingTime.Seconds > 0)
+          GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetSongCountLabel(iTotalItems, (int)totalPlayingTime.TotalSeconds));
+        else
+          GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+
+        //set selected item
         if (m_iItemSelected >= 0 && !itemSelected)
-        {
           GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
-        }
+
         GUIWaitCursor.Hide();
       }
       catch (Exception ex)
@@ -1238,7 +1236,6 @@ namespace MediaPortal.GUI.Music
 
     void DisplayFilesList(int searchKind, string strSearchText)
     {
-      string strObjects = String.Empty;
       GUIControl.ClearControl(GetID, facadeView.GetID);
       List<GUIListItem> itemlist = new List<GUIListItem>();
       m_database.GetSongs(searchKind, strSearchText, ref itemlist);
@@ -1269,9 +1266,8 @@ namespace MediaPortal.GUI.Music
           iTotalItems--;
       }
 
-      strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
-
+      //set object count label
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
     }
 
     void LoadFolderSettings(string folderName)

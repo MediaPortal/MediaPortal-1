@@ -411,8 +411,9 @@ namespace MediaPortal.GUI.TV
         }
       }
 
-      string strObjects = String.Format("{0} {1}", objects, GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", strObjects.ToString());
+      //set object count label
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(objects));
+
       GUIControl cntlLabel = GetControl(12);
 
       if (listAlbums.IsVisible)

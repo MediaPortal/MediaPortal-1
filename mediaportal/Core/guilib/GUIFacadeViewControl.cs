@@ -567,7 +567,13 @@ namespace MediaPortal.GUI.Library
           iTotalItems++;
         }
       }
-      string strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
+
+      //set object count label
+      string strObjects = String.Empty;
+      if (iTotalItems == 1)
+        strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(1062)); //Object
+      else
+        strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632)); //Objects
       GUIPropertyManager.SetProperty("#itemcount", strObjects);
     }
 

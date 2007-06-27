@@ -375,8 +375,6 @@ namespace MediaPortal.GUI.MusicVideos
       m_strDirectory = strNewDirectory;
       GUIControl.ClearControl(GetID, facadeView.GetID);
 
-      string strObjects;
-
       List<GUIListItem> itemlist = new List<GUIListItem>();
 
       PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
@@ -464,14 +462,13 @@ namespace MediaPortal.GUI.MusicVideos
         GUIListItem rootItem = itemlist[0];
         if (rootItem.Label == "..") iTotalItems--;
       }
-      strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
-      if (totalPlayingTime.Seconds > 0)
-      {
-        strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
-                    MediaPortal.Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));//songs
-      }
 
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
+      //set object count label
+      if (totalPlayingTime.Seconds > 0)
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetSongCountLabel(iTotalItems, (int)totalPlayingTime.TotalSeconds));
+      else
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+
       SetLabels();
       for (int i = 0; i < facadeView.Count; ++i)
       {

@@ -163,7 +163,6 @@ namespace MediaPortal.GUI.TV
       GUIControl.ClearControl(GetID, listConflicts.GetID);
       GUIControl cntlLabel;
 
-      string strObjects;
       int total = 0;
       if (currentShow != null)
       {
@@ -232,8 +231,10 @@ namespace MediaPortal.GUI.TV
             total++;
           }
         }
-        strObjects = String.Format("{0} {1}", total, GUILocalizeStrings.Get(632));
-        GUIPropertyManager.SetProperty("#itemcount", strObjects);
+
+        //set object count label
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(total));
+
         cntlLabel = GetControl(12);
         if (cntlLabel != null)
           cntlLabel.YPosition = listConflicts.SpinY;
@@ -258,8 +259,9 @@ namespace MediaPortal.GUI.TV
         total++;
       }
 
-      strObjects = String.Format("{0} {1}", total, GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
+      //set object count label
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(total));
+
       cntlLabel = GetControl(12);
       if (cntlLabel != null)
         cntlLabel.YPosition = listConflicts.SpinY;

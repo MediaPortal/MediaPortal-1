@@ -782,8 +782,11 @@ namespace MediaPortal.GUI.GUIBurner
           GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_DIR, pItem);
         }
       }
-      string strObjects = String.Format("{0} {1}", GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_DIR).ToString(), GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
+
+      //set object count label
+      int iTotalItems = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_DIR);
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+
       currentFolder = folder;
     }
 
@@ -800,8 +803,10 @@ namespace MediaPortal.GUI.GUIBurner
         Util.Utils.SetDefaultIcons(pItem);
         GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_DIR, pItem);
       }
-      string strObjects = String.Format("{0} {1}", GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_DIR).ToString(), GUILocalizeStrings.Get(632));
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
+
+      //set object count label
+      int iTotalItems = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_DIR);
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
     }
 
     private void DisableButtons()

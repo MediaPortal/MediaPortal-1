@@ -34,6 +34,7 @@ using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Topbar;
 using MediaPortal.Configuration;
+using MediaPortal.Util;
 
 namespace MyMail
 {
@@ -370,7 +371,6 @@ namespace MyMail
     void SetMailBoxList()
     {
       m_currentView = (int)Views.VIEW_MAILBOX;
-      string strObjects = "";
       if ((int)GUIWindowManager.ActiveWindow == GetID)
       {
 
@@ -398,9 +398,10 @@ namespace MyMail
         {
           GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST, item);
         }
-        strObjects = String.Format("{0} {1}", itemlist.Count, GUILocalizeStrings.Get(632));
-        GUIPropertyManager.SetProperty("#itemcount", strObjects);
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, strObjects);
+
+        //set object count label
+        GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(itemlist.Count));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, Utils.GetObjectCountLabel(itemlist.Count));
       }
 
     }
@@ -410,9 +411,10 @@ namespace MyMail
       if ((int)GUIWindowManager.ActiveWindow == GetID)
       {
         GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST);
-        string strObjects = String.Format("{0} {1}", 0, GUILocalizeStrings.Get(632));
-        GUIPropertyManager.SetProperty("#itemcount", strObjects);
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, strObjects);
+
+        //set object count label
+        GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(0));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, Utils.GetObjectCountLabel(0));
       }
     }
     // add a incoming mail
@@ -464,9 +466,11 @@ namespace MyMail
         {
           GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST, item);
         }
-        string strObjects = String.Format("{0} {1}", itemlist.Count - 1, GUILocalizeStrings.Get(632));
-        GUIPropertyManager.SetProperty("#itemcount", strObjects);
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, strObjects);
+
+        //set object count label
+        GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(itemlist.Count - 1));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, Utils.GetObjectCountLabel(itemlist.Count - 1));
+
         DisplayOverlayNotify(false, ""); // remove the notify
       }
 

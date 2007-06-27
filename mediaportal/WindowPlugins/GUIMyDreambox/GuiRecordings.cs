@@ -168,28 +168,30 @@ namespace MediaPortal.GUI.Dreambox
                 }
             }
         }
-        void FillRecordings()
+      void FillRecordings()
+      {
+        DataTable dt = _Dreambox.Data.Recordings.Tables[0];
+        foreach (DataRow row in dt.Rows)
         {
-            DataTable dt = _Dreambox.Data.Recordings.Tables[0];
-            foreach (DataRow row in dt.Rows)
+          GUIListItem li = new GUIListItem();
+          li.Label = row["Name"].ToString();
+          if (li.Label == _Dreambox.CurrentChannel.Name)
+          {
+            li.Selected = true;
+            try
             {
-                GUIListItem li = new GUIListItem();
-                li.Label = row["Name"].ToString();
-                if (li.Label == _Dreambox.CurrentChannel.Name)
-                {
-                    li.Selected = true;
-                    try
-                    {
-                        GUIPropertyManager.SetProperty("#Play.Current.File", li.Label);
-                        GUIPropertyManager.SetProperty("#Play.Current.Title", li.Label);
-                    }
-                    catch (Exception) { }
-                }
-                GUIControl.AddListItemControl(GetID, (int)Controls.List, li);
-                string strObjects = String.Format("{0} {1}", GUIControl.GetItemCount(GetID, (int)Controls.List).ToString(), GUILocalizeStrings.Get(632));
-                GUIPropertyManager.SetProperty("#itemcount", strObjects);
+              GUIPropertyManager.SetProperty("#Play.Current.File", li.Label);
+              GUIPropertyManager.SetProperty("#Play.Current.Title", li.Label);
             }
+            catch (Exception) { }
+          }
+          GUIControl.AddListItemControl(GetID, (int)Controls.List, li);
+
+          //set object count label
+          int iTotalItems = GUIControl.GetItemCount(GetID, (int)Controls.List);
+          GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
         }
+      }
         void PlayRecording(GUIListItem listItem)
         {
             string uri = GetChannelRef(listItem.Label);
