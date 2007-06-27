@@ -1016,6 +1016,13 @@ namespace MediaPortal.GUI.Library
                 _offset += _itemsPerPage;
               }
               _cursorX = iItem;
+
+              // Special handling when more than one page
+              if (iPage > 1)
+              {
+                _offset = _listItems.Count - _itemsPerPage;
+                _cursorX = _itemsPerPage - 1;
+              }
               OnSelectionChanged();
             }
             _refresh = true;
