@@ -201,6 +201,7 @@ namespace TvLibrary.Implementations.DVB
       locator.put_Modulation(ModulationType.ModNotSet);
       locator.put_OuterFEC(FECMethod.MethodNotSet);
       locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
+      locator.put_SpectralInversion(SpectralInversion.Automatic);
       locator.put_SymbolRate(-1);
 
       object newIndex;
@@ -266,26 +267,34 @@ namespace TvLibrary.Implementations.DVB
 
       _tuningSpace.get_DefaultLocator(out locator);
       IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
-      
-      int hr = dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
+
+      int hr = _tuneRequest.put_ONID(dvbsChannel.NetworkId);
+      hr = _tuneRequest.put_SID(dvbsChannel.ServiceId);
+      hr = _tuneRequest.put_TSID(dvbsChannel.TransportId);
+      hr = locator.put_CarrierFrequency((int)dvbsChannel.Frequency);
+      hr = dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
       hr = dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
-      dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
-      Log.Log.WriteFile("Channel FECRate is set to {0}", dvbsChannel.InnerFecRate);
       //DVB-S2 specific modulation class call here if DVB-S2 card detected
       if (_conditionalAccess != null)
       {
         Log.Log.WriteFile("Set DVB-S2 modulation...");
         _conditionalAccess.SetDVBS2Modulation(_parameters, dvbsChannel);
       }
-      dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
-      Log.Log.WriteFile("Channel modulation is set to {0}", dvbsChannel.ModulationType);
-      hr = _tuneRequest.put_ONID(dvbsChannel.NetworkId);
-      hr = _tuneRequest.put_SID(dvbsChannel.ServiceId);
-      hr = _tuneRequest.put_TSID(dvbsChannel.TransportId);
-      hr = locator.put_CarrierFrequency((int)dvbsChannel.Frequency);
-
+      try
+      {
+        hr = dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
+        Log.Log.WriteFile("Channel modulation is set to {0}", dvbsChannel.ModulationType);
+        Log.Log.Info("Put Modulation returned:{0:X}", hr);
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
+      hr = dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
+      Log.Log.WriteFile("Channel FECRate is set to {0}", dvbsChannel.InnerFecRate);
+      Log.Log.Info("Put InnerFECRate returned:{0:X}", hr);
+      
       _tuneRequest.put_Locator(locator);
-
 
       if (_conditionalAccess != null)
       {
