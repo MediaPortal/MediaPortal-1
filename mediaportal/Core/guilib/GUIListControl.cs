@@ -1871,6 +1871,13 @@ namespace MediaPortal.GUI.Library
               // move 2 last item in list
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, _listItems.Count - 1, 0, null);
               OnMessage(msg);
+              // Select item adjusts according to scroll offset, so we may need to adjust again here...
+              _offset = (_listItems.Count < _itemsPerPage ? 0 : _listItems.Count - _itemsPerPage);
+              _cursorX = _itemsPerPage - 1;
+              if (_offset + _cursorX >= _listItems.Count)
+              {
+                _cursorX = (_listItems.Count - _offset) - 1;
+              }
             }
           }
         }
@@ -2047,6 +2054,9 @@ namespace MediaPortal.GUI.Library
         // already on last page, move 2 last item in list
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, WindowId, GetID, _listItems.Count - 1, 0, null);
         OnMessage(msg);
+        // Select item adjusts according to scroll offset, so we may need to adjust again here...
+        _offset = (_listItems.Count < _itemsPerPage ? 0 : _listItems.Count - _itemsPerPage);
+        _cursorX = _itemsPerPage - 1;
       }
       if (_offset + _cursorX >= _listItems.Count)
       {
