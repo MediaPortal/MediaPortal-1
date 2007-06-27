@@ -959,8 +959,6 @@ namespace MediaPortal.Player
         if (VizPluginInfo != null)
           this.CreateVisualization(VizPluginInfo);
       }
-
-      SetVisualizationWindow();
     }
 
     /// <summary>
@@ -1063,6 +1061,36 @@ namespace MediaPortal.Player
 
       if (!foundWindow)
         GUIGraphicsContext.form.Controls.Add(VizWindow);
+
+      GUIGraphicsContext.form.ResumeLayout();
+    }
+
+    /// <summary>
+    /// Remove the Visualisation Window from the Main Form control collection when playback has stopped
+    /// It was causing troubles to other Controls. For example the WMP player.
+    /// </summary>
+    private void RemoveVisualizationWindow()
+    {
+      GUIGraphicsContext.form.SuspendLayout();
+
+      bool foundWindow = false;
+      VisualizationWindow tempVizWindow = null;
+
+      // Check if the MP window already has our viz window in it's control collection...
+      foreach (Control ctrl in GUIGraphicsContext.form.Controls)
+      {
+        if (ctrl.Name == "NativeVisualizationWindow" && ctrl is VisualizationWindow)
+        {
+          foundWindow = true;
+          tempVizWindow = (VisualizationWindow)ctrl;
+          break;
+        }
+      }
+
+      if (foundWindow && tempVizWindow != null)
+      {
+        GUIGraphicsContext.form.Controls.Remove(VizWindow);
+      }
 
       GUIGraphicsContext.form.ResumeLayout();
     }
@@ -1667,6 +1695,8 @@ namespace MediaPortal.Player
             _VideoWidth = GUIGraphicsContext.VideoWindow.Width;
             _VideoHeight = GUIGraphicsContext.VideoWindow.Height;
 
+            // Add the Viswindow to the Mainform Control
+            SetVisualizationWindow();
             SetVideoWindow();
 
             PlayState oldState = _State;
@@ -2364,6 +2394,9 @@ namespace MediaPortal.Player
           PlaybackStop(this);
 
         HandleSongEnded(true);
+
+        // Remove the Viz Window from the Main Form as it causes troubles to other plugin overlay window
+        RemoveVisualizationWindow();
       }
 
       catch (Exception ex)
