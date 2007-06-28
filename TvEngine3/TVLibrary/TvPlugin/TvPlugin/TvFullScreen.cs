@@ -1809,7 +1809,7 @@ namespace TvPlugin
         UpdateGUI();
       }
 
-      if ((_statusVisible || _stepSeekVisible || (!_isOsdVisible && g_Player.Speed != 1) || (!_isOsdVisible && g_Player.Paused)))
+      if ((_statusVisible || _stepSeekVisible || (!_isOsdVisible && g_Player.Speed != 1) || (!_isOsdVisible && g_Player.Paused)) || _isOsdVisible)
       {
         TVHome.UpdateProgressPercentageBar();
       }

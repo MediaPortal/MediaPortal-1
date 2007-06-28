@@ -1298,7 +1298,7 @@ namespace TvPlugin
         lblCurrentChannel.Label = GetChannelName();
       }
 
-      Program prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);
+      Program prog = TVHome.Navigator.Channel.CurrentProgram; //TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);      
 
       if (prog != null)
       {
@@ -1324,7 +1324,7 @@ namespace TvPlugin
         if (tbProgramDescription != null)
         {
           tbProgramDescription.Label = prog.Description;
-        }
+        }        
 
         // next program
         prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(prog.EndTime.AddMinutes(1));
@@ -1338,6 +1338,9 @@ namespace TvPlugin
       }
       else
       {
+        tbOnTvNow.Label = GUILocalizeStrings.Get(736); // no epg for this channel
+        tbOnTvNext.Label = GUILocalizeStrings.Get(736); // no epg for this channel
+        
         GUIPropertyManager.SetProperty("#TV.View.start", string.Empty);
         GUIPropertyManager.SetProperty("#TV.View.stop", string.Empty);
         GUIPropertyManager.SetProperty("#TV.View.remaining", string.Empty);
@@ -1350,10 +1353,10 @@ namespace TvPlugin
     }
 
     void UpdateProgressBar()
-    {
+    {      
       double fPercent;
-      Program  prog = TVHome.Navigator.GetChannel(GetChannelName()).CurrentProgram; 
-
+      Program  prog = TVHome.Navigator.GetChannel(GetChannelName()).CurrentProgram;
+      
       if (prog == null)
       {
         GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
@@ -1388,14 +1391,14 @@ namespace TvPlugin
         updateProperties = true;
       }
       if (updateProperties)
-      {
+      {        
         GUIPropertyManager.SetProperty("#TV.View.channel", prog.ReferencedChannel().Name);
         GUIPropertyManager.SetProperty("#TV.View.start", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         GUIPropertyManager.SetProperty("#TV.View.stop", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
         GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
         GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
-        GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
+        GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);         
       }
     }
 

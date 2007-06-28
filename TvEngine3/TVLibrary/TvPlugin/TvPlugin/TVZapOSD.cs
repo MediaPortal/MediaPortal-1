@@ -346,7 +346,7 @@ namespace TvPlugin
         if (lblOnTvNow != null)
         {
           lblOnTvNow.Label = prog.Title;
-        }
+        }        
         if (lblStartTime != null)
         {
           strTime = String.Format("{0}", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
@@ -370,6 +370,9 @@ namespace TvPlugin
       }
       else
       {
+        
+        lblOnTvNow.Label = GUILocalizeStrings.Get(736); // no epg for this channel
+        
         if (lblStartTime != null)
         {
           lblStartTime.Label = String.Empty;

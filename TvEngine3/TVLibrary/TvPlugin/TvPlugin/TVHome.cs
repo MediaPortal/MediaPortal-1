@@ -1066,8 +1066,7 @@ namespace TvPlugin
     /// how much of the current tv program has elapsed
     /// </summary>
     static public void UpdateProgressPercentageBar()
-    {
-
+    {     
       TimeSpan ts = DateTime.Now - _updateProgressTimer;
       if (ts.TotalMilliseconds < 1000) return;
       _updateProgressTimer = DateTime.Now;
@@ -1122,6 +1121,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.View.channel", Navigator.CurrentChannel);
         GUIPropertyManager.SetProperty("#TV.View.title", Navigator.CurrentChannel);
         Program current = Navigator.Channel.CurrentProgram;
+
         if (current != null)
         {
           GUIPropertyManager.SetProperty("#TV.View.start", current.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
@@ -1130,6 +1130,10 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.View.genre", current.Genre);
           GUIPropertyManager.SetProperty("#TV.View.title", current.Title);
           GUIPropertyManager.SetProperty("#TV.View.description", current.Description);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(736));// no epg for this channel
         }
         Program next = Navigator.Channel.NextProgram;
         if (next != null)
@@ -1141,6 +1145,11 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.Next.title", next.Title);
           GUIPropertyManager.SetProperty("#TV.Next.description", next.Description);
         }
+        else
+        {
+          GUIPropertyManager.SetProperty("#TV.Next.title", GUILocalizeStrings.Get(736));// no epg for this channel
+        }
+        
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, Navigator.CurrentChannel);
         if (!System.IO.File.Exists(strLogo))
         {
@@ -1590,6 +1599,7 @@ namespace TvPlugin
     static public void ViewChannel(Channel channel)
     {
       ViewChannelAndCheck(channel);
+      TVHome.UpdateProgressPercentageBar();
       return;
     }
 
