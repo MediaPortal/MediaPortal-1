@@ -1649,9 +1649,7 @@ namespace TvLibrary.Implementations.Analog
                 pins[i].QueryDirection(out pinDir);
                 if (pinDir == PinDirection.Input) continue;
                 Log.Log.WriteFile("analog: audioencoder  pin:{0} {1} {2}", i, pinDir, FilterGraphTools.LogPinInfo(pins[i]));
-                {
-                  string pinName = FilterGraphTools.GetPinName(pins[i]);
-                }
+                string pinName = FilterGraphTools.GetPinName(pins[i]);
                 // try to connect this output pin of the audio encoder filter to the 1st input pin
                 // of the multiplexer
                 // only try to connect when pin name matching is turned off
