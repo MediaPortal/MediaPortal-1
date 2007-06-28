@@ -201,7 +201,7 @@ namespace TvLibrary.Implementations.DVB
       locator.put_Modulation(ModulationType.ModNotSet);
       locator.put_OuterFEC(FECMethod.MethodNotSet);
       locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      locator.put_SpectralInversion(SpectralInversion.Automatic);
+      //locator.put_SpectralInversion(SpectralInversion.Automatic);
       locator.put_SymbolRate(-1);
 
       object newIndex;
