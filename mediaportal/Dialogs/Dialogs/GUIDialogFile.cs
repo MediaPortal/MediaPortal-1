@@ -56,8 +56,6 @@ namespace MediaPortal.Dialogs
     protected GUIButtonControl btnNever = null;
     [SkinControlAttribute(14)]
     protected GUIButtonControl btnCancel = null;
-    [SkinControlAttribute(15)]
-    protected GUIButtonControl btnOk = null;
     [SkinControlAttribute(100)]
     protected GUIImage imgProgressBackground = null;
     [SkinControlAttribute(20)]
@@ -200,7 +198,7 @@ namespace MediaPortal.Dialogs
           {
             int iAction = message.Param1;
             int iControl = message.SenderControlId;
-            if (btnOk != null && iControl == (int)btnOk.GetID)
+            if (btnCancel != null && iControl == (int)btnCancel.GetID)
             {
               m_bCanceled = true;
               if (!m_bBusy) Close();
