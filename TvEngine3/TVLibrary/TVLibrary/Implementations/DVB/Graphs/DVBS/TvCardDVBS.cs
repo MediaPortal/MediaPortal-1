@@ -186,7 +186,7 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace.put__NetworkType(typeof(DVBSNetworkProvider).GUID);
       _tuningSpace.put_SystemType(DVBSystemType.Satellite);
 
-      _tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
+      //_tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
       // GagReflex
       // _tuningSpace.put_LNBSwitch(11700000);
       _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
