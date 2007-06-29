@@ -263,6 +263,7 @@ namespace TvLibrary.Implementations.Analog
           // no it does not. So we have situation 2, 3 or 4 and first need to add 1 or more encoder filters
           // First we try only to add encoders where the encoder pin names are the same as the
           // output pins of the capture filters
+
           if (!AddTvEncoderFilter(true))
           {
             //if that fails, we try any encoder filter
@@ -322,6 +323,13 @@ namespace TvLibrary.Implementations.Analog
             Log.Log.WriteFile("analog:   failed to add analog muxer");
             throw new Exception("No analog muxer filter found");
           }
+        }
+        //Certain ATI cards have pin names which don't match etc.
+        if (_captureDevice.Name.Contains("ATI AVStream Analog Capture"))
+        {
+          Log.Log.WriteFile("analog: ATI AVStream Analog Capture card detected adding mux");
+          AddTvMultiPlexer(false);
+          FindCapturePin(MediaType.Stream, MediaSubType.Mpeg2Program);
         }
         //find the vbi output pin 
         FindVBIPin();
@@ -684,7 +692,6 @@ namespace TvLibrary.Implementations.Analog
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
         }
-
         if (hr != 0)
         {
           //cannot add video capture filter to graph, try next one
@@ -705,7 +712,7 @@ namespace TvLibrary.Implementations.Analog
           _filterCapture = tmp;
           _captureDevice = devices[i];
           DevicesInUse.Instance.Add(_captureDevice);
-          Log.Log.WriteFile("analog: AddTvCaptureFilter succeeded:0x{0:X}", hr);
+          Log.Log.WriteFile("analog: AddTvCaptureFilter connected to crossbar successfully");
           //and we're done
           break;
         }
@@ -713,6 +720,7 @@ namespace TvLibrary.Implementations.Analog
         {
           // cannot connect crossbar->video capture filter, remove filter from graph
           // cand continue with the next vieo capture filter
+          Log.Log.WriteFile("analog: AddTvCaptureFilter failed to connect to crossbar");
           hr = _graphBuilder.RemoveFilter(tmp);
           Release.ComObject("capture filter", tmp);
         }
@@ -985,7 +993,6 @@ namespace TvLibrary.Implementations.Analog
         Release.ComObject("capture pin", pins[0]);
       }
     }
-
 
     object getStreamConfigSetting(IAMStreamConfig streamConfig, string fieldName)
     {
@@ -1356,7 +1363,7 @@ namespace TvLibrary.Implementations.Analog
           if (pins[i] != null) Release.ComObject("capture pin" + i.ToString(), pins[i]);
         }
       }
-      Log.Log.Debug("analog: ConnectEncoderFilter failed (matchPinNames:{0})", matchPinNames);
+      Log.Log.Write("analog: ConnectEncoderFilter failed (matchPinNames:{0})", matchPinNames);
       return false;
     }
 
@@ -1911,7 +1918,6 @@ namespace TvLibrary.Implementations.Analog
           Log.Log.WriteFile("analog: cannot add filter {0} to graph", devices[i].Name);
           continue;
         }
-
         if (hr != 0)
         {
           //failed to add filter to graph, continue with the next one
