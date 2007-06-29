@@ -140,11 +140,7 @@ namespace MediaPortal.Visualization
             Un4seen.Bass.Bass.BASS_ChannelGetData(stream, ref data[0], data.Length);
             Un4seen.Bass.Bass.BASS_ChannelGetData(stream, ref fftData[0], (int)BASSData.BASS_DATA_FFT1024);
 
-            double pos = Bass.CurrentPosition;
-            // This Vis needs the position in ms to work correctly
-            if (VizPluginInfo.Name == "Surreal Potential Fields v1.0")
-              pos *= 1000;
-
+            double pos = 1000 * Bass.CurrentPosition; // Convert to milliseconds
             BassVis.BASS_SONIQUEVIS_Render2(VisChannel, ref data[0], ref fftData[0], hdc, BASSStream.BASS_SAMPLE_FLOAT, (int)pos);
           }
         }
