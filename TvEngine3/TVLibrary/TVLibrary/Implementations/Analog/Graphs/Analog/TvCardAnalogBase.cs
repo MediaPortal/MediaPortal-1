@@ -977,7 +977,7 @@ namespace TvLibrary.Implementations.Analog
           if (fetchedMedia != 1) break;
           if (media[0].majorType == mediaType)
           {
-            Log.Log.WriteFile("analog: FindCapturePin major:{0}", media[0].majorType);
+            //Log.Log.WriteFile("analog: FindCapturePin major:{0}", media[0].majorType);
             if (media[0].subType == mediaSubtype || media[0].subType == MediaSubType.Mpeg2Program)
             {
               //it does... we're done
@@ -988,7 +988,7 @@ namespace TvLibrary.Implementations.Analog
               DsUtils.FreeAMMediaType(media[0]);
               return;
             }
-            Log.Log.WriteFile("analog: FindCapturePin subtype:{0}", media[0].subType);
+            //Log.Log.WriteFile("analog: FindCapturePin subtype:{0}", media[0].subType);
           }
           DsUtils.FreeAMMediaType(media[0]);
         }
