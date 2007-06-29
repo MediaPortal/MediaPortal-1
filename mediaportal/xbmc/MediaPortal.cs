@@ -652,7 +652,7 @@ public class MediaPortalApp : D3DApp, IRender
   protected override void WndProc(ref Message msg)
   {
     try
-    {
+    {      
       if (msg.Msg == WM_POWERBROADCAST)
       {
         Log.Info("Main: WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
@@ -744,21 +744,21 @@ public class MediaPortalApp : D3DApp, IRender
         else
         {
           Log.Info("Main: shutdown mode granted");
-          msg.Result = (IntPtr) 1; //tell windows we are ready to shutdown
-          
+          base._shuttingDown = true;
+          msg.Result = (IntPtr) 1; //tell windows we are ready to shutdown          
         }
       }
-      // gibman - http://mantis.team-mediaportal.com/view.php?id=1073
-      else if (msg.Msg == WM_ENDSESSION)
-      {
-        Log.Info("Main: shutdown mode executed");        
-        msg.Result = (IntPtr) 0; // tell windows it's ok to shutdown
+      // gibman - http://mantis.team-mediaportal.com/view.php?id=1073     
+      else if (msg.Msg == WM_ENDSESSION) // && msg.WParam == ((IntPtr)1))
+      {        
+        base.WndProc(ref msg);        
+        Log.Info("Main: shutdown mode executed");
+        msg.Result = IntPtr.Zero; // tell windows it's ok to shutdown        
                 
         tMouseClickTimer.Stop();
         tMouseClickTimer.Dispose();
         Application.ExitThread();        
-        Application.Exit();
-        base.WndProc(ref msg);        
+        Application.Exit();               
       }
        
       if (!PluginManager.WndProc(ref msg))
