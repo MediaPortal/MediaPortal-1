@@ -33,8 +33,9 @@ using MediaPortal.EPG;
 using MediaPortal.Services;
 using MediaPortal.Webepg.TV.Database;
 using MediaPortal.Util;
+using MediaPortal.Utils.CommandLine;
 
-namespace MediaPortal.EPG.TestWebEPG
+namespace MediaPortal.EPG.WebEPGxmltv
 {
   public class Program
   {
@@ -42,8 +43,22 @@ namespace MediaPortal.EPG.TestWebEPG
     /// The main entry point for the WebEPG application as external exe.
     /// </summary>
     [STAThread]
-    static void Main()
+    static void Main(params string[] args)
     {
+      // Parse Command Line options
+      CommandLineOptions webepgArgs = new CommandLineOptions();
+      ICommandLineOptions iwebepgArgs = (ICommandLineOptions)webepgArgs;
+
+      try
+      {
+        CommandLine.Parse(args, ref iwebepgArgs);
+      }
+      catch (ArgumentException)
+      {
+        iwebepgArgs.DisplayOptions();
+        return;
+      }
+
       // setup logging service
       ILog _log = GlobalServiceProvider.Get<ILog>();
       _log.BackupLogFiles();
@@ -57,23 +72,37 @@ namespace MediaPortal.EPG.TestWebEPG
       try
       {
 #endif
-      // Set location of directories and config file
-      string configFile = Environment.CurrentDirectory + "\\WebEPG\\WebEPG.xml";
-      string xmltvDirectory = Environment.CurrentDirectory + "\\xmltv\\";
+        // Set location of directories and config file
+        string webepgDirectory = Environment.CurrentDirectory;
+        if (webepgArgs.IsOption(CommandLineOptions.Option.webepg))
+          webepgDirectory = webepgArgs.GetOption(CommandLineOptions.Option.webepg);
 
-      // Create main class and import guide
-      WebEPG epg = new WebEPG(configFile, xmltvDirectory, Environment.CurrentDirectory);
-      epg.Import();
+        string xmltvDirectory;
+        if (webepgArgs.IsOption(CommandLineOptions.Option.xmltv))
+          xmltvDirectory = webepgArgs.GetOption(CommandLineOptions.Option.xmltv);
+        else
+          xmltvDirectory = webepgDirectory + "\\xmltv\\";
 
-      // If not in debug mode - Catch all Exceptions and log as Fatal errors
-      // Program crashes cleanly without the MS message.
+        _log.Info(LogType.WebEPG, "WebEPG: Using directories");
+        _log.Info(LogType.WebEPG, " WebEPG - {0}", webepgDirectory);
+        _log.Info(LogType.WebEPG, " xmltv  - {0}", xmltvDirectory);
+
+        string configFile = webepgDirectory + "\\WebEPG\\WebEPG.xml";
+
+
+        // Create main class and import guide
+        WebEPG epg = new WebEPG(configFile, xmltvDirectory, webepgDirectory);
+        epg.Import();
+
+        // If not in debug mode - Catch all Exceptions and log as Fatal errors
+        // Program crashes cleanly without the MS message.
 #if !DEBUG
       }
       // Catch and log all exceptions - fail cleanly
       catch (Exception ex)
       {
-      _log.WriteFile(LogType.WebEPG, Level.Error, "WebEPG: Fatal Error");
-      _log.WriteFile(LogType.WebEPG, Level.Error, "WebEPG: {0}", ex.Message);
+        _log.WriteFile(LogType.WebEPG, Level.Error, "WebEPG: Fatal Error");
+        _log.WriteFile(LogType.WebEPG, Level.Error, "WebEPG: {0}", ex.Message);
       }
 #endif
 

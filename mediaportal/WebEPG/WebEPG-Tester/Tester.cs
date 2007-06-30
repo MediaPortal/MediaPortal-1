@@ -58,155 +58,6 @@ namespace MediaPortal.EPG.WebEPGTester
     }
     #endregion
 
-    #region Events
-    private void tvGrabbers_Checkbox(object sender, TreeViewEventArgs e)
-    {
-      this.tvGrabbers.AfterCheck -= new System.Windows.Forms.TreeViewEventHandler(this.tvGrabbers_Checkbox);
-      CheckChildren(e.Node.Checked, e.Node);
-      this.tvGrabbers.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.tvGrabbers_Checkbox);
-    }
-
-    private void bRun_Click(object sender, EventArgs e)
-    {
-      ResetImages(tvGrabbers.TopNode);
-      _testList = new List<TreeNode>();
-      GetTestList(tvGrabbers.TopNode);
-
-      ChannelsList config = new ChannelsList(_webepgDir);
-
-      string testDir = Environment.CurrentDirectory + "\\test";
-
-      MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(testDir + "\\GrabberTests.xml");
-
-      HTMLCache cache;
-      if (GlobalServiceProvider.IsRegistered<IHtmlCache>())
-      {
-        cache = (HTMLCache)GlobalServiceProvider.Get<IHtmlCache>();
-      }
-      else
-      {
-        cache = new HTMLCache();
-        cache.WebCacheInitialise();
-        GlobalServiceProvider.Add<IHtmlCache>(cache);
-      }
-
-      if (cbCache.Checked)
-        cache.CacheMode = HTMLCache.Mode.Enabled;
-      else
-        cache.CacheMode = HTMLCache.Mode.Disabled;
-
-      if (!System.IO.Directory.Exists(testDir))
-        System.IO.Directory.CreateDirectory(testDir);
-
-      string[] countries = config.GetCountries();
-
-      XMLTVExport xmltv = null;
-
-      for (int c = 0; c < _testList.Count; c++)
-      {
-        if (_testList[c].Parent == null || _testList[c].Parent.Parent == null)
-          continue;
-
-        string channelId = _testList[c].Text;
-        string grabber = _testList[c].Parent.Text;
-        string country = _testList[c].Parent.Parent.Text;
-
-        string countryDir = testDir + "\\" + country;
-        string grabberDir = countryDir + "\\" + grabber;
-        string channelDir = grabberDir + "\\" + channelId;
-
-        if (!System.IO.Directory.Exists(countryDir))
-          System.IO.Directory.CreateDirectory(countryDir);
-
-        if (!System.IO.Directory.Exists(grabberDir))
-          System.IO.Directory.CreateDirectory(grabberDir);
-
-        if (!System.IO.Directory.Exists(channelDir))
-          System.IO.Directory.CreateDirectory(channelDir);
-
-        WebListingGrabber m_EPGGrabber = new WebListingGrabber((int)numDays.Value, _webepgDir + "\\grabbers\\");
-
-        _log.Info("WebEPG: Grabber {0}\\{1}", country, grabber);
-
-        xmltv = new XMLTVExport(channelDir);
-        xmltv.Open();
-
-        FileInfo grabberLogFile = new FileInfo(channelDir + "\\grab.log");
-        if (grabberLogFile.Exists)
-          grabberLogFile.Delete();
-
-        UpdateImage(Status.working, _testList[c]);
-        tvGrabbers.SelectedNode = _testList[c];
-        tvGrabbers.Focus();
-        tvGrabbers.Refresh();
-
-        xmltv.WriteChannel(channelId, channelId);
-        _log.Info("WebEPG: Getting Channel {0}", channelId);
-
-        string countryGrabber = country + "\\" + grabber.Replace('.', '_') + ".xml";
-        string grabTimeStr = xmlreader.GetValueAsString("Grabbers", countryGrabber, "");
-        DateTime grabDateTime;
-        if (grabTimeStr == "")
-        {
-          grabDateTime = DateTime.Now;
-          long dtLong = GetLongDateTime(grabDateTime);
-          xmlreader.SetValue("Grabbers", countryGrabber, dtLong.ToString());
-          xmlreader.Save();
-          cache.CacheMode = HTMLCache.Mode.Replace;
-        }
-        else
-        {
-          grabDateTime = GetDateTime(long.Parse(grabTimeStr));
-          cache.CacheMode = HTMLCache.Mode.Enabled;
-        }
-
-        if (m_EPGGrabber.Initalise(countryGrabber))
-        {
-          ArrayList programs = m_EPGGrabber.GetGuide(channelId, false, 0, 23, grabDateTime);
-          if (programs != null)
-          {
-            for (int p = 0; p < programs.Count; p++)
-            {
-              xmltv.WriteProgram((TVProgram)programs[p], 0);
-            }
-
-          }
-        }
-        else
-        {
-          _log.Error("WebEPG: Grabber failed for: {0}", channelId);
-          UpdateImage(Status.error, _testList[c]);
-        }
-
-        UpdateImage(Status.ok, _testList[c]);
-
-        if (_logString.ToString().IndexOf("[ERROR]") != -1)
-        {
-          _log.Error("WebEPG: Grabber error for: {0}", channelId);
-          UpdateImage(Status.error, _testList[c]);
-        }
-        if (_logString.ToString().IndexOf("[Warn.]") != -1)
-        {
-          _log.Warn("WebEPG: Grabber warning for: {0}", channelId);
-          UpdateImage(Status.warning, _testList[c]);
-        }
-
-        // Write log to disk
-        _logString.Flush();
-        TextWriter grabberLog = new StreamWriter(grabberLogFile.FullName);
-        grabberLog.Write(_sb.ToString());
-        grabberLog.Flush();
-
-        tvGrabbers.Refresh();
-
-        _sb.Remove(0, _sb.Length);
-      }
-
-      if (xmltv != null)
-        xmltv.Close();
-    }
-    #endregion
-
     #region Private Methods
     private void GetTestList(TreeNode node)
     {
@@ -444,12 +295,6 @@ namespace MediaPortal.EPG.WebEPGTester
       for (int i = 0; i < node.Nodes.Count; i++)
         ResetImages(node.Nodes[i]);
     }
-    #endregion
-
-    private void bScan_Click(object sender, EventArgs e)
-    {
-      SetWebepgDir();
-    }
 
     private void SetWebepgDir()
     {
@@ -469,6 +314,160 @@ namespace MediaPortal.EPG.WebEPGTester
 
       tvGrabbers.Nodes.Add((TreeNode)tGrabbers.Clone());
       tvGrabbers.Refresh();
+    }
+    #endregion
+
+    #region Events
+    private void tvGrabbers_Checkbox(object sender, TreeViewEventArgs e)
+    {
+      this.tvGrabbers.AfterCheck -= new System.Windows.Forms.TreeViewEventHandler(this.tvGrabbers_Checkbox);
+      CheckChildren(e.Node.Checked, e.Node);
+      this.tvGrabbers.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.tvGrabbers_Checkbox);
+    }
+
+    private void bRun_Click(object sender, EventArgs e)
+    {
+      ResetImages(tvGrabbers.TopNode);
+      _testList = new List<TreeNode>();
+      GetTestList(tvGrabbers.TopNode);
+
+      ChannelsList config = new ChannelsList(_webepgDir);
+
+      string testDir = Environment.CurrentDirectory + "\\test";
+
+      MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(testDir + "\\GrabberTests.xml");
+
+      HTMLCache cache;
+      if (GlobalServiceProvider.IsRegistered<IHtmlCache>())
+      {
+        cache = (HTMLCache)GlobalServiceProvider.Get<IHtmlCache>();
+      }
+      else
+      {
+        cache = new HTMLCache();
+        cache.WebCacheInitialise();
+        GlobalServiceProvider.Add<IHtmlCache>(cache);
+      }
+
+      if (cbCache.Checked)
+        cache.CacheMode = HTMLCache.Mode.Enabled;
+      else
+        cache.CacheMode = HTMLCache.Mode.Disabled;
+
+      if (!System.IO.Directory.Exists(testDir))
+        System.IO.Directory.CreateDirectory(testDir);
+
+      string[] countries = config.GetCountries();
+
+      XMLTVExport xmltv = null;
+
+      for (int c = 0; c < _testList.Count; c++)
+      {
+        if (_testList[c].Parent == null || _testList[c].Parent.Parent == null)
+          continue;
+
+        string channelId = _testList[c].Text;
+        string grabber = _testList[c].Parent.Text;
+        string country = _testList[c].Parent.Parent.Text;
+
+        string countryDir = testDir + "\\" + country;
+        string grabberDir = countryDir + "\\" + grabber;
+        string channelDir = grabberDir + "\\" + channelId;
+
+        if (!System.IO.Directory.Exists(countryDir))
+          System.IO.Directory.CreateDirectory(countryDir);
+
+        if (!System.IO.Directory.Exists(grabberDir))
+          System.IO.Directory.CreateDirectory(grabberDir);
+
+        if (!System.IO.Directory.Exists(channelDir))
+          System.IO.Directory.CreateDirectory(channelDir);
+
+        WebListingGrabber m_EPGGrabber = new WebListingGrabber((int)numDays.Value, _webepgDir + "\\grabbers\\");
+
+        _log.Info("WebEPG: Grabber {0}\\{1}", country, grabber);
+
+        xmltv = new XMLTVExport(channelDir);
+        xmltv.Open();
+
+        FileInfo grabberLogFile = new FileInfo(channelDir + "\\grab.log");
+        if (grabberLogFile.Exists)
+          grabberLogFile.Delete();
+
+        UpdateImage(Status.working, _testList[c]);
+        tvGrabbers.SelectedNode = _testList[c];
+        tvGrabbers.Focus();
+        tvGrabbers.Refresh();
+
+        xmltv.WriteChannel(channelId, channelId);
+        _log.Info("WebEPG: Getting Channel {0}", channelId);
+
+        string countryGrabber = country + "\\" + grabber.Replace('.', '_') + ".xml";
+        string grabTimeStr = xmlreader.GetValueAsString("Grabbers", countryGrabber, "");
+        DateTime grabDateTime;
+        if (grabTimeStr == "")
+        {
+          grabDateTime = DateTime.Now;
+          long dtLong = GetLongDateTime(grabDateTime);
+          xmlreader.SetValue("Grabbers", countryGrabber, dtLong.ToString());
+          xmlreader.Save();
+          cache.CacheMode = HTMLCache.Mode.Replace;
+        }
+        else
+        {
+          grabDateTime = GetDateTime(long.Parse(grabTimeStr));
+          cache.CacheMode = HTMLCache.Mode.Enabled;
+        }
+
+        if (m_EPGGrabber.Initalise(countryGrabber))
+        {
+          ArrayList programs = m_EPGGrabber.GetGuide(channelId, false, 0, 23, grabDateTime);
+          if (programs != null)
+          {
+            for (int p = 0; p < programs.Count; p++)
+            {
+              xmltv.WriteProgram((TVProgram)programs[p], 0);
+            }
+
+          }
+        }
+        else
+        {
+          _log.Error("WebEPG: Grabber failed for: {0}", channelId);
+          UpdateImage(Status.error, _testList[c]);
+        }
+
+        UpdateImage(Status.ok, _testList[c]);
+
+        if (_logString.ToString().IndexOf("[ERROR]") != -1)
+        {
+          _log.Error("WebEPG: Grabber error for: {0}", channelId);
+          UpdateImage(Status.error, _testList[c]);
+        }
+        if (_logString.ToString().IndexOf("[Warn.]") != -1)
+        {
+          _log.Warn("WebEPG: Grabber warning for: {0}", channelId);
+          UpdateImage(Status.warning, _testList[c]);
+        }
+
+        // Write log to disk
+        _logString.Flush();
+        TextWriter grabberLog = new StreamWriter(grabberLogFile.FullName);
+        grabberLog.Write(_sb.ToString());
+        grabberLog.Flush();
+
+        tvGrabbers.Refresh();
+
+        _sb.Remove(0, _sb.Length);
+      }
+
+      if (xmltv != null)
+        xmltv.Close();
+    }
+
+    private void bScan_Click(object sender, EventArgs e)
+    {
+      SetWebepgDir();
     }
 
     private void tvGrabbers_AfterSelect(object sender, TreeViewEventArgs e)
@@ -506,5 +505,6 @@ namespace MediaPortal.EPG.WebEPGTester
         reader.Close();
       }
     }
+    #endregion
   }
 }
