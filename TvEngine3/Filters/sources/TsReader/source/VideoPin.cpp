@@ -437,13 +437,18 @@ STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
 void CVideoPin::UpdateFromSeek()
 {
 
+	if (m_rtStart>m_rtDuration)
+		m_rtStart=m_rtDuration;
+
   CRefTime rtSeek=m_rtStart;
   float seekTime=(float)rtSeek.Millisecs();
   seekTime/=1000.0f;
   LogDebug("vid seek to %f", seekTime);
   m_bSeeking=true;
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
+   LogDebug("vid seek filter->Iseeking() done");
   CAutoLock lock(&m_bufferLock);
+  LogDebug("vid seek buffer locked");
   if (ThreadExists()) 
   {
       // next time around the loop, the worker thread will
@@ -453,28 +458,36 @@ void CVideoPin::UpdateFromSeek()
       
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
-        m_pTsReaderFilter->SeekStart();
+        LogDebug("vid seek filter->seekstart");
+				m_pTsReaderFilter->SeekStart();
       }
+			LogDebug("vid seek begindeliverflush");
       HRESULT hr=DeliverBeginFlush();
      // LogDebug("vid:beginflush:%x",hr);
       // make sure we have stopped pushing
+			LogDebug("vid seek stop");
       Stop();
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
+				LogDebug("vid seek filter->seek");
         m_pTsReaderFilter->Seek(CRefTime(m_rtStart));
       }
       // complete the flush
+			LogDebug("vid seek deliverendflush");
       hr=DeliverEndFlush();
      // LogDebug("vid:endflush:%x",hr);
       
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
+				LogDebug("vid seek filter->seekdone");
         m_pTsReaderFilter->SeekDone(rtSeek);
       }
       // restart
       
+			LogDebug("vid seek restart");
       m_rtStart=rtSeek;
       Run();
+			LogDebug("vid seek running");
   }
   m_bSeeking=false;
 }

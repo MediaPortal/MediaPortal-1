@@ -36,7 +36,7 @@
 #include "memoryreader.h"
 void LogDebug(const char *fmt, ...) 
 {
-#ifndef DEBUG
+#ifdef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -129,7 +129,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   m_demultiplexer( m_duration, *this),
   m_rtspClient(m_buffer)
 {
-#if DEBUG
+#ifdef DEBUG
   ::DeleteFile("c:\\tsreader.log");
 #endif
   m_fileReader=NULL;
@@ -576,18 +576,21 @@ void CTsReaderFilter::ThreadProc()
       CTsDuration duration;
       duration.SetFileReader(m_fileDuration);
       duration.UpdateDuration();
-      if (duration.Duration() != m_duration.Duration())
-      {
-        m_duration.Set(duration.StartPcr(), duration.EndPcr());
-        if (m_State == State_Running)
-        {
-          float secs=(float)duration.Duration().Millisecs();
-          secs/=1000.0f;
-          //LogDebug("notify length change:%f",secs);
-          NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
-          SetDuration();
-        }
-      }
+			if (duration.Duration().Millisecs()>0)
+			{
+				if (duration.Duration() != m_duration.Duration())
+				{
+					m_duration.Set(duration.StartPcr(), duration.EndPcr());
+					if (m_State == State_Running)
+					{
+						float secs=(float)duration.Duration().Millisecs();
+						secs/=1000.0f;
+						//LogDebug("notify length change:%f",secs);
+						NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
+						SetDuration();
+					}
+				}
+			}
     }
     else if (m_rtspClient.IsRunning())
     {
