@@ -162,10 +162,10 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The channel.</param>
     /// <param name="settings">The settings.</param>
     /// <returns></returns>
-    public List<IChannel> Scan(IChannel channel,ScanParameters settings)
+    public List<IChannel> Scan(IChannel channel, ScanParameters settings)
     {
       _card.IsScanning = true;
-      _card.Tune(0,channel);
+      _card.Tune(0, channel);
       _analyzer = GetAnalyzer();
       if (_analyzer == null)
       {
@@ -180,7 +180,7 @@ namespace TvLibrary.Implementations.DVB
         System.Threading.Thread.Sleep(settings.TimeOutTune * 1000);
         ResetSignalUpdate();
       }
-      Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel , _card.SignalQuality);
+      Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
       if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
       {
         try
@@ -190,7 +190,7 @@ namespace TvLibrary.Implementations.DVB
           _analyzer.SetCallBack(this);
           _analyzer.Start();
           startTime = DateTime.Now;
-          _event.WaitOne(settings.TimeOutSDT*1000, true);
+          _event.WaitOne(settings.TimeOutSDT * 1000, true);
 
           int networkId;
           int transportId;
@@ -247,10 +247,10 @@ namespace TvLibrary.Implementations.DVB
                   out frequency, out lcn, out EIT_schedule_flag, out EIT_present_following_flag, out runningStatus,
                   out freeCAMode, out serviceType, out modulation, out providerName, out serviceName,
                   out pcrPid, out pmtPid, out videoPid, out audio1Pid, out audio2Pid, out audio3Pid, out audio4Pid, out audio5Pid,
-                  out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out audioLanguage4, out audioLanguage5, 
+                  out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out audioLanguage4, out audioLanguage5,
                   out teletextPid, out subtitlePid, out subtitleLanguage, out videoStreamType);
             bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
-            string name = Marshal.PtrToStringAnsi(serviceName);
+            string name = DvbTextConverter.Convert(serviceName, "");
             //Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} v:{6:X} a:{7:X} ac3:{8:X} type:{9:X}", 
             //  i, networkId, transportId, serviceId, pmtPid, name,videoPid,audio1Pid,ac3Pid, serviceType);
             if (videoStreamType == 0x10 || videoStreamType == 0x1b)
@@ -276,11 +276,11 @@ namespace TvLibrary.Implementations.DVB
               info.eitPreFollow = (EIT_present_following_flag != 0);
               info.serviceType = serviceType;
               info.modulation = modulation;
-              info.service_provider_name = Marshal.PtrToStringAnsi(providerName);
-              info.service_name = Marshal.PtrToStringAnsi(serviceName);
+              info.service_provider_name =  DvbTextConverter.Convert(providerName, "");
+              info.service_name = DvbTextConverter.Convert(serviceName, "");
               info.pcr_pid = pcrPid;
               info.scrambled = (freeCAMode != 0);
-              
+
               info.network_pmt_PID = pmtPid;
 
               strAudioLanguage1 = Marshal.PtrToStringAnsi(audioLanguage1);

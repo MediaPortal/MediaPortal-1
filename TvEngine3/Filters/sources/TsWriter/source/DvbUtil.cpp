@@ -74,7 +74,11 @@ void CDvbUtil::getString468A(BYTE *b, int l1,char *text)
 				
 		if (((BYTE)c) < 0x20)
 		{
-			goto cont;
+      //0x1-0x5 = choose character set...
+      if ((BYTE)c < 0x1 || (BYTE)c>0x5)
+      {
+			  goto cont;
+      }
 		}
 				
 		text[num] = c;
