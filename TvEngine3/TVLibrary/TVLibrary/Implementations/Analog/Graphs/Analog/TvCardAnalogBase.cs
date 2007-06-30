@@ -2734,7 +2734,6 @@ namespace TvLibrary.Implementations.Analog
           _pinVideo.Disconnect();
         return;
       }
-
       Log.Log.WriteFile("analog:AddMpegMuxer()");
       try
       {
@@ -2752,30 +2751,39 @@ namespace TvLibrary.Implementations.Analog
           Log.Log.WriteFile("analog:connect pinvideo->mpeg muxer");
           if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinVideo, _filterMpegMuxer, 0))
           {
-            Log.Log.WriteFile("analog:unable to connect pinvideo->mpeg muxer");
+            Log.Log.WriteFile("analog: unable to connect pinvideo->mpeg muxer");
           }
+          Log.Log.WriteFile("analog: connected pinvideo->mpeg muxer");
         }
         else
         {
-          Log.Log.WriteFile("analog:disconnect for radio pinvideo->mpeg muxer");
+          Log.Log.WriteFile("analog: disconnect for radio pinvideo->mpeg muxer");
           _pinVideo.Disconnect();
         }
-        Log.Log.WriteFile("analog:connect pinaudio->mpeg muxer");
-        if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinAudio, _filterMpegMuxer, 1))
+        //Adaptec devices use the LPCM pin for audio so we check this can connect if applicable.
+        bool isAdaptec = false;
+        if (_captureDevice.Name.Contains("Adaptec USB Capture Device") || _captureDevice.Name.Contains("Adaptec PCI Capture Device"))
         {
-          Log.Log.WriteFile("analog:uable to connect pinaudio->mpeg muxer");
+          Log.Log.WriteFile("analog: AddMpegMuxer, Adaptec device found using LPCM");
+          isAdaptec = true;
         }
-
-        //_infTee = (IBaseFilter)new InfTee();
-        //hr = _graphBuilder.AddFilter(_infTee, "Inf Tee");
-        //if (hr != 0)
-        //{
-        //  Log.Log.WriteFile("analog:Add InfTee returns:0x{0:X}", hr);
-        //  throw new TvException("Unable to add InfTee");
-        //}
-        //IPin pin = DsFindPin.ByDirection(_filterMpegMuxer, PinDirection.Output, 0);
-        //FilterGraphTools.ConnectPin(_graphBuilder, pin, _infTee, 0);
-        //Release.ComObject("mpegmux out", pin);
+        if (isAdaptec)
+        {
+          if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinLPCM, _filterMpegMuxer, 1))
+          {
+            Log.Log.WriteFile("analog: AddMpegMuxer, unable to connect pinLPCM->mpeg muxer");
+          }
+          Log.Log.WriteFile("analog: AddMpegMuxer, connected pinLPCM->mpeg muxer");
+        }
+        else
+        {
+          Log.Log.WriteFile("analog:connect pinaudio->mpeg muxer");
+          if (!FilterGraphTools.ConnectPin(_graphBuilder, _pinAudio, _filterMpegMuxer, 1))
+          {
+            Log.Log.WriteFile("analog:AddMpegMuxer, unable to connect pinaudio->mpeg muxer");
+          }
+          Log.Log.WriteFile("analog:AddMpegMuxer, connected pinaudio->mpeg muxer");
+        }
       }
       catch (Exception ex)
       {
