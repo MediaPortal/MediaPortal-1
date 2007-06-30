@@ -302,8 +302,8 @@ namespace TvLibrary.Implementations.DVB
       }
 
       ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
-      RunGraph(ch.SubChannelId);
 
+      //move diseqc motor to correct satellite
       if (_conditionalAccess != null)
       {
         if (dvbsChannel.SatelliteIndex > 0 && _conditionalAccess.DiSEqCMotor != null)
@@ -311,6 +311,7 @@ namespace TvLibrary.Implementations.DVB
           _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
         }
       }
+      RunGraph(ch.SubChannelId);
 
       return ch;
     }
