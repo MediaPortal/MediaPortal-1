@@ -255,7 +255,7 @@ namespace MediaPortal.EPG
 
       if (!File.Exists(_configFile))
       {
-        _log.Info(LogType.WebEPG, "File not found: WebEPG.xml");
+        _log.Info(LogType.WebEPG, "File not found: {0}", _configFile);
         return false;
       }
 
