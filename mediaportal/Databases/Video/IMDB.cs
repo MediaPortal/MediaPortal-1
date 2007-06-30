@@ -1001,9 +1001,9 @@ namespace MediaPortal.Video.Database
         // Mars Warrior @ 03-sep-2004.
         // First try to find an Exact Match. If no exact match found, just look
         // for any match and add all those to the list. This narrows it down more easily...
-        int iStartOfMovieList = strBody.IndexOf("Popular Titles");
-        if (iStartOfMovieList < 0) iStartOfMovieList = strBody.IndexOf("Exact Matches");
+        int iStartOfMovieList = strBody.IndexOf("Exact Matches");
         if (iStartOfMovieList < 0) iStartOfMovieList = strBody.IndexOf("Partial Matches");
+        if (iStartOfMovieList < 0) iStartOfMovieList = strBody.IndexOf("Popular Titles");
         if (iStartOfMovieList < 0) iStartOfMovieList = strBody.IndexOf("Approx Matches");
 
         int endOfTitleList = strBody.IndexOf("Suggestions For Improving Your Results");
@@ -1085,8 +1085,8 @@ namespace MediaPortal.Video.Database
                   string strSub = strBody.Substring(iEndAHREF + endTagLength, posNextTag - (iEndAHREF + endTagLength));
                   strTitle += strSub;
                 }
-
-                if (strTitle.IndexOf("\n") < 0)
+                                                     // to avoid including of &nbsp; 
+                if ((strTitle.IndexOf("\n") < 0) && (strTitle.IndexOf("&nbsp;") < 0))
                 {
                   IMDBUrl url = new IMDBUrl(strURL, strTitle + " (imdb)", "IMDB");
                   elements.Add(url);
