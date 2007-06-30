@@ -592,17 +592,16 @@ namespace MediaPortal.Player
 
     public override void SeekAbsolute(double dTimeInSecs)
     {
-      Log.Info("SeekAbsolute:seekabs:{0} duration:{1} pos:{2}", dTimeInSecs, Duration, CurrentPosition);
       if (_state != PlayState.Init)
       {
         if (_mediaCtrl != null && _mediaSeeking != null)
         {
+          UpdateCurrentPosition();
           if (dTimeInSecs < 0.0d)
             dTimeInSecs = 0.0d;
-          //if (dTimeInSecs > Duration)
-          //  dTimeInSecs = Duration;
-          dTimeInSecs = Math.Floor(dTimeInSecs);
-          //Log.Info("StreamBufferPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs,Duration, CurrentPosition);
+          if (dTimeInSecs > Duration)
+            dTimeInSecs = Duration;
+          Log.Info("SeekAbsolute:seekabs:{0} duration:{1} pos:{2}", dTimeInSecs, Duration, CurrentPosition);
           dTimeInSecs *= 10000000d;
           long pStop = 0;
           long lContentStart, lContentEnd;
@@ -619,9 +618,11 @@ namespace MediaPortal.Player
             Log.Error("seek failed->seek to 0 0x:{0:X}", hr);
           }
         }
+
         UpdateCurrentPosition();
         if (dvbSubRenderer != null) dvbSubRenderer.OnSeek(CurrentPosition);
         _state = PlayState.Playing;
+
         Log.Info("TSReaderPlayer: current pos:{0} dur:{1}", CurrentPosition, Duration);
       }
     }
