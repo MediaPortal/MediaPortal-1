@@ -46,6 +46,7 @@ void CTsDuration::Set(CPcr& startPcr, CPcr& endPcr)
 void CTsDuration::UpdateDuration()
 {
   m_bSearchStart=true;
+  m_bSearchEnd=false;
   m_startPcr.Reset();
   m_reader->SetFilePointer(0,FILE_BEGIN);
   byte buffer[32712];
@@ -63,12 +64,14 @@ void CTsDuration::UpdateDuration()
     OnRawData(buffer,dwBytesRead);
   }
   m_bSearchEnd=true;
+  m_bSearchStart=false;
   m_endPcr.Reset();
   __int64 offset=sizeof(buffer);
-  
   __int64 fileSize=m_reader->GetFileSize();
+  
   while (!m_endPcr.IsValid)
   {
+   // LogDebug("fileSize:%x off:%x",(DWORD)fileSize, (DWORD)fileSize-offset);
     DWORD dwBytesRead;
     m_reader->SetFilePointer(fileSize-offset,FILE_BEGIN);
     if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
@@ -77,10 +80,13 @@ void CTsDuration::UpdateDuration()
     }
     if (dwBytesRead==0) 
     {
-      return;
+      if (m_endPcr.IsValid)
+      {
+        return;
+      }
     }
     OnRawData(buffer,dwBytesRead);
-    offset-=sizeof(buffer);
+    offset+=sizeof(buffer);
   }
 }
 
@@ -93,10 +99,11 @@ void CTsDuration::OnTsPacket(byte* tsPacket)
   {
     if (m_bSearchStart)
     {
+      m_pid=header.Pid;
       m_startPcr=field.Pcr;
       m_bSearchStart=false;
     }
-    if (m_bSearchEnd)
+    if (m_bSearchEnd && m_pid==header.Pid)
     {
       m_endPcr=field.Pcr;
     }

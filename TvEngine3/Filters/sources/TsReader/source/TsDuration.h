@@ -17,6 +17,7 @@ public:
   CPcr     EndPcr();
   void     Set(CPcr& startPcr, CPcr& endPcr);
 private:
+  int m_pid;
 	FileReader* m_reader;
   CPcr     m_startPcr;
   CPcr     m_endPcr;

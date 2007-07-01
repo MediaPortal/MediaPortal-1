@@ -294,6 +294,8 @@ int FileReader::GetStartPosition(__int64 *lpllpos)
 DWORD FileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 {
 	LARGE_INTEGER li;
+  li.LowPart=0;
+  li.HighPart=0;
 
 	if (dwMoveMethod == FILE_END && m_hInfoFile != INVALID_HANDLE_VALUE)
 	{
@@ -350,6 +352,7 @@ DWORD FileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 	}
 
 	return ::SetFilePointer(m_hFile, li.LowPart, &li.HighPart, dwMoveMethod);
+  
 }
 
 __int64 FileReader::GetFilePointer()

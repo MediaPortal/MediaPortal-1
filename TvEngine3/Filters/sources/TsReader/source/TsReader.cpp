@@ -429,6 +429,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     m_duration.UpdateDuration();
 
 	  m_fileReader->SetFilePointer(0LL,FILE_BEGIN);
+    
 
   }
 
