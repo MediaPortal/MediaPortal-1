@@ -122,7 +122,7 @@ namespace MediaPortal.Utils.Web
     {
       if (_cache != null && _cache.Initialised)
       {
-        if (_cache.LoadPage(page.Uri))
+        if (_cache.LoadPage(page))
         {
           _strPageSource = _cache.GetPage();
           return true;
@@ -143,7 +143,7 @@ namespace MediaPortal.Utils.Web
       if (success)
       {
         if (_cache != null && _cache.Initialised)
-          _cache.SavePage(page.Uri, _strPageSource);
+          _cache.SavePage(page, _strPageSource);
 
         return true;
       }

@@ -94,9 +94,9 @@ namespace MediaPortal.Utils.Web
     /// Deletes a cached page.
     /// </summary>
     /// <param name="pageUri">The page URI.</param>
-    public void DeleteCachePage(Uri pageUri)
+    public void DeleteCachePage(HTTPRequest page)
     {
-      string file = GetCacheFileName(pageUri);
+      string file = GetCacheFileName(page);
 
       if (System.IO.File.Exists(file))
         System.IO.File.Delete(file);
@@ -107,11 +107,11 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     /// <param name="pageUri">The page URI.</param>
     /// <returns>bool - true if the page is in the cache</returns>
-    public bool LoadPage(Uri pageUri)
+    public bool LoadPage(HTTPRequest page)
     {
       if (_cacheMode == Mode.Enabled)
       {
-        if (LoadCacheFile(GetCacheFileName(pageUri)))
+        if (LoadCacheFile(GetCacheFileName(page)))
           return true;
       }
       return false;
@@ -122,10 +122,10 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     /// <param name="pageUri">The page URI.</param>
     /// <param name="strSource">The HTML source.</param>
-    public void SavePage(Uri pageUri, string strSource)
+    public void SavePage(HTTPRequest page, string strSource)
     {
       if (_cacheMode != Mode.Disabled)
-        SaveCacheFile(GetCacheFileName(pageUri), strSource);
+        SaveCacheFile(GetCacheFileName(page), strSource);
     }
 
     /// <summary>
@@ -178,11 +178,16 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     /// <param name="Page">The page.</param>
     /// <returns>filename</returns>
-    static private string GetCacheFileName(Uri Page)
+    static private string GetCacheFileName(HTTPRequest Page)
     {
-      uint hash = (uint)Page.GetHashCode();
+      uint gethash = (uint)Page.Uri.GetHashCode();
 
-      return CACHE_DIR + "/" + Page.Host + "_" + hash.ToString() + ".html";
+      if (Page.PostQuery == null || Page.PostQuery == string.Empty)
+        return CACHE_DIR + "/" + Page.Host + "_" + gethash.ToString() + ".html";
+
+      uint posthash = (uint)Page.PostQuery.GetHashCode();
+
+      return CACHE_DIR + "/" + Page.Host + "_" + gethash.ToString() + "_" + posthash.ToString() + ".html";
     }
     #endregion
   }

@@ -140,8 +140,8 @@ namespace MediaPortal.WebEPG
           _siteTimeZone = null;
         }
       }
-      
-      if(_siteTimeZone == null)
+
+      if (_siteTimeZone == null)
       {
         _log.Info(LogType.WebEPG, "WebEPG: No site TimeZone, using Local: {0}", TimeZone.CurrentTimeZone.StandardName);
         _siteTimeZone = new WorldTimeZone(TimeZone.CurrentTimeZone.StandardName);
@@ -306,9 +306,9 @@ namespace MediaPortal.WebEPG
         }
         else
         {
-          if (!_reqBuilder.HasList()) // < here
+          //if (_reqBuilder.HasList()) // < here
             break;
-          _reqBuilder.AddDays(_timeControl.GrabDay);
+          //_reqBuilder.AddDays(_timeControl.GrabDay);
         }
       }
 
@@ -483,7 +483,7 @@ namespace MediaPortal.WebEPG
       {
         _log.Info(LogType.WebEPG, "WebEPG: Listing Count {0}", listingCount);
 
-        if (_reqBuilder.IsMaxListing(listingCount) || !_reqBuilder.IsLastPage(listingCount))
+        if (_reqBuilder.IsMaxListing(listingCount) || !_reqBuilder.IsLastPage())
           bMore = true;
 
         _discarded = 0;
@@ -500,7 +500,7 @@ namespace MediaPortal.WebEPG
         }
 
         _log.Debug(LogType.WebEPG, "WebEPG: Program Count ({0}), Listing Count ({1}), Discard Count ({2})", programCount, listingCount, _discarded);
-        if(programCount < (listingCount - _discarded))
+        if (programCount < (listingCount - _discarded))
           _log.Warn(LogType.WebEPG, "WebEPG: Program Count ({0}) < Listing Count ({1}) - Discard Count ({2}), possible template error", programCount, listingCount, _discarded);
 
         if (_timeControl.GrabDay > _maxGrabDays) //_GrabDay > _maxGrabDays)

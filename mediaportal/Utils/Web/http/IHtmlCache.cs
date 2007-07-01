@@ -62,21 +62,21 @@ namespace MediaPortal.Utils.Web
     /// Deletes a cached page.
     /// </summary>
     /// <param name="pageUri">The page URI.</param>
-    void DeleteCachePage(Uri pageUri);
+    void DeleteCachePage(HTTPRequest page);
 
     /// <summary>
     /// Loads a page from cache.
     /// </summary>
     /// <param name="pageUri">The page URI.</param>
     /// <returns>bool - true if the page is in the cache</returns>
-		bool LoadPage(Uri pageUri);
+    bool LoadPage(HTTPRequest page);
 
     /// <summary>
     /// Saves a page to the cache.
     /// </summary>
     /// <param name="pageUri">The page URI.</param>
     /// <param name="strSource">The HTML source.</param>
-		void SavePage(Uri pageUri, string strSource);
+    void SavePage(HTTPRequest page, string strSource);
 
     /// <summary>
     /// Gets the page source of the current loaded page.

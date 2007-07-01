@@ -144,24 +144,36 @@ namespace MediaPortal.Utils.Web
     {
       int index = 0;
       int nesting = 0;
+      bool comment = false;
 
       if (strSource[StartPos] == '<')
         index++;
+      if (strSource[StartPos + index] == '!')
+        comment = true;
 
       while (StartPos + index < strSource.Length)
       {
-        if (strSource[StartPos + index] == '<')
+        if (strSource[StartPos + index] == '<' && !comment)
           nesting++;
         if (strSource[StartPos + index] == '>')
         {
-          if (nesting > 0)
-          {
-            nesting--;
-          }
-          else
+          if (comment && strSource[StartPos + index - 1] == '-')
           {
             index++;
             break;
+          }
+
+          if (!comment)
+          {
+            if (nesting > 0)
+            {
+              nesting--;
+            }
+            else
+            {
+              index++;
+              break;
+            }
           }
         }
         index++;

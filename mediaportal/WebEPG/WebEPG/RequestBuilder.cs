@@ -142,9 +142,9 @@ namespace MediaPortal.WebEPG
       return false;
     }
 
-    public bool IsLastPage(int count)
+    public bool IsLastPage()
     {
-      if (_offset + _data.PageStart == _data.PageEnd || !IsMaxListing(count))
+      if (_offset + _data.PageStart == _data.PageEnd)
         return true;
 
       return false;

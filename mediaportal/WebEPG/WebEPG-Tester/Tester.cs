@@ -327,9 +327,9 @@ namespace MediaPortal.EPG.WebEPGTester
 
     private void bRun_Click(object sender, EventArgs e)
     {
-      ResetImages(tvGrabbers.TopNode);
+      ResetImages(tvGrabbers.Nodes[0]);
       _testList = new List<TreeNode>();
-      GetTestList(tvGrabbers.TopNode);
+      GetTestList(tvGrabbers.Nodes[0]);
 
       ChannelsList config = new ChannelsList(_webepgDir);
 
