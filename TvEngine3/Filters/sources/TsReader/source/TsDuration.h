@@ -12,15 +12,21 @@ public:
   void SetFileReader(FileReader* reader);
 	void OnTsPacket(byte* tsPacket);
   void UpdateDuration();
+  void SetVideoPid(int pid);
+  int  GetPid();
   CRefTime Duration();
   CPcr     StartPcr();
   CPcr     EndPcr();
-  void     Set(CPcr& startPcr, CPcr& endPcr);
+  CPcr     MaxPcr();
+  void     Set(CPcr& startPcr, CPcr& endPcr, CPcr& maxPcr);
 private:
-  int m_pid;
-	FileReader* m_reader;
-  CPcr     m_startPcr;
-  CPcr     m_endPcr;
-  bool m_bSearchStart;
-  bool m_bSearchEnd;
+  int          m_pid;
+  int          m_videoPid;
+	FileReader*  m_reader;
+  CPcr         m_startPcr;
+  CPcr         m_endPcr;
+  CPcr         m_maxPcr;
+  bool         m_bSearchStart;
+  bool         m_bSearchEnd;
+  bool         m_bSearchMax;
 };

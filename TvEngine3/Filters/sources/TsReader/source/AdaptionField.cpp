@@ -53,7 +53,7 @@ CAdaptionField::~CAdaptionField(void)
 
 void CAdaptionField::Decode(CTsHeader& header,byte* tsPacket)
 {
-  if (header.PayLoadOnly() || tsPacket[ADAPTION_FIELD_LENGTH_OFFSET] < 7) 
+  if (header.PayLoadOnly() || tsPacket[ADAPTION_FIELD_LENGTH_OFFSET] < 7 ) 
   {
      DiscontinuityIndicator=false;
      RandomAccessInidicator=false;

@@ -18,4 +18,5 @@ private:
   FileReader* m_reader;
   CTsDuration& m_duration;
   CPcr m_pcrFound;
+  int m_seekPid;
 };

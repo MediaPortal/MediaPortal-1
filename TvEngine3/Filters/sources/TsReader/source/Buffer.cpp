@@ -46,8 +46,17 @@ bool CBuffer::MediaTime(CRefTime &reftime)
 {
   if (!m_pts.IsValid) return false;
 
-  if (m_startPcr>m_pts )
+  if (m_startPcr > m_pts )
   {
+    //pcr rolled over    
+    CPcr pts=m_pts;
+    double d1=( m_endPcr.ToClock() - m_startPcr.ToClock() );
+    double d2=m_pts.ToClock();
+    d2+=d1;
+    d2*=1000.0f;
+    CRefTime mediaTime((LONG)d2);
+    reftime=mediaTime;
+    return true;
     return false;
   }
   CPcr pts=m_pts;
@@ -85,10 +94,11 @@ void CBuffer::SetPts(CPcr& pts)
 }
 
 
-void CBuffer::SetPcr(CPcr& pcr,CPcr& startPcr)
+void CBuffer::SetPcr(CPcr& pcr,CPcr& startPcr,CPcr& endPcr)
 {
   m_pcr=pcr;
   m_startPcr=startPcr;
+  m_endPcr=endPcr;
 }
 
 CPcr& CBuffer::Pcr()

@@ -75,4 +75,5 @@ private:
   CTsReaderFilter& m_filter;
   int m_iAudioStream;
   int m_audioPid;
+  bool m_bScanning;
 };

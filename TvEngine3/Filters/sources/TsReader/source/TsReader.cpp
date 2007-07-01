@@ -321,11 +321,11 @@ STDMETHODIMP CTsReaderFilter::Pause()
         LogDebug("  -- Pause()->client started");
 
         double duration=m_rtspClient.Duration()/1000.0f;
-        CPcr pcrstart,pcrEnd;
+        CPcr pcrstart,pcrEnd,pcrMax;
         pcrstart=m_duration.StartPcr();
         duration+=pcrstart.ToClock();
         pcrEnd.FromClock(duration);
-        m_duration.Set( pcrstart, pcrEnd);
+        m_duration.Set( pcrstart, pcrEnd,pcrMax);
       }
       else
       {
@@ -397,11 +397,11 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     LogDebug("close rtsp:%s", url);
     m_rtspClient.Stop();
     double duration=m_rtspClient.Duration()/1000.0f;
-    CPcr pcrstart,pcrEnd;
+    CPcr pcrstart,pcrEnd,pcrMax;
     pcrstart=m_duration.StartPcr();
     duration+=pcrstart.ToClock();
     pcrEnd.FromClock(duration);
-    m_duration.Set( pcrstart, pcrEnd);
+    m_duration.Set( pcrstart, pcrEnd,pcrMax);
   }
   else
   {
@@ -428,6 +428,11 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     m_duration.SetFileReader(m_fileDuration);
     m_duration.UpdateDuration();
 
+    float milli=m_duration.Duration().Millisecs();
+    milli/=1000.0;
+    LogDebug("start:%x end:%x %f", 
+        (DWORD)m_duration.StartPcr().PcrReferenceBase,(DWORD) m_duration.EndPcr().PcrReferenceBase,
+        milli);
 	  m_fileReader->SetFilePointer(0LL,FILE_BEGIN);
     
 
@@ -518,11 +523,11 @@ void CTsReaderFilter::Seek(CRefTime& seekTime)
     m_tickCount=GetTickCount();
 
     double duration=m_rtspClient.Duration()/1000.0f;
-    CPcr pcrstart,pcrEnd;
+    CPcr pcrstart,pcrEnd,pcrMax;
     pcrstart=m_duration.StartPcr();
     duration+=pcrstart.ToClock();
     pcrEnd.FromClock(duration);
-    m_duration.Set( pcrstart, pcrEnd);
+    m_duration.Set( pcrstart, pcrEnd,pcrMax);
   }
 }
 bool CTsReaderFilter::IsFilterRunning()
@@ -576,12 +581,13 @@ void CTsReaderFilter::ThreadProc()
     {
       CTsDuration duration;
       duration.SetFileReader(m_fileDuration);
+      duration.SetVideoPid(m_duration.GetPid());
       duration.UpdateDuration();
 			if (duration.Duration().Millisecs()>0)
 			{
 				if (duration.Duration() != m_duration.Duration())
 				{
-					m_duration.Set(duration.StartPcr(), duration.EndPcr());
+          m_duration.Set(duration.StartPcr(), duration.EndPcr(), duration.MaxPcr());
 					if (m_State == State_Running)
 					{
 						float secs=(float)duration.Duration().Millisecs();
@@ -599,11 +605,11 @@ void CTsReaderFilter::ThreadProc()
 	    DWORD ticks=(GetTickCount()-m_tickCount)/1000;
       double duration=m_rtspClient.Duration()/1000.0f;
       duration+=ticks;
-      CPcr pcrstart,pcrEnd;
+      CPcr pcrstart,pcrEnd,pcrMax;
       pcrstart=m_duration.StartPcr();
       duration+=pcrstart.ToClock();
       pcrEnd.FromClock(duration);
-      m_duration.Set( pcrstart, pcrEnd);
+      m_duration.Set( pcrstart, pcrEnd,pcrMax);
       
       //sprintf(sztmp,"%f %d %f\n", (m_rtspClient.Duration()/1000.0f), ticks, (((float)m_duration.Duration().Millisecs())/1000.0f) );
       //::OutputDebugStringA(sztmp);

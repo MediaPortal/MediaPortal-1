@@ -30,7 +30,7 @@ public:
 	byte*  Data();
 	void   Add(CBuffer* pBuffer);    
   void   Add(byte* data, int len);
-  void   SetPcr(CPcr& pcr,CPcr& startpcr);
+  void   SetPcr(CPcr& pcr,CPcr& startpcr,CPcr& endPcr);
   void   SetPts(CPcr& pts);
   void   SetLength(int len);
   CPcr&  Pcr();
@@ -39,6 +39,7 @@ private:
 	CPcr  m_pcr;
 	CPcr  m_pts;
 	CPcr  m_startPcr;
+	CPcr  m_endPcr;
 	byte* m_pBuffer;
 	int   m_iLength;
 };

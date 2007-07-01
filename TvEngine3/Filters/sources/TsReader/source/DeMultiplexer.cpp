@@ -45,6 +45,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_pCurrentSubtitleBuffer = new CBuffer();
   m_iAudioStream=0;
   m_audioPid=0;
+  m_bScanning=false;
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -281,6 +282,7 @@ CBuffer* CDeMultiplexer::GetAudio()
 
 void CDeMultiplexer:: Start()
 {
+  m_bScanning=true;
   DWORD dwBytesProcessed=0;
   while (ReadFromFile())
   {
@@ -288,11 +290,14 @@ void CDeMultiplexer:: Start()
     {
       m_reader->SetFilePointer(0,FILE_BEGIN);
       Flush();
-      m_streamPcr=m_duration.StartPcr();
+      m_streamPcr.Reset();
+      m_bScanning=false;
       return;
     }
     dwBytesProcessed+=32712;
   }
+  m_streamPcr.Reset();
+  m_bScanning=false;
 }
 
 bool CDeMultiplexer::ReadFromFile()
@@ -324,6 +329,7 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   if (header.Pid==0) return;
   if (header.TransportError) return;
 
+  
   //CAdaptionField field;
   //field.Decode(header,tsPacket);
   //if (field.Pcr.IsValid)
@@ -337,7 +343,7 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
     field.Decode(header,tsPacket);
     if (field.Pcr.IsValid)
     {
-      m_duration.Set(field.Pcr,field.Pcr);
+      m_duration.Set(field.Pcr,field.Pcr,field.Pcr);
     }
   }
   if (header.Pid==m_pids.PcrPid)
@@ -353,6 +359,8 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   {
     return;
   }
+  if (m_bScanning) return;
+
   FillSubtitle(header,tsPacket);
   FillAudio(header,tsPacket);
   FillVideo(header,tsPacket);
@@ -397,7 +405,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         }
 				if (pos>0 && pos < 188)
 				{
-					m_pCurrentAudioBuffer->SetPcr(m_streamPcr,m_duration.StartPcr());
+          m_pCurrentAudioBuffer->SetPcr(m_streamPcr,m_duration.StartPcr(),m_duration.MaxPcr());
 					m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos);
 				}
       }
@@ -455,7 +463,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
           }
 					if (pos>0 && pos < 188)
 					{
-						m_pCurrentVideoBuffer->SetPcr(m_streamPcr,m_duration.StartPcr());
+						m_pCurrentVideoBuffer->SetPcr(m_streamPcr,m_duration.StartPcr(),m_duration.MaxPcr());
 						m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos);
 					}
         }
@@ -509,7 +517,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
               m_pCurrentSubtitleBuffer->SetPts(pts);
             }
           }
-          m_pCurrentSubtitleBuffer->SetPcr(m_streamPcr,m_duration.StartPcr());
+          m_pCurrentSubtitleBuffer->SetPcr(m_streamPcr,m_duration.StartPcr(),m_duration.MaxPcr());
           m_pCurrentSubtitleBuffer->Add(tsPacket,188);
         }
         else if (m_pCurrentSubtitleBuffer->Length()>0)
@@ -566,4 +574,12 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   LogDebug(" Pmt      pid:%x ",m_pids.PmtPid);
   LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid);
 
+  if (m_pids.PcrPid>0x1)
+  {
+    m_duration.SetVideoPid(m_pids.PcrPid);
+  }
+  else if (m_pids.VideoPid>0x1)
+  {
+    m_duration.SetVideoPid(m_pids.VideoPid);
+  }
 }

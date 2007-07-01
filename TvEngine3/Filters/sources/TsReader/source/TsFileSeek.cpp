@@ -24,12 +24,15 @@ void CTsFileSeek::Seek(CRefTime refTime)
   float percent=seekPos/duration;
   __int64 filePos=m_reader->GetFileSize()*percent;
   seekPos/=1000.0f;
-  LogDebug("seek to %f", seekPos);
 
+  m_seekPid=m_duration.GetPid();
+  LogDebug("seek to %f filepos:%x pid:%x", seekPos,(DWORD)filePos, m_seekPid);
   byte buffer[188*10];
   int state=0;
   while (true)
   {
+    if (filePos<0) return;
+    if (filePos+sizeof(buffer) > m_reader->GetFileSize()) return;
     m_reader->SetFilePointer(filePos,FILE_BEGIN);
     DWORD dwBytesRead;
     if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
@@ -40,24 +43,26 @@ void CTsFileSeek::Seek(CRefTime refTime)
     {
       return;
     }
+    m_pcrFound.Reset();
     OnRawData(buffer,dwBytesRead);
     if (m_pcrFound.IsValid)
     {
+      double clock=m_pcrFound.ToClock();
       if (state==0)
       {
-        if (m_pcrFound.ToClock() < seekPos)
+        if (clock < seekPos)
         {
           state=1;
           filePos+=sizeof(buffer);
         }
-        else if (m_pcrFound.ToClock() > seekPos)
+        else if (clock > seekPos)
         {
           state=-1;
           filePos-=sizeof(buffer);
         }
         else
         {
-            LogDebug(" got %f", m_pcrFound.ToClock());
+          LogDebug(" got %f", clock);
           return;
         }
       }
@@ -65,18 +70,18 @@ void CTsFileSeek::Seek(CRefTime refTime)
       {
         if (state==1)
         {
-          if (m_pcrFound.ToClock() >= seekPos)
+          if (clock >= seekPos)
           {
-            LogDebug(" got %f", m_pcrFound.ToClock());
+            LogDebug(" got %f", clock);
             return;
           }
           filePos+=sizeof(buffer);
         }
         else if (state==-1)
         {
-          if (m_pcrFound.ToClock() < seekPos)
+          if (clock < seekPos)
           {
-            LogDebug(" got %f", m_pcrFound.ToClock());
+            LogDebug(" got %f", clock);
             return;
           }
           filePos-=sizeof(buffer);
@@ -85,7 +90,14 @@ void CTsFileSeek::Seek(CRefTime refTime)
     }
     else
     {
-      filePos+=sizeof(buffer);
+      if (state<0)
+      {
+        filePos-=sizeof(buffer);
+      }
+      else
+      {
+        filePos+=sizeof(buffer);
+      }
     }
   }
 }
@@ -98,10 +110,35 @@ void CTsFileSeek::OnTsPacket(byte* tsPacket)
   field.Decode(header,tsPacket);
   if (field.Pcr.IsValid)
   {
-    m_pcrFound=field.Pcr;
-    double d1=m_pcrFound.ToClock();
-    double start=m_duration.StartPcr().ToClock();
-    d1-=start;
-    m_pcrFound.FromClock(d1);
+    if ( (header.Pid==m_seekPid) || (m_seekPid<0) )
+    {
+      if (m_duration.MaxPcr().IsValid)
+      {
+        if (field.Pcr.ToClock() <=m_duration.EndPcr().ToClock())
+        {
+          m_pcrFound=field.Pcr;
+          double d1=m_pcrFound.ToClock();
+          double start=m_duration.StartPcr().ToClock();
+          d1-=start;
+          m_pcrFound.FromClock(d1);
+        }
+        else
+        {
+          m_pcrFound=field.Pcr;
+          double d1=m_pcrFound.ToClock();
+          double start=m_duration.MaxPcr().ToClock()- m_duration.StartPcr().ToClock();
+          d1+=start;
+          m_pcrFound.FromClock(d1);
+        }
+      }
+      else
+      {
+        m_pcrFound=field.Pcr;
+        double d1=m_pcrFound.ToClock();
+        double start=m_duration.StartPcr().ToClock();
+        d1-=start;
+        m_pcrFound.FromClock(d1);
+      }
+    }
   }
 }

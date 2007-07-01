@@ -25,6 +25,7 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CTsDuration::CTsDuration()
 {
+  m_videoPid=-1;
 }
 
 CTsDuration::~CTsDuration(void)
@@ -37,17 +38,30 @@ void CTsDuration::SetFileReader(FileReader* reader)
   m_reader=reader;
 }
 
-void CTsDuration::Set(CPcr& startPcr, CPcr& endPcr)
+void CTsDuration::Set(CPcr& startPcr, CPcr& endPcr, CPcr& maxPcr)
 {
   m_startPcr=startPcr;
   m_endPcr=endPcr;
+  m_maxPcr=maxPcr;
+}
+  
+void CTsDuration::SetVideoPid(int pid)
+{
+  m_videoPid=pid;
+}
 
+int CTsDuration::GetPid()
+{
+  if (m_videoPid>0) return m_videoPid;
+  return m_pid;
 }
 void CTsDuration::UpdateDuration()
 {
   m_bSearchStart=true;
   m_bSearchEnd=false;
+  m_bSearchMax=false;
   m_startPcr.Reset();
+  m_maxPcr.Reset();
   m_reader->SetFilePointer(0,FILE_BEGIN);
   byte buffer[32712];
   while (!m_startPcr.IsValid)
@@ -76,17 +90,40 @@ void CTsDuration::UpdateDuration()
     m_reader->SetFilePointer(fileSize-offset,FILE_BEGIN);
     if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
     {
-      return;
+      break;
     }
     if (dwBytesRead==0) 
     {
-      if (m_endPcr.IsValid)
-      {
-        return;
-      }
+      break;
     }
     OnRawData(buffer,dwBytesRead);
     offset+=sizeof(buffer);
+  }
+  if (m_endPcr.ToClock() < m_startPcr.ToClock())
+  {
+    //PCR rollover
+    m_bSearchMax=true;
+    m_bSearchEnd=false;
+    offset=sizeof(buffer);
+    while (!m_maxPcr.IsValid)
+    {
+      DWORD dwBytesRead;
+      m_reader->SetFilePointer(fileSize-offset,FILE_BEGIN);
+      if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
+      {
+        break;
+      }
+      if (dwBytesRead==0) 
+      {
+        break;
+      }
+      OnRawData(buffer,dwBytesRead);
+      offset+=sizeof(buffer);
+    }
+  }
+  else
+  {
+    m_maxPcr=m_endPcr;
   }
 }
 
@@ -99,25 +136,47 @@ void CTsDuration::OnTsPacket(byte* tsPacket)
   {
     if (m_bSearchStart)
     {
-      m_pid=header.Pid;
-      m_startPcr=field.Pcr;
-      m_bSearchStart=false;
+      if ( (m_videoPid>0 && header.Pid==m_videoPid) || m_videoPid<0)
+      {
+        m_pid=header.Pid;
+        m_startPcr=field.Pcr;
+        m_bSearchStart=false;
+      }
     }
     if (m_bSearchEnd && m_pid==header.Pid)
     {
       m_endPcr=field.Pcr;
+    }
+    if (m_bSearchMax && m_pid==header.Pid)
+    {
+      if (field.Pcr.ToClock() >  m_startPcr.ToClock())
+      {
+        m_maxPcr=field.Pcr;
+      }
     }
   }
 }
 
 CRefTime CTsDuration::Duration()
 {
-  double duration= m_endPcr.ToClock() - m_startPcr.ToClock();
-  CPcr pcr;
-  pcr.FromClock(duration);
-  LogDebug("Duration:%f %s", duration, pcr.ToString());
-  CRefTime refTime((LONG)(duration*1000.0f));
-  return refTime;
+  if (m_maxPcr.IsValid)
+  {
+    double duration= m_endPcr.ToClock() + (m_maxPcr.ToClock()- m_startPcr.ToClock());
+    CPcr pcr;
+    pcr.FromClock(duration);
+    //LogDebug("Duration:%f %s", duration, pcr.ToString());
+    CRefTime refTime((LONG)(duration*1000.0f));
+    return refTime;
+  }
+  else
+  {
+    double duration= m_endPcr.ToClock() - m_startPcr.ToClock();
+    CPcr pcr;
+    pcr.FromClock(duration);
+    //LogDebug("Duration:%f %s", duration, pcr.ToString());
+    CRefTime refTime((LONG)(duration*1000.0f));
+    return refTime;
+  }
 }
 
 CPcr CTsDuration::StartPcr()
@@ -128,4 +187,8 @@ CPcr CTsDuration::StartPcr()
 CPcr CTsDuration::EndPcr()
 {
   return m_endPcr;
+}
+CPcr CTsDuration::MaxPcr()
+{
+  return m_maxPcr;
 }
