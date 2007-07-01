@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="fr" availableDays="9" timezone="" />
+  <Info language="fr" availableDays="9" timezone="" version="2.0" />
   <Channels>
     <Channel id="13e Rue" siteId="1" />
     <Channel id="AB 1" siteId="2" />

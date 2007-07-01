@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="0" timezone="" />
+  <Info availableDays="0" timezone="" version="2.0" />
   <Channels>
     <Channel id="tvp1.pl" siteId="TVP1" />
     <Channel id="tvp2.pl" siteId="TVP2" />

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="da" availableDays="14" timezone="" />
+  <Info language="da" availableDays="14" timezone="" version="2.0" />
   <Channels>
     <Channel id="senado.gov.br" siteId="84" />
   </Channels>

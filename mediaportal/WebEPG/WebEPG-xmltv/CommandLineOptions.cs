@@ -10,7 +10,8 @@ namespace MediaPortal.EPG.WebEPGxmltv
     public enum Option
     {
       webepg,
-      xmltv
+      xmltv,
+      config
     }
     #endregion
 

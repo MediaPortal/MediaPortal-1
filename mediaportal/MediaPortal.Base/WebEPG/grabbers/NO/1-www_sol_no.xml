@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="no" availableDays="12" timezone="W. Europe Standard Time" />
+  <Info language="no" availableDays="12" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
     <Channel id="sportn@viasat.no" siteId="sportn" />  
     <Channel id="film@tv2.no" siteId="tv2film" />  

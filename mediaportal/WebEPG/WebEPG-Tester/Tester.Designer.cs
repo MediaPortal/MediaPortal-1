@@ -41,11 +41,11 @@ namespace MediaPortal.EPG.WebEPGTester
       this.rbNumb = new System.Windows.Forms.RadioButton();
       this.rbAllDays = new System.Windows.Forms.RadioButton();
       this.gbView = new System.Windows.Forms.GroupBox();
+      this.bScan = new System.Windows.Forms.Button();
+      this.label2 = new System.Windows.Forms.Label();
+      this.tbGrabberDir = new System.Windows.Forms.TextBox();
       this.gbLog = new System.Windows.Forms.GroupBox();
       this.tbLog = new System.Windows.Forms.TextBox();
-      this.tbGrabberDir = new System.Windows.Forms.TextBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.bScan = new System.Windows.Forms.Button();
       this.gbSetup.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numDays)).BeginInit();
       this.gbView.SuspendLayout();
@@ -54,6 +54,8 @@ namespace MediaPortal.EPG.WebEPGTester
       // 
       // tvGrabbers
       // 
+      this.tvGrabbers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.tvGrabbers.CheckBoxes = true;
       this.tvGrabbers.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.tvGrabbers.ImageIndex = 0;
@@ -77,6 +79,7 @@ namespace MediaPortal.EPG.WebEPGTester
       // 
       // cbCache
       // 
+      this.cbCache.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.cbCache.AutoSize = true;
       this.cbCache.Checked = true;
       this.cbCache.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -89,6 +92,7 @@ namespace MediaPortal.EPG.WebEPGTester
       // 
       // bRun
       // 
+      this.bRun.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this.bRun.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.bRun.Location = new System.Drawing.Point(279, 45);
       this.bRun.Name = "bRun";
@@ -100,6 +104,8 @@ namespace MediaPortal.EPG.WebEPGTester
       // 
       // gbSetup
       // 
+      this.gbSetup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.gbSetup.Controls.Add(this.label1);
       this.gbSetup.Controls.Add(this.numDays);
       this.gbSetup.Controls.Add(this.rbFirstLast);
@@ -180,6 +186,8 @@ namespace MediaPortal.EPG.WebEPGTester
       // 
       // gbView
       // 
+      this.gbView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.gbView.Controls.Add(this.bScan);
       this.gbView.Controls.Add(this.tvGrabbers);
       this.gbView.Controls.Add(this.label2);
@@ -191,8 +199,40 @@ namespace MediaPortal.EPG.WebEPGTester
       this.gbView.TabStop = false;
       this.gbView.Text = "Sites / Channels";
       // 
+      // bScan
+      // 
+      this.bScan.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+      this.bScan.Location = new System.Drawing.Point(237, 515);
+      this.bScan.Name = "bScan";
+      this.bScan.Size = new System.Drawing.Size(63, 19);
+      this.bScan.TabIndex = 12;
+      this.bScan.Text = "Scan";
+      this.bScan.UseVisualStyleBackColor = true;
+      this.bScan.Click += new System.EventHandler(this.bScan_Click);
+      // 
+      // label2
+      // 
+      this.label2.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(6, 517);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(51, 13);
+      this.label2.TabIndex = 11;
+      this.label2.Text = "Location:";
+      // 
+      // tbGrabberDir
+      // 
+      this.tbGrabberDir.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+      this.tbGrabberDir.Location = new System.Drawing.Point(63, 514);
+      this.tbGrabberDir.Name = "tbGrabberDir";
+      this.tbGrabberDir.Size = new System.Drawing.Size(167, 20);
+      this.tbGrabberDir.TabIndex = 10;
+      // 
       // gbLog
       // 
+      this.gbLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.gbLog.Controls.Add(this.tbLog);
       this.gbLog.Location = new System.Drawing.Point(324, 93);
       this.gbLog.Name = "gbLog";
@@ -203,6 +243,9 @@ namespace MediaPortal.EPG.WebEPGTester
       // 
       // tbLog
       // 
+      this.tbLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tbLog.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.tbLog.Location = new System.Drawing.Point(6, 19);
       this.tbLog.Multiline = true;
@@ -210,32 +253,6 @@ namespace MediaPortal.EPG.WebEPGTester
       this.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
       this.tbLog.Size = new System.Drawing.Size(395, 427);
       this.tbLog.TabIndex = 0;
-      // 
-      // tbGrabberDir
-      // 
-      this.tbGrabberDir.Location = new System.Drawing.Point(63, 514);
-      this.tbGrabberDir.Name = "tbGrabberDir";
-      this.tbGrabberDir.Size = new System.Drawing.Size(167, 20);
-      this.tbGrabberDir.TabIndex = 10;
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(6, 517);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(51, 13);
-      this.label2.TabIndex = 11;
-      this.label2.Text = "Location:";
-      // 
-      // bScan
-      // 
-      this.bScan.Location = new System.Drawing.Point(237, 515);
-      this.bScan.Name = "bScan";
-      this.bScan.Size = new System.Drawing.Size(63, 19);
-      this.bScan.TabIndex = 12;
-      this.bScan.Text = "Scan";
-      this.bScan.UseVisualStyleBackColor = true;
-      this.bScan.Click += new System.EventHandler(this.bScan_Click);
       // 
       // fTester
       // 

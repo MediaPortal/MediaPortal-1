@@ -113,6 +113,11 @@ namespace MediaPortal.WebEPG
         return false;
       }
 
+      if (_grabber.Info.Version == null || _grabber.Info.Version == string.Empty)
+        _log.Warn(LogType.WebEPG, "WebEPG: Unknown Version");
+      else
+        _log.Info(LogType.WebEPG, "WebEPG: Version: {0}", _grabber.Info.Version);
+
       if (_grabber.Listing.SearchParameters == null)
         _grabber.Listing.SearchParameters = new RequestData();
 

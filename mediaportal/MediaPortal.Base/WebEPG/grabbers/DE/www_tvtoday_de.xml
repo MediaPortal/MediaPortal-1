@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="de" availableDays="7" timezone="W. Europe Standard Time" />
+  <Info language="de" availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
     <!-- Haupt -->
     <Channel id="ard.de" siteId="ARD" />

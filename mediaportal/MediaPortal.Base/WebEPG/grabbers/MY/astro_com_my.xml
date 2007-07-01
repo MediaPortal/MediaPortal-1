@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="7" />
+  <Info availableDays="7" version="2.0" />
   <Channels>
     <Channel id="rtm1@rtm.net.my" siteId="M038" />
     <Channel id="rtm2@rtm.net.my" siteId="M039" />

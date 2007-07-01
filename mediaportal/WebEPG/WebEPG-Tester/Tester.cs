@@ -498,11 +498,20 @@ namespace MediaPortal.EPG.WebEPGTester
       FileInfo grabberLogFile = new FileInfo(channelDir + "\\grab.log");
       if (grabberLogFile.Exists)
       {
-        TextReader reader = new StreamReader(grabberLogFile.FullName);
+        try
+        {
+          FileStream file = grabberLogFile.OpenRead();
+          TextReader reader = new StreamReader(file);
 
-        tbLog.Text = reader.ReadToEnd();
+          tbLog.Text = reader.ReadToEnd();
 
-        reader.Close();
+          reader.Close();
+          file.Close();
+          file.Dispose();
+        }
+        catch (IOException)
+        {
+        }
       }
     }
     #endregion

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="en" availableDays="4" timezone="" />
+  <Info language="en" availableDays="4" timezone="" version="2.0" />
   <Channels>
     <Channel id="sbs@sbs.com.au" siteId="SBS" />
   </Channels>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="fi" availableDays="7" timezone="" />
+  <Info language="fi" availableDays="7" timezone="" version="2.0" />
   <Channels>
     <Channel id="tv1@yle.fi" siteId="1076152536046" />
     <Channel id="tv2@yle.fi" siteId="1076152536062" />

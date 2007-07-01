@@ -83,12 +83,15 @@ namespace MediaPortal.EPG.WebEPGxmltv
         else
           xmltvDirectory = webepgDirectory + "\\xmltv\\";
 
+        string configFile;
+        if (webepgArgs.IsOption(CommandLineOptions.Option.config))
+          configFile = webepgArgs.GetOption(CommandLineOptions.Option.config);
+        else
+          configFile = webepgDirectory + "\\WebEPG\\WebEPG.xml";
+
         _log.Info(LogType.WebEPG, "WebEPG: Using directories");
         _log.Info(LogType.WebEPG, " WebEPG - {0}", webepgDirectory);
         _log.Info(LogType.WebEPG, " xmltv  - {0}", xmltvDirectory);
-
-        string configFile = webepgDirectory + "\\WebEPG\\WebEPG.xml";
-
 
         // Create main class and import guide
         WebEPG epg = new WebEPG(configFile, xmltvDirectory, webepgDirectory);

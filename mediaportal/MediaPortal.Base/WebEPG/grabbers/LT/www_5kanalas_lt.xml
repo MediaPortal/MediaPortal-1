@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Grabber>
-  <Info language="lt" availableDays="3" timezone="E. Europe Standard Time" />
+  <Info language="lt" availableDays="3" timezone="E. Europe Standard Time" version="2.0" />
   <Channels>
     <Channel id="5kanalas.lt" siteId="" />
   </Channels>

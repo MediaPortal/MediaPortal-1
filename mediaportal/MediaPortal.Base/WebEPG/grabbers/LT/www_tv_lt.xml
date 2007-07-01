@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Grabber>
-  <Info language="lt" availableDays="1" timezone="" />
+  <Info language="lt" availableDays="1" timezone="" version="2.0" />
   <Channels>
     <Channel id="ltv@lrt.lt" siteId="30" />
     <Channel id="lnk.lt" siteId="26" />

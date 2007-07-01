@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="6" timezone="W. Europe Standard Time" />
+  <Info availableDays="6" timezone="W. Europe Standard Time" version="2.1.0" />
   <Channels>
     <Channel id="Rai 1" siteId="1" />
     <Channel id="Rai 2" siteId="3" />
@@ -10,7 +10,7 @@
     <Channel id="Rete 4" siteId="24" />
     <Channel id="La7" siteId="75" />
     <Channel id="All Music" siteId="72" />
-    <Channel id="MTV Italia" siteId="24" />
+    <Channel id="MTV Italia" siteId="73" />
   </Channels>
   <Listing type="Html">
     <Site url="http://spettacolo.alice.it/guidatv/cgi/index.cgi?tipo=3&amp;channel=[ID]&amp;day=[DD]/[MM]/[YYYY]" post="" external="false" encoding="" />
@@ -39,11 +39,11 @@
     </TemplateText>
         </SectionTemplate>
       </Template>
-      <Template name="Details">
+      <Template name="Details" start="&lt;div id=&quot;scheda-testo&quot;&gt;" end="&lt;tr&gt;&lt;td id=&quot;risult-scheda&quot;&gt;">
         <SectionTemplate tags="D">
           <TemplateText>
       &lt;div&gt;
-      &lt;#DESCRIPTION&gt;
+       &lt;z(&gt;&lt;#DESCRIPTION&gt;&lt;br&gt;&lt;/z)?&gt;
       &lt;br&gt;&lt;br&gt;
       &lt;b&gt;&lt;/b&gt;
       &lt;br&gt;

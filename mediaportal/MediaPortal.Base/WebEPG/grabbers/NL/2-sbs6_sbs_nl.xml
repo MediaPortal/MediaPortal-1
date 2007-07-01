@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="7" timezone="W. Europe Standard Time" />
+  <Info availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
     <Channel id="ned1@omroep.nl" siteId="1" />
     <Channel id="ned2@omroep.nl" siteId="2" />

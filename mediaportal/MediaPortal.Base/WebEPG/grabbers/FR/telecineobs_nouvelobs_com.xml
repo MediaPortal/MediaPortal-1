@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="fr" availableDays="5" timezone="W. Europe Standard Time" />
+  <Info language="fr" availableDays="5" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
     <Channel id="13emerue.fr" siteId="2" />
     <Channel id="3sat.de" siteId="3" />

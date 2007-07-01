@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="3" timezone="W. Europe Standard Time" />
+  <Info availableDays="3" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
     <Channel id="sf1@sfdrs.ch" siteId="1" />
     <Channel id="sf2@sfdrs.ch" siteId="2" />

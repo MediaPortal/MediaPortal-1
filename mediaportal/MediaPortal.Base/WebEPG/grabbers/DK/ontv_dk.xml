@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="da" availableDays="14" timezone="W. Europe Standard Time" />
+  <Info language="da" availableDays="14" timezone="W. Europe Standard Time" version="2.1.0" />
   <Channels>
     <Channel id="dr1@dr.dk" siteId="1" />
     <Channel id="dr2@dr.dk" siteId="2" />
@@ -43,7 +43,7 @@
     <Channel id="natureaction@viasat.dk" siteId="20" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://ontv.dk/?s=tv&amp;guide=&amp;kanal=[ID]&amp;date=[YYYY]-[MM]-[DD]" post="" external="false" encoding="" />
+    <Site url="http://ontv.dk/?s=tvguide_kanal&amp;guide=&amp;kanal=[ID]&amp;date=[YYYY]-[MM]-[DD]" post="" external="false" encoding="" />
     <Html>
       <Template name="default">
         <SectionTemplate tags="TP">

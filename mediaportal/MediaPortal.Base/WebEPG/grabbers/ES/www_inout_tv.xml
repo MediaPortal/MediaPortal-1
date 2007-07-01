@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="5" timezone="Romance Standard Time" />
+  <Info availableDays="5" timezone="Romance Standard Time" version="2.0" />
   <Channels>
     <Channel id="tve1@tve.es" siteId="21" />
   </Channels>

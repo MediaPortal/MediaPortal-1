@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="da" availableDays="7" timezone="W. Europe Standard Time" />
+  <Info language="da" availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
     <Channel id="dr1@dr.dk" siteId="dk1" />
     <Channel id="dr2@dr.dk" siteId="dk2" />
