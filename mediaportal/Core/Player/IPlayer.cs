@@ -28,7 +28,6 @@ using System.Windows.Forms;
 using System.Drawing;
 using MediaPortal.GUI.Library;
 
-
 namespace MediaPortal.Player
 {
   /// <summary>
@@ -177,7 +176,6 @@ namespace MediaPortal.Player
       set { }
     }
 
-
     /// <summary>
     /// Property to get/set the width of the video window
     /// </summary>
@@ -214,12 +212,12 @@ namespace MediaPortal.Player
       get { return 0; }
       set { }
     }
+
     public virtual int Height
     {
       get { return 0; }
       set { }
     }
-
 
     /// <summary>
     /// Property to put video window fullscreen or preview mode
@@ -238,7 +236,6 @@ namespace MediaPortal.Player
       get { return 1; }
       set { }
     }
-
 
     /// <summary>
     /// Property to set the volume (0%-100%)
@@ -272,7 +269,6 @@ namespace MediaPortal.Player
     {
       get { return 0; }
     }
-
 
     /// <summary>
     /// Method to pause or unpause
@@ -345,7 +341,6 @@ namespace MediaPortal.Player
       get { return ""; }
     }
 
-
     /// <summary>
     /// Property to get/set the zoom/AR mode
     /// </summary>
@@ -389,7 +384,6 @@ namespace MediaPortal.Player
     {
     }
 
-
     /// <summary>
     /// 
     /// </summary>
@@ -400,7 +394,6 @@ namespace MediaPortal.Player
       return false;
     }
 
-
     /// <summary>
     /// 
     /// </summary>
@@ -409,7 +402,6 @@ namespace MediaPortal.Player
     {
       return false;
     }
-
 
     /// <summary>
     /// Property which should return true if the player wants to show a video window
@@ -452,7 +444,6 @@ namespace MediaPortal.Player
       return Strings.Unknown;
     }
 
-
     /// <summary>
     /// Property to get the total number of subtitle streams
     /// </summary>
@@ -478,6 +469,13 @@ namespace MediaPortal.Player
       return Strings.Unknown;
     }
 
+    /// <summary>
+    /// Property to get chapters
+    /// </summary>
+    public virtual double[] Chapters
+    {
+      get { return null; }
+    }
 
     /// <summary>
     /// Method which is called by MP if the player needs to update its video window
@@ -579,7 +577,6 @@ namespace MediaPortal.Player
       get { return false; }
     }
 
-
     /// <summary>
     /// Property which indicates if the file is a tv timeshifting file or not
     /// </summary>
@@ -602,12 +599,10 @@ namespace MediaPortal.Player
     }
 
     #region IDisposable Members
-
     public virtual void Release()
     {
       // TODO:  Add IPlayer.Dispose implementation
     }
-
     #endregion
   }
 }

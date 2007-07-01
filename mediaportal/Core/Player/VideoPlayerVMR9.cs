@@ -161,14 +161,14 @@ namespace MediaPortal.Player
         vobSub = (IDirectVobSub)vob;
         if (vobSub != null)
         {
-          string defaultLanguage;
+          //string defaultLanguage;
           using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
           {
             string strTmp = "";
             string strFont = xmlreader.GetValueAsString("subtitles", "fontface", "Arial");
             int iFontSize = xmlreader.GetValueAsInt("subtitles", "fontsize", 18);
             bool bBold = xmlreader.GetValueAsBool("subtitles", "bold", true);
-            defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
+            //defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
             strTmp = xmlreader.GetValueAsString("subtitles", "color", "ffffff");
             long iColor = Convert.ToInt64(strTmp, 16);
             int iShadow = xmlreader.GetValueAsInt("subtitles", "shadow", 5);
@@ -188,17 +188,9 @@ namespace MediaPortal.Player
             if (iShadow > 0) fShadow = true;
             int res = vobSub.put_TextSettings(logFont, size, txtcolor, fShadow, fOutLine, fAdvancedRenderer);
           }
-          for (int i = 0; i < SubtitleStreams; ++i)
-          {
-            string language = SubtitleLanguage(i);
-            if (String.Compare(language, defaultLanguage, true) == 0)
-            {
-              CurrentSubtitleStream = i;
-              break;
-            }
-          }
-        }
 
+        }
+       
         if (!Vmr9.IsVMR9Connected)
         {
           //VMR9 is not supported, switch to overlay

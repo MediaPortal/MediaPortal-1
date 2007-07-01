@@ -172,6 +172,12 @@ namespace MediaPortal.Player
     protected bool m_bVisible = false;
     protected DateTime updateTimer;
     protected FilterStreams FStreams = null;
+    protected double[] chapters = null;
+
+    public override double[] Chapters
+    {
+        get { return chapters; }
+    }
     VMR7Util vmr7 = null;
     protected g_Player.MediaType _mediaType;
 
@@ -275,10 +281,31 @@ namespace MediaPortal.Player
         Log.Info("VideoPlayer:Duration:{0}", m_dDuration);
 
         AnalyseStreams();
+        SetDefaultLanguage();
 
         OnInitialized();
       }
       return true;
+    }
+
+    private void SetDefaultLanguage()
+    {
+      string defaultLanguage = null;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
+      }
+      for (int i = 0; i < SubtitleStreams; ++i)
+      {
+        string language = SubtitleLanguage(i);
+        if (language.StartsWith("S: [")) //haali media splitter show language as "S: [language]"
+          language = language.Substring(4, language.Length-5);
+        if (defaultLanguage.StartsWith(language, StringComparison.OrdinalIgnoreCase))
+        {
+          CurrentSubtitleStream = i;
+          break;
+        }
+      }
     }
 
     public override bool PlayStream(string strFile, string streamName)
@@ -722,7 +749,7 @@ namespace MediaPortal.Player
       get { return m_iVolume; }
       set
       {
-
+        
         if (m_iVolume != value)
         {
           m_iVolume = value;
@@ -735,8 +762,8 @@ namespace MediaPortal.Player
               int iVolume = (int)(5000.0f * fPercent);
               basicAudio.put_Volume((iVolume - 5000));
             }
-
-
+         
+          
           }
         }
       }
@@ -841,7 +868,6 @@ namespace MediaPortal.Player
     }
 
 
-
     public override bool Ended
     {
       get { return m_state == PlayState.Ended; }
@@ -911,7 +937,7 @@ namespace MediaPortal.Player
           Marshal.ThrowExceptionForHR(hr);
 
 
-
+        
         ushort b;
         unchecked
         {
@@ -970,7 +996,6 @@ namespace MediaPortal.Player
           }
         }
 
-
         mediaCtrl = (IMediaControl)graphBuilder;
         mediaEvt = (IMediaEventEx)graphBuilder;
         mediaSeek = (IMediaSeeking)graphBuilder;
@@ -1026,7 +1051,7 @@ namespace MediaPortal.Player
         if (h264videoCodecFilter != null) Marshal.ReleaseComObject(h264videoCodecFilter); h264videoCodecFilter = null;
         if (audioCodecFilter != null) Marshal.ReleaseComObject(audioCodecFilter); audioCodecFilter = null;
         if (audioRendererFilter != null) Marshal.ReleaseComObject(audioRendererFilter); audioRendererFilter = null;
-
+        
         // FlipGer: release custom filters
         for (int i = 0; i < customFilters.Length; i++)
         {
@@ -1206,15 +1231,15 @@ namespace MediaPortal.Player
     {
       get
       {
-        //DVD
+        int subsStreamCount = FStreams.GetStreamCount(2);
+        if (subsStreamCount > 0)
+          return subsStreamCount;
+        int ret = 0;
         if (this.vobSub != null)
         {
-          int ret;
           vobSub.get_LanguageCount(out ret);
-          return ret;
         }
-        //AVI & MKV
-        return FStreams.GetStreamCount(2);
+        return ret;
       }
     }
 
@@ -1222,43 +1247,50 @@ namespace MediaPortal.Player
     {
       get
       {
-        //DVD
+        int subsStreamCount = FStreams.GetStreamCount(2);
+        if (subsStreamCount > 0) 
+        {
+          for (int i = 0; i < subsStreamCount; i++)
+            if (FStreams.GetStreamInfos(2, i).Current)
+              return i;
+          return 0;
+        }
+        int ret = 0;
         if (vobSub != null)
         {
-          int ret = 0;
           vobSub.get_SelectedLanguage(out ret);
-          return ret;
         }
-        //AVI & MKV
-        for (int i = 0; i < FStreams.GetStreamCount(2); i++)
-          if (FStreams.GetStreamInfos(2, i).Current)
-            return i;
-        return 0;
+        return ret;
       }
       set
       {
-        //DVD
+        int subsStreamCount = FStreams.GetStreamCount(2);
+        if (subsStreamCount > 0)
+        {
+          for (int i = 0; i < FStreams.GetStreamCount(2); i++)
+            FStreams.SetCurrentValue(2, i, false);
+          FStreams.SetCurrentValue(2, value, true);
+          EnableStream(FStreams.GetStreamInfos(2, value).Id, 0, FStreams.GetStreamInfos(2, value).Filter);
+          EnableStream(FStreams.GetStreamInfos(2, value).Id, AMStreamSelectEnableFlags.Enable, FStreams.GetStreamInfos(2, value).Filter);
+          return;
+        }
         if (vobSub != null)
         {
           vobSub.put_SelectedLanguage(value);
           return;
         }
-        //AVI & MKV
-        for (int i = 0; i < FStreams.GetStreamCount(2); i++)
-          FStreams.SetCurrentValue(2, i, false);
-        FStreams.SetCurrentValue(2, value, true);
-        EnableStream(FStreams.GetStreamInfos(2, value).Id, 0, FStreams.GetStreamInfos(2, value).Filter);
-        EnableStream(FStreams.GetStreamInfos(2, value).Id, AMStreamSelectEnableFlags.Enable, FStreams.GetStreamInfos(2, value).Filter);
-        return;
       }
     }
 
     public override string SubtitleLanguage(int iStream)
     {
-      //DVD
+      if (FStreams.GetStreamCount(2) > 0)
+      {
+        return FStreams.GetStreamInfos(2, iStream).Name;
+      }
+      string ret = Strings.Unknown;
       if (vobSub != null)
       {
-        string ret = Strings.Unknown;
         IntPtr curNamePtr;
         vobSub.get_LanguageName(iStream, out curNamePtr);
         if (curNamePtr != IntPtr.Zero)
@@ -1266,10 +1298,8 @@ namespace MediaPortal.Player
           ret = Marshal.PtrToStringUni(curNamePtr);
           Marshal.FreeCoTaskMem(curNamePtr);
         }
-        return ret;
       }
-      //AVI & MKV
-      return FStreams.GetStreamInfos(2, iStream).Name;
+      return ret;
     }
 
 
@@ -1341,6 +1371,27 @@ namespace MediaPortal.Player
           {
             if (foundfilter[0] != null && fetched == 1)
             {
+              if (chapters == null)
+              {
+                IAMExtendedSeeking pEs = foundfilter[0] as IAMExtendedSeeking;
+                if (pEs != null)
+                {
+                  int markerCount = 0;
+                  if (pEs.get_MarkerCount(out markerCount) == 0 && markerCount > 0)
+                  {
+                    chapters = new double[markerCount];
+                    for (int i = 1; i <= markerCount; i++)
+                    {
+                      double markerTime = 0;
+                      pEs.GetMarkerTime(i, out markerTime);
+                      chapters[i - 1] = markerTime;
+                      //there is no usage to chapter's names right now
+                      //string name = null;
+                      //pEs.GetMarkerName(i, out name);
+                    }
+                  }
+                }
+              }
               IAMStreamSelect pStrm = foundfilter[0] as IAMStreamSelect;
               if (pStrm != null)
               {
