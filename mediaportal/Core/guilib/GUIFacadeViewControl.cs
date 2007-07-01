@@ -181,7 +181,22 @@ namespace MediaPortal.GUI.Library
       get { return _currentViewMode; }
       set
       {
-        _currentViewMode = value;
+        if (_currentViewMode != value)
+        {
+          _currentViewMode = value;
+          GUIControl ctl = null;
+          if (_currentViewMode == ViewMode.AlbumView) ctl = AlbumListView;
+          else if (_currentViewMode == ViewMode.List) ctl = _viewList;
+          else if (_currentViewMode == ViewMode.Filmstrip) ctl = _viewFilmStrip;
+          else if (_currentViewMode == ViewMode.Playlist) ctl = _viewPlayList;
+          else ctl = _viewThumbnail;
+
+          if (ctl != null)
+          {
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESH, 0, 0, ctl.GetID, 0, 0, null);
+            ctl.OnMessage(msg);
+          }
+        }
         UpdateView();
       }
     }
