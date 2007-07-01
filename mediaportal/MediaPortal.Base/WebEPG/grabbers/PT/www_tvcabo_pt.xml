@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="pt" availableDays="6" timezone="GMT Standard Time" version="2.0" />
+  <Info language="pt" availableDays="6" timezone="GMT Standard Time" version="2.1.0" />
   <Channels>
     <Channel id="dois.tv" siteId="2:" />
     <Channel id="arte-tv.com" siteId="Arte" />
@@ -64,7 +64,7 @@
     <Channel id="vivir-tv-pt" siteId="VIV" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://wwwnew2.tvcabo.pt/TV/ProgramacaoTv.aspx?programId=1&amp;channelSigla=[ID]&amp;SelectedDay=[DAY_OFFSET]" post="" external="false" encoding="" />
+    <Site url="http://www.tvcabo.pt/Televisao/ListaProgramas.aspx?cat=&amp;channelSigla=[ID]&amp;dia=[DAY_OFFSET]&amp;package=9" post="" external="false" encoding="" />
     <Html>
       <Template name="default" start="Imprimir">
         <SectionTemplate tags="TA">
