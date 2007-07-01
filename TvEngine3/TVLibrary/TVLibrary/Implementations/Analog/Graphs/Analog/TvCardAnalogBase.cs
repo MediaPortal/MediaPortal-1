@@ -263,7 +263,6 @@ namespace TvLibrary.Implementations.Analog
           // no it does not. So we have situation 2, 3 or 4 and first need to add 1 or more encoder filters
           // First we try only to add encoders where the encoder pin names are the same as the
           // output pins of the capture filters
-
           if (!AddTvEncoderFilter(true))
           {
             //if that fails, we try any encoder filter
@@ -283,7 +282,9 @@ namespace TvLibrary.Implementations.Analog
             //still no mpeg output found, we move on to situation 3. We need to add a multiplexer
             // First we try only to add multiplexers where the multiplexer pin names are the same as the
             // output pins of the encoder filters
-            if (!AddTvMultiPlexer(true))
+            //for the NVTV filter the pin names dont match .. so check first in bool eval and thus skips 
+            // trying AddTvMultiPlexer with matching pinnames when using NVTV
+            if (FilterGraphTools.GetFilterName(_filterTvTuner).Contains("NVTV") || !AddTvMultiPlexer(true))
             {
               //if that fails, we try any multiplexer filter
               AddTvMultiPlexer(false);
@@ -445,7 +446,7 @@ namespace TvLibrary.Implementations.Analog
       // try each tv audio tuner
       for (int i = 0; i < devices.Length; i++)
       {
-        Log.Log.WriteFile("analog: AddTvAudioFilter try:{0}", devices[i].Name);
+        Log.Log.WriteFile("analog: AddTvAudioFilter try:{0} {1}", devices[i].Name, i);
         //if tv audio tuner is currently in use we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
         int hr;
@@ -580,7 +581,7 @@ namespace TvLibrary.Implementations.Analog
       //try each crossbar
       for (int i = 0; i < devices.Length; i++)
       {
-        Log.Log.WriteFile("analog: AddCrossBarFilter try:{0}", devices[i].Name);
+        Log.Log.WriteFile("analog: AddCrossBarFilter try:{0} {1}", devices[i].Name, i);
         //if crossbar is already in use then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
         int hr;
@@ -678,7 +679,7 @@ namespace TvLibrary.Implementations.Analog
       //try each video capture filter
       for (int i = 0; i < devices.Length; i++)
       {
-        Log.Log.WriteFile("analog: AddTvCaptureFilter try:{0}", devices[i].Name);
+        Log.Log.WriteFile("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
         int hr;
@@ -1456,6 +1457,12 @@ namespace TvLibrary.Implementations.Analog
                   }
                 }
               }
+              if (FilterGraphTools.GetFilterName(_filterTvTuner).Contains("NVTV") && (pinsConnected == 1) && (_filterVideoEncoder != null))
+              {
+                Log.Log.WriteFile("analog: ConnectMultiplexer step 1 software audio encoder connected and no need for a software video encoder");
+                break;
+              } 
+              else
               if (pinsConnected == 2)
               {
                 //if both pins are connected, we're done..
@@ -1766,7 +1773,11 @@ namespace TvLibrary.Implementations.Analog
         devicesHW = DsDevice.GetDevicesOfCat(AMKSMultiplexer);
         devicesHW = DeviceSorter.Sort(devicesHW, _tunerDevice, _audioDevice, _crossBarDevice, _captureDevice, _videoEncoderDevice, _audioEncoderDevice, _multiplexerDevice);
         // also add the SoftWare Multiplexers in case no compatible HardWare multiplexer is found (NVTV cards)
-        devicesSW = DsDevice.GetDevicesOfCat(AMKSMultiplexerSW);
+        if (FilterGraphTools.GetFilterName(_filterTvTuner).Contains("NVTV"))
+          devicesSW = DsDevice.GetDevicesOfCat(AMKSMultiplexerSW);// NVTV cards needs a Software Multiplexer
+        else
+          devicesSW = new DsDevice[0];
+
         devices = new DsDevice[devicesHW.Length + devicesSW.Length];
         int nr = 0;
         for (int i = 0; i < devicesHW.Length; ++i)
@@ -1787,7 +1798,7 @@ namespace TvLibrary.Implementations.Analog
       //for each multiplexer
       for (int i = 0; i < devices.Length; i++)
       {
-        Log.Log.WriteFile("analog: AddTvMultiPlexer try:{0}", devices[i].Name);
+        Log.Log.WriteFile("analog: AddTvMultiPlexer try:{0} {1}", devices[i].Name, i);
         // if multiplexer is in use, we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i])) continue;
         int hr;

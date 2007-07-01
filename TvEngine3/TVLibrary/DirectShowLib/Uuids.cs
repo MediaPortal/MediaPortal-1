@@ -1254,7 +1254,7 @@ namespace DirectShowLib
 
         /// <summary> MEDIASUBTYPE_MPEG2_PROGRAM </summary>
         public static readonly Guid Mpeg2Program = new Guid(0xe06d8022, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x5f, 0x6c, 0xbb, 0xea);
-
+      
         /// <summary> MEDIASUBTYPE_MPEG2_TRANSPORT </summary>
         public static readonly Guid Mpeg2Transport = new Guid(0xe06d8023, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x5f, 0x6c, 0xbb, 0xea);
 

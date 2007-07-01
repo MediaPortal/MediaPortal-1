@@ -91,25 +91,21 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_graphState != GraphState.Idle)
         {
-          throw new TvException("Graph already build");
+          throw new TvException("Graph already built");
         }
         Log.Log.WriteFile("BuildGraph");
-
         _graphBuilder = (IFilterGraph2)new FilterGraph();
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
-
         // Method names should be self explanatory
         AddNetworkProviderFilter(typeof(DVBSNetworkProvider).GUID);
         CreateTuningSpace();
         AddMpeg2DemuxerToGraph();
         AddAndConnectBDABoardFilters(_device);
         AddBdaTransportFiltersToGraph();
-
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;
-
       }
       catch (Exception ex)
       {
@@ -119,6 +115,7 @@ namespace TvLibrary.Implementations.DVB
         throw ex;
       }
     }
+
     /// <summary>
     /// Creates the tuning space.
     /// </summary>
@@ -130,9 +127,6 @@ namespace TvLibrary.Implementations.DVB
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       IEnumTuningSpaces enumTuning;
       ITuningSpace[] spaces = new ITuningSpace[2];
-
-
-
       int lowOsc = 9750;
       int hiOsc = 10600;
       int lnbSwitch = 11700;
@@ -162,18 +156,13 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.WriteFile("Found correct tuningspace {0}", name);
           _tuningSpace = (IDVBSTuningSpace)spaces[0];
-          // GagReflex
-          // _tuningSpace.put_LNBSwitch(11700000);
           _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-          // End GagReflex
           _tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
           _tuningSpace.put_LowOscillator(lowOsc * 1000);
           _tuningSpace.put_HighOscillator(hiOsc * 1000);
-
           tuner.put_TuningSpace(_tuningSpace);
           _tuningSpace.CreateTuneRequest(out request);
           _tuneRequest = (IDVBTuneRequest)request;
-
           return;
         }
         Release.ComObject("ITuningSpace", spaces[0]);
@@ -185,15 +174,9 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace.put_FriendlyName("DVBS TuningSpace");
       _tuningSpace.put__NetworkType(typeof(DVBSNetworkProvider).GUID);
       _tuningSpace.put_SystemType(DVBSystemType.Satellite);
-
-      //_tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
-      // GagReflex
-      // _tuningSpace.put_LNBSwitch(11700000);
       _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-      // End GagReflex
       _tuningSpace.put_LowOscillator(lowOsc * 1000);
       _tuningSpace.put_HighOscillator(hiOsc * 1000);
-
       IDVBSLocator locator = (IDVBSLocator)new DVBSLocator();
       locator.put_CarrierFrequency(-1);
       locator.put_InnerFEC(FECMethod.MethodNotSet);
@@ -201,18 +184,14 @@ namespace TvLibrary.Implementations.DVB
       locator.put_Modulation(ModulationType.ModNotSet);
       locator.put_OuterFEC(FECMethod.MethodNotSet);
       locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      //locator.put_SpectralInversion(SpectralInversion.Automatic);
       locator.put_SymbolRate(-1);
-
       object newIndex;
       _tuningSpace.put_DefaultLocator(locator);
       container.Add((ITuningSpace)_tuningSpace, out newIndex);
       tuner.put_TuningSpace(_tuningSpace);
       Release.ComObject("TuningSpaceContainer", container);
-
       _tuningSpace.CreateTuneRequest(out request);
       _tuneRequest = (IDVBTuneRequest)request;
-
     }
     #endregion
 
