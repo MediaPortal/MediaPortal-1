@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="de" availableDays="14" timezone="W. Europe Standard Time" version="2.0" />
+  <Info language="de" availableDays="14" timezone="W. Europe Standard Time" version="2.1.0" />
   <Channels>
     <Channel id="sf1@sfdrs.ch" siteId="DRS" />
     <Channel id="sf2@sfdrs.ch" siteId="CH4" />
@@ -13,12 +13,12 @@
     <Channel id="www.telezueri.ch" siteId="T24" />
     <Channel id="tele-m1.ch" siteId="TM1" />
     <Channel id="teleostschweiz.ch" siteId="TOS" />
-    <Channel id="tele-suedostschweiz.ch" siteId="TSS" />
+  <!--  <Channel id="tele-suedostschweiz.ch" siteId="TSS" />  no program data 01.07.2007 -->
     <Channel id="teletell.ch" siteId="TET" />
-    <Channel id="cine@cablecom.ch" siteId="CAB" />
-    <Channel id="teleclub.ch" siteId="TCL" />
-    <Channel id="cine@teleclub.ch" siteId="TCC" />
-    <Channel id="star@teleclub.ch" siteId="TCS" />
+  <!--  <Channel id="cine@cablecom.ch" siteId="CAB" /> -->
+  <!--   <Channel id="teleclub.ch" siteId="TCL" /> -->
+  <!--  <Channel id="cine@teleclub.ch" siteId="TCC" /> -->
+  <!--  <Channel id="star@teleclub.ch" siteId="TCS" /> -->
     <Channel id="orf1@orf.at" siteId="FS1" />
     <Channel id="orf2@orf.at" siteId="FS2" />
     <Channel id="ard.de" siteId="ARD" />
@@ -43,12 +43,12 @@
     <Channel id="ndrtv.de" siteId="NO3" />
     <Channel id="mdr.de" siteId="MDR" />
     <Channel id="phoenix.de" siteId="PHX" />
-    <Channel id="neunlive.de" siteId="TM3" />
+  <!--  <Channel id="neunlive.de" siteId="TM3" /> -->
     <Channel id="kika.de" siteId="KKA" />
-    <Channel id="n24.de" siteId="N24" />
+  <!--  <Channel id="n24.de" siteId="N24" /> -->
     <Channel id="n-tv.de" siteId="NTV" />
     <Channel id="viva.tv" siteId="VIV" />
-    <Channel id="vivaplus.tv" siteId="VI2" />
+  <!--  <Channel id="vivaplus.tv" siteId="VI2" /> -->
     <Channel id="mtv.de" siteId="MTV" />
     <Channel id="cartoonnetworkeurope.com" siteId="TNT" />
     <Channel id="13thstreet.de" siteId="STR" />
@@ -72,19 +72,33 @@
   </Channels>
   <Listing type="Html">
     <Site url="http://www.fernsehen.ch/sender/[ID].html?next=[LIST_OFFSET]" post="" external="false" encoding="" />
-    <Search maxlistings="50" listStart="1"/>
+    <Search maxlistings="10" listStart="1"/>
     <Html>
       <Template name="default">
-        <SectionTemplate tags="TA">
+        <SectionTemplate tags="T">
           <TemplateText>
-            &lt;td&gt;&lt;b&gt;&lt;/b&gt;&lt;br /&gt;&lt;#DAY&gt;. &lt;#MONTH&gt;. &lt;#START&gt;-&lt;#END&gt;&lt;/td&gt;&lt;/tr&gt;
-            &lt;tr&gt;&lt;td&gt;&lt;img src /&gt;&lt;/td&gt;&lt;/tr&gt;
-            &lt;/table&gt;
-            &lt;/td&gt;
-            &lt;td&gt;&lt;a href&gt;&lt;b&gt;&lt;#TITLE&gt;&lt;/b&gt;&lt;/a&gt;
-            &lt;z(&gt;&lt;a href&gt;&lt;img src /&gt;&lt;/a&gt;&lt;/z)*&gt;
-            &lt;br/&gt;&lt;#SUBTITLE&gt;&lt;br /&gt;&lt;#DESCRIPTION&gt;&lt;br /&gt;
-            &lt;/td&gt;
+&lt;td&gt;&lt;img&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;
+&lt;td&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href&gt;&lt;img&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;b&gt;&lt;/b&gt;&lt;br /&gt;&lt;#DAY&gt;. &lt;#MONTH&gt;. &lt;#START&gt;-&lt;#END&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href&gt;&lt;b&gt;&lt;#TITLE&gt;&lt;/b&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;a href&gt;&lt;img&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;a href&gt;&lt;img&gt;&lt;/a&gt;
+&lt;a href&gt;&lt;img&gt;&lt;/a&gt;
+&lt;a href&gt;&lt;/a&gt;&lt;br/&gt;
+&lt;#DESCRIPTION&gt;&lt;br /&gt;	
+&lt;/td&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
