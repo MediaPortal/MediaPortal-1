@@ -99,7 +99,7 @@ void CTsDuration::UpdateDuration()
     OnRawData(buffer,dwBytesRead);
     offset+=sizeof(buffer);
   }
-  if (m_endPcr.ToClock() < m_startPcr.ToClock())
+  if (m_endPcr.PcrReferenceBase < m_startPcr.PcrReferenceBase)
   {
     //PCR rollover
     m_bSearchMax=true;
@@ -120,10 +120,6 @@ void CTsDuration::UpdateDuration()
       OnRawData(buffer,dwBytesRead);
       offset+=sizeof(buffer);
     }
-  }
-  else
-  {
-    m_maxPcr=m_endPcr;
   }
 }
 
