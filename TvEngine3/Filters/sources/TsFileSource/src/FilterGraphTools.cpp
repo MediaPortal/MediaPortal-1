@@ -27,11 +27,9 @@
 #include <stdio.h>
 #include <winerror.h>
 #include <vector>
-
 #include <ks.h>
 #include <ksmedia.h>
 #include <bdamedia.h>
-//#include "dsnetifc.h"
 #include "TSFileSinkGuids.h"
 #include "Winsock.h"
 #include "MediaFormats.h"
@@ -90,7 +88,6 @@ HRESULT FilterGraphTools::AddFilterByName(IGraphBuilder* piGraphBuilder, IBaseFi
 		{
 			//Get friendly name
 			CComVariant varBSTR;
-
 			//Get filter PropertyBag
 			CComPtr <IPropertyBag> pBag;
 			if FAILED(hr = pMoniker->BindToStorage(NULL, NULL, IID_IPropertyBag, reinterpret_cast<void**>(&pBag)))
@@ -1686,10 +1683,13 @@ HRESULT FilterGraphTools::GetH264Media(AM_MEDIA_TYPE *pintype)
 	pintype->bFixedSizeSamples = FALSE;
 	pintype->bTemporalCompression = TRUE;
 	pintype->lSampleSize = 1;
-	pintype->formattype = FORMAT_VideoInfo;
+	//pintype->formattype = FORMAT_VideoInfo;
+	pintype->formattype = FORMAT_MPEG2Video;
 	pintype->pUnk = NULL;
-	pintype->cbFormat = sizeof(H264VideoFormat); //This should be determined by the stream for CoreAVC. Other codecs are fine.
-	pintype->pbFormat = H264VideoFormat;
+	//pintype->cbFormat = sizeof(H264VideoFormat); //This should be determined by the stream for CoreAVC. Other codecs are fine.
+	//pintype->pbFormat = H264VideoFormat;
+	pintype->cbFormat = sizeof(g_Mpeg2ProgramVideo);
+	pintype->pbFormat = g_Mpeg2ProgramVideo;
 	return S_OK;
 }
 

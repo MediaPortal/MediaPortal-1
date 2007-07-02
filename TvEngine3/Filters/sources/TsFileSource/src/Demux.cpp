@@ -36,9 +36,6 @@
 #include <atlbase.h>
 #include "TunerEvent.h"
 
-//static GUID H264_SubType = {0x8D2D71CB, 0x243F, 0x45E3, {0xB2, 0xD8, 0x5F, 0xD7, 0x96, 0x7E, 0xC0, 0x9B}};
-//static GUID MEDIASUBTYPE_H264 = {0x8D2D71CB, 0x243F, 0x45E3, {0xB2, 0xD8, 0x5F, 0xD7, 0x96, 0x7E, 0xC0, 0x9B}};
-
 Demux::Demux(PidParser *pPidParser, IBaseFilter *pFilter, CFilterList *pFList) :
 
 	m_bAuto(TRUE),
@@ -3465,10 +3462,13 @@ HRESULT Demux::GetH264Media(AM_MEDIA_TYPE *pintype)
 	pintype->bFixedSizeSamples = FALSE;
 	pintype->bTemporalCompression = TRUE;
 	pintype->lSampleSize = 1;
-	pintype->formattype = FORMAT_VideoInfo;
+	//pintype->formattype = FORMAT_VideoInfo;
+	pintype->formattype = FORMAT_MPEG2Video;
 	pintype->pUnk = NULL;
-	pintype->cbFormat = sizeof(H264VideoFormat); //This should be determined by the stream for CoreAVC. Other codecs are fine.
-	pintype->pbFormat = H264VideoFormat;
+	//pintype->cbFormat = sizeof(H264VideoFormat); //This should be determined by the stream for CoreAVC. Other codecs are fine.
+	//pintype->pbFormat = H264VideoFormat;
+	pintype->cbFormat = sizeof(g_Mpeg2ProgramVideo);
+	pintype->pbFormat = g_Mpeg2ProgramVideo;
 	return S_OK;
 }
 
