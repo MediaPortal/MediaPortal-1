@@ -318,7 +318,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       pSample->SetSyncPoint(TRUE);
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
-      //LogDebug("vid:%f", fTime);
+     // LogDebug("vid:%f", fTime);
     }
     else
     {
