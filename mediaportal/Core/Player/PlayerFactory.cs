@@ -172,6 +172,8 @@ namespace MediaPortal.Player
       IPlayer newPlayer = null;
       if (fileName.ToLower().IndexOf("rtsp:") >= 0)
       {
+        if (_useTSReader)
+          return new TSReaderPlayer();
         return new RTSPPlayer();
       }
       if (fileName.StartsWith("mms:") && fileName.EndsWith(".ymvp"))
@@ -230,7 +232,7 @@ namespace MediaPortal.Player
       bool bUseTsFileSourceForMpegs = true;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        bUseTsFileSourceForMpegs=xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
+        bUseTsFileSourceForMpegs = xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
       }
       bool playWithTsFileSource = false;
       if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
@@ -359,6 +361,8 @@ namespace MediaPortal.Player
       IPlayer newPlayer = null;
       if (fileName.ToLower().IndexOf("rtsp:") >= 0)
       {
+        if (_useTSReader)
+          return new TSReaderPlayer(type);
         return new RTSPPlayer(type);
       }
       string extension = System.IO.Path.GetExtension(fileName).ToLower();
