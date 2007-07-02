@@ -403,6 +403,31 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     pcrEnd.FromClock(duration);
     m_duration.Set( pcrstart, pcrEnd,pcrMax);
   }
+  else if ((length > 7) && (strnicmp(url, "rtsp://",7) == 0))
+  {
+    //strcpy(url,"rtsp://192.168.1.58/stream2.0");
+    LogDebug("open rtsp:%s", url);
+    if ( !m_rtspClient.OpenStream(url)) return E_FAIL;
+    
+    m_buffer.Clear();
+    m_buffer.Run(true);
+    m_rtspClient.Play(0.0f);
+    m_tickCount=GetTickCount();
+    m_fileReader = new CMemoryReader(m_buffer);
+    m_demultiplexer.SetFileReader(m_fileReader);
+    m_demultiplexer.Start();
+    m_buffer.Run(false);
+    m_tickCount=GetTickCount();
+    
+    LogDebug("close rtsp:%s", url);
+    m_rtspClient.Stop();
+    double duration=m_rtspClient.Duration()/1000.0f;
+    CPcr pcrstart,pcrEnd,pcrMax;
+    pcrstart=m_duration.StartPcr();
+    duration+=pcrstart.ToClock();
+    pcrEnd.FromClock(duration);
+    m_duration.Set( pcrstart, pcrEnd,pcrMax);
+  }
   else
   {
     if ((length < 9) || (_strcmpi(&url[length-9], ".tsbuffer") != 0))
