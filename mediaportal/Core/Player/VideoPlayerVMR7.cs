@@ -281,19 +281,21 @@ namespace MediaPortal.Player
         Log.Info("VideoPlayer:Duration:{0}", m_dDuration);
 
         AnalyseStreams();
-        SetDefaultLanguage();
+        SelectSubtitles();
 
         OnInitialized();
       }
       return true;
     }
 
-    private void SetDefaultLanguage()
+    private void SelectSubtitles()
     {
       string defaultLanguage = null;
+      bool showSubtitles = true;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
+        showSubtitles = xmlreader.GetValueAsBool("subtitles", "enabled", true);
       }
       for (int i = 0; i < SubtitleStreams; ++i)
       {
@@ -306,6 +308,7 @@ namespace MediaPortal.Player
           break;
         }
       }
+      EnableSubtitle = showSubtitles;
     }
 
     public override bool PlayStream(string strFile, string streamName)
@@ -949,8 +952,8 @@ namespace MediaPortal.Player
         {
           Marshal.ReleaseComObject(vob);
           vob = null;
-          DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
         }
+        DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
 
         vobSub = null;
         vobSub = (IDirectVobSub)vob;
@@ -983,16 +986,6 @@ namespace MediaPortal.Player
             color = (B << 16) + (G << 8) + R;
             if (iShadow > 0) fShadow = true;
             int res = vobSub.put_TextSettings(logFont, size, color, fShadow, fOutLine, fAdvancedRenderer);
-          }
-
-          for (int i = 0; i < SubtitleStreams; ++i)
-          {
-            string language = SubtitleLanguage(i);
-            if (String.Compare(language, defaultLanguage, true) == 0)
-            {
-              CurrentSubtitleStream = i;
-              break;
-            }
           }
         }
 

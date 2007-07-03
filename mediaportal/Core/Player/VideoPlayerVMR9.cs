@@ -155,8 +155,8 @@ namespace MediaPortal.Player
         {
           Marshal.ReleaseComObject(vob);
           vob = null;
-          DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
         }
+        DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out vob);
         vobSub = null;
         vobSub = (IDirectVobSub)vob;
         if (vobSub != null)
