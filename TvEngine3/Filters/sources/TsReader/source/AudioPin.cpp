@@ -111,6 +111,7 @@ HRESULT CAudioPin::GetMediaType(CMediaType *pmt)
 {
 
 	pmt->InitMediaType();
+  pmt->SetFormatType(&FORMAT_WaveFormatEx);
 	pmt->SetType      (& MEDIATYPE_Audio);
 	pmt->SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
 	pmt->SetSampleSize(1);
