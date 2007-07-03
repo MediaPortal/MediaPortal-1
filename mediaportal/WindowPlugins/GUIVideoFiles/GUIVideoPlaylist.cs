@@ -390,7 +390,7 @@ namespace MediaPortal.GUI.Video
 
     void ClearFileItems()
     {
-      facadeView.Clear();
+      GUIControl.ClearControl(GetID, facadeView.GetID);
     }
 
     void OnClearPlayList()
