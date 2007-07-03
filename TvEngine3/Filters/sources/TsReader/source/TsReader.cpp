@@ -139,7 +139,10 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	m_pAudioPin = new CAudioPin(GetOwner(), this, phr,&m_section);
 	m_pVideoPin = new CVideoPin(GetOwner(), this, phr,&m_section);
   m_pSubtitlePin = new CSubtitlePin(GetOwner(), this, phr,&m_section);
-  m_referenceClock= new CBaseReferenceClock("refClock",GetOwner(), phr);
+  
+  // Not used anywhere and currently is causing a leak (2 objects left active in TsReader.ax)
+  // - tourettes
+  // m_referenceClock= new CBaseReferenceClock("refClock",GetOwner(), phr);
   m_bSeeking=false;
 
 	if (m_pAudioPin == NULL) 
