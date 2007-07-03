@@ -140,9 +140,6 @@ namespace MediaPortal.Player
     VMR9Util _vmr9 = null;
     IPin _pinAudio = null;
     IPin _pinVideo = null;
-    //IPin _pinPcr = null;
-    //IPin _pinSubtitle = null;
-    //IPin _pinPMT = null;
     bool enableDvbSubtitles = false;
     #endregion
 

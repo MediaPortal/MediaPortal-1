@@ -287,7 +287,7 @@ namespace MediaPortal.Player
         {
             try
             {
-                filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub");
+                filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub2");
                 subFilter = filter as IDVBSubtitle;
                 Log.Debug("SubtitleRenderer: CreateFilter success: " + (filter != null) + " & " + (subFilter != null));
             }
