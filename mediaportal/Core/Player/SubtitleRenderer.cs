@@ -60,9 +60,9 @@ namespace MediaPortal.Player
     /// allows us to get notified of subtitles and
     /// retrieve them
     /// </summary>
-    [Guid("C19647D5-A861-4845-97A6-EBD0A135D0BF"),
+    [Guid("901C9084-246A-47c9-BBCD-F8F398D30AB0"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IDVBSubtitle
+    public interface IDVBSubtitle2
     {
         //void GetSubtitle(int place, ref SUBTITLE subtitle);
         //void GetSubtitleCount(out int count);
@@ -80,7 +80,7 @@ namespace MediaPortal.Player
     {
 
         private static SubtitleRenderer instance = null;
-        private IDVBSubtitle subFilter = null;
+        private IDVBSubtitle2 subFilter = null;
         private long subCounter = 0;
         /// <summary>
         /// The coordinates of current vertex buffer
@@ -288,7 +288,7 @@ namespace MediaPortal.Player
             try
             {
                 filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub2");
-                subFilter = filter as IDVBSubtitle;
+                subFilter = filter as IDVBSubtitle2;
                 Log.Debug("SubtitleRenderer: CreateFilter success: " + (filter != null) + " & " + (subFilter != null));
             }
             catch (Exception e)
