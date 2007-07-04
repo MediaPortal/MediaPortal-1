@@ -59,4 +59,5 @@ DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
   STDMETHOD(SetTimestampResetCallback)( int (CALLBACK *pSubtitleObserver)() ) PURE;
   STDMETHOD(Test)( int status ) PURE;
   STDMETHOD(SetSubtitlePid)( LONG pPid ) PURE;
+  STDMETHOD(SetFirstPcr)( LONGLONG pPcr ) PURE;
 };

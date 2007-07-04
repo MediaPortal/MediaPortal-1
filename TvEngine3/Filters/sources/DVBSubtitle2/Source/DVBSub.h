@@ -35,8 +35,6 @@
 
 #include "IDVBSub.h"
 
-
-
 class CSubtitleInputPin;
 class CDVBSubDecoder;
 
@@ -67,6 +65,7 @@ public:
   virtual HRESULT STDMETHODCALLTYPE SetTimestampResetCallback( int (CALLBACK *pTimestampResetObserver)() );
   virtual HRESULT STDMETHODCALLTYPE Test( int status );
   virtual HRESULT STDMETHODCALLTYPE SetSubtitlePid( LONG pPid );
+  virtual HRESULT STDMETHODCALLTYPE SetFirstPcr( LONGLONG pPcr );
 
   // IUnknown
   DECLARE_IUNKNOWN;
@@ -107,6 +106,8 @@ private: // data
   CCritSec            m_ReceiveLock;		  // Sublock for received samples
 
   REFERENCE_TIME      m_startTimestamp;
+  REFERENCE_TIME      m_CurrentPosition;
+  LONGLONG            m_basePCR;
 
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub);
   int                 (CALLBACK *m_pTimestampResetObserver) ();

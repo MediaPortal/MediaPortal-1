@@ -98,7 +98,7 @@ HRESULT CSubtitleInputPin::BreakConnect()
 //
 HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
 {
-	HRESULT hr = CBasePin::CompleteConnect( pPin );
+  HRESULT hr = CBasePin::CompleteConnect( pPin );
   return hr;
 }
 
@@ -127,11 +127,8 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
   }
 
 	if( m_SubtitlePid == -1 )
-//    return S_OK;  // Nothing to be done yet
+    return S_OK;  // Nothing to be done yet
 
-//	REFERENCE_TIME tStart, tStop;
-//	pSample->GetTime( &tStart, &tStop);
-    
   CheckPointer( pSample, E_POINTER );
 	PBYTE pbData = NULL;
 
@@ -225,3 +222,26 @@ STDMETHODIMP CSubtitleInputPin::EndFlush( void )
   LogDebug( "CSubtitleInputPin::BeginFlush - done" );
   return hr; 
 }
+
+#ifdef _DEBUG
+// DEBUG ONLY
+//
+// AddRef
+//
+STDMETHODIMP_(ULONG) CSubtitleInputPin::AddRef()
+{
+  int tmp = m_cRef;
+  return CBaseInputPin::AddRef();
+}
+
+
+// DEBUG ONLY
+//
+// Release
+//
+STDMETHODIMP_(ULONG) CSubtitleInputPin::Release()
+{
+  int tmp = m_cRef;
+  return CBaseInputPin::Release();
+}
+#endif 

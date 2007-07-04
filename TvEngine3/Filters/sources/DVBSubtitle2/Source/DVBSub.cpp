@@ -67,8 +67,10 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_pTimestampResetObserver( NULL ),
   m_pIMediaSeeking( NULL ),
   m_pMediaFilter( NULL ),
+  m_bSeekingDone( true ),
+  m_pReferenceClock( NULL ),
   m_startTimestamp( -1 ),
-  m_bSeekingDone( true )
+  m_CurrentPosition( 0 )
 {
 	// Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -121,9 +123,10 @@ CDVBSub::~CDVBSub()
   {
     m_pSubDecoder->SetObserver( NULL );
   }
+
 	delete m_pSubDecoder;
 	delete m_pSubtitlePin;
-
+  
   LogDebug( "CDVBSub::~CDVBSub() - end" );
 }
 
@@ -133,7 +136,7 @@ CDVBSub::~CDVBSub()
 //
 CBasePin * CDVBSub::GetPin( int n )
 {
-	if( n == 0 )
+  if( n == 0 )
 		return m_pSubtitlePin;
 
   return NULL;
@@ -157,7 +160,7 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
   CAutoLock cObjectLock( m_pLock );
   LogDebug( "CDVBSub::Run" );
   m_startTimestamp = tStart;
-  
+
   HRESULT hr = CBaseFilter::Run( tStart );
 
   if( hr != S_OK )
@@ -169,16 +172,29 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
   // Get the reference clock interface 
   if( !m_pReferenceClock )
   {
-    GetFilterGraph()->QueryInterface( IID_IMediaFilter, (void**)&m_pMediaFilter );
-    m_pMediaFilter->GetSyncSource( &m_pReferenceClock );
+    IFilterGraph *pGraph = GetFilterGraph();
+    if( pGraph )
+    {
+      pGraph->QueryInterface( IID_IMediaFilter, (void**)&m_pMediaFilter );
+      m_pMediaFilter->GetSyncSource( &m_pReferenceClock );
+      pGraph->Release();
+    }
   }
 
   // Get media seeking interface if missing
   if( !m_pIMediaSeeking )
   {
-    IFilterGraph *pGraph = GetFilterGraph();
-	  pGraph->QueryInterface( &m_pIMediaSeeking );
+    IFilterGraph *pGraph = GetFilterGraph();    
+    if( pGraph )
+    {
+	    pGraph->QueryInterface( &m_pIMediaSeeking );
+      pGraph->Release();
+    }
   }
+  LONGLONG pos( 0 );
+  m_pIMediaSeeking->GetCurrentPosition( &pos );
+  pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
+  m_CurrentPosition = pos;
 
   LogDebugMediaPosition( "Run - media seeking position" );        
 
@@ -213,12 +229,20 @@ STDMETHODIMP CDVBSub::Stop()
   // Make sure no further processing is done
   if( m_pSubDecoder ) m_pSubDecoder->Reset();
 	if( m_pSubtitlePin ) m_pSubtitlePin->Reset();
+  
+  LogDebug( "Release m_pReferenceClock" );
+  if( m_pReferenceClock )
+  {
+    //m_pReferenceClock->Release();
+    //m_pReferenceClock = NULL;
+  }
+  LogDebug( "Release m_pReferenceClock - done" );
 
   LogDebug( "Release m_pMediaFilter" );
   if( m_pMediaFilter )
   {
     m_pMediaFilter->Release();
-    m_pMediaFilter = NULL;
+    //m_pMediaFilter = NULL;
   }
   LogDebug( "Release m_pMediaFilter - done" );
 
@@ -226,11 +250,11 @@ STDMETHODIMP CDVBSub::Stop()
   if( m_pIMediaSeeking )
   {
     m_pIMediaSeeking->Release();
-    m_pIMediaSeeking = NULL;
+    //m_pIMediaSeeking = NULL;
   }
   LogDebug( "Release m_pIMediaSeeking - done" );
-
   LogDebug("CDVBSub::Stop - done" );
+
   return hr;
 }
 
@@ -243,8 +267,8 @@ void CDVBSub::Reset()
   CAutoLock cObjectLock( m_pLock );
   LogDebug( "CDVBSub::Reset()" );
 
-	m_pSubDecoder->Reset();
-	m_pSubtitlePin->Reset();
+	if( m_pSubDecoder ) m_pSubDecoder->Reset();
+  if( m_pSubtitlePin ) m_pSubtitlePin->Reset();
 
   // Notify reset observer
   if( m_pTimestampResetObserver )
@@ -282,11 +306,22 @@ STDMETHODIMP CDVBSub::SetSubtitlePid( LONG pPid )
 }
 
 //
+// SetFirstPcr
+//
+STDMETHODIMP CDVBSub::SetFirstPcr( LONGLONG pPcr )
+{
+  m_basePCR = pPcr;
+  LogDebugMediaPosition( "SetFirstPcr - media position" );  
+  LogDebugPTS( "SetFirstPcr", pPcr ); 
+  return S_OK;
+}
+
+//
 // NotifySubtitle
 //
 void CDVBSub::NotifySubtitle()
 {
-  LogDebug( "subtitle arrived" );
+  LogDebugMediaPosition( "Subtitle arrived - media position" );  
 
   // calculate the time stamp
   CSubtitle* pSubtitle( NULL );
@@ -296,9 +331,15 @@ void CDVBSub::NotifySubtitle()
     // PTS to milliseconds ( 90khz )
     LONGLONG pts( 0 ); 
     LONGLONG subtitlePTS( pSubtitle->PTS() );
-      
-//    pts = ( subtitlePTS - m_basePCR - m_seekDifPCR ) / 90; 
-//    pSubtitle->SetTimestamp( pts );  
+   
+    pts = ( subtitlePTS - m_basePCR - m_CurrentPosition ) / 90;
+
+    LogDebugPTS( "subtitlePTS       ", subtitlePTS ); 
+    LogDebugPTS( "m_basePCR         ", m_basePCR ); 
+    LogDebugPTS( "m_CurrentPosition ", m_CurrentPosition ); 
+    LogDebugPTS( "timestamp ms      ", pts * 90 ); 
+
+    pSubtitle->SetTimestamp( pts );  
 
     if( pts <= 0 )
     {
@@ -548,54 +589,3 @@ STDMETHODIMP CDVBSub::NonDelegatingQueryInterface( REFIID riid, void** ppv )
 		return hr;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

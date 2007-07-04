@@ -63,6 +63,11 @@ public:
   // From CPesCallback
   int OnNewPesPacket( int streamid,byte* header, int headerlen,byte* data, int len, bool isStart );
 
+#ifdef _DEBUG
+  STDMETHODIMP_(ULONG) AddRef();
+  STDMETHODIMP_(ULONG) Release();
+#endif
+
 private:
 
 	CDVBSubDecoder*		m_pSubDecoder;
