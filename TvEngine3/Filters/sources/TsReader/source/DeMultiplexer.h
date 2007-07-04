@@ -56,8 +56,10 @@ public:
   void       GetAudioStreamInfo(int stream,char* szName);
   void       GetAudioStreamType(int stream,CMediaType&  pmt);
   int        GetAudioStreamCount();
+  bool       EndOfFile();
 private:
   bool ReadFromFile();
+  bool m_bEndOfFile;
   CCritSec m_section;
 	FileReader* m_reader;
   CPatParser m_patParser;

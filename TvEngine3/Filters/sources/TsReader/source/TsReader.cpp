@@ -606,6 +606,8 @@ void CTsReaderFilter::ThreadProc()
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_BELOW_NORMAL);
   while (!ThreadIsStopping(100))
 	{
+    if (m_demultiplexer.EndOfFile()) 
+      break;
     if (m_fileDuration!=NULL)
     {
       CTsDuration duration;

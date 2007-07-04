@@ -273,6 +273,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
     pSample->SetDiscontinuity(TRUE);
 	  pSample->SetActualDataLength(0);
     pSample->SetTime(NULL,NULL);  
+    if (demux.EndOfFile()) 
+      return S_FALSE;
   }
   return NOERROR;
 }
