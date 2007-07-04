@@ -266,6 +266,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source\IDVBSub.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\SubdecoderObserver.h"
 				>
 			</File>
