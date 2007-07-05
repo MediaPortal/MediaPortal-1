@@ -390,7 +390,7 @@ namespace TvEngine.PowerScheduler.Handlers
           int cardId = _controller.CardId(i);
           if (_controller.IsGrabbingEpg(cardId))
           {
-            Log.Debug("EpgGrabbingHandler: card {0} does not allow standby", _controller.CardName(i));
+            Log.Debug("EpgGrabbingHandler: card {0} does not allow standby", _controller.CardName(cardId));
             return true;
           }
         }
