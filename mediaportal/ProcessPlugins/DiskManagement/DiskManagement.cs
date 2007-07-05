@@ -178,9 +178,9 @@ namespace ProcessPlugins.DiskSpace
       // until we have enough free disk space again
       recordings.Sort();
       while (OutOfDiskSpace(drive) && recordings.Count > 0)
-      {        
+      {
         try
-        {          
+        {
           RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
           if (fi.record.KeepRecordingMethod == TVRecorded.KeepMethod.UntilSpaceNeeded)
           {
@@ -190,11 +190,14 @@ namespace ProcessPlugins.DiskSpace
                                                 fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
             Recorder.DeleteRecording(fi.record);
           }
-          recordings.RemoveAt(0);
         }
         catch (Exception ex)
         {
           Log.Error("DiskManagement: An error occured while out of diskspace deleting a record: {0}", ex.Message);
+        }
+        finally
+        {
+          recordings.RemoveAt(0);
         }
       }//while ( OutOfDiskSpace(drive) && recordings.Count > 0)
     }
