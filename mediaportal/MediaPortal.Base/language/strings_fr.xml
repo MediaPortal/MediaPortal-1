@@ -879,6 +879,8 @@
     <String id="1054">(enregistre)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(indisponible)</String>
+    <String id="1061">Amovible</String>
+    <String id="1062">Objet</String>
     <String id="1100">Importer le CD</String>
     <String id="1101">Importer la chanson choisie</String>
     <String id="1102">Annuler l'importation du CD</String>
@@ -1264,6 +1266,7 @@
     <String id="6033">Recherche par mot-clé</String>
     <String id="6034">Recherche par genre</String>
     <String id="6035">Ajouter programme</String>
+    <String id="6036">Codec Video H.264</String>
     <String id="8000" prefix="Mes ">Messages</String>
     <String id="8001">Vérifier boîte aux lettres</String>
     <String id="8002">Vérification auto. inactive</String>
