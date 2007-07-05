@@ -31,6 +31,7 @@
 #include "PidTable.h"
 #include "Pcr.h"
 #include <vector>
+#include <map>
 using namespace std;
 class CTsReaderFilter;
 class CDeMultiplexer : public CPacketSync, public IPatParserCallback
@@ -55,9 +56,20 @@ public:
   int        GetAudioStream();
   void       GetAudioStreamInfo(int stream,char* szName);
   void       GetAudioStreamType(int stream,CMediaType&  pmt);
+  void       GetVideoStreamType(CMediaType& pmt);
   int        GetAudioStreamCount();
   bool       EndOfFile();
 private:
+  struct stAudioStream
+  {
+    int pid;
+    int audioType;
+    char language[4];
+  } ;
+  vector<struct stAudioStream> m_audioStreams;
+  void GetVideoMedia(CMediaType *pmt);
+  void GetH264Media(CMediaType *pmt);
+  void GetMpeg4Media(CMediaType *pmt);
   bool ReadFromFile();
   bool m_bEndOfFile;
   CCritSec m_section;

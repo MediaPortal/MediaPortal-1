@@ -28,12 +28,12 @@
 #include "audioPin.h"
 #include "videoPin.h"
 #include "subtitlePin.h"
+#include "MediaFormats.h"
 
 #define MAX_BUF_SIZE 300
 #define OUTPUT_PACKET_LENGTH 0x6000e
 #define BUFFER_LENGTH        0x1000
 extern void LogDebug(const char *fmt, ...) ;
-extern byte* MPEG1AudioFormat;
 
 CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
 :m_duration(duration)
@@ -58,6 +58,43 @@ CDeMultiplexer::~CDeMultiplexer()
 
 }
 
+void CDeMultiplexer::GetVideoMedia(CMediaType *pmt)
+{
+	pmt->InitMediaType();
+	pmt->SetType      (& MEDIATYPE_Video);
+	pmt->SetSubtype   (& MEDIASUBTYPE_MPEG2_VIDEO);
+	pmt->SetFormatType(&FORMAT_MPEG2Video);
+	pmt->SetSampleSize(1);
+	pmt->SetTemporalCompression(FALSE);
+	pmt->SetVariableSize();
+	pmt->SetFormat(g_Mpeg2ProgramVideo,sizeof(g_Mpeg2ProgramVideo));
+}
+
+void CDeMultiplexer::GetH264Media(CMediaType *pmt)
+{
+	pmt->InitMediaType();
+	pmt->SetType      (& MEDIATYPE_Video);
+	pmt->SetSubtype   (& H264_SubType);
+	pmt->SetFormatType(&FORMAT_VideoInfo);
+	pmt->SetSampleSize(1);
+	pmt->SetTemporalCompression(TRUE);
+	pmt->SetVariableSize();
+	pmt->SetFormat(H264VideoFormat,sizeof(H264VideoFormat));
+}
+
+void CDeMultiplexer::GetMpeg4Media(CMediaType *pmt)
+{
+	pmt->InitMediaType();
+	pmt->SetType      (& MEDIATYPE_Video);
+	pmt->SetSubtype   (&MPG4_SubType);
+	pmt->SetFormatType(&FORMAT_MPEG2Video);
+	pmt->SetSampleSize(1);
+	pmt->SetTemporalCompression(TRUE);
+	pmt->SetVariableSize();
+	pmt->SetFormat(g_Mpeg2ProgramVideo,sizeof(g_Mpeg2ProgramVideo));
+}
+
+
 void CDeMultiplexer::SetFileReader(FileReader* reader)
 {
   m_reader=reader;
@@ -80,77 +117,24 @@ int CDeMultiplexer::GetAudioStream()
 
 void CDeMultiplexer::GetAudioStreamInfo(int stream,char* szName)
 {
-  if (stream==0)
+  if (stream <0 || stream>=m_audioStreams.size())
   {
-    szName[0]=m_pids.Lang1_1;
-    szName[1]=m_pids.Lang1_2;
-    szName[2]=m_pids.Lang1_3;
-    szName[3]=0;
+    szName[0]=szName[1]=szName[2]=0;
+    return;
   }
-  if (stream==1)
-  {
-    szName[0]=m_pids.Lang2_1;
-    szName[1]=m_pids.Lang2_2;
-    szName[2]=m_pids.Lang3_3;
-    szName[3]=0;
-  }
-  if (stream==2)
-  {
-    szName[0]=m_pids.Lang3_1;
-    szName[1]=m_pids.Lang3_2;
-    szName[2]=m_pids.Lang3_3;
-    szName[3]=0;
-  }
-  if (stream==3)
-  {
-    szName[0]=m_pids.Lang4_1;
-    szName[1]=m_pids.Lang4_2;
-    szName[2]=m_pids.Lang4_3;
-    szName[3]=0;
-  }
-  if (stream==4)
-  {
-    szName[0]=m_pids.Lang5_1;
-    szName[1]=m_pids.Lang5_2;
-    szName[2]=m_pids.Lang5_3;
-    szName[3]=0;
-  }
-  if (stream==5)
-  {
-    szName[0]=m_pids.Lang6_1;
-    szName[1]=m_pids.Lang6_2;
-    szName[2]=m_pids.Lang6_3;
-    szName[3]=0;
-  }
-  if (stream==6)
-  {
-    szName[0]=m_pids.Lang7_1;
-    szName[1]=m_pids.Lang7_2;
-    szName[2]=m_pids.Lang7_3;
-    szName[3]=0;
-  }
-  if (stream==7)
-  {
-    strcpy(szName,"AC3");
-  }
+    szName[0]=m_audioStreams[stream].language[0];
+    szName[1]=m_audioStreams[stream].language[1];
+    szName[2]=m_audioStreams[stream].language[2];
+    szName[3]=m_audioStreams[stream].language[3];
 }
 int CDeMultiplexer::GetAudioStreamCount()
 {
-  int streamCount=0;
-  if (m_pids.AudioPid1!=0) streamCount++;
-  if (m_pids.AudioPid2!=0) streamCount++;
-  if (m_pids.AudioPid3!=0) streamCount++;
-  if (m_pids.AudioPid4!=0) streamCount++;
-  if (m_pids.AudioPid5!=0) streamCount++;
-  if (m_pids.AudioPid6!=0) streamCount++;
-  if (m_pids.AudioPid7!=0) streamCount++;
-  if (m_pids.AC3Pid!=0) streamCount++;
-  return streamCount;
+  return m_audioStreams.size();
 }
 
 void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
 {
-  if (stream <= 7)
+  if (m_iAudioStream< 0 || m_iAudioStream >=m_audioStreams.size())
   {
 	    pmt.InitMediaType();
 	    pmt.SetType      (& MEDIATYPE_Audio);
@@ -159,12 +143,33 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
 	    pmt.SetTemporalCompression(FALSE);
 	    pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      int i=sizeof(MPEG1AudioFormat);
-	    pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
-      
+      pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
+      return;
   }
-  else
+
+  switch (m_audioStreams[m_iAudioStream].audioType)
   {
+    case SERVICE_TYPE_AUDIO_MPEG1:
+	    pmt.InitMediaType();
+	    pmt.SetType      (& MEDIATYPE_Audio);
+	    pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
+	    pmt.SetSampleSize(1);
+	    pmt.SetTemporalCompression(FALSE);
+	    pmt.SetVariableSize();
+      pmt.SetFormatType(&FORMAT_WaveFormatEx);
+      pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
+      break;
+    case SERVICE_TYPE_AUDIO_MPEG2:
+	    pmt.InitMediaType();
+	    pmt.SetType      (& MEDIATYPE_Audio);
+	    pmt.SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
+	    pmt.SetSampleSize(1);
+	    pmt.SetTemporalCompression(FALSE);
+	    pmt.SetVariableSize();
+      pmt.SetFormatType(&FORMAT_WaveFormatEx);
+      pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
+      break;
+    case SERVICE_TYPE_AUDIO_AC3:
 	    pmt.InitMediaType();
 	    pmt.SetType      (& MEDIATYPE_Audio);
 	    pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_AC3);
@@ -172,8 +177,29 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
 	    pmt.SetTemporalCompression(FALSE);
 	    pmt.SetVariableSize();
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      int i=sizeof(MPEG1AudioFormat);
-	    pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
+      pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
+      break;
+
+  }
+}
+
+void CDeMultiplexer::GetVideoStreamType(CMediaType& pmt)
+{
+	pmt.InitMediaType();
+  switch (m_pids.videoServiceType)
+  {
+    case SERVICE_TYPE_VIDEO_MPEG1:
+      GetVideoMedia(&pmt);
+    break;
+    case SERVICE_TYPE_VIDEO_MPEG2:
+      GetVideoMedia(&pmt);
+    break;
+    case SERVICE_TYPE_VIDEO_MPEG4:
+      GetMpeg4Media(&pmt);
+    break;
+    case SERVICE_TYPE_VIDEO_H264:
+      GetH264Media(&pmt);
+    break;
   }
 }
 
@@ -382,14 +408,8 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 }
 void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 {
-  if (m_iAudioStream==0) m_audioPid=m_pids.AudioPid1;
-  else if (m_iAudioStream==1) m_audioPid=m_pids.AudioPid2;
-  else if (m_iAudioStream==2) m_audioPid=m_pids.AudioPid3;
-  else if (m_iAudioStream==3) m_audioPid=m_pids.AudioPid4;
-  else if (m_iAudioStream==4) m_audioPid=m_pids.AudioPid5;
-  else if (m_iAudioStream==5) m_audioPid=m_pids.AudioPid6;
-  else if (m_iAudioStream==6) m_audioPid=m_pids.AudioPid7;
-  else if (m_iAudioStream==7) m_audioPid=m_pids.AC3Pid;
+  if (m_iAudioStream<0 || m_iAudioStream>=m_audioStreams.size()) return;
+  m_audioPid= m_audioStreams[m_iAudioStream].pid;
   if (m_audioPid==0 || m_audioPid != header.Pid) return;
 
   if (m_filter.GetAudioPin()->IsConnected())
@@ -596,4 +616,95 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     m_duration.SetVideoPid(m_pids.VideoPid);
   }
+  m_audioStreams.clear();
+  
+  if (m_pids.AudioPid1!=0) 
+  {
+    struct stAudioStream audio;
+    audio.pid=m_pids.AudioPid1;
+    audio.language[0]=m_pids.Lang1_1;
+    audio.language[1]=m_pids.Lang1_2;
+    audio.language[2]=m_pids.Lang1_3;
+    audio.language[3]=0;
+    audio.audioType=SERVICE_TYPE_AUDIO_MPEG1;
+    m_audioStreams.push_back(audio);
+  }
+  if (m_pids.AudioPid2!=0) 
+  {
+    struct stAudioStream audio;
+    audio.pid=m_pids.AudioPid2;
+    audio.language[0]=m_pids.Lang2_1;
+    audio.language[1]=m_pids.Lang2_2;
+    audio.language[2]=m_pids.Lang2_3;
+    audio.language[3]=0;
+    audio.audioType=SERVICE_TYPE_AUDIO_MPEG1;
+    m_audioStreams.push_back(audio);
+  }
+  if (m_pids.AudioPid3!=0) 
+  {
+    struct stAudioStream audio;
+    audio.pid=m_pids.AudioPid3;
+    audio.language[0]=m_pids.Lang3_1;
+    audio.language[1]=m_pids.Lang3_2;
+    audio.language[2]=m_pids.Lang3_3;
+    audio.language[3]=0;
+    audio.audioType=SERVICE_TYPE_AUDIO_MPEG1;
+    m_audioStreams.push_back(audio);
+  }
+  if (m_pids.AudioPid4!=0) 
+  {
+    struct stAudioStream audio;
+    audio.pid=m_pids.AudioPid4;
+    audio.language[0]=m_pids.Lang4_1;
+    audio.language[1]=m_pids.Lang4_2;
+    audio.language[2]=m_pids.Lang4_3;
+    audio.language[3]=0;
+    audio.audioType=SERVICE_TYPE_AUDIO_MPEG1;
+    m_audioStreams.push_back(audio);
+  }
+  if (m_pids.AudioPid5!=0) 
+  {
+    struct stAudioStream audio;
+    audio.pid=m_pids.AudioPid5;
+    audio.language[0]=m_pids.Lang5_1;
+    audio.language[1]=m_pids.Lang5_2;
+    audio.language[2]=m_pids.Lang5_3;
+    audio.language[3]=0;
+    audio.audioType=SERVICE_TYPE_AUDIO_MPEG1;
+    m_audioStreams.push_back(audio);
+  }
+  if (m_pids.AudioPid6!=0) 
+  {
+    struct stAudioStream audio;
+    audio.pid=m_pids.AudioPid6;
+    audio.language[0]=m_pids.Lang6_1;
+    audio.language[1]=m_pids.Lang6_2;
+    audio.language[2]=m_pids.Lang6_3;
+    audio.language[3]=0;
+    audio.audioType=SERVICE_TYPE_AUDIO_MPEG1;
+    m_audioStreams.push_back(audio);
+  }
+  if (m_pids.AudioPid7!=0) 
+  {
+    struct stAudioStream audio;
+    audio.pid=m_pids.AudioPid7;
+    audio.language[0]=m_pids.Lang7_1;
+    audio.language[1]=m_pids.Lang7_2;
+    audio.language[2]=m_pids.Lang7_3;
+    audio.language[3]=0;
+    audio.audioType=SERVICE_TYPE_AUDIO_AC3;
+    m_audioStreams.push_back(audio);
+  }
+  if (m_pids.AC3Pid!=0) 
+  {
+    struct stAudioStream audio;
+    audio.pid=m_pids.AC3Pid;
+    audio.language[0]='A';
+    audio.language[1]='C';
+    audio.language[2]='3';
+    audio.language[3]=0;
+    audio.audioType=SERVICE_TYPE_AUDIO_AC3;
+    m_audioStreams.push_back(audio);
+  }
+
 }

@@ -110,15 +110,8 @@ STDMETHODIMP CAudioPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 HRESULT CAudioPin::GetMediaType(CMediaType *pmt)
 {
 
-	pmt->InitMediaType();
-  pmt->SetFormatType(&FORMAT_WaveFormatEx);
-	pmt->SetType      (& MEDIATYPE_Audio);
-	pmt->SetSubtype   (& MEDIASUBTYPE_MPEG2_AUDIO);
-	pmt->SetSampleSize(1);
-	pmt->SetTemporalCompression(FALSE);
-	pmt->SetVariableSize();
-	pmt->SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
-
+  CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
+  demux.GetAudioStreamType(demux.GetAudioStream(), *pmt);
 	return S_OK;
 }
 HRESULT CAudioPin::CheckConnect(IPin *pReceivePin)
