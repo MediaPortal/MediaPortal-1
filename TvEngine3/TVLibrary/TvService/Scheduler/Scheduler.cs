@@ -634,7 +634,7 @@ namespace TvService
 
         PostProcessing processor = new PostProcessing();
         processor.Process(recording);
-        if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
+        if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once && !recording.IsSerie )
         {
           recording.Schedule.Delete();
           // even for Once type , the schedule can initially be a serie
