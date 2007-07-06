@@ -882,6 +882,7 @@
         <String id="1061">Removable</String>
         <String id="1062">Object</String>
         <String id="1064">Bookmarks</String>
+        <String id="1065">Jump to</String>
         <String id="1100">Import CD</String>
         <String id="1101">Import selected track</String>
         <String id="1102">Cancel CD import</String>

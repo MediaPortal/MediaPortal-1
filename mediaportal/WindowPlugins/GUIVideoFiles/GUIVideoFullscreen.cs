@@ -1369,8 +1369,18 @@ namespace MediaPortal.GUI.Video
       if (bookmarkList.Count > 0)
         dlg.AddLocalizedString(296); // clear Bookmarks
 
+      // align the time right
       for (int i = 0; i < bookmarkList.Count; ++i)
-        dlg.Add(Util.Utils.SecondsToHMSString((int)bookmarkList[i]));
+      {
+        GUIListItem item = new GUIListItem();
+        item.Label = GUILocalizeStrings.Get(1065); // Jump to
+        item.Label2 = Util.Utils.SecondsToHMSString((int)bookmarkList[i]);
+
+        dlg.Add(item);
+      }
+      // show only the time on the left
+      //for (int i = 0; i < bookmarkList.Count; ++i)
+      //  dlg.Add(Util.Utils.SecondsToHMSString((int)bookmarkList[i]));
       
       _IsDialogVisible = true;
       dlg.DoModal(GetID);
