@@ -1145,7 +1145,8 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(975); // Previous chapter
       }
 
-      dlg.AddLocalizedString(1064); // Bookmarks
+      if (g_Player.IsVideo)
+        dlg.AddLocalizedString(1064); // Bookmarks
 
       _IsDialogVisible = true;
       dlg.DoModal(GetID);
