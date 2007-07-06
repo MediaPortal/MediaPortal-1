@@ -107,6 +107,7 @@
     <String id="172">Utgivelsesdato:</String>
     <String id="173">Rating:</String>
     <String id="174">Sjanger:</String>
+
     <String id="175">Toner:</String>
     <String id="176">Stil:</String>
     <String id="177">Anmeldelse:</String>
@@ -879,6 +880,8 @@
     <String id="1054">(opptak)</String>
     <String id="1055">(tidsskifting)</String>
     <String id="1056">(utilgjengelig)</String>
+    <String id="1061">Kan fjernes</String>
+    <String id="1062">Objekt</String>
     <String id="1100">Importere CD</String>
     <String id="1101">Importere valgte spor</String>
     <String id="1102">Avbryte CD-Import</String>
@@ -1228,7 +1231,7 @@
     <String id="5923">DVD-utgivelser denne uken</String>
     <String id="5924">DVD-utgivelser neste uke</String>
     <String id="5925">Forhåndsbestilte DVD-er</String>
-    <String id="6000">Video Codec</String>
+    <String id="6000">MPEG-2 Video Codec</String>
     <String id="6001">Audio Codec</String>
     <String id="6002">Audio Renderer</String>
     <String id="6003">Deinterlacing</String>
@@ -1264,6 +1267,7 @@
     <String id="6033">Søk etter nøkkelord</String>
     <String id="6034">Søk etter sjanger</String>
     <String id="6035">Legg til en oppgave</String>
+    <String id="6036">H.264 Video Codec</String>
     <String id="8000" prefix="Min ">Epost</String>
     <String id="8001">Sjekk postboks</String>
     <String id="8002">Autosjekk av</String>
