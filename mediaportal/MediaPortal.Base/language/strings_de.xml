@@ -225,9 +225,9 @@
         <String id="291">Video</String>
         <String id="292">Audio</String>
         <String id="293">Untertitel</String>
-        <String id="294">Lesezeichen erst.</String>
+        <String id="294">Lesezeichen erstellen</String>
         <String id="295">Lesezeichen tausch.</String>
-        <String id="296">Lesezeichen lösch.</String>
+        <String id="296">Lesezeichen löschen</String>
         <String id="297">AV-Verzög.</String>
         <String id="298">Suchleiste</String>
         <String id="299">Laufzeit:</String>
@@ -882,6 +882,7 @@
         <String id="1061">Wechseldatenspeicher</String>
         <String id="1062">Objekt</String>
         <String id="1063">Titel</String>
+        <String id="1064">Lesezeichen</String>
         <String id="1100">CD importieren</String>
         <String id="1101">Gewählten Titel importieren</String>
         <String id="1102">CD-Import abbrechen</String>

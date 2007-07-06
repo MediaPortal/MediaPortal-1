@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -35,6 +36,7 @@ using MediaPortal.Util;
 using MediaPortal.Configuration;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
+using MediaPortal.Video.Database;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
@@ -47,7 +49,6 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public class GUIVideoFullscreen : GUIWindow, IRenderLayer
   {
-
     class FullScreenState
     {
       public int SeekStep = 1;
@@ -1144,8 +1145,9 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(975); // Previous chapter
       }
 
-      _IsDialogVisible = true;
+      dlg.AddLocalizedString(1064); // Bookmarks
 
+      _IsDialogVisible = true;
       dlg.DoModal(GetID);
       _IsDialogVisible = false;
 
@@ -1159,6 +1161,9 @@ namespace MediaPortal.GUI.Video
           break;
         case 462:
           ShowSubtitleStreamsMenu();
+          break;
+        case 1064:
+          ShowBookmarksMenu();
           break;
         case 974: // DVD root menu
           Action actionMenu = new Action(Action.ActionType.ACTION_DVD_MENU, 0, 0);
@@ -1345,6 +1350,60 @@ namespace MediaPortal.GUI.Video
       OnMessage(msg);
     }
 
+    void ShowBookmarksMenu()
+    {
+      if (dlg == null) return;
+
+      dlg.Reset();
+      dlg.SetHeading(1064); // Bookmarks
+
+      // load the stored bookmarks
+      ArrayList bookmarks = new ArrayList();
+      VideoDatabase.GetBookMarksForMovie(g_Player.CurrentFile, ref bookmarks);
+
+      dlg.AddLocalizedString(294); // create Bookmark
+      if (bookmarks.Count > 0)
+        dlg.AddLocalizedString(296); // clear Bookmarks
+
+      for (int i = 0; i < bookmarks.Count; ++i)
+      {
+        double fTime = (double)bookmarks[i];
+        long lPTS1 = (long)(fTime);
+        int hh = (int)(lPTS1 / 3600) % 100;
+        int mm = (int)((lPTS1 / 60) % 60);
+        int ss = (int)((lPTS1 / 1) % 60);
+        string strBookmark = String.Format("{0:00}.   {1:00}:{2:00}:{3:00}", i + 1, hh, mm, ss);
+        dlg.Add(strBookmark);
+      }
+
+      _IsDialogVisible = true;
+      dlg.DoModal(GetID);
+      _IsDialogVisible = false;
+
+      if (dlg.SelectedId == -1) return;
+
+      if (dlg.SelectedLabel == 0)
+      {
+        // get the current playing time position
+        double dCurTime = g_Player.CurrentPosition;
+        // add the current timestamp
+        VideoDatabase.AddBookMarkToMovie(g_Player.CurrentFile, (float)dCurTime);
+      }
+      else if (dlg.SelectedLabel == 1)
+      {
+        // empty the bookmarks table for this movie
+        VideoDatabase.ClearBookMarksOfMovie(g_Player.CurrentFile);
+      }
+      else
+      {
+        // get selected bookmark
+        // dlg[0] = create, dlg[1] = clearAll --> dlg[2] = bookmark[0]
+        int selectedBookmarkIndex = dlg.SelectedLabel - 2;
+
+        // set mplayers play position
+        g_Player.SeekAbsolute((double)bookmarks[selectedBookmarkIndex]);
+      }
+    }
 
     public bool ScreenStateChanged()
     {
