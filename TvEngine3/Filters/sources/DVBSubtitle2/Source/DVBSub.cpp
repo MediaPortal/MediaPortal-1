@@ -70,7 +70,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_bSeekingDone( true ),
   m_pReferenceClock( NULL ),
   m_startTimestamp( -1 ),
-  m_CurrentPosition( 0 )
+  m_CurrentSeekPosition( 0 )
 {
 	// Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -194,7 +194,7 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
   LONGLONG pos( 0 );
   m_pIMediaSeeking->GetCurrentPosition( &pos );
   pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
-  m_CurrentPosition = pos;
+  m_CurrentSeekPosition = pos;
 
   LogDebugMediaPosition( "Run - media seeking position" );        
 
@@ -332,12 +332,12 @@ void CDVBSub::NotifySubtitle()
     LONGLONG pts( 0 ); 
     LONGLONG subtitlePTS( pSubtitle->PTS() );
    
-    pts = ( subtitlePTS - m_basePCR - m_CurrentPosition ) / 90;
+    pts = ( subtitlePTS - m_basePCR - m_CurrentSeekPosition ) / 90;
 
-    LogDebugPTS( "subtitlePTS       ", subtitlePTS ); 
-    LogDebugPTS( "m_basePCR         ", m_basePCR ); 
-    LogDebugPTS( "m_CurrentPosition ", m_CurrentPosition ); 
-    LogDebugPTS( "timestamp ms      ", pts * 90 ); 
+    LogDebugPTS( "subtitlePTS           ", subtitlePTS ); 
+    LogDebugPTS( "m_basePCR             ", m_basePCR ); 
+    LogDebugPTS( "m_CurrentSeekPosition ", m_CurrentSeekPosition ); 
+    LogDebugPTS( "timestamp ms          ", pts * 90 ); 
 
     pSubtitle->SetTimestamp( pts );  
 
@@ -362,59 +362,6 @@ void CDVBSub::NotifySubtitle()
   {
 	  LogDebug( "No callback set" );
   }
-}
-
-
-//
-// NotifyFirstPTS
-//
-void CDVBSub::NotifyFirstPTS( ULONGLONG /*firstPTS*/ )
-{
-  // not used anymore
-}
-
-
-//
-// SetPcr
-//
-void CDVBSub::SetPcr( ULONGLONG pcr )
-{
-  //CAutoLock cObjectLock( m_pLock );
-  
-  // This gets called from PcrInputPin
-/*  m_curPCR = pcr;
-
-  if( m_firstPCR < 0 )
-    m_firstPCR = pcr;
-
-  if( m_basePCR < 0 )
-  {
-    LogDebugPTS( "SetPcr PCR :", pcr );
-	}
-  
-  if ( m_fixPCR < 0 )
-  {
-    // This is updated only on startup
-    m_fixPCR = pcr - m_basePCR;
-    LogDebugPTS( "fixPCR: ", m_fixPCR );
-  }
-  if( m_seekDifPCR < 0 )
-  {
-    // updated on every seek (reset)
-    LONGLONG pos( 0 );
-	  if( m_pIMediaSeeking && m_State == State_Running )
-	  {
-      m_pIMediaSeeking->GetCurrentPosition( &pos );
-		  if( pos > 0 )
-		  {
-			  pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
-      }
-	  }  
-
-    m_seekDifPCR = pos;
-    LogDebugPTS( "fixDifPCR: ", m_fixPCR );
-  }
-*/
 }
 
 //

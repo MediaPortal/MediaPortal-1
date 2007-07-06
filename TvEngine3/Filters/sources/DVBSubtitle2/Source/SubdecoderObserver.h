@@ -26,5 +26,4 @@ class MSubdecoderObserver
 	public:
 
 		virtual void NotifySubtitle() = 0;
-    virtual void NotifyFirstPTS( ULONGLONG firstPTS ) = 0;
 };

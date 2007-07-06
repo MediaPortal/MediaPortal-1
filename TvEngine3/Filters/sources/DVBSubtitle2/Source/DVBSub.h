@@ -74,16 +74,9 @@ public:
 
   // From MSubdecoderObserver
 	void NotifySubtitle();
-  void NotifyFirstPTS( ULONGLONG firstPTS );
-
-//  void SetSubtitlePid( LONG pid );
-
-  static CUnknown * WINAPI CreateInstance( LPUNKNOWN pUnk, HRESULT *pHr );
-
-  void SetPcr( ULONGLONG pcr );
   void NotifySeeking();
 
-  void Event();
+  static CUnknown * WINAPI CreateInstance( LPUNKNOWN pUnk, HRESULT *pHr );
 
 private:
 
@@ -106,7 +99,7 @@ private: // data
   CCritSec            m_ReceiveLock;		  // Sublock for received samples
 
   REFERENCE_TIME      m_startTimestamp;
-  REFERENCE_TIME      m_CurrentPosition;
+  REFERENCE_TIME      m_CurrentSeekPosition;
   LONGLONG            m_basePCR;
 
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub);
