@@ -1360,22 +1360,18 @@ namespace MediaPortal.GUI.Video
       // load the stored bookmarks
       ArrayList bookmarks = new ArrayList();
       VideoDatabase.GetBookMarksForMovie(g_Player.CurrentFile, ref bookmarks);
+      List<double> bookmarkList = new List<double>();
+      for (int i = 0; i < bookmarks.Count; i++)
+        bookmarkList.Add((double)bookmarks[i]);
+      bookmarkList.Sort();
 
       dlg.AddLocalizedString(294); // create Bookmark
-      if (bookmarks.Count > 0)
+      if (bookmarkList.Count > 0)
         dlg.AddLocalizedString(296); // clear Bookmarks
 
-      for (int i = 0; i < bookmarks.Count; ++i)
-      {
-        double fTime = (double)bookmarks[i];
-        long lPTS1 = (long)(fTime);
-        int hh = (int)(lPTS1 / 3600) % 100;
-        int mm = (int)((lPTS1 / 60) % 60);
-        int ss = (int)((lPTS1 / 1) % 60);
-        string strBookmark = String.Format("{0:00}.   {1:00}:{2:00}:{3:00}", i + 1, hh, mm, ss);
-        dlg.Add(strBookmark);
-      }
-
+      for (int i = 0; i < bookmarkList.Count; ++i)
+        dlg.Add(Util.Utils.SecondsToHMSString((int)bookmarkList[i]));
+      
       _IsDialogVisible = true;
       dlg.DoModal(GetID);
       _IsDialogVisible = false;
@@ -1401,7 +1397,7 @@ namespace MediaPortal.GUI.Video
         int selectedBookmarkIndex = dlg.SelectedLabel - 2;
 
         // set mplayers play position
-        g_Player.SeekAbsolute((double)bookmarks[selectedBookmarkIndex]);
+        g_Player.SeekAbsolute(bookmarkList[selectedBookmarkIndex]);
       }
     }
 
