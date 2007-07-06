@@ -785,6 +785,8 @@ namespace MediaPortal.Player
       }
     }
 
+    #region Seeking
+
     public override void SeekRelative(double dTime)
     {
       if (m_state != PlayState.Init)
@@ -845,7 +847,6 @@ namespace MediaPortal.Player
       }
     }
 
-
     public override void SeekAsolutePercentage(int iPercentage)
     {
       if (m_state != PlayState.Init)
@@ -861,6 +862,7 @@ namespace MediaPortal.Player
       }
     }
 
+    #endregion
 
     public override bool HasVideo
     {
@@ -870,11 +872,12 @@ namespace MediaPortal.Player
       }
     }
 
-
     public override bool Ended
     {
       get { return m_state == PlayState.Ended; }
     }
+
+    #region Get/Close Interfaces
 
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected virtual bool GetInterfaces()
@@ -1010,7 +1013,6 @@ namespace MediaPortal.Player
       }
     }
 
-
     /// <summary> do cleanup and release DirectShow. </summary>
     protected virtual void CloseInterfaces()
     {
@@ -1095,6 +1097,8 @@ namespace MediaPortal.Player
         Log.Error("VideoPlayerVMR7: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
     }
+
+    #endregion
 
     public override void WndProc(ref Message m)
     {
@@ -1191,6 +1195,7 @@ namespace MediaPortal.Player
     }
 
     #region subtitle/audio stream selection
+
     public override int AudioStreams
     {
       get { return FStreams.GetStreamCount(1); }
@@ -1218,15 +1223,16 @@ namespace MediaPortal.Player
       return FStreams.GetStreamInfos(1, iStream).Name;
     }
 
-
-    //SUBTITLES
     public override int SubtitleStreams
     {
       get
       {
+        // embedded subtitles
         int subsStreamCount = FStreams.GetStreamCount(2);
         if (subsStreamCount > 0)
           return subsStreamCount;
+
+        // vobsub subtitles
         int ret = 0;
         if (this.vobSub != null)
         {
@@ -1235,11 +1241,11 @@ namespace MediaPortal.Player
         return ret;
       }
     }
-
     public override int CurrentSubtitleStream
     {
       get
       {
+        // embedded subtitles
         int subsStreamCount = FStreams.GetStreamCount(2);
         if (subsStreamCount > 0) 
         {
@@ -1248,6 +1254,8 @@ namespace MediaPortal.Player
               return i;
           return 0;
         }
+
+        // vobsub subtitles
         int ret = 0;
         if (vobSub != null)
         {
@@ -1257,6 +1265,7 @@ namespace MediaPortal.Player
       }
       set
       {
+        // embedded subtitles
         int subsStreamCount = FStreams.GetStreamCount(2);
         if (subsStreamCount > 0)
         {
@@ -1267,6 +1276,8 @@ namespace MediaPortal.Player
           EnableStream(FStreams.GetStreamInfos(2, value).Id, AMStreamSelectEnableFlags.Enable, FStreams.GetStreamInfos(2, value).Filter);
           return;
         }
+
+        // vobsub subtitles
         if (vobSub != null)
         {
           vobSub.put_SelectedLanguage(value);
@@ -1274,13 +1285,15 @@ namespace MediaPortal.Player
         }
       }
     }
-
     public override string SubtitleLanguage(int iStream)
     {
+      // embedded subtitles
       if (FStreams.GetStreamCount(2) > 0)
       {
         return FStreams.GetStreamInfos(2, iStream).Name;
       }
+
+      // vobsub subtitles
       string ret = Strings.Unknown;
       if (vobSub != null)
       {
@@ -1294,7 +1307,6 @@ namespace MediaPortal.Player
       }
       return ret;
     }
-
 
     public override bool EnableSubtitle
     {
@@ -1342,7 +1354,6 @@ namespace MediaPortal.Player
         }
       }
     }
-
     public bool AnalyseStreams()
     {
       try
@@ -1410,26 +1421,21 @@ namespace MediaPortal.Player
                   FSInfos.Id = istream;
                   FSInfos.Type = -1;
 
-
                   //VIDEO
                   if (sPDWGroup == 0)
                     FSInfos.Type = 0;
-                  else
-                    //AUDIO
-                    if (sPDWGroup == 1)
-                      FSInfos.Type = 1;
-                    else
-                      //SUBTITLE
-                      if (sPDWGroup == 2 && sName.LastIndexOf("off") == -1 && sName.LastIndexOf("Hide ") == -1 && sName.LastIndexOf("No ") == -1 && sName.LastIndexOf("Miscellaneous ") == -1)
-                        FSInfos.Type = 2;
-                      else
-                        //NO SUBTITILE TAG
-                        if ((sPDWGroup == 2 && (sName.LastIndexOf("off") != -1 || sName.LastIndexOf("No ") != -1)) || (sPDWGroup == 6590033 && sName.LastIndexOf("Hide ") != -1))
-                          FSInfos.Type = 3;
-                        else
-                          //DirectVobSub SHOW SUBTITLE TAG
-                          if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ") != -1)
-                            FSInfos.Type = 4;
+                  //AUDIO
+                  else if (sPDWGroup == 1)
+                    FSInfos.Type = 1;
+                  //SUBTITLE
+                  else if (sPDWGroup == 2 && sName.LastIndexOf("off") == -1 && sName.LastIndexOf("Hide ") == -1 && sName.LastIndexOf("No ") == -1 && sName.LastIndexOf("Miscellaneous ") == -1)
+                    FSInfos.Type = 2;
+                  //NO SUBTITILE TAG
+                  else if ((sPDWGroup == 2 && (sName.LastIndexOf("off") != -1 || sName.LastIndexOf("No ") != -1)) || (sPDWGroup == 6590033 && sName.LastIndexOf("Hide ") != -1))
+                    FSInfos.Type = 3;
+                  //DirectVobSub SHOW SUBTITLE TAG
+                  else if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ") != -1)
+                    FSInfos.Type = 4;
 
                   if (FSInfos.Type != -1)
                   {
@@ -1454,7 +1460,6 @@ namespace MediaPortal.Player
       }
       return true;
     }
-
     public bool EnableStream(int Id, AMStreamSelectEnableFlags dwFlags, string Filter)
     {
       try
@@ -1475,7 +1480,6 @@ namespace MediaPortal.Player
       return true;
     }
 
-    //ENDS
     #endregion
 
     #region IDisposable Members
@@ -1493,7 +1497,6 @@ namespace MediaPortal.Player
         return (_mediaType == g_Player.MediaType.TV || _mediaType == g_Player.MediaType.Recording);
       }
     }
-
     public override bool IsTimeShifting
     {
       get

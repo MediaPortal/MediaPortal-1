@@ -1209,45 +1209,43 @@ namespace MediaPortal.GUI.Video
     // Add audio stream selection to be able to switch audio streams in .ts recordings
     void ShowAudioStreamsMenu()
     {
-      if (dlg == null)
-        return;
+      if (dlg == null) return;
       dlg.Reset();
       dlg.SetHeading(492); // Audio Streams
 
+      // get the number of audiostreams in the current movie
       int count = g_Player.AudioStreams;
+      // cycle through each audiostream and add it to our list control
       for (int i = 0; i < count; i++)
         dlg.Add(g_Player.AudioLanguage(i));
 
+      // select/focus the audiostream, which is active atm
       dlg.SelectedLabel = g_Player.CurrentAudioStream;
+
+      // show dialog and wait for result
       _IsDialogVisible = true;
-
       dlg.DoModal(GetID);
-
       _IsDialogVisible = false;
 
-      if (dlg.SelectedId == -1)
-        return;
-
+      if (dlg.SelectedId == -1) return;
       if (dlg.SelectedLabel != g_Player.CurrentAudioStream)
         g_Player.CurrentAudioStream = dlg.SelectedLabel;
     }
 
     void ShowSubtitleStreamsMenu()
     {
-      if (dlg == null)
-        return;
+      if (dlg == null) return;
       dlg.Reset();
       dlg.SetHeading(462); // SubTitle Streams
 
-      // get the number of subtitles in the current movie
-      int count = g_Player.SubtitleStreams;
-      
       dlg.AddLocalizedString(519); // disable Subtitles
 
+      // get the number of subtitles in the current movie
+      int count = g_Player.SubtitleStreams;
       // cycle through each subtitle and add it to our list control
-      int currentSubtitleStream = g_Player.CurrentSubtitleStream;
       for (int i = 0; i < count; ++i)
       {
+        // remove (English) in: "English (English)", should be done by gplayer
         string strLang = g_Player.SubtitleLanguage(i);
         int ipos = strLang.IndexOf("(");
         if (ipos > 0)
@@ -1256,18 +1254,18 @@ namespace MediaPortal.GUI.Video
         dlg.Add(strLang);
       }
 
+      // select/focus the subtitle, which is active atm
       if (g_Player.EnableSubtitle)
         dlg.SelectedLabel = g_Player.CurrentSubtitleStream + 1;
       else
         dlg.SelectedLabel = 0;
 
+      // show dialog and wait for result
       _IsDialogVisible = true;
       dlg.DoModal(GetID);
       _IsDialogVisible = false;
 
-      if (dlg.SelectedId == -1)
-        return;
-
+      if (dlg.SelectedId == -1) return;
       if (dlg.SelectedLabel == 0)
         g_Player.EnableSubtitle = false;
       else
@@ -1280,8 +1278,7 @@ namespace MediaPortal.GUI.Video
 
     void ShowAspectRatioMenu()
     {
-      if (dlg == null)
-        return;
+      if (dlg == null) return;
       dlg.Reset();
       dlg.SetHeading(941); // Change aspect ratio
 
@@ -1293,13 +1290,12 @@ namespace MediaPortal.GUI.Video
       dlg.AddLocalizedString(947); // Zoom
       dlg.AddLocalizedString(1190); // Zoom 14:9
 
+      // show dialog and wait for result
       _IsDialogVisible = true;
-
       dlg.DoModal(GetID);
       _IsDialogVisible = false;
 
-      if (dlg.SelectedId == -1)
-        return;
+      if (dlg.SelectedId == -1) return;
       _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
       string statusLine = "";
       switch (dlg.SelectedId)
