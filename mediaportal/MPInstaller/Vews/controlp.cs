@@ -44,6 +44,7 @@ namespace MediaPortal.MPInstaller
   {
     public MPInstallHelper lst = new MPInstallHelper();
     public MPInstallHelper lst_online = new MPInstallHelper();
+    private string InstalDir = Config.GetFolder(Config.Dir.Base) + @"\" + "Installer";
     private Hashtable[] groupTables;
     int groupColumn = 0;
 
@@ -483,7 +484,11 @@ namespace MediaPortal.MPInstaller
 
     private void button6_Click(object sender, EventArgs e)
     {
-      string temp_file = Config.GetFolder(Config.Dir.Base) + @"\" + "Instaler" + @"\online.xml";
+      string temp_file = InstalDir + @"\online.xml";
+      if (!Directory.Exists(InstalDir))
+      {
+        Directory.CreateDirectory(InstalDir);
+      }
       download_form dw = new download_form(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/" + "MPExtensionFileList.xml", temp_file);
       dw.Text = "Download online list";
       dw.ShowDialog();
@@ -499,7 +504,7 @@ namespace MediaPortal.MPInstaller
         ((MPpackageStruct)lst.lst[i]).isInstalled = true;
         ((MPpackageStruct)lst.lst[i]).isLocal = true;
       }
-      string temp_file = Config.GetFolder(Config.Dir.Base) + @"\" + "Instaler" + @"\online.xml";
+      string temp_file = InstalDir+ @"\online.xml";
       if (File.Exists(temp_file))
       {
         lst_online.LoadFromFile(temp_file);

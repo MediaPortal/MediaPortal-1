@@ -76,6 +76,10 @@ xcopy /y %1\WebEPG\WebEPG\bin\%2\WebEPG.dll .
 copy %1\WebEPG\WebEPG-xmltv\bin\%2\WebEPG-xmltv.exe WebEPG.exe
 xcopy /y %1\WebEPG\WebEPG-conf\bin\%2\WebEPG-conf.exe .
 
+REM MPInstaller
+xcopy /y %1\MPInstaller\bin\%2\MPInstaller.Library.dll .
+xcopy /y %1\MPInstaller\bin\%2\MPInstaller.exe .
+
 rem MyDreambox plugin dependencies
 xcopy /y %1\WindowPlugins\GUIMyDreambox\AxInterop.AXVLC.dll .
 xcopy /y %1\WindowPlugins\GUIMyDreambox\Interop.AXVLC.dll .
