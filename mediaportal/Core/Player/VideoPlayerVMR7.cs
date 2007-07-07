@@ -1220,7 +1220,13 @@ namespace MediaPortal.Player
     }
     public override string AudioLanguage(int iStream)
     {
-      return FStreams.GetStreamInfos(1, iStream).Name;
+      string streamName = FStreams.GetStreamInfos(1, iStream).Name;
+
+      // remove prefix, which is added by Haali Media Splitter
+      if (streamName.StartsWith("A: "))
+        streamName = streamName.Replace("A: ", String.Empty);
+
+      return streamName;
     }
 
     public override int SubtitleStreams
@@ -1290,7 +1296,13 @@ namespace MediaPortal.Player
       // embedded subtitles
       if (FStreams.GetStreamCount(2) > 0)
       {
-        return FStreams.GetStreamInfos(2, iStream).Name;
+        string streamName = FStreams.GetStreamInfos(2, iStream).Name;
+
+        // remove prefix, which is added by Haali Media Splitter
+        if (streamName.StartsWith("S: "))
+          streamName = streamName.Replace("S: ", String.Empty);
+
+        return streamName;
       }
 
       // vobsub subtitles
