@@ -255,7 +255,7 @@
 		<carrier frequency="767500" bandwidth="7" />
 		<carrier frequency="788500" bandwidth="7" />
 	</country>
-	<country name="Austria - All regions">
+	<country name="Austria - All Regions">
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="794000" bandwidth="8" />
 		<carrier frequency="802000" bandwidth="8" />
@@ -292,7 +292,7 @@
 	<country name="Austria - Wien">
 		<carrier frequency="794000" bandwidth="8" />
 	</country>
-	<country name="Belgium - All regions" offset="125">
+	<country name="Belgium - All Regions" offset="125">
 		<carrier frequency="482000" bandwidth="8"/>
 		<carrier frequency="626000" bandwidth="8"/>
 		<carrier frequency="634000" bandwidth="8"/>
@@ -324,7 +324,7 @@
 		<carrier frequency="618000" bandwidth="8" />
 		<carrier frequency="" bandwidth="8" />
 	</country>
-	<country name="Danmark - All regions">
+	<country name="Danmark - All Regions">
 		<carrier frequency="506000" bandwidth="8"/>
 		<carrier frequency="538000" bandwidth="8"/>
 		<carrier frequency="554000" bandwidth="8"/>
@@ -1825,7 +1825,7 @@
 		<carrier frequency="850000" />
 		<carrier frequency="858000" />
 	</country>
-	<country name="New Zealand Auckland">
+	<country name="New Zealand - Auckland (trials)">
 		<carrier frequency="698000" bandwidth="8" />
 	</country>
 	<country name="Norway - Oslo (trials)" offset="0">
@@ -3324,6 +3324,8 @@
 		<carrier frequency="593000" bandwidth="6" />
 		<carrier frequency="599000" bandwidth="6" />
 	</country>
+
+	<!-- UK transponders @ http://www.ofcom.org.uk/static/reception_advice/digital_trans_guide/index.asp-region=show_all.html -->
 	<country name="UK - All Regions" offset="167">
 		<carrier frequency="474000" bandwidth="8" />
 		<carrier frequency="482000" bandwidth="8" />
