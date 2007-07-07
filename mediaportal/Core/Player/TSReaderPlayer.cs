@@ -615,6 +615,8 @@ namespace MediaPortal.Player
 
           dTimeInSecs += fContentStart;
           long lTime = (long)dTimeInSecs;
+          if (lTime > lContentEnd)
+            lTime = lContentEnd;
           int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
           if (hr != 0)
           {
