@@ -698,12 +698,6 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 
 			new_i = i + segment_length + 4;
 
-		  if (first_PTS == 0) 
-		  { 
-			  first_PTS = PTS; 
-        m_pObserver->NotifyFirstPTS( first_PTS );
-		  }
-
 			/* SEGMENT_DATA_FIELD */
 			switch(segment_type) {
 				case 0x10: 
