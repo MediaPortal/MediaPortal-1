@@ -280,6 +280,7 @@ bool CAudioPin::IsConnected()
 // CMediaSeeking
 HRESULT CAudioPin::ChangeStart()
 {
+
     UpdateFromSeek();
 	return S_OK;
 }
@@ -314,6 +315,7 @@ STDMETHODIMP CAudioPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
 
 void CAudioPin::UpdateFromSeek()
 {
+	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
 	if (m_rtStart>m_rtDuration)
 		m_rtStart=m_rtDuration;
 
@@ -326,6 +328,7 @@ void CAudioPin::UpdateFromSeek()
   m_bSeeking=true;
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
   LogDebug("aud seek filter->Iseeking() done");
+	demux.SetPause(true);
   CAutoLock lock(&m_bufferLock);
   LogDebug("aud seek buffer locked");
   if (ThreadExists()) 
@@ -357,7 +360,9 @@ void CAudioPin::UpdateFromSeek()
       Run();
 			LogDebug("aud seek running");
   }
+	demux.Flush();
   m_bSeeking=false;
+	demux.SetPause(false);
 }
 
 

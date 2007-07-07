@@ -59,6 +59,8 @@ public:
   void       GetVideoStreamType(CMediaType& pmt);
   int        GetAudioStreamCount();
   bool       EndOfFile();
+	bool			 IsPaused();
+	void			 SetPause(bool onOff);
 private:
   struct stAudioStream
   {
@@ -95,4 +97,5 @@ private:
   int m_iAudioStream;
   int m_audioPid;
   bool m_bScanning;
+	bool m_bPause;
 };

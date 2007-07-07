@@ -355,6 +355,7 @@ STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
 
 void CVideoPin::UpdateFromSeek()
 {
+	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
 
 	if (m_rtStart>m_rtDuration)
 		m_rtStart=m_rtDuration;
@@ -366,6 +367,7 @@ void CVideoPin::UpdateFromSeek()
   m_bSeeking=true;
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
    LogDebug("vid seek filter->Iseeking() done");
+	demux.SetPause(true);
   CAutoLock lock(&m_bufferLock);
   LogDebug("vid seek buffer locked");
   if (ThreadExists()) 
@@ -409,6 +411,8 @@ void CVideoPin::UpdateFromSeek()
 			LogDebug("vid seek running");
   }
   m_bSeeking=false;
+	demux.Flush();
+	demux.SetPause(false);
 }
 
 STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )

@@ -300,6 +300,7 @@ CBuffer* CDeMultiplexer::GetVideo()
   {
     if (!m_filter.IsFilterRunning()) return NULL;
     if (m_bEndOfFile) return NULL;
+		if (m_bPause) return NULL;
     ReadFromFile() ;
     
   }
@@ -326,6 +327,7 @@ CBuffer* CDeMultiplexer::GetAudio()
   {
     if (!m_filter.IsFilterRunning()) return NULL;
     if (m_bEndOfFile) return NULL;
+		if (m_bPause) return NULL;
     ReadFromFile() ;
     
   }
@@ -367,7 +369,7 @@ bool CDeMultiplexer::EndOfFile()
 bool CDeMultiplexer::ReadFromFile()
 {
   DWORD dwTick=GetTickCount();
-    byte buffer[32712];
+  byte buffer[32712];
   while (true)
   {
     DWORD dwReadBytes;
@@ -379,6 +381,8 @@ bool CDeMultiplexer::ReadFromFile()
     }
     else 
     {
+			
+			if (m_bPause) return false;
       if (!m_filter.IsTimeShifting())
       {
         m_bEndOfFile=true;
@@ -387,6 +391,7 @@ bool CDeMultiplexer::ReadFromFile()
       Sleep(100);
       if (GetTickCount() - dwTick >5000) break;
     }
+		if (m_bPause) return false;
   }
   return false;
 }
@@ -946,4 +951,13 @@ HRESULT CDeMultiplexer::RenderFilterPin(CBasePin* pin)
 	  return hr;
   }
   return S_OK;
+}
+bool CDeMultiplexer::IsPaused()
+{
+	return m_bPause;
+}
+	
+void CDeMultiplexer::SetPause(bool onOff)
+{
+	m_bPause=onOff;
 }
