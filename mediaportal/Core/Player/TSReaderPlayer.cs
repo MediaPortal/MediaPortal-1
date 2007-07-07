@@ -41,7 +41,7 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.Player
 {
-  class TSReaderPlayer: BaseTSReaderPlayer
+  class TSReaderPlayer : BaseTSReaderPlayer
   {
     #region structs
     static byte[] Mpeg2ProgramVideo = 
@@ -313,18 +313,18 @@ namespace MediaPortal.Player
         }
         //Log.Info("TSStreamBufferPlayer9: open file:{0}",filename);
 
-          Log.Info("TSReaderPlayer: open file with mediatype:{0}", filename);
-          AMMediaType mpeg2ProgramStream = new AMMediaType();
-          mpeg2ProgramStream.majorType = MediaType.Stream;
-          mpeg2ProgramStream.subType = MediaSubType.Mpeg2Program;
-          mpeg2ProgramStream.unkPtr = IntPtr.Zero;
-          mpeg2ProgramStream.sampleSize = 0;
-          mpeg2ProgramStream.temporalCompression = false;
-          mpeg2ProgramStream.fixedSizeSamples = true;
-          mpeg2ProgramStream.formatType = FormatType.None;
-          mpeg2ProgramStream.formatSize = 0;
-          mpeg2ProgramStream.formatPtr = IntPtr.Zero;
-          hr = interfaceFile.Load(filename, mpeg2ProgramStream);
+        Log.Info("TSReaderPlayer: open file with mediatype:{0}", filename);
+        AMMediaType mpeg2ProgramStream = new AMMediaType();
+        mpeg2ProgramStream.majorType = MediaType.Stream;
+        mpeg2ProgramStream.subType = MediaSubType.Mpeg2Program;
+        mpeg2ProgramStream.unkPtr = IntPtr.Zero;
+        mpeg2ProgramStream.sampleSize = 0;
+        mpeg2ProgramStream.temporalCompression = false;
+        mpeg2ProgramStream.fixedSizeSamples = true;
+        mpeg2ProgramStream.formatType = FormatType.None;
+        mpeg2ProgramStream.formatSize = 0;
+        mpeg2ProgramStream.formatPtr = IntPtr.Zero;
+        hr = interfaceFile.Load(filename, mpeg2ProgramStream);
 
         if (hr != 0)
         {
@@ -594,29 +594,19 @@ namespace MediaPortal.Player
         if (_mediaCtrl != null && _mediaSeeking != null)
         {
           UpdateCurrentPosition();
-          if (IsTimeShifting && dTimeInSecs + 0.5 > Duration)
-          {
-            Log.Info("TsReaderPlayer:sleep");
-            System.Threading.Thread.Sleep(500);
-          }
-          UpdateCurrentPosition();
-          if (dTimeInSecs < 0.0d)
-            dTimeInSecs = 0.0d;
-          if (dTimeInSecs > Duration)
-            dTimeInSecs = Duration;
+          if (dTimeInSecs < 0) dTimeInSecs = 0;
           Log.Info("TsReaderPlayer:seekabs:{0} duration:{1} pos:{2}", dTimeInSecs, Duration, CurrentPosition);
           dTimeInSecs *= 10000000d;
+          long lTime = (long)dTimeInSecs;
           long pStop = 0;
           long lContentStart, lContentEnd;
-          double fContentStart, fContentEnd;
           _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-          fContentStart = lContentStart;
-          fContentEnd = lContentEnd;
-
-          dTimeInSecs += fContentStart;
-          long lTime = (long)dTimeInSecs;
           if (lTime > lContentEnd)
+          {
+            System.Threading.Thread.Sleep(500);
+            _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
             lTime = lContentEnd;
+          }
           int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
           if (hr != 0)
           {
