@@ -707,15 +707,12 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_ZOOM_LEVEL_NORMAL:
-          //Fit current image to screen
           _userZoomLevel = 1.0f;
-          //_isPictureZoomed = false;
-          if (LoadCurrentSlide() == null)
-            Log.Debug("GUISlideShow: current slide unknown for zooming out");
+          ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
         case Action.ActionType.ACTION_ZOOM_LEVEL_1:
-          _userZoomLevel = 1.0f;
+          _userZoomLevel = 1.5f;
           ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
