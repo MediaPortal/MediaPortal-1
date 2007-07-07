@@ -48,7 +48,7 @@ namespace MediaPortal.Player
       public string Name;
       public bool Current;
       public string Filter;
-      public int Type; // 0=video 1=audio 2=subtitle 3=hide subtitle 4=show subtitle
+      public StreamType Type;
     };
     protected class FilterStreams
     {
@@ -57,7 +57,7 @@ namespace MediaPortal.Player
         cStreams = 0;
         Streams = new FilterStreamInfos[MAX_STREAMS];
       }
-      public FilterStreamInfos GetStreamInfos(int Type, int Id)
+      public FilterStreamInfos GetStreamInfos(StreamType Type, int Id)
       {
         FilterStreamInfos empty = new FilterStreamInfos();
         for (int i = 0; i < cStreams; i++)
@@ -70,7 +70,7 @@ namespace MediaPortal.Player
         }
         return empty;
       }
-      public int GetStreamCount(int Type)
+      public int GetStreamCount(StreamType Type)
       {
         int ret = 0;
         for (int i = 0; i < cStreams; i++)
@@ -89,7 +89,7 @@ namespace MediaPortal.Player
         cStreams++;
         return true;
       }
-      public bool SetCurrentValue(int Type, int Id, bool Value)
+      public bool SetCurrentValue(StreamType Type, int Id, bool Value)
       {
         for (int i = 0; i < cStreams; i++)
         {
@@ -114,8 +114,19 @@ namespace MediaPortal.Player
       Init,
       Playing,
       Paused,
-      Ended
+      Ended,
     }
+
+    public enum StreamType
+    {
+      Video,
+      Audio,
+      Subtitle,
+      Subtitle_hidden,
+      Subtitle_shown,
+      Unknown,
+    }
+
     protected int m_iPositionX = 0;
     protected int m_iPositionY = 0;
     protected int m_iWidth = 200;
@@ -1198,29 +1209,29 @@ namespace MediaPortal.Player
 
     public override int AudioStreams
     {
-      get { return FStreams.GetStreamCount(1); }
+      get { return FStreams.GetStreamCount(StreamType.Audio); }
     }
     public override int CurrentAudioStream
     {
       get
       {
-        for (int i = 0; i < FStreams.GetStreamCount(1); i++) if (FStreams.GetStreamInfos(1, i).Current) return i;
+        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Audio); i++) if (FStreams.GetStreamInfos(StreamType.Audio, i).Current) return i;
         return 0;
       }
       set
       {
-        for (int i = 0; i < FStreams.GetStreamCount(1); i++)
-          if (FStreams.GetStreamInfos(1, i).Current)
-            FStreams.SetCurrentValue(1, i, false);
-        FStreams.SetCurrentValue(1, value, true);
-        EnableStream(FStreams.GetStreamInfos(1, value).Id, 0, FStreams.GetStreamInfos(1, value).Filter);
-        EnableStream(FStreams.GetStreamInfos(1, value).Id, AMStreamSelectEnableFlags.Enable, FStreams.GetStreamInfos(1, value).Filter);
+        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Audio); i++)
+          if (FStreams.GetStreamInfos(StreamType.Audio, i).Current)
+            FStreams.SetCurrentValue(StreamType.Audio, i, false);
+        FStreams.SetCurrentValue(StreamType.Audio, value, true);
+        EnableStream(FStreams.GetStreamInfos(StreamType.Audio, value).Id, 0, FStreams.GetStreamInfos(StreamType.Audio, value).Filter);
+        EnableStream(FStreams.GetStreamInfos(StreamType.Audio, value).Id, AMStreamSelectEnableFlags.Enable, FStreams.GetStreamInfos(StreamType.Audio, value).Filter);
         return;
       }
     }
     public override string AudioLanguage(int iStream)
     {
-      string streamName = FStreams.GetStreamInfos(1, iStream).Name;
+      string streamName = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
 
       // remove prefix, which is added by Haali Media Splitter
       if (streamName.StartsWith("A: "))
@@ -1234,7 +1245,7 @@ namespace MediaPortal.Player
       get
       {
         // embedded subtitles
-        int subsStreamCount = FStreams.GetStreamCount(2);
+        int subsStreamCount = FStreams.GetStreamCount(StreamType.Subtitle);
         if (subsStreamCount > 0)
           return subsStreamCount;
 
@@ -1252,11 +1263,11 @@ namespace MediaPortal.Player
       get
       {
         // embedded subtitles
-        int subsStreamCount = FStreams.GetStreamCount(2);
+        int subsStreamCount = FStreams.GetStreamCount(StreamType.Subtitle);
         if (subsStreamCount > 0) 
         {
           for (int i = 0; i < subsStreamCount; i++)
-            if (FStreams.GetStreamInfos(2, i).Current)
+            if (FStreams.GetStreamInfos(StreamType.Subtitle, i).Current)
               return i;
           return 0;
         }
@@ -1272,14 +1283,14 @@ namespace MediaPortal.Player
       set
       {
         // embedded subtitles
-        int subsStreamCount = FStreams.GetStreamCount(2);
+        int subsStreamCount = FStreams.GetStreamCount(StreamType.Subtitle);
         if (subsStreamCount > 0)
         {
-          for (int i = 0; i < FStreams.GetStreamCount(2); i++)
-            FStreams.SetCurrentValue(2, i, false);
-          FStreams.SetCurrentValue(2, value, true);
-          EnableStream(FStreams.GetStreamInfos(2, value).Id, 0, FStreams.GetStreamInfos(2, value).Filter);
-          EnableStream(FStreams.GetStreamInfos(2, value).Id, AMStreamSelectEnableFlags.Enable, FStreams.GetStreamInfos(2, value).Filter);
+          for (int i = 0; i < FStreams.GetStreamCount(StreamType.Subtitle); i++)
+            FStreams.SetCurrentValue(StreamType.Subtitle, i, false);
+          FStreams.SetCurrentValue(StreamType.Subtitle, value, true);
+          EnableStream(FStreams.GetStreamInfos(StreamType.Subtitle, value).Id, 0, FStreams.GetStreamInfos(StreamType.Subtitle, value).Filter);
+          EnableStream(FStreams.GetStreamInfos(StreamType.Subtitle, value).Id, AMStreamSelectEnableFlags.Enable, FStreams.GetStreamInfos(StreamType.Subtitle, value).Filter);
           return;
         }
 
@@ -1294,9 +1305,9 @@ namespace MediaPortal.Player
     public override string SubtitleLanguage(int iStream)
     {
       // embedded subtitles
-      if (FStreams.GetStreamCount(2) > 0)
+      if (FStreams.GetStreamCount(StreamType.Subtitle) > 0)
       {
-        string streamName = FStreams.GetStreamInfos(2, iStream).Name;
+        string streamName = FStreams.GetStreamInfos(StreamType.Subtitle, iStream).Name;
 
         // remove prefix, which is added by Haali Media Splitter
         if (streamName.StartsWith("S: "))
@@ -1336,7 +1347,7 @@ namespace MediaPortal.Player
         }
         else
         {
-          return !FStreams.GetStreamInfos(3, 0).Current;
+          return !FStreams.GetStreamInfos(StreamType.Subtitle_hidden, 0).Current;
         }
         return ret;
       }
@@ -1351,17 +1362,17 @@ namespace MediaPortal.Player
         {
           int CurrentSub = CurrentSubtitleStream;
 
-          if (CurrentSub >= 0 && FStreams.GetStreamCount(2) >= 1)
+          if (CurrentSub >= 0 && FStreams.GetStreamCount(StreamType.Subtitle) >= 1)
           {
-            FStreams.SetCurrentValue(3, 0, !value);
+            FStreams.SetCurrentValue(StreamType.Subtitle_hidden, 0, !value);
 
-            for (int i = 0; i < FStreams.GetStreamCount(3); i++)
-              EnableStream(FStreams.GetStreamInfos(3, i).Id, (value) ? 0 : AMStreamSelectEnableFlags.Enable, FStreams.GetStreamInfos(3, i).Filter);
+            for (int i = 0; i < FStreams.GetStreamCount(StreamType.Subtitle_hidden); i++)
+              EnableStream(FStreams.GetStreamInfos(StreamType.Subtitle_hidden, i).Id, (value) ? 0 : AMStreamSelectEnableFlags.Enable, FStreams.GetStreamInfos(StreamType.Subtitle_hidden, i).Filter);
 
-            EnableStream(FStreams.GetStreamInfos(2, CurrentSub).Id, (value) ? AMStreamSelectEnableFlags.Enable : 0, FStreams.GetStreamInfos(2, CurrentSub).Filter);
+            EnableStream(FStreams.GetStreamInfos(StreamType.Subtitle, CurrentSub).Id, (value) ? AMStreamSelectEnableFlags.Enable : 0, FStreams.GetStreamInfos(StreamType.Subtitle, CurrentSub).Filter);
 
-            if (FStreams.GetStreamCount(4) > 0)
-              EnableStream(FStreams.GetStreamInfos(4, 0).Id, (value) ? AMStreamSelectEnableFlags.Enable : 0, FStreams.GetStreamInfos(4, 0).Filter);
+            if (FStreams.GetStreamCount(StreamType.Subtitle_shown) > 0)
+              EnableStream(FStreams.GetStreamInfos(StreamType.Subtitle_shown, 0).Id, (value) ? AMStreamSelectEnableFlags.Enable : 0, FStreams.GetStreamInfos(StreamType.Subtitle_shown, 0).Filter);
           }
         }
       }
@@ -1431,33 +1442,41 @@ namespace MediaPortal.Player
                   FSInfos.Filter = filter;
                   FSInfos.Name = sName;
                   FSInfos.Id = istream;
-                  FSInfos.Type = -1;
+                  FSInfos.Type = StreamType.Unknown;
 
                   //VIDEO
                   if (sPDWGroup == 0)
-                    FSInfos.Type = 0;
+                    FSInfos.Type = StreamType.Video;
                   //AUDIO
                   else if (sPDWGroup == 1)
-                    FSInfos.Type = 1;
+                    FSInfos.Type = StreamType.Audio;
                   //SUBTITLE
                   else if (sPDWGroup == 2 && sName.LastIndexOf("off") == -1 && sName.LastIndexOf("Hide ") == -1 && sName.LastIndexOf("No ") == -1 && sName.LastIndexOf("Miscellaneous ") == -1)
-                    FSInfos.Type = 2;
+                    FSInfos.Type = StreamType.Subtitle;
                   //NO SUBTITILE TAG
                   else if ((sPDWGroup == 2 && (sName.LastIndexOf("off") != -1 || sName.LastIndexOf("No ") != -1)) || (sPDWGroup == 6590033 && sName.LastIndexOf("Hide ") != -1))
-                    FSInfos.Type = 3;
+                    FSInfos.Type = StreamType.Subtitle_hidden;
                   //DirectVobSub SHOW SUBTITLE TAG
                   else if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ") != -1)
-                    FSInfos.Type = 4;
+                    FSInfos.Type = StreamType.Subtitle_shown;
 
-                  if (FSInfos.Type != -1)
+                  switch (FSInfos.Type)
                   {
-                    if (FSInfos.Type < 3 && FStreams.GetStreamCount(FSInfos.Type) == 0)
-                    {
-                      FSInfos.Current = true;
-                      pStrm.Enable(FSInfos.Id, 0);
-                      pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
-                    }
-                    FStreams.AddStreamInfos(FSInfos);
+                    case StreamType.Unknown:
+                      break;
+                    case StreamType.Video:
+                    case StreamType.Audio:
+                    case StreamType.Subtitle:
+                      if (FStreams.GetStreamCount(FSInfos.Type) == 0)
+                      {
+                        FSInfos.Current = true;
+                        pStrm.Enable(FSInfos.Id, 0);
+                        pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
+                      }
+                      goto default;
+                    default:
+                      FStreams.AddStreamInfos(FSInfos);
+                      break;
                   }
                 }
               }
