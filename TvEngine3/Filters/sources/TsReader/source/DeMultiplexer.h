@@ -72,6 +72,11 @@ private:
   void GetMpeg4Media(CMediaType *pmt);
   bool ReadFromFile();
   bool m_bEndOfFile;
+  HRESULT RenderFilterPin(CBasePin* pin);
+  HRESULT DoStart();
+  HRESULT DoStop();
+  HRESULT IsStopped();
+  HRESULT IsPlaying();
   CCritSec m_section;
 	FileReader* m_reader;
   CPatParser m_patParser;

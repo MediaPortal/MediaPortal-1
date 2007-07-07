@@ -55,9 +55,11 @@ private:
     int GetPinCount();
 
     // Open and close the file as necessary
+public:
     STDMETHODIMP Run(REFERENCE_TIME tStart);
     STDMETHODIMP Pause();
     STDMETHODIMP Stop();
+private:
 	// IAMFilterMiscFlags
 		virtual ULONG STDMETHODCALLTYPE		GetMiscFlags();
 

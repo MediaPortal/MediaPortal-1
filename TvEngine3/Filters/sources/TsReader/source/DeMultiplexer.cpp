@@ -107,7 +107,36 @@ CPidTable CDeMultiplexer::GetPidTable()
 
 void CDeMultiplexer::SetAudioStream(int stream)
 {
+  if (stream< 0 || stream>=m_audioStreams.size()) return;
+
   m_iAudioStream=stream;   
+
+  int oldAudioStreamType=0;
+  if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
+  {
+    oldAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
+  }
+
+  HRESULT isPlaying=IsPlaying();
+  int newAudioStreamType=0;
+  if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
+  {
+    newAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
+  }
+  if (oldAudioStreamType != newAudioStreamType )
+  {
+    if (m_filter.GetAudioPin()->IsConnected())
+    {
+      // change audio pin media type
+      if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
+      RenderFilterPin(m_filter.GetAudioPin());
+    }
+  }
+  if (isPlaying)
+  {
+    DoStart();
+  }
+
 }
 
 int CDeMultiplexer::GetAudioStream()
@@ -578,32 +607,38 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 {
 	CAutoLock lock (&m_section);
   CPidTable pids=info.PidTable;
-  if (  m_pids.AudioPid1==pids.AudioPid1 &&
-				m_pids.AudioPid2==pids.AudioPid2 &&
-				m_pids.AudioPid3==pids.AudioPid3 &&
-				m_pids.AudioPid4==pids.AudioPid4 &&
-				m_pids.AudioPid5==pids.AudioPid5 &&
-				m_pids.AudioPid6==pids.AudioPid6 &&
-				m_pids.AudioPid7==pids.AudioPid7 &&
-				m_pids.AC3Pid==pids.AC3Pid &&
+  if (  m_pids.AudioPid1==pids.AudioPid1 && m_pids.AudioServiceType1==pids.AudioServiceType1 &&
+				m_pids.AudioPid2==pids.AudioPid2 && m_pids.AudioServiceType2==pids.AudioServiceType2 &&
+				m_pids.AudioPid3==pids.AudioPid3 && m_pids.AudioServiceType3==pids.AudioServiceType3 &&
+				m_pids.AudioPid4==pids.AudioPid4 && m_pids.AudioServiceType4==pids.AudioServiceType4 &&
+				m_pids.AudioPid5==pids.AudioPid5 && m_pids.AudioServiceType5==pids.AudioServiceType5 &&
+				m_pids.AudioPid6==pids.AudioPid6 && m_pids.AudioServiceType6==pids.AudioServiceType6 &&
+				m_pids.AudioPid7==pids.AudioPid7 && m_pids.AudioServiceType7==pids.AudioServiceType7 &&
+				m_pids.AudioPid8==pids.AudioPid8 && m_pids.AudioServiceType8==pids.AudioServiceType8 &&
 				m_pids.PcrPid==pids.PcrPid &&
 				m_pids.PmtPid==pids.PmtPid &&
 				m_pids.SubtitlePid==pids.SubtitlePid)
 	{
-		if ( pids.videoServiceType==0x1b && m_pids.VideoPid==pids.VideoPid) return;
-		if ( pids.videoServiceType==0x10 && m_pids.VideoPid==pids.VideoPid) return;
-		if ( m_pids.VideoPid==pids.VideoPid) return;
+		if ( pids.videoServiceType==m_pids.videoServiceType && m_pids.VideoPid==pids.VideoPid) return;
 	}
+
+  int oldVideoServiceType=m_pids.videoServiceType ;
+  int oldAudioStreamType=0;
+  if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
+  {
+    oldAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
+  }
   m_pids=pids;
   LogDebug("New channel found");
   LogDebug(" video    pid:%x type:%x",m_pids.VideoPid,pids.videoServiceType);
-  LogDebug(" audio1   pid:%x ",m_pids.AudioPid1);
-  LogDebug(" audio2   pid:%x ",m_pids.AudioPid2);
-  LogDebug(" audio3   pid:%x ",m_pids.AudioPid3);
-  LogDebug(" audio4   pid:%x ",m_pids.AudioPid4);
-  LogDebug(" audio5   pid:%x ",m_pids.AudioPid5);
-  LogDebug(" audio6   pid:%x ",m_pids.AudioPid6);
-  LogDebug(" audio7   pid:%x ",m_pids.AudioPid7);
+  LogDebug(" audio1   pid:%x type:%x ",m_pids.AudioPid1,m_pids.AudioServiceType1);
+  LogDebug(" audio2   pid:%x type:%x ",m_pids.AudioPid2,m_pids.AudioServiceType2);
+  LogDebug(" audio3   pid:%x type:%x ",m_pids.AudioPid3,m_pids.AudioServiceType3);
+  LogDebug(" audio4   pid:%x type:%x ",m_pids.AudioPid4,m_pids.AudioServiceType4);
+  LogDebug(" audio5   pid:%x type:%x ",m_pids.AudioPid5,m_pids.AudioServiceType5);
+  LogDebug(" audio6   pid:%x type:%x ",m_pids.AudioPid6,m_pids.AudioServiceType6);
+  LogDebug(" audio7   pid:%x type:%x ",m_pids.AudioPid7,m_pids.AudioServiceType7);
+  LogDebug(" audio8   pid:%x type:%x ",m_pids.AudioPid8,m_pids.AudioServiceType8);
   LogDebug(" Pcr      pid:%x ",m_pids.PcrPid);
   LogDebug(" Pmt      pid:%x ",m_pids.PmtPid);
   LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid);
@@ -626,7 +661,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     audio.language[1]=m_pids.Lang1_2;
     audio.language[2]=m_pids.Lang1_3;
     audio.language[3]=0;
-    audio.audioType=SERVICE_TYPE_AUDIO_MPEG1;
+    audio.audioType=m_pids.AudioServiceType1;
     m_audioStreams.push_back(audio);
   }
   if (m_pids.AudioPid2!=0) 
@@ -637,7 +672,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     audio.language[1]=m_pids.Lang2_2;
     audio.language[2]=m_pids.Lang2_3;
     audio.language[3]=0;
-    audio.audioType=SERVICE_TYPE_AUDIO_MPEG1;
+    audio.audioType=m_pids.AudioServiceType2;
     m_audioStreams.push_back(audio);
   }
   if (m_pids.AudioPid3!=0) 
@@ -648,7 +683,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     audio.language[1]=m_pids.Lang3_2;
     audio.language[2]=m_pids.Lang3_3;
     audio.language[3]=0;
-    audio.audioType=SERVICE_TYPE_AUDIO_MPEG1;
+    audio.audioType=m_pids.AudioServiceType3;
     m_audioStreams.push_back(audio);
   }
   if (m_pids.AudioPid4!=0) 
@@ -659,7 +694,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     audio.language[1]=m_pids.Lang4_2;
     audio.language[2]=m_pids.Lang4_3;
     audio.language[3]=0;
-    audio.audioType=SERVICE_TYPE_AUDIO_MPEG1;
+    audio.audioType=m_pids.AudioServiceType4;
     m_audioStreams.push_back(audio);
   }
   if (m_pids.AudioPid5!=0) 
@@ -670,7 +705,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     audio.language[1]=m_pids.Lang5_2;
     audio.language[2]=m_pids.Lang5_3;
     audio.language[3]=0;
-    audio.audioType=SERVICE_TYPE_AUDIO_MPEG1;
+    audio.audioType=m_pids.AudioServiceType5;
     m_audioStreams.push_back(audio);
   }
   if (m_pids.AudioPid6!=0) 
@@ -681,7 +716,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     audio.language[1]=m_pids.Lang6_2;
     audio.language[2]=m_pids.Lang6_3;
     audio.language[3]=0;
-    audio.audioType=SERVICE_TYPE_AUDIO_MPEG1;
+    audio.audioType=m_pids.AudioServiceType6;
     m_audioStreams.push_back(audio);
   }
   if (m_pids.AudioPid7!=0) 
@@ -692,19 +727,223 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     audio.language[1]=m_pids.Lang7_2;
     audio.language[2]=m_pids.Lang7_3;
     audio.language[3]=0;
-    audio.audioType=SERVICE_TYPE_AUDIO_AC3;
+    audio.audioType=m_pids.AudioServiceType7;
     m_audioStreams.push_back(audio);
   }
-  if (m_pids.AC3Pid!=0) 
+  if (m_pids.AudioPid8!=0) 
   {
     struct stAudioStream audio;
-    audio.pid=m_pids.AC3Pid;
-    audio.language[0]='A';
-    audio.language[1]='C';
-    audio.language[2]='3';
+    audio.pid=m_pids.AudioPid8;
+    audio.language[0]=m_pids.Lang8_1;
+    audio.language[1]=m_pids.Lang8_1;
+    audio.language[2]=m_pids.Lang8_1;
     audio.language[3]=0;
-    audio.audioType=SERVICE_TYPE_AUDIO_AC3;
+    audio.audioType=m_pids.AudioServiceType8;
     m_audioStreams.push_back(audio);
   }
 
+  HRESULT isPlaying=IsPlaying();
+  if (oldVideoServiceType != m_pids.videoServiceType )
+  {
+    if (m_filter.GetVideoPin()->IsConnected())
+    {
+      // change video pin media type
+      if (DoStop() ==S_OK){while(IsStopped() == S_FALSE){Sleep(100); break;}}
+      RenderFilterPin(m_filter.GetVideoPin());
+    }
+  }
+  
+  int newAudioStreamType=0;
+  if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
+  {
+    newAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
+  }
+
+  if (oldAudioStreamType != newAudioStreamType )
+  {
+    if (m_filter.GetAudioPin()->IsConnected())
+    {
+      // change audio pin media type
+      if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
+      RenderFilterPin(m_filter.GetAudioPin());
+    }
+  }
+  if (isPlaying==S_OK)
+  {
+    DoStart();
+  }
+}
+HRESULT CDeMultiplexer::DoStop()
+{
+	HRESULT hr = S_OK;
+
+	FILTER_INFO Info;
+	if (SUCCEEDED(m_filter.QueryFilterInfo(&Info)) && Info.pGraph != NULL)
+	{
+		// Get IMediaFilter interface
+		IMediaFilter* pMediaFilter = NULL;
+		hr = Info.pGraph->QueryInterface(IID_IMediaFilter, (void**)&pMediaFilter);
+		if (!pMediaFilter)
+		{
+			Info.pGraph->Release();
+			return m_filter.Stop();
+		}
+		else
+			pMediaFilter->Release();
+
+		IMediaControl *pMediaControl;
+		if (SUCCEEDED(Info.pGraph->QueryInterface(IID_IMediaControl, (void **) &pMediaControl)))
+		{
+			hr = pMediaControl->Stop(); 
+			pMediaControl->Release();
+		}
+
+		Info.pGraph->Release();
+
+		if (FAILED(hr))
+			return S_OK;
+	}
+	return S_OK;
+}
+HRESULT CDeMultiplexer::DoStart()
+{
+	HRESULT hr = S_OK;
+
+	FILTER_INFO Info;
+	if (SUCCEEDED(m_filter.QueryFilterInfo(&Info)) && Info.pGraph != NULL)
+	{
+		// Get IMediaFilter interface
+		IMediaFilter* pMediaFilter = NULL;
+		hr = Info.pGraph->QueryInterface(IID_IMediaFilter, (void**)&pMediaFilter);
+		if (!pMediaFilter)
+		{
+			Info.pGraph->Release();
+			return m_filter.Run(NULL);
+		}
+		else
+			pMediaFilter->Release();
+
+		IMediaControl *pMediaControl;
+		if (SUCCEEDED(Info.pGraph->QueryInterface(IID_IMediaControl, (void **) &pMediaControl)))
+		{
+			hr = pMediaControl->Run();
+			pMediaControl->Release();
+		}
+
+		Info.pGraph->Release();
+
+		if (FAILED(hr))
+			return S_OK;
+	}
+	return S_OK;
+}
+
+HRESULT CDeMultiplexer::IsStopped()
+{
+	HRESULT hr = S_FALSE;
+
+	FILTER_STATE state = State_Stopped;
+
+	FILTER_INFO Info;
+	if (SUCCEEDED(m_filter.QueryFilterInfo(&Info)) && Info.pGraph != NULL)
+	{
+		// Get IMediaFilter interface
+		IMediaFilter* pMediaFilter = NULL;
+		hr = Info.pGraph->QueryInterface(IID_IMediaFilter, (void**)&pMediaFilter);
+		if (!pMediaFilter)
+		{
+			Info.pGraph->Release();
+			hr = m_filter.GetState(200, &state);
+			if (state == State_Stopped)
+			{
+				if (hr == S_OK || hr == VFW_S_STATE_INTERMEDIATE || VFW_S_CANT_CUE)
+					return S_OK;
+			}
+		}
+		else
+			pMediaFilter->Release();
+
+		IMediaControl *pMediaControl;
+		if (SUCCEEDED(Info.pGraph->QueryInterface(IID_IMediaControl, (void **) &pMediaControl)))
+		{
+			hr = pMediaControl->GetState(200, (OAFilterState*)&state);
+			pMediaControl->Release();
+		}
+
+		Info.pGraph->Release();
+
+		if (state == State_Stopped)
+		{
+			if (hr == S_OK || hr == VFW_S_STATE_INTERMEDIATE || VFW_S_CANT_CUE)
+				return S_OK;
+		}
+	} 
+	return S_FALSE;
+}
+
+
+HRESULT CDeMultiplexer::IsPlaying()
+{
+
+	HRESULT hr = S_FALSE;
+
+	FILTER_STATE state = State_Stopped;
+
+	FILTER_INFO Info;
+	if (SUCCEEDED(m_filter.QueryFilterInfo(&Info)) && Info.pGraph != NULL)
+	{
+		// Get IMediaFilter interface
+		IMediaFilter* pMediaFilter = NULL;
+		hr = Info.pGraph->QueryInterface(IID_IMediaFilter, (void**)&pMediaFilter);
+		if (!pMediaFilter)
+		{
+			Info.pGraph->Release();
+			hr =  m_filter.GetState(200, &state);
+			if (state == State_Running)
+			{
+				if (hr == S_OK || hr == VFW_S_STATE_INTERMEDIATE || VFW_S_CANT_CUE)
+					return S_OK;
+			}
+
+			return S_FALSE;
+		}
+		else
+			pMediaFilter->Release();
+
+		IMediaControl *pMediaControl = NULL;
+		if (SUCCEEDED(Info.pGraph->QueryInterface(IID_IMediaControl, (void **) &pMediaControl)))
+		{
+			hr = pMediaControl->GetState(200, (OAFilterState*)&state);
+			pMediaControl->Release();
+		}
+
+		Info.pGraph->Release();
+	
+		if (state == State_Running)
+		{
+			if (hr == S_OK || hr == VFW_S_STATE_INTERMEDIATE || VFW_S_CANT_CUE)
+				return S_OK;
+		}
+	}
+	return S_FALSE;
+}
+
+HRESULT CDeMultiplexer::RenderFilterPin(CBasePin* pin)
+{
+  if ( pin->IsConnected())
+  {
+	  HRESULT hr = E_FAIL;
+    pin->Disconnect();
+    IFilterGraph* graph=m_filter.GetFilterGraph();
+	  IGraphBuilder *pGraphBuilder;
+	  if(SUCCEEDED(graph->QueryInterface(IID_IGraphBuilder, (void **) &pGraphBuilder)))
+	  {
+		  hr = pGraphBuilder->Render(pin);
+		  pGraphBuilder->Release();
+	  }
+
+	  graph->Release();
+	  return hr;
+  }
+  return S_OK;
 }

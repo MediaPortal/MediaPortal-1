@@ -116,7 +116,7 @@ HRESULT CAudioPin::GetMediaType(CMediaType *pmt)
 }
 HRESULT CAudioPin::CheckConnect(IPin *pReceivePin)
 {
-  HRESULT hr;
+  //HRESULT hr;
   /*
 #ifndef DEBUG
   PIN_INFO pinInfo;

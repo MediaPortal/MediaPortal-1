@@ -98,6 +98,7 @@ void CPmtParser::OnNewSection(CSection& sections)
   while (len1 > 0)
   {
 	  //if (start+pointer+4>=sectionLen+9) return ;
+    int curAudio=-1;
 	  stream_type = section[start+pointer];
 	  elementary_PID = ((section[start+pointer+1]&0x1F)<<8)+section[start+pointer+2];
 	  ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
@@ -120,57 +121,49 @@ void CPmtParser::OnNewSection(CSection& sections)
 				m_pidInfo.videoServiceType=stream_type;
 			}
 	  }
-		if(stream_type==SERVICE_TYPE_AUDIO_MPEG1 || stream_type==SERVICE_TYPE_AUDIO_MPEG2)
+		if(stream_type==SERVICE_TYPE_AUDIO_MPEG1 || stream_type==SERVICE_TYPE_AUDIO_MPEG2 || stream_type==SERVICE_TYPE_AUDIO_AC3)
 	  {
-			//mpeg 2 audio
-		  audioToSet=0;
-		  if(m_pidInfo.AudioPid1==0)
-		  {
-			  audioToSet=1;
-			  m_pidInfo.AudioPid1=elementary_PID;
-		  }
-		  else
-		  {
-			  if(m_pidInfo.AudioPid2==0)
-			  {
-				  audioToSet=2;
-				  m_pidInfo.AudioPid2=elementary_PID;
-			  }
-			  else if(m_pidInfo.AudioPid3==0)
-			  {
-				  audioToSet=3;
-				  m_pidInfo.AudioPid3=elementary_PID;
-			  }
-				else if(m_pidInfo.AudioPid4==0)
-			  {
-				  audioToSet=4;
-				  m_pidInfo.AudioPid4=elementary_PID;
-			  }
-				else if(m_pidInfo.AudioPid5==0)
-			  {
-				  audioToSet=5;
-				  m_pidInfo.AudioPid5=elementary_PID;
-			  }
-				else if(m_pidInfo.AudioPid6==0)
-			  {
-				  audioToSet=6;
-				  m_pidInfo.AudioPid6=elementary_PID;
-			  }
-				else if(m_pidInfo.AudioPid7==0)
-			  {
-				  audioToSet=7;
-				  m_pidInfo.AudioPid7=elementary_PID;
-			  }
-		  }
+			//mpeg1/mpeg 2/ac3 audio
+      audioToSet++;
+      curAudio=audioToSet;
+      switch(curAudio)
+      {
+         case 1:
+			      m_pidInfo.AudioPid1=elementary_PID;
+            m_pidInfo.AudioServiceType1=stream_type;
+          break;
+          case 2:
+			      m_pidInfo.AudioPid2=elementary_PID;
+            m_pidInfo.AudioServiceType2=stream_type;
+          break;
+          case 3:
+			      m_pidInfo.AudioPid3=elementary_PID;
+            m_pidInfo.AudioServiceType3=stream_type;
+          break;
+          case 4:
+			      m_pidInfo.AudioPid4=elementary_PID;
+            m_pidInfo.AudioServiceType4=stream_type;
+          break;
+          case 5:
+			      m_pidInfo.AudioPid5=elementary_PID;
+            m_pidInfo.AudioServiceType5=stream_type;
+          break;
+          case 6:
+			      m_pidInfo.AudioPid6=elementary_PID;
+            m_pidInfo.AudioServiceType6=stream_type;
+          break;
+          case 7:
+			      m_pidInfo.AudioPid7=elementary_PID;
+            m_pidInfo.AudioServiceType7=stream_type;
+          break;
+          case 8:
+			      m_pidInfo.AudioPid8=elementary_PID;
+            m_pidInfo.AudioServiceType8=stream_type;
+          break;
+      }
 	  }
 	  m_pidInfo.PcrPid=pcr_pid;
 
-		if(stream_type==SERVICE_TYPE_AUDIO_AC3)
-	  {
-			//ac3 audio
-		  if(m_pidInfo.AC3Pid==0)
-			  m_pidInfo.AC3Pid=elementary_PID;
-	  }
 	  pointer += 5;
 	  len1 -= 5;
 	  len2 = ES_info_length;
@@ -186,8 +179,48 @@ void CPmtParser::OnNewSection(CSection& sections)
 		  x = section[start+pointer + 1] + 2;
 		  if(indicator==DESCRIPTOR_DVB_AC3)
 			{
-			  m_pidInfo.AC3Pid=elementary_PID;
+        if (curAudio<0) 
+        {
+          audioToSet++;
+          curAudio=audioToSet;
+        }
+        switch (curAudio)
+        {
+          case 1:
+			      m_pidInfo.AudioPid1=elementary_PID;
+            m_pidInfo.AudioServiceType1=SERVICE_TYPE_AUDIO_AC3;
+          break;
+          case 2:
+			      m_pidInfo.AudioPid2=elementary_PID;
+            m_pidInfo.AudioServiceType2=SERVICE_TYPE_AUDIO_AC3;
+          break;
+          case 3:
+			      m_pidInfo.AudioPid3=elementary_PID;
+            m_pidInfo.AudioServiceType3=SERVICE_TYPE_AUDIO_AC3;
+          break;
+          case 4:
+			      m_pidInfo.AudioPid4=elementary_PID;
+            m_pidInfo.AudioServiceType4=SERVICE_TYPE_AUDIO_AC3;
+          break;
+          case 5:
+			      m_pidInfo.AudioPid5=elementary_PID;
+            m_pidInfo.AudioServiceType5=SERVICE_TYPE_AUDIO_AC3;
+          break;
+          case 6:
+			      m_pidInfo.AudioPid6=elementary_PID;
+            m_pidInfo.AudioServiceType6=SERVICE_TYPE_AUDIO_AC3;
+          break;
+          case 7:
+			      m_pidInfo.AudioPid7=elementary_PID;
+            m_pidInfo.AudioServiceType7=SERVICE_TYPE_AUDIO_AC3;
+          break;
+          case 8:
+			      m_pidInfo.AudioPid8=elementary_PID;
+            m_pidInfo.AudioServiceType8=SERVICE_TYPE_AUDIO_AC3;
+          break;
+        }
 			}
+
 		  if(indicator==DESCRIPTOR_MPEG_ISO639_Lang)
 		  {	
 			  if (pointer+4>=sectionLen) 
@@ -199,47 +232,53 @@ void CPmtParser::OnNewSection(CSection& sections)
 			  d[0]=section[start+pointer+2];
 			  d[1]=section[start+pointer+3];
 			  d[2]=section[start+pointer+4];
-			  if(audioToSet==1)
+        if(curAudio==1)
 			  {
 				  m_pidInfo.Lang1_1=d[0];
 				  m_pidInfo.Lang1_2=d[1];
 				  m_pidInfo.Lang1_3=d[2];
 			  }
-			  if(audioToSet==2)
+			  if(curAudio==2)
 			  {
 				  m_pidInfo.Lang2_1=d[0];
 				  m_pidInfo.Lang2_2=d[1];
 				  m_pidInfo.Lang2_3=d[2];
 			  }
-			  if(audioToSet==3)
+			  if(curAudio==3)
 			  {
 				  m_pidInfo.Lang3_1=d[0];
 				  m_pidInfo.Lang3_2=d[1];
 				  m_pidInfo.Lang3_3=d[2];
 			  }
-			  if(audioToSet==4)
+			  if(curAudio==4)
 			  {
 				  m_pidInfo.Lang4_1=d[0];
 				  m_pidInfo.Lang4_2=d[1];
 				  m_pidInfo.Lang4_3=d[2];
 			  }
-			  if(audioToSet==5)
+			  if(curAudio==5)
 			  {
 				  m_pidInfo.Lang5_1=d[0];
 				  m_pidInfo.Lang5_2=d[1];
 				  m_pidInfo.Lang5_3=d[2];
 			  }
-			  if(audioToSet==6)
+			  if(curAudio==6)
 			  {
 				  m_pidInfo.Lang6_1=d[0];
 				  m_pidInfo.Lang6_2=d[1];
 				  m_pidInfo.Lang6_3=d[2];
 			  }
-			  if(audioToSet==7)
+			  if(curAudio==7)
 			  {
 				  m_pidInfo.Lang7_1=d[0];
 				  m_pidInfo.Lang7_2=d[1];
 				  m_pidInfo.Lang7_3=d[2];
+			  }
+			  if(curAudio==8)
+			  {
+				  m_pidInfo.Lang8_1=d[0];
+				  m_pidInfo.Lang8_2=d[1];
+				  m_pidInfo.Lang8_3=d[2];
 			  }
 
 		  }
