@@ -445,7 +445,19 @@ namespace MediaPortal.GUI.Pictures
     bool _update = false;
     bool _useRandomTransitions = true;
     float _defaultZoomFactor = 1.0f;
-    bool _isPictureZoomed = false;
+
+
+    bool _isPictureZoomed
+    {
+      get
+      {
+        if (_userZoomLevel == 1.0f)
+          return false;
+        else
+          return true;
+      }
+    }
+
     float _userZoomLevel = 1.0f;
     //bool _trueSizeTexture = false;
     bool _autoShuffle = false;
@@ -668,22 +680,23 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_ZOOM_OUT:
-          _userZoomLevel -= 0.25f;
-          if (_userZoomLevel < 1.0f) // use < instead of <= to make it possible to reach 100% before "fit to screen" 
-          {
-            _userZoomLevel = 1.0f;
-            _isPictureZoomed = false; // make that it is possible to switch to the next or prev. image again
-            if (LoadCurrentSlide() == null)
-              Log.Debug("GUISlideShow: current slide unknown for zooming out");
-            break;
-          }
+          if (_userZoomLevel == 1.0f) break; // picture has already min Zoom value
+
+          _userZoomLevel -= 0.25f;     //decrease the zoomLevel
+          if (_userZoomLevel < 1.0f)   //if zoom level < 1.0f, then anywhere zoomLevel is not changed in 0.25f steps
+            _userZoomLevel = 1.0f;     //  so set it to 1.0f
+
           ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
 
         case Action.ActionType.ACTION_ZOOM_IN:
-          if (_isPictureZoomed) _userZoomLevel += 0.25f; // the if _isPictureZoomed condition is used to make it possible to reach 100% (not directly 125%). 
-          if (_userZoomLevel > 20.0f) _userZoomLevel = 20.0f;
+          if (_userZoomLevel == 20.0f) break; // picture has already max Zoom value
+
+          _userZoomLevel += 0.25f;     //increase the zoomLevel
+          if (_userZoomLevel > 20.0f)  //if zoom level > 20.0f, then anywhere zoomLevel is not changed in 0.25f steps
+            _userZoomLevel = 20.0f;    //  so set it to 20.0f
+
           ZoomBackGround(_defaultZoomFactor * _userZoomLevel);
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
@@ -696,7 +709,7 @@ namespace MediaPortal.GUI.Pictures
         case Action.ActionType.ACTION_ZOOM_LEVEL_NORMAL:
           //Fit current image to screen
           _userZoomLevel = 1.0f;
-          _isPictureZoomed = false;
+          //_isPictureZoomed = false;
           if (LoadCurrentSlide() == null)
             Log.Debug("GUISlideShow: current slide unknown for zooming out");
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
@@ -1123,7 +1136,7 @@ namespace MediaPortal.GUI.Pictures
       _zoomFactorBackground = _defaultZoomFactor;
       _currentZoomFactor = _defaultZoomFactor;
       _kenBurnsEffect = 0;
-      _isPictureZoomed = false;
+      //_isPictureZoomed = false;
       _currentZoomLeft = 0;
       _currentZoomTop = 0;
       _currentZoomLeft = 0;
@@ -2265,6 +2278,7 @@ namespace MediaPortal.GUI.Pictures
       // load picture
       string slideFilePath = _slideList[_currentSlideIndex];
       _backgroundSlide = new SlidePicture(slideFilePath, true);
+      ResetCurrentZoom(_backgroundSlide);
       _isLoadingRawPicture = false;
     }
 
@@ -2274,8 +2288,10 @@ namespace MediaPortal.GUI.Pictures
         return;
 
       // to make it possibel to reach a 100% zoom level without changing the slideshow code, this condition are used
-      if (_isSlideShow) _isPictureZoomed = _userZoomLevel == 1.0f ? false : true;
-      else _isPictureZoomed = _userZoomLevel == _defaultZoomFactor ? false : true;
+      //if (_isSlideShow)
+      //  _isPictureZoomed = _userZoomLevel == 1.0f ? false : true;
+      //else
+      //  _isPictureZoomed = _userZoomLevel == _defaultZoomFactor ? false : true;
 
       // Load raw picture when zooming
       if (!_backgroundSlide.TrueSizeTexture && _isPictureZoomed)
@@ -2286,7 +2302,6 @@ namespace MediaPortal.GUI.Pictures
         {
           Thread WorkerThread = new Thread(new ThreadStart(LoadRawPictureThread));
           WorkerThread.Start();
-
 
           // Update window
           while (_isLoadingRawPicture)
