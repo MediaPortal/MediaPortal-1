@@ -48,6 +48,7 @@ namespace WindowPlugins.GUIPrograms
     private void ShowProgressDialog()
     {
       pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.Reset();
       pDlgProgress.ShowWaitCursor = true;
       pDlgProgress.SetHeading(GUILocalizeStrings.Get(13015));
       pDlgProgress.SetLine(0, GUILocalizeStrings.Get(13015));

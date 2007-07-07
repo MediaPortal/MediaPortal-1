@@ -244,6 +244,7 @@ namespace MediaPortal.GUI.MSN
             {
               if (_dlgProgress != null)
               {
+                _dlgProgress.Reset();
                 _dlgProgress.SetHeading(901);//MSN Messenger
                 _dlgProgress.SetLine(1, GUILocalizeStrings.Get(910));//Signing in...
                 _dlgProgress.SetLine(2, "");
@@ -566,6 +567,7 @@ namespace MediaPortal.GUI.MSN
       {
         if (_dlgProgress != null)
         {
+          _dlgProgress.Reset();
           _dlgProgress.SetHeading(901);//MSN Messenger
           _dlgProgress.SetLine(1, GUILocalizeStrings.Get(909));//Connecting...
           _dlgProgress.SetLine(2, contact.Name);

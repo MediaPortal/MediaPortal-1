@@ -331,6 +331,8 @@ namespace MediaPortal.GUI.TV
         }
       }
 
+      GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
+
       SaveSettings();
       base.OnPageDestroy(newWindowId);
     }

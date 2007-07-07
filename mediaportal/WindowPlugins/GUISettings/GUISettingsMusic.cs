@@ -189,7 +189,7 @@ namespace MediaPortal.GUI.Settings
 
                     MusicDatabaseReorg reorg = new MusicDatabaseReorg();
                     int iReturnString = reorg.DoReorg();
-                    dlgProgress.Close();
+                    dlgProgress.PageDestroy();
 
                     if (!dlgProgress.IsCanceled)
                     {

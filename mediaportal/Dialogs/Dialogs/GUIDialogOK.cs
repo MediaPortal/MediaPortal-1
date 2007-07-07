@@ -33,20 +33,12 @@ namespace MediaPortal.Dialogs
   /// <summary>
   /// Shows a dialog box with an OK button  
   /// </summary>
-  public class GUIDialogOK : GUIWindow, IRenderLayer
+  public class GUIDialogOK : GUIDialogWindow
   {
-
-    #region Base Dialog Variables
-    bool m_bRunning = false;
-    int m_dwParentWindowID = 0;
-    GUIWindow m_pParentWindow = null;
-    #endregion
-
     [SkinControlAttribute(10)]    protected GUIButtonControl btnNo = null;
     [SkinControlAttribute(11)]    protected GUIButtonControl btnYes = null;
     bool m_bConfirmed = false;
-    bool m_bPrevOverlay = true;
-
+    
     public GUIDialogOK()
     {
       GetID = (int)GUIWindow.Window.WINDOW_DIALOG_OK;
@@ -56,82 +48,7 @@ namespace MediaPortal.Dialogs
     {
       return Load(GUIGraphicsContext.Skin + @"\dialogOK.xml");
     }
-
-    public override bool SupportsDelayedLoad
-    {
-      get { return true; }
-    }
-
-    public override void PreInit()
-    {
-    }
-
-    public override void OnAction(Action action)
-    {
-      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-      {
-        Close();
-        return;
-      }
-      base.OnAction(action);
-    }
-
-    #region Base Dialog Members
-
-    void Close()
-    {
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (this)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
-        OnMessage(msg);
-
-        GUIWindowManager.UnRoute();
-        m_bRunning = false;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-    }
-
-    public void DoModal(int dwParentId)
-    {
-      m_dwParentWindowID = dwParentId;
-      m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
-      if (null == m_pParentWindow)
-      {
-        m_dwParentWindowID = 0;
-        return;
-      }
-      bool wasRouted = GUIWindowManager.IsRouted;
-      IRenderLayer prevLayer = GUILayerManager.GetLayer(GUILayerManager.LayerType.Dialog);
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-
-      GUIWindowManager.RouteToWindow(GetID);
-
-      // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
-      OnMessage(msg);
-      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-
-      m_bRunning = true;
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
-        GUIWindowManager.Process();
-      }
-      GUIGraphicsContext.Overlay = m_bPrevOverlay;
-      FreeResources();
-      DeInitControls();
-      GUILayerManager.UnRegisterLayer(this);
-      if (wasRouted)
-      {
-        GUIWindowManager.RouteToWindow(dwParentId);
-        GUILayerManager.RegisterLayer(prevLayer, GUILayerManager.LayerType.Dialog);
-      }
-
-    }
-    #endregion
-
+    
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
@@ -139,22 +56,9 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT :
           {
             SetControlLabel(GetID, 1, string.Empty);
-
             base.OnMessage(message);
-            m_bRunning = false;
-
             return true;
           }
-
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          {
-            m_bPrevOverlay = GUIGraphicsContext.Overlay;
-            m_bConfirmed = false;
-            base.OnMessage(message);
-            //GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
-            GUIGraphicsContext.Overlay = m_pParentWindow.IsOverlayAllowed;
-          }
-          return true;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
@@ -163,19 +67,19 @@ namespace MediaPortal.Dialogs
             if (btnYes == null)
             {
               m_bConfirmed = true;
-              Close();
+              PageDestroy();
               return true;
             }
             if (iControl == btnNo.GetID)
             {
               m_bConfirmed = false;
-              Close();
+              PageDestroy();
               return true;
             }
             if (iControl == btnYes.GetID)
             {
               m_bConfirmed = true;
-              Close();
+              PageDestroy();
               return true;
             }
           }
@@ -225,22 +129,5 @@ namespace MediaPortal.Dialogs
       SetLine(iLine, GUILocalizeStrings.Get(iString));
     }
 
-    void SetControlLabel(int iWindowId, int iControlId, string strText)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, iWindowId, 0, iControlId, 0, 0, null);
-      msg.Label = strText;
-      OnMessage(msg);
-    }
-    #region IRenderLayer
-    public bool ShouldRenderLayer()
-    {
-      return true;
-    }
-
-    public void RenderLayer(float timePassed)
-    {
-      Render(timePassed);
-    }
-    #endregion
   }
 }

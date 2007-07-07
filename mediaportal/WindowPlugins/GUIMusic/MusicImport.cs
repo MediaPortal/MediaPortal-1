@@ -296,6 +296,7 @@ namespace MediaPortal.MusicImport
         GUIWaitCursor.Show();
       else if (dlgProgress != null)
       {
+        dlgProgress.Reset();
         dlgProgress.SetPercentage(0);
         dlgProgress.StartModal(GetID);
         dlgProgress.Progress();

@@ -23,20 +23,15 @@
 
 #endregion
 
-using System;
 using System.Collections;
-using System.Drawing;
-using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-
 
 namespace MediaPortal.Dialogs
 {
   /// <summary>
   /// 
   /// </summary>
-  public class GUIDialogSelect2 : GUIWindow, IRenderLayer
+  public class GUIDialogSelect2 : GUIDialogWindow
   {
     enum Controls
     {
@@ -46,92 +41,18 @@ namespace MediaPortal.Dialogs
       CONTROL_BACKGROUNDDLG = 6
     };
 
-    #region Base Dialog Variables
-    bool m_bRunning = false;
-    int m_dwParentWindowID = 0;
-    GUIWindow m_pParentWindow = null;
-    #endregion
-
-    int m_iSelected = -1;
-
     string m_strSelected = "";
     ArrayList m_vecList = new ArrayList();
-    bool m_bPrevOverlay = false;
-    //bool needRefresh = false;
-    DateTime vmr7UpdateTimer = DateTime.Now;
 
     public GUIDialogSelect2()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_SELECT2;
+      GetID = (int)Window.WINDOW_DIALOG_SELECT2;
     }
 
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\DialogSelect2.xml");
     }
-
-    public override bool SupportsDelayedLoad
-    {
-      get { return true; }
-    }
-
-    public override void PreInit()
-    {
-    }
-
-    public override void OnAction(Action action)
-    {
-      //      needRefresh = true;
-      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU || action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
-      {
-        Close();
-        return;
-      }
-      base.OnAction(action);
-    }
-
-    #region Base Dialog Members
-    void Close()
-    {
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (this)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
-        OnMessage(msg);
-
-        GUIWindowManager.UnRoute();
-        m_pParentWindow = null;
-        m_bRunning = false;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-    }
-
-    public void DoModal(int dwParentId)
-    {
-      m_dwParentWindowID = dwParentId;
-      m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
-      if (null == m_pParentWindow)
-      {
-        m_dwParentWindowID = 0;
-        return;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-
-      GUIWindowManager.RouteToWindow(GetID);
-
-      // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
-      OnMessage(msg);
-
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-      m_bRunning = true;
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
-        GUIWindowManager.Process();
-
-      }
-    }
-    #endregion
 
     public override bool OnMessage(GUIMessage message)
     {
@@ -141,24 +62,14 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             SetControlLabel(GetID, (int)Controls.CONTROL_HEADING, string.Empty);
-
             base.OnMessage(message);
-            m_pParentWindow = null;
-            m_bRunning = false;
-            GUIGraphicsContext.Overlay = m_bPrevOverlay;
-            FreeResources();
-            DeInitControls();
-            GUILayerManager.UnRegisterLayer(this);
-
             return true;
           }
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
 
-            m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
-            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             ClearControl(GetID, (int)Controls.CONTROL_LIST);
 
             for (int i = 0; i < m_vecList.Count; i++)
@@ -167,15 +78,12 @@ namespace MediaPortal.Dialogs
               AddListItemControl(GetID, (int)Controls.CONTROL_LIST, pItem);
             }
 
-            if (m_iSelected >= 0)
+            if (_selectedLabel >= 0)
             {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, (int)Controls.CONTROL_LIST, m_iSelected, 0, null);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, (int)Controls.CONTROL_LIST, _selectedLabel, 0, null);
               OnMessage(msg);
             }
-            m_iSelected = -1;
-            string wszText = String.Format("{0} {1}", m_vecList.Count, GUILocalizeStrings.Get(127));
-            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
-
+            _selectedLabel = -1;
           }
           return true;
 
@@ -184,9 +92,9 @@ namespace MediaPortal.Dialogs
             int iControl = message.SenderControlId;
             if ((int)Controls.CONTROL_LIST == iControl)
             {
-              m_iSelected = GetSelectedItemNo();
+              _selectedLabel = GetSelectedItemNo();
               m_strSelected = GetSelectedItem().Label;
-              Close();
+              PageDestroy();
             }
           }
           break;
@@ -195,13 +103,9 @@ namespace MediaPortal.Dialogs
       return base.OnMessage(message);
     }
 
-    public void Reset()
+    public override void Reset()
     {
-      LoadSkin();
-      AllocResources();
-      InitControls();
-
-      m_iSelected = -1;
+      base.Reset();
       m_vecList.Clear();
     }
 
@@ -216,12 +120,6 @@ namespace MediaPortal.Dialogs
       m_vecList.Add(pItem);
     }
 
-    public int SelectedLabel
-    {
-      get { return m_iSelected; }
-      set { m_iSelected = value; }
-    }
-
     public string SelectedLabelText
     {
       get { return m_strSelected; }
@@ -229,6 +127,7 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(string strLine)
     {
+      Reset();
       LoadSkin();
       AllocResources();
       InitControls();
@@ -260,7 +159,7 @@ namespace MediaPortal.Dialogs
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, (int)Controls.CONTROL_LIST, 0, 0, null);
       OnMessage(msg);
-      int iItem = (int)msg.Param1;
+      int iItem = msg.Param1;
       return iItem;
     }
 
@@ -283,47 +182,5 @@ namespace MediaPortal.Dialogs
       OnMessage(msg);
     }
 
-    void SetControlLabel(int iWindowId, int iControlId, string strText)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, iWindowId, 0, iControlId, 0, 0, null);
-      msg.Label = strText;
-      OnMessage(msg);
-    }
-
-    void HideControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN, iWindowId, 0, iControlId, 0, 0, null);
-      OnMessage(msg);
-    }
-
-    void ShowControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, iWindowId, 0, iControlId, 0, 0, null);
-      OnMessage(msg);
-    }
-
-    void DisableControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, iWindowId, 0, iControlId, 0, 0, null);
-      OnMessage(msg);
-    }
-
-    void EnableControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, iWindowId, 0, iControlId, 0, 0, null);
-      OnMessage(msg);
-    }
-
-    #region IRenderLayer
-    public bool ShouldRenderLayer()
-    {
-      return true;
-    }
-
-    public void RenderLayer(float timePassed)
-    {
-      Render(timePassed);
-    }
-    #endregion
   }
 }

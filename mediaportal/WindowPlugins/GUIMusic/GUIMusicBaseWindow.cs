@@ -1205,6 +1205,7 @@ namespace MediaPortal.GUI.Music
       // show dialog box indicating we're searching the artist
       if (dlgProgress != null)
       {
+        dlgProgress.Reset();
         dlgProgress.SetHeading(320);
         dlgProgress.SetLine(1, artistName);
         dlgProgress.SetLine(2, String.Empty);
@@ -1250,6 +1251,7 @@ namespace MediaPortal.GUI.Music
           // ok, now show dialog we're downloading the artist info
           if (null != dlgProgress)
           {
+            dlgProgress.Reset();
             dlgProgress.SetHeading(320);
             dlgProgress.SetLine(1, artistName);
             dlgProgress.SetLine(2, String.Empty);
@@ -1422,6 +1424,7 @@ namespace MediaPortal.GUI.Music
 
         if (dlgProgress != null)
         {
+          dlgProgress.Reset();
           dlgProgress.SetHeading(185);
           dlgProgress.SetLine(1, albumName);
           dlgProgress.SetLine(2, artistName);
@@ -1520,6 +1523,7 @@ namespace MediaPortal.GUI.Music
       // show dialog box indicating we're searching the album
       if (dlgProgress != null)
       {
+        dlgProgress.Reset();
         dlgProgress.SetHeading(185);
         dlgProgress.SetLine(1, albumName);
         dlgProgress.SetLine(2, artistName);
@@ -1577,6 +1581,7 @@ namespace MediaPortal.GUI.Music
           MusicAlbumInfo album = scraper[iSelectedAlbum];
           if (null != dlgProgress)
           {
+            dlgProgress.Reset();
             dlgProgress.SetHeading(185);
             dlgProgress.SetLine(1, album.Title2);
             dlgProgress.SetLine(2, album.Artist);

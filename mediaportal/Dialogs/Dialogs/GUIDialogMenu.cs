@@ -25,42 +25,31 @@
 
 using System;
 using System.Collections;
-using System.Drawing;
-using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player;
 
 namespace MediaPortal.Dialogs
 {
   /// <summary>
   /// 
   /// </summary>
-  public class GUIDialogMenu : GUIWindow, IDialogbox, IRenderLayer
+  public class GUIDialogMenu : GUIDialogWindow, IDialogbox, IRenderLayer
   {
-
-    #region Base Dialog Variables
-    bool m_bRunning = false;
-    #endregion
-
     [SkinControlAttribute(2)]    protected GUIButtonControl btnClose = null;
     [SkinControlAttribute(3)]    protected GUIListControl listView = null;
     [SkinControlAttribute(4)]    protected GUILabelControl lblHeading = null;
-    [SkinControlAttribute(5)]    protected GUILabelControl lblGFXHeading = null;
+    [SkinControlAttribute(5)]    protected GUILabelControl lblHeading2 = null;
 
-    int selectedItemIndex = -1;
-    int selectedId = -1;
-    bool showQuickNumbers = true;
-    string selectedItemLabel = String.Empty;
-    ArrayList listItems = new ArrayList();
-    bool m_bPrevOverlay = false;
-    //bool needRefresh = false;
-    DateTime vmr7UpdateTimer = DateTime.Now;
-    DateTime keyTimer = DateTime.Now;
-    string keySelection = string.Empty;
+    protected int selectedItemIndex = -1;
+    protected int selectedId = -1;
+    protected bool showQuickNumbers = true;
+    protected string selectedItemLabel = String.Empty;
+    protected ArrayList listItems = new ArrayList();
+    protected DateTime keyTimer = DateTime.Now;
+    protected string keySelection = string.Empty;
 
     public GUIDialogMenu()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_MENU;
+      GetID = (int)Window.WINDOW_DIALOG_MENU;
     }
 
     public override bool Init()
@@ -68,24 +57,9 @@ namespace MediaPortal.Dialogs
       return Load(GUIGraphicsContext.Skin + @"\DialogMenu.xml");
     }
 
-    public override bool SupportsDelayedLoad
-    {
-      get { return true; }
-    }
-
-    public override void PreInit()
-    {
-    }
-
     public override void OnAction(Action action)
     {
-      //      needRefresh = true;
       char key = (char)0;
-      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU || action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
-      {
-        Close();
-        return;
-      }
 
       // if we have a keypress or a remote button press
       if ((action.wID == Action.ActionType.ACTION_KEY_PRESSED) || ((Action.ActionType.REMOTE_0 <= action.wID) && (Action.ActionType.REMOTE_9 >= action.wID)))
@@ -151,62 +125,8 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    void Close()
-    {
-      if (m_bRunning == false) return;
-      m_bRunning = false;
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (this)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
-        OnMessage(msg);
-
-        GUIWindowManager.UnRoute();
-        m_bRunning = false;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-    }
-
-    #region Base Dialog Members
-    public void DoModal(int dwParentId)
-    {
-      if (listItems.Count == 0)
-        return;
-      GUIWindow parentWindow = GUIWindowManager.GetWindow(dwParentId); ;
-      if (null == parentWindow)
-      {
-        return;
-      }
-      bool wasRouted = GUIWindowManager.IsRouted;
-      IRenderLayer prevLayer = GUILayerManager.GetLayer(GUILayerManager.LayerType.Dialog);
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      GUIWindowManager.RouteToWindow(GetID);
-
-      // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, -1, 0, null);
-      OnMessage(msg);
-
-      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-      m_bRunning = true;
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
-        GUIWindowManager.Process();
-      }
-      GUIGraphicsContext.Overlay = m_bPrevOverlay;
-      FreeResources();
-      DeInitControls();
-      GUILayerManager.UnRegisterLayer(this);
-      if (wasRouted)
-      {
-        GUIWindowManager.RouteToWindow(dwParentId);
-        GUILayerManager.RegisterLayer(prevLayer, GUILayerManager.LayerType.Dialog);
-      }
-    }
-    #endregion
-
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
       if (control == listView)
@@ -216,11 +136,11 @@ namespace MediaPortal.Dialogs
         int pos = selectedItemLabel.IndexOf(" ");
         if (pos > 0) selectedItemLabel = selectedItemLabel.Substring(pos + 1);
         selectedId = listView.SelectedListItem.ItemId;
-        Close();
+        PageDestroy();
       }
       if (control == btnClose)
       {
-        Close();
+        PageDestroy();
       }
     }
 
@@ -232,25 +152,17 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             lblHeading.Label = string.Empty;
-            if (lblGFXHeading != null)
-              lblGFXHeading.Label = string.Empty;
+            if (lblHeading2 != null) lblHeading2.Label = string.Empty;
 
             base.OnMessage(message);
-            m_bRunning = false;            
-
             return true;
           }
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
-            m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
-            int parentWindowId = GUIWindowManager.ActiveWindow;
-            GUIWindow parentWindow = GUIWindowManager.GetWindow(parentWindowId);
 
-            GUIGraphicsContext.Overlay = parentWindow.IsOverlayAllowed;
             listView.Clear();
-
             for (int i = 0; i < listItems.Count; i++)
             {
               GUIListItem pItem = (GUIListItem)listItems[i];
@@ -272,16 +184,24 @@ namespace MediaPortal.Dialogs
       return base.OnMessage(message);
     }
 
-    public void Reset()
+    public override void Reset()
     {
-      LoadSkin();
-      AllocResources();
-      InitControls();
-
-      selectedItemIndex = -1;
+      base.Reset();
       listItems.Clear();
       showQuickNumbers = true;
+      selectedItemIndex = -1;
     }
+
+    public override void DoModal(int dwParentId)
+    {
+      if (listItems.Count == 0)
+      {
+        PageDestroy();
+        return;
+      }
+      base.DoModal(dwParentId);
+    }
+ 
 
     public void Add(string strLabel)
     {
@@ -332,7 +252,7 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    public int SelectedLabel
+    public override int SelectedLabel
     {
       get { return selectedItemIndex; }
       set { selectedItemIndex = value; }
@@ -349,19 +269,19 @@ namespace MediaPortal.Dialogs
       get { return selectedItemLabel; }
     }
 
-    public void SetHeading(string strLine)
+    public virtual void SetHeading(string strLine)
     {
       LoadSkin();
       AllocResources();
       InitControls();
 
       lblHeading.Label = strLine;
-      if (lblGFXHeading != null)
+      if (lblHeading2 != null)
       {
         if (strLine.Length < 1)
-          lblGFXHeading.Label = string.Empty;
+          lblHeading2.Label = string.Empty;
         else
-          lblGFXHeading.Label = GUILocalizeStrings.Get(924);
+          lblHeading2.Label = GUILocalizeStrings.Get(924);
       }
     }
 
@@ -372,16 +292,5 @@ namespace MediaPortal.Dialogs
       listItems.Clear();
     }
 
-    #region IRenderLayer
-    public bool ShouldRenderLayer()
-    {
-      return true;
-    }
-
-    public void RenderLayer(float timePassed)
-    {
-      Render(timePassed);
-    }
-    #endregion
   }
 }

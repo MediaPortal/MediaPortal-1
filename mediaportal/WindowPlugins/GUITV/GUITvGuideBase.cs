@@ -2266,6 +2266,7 @@ namespace MediaPortal.GUI.TV
       GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       if (dlgProgress != null)
       {
+        dlgProgress.Reset();
         dlgProgress.SetHeading(606);
         dlgProgress.SetLine(1, String.Empty);
         dlgProgress.SetLine(2, String.Empty);

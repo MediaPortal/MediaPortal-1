@@ -586,6 +586,7 @@ namespace WindowPlugins.GUIPrograms
       ScraperSaveType saveType = ScraperSaveType.DataAndImages;
       GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
+      dlgProgress.Reset();
       dlgProgress.ShowWaitCursor = false;
       dlgProgress.ShowProgressBar(false);
       dlgProgress.SetHeading("Lookup Gameinfo");

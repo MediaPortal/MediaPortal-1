@@ -33,7 +33,7 @@ namespace MediaPortal.Dialogs
   /// <summary>
   /// 
   /// </summary>
-  public class GUIDialogSetRating : GUIWindow, IRenderLayer
+  public class GUIDialogSetRating : GUIDialogWindow
   {
     public enum ResultCode
     {
@@ -69,13 +69,6 @@ namespace MediaPortal.Dialogs
     [SkinControlAttribute(104)]
     protected GUIImage imgStar5 = null;
 
-    #region Base Dialog Variables
-    bool m_bRunning = false;
-    int m_dwParentWindowID = 0;
-    GUIWindow m_pParentWindow = null;
-    #endregion
-
-    bool m_bPrevOverlay = true;
     int rating = 1;
     string fileName;
     ResultCode resultCode;
@@ -89,88 +82,25 @@ namespace MediaPortal.Dialogs
     {
       return Load(GUIGraphicsContext.Skin + @"\dialogRating.xml");
     }
-    public override bool SupportsDelayedLoad
-    {
-      get { return true; }
-    }
-
-    public override void PreInit()
-    {
-    }
-
-
-    public override void OnAction(Action action)
-    {
-      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-      {
-        Close();
-        return;
-      }
-      base.OnAction(action);
-    }
-
-    #region Base Dialog Members
-    void Close()
-    {
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (this)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
-        OnMessage(msg);
-
-        GUIWindowManager.UnRoute();
-        m_pParentWindow = null;
-        m_bRunning = false;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-    }
-
-    public void DoModal(int dwParentId)
-    {
-      m_dwParentWindowID = dwParentId;
-      m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
-      if (null == m_pParentWindow)
-      {
-        m_dwParentWindowID = 0;
-        return;
-      }
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      GUIWindowManager.RouteToWindow(GetID);
-
-      // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
-      OnMessage(msg);
-
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-      m_bRunning = true;
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
-        GUIWindowManager.Process();
-
-      }
-    }
-    #endregion
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
       if (control == btnOk)
       {
-        Close();
+        PageDestroy();
         resultCode = ResultCode.Close;
         return;
       }
       if (control == btnNextItem)
       {
-        Close();
+        PageDestroy();
         resultCode = ResultCode.Next;
         return;
       }
       if (control == btnPreviousItem)
       {
-        Close();
+        PageDestroy();
         resultCode = ResultCode.Previous;
         return;
       }
@@ -198,26 +128,11 @@ namespace MediaPortal.Dialogs
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          {
-            base.OnMessage(message);
-            m_pParentWindow = null;
-            m_bRunning = false;
-            GUIGraphicsContext.Overlay = m_bPrevOverlay;
-            FreeResources();
-            DeInitControls();
-            GUILayerManager.UnRegisterLayer(this);
-            return true;
-          }
-
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             resultCode = ResultCode.Close;
-            m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
-            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             UpdateRating();
-            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
           }
           return true;
       }
@@ -274,18 +189,6 @@ namespace MediaPortal.Dialogs
     {
       get { return resultCode; }
     }
-
-    #region IRenderLayer
-    public bool ShouldRenderLayer()
-    {
-      return true;
-    }
-
-    public void RenderLayer(float timePassed)
-    {
-      Render(timePassed);
-    }
-    #endregion
 
   }
 }

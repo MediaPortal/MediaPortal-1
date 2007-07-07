@@ -1230,6 +1230,7 @@ namespace MediaPortal.GUI.Pictures
       GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       if (dlgProgress != null)
       {
+        dlgProgress.Reset();
         dlgProgress.SetHeading(110);
         dlgProgress.ShowProgressBar(false);
         dlgProgress.SetLine(1, String.Empty);
@@ -1255,6 +1256,7 @@ namespace MediaPortal.GUI.Pictures
       GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       if (dlgProgress != null)
       {
+        dlgProgress.Reset();
         dlgProgress.SetHeading(110);
         dlgProgress.ShowProgressBar(true);
         dlgProgress.SetLine(1, String.Empty);
@@ -1701,6 +1703,7 @@ namespace MediaPortal.GUI.Pictures
       GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       if (dlgProgress != null)
       {
+        dlgProgress.Reset();
         dlgProgress.SetHeading(110);
         dlgProgress.SetLine(1, String.Empty);
         dlgProgress.SetLine(2, String.Empty);

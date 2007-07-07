@@ -24,22 +24,20 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Pictures;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.Picture.Database;
+using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.Dialogs
 {
   /// <summary>
   /// Shows a dialog box with an OK button  
   /// </summary>
-  public class GUIDialogExif : GUIWindow, IRenderLayer
+  public class GUIDialogExif : GUIDialogWindow
   {
-    [SkinControlAttribute(2)]
+    [SkinControl(2)]
     protected GUILabelControl lblHeading = null;
     [SkinControlAttribute(3)]
     protected GUIImage imgPicture = null;
@@ -70,20 +68,13 @@ namespace MediaPortal.Dialogs
     [SkinControlAttribute(32)]
     protected GUILabelControl lblViewComments = null;
 
-    #region Base Dialog Variables
-    bool m_bRunning = false;
-    int m_dwParentWindowID = 0;
-    GUIWindow m_pParentWindow = null;
-    #endregion
-
     int m_iTextureWidth, m_iTextureHeight;
-    bool m_bPrevOverlay = true;
     string fileName;
     Texture m_pTexture = null;
 
     public GUIDialogExif()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_EXIF;
+      GetID = (int)Window.WINDOW_DIALOG_EXIF;
     }
 
     public override bool Init()
@@ -91,116 +82,27 @@ namespace MediaPortal.Dialogs
       return Load(GUIGraphicsContext.Skin + @"\DialogPictureInfo.xml");
     }
 
-    public override bool SupportsDelayedLoad
-    {
-      get { return true; }
-    }
-    public override void PreInit()
-    {
-    }
-
-
-    public override void OnAction(Action action)
-    {
-      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU || action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
-      {
-        Close();
-        return;
-      }
-      base.OnAction(action);
-    }
-
-    #region Base Dialog Members
-
-    void Close()
-    {
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (this)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
-        OnMessage(msg);
-
-        GUIWindowManager.UnRoute();
-        m_pParentWindow = null;
-        m_bRunning = false;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-    }
-
-    public void DoModal(int dwParentId)
-    {
-      m_dwParentWindowID = dwParentId;
-      m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
-      if (null == m_pParentWindow)
-      {
-        m_dwParentWindowID = 0;
-        return;
-      }
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      GUIWindowManager.RouteToWindow(GetID);
-
-      // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
-      OnMessage(msg);
-
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-      m_bRunning = true;
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
-        GUIWindowManager.Process();
-      }
-    }
-    #endregion
-
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          {
-            base.OnMessage(message);
-            m_pParentWindow = null;
-            m_bRunning = false;
-            GUIGraphicsContext.Overlay = m_bPrevOverlay;
-            FreeResources();
-            DeInitControls();
-            if (m_pTexture != null)
-              m_pTexture.Dispose();
-            m_pTexture = null;
-
-            GUILayerManager.UnRegisterLayer(this);
-            return true;
-          }
-
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
-            m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
-            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             Update();
-            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
+            return true;
           }
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
+        {
+          if (m_pTexture != null) m_pTexture.Dispose();
+          m_pTexture = null;
+          base.OnMessage(message);
           return true;
-
-        case GUIMessage.MessageType.GUI_MSG_CLICKED:
-          {
-            int iControl = message.SenderControlId;
-            /*
-              if ( GetControl((int)Controls.ID_BUTTON_YES) == null)
-              {
-                Close();
-                return true;
-              }*/
-          }
-          break;
+        }
       }
-
       return base.OnMessage(message);
     }
-
-
-
+        
     public void SetHeading(string strLine)
     {
       LoadSkin();
@@ -223,17 +125,14 @@ namespace MediaPortal.Dialogs
       set { fileName = value; }
     }
 
-
     void Update()
     {
-      if (m_pTexture != null)
-        m_pTexture.Dispose();
-
+      if (m_pTexture != null) m_pTexture.Dispose();
 
       PictureDatabase dbs = new PictureDatabase();
       int iRotate = dbs.GetRotation(FileName);
 
-      m_pTexture = MediaPortal.Util.Picture.Load(FileName, iRotate, 512, 512, true, false, out m_iTextureWidth, out m_iTextureHeight);
+      m_pTexture = Util.Picture.Load(FileName, iRotate, 512, 512, true, false, out m_iTextureWidth, out m_iTextureHeight);
 
       lblCameraModel.Label = String.Empty;
       lblDateTakenLabel.Label = String.Empty;
@@ -261,7 +160,7 @@ namespace MediaPortal.Dialogs
         lblFlash.Label = metaData.Flash.DisplayValue;
         lblFstop.Label = metaData.Fstop.DisplayValue;
         lblImgDimensions.Label = metaData.ImageDimensions.DisplayValue;
-        lblImgTitle.Label = System.IO.Path.GetFileNameWithoutExtension(FileName);
+        lblImgTitle.Label = Path.GetFileNameWithoutExtension(FileName);
         lblMeteringMode.Label = metaData.MeteringMode.DisplayValue;
         lblResolutions.Label = metaData.Resolution.DisplayValue;
         lblShutterSpeed.Label = metaData.ShutterSpeed.DisplayValue;
@@ -271,33 +170,19 @@ namespace MediaPortal.Dialogs
       }
     }
 
-
     public override void Render(float timePassed)
     {
       base.Render(timePassed);
       if (null == m_pTexture) return;
-      float x = (float)imgPicture.XPosition;
-      float y = (float)imgPicture.YPosition;
+      float x = imgPicture.XPosition;
+      float y = imgPicture.YPosition;
       int width;
       int height;
       GUIGraphicsContext.Correct(ref x, ref y);
 
       GUIFontManager.Present();
       GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, imgPicture.Width, imgPicture.Height, out width, out height);
-      MediaPortal.Util.Picture.RenderImage(m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0, true);
+      Util.Picture.RenderImage(m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0, true);
     }
-
-
-    #region IRenderLayer
-    public bool ShouldRenderLayer()
-    {
-      return true;
-    }
-
-    public void RenderLayer(float timePassed)
-    {
-      Render(timePassed);
-    }
-    #endregion
   }
 }

@@ -80,13 +80,13 @@ namespace WindowPlugins.VideoEditor
 			{
 				result = true;
 				SaveSettings();
-				this.Close();
+				this.PageDestroy();
 				return;
 			}
 			if (control == abbortBtn)
 			{
 				result = false;
-				this.Close();
+				this.PageDestroy();
 				return;
 			}
 			if (control == videoQualitySelect)

@@ -23,120 +23,35 @@
 
 #endregion
 
-using System;
 using MediaPortal.GUI.Library;
+
 namespace MediaPortal.Dialogs
 {
   /// <summary>
   /// 
   /// </summary>
-  public class GUIDialogFileStacking : GUIWindow, IRenderLayer
+  public class GUIDialogFileStacking : GUIDialogWindow
   {
-
-    #region Base Dialog Variables
-    bool m_bRunning = false;
-    int m_dwParentWindowID = 0;
-    GUIWindow m_pParentWindow = null;
-    #endregion
     int m_iSelectedFile = -1;
     int m_iFrames = -1;
     int m_iNumberOfFiles = 0;
-    bool m_bPrevOverlay;
     public GUIDialogFileStacking()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_FILESTACKING;
+      GetID = (int)Window.WINDOW_DIALOG_FILESTACKING;
     }
 
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\dialogFileStacking.xml");
     }
-
-    public override bool SupportsDelayedLoad
-    {
-      get { return true; }
-    }
-    public override void PreInit()
-    {
-    }
-
-
-    public override void OnAction(Action action)
-    {
-      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-      {
-        Close();
-        return;
-      }
-      base.OnAction(action);
-    }
-
-    #region Base Dialog Members
-
-    void Close()
-    {
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (this)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
-        OnMessage(msg);
-
-        GUIWindowManager.UnRoute();
-        m_pParentWindow = null;
-        m_bRunning = false;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-    }
-
-    public void DoModal(int dwParentId)
-    {
-      m_dwParentWindowID = dwParentId;
-      m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
-      if (null == m_pParentWindow)
-      {
-        m_dwParentWindowID = 0;
-        return;
-      }
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      GUIWindowManager.RouteToWindow(GetID);
-
-      // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
-      OnMessage(msg);
-
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-      m_bRunning = true;
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
-        GUIWindowManager.Process();
-
-      }
-    }
-    #endregion
-
+    
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          {
-            base.OnMessage(message);
-            m_pParentWindow = null;
-            m_bRunning = false;
-            GUIGraphicsContext.Overlay = m_bPrevOverlay;
-            FreeResources();
-            DeInitControls();
-            GUILayerManager.UnRegisterLayer(this);
-
-            return true;
-          }
-
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
-            m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
-            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             m_iSelectedFile = -1;
             m_iFrames = 0;
 
@@ -154,13 +69,12 @@ namespace MediaPortal.Dialogs
               DisableControl(GetID, i);
             }
           }
-          GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
             m_iSelectedFile = message.SenderControlId;
-            Close();
+            PageDestroy();
           }
           break;
       }
@@ -177,15 +91,15 @@ namespace MediaPortal.Dialogs
         int dwScreenWidth = GUIGraphicsContext.Width;
         for (int i = 1; i <= m_iNumberOfFiles; ++i)
         {
-          GUIControl pControl = (GUIControl)GetControl(i);
+          GUIControl pControl = GetControl(i);
           if (null != pControl)
           {
             int dwEndPos = dwScreenWidth - ((m_iNumberOfFiles - i) * 32) - 140;
             int dwStartPos = dwScreenWidth;
-            float fStep = (float)(dwStartPos - dwEndPos);
+            float fStep = dwStartPos - dwEndPos;
             fStep /= 25.0f;
-            fStep *= (float)m_iFrames;
-            int dwPosX = (int)(((float)dwStartPos) - fStep);
+            fStep *= m_iFrames;
+            int dwPosX = (int)(dwStartPos - fStep);
             pControl.SetPosition(dwPosX, pControl.YPosition);
           }
         }
@@ -194,7 +108,6 @@ namespace MediaPortal.Dialogs
 
       base.Render(timePassed);
     }
-
 
     public int SelectedFile
     {
@@ -210,39 +123,6 @@ namespace MediaPortal.Dialogs
       m_iNumberOfFiles = iFiles;
     }
 
-    void HideControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN, iWindowId, 0, iControlId, 0, 0, null);
-      OnMessage(msg);
-    }
-    void ShowControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, iWindowId, 0, iControlId, 0, 0, null);
-      OnMessage(msg);
-    }
-
-    void DisableControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, iWindowId, 0, iControlId, 0, 0, null);
-      OnMessage(msg);
-    }
-    void EnableControl(int iWindowId, int iControlId)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, iWindowId, 0, iControlId, 0, 0, null);
-      OnMessage(msg);
-    }
-
-    #region IRenderLayer
-    public bool ShouldRenderLayer()
-    {
-      return true;
-    }
-
-    public void RenderLayer(float timePassed)
-    {
-      Render(timePassed);
-    }
-    #endregion
   }
 }
 

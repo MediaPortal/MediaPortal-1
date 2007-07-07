@@ -939,8 +939,6 @@ namespace MediaPortal.GUI.Video
     protected override void OnInfo(int iItem)
     {
       currentSelectedItem = facadeView.SelectedListItemIndex;
-      GUIDialogSelect dlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
-      int iSelectedItem = facadeView.SelectedListItemIndex;
       GUIListItem pItem = facadeView.SelectedListItem;
       if (pItem == null) return;
       if (pItem.IsRemote) return;
@@ -1313,6 +1311,7 @@ namespace MediaPortal.GUI.Video
         GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
         if (dlgProgress != null)
         {
+          dlgProgress.Reset();
           dlgProgress.SetHeading(13013);
           dlgProgress.SetLine(1, System.IO.Path.GetFileNameWithoutExtension(file));
           dlgProgress.StartModal(WindowID);
@@ -2153,6 +2152,7 @@ namespace MediaPortal.GUI.Video
       {
         heading = GUILocalizeStrings.Get(197);
       }
+      pDlgProgress.Reset();
       pDlgProgress.SetHeading(heading);
       pDlgProgress.SetLine(1, fetcher.MovieName);
       pDlgProgress.SetLine(2, String.Empty);
@@ -2211,6 +2211,7 @@ namespace MediaPortal.GUI.Video
       {
         heading = GUILocalizeStrings.Get(198);
       }
+      pDlgProgress.Reset();
       pDlgProgress.SetHeading(heading);
       //pDlgProgress.SetLine(0, strMovieName);
       pDlgProgress.SetLine(1, fetcher.MovieName);
@@ -2252,6 +2253,7 @@ namespace MediaPortal.GUI.Video
       {
         heading = GUILocalizeStrings.Get(986);
       }
+      pDlgProgress.Reset();
       pDlgProgress.SetHeading(heading);
       //pDlgProgress.SetLine(0, strMovieName);
       pDlgProgress.SetLine(1, fetcher.MovieName);
@@ -2331,8 +2333,8 @@ namespace MediaPortal.GUI.Video
         GUIDialogSelect pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
         // more then 1 movie found
         // ask user to select 1
-        pDlgSelect.SetHeading(196);//select movie
         pDlgSelect.Reset();
+        pDlgSelect.SetHeading(196);//select movie
         for (int i = 0; i < fetcher.Count; ++i)
         {
           pDlgSelect.Add(fetcher[i].Title);
@@ -2366,8 +2368,8 @@ namespace MediaPortal.GUI.Video
         // ask user to select 1
         do
         {
-          pDlgSelect.SetHeading(892);//select movie
           pDlgSelect.Reset();
+          pDlgSelect.SetHeading(892);//select movie
           for (int i = 0; i < conflictFiles.Count; ++i)
           {
             IMDBMovie currentMovie = (IMDBMovie)conflictFiles[i];

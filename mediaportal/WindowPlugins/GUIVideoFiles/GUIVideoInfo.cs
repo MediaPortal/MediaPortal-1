@@ -519,6 +519,7 @@ namespace MediaPortal.GUI.Video
     {
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       // show dialog that we're busy querying www.imdb.com
+      pDlgProgress.Reset();
       pDlgProgress.SetHeading(197);
       pDlgProgress.SetLine(1, fetcher.MovieName);
       pDlgProgress.SetLine(2, String.Empty);
@@ -571,6 +572,7 @@ namespace MediaPortal.GUI.Video
     {
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       // show dialog that we're downloading the movie info
+      pDlgProgress.Reset();
       pDlgProgress.SetHeading(198);
       pDlgProgress.SetLine(1, fetcher.MovieName);
       pDlgProgress.SetLine(2, String.Empty);
@@ -602,6 +604,7 @@ namespace MediaPortal.GUI.Video
     {
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       // show dialog that we're downloading the actor info
+      pDlgProgress.Reset();
       pDlgProgress.SetHeading(986);
       pDlgProgress.SetLine(1, fetcher.MovieName);
       pDlgProgress.SetLine(2, String.Empty);

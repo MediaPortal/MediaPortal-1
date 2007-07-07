@@ -24,42 +24,31 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Drawing;
-using System.Windows.Forms;
+using System.IO;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-
 
 namespace MediaPortal.Dialogs
 {
   /// <summary>
   /// 
   /// </summary>
-  public class GUIDialogNotify : GUIWindow, IRenderLayer
+  public class GUIDialogNotify : GUIDialogWindow
   {
-
-    #region Base Dialog Variables
-    bool m_bRunning = false;
-    int m_dwParentWindowID = 0;
-    GUIWindow m_pParentWindow = null;
-    #endregion
-
-    [SkinControlAttribute(4)]   protected GUIButtonControl btnClose = null;
+    [SkinControl(4)]   protected GUIButtonControl btnClose = null;
     [SkinControlAttribute(3)]   protected GUILabelControl lblHeading = null;
     [SkinControlAttribute(5)]   protected GUIImage imgLogo = null;
     [SkinControlAttribute(6)]   protected GUITextControl txtArea = null;
 
-    bool m_bPrevOverlay = false;
     int timeOutInSeconds = 8;
-    DateTime vmr7UpdateTimer = DateTime.Now;
+    private DateTime timeStart = DateTime.Now;
     bool m_bNeedRefresh = false;
     string logoUrl = string.Empty;
 
 
     public GUIDialogNotify()
     {
-      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY;
+      GetID = (int)Window.WINDOW_DIALOG_NOTIFY;
     }
 
     public override bool Init()
@@ -67,89 +56,35 @@ namespace MediaPortal.Dialogs
       return Load(GUIGraphicsContext.Skin + @"\DialogNotify.xml");
     }
 
-    public override bool SupportsDelayedLoad
-    {
-      get { return true; }
-    }
-    public override void PreInit()
-    {
-    }
-
-
-    public override void OnAction(Action action)
-    {
-      //needRefresh = true;
-      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU || action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
-      {
-        Close();
-        return;
-      }
-
-      base.OnAction(action);
-    }
-
     #region Base Dialog Members
-
-
-    void Close()
+    public override void DoModal(int dwParentId)
     {
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (this)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
-        OnMessage(msg);
-
-        GUIWindowManager.UnRoute();
-        m_pParentWindow = null;
-        m_bRunning = false;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
+      timeStart = DateTime.Now;
+      base.DoModal(dwParentId);
     }
 
-    public void DoModal(int dwParentId)
+    public override bool ProcessDoModal()
     {
-
-      m_dwParentWindowID = dwParentId;
-      m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
-      if (null == m_pParentWindow)
+      base.ProcessDoModal();
+      TimeSpan timeElapsed = DateTime.Now - timeStart;
+      if (TimeOut > 0)
       {
-        m_dwParentWindowID = 0;
-        return;
-      }
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      GUIWindowManager.RouteToWindow(GetID);
-
-      // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, -1, 0, null);
-      OnMessage(msg);
-
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-      m_bRunning = true;
-      DateTime timeStart = DateTime.Now;
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
-        GUIWindowManager.Process();
-
-        TimeSpan timeElapsed = DateTime.Now - timeStart;
-        if (TimeOut > 0)
+        if (timeElapsed.TotalSeconds >= TimeOut)
         {
-          if (timeElapsed.TotalSeconds >= TimeOut)
-          {
-            Close();
-            return;
-          }
+          PageDestroy();
+          return false;
         }
       }
+      return true;
     }
     #endregion
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
       if (control == btnClose)
       {
-        Close();
+        PageDestroy();
       }
     }
 
@@ -161,29 +96,19 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             lblHeading.Label = string.Empty;
-
             base.OnMessage(message);
-            m_pParentWindow = null;
-            m_bRunning = false;
-            GUIGraphicsContext.Overlay = m_bPrevOverlay;
-            FreeResources();
-            DeInitControls();
-            GUILayerManager.UnRegisterLayer(this);
             return true;
           }
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
-            m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
-            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
-            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
             if (imgLogo != null)
             {
               SetImage(logoUrl);
             }
-
           }
+
           return true;
 
       }
@@ -191,11 +116,8 @@ namespace MediaPortal.Dialogs
       return base.OnMessage(message);
     }
 
-    public void Reset()
+    public override void Reset()
     {
-      LoadSkin();
-      AllocResources();
-      InitControls();
       timeOutInSeconds = 5;
       logoUrl = string.Empty;
     }
@@ -223,7 +145,7 @@ namespace MediaPortal.Dialogs
     public void SetImage(string filename)
     {
       logoUrl = filename;
-      if (System.IO.File.Exists(filename))
+      if (File.Exists(filename))
       {
         if (imgLogo != null)
         {
@@ -273,17 +195,5 @@ namespace MediaPortal.Dialogs
       }
       return false;
     }
-
-    #region IRenderLayer
-    public bool ShouldRenderLayer()
-    {
-      return true;
-    }
-
-    public void RenderLayer(float timePassed)
-    {
-      Render(timePassed);
-    }
-    #endregion
   }
 }

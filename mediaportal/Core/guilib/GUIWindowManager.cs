@@ -83,6 +83,7 @@ namespace MediaPortal.GUI.Library
     static bool _isSwitchingToNewWindow = false;
     static string _currentWindowName = String.Empty;
     static int _nextWindowIndex = -1;
+    static Object thisLock = new Object();      // used in Route functions
     #endregion
 
     #region ctor
@@ -1066,8 +1067,11 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (null != _routedWindow) return true;
-        return false;
+        lock (thisLock)
+        {
+          if (null != _routedWindow) return true;
+          return false;
+        }
       }
     }
     /// <summary>
@@ -1079,9 +1083,12 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_routedWindow != null)
-          return _routedWindow.GetID;
-        return -1;
+        lock (thisLock)
+        {
+          if (_routedWindow != null)
+            return _routedWindow.GetID;
+          return -1;
+        }
       }
     }
 
@@ -1126,26 +1133,32 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void UnRoute()
     {
-      if (_routedWindow != null)
+      lock (thisLock)
       {
-        Log.Info("WindowManager:unroute to {0}:{1}->{2}:{3}",
-                _routedWindow, _routedWindow.GetID, GetWindow(ActiveWindow), ActiveWindow);
+        if (_routedWindow != null)
+        {
+          Log.Info("WindowManager:unroute to {0}:{1}->{2}:{3}",
+                   _routedWindow, _routedWindow.GetID, GetWindow(ActiveWindow), ActiveWindow);
+        }
+        if (_currentWindowName != String.Empty && _routedWindow != null)
+          GUIPropertyManager.SetProperty("#currentmodule", _currentWindowName);
+        else
+          GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + ActiveWindow));
+        _routedWindow = null;
+        _shouldRefresh = true;
       }
-      if (_currentWindowName != String.Empty && _routedWindow != null)
-        GUIPropertyManager.SetProperty("#currentmodule", _currentWindowName);
-      else
-        GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + ActiveWindow));
-      _routedWindow = null;
-      _shouldRefresh = true;
     }
 
     static public void RouteToWindow(int dialogId)
     {
-      _shouldRefresh = true;
-      _routedWindow = GetWindow(dialogId);
-      Log.Info("WindowManager:route {0}:{1}->{2}:{3}",
-                GetWindow(ActiveWindow), ActiveWindow, _routedWindow, dialogId);
-      _currentWindowName = GUIPropertyManager.GetProperty("#currentmodule");
+      lock (thisLock)
+      {
+        _shouldRefresh = true;
+        _routedWindow = GetWindow(dialogId);
+        Log.Info("WindowManager:route {0}:{1}->{2}:{3}",
+                 GetWindow(ActiveWindow), ActiveWindow, _routedWindow, dialogId);
+        _currentWindowName = GUIPropertyManager.GetProperty("#currentmodule");
+      }
     }
 
 

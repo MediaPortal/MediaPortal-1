@@ -33,16 +33,9 @@ namespace MediaPortal.Dialogs
   /// <summary>
   /// Shows a dialog box with an OK button  
   /// </summary>
-  public class GUIDialogDateTime : GUIWindow, IRenderLayer
+  public class GUIDialogDateTime : GUIDialogWindow
   {
     readonly int[] months = new int[] { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
-    #region Base Dialog Variables
-    bool m_bRunning = false;
-    int m_dwParentWindowID = 0;
-    GUIWindow m_pParentWindow = null;
-    #endregion
-
 
     [SkinControlAttribute(1)]
     protected GUISpinControl spinChannel = null;
@@ -71,8 +64,7 @@ namespace MediaPortal.Dialogs
     [SkinControlAttribute(13)]
     protected GUILabelControl lblHeading = null;
 
-    bool m_bConfirmed = false;
-    bool m_bPrevOverlay = true;
+    bool _confirmed = false;
     string channel = String.Empty;
     bool enableEditStartTime = true;
     bool enableEditChannel = true;
@@ -89,73 +81,11 @@ namespace MediaPortal.Dialogs
     {
       return Load(GUIGraphicsContext.Skin + @"\dialogDateTime.xml");
     }
-
-    public override bool SupportsDelayedLoad
-    {
-      get { return true; }
-    }
-    public override void PreInit()
-    {
-    }
-
-
-    public override void OnAction(Action action)
-    {
-      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-      {
-        Close();
-        return;
-      }
-      base.OnAction(action);
-    }
-
-    #region Base Dialog Members
-    void Close()
-    {
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (this)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
-        OnMessage(msg);
-
-        GUIWindowManager.UnRoute();
-        m_pParentWindow = null;
-        m_bRunning = false;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-    }
-
-    public void DoModal(int dwParentId)
-    {
-      m_dwParentWindowID = dwParentId;
-      m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
-      if (null == m_pParentWindow)
-      {
-        m_dwParentWindowID = 0;
-        return;
-      }
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      GUIWindowManager.RouteToWindow(GetID);
-
-      // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
-      OnMessage(msg);
-
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-      m_bRunning = true;
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
-        GUIWindowManager.Process();
-      }
-    }
-    #endregion
-
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
-      int iYear, iMonth, iDay;
-      int iHour, iMin;
+      int iYear, iMonth;
       if (control == spinStartMonth)
       {
         iYear = spinStartYear.Value;
@@ -184,8 +114,11 @@ namespace MediaPortal.Dialogs
       }
       if (control == btnOK)
       {
+        int iHour;
         iHour = spinStartHour.Value;
+        int iMin;
         iMin = spinStartMinute.Value;
+        int iDay;
         iDay = spinStartDay.Value;
         iMonth = spinStartMonth.Value;
         iYear = spinStartYear.Value;
@@ -199,8 +132,8 @@ namespace MediaPortal.Dialogs
         iYear = spinEndYear.Value;
         endDateTime = new DateTime(iYear, iMonth, iDay, iHour, iMin, 0, 0);
 
-        m_bConfirmed = true;
-        Close();
+        _confirmed = true;
+        PageDestroy();
         return;
       }
     }
@@ -209,25 +142,10 @@ namespace MediaPortal.Dialogs
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          {
-            base.OnMessage(message);
-            m_pParentWindow = null;
-            m_bRunning = false;
-            GUIGraphicsContext.Overlay = m_bPrevOverlay;
-            FreeResources();
-            DeInitControls();
-            GUILayerManager.UnRegisterLayer(this);
-
-            return true;
-          }
-
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
-            m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
-            m_bConfirmed = false;
-            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
+            _confirmed = false;
             spinStartHour.SetRange(0, 23);
             spinStartHour.Value = startDateTime.Hour;
 
@@ -259,7 +177,7 @@ namespace MediaPortal.Dialogs
               i++;
             }
             if (iSel >= 0)
-              SelectItemControl(GetID, (int)spinChannel.GetID, iSel);
+              SelectItemControl(GetID, spinChannel.GetID, iSel);
 
             spinEndHour.SetRange(0, 23);
             spinEndHour.Value = endDateTime.Hour;
@@ -287,25 +205,18 @@ namespace MediaPortal.Dialogs
             spinStartMonth.Disabled = !enableEditStartTime;
             spinStartYear.Disabled = !enableEditStartTime;
 
-
             spinChannel.Disabled = !enableEditChannel;
-            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
-
           }
           return true;
-
       }
-
       return base.OnMessage(message);
     }
 
 
     public bool IsConfirmed
     {
-      get { return m_bConfirmed; }
+      get { return _confirmed; }
     }
-
- 
 
     void SelectItemControl(int iWindowId, int iControlId,int iItem)
     {
@@ -355,18 +266,5 @@ namespace MediaPortal.Dialogs
       get { return enableEditChannel; }
       set { enableEditChannel = value; }
     }
-
-    #region IRenderLayer
-    public bool ShouldRenderLayer()
-    {
-      return true;
-    }
-
-    public void RenderLayer(float timePassed)
-    {
-      Render(timePassed);
-    }
-    #endregion
-
   }
 }

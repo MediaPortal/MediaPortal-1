@@ -37,186 +37,6 @@ using MediaPortal.TV.Database;
 namespace MediaPortal.Dialogs
 {
 
-  public abstract class GUIDialogWindow : GUIWindow, IRenderLayer
-  {
-    #region Variables
-    // Private Variables
-    private Object thisLock = new Object();      // used in Close
-    private int _selectedLabel = -1;
-    // Protected Variables
-    protected GUIWindow _parentWindow = null;
-    protected int _parentWindowID = -1;
-    protected bool _prevOverlay = false;
-    protected bool _running = false;
-    // Public Variables
-    #endregion
-
-    #region Properties
-    // Public Properties
-    public int SelectedLabel
-    {
-      get { return _selectedLabel; }
-      set { _selectedLabel = value; }
-    }
-    #endregion
-
-    #region Public Methods
-    public virtual void Reset()
-    {
-      LoadSkin();
-      AllocResources();
-      InitControls();
-      _selectedLabel = -1;
-    }
-
-    public void DoModal(int ParentID)
-    {
-      _parentWindowID = ParentID;
-      _parentWindow = GUIWindowManager.GetWindow(_parentWindowID);
-      if (_parentWindow == null)
-      {
-        _parentWindowID = 0;
-        return;
-      }
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      GUIWindowManager.RouteToWindow(GetID);
-      // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
-      OnMessage(msg);
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-
-      _running = true;
-      while (_running && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
-        GUIWindowManager.Process();
-      }
-    }
-
-    #endregion
-
-    #region Protected Methods
-    protected void SetControlLabel(int WindowID, int ControlID, string LabelText)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, WindowID, 0, ControlID, 0, 0, null);
-      msg.Label = LabelText;
-      OnMessage(msg);
-    }
-
-    protected void HideControl(int WindowID, int ControlID)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN, WindowID, 0, ControlID, 0, 0, null);
-      OnMessage(msg);
-    }
-
-    protected void ShowControl(int WindowID, int ControlID)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, WindowID, 0, ControlID, 0, 0, null);
-      OnMessage(msg);
-    }
-
-    protected void DisableControl(int WindowID, int ControlID)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, WindowID, 0, ControlID, 0, 0, null);
-      OnMessage(msg);
-    }
-
-    protected void EnableControl(int WindowID, int ControlID)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, WindowID, 0, ControlID, 0, 0, null);
-      OnMessage(msg);
-    }
-    
-    protected void Close()
-    {
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (thisLock)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
-        OnMessage(msg);
-        GUIWindowManager.UnRoute();
-        _parentWindow = null;
-        _running = false;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-    }
-
-
-    #endregion
-
-    #region <Base class> Overloads
-    #region SupportsDelayedLoad
-    public override bool SupportsDelayedLoad
-    {
-      get { return true; }
-    }
-    #endregion
-    #region PreInit
-    public override void PreInit()
-    {
-    }
-    #endregion
-    #region OnAction
-    public override void OnAction(Action action)
-    {
-      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || 
-          action.wID == Action.ActionType.ACTION_PREVIOUS_MENU || 
-          action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
-      {
-        Close();
-        return;
-      }
-      base.OnAction(action);
-    }
-    #endregion
-    #region OnMessage
-    public override bool OnMessage(GUIMessage message)
-    {
-      switch (message.Message)
-      {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          {
-            _prevOverlay = GUIGraphicsContext.Overlay;
-            base.OnMessage(message);
-            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
-            //Reset();
-            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
-            return true;
-          }
-
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          {
-            base.OnMessage(message);
-            _parentWindow = null;
-            _running = false;
-            GUIGraphicsContext.Overlay = _prevOverlay;
-            FreeResources();
-            DeInitControls();
-            GUILayerManager.UnRegisterLayer(this);
-            return true;
-          }
-      }
-      return base.OnMessage(message);
-    }
-    #endregion
-    #endregion
-
-    #region <Interface> Implementations
-    #region IRenderLayer
-    public bool ShouldRenderLayer()
-    {
-      return true;
-    }
-
-    public void RenderLayer(float timePassed)
-    {
-      Render(timePassed);
-    }
-    #endregion
-    #endregion
-  }
-
-  
   public class GUIDialogTVConflict : GUIDialogWindow
   {
     #region Enums
@@ -326,17 +146,17 @@ namespace MediaPortal.Dialogs
           if ((int)Controls.BUTTON_NEW_REC == iControl)
           {
             SelectedLabel = 0;
-            Close();
+            PageDestroy();
           }
           else if ((int)Controls.BUTTON_CONFLICT_REC == iControl)
           {
             SelectedLabel = 1;
-            Close();
+            PageDestroy();
           }
           else if ((int)Controls.BUTTON_KEEP_CONFLICT == iControl)
           {
             SelectedLabel = 2;
-            Close();
+            PageDestroy();
           }
           break;
       }

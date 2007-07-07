@@ -45,6 +45,7 @@ namespace ProgramsDatabase
     private void ShowProgressDialog()
     {
       pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.Reset();
       pDlgProgress.ShowWaitCursor = true;
       pDlgProgress.SetHeading(13004);
       pDlgProgress.SetLine(0, 13004); //"importing *.my file
