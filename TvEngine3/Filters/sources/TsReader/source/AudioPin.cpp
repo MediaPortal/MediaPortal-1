@@ -222,6 +222,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
   if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
 	{
+    LogDebug("aud:isseeking");
 		Sleep(1);
     pSample->SetTime(NULL,NULL); 
 	  pSample->SetActualDataLength(0);
@@ -235,12 +236,13 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   CBuffer* buffer=demux.GetAudio();
   if (m_bDiscontinuity)
   {
-    //LogDebug("aud:set discontinuity");
+    LogDebug("aud:set discontinuity");
     pSample->SetDiscontinuity(TRUE);
     m_bDiscontinuity=FALSE;
   }
   if (buffer!=NULL)
   {
+    LogDebug("aud:gotbuffer");
 //    LogDebug("aud:set %d",buffer->Length());
     BYTE* pSampleBuffer;
     CRefTime cRefTime;
@@ -252,7 +254,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       pSample->SetSyncPoint(TRUE);
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
-//     LogDebug("aud:%f", fTime);
+      LogDebug("aud:%f", fTime);
     }
 	  pSample->SetActualDataLength(buffer->Length());
     pSample->GetPointer(&pSampleBuffer);
@@ -262,7 +264,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   }
   else
   {
-  //  LogDebug("aud:no buffer");
+    LogDebug("aud:no buffer");
     pSample->SetDiscontinuity(TRUE);
 	  pSample->SetActualDataLength(0);
     pSample->SetTime(NULL,NULL);  

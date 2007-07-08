@@ -209,6 +209,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
   }
   if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
 	{
+    LogDebug("vid:isseeking");
 		Sleep(1);
     pSample->SetTime(NULL,NULL); 
 	  pSample->SetActualDataLength(0);
@@ -225,6 +226,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
   }
   if (buffer!=NULL)
   {
+    LogDebug("vid:gotbuffer");
     BYTE* pSampleBuffer;
     CRefTime cRefTime;
     if (buffer->MediaTime(cRefTime))
@@ -235,7 +237,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       pSample->SetSyncPoint(TRUE);
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
-     // LogDebug("vid:%f", fTime);
+      LogDebug("vid:%f", fTime);
     }
     else
     {
@@ -249,7 +251,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
   }
   else
   {
-    //LogDebug("vid:no buffer");
+    LogDebug("vid:no buffer");
     pSample->SetDiscontinuity(TRUE);
 	  pSample->SetActualDataLength(0);
     pSample->SetTime(NULL,NULL);  

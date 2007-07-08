@@ -236,7 +236,7 @@ void CDeMultiplexer::GetVideoStreamType(CMediaType& pmt)
 void CDeMultiplexer::Flush()
 {
 	CAutoLock lock (&m_section);
-//  LogDebug("demux:flushing");
+  LogDebug("demux:flushing");
   delete m_pCurrentVideoBuffer;
   delete m_pCurrentAudioBuffer;
   delete m_pCurrentSubtitleBuffer;
@@ -381,10 +381,16 @@ bool CDeMultiplexer::ReadFromFile()
     }
     else 
     {
+      LogDebug("demux:read failed:%d",dwReadBytes);
 			
-			if (m_bPause) return false;
+			if (m_bPause)
+      {
+        LogDebug("demux:paused");
+        return false;
+      }
       if (!m_filter.IsTimeShifting())
       {
+        LogDebug("demux:endoffile");
         m_bEndOfFile=true;
         return false;
       }
@@ -753,6 +759,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     if (m_filter.GetVideoPin()->IsConnected())
     {
       // change video pin media type
+      LogDebug("demux:video pin media changed");
       if (DoStop() ==S_OK){while(IsStopped() == S_FALSE){Sleep(100); break;}}
       RenderFilterPin(m_filter.GetVideoPin());
     }
@@ -769,6 +776,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     if (m_filter.GetAudioPin()->IsConnected())
     {
       // change audio pin media type
+      LogDebug("demux:audio pin media changed");
       if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
       RenderFilterPin(m_filter.GetAudioPin());
     }
@@ -780,6 +788,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 }
 HRESULT CDeMultiplexer::DoStop()
 {
+  LogDebug("demux:DoStop");
 	HRESULT hr = S_OK;
 
 	FILTER_INFO Info;
@@ -812,6 +821,7 @@ HRESULT CDeMultiplexer::DoStop()
 }
 HRESULT CDeMultiplexer::DoStart()
 {
+  LogDebug("demux:DoStart");
 	HRESULT hr = S_OK;
 
 	FILTER_INFO Info;
@@ -845,6 +855,7 @@ HRESULT CDeMultiplexer::DoStart()
 
 HRESULT CDeMultiplexer::IsStopped()
 {
+  LogDebug("demux:IsStopped");
 	HRESULT hr = S_FALSE;
 
 	FILTER_STATE state = State_Stopped;
@@ -889,6 +900,7 @@ HRESULT CDeMultiplexer::IsStopped()
 
 HRESULT CDeMultiplexer::IsPlaying()
 {
+  LogDebug("demux:IsPlaying");
 
 	HRESULT hr = S_FALSE;
 
@@ -935,6 +947,7 @@ HRESULT CDeMultiplexer::IsPlaying()
 
 HRESULT CDeMultiplexer::RenderFilterPin(CBasePin* pin)
 {
+  LogDebug("demux:RenderFilterPin");
   if ( pin->IsConnected())
   {
 	  HRESULT hr = E_FAIL;
@@ -959,5 +972,6 @@ bool CDeMultiplexer::IsPaused()
 	
 void CDeMultiplexer::SetPause(bool onOff)
 {
+  LogDebug("set pause:%d", onOff);
 	m_bPause=onOff;
 }

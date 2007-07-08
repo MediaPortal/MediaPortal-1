@@ -415,6 +415,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     LogDebug("open rtsp:%s", url);
     if ( !m_rtspClient.OpenStream(url)) return E_FAIL;
     
+    m_bTimeShifting=true;
     m_buffer.Clear();
     m_buffer.Run(true);
     m_rtspClient.Play(0.0f);
