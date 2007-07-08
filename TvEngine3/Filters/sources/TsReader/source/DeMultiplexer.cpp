@@ -47,6 +47,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_audioPid=0;
   m_bScanning=false;
   m_bEndOfFile=false;
+  m_bPause=false;
 }
 
 CDeMultiplexer::~CDeMultiplexer()
