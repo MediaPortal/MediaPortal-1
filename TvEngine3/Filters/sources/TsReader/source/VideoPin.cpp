@@ -452,5 +452,5 @@ STDMETHODIMP CVideoPin::GetDuration(LONGLONG *pDuration)
 STDMETHODIMP CVideoPin::GetCurrentPosition(LONGLONG *pCurrent)
 {
  // LogDebug("vid:GetCurrentPosition");
-  return CSourceSeeking::GetCurrentPosition(pCurrent);
+  return E_NOTIMPL;//CSourceSeeking::GetCurrentPosition(pCurrent);
 }

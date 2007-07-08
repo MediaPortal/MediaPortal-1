@@ -404,5 +404,5 @@ STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
 STDMETHODIMP CAudioPin::GetCurrentPosition(LONGLONG *pCurrent)
 {
  // LogDebug("aud:GetCurrentPosition");
-  return CSourceSeeking::GetCurrentPosition(pCurrent);
+  return E_NOTIMPL;//CSourceSeeking::GetCurrentPosition(pCurrent);
 }
