@@ -360,9 +360,10 @@ void CAudioPin::UpdateFromSeek()
       Run();
 			LogDebug("aud seek running");
   }
-	demux.Flush();
-  m_bSeeking=false;
+	//demux.Flush();
 	demux.SetPause(false);
+  m_bSeeking=false;
+  LogDebug("aud seek done---");
 }
 
 

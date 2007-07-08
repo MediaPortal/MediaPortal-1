@@ -36,7 +36,7 @@
 #include "memoryreader.h"
 void LogDebug(const char *fmt, ...) 
 {
-#ifndef DEBUG
+#ifdef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 

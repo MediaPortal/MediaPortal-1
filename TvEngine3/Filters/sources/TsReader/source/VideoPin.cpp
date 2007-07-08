@@ -410,9 +410,10 @@ void CVideoPin::UpdateFromSeek()
       Run();
 			LogDebug("vid seek running");
   }
-  m_bSeeking=false;
-	demux.Flush();
+	//demux.Flush();
 	demux.SetPause(false);
+  m_bSeeking=false;
+  LogDebug("vid seek done---");
 }
 
 STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )

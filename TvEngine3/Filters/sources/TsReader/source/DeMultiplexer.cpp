@@ -301,9 +301,8 @@ CBuffer* CDeMultiplexer::GetVideo()
   {
     if (!m_filter.IsFilterRunning()) return NULL;
     if (m_bEndOfFile) return NULL;
-		if (m_bPause) return NULL;
     ReadFromFile() ;
-    
+		if (m_bPause) return NULL;
   }
   
   if (m_vecVideoBuffers.size()!=0)
@@ -328,8 +327,8 @@ CBuffer* CDeMultiplexer::GetAudio()
   {
     if (!m_filter.IsFilterRunning()) return NULL;
     if (m_bEndOfFile) return NULL;
-		if (m_bPause) return NULL;
     ReadFromFile() ;
+		if (m_bPause) return NULL;
     
   }
   if (m_vecAudioBuffers.size()!=0)
