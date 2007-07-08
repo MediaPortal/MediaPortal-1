@@ -65,6 +65,8 @@ protected:
 	bool	m_bDropPackets;
   bool  m_bDropSeek;
   bool  m_bSeeking;
+  DWORD m_seekTimer;
+  CRefTime m_lastSeek;
 };
 
 #endif

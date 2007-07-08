@@ -359,6 +359,15 @@ void CVideoPin::UpdateFromSeek()
 
 	if (m_rtStart>m_rtDuration)
 		m_rtStart=m_rtDuration;
+  if (GetTickCount()-m_seekTimer<100)
+  {
+    if (m_lastSeek.Millisecs()==m_rtStart.Millisecs()) 
+    {
+      return;
+    }
+  }
+  m_seekTimer=GetTickCount();
+  m_lastSeek=m_rtStart;
 
   CRefTime rtSeek=m_rtStart;
   float seekTime=(float)rtSeek.Millisecs();
@@ -366,10 +375,10 @@ void CVideoPin::UpdateFromSeek()
   LogDebug("vid seek to %f", seekTime);
   m_bSeeking=true;
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
-   LogDebug("vid seek filter->Iseeking() done");
+  // LogDebug("vid seek filter->Iseeking() done");
 	demux.SetPause(true);
   CAutoLock lock(&m_bufferLock);
-  LogDebug("vid seek buffer locked");
+  //LogDebug("vid seek buffer locked");
   if (ThreadExists()) 
   {
       // next time around the loop, the worker thread will
@@ -379,36 +388,36 @@ void CVideoPin::UpdateFromSeek()
       
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
-        LogDebug("vid seek filter->seekstart");
+    //    LogDebug("vid seek filter->seekstart");
 				m_pTsReaderFilter->SeekStart();
       }
-			LogDebug("vid seek begindeliverflush");
+//			LogDebug("vid seek begindeliverflush");
       HRESULT hr=DeliverBeginFlush();
      // LogDebug("vid:beginflush:%x",hr);
       // make sure we have stopped pushing
-			LogDebug("vid seek stop");
+	//		LogDebug("vid seek stop");
       Stop();
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
-				LogDebug("vid seek filter->seek");
+		//		LogDebug("vid seek filter->seek");
         m_pTsReaderFilter->Seek(CRefTime(m_rtStart));
       }
       // complete the flush
-			LogDebug("vid seek deliverendflush");
+			//LogDebug("vid seek deliverendflush");
       hr=DeliverEndFlush();
      // LogDebug("vid:endflush:%x",hr);
       
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
-				LogDebug("vid seek filter->seekdone");
+				//LogDebug("vid seek filter->seekdone");
         m_pTsReaderFilter->SeekDone(rtSeek);
       }
       // restart
       
-			LogDebug("vid seek restart");
+			//LogDebug("vid seek restart");
       m_rtStart=rtSeek;
       Run();
-			LogDebug("vid seek running");
+			//LogDebug("vid seek running");
   }
 	//demux.Flush();
 	demux.SetPause(false);

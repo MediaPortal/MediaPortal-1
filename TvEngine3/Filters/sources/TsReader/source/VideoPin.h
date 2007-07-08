@@ -63,6 +63,8 @@ protected:
 	CCritSec* m_section;
   CCritSec m_bufferLock;
   bool     m_bSeeking;
+  DWORD m_seekTimer;
+  CRefTime m_lastSeek;
 };
 
 #endif

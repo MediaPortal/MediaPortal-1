@@ -281,7 +281,7 @@ bool CAudioPin::IsConnected()
 HRESULT CAudioPin::ChangeStart()
 {
 
-    UpdateFromSeek();
+  UpdateFromSeek();
 	return S_OK;
 }
 HRESULT CAudioPin::ChangeStop()
@@ -319,6 +319,15 @@ void CAudioPin::UpdateFromSeek()
 	if (m_rtStart>m_rtDuration)
 		m_rtStart=m_rtDuration;
 
+  if (GetTickCount()-m_seekTimer<100)
+  {
+    if (m_lastSeek.Millisecs()==m_rtStart.Millisecs()) 
+    {
+      return;
+    }
+  }
+  m_seekTimer=GetTickCount();
+  m_lastSeek=m_rtStart;
   CRefTime rtSeek=m_rtStart;
   float seekTime=(float)rtSeek.Millisecs();
   seekTime/=1000.0f;
@@ -327,10 +336,10 @@ void CAudioPin::UpdateFromSeek()
   LogDebug("aud seek to %f/%f", seekTime, duration);
   m_bSeeking=true;
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
-  LogDebug("aud seek filter->Iseeking() done");
+//  LogDebug("aud seek filter->Iseeking() done");
 	demux.SetPause(true);
   CAutoLock lock(&m_bufferLock);
-  LogDebug("aud seek buffer locked");
+//  LogDebug("aud seek buffer locked");
   if (ThreadExists()) 
   {
       // next time around the loop, the worker thread will
@@ -338,27 +347,27 @@ void CAudioPin::UpdateFromSeek()
       // We need to flush all the existing data - we must do that here
       // as our thread will probably be blocked in GetBuffer otherwise
       
-			LogDebug("aud seek filter->seekstart");
+	//		LogDebug("aud seek filter->seekstart");
       m_pTsReaderFilter->SeekStart();
-			LogDebug("aud seek begindeliverflush");
+		//	LogDebug("aud seek begindeliverflush");
       DeliverBeginFlush();
-			LogDebug("aud seek stop");
+			//LogDebug("aud seek stop");
       // make sure we have stopped pushing
       Stop();
-			LogDebug("aud seek filter->seek");
+			//LogDebug("aud seek filter->seek");
       m_pTsReaderFilter->Seek(CRefTime(m_rtStart));
 
       // complete the flush
-			LogDebug("aud seek deliverendflush");
+			//LogDebug("aud seek deliverendflush");
       DeliverEndFlush();
-			LogDebug("aud seek filter->seekdone");
+			//LogDebug("aud seek filter->seekdone");
       m_pTsReaderFilter->SeekDone(rtSeek);
 
       // restart
-			LogDebug("aud seek restart");
+			//LogDebug("aud seek restart");
       m_rtStart=rtSeek;
       Run();
-			LogDebug("aud seek running");
+			//LogDebug("aud seek running");
   }
 	//demux.Flush();
 	demux.SetPause(false);

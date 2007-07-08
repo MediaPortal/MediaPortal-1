@@ -21,8 +21,8 @@ void CTsFileSeek::Seek(CRefTime refTime)
 {
   float duration=(float)m_duration.Duration().Millisecs();
   float seekPos=(float)refTime.Millisecs();
-  if (seekPos>1000) seekPos-=1000;
-  else seekPos=1000;
+  //if (seekPos>1000) seekPos-=1000;
+  //else seekPos=1000;
   float percent=seekPos/duration;
   __int64 filePos=m_reader->GetFileSize()*percent;
   seekPos/=1000.0f;
