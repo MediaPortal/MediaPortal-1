@@ -314,6 +314,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
     {
       if (!m_rtspClient.IsRunning())
       {
+        m_demultiplexer.SetPause(true);
         double startTime=m_seekTime.Millisecs();
         m_demultiplexer.Flush();
         LogDebug("  -- Pause()->start client from %f",startTime);
@@ -329,6 +330,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
         duration+=pcrstart.ToClock();
         pcrEnd.FromClock(duration);
         m_duration.Set( pcrstart, pcrEnd,pcrMax);
+        m_demultiplexer.SetPause(false);
       }
       else
       {
@@ -371,7 +373,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 	wcscpy(m_fileName,pszFileName);
   char url[MAX_PATH];
   WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
-//  strcpy(url,"rtsp://htpc/stream1.0");
+  //strcpy(url,"rtsp://htpc/stream1.0");
   int length=strlen(url);	
   if ((length > 5) && (_strcmpi(&url[length-4], ".tsp") == 0))
   {
@@ -557,6 +559,7 @@ void CTsReaderFilter::Seek(CRefTime& seekTime)
     duration+=pcrstart.ToClock();
     pcrEnd.FromClock(duration);
     m_duration.Set( pcrstart, pcrEnd,pcrMax);
+    LogDebug("  Seek->start client done %2.2f",duration);
   }
 }
 bool CTsReaderFilter::IsFilterRunning()

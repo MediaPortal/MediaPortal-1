@@ -44,7 +44,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
 	AM_SEEKING_CanSeekBackwards	|
 	AM_SEEKING_CanGetStopPos	|
 	AM_SEEKING_CanGetDuration |
-  AM_SEEKING_CanGetCurrentPos |
+  //AM_SEEKING_CanGetCurrentPos |
 	AM_SEEKING_Source;
   m_bSeeking=false;
 }
