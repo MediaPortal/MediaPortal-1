@@ -51,8 +51,8 @@ public:
 
   // Methods from directshow base classes
   STDMETHODIMP Run( REFERENCE_TIME tStart );
-	STDMETHODIMP Pause();
-	STDMETHODIMP Stop();
+  STDMETHODIMP Pause();
+  STDMETHODIMP Stop();
   CBasePin * GetPin( int n );
   int GetPinCount();
 
@@ -66,6 +66,7 @@ public:
   virtual HRESULT STDMETHODCALLTYPE Test( int status );
   virtual HRESULT STDMETHODCALLTYPE SetSubtitlePid( LONG pPid );
   virtual HRESULT STDMETHODCALLTYPE SetFirstPcr( LONGLONG pPcr );
+  virtual HRESULT STDMETHODCALLTYPE SeekDone( CRefTime& rtSeek );
 
   // IUnknown
   DECLARE_IUNKNOWN;
@@ -73,7 +74,7 @@ public:
   STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
 
   // From MSubdecoderObserver
-	void NotifySubtitle();
+  void NotifySubtitle();
   void NotifySeeking();
 
   static CUnknown * WINAPI CreateInstance( LPUNKNOWN pUnk, HRESULT *pHr );
@@ -92,7 +93,7 @@ private: // data
   int m_VideoPid;
 
   CDVBSubDecoder*     m_pSubDecoder;      // Subtitle decoder
-	IMediaFilter*       m_pMediaFilter;     
+  IMediaFilter*       m_pMediaFilter;     
   IMediaSeeking*      m_pIMediaSeeking;   // Media seeking interface
   IReferenceClock*    m_pReferenceClock;
   CCritSec            m_Lock;				      // Main renderer critical section

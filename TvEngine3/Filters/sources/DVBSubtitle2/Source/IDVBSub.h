@@ -60,4 +60,5 @@ DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
   STDMETHOD(Test)( int status ) PURE;
   STDMETHOD(SetSubtitlePid)( LONG pPid ) PURE;
   STDMETHOD(SetFirstPcr)( LONGLONG pPcr ) PURE;
+  STDMETHOD(SeekDone)( CRefTime& rtSeek ) PURE;
 };

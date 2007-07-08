@@ -191,12 +191,13 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
       pGraph->Release();
     }
   }
-  LONGLONG pos( 0 );
+  
+	/*LONGLONG pos( 0 );
   m_pIMediaSeeking->GetCurrentPosition( &pos );
   pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
   m_CurrentSeekPosition = pos;
 
-  LogDebugMediaPosition( "Run - media seeking position" );        
+  LogDebugMediaPosition( "Run - media seeking position" );*/
 
   LogDebug( "CDVBSub::Run - done" );
 	return hr; 
@@ -317,13 +318,24 @@ STDMETHODIMP CDVBSub::SetFirstPcr( LONGLONG pPcr )
 }
 
 //
+// SeekDone
+//
+STDMETHODIMP CDVBSub::SeekDone( CRefTime& rtSeek )
+{
+	// milliseconds to PCR (90Khz)
+	m_CurrentSeekPosition = rtSeek.Millisecs() * 90;
+	LogDebugPTS( "SeekDone", m_CurrentSeekPosition );
+	return S_OK;
+}
+
+//
 // NotifySubtitle
 //
 void CDVBSub::NotifySubtitle()
 {
   LogDebugMediaPosition( "Subtitle arrived - media position" );  
 
-  // calculate the time stamp
+  // Calculate the time stamp
   CSubtitle* pSubtitle( NULL );
   pSubtitle = m_pSubDecoder->GetLatestSubtitle();
   if( pSubtitle )
@@ -467,12 +479,12 @@ STDMETHODIMP CDVBSub::DiscardOldestSubtitle()
 //
 void CDVBSub::LogDebugMediaPosition( const char *text )
 {
-  if( m_State == State_Stopped || m_State == State_Paused )
+  /*if( m_State == State_Stopped || m_State == State_Paused )
   {
     LogDebug( text );
     LogDebug( "LogDebugMediaPosition - paused || stopped" );
     return;
-  }
+  }*/
   
   LONGLONG pos( 0 );
   if( m_pIMediaSeeking )
