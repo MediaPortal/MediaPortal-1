@@ -241,7 +241,7 @@ STDMETHODIMP CDVBSub::Stop()
   LogDebug( "Release m_pMediaFilter" );
   if( m_pMediaFilter )
   {
-    m_pMediaFilter->Release();
+//    m_pMediaFilter->Release();
     //m_pMediaFilter = NULL;
   }
   LogDebug( "Release m_pMediaFilter - done" );
@@ -249,7 +249,7 @@ STDMETHODIMP CDVBSub::Stop()
   LogDebug( "Release m_pIMediaSeeking" );
   if( m_pIMediaSeeking )
   {
-    m_pIMediaSeeking->Release();
+//    m_pIMediaSeeking->Release();
     //m_pIMediaSeeking = NULL;
   }
   LogDebug( "Release m_pIMediaSeeking - done" );
