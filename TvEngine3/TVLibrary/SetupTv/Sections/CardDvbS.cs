@@ -826,8 +826,8 @@ namespace SetupTv.Sections
           else
           {
             //update tuning details...
-            channel.SatelliteIndex = context.Satelite.IdSatellite;
-            currentDetail.SatIndex = context.Satelite.IdSatellite;
+            channel.SatelliteIndex = position;// context.Satelite.IdSatellite;
+            currentDetail.SatIndex = position;//context.Satelite.IdSatellite;
             layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
           }
 

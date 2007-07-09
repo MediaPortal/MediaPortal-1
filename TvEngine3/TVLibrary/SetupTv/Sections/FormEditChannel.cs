@@ -256,7 +256,7 @@ namespace SetupTv.Sections
                             break;
                         }
                         dvbsChannel.DisEqc = (DisEqcType)comboBoxDisEqc.SelectedIndex;
-                        
+
                         IList satellites = Satellite.ListAll();
                         foreach (Satellite sat in satellites)
                         {
@@ -386,13 +386,18 @@ namespace SetupTv.Sections
               detail.Polarisation = (int)Polarisation.CircularR;
               break;
           }
-
           IList satellites = Satellite.ListAll();
           foreach (Satellite sat in satellites)
           {
             if (sat.SatelliteName == comboBoxSatellite.SelectedItem.ToString())
             {
-              detail.SatIndex = sat.IdSatellite;
+              foreach (DiSEqCMotor motor in DiSEqCMotor.ListAll())
+              {
+                if (motor.IdSatellite == sat.IdSatellite)
+                {
+                  detail.SatIndex = motor.Position;
+                }
+              }
               break;
             }
           }
@@ -532,13 +537,25 @@ namespace SetupTv.Sections
 
           comboBoxInnerFecRate.SelectedIndex = 1 + detail.InnerFecRate;
           comboBoxDisEqc.SelectedIndex = (int)detail.Diseqc;
-          Satellite sat=Satellite.Retrieve( detail.SatIndex);
-          for (int i = 0; i < comboBoxSatellite.Items.Count; ++i)
+          Satellite sat=null;
+          foreach (DiSEqCMotor motor in DiSEqCMotor.ListAll())
           {
-            if (comboBoxSatellite.Items[i].ToString() == sat.SatelliteName)
+            if (detail.SatIndex == motor.Position)
             {
-              comboBoxSatellite.SelectedIndex = i;
+              sat = Satellite.Retrieve(motor.IdSatellite);
               break;
+            }
+          }
+
+          if (sat != null)
+          {
+            for (int i = 0; i < comboBoxSatellite.Items.Count; ++i)
+            {
+              if (comboBoxSatellite.Items[i].ToString() == sat.SatelliteName)
+              {
+                comboBoxSatellite.SelectedIndex = i;
+                break;
+              }
             }
           }
         }
