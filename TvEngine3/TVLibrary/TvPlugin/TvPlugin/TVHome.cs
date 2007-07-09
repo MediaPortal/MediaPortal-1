@@ -1694,7 +1694,7 @@ namespace TvPlugin
 
     public string Description()
     {
-      return "Watch, record and timeshift analog and digital TV with MediaPortal";
+      return "Watch, record and timeshift analog and digital TV with MediaPortal. Tv Engine v3";
     }
 
     public bool HasSetup()

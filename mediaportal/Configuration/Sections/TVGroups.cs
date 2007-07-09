@@ -79,6 +79,14 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
       treeViewProviders.MultiSelect = TreeViewMultiSelect.MultiSameBranchAndLevel;
+
+      // Disable if TVE3
+      Plugins plugin = new Plugins();
+      string plugindesc = plugin.GetPluginDescription("My TV");
+      if (plugindesc.Contains("v3"))
+      {
+        this.Enabled = false;
+      }
     }
 
     /// <summary>

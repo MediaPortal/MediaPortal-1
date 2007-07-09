@@ -116,6 +116,17 @@ namespace MediaPortal.Configuration.Sections
 
       // This call is required by the Windows Form Designer.
       InitializeComponent();
+
+      // Disable it TVE3
+      Plugins plugin = new Plugins();
+      string plugindesc = plugin.GetPluginDescription("My TV");
+
+      if (plugindesc.Contains("v3"))
+      {
+        this.Enabled = false;
+        _init = true;
+      }
+
     }
 
     public override void OnSectionActivated()
@@ -559,7 +570,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageTvCards.ResumeLayout(false);
       this.tabPageTvCards.PerformLayout();
       this.ResumeLayout(false);
-
     }
     #endregion
 

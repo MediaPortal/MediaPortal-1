@@ -71,6 +71,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox h264videoCodecComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
+    public int pluginVersion;
 
     public Television()
       : this("Television")
@@ -549,6 +550,35 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       if (_init == false) return;
+
+      Plugins plugin = new Plugins();
+      string plugindesc = plugin.GetPluginDescription("My TV");
+
+      if (plugindesc.Contains("v2") )
+        { pluginVersion = 2; }
+      else 
+        { pluginVersion = 3;}
+
+      //Add call to enable/disable objects. 
+      // test call ony
+      switch (pluginVersion)
+      {
+        case 3:
+          // timeshifting section. 
+          groupBox4.Enabled = false;
+          //h.264 section 
+          mpLabel1.Enabled = true;
+          h264videoCodecComboBox.Enabled = true;
+          break;
+        case 2:
+          // timeshifting section. 
+          groupBox4.Enabled  = true;
+          //h.264 section 
+          mpLabel1.Enabled = false;
+          h264videoCodecComboBox.Enabled = false;
+          break;
+      }
+      // end of test call. 
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {

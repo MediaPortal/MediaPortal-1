@@ -270,6 +270,15 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    public string GetPluginDescription(string name)
+    {
+      if (!isLoaded) { this.LoadAll(); }
+      foreach (ItemTag tag in loadedPlugins)
+      {
+        if (tag.SetupForm.PluginName() == name) return tag.SetupForm.Description();
+      }
+      return string.Empty;
+    }
     public override void LoadSettings()
     {
       try

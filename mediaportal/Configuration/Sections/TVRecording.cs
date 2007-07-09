@@ -87,7 +87,16 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
       comboDrives.SelectedIndexChanged += new EventHandler(comboDrives_SelectedIndexChanged);
 
+
       // TODO: Add any initialization after the InitializeComponent call
+
+      // Disable if TVE3
+      Plugins plugin = new Plugins();
+      string plugindesc = plugin.GetPluginDescription("My TV");
+      if (plugindesc.Contains("v3"))
+      {
+        this.Enabled = false;
+      }
     }
 
     /// <summary>

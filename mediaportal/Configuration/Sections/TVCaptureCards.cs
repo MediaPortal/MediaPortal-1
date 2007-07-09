@@ -71,12 +71,21 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
+      // Disable it TVE3
+      Plugins plugin = new Plugins();
+      string plugindesc = plugin.GetPluginDescription("My TV");
+
+      if (plugindesc.Contains("v3"))
+      {
+        this.Enabled = false;
+        _init = true;
+      }
 
     }
 
     public override void OnSectionActivated()
     {
-      base.OnSectionActivated();
+
       if (_init == false)
       {
 
@@ -137,6 +146,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
+
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.deleteButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.editButton = new MediaPortal.UserInterface.Controls.MPButton();
