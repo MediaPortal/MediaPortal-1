@@ -647,6 +647,10 @@ namespace TvPlugin
 
         case 980: // Play recording from live point
           {
+            TVHome.ViewChannelAndCheck(rec.ReferencedChannel());
+            if (g_Player.Playing)
+              g_Player.ShowFullScreenWindow();
+            /*
             g_Player.Stop();
             if (System.IO.File.Exists(fileName))
             {
@@ -671,7 +675,7 @@ namespace TvPlugin
                   return;
                 }
               }
-            }
+            }*/
           }
           break;
       }
