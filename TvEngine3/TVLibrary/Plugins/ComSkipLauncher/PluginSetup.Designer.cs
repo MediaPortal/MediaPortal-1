@@ -29,6 +29,7 @@ namespace SetupTv.Sections
         /// </summary>
         private void InitializeComponent()
         {
+          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginSetup));
           this.groupBoxTest = new System.Windows.Forms.GroupBox();
           this.textBoxTest = new System.Windows.Forms.TextBox();
           this.buttonTest = new System.Windows.Forms.Button();
@@ -46,6 +47,7 @@ namespace SetupTv.Sections
           this.textBoxProgram = new System.Windows.Forms.TextBox();
           this.linkLabel = new System.Windows.Forms.LinkLabel();
           this.labelComSkip = new System.Windows.Forms.Label();
+          this.labelAboutComskip = new System.Windows.Forms.Label();
           this.groupBoxTest.SuspendLayout();
           this.groupBoxWhen.SuspendLayout();
           this.groupBoxWhat.SuspendLayout();
@@ -58,7 +60,7 @@ namespace SetupTv.Sections
           this.groupBoxTest.Controls.Add(this.buttonFindTestFile);
           this.groupBoxTest.Location = new System.Drawing.Point(8, 184);
           this.groupBoxTest.Name = "groupBoxTest";
-          this.groupBoxTest.Size = new System.Drawing.Size(328, 56);
+          this.groupBoxTest.Size = new System.Drawing.Size(344, 56);
           this.groupBoxTest.TabIndex = 2;
           this.groupBoxTest.TabStop = false;
           this.groupBoxTest.Text = "Test";
@@ -69,13 +71,13 @@ namespace SetupTv.Sections
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.textBoxTest.Location = new System.Drawing.Point(8, 24);
           this.textBoxTest.Name = "textBoxTest";
-          this.textBoxTest.Size = new System.Drawing.Size(224, 20);
+          this.textBoxTest.Size = new System.Drawing.Size(240, 20);
           this.textBoxTest.TabIndex = 0;
           // 
           // buttonTest
           // 
           this.buttonTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.buttonTest.Location = new System.Drawing.Point(272, 24);
+          this.buttonTest.Location = new System.Drawing.Point(288, 24);
           this.buttonTest.Name = "buttonTest";
           this.buttonTest.Size = new System.Drawing.Size(48, 20);
           this.buttonTest.TabIndex = 2;
@@ -86,7 +88,7 @@ namespace SetupTv.Sections
           // buttonFindTestFile
           // 
           this.buttonFindTestFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.buttonFindTestFile.Location = new System.Drawing.Point(240, 24);
+          this.buttonFindTestFile.Location = new System.Drawing.Point(256, 24);
           this.buttonFindTestFile.Name = "buttonFindTestFile";
           this.buttonFindTestFile.Size = new System.Drawing.Size(24, 20);
           this.buttonFindTestFile.TabIndex = 1;
@@ -104,7 +106,7 @@ namespace SetupTv.Sections
           this.groupBoxWhen.Controls.Add(this.radioButtonEnd);
           this.groupBoxWhen.Location = new System.Drawing.Point(8, 8);
           this.groupBoxWhen.Name = "groupBoxWhen";
-          this.groupBoxWhen.Size = new System.Drawing.Size(328, 48);
+          this.groupBoxWhen.Size = new System.Drawing.Size(344, 48);
           this.groupBoxWhen.TabIndex = 0;
           this.groupBoxWhen.TabStop = false;
           this.groupBoxWhen.Text = "When to launch";
@@ -122,7 +124,7 @@ namespace SetupTv.Sections
           // 
           // radioButtonEnd
           // 
-          this.radioButtonEnd.Location = new System.Drawing.Point(144, 16);
+          this.radioButtonEnd.Location = new System.Drawing.Point(152, 16);
           this.radioButtonEnd.Name = "radioButtonEnd";
           this.radioButtonEnd.Size = new System.Drawing.Size(120, 24);
           this.radioButtonEnd.TabIndex = 1;
@@ -139,7 +141,7 @@ namespace SetupTv.Sections
           this.groupBoxWhat.Controls.Add(this.textBoxProgram);
           this.groupBoxWhat.Location = new System.Drawing.Point(8, 64);
           this.groupBoxWhat.Name = "groupBoxWhat";
-          this.groupBoxWhat.Size = new System.Drawing.Size(328, 112);
+          this.groupBoxWhat.Size = new System.Drawing.Size(344, 112);
           this.groupBoxWhat.TabIndex = 1;
           this.groupBoxWhat.TabStop = false;
           this.groupBoxWhat.Text = "What to launch";
@@ -150,7 +152,7 @@ namespace SetupTv.Sections
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.labelParameters.Location = new System.Drawing.Point(8, 64);
           this.labelParameters.Name = "labelParameters";
-          this.labelParameters.Size = new System.Drawing.Size(280, 16);
+          this.labelParameters.Size = new System.Drawing.Size(296, 16);
           this.labelParameters.TabIndex = 3;
           this.labelParameters.Text = "Parameters:";
           this.labelParameters.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -161,13 +163,13 @@ namespace SetupTv.Sections
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.textBoxParameters.Location = new System.Drawing.Point(8, 80);
           this.textBoxParameters.Name = "textBoxParameters";
-          this.textBoxParameters.Size = new System.Drawing.Size(280, 20);
+          this.textBoxParameters.Size = new System.Drawing.Size(296, 20);
           this.textBoxParameters.TabIndex = 4;
           // 
           // buttonParameters
           // 
           this.buttonParameters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.buttonParameters.Location = new System.Drawing.Point(296, 80);
+          this.buttonParameters.Location = new System.Drawing.Point(312, 80);
           this.buttonParameters.Name = "buttonParameters";
           this.buttonParameters.Size = new System.Drawing.Size(24, 20);
           this.buttonParameters.TabIndex = 5;
@@ -181,7 +183,7 @@ namespace SetupTv.Sections
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.labelProgram.Location = new System.Drawing.Point(8, 24);
           this.labelProgram.Name = "labelProgram";
-          this.labelProgram.Size = new System.Drawing.Size(280, 16);
+          this.labelProgram.Size = new System.Drawing.Size(296, 16);
           this.labelProgram.TabIndex = 0;
           this.labelProgram.Text = "Program:";
           this.labelProgram.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -189,7 +191,7 @@ namespace SetupTv.Sections
           // buttonProgram
           // 
           this.buttonProgram.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.buttonProgram.Location = new System.Drawing.Point(296, 40);
+          this.buttonProgram.Location = new System.Drawing.Point(312, 40);
           this.buttonProgram.Name = "buttonProgram";
           this.buttonProgram.Size = new System.Drawing.Size(24, 20);
           this.buttonProgram.TabIndex = 2;
@@ -203,14 +205,14 @@ namespace SetupTv.Sections
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.textBoxProgram.Location = new System.Drawing.Point(8, 40);
           this.textBoxProgram.Name = "textBoxProgram";
-          this.textBoxProgram.Size = new System.Drawing.Size(280, 20);
+          this.textBoxProgram.Size = new System.Drawing.Size(296, 20);
           this.textBoxProgram.TabIndex = 1;
           // 
           // linkLabel
           // 
-          this.linkLabel.Location = new System.Drawing.Point(8, 272);
+          this.linkLabel.Location = new System.Drawing.Point(8, 328);
           this.linkLabel.Name = "linkLabel";
-          this.linkLabel.Size = new System.Drawing.Size(328, 16);
+          this.linkLabel.Size = new System.Drawing.Size(344, 16);
           this.linkLabel.TabIndex = 4;
           this.linkLabel.TabStop = true;
           this.linkLabel.Text = "http://www.kaashoek.com/comskip/";
@@ -218,23 +220,32 @@ namespace SetupTv.Sections
           // 
           // labelComSkip
           // 
-          this.labelComSkip.Location = new System.Drawing.Point(8, 248);
+          this.labelComSkip.Location = new System.Drawing.Point(8, 312);
           this.labelComSkip.Name = "labelComSkip";
-          this.labelComSkip.Size = new System.Drawing.Size(328, 16);
+          this.labelComSkip.Size = new System.Drawing.Size(344, 16);
           this.labelComSkip.TabIndex = 3;
           this.labelComSkip.Text = "Get ComSkip here:";
           this.labelComSkip.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
           // 
+          // labelAboutComskip
+          // 
+          this.labelAboutComskip.Location = new System.Drawing.Point(8, 248);
+          this.labelAboutComskip.Name = "labelAboutComskip";
+          this.labelAboutComskip.Size = new System.Drawing.Size(344, 64);
+          this.labelAboutComskip.TabIndex = 5;
+          this.labelAboutComskip.Text = resources.GetString("labelAboutComskip.Text");
+          this.labelAboutComskip.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+          // 
           // PluginSetup
           // 
+          this.Controls.Add(this.labelAboutComskip);
           this.Controls.Add(this.labelComSkip);
           this.Controls.Add(this.linkLabel);
           this.Controls.Add(this.groupBoxWhen);
           this.Controls.Add(this.groupBoxWhat);
           this.Controls.Add(this.groupBoxTest);
-          this.MinimumSize = new System.Drawing.Size(346, 298);
           this.Name = "PluginSetup";
-          this.Size = new System.Drawing.Size(346, 298);
+          this.Size = new System.Drawing.Size(362, 354);
           this.groupBoxTest.ResumeLayout(false);
           this.groupBoxTest.PerformLayout();
           this.groupBoxWhen.ResumeLayout(false);
@@ -263,6 +274,7 @@ namespace SetupTv.Sections
       private System.Windows.Forms.TextBox textBoxProgram;
       private System.Windows.Forms.LinkLabel linkLabel;
       private System.Windows.Forms.Label labelComSkip;
+      private System.Windows.Forms.Label labelAboutComskip;
 
 
 

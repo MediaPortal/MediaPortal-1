@@ -120,4 +120,7 @@
   <metadata name="openFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="labelAboutComskip.Text" xml:space="preserve">
+    <value>Comskip is a free commercial detector. It's a windows console application that reads an mpeg file and analyses the content based on a large amount of configurable parameters. After analysis it can remove the commercials detected from the file.</value>
+  </data>
 </root>
