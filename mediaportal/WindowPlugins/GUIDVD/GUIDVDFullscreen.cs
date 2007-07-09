@@ -48,6 +48,7 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public class GUIDVDFullscreen : GUIWindow, ISetupForm, IShowPlugin
   {
+    private bool bINIT_from_MyVideosFullScreen=false;
 
     public GUIDVDFullscreen()
       : base()
@@ -65,29 +66,41 @@ namespace MediaPortal.GUI.Video
 			Log.Info("DVDFullscreen: Message: {0}", message.Message.ToString());
 			if (message.Message == GUIMessage.MessageType.GUI_MSG_WINDOW_INIT)
 			{
-				//if viz is on, this hides the DVD select dialog: GUIWindowManager.ReplaceWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-				ISelectDVDHandler selectDVDHandler;
-				if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
-				{
-					selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
-				}
-				else
-				{
-					selectDVDHandler = new SelectDVDHandler();
-					GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
-				}
-
-				string dvdToPlay = selectDVDHandler.ShowSelectDVDDialog(GetID);
-        if (dvdToPlay == null || !selectDVDHandler.OnPlayDVD(dvdToPlay, GetID))
+        if (!bINIT_from_MyVideosFullScreen)
         {
-          Log.Info("DVDFullscreen: Returning from DVD screen");
-          GUIWindowManager.ShowPreviousWindow();
-          /*GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, this.GetID, 0, 0, GetID, 0, null);
-          return this.OnMessage(msg);	// Send a de-init msg*/
+          //if viz is on, this hides the DVD select dialog: GUIWindowManager.ReplaceWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+          ISelectDVDHandler selectDVDHandler;
+          if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
+          {
+            selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
+          }
+          else
+          {
+            selectDVDHandler = new SelectDVDHandler();
+            GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
+          }
+
+          string dvdToPlay = selectDVDHandler.ShowSelectDVDDialog(GetID);
+          if (dvdToPlay == null || !selectDVDHandler.OnPlayDVD(dvdToPlay, GetID))
+          {
+            Log.Info("DVDFullscreen: Returning from DVD screen");
+            GUIWindowManager.ShowPreviousWindow();
+            /*GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, this.GetID, 0, 0, GetID, 0, null);
+            return this.OnMessage(msg);	// Send a de-init msg*/
+          }
+          else
+          {
+            g_Player.ShowFullScreenWindow();
+            bINIT_from_MyVideosFullScreen=true;
+          }
         }
         else
-          g_Player.ShowFullScreenWindow();
-				return true;
+        {
+          bINIT_from_MyVideosFullScreen=false;
+          Log.Info("DVDFullscreen: Returning from DVD screen");
+          GUIWindowManager.ShowPreviousWindow();
+        }
+        return true;
 			}
 			return base.OnMessage(message);
 		}
