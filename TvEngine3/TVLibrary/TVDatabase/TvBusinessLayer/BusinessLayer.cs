@@ -1227,6 +1227,21 @@ namespace TvDatabase
       List<Schedule>[] cardSchedules = new List<Schedule>[cards.Count];
       for (int i = 0; i < cards.Count; i++) cardSchedules[i] = new List<Schedule>();
 
+      // GEMX: Assign all already scheduled timers to cards. Assume that even possibly overlapping schedulues are ok to the user,
+      // as he decided to keep them before. That's why they are in the db
+      foreach (Schedule schedule in schedulesList)
+      {
+        if (DateTime.Now > schedule.EndTime) continue;
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        List<Schedule> episodes = GetRecordingTimes(schedule);
+        foreach (Schedule episode in episodes)
+        {
+          if (DateTime.Now > episode.EndTime) continue;
+          if (episode.Canceled != Schedule.MinSchedule) continue;
+          AssignSchedulesToCard(episode, cardSchedules);
+        }
+      }
+
       List<Schedule> newEpisodes = GetRecordingTimes(rec);
       foreach (Schedule newEpisode in newEpisodes)
       {
@@ -1239,7 +1254,7 @@ namespace TvDatabase
           conflicts.Add(newEpisode);
         }
 
-        Log.Info("GetConflictingSchedules: newEpisode = " + newEpisode.ToString());
+        /*Log.Info("GetConflictingSchedules: newEpisode = " + newEpisode.ToString());
         foreach (Schedule schedule in schedulesList)
         {
           if (DateTime.Now > schedule.EndTime) continue;
@@ -1263,7 +1278,7 @@ namespace TvDatabase
               }
             }
           }
-        }
+        }*/
       }
       return conflicts;
     }
@@ -1285,12 +1300,12 @@ namespace TvDatabase
             Log.Info("AssignSchedulesToCard: card {0}, ID = {1} has schedule = " + assignedSchedule.ToString(), count, card.IdCard);
             if (schedule.IsOverlapping(assignedSchedule))
             {
-							if (!(schedule.isSameTransponder(assignedSchedule) && card.supportSubChannels))
-							{
-								Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule.ToString() + " on card {0}, ID = {1}", count, card.IdCard);
-								free = false;
-								break;
-							}
+              if (!(schedule.isSameTransponder(assignedSchedule) && card.supportSubChannels))
+              {
+                Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule.ToString() + " on card {0}, ID = {1}", count, card.IdCard);
+                free = false;
+                break;
+              }
             }
           }
           if (free)
