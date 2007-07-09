@@ -83,7 +83,8 @@ namespace MediaPortal.Configuration.Sections
           if (device.Name != null)
           {
             lBDSFilter.Items.Add(device);
-            if (strFilters.Contains(device.Name))
+            // if (strFilters.Contains(device.Name))
+            if ( strFilters.Remove(strFilters.Length - 1 ) == device.Name )
             {
               cLBDSFilter.Items.Add(device);
               cLBDSFilter.SetItemChecked(cLBDSFilter.Items.Count - 1, strUsedFilters.Contains(device.Name));
@@ -139,8 +140,29 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      components = new System.ComponentModel.Container();
+        this.groupBoxActivatedFilters.SuspendLayout();
+        this.groupBoxAvailableFilters.SuspendLayout();
+        this.SuspendLayout();
+        // 
+        // cLBDSFilter
+        // 
+        this.cLBDSFilter.Size = new System.Drawing.Size(440, 94);
+        this.cLBDSFilter.SelectedIndexChanged += new System.EventHandler(this.cLBDSFilter_SelectedIndexChanged);
+        // 
+        // MoviePostProcessing
+        // 
+        this.Name = "MoviePostProcessing";
+        this.groupBoxActivatedFilters.ResumeLayout(false);
+        this.groupBoxActivatedFilters.PerformLayout();
+        this.groupBoxAvailableFilters.ResumeLayout(false);
+        this.ResumeLayout(false);
+
     }
     #endregion
+
+      private void cLBDSFilter_SelectedIndexChanged(object sender, EventArgs e)
+      {
+
+      }
   }
 }

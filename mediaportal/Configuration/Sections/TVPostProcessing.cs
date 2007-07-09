@@ -83,7 +83,8 @@ namespace MediaPortal.Configuration.Sections
           if (device.Name != null)
           {
             lBDSFilter.Items.Add(device);
-            if (strFilters.Contains(device.Name))
+            // if (strFilters.Contains(device.Name))
+            if (strFilters.Remove(strFilters.Length - 1) == device.Name)
             {
               cLBDSFilter.Items.Add(device);
               cLBDSFilter.SetItemChecked(cLBDSFilter.Items.Count - 1, strUsedFilters.Contains(device.Name));
