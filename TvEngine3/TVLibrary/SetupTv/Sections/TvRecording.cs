@@ -319,8 +319,6 @@ namespace SetupTv.Sections
       formatString[0] = layer.GetSetting("moviesformat", @"%title%-%channel%\%title%-%date%-%start%").Value;
       formatString[1] = layer.GetSetting("seriesformat", @"%title%-%channel%\%title%-[%episode%-]%date%-%start%").Value;
 
-      checkBoxComSkipEnabled.Checked = (layer.GetSetting("comskipEnabled", "no").Value == "yes");
-      textBoxComSkip.Text = layer.GetSetting("comskipLocation", "").Value;
       /*using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         startTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "prerecord", 5));
@@ -362,22 +360,6 @@ namespace SetupTv.Sections
       setting.Persist();
       setting = layer.GetSetting("seriesformat", "");
       setting.Value = formatString[1];
-      setting.Persist();
-
-      if (checkBoxComSkipEnabled.Checked)
-      {
-        setting = layer.GetSetting("comskipEnabled", "no");
-        setting.Value = "yes";
-      }
-      else
-      {
-        setting = layer.GetSetting("comskipEnabled", "no");
-        setting.Value = "no";
-      }
-      setting.Persist();
-
-      setting = layer.GetSetting("comskipLocation", "");
-      setting.Value = textBoxComSkip.Text;
       setting.Persist();
 
       setting = layer.GetSetting("autodeletewatchedrecordings", "no");
@@ -501,29 +483,6 @@ namespace SetupTv.Sections
       }
     }
 
-    private void checkBoxComSkipEnabled_CheckedChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void buttonLocateComSkip_Click(object sender, EventArgs e)
-    {
-      openFileDialog1.CheckFileExists = true;
-      openFileDialog1.CheckPathExists = true;
-      openFileDialog1.DefaultExt = ".bat";
-      openFileDialog1.Filter = "Batch files (*.bat)|*.bat";
-      openFileDialog1.RestoreDirectory = true;
-      openFileDialog1.Title = "Select batch file to run comskip/comclean";
-      DialogResult result = openFileDialog1.ShowDialog(this);
-      if (result != DialogResult.OK) return;
-      textBoxComSkip.Text = openFileDialog1.FileName;
-    }
-
-    private void label18_Click(object sender, EventArgs e)
-    {
-
-    }
-
     private void textBoxFolder_TextChanged(object sender, EventArgs e)
     {
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
@@ -533,11 +492,6 @@ namespace SetupTv.Sections
         info.card.Persist();
         _needRestart = true;
       }
-    }
-
-    private void label19_Click(object sender, EventArgs e)
-    {
-
     }
 
     private void buttonTimeShiftBrowse_Click(object sender, EventArgs e)

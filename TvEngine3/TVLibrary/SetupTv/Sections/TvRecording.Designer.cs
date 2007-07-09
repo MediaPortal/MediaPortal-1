@@ -83,17 +83,6 @@ namespace SetupTv.Sections
       this.textBoxFolder = new System.Windows.Forms.TextBox();
       this.label12 = new System.Windows.Forms.Label();
       this.comboBoxCards = new System.Windows.Forms.ComboBox();
-      this.tabPage5 = new System.Windows.Forms.TabPage();
-      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-      this.label21 = new System.Windows.Forms.Label();
-      this.label20 = new System.Windows.Forms.Label();
-      this.label19 = new System.Windows.Forms.Label();
-      this.label18 = new System.Windows.Forms.Label();
-      this.label17 = new System.Windows.Forms.Label();
-      this.buttonLocateComSkip = new System.Windows.Forms.Button();
-      this.label16 = new System.Windows.Forms.Label();
-      this.textBoxComSkip = new System.Windows.Forms.TextBox();
-      this.checkBoxComSkipEnabled = new System.Windows.Forms.CheckBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -106,7 +95,6 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.trackBarDisk)).BeginInit();
       this.tabPage4.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-      this.tabPage5.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -115,7 +103,6 @@ namespace SetupTv.Sections
       this.tabControl1.Controls.Add(this.tabPage2);
       this.tabControl1.Controls.Add(this.tabPage3);
       this.tabControl1.Controls.Add(this.tabPage4);
-      this.tabControl1.Controls.Add(this.tabPage5);
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
@@ -456,7 +443,7 @@ namespace SetupTv.Sections
       // 
       this.trackBarDisk.Location = new System.Drawing.Point(30, 185);
       this.trackBarDisk.Name = "trackBarDisk";
-      this.trackBarDisk.Size = new System.Drawing.Size(391, 40);
+      this.trackBarDisk.Size = new System.Drawing.Size(391, 42);
       this.trackBarDisk.TabIndex = 7;
       this.trackBarDisk.Visible = false;
       this.trackBarDisk.Scroll += new System.EventHandler(this.trackBarDisk_Scroll);
@@ -674,129 +661,6 @@ namespace SetupTv.Sections
       this.comboBoxCards.TabIndex = 0;
       this.comboBoxCards.SelectedIndexChanged += new System.EventHandler(this.comboBoxCards_SelectedIndexChanged);
       // 
-      // tabPage5
-      // 
-      this.tabPage5.Controls.Add(this.linkLabel1);
-      this.tabPage5.Controls.Add(this.label21);
-      this.tabPage5.Controls.Add(this.label20);
-      this.tabPage5.Controls.Add(this.label19);
-      this.tabPage5.Controls.Add(this.label18);
-      this.tabPage5.Controls.Add(this.label17);
-      this.tabPage5.Controls.Add(this.buttonLocateComSkip);
-      this.tabPage5.Controls.Add(this.label16);
-      this.tabPage5.Controls.Add(this.textBoxComSkip);
-      this.tabPage5.Controls.Add(this.checkBoxComSkipEnabled);
-      this.tabPage5.Location = new System.Drawing.Point(4, 22);
-      this.tabPage5.Name = "tabPage5";
-      this.tabPage5.Size = new System.Drawing.Size(457, 374);
-      this.tabPage5.TabIndex = 4;
-      this.tabPage5.Text = "Commercials";
-      this.tabPage5.UseVisualStyleBackColor = true;
-      // 
-      // linkLabel1
-      // 
-      this.linkLabel1.AutoSize = true;
-      this.linkLabel1.Location = new System.Drawing.Point(27, 197);
-      this.linkLabel1.Name = "linkLabel1";
-      this.linkLabel1.Size = new System.Drawing.Size(174, 13);
-      this.linkLabel1.TabIndex = 13;
-      this.linkLabel1.TabStop = true;
-      this.linkLabel1.Text = "http://mk.kaashoek.com/comskip/";
-      // 
-      // label21
-      // 
-      this.label21.AutoSize = true;
-      this.label21.Location = new System.Drawing.Point(27, 184);
-      this.label21.Name = "label21";
-      this.label21.Size = new System.Drawing.Size(230, 13);
-      this.label21.TabIndex = 12;
-      this.label21.Tag = "";
-      this.label21.Text = "More information about comskip and comclean:";
-      this.label21.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-      // 
-      // label20
-      // 
-      this.label20.AutoSize = true;
-      this.label20.Location = new System.Drawing.Point(27, 160);
-      this.label20.Name = "label20";
-      this.label20.Size = new System.Drawing.Size(64, 13);
-      this.label20.TabIndex = 11;
-      this.label20.Tag = "";
-      this.label20.Text = "from the file.";
-      this.label20.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-      // 
-      // label19
-      // 
-      this.label19.AutoSize = true;
-      this.label19.Location = new System.Drawing.Point(27, 147);
-      this.label19.Name = "label19";
-      this.label19.Size = new System.Drawing.Size(379, 13);
-      this.label19.TabIndex = 10;
-      this.label19.Tag = "";
-      this.label19.Text = "configurable parameters. After analysis it can remove the commercials detected";
-      this.label19.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-      this.label19.Click += new System.EventHandler(this.label19_Click);
-      // 
-      // label18
-      // 
-      this.label18.AutoSize = true;
-      this.label18.Location = new System.Drawing.Point(27, 134);
-      this.label18.Name = "label18";
-      this.label18.Size = new System.Drawing.Size(350, 13);
-      this.label18.TabIndex = 9;
-      this.label18.Tag = "";
-      this.label18.Text = "reads an mpeg file and analyses the content based on a large amount of ";
-      this.label18.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-      this.label18.Click += new System.EventHandler(this.label18_Click);
-      // 
-      // label17
-      // 
-      this.label17.AutoSize = true;
-      this.label17.Location = new System.Drawing.Point(27, 121);
-      this.label17.Name = "label17";
-      this.label17.Size = new System.Drawing.Size(379, 13);
-      this.label17.TabIndex = 8;
-      this.label17.Tag = "";
-      this.label17.Text = "Comskip is a free commercial detector. Its an windows console application that ";
-      this.label17.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-      // 
-      // buttonLocateComSkip
-      // 
-      this.buttonLocateComSkip.Location = new System.Drawing.Point(320, 80);
-      this.buttonLocateComSkip.Name = "buttonLocateComSkip";
-      this.buttonLocateComSkip.Size = new System.Drawing.Size(23, 23);
-      this.buttonLocateComSkip.TabIndex = 7;
-      this.buttonLocateComSkip.Text = "...";
-      this.buttonLocateComSkip.UseVisualStyleBackColor = true;
-      this.buttonLocateComSkip.Click += new System.EventHandler(this.buttonLocateComSkip_Click);
-      // 
-      // label16
-      // 
-      this.label16.AutoSize = true;
-      this.label16.Location = new System.Drawing.Point(27, 53);
-      this.label16.Name = "label16";
-      this.label16.Size = new System.Drawing.Size(354, 13);
-      this.label16.TabIndex = 6;
-      this.label16.Text = "Location of comskip/comclean batchfile to run when recording is finished:";
-      // 
-      // textBoxComSkip
-      // 
-      this.textBoxComSkip.Location = new System.Drawing.Point(30, 82);
-      this.textBoxComSkip.Name = "textBoxComSkip";
-      this.textBoxComSkip.Size = new System.Drawing.Size(284, 20);
-      this.textBoxComSkip.TabIndex = 5;
-      // 
-      // checkBoxComSkipEnabled
-      // 
-      this.checkBoxComSkipEnabled.AutoSize = true;
-      this.checkBoxComSkipEnabled.Location = new System.Drawing.Point(27, 27);
-      this.checkBoxComSkipEnabled.Name = "checkBoxComSkipEnabled";
-      this.checkBoxComSkipEnabled.Size = new System.Drawing.Size(324, 17);
-      this.checkBoxComSkipEnabled.TabIndex = 0;
-      this.checkBoxComSkipEnabled.Text = "Use comskip/comclean to remove commercials from recordings";
-      this.checkBoxComSkipEnabled.UseVisualStyleBackColor = true;
-      this.checkBoxComSkipEnabled.CheckedChanged += new System.EventHandler(this.checkBoxComSkipEnabled_CheckedChanged);
-      // 
       // openFileDialog1
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
@@ -824,8 +688,6 @@ namespace SetupTv.Sections
       this.tabPage4.ResumeLayout(false);
       this.tabPage4.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-      this.tabPage5.ResumeLayout(false);
-      this.tabPage5.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -875,17 +737,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Button buttonBrowse;
     private System.Windows.Forms.Label label13;
     private System.Windows.Forms.TextBox textBoxFolder;
-    private System.Windows.Forms.TabPage tabPage5;
-    private System.Windows.Forms.CheckBox checkBoxComSkipEnabled;
-    private System.Windows.Forms.Button buttonLocateComSkip;
-    private System.Windows.Forms.Label label16;
-    private System.Windows.Forms.TextBox textBoxComSkip;
-    private System.Windows.Forms.Label label18;
-    private System.Windows.Forms.Label label17;
-    private System.Windows.Forms.Label label19;
-    private System.Windows.Forms.Label label20;
-    private System.Windows.Forms.Label label21;
-    private System.Windows.Forms.LinkLabel linkLabel1;
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
     private System.Windows.Forms.PictureBox pictureBox1;
     private System.Windows.Forms.Button buttonTimeShiftBrowse;

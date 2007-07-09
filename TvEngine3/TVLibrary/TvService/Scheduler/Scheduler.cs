@@ -632,8 +632,6 @@ namespace TvService
 
         //DatabaseManager.Instance.SaveChanges();
 
-        PostProcessing processor = new PostProcessing();
-        processor.Process(recording);
         if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once && !recording.IsSerie )
         {
           recording.Schedule.Delete();

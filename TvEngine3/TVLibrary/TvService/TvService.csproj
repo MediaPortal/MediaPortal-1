@@ -77,7 +77,6 @@
     <Compile Include="ProjectInstaller.Designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
-    <Compile Include="Scheduler\PostProcessing.cs" />
     <Compile Include="Scheduler\RecordingDetail.cs" />
     <Compile Include="Scheduler\Scheduler.cs" />
     <Compile Include="Service1.cs">
