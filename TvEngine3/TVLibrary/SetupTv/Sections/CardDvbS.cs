@@ -820,7 +820,7 @@ namespace SetupTv.Sections
           }
           if (currentDetail == null)
           {
-            channel.SatelliteIndex = context.Satelite.IdSatellite;
+            channel.SatelliteIndex = position;// context.Satelite.IdSatellite;
             layer.AddTuningDetails(dbChannel, channel);
           }
           else
