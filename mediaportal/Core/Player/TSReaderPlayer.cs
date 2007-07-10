@@ -608,10 +608,7 @@ namespace MediaPortal.Player
             lTime = lContentEnd;
           }
           int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-          if (hr != 0)
-          {
-            Log.Error("seek failed->seek to 0 0x:{0:X}", hr);
-          }
+          Log.Info("TsReaderPlayer seek done:{0:X}", hr);
         }
 
         UpdateCurrentPosition();
