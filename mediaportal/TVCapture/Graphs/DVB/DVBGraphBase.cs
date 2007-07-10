@@ -3338,7 +3338,10 @@ namespace MediaPortal.TV.Recording
         if (info.service_provider_name.Length == 0)
           info.service_provider_name = Strings.Unknown;
         if (info.service_name.Length == 0)
-          info.service_name = String.Format("NoName:{0}{1}{2}{3}", info.networkID, info.transportStreamID, info.serviceID, i);
+        {
+          if (_networkType == NetworkType.ATSC) info.service_name = String.Format("NoName:  {0}-{1} ({2})", info.majorChannel, info.minorChannel, _currentTuningObject.PhysicalChannel);
+          else info.service_name = String.Format("NoName:{0}{1}{2}{3}", info.networkID, info.transportStreamID, info.serviceID, i);
+        }
         bool hasAudio = false;
         bool hasVideo = false;
         info.freq = _currentTuningObject.Frequency;
