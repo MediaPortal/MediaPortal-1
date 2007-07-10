@@ -215,38 +215,38 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          but.eKeyChar = 0;
-          strButton = strButton.ToUpper();
-          if (strButton == "F1") but.eKeyCode = (int)Keys.F1;
-          if (strButton == "F2") but.eKeyCode = (int)Keys.F2;
-          if (strButton == "F3") but.eKeyCode = (int)Keys.F3;
-          if (strButton == "F4") but.eKeyCode = (int)Keys.F4;
-          if (strButton == "F5") but.eKeyCode = (int)Keys.F5;
-          if (strButton == "F6") but.eKeyCode = (int)Keys.F6;
-          if (strButton == "F7") but.eKeyCode = (int)Keys.F7;
-          if (strButton == "F8") but.eKeyCode = (int)Keys.F8;
-          if (strButton == "F9") but.eKeyCode = (int)Keys.F9;
-          if (strButton == "F10") but.eKeyCode = (int)Keys.F10;
-          if (strButton == "F11") but.eKeyCode = (int)Keys.F11;
-          if (strButton == "F12") but.eKeyCode = (int)Keys.F12;
-          if (strButton == "BACKSPACE") but.eKeyCode = (int)Keys.Back;
-          if (strButton == "TAB") but.eKeyCode = (int)Keys.Tab;
-          if (strButton == "END") but.eKeyCode = (int)Keys.End;
-          if (strButton == "INSERT") but.eKeyCode = (int)Keys.Insert;
-          if (strButton == "HOME") but.eKeyCode = (int)Keys.Home;
-          if (strButton == "PAGEUP") but.eKeyCode = (int)Keys.PageUp;
-          if (strButton == "PAGEDOWN") but.eKeyCode = (int)Keys.PageDown;
-          if (strButton == "LEFT") but.eKeyCode = (int)Keys.Left;
-          if (strButton == "RIGHT") but.eKeyCode = (int)Keys.Right;
-          if (strButton == "UP") but.eKeyCode = (int)Keys.Up;
-          if (strButton == "DOWN") but.eKeyCode = (int)Keys.Down;
-          if (strButton == "ENTER") but.eKeyCode = (int)Keys.Enter;
-          if (strButton == "DELETE") but.eKeyCode = (int)Keys.Delete;
-          if (strButton == "PAUSE") but.eKeyCode = (int)Keys.Pause;
-          if (strButton == "PRINTSCREEN") but.eKeyCode = (int)Keys.PrintScreen;
-          if (strButton == "ESCAPE") but.eKeyCode = (int)Keys.Escape;
-          if (strButton == "ESC") but.eKeyCode = (int)Keys.Escape;
-          if (strButton == "SPACE")
+          but.eKeyChar = 0;          
+          strButton = strButton.ToLower();
+          if (strButton == "f1") but.eKeyCode = (int)Keys.F1;
+          if (strButton == "f2") but.eKeyCode = (int)Keys.F2;
+          if (strButton == "f3") but.eKeyCode = (int)Keys.F3;
+          if (strButton == "f4") but.eKeyCode = (int)Keys.F4;
+          if (strButton == "f5") but.eKeyCode = (int)Keys.F5;
+          if (strButton == "f6") but.eKeyCode = (int)Keys.F6;
+          if (strButton == "f7") but.eKeyCode = (int)Keys.F7;
+          if (strButton == "f8") but.eKeyCode = (int)Keys.F8;
+          if (strButton == "f9") but.eKeyCode = (int)Keys.F9;
+          if (strButton == "f10") but.eKeyCode = (int)Keys.F10;
+          if (strButton == "f11") but.eKeyCode = (int)Keys.F11;
+          if (strButton == "f12") but.eKeyCode = (int)Keys.F12;
+          if (strButton == "backspace") but.eKeyCode = (int)Keys.Back;
+          if (strButton == "tab") but.eKeyCode = (int)Keys.Tab;
+          if (strButton == "end") but.eKeyCode = (int)Keys.End;
+          if (strButton == "insert") but.eKeyCode = (int)Keys.Insert;
+          if (strButton == "home") but.eKeyCode = (int)Keys.Home;
+          if (strButton == "pageup") but.eKeyCode = (int)Keys.PageUp;
+          if (strButton == "pagedown") but.eKeyCode = (int)Keys.PageDown;
+          if (strButton == "left") but.eKeyCode = (int)Keys.Left;
+          if (strButton == "right") but.eKeyCode = (int)Keys.Right;
+          if (strButton == "up") but.eKeyCode = (int)Keys.Up;
+          if (strButton == "down") but.eKeyCode = (int)Keys.Down;
+          if (strButton == "enter") but.eKeyCode = (int)Keys.Enter;
+          if (strButton == "delete") but.eKeyCode = (int)Keys.Delete;
+          if (strButton == "pause") but.eKeyCode = (int)Keys.Pause;
+          if (strButton == "print") but.eKeyCode = (int)Keys.PrintScreen;
+          if (strButton == "escape") but.eKeyCode = (int)Keys.Escape;
+          if (strButton == "esc") but.eKeyCode = (int)Keys.Escape;
+          if (strButton == "space")
           {
             but.eKeyCode = 0;
             but.eKeyChar = 32;
@@ -354,5 +354,3 @@ namespace MediaPortal.GUI.Library
     }
   }
 }
-
- 	  	 
