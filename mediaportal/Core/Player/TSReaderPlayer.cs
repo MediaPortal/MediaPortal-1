@@ -595,12 +595,13 @@ namespace MediaPortal.Player
         {
           UpdateCurrentPosition();
           if (dTimeInSecs < 0) dTimeInSecs = 0;
-          Log.Info("TsReaderPlayer:seekabs:{0} duration:{1} pos:{2}", dTimeInSecs, Duration, CurrentPosition);
           dTimeInSecs *= 10000000d;
           long lTime = (long)dTimeInSecs;
           long pStop = 0;
           long lContentStart, lContentEnd;
           _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+          lTime += lContentStart;
+          Log.Info("TsReaderPlayer:seekabs:{0} start:{1} end:{2}", lTime, lContentStart, lContentEnd);
           if (lTime > lContentEnd)
           {
             System.Threading.Thread.Sleep(500);
