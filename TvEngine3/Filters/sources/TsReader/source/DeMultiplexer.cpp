@@ -30,7 +30,7 @@
 #include "subtitlePin.h"
 #include "MediaFormats.h"
 
-#define MAX_BUF_SIZE 300
+#define MAX_BUF_SIZE 800
 #define OUTPUT_PACKET_LENGTH 0x6000e
 #define BUFFER_LENGTH        0x1000
 extern void LogDebug(const char *fmt, ...) ;
