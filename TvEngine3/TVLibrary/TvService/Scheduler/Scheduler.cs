@@ -632,7 +632,7 @@ namespace TvService
 
         //DatabaseManager.Instance.SaveChanges();
 
-        if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once && !recording.IsSerie )
+        if ((ScheduleRecordingType)recording.Schedule.ScheduleType == ScheduleRecordingType.Once)
         {
           recording.Schedule.Delete();
           // even for Once type , the schedule can initially be a serie
