@@ -58,7 +58,8 @@ public:
 	virtual __int64 GetFilePointer();
 	virtual DWORD setFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	virtual __int64 getFilePointer();
-
+  virtual bool IsBuffer(){return false;};
+  virtual bool HasMoreData(int bytes){return false;};
 	void SetDebugOutput(BOOL bDebugOutput);
 
 protected:

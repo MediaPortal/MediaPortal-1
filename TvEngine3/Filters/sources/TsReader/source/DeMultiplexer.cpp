@@ -35,6 +35,8 @@
 #define BUFFER_LENGTH        0x1000
 extern void LogDebug(const char *fmt, ...) ;
 
+#define READ_SIZE (1316*30)
+
 CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
 :m_duration(duration)
 ,m_filter(filter)
@@ -356,7 +358,7 @@ void CDeMultiplexer:: Start()
       m_bScanning=false;
       return;
     }
-    dwBytesProcessed+=32712;
+    dwBytesProcessed+=READ_SIZE;
   }
   m_streamPcr.Reset();
   m_bScanning=false;
@@ -369,34 +371,56 @@ bool CDeMultiplexer::EndOfFile()
 bool CDeMultiplexer::ReadFromFile()
 {
   DWORD dwTick=GetTickCount();
-  byte buffer[32712];
+  byte buffer[READ_SIZE];
   while (true)
   {
     DWORD dwReadBytes;
-    m_reader->Read(buffer,sizeof(buffer), &dwReadBytes);
-    if (dwReadBytes > 0)
+    bool result=false;
+    if (m_reader->IsBuffer())
     {
-      OnRawData(buffer,(int)dwReadBytes);
-      return true;
+      while (m_reader->HasMoreData( sizeof(buffer) ) )
+      {
+        m_reader->Read(buffer, sizeof(buffer), &dwReadBytes);
+        if (dwReadBytes > 0)
+        {
+          result=true;
+          OnRawData(buffer,(int)dwReadBytes);
+        }
+        else
+        {
+          //LogDebug("NO read:%d",dwReadBytes);
+          break;
+        }
+        if (m_bPause) return false;
+      }
+      if (result==true) 
+        return true;
     }
-    else 
+    else
     {
-      LogDebug("demux:read failed:%d",dwReadBytes);
-			
-			if (m_bPause)
+      m_reader->Read(buffer,sizeof(buffer), &dwReadBytes);
+      if (dwReadBytes > 0)
       {
-        LogDebug("demux:paused");
-        return false;
+        OnRawData(buffer,(int)dwReadBytes);
+        return true;
       }
-      if (!m_filter.IsTimeShifting())
-      {
-        LogDebug("demux:endoffile");
-        m_bEndOfFile=true;
-        return false;
-      }
-      Sleep(100);
-      if (GetTickCount() - dwTick >5000) break;
     }
+    //LogDebug("demux:read failed");
+		
+		if (m_bPause)
+    {
+      LogDebug("demux:paused");
+      return false;
+    }
+    if (!m_filter.IsTimeShifting())
+    {
+      LogDebug("demux:endoffile");
+      m_bEndOfFile=true;
+      return false;
+    }
+    Sleep(50);
+    if (GetTickCount() - dwTick >5000) break;
+    
 		if (m_bPause) return false;
   }
   return false;

@@ -25,3 +25,7 @@ DWORD CMemoryReader::setFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod
 {
   return 0;
 }
+bool CMemoryReader::HasMoreData(int bytes)
+{
+  return (m_buffer.Size()>=bytes);
+}

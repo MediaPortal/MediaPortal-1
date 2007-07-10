@@ -145,10 +145,10 @@ HRESULT CAudioPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 
 	if (pRequest->cBuffers == 0)
 	{
-			pRequest->cBuffers = 1;
+			pRequest->cBuffers = 30;
 	}
 
-	pRequest->cbBuffer = 0x10000;
+	pRequest->cbBuffer = 1316*30;
 
 
 	ALLOCATOR_PROPERTIES Actual;
@@ -242,7 +242,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   }
   if (buffer!=NULL)
   {
-    LogDebug("aud:gotbuffer");
+    //LogDebug("aud:gotbuffer");
 //    LogDebug("aud:set %d",buffer->Length());
     BYTE* pSampleBuffer;
     CRefTime cRefTime;
@@ -254,7 +254,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       pSample->SetSyncPoint(TRUE);
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
-      LogDebug("aud:%f", fTime);
+      //LogDebug("aud:%f", fTime);
     }
 	  pSample->SetActualDataLength(buffer->Length());
     pSample->GetPointer(&pSampleBuffer);

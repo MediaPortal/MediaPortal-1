@@ -386,8 +386,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     if (bytesRead>=0) url[bytesRead]=0;
     fclose(fd);
     
-    //strcpy(url,"rtsp://192.168.1.58/stream2.0");
-    LogDebug("open rtsp:%s", url);
+    LogDebug("open %s", url);
     if ( !m_rtspClient.OpenStream(url)) return E_FAIL;
     
     m_buffer.Clear();
@@ -411,7 +410,6 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   }
   else if ((length > 7) && (strnicmp(url, "rtsp://",7) == 0))
   {
-    //strcpy(url,"rtsp://192.168.1.58/stream2.0");
     LogDebug("open rtsp:%s", url);
     if ( !m_rtspClient.OpenStream(url)) return E_FAIL;
     
