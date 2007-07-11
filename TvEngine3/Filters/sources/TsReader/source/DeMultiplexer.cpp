@@ -475,169 +475,226 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
   if (m_iAudioStream<0 || m_iAudioStream>=m_audioStreams.size()) return;
   m_audioPid= m_audioStreams[m_iAudioStream].pid;
   if (m_audioPid==0 || m_audioPid != header.Pid) return;
+  if (m_filter.GetAudioPin()->IsConnected()==false) return;
+	if ( header.AdaptionFieldOnly() ) return;
 
-  if (m_filter.GetAudioPin()->IsConnected())
+  //does tspacket contain the start of a pes packet?
+  if (header.PayloadUnitStart)
   {
-    if ( false==header.AdaptionFieldOnly() ) 
+    //yes packet contains start of a pes packet.
+    //does current buffer hold any data ?
+    if (m_pCurrentAudioBuffer->Length() > 0)
     {
-      if ( header.PayloadUnitStart)
-      {
-        if (m_pCurrentAudioBuffer->Length()>0)
-        {
-          if (m_vecAudioBuffers.size()>MAX_BUF_SIZE) 
-            m_vecAudioBuffers.erase(m_vecAudioBuffers.begin());
-          m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
-          m_pCurrentAudioBuffer = new CBuffer();
-        }
-        int pos=header.PayLoadStart;
-        if (tsPacket[pos]==0&&tsPacket[pos+1]==0&&tsPacket[pos+2]==1)
-        {
-          CPcr pts;
-          CPcr dts;
-          if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
-          {
-            m_pCurrentAudioBuffer->SetPts(pts);
-          }
-          int headerLen=9+tsPacket[pos+8];
-          pos+=headerLen;
-        }
-				if (pos>0 && pos < 188)
-				{
-          m_pCurrentAudioBuffer->SetPcr(m_streamPcr,m_duration.StartPcr(),m_duration.MaxPcr());
-					m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos);
-				}
-      }
-      else if (m_pCurrentAudioBuffer->Length()>0)
-      {
-        int pos=header.PayLoadStart;
-        if (m_pCurrentAudioBuffer->Length()+(188-pos)>=0x2000)
-        {
-          int copyLen=0x2000-m_pCurrentAudioBuffer->Length();
-          m_pCurrentAudioBuffer->Add(&tsPacket[pos],copyLen);
-          pos+=copyLen;
-          
-          if (m_vecAudioBuffers.size()>MAX_BUF_SIZE) 
-            m_vecAudioBuffers.erase(m_vecAudioBuffers.begin());
-          m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
-          m_pCurrentAudioBuffer = new CBuffer();
-        }
-				if (pos>0 && pos < 188)
-				{
-					m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos); 
-				}
-      }
+      //yes, then store current buffer
+      if (m_vecAudioBuffers.size()>MAX_BUF_SIZE) 
+        m_vecAudioBuffers.erase(m_vecAudioBuffers.begin());
+      m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
+      //and create a new one
+      m_pCurrentAudioBuffer = new CBuffer();
     }
+
+    int pos=header.PayLoadStart;
+    //check for PES start code
+    if (tsPacket[pos]==0&&tsPacket[pos+1]==0&&tsPacket[pos+2]==1) 
+    {
+      //get pts/dts from pes header
+      CPcr pts;
+      CPcr dts;
+      if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
+      {
+        m_pCurrentAudioBuffer->SetPts(pts);
+      }
+      //skip pes header
+      int headerLen=9+tsPacket[pos+8];  
+      pos+=headerLen;
+    }
+
+    //copy (rest) data in current buffer
+		if (pos>0 && pos < 188)
+		{
+			m_pCurrentAudioBuffer->SetPcr(m_streamPcr,m_duration.StartPcr(),m_duration.MaxPcr());
+			m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos);
+		}
+  }
+  else //if (m_pCurrentAudioBuffer->Length()>0)
+  {
+    int pos=header.PayLoadStart;
+    //packet contains rest of a pes packet
+    //does the entire data in this tspacket fit in the current buffer ?
+    if (m_pCurrentAudioBuffer->Length()+(188-pos)>=0x2000)
+    {
+      //no, then determine how many bytes do fit
+      int copyLen=0x2000-m_pCurrentAudioBuffer->Length();
+      //copy those bytes
+      m_pCurrentAudioBuffer->Add(&tsPacket[pos],copyLen);
+      pos+=copyLen;
+
+      //store current buffer since its now full
+      if (m_vecAudioBuffers.size()>MAX_BUF_SIZE) 
+        m_vecAudioBuffers.erase(m_vecAudioBuffers.begin());
+      m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
+      
+      //and create a new one
+      m_pCurrentAudioBuffer = new CBuffer();
+    }
+
+    //copy (rest) data in current buffer
+		if (pos>0 && pos < 188)
+		{
+			m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos); 
+		}
   }
 }
 
 void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 {
-  if (header.Pid==m_pids.VideoPid)
-  {
-    if (m_filter.GetVideoPin()->IsConnected())
-    {
-	    if ( false==header.AdaptionFieldOnly() ) 
-	    {
-        if ( header.PayloadUnitStart)
-        {
-          if (m_pCurrentVideoBuffer->Length()>0)
-          {
-            if (m_vecVideoBuffers.size()>MAX_BUF_SIZE) 
-              m_vecVideoBuffers.erase(m_vecVideoBuffers.begin());
-            m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
-            m_pCurrentVideoBuffer = new CBuffer();
-          }
-          int pos=header.PayLoadStart;
-          if (tsPacket[pos]==0&&tsPacket[pos+1]==0&&tsPacket[pos+2]==1)
-          {
-	          CPcr pts;
-	          CPcr dts;
-            if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
-            {
-              m_pCurrentVideoBuffer->SetPts(pts);
-            }
-            int headerLen=9+tsPacket[pos+8];
-            pos+=headerLen;
-          }
-					if (pos>0 && pos < 188)
-					{
-						m_pCurrentVideoBuffer->SetPcr(m_streamPcr,m_duration.StartPcr(),m_duration.MaxPcr());
-						m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos);
-					}
-        }
-        else if (m_pCurrentVideoBuffer->Length()>0)
-        {
-          int pos=header.PayLoadStart;
-          if (m_pCurrentVideoBuffer->Length()+(188-pos)>=0x2000)
-          {
-            int copyLen=0x2000-m_pCurrentVideoBuffer->Length();
-            m_pCurrentVideoBuffer->Add(&tsPacket[pos],copyLen);
-            pos+=copyLen;
+  if (m_pids.VideoPid==0) return;
+  if (header.Pid!=m_pids.VideoPid) return;
+  if (m_filter.GetVideoPin()->IsConnected()==false) return;
+	if ( header.AdaptionFieldOnly() ) return;
 
-            if (m_vecVideoBuffers.size()>MAX_BUF_SIZE) 
-              m_vecVideoBuffers.erase(m_vecVideoBuffers.begin());
-            m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
-            m_pCurrentVideoBuffer = new CBuffer();
-          }
-					if (pos>0 && pos < 188)
-					{
-						m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos); 
-					}
-        }
-      }
+  //does tspacket contain the start of a pes packet?
+  if (header.PayloadUnitStart)
+  {
+    //yes packet contains start of a pes packet.
+    //does current buffer hold any data ?
+    if (m_pCurrentVideoBuffer->Length() > 0)
+    {
+      //yes, then store current buffer
+      if (m_vecVideoBuffers.size()>MAX_BUF_SIZE) 
+        m_vecVideoBuffers.erase(m_vecVideoBuffers.begin());
+      m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
+      //and create a new one
+      m_pCurrentVideoBuffer = new CBuffer();
     }
+
+    int pos=header.PayLoadStart;
+    //check for PES start code
+    if (tsPacket[pos]==0&&tsPacket[pos+1]==0&&tsPacket[pos+2]==1) 
+    {
+      //get pts/dts from pes header
+      CPcr pts;
+      CPcr dts;
+      if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
+      {
+        m_pCurrentVideoBuffer->SetPts(pts);
+      }
+      //skip pes header
+      int headerLen=9+tsPacket[pos+8];  
+      pos+=headerLen;
+    }
+
+    //copy (rest) data in current buffer
+		if (pos>0 && pos < 188)
+		{
+			m_pCurrentVideoBuffer->SetPcr(m_streamPcr,m_duration.StartPcr(),m_duration.MaxPcr());
+			m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos);
+		}
+  }
+  else //if (m_pCurrentVideoBuffer->Length()>0)
+  {
+    int pos=header.PayLoadStart;
+    //packet contains rest of a pes packet
+    //does the entire data in this tspacket fit in the current buffer ?
+    if (m_pCurrentVideoBuffer->Length()+(188-pos)>=0x2000)
+    {
+      //no, then determine how many bytes do fit
+      int copyLen=0x2000-m_pCurrentVideoBuffer->Length();
+      //copy those bytes
+      m_pCurrentVideoBuffer->Add(&tsPacket[pos],copyLen);
+      pos+=copyLen;
+
+      //store current buffer since its now full
+      if (m_vecVideoBuffers.size()>MAX_BUF_SIZE) 
+        m_vecVideoBuffers.erase(m_vecVideoBuffers.begin());
+      m_vecVideoBuffers.push_back(m_pCurrentVideoBuffer);
+      
+      //and create a new one
+      m_pCurrentVideoBuffer = new CBuffer();
+    }
+
+    //copy (rest) data in current buffer
+		if (pos>0 && pos < 188)
+		{
+			m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos); 
+		}
   }
 }
+
 void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
 {
-  if (header.Pid==m_pids.SubtitlePid || header.Pid==m_pids.PcrPid|| header.Pid==m_pids.PmtPid|| header.Pid==0)
+  if (m_pids.SubtitlePid==0) return;
+  if (header.Pid!=m_pids.SubtitlePid) return;
+  if (m_filter.GetSubtitlePin()->IsConnected()==false) return;
+	if ( header.AdaptionFieldOnly() ) return;
+
+  //does tspacket contain the start of a pes packet?
+  if (header.PayloadUnitStart)
   {
-    if (m_filter.GetSubtitlePin()->IsConnected())
+    //yes packet contains start of a pes packet.
+    //does current buffer hold any data ?
+    if (m_pCurrentSubtitleBuffer->Length() > 0)
     {
-	    if ( false==header.AdaptionFieldOnly() ) 
-	    {
-        if ( header.PayloadUnitStart)
-        {
-          if (m_pCurrentSubtitleBuffer->Length()>0)
-          {
-            if (m_vecSubtitleBuffers.size()>MAX_BUF_SIZE) 
-              m_vecSubtitleBuffers.erase(m_vecSubtitleBuffers.begin());
-            m_vecSubtitleBuffers.push_back(m_pCurrentSubtitleBuffer);
-            m_pCurrentSubtitleBuffer = new CBuffer();
-          }
-          int pos=header.PayLoadStart;
-          if (tsPacket[pos]==0&&tsPacket[pos+1]==0&&tsPacket[pos+2]==1)
-          {
-	          CPcr pts;
-	          CPcr dts;
-            if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
-            {
-              m_pCurrentSubtitleBuffer->SetPts(pts);
-            }
-          }
-          m_pCurrentSubtitleBuffer->SetPcr(m_streamPcr,m_duration.StartPcr(),m_duration.MaxPcr());
-          m_pCurrentSubtitleBuffer->Add(tsPacket,188);
-        }
-        else if (m_pCurrentSubtitleBuffer->Length()>0)
-        {
-          if (m_pCurrentSubtitleBuffer->Length()+(188)>=0x2000)
-          {
-            m_pCurrentSubtitleBuffer->Add(tsPacket,188);
-            if (m_vecSubtitleBuffers.size()>MAX_BUF_SIZE) 
-              m_vecSubtitleBuffers.erase(m_vecSubtitleBuffers.begin());
-            m_vecSubtitleBuffers.push_back(m_pCurrentSubtitleBuffer);
-            m_pCurrentSubtitleBuffer = new CBuffer();
-          }
-          else
-          {
-            m_pCurrentSubtitleBuffer->Add(tsPacket,188); 
-          }
-        }
-      }
+      //yes, then store current buffer
+      if (m_vecSubtitleBuffers.size()>MAX_BUF_SIZE) 
+        m_vecSubtitleBuffers.erase(m_vecSubtitleBuffers.begin());
+      m_vecSubtitleBuffers.push_back(m_pCurrentSubtitleBuffer);
+      //and create a new one
+      m_pCurrentSubtitleBuffer = new CBuffer();
     }
+
+    int pos=header.PayLoadStart;
+    //check for PES start code
+    if (tsPacket[pos]==0&&tsPacket[pos+1]==0&&tsPacket[pos+2]==1) 
+    {
+      //get pts/dts from pes header
+      CPcr pts;
+      CPcr dts;
+      if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
+      {
+        m_pCurrentSubtitleBuffer->SetPts(pts);
+      }
+      //skip pes header
+      int headerLen=9+tsPacket[pos+8];  
+      pos+=headerLen;
+    }
+
+    //copy (rest) data in current buffer
+		if (pos>0 && pos < 188)
+		{
+			m_pCurrentSubtitleBuffer->SetPcr(m_streamPcr,m_duration.StartPcr(),m_duration.MaxPcr());
+			m_pCurrentSubtitleBuffer->Add(&tsPacket[pos],188-pos);
+		}
   }
-}
-	
+  else //if (m_pCurrentSubtitleBuffer->Length()>0)
+  {
+    int pos=header.PayLoadStart;
+    //packet contains rest of a pes packet
+    //does the entire data in this tspacket fit in the current buffer ?
+    if (m_pCurrentSubtitleBuffer->Length()+(188-pos)>=0x2000)
+    {
+      //no, then determine how many bytes do fit
+      int copyLen=0x2000-m_pCurrentSubtitleBuffer->Length();
+      //copy those bytes
+      m_pCurrentSubtitleBuffer->Add(&tsPacket[pos],copyLen);
+      pos+=copyLen;
+
+      //store current buffer since its now full
+      if (m_vecSubtitleBuffers.size()>MAX_BUF_SIZE) 
+        m_vecSubtitleBuffers.erase(m_vecSubtitleBuffers.begin());
+      m_vecSubtitleBuffers.push_back(m_pCurrentSubtitleBuffer);
+      
+      //and create a new one
+      m_pCurrentSubtitleBuffer = new CBuffer();
+    }
+
+    //copy (rest) data in current buffer
+		if (pos>0 && pos < 188)
+		{
+			m_pCurrentSubtitleBuffer->Add(&tsPacket[pos],188-pos); 
+		}
+  }
+}	
 void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 {
 	CAutoLock lock (&m_section);
