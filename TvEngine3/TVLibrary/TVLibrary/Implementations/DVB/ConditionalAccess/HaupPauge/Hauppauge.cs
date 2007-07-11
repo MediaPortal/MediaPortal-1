@@ -76,8 +76,8 @@ namespace TvLibrary.Implementations.DVB
     {
       HCW_PILOT_NOT_SET = -1,
       HCW_PILOT_NOT_DEFINED = 0,
-      HCW_PILOT_OFF = 1,           // Pilot Off (DVB-S2 Only)
-      HCW_PILOT_ON,                // Pilot On  (DVB-S2 Only) (Default for DVB-S2)
+      HCW_PILOT_OFF = 1,           // Pilot Off (DVB-S2 Only) (Default for DVB-S2)
+      HCW_PILOT_ON,                // Pilot On  (DVB-S2 Only)
       HCW_PILOT_MAX
     }
     #endregion
@@ -87,25 +87,6 @@ namespace TvLibrary.Implementations.DVB
     const byte DISEQC_RX_BUFFER_SIZE = 8;		// reply fifo size, do not increase
     #endregion
 
-    #region structs
-    /*
-    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
-    struct DISEQC_MESSAGE_PARAMS
-    {
-     byte       uc_diseqc_send_message[DISEQC_TX_BUFFER_SIZE+1];    //0-150
-     byte       uc_diseqc_receive_message[DISEQC_RX_BUFFER_SIZE+1]; //151-159
-     ulong      ul_diseqc_send_message_length;                      //160..163
-     ulong      ul_diseqc_receive_message_length;                   //164..167
-     ulong      ul_amplitude_attenuation;                           //168..171
-     bool       b_tone_burst_modulated;                             //172
-     DISEQC_VER diseqc_version;                                     //173
-     RXMODE     receive_mode;                                       //174
-     bool       b_last_message;                                     //175
-    };
-    */
-
-    #endregion
-
     #region variables
     Guid BdaTunerExtentionProperties = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0, 0xc9, 0xf2, 0x1f, 0xc7);
     bool _isHauppauge = false;
@@ -113,7 +94,6 @@ namespace TvLibrary.Implementations.DVB
     IntPtr _ptrDiseqc = IntPtr.Zero;
     IntPtr _tempPtr = Marshal.AllocCoTaskMem(1024);
     IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
-    //IntPtr _bdaNode = Marshal.AllocCoTaskMem(1024);
     DirectShowLib.IKsPropertySet _propertySet = null;
     #endregion
 
@@ -266,17 +246,19 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// sets the dvb-s2 pilot / roll-off
     /// </summary>
-    public void SetDVBS2Modulation()
+    public void SetDVBS2PilotRolloff()
     {
       //if (_isHauppaugeDVBS2 == false) return;
       
       //Set the Pilot
       Marshal.WriteInt32(_tempValue, (Int32)Pilot.HCW_PILOT_OFF);
+      Log.Log.Info("Hauppauge: BDA Pilot value = {0}", Marshal.ReadInt32(_tempValue));
       int pilot = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempPtr, 1024, _tempValue, 4);
       Log.Log.Info("Hauppauge: Set BDA Pilot returned:{0:X}", pilot);
 
       //Set the Roll-off
       Marshal.WriteInt32(_tempValue, (Int32)RollOff.HCW_ROLL_OFF_35);
+      Log.Log.Info("Hauppauge: BDA Roll-off value = {0}", Marshal.ReadInt32(_tempValue));
       int rolloff = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempPtr, 1024, _tempValue, 4);
       Log.Log.Info("Hauppauge: Set BDA Roll-Off returned:{0:X}", rolloff);
     }

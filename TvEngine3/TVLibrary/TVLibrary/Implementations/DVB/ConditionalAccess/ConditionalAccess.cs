@@ -106,7 +106,7 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.WriteFile("Hauppauge card detected");
           //Log.Log.WriteFile("Hauppauge try DVB-S2 pilot & roll-off");
-          //_hauppauge.SetDVBS2Modulation();
+          //_hauppauge.SetDVBS2PilotRolloff();
           _diSEqCMotor = new DiSEqCMotor(_hauppauge);
           return;
         }
@@ -408,10 +408,10 @@ namespace TvLibrary.Implementations.DVB
         if (_hauppauge != null)
         {
           //Set Hauppauge pilot, roll-off settings - need to query if supported first.
-          //if (_hauppauge.IsHauppaugeDVBS2 != null)
-          //{
-            //_hauppauge.SetDVBS2Modulation();
-          //}
+          if (_hauppauge.IsHauppaugeDVBS2)
+          {
+            _hauppauge.SetDVBS2PilotRolloff();
+          }
           //Set the Modulation
           if (channel.ModulationType == ModulationType.ModQpsk) channel.ModulationType = ModulationType.ModQpsk2;
           Log.Log.WriteFile("Hauppauge DVB-S2 modulation set");
