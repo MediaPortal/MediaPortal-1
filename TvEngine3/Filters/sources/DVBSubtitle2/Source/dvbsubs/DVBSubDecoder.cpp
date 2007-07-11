@@ -339,10 +339,10 @@ void CDVBSubDecoder::Process_page_composition_segment()
 	//LogDebug("DVBsubs: page_state=%d", page_state );
   
   // HACK, not all broadcasters provide valid a timeout values for subtitles
-  if( page_time_out <= 1 || page_time_out > 7 )
+  if( page_time_out <= 1 || page_time_out > 8 )
   {
     LogDebug("DVBsubs: page_time_out was %i , forcing it to 5 seconds", page_time_out );
-    page_time_out = 5; // in seconds
+    page_time_out = 8; // in seconds
   }
   m_CurrentSubtitle->SetTimeout( page_time_out );
 
@@ -775,7 +775,6 @@ uint64_t CDVBSubDecoder::Get_pes_pts (unsigned char* buf)
 		k <<=30LL;
 		pts+=k;			// 3bits
 		pts &= 0x1FFFFFFFFLL;
-
 	}
 	if (DTS_available) 
 	{
