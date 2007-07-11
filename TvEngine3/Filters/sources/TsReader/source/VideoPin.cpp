@@ -112,7 +112,7 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 			pRequest->cBuffers = 30;
 	}
 
-	pRequest->cbBuffer = 1316*30;
+	pRequest->cbBuffer = 8192;
 
 
 	ALLOCATOR_PROPERTIES Actual;
@@ -213,6 +213,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 		Sleep(1);
     pSample->SetTime(NULL,NULL); 
 	  pSample->SetActualDataLength(0);
+    pSample->SetSyncPoint(FALSE);
 		return NOERROR;
 	}
   CAutoLock lock(&m_bufferLock);
@@ -226,22 +227,23 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
   }
   if (buffer!=NULL)
   {
-    //LogDebug("vid:gotbuffer");
     BYTE* pSampleBuffer;
     CRefTime cRefTime;
     if (buffer->MediaTime(cRefTime))
     {
       cRefTime-=m_rtStart;
       REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
-      pSample->SetTime(&refTime,NULL); 
+      pSample->SetTime(&refTime,&refTime); 
       pSample->SetSyncPoint(TRUE);
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
-      //LogDebug("vid:%f", fTime);
+      //LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
     }
     else
     {
+      //LogDebug("vid:gotbuffer:%d ",buffer->Length());
       pSample->SetTime(NULL,NULL);  
+      pSample->SetSyncPoint(FALSE);
     }
 	  pSample->SetActualDataLength(buffer->Length());
     pSample->GetPointer(&pSampleBuffer);
@@ -254,6 +256,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
     LogDebug("vid:no buffer");
     pSample->SetDiscontinuity(TRUE);
 	  pSample->SetActualDataLength(0);
+    pSample->SetSyncPoint(FALSE);
     pSample->SetTime(NULL,NULL);  
     if (demux.EndOfFile()) 
       return S_FALSE;

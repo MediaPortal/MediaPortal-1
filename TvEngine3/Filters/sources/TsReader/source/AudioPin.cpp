@@ -148,7 +148,7 @@ HRESULT CAudioPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 			pRequest->cBuffers = 30;
 	}
 
-	pRequest->cbBuffer = 1316*30;
+	pRequest->cbBuffer = 8192;
 
 
 	ALLOCATOR_PROPERTIES Actual;
@@ -227,6 +227,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
     pSample->SetTime(NULL,NULL); 
 	  pSample->SetActualDataLength(0);
     pSample->SetDiscontinuity(TRUE);
+    pSample->SetSyncPoint(FALSE);
 		return NOERROR;
 	}
   
@@ -250,7 +251,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
     {
       cRefTime-=m_rtStart;
       REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
-      pSample->SetTime(&refTime,NULL);  
+      pSample->SetTime(&refTime,&refTime);  
       pSample->SetSyncPoint(TRUE);
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
@@ -268,6 +269,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
     pSample->SetDiscontinuity(TRUE);
 	  pSample->SetActualDataLength(0);
     pSample->SetTime(NULL,NULL);  
+    pSample->SetSyncPoint(FALSE);
     if (demux.EndOfFile()) 
       return S_FALSE;
   }
