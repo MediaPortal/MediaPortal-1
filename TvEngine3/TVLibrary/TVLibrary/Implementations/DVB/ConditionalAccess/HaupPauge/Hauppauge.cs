@@ -111,8 +111,8 @@ namespace TvLibrary.Implementations.DVB
     bool _isHauppauge = false;
     bool _isHauppaugeDVBS2 = false;
     IntPtr _ptrDiseqc = IntPtr.Zero;
-    IntPtr _pilotOnOff = IntPtr.Zero; //Marshal.AllocCoTaskMem(1024);
-    IntPtr _rollOff = IntPtr.Zero; //Marshal.AllocCoTaskMem(1024);
+    IntPtr _tempPtr = Marshal.AllocCoTaskMem(1024);
+    IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
     //IntPtr _bdaNode = Marshal.AllocCoTaskMem(1024);
     DirectShowLib.IKsPropertySet _propertySet = null;
     #endregion
@@ -139,11 +139,9 @@ namespace TvLibrary.Implementations.DVB
             _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, out supported);
             if ((supported & KSPropertySupport.Set) != 0)
             {
-              _pilotOnOff = Marshal.AllocCoTaskMem(1024);
               _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, out supported);
               if ((supported & KSPropertySupport.Set) != 0)
               {
-                _rollOff = Marshal.AllocCoTaskMem(1024);
                 Log.Log.Info("Hauppauge: card supports dvb-s2");
                 _isHauppaugeDVBS2 = true;
               }
@@ -268,24 +266,18 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// sets the dvb-s2 pilot / roll-off
     /// </summary>
-    //public void SetDVBS2Modulation(ScanParameters parameters, DVBSChannel channel)
     public void SetDVBS2Modulation()
     {
-      int len = 8;
-      //Log.Log.WriteFile("Hauppauge: SetDVBS2Modulation for channel: {0}", channel);
       //if (_isHauppaugeDVBS2 == false) return;
-      Marshal.WriteInt32(_pilotOnOff, (Int32)Pilot.HCW_PILOT_OFF);
-      //Marshal.WriteInt64(_bdaNode, (Int64)BdaNodes.BDA_TUNER_NODE);
-      Marshal.WriteInt32(_rollOff, (Int32)RollOff.HCW_ROLL_OFF_35);
-      //Log.Log.Info("Hauppauge: Pilot = {0} & RollOff = {1} & _bdaNode = {2}", _pilotOnOff, _rollOff, _bdaNode);
-      Log.Log.Info("Hauppauge: Pilot = {0} & RollOff = {1}", _pilotOnOff, _rollOff);
       
       //Set the Pilot
-      int pilot = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _pilotOnOff, len, _pilotOnOff, len);
+      Marshal.WriteInt32(_tempValue, (Int32)Pilot.HCW_PILOT_OFF);
+      int pilot = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempPtr, 1024, _tempValue, 4);
       Log.Log.Info("Hauppauge: Set BDA Pilot returned:{0:X}", pilot);
-      
+
       //Set the Roll-off
-      int rolloff = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _rollOff, len, _rollOff, len);
+      Marshal.WriteInt32(_tempValue, (Int32)RollOff.HCW_ROLL_OFF_35);
+      int rolloff = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempPtr, 1024, _tempValue, 4);
       Log.Log.Info("Hauppauge: Set BDA Roll-Off returned:{0:X}", rolloff);
     }
   }
