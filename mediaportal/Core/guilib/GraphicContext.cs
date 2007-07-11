@@ -127,6 +127,7 @@ namespace MediaPortal.GUI.Library
     static IRender m_renderFrame = null;
     static bool vmr9Active = false;
     static bool m_bisvmr9Exclusive = false;
+    static bool m_bisevr = false;
     static int m_iMaxFPS = 20;
     static long m_iDesiredFrameTime = 100;
     static float m_fCurrentFPS = 0;
@@ -1124,7 +1125,19 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    static public float TimePassed
+    static public bool IsEvr
+    {
+        get
+        {
+            return m_bisevr;
+        }
+        set
+        {
+            m_bisevr = value;
+        }
+    }
+
+     static public float TimePassed
     {
       get
       {

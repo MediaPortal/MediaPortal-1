@@ -35,12 +35,14 @@
 #include <strsafe.h>
 #include <dshow.h>
 #include <vmr9.h>
+#include <evr.h>
 #include <sbe.h>
 #include <dxva.h>
 #include <dvdmedia.h>
 
 #include "dshowhelper.h"
-#include "DX9AllocatorPresenter.h"
+#include "evrcustomPresenter.h"
+#include "dx9allocatorpresenter.h"
 #include <map>
 #include <comutil.h>
 using namespace std;
@@ -82,6 +84,8 @@ Cdshowhelper::Cdshowhelper()
 
 LPDIRECT3DDEVICE9			    m_pDevice=NULL;
 CVMR9AllocatorPresenter*	m_vmr9Presenter=NULL;
+EVRCustomPresenter*	m_evrPresenter=NULL;
+IMFVideoDisplayControl* m_pControl=NULL;
 IBaseFilter*				      m_pVMR9Filter=NULL;
 IVMRSurfaceAllocator9*		m_allocator=NULL;
 
@@ -157,79 +161,157 @@ VMR9_SampleFormat ConvertInterlaceFlags(DWORD dwInterlaceFlags)
     }
 }
 
-
 BOOL Vmr9Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter,DWORD monitor)
 {
+   	HRESULT hr;
+   	m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
+   	m_pVMR9Filter=vmr9Filter;
+   
+   	CComQIPtr<IVMRFilterConfig9> pConfig = m_pVMR9Filter;
+   	if(!pConfig)
+   		return FALSE;
+   
+   	if(FAILED(hr = pConfig->SetRenderingMode(VMR9Mode_Renderless)))
+   	{
+   		Log("Vmr9:Init() SetRenderingMode() failed 0x:%x",hr);
+   		return FALSE;
+   	}
+   	if(FAILED(hr = pConfig->SetNumberOfStreams(1)))
+   	{
+   		Log("Vmr9:Init() SetNumberOfStreams() failed 0x:%x",hr);
+   		return FALSE;
+   	}
+   
+   	CComQIPtr<IVMRSurfaceAllocatorNotify9> pSAN = m_pVMR9Filter;
+   	if(!pSAN)
+   		return FALSE;
+   
+   	m_vmr9Presenter = new CVMR9AllocatorPresenter( m_pDevice, callback,(HMONITOR)monitor) ;
+   	m_vmr9Presenter->QueryInterface(IID_IVMRSurfaceAllocator9,(void**)&m_allocator);
+   
+   	if(FAILED(hr = pSAN->AdviseSurfaceAllocator(MY_USER_ID, m_allocator)))
+   	{
+   		Log("Vmr9:Init() AdviseSurfaceAllocator() failed 0x:%x",hr);
+   		return FALSE;
+   	}
+   	if (FAILED(hr = m_allocator->AdviseNotify(pSAN)))
+   	{
+   		Log("Vmr9:Init() AdviseNotify() failed 0x:%x",hr);
+   		return FALSE;
+  	}
+   	return TRUE;
+   }
+   
+   
+   void Vmr9Deinit()
+   {
+     try
+     {
+   	  int hr;
+   	  if (m_allocator!=NULL)
+   	  {
+   		  m_allocator=NULL;
+   	  }
+   	  if (m_vmr9Presenter!=NULL)
+   	  {
+   		  do
+         {
+           hr=m_vmr9Presenter->Release();
+         } while (hr>0);
+   
+   		  m_vmr9Presenter=NULL;
+   		  Log("Vmr9Deinit:m_vmr9Presenter release:%d", hr);
+   	  }
+   	  m_vmr9Presenter=NULL;
+   
+   	  m_pDevice=NULL;
+   	  m_pVMR9Filter=NULL;
+     }
+     catch(...)
+     {
+   		  Log("Vmr9Deinit:exception");
+     }
+   
+  }
+
+BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter,DWORD monitor)
+{
+	//HWND wnd = (HWND)dwWindow;
 	HRESULT hr;
 	m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
 	m_pVMR9Filter=vmr9Filter;
-	
-	CComQIPtr<IVMRFilterConfig9> pConfig = m_pVMR9Filter;
-	if(!pConfig)
+	CComQIPtr<IMFVideoRenderer> pRenderer = m_pVMR9Filter;
+	if (!pRenderer) {
+		Log("Could not get IMFVideoRenderer");
 		return FALSE;
-
-	if(FAILED(hr = pConfig->SetRenderingMode(VMR9Mode_Renderless)))
-	{
-		Log("Vmr9:Init() SetRenderingMode() failed 0x:%x",hr);
+	}
+	m_evrPresenter = new EVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor);
+	hr = pRenderer->InitializeRenderer(NULL, m_evrPresenter);
+	if (FAILED(hr) ) {
+		Log("InitializeRenderer failed: 0x%x", hr);
+		return FALSE;
+	}
+	CComQIPtr<IEVRFilterConfig> pConfig = m_pVMR9Filter;
+	if(!pConfig) {
+		Log("Could not get IEVRFilterConfig  interface" );
+		return FALSE;
+	}
+	CComQIPtr<IMFGetService> pService = m_pVMR9Filter;
+	if (!pService) {
+		Log("Could not get IMFGetService Interface");
 		return FALSE;
 	}
 	if(FAILED(hr = pConfig->SetNumberOfStreams(1)))
 	{
-		Log("Vmr9:Init() SetNumberOfStreams() failed 0x:%x",hr);
+		Log("EVR:Init() SetNumberOfStreams() failed 0x:%x",hr);
 		return FALSE;
 	}
 
-	CComQIPtr<IVMRSurfaceAllocatorNotify9> pSAN = m_pVMR9Filter;
-	if(!pSAN)
-		return FALSE;
+	/*IMFVideoDisplayControl *pControl;
+	CHECK_HR(pService->GetService(MR_VIDEO_RENDER_SERVICE, __uuidof(IMFVideoDisplayControl),
+		(void**)&pControl), "nonsense");
+	RECT pos = {0,0,800,600};
+	CHECK_HR(pControl->SetVideoWindow(wnd), "nixwindow");
+	CHECK_HR(pControl->SetVideoPosition(NULL, &pos), "Geht ned");
+	pControl->Release();*/
 
-	m_vmr9Presenter = new CVMR9AllocatorPresenter( m_pDevice, callback,(HMONITOR)monitor) ;
-	m_vmr9Presenter->QueryInterface(IID_IVMRSurfaceAllocator9,(void**)&m_allocator);
-
-	if(FAILED(hr = pSAN->AdviseSurfaceAllocator(MY_USER_ID, m_allocator)))
-	{
-		Log("Vmr9:Init() AdviseSurfaceAllocator() failed 0x:%x",hr);
-		return FALSE;
-	}
-	if (FAILED(hr = m_allocator->AdviseNotify(pSAN)))
-	{
-		Log("Vmr9:Init() AdviseNotify() failed 0x:%x",hr);
-		return FALSE;
-	}
 	return TRUE;
 }
 
 
-void Vmr9Deinit()
+void EvrDeinit()
 {
   try
   {
 	  int hr;
-	  if (m_allocator!=NULL)
-	  {
-		  m_allocator=NULL;
+	  if (m_pControl) {
+		m_pControl->Release();
+		m_pControl = NULL;
 	  }
-	  if (m_vmr9Presenter!=NULL)
+	  if (m_evrPresenter!=NULL)
 	  {
 		  do
-      {
-        hr=m_vmr9Presenter->Release();
-      } while (hr>0);
+		  {
+			hr=m_evrPresenter->Release();
+		  } while (hr>0);
 
-		  m_vmr9Presenter=NULL;
-		  Log("Vmr9Deinit:m_vmr9Presenter release:%d", hr);
+		  m_evrPresenter=NULL;
+		  Log("EVRDeinit:m_evrPresenter release:%d", hr);
 	  }
-	  m_vmr9Presenter=NULL;
+	  m_evrPresenter=NULL;
 
 	  m_pDevice=NULL;
 	  m_pVMR9Filter=NULL;
   }
   catch(...)
   {
-		  Log("Vmr9Deinit:exception");
+		  Log("EvrDeinit:exception");
   }
 
 }
+
+
+
 void Vmr9SetDeinterlaceMode(int mode)
 {
 	//0=None

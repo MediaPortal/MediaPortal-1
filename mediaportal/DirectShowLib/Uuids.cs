@@ -250,6 +250,13 @@ namespace DirectShowLib
     {
     }
 
+    /// <summary>
+    /// CLSID_EnhancedVideoRenderer
+    /// </summary>
+    [ComImport, Guid("fa10746c-9b63-4b6c-bc49-fc300ea5f256")]
+    public class EnhancedVideoRenderer
+    {
+    }
 
     /// <summary>
     /// CLSID_VideoRendererDefault

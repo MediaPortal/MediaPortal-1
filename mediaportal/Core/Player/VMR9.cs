@@ -83,6 +83,10 @@ namespace MediaPortal.Player
     unsafe private static extern void Vmr9SetDeinterlaceMode(Int16 mode);
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     unsafe private static extern void Vmr9SetDeinterlacePrefs(uint dwMethod);
+    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    unsafe private static extern bool EvrInit(IVMR9PresentCallback callback, uint dwD3DDevice, IBaseFilter vmr9Filter, uint monitor);//, uint dwWindow);
+    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    unsafe private static extern void EvrDeinit();
     #endregion
 
     #region static vars
@@ -328,6 +332,8 @@ namespace MediaPortal.Player
         Log.Info("vmr9:addvmr9: vmr9 already initialized");
         return false;
       }
+      bool _useEvr = GUIGraphicsContext.IsEvr;
+      Log.Info("EVR-Flag is set to {0}", _useEvr);
       //Log.Info("VMR9Helper:AddVmr9");
       if (_instanceCounter != 0)
       {
@@ -335,7 +341,10 @@ namespace MediaPortal.Player
         throw new Exception("VMR9Helper:Multiple instances of VMR9 running!!!");
       }
 
-      _vmr9Filter = (IBaseFilter)new VideoMixingRenderer9();
+      if ( _useEvr )
+        _vmr9Filter = (IBaseFilter)new EnhancedVideoRenderer(); 
+      else
+        _vmr9Filter = (IBaseFilter)new VideoMixingRenderer9();
       if (_vmr9Filter == null)
       {
         Error.SetError("Unable to play movie", "VMR9 is not installed");
@@ -351,12 +360,18 @@ namespace MediaPortal.Player
       _scene = new PlaneScene(_renderFrame, this);
       _scene.Init();
 
-      Vmr9Init(_scene, (uint)upDevice.ToInt32(), _vmr9Filter, (uint)hMonitor.ToInt32());
-
+      if (_useEvr)
+          EvrInit(_scene, (uint)upDevice.ToInt32(), _vmr9Filter, (uint)hMonitor.ToInt32());
+      //(uint)GUIGraphicsContext.ActiveForm);
+      else
+          Vmr9Init(_scene, (uint)upDevice.ToInt32(), _vmr9Filter, (uint)hMonitor.ToInt32());
       HResult hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Video Mixing Renderer 9"));
       if (hr != 0)
       {
-        Vmr9Deinit();
+          if (_useEvr)
+              EvrDeinit();
+          else
+              Vmr9Deinit();
         _scene.Stop();
         _scene.Deinit();
         _scene = null;
@@ -373,67 +388,69 @@ namespace MediaPortal.Player
       _graphBuilderInterface = graphBuilder;
       _instanceCounter++;
       _isVmr9Initialized = true;
-      SetDeinterlacePrefs();
-      System.OperatingSystem os = Environment.OSVersion;
-      if (os.Platform == System.PlatformID.Win32NT)
+      if (!_useEvr)
       {
-        long version = os.Version.Major * 10000000 + os.Version.Minor * 10000 + os.Version.Build;
-        if (version >= 50012600) // we need at least win xp sp2 for VMR9 YUV mixing mode
-        {
-          IVMRMixerControl9 mixer = _vmr9Filter as IVMRMixerControl9;
-          if (mixer != null)
-          {
-           
-            VMR9MixerPrefs dwPrefs;
-            mixer.GetMixingPrefs(out dwPrefs);
-            dwPrefs &= ~VMR9MixerPrefs.RenderTargetMask;
+       SetDeinterlacePrefs();
+       System.OperatingSystem os = Environment.OSVersion;
+       if (os.Platform == System.PlatformID.Win32NT)
+       {
+         long version = os.Version.Major * 10000000 + os.Version.Minor * 10000 + os.Version.Build;
+         if (version >= 50012600) // we need at least win xp sp2 for VMR9 YUV mixing mode
+         {
+           IVMRMixerControl9 mixer = _vmr9Filter as IVMRMixerControl9;
+           if (mixer != null)
+           {
+       
+             VMR9MixerPrefs dwPrefs;
+             mixer.GetMixingPrefs(out dwPrefs);
+             dwPrefs &= ~VMR9MixerPrefs.RenderTargetMask;
 
-            dwPrefs |= VMR9MixerPrefs.RenderTargetYUV;
-            hr.Set(mixer.SetMixingPrefs(dwPrefs));
-            Log.Info("VMR9Helper: enabled YUV mixing - " + hr.ToDXString());
+             dwPrefs |= VMR9MixerPrefs.RenderTargetYUV;
+             hr.Set(mixer.SetMixingPrefs(dwPrefs));
+             Log.Info("VMR9Helper: enabled YUV mixing - " + hr.ToDXString());
 
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-            {
-              //Enable nonsquaremixing
-              if (xmlreader.GetValueAsBool("mytv", "nonsquare", false))
-              {
-                mixer.GetMixingPrefs(out dwPrefs);
-                dwPrefs |= VMR9MixerPrefs.NonSquareMixing;
-                hr.Set(mixer.SetMixingPrefs(dwPrefs));
-                Log.Info("VRM9Helper: Turning on nonsquare mixing - " + hr.ToDXString());
-              }
-              // see  D3DTEXTUREFILTERTYPE Enumerated Type documents for further information
-              // MixerPref9_PointFiltering
-              // MixerPref9_BiLinearFiltering
-              // MixerPref9_AnisotropicFiltering
-              // MixerPref9_PyramidalQuadFiltering
-              // MixerPref9_GaussianQuadFiltering
+             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+             {
+               //Enable nonsquaremixing
+               if (xmlreader.GetValueAsBool("mytv", "nonsquare", false))
+               {
+                 mixer.GetMixingPrefs(out dwPrefs);
+                 dwPrefs |= VMR9MixerPrefs.NonSquareMixing;
+                 hr.Set(mixer.SetMixingPrefs(dwPrefs));
+                 Log.Info("VRM9Helper: Turning on nonsquare mixing - " + hr.ToDXString());
+               }
+               // see  D3DTEXTUREFILTERTYPE Enumerated Type documents for further information
+               // MixerPref9_PointFiltering
+               // MixerPref9_BiLinearFiltering
+               // MixerPref9_AnisotropicFiltering
+               // MixerPref9_PyramidalQuadFiltering
+               // MixerPref9_GaussianQuadFiltering
 
-              if (xmlreader.GetValueAsString("mytv", "dx9filteringmode", "None")!="None")
-              {
-                mixer.SetMixingPrefs(dwPrefs);
-                mixer.GetMixingPrefs(out dwPrefs);
-                dwPrefs &= ~VMR9MixerPrefs.FilteringMask;
-                string filtermode9 = xmlreader.GetValueAsString("mytv", "dx9filteringmode", "bilinear");
-                if (filtermode9 == "Point Filtering")
-                  dwPrefs |= VMR9MixerPrefs.PointFiltering;
-                else if (filtermode9 == "Bilinear Filtering")
-                  dwPrefs |= VMR9MixerPrefs.BiLinearFiltering;
-                else if (filtermode9 == "Anisotropic Filtering")
-                  dwPrefs |= VMR9MixerPrefs.AnisotropicFiltering;
-                else if (filtermode9 == "Pyrimidal Quad Filtering")
-                  dwPrefs |= VMR9MixerPrefs.PyramidalQuadFiltering;
-                else
-                  dwPrefs |= VMR9MixerPrefs.GaussianQuadFiltering;
+               if (xmlreader.GetValueAsString("mytv", "dx9filteringmode", "None")!="None")
+               {
+                 mixer.SetMixingPrefs(dwPrefs);
+                 mixer.GetMixingPrefs(out dwPrefs);
+                 dwPrefs &= ~VMR9MixerPrefs.FilteringMask;
+                 string filtermode9 = xmlreader.GetValueAsString("mytv", "dx9filteringmode", "bilinear");
+                 if (filtermode9 == "Point Filtering")
+                   dwPrefs |= VMR9MixerPrefs.PointFiltering;
+                 else if (filtermode9 == "Bilinear Filtering")
+                   dwPrefs |= VMR9MixerPrefs.BiLinearFiltering;
+                 else if (filtermode9 == "Anisotropic Filtering")
+                   dwPrefs |= VMR9MixerPrefs.AnisotropicFiltering;
+                 else if (filtermode9 == "Pyrimidal Quad Filtering")
+                   dwPrefs |= VMR9MixerPrefs.PyramidalQuadFiltering;
+                 else
+                   dwPrefs |= VMR9MixerPrefs.GaussianQuadFiltering;
 
-                hr.Set(mixer.SetMixingPrefs(dwPrefs));
-                Log.Info("VRM9Helper: Set filter mode - " + filtermode9 + " " + hr.ToDXString());
-              }
-              }
-            }
-          }
-        }
-      
+                 hr.Set(mixer.SetMixingPrefs(dwPrefs));
+                 Log.Info("VRM9Helper: Set filter mode - " + filtermode9 + " " + hr.ToDXString());
+               }
+               }
+             }
+           }
+         }
+      }
       _threadId = Thread.CurrentThread.ManagedThreadId;
       GUIGraphicsContext.Vmr9Active = true;
       g_vmr9 = this;
@@ -497,7 +514,12 @@ namespace MediaPortal.Player
 
         if (_threadId == Thread.CurrentThread.ManagedThreadId)
         {
-          VideoRendererStatistics.Update(_qualityInterface);
+            if (_qualityInterface != null)
+            {
+                VideoRendererStatistics.Update(_qualityInterface);
+            }
+            else
+                Log.Info("_qualityInterface is null!");
         }
         _repaintTimer = DateTime.Now;
       }
@@ -552,7 +574,7 @@ namespace MediaPortal.Player
         //Best
         DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
       }
-      Vmr9SetDeinterlaceMode((short)DeInterlaceMode);
+      //Vmr9SetDeinterlaceMode((short)DeInterlaceMode);
     }
     public void Enable(bool onOff)
     {
@@ -770,7 +792,10 @@ namespace MediaPortal.Player
       catch (Exception)
       {
       }
-      Vmr9Deinit();
+      if (GUIGraphicsContext.IsEvr)
+          EvrDeinit();
+      else
+          Vmr9Deinit();
       _vmr9Filter = null;
       _graphBuilderInterface = null;
       _scene = null;

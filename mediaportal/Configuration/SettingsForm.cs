@@ -294,6 +294,8 @@ namespace MediaPortal.Configuration
       }
       //Add section for vmr9 configuration
       AddChildSection(filterSection, new VMR9Config());
+      //Add section for evr configuration
+      AddChildSection(filterSection, new EVRConfig());
       //Look for Audio Encoders, if exist assume encoders are installed & present config option
       string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
       FilterCollection legacyFilters = Filters.LegacyFilters;

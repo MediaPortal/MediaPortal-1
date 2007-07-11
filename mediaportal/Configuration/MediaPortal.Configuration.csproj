@@ -287,6 +287,12 @@
     <Compile Include="Sections\CDSpeed.Designer.cs">
       <DependentUpon>CDSpeed.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\EVRConfig.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\EVRConfig.Designer.cs">
+      <DependentUpon>EVRConfig.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\GeneralThumbs.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -626,6 +632,10 @@
     <EmbeddedResource Include="Sections\CDSpeed.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CDSpeed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\EVRConfig.resx">
+      <DependentUpon>EVRConfig.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralThumbs.resx">
       <SubType>Designer</SubType>

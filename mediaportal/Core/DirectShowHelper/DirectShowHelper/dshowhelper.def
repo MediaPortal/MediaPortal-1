@@ -15,3 +15,5 @@ AddTeeSinkToGraph			@8
 AddWstCodecToGraph			@9
 GrabBitmaps					@10
 AddTeeSinkNameToGraph		@11
+EvrInit						@12
+EvrDeinit					@13

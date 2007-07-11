@@ -273,6 +273,7 @@ namespace MediaPortal
     protected bool autoHideTaskbar = true;
     private bool alwaysOnTop = false;
     private bool useExclusiveDirectXMode;
+    private bool useEnhancedVideoRenderer;
 
     [DllImport("winmm.dll")]
     internal static extern uint timeBeginPeriod(uint period);
@@ -327,6 +328,9 @@ namespace MediaPortal
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
+        useEnhancedVideoRenderer = xmlreader.GetValueAsBool("general", "useevr", false);
+        Log.Info("Loaded useevr: {0}", useEnhancedVideoRenderer);
+        if (useEnhancedVideoRenderer) useExclusiveDirectXMode = false;
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
         alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         debugChangeDeviceHack = xmlreader.GetValueAsBool("debug", "changedevicehack", false);
@@ -349,6 +353,7 @@ namespace MediaPortal
       }
 
       GUIGraphicsContext.IsVMR9Exclusive = useExclusiveDirectXMode;
+      GUIGraphicsContext.IsEvr = useEnhancedVideoRenderer;
      playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
