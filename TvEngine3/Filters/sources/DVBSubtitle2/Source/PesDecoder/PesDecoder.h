@@ -52,4 +52,5 @@ private:
 	int						m_iWritePos;
 	int						m_iMaxLength;
 	int						m_iStreamId;
+  int           m_iPesLenght;
 };

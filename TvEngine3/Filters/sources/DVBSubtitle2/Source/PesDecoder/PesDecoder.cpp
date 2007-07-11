@@ -36,6 +36,7 @@ CPesDecoder::CPesDecoder(CPesCallback* callback)
 	m_pCallback=callback;
 	m_iStreamId=-1;
   m_iPesHeaderLen=0;
+  m_iPesLenght=0;
 }
 void CPesDecoder::SetMaxLength(int len)
 {
@@ -97,6 +98,7 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	{
     m_bStart=false;
 		m_iWritePos=0;
+    m_iPesLenght=0;
 		//LogDebug("pesdecoder pid:%x transport error", m_pid);
 		return false;
 	}
@@ -113,22 +115,6 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	bool result=false;
 	if (header.PayloadUnitStart)
 	{
-
-		if (m_iWritePos>0)
-		{
-			if (m_pCallback!=NULL)
-			{
-				//LogDebug(" pes %x start:%x", m_iStreamId,m_iWritePos);
-				int written=m_pCallback->OnNewPesPacket(m_iStreamId,m_pesHeader, m_iPesHeaderLen,  m_pesBuffer, m_iWritePos, m_bStart);
-        if (written>=0)
-        {
-				  //LogDebug(" pes %x written:%x", m_iStreamId,written);
-          m_bStart=false;
-				  m_iWritePos=0;
-        }
-			}
-		}
-
 		if (tsPacket[pos+0]==0 && tsPacket[pos+1]==0 && tsPacket[pos+2]==1)
 		{
 			if (m_iStreamId<0)
@@ -139,6 +125,12 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
       memcpy(m_pesHeader,&tsPacket[pos],m_iPesHeaderLen);
       pos += (m_iPesHeaderLen);
 			m_bStart=true;
+
+      int a = m_pesHeader[4];
+      int b = m_pesHeader[5];
+
+      m_iPesLenght = ( a << 8  ) + b;
+      //LogDebug("  PES decoder - PES lenght %d", m_iPesLenght );
 		}
 	}
 
@@ -148,6 +140,26 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 	memcpy(&m_pesBuffer[m_iWritePos], &tsPacket[pos], 188-pos);
 	m_iWritePos += (188-pos);
 	//LogDebug(" pes %x copy:%x len:%x maxlen:%x start:%d", m_iStreamId,m_iWritePos,(188-pos),m_iMaxLength,m_bStart);
+  //LogDebug( "m_iPesLenght %d  m_iWritePos %d  diff is %d", m_iPesLenght, m_iWritePos, m_iPesLenght - m_iWritePos );
+
+  if ( ( m_iPesLenght - m_iWritePos ) < 9  )
+	  {
+	    if (m_iWritePos>0)
+		  {
+			  if (m_pCallback!=NULL)
+			  {
+				  //LogDebug(" pes %x start:%x", m_iStreamId,m_iWritePos);
+				  int written=m_pCallback->OnNewPesPacket(m_iStreamId,m_pesHeader, m_iPesHeaderLen,  m_pesBuffer, m_iWritePos, m_bStart);
+          if (written>=0)
+          {
+				    //LogDebug(" pes %x written:%x", m_iStreamId,written);
+            m_bStart=false;
+				    m_iWritePos=0;
+          }
+			  }
+		  }
+    }
+
 	if (m_iWritePos  >= m_iMaxLength)
 	{
     int written=0;
