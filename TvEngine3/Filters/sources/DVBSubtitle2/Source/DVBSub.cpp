@@ -191,13 +191,6 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
       pGraph->Release();
     }
   }
-  
-	/*LONGLONG pos( 0 );
-  m_pIMediaSeeking->GetCurrentPosition( &pos );
-  pos = ( ( pos / 1000 ) * 9 ); // PTS = 90Khz, REFERENCE_TIME one tick 100ns
-  m_CurrentSeekPosition = pos;
-
-  LogDebugMediaPosition( "Run - media seeking position" );*/
 
   LogDebug( "CDVBSub::Run - done" );
 	return hr; 
@@ -342,22 +335,36 @@ void CDVBSub::NotifySubtitle()
   {
     // PTS to milliseconds ( 90khz )
     LONGLONG pts( 0 ); 
-    LONGLONG subtitlePTS( pSubtitle->PTS() );
    
-    pts = ( subtitlePTS - m_basePCR - m_CurrentSeekPosition ) / 90;
+    pts = ( pSubtitle->PTS() - m_basePCR - m_CurrentSeekPosition ) / 90;
 
-    LogDebugPTS( "subtitlePTS           ", subtitlePTS ); 
+    LogDebugPTS( "subtitlePTS           ", pSubtitle->PTS() ); 
     LogDebugPTS( "m_basePCR             ", m_basePCR ); 
+    LogDebugPTS( "timestamp             ", pts * 90 ); 
     LogDebugPTS( "m_CurrentSeekPosition ", m_CurrentSeekPosition ); 
-    LogDebugPTS( "timestamp ms          ", pts * 90 ); 
 
     pSubtitle->SetTimestamp( pts );  
 
+    LONGLONG pos( 0 );
+    if( m_pIMediaSeeking )
+    {
+      m_pIMediaSeeking->GetCurrentPosition( &pos );
+      if( pos > 0 )
+      {
+	      pos = ( ( pos / 10000 ) );
+      }
+    } 
+
     if( pts <= 0 )
     {
-      LogDebug( "Discarding subtitle, too old timestamp!" );
-      this->DiscardOldestSubtitle();
+      LogDebug( "Discarding subtitle, invalid timestamp!" );
+      DiscardOldestSubtitle();
       return;
+    }
+
+    if( pts <= pos )
+    {
+      LogDebug( "Too old timestamp! - diff was %lld ms", pos - pts );
     }
   }
   if( m_pSubtitleObserver )

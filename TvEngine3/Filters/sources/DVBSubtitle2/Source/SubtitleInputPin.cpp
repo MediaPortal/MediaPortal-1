@@ -108,7 +108,7 @@ HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
 //
 STDMETHODIMP CSubtitleInputPin::ReceiveCanBlock()
 {
-  return S_OK;
+  return S_FALSE; //S_OK;
 }
 
 
@@ -152,6 +152,7 @@ STDMETHODIMP CSubtitleInputPin::Receive( IMediaSample *pSample )
 //
 void CSubtitleInputPin::OnTsPacket( byte* tsPacket )
 {
+//  LogDebug(" new TS packet received");
   m_pesDecoder->OnTsPacket( tsPacket );
 }
 
@@ -162,6 +163,8 @@ void CSubtitleInputPin::OnTsPacket( byte* tsPacket )
 int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen,
                                        byte* data, int len, bool isStart )
 {
+  //LogDebug( "CSubtitleInputPin::OnNewPesPacket" ); 
+  
   byte* pesData = NULL;
   pesData = (unsigned char*)malloc( headerlen + len );
 
