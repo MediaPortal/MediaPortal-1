@@ -402,9 +402,11 @@ namespace TvService
 
       if (type == ScheduleRecordingType.EveryTimeOnEveryChannel)
       {
+        TvDatabase.Program current;
+        Schedule dbSchedule;
         foreach (Channel channel in _channels)
         {
-          TvDatabase.Program current = channel.GetProgramAt(DateTime.Now.AddMinutes(schedule.PreRecordInterval));
+          current = channel.GetProgramAt(DateTime.Now.AddMinutes(schedule.PreRecordInterval));
           //TvDatabase.Program next = channel.GetProgramAt(current.EndTime.AddMinutes(1));
           if (current != null)
           {
@@ -414,7 +416,7 @@ namespace TvService
               {
                 if (!schedule.IsSerieIsCanceled(current.StartTime))
                 {
-                Schedule dbSchedule = Schedule.RetrieveOnce(channel.IdChannel,current.Title, current.StartTime, current.EndTime);
+                dbSchedule = Schedule.RetrieveOnce(channel.IdChannel,current.Title, current.StartTime, current.EndTime);
                 if (dbSchedule == null) // not created yet
                 {
                     Schedule newSchedule = new Schedule(schedule);
@@ -432,6 +434,9 @@ namespace TvService
             }
           }
         }
+        GC.Collect();
+        GC.Collect();
+        GC.Collect();
       }
       return false;      
     }
