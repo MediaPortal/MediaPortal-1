@@ -881,6 +881,8 @@
     <String id="1056">(indisponible)</String>
     <String id="1061">Amovible</String>
     <String id="1062">Objet</String>
+    <String id="1064">Favoris</String>
+    <String id="1065">Aller à</String>
     <String id="1100">Importer le CD</String>
     <String id="1101">Importer la chanson choisie</String>
     <String id="1102">Annuler l'importation du CD</String>
