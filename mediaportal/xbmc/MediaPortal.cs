@@ -180,6 +180,8 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Error("No write permissions to set registry keys for SVN installer");
       }
 
+      bool autoHideTaskbar = true; ;
+
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string MPThreadPriority = xmlreader.GetValueAsString("MP", "ThreadPriority", "Normal");
@@ -198,6 +200,8 @@ public class MediaPortalApp : D3DApp, IRender
           Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
           Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
         }
+        
+        autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
       }
 
       if (args.Length > 0)
@@ -416,8 +420,14 @@ public class MediaPortalApp : D3DApp, IRender
         
         Settings.SaveCache();
         Log.Info("Main: MediaPortal done");
-        Win32API.EnableStartBar(true);
-        Win32API.ShowStartBar(true);
+
+        if (autoHideTaskbar)
+        {
+          // only re-show the startbar if MP is the one that has hidden it.
+          Win32API.EnableStartBar(true);
+          Win32API.ShowStartBar(true);
+        }
+        
         if (useRestartOptions)
         {
           Log.Info("Main: Exiting Windows - {0}", restartOptions);
@@ -448,7 +458,7 @@ public class MediaPortalApp : D3DApp, IRender
         MessageBox.Show("Error opening file " + Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\MediaPortalDirs.xml using notepad.exe", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
     }
-  }
+  }  
 
   private static void ActivatePreviousInstance()
   {
@@ -1827,9 +1837,13 @@ public class MediaPortalApp : D3DApp, IRender
 
             WindowState = FormWindowState.Minimized;
             Hide();
-
-            Win32API.EnableStartBar(true);
-            Win32API.ShowStartBar(true);
+            
+            if (base.autoHideTaskbar)
+            {
+              // only re-show the startbar if MP is the one that has hidden it.
+              Win32API.EnableStartBar(true);
+              Win32API.ShowStartBar(true);
+            }
             if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
             {
               if (g_Player.Volume > 0)
