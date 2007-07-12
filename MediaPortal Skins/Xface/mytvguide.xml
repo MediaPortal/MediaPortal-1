@@ -4,18 +4,39 @@
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <control>
+     <control>
       <description>BG</description>
       <type>image</type>
-      <id>0</id>
+      <id>1</id>
       <width>1366</width>
       <height>768</height>
+      <texture>background4.png</texture>
+    </control>
+      <control>
+	  <type>image</type>
+	  <posX>0</posX>
+	  <posY>700</posY>
+	  <height>89</height>
+      <width>1366</width>
+      <texture>Barback.png</texture>
+	  <colorDiffuse>effffffff</colorDiffuse>
+    </control>
+    <control>
+	<type>image</type>
+	<posX>0</posX>
+	<posY>-20</posY>
+	<height>89</height>
+    <width>1366</width>
+    <texture>Barback.png</texture>
+	<colorDiffuse>effffffff</colorDiffuse>
     </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>113</posX>
-      <posY>26</posY>
+       <posX>89</posX>
+      <posY>4</posY>
+       <width>220</width>
+       <height>55</height>
       <texture>television_logo.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -28,51 +49,25 @@
       <texture>-</texture>
     </control>
     <control>
-      <description>Date</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>1254</posX>
-      <posY>66</posY>
-      <label>#date</label>
-      <align>right</align>
-      <font>font13</font>
-      <textcolor>ffa9d0f7</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <description>Time</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>1254</posX>
-      <posY>93</posY>
-      <label>#time</label>
-      <align>right</align>
-      <font>font13</font>
-      <textcolor>ffa9d0f7</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
       <description>Guide Text Label</description>
       <type>label</type>
       <id>11</id>
-      <posX>474</posX>
-      <posY>93</posY>
+      <posX>374</posX>
+      <posY>39</posY>
       <!-- <label>4</label> -->
       <label>#TV.Guide.Group</label>
-      <font>font16</font>
+       <font>font14</font>
       <align>right</align>
-      <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+      <textcolor>White</textcolor>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
     </control>
     <control>
       <description>TVGUIDE Panel</description>
       <type>image</type>
       <id>2</id>
       <posX>113</posX>
-      <posY>120</posY>
+      <posY>80</posY>
       <width>1140</width>
       <height>440</height>
       <colordiffuse>60ffffff</colordiffuse>
@@ -85,7 +80,7 @@
       <type>label</type>
       <id>32</id>
       <posX>436</posX>
-      <posY>120</posY>
+      <posY>80</posY>
       <font>font10</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
@@ -97,7 +92,7 @@
       <type>image</type>
       <id>33</id>
       <posX>350</posX>
-      <posY>117</posY>
+      <posY>77</posY>
       <width>46</width>
       <height>46</height>
       <keepaspectratio>yes</keepaspectratio>
@@ -113,9 +108,9 @@
       <type>image</type>
       <id>90</id>
       <posX>352</posX>
-      <posY>120</posY>
+      <posY>80</posY>
       <width>153</width>
-      <height>37</height>
+      <height>42</height>
       <texture>button_small_settings_nofocus.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -125,7 +120,7 @@
       <type>label</type>
       <id>40</id>
       <posX>352</posX>
-      <posY>120</posY>
+      <posY>80</posY>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -138,7 +133,7 @@
       <width>24</width>
       <height>24</height>
       <posX>119</posX>
-      <posY>122</posY>
+      <posY>82</posY>
       <showrange>no</showrange>
       <orientation>horizontal</orientation>
       <align>center</align>
@@ -158,7 +153,7 @@
       <width>24</width>
       <height>24</height>
       <posX>313</posX>
-      <posY>128</posY>
+      <posY>88</posY>
       <showrange>no</showrange>
       <orientation>vertical</orientation>
       <align>center</align>
@@ -176,7 +171,7 @@
       <type>image</type>
       <id>20</id>
       <posX>117</posX>
-      <posY>166</posY>
+      <posY>126</posY>
       <width>240</width>
       <height>35</height>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -199,7 +194,7 @@
       <id>18</id>
       <posX>66</posX>
       <posY>6</posY>
-      <width>86</width>
+      <width>46</width>
       <height>20</height>
       <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -284,7 +279,7 @@
       <type>image</type>
       <id>25</id>
       <posX>55</posX>
-      <posY>163</posY>
+      <posY>123</posY>
       <height>390</height>
       <colordiffuse>c0ffffff</colordiffuse>
       <texture>tvguide_slider.png</texture>
@@ -311,38 +306,37 @@
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control> -->
-    <control>
-      <description>TV background</description>
-      <type>image</type>
-      <id>98</id>
-      <posX>113</posX>
-      <posY>574</posY>
-      <width>235</width>
-      <height>175</height>
-      <colordiffuse>60ffffff</colordiffuse>
-      <texture>previewbackground.png</texture>
-    </control>
-    <animation effect="fade" time="250">WindowOpen</animation>
-    <animation effect="fade" time="500">WindowClose</animation>
-    <control>
-      <description>TV preview window</description>
-      <type>videowindow</type>
-      <id>99</id>
-      <posX>121</posX>
-      <posY>580</posY>
-      <width>221</width>
-      <height>161</height>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
+     <control>
+      <description>video rectangle</description>
+     <type>image</type>
+		<id>0</id>
+		<posX>48</posX>
+		<posY>515</posY>
+		<width>330</width>
+		<height>195</height>
+		  <texture flipY="true" diffuse="Thumb_Mask.png">playback_background.png</texture>
+		 <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>1</id>
+     <posX>100</posX>
+			<posY>543</posY>
+			<width>234</width>
+			<height>131</height>
+			<keepaspectratio>yes</keepaspectratio>
+			<centered>yes</centered>
+			 <action>18</action>
+			<textureFocus>tv_green_border.png</textureFocus>
     </control>
     <control>
       <description>Horizontal scrollbar</description>
       <type>hscrollbar</type>
       <id>28</id>
       <posX>115</posX>
-      <posY>550</posY>
+      <posY>510</posY>
       <width>1132</width>
       <height>24</height>
       <visible>yes</visible>
@@ -354,7 +348,7 @@
       <type>vscrollbar</type>
       <id>29</id>
       <posX>1261</posX>
-      <posY>166</posY>
+      <posY>126</posY>
       <width>26</width>
       <height>409</height>
       <visible>yes</visible>
@@ -372,5 +366,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
+   
   </controls>
 </window>

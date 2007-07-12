@@ -7,7 +7,7 @@
   <define>#header.image:videos_logo.png</define>
   <define>#header.hover:-</define>
   <controls>
-    <import>common.window.xml</import>
+    <import>common.window.video.xml</import>
     <import>common.time.xml</import>
     <control>
       <type>actiongroup</type>

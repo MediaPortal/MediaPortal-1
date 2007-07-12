@@ -49,7 +49,7 @@
       <posY>590</posY>
       <width>160</width>
       <height>162</height>
-      <texture>defaultAudio.png</texture>
+      <texture>defaultAudioBig.png</texture>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
@@ -78,8 +78,8 @@
       <type>image</type>
       <description>album art image</description>
       <id>112</id>
-      <posX>908</posX>
-      <posY>122</posY>
+      <posX>508</posX>
+      <posY>100</posY>
       <width>350</width>
       <height>350</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">-</texture>
@@ -91,11 +91,11 @@
       <description>track label</description>
       <id>0</id>
       <posX>262</posX>
-      <posY>582</posY>
+      <posY>592</posY>
       <width>600</width>
       <height>26</height>
       <label>#Play.Current.Title</label>
-      <font>font18</font>
+      <font>font16</font>
       <textcolor>black</textcolor>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
@@ -129,8 +129,8 @@
       <type>fadelabel</type>
       <description>year label</description>
       <id>0</id>
-      <posX>1258</posX>
-      <posY>86</posY>
+      <posX>852</posX>
+      <posY>446</posY>
       <width>150</width>
       <label>#Play.Current.Year</label>
       <font>font13</font>
@@ -141,8 +141,8 @@
       <type>label</type>
       <description>album label</description>
       <id>0</id>
-      <posX>908</posX>
-      <posY>86</posY>
+      <posX>511</posX>
+      <posY>446</posY>
       <width>230</width>
       <label>#Play.Current.Album</label>
       <font>font13</font>
@@ -153,26 +153,26 @@
     <control>
       <type>image</type>
       <id>117</id>
-      <posX>970</posX>
-      <posY>482</posY>
-      <width>220</width>
-      <texture>osd_progress_background.png</texture>
+      <posX>507</posX>
+      <posY>520</posY>
+      <width>350</width>
+      <texture flipY="true" diffuse="Thumb_Mask.png">osd_progress_background.png</texture>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>progress</type>
       <description>track progress</description>
       <id>118</id>
-      <posX>960</posX>
-      <posY>482</posY>
+      <posX>504</posX>
+      <posY>520</posY>
       <width>240</width>
     </control>
     <control>
       <type>label</type>
       <description>track progress label</description>
       <id>0</id>
-      <posX>908</posX>
-      <posY>482</posY>
+      <posX>865</posX>
+      <posY>524</posY>
       <label>#currentplaytime</label>
       <font>font14</font>
       <align>left</align>
@@ -183,8 +183,8 @@
       <type>label</type>
       <description>track duration label</description>
       <id>0</id>
-      <posX>1258</posX>
-      <posY>482</posY>
+      <posX>498</posX>
+      <posY>524</posY>
       <label>#duration</label>
       <font>font14</font>
       <align>right</align>
@@ -194,7 +194,7 @@
       <type>label</type>
       <description>up next label</description>
       <id>20</id>
-      <posX>1239</posX>
+      <posX>1237</posX>
       <posY>589</posY>
       <label>4541</label>
       <font>font14</font>
@@ -206,7 +206,7 @@
       <description>next track label</description>
       <id>121</id>
       <posX>1237</posX>
-      <posY>612</posY>
+      <posY>616</posY>
       <width>300</width>
       <font>font16</font>
       <label>#Play.Next.Title</label>
@@ -230,7 +230,7 @@
       <id>166</id>
       <onright>155</onright>
       <ondown>155</ondown>
-      <posX>102</posX>
+      <posX>30</posX>
       <posY>181</posY>
       <width>335</width>
       <height>180</height>
@@ -251,8 +251,8 @@
       <id>155</id>
       <onup>166</onup>
       <onleft>166</onleft>
-      <posX>102</posX>
-      <posY>384</posY>
+      <posX>872</posX>
+      <posY>181</posY>
       <width>435</width>
       <height>180</height>
       <textXOff>10</textXOff>
@@ -271,7 +271,7 @@
       <description>unknown rating1</description>
       <type>imagelist</type>
       <id>77</id>
-      <posX>475</posX>
+      <posX>383</posX>
       <posY>190</posY>
       <width>100</width>
       <height>32</height>
@@ -290,7 +290,7 @@
       <description>unknown rating2</description>
       <type>imagelist</type>
       <id>78</id>
-      <posX>475</posX>
+      <posX>383</posX>
       <posY>235</posY>
       <width>100</width>
       <height>32</height>
@@ -309,7 +309,7 @@
       <description>unknown rating3</description>
       <type>imagelist</type>
       <id>79</id>
-      <posX>475</posX>
+      <posX>383</posX>
       <posY>278</posY>
       <width>100</width>
       <height>32</height>
@@ -328,7 +328,7 @@
       <description>existent rating1</description>
       <type>imagelist</type>
       <id>80</id>
-      <posX>475</posX>
+      <posX>383</posX>
       <posY>190</posY>
       <width>100</width>
       <height>32</height>
@@ -347,7 +347,7 @@
       <description>existent rating2</description>
       <type>imagelist</type>
       <id>81</id>
-      <posX>475</posX>
+      <posX>383</posX>
       <posY>235</posY>
       <width>100</width>
       <height>32</height>
@@ -366,7 +366,7 @@
       <description>existent rating3</description>
       <type>imagelist</type>
       <id>82</id>
-      <posX>475</posX>
+      <posX>383</posX>
       <posY>278</posY>
       <width>100</width>
       <height>32</height>
@@ -385,7 +385,7 @@
       <description>known rating1</description>
       <type>imagelist</type>
       <id>83</id>
-      <posX>475</posX>
+      <posX>383</posX>
       <posY>190</posY>
       <width>100</width>
       <height>32</height>
@@ -404,7 +404,7 @@
       <description>known rating2</description>
       <type>imagelist</type>
       <id>84</id>
-      <posX>475</posX>
+      <posX>383</posX>
       <posY>235</posY>
       <width>100</width>
       <height>32</height>
@@ -423,7 +423,7 @@
       <description>known rating3</description>
       <type>imagelist</type>
       <id>85</id>
-      <posX>475</posX>
+      <posX>383</posX>
       <posY>278</posY>
       <width>100</width>
       <height>32</height>
@@ -442,7 +442,7 @@
       <description>famous rating1</description>
       <type>imagelist</type>
       <id>87</id>
-      <posX>475</posX>
+      <posX>383</posX>
       <posY>190</posY>
       <width>100</width>
       <height>32</height>
@@ -461,7 +461,7 @@
       <description>famous rating2</description>
       <type>imagelist</type>
       <id>88</id>
-      <posX>475</posX>
+      <posX>383</posX>
       <posY>235</posY>
       <width>100</width>
       <height>32</height>
@@ -480,7 +480,7 @@
       <description>famous rating3</description>
       <type>imagelist</type>
       <id>89</id>
-      <posX>475</posX>
+      <posX>383</posX>
       <posY>278</posY>
       <width>100</width>
       <height>32</height>
@@ -499,8 +499,8 @@
       <type>fadelabel</type>
       <description>best album tracks label</description>
       <id>29</id>
-      <posX>109</posX>
-      <posY>152</posY>
+      <posX>66</posX>
+      <posY>148</posY>
       <width>550</width>
       <label>33030</label>
       <!-- 			<textcolor>80ffffff</textcolor> -->
@@ -509,8 +509,8 @@
       <type>fadelabel</type>
       <description>best tag tracks label</description>
       <id>28</id>
-      <posX>109</posX>
-      <posY>354</posY>
+      <posX>906</posX>
+      <posY>148</posY>
       <width>550</width>
       <label>Top tracks for tag</label>
       <!-- 			<textcolor>80ffffff</textcolor> -->

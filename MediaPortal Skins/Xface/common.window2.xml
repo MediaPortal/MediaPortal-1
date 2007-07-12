@@ -7,7 +7,7 @@
       <id>1</id>
       <width>1366</width>
       <height>768</height>
-      <texture>background4.png</texture>
+      <texture>background3.png</texture>
     </control>
       <control>
 	  <type>image</type>
@@ -52,62 +52,6 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-    <control>
-      <description>Number of Files Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>762</posX>
-      <posY>640</posY>
-      <label>#itemcount</label>
-      <align>left</align>
-      <textcolor>ff969696</textcolor>
-      <animation effect="fade" time="200">WindowOpen</animation>
-      <animation effect="fade" time="200">WindowClose</animation>
-    </control>
-    <control>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <description>Selected item Label</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>762</posX>
-      <posY>580</posY>
-      <width>365</width>
-      <label>#selecteditem</label>
-      <font>font14</font>
-      <align>left</align>
-      <textcolor>Black</textcolor>
-    </control>
-     <control>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <description>Selected item Label</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>762</posX>
-      <posY>615</posY>
-      <width>365</width>
-      <label>#selecteditem2</label>
-      <font>font13</font>
-      <align>left</align>
-    <textcolor>white</textcolor>
-    </control>
-    <control>
-	<type>image</type>
-	<posX>637</posX>
-	<posY>585</posY>
-	<width>85</width>
-	<height>86</height>
-	 <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
-	</control>
-	 <control>
-	<type>image</type>
-	<posX>633</posX>
-	<posY>582</posY>
-	<width>92</width>
-	<height>93</height>
-	 <texture>Covertop.png</texture>
-	</control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>

@@ -119,17 +119,17 @@
 					<textureUpFocus>page_up_focus.png</textureUpFocus>
 					<textureDownFocus>page_down_focus.png</textureDownFocus>
 					<thumbWidth>179</thumbWidth>
-					<thumbHeight>149</thumbHeight>
-					<thumbPosX>15</thumbPosX>
+					<thumbHeight>134</thumbHeight>
+					<thumbPosX>16</thumbPosX>
 					<thumbPosY>12</thumbPosY>
 					<imageFolder>Coverback.png</imageFolder>
 					<imageFolderFocus>Framefocus.png</imageFolderFocus>
-					<frame>Frame.png</frame>
-					<frameFocus>Covertop.png</frameFocus>
-					<itemWidth>203</itemWidth>
+					<frame>Picture_cover.png</frame>
+					<frameFocus>Picture_cover.png</frameFocus>
+					<itemWidth>246</itemWidth>
 					<itemHeight>210</itemHeight>
-					<textureWidth>203</textureWidth>
-					<textureHeight>180</textureHeight>
+					<textureWidth>237</textureWidth>
+					<textureHeight>189</textureHeight>
 					<font>font10</font>
 					<selectedColor>00ffffff</selectedColor>
 					<textcolor>00ffffff</textcolor>

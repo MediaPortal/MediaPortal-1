@@ -94,19 +94,19 @@
     </control>
     <control>
 	<type>image</type>
-	<posX>637</posX>
-	<posY>585</posY>
-	<width>85</width>
-	<height>86</height>
+	<posX>642</posX>
+	<posY>590</posY>
+	<width>93</width>
+	<height>68</height>
 	 <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
 	</control>
 	 <control>
 	<type>image</type>
 	<posX>633</posX>
 	<posY>582</posY>
-	<width>92</width>
-	<height>93</height>
-	 <texture>Covertop.png</texture>
+	<width>120</width>
+	<height>99</height>
+	 <texture>Picture_cover.png</texture>
 	</control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>

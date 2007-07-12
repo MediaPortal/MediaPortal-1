@@ -14,8 +14,10 @@
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>113</posX>
-      <posY>26</posY>
+       <posX>89</posX>
+      <posY>4</posY>
+       <width>220</width>
+       <height>55</height>
       <texture>select_logo.png</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -24,12 +26,12 @@
       <description>Select text label</description>
       <type>label</type>
       <id>4</id>
-      <posX>474</posX>
-      <posY>93</posY>
+     <posX>374</posX>
+      <posY>39</posY>
       <label>181</label>
       <font>font16</font>
-      <align>right</align>
-      <textcolor>ffffffff</textcolor>
+     <align>right</align>
+      <textcolor>White</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -73,8 +75,8 @@
       <description>IMDB</description>
       <type>button</type>
       <id>5</id>
-      <posX>113</posX>
-      <posY>129</posY>
+      <posX>69</posX>
+      <posY>89</posY>
       <label>368</label>
       <onleft>3</onleft>
       <onright>3</onright>

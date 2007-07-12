@@ -96,17 +96,17 @@
 	<type>image</type>
 	<posX>637</posX>
 	<posY>585</posY>
-	<width>85</width>
-	<height>86</height>
+	<width>68</width>
+	<height>102</height>
 	 <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
 	</control>
 	 <control>
 	<type>image</type>
 	<posX>633</posX>
 	<posY>582</posY>
-	<width>92</width>
-	<height>93</height>
-	 <texture>Covertop.png</texture>
+	<width>79</width>
+	<height>112</height>
+	 <texture>Cover_dvd_klein.png</texture>
 	</control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>

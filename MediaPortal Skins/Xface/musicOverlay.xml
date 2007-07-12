@@ -7,12 +7,12 @@
       <description>play time label</description>
       <type>label</type>
       <id>2</id>
-      <posX>197</posX>
-      <posY>707</posY>
+      <posX>257</posX>
+      <posY>710</posY>
       <label>#currentplaytime</label>
       <align>left</align>
-      <font>font12</font>
-      <textcolor>ffffffff</textcolor>
+      <font>font11</font>
+      <textcolor>00ffffff</textcolor>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>
@@ -21,10 +21,10 @@
 		<type>image</type>
 		<id>0</id>
 		<posX>48</posX>
-		<posY>515</posY>
+		<posY>540</posY>
 		<width>330</width>
-		<height>195</height>
-		  <texture flipY="true" diffuse="Thumb_Mask.png">playback_background.png</texture>
+		<height>225</height>
+		 <texture>playback_background.png</texture>
 		 <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
@@ -33,7 +33,7 @@
       <type>image</type>
       <id>1</id>
       <posX>160</posX>
-      <posY>548</posY>
+      <posY>588</posY>
       <width>160</width>
       <height>124</height>
       <keepaspectratio>yes</keepaspectratio>
@@ -133,15 +133,27 @@
 			<description>video preview window</description>
 			<type>videowindow</type>
 			<id>9</id>
-			<posX>100</posX>
-			<posY>543</posY>
-			<width>234</width>
+			<posX>96</posX>
+			<posY>568</posY>
+			<width>238</width>
 			<height>131</height>
 			<keepaspectratio>yes</keepaspectratio>
 			<centered>yes</centered>
 			 <action>18</action>
 			<textureFocus>tv_green_border.png</textureFocus>
 		</control>
-		
+    <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>126</posX>
+      <posY>701</posY>
+      <width>158</width>
+     <label>#percentage</label>
+      <visible>yes</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+
   </controls>
 </window>

@@ -146,7 +146,7 @@
       </control>
        </control>
     </control>
-    <import>common.facade.musicgenres.xml</import>
+    <import>common.facade.music2.xml</import>
 
   </controls>
 </window>
