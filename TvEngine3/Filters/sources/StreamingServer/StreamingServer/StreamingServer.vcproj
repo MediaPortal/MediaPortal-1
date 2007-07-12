@@ -66,6 +66,7 @@
 				AdditionalDependencies="strmbasd.lib winmm.lib WSock32.Lib"
 				LinkIncremental="2"
 				GenerateManifest="true"
+				IgnoreDefaultLibraryNames="libcmtd.lib"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
 				SubSystem="1"

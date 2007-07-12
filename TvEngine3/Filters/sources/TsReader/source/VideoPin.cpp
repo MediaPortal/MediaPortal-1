@@ -216,9 +216,31 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
     pSample->SetSyncPoint(FALSE);
 		return NOERROR;
 	}
-  CAutoLock lock(&m_bufferLock);
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-  CBuffer* buffer=demux.GetVideo();
+
+  CBuffer* buffer=NULL;
+  while (buffer==NULL)
+  {
+      {
+        CAutoLock lock(&m_bufferLock);
+        buffer=demux.GetVideo();
+      }
+      if (buffer!=NULL) break;
+      if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
+      {
+        LogDebug("vid:isseeking");
+	      Sleep(1);
+        pSample->SetTime(NULL,NULL); 
+        pSample->SetActualDataLength(0);
+        pSample->SetDiscontinuity(TRUE);
+        pSample->SetSyncPoint(FALSE);
+	      return NOERROR;
+      }
+      if (demux.EndOfFile()) 
+        return S_FALSE;
+      Sleep(10);
+  }
+
   if (m_bDiscontinuity)
   {
     LogDebug("vid:set discontinuity");
@@ -237,11 +259,11 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       pSample->SetSyncPoint(TRUE);
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
-      //LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
+     // LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
     }
     else
     {
-      //LogDebug("vid:gotbuffer:%d ",buffer->Length());
+     // LogDebug("vid:gotbuffer:%d ",buffer->Length());
       pSample->SetTime(NULL,NULL);  
       pSample->SetSyncPoint(FALSE);
     }
@@ -250,16 +272,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
     memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
     delete buffer;
     return NOERROR;
-  }
-  else
-  {
-    LogDebug("vid:no buffer");
-    pSample->SetDiscontinuity(TRUE);
-	  pSample->SetActualDataLength(0);
-    pSample->SetSyncPoint(FALSE);
-    pSample->SetTime(NULL,NULL);  
-    if (demux.EndOfFile()) 
-      return S_FALSE;
   }
 
   return NOERROR;

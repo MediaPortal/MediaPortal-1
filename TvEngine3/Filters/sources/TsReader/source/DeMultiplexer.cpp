@@ -114,14 +114,15 @@ void CDeMultiplexer::SetAudioStream(int stream)
 
   m_iAudioStream=stream;   
 
-  int oldAudioStreamType=0;
+  int oldAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
   if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
   {
     oldAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
   }
 
   HRESULT isPlaying=IsPlaying();
-  int newAudioStreamType=0;
+  bool didStop=false;
+  int newAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
   if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
   {
     newAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
@@ -133,9 +134,10 @@ void CDeMultiplexer::SetAudioStream(int stream)
       // change audio pin media type
       if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
       RenderFilterPin(m_filter.GetAudioPin());
+      didStop=true;
     }
   }
-  if (isPlaying)
+  if (isPlaying && didStop)
   {
     DoStart();
   }
@@ -518,6 +520,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
   }
   else //if (m_pCurrentAudioBuffer->Length()>0)
   {
+    //1111-1111-1-11-1-1100
     int pos=header.PayLoadStart;
     //packet contains rest of a pes packet
     //does the entire data in this tspacket fit in the current buffer ?
@@ -699,6 +702,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 {
 	CAutoLock lock (&m_section);
   CPidTable pids=info.PidTable;
+  if (pids.AudioPid1==0) return;
   if (  m_pids.AudioPid1==pids.AudioPid1 && m_pids.AudioServiceType1==pids.AudioServiceType1 &&
 				m_pids.AudioPid2==pids.AudioPid2 && m_pids.AudioServiceType2==pids.AudioServiceType2 &&
 				m_pids.AudioPid3==pids.AudioPid3 && m_pids.AudioServiceType3==pids.AudioServiceType3 &&
@@ -715,7 +719,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 	}
 
   int oldVideoServiceType=m_pids.videoServiceType ;
-  int oldAudioStreamType=0;
+  int oldAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
   if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
   {
     oldAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
@@ -835,6 +839,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   }
 
   HRESULT isPlaying=IsPlaying();
+  bool didStop=false;
   if (oldVideoServiceType != m_pids.videoServiceType )
   {
     if (m_filter.GetVideoPin()->IsConnected())
@@ -843,10 +848,11 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
       LogDebug("demux:video pin media changed");
       if (DoStop() ==S_OK){while(IsStopped() == S_FALSE){Sleep(100); break;}}
       RenderFilterPin(m_filter.GetVideoPin());
+      didStop=true;
     }
   }
   
-  int newAudioStreamType=0;
+  int newAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
   if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
   {
     newAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
@@ -860,9 +866,10 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
       LogDebug("demux:audio pin media changed");
       if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
       RenderFilterPin(m_filter.GetAudioPin());
+      didStop=true;
     }
   }
-  if (isPlaying==S_OK)
+  if (isPlaying==S_OK && didStop)
   {
     DoStart();
   }

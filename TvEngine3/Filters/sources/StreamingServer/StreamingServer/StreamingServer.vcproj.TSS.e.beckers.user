@@ -9,7 +9,7 @@
 			Name="Debug|Win32"
 			>
 			<DebugSettings
-				Command="C:\erwin\tvServer\Filters\sources\StreamingServer\debug\StreamingServer.exe"
+				Command="C:\erwin\TvEngine3\Filters\sources\StreamingServer\debug\StreamingServer.exe"
 				WorkingDirectory=""
 				CommandArguments=""
 				Attach="false"
