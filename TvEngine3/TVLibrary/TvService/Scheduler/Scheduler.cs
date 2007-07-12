@@ -383,16 +383,16 @@ namespace TvService
             {
               if (!schedule.IsSerieIsCanceled(current.StartTime))
               {
-                Schedule dbSchedule = Schedule.RetrieveOnce(current.IdChannel,current.Title, current.StartTime, current.EndTime);
+                Schedule dbSchedule = Schedule.RetrieveOnce(current.IdChannel, current.Title, current.StartTime, current.EndTime);
                 if (dbSchedule == null) // not created yet
                 {
-                    Schedule newSchedule = new Schedule(schedule);
-                    newSchedule.StartTime = current.StartTime;
-                    newSchedule.EndTime = current.EndTime;
-                    newSchedule.ScheduleType = 0; // type Once
-                    newSchedule.Persist();
-                    newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.StartTime, current.EndTime, true);
-                    return true;
+                  Schedule newSchedule = new Schedule(schedule);
+                  newSchedule.StartTime = current.StartTime;
+                  newSchedule.EndTime = current.EndTime;
+                  newSchedule.ScheduleType = 0; // type Once
+                  newSchedule.Persist();
+                  newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.StartTime, current.EndTime, true);
+                  return true;
                 }
               }
             }
@@ -402,43 +402,28 @@ namespace TvService
 
       if (type == ScheduleRecordingType.EveryTimeOnEveryChannel)
       {
-        TvDatabase.Program current;
         Schedule dbSchedule;
-        foreach (Channel channel in _channels)
+        IList programs = TvDatabase.Program.RetrieveCurrentRunningByTitle(schedule.ProgramName, schedule.PreRecordInterval, schedule.PostRecordInterval);
+        foreach (TvDatabase.Program program in programs)
         {
-          current = channel.GetProgramAt(DateTime.Now.AddMinutes(schedule.PreRecordInterval));
-          //TvDatabase.Program next = channel.GetProgramAt(current.EndTime.AddMinutes(1));
-          if (current != null)
+          if (!schedule.IsSerieIsCanceled(program.StartTime))
           {
-            if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) && currentTime <= current.EndTime.AddMinutes(schedule.PostRecordInterval))
+            dbSchedule = Schedule.RetrieveOnce(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+            if (dbSchedule == null) // not created yet
             {
-              if (String.Compare(current.Title, schedule.ProgramName, true) == 0)
-              {
-                if (!schedule.IsSerieIsCanceled(current.StartTime))
-                {
-                dbSchedule = Schedule.RetrieveOnce(channel.IdChannel,current.Title, current.StartTime, current.EndTime);
-                if (dbSchedule == null) // not created yet
-                {
-                    Schedule newSchedule = new Schedule(schedule);
-                    newSchedule.IdChannel = channel.IdChannel;
-                    newSchedule.StartTime = current.StartTime;
-                    newSchedule.EndTime = current.EndTime;
-                    newSchedule.ScheduleType = 0; // type Once
-                    newSchedule.Persist();
-                    newRecording = new RecordingDetail(newSchedule, current.ReferencedChannel(), current.StartTime, current.EndTime, true);
-                    return true;
-                  }
-
-                }
-              }
+              Schedule newSchedule = new Schedule(schedule);
+              newSchedule.IdChannel = program.IdChannel;
+              newSchedule.StartTime = program.StartTime;
+              newSchedule.EndTime = program.EndTime;
+              newSchedule.ScheduleType = 0; // type Once
+              newSchedule.Persist();
+              newRecording = new RecordingDetail(newSchedule, program.ReferencedChannel(), program.StartTime, program.EndTime, true);
+              return true;
             }
           }
         }
-        GC.Collect();
-        GC.Collect();
-        GC.Collect();
       }
-      return false;      
+      return false;
     }
 
     /// <summary>
