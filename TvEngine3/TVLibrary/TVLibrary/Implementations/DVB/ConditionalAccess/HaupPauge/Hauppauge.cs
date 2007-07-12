@@ -90,7 +90,6 @@ namespace TvLibrary.Implementations.DVB
     #region variables
     Guid BdaTunerExtentionProperties = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0, 0xc9, 0xf2, 0x1f, 0xc7);
     bool _isHauppauge = false;
-    bool _isHauppaugeDVBS2 = false;
     IntPtr _ptrDiseqc = IntPtr.Zero;
     IntPtr _tempPtr = Marshal.AllocCoTaskMem(1024);
     IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
@@ -116,16 +115,6 @@ namespace TvLibrary.Implementations.DVB
           {
             _isHauppauge = true;
             _ptrDiseqc = Marshal.AllocCoTaskMem(1024);
-            _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, out supported);
-            if ((supported & KSPropertySupport.Set) != 0)
-            {
-              _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, out supported);
-              if ((supported & KSPropertySupport.Set) != 0)
-              {
-                Log.Log.Info("Hauppauge: card supports dvb-s2");
-                _isHauppaugeDVBS2 = true;
-              }
-            }
           }
         }
       }
@@ -144,19 +133,7 @@ namespace TvLibrary.Implementations.DVB
         return _isHauppauge;
       }
     }
-    /// <summary>
-    /// Gets a value indicating whether this instance is hauppauge dvb-s2 tuning capable.
-    /// </summary>
-    /// <value>
-    /// 	<c>true</c> if this instance is hauppaugeDVBS2; otherwise, <c>false</c>.
-    /// </value>
-    public bool IsHauppaugeDVBS2
-    {
-      get
-      {
-        return _isHauppaugeDVBS2;
-      }
-    }
+
     /// <summary>
     /// Sends the diseq command.
     /// </summary>
@@ -200,7 +177,6 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message
 
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
-      Log.Log.Info("Hauppauge: _ptrDiseqc = {0}", _ptrDiseqc);
       Log.Log.Info("Hauppauge: setdiseqc returned:{0:X}", hr);
     }
 
@@ -225,7 +201,6 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message
 
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
-      Log.Log.Info("Hauppauge: _ptrDiseqc = {0}", _ptrDiseqc);
       Log.Log.Info("hauppauge: setdiseqc returned:{0:X}", hr);
       return (hr == 0);
     }
@@ -248,32 +223,28 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void SetDVBS2PilotRolloff()
     {
-      //if (_isHauppaugeDVBS2 == false) return;
-
       //Set the Pilot
       int hr;
       KSPropertySupport supported;
       _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        Log.Log.Info("Hauppauge: Set BDA Pilot");
+        Log.Log.Info("Hauppauge: Set Pilot");
         Marshal.WriteInt32(_tempValue, (Int32)Pilot.HCW_PILOT_OFF);
         hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempPtr, 1024, _tempValue, 4);
-        Log.Log.Info("Hauppauge: Set BDA Pilot returned:{0:X}", hr);
+        Log.Log.Info("Hauppauge: Set Pilot returned:{0:X}", hr);
       }
-
 
       //get Pilot
       int length;
       if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {
-        Log.Log.Info("Hauppauge: Get BDA Pilot");
+        Log.Log.Info("Hauppauge: Get Pilot");
         Marshal.WriteInt32(_tempValue, (Int32)0);
         hr = _propertySet.Get(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempPtr, 1024, _tempValue, 4, out length);
-        Log.Log.Info("Hauppauge: Get BDA Pilot returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
+        Log.Log.Info("Hauppauge: Get Pilot returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
       }
-
-
+      
       //Set the Roll-off
       _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
@@ -283,7 +254,6 @@ namespace TvLibrary.Implementations.DVB
         hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempPtr, 1024, _tempValue, 4);
         Log.Log.Info("Hauppauge: Set BDA Roll-Off returned:{0:X}", hr);
       }
-
 
       //get roll-off
       if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)

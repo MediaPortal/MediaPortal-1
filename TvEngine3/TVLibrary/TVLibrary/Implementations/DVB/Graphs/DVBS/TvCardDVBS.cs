@@ -226,13 +226,6 @@ namespace TvLibrary.Implementations.DVB
       {
         BuildGraph();
       }
-      //DVB-S2 specific modulation class call here if DVB-S2 card detected
-      if (_conditionalAccess != null)
-      {
-        Log.Log.WriteFile("Set DVB-S2 modulation...");
-        _conditionalAccess.SetDVBS2Modulation(_parameters, dvbsChannel);
-      }
-
       //_pmtPid = -1;
       ILocator locator;
 
@@ -253,17 +246,22 @@ namespace TvLibrary.Implementations.DVB
 
       _tuningSpace.get_DefaultLocator(out locator);
       IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
-
-      int hr = dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
-      Log.Log.WriteFile("Channel modulation is set to {0}", dvbsChannel.ModulationType);
-      Log.Log.Info("Put Modulation returned:{0:X}", hr);
-
-      hr = _tuneRequest.put_ONID(dvbsChannel.NetworkId);
+      int hr = _tuneRequest.put_ONID(dvbsChannel.NetworkId);
       hr = _tuneRequest.put_SID(dvbsChannel.ServiceId);
       hr = _tuneRequest.put_TSID(dvbsChannel.TransportId);
       hr = locator.put_CarrierFrequency((int)dvbsChannel.Frequency);
       hr = dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
       hr = dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
+
+      //DVB-S2 specific modulation class call here if DVB-S2 card detected
+      if (_conditionalAccess != null)
+      {
+        Log.Log.WriteFile("Set DVB-S2 modulation...");
+        _conditionalAccess.SetDVBS2Modulation(_parameters, dvbsChannel);
+      }
+      hr = dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
+      Log.Log.WriteFile("Channel modulation is set to {0}", dvbsChannel.ModulationType);
+      Log.Log.Info("Put Modulation returned:{0:X}", hr);
 
       hr = dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
       Log.Log.WriteFile("Channel FECRate is set to {0}", dvbsChannel.InnerFecRate);

@@ -187,14 +187,16 @@ namespace DirectShowLib.BDA
         ModQpsk,
         ModBpsk,
         ModOqpsk, //Twinhan uses ModOqpsk for Mod32Apsk when DVB-S2 tuning
-        Mod8Vsb, //Twinhan & TechnoTrend uses Mod8Vsb for Mod8psk & Modqpsk when DVB-S2 tuning
+        Mod8Vsb, //Twinhan & TechnoTrend uses Mod8Vsb for Mod8psk & ModQpsk when DVB-S2 tuning
         Mod16Vsb, //Twinhan uses Mod16Vsb for Mod16Apsk when DVB-S2 tuning
         ModAnalogAmplitude, // std am
         ModAnalogFrequency, // std fm
+        Mod8psk, //enum location for Hauppauge DVB-S2 (Not in the BDA Network Provider)
+        ModRf, // analog TV (Video standards such as NTSC/PAL/SECAM specified in IAnalogLocator VideoStandard property)
         Mod16Apsk, //enum location for Hauppauge DVB-S2 (Not in the BDA Network Provider)
         Mod32Apsk, //enum location for Hauppauge DVB-S2 (Not in the BDA Network Provider)
         ModQpsk2, //enum location for Hauppauge DVB-S2 Not in the BDA Network Provider)
-        Mod8psk, //enum location for Hauppauge DVB-S2 (Not in the BDA Network Provider)
+        Mod8psk2, //enum location for Hauppauge DVB-S2 Not in the BDA Network Provider)
         ModDirectTV,  //For Hauppauge DIRECTV DSS (Not in the BDA Network Provider)
         ModMax
     } 

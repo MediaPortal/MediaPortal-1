@@ -408,16 +408,11 @@ namespace TvLibrary.Implementations.DVB
         if (_hauppauge != null)
         {
           //Set Hauppauge pilot, roll-off settings - need to query if supported first.
-          if (_hauppauge.IsHauppaugeDVBS2)
-          {
-            _hauppauge.SetDVBS2PilotRolloff();
-          }
+          _hauppauge.SetDVBS2PilotRolloff();
           //Set the Modulation
-          if (channel.ModulationType == ModulationType.ModQpsk)
-          {
-            channel.ModulationType = ModulationType.ModQpsk2;
-            Log.Log.WriteFile("Hauppauge DVB-S2 modulation set");
-          }
+          if (channel.ModulationType == ModulationType.ModQpsk) channel.ModulationType = ModulationType.ModQpsk2;
+          //if (channel.ModulationType == ModulationType.Mod8psk) channel.ModulationType = ModulationType.Mod8psk2;
+          Log.Log.WriteFile("Hauppauge DVB-S2 modulation set");
         }
         if (_technoTrend != null)
         {
