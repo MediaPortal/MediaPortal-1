@@ -413,8 +413,11 @@ namespace TvLibrary.Implementations.DVB
             _hauppauge.SetDVBS2PilotRolloff();
           }
           //Set the Modulation
-          if (channel.ModulationType == ModulationType.ModQpsk) channel.ModulationType = ModulationType.ModQpsk2;
-          Log.Log.WriteFile("Hauppauge DVB-S2 modulation set");
+          if (channel.ModulationType == ModulationType.ModQpsk)
+          {
+            channel.ModulationType = ModulationType.ModQpsk2;
+            Log.Log.WriteFile("Hauppauge DVB-S2 modulation set");
+          }
         }
         if (_technoTrend != null)
         {
