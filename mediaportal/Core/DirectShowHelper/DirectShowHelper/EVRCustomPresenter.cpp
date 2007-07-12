@@ -139,34 +139,54 @@ unsigned __stdcall SchedulerThread(void *ArgList) {
 EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor)
 : m_refCount(1)
 {
-	Log("----------v0.37---------------------------");
-	m_hMonitor=monitor;
-	m_pD3DDev=direct3dDevice;
-	HRESULT hr = DXVA2CreateDirect3DDeviceManager9(
-		&m_iResetToken, &m_pDeviceManager);
-	if ( FAILED(hr) ) {
-		Log( "Could not create DXVA2 Device Manager" );
-	} else {
-		m_pDeviceManager->ResetDevice(direct3dDevice, m_iResetToken);
-	}
-	m_pCallback=pCallback;
-	m_surfaceCount=0;
-	//m_UseOffScreenSurface=false;
-	m_fRate = 1.0f;
-	//TODO: use ZeroMemory
-	for ( int i=0; i<NUM_SURFACES; i++ ) {
-		chains[i] = NULL;
-		surfaces[i] = NULL;
-		samples[i] = NULL;
-	}
+  char systemFolder[MAX_PATH];
+  char mfDLLFileName[MAX_PATH];
+  GetSystemDirectory(systemFolder,sizeof(systemFolder));
+  sprintf(mfDLLFileName,"%s\\mf.dll", systemFolder);
+  m_hModuleMF=LoadLibrary(mfDLLFileName);
+  if (m_hModuleMF!=NULL)
+  {
+    m_pMFGetService=(TMFGetService*)GetProcAddress(m_hModuleMF,"MFGetService");
+    if (m_pMFGetService!=NULL)
+    {
+	    Log("----------v0.37---------------------------");
+	    m_hMonitor=monitor;
+	    m_pD3DDev=direct3dDevice;
+	    HRESULT hr = DXVA2CreateDirect3DDeviceManager9(
+		    &m_iResetToken, &m_pDeviceManager);
+	    if ( FAILED(hr) ) {
+		    Log( "Could not create DXVA2 Device Manager" );
+	    } else {
+		    m_pDeviceManager->ResetDevice(direct3dDevice, m_iResetToken);
+	    }
+	    m_pCallback=pCallback;
+	    m_surfaceCount=0;
+	    //m_UseOffScreenSurface=false;
+	    m_fRate = 1.0f;
+	    //TODO: use ZeroMemory
+	    for ( int i=0; i<NUM_SURFACES; i++ ) {
+		    chains[i] = NULL;
+		    surfaces[i] = NULL;
+		    samples[i] = NULL;
+	    }
+    }
+  }
 }
 
+bool EVRCustomPresenter::IsInstalled()
+{
+  return (m_hModuleMF!=NULL && m_pMFGetService!=NULL);
+}
 EVRCustomPresenter::~EVRCustomPresenter()
 {
 	if (m_pCallback!=NULL)
 		m_pCallback->PresentImage(0,0,0,0,0);
 	DeleteSurfaces();
 	StopScheduler();
+  if (m_hModuleMF!=NULL)
+  {
+    FreeLibrary(m_hModuleMF);
+  }
 }	
 
 HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetParameters( 
@@ -765,7 +785,7 @@ HRESULT EVRCustomPresenter::PresentSample(IMFSample* pSample)
     // Get the buffer from the sample.
 	CHECK_HR(hr = pSample->GetBufferByIndex(0, &pBuffer), "failed: GetBufferByIndex");
 
-    CHECK_HR(hr = MFGetService(
+    CHECK_HR(hr = m_pMFGetService(
         pBuffer, 
         MR_BUFFER_SERVICE, 
         __uuidof(IDirect3DSurface9), 

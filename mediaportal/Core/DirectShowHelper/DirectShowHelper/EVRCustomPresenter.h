@@ -40,7 +40,7 @@ public:
 	EVRCustomPresenter(IVMR9Callback* callback, IDirect3DDevice9* direct3dDevice,HMONITOR monitor);
     virtual ~EVRCustomPresenter();
     void UseOffScreenSurface(bool yesNo);
-
+  bool IsInstalled();
 	//IQualProp (stub)
     virtual HRESULT STDMETHODCALLTYPE get_FramesDroppedInRenderer(int *pcFrames);
     virtual HRESULT STDMETHODCALLTYPE get_FramesDrawn(int *pcFramesDrawn) ;     
@@ -169,4 +169,8 @@ protected:
 	double m_fps ;
 	BOOL		m_bfirstFrame;
 	BOOL		m_bfirstInput;
+  HMODULE m_hModuleMF;
+
+  typedef HRESULT __stdcall TMFGetService(IUnknown* punkObject,REFGUID guidService,REFIID riid,LPVOID* ppvObject);
+	TMFGetService* m_pMFGetService;
 };

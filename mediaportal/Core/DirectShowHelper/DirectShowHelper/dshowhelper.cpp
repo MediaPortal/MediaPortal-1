@@ -241,39 +241,46 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter
 	m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
 	m_pVMR9Filter=vmr9Filter;
 	CComQIPtr<IMFVideoRenderer> pRenderer = m_pVMR9Filter;
-	if (!pRenderer) {
+	if (!pRenderer) 
+  {
 		Log("Could not get IMFVideoRenderer");
 		return FALSE;
 	}
 	m_evrPresenter = new EVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor);
-	hr = pRenderer->InitializeRenderer(NULL, m_evrPresenter);
-	if (FAILED(hr) ) {
-		Log("InitializeRenderer failed: 0x%x", hr);
-		return FALSE;
-	}
-	CComQIPtr<IEVRFilterConfig> pConfig = m_pVMR9Filter;
-	if(!pConfig) {
-		Log("Could not get IEVRFilterConfig  interface" );
-		return FALSE;
-	}
-	CComQIPtr<IMFGetService> pService = m_pVMR9Filter;
-	if (!pService) {
-		Log("Could not get IMFGetService Interface");
-		return FALSE;
-	}
-	if(FAILED(hr = pConfig->SetNumberOfStreams(1)))
-	{
-		Log("EVR:Init() SetNumberOfStreams() failed 0x:%x",hr);
-		return FALSE;
-	}
+  if (m_evrPresenter->IsInstalled()==FALSE)
+  {
+    delete m_evrPresenter;
+    return FALSE;
+  }
 
-	/*IMFVideoDisplayControl *pControl;
-	CHECK_HR(pService->GetService(MR_VIDEO_RENDER_SERVICE, __uuidof(IMFVideoDisplayControl),
-		(void**)&pControl), "nonsense");
-	RECT pos = {0,0,800,600};
-	CHECK_HR(pControl->SetVideoWindow(wnd), "nixwindow");
-	CHECK_HR(pControl->SetVideoPosition(NULL, &pos), "Geht ned");
-	pControl->Release();*/
+  hr = pRenderer->InitializeRenderer(NULL, m_evrPresenter);
+  if (FAILED(hr) ) {
+	  Log("InitializeRenderer failed: 0x%x", hr);
+	  return FALSE;
+  }
+  CComQIPtr<IEVRFilterConfig> pConfig = m_pVMR9Filter;
+  if(!pConfig) {
+	  Log("Could not get IEVRFilterConfig  interface" );
+	  return FALSE;
+  }
+  CComQIPtr<IMFGetService> pService = m_pVMR9Filter;
+  if (!pService) {
+	  Log("Could not get IMFGetService Interface");
+	  return FALSE;
+  }
+  if(FAILED(hr = pConfig->SetNumberOfStreams(1)))
+  {
+	  Log("EVR:Init() SetNumberOfStreams() failed 0x:%x",hr);
+	  return FALSE;
+  }
+
+  /*IMFVideoDisplayControl *pControl;
+  CHECK_HR(pService->GetService(MR_VIDEO_RENDER_SERVICE, __uuidof(IMFVideoDisplayControl),
+	  (void**)&pControl), "nonsense");
+  RECT pos = {0,0,800,600};
+  CHECK_HR(pControl->SetVideoWindow(wnd), "nixwindow");
+  CHECK_HR(pControl->SetVideoPosition(NULL, &pos), "Geht ned");
+  pControl->Release();*/
 
 	return TRUE;
 }
