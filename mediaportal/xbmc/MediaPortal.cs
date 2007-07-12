@@ -1982,11 +1982,13 @@ public class MediaPortalApp : D3DApp, IRender
                   restartOptions = RestartOptions.PowerOff;
                   useRestartOptions = true;
                   GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+                  base._shuttingDown = true;
                   break;
                 case 1031:
                   restartOptions = RestartOptions.Reboot;
                   useRestartOptions = true;
                   GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+                  base._shuttingDown = true;
                   break;
                 case 1032:
                   restartOptions = RestartOptions.Suspend;
