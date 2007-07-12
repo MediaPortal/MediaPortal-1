@@ -674,7 +674,7 @@ namespace TvLibrary.Implementations.DVB
             if (info.IsMpeg1Audio)
               stream.StreamType = AudioStreamType.Mpeg1;
             else
-              stream.StreamType = AudioStreamType.Mpeg3;
+              stream.StreamType = AudioStreamType.Mpeg2;
             streams.Add(stream);
           }
         }
@@ -1074,8 +1074,8 @@ namespace TvLibrary.Implementations.DVB
                 _currentAudioStream.Language = pidInfo.language;
                 if (pidInfo.IsMpeg1Audio)
                   _currentAudioStream.StreamType = AudioStreamType.Mpeg1;
-                else if (pidInfo.IsMpeg3Audio)
-                  _currentAudioStream.StreamType = AudioStreamType.Mpeg3;
+                else if (pidInfo.IsMpeg2Audio)
+                  _currentAudioStream.StreamType = AudioStreamType.Mpeg2;
                 if (pidInfo.isAC3Audio)
                   _currentAudioStream.StreamType = AudioStreamType.AC3;
               }

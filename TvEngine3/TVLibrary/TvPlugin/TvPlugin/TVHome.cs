@@ -1234,7 +1234,6 @@ namespace TvPlugin
     static private int GetPreferedAudioStreamIndex(string langCodes, bool preferAC3)
     {
       int idx = -1;
-      int idxNonAC3 = -1;
       int idxLastAC3 = -1;
       IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
       for (int i = 0; i < streams.Length; i++)
@@ -1246,6 +1245,7 @@ namespace TvPlugin
           if (!preferAC3)
           {
             idx = i;
+            Log.Info("Audio stream: switching to preferred language audio stream {0}", idx);
             break;
           }
           else
@@ -1253,22 +1253,22 @@ namespace TvPlugin
             if ((streams[i].StreamType == AudioStreamType.AC3))
             {
               idx = i;
+              Log.Info("Audio stream: switching to preferred AC3 language audio stream {0}", idx);
               break;
             }
-            else
-              idxNonAC3 = i;
           }
         }
       }
-      Log.Info("Preferred audio stream: idx={0}, idxNonAC3={1}, idxLastAC3={2}", idx, idxNonAC3, idxLastAC3);
-      if ((idx == -1) && (idxNonAC3 != -1))
-        idx = idxNonAC3;
-      else
-        if (idxLastAC3 != -1)
-          idx = idxLastAC3;
+      if (idxLastAC3 != -1)
+      {
+        idx = idxLastAC3;
+        Log.Info("Audio stream: switching to preferred AC3 audio stream {0}", idx);
+      }
       if (idx == -1)
+      {
         idx = 0;
-      Log.Info("Preferred audio stream: switching to audio stream {0}", idx);
+        Log.Info("Audio stream: no preferred audio stream found using first stream");
+      }
       return idx;
     }
 
