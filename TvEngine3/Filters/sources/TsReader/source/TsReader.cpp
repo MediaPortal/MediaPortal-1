@@ -373,7 +373,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 	wcscpy(m_fileName,pszFileName);
   char url[MAX_PATH];
   WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
-  //strcpy(url,"rtsp://192.168.1.58/test1");
+  //strcpy(url,"rtsp://192.168.1.102/stream1.0");
   int length=strlen(url);	
   if ((length > 5) && (_strcmpi(&url[length-4], ".tsp") == 0))
   {

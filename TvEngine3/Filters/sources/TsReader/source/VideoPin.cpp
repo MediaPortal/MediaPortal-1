@@ -209,8 +209,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
   }
   if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
 	{
-    LogDebug("vid:isseeking");
-		Sleep(1);
+    LogDebug("vid:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
+		Sleep(20);
     pSample->SetTime(NULL,NULL); 
 	  pSample->SetActualDataLength(0);
     pSample->SetSyncPoint(FALSE);
@@ -228,8 +228,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       if (buffer!=NULL) break;
       if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
       {
-        LogDebug("vid:isseeking");
-	      Sleep(1);
+        LogDebug("vid:isseeking2");
+	      Sleep(20);
         pSample->SetTime(NULL,NULL); 
         pSample->SetActualDataLength(0);
         pSample->SetDiscontinuity(TRUE);
@@ -376,7 +376,7 @@ void CVideoPin::UpdateFromSeek()
 
 	if (m_rtStart>m_rtDuration)
 		m_rtStart=m_rtDuration;
-  if (GetTickCount()-m_seekTimer<100)
+  if (GetTickCount()-m_seekTimer<2000)
   {
     if (m_lastSeek.Millisecs()==m_rtStart.Millisecs()) 
     {

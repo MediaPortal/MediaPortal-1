@@ -223,7 +223,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
 	{
     LogDebug("aud:isseeking");
-		Sleep(1);
+		Sleep(20);
     pSample->SetTime(NULL,NULL); 
 	  pSample->SetActualDataLength(0);
     pSample->SetDiscontinuity(TRUE);
@@ -243,8 +243,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
     if (buffer!=NULL) break;
     if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
     {
-      LogDebug("aud:isseeking");
-      Sleep(1);
+      LogDebug("aud:isseeking2");
+      Sleep(20);
       pSample->SetTime(NULL,NULL); 
       pSample->SetActualDataLength(0);
       pSample->SetDiscontinuity(TRUE);
@@ -338,7 +338,7 @@ void CAudioPin::UpdateFromSeek()
 	if (m_rtStart>m_rtDuration)
 		m_rtStart=m_rtDuration;
 
-  if (GetTickCount()-m_seekTimer<100)
+  if (GetTickCount()-m_seekTimer<2000)
   {
     if (m_lastSeek.Millisecs()==m_rtStart.Millisecs()) 
     {
