@@ -428,6 +428,11 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_SHOW_GUI:
           {
             // switch back to the menu
+            if ((g_Player.IsDVD) && (g_Player.IsDVDMenu))
+            {
+              Log.Info("GUIVideoFullScreen: Leaving the DVD screen is not permitted while in menu mode.");
+              return;
+            }
             _isOsdVisible = false;
             GUIWindowManager.IsOsdVisible = false;
             GUIGraphicsContext.IsFullScreenVideo = false;
