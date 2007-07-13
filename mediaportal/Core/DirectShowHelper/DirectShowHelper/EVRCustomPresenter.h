@@ -170,7 +170,15 @@ protected:
 	BOOL		m_bfirstFrame;
 	BOOL		m_bfirstInput;
   HMODULE m_hModuleMF;
+  HMODULE m_hModuleDXVA2;
+  HMODULE m_hModuleEVR;
 
   typedef HRESULT __stdcall TMFGetService(IUnknown* punkObject,REFGUID guidService,REFIID riid,LPVOID* ppvObject);
 	TMFGetService* m_pMFGetService;
+
+  typedef HRESULT __stdcall TDXVA2CreateDirect3DDeviceManager9(__out UINT* pResetToken,__deref_out IDirect3DDeviceManager9** ppDeviceManager);
+	TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9;
+
+  typedef HRESULT __stdcall TMFCreateVideoSampleFromSurface(__in_opt IUnknown* pUnkSurface,__deref_out_opt IMFSample** ppSample);
+  TMFCreateVideoSampleFromSurface* m_pMFCreateVideoSampleFromSurface;
 };

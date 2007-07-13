@@ -149,26 +149,44 @@ EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevic
     m_pMFGetService=(TMFGetService*)GetProcAddress(m_hModuleMF,"MFGetService");
     if (m_pMFGetService!=NULL)
     {
-	    Log("----------v0.37---------------------------");
-	    m_hMonitor=monitor;
-	    m_pD3DDev=direct3dDevice;
-	    HRESULT hr = DXVA2CreateDirect3DDeviceManager9(
-		    &m_iResetToken, &m_pDeviceManager);
-	    if ( FAILED(hr) ) {
-		    Log( "Could not create DXVA2 Device Manager" );
-	    } else {
-		    m_pDeviceManager->ResetDevice(direct3dDevice, m_iResetToken);
-	    }
-	    m_pCallback=pCallback;
-	    m_surfaceCount=0;
-	    //m_UseOffScreenSurface=false;
-	    m_fRate = 1.0f;
-	    //TODO: use ZeroMemory
-	    for ( int i=0; i<NUM_SURFACES; i++ ) {
-		    chains[i] = NULL;
-		    surfaces[i] = NULL;
-		    samples[i] = NULL;
-	    }
+      sprintf(mfDLLFileName,"%s\\dxva2.dll", systemFolder);
+      m_hModuleDXVA2=LoadLibrary(mfDLLFileName);
+      if (m_hModuleDXVA2!=NULL)
+      {
+        m_pDXVA2CreateDirect3DDeviceManager9=(TDXVA2CreateDirect3DDeviceManager9*)GetProcAddress(m_hModuleDXVA2,"DXVA2CreateDirect3DDeviceManager9");
+        if (m_pDXVA2CreateDirect3DDeviceManager9!=NULL)
+        {
+          sprintf(mfDLLFileName,"%s\\evr.dll", systemFolder);
+          m_hModuleEVR=LoadLibrary(mfDLLFileName);
+          if (m_hModuleEVR!=NULL)
+          {
+            m_pMFCreateVideoSampleFromSurface=(TMFCreateVideoSampleFromSurface*)GetProcAddress(m_hModuleEVR,"MFCreateVideoSampleFromSurface");
+            if (m_pMFCreateVideoSampleFromSurface!=NULL)
+            {
+	            Log("----------v0.37---------------------------");
+	            m_hMonitor=monitor;
+	            m_pD3DDev=direct3dDevice;
+	            HRESULT hr = m_pDXVA2CreateDirect3DDeviceManager9(
+		            &m_iResetToken, &m_pDeviceManager);
+	            if ( FAILED(hr) ) {
+		            Log( "Could not create DXVA2 Device Manager" );
+	            } else {
+		            m_pDeviceManager->ResetDevice(direct3dDevice, m_iResetToken);
+	            }
+	            m_pCallback=pCallback;
+	            m_surfaceCount=0;
+	            //m_UseOffScreenSurface=false;
+	            m_fRate = 1.0f;
+	            //TODO: use ZeroMemory
+	            for ( int i=0; i<NUM_SURFACES; i++ ) {
+		            chains[i] = NULL;
+		            surfaces[i] = NULL;
+		            samples[i] = NULL;
+	            }
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -186,6 +204,14 @@ EVRCustomPresenter::~EVRCustomPresenter()
   if (m_hModuleMF!=NULL)
   {
     FreeLibrary(m_hModuleMF);
+  }
+  if (m_hModuleDXVA2!=NULL)
+  {
+    FreeLibrary(m_hModuleDXVA2);
+  }
+  if (m_hModuleEVR!=NULL)
+  {
+    FreeLibrary(m_hModuleEVR);
   }
 }	
 
@@ -534,7 +560,7 @@ void EVRCustomPresenter::ReAllocSurfaces()
 			Log("Could not get back buffer: 0x%x", hr);
 			return;
 		}
-		hr = MFCreateVideoSampleFromSurface(surfaces[i],
+		hr = m_pMFCreateVideoSampleFromSurface(surfaces[i],
 			&samples[i]);
 		if (FAILED(hr)) {
 			Log("CreateVideoSampleFromSurface failed: 0x%x", hr);
