@@ -59,8 +59,10 @@ public:
   void       GetVideoStreamType(CMediaType& pmt);
   int        GetAudioStreamCount();
   bool       EndOfFile();
-	bool			 IsPaused();
-	void			 SetPause(bool onOff);
+	bool			 HoldAudio();
+	void			 SetHoldAudio(bool onOff);
+	bool			 HoldVideo();
+	void			 SetHoldVideo(bool onOff);
 private:
   struct stAudioStream
   {
@@ -72,7 +74,7 @@ private:
   void GetVideoMedia(CMediaType *pmt);
   void GetH264Media(CMediaType *pmt);
   void GetMpeg4Media(CMediaType *pmt);
-  bool ReadFromFile();
+  bool ReadFromFile(bool isAudio, bool isVideo);
   bool m_bEndOfFile;
   HRESULT RenderFilterPin(CBasePin* pin);
   HRESULT DoStart();
@@ -97,5 +99,6 @@ private:
   int m_iAudioStream;
   int m_audioPid;
   bool m_bScanning;
-	bool m_bPause;
+	bool m_bHoldAudio;
+	bool m_bHoldVideo;
 };

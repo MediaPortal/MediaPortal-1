@@ -49,7 +49,8 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_audioPid=0;
   m_bScanning=false;
   m_bEndOfFile=false;
-  m_bPause=false;
+  m_bHoldAudio=false;
+  m_bHoldVideo=false;
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -279,7 +280,7 @@ CBuffer* CDeMultiplexer::GetSubtitle()
 
   while (m_vecSubtitleBuffers.size()==0) 
   {
-    ReadFromFile() ;
+    ReadFromFile(false,false) ;
     if (m_bEndOfFile) return NULL;
   }
   
@@ -298,15 +299,15 @@ CBuffer* CDeMultiplexer::GetVideo()
 	CAutoLock lock (&m_section);
   if (m_pids.VideoPid==0)
   {
-    ReadFromFile();
+    ReadFromFile(false,true);
     return NULL;
   }
   while (m_vecVideoBuffers.size()==0) 
   {
     if (!m_filter.IsFilterRunning()) return NULL;
     if (m_bEndOfFile) return NULL;
-    ReadFromFile() ;
-		if (m_bPause) return NULL;
+    ReadFromFile(false,true) ;
+		if (m_bHoldVideo) return NULL;
   }
   
   if (m_vecVideoBuffers.size()!=0)
@@ -324,15 +325,15 @@ CBuffer* CDeMultiplexer::GetAudio()
 	CAutoLock lock (&m_section);
   if (  m_audioPid==0)
   {
-    ReadFromFile();
+    ReadFromFile(true,false);
     return NULL;
   }
   while (m_vecAudioBuffers.size()==0) 
   {
     if (!m_filter.IsFilterRunning()) return NULL;
     if (m_bEndOfFile) return NULL;
-    ReadFromFile() ;
-		if (m_bPause) return NULL;
+    ReadFromFile(true,false) ;
+		if (m_bHoldAudio) return NULL;
     
   }
   if (m_vecAudioBuffers.size()!=0)
@@ -350,7 +351,7 @@ void CDeMultiplexer:: Start()
   m_bEndOfFile=false;
   m_bScanning=true;
   DWORD dwBytesProcessed=0;
-  while (ReadFromFile())
+  while (ReadFromFile(false,false))
   {
     if (dwBytesProcessed>1000000 || GetAudioStreamCount()>0)
     {
@@ -370,7 +371,7 @@ bool CDeMultiplexer::EndOfFile()
 {
   return m_bEndOfFile;
 }
-bool CDeMultiplexer::ReadFromFile()
+bool CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
 {
   DWORD dwTick=GetTickCount();
   byte buffer[READ_SIZE];
@@ -393,7 +394,8 @@ bool CDeMultiplexer::ReadFromFile()
           //LogDebug("NO read:%d",dwReadBytes);
           break;
         }
-        if (m_bPause) return false;
+        if (isAudio && m_bHoldAudio) return false;
+        if (isVideo && m_bHoldVideo) return false;
       }
       if (result==true) 
         return true;
@@ -409,9 +411,9 @@ bool CDeMultiplexer::ReadFromFile()
     }
     //LogDebug("demux:read failed");
 		
-		if (m_bPause)
+    if ( (isAudio && m_bHoldAudio) || (isVideo && m_bHoldVideo) )
     {
-      LogDebug("demux:paused");
+      LogDebug("demux:paused %d %d",m_bHoldAudio,m_bHoldVideo);
       return false;
     }
     if (!m_filter.IsTimeShifting())
@@ -423,7 +425,8 @@ bool CDeMultiplexer::ReadFromFile()
     Sleep(50);
     if (GetTickCount() - dwTick >5000) break;
     
-		if (m_bPause) return false;
+    if ( (isAudio && m_bHoldAudio) || (isVideo && m_bHoldVideo) )
+      return false;
   }
   return false;
 }
@@ -1053,13 +1056,23 @@ HRESULT CDeMultiplexer::RenderFilterPin(CBasePin* pin)
   }
   return S_OK;
 }
-bool CDeMultiplexer::IsPaused()
+bool CDeMultiplexer::HoldAudio()
 {
-	return m_bPause;
+	return m_bHoldAudio;
 }
 	
-void CDeMultiplexer::SetPause(bool onOff)
+void CDeMultiplexer::SetHoldAudio(bool onOff)
 {
-  LogDebug("set pause:%d", onOff);
-	m_bPause=onOff;
+  LogDebug("demux:set hold audio:%d", onOff);
+	m_bHoldAudio=onOff;
+}
+bool CDeMultiplexer::HoldVideo()
+{
+	return m_bHoldVideo;
+}
+	
+void CDeMultiplexer::SetHoldVideo(bool onOff)
+{
+  LogDebug("demux:set hold video:%d", onOff);
+	m_bHoldVideo=onOff;
 }
