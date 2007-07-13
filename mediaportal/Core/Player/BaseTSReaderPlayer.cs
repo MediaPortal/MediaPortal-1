@@ -364,16 +364,26 @@ namespace MediaPortal.Player
       msg.Label = strFile;
       GUIWindowManager.SendThreadMessage(msg);
 
-      _state = PlayState.Playing;
-
       long dur = 0;
-      _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
-      _mediaCtrl.Run();
-      _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
-      UpdateCurrentPosition();
-      UpdateDuration();
-      OnInitialized();
-      Log.Info("TSReaderPlayer:running pos:{1} duration:{2} {3}", Duration, CurrentPosition, dur);
+      _state = PlayState.Playing;
+      if (strFile.ToLower().IndexOf("rtsp:") >= 0)
+      {
+        _mediaCtrl.Run();
+        UpdateCurrentPosition();
+        UpdateDuration();
+        OnInitialized();
+        Log.Info("TSReaderPlayer:running pos:{1} duration:{2} {3}", Duration, CurrentPosition, dur);
+      }
+      else
+      {
+        _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
+        _mediaCtrl.Run();
+        _mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
+        UpdateCurrentPosition();
+        UpdateDuration();
+        OnInitialized();
+        Log.Info("TSReaderPlayer:running pos:{1} duration:{2} {3}", Duration, CurrentPosition, dur);
+      }
       return true;
     }
 
