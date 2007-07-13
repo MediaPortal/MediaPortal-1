@@ -26,6 +26,60 @@ using namespace std;
 
 #define PID_NIT 0x10
 
+typedef  struct stNITLCN
+{
+	int network_id;
+	int transport_id;
+	int service_id;
+	int LCN;
+}NITLCN;
+typedef  struct stNITSatDescriptor
+{
+	int Frequency;
+	float OrbitalPosition;
+	int WestEastFlag;
+	int Polarisation;
+	int Modulation;
+	int Symbolrate;
+	int FECInner;
+	string NetworkName;
+}NITSatDescriptor;
+//
+typedef  struct stNITCableDescriptor
+{
+	int Frequency;
+	int FECOuter;
+	int Modulation;
+	int Symbolrate;
+	int FECInner;
+	string NetworkName;
+}NITCableDescriptor;
+
+//
+typedef struct stNITTerrestrialDescriptor
+{
+	int CentreFrequency;
+	int Bandwidth;
+	int Constellation;
+	int HierarchyInformation;
+	int CoderateHPStream;
+	int CoderateLPStream;
+	int GuardInterval;
+	int TransmissionMode; 
+	int OtherFrequencyFlag;
+	string NetworkName;
+}NITTerrestrialDescriptor;
+
+typedef struct stDVBNetworkInfo
+{
+	vector<NITSatDescriptor>		  satteliteNIT;
+	vector<NITCableDescriptor>		  cableNIT;
+	vector<NITTerrestrialDescriptor>  terrestialNIT;
+	vector<NITLCN>					  lcnNIT;
+	string							  NetworkName;
+
+}DVBNetworkInfo;
+
 class CNITDecoder: public  CSectionDecoder
 {
 public:
@@ -38,7 +92,9 @@ public:
 private:
 	void decodeNITTable(byte* buf);
 	void DVB_GetLogicalChannelNumber(int original_network_id,int transport_stream_id,byte* buf);
-
+  void DVB_GetSatDelivSys(byte* b,int maxLen);
+  void DVB_GetTerrestrialDelivSys(byte*b , int maxLen);
+  void DVB_GetCableDelivSys(byte* b, int maxLen);
 	typedef  struct stNITLCN
 	{
 		int network_id;
@@ -50,4 +106,5 @@ private:
 	vector<NITLCN> m_vecLCN;
 	typedef vector<NITLCN>::iterator ivecLCN;
 	DWORD m_timer;
+	DVBNetworkInfo m_nit;
 };
