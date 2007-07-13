@@ -109,37 +109,55 @@ CPidTable CDeMultiplexer::GetPidTable()
   return m_pids;
 }
 
+/// This methods selects the audio stream specified
+/// and updates the audio output pin media type if needed 
 void CDeMultiplexer::SetAudioStream(int stream)
 {
-  if (stream< 0 || stream>=m_audioStreams.size()) return;
+  //is stream index valid?
+  if (stream< 0 || stream>=m_audioStreams.size()) return;//no..
 
-  m_iAudioStream=stream;   
-
+  //get the current audio forma stream type
   int oldAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
   if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
   {
     oldAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
   }
 
+  //set index
+  m_iAudioStream=stream;   
+
   HRESULT isPlaying=IsPlaying();
   bool didStop=false;
+
+  //get the new audio stream type
   int newAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
   if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
   {
     newAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
   }
+
+  //did it change?
   if (oldAudioStreamType != newAudioStreamType )
   {
+    //yes, is the audio pin connected?
     if (m_filter.GetAudioPin()->IsConnected())
     {
-      // change audio pin media type
+      // yes, time to change audio pin media type
+
+      //first stop the filter
       if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
+
+      //render the audio pin
       RenderFilterPin(m_filter.GetAudioPin());
+
       didStop=true;
     }
   }
+
+  //if we where playing and stopped the graph
   if (isPlaying && didStop)
   {
+    //then start the graph again
     DoStart();
   }
 
@@ -238,117 +256,185 @@ void CDeMultiplexer::GetVideoStreamType(CMediaType& pmt)
   }
 }
 
+/// Flushes all buffers 
+///
 void CDeMultiplexer::Flush()
 {
-	CAutoLock lock (&m_section);
+  bool holdAudio=HoldAudio();
+  bool holdVideo=HoldVideo();
+  SetHoldAudio(true);
+  SetHoldVideo(true);
   LogDebug("demux:flushing");
-  delete m_pCurrentVideoBuffer;
-  delete m_pCurrentAudioBuffer;
-  delete m_pCurrentSubtitleBuffer;
-  
-  ivecBuffers it =m_vecVideoBuffers.begin();
-  while (it != m_vecVideoBuffers.end())
+  ivecBuffers it;
   {
-    CBuffer* videoBuffer=*it;
-    delete videoBuffer;
-    it=m_vecVideoBuffers.erase(it);
-  }
-  it =m_vecAudioBuffers.begin();
-  while (it != m_vecAudioBuffers.end())
-  {
-    CBuffer* AudioBuffer=*it;
-    delete AudioBuffer;
-    it=m_vecAudioBuffers.erase(it);
+	  CAutoLock lock (&m_sectionAudio);
+    delete m_pCurrentAudioBuffer;
+    it =m_vecAudioBuffers.begin();
+    while (it != m_vecAudioBuffers.end())
+    {
+      CBuffer* AudioBuffer=*it;
+      delete AudioBuffer;
+      it=m_vecAudioBuffers.erase(it);
+    }
+    m_pCurrentAudioBuffer = new CBuffer();
   }
   
-  it =m_vecSubtitleBuffers.begin();
-  while (it != m_vecSubtitleBuffers.end())
   {
-    CBuffer* subtitleBuffer=*it;
-    delete subtitleBuffer;
-    it=m_vecSubtitleBuffers.erase(it);
+	  CAutoLock lock (&m_sectionVideo);
+    delete m_pCurrentVideoBuffer;
+    ivecBuffers it =m_vecVideoBuffers.begin();
+    while (it != m_vecVideoBuffers.end())
+    {
+      CBuffer* videoBuffer=*it;
+      delete videoBuffer;
+      it=m_vecVideoBuffers.erase(it);
+    }
+    m_pCurrentVideoBuffer = new CBuffer();
   }
-  m_pCurrentVideoBuffer = new CBuffer();
-  m_pCurrentAudioBuffer = new CBuffer();
-  m_pCurrentSubtitleBuffer = new CBuffer();
+
+  {
+	  CAutoLock lock (&m_sectionSubtitle);
+    delete m_pCurrentSubtitleBuffer;
+    it =m_vecSubtitleBuffers.begin();
+    while (it != m_vecSubtitleBuffers.end())
+    {
+      CBuffer* subtitleBuffer=*it;
+      delete subtitleBuffer;
+      it=m_vecSubtitleBuffers.erase(it);
+    }
+    m_pCurrentSubtitleBuffer = new CBuffer();
+  }
+  SetHoldAudio(holdAudio);
+  SetHoldVideo(holdVideo);
 }
 
+///
+///Returns the next subtitle packet
+// or NULL if there is none available
 CBuffer* CDeMultiplexer::GetSubtitle()
 {
-	CAutoLock lock (&m_section);
+	//if there is no subtitle pid, then simply return NULL
   if (m_pids.SubtitlePid==0) return NULL;
 
+  // when there are no subtitle packets at the moment
+  // then try to read some from the current file
   while (m_vecSubtitleBuffers.size()==0) 
   {
     ReadFromFile(false,false) ;
+
+    //if we reached the end of the file, return NULL
     if (m_bEndOfFile) return NULL;
   }
   
+
+  //are there subtitle packets in the buffer?
   if (m_vecSubtitleBuffers.size()!=0)
   {
+    //yup, then return the next one
+    CAutoLock lock (&m_sectionSubtitle);
     ivecBuffers it =m_vecSubtitleBuffers.begin();
     CBuffer* subtitleBuffer=*it;
     m_vecSubtitleBuffers.erase(it);
     return subtitleBuffer;
   }
+  //no video packets available
   return NULL;
 }
+
+///
+///Returns the next video packet
+// or NULL if there is none available
 CBuffer* CDeMultiplexer::GetVideo()
-{
-  
-	CAutoLock lock (&m_section);
+{ 
+
+  //if there is no video pid, then simply return NULL
   if (m_pids.VideoPid==0)
   {
     ReadFromFile(false,true);
     return NULL;
   }
+
+  // when there are no video packets at the moment
+  // then try to read some from the current file
   while (m_vecVideoBuffers.size()==0) 
   {
+    //if filter is stopped or 
+    //end of file has been reached or
+    //demuxer should stop getting video packets
+    //then return NULL
     if (!m_filter.IsFilterRunning()) return NULL;
     if (m_bEndOfFile) return NULL;
-    ReadFromFile(false,true) ;
 		if (m_bHoldVideo) return NULL;
+
+    //else try to read some packets from the file
+    ReadFromFile(false,true) ;
   }
   
+  //are there video packets in the buffer?
   if (m_vecVideoBuffers.size()!=0)
   {
+	  CAutoLock lock (&m_sectionVideo);
+    //yup, then return the next one
     ivecBuffers it =m_vecVideoBuffers.begin();
     CBuffer* videoBuffer=*it;
     m_vecVideoBuffers.erase(it);
     return videoBuffer;
   }
+
+  //no video packets available
   return NULL;
 }
 
+///
+///Returns the next audio packet
+// or NULL if there is none available
 CBuffer* CDeMultiplexer::GetAudio()
 {
-	CAutoLock lock (&m_section);
+  //if there is no audio pid, then simply return NULL
   if (  m_audioPid==0)
   {
     ReadFromFile(true,false);
     return NULL;
   }
+
+  // when there are no audio packets at the moment
+  // then try to read some from the current file
   while (m_vecAudioBuffers.size()==0) 
   {
+    //if filter is stopped or 
+    //end of file has been reached or
+    //demuxer should stop getting audio packets
+    //then return NULL
     if (!m_filter.IsFilterRunning()) return NULL;
     if (m_bEndOfFile) return NULL;
-    ReadFromFile(true,false) ;
 		if (m_bHoldAudio) return NULL;
-    
+    ReadFromFile(true,false) ;
+    //else try to read some packets from the file
   }
+  //are there audio packets in the buffer?
   if (m_vecAudioBuffers.size()!=0)
   {
+    //yup, then return the next one
+	  CAutoLock lock (&m_sectionAudio);
     ivecBuffers it =m_vecAudioBuffers.begin();
     CBuffer* audiobuffer=*it;
     m_vecAudioBuffers.erase(it);
     return audiobuffer;
   }
+  //no audio packets available
   return NULL;
 }
 
-void CDeMultiplexer:: Start()
+
+/// Starts the demuxer
+/// This method will read the file until we found the pat/sdt
+/// with all the audio/video pids
+void CDeMultiplexer::Start()
 {
+  //reset some values
   m_bEndOfFile=false;
+  m_bHoldAudio=false;
+  m_bHoldVideo=false;
   m_bScanning=true;
   DWORD dwBytesProcessed=0;
   while (ReadFromFile(false,false))
@@ -367,114 +453,159 @@ void CDeMultiplexer:: Start()
   m_bScanning=false;
 }
 
+/// Returns true if we reached the end of the file
 bool CDeMultiplexer::EndOfFile()
 {
   return m_bEndOfFile;
 }
+
+/// This method reads the next READ_SIZE bytes from the file
+/// and processes the raw data
+/// When a TS packet has been discovered, OnTsPacket(byte* tsPacket) gets called
+//  which in its turn deals with the packet
 bool CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
 {
+	CAutoLock lock (&m_sectionRead);
+  
   DWORD dwTick=GetTickCount();
   byte buffer[READ_SIZE];
   while (true)
   {
     DWORD dwReadBytes;
     bool result=false;
+    //if we are playing a RTSP stream
     if (m_reader->IsBuffer())
     {
+      // and, the current buffer holds data
       while (m_reader->HasMoreData( sizeof(buffer) ) )
       {
+        //then read raw data from the buffer
         m_reader->Read(buffer, sizeof(buffer), &dwReadBytes);
+        //did it succeed?
         if (dwReadBytes > 0)
         {
+          //yes, then process the raw data
           result=true;
           OnRawData(buffer,(int)dwReadBytes);
         }
         else
         {
+          //failed to read data from the buffer?
           //LogDebug("NO read:%d",dwReadBytes);
           break;
         }
+
+        //When needed, stop reading data so outputpin does not get blocked
         if (isAudio && m_bHoldAudio) return false;
         if (isVideo && m_bHoldVideo) return false;
       }
+
+      //return if we succeeded
       if (result==true) 
         return true;
     }
     else
     {
+      //playing a local file.
+      //read raw data from the file
       m_reader->Read(buffer,sizeof(buffer), &dwReadBytes);
       if (dwReadBytes > 0)
       {
+        //succeeded, process data
         OnRawData(buffer,(int)dwReadBytes);
+
+        //and return
         return true;
       }
     }
-    //LogDebug("demux:read failed");
-		
+    
+		//Failed to read any data
     if ( (isAudio && m_bHoldAudio) || (isVideo && m_bHoldVideo) )
     {
       LogDebug("demux:paused %d %d",m_bHoldAudio,m_bHoldVideo);
       return false;
     }
+
+    //if we are not timeshifting, this means we reached the end of the file
     if (!m_filter.IsTimeShifting())
     {
+      //set EOF flag and return
       LogDebug("demux:endoffile");
       m_bEndOfFile=true;
       return false;
     }
+
+    //failed to read data
+    //we didnt reach the EOF
+    //sleep 50 msecs and try again
     Sleep(50);
-    if (GetTickCount() - dwTick >5000) break;
+
+    //but when we didnt read data for >=5 secs, we return anyway to prevent lockups
+    if (GetTickCount() - dwTick >=5000) break;
     
     if ( (isAudio && m_bHoldAudio) || (isVideo && m_bHoldVideo) )
       return false;
   }
   return false;
 }
+/// This method gets called via ReadFile() when a new TS packet has been received
+/// if will :
+///  - decode any new pat/pmt/sdt
+///  - decode any audio/video packets and put the PES packets in the appropiate buffers
 void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 {
   CTsHeader header(tsPacket);
   m_patParser.OnTsPacket(tsPacket);
+
+  //if we have no PCR pid (yet) then there's nothing to decode, so return
   if (m_pids.PcrPid==0) return;
+
   if (header.Pid==0) return;
+
+  //skip any packets with errors in it
   if (header.TransportError) return;
 
-  
-  //CAdaptionField field;
-  //field.Decode(header,tsPacket);
-  //if (field.Pcr.IsValid)
-  //{
-  //  LogDebug("pcr:%f", field.Pcr.ToClock());
-  //}
-
+  //Do we have a start pcr?
   if (!m_duration.StartPcr().IsValid)
   {
+    //no, then decode the pcr
     CAdaptionField field;
     field.Decode(header,tsPacket);
     if (field.Pcr.IsValid)
     {
+      //and we consider this PCR timestamp as the start of the file
       m_duration.Set(field.Pcr,field.Pcr,field.Pcr);
     }
   }
+
+  //is this the PCR pid ?
   if (header.Pid==m_pids.PcrPid)
   {
+    //yep, does it have a PCR timestamp?
     CAdaptionField field;
     field.Decode(header,tsPacket);
     if (field.Pcr.IsValid)
     {
+      //then update our stream pcr which holds the current playback timestamp
       m_streamPcr=field.Pcr;
     }
   }
+
+  //as long as we dont have a stream pcr timestamp we return
   if (m_streamPcr.IsValid==false)
   {
     return;
   }
   if (m_bScanning) return;
 
+  //process the ts packet further
   FillSubtitle(header,tsPacket);
   FillAudio(header,tsPacket);
   FillVideo(header,tsPacket);
-  
-}
+  }
+
+/// This method will check if the tspacket is an audio packet
+/// ifso, it decodes the PES audio packet and stores it in the audio buffers
 void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 {
   if (m_iAudioStream<0 || m_iAudioStream>=m_audioStreams.size()) return;
@@ -483,6 +614,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
   if (m_filter.GetAudioPin()->IsConnected()==false) return;
 	if ( header.AdaptionFieldOnly() ) return;
 
+	CAutoLock lock (&m_sectionAudio);
   //does tspacket contain the start of a pes packet?
   if (header.PayloadUnitStart)
   {
@@ -552,6 +684,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
   }
 }
 
+/// This method will check if the tspacket is an video packet
+/// ifso, it decodes the PES video packet and stores it in the video buffers
 void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 {
   if (m_pids.VideoPid==0) return;
@@ -559,6 +693,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
   if (m_filter.GetVideoPin()->IsConnected()==false) return;
 	if ( header.AdaptionFieldOnly() ) return;
 
+	CAutoLock lock (&m_sectionVideo);
   //does tspacket contain the start of a pes packet?
   if (header.PayloadUnitStart)
   {
@@ -627,6 +762,8 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
   }
 }
 
+/// This method will check if the tspacket is an subtitle packet
+/// ifso, it decodes the PES subtitle packet and stores it in the subtitle buffers
 void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
 {
   if (m_pids.SubtitlePid==0) return;
@@ -634,6 +771,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
   if (m_filter.GetSubtitlePin()->IsConnected()==false) return;
 	if ( header.AdaptionFieldOnly() ) return;
 
+	CAutoLock lock (&m_sectionSubtitle);
   //does tspacket contain the start of a pes packet?
   if (header.PayloadUnitStart)
   {
@@ -701,11 +839,19 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
 		}
   }
 }	
+
+/// This method gets called-back from the pat parser when a new PAT/PMT/SDT has been received
+/// In this method we check if any audio/video/subtitle pid or format has changed
+/// If not, we simply return
+/// If something has changed we reconfigure the audio/video output pins if needed
 void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 {
-	CAutoLock lock (&m_section);
+	//CAutoLock lock (&m_section);
   CPidTable pids=info.PidTable;
-  if (pids.AudioPid1==0) return;
+  //do we have at least an audio pid?
+  if (pids.AudioPid1==0) return; // no? then return
+
+  //check if something changed
   if (  m_pids.AudioPid1==pids.AudioPid1 && m_pids.AudioServiceType1==pids.AudioServiceType1 &&
 				m_pids.AudioPid2==pids.AudioPid2 && m_pids.AudioServiceType2==pids.AudioServiceType2 &&
 				m_pids.AudioPid3==pids.AudioPid3 && m_pids.AudioServiceType3==pids.AudioServiceType3 &&
@@ -718,9 +864,14 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 				m_pids.PmtPid==pids.PmtPid &&
 				m_pids.SubtitlePid==pids.SubtitlePid)
 	{
-		if ( pids.videoServiceType==m_pids.videoServiceType && m_pids.VideoPid==pids.VideoPid) return;
+		if ( pids.videoServiceType==m_pids.videoServiceType && m_pids.VideoPid==pids.VideoPid) 
+    {
+      //nothing changed so return
+      return;
+    }
 	}
 
+  //remember the old audio & video formats
   int oldVideoServiceType=m_pids.videoServiceType ;
   int oldAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
   if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
@@ -742,6 +893,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   LogDebug(" Pmt      pid:%x ",m_pids.PmtPid);
   LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid);
 
+  //update audio streams etc..
   if (m_pids.PcrPid>0x1)
   {
     m_duration.SetVideoPid(m_pids.PcrPid);
@@ -840,14 +992,17 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     audio.audioType=m_pids.AudioServiceType8;
     m_audioStreams.push_back(audio);
   }
-
+return;
   HRESULT isPlaying=IsPlaying();
   bool didStop=false;
+
+  //did the video format change?
   if (oldVideoServiceType != m_pids.videoServiceType )
   {
+    //yes, is the video pin connected?
     if (m_filter.GetVideoPin()->IsConnected())
     {
-      // change video pin media type
+      // yes, then change video pin media type
       LogDebug("demux:video pin media changed");
       if (DoStop() ==S_OK){while(IsStopped() == S_FALSE){Sleep(100); break;}}
       RenderFilterPin(m_filter.GetVideoPin());
@@ -855,14 +1010,17 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     }
   }
   
+  //get the new audio format
   int newAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
   if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
   {
     newAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
   }
 
+  //did the audio format change?
   if (oldAudioStreamType != newAudioStreamType )
   {
+    //yes, is the audio pin connected?
     if (m_filter.GetAudioPin()->IsConnected())
     {
       // change audio pin media type
@@ -872,11 +1030,16 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
       didStop=true;
     }
   }
+
+  //restart the graph if we stopped it.
   if (isPlaying==S_OK && didStop)
   {
     DoStart();
   }
 }
+
+///
+/// Method which stops the graph
 HRESULT CDeMultiplexer::DoStop()
 {
   LogDebug("demux:DoStop");
@@ -910,6 +1073,9 @@ HRESULT CDeMultiplexer::DoStop()
 	}
 	return S_OK;
 }
+
+///
+/// Method which starts the graph
 HRESULT CDeMultiplexer::DoStart()
 {
   LogDebug("demux:DoStart");
@@ -944,6 +1110,8 @@ HRESULT CDeMultiplexer::DoStart()
 	return S_OK;
 }
 
+///
+/// Returns if graph is stopped
 HRESULT CDeMultiplexer::IsStopped()
 {
   LogDebug("demux:IsStopped");
@@ -989,6 +1157,8 @@ HRESULT CDeMultiplexer::IsStopped()
 }
 
 
+///
+/// Returns if graph is playing
 HRESULT CDeMultiplexer::IsPlaying()
 {
   LogDebug("demux:IsPlaying");
@@ -1036,6 +1206,8 @@ HRESULT CDeMultiplexer::IsPlaying()
 	return S_FALSE;
 }
 
+///
+/// Renders an output pin
 HRESULT CDeMultiplexer::RenderFilterPin(CBasePin* pin)
 {
   LogDebug("demux:RenderFilterPin");
@@ -1056,21 +1228,26 @@ HRESULT CDeMultiplexer::RenderFilterPin(CBasePin* pin)
   }
   return S_OK;
 }
+
+///Returns whether the demuxer is allowed to block in GetAudio() or not
 bool CDeMultiplexer::HoldAudio()
 {
 	return m_bHoldAudio;
 }
 	
+///Sets whether the demuxer may block in GetAudio() or not
 void CDeMultiplexer::SetHoldAudio(bool onOff)
 {
   LogDebug("demux:set hold audio:%d", onOff);
 	m_bHoldAudio=onOff;
 }
+///Returns whether the demuxer is allowed to block in GetVideo() or not
 bool CDeMultiplexer::HoldVideo()
 {
 	return m_bHoldVideo;
 }
 	
+///Sets whether the demuxer may block in GetVideo() or not
 void CDeMultiplexer::SetHoldVideo(bool onOff)
 {
   LogDebug("demux:set hold video:%d", onOff);

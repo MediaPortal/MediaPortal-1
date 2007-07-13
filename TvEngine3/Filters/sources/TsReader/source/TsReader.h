@@ -84,7 +84,8 @@ public:
   CVideoPin*      GetVideoPin();
   CSubtitlePin*   GetSubtitlePin();
   bool            IsTimeShifting();
-
+  
+  CRefTime        Compensation;
 protected:
   void ThreadProc();
 private:

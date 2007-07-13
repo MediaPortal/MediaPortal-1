@@ -137,7 +137,8 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 		    if (GetChannel(i, info))
 		    {
 			    m_iState=Idle;
-			    m_pCallback->OnNewChannel(info);
+
+          m_pCallback->OnNewChannel(info);
 	        m_iState=Parsing;
 			    return ;
 		    }

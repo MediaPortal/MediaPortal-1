@@ -38,6 +38,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
 {
 	m_rtStart=0;
   m_bConnected=false;
+  m_bMeasureCompensation=false;
 	m_dwSeekingCaps =
     AM_SEEKING_CanSeekAbsolute	|
 	AM_SEEKING_CanSeekForwards	|
@@ -254,12 +255,22 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
     if (buffer->MediaTime(cRefTime))
     {
       cRefTime-=m_rtStart;
+      if (m_bMeasureCompensation)
+      {
+        m_bMeasureCompensation=false;
+        m_pTsReaderFilter->Compensation=cRefTime;
+        float fTime=(float)cRefTime.Millisecs();
+        fTime/=1000.0f;
+        LogDebug("vid:compensation:%03.3f",fTime);
+      }
+      cRefTime -=m_pTsReaderFilter->Compensation;
       REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
       pSample->SetTime(&refTime,&refTime); 
       pSample->SetSyncPoint(TRUE);
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
-     // LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
+      
+     LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
     }
     else
     {
@@ -285,6 +296,7 @@ HRESULT CVideoPin::OnThreadStartPlay()
   float fStart=(float)m_rtStart.Millisecs();
   fStart/=1000.0f;
   LogDebug("vid:OnThreadStartPlay(%f)", fStart);
+  m_bMeasureCompensation=true;
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
 	return CSourceStream::OnThreadStartPlay( );
 }

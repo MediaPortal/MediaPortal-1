@@ -67,6 +67,7 @@ protected:
   bool  m_bSeeking;
   DWORD m_seekTimer;
   CRefTime m_lastSeek;
+  bool            m_bMeasureCompensation;
 };
 
 #endif

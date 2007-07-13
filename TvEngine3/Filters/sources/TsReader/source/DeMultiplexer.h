@@ -81,7 +81,10 @@ private:
   HRESULT DoStop();
   HRESULT IsStopped();
   HRESULT IsPlaying();
-  CCritSec m_section;
+  CCritSec m_sectionAudio;
+  CCritSec m_sectionVideo;
+  CCritSec m_sectionSubtitle;
+  CCritSec m_sectionRead;
 	FileReader* m_reader;
   CPatParser m_patParser;
   CPidTable m_pids;
