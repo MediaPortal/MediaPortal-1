@@ -495,9 +495,9 @@ namespace SetupTv.Sections
           item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
           _dvbcChannels[i] = new DVBCList();
-          _dvbcChannels[i].frequency = (int)ch.Frequency;
+          _dvbcChannels[i].frequency = (int)ch.Frequency/10;
           _dvbcChannels[i].modulation = ch.ModulationType;
-          _dvbcChannels[i].symbolrate = ch.SymbolRate;
+          _dvbcChannels[i].symbolrate = ch.SymbolRate/10;
 
         }
         _channelCount = channels.Length;
@@ -512,10 +512,13 @@ namespace SetupTv.Sections
       lastItem.EnsureVisible();
       mpButton1.Enabled = true;
 
-      if (DialogResult.Yes == MessageBox.Show("Found {0} transponders. Would you like to scan those?", "Manual scan results", MessageBoxButtons.YesNo))
+      if (_channelCount != 0)
       {
-        Thread scanThread = new Thread(new ThreadStart(DoScan));
-        scanThread.Start();
+        if (DialogResult.Yes == MessageBox.Show(String.Format("Found {0} transponders. Would you like to scan those?", _channelCount), "Manual scan results", MessageBoxButtons.YesNo))
+        {
+          Thread scanThread = new Thread(new ThreadStart(DoScan));
+          scanThread.Start();
+        }
       }
     }
 

@@ -112,7 +112,7 @@ namespace SetupTv.Sections
       // 
       this.mpButtonScanTv.Location = new System.Drawing.Point(260, 14);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
-      this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
+      this.mpButtonScanTv.Size = new System.Drawing.Size(168, 23);
       this.mpButtonScanTv.TabIndex = 2;
       this.mpButtonScanTv.Text = "Scan predefined provider";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
