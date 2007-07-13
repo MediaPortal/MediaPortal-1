@@ -229,16 +229,15 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
+      mpComboBoxMod.SelectedIndex = 3;
       UpdateStatus();
       TvBusinessLayer layer = new TvBusinessLayer();
-      int index=Int32.Parse(layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0").Value);
+      int index = Int32.Parse(layer.GetSetting("dvbc" + _cardNumber.ToString() + "Country", "0").Value);
       if (index < mpComboBoxCountry.Items.Count)
         mpComboBoxCountry.SelectedIndex = index;
 
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      if (card.CamType < mpComboBox1Cam.Items.Count)
-        mpComboBox1Cam.SelectedIndex = card.CamType;
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbc" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
 
 
@@ -270,8 +269,10 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
           return;
         }
+        LoadList(String.Format(@"Tuningparameters\{0}.dvbc", mpComboBoxCountry.SelectedItem));
         Thread scanThread = new Thread(new ThreadStart(DoScan));
         scanThread.Start();
+        listViewStatus.Items.Clear();
       }
       else
       {
@@ -294,11 +295,10 @@ namespace SetupTv.Sections
         _stopScanning = false;
         mpButtonScanTv.Text = "Cancel...";
         RemoteControl.Instance.EpgGrabberEnabled = false;
-        LoadList(String.Format(@"Tuningparameters\{0}.dvbc", mpComboBoxCountry.SelectedItem));
         if (_channelCount == 0) return;
 
         mpComboBoxCountry.Enabled = false;
-        listViewStatus.Items.Clear();
+        mpButton1.Enabled = false;
 
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -439,6 +439,7 @@ namespace SetupTv.Sections
         RemoteControl.Instance.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
         mpComboBoxCountry.Enabled = true;
+        mpButton1.Enabled = true;
         mpButtonScanTv.Text = buttonText;
         _isScanning = false;
       }
@@ -452,10 +453,6 @@ namespace SetupTv.Sections
     private void mpComboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      card.CamType = mpComboBox1Cam.SelectedIndex;
-      card.Persist();
     }
 
     private void mpComboBoxCountry_SelectedIndexChanged(object sender, EventArgs e)
@@ -464,6 +461,65 @@ namespace SetupTv.Sections
     }
 
     private void mpBeveledLine1_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    private void mpButton1_Click(object sender, EventArgs e)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+      if (card.Enabled == false)
+      {
+        MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+        return;
+      }
+      mpButton1.Enabled = false;
+      DVBCChannel tuneChannel = new DVBCChannel();
+      tuneChannel.Frequency = Int32.Parse(textBoxFreq.Text);
+      tuneChannel.ModulationType = (ModulationType)mpComboBoxMod.SelectedIndex;
+      tuneChannel.SymbolRate = Int32.Parse(textBoxSymbolRate.Text);
+
+      listViewStatus.Items.Clear();
+      string line = String.Format("Scan freq:{0} {1} symbolrate:{2} ...", tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate);
+      ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
+      item.EnsureVisible();
+
+      IChannel[] channels = RemoteControl.Instance.ScanNIT(_cardNumber, tuneChannel);
+      if (channels != null)
+      {
+        for (int i = 0; i < channels.Length; ++i)
+        {
+          DVBCChannel ch = (DVBCChannel)channels[i];
+          line = String.Format("{0}) {1} freq:{2} mod:{3} symbolrate:{4}", i, ch.Name, ch.Frequency, ch.ModulationType, ch.SymbolRate);
+          item = listViewStatus.Items.Add(new ListViewItem(line));
+          item.EnsureVisible();
+          _dvbcChannels[i] = new DVBCList();
+          _dvbcChannels[i].frequency = (int)ch.Frequency;
+          _dvbcChannels[i].modulation = ch.ModulationType;
+          _dvbcChannels[i].symbolrate = ch.SymbolRate;
+
+        }
+        _channelCount = channels.Length;
+      }
+      else
+      {
+        item = listViewStatus.Items.Add("No transponders found");
+        item.EnsureVisible();
+      }
+
+      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
+      lastItem.EnsureVisible();
+      mpButton1.Enabled = true;
+
+      if (DialogResult.Yes == MessageBox.Show("Found {0} transponders. Would you like to scan those?", "Manual scan results", MessageBoxButtons.YesNo))
+      {
+        Thread scanThread = new Thread(new ThreadStart(DoScan));
+        scanThread.Start();
+      }
+    }
+
+    private void CardDvbC_Load(object sender, EventArgs e)
     {
 
     }

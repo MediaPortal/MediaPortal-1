@@ -156,6 +156,7 @@ namespace TvLibrary.Implementations.DVB
     }
     #endregion
 
+    #region channel scanning
     /// <summary>
     /// Scans the specified transponder.
     /// </summary>
@@ -445,6 +446,100 @@ namespace TvLibrary.Implementations.DVB
       return 0;
     }
 
+    #endregion
+
+    #endregion
+
+    #region NIT scanning
+    public List<IChannel> ScanNIT(IChannel channel, ScanParameters settings)
+    {
+      _card.IsScanning = true;
+      _card.Tune(0, channel);
+      _analyzer = GetAnalyzer();
+      if (_analyzer == null)
+      {
+        Log.Log.WriteFile("Scan: no analyzer interface available");
+        return new List<IChannel>();
+      }
+      _card.IsScanning = false;
+      DateTime startTime = DateTime.Now;
+      ResetSignalUpdate();
+      if (_card.IsTunerLocked == false)
+      {
+        System.Threading.Thread.Sleep(settings.TimeOutTune * 1000);
+        ResetSignalUpdate();
+      }
+      Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
+      if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
+      {
+        try
+        {
+
+          _analyzer.SetCallBack(null);
+          _analyzer.ScanNIT();
+          startTime = DateTime.Now;
+          int count = 0;
+          while (true)
+          {
+            TimeSpan ts = DateTime.Now - startTime;
+            if (ts.TotalSeconds >= 10) break;
+            _analyzer.GetNITCount(out count);
+            if (count > 0) break;
+          }
+          System.Threading.Thread.Sleep(500);
+          List<IChannel> channelsFound = new List<IChannel>();
+          _analyzer.GetNITCount(out count);
+          for (int i = 0; i < count; ++i)
+          {
+            int freq, pol, mod, symbolrate, bandwidth, innerfec, chType;
+            IntPtr ptrName;
+            _analyzer.GetNITChannel((short)i, out chType,out freq, out pol, out mod, out symbolrate, out bandwidth, out innerfec, out ptrName);
+            string name = DvbTextConverter.Convert(ptrName, "");
+            if (chType==0)
+            {
+              DVBSChannel ch = new DVBSChannel();
+              ch.Name = name;
+              ch.Frequency = freq;
+              ch.ModulationType = (ModulationType)mod;
+              ch.SymbolRate = symbolrate;
+              ch.InnerFecRate = (BinaryConvolutionCodeRate)innerfec;
+              channelsFound.Add(ch);
+            }
+            else if (chType==1)
+            {
+              DVBCChannel ch = new DVBCChannel();
+              ch.Name = name;
+              ch.Frequency = freq;
+              ch.ModulationType = (ModulationType)mod;
+              ch.SymbolRate = symbolrate;
+              channelsFound.Add(ch);
+            }
+            else if (chType == 2)
+            {
+              DVBTChannel ch = new DVBTChannel();
+              ch.Name = name;
+              ch.Frequency = freq;
+              ch.BandWidth = bandwidth;
+              channelsFound.Add(ch);
+            }
+          }
+          _analyzer.StopNIT();
+          return channelsFound;
+        }
+        finally
+        {
+          if (_analyzer != null)
+          {
+            _analyzer.StopNIT();
+          }
+        }
+      }
+      else
+      {
+        Log.Log.WriteFile("Scan: no signal detected");
+        return new List<IChannel>();
+      }
+    }
     #endregion
   }
 }

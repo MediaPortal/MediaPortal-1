@@ -93,6 +93,7 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
 void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 {
   if (m_tableId < 0 || m_pid < 0) return;
+ 
   if (header.Pid != m_pid) return;
 
  

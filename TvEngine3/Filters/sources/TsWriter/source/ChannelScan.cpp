@@ -35,6 +35,7 @@ extern void LogDebug(const char *fmt, ...) ;
 CChannelScan::CChannelScan(LPUNKNOWN pUnk, HRESULT *phr, CMpTsFilter* filter) 
 :CUnknown( NAME ("MpTsChannelScan"), pUnk)
 {
+  m_bIsParsingNIT=false;
 	m_bIsParsing=false;
 	m_pFilter=filter;
 	m_pConditionalAccess=NULL;
@@ -263,7 +264,88 @@ void CChannelScan::OnTsPacket(byte* tsPacket)
 {
 	if (m_bIsParsing)
 	{
-	CEnterCriticalSection enter(m_section);
+	  CEnterCriticalSection enter(m_section);
 		m_patParser.OnTsPacket(tsPacket);
 	}
+  if (m_bIsParsingNIT)
+  {
+    m_nit.OnTsPacket(tsPacket);
+  }
+}
+
+
+STDMETHODIMP CChannelScan::ScanNIT()
+{
+  m_nit.Reset();
+  m_bIsParsingNIT=true;
+  return 0;
+}
+
+STDMETHODIMP CChannelScan::StopNIT()
+{
+  m_bIsParsingNIT=false;
+  return 0;
+}
+
+STDMETHODIMP CChannelScan::GetNITCount(int* transponderCount)
+{
+  *transponderCount=0;
+  if (m_nit.m_nit.satteliteNIT.size()>0) *transponderCount= m_nit.m_nit.satteliteNIT.size();
+  else if (m_nit.m_nit.cableNIT.size()>0) *transponderCount= m_nit.m_nit.cableNIT.size();
+  else if (m_nit.m_nit.terrestialNIT.size()>0) *transponderCount= m_nit.m_nit.terrestialNIT.size();
+  return 0;
+}
+
+STDMETHODIMP CChannelScan::GetNITChannel(int channel,int* type,int* frequency,int *polarisation, int* modulation, int* symbolrate, int* bandwidth, int* fecInner, char** networkName)
+{
+	static char sNetworkName[128];
+	strcpy(sNetworkName,"");
+  *frequency=0;
+  *polarisation=0;
+  *modulation=0;
+  *symbolrate=0;
+  *bandwidth=0;
+  *fecInner=0;
+  *type=-1;
+	*networkName=sNetworkName;
+
+  if (m_nit.m_nit.satteliteNIT.size()>0)
+  {
+    if (channel<0 || channel >=m_nit.m_nit.satteliteNIT.size()) return 0;
+    NITSatDescriptor& des = m_nit.m_nit.satteliteNIT[channel];
+    *frequency=des.Frequency;
+    *polarisation=des.Polarisation;
+    *modulation=des.Modulation;
+    *symbolrate=des.Symbolrate;
+    *fecInner=des.FECInner;
+    strcpy(sNetworkName,des.NetworkName.c_str());
+	  *networkName=sNetworkName;
+    *type=0;
+    return 0;
+  }
+  if (m_nit.m_nit.cableNIT.size()>0)
+  {
+    if (channel<0 || channel >=m_nit.m_nit.cableNIT.size()) return 0;
+    NITCableDescriptor& des = m_nit.m_nit.cableNIT[channel];
+    *frequency=des.Frequency;
+    *modulation=des.Modulation;
+    *symbolrate=des.Symbolrate;
+    *fecInner=des.FECInner;
+    strcpy(sNetworkName,des.NetworkName.c_str());
+	  *networkName=sNetworkName;
+    *type=1;
+    return 0;
+  }
+  if (m_nit.m_nit.cableNIT.size()>0)
+  {
+    if (channel<0 || channel >=m_nit.m_nit.terrestialNIT.size()) return 0;
+    NITTerrestrialDescriptor& des = m_nit.m_nit.terrestialNIT[channel];
+    *frequency=des.CentreFrequency;
+    *bandwidth=des.Bandwidth;
+    strcpy(sNetworkName,des.NetworkName.c_str());
+	  *networkName=sNetworkName;
+    *type=2;
+    return 0;
+  }
+  return 0;
 }

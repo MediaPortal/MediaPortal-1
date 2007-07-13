@@ -22,6 +22,7 @@
 #include "ConditionalAccess.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
+#include "nitdecoder.h"
 
 using namespace Mediaportal;
 
@@ -73,6 +74,11 @@ DECLARE_INTERFACE_(ITSChannelScan, IUnknown)
 										 char** subLanguage1,
 										 int* videoStreamType)PURE;
 	STDMETHOD(SetCallBack)(THIS_ IChannelScanCallback* callback)PURE;
+
+	STDMETHOD(ScanNIT)(THIS_)PURE;
+	STDMETHOD(StopNIT)(THIS_)PURE;
+	STDMETHOD(GetNITCount)(THIS_ int* transponderCount)PURE;
+	STDMETHOD(GetNITChannel)(THIS_ int channel,int* type,int* frequency,int *polarisation, int* modulation, int* symbolrate, int* bandwidth, int* fecInner, char** networkName)PURE;
 
 };
 
@@ -126,13 +132,19 @@ public:
 										 int* videoStreamType);
 	STDMETHODIMP SetCallBack(IChannelScanCallback* callback);
 
+	STDMETHODIMP ScanNIT();
+	STDMETHODIMP StopNIT();
+	STDMETHODIMP GetNITCount(int* transponderCount);
+	STDMETHODIMP GetNITChannel(int channel,int* type, int* frequency,int *polarisation, int* modulation, int* symbolrate, int* bandwidth, int* fecInner, char** networkName);
 
 	void OnTsPacket(byte* tsPacket);
 private:
 	CPatParser m_patParser;
 	bool m_bIsParsing;
+	bool m_bIsParsingNIT;
 	CMpTsFilter* m_pFilter;
 	CCriticalSection m_section;
 	CConditionalAccess*	m_pConditionalAccess;
 	IChannelScanCallback* m_pCallback;
+  CNITDecoder m_nit;
 };

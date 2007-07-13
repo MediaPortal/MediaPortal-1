@@ -702,6 +702,38 @@ namespace TvService
         return null;
       }
     }
+    public IChannel[] ScanNIT(IChannel channel, ScanParameters settings)
+    {
+      try
+      {
+        if (_dbsCard.Enabled == false) return new List<IChannel>().ToArray();
+        if (IsLocal == false)
+        {
+          try
+          {
+            RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
+            return RemoteControl.Instance.ScanNIT(_dbsCard.IdCard, channel);
+          }
+          catch (Exception)
+          {
+            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            return null;
+          }
+        }
+        ITVScanning scanner = _card.ScanningInterface;
+        if (scanner == null) return null;
+        scanner.Reset();
+        List<IChannel> channelsFound = scanner.ScanNIT(channel, settings);
+        if (channelsFound == null) return null;
+        return channelsFound.ToArray();
+
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+        return null;
+      }
+    }
 
     /// <summary>
     /// grabs the epg.

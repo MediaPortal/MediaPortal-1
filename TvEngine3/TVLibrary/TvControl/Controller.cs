@@ -239,6 +239,7 @@ namespace TvControl
     /// <param name="channel">contains tuningdetails for the transponder.</param>
     /// <returns>list of all channels found</returns>
     IChannel[] Scan(int cardId, IChannel channel);
+    IChannel[] ScanNIT(int cardId, IChannel channel);
 
     /// <summary>
     /// returns the minium channel numbers for analog cards

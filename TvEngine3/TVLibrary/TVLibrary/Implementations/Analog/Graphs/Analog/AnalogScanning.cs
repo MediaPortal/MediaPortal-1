@@ -141,5 +141,9 @@ namespace TvLibrary.Implementations.Analog
       _card.IsScanning = false;
       return null;
     }
+    public List<IChannel> ScanNIT(IChannel channel, ScanParameters settings)
+    {
+      return new List<IChannel>();
+    }
   }
 }

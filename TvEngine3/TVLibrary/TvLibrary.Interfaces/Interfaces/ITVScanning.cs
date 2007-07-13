@@ -44,7 +44,8 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <param name="channel">channel to tune to</param>
     /// <returns>list of channels found</returns>
-    List<IChannel> Scan(IChannel channel,ScanParameters settings);
+    List<IChannel> Scan(IChannel channel, ScanParameters settings);
+    List<IChannel> ScanNIT(IChannel channel, ScanParameters settings);
 
     /// <summary>
     /// returns the tv card used 

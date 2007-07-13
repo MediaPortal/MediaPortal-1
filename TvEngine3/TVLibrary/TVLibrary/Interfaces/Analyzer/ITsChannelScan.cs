@@ -148,5 +148,19 @@ namespace TvLibrary.Interfaces.Analyzer
     
     [PreserveSig]
 	  int SetCallBack(IChannelScanCallback callback);
+
+
+    [PreserveSig]
+    int ScanNIT();
+
+    [PreserveSig]
+    int StopNIT();
+
+    [PreserveSig]
+    int GetNITCount(out int transponderCount);
+
+    [PreserveSig]
+    int GetNITChannel(int channel, out int chType, out int frequency, out int polarisation, out int modulation, out int symbolrate, out int bandwidth, out int fecInner, out IntPtr networkName);
+
   }
 }

@@ -113,7 +113,7 @@ BOOL CPatParser::IsReady()
 	if (m_nitDecoder.Ready()==false) 
 	{
 //		LogDebug("nit not ready");
-//		return FALSE;
+		return FALSE;
 	}
   if (m_mapPmtParsers.size()==false) 
 	{
