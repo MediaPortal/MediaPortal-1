@@ -64,7 +64,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\TVDatabase\references\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -78,7 +77,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\mediaportal\xbmc\bin\Release\Utils.dll</HintPath>
     </Reference>
-    <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />

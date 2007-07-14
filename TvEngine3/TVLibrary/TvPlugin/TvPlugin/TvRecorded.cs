@@ -29,9 +29,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+//using System.Windows;
+//using System.Windows.Media;
+//using System.Windows.Media.Imaging;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -79,37 +79,37 @@ namespace TvPlugin
         if (!System.IO.File.Exists(thumbNail))
         {
           Log.Info("RecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
-          //if (!DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail))
-          //  Log.Info("GUIRecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
-          try
-          {
-            MediaPlayer player = new MediaPlayer();
-            player.Open(new Uri(rec.FileName, UriKind.Absolute));
-            player.ScrubbingEnabled = true;
-            player.Play();
-            player.Pause();
-            // Grab the frame 10 minutes after start to respect pre-recording times.
-            player.Position = new TimeSpan(0, 10, 0);
-            System.Threading.Thread.Sleep(5000);
-            RenderTargetBitmap rtb = new RenderTargetBitmap(720, 576, 1 / 200, 1 / 200, PixelFormats.Pbgra32);
-            DrawingVisual dv = new DrawingVisual();
-            DrawingContext dc = dv.RenderOpen();
-            dc.DrawVideo(player, new Rect(0, 0, 720, 576));
-            dc.Close();
-            rtb.Render(dv);
-            PngBitmapEncoder encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(rtb));
-            using (FileStream stream = new FileStream(thumbNail, FileMode.OpenOrCreate))
-            {
-              encoder.Save(stream);
-            }
-            player.Stop();
-            player.Close();
-          }
-          catch (Exception ex)
-          {
-            Log.Info("RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
-          }
+          if (!DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail))
+            Log.Info("GUIRecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
+          //try
+          //{
+          //  MediaPlayer player = new MediaPlayer();
+          //  player.Open(new Uri(rec.FileName, UriKind.Absolute));
+          //  player.ScrubbingEnabled = true;
+          //  player.Play();
+          //  player.Pause();
+          //  // Grab the frame 10 minutes after start to respect pre-recording times.
+          //  player.Position = new TimeSpan(0, 10, 0);
+          //  System.Threading.Thread.Sleep(5000);
+          //  RenderTargetBitmap rtb = new RenderTargetBitmap(720, 576, 1 / 200, 1 / 200, PixelFormats.Pbgra32);
+          //  DrawingVisual dv = new DrawingVisual();
+          //  DrawingContext dc = dv.RenderOpen();
+          //  dc.DrawVideo(player, new Rect(0, 0, 720, 576));
+          //  dc.Close();
+          //  rtb.Render(dv);
+          //  PngBitmapEncoder encoder = new PngBitmapEncoder();
+          //  encoder.Frames.Add(BitmapFrame.Create(rtb));
+          //  using (FileStream stream = new FileStream(thumbNail, FileMode.OpenOrCreate))
+          //  {
+          //    encoder.Save(stream);
+          //  }
+          //  player.Stop();
+          //  player.Close();
+          //}
+          //catch (Exception ex)
+          //{
+          //  Log.Info("RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
+          //}
         }
       }
       //}
