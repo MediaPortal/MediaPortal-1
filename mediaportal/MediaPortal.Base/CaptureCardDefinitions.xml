@@ -19112,6 +19112,22 @@
     </tv>
   </capturecard>
 
+  <capturecard commercialname="Terratec Cinergy DT USB XS Diversity" capturename="Cinergy DT USB XS Diversity Digital Capture (Dev1 Path1)" devid="vid_0ccd&amp;pid_005a">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"                          checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Cinergy DT USB XS Diversity Digital Tuner (Dev1 Path1) "  checkdevice="true"/>
+        <filter cat="capture"         name="Cinergy DT USB XS Diversity Digital Capture (Dev1 Path1)" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
   <capturecard commercialname="ADS-Tech Instant DigitalTV USB" capturename="Instant DigitalTV USB, Capture" devid="vid_06e1&amp;pid_a338">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
@@ -20178,6 +20194,147 @@
         <connection sourcefilter="capture"    sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
         <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"	      sinkpin="0"/>
         <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"	      sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV Dual DVB-T Diversity Stick " capturename="PCTV DiB BDA Digital Capture (Dev1 Path0)" devid="vid_2304&amp;pid_022c">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"            checkdevice="false"/>
+        <filter cat="tunerdevice"     name="PCTV DiB BDA Digital Tuner (Dev1 Path0) "   checkdevice="true"/>
+        <filter cat="capture"         name="PCTV DiB BDA Digital Capture (Dev1 Path0)"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV Dual DVB-T Diversity Stick " capturename="PCTV DiB BDA Digital Capture (Dev1 Path0)" devid="vid_2304&amp;pid_022c">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"            checkdevice="false"/>
+        <filter cat="tunerdevice"     name="PCTV DiB BDA Digital Tuner (Dev1 Path0) "   checkdevice="true"/>
+        <filter cat="capture"         name="PCTV DiB BDA Digital Capture (Dev1 Path0)"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Micronas Cypher 7108" capturename="Micronas Cypher 7108 Network Tuner" devid="media">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="videncoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="Micronas Cypher 7108 TV Tuner"		  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="Micronas Cypher 7108 TV Audio"		  checkdevice="true"/>
+        <filter cat="crossbar"		name="Micronas Cypher 7108 CrossBar"		  checkdevice="true"/>
+        <filter cat="capture"		  name="Micronas Cypher 7108 Network Tuner"	checkdevice="true"/>
+        <filter cat="videncoder"	name="Micronas Cypher 7108 VIDEO Encoder"	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Geniatech DVBS DIGISTAR" capturename="Conexant 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_008414f1&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"          checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Conexant BDA DVB-S Tuner/Demod"           checkdevice="true"/>
+        <filter cat="capture"         name="Conexant 2388x Transport Stream Capture"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KWORLD Global TV Terminator" capturename="Phillips Cap713x Video Capture" devid="ven_1131&amp;dev_7133&amp;subsys_00001131&amp;rev_d0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="Phillips Cap713x TvTuner Silicon" checkdevice="true"/>
+        <filter cat="tvaudio"     name="Phillips Cap713x Audio"           checkdevice="true"/>
+        <filter cat="crossbar"    name="Phillips Cap713x Crossbar"        checkdevice="true"/>
+        <filter cat="capture"     name="Phillips Cap713x Video Capture"   checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"                   checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"                   checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"                        checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="crossbar"   sourcepin="1" sinkfilter="capture"	  sinkpin="1"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"	      sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"	      sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Freecom USB DVB-T" capturename="Freecom USB DVB-T" devid="vid_14aa&amp;pid_0226">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="tvtuner"     name="Freecom USB DVB-T Tuner (B/G)"  checkdevice="true"/>
+        <filter cat="crossbar"    name="Freecom USB DVB-T Crossbar"     checkdevice="true"/>
+        <filter cat="capture"     name="Freecom USB DVB-T Capture"      checkdevice="true"/>
+        <filter cat="videncoder"  name="%videoencoder%"                 checkdevice="false"/>
+        <filter cat="audencoder"  name="%audioencoder%"                 checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"                      checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"     sinkpin="%tvtuner%"/>
+        <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+        <connection sourcefilter="capture"      sourcepin="0" sinkfilter="videncoder"   sinkpin="0"/>
+        <connection sourcefilter="capture"      sourcepin="4" sinkfilter="audencoder"   sinkpin="0"/>
+        <connection sourcefilter="videncoder"   sourcepin="0" sinkfilter="mux"          sinkpin="0"/>
+        <connection sourcefilter="audencoder"   sourcepin="0" sinkfilter="mux"          sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LeadTek WinFast PVR3000 Deluxe" capturename="WinFast PVR3000 Video Capture" devid="ven_4444&amp;dev_0016&amp;subsys_6f19107d&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="WinFast PVR3000 Tuner"         checkdevice="true"/>
+        <filter cat="tvaudio"  name="WinFast PVR3000 TvAudio"       checkdevice="true"/>
+        <filter cat="crossbar" name="WinFast PVR3000 Crossbar"      checkdevice="true"/>
+        <filter cat="capture"  name="WinFast PVR3000 Video Capture" checkdevice="true"/>
+        <filter cat="encoder"  name="WinFast PVR3000 Encoder"       checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"	sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
