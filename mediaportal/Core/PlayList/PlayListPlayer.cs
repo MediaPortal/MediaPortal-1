@@ -568,5 +568,11 @@ namespace MediaPortal.Playlists
         return _entriesNotFound;
       }
     }
+
+    public bool RepeatPlaylist
+    {
+      get { return _repeatPlayList; }
+      set { _repeatPlayList = value; }
+    }
   }
 }

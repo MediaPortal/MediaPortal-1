@@ -111,7 +111,7 @@ namespace MediaPortal.GUI.Music
     int _maxScrobbledArtistsForSongs = 4;
     int _preferCountForTracks = 2;
     private bool ScrobblerOn = false;
-    private bool _enableScrobbling = false;    
+    private bool _enableScrobbling = false;
     private bool _useSimilarRandom = true;
     private bool _rememberStartTrack = true;
     private AudioscrobblerUtils ascrobbler = null;
@@ -121,14 +121,15 @@ namespace MediaPortal.GUI.Music
     protected ScrobbleMode currentScrobbleMode = ScrobbleMode.Similar;
     protected offlineMode currentOfflineMode = offlineMode.random;
 
-    [SkinControlAttribute(20)]    protected GUIButtonControl btnShuffle = null;
-    [SkinControlAttribute(21)]    protected GUIButtonControl btnSave = null;
-    [SkinControlAttribute(22)]    protected GUIButtonControl btnClear = null;    
-    [SkinControlAttribute(26)]    protected GUIButtonControl btnNowPlaying = null;
-    [SkinControlAttribute(27)]    protected GUIToggleButtonControl btnScrobble = null;
-    [SkinControlAttribute(28)]    protected GUIButtonControl btnScrobbleMode = null;
-    [SkinControlAttribute(29)]    protected GUIButtonControl btnScrobbleUser = null;
-    
+    [SkinControlAttribute(20)] protected GUIButtonControl btnShuffle = null;
+    [SkinControlAttribute(21)] protected GUIButtonControl btnSave = null;
+    [SkinControlAttribute(22)] protected GUIButtonControl btnClear = null;
+    [SkinControlAttribute(26)] protected GUIButtonControl btnNowPlaying = null;
+    [SkinControlAttribute(27)] protected GUIToggleButtonControl btnScrobble = null;
+    [SkinControlAttribute(28)] protected GUIButtonControl btnScrobbleMode = null;
+    [SkinControlAttribute(29)] protected GUIButtonControl btnScrobbleUser = null;
+    [SkinControlAttribute(30)] protected GUIToggleButtonControl btnRepeatPlaylist = null;
+
 
     public GUIMusicPlayList()
     {
@@ -144,7 +145,7 @@ namespace MediaPortal.GUI.Music
       string currentUID = Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser));
       ScrobblerOn = (mdb.AddScrobbleUserSettings(currentUID, "iScrobbleDefault", -1) == 1) ? true : false;
       _maxScrobbledArtistsForSongs = mdb.AddScrobbleUserSettings(currentUID, "iAddArtists", -1);
-      _maxScrobbledSongsPerArtist = mdb.AddScrobbleUserSettings(currentUID, "iAddTracks", -1);      
+      _maxScrobbledSongsPerArtist = mdb.AddScrobbleUserSettings(currentUID, "iAddTracks", -1);
       _preferCountForTracks = mdb.AddScrobbleUserSettings(currentUID, "iPreferCount", -1);
       _rememberStartTrack = (mdb.AddScrobbleUserSettings(currentUID, "iRememberStartArtist", -1) == 1) ? true : false;
       _maxScrobbledArtistsForSongs = (_maxScrobbledArtistsForSongs > 0) ? _maxScrobbledArtistsForSongs : 3;
@@ -287,6 +288,11 @@ namespace MediaPortal.GUI.Music
       {
         GUIControl.FocusControl(GetID, btnViewAs.GetID);
       }
+      if (btnRepeatPlaylist != null)
+      {
+        btnRepeatPlaylist.Selected = playlistPlayer.RepeatPlaylist;
+      }
+
       SelectCurrentPlayingSong();
     }
 
@@ -466,6 +472,10 @@ namespace MediaPortal.GUI.Music
           //}
           UpdateButtonStates();
       }
+      else if ((btnRepeatPlaylist != null) && (control == btnRepeatPlaylist))
+      {
+        playlistPlayer.RepeatPlaylist = btnRepeatPlaylist.Selected;
+      }
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -600,7 +610,7 @@ namespace MediaPortal.GUI.Music
     #endregion
 
     void OnThreadMessage(GUIMessage message)
-    {      
+    {
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
@@ -617,7 +627,7 @@ namespace MediaPortal.GUI.Music
         // delaying internet lookups for smooth playback start
         case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
           if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && ScrobblerOn == true) // && playlistPlayer.CurrentSong != 0)
-          {            
+          {
             DoScrobbleLookups();
           }
           break;
@@ -1208,7 +1218,7 @@ namespace MediaPortal.GUI.Music
             }
           string strFile = String.Empty;
           if (g_Player.Player.CurrentFile != null && g_Player.Player.CurrentFile != String.Empty && g_Player.IsMusic)
-          {            
+          {
             strFile = g_Player.Player.CurrentFile;
 
             bool songFound = dbs.GetSongByFileName(strFile, ref current10SekSong);
@@ -1340,13 +1350,13 @@ namespace MediaPortal.GUI.Music
     void OnScrobbleLookupsCompleted(List<Song> LookupArtists)
     {
       Log.Debug("GUIMusicPlaylist: OnScrobbleLookupsCompleted - processing {0} results", Convert.ToString(LookupArtists.Count));
-      
+
       if (LookupArtists.Count < _maxScrobbledArtistsForSongs)
       {
         if (LookupArtists.Count > 0)
           for (int i = 0; i < LookupArtists.Count; i++)
             ScrobbleSimilarArtists(LookupArtists[i].Artist);
-          }
+      }
       else // enough artists
       {
         int addedSimilarSongs = 0;
@@ -1402,7 +1412,7 @@ namespace MediaPortal.GUI.Music
         songList.Add(singlesong);
       }
 
-//      Log.Debug("GUIMusicPlaylist: ScrobbleSimilarArtists found {0} songs allowed to add", Convert.ToString(songList.Count));
+      //      Log.Debug("GUIMusicPlaylist: ScrobbleSimilarArtists found {0} songs allowed to add", Convert.ToString(songList.Count));
 
       // exit if not enough songs were found
       if (songList.Count < _maxScrobbledSongsPerArtist)
@@ -1488,7 +1498,7 @@ namespace MediaPortal.GUI.Music
 
         refSong = songList[randomPosition];
 
-//        Log.Debug("GUIMusicPlaylist: ScrobbleSimilarArtists tries to add this song - {0}", refSong.ToShortString());
+        //        Log.Debug("GUIMusicPlaylist: ScrobbleSimilarArtists tries to add this song - {0}", refSong.ToShortString());
 
         if (AddRandomSongToPlaylist(ref refSong))
         {
@@ -1548,5 +1558,6 @@ namespace MediaPortal.GUI.Music
         }
       }
     }
+
   }
 }
