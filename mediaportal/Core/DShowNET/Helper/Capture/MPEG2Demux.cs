@@ -41,7 +41,7 @@ namespace DShowNET.Helper
   /// <summary>
   /// 
   /// </summary>
-  public class MPEG2Demux : IDisposable 
+  public class MPEG2Demux : IDisposable
   {
     #region imports
     [ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
@@ -55,7 +55,6 @@ namespace DShowNET.Helper
     [DllImport("advapi32", CharSet = CharSet.Auto)]
     private static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
     #endregion
-
 
     #region variables
     IGraphBuilder _graphBuilderInterface = null;
@@ -172,7 +171,7 @@ namespace DShowNET.Helper
         0x00, 0x00, 0x00, 0x00, // dwPTSLow
         0x00, 0x00, 0x00, 0x00  // dwPTSHigh
       };
-      static byte[] LPCMAudioFormat =
+    static byte[] LPCMAudioFormat =
         {
           0x00, 0x00,             // format type      = 0x0000=WAVE_FORMAT_UNKNOWN
           0x02, 0x00,             // channels
@@ -189,7 +188,6 @@ namespace DShowNET.Helper
 
     public MPEG2Demux(ref IGraphBuilder graphBuilder, Size framesize)
     {
-
       _graphBuilderInterface = graphBuilder;
       _sizeFrame = framesize;
       AddMpeg2Demultiplexer();
@@ -198,7 +196,6 @@ namespace DShowNET.Helper
     {
       Dispose();
     }
-
     #endregion
 
     #region properties
@@ -214,7 +211,7 @@ namespace DShowNET.Helper
 
     public IPin LPCMOutputPin
     {
-        get { return _pinLPCMOut; }
+      get { return _pinLPCMOut; }
     }
 
     public IPin VideoOutputPin
@@ -247,17 +244,14 @@ namespace DShowNET.Helper
         {
           if (_videoWindowInterface != null)
             _videoWindowInterface.put_Visible(OABool.False);
-
         }
         else
         {
           if (_videoWindowInterface != null)
             _videoWindowInterface.put_Visible(OABool.True);
-
         }
       }
     }
-
     #endregion
 
     #region viewing
@@ -270,7 +264,6 @@ namespace DShowNET.Helper
     {
       if (false == _isRendered) return;
       Log.Info("mpeg2:StopViewing()");
-
       _isOverlayWindowVisible = false;
       if (_videoWindowInterface != null)
       {
@@ -285,7 +278,6 @@ namespace DShowNET.Helper
       DirectShowUtil.RemoveDownStreamFilters(_graphBuilderInterface, _filterMpeg2Demultiplexer, false);
       _videoWindowInterface = null;
       _basicVideoInterface = null;
-     
       _isRendered = false;
     }
 
@@ -302,9 +294,7 @@ namespace DShowNET.Helper
       {
         _isOverlayWindowVisible = true;
         Log.Info("mpeg2:StartViewing()");
-
         Overlay = false;
-
         // start graph
         SetVideoWindow();
         StartGraph();
@@ -314,7 +304,6 @@ namespace DShowNET.Helper
 
       // video window has not been created yet, so create it
       Log.Info("mpeg2:StartViewing()");
-
       //render the video output. This will create the overlay render filter
       int hr = _graphBuilderInterface.Render(_pinVideoout);
       if (hr != 0)
@@ -324,40 +313,56 @@ namespace DShowNET.Helper
       }
       Log.Info("mpeg2:demux video out connected ");
 
-
       //render the audio output pin, this will create the audio renderer which plays the audio part
       IBaseFilter capture;
+      //check for Adaptec USB device (uses LPCM pin)
       _graphBuilderInterface.FindFilterByName("Adaptec USB Capture Device", out capture);
       if (capture == null)
       {
-          _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
-      }
-      if (capture == null)
-      {
-        //Log.Info("mpeg2:FAILED to find Adaptec Capture Device");
-        hr = _graphBuilderInterface.Render(_pinAudioOut);
-        if (hr != 0)
+        //failed to find Adaptec USB device - see if the PCI device is in the graph
+        _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
+        if (capture == null)
         {
-          Log.Error("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
-          return false;
-        }
-        Log.Info("mpeg2:demux mpeg audio out connected ");
-      }
-      if (capture != null)
-      {
-        Log.Info("mpeg2:Found Adaptec Capture Device");
-        hr = _graphBuilderInterface.Render(_pinLPCMOut);
-        if (hr != 0)
-        {
-          Log.Error("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
-          Log.Info("mpeg2:Trying standard audio connection");
+          //No Adaptec device found render std audio as normal
+          Log.Info("mpeg2:FAILED to find Adaptec Capture Device");
           hr = _graphBuilderInterface.Render(_pinAudioOut);
           if (hr != 0)
           {
+            Log.Error("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
             return false;
           }
+          Log.Info("mpeg2:demux mpeg audio out connected ");
         }
-        Log.Info("mpeg2:demux audio out connected ");
+      }
+      else
+      {
+        //Found an aplicable Adaptec capture device
+        Log.Info("mpeg2:Found Adaptec Capture Device");
+        //However we need to check if this is a MCE device if so render std audio
+        Log.Info("mpeg2:Checking if MCE Device");
+        IPin pinMpgOut = DsFindPin.ByName(capture, "Mpeg Out");
+        if (pinMpgOut == null)
+        {
+          //Adaptec device is not a MCE version
+          hr = _graphBuilderInterface.Render(_pinLPCMOut);
+          if (hr != 0)
+          {
+            Log.Error("mpeg2:FAILED to render mpeg2demux lpcm audio out:0x{0:X}", hr);
+            return false;
+          }
+          Log.Info("mpeg:demux lpcm audio out connected");
+        }
+        else
+        {
+          Log.Info("mpeg2:Adaptec MCE device found - connecting mpeg audio");
+          hr = _graphBuilderInterface.Render(_pinAudioOut);
+          if (hr != 0)
+          {
+            Log.Error("mpeg2:FAILED to render mpeg2demux mpeg audio out:0x{0:X}", hr);
+            return false;
+          }
+          Log.Info("mpeg2:demux mpeg audio out connected");
+        }
       }
 
       bool useOverlay = true;
@@ -538,45 +543,59 @@ namespace DShowNET.Helper
       _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
       if (capture == null)
       {
-          _graphBuilderInterface.FindFilterByName("Adaptec USB Capture Device", out capture);
-      }
-      if (capture == null)
-      {
-        //Log.Info("mpeg2:FAILED to find Adaptec Capture Device");
-        int hr = _graphBuilderInterface.Render(_pinAudioOut);
-        if (hr == 0)
+        _graphBuilderInterface.FindFilterByName("Adaptec USB Capture Device", out capture);
+        if (capture == null)
         {
+          Log.Info("mpeg2:FAILED to find Adaptec Capture Device");
+          int hr = _graphBuilderInterface.Render(_pinAudioOut);
+          if (hr != 0)
+          {
+            Log.Error("mpeg2:FAILED to render mpeg2demux mpeg audio out:0x{0:X}", hr);
+          }
           Log.Info("mpeg2:demux mpeg audio out connected ");
         }
-        else
-          Log.Error("mpeg2:FAILED to render mpeg2demux mpeg audio out:0x{0:X}", hr);
       }
-      if (capture != null)
+      else
       {
-        //Log.Info("mpeg2:Found Adaptec Capture Device");
-        int hr = _graphBuilderInterface.Render(_pinLPCMOut);
-        if (hr == 0)
+        Log.Info("mpeg2:Found Adaptec Capture Device");
+        Log.Info("mpeg2:Checking if MCE Device");
+        IPin pinMpgOut = DsFindPin.ByName(capture, "Mpeg Out");
+        if (pinMpgOut == null)
         {
-          Log.Info("mpeg2:demux lpcm audio out connected ");
+          int hr = _graphBuilderInterface.Render(_pinLPCMOut);
+          if (hr != 0)
+          {
+            Log.Error("mpeg2:FAILED to render mpeg2demux LPCM audio out:0x{0:X}", hr);
+          }
+          Log.Info("mpeg2:demux lpcm audio out connected");
         }
         else
-          Log.Error("mpeg2:FAILED to render mpeg2demux LPCM audio out:0x{0:X}", hr);
-          Log.Info("mpeg2:Trying standard audio connection");
-          hr = _graphBuilderInterface.Render(_pinAudioOut);
+        {
+          Log.Info("mpeg2:Adaptec MCE device found - connecting mpeg audio");
+          int hr = _graphBuilderInterface.Render(_pinAudioOut);
+          if (hr != 0)
+          {
+            Log.Error("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
+          }
+          Log.Info("mpeg2:demux audio out connected");
+        }
       }
+
       _isRendered = true;
       if (_mediaControlInterface == null)
+      {
         _mediaControlInterface = _graphBuilderInterface as IMediaControl;
-
+      }
       StartGraph();
     }
+
     public void StopListening()
     {
       if (_isRendered == false) return;
-      
+
       StopGraph();
 
-      DirectShowUtil.RemoveDownStreamFilters(_graphBuilderInterface, _filterMpeg2Demultiplexer,false);
+      DirectShowUtil.RemoveDownStreamFilters(_graphBuilderInterface, _filterMpeg2Demultiplexer, false);
       _isRendered = false;
     }
     #endregion
@@ -602,7 +621,7 @@ namespace DShowNET.Helper
           }
           StopGraph();
 
-          DirectShowUtil.RemoveDownStreamFilters(_graphBuilderInterface, _filterMpeg2Demultiplexer,false);
+          DirectShowUtil.RemoveDownStreamFilters(_graphBuilderInterface, _filterMpeg2Demultiplexer, false);
           DeleteSBESink();
           _isRendered = false;
 
@@ -619,7 +638,7 @@ namespace DShowNET.Helper
     {
       int hr;
       if (!CreateSBESink()) return false;
-      
+
       fileName = System.IO.Path.ChangeExtension(fileName, ".tv");
       Log.Info("mpeg2:StartTimeshifting({0})", fileName);
       int pos = fileName.LastIndexOf(@"\");
@@ -667,7 +686,6 @@ namespace DShowNET.Helper
         }
         Log.Info("mpeg2:connected to streambuffer");
 
-
         //find streambuffer in#1 pin
         _pinStreamBufferIn1 = DsFindPin.ByDirection(_filterStreamBuffer, PinDirection.Input, 1);
         if (_pinStreamBufferIn1 == null)
@@ -680,37 +698,48 @@ namespace DShowNET.Helper
         _graphBuilderInterface.FindFilterByName("Adaptec USB Capture Device", out capture);
         if (capture == null)
         {
-            _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
-        }
-        if (capture == null)
-        {
-          //Log.Info("mpeg2:FAILED to find Adaptec Capture Device");
-          Log.Info("mpeg2:demux mpeg audio out->stream buffer");
-          hr = _graphBuilderInterface.Connect(_pinAudioOut, _pinStreamBufferIn1);
-          if (hr != 0)
+          _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
+          if (capture == null)
           {
-            Log.Error("mpeg2:FAILED to connect audio out to streambuffer:0x{0:X}", hr);
-            return false;
-          }
-          Log.Info("mpeg2:mpeg audio out connected to streambuffer");
-        }
-        if (capture != null)
-        {
-          Log.Info("mpeg2:Found Adaptec Capture Device");
-          Log.Info("mpeg2:demux lpcm audio out->stream buffer");
-          hr = _graphBuilderInterface.Connect(_pinLPCMOut, _pinStreamBufferIn1);
-          if (hr != 0)
-          {
-            Log.Error("mpeg2:FAILED to connect lpcm audio out to streambuffer:0x{0:X}", hr);
-            Log.Info("mpeg2:Trying non LPCM audio connection");
+            Log.Info("mpeg2:FAILED to find Adaptec Capture Device");
+            Log.Info("mpeg2:demux mpeg audio out->stream buffer");
             hr = _graphBuilderInterface.Connect(_pinAudioOut, _pinStreamBufferIn1);
             if (hr != 0)
             {
+              Log.Error("mpeg2:FAILED to connect audio out to streambuffer:0x{0:X}", hr);
               return false;
             }
+            Log.Info("mpeg2:mpeg audio out connected to streambuffer");
           }
-          Log.Info("mpeg2:audio out connected to streambuffer");
         }
+        else
+        {
+          Log.Info("mpeg2:Found Adaptec Capture Device");
+          Log.Info("mpeg2:Checking if MCE Device");
+          IPin pinMpgOut = DsFindPin.ByName(capture, "Mpeg Out");
+          if (pinMpgOut == null)
+          {
+            Log.Info("mpeg2:demux lpcm audio out->stream buffer");
+            hr = _graphBuilderInterface.Connect(_pinLPCMOut, _pinStreamBufferIn1);
+            if (hr != 0)
+            {
+              Log.Error("mpeg2:FAILED to connect lpcm audio out to streambuffer:0x{0:X}", hr);
+              return false;
+            }
+            Log.Info("mpeg2:lpcm audio out connected to streambuffer");
+          }
+          else
+          {
+            Log.Info("mpeg2:Adaptec MCE device found - connecting mpeg audio");
+            hr = _graphBuilderInterface.Connect(_pinAudioOut, _pinStreamBufferIn1);
+            if (hr != 0)
+            {
+              Log.Error("mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
+            }
+            Log.Info("mpeg2:demux audio out connected ");
+          }
+        }
+
         //set mpeg2 demux as reference clock 
         (_graphBuilderInterface as IMediaFilter).SetSyncSource(_filterMpeg2Demultiplexer as IReferenceClock);
 
@@ -733,7 +762,6 @@ namespace DShowNET.Helper
 
         Log.Info("mpeg2:Set folder:{0} filecount 6-8, fileduration:{1} sec", folder, iFileDuration);
 
-
         // set streambuffer backing file configuration
         m_StreamBufferConfig = new StreamBufferConfig();
         _streamBufferConfigureInterface = (IStreamBufferConfigure)m_StreamBufferConfig;
@@ -748,7 +776,6 @@ namespace DShowNET.Helper
         {
           Log.Error("mpeg2: FAILED to set hkey:0x{0:X}", hr);
         }
-
         hr = _streamBufferConfigureInterface.SetDirectory(folder);
         if (hr != 0)
         {
@@ -916,8 +943,8 @@ namespace DShowNET.Helper
       hr = _mpeg2DemultiplexerInterface.CreateOutputPin(lpcmAudioOut, "lpcm", out _pinLPCMOut);
       if (hr != 0)
       {
-          Log.Error("mpeg2:FAILED to create lpcm audio out pin:0x{0:X}", hr);
-          return false;
+        Log.Error("mpeg2:FAILED to create lpcm audio out pin:0x{0:X}", hr);
+        return false;
       }
       //  Marshal.FreeCoTaskMem(mpegAudioOut.formatPtr);
       //  Marshal.FreeCoTaskMem(mpegVideoOut.formatPtr);
@@ -1130,8 +1157,8 @@ namespace DShowNET.Helper
       }
       if (_pinLPCMOut != null)
       {
-          hr = Marshal.ReleaseComObject(_pinLPCMOut);
-          _pinLPCMOut = null;
+        hr = Marshal.ReleaseComObject(_pinLPCMOut);
+        _pinLPCMOut = null;
       }
       if (_pinVideoout != null)
       {
