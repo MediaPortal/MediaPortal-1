@@ -47,24 +47,12 @@
 #include <comutil.h>
 using namespace std;
 
+HMODULE m_hModuleDXVA2 = NULL;
+HMODULE m_hModuleEVR = NULL;
 
-
-
-BOOL APIENTRY DllMain( HANDLE hModule, 
-                       DWORD  ul_reason_for_call, 
-                       LPVOID lpReserved
-					 )
-{
-	switch (ul_reason_for_call)
-	{
-	case DLL_PROCESS_ATTACH:
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-	case DLL_PROCESS_DETACH:
-		break;
-	}
-    return TRUE;
-}
+TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9 = NULL;
+TMFCreateVideoSampleFromSurface* m_pMFCreateVideoSampleFromSurface = NULL;
+BOOL m_bEVRLoaded = false;
 
 // This is an example of an exported variable
 DSHOWHELPER_API int ndshowhelper=0;
@@ -238,20 +226,22 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter
 {
 	//HWND wnd = (HWND)dwWindow;
 	HRESULT hr;
+
+	if ( !m_bEVRLoaded ) 
+	{
+		Log("EVR libraries are not loaded. Cannot init EVR");
+		return FALSE;
+	}
+
 	m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
 	m_pVMR9Filter=vmr9Filter;
 	CComQIPtr<IMFVideoRenderer> pRenderer = m_pVMR9Filter;
 	if (!pRenderer) 
-  {
+   {
 		Log("Could not get IMFVideoRenderer");
 		return FALSE;
 	}
 	m_evrPresenter = new EVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor);
-  if (m_evrPresenter->IsInstalled()==FALSE)
-  {
-    delete m_evrPresenter;
-    return FALSE;
-  }
 
   hr = pRenderer->InitializeRenderer(NULL, m_evrPresenter);
   if (FAILED(hr) ) {
@@ -794,3 +784,75 @@ void AddWstCodecToGraph(IGraphBuilder* pGraph)
 		pWstCodec->Release();
 	}
 }
+
+void UnloadEVR()
+{
+	Log("Unloading EVR libraries");
+  if (m_hModuleDXVA2!=NULL)
+  {
+    FreeLibrary(m_hModuleDXVA2);
+  }
+  if (m_hModuleEVR!=NULL)
+  {
+    FreeLibrary(m_hModuleEVR);
+  }
+}
+
+
+bool LoadEVR()
+{
+	Log("Loading EVR libraries");
+  char systemFolder[MAX_PATH];
+  char mfDLLFileName[MAX_PATH];
+  GetSystemDirectory(systemFolder,sizeof(systemFolder));
+  sprintf(mfDLLFileName,"%s\\dxva2.dll", systemFolder);
+  m_hModuleDXVA2=LoadLibrary(mfDLLFileName);
+  if (m_hModuleDXVA2!=NULL)
+  {
+	  Log("Found dxva2.dll");
+    m_pDXVA2CreateDirect3DDeviceManager9=(TDXVA2CreateDirect3DDeviceManager9*)GetProcAddress(m_hModuleDXVA2,"DXVA2CreateDirect3DDeviceManager9");
+    if (m_pDXVA2CreateDirect3DDeviceManager9!=NULL)
+    {
+		Log("Found method DXVA2CreateDirect3DDeviceManager9");
+      sprintf(mfDLLFileName,"%s\\evr.dll", systemFolder);
+      m_hModuleEVR=LoadLibrary(mfDLLFileName);
+      m_pMFCreateVideoSampleFromSurface=(TMFCreateVideoSampleFromSurface*)GetProcAddress(m_hModuleEVR,"MFCreateVideoSampleFromSurface");
+	  if ( m_pMFCreateVideoSampleFromSurface )
+	  {
+		  Log("Found method MFCreateVideoSampleFromSurface");
+		  Log("Successfully loaded EVR dlls");
+		  return TRUE;
+	  }
+	}
+  }
+  Log("Could not find all dependencies for EVR!");
+  UnloadEVR();
+  return FALSE;
+}
+
+int processCounter=0;
+BOOL APIENTRY DllMain( HANDLE hModule, 
+                       DWORD  ul_reason_for_call, 
+                       LPVOID lpReserved
+					 )
+{
+	switch (ul_reason_for_call)
+	{
+	case DLL_PROCESS_ATTACH:
+		if (processCounter==0)
+			m_bEVRLoaded = LoadEVR();
+		processCounter++;
+		break;
+	case DLL_THREAD_ATTACH:
+		break;
+	case DLL_THREAD_DETACH:
+		break;
+	case DLL_PROCESS_DETACH:
+		processCounter--;
+		if ( processCounter == 0 && m_bEVRLoaded )
+			UnloadEVR();
+		break;
+	}
+    return TRUE;
+}
+

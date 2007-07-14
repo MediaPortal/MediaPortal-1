@@ -39,8 +39,6 @@ class EVRCustomPresenter
 public:
 	EVRCustomPresenter(IVMR9Callback* callback, IDirect3DDevice9* direct3dDevice,HMONITOR monitor);
     virtual ~EVRCustomPresenter();
-    void UseOffScreenSurface(bool yesNo);
-  bool IsInstalled();
 	//IQualProp (stub)
     virtual HRESULT STDMETHODCALLTYPE get_FramesDroppedInRenderer(int *pcFrames);
     virtual HRESULT STDMETHODCALLTYPE get_FramesDrawn(int *pcFramesDrawn) ;     
@@ -128,8 +126,8 @@ public:
 protected:
 	void Paint(IDirect3DSurface9* pSurface);
 	void DeleteSurfaces();
+	HRESULT SetMediaType(IMFMediaType *pType);
 	void ReAllocSurfaces();
-	HRESULT RenegotiateMediaInputType();
 	HRESULT RenegotiateMediaOutputType();
 	HRESULT ProcessInputNotify();
 	void	StartScheduler();
@@ -142,6 +140,7 @@ protected:
 	HRESULT GetFreeSample(IMFSample **ppSample);
 	void	ReturnSample(IMFSample *pSample, BOOL bCheckForWork);
 	HRESULT PresentSample(IMFSample *pSample);
+	void    ResetStatistics();
 
     CComPtr<IDirect3DDevice9> m_pD3DDev;
 	IVMR9Callback* m_pCallback;
@@ -169,16 +168,7 @@ protected:
 	double m_fps ;
 	BOOL		m_bfirstFrame;
 	BOOL		m_bfirstInput;
-  HMODULE m_hModuleMF;
-  HMODULE m_hModuleDXVA2;
-  HMODULE m_hModuleEVR;
+	int m_iFramesDrawn, m_iFramesDropped, m_iJitter;
+	LONGLONG m_hnsLastFrameTime, m_hnsTotalDiff;
 
-  typedef HRESULT __stdcall TMFGetService(IUnknown* punkObject,REFGUID guidService,REFIID riid,LPVOID* ppvObject);
-	TMFGetService* m_pMFGetService;
-
-  typedef HRESULT __stdcall TDXVA2CreateDirect3DDeviceManager9(__out UINT* pResetToken,__deref_out IDirect3DDeviceManager9** ppDeviceManager);
-	TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9;
-
-  typedef HRESULT __stdcall TMFCreateVideoSampleFromSurface(__in_opt IUnknown* pUnkSurface,__deref_out_opt IMFSample** ppSample);
-  TMFCreateVideoSampleFromSurface* m_pMFCreateVideoSampleFromSurface;
 };

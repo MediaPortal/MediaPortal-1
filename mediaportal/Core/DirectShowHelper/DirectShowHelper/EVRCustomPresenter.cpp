@@ -40,9 +40,11 @@
 #include <dvdmedia.h>
 #include <evr.h>
 #include <mfapi.h>
+#include <mfidl.h>
 #include <mferror.h>
 #include <objbase.h>
 #include <dxva2api.h>
+#include "dshowhelper.h"
 #include "evrcustompresenter.h"
 
 void Log(const char *fmt, ...) ;
@@ -106,11 +108,27 @@ void LogGUID( REFGUID guid ) {
 	CoTaskMemFree(str);
 }
 
+//avoid dependency into MFGetService, aparently only availabe on vista
+HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService,
+    REFIID riid, LPVOID* ppvObject ) 
+{
+	if ( ppvObject == NULL ) return E_POINTER;
+	HRESULT hr;
+	IMFGetService* pGetService;
+	hr = punkObject->QueryInterface(__uuidof(IMFGetService),
+		(void**)&pGetService);
+	if ( SUCCEEDED(hr) ) {
+		hr = pGetService->GetService(guidService, riid, ppvObject);
+		SAFE_RELEASE(pGetService);
+	}
+	return hr;
+}
 
 unsigned __stdcall SchedulerThread(void *ArgList) {
 	SchedulerParams *p = (SchedulerParams*)ArgList;
 	EVRCustomPresenter* pPresenter = p->pPresenter;
 	Log( "EVRCustomPresenter: SchedulerThread started" );
+	ULONGLONG mintime=1000000, maxtime=0;
 	while ( true ) 
 	{
 		HRESULT hr;
@@ -139,80 +157,47 @@ unsigned __stdcall SchedulerThread(void *ArgList) {
 EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor)
 : m_refCount(1)
 {
-  char systemFolder[MAX_PATH];
-  char mfDLLFileName[MAX_PATH];
-  GetSystemDirectory(systemFolder,sizeof(systemFolder));
-  sprintf(mfDLLFileName,"%s\\mf.dll", systemFolder);
-  m_hModuleMF=LoadLibrary(mfDLLFileName);
-  if (m_hModuleMF!=NULL)
-  {
-    m_pMFGetService=(TMFGetService*)GetProcAddress(m_hModuleMF,"MFGetService");
-    if (m_pMFGetService!=NULL)
+    if (m_pMFCreateVideoSampleFromSurface!=NULL)
     {
-      sprintf(mfDLLFileName,"%s\\dxva2.dll", systemFolder);
-      m_hModuleDXVA2=LoadLibrary(mfDLLFileName);
-      if (m_hModuleDXVA2!=NULL)
-      {
-        m_pDXVA2CreateDirect3DDeviceManager9=(TDXVA2CreateDirect3DDeviceManager9*)GetProcAddress(m_hModuleDXVA2,"DXVA2CreateDirect3DDeviceManager9");
-        if (m_pDXVA2CreateDirect3DDeviceManager9!=NULL)
-        {
-          sprintf(mfDLLFileName,"%s\\evr.dll", systemFolder);
-          m_hModuleEVR=LoadLibrary(mfDLLFileName);
-          if (m_hModuleEVR!=NULL)
-          {
-            m_pMFCreateVideoSampleFromSurface=(TMFCreateVideoSampleFromSurface*)GetProcAddress(m_hModuleEVR,"MFCreateVideoSampleFromSurface");
-            if (m_pMFCreateVideoSampleFromSurface!=NULL)
-            {
-	            Log("----------v0.37---------------------------");
-	            m_hMonitor=monitor;
-	            m_pD3DDev=direct3dDevice;
-	            HRESULT hr = m_pDXVA2CreateDirect3DDeviceManager9(
-		            &m_iResetToken, &m_pDeviceManager);
-	            if ( FAILED(hr) ) {
-		            Log( "Could not create DXVA2 Device Manager" );
-	            } else {
-		            m_pDeviceManager->ResetDevice(direct3dDevice, m_iResetToken);
-	            }
-	            m_pCallback=pCallback;
-	            m_surfaceCount=0;
-	            //m_UseOffScreenSurface=false;
-	            m_fRate = 1.0f;
-	            //TODO: use ZeroMemory
-	            for ( int i=0; i<NUM_SURFACES; i++ ) {
-		            chains[i] = NULL;
-		            surfaces[i] = NULL;
-		            samples[i] = NULL;
-	            }
-            }
-          }
+        Log("----------v0.37---------------------------");
+        m_hMonitor=monitor;
+        m_pD3DDev=direct3dDevice;
+        HRESULT hr = m_pDXVA2CreateDirect3DDeviceManager9(
+            &m_iResetToken, &m_pDeviceManager);
+        if ( FAILED(hr) ) {
+            Log( "Could not create DXVA2 Device Manager" );
+        } else {
+            m_pDeviceManager->ResetDevice(direct3dDevice, m_iResetToken);
         }
-      }
+        m_pCallback=pCallback;
+        m_surfaceCount=0;
+        //m_UseOffScreenSurface=false;
+        m_fRate = 1.0f;
+        //TODO: use ZeroMemory
+        for ( int i=0; i<NUM_SURFACES; i++ ) {
+            chains[i] = NULL;
+            surfaces[i] = NULL;
+            samples[i] = NULL;
+        }
     }
-  }
+    m_pCallback=pCallback;
+    m_surfaceCount=0;
+    m_fRate = 1.0f;
+    //TODO: use ZeroMemory
+    for ( int i=0; i<NUM_SURFACES; i++ ) {
+	    chains[i] = NULL;
+	    surfaces[i] = NULL;
+	    samples[i] = NULL;
+    }
 }
 
-bool EVRCustomPresenter::IsInstalled()
-{
-  return (m_hModuleMF!=NULL && m_pMFGetService!=NULL);
-}
 EVRCustomPresenter::~EVRCustomPresenter()
 {
 	if (m_pCallback!=NULL)
 		m_pCallback->PresentImage(0,0,0,0,0);
 	DeleteSurfaces();
 	StopScheduler();
-  if (m_hModuleMF!=NULL)
-  {
-    FreeLibrary(m_hModuleMF);
-  }
-  if (m_hModuleDXVA2!=NULL)
-  {
-    FreeLibrary(m_hModuleDXVA2);
-  }
-  if (m_hModuleEVR!=NULL)
-  {
-    FreeLibrary(m_hModuleEVR);
-  }
+	m_pDeviceManager.Release();
 }	
 
 HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetParameters( 
@@ -262,16 +247,6 @@ LogIID( riid );
         AddRef();
         hr = S_OK;
     } 
-	else if( riid == IID_IMFGetService) {
-		*ppvObject = static_cast<IMFGetService*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-	else if( riid == IID_IMFGetService) {
-		*ppvObject = static_cast<IMFGetService*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
 	else if( riid == IID_IQualProp) {
 		*ppvObject = static_cast<IQualProp*>( this );
         AddRef();
@@ -312,6 +287,16 @@ ULONG EVRCustomPresenter::Release()
     }
 
     return ret;
+}
+
+void EVRCustomPresenter::ResetStatistics()
+{
+			m_bfirstFrame = true;
+			m_bfirstInput = true;
+			m_iFramesDrawn = 0;
+			m_iFramesDropped = 0;
+			m_hnsLastFrameTime = 0;
+			m_iJitter = 0;
 }
 
 HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetSlowestRate( 
@@ -506,23 +491,79 @@ HRESULT EVRCustomPresenter::GetTimeToSchedule(IMFSample* pSample, LONGLONG *phns
 	return hr;
 }
 
+HRESULT EVRCustomPresenter::SetMediaType(IMFMediaType* pType)
+{
+	if (pType == NULL) 
+	{
+		m_pMediaType = NULL;
+		return S_OK;
+	}
+
+	HRESULT hr = S_OK;
+
+
+	LARGE_INTEGER u64;
+	UINT32 u32;
+	
+	CHECK_HR(pType->GetUINT64(MF_MT_FRAME_SIZE, (UINT64*)&u64), "Getting Framesize failed!");
+	m_iVideoWidth = u64.HighPart;
+	m_iVideoHeight = u64.LowPart;
+	//use video size as default value for aspect ratios
+	m_iARX = m_iVideoWidth;
+	m_iARY = m_iVideoHeight;
+	if ( SUCCEEDED(pType->GetUINT32(MF_MT_SOURCE_CONTENT_HINT, &u32) ) )
+	{
+		Log( "Getting aspect ratio 'MediaFoundation style'");
+		switch ( u32 )
+		{
+			case MFVideoSrcContentHintFlag_None:
+				Log("Aspect ratio unknown");
+				break;
+			case MFVideoSrcContentHintFlag_16x9:
+				Log("Source is 16:9 within 4:3!");
+				m_iARX = 16;
+				m_iARY = 9;
+				break;
+			case MFVideoSrcContentHintFlag_235_1:
+				Log("Source is 2.35:1 within 16:9 or 4:3");
+				m_iARX = 47;
+				m_iARY = 20;
+				break;
+			default:
+				Log("Unkown aspect ratio flag: %d", u32);
+		}
+	}
+	else
+	{
+		//Try old DirectShow-Header, if above does not work
+		Log( "Getting aspect ratio 'DirectShow style'");
+		AM_MEDIA_TYPE* pAMMediaType;
+		CHECK_HR(
+			hr = pType->GetRepresentation(FORMAT_VideoInfo2, (void**)&pAMMediaType),
+			"Getting DirectShow Video Info failed");
+		if ( SUCCEEDED(hr) ) 
+		{
+			VIDEOINFOHEADER2* vheader = (VIDEOINFOHEADER2*)pAMMediaType->pbFormat;
+			m_iARX = vheader->dwPictAspectRatioX;
+			m_iARY = vheader->dwPictAspectRatioY;
+			pType->FreeRepresentation(FORMAT_VideoInfo2, (void*)pAMMediaType);
+		}
+	}
+
+	Log( "New format: %dx%d, Ratio: %d:%d",
+		m_iVideoWidth, m_iVideoHeight, m_iARX, m_iARY );
+
+	GUID subtype;
+	CHECK_HR(pType->GetGUID(MF_MT_SUBTYPE, &subtype), "Could not get subtype");
+	LogGUID( subtype );
+	m_pMediaType = pType;
+	m_pMediaType->AddRef();
+	return hr;
+}
+
 void EVRCustomPresenter::ReAllocSurfaces()
 {
 	DeleteSurfaces();
-	IMFVideoMediaType *type = NULL;
-	CHECK_HR( GetCurrentMediaType(&type), "GetCurrentMediaType failed" );
-	if ( type == NULL ) Log( "Returned NULL-MediaType" );
-	const MFVIDEOFORMAT* format = type->GetVideoFormat();
-
-	m_iVideoWidth = format->videoInfo.dwWidth;
-	m_iVideoHeight = format->videoInfo.dwHeight;
-	m_iARX = format->videoInfo.GeometricAperture.Area.cx;
-	m_iARY = format->videoInfo.GeometricAperture.Area.cy;
-	Log( "New format: %dx%d, Ratio: %d:%d",
-		m_iVideoWidth, m_iVideoHeight, m_iARX, m_iARY );
-	LogGUID( format->guidFormat );
-
-	SAFE_RELEASE(type);
 
 	// set the presentation parameters
 	D3DPRESENT_PARAMETERS d3dpp;
@@ -530,6 +571,7 @@ void EVRCustomPresenter::ReAllocSurfaces()
 	d3dpp.BackBufferWidth = m_iVideoWidth;
 	d3dpp.BackBufferHeight = m_iVideoHeight;
 	d3dpp.BackBufferCount = 1;
+	//TODO check media type for correct format!
 	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dpp.Windowed = true;
@@ -543,13 +585,9 @@ void EVRCustomPresenter::ReAllocSurfaces()
 	IDirect3DDevice9* pDevice;
 	CHECK_HR(m_pDeviceManager->OpenDeviceHandle(&hDevice), "Cannot open device handle");
 	CHECK_HR(m_pDeviceManager->LockDevice(hDevice, &pDevice, TRUE), "Cannot lock device");
-	IDirectXVideoDecoderService *pService;
-	m_pDeviceManager->GetVideoService(hDevice,
-		__uuidof(IDirectXVideoDecoderService), (void**)&pService);
-	SAFE_RELEASE(pService);
 	HRESULT hr;
 	for ( int i=0; i<NUM_SURFACES; i++ ) {
-		Log( "Creating chain %d...", i );
+		//Log( "Creating chain %d...", i );
 		hr = pDevice->CreateAdditionalSwapChain(&d3dpp, &chains[i]);
 		if (FAILED(hr)) {
 			Log("Chain creation failed with 0x%x", hr);
@@ -566,109 +604,23 @@ void EVRCustomPresenter::ReAllocSurfaces()
 			Log("CreateVideoSampleFromSurface failed: 0x%x", hr);
 			return;
 		}
-		Log("Adding sample: 0x%x", samples[i]);
+		//Log("Adding sample: 0x%x", samples[i]);
 		m_vFreeSamples.push_back(samples[i]);
-		Log("Chain created");
+		//Log("Chain created");
 	}
 	m_pDeviceManager->UnlockDevice(hDevice, FALSE);
 	m_pDeviceManager->CloseDeviceHandle(hDevice);
 }
 
-HRESULT EVRCustomPresenter::RenegotiateMediaInputType()
-{
-    HRESULT hr = S_OK;
-    BOOL fFoundMediaType = FALSE;
-
-    IMFMediaType *pMixerType = NULL;
-    IMFMediaType *pType = NULL;
-
-    if (!m_pMixer)
-    {
-        return MF_E_INVALIDREQUEST;
-    }
-	if ( SUCCEEDED(m_pMixer->GetInputCurrentType(0, &pMixerType)) ){
-		SAFE_RELEASE(pMixerType);
-		Log( "Mixer has a valid input type!" );
-		return S_OK;
-	}
-    // Loop through all of the mixer's proposed input types.
-    DWORD iTypeIndex = 0;
-    while (!fFoundMediaType && (hr != MF_E_NO_MORE_TYPES))
-    {
-        SAFE_RELEASE(pMixerType);
-        SAFE_RELEASE(pType );
-Log(  "Testing input media type..." );
-        // Step 1. Get the next media type supported by mixer.
-        hr = m_pMixer->GetInputAvailableType(0, iTypeIndex++, &pMixerType);
-        if (FAILED(hr))
-        {
-            break;
-        }
-
-        // Step 2. Check if we support this media type.
-        if (SUCCEEDED(hr))
-        {
-            hr = S_OK; //IsMediaTypeSupported(pMixerType);
-        }
-
-        // Step 3. Adjust the mixer's type to match our requirements.
-        if (SUCCEEDED(hr))
-        {
-            //hr = CreateProposedOutputType(pMixerType, &pType);
-        }
-
-        // Step 4. Check if the mixer will accept this media type.
-        if (SUCCEEDED(hr))
-        {
-            //hr = m_pMixer->SetOutputType(0, pType, MFT_SET_TYPE_TEST_ONLY);
-			hr = m_pMixer->SetInputType(0, pMixerType, MFT_SET_TYPE_TEST_ONLY);
-        }
-
-        // Step 5. Try to set the media type on ourselves.
-        if (SUCCEEDED(hr))
-        {
-            //hr = SetMediaType(pType);
-			Log( "New input media type successfully negotiated!" );
-			//m_pMediaInputType = pMixerType;
-			CHECK_HR( 
-				hr = m_pMixer->SetInputType(0, pMixerType, 0),
-				"SetInputType failed" );
-        }
-
-        // Step 6. Set output media type on mixer.
-        if (SUCCEEDED(hr))
-        {
-            hr = m_pMixer->SetOutputType(0, pType, 0);
-
-            // If something went wrong, clear the media type.
-            if (FAILED(hr))
-            {
-                
-				m_pMediaType = NULL;
-            }
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            fFoundMediaType = TRUE;
-        }
-    }
-
-    SAFE_RELEASE(pMixerType);
-    SAFE_RELEASE(pType);
-    return hr;
-}
 
 void LogMediaTypes(IMFTransform* pMixer)
 {
 	HRESULT hr=S_OK;
     DWORD iTypeIndex = 0;
 	IMFMediaType* pType=NULL;
-	IMFVideoMediaType* pVideo;
+	IMFVideoMediaType* pVideo=NULL;
     while ((hr != MF_E_NO_MORE_TYPES))
     {
-        SAFE_RELEASE(pType );
-        // Step 1. Get the next media type supported by mixer.
         hr = pMixer->GetOutputAvailableType(0, iTypeIndex++, &pType);
         if (FAILED(hr))
         {
@@ -684,6 +636,9 @@ void LogMediaTypes(IMFTransform* pMixer)
 		Log( "Videotype: %dx%d",f->videoInfo.dwWidth,
 			f->videoInfo.dwHeight);
 
+		SAFE_RELEASE(pVideo);
+        SAFE_RELEASE(pType);
+
 	}
 }
 
@@ -693,7 +648,7 @@ HRESULT EVRCustomPresenter::RenegotiateMediaOutputType()
     BOOL fFoundMediaType = FALSE;
 
     IMFMediaType *pMixerType = NULL;
-    IMFMediaType *pType = NULL;
+    //IMFMediaType *pType = NULL;
 
     if (!m_pMixer)
     {
@@ -706,7 +661,7 @@ HRESULT EVRCustomPresenter::RenegotiateMediaOutputType()
     while (!fFoundMediaType && (hr != MF_E_NO_MORE_TYPES))
     {
         SAFE_RELEASE(pMixerType);
-        SAFE_RELEASE(pType );
+        //SAFE_RELEASE(pType );
 Log(  "Testing media type..." );
         // Step 1. Get the next media type supported by mixer.
         hr = m_pMixer->GetOutputAvailableType(0, iTypeIndex++, &pMixerType);
@@ -736,10 +691,13 @@ Log(  "Testing media type..." );
         // Step 5. Try to set the media type on ourselves.
         if (SUCCEEDED(hr))
         {
-            //hr = SetMediaType(pType);
 			Log( "New media type successfully negotiated!" );
-			m_pMediaType = pMixerType;
-			ReAllocSurfaces();
+			
+            hr = SetMediaType(pMixerType);
+			if (SUCCEEDED(hr))
+			{
+				ReAllocSurfaces();
+			}
         }
 
         // Step 6. Set output media type on mixer.
@@ -751,8 +709,7 @@ Log(  "Testing media type..." );
             if (FAILED(hr))
             {
 				Log( "Could not set output type: 0x%x", hr );
-                //SetMediaType(NULL);
-				m_pMediaType = NULL;
+                SetMediaType(NULL);
             }
         }
 
@@ -763,7 +720,6 @@ Log(  "Testing media type..." );
     }
 
     SAFE_RELEASE(pMixerType);
-    SAFE_RELEASE(pType);
     return hr;
 }
 
@@ -811,12 +767,12 @@ HRESULT EVRCustomPresenter::PresentSample(IMFSample* pSample)
     // Get the buffer from the sample.
 	CHECK_HR(hr = pSample->GetBufferByIndex(0, &pBuffer), "failed: GetBufferByIndex");
 
-    CHECK_HR(hr = m_pMFGetService(
+    CHECK_HR(hr = MyGetService(
         pBuffer, 
         MR_BUFFER_SERVICE, 
         __uuidof(IDirect3DSurface9), 
         (void**)&pSurface),
-		"failed: MFGetService");
+		"failed: MyGetService");
 
     if (pSurface)
     {
@@ -828,6 +784,23 @@ HRESULT EVRCustomPresenter::PresentSample(IMFSample* pSample)
 
         // Present the swap chain.
 		Paint(pSurface);
+
+		// Calculate offset to scheduled time
+		LONGLONG hnsTimeNow, hnsSystemTime, hnsTimeScheduled;
+		m_pClock->GetCorrelatedTime(0, &hnsTimeNow, &hnsSystemTime);
+
+		pSample->GetSampleTime(&hnsTimeScheduled);
+		LONGLONG deviation = hnsTimeNow - hnsTimeScheduled;
+		if ( deviation < 0 ) deviation = -deviation;
+		m_hnsTotalDiff += deviation;
+		if ( m_hnsLastFrameTime != 0 )
+		{
+			LONGLONG hnsDiff = hnsTimeNow - m_hnsLastFrameTime;
+			//todo: expected: standard deviation!
+			m_iJitter = hnsDiff / 10000;
+		}
+		m_hnsLastFrameTime = hnsTimeNow;
+		m_iFramesDrawn++;
         /*CHECK_HR(hr = pSwapChain->Present(NULL, NULL, NULL, NULL, 0),
 			"failed: Present");*/
     }
@@ -874,6 +847,7 @@ HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime)
 		if ( *pNextSampleTime < -400000 ) {
 			//skip!
 			Log( "skipping frame, behind %d hns", -*pNextSampleTime );
+			m_iFramesDropped++;
 		} else {
 			CHECK_HR(PresentSample(pSample), "PresentSample failed");
 		}
@@ -991,15 +965,13 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::ProcessMessage(
 		case MFVP_MESSAGE_INVALIDATEMEDIATYPE:
 			Log( "Negotiate Media type" );
 			//The mixer's output media type is invalid. The presenter should negotiate a new media type with the mixer. See Negotiating Formats.
-			hr = RenegotiateMediaInputType();
-			if ( SUCCEEDED(hr) ) RenegotiateMediaOutputType();
+			RenegotiateMediaOutputType();
 			break;
 
 		case MFVP_MESSAGE_BEGINSTREAMING:
 			//Streaming has started. No particular action is required by this message, but you can use it to allocate resources.
 			Log("ProcessMessage %x", eMessage);
-			m_bfirstFrame = true;
-			m_bfirstInput = true;
+			ResetStatistics();
 			StartScheduler();
 			break;
 
@@ -1155,11 +1127,13 @@ void EVRCustomPresenter::ReleaseCallBack()
 }
 void EVRCustomPresenter::DeleteSurfaces()
 {
-
 	Log("vmr9:DeleteSurfaces()");
+	Flush();
 	m_vFreeSamples.clear();
 	for ( int i=0; i<NUM_SURFACES; i++ ) {
-		Log("Delete: %d, 0x%x", i, chains[i]);
+		//Log("Delete: %d, 0x%x", i, chains[i]);
+		SAFE_RELEASE( samples[i] );
+		SAFE_RELEASE( surfaces[i] );
 		SAFE_RELEASE( chains[i] );
 	}
 
@@ -1218,31 +1192,37 @@ void EVRCustomPresenter::Paint(IDirect3DSurface9* pSurface)
 
 HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_FramesDroppedInRenderer(int *pcFrames)
 {
-	Log("evr:get_FramesDropped");
+	if ( pcFrames == NULL ) return E_POINTER;
+//	Log("evr:get_FramesDropped: %d", m_iFramesDropped);
+	*pcFrames = m_iFramesDropped;
 	return S_OK;
 }
 HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_FramesDrawn(int *pcFramesDrawn)
 {
-	Log("evr:get_FramesDrawn");
+	if ( pcFramesDrawn == NULL ) return E_POINTER;
+//	Log("evr:get_FramesDrawn: %d", m_iFramesDrawn);
+	*pcFramesDrawn = m_iFramesDrawn;
 	return S_OK;
 }
 HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_AvgFrameRate(int *piAvgFrameRate)
 {
-	Log("evr:get_AvgFrameRate");
+	//Log("evr:get_AvgFrameRate");
 	return S_OK;
 }
 HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_Jitter(int *iJitter)
 {
-	Log("evr:get_Jitter");
+	Log("evr:get_Jitter: %d, deviation: %d", m_iJitter,
+		(int)(m_hnsTotalDiff / m_iFramesDrawn) );
+	*iJitter = m_iJitter;
 	return S_OK;
 }
 HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_AvgSyncOffset(int *piAvg)
 {
-	Log("evr:get_AvgSyncOffset");
+	//Log("evr:get_AvgSyncOffset");
 	return S_OK;
 }
 HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_DevSyncOffset(int *piDev)
 {
-	Log("evr:get_DevSyncOffset");
+	//Log("evr:get_DevSyncOffset");
 	return S_OK;
 }

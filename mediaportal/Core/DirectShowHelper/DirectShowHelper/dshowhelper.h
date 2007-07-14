@@ -9,6 +9,8 @@
 #else
 #define DSHOWHELPER_API __declspec(dllimport)
 #endif
+#include <evr.h>
+#include <dxva2api.h>
 
 // This class is exported from the dshowhelper.dll
 class DSHOWHELPER_API Cdshowhelper {
@@ -20,3 +22,10 @@ public:
 extern DSHOWHELPER_API int ndshowhelper;
 
 DSHOWHELPER_API int fndshowhelper(void);
+
+typedef HRESULT __stdcall TDXVA2CreateDirect3DDeviceManager9(__out UINT* pResetToken,__deref_out IDirect3DDeviceManager9** ppDeviceManager);
+extern TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9;
+
+typedef HRESULT __stdcall TMFCreateVideoSampleFromSurface(__in_opt IUnknown* pUnkSurface,__deref_out_opt IMFSample** ppSample);
+extern TMFCreateVideoSampleFromSurface* m_pMFCreateVideoSampleFromSurface;
+
