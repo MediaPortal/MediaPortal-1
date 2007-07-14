@@ -27,7 +27,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Threading;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -71,12 +75,41 @@ namespace TvPlugin
       IList recordings = Recording.ListAll();
       foreach (Recording rec in recordings)
       {
-        string thumbNail = Utils.GetCoverArtName(Thumbs.TVRecorded, Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, Utils.GetThumbExtension())));
+        string thumbNail = Utils.GetCoverArtName(Thumbs.TVRecorded, Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, @".png")));
         if (!System.IO.File.Exists(thumbNail))
         {
-          Log.Info("GUIRecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
-          if (!DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail))
-            Log.Info("GUIRecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
+          Log.Info("RecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
+          //if (!DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail))
+          //  Log.Info("GUIRecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
+          try
+          {
+            MediaPlayer player = new MediaPlayer();
+            player.Open(new Uri(rec.FileName, UriKind.Absolute));
+            player.ScrubbingEnabled = true;
+            player.Play();
+            player.Pause();
+            // Grab the frame 10 minutes after start to respect pre-recording times.
+            player.Position = new TimeSpan(0, 10, 0);
+            System.Threading.Thread.Sleep(5000);
+            RenderTargetBitmap rtb = new RenderTargetBitmap(720, 576, 1 / 200, 1 / 200, PixelFormats.Pbgra32);
+            DrawingVisual dv = new DrawingVisual();
+            DrawingContext dc = dv.RenderOpen();
+            dc.DrawVideo(player, new Rect(0, 0, 720, 576));
+            dc.Close();
+            rtb.Render(dv);
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(rtb));
+            using (FileStream stream = new FileStream(thumbNail, FileMode.OpenOrCreate))
+            {
+              encoder.Save(stream);
+            }
+            player.Stop();
+            player.Close();
+          }
+          catch (Exception ex)
+          {
+            Log.Info("RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
+          }
         }
       }
       //}
@@ -87,7 +120,7 @@ namespace TvPlugin
     }
   }
   #endregion
- 
+
   public class TvRecorded : GUIWindow, IComparer<GUIListItem>
   {
     #region variables
@@ -125,18 +158,12 @@ namespace TvPlugin
     //bool _creatingThumbNails = false;
     RecordingThumbCacher thumbworker = null;
 
-    [SkinControlAttribute(2)]
-    protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnView = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnCleanup = null;
-    [SkinControlAttribute(10)]
-    protected GUIListControl listAlbums = null;
-    [SkinControlAttribute(11)]
-    protected GUIListControl listViews = null;
+    [SkinControlAttribute(2)]     protected GUIButtonControl btnViewAs = null;
+    [SkinControlAttribute(3)]     protected GUISortButtonControl btnSortBy = null;
+    [SkinControlAttribute(5)]     protected GUIButtonControl btnView = null;
+    [SkinControlAttribute(6)]     protected GUIButtonControl btnCleanup = null;
+    [SkinControlAttribute(10)]    protected GUIListControl listAlbums = null;
+    [SkinControlAttribute(11)]    protected GUIListControl listViews = null;
 
     #endregion
     public TvRecorded()
@@ -158,7 +185,7 @@ namespace TvPlugin
         return true;
       }
     }
-    
+
 
     #region Serialisation
     void LoadSettings()
@@ -465,6 +492,11 @@ namespace TvPlugin
         //  break;
       }
     }
+
+    public override void Process()
+    {
+      TVHome.UpdateProgressPercentageBar();
+    }
     #endregion
 
     #region recording methods
@@ -689,7 +721,7 @@ namespace TvPlugin
       SortMethod method = currentSortMethod;
       bool bAscending = m_bSortAscending;
 
-      for (int i = 0; i < listAlbums.Count; ++i)
+      for (int i = 0 ; i < listAlbums.Count ; ++i)
       {
         GUIListItem item1 = listAlbums[i];
         GUIListItem item2 = listViews[i];
@@ -739,7 +771,7 @@ namespace TvPlugin
         return false;
       }
 
-      
+
       Recording rec = (Recording)pItem.TVTag;
       g_Player.Stop();
       if (TVHome.Card != null)
@@ -870,17 +902,17 @@ namespace TvPlugin
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(676))); // Only watched recordings?
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200044))); // Only invalid recordings?
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200045))); // Both?
-      if ( currentShow != "" ) dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200049))); // Only watched recordings from this folder. 
+      if (currentShow != "") dlg.Add(new GUIListItem(GUILocalizeStrings.Get(200049))); // Only watched recordings from this folder. 
       dlg.Add(new GUIListItem(GUILocalizeStrings.Get(222))); // Cancel?
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel < 0) return;
       if (dlg.SelectedLabel > 4) return;
 
-      if ((dlg.SelectedLabel==0) || (dlg.SelectedLabel==2))
+      if ((dlg.SelectedLabel == 0) || (dlg.SelectedLabel == 2))
         DeleteWatchedRecordings(null);
       if ((dlg.SelectedLabel == 1) || (dlg.SelectedLabel == 2))
         DeleteInvalidRecordings();
-      if (dlg.SelectedLabel == 3 && currentShow !="" ) 
+      if (dlg.SelectedLabel == 3 && currentShow != "")
         DeleteWatchedRecordings(currentShow);
       Gentle.Common.CacheManager.Clear();
       dlg.Reset();
@@ -896,8 +928,8 @@ namespace TvPlugin
       foreach (Recording rec in itemlist)
       {
         if (rec.TimesWatched > 0)
-            if (_currentTitle == null || _currentTitle == rec.Title )
-          server.DeleteRecording(rec.IdRecording);
+          if (_currentTitle == null || _currentTitle == rec.Title)
+            server.DeleteRecording(rec.IdRecording);
       }
     }
     void DeleteInvalidRecordings()
@@ -1140,8 +1172,13 @@ namespace TvPlugin
       }
       return 0;
     }
-    #endregion
 
+    void SortChanged(object sender, SortEventArgs e)
+    {
+      m_bSortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
+      OnSort();
+    }
+    #endregion
 
     #region playback events
     private void OnPlayRecordingBackStopped(MediaPortal.Player.g_Player.MediaType type, int stoptime, string filename)
@@ -1152,7 +1189,7 @@ namespace TvPlugin
       if (filename.Substring(0, 4) == "rtsp") { filename = g_Player.currentFileName; };
       TvBusinessLayer layer = new TvBusinessLayer();
       Recording rec = layer.GetRecordingByFileName(filename);
-      if (stoptime >= g_Player.Duration) { stoptime = 0;}; //temporary workaround before end of stream get's properly implemented
+      if (stoptime >= g_Player.Duration) { stoptime = 0; }; //temporary workaround before end of stream get's properly implemented
       if (rec != null)
       {
         rec.StopTime = stoptime;
@@ -1174,7 +1211,7 @@ namespace TvPlugin
 
       g_Player.Stop();
 
-      
+
       TvBusinessLayer layer = new TvBusinessLayer();
       Recording rec = layer.GetRecordingByFileName(filename);
       if (rec != null)
@@ -1190,12 +1227,12 @@ namespace TvPlugin
           rec.Persist();
         }
       }
-      
+
       //@int movieid = VideoDatabase.GetMovieId(filename);
       //@if (movieid < 0) return;
 
       //@VideoDatabase.DeleteMovieStopTime(movieid);
-    
+
       //@IMDBMovie details = new IMDBMovie();
       //@VideoDatabase.GetMovieInfoById(movieid, ref details);
       //@details.Watched++;
@@ -1228,17 +1265,6 @@ namespace TvPlugin
     //  TVDatabase.PlayedRecordedTV(rec);
     //}
     #endregion
-
-    void SortChanged(object sender, SortEventArgs e)
-    {
-      m_bSortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
-      OnSort();
-    }
-    public override void Process()
-    {
-      TVHome.UpdateProgressPercentageBar();
-    }
-    
 
   }
 }
