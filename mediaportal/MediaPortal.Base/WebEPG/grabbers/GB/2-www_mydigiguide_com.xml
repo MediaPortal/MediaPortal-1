@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="en" availableDays="14" timezone="GMT Standard Time" version="2.1.0" />
+  <Info language="en" availableDays="14" timezone="GMT Standard Time" version="2.1.1" />
   <Channels>
     <Channel id="abc1@disney.co.uk" siteId="50281" />
     <Channel id="abc1d@disney.co.uk" siteId="50462" />
@@ -71,7 +71,6 @@
     <Channel id="cartoonito.co.uk" siteId="50574" />
     <Channel id="cbbc@bbc.co.uk" siteId="638" />
     <Channel id="cbeeb@bbc.co.uk" siteId="639" />
-    <Channel id="tv@celticfc.co.uk" siteId="50387" />
     <Channel id="challengetv.co.uk" siteId="10" />
     <Channel id="an@challengetv.co.uk" siteId="510" />
     <Channel id="p1@challengetv.co.uk" siteId="50289" />
@@ -80,7 +79,6 @@
     <Channel id="channel6@matv.co.uk" siteId="50499" />
     <Channel id="chartshow.tv" siteId="50358" />
     <Channel id="bliss@chartshow.tv" siteId="50225" />
-    <Channel id="tv@chelseafc.com" siteId="50286" />
     <Channel id="tv@classicfm.com" siteId="50353" />
     <Channel id="climax3-1@redhottv.co.uk" siteId="50490" />
     <Channel id="climax3-2@redhottv.co.uk" siteId="50491" />
@@ -94,6 +92,7 @@
     <Channel id="english@dw-world.de" siteId="50467" />
     <Channel id="discoverychannel.co.uk" siteId="12" />
     <Channel id="an@discoverychannel.co.uk" siteId="513" />
+    <Channel id="15@discoverychannel.co.uk" siteId="50582" />
     <Channel id="civil@discoverychannel.co.uk" siteId="11" />
     <Channel id="home@discoverychannel.co.uk" siteId="564" />
     <Channel id="homep1@discoverychannel.co.uk" siteId="50448" />
@@ -117,22 +116,22 @@
     <Channel id="more4p1@channel4.com" siteId="50460" />
     <Channel id="espnclassic.co.uk" siteId="50493" />
     <Channel id="euronews.net" siteId="570" />
-    <Channel id="eurosport.com" siteId="68" />
-    <Channel id="2@eurosport.com" siteId="50376" />
+    <Channel id="eurosport@eurosport.com" siteId="68" />
+    <Channel id="eurosport2@eurosport.com" siteId="50376" />
     <Channel id="sports@extreme.com" siteId="630" />
     <Channel id="ftn.tv" siteId="6195" />
     <Channel id="film4@channel4.com" siteId="100" />
     <Channel id="film4p1@channel4.com" siteId="598" />
     <Channel id="five.tv" siteId="5" />
-    <Channel id="live@five.tv" siteId="50544" />
+    <Channel id="life@five.tv" siteId="50544" />
     <Channel id="us@five.tv" siteId="50543" />
     <Channel id="flaunt.tv" siteId="50226" />
     <Channel id="fxuk.tv" siteId="50253" />
     <Channel id="p2@fxuk.tv" siteId="50456" />
     <Channel id="gaydatetv.co.uk" siteId="50287" />
-    <Channel id="2@god.tv" siteId="50356" />
-    <Channel id="god.tv" siteId="526" />
-    <Channel id="an@god.tv" siteId="535" />
+    <Channel id="europe@god.tv" siteId="50356" />
+    <Channel id="uk@god.tv" siteId="526" />
+    <Channel id="ukan@god.tv" siteId="535" />
     <Channel id="thegolfchanneluk.com" siteId="50541" />
     <Channel id="hallmarkchannel.co.uk" siteId="508" />
     <Channel id="thehistorychannel.co.uk" siteId="72" />
@@ -226,7 +225,6 @@
     <Channel id="propellertv.co.uk" siteId="50545" />
     <Channel id="tv@q4music.com" siteId="50374" />
     <Channel id="qvcuk.com" siteId="529" />
-    <Channel id="tv@rangers.co.uk" siteId="50388" />
     <Channel id="realestatetv.tv" siteId="50523" />
     <Channel id="p1@realestatetv.tv" siteId="50577" />
     <Channel id="40pwives@redhottv.co.uk" siteId="50510" />
@@ -312,7 +310,7 @@
     <Channel id="skymovies2a@sky.com" siteId="40" />
     <Channel id="skymoviescomedy@sky.com" siteId="91" />
     <Channel id="skymoviesactionthriller@sky.com" siteId="96" />
-    <Channel id="sskymoviesfamily@sky.com" siteId="92" />
+    <Channel id="skymoviesfamily@sky.com" siteId="92" />
     <Channel id="skymoviesdrama@sky.com" siteId="97" />
     <Channel id="skymoviesscifihorror@sky.com" siteId="93" />
     <Channel id="skymoviesclassics@sky.com" siteId="114" />
@@ -374,7 +372,7 @@
     <Channel id="p1@travelchannel.co.uk" siteId="50354" />
     <Channel id="trouble@uktv.co.uk" siteId="25" />
     <Channel id="troublean@uktv.co.uk" siteId="518" />
-    <Channel id="troublere@uktv.co.uk" siteId="50228" />
+    <Channel id="troublep1@uktv.co.uk" siteId="50228" />
     <Channel id="tv3.ie" siteId="302" />
     <Channel id="tv5.org" siteId="568" />
     <Channel id="twcfight.com" siteId="50447" />
@@ -408,8 +406,8 @@
     <Channel id="music@zeetv.co.uk" siteId="50382" />
     <Channel id="zeetv.co.uk" siteId="533" />
     <Channel id="zonehorror.tv" siteId="50277" />
-    <Channel id="realitytv.co.uk" siteId="5910" />
-    <Channel id="p1@realitytv.co.uk" siteId="50352" />
+    <Channel id="zonereality.co.uk" siteId="5910" />
+    <Channel id="p1@zonereality.co.uk" siteId="50352" />
     <Channel id="extra@zonereality.co.uk" siteId="50483" />
     <Channel id="zonethriller.tv" siteId="50542" />
   </Channels>
