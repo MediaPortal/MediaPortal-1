@@ -54,18 +54,14 @@ namespace MediaPortal.GUI.Video
     //PlayListPlayer playlistPlayer;
     #endregion
 
-    [SkinControlAttribute(20)]
-    protected GUIButtonControl btnShuffle = null;
-    [SkinControlAttribute(21)]
-    protected GUIButtonControl btnSave = null;
-    [SkinControlAttribute(22)]
-    protected GUIButtonControl btnClear = null;
-    [SkinControlAttribute(23)]
-    protected GUIButtonControl btnPlay = null;
-    [SkinControlAttribute(24)]
-    protected GUIButtonControl btnNext = null;
-    [SkinControlAttribute(25)]
-    protected GUIButtonControl btnPrevious = null;
+    [SkinControlAttribute(20)] protected GUIButtonControl btnShuffle = null;
+    [SkinControlAttribute(21)] protected GUIButtonControl btnSave = null;
+    [SkinControlAttribute(22)] protected GUIButtonControl btnClear = null;
+    [SkinControlAttribute(23)] protected GUIButtonControl btnPlay = null;
+    [SkinControlAttribute(24)] protected GUIButtonControl btnNext = null;
+    [SkinControlAttribute(25)] protected GUIButtonControl btnPrevious = null;
+    [SkinControlAttribute(30)] protected GUIToggleButtonControl btnRepeatPlaylist = null;
+
 
     public GUIVideoPlayList()
     {
@@ -155,6 +151,10 @@ namespace MediaPortal.GUI.Video
       {
         GUIControl.FocusControl(GetID, btnViewAs.GetID);
       }
+      if (btnRepeatPlaylist != null)
+      {
+        btnRepeatPlaylist.Selected = playlistPlayer.RepeatPlaylist;
+      }
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -194,6 +194,10 @@ namespace MediaPortal.GUI.Video
       {
         playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
         playlistPlayer.PlayPrevious();
+      }
+      else if ((btnRepeatPlaylist != null) && (control == btnRepeatPlaylist))
+      {
+        playlistPlayer.RepeatPlaylist = btnRepeatPlaylist.Selected;
       }
     }
 
