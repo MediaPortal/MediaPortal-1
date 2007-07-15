@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>623</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <description>BG</description>
+      <id>1</id>
+    </control>
+    <control>
+      <type>label</type>
+      <id>10</id>
+      <posX>144</posX>
+      <posY>184</posY>
+      <label>LNB1:</label>
+    </control>
+    <control>
+      <type>label</type>
+      <id>11</id>
+      <posX>144</posX>
+      <posY>224</posY>
+      <label>LNB2:</label>
+    </control>
+    <control>
+      <type>label</type>
+      <id>12</id>
+      <posX>144</posX>
+      <posY>264</posY>
+      <label>LNB3:</label>
+    </control>
+    <control>
+      <type>label</type>
+      <id>13</id>
+      <posX>144</posX>
+      <posY>304</posY>
+      <label>LNB4:</label>
+    </control>
+    <control>
+      <type>button</type>
+      <id>50</id>
+      <posX>32</posX>
+      <posY>184</posY>
+      <label>LNB 1</label>
+      <width>96</width>
+      <onup>50</onup>
+      <ondown>51</ondown>
+      <onleft>50</onleft>
+      <onright>26</onright>
+    </control>
+    <control>
+      <type>button</type>
+      <id>51</id>
+      <posX>32</posX>
+      <posY>224</posY>
+      <label>LNB 2</label>
+      <width>96</width>
+      <onup>50</onup>
+      <ondown>52</ondown>
+      <onleft>51</onleft>
+      <onright>26</onright>
+    </control>
+    <control>
+      <type>button</type>
+      <id>52</id>
+      <posX>32</posX>
+      <posY>264</posY>
+      <label>LNB 3</label>
+      <width>96</width>
+      <onup>51</onup>
+      <ondown>53</ondown>
+      <onleft>52</onleft>
+      <onright>26</onright>
+    </control>
+    <control>
+      <type>button</type>
+      <id>53</id>
+      <posX>32</posX>
+      <posY>304</posY>
+      <label>LNB 4</label>
+      <width>96</width>
+      <onup>52</onup>
+      <ondown>26</ondown>
+      <onleft>53</onleft>
+      <onright>26</onright>
+    </control>
+    <control>
+      <type>label</type>
+      <description>press next</description>
+      <id>27</id>
+      <posX>32</posX>
+      <posY>368</posY>
+      <label>Press Next to continue the setup</label>
+    </control>
+    <control>
+      <type>label</type>
+      <description>-</description>
+      <id>1</id>
+      <posX>32</posX>
+      <posY>152</posY>
+      <label>Please select the satellite for each LNB</label>
+      <font>font12</font>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>48</posX>
+      <posY>390</posY>
+      <texture>hover_my tv.png</texture>
+    </control>
+    <control>
+      <type>image</type>
+      <description>MP Logo</description>
+      <id>1</id>
+      <posX>32</posX>
+      <posY>24</posY>
+      <texture>mplogo.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Setup DVBT</description>
+      <id>1</id>
+      <posX>32</posX>
+      <posY>120</posY>
+      <label>TV Setup - DVB Satellite</label>
+      <font>font18</font>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Back</description>
+      <id>25</id>
+      <posX>448</posX>
+      <posY>504</posY>
+      <onleft>25</onleft>
+      <onright>26</onright>
+      <onup>53</onup>
+      <ondown>53</ondown>
+      <hyperlink>615</hyperlink>
+      <label>&lt;Back</label>
+      <width>96</width>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Next</description>
+      <id>26</id>
+      <posX>560</posX>
+      <posY>504</posY>
+      <onleft>25</onleft>
+      <onright>26</onright>
+      <onup>53</onup>
+      <ondown>53</ondown>
+      <label>Next&gt;</label>
+      <width>96</width>
+    </control>
+  </controls>
+</window>

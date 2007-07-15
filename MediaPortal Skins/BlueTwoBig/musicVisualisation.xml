@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2006</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <description>bar image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>18</posX>
+      <posY>33</posY>
+      <width>684</width>
+      <height>74</height>
+      <texture>calibration_bar.png</texture>
+    </control>
+    <control>
+      <description>row 1 label</description>
+      <type>label</type>
+      <id>10</id>
+      <posX>70</posX>
+      <posY>55</posY>
+      <label>-</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>row 2 label</description>
+      <type>label</type>
+      <id>11</id>
+      <posX>600</posX>
+      <posY>55</posY>
+      <label>-</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>row 3 label</description>
+      <type>label</type>
+      <id>12</id>
+      <posX>450</posX>
+      <posY>55</posY>
+      <label>-</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>no</visible>
+    </control>
+  </controls>
+</window>
