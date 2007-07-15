@@ -479,12 +479,12 @@ namespace TvLibrary.Implementations.DVB
           _analyzer.ScanNIT();
           startTime = DateTime.Now;
           int count = 0;
+          
           while (true)
           {
             TimeSpan ts = DateTime.Now - startTime;
             if (ts.TotalSeconds >= 10) break;
             _analyzer.GetNITCount(out count);
-            if (count > 0) break;
           }
           System.Threading.Thread.Sleep(500);
           List<IChannel> channelsFound = new List<IChannel>();
