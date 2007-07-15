@@ -76,7 +76,7 @@ public:
 	bool            IsSeeking();
   bool            IsFilterRunning();
 	CDeMultiplexer& GetDemultiplexer();
-	void            Seek(CRefTime& seekTime);
+	void            Seek(CRefTime& seekTime, bool seekInFile);
   void            SeekDone(CRefTime& refTime);
   void            SeekStart();
 	double          UpdateDuration();

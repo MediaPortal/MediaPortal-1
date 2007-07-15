@@ -332,7 +332,7 @@ void CSubtitlePin::UpdateFromSeek()
         Stop();
         if (!m_pTsReaderFilter->GetAudioPin()->IsConnected() && m_pTsReaderFilter->GetVideoPin()->IsConnected() )
         {
-          m_pTsReaderFilter->Seek(CRefTime(m_rtStart));
+          m_pTsReaderFilter->Seek(CRefTime(m_rtStart),true);
         }
         // complete the flush
         hr=DeliverEndFlush();

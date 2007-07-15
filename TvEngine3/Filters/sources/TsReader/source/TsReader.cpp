@@ -420,7 +420,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   char url[MAX_PATH];
   WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
   //strcpy(url,"rtsp://192.168.1.102/stream1.0");
-  
+  //strcpy(url,"rtsp://192.168.1.102/stream2.0");
   //check file type
   int length=strlen(url);	
   if ((length > 5) && (_strcmpi(&url[length-4], ".tsp") == 0))
@@ -540,7 +540,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 }
 
 
-STDMETHODIMP CTsReaderFilter::GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt)
+STDMETHODIMP CTsReaderFilter::GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt)//
 {
 	CheckPointer(ppszFileName, E_POINTER);
 	*ppszFileName = NULL;
@@ -585,13 +585,15 @@ double CTsReaderFilter::GetStartTime()
 }
 
 ///Seeks to the specified seekTime
-void CTsReaderFilter::Seek(CRefTime& seekTime)
+void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
 {
   //dont seek to the same location as last time
-  if (m_seekTime==seekTime) return;
+   if (m_seekTime==seekTime) return;
 
   LogDebug("CTsReaderFilter::Seek--");
   m_seekTime=seekTime;
+  if (seekInfile==false) return;
+
   m_bSeeking=true;
   //are we playing a rtsp:// stream?
   if (m_fileDuration!=NULL)

@@ -429,7 +429,7 @@ void CVideoPin::UpdateFromSeek()
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
 				LogDebug("vid seek filter->seek");
-        m_pTsReaderFilter->Seek(CRefTime(m_rtStart));
+        m_pTsReaderFilter->Seek(CRefTime(m_rtStart),true);
       }
       // complete the flush
 			LogDebug("vid seek deliverendflush");
@@ -447,6 +447,10 @@ void CVideoPin::UpdateFromSeek()
       m_rtStart=rtSeek;
       Run();
 			LogDebug("vid seek running");
+  }
+  else
+  {
+    m_pTsReaderFilter->Seek(CRefTime(m_rtStart),false);
   }
 	//demux.Flush();
 	demux.SetHoldVideo(false);

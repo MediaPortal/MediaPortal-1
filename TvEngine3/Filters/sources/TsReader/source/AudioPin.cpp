@@ -386,7 +386,7 @@ void CAudioPin::UpdateFromSeek()
       // make sure we have stopped pushing
       Stop();
 			LogDebug("aud seek filter->seek");
-      m_pTsReaderFilter->Seek(CRefTime(m_rtStart));
+      m_pTsReaderFilter->Seek(CRefTime(m_rtStart),true);
 
       // complete the flush
 			LogDebug("aud seek deliverendflush");
@@ -399,6 +399,10 @@ void CAudioPin::UpdateFromSeek()
       m_rtStart=rtSeek;
       Run();
 			LogDebug("aud seek running");
+  }
+  else
+  {
+    m_pTsReaderFilter->Seek(CRefTime(m_rtStart),false);
   }
 	//demux.Flush();
 	demux.SetHoldAudio(false);

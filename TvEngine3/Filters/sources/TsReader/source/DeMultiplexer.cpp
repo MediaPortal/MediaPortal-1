@@ -122,7 +122,7 @@ void CDeMultiplexer::SetAudioStream(int stream)
   {
     oldAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
   }
-
+ 
   //set index
   m_iAudioStream=stream;   
 
@@ -138,7 +138,7 @@ void CDeMultiplexer::SetAudioStream(int stream)
 
   //did it change?
   if (oldAudioStreamType != newAudioStreamType )
-  {
+  { 
     //yes, is the audio pin connected?
     if (m_filter.GetAudioPin()->IsConnected())
     {
@@ -148,19 +148,18 @@ void CDeMultiplexer::SetAudioStream(int stream)
       if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
 
       //render the audio pin
-      RenderFilterPin(m_filter.GetAudioPin());
+     // RenderFilterPin(m_filter.GetAudioPin());
 
       didStop=true;
     }
   }
 
   //if we where playing and stopped the graph
-  if (isPlaying && didStop)
+  if (isPlaying==S_OK && didStop)
   {
     //then start the graph again
     DoStart();
   }
-
 }
 
 int CDeMultiplexer::GetAudioStream()
@@ -1005,7 +1004,7 @@ return;
       // yes, then change video pin media type
       LogDebug("demux:video pin media changed");
       if (DoStop() ==S_OK){while(IsStopped() == S_FALSE){Sleep(100); break;}}
-      RenderFilterPin(m_filter.GetVideoPin());
+      //RenderFilterPin(m_filter.GetVideoPin());
       didStop=true;
     }
   }
