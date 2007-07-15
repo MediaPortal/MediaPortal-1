@@ -25,6 +25,7 @@
 
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Collections.Generic;
 using MediaPortal.Services;
@@ -171,8 +172,12 @@ namespace MediaPortal.WebEPG.Parser
           {
             string fieldText = GetElement(actions[i].field);
 
-            if (fieldText != null && fieldText == actions[i].search)
-              SetElement(actions[i].field, actions[i].text);
+            if (fieldText != null)
+            {
+              Regex replace = new Regex(actions[i].search);
+              string newValue = replace.Replace(fieldText, actions[i].text);
+              SetElement(actions[i].field, newValue);
+            }
           }
         }
       }
