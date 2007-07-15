@@ -25,6 +25,7 @@
 
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.IO;
 using System.Net;
 using System.Web;
@@ -153,6 +154,7 @@ namespace MediaPortal.Utils.Web
         // Create the request header
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(pageUri);
         request.UserAgent = _agent;
+        request.AllowAutoRedirect = false;
         if (pageRequest.PostQuery == string.Empty)
         {
           // GET request
@@ -185,6 +187,36 @@ namespace MediaPortal.Utils.Web
         }
 
         _response = (HttpWebResponse)request.GetResponse();
+
+        // Check for redirection
+        if ((_response.StatusCode == HttpStatusCode.Found) ||
+                    (_response.StatusCode == HttpStatusCode.Redirect) ||
+                    (_response.StatusCode == HttpStatusCode.Moved) ||
+                    (_response.StatusCode == HttpStatusCode.MovedPermanently))
+        {
+          Uri uri = new Uri(_response.Headers["Location"]);
+          HttpWebRequest redirect = (HttpWebRequest)WebRequest.Create(uri);
+          redirect.UserAgent = _agent;
+          redirect.AllowAutoRedirect = false;
+          redirect.Referer = _response.ResponseUri.ToString();
+
+          redirect.CookieContainer = new CookieContainer();
+          if (_response.Headers["Set-Cookie"] != null)
+          {
+            string cookieStr = _response.Headers["Set-Cookie"];
+            Regex cookieParser = new Regex("(?<name>[^=]+)=(?<value>[^;]+)(;)");
+            Match result = cookieParser.Match(cookieStr);
+            if (result.Success)
+            {
+              Cookie reply = new Cookie(result.Groups["name"].ToString(), result.Groups["value"].ToString());
+              reply.Domain = uri.Host;
+              redirect.CookieContainer.Add(reply);
+            }
+          } 
+          //redirect.ContentType = "text/html"; 
+          _response = (HttpWebResponse)redirect.GetResponse();
+        }
+
         if (request.CookieContainer != null)
         {
           _response.Cookies = request.CookieContainer.GetCookies(request.RequestUri);
