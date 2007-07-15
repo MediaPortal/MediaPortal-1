@@ -349,11 +349,6 @@ namespace MediaPortal.EPG.WebEPGTester
         GlobalServiceProvider.Add<IHtmlCache>(cache);
       }
 
-      if (cbCache.Checked)
-        cache.CacheMode = HTMLCache.Mode.Enabled;
-      else
-        cache.CacheMode = HTMLCache.Mode.Disabled;
-
       if (!System.IO.Directory.Exists(testDir))
         System.IO.Directory.CreateDirectory(testDir);
 
@@ -405,6 +400,7 @@ namespace MediaPortal.EPG.WebEPGTester
         string countryGrabber = country + "\\" + grabber.Replace('.', '_') + ".xml";
         string grabTimeStr = xmlreader.GetValueAsString("Grabbers", countryGrabber, "");
         DateTime grabDateTime;
+
         if (grabTimeStr == "")
         {
           grabDateTime = DateTime.Now;
@@ -418,6 +414,9 @@ namespace MediaPortal.EPG.WebEPGTester
           grabDateTime = GetDateTime(long.Parse(grabTimeStr));
           cache.CacheMode = HTMLCache.Mode.Enabled;
         }
+
+        if (!cbCache.Checked)
+          cache.CacheMode = HTMLCache.Mode.Disabled;
 
         if (m_EPGGrabber.Initalise(countryGrabber))
         {
@@ -436,6 +435,9 @@ namespace MediaPortal.EPG.WebEPGTester
           _log.Error("WebEPG: Grabber failed for: {0}", channelId);
           UpdateImage(Status.error, _testList[c]);
         }
+
+        if (xmltv != null)
+          xmltv.Close();
 
         UpdateImage(Status.ok, _testList[c]);
 
@@ -460,9 +462,6 @@ namespace MediaPortal.EPG.WebEPGTester
 
         _sb.Remove(0, _sb.Length);
       }
-
-      if (xmltv != null)
-        xmltv.Close();
     }
 
     private void bScan_Click(object sender, EventArgs e)
