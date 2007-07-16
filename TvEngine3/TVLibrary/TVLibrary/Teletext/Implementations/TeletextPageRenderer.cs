@@ -24,11 +24,7 @@ using System.Text;
 
 namespace TvLibrary.Teletext
 {
-  /// <summary>
-  /// class which can render a teletext page
-  /// </summary>
-  public class TeletextPageRenderer
-  {
+  public class TeletextPageRenderer {
     #region constants
     const int MAX_ROWS = 50;
     #endregion
@@ -40,6 +36,8 @@ namespace TvLibrary.Teletext
 
     bool _hiddenMode = true;
     bool _transparentMode = false;
+    bool _fullscreenMode = false;
+
     string _selectedPageText = "";
 
     int _pageRenderWidth = 1920;
@@ -47,8 +45,10 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region enums
-    enum TextColors
-    {
+    /// <summary>
+    /// Enumeration of all availabel colors in teletext
+    /// </summary>
+    enum TextColors {
       None,
       Black,
       Red,
@@ -61,8 +61,11 @@ namespace TvLibrary.Teletext
       Trans1,
       Trans2
     }
-    public enum Attributes
-    {
+
+    /// <summary>
+    /// Enumeration of all possible attributes for a position in teletext
+    /// </summary>
+    public enum Attributes {
       AlphaBlack,
       AlphaRed,
       AlphaGreen,
@@ -98,8 +101,7 @@ namespace TvLibrary.Teletext
     }
     #endregion
 
-    #region character and other tables
-    //
+    #region character and other tables for multi-language support. Referring the bits C12-C14 in the header
     char[,] m_charTableA = new char[,]{{ '#', '\u016F' },{ '£', '$' }, 
 	{ '#', 'õ' },{ 'é', 'ï' }, { '#', '$' }, { '£', '$' },{ '#', '$' },
 	{ '#', '\u0149' },{ 'ç', '$' }, { '#', '¤' },{ '#', 'Ë' }, { '#', '¤' },{ '£', '\u011F' }
@@ -122,114 +124,98 @@ namespace TvLibrary.Teletext
 
     #endregion
 
+    #region properties
     /// <summary>
-    /// Gets or sets the render width.
+    /// Width of the bitmap
     /// </summary>
-    /// <value>The width.</value>
-    public int Width
-    {
+    public int Width {
       get { return _pageRenderWidth; }
-      set { 
+      set {
         _pageRenderWidth = value;
         Clear();
       }
     }
+
     /// <summary>
-    /// Gets or sets the render height.
+    /// Height of the bitmap
     /// </summary>
-    /// <value>The height.</value>
-    public int Height
-    {
+    public int Height {
       get { return _pageRenderHeight; }
-      set
-      {
+      set {
         _pageRenderHeight = value;
         Clear();
       }
     }
 
     /// <summary>
-    /// Gets or sets a value indicating if concealed mode is on or off
+    /// Draw also hidden information
     /// </summary>
-    /// <value><c>true</c> if concealed mode; otherwise, <c>false</c>.</value>
-    public bool HiddenMode
-    {
-      get
-      {
+    public bool HiddenMode {
+      get {
         return _hiddenMode;
       }
-      set
-      {
+      set {
         _hiddenMode = value;
       }
     }
+
     /// <summary>
-    /// Get/sets transparent mode on/off
+    /// Draw the background transparent, only allowed in combination with fullscreen
     /// </summary>
-    /// <value><c>true</c> if transparent mode is enabled; otherwise, <c>false</c>.</value>
-    public bool TransparentMode
-    {
+    public bool TransparentMode {
       get { return _transparentMode; }
       set { _transparentMode = value; }
     }
 
+    /// <summary>
+    /// Draw for windowed mode or fullscreen mode
+    /// </summary>
+    public bool FullscreenMode {
+      get { return _fullscreenMode; }
+      set { _fullscreenMode = value; }
+    }
 
     /// <summary>
-    /// Gets or sets the current selected page.
+    /// This text describe the selected page.
     /// </summary>
-    /// <value>The current selected page.</value>
-    public string PageSelectText
-    {
-      get
-      {
+    public string PageSelectText {
+      get {
         return _selectedPageText;
       }
-      set
-      {
+      set {
         _selectedPageText = "";
-        if (value.Length > 0 && value.Length < 3)
+        if (value.Length == 3) {
+          _selectedPageText = value;
+        }
+        if (value.Length > 0 && value.Length < 3) {
           _selectedPageText = value + (new string('-', 3 - value.Length));
+        }
       }
     }
+    #endregion
 
+    #region private methods
     /// <summary>
-    /// Clears this instance.
+    /// Render a single position in the bitmap
     /// </summary>
-    public void Clear()
-    {
-      if (_pageBitmap != null)
-        _pageBitmap.Dispose();
-      _pageBitmap = null;
-
-      if (_renderGraphics != null)
-        _renderGraphics.Dispose();
-      _renderGraphics = null;
-    }
-
-
-    /// <summary>
-    /// Renders the specified character.
-    /// </summary>
-    /// <param name="graph">The graph.</param>
-    /// <param name="chr">The CHR.</param>
-    /// <param name="attrib">The attrib.</param>
-    /// <param name="x">The x.</param>
-    /// <param name="y">The y.</param>
-    /// <param name="w">The w.</param>
-    /// <param name="h">The h.</param>
-    /// <param name="isSubtitlePage">if set to <c>true</c> [is subtitle page].</param>
-    /// <param name="txtLanguage">The TXT language.</param>
-    void Render(System.Drawing.Graphics graph, byte chr, int attrib, ref int x, ref int y, int w, int h, bool isSubtitlePage, int txtLanguage)
-    {
-
+    /// <param name="graph">Graphics</param>
+    /// <param name="chr">Character</param>
+    /// <param name="attrib">Attributes</param>
+    /// <param name="x">x position</param>
+    /// <param name="y">y position</param>
+    /// <param name="w">width of the font</param>
+    /// <param name="h">height of the font</param>
+    /// <param name="txtLanguage">Teletext language</param>
+    private void Render(System.Drawing.Graphics graph, byte chr, int attrib, ref int x, ref int y, int w, int h, int txtLanguage) {
       bool charReady = false;
       char chr2 = '?';
 
-      if (chr == 0xFF)
-      {
+      // Skip the character if 0xFF
+      if (chr == 0xFF) {
         x += w;
         return;
       }
+      // Generate mosaic
       int[] mosaicY = new int[4];
       mosaicY[0] = 0;
       mosaicY[1] = (h + 1) / 3;
@@ -240,26 +226,23 @@ namespace TvLibrary.Teletext
       int fColor = attrib & 0x0F;
       int bColor = (attrib >> 4) & 0x0F;
       System.Drawing.Color bgColor = GetColor(bColor);
-      //if (bgColor==System.Drawing.Color.Black && isSubtitlePage)
-      //	bgColor=System.Drawing.Color.HotPink;
-      if (bgColor == System.Drawing.Color.HotPink && !isSubtitlePage)
-        bgColor = System.Drawing.Color.Black;
+      // We are in transparent mode and fullscreen. Make beckground transparent
+      if (_transparentMode && _fullscreenMode)
+        bgColor = System.Drawing.Color.HotPink;
       System.Drawing.Brush backBrush = new System.Drawing.SolidBrush(bgColor);
       System.Drawing.Brush foreBrush = new System.Drawing.SolidBrush(GetColor(fColor));
       System.Drawing.Pen backPen = new System.Drawing.Pen(backBrush, 1);
       System.Drawing.Pen forePen = new System.Drawing.Pen(foreBrush, 1);
-      try
-      {
-        if (((attrib & 0x300) > 0) && ((chr & 0xA0) == 0x20))
-        {
+      // Draw the graphic
+      try {
+        if (((attrib & 0x300) > 0) && ((chr & 0xA0) == 0x20)) {
           int w1 = w / 2;
           int w2 = w - w1;
           int y1;
 
           chr = (byte)((chr & 0x1f) | ((chr & 0x40) >> 1));
           if ((attrib & 0x200) > 0)
-            for (y1 = 0; y1 < 3; y1++)
-            {
+            for (y1 = 0; y1 < 3; y1++) {
               graph.FillRectangle(backBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
               if ((chr & 1) > 0)
                 graph.FillRectangle(foreBrush, x + 1, y + mosaicY[y1] + 1, w1 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
@@ -267,10 +250,8 @@ namespace TvLibrary.Teletext
               if ((chr & 2) > 0)
                 graph.FillRectangle(foreBrush, x + w1 + 1, y + mosaicY[y1] + 1, w2 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
               chr >>= 2;
-            }
-          else
-            for (y1 = 0; y1 < 3; y1++)
-            {
+            } else
+            for (y1 = 0; y1 < 3; y1++) {
               if ((chr & 1) > 0)
                 graph.FillRectangle(foreBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
               else
@@ -294,9 +275,8 @@ namespace TvLibrary.Teletext
           factor = 1;
 
         charReady = false;
-
-        switch (chr)
-        {
+        // If character is still not drawn, then we analyse it again
+        switch (chr) {
           case 0x00:
           case 0x20:
             graph.FillRectangle(backBrush, x, y, w, h);
@@ -432,50 +412,40 @@ namespace TvLibrary.Teletext
             chr2 = (char)chr;
             break;
         }
-        if (charReady == false)
-        {
+        // If still not drawn than it's a text and we draw the string
+        if (charReady == false) {
           string text = "" + chr2;
           graph.FillRectangle(backBrush, x, y, w, h);
           System.Drawing.SizeF width = graph.MeasureString(text, _fontTeletext);
           System.Drawing.PointF xyPos = new System.Drawing.PointF((float)x + ((w - ((int)width.Width)) / 2), (float)y);
           graph.DrawString(text, _fontTeletext, foreBrush, xyPos);
-          if (factor == 2)
-          {
+          if (factor == 2) {
             graph.FillRectangle(backBrush, x, y + h, w, h);
             System.Drawing.Color[,] pixelColor = new System.Drawing.Color[w + 1, h + 1];
             // save char
-            for (int ypos = 0; ypos < h; ypos++)
-            {
-              for (int xpos = 0; xpos < w; xpos++)
-              {
+            for (int ypos = 0; ypos < h; ypos++) {
+              for (int xpos = 0; xpos < w; xpos++) {
                 pixelColor[xpos, ypos] = _pageBitmap.GetPixel(xpos + x, ypos + y); // backup old line
               }
             }
             // draw doubleheight
-            for (int ypos = 0; ypos < h; ypos++)
-            {
+            for (int ypos = 0; ypos < h; ypos++) {
 
-              for (int xpos = 0; xpos < w; xpos++)
-              {
+              for (int xpos = 0; xpos < w; xpos++) {
 
-                try
-                {
-                  if (y + (ypos * 2) + 1 < _pageBitmap.Height)
-                  {
+                try {
+                  if (y + (ypos * 2) + 1 < _pageBitmap.Height) {
                     _pageBitmap.SetPixel(x + xpos, y + (ypos * 2), pixelColor[xpos, ypos]); // backup old line
                     _pageBitmap.SetPixel(x + xpos, y + (ypos * 2) + 1, pixelColor[xpos, ypos]);
                   }
-                }
-                catch { }
+                } catch { }
               }
             }
 
           }
           x += w;
         }
-      }
-      finally
-      {
+      } finally {
         foreBrush.Dispose();
         backBrush.Dispose();
         forePen.Dispose();
@@ -483,17 +453,14 @@ namespace TvLibrary.Teletext
       }
       return;
     }
-
     /// <summary>
-    /// Gets the color.
+    /// Converts the color of the teletext informations to a system color
     /// </summary>
-    /// <param name="colorNumber">The color number.</param>
-    /// <returns>System.Drawing.Color</returns>
-    System.Drawing.Color GetColor(int colorNumber)
-    {
+    /// <param name="colorNumber">Number of the teletext color, referring to the enumeration TextColors </param>
+    /// <returns>Corresponding System Color, or black if the value is not defined</returns>
+    private System.Drawing.Color GetColor(int colorNumber) {
 
-      switch (colorNumber)
-      {
+      switch (colorNumber) {
         case (int)TextColors.Black:
           return System.Drawing.Color.Black;
         case (int)TextColors.Red:
@@ -517,19 +484,38 @@ namespace TvLibrary.Teletext
       }
       return System.Drawing.Color.Black;
     }
-
+    /// <summary>
+    /// Checks if is a valid page to be displayed
+    /// </summary>
+    /// <param name="i">Pagenumber to check</param>
+    /// <returns>True, if page should be displayed</returns>
+    private bool IsDecimalPage(int i) {
+      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));
+    }
 
     /// <summary>
-    /// Renders a teletext page page.
+    /// Checks if is a valid subpage 
     /// </summary>
-    /// <param name="byPage">The page data.</param>
-    /// <param name="mPage">The page number.</param>
-    /// <param name="sPage">The subpage number.</param>
-    /// <returns>bitmap containing the teletext page</returns>
-    public System.Drawing.Bitmap RenderPage(byte[] byPage, int mPage, int sPage)
-    {
-      if (_pageBitmap == null)
-      {
+    /// <param name="i">Subpagenumber to check</param>
+    /// <returns>True, if subpage is valid</returns>
+    private bool IsDecimalSubPage(int i) {
+      if (i >= 0x80) return false;
+
+      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x70));
+    }
+    #endregion
+
+    #region public methods
+    /// <summary>
+    /// Renders a teletext page to a bitmap
+    /// </summary>
+    /// <param name="byPage">Teletext page data</param>
+    /// <param name="mPage">Pagenumber</param>
+    /// <param name="sPage">Subpagenumber</param>
+    /// <returns>Rendered teletext page as bitmap</returns>
+    public System.Drawing.Bitmap RenderPage(byte[] byPage, int mPage, int sPage) {
+      // Create Bitmap and set HotPink as the transparent color
+      if (_pageBitmap == null) {
         _pageBitmap = new System.Drawing.Bitmap(_pageRenderWidth, _pageRenderHeight);
         _pageBitmap.MakeTransparent(System.Drawing.Color.HotPink);
       }
@@ -541,31 +527,36 @@ namespace TvLibrary.Teletext
       int foreground, background, doubleheight, charset, mosaictype;
       byte held_mosaic;
       bool flag = false;
-      int boxed = 0;
-      byte[] pageChars = new byte[31*40];
+      bool isBoxed = false;
+      byte[] pageChars = new byte[31 * 40];
       int[] pageAttribs = new int[31 * 40];
       bool row24 = false;
-      for (int rowNr = 0; rowNr < MAX_ROWS; rowNr++)
-      {
+      // Decode the page data (Hamming 8/4 or odd parity)
+      for (int rowNr = 0; rowNr < MAX_ROWS; rowNr++) {
         if (rowNr * 42 >= byPage.Length) break;
         int packetNumber = Hamming.GetPacketNumber(rowNr * 42, ref byPage);
+        // Only the packets 0-25 are accepted
         if (packetNumber < 0 || packetNumber > 25) continue;
-        bool stripParity=true;
-        if (packetNumber == 25 || packetNumber == 0) 
+        bool stripParity = true;
+        // Packets 0 and 25 are hamming 8/4 encoded
+        if (packetNumber == 25 || packetNumber == 0)
           stripParity = false;
-        for (col = 2; col < 42; col++)
-        {
-          byte kar= byPage[rowNr * 42 + col];
-          if (stripParity) 
+        // Decode the whole row and remove the first two bytes
+        for (col = 2; col < 42; col++) {
+          // After pageheader in packet 0 (Bit 10) odd parity is used
+          if (col >= 10 && packetNumber == 0) stripParity = true;
+          byte kar = byPage[rowNr * 42 + col];
+          if (stripParity)
             kar &= 0x7f;
-          pageChars[packetNumber * 40 + col-2] = kar;
+          pageChars[packetNumber * 40 + col - 2] = kar;
         }
+        // Exists a packet 24 (Toptext line)
         if (packetNumber == 24)
           row24 = true;
       }
       row = col = 0;
-      int txtLanguage=0;
-      //language
+      int txtLanguage = 0;
+      // language detection. Extract the bit C12-C14 from the teletext header and set the language code
       int languageCode = 0;
       byte byte1 = Hamming.Decode[byPage[9]];
       if (byte1 == 0xFF)
@@ -573,8 +564,7 @@ namespace TvLibrary.Teletext
       else
         languageCode = ((byte1 >> 3) & 0x01) | (((byte1 >> 2) & 0x01) << 1) | (((byte1 >> 1) & 0x01) << 2);
 
-      switch (languageCode)
-      {
+      switch (languageCode) {
         case 0:
           txtLanguage = 1;
           break;
@@ -601,69 +591,75 @@ namespace TvLibrary.Teletext
           break;
 
       }
+      // Detect if it's a boxed page. Boxed Page = subtitle and/or newsflash bit is set
+      bool isSubtitlePage = Hamming.IsSubtitleBitSet(0, ref byPage);
+      bool isNewsflash = Hamming.IsNewsflash(0, ref byPage);
+      isBoxed = isNewsflash | isSubtitlePage;
 
-      bool isSubtitlePage = false;
-      if (Hamming.IsBoxed(0,ref byPage) )
-        boxed = 1;
-      else
-        boxed = 0;
+      // Determine if the header or toptext line sould be displayed.
+      bool displayHeaderAndTopText = !_fullscreenMode || !isBoxed || (isBoxed && _selectedPageText.IndexOf("-") != -1)
+        || (isBoxed && _selectedPageText.IndexOf("-") == -1 && !_selectedPageText.Equals(Convert.ToString(mPage, 16)));
 
-      if (Hamming.IsSubtitleBitSet(0, ref byPage) && _transparentMode)
-        isSubtitlePage = true;
-
-      for (row = 0; row <= 24; row++)
-      {
+      // Iterate over all lines of the teletext page and prepare the rendering
+      for (row = 0; row <= 24; row++) {
+        // If row 24 and no toptext exists, then skip this row
         if (row == 24 && !row24) continue;
-        if ((row == 0 || row == 24) && isSubtitlePage)
-        {
-          for (int i = 0; i < 40; ++i)
-          {
+        // If not display the header and toptext line, then clear these two rows
+        if ((row == 0 || row == 24) && !displayHeaderAndTopText) {
+          for (int i = 0; i < 40; ++i) {
             pageChars[row * 40 + i] = 32;
             pageAttribs[row * 40 + i] = ((int)TextColors.Trans1 << 4) | ((int)TextColors.White);
           }
-        }
-        else
-        {
+        } else {
+          // Otherwise, analyse the information. First set the forground to white and the background to:
+          // - Transparent, if transparent mode or boxed and fullscreen and not display the header and toptext line
+          // - Black otherwise
           foreground = (int)TextColors.White;
-          if (isSubtitlePage == false && _transparentMode == false)
-            background = (int)TextColors.Black;
-          else
+          if ((isBoxed || _transparentMode) && _fullscreenMode && !displayHeaderAndTopText)
             background = (int)TextColors.Trans1;
+          else
+            background = (int)TextColors.Black;
 
+          // Reset the attributes
           doubleheight = 0;
           charset = 0;
           mosaictype = 0;
           hold = 0;
           held_mosaic = 32;
-
-          for (int loop1 = 0; loop1 < 40; loop1++)
-          {
-            if (pageChars[(row * 40) + loop1] == (int)Attributes.StartBox)
-            {
+          // Iterate over all columns in the row and check if a box starts
+          for (int loop1 = 0; loop1 < 40; loop1++) {
+            // Box starts in this row
+            if (pageChars[(row * 40) + loop1] == (int)Attributes.StartBox) {
               flag = true;
               break;
             }
           }
 
-          if (boxed != 0 && flag == false)
-          {
-            if (_transparentMode)
-            {
+          // If boxed page and box doesn't start in this line, than set foreground and background to black or transparent
+          // depending on the mode (fullscreen <-> windowed)
+          if (isBoxed && flag == false) {
+            if (_fullscreenMode) {
               foreground = (int)TextColors.Trans1;
               background = (int)TextColors.Trans1;
+            } else {
+              foreground = (int)TextColors.Black;
+              background = (int)TextColors.Black;
             }
           }
 
-          for (col = 0; col < 40; col++)
-          {
+          // Iterate over all columns in the row again and now analyse every byte
+          for (col = 0; col < 40; col++) {
             int index = row * 40 + col;
 
+            // Set the attributes
             pageAttribs[index] = (doubleheight << 10 | charset << 8 | background << 4 | foreground);
-
-            if (pageChars[index] < 32)
-            {
-              switch (pageChars[index])
-              {
+            // Boxed and no flag and not row 24 than delete the characters
+            if (isBoxed && !flag && row != 24) {
+              pageChars[index] = 32;
+            }
+            // Analyse the attributes
+            if (pageChars[index] < 32) {
+              switch (pageChars[index]) {
                 case (int)Attributes.AlphaBlack:
                   foreground = (int)TextColors.Black;
                   charset = 0;
@@ -711,25 +707,35 @@ namespace TvLibrary.Teletext
                   break;
 
                 case (int)Attributes.EndBox:
-                  if (boxed > 0)
-                  {
-                    if (_transparentMode)
-                    {
+                  if (isBoxed) {
+                    if (_fullscreenMode) {
                       foreground = (int)TextColors.Trans1;
                       background = (int)TextColors.Trans1;
+                    } else {
+                      foreground = (int)TextColors.Black;
+                      background = (int)TextColors.Black;
                     }
                   }
                   break;
 
                 case (int)Attributes.StartBox:
-                  if (boxed > 0 && _transparentMode)
-                  {
-                    background = (int)TextColors.Black;
+                  if (isBoxed) {
+                    // Clear everything until this position in the line
                     if (col > 0)
                       for (int loop1 = 0; loop1 < col; loop1++)
                         pageChars[(row * 40) + loop1] = 32;
-                    for (int clear = 0; clear < col; clear++)
-                      pageAttribs[row * 40 + clear] = doubleheight << 10 | charset << 8 | (int)TextColors.Black << 4 | (int)TextColors.Black;
+                    // Clear also the page attributes
+                    for (int clear = 0; clear < col; clear++) {
+                      if (_fullscreenMode) {
+                        pageAttribs[row * 40 + clear] = doubleheight << 10 | charset << 8 | (int)TextColors.Trans1 << 4 | (int)TextColors.Trans1;
+                      } else {
+                        pageAttribs[row * 40 + clear] = doubleheight << 10 | charset << 8 | (int)TextColors.Black << 4 | (int)TextColors.Black;
+                      }
+                    }
+                    // Set the standard background color
+                    if (background == (int)TextColors.Trans1) {
+                      background = (int)TextColors.Black;
+                    }
                   }
                   break;
 
@@ -784,8 +790,7 @@ namespace TvLibrary.Teletext
                   break;
 
                 case (int)Attributes.Conceal:
-                  if (_hiddenMode == true)
-                  {
+                  if (_hiddenMode == true) {
                     foreground = background;
                     pageAttribs[index] = (doubleheight << 10 | charset << 8 | background << 4 | foreground);
                   }
@@ -793,8 +798,7 @@ namespace TvLibrary.Teletext
 
                 case (int)Attributes.ContiguousMosaic:
                   mosaictype = 0;
-                  if (charset > 0)
-                  {
+                  if (charset > 0) {
                     charset = 1;
                     pageAttribs[index] = (doubleheight << 10 | charset << 8 | background << 4 | foreground);
                   }
@@ -802,8 +806,7 @@ namespace TvLibrary.Teletext
 
                 case (int)Attributes.SeparatedMosaic:
                   mosaictype = 1;
-                  if (charset > 0)
-                  {
+                  if (charset > 0) {
                     charset = 2;
                     pageAttribs[index] = (doubleheight << 10 | charset << 8 | background << 4 | foreground);
                   }
@@ -838,21 +841,17 @@ namespace TvLibrary.Teletext
 
               if (hold == 2)
                 hold = 0;
-            }
-            else
-            {
+            } else {
               if (charset > 0)
                 held_mosaic = pageChars[index];
-
+              // If doubleheight is selected than delete the following line
               if (doubleheight > 0)
                 pageChars[index + 40] = 0xFF;
             }
           }
-
-          for (int count = (row + 1) * 40; count < ((row + 1) * 40) + 40; count++)
-          {
-            if (pageChars[count] == 255)
-            {
+          // Check, if there is double height selected in than set the attributes for the next row and skip it
+          for (int count = (row + 1) * 40; count < ((row + 1) * 40) + 40; count++) {
+            if (pageChars[count] == 255) {
               for (int loop1 = 0; loop1 < 40; loop1++)
                 pageAttribs[(row + 1) * 40 + loop1] = ((pageAttribs[(row * 40) + loop1] & 0xF0) | ((pageAttribs[(row * 40) + loop1] & 0xF0) >> 4));
 
@@ -863,68 +862,70 @@ namespace TvLibrary.Teletext
         }
       }//for (int rowNr = 0; rowNr < 24; rowNr++)
 
-      if (IsDecimalPage(mPage))
-      {
-        if (!isSubtitlePage)
-        {
-          int i;
-          string pageNumber = "";
-          int lineColor = 0;
-          if (_selectedPageText.IndexOf("-") == -1)
-          {
+      // Generate header line, if it should be displayed
+      if (IsDecimalPage(mPage) && displayHeaderAndTopText) {
+        int i;
+        string pageNumber = "";
+        int lineColor = 0;
+        // Determine the state, of the header line.
+        // Red=Incomplete page number
+        // Yellow=Waiting for page
+        // Green=Page is displayed
+        if (_selectedPageText.IndexOf("-") == -1) {
+          if (_selectedPageText.Equals(Convert.ToString(mPage, 16))) {
             lineColor = (int)TextColors.Green;
             pageNumber = Convert.ToString(mPage, 16) + "/" + Convert.ToString(sPage, 16);
-          }
-          else
-          {
-            lineColor = (int)TextColors.Red;
+          } else {
+            lineColor = (int)TextColors.Yellow;
             pageNumber = _selectedPageText;
           }
-          string headline = "MediaPortal P." + pageNumber;
-          headline += new string((char)32, 32 - headline.Length);
-          byte[] mpText = System.Text.Encoding.ASCII.GetBytes(headline);
-          System.Array.Copy(mpText, 0, pageChars, 0, mpText.Length);
-          for (i = 0; i < 11; i++)
-            pageAttribs[i] = ((int)TextColors.Black << 4) | lineColor;
-          for (i = 12; i < 40; i++)
-            pageAttribs[i] = ((int)TextColors.Black << 4) | ((int)TextColors.White);
+        } else {
+          lineColor = (int)TextColors.Red;
+          pageNumber = _selectedPageText;
         }
+        string headline = "MediaPortal P." + pageNumber;
+        headline += new string((char)32, 32 - headline.Length);
+        byte[] mpText = System.Text.Encoding.ASCII.GetBytes(headline);
+        System.Array.Copy(mpText, 0, pageChars, 0, mpText.Length);
+        for (i = 0; i < 11; i++)
+          pageAttribs[i] = ((int)TextColors.Black << 4) | lineColor;
+        for (i = 12; i < 40; i++)
+          pageAttribs[i] = ((int)TextColors.Black << 4) | ((int)TextColors.White);
       }
 
+      // Now we generate the bitmap
       int y = 0;
       int x;
       int width = _pageRenderWidth / 40;
       int height = (_pageRenderHeight - 2) / 25;
       float fntSizeX = (width - 2 < 10) ? 10 : width - 2;
       float fntSizeY = (height - 8.7f < 10f) ? 10f : height - 8.7f;
-      _fontTeletext = new System.Drawing.Font("Verdana", Math.Min(fntSizeX, fntSizeY), System.Drawing.FontStyle.Regular);
-      System.Drawing.SolidBrush brush=null;
-      try
-      {
-        if (isSubtitlePage)
+      _fontTeletext = new System.Drawing.Font("Verdana", Math.Min(fntSizeX, fntSizeY), System.Drawing.FontStyle.Bold);
+      System.Drawing.SolidBrush brush = null;
+      try {
+        // Select the brush, depending on the page and mode
+        if ((isBoxed || _transparentMode) && _fullscreenMode)
           brush = new System.Drawing.SolidBrush(System.Drawing.Color.HotPink);
         else
           brush = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
 
+        // Draw the base rectangle
         _renderGraphics.FillRectangle(brush, 0, 0, _pageRenderWidth, _pageRenderHeight);
-
-        if (_renderGraphics != null && _pageBitmap != null)
-        {
-          for (row = 0; row < 25; row++)
-          {
-            if (isSubtitlePage && row == 24) break;
+        // Fill the rectangle with the teletext page informations
+        if (_renderGraphics != null && _pageBitmap != null) {
+          for (row = 0; row < 25; row++) {
+            // If not display a toptext line than abort
+            if (!displayHeaderAndTopText && row == 24) break;
             x = 0;
-
+            // Draw a single point
             for (col = 0; col < 40; col++)
-              Render(_renderGraphics, pageChars[row * 40 + col], pageAttribs[row * 40 + col], ref x, ref y, width, height, isSubtitlePage, txtLanguage);
+              Render(_renderGraphics, pageChars[row * 40 + col], pageAttribs[row * 40 + col], ref x, ref y, width, height, txtLanguage);
 
             y += height + (row == 23 ? 2 : 0);
           }
         }
-      }
-      finally
-      {
-        if (brush!=null)
+      } finally {
+        if (brush != null)
           brush.Dispose();
         brush = null;
         _fontTeletext.Dispose();
@@ -933,34 +934,18 @@ namespace TvLibrary.Teletext
       return _pageBitmap;
       // send the bitmap to the callback
     }
-
-    #region private members
     /// <summary>
-    /// Determines whether the number is a decimal number or not
+    /// Clear the bitmap
     /// </summary>
-    /// <param name="i">The number.</param>
-    /// <returns>
-    /// 	<c>true</c> decimal; otherwise, <c>false</c>.
-    /// </returns>
-    bool IsDecimalPage(int i)
-    {
-      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));
-    }
+    public void Clear() {
+      if (_pageBitmap != null)
+        _pageBitmap.Dispose();
+      _pageBitmap = null;
 
-    /// <summary>
-    /// Determines whether the number is a decimal subpage number or not
-    /// </summary>
-    /// <param name="i">The number.</param>
-    /// <returns>
-    /// 	<c>true</c> decimal; otherwise, <c>false</c>.
-    /// </returns>
-    bool IsDecimalSubPage(int i)
-    {
-      if (i >= 0x80) return false;
-
-      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x70));
+      if (_renderGraphics != null)
+        _renderGraphics.Dispose();
+      _renderGraphics = null;
     }
     #endregion
-
   }
 }

@@ -42,436 +42,126 @@ using TvDatabase;
 
 using Gentle.Common;
 using Gentle.Framework;
-namespace TvPlugin
-{
+namespace TvPlugin {
   /// <summary>
-  /// 
+  /// Teletext window of TVE3
   /// </summary>
-  public class TVTeletext : GUIWindow
-  {
-		[SkinControlAttribute(27)]				protected GUILabelControl lblMessage=null;
-		[SkinControlAttribute(500)]				protected GUIImage imgTeletextPage=null;
-		[SkinControlAttribute(502)]				protected GUIButtonControl btnPage100=null;
-		[SkinControlAttribute(503)]				protected GUIButtonControl btnPage200=null;
-		[SkinControlAttribute(504)]				protected GUIButtonControl btnPage300=null;
-		[SkinControlAttribute(505)]				protected GUIToggleButtonControl btnHidden=null;
-		[SkinControlAttribute(506)]				protected GUISelectButtonControl btnSubPage=null;
-    [SkinControlAttribute(507)]       protected GUIButtonControl btnFullscreen = null;
+  public class TVTeletext : TvTeletextBase {
+    #region gui components
+    [SkinControlAttribute(502)]
+    protected GUIButtonControl btnPage100 = null;
+    [SkinControlAttribute(503)]
+    protected GUIButtonControl btnPage200 = null;
+    [SkinControlAttribute(504)]
+    protected GUIButtonControl btnPage300 = null;
+    [SkinControlAttribute(505)]
+    protected GUIToggleButtonControl btnHidden = null;
+    [SkinControlAttribute(506)]
+    protected GUISelectButtonControl btnSubPage = null;
+    [SkinControlAttribute(507)]
+    protected GUIButtonControl btnFullscreen = null;
+    #endregion
 
-    Bitmap bitmapTeletextPage;
-    string inputLine = "";
-    int currentPageNumber = 0x100;
-    int currentSubPageNumber = 0;
-
-    bool _waiting = false;
-    DateTime _startTime = DateTime.MinValue;
-    TvLibrary.Teletext.TeletextPageRenderer _renderer = new TvLibrary.Teletext.TeletextPageRenderer();
-
-
-    public TVTeletext()
-    {
+    #region ctor
+    public TVTeletext() {
       GetID = (int)GUIWindow.Window.WINDOW_TELETEXT;
     }
+    #endregion
 
-    public override bool Init()
-    {
+    #region GUIWindow initializing methods
+    public override bool Init() {
       return Load(GUIGraphicsContext.Skin + @"\myteletext.xml");
     }
-    public override void OnAdded()
-    {
+    public override void OnAdded() {
       GUIWindowManager.Replace((int)GUIWindow.Window.WINDOW_TELETEXT, this);
       Restore();
       PreInit();
       ResetAllControls();
     }
-    public override bool IsTv
-    {
-      get
-      {
-        return true;
-      }
+    protected override void OnPageDestroy(int newWindowId) {
+      // Save the settings and then stop the update thread. Also the teletext grabbing
+      SaveSettings();
+      _updateThreadStop = true;
+      TVHome.Card.GrabTeletext = false;
+      base.OnPageDestroy(newWindowId);
     }
 
-    #region Serialisation
-    void LoadSettings()
-    {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-      }
+    protected override void OnPageLoad() {
+      base.OnPageLoad();
+      // Deactivate fullscreen video and initialize the window
+      GUIGraphicsContext.IsFullScreenVideo = false;
+      btnSubPage.RestoreSelection = false;
+      InitializeWindow(false);
+      btnHidden.Selected = _hiddenMode;
     }
+    #endregion
 
-    void SaveSettings()
-    {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
+    #region OnAction
+    public override void OnAction(Action action) {
+      base.OnAction(action);
+      switch (action.wID) {
+        case Action.ActionType.ACTION_SWITCH_TELETEXT_HIDDEN:
+          //Change Hidden Mode
+          if (btnHidden != null) {
+            btnHidden.Selected = _hiddenMode;
+          }
+          break;
+        case Action.ActionType.ACTION_REMOTE_SUBPAGE_UP:
+        case Action.ActionType.ACTION_REMOTE_SUBPAGE_DOWN:
+          // Subpage up
+          if (btnSubPage != null) {
+            btnSubPage.SelectedItem = currentSubPageNumber;
+          }
+          break;
       }
     }
     #endregion
 
-    public override void OnAction(Action action)
-    {
-      switch (action.wID)
-      {
-        case Action.ActionType.ACTION_KEY_PRESSED:
-          if (action.m_key != null)
-          {
-            if ((char)action.m_key.KeyChar >= '0' || (char)action.m_key.KeyChar <= '9')
-              OnKeyPressed((char)action.m_key.KeyChar);
-          }
-          break;
-        case Action.ActionType.ACTION_REMOTE_RED_BUTTON:
-          OnKeyPressed((char)'h');
-          break;
-        case Action.ActionType.ACTION_REMOTE_GREEN_BUTTON:
-          OnKeyPressed((char)'j');
-          break;
-        case Action.ActionType.ACTION_REMOTE_YELLOW_BUTTON:
-          OnKeyPressed((char)'k');
-          break;
-        case Action.ActionType.ACTION_REMOTE_BLUE_BUTTON:
-          OnKeyPressed((char)'l');
-          break;
-      }
-      base.OnAction(action);
-    }
-
-    protected override void OnPageDestroy(int newWindowId)
-    {
-
-      TVHome.Card.GrabTeletext = false;
-      //@TeletextGrabber.TeletextCache.PageUpdatedEvent-=new MediaPortal.TV.Teletext.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
-
-      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
-      {
-        if (TVHome.Card.IsTimeShifting && !(TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording))
-        {
-          if (GUIGraphicsContext.ShowBackground)
-          {
-            // stop timeshifting & viewing... 
-
-            //@Recorder.StopViewing();
-          }
-        }
-      }
-      base.OnPageDestroy(newWindowId);
-    }
-
-    protected override void OnPageLoad()
-    {
-      base.OnPageLoad();
-      TVHome.Card.GrabTeletext = true;
-      btnSubPage.RestoreSelection = false;
-      currentPageNumber = 0x100;
-      currentSubPageNumber = 0;
-      _startTime = DateTime.MinValue;
-      ShowMessage(currentPageNumber, currentSubPageNumber);
-      _renderer = new TvLibrary.Teletext.TeletextPageRenderer();
-      _renderer.Height = imgTeletextPage.Height;
-      _renderer.Width = imgTeletextPage.Width;
-
-      //@
-      _renderer.PageSelectText = "";
-      //if(imgTeletextPage!=null && TeletextGrabber.TeletextCache!=null)
-      //{
-      //	TeletextGrabber.TeletextCache.SetPageSize(imgTeletextPage.Width,imgTeletextPage.Height);
-      //}
-      if (btnHidden != null)
-      {
-        _renderer.HiddenMode = true;
-        btnHidden.Selected = true;
-      }
-      GetNewPage();
-      Redraw();
-      //@TeletextGrabber.TeletextCache.PageUpdatedEvent+=new MediaPortal.TV.Teletext.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
-      _renderer.TransparentMode = false;
-
-
-    }
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
-    {
-      if (control == btnPage100)
-      {
+    #region OnClicked
+    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType) {
+      // Handle the click events, of this window
+      if (control == btnPage100) {
         currentPageNumber = 0x100;
         currentSubPageNumber = 0;
-        GetNewPage();
-        Redraw();
+        _numberOfRequestedUpdates++;
       }
-      if (control == btnPage200)
-      {
+      if (control == btnPage200) {
         currentPageNumber = 0x200;
         currentSubPageNumber = 0;
-        GetNewPage();
-        Redraw();
+        _numberOfRequestedUpdates++;
       }
-      if (control == btnPage300)
-      {
+      if (control == btnPage300) {
         currentPageNumber = 0x300;
         currentSubPageNumber = 0;
-        GetNewPage();
-        Redraw();
+        _numberOfRequestedUpdates++;
       }
-      if (control == btnHidden)
-      {
-        if (btnHidden != null)
-        {
+      if (control == btnHidden) {
+        if (btnHidden != null) {
+          _hiddenMode = btnHidden.Selected;
           _renderer.HiddenMode = btnHidden.Selected;
-          GetNewPage();
-          Redraw();
+          _numberOfRequestedUpdates++;
         }
       }
-      if (control == btnSubPage)
-      {
-        if (btnSubPage != null)
-        {
+      if (control == btnSubPage) {
+        if (btnSubPage != null) {
           currentSubPageNumber = btnSubPage.SelectedItem;
-          GetNewPage();
-          Redraw();
+          _numberOfRequestedUpdates++;
         }
       }
-      if (control == btnFullscreen)
-      {
-        Log.Info("TvTeletext: Fullscreen-Button pressed");
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+      if (control == btnFullscreen) {
+        // First the fullscreen video and then switch to the new window. Otherwise the teletext isn't displayed
         GUIGraphicsContext.IsFullScreenVideo = true;
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
       }
-
       base.OnClicked(controlId, control, actionType);
     }
+    #endregion
 
-    void GetNewPage()
-    {
-      int sub = currentSubPageNumber;
-      int maxSubs = TVHome.Card.SubPageCount(currentPageNumber);
-      if (maxSubs <= 0) return;
-      if (sub >= maxSubs)
-        sub = maxSubs - 1;
-      byte[] page = TVHome.Card.GetTeletextPage(currentPageNumber, sub);
-      if (page != null && page.Length > 1)
-      {
-        bitmapTeletextPage = _renderer.RenderPage(page, currentPageNumber, sub);
-        Redraw();
-        _waiting = false;
-        Log.Info("TvTeletext select page {0:X} / subpage {1:X}", currentPageNumber, sub);
-      }
-      else
-      {
-        _waiting = true;
-      }
-
+    #region Rendering method
+    public override void Render(float timePassed) {
+      base.Render(timePassed);
     }
-
-
-    void OnKeyPressed(char chKey)
-    {
-
-      if (chKey == 'f' || chKey == 'F')
-      {
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
-      }
-      if (chKey == 'c' || chKey == 'C')
-      {
-        _renderer.PageSelectText = "";
-        inputLine = "";
-        GetNewPage();
-        Redraw();
-        return;
-      }
-      // top text
-      if (chKey == 'h' || chKey == 'j' || chKey == 'k' || chKey == 'l' ||
-        chKey == 'H' || chKey == 'J' || chKey == 'K' || chKey == 'L')
-      {
-
-        int hexPage = 0;
-        string topButton = new string(chKey, 1);
-        switch (topButton.ToLower())
-        {
-          case "h":
-            hexPage = TVHome.Card.GetTeletextRedPageNumber();
-            break;
-          case "j":
-            hexPage = TVHome.Card.GetTeletextGreenPageNumber();
-            break;
-          case "k":
-            hexPage = TVHome.Card.GetTeletextYellowPageNumber();
-            break;
-          case "l":
-            hexPage = TVHome.Card.GetTeletextBluePageNumber();
-            break;
-        }
-
-        if (hexPage >= 0x100 && hexPage <= 0x899)
-        {
-          currentPageNumber = hexPage;
-          currentSubPageNumber = 0;
-          GetNewPage();
-          Redraw();
-          Log.Info("TvTeletext select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
-          inputLine = "";
-          return;
-        }
-      }
-
-      //
-      if ((chKey >= '0' && chKey <= '9') || (chKey == '+' || chKey == '-')) //navigation
-      {
-        if (chKey == '0' && inputLine.Length == 0) return;
-
-        // page up
-        if ((byte)chKey == 0x2B && currentPageNumber < 0x899) // +
-        {
-          currentPageNumber++;
-          while ((currentPageNumber % 0x10) > 9) currentPageNumber++;
-          currentSubPageNumber = 0;
-          {
-            GetNewPage();
-            Redraw();
-            Log.Info("TvTeletext select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
-            inputLine = "";
-            return;
-          }
-
-        }
-        // page down
-        if ((byte)chKey == 0x2D && currentPageNumber > 0x100) // -
-        {
-          currentPageNumber--;
-          while ((currentPageNumber % 0x10) > 9) currentPageNumber--;
-          currentSubPageNumber = 0;
-          {
-            GetNewPage();
-            Redraw();
-            Log.Info("TvTeletext select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
-            inputLine = "";
-            return;
-          }
-
-        }
-        if (chKey >= '0' && chKey <= '9')
-        {
-          inputLine += chKey;
-          {
-            _renderer.PageSelectText = inputLine;
-            GetNewPage();
-            Redraw();
-          }
-        }
-
-        if (inputLine.Length == 3)
-        {
-          // change channel
-          currentPageNumber = Convert.ToInt16(inputLine, 16);
-          currentSubPageNumber = 0;
-          if (currentPageNumber < 0x100)
-            currentPageNumber = 0x100;
-          if (currentPageNumber > 0x899)
-            currentPageNumber = 0x899;
-
-          {
-            GetNewPage();
-            Redraw();
-          }
-          Log.Info("TvTeletext select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
-          inputLine = "";
-
-        }
-        //
-        // get page
-        //
-      }
-    }
-
-
-    public bool HasTeletext()
-    {
-      return (TVHome.Card.HasTeletext);
-    }
-    //
-    //
-    void ShowMessage(int page, int subpage)
-    {
-      string tmp = String.Format("{0:X}", page);
-      int pageNr = Int32.Parse(tmp);
-      tmp = String.Format("{0:X}", subpage);
-      int subPageNr = Int32.Parse(tmp);
-      if (lblMessage == null) return;
-      lblMessage.Label = String.Format(GUILocalizeStrings.Get(596), pageNr, subPageNr); // Waiting for Page {0}/{1}...
-      lblMessage.IsVisible = true;
-    }
-
-
-    public override void Process()
-    {
-      TimeSpan ts = DateTime.Now - _startTime;
-      if (ts.TotalMilliseconds < 1000) return;
-      if (_waiting)
-      {
-        GetNewPage();
-        Redraw();
-        _startTime = DateTime.Now;
-        return;
-      }
-      TimeSpan tsRotation = TVHome.Card.TeletextRotation(currentPageNumber);
-      if (ts.TotalMilliseconds < tsRotation.TotalMilliseconds) return;
-      _startTime = DateTime.Now;
-
-      if (currentPageNumber < 0x100) currentPageNumber = 0x100;
-      if (currentPageNumber > 0x899) currentPageNumber = 0x899;
-      _renderer.PageSelectText = String.Format("{0:X}", currentPageNumber);
-      int NumberOfSubpages = TVHome.Card.SubPageCount(currentPageNumber);
-      if (NumberOfSubpages > currentSubPageNumber)
-      {
-        currentSubPageNumber++;
-        while ((currentSubPageNumber & 0xf) > 9) currentSubPageNumber++;
-      }
-      if (currentSubPageNumber > NumberOfSubpages)
-        currentSubPageNumber = 0;
-
-      Log.Info("dvb-teletext page updated. {0:X}/{1:X} total:{2} rotspeed:{3}", currentPageNumber, currentSubPageNumber, NumberOfSubpages, tsRotation.TotalMilliseconds);
-      GetNewPage();
-      Redraw();
-    }
-
-    void Redraw()
-    {
-      Log.Info("dvb-teletext redraw()");
-      try
-      {
-
-        if (bitmapTeletextPage == null)
-        {
-          ShowMessage(currentPageNumber, currentSubPageNumber);
-          imgTeletextPage.FreeResources();
-          imgTeletextPage.SetFileName("button_small_settings_nofocus.png");
-          imgTeletextPage.AllocResources();
-          return;
-        }
-        if (lblMessage != null)
-          lblMessage.IsVisible = false;
-        lock (imgTeletextPage)
-        {
-          System.Drawing.Image img = (Image)bitmapTeletextPage.Clone();
-          imgTeletextPage.IsVisible = false;
-          imgTeletextPage.FileName = "";
-          //Utils.FileDelete(@"teletext.jpg");
-          GUITextureManager.ReleaseTexture("[teletextpage]");
-          //bitmapTeletextPage.Save(@"teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
-          imgTeletextPage.MemoryImage = img;
-          imgTeletextPage.FileName = "[teletextpage]";
-          imgTeletextPage.IsVisible = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error(ex);
-      }
-    }
-    public override void Render(float timePassed)
-    {
-      lock (imgTeletextPage)
-      {
-        base.Render(timePassed);
-      }
-    }
+    #endregion
 
   }// class
 }// namespace

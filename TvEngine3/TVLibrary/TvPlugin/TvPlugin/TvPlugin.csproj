@@ -83,10 +83,10 @@
     <Compile Include="Radio.cs" />
     <Compile Include="RadioGuide.cs" />
     <Compile Include="RadioGuideBase.cs" />
-    <Compile Include="teletext\FastTextDecoder.cs" />
     <Compile Include="teletext\Hamming.cs" />
     <Compile Include="teletext\TeletextPageRenderer.cs" />
     <Compile Include="teletext\TvFullscreenTeletext.cs" />
+    <Compile Include="teletext\TvTeletextBase.cs" />
     <Compile Include="TvChannelSettings.cs" />
     <Compile Include="TvCropManager.cs" />
     <Compile Include="TvCropSettings.cs" />
@@ -154,6 +154,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>TvSetupForm.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="teletext\LogoPage" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

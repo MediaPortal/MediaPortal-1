@@ -27,17 +27,37 @@ namespace TvLibrary.Teletext
   public class Hamming
   {
     #region constants
-    const int ERASE_BIT_OFFSET = 5;
+    // Byte offset of the magazin number. Only the first 3 bits are used
+    const int MAGZIN_BYTE_OFFSET = 0;
+
+    // Byte offset of the packetnumber. Last bit of byte1 is only used.
+    const int PACKETNUMBER_BYTE1_OFFSET = 0;
+    const int PACKETNUMBER_BYTE2_OFFSET = 1;
+
+    // Pagenumber. Magazin Number is also needed for the complete pagenumber
+    const int PAGENUMBER_BYTE1_OFFSET = 2;
+    const int PAGENUMBER_BYTE2_OFFSET = 3;
+
+    // Subpagenumber. Byte1 only 3 bits and Byte3 only 2 Bits are used
+    const int SUBPAGENUMBER_BYTE1_OFFSET = 4;
+    const int SUBPAGENUMBER_BYTE2_OFFSET = 5;
+    const int SUBPAGENUMBER_BYTE3_OFFSET = 6;
+    const int SUBPAGENUMBER_BYTE4_OFFSET = 7;
+    
+    // C4 Bit in header
+    const int ERASE_BYTE_OFFSET = 6;
     const int ERASE_BIT = 8;
     
-    const int SUBTITLE_BIT_OFFSET = 7;
-    const int SUBTITLE_BIT = 4;
+    // C6 Bit in header
+    const int SUBTITLE_BYTE_OFFSET = 7;
+    const int SUBTITLE_BIT = 8;
 
-    const int BOXED_BIT_OFFSET = 7;
-    const int BOXED_BIT = 12;
+    // C5 Bit in header
+    const int NEWSFLASH_BYTE_OFFSET = 7;
+    const int NEWSFLASH_BIT = 4;
 
-
-    const int SERIAL_BIT_OFFSET = 9;
+    // C11 Bit in header
+    const int SERIAL_BYTE_OFFSET = 9;
     const int SERIAL_BIT = 1;
     #endregion
 
@@ -73,78 +93,134 @@ namespace TvLibrary.Teletext
 
     #region hamming helper methods
 
+    /// <summary>
+    /// Extracts the packetnumber from the teletext header
+    /// </summary>
+    /// <param name="offset">Offset in the data stream</param>
+    /// <param name="rowData">Teletext data</param>
+    /// <returns>PacketNumber of the teletext page row</returns>
     static public int GetPacketNumber(int offset, ref byte[] rowData)
     {
-      int magazine = Decode[rowData[offset + 0]];
-      int rowAddress = Decode[rowData[offset + 1]];
+      int magazine = Decode[rowData[offset + PACKETNUMBER_BYTE1_OFFSET]];
+      int rowAddress = Decode[rowData[offset + PACKETNUMBER_BYTE2_OFFSET]];
       if (magazine == 0xff || rowAddress == 0xff) return -1;
       int packetNumber = (magazine >> 3) + (rowAddress << 1); // Line number in Page 
       return packetNumber;
     }
 
+    /// <summary>
+    /// Extracts the pagenumber from the teletext header
+    /// </summary>
+    /// <param name="offset">Offset in the data stream</param>
+    /// <param name="rowData">Teletext data</param>
+    /// <returns>PageNumber of the teletext page</returns>
     static public int GetPageNumber(int offset, ref byte[] rowData)
     {
-      int magazine = Decode[rowData[offset + 0]];
+      // Page number = Magazin PageTens PageUnits
+      int magazine = Decode[rowData[offset + MAGZIN_BYTE_OFFSET]];
       if (magazine == 0) magazine = 8;
 
-      int pageUnits = Decode[rowData[offset + 2]];
-      int pageTens = Decode[rowData[offset + 3]];
+      int pageUnits = Decode[rowData[offset + PAGENUMBER_BYTE1_OFFSET]];
+      int pageTens = Decode[rowData[offset + PAGENUMBER_BYTE2_OFFSET]];
       return (magazine * 0x100 + pageTens * 0x10 + pageUnits);
     }
 
+    /// <summary>
+    /// Extracts the subpagenumber from the teletext header
+    /// </summary>
+    /// <param name="offset">Offset in the data stream</param>
+    /// <param name="rowData">Teletext data</param>
+    /// <returns>SubPageNumber of the teletext page</returns>
     static public int GetSubPageNumber(int offset, ref byte[] rowData)
     {
       // decode the subpage number
+      // SubPageNumber = 4 Bits SubPageNumber_Byte1 - 3 Bits SubPageNumber_Byte2 - 4 Bits SubPageNumber_Byte3 - 2 Bits SubPageNumber_Byte4
       int subPageNumber = 0;
-      subPageNumber = ((Decode[rowData[offset + 7]] & 3) << 12) +  //3
-                        (Decode[rowData[offset + 6]] << 8) +        //f
-                       ((Decode[rowData[offset + 5]] & 7) << 4) +   //7
-                        (Decode[rowData[offset + 4]] & 0xf);        //f
+      subPageNumber = ((Decode[rowData[offset + SUBPAGENUMBER_BYTE4_OFFSET]] & 3) << 12) +  //3
+                        (Decode[rowData[offset + SUBPAGENUMBER_BYTE3_OFFSET]] << 8) +        //f
+                       ((Decode[rowData[offset + SUBPAGENUMBER_BYTE2_OFFSET]] & 7) << 4) +   //7
+                        (Decode[rowData[offset + SUBPAGENUMBER_BYTE1_OFFSET]] & 0xf);        //f
       return subPageNumber;
     }
-
+  
+    /// <summary>
+    /// Check if the erase bit (C4) is set in the teletext page header
+    /// </summary>
+    /// <param name="offset">Offset in the data stream</param>
+    /// <param name="rowData">Teletext data</param>
+    /// <returns>true, if erase bit is set</returns>
     static public bool IsEraseBitSet(int offset, ref byte[] rowData)
     {
-      int controlByte = Decode[rowData[offset + ERASE_BIT_OFFSET]];
+      int controlByte = Decode[rowData[offset + ERASE_BYTE_OFFSET]];
       controlByte &= ERASE_BIT;
       return (controlByte != 0);
     }
+
+    /// <summary>
+    /// Check if the newsflash bit (C7) is set in the teletext page header
+    /// </summary>
+    /// <param name="offset">Offset in the data stream</param>
+    /// <param name="rowData">Teletext data</param>
+    /// <returns>true, if newsflash bit is set</returns>
+    static public bool IsNewsflash(int offset, ref byte[] rowData) {
+      int controlByte = Decode[rowData[offset + NEWSFLASH_BYTE_OFFSET]];
+      controlByte &= NEWSFLASH_BIT;
+      return (controlByte != 0);
+    }
+
+    /// <summary>
+    /// Check if the subtitle bit (C6) is set in the teletext page header
+    /// </summary>
+    /// <param name="offset">Offset in the data stream</param>
+    /// <param name="rowData">Teletext data</param>
+    /// <returns>true, if subtitle bit is set</returns>
     static public bool IsSubtitleBitSet(int offset, ref byte[] rowData)
     {
-      int controlByte = Decode[rowData[offset + SUBTITLE_BIT_OFFSET]];
+      int controlByte = Decode[rowData[offset + SUBTITLE_BYTE_OFFSET]];
       controlByte &= SUBTITLE_BIT;
       return (controlByte != 0);
     }
 
-    static public bool IsBoxed(int offset, ref byte[] rowData)
-    {
-      int controlByte = Decode[rowData[offset + BOXED_BIT_OFFSET]];
-      controlByte &= BOXED_BIT;
-      return (controlByte != 0);
-    }
-
+    /// <summary>
+    /// Check if the magazin serial bit (C11) is set in the teletext page header
+    /// </summary>
+    /// <param name="offset">Offset in the data stream</param>
+    /// <param name="rowData">Teletext data</param>
+    /// <returns>true, if magazin serial is set</returns>
     static public bool IsSerial(int offset, ref byte[] rowData)
     {
-      int controlByte = Decode[rowData[offset + SERIAL_BIT_OFFSET]];
+      int controlByte = Decode[rowData[offset + SERIAL_BYTE_OFFSET]];
       controlByte &= SERIAL_BIT;
       return (controlByte != 0);
     }
 
-
+    /// <summary>
+    /// Sets a page number in teletext header into the given data stream
+    /// </summary>
+    /// <param name="offset">Offset in the data stream</param>
+    /// <param name="rowData">Teletext data</param>
+    /// <param name="hexSubPageNr">PageNumber (Hex representation)</param>
     static public void SetSubPageNumber(int offset, ref byte[] rowData, int hexSubPageNr)
     {
 	    // max sub = 0x3f7f
-      rowData[offset + 4] = Encode[hexSubPageNr & 0xf];
+      rowData[offset + SUBPAGENUMBER_BYTE1_OFFSET] = Encode[hexSubPageNr & 0xf];
       hexSubPageNr >>= 4;
 
-      rowData[offset + 5] = Encode[hexSubPageNr & 0x7];
+      rowData[offset + SUBPAGENUMBER_BYTE2_OFFSET] = Encode[hexSubPageNr & 0x7];
       hexSubPageNr >>= 4;
 
-      rowData[offset + 6] = Encode[hexSubPageNr & 0xf];
+      rowData[offset + SUBPAGENUMBER_BYTE3_OFFSET] = Encode[hexSubPageNr & 0xf];
       hexSubPageNr >>= 4;
 
-      rowData[offset + 7] = Encode[hexSubPageNr & 0x3];
+      rowData[offset + SUBPAGENUMBER_BYTE4_OFFSET] = Encode[hexSubPageNr & 0x3];
     }
+    /// <summary>
+    /// Sets a page header into the given data stream
+    /// </summary>
+    /// <param name="offset">Offset in the data stream</param>
+    /// <param name="rowData">Teletext data</param>
+    /// <param name="pagenr">PageNumber</param>
+    /// <param name="subnr">SubPageNumber</param>
     static public void SetHeader(int offset, ref byte[] byData, int pagenr, int subnr)
     {
       int magazine  = ( pagenr / 256 ) & 0x7;
@@ -153,10 +229,10 @@ namespace TvLibrary.Teletext
       
       if (magazine == 8) magazine = 0;
 
-	    byData[offset+0] = Encode[magazine];
+      byData[offset + MAGZIN_BYTE_OFFSET] = Encode[magazine];
       byData[offset + 1] = Encode[0];
-      byData[offset + 2] = Encode[pageUnits];
-      byData[offset + 3] = Encode[pageTens];
+      byData[offset + PAGENUMBER_BYTE1_OFFSET] = Encode[pageUnits];
+      byData[offset + PAGENUMBER_BYTE2_OFFSET] = Encode[pageTens];
 
       SetSubPageNumber(0, ref byData, subnr);
       byData[offset + 8] = Encode[0];
@@ -184,6 +260,13 @@ namespace TvLibrary.Teletext
       }
       for (int x = 13; x < 42; x++) byData[x] = 0x20;
     }
+    /// <summary>
+    /// Sets a packet number in teletext header into the given data stream
+    /// </summary>
+    /// <param name="offset">Offset in the data stream</param>
+    /// <param name="rowData">Teletext data</param>
+    /// <param name="pagenr">PageNumber (needed for magazin number)</param>
+    /// <param name="packetNumber">PacketNumber</param>
     static public void SetPacketNumber(int offset, ref byte[] byData, int pageNumber, int packetNumber)
     {
       int iMagazine = pageNumber / 0x100;
