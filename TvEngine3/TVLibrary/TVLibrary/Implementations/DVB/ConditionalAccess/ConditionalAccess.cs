@@ -412,17 +412,25 @@ namespace TvLibrary.Implementations.DVB
         {
           //DVB-S2 modulation parameters for Twinhan
           if (channel.ModulationType == ModulationType.ModQpsk)
+          {
             channel.ModulationType = ModulationType.Mod8Vsb;
+            Log.Log.WriteFile("Twinhan DVB-S2 modulation set");
+          }
           if (channel.ModulationType == ModulationType.Mod8psk)
+          {
             channel.ModulationType = ModulationType.Mod8Vsb;
+            Log.Log.WriteFile("Twinhan DVB-S2 modulation set");
+          }
           if (channel.ModulationType == ModulationType.Mod16Apsk)
+          {
             channel.ModulationType = ModulationType.Mod16Vsb;
+            Log.Log.WriteFile("Twinhan DVB-S2 modulation set");
+          }
           if (channel.ModulationType == ModulationType.Mod32Apsk)
+          {
             channel.ModulationType = ModulationType.ModOqpsk;
-          Log.Log.WriteFile("Twinhan DVB-S2 modulation set");
-          //Twinhan does not currently use Pilot / Roll-off parameters
-          channel.Pilot = Pilot.NotSet;
-          channel.RollOff = Rolloff.NotSet;
+            Log.Log.WriteFile("Twinhan DVB-S2 modulation set");
+          }
         }
         if (_hauppauge != null)
         {
@@ -430,56 +438,77 @@ namespace TvLibrary.Implementations.DVB
           _hauppauge.SetDVBS2PilotRolloff();
           //Set the Hauppauge Modulation
           if (channel.ModulationType == ModulationType.ModQpsk)
+          {
             channel.ModulationType = ModulationType.ModQpsk2;
+            Log.Log.WriteFile("Hauppauge DVB-S2 modulation set");
+          }
           if (channel.ModulationType == ModulationType.Mod8psk)
+          {
             channel.ModulationType = ModulationType.Mod8psk2;
-          Log.Log.WriteFile("Hauppauge DVB-S2 modulation set");
+            Log.Log.WriteFile("Hauppauge DVB-S2 modulation set");
+          }
         }
         if (_technoTrend != null)
         {
           //Set TechnoTrend modulation tuning settings
           if (channel.ModulationType == ModulationType.ModQpsk)
+          {
             channel.ModulationType = ModulationType.Mod8Vsb;
+            Log.Log.WriteFile("Technotrend DVB-S2 modulation set");
+          }
           if (channel.ModulationType == ModulationType.Mod8psk)
+          {
             channel.ModulationType = ModulationType.Mod8Vsb;
+            Log.Log.WriteFile("Technotrend DVB-S2 modulation set");
+          }
           if (channel.ModulationType == ModulationType.Mod16Apsk)
+          {
             channel.ModulationType = ModulationType.Mod16Vsb;
+            Log.Log.WriteFile("Technotrend DVB-S2 modulation set");
+          }
           if (channel.ModulationType == ModulationType.Mod32Apsk)
+          {
             channel.ModulationType = ModulationType.ModOqpsk;
-          Log.Log.WriteFile("Technotrend DVB-S2 modulation set");
-          //TechnoTrend does not currently use Pilot / Roll-off
-          channel.Pilot = Pilot.NotSet;
-          channel.RollOff = Rolloff.NotSet;
+            Log.Log.WriteFile("Technotrend DVB-S2 modulation set");
+          }
         }
         if (_digitalEveryWhere != null)
         {
           if (channel.ModulationType == ModulationType.ModQpsk)
+          {
             channel.ModulationType = ModulationType.ModQpsk2;
+            Log.Log.WriteFile("DigitalEverywhere DVB-S2 modulation set");
+          }
           if (channel.ModulationType == ModulationType.Mod8psk)
+          {
             channel.ModulationType = ModulationType.Mod8psk2;
-          Log.Log.WriteFile("DigitalEverywhere DVB-S2 modulation set");
+            Log.Log.WriteFile("DigitalEverywhere DVB-S2 modulation set");
+          }
           //Check if DVB-S channel if not turn off Pilot & Roll-off regardless
           if (channel.ModulationType == ModulationType.ModNotSet)
           {
             channel.Pilot = Pilot.NotSet;
             channel.RollOff = Rolloff.NotSet;
-            Log.Log.WriteFile("DigitalEverywhere: we're tuning DVB-S, pilot & roll-off now not set");
+            //Log.Log.WriteFile("DigitalEverywhere: we're tuning DVB-S, pilot & roll-off are now not set");
           }
-          //Set the DigitalEverywhere binary values for Pilot & Roll-off
-          int _pilot = 0;
-          int _rollOff = 0;
-          if (channel.Pilot == Pilot.PilotOn)
-            _pilot = 128;
-          if (channel.Pilot == Pilot.PilotOff)
-            _pilot = 64;
-          if (channel.RollOff == Rolloff.RollOff_20)
-            _rollOff = 16;
-          if (channel.RollOff == Rolloff.RollOff_25)
-            _rollOff = 32;
-          if (channel.RollOff == Rolloff.RollOff_35)
-            _rollOff = 48;
-         //The binary values get added to the current InnerFECRate - done!
-          channel.InnerFecRate = channel.InnerFecRate + _pilot + _rollOff;
+          if (channel.InnerFecRate != BinaryConvolutionCodeRate.RateNotSet)
+          {
+            //Set the DigitalEverywhere binary values for Pilot & Roll-off
+            int _pilot = 0;
+            int _rollOff = 0;
+            if (channel.Pilot == Pilot.PilotOn)
+              _pilot = 128;
+            if (channel.Pilot == Pilot.PilotOff)
+              _pilot = 64;
+            if (channel.RollOff == Rolloff.RollOff_20)
+              _rollOff = 16;
+            if (channel.RollOff == Rolloff.RollOff_25)
+              _rollOff = 32;
+            if (channel.RollOff == Rolloff.RollOff_35)
+              _rollOff = 48;
+            //The binary values get added to the current InnerFECRate - done!
+            channel.InnerFecRate = channel.InnerFecRate + _pilot + _rollOff;
+          }
         }
       }
       catch (Exception ex)

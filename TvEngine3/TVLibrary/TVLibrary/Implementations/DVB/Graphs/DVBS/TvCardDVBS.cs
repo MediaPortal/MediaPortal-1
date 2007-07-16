@@ -256,15 +256,15 @@ namespace TvLibrary.Implementations.DVB
       //DVB-S2 specific modulation class call here if DVB-S2 card detected
       if (_conditionalAccess != null)
       {
-        Log.Log.WriteFile("Set DVB-S2 modulation...");
+        //Log.Log.WriteFile("Set DVB-S2 modulation...");
         _conditionalAccess.SetDVBS2Modulation(_parameters, dvbsChannel);
       }
       hr = dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
       Log.Log.WriteFile("Channel modulation is set to {0}", dvbsChannel.ModulationType);
-      Log.Log.Info("Put Modulation returned:{0:X}", hr);
+      //Log.Log.Info("Put Modulation returned:{0:X}", hr);
       hr = dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
       Log.Log.WriteFile("Channel FECRate is set to {0}", dvbsChannel.InnerFecRate);
-      Log.Log.Info("Put InnerFECRate returned:{0:X}", hr);
+      //Log.Log.Info("Put InnerFECRate returned:{0:X}", hr);
       
       _tuneRequest.put_Locator(locator);
 
