@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2007 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -29,61 +29,6 @@ namespace TvLibrary.Teletext
 {
   public class TeletextPage : IDisposable
   {
-    static byte[] emptyPage =
-    {32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,
-     32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32,32,32,32,32,32,32,32,32, 32,32};
     #region constants
     const int MAX_SUB_PAGES = 0x80;
     const int MAX_ROWS = 50;
@@ -93,14 +38,17 @@ namespace TvLibrary.Teletext
     int _pageNumber = -1;
     int _numberOfSubPages = -1;
     IntPtr[] _pageCache = new IntPtr[MAX_SUB_PAGES];
-
     DateTime _lastTimeRoulated = DateTime.MinValue;
     DateTime _lastTimeReceived = DateTime.MinValue;
-    int _previousSubPageNumber = -1;
+    int      _previousSubPageNumber = -1;
     TimeSpan _rotationTime = new TimeSpan(0, 0, 15);
     #endregion
 
     #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TeletextPage"/> class.
+    /// </summary>
+    /// <param name="pageNumber">The page number.</param>
     public TeletextPage(int pageNumber)
     {
       _pageNumber = pageNumber;
@@ -108,6 +56,10 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region properties
+    /// <summary>
+    /// Gets the sub page count.
+    /// </summary>
+    /// <value>The sub page count.</value>
     public int SubPageCount
     {
       get
@@ -115,6 +67,10 @@ namespace TvLibrary.Teletext
         return _numberOfSubPages;
       }
     }
+    /// <summary>
+    /// Gets the rotation time.
+    /// </summary>
+    /// <value>The rotation time.</value>
     public TimeSpan RotationTime
     {
       get
@@ -122,6 +78,10 @@ namespace TvLibrary.Teletext
         return _rotationTime;
       }
     }
+    /// <summary>
+    /// Gets the last time received.
+    /// </summary>
+    /// <value>The last time received.</value>
     public DateTime LastTimeReceived
     {
       get
@@ -130,6 +90,10 @@ namespace TvLibrary.Teletext
       }
     }
 
+    /// <summary>
+    /// Gets the last time roulated.
+    /// </summary>
+    /// <value>The last time roulated.</value>
     public DateTime LastTimeRoulated
     {
       get
@@ -138,29 +102,31 @@ namespace TvLibrary.Teletext
       }
     }
     #endregion
+
     #region public methods
+    /// <summary>
+    /// Gets the sub page.
+    /// </summary>
+    /// <param name="subPageNumber">The sub page number.</param>
+    /// <returns></returns>
     public byte[] GetSubPage(int subPageNumber)
     {
       if (subPageNumber < 0 || subPageNumber > _numberOfSubPages)
       {
         return null;
       }
+      if (_pageCache[subPageNumber] == IntPtr.Zero) return null;
       byte[] pageChars = new byte[MAX_ROWS * 42];
       Marshal.Copy(_pageCache[subPageNumber], pageChars, 0, MAX_ROWS * 42);
       return pageChars;
     }
 
-    public void Clear(int subPageNumber)
-    {
-      if (subPageNumber < 0 || subPageNumber > _numberOfSubPages)
-      {
-        return;
-      }
-      if (_pageCache[subPageNumber] == IntPtr.Zero) return;
-
-      Marshal.Copy(emptyPage, 0, _pageCache[subPageNumber], MAX_ROWS * 42);
-    }
-
+    /// <summary>
+    /// Deletes the specified page number.
+    /// </summary>
+    /// <param name="pageNumber">The page number.</param>
+    /// <param name="subPageNumber">The sub page number.</param>
+    /// <returns></returns>
     public bool Delete(int pageNumber, int subPageNumber)
     {
       if (_numberOfSubPages < subPageNumber) return false;
@@ -177,22 +143,38 @@ namespace TvLibrary.Teletext
       return true;
     }
 
-    public void SubPageReceived(int pageNumber, int subPageNumber, ref byte[] pageData, out bool isUpdate, out bool isNew, out bool isDeleted)
+    /// <summary>
+    /// Subs the page received.
+    /// </summary>
+    /// <param name="pageNumber">The page number.</param>
+    /// <param name="subPageNumber">The sub page number.</param>
+    /// <param name="pageData">The page data.</param>
+    /// <param name="isUpdate">if set to <c>true</c> [is update].</param>
+    /// <param name="isNew">if set to <c>true</c> [is new].</param>
+    /// <param name="isDeleted">if set to <c>true</c> [is deleted].</param>
+    public void SubPageReceived(int pageNumber, ref int subPageNumber, ref byte[] pageData, out bool isUpdate, out bool isNew, out bool isDeleted, string vbiLines)
     {
-      if (pageNumber == 0x600)
-      {
-        //Trace.WriteLine(String.Format("received {0:X}/{1} total:{2} prev:{3}", pageNumber, subPageNumber, _numberOfSubPages, _previousSubPageNumber));
-      }
       isDeleted = false;
       isUpdate = false;
       isNew = false;
+
       if (subPageNumber < 0 || subPageNumber >= 0x80)
       {
         //invalid subpage 
-        //if (pageNumber == 0x600)
-         // Trace.WriteLine("Invalid subpage number");
         return;
       }
+      if (SubPageExists(subPageNumber))
+      {
+        if (PageDiffers(pageData, subPageNumber))
+        {
+          Trace.WriteLine(String.Format("page:{0:X}/{1:X} updated {2}", pageNumber, subPageNumber,vbiLines));
+          isUpdate = true;
+          UpdatePage(pageNumber, subPageNumber, pageData, vbiLines);
+        }
+      }
+
+
+
       if (_numberOfSubPages > 0 && subPageNumber != _numberOfSubPages)
       {
         _rotationTime = DateTime.Now - _lastTimeRoulated;
@@ -205,14 +187,16 @@ namespace TvLibrary.Teletext
       {
         //received a new subpage        
         //if (pageNumber == 0x600)
-          // Trace.WriteLine(String.Format(" subpage added total:{0} prev:{1}", _numberOfSubPages, _previousSubPageNumber));
+        // Trace.WriteLine(String.Format(" subpage added total:{0} prev:{1}", _numberOfSubPages, _previousSubPageNumber));
 
         _lastTimeRoulated = DateTime.Now;
         _lastTimeReceived = DateTime.Now;
         _numberOfSubPages = subPageNumber;
         _previousSubPageNumber = subPageNumber;
-        AllocPage(subPageNumber);
-        UpdatePage(subPageNumber, pageData);
+        if (!SubPageExists(subPageNumber))
+        {
+          AllocPage(subPageNumber, pageData);
+        }
         _lastTimeReceived = DateTime.Now;
         isNew = true;
         return;
@@ -220,15 +204,18 @@ namespace TvLibrary.Teletext
 
       if (subPageNumber > _numberOfSubPages)
       {
-        _numberOfSubPages++;
         _lastTimeRoulated = DateTime.Now;
-        _previousSubPageNumber = _numberOfSubPages;
-        AllocPage(_numberOfSubPages);
-        UpdatePage(_numberOfSubPages, pageData);
+        _lastTimeReceived = DateTime.Now;
+        _numberOfSubPages++;
+        subPageNumber = _numberOfSubPages;
+        _previousSubPageNumber = subPageNumber;
+        if (!SubPageExists(subPageNumber))
+        {
+          AllocPage(subPageNumber, pageData);
+        }
         _lastTimeReceived = DateTime.Now;
         isNew = true;
-        //if (pageNumber == 0x600)
-          // Trace.WriteLine(String.Format(" subpage added2 total:{0} prev:{1}", _numberOfSubPages, _previousSubPageNumber));
+
         return;
       }
 
@@ -237,9 +224,11 @@ namespace TvLibrary.Teletext
         //same subpage received
         //if (pageNumber == 0x600) Trace.WriteLine("Same subpage");
         _lastTimeReceived = DateTime.Now;
-        AllocPage(subPageNumber);
+        if (!SubPageExists(subPageNumber))
+        {
+          AllocPage(subPageNumber, pageData);
+        }
 
-        isUpdate = UpdatePage(subPageNumber, pageData);
         return;
       }
 
@@ -250,11 +239,13 @@ namespace TvLibrary.Teletext
         {
           //normal roulation
           //if (pageNumber == 0x600)
-            //Trace.WriteLine(String.Format(" from {0}->0", _previousSubPageNumber, subPageNumber));
+          //Trace.WriteLine(String.Format(" from {0}->0", _previousSubPageNumber, subPageNumber));
           _lastTimeRoulated = DateTime.Now;
           _previousSubPageNumber = subPageNumber;
-          AllocPage(subPageNumber);
-          isUpdate = UpdatePage(subPageNumber, pageData);
+          if (!SubPageExists(subPageNumber))
+          {
+            AllocPage(subPageNumber, pageData);
+          }
         }
         else
         {
@@ -268,18 +259,21 @@ namespace TvLibrary.Teletext
           _previousSubPageNumber = subPageNumber;
           isDeleted = true;
 
-          AllocPage(subPageNumber);
-          UpdatePage(subPageNumber, pageData);
+          if (!SubPageExists(subPageNumber))
+          {
+            AllocPage(subPageNumber, pageData);
+          }
         }
       }
       else
       {
         //if (pageNumber == 0x600)
-          //Trace.WriteLine(String.Format(" from {0}->{1}", _previousSubPageNumber, subPageNumber));
+        //Trace.WriteLine(String.Format(" from {0}->{1}", _previousSubPageNumber, subPageNumber));
         _lastTimeReceived = DateTime.Now;
-        AllocPage(subPageNumber);
-
-        isUpdate = UpdatePage(subPageNumber, pageData);
+        if (!SubPageExists(subPageNumber))
+        {
+          AllocPage(subPageNumber, pageData);
+        }
       }
       _previousSubPageNumber = subPageNumber;
       _lastTimeReceived = DateTime.Now;
@@ -287,6 +281,11 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region private members
+    /// <summary>
+    /// Saves the page.
+    /// </summary>
+    /// <param name="page">The page.</param>
+    /// <param name="fileName">Name of the file.</param>
     void SavePage(byte[] page, string fileName)
     {
       using (FileStream stream = new FileStream(fileName, FileMode.OpenOrCreate))
@@ -294,59 +293,247 @@ namespace TvLibrary.Teletext
         stream.Write(page, 0, 1008);
       }
     }
-    bool UpdatePage(int subPageNumber, byte[] pageData)
+    void DumpPages(byte[] page, int subPageNumber)
     {
-      bool updated = false;
-
-      if (subPageNumber < 0 || subPageNumber > _numberOfSubPages)
-      {
-        return false;
-      }
       IntPtr pagePtr = _pageCache[subPageNumber];
+      if (pagePtr == IntPtr.Zero) return;
       unsafe
       {
         byte* ptr = (byte*)pagePtr.ToPointer();
         for (int row = 0; row < 31; row++)
         {
-          int off = row * 42;
-          if (pageData[off] == 32) continue;
-          for (int col = 0; col < 42; col++)
+          string line = "";
+          for (int col = 2; col <= 41; col++)
           {
-            //if (row != 0)
-            //{
-              if (ptr[off + col] != pageData[off + col])
-              {
-                updated = true;
-                ptr[off + col] = pageData[off + col];
-              }
-            //}
+            byte k = (byte)((ptr[row * 42 + col]) & 0x7f);
+            if (k < 32) k = 32;
+            line += (char)k;
           }
+
+          line += " | ";
+          for (int col = 2; col <= 41; col++)
+          {
+            byte k = (byte)((page[row * 42 + col]) & 0x7f);
+            if (k < 32) k = 32;
+            line += (char)k;
+          }
+          System.Diagnostics.Trace.WriteLine(String.Format("  PAGE:{0} {1}", row, line));
         }
       }
-      /*
+    }
+    void DumpPage(byte[] page)
+    {
       for (int row = 0; row < 31; row++)
       {
-        int off = row * 42;
-        if (pageData[off] == 32) continue;
-        for (int col = 0; col < 42; col++)
+        string line = "";
+        for (int col = 2; col <= 41; col++)
         {
-          if (updated == false)
+          byte k = (byte)((page[row * 42 + col]) & 0x7f);
+          if (k < 32) k = 32;
+          line += (char)k;
+        }
+        System.Diagnostics.Trace.WriteLine(String.Format("  PAGE:{0} {1}", row, line));
+      }
+    }
+    void DumpPage(int subPageNumber)
+    {
+      IntPtr pagePtr = _pageCache[subPageNumber];
+      if (pagePtr == IntPtr.Zero) return;
+      unsafe
+      {
+        byte* ptr = (byte*)pagePtr.ToPointer();
+        for (int row = 0; row < 31; row++)
+        {
+          string line = "";
+          for (int col = 2; col <= 41; col++)
           {
-            if (row != 0)
-            {
-              if (data[off + col] != pageData[off + col])
-              {
-                updated = true;
-              }
-            }
+            byte k = (byte)((ptr[row * 42 + col]) & 0x7f);
+            if (k < 32) k = 32;
+            line += (char)k;
           }
-          data[off + col] = pageData[off + col];
+          System.Diagnostics.Trace.WriteLine(String.Format("  PAGE:{0} {1}", row, line));
         }
       }
-      Marshal.Copy(data, 0, _pageCache[subPageNumber], MAX_ROWS * 42);*/
+    }
+
+    bool PageDiffers(byte[] pageData, int subPageNumber)
+    {
+      bool updated = false;
+      if (subPageNumber < 0 || subPageNumber > _numberOfSubPages)
+      {
+        return false;
+      }
+      IntPtr pagePtr = _pageCache[subPageNumber];
+      if (pagePtr == IntPtr.Zero) return false;
+      int rowNr;
+      int off;
+      unsafe
+      {
+
+        byte* ptr = (byte*)pagePtr.ToPointer();
+        bool isSet = Hamming.IsEraseBitSet(0, ref pageData);
+        for (int row = 0; row < 31; row++)
+        {
+          off = row * 42;
+          if (row != 0)
+          {
+            if (pageData[off] == 32 && isSet)
+            {
+              for (int col = 0; col < 42; col++)
+              {
+                if (ptr[off + col] != 32 && pageData[off + col] == 32)
+                {
+                  updated = true;
+                  return true;
+                }
+              }
+              continue;
+            }
+          }
+
+
+          off = row * 42;
+          rowNr = Hamming.GetPacketNumber(off, ref pageData);
+
+          if (rowNr < 0) continue;
+          for (int col = 0; col < 42; col++)
+          {
+            byte newData = pageData[off + col];
+            if (rowNr != 0)
+            {
+              if (ptr[off + col] != newData)
+              {
+                if (rowNr >= 1 && rowNr <= 24)
+                {
+                  if (col >= 2)
+                  {
+                    if (OddParity.IsCorrect(newData))
+                    {
+                      // Trace.WriteLine(String.Format("2) {0:X}/{1} r:{2} c:{3} {4} {5:X}!={6:X}", _pageNumber, subPageNumber, row, col, _clearSubPage[subPageNumber], ptr[off + col], pageData[off + col]));
+                      updated = true;
+                      return true;
+                    }
+                  }
+                  else if (Hamming.Decode[newData] != 0xff)
+                  {
+                    //bytes 0-1 = row/column, hamming 8/4 coded
+
+                    //Trace.WriteLine(String.Format("3) {0:X}/{1} r:{2} c:{3} {4} {5:X}!={6:X}", _pageNumber, subPageNumber, row, col, _clearSubPage[subPageNumber], ptr[off + col], pageData[off + col]));
+                    updated = true;
+                    return true;
+                  }
+                }
+                else
+                {
+                  //rows 25,26,27
+
+                  //Trace.WriteLine(String.Format("4) {0:X}/{1} r:{2} c:{3} {4} {5:X}!={6:X}", _pageNumber, subPageNumber, row, col, _clearSubPage[subPageNumber], ptr[off + col], pageData[off + col]));
+                  updated = true;
+                  return true;
+                }
+              }
+            }
+            else
+            {
+              //row 0
+            }
+          }
+        }
+      }
       return updated;
     }
 
+    /// <summary>
+    /// Updates the page.
+    /// </summary>
+    /// <param name="pageNumber">The page number.</param>
+    /// <param name="subPageNumber">The sub page number.</param>
+    /// <param name="pageData">The page data.</param>
+    /// <returns></returns>
+    bool UpdatePage(int pageNumber, int subPageNumber, byte[] pageData, string vbiLines)
+    {
+      bool updated = false;
+      if (subPageNumber < 0 || subPageNumber > _numberOfSubPages)
+      {
+        return false;
+      }
+      IntPtr pagePtr = _pageCache[subPageNumber];
+      int off;
+      unsafe
+      {
+        byte* ptr = (byte*)pagePtr.ToPointer();
+        bool isSet = Hamming.IsEraseBitSet(0, ref pageData);
+        for (int row = 0; row < 31; row++)
+        {
+          off = row * 42;
+          if (row != 0)
+          {
+            if (pageData[off] == 32 && isSet)
+            {
+              for (int col = 0; col < 42; col++)
+              {
+                if (ptr[off + col] != 32 && pageData[off + col] == 32)
+                {
+                  updated = true;
+                  ptr[off + col] = 32;
+                }
+              }
+              continue;
+            }
+          }
+
+
+          off = row * 42;
+          int rowNr = Hamming.GetPacketNumber(off, ref pageData);
+          if (rowNr < 0) continue;
+          for (int col = 0; col < 42; col++)
+          {
+            byte newData = pageData[off + col];
+            if (rowNr != 0)
+            {
+              if (ptr[off + col] != newData)
+              {
+                if (rowNr >= 1 && rowNr <= 24)
+                {
+                  if (col >= 2)
+                  {
+                    if (OddParity.IsCorrect(newData))
+                    {
+                      updated = true;
+                      ptr[off + col] = newData;
+                    }
+                  }
+                  else if (Hamming.Decode[newData] != 0xff)
+                  {
+                    //bytes 0-1 = row/column, hamming 8/4 coded
+                    updated = true;
+                    ptr[off + col] = newData;
+                  }
+                }
+                else
+                {
+                  //rows 25,26,27
+                  updated = true;
+                  ptr[off + col] = newData;
+                }
+              }
+            }
+            else
+            {
+              //row 0
+              ptr[off + col] = newData;
+            }
+          }
+        }
+      }
+       
+      return updated;
+    }
+
+    /// <summary>
+    /// Frees the page.
+    /// </summary>
+    /// <param name="subPageNumber">The sub page number.</param>
     void FreePage(int subPageNumber)
     {
       if (subPageNumber < 0 || subPageNumber >= 0x80)
@@ -358,10 +545,14 @@ namespace TvLibrary.Teletext
       {
         Marshal.FreeHGlobal(_pageCache[subPageNumber]);
         _pageCache[subPageNumber] = IntPtr.Zero;
-      }
+      } 
     }
 
-    void AllocPage(int subPageNumber)
+    /// <summary>
+    /// Allocs the page.
+    /// </summary>
+    /// <param name="subPageNumber">The sub page number.</param>
+    void AllocPage(int subPageNumber, byte[] page)
     {
       if (subPageNumber < 0 || subPageNumber >= 0x80)
       {
@@ -373,12 +564,30 @@ namespace TvLibrary.Teletext
       int size = MAX_ROWS * 42;
 
       _pageCache[subPageNumber] = Marshal.AllocHGlobal(size);
-      Marshal.Copy(emptyPage, 0, _pageCache[subPageNumber], size);
+      Marshal.Copy(page, 0, _pageCache[subPageNumber], size); 
+    }
+    /// <summary>
+    /// Subs the page exists.
+    /// </summary>
+    /// <param name="subPageNumber">The sub page number.</param>
+    /// <returns></returns>
+    bool SubPageExists(int subPageNumber)
+    {
+      if (subPageNumber < 0 || subPageNumber >= 0x80)
+      {
+        return false;
+      }
+
+      if (_pageCache[subPageNumber] == IntPtr.Zero) return false;
+      return true;
     }
     #endregion
 
     #region IDisposable Members
 
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
     public void Dispose()
     {
       for (int i = 0; i < MAX_SUB_PAGES; ++i)

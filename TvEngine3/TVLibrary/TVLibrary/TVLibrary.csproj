@@ -118,6 +118,7 @@
     <Compile Include="Teletext\Implementations\DVBTeletext.cs" />
     <Compile Include="Teletext\Implementations\FastTextDecoder.cs" />
     <Compile Include="Teletext\Implementations\Hamming.cs" />
+    <Compile Include="Teletext\Implementations\OddParity.cs" />
     <Compile Include="Teletext\Implementations\TeletextPage.cs" />
     <Compile Include="Teletext\Implementations\TeletextDecoder.cs" />
     <Compile Include="Teletext\Implementations\TeletextPageCache.cs" />

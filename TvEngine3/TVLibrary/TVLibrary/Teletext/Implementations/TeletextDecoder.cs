@@ -38,6 +38,7 @@ namespace TvLibrary.Teletext
     int[] _magazineCurrentSubPage = new int[MAX_MAGAZINE + 2];
     int[] _magazineCurrentPageNr = new int[MAX_MAGAZINE + 2];
     int[] _magazineLastRow = new int[MAX_MAGAZINE + 2];
+    string[] _vbiLine = new string[MAX_MAGAZINE + 2];
     List<byte[]> _workingPage = new List<byte[]>();
     TeletextPageCache _pageCache;
     //bool[,] _rowsReceived = new bool[MAX_MAGAZINE + 2, 32];
@@ -47,11 +48,16 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region ctor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TeletextDecoder"/> class.
+    /// </summary>
+    /// <param name="cache">The cache.</param>
     public TeletextDecoder(ref TeletextPageCache cache)
     {
       _pageCache = cache;
       for (int i = 0; i < MAX_MAGAZINE + 2; ++i)
       {
+        _vbiLine[i] = "";
         byte[] page = new byte[2100];
         _workingPage.Add(page);
       }
@@ -69,6 +75,7 @@ namespace TvLibrary.Teletext
       {
         _magazineCurrentPageNr[i] = -1;
         _magazineLastRow[i] = -1;
+        _vbiLine[i] = "";
       }
       _pageCache.Clear();
     }
@@ -83,38 +90,6 @@ namespace TvLibrary.Teletext
     {
       int line = 0;
       int byte1 = 0, byte2 = 0;
-      /*
-      _line = "";
-      for (line = 0; line < rows; line++)
-      {
-        int off = startOff + line * 43;
-        int packetNumber;
-        byte magazine;
-        byte1 = Hamming.Decode[rowData[off + 0]];
-        byte2 = Hamming.Decode[rowData[off + 1]];
-        if (byte1 == 0xff || byte2 == 0xff)
-        {
-            _line+="??? ";
-          continue;
-        }
-        magazine = (byte)(byte1 & 0x7);
-        if (magazine==0) magazine=8;
-        packetNumber = Hamming.GetPacketNumber(off, ref rowData);
-        if (packetNumber == 0)
-        {
-          _line += String.Format("{0:X}'", Hamming.GetPageNumber(off, ref rowData));
-        }
-        else if (packetNumber < 10)
-        {
-          _line += String.Format("{0}0{1} ", magazine, packetNumber);
-        }
-        else
-        {
-          _line += String.Format("{0}{1} ", magazine, packetNumber);
-        }
-      }
-      System.Diagnostics.Trace.WriteLine(_line);
-      */
       _line = "";
       try
       {
@@ -141,20 +116,24 @@ namespace TvLibrary.Teletext
           if (packetNumber < 0)
           {
             _line += "HE2 ";
+            _vbiLine[magazine] += "HE2 ";
             continue;
           }
 
           if (packetNumber == 0)
           {
             _line += String.Format("{0:X}'", Hamming.GetPageNumber(off, ref rowData));
+            _vbiLine[magazine] += String.Format(" [{0}] {1:X}'", (line), Hamming.GetPageNumber(off, ref rowData));
           }
           else if (packetNumber < 10)
           {
             _line += String.Format("{0}0{1} ", magazine, packetNumber);
+            _vbiLine[magazine] += String.Format(" [{0}] {1}0{2} ", (line), magazine, packetNumber);
           }
           else
           {
             _line += String.Format("{0}{1} ", magazine, packetNumber);
+            _vbiLine[magazine] += String.Format(" [{0}] {1}{2} ", (line), magazine, packetNumber);
           }
 
 
@@ -200,6 +179,9 @@ namespace TvLibrary.Teletext
           if (packetNumber == 0)
           {
             UpdatePage(magazine);
+            _vbiLine[magazine] = String.Format(" [{0}] {1:X}'", ( line), Hamming.GetPageNumber(off, ref rowData));
+            _magazineCurrentPageNr[magazine] = -1;
+            _magazineCurrentSubPage[magazine] = -1;
 
             // check if header contains errors
             bool headerError = false;
@@ -250,10 +232,6 @@ namespace TvLibrary.Teletext
 
             //strip parity of header
 
-            if (Hamming.IsEraseBitSet(off, ref rowData))   /* C4 -> erase page */
-            {
-              _pageCache.ClearPage(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine]);
-            }
             copyData = true;
             _magazineLastRow[magazine] = 0;
           }
@@ -392,17 +370,13 @@ namespace TvLibrary.Teletext
     }
     void UpdatePage(int magazine)
     {
-      if (_magazineCurrentPageNr[magazine] == 0x600)
-      {
-        Dump(magazine);
-      }
 
       //page header
       if (_magazineCurrentPageNr[magazine] != -1 && _magazineCurrentSubPage[magazine] != -1)
       {
-        _pageCache.PageReceived(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine], _workingPage[magazine]);
+        _pageCache.PageReceived(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine], _workingPage[magazine], _vbiLine[magazine]);
       }
-
+      _vbiLine[magazine] = "";
       _magazineCurrentPageNr[magazine] = -1;
       _magazineCurrentSubPage[magazine] = -1;
       _magazineLastRow[magazine] = -1;

@@ -119,20 +119,6 @@ namespace TvLibrary.Teletext
       if (_pageCache[pageNumber] == null) return new TimeSpan(0,0,15);
       return _pageCache[pageNumber].RotationTime;
     }
-    public void ClearPage(int pageNumber, int subPageNumber)
-    {
-      //if (pageNumber == 0x600) Trace.WriteLine(String.Format("ClearPage {0:X}/{1:X}", pageNumber, subPageNumber));
-      if (subPageNumber > 0)
-      {
-        subPageNumber--;
-      }
-      if (pageNumber < MIN_PAGE || pageNumber >= MAX_PAGE)
-        throw new ArgumentOutOfRangeException("page");
-
-      
-      if (_pageCache[pageNumber] == null) return;
-      _pageCache[pageNumber].Clear(subPageNumber);
-    }
 
     public void DeletePage(int pageNumber, int subPageNumber)
     {
@@ -159,7 +145,7 @@ namespace TvLibrary.Teletext
       }
     }
 
-    public void PageReceived(int pageNumber, int subPageNumber,  byte[] pageData)
+    public void PageReceived(int pageNumber, int subPageNumber,  byte[] pageData, string vbiLines)
     {
       //if (pageNumber == 0x600) Trace.WriteLine(String.Format("PageReceived {0:X}/{1:X}", pageNumber, subPageNumber));
       if (pageNumber < MIN_PAGE || pageNumber >= MAX_PAGE)
@@ -191,7 +177,7 @@ namespace TvLibrary.Teletext
         subPageNumber--;
       }
       bool isUpdate, isNew, isDeleted;
-      _pageCache[pageNumber].SubPageReceived(pageNumber,subPageNumber,ref pageData, out isUpdate, out isNew, out isDeleted);
+      _pageCache[pageNumber].SubPageReceived(pageNumber,ref subPageNumber,ref pageData, out isUpdate, out isNew, out isDeleted, vbiLines);
       if (isNew)
       {
         if (OnPageAdded != null)
@@ -206,7 +192,7 @@ namespace TvLibrary.Teletext
           OnPageDeleted(pageNumber, subPageNumber);
         }
       }
-      if (isUpdate || pageNumber>=0x600 && pageNumber<=0x604)
+      if (isUpdate)
       {
         if (OnPageUpdated != null)
         {
