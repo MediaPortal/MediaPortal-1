@@ -95,6 +95,13 @@
 		<carrier frequency="226500" bandwidth="7" />
 		<carrier frequency="585500" bandwidth="7" />
 	</country>
+	<country name="Australia - NSW - Newcastle" offset="125">
+		<carrier frequency="585500" bandwidth="7" />
+		<carrier frequency="592500" bandwidth="7" />
+		<carrier frequency="599500" bandwidth="7" />
+		<carrier frequency="690500" bandwidth="7" />
+		<carrier frequency="704500" bandwidth="7" />
+	</country>
 	<country name="Australia - NSW - Sydney" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
 		<carrier frequency="191500" bandwidth="7" />
@@ -3041,6 +3048,7 @@
 		<carrier frequency="642000" bandwidth="8" />
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
 		<carrier frequency="746000" bandwidth="8" />
 	</country>
 	<country name="Sweden - Stockholm Nacka - Bergshamra-Vaxtuna" offset="125">
