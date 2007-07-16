@@ -87,8 +87,8 @@ namespace SetupTv.Sections
       public int SymbolRate; // symbol rate
       public ModulationType Modulation = ModulationType.ModNotSet;
       public BinaryConvolutionCodeRate InnerFecRate = BinaryConvolutionCodeRate.RateNotSet;
-      //public Pilot Pilot = Pilot.NotSet;
-      //public Rolloff RollOff = Rolloff.NotSet;
+      public Pilot Pilot = Pilot.NotSet;
+      public Rolloff RollOff = Rolloff.NotSet;
 
       public int CompareTo(Transponder other)
       {
@@ -252,10 +252,10 @@ namespace SetupTv.Sections
                 if (tpdata.Length >= 4)
                 {
                   tpdata[3] = tpdata[3].ToLower();
-                  if (tpdata[3] == "8psk") transponder.Modulation = ModulationType.Mod8psk; //not supported by BDA yet...
-                  if (tpdata[3] == "qpsk") transponder.Modulation = ModulationType.ModQpsk; //not supported by BDA yet...
-                  if (tpdata[3] == "16apsk") transponder.Modulation = ModulationType.Mod16Apsk; //not supported by BDA yet...
-                  if (tpdata[3] == "32apsk") transponder.Modulation = ModulationType.Mod32Apsk; //not supported by BDA yet...
+                  if (tpdata[3] == "8psk") transponder.Modulation = ModulationType.Mod8psk;
+                  if (tpdata[3] == "qpsk") transponder.Modulation = ModulationType.ModQpsk;
+                  if (tpdata[3] == "16apsk") transponder.Modulation = ModulationType.Mod16Apsk;
+                  if (tpdata[3] == "32apsk") transponder.Modulation = ModulationType.Mod32Apsk;
 
                   if (tpdata.Length >= 5)
                   {
@@ -268,14 +268,28 @@ namespace SetupTv.Sections
                     if (tpdata[4] == "5/11") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
                     if (tpdata[4] == "5/6") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
                     if (tpdata[4] == "7/8") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
-                    //if (tpdata[4] == "9/10") transponder.InnerFecRate = BinaryConvolutionCodeRate.RateNotDefined;
-                    if (tpdata[4] == "1/4") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4; //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-                    if (tpdata[4] == "1/3") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3; //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-                    if (tpdata[4] == "2/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5; //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-                    if (tpdata[4] == "6/7") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7; //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-                    if (tpdata[4] == "8/9") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9; //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-                    if (tpdata[4] == "9/10") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10; //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+                    if (tpdata[4] == "1/4") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4; 
+                    if (tpdata[4] == "1/3") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3; 
+                    if (tpdata[4] == "2/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5; 
+                    if (tpdata[4] == "6/7") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7; 
+                    if (tpdata[4] == "8/9") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9; 
+                    if (tpdata[4] == "9/10") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10; 
                     //Optional RateMax;
+
+                    if (tpdata.Length >= 6)
+                    {
+                      tpdata[5] = tpdata[5].ToLower();
+                      if (tpdata[5] == "1") transponder.Pilot = Pilot.PilotOff;
+                      if (tpdata[5] == "2") transponder.Pilot = Pilot.PilotOn;
+
+                      if (tpdata.Length >= 7)
+                      {
+                        tpdata[6] = tpdata[6].ToLower();
+                        if (tpdata[6] == "1") transponder.RollOff = Rolloff.RollOff_20;
+                        if (tpdata[6] == "2") transponder.RollOff = Rolloff.RollOff_25;
+                        if (tpdata[6] == "3") transponder.RollOff = Rolloff.RollOff_35;
+                      }
+                    }
                   }
                 }
                 _transponders.Add(transponder);
@@ -421,15 +435,6 @@ namespace SetupTv.Sections
       mpDisEqc4.Items.Add(DisEqcType.Level1BB);
       mpDisEqc4.SelectedIndex = 0;
 
-      comboBoxRollOff.Items.Clear();
-      comboBoxRollOff.Items.Add(Rolloff.NotDefined);
-      comboBoxRollOff.Items.Add(Rolloff.NotSet);
-      comboBoxRollOff.Items.Add(Rolloff.RollOff_20);
-      comboBoxRollOff.Items.Add(Rolloff.RollOff_25);
-      comboBoxRollOff.Items.Add(Rolloff.RollOff_35);
-      comboBoxRollOff.Items.Add(Rolloff.RollOffMax);
-      comboBoxRollOff.SelectedIndex = 4;
-
       TvBusinessLayer layer = new TvBusinessLayer();
       mpTransponder1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext1", "0").Value);
       mpTransponder2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext2", "0").Value);
@@ -445,8 +450,6 @@ namespace SetupTv.Sections
       mpBand2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band2", "0").Value);
       mpBand3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band3", "0").Value);
       mpBand4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band4", "0").Value);
-
-      comboBoxRollOff.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "rollOff", "4").Value);
 
       mpLNB1.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB1", "false").Value == "true");
       mpLNB2.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB2", "false").Value == "true");
@@ -472,12 +475,6 @@ namespace SetupTv.Sections
       if (!checkEnableDVBS2.Checked)
       {
         checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "enabledvbs2", "false").Value == "false");
-      }
-      
-      checkBoxPilot.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "pilot", "false").Value == "true");
-      if (!checkBoxPilot.Checked)
-      {
-        checkBoxPilot.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "pilot", "false").Value == "false");
       }
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -558,14 +555,6 @@ namespace SetupTv.Sections
 
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "enabledvbs2", "false");
       setting.Value = checkEnableDVBS2.Checked ? "true" : "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "pilot", "false");
-      setting.Value = checkBoxPilot.Checked ? "true" : "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "rollOff", "4");
-      setting.Value = comboBoxRollOff.SelectedIndex.ToString();
       setting.Persist();
 
       bool restart = false;
@@ -658,8 +647,6 @@ namespace SetupTv.Sections
         mpBand3.Enabled = false;
         mpBand4.Enabled = false;
         checkEnableDVBS2.Enabled = false;
-        checkBoxPilot.Enabled = false;
-        comboBoxRollOff.Enabled = false;
 
         listViewStatus.Items.Clear();
         _tvChannelsNew = 0;
@@ -715,8 +702,6 @@ namespace SetupTv.Sections
         mpLNB3.Enabled = true;
         mpLNB4.Enabled = true;
         mpButtonScanTv.Text = buttonText;
-        checkBoxPilot.Enabled = true;
-        comboBoxRollOff.Enabled = true;
         checkEnableDVBS2.Enabled = true;
         _isScanning = false;
       }
@@ -765,24 +750,8 @@ namespace SetupTv.Sections
         //Grab the Pilot & Roll-off settings
         if (checkEnableDVBS2.Checked)
         {
-          setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "pilot", "false");
-          if (setting.Value == "true")
-            tuneChannel.Pilot = Pilot.PilotOn;
-          else
-            tuneChannel.Pilot = Pilot.PilotOff;
-          setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "rollOff", "4");
-          if (setting.Value == "0")
-            tuneChannel.RollOff = Rolloff.NotSet;
-          if (setting.Value == "1")
-            tuneChannel.RollOff = Rolloff.NotDefined;
-          if (setting.Value == "2")
-            tuneChannel.RollOff = Rolloff.RollOff_20;
-          if (setting.Value == "3")
-            tuneChannel.RollOff = Rolloff.RollOff_25;
-          if (setting.Value == "4")
-            tuneChannel.RollOff = Rolloff.RollOff_35;
-          if (setting.Value == "5")
-            tuneChannel.RollOff = Rolloff.RollOffMax;
+          tuneChannel.Pilot = _transponders[index].Pilot;
+          tuneChannel.RollOff = _transponders[index].RollOff;
         }
         if (!checkEnableDVBS2.Checked)
         {
@@ -1395,20 +1364,6 @@ namespace SetupTv.Sections
         checkBoxCreateGroupsSat.Checked = false;
       }
       _ignoreCheckBoxCreateGroupsClickEvent = false;
-    }
-
-    private void checkEnableDVBS2_CheckedChanged(object sender, EventArgs e)
-    {
-      if (checkEnableDVBS2.Checked)
-      {
-        checkBoxPilot.Enabled = true;
-        comboBoxRollOff.Enabled = true;
-      }
-      if (!checkEnableDVBS2.Checked)
-      {
-        checkBoxPilot.Enabled = false;
-        comboBoxRollOff.Enabled = false;
-      }
     }
   }
 }

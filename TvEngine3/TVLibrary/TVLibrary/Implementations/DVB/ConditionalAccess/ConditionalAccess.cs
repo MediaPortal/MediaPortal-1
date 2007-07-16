@@ -106,8 +106,6 @@ namespace TvLibrary.Implementations.DVB
         if (_hauppauge.IsHauppauge)
         {
           Log.Log.WriteFile("Hauppauge card detected");
-          //Log.Log.WriteFile("Hauppauge try DVB-S2 pilot & roll-off");
-          //_hauppauge.SetDVBS2PilotRolloff();
           _diSEqCMotor = new DiSEqCMotor(_hauppauge);
           return;
         }
@@ -313,7 +311,6 @@ namespace TvLibrary.Implementations.DVB
 
         if (_twinhan != null)
         {
-
           ChannelInfo info = new ChannelInfo();
           info.DecodePmt(PMT);
           int videoPid = -1;
@@ -460,7 +457,7 @@ namespace TvLibrary.Implementations.DVB
             channel.ModulationType = ModulationType.ModQpsk2;
           if (channel.ModulationType == ModulationType.Mod8psk)
             channel.ModulationType = ModulationType.Mod8psk2;
-          Log.Log.WriteFile("DigitalEverywhere DVB-S2 modulation set to {0}", channel.ModulationType);
+          Log.Log.WriteFile("DigitalEverywhere DVB-S2 modulation set");
           //Check if DVB-S channel if not turn off Pilot & Roll-off regardless
           if (channel.ModulationType == ModulationType.ModNotSet)
           {
@@ -469,7 +466,6 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("DigitalEverywhere: we're tuning DVB-S, pilot & roll-off now not set");
           }
           //Set the DigitalEverywhere binary values for Pilot & Roll-off
-          Log.Log.WriteFile("DigitalEverywhere: Pilot: {0} , Roll-off: {1}", channel.Pilot, channel.RollOff);
           int _pilot = 0;
           int _rollOff = 0;
           if (channel.Pilot == Pilot.PilotOn)
@@ -482,9 +478,8 @@ namespace TvLibrary.Implementations.DVB
             _rollOff = 32;
           if (channel.RollOff == Rolloff.RollOff_35)
             _rollOff = 48;
-          
+         //The binary values get added to the current InnerFECRate - done!
           channel.InnerFecRate = channel.InnerFecRate + _pilot + _rollOff;
-          Log.Log.WriteFile("DigitalEverywhere now FEC = {0}", channel.InnerFecRate);
         }
       }
       catch (Exception ex)
