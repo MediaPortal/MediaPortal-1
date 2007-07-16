@@ -513,17 +513,6 @@ namespace MediaPortal.Playlists
         {
           _currentPlayList = value;
           _entriesNotFound = 0;
-          using (Settings settings = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-          {
-            if (value == PlayListType.PLAYLIST_MUSIC || value == PlayListType.PLAYLIST_MUSIC_TEMP)
-            {
-              _repeatPlayList = settings.GetValueAsBool("musicfiles", "repeat", true);
-            }
-            else
-            {
-              _repeatPlayList = settings.GetValueAsBool("movies", "repeat", true);
-            }
-          }
         }
       }
     }

@@ -27,6 +27,7 @@ using System;
 using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Profile;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Dialogs;
@@ -151,6 +152,13 @@ namespace MediaPortal.GUI.Video
       {
         GUIControl.FocusControl(GetID, btnViewAs.GetID);
       }
+
+
+      using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        playlistPlayer.RepeatPlaylist = settings.GetValueAsBool("movies", "repeat", true);
+      }
+
       if (btnRepeatPlaylist != null)
       {
         btnRepeatPlaylist.Selected = playlistPlayer.RepeatPlaylist;
@@ -160,6 +168,10 @@ namespace MediaPortal.GUI.Video
     protected override void OnPageDestroy(int newWindowId)
     {
       currentSelectedItem = facadeView.SelectedListItemIndex;
+      using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        settings.SetValueAsBool("movies", "repeat", playlistPlayer.RepeatPlaylist);
+      }
       base.OnPageDestroy(newWindowId);
     }
 

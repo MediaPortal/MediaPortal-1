@@ -288,6 +288,12 @@ namespace MediaPortal.GUI.Music
       {
         GUIControl.FocusControl(GetID, btnViewAs.GetID);
       }
+
+      using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        playlistPlayer.RepeatPlaylist = settings.GetValueAsBool("musicfiles", "repeat", true);
+      }
+
       if (btnRepeatPlaylist != null)
       {
         btnRepeatPlaylist.Selected = playlistPlayer.RepeatPlaylist;
@@ -299,6 +305,10 @@ namespace MediaPortal.GUI.Music
     protected override void OnPageDestroy(int newWindowId)
     {
       m_iItemSelected = facadeView.SelectedListItemIndex;
+      using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        settings.SetValueAsBool("musicfiles", "repeat", playlistPlayer.RepeatPlaylist);
+      }
       base.OnPageDestroy(newWindowId);
     }
 
