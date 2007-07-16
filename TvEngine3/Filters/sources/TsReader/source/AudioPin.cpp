@@ -56,6 +56,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   m_bDropSeek=false;
   m_bConnected=false;
   m_bMeasureCompensation=false;
+  m_bInFillBuffer=false;
 	m_rtStart=0;
 	m_dwSeekingCaps =
     AM_SEEKING_CanSeekAbsolute	|
@@ -238,6 +239,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 	}
   
 
+  m_bInFillBuffer=true;
+
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   CBuffer* buffer=NULL;
   while (buffer==NULL)
@@ -255,10 +258,14 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       pSample->SetActualDataLength(0);
       pSample->SetDiscontinuity(TRUE);
       pSample->SetSyncPoint(FALSE);
+      m_bInFillBuffer=false;
       return NOERROR;
     }
     if (demux.EndOfFile()) 
+    {
+      m_bInFillBuffer=false;
       return S_FALSE;
+    }
     Sleep(10);
   }
 
@@ -302,8 +309,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
     pSample->GetPointer(&pSampleBuffer);
     memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
     delete buffer;
+    m_bInFillBuffer=false;
     return NOERROR;
   }
+  m_bInFillBuffer=false;
   return NOERROR;
 }
 
@@ -374,6 +383,7 @@ void CAudioPin::UpdateFromSeek()
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
   LogDebug("aud seek filter->Iseeking() done");
   demux.SetHoldAudio(true);
+  while (m_bInFillBuffer) Sleep(1);
   CAutoLock lock(&m_bufferLock);
   LogDebug("aud seek buffer locked");
   if (ThreadExists()) 

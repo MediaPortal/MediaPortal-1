@@ -219,6 +219,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 	}
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
 
+  m_bInFillBuffer=true;
   CBuffer* buffer=NULL;
   while (buffer==NULL)
   {
@@ -235,10 +236,14 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         pSample->SetActualDataLength(0);
         pSample->SetDiscontinuity(TRUE);
         pSample->SetSyncPoint(FALSE);
+        m_bInFillBuffer=false;
 	      return NOERROR;
       }
       if (demux.EndOfFile()) 
+      {
+        m_bInFillBuffer=false;
         return S_FALSE;
+      }
       Sleep(10);
   }
 
@@ -282,9 +287,11 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
     pSample->GetPointer(&pSampleBuffer);
     memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
     delete buffer;
+    m_bInFillBuffer=false;
     return NOERROR;
   }
 
+  m_bInFillBuffer=false;
   return NOERROR;
 }
 
@@ -406,6 +413,7 @@ void CVideoPin::UpdateFromSeek()
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
    LogDebug("vid seek filter->Iseeking() done");
 	demux.SetHoldVideo(true);
+  while (m_bInFillBuffer) Sleep(1);
   CAutoLock lock(&m_bufferLock);
   LogDebug("vid seek buffer locked");
   if (ThreadExists()) 
