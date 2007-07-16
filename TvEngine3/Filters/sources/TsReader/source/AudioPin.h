@@ -53,6 +53,7 @@ public:
 	void SetStart(CRefTime rtStartTime);
 
   bool IsConnected();
+  void SetDiscontinuity(bool onOff);
 
 protected:
   void UpdateFromSeek();

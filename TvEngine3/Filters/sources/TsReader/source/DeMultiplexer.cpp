@@ -148,11 +148,16 @@ void CDeMultiplexer::SetAudioStream(int stream)
       if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
 
       //render the audio pin
-     // RenderFilterPin(m_filter.GetAudioPin());
+      RenderFilterPin(m_filter.GetAudioPin());
 
       didStop=true;
     }
   }
+  else
+  {
+    m_filter.GetAudioPin()->SetDiscontinuity(true);  
+  }
+
 
   //if we where playing and stopped the graph
   if (isPlaying==S_OK && didStop)
@@ -991,6 +996,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     audio.audioType=m_pids.AudioServiceType8;
     m_audioStreams.push_back(audio);
   }
+
 return;
   HRESULT isPlaying=IsPlaying();
   bool didStop=false;
@@ -1004,7 +1010,7 @@ return;
       // yes, then change video pin media type
       LogDebug("demux:video pin media changed");
       if (DoStop() ==S_OK){while(IsStopped() == S_FALSE){Sleep(100); break;}}
-      //RenderFilterPin(m_filter.GetVideoPin());
+      RenderFilterPin(m_filter.GetVideoPin());
       didStop=true;
     }
   }
@@ -1213,8 +1219,16 @@ HRESULT CDeMultiplexer::RenderFilterPin(CBasePin* pin)
   if ( pin->IsConnected())
   {
 	  HRESULT hr = E_FAIL;
-    pin->Disconnect();
+    IPin* pConnectedPin;
+    PIN_INFO info;
+    pin->ConnectedTo(&pConnectedPin);
+    pConnectedPin->QueryPinInfo(&info);
+    pConnectedPin->Release();
     IFilterGraph* graph=m_filter.GetFilterGraph();
+    graph->Disconnect(pin);
+    graph->RemoveFilter(info.pFilter);
+    info.pFilter->Release();
+
 	  IGraphBuilder *pGraphBuilder;
 	  if(SUCCEEDED(graph->QueryInterface(IID_IGraphBuilder, (void **) &pGraphBuilder)))
 	  {

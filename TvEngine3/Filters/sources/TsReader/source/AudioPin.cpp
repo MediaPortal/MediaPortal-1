@@ -115,6 +115,11 @@ HRESULT CAudioPin::GetMediaType(CMediaType *pmt)
   demux.GetAudioStreamType(demux.GetAudioStream(), *pmt);
 	return S_OK;
 }
+
+void CAudioPin::SetDiscontinuity(bool onOff)
+{
+  m_bDiscontinuity=onOff;
+}
 HRESULT CAudioPin::CheckConnect(IPin *pReceivePin)
 {
   //HRESULT hr;
