@@ -44,5 +44,5 @@ CREATE TABLE `channellinkagemap` (
   PRIMARY KEY (`idMapping`)
 ) ENGINE=MyISAM AUTO_INCREMENT=68 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 #  
-UPDATE `version` SET `versionNumber`=28;
+UPDATE `version` SET `versionNumber`=29;
 #

@@ -67,5 +67,17 @@ ALTER TABLE KeywordMap  WITH CHECK ADD  CONSTRAINT FK_KeywordMap_ChannelGroup FO
 REFERENCES ChannelGroup (idGroup)
 GO
 
-insert into version(versionNumber) values(28)
+
+
+--- version 29 ---
+GO
+
+ALTER TABLE TuningDetail ADD pilot int NOT NULL
+GO
+
+
+ALTER TABLE TuningDetail ADD rollOff int NOT NULL
+GO
+
+insert into version(versionNumber) values(29)
 GO
