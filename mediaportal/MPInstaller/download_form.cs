@@ -62,8 +62,8 @@ namespace MediaPortal.MPInstaller
               if (direction == 0)
               {
                 byte[] result=new byte[100];
-                result = client.DownloadData(new System.Uri("http://dukus.extra.hu/fusion/mp_download.php?file=" + source));
-                //MessageBox.Show("http://dukus.extra.hu/fusion/mpi.php?file=" + source);
+                result = client.DownloadData(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE+"/mp_download.php?file=" + Path.GetFileName(source)));
+                //MessageBox.Show(MPinstalerStruct.DEFAULT_UPDATE_SITE+"/mp_download.php?file=" + Path.GetFileName(source));
                 client.DownloadFileAsync(new System.Uri(source), dest);
               }
               else

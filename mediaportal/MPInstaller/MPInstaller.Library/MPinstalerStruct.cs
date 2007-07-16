@@ -43,7 +43,7 @@ namespace MediaPortal.MPInstaller
 {
     public class MPinstalerStruct
     {
-        public const string DEFAULT_UPDATE_SITE = "http://dukus.extra.hu";
+      public const string DEFAULT_UPDATE_SITE = "http://mpi.team-mediaportal.com/downloads";
 
         static public string[] CategoriListing ={ "Audio/Radio", "Automation", "EPG/TV", "Games", "Input", "Others", "PIM", "Skins", "Utilities", "Video/Movies", "Web", "TV Logo" };
 
