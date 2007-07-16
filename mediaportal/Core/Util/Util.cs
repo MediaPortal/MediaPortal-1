@@ -1875,30 +1875,37 @@ namespace MediaPortal.Util
 
       if (success)
       {
-        // Stop Vista specific services
-        if (Process.GetProcessesByName("ehtray").Length != 0)
+        try
         {
-          _restartWmcEhtray = true;
-          _ehtrayPath = Process.GetProcessesByName("ehtray")[0].MainModule.FileName;
-          foreach (Process proc in Process.GetProcessesByName("ehtray"))
-            proc.Kill();
+          // Stop Vista specific services
+          if (Process.GetProcessesByName("ehtray").Length != 0)
+          {
+            _restartWmcEhtray = true;
+            _ehtrayPath = Process.GetProcessesByName("ehtray")[0].MainModule.FileName;
+            foreach (Process proc in Process.GetProcessesByName("ehtray"))
+              proc.Kill();
+          }
+          //if (Process.GetProcessesByName("ehmsas").Length != 0)
+          //{
+          //  _restartWmcEhmsas = true;
+          //  _ehmsasPath = Process.GetProcessesByName("ehmsas")[0].MainModule.FileName;
+          //  foreach (Process proc in Process.GetProcessesByName("ehmsas"))
+          //    proc.Kill();
+          //}
+          Thread.Sleep(200);
+          if (Process.GetProcessesByName("ehtray").Length != 0)
+          {
+            Log.Error("StopVistaServices: Cannot terminate ehtray.exe");
+          }
+          //if (Process.GetProcessesByName("ehmsas").Length != 0)
+          //{
+          //  Log.Error("StopVistaServices: Cannot terminate ehmsas.exe");
+          //}
+
         }
-        //if (Process.GetProcessesByName("ehmsas").Length != 0)
-        //{
-        //  _restartWmcEhmsas = true;
-        //  _ehmsasPath = Process.GetProcessesByName("ehmsas")[0].MainModule.FileName;
-        //  foreach (Process proc in Process.GetProcessesByName("ehmsas"))
-        //    proc.Kill();
-        //}
-        Thread.Sleep(200);
-        if (Process.GetProcessesByName("ehtray").Length != 0)
+        catch (System.ComponentModel.Win32Exception)
         {
-          Log.Error("StopVistaServices: Cannot terminate ehtray.exe");
         }
-        //if (Process.GetProcessesByName("ehmsas").Length != 0)
-        //{
-        //  Log.Error("StopVistaServices: Cannot terminate ehmsas.exe");
-        //}
       }
       else
         Log.Error("!!! MediaPortal needs to be run as Administrator on Vista to stop the Media Center services that occupy your TV cards/remote control !!!");
