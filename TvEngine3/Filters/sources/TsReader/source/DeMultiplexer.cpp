@@ -997,21 +997,20 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     m_audioStreams.push_back(audio);
   }
 
-return;
-  HRESULT isPlaying=IsPlaying();
-  bool didStop=false;
 
+  if (m_iAudioStream>=m_audioStreams.size())
+  {
+    m_iAudioStream=0;
+  }
+
+  bool changed=false;
   //did the video format change?
   if (oldVideoServiceType != m_pids.videoServiceType )
   {
     //yes, is the video pin connected?
     if (m_filter.GetVideoPin()->IsConnected())
     {
-      // yes, then change video pin media type
-      LogDebug("demux:video pin media changed");
-      if (DoStop() ==S_OK){while(IsStopped() == S_FALSE){Sleep(100); break;}}
-      RenderFilterPin(m_filter.GetVideoPin());
-      didStop=true;
+      changed=true;
     }
   }
   
@@ -1028,18 +1027,16 @@ return;
     //yes, is the audio pin connected?
     if (m_filter.GetAudioPin()->IsConnected())
     {
-      // change audio pin media type
-      LogDebug("demux:audio pin media changed");
-      if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
-      RenderFilterPin(m_filter.GetAudioPin());
-      didStop=true;
+      changed=true;
     }
   }
 
-  //restart the graph if we stopped it.
-  if (isPlaying==S_OK && didStop)
+  //did audio/video format change?
+  if (changed)
   {
-    DoStart();
+    //yes? then reconfigure the audio/video output pins
+    //we do this in a seperate thread to prevent any lockups
+    StartThread();
   }
 }
 
@@ -1265,4 +1262,28 @@ void CDeMultiplexer::SetHoldVideo(bool onOff)
 {
   LogDebug("demux:set hold video:%d", onOff);
 	m_bHoldVideo=onOff;
+}
+
+void CDeMultiplexer::ThreadProc()
+{
+  LogDebug("demux:reconfigure graph");
+  //remember if graph is playing
+  HRESULT isPlaying=IsPlaying();
+
+  //stop graph
+  if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
+  
+  //re-render the video output pin
+  RenderFilterPin(m_filter.GetVideoPin());
+
+  //re-render the audio output pin
+  RenderFilterPin(m_filter.GetAudioPin());
+
+  //if we where playing
+  if (isPlaying==S_OK )
+  {
+    //then start the graph again
+    DoStart();
+  }
+  LogDebug("demux:reconfigure graph done");
 }

@@ -29,12 +29,13 @@
 #include "patparser.h"
 #include "channelInfo.h"
 #include "PidTable.h"
+#include "TSThread.h"
 #include "Pcr.h"
 #include <vector>
 #include <map>
 using namespace std;
 class CTsReaderFilter;
-class CDeMultiplexer : public CPacketSync, public IPatParserCallback
+class CDeMultiplexer : public CPacketSync, public TSThread, public IPatParserCallback
 {
 public:
   CDeMultiplexer( CTsDuration& duration,CTsReaderFilter& filter);
@@ -63,6 +64,7 @@ public:
 	void			 SetHoldAudio(bool onOff);
 	bool			 HoldVideo();
 	void			 SetHoldVideo(bool onOff);
+  void       ThreadProc();
 private:
   struct stAudioStream
   {
