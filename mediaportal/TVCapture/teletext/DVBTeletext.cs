@@ -162,6 +162,10 @@ namespace MediaPortal.TV.Teletext
       get { return _renderer.TransparentMode; }
       set { _renderer.TransparentMode = value; }
     }
+    public bool FullscreenMode {
+      get { return _renderer.FullscreenMode; }
+      set { _renderer.FullscreenMode = value; }
+    }
 
     public void ClearBuffer()
     {

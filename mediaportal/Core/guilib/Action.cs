@@ -174,7 +174,12 @@ namespace MediaPortal.GUI.Library
       ACTION_SHOW_CURRENT_TV_INFO = 9983,
       ACTION_AUTOCROP = 9884,                 // If the AutoCropper is used, request new crop detection          
       ACTION_TOGGLE_AUTOCROP = 9885,          // Switch AutoCropper operating mode: off/auto/on request
-      ACTION_TOGGLE_MUSIC_GAP = 9886          // Toggles Music Playback Normal -> Gapless -> Crossfade -> Normal    
+      ACTION_TOGGLE_MUSIC_GAP = 9886,         // Toggles Music Playback Normal -> Gapless -> Crossfade -> Normal    
+      ACTION_NEXT_TELETEXTPAGE = 9984,                    // Switch to next teletext page window id=7701 || 7700
+      ACTION_PREV_TELETEXTPAGE = 9985,                    // Switch to previous teletext page window id=7701 || 7700
+      ACTION_SWITCH_TELETEXT_HIDDEN = 9986,               // Switch on/off the hidden mode in teletext window id=7701 || 7700
+      ACTION_SWITCH_TELETEXT_TRANSPARENT = 9987,          // Switch on/off the hidden mode in teletext window id=7701 || 7700
+      ACTION_SHOW_INDEXPAGE=9988,                         // Go to index page window id=7701 | 7700
     };
     #endregion
 

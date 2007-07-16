@@ -13,7 +13,7 @@
     </control>
     <control>
       <type>image</type>
-      <id>501</id>
+      <id>499</id>
       <posX>113</posX>
       <posY>26</posY>
       <width>529</width>
@@ -26,6 +26,18 @@
       <description>tele-text rendering image</description>
       <type>image</type>
       <id>500</id>
+      <posX>464</posX>
+      <posY>129</posY>
+      <width>613</width>
+      <height>613</height>
+      <texture>button_small_settings_nofocus.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+    <control>
+      <description>tele-text rendering image2</description>
+      <type>image</type>
+      <id>501</id>
       <posX>464</posX>
       <posY>129</posY>
       <width>613</width>

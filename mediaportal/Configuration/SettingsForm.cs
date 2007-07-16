@@ -222,6 +222,8 @@ namespace MediaPortal.Configuration
       AddChildSection(television, new TVRecording());
       Log.Info("  add tv postprocessing section");
       AddChildSection(television, new TVPostProcessing());
+      Log.Info("  add tv teletext section");
+      AddChildSection(television, new TVTeletext());
 
       SectionSettings remote = new Remote();
       AddSection(remote);

@@ -1147,4 +1147,138 @@
       <description>Skip Next</description>
     </action>
   </window>
+  <window>
+    <id>7700</id>
+    <description>Teletext (Windowed)</description>
+    <action>
+      <id>9988</id>
+      <key>I</key>
+      <sound />
+      <description>IndexPage</description>
+    </action>
+    <action>
+      <id>9986</id>
+      <key>G</key>
+      <sound />
+      <description>HiddenMode</description>
+    </action>
+    <action>
+      <id>9984</id>
+      <key>F8</key>
+      <sound />
+      <description>NextPage</description>
+    </action>
+    <action>
+      <id>9985</id>
+      <key>F7</key>
+      <sound />
+      <description>PrevPage</description>
+    </action>
+    <action>
+      <id>9979</id>
+      <key>F6</key>
+      <sound />
+      <description>NextSubPage</description>
+    </action>
+    <action>
+      <id>9980</id>
+      <key>F5</key>
+      <sound />
+      <description>PrevSubPage</description>
+    </action>
+    <action>
+      <id>9975</id>
+      <key>Q</key>
+      <sound />
+      <description>RedButton</description>
+    </action>
+    <action>
+      <id>9976</id>
+      <key>W</key>
+      <sound />
+      <description>GreenButton</description>
+    </action>
+    <action>
+      <id>9977</id>
+      <key>O</key>
+      <sound />
+      <description>YellowButton</description>
+    </action>
+    <action>
+      <id>9978</id>
+      <key>P</key>
+      <sound />
+      <description>BlueButton</description>
+    </action>
+  </window>
+  <window>
+    <id>7701</id>
+    <description>Teletext (Fullscreen)</description>
+    <action>
+      <id>9988</id>
+      <key>I</key>
+      <sound />
+      <description>IndexPage</description>
+    </action>
+    <action>
+      <id>9986</id>
+      <key>G</key>
+      <sound />
+      <description>HiddenMode</description>
+    </action>
+    <action>
+      <id>9984</id>
+      <key>F8</key>
+      <sound />
+      <description>NextPage</description>
+    </action>
+    <action>
+      <id>9985</id>
+      <key>F7</key>
+      <sound />
+      <description>PrevPage</description>
+    </action>
+    <action>
+      <id>9979</id>
+      <key>F6</key>
+      <sound />
+      <description>NextSubPage</description>
+    </action>
+    <action>
+      <id>9980</id>
+      <key>F5</key>
+      <sound />
+      <description>PrevSubPage</description>
+    </action>
+    <action>
+      <id>9987</id>
+      <key>T</key>
+      <sound />
+      <description>TransparentMode</description>
+    </action>
+    <action>
+      <id>9975</id>
+      <key>Q</key>
+      <sound />
+      <description>RedButton</description>
+    </action>
+    <action>
+      <id>9976</id>
+      <key>W</key>
+      <sound />
+      <description>GreenButton</description>
+    </action>
+    <action>
+      <id>9977</id>
+      <key>O</key>
+      <sound />
+      <description>YellowButton</description>
+    </action>
+    <action>
+      <id>9978</id>
+      <key>P</key>
+      <sound />
+      <description>BlueButton</description>
+    </action>
+  </window>
 </keymap>
