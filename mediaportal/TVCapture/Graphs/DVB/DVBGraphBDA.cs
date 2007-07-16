@@ -137,7 +137,7 @@ namespace MediaPortal.TV.Recording
         _vmr9 = new VMR9Util();
 
         // Make a new filter graph
-        Log.WriteFile(LogType.Log,"DVBGraphBDA:create new filter graph (IGraphBuilder)");
+        Log.Info("DVBGraphBDA:create new filter graph (IGraphBuilder)");
         _graphBuilder = (IGraphBuilder)new FilterGraph();
 
         // Get the Capture Graph Builder
