@@ -63,7 +63,8 @@ namespace TvLibrary.Implementations.DVB
       TONE_BURST_UNMODULATED = 0,
       TONE_BURST_MODULATED
     };
-    enum RollOff
+    //Use BDATypes.cs enums instead
+    /*enum RollOff
     {
       HCW_ROLL_OFF_NOT_SET = -1,
       HCW_ROLL_OFF_NOT_DEFINED = 0,
@@ -79,7 +80,7 @@ namespace TvLibrary.Implementations.DVB
       HCW_PILOT_OFF = 1,           // Pilot Off (DVB-S2 Only) (Default for DVB-S2)
       HCW_PILOT_ON,                // Pilot On  (DVB-S2 Only)
       HCW_PILOT_MAX
-    }
+    }*/
     #endregion
 
     #region constants
@@ -221,7 +222,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// sets the dvb-s2 pilot / roll-off
     /// </summary>
-    public void SetDVBS2PilotRolloff()
+    public void SetDVBS2PilotRolloff(DVBSChannel channel)
     {
       //Set the Pilot
       int hr;
@@ -229,8 +230,8 @@ namespace TvLibrary.Implementations.DVB
       _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        Log.Log.Info("Hauppauge: Set Pilot");
-        Marshal.WriteInt32(_tempValue, (Int32)Pilot.HCW_PILOT_OFF);
+        Log.Log.Info("Hauppauge: Set Pilot: {0}", channel.Pilot);
+        Marshal.WriteInt32(_tempValue, (Int32)channel.Pilot);
         hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempPtr, 1024, _tempValue, 4);
         Log.Log.Info("Hauppauge: Set Pilot returned:{0:X}", hr);
       }
@@ -249,8 +250,8 @@ namespace TvLibrary.Implementations.DVB
       _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        Log.Log.Info("Hauppauge: Set BDA Roll-Off");
-        Marshal.WriteInt32(_tempValue, (Int32)RollOff.HCW_ROLL_OFF_35);
+        Log.Log.Info("Hauppauge: Set Roll-Off: {0}", channel.RollOff);
+        Marshal.WriteInt32(_tempValue, (Int32)channel.RollOff);
         hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempPtr, 1024, _tempValue, 4);
         Log.Log.Info("Hauppauge: Set BDA Roll-Off returned:{0:X}", hr);
       }

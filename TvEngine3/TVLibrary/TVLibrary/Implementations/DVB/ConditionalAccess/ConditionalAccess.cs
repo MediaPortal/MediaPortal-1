@@ -434,8 +434,12 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_hauppauge != null)
         {
-          //Set Hauppauge pilot, roll-off settings
-          _hauppauge.SetDVBS2PilotRolloff();
+          //Set Hauppauge pilot, roll-off settings but only if DVB-S2
+          //We assume if the modulation is set then a DVB-S2 tuning request has been requested
+          if (channel.ModulationType != ModulationType.ModNotSet)
+          {
+            _hauppauge.SetDVBS2PilotRolloff(channel);
+          }
           //Set the Hauppauge Modulation
           if (channel.ModulationType == ModulationType.ModQpsk)
           {
