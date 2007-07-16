@@ -5,12 +5,24 @@
   <allowoverlay>yes</allowoverlay>
   <controls>
     <import>common.dialog.xml</import>
+    <!-- Override the definition in common.dialog.xml, as we need more space for the Always and Never buttons -->
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>158</posX>
+      <posY>187</posY>
+      <width>404</width>
+      <height>242</height>
+      <texture>dialog_background.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
     <control>
       <type>image</type>
       <id>100</id>
       <posX>206</posX>
-      <posY>301</posY>
-      <width>345</width>
+      <posY>296</posY>
+      <width>300</width>
       <texture>osd_progress_background.png</texture>
     </control>
     <control>
@@ -18,8 +30,8 @@
       <type>progress</type>
       <id>20</id>
       <posX>195</posX>
-      <posY>300</posY>
-      <width>367</width>
+      <posY>295</posY>
+      <width>300</width>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -29,8 +41,8 @@
       <id>11</id>
       <posX>205</posX>
       <posY>330</posY>
-      <width>105</width>
-      <height>38</height>
+      <width>80</width>
+      <height>30</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>107</label>
@@ -45,10 +57,10 @@
       <description>No button</description>
       <type>button</type>
       <id>10</id>
-      <posX>328</posX>
+      <posX>320</posX>
       <posY>330</posY>
-      <width>105</width>
-      <height>38</height>
+      <width>80</width>
+      <height>30</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>106</label>
@@ -64,9 +76,9 @@
       <type>button</type>
       <id>12</id>
       <posX>205</posX>
-      <posY>370</posY>
-      <width>105</width>
-      <height>38</height>
+      <posY>365</posY>
+      <width>80</width>
+      <height>30</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>511</label>
@@ -81,10 +93,10 @@
       <description>Never</description>
       <type>button</type>
       <id>13</id>
-      <posX>328</posX>
-      <posY>370</posY>
-      <width>105</width>
-      <height>38</height>
+      <posX>320</posX>
+      <posY>365</posY>
+      <width>80</width>
+      <height>30</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>512</label>
@@ -99,10 +111,10 @@
       <description>Cancel button</description>
       <type>button</type>
       <id>14</id>
-      <posX>452</posX>
+      <posX>420</posX>
       <posY>330</posY>
-      <width>105</width>
-      <height>38</height>
+      <width>80</width>
+      <height>30</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>510</label>

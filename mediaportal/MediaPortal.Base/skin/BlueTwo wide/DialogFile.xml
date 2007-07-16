@@ -5,21 +5,33 @@
   <allowoverlay>yes</allowoverlay>
   <controls>
     <import>common.dialog.xml</import>
+    <!-- Override the definition in common.dialog.xml, as we need more space for the Always and Never buttons -->
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>366</posX>
+      <posY>250</posY>
+      <width>634</width>
+      <height>348</height>
+      <texture>dialog_background.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
+      <animation effect="fade" time="200">WindowClose</animation>
+    </control>
     <control>
       <type>image</type>
       <id>100</id>
-      <posX>390</posX>
+      <posX>425</posX>
       <posY>401</posY>
-      <width>460</width>
+      <width>510</width>
       <texture>osd_progress_background.png</texture>
     </control>
     <control>
       <description>progress control</description>
       <type>progress</type>
       <id>20</id>
-      <posX>369</posX>
+      <posX>413</posX>
       <posY>400</posY>
-      <width>489</width>
+      <width>539</width>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -27,7 +39,7 @@
       <description>Yes button</description>
       <type>button</type>
       <id>11</id>
-      <posX>388</posX>
+      <posX>415</posX>
       <posY>440</posY>
       <width>140</width>
       <height>50</height>
@@ -63,7 +75,7 @@
       <description>Always</description>
       <type>button</type>
       <id>12</id>
-      <posX>388</posX>
+      <posX>415</posX>
       <posY>493</posY>
       <width>140</width>
       <height>50</height>
@@ -99,7 +111,7 @@
       <description>Cancel button</description>
       <type>button</type>
       <id>14</id>
-      <posX>857</posX>
+      <posX>807</posX>
       <posY>440</posY>
       <width>140</width>
       <height>50</height>
