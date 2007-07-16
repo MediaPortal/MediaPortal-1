@@ -262,7 +262,6 @@ namespace TvLibrary.Implementations.DVB
       hr = dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
       Log.Log.WriteFile("Channel modulation is set to {0}", dvbsChannel.ModulationType);
       Log.Log.Info("Put Modulation returned:{0:X}", hr);
-
       hr = dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
       Log.Log.WriteFile("Channel FECRate is set to {0}", dvbsChannel.InnerFecRate);
       Log.Log.Info("Put InnerFECRate returned:{0:X}", hr);
@@ -358,6 +357,5 @@ namespace TvLibrary.Implementations.DVB
       if ((channel as DVBSChannel) == null) return false;
       return true;
     }
-
   }
 }

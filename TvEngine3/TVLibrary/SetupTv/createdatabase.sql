@@ -182,6 +182,8 @@ CREATE TABLE TuningDetail(
 	band int NOT NULL,
 	satIndex int NOT NULL,
 	innerFecRate int NOT NULL,
+	pilot int NOT NULL,
+	rollOff int NOT NULL,
  CONSTRAINT PK_TuningDetail PRIMARY KEY  
 (
 	idTuning ASC
@@ -654,5 +656,5 @@ GO
 delete from version
 GO
 
-insert into version(versionNumber) values(28)
+insert into version(versionNumber) values(29)
 GO

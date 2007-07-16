@@ -117,17 +117,17 @@ namespace DirectShowLib.BDA
         Rate1_2 = 1, // 1/2
         Rate2_3, // 2/3
         Rate3_4, // 3/4
-        Rate3_5,
-        Rate4_5,
+        Rate3_5, // 3/5
+        Rate4_5, // 4/5
         Rate5_6, // 5/6
-        Rate5_11,
+        Rate5_11, // 5/11
         Rate7_8, // 7/8
-        Rate1_4, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        Rate1_3, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        Rate2_5, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        Rate6_7, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        Rate8_9, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
-        Rate9_10, //DVB-S2 For Hauppauge (Not in the BDA Network Provider)
+        Rate1_4, // 1/4
+        Rate1_3, // 1/3
+        Rate2_5, // 2/5
+        Rate6_7, // 6/7
+        Rate8_9, // 8/9
+        Rate9_10, // 9/10
         RateMax
     }
 
@@ -184,20 +184,20 @@ namespace DirectShowLib.BDA
         Mod768Qam,
         Mod896Qam,
         Mod1024Qam,
-        ModQpsk,
-        ModBpsk,
-        ModOqpsk, //Twinhan uses ModOqpsk for Mod32Apsk when DVB-S2 tuning
-        Mod8Vsb, //Twinhan & TechnoTrend uses Mod8Vsb for Mod8psk & ModQpsk when DVB-S2 tuning
-        Mod16Vsb, //Twinhan uses Mod16Vsb for Mod16Apsk when DVB-S2 tuning
+        ModQpsk, // Quadrature Phase Shift Keying (including backwards compatible mode)
+        ModBpsk, // Binary Phase Shift Keying
+        ModOqpsk, // Offset QPSK
+        Mod8Vsb, // 8-Level Vestigial Sideband
+        Mod16Vsb, // 16-Level Vestigial Sideband
         ModAnalogAmplitude, // std am
         ModAnalogFrequency, // std fm
-        Mod8psk, //enum location for Hauppauge DVB-S2 (Not in the BDA Network Provider)
+        Mod8psk, // 8 Phase Shift Keying (including backwards compatible mode)
         ModRf, // analog TV (Video standards such as NTSC/PAL/SECAM specified in IAnalogLocator VideoStandard property)
-        Mod16Apsk, //enum location for Hauppauge DVB-S2 (Not in the BDA Network Provider)
-        Mod32Apsk, //enum location for Hauppauge DVB-S2 (Not in the BDA Network Provider)
-        ModQpsk2, //enum location for Hauppauge DVB-S2 Not in the BDA Network Provider)
-        Mod8psk2, //enum location for Hauppauge DVB-S2 Not in the BDA Network Provider)
-        ModDirectTV,  //For Hauppauge DIRECTV DSS (Not in the BDA Network Provider)
+        Mod16Apsk, // DVB-S2 modulation 16-Level APSK
+        Mod32Apsk, // DVB-S2 modulation 32-Level APSK
+        ModQpsk2, // Non-Backwards Compatible Quadrature Phase Shift Keying
+        Mod8psk2, // Non-Backwards Compatible 8 Phase Shift Keying
+        ModDirectTV,  // DIRECTV DSS
         ModMax
     } 
 
@@ -248,6 +248,31 @@ namespace DirectShowLib.BDA
         Mode2K = 1, // Transmission uses 1705 carriers (use a 2K FFT)
         Mode8K, // Transmission uses 6817 carriers (use an 8K FFT)
         ModeMax,
+    }
+
+    /// <summary>
+    /// From Roll-Off
+    /// </summary>
+    public enum Rolloff
+    {
+      NotSet = -1,
+      NotDefined = 0,
+      RollOff_20 = 1, // .20 Roll Off (DVB-S2 Only)
+      RollOff_25, // .25 Roll Off (DVB-S2 Only)
+      RollOff_35, // .35 Roll Off (DVB-S2 Only)
+      RollOffMax
+    }
+
+    /// <summary>
+    /// From Pilot
+    /// </summary>
+    public enum Pilot
+    {
+      NotSet = -1,
+      NotDefined = 0,
+      PilotOff = 1, // Pilot Off (DVB-S2 Only)
+      PilotOn, // Pilot On  (DVB-S2 Only)
+      PilotMax
     }
 
     /// <summary>

@@ -75,7 +75,6 @@ namespace TvLibrary.Implementations.DVB
     const int ScanMaxChannels = 10;
     #endregion
 
-
     #region variables
     ITsChannelScan _analyzer;
     ITVCard _card;

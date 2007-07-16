@@ -114,9 +114,10 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.SatelliteIndex = tuningChannel.SatelliteIndex;
       dvbsChannel.ModulationType = tuningChannel.ModulationType;
       dvbsChannel.InnerFecRate = tuningChannel.InnerFecRate;
+      dvbsChannel.Pilot = tuningChannel.Pilot;
+      dvbsChannel.RollOff = tuningChannel.RollOff;
       Log.Log.Write("Found: {0}", dvbsChannel);
       return dvbsChannel;
     }
-
   }
 }

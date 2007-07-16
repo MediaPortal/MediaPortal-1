@@ -87,6 +87,8 @@ namespace SetupTv.Sections
       public int SymbolRate; // symbol rate
       public ModulationType Modulation = ModulationType.ModNotSet;
       public BinaryConvolutionCodeRate InnerFecRate = BinaryConvolutionCodeRate.RateNotSet;
+      //public Pilot Pilot = Pilot.NotSet;
+      //public Rolloff RollOff = Rolloff.NotSet;
 
       public int CompareTo(Transponder other)
       {
@@ -419,12 +421,20 @@ namespace SetupTv.Sections
       mpDisEqc4.Items.Add(DisEqcType.Level1BB);
       mpDisEqc4.SelectedIndex = 0;
 
+      comboBoxRollOff.Items.Clear();
+      comboBoxRollOff.Items.Add(Rolloff.NotDefined);
+      comboBoxRollOff.Items.Add(Rolloff.NotSet);
+      comboBoxRollOff.Items.Add(Rolloff.RollOff_20);
+      comboBoxRollOff.Items.Add(Rolloff.RollOff_25);
+      comboBoxRollOff.Items.Add(Rolloff.RollOff_35);
+      comboBoxRollOff.Items.Add(Rolloff.RollOffMax);
+      comboBoxRollOff.SelectedIndex = 4;
+
       TvBusinessLayer layer = new TvBusinessLayer();
       mpTransponder1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext1", "0").Value);
       mpTransponder2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext2", "0").Value);
       mpTransponder3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext3", "0").Value);
       mpTransponder4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "SatteliteContext4", "0").Value);
-
 
       mpDisEqc1.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc1", "0").Value);
       mpDisEqc2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "DisEqc2", "0").Value);
@@ -435,6 +445,8 @@ namespace SetupTv.Sections
       mpBand2.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band2", "0").Value);
       mpBand3.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band3", "0").Value);
       mpBand4.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "band4", "0").Value);
+
+      comboBoxRollOff.SelectedIndex = Int32.Parse(layer.GetSetting("dvbs" + _cardNumber.ToString() + "rollOff", "4").Value);
 
       mpLNB1.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB1", "false").Value == "true");
       mpLNB2.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB2", "false").Value == "true");
@@ -451,16 +463,24 @@ namespace SetupTv.Sections
       textBoxLNBSwitch.Text = layer.GetSetting("LnbSwitchFrequency", "0").Value;
 
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
-
       if (!checkBoxCreateGroups.Checked)
       {
         checkBoxCreateGroupsSat.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "creategroupssat", "false").Value == "true");
       }
-          
 
+      checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "enabledvbs2", "false").Value == "true");
+      if (!checkEnableDVBS2.Checked)
+      {
+        checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "enabledvbs2", "false").Value == "false");
+      }
+      
+      checkBoxPilot.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "pilot", "false").Value == "true");
+      if (!checkBoxPilot.Checked)
+      {
+        checkBoxPilot.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "pilot", "false").Value == "false");
+      }
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-
       _enableEvents = true;
       mpLNB1_CheckedChanged(null, null); ;
     }
@@ -469,8 +489,8 @@ namespace SetupTv.Sections
     {
       timer1.Enabled = false;
       base.OnSectionDeActivated();
-
     }
+
     void SaveSettings()
     {
       Setting setting;
@@ -522,7 +542,6 @@ namespace SetupTv.Sections
       setting.Value = mpBand4.SelectedIndex.ToString();
       setting.Persist();
 
-
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB1", "false");
       setting.Value = mpLNB1.Checked ? "true" : "false";
       setting.Persist();
@@ -535,6 +554,18 @@ namespace SetupTv.Sections
       setting.Persist();
       setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "LNB4", "false");
       setting.Value = mpLNB4.Checked ? "true" : "false";
+      setting.Persist();
+
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "enabledvbs2", "false");
+      setting.Value = checkEnableDVBS2.Checked ? "true" : "false";
+      setting.Persist();
+
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "pilot", "false");
+      setting.Value = checkBoxPilot.Checked ? "true" : "false";
+      setting.Persist();
+
+      setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "rollOff", "4");
+      setting.Value = comboBoxRollOff.SelectedIndex.ToString();
       setting.Persist();
 
       bool restart = false;
@@ -570,8 +601,6 @@ namespace SetupTv.Sections
       progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
       progressBarSatLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
       progressBarSatQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
-
-
     }
 
     public override void OnSectionActivated()
@@ -580,10 +609,7 @@ namespace SetupTv.Sections
       UpdateStatus(1);
       labelCurrentPosition.Text = "";
       tabControl1_SelectedIndexChanged(null, null);
-
     }
-
-
 
     private void mpButtonScanTv_Click(object sender, EventArgs e)
     {
@@ -605,9 +631,9 @@ namespace SetupTv.Sections
         _stopScanning = true;
       }
     }
+
     void DoScan()
     {
-
       string buttonText = mpButtonScanTv.Text;
       try
       {
@@ -631,6 +657,9 @@ namespace SetupTv.Sections
         mpBand2.Enabled = false;
         mpBand3.Enabled = false;
         mpBand4.Enabled = false;
+        checkEnableDVBS2.Enabled = false;
+        checkBoxPilot.Enabled = false;
+        comboBoxRollOff.Enabled = false;
 
         listViewStatus.Items.Clear();
         _tvChannelsNew = 0;
@@ -681,12 +710,14 @@ namespace SetupTv.Sections
         mpBand3.Enabled = true;
         mpBand4.Enabled = true;
         progressBar1.Value = 100;
-
         mpLNB1.Enabled = true;
         mpLNB2.Enabled = true;
         mpLNB3.Enabled = true;
         mpLNB4.Enabled = true;
         mpButtonScanTv.Text = buttonText;
+        checkBoxPilot.Enabled = true;
+        comboBoxRollOff.Enabled = true;
+        checkEnableDVBS2.Enabled = true;
         _isScanning = false;
       }
     }
@@ -695,7 +726,6 @@ namespace SetupTv.Sections
     {
       LoadTransponders(context);
       if (_channelCount == 0) return;
-
 
       TvBusinessLayer layer = new TvBusinessLayer();
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -724,7 +754,6 @@ namespace SetupTv.Sections
         if (percent > 100f) percent = 100f;
         progressBar1.Value = (int)percent;
 
-
         DVBSChannel tuneChannel = new DVBSChannel();
         tuneChannel.Frequency = _transponders[index].CarrierFrequency;
         tuneChannel.Polarisation = _transponders[index].Polarisation;
@@ -733,6 +762,33 @@ namespace SetupTv.Sections
         tuneChannel.SatelliteIndex = position;
         tuneChannel.ModulationType = _transponders[index].Modulation;
         tuneChannel.InnerFecRate = _transponders[index].InnerFecRate;
+        //Grab the Pilot & Roll-off settings
+        if (checkEnableDVBS2.Checked)
+        {
+          setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "pilot", "false");
+          if (setting.Value == "true")
+            tuneChannel.Pilot = Pilot.PilotOn;
+          else
+            tuneChannel.Pilot = Pilot.PilotOff;
+          setting = layer.GetSetting("dvbs" + _cardNumber.ToString() + "rollOff", "4");
+          if (setting.Value == "0")
+            tuneChannel.RollOff = Rolloff.NotSet;
+          if (setting.Value == "1")
+            tuneChannel.RollOff = Rolloff.NotDefined;
+          if (setting.Value == "2")
+            tuneChannel.RollOff = Rolloff.RollOff_20;
+          if (setting.Value == "3")
+            tuneChannel.RollOff = Rolloff.RollOff_25;
+          if (setting.Value == "4")
+            tuneChannel.RollOff = Rolloff.RollOff_35;
+          if (setting.Value == "5")
+            tuneChannel.RollOff = Rolloff.RollOffMax;
+        }
+        if (!checkEnableDVBS2.Checked)
+        {
+          tuneChannel.Pilot = Pilot.NotSet;
+          tuneChannel.RollOff = Rolloff.NotSet;
+        }
         if (bandType == BandType.Circular)
         {
           if (tuneChannel.Polarisation == Polarisation.LinearH)
@@ -740,7 +796,6 @@ namespace SetupTv.Sections
           else if (tuneChannel.Polarisation == Polarisation.LinearV)
             tuneChannel.Polarisation = Polarisation.CircularR;
         }
-
         tuneChannel.DisEqc = disEqc;
         string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate);
         ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
@@ -772,9 +827,7 @@ namespace SetupTv.Sections
             item.ForeColor = Color.Red;
             continue;
           }
-
         }
-
 
         int newChannels = 0;
         int updatedChannels = 0;
@@ -812,7 +865,7 @@ namespace SetupTv.Sections
 
           if (checkBoxCreateGroupsSat.Checked)
           {
-              layer.AddChannelToGroup(dbChannel, context.Satelite.SatelliteName);
+            layer.AddChannelToGroup(dbChannel, context.Satelite.SatelliteName);
           }
           else if (checkBoxCreateGroups.Checked)
           {
@@ -830,7 +883,6 @@ namespace SetupTv.Sections
             currentDetail.SatIndex = position;//context.Satelite.IdSatellite;
             layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
           }
-
           if (channel.IsTv)
           {
             if (exists)
@@ -863,9 +915,7 @@ namespace SetupTv.Sections
           item.Text = line;
         }
       }
-
       // DatabaseManager.Instance.SaveChanges();
-
     }
 
     private void CardDvbS_Load(object sender, EventArgs e)
@@ -1249,6 +1299,7 @@ namespace SetupTv.Sections
     }
 
     #endregion
+    
     private void buttonUpdate_Click(object sender, EventArgs e)
     {
       listViewStatus.Items.Clear();
@@ -1272,12 +1323,12 @@ namespace SetupTv.Sections
       textBoxLNBSwitch.Enabled = checkBox2.Checked;
     }
 
-
     private void mpLNB1_CheckedChanged(object sender, EventArgs e)
     {
       mpTransponder1.Enabled = mpLNB1.Checked;
       mpDisEqc1.Enabled = mpLNB1.Checked;
     }
+
     private void mpLNB2_CheckedChanged(object sender, EventArgs e)
     {
       mpTransponder2.Enabled = mpLNB2.Checked;
@@ -1296,19 +1347,16 @@ namespace SetupTv.Sections
       mpDisEqc4.Enabled = mpLNB4.Checked;
     }
 
-
     private void mpBand1_SelectedIndexChanged(object sender, EventArgs e)
     {
       if (_enableEvents == false) return;
       if (checkBox2.Checked) return;
       int lof1 = 0, lof2 = 0, sw = 0;
       ScanParameters p = new ScanParameters();
-      BandTypeConverter.GetDefaultLnbSetup(p,(BandType)mpBand1.SelectedIndex, out lof1, out lof2, out sw);
-
+      BandTypeConverter.GetDefaultLnbSetup(p, (BandType)mpBand1.SelectedIndex, out lof1, out lof2, out sw);
       textBoxLNBLo.Text = lof1.ToString();
       textBoxLNBHi.Text = lof2.ToString();
       textBoxLNBSwitch.Text = sw.ToString();
-
     }
 
     private void mpBand2_SelectedIndexChanged(object sender, EventArgs e)
@@ -1327,30 +1375,40 @@ namespace SetupTv.Sections
     }
     #endregion
 
-      
-
-      private void checkBoxCreateGroupsSat_CheckedChanged(object sender, EventArgs e)
+    private void checkBoxCreateGroupsSat_CheckedChanged(object sender, EventArgs e)
+    {
+      if (_ignoreCheckBoxCreateGroupsClickEvent) return;
+      _ignoreCheckBoxCreateGroupsClickEvent = true;
+      if (checkBoxCreateGroups.Checked)
       {
-          if (_ignoreCheckBoxCreateGroupsClickEvent) return;
-
-          _ignoreCheckBoxCreateGroupsClickEvent = true;
-          if (checkBoxCreateGroups.Checked)
-          {
-              checkBoxCreateGroups.Checked = false;
-          }
-          _ignoreCheckBoxCreateGroupsClickEvent = false;
+        checkBoxCreateGroups.Checked = false;
       }
+      _ignoreCheckBoxCreateGroupsClickEvent = false;
+    }
 
-      private void checkBoxCreateGroups_CheckedChanged(object sender, EventArgs e)
+    private void checkBoxCreateGroups_CheckedChanged(object sender, EventArgs e)
+    {
+      if (_ignoreCheckBoxCreateGroupsClickEvent) return;
+      _ignoreCheckBoxCreateGroupsClickEvent = true;
+      if (checkBoxCreateGroupsSat.Checked)
       {
-          if (_ignoreCheckBoxCreateGroupsClickEvent) return;
-
-          _ignoreCheckBoxCreateGroupsClickEvent = true;
-          if (checkBoxCreateGroupsSat.Checked)
-          {
-              checkBoxCreateGroupsSat.Checked = false;
-          }
-          _ignoreCheckBoxCreateGroupsClickEvent = false;
+        checkBoxCreateGroupsSat.Checked = false;
       }
+      _ignoreCheckBoxCreateGroupsClickEvent = false;
+    }
+
+    private void checkEnableDVBS2_CheckedChanged(object sender, EventArgs e)
+    {
+      if (checkEnableDVBS2.Checked)
+      {
+        checkBoxPilot.Enabled = true;
+        comboBoxRollOff.Enabled = true;
+      }
+      if (!checkEnableDVBS2.Checked)
+      {
+        checkBoxPilot.Enabled = false;
+        comboBoxRollOff.Enabled = false;
+      }
+    }
   }
 }

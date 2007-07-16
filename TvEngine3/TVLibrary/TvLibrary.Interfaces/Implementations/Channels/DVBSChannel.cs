@@ -76,7 +76,7 @@ namespace TvLibrary.Channels
     static public bool IsHiBand(DVBSChannel channel, ScanParameters parameters)
     {
       int lof1, lof2, sw;
-      BandTypeConverter.GetDefaultLnbSetup(parameters,channel.BandType, out  lof1, out  lof2, out  sw);
+      BandTypeConverter.GetDefaultLnbSetup(parameters, channel.BandType, out  lof1, out  lof2, out  sw);
 
       if (sw == 0) return false;
       if (channel.Frequency >= (sw * 1000)) return true;
@@ -191,6 +191,8 @@ namespace TvLibrary.Channels
     BandType _bandType;
     ModulationType _modulation = ModulationType.ModQpsk;
     BinaryConvolutionCodeRate _innerFecRate = BinaryConvolutionCodeRate.RateNotSet;
+    Pilot _pilot = Pilot.NotSet;
+    Rolloff _rollOff = Rolloff.NotSet;
     int _satelliteIndex;
     #endregion
 
@@ -205,11 +207,13 @@ namespace TvLibrary.Channels
       _satelliteIndex = -1;
       _modulation = ModulationType.ModQpsk;
       _innerFecRate = BinaryConvolutionCodeRate.RateNotSet;
+      _pilot = Pilot.NotSet;
+      _rollOff = Rolloff.NotSet;
     }
 
     #region properties
     /// <summary>
-    /// gets/sets the Satellite index for this channel
+    /// gets/sets the InnerFEC Rate for this channel
     /// </summary>
     public BinaryConvolutionCodeRate InnerFecRate
     {
@@ -223,7 +227,7 @@ namespace TvLibrary.Channels
       }
     }
     /// <summary>
-    /// gets/sets the Satellite index for this channel
+    /// gets/sets the Modulation type for this channel
     /// </summary>
     public ModulationType ModulationType
     {
@@ -237,7 +241,7 @@ namespace TvLibrary.Channels
       }
     }
     /// <summary>
-    /// gets/sets the Satellite index for this channel
+    /// gets/sets the Satellite Index for this channel
     /// </summary>
     public int SatelliteIndex
     {
@@ -280,7 +284,7 @@ namespace TvLibrary.Channels
       }
     }
     /// <summary>
-    /// gets/sets the symbolrate for this channel
+    /// gets/sets the SymbolRate for this channel
     /// </summary>
     public int SymbolRate
     {
@@ -294,7 +298,7 @@ namespace TvLibrary.Channels
       }
     }
     /// <summary>
-    /// gets/sets the lnb switch frequency for this channel
+    /// gets/sets the LNB Switch frequency for this channel
     /// </summary>
     public int SwitchingFrequency
     {
@@ -308,7 +312,7 @@ namespace TvLibrary.Channels
       }
     }
     /// <summary>
-    /// gets/sets the diseqc setting for this channel
+    /// gets/sets the DiSEqC setting for this channel
     /// </summary>
     public DisEqcType DisEqc
     {
@@ -321,6 +325,34 @@ namespace TvLibrary.Channels
         _disEqc = value;
       }
     }
+    /// <summary>
+    /// gets/sets the Pilot setting for this channel
+    /// </summary>
+    public Pilot Pilot
+    {
+      get
+      {
+        return _pilot;
+      }
+      set
+      {
+        _pilot = value;
+      }
+    }
+    /// <summary>
+    /// gets/sets the Roll-Off setting for this channel
+    /// </summary>
+    public Rolloff RollOff
+    {
+      get
+      {
+        return _rollOff;
+      }
+      set
+      {
+        _rollOff = value;
+      }
+    }
     #endregion
 
     /// <summary>
@@ -331,8 +363,8 @@ namespace TvLibrary.Channels
     /// </returns>
     public override string ToString()
     {
-      string line = String.Format("DVBS:{0} SymbolRate:{1} Modulation:{2} Polarisation:{3} InnerFecRate:{4} DisEqc:{5} band:{6}",
-          base.ToString(), SymbolRate, ModulationType, Polarisation, InnerFecRate, DisEqc, BandType);
+      string line = String.Format("DVBS:{0} SymbolRate:{1} Modulation:{2} Polarisation:{3} InnerFecRate:{4} DisEqc:{5} band:{6} Pilot:{7} RollOff:{8}",
+          base.ToString(), SymbolRate, ModulationType, Polarisation, InnerFecRate, DisEqc, BandType, Pilot, RollOff);
       return line;
     }
 
@@ -356,6 +388,8 @@ namespace TvLibrary.Channels
       if (ch.BandType != BandType) return false;
       if (ch.ModulationType != ModulationType) return false;
       if (ch.InnerFecRate != InnerFecRate) return false;
+      if (ch.Pilot != Pilot) return false;
+      if (ch.RollOff != RollOff) return false;
 
       return true;
     }
@@ -369,8 +403,7 @@ namespace TvLibrary.Channels
     {
       return base.GetHashCode() ^ _polarisation.GetHashCode() ^ _symbolRate.GetHashCode() ^
              _switchingFrequency.GetHashCode() ^ _disEqc.GetHashCode() ^ _bandType.GetHashCode()
-             ^ SatelliteIndex.GetHashCode() ^ _modulation.GetHashCode() ^ _innerFecRate.GetHashCode();
+             ^ SatelliteIndex.GetHashCode() ^ _modulation.GetHashCode() ^ _innerFecRate.GetHashCode() ^ _pilot.GetHashCode() ^ _rollOff.GetHashCode();
     }
   }
 }
-

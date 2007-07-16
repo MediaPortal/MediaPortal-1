@@ -26,8 +26,6 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
-
 using TvDatabase;
 using TvLibrary;
 using TvLibrary.Implementations;
@@ -225,6 +223,8 @@ namespace SetupTv.Sections
                         dvbsChannel.SymbolRate = symbolrate;
                         dvbsChannel.SwitchingFrequency = switchfreq;
                         dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
+                        dvbsChannel.Pilot = (Pilot)(comboBoxPilot.SelectedIndex);
+                        dvbsChannel.RollOff = (Rolloff)(comboBoxRollOff.SelectedIndex);
                         switch (comboBoxModulation.SelectedIndex)
                         {
                           case 0:
@@ -356,7 +356,7 @@ namespace SetupTv.Sections
           detail.Persist();
         }
 
-        //dvbs tab
+        //DVBS tab
         if (detail.ChannelType == 3)
         {
           _dvbs = true;
@@ -367,6 +367,8 @@ namespace SetupTv.Sections
           detail.Symbolrate = Int32.Parse(textBox1.Text);
           detail.SwitchingFrequency = Int32.Parse(textBoxSwitch.Text);
           detail.InnerFecRate = (int)(BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
+          detail.Pilot = (int)(Pilot)(comboBoxPilot.SelectedIndex);
+          detail.RollOff = (int)(Rolloff)(comboBoxRollOff.SelectedIndex);
           if (comboBoxModulation.SelectedIndex == 1)
             detail.Modulation = (int)ModulationType.Mod8Vsb;
           else
@@ -451,6 +453,8 @@ namespace SetupTv.Sections
       comboBoxBandWidth.SelectedIndex = 1;
       comboBoxModulation.SelectedIndex = 0;
       comboBoxInnerFecRate.SelectedIndex = 0;
+      comboBoxPilot.SelectedIndex = 0;
+      comboBoxRollOff.SelectedIndex = 0;
       //general tab
       textBoxName.Text = _channel.Name;
       checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;
@@ -507,7 +511,7 @@ namespace SetupTv.Sections
           textBoxSymbolRate.Text = detail.Symbolrate.ToString();
         }
 
-        //dvbs tab
+        //DVBS tab
         if (detail.ChannelType == 3 || _newChannel)
         {
           _dvbs = true;
@@ -536,6 +540,8 @@ namespace SetupTv.Sections
             comboBoxModulation.SelectedIndex = 1;
 
           comboBoxInnerFecRate.SelectedIndex = 1 + detail.InnerFecRate;
+          comboBoxPilot.SelectedIndex = (int)detail.Pilot;
+          comboBoxRollOff.SelectedIndex = (int)detail.RollOff;
           comboBoxDisEqc.SelectedIndex = (int)detail.Diseqc;
           Satellite sat=null;
           foreach (DiSEqCMotor motor in DiSEqCMotor.ListAll())
@@ -658,6 +664,5 @@ namespace SetupTv.Sections
       freq /= 1000000f;
       return freq.ToString("f2");
     }
-
   }
 }
