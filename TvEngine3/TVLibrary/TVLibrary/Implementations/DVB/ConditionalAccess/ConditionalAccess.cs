@@ -46,6 +46,7 @@ namespace TvLibrary.Implementations.DVB
     Hauppauge _hauppauge = null;
     DiSEqCMotor _diSEqCMotor = null;
     Dictionary<int, ConditionalAccessContext> _mapSubChannels;
+    GenericBDAS _genericbdas = null;
     #endregion
 
     //ctor
@@ -111,6 +112,15 @@ namespace TvLibrary.Implementations.DVB
           return;
         }
         _hauppauge = null;
+
+        Log.Log.WriteFile("Check for Generic BDA card");
+        _genericbdas = new GenericBDAS(tunerFilter, analyzerFilter);
+        if (_genericbdas.IsGenericBDAS)
+        {
+          Log.Log.WriteFile("Generic BDA card detected");
+          return;
+        }
+        _genericbdas = null;
       }
       catch (Exception ex)
       {
@@ -358,6 +368,11 @@ namespace TvLibrary.Implementations.DVB
         if (_hauppauge != null)
         {
           _hauppauge.SendDiseqCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
+        }
+        if (_genericbdas != null)
+        {
+          _genericbdas.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
       }

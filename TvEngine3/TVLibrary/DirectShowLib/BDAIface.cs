@@ -468,10 +468,10 @@ namespace DirectShowLib.BDA
     int get_Polarity([Out] out Polarisation pPolarity);
 
     [PreserveSig]
-    int put_Range([In] int ulRange);
+    int put_Range([In] ulong ulRange);//int ulRange); //Changed by digi
 
     [PreserveSig]
-    int get_Range([Out] out int pulRange);
+    int get_Range([Out] out ulong pulRange);//int pulRange); //Changed by digi
 
     [PreserveSig]
     int put_Bandwidth([In] int ulBandwidth);
