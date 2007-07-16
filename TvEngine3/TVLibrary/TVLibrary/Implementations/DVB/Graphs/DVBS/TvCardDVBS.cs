@@ -285,6 +285,9 @@ namespace TvLibrary.Implementations.DVB
       }
       RunGraph(ch.SubChannelId);
 
+      if (dvbsChannel.ServiceId<0 ||dvbsChannel.NetworkId<0||dvbsChannel.TransportId<0)
+        _filterTIF.Stop();
+
       return ch;
     }
     #endregion
