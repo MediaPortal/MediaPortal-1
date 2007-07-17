@@ -429,7 +429,6 @@ STDMETHODIMP CDVBSub::GetSubtitle( int place, SUBTITLE* subtitle )
   }
 }
 
-
 //
 // SetCallback
 //
@@ -533,7 +532,7 @@ STDMETHODIMP CDVBSub::NonDelegatingQueryInterface( REFIID riid, void** ppv )
 	if ( riid == IID_IDVBSubtitle2 )
   {
 		//LogDebug( "QueryInterface in DVBSub.CPP accepting" );
-		return GetInterface( (IDVBSubtitle *) this, ppv );
+    return GetInterface( (IDVBSubtitle *) this, ppv );
 	}
 	else
 	{
@@ -555,3 +554,25 @@ STDMETHODIMP CDVBSub::NonDelegatingQueryInterface( REFIID riid, void** ppv )
 		return hr;
 	}
 }
+
+#ifdef _DEBUG
+// DEBUG ONLY
+//
+// NonDelegatingAddRef
+//
+STDMETHODIMP_(ULONG) CDVBSub::NonDelegatingAddRef()
+{
+  int tmp = m_cRef;
+  return CUnknown::NonDelegatingAddRef();
+}
+
+// DEBUG ONLY
+//
+// NonDelegatingRelease
+//
+STDMETHODIMP_(ULONG) CDVBSub::NonDelegatingRelease()
+{
+  int tmp = m_cRef;
+  return CUnknown::NonDelegatingRelease();
+}
+#endif

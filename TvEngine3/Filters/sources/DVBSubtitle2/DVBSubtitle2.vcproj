@@ -84,7 +84,7 @@
 				AdditionalLibraryDirectories="C:\DXSDK\Lib"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\source\DVBSub.def"
+				ModuleDefinitionFile=".\source\DVBSub2.def"
 				ProgramDatabaseFile=".\Release/DVBSub.pdb"
 				StackReserveSize="2097152"
 				StackCommitSize="2097152"
@@ -307,6 +307,10 @@
 			</File>
 			<File
 				RelativePath=".\Source\PesDecoder\TsHeader.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\PesDecoder\TsHeader.h"
 				>
 			</File>
 		</Filter>

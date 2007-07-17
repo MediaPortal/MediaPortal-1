@@ -70,7 +70,6 @@ public:
 
   // IUnknown
   DECLARE_IUNKNOWN;
-
   STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
 
   // From MSubdecoderObserver
@@ -78,6 +77,11 @@ public:
   void NotifySeeking();
 
   static CUnknown * WINAPI CreateInstance( LPUNKNOWN pUnk, HRESULT *pHr );
+
+#ifdef _DEBUG
+  STDMETHODIMP_(ULONG) NonDelegatingAddRef();
+  STDMETHODIMP_(ULONG) NonDelegatingRelease();
+#endif
 
 private:
 
