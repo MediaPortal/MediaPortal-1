@@ -89,6 +89,9 @@ namespace TvService
       #endregion
       */
 
+      // apply process priority.
+      applyProcessPriority();     
+
       string applicationPath = System.Windows.Forms.Application.ExecutablePath;
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
@@ -431,6 +434,37 @@ namespace TvService
         }
 
         return false;
+      }
+    }
+
+    private void applyProcessPriority()
+    {
+      TvDatabase.TvBusinessLayer layer = new TvDatabase.TvBusinessLayer();
+      int processPriority = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value);
+
+      switch (processPriority)
+      {
+        case 0:
+          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.RealTime;
+          break;
+        case 1:
+          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
+          break;
+        case 2:
+          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.AboveNormal;
+          break;
+        case 3:
+          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
+          break;
+        case 4:
+          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
+          break;
+        case 5:
+          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Idle;
+          break;
+        default:
+          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
+          break;
       }
     }
 

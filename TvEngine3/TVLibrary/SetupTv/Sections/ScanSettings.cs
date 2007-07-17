@@ -67,6 +67,29 @@ namespace SetupTv.Sections
       textBoxMaxFileSize.Text = layer.GetSetting("timeshiftMaxFileSize", "256").Value;
 
       checkBoxEnableLinkageScanner.Checked=(layer.GetSetting("linkageScannerEnabled","no").Value=="yes");
+
+      mpComboBoxPrio.Items.Clear();
+            
+      mpComboBoxPrio.Items.Add("Realtime");
+      mpComboBoxPrio.Items.Add("High");
+      mpComboBoxPrio.Items.Add("Above Normal");
+      mpComboBoxPrio.Items.Add("Normal");
+      mpComboBoxPrio.Items.Add("Below Normal");
+      mpComboBoxPrio.Items.Add("Idle");      
+
+      try
+      {        
+        mpComboBoxPrio.SelectedIndex = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value); //default is normal=3       
+      }
+      catch (Exception e)
+      {        
+        mpComboBoxPrio.SelectedIndex = 3; //fall back to default which is normal=3
+      }
+
+      
+
+
+      
     }
     public override void OnSectionDeActivated()
     {
@@ -118,6 +141,11 @@ namespace SetupTv.Sections
       else
         s.Value = "no";
       s.Persist();
+
+      s = layer.GetSetting("processPriority", "3");
+      s.Value = mpComboBoxPrio.SelectedIndex.ToString();
+      s.Persist();
+
     }
 
     private void groupBox1_Enter(object sender, EventArgs e)
@@ -143,6 +171,46 @@ namespace SetupTv.Sections
     private void label16_Click(object sender, EventArgs e)
     {
 
+    }
+
+    private void mpComboBoxPrio_SelectedIndexChanged(object sender, EventArgs e)
+    {      
+      System.Diagnostics.Process process = null;
+      try
+      {
+        process = System.Diagnostics.Process.GetProcessesByName("TVService")[0];
+      }
+      catch (Exception ex)
+      {
+        Log.Write("could not set priority on tvservice - the process might be terminated : " + ex.Message);
+        return;
+      }      
+
+      switch (mpComboBoxPrio.SelectedIndex)
+      {
+        case 0:
+          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.RealTime;
+          break;
+        case 1:
+          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
+          break;
+        case 2:
+          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.AboveNormal;
+          break;
+        case 3:
+          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
+          break;
+        case 4:
+          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
+          break;
+        case 5:
+          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.Idle;
+          break;
+        default:
+          process.PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
+          break;
+      }
+      
     }
   }
 }
