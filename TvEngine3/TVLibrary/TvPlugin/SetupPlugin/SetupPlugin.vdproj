@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_167290DB26CE81C32B2BB365DFB4CCDB"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_1F2880691CC3378A04BA822E5C1D66BC"
         "OwnerKey" = "8:_A987C233BAE14CE1A50509BEB71AD2A4"
         "MsmSig" = "8:_UNDEFINED"
@@ -41,6 +47,12 @@
         {
         "MsmKey" = "8:_23CF07142DCBBC8E7473F42B8E188104"
         "OwnerKey" = "8:_41CB22ADB68ADDF1A90C1424671BAB3A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_24C979D86F3C71AEC0A2C4ACE26E749A"
+        "OwnerKey" = "8:_167290DB26CE81C32B2BB365DFB4CCDB"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -412,13 +424,13 @@
         "Entry"
         {
         "MsmKey" = "8:_DCE87176D4EB802A75EB5F240EF9E23D"
-        "OwnerKey" = "8:_78D4FD0ECE1EE25CA2F412BB36BEA740"
+        "OwnerKey" = "8:_76D4446E7EE952802965E5C9D8CCC653"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_DCE87176D4EB802A75EB5F240EF9E23D"
-        "OwnerKey" = "8:_76D4446E7EE952802965E5C9D8CCC653"
+        "OwnerKey" = "8:_78D4FD0ECE1EE25CA2F412BB36BEA740"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -527,6 +539,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_652B4EF6689AA1812318FF244CD6FEBF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_167290DB26CE81C32B2BB365DFB4CCDB"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -733,6 +751,37 @@
         }
         "File"
         {
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_167290DB26CE81C32B2BB365DFB4CCDB"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:TRUE"
+            "AssemblyAsmDisplayName" = "8:Interop.SHDocVw, Version=1.1.0.0, Culture=neutral, PublicKeyToken=a53cf5803f4c3827"
+                "ScatterAssemblies"
+                {
+                    "_167290DB26CE81C32B2BB365DFB4CCDB"
+                    {
+                    "Name" = "8:Interop.SHDocVw.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Interop.SHDocVw.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_E88C006BAD524657A925AC041F38E802"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1F2880691CC3378A04BA822E5C1D66BC"
             {
             "AssemblyRegister" = "3:1"
@@ -853,6 +902,26 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
+            "Exclude" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_24C979D86F3C71AEC0A2C4ACE26E749A"
+            {
+            "SourcePath" = "8:ieframe.dll"
+            "TargetName" = "8:ieframe.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_E88C006BAD524657A925AC041F38E802"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:4"
             "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
