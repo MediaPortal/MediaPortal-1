@@ -606,72 +606,32 @@ namespace MediaPortal.MPInstaller
             return ret;
         }
   
-        public static string GetDirEntry(MPIFileList flst)
+        public static string GetSkinDirEntry(MPIFileList flst, string skindDir)
         {
             string ret = string.Empty;
-            if (flst.Type == PLUGIN_TYPE)
-            {
-                ret = Config.GetFolder(Config.Dir.Plugins) + @"\";
-                switch (flst.SubType)
-                {
-                    case PLUGIN_WINDOW_SUBTYPE:
-                        ret += "Windows";
-                        break;
-                    case PLUGIN_PLAYER_SUBTYPE:
-                        ret += "ExternalPlayers";
-                        break;
-                    case PLUGIN_PROCESS_SUBTYPE:
-                        ret += "Process";
-                        break;
-                    case PLUGIN_SUBTITLE_SUBTYPE:
-                        ret += "Subtitle";
-                        break;
-                    case PLUGIN_TAGREADER_SUBTYPE:
-                        ret += "TagReaders";
-                        break;
-
-                }
-                ret += @"\" ;
-            }
 
             if (flst.Type == SKIN_TYPE)
             {
-                ret = Config.GetFolder(Config.Dir.Skin) + @"\" + flst.SubType + @"\";
+              ret = Config.GetFolder(Config.Dir.Skin) + @"\" + skindDir + @"\";
             }
 
             if (flst.Type == SKIN_MEDIA_TYPE)
             {
-                ret = Config.GetFolder(Config.Dir.Skin) + @"\" + flst.SubType + @"\" + "Media" + @"\";
+              ret = Config.GetFolder(Config.Dir.Skin) + @"\" + skindDir + @"\" + "Media" + @"\";
             }
 
             if (flst.Type == SKIN_SOUNDS_TYPE)
             {
-                ret = Config.GetFolder(Config.Dir.Skin) + @"\" + flst.SubType + @"\" + "Sounds" + @"\" ;
+              ret = Config.GetFolder(Config.Dir.Skin) + @"\" + skindDir + @"\" + "Sounds" + @"\";
             }
 
             if (flst.Type == SKIN_ANIMATIONS_TYPE)
             {
-                ret = Config.GetFolder(Config.Dir.Skin) + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Animations" + @"\";
+              ret = Config.GetFolder(Config.Dir.Skin) + @"\" + skindDir + @"\" + "Media" + @"\" + "Animations" + @"\";
             }
             if (flst.Type == SKIN_TETRIS_TYPE)
             {
-                ret = Config.GetFolder(Config.Dir.Skin) + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Tetris" + @"\";
-            }
-
-            if (flst.Type == THUMBS_TYPE)
-            {
-                ret = Config.GetFolder(Config.Dir.Thumbs) + @"\" + flst.SubType +@"\" ;
-            }
-            if (flst.Type == OTHER_TYPE)
-            {
-                if (String.IsNullOrEmpty(flst.SubType.Trim()))
-                    ret = Config.GetFolder(Config.Dir.Base) +  @"\" ;
-                else
-                    ret = Config.GetFolder(Config.Dir.Base) + @"\" + flst.SubType + @"\" ;
-            }
-            if (flst.Type == TEXT_TYPE)
-            {
-                ret = Config.GetFolder(Config.Dir.Base) + @"\" +"Docs"+ @"\" ;
+              ret = Config.GetFolder(Config.Dir.Skin) + @"\" + skindDir + @"\" + "Media" + @"\" + "Tetris" + @"\";
             }
             if (string.IsNullOrEmpty(flst.FileProperties.OutputFileName))
               ret += Path.GetFileName(flst.FileName);
@@ -679,6 +639,80 @@ namespace MediaPortal.MPInstaller
               ret += flst.FileProperties.OutputFileName;
             return ret;
         }
+      public static string GetDirEntry(MPIFileList flst)
+      {
+        string ret = string.Empty;
+        if (flst.Type == PLUGIN_TYPE)
+        {
+          ret = Config.GetFolder(Config.Dir.Plugins) + @"\";
+          switch (flst.SubType)
+          {
+            case PLUGIN_WINDOW_SUBTYPE:
+              ret += "Windows";
+              break;
+            case PLUGIN_PLAYER_SUBTYPE:
+              ret += "ExternalPlayers";
+              break;
+            case PLUGIN_PROCESS_SUBTYPE:
+              ret += "Process";
+              break;
+            case PLUGIN_SUBTITLE_SUBTYPE:
+              ret += "Subtitle";
+              break;
+            case PLUGIN_TAGREADER_SUBTYPE:
+              ret += "TagReaders";
+              break;
+
+          }
+          ret += @"\";
+        }
+
+        if (flst.Type == SKIN_TYPE)
+        {
+          ret = Config.GetFolder(Config.Dir.Skin) + @"\" + flst.SubType + @"\";
+        }
+
+        if (flst.Type == SKIN_MEDIA_TYPE)
+        {
+          ret = Config.GetFolder(Config.Dir.Skin) + @"\" + flst.SubType + @"\" + "Media" + @"\";
+        }
+
+        if (flst.Type == SKIN_SOUNDS_TYPE)
+        {
+          ret = Config.GetFolder(Config.Dir.Skin) + @"\" + flst.SubType + @"\" + "Sounds" + @"\";
+        }
+
+        if (flst.Type == SKIN_ANIMATIONS_TYPE)
+        {
+          ret = Config.GetFolder(Config.Dir.Skin) + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Animations" + @"\";
+        }
+        if (flst.Type == SKIN_TETRIS_TYPE)
+        {
+          ret = Config.GetFolder(Config.Dir.Skin) + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Tetris" + @"\";
+        }
+
+        if (flst.Type == THUMBS_TYPE)
+        {
+          ret = Config.GetFolder(Config.Dir.Thumbs) + @"\" + flst.SubType + @"\";
+        }
+        if (flst.Type == OTHER_TYPE)
+        {
+          if (String.IsNullOrEmpty(flst.SubType.Trim()))
+            ret = Config.GetFolder(Config.Dir.Base) + @"\";
+          else
+            ret = Config.GetFolder(Config.Dir.Base) + @"\" + flst.SubType + @"\";
+        }
+        if (flst.Type == TEXT_TYPE)
+        {
+          ret = Config.GetFolder(Config.Dir.Base) + @"\" + "Docs" + @"\";
+        }
+        if (string.IsNullOrEmpty(flst.FileProperties.OutputFileName))
+          ret += Path.GetFileName(flst.FileName);
+        else
+          ret += flst.FileProperties.OutputFileName;
+        return ret;
+      }
+
     }
 
     public class MPIFileList
@@ -736,6 +770,11 @@ namespace MediaPortal.MPInstaller
             get { return _Type; }
             set { _Type = value; }
         }
+
+      public bool SkinType
+      {
+        get {return this.Type == MPinstalerStruct.SKIN_TYPE || this.Type == MPinstalerStruct.SKIN_MEDIA_TYPE || this.Type == MPinstalerStruct.SKIN_SOUNDS_TYPE || this.Type == MPinstalerStruct.SKIN_ANIMATIONS_TYPE || this.Type == MPinstalerStruct.SKIN_TETRIS_TYPE; }
+      }
 
         public string SubType
         {

@@ -170,10 +170,12 @@ namespace MediaPortal.MPInstaller
   public class FilePropertiesClass
   {
     private string outputfilename;
+    private bool defaultfile;
     public FilePropertiesClass()
     {
 
     }
+
     public string OutputFileName
     {
       set
@@ -185,16 +187,31 @@ namespace MediaPortal.MPInstaller
         return outputfilename;
       }
     }
+
+    public bool  DefaultFile
+    {
+      set
+      {
+        defaultfile = value;
+      }
+      get
+      {
+        return defaultfile;
+      }
+
+    }
     
     public void Clear()
     {
       OutputFileName = string.Empty;
+      DefaultFile = false;
     }
     
     override public string ToString()
     {
       string x_ret=string.Empty;;
       x_ret += "OutputFileName" + "=" + OutputFileName+"|";
+      x_ret += "DefaultFile" + "=" + DefaultFile.ToString() + "|";
       return x_ret;
     }
     
@@ -210,6 +227,9 @@ namespace MediaPortal.MPInstaller
           {
             case "OutputFileName":
               OutputFileName = s.Substring(s.IndexOf('=') + 1);
+              break;
+            case "DefaultFile":
+              DefaultFile = s.Substring(s.IndexOf('=') + 1).ToUpper()=="TRUE"?true :false;
               break;
           }
         }

@@ -44,6 +44,7 @@ namespace MediaPortal.MPInstaller
         public download_form(string s, string d)
         {
             InitializeComponent();
+            label2.Text = "Resolving host ....";
             source = s;
             dest = d;
             client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
@@ -57,14 +58,26 @@ namespace MediaPortal.MPInstaller
 
         private void download_form_Shown(object sender, EventArgs e)
         {
+          this.Refresh();
+          this.Update();
             if (!String.IsNullOrEmpty(source) && !String.IsNullOrEmpty(dest))
             {
               if (direction == 0)
               {
                 byte[] result=new byte[100];
-                result = client.DownloadData(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE+"/mp_download.php?file=" + Path.GetFileName(source)));
-                //MessageBox.Show(MPinstalerStruct.DEFAULT_UPDATE_SITE+"/mp_download.php?file=" + Path.GetFileName(source));
-                client.DownloadFileAsync(new System.Uri(source), dest);
+                try
+                {
+
+                  result = client.DownloadData(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/mp_download.php?file=" + Path.GetFileName(source)));
+                  //MessageBox.Show(MPinstalerStruct.DEFAULT_UPDATE_SITE+"/mp_download.php?file=" + Path.GetFileName(source));
+                  client.DownloadFileAsync(new System.Uri(source), dest);
+
+                }
+                catch (WebException ex)
+                {
+                  MessageBox.Show("Error ocured : "+ex.Message);
+                  this.Close();
+                }
               }
               else
               {
@@ -76,7 +89,7 @@ namespace MediaPortal.MPInstaller
         private void DownloadProgressCallback(object sender, DownloadProgressChangedEventArgs e)
         {
             progressBar1.Value = e.ProgressPercentage;
-            label2.Text = string.Format("{0}kb/{1}kb", e.BytesReceived/1024, e.TotalBytesToReceive/1024);
+            label2.Text = string.Format("{0} kb/{1} kb", e.BytesReceived/1024, e.TotalBytesToReceive/1024);
         }
 
         private void UploadProgressCallback(object sender, UploadProgressChangedEventArgs e)

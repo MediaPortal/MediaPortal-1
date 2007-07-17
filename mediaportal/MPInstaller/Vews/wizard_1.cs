@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.IO;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -105,7 +106,7 @@ namespace MediaPortal.MPInstaller
       {
         case 1:
           {
-            this.Text = "MediaPortal extension instaler";
+            this.Text = "MediaPortal extension installer";
             skinlister.Items.Clear();
             Customize_list.Visible = false;
             button_back.Visible = false;
@@ -190,7 +191,15 @@ namespace MediaPortal.MPInstaller
             skinlister.Items.Clear();
             foreach (string sk in package.SkinList)
             {
-              skinlister.Items.Add(sk, true);
+              if (package.InstalledSkinList.Contains(sk))
+                  skinlister.Items.Add(sk, true);
+              else
+                  skinlister.Items.Add(sk, false);
+            }
+            foreach (string sk in package.InstalledSkinList)
+            {
+              if (!package.SkinList.Contains(sk))
+                skinlister.Items.Add(sk, true);
             }
             break;
           }

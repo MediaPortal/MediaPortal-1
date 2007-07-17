@@ -31,6 +31,8 @@ namespace MediaPortal.MPInstaller
         public bool isValid = false;
         public List<string> SkinList;
         public List<string> InstallableSkinList;
+        public List<string> InstalledSkinList;
+
         public MPpackageStruct()
         {
             txt_EULA = String.Empty;
@@ -43,6 +45,7 @@ namespace MediaPortal.MPInstaller
             isLocal = false;
             SkinList = new List<string>();
             InstallableSkinList = new List<string>();
+            InstalledSkinList = new List<string>();
 
         }
         
@@ -63,7 +66,7 @@ namespace MediaPortal.MPInstaller
                         if (test_file(fl,entry))
                         { 
                             string tpf =Path.GetFullPath(MPinstalerStruct.GetDirEntry(fl)) ;
-                            if (fl.Type == MPinstalerStruct.SKIN_TYPE || fl.Type == MPinstalerStruct.SKIN_MEDIA_TYPE || fl.Type == MPinstalerStruct.SKIN_SOUNDS_TYPE || fl.Type == MPinstalerStruct.SKIN_ANIMATIONS_TYPE || fl.Type == MPinstalerStruct.SKIN_TETRIS_TYPE)
+                            if (fl.SkinType)
                             {
                                 if (!Directory.Exists(Path.GetDirectoryName(tpf)))
                                     Directory.CreateDirectory(Path.GetDirectoryName(tpf));
@@ -89,6 +92,24 @@ namespace MediaPortal.MPInstaller
                             }
                             fs.Close();
                             this._intalerStruct.Uninstall.Add(new UninstallInfo(tpf));
+                            if (fl.SkinType && fl.FileProperties.DefaultFile)
+                            {
+                              foreach(string sd in this.InstallableSkinList)
+                                if (!this.SkinList.Contains(sd))
+                                {
+                                  string newtpf = Path.GetFullPath(MPinstalerStruct.GetSkinDirEntry(fl,sd));
+                                  File.Copy(tpf,newtpf,true);
+                                  this._intalerStruct.Uninstall.Add(new UninstallInfo(newtpf));
+                                  if (lb != null)
+                                  {
+                                    lb.Items.Add(newtpf);
+                                    lb.Refresh();
+                                    lb.Update();
+                                  }
+
+                                }
+                            }
+
                             if (lb != null)
                             {
                                 lb.Items.Add(tpf);
@@ -111,7 +132,7 @@ namespace MediaPortal.MPInstaller
         {
           if (_intalerStruct.FindFileInGroupState(fl))
           {
-            if (fl.Type == MPinstalerStruct.SKIN_TYPE || fl.Type == MPinstalerStruct.SKIN_MEDIA_TYPE)
+            if (fl.SkinType)
             {
               if (Path.GetFileName(ze.Name) == Path.GetFileName(fl.FileName)
                   && ze.Name.Contains(@"\" + fl.SubType + @"\") && InstallableSkinList.Contains(fl.SubType))
@@ -254,6 +275,46 @@ namespace MediaPortal.MPInstaller
                         containsSkin = true;
                     }
                 }
+                //-----------------
+                string SkinDirectory = Config.GetFolder(Config.Dir.Skin);
+                if (Directory.Exists(SkinDirectory))
+                {
+                  string[] skinFolders = Directory.GetDirectories(SkinDirectory, "*.*");
+
+                  foreach (string skinFolder in skinFolders)
+                  {
+                    bool isInvalidDirectory = false;
+                    string[] invalidDirectoryNames = new string[] { "cvs" };
+
+                    string directoryName = skinFolder.Substring(SkinDirectory.Length + 1);
+
+                    if (directoryName != null && directoryName.Length > 0)
+                    {
+                      foreach (string invalidDirectory in invalidDirectoryNames)
+                      {
+                        if (invalidDirectory.Equals(directoryName.ToLower()))
+                        {
+                          isInvalidDirectory = true;
+                          break;
+                        }
+                      }
+
+                      if (isInvalidDirectory == false)
+                      {
+                        //
+                        // Check if we have a home.xml located in the directory, if so we consider it as a
+                        // valid skin directory
+                        //
+                        string filename = Path.Combine(SkinDirectory, Path.Combine(directoryName, "references.xml"));
+                        if (File.Exists(filename))
+                        {
+                          InstalledSkinList.Add(directoryName);
+                        }
+                      }
+                    }
+                  }
+                }
+                //-----------------
             }
         }
     }

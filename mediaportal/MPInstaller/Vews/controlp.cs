@@ -343,8 +343,9 @@ namespace MediaPortal.MPInstaller
     {
       if (listView1.SelectedItems.Count > 0)
       {
-
-        MPpackageStruct pk = lst.Find(listView1.SelectedItems[0].SubItems[0].Text);
+        MPInstallHelper temp_lst = new MPInstallHelper();
+        temp_lst.LoadFromFile();
+        MPpackageStruct pk = temp_lst.Find(listView1.SelectedItems[0].SubItems[0].Text);
         if (pk != null)
         {
           if (!String.IsNullOrEmpty(pk._intalerStruct.UpdateURL.Trim()))
@@ -361,8 +362,8 @@ namespace MediaPortal.MPInstaller
               int idx = temp_mpih.IndexOf(pk);
               if (idx > -1)
               {
-                if (((MPpackageStruct)temp_mpih.lst[idx])._intalerStruct.Version.CompareTo(pk._intalerStruct.Version) > 0)
-                {
+               //if (((MPpackageStruct)temp_mpih.lst[idx])._intalerStruct.Version.CompareTo(pk._intalerStruct.Version) > 0)
+                //{
                   if (MessageBox.Show("New version found!. Do you want download and install ?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
                   {
                     MPpackageStruct pk1 = ((MPpackageStruct)temp_mpih.lst[idx]);
@@ -386,11 +387,11 @@ namespace MediaPortal.MPInstaller
                         MessageBox.Show("Invalid package !");
                     }
                   }
-                }
-                else
-                {
-                  MessageBox.Show("No updates were found !");
-                }
+                //}
+                //else
+                //{
+                //  MessageBox.Show("No updates were found !");
+                //}
               }
               else
               {
