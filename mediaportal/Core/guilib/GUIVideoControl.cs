@@ -109,21 +109,23 @@ namespace MediaPortal.GUI.Library
       {
         if (!IsVisible)
         {
+          if (_setVideoWindow) GUIGraphicsContext.VideoWindow = new Rectangle(0,0,0,0);
           base.Render(timePassed);
           return;
         }
       }
       
-      float x=base.XPosition;
-      float y=base.YPosition;
-      GUIGraphicsContext.Correct(ref x,ref y);
-
-      _videoWindows[0].X=(int)x;
-      _videoWindows[0].Y=(int)y;
-      _videoWindows[0].Width=base.Width;
-      _videoWindows[0].Height=base.Height;
       if (!GUIGraphicsContext.Calibrating )
       {
+        float x = base.XPosition;
+        float y = base.YPosition;
+        GUIGraphicsContext.Correct(ref x, ref y);
+
+        _videoWindows[0].X = (int)x;
+        _videoWindows[0].Y = (int)y;
+        _videoWindows[0].Width = base.Width;
+        _videoWindows[0].Height = base.Height;
+
         if (_setVideoWindow)
           GUIGraphicsContext.VideoWindow = _videoWindows[0];
 
