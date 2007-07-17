@@ -160,12 +160,6 @@
         "Entry"
         {
         "MsmKey" = "8:_652B4EF6689AA1812318FF244CD6FEBF"
-        "OwnerKey" = "8:_91C69A1D9319483292529A8986F4215B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_652B4EF6689AA1812318FF244CD6FEBF"
         "OwnerKey" = "8:_A987C233BAE14CE1A50509BEB71AD2A4"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -197,12 +191,6 @@
         {
         "MsmKey" = "8:_78D4FD0ECE1EE25CA2F412BB36BEA740"
         "OwnerKey" = "8:_A987C233BAE14CE1A50509BEB71AD2A4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_78D4FD0ECE1EE25CA2F412BB36BEA740"
-        "OwnerKey" = "8:_91C69A1D9319483292529A8986F4215B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -315,6 +303,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B113D874E12A4035981F6A8D5FC99AEF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B5F0F422BC28C39FE4F02EDEA934D5A6"
         "OwnerKey" = "8:_A987C233BAE14CE1A50509BEB71AD2A4"
         "MsmSig" = "8:_UNDEFINED"
@@ -347,12 +341,6 @@
         {
         "MsmKey" = "8:_B616CA99FC885E49913FD5951C6E4270"
         "OwnerKey" = "8:_C666A405049845719EBCFFF09ED8F684"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C38B198C85094FCF97142104A082E6F8"
-        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -761,7 +749,7 @@
                     "_167290DB26CE81C32B2BB365DFB4CCDB"
                     {
                     "Name" = "8:Interop.SHDocVw.dll"
-                    "Attributes" = "3:512"
+                    "Attributes" = "3:0"
                     }
                 }
             "SourcePath" = "8:Interop.SHDocVw.dll"
@@ -770,7 +758,7 @@
             "Folder" = "8:_E88C006BAD524657A925AC041F38E802"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
+            "Vital" = "11:FALSE"
             "ReadOnly" = "11:FALSE"
             "Hidden" = "11:FALSE"
             "System" = "11:FALSE"
@@ -1566,6 +1554,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B113D874E12A4035981F6A8D5FC99AEF"
+            {
+            "SourcePath" = "8:..\\..\\..\\Filters\\bin\\TsReader.ax"
+            "TargetName" = "8:TsReader.ax"
+            "Tag" = "8:"
+            "Folder" = "8:_C2F0F37686774BEB8C7DCDEAD47B6909"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B5F0F422BC28C39FE4F02EDEA934D5A6"
             {
             "AssemblyRegister" = "3:1"
@@ -1626,26 +1634,6 @@
             "Register" = "3:1"
             "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C38B198C85094FCF97142104A082E6F8"
-            {
-            "SourcePath" = "8:..\\..\\..\\Filters\\bin\\TsReader.ax"
-            "TargetName" = "8:TsReader.ax"
-            "Tag" = "8:"
-            "Folder" = "8:_C2F0F37686774BEB8C7DCDEAD47B6909"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:4"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C5FE318D416D4459916DA524598E4663"
@@ -1994,7 +1982,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Mediaportal TV Client Plugin"
         "ProductCode" = "8:{F7444E89-5BC0-497E-9650-E50539860DE0}"
-        "PackageCode" = "8:{398CAABA-F5AD-45F7-8EE4-59EAC997A15A}"
+        "PackageCode" = "8:{83DC17B9-6C13-41E3-A557-652F9CC14BB5}"
         "UpgradeCode" = "8:{93E7284D-C9D1-4386-9A08-1A85408D3CCA}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
