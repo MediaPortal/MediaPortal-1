@@ -95,6 +95,7 @@ namespace MediaPortal.Player
     bool _isUsingNvidiaCodec = false;
     protected IBaseFilter _interfaceTSReader = null;
     protected IBaseFilter _videoCodecFilter = null;
+    protected IBaseFilter _h264videoCodecFilter = null;
     protected IBaseFilter _audioCodecFilter = null;
     protected IBaseFilter _audioRendererFilter = null;
     protected IBaseFilter _subtitleFilter = null;

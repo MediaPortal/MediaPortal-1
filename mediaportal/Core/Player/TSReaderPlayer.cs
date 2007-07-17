@@ -218,6 +218,7 @@ namespace MediaPortal.Player
         string strVideoCodec = "";
         string strAudioCodec = "";
         string strAudioRenderer = "";
+        string strH264VideoCodec = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -235,6 +236,7 @@ namespace MediaPortal.Player
           }
           strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
+          strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
           strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
           enableDvbSubtitles = xmlreader.GetValueAsBool("mytv", "dvbsubtitles", false);
           string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
@@ -258,6 +260,9 @@ namespace MediaPortal.Player
         {
           if (strVideoCodec.Length > 0)
             _videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
+
+          if (strH264VideoCodec.Length > 0)
+            _h264videoCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
         }
         if (strAudioCodec.Length > 0)
           _audioCodecFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
@@ -493,6 +498,11 @@ namespace MediaPortal.Player
         {
           while ((hr = Marshal.ReleaseComObject(_videoCodecFilter)) > 0) ;
           _videoCodecFilter = null;
+        }
+        if (_h264videoCodecFilter != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_h264videoCodecFilter)) > 0) ;
+          _h264videoCodecFilter = null;
         }
         if (_audioCodecFilter != null)
         {
