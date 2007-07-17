@@ -33,6 +33,20 @@ namespace TvLibrary.Implementations.DVB
   public class Hauppauge : IDiSEqCController
   {
     #region enums
+    Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e, 0x4, 0xe1, 0xe0);
+
+    enum BdaDigitalModulator
+    {
+      MODULATION_TYPE = 0,
+      INNER_FEC_TYPE,
+      INNER_FEC_RATE,
+      OUTER_FEC_TYPE,
+      OUTER_FEC_RATE,
+      SYMBOL_RATE,
+      SPECTRAL_INVERSION,
+      GUARD_INTERVAL,
+      TRANSMISSION_MODE
+    } ;
     enum BdaNodes
     {
       BDA_TUNER_NODE = 0,
@@ -92,8 +106,8 @@ namespace TvLibrary.Implementations.DVB
     Guid BdaTunerExtentionProperties = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0, 0xc9, 0xf2, 0x1f, 0xc7);
     bool _isHauppauge = false;
     IntPtr _ptrDiseqc = IntPtr.Zero;
-    IntPtr _tempPtr = Marshal.AllocCoTaskMem(1024);
     IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
+    IntPtr _tempInstance = Marshal.AllocCoTaskMem(1024);
     DirectShowLib.IKsPropertySet _propertySet = null;
     #endregion
 
@@ -226,44 +240,63 @@ namespace TvLibrary.Implementations.DVB
     {
       //Set the Pilot
       int hr;
+      int length;
       KSPropertySupport supported;
       _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, out supported);
+
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
         Log.Log.Info("Hauppauge: Set Pilot: {0}", channel.Pilot);
         Marshal.WriteInt32(_tempValue, (Int32)channel.Pilot);
-        hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempPtr, 1024, _tempValue, 4);
-        Log.Log.Info("Hauppauge: Set Pilot returned:{0:X}", hr);
+        hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempInstance, 32, _tempValue, 4);
+        Log.Log.Info("Hauppauge:  returned:{0:X}", hr);
       }
 
       //get Pilot
-      int length;
       if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {
         Log.Log.Info("Hauppauge: Get Pilot");
-        Marshal.WriteInt32(_tempValue, (Int32)0);
-        hr = _propertySet.Get(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempPtr, 1024, _tempValue, 4, out length);
-        Log.Log.Info("Hauppauge: Get Pilot returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
+        hr = _propertySet.Get(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempInstance, 32, _tempValue, 4, out length);
+        Log.Log.Info("Hauppauge:   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
       }
-      
+
       //Set the Roll-off
       _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
         Log.Log.Info("Hauppauge: Set Roll-Off: {0}", channel.RollOff);
         Marshal.WriteInt32(_tempValue, (Int32)channel.RollOff);
-        hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempPtr, 1024, _tempValue, 4);
-        Log.Log.Info("Hauppauge: Set BDA Roll-Off returned:{0:X}", hr);
+        hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempInstance, 32, _tempValue, 4);
+        Log.Log.Info("Hauppauge:   returned:{0:X}", hr);
       }
 
       //get roll-off
       if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {
         Log.Log.Info("Hauppauge: Get BDA Roll-Off");
-        Marshal.WriteInt32(_tempValue, (Int32)0);
-        hr = _propertySet.Get(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempPtr, 1024, _tempValue, 4, out length);
-        Log.Log.Info("Hauppauge: Get BDA Roll-Off returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
+        hr = _propertySet.Get(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempInstance, 32, _tempValue, 4, out length);
+        Log.Log.Info("Hauppauge:   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
       }
+
+
+      ////Set the modulation
+      //_propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
+      //if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
+      //{
+      //  Log.Log.Info("Hauppauge: Set ModulationType: {0}", channel.ModulationType);
+      //  Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
+      //  hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4);
+      //  Log.Log.Info("Hauppauge:    returned:{0:X}", hr);
+      //}
+
+      ////get modulation
+      //if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
+      //{
+      //  Log.Log.Info("Hauppauge: Get BDA ModulationType");
+      //  Marshal.WriteInt32(_tempValue, (Int32)0);
+      //  hr = _propertySet.Get(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4, out length);
+      //  Log.Log.Info("Hauppauge: Get   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
+      //}
     }
   }
 }
