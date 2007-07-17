@@ -148,7 +148,7 @@ void CDeMultiplexer::SetAudioStream(int stream)
       if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
 
       //render the audio pin
-      RenderFilterPin(m_filter.GetAudioPin());
+      RenderFilterPin(m_filter.GetAudioPin(),true,false);
 
       didStop=true;
     }
@@ -380,9 +380,12 @@ CBuffer* CDeMultiplexer::GetVideo()
 	  CAutoLock lock (&m_sectionVideo);
     //yup, then return the next one
     ivecBuffers it =m_vecVideoBuffers.begin();
-    CBuffer* videoBuffer=*it;
-    m_vecVideoBuffers.erase(it);
-    return videoBuffer;
+    if (it!=m_vecVideoBuffers.end())
+    {
+      CBuffer* videoBuffer=*it;
+      m_vecVideoBuffers.erase(it);
+      return videoBuffer;
+    }
   }
 
   //no video packets available
@@ -1207,24 +1210,125 @@ HRESULT CDeMultiplexer::IsPlaying()
 	}
 	return S_FALSE;
 }
+bool CreateFilter(const WCHAR *Name, IBaseFilter **Filter,
+   REFCLSID FilterCategory)
+{
+
+   HRESULT hr;    
+
+   // Create the system device enumerator.
+   CComPtr<ICreateDevEnum> devenum;
+   hr = devenum.CoCreateInstance(CLSID_SystemDeviceEnum);
+   if (FAILED(hr))
+      return false;    
+
+   // Create an enumerator for this category.
+   CComPtr<IEnumMoniker> classenum;
+   hr = devenum->CreateClassEnumerator(FilterCategory, &classenum, 0);
+   if (hr != S_OK)
+      return false;    
+
+   // Find the filter that matches the name given.
+   CComVariant name(Name);
+   CComPtr<IMoniker> moniker;
+   while (classenum->Next(1, &moniker, 0) == S_OK)
+   {
+      CComPtr<IPropertyBag> properties;
+      hr = moniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&properties);
+      if (FAILED(hr))
+         return false;    
+
+      CComVariant friendlyname;
+      hr = properties->Read(L"FriendlyName", &friendlyname, 0);
+      if (FAILED(hr))
+         return false;    
+
+      if (name == friendlyname)
+      {
+         hr = moniker->BindToObject(0, 0, IID_IBaseFilter, (void **)Filter);
+         return SUCCEEDED(hr);
+      }    
+
+      moniker.Release();
+   }    
+
+   // Couldn't find a matching filter.
+   return false;
+}
+//
+/// Create a filter by category and name, and add it to a filter
+/// graph. Will enumerate all filters of the given category and
+/// add the filter whose name matches, if any. If the filter could be
+/// created but not added to the graph, the filter is destroyed.
+///
+/// @param Graph Filter graph.
+/// @param Name of filter to create.
+/// @param Filter Receives a pointer to the filter.
+/// @param FilterCategory Filter category.
+/// @param NameInGraph Name for the filter in the graph, or 0 for no
+/// name.
+///
+/// @return true if successful.
+bool AddFilter(IFilterGraph *Graph, const WCHAR *Name,
+   IBaseFilter **Filter, REFCLSID FilterCategory,
+   const WCHAR *NameInGraph)
+{
+
+   if (!CreateFilter(Name, Filter, FilterCategory))
+      return false;   
+
+   if (FAILED(Graph->AddFilter(*Filter, NameInGraph)))
+   {
+      (*Filter)->Release();
+      *Filter = 0;
+      return false;
+   }   
+
+   return true;
+}   
 
 ///
 /// Renders an output pin
-HRESULT CDeMultiplexer::RenderFilterPin(CBasePin* pin)
+HRESULT CDeMultiplexer::RenderFilterPin(CBasePin* pin, bool isAudio, bool isVideo)
 {
   LogDebug("demux:RenderFilterPin");
   if ( pin->IsConnected())
   {
-	  HRESULT hr = E_FAIL;
-    IPin* pConnectedPin;
-    PIN_INFO info;
-    pin->ConnectedTo(&pConnectedPin);
-    pConnectedPin->QueryPinInfo(&info);
-    pConnectedPin->Release();
+    //tsreader->codec->renderer
+	  HRESULT    hr = E_FAIL;
+    IPin*     pCodecPinIn;
+    IPin*     pCodecPinOut;
+    PIN_INFO  codecInfo;
     IFilterGraph* graph=m_filter.GetFilterGraph();
+    pin->ConnectedTo(&pCodecPinIn);
+    pCodecPinIn->QueryPinInfo(&codecInfo);
+    graph->Disconnect(pCodecPinIn);
+    pCodecPinIn->Release();
     graph->Disconnect(pin);
-    graph->RemoveFilter(info.pFilter);
-    info.pFilter->Release();
+
+    ULONG      fetched;
+    IEnumPins* enumPins;
+    IPin*      codecPinsOut[1];
+    codecInfo.pFilter->EnumPins(&enumPins);
+    while (SUCCEEDED(enumPins->Next(1,codecPinsOut,&fetched)))
+    {
+      if (1!=fetched) break;
+      PIN_DIRECTION pinDir;
+      codecPinsOut[0]->QueryDirection(&pinDir);
+      if (PINDIR_OUTPUT == pinDir)
+      {
+        if (SUCCEEDED(codecPinsOut[0]->ConnectedTo(&pCodecPinOut)))
+        {
+          graph->Disconnect(pCodecPinOut);
+          pCodecPinOut->Release();
+        }
+        graph->Disconnect(codecPinsOut[0]);
+      }
+      codecPinsOut[0]->Release();
+    } 
+    enumPins->Release(); 
+    codecInfo.pFilter->Release();
+    
 
 	  IGraphBuilder *pGraphBuilder;
 	  if(SUCCEEDED(graph->QueryInterface(IID_IGraphBuilder, (void **) &pGraphBuilder)))
@@ -1233,7 +1337,7 @@ HRESULT CDeMultiplexer::RenderFilterPin(CBasePin* pin)
 		  pGraphBuilder->Release();
 	  }
 
-	  graph->Release();
+	  //graph->Release();
 	  return hr;
   }
   return S_OK;
@@ -1264,26 +1368,52 @@ void CDeMultiplexer::SetHoldVideo(bool onOff)
 	m_bHoldVideo=onOff;
 }
 
+
+///
+/// Create a filter by category and name. Will enumerate all filters
+/// of the given category and return the filter whose name matches,
+/// if any.
+///
+/// @param Name of filter to create.
+/// @param Filter Will receive the pointer to the interface
+/// for the created filter.
+/// @param FilterCategory Filter category.
+///
+/// @return true if successful.
+
 void CDeMultiplexer::ThreadProc()
 {
-  LogDebug("demux:reconfigure graph");
-  //remember if graph is playing
-  HRESULT isPlaying=IsPlaying();
+  try
 
-  //stop graph
-  if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
-  
-  //re-render the video output pin
-  RenderFilterPin(m_filter.GetVideoPin());
-
-  //re-render the audio output pin
-  RenderFilterPin(m_filter.GetAudioPin());
-
-  //if we where playing
-  if (isPlaying==S_OK )
   {
-    //then start the graph again
-    DoStart();
+    LogDebug("demux:reconfigure graph");
+    //remember if graph is playing
+    HRESULT isPlaying=IsPlaying();
+
+    //stop graph
+    LogDebug("demux:  stop graph");
+    if (DoStop()==S_OK ){while(IsStopped() == S_FALSE){Sleep(100); break;}}
+    
+    //re-render the video output pin
+    LogDebug("demux:  render video");
+    RenderFilterPin(m_filter.GetVideoPin(),false,true);
+
+    //re-render the audio output pin
+    LogDebug("demux:  render audio");
+    RenderFilterPin(m_filter.GetAudioPin(),true,false);
+
+
+    //if we where playing
+    if (isPlaying==S_OK )
+    {
+      //then start the graph again
+      LogDebug("demux:  start graph");
+      DoStart();
+    }
+    LogDebug("demux:reconfigure graph done");
+    }
+  catch(...)
+  {
+    LogDebug("demux:reconfigure exception");
   }
-  LogDebug("demux:reconfigure graph done");
 }

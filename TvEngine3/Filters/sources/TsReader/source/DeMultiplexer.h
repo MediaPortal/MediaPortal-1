@@ -78,7 +78,7 @@ private:
   void GetMpeg4Media(CMediaType *pmt);
   bool ReadFromFile(bool isAudio, bool isVideo);
   bool m_bEndOfFile;
-  HRESULT RenderFilterPin(CBasePin* pin);
+  HRESULT RenderFilterPin(CBasePin* pin, bool isAudio, bool isVideo);
   HRESULT DoStart();
   HRESULT DoStop();
   HRESULT IsStopped();

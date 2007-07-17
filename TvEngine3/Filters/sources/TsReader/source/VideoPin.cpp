@@ -95,6 +95,7 @@ STDMETHODIMP CVideoPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 
 HRESULT CVideoPin::GetMediaType(CMediaType *pmt)
 {
+  LogDebug("vid:GetMediaType()");
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   demux.GetVideoStreamType(*pmt);
 	return S_OK;
@@ -153,20 +154,21 @@ HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
   }
 #endif
   */
+  LogDebug("vid:CheckConnect()");
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
 HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 {
-	LogDebug("pin:CompleteConnect()");
+	LogDebug("vid:CompleteConnect()");
 	HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
 	if (SUCCEEDED(hr))
 	{
-		LogDebug("pin:CompleteConnect() done");
+		LogDebug("vid:CompleteConnect() done");
     m_bConnected=true;
 	}
 	else
 	{
-		LogDebug("pin:CompleteConnect() failed:%x",hr);
+		LogDebug("vid:CompleteConnect() failed:%x",hr);
 	}
 
   if (m_pTsReaderFilter->IsTimeShifting())
@@ -182,12 +184,14 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
     m_pTsReaderFilter->GetDuration(&refTime);
     m_rtDuration=CRefTime(refTime);
   }
+  LogDebug("vid:CompleteConnect() ok");
 	return hr;
 }
 
 
 HRESULT CVideoPin::BreakConnect()
 {
+  LogDebug("vid:BreakConnect() ok");
   m_bConnected=false;
   return CSourceStream::BreakConnect();
 }

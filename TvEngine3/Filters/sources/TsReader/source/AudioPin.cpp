@@ -111,7 +111,7 @@ STDMETHODIMP CAudioPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 
 HRESULT CAudioPin::GetMediaType(CMediaType *pmt)
 {
-
+  LogDebug("aud:GetMediaType()");
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   demux.GetAudioStreamType(demux.GetAudioStream(), *pmt);
 	return S_OK;
@@ -139,6 +139,7 @@ HRESULT CAudioPin::CheckConnect(IPin *pReceivePin)
   }
 #endif
   */
+  LogDebug("aud:CheckConnect()");
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
 
@@ -175,16 +176,16 @@ HRESULT CAudioPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 
 HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
 {
-	LogDebug("pin:CompleteConnect()");
+	LogDebug("aud:CompleteConnect()");
 	HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
 	if (SUCCEEDED(hr))
 	{
-		LogDebug("pin:CompleteConnect() done");
+		LogDebug("aud:CompleteConnect() done");
     m_bConnected=true;
 	}
 	else
 	{
-		LogDebug("pin:CompleteConnect() failed:%x",hr);
+		LogDebug("aud:CompleteConnect() failed:%x",hr);
 	}
 
   if (m_pTsReaderFilter->IsTimeShifting())
@@ -200,12 +201,14 @@ HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
     m_pTsReaderFilter->GetDuration(&refTime);
     m_rtDuration=CRefTime(refTime);
   }
+	LogDebug("aud:CompleteConnect() ok");
 	return hr;
 }
 
 HRESULT CAudioPin::BreakConnect()
 {
   m_bConnected=false;
+	LogDebug("aud:BreakConnect()");
   return CSourceStream::BreakConnect();
 }
 
@@ -263,6 +266,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
     }
     if (demux.EndOfFile()) 
     {
+    LogDebug("aud:set eof");
       m_bInFillBuffer=false;
       return S_FALSE;
     }
