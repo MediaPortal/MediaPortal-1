@@ -19496,7 +19496,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="DIGITTRADE DVB-T USB Stick" capturename="AF9015 BDA Filter" devid="vid_15a4&amp;pid_9016&amp;mi_00">
+  <capturecard commercialname="August/Digitrade DVB-T USB Stick" capturename="AF9015 BDA Filter" devid="vid_15a4&amp;pid_9016&amp;mi_00">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
@@ -20336,20 +20336,6 @@
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"	sinkpin="0"/>
-      </connections>
-    </tv>
-  </capturecard>
-
-  <capturecard commercialname="August USB Freeview TV Receiver DVB-T201" capturename="AF9015 BDA Filter" devid="vid_15a4&amp;pid_9016&amp;mi_00">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
-    <tv>
-      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
-      <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"/>
-        <filter cat="tunerdevice"     name="AF9015 BDA Filter"                checkdevice="true"/>
-      </filters>
-      <connections>
-        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
