@@ -41,6 +41,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
+using System.Xml;
 
 using TvLibrary.Log;
 using TvControl;
@@ -442,36 +443,74 @@ namespace TvService
         return false;
       }
     }
+     void GetDatabaseConnectionString(out string connectionString, out string provider)
+    {
+      connectionString = "";
+      provider = "";
+      try
+      {
+        string fname = String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        try
+        {
+          System.IO.File.Copy(fname, "gentle.config", true);
+        }
+        catch (Exception) { }
+        XmlDocument doc = new XmlDocument();
+        doc.Load(String.Format(@"{0}\MediaPortal TV Server\gentle.config", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)));
+        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+        XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString"); ;
+        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name"); ;
+        connectionString = nodeConnection.InnerText;
+        provider = nodeProvider.InnerText;
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+    }
 
     private void applyProcessPriority()
     {
-      TvDatabase.TvBusinessLayer layer = new TvDatabase.TvBusinessLayer();
-      int processPriority = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value);
-
-      switch (processPriority)
+      try
       {
-        case 0:
-          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.RealTime;
-          break;
-        case 1:
-          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
-          break;
-        case 2:
-          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.AboveNormal;
-          break;
-        case 3:
-          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
-          break;
-        case 4:
-          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
-          break;
-        case 5:
-          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Idle;
-          break;
-        default:
-          Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
-          break;
+        string connectionString, provider;
+        GetDatabaseConnectionString(out connectionString, out provider);
+        string ConnectionLog = connectionString.Remove(connectionString.IndexOf(@"Password=") + 8);
+        Log.Info("Controller: using {0} database connection: {1}", provider, ConnectionLog);
+        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
+
+        TvDatabase.TvBusinessLayer layer = new TvDatabase.TvBusinessLayer();
+        int processPriority = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value);
+
+        switch (processPriority)
+        {
+          case 0:
+            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.RealTime;
+            break;
+          case 1:
+            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
+            break;
+          case 2:
+            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.AboveNormal;
+            break;
+          case 3:
+            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
+            break;
+          case 4:
+            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
+            break;
+          case 5:
+            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Idle;
+            break;
+          default:
+            Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.Normal;
+            break;
+        }
       }
+      catch (Exception)
+      {
+      }
+
     }
 
     private bool OnPowerEventHandler(PowerBroadcastStatus powerStatus)
