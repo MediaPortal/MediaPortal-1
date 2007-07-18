@@ -89,9 +89,7 @@ namespace TvService
       #endregion
       */
 
-      // apply process priority.
-      applyProcessPriority();     
-
+     
       string applicationPath = System.Windows.Forms.Application.ExecutablePath;
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
@@ -109,6 +107,14 @@ namespace TvService
       catch (Exception ex)
       {      
         Log.Write(ex);
+      } // apply process priority.
+      try
+      {
+        applyProcessPriority();
+      }
+      catch (Exception)
+      {
+        //applyProcessPriority can generate an exception when we cannot connect to the database
       }
       InitializeComponent();
     }
