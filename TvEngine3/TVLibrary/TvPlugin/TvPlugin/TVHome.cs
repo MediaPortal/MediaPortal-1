@@ -84,16 +84,24 @@ namespace TvPlugin
     static bool _avoidSeeking = false;
     Stopwatch benchClock = null;
 
-    [SkinControlAttribute(2)]     protected GUIButtonControl btnTvGuide = null;
-    [SkinControlAttribute(3)]     protected GUIButtonControl btnRecord = null;
+    [SkinControlAttribute(2)]
+    protected GUIButtonControl btnTvGuide = null;
+    [SkinControlAttribute(3)]
+    protected GUIButtonControl btnRecord = null;
     // [SkinControlAttribute(6)]     protected GUIButtonControl btnGroup = null;
-    [SkinControlAttribute(7)]     protected GUIButtonControl btnChannel = null;
-    [SkinControlAttribute(8)]     protected GUIToggleButtonControl btnTvOnOff = null;
-    [SkinControlAttribute(13)]    protected GUIButtonControl btnTeletext = null;
-//    [SkinControlAttribute(14)]    protected GUIButtonControl btnTuningDetails = null;
-    [SkinControlAttribute(24)]    protected GUIImage imgRecordingIcon = null;
-    [SkinControlAttribute(99)]    protected GUIVideoControl videoWindow = null;
-    [SkinControlAttribute(9)]     protected GUIButtonControl btnActiveStreams = null;
+    [SkinControlAttribute(7)]
+    protected GUIButtonControl btnChannel = null;
+    [SkinControlAttribute(8)]
+    protected GUIToggleButtonControl btnTvOnOff = null;
+    [SkinControlAttribute(13)]
+    protected GUIButtonControl btnTeletext = null;
+    //    [SkinControlAttribute(14)]    protected GUIButtonControl btnTuningDetails = null;
+    [SkinControlAttribute(24)]
+    protected GUIImage imgRecordingIcon = null;
+    [SkinControlAttribute(99)]
+    protected GUIVideoControl videoWindow = null;
+    [SkinControlAttribute(9)]
+    protected GUIButtonControl btnActiveStreams = null;
     static bool _connected = false;
 
     static protected TvServer _server;
@@ -577,11 +585,11 @@ namespace TvPlugin
     void OnSelectChannel()
     {
       Stopwatch benchClock = null;
-      benchClock = Stopwatch.StartNew();      
-      TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MINI_GUIDE);      
+      benchClock = Stopwatch.StartNew();
+      TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MINI_GUIDE);
       miniGuide.AutoZap = false;
       miniGuide.SelectedChannel = Navigator.Channel;
-      miniGuide.DoModal(GetID);      
+      miniGuide.DoModal(GetID);
 
       //Only change the channel if the channel selectd is actually different. 
       //Without this, a ChannelChange might occur even when MiniGuide is canceled. 
@@ -733,9 +741,9 @@ namespace TvPlugin
         btnRecord.Disabled = false;
       //btnTeletext.Visible = false;
       bool isTimeShifting = TVHome.Card.IsTimeShifting;
-      if (btnTvOnOff.Selected != ( g_Player.Playing && g_Player.IsTV && isTimeShifting ))
+      if (btnTvOnOff.Selected != (g_Player.Playing && g_Player.IsTV && isTimeShifting))
       {
-          btnTvOnOff.Selected = (g_Player.Playing && g_Player.IsTV && isTimeShifting);
+        btnTvOnOff.Selected = (g_Player.Playing && g_Player.IsTV && isTimeShifting);
       }
       if (g_Player.Playing == false)
       {
@@ -1001,9 +1009,9 @@ namespace TvPlugin
     void UpdateStateOfButtons()
     {
       bool isTimeShifting = TVHome.Card.IsTimeShifting;
-      if (btnTvOnOff.Selected != (g_Player.Playing && g_Player.IsTV && isTimeShifting ))
+      if (btnTvOnOff.Selected != (g_Player.Playing && g_Player.IsTV && isTimeShifting))
       {
-          btnTvOnOff.Selected = (g_Player.Playing && g_Player.IsTV && isTimeShifting );
+        btnTvOnOff.Selected = (g_Player.Playing && g_Player.IsTV && isTimeShifting);
       }
       bool hasTeletext = TVHome.Card.HasTeletext;
       if (btnTeletext.IsVisible != hasTeletext)
@@ -1066,7 +1074,7 @@ namespace TvPlugin
     /// how much of the current tv program has elapsed
     /// </summary>
     static public void UpdateProgressPercentageBar()
-    {     
+    {
       TimeSpan ts = DateTime.Now - _updateProgressTimer;
       if (ts.TotalMilliseconds < 1000) return;
       _updateProgressTimer = DateTime.Now;
@@ -1082,11 +1090,11 @@ namespace TvPlugin
         }
         if ((g_Player.currentDescription.Length == 0) && (GUIPropertyManager.GetProperty("#TV.View.description").Length != 0))
         {
-            GUIPropertyManager.SetProperty("#TV.View.channel", "");
-            GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
-            GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
-            GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
-            GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.View.channel", "");
+          GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
         }
       }
       if (g_Player.IsTVRecording)
@@ -1149,7 +1157,7 @@ namespace TvPlugin
         {
           GUIPropertyManager.SetProperty("#TV.Next.title", GUILocalizeStrings.Get(736));// no epg for this channel
         }
-        
+
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, Navigator.CurrentChannel);
         if (!System.IO.File.Exists(strLogo))
         {
@@ -1313,24 +1321,24 @@ namespace TvPlugin
               return true;
             }
         }
-        
+
         //check if we are currently watching a tv channel with AC3
         IAudioStream[] audioStreams;
         bool hadAc3 = false;
         if (g_Player.Playing && TVHome.Card != null)
         {
-            audioStreams = TVHome.Card.AvailableAudioStreams;
-            foreach (IAudioStream stream in audioStreams)
+          audioStreams = TVHome.Card.AvailableAudioStreams;
+          foreach (IAudioStream stream in audioStreams)
+          {
+            if (stream.StreamType == AudioStreamType.AC3)
             {
-              if (stream.StreamType == AudioStreamType.AC3)
-                  {
-                      hadAc3 = true;
-                  }
+              hadAc3 = true;
             }
-        }  
-        
+          }
+        }
+
         benchClock.Stop();
-        Log.Warn ("TVHome.ViewChannelAndCheck(): Phase 1 - {0} ms - Done method initialization", benchClock.ElapsedMilliseconds.ToString());
+        Log.Warn("TVHome.ViewChannelAndCheck(): Phase 1 - {0} ms - Done method initialization", benchClock.ElapsedMilliseconds.ToString());
         benchClock.Reset();
         benchClock.Start();
         User user = new User();
@@ -1389,7 +1397,7 @@ namespace TvPlugin
         if (succeeded == TvResult.Succeeded)
         {
           //timeshifting succeeded
-          
+
           //check if we the new tvchannel has AC3
           audioStreams = card.AvailableAudioStreams;
           bool hasAc3 = false;
@@ -1441,26 +1449,26 @@ namespace TvPlugin
           MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): had ac3 {0}, has ac3 {1}", hadAc3, hasAc3);
 
           if (cardChanged)
-          {              
-              if (wasPlaying)
-              {
-                  MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}/{3}", TVHome.Card.Id ,card.Id ,TVHome.Card.RTSPUrl, card.RTSPUrl);
-                  MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}/{1}", TVHome.Card.TimeShiftFileName,Card.TimeShiftFileName);
-                  g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
-                  MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (card changed) - timeshifting continueing."); 
-              }
+          {
+            if (wasPlaying)
+            {
+              MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}/{3}", TVHome.Card.Id, card.Id, TVHome.Card.RTSPUrl, card.RTSPUrl);
+              MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}/{1}", TVHome.Card.TimeShiftFileName, Card.TimeShiftFileName);
+              g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
+              MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (card changed) - timeshifting continueing.");
+            }
           }
           else if ((videoSpecsChanged && _rebuildGraphOnNewVideoSpecs) || (audioSpecsChanged && _rebuildGraphOnNewAudioSpecs))
           {
             if (wasPlaying)
             {
               g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
-              MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (video specs changed={0}, audio specs changed={1}) - timeshifting continueing.", videoSpecsChanged, audioSpecsChanged); 
+              MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (video specs changed={0}, audio specs changed={1}) - timeshifting continueing.", videoSpecsChanged, audioSpecsChanged);
             }
           }
           else if ((videoSpecsChanged || audioSpecsChanged) && wasPlaying)
           {
-            MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): keeping graph (video specs changed={0}, audio specs changed={1}) - timeshifting continueing.", videoSpecsChanged, audioSpecsChanged); 
+            MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): keeping graph (video specs changed={0}, audio specs changed={1}) - timeshifting continueing.", videoSpecsChanged, audioSpecsChanged);
           }
 
 
@@ -1478,10 +1486,10 @@ namespace TvPlugin
             StartPlay();
 
           else if (wasPlaying)
-            if ( _avoidSeeking && ((g_Player.CurrentPosition + 15) > g_Player.Duration) ) 
+            if (_avoidSeeking && ((g_Player.CurrentPosition + 15) > g_Player.Duration))
               Log.Warn("TvHome.ViewChannelandCheck(): Seeking avoided. Current position {0}, Duration {1}", g_Player.CurrentPosition, g_Player.Duration);
             else
-              SeekToEnd(true); 
+              SeekToEnd(true);
 
           benchClock.Stop();
           MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 5- {0} ms. Done startplaying or seeking. ", benchClock.ElapsedMilliseconds.ToString());
@@ -1493,18 +1501,18 @@ namespace TvPlugin
           MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): preferred langId:{0}", prefLangId);
 
           if (IsSingleSeat())
-          {            
+          {
             g_Player.CurrentAudioStream = prefLangId;
           }
           else
-          {            
-            IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;           
+          {
+            IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
             MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): streams length:{0}", streams.Length);
             if (streams.Length > prefLangId) // guard; avoid index out of bounds errors.
-            {              
-              TVHome.Card.AudioStream = streams[prefLangId];             
+            {
+              TVHome.Card.AudioStream = streams[prefLangId];
             }
-          }          
+          }
           GUIWaitCursor.Hide();
 
           benchClock.Stop();
@@ -1582,8 +1590,8 @@ namespace TvPlugin
           // If failed and wasPlaying TV, fallback to the last viewed channel. 
           if (!g_Player.IsTimeShifting && wasPlaying)
           {
-              ViewChannelAndCheck(Navigator.Channel);
-              GUIWaitCursor.Hide();
+            ViewChannelAndCheck(Navigator.Channel);
+            GUIWaitCursor.Hide();
           }
         }
         return false;
@@ -1779,6 +1787,7 @@ namespace TvPlugin
     }
     static void SeekToEnd(bool zapping)
     {
+      Log.Info("tvhome:SeektoEnd({0})", zapping);
       string timeshiftFileName = TVHome.Card.TimeShiftFileName;
       bool useRtsp = System.IO.File.Exists("usertsp.txt");
       if (System.IO.File.Exists(timeshiftFileName) && !useRtsp)
@@ -1787,16 +1796,6 @@ namespace TvPlugin
         {
           double duration = g_Player.Duration;
           double position = g_Player.CurrentPosition;
-          /*
-          if (duration > 0 && position > 0)
-          {
-            if (Math.Abs(duration - position) >= 10)
-            {
-              MediaPortal.GUI.Library.Log.Info("tvhome:seektoend dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
-              g_Player.SeekAbsolute(duration);
-              MediaPortal.GUI.Library.Log.Info("tvhome:seektoend  done dur:{0} pos:{1}", g_Player.Duration, g_Player.CurrentPosition);
-            }
-          }*/
           g_Player.SeekAbsolute(duration + 10);
         }
       }
@@ -1805,11 +1804,12 @@ namespace TvPlugin
         //streaming....
         if (zapping)
         {
-          System.Threading.Thread.Sleep(100);
+          //System.Threading.Thread.Sleep(100);
           double duration = g_Player.Duration;
           double position = g_Player.CurrentPosition;
+          Log.Info("tvhome:SeektoEnd({0}/{1})", position, duration);
           if (duration > 0 || position > 0)
-            g_Player.SeekAbsolute(duration - 10);
+            g_Player.SeekAbsolute(duration + 10);
         }
       }
     }
@@ -2477,12 +2477,12 @@ namespace TvPlugin
       // if the groupname does not match any of the groups assigned to the channel, then find the last group avail. (avoiding the all "channels group") for that channel and set is as the new currentgroup
       if (!foundMatchingGroupName && m_currentChannel.ReferringGroupMap().Count > 0)
       {
-        GroupMap groupMap = (GroupMap)m_currentChannel.ReferringGroupMap()[m_currentChannel.ReferringGroupMap().Count-1];
+        GroupMap groupMap = (GroupMap)m_currentChannel.ReferringGroupMap()[m_currentChannel.ReferringGroupMap().Count - 1];
         m_currentgroup = GetGroupIndex(groupMap.ReferencedChannelGroup().GroupName);
         if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count)		// Group no longer exists?
           m_currentgroup = 0;
       }
-            
+
 
     }
 
