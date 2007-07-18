@@ -474,6 +474,7 @@ namespace SetupTv.Sections
         MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
         return;
       }
+      RemoteControl.Instance.EpgGrabberEnabled = false;
       mpButton1.Enabled = false;
       DVBCChannel tuneChannel = new DVBCChannel();
       tuneChannel.Frequency = Int32.Parse(textBoxFreq.Text);
@@ -484,7 +485,7 @@ namespace SetupTv.Sections
       string line = String.Format("Scan freq:{0} {1} symbolrate:{2} ...", tuneChannel.Frequency, tuneChannel.ModulationType, tuneChannel.SymbolRate);
       ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
       item.EnsureVisible();
-
+      Application.DoEvents();
       IChannel[] channels = RemoteControl.Instance.ScanNIT(_cardNumber, tuneChannel);
       if (channels != null)
       {
@@ -502,16 +503,12 @@ namespace SetupTv.Sections
         }
         _channelCount = channels.Length;
       }
-      else
-      {
-        item = listViewStatus.Items.Add("No transponders found");
-        item.EnsureVisible();
-      }
 
-      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
+      ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Scan done, found {0} transponders..." , _channelCount)));
       lastItem.EnsureVisible();
       mpButton1.Enabled = true;
 
+      RemoteControl.Instance.EpgGrabberEnabled = true;
       if (_channelCount != 0)
       {
         if (DialogResult.Yes == MessageBox.Show(String.Format("Found {0} transponders. Would you like to scan those?", _channelCount), "Manual scan results", MessageBoxButtons.YesNo))

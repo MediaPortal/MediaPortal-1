@@ -164,262 +164,268 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public List<IChannel> Scan(IChannel channel, ScanParameters settings)
     {
-      _card.IsScanning = true;
-      _card.Tune(0, channel);
-      _analyzer = GetAnalyzer();
-      if (_analyzer == null)
+      try
       {
-        Log.Log.WriteFile("Scan: no analyzer interface available");
-        return new List<IChannel>();
-      }
-      _card.IsScanning = false;
-      DateTime startTime = DateTime.Now;
-      ResetSignalUpdate();
-      if (_card.IsTunerLocked == false)
-      {
-        System.Threading.Thread.Sleep(settings.TimeOutTune * 1000);
+        _card.IsScanning = true;
+        _card.Tune(0, channel);
+        _analyzer = GetAnalyzer();
+        if (_analyzer == null)
+        {
+          Log.Log.WriteFile("Scan: no analyzer interface available");
+          return new List<IChannel>();
+        }
+        DateTime startTime = DateTime.Now;
         ResetSignalUpdate();
-      }
-      Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
-      if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
-      {
-        try
+        if (_card.IsTunerLocked == false)
         {
-          _event = new ManualResetEvent(false);
-
-          _analyzer.SetCallBack(this);
-          _analyzer.Start();
-          startTime = DateTime.Now;
-          _event.WaitOne(settings.TimeOutSDT * 1000, true);
-
-          int networkId;
-          int transportId;
-          int serviceId;
-          short majorChannel;
-          short minorChannel;
-          short frequency;
-          short EIT_schedule_flag;
-          short EIT_present_following_flag;
-          short runningStatus;
-          short freeCAMode;
-          short serviceType;
-          short modulation;
-          IntPtr providerName;
-          IntPtr serviceName;
-          short pcrPid;
-          short pmtPid;
-          short videoPid;
-          short audio1Pid;
-          short audio2Pid;
-          short audio3Pid;
-          short audio4Pid;
-          short audio5Pid;
-          short ac3Pid;
-          IntPtr audioLanguage1;
-          IntPtr audioLanguage2;
-          IntPtr audioLanguage3;
-          IntPtr audioLanguage4;
-          IntPtr audioLanguage5;
-          IntPtr subtitleLanguage;
-          short teletextPid;
-          short subtitlePid;
-          string strAudioLanguage1 = "";
-          string strAudioLanguage2 = "";
-          string strAudioLanguage3 = "";
-          string strAudioLanguage4 = "";
-          string strAudioLanguage5 = "";
-          short videoStreamType;
-          int found = 0;
-          short lcn = -1;
-          short channelCount;
-          _analyzer.GetCount(out channelCount);
-          bool[] channelFound = new bool[channelCount];
-          List<IChannel> channelsFound = new List<IChannel>();
-          startTime = DateTime.Now;
-
-          for (int i = 0; i < channelCount; ++i)
-          {
-            networkId = 0;
-            transportId = 0;
-            serviceId = 0;
-            _analyzer.GetChannel((short)i,
-                  out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
-                  out frequency, out lcn, out EIT_schedule_flag, out EIT_present_following_flag, out runningStatus,
-                  out freeCAMode, out serviceType, out modulation, out providerName, out serviceName,
-                  out pcrPid, out pmtPid, out videoPid, out audio1Pid, out audio2Pid, out audio3Pid, out audio4Pid, out audio5Pid,
-                  out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out audioLanguage4, out audioLanguage5,
-                  out teletextPid, out subtitlePid, out subtitleLanguage, out videoStreamType);
-            bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
-            string name = DvbTextConverter.Convert(serviceName, "");
-            //Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} v:{6:X} a:{7:X} ac3:{8:X} type:{9:X}", 
-            //  i, networkId, transportId, serviceId, pmtPid, name,videoPid,audio1Pid,ac3Pid, serviceType);
-            if (videoStreamType == 0x10 || videoStreamType == 0x1b)
-            {
-              Log.Log.WriteFile("H264/MPEG4!");
-            }
-            if ((channel as ATSCChannel) != null)
-            {
-              isValid = (majorChannel != 0 && minorChannel != 0);
-            }
-            if (isValid)
-            {
-              found++;
-              ChannelInfo info = new ChannelInfo();
-              info.networkID = networkId;
-              info.transportStreamID = transportId;
-              info.serviceID = serviceId;
-              info.majorChannel = majorChannel;
-              info.minorChannel = minorChannel;
-              info.freq = frequency;
-              info.LCN = lcn;
-              info.eitSchedule = (EIT_schedule_flag != 0);
-              info.eitPreFollow = (EIT_present_following_flag != 0);
-              info.serviceType = serviceType;
-              info.modulation = modulation;
-              info.service_provider_name =  DvbTextConverter.Convert(providerName, "");
-              info.service_name = DvbTextConverter.Convert(serviceName, "");
-              info.pcr_pid = pcrPid;
-              info.scrambled = (freeCAMode != 0);
-
-              info.network_pmt_PID = pmtPid;
-
-              strAudioLanguage1 = Marshal.PtrToStringAnsi(audioLanguage1);
-              strAudioLanguage2 = Marshal.PtrToStringAnsi(audioLanguage2);
-              strAudioLanguage3 = Marshal.PtrToStringAnsi(audioLanguage3);
-              strAudioLanguage4 = Marshal.PtrToStringAnsi(audioLanguage4);
-              strAudioLanguage5 = Marshal.PtrToStringAnsi(audioLanguage5);
-
-              Log.Log.Info("v:{0:X} a1:{1:X} a2:{2:X} a3:{3:X} a4:{4:X} a5:{5:X} ac3:{6:X} ttx:{7:X} sub:{8:X} pmt:{9:X} pcr:{10:X} onid:{11:X} TSID:{12:X} SID:{13:X} maj:{14} min:{15} type:{16} name:{17}",
-                videoPid, audio1Pid, audio2Pid, audio3Pid, audio4Pid, audio5Pid, ac3Pid, teletextPid, subtitlePid, pmtPid, pcrPid, networkId, transportId, serviceId, majorChannel, minorChannel, serviceType, name);
-              bool hasVideo = false;
-              bool hasAudio = false;
-              if (videoPid > 0)
-              {
-                PidInfo pidInfo = new PidInfo();
-                pidInfo.VideoPid(videoPid, videoStreamType);
-                info.AddPid(pidInfo);
-                hasVideo = true;
-              }
-              if (audio1Pid > 0)
-              {
-                PidInfo pidInfo = new PidInfo();
-                pidInfo.AudioPid(audio1Pid, strAudioLanguage1);
-                info.AddPid(pidInfo);
-                hasAudio = true;
-              }
-              if (audio2Pid > 0)
-              {
-                PidInfo pidInfo = new PidInfo();
-                pidInfo.AudioPid(audio2Pid, strAudioLanguage2);
-                info.AddPid(pidInfo);
-                hasAudio = true;
-              }
-              if (audio3Pid > 0)
-              {
-                PidInfo pidInfo = new PidInfo();
-                pidInfo.AudioPid(audio3Pid, strAudioLanguage3);
-                info.AddPid(pidInfo);
-                hasAudio = true;
-              }
-              if (audio4Pid > 0)
-              {
-                PidInfo pidInfo = new PidInfo();
-                pidInfo.AudioPid(audio4Pid, strAudioLanguage4);
-                info.AddPid(pidInfo);
-                hasAudio = true;
-              }
-              if (audio5Pid > 0)
-              {
-                PidInfo pidInfo = new PidInfo();
-                pidInfo.AudioPid(audio5Pid, strAudioLanguage5);
-                info.AddPid(pidInfo);
-                hasAudio = true;
-              }
-              if (ac3Pid > 0)
-              {
-                PidInfo pidInfo = new PidInfo();
-                pidInfo.Ac3Pid(ac3Pid, "");
-                info.AddPid(pidInfo);
-                hasAudio = true;
-              }
-              if (teletextPid > 0)
-              {
-                PidInfo pidInfo = new PidInfo();
-                pidInfo.TeletextPid(teletextPid);
-                info.AddPid(pidInfo);
-              }
-              if (subtitlePid > 0)
-              {
-                PidInfo pidInfo = new PidInfo();
-                pidInfo.SubtitlePid(subtitlePid);
-                info.AddPid(pidInfo);
-              }
-              // This is needed to have the transponder for the 9 day dish epg guide discovered by the scan and to add the channel 
-              // as TV Channel so that we can grab EPG from it
-              if (info.serviceType == 141)
-                hasVideo = true;
-              startTime = DateTime.Now;
-              bool isTvRadioChannel = false;
-              if (info.serviceType == (int)ServiceType.Video || info.serviceType == (int)ServiceType.Mpeg4Stream ||
-                  info.serviceType == (int)ServiceType.Audio || info.serviceType == (int)ServiceType.H264Stream ||
-                  info.serviceType == (int)ServiceType.Mpeg4OrH264Stream)
-              {
-                if (info.service_name.Length == 0)
-                {
-                  info.service_name = String.Format("{0:X}", info.serviceID);
-                }
-                IChannel dvbChannel = CreateNewChannel(info);
-                if (dvbChannel != null)
-                {
-                  channelsFound.Add(dvbChannel);
-                  isTvRadioChannel = true;
-                }
-              }
-              else if (hasVideo || hasAudio)
-              {
-                if (hasVideo)
-                  info.serviceType = (int)ServiceType.Video;
-                else
-                  info.serviceType = (int)ServiceType.Audio;
-                if (info.service_name.Length == 0)
-                {
-                  info.service_name = String.Format("{0:X}", info.serviceID);
-                }
-                IChannel dvbChannel = CreateNewChannel(info);
-                if (dvbChannel != null)
-                {
-                  channelsFound.Add(dvbChannel);
-                  isTvRadioChannel = true;
-                }
-
-              }
-              if (!isTvRadioChannel)
-              {
-                Log.Log.Write("Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X}",
-                  info.service_provider_name, info.service_name, info.serviceType, info.networkID, info.transportStreamID, info.serviceID);
-              }
-            }
-          }
-          if (found != channelCount)
-            Log.Log.Write("Scan! Got {0} from {1} channels", found, channelCount);
-          else
-            Log.Log.Write("Scan Got {0} from {1} channels", found, channelCount);
-          return channelsFound;
+          System.Threading.Thread.Sleep(settings.TimeOutTune * 1000);
+          ResetSignalUpdate();
         }
-        finally
+        Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
+        if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
         {
-          if (_analyzer != null)
+          try
           {
-            _analyzer.SetCallBack(null);
-            _analyzer.Stop();
+            _event = new ManualResetEvent(false);
+
+            _analyzer.SetCallBack(this);
+            _analyzer.Start();
+            startTime = DateTime.Now;
+            _event.WaitOne(settings.TimeOutSDT * 1000, true);
+
+            int networkId;
+            int transportId;
+            int serviceId;
+            short majorChannel;
+            short minorChannel;
+            short frequency;
+            short EIT_schedule_flag;
+            short EIT_present_following_flag;
+            short runningStatus;
+            short freeCAMode;
+            short serviceType;
+            short modulation;
+            IntPtr providerName;
+            IntPtr serviceName;
+            short pcrPid;
+            short pmtPid;
+            short videoPid;
+            short audio1Pid;
+            short audio2Pid;
+            short audio3Pid;
+            short audio4Pid;
+            short audio5Pid;
+            short ac3Pid;
+            IntPtr audioLanguage1;
+            IntPtr audioLanguage2;
+            IntPtr audioLanguage3;
+            IntPtr audioLanguage4;
+            IntPtr audioLanguage5;
+            IntPtr subtitleLanguage;
+            short teletextPid;
+            short subtitlePid;
+            string strAudioLanguage1 = "";
+            string strAudioLanguage2 = "";
+            string strAudioLanguage3 = "";
+            string strAudioLanguage4 = "";
+            string strAudioLanguage5 = "";
+            short videoStreamType;
+            int found = 0;
+            short lcn = -1;
+            short channelCount;
+            _analyzer.GetCount(out channelCount);
+            bool[] channelFound = new bool[channelCount];
+            List<IChannel> channelsFound = new List<IChannel>();
+            startTime = DateTime.Now;
+
+            for (int i = 0; i < channelCount; ++i)
+            {
+              networkId = 0;
+              transportId = 0;
+              serviceId = 0;
+              _analyzer.GetChannel((short)i,
+                    out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
+                    out frequency, out lcn, out EIT_schedule_flag, out EIT_present_following_flag, out runningStatus,
+                    out freeCAMode, out serviceType, out modulation, out providerName, out serviceName,
+                    out pcrPid, out pmtPid, out videoPid, out audio1Pid, out audio2Pid, out audio3Pid, out audio4Pid, out audio5Pid,
+                    out ac3Pid, out  audioLanguage1, out audioLanguage2, out audioLanguage3, out audioLanguage4, out audioLanguage5,
+                    out teletextPid, out subtitlePid, out subtitleLanguage, out videoStreamType);
+              bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
+              string name = DvbTextConverter.Convert(serviceName, "");
+              //Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} v:{6:X} a:{7:X} ac3:{8:X} type:{9:X}", 
+              //  i, networkId, transportId, serviceId, pmtPid, name,videoPid,audio1Pid,ac3Pid, serviceType);
+              if (videoStreamType == 0x10 || videoStreamType == 0x1b)
+              {
+                Log.Log.WriteFile("H264/MPEG4!");
+              }
+              if ((channel as ATSCChannel) != null)
+              {
+                isValid = (majorChannel != 0 && minorChannel != 0);
+              }
+              if (isValid)
+              {
+                found++;
+                ChannelInfo info = new ChannelInfo();
+                info.networkID = networkId;
+                info.transportStreamID = transportId;
+                info.serviceID = serviceId;
+                info.majorChannel = majorChannel;
+                info.minorChannel = minorChannel;
+                info.freq = frequency;
+                info.LCN = lcn;
+                info.eitSchedule = (EIT_schedule_flag != 0);
+                info.eitPreFollow = (EIT_present_following_flag != 0);
+                info.serviceType = serviceType;
+                info.modulation = modulation;
+                info.service_provider_name = DvbTextConverter.Convert(providerName, "");
+                info.service_name = DvbTextConverter.Convert(serviceName, "");
+                info.pcr_pid = pcrPid;
+                info.scrambled = (freeCAMode != 0);
+
+                info.network_pmt_PID = pmtPid;
+
+                strAudioLanguage1 = Marshal.PtrToStringAnsi(audioLanguage1);
+                strAudioLanguage2 = Marshal.PtrToStringAnsi(audioLanguage2);
+                strAudioLanguage3 = Marshal.PtrToStringAnsi(audioLanguage3);
+                strAudioLanguage4 = Marshal.PtrToStringAnsi(audioLanguage4);
+                strAudioLanguage5 = Marshal.PtrToStringAnsi(audioLanguage5);
+
+                Log.Log.Info("v:{0:X} a1:{1:X} a2:{2:X} a3:{3:X} a4:{4:X} a5:{5:X} ac3:{6:X} ttx:{7:X} sub:{8:X} pmt:{9:X} pcr:{10:X} onid:{11:X} TSID:{12:X} SID:{13:X} maj:{14} min:{15} type:{16} name:{17}",
+                  videoPid, audio1Pid, audio2Pid, audio3Pid, audio4Pid, audio5Pid, ac3Pid, teletextPid, subtitlePid, pmtPid, pcrPid, networkId, transportId, serviceId, majorChannel, minorChannel, serviceType, name);
+                bool hasVideo = false;
+                bool hasAudio = false;
+                if (videoPid > 0)
+                {
+                  PidInfo pidInfo = new PidInfo();
+                  pidInfo.VideoPid(videoPid, videoStreamType);
+                  info.AddPid(pidInfo);
+                  hasVideo = true;
+                }
+                if (audio1Pid > 0)
+                {
+                  PidInfo pidInfo = new PidInfo();
+                  pidInfo.AudioPid(audio1Pid, strAudioLanguage1);
+                  info.AddPid(pidInfo);
+                  hasAudio = true;
+                }
+                if (audio2Pid > 0)
+                {
+                  PidInfo pidInfo = new PidInfo();
+                  pidInfo.AudioPid(audio2Pid, strAudioLanguage2);
+                  info.AddPid(pidInfo);
+                  hasAudio = true;
+                }
+                if (audio3Pid > 0)
+                {
+                  PidInfo pidInfo = new PidInfo();
+                  pidInfo.AudioPid(audio3Pid, strAudioLanguage3);
+                  info.AddPid(pidInfo);
+                  hasAudio = true;
+                }
+                if (audio4Pid > 0)
+                {
+                  PidInfo pidInfo = new PidInfo();
+                  pidInfo.AudioPid(audio4Pid, strAudioLanguage4);
+                  info.AddPid(pidInfo);
+                  hasAudio = true;
+                }
+                if (audio5Pid > 0)
+                {
+                  PidInfo pidInfo = new PidInfo();
+                  pidInfo.AudioPid(audio5Pid, strAudioLanguage5);
+                  info.AddPid(pidInfo);
+                  hasAudio = true;
+                }
+                if (ac3Pid > 0)
+                {
+                  PidInfo pidInfo = new PidInfo();
+                  pidInfo.Ac3Pid(ac3Pid, "");
+                  info.AddPid(pidInfo);
+                  hasAudio = true;
+                }
+                if (teletextPid > 0)
+                {
+                  PidInfo pidInfo = new PidInfo();
+                  pidInfo.TeletextPid(teletextPid);
+                  info.AddPid(pidInfo);
+                }
+                if (subtitlePid > 0)
+                {
+                  PidInfo pidInfo = new PidInfo();
+                  pidInfo.SubtitlePid(subtitlePid);
+                  info.AddPid(pidInfo);
+                }
+                // This is needed to have the transponder for the 9 day dish epg guide discovered by the scan and to add the channel 
+                // as TV Channel so that we can grab EPG from it
+                if (info.serviceType == 141)
+                  hasVideo = true;
+                startTime = DateTime.Now;
+                bool isTvRadioChannel = false;
+                if (info.serviceType == (int)ServiceType.Video || info.serviceType == (int)ServiceType.Mpeg4Stream ||
+                    info.serviceType == (int)ServiceType.Audio || info.serviceType == (int)ServiceType.H264Stream ||
+                    info.serviceType == (int)ServiceType.Mpeg4OrH264Stream)
+                {
+                  if (info.service_name.Length == 0)
+                  {
+                    info.service_name = String.Format("{0:X}", info.serviceID);
+                  }
+                  IChannel dvbChannel = CreateNewChannel(info);
+                  if (dvbChannel != null)
+                  {
+                    channelsFound.Add(dvbChannel);
+                    isTvRadioChannel = true;
+                  }
+                }
+                else if (hasVideo || hasAudio)
+                {
+                  if (hasVideo)
+                    info.serviceType = (int)ServiceType.Video;
+                  else
+                    info.serviceType = (int)ServiceType.Audio;
+                  if (info.service_name.Length == 0)
+                  {
+                    info.service_name = String.Format("{0:X}", info.serviceID);
+                  }
+                  IChannel dvbChannel = CreateNewChannel(info);
+                  if (dvbChannel != null)
+                  {
+                    channelsFound.Add(dvbChannel);
+                    isTvRadioChannel = true;
+                  }
+
+                }
+                if (!isTvRadioChannel)
+                {
+                  Log.Log.Write("Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X}",
+                    info.service_provider_name, info.service_name, info.serviceType, info.networkID, info.transportStreamID, info.serviceID);
+                }
+              }
+            }
+            if (found != channelCount)
+              Log.Log.Write("Scan! Got {0} from {1} channels", found, channelCount);
+            else
+              Log.Log.Write("Scan Got {0} from {1} channels", found, channelCount);
+            return channelsFound;
           }
-          _event.Close();
+          finally
+          {
+            if (_analyzer != null)
+            {
+              _analyzer.SetCallBack(null);
+              _analyzer.Stop();
+            }
+            _event.Close();
+          }
+        }
+        else
+        {
+          Log.Log.WriteFile("Scan: no signal detected");
+          return new List<IChannel>();
         }
       }
-      else
+      finally
       {
-        Log.Log.WriteFile("Scan: no signal detected");
-        return new List<IChannel>();
+        _card.IsScanning = false;
       }
     }
     /// <summary>
@@ -452,49 +458,39 @@ namespace TvLibrary.Implementations.DVB
     #region NIT scanning
     public List<IChannel> ScanNIT(IChannel channel, ScanParameters settings)
     {
-      _card.IsScanning = true;
-      _card.Tune(0, channel);
-      _analyzer = GetAnalyzer();
-      if (_analyzer == null)
+      try
       {
-        Log.Log.WriteFile("Scan: no analyzer interface available");
-        return new List<IChannel>();
-      }
-      _card.IsScanning = false;
-      DateTime startTime = DateTime.Now;
-      ResetSignalUpdate();
-      if (_card.IsTunerLocked == false)
-      {
+        _card.IsScanning = true;
+        _card.Tune(0, channel);
+        _analyzer = GetAnalyzer();
+        if (_analyzer == null)
+        {
+          Log.Log.WriteFile("Scan: no analyzer interface available");
+          return new List<IChannel>();
+        }
+        _analyzer.SetCallBack(null);
+        _analyzer.ScanNIT();
+        DateTime startTime = DateTime.Now;
         System.Threading.Thread.Sleep(settings.TimeOutTune * 1000);
         ResetSignalUpdate();
-      }
-      Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
-      if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
-      {
-        try
+        Log.Log.WriteFile("ScanNIT: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
+        if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
         {
-
-          _analyzer.SetCallBack(null);
-          _analyzer.ScanNIT();
           startTime = DateTime.Now;
           int count = 0;
-          
-          while (true)
-          {
-            TimeSpan ts = DateTime.Now - startTime;
-            if (ts.TotalSeconds >= 10) break;
-            _analyzer.GetNITCount(out count);
-          }
-          System.Threading.Thread.Sleep(500);
+
+          _event = new ManualResetEvent(false);
+          _event.WaitOne(16000, true);
+          _event.Close();
           List<IChannel> channelsFound = new List<IChannel>();
           _analyzer.GetNITCount(out count);
           for (int i = 0; i < count; ++i)
           {
             int freq, pol, mod, symbolrate, bandwidth, innerfec, chType;
             IntPtr ptrName;
-            _analyzer.GetNITChannel((short)i, out chType,out freq, out pol, out mod, out symbolrate, out bandwidth, out innerfec, out ptrName);
+            _analyzer.GetNITChannel((short)i, out chType, out freq, out pol, out mod, out symbolrate, out bandwidth, out innerfec, out ptrName);
             string name = DvbTextConverter.Convert(ptrName, "");
-            if (chType==0)
+            if (chType == 0)
             {
               DVBSChannel ch = new DVBSChannel();
               ch.Name = name;
@@ -504,7 +500,7 @@ namespace TvLibrary.Implementations.DVB
               ch.InnerFecRate = (BinaryConvolutionCodeRate)innerfec;
               channelsFound.Add(ch);
             }
-            else if (chType==1)
+            else if (chType == 1)
             {
               DVBCChannel ch = new DVBCChannel();
               ch.Name = name;
@@ -524,19 +520,21 @@ namespace TvLibrary.Implementations.DVB
           }
           _analyzer.StopNIT();
           return channelsFound;
+
         }
-        finally
+        else
         {
-          if (_analyzer != null)
-          {
-            _analyzer.StopNIT();
-          }
+          Log.Log.WriteFile("Scan: no signal detected");
+          return new List<IChannel>();
         }
       }
-      else
+      finally
       {
-        Log.Log.WriteFile("Scan: no signal detected");
-        return new List<IChannel>();
+        if (_analyzer != null)
+        {
+          _analyzer.StopNIT();
+        }
+        _card.IsScanning = false;
       }
     }
     #endregion
