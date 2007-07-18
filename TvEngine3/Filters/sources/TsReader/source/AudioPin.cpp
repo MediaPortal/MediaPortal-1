@@ -301,7 +301,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
       
-      LogDebug("aud:gotbuffer:%d %03.3f",buffer->Length(),fTime);
+      //LogDebug("aud:gotbuffer:%d %03.3f",buffer->Length(),fTime);
     } 
     else
     {
@@ -328,13 +328,12 @@ bool CAudioPin::IsConnected()
 // CMediaSeeking
 HRESULT CAudioPin::ChangeStart()
 {
-
   UpdateFromSeek();
 	return S_OK;
 }
 HRESULT CAudioPin::ChangeStop()
 {
-    UpdateFromSeek();
+  UpdateFromSeek();
 	return S_OK;
 }
 HRESULT CAudioPin::ChangeRate()
@@ -368,12 +367,10 @@ void CAudioPin::UpdateFromSeek()
 	if (m_rtStart>m_rtDuration)
 		m_rtStart=m_rtDuration;
 
-  if (GetTickCount()-m_seekTimer<2000)
+  if (GetTickCount()-m_seekTimer < 5000)
   {
-    if (m_lastSeek.Millisecs()==m_rtStart.Millisecs()) 
-    {
+      LogDebug("aud:skip seek");
       return;
-    }
   }
   m_seekTimer=GetTickCount();
   m_lastSeek=m_rtStart;
@@ -385,11 +382,11 @@ void CAudioPin::UpdateFromSeek()
   LogDebug("aud seek to %f/%f", seekTime, duration);
   m_bSeeking=true;
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
-  LogDebug("aud seek filter->Iseeking() done");
+  //LogDebug("aud seek filter->Iseeking() done");
   demux.SetHoldAudio(true);
   while (m_bInFillBuffer) Sleep(1);
   CAutoLock lock(&m_bufferLock);
-  LogDebug("aud seek buffer locked");
+  //LogDebug("aud seek buffer locked");
   if (ThreadExists()) 
   {
       // next time around the loop, the worker thread will
@@ -397,27 +394,27 @@ void CAudioPin::UpdateFromSeek()
       // We need to flush all the existing data - we must do that here
       // as our thread will probably be blocked in GetBuffer otherwise
       
-			LogDebug("aud seek filter->seekstart");
+			//LogDebug("aud seek filter->seekstart");
       m_pTsReaderFilter->SeekStart();
-			LogDebug("aud seek begindeliverflush");
+			//LogDebug("aud seek begindeliverflush");
       DeliverBeginFlush();
-			LogDebug("aud seek stop");
+			//LogDebug("aud seek stop");
       // make sure we have stopped pushing
       Stop();
-			LogDebug("aud seek filter->seek");
+			//LogDebug("aud seek filter->seek");
       m_pTsReaderFilter->Seek(CRefTime(m_rtStart),true);
 
       // complete the flush
-			LogDebug("aud seek deliverendflush");
+			//LogDebug("aud seek deliverendflush");
       DeliverEndFlush();
-			LogDebug("aud seek filter->seekdone");
+			//LogDebug("aud seek filter->seekdone");
       m_pTsReaderFilter->SeekDone(rtSeek);
 
       // restart
-			LogDebug("aud seek restart");
+			//LogDebug("aud seek restart");
       m_rtStart=rtSeek;
       Run();
-			LogDebug("aud seek running");
+			//LogDebug("aud seek running");
   }
   else
   {

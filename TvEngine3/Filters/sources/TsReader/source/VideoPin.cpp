@@ -270,7 +270,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         m_pTsReaderFilter->Compensation=cRefTime;
         float fTime=(float)cRefTime.Millisecs();
         fTime/=1000.0f;
-        LogDebug("vid:compensation:%03.3f",fTime);
+        //LogDebug("vid:compensation:%03.3f",fTime);
       }
       cRefTime -=m_pTsReaderFilter->Compensation;
       REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
@@ -279,7 +279,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       float fTime=(float)cRefTime.Millisecs();
       fTime/=1000.0f;
       
-     LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
+     //LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
     }
     else
     {
@@ -399,12 +399,10 @@ void CVideoPin::UpdateFromSeek()
 
 	if (m_rtStart>m_rtDuration)
 		m_rtStart=m_rtDuration;
-  if (GetTickCount()-m_seekTimer<2000)
+  if (GetTickCount()-m_seekTimer<5000)
   {
-    if (m_lastSeek.Millisecs()==m_rtStart.Millisecs()) 
-    {
+      LogDebug("vid:skip seek");
       return;
-    }
   }
   m_seekTimer=GetTickCount();
   m_lastSeek=m_rtStart;
@@ -415,11 +413,11 @@ void CVideoPin::UpdateFromSeek()
   LogDebug("vid seek to %f", seekTime);
   m_bSeeking=true;
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
-   LogDebug("vid seek filter->Iseeking() done");
+//   LogDebug("vid seek filter->Iseeking() done");
 	demux.SetHoldVideo(true);
   while (m_bInFillBuffer) Sleep(1);
   CAutoLock lock(&m_bufferLock);
-  LogDebug("vid seek buffer locked");
+//  LogDebug("vid seek buffer locked");
   if (ThreadExists()) 
   {
       // next time around the loop, the worker thread will
@@ -429,36 +427,36 @@ void CVideoPin::UpdateFromSeek()
       
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
-        LogDebug("vid seek filter->seekstart");
+//        LogDebug("vid seek filter->seekstart");
 				m_pTsReaderFilter->SeekStart();
       }
-			LogDebug("vid seek begindeliverflush");
+//			LogDebug("vid seek begindeliverflush");
       HRESULT hr=DeliverBeginFlush();
-      LogDebug("vid:beginflush:%x",hr);
+//      LogDebug("vid:beginflush:%x",hr);
       // make sure we have stopped pushing
-			LogDebug("vid seek stop");
+//			LogDebug("vid seek stop");
       Stop();
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
-				LogDebug("vid seek filter->seek");
+//				LogDebug("vid seek filter->seek");
         m_pTsReaderFilter->Seek(CRefTime(m_rtStart),true);
       }
       // complete the flush
-			LogDebug("vid seek deliverendflush");
+//			LogDebug("vid seek deliverendflush");
       hr=DeliverEndFlush();
-      LogDebug("vid:endflush:%x",hr);
+//      LogDebug("vid:endflush:%x",hr);
       
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
-				LogDebug("vid seek filter->seekdone");
+//				LogDebug("vid seek filter->seekdone");
         m_pTsReaderFilter->SeekDone(rtSeek);
       }
       // restart
       
-			LogDebug("vid seek restart");
+//			LogDebug("vid seek restart");
       m_rtStart=rtSeek;
       Run();
-			LogDebug("vid seek running");
+//			LogDebug("vid seek running");
   }
   else
   {

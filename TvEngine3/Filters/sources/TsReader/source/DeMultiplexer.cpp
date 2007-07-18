@@ -268,7 +268,7 @@ void CDeMultiplexer::Flush()
   bool holdVideo=HoldVideo();
   SetHoldAudio(true);
   SetHoldVideo(true);
-  LogDebug("demux:flushing");
+//  LogDebug("demux:flushing");
   ivecBuffers it;
   {
 	  CAutoLock lock (&m_sectionAudio);
@@ -529,7 +529,7 @@ bool CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
 		//Failed to read any data
     if ( (isAudio && m_bHoldAudio) || (isVideo && m_bHoldVideo) )
     {
-      LogDebug("demux:paused %d %d",m_bHoldAudio,m_bHoldVideo);
+//      LogDebug("demux:paused %d %d",m_bHoldAudio,m_bHoldVideo);
       return false;
     }
 
@@ -1352,7 +1352,7 @@ bool CDeMultiplexer::HoldAudio()
 ///Sets whether the demuxer may block in GetAudio() or not
 void CDeMultiplexer::SetHoldAudio(bool onOff)
 {
-  LogDebug("demux:set hold audio:%d", onOff);
+  //LogDebug("demux:set hold audio:%d", onOff);
 	m_bHoldAudio=onOff;
 }
 ///Returns whether the demuxer is allowed to block in GetVideo() or not
@@ -1364,7 +1364,7 @@ bool CDeMultiplexer::HoldVideo()
 ///Sets whether the demuxer may block in GetVideo() or not
 void CDeMultiplexer::SetHoldVideo(bool onOff)
 {
-  LogDebug("demux:set hold video:%d", onOff);
+  //LogDebug("demux:set hold video:%d", onOff);
 	m_bHoldVideo=onOff;
 }
 

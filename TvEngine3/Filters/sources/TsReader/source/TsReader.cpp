@@ -36,7 +36,7 @@
 #include "memoryreader.h"
 void LogDebug(const char *fmt, ...) 
 {
-#ifdef DONTLOG
+#ifndef DONTLOG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -619,8 +619,14 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     m_rtspClient.Stop();
     double startTime=m_seekTime.Millisecs();
     startTime/=1000.0f;
+    float milli=m_duration.Duration().Millisecs();
+    milli/=1000.0;
+    if (startTime >= milli-40.0f)
+    {
+      startTime=milli+40.0f;
+    }
 
-    LogDebug("CTsReaderFilter::  Seek->start client from %f",startTime);
+    LogDebug("CTsReaderFilter::  Seek->start client from %f/ %f",startTime,milli);
     //clear the buffers
     m_demultiplexer.Flush();
     m_buffer.Clear();
@@ -636,7 +642,7 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     duration+=pcrstart.ToClock();
     pcrEnd.FromClock(duration);
     m_duration.Set( pcrstart, pcrEnd,pcrMax);
-    LogDebug("CTsReaderFilter::  Seek->start client done %2.2f",duration);
+    LogDebug("CTsReaderFilter::  Seek->start client done duration:%2.2f",duration);
   }
 }
 
