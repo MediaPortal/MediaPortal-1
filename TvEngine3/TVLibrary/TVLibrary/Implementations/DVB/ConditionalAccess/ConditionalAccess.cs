@@ -440,6 +440,8 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_hauppauge != null)
         {
+          /*Following not used until new driver released from Hauppauge
+           * 
           //Set Hauppauge pilot, roll-off settings but only if DVB-S2
           //We assume if the modulation is set then a DVB-S2 tuning request has been requested
           if (channel.ModulationType != ModulationType.ModNotSet)
@@ -458,6 +460,37 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("Hauppauge DVB-S2 RollOff set to:{0}", channel.RollOff);
             Log.Log.WriteFile("Hauppauge DVB-S2 fec set to:{0}", channel.InnerFecRate);
             _hauppauge.SetDVBS2PilotRolloff(channel);
+          }
+          return;*/
+
+          //Work-around until new driver released...
+          if (channel.ModulationType != ModulationType.ModNotSet)
+          {
+            //Set the alternative Hauppauge Modulation type
+            if (channel.ModulationType == ModulationType.ModQpsk)
+            {
+              if (channel.InnerFecRate == BinaryConvolutionCodeRate.Rate9_10)
+              {
+                channel.ModulationType = ModulationType.Mod32Qam;
+              }
+              if (channel.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9)
+              {
+                channel.ModulationType = ModulationType.Mod16Qam;
+              }
+              else
+                channel.ModulationType = ModulationType.ModBpsk;
+            }
+            if (channel.ModulationType == ModulationType.Mod8psk)
+            {
+              if (channel.InnerFecRate == BinaryConvolutionCodeRate.Rate9_10)
+              {
+                channel.ModulationType = ModulationType.Mod80Qam;
+              }
+              if (channel.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9)
+              {
+                channel.ModulationType = ModulationType.Mod64Qam;
+              }
+            }
           }
           return;
         }
