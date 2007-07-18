@@ -612,14 +612,16 @@ namespace MediaPortal.Player
           _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
           lTime += lContentStart;
           Log.Info("TsReaderPlayer:seekabs:{0} start:{1} end:{2}", lTime, lContentStart, lContentEnd);
-          if (lTime > lContentEnd)
+          /*if (lTime > lContentEnd)
           {
             System.Threading.Thread.Sleep(500);
             _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
             lTime = lContentEnd;
-          }
+          }*/
           int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
           Log.Info("TsReaderPlayer seek done:{0:X}", hr);
+          if (VMR9Util.g_vmr9 != null)
+            VMR9Util.g_vmr9.FrameCounter = 123;
         }
 
         UpdateCurrentPosition();
