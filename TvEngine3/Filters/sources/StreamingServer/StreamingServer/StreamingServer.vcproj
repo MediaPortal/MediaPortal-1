@@ -494,6 +494,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\liveMedia\Locale.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\liveMedia\Media.cpp"
 				>
 			</File>
@@ -759,6 +763,10 @@
 			</File>
 			<File
 				RelativePath=".\liveMedia\RTSPCommon.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\liveMedia\RTSPOverHTTPServer.cpp"
 				>
 			</File>
 			<File

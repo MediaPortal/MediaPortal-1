@@ -77,7 +77,7 @@ Boolean parseRTSPRequestString(char const* reqStr,
 	reqStr[k+2] == 'S' && reqStr[k+3] == 'P' && reqStr[k+4] == '/') {
       while (--k >= i && reqStr[k] == ' ') {} // go back over all spaces before "RTSP/"
       unsigned k1 = k;
-      while (k1 > i && reqStr[k1] != '/' && reqStr[k1] != ' ') --k1;
+      while (k1 > i && reqStr[k1] != '/') --k1;
       // the URL suffix comes from [k1+1,k]
 
       // Copy "resultURLSuffix":
@@ -88,7 +88,7 @@ Boolean parseRTSPRequestString(char const* reqStr,
 
       // Also look for the URL 'pre-suffix' before this:
       unsigned k3 = --k1;
-      while (k3 > i && reqStr[k3] != '/' && reqStr[k3] != ' ') --k3;
+      while (k3 > i && reqStr[k3] != '/') --k3;
       // the URL pre-suffix comes from [k3+1,k1]
 
       // Copy "resultURLPreSuffix":

@@ -40,6 +40,7 @@ public:
 
   void changeInputSource(FramedSource* newInputSource) { fInputSource = newInputSource; }
 
+  void clearPIDStatusTable();
 protected:
   MPEG2TransportStreamFramer(UsageEnvironment& env, FramedSource* inputSource);
       // called only by createNew()

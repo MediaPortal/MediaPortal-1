@@ -20,6 +20,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "liveMedia.hh"
+#include "Locale.hh"
 #ifdef SUPPORT_REAL_RTSP
 #include "../RealRTSP/include/RealRTSP.hh"
 #endif
@@ -935,8 +936,9 @@ Boolean MediaSubsession::parseSDPAttribute_rtpmap(char const* sdpLine) {
       // This "rtpmap" matches our payload format, so set our
       // codec name and timestamp frequency:
       // (First, make sure the codec name is upper case)
-      for (char* p = codecName; *p != '\0'; ++p) {
-	*p = toupper(*p);
+      {
+	Locale("POSIX");
+	for (char* p = codecName; *p != '\0'; ++p) *p = toupper(*p);
       }
       delete[] fCodecName; fCodecName = strDup(codecName);
       fRTPTimestampFrequency = rtpTimestampFrequency;
@@ -995,7 +997,10 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
     // parameter assignments.  Look at each of these.
     // First, convert the line to lower-case, to ease comparison:
     char* const lineCopy = strDup(sdpLine); char* line = lineCopy;
-    for (char* c = line; *c != '\0'; ++c) *c = tolower(*c);
+    {
+      Locale("POSIX");
+      for (char* c = line; *c != '\0'; ++c) *c = tolower(*c);
+    }
     while (*line != '\0' && *line != '\r' && *line != '\n') {
       unsigned u;
       char* valueStr = strDupSize(line);

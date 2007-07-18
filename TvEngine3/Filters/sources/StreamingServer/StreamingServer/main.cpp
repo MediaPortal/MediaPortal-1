@@ -11,6 +11,7 @@
 #include "TsMPEG1or2FileServerDemux.h" 
 #include "MPEG1or2FileServerDemux.hh" 
 #include "TsFileDuration.h"
+#include "RTSPOverHTTPServer.hh"
 
 const char* STREAM_NAME = "testStream";
 const char* STREAM_DESCRIPTION = "Session streamed by \"MediaPortal Tv Server v1.0\"";
@@ -99,7 +100,6 @@ void StreamSetup(char* ipAdress)
 
   TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   m_env = BasicUsageEnvironment::createNew(*scheduler);
-
   m_rtspServer = RTSPServer::createNew(*m_env);
   if (m_rtspServer == NULL) 
   {

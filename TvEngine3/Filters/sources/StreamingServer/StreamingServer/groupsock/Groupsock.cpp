@@ -269,11 +269,14 @@ Boolean Groupsock::output(UsageEnvironment& env, u_int8_t ttlToSend,
     statsGroupOutgoing.countPacket(bufferSize);
     
     // Then, forward to our members:
-    int numMembers =
-      outputToAllMembersExcept(interfaceNotToFwdBackTo,
-			       ttlToSend, buffer, bufferSize,
-			       ourSourceAddressForMulticast(env));
-    if (numMembers < 0) break;
+    int numMembers = 0;
+    if (!members().IsEmpty()) {
+      numMembers =
+	outputToAllMembersExcept(interfaceNotToFwdBackTo,
+				 ttlToSend, buffer, bufferSize,
+				 ourSourceAddressForMulticast(env));
+      if (numMembers < 0) break;
+    }
     
     if (DebugLevel >= 3) {
       env << *this << ": wrote " << bufferSize << " bytes, ttl "

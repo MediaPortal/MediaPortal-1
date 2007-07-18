@@ -94,6 +94,11 @@ RTPInterface::RTPInterface(Medium* owner, Groupsock* gs)
     fNextTCPReadSize(0), fNextTCPReadStreamSocketNum(-1),
     fNextTCPReadStreamChannelId(0xFF), fReadHandlerProc(NULL),
     fAuxReadHandlerFunc(NULL), fAuxReadHandlerClientData(NULL) {
+  // Make the socket non-blocking, even though it will be read from only asynchronously, when packets arrive.
+  // The reason for this is that, in some OSs, reads on a blocking socket can (allegedly) sometimes block,
+  // even if the socket was previously reported (e.g., by "select()") as having data available.
+  // (This can supposedly happen if the UDP checksum fails, for example.)
+  makeSocketNonBlocking(fGS->socketNum());
 }
 
 RTPInterface::~RTPInterface() {

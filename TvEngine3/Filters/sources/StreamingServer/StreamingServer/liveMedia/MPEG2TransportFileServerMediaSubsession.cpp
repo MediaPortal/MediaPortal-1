@@ -77,13 +77,12 @@ MPEG2TransportFileServerMediaSubsession::createNew(UsageEnvironment& env,
 						   char const* fileName,
 						   char const* indexFileName,
 						   Boolean reuseFirstSource) {
-  MPEG2TransportStreamIndexFile* indexFile
-    = MPEG2TransportStreamIndexFile::createNew(env, indexFileName);
-  if (indexFile != NULL && reuseFirstSource) {
-    // It makes no sense for all clients to use the same source if we also
-    // support trick play.  Fix this:
-    env << "MPEG2TransportFileServerMediaSubsession::createNew(): ignoring \"reuseFirstSource\", because we also have an index file\n";
+  if (indexFileName != NULL && reuseFirstSource) {
+    // It makes no sense to support trick play if all clients use the same source.  Fix this:
+    env << "MPEG2TransportFileServerMediaSubsession::createNew(): ignoring the index file name, because \"reuseFirstSource\" is set\n";
+    indexFileName = NULL;
   }
+  MPEG2TransportStreamIndexFile* indexFile = MPEG2TransportStreamIndexFile::createNew(env, indexFileName);
   return new MPEG2TransportFileServerMediaSubsession(env, fileName, indexFile,
 						     reuseFirstSource);
 }
@@ -271,7 +270,7 @@ ClientTrickPlayState::ClientTrickPlayState(MPEG2TransportStreamIndexFile* indexF
     fOriginalTransportStreamSource(NULL),
     fTrickModeFilter(NULL), fTrickPlaySource(NULL),
     fFramer(NULL),
-    fScale(2.0f), fNextScale(1.0f), fNPT(0.0f),
+    fScale(1.0f), fNextScale(1.0f), fNPT(0.0f),
     fTSRecordNum(0), fIxRecordNum(0) {
 }
 
@@ -291,6 +290,7 @@ void ClientTrickPlayState::updateStateFromNPT(float npt) {
     // Note: We assume that we're asked to seek only in normal
     // (i.e., non trick play) mode, so we don't seek within the trick
     // play source (if any).
+    fFramer->clearPIDStatusTable();
   }
 }
 

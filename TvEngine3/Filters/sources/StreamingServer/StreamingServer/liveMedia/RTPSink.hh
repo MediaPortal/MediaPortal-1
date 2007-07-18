@@ -56,7 +56,7 @@ public:
   unsigned numChannels() const { return fNumChannels; }
 
   virtual char const* sdpMediaType() const; // for use in SDP m= lines
-  char* rtpmapLine() const; // returns a string to be delete[]d
+  virtual char* rtpmapLine() const; // returns a string to be delete[]d
   virtual char const* auxSDPLine();
       // optional SDP line (e.g. a=fmtp:...)
 

@@ -65,6 +65,7 @@ protected: // new virtual functions, possibly redefined by subclasses
 				    FramedSource* inputSource);
   virtual void seekStreamSource(FramedSource* inputSource, float seekNPT);
   virtual void setStreamSourceScale(FramedSource* inputSource, float scale);
+  virtual void closeStreamSource(FramedSource *inputSource);
 
 protected: // new virtual functions, defined by all subclasses
   virtual FramedSource* createNewStreamSource(unsigned clientSessionId,
@@ -85,6 +86,7 @@ private:
   void* fLastStreamToken;
   char* fSDPLines;
   char fCNAME[100]; // for RTCP
+  friend class StreamState;
 };
 
 #endif

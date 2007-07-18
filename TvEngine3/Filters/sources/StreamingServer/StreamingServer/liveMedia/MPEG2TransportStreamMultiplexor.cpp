@@ -35,7 +35,8 @@ MPEG2TransportStreamMultiplexor
     fOutgoingPacketCounter(0), fProgramMapVersion(0),
     fPreviousInputProgramMapVersion(0xFF), fCurrentInputProgramMapVersion(0xFF),
     fPCR_PID(0), fCurrentPID(0),
-    fInputBuffer(NULL), fInputBufferSize(0), fInputBufferBytesUsed(0) {
+    fInputBuffer(NULL), fInputBufferSize(0), fInputBufferBytesUsed(0),
+    fIsFirstAdaptationField(True) {
   for (unsigned i = 0; i < PID_TABLE_SIZE; ++i) {
     fPIDState[i].counter = 0;
     fPIDState[i].streamType = 0;
@@ -195,7 +196,12 @@ void MPEG2TransportStreamMultiplexor
 	= (numHeaderBytes == 5) ? 0 : 1 + numPCRBytes + numPaddingBytes;
       *header++ = adaptation_field_length;
       if (numHeaderBytes > 5) {
-	*header++ = willAddPCR ? 0x10 : 0x00; // various flags
+	u_int8_t flags = willAddPCR ? 0x10 : 0x00;
+	if (fIsFirstAdaptationField) {
+	  flags |= 0x80; // discontinuity_indicator
+	  fIsFirstAdaptationField = False;
+	}
+	*header++ = flags;
 	if (willAddPCR) {
 	  u_int32_t pcrHigh32Bits = (fPCR.highBit<<31) | (fPCR.remainingBits>>1);
 	  u_int8_t pcrLowBit = fPCR.remainingBits&1;

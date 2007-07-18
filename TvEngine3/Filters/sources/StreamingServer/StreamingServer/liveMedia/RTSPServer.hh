@@ -99,6 +99,11 @@ protected:
   virtual ~RTSPServer();
 
   static int setUpOurSocket(UsageEnvironment& env, Port& ourPort);
+  virtual Boolean specialClientAccessCheck(int clientSocket, struct sockaddr_in& clientAddr,
+					   char const* urlSuffix);
+      // a hook that allows subclassed servers to do server-specific access checking
+      // on each client (e.g., based on client IP address), without using
+      // digest authentication.
 
 private: // redefined virtual functions
   virtual Boolean isRTSPServer() const;
@@ -144,7 +149,8 @@ public:
     void handleCmd_GET_PARAMETER(ServerMediaSubsession* subsession,
 				 char const* cseq, char const* fullRequestStr);
     Boolean authenticationOK(char const* cmdName, char const* cseq,
-			     char const* fullRequestStr);
+                             char const* urlSuffix,
+                             char const* fullRequestStr);
     void noteLiveness();
     Boolean isMulticast() const { return fIsMulticast; }
     static void noteClientLiveness(RTSPClientSession* clientSession);
@@ -166,7 +172,7 @@ public:
     unsigned fRequestBytesAlreadySeen, fRequestBufferBytesLeft;
     unsigned char* fLastCRLF;
     unsigned char fResponseBuffer[RTSP_BUFFER_SIZE];
-    Boolean fIsMulticast, fStreamAfterSETUP;
+    Boolean fIsMulticast,  fStreamAfterSETUP;
     Authenticator fCurrentAuthenticator; // used if access control is needed
     unsigned char fTCPStreamIdCount; // used for (optional) RTP/TCP
     unsigned fNumStreamStates; 

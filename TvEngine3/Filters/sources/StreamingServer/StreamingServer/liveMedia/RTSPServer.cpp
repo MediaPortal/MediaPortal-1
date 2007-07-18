@@ -166,6 +166,12 @@ int RTSPServer::setUpOurSocket(UsageEnvironment& env, Port& ourPort) {
   return -1;
 }
 
+Boolean RTSPServer
+::specialClientAccessCheck(int /*clientSocket*/, struct sockaddr_in& /*clientAddr*/, char const* /*urlSuffix*/) {
+  // default implementation
+  return True;
+}
+
 RTSPServer::RTSPServer(UsageEnvironment& env,
 		       int ourSocket, Port ourPort,
 		       UserAuthenticationDatabase* authDatabase,
@@ -496,7 +502,8 @@ void RTSPServer::RTSPClientSession
   char* sdpDescription = NULL;
   char* rtspURL = NULL;
   do {
-    if (!authenticationOK("DESCRIBE", cseq, fullRequestStr)) break;
+      if (!authenticationOK("DESCRIBE", cseq, urlSuffix, fullRequestStr))
+          break;
 
     // We should really check that the request contains an "Accept:" #####
     // for "application/sdp", because that's what we're sending back #####
@@ -780,22 +787,41 @@ void RTSPServer::RTSPClientSession
 				  serverRTPPort, serverRTCPPort,
 				  fStreamStates[streamNum].streamToken);
   struct in_addr destinationAddr; destinationAddr.s_addr = destinationAddress;
+  char* destAddrStr = strDup(our_inet_ntoa(destinationAddr));
+  struct in_addr sourceAddr; sourceAddr.s_addr = ourSourceAddressForMulticast(envir());
+  char* sourceAddrStr = strDup(our_inet_ntoa(sourceAddr));
   if (fIsMulticast) {
-    if (streamingMode == RTP_TCP) {
-      // multicast streams can't be sent via TCP
-      handleCmd_unsupportedTransport(cseq);
-      return;
+    switch (streamingMode) {
+    case RTP_UDP:
+        snprintf((char*)fResponseBuffer, sizeof fResponseBuffer,
+                 "RTSP/1.0 200 OK\r\n"
+                 "CSeq: %s\r\n"
+                 "%s"
+                 "Transport: RTP/AVP;multicast;destination=%s;source=%s;port=%d-%d;ttl=%d\r\n"
+                 "Session: %d\r\n\r\n",
+                 cseq,
+                 dateHeader(),
+                 destAddrStr, sourceAddrStr, ntohs(serverRTPPort.num()), ntohs(serverRTCPPort.num()), destinationTTL,
+                 fOurSessionId);
+        break;
+    case RTP_TCP:
+        // multicast streams can't be sent via TCP
+        handleCmd_unsupportedTransport(cseq);
+        break;
+    case RAW_UDP:
+        snprintf((char*)fResponseBuffer, sizeof fResponseBuffer,
+                 "RTSP/1.0 200 OK\r\n"
+                 "CSeq: %s\r\n"
+                 "%s"
+                 "Transport: %s;multicast;destination=%s;source=%s;port=%d;ttl=%d\r\n"
+                 "Session: %d\r\n\r\n",
+                 cseq,
+                 dateHeader(),
+                 streamingModeString, destAddrStr, sourceAddrStr, ntohs(serverRTPPort.num()), destinationTTL,
+                 fOurSessionId);
+        delete[] streamingModeString;
+        break;
     }
-    snprintf((char*)fResponseBuffer, sizeof fResponseBuffer,
-	     "RTSP/1.0 200 OK\r\n"
-	     "CSeq: %s\r\n"
-	     "%s"
-	     "Transport: RTP/AVP;multicast;destination=%s;port=%d-%d;ttl=%d\r\n"
-	     "Session: %d\r\n\r\n",
-	     cseq,
-	     dateHeader(),
-	     our_inet_ntoa(destinationAddr), ntohs(serverRTPPort.num()), ntohs(serverRTCPPort.num()), destinationTTL,
-	     fOurSessionId);
   } else {
     switch (streamingMode) {
     case RTP_UDP: {
@@ -803,11 +829,11 @@ void RTSPServer::RTSPClientSession
 	       "RTSP/1.0 200 OK\r\n"
 	       "CSeq: %s\r\n"
 	       "%s"
-	       "Transport: RTP/AVP;unicast;destination=%s;client_port=%d-%d;server_port=%d-%d\r\n"
+	       "Transport: RTP/AVP;unicast;destination=%s;source=%s;client_port=%d-%d;server_port=%d-%d\r\n"
 	       "Session: %d\r\n\r\n",
 	       cseq,
 	       dateHeader(),
-	       our_inet_ntoa(destinationAddr), ntohs(clientRTPPort.num()), ntohs(clientRTCPPort.num()), ntohs(serverRTPPort.num()), ntohs(serverRTCPPort.num()),
+	       destAddrStr, sourceAddrStr, ntohs(clientRTPPort.num()), ntohs(clientRTCPPort.num()), ntohs(serverRTPPort.num()), ntohs(serverRTCPPort.num()),
 	       fOurSessionId);
       break;
     }
@@ -816,11 +842,11 @@ void RTSPServer::RTSPClientSession
 	       "RTSP/1.0 200 OK\r\n"
 	       "CSeq: %s\r\n"
 	       "%s"
-	       "Transport: RTP/AVP/TCP;unicast;destination=%s;interleaved=%d-%d\r\n"
+	       "Transport: RTP/AVP/TCP;unicast;destination=%s;source=%s;interleaved=%d-%d\r\n"
 	       "Session: %d\r\n\r\n",
 	       cseq,
 	       dateHeader(),
-	       our_inet_ntoa(destinationAddr), rtpChannelId, rtcpChannelId,
+	       destAddrStr, sourceAddrStr, rtpChannelId, rtcpChannelId,
 	       fOurSessionId);
       break;
     }
@@ -829,16 +855,17 @@ void RTSPServer::RTSPClientSession
 	       "RTSP/1.0 200 OK\r\n"
 	       "CSeq: %s\r\n"
 	       "%s"
-	       "Transport: %s;unicast;destination=%s;client_port=%d;server_port=%d\r\n"
+	       "Transport: %s;unicast;destination=%s;source=%s;client_port=%d;server_port=%d\r\n"
 	       "Session: %d\r\n\r\n",
 	       cseq,
 	       dateHeader(),
-	       streamingModeString, our_inet_ntoa(destinationAddr), ntohs(clientRTPPort.num()), ntohs(serverRTPPort.num()),
+	       streamingModeString, destAddrStr, sourceAddrStr, ntohs(clientRTPPort.num()), ntohs(serverRTPPort.num()),
 	       fOurSessionId);
       delete[] streamingModeString;
       break;
     }
     }
+    delete[] destAddrStr; delete[] sourceAddrStr;
   }
 }
 
@@ -1174,7 +1201,18 @@ static Boolean parseAuthorizationHeader(char const* buf,
 
 Boolean RTSPServer::RTSPClientSession
 ::authenticationOK(char const* cmdName, char const* cseq,
-		   char const* fullRequestStr) {
+		   char const* urlSuffix, char const* fullRequestStr) {
+
+  if (!fOurServer.specialClientAccessCheck(fClientSocket, fClientAddr, urlSuffix)) {
+    snprintf((char*)fResponseBuffer, sizeof fResponseBuffer,
+             "RTSP/1.0 401 Unauthorized\r\n"
+             "CSeq: %s\r\n"
+             "%s"
+             "\r\n",
+             cseq, dateHeader());
+    return False;
+  }
+
   // If we weren't set up with an authentication database, we're OK:
   if (fOurServer.fAuthDB == NULL) return True;
 

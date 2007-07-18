@@ -71,14 +71,16 @@ MPEG2TransportStreamFramer
   fPIDStatusTable = HashTable::create(ONE_WORD_HASH_KEYS);
 }
 
-MPEG2TransportStreamFramer::~MPEG2TransportStreamFramer() 
-{
-  Log("MPEG2TransportStreamFramer:dtor:%x",this);
+MPEG2TransportStreamFramer::~MPEG2TransportStreamFramer() {
+  clearPIDStatusTable();
+  delete fPIDStatusTable;
+}
+
+void MPEG2TransportStreamFramer::clearPIDStatusTable() {
   PIDStatus* pidStatus;
   while ((pidStatus = (PIDStatus*)fPIDStatusTable->RemoveNext()) != NULL) {
     delete pidStatus;
   }
-  delete fPIDStatusTable;
 }
 
 void MPEG2TransportStreamFramer::doGetNextFrame() {
