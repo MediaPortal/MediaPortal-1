@@ -228,7 +228,7 @@ namespace SetupTv.Sections
           }
           IChannel[] channels;
           channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
-          if (channels.Length == 0)
+          if (channels == null || channels.Length == 0)
           {
             /// try frequency - offset
             tuneChannel.Frequency = values.Key - frequencyOffset;
@@ -236,7 +236,7 @@ namespace SetupTv.Sections
             line = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
             item.Text = line;
             channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
-            if (channels.Length == 0)
+            if (channels == null || channels.Length == 0)
             {
               /// try frequency + offset
               tuneChannel.Frequency = values.Key + frequencyOffset;

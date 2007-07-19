@@ -107,7 +107,7 @@ namespace TvLibrary.Implementations.DVB
         AddAndConnectBDABoardFilters(_device);
         AddBdaTransportFiltersToGraph();
 
-        //        ConnectFilters();
+//                ConnectFilters();
         GetTunerSignalStatistics();
 
 

@@ -473,7 +473,7 @@ namespace TvLibrary.Implementations.DVB
               {
                 channel.ModulationType = ModulationType.Mod32Qam;
               }
-              if (channel.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9)
+              if (channel.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9)
               {
                 channel.ModulationType = ModulationType.Mod16Qam;
               }
@@ -486,7 +486,7 @@ namespace TvLibrary.Implementations.DVB
               {
                 channel.ModulationType = ModulationType.Mod80Qam;
               }
-              if (channel.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9)
+              if (channel.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9)
               {
                 channel.ModulationType = ModulationType.Mod64Qam;
               }

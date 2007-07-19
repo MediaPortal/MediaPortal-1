@@ -26,10 +26,12 @@ namespace SetupTv
       _plugins.Clear();
       try
       {
-
-        string[] strFiles = System.IO.Directory.GetFiles("plugins", "*.dll");
-        foreach (string strFile in strFiles)
-          LoadPlugin(strFile);
+        if (System.IO.Directory.Exists("plugins"))
+        {
+          string[] strFiles = System.IO.Directory.GetFiles("plugins", "*.dll");
+          foreach (string strFile in strFiles)
+            LoadPlugin(strFile);
+        }
       }
       catch (Exception)
       {
