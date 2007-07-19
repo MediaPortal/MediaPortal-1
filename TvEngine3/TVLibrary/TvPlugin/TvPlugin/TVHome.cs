@@ -2490,12 +2490,24 @@ namespace TvPlugin
     {
       if (m_currentChannel != null)
       {
-        xmlwriter.SetValue("mytv", "channel", m_currentChannel.Name);
+        try
+        {
+          xmlwriter.SetValue("mytv", "channel", m_currentChannel.Name);
+        }
+        catch (Exception)
+        {
+        }
       }
       if (CurrentGroup != null)
       {
-        if (CurrentGroup.GroupName.Trim() != String.Empty)
-          xmlwriter.SetValue("mytv", "group", CurrentGroup.GroupName);
+        try
+        {
+          if (CurrentGroup.GroupName.Trim() != String.Empty)
+            xmlwriter.SetValue("mytv", "group", CurrentGroup.GroupName);
+        }
+        catch (Exception)
+        {
+        }
       }
     }
 
