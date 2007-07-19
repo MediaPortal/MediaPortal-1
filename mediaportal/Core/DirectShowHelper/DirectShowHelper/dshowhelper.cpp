@@ -244,17 +244,20 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter
 	m_evrPresenter = new EVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor);
 
   hr = pRenderer->InitializeRenderer(NULL, m_evrPresenter);
-  if (FAILED(hr) ) {
+  if (FAILED(hr) ) 
+  {
 	  Log("InitializeRenderer failed: 0x%x", hr);
 	  return FALSE;
   }
   CComQIPtr<IEVRFilterConfig> pConfig = m_pVMR9Filter;
-  if(!pConfig) {
+  if(!pConfig) 
+  {
 	  Log("Could not get IEVRFilterConfig  interface" );
 	  return FALSE;
   }
   CComQIPtr<IMFGetService> pService = m_pVMR9Filter;
-  if (!pService) {
+  if (!pService) 
+  {
 	  Log("Could not get IMFGetService Interface");
 	  return FALSE;
   }
@@ -281,15 +284,16 @@ void EvrDeinit()
   try
   {
 	  int hr;
-	  if (m_pControl) {
-		m_pControl->Release();
-		m_pControl = NULL;
+	  if (m_pControl) 
+    {
+		  m_pControl->Release();
+		  m_pControl = NULL;
 	  }
 	  if (m_evrPresenter!=NULL)
 	  {
 		  do
 		  {
-			hr=m_evrPresenter->Release();
+			  hr=m_evrPresenter->Release();
 		  } while (hr>0);
 
 		  m_evrPresenter=NULL;
@@ -304,7 +308,6 @@ void EvrDeinit()
   {
 		  Log("EvrDeinit:exception");
   }
-
 }
 
 

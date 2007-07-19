@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *  Author: Frodo
  *	http://www.team-mediaportal.com
  *
@@ -1226,8 +1226,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_AvgFrameRate(int *piAvgFrameRa
 }
 HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_Jitter(int *iJitter)
 {
-	Log("evr:get_Jitter: %d, deviation: %d", m_iJitter,
-		(int)(m_hnsTotalDiff / m_iFramesDrawn) );
+	Log("evr:get_Jitter: %d, deviation: %d", m_iJitter,(int)(m_hnsTotalDiff / m_iFramesDrawn) );
 	*iJitter = m_iJitter;
 	return S_OK;
 }
