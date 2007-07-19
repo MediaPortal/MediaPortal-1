@@ -30,20 +30,9 @@ namespace SetupTv.Sections
     {
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
       this.checkBoxEnableLinkageScanner = new System.Windows.Forms.CheckBox();
       this.label21 = new System.Windows.Forms.Label();
-      this.groupBox3 = new System.Windows.Forms.GroupBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.textBoxMaxFiles = new System.Windows.Forms.TextBox();
-      this.label16 = new System.Windows.Forms.Label();
-      this.label20 = new System.Windows.Forms.Label();
-      this.label17 = new System.Windows.Forms.Label();
-      this.label19 = new System.Windows.Forms.Label();
-      this.textBoxMaxFileSize = new System.Windows.Forms.TextBox();
-      this.textBoxMinfiles = new System.Windows.Forms.TextBox();
-      this.label18 = new System.Windows.Forms.Label();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.label15 = new System.Windows.Forms.Label();
       this.textBoxEPGRefresh = new System.Windows.Forms.TextBox();
@@ -67,58 +56,61 @@ namespace SetupTv.Sections
       this.textBoxSDT = new System.Windows.Forms.TextBox();
       this.label5 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
+      this.tabPage2 = new System.Windows.Forms.TabPage();
       this.mpComboBoxPrio = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.lblPriority = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.label18 = new System.Windows.Forms.Label();
+      this.textBoxMinfiles = new System.Windows.Forms.TextBox();
+      this.textBoxMaxFileSize = new System.Windows.Forms.TextBox();
+      this.label19 = new System.Windows.Forms.Label();
+      this.label17 = new System.Windows.Forms.Label();
+      this.label20 = new System.Windows.Forms.Label();
+      this.label16 = new System.Windows.Forms.Label();
+      this.textBoxMaxFiles = new System.Windows.Forms.TextBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
-      this.tabPage2.SuspendLayout();
       this.groupBox4.SuspendLayout();
-      this.groupBox3.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox1.SuspendLayout();
+      this.tabPage2.SuspendLayout();
+      this.tabPage3.SuspendLayout();
+      this.tabPage4.SuspendLayout();
+      this.groupBox3.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl1
       // 
       this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Controls.Add(this.tabPage2);
+      this.tabControl1.Controls.Add(this.tabPage3);
+      this.tabControl1.Controls.Add(this.tabPage4);
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(442, 414);
+      this.tabControl1.Size = new System.Drawing.Size(471, 400);
       this.tabControl1.TabIndex = 15;
       // 
       // tabPage1
       // 
       this.tabPage1.Controls.Add(this.groupBox4);
-      this.tabPage1.Controls.Add(this.groupBox3);
-      this.tabPage1.Controls.Add(this.groupBox2);
       this.tabPage1.Controls.Add(this.groupBox1);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(434, 388);
+      this.tabPage1.Size = new System.Drawing.Size(414, 374);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Scan";
       this.tabPage1.UseVisualStyleBackColor = true;
-      // 
-      // tabPage2
-      // 
-      this.tabPage2.Controls.Add(this.mpComboBoxPrio);
-      this.tabPage2.Controls.Add(this.lblPriority);
-      this.tabPage2.Location = new System.Drawing.Point(4, 22);
-      this.tabPage2.Name = "tabPage2";
-      this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(434, 388);
-      this.tabPage2.TabIndex = 1;
-      this.tabPage2.Text = "Application";
-      this.tabPage2.UseVisualStyleBackColor = true;
       // 
       // groupBox4
       // 
       this.groupBox4.Controls.Add(this.checkBoxEnableLinkageScanner);
       this.groupBox4.Controls.Add(this.label21);
-      this.groupBox4.Location = new System.Drawing.Point(6, 192);
+      this.groupBox4.Location = new System.Drawing.Point(8, 165);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(325, 46);
       this.groupBox4.TabIndex = 18;
@@ -143,99 +135,6 @@ namespace SetupTv.Sections
       this.label21.TabIndex = 16;
       this.label21.Text = "Enabled";
       // 
-      // groupBox3
-      // 
-      this.groupBox3.Controls.Add(this.label2);
-      this.groupBox3.Controls.Add(this.textBoxMaxFiles);
-      this.groupBox3.Controls.Add(this.label16);
-      this.groupBox3.Controls.Add(this.label20);
-      this.groupBox3.Controls.Add(this.label17);
-      this.groupBox3.Controls.Add(this.label19);
-      this.groupBox3.Controls.Add(this.textBoxMaxFileSize);
-      this.groupBox3.Controls.Add(this.textBoxMinfiles);
-      this.groupBox3.Controls.Add(this.label18);
-      this.groupBox3.Location = new System.Drawing.Point(6, 89);
-      this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(325, 97);
-      this.groupBox3.TabIndex = 17;
-      this.groupBox3.TabStop = false;
-      this.groupBox3.Text = "Timeshifting";
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(195, 73);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(55, 13);
-      this.label2.TabIndex = 23;
-      this.label2.Text = "MByte/file";
-      // 
-      // textBoxMaxFiles
-      // 
-      this.textBoxMaxFiles.Location = new System.Drawing.Point(89, 42);
-      this.textBoxMaxFiles.Name = "textBoxMaxFiles";
-      this.textBoxMaxFiles.Size = new System.Drawing.Size(100, 20);
-      this.textBoxMaxFiles.TabIndex = 19;
-      // 
-      // label16
-      // 
-      this.label16.AutoSize = true;
-      this.label16.Location = new System.Drawing.Point(195, 49);
-      this.label16.Name = "label16";
-      this.label16.Size = new System.Drawing.Size(25, 13);
-      this.label16.TabIndex = 22;
-      this.label16.Text = "files";
-      // 
-      // label20
-      // 
-      this.label20.AutoSize = true;
-      this.label20.Location = new System.Drawing.Point(14, 71);
-      this.label20.Name = "label20";
-      this.label20.Size = new System.Drawing.Size(41, 13);
-      this.label20.TabIndex = 17;
-      this.label20.Text = "Filesize";
-      // 
-      // label17
-      // 
-      this.label17.AutoSize = true;
-      this.label17.Location = new System.Drawing.Point(195, 23);
-      this.label17.Name = "label17";
-      this.label17.Size = new System.Drawing.Size(25, 13);
-      this.label17.TabIndex = 21;
-      this.label17.Text = "files";
-      // 
-      // label19
-      // 
-      this.label19.AutoSize = true;
-      this.label19.Location = new System.Drawing.Point(14, 45);
-      this.label19.Name = "label19";
-      this.label19.Size = new System.Drawing.Size(51, 13);
-      this.label19.TabIndex = 16;
-      this.label19.Text = "Maximum";
-      // 
-      // textBoxMaxFileSize
-      // 
-      this.textBoxMaxFileSize.Location = new System.Drawing.Point(89, 68);
-      this.textBoxMaxFileSize.Name = "textBoxMaxFileSize";
-      this.textBoxMaxFileSize.Size = new System.Drawing.Size(100, 20);
-      this.textBoxMaxFileSize.TabIndex = 18;
-      // 
-      // textBoxMinfiles
-      // 
-      this.textBoxMinfiles.Location = new System.Drawing.Point(89, 16);
-      this.textBoxMinfiles.Name = "textBoxMinfiles";
-      this.textBoxMinfiles.Size = new System.Drawing.Size(100, 20);
-      this.textBoxMinfiles.TabIndex = 20;
-      // 
-      // label18
-      // 
-      this.label18.AutoSize = true;
-      this.label18.Location = new System.Drawing.Point(14, 19);
-      this.label18.Name = "label18";
-      this.label18.Size = new System.Drawing.Size(48, 13);
-      this.label18.TabIndex = 15;
-      this.label18.Text = "Minimum";
-      // 
       // groupBox2
       // 
       this.groupBox2.Controls.Add(this.label15);
@@ -244,7 +143,7 @@ namespace SetupTv.Sections
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.label7);
       this.groupBox2.Controls.Add(this.textBoxEpgTimeOut);
-      this.groupBox2.Location = new System.Drawing.Point(6, 6);
+      this.groupBox2.Location = new System.Drawing.Point(12, 16);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(325, 77);
       this.groupBox2.TabIndex = 16;
@@ -318,7 +217,7 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.textBoxSDT);
       this.groupBox1.Controls.Add(this.label5);
       this.groupBox1.Controls.Add(this.label6);
-      this.groupBox1.Location = new System.Drawing.Point(-66, -158);
+      this.groupBox1.Location = new System.Drawing.Point(8, 6);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(325, 153);
       this.groupBox1.TabIndex = 15;
@@ -450,6 +349,18 @@ namespace SetupTv.Sections
       this.label6.TabIndex = 6;
       this.label6.Text = "SDT/VCT:";
       // 
+      // tabPage2
+      // 
+      this.tabPage2.Controls.Add(this.mpComboBoxPrio);
+      this.tabPage2.Controls.Add(this.lblPriority);
+      this.tabPage2.Location = new System.Drawing.Point(4, 22);
+      this.tabPage2.Name = "tabPage2";
+      this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage2.Size = new System.Drawing.Size(463, 374);
+      this.tabPage2.TabIndex = 1;
+      this.tabPage2.Text = "Application";
+      this.tabPage2.UseVisualStyleBackColor = true;
+      // 
       // mpComboBoxPrio
       // 
       this.mpComboBoxPrio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -504,26 +415,141 @@ namespace SetupTv.Sections
       this.lblPriority.TabIndex = 76;
       this.lblPriority.Text = "Priority:";
       // 
+      // tabPage3
+      // 
+      this.tabPage3.Controls.Add(this.groupBox2);
+      this.tabPage3.Location = new System.Drawing.Point(4, 22);
+      this.tabPage3.Name = "tabPage3";
+      this.tabPage3.Size = new System.Drawing.Size(414, 442);
+      this.tabPage3.TabIndex = 2;
+      this.tabPage3.Text = "EPG";
+      this.tabPage3.UseVisualStyleBackColor = true;
+      // 
+      // tabPage4
+      // 
+      this.tabPage4.Controls.Add(this.groupBox3);
+      this.tabPage4.Location = new System.Drawing.Point(4, 22);
+      this.tabPage4.Name = "tabPage4";
+      this.tabPage4.Size = new System.Drawing.Size(414, 374);
+      this.tabPage4.TabIndex = 3;
+      this.tabPage4.Text = "Timeshifting";
+      this.tabPage4.UseVisualStyleBackColor = true;
+      // 
+      // label18
+      // 
+      this.label18.AutoSize = true;
+      this.label18.Location = new System.Drawing.Point(14, 19);
+      this.label18.Name = "label18";
+      this.label18.Size = new System.Drawing.Size(48, 13);
+      this.label18.TabIndex = 15;
+      this.label18.Text = "Minimum";
+      // 
+      // textBoxMinfiles
+      // 
+      this.textBoxMinfiles.Location = new System.Drawing.Point(89, 16);
+      this.textBoxMinfiles.Name = "textBoxMinfiles";
+      this.textBoxMinfiles.Size = new System.Drawing.Size(100, 20);
+      this.textBoxMinfiles.TabIndex = 20;
+      // 
+      // textBoxMaxFileSize
+      // 
+      this.textBoxMaxFileSize.Location = new System.Drawing.Point(89, 68);
+      this.textBoxMaxFileSize.Name = "textBoxMaxFileSize";
+      this.textBoxMaxFileSize.Size = new System.Drawing.Size(100, 20);
+      this.textBoxMaxFileSize.TabIndex = 18;
+      // 
+      // label19
+      // 
+      this.label19.AutoSize = true;
+      this.label19.Location = new System.Drawing.Point(14, 45);
+      this.label19.Name = "label19";
+      this.label19.Size = new System.Drawing.Size(51, 13);
+      this.label19.TabIndex = 16;
+      this.label19.Text = "Maximum";
+      // 
+      // label17
+      // 
+      this.label17.AutoSize = true;
+      this.label17.Location = new System.Drawing.Point(195, 23);
+      this.label17.Name = "label17";
+      this.label17.Size = new System.Drawing.Size(25, 13);
+      this.label17.TabIndex = 21;
+      this.label17.Text = "files";
+      // 
+      // label20
+      // 
+      this.label20.AutoSize = true;
+      this.label20.Location = new System.Drawing.Point(14, 71);
+      this.label20.Name = "label20";
+      this.label20.Size = new System.Drawing.Size(41, 13);
+      this.label20.TabIndex = 17;
+      this.label20.Text = "Filesize";
+      // 
+      // label16
+      // 
+      this.label16.AutoSize = true;
+      this.label16.Location = new System.Drawing.Point(195, 49);
+      this.label16.Name = "label16";
+      this.label16.Size = new System.Drawing.Size(25, 13);
+      this.label16.TabIndex = 22;
+      this.label16.Text = "files";
+      // 
+      // textBoxMaxFiles
+      // 
+      this.textBoxMaxFiles.Location = new System.Drawing.Point(89, 42);
+      this.textBoxMaxFiles.Name = "textBoxMaxFiles";
+      this.textBoxMaxFiles.Size = new System.Drawing.Size(100, 20);
+      this.textBoxMaxFiles.TabIndex = 19;
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(195, 73);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(55, 13);
+      this.label2.TabIndex = 23;
+      this.label2.Text = "MByte/file";
+      // 
+      // groupBox3
+      // 
+      this.groupBox3.Controls.Add(this.label2);
+      this.groupBox3.Controls.Add(this.textBoxMaxFiles);
+      this.groupBox3.Controls.Add(this.label16);
+      this.groupBox3.Controls.Add(this.label20);
+      this.groupBox3.Controls.Add(this.label17);
+      this.groupBox3.Controls.Add(this.label19);
+      this.groupBox3.Controls.Add(this.textBoxMaxFileSize);
+      this.groupBox3.Controls.Add(this.textBoxMinfiles);
+      this.groupBox3.Controls.Add(this.label18);
+      this.groupBox3.Location = new System.Drawing.Point(13, 14);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(325, 97);
+      this.groupBox3.TabIndex = 17;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "Timeshifting";
+      // 
       // ScanSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "ScanSettings";
-      this.Size = new System.Drawing.Size(445, 417);
+      this.Size = new System.Drawing.Size(474, 412);
       this.Load += new System.EventHandler(this.ScanSettings_Load);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
-      this.tabPage2.ResumeLayout(false);
-      this.tabPage2.PerformLayout();
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
-      this.groupBox3.ResumeLayout(false);
-      this.groupBox3.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
+      this.tabPage2.ResumeLayout(false);
+      this.tabPage2.PerformLayout();
+      this.tabPage3.ResumeLayout(false);
+      this.tabPage4.ResumeLayout(false);
+      this.groupBox3.ResumeLayout(false);
+      this.groupBox3.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -535,16 +561,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.GroupBox groupBox4;
     private System.Windows.Forms.CheckBox checkBoxEnableLinkageScanner;
     private System.Windows.Forms.Label label21;
-    private System.Windows.Forms.GroupBox groupBox3;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.TextBox textBoxMaxFiles;
-    private System.Windows.Forms.Label label16;
-    private System.Windows.Forms.Label label20;
-    private System.Windows.Forms.Label label17;
-    private System.Windows.Forms.Label label19;
-    private System.Windows.Forms.TextBox textBoxMaxFileSize;
-    private System.Windows.Forms.TextBox textBoxMinfiles;
-    private System.Windows.Forms.Label label18;
     private System.Windows.Forms.GroupBox groupBox2;
     private System.Windows.Forms.Label label15;
     private System.Windows.Forms.TextBox textBoxEPGRefresh;
@@ -571,6 +587,18 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TabPage tabPage2;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxPrio;
     private MediaPortal.UserInterface.Controls.MPLabel lblPriority;
+    private System.Windows.Forms.TabPage tabPage3;
+    private System.Windows.Forms.TabPage tabPage4;
+    private System.Windows.Forms.GroupBox groupBox3;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.TextBox textBoxMaxFiles;
+    private System.Windows.Forms.Label label16;
+    private System.Windows.Forms.Label label20;
+    private System.Windows.Forms.Label label17;
+    private System.Windows.Forms.Label label19;
+    private System.Windows.Forms.TextBox textBoxMaxFileSize;
+    private System.Windows.Forms.TextBox textBoxMinfiles;
+    private System.Windows.Forms.Label label18;
 
   }
 }
