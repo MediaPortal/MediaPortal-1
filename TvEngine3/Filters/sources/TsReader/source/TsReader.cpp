@@ -129,9 +129,10 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   m_demultiplexer( m_duration, *this),
   m_rtspClient(m_buffer)
 {
-#ifdef DEBUG
+
   ::DeleteFile("c:\\tsreader.log");
-#endif
+  LogDebug("-------------- v1.0.0.0 ----------------");
+
   m_fileReader=NULL;
   m_fileDuration=NULL;
   Compensation=CRefTime(0L);
