@@ -78,7 +78,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region constants
 
-    
+
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
     class MpTsAnalyzer { }
 
@@ -111,7 +111,7 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterCapture = null;
     protected IBaseFilter _filterTIF = null;
     protected IBaseFilter _filterWinTvUsb = null;
-    
+
     protected DsDevice _tunerDevice = null;
     protected DsDevice _captureDevice = null;
     protected DsDevice _deviceWinTvUsb = null;
@@ -537,18 +537,21 @@ namespace TvLibrary.Implementations.DVB
         {
           if (capDevices[capIndex].Name.ToLower() == "wintvciusbbda source")
           {
-            usbWinTvDevice = capDevices[capIndex];
-            break;
+            if (false == DevicesInUse.Instance.IsUsed(capDevices[capIndex]))
+            {
+              usbWinTvDevice = capDevices[capIndex];
+              break;
+            }
           }
         }
       }
 
-      if (usbWinTvDevice==null)
+      if (usbWinTvDevice == null)
       {
         Log.Log.Info("dvb:  WinTv CI module not detected. Render [capture]->[inftee]");
         //no wintv ci usb module found. Render [Capture]->[InfTee]
-        hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);      
-        return (hr==0);
+        hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
+        return (hr == 0);
       }
 
       Log.Log.Info("dvb:  WinTv CI module deteced");
@@ -595,7 +598,7 @@ namespace TvLibrary.Implementations.DVB
         hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
         return (hr == 0);
       }
-      
+
       _filterWinTvUsb = tmpCiFilter;
       _deviceWinTvUsb = usbWinTvDevice;
       DevicesInUse.Instance.Add(usbWinTvDevice);
@@ -2411,7 +2414,7 @@ namespace TvLibrary.Implementations.DVB
               _interfaceEpgGrabber.GetMHWTheme(themeid, out ptrTheme);
 
               string channelName, title, programName, summary, theme;
-              channelName = DvbTextConverter.Convert(ptrChannelName,"");
+              channelName = DvbTextConverter.Convert(ptrChannelName, "");
               title = DvbTextConverter.Convert(ptrTitle, "");
               programName = DvbTextConverter.Convert(ptrProgramName, "");
               summary = DvbTextConverter.Convert(ptrSummary, "");
