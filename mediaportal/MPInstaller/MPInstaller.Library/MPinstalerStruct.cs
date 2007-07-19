@@ -41,6 +41,9 @@ using MediaPortal.MPInstaller;
 
 namespace MediaPortal.MPInstaller
 {
+  /// <summary>
+  ///  Base mpi entity class informations stored in instaler.xmp
+  /// </summary>
     public class MPinstalerStruct
     {
       public const string DEFAULT_UPDATE_SITE = "http://mpi.team-mediaportal.com/downloads";
@@ -156,6 +159,13 @@ namespace MediaPortal.MPInstaller
               FileList.Add(new MPIFileList(lst.Items[i].SubItems[3].Text, lst.Items[i].SubItems[1].Text, lst.Items[i].SubItems[2].Text, lst.Items[i].SubItems[4].Text, lst.Items[i].SubItems[5].Text));
             }
         }
+
+        /// <summary>
+        /// Finds a action.
+        /// 
+        /// </summary>
+        /// <param name="p">Name of action to find ex.: "POSTSETUP"</param>
+        /// <returns></returns>
         public ActionInfo FindAction(string p)
         {
             int idx = -1;
@@ -172,6 +182,10 @@ namespace MediaPortal.MPInstaller
             else return null;
         }
 
+        /// <summary>
+        /// Adds a new action action.
+        /// </summary>
+        /// <param name="a"> Action descriptor </param>
         public void AddAction(ActionInfo a)
         {
             int idx = -1;
@@ -217,6 +231,11 @@ namespace MediaPortal.MPInstaller
         }
       }
 
+      /// <summary>
+      /// Finds the state of the file in group.
+      /// </summary>
+      /// <param name="fl">The fl.</param>
+      /// <returns></returns>
       public bool FindFileInGroupState(MPIFileList fl)
       {
         if (SetupGroups.Count < 1)
@@ -351,7 +370,11 @@ namespace MediaPortal.MPInstaller
             }
             return true;
         }
-        
+
+        /// <summary>
+        /// Writes the logo element to xml .
+        /// </summary>
+        /// <param name="writer">The writer .</param>
         public void WriteLogoElement(XmlWriter writer)
         {
             if (this.Logo != null)
@@ -605,7 +628,14 @@ namespace MediaPortal.MPInstaller
             
             return ret;
         }
-  
+
+        /// <summary>
+        /// Gets the skin dir entry.
+        /// Build a path for a new skin 
+        /// </summary>
+        /// <param name="flst">File info </param>
+        /// <param name="skindDir">The skin name</param>
+        /// <returns></returns>
         public static string GetSkinDirEntry(MPIFileList flst, string skindDir)
         {
             string ret = string.Empty;

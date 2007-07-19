@@ -66,11 +66,11 @@ namespace MediaPortal.MPInstaller
                         if (test_file(fl,entry))
                         { 
                             string tpf =Path.GetFullPath(MPinstalerStruct.GetDirEntry(fl)) ;
-                            if (fl.SkinType)
-                            {
+                            //if (fl.SkinType)
+                            //{
                                 if (!Directory.Exists(Path.GetDirectoryName(tpf)))
                                     Directory.CreateDirectory(Path.GetDirectoryName(tpf));
-                            }
+                            //}
                             //MessageBox.Show(tpf);
                             FileStream fs = new FileStream(tpf, FileMode.Create);
                             if (pb != null)
@@ -98,6 +98,8 @@ namespace MediaPortal.MPInstaller
                                 if (!this.SkinList.Contains(sd))
                                 {
                                   string newtpf = Path.GetFullPath(MPinstalerStruct.GetSkinDirEntry(fl,sd));
+                                  if (!Directory.Exists(Path.GetDirectoryName(newtpf)))
+                                    Directory.CreateDirectory(Path.GetDirectoryName(newtpf));
                                   File.Copy(tpf,newtpf,true);
                                   this._intalerStruct.Uninstall.Add(new UninstallInfo(newtpf));
                                   if (lb != null)
