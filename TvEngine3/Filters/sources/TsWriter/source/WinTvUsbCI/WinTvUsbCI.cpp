@@ -72,6 +72,7 @@ static int _status=STATUS_DEVICE_UNPLUGGED;
 HRESULT Callback_Status(PVOID Context, long Status)
 {
   LogDebug("WinTVCI:Callback_Status %x %x", Context,Status);
+  _status=Status;
   return S_OK;
 }
 HRESULT Callback_CamInfo(PVOID Context, PCAM_INFO CamInfo)
