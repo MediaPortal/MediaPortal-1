@@ -693,6 +693,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\StreamingServer\StreamingServer\liveMedia\Locale.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\StreamingServer\StreamingServer\liveMedia\Media.cpp"
 				>
 			</File>
