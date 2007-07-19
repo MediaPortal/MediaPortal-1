@@ -11,7 +11,7 @@
 #include "TsMPEG1or2FileServerDemux.h" 
 #include "MPEG1or2FileServerDemux.hh" 
 #include "TsFileDuration.h"
-#include "RTSPOverHTTPServer.hh"
+//#include "RTSPOverHTTPServer.hh"
 
 const char* STREAM_NAME = "testStream";
 const char* STREAM_DESCRIPTION = "Session streamed by \"MediaPortal Tv Server v1.0\"";
@@ -36,8 +36,8 @@ extern netAddressBits ReceivingInterfaceAddr ;
 
 int main(int argc, char* argv[])
 {
-  StreamSetup("192.168.1.58");
-  StreamAddTimeShiftFile("test1", "C:\\media\\Denmark-TV2-Judging Amy.ts",false);
+  StreamSetup("192.168.1.130");
+  StreamAddTimeShiftFile("test1", "C:\\1\\live5-0.ts.tsbuffer",false);
   //StreamAddMpegFile("test2", "C:\\media\\movies\\NED 1.mpg");
   //StreamAddMpegFile("test3", "C:\\media\\movies\\PREMIERE 420070201-1146.ts");
   while (true)

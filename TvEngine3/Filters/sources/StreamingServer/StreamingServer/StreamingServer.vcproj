@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="StreamingServer"
 	ProjectGUID="{EACCF7EE-35F6-4A62-8C4A-64E1B0FF5A56}"
 	RootNamespace="StreamingServer"
@@ -763,10 +763,6 @@
 			</File>
 			<File
 				RelativePath=".\liveMedia\RTSPCommon.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\liveMedia\RTSPOverHTTPServer.cpp"
 				>
 			</File>
 			<File
