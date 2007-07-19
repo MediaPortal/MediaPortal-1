@@ -50,46 +50,44 @@
 void Log(const char *fmt, ...) ;
 HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
 {
+  ULONG cbAnsi, cCharacters;
+  DWORD dwError;
 
-    ULONG cbAnsi, cCharacters;
-    DWORD dwError;
-
-    // If input is null then just return the same.
-    if (pszW == NULL)
-    {
-        *ppszA = NULL;
-        return NOERROR;
-    }
-
-    cCharacters = wcslen(pszW)+1;
-    // Determine number of bytes to be allocated for ANSI string. An
-    // ANSI string can have at most 2 bytes per character (for Double
-    // Byte Character Strings.)
-    cbAnsi = cCharacters*2;
-
-    // Use of the OLE allocator is not required because the resultant
-    // ANSI  string will never be passed to another COM component. You
-    // can use your own allocator.
-    *ppszA = (LPSTR) CoTaskMemAlloc(cbAnsi);
-    if (NULL == *ppszA)
-        return E_OUTOFMEMORY;
-
-    // Convert to ANSI.
-    if (0 == WideCharToMultiByte(CP_ACP, 0, pszW, cCharacters, *ppszA,
-                  cbAnsi, NULL, NULL))
-    {
-        dwError = GetLastError();
-        CoTaskMemFree(*ppszA);
-        *ppszA = NULL;
-        return HRESULT_FROM_WIN32(dwError);
-    }
+  // If input is null then just return the same.
+  if (pszW == NULL)
+  {
+    *ppszA = NULL;
     return NOERROR;
+  }
 
+  cCharacters = wcslen(pszW)+1;
+  // Determine number of bytes to be allocated for ANSI string. An
+  // ANSI string can have at most 2 bytes per character (for Double
+  // Byte Character Strings.)
+  cbAnsi = cCharacters*2;
+
+  // Use of the OLE allocator is not required because the resultant
+  // ANSI  string will never be passed to another COM component. You
+  // can use your own allocator.
+  *ppszA = (LPSTR) CoTaskMemAlloc(cbAnsi);
+  if (NULL == *ppszA)
+      return E_OUTOFMEMORY;
+
+  // Convert to ANSI.
+  if (0 == WideCharToMultiByte(CP_ACP, 0, pszW, cCharacters, *ppszA,cbAnsi, NULL, NULL))
+  {
+    dwError = GetLastError();
+    CoTaskMemFree(*ppszA);
+    *ppszA = NULL;
+    return HRESULT_FROM_WIN32(dwError);
+  }
+  return NOERROR;
 }
 
 
 
-void LogIID( REFIID riid ) {
+void LogIID( REFIID riid ) 
+{
 	LPOLESTR str;
 	LPSTR astr;
 	StringFromIID(riid, &str); 
@@ -98,7 +96,8 @@ void LogIID( REFIID riid ) {
 	CoTaskMemFree(str);
 }
 
-void LogGUID( REFGUID guid ) {
+void LogGUID( REFGUID guid ) 
+{
 	LPOLESTR str;
 	LPSTR astr;
 	str = (LPOLESTR)CoTaskMemAlloc(200);
@@ -109,22 +108,22 @@ void LogGUID( REFGUID guid ) {
 }
 
 //avoid dependency into MFGetService, aparently only availabe on vista
-HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService,
-    REFIID riid, LPVOID* ppvObject ) 
+HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService, REFIID riid, LPVOID* ppvObject ) 
 {
 	if ( ppvObject == NULL ) return E_POINTER;
 	HRESULT hr;
 	IMFGetService* pGetService;
-	hr = punkObject->QueryInterface(__uuidof(IMFGetService),
-		(void**)&pGetService);
-	if ( SUCCEEDED(hr) ) {
+	hr = punkObject->QueryInterface(__uuidof(IMFGetService),(void**)&pGetService);
+	if ( SUCCEEDED(hr) ) 
+  {
 		hr = pGetService->GetService(guidService, riid, ppvObject);
 		SAFE_RELEASE(pGetService);
 	}
 	return hr;
 }
 
-unsigned __stdcall SchedulerThread(void *ArgList) {
+unsigned __stdcall SchedulerThread(void *ArgList) 
+{
 	SchedulerParams *p = (SchedulerParams*)ArgList;
 	EVRCustomPresenter* pPresenter = p->pPresenter;
 	Log( "EVRCustomPresenter: SchedulerThread started" );
@@ -134,17 +133,22 @@ unsigned __stdcall SchedulerThread(void *ArgList) {
 		HRESULT hr;
 		LONGLONG nextSampleTime;
 		p->csLock.Lock();
-		if ( p->bDone ) {
+		if ( p->bDone ) 
+    {
 			p->csLock.Unlock();
 			break;
 		}
 		hr = pPresenter->CheckForScheduledSample(&nextSampleTime);
 		p->csLock.Unlock();
-		if ( nextSampleTime <= 0 ) { //Wait for notification
+		if ( nextSampleTime <= 0 ) 
+    { 
+      //Wait for notification
 			//Log( "Waiting for notification...");
 			while ( !p->eHasWork.Wait() );
 			//Log( "Done waiting." );
-		} else if ( nextSampleTime >= 10000 ) {
+		} 
+    else if ( nextSampleTime >= 10000 ) 
+    {
 			//Log( "Sleeping: %I64d", nextSampleTime );
 			Sleep(nextSampleTime / 10000);
 		}
@@ -157,38 +161,42 @@ unsigned __stdcall SchedulerThread(void *ArgList) {
 EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor)
 : m_refCount(1)
 {
-    if (m_pMFCreateVideoSampleFromSurface!=NULL)
+  if (m_pMFCreateVideoSampleFromSurface!=NULL)
+  {
+    Log("----------v0.37---------------------------");
+    m_hMonitor=monitor;
+    m_pD3DDev=direct3dDevice;
+    HRESULT hr = m_pDXVA2CreateDirect3DDeviceManager9(&m_iResetToken, &m_pDeviceManager);
+    if ( FAILED(hr) ) 
     {
-        Log("----------v0.37---------------------------");
-        m_hMonitor=monitor;
-        m_pD3DDev=direct3dDevice;
-        HRESULT hr = m_pDXVA2CreateDirect3DDeviceManager9(
-            &m_iResetToken, &m_pDeviceManager);
-        if ( FAILED(hr) ) {
-            Log( "Could not create DXVA2 Device Manager" );
-        } else {
-            m_pDeviceManager->ResetDevice(direct3dDevice, m_iResetToken);
-        }
-        m_pCallback=pCallback;
-        m_surfaceCount=0;
-        //m_UseOffScreenSurface=false;
-        m_fRate = 1.0f;
-        //TODO: use ZeroMemory
-        for ( int i=0; i<NUM_SURFACES; i++ ) {
-            chains[i] = NULL;
-            surfaces[i] = NULL;
-            samples[i] = NULL;
-        }
+      Log( "Could not create DXVA2 Device Manager" );
+    } 
+    else 
+    {
+      m_pDeviceManager->ResetDevice(direct3dDevice, m_iResetToken);
     }
     m_pCallback=pCallback;
     m_surfaceCount=0;
+    //m_UseOffScreenSurface=false;
     m_fRate = 1.0f;
     //TODO: use ZeroMemory
-    for ( int i=0; i<NUM_SURFACES; i++ ) {
-	    chains[i] = NULL;
-	    surfaces[i] = NULL;
-	    samples[i] = NULL;
+    for ( int i=0; i<NUM_SURFACES; i++ ) 
+    {
+      chains[i] = NULL;
+      surfaces[i] = NULL;
+      samples[i] = NULL;
     }
+  }
+  m_pCallback=pCallback;
+  m_surfaceCount=0;
+  m_fRate = 1.0f;
+  //TODO: use ZeroMemory
+  for ( int i=0; i<NUM_SURFACES; i++ ) 
+  {
+    chains[i] = NULL;
+    surfaces[i] = NULL;
+    samples[i] = NULL;
+  }
 }
 
 EVRCustomPresenter::~EVRCustomPresenter()
@@ -200,16 +208,13 @@ EVRCustomPresenter::~EVRCustomPresenter()
 	m_pDeviceManager.Release();
 }	
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetParameters( 
-    /* [out] */ __RPC__out DWORD *pdwFlags,
-    /* [out] */ __RPC__out DWORD *pdwQueue)
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetParameters( /* [out] */ __RPC__out DWORD *pdwFlags,/* [out] */ __RPC__out DWORD *pdwQueue)
 {
 	Log("GetParameters");
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::Invoke( 
-    /* [in] */ __RPC__in_opt IMFAsyncResult *pAsyncResult)
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::Invoke(/* [in] */ __RPC__in_opt IMFAsyncResult *pAsyncResult)
 {
 	Log("Invoke");
 	return S_OK;
@@ -217,110 +222,106 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::Invoke(
 
 
 // IUnknown
-HRESULT EVRCustomPresenter::QueryInterface( 
-        REFIID riid,
-        void** ppvObject)
+HRESULT EVRCustomPresenter::QueryInterface( REFIID riid,void** ppvObject)
 {
-    HRESULT hr = E_NOINTERFACE;
-Log( "QueryInterface" );
-LogIID( riid );
-    if( ppvObject == NULL ) {
-        hr = E_POINTER;
-    } 
-	else if( riid == IID_IMFVideoDeviceID) {
-		*ppvObject = static_cast<IMFVideoDeviceID*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-	else if( riid == IID_IMFTopologyServiceLookupClient) {
+  HRESULT hr = E_NOINTERFACE;
+  Log( "QueryInterface" );
+  LogIID( riid );
+  if( ppvObject == NULL ) 
+  {
+    hr = E_POINTER;
+  } 
+	else if( riid == IID_IMFVideoDeviceID) 
+  {
+	  *ppvObject = static_cast<IMFVideoDeviceID*>( this );
+    AddRef();
+    hr = S_OK;
+  } 
+	else if( riid == IID_IMFTopologyServiceLookupClient) 
+  {
 		*ppvObject = static_cast<IMFTopologyServiceLookupClient*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-	else if( riid == IID_IMFVideoPresenter) {
+      AddRef();
+      hr = S_OK;
+  } 
+	else if( riid == IID_IMFVideoPresenter) 
+  {
 		*ppvObject = static_cast<IMFVideoPresenter*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-	else if( riid == IID_IMFGetService) {
+    AddRef();
+    hr = S_OK;
+  } 
+	else if( riid == IID_IMFGetService) 
+  {
 		*ppvObject = static_cast<IMFGetService*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-	else if( riid == IID_IQualProp) {
+    AddRef();
+    hr = S_OK;
+  } 
+	else if( riid == IID_IQualProp) 
+  {
 		*ppvObject = static_cast<IQualProp*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-	else if( riid == IID_IMFRateSupport) {
+    AddRef();
+    hr = S_OK;
+  } 
+	else if( riid == IID_IMFRateSupport) 
+  {
 		*ppvObject = static_cast<IMFRateSupport*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-    else if( riid == IID_IUnknown ) {
-        *ppvObject = 
-            static_cast<IUnknown*>( 
-			static_cast<IMFVideoDeviceID*>( this ) );
-        AddRef();
-        hr = S_OK;    
-    }
-	if ( FAILED(hr) ) {
+    AddRef();
+    hr = S_OK;
+  } 
+  else if( riid == IID_IUnknown ) 
+  {
+    *ppvObject = static_cast<IUnknown*>( static_cast<IMFVideoDeviceID*>( this ) );
+    AddRef();
+    hr = S_OK;    
+  }
+	if ( FAILED(hr) ) 
+  {
 		Log( "QueryInterface failed" );
 	}
-    return hr;
+  return hr;
 }
 
 ULONG EVRCustomPresenter::AddRef()
 {
-    Log("EVRCustomPresenter::AddRef()");
-    return InterlockedIncrement(& m_refCount);
+  Log("EVRCustomPresenter::AddRef()");
+  return InterlockedIncrement(& m_refCount);
 }
 
 ULONG EVRCustomPresenter::Release()
 {
-    Log("EVRCustomPresenter::Release()");
-    ULONG ret = InterlockedDecrement(& m_refCount);
-    if( ret == 0 )
-    {
-        Log("EVRCustomPresenter::Cleanup()");
-        delete this;
-    }
+  Log("EVRCustomPresenter::Release()");
+  ULONG ret = InterlockedDecrement(& m_refCount);
+  if( ret == 0 )
+  {
+      Log("EVRCustomPresenter::Cleanup()");
+      delete this;
+  }
 
-    return ret;
+  return ret;
 }
 
 void EVRCustomPresenter::ResetStatistics()
 {
-			m_bfirstFrame = true;
-			m_bfirstInput = true;
-			m_iFramesDrawn = 0;
-			m_iFramesDropped = 0;
-			m_hnsLastFrameTime = 0;
-			m_iJitter = 0;
+	m_bfirstFrame = true;
+	m_bfirstInput = true;
+	m_iFramesDrawn = 0;
+	m_iFramesDropped = 0;
+	m_hnsLastFrameTime = 0;
+	m_iJitter = 0;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetSlowestRate( 
-    /* [in] */ MFRATE_DIRECTION eDirection,
-    /* [in] */ BOOL fThin,
-    /* [out] */ __RPC__out float *pflRate)
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetSlowestRate( /* [in] */ MFRATE_DIRECTION eDirection,/* [in] */ BOOL fThin,/* [out] */ __RPC__out float *pflRate)
 {
 	Log("GetSlowestRate");
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetFastestRate( 
-    /* [in] */ MFRATE_DIRECTION eDirection,
-    /* [in] */ BOOL fThin,
-    /* [out] */ __RPC__out float *pflRate)
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetFastestRate( /* [in] */ MFRATE_DIRECTION eDirection,/* [in] */ BOOL fThin,/* [out] */ __RPC__out float *pflRate)
 {
 	Log("GetFastestRate");
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::IsRateSupported( 
-    /* [in] */ BOOL fThin,
-    /* [in] */ float flRate,
-    /* [unique][out][in] */ __RPC__inout_opt float *pflNearestSupportedRate)
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::IsRateSupported( /* [in] */ BOOL fThin,/* [in] */ float flRate,/* [unique][out][in] */ __RPC__inout_opt float *pflNearestSupportedRate)
 {
 	Log("IsRateSupported");
 	return S_OK;
@@ -331,12 +332,12 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::IsRateSupported(
 HRESULT EVRCustomPresenter::GetDeviceID(IID* pDeviceID)
 {
 	Log("GetDeviceID");
-    if (pDeviceID == NULL)
-    {
-        return E_POINTER;
-    }
-    *pDeviceID = __uuidof(IDirect3DDevice9);
-    return S_OK;
+  if (pDeviceID == NULL)
+  {
+      return E_POINTER;
+  }
+  *pDeviceID = __uuidof(IDirect3DDevice9);
+  return S_OK;
 }
 
 HRESULT EVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLookup)
@@ -345,60 +346,69 @@ HRESULT EVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLooku
 	HRESULT hr = S_OK;
     DWORD   cCount = 0;
 
-    // Ask for the mixer
-    cCount = 1;
-    hr = pLookup->LookupService(      
-        MF_SERVICE_LOOKUP_GLOBAL,   // Not used
-        0,                          // Reserved
-        MR_VIDEO_MIXER_SERVICE,    // Service to look up
-		__uuidof(IMFTransform),         // Interface to look up
-        (void**)&m_pMixer,          // Receives the pointer.
-        &cCount                     // Number of pointers
-        );
+  // Ask for the mixer
+  cCount = 1;
+  hr = pLookup->LookupService(      
+      MF_SERVICE_LOOKUP_GLOBAL,   // Not used
+      0,                          // Reserved
+      MR_VIDEO_MIXER_SERVICE,     // Service to look up
+	    __uuidof(IMFTransform),     // Interface to look up
+      (void**)&m_pMixer,          // Receives the pointer.
+      &cCount                     // Number of pointers
+      );
 
-	if ( FAILED(hr) ) {
-		Log( "ERR: Could not get IMFTransform interface" );
-	} else {
+	if ( FAILED(hr) ) 
+  {
+    Log( "ERR: Could not get IMFTransform interface:%x",hr );
+	} 
+  else 
+  {
 		// If there is no clock, cCount is zero.
 		Log( "Found mixers: %d", cCount );
 		ASSERT(cCount == 0 || cCount == 1);
 	}
 
-    // Ask for the clock
-    cCount = 1;
-    hr = pLookup->LookupService(      
-        MF_SERVICE_LOOKUP_GLOBAL,   // Not used
-        0,                          // Reserved
-        MR_VIDEO_RENDER_SERVICE,    // Service to look up
-		__uuidof(IMFClock),         // Interface to look up
-        (void**)&m_pClock,          // Receives the pointer.
-        &cCount                     // Number of pointers
-        );
+  // Ask for the clock
+  cCount = 1;
+  hr = pLookup->LookupService(      
+      MF_SERVICE_LOOKUP_GLOBAL,   // Not used
+      0,                          // Reserved
+      MR_VIDEO_RENDER_SERVICE,    // Service to look up
+	    __uuidof(IMFClock),         // Interface to look up
+      (void**)&m_pClock,          // Receives the pointer.
+      &cCount                     // Number of pointers
+      );
 
-	if ( FAILED(hr) ) {
-		Log( "ERR: Could not get IMFClock interface" );
+	if ( FAILED(hr) ) 
+  {
+		Log( "ERR: Could not get IMFClock interface:%x",hr );
 		m_pClock = NULL;
-	} else {
+	} 
+  else 
+  {
 		// If there is no clock, cCount is zero.
 		Log( "Found clock: %d", cCount );
 		ASSERT(cCount == 0 || cCount == 1);
 	}
 
-    // Ask for the event-sink
-    cCount = 1;
-    hr = pLookup->LookupService(      
-        MF_SERVICE_LOOKUP_GLOBAL,   // Not used
-        0,                          // Reserved
-        MR_VIDEO_RENDER_SERVICE,    // Service to look up
-		__uuidof(IMediaEventSink),         // Interface to look up
-        (void**)&m_pEventSink,          // Receives the pointer.
-        &cCount                     // Number of pointers
-        );
+  // Ask for the event-sink
+  cCount = 1;
+  hr = pLookup->LookupService(      
+      MF_SERVICE_LOOKUP_GLOBAL,   // Not used
+      0,                          // Reserved
+      MR_VIDEO_RENDER_SERVICE,    // Service to look up
+	    __uuidof(IMediaEventSink),  // Interface to look up
+      (void**)&m_pEventSink,      // Receives the pointer.
+      &cCount                     // Number of pointers
+      );
 
-	if ( FAILED(hr) ) {
+	if ( FAILED(hr) ) 
+  {
 		Log( "ERR: Could not get IMediaEventSink interface" );
 		m_pClock = NULL;
-	} else {
+	} 
+  else 
+  {
 		// If there is no clock, cCount is zero.
 		Log( "Found event sink: %d", cCount );
 		ASSERT(cCount == 0 || cCount == 1);
@@ -422,42 +432,39 @@ HRESULT EVRCustomPresenter::ReleaseServicePointers()
 HRESULT EVRCustomPresenter::GetCurrentMediaType(IMFVideoMediaType** ppMediaType)
 {
 	Log("GetCurrentMediaType");
-    HRESULT hr = S_OK;
-    //AutoLock lock(m_ObjectLock);  // Hold the critical section.
-	
-    if (ppMediaType == NULL)
-    {
-        return E_POINTER;
-    }
+  HRESULT hr = S_OK;
+  //AutoLock lock(m_ObjectLock);  // Hold the critical section.
 
-    //CHECK_HR(hr = CheckShutdown());
+  if (ppMediaType == NULL)
+  {
+    return E_POINTER;
+  }
 
-    if (m_pMediaType == NULL)
-    {
-        CHECK_HR(hr = MF_E_NOT_INITIALIZED, "MediaType is NULL");
-    }
+  //CHECK_HR(hr = CheckShutdown());
 
-    CHECK_HR(hr = m_pMediaType->QueryInterface(
-        __uuidof(IMFVideoMediaType), (void**)ppMediaType),
-		"Query interface failed in GetCurrentMediaType");
+  if (m_pMediaType == NULL)
+  {
+    CHECK_HR(hr = MF_E_NOT_INITIALIZED, "MediaType is NULL");
+  }
+
+  CHECK_HR(hr = m_pMediaType->QueryInterface(__uuidof(IMFVideoMediaType), (void**)ppMediaType),"Query interface failed in GetCurrentMediaType");
 
 done:
-
 	Log( "GetCurrentMediaType done" );
-    return hr;
+  return hr;
 }
 
 HRESULT EVRCustomPresenter::TrackSample(IMFSample *pSample)
 {
-    HRESULT hr = S_OK;
-    IMFTrackedSample *pTracked = NULL;
+  HRESULT hr = S_OK;
+  IMFTrackedSample *pTracked = NULL;
 
-    CHECK_HR(hr = pSample->QueryInterface(__uuidof(IMFTrackedSample), (void**)&pTracked), "Cannot get Interface IMFTrackedSample");
-    CHECK_HR(hr = pTracked->SetAllocator(this, NULL), "SetAllocator failed"); 
+  CHECK_HR(hr = pSample->QueryInterface(__uuidof(IMFTrackedSample), (void**)&pTracked), "Cannot get Interface IMFTrackedSample");
+  CHECK_HR(hr = pTracked->SetAllocator(this, NULL), "SetAllocator failed"); 
 
 done:
-    SAFE_RELEASE(pTracked);
-    return hr;
+  SAFE_RELEASE(pTracked);
+  return hr;
 }
 
 HRESULT EVRCustomPresenter::GetTimeToSchedule(IMFSample* pSample, LONGLONG *phnsDelta) 
@@ -644,83 +651,83 @@ void LogMediaTypes(IMFTransform* pMixer)
 
 HRESULT EVRCustomPresenter::RenegotiateMediaOutputType()
 {
-    HRESULT hr = S_OK;
-    BOOL fFoundMediaType = FALSE;
+  HRESULT hr = S_OK;
+  BOOL fFoundMediaType = FALSE;
 
-    IMFMediaType *pMixerType = NULL;
-    //IMFMediaType *pType = NULL;
+  IMFMediaType *pMixerType = NULL;
+  //IMFMediaType *pType = NULL;
 
-    if (!m_pMixer)
-    {
-        return MF_E_INVALIDREQUEST;
-    }
+  if (!m_pMixer)
+  {
+      return MF_E_INVALIDREQUEST;
+  }
 
 	LogMediaTypes(m_pMixer);
-    // Loop through all of the mixer's proposed output types.
-    DWORD iTypeIndex = 0;
-    while (!fFoundMediaType && (hr != MF_E_NO_MORE_TYPES))
+  // Loop through all of the mixer's proposed output types.
+  DWORD iTypeIndex = 0;
+  while (!fFoundMediaType && (hr != MF_E_NO_MORE_TYPES))
+  {
+    SAFE_RELEASE(pMixerType);
+    //SAFE_RELEASE(pType );
+    Log(  "Testing media type..." );
+    // Step 1. Get the next media type supported by mixer.
+    hr = m_pMixer->GetOutputAvailableType(0, iTypeIndex++, &pMixerType);
+    if (FAILED(hr))
     {
-        SAFE_RELEASE(pMixerType);
-        //SAFE_RELEASE(pType );
-Log(  "Testing media type..." );
-        // Step 1. Get the next media type supported by mixer.
-        hr = m_pMixer->GetOutputAvailableType(0, iTypeIndex++, &pMixerType);
-        if (FAILED(hr))
-        {
-            break;
-        }
-        // Step 2. Check if we support this media type.
-        if (SUCCEEDED(hr))
-        {
-            hr = S_OK; //IsMediaTypeSupported(pMixerType);
-        }
+        break;
+    }
+    // Step 2. Check if we support this media type.
+    if (SUCCEEDED(hr))
+    {
+        hr = S_OK; //IsMediaTypeSupported(pMixerType);
+    }
 
-        // Step 3. Adjust the mixer's type to match our requirements.
-        if (SUCCEEDED(hr))
-        {
-            //hr = CreateProposedOutputType(pMixerType, &pType);
-        }
+    // Step 3. Adjust the mixer's type to match our requirements.
+    if (SUCCEEDED(hr))
+    {
+        //hr = CreateProposedOutputType(pMixerType, &pType);
+    }
 
-        // Step 4. Check if the mixer will accept this media type.
-        if (SUCCEEDED(hr))
-        {
-            //hr = m_pMixer->SetOutputType(0, pType, MFT_SET_TYPE_TEST_ONLY);
-			hr = m_pMixer->SetOutputType(0, pMixerType, MFT_SET_TYPE_TEST_ONLY);
-        }
+    // Step 4. Check if the mixer will accept this media type.
+    if (SUCCEEDED(hr))
+    {
+        //hr = m_pMixer->SetOutputType(0, pType, MFT_SET_TYPE_TEST_ONLY);
+	      hr = m_pMixer->SetOutputType(0, pMixerType, MFT_SET_TYPE_TEST_ONLY);
+    }
 
-        // Step 5. Try to set the media type on ourselves.
-        if (SUCCEEDED(hr))
-        {
+    // Step 5. Try to set the media type on ourselves.
+    if (SUCCEEDED(hr))
+    {
 			Log( "New media type successfully negotiated!" );
 			
-            hr = SetMediaType(pMixerType);
+      hr = SetMediaType(pMixerType);
 			if (SUCCEEDED(hr))
 			{
 				ReAllocSurfaces();
 			}
-        }
-
-        // Step 6. Set output media type on mixer.
-        if (SUCCEEDED(hr))
-        {
-            hr = m_pMixer->SetOutputType(0, pMixerType, 0);
-
-            // If something went wrong, clear the media type.
-            if (FAILED(hr))
-            {
-				Log( "Could not set output type: 0x%x", hr );
-                SetMediaType(NULL);
-            }
-        }
-
-        if (SUCCEEDED(hr))
-        {
-            fFoundMediaType = TRUE;
-        }
     }
 
-    SAFE_RELEASE(pMixerType);
-    return hr;
+    // Step 6. Set output media type on mixer.
+    if (SUCCEEDED(hr))
+    {
+      hr = m_pMixer->SetOutputType(0, pMixerType, 0);
+
+      // If something went wrong, clear the media type.
+      if (FAILED(hr))
+      {
+	      Log( "Could not set output type: 0x%x", hr );
+        SetMediaType(NULL);
+      }
+    }
+
+    if (SUCCEEDED(hr))
+    {
+       fFoundMediaType = TRUE;
+    }
+  }
+
+  SAFE_RELEASE(pMixerType);
+  return hr;
 }
 
 HRESULT EVRCustomPresenter::GetFreeSample(IMFSample** ppSample) 
@@ -759,28 +766,28 @@ void EVRCustomPresenter::ReturnSample(IMFSample* pSample, BOOL bCheckForWork)
 
 HRESULT EVRCustomPresenter::PresentSample(IMFSample* pSample)
 {
-    HRESULT hr = S_OK;
-    IMFMediaBuffer* pBuffer = NULL;
-    IDirect3DSurface9* pSurface = NULL;
-    IDirect3DSwapChain9* pSwapChain = NULL;
-//Log("Presenting sample");
-    // Get the buffer from the sample.
+  HRESULT hr = S_OK;
+  IMFMediaBuffer* pBuffer = NULL;
+  IDirect3DSurface9* pSurface = NULL;
+  IDirect3DSwapChain9* pSwapChain = NULL;
+  //Log("Presenting sample");
+  // Get the buffer from the sample.
 	CHECK_HR(hr = pSample->GetBufferByIndex(0, &pBuffer), "failed: GetBufferByIndex");
 
-    CHECK_HR(hr = MyGetService(
-        pBuffer, 
-        MR_BUFFER_SERVICE, 
-        __uuidof(IDirect3DSurface9), 
-        (void**)&pSurface),
-		"failed: MyGetService");
+  CHECK_HR(hr = MyGetService(
+      pBuffer, 
+      MR_BUFFER_SERVICE, 
+      __uuidof(IDirect3DSurface9), 
+      (void**)&pSurface),
+	    "failed: MyGetService");
 
-    if (pSurface)
-    {
-        // Get the swap chain from the surface.
-        CHECK_HR(hr = pSurface->GetContainer(
+  if (pSurface)
+  {
+    // Get the swap chain from the surface.
+    CHECK_HR(hr = pSurface->GetContainer(
             __uuidof(IDirect3DSwapChain9),
             (void**)&pSwapChain),
-			"failed: GetContainer");
+	          "failed: GetContainer");
 
         // Present the swap chain.
 		Paint(pSurface);
@@ -801,58 +808,63 @@ HRESULT EVRCustomPresenter::PresentSample(IMFSample* pSample)
 		}
 		m_hnsLastFrameTime = hnsTimeNow;
 		m_iFramesDrawn++;
-        /*CHECK_HR(hr = pSwapChain->Present(NULL, NULL, NULL, NULL, 0),
-			"failed: Present");*/
-    }
+      /*CHECK_HR(hr = pSwapChain->Present(NULL, NULL, NULL, NULL, 0),
+		"failed: Present");*/
+  }
 
 done:
-    SAFE_RELEASE(pBuffer);
-    SAFE_RELEASE(pSurface);
-    SAFE_RELEASE(pSwapChain);
-    if (hr == D3DERR_DEVICELOST || hr == D3DERR_DEVICENOTRESET)
+  SAFE_RELEASE(pBuffer);
+  SAFE_RELEASE(pSurface);
+  SAFE_RELEASE(pSwapChain);
+  if (hr == D3DERR_DEVICELOST || hr == D3DERR_DEVICENOTRESET)
+  {
+    // Failed because the device was lost.
+    hr = S_OK;
+    /*HRESULT hrTmp = TestCooperativeLevel();
+    if (hrTmp == D3DERR_DEVICENOTRESET)
     {
-        // Failed because the device was lost.
-        hr = S_OK;
-        /*HRESULT hrTmp = TestCooperativeLevel();
-        if (hrTmp == D3DERR_DEVICENOTRESET)
-        {
-			Log("Lost device!");
-            //HandleLostDevice();
-        }*/
-    }
+    	Log("Lost device!");
+      //HandleLostDevice();
+    }*/
+  }
 
-	//Log ( "Presented sample, returning %d\n", hr );
-    return hr;
+  //Log ( "Presented sample, returning %d\n", hr );
+  return hr;
 }
 
 HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime)
 {
 	HRESULT hr = S_OK;
 	CAutoLock lock(this);
-	if ( m_vScheduledSamples.size() == 0 ) {
+	if ( m_vScheduledSamples.size() == 0 ) 
+  {
 		//Log("Nothing in queue. False alert?");
-	} else {
-	//Log("Checking for scheduled sample (size: %d)",
-	//	m_vScheduledSamples.size());
-	while ( m_vScheduledSamples.size() > 0 ) {
-		IMFSample* pSample = m_vScheduledSamples.front();
-		GetTimeToSchedule(pSample, pNextSampleTime);
-		//Log( "Time to schedule: %I64d", *pNextSampleTime );
-		//if we are ahead only 1 ms, present this sample anyway
-		//else sleep for some time
-		if ( *pNextSampleTime > 10000 ) {
-			return hr;
-		}
-		m_vScheduledSamples.pop();
-		if ( *pNextSampleTime < -400000 ) {
-			//skip!
-			Log( "skipping frame, behind %d hns", -*pNextSampleTime );
-			m_iFramesDropped++;
-		} else {
-			CHECK_HR(PresentSample(pSample), "PresentSample failed");
-		}
-		ReturnSample(pSample, TRUE);
-	}
+	} 
+  else 
+  {
+	  //Log("Checking for scheduled sample (size: %d)",
+	  //	m_vScheduledSamples.size());
+	  while ( m_vScheduledSamples.size() > 0 ) 
+    {
+		  IMFSample* pSample = m_vScheduledSamples.front();
+		  GetTimeToSchedule(pSample, pNextSampleTime);
+		  //Log( "Time to schedule: %I64d", *pNextSampleTime );
+		  //if we are ahead only 1 ms, present this sample anyway
+		  //else sleep for some time
+		  if ( *pNextSampleTime > 10000 ) 
+      {
+			  return hr;
+		  }
+		  m_vScheduledSamples.pop();
+		  if ( *pNextSampleTime < -400000 ) {
+			  //skip!
+			  Log( "skipping frame, behind %d hns", -*pNextSampleTime );
+			  m_iFramesDropped++;
+		  } else {
+			  CHECK_HR(PresentSample(pSample), "PresentSample failed");
+		  }
+		  ReturnSample(pSample, TRUE);
+	  }
 	}
 	*pNextSampleTime = 0;
 	return hr;
@@ -864,8 +876,7 @@ void EVRCustomPresenter::StartScheduler()
 	m_schedulerParams = new SchedulerParams();
 	m_schedulerParams->pPresenter = this;
 	m_schedulerParams->bDone = FALSE;
-	m_hScheduler = (HANDLE)_beginthreadex(NULL, 0, SchedulerThread,
-		m_schedulerParams, 0, &m_uThreadId);
+	m_hScheduler = (HANDLE)_beginthreadex(NULL, 0, SchedulerThread, m_schedulerParams, 0, &m_uThreadId);
 	m_bSchedulerRunning = TRUE;
 }
 
@@ -884,7 +895,8 @@ void EVRCustomPresenter::StopScheduler()
 void EVRCustomPresenter::NotifyScheduler()
 {
 	//Log( "Notifying Scheduler" );
-	if ( !m_bSchedulerRunning ) {
+	if ( !m_bSchedulerRunning ) 
+  {
 		Log("ERROR: Scheduler not running!");
 		return;
 	} 
@@ -894,7 +906,7 @@ void EVRCustomPresenter::NotifyScheduler()
 void EVRCustomPresenter::ScheduleSample(IMFSample* pSample)
 {
 	CAutoLock lock(this);
-//	Log( "Scheduling Sample, size: %d", m_vScheduledSamples.size() );
+  //	Log( "Scheduling Sample, size: %d", m_vScheduledSamples.size() );
 	m_vScheduledSamples.push(pSample);
 	if ( m_vScheduledSamples.size() == 1 )
 	{
@@ -906,7 +918,8 @@ HRESULT EVRCustomPresenter::ProcessInputNotify()
 {
 	CAutoLock lock(this);
 	HRESULT hr=S_OK;
-	if ( m_pClock ) {
+	if ( m_pClock ) 
+  {
 		MFCLOCK_STATE state;
 		m_pClock->GetState(0, &state);
 		if ( state == MFCLOCK_STATE_PAUSED && !m_bfirstInput) return S_OK;
@@ -914,10 +927,12 @@ HRESULT EVRCustomPresenter::ProcessInputNotify()
 	}
 	//try to process as many samples as possible:
 	BOOL bhasMoreSamples = true;
-	do {
+	do 
+  {
 		IMFSample* sample;
 		hr = GetFreeSample(&sample);
-		if ( FAILED(hr) ) {
+		if ( FAILED(hr) ) 
+    {
 			//Log( "No free sample available" );
 			return S_OK;
 		}
@@ -928,14 +943,17 @@ HRESULT EVRCustomPresenter::ProcessInputNotify()
 		outputSamples[0].dwStatus = 0; 
 		outputSamples[0].pSample = sample; 
 		outputSamples[0].pEvents = NULL;
-		hr = m_pMixer->ProcessOutput(0, 1, outputSamples,
-			&dwStatus);
+		hr = m_pMixer->ProcessOutput(0, 1, outputSamples,	&dwStatus);
 		SAFE_RELEASE(outputSamples[0].pEvents);
-		if ( SUCCEEDED( hr ) ) {
+		if ( SUCCEEDED( hr ) ) 
+    {
 			//Log("Scheduling sample");
 			ScheduleSample(sample);
-		} else {
-			switch ( hr ) {
+		} 
+    else 
+    {
+			switch ( hr ) 
+      {
 				case MF_E_TRANSFORM_NEED_MORE_INPUT:
 					//we are done for now
 					hr = S_OK;
@@ -956,12 +974,11 @@ HRESULT EVRCustomPresenter::ProcessInputNotify()
 	return hr;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::ProcessMessage( 
-            MFVP_MESSAGE_TYPE eMessage,
-            ULONG_PTR ulParam)
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::ProcessMessage( MFVP_MESSAGE_TYPE eMessage,ULONG_PTR ulParam)
 {
 	HRESULT hr = S_OK;
-	switch ( eMessage ) {
+	switch ( eMessage ) 
+  {
 		case MFVP_MESSAGE_INVALIDATEMEDIATYPE:
 			Log( "Negotiate Media type" );
 			//The mixer's output media type is invalid. The presenter should negotiate a new media type with the mixer. See Negotiating Formats.
@@ -983,46 +1000,44 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::ProcessMessage(
 
 		case MFVP_MESSAGE_PROCESSINPUTNOTIFY:
 			//The mixer has received a new input sample and might be able to generate a new output frame. The presenter should call IMFTransform::ProcessOutput on the mixer. See Processing Output.
-	//Log("ProcessMessage %x", eMessage);
+	    //Log("ProcessMessage %x", eMessage);
 			hr = ProcessInputNotify();
 			break;
 
 		case MFVP_MESSAGE_ENDOFSTREAM:
 			//The presentation has ended. See End of Stream.
-	Log("ProcessMessage %x", eMessage);
-	Flush();
-	m_pEventSink->Notify(EC_COMPLETE, (LONG_PTR)S_OK,
-		0);
+	    Log("ProcessMessage %x", eMessage);
+	    Flush();
+	    m_pEventSink->Notify(EC_COMPLETE, (LONG_PTR)S_OK,0);
 			break;
 
 		case MFVP_MESSAGE_FLUSH:
 			//The EVR is flushing the data in its rendering pipeline. The presenter should discard any video frames that are scheduled for presentation.
-	Log("ProcessMessage %x", eMessage);
+	    Log("ProcessMessage %x", eMessage);
 			Flush();
 			break;
 
 		case MFVP_MESSAGE_STEP:
 			//Requests the presenter to step forward N frames. The presenter should discard the next N-1 frames and display the Nth frame. See Frame Stepping.
-	Log("ProcessMessage %x", eMessage);
+	    Log("ProcessMessage %x", eMessage);
 			break;
 
 		case MFVP_MESSAGE_CANCELSTEP:
 			//Cancels frame stepping.
-	Log("ProcessMessage %x", eMessage);
+	    Log("ProcessMessage %x", eMessage);
 			break;
 		default:
 			Log( "ProcessMessage: Unknown: %d", eMessage );
 			break;
 	}
-	if ( FAILED(hr) ) {
+	if ( FAILED(hr) ) 
+  {
 		Log( "ProcessMessage failed with 0x%x", hr );
 	}
 	return hr;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockStart( 
-    /* [in] */ MFTIME hnsSystemTime,
-    /* [in] */ LONGLONG llClockStartOffset)
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockStart( /* [in] */ MFTIME hnsSystemTime,/* [in] */ LONGLONG llClockStartOffset)
 {
 	Log("OnClockStart");
 	Flush();
@@ -1030,87 +1045,87 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockStart(
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockStop( 
-    /* [in] */ MFTIME hnsSystemTime)
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockStop(/* [in] */ MFTIME hnsSystemTime)
 {
 	Log("OnClockStop");
 	return S_OK;
 }
 
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockPause( 
-    /* [in] */ MFTIME hnsSystemTime)
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockPause(/* [in] */ MFTIME hnsSystemTime)
 {
 	Log("OnClockPause");
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockRestart( 
-    /* [in] */ MFTIME hnsSystemTime)
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockRestart( /* [in] */ MFTIME hnsSystemTime)
 {
 	Log("OnClockRestart");
 	ProcessInputNotify();
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockSetRate( 
-    /* [in] */ MFTIME hnsSystemTime,
-    /* [in] */ float flRate)
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockSetRate(/* [in] */ MFTIME hnsSystemTime,/* [in] */ float flRate)
 {
 	Log("OnClockSetRate");
 	m_fRate = flRate;
 	return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetService( 
-    /* [in] */ REFGUID guidService,
-    /* [in] */  REFIID riid,
-    /* [iid_is][out] */ LPVOID *ppvObject)
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetService(/* [in] */ REFGUID guidService,/* [in] */  REFIID riid,/* [iid_is][out] */ LPVOID *ppvObject)
 {
 	Log( "GetService" );
 	LogGUID(guidService);
 	LogIID(riid);
 	HRESULT hr = MF_E_UNSUPPORTED_SERVICE;
-    if( ppvObject == NULL ) {
-        hr = E_POINTER;
-    } 
-	
-	else if( riid == __uuidof(IDirect3DDeviceManager9) ) {
+  if( ppvObject == NULL ) 
+  {
+      hr = E_POINTER;
+  } 
+	else if( riid == __uuidof(IDirect3DDeviceManager9) ) 
+  {
 		Log("Wanting Manager!");
 		hr = m_pDeviceManager->QueryInterface(riid, (void**)ppvObject);
 		hr = S_OK;
 	}
-	else if( riid == IID_IMFVideoDeviceID) {
+	else if( riid == IID_IMFVideoDeviceID) 
+  {
 		*ppvObject = static_cast<IMFVideoDeviceID*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-	else if( riid == IID_IMFClockStateSink) {
+    AddRef();
+    hr = S_OK;
+  }  
+	else if( riid == IID_IMFClockStateSink) 
+  {
 		*ppvObject = static_cast<IMFClockStateSink*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-	else if( riid == IID_IMFTopologyServiceLookupClient) {
-		*ppvObject = static_cast<IMFTopologyServiceLookupClient*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-	else if( riid == IID_IMFVideoPresenter) {
+    AddRef();
+    hr = S_OK;
+  }
+	else if( riid == IID_IMFTopologyServiceLookupClient) 
+  {
+	  *ppvObject = static_cast<IMFTopologyServiceLookupClient*>( this );
+    AddRef();
+    hr = S_OK;
+  } 
+	else if( riid == IID_IMFVideoPresenter) 
+  {
 		*ppvObject = static_cast<IMFVideoPresenter*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-	else if( riid == IID_IMFGetService) {
+    AddRef();
+    hr = S_OK;
+  } 
+	else if( riid == IID_IMFGetService) 
+  {
 		*ppvObject = static_cast<IMFGetService*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-	else if( riid == IID_IMFRateSupport) {
+    AddRef();
+    hr = S_OK;
+  } 
+	else if( riid == IID_IMFRateSupport) 
+  {
 		*ppvObject = static_cast<IMFRateSupport*>( this );
-        AddRef();
-        hr = S_OK;
-    } 
-	if ( FAILED(hr) ) {
+    AddRef();
+    hr = S_OK;
+  } 
+	if ( FAILED(hr) ) 
+  {
 		Log("GetService failed" );
 	}
 	return hr;
