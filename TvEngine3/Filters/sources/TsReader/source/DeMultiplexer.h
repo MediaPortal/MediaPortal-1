@@ -65,6 +65,7 @@ public:
 	bool			 HoldVideo();
 	void			 SetHoldVideo(bool onOff);
   void       ThreadProc();
+  int        GetVideoServiceType();
 private:
   struct stAudioStream
   {

@@ -62,6 +62,10 @@ CDeMultiplexer::~CDeMultiplexer()
 
 }
 
+int CDeMultiplexer::GetVideoServiceType()
+{
+  return m_pids.videoServiceType;
+}
 void CDeMultiplexer::GetVideoMedia(CMediaType *pmt)
 {
 	pmt->InitMediaType();
