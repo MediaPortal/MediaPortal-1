@@ -47,6 +47,7 @@ namespace TvLibrary.Implementations.DVB
     DiSEqCMotor _diSEqCMotor = null;
     Dictionary<int, ConditionalAccessContext> _mapSubChannels;
     GenericBDAS _genericbdas = null;
+    WinTvCiModule _winTvCiModule = null;
     #endregion
 
     //ctor
@@ -55,13 +56,18 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="analyzerFilter">The capture filter.</param>
-    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter)
+    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter)
     {
       try
       {
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
         if (tunerFilter == null && analyzerFilter == null) return;
 
+        if (winTvUsbCiFilter != null)
+        {
+          Log.Log.WriteFile("WinTV Ci Module detected");
+          _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter, analyzerFilter);
+        }
         Log.Log.WriteFile("Check for KNC");
         _knc = new KNC(tunerFilter, analyzerFilter);
         if (_knc.IsKNC)
@@ -201,6 +207,10 @@ namespace TvLibrary.Implementations.DVB
         {
           return true;
         }
+        if (_winTvCiModule != null)
+        {
+          return (_winTvCiModule.IsCAMInstalled && _winTvCiModule.IsDeviceInstalled);
+        }
       }
       catch (Exception ex)
       {
@@ -297,6 +307,10 @@ namespace TvLibrary.Implementations.DVB
         if (_knc != null)
         {
           return _knc.SendPMT(PMT, pmtLength);
+        }
+        if (_winTvCiModule != null)
+        {
+          return _winTvCiModule.SendPMT(PMT, pmtLength);
         }
         if (_digitalEveryWhere != null)
         {

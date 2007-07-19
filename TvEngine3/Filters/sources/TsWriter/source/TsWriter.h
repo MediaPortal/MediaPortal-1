@@ -32,6 +32,7 @@
 #include "knc.h"
 #include "channellinkagescanner.h"
 #include "tschannel.h"
+#include "WinTvUsbCI/WinTvUsbCI.h"
 
 #include <map>
 #include <vector>
@@ -235,6 +236,7 @@ private:
 		CEpgScanner*		m_pEpgScanner;
     CTechnotrend*   m_pTechnoTrend;
 		CKnc* m_pKNC;
+    CWinTvUsbCI* m_pWinTvCI;
 		CChannelLinkageScanner* m_pChannelLinkageScanner;
 		vector<CTsChannel*> m_vecChannels;
     typedef vector<CTsChannel*>::iterator ivecChannels;
