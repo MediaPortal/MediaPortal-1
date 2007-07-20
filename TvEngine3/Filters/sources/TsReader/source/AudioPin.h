@@ -54,9 +54,10 @@ public:
 
   bool IsConnected();
   void SetDiscontinuity(bool onOff);
-
+  bool IsSeeking();
 protected:
   void UpdateFromSeek();
+  bool m_binUpdateFromSeek;
   bool m_bConnected;
 	CRefTime	m_refStartTime;
 	BOOL m_bDiscontinuity;

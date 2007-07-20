@@ -264,6 +264,32 @@ void CDeMultiplexer::GetVideoStreamType(CMediaType& pmt)
   }
 }
 
+void CDeMultiplexer::FlushVideo()
+{
+  CAutoLock lock (&m_sectionVideo);
+  delete m_pCurrentVideoBuffer;
+  ivecBuffers it =m_vecVideoBuffers.begin();
+  while (it != m_vecVideoBuffers.end())
+  {
+    CBuffer* videoBuffer=*it;
+    delete videoBuffer;
+    it=m_vecVideoBuffers.erase(it);
+  }
+  m_pCurrentVideoBuffer = new CBuffer();
+}
+void CDeMultiplexer::FlushAudio()
+{
+  CAutoLock lock (&m_sectionAudio);
+  delete m_pCurrentAudioBuffer;
+  ivecBuffers it =m_vecAudioBuffers.begin();
+  while (it != m_vecAudioBuffers.end())
+  {
+    CBuffer* AudioBuffer=*it;
+    delete AudioBuffer;
+    it=m_vecAudioBuffers.erase(it);
+  }
+  m_pCurrentAudioBuffer = new CBuffer();
+}
 /// Flushes all buffers 
 ///
 void CDeMultiplexer::Flush()
@@ -274,31 +300,8 @@ void CDeMultiplexer::Flush()
   SetHoldVideo(true);
 //  LogDebug("demux:flushing");
   ivecBuffers it;
-  {
-	  CAutoLock lock (&m_sectionAudio);
-    delete m_pCurrentAudioBuffer;
-    it =m_vecAudioBuffers.begin();
-    while (it != m_vecAudioBuffers.end())
-    {
-      CBuffer* AudioBuffer=*it;
-      delete AudioBuffer;
-      it=m_vecAudioBuffers.erase(it);
-    }
-    m_pCurrentAudioBuffer = new CBuffer();
-  }
-  
-  {
-	  CAutoLock lock (&m_sectionVideo);
-    delete m_pCurrentVideoBuffer;
-    ivecBuffers it =m_vecVideoBuffers.begin();
-    while (it != m_vecVideoBuffers.end())
-    {
-      CBuffer* videoBuffer=*it;
-      delete videoBuffer;
-      it=m_vecVideoBuffers.erase(it);
-    }
-    m_pCurrentVideoBuffer = new CBuffer();
-  }
+  FlushAudio();
+  FlushVideo();
 
   {
 	  CAutoLock lock (&m_sectionSubtitle);
@@ -1391,6 +1394,10 @@ void CDeMultiplexer::ThreadProc()
 
   {
     LogDebug("demux:reconfigure graph");
+    while (m_filter.GetVideoPin()->IsSeeking() ||m_filter.GetAudioPin()->IsSeeking() )
+    {
+      Sleep(5);
+    }
     //remember if graph is playing
     HRESULT isPlaying=IsPlaying();
 

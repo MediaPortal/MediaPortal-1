@@ -67,6 +67,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCri
   //AM_SEEKING_CanGetCurrentPos |
 	AM_SEEKING_Source;
   m_bSeeking=false;
+  m_binUpdateFromSeek=false;
 }
 
 CAudioPin::~CAudioPin()
@@ -303,7 +304,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         float fTime=(float)cRefTime.Millisecs();
         fTime/=1000.0f;
         
-        //LogDebug("aud:gotbuffer:%d %03.3f",buffer->Length(),fTime);
+       // LogDebug("aud:gotbuffer:%d %03.3f",buffer->Length(),fTime);
       } 
       else
       {
@@ -351,10 +352,12 @@ HRESULT CAudioPin::ChangeRate()
 
 HRESULT CAudioPin::OnThreadStartPlay()
 {    
-   m_bDiscontinuity=TRUE;
-    m_bInFillBuffer=false;
+  m_bDiscontinuity=TRUE;
+  m_bInFillBuffer=false;
   float fStart=(float)m_rtStart.Millisecs();
   fStart/=1000.0f;
+	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
+  demux.FlushAudio();
   LogDebug("aud:OnThreadStartPlay(%f)", fStart);
   m_bMeasureCompensation=true;
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
@@ -369,8 +372,13 @@ STDMETHODIMP CAudioPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
   return CSourceSeeking::SetPositions(pCurrent, CurrentFlags, pStop,  StopFlags);
 }
 
+bool CAudioPin::IsSeeking()
+{
+  return m_binUpdateFromSeek;
+}
 void CAudioPin::UpdateFromSeek()
 {
+  m_binUpdateFromSeek=true;
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
 	if (m_rtStart>m_rtDuration)
 		m_rtStart=m_rtDuration;
@@ -378,6 +386,7 @@ void CAudioPin::UpdateFromSeek()
   if (GetTickCount()-m_seekTimer < 5000)
   {
       LogDebug("aud:skip seek");
+      m_binUpdateFromSeek=false;
       return;
   }
   m_seekTimer=GetTickCount();
@@ -431,6 +440,7 @@ void CAudioPin::UpdateFromSeek()
 	//demux.Flush();
 	demux.SetHoldAudio(false);
   m_bSeeking=false;
+  m_binUpdateFromSeek=false;
   LogDebug("aud seek done---");
 }
 

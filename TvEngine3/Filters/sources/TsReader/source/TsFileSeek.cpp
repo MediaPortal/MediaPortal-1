@@ -30,6 +30,16 @@ void CTsFileSeek::Seek(CRefTime refTime)
   m_seekPid=m_duration.GetPid();
   LogDebug("seek to %f filepos:%x pid:%x", seekPos,(DWORD)filePos, m_seekPid);
   byte buffer[188*10];
+  if (filePos<0)
+  {
+    m_reader->SetFilePointer(0,FILE_BEGIN);
+    return;
+  }
+  if (filePos+sizeof(buffer) > m_reader->GetFileSize())
+  {
+    m_reader->SetFilePointer(m_reader->GetFileSize(),FILE_BEGIN);
+    return;
+  }
   int state=0;
   while (true)
   {

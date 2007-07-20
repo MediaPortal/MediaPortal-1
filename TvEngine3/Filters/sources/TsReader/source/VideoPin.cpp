@@ -282,7 +282,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           m_pTsReaderFilter->Compensation=cRefTime;
           float fTime=(float)cRefTime.Millisecs();
           fTime/=1000.0f;
-          //LogDebug("vid:compensation:%03.3f",fTime);
+          LogDebug("vid:compensation:%03.3f",fTime);
         }
         cRefTime -=m_pTsReaderFilter->Compensation;
         REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
@@ -323,6 +323,9 @@ HRESULT CVideoPin::OnThreadStartPlay()
   m_bDiscontinuity=TRUE;
   float fStart=(float)m_rtStart.Millisecs();
   fStart/=1000.0f;
+  
+	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
+  demux.FlushVideo();
   LogDebug("vid:OnThreadStartPlay(%f)", fStart);
   m_bMeasureCompensation=true;
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
@@ -410,8 +413,13 @@ STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
   return CSourceSeeking::SetPositions(pCurrent, CurrentFlags, pStop,  StopFlags);
 }
 
+bool CVideoPin::IsSeeking()
+{
+  return m_binUpdateFromSeek;
+}
 void CVideoPin::UpdateFromSeek()
 {
+  m_binUpdateFromSeek=true;
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
 
 	if (m_rtStart>m_rtDuration)
@@ -419,6 +427,7 @@ void CVideoPin::UpdateFromSeek()
   if (GetTickCount()-m_seekTimer<5000)
   {
       LogDebug("vid:skip seek");
+      m_binUpdateFromSeek=false;
       return;
   }
   m_seekTimer=GetTickCount();
@@ -483,6 +492,7 @@ void CVideoPin::UpdateFromSeek()
 	demux.SetHoldVideo(false);
   m_bSeeking=false;
   LogDebug("vid seek done---");
+  m_binUpdateFromSeek=false;
 }
 
 STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )

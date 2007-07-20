@@ -742,7 +742,7 @@ void CTsReaderFilter::ThreadProc()
           m_duration.Set(duration.StartPcr(), duration.EndPcr(), duration.MaxPcr());
 
           // Is graph running?
-					if (m_State == State_Running)
+					if (m_State == State_Running||m_State==State_Paused)
 					{
             //yes, then send a EC_LENGTH_CHANGED event
 						float secs=(float)duration.Duration().Millisecs();

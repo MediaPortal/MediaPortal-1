@@ -54,9 +54,11 @@ public:
 	void FlushStart();
 	void FlushStop();
   bool IsConnected();
+  bool IsSeeking();
 
 protected:
   void UpdateFromSeek();
+  bool m_binUpdateFromSeek;
   bool m_bConnected;
 	BOOL m_bDiscontinuity;
 	CTsReaderFilter *	const m_pTsReaderFilter;
