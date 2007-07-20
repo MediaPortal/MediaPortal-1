@@ -147,6 +147,12 @@ namespace DirectShowLib.BDA
         Rate5_6, // 5/6
         Rate5_11,
         Rate7_8, // 7/8
+        Rate1_4, // 1/4
+        Rate1_3, // 1/3
+        Rate2_5, // 2/5
+        Rate6_7, // 6/7
+        Rate8_9, // 8/9
+        Rate9_10, // 9/10
         RateMax
     }
 
@@ -210,8 +216,15 @@ namespace DirectShowLib.BDA
         Mod16Vsb,
         ModAnalogAmplitude, // std am
         ModAnalogFrequency, // std fm
+        Mod8psk, // 8 Phase Shift Keying (including backwards compatible mode)
+        ModRf, // analog TV (Video standards such as NTSC/PAL/SECAM specified in IAnalogLocator VideoStandard property)
+        Mod16Apsk, // DVB-S2 modulation 16-Level APSK
+        Mod32Apsk, // DVB-S2 modulation 32-Level APSK
+        ModQpsk2, // Non-Backwards Compatible Quadrature Phase Shift Keying
+        Mod8psk2, // Non-Backwards Compatible 8 Phase Shift Keying
+        ModDirectTV,  // DIRECTV DSS
         ModMax
-    }
+    } 
 
     /// <summary>
     /// From DVBSystemType
@@ -260,6 +273,31 @@ namespace DirectShowLib.BDA
         Mode2K = 1, // Transmission uses 1705 carriers (use a 2K FFT)
         Mode8K, // Transmission uses 6817 carriers (use an 8K FFT)
         ModeMax,
+    }
+
+    /// <summary>
+    /// From Roll-Off
+    /// </summary>
+    public enum Rolloff
+    {
+      NotSet = -1,
+      NotDefined = 0,
+      RollOff_20 = 1, // .20 Roll Off (DVB-S2 Only)
+      RollOff_25, // .25 Roll Off (DVB-S2 Only)
+      RollOff_35, // .35 Roll Off (DVB-S2 Only)
+      RollOffMax
+    }
+
+    /// <summary>
+    /// From Pilot
+    /// </summary>
+    public enum Pilot
+    {
+      NotSet = -1,
+      NotDefined = 0,
+      PilotOff = 1, // Pilot Off (DVB-S2 Only)
+      PilotOn, // Pilot On  (DVB-S2 Only)
+      PilotMax
     }
 
     /// <summary>
