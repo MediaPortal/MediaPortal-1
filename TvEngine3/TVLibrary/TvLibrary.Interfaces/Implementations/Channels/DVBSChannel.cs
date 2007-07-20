@@ -197,6 +197,25 @@ namespace TvLibrary.Channels
     #endregion
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="DVBSChannel"/> class.
+    /// </summary>
+    /// <param name="chan">The chan.</param>
+    public DVBSChannel(DVBSChannel chan)
+      : base((DVBBaseChannel)chan)
+    {
+      _polarisation = chan.Polarisation;
+      _symbolRate = chan.SymbolRate;
+      _switchingFrequency = chan.SwitchingFrequency;
+      DisEqc = chan.DisEqc;
+      _bandType = chan.BandType;
+      _modulation = chan.ModulationType;
+      _innerFecRate = chan.InnerFecRate;
+      _pilot = chan.Pilot;
+      _rollOff = chan.RollOff;
+      _satelliteIndex = chan.SatelliteIndex;
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="T:DVBSChannel"/> class.
     /// </summary>
     public DVBSChannel()

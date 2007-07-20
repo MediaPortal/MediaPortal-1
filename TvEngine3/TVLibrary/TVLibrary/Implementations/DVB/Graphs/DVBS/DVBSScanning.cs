@@ -114,9 +114,7 @@ namespace TvLibrary.Implementations.DVB
             dvbsChannel.SatelliteIndex = tuningChannel.SatelliteIndex;
             dvbsChannel.ModulationType = tuningChannel.ModulationType;
 
-            int fec = (int)(tuningChannel.InnerFecRate);
-            if (fec >= 0) fec &= 15;
-            dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)(fec);
+            dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)tuningChannel.InnerFecRate;
             dvbsChannel.Pilot = tuningChannel.Pilot;
             dvbsChannel.RollOff = tuningChannel.RollOff;
             Log.Log.Write("Found: {0}", dvbsChannel);

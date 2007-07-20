@@ -249,54 +249,51 @@ namespace SetupTv.Sections
                     break;
                 }
                 transponder.SymbolRate = Int32.Parse(tpdata[2]);
-                if (tpdata.Length >= 4)
+                for (int idx = 3; idx < tpdata.Length; ++idx)
                 {
-                  tpdata[3] = tpdata[3].ToLower();
-                  if (tpdata[3] == "8psk") transponder.Modulation = ModulationType.Mod8psk;
-                  if (tpdata[3] == "qpsk") transponder.Modulation = ModulationType.ModQpsk;
-                  if (tpdata[3] == "16apsk") transponder.Modulation = ModulationType.Mod16Apsk;
-                  if (tpdata[3] == "32apsk") transponder.Modulation = ModulationType.Mod32Apsk;
+                  string fieldValue = tpdata[idx].ToLower();
+                  if (fieldValue == "8psk") transponder.Modulation = ModulationType.Mod8psk;
+                  if (fieldValue == "qpsk") transponder.Modulation = ModulationType.ModQpsk;
+                  if (fieldValue == "16apsk") transponder.Modulation = ModulationType.Mod16Apsk;
+                  if (fieldValue == "32apsk") transponder.Modulation = ModulationType.Mod32Apsk;
 
-                  if (tpdata.Length >= 5)
-                  {
-                    tpdata[4] = tpdata[4].ToLower();
-                    if (tpdata[4] == "1/2") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_2;
-                    if (tpdata[4] == "2/3") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_3;
-                    if (tpdata[4] == "3/4") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_4;
-                    if (tpdata[4] == "3/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_5;
-                    if (tpdata[4] == "4/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate4_5;
-                    if (tpdata[4] == "5/11") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
-                    if (tpdata[4] == "5/6") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
-                    if (tpdata[4] == "7/8") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
-                    if (tpdata[4] == "1/4") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4; 
-                    if (tpdata[4] == "1/3") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3; 
-                    if (tpdata[4] == "2/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5; 
-                    if (tpdata[4] == "6/7") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7; 
-                    if (tpdata[4] == "8/9") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9; 
-                    if (tpdata[4] == "9/10") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10; 
-                    //Optional RateMax;
+                  if (fieldValue == "12") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_2;
+                  if (fieldValue == "23") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_3;
+                  if (fieldValue == "34") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_4;
+                  if (fieldValue == "35") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_5;
+                  if (fieldValue == "45") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate4_5;
+                  if (fieldValue == "511") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
+                  if (fieldValue == "56") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
+                  if (fieldValue == "78") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
+                  if (fieldValue == "14") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4;
+                  if (fieldValue == "13") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3;
+                  if (fieldValue == "25") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5;
+                  if (fieldValue == "67") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7;
+                  if (fieldValue == "89") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9;
+                  if (fieldValue == "910") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10;
 
-                    if (tpdata.Length >= 6)
-                    {
-                      tpdata[5] = tpdata[5].ToLower();
-                      if (tpdata[5] == "1") transponder.Pilot = Pilot.PilotOff;
-                      if (tpdata[5] == "2") transponder.Pilot = Pilot.PilotOn;
-                      if (tpdata[5] == "off") transponder.Pilot = Pilot.PilotOff;
-                      if (tpdata[5] == "on") transponder.Pilot = Pilot.PilotOn;
+                  if (fieldValue == "1/2") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_2;
+                  if (fieldValue == "2/3") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_3;
+                  if (fieldValue == "3/4") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_4;
+                  if (fieldValue == "3/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate3_5;
+                  if (fieldValue == "4/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate4_5;
+                  if (fieldValue == "5/11") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
+                  if (fieldValue == "5/6") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate5_6;
+                  if (fieldValue == "7/8") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
+                  if (fieldValue == "1/4") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_4;
+                  if (fieldValue == "1/3") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate1_3;
+                  if (fieldValue == "2/5") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate2_5;
+                  if (fieldValue == "6/7") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate6_7;
+                  if (fieldValue == "8/9") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate8_9;
+                  if (fieldValue == "9/10") transponder.InnerFecRate = BinaryConvolutionCodeRate.Rate9_10;
 
-                      if (tpdata.Length >= 7)
-                      {
-                        tpdata[6] = tpdata[6].ToLower();
-                        if (tpdata[6] == "1") transponder.RollOff = Rolloff.RollOff_20;
-                        if (tpdata[6] == "2") transponder.RollOff = Rolloff.RollOff_25;
-                        if (tpdata[6] == "3") transponder.RollOff = Rolloff.RollOff_35;
 
-                        if (tpdata[6] == "0.20") transponder.RollOff = Rolloff.RollOff_20;
-                        if (tpdata[6] == "0.25") transponder.RollOff = Rolloff.RollOff_25;
-                        if (tpdata[6] == "0.35") transponder.RollOff = Rolloff.RollOff_35;
-                      }
-                    }
-                  }
+                  if (fieldValue == "off") transponder.Pilot = Pilot.PilotOff;
+                  if (fieldValue == "on") transponder.Pilot = Pilot.PilotOn;
+
+                  if (fieldValue == "0.20") transponder.RollOff = Rolloff.RollOff_20;
+                  if (fieldValue == "0.25") transponder.RollOff = Rolloff.RollOff_25;
+                  if (fieldValue == "0.35") transponder.RollOff = Rolloff.RollOff_35;
                 }
                 _transponders.Add(transponder);
                 _count += 1;
@@ -1274,7 +1271,7 @@ namespace SetupTv.Sections
     }
 
     #endregion
-    
+
     private void buttonUpdate_Click(object sender, EventArgs e)
     {
       listViewStatus.Items.Clear();

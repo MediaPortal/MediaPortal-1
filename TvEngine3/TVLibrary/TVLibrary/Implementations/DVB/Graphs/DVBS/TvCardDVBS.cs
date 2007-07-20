@@ -254,18 +254,19 @@ namespace TvLibrary.Implementations.DVB
       hr = dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
 
       //DVB-S2 specific modulation class call here if DVB-S2 card detected
+      DVBSChannel tuneChannel = dvbsChannel;
       if (_conditionalAccess != null)
       {
         //Log.Log.WriteFile("Set DVB-S2 modulation...");
-        _conditionalAccess.SetDVBS2Modulation(_parameters, dvbsChannel);
+        tuneChannel = _conditionalAccess.SetDVBS2Modulation(_parameters, dvbsChannel);
       }
-      hr = dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
-      Log.Log.WriteFile("Channel modulation is set to {0}", dvbsChannel.ModulationType);
+      hr = dvbsLocator.put_Modulation(tuneChannel.ModulationType);
+      Log.Log.WriteFile("  Channel modulation is set to {0}", tuneChannel.ModulationType);
       //Log.Log.Info("Put Modulation returned:{0:X}", hr);
       hr = dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
-      Log.Log.WriteFile("Channel FECRate is set to {0}", dvbsChannel.InnerFecRate);
+      Log.Log.WriteFile("  Channel FECRate is set to {0}", tuneChannel.InnerFecRate);
       //Log.Log.Info("Put InnerFECRate returned:{0:X}", hr);
-      
+
       _tuneRequest.put_Locator(locator);
 
       if (_conditionalAccess != null)
@@ -285,7 +286,7 @@ namespace TvLibrary.Implementations.DVB
       }
       RunGraph(ch.SubChannelId);
 
-      if (dvbsChannel.ServiceId<0 ||dvbsChannel.NetworkId<0||dvbsChannel.TransportId<0)
+      if (dvbsChannel.ServiceId < 0 || dvbsChannel.NetworkId < 0 || dvbsChannel.TransportId < 0)
         _filterTIF.Stop();
 
       return ch;

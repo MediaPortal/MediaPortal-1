@@ -422,8 +422,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="parameters">The parameters.</param>
     /// <param name="channel">The channel.</param>
-    public void SetDVBS2Modulation(ScanParameters parameters, DVBSChannel channel)
+    public DVBSChannel SetDVBS2Modulation(ScanParameters parameters, DVBSChannel channel)
     {
+      
       Log.Log.WriteFile("Trying to set DVB-S2 modulation...");
       try
       {
@@ -450,7 +451,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Twinhan DVB-S2 Pilot set to:{0}", channel.Pilot);
           Log.Log.WriteFile("Twinhan DVB-S2 RollOff set to:{0}", channel.RollOff);
           Log.Log.WriteFile("Twinhan DVB-S2 fec set to:{0}", channel.InnerFecRate);
-          return;
+          return channel;
         }
         if (_hauppauge != null)
         {
@@ -506,7 +507,7 @@ namespace TvLibrary.Implementations.DVB
               }
             }
           }
-          return;
+          return channel;
         }
         if (_technoTrend != null)
         {
@@ -531,7 +532,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("Technotrend DVB-S2 Pilot set to:{0}", channel.Pilot);
           Log.Log.WriteFile("Technotrend DVB-S2 RollOff set to:{0}", channel.RollOff);
           Log.Log.WriteFile("Technotrend DVB-S2 fec set to:{0}", channel.InnerFecRate);
-          return;
+          return channel;
         }
         if (_digitalEveryWhere != null)
         {
@@ -550,6 +551,8 @@ namespace TvLibrary.Implementations.DVB
             channel.RollOff = Rolloff.NotSet;
             //Log.Log.WriteFile("DigitalEverywhere: we're tuning DVB-S, pilot & roll-off are now not set");
           }
+
+          DVBSChannel tuneChannel = new DVBSChannel(channel);
           if (channel.InnerFecRate != BinaryConvolutionCodeRate.RateNotSet)
           {
             //Set the DigitalEverywhere binary values for Pilot & Roll-off
@@ -566,19 +569,20 @@ namespace TvLibrary.Implementations.DVB
             if (channel.RollOff == Rolloff.RollOff_35)
               _rollOff = 48;
             //The binary values get added to the current InnerFECRate - done!
-            channel.InnerFecRate = channel.InnerFecRate + _pilot + _rollOff;
+            tuneChannel.InnerFecRate = channel.InnerFecRate + _pilot + _rollOff;
           }
           Log.Log.WriteFile("DigitalEverywhere DVB-S2 modulation set to:{0}", channel.ModulationType);
           Log.Log.WriteFile("DigitalEverywhere Pilot set to:{0}", channel.Pilot);
           Log.Log.WriteFile("DigitalEverywhere RollOff set to:{0}", channel.RollOff);
-          Log.Log.WriteFile("DigitalEverywhere fec set to:{0}", (int)channel.InnerFecRate);
-          return;
+          Log.Log.WriteFile("DigitalEverywhere fec set to:{0}", (int)tuneChannel.InnerFecRate);
+          return tuneChannel;
         }
       }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
+      return channel;
     }
   }
 }

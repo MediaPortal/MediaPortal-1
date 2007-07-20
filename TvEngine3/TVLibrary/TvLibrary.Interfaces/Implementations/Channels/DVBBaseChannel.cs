@@ -49,6 +49,21 @@ namespace TvLibrary.Channels
     /// <summary>
     /// ctor
     /// </summary>
+    public DVBBaseChannel(DVBBaseChannel chan)
+    {
+      _channelName = chan._channelName;
+      _providerName = chan._providerName;
+      _channelFrequency = chan._channelFrequency;
+      _networkId = chan._networkId;
+      _serviceId = chan._serviceId;
+      _transportId = chan._transportId;
+      _pmtPid = chan._pmtPid;
+      _pcrPid = chan._pcrPid;
+      _lcn = chan._lcn;
+      _isRadio = chan._isRadio;
+      _isTv = chan._isTv;
+      _freeToAir = chan._freeToAir;
+    }
     public DVBBaseChannel()
     {
       _channelName = "";
