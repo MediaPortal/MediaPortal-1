@@ -378,9 +378,15 @@ namespace MediaPortal.Player
             if (fetched != 1) break;
             PinDirection direction;
             pins[0].QueryDirection(out direction);
-            if (direction == PinDirection.Input) continue;
+            if (direction == PinDirection.Input)
+            {
+              Marshal.ReleaseComObject(pins[0]);
+              continue;
+            }
             _graphBuilder.Render(pins[0]);
+            Marshal.ReleaseComObject(pins[0]);
           }
+          Marshal.ReleaseComObject(enumPins);
         }
         #endregion
 
@@ -453,35 +459,44 @@ namespace MediaPortal.Player
       Log.Info("TSReaderPlayer:cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
       {
+        _videoWin = _graphBuilder as IVideoWindow;
+        if (_videoWin != null)
+          _videoWin.put_Visible(OABool.False);
         if (_vmr9 != null)
         {
           Log.Info("TSReaderPlayer: vmr9 disable");
           _vmr9.Enable(false);
         }
-        int counter = 0;
-        while (GUIGraphicsContext.InVmr9Render)
-        {
-          counter++;
-          System.Threading.Thread.Sleep(100);
-          if (counter > 5)
-            break;
-        }
-
         if (_mediaCtrl != null)
         {
+          int counter = 0;
+          while (GUIGraphicsContext.InVmr9Render)
+          {
+            counter++;
+            System.Threading.Thread.Sleep(100);
+            if (counter > 200) break;
+            break;
+          }
           hr = _mediaCtrl.Stop();
+          FilterState state;
+          hr = _mediaCtrl.GetState(10, out state);
+          Log.Info("state:{0} {1:X}", state.ToString(), hr);
+          _mediaCtrl = null;
         }
-        _mediaCtrl = null;
         _mediaEvt = null;
         _mediaSeeking = null;
         _videoWin = null;
         _basicAudio = null;
         _basicVideo = null;
+        if (_vmr9 != null)
+        {
+          _vmr9.Dispose();
+          _vmr9 = null;
+        }
 
         if (_fileSource != null)
         {
-          while ((hr = Marshal.ReleaseComObject(_fileSource)) > 0)
-            ;
+          while ((hr = Marshal.ReleaseComObject(_fileSource)) > 0);
           _fileSource = null;
         }
         if (_pinAudio != null)
@@ -543,14 +558,7 @@ namespace MediaPortal.Player
           _mpegDemux = null;
         }
 
-        DirectShowUtil.RemoveFilters(_graphBuilder);
-
-        if (_vmr9 != null)
-        {
-          Log.Info("TSReaderPlayer: vmr9 dispose");
-          _vmr9.Dispose();
-          _vmr9 = null;
-        }
+        //	DsUtils.RemoveFilters(graphBuilder);
 
         if (_rotEntry != null)
         {
