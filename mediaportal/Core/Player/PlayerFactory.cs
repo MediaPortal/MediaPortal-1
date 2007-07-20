@@ -235,10 +235,14 @@ namespace MediaPortal.Player
         bUseTsFileSourceForMpegs = xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
       }
       bool playWithTsFileSource = false;
+      bool isMpg = false;
       if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
       {
         if (extension == ".mpg" || extension == ".mpeg")
+        {
+          isMpg = true;
           playWithTsFileSource = bUseTsFileSourceForMpegs;
+        }
         else
           playWithTsFileSource = true;
       }
@@ -254,12 +258,12 @@ namespace MediaPortal.Player
         {
           if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
           {
-            if (_useTSReader)
+            if (_useTSReader && !isMpg)
               return new Player.BaseTSReaderPlayer();
             else
               return new Player.BaseTStreamBufferPlayer();
           }
-          if (_useTSReader)
+          if (_useTSReader && !isMpg)
             newPlayer = new Player.TSReaderPlayer();
           else
             newPlayer = new Player.TStreamBufferPlayer9();
@@ -408,10 +412,14 @@ namespace MediaPortal.Player
         bUseTsFileSourceForMpegs = xmlreader.GetValueAsBool("movieplayer", "useTsFileSourceForMpegs", true);
       }
       bool playWithTsFileSource = false;
+      bool isMpg = false;
       if (extension == ".tsbuffer" || extension == ".ts" || extension == ".mpg" || extension == ".mpeg")
       {
         if (extension == ".mpg" || extension == ".mpeg")
+        {
           playWithTsFileSource = bUseTsFileSourceForMpegs;
+          isMpg = true;
+        }
         else
           playWithTsFileSource = true;
       }
@@ -428,12 +436,12 @@ namespace MediaPortal.Player
         {
           if (fileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
           {
-            if (_useTSReader)
+            if (_useTSReader && !isMpg)
               return new Player.BaseTSReaderPlayer(type);
             else
               return new Player.BaseTStreamBufferPlayer(type);
           }
-          if (_useTSReader)
+          if (_useTSReader && !isMpg)
             newPlayer = new Player.TSReaderPlayer(type);
           else
             newPlayer = new Player.TStreamBufferPlayer9(type);
