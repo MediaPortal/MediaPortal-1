@@ -168,6 +168,7 @@ HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
 }
 HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 {
+  m_bInFillBuffer=false;
 	LogDebug("vid:CompleteConnect()");
 	HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
 	if (SUCCEEDED(hr))
@@ -208,102 +209,108 @@ HRESULT CVideoPin::BreakConnect()
 HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 {
 //	::OutputDebugStringA("CVideoPin::FillBuffer()\n");
-  if (m_pTsReaderFilter->IsTimeShifting())
+  try
   {
-    //m_rtDuration=CRefTime(MAX_TIME);
-    REFERENCE_TIME refTime;
-    m_pTsReaderFilter->GetDuration(&refTime);
-    m_rtDuration=CRefTime(refTime);
-  }
-  else
-  {
-    REFERENCE_TIME refTime;
-    m_pTsReaderFilter->GetDuration(&refTime);
-    m_rtDuration=CRefTime(refTime);
-  }
-  if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
-	{
-    LogDebug("vid:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
-		Sleep(20);
-    pSample->SetTime(NULL,NULL); 
-	  pSample->SetActualDataLength(0);
-    pSample->SetSyncPoint(FALSE);
-		return NOERROR;
-	}
-	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-
-  m_bInFillBuffer=true;
-  CBuffer* buffer=NULL;
-  while (buffer==NULL)
-  {
-      {
-        CAutoLock lock(&m_bufferLock);
-        buffer=demux.GetVideo();
-      }
-      if (buffer!=NULL) break;
-      if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
-      {
-        LogDebug("vid:isseeking2");
-	      Sleep(20);
-        pSample->SetTime(NULL,NULL); 
-        pSample->SetActualDataLength(0);
-        pSample->SetDiscontinuity(TRUE);
-        pSample->SetSyncPoint(FALSE);
-        m_bInFillBuffer=false;
-	      return NOERROR;
-      }
-      if (demux.EndOfFile()) 
-      {
-        m_bInFillBuffer=false;
-        return S_FALSE;
-      }
-      Sleep(10);
-  }
-
-  if (m_bDiscontinuity)
-  {
-    LogDebug("vid:set discontinuity");
-    pSample->SetDiscontinuity(TRUE);
-    m_bDiscontinuity=FALSE;
-  }
-  if (buffer!=NULL)
-  {
-    BYTE* pSampleBuffer;
-    CRefTime cRefTime;
-    if (buffer->MediaTime(cRefTime))
+    if (m_pTsReaderFilter->IsTimeShifting())
     {
-      cRefTime-=m_rtStart;
-      if (m_bMeasureCompensation)
-      {
-        m_bMeasureCompensation=false;
-        m_pTsReaderFilter->Compensation=cRefTime;
-        float fTime=(float)cRefTime.Millisecs();
-        fTime/=1000.0f;
-        //LogDebug("vid:compensation:%03.3f",fTime);
-      }
-      cRefTime -=m_pTsReaderFilter->Compensation;
-      REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
-      pSample->SetTime(&refTime,&refTime); 
-      pSample->SetSyncPoint(TRUE);
-      float fTime=(float)cRefTime.Millisecs();
-      fTime/=1000.0f;
-      
-     //LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
+      //m_rtDuration=CRefTime(MAX_TIME);
+      REFERENCE_TIME refTime;
+      m_pTsReaderFilter->GetDuration(&refTime);
+      m_rtDuration=CRefTime(refTime);
     }
     else
     {
-     // LogDebug("vid:gotbuffer:%d ",buffer->Length());
-      pSample->SetTime(NULL,NULL);  
-      pSample->SetSyncPoint(FALSE);
+      REFERENCE_TIME refTime;
+      m_pTsReaderFilter->GetDuration(&refTime);
+      m_rtDuration=CRefTime(refTime);
     }
-	  pSample->SetActualDataLength(buffer->Length());
-    pSample->GetPointer(&pSampleBuffer);
-    memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
-    delete buffer;
-    m_bInFillBuffer=false;
-    return NOERROR;
-  }
+    if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
+	  {
+      LogDebug("vid:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
+		  Sleep(20);
+      pSample->SetTime(NULL,NULL); 
+	    pSample->SetActualDataLength(0);
+      pSample->SetSyncPoint(FALSE);
+		  return NOERROR;
+	  }
+	  CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
 
+    m_bInFillBuffer=true;
+    CBuffer* buffer=NULL;
+    while (buffer==NULL)
+    {
+        {
+          CAutoLock lock(&m_bufferLock);
+          buffer=demux.GetVideo();
+        }
+        if (buffer!=NULL) break;
+        if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
+        {
+          LogDebug("vid:isseeking2");
+	        Sleep(20);
+          pSample->SetTime(NULL,NULL); 
+          pSample->SetActualDataLength(0);
+          pSample->SetDiscontinuity(TRUE);
+          pSample->SetSyncPoint(FALSE);
+          m_bInFillBuffer=false;
+	        return NOERROR;
+        }
+        if (demux.EndOfFile()) 
+        {
+          m_bInFillBuffer=false;
+          return S_FALSE;
+        }
+        Sleep(10);
+    }
+
+    if (m_bDiscontinuity)
+    {
+      LogDebug("vid:set discontinuity");
+      pSample->SetDiscontinuity(TRUE);
+      m_bDiscontinuity=FALSE;
+    }
+    if (buffer!=NULL)
+    {
+      BYTE* pSampleBuffer;
+      CRefTime cRefTime;
+      if (buffer->MediaTime(cRefTime))
+      {
+        cRefTime-=m_rtStart;
+        if (m_bMeasureCompensation)
+        {
+          m_bMeasureCompensation=false;
+          m_pTsReaderFilter->Compensation=cRefTime;
+          float fTime=(float)cRefTime.Millisecs();
+          fTime/=1000.0f;
+          //LogDebug("vid:compensation:%03.3f",fTime);
+        }
+        cRefTime -=m_pTsReaderFilter->Compensation;
+        REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
+        pSample->SetTime(&refTime,&refTime); 
+        pSample->SetSyncPoint(TRUE);
+        float fTime=(float)cRefTime.Millisecs();
+        fTime/=1000.0f;
+        
+       //LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
+      }
+      else
+      {
+       // LogDebug("vid:gotbuffer:%d ",buffer->Length());
+        pSample->SetTime(NULL,NULL);  
+        pSample->SetSyncPoint(FALSE);
+      }
+	    pSample->SetActualDataLength(buffer->Length());
+      pSample->GetPointer(&pSampleBuffer);
+      memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
+      delete buffer;
+      m_bInFillBuffer=false;
+      return NOERROR;
+    }
+  }
+  catch(...)
+  {
+    LogDebug("vid:fillbuffer exception");
+  }
   m_bInFillBuffer=false;
   return NOERROR;
 }
@@ -312,6 +319,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
 HRESULT CVideoPin::OnThreadStartPlay()
 {    
+  m_bInFillBuffer=false;
   m_bDiscontinuity=TRUE;
   float fStart=(float)m_rtStart.Millisecs();
   fStart/=1000.0f;

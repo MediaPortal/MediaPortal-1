@@ -176,6 +176,7 @@ HRESULT CAudioPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 
 HRESULT CAudioPin::CompleteConnect(IPin *pReceivePin)
 {
+  m_bInFillBuffer=false;
 	LogDebug("aud:CompleteConnect()");
 	HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
 	if (SUCCEEDED(hr))
@@ -215,106 +216,112 @@ HRESULT CAudioPin::BreakConnect()
 HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 {
  // LogDebug(".");
-
-  if (m_pTsReaderFilter->IsTimeShifting())
+  try
   {
-    //m_rtDuration=CRefTime(MAX_TIME);
-    REFERENCE_TIME refTime;
-    m_pTsReaderFilter->GetDuration(&refTime);
-    m_rtDuration=CRefTime(refTime);
-  }
-  else
-  {
-    REFERENCE_TIME refTime;
-    m_pTsReaderFilter->GetDuration(&refTime);
-    m_rtDuration=CRefTime(refTime);
-  }
-
-  if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
-	{
-    LogDebug("aud:isseeking");
-		Sleep(20);
-    pSample->SetTime(NULL,NULL); 
-	  pSample->SetActualDataLength(0);
-    pSample->SetDiscontinuity(TRUE);
-    pSample->SetSyncPoint(FALSE);
-		return NOERROR;
-	}
-  
-
-  m_bInFillBuffer=true;
-
-	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-  CBuffer* buffer=NULL;
-  while (buffer==NULL)
-  {
+    if (m_pTsReaderFilter->IsTimeShifting())
     {
-      CAutoLock lock(&m_bufferLock);
-      buffer=demux.GetAudio();
+      //m_rtDuration=CRefTime(MAX_TIME);
+      REFERENCE_TIME refTime;
+      m_pTsReaderFilter->GetDuration(&refTime);
+      m_rtDuration=CRefTime(refTime);
     }
-    if (buffer!=NULL) break;
-    if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
+    else
     {
-      LogDebug("aud:isseeking2");
-      Sleep(20);
+      REFERENCE_TIME refTime;
+      m_pTsReaderFilter->GetDuration(&refTime);
+      m_rtDuration=CRefTime(refTime);
+    }
+
+    if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
+	  {
+      LogDebug("aud:isseeking");
+		  Sleep(20);
       pSample->SetTime(NULL,NULL); 
-      pSample->SetActualDataLength(0);
+	    pSample->SetActualDataLength(0);
       pSample->SetDiscontinuity(TRUE);
       pSample->SetSyncPoint(FALSE);
+		  return NOERROR;
+	  }
+    
+
+    m_bInFillBuffer=true;
+
+	  CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
+    CBuffer* buffer=NULL;
+    while (buffer==NULL)
+    {
+      {
+        CAutoLock lock(&m_bufferLock);
+        buffer=demux.GetAudio();
+      }
+      if (buffer!=NULL) break;
+      if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
+      {
+        LogDebug("aud:isseeking2");
+        Sleep(20);
+        pSample->SetTime(NULL,NULL); 
+        pSample->SetActualDataLength(0);
+        pSample->SetDiscontinuity(TRUE);
+        pSample->SetSyncPoint(FALSE);
+        m_bInFillBuffer=false;
+        return NOERROR;
+      }
+      if (demux.EndOfFile()) 
+      {
+      LogDebug("aud:set eof");
+        m_bInFillBuffer=false;
+        return S_FALSE;
+      }
+      Sleep(10);
+    }
+
+    if (m_bDiscontinuity)
+    {
+      LogDebug("aud:set discontinuity");
+      pSample->SetDiscontinuity(TRUE);
+      m_bDiscontinuity=FALSE;
+    }
+    if (buffer!=NULL)
+    {
+      BYTE* pSampleBuffer;
+      CRefTime cRefTime;
+      if (buffer->MediaTime(cRefTime))
+      {
+        cRefTime-=m_rtStart;
+        if (m_bMeasureCompensation)
+        {
+          m_bMeasureCompensation=false;
+          m_pTsReaderFilter->Compensation=cRefTime;
+          float fTime=(float)cRefTime.Millisecs();
+          fTime/=1000.0f;
+          LogDebug("aud:compensation:%03.3f",fTime);
+        }
+        cRefTime -=m_pTsReaderFilter->Compensation;
+        REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
+        pSample->SetTime(&refTime,&refTime);  
+        pSample->SetSyncPoint(TRUE);
+        float fTime=(float)cRefTime.Millisecs();
+        fTime/=1000.0f;
+        
+        //LogDebug("aud:gotbuffer:%d %03.3f",buffer->Length(),fTime);
+      } 
+      else
+      {
+        //LogDebug("aud:gotbuffer:%d ",buffer->Length());
+        pSample->SetTime(NULL,NULL);  
+        pSample->SetSyncPoint(FALSE);
+      }
+	    pSample->SetActualDataLength(buffer->Length());
+      pSample->GetPointer(&pSampleBuffer);
+      memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
+      delete buffer;
       m_bInFillBuffer=false;
       return NOERROR;
     }
-    if (demux.EndOfFile()) 
-    {
-    LogDebug("aud:set eof");
-      m_bInFillBuffer=false;
-      return S_FALSE;
-    }
-    Sleep(10);
   }
-
-  if (m_bDiscontinuity)
+  catch(...)
   {
-    LogDebug("aud:set discontinuity");
-    pSample->SetDiscontinuity(TRUE);
-    m_bDiscontinuity=FALSE;
-  }
-  if (buffer!=NULL)
-  {
-    BYTE* pSampleBuffer;
-    CRefTime cRefTime;
-    if (buffer->MediaTime(cRefTime))
-    {
-      cRefTime-=m_rtStart;
-      if (m_bMeasureCompensation)
-      {
-        m_bMeasureCompensation=false;
-        m_pTsReaderFilter->Compensation=cRefTime;
-        float fTime=(float)cRefTime.Millisecs();
-        fTime/=1000.0f;
-        LogDebug("aud:compensation:%03.3f",fTime);
-      }
-      cRefTime -=m_pTsReaderFilter->Compensation;
-      REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
-      pSample->SetTime(&refTime,&refTime);  
-      pSample->SetSyncPoint(TRUE);
-      float fTime=(float)cRefTime.Millisecs();
-      fTime/=1000.0f;
-      
-      //LogDebug("aud:gotbuffer:%d %03.3f",buffer->Length(),fTime);
-    } 
-    else
-    {
-      //LogDebug("aud:gotbuffer:%d ",buffer->Length());
-      pSample->SetTime(NULL,NULL);  
-      pSample->SetSyncPoint(FALSE);
-    }
-	  pSample->SetActualDataLength(buffer->Length());
-    pSample->GetPointer(&pSampleBuffer);
-    memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
-    delete buffer;
-    m_bInFillBuffer=false;
-    return NOERROR;
+    LogDebug("aud:fillbuffer exception");
   }
   m_bInFillBuffer=false;
   return NOERROR;
@@ -345,6 +352,7 @@ HRESULT CAudioPin::ChangeRate()
 HRESULT CAudioPin::OnThreadStartPlay()
 {    
    m_bDiscontinuity=TRUE;
+    m_bInFillBuffer=false;
   float fStart=(float)m_rtStart.Millisecs();
   fStart/=1000.0f;
   LogDebug("aud:OnThreadStartPlay(%f)", fStart);
