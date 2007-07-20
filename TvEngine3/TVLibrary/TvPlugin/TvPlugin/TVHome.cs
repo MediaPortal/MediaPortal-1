@@ -1393,6 +1393,15 @@ namespace TvPlugin
 
         if (succeeded == TvResult.Succeeded)
         {
+          if (card != null)
+          {
+            Log.Info("card:{0}", card);
+            if (card.User!=null)
+              Log.Info("user.cardid:{0} name:{1} sub:{2} idch:{3}", card.User.CardId, card.User.Name, card.User.SubChannel, card.User.IdChannel);
+            IChannel ch = card.Channel;
+            Log.Info("ch:{0}", ch);
+          }
+
           //timeshifting succeeded
 
           //check if we the new tvchannel has AC3

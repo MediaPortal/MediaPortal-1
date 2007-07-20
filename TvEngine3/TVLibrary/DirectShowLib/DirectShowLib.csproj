@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="amstream.cs" />
     <Compile Include="amvideo.cs" />
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="austream.cs" />
     <Compile Include="AxCore.cs" />
     <Compile Include="AXExtend.cs" />
@@ -61,7 +62,6 @@
     <Compile Include="Mpeg2Data.cs" />
     <Compile Include="other.cs" />
     <Compile Include="PlayList.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QEdit.cs" />
     <Compile Include="qnetwork.cs" />
     <Compile Include="RegBag.cs" />
@@ -73,6 +73,9 @@
     <Compile Include="VidPort.cs" />
     <Compile Include="Vmr9.cs" />
     <Compile Include="VmRender.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
