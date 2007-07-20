@@ -113,7 +113,9 @@ namespace TvLibrary.Implementations.DVB
             dvbsChannel.FreeToAir = !info.scrambled;
             dvbsChannel.SatelliteIndex = tuningChannel.SatelliteIndex;
             dvbsChannel.ModulationType = tuningChannel.ModulationType;
-            int fec = ((int)(tuningChannel.InnerFecRate))&15;
+
+            int fec = (int)(tuningChannel.InnerFecRate);
+            if (fec >= 0) fec &= 15;
             dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)(fec);
             dvbsChannel.Pilot = tuningChannel.Pilot;
             dvbsChannel.RollOff = tuningChannel.RollOff;

@@ -281,6 +281,8 @@ namespace SetupTv.Sections
                       tpdata[5] = tpdata[5].ToLower();
                       if (tpdata[5] == "1") transponder.Pilot = Pilot.PilotOff;
                       if (tpdata[5] == "2") transponder.Pilot = Pilot.PilotOn;
+                      if (tpdata[5] == "off") transponder.Pilot = Pilot.PilotOff;
+                      if (tpdata[5] == "on") transponder.Pilot = Pilot.PilotOn;
 
                       if (tpdata.Length >= 7)
                       {
@@ -288,6 +290,10 @@ namespace SetupTv.Sections
                         if (tpdata[6] == "1") transponder.RollOff = Rolloff.RollOff_20;
                         if (tpdata[6] == "2") transponder.RollOff = Rolloff.RollOff_25;
                         if (tpdata[6] == "3") transponder.RollOff = Rolloff.RollOff_35;
+
+                        if (tpdata[6] == "0.20") transponder.RollOff = Rolloff.RollOff_20;
+                        if (tpdata[6] == "0.25") transponder.RollOff = Rolloff.RollOff_25;
+                        if (tpdata[6] == "0.35") transponder.RollOff = Rolloff.RollOff_35;
                       }
                     }
                   }

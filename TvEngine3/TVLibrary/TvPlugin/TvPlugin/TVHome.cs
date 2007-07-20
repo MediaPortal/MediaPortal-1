@@ -1442,7 +1442,7 @@ namespace TvPlugin
 
           TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
-          MediaPortal.GUI.Library.Log.Info("succeeded:{0} ", succeeded);
+          MediaPortal.GUI.Library.Log.Info("succeeded:{0} {1}", succeeded, card);
 
 
           benchClock.Stop();
