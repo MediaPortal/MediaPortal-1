@@ -141,7 +141,7 @@ namespace TvPlugin
       catch (Exception)
       {
       }
-    }
+    }   
 
     public override void OnAdded()
     {
@@ -466,16 +466,33 @@ namespace TvPlugin
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE);
         return;
       }
-
+      
       try
       {
-        IList cards = TvDatabase.Card.ListAll(); ;
+        IList cards = TvDatabase.Card.ListAll();        
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        RemoteControl.Clear();
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE);
-        return;
+        // lets try one more time - seems like the gentle framework is not properly initialized when coming out of standby/hibernation.
+        if (TVHome.Connected && RemoteControl.IsConnected)        
+        {
+          try
+          {
+            IList cards = TvDatabase.Card.ListAll();
+          }
+          catch (Exception)
+          {
+            RemoteControl.Clear();
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE);
+            return;
+          }
+        }
+        else
+        {
+          RemoteControl.Clear();
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE);
+          return;
+        }
       }
       LoadSettings();
       //stop the old recorder.
@@ -533,6 +550,9 @@ namespace TvPlugin
         MediaPortal.GUI.Library.Log.Info("tv home init:{0} done", channel.Name);
       }
     }
+
+
+
 
     protected override void OnPageDestroy(int newWindowId)
     {
