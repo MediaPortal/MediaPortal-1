@@ -227,6 +227,7 @@ namespace TvPlugin
             {
               // exit
               Close();
+              _canceled = true;
             }
             break;
           }
@@ -248,6 +249,7 @@ namespace TvPlugin
           return;
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           //_running = false;
+          _canceled = true;
           Close();
           return;
         case Action.ActionType.ACTION_MOVE_LEFT:
