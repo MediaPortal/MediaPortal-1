@@ -1357,36 +1357,13 @@ namespace TvPlugin
         VirtualCard card;
         bool _return = false;
 
-        /*
-        TvBusinessLayer layer = new TvBusinessLayer();
-        int newCardId = -1;
-        foreach (Card c in layer.Cards)
-        {
-            foreach (ChannelMap map in c.ReferringChannelMap())
-            {
-                if (map.IdChannel == channel.IdChannel)
-                {
-                   newCardId = c.IdCard;
-                    break;
-                }
-            }
-            if (newCardId > -1) break;
-        }
-
-        // by gibman - comment from rtv: if there's a timing issue which causes no AvailableAudioStreams then please
-        //                               add a callback and wait for that (suggested by tourettes)
-        if (newCardId != _card.Id && newCardId > -1)
-        {
-            Log.Debug("TvPlugin: Stop player. newCard {0} <> _CardID {1} and newCard is Valid" , newCardId, _card.Id);
-            g_Player.Stop();
-        } 
-        Log.Debug("TvPlugin: Continuing player. NewCard is {0} and oldCard was {1}", newCardId, _card.Id); */
-
         benchClock.Stop();
         MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 2 - {0} ms. Done previous state management.", benchClock.ElapsedMilliseconds.ToString());
         benchClock.Reset();
         benchClock.Start();
 
+        if (wasPlaying)
+          SeekToEnd(true);
         succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
 
         benchClock.Stop();
@@ -1408,36 +1385,7 @@ namespace TvPlugin
               hasAc3 = true;
             }
           }
-          // when we switch from mpeg-2 <-> ac3, then recreate the playing graph
-          //if (hadAc3 != hasAc3)
-          //{
-          //  Log.Info("stop player: ac3 changed:{0}-{1}", hadAc3, hasAc3);
-          //  g_Player.Stop();
-          //}
-          /*
-          //Removed code since it's functions were replaced by previous check
-          bool useRtsp = System.IO.File.Exists("usertsp.txt");
-          if (g_Player.Playing)
-          {
-            if (System.IO.File.Exists(TVHome.Card.TimeShiftFileName) && !useRtsp)
-            {
-              if (g_Player.CurrentFile != TVHome.Card.TimeShiftFileName)
-              {
-                Log.Info("stop player: file changed:{0}-{1}", g_Player.CurrentFile, TVHome.Card.TimeShiftFileName);
-                g_Player.Stop();
-              }
-              Log.Debug("TvPlugin: Continuing player. File not changed :{0}-{1}", g_Player.CurrentFile, TVHome.Card.TimeShiftFileName);
-            }
-            else
-            {
-              if (g_Player.CurrentFile != TVHome.Card.RTSPUrl)
-              {
-                Log.Info("stop player: url changed:{0}-{1}", g_Player.CurrentFile, TVHome.Card.RTSPUrl);
-                g_Player.Stop();
-              }
-              Log.Debug("TvPlugin: Continuing player. URL  not changed :{0}-{1}", g_Player.CurrentFile, TVHome.Card.RTSPUrl);
-            }
-          }*/
+          
 
           //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player. 
           int newVideoStream = TVHome.Card.GetCurrentVideoStream(card.User);
@@ -1486,11 +1434,12 @@ namespace TvPlugin
             StartPlay();
 
           else if (wasPlaying)
-            if (_avoidSeeking && ((g_Player.CurrentPosition + 15) > g_Player.Duration))
-              Log.Warn("TvHome.ViewChannelandCheck(): Seeking avoided. Current position {0}, Duration {1}", g_Player.CurrentPosition, g_Player.Duration);
-            else
-              SeekToEnd(true);
-
+          {
+//            if (_avoidSeeking && ((g_Player.CurrentPosition + 15) > g_Player.Duration))
+              //Log.Warn("TvHome.ViewChannelandCheck(): Seeking avoided. Current position {0}, Duration {1}", g_Player.CurrentPosition, g_Player.Duration);
+            //else
+//              SeekToEnd(true);
+            }
           benchClock.Stop();
           MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 5- {0} ms. Done startplaying or seeking. ", benchClock.ElapsedMilliseconds.ToString());
           benchClock.Reset();
@@ -1768,7 +1717,7 @@ namespace TvPlugin
         Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
         benchClock.Reset();
         benchClock.Start();
-        SeekToEnd(false);
+        //SeekToEnd(false);
         Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString());
       }
       else
@@ -1780,23 +1729,28 @@ namespace TvPlugin
         Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
         benchClock.Reset();
         benchClock.Start();
-        SeekToEnd(true);
-        Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString()); SeekToEnd(true);
+//        SeekToEnd(true);
+        Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString()); 
+        //SeekToEnd(true);
       }
       benchClock.Stop();
     }
+
     static void SeekToEnd(bool zapping)
     {
       Log.Info("tvhome:SeektoEnd({0})", zapping);
+      double duration = g_Player.Duration;
+      double position = g_Player.CurrentPosition;
+      if (Math.Abs(duration - position) <= 3) return;
+
       string timeshiftFileName = TVHome.Card.TimeShiftFileName;
       bool useRtsp = System.IO.File.Exists("usertsp.txt");
       if (System.IO.File.Exists(timeshiftFileName) && !useRtsp)
       {
         if (g_Player.IsRadio == false)
         {
-          double duration = g_Player.Duration;
-          double position = g_Player.CurrentPosition;
-          g_Player.SeekAbsolute(duration + 10);
+          if (duration > 0 || position > 0)
+            g_Player.SeekAbsolute(duration);
         }
       }
       else
@@ -1805,8 +1759,6 @@ namespace TvPlugin
         if (zapping)
         {
           //System.Threading.Thread.Sleep(100);
-          double duration = g_Player.Duration;
-          double position = g_Player.CurrentPosition;
           Log.Info("tvhome:SeektoEnd({0}/{1})", position, duration);
           if (duration > 0 || position > 0)
             g_Player.SeekAbsolute(duration + 10);
