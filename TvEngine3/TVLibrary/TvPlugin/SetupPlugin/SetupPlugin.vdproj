@@ -764,6 +764,46 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+	    "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4C5029D6E97E460A96BC15F28966479F"
+	    {
+            "SourcePath" = "8:..\\..\\..\\Filters\\bin\\mfc80.dll"
+            "TargetName" = "8:mfc80.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_C2F0F37686774BEB8C7DCDEAD47B6909"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_56FB41D03DA74FE88BFDF4A7FEED17C4"
+            {
+            "SourcePath" = "8:..\\..\\..\\Filters\\bin\\msvcp80.dll"
+            "TargetName" = "8:msvcp80.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_C2F0F37686774BEB8C7DCDEAD47B6909"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7A027C8BC80A443B9D3D651A65D0FB28"
             {
             "SourcePath" = "8:..\\..\\..\\Filters\\bin\\Microsoft.VC80.CRT.manifest"
@@ -2532,7 +2572,8 @@
             }
         }
         "MergeModule"
-        {            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_04485042C9E949F981082FCD1E8FEB43"
+        {            
+	    "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_04485042C9E949F981082FCD1E8FEB43"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:FALSE"
