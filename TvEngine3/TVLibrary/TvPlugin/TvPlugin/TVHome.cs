@@ -314,7 +314,7 @@ namespace TvPlugin
     {
       if (type != g_Player.MediaType.TV) return;
       GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
-      if (currentWindow.IsTv) return;
+      //if (currentWindow.IsTv) return;
       if (TVHome.Card.IsTimeShifting == false) return;
       if (TVHome.Card.IsRecording == true) return;
       TVHome.Card.User.Name = new User().Name;
