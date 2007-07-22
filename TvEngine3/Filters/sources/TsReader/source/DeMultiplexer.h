@@ -104,9 +104,12 @@ private:
   CPcr     m_streamPcr;
   CTsDuration& m_duration;
   CTsReaderFilter& m_filter;
-  int m_iAudioStream;
-  int m_audioPid;
+  unsigned int m_iAudioStream;
+  unsigned int m_audioPid;
+  unsigned int m_currentSubtitlePid;
   bool m_bScanning;
 	bool m_bHoldAudio;
 	bool m_bHoldVideo;
+
+  CPcr m_subtitlePcr;
 };

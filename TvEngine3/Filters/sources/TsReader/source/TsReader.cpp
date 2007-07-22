@@ -127,7 +127,8 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	CSource(NAME("CTsReaderFilter"), pUnk, CLSID_TSReader),
 	m_pAudioPin(NULL),
   m_demultiplexer( m_duration, *this),
-  m_rtspClient(m_buffer)
+  m_rtspClient(m_buffer),
+  m_pDVBSubtitle(NULL)
 {
 
   ::DeleteFile("c:\\tsreader.log");
@@ -232,28 +233,26 @@ STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** p
 
 CBasePin * CTsReaderFilter::GetPin(int n)
 {
-    if (n == 0) 
-		{
-			return m_pAudioPin;
-    } 
-		else  if (n==1)
-		{
-        return m_pVideoPin;
-    }
-		//else  if (n==2)
-		//{
-    //    return m_pSubtitlePin;
-    //}  
-		else 
-		{
-        return NULL;
-    }
+  if (n == 0) 
+	{
+		return m_pAudioPin;
+  } 
+	else  if (n==1)
+	{
+      return m_pVideoPin;
+  }
+  else if (n==2)
+  {
+   // return m_pSubtitlePin;
+  }
+  return NULL;
+  
 }
 
 
 int CTsReaderFilter::GetPinCount()
 {
-    return 2;
+  return 2;
 }
 
 STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
@@ -264,6 +263,7 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
 	LogDebug("CTsReaderFilter::Run(%05.2f)",msec);
   CAutoLock cObjectLock(m_pLock);
 		 
+	if(m_pSubtitlePin) m_pSubtitlePin->SetRunningStatus(true);
   //are we using RTSP or local file
   if (m_fileDuration==NULL)
   {
@@ -282,6 +282,7 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
   //Set our StreamTime Reference offset to zero
 	HRESULT hr= CSource::Run(tStart);
 
+  FindSubtitleFilter();
   LogDebug("CTsReaderFilter::Run(%05.2f)  -->done",msec);
   return hr;
 }
@@ -297,6 +298,8 @@ STDMETHODIMP CTsReaderFilter::Stop()
   
   //stop duration thread
   StopThread();
+	if(m_pSubtitlePin) m_pSubtitlePin->SetRunningStatus(false);
+  if(m_pDVBSubtitle) m_pDVBSubtitle->Release();
 
 	LogDebug("CTsReaderFilter::Stop()  -stop source");
   //stop filter
@@ -673,6 +676,7 @@ void CTsReaderFilter::SeekDone(CRefTime& rtSeek)
   m_demultiplexer.Flush();
   m_bSeeking=false;
   
+	if(m_pDVBSubtitle) m_pDVBSubtitle->SeekDone( rtSeek );
 }
 
 // When a IMediaSeeking.SetPositions() is done on one of the output pins the output pin will do:
@@ -705,6 +709,10 @@ CSubtitlePin* CTsReaderFilter::GetSubtitlePin()
   return m_pSubtitlePin;
 }
 
+IDVBSubtitle* CTsReaderFilter::GetSubtitleFilter()
+{
+  return m_pDVBSubtitle;
+}
 
 /// This method is running in its own thread
 /// Every second it will check the stream or local file and determine the total duration of the file/stream
@@ -901,6 +909,39 @@ STDMETHODIMP CTsReaderFilter::Info( long lIndex,AM_MEDIA_TYPE **ppmt,DWORD *pdwF
   return S_OK;
 }
 
+//
+// FindSubtitleFilter
+//
+HRESULT CTsReaderFilter::FindSubtitleFilter()
+{
+  if( m_pDVBSubtitle )
+		return S_OK;
+  
+  LogDebug( "FindSubtitleFilter - start");
+
+	IEnumFilters * piEnumFilters = NULL;
+	if (GetFilterGraph() && SUCCEEDED(GetFilterGraph()->EnumFilters(&piEnumFilters)))
+	{
+		IBaseFilter * pFilter;
+		while (piEnumFilters->Next(1, &pFilter, 0) == NOERROR )
+		{
+      FILTER_INFO filterInfo;
+			if (pFilter->QueryFilterInfo(&filterInfo) == S_OK)
+			{
+				if (!wcsicmp(L"MediaPortal DVBSub2", filterInfo.achName))
+				{
+          pFilter->QueryInterface( IID_IDVBSubtitle2, ( void**)&m_pDVBSubtitle );  
+				}
+        filterInfo.pGraph->Release(); 
+			}
+			pFilter->Release();
+			pFilter = NULL;
+		}
+		piEnumFilters->Release();
+	}
+  LogDebug( "FindSubtitleFilter - End");
+  return S_OK;
+}
 ////////////////////////////////////////////////////////////////////////
 //
 // Exported entry points for registration and unregistration 

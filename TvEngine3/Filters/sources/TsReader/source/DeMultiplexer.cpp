@@ -28,6 +28,7 @@
 #include "audioPin.h"
 #include "videoPin.h"
 #include "subtitlePin.h"
+#include "..\..\DVBSubtitle2\Source\IDVBSub.h"
 #include "MediaFormats.h"
 
 #define MAX_BUF_SIZE 800
@@ -47,6 +48,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_pCurrentSubtitleBuffer = new CBuffer();
   m_iAudioStream=0;
   m_audioPid=0;
+  m_currentSubtitlePid=0;
   m_bScanning=false;
   m_bEndOfFile=false;
   m_bHoldAudio=false;
@@ -326,16 +328,9 @@ CBuffer* CDeMultiplexer::GetSubtitle()
 {
 	//if there is no subtitle pid, then simply return NULL
   if (m_pids.SubtitlePid==0) return NULL;
-
-  // when there are no subtitle packets at the moment
-  // then try to read some from the current file
-  while (m_vecSubtitleBuffers.size()==0) 
-  {
-    ReadFromFile(false,false) ;
-
-    //if we reached the end of the file, return NULL
-    if (m_bEndOfFile) return NULL;
-  }
+  if (m_bEndOfFile) return NULL;
+  ReadFromFile(false,false);
+  if (m_bEndOfFile) return NULL;
   
 
   //are there subtitle packets in the buffer?
@@ -579,6 +574,17 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   //skip any packets with errors in it
   if (header.TransportError) return;
 
+  if( m_pids.SubtitlePid > 0 && m_pids.SubtitlePid != m_currentSubtitlePid )
+  {
+    IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
+    if( pDVBSubtitleFilter )
+    {
+      pDVBSubtitleFilter->SetSubtitlePid(m_pids.SubtitlePid);
+      pDVBSubtitleFilter->SetFirstPcr(m_duration.StartPcr().PcrReferenceBase);
+    
+      m_currentSubtitlePid = m_pids.SubtitlePid;
+    }
+  }
   //Do we have a start pcr?
   if (!m_duration.StartPcr().IsValid)
   {
@@ -786,73 +792,30 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
 	if ( header.AdaptionFieldOnly() ) return;
 
 	CAutoLock lock (&m_sectionSubtitle);
-  //does tspacket contain the start of a pes packet?
-  if (header.PayloadUnitStart)
+  if ( false==header.AdaptionFieldOnly() ) 
   {
-    //yes packet contains start of a pes packet.
-    //does current buffer hold any data ?
-    if (m_pCurrentSubtitleBuffer->Length() > 0)
+    if (header.PayloadUnitStart)
     {
-      //yes, then store current buffer
-      if (m_vecSubtitleBuffers.size()>MAX_BUF_SIZE) 
-        m_vecSubtitleBuffers.erase(m_vecSubtitleBuffers.begin());
-      m_vecSubtitleBuffers.push_back(m_pCurrentSubtitleBuffer);
-      //and create a new one
-      m_pCurrentSubtitleBuffer = new CBuffer();
+        m_subtitlePcr = m_streamPcr;
+        LogDebug("FillSubtitle: PayloadUnitStart -- %lld", m_streamPcr.PcrReferenceBase );
+    }
+    if (m_vecSubtitleBuffers.size()>MAX_BUF_SIZE) 
+    {
+      m_vecSubtitleBuffers.erase(m_vecSubtitleBuffers.begin());
     }
 
-    int pos=header.PayLoadStart;
-    //check for PES start code
-    if (tsPacket[pos]==0&&tsPacket[pos+1]==0&&tsPacket[pos+2]==1) 
-    {
-      //get pts/dts from pes header
-      CPcr pts;
-      CPcr dts;
-      if (CPcr::DecodeFromPesHeader(&tsPacket[pos],pts,dts))
-      {
-        m_pCurrentSubtitleBuffer->SetPts(pts);
-      }
-      //skip pes header
-      int headerLen=9+tsPacket[pos+8];  
-      pos+=headerLen;
-    }
+    m_pCurrentSubtitleBuffer->SetPcr(m_subtitlePcr,m_duration.StartPcr(),m_duration.MaxPcr());
+    m_pCurrentSubtitleBuffer->SetPts(m_subtitlePcr);
+    m_pCurrentSubtitleBuffer->Add(tsPacket,188);
 
-    //copy (rest) data in current buffer
-		if (pos>0 && pos < 188)
-		{
-			m_pCurrentSubtitleBuffer->SetPcr(m_streamPcr,m_duration.StartPcr(),m_duration.MaxPcr());
-			m_pCurrentSubtitleBuffer->Add(&tsPacket[pos],188-pos);
-		}
+    m_vecSubtitleBuffers.push_back(m_pCurrentSubtitleBuffer);
+
+    m_pCurrentSubtitleBuffer = new CBuffer();
   }
-  else //if (m_pCurrentSubtitleBuffer->Length()>0)
-  {
-    int pos=header.PayLoadStart;
-    //packet contains rest of a pes packet
-    //does the entire data in this tspacket fit in the current buffer ?
-    if (m_pCurrentSubtitleBuffer->Length()+(188-pos)>=0x2000)
-    {
-      //no, then determine how many bytes do fit
-      int copyLen=0x2000-m_pCurrentSubtitleBuffer->Length();
-      //copy those bytes
-      m_pCurrentSubtitleBuffer->Add(&tsPacket[pos],copyLen);
-      pos+=copyLen;
+}
 
-      //store current buffer since its now full
-      if (m_vecSubtitleBuffers.size()>MAX_BUF_SIZE) 
-        m_vecSubtitleBuffers.erase(m_vecSubtitleBuffers.begin());
-      m_vecSubtitleBuffers.push_back(m_pCurrentSubtitleBuffer);
-      
-      //and create a new one
-      m_pCurrentSubtitleBuffer = new CBuffer();
-    }
+	
 
-    //copy (rest) data in current buffer
-		if (pos>0 && pos < 188)
-		{
-			m_pCurrentSubtitleBuffer->Add(&tsPacket[pos],188-pos); 
-		}
-  }
-}	
 
 /// This method gets called-back from the pat parser when a new PAT/PMT/SDT has been received
 /// In this method we check if any audio/video/subtitle pid or format has changed

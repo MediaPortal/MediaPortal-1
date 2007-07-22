@@ -27,6 +27,7 @@
 #include "TSThread.h"
 #include "rtspclient.h"
 #include "memorybuffer.h"
+#include "..\..\DVBSubtitle2\Source\IDVBSub.h"
 #include <map>
 using namespace std;
 
@@ -83,6 +84,7 @@ public:
   CAudioPin*      GetAudioPin();
   CVideoPin*      GetVideoPin();
   CSubtitlePin*   GetSubtitlePin();
+  IDVBSubtitle*   GetSubtitleFilter();
   bool            IsTimeShifting();
   
   CRefTime        Compensation;
@@ -91,6 +93,7 @@ protected:
 private:
   void SetDuration();
   HRESULT AddGraphToRot(IUnknown *pUnkGraph) ;
+  HRESULT FindSubtitleFilter();
   void    RemoveGraphFromRot();
 	CAudioPin*	    m_pAudioPin;;
 	CVideoPin*	    m_pVideoPin;
@@ -112,5 +115,6 @@ private:
   CRefTime        m_seekTime;
   bool            m_bNeedSeeking;
   bool            m_bTimeShifting;
+  IDVBSubtitle*   m_pDVBSubtitle;
 };
 
