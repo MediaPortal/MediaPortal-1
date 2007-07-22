@@ -241,7 +241,13 @@ namespace TvLibrary.Implementations.DVB
     {
       return true;
     }
-
+    public void OnStopGraph()
+    {
+      if (_digitalEveryWhere != null)
+      {
+        _digitalEveryWhere.OnStopGraph();
+      }
+    }
     /// <summary>
     /// Gets the number of channels the card is currently decrypting.
     /// </summary>

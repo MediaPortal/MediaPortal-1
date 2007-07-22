@@ -900,5 +900,10 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #endregion
+
+    public void OnStopGraph()
+    {
+      _previousChannel = null;
+    }
   }
 }

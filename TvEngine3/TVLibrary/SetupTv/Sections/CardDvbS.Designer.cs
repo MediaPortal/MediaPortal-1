@@ -113,6 +113,8 @@ namespace SetupTv.Sections
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+      this.label18 = new System.Windows.Forms.Label();
+      this.labelTunerLock = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage3.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -605,6 +607,8 @@ namespace SetupTv.Sections
       // 
       // tabPage2
       // 
+      this.tabPage2.Controls.Add(this.labelTunerLock);
+      this.tabPage2.Controls.Add(this.label18);
       this.tabPage2.Controls.Add(this.pictureBox1);
       this.tabPage2.Controls.Add(this.labelCurrentPosition);
       this.tabPage2.Controls.Add(this.label12);
@@ -647,7 +651,7 @@ namespace SetupTv.Sections
       // 
       this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
       this.pictureBox1.InitialImage = null;
-      this.pictureBox1.Location = new System.Drawing.Point(363, 81);
+      this.pictureBox1.Location = new System.Drawing.Point(363, 71);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(60, 60);
       this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -674,7 +678,7 @@ namespace SetupTv.Sections
       // 
       // buttonReset
       // 
-      this.buttonReset.Location = new System.Drawing.Point(160, 257);
+      this.buttonReset.Location = new System.Drawing.Point(160, 236);
       this.buttonReset.Name = "buttonReset";
       this.buttonReset.Size = new System.Drawing.Size(66, 23);
       this.buttonReset.TabIndex = 13;
@@ -716,7 +720,7 @@ namespace SetupTv.Sections
       // 
       // buttonUp
       // 
-      this.buttonUp.Location = new System.Drawing.Point(195, 154);
+      this.buttonUp.Location = new System.Drawing.Point(195, 135);
       this.buttonUp.Name = "buttonUp";
       this.buttonUp.Size = new System.Drawing.Size(66, 23);
       this.buttonUp.TabIndex = 8;
@@ -726,7 +730,7 @@ namespace SetupTv.Sections
       // 
       // buttonDown
       // 
-      this.buttonDown.Location = new System.Drawing.Point(195, 212);
+      this.buttonDown.Location = new System.Drawing.Point(195, 193);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(66, 23);
       this.buttonDown.TabIndex = 10;
@@ -736,7 +740,7 @@ namespace SetupTv.Sections
       // 
       // buttonGotoStart
       // 
-      this.buttonGotoStart.Location = new System.Drawing.Point(232, 257);
+      this.buttonGotoStart.Location = new System.Drawing.Point(232, 236);
       this.buttonGotoStart.Name = "buttonGotoStart";
       this.buttonGotoStart.Size = new System.Drawing.Size(66, 23);
       this.buttonGotoStart.TabIndex = 14;
@@ -746,7 +750,7 @@ namespace SetupTv.Sections
       // 
       // buttonStop
       // 
-      this.buttonStop.Location = new System.Drawing.Point(195, 183);
+      this.buttonStop.Location = new System.Drawing.Point(195, 164);
       this.buttonStop.Name = "buttonStop";
       this.buttonStop.Size = new System.Drawing.Size(66, 23);
       this.buttonStop.TabIndex = 9;
@@ -840,7 +844,7 @@ namespace SetupTv.Sections
       // checkBoxEnabled
       // 
       this.checkBoxEnabled.AutoSize = true;
-      this.checkBoxEnabled.Location = new System.Drawing.Point(14, 261);
+      this.checkBoxEnabled.Location = new System.Drawing.Point(14, 240);
       this.checkBoxEnabled.Name = "checkBoxEnabled";
       this.checkBoxEnabled.Size = new System.Drawing.Size(142, 17);
       this.checkBoxEnabled.TabIndex = 10;
@@ -861,7 +865,7 @@ namespace SetupTv.Sections
       // 
       // buttonStore
       // 
-      this.buttonStore.Location = new System.Drawing.Point(352, 257);
+      this.buttonStore.Location = new System.Drawing.Point(352, 236);
       this.buttonStore.Name = "buttonStore";
       this.buttonStore.Size = new System.Drawing.Size(88, 23);
       this.buttonStore.TabIndex = 15;
@@ -890,7 +894,7 @@ namespace SetupTv.Sections
       // 
       // buttonSetEastLimit
       // 
-      this.buttonSetEastLimit.Location = new System.Drawing.Point(352, 183);
+      this.buttonSetEastLimit.Location = new System.Drawing.Point(352, 164);
       this.buttonSetEastLimit.Name = "buttonSetEastLimit";
       this.buttonSetEastLimit.Size = new System.Drawing.Size(88, 23);
       this.buttonSetEastLimit.TabIndex = 12;
@@ -900,7 +904,7 @@ namespace SetupTv.Sections
       // 
       // buttonSetWestLimit
       // 
-      this.buttonSetWestLimit.Location = new System.Drawing.Point(14, 183);
+      this.buttonSetWestLimit.Location = new System.Drawing.Point(14, 164);
       this.buttonSetWestLimit.Name = "buttonSetWestLimit";
       this.buttonSetWestLimit.Size = new System.Drawing.Size(88, 23);
       this.buttonSetWestLimit.TabIndex = 6;
@@ -910,7 +914,7 @@ namespace SetupTv.Sections
       // 
       // buttonMoveEast
       // 
-      this.buttonMoveEast.Location = new System.Drawing.Point(267, 183);
+      this.buttonMoveEast.Location = new System.Drawing.Point(267, 164);
       this.buttonMoveEast.Name = "buttonMoveEast";
       this.buttonMoveEast.Size = new System.Drawing.Size(66, 23);
       this.buttonMoveEast.TabIndex = 11;
@@ -920,7 +924,7 @@ namespace SetupTv.Sections
       // 
       // buttonMoveWest
       // 
-      this.buttonMoveWest.Location = new System.Drawing.Point(123, 183);
+      this.buttonMoveWest.Location = new System.Drawing.Point(123, 164);
       this.buttonMoveWest.Name = "buttonMoveWest";
       this.buttonMoveWest.Size = new System.Drawing.Size(66, 23);
       this.buttonMoveWest.TabIndex = 7;
@@ -1009,6 +1013,24 @@ namespace SetupTv.Sections
       this.mpLabel1.Size = new System.Drawing.Size(47, 13);
       this.mpLabel1.TabIndex = 66;
       this.mpLabel1.Text = "DiSEqC:";
+      // 
+      // label18
+      // 
+      this.label18.AutoSize = true;
+      this.label18.Location = new System.Drawing.Point(11, 270);
+      this.label18.Name = "label18";
+      this.label18.Size = new System.Drawing.Size(73, 13);
+      this.label18.TabIndex = 51;
+      this.label18.Text = "Tuner locked:";
+      // 
+      // labelTunerLock
+      // 
+      this.labelTunerLock.AutoSize = true;
+      this.labelTunerLock.Location = new System.Drawing.Point(90, 270);
+      this.labelTunerLock.Name = "labelTunerLock";
+      this.labelTunerLock.Size = new System.Drawing.Size(73, 13);
+      this.labelTunerLock.TabIndex = 52;
+      this.labelTunerLock.Text = "Tuner locked:";
       // 
       // CardDvbS
       // 
@@ -1120,5 +1142,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.CheckBox checkBoxCreateGroupsSat;
     private System.Windows.Forms.CheckBox checkEnableDVBS2;
     private System.Windows.Forms.GroupBox groupBox2;
+    private System.Windows.Forms.Label labelTunerLock;
+    private System.Windows.Forms.Label label18;
   }
 }

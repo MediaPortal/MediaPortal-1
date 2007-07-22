@@ -120,6 +120,7 @@ namespace SetupTv.Sections
     bool _stopScanning = false;
     bool _enableEvents = false;
     bool _ignoreCheckBoxCreateGroupsClickEvent = false;
+    User _user;
     #endregion
 
     #region ctors
@@ -593,6 +594,10 @@ namespace SetupTv.Sections
       progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
       progressBarSatLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
       progressBarSatQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
+      if (RemoteControl.Instance.TunerLocked(_cardNumber))
+        labelTunerLock.Text = "Yes";
+      else
+        labelTunerLock.Text = "No";
     }
 
     public override void OnSectionActivated()
@@ -601,6 +606,7 @@ namespace SetupTv.Sections
       UpdateStatus(1);
       labelCurrentPosition.Text = "";
       tabControl1_SelectedIndexChanged(null, null);
+      _user = new User();
     }
 
     private void mpButtonScanTv_Click(object sender, EventArgs e)
@@ -969,6 +975,7 @@ namespace SetupTv.Sections
       if (checkBox1.Checked == false) return;
       //move motor west
       RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.West, (byte)(1 + comboBoxStepSize.SelectedIndex));
+      comboBox1_SelectedIndexChanged(null, null);//tune..;
     }
 
     private void buttonSetWestLimit_Click(object sender, EventArgs e)
@@ -1043,6 +1050,7 @@ namespace SetupTv.Sections
       if (checkBox1.Checked == false) return;
       //move motor east
       RemoteControl.Instance.DiSEqCDriveMotor(_cardNumber, DiSEqCDirection.East, (byte)(1 + comboBoxStepSize.SelectedIndex));
+      comboBox1_SelectedIndexChanged(null, null);//tune..
     }
 
     private void buttonSetEastLimit_Click(object sender, EventArgs e)
@@ -1133,11 +1141,25 @@ namespace SetupTv.Sections
       tuneChannel.Frequency = transponder.CarrierFrequency;
       tuneChannel.Polarisation = transponder.Polarisation;
       tuneChannel.SymbolRate = transponder.SymbolRate;
+      tuneChannel.ModulationType = transponder.Modulation;
+      tuneChannel.Pilot = transponder.Pilot;
+      tuneChannel.RollOff = transponder.RollOff;
+      tuneChannel.InnerFecRate = transponder.InnerFecRate;
       tuneChannel.BandType = BandType.Universal;
       tuneChannel.DisEqc = DisEqcType.None;
-      User user = new User();
-      user.CardId = _cardNumber;
-      RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
+      if (mpBand1.SelectedIndex >= 0)
+        tuneChannel.BandType = (BandType)mpBand1.SelectedIndex;
+      if (mpDisEqc1.SelectedIndex >= 0)
+        tuneChannel.DisEqc = (DisEqcType)mpDisEqc1.SelectedIndex;
+      _user.CardId = _cardNumber;
+      RemoteControl.Instance.StopCard(_user);
+      _user.CardId = _cardNumber;
+      RemoteControl.Instance.Tune(ref _user, tuneChannel, -1);
+      progressBarLevel.Value = 1;
+      progressBarQuality.Value = 1;
+      progressBarSatLevel.Value = 1;
+      progressBarSatQuality.Value = 1;
+      labelTunerLock.Text=String.Empty; 
 
     }
 
@@ -1222,6 +1244,7 @@ namespace SetupTv.Sections
         if (ts.TotalMilliseconds > 500)
         {
           if (checkBox1.Checked == false) return;
+
           RemoteControl.Instance.UpdateSignalSate(_cardNumber);
           _signalTimer = DateTime.Now;
           int satPos, stepsAzimuth, stepsElevation;

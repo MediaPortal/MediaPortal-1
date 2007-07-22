@@ -413,7 +413,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
-
+      //GetTunerSignalStatistics();
       _epgGrabbing = false;
       _graphRunning = true;
       if (_mapSubChannels.ContainsKey(subChannel))
@@ -456,6 +456,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
           throw new TvException("Unable to stop graph");
         }
+        _conditionalAccess.OnStopGraph();
         _graphRunning = false;
       }
       _graphState = GraphState.Created;
