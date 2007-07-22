@@ -1514,6 +1514,10 @@ namespace TvService
       Log.Write("Controller: StartTimeShifting {0} {1}", channel.Name, channel.IdChannel);
       card = null;
       TvResult result;
+      if (_epgGrabber != null)
+      {
+        _epgGrabber.Stop();
+      }
       try
       {
         List<CardDetail> freeCards = GetFreeCardsForChannel(channel, ref user, true, false, out result);
@@ -1555,6 +1559,11 @@ namespace TvService
         {
           //no free cards available
           Log.Write("Controller: StartTimeShifting failed:{0}", result);
+
+          if (_epgGrabber != null)
+          {
+            _epgGrabber.Start();
+          }
           return result;
         }
 
@@ -1573,6 +1582,10 @@ namespace TvService
         result = CardTune(ref user, tuneChannel, channel);
         if (result != TvResult.Succeeded)
         {
+          if (_epgGrabber != null)
+          {
+            _epgGrabber.Start();
+          }
           return result;
         }
         Log.Info("control2:{0} {1} {2}", user.Name, user.CardId, user.SubChannel);
@@ -1586,6 +1599,10 @@ namespace TvService
         result = StartTimeShifting(ref user, ref timeshiftFileName);
         if (result != TvResult.Succeeded)
         {
+          if (_epgGrabber != null)
+          {
+            _epgGrabber.Start();
+          }
           return result;
         }
         Log.Write("Controller: StartTimeShifting started on card:{0} to {1}", user.CardId, timeshiftFileName);
@@ -1594,6 +1611,10 @@ namespace TvService
       }
       catch (Exception ex)
       {
+        if (_epgGrabber != null)
+        {
+          _epgGrabber.Start();
+        }
         Log.Write(ex);
         return TvResult.UnknownError;
       }
