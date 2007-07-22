@@ -799,7 +799,7 @@ void CTsReaderFilter::ThreadProc()
         }
       }
     }
-    Sleep(1000);
+    Sleep(10000);
   }
   LogDebug("CTsReaderFilter::ThreadProc stopped()");
 }

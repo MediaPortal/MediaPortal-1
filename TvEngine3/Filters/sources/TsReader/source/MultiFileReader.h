@@ -68,7 +68,7 @@ public:
 	virtual DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	virtual __int64 GetFilePointer();
 	virtual __int64 GetFileSize();
-
+  
 protected:
 	int RefreshTSBufferFile();
 	int GetFileLength(char* pFilename, __int64 &length);

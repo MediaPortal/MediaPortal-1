@@ -64,15 +64,21 @@ void CTsDuration::UpdateDuration()
   m_maxPcr.Reset();
   m_reader->SetFilePointer(0,FILE_BEGIN);
   byte buffer[32712];
+  DWORD dwBytesRead;
   while (!m_startPcr.IsValid)
   {
-    DWORD dwBytesRead;
     if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
     {
+      //park filepointer at end of file
+      m_reader->SetFilePointer(1,FILE_END);
+      m_reader->Read(buffer,1,&dwBytesRead);
       return;
     }
     if (dwBytesRead==0) 
     {
+      //park filepointer at end of file
+      m_reader->SetFilePointer(1,FILE_END);
+      m_reader->Read(buffer,1,&dwBytesRead);
       return;
     }
     OnRawData(buffer,dwBytesRead);
@@ -121,6 +127,9 @@ void CTsDuration::UpdateDuration()
       offset+=sizeof(buffer);
     }
   }
+  //park filepointer at end of file
+  m_reader->SetFilePointer(1,FILE_END);
+  m_reader->Read(buffer,1,&dwBytesRead);
 }
 
 void CTsDuration::OnTsPacket(byte* tsPacket)

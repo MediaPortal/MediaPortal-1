@@ -74,7 +74,7 @@ int FileReader::SetFileName(char* pszFileName)
 int FileReader::OpenFile()
 {
 
-    //printf("FileReader::OpenFile(%s)\n",m_fileName);
+//  LogDebug("FileReader::OpenFile(%s)",m_fileName);
 	// Is the file already opened
 	if (m_hFile != INVALID_HANDLE_VALUE) 
   {
@@ -154,7 +154,7 @@ int FileReader::CloseFile()
 	// Must lock this section to prevent problems related to
 	// closing the file while still receiving data in Receive()
 
-
+//  LogDebug("FileReader::CloseFile(%s)",m_fileName);
 //    printf("FileReader::CloseFile()\n");
 	if (m_hFile == INVALID_HANDLE_VALUE) {
 
