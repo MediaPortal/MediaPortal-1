@@ -717,6 +717,7 @@ IDVBSubtitle* CTsReaderFilter::GetSubtitleFilter()
   return m_pDVBSubtitle;
 }
 
+//**************************************************************************************************************
 /// This method is running in its own thread
 /// Every second it will check the stream or local file and determine the total duration of the file/stream
 /// The duration can/will grow if we are playing a timeshifting buffer/stream
@@ -747,9 +748,6 @@ void CTsReaderFilter::ThreadProc()
       //did we find a duration?
 			if (duration.Duration().Millisecs()>0)
 			{
-        float fstart=duration.StartPcr().ToClock();
-        float fend=duration.EndPcr().ToClock();
-
         //yes, is it different then the one we determined last time?
         if (duration.StartPcr().PcrReferenceBase!=m_duration.StartPcr().PcrReferenceBase ||
             duration.EndPcr().PcrReferenceBase!=m_duration.EndPcr().PcrReferenceBase)
@@ -757,15 +755,10 @@ void CTsReaderFilter::ThreadProc()
           //yes, then update it
           m_duration.Set(duration.StartPcr(), duration.EndPcr(), duration.MaxPcr());
 
-          float fstart2=m_duration.StartPcr().ToClock();
-          float fend2=m_duration.EndPcr().ToClock();
           // Is graph running?
 					if (m_State == State_Running||m_State==State_Paused)
 					{
-            //yes, then send a EC_LENGTH_CHANGED event
-						float secs=(float)duration.Duration().Millisecs();
-						secs/=1000.0f;
-						//LogDebug("notify length change:%f",secs);
+            //yes, then send a EC_LENGTH_CHANGED event to the graph
 						NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
 						SetDuration();
 					}
@@ -774,7 +767,7 @@ void CTsReaderFilter::ThreadProc()
     }
     else 
     {
-      // we not playing a local file
+      // we are not playing a local file
       // are we playing a (RTSP) stream?
       if (m_rtspClient.IsRunning())
       {
@@ -802,14 +795,12 @@ void CTsReaderFilter::ThreadProc()
 				  {
             //set the duration
             m_duration.Set( pcrstart, pcrEnd,pcrMax);
-            //char sztmp[256];
-            //sprintf(sztmp,"%f %d %f\n", (m_rtspClient.Duration()/1000.0f), ticks, (((float)m_duration.Duration().Millisecs())/1000.0f) );
-            //::OutputDebugStringA(sztmp);
 
             // Is graph running?
 				    if (m_State == State_Running)
 				    {
-              //send the event
+            
+              //yes, then send a EC_LENGTH_CHANGED event to the graph
               NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
               SetDuration();
             }
