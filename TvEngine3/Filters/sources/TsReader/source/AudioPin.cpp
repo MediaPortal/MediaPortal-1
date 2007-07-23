@@ -288,6 +288,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       CRefTime cRefTime;
       if (buffer->MediaTime(cRefTime))
       {
+        static float prevTime=0;
         cRefTime-=m_rtStart;
         if (m_bMeasureCompensation)
         {
@@ -304,7 +305,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         float fTime=(float)cRefTime.Millisecs();
         fTime/=1000.0f;
         
-       // LogDebug("aud:gotbuffer:%d %03.3f",buffer->Length(),fTime);
+        if (abs(prevTime-fTime)>=1)
+        {
+          //LogDebug("aud:gotbuffer:%d %03.3f",buffer->Length(),fTime);
+          prevTime=fTime;
+        }
       } 
       else
       {
@@ -380,8 +385,9 @@ void CAudioPin::UpdateFromSeek()
 {
   m_binUpdateFromSeek=true;
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-	if (m_rtStart>m_rtDuration)
-		m_rtStart=m_rtDuration;
+  CTsDuration tsduration=m_pTsReaderFilter->GetDuration();
+	//if (m_rtStart>m_rtDuration)
+	//	m_rtStart=m_rtDuration;
 
   if (GetTickCount()-m_seekTimer < 5000)
   {
@@ -394,6 +400,11 @@ void CAudioPin::UpdateFromSeek()
   CRefTime rtSeek=m_rtStart;
   float seekTime=(float)rtSeek.Millisecs();
   seekTime/=1000.0f;
+  float startOfFile= tsduration.StartPcr().ToClock()-tsduration.FirstStartPcr().ToClock();
+  if (startOfFile<0) startOfFile=0;
+  seekTime-=startOfFile;
+  if (seekTime<0) seekTime=0;
+
   float duration=(float)m_rtDuration.Millisecs();
   duration /=1000.0f;
   LogDebug("aud seek to %f/%f", seekTime, duration);
@@ -419,7 +430,9 @@ void CAudioPin::UpdateFromSeek()
       // make sure we have stopped pushing
       Stop();
 			//LogDebug("aud seek filter->seek");
-      m_pTsReaderFilter->Seek(CRefTime(m_rtStart),true);
+      seekTime*=1000.0f;
+      rtSeek = CRefTime((LONG)seekTime);
+      m_pTsReaderFilter->Seek(rtSeek,true);
 
       // complete the flush
 			//LogDebug("aud seek deliverendflush");
@@ -448,6 +461,25 @@ void CAudioPin::UpdateFromSeek()
 STDMETHODIMP CAudioPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 {
 //  LogDebug("aud:GetAvailable");
+  if (m_pTsReaderFilter->IsTimeShifting())
+  {
+    CTsDuration duration=m_pTsReaderFilter->GetDuration();
+    if (pEarliest)
+    {
+      double d2=duration.StartPcr().ToClock();
+      d2*=1000.0f;
+      CRefTime mediaTime((LONG)d2);
+      *pEarliest= mediaTime;
+    }
+    if (pLatest)
+    {
+      double d2=duration.EndPcr().ToClock();
+      d2*=1000.0f;
+      CRefTime mediaTime((LONG)d2);
+      *pLatest= mediaTime;
+    }
+    return S_OK;
+  }
   return CSourceSeeking::GetAvailable( pEarliest, pLatest );
 }
 
@@ -456,10 +488,11 @@ STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
  // LogDebug("aud:GetDuration");
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    //m_rtDuration=CRefTime(MAX_TIME);
-    REFERENCE_TIME refTime;
-    m_pTsReaderFilter->GetDuration(&refTime);
-    m_rtDuration=CRefTime(refTime);
+    CTsDuration duration=m_pTsReaderFilter->GetDuration();
+    
+    CRefTime totalDuration=duration.TotalDuration();
+    m_rtDuration=totalDuration;
+
   }
   else
   {

@@ -517,14 +517,21 @@ bool CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
     {
       //playing a local file.
       //read raw data from the file
-      m_reader->Read(buffer,sizeof(buffer), &dwReadBytes);
-      if (dwReadBytes > 0)
+      if (SUCCEEDED(m_reader->Read(buffer,sizeof(buffer), &dwReadBytes)))
       {
-        //succeeded, process data
-        OnRawData(buffer,(int)dwReadBytes);
+        if (dwReadBytes > 0)
+        {
+          //succeeded, process data
+          OnRawData(buffer,(int)dwReadBytes);
 
-        //and return
-        return true;
+          //and return
+          return true;
+        }
+      }
+      else
+      {
+        int x=123;
+        LogDebug("Read failed...");
       }
     }
     
@@ -580,7 +587,7 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
     if( pDVBSubtitleFilter )
     {
       pDVBSubtitleFilter->SetSubtitlePid(m_pids.SubtitlePid);
-      pDVBSubtitleFilter->SetFirstPcr(m_duration.StartPcr().PcrReferenceBase);
+      pDVBSubtitleFilter->SetFirstPcr(m_duration.FirstStartPcr().PcrReferenceBase);
     
       m_currentSubtitlePid = m_pids.SubtitlePid;
     }
@@ -608,6 +615,16 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
     {
       //then update our stream pcr which holds the current playback timestamp
       m_streamPcr=field.Pcr;
+    /*
+      static float prevTime=0;
+      float fTime=(float)m_streamPcr.ToClock();
+      
+      if (abs(prevTime-fTime)>=1)
+      {
+        LogDebug("pcr:%s", m_streamPcr.ToString());
+        prevTime=fTime;
+      }
+    */
     }
   }
 
@@ -622,7 +639,7 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   FillSubtitle(header,tsPacket);
   FillAudio(header,tsPacket);
   FillVideo(header,tsPacket);
-  }
+}
 
 /// This method will check if the tspacket is an audio packet
 /// ifso, it decodes the PES audio packet and stores it in the audio buffers
@@ -669,7 +686,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
     //copy (rest) data in current buffer
 		if (pos>0 && pos < 188)
 		{
-			m_pCurrentAudioBuffer->SetPcr(m_streamPcr,m_duration.StartPcr(),m_duration.MaxPcr());
+			m_pCurrentAudioBuffer->SetPcr(m_streamPcr,m_duration.FirstStartPcr(),m_duration.MaxPcr());
 			m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos);
 		}
   }
@@ -748,7 +765,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
     //copy (rest) data in current buffer
 		if (pos>0 && pos < 188)
 		{
-			m_pCurrentVideoBuffer->SetPcr(m_streamPcr,m_duration.StartPcr(),m_duration.MaxPcr());
+			m_pCurrentVideoBuffer->SetPcr(m_streamPcr,m_duration.FirstStartPcr(),m_duration.MaxPcr());
 			m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos);
 		}
   }
@@ -804,7 +821,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
       m_vecSubtitleBuffers.erase(m_vecSubtitleBuffers.begin());
     }
 
-    m_pCurrentSubtitleBuffer->SetPcr(m_subtitlePcr,m_duration.StartPcr(),m_duration.MaxPcr());
+    m_pCurrentSubtitleBuffer->SetPcr(m_subtitlePcr,m_duration.FirstStartPcr(),m_duration.MaxPcr());
     m_pCurrentSubtitleBuffer->SetPts(m_subtitlePcr);
     m_pCurrentSubtitleBuffer->Add(tsPacket,188);
 
