@@ -99,18 +99,19 @@ HRESULT CSubtitlePin::GetMediaType(CMediaType *pmt)
 }
 HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
 {
-/*  HRESULT hr;
+  HRESULT hr;
   PIN_INFO pinInfo;
   FILTER_INFO filterInfo;
   hr=pReceivePin->QueryPinInfo(&pinInfo);
   if (!SUCCEEDED(hr)) return E_FAIL;
   if (pinInfo.pFilter==NULL) return E_FAIL;
   hr=pinInfo.pFilter->QueryFilterInfo(&filterInfo);
+  filterInfo.pGraph->Release();
   if (!SUCCEEDED(hr)) return E_FAIL;
   if (wcscmp(filterInfo.achName,L"MediaPortal DVBSub2")!=0)
   {
     return E_FAIL;
-  }*/
+  }
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
 
