@@ -282,16 +282,27 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       {
         static float prevTime=0;
         // now comes the hard part ;-)
+        // directshow expects a stream time. The stream time is reset to 0 when graph is started 
+        // and after a seek operation so.. to get the stream time we get 
+        // the buffer's timestamp
+        // and subtract the pin's m_rtStart timestamp
         cRefTime-=m_rtStart;
 
         if (m_bMeasureCompensation)
         {
+        // next.. seeking is not perfect since the file does not contain a PCR for every micro second. 
+        // even if we find the exact pcr time during seeking, the next start of a pes-header might start a few 
+        // milliseconds later
+        // We compensate this when m_bMeasureCompensation=true 
+        // which is directly after seeking
           m_bMeasureCompensation=false;
           m_pTsReaderFilter->Compensation=cRefTime;
           float fTime=(float)cRefTime.Millisecs();
           fTime/=1000.0f;
           LogDebug("vid:compensation:%03.3f",fTime);
+          prevTime=-1;
         }
+        //adjust the timestamp with the compensation
         cRefTime -=m_pTsReaderFilter->Compensation;
 
         //now we have the final timestamp, set timestamp in sample
@@ -406,11 +417,11 @@ void CVideoPin::UpdateFromSeek()
   //directly after eachother
   //for a single seek operation. To 'fix' this we only perform the seeking operation
   //if we didnt do a seek in the last 5 seconds...
-  if (GetTickCount()-m_seekTimer<5000)
+  if (GetTickCount()-m_seekTimer<2000)
   {
-      LogDebug("vid:skip seek");
-      m_binUpdateFromSeek=false;
-      return;
+//      LogDebug("vid:skip seek");
+//      m_binUpdateFromSeek=false;
+//      return;
   }
   
   //Note that the seek timestamp (m_rtStart) is done in the range
@@ -478,7 +489,7 @@ void CVideoPin::UpdateFromSeek()
       }
 
       //set our start time
-      m_rtStart=rtSeek;
+      //m_rtStart=rtSeek;
 
       // and restart the thread
       Run();

@@ -254,8 +254,8 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
     CRefTime cRefTime;
     if (buffer->MediaTime(cRefTime))
     {
-			CPcr pcr = buffer->Pcr();
-      LogDebug("sub: buffer->Pcr = %lld" ,pcr.PcrReferenceBase );
+			//CPcr pcr = buffer->Pcr();
+      //LogDebug("sub: buffer->Pcr = %lld" ,pcr.PcrReferenceBase );
       
       cRefTime-=m_rtStart;
       REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;

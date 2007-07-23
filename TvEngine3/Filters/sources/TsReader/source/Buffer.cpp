@@ -24,10 +24,12 @@
 static DWORD bufferCount=0;
 extern void LogDebug(const char *fmt, ...) ;
 
+///*******************************************
+///Class which holds a single PES-packet
+///
 CBuffer::CBuffer()
 {
   bufferCount++;
-  m_pcr.Reset();
 	m_iLength=0;
 	m_pBuffer = new byte[MAX_BUFFER_SIZE];
  // LogDebug("buffers:%d",bufferCount);
@@ -42,42 +44,62 @@ CBuffer::~CBuffer()
 	m_iLength=0;
 }
 
+///***************************************************************
+///returns a CRefTime which contains the current timestamp
+// current timestamp starts at 0 at start of file
+// and continously increases (depending on the pcr/pts value of the pes packet)
 bool CBuffer::MediaTime(CRefTime &reftime)
 {
-  if (!m_pts.IsValid) return false;
+  //does this pes packet have a pts timestamp
+  if (!m_pts.IsValid) return false; //no
 
-  if (m_startPcr > m_pts )
+  // if PCR rollover occured
+  // firstpcr--------------->maxpcr->0-------------------->endpcr
+  // <--- partTimeStamp----->
+  if (m_firstPcr > m_pts )  
   {
-    //pcr rolled over    
-    CPcr pts=m_pts;
-    double d1=( m_endPcr.ToClock() - m_startPcr.ToClock() );
-    double d2=m_pts.ToClock();
-    d2+=d1;
-    d2*=1000.0f;
-    CRefTime mediaTime((LONG)d2);
+    //pcr rolled over
+    //formule : timestamp = pts + (maxpcr-startpc)
+    CPcr pts = m_pts;
+    double partTimeStamp= ( m_maxPcr.ToClock() - m_firstPcr.ToClock() );
+    double ptsTimeStamp = m_pts.ToClock();
+    ptsTimeStamp += partTimeStamp;
+    ptsTimeStamp *= 1000.0f;
+    CRefTime mediaTime((LONG)ptsTimeStamp);
     reftime=mediaTime;
     return true;
-    return false;
   }
+  
+  // pcr did not rollover
+  // startpcr----------------------------->endpcr
+  //formule : timestamp = pts -startpc
   CPcr pts=m_pts;
-  double d1=m_startPcr.ToClock();
-  double d2=m_pts.ToClock();
-  d2-=d1;
-  d2*=1000.0f;
-  CRefTime mediaTime((LONG)d2);
+  double startOfFileTimeStamp = m_firstPcr.ToClock();
+  double ptsTimeStamp = m_pts.ToClock();
+  ptsTimeStamp -= startOfFileTimeStamp;
+  ptsTimeStamp *= 1000.0f;
+  CRefTime mediaTime( (LONG)ptsTimeStamp );
   reftime=mediaTime;
   return true;
 }
+
+
+///***************************************************************
+///Sets the length in bytes of the PES packet
 void CBuffer::SetLength(int len)
 {
   m_iLength=len;
 }
 
+///***************************************************************
+///returns the length in bytes of the PES packet
 int CBuffer::Length()
 {
 	return m_iLength;
 }
 
+///***************************************************************
+///returns the PES packet
 byte* CBuffer::Data()
 {
 	if (m_pBuffer==NULL)
@@ -88,30 +110,36 @@ byte* CBuffer::Data()
 
 }
 
+///***************************************************************
+///Sets PTS packet for the PES packet
 void CBuffer::SetPts(CPcr& pts)
 {
   m_pts=pts;
 }
 
 
-void CBuffer::SetPcr(CPcr& pcr,CPcr& startPcr,CPcr& endPcr)
+///***************************************************************
+///Sets pcr,startpcr and endpcr when this packet was received
+// m_firstPcr   : earliest pcr value found since start of playback
+// m_maxPcr     : in case of a PCR rollover, endpcr contains the last pcr timestamp before the
+//                rollover occured
+void CBuffer::SetPcr(CPcr& firstPcr,CPcr& maxPcr)
 {
-  m_pcr=pcr;
-  m_startPcr=startPcr;
-  m_endPcr=endPcr;
+  m_firstPcr=firstPcr;
+  m_maxPcr=maxPcr;
 }
 
-CPcr& CBuffer::Pcr()
-{
-	return m_pcr;
-}
 
+///***************************************************************
+// Adds data contained in pBuffer to this pes packet
 void CBuffer::Add(CBuffer* pBuffer)
 {
 	memcpy(&m_pBuffer[m_iLength], pBuffer->Data(), pBuffer->Length());
 	m_iLength+=pBuffer->Length();
 }
 
+///***************************************************************
+// Adds data contained to this pes packet
 void CBuffer::Add(byte* data, int len)
 {
 	memcpy(&m_pBuffer[m_iLength], data, len);

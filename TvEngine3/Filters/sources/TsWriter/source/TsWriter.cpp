@@ -68,7 +68,7 @@ void DumpTs(byte* tspacket)
 static char logbuffer[2000]; 
 void LogDebug(const char *fmt, ...) 
 {
-#ifndef DEBUG
+#ifdef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 

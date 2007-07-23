@@ -30,16 +30,16 @@ public:
 	byte*  Data();
 	void   Add(CBuffer* pBuffer);    
   void   Add(byte* data, int len);
-  void   SetPcr(CPcr& pcr,CPcr& startpcr,CPcr& endPcr);
+  void   SetPcr(CPcr& firstPcr,CPcr& maxPcr);
   void   SetPts(CPcr& pts);
   void   SetLength(int len);
   CPcr&  Pcr();
   bool   MediaTime(CRefTime &reftime);
 private:
-	CPcr  m_pcr;
+	CPcr  m_currentPcr;
 	CPcr  m_pts;
-	CPcr  m_startPcr;
-	CPcr  m_endPcr;
+	CPcr  m_firstPcr;
+	CPcr  m_maxPcr;
 	byte* m_pBuffer;
 	int   m_iLength;
 };

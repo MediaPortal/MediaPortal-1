@@ -593,17 +593,17 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
     }
   }
   //Do we have a start pcr?
-  if (!m_duration.StartPcr().IsValid)
-  {
-    //no, then decode the pcr
-    CAdaptionField field;
-    field.Decode(header,tsPacket);
-    if (field.Pcr.IsValid)
-    {
-      //and we consider this PCR timestamp as the start of the file
-      m_duration.Set(field.Pcr,field.Pcr,field.Pcr);
-    }
-  }
+  //if (!m_duration.StartPcr().IsValid)
+  //{
+  //  //no, then decode the pcr
+  //  CAdaptionField field;
+  //  field.Decode(header,tsPacket);
+  //  if (field.Pcr.IsValid)
+  //  {
+  //    //and we consider this PCR timestamp as the start of the file
+  //    m_duration.Set(field.Pcr,field.Pcr,field.Pcr);
+  //  }
+  //}
 
   //is this the PCR pid ?
   if (header.Pid==m_pids.PcrPid)
@@ -686,7 +686,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
     //copy (rest) data in current buffer
 		if (pos>0 && pos < 188)
 		{
-			m_pCurrentAudioBuffer->SetPcr(m_streamPcr,m_duration.FirstStartPcr(),m_duration.MaxPcr());
+			m_pCurrentAudioBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
 			m_pCurrentAudioBuffer->Add(&tsPacket[pos],188-pos);
 		}
   }
@@ -765,7 +765,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
     //copy (rest) data in current buffer
 		if (pos>0 && pos < 188)
 		{
-			m_pCurrentVideoBuffer->SetPcr(m_streamPcr,m_duration.FirstStartPcr(),m_duration.MaxPcr());
+			m_pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
 			m_pCurrentVideoBuffer->Add(&tsPacket[pos],188-pos);
 		}
   }
@@ -821,7 +821,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
       m_vecSubtitleBuffers.erase(m_vecSubtitleBuffers.begin());
     }
 
-    m_pCurrentSubtitleBuffer->SetPcr(m_subtitlePcr,m_duration.FirstStartPcr(),m_duration.MaxPcr());
+    m_pCurrentSubtitleBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
     m_pCurrentSubtitleBuffer->SetPts(m_subtitlePcr);
     m_pCurrentSubtitleBuffer->Add(tsPacket,188);
 
