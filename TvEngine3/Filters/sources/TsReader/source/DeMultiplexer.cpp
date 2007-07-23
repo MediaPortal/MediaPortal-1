@@ -345,7 +345,7 @@ CBuffer* CDeMultiplexer::GetSubtitle()
     m_vecSubtitleBuffers.erase(it);
     return subtitleBuffer;
   }
-  //no video packets available
+  //no subtitle packets available
   return NULL;
 }
 
@@ -816,7 +816,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
     if (header.PayloadUnitStart)
     {
         m_subtitlePcr = m_streamPcr;
-        LogDebug("FillSubtitle: PayloadUnitStart -- %lld", m_streamPcr.PcrReferenceBase );
+        //LogDebug("FillSubtitle: PayloadUnitStart -- %lld", m_streamPcr.PcrReferenceBase );
     }
     if (m_vecSubtitleBuffers.size()>MAX_BUF_SIZE) 
     {
