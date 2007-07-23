@@ -124,22 +124,6 @@ void CAudioPin::SetDiscontinuity(bool onOff)
 }
 HRESULT CAudioPin::CheckConnect(IPin *pReceivePin)
 {
-  //HRESULT hr;
-  /*
-#ifndef DEBUG
-  PIN_INFO pinInfo;
-  FILTER_INFO filterInfo;
-  hr=pReceivePin->QueryPinInfo(&pinInfo);
-  if (!SUCCEEDED(hr)) return E_FAIL;
-  if (pinInfo.pFilter==NULL) return E_FAIL;
-  hr=pinInfo.pFilter->QueryFilterInfo(&filterInfo);
-  if (!SUCCEEDED(hr)) return E_FAIL;
-  if (wcscmp(filterInfo.achName,L"ffdshow Audio Decoder")==0)
-  {
-    return E_FAIL;
-  }
-#endif
-  */
   LogDebug("aud:CheckConnect()");
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
@@ -216,23 +200,14 @@ HRESULT CAudioPin::BreakConnect()
 
 HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 {
- // LogDebug(".");
   try
   {
-    if (m_pTsReaderFilter->IsTimeShifting())
-    {
-      //m_rtDuration=CRefTime(MAX_TIME);
-      REFERENCE_TIME refTime;
-      m_pTsReaderFilter->GetDuration(&refTime);
-      m_rtDuration=CRefTime(refTime);
-    }
-    else
-    {
-      REFERENCE_TIME refTime;
-      m_pTsReaderFilter->GetDuration(&refTime);
-      m_rtDuration=CRefTime(refTime);
-    }
+    //get file-duration and set m_rtDuration
+    GetDuration(NULL);
 
+    //if the filter is currently seeking to a new position
+    //or this pin is currently seeking to a new position then
+    //we dont try to read any packets, but simply return...
     if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
 	  {
       LogDebug("aud:isseeking");
@@ -243,10 +218,9 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       pSample->SetSyncPoint(FALSE);
 		  return NOERROR;
 	  }
-    
 
+    //get next buffer from demultiplexer
     m_bInFillBuffer=true;
-
 	  CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
     CBuffer* buffer=NULL;
     while (buffer==NULL)
@@ -255,9 +229,12 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         CAutoLock lock(&m_bufferLock);
         buffer=demux.GetAudio();
       }
-      if (buffer!=NULL) break;
+      if (buffer!=NULL) break;//got a buffer
+      //no buffer ?
+      //check if we're seeking
       if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
       {
+        //yes, then return
         LogDebug("aud:isseeking2");
         Sleep(20);
         pSample->SetTime(NULL,NULL); 
@@ -267,29 +244,38 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         m_bInFillBuffer=false;
         return NOERROR;
       }
+      //did we reach the end of the file
       if (demux.EndOfFile()) 
       {
-      LogDebug("aud:set eof");
-        m_bInFillBuffer=false;
-        return S_FALSE;
+         //then return
+         LogDebug("aud:set eof");
+         m_bInFillBuffer=false;
+         return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
       }
       Sleep(10);
-    }
+    }//while (buffer==NULL)
 
+    //do we need to set the discontinuity flag?
     if (m_bDiscontinuity)
     {
+      //ifso, set it
       LogDebug("aud:set discontinuity");
       pSample->SetDiscontinuity(TRUE);
       m_bDiscontinuity=FALSE;
     }
+
+    //if we got a new buffer
     if (buffer!=NULL)
     {
       BYTE* pSampleBuffer;
       CRefTime cRefTime;
+      //check if it has a timestamp
       if (buffer->MediaTime(cRefTime))
       {
         static float prevTime=0;
-        cRefTime-=m_rtStart;
+        // now comes the hard part ;-)
+        cRefTime -= m_rtStart;
+
         if (m_bMeasureCompensation)
         {
           m_bMeasureCompensation=false;
@@ -299,6 +285,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           LogDebug("aud:compensation:%03.3f",fTime);
         }
         cRefTime -=m_pTsReaderFilter->Compensation;
+
+        //now we have the final timestamp, set timestamp in sample
         REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
         pSample->SetTime(&refTime,&refTime);  
         pSample->SetSyncPoint(TRUE);
@@ -313,13 +301,17 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       } 
       else
       {
+        //buffer has no timestamp
         //LogDebug("aud:gotbuffer:%d ",buffer->Length());
         pSample->SetTime(NULL,NULL);  
         pSample->SetSyncPoint(FALSE);
       }
+      //copy buffer in sample
 	    pSample->SetActualDataLength(buffer->Length());
       pSample->GetPointer(&pSampleBuffer);
       memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
+
+      //delete the buffer and return
       delete buffer;
       m_bInFillBuffer=false;
       return NOERROR;
@@ -354,17 +346,27 @@ HRESULT CAudioPin::ChangeRate()
 	return S_OK;
 }
 
-
+//******************************************************
+/// Called when thread is about to start delivering data to the codec
+/// 
 HRESULT CAudioPin::OnThreadStartPlay()
 {    
+  //set discontinuity flag indicating to codec that the new data
+  //is not belonging to any previous data
   m_bDiscontinuity=TRUE;
   m_bInFillBuffer=false;
   float fStart=(float)m_rtStart.Millisecs();
   fStart/=1000.0f;
+
+  //tell demuxer to delete any audio packets it still might have
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   demux.FlushAudio();
   LogDebug("aud:OnThreadStartPlay(%f)", fStart);
+
+  //set flag to compensate any differences in the stream time & file time
   m_bMeasureCompensation=true;
+
+  //start playing
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
 	return CSourceStream::OnThreadStartPlay( );
 }
@@ -377,10 +379,18 @@ STDMETHODIMP CAudioPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
   return CSourceSeeking::SetPositions(pCurrent, CurrentFlags, pStop,  StopFlags);
 }
 
+//******************************************************
+/// Returns true if a thread is currently executing in UpdateFromSeek()
+/// 
 bool CAudioPin::IsSeeking()
 {
   return m_binUpdateFromSeek;
 }
+
+//******************************************************
+/// UpdateFromSeek() called when need to seek to a specific timestamp in the file
+/// m_rtStart contains the time we need to seek to...
+/// 
 void CAudioPin::UpdateFromSeek()
 {
   m_binUpdateFromSeek=true;
@@ -389,83 +399,109 @@ void CAudioPin::UpdateFromSeek()
 	//if (m_rtStart>m_rtDuration)
 	//	m_rtStart=m_rtDuration;
 
+  //there is a bug in directshow causing UpdateFromSeek() to be called multiple times 
+  //directly after eachother
+  //for a single seek operation. To 'fix' this we only perform the seeking operation
+  //if we didnt do a seek in the last 5 seconds...
   if (GetTickCount()-m_seekTimer < 5000)
   {
-      LogDebug("aud:skip seek");
-      m_binUpdateFromSeek=false;
-      return;
+    LogDebug("aud:skip seek");
+    m_binUpdateFromSeek=false;
+    return;
   }
   m_seekTimer=GetTickCount();
+
+  //Note that the seek timestamp (m_rtStart) is done in the range
+  //from earliest - latest from GetAvailable()
+  //We however would like the seek timestamp to be in the range 0-fileduration
   m_lastSeek=m_rtStart;
   CRefTime rtSeek=m_rtStart;
   float seekTime=(float)rtSeek.Millisecs();
   seekTime/=1000.0f;
-  float startOfFile= tsduration.StartPcr().ToClock()-tsduration.FirstStartPcr().ToClock();
-  if (startOfFile<0) startOfFile=0;
-  seekTime-=startOfFile;
-  if (seekTime<0) seekTime=0;
+  
+  //get the earliest timestamp available in the file
+  float earliesTimeStamp= tsduration.StartPcr().ToClock() - tsduration.FirstStartPcr().ToClock();
+  if (earliesTimeStamp<0) earliesTimeStamp=0;
+
+  //correct the seek time
+  seekTime -= earliesTimeStamp;
+  if (seekTime < 0) seekTime=0;
 
   float duration=(float)m_rtDuration.Millisecs();
   duration /=1000.0f;
   LogDebug("aud seek to %f/%f", seekTime, duration);
+
+  seekTime*=1000.0f;
+  rtSeek = CRefTime((LONG)seekTime);
+
+  //if another output pin is seeking, then wait until its finished
   m_bSeeking=true;
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
-  //LogDebug("aud seek filter->Iseeking() done");
+
+  //tell demuxer to stop deliver audio data and wait until 
+  //FillBuffer() finished
   demux.SetHoldAudio(true);
   while (m_bInFillBuffer) Sleep(1);
   CAutoLock lock(&m_bufferLock);
-  //LogDebug("aud seek buffer locked");
+
+  //if a pin-output thread exists...
   if (ThreadExists()) 
   {
-      // next time around the loop, the worker thread will
-      // pick up the position change.
-      // We need to flush all the existing data - we must do that here
-      // as our thread will probably be blocked in GetBuffer otherwise
-      
-			//LogDebug("aud seek filter->seekstart");
+      //tell the filter we are starting a seek operation
       m_pTsReaderFilter->SeekStart();
-			//LogDebug("aud seek begindeliverflush");
+			
+      //deliver a begin-flush to the codec filter so it stops asking for data
       DeliverBeginFlush();
-			//LogDebug("aud seek stop");
-      // make sure we have stopped pushing
+			
+      //stop the thread
       Stop();
-			//LogDebug("aud seek filter->seek");
-      seekTime*=1000.0f;
-      rtSeek = CRefTime((LONG)seekTime);
+			
+      //do the seek...
       m_pTsReaderFilter->Seek(rtSeek,true);
 
-      // complete the flush
-			//LogDebug("aud seek deliverendflush");
+      //deliver a end-flush to the codec filter so it will start asking for data again
       DeliverEndFlush();
-			//LogDebug("aud seek filter->seekdone");
+			
+      //tell filter we're done with seeking
       m_pTsReaderFilter->SeekDone(rtSeek);
 
-      // restart
-			//LogDebug("aud seek restart");
+      //set our start time
       m_rtStart=rtSeek;
+      
+      // and restart the thread
       Run();
 			//LogDebug("aud seek running");
   }
   else
   {
-    m_pTsReaderFilter->Seek(CRefTime(m_rtStart),false);
+    //no thread running? then simply seek to the position
+    m_pTsReaderFilter->Seek(rtSeek,false);
   }
-	//demux.Flush();
+	
+  //tell demuxer to start deliver audio packets again
 	demux.SetHoldAudio(false);
+  //clear flags indiciating that the pin is seeking
   m_bSeeking=false;
   m_binUpdateFromSeek=false;
   LogDebug("aud seek done---");
 }
 
 
+//******************************************************
+/// GetAvailable() returns 
+/// pEarliest -> the earliest (pcr) timestamp in the file
+/// pLatest   -> the latest (pcr) timestamp in the file
+/// 
 STDMETHODIMP CAudioPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 {
 //  LogDebug("aud:GetAvailable");
+  //if we are timeshifting, the earliest/latest timestamp can change
   if (m_pTsReaderFilter->IsTimeShifting())
   {
     CTsDuration duration=m_pTsReaderFilter->GetDuration();
     if (pEarliest)
     {
+      //return the startpcr, which is the earliest pcr timestamp available in the timeshifting file 
       double d2=duration.StartPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
@@ -473,6 +509,7 @@ STDMETHODIMP CAudioPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
     }
     if (pLatest)
     {
+      //return the endpcr, which is the latest pcr timestamp available in the timeshifting file 
       double d2=duration.EndPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
@@ -480,19 +517,26 @@ STDMETHODIMP CAudioPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
     }
     return S_OK;
   }
+
+  //not timeshifting, then leave it to the default sourceseeking class
+  //which returns earliest=0, latest=m_rtDuration
   return CSourceSeeking::GetAvailable( pEarliest, pLatest );
 }
 
+//******************************************************
+/// Returns the file duration in REFERENCE_TIME
+/// For nomal .ts files it returns the current pcr - first pcr in the file
+/// for timeshifting files it returns the current pcr - the first pcr ever read
+/// So the duration keeps growing, even if timeshifting files are wrapped and being resued!
+//
 STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
 {
  // LogDebug("aud:GetDuration");
   if (m_pTsReaderFilter->IsTimeShifting())
   {
     CTsDuration duration=m_pTsReaderFilter->GetDuration();
-    
     CRefTime totalDuration=duration.TotalDuration();
     m_rtDuration=totalDuration;
-
   }
   else
   {
@@ -500,9 +544,16 @@ STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
     m_pTsReaderFilter->GetDuration(&refTime);
     m_rtDuration=CRefTime(refTime);
   }
-  return CSourceSeeking::GetDuration(pDuration);
+  if (pDuration!=NULL)
+    return CSourceSeeking::GetDuration(pDuration);
+  return S_OK;
 }
 
+//******************************************************
+/// GetCurrentPosition() simply returns that this is not implemented by this pin
+/// reason is that only the audio/video renderer now exactly the 
+/// current playing position and they do implement GetCurrentPosition()
+/// 
 STDMETHODIMP CAudioPin::GetCurrentPosition(LONGLONG *pCurrent)
 {
  // LogDebug("aud:GetCurrentPosition");

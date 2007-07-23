@@ -8,12 +8,18 @@
 class CTsFileSeek: public CPacketSync
 {
 public:
+  enum SeekState
+  {
+    FindPreviousPcr=-1,
+    FindPcr=0,
+    FindNextPcr=1
+  };
   CTsFileSeek( CTsDuration& duration );
-public:
   virtual ~CTsFileSeek(void);
 	void OnTsPacket(byte* tsPacket);
   void Seek(CRefTime refTime);
   void SetFileReader(FileReader* reader);
+
 private:
   FileReader* m_reader;
   CTsDuration& m_duration;

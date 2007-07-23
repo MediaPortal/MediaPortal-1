@@ -213,19 +213,12 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 //	::OutputDebugStringA("CVideoPin::FillBuffer()\n");
   try
   {
-    if (m_pTsReaderFilter->IsTimeShifting())
-    {
-      //m_rtDuration=CRefTime(MAX_TIME);
-      REFERENCE_TIME refTime;
-      m_pTsReaderFilter->GetDuration(&refTime);
-      m_rtDuration=CRefTime(refTime);
-    }
-    else
-    {
-      REFERENCE_TIME refTime;
-      m_pTsReaderFilter->GetDuration(&refTime);
-      m_rtDuration=CRefTime(refTime);
-    }
+    //get file-duration and set m_rtDuration
+    GetDuration(NULL);
+
+    //if the filter is currently seeking to a new position
+    //or this pin is currently seeking to a new position then
+    //we dont try to read any packets, but simply return...
     if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
 	  {
       LogDebug("vid:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
@@ -235,19 +228,23 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       pSample->SetSyncPoint(FALSE);
 		  return NOERROR;
 	  }
-	  CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
 
+    //get next buffer from demultiplexer
     m_bInFillBuffer=true;
+	  CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
     CBuffer* buffer=NULL;
     while (buffer==NULL)
     {
+      {
+        CAutoLock lock(&m_bufferLock);
+        buffer=demux.GetVideo();
+      }
+      if (buffer!=NULL) break;;//got a buffer
+      //no buffer ?
+      //check if we're seeking
+      if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
         {
-          CAutoLock lock(&m_bufferLock);
-          buffer=demux.GetVideo();
-        }
-        if (buffer!=NULL) break;
-        if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
-        {
+        //yes, then return
           LogDebug("vid:isseeking2");
 	        Sleep(20);
           pSample->SetTime(NULL,NULL); 
@@ -256,29 +253,37 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           pSample->SetSyncPoint(FALSE);
           m_bInFillBuffer=false;
 	        return NOERROR;
-        }
-        if (demux.EndOfFile()) 
-        {
-          m_bInFillBuffer=false;
-          return S_FALSE;
-        }
-        Sleep(10);
-    }
+      }
+      //did we reach the end of the file
+      if (demux.EndOfFile()) 
+      {
+        m_bInFillBuffer=false;
+        return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
+      }
+      Sleep(10);
+    }//while (buffer==NULL)
 
+    //do we need to set the discontinuity flag?
     if (m_bDiscontinuity)
     {
+      //ifso, set it
       LogDebug("vid:set discontinuity");
       pSample->SetDiscontinuity(TRUE);
       m_bDiscontinuity=FALSE;
     }
+
+    //if we got a new buffer
     if (buffer!=NULL)
     {
       BYTE* pSampleBuffer;
       CRefTime cRefTime;
+      //check if it has a timestamp
       if (buffer->MediaTime(cRefTime))
       {
         static float prevTime=0;
+        // now comes the hard part ;-)
         cRefTime-=m_rtStart;
+
         if (m_bMeasureCompensation)
         {
           m_bMeasureCompensation=false;
@@ -288,6 +293,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           LogDebug("vid:compensation:%03.3f",fTime);
         }
         cRefTime -=m_pTsReaderFilter->Compensation;
+
+        //now we have the final timestamp, set timestamp in sample
         REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
         pSample->SetTime(&refTime,&refTime); 
         pSample->SetSyncPoint(TRUE);
@@ -301,13 +308,17 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       }
       else
       {
+        //buffer has no timestamp
        // LogDebug("vid:gotbuffer:%d ",buffer->Length());
         pSample->SetTime(NULL,NULL);  
         pSample->SetSyncPoint(FALSE);
       }
+      //copy buffer in sample
 	    pSample->SetActualDataLength(buffer->Length());
       pSample->GetPointer(&pSampleBuffer);
       memcpy(pSampleBuffer,buffer->Data(),buffer->Length());
+
+      //delete the buffer and return
       delete buffer;
       m_bInFillBuffer=false;
       return NOERROR;
@@ -323,17 +334,27 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
 
 
+//******************************************************
+/// Called when thread is about to start delivering data to the codec
+/// 
 HRESULT CVideoPin::OnThreadStartPlay()
 {    
+  //set discontinuity flag indicating to codec that the new data
+  //is not belonging to any previous data
   m_bInFillBuffer=false;
   m_bDiscontinuity=TRUE;
   float fStart=(float)m_rtStart.Millisecs();
   fStart/=1000.0f;
   
+  //tell demuxer to delete any audio packets it still might have
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   demux.FlushVideo();
   LogDebug("vid:OnThreadStartPlay(%f)", fStart);
+
+  //set flag to compensate any differences in the stream time & file time
   m_bMeasureCompensation=true;
+
+  //start playing
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
 	return CSourceStream::OnThreadStartPlay( );
 }
@@ -342,12 +363,12 @@ HRESULT CVideoPin::OnThreadStartPlay()
 	// CSourceSeeking
 HRESULT CVideoPin::ChangeStart()
 {
-    UpdateFromSeek();
+  UpdateFromSeek();
   return S_OK;
 }
 HRESULT CVideoPin::ChangeStop()
 {
-    UpdateFromSeek();
+  UpdateFromSeek();
   return S_OK;
 }
 HRESULT CVideoPin::ChangeRate()
@@ -356,158 +377,132 @@ HRESULT CVideoPin::ChangeRate()
 }
 
 STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
-{ /*
-	REFERENCE_TIME rtStop = *pStop;
-	REFERENCE_TIME rtCurrent = *pCurrent;
-	if (CurrentFlags & AM_SEEKING_RelativePositioning)
-	{
-		rtCurrent += m_rtStart;
-		CurrentFlags -= AM_SEEKING_RelativePositioning; //Remove relative flag
-		CurrentFlags += AM_SEEKING_AbsolutePositioning; //Replace with absoulute flag
-	}
-	if (CurrentFlags & AM_SEEKING_PositioningBitsMask)
-	{
-		m_rtStart = rtCurrent;
-	}
-  
-	if (StopFlags & AM_SEEKING_RelativePositioning)
-	{
-		rtStop += m_rtStop;
-		StopFlags -= AM_SEEKING_RelativePositioning; //Remove relative flag
-		StopFlags += AM_SEEKING_AbsolutePositioning; //Replace with absoulute flag
-	}
-	if (!(CurrentFlags & AM_SEEKING_NoFlush) && (CurrentFlags & AM_SEEKING_PositioningBitsMask))
-  {
-    m_pTsReaderFilter->SeekStart();
-    CRefTime rtSeek=rtCurrent;
-    float seekTime=rtSeek.Millisecs();
-    seekTime/=1000.0f;
-    LogDebug("seek to %f", seekTime);
-  				
-    m_rtStart = rtCurrent;
-    
-	  if (m_pTsReaderFilter->IsActive())
-	  {
-		  DeliverBeginFlush();
-	  }
-
-	  CSourceStream::Stop();
-
-    m_pTsReaderFilter->Seek(CRefTime(rtCurrent));
-    
-		if (CurrentFlags & AM_SEEKING_PositioningBitsMask)
-		{
-			m_rtStart = rtCurrent;
-		}
-	  if (m_pTsReaderFilter->IsActive())
-	  {
-		  DeliverEndFlush();
-	  }
-    m_pTsReaderFilter->SeekDone();
-
-    m_bDiscontinuity=TRUE;
-    CSourceStream::Run();
-
-	  if (CurrentFlags & AM_SEEKING_ReturnTime)
-    {
-      *pCurrent=rtCurrent;
-    }
-			
-    return CSourceSeeking::SetPositions(&rtCurrent, CurrentFlags, pStop, StopFlags);
-
-  }*/
+{ 
   return CSourceSeeking::SetPositions(pCurrent, CurrentFlags, pStop,  StopFlags);
 }
 
+//******************************************************
+/// Returns true if a thread is currently executing in UpdateFromSeek()
+/// 
 bool CVideoPin::IsSeeking()
 {
   return m_binUpdateFromSeek;
 }
+
+//******************************************************
+/// UpdateFromSeek() called when need to seek to a specific timestamp in the file
+/// m_rtStart contains the time we need to seek to...
+/// 
 void CVideoPin::UpdateFromSeek()
 {
   m_binUpdateFromSeek=true;
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   CTsDuration tsduration=m_pTsReaderFilter->GetDuration();
 
-	if (m_rtStart>m_rtDuration)
-		m_rtStart=m_rtDuration;
+	//if (m_rtStart>m_rtDuration)
+	//	m_rtStart=m_rtDuration;
+  
+  //there is a bug in directshow causing UpdateFromSeek() to be called multiple times 
+  //directly after eachother
+  //for a single seek operation. To 'fix' this we only perform the seeking operation
+  //if we didnt do a seek in the last 5 seconds...
   if (GetTickCount()-m_seekTimer<5000)
   {
       LogDebug("vid:skip seek");
       m_binUpdateFromSeek=false;
       return;
   }
+  
+  //Note that the seek timestamp (m_rtStart) is done in the range
+  //from earliest - latest from GetAvailable()
+  //We however would like the seek timestamp to be in the range 0-fileduration
   m_seekTimer=GetTickCount();
   m_lastSeek=m_rtStart;
 
   CRefTime rtSeek=m_rtStart;
   float seekTime=(float)rtSeek.Millisecs();
   seekTime/=1000.0f;
-  float startOfFile= tsduration.StartPcr().ToClock()-tsduration.FirstStartPcr().ToClock();
-  if (startOfFile<0) startOfFile=0;
-  seekTime-=startOfFile;
+  
+  
+  //get the earliest timestamp available in the file
+  float earliesTimeStamp= tsduration.StartPcr().ToClock() - tsduration.FirstStartPcr().ToClock();
+  if (earliesTimeStamp<0) earliesTimeStamp=0;
+
+  //correct the seek time
+  seekTime-=earliesTimeStamp;
   if (seekTime<0) seekTime=0;
   LogDebug("vid seek to %f", seekTime);
+  
+  seekTime*=1000.0f;
+  rtSeek = CRefTime((LONG)seekTime);
+
+  //if another output pin is seeking, then wait until its finished
   m_bSeeking=true;
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
-//   LogDebug("vid seek filter->Iseeking() done");
+
+  //tell demuxer to stop deliver video data and wait until 
+  //FillBuffer() finished
 	demux.SetHoldVideo(true);
   while (m_bInFillBuffer) Sleep(1);
   CAutoLock lock(&m_bufferLock);
-//  LogDebug("vid seek buffer locked");
+
+  //if a pin-output thread exists...
   if (ThreadExists()) 
   {
-      // next time around the loop, the worker thread will
-      // pick up the position change.
-      // We need to flush all the existing data - we must do that here
-      // as our thread will probably be blocked in GetBuffer otherwise
-      
+    //normally the audio pin does the acutal seeking
+    //check if its connected. If not, we'll do the seeking
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
-//        LogDebug("vid seek filter->seekstart");
+        //tell the filter we are starting a seek operation
 				m_pTsReaderFilter->SeekStart();
       }
-//			LogDebug("vid seek begindeliverflush");
+
+	  	//deliver a begin-flush to the codec filter so it stops asking for data
       HRESULT hr=DeliverBeginFlush();
-//      LogDebug("vid:beginflush:%x",hr);
-      // make sure we have stopped pushing
-//			LogDebug("vid seek stop");
+
+      //stop the thread
       Stop();
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
-//				LogDebug("vid seek filter->seek");
-        seekTime*=1000.0f;
-        rtSeek = CRefTime((LONG)seekTime);
+        //do the seek..
         m_pTsReaderFilter->Seek(rtSeek,true);
       }
-      // complete the flush
-//			LogDebug("vid seek deliverendflush");
+
+      //deliver a end-flush to the codec filter so it will start asking for data again
       hr=DeliverEndFlush();
-//      LogDebug("vid:endflush:%x",hr);
       
       if (!m_pTsReaderFilter->GetAudioPin()->IsConnected())
       {
-//				LogDebug("vid seek filter->seekdone");
+        //tell filter we're done with seeking
         m_pTsReaderFilter->SeekDone(rtSeek);
       }
-      // restart
-      
-//			LogDebug("vid seek restart");
+
+      //set our start time
       m_rtStart=rtSeek;
+
+      // and restart the thread
       Run();
-//			LogDebug("vid seek running");
   }
   else
   {
-    m_pTsReaderFilter->Seek(CRefTime(m_rtStart),false);
+    //no thread running? then simply seek to the position
+    m_pTsReaderFilter->Seek(rtSeek,false);
   }
-	//demux.Flush();
+  
+  //tell demuxer to start deliver video packets again
 	demux.SetHoldVideo(false);
+
+  //clear flags indiciating that the pin is seeking
   m_bSeeking=false;
   LogDebug("vid seek done---");
   m_binUpdateFromSeek=false;
 }
 
+//******************************************************
+/// GetAvailable() returns 
+/// pEarliest -> the earliest (pcr) timestamp in the file
+/// pLatest   -> the latest (pcr) timestamp in the file
+/// 
 STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 {
 //  LogDebug("vid:GetAvailable");
@@ -516,6 +511,7 @@ STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
     CTsDuration duration=m_pTsReaderFilter->GetDuration();
     if (pEarliest)
     {
+      //return the startpcr, which is the earliest pcr timestamp available in the timeshifting file 
       double d2=duration.StartPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
@@ -523,6 +519,7 @@ STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
     }
     if (pLatest)
     {
+      //return the endpcr, which is the latest pcr timestamp available in the timeshifting file 
       double d2=duration.EndPcr().ToClock();
       d2*=1000.0f;
       CRefTime mediaTime((LONG)d2);
@@ -530,9 +527,18 @@ STDMETHODIMP CVideoPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
     }
     return S_OK;
   }
+
+  //not timeshifting, then leave it to the default sourceseeking class
+  //which returns earliest=0, latest=m_rtDuration
   return CSourceSeeking::GetAvailable( pEarliest, pLatest );
 }
 
+//******************************************************
+/// Returns the file duration in REFERENCE_TIME
+/// For nomal .ts files it returns the current pcr - first pcr in the file
+/// for timeshifting files it returns the current pcr - the first pcr ever read
+/// So the duration keeps growing, even if timeshifting files are wrapped and being resued!
+//
 STDMETHODIMP CVideoPin::GetDuration(LONGLONG *pDuration)
 {
   if (m_pTsReaderFilter->IsTimeShifting())
@@ -550,6 +556,11 @@ STDMETHODIMP CVideoPin::GetDuration(LONGLONG *pDuration)
   return CSourceSeeking::GetDuration(pDuration);
 }
 
+//******************************************************
+/// GetCurrentPosition() simply returns that this is not implemented by this pin
+/// reason is that only the audio/video renderer now exactly the 
+/// current playing position and they do implement GetCurrentPosition()
+/// 
 STDMETHODIMP CVideoPin::GetCurrentPosition(LONGLONG *pCurrent)
 {
  // LogDebug("vid:GetCurrentPosition");

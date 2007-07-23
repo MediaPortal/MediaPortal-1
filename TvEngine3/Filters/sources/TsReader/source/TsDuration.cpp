@@ -59,6 +59,11 @@ int CTsDuration::GetPid()
   if (m_videoPid>0) return m_videoPid;
   return m_pid;
 }
+
+//*********************************************************
+// Determines the total duration of the file (or timeshifting files)
+// 
+// 
 void CTsDuration::UpdateDuration()
 {
   m_bSearchStart=true;
@@ -69,6 +74,8 @@ void CTsDuration::UpdateDuration()
   m_reader->SetFilePointer(0,FILE_BEGIN);
   byte buffer[32712];
   DWORD dwBytesRead;
+
+  //find the first pcr in the file
   while (!m_startPcr.IsValid)
   {
     if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
@@ -87,6 +94,8 @@ void CTsDuration::UpdateDuration()
     }
     OnRawData(buffer,dwBytesRead);
   }
+
+  //find the last pcr in the file
   m_bSearchEnd=true;
   m_bSearchStart=false;
   m_endPcr.Reset();
@@ -109,6 +118,11 @@ void CTsDuration::UpdateDuration()
     OnRawData(buffer,dwBytesRead);
     offset+=sizeof(buffer);
   }
+
+  
+  //When the last pcr < first pcr then a pcr roll over occured
+  //find where in the file this rollover happened
+  //and fill maxPcr
   if (m_endPcr.PcrReferenceBase < m_startPcr.PcrReferenceBase)
   {
     //PCR rollover
@@ -131,6 +145,7 @@ void CTsDuration::UpdateDuration()
       offset+=sizeof(buffer);
     }
   }
+
   //park filepointer at end of file
   m_reader->SetFilePointer(-1,FILE_END);
   m_reader->Read(buffer,1,&dwBytesRead);
@@ -170,6 +185,10 @@ void CTsDuration::OnTsPacket(byte* tsPacket)
   }
 }
 
+
+//*********************************************************
+// returns the duration in REFERENCE_TIME
+// of the file (or timeshifting files)
 CRefTime CTsDuration::Duration()
 {
   if (m_maxPcr.IsValid)
@@ -191,6 +210,12 @@ CRefTime CTsDuration::Duration()
     return refTime;
   }
 }
+
+//*********************************************************
+// returns the total duration in REFERENCE_TIME
+// of the file (or timeshifting files) since start of playback
+// The TotalDuration() >= Duration() since the timeshifting files may have been
+// wrapped and reused.
 CRefTime CTsDuration::TotalDuration()
 {
   if (m_maxPcr.IsValid)
@@ -213,20 +238,30 @@ CRefTime CTsDuration::TotalDuration()
   }
 }
 
+///*********************************************************
+///returns the earliest pcr we've encountered since we started playback
+///Needed for timeshifting files since when
+///timeshifting files are wrapped and being re-used, we 'loose' the first pcr
 CPcr CTsDuration::FirstStartPcr()
 {
   return m_firstStartPcr;
 }
 
+///*********************************************************
+///returns the earliest pcr currently available in the file/timeshifting files
 CPcr CTsDuration::StartPcr()
 {
   return m_startPcr;
 }
 
+///*********************************************************
+///returns the latest pcr 
 CPcr CTsDuration::EndPcr()
 {
   return m_endPcr;
 }
+///*********************************************************
+///returns the pcr after which the pcr roll over happened
 CPcr CTsDuration::MaxPcr()
 {
   return m_maxPcr;
