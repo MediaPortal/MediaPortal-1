@@ -11,15 +11,17 @@ CMemoryReader::~CMemoryReader(void)
 {
 }
 
-int CMemoryReader::Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes)
+HRESULT CMemoryReader::Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes)
 {
   *dwReadBytes =m_buffer.ReadFromBuffer(pbData,lDataLength);
-  return *dwReadBytes;
+  if ((*dwReadBytes) <=0) return S_FALSE;
+  return S_OK;
 }
-int CMemoryReader::Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod)
+HRESULT CMemoryReader::Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod)
 {
   *dwReadBytes =m_buffer.ReadFromBuffer(pbData,lDataLength);
-  return *dwReadBytes;
+  if ((*dwReadBytes) <=0) return S_FALSE;
+  return S_OK;
 }
 DWORD CMemoryReader::setFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 {

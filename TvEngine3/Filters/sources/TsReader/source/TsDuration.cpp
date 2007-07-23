@@ -43,6 +43,10 @@ void CTsDuration::Set(CPcr& startPcr, CPcr& endPcr, CPcr& maxPcr)
   m_startPcr=startPcr;
   m_endPcr=endPcr;
   m_maxPcr=maxPcr;
+  if (!m_firstStartPcr.IsValid)
+  {
+    m_firstStartPcr=m_startPcr;
+  }
 }
   
 void CTsDuration::SetVideoPid(int pid)
@@ -70,14 +74,14 @@ void CTsDuration::UpdateDuration()
     if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
     {
       //park filepointer at end of file
-      m_reader->SetFilePointer(1,FILE_END);
+      m_reader->SetFilePointer(-1,FILE_END);
       m_reader->Read(buffer,1,&dwBytesRead);
       return;
     }
     if (dwBytesRead==0) 
     {
       //park filepointer at end of file
-      m_reader->SetFilePointer(1,FILE_END);
+      m_reader->SetFilePointer(-1,FILE_END);
       m_reader->Read(buffer,1,&dwBytesRead);
       return;
     }
@@ -93,7 +97,7 @@ void CTsDuration::UpdateDuration()
   {
    // LogDebug("fileSize:%x off:%x",(DWORD)fileSize, (DWORD)fileSize-offset);
     DWORD dwBytesRead;
-    m_reader->SetFilePointer(fileSize-offset,FILE_BEGIN);
+    m_reader->SetFilePointer(-offset,FILE_END);
     if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
     {
       break;
@@ -114,7 +118,7 @@ void CTsDuration::UpdateDuration()
     while (!m_maxPcr.IsValid)
     {
       DWORD dwBytesRead;
-      m_reader->SetFilePointer(fileSize-offset,FILE_BEGIN);
+      m_reader->SetFilePointer(-offset,FILE_END);
       if (!SUCCEEDED(m_reader->Read(buffer,sizeof(buffer),&dwBytesRead)))
       {
         break;
@@ -128,7 +132,7 @@ void CTsDuration::UpdateDuration()
     }
   }
   //park filepointer at end of file
-  m_reader->SetFilePointer(1,FILE_END);
+  m_reader->SetFilePointer(-1,FILE_END);
   m_reader->Read(buffer,1,&dwBytesRead);
 }
 
@@ -146,6 +150,10 @@ void CTsDuration::OnTsPacket(byte* tsPacket)
         m_pid=header.Pid;
         m_startPcr=field.Pcr;
         m_bSearchStart=false;
+        if (!m_firstStartPcr.IsValid)
+        {
+          m_firstStartPcr=m_startPcr;
+        }
       }
     }
     if (m_bSearchEnd && m_pid==header.Pid)
@@ -182,6 +190,32 @@ CRefTime CTsDuration::Duration()
     CRefTime refTime((LONG)(duration*1000.0f));
     return refTime;
   }
+}
+CRefTime CTsDuration::TotalDuration()
+{
+  if (m_maxPcr.IsValid)
+  {
+    double duration= m_endPcr.ToClock() + (m_maxPcr.ToClock()- m_firstStartPcr.ToClock());
+    CPcr pcr;
+    pcr.FromClock(duration);
+    //LogDebug("Duration:%f %s", duration, pcr.ToString());
+    CRefTime refTime((LONG)(duration*1000.0f));
+    return refTime;
+  }
+  else
+  {
+    double duration= m_endPcr.ToClock() - m_firstStartPcr.ToClock();
+    CPcr pcr;
+    pcr.FromClock(duration);
+    //LogDebug("Duration:%f %s", duration, pcr.ToString());
+    CRefTime refTime((LONG)(duration*1000.0f));
+    return refTime;
+  }
+}
+
+CPcr CTsDuration::FirstStartPcr()
+{
+  return m_firstStartPcr;
 }
 
 CPcr CTsDuration::StartPcr()
