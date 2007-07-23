@@ -77,7 +77,7 @@ public:
 	bool            IsSeeking();
   bool            IsFilterRunning();
 	CDeMultiplexer& GetDemultiplexer();
-	void            Seek(CRefTime& seekTime, bool seekInFile);
+	void            Seek(CRefTime&  seekTime, bool seekInFile);
   void            SeekDone(CRefTime& refTime);
   void            SeekStart();
 	double          UpdateDuration();
@@ -86,6 +86,7 @@ public:
   CSubtitlePin*   GetSubtitlePin();
   IDVBSubtitle*   GetSubtitleFilter();
   bool            IsTimeShifting();
+  CTsDuration&    GetDuration();
   
   CRefTime        Compensation;
 protected:

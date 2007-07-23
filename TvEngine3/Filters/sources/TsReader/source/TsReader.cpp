@@ -516,10 +516,10 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     }
 
     //open file
-	  m_fileReader->SetFileName(url);
+	  m_fileReader->SetFileName(m_fileName);
 	  m_fileReader->OpenFile();
 
-    m_fileDuration->SetFileName(url);
+    m_fileDuration->SetFileName(m_fileName);
 	  m_fileDuration->OpenFile();
 
     //detect audio/video pids
@@ -595,7 +595,7 @@ double CTsReaderFilter::GetStartTime()
 void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
 {
   //dont seek to the same location as last time
-   if (m_seekTime==seekTime) return;
+   //if (m_seekTime==seekTime) return;
 
   LogDebug("CTsReaderFilter::Seek--");
   m_seekTime=seekTime;
@@ -743,15 +743,22 @@ void CTsReaderFilter::ThreadProc()
       duration.SetVideoPid(m_duration.GetPid());
       duration.UpdateDuration();
 
+
       //did we find a duration?
 			if (duration.Duration().Millisecs()>0)
 			{
+        float fstart=duration.StartPcr().ToClock();
+        float fend=duration.EndPcr().ToClock();
+
         //yes, is it different then the one we determined last time?
-				if (duration.Duration() != m_duration.Duration())
+        if (duration.StartPcr().PcrReferenceBase!=m_duration.StartPcr().PcrReferenceBase ||
+            duration.EndPcr().PcrReferenceBase!=m_duration.EndPcr().PcrReferenceBase)
 				{
           //yes, then update it
           m_duration.Set(duration.StartPcr(), duration.EndPcr(), duration.MaxPcr());
 
+          float fstart2=m_duration.StartPcr().ToClock();
+          float fend2=m_duration.EndPcr().ToClock();
           // Is graph running?
 					if (m_State == State_Running||m_State==State_Paused)
 					{
@@ -810,7 +817,7 @@ void CTsReaderFilter::ThreadProc()
         }
       }
     }
-    Sleep(10000);
+    Sleep(1000);
   }
   LogDebug("CTsReaderFilter::ThreadProc stopped()");
 }
@@ -944,6 +951,11 @@ HRESULT CTsReaderFilter::FindSubtitleFilter()
 	}
   LogDebug( "FindSubtitleFilter - End");
   return S_OK;
+}
+
+CTsDuration& CTsReaderFilter::GetDuration()
+{
+  return m_duration;
 }
 ////////////////////////////////////////////////////////////////////////
 //
