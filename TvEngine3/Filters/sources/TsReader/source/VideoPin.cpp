@@ -149,6 +149,8 @@ HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
   if (!SUCCEEDED(hr)) return E_FAIL;
   if (pinInfo.pFilter==NULL) return E_FAIL;
   hr=pinInfo.pFilter->QueryFilterInfo(&filterInfo);
+  filterInfo.pGraph->Release();
+
   if (!SUCCEEDED(hr)) return E_FAIL;
   if (mpeg2Video)
   {
