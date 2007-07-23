@@ -25,6 +25,7 @@
 #include <sbe.h>
 #include "tsreader.h"
 #include "audiopin.h"
+#include "videopin.h"
 
 #define MAX_TIME  86400000L
 byte MPEG1AudioFormat[] = 
@@ -285,17 +286,19 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         // milliseconds later
         // We compensate this when m_bMeasureCompensation=true 
         // which is directly after seeking
-        if (m_bMeasureCompensation)
+        if (m_bMeasureCompensation )
         {
           //set flag to false so we dont keep compensating
           m_bMeasureCompensation=false;
-          
-          // set the current compensation
-          m_pTsReaderFilter->Compensation=cRefTime;
-          float fTime=(float)cRefTime.Millisecs();
-          fTime/=1000.0f;
-          LogDebug("aud:compensation:%03.3f",fTime);
-          prevTime=-1;
+          if (FALSE == m_pTsReaderFilter->GetVideoPin()->IsConnected())
+          {
+            // set the current compensation
+            m_pTsReaderFilter->Compensation=cRefTime;
+            float fTime=(float)cRefTime.Millisecs();
+            fTime/=1000.0f;
+            LogDebug("aud:compensation:%03.3f",fTime);
+            prevTime=-1;
+          }
         }
 
         //adjust the timestamp with the compensation
@@ -308,7 +311,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         float fTime=(float)cRefTime.Millisecs();
         fTime/=1000.0f;
         
-        if (abs(prevTime-fTime)>=1)
+        if (true||abs(prevTime-fTime)>=1)
         {
           //LogDebug("aud:gotbuffer:%d %03.3f",buffer->Length(),fTime);
           prevTime=fTime;
@@ -418,11 +421,14 @@ void CAudioPin::UpdateFromSeek()
   //directly after eachother
   //for a single seek operation. To 'fix' this we only perform the seeking operation
   //if we didnt do a seek in the last 5 seconds...
-  if (GetTickCount()-m_seekTimer < 2000)
+  if (GetTickCount()-m_seekTimer < 5000)
   {
-//    LogDebug("aud:skip seek");
-//    m_binUpdateFromSeek=false;
-//    return;
+    if (m_lastSeek==m_rtStart)
+    {
+      LogDebug("aud:skip seek");
+      m_binUpdateFromSeek=false;
+      return;
+    }
   }
   m_seekTimer=GetTickCount();
 

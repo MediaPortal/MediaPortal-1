@@ -290,11 +290,11 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
         if (m_bMeasureCompensation)
         {
-        // next.. seeking is not perfect since the file does not contain a PCR for every micro second. 
-        // even if we find the exact pcr time during seeking, the next start of a pes-header might start a few 
-        // milliseconds later
-        // We compensate this when m_bMeasureCompensation=true 
-        // which is directly after seeking
+          // next.. seeking is not perfect since the file does not contain a PCR for every micro second. 
+          // even if we find the exact pcr time during seeking, the next start of a pes-header might start a few 
+          // milliseconds later
+          // We compensate this when m_bMeasureCompensation=true 
+          // which is directly after seeking
           m_bMeasureCompensation=false;
           m_pTsReaderFilter->Compensation=cRefTime;
           float fTime=(float)cRefTime.Millisecs();
@@ -311,7 +311,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         pSample->SetSyncPoint(TRUE);
         float fTime=(float)cRefTime.Millisecs();
         fTime/=1000.0f;
-        if (abs(prevTime-fTime)>=1)
+        if (true||abs(prevTime-fTime)>=1)
         {
           //LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
           prevTime=fTime;
@@ -417,11 +417,14 @@ void CVideoPin::UpdateFromSeek()
   //directly after eachother
   //for a single seek operation. To 'fix' this we only perform the seeking operation
   //if we didnt do a seek in the last 5 seconds...
-  if (GetTickCount()-m_seekTimer<2000)
+  if (GetTickCount()-m_seekTimer<5000)
   {
-//      LogDebug("vid:skip seek");
-//      m_binUpdateFromSeek=false;
-//      return;
+    if (m_lastSeek==m_rtStart)
+    {
+      LogDebug("vid:skip seek");
+      m_binUpdateFromSeek=false;
+      return;
+    }
   }
   
   //Note that the seek timestamp (m_rtStart) is done in the range

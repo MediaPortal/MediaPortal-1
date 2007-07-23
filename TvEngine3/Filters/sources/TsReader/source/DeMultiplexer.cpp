@@ -268,6 +268,7 @@ void CDeMultiplexer::GetVideoStreamType(CMediaType& pmt)
 
 void CDeMultiplexer::FlushVideo()
 {
+  LogDebug("demux:flush video");
   CAutoLock lock (&m_sectionVideo);
   delete m_pCurrentVideoBuffer;
   ivecBuffers it =m_vecVideoBuffers.begin();
@@ -281,6 +282,7 @@ void CDeMultiplexer::FlushVideo()
 }
 void CDeMultiplexer::FlushAudio()
 {
+  LogDebug("demux:flush audio");
   CAutoLock lock (&m_sectionAudio);
   delete m_pCurrentAudioBuffer;
   ivecBuffers it =m_vecAudioBuffers.begin();
@@ -296,11 +298,11 @@ void CDeMultiplexer::FlushAudio()
 ///
 void CDeMultiplexer::Flush()
 {
+  LogDebug("demux:flushing");
   bool holdAudio=HoldAudio();
   bool holdVideo=HoldVideo();
   SetHoldAudio(true);
   SetHoldVideo(true);
-//  LogDebug("demux:flushing");
   ivecBuffers it;
   FlushAudio();
   FlushVideo();
@@ -1339,7 +1341,7 @@ bool CDeMultiplexer::HoldAudio()
 ///Sets whether the demuxer may block in GetAudio() or not
 void CDeMultiplexer::SetHoldAudio(bool onOff)
 {
-  //LogDebug("demux:set hold audio:%d", onOff);
+  LogDebug("demux:set hold audio:%d", onOff);
 	m_bHoldAudio=onOff;
 }
 ///Returns whether the demuxer is allowed to block in GetVideo() or not
@@ -1351,7 +1353,7 @@ bool CDeMultiplexer::HoldVideo()
 ///Sets whether the demuxer may block in GetVideo() or not
 void CDeMultiplexer::SetHoldVideo(bool onOff)
 {
-  //LogDebug("demux:set hold video:%d", onOff);
+  LogDebug("demux:set hold video:%d", onOff);
 	m_bHoldVideo=onOff;
 }
 

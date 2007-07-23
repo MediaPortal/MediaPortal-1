@@ -676,7 +676,7 @@ void CTsReaderFilter::SeekDone(CRefTime& rtSeek)
       rtSeek=m_duration.Duration();
   }
   LogDebug("CTsReaderFilter::--SeekDone()");
-  m_demultiplexer.Flush();
+  //m_demultiplexer.Flush();
   m_bSeeking=false;
   
 	if(m_pDVBSubtitle) m_pDVBSubtitle->SeekDone( rtSeek );
