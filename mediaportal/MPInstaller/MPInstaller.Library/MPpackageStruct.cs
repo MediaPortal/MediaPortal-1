@@ -64,8 +64,16 @@ namespace MediaPortal.MPInstaller
                     {
                         //MessageBox.Show(entry.Name);
                         if (test_file(fl,entry))
-                        { 
-                            string tpf =Path.GetFullPath(MPinstalerStruct.GetDirEntry(fl)) ;
+                        {
+                          string tpf;
+                          if (InstallableSkinList.Contains(fl.SubType))
+                          {
+                            tpf = Path.GetFullPath(MPinstalerStruct.GetDirEntry(fl));
+                          }
+                          else
+                          {
+                            tpf = Path.GetTempFileName();
+                          }
                             //if (fl.SkinType)
                             //{
                                 if (!Directory.Exists(Path.GetDirectoryName(tpf)))
@@ -91,7 +99,6 @@ namespace MediaPortal.MPInstaller
                                 fs.Write(data, 0, nb);
                             }
                             fs.Close();
-                            this._intalerStruct.Uninstall.Add(new UninstallInfo(tpf));
                             if (fl.SkinType && fl.FileProperties.DefaultFile)
                             {
                               foreach(string sd in this.InstallableSkinList)
@@ -111,12 +118,19 @@ namespace MediaPortal.MPInstaller
 
                                 }
                             }
-
-                            if (lb != null)
+                            if (!InstallableSkinList.Contains(fl.SubType))
                             {
+                              File.Delete(tpf);
+                            }
+                            else
+                            {
+                              this._intalerStruct.Uninstall.Add(new UninstallInfo(tpf));
+                              if (lb != null)
+                              {
                                 lb.Items.Add(tpf);
                                 lb.Refresh();
                                 lb.Update();
+                              }
                             }
                         }
                     }
@@ -137,7 +151,7 @@ namespace MediaPortal.MPInstaller
             if (fl.SkinType)
             {
               if (Path.GetFileName(ze.Name) == Path.GetFileName(fl.FileName)
-                  && ze.Name.Contains(@"\" + fl.SubType + @"\") && InstallableSkinList.Contains(fl.SubType))
+                  && ze.Name.Contains(@"\" + fl.SubType + @"\") )
               {
                 return true;
               }
@@ -489,6 +503,10 @@ namespace MediaPortal.MPInstaller
             LoadFromFile();
         }
 
+        /// <summary>
+        /// Loads from FileName specified file.
+        /// By default from <b>InstalDir + @"\" + "config.xml</b>"
+        /// </summary>
         public void LoadFromFile()
         {
             XmlDocument doc = new XmlDocument();

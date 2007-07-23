@@ -121,7 +121,7 @@ namespace MediaPortal.MPInstaller
           // 
           // richTextBox1
           // 
-          this.richTextBox1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+          this.richTextBox1.BackColor = System.Drawing.SystemColors.Window;
           this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
           this.richTextBox1.Location = new System.Drawing.Point(3, 74);
           this.richTextBox1.Name = "richTextBox1";
