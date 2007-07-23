@@ -53,12 +53,9 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     /// <param name="device">The device.</param>
     public TvCardAnalog(DsDevice device)
+      :base(device)
     {
       _previousChannel = null;
-      _tunerDevice = device;
-      _name = device.Name;
-      _graphState = GraphState.Idle;
-      _teletextDecoder = new DVBTeletext();
     }
     #endregion
 

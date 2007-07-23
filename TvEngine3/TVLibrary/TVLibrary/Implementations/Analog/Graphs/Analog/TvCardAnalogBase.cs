@@ -156,12 +156,6 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardAnalogBase"/> class.
     /// </summary>
-    public TvCardAnalogBase()
-    {
-    }
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TvCardAnalogBase"/> class.
-    /// </summary>
     /// <param name="device">The device.</param>
     public TvCardAnalogBase(DsDevice device)
     {
@@ -246,6 +240,7 @@ namespace TvLibrary.Implementations.Analog
         }
         //add the tv capture device and connect it to the crossbar
         AddTvCaptureFilter();
+        SetupCaptureFormat();
         // now things get difficult.
         // Here we can have the following situations:
         // 1. we're done, the video capture filter has a mpeg-2 audio output pin
@@ -341,7 +336,7 @@ namespace TvLibrary.Implementations.Analog
         }
         //add the mpeg-2 demultiplexer filter
         AddMpeg2Demultiplexer();
-        SetupCaptureFormat();
+        //SetupCaptureFormat();
         //If a hauppauge analog card, set bitrate to default
         //As the graph is stopped, we don't need to pass in the deviceID
         //However, if we wish to change quality for a live graph, the deviceID must be passed in
@@ -1223,8 +1218,8 @@ namespace TvLibrary.Implementations.Analog
     void SetupCaptureFormat()
     {
       if (_pinCapture == null) return;
-      if (_pinAnalogAudio == null) return;
-      if (_pinAnalogVideo == null) return;
+      //if (_pinAnalogAudio == null) return;
+      //if (_pinAnalogVideo == null) return;
       Log.Log.Info("VideoCaptureDevice:get Video stream control interface (IAMStreamConfig)");
       DsGuid cat = new DsGuid(PinCategory.Capture);
       Guid iid = typeof(IAMStreamConfig).GUID;
