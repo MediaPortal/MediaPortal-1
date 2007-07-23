@@ -301,6 +301,9 @@ STDMETHODIMP CTsReaderFilter::Stop()
 	if(m_pSubtitlePin) m_pSubtitlePin->SetRunningStatus(false);
   if(m_pDVBSubtitle) m_pDVBSubtitle->Release();
 
+	if(m_pSubtitlePin) m_pSubtitlePin->SetRunningStatus(false);
+  if(m_pDVBSubtitle) m_pDVBSubtitle->Release();
+
 	LogDebug("CTsReaderFilter::Stop()  -stop source");
   //stop filter
 	HRESULT hr=CSource::Stop();
