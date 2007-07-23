@@ -611,8 +611,8 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     startTime/=1000.0f;
     duration/=1000.0f;
     LogDebug("CTsReaderFilter::  Seek-> %f/%f",startTime,duration);
-    if (seekTime >= m_duration.Duration())
-      seekTime=m_duration.Duration();
+    //if (seekTime >= m_duration.Duration())
+    //  seekTime=m_duration.Duration();
     CTsFileSeek seek(m_duration);
     seek.SetFileReader(m_fileReader);
     seek.Seek(seekTime);

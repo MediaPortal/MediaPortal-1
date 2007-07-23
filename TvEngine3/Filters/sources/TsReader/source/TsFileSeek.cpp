@@ -51,7 +51,7 @@ void CTsFileSeek::Seek(CRefTime refTime)
   
   //sanity checks...
   if (seekTimeStamp < 0) seekTimeStamp=0;
-  if (seekTimeStamp > fileDuration) seekTimeStamp=fileDuration;
+  //if (seekTimeStamp > fileDuration) seekTimeStamp=fileDuration;
 
   //make a guess where should start looking in the file
   float percent=seekTimeStamp/fileDuration;
