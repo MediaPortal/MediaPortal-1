@@ -92,7 +92,7 @@ void StreamSetup(char* ipAdress)
   sprintf(fileName,"%s\\MediaPortal TV Server\\log\\streaming server.Log",folder);
 	::DeleteFile(fileName);
 
-
+   Log("-------------- v1.0.0.1---------------");
 	Log("Stream server:Setup stream server for ip:%s",ipAdress);
 	
 	ReceivingInterfaceAddr=inet_addr(ipAdress );

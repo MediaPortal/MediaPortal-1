@@ -494,10 +494,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\liveMedia\Locale.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\liveMedia\Media.cpp"
 				>
 			</File>

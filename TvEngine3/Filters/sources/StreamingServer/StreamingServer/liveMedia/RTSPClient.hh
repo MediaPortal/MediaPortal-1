@@ -54,8 +54,7 @@ public:
       // (This is dynamically allocated, and must later be freed
       //  by the caller - using "delete[]")
   char* describeWithPassword(char const* url,
-			     char const* username, char const* password,
-			     Boolean allowKasennaProtocol = False);
+			       char const* username, char const* password);
       // Uses "describeURL()" to do a "DESCRIBE" - first
       // without using "password", then (if we get an Unauthorized
       // response) with an authentication response computed from "password"

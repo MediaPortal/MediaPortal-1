@@ -73,7 +73,6 @@ private:
   MPEG1or2Demux::SCR fPCR;
   unsigned char* fInputBuffer;
   unsigned fInputBufferSize, fInputBufferBytesUsed;
-  Boolean fIsFirstAdaptationField;
 };
 
 #endif

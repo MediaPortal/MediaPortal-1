@@ -251,7 +251,6 @@ void InputESSourceRecord
 
   fInputBufferBytesAvailable += frameSize;
 
-  fParent.fPresentationTime = presentationTime;
   // Now that we have new input data, check if we can deliver to the client:
   fParent.awaitNewBuffer(NULL);
 }

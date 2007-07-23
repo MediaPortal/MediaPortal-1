@@ -98,13 +98,11 @@ int setupDatagramSocket(UsageEnvironment& env, Port port,
 #endif
   
   // Note: Windoze requires binding, even if the port number is 0
-  netAddressBits addr = INADDR_ANY;;
 #if defined(__WIN32__) || defined(_WIN32)
 #else
   if (port.num() != 0 || ReceivingInterfaceAddr != INADDR_ANY) {
 #endif
-    if (port.num() == 0) addr = ReceivingInterfaceAddr;
-    MAKE_SOCKADDR_IN(name, addr, port.num());
+    MAKE_SOCKADDR_IN(name, ReceivingInterfaceAddr, port.num());
     if (bind(newSocket, (struct sockaddr*)&name, sizeof name) != 0) {
       char tmpBuffer[100];
       sprintf(tmpBuffer, "bind() error (port number: %d): ",
