@@ -1,6 +1,7 @@
 #include <streams.h>
 #include "rtspclient.h"
 #include "MemorySink.h"
+extern void LogDebug(const char *fmt, ...) ;
 
 extern void Log(const char *fmt, ...) ;
 CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
@@ -335,6 +336,11 @@ bool CRTSPClient::OpenStream(char* url)
 					// Because we're saving the incoming data, rather than playing
 					// it in real time, allow an especially large time threshold
 					// (1 second) for reordering misordered incoming packets:
+          
+					int socketNum= subsession->rtpSource()->RTPgs()->socketNum();
+          LogDebug("rtsp:increaseReceiveBufferTo to 2000000 for s:%d",socketNum);
+          increaseReceiveBufferTo( *m_env, socketNum, 2000000 );
+
 					unsigned const thresh = 1000000; // 1 second 
 					subsession->rtpSource()->setPacketReorderingThresholdTime(thresh);
 
