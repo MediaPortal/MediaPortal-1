@@ -344,12 +344,11 @@ void CDeMultiplexer::Flush()
 // or NULL if there is none available
 CBuffer* CDeMultiplexer::GetSubtitle()
 {
-	//if there is no subtitle pid, then simply return NULL
+  //if there is no subtitle pid, then simply return NULL
   if (m_pids.SubtitlePid==0) return NULL;
   if (m_bEndOfFile) return NULL;
-  ReadFromFile(false,false);
-  if (m_bEndOfFile) return NULL;
-  
+  //ReadFromFile(false,false);
+  //if (m_bEndOfFile) return NULL;
 
   //are there subtitle packets in the buffer?
   if (m_vecSubtitleBuffers.size()!=0)
