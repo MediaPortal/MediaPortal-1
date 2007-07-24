@@ -1269,12 +1269,6 @@ namespace TvPlugin
       {
         if ((preferAC3) && (streams[i].StreamType == AudioStreamType.AC3))
           idxLastAC3 = i;
-        if (preferAC3 && (streams[i].StreamType != AudioStreamType.AC3))
-        {
-          idx = i;
-          Log.Info("Audio stream: no AC3 found, switching to preferred language audio stream {0}", idx);
-          break;
-        }
         if (langCodes.Contains(streams[i].Language))
         {
           if (!preferAC3)
@@ -1289,6 +1283,12 @@ namespace TvPlugin
             {
               idx = i;
               Log.Info("Audio stream: switching to preferred AC3 language audio stream {0}", idx);
+              break;
+            }
+            else
+            {
+              idx = i;
+              Log.Info("Audio stream: no AC3 found, switching to preferred language audio stream {0}", idx);
               break;
             }
           }
