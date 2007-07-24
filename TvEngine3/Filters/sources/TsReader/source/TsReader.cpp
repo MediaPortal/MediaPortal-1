@@ -472,8 +472,16 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     LogDebug("open rtsp:%s", url);
     if ( !m_rtspClient.OpenStream(url)) return E_FAIL;
     
-    //play
     m_bTimeShifting=true;
+
+    //are we playing a recording via RTSP
+    if (strstr(url,"/stream")==NULL)
+    {
+      //yes, then we're not timeshifting
+      m_bTimeShifting=false;
+    }
+
+    //play
     m_buffer.Clear();
     m_buffer.Run(true);
     m_rtspClient.Play(0.0f);

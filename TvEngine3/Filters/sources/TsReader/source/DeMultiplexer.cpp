@@ -53,6 +53,22 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_bEndOfFile=false;
   m_bHoldAudio=false;
   m_bHoldVideo=false;
+  m_bPreferAC3=false;
+
+  //get ac3 preference from registry key
+  HKEY key;
+  if (ERROR_SUCCESS==RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\MediaPortal\\TsReader",0,KEY_READ,&key))
+  {
+    DWORD preferAc3=0;
+    DWORD keyType=REG_DWORD;
+    DWORD dwSize=sizeof(DWORD);
+    if (ERROR_SUCCESS==RegQueryValueEx(key, "preferac3",0,&keyType,(LPBYTE)&preferAc3,&dwSize))
+    {
+      m_bPreferAC3= (preferAc3!=0);
+    }
+    RegCloseKey(key);
+  }
+  
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -1003,6 +1019,21 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     if (m_filter.GetVideoPin()->IsConnected())
     {
       changed=true;
+    }
+  }
+  
+  //do we prefer ac3?
+  if (m_bPreferAC3)
+  {
+    //then check if any stream is ac3
+    for (int i=0; i < m_audioStreams.size();++i)
+    {
+      if (SERVICE_TYPE_AUDIO_AC3 == m_audioStreams[i].audioType)
+      {
+        //this one is, use it
+        m_iAudioStream=i;
+        break;
+      }
     }
   }
   

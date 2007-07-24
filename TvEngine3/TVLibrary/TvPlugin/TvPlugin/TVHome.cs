@@ -34,6 +34,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Xml;
+using Microsoft.Win32;
 using AMS.Profile;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -141,7 +142,7 @@ namespace TvPlugin
       catch (Exception)
       {
       }
-    }   
+    }
 
     public override void OnAdded()
     {
@@ -466,15 +467,15 @@ namespace TvPlugin
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE);
         return;
       }
-      
+
       try
       {
-        IList cards = TvDatabase.Card.ListAll();        
+        IList cards = TvDatabase.Card.ListAll();
       }
       catch (Exception ex)
       {
         // lets try one more time - seems like the gentle framework is not properly initialized when coming out of standby/hibernation.
-        if (TVHome.Connected && RemoteControl.IsConnected)        
+        if (TVHome.Connected && RemoteControl.IsConnected)
         {
           try
           {
@@ -1304,16 +1305,16 @@ namespace TvPlugin
     {
       try
       {
-        Stopwatch benchClock = null;
-        benchClock = Stopwatch.StartNew();
+        Stopwatch benchClock = Stopwatch.StartNew();
         if (channel == null)
         {
           MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): channel==null");
           return false;
         }
         MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.Name);
-        if (g_Player.Playing && !_autoswitchTVon) //- Changed by joboehl - Enable TV to autoturnon on channel selection. 
+        if (g_Player.Playing && !_autoswitchTVon)
         {
+          //- Changed by joboehl - Enable TV to autoturnon on channel selection. 
           if (g_Player.IsTVRecording) return true;
           if (g_Player.IsVideo) return true;
           //if (g_Player.IsTV) return true;
@@ -1329,6 +1330,7 @@ namespace TvPlugin
         {
           MediaPortal.GUI.Library.Log.Info("Navigator.Channel==null");
         }
+
         string errorMessage;
         TvResult succeeded;
         if (TVHome.Card != null)
@@ -1342,34 +1344,10 @@ namespace TvPlugin
             }
         }
 
-        //check if we are currently watching a tv channel with AC3
-        IAudioStream[] audioStreams;
-        bool hadAc3 = false;
-        if (g_Player.Playing && TVHome.Card != null)
-        {
-          audioStreams = TVHome.Card.AvailableAudioStreams;
-          foreach (IAudioStream stream in audioStreams)
-          {
-            if (stream.StreamType == AudioStreamType.AC3)
-            {
-              hadAc3 = true;
-            }
-          }
-        }
 
-        benchClock.Stop();
-        Log.Warn("TVHome.ViewChannelAndCheck(): Phase 1 - {0} ms - Done method initialization", benchClock.ElapsedMilliseconds.ToString());
-        benchClock.Reset();
-        benchClock.Start();
         User user = new User();
-
         GUIWaitCursor.Show();
         bool wasPlaying = g_Player.Playing && g_Player.IsTimeShifting && g_Player.IsTV;
-
-        int OldVideoStream = TVHome.Card.GetCurrentVideoStream(TVHome.Card.User);
-
-        // QuickHack to test AC3 functionality. 
-        int OldAudioStream;
 
 
         //Start timeshifting the new tv channel
@@ -1377,54 +1355,16 @@ namespace TvPlugin
         VirtualCard card;
         bool _return = false;
 
-        benchClock.Stop();
-        MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 2 - {0} ms. Done previous state management.", benchClock.ElapsedMilliseconds.ToString());
-        benchClock.Reset();
-        benchClock.Start();
-
         if (wasPlaying)
           SeekToEnd(true);
         succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
-
-        benchClock.Stop();
-        MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 3 - {0} ms. Done statring timeshif.", benchClock.ElapsedMilliseconds.ToString());
-        benchClock.Reset();
-        benchClock.Start();
-
         if (succeeded == TvResult.Succeeded)
         {
-          if (card != null)
-          {
-            Log.Info("card:{0}", card);
-            if (card.User!=null)
-              Log.Info("user.cardid:{0} name:{1} sub:{2} idch:{3}", card.User.CardId, card.User.Name, card.User.SubChannel, card.User.IdChannel);
-            IChannel ch = card.Channel;
-            Log.Info("ch:{0}", ch);
-          }
-
           //timeshifting succeeded
 
-          //check if we the new tvchannel has AC3
-          audioStreams = card.AvailableAudioStreams;
-          bool hasAc3 = false;
-          foreach (IAudioStream stream in audioStreams)
-          {
-            if (stream.StreamType == AudioStreamType.AC3)
-            {
-              hasAc3 = true;
-            }
-          }
-          
 
           //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player. 
-          int newVideoStream = TVHome.Card.GetCurrentVideoStream(card.User);
           bool cardChanged = (TVHome.Card.Id != card.Id || TVHome.Card.RTSPUrl != card.RTSPUrl || TVHome.Card.TimeShiftFileName != Card.TimeShiftFileName);
-          bool videoSpecsChanged = (OldVideoStream != newVideoStream);
-          bool audioSpecsChanged = (hadAc3 != hasAc3);
-
-          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): old videostream {0}, new videostream {1}", OldVideoStream, newVideoStream);
-          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): had ac3 {0}, has ac3 {1}", hadAc3, hasAc3);
-
           if (cardChanged)
           {
             if (wasPlaying)
@@ -1435,68 +1375,15 @@ namespace TvPlugin
               MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (card changed) - timeshifting continueing.");
             }
           }
-          else if ((videoSpecsChanged && _rebuildGraphOnNewVideoSpecs) || (audioSpecsChanged && _rebuildGraphOnNewAudioSpecs))
-          {
-            if (wasPlaying)
-            {
-              g_Player.StopAndKeepTimeShifting(); // keep timeshifting on server, we only want to recreate the graph on the client
-              MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): rebulding graph (video specs changed={0}, audio specs changed={1}) - timeshifting continueing.", videoSpecsChanged, audioSpecsChanged);
-            }
-          }
-          else if ((videoSpecsChanged || audioSpecsChanged) && wasPlaying)
-          {
-            MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): keeping graph (video specs changed={0}, audio specs changed={1}) - timeshifting continueing.", videoSpecsChanged, audioSpecsChanged);
-          }
-
-
           TVHome.Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
 
           MediaPortal.GUI.Library.Log.Info("succeeded:{0} {1}", succeeded, card);
 
-
-          benchClock.Stop();
-          MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 4 - {0} ms. Done handling stream changes. ", benchClock.ElapsedMilliseconds.ToString());
-          benchClock.Reset();
-          benchClock.Start();
-
           if (!g_Player.Playing)
             StartPlay();
 
-          else if (wasPlaying)
-          {
-//            if (_avoidSeeking && ((g_Player.CurrentPosition + 15) > g_Player.Duration))
-              //Log.Warn("TvHome.ViewChannelandCheck(): Seeking avoided. Current position {0}, Duration {1}", g_Player.CurrentPosition, g_Player.Duration);
-            //else
-//              SeekToEnd(true);
-            }
-          benchClock.Stop();
-          MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 5- {0} ms. Done startplaying or seeking. ", benchClock.ElapsedMilliseconds.ToString());
-          benchClock.Reset();
-          benchClock.Start();
-
-          int prefLangId = GetPreferedAudioStreamIndex(_preferredLanguages, _preferAC3);
-
-          MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): preferred langId:{0}", prefLangId);
-
-          if (IsSingleSeat())
-          {
-            g_Player.CurrentAudioStream = prefLangId;
-          }
-          else
-          {
-            IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
-            MediaPortal.GUI.Library.Log.Debug("TVHome.ViewChannelAndCheck(): streams length:{0}", streams.Length);
-            if (streams.Length > prefLangId) // guard; avoid index out of bounds errors.
-            {
-              TVHome.Card.AudioStream = streams[prefLangId];
-            }
-          }
           GUIWaitCursor.Hide();
 
-          benchClock.Stop();
-          MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 6 - {0} ms. Done audiostream management. Method finished. ", benchClock.ElapsedMilliseconds.ToString());
-          benchClock.Reset();
-          benchClock.Start();
 
           return true;
 
@@ -1504,13 +1391,12 @@ namespace TvPlugin
         else
         {
           //timeshifting new channel failed. 
-          benchClock.Stop();
-          MediaPortal.GUI.Library.Log.Warn("TVHome.ViewChannelAndCheck(): Phase 4 failed - {0} ms. Starting error handling.", benchClock.ElapsedMilliseconds.ToString());
-          benchClock.Reset();
-          benchClock.Start();
 
-          if (g_Player.Duration == 0) //Added by joboehl - Only stops if stream is empty. Otherwise, a message is displaying but everything stays as before.  
+          if (g_Player.Duration == 0)
+          {
+            //Added by joboehl - Only stops if stream is empty. Otherwise, a message is displaying but everything stays as before.  
             g_Player.Stop();
+          }
         }
 
         GUIWaitCursor.Hide();
@@ -1707,6 +1593,35 @@ namespace TvPlugin
 
     static void StartPlay()
     {
+      int prefLangId = GetPreferedAudioStreamIndex(_preferredLanguages, _preferAC3);
+      MediaPortal.GUI.Library.Log.Debug("TVHome.StartPlay(): preferred langId:{0} {1}", prefLangId, _preferAC3);
+      try
+      {
+        using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software",true))
+        {
+          RegistryKey subKeyMP = subkey.OpenSubKey("MediaPortal", true);
+          if (subKeyMP == null)
+          {
+            subKeyMP = subkey.CreateSubKey("MediaPortal");
+          }
+
+          RegistryKey subKeyTsReader = subKeyMP.OpenSubKey("TsReader", true);
+          if (subKeyTsReader == null)
+          {
+            subKeyTsReader = subKeyMP.CreateSubKey("TsReader");
+          }
+          UInt32 preferAc3Value = 0;
+          if (_preferAC3) preferAc3Value = 1;
+          subKeyTsReader.SetValue("preferac3", preferAc3Value, RegistryValueKind.DWord);
+          subKeyTsReader.Close();
+          subKeyMP.Close();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+
       Stopwatch benchClock = null;
       benchClock = Stopwatch.StartNew();
       if (TVHome.Card == null)
@@ -1758,8 +1673,8 @@ namespace TvPlugin
         Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()", benchClock.ElapsedMilliseconds.ToString());
         benchClock.Reset();
         benchClock.Start();
-//        SeekToEnd(true);
-        Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString()); 
+        //        SeekToEnd(true);
+        Log.Warn("tvhome:startplay.  Phase 3 - {0} ms - Done seeking.", benchClock.ElapsedMilliseconds.ToString());
         //SeekToEnd(true);
       }
       benchClock.Stop();

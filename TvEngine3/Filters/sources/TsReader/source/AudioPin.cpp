@@ -290,7 +290,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         {
           //set flag to false so we dont keep compensating
           m_bMeasureCompensation=false;
-          if (FALSE == m_pTsReaderFilter->GetVideoPin()->IsConnected())
+          if ( m_pTsReaderFilter->GetVideoPin()->IsConnected() )
           {
             // set the current compensation
             m_pTsReaderFilter->Compensation=cRefTime;

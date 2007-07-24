@@ -110,6 +110,7 @@ private:
   bool m_bScanning;
 	bool m_bHoldAudio;
 	bool m_bHoldVideo;
+  bool m_bPreferAC3;
 
   CPcr m_subtitlePcr;
 };
