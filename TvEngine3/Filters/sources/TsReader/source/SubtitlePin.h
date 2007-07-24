@@ -39,12 +39,13 @@ public:
 	HRESULT FillBuffer(IMediaSample *pSample);
   HRESULT BreakConnect();
 	
+
 	// CSourceSeeking
 	HRESULT ChangeStart();
 	HRESULT ChangeStop();
 	HRESULT ChangeRate();
-  STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
   STDMETHODIMP GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest );
+  STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
   STDMETHODIMP GetDuration(LONGLONG *pDuration);
   STDMETHODIMP GetCurrentPosition(LONGLONG *pCurrent);
 
@@ -53,13 +54,14 @@ public:
 	void SetRunningStatus(bool onOff);
 
   bool IsConnected();
+  bool IsSeeking();
 
 protected:
 	void EmptySample(IMediaSample *pSample);
 	void LogCurrentPosition();
   void UpdateFromSeek();
+  bool m_binUpdateFromSeek;
   bool m_bConnected;
-	CRefTime	m_refStartTime;
 	BOOL m_bDiscontinuity;
 	CTsReaderFilter *	const m_pTsReaderFilter;
 	CCritSec* m_section;
@@ -68,6 +70,7 @@ protected:
 	bool m_bRunning; 
   DWORD m_seekTimer;
   CRefTime m_lastSeek;
+  bool     m_bInFillBuffer;
 };
 
 #endif
