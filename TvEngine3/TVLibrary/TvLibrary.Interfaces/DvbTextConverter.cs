@@ -145,8 +145,11 @@ namespace TvLibrary.Interfaces
       catch
       {
       }
-      text = new byte[len - pos];
-      Marshal.Copy(ptr, text, 0, len - pos);
+      text = new byte[len - pos];;
+      for (int i = 0; i < len-pos; i++)
+      {
+        text[i] = Marshal.ReadByte(ptr, i+pos);
+      }
       return Encoding.GetEncoding(encoding).GetString(text);
     }
   }
