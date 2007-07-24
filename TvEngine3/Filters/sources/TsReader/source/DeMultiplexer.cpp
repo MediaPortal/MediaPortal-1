@@ -525,7 +525,35 @@ bool CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
         if (isAudio && m_bHoldAudio) return false;
         if (isVideo && m_bHoldVideo) return false;
       }
-
+    
+      
+      if (result==false) 
+      {
+        if (m_filter.State()==State_Running)
+        {
+          if (m_filter.IsTimeShifting()==FALSE)
+          {
+            IFilterGraph* graph=m_filter.GetFilterGraph();
+            if (graph!=NULL)
+            {
+              IMediaSeeking * ptrMediaPos;
+              if (SUCCEEDED(graph->QueryInterface(IID_IMediaSeeking , (void**)&ptrMediaPos) ) )
+              {
+                LONGLONG currentPos;
+                ptrMediaPos->GetCurrentPosition(&currentPos);
+                ptrMediaPos->Release();
+                double clock =currentPos;clock /=10000000.0;
+                float clockEnd=m_duration.EndPcr().ToClock() ;
+                if (clock>=clockEnd && clockEnd>0 )
+                {
+                  LogDebug("End of rtsp stream...");
+                  m_bEndOfFile=true;
+                }
+              }
+            }
+          }
+        }
+      }
       //return if we succeeded
       if (result==true) 
         return true;
@@ -562,10 +590,13 @@ bool CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
     //if we are not timeshifting, this means we reached the end of the file
     if (!m_filter.IsTimeShifting())
     {
-      //set EOF flag and return
-      LogDebug("demux:endoffile");
-      m_bEndOfFile=true;
-      return false;
+      if ( FALSE==m_reader->IsBuffer() )
+      {
+        //set EOF flag and return
+        LogDebug("demux:endoffile");
+        m_bEndOfFile=true;
+        return false;
+      }
     }
 
     //failed to read data

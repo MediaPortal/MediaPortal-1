@@ -86,7 +86,7 @@ Boolean CRTSPClient::clientStartPlayingSession(Medium* client,MediaSession* sess
 
   long dur=m_duration/1000;
   long diff=abs(dur-m_fStart);
-  if (diff <20)
+  if (diff <20 && m_fStart>1 )
   {
     m_fStart=dur+5;
   }

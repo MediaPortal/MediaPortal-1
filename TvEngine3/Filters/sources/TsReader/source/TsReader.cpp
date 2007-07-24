@@ -427,7 +427,7 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   char url[MAX_PATH];
   WideCharToMultiByte(CP_ACP,0,m_fileName,-1,url,MAX_PATH,0,0);
   //strcpy(url,"rtsp://192.168.1.102/stream1.0");
-  //strcpy(url,"rtsp://192.168.1.102/stream2.0");
+  //strcpy(url,"rtsp://192.168.1.58/F8C66B49");
   //check file type
   int length=strlen(url);	
   if ((length > 5) && (_strcmpi(&url[length-4], ".tsp") == 0))
@@ -779,38 +779,41 @@ void CTsReaderFilter::ThreadProc()
       // are we playing a (RTSP) stream?
       if (m_rtspClient.IsRunning())
       {
-        //yes.
-        //Then update the duration. Since we cannot 'read' the duration continously from the stream
-        //we take the duration we got when we started playing this stream
-        //and add the time-passed since then to it which should give a indication of the current
-        //duration
-	      DWORD ticks=(GetTickCount()-m_tickCount)/1000;
-        double duration=m_rtspClient.Duration()/1000.0f;
-        duration+=ticks;
-        CPcr pcrstart,pcrEnd,pcrMax;
-        pcrstart=m_duration.StartPcr();
-        duration+=pcrstart.ToClock();
-        pcrEnd.FromClock(duration);
+        if (m_bTimeShifting)
+        {
+          //yes.
+          //Then update the duration. Since we cannot 'read' the duration continously from the stream
+          //we take the duration we got when we started playing this stream
+          //and add the time-passed since then to it which should give a indication of the current
+          //duration
+	        DWORD ticks=(GetTickCount()-m_tickCount)/1000;
+          double duration=m_rtspClient.Duration()/1000.0f;
+          duration+=ticks;
+          CPcr pcrstart,pcrEnd,pcrMax;
+          pcrstart=m_duration.StartPcr();
+          duration+=pcrstart.ToClock();
+          pcrEnd.FromClock(duration);
 
-        CTsDuration newDuration;
-        newDuration.Set( pcrstart, pcrEnd,pcrMax);
+          CTsDuration newDuration;
+          newDuration.Set( pcrstart, pcrEnd,pcrMax);
 
-        //did we find a duration?
-			  if (newDuration.Duration().Millisecs()>0)
-			  {
-          //did the duration change?
-				  if (newDuration.Duration() != m_duration.Duration())
-				  {
-            //set the duration
-            m_duration.Set( pcrstart, pcrEnd,pcrMax);
-
-            // Is graph running?
-				    if (m_State == State_Running)
+          //did we find a duration?
+			    if (newDuration.Duration().Millisecs()>0)
+			    {
+            //did the duration change?
+				    if (newDuration.Duration() != m_duration.Duration())
 				    {
-            
-              //yes, then send a EC_LENGTH_CHANGED event to the graph
-              NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
-              SetDuration();
+              //set the duration
+              m_duration.Set( pcrstart, pcrEnd,pcrMax);
+
+              // Is graph running?
+				      if (m_State == State_Running)
+				      {
+              
+                //yes, then send a EC_LENGTH_CHANGED event to the graph
+                NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);	
+                SetDuration();
+              }
             }
           }
         }

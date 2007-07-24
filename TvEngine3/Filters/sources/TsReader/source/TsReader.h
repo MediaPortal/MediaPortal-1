@@ -87,7 +87,7 @@ public:
   IDVBSubtitle*   GetSubtitleFilter();
   bool            IsTimeShifting();
   CTsDuration&    GetDuration();
-  
+  FILTER_STATE    State() {return m_State;};
   CRefTime        Compensation;
 protected:
   void ThreadProc();
