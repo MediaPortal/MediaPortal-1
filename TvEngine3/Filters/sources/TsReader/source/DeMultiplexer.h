@@ -67,6 +67,7 @@ public:
   void       ThreadProc();
   void       FlushVideo();
   void       FlushAudio();
+  void       FlushSubtitle();
   int        GetVideoServiceType();
 private:
   struct stAudioStream

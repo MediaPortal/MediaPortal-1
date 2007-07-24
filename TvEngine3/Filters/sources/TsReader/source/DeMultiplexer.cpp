@@ -310,6 +310,21 @@ void CDeMultiplexer::FlushAudio()
   }
   m_pCurrentAudioBuffer = new CBuffer();
 }
+
+void CDeMultiplexer::FlushSubtitle()
+{
+  CAutoLock lock (&m_sectionSubtitle);
+  delete m_pCurrentSubtitleBuffer;
+  ivecBuffers it = m_vecSubtitleBuffers.begin();
+  while (it != m_vecSubtitleBuffers.end())
+  {
+    CBuffer* subtitleBuffer = *it;
+    delete subtitleBuffer;
+    it = m_vecSubtitleBuffers.erase(it);
+  }
+  m_pCurrentSubtitleBuffer = new CBuffer();
+}
+
 /// Flushes all buffers 
 ///
 void CDeMultiplexer::Flush()
@@ -319,22 +334,9 @@ void CDeMultiplexer::Flush()
   bool holdVideo=HoldVideo();
   SetHoldAudio(true);
   SetHoldVideo(true);
-  ivecBuffers it;
   FlushAudio();
   FlushVideo();
-
-  {
-	  CAutoLock lock (&m_sectionSubtitle);
-    delete m_pCurrentSubtitleBuffer;
-    it =m_vecSubtitleBuffers.begin();
-    while (it != m_vecSubtitleBuffers.end())
-    {
-      CBuffer* subtitleBuffer=*it;
-      delete subtitleBuffer;
-      it=m_vecSubtitleBuffers.erase(it);
-    }
-    m_pCurrentSubtitleBuffer = new CBuffer();
-  }
+  FlushSubtitle();
   SetHoldAudio(holdAudio);
   SetHoldVideo(holdVideo);
 }
