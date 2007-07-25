@@ -36,7 +36,7 @@
 #include "memoryreader.h"
 void LogDebug(const char *fmt, ...) 
 {
-#ifndef DONTLOG
+#ifdef DONTLOG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -136,7 +136,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
-  Compensation=CRefTime(0L);
+  Compensation=CRefTime(-1000000L);
 
 	LogDebug("CTsReaderFilter::ctor");
 	m_pAudioPin = new CAudioPin(GetOwner(), this, phr,&m_section);

@@ -57,6 +57,8 @@ void CTsFileSeek::Seek(CRefTime refTime)
   float percent=seekTimeStamp/fileDuration;
   __int64 filePos=m_reader->GetFileSize()*percent;
 
+  filePos/=188;
+  filePos*=188;
   seekTimeStamp /= 1000.0f; // convert to seconds.
 
   m_seekPid=m_duration.GetPid();
@@ -77,7 +79,7 @@ void CTsFileSeek::Seek(CRefTime refTime)
     m_reader->SetFilePointer(0,FILE_END);
     return;
   }
-  
+  __int64 prevfilePos=filePos;
   SeekState state=FindPcr;
   while (true)
   {
@@ -110,24 +112,29 @@ void CTsFileSeek::Seek(CRefTime refTime)
       double clockFound=m_pcrFound.ToClock();
       if (state==FindPcr)
       {
+        prevfilePos=filePos;
         //we found the pcr.
         //compare it with the timestamp we want to seek to
         if (clockFound < seekTimeStamp)
         {
           // pcr found is too low, move forward in file and seek next pcr
           state=FindNextPcr;
+          
+          //LogDebug(" got %f at filepos %x ->find next", clockFound, (DWORD)filePos);
           filePos += sizeof(buffer);
         }
         else if (clockFound > seekTimeStamp)
         {
           // pcr found is too high, move backward in file and seek previous pcr
+          //LogDebug(" got %f at filepos %x ->find prev", clockFound, (DWORD)filePos);
           state=FindPreviousPcr;
           filePos -= sizeof(buffer);
         }
         else
         {
           //pcr is correct, just return
-          LogDebug(" got %f", clockFound);
+          //LogDebug(" got %f", clockFound);
+          m_reader->SetFilePointer(filePos,FILE_BEGIN);
           return;
         }
       }
@@ -136,24 +143,30 @@ void CTsFileSeek::Seek(CRefTime refTime)
         //pcr found, check state
         if (state==FindNextPcr)
         {
+          //LogDebug(" got %f at filepos %x", clockFound, (DWORD)filePos);
           //looking for a pcr > seektime
-          if (clockFound >= seekTimeStamp)
+          if (clockFound > seekTimeStamp)
           {
             //found it..
-            LogDebug(" got %f", clockFound);
+            //LogDebug(" stop seek too big: %f at %x", clockFound, (DWORD)filePos);
+            m_reader->SetFilePointer(prevfilePos,FILE_BEGIN);
             return;
           }
+          prevfilePos=filePos;
           filePos+=sizeof(buffer);
         }
         else if (state==FindPreviousPcr)
         {
+          //LogDebug(" got %f at filepos %x", clockFound, (DWORD)filePos);
           //looking for a pcr < seektime
           if (clockFound < seekTimeStamp)
           {
             //found it...
-            LogDebug(" got %f", clockFound);
+            //LogDebug(" stop seek too small: %f at %x", clockFound, (DWORD)filePos);
+            m_reader->SetFilePointer(filePos,FILE_BEGIN);
             return;
           }
+          prevfilePos=filePos;
           filePos-=sizeof(buffer);
         }
       }

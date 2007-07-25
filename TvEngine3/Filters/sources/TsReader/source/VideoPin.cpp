@@ -216,16 +216,33 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
     //get file-duration and set m_rtDuration
     GetDuration(NULL);
 
+    if (m_bDiscontinuity)
+    {
+      //ifso, set it
+      LogDebug("vid:set discontinuity");
+      pSample->SetDiscontinuity(TRUE);
+      m_bDiscontinuity=FALSE;
+      pSample->SetTime(NULL,NULL); 
+	    pSample->SetActualDataLength(0);
+      pSample->SetSyncPoint(FALSE);
+      m_bInFillBuffer=false;
+		  return NOERROR;
+    }
+    else
+    {
+      pSample->SetDiscontinuity(FALSE);
+    }
     //if the filter is currently seeking to a new position
     //or this pin is currently seeking to a new position then
     //we dont try to read any packets, but simply return...
-    if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
+    if (m_pTsReaderFilter->IsSeeking() || m_bSeeking || m_pTsReaderFilter->Compensation.Millisecs()==-1000000L)
 	  {
       LogDebug("vid:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
 		  Sleep(20);
       pSample->SetTime(NULL,NULL); 
 	    pSample->SetActualDataLength(0);
       pSample->SetSyncPoint(FALSE);
+      m_bInFillBuffer=false;
 		  return NOERROR;
 	  }
 
@@ -249,7 +266,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 	        Sleep(20);
           pSample->SetTime(NULL,NULL); 
           pSample->SetActualDataLength(0);
-          pSample->SetDiscontinuity(TRUE);
           pSample->SetSyncPoint(FALSE);
           m_bInFillBuffer=false;
 	        return NOERROR;
@@ -262,16 +278,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       }
       Sleep(10);
     }//while (buffer==NULL)
-
-    //do we need to set the discontinuity flag?
-    if (m_bDiscontinuity)
-    {
-      //ifso, set it
-      LogDebug("vid:set discontinuity");
-      pSample->SetDiscontinuity(TRUE);
-      m_bDiscontinuity=FALSE;
-    }
-
+ 
     //if we got a new buffer
     if (buffer!=NULL)
     {
@@ -288,20 +295,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         // and subtract the pin's m_rtStart timestamp
         cRefTime-=m_rtStart;
 
-        if (m_bMeasureCompensation)
-        {
-          // next.. seeking is not perfect since the file does not contain a PCR for every micro second. 
-          // even if we find the exact pcr time during seeking, the next start of a pes-header might start a few 
-          // milliseconds later
-          // We compensate this when m_bMeasureCompensation=true 
-          // which is directly after seeking
-          m_bMeasureCompensation=false;
-          m_pTsReaderFilter->Compensation=cRefTime;
-          float fTime=(float)cRefTime.Millisecs();
-          fTime/=1000.0f;
-          LogDebug("vid:compensation:%03.3f",fTime);
-          prevTime=-1;
-        }
+       
         //adjust the timestamp with the compensation
         cRefTime -=m_pTsReaderFilter->Compensation;
 
@@ -311,9 +305,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         pSample->SetSyncPoint(TRUE);
         float fTime=(float)cRefTime.Millisecs();
         fTime/=1000.0f;
-        if (true||abs(prevTime-fTime)>=1)
+        if (fTime < 5)
         {
-          //LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
+          LogDebug("vid:gotbuffer:%d %03.3f",buffer->Length(),fTime);
           prevTime=fTime;
         }
       }
