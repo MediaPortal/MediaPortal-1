@@ -1264,14 +1264,12 @@ namespace TvPlugin
     {
       int idx = -1;
       int idxLastAC3 = -1;
-      int langFound = -1;
       IAudioStream[] streams = TVHome.Card.AvailableAudioStreams;
       for (int i = 0; i < streams.Length; i++)
       {
         if ((preferAC3) && (streams[i].StreamType == AudioStreamType.AC3))
           idxLastAC3 = i;
         if (langCodes.Contains(streams[i].Language))
-          langFound = i;
         {
           if (!preferAC3)
           {
@@ -1287,23 +1285,31 @@ namespace TvPlugin
               Log.Info("Audio stream: switching to preferred AC3 language audio stream {0}", idx);
               break;
             }
+            else idx = i;
           }
         }
       }
-      if (idxLastAC3 != -1)
+      if (idxLastAC3 != -1 && idx != -1)
       {
-        idx = idxLastAC3;
-        Log.Info("Audio stream: switching to preferred AC3 audio stream {0}", idx);
+        // we got an ac3 stream with pref language in idx 
+        Log.Info("Audio stream: switching to preferred AC3 audio stream {0}", idxLastAC3);
+        return idxLastAC3;
       }
-      if (idx == -1 && langFound != -1)
+      if (idxLastAC3 == -1 && idx != -1)
       {
-        idx = langFound;
-        Log.Info("Audio stream: no AC3 found, switching to preferred audio stream {0}", idx);
+        // we got a stream with pref language in idx 
+        Log.Info("Audio stream: no AC3 switching to preferred audio stream {0}", idx);
+        return idx;
       }
-      else
+      if (idxLastAC3 != -1 && idx == -1 && preferAC3)
+      {
+        Log.Info("Audio stream: no audio stream found with preferred language using last AC3 stream {0}", idxLastAC3);
+        return idxLastAC3;
+      }
+      if (idx == -1 && idxLastAC3 == -1)
       {
         idx = 0;
-        Log.Info("Audio stream: no preferred audio stream found using first stream");
+        Log.Info("Audio stream: no preferred audio stream found using first stream {0}", idx);
       }
       return idx;
     }
