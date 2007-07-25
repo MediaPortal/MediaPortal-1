@@ -361,6 +361,12 @@ HRESULT CAudioPin::ChangeStop()
 }
 HRESULT CAudioPin::ChangeRate()
 {
+  if( m_dRateSeeking <= 0 ) 
+  {
+      m_dRateSeeking = 1.0;  // Reset to a reasonable value.
+      return E_FAIL;
+  }
+  UpdateFromSeek();
 	return S_OK;
 }
 
@@ -379,7 +385,7 @@ HRESULT CAudioPin::OnThreadStartPlay()
   //tell demuxer to delete any audio packets it still might have
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   demux.FlushAudio();
-  LogDebug("aud:OnThreadStartPlay(%f)", fStart);
+  LogDebug("aud:OnThreadStartPlay(%f) %02.2f", fStart,m_dRateSeeking);
 
   //set flag to compensate any differences in the stream time & file time
   m_bMeasureCompensation=true;
