@@ -54,7 +54,7 @@ namespace MediaPortal.MPInstaller
     {
       proiect_file_name = fil;
       InitializeComponent();
-      proiectt_textBox6.Items.AddRange(MPinstalerStruct.CategoriListing);     
+      proiectt_textBox6.Items.AddRange(MPinstalerStruct.CategoriListing);
       _struct.LoadFromFile(fil);
       _struct.ProiectdFileName = fil;
       loadProperties();
@@ -72,16 +72,19 @@ namespace MediaPortal.MPInstaller
 
       saveFileDialog1.Filter = "Proiect files (*.xmp)|*.xmp|All files (*.*)|*.*";
       saveFileDialog1.DefaultExt = "*.xmp";
+      _struct.AddFileList(bossview);
       if (Path.GetFileName(proiect_file_name) == "Untitled" || String.IsNullOrEmpty(proiect_file_name.Trim()))
       {
-        _struct.AddFileList(bossview);
         if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
         {
           proiect_file_name = saveFileDialog1.FileName;
           _struct.SaveToFile(proiect_file_name);
         }
       }
-      else _struct.SaveToFile(proiect_file_name);
+      else
+      {
+        _struct.SaveToFile(proiect_file_name);
+      }
     }
     private void windowToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -344,8 +347,12 @@ namespace MediaPortal.MPInstaller
 
     private void toolStripComboBox1_Click(object sender, EventArgs e)
     {
-      for (int i = 0; i < bossview.Items.Count; i++)
-        if (bossview.Items[i].Selected) bossview.Items.RemoveAt(i);
+      //for (int i = 0; i < bossview.Items.Count; i++)
+      //  if (bossview.Items[i].Selected) bossview.Items.RemoveAt(i);
+      foreach (ListViewItem li in bossview.SelectedItems)
+      {
+        bossview.Items.Remove(li);
+      }
     }
 
 
@@ -460,7 +467,7 @@ namespace MediaPortal.MPInstaller
         tabControl1.Controls.Add(tabPage_Proiect);
         tabControl1.Controls.Add(tabPage_Advanced);
       }
-
+      bossview.Focus();
     }
     private void bossview_ColumnClick(object sender, ColumnClickEventArgs e)
     {
@@ -676,7 +683,7 @@ namespace MediaPortal.MPInstaller
       }
       if (Path.GetExtension(fil).ToUpper() == ".TXT")
       {
-        addrow(Path.GetFileName(fil), MPinstalerStruct.TEXT_TYPE,MPinstalerStruct.TEXT_README_TYPE, Path.GetFullPath(fil), "02010", "");
+        addrow(Path.GetFileName(fil), MPinstalerStruct.TEXT_TYPE, MPinstalerStruct.TEXT_README_TYPE, Path.GetFullPath(fil), "02010", "");
         return;
       }
       addrow(Path.GetFileName(fil), MPinstalerStruct.OTHER_TYPE, "", Path.GetFullPath(fil), "02010", "");
@@ -684,11 +691,11 @@ namespace MediaPortal.MPInstaller
 
     private void directoryAutomatedDiscoverTypeToolStripMenuItem_Click(object sender, EventArgs e)
     {
-    
+
       if (folderBrowserDialog1.ShowDialog(this) == DialogResult.OK)
       {
         DirectoryInfo di = new DirectoryInfo(folderBrowserDialog1.SelectedPath);
-        FileInfo[] fileList = di.GetFiles("*.*",SearchOption.AllDirectories);
+        FileInfo[] fileList = di.GetFiles("*.*", SearchOption.AllDirectories);
         foreach (FileInfo f in fileList)
         {
           addFile(f.FullName);
@@ -711,6 +718,19 @@ namespace MediaPortal.MPInstaller
         return false;
       }
       return true;
+    }
+
+    private void bossview_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Delete)
+      {
+        foreach (ListViewItem li in bossview.SelectedItems)
+        {
+          bossview.Items.Remove(li);
+        }
+
+      }
+
     }
   }
 }

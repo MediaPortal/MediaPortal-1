@@ -429,6 +429,7 @@ namespace MediaPortal.MPInstaller
           this.bossview.UseCompatibleStateImageBehavior = false;
           this.bossview.View = System.Windows.Forms.View.Details;
           this.bossview.SelectedIndexChanged += new System.EventHandler(this.bossview_SelectedIndexChanged);
+          this.bossview.KeyDown += new System.Windows.Forms.KeyEventHandler(this.bossview_KeyDown);
           this.bossview.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.bossview_ColumnClick);
           // 
           // columnHeader1
