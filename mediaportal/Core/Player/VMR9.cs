@@ -332,7 +332,7 @@ namespace MediaPortal.Player
         Log.Info("vmr9:addvmr9: vmr9 already initialized");
         return false;
       }
-      bool _useEvr = GUIGraphicsContext.B;
+      bool _useEvr = GUIGraphicsContext.IsEvr;
       Log.Info("EVR-Flag is set to {0}", _useEvr);
       //Log.Info("VMR9Helper:AddVmr9");
       if (_instanceCounter != 0)
