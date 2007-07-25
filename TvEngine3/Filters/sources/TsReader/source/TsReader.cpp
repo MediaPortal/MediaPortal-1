@@ -36,7 +36,6 @@
 #include "memoryreader.h"
 void LogDebug(const char *fmt, ...) 
 {
-#ifdef DONTLOG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -48,6 +47,7 @@ void LogDebug(const char *fmt, ...)
 	SYSTEMTIME systemTime;
 	GetLocalTime(&systemTime);
 
+#ifdef DONTLOG
   FILE* fp = fopen("c:\\tsreader.log","a+");
 	if (fp!=NULL)
 	{
@@ -57,6 +57,7 @@ void LogDebug(const char *fmt, ...)
 			buffer);
 		fclose(fp);
   }
+#endif
 	char buf[1000];
 	sprintf(buf,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
 		systemTime.wDay, systemTime.wMonth, systemTime.wYear,
@@ -64,7 +65,6 @@ void LogDebug(const char *fmt, ...)
 		buffer);
 	::OutputDebugString(buf);
 	
-#endif
 };
 
 
@@ -136,7 +136,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
-  Compensation=CRefTime(-1000000L);
+  Compensation=CRefTime(0L);
 
 	LogDebug("CTsReaderFilter::ctor");
 	m_pAudioPin = new CAudioPin(GetOwner(), this, phr,&m_section);

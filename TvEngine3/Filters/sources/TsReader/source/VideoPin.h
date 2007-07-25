@@ -55,6 +55,7 @@ public:
 	void FlushStop();
   bool IsConnected();
   bool IsSeeking();
+  void SetDiscontinuity(bool onOff);
 
 protected:
   void UpdateFromSeek();

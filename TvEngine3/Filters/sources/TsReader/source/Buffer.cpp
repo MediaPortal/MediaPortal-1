@@ -30,6 +30,7 @@ extern void LogDebug(const char *fmt, ...) ;
 CBuffer::CBuffer()
 {
   bufferCount++;
+  m_bDiscontinuity=false;
 	m_iLength=0;
 	m_pBuffer = new byte[MAX_BUFFER_SIZE];
  // LogDebug("buffers:%d",bufferCount);
@@ -44,6 +45,15 @@ CBuffer::~CBuffer()
 	m_iLength=0;
 }
 
+
+void CBuffer::SetDiscontinuity()
+{
+  m_bDiscontinuity=true;
+}
+bool CBuffer::GetDiscontinuity()
+{
+  return m_bDiscontinuity;
+}
 ///***************************************************************
 ///returns a CRefTime which contains the current timestamp
 // current timestamp starts at 0 at start of file

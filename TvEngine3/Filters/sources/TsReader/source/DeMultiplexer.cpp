@@ -54,6 +54,9 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_bHoldAudio=false;
   m_bHoldVideo=false;
   m_bPreferAC3=false;
+  m_iPatVersion=-1;
+  m_bSetAudioDiscontinuity=false;
+  m_bSetVideoDiscontinuity=false;
 
   //get ac3 preference from registry key
   HKEY key;
@@ -464,6 +467,9 @@ void CDeMultiplexer::Start()
   m_bHoldAudio=false;
   m_bHoldVideo=false;
   m_bScanning=true;
+  m_iPatVersion=-1;
+  m_bSetAudioDiscontinuity=false;
+  m_bSetVideoDiscontinuity=false;
   DWORD dwBytesProcessed=0;
   while (ReadFromFile(false,false))
   {
@@ -732,6 +738,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
       int headerLen=9+tsPacket[pos+8];  
       pos+=headerLen;
     }
+    if (m_bSetAudioDiscontinuity)
+    {
+      m_bSetAudioDiscontinuity=false;
+      m_pCurrentAudioBuffer->SetDiscontinuity();
+    }
 
     //copy (rest) data in current buffer
 		if (pos>0 && pos < 188)
@@ -754,6 +765,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
       m_pCurrentAudioBuffer->Add(&tsPacket[pos],copyLen);
       pos+=copyLen;
 
+      if (m_bSetAudioDiscontinuity)
+      {
+        m_bSetAudioDiscontinuity=false;
+        m_pCurrentAudioBuffer->SetDiscontinuity();
+      }
       //store current buffer since its now full
       if (m_vecAudioBuffers.size()>MAX_BUF_SIZE) 
         m_vecAudioBuffers.erase(m_vecAudioBuffers.begin());
@@ -811,6 +827,11 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
       int headerLen=9+tsPacket[pos+8];  
       pos+=headerLen;
     }
+    if (m_bSetVideoDiscontinuity)
+    {
+      m_bSetVideoDiscontinuity=false;
+      m_pCurrentVideoBuffer->SetDiscontinuity();
+    }
 
     //copy (rest) data in current buffer
 		if (pos>0 && pos < 188)
@@ -831,6 +852,12 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
       //copy those bytes
       m_pCurrentVideoBuffer->Add(&tsPacket[pos],copyLen);
       pos+=copyLen;
+
+       if (m_bSetVideoDiscontinuity)
+      {
+        m_bSetVideoDiscontinuity=false;
+        m_pCurrentVideoBuffer->SetDiscontinuity();
+      }
 
       //store current buffer since its now full
       if (m_vecVideoBuffers.size()>MAX_BUF_SIZE) 
@@ -890,6 +917,13 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
 /// If something has changed we reconfigure the audio/video output pins if needed
 void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 {
+  if (info.PatVersion != m_iPatVersion)
+  {
+    LogDebug("OnNewChannel pat version:%d->%d",m_iPatVersion, info.PatVersion);
+    m_iPatVersion=info.PatVersion;
+    m_bSetAudioDiscontinuity=true;
+    m_bSetVideoDiscontinuity=true;
+  }
 	//CAutoLock lock (&m_section);
   CPidTable pids=info.PidTable;
   //do we have at least an audio pid?

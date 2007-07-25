@@ -205,23 +205,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   {
     //get file-duration and set m_rtDuration
     GetDuration(NULL);
-    //do we need to set the discontinuity flag?
-    if (m_bDiscontinuity)
-    {
-      //ifso, set it
-      LogDebug("aud:set discontinuity");
-      pSample->SetDiscontinuity(TRUE);
-      m_bDiscontinuity=FALSE;
-      pSample->SetTime(NULL,NULL); 
-	    pSample->SetActualDataLength(0);
-      pSample->SetSyncPoint(FALSE);
-      m_bInFillBuffer=false;
-      return NOERROR;
-    }
-    else
-    {
-      pSample->SetDiscontinuity(FALSE);
-    }
 
     //if the filter is currently seeking to a new position
     //or this pin is currently seeking to a new position then
@@ -232,8 +215,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 		  Sleep(20);
       pSample->SetTime(NULL,NULL); 
 	    pSample->SetActualDataLength(0);
+      pSample->SetDiscontinuity(TRUE);
       pSample->SetSyncPoint(FALSE);
-      m_bInFillBuffer=false;
 		  return NOERROR;
 	  }
 
@@ -257,6 +240,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         Sleep(20);
         pSample->SetTime(NULL,NULL); 
         pSample->SetActualDataLength(0);
+        pSample->SetDiscontinuity(TRUE);
         pSample->SetSyncPoint(FALSE);
         m_bInFillBuffer=false;
         return NOERROR;
@@ -272,11 +256,25 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       Sleep(10);
     }//while (buffer==NULL)
 
+    //do we need to set the discontinuity flag?
+    if (m_bDiscontinuity)
+    {
+      //ifso, set it
+      LogDebug("aud:set discontinuity");
+      pSample->SetDiscontinuity(TRUE);
+      m_bDiscontinuity=FALSE;
+    }
 
 
     //if we got a new buffer
     if (buffer!=NULL)
     {
+      if (buffer->GetDiscontinuity())
+      {
+        LogDebug("aud:set discontinuity");
+        pSample->SetDiscontinuity(TRUE);
+      }
+
       BYTE* pSampleBuffer;
       CRefTime cRefTime;
       //check if it has a timestamp
@@ -320,7 +318,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         float fTime=(float)cRefTime.Millisecs();
         fTime/=1000.0f;
         
-        if (true||abs(prevTime-fTime)>=1)
+        //if (fTime<5)
         {
           //LogDebug("aud:gotbuffer:%d %03.3f",buffer->Length(),fTime);
           prevTime=fTime;
@@ -397,7 +395,6 @@ HRESULT CAudioPin::OnThreadStartPlay()
   LogDebug("aud:OnThreadStartPlay(%f) %02.2f", fStart,m_dRateSeeking);
 
   //set flag to compensate any differences in the stream time & file time
-  m_pTsReaderFilter->Compensation=CRefTime(-1000000L);
   m_bMeasureCompensation=true;
 
   //start playing

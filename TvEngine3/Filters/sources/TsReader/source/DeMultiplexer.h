@@ -112,6 +112,9 @@ private:
 	bool m_bHoldAudio;
 	bool m_bHoldVideo;
   bool m_bPreferAC3;
+  int m_iPatVersion;
 
+  bool m_bSetAudioDiscontinuity;
+  bool m_bSetVideoDiscontinuity;
   CPcr m_subtitlePcr;
 };

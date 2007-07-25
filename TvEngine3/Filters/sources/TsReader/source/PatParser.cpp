@@ -138,6 +138,7 @@ void CPatParser::OnTsPacket(byte* tsPacket)
 		    {
 			    m_iState=Idle;
 
+          info.PatVersion=m_iPatTableVersion;
           m_pCallback->OnNewChannel(info);
 	        m_iState=Parsing;
 			    return ;

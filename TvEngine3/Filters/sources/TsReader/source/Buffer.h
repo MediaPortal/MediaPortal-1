@@ -35,7 +35,10 @@ public:
   void   SetLength(int len);
   CPcr&  Pcr();
   bool   MediaTime(CRefTime &reftime);
+  void   SetDiscontinuity();
+  bool   GetDiscontinuity();
 private:
+  bool  m_bDiscontinuity;
 	CPcr  m_currentPcr;
 	CPcr  m_pts;
 	CPcr  m_firstPcr;
