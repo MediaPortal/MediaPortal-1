@@ -332,7 +332,7 @@ namespace MediaPortal.Player
         Log.Info("vmr9:addvmr9: vmr9 already initialized");
         return false;
       }
-      bool _useEvr = GUIGraphicsContext.IsEvr;
+      bool _useEvr = GUIGraphicsContext.B;
       Log.Info("EVR-Flag is set to {0}", _useEvr);
       //Log.Info("VMR9Helper:AddVmr9");
       if (_instanceCounter != 0)
@@ -564,17 +564,20 @@ namespace MediaPortal.Player
     }
     public void SetDeinterlaceMode()
     {
-      if (!_isVmr9Initialized) return;
-      int DeInterlaceMode = 3;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      if (!GUIGraphicsContext.IsEvr)
       {
-        //None
-        //Bob
-        //Weave
-        //Best
-        DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
+        if (!_isVmr9Initialized) return;
+        int DeInterlaceMode = 3;
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        {
+          //None
+          //Bob
+          //Weave
+          //Best
+          DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
+        }
+        Vmr9SetDeinterlaceMode((short)DeInterlaceMode);
       }
-      //Vmr9SetDeinterlaceMode((short)DeInterlaceMode);
     }
     public void Enable(bool onOff)
     {
