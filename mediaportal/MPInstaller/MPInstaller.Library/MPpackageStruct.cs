@@ -66,7 +66,7 @@ namespace MediaPortal.MPInstaller
                         if (test_file(fl,entry))
                         {
                           string tpf;
-                          if (InstallableSkinList.Contains(fl.SubType))
+                          if (InstallableSkinList.Contains(fl.SubType)||!fl.SkinType)
                           {
                             tpf = Path.GetFullPath(MPinstalerStruct.GetDirEntry(fl));
                           }
@@ -118,7 +118,7 @@ namespace MediaPortal.MPInstaller
 
                                 }
                             }
-                            if (!InstallableSkinList.Contains(fl.SubType))
+                            if (!InstallableSkinList.Contains(fl.SubType)&&fl.SkinType)
                             {
                               File.Delete(tpf);
                             }
