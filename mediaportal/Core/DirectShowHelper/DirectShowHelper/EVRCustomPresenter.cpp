@@ -103,6 +103,10 @@ void CALLBACK TimerCallback(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PT
 	p->eHasWork.Set();
 }
 
+#define MIN(x,y) ((x)<(y))?(x):(y)
+//wait for a maximum of 500 ms
+#define MAX_WAIT 10000*500 
+
 UINT CALLBACK SchedulerThread(void* param)
 {
 	SchedulerParams *p = (SchedulerParams*)param;
@@ -125,7 +129,8 @@ UINT CALLBACK SchedulerThread(void* param)
 		if ( hnsSampleTime > 0 ) { 
 			p->bWorkScheduled = TRUE;
 			//Sleep(hnsSampleTime/10000);
-			timeSetEvent(hnsSampleTime/10000,1,
+			//wait for a maximum of 500 ms!
+			timeSetEvent(MIN(hnsSampleTime/10000, MAX_WAIT),1,
 				TimerCallback, (DWORD)param, TIME_ONESHOT);
 			/*Log( "Next event: %d hns", hnsSampleTime );*/
 		}
@@ -160,6 +165,7 @@ EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevic
         m_surfaceCount=0;
 		m_bInputAvailable = FALSE;
 		m_bendStreaming = FALSE;
+		m_state = RENDER_STATE_SHUTDOWN;
         //m_UseOffScreenSurface=false;
         m_fRate = 1.0f;
         //TODO: use ZeroMemory
@@ -477,11 +483,11 @@ HRESULT EVRCustomPresenter::GetTimeToSchedule(CComPtr<IMFSample> pSample, LONGLO
 	// Calculate the amount of time until the sample's presentation
 	// time. A negative value means the sample is late.
 	hnsDelta = hnsPresentationTime - hnsTimeNow;
-	if (hnsDelta > 10000000 )
+	//if off more than a second
+	if (hnsDelta > 100000000 )
 	{
 		Log("dangerous and unlikely time to schedule [%p]: %I64d. scheduled time: %I64d, now: %I64d",
 			pSample, hnsDelta, hnsPresentationTime, hnsTimeNow);
-    hnsDelta=1;
 	}
 	//Log("Calculated delta: %I64d (rate: %f)", hnsDelta, m_fRate);
 	if ( m_fRate != 1.0f && m_fRate != 0.0f )
@@ -666,7 +672,8 @@ HRESULT EVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType, I
 	  i64Size.HighPart = 1;
 	  i64Size.LowPart  = 1;
 	  pMediaType->SetUINT64 (MF_MT_PIXEL_ASPECT_RATIO, i64Size.QuadPart);
-	  
+	  Log("Would set aperture: %dx%d", VideoFormat->videoInfo.dwWidth,
+		  VideoFormat->videoInfo.dwHeight);
     }
 	pMixerType->FreeRepresentation (FORMAT_MFVideoFormat, (void*)pAMMedia);
    	pMediaType->QueryInterface (__uuidof(IMFMediaType), (void**) pType);
@@ -881,7 +888,18 @@ HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime)
 	//	m_vScheduledSamples.size());
 	while ( m_vScheduledSamples.size() > 0 ) {
 		CComPtr<IMFSample> pSample = m_vScheduledSamples.front();
-		CHECK_HR(hr=GetTimeToSchedule(pSample, pNextSampleTime), "Couldn't get time to schedule!");
+		if ( m_state == RENDER_STATE_STARTED ) 
+		{
+			CHECK_HR(hr=GetTimeToSchedule(pSample, pNextSampleTime), "Couldn't get time to schedule!");
+		}
+		else if ( m_bfirstFrame )
+		{
+			*pNextSampleTime = -1; //immediate
+		}
+		else
+		{
+			*pNextSampleTime = 0; //not now!
+		}
 		//Log( "Time to schedule: %I64d", *pNextSampleTime );
 		//if we are ahead only 1 ms, present this sample anyway
 		//else sleep for some time
@@ -1093,6 +1111,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::ProcessMessage(
 			Log("ProcessMessage %x", eMessage);
 			//m_bendStreaming = TRUE;
 			StopScheduler();
+			m_state = RENDER_STATE_SHUTDOWN;
 			DWORD flags;
 			CHECK_HR(m_pMixer->GetOutputStatus(&flags), "nadamixa");
 			if ( flags & MFT_OUTPUT_STATUS_SAMPLE_READY )
@@ -1147,6 +1166,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockStart(
     /* [in] */ LONGLONG llClockStartOffset)
 {
 	Log("OnClockStart");
+	m_state = RENDER_STATE_STARTED;
 	Flush();
 	ProcessInputNotify();
 	return S_OK;
@@ -1156,6 +1176,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockStop(
     /* [in] */ MFTIME hnsSystemTime)
 {
 	Log("OnClockStop");
+	m_state = RENDER_STATE_STOPPED;
 	return S_OK;
 }
 
@@ -1164,6 +1185,7 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockPause(
     /* [in] */ MFTIME hnsSystemTime)
 {
 	Log("OnClockPause");
+	m_state = RENDER_STATE_PAUSED;
 	return S_OK;
 }
 
@@ -1171,7 +1193,11 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::OnClockRestart(
     /* [in] */ MFTIME hnsSystemTime)
 {
 	Log("OnClockRestart");
+	m_state = RENDER_STATE_STARTED;
 	ProcessInputNotify();
+	//just in case the scheduling queue is full, and ProcessInputNotify
+	//cannot process any new  output
+	NotifyScheduler();
 	return S_OK;
 }
 

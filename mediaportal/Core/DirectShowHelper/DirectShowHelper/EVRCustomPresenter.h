@@ -17,6 +17,14 @@ using namespace std;
 
 class EVRCustomPresenter;
 
+enum RENDER_STATE
+{
+	RENDER_STATE_STARTED,
+	RENDER_STATE_STOPPED,
+	RENDER_STATE_PAUSED,
+	RENDER_STATE_SHUTDOWN
+};
+
 typedef struct _SchedulerParams
 {
 	EVRCustomPresenter* pPresenter;
@@ -176,5 +184,5 @@ protected:
 	BOOL		m_bendStreaming;
 	int m_iFramesDrawn, m_iFramesDropped, m_iJitter;
 	LONGLONG m_hnsLastFrameTime, m_hnsTotalDiff;
-
+	RENDER_STATE m_state;
 };
