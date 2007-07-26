@@ -19,11 +19,12 @@
  *
  */
 #include <stdio.h>
-
+#include <windows.h>
 #include "autostring.h"
 CAutoString::CAutoString(int len)
 {
 	m_pBuffer = new char[len];
+  memset(m_pBuffer,0,len);
 }
 CAutoString::~CAutoString()
 {

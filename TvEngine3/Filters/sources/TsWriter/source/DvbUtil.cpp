@@ -29,14 +29,19 @@ CDvbUtil::~CDvbUtil(void)
 {
 }
 
-void CDvbUtil::getString468A(BYTE *b, int l1,char *text)
+void CDvbUtil::getString468A(BYTE *b, int maxLen,char *text)
 {
 	int i = 0;
 	int num=0;
 	unsigned char c;
 	char em_ON = (char)0x86;
 	char em_OFF = (char)0x87;
-	
+
+  if (maxLen< 1) return;
+  if (text==NULL) return;
+  if (b==NULL) return;
+
+  int len=maxLen;
 	do
 	{
 		c = (char)b[i];
@@ -66,6 +71,7 @@ void CDvbUtil::getString468A(BYTE *b, int l1,char *text)
 				
 		if ( ((BYTE)c) == 0x84)
 		{
+      if (num >=maxLen) return;
 			text[num] = '\r';
 			text[num+1]=0;
 			num++;
@@ -81,12 +87,14 @@ void CDvbUtil::getString468A(BYTE *b, int l1,char *text)
       }
 		}
 				
+      
+    if (num >=maxLen) return;
 		text[num] = c;
 		text[num+1]=0;
 		num++;
 cont:
-		l1 -= 1;
+		len -= 1;
 		i += 1;
-	}while (!(l1 <= 0));
+	}while (!(len <= 0));
 
 }
