@@ -899,6 +899,7 @@ HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime)
 		else
 		{
 			*pNextSampleTime = 0; //not now!
+			return hr;
 		}
 		//Log( "Time to schedule: %I64d", *pNextSampleTime );
 		//if we are ahead only 1 ms, present this sample anyway
