@@ -1370,11 +1370,12 @@ namespace TvPlugin
         bool _return = false;
 
         // issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.        
+        /*
         if (!_avoidSeeking)
         {          
           g_Player.PauseGraph();
         }
-
+        */
         if (wasPlaying)
           SeekToEnd(true);
 
@@ -1410,12 +1411,13 @@ namespace TvPlugin
 
 
           // issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.
+          /*
           if (!_avoidSeeking)          
           {            
             g_Player.ContinueGraph();                        
             g_Player.SeekAbsolute(g_Player.Duration);            
           }                    
-
+          */
           return true;
 
         }
