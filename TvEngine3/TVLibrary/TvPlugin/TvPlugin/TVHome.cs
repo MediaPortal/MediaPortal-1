@@ -299,7 +299,9 @@ namespace TvPlugin
             TvBusinessLayer layer = new TvBusinessLayer();
             Channel channel = layer.GetChannelByName(message.Label);
             if (channel != null)
-              TVHome.ViewChannelAndCheck(channel);
+            {
+              TVHome.ViewChannelAndCheck(channel);              
+            }
             break;
           }
         case GUIMessage.MessageType.GUI_MSG_STOP_SERVER_TIMESHIFTING:
@@ -545,7 +547,7 @@ namespace TvPlugin
         MediaPortal.GUI.Library.Log.Info("tv home init:{0}", channel.Name);
         if (_autoTurnOnTv)
         {
-          ViewChannelAndCheck(channel);
+          ViewChannelAndCheck(channel);          
         }
         GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
         MediaPortal.GUI.Library.Log.Info("tv home init:{0} done", channel.Name);
@@ -616,7 +618,7 @@ namespace TvPlugin
       //Without this, a ChannelChange might occur even when MiniGuide is canceled. 
       if (!miniGuide.Canceled)
       {
-        ViewChannelAndCheck(miniGuide.SelectedChannel);
+        ViewChannelAndCheck(miniGuide.SelectedChannel);        
       }
 
       benchClock.Stop();
@@ -673,7 +675,7 @@ namespace TvPlugin
         }
 
         // turn tv on/off
-        ViewChannelAndCheck(Navigator.Channel);
+        ViewChannelAndCheck(Navigator.Channel);        
         UpdateStateOfButtons();
         UpdateProgressPercentageBar();
         benchClock.Stop();
@@ -718,7 +720,7 @@ namespace TvPlugin
             {
               //restart viewing...  
               MediaPortal.GUI.Library.Log.Info("tv home msg resume tv:{0}", Navigator.CurrentChannel);
-              ViewChannel(Navigator.Channel);
+              ViewChannel(Navigator.Channel);              
             }
           }
           break;
@@ -727,8 +729,7 @@ namespace TvPlugin
           {
             TvBusinessLayer layer = new TvBusinessLayer();
             Channel ch = layer.GetChannelByName(message.Label);
-            ViewChannel(ch);
-            Navigator.UpdateCurrentChannel();
+            ViewChannel(ch);            
           }
           break;
 
@@ -737,8 +738,7 @@ namespace TvPlugin
             MediaPortal.GUI.Library.Log.Info("tv home msg stop chan:{0}", message.Label);
             TvBusinessLayer layer = new TvBusinessLayer();
             Channel ch = layer.GetChannelByName(message.Label);
-            ViewChannel(ch);
-            Navigator.UpdateCurrentChannel();
+            ViewChannel(ch);            
           }
           break;
       }
@@ -1317,8 +1317,7 @@ namespace TvPlugin
     static public bool ViewChannelAndCheck(Channel channel)
     {
       try
-      {
-        Stopwatch benchClock = Stopwatch.StartNew();
+      {                    
         if (channel == null)
         {
           MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): channel==null");
@@ -1366,10 +1365,13 @@ namespace TvPlugin
         //Start timeshifting the new tv channel
         TvServer server = new TvServer();
         VirtualCard card;
-        bool _return = false;
+        bool _return = false;       
 
         if (wasPlaying)
           SeekToEnd(true);
+
+
+
         succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
         if (succeeded == TvResult.Succeeded)
         {
@@ -1395,8 +1397,7 @@ namespace TvPlugin
           if (!g_Player.Playing)
             StartPlay();
 
-          GUIWaitCursor.Hide();
-
+          GUIWaitCursor.Hide();                       
 
           return true;
 
@@ -1484,6 +1485,7 @@ namespace TvPlugin
     static public void ViewChannel(Channel channel)
     {
       ViewChannelAndCheck(channel);
+      Navigator.UpdateCurrentChannel();
       TVHome.UpdateProgressPercentageBar();
       return;
     }
@@ -2033,7 +2035,7 @@ namespace TvPlugin
           Channel zappingTo = m_zapchannel;
           m_zapchannel = null;
           MediaPortal.GUI.Library.Log.Info("Channel change:{0}", zappingTo.Name);
-          TVHome.ViewChannel(zappingTo);
+          TVHome.ViewChannel(zappingTo);          
           reentrant = false;
           return true;
         }
@@ -2334,6 +2336,15 @@ namespace TvPlugin
       return -1;
     }
 
+    public Channel GetChannel(int channelId)
+    {
+      foreach (Channel chan in channels)
+      {
+        if (chan.IdChannel == channelId) return chan;
+      }
+      return null;
+    }
+
     public Channel GetChannel(string channelName)
     {
       foreach (Channel chan in channels)
@@ -2373,7 +2384,10 @@ namespace TvPlugin
 
       //check if the channel does indeed belong to the group read from the XML setup file ?
 
+      
+
       bool foundMatchingGroupName = false;
+      
       foreach (GroupMap groupMap in m_currentChannel.ReferringGroupMap())
       {
         if (groupMap.ReferencedChannelGroup().GroupName == groupname)
@@ -2382,6 +2396,21 @@ namespace TvPlugin
           break;
         }
       }
+
+      //if we still havent found the right group, then iterate through the selected group and find the channelname.      
+      if (!foundMatchingGroupName)
+      {
+        foreach (GroupMap groupMap in ((ChannelGroup)m_groups[m_currentgroup]).ReferringGroupMap())
+        {
+          if (groupMap.ReferencedChannel().Name == currentchannelName)
+          {
+            foundMatchingGroupName = true;
+            m_currentChannel = GetChannel (groupMap.ReferencedChannel().IdChannel);
+            break;
+          }
+        }
+      }
+      
 
       // if the groupname does not match any of the groups assigned to the channel, then find the last group avail. (avoiding the all "channels group") for that channel and set is as the new currentgroup
       if (!foundMatchingGroupName && m_currentChannel.ReferringGroupMap().Count > 0)
