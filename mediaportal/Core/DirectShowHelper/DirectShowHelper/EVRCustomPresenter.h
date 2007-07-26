@@ -13,7 +13,7 @@ using namespace std;
 #define CHECK_HR(hr, msg) if ( FAILED(hr) ) Log( msg );
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
 
-#define NUM_SURFACES 6
+#define NUM_SURFACES 5
 
 class EVRCustomPresenter;
 
@@ -23,6 +23,7 @@ typedef struct _SchedulerParams
 	CCritSec csLock;
 	CAMEvent eHasWork;
 	BOOL bDone;
+	BOOL bWorkScheduled;
 } SchedulerParams;
 
 class EVRCustomPresenter
@@ -123,37 +124,40 @@ public:
 	void ReleaseCallBack();
 
 	HRESULT CheckForScheduledSample(LONGLONG *pNextSampleTime);
-protected:
-	void Paint(IDirect3DSurface9* pSurface);
-	void DeleteSurfaces();
-	HRESULT SetMediaType(IMFMediaType *pType);
-	void ReAllocSurfaces();
-	HRESULT RenegotiateMediaOutputType();
 	HRESULT ProcessInputNotify();
+protected:
+	void ReleaseSurfaces();
+	void Paint(CComPtr<IDirect3DSurface9> pSurface);
+	HRESULT SetMediaType(CComPtr<IMFMediaType> pType);
+	void ReAllocSurfaces();
+	HRESULT CreateProposedOutputType(IMFMediaType* pMixerType, IMFMediaType** pType);
+	HRESULT RenegotiateMediaOutputType();
+	BOOL CheckForEndOfStream();
 	void	StartScheduler();
 	void	StopScheduler();
 	void    NotifyScheduler();
-	HRESULT GetTimeToSchedule(IMFSample* pSample, LONGLONG* pDelta);
+	HRESULT GetTimeToSchedule(CComPtr<IMFSample> pSample, LONGLONG* pDelta);
 	void  Flush();
-	void ScheduleSample(IMFSample* pSample);
+	void ScheduleSample(CComPtr<IMFSample> pSample);
 	HRESULT TrackSample(IMFSample *pSample);
-	HRESULT GetFreeSample(IMFSample **ppSample);
-	void	ReturnSample(IMFSample *pSample, BOOL bCheckForWork);
-	HRESULT PresentSample(IMFSample *pSample);
+	HRESULT GetFreeSample(CComPtr<IMFSample>& ppSample);
+	void	ReturnSample(CComPtr<IMFSample> pSample, BOOL bCheckForWork);
+	HRESULT PresentSample(CComPtr<IMFSample> pSample);
 	void    ResetStatistics();
 
     CComPtr<IDirect3DDevice9> m_pD3DDev;
 	IVMR9Callback* m_pCallback;
 	CComPtr<IDirect3DDeviceManager9> m_pDeviceManager;
-	IMediaEventSink* m_pEventSink;
-	IMFClock* m_pClock;
-	IMFTransform* m_pMixer;
-	IMFMediaType* m_pMediaType;
-	IDirect3DSwapChain9* chains[NUM_SURFACES];
-	IDirect3DSurface9* surfaces[NUM_SURFACES];
-	IMFSample* samples[NUM_SURFACES];
-	vector<IMFSample*> m_vFreeSamples;
-	queue<IMFSample*> m_vScheduledSamples;
+	CComPtr<IMediaEventSink> m_pEventSink;
+	CComPtr<IMFClock> m_pClock;
+	CComPtr<IMFTransform> m_pMixer;
+	CComPtr<IMFMediaType> m_pMediaType;
+	CComPtr<IDirect3DSwapChain9> chains[NUM_SURFACES];
+	CComPtr<IDirect3DSurface9> surfaces[NUM_SURFACES];
+	CComPtr<IMFSample> samples[NUM_SURFACES];
+	CCritSec m_lockSamples;
+	vector<CComPtr<IMFSample>> m_vFreeSamples;
+	queue<CComPtr<IMFSample>> m_vScheduledSamples;
 	SchedulerParams *m_schedulerParams;
 	BOOL		  m_bSchedulerRunning;
 	HANDLE		  m_hScheduler;
@@ -168,6 +172,8 @@ protected:
 	double m_fps ;
 	BOOL		m_bfirstFrame;
 	BOOL		m_bfirstInput;
+	BOOL		m_bInputAvailable;
+	BOOL		m_bendStreaming;
 	int m_iFramesDrawn, m_iFramesDropped, m_iJitter;
 	LONGLONG m_hnsLastFrameTime, m_hnsTotalDiff;
 

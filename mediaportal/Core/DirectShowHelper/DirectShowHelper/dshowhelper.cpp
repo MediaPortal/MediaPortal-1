@@ -52,6 +52,7 @@ HMODULE m_hModuleEVR = NULL;
 
 TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9 = NULL;
 TMFCreateVideoSampleFromSurface* m_pMFCreateVideoSampleFromSurface = NULL;
+TMFCreateVideoMediaType* m_pMFCreateVideoMediaType = NULL;
 BOOL m_bEVRLoaded = false;
 
 // This is an example of an exported variable
@@ -99,6 +100,46 @@ typedef map<int,IStreamBufferRecordControl*>::iterator imapRecordControl;
 
 INIT_GUID(bobDxvaGuid          ,0x335aa36e, 0x7884, 0x43a4, 0x9c, 0x91, 0x7f, 0x87, 0xfa, 0xf3, 0xe3, 0x7e);
 INIT_GUID(clsidTeeSink         ,0x0A4252A0, 0x7E70, 0x11D0, 0xA5, 0xD6, 0x28, 0xDB, 0x04, 0xC1, 0x00, 0x00);
+
+HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
+{
+
+    ULONG cbAnsi, cCharacters;
+    DWORD dwError;
+
+    // If input is null then just return the same.
+    if (pszW == NULL)
+    {
+        *ppszA = NULL;
+        return NOERROR;
+    }
+
+    cCharacters = wcslen(pszW)+1;
+    // Determine number of bytes to be allocated for ANSI string. An
+    // ANSI string can have at most 2 bytes per character (for Double
+    // Byte Character Strings.)
+    cbAnsi = cCharacters*2;
+
+    // Use of the OLE allocator is not required because the resultant
+    // ANSI  string will never be passed to another COM component. You
+    // can use your own allocator.
+    *ppszA = (LPSTR) CoTaskMemAlloc(cbAnsi);
+    if (NULL == *ppszA)
+        return E_OUTOFMEMORY;
+
+    // Convert to ANSI.
+    if (0 == WideCharToMultiByte(CP_ACP, 0, pszW, cCharacters, *ppszA,
+                  cbAnsi, NULL, NULL))
+    {
+        dwError = GetLastError();
+        CoTaskMemFree(*ppszA);
+        *ppszA = NULL;
+        return HRESULT_FROM_WIN32(dwError);
+    }
+    return NOERROR;
+
+}
+
 
 void Log(const char *fmt, ...) 
 {
@@ -222,11 +263,127 @@ BOOL Vmr9Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filte
    
   }
 
+
+
+void UnloadEVR()
+{
+  Log("Unloading EVR libraries");
+  if (m_hModuleDXVA2!=NULL)
+  {
+
+	  Log("Freeing library DXVA2.dll");
+
+    if (!FreeLibrary(m_hModuleDXVA2))
+	{
+		Log("DXVA2.dll could not be unloaded!");
+	}
+	m_hModuleDXVA2 = NULL;
+  }
+  if (m_hModuleEVR!=NULL)
+  {
+	  Log("Freeing lib: EVR.dll");
+	  if ( !FreeLibrary(m_hModuleEVR) )
+	  {
+		  Log("EVR.dll could not be unloaded");
+	  }
+	m_hModuleEVR = NULL;
+  }
+  
+}
+
+bool LoadEVR()
+{
+	Log("Loading EVR libraries");
+  char systemFolder[MAX_PATH];
+  char mfDLLFileName[MAX_PATH];
+  GetSystemDirectory(systemFolder,sizeof(systemFolder));
+  sprintf(mfDLLFileName,"%s\\dxva2.dll", systemFolder);
+  m_hModuleDXVA2=LoadLibrary(mfDLLFileName);
+  if (m_hModuleDXVA2!=NULL)
+  {
+	  Log("Found dxva2.dll");
+    m_pDXVA2CreateDirect3DDeviceManager9=(TDXVA2CreateDirect3DDeviceManager9*)GetProcAddress(m_hModuleDXVA2,"DXVA2CreateDirect3DDeviceManager9");
+    if (m_pDXVA2CreateDirect3DDeviceManager9!=NULL)
+    {
+		Log("Found method DXVA2CreateDirect3DDeviceManager9");
+      sprintf(mfDLLFileName,"%s\\evr.dll", systemFolder);
+      m_hModuleEVR=LoadLibrary(mfDLLFileName);
+      m_pMFCreateVideoSampleFromSurface=(TMFCreateVideoSampleFromSurface*)GetProcAddress(m_hModuleEVR,"MFCreateVideoSampleFromSurface");
+	  if ( m_pMFCreateVideoSampleFromSurface )
+	  {
+		  Log("Found method MFCreateVideoSampleFromSurface");
+		  m_pMFCreateVideoMediaType=(TMFCreateVideoMediaType*)GetProcAddress(m_hModuleEVR,"MFCreateVideoMediaType");
+		  if ( m_pMFCreateVideoMediaType )
+		  {
+			  Log("Found method MFCreateVideoMediaType");
+			  Log("Successfully loaded EVR dlls");
+			  return TRUE;
+		  }
+	  }
+	}
+  }
+  Log("Could not find all dependencies for EVR!");
+  UnloadEVR();
+  return FALSE;
+}
+
+
+void DsDumpGraph( IFilterGraph* vmr9Filter )
+{
+	/*IEnumFilters* pEnum;
+	vmr9Filter->EnumFilters(&pEnum);
+
+	HRESULT hr;
+	IBaseFilter* pFilter;
+	ULONG cFetched;
+	do {
+		pEnum->Next(1, &pFilter, &cFetched);
+		if ( cFetched > 0 ) {
+			FILTER_INFO info;
+			pFilter->QueryFilterInfo(&info);
+			LPSTR astr;
+			UnicodeToAnsi(info.achName, &astr);
+			Log("Found filter %p: %s", pFilter, astr);
+			CoTaskMemFree(astr);
+			IEnumPins* pEnumPins;
+			pFilter->EnumPins(&pEnumPins);
+			IPin* pPins, *pConnectedPin;
+			ULONG pinsFetched;
+			do {
+				pEnumPins->Next(1, &pPins, &pinsFetched);
+				if ( pinsFetched > 0 )
+				{
+					PIN_INFO pinInfo;
+					pPins->QueryPinInfo(&pinInfo);
+					UnicodeToAnsi(pinInfo.achName, &astr);
+					Log("Found pin: %s", astr);
+					CoTaskMemFree(astr);
+
+					if ( SUCCEEDED(pPins->ConnectedTo(&pConnectedPin)) ) {
+						pConnectedPin->QueryPinInfo(&pinInfo);
+						UnicodeToAnsi(pinInfo.achName, &astr);
+						Log("Connected to pin: %s", astr);
+						CoTaskMemFree(astr);
+						pinInfo.pFilter->QueryFilterInfo(&info);
+						UnicodeToAnsi(info.achName, &astr);
+						Log("\tFrom Filter: %p: %s", pinInfo.pFilter, astr);
+						CoTaskMemFree(astr);
+					} else {
+						Log( "Could not get connected pin!");
+					}
+				}
+			} while (pinsFetched > 0);
+		}
+	} while ( cFetched > 0 );
+
+	pEnum->Release();*/
+	//DumpGraph(vmr9Filter, 0);
+}
+
 BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter,DWORD monitor)
 {
-	//HWND wnd = (HWND)dwWindow;
 	HRESULT hr;
-
+	m_bEVRLoaded = LoadEVR();
 	if ( !m_bEVRLoaded ) 
 	{
 		Log("EVR libraries are not loaded. Cannot init EVR");
@@ -235,6 +392,7 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter
 
 	m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
 	m_pVMR9Filter=vmr9Filter;
+#ifndef DEFAULT_PRESENTER
 	CComQIPtr<IMFVideoRenderer> pRenderer = m_pVMR9Filter;
 	if (!pRenderer) 
    {
@@ -244,36 +402,22 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter
 	m_evrPresenter = new EVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor);
 
   hr = pRenderer->InitializeRenderer(NULL, m_evrPresenter);
-  if (FAILED(hr) ) 
-  {
+  if (FAILED(hr) ) {
 	  Log("InitializeRenderer failed: 0x%x", hr);
 	  return FALSE;
   }
-  CComQIPtr<IEVRFilterConfig> pConfig = m_pVMR9Filter;
-  if(!pConfig) 
-  {
+  pRenderer.Release();
+#endif
+  /*CComQIPtr<IEVRFilterConfig> pConfig = m_pVMR9Filter;
+  if(!pConfig) {
 	  Log("Could not get IEVRFilterConfig  interface" );
-	  return FALSE;
-  }
-  CComQIPtr<IMFGetService> pService = m_pVMR9Filter;
-  if (!pService) 
-  {
-	  Log("Could not get IMFGetService Interface");
 	  return FALSE;
   }
   if(FAILED(hr = pConfig->SetNumberOfStreams(1)))
   {
 	  Log("EVR:Init() SetNumberOfStreams() failed 0x:%x",hr);
 	  return FALSE;
-  }
-
-  /*IMFVideoDisplayControl *pControl;
-  CHECK_HR(pService->GetService(MR_VIDEO_RENDER_SERVICE, __uuidof(IMFVideoDisplayControl),
-	  (void**)&pControl), "nonsense");
-  RECT pos = {0,0,800,600};
-  CHECK_HR(pControl->SetVideoWindow(wnd), "nixwindow");
-  CHECK_HR(pControl->SetVideoPosition(NULL, &pos), "Geht ned");
-  pControl->Release();*/
+  }*/
 
 	return TRUE;
 }
@@ -284,16 +428,15 @@ void EvrDeinit()
   try
   {
 	  int hr;
-	  if (m_pControl) 
-    {
-		  m_pControl->Release();
-		  m_pControl = NULL;
+	  if (m_pControl) {
+		m_pControl->Release();
+		m_pControl = NULL;
 	  }
 	  if (m_evrPresenter!=NULL)
 	  {
 		  do
 		  {
-			  hr=m_evrPresenter->Release();
+			hr=m_evrPresenter->Release();
 		  } while (hr>0);
 
 		  m_evrPresenter=NULL;
@@ -301,13 +444,19 @@ void EvrDeinit()
 	  }
 	  m_evrPresenter=NULL;
 
-	  m_pDevice=NULL;
-	  m_pVMR9Filter=NULL;
+	  //SAFE_RELEASE(m_pVMR9Filter);
+	  m_pVMR9Filter = NULL;
+	  if ( m_bEVRLoaded )
+	  {
+		  UnloadEVR();
+		  m_bEVRLoaded = FALSE;
+	  }
   }
   catch(...)
   {
 		  Log("EvrDeinit:exception");
   }
+
 }
 
 
@@ -788,52 +937,11 @@ void AddWstCodecToGraph(IGraphBuilder* pGraph)
 	}
 }
 
-void UnloadEVR()
-{
-	Log("Unloading EVR libraries");
-  if (m_hModuleDXVA2!=NULL)
-  {
-    FreeLibrary(m_hModuleDXVA2);
-  }
-  if (m_hModuleEVR!=NULL)
-  {
-    FreeLibrary(m_hModuleEVR);
-  }
-}
 
 
-bool LoadEVR()
-{
-	Log("Loading EVR libraries");
-  char systemFolder[MAX_PATH];
-  char mfDLLFileName[MAX_PATH];
-  GetSystemDirectory(systemFolder,sizeof(systemFolder));
-  sprintf(mfDLLFileName,"%s\\dxva2.dll", systemFolder);
-  m_hModuleDXVA2=LoadLibrary(mfDLLFileName);
-  if (m_hModuleDXVA2!=NULL)
-  {
-	  Log("Found dxva2.dll");
-    m_pDXVA2CreateDirect3DDeviceManager9=(TDXVA2CreateDirect3DDeviceManager9*)GetProcAddress(m_hModuleDXVA2,"DXVA2CreateDirect3DDeviceManager9");
-    if (m_pDXVA2CreateDirect3DDeviceManager9!=NULL)
-    {
-		Log("Found method DXVA2CreateDirect3DDeviceManager9");
-      sprintf(mfDLLFileName,"%s\\evr.dll", systemFolder);
-      m_hModuleEVR=LoadLibrary(mfDLLFileName);
-      m_pMFCreateVideoSampleFromSurface=(TMFCreateVideoSampleFromSurface*)GetProcAddress(m_hModuleEVR,"MFCreateVideoSampleFromSurface");
-	  if ( m_pMFCreateVideoSampleFromSurface )
-	  {
-		  Log("Found method MFCreateVideoSampleFromSurface");
-		  Log("Successfully loaded EVR dlls");
-		  return TRUE;
-	  }
-	}
-  }
-  Log("Could not find all dependencies for EVR!");
-  UnloadEVR();
-  return FALSE;
-}
 
 int processCounter=0;
+int threadCounter=0;
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved
@@ -842,18 +950,16 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		if (processCounter==0)
-			m_bEVRLoaded = LoadEVR();
 		processCounter++;
 		break;
 	case DLL_THREAD_ATTACH:
+		threadCounter++;
 		break;
 	case DLL_THREAD_DETACH:
+		threadCounter--;
 		break;
 	case DLL_PROCESS_DETACH:
 		processCounter--;
-		if ( processCounter == 0 && m_bEVRLoaded )
-			UnloadEVR();
 		break;
 	}
     return TRUE;
