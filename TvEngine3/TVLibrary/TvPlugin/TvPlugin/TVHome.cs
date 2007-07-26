@@ -1335,8 +1335,10 @@ namespace TvPlugin
         }
         if (Navigator.Channel != null)
         {
-          if (channel.IdChannel != Navigator.Channel.IdChannel)
-            Navigator.LastViewedChannel = Navigator.Channel;
+          if (channel.IdChannel != Navigator.Channel.IdChannel || (Navigator.LastViewedChannel == null))
+          {
+            Navigator.LastViewedChannel = Navigator.Channel;            
+          }
         }
         else
         {
@@ -1365,7 +1367,13 @@ namespace TvPlugin
         //Start timeshifting the new tv channel
         TvServer server = new TvServer();
         VirtualCard card;
-        bool _return = false;       
+        bool _return = false;
+
+        // issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.        
+        if (!_avoidSeeking)
+        {          
+          g_Player.PauseGraph();
+        }
 
         if (wasPlaying)
           SeekToEnd(true);
@@ -1397,7 +1405,16 @@ namespace TvPlugin
           if (!g_Player.Playing)
             StartPlay();
 
-          GUIWaitCursor.Hide();                       
+          GUIWaitCursor.Hide();
+
+
+
+          // issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.
+          if (!_avoidSeeking)          
+          {            
+            g_Player.ContinueGraph();                        
+            g_Player.SeekAbsolute(g_Player.Duration);            
+          }                    
 
           return true;
 
@@ -1768,9 +1785,9 @@ namespace TvPlugin
     private int m_currentgroup = 0;
     private DateTime m_zaptime;
     private long m_zapdelay;
-    private Channel m_zapchannel = null;
+    private Channel m_zapchannel = null;    
     private int m_zapgroup = -1;
-    private Channel _lastViewedChannel = null; // saves the last viewed Channel  // mPod
+    private Channel _lastViewedChannel = null; // saves the last viewed Channel  // mPod    
     private Channel m_currentChannel = null;
     private IList channels = new ArrayList();
     private bool reentrant = false;
@@ -1932,8 +1949,7 @@ namespace TvPlugin
     {
       get { return _lastViewedChannel; }
       set { _lastViewedChannel = value; }
-    }
-
+    }   
 
     /// <summary>
     /// Gets the currently active channel group.
@@ -2033,8 +2049,20 @@ namespace TvPlugin
           //  lastViewedChannel = m_currentchannel;
           // Zap to desired channel
           Channel zappingTo = m_zapchannel;
+
+          //remember to apply the new group also.
+          if (m_zapchannel.CurrentGroup != null)
+          {
+            m_currentgroup = GetGroupIndex(m_zapchannel.CurrentGroup.GroupName);
+            MediaPortal.GUI.Library.Log.Info("Channel change:{0} on group {1}", zappingTo.Name, m_zapchannel.CurrentGroup.GroupName);
+          }
+          else
+          {
+            MediaPortal.GUI.Library.Log.Info("Channel change:{0}", zappingTo.Name);
+          }
+                    
           m_zapchannel = null;
-          MediaPortal.GUI.Library.Log.Info("Channel change:{0}", zappingTo.Name);
+          
           TVHome.ViewChannel(zappingTo);          
           reentrant = false;
           return true;
@@ -2104,6 +2132,7 @@ namespace TvPlugin
       if (m_currentChannel != newChannel && newChannel != null)
       {
         m_currentChannel = newChannel;
+        m_currentChannel.CurrentGroup = CurrentGroup;       
       }
     }
 
@@ -2292,11 +2321,13 @@ namespace TvPlugin
     /// </summary>
     public void ZapToLastViewedChannel()
     {
+      
       if (_lastViewedChannel != null)
       {
-        m_zapchannel = _lastViewedChannel;
+        m_zapchannel = _lastViewedChannel;      
         m_zaptime = DateTime.Now;
       }
+      
     }
     #endregion
 
@@ -2369,6 +2400,7 @@ namespace TvPlugin
         m_currentgroup = 0;
 
       m_currentChannel = GetChannel(currentchannelName);
+      
       if (m_currentChannel == null)
       {
         if (m_currentgroup < m_groups.Count)
@@ -2377,7 +2409,7 @@ namespace TvPlugin
           if (group.ReferringGroupMap().Count > 0)
           {
             GroupMap gm = (GroupMap)group.ReferringGroupMap()[0];
-            m_currentChannel = gm.ReferencedChannel();
+            m_currentChannel = gm.ReferencedChannel();            
           }
         }
       }
@@ -2405,7 +2437,7 @@ namespace TvPlugin
           if (groupMap.ReferencedChannel().Name == currentchannelName)
           {
             foundMatchingGroupName = true;
-            m_currentChannel = GetChannel (groupMap.ReferencedChannel().IdChannel);
+            m_currentChannel = GetChannel (groupMap.ReferencedChannel().IdChannel);            
             break;
           }
         }
@@ -2421,6 +2453,7 @@ namespace TvPlugin
           m_currentgroup = 0;
       }
 
+      m_currentChannel.CurrentGroup = CurrentGroup;
 
     }
 
@@ -2441,7 +2474,7 @@ namespace TvPlugin
         try
         {
           if (CurrentGroup.GroupName.Trim() != String.Empty)
-            xmlwriter.SetValue("mytv", "group", CurrentGroup.GroupName);
+            xmlwriter.SetValue("mytv", "group", m_currentChannel.CurrentGroup.GroupName);
         }
         catch (Exception)
         {
