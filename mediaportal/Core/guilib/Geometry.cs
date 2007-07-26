@@ -163,6 +163,8 @@ namespace MediaPortal.GUI.Library
             //Log.Debug("croppedImage W/H {0}x{1}", croppedImageWidth, croppedImageHeight);
             //Log.Debug("fOutputFrameRatio : {0}", fOutputFrameRatio);
             //Log.Debug("fCroppedOutputFrameRatio : {0}", fCroppedOutputFrameRatio);
+            //Log.Debug("fSourceFrameRatio: {0}", fSourceFrameRatio);
+          
 
             switch (ARType)
             {
@@ -205,39 +207,38 @@ namespace MediaPortal.GUI.Library
                     }
                     break;
 
-                case Type.Normal:
+                  case Type.Normal:
                     {
-                        // maximize the movie width
-                        float fNewWidth = (float)ScreenWidth;
-                        float fNewHeight = (float)(fNewWidth / fCroppedOutputFrameRatio); // use the aspect ratio of the cropped source
+                      // maximize the movie width
+                      float fNewWidth = (float)ScreenWidth;
+                      float fNewHeight = (float)(fNewWidth / fOutputFrameRatio);
 
-                        if (fNewHeight > ScreenHeight)
-                        {
-                            fNewHeight = ScreenHeight;
-                            fNewWidth = fNewHeight * fCroppedOutputFrameRatio;
-                        }
+                      if (fNewHeight > ScreenHeight)
+                      {
+                        fNewHeight = ScreenHeight;
+                        fNewWidth = fNewHeight * fOutputFrameRatio;
+                      }
 
-                        // this shouldnt happen, but just make sure that everything still fits onscreen
-                        if (fNewWidth > ScreenWidth || fNewHeight > ScreenHeight)
-                        {
-                            Log.Error("Normal Zoom Mode: 'this shouldnt happen'");
+                      // this shouldnt happen, but just make sure that everything still fits onscreen
+                      if (fNewWidth > ScreenWidth || fNewHeight > ScreenHeight)
+                      {
+                        fNewWidth = (float)ImageWidth;
                             fNewWidth = (float)croppedImageWidth;
                             fNewHeight = (float)croppedImageHeight;
-                        }
+                      }
 
-                        // Centre the movie
-                        float iPosY = (ScreenHeight - fNewHeight) / 2;
-                        float iPosX = (ScreenWidth - fNewWidth) / 2;
+                      // Centre the movie
+                      float iPosY = (ScreenHeight - fNewHeight) / 2;
+                      float iPosX = (ScreenWidth - fNewWidth) / 2;
 
                         rSource = new System.Drawing.Rectangle(cropSettings.Left, cropSettings.Top, croppedImageWidth, croppedImageHeight);
+                      rDest = new System.Drawing.Rectangle((int)iPosX, (int)iPosY, (int)(fNewWidth + 0.5f), (int)(fNewHeight + 0.5f));
 
-                        rDest = new System.Drawing.Rectangle((int)iPosX, (int)iPosY, (int)(fNewWidth + 0.5f), (int)(fNewHeight + 0.5f));
-
-                        //AdjustForCropping(ref rSource, ref rDest, cropSettings, true);
+                      //AdjustForCropping(ref rSource, ref rDest, cropSettings, true);
                     }
-                    break;
+                    break;                    
 
-                case Type.Original:
+                  case Type.Original:
                     {
                         // maximize the movie width
                         float fNewWidth = (float)Math.Min(ImageWidth, ScreenWidth);
@@ -265,7 +266,7 @@ namespace MediaPortal.GUI.Library
                         rDest = new System.Drawing.Rectangle((int)iPosX, (int)iPosY, (int)(fNewWidth + 0.5f), (int)(fNewHeight + 0.5f));
                     }
                     break;
-
+                
                 case Type.LetterBox43:
                     {
                         // shrink movie 33% vertically
@@ -401,7 +402,8 @@ namespace MediaPortal.GUI.Library
         /// <param name="rSource"></param>
         /// <param name="rDest"></param>
         /// <param name="cropSettings"></param>
-        /*void AdjustForCropping(ref System.Drawing.Rectangle rSource, ref System.Drawing.Rectangle rDest, CropSettings cropSettings, bool strictKeepAspect)
+        /*
+        void AdjustForCropping(ref System.Drawing.Rectangle rSource, ref System.Drawing.Rectangle rDest, CropSettings cropSettings, bool strictKeepAspect)
         {
           // temp
           //return;
@@ -478,8 +480,8 @@ namespace MediaPortal.GUI.Library
           if (rDest.Y < 0) Log.Error("Geometry.AdjustForCropping miscalculated, produced NEGATIVE Y coordinate!");
 
           AdjustSourceForCropping(ref rSource, cropSettings);
-        }*/
-
+        }
+        */
         /// <summary>
         /// Adjusts only the source rectangle according to the cropping parameters.
         /// </summary>
