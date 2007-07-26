@@ -481,6 +481,7 @@ HRESULT EVRCustomPresenter::GetTimeToSchedule(CComPtr<IMFSample> pSample, LONGLO
 	{
 		Log("dangerous and unlikely time to schedule [%p]: %I64d. scheduled time: %I64d, now: %I64d",
 			pSample, hnsDelta, hnsPresentationTime, hnsTimeNow);
+    hnsDelta=1;
 	}
 	//Log("Calculated delta: %I64d (rate: %f)", hnsDelta, m_fRate);
 	if ( m_fRate != 1.0f && m_fRate != 0.0f )
