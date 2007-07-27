@@ -782,7 +782,9 @@ namespace MediaPortal.GUI.Video
     public static void PlayTrailer(string url, string videoName)
     {
       GetGUIProperties();
+      MMSUrl = string.Empty;
       GetMMSURL(url);
+      Log.Debug("Url: {0}, mmsurl: {1}, videoname: {2}", url, MMSUrl, videoName);
       bool playOk = false;
       if (useVMR9)
           playOk = g_Player.PlayVideoStream(MMSUrl,videoName);

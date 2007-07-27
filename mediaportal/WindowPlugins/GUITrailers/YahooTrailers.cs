@@ -193,7 +193,7 @@ namespace MediaPortal.GUI.Video
             else if (m.Value.IndexOf("300-wmv-s") != -1)
             {
               Match m1 = Regex.Match(m.Value, @"<a\shref=.http://us.rd.yahoo.com/movies/trailers/(?<movienumber>\d*)/.*,(?<segment>\d*)-300-wmv-s.(?<id>\d*).");
-              TrailersUrl[t] = "http://playlist.yahoo.com/makeplaylist.dll?ids=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"].Value + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
+              TrailersUrl[t] = "http://playlist.yahoo.com/makeplaylist.dll?sid=" + m1.Groups["id"].Value + "&segment=" + m1.Groups["segment"].Value + "&s=" + m1.Groups["movienumber"].Value + "&ru=y&b=639r4gd1i7uth433192d0&type=t";
               Log.Info(m1.Groups["id"].Value);
               Log.Info(m1.Groups["segment"].Value);
               Log.Info(m1.Groups["movienumber"].Value);
