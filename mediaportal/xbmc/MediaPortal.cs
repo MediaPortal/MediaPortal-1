@@ -57,6 +57,7 @@ using Microsoft.Win32;
 using MediaPortal.Configuration;
 using Geometry = MediaPortal.GUI.Library.Geometry;
 using Timer = System.Timers.Timer;
+using MediaPortal.Support;
 
 #endregion
 
@@ -98,6 +99,10 @@ public class MediaPortalApp : D3DApp, IRender
   private bool _suspended = false;
   private bool _onResumeRunning = false;
   protected string _dateFormat = String.Empty;
+
+  private static int _configuredLoglevel = 2;
+  private static bool _enableLogCollector = false;
+  private static bool _mpCrashed = false;
 
 #if AUTOUPDATE
   string m_strNewVersion = "";
@@ -161,6 +166,27 @@ public class MediaPortalApp : D3DApp, IRender
   {
     Thread.CurrentThread.Name = "MPMain";
 
+    if (args.Length > 0)
+    {
+      foreach (string arg in args)
+      {
+        if (arg == "/fullscreen")
+        {
+          _fullscreenOverride = "yes";
+        }
+        if (arg == "/debug")
+        {
+          using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          {
+            // set the loglevel to "debug"
+            _configuredLoglevel = xmlreader.GetValueAsInt("general", "loglevel", 2);
+            xmlreader.SetValue("general", "loglevel", 3);
+          }
+          _enableLogCollector = true;
+        }
+      }
+    }
+    Log.Info("_confloglevel={0}", _configuredLoglevel);
     if (!Config.DirsFileUpdateDetected)
     {
       try
@@ -204,16 +230,6 @@ public class MediaPortalApp : D3DApp, IRender
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
       }
 
-      if (args.Length > 0)
-      {
-        foreach (string arg in args)
-        {
-          if (arg == "/fullscreen")
-          {
-            _fullscreenOverride = "yes";
-          }
-        }
-      }
 #if !DEBUG
       AddExceptionHandler();
 #endif
@@ -394,6 +410,7 @@ public class MediaPortalApp : D3DApp, IRender
             {
               Log.Error(ex);
               Log.Error("MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+              _mpCrashed = true;
             }
             //#endif
             finally
@@ -408,6 +425,7 @@ public class MediaPortalApp : D3DApp, IRender
         {
           Log.Error(ex);
           Log.Error("MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+          _mpCrashed = true;
         }
 #endif
 #if !DEBUG
@@ -427,13 +445,31 @@ public class MediaPortalApp : D3DApp, IRender
           Win32API.EnableStartBar(true);
           Win32API.ShowStartBar(true);
         }
-        
+
         if (useRestartOptions)
         {
           Log.Info("Main: Exiting Windows - {0}", restartOptions);
           WindowsController.ExitWindows(restartOptions, true);
         }
-         
+        else
+        {
+          Log.Info("_enableLogCollector={0}", _enableLogCollector);
+          if (_enableLogCollector || _mpCrashed)
+          {
+            using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+              xmlreader.SetValue("general", "loglevel", _configuredLoglevel);
+            }
+            LogCollector dlg;
+            if (_mpCrashed)
+              dlg = new LogCollector(LogCollector.DialogCategory.EXCEPTION_VIEW);
+            else
+            {
+              dlg = new LogCollector(LogCollector.DialogCategory.DEBUG_VIEW);
+              dlg.ShowDialog(null);
+            }
+          }
+        }
       }
     }
     else

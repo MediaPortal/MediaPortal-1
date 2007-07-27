@@ -61,7 +61,8 @@ namespace MediaPortal
 
       ExceptionLogger logger = new ExceptionLogger(ex);
       logger.CreateLogs(directory);
-
+      LogCollector dlg = new LogCollector(LogCollector.DialogCategory.EXCEPTION_VIEW);
+      dlg.ShowDialog();
       Log.Info("MediaPortal: stop...");
       //Process.Start("crash.exe");
       Application.Exit();
