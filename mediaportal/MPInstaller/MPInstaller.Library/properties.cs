@@ -22,7 +22,8 @@
  */
 
 #endregion
-
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -35,6 +36,8 @@ namespace MediaPortal.MPInstaller
   {
     private string mpminversion;
     private string mpmaxversion;
+    private string minextensionversion;
+    private string maxextensionversion;
     private string forumurl;
     private string weburl;
     private DateTime creationdate;
@@ -44,7 +47,7 @@ namespace MediaPortal.MPInstaller
     {
       Clear();
     }
-
+    [Description("Minimum version of MediaPortal")]
     public string MPMinVersion
     {
       set
@@ -56,7 +59,9 @@ namespace MediaPortal.MPInstaller
         return mpminversion;
       }
     }
-
+    [
+    Description("Maximum version of MediaPortal"),
+    ]
     public string MPMaxVersion
     {
       set
@@ -66,6 +71,30 @@ namespace MediaPortal.MPInstaller
       get
       {
         return mpmaxversion;
+      }
+    }
+
+    public string MinExtensionVersion
+    {
+      set
+      {
+        minextensionversion = value;
+      }
+      get
+      {
+        return minextensionversion;
+      }
+    }
+
+    public string MaxExtensionVersion
+    {
+      set
+      {
+        maxextensionversion = value;
+      }
+      get
+      {
+        return maxextensionversion;
       }
     }
 
@@ -104,7 +133,7 @@ namespace MediaPortal.MPInstaller
         return creationdate;
       }
     }
-
+    [Description("Used only when a grouping is specified. If is True alove select only one group")]
     public bool SingleGroupSelect
     {
       set
@@ -120,6 +149,8 @@ namespace MediaPortal.MPInstaller
     {
       writer.WriteElementString("MPMaxVersion", MPMaxVersion);
       writer.WriteElementString("MPMinVersion", MPMinVersion);
+      writer.WriteElementString("MinExtensionVersion", MinExtensionVersion);
+      writer.WriteElementString("MaxExtensionVersion", MaxExtensionVersion);
       writer.WriteElementString("ForumURL", ForumURL);
       writer.WriteElementString("WebURL", WebURL);
       writer.WriteElementString("CreationDate", CreationDate.ToString("F", new CultureInfo("en-US")));
@@ -137,6 +168,12 @@ namespace MediaPortal.MPInstaller
         node = basenode.SelectSingleNode("MPMinVersion");
         if (node != null && node.InnerText != null)
           MPMinVersion = node.InnerText;
+        node = basenode.SelectSingleNode("MinExtensionVersion");
+        if (node != null && node.InnerText != null)
+          MinExtensionVersion = node.InnerText;
+        node = basenode.SelectSingleNode("MaxExtensionVersion");
+        if (node != null && node.InnerText != null)
+          MaxExtensionVersion = node.InnerText;
         node = basenode.SelectSingleNode("ForumURL");
         if (node != null && node.InnerText != null)
           ForumURL = node.InnerText;

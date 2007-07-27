@@ -95,7 +95,7 @@ namespace MediaPortal.MPInstaller
           this.label10 = new System.Windows.Forms.Label();
           this.label9 = new System.Windows.Forms.Label();
           this.proiectt_textBox5 = new System.Windows.Forms.TextBox();
-          this.proiectt_textBox4 = new System.Windows.Forms.TextBox();
+          this.proiectt_textBox4 = new System.Windows.Forms.MaskedTextBox();
           this.label5 = new System.Windows.Forms.Label();
           this.proiectt_textBox3 = new System.Windows.Forms.TextBox();
           this.label4 = new System.Windows.Forms.Label();
@@ -115,6 +115,8 @@ namespace MediaPortal.MPInstaller
           this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
           this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
           this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+          this.proiectt_comboBox1 = new System.Windows.Forms.ComboBox();
+          this.label12 = new System.Windows.Forms.Label();
           this.menuStrip1.SuspendLayout();
           this.contextMenuStrip1.SuspendLayout();
           this.tabPage_Skin.SuspendLayout();
@@ -642,6 +644,8 @@ namespace MediaPortal.MPInstaller
           // 
           // tabPage_Proiect
           // 
+          this.tabPage_Proiect.Controls.Add(this.label12);
+          this.tabPage_Proiect.Controls.Add(this.proiectt_comboBox1);
           this.tabPage_Proiect.Controls.Add(this.proiectt_textBox6);
           this.tabPage_Proiect.Controls.Add(this.label10);
           this.tabPage_Proiect.Controls.Add(this.label9);
@@ -714,6 +718,7 @@ namespace MediaPortal.MPInstaller
           // proiectt_textBox4
           // 
           this.proiectt_textBox4.Location = new System.Drawing.Point(94, 85);
+          this.proiectt_textBox4.Mask = "99.99.99.99999";
           this.proiectt_textBox4.Name = "proiectt_textBox4";
           this.proiectt_textBox4.Size = new System.Drawing.Size(76, 20);
           this.proiectt_textBox4.TabIndex = 7;
@@ -912,6 +917,30 @@ namespace MediaPortal.MPInstaller
           // 
           this.folderBrowserDialog1.ShowNewFolderButton = false;
           // 
+          // proiectt_comboBox1
+          // 
+          this.proiectt_comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.proiectt_comboBox1.FormattingEnabled = true;
+          this.proiectt_comboBox1.Items.AddRange(new object[] {
+            "Stable ",
+            "Beta",
+            "Test",
+            "Update"});
+          this.proiectt_comboBox1.Location = new System.Drawing.Point(94, 111);
+          this.proiectt_comboBox1.Name = "proiectt_comboBox1";
+          this.proiectt_comboBox1.Size = new System.Drawing.Size(114, 21);
+          this.proiectt_comboBox1.TabIndex = 12;
+          this.proiectt_comboBox1.SelectedIndexChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
+          // 
+          // label12
+          // 
+          this.label12.AutoSize = true;
+          this.label12.Location = new System.Drawing.Point(3, 119);
+          this.label12.Name = "label12";
+          this.label12.Size = new System.Drawing.Size(52, 13);
+          this.label12.TabIndex = 13;
+          this.label12.Text = "Release :";
+          // 
           // Form1
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1009,7 +1038,7 @@ namespace MediaPortal.MPInstaller
         private System.Windows.Forms.TextBox proiectt_textBox3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox proiectt_textBox4;
+        private System.Windows.Forms.MaskedTextBox proiectt_textBox4;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox skint_comboBox1;
         private System.Windows.Forms.TabPage tabPage_Thumbs;
@@ -1042,6 +1071,8 @@ namespace MediaPortal.MPInstaller
       private System.Windows.Forms.ToolStripMenuItem fileAutomatedDiscoverTypeToolStripMenuItem;
       private System.Windows.Forms.ToolStripMenuItem directoryAutomatedDiscoverTypeToolStripMenuItem;
       private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+      private System.Windows.Forms.Label label12;
+      private System.Windows.Forms.ComboBox proiectt_comboBox1;
     }
 }
 

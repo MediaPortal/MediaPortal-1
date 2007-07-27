@@ -297,6 +297,7 @@ namespace MediaPortal.MPInstaller
       proiectt_textBox4.Text = _struct.Version;
       proiectt_textBox5.Text = _struct.Description;
       proiectt_textBox6.Text = _struct.Group;
+      proiectt_comboBox1.Text = _struct.Release;
       pictureBox1.Image = _struct.Logo;
       _loading = false;
     }
@@ -380,6 +381,7 @@ namespace MediaPortal.MPInstaller
       tabControl1.Controls.Clear();
       tabControl1.Controls.Add(tabPage_Proiect);
       tabControl1.Controls.Add(tabPage_Advanced);
+      propertyGrid1.SelectedObject = _struct.ProiectProperties;
       textt_comboBox1.Items.Clear();
       textt_comboBox1.Items.Add(MPinstalerStruct.TEXT_LOG_TYPE);
       textt_comboBox1.Items.Add(MPinstalerStruct.TEXT_README_TYPE);
@@ -547,6 +549,7 @@ namespace MediaPortal.MPInstaller
         _struct.Version = proiectt_textBox4.Text;
         _struct.Description = proiectt_textBox5.Text;
         _struct.Group = proiectt_textBox6.Text;
+        _struct.Release = proiectt_comboBox1.Text;
       }
     }
 
@@ -715,6 +718,12 @@ namespace MediaPortal.MPInstaller
       {
         MessageBox.Show("Group is mandatory !", "Stop");
         proiectt_textBox6.Focus();
+        return false;
+      }
+      if (proiectt_comboBox1.Text.Length == 0)
+      {
+        MessageBox.Show("Release is mandatory !", "Stop");
+        proiectt_comboBox1.Focus();
         return false;
       }
       return true;
