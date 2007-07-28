@@ -36,13 +36,13 @@ namespace MediaPortal.GUI.Library
     {
         public enum Type
         {
-            Zoom,     //widescreen
-            Normal,   //pan scan
-            Stretch,  //letterbox
-            Original, //original source format
-            LetterBox43, // Letterbox 4:3
-            PanScan43, // Pan&Scan 4:3
-            Zoom14to9 // 4:3 on 16:9 screens
+          Stretch,     // letterbox
+          Normal,      // pan scan
+          Original,    // original source format
+          LetterBox43, // Letterbox 4:3
+          PanScan43,   // Pan&Scan 4:3
+          Zoom,        // widescreen
+          Zoom14to9,   // 4:3 on 16:9 screens
         }
 
         int _imageWidth = 100;				// width of the video window or image

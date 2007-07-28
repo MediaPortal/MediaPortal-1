@@ -2215,5 +2215,95 @@ namespace MediaPortal.Util
       return result;
     }
 
+    public static string GetAspectRatio(MediaPortal.GUI.Library.Geometry.Type aspectRatioType)
+    {
+      switch (aspectRatioType)
+      {
+        case MediaPortal.GUI.Library.Geometry.Type.Stretch:
+          return "stretch";
+
+        case MediaPortal.GUI.Library.Geometry.Type.Normal:
+          return "normal";
+
+        case MediaPortal.GUI.Library.Geometry.Type.Original:
+          return "original";
+
+        case MediaPortal.GUI.Library.Geometry.Type.LetterBox43:
+          return "letterbox";
+
+        case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
+          return "panscan";
+
+        case MediaPortal.GUI.Library.Geometry.Type.Zoom:
+          return "zoom";
+
+        case MediaPortal.GUI.Library.Geometry.Type.Zoom14to9:
+          return "zoom149";
+
+        default:
+          return "normal";
+      }
+    }
+
+    public static MediaPortal.GUI.Library.Geometry.Type GetAspectRatio(string aspectRatioText)
+    {
+      switch (aspectRatioText)
+      {
+        case "stretch":
+          return MediaPortal.GUI.Library.Geometry.Type.Stretch;
+
+        case "normal":
+          return MediaPortal.GUI.Library.Geometry.Type.Normal;
+
+        case "original":
+          return MediaPortal.GUI.Library.Geometry.Type.Original;
+
+        case "letterbox":
+          return MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
+
+        case "panscan":
+          return MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+
+        case "zoom":
+          return MediaPortal.GUI.Library.Geometry.Type.Zoom;
+
+        case "zoom149":
+          return MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
+
+        default:
+          return MediaPortal.GUI.Library.Geometry.Type.Normal;
+      }
+    }
+
+    public static MediaPortal.GUI.Library.Geometry.Type GetAspectRatioByLangID(int languageID)
+    {
+      switch (languageID)
+      {
+        case 942:
+          return MediaPortal.GUI.Library.Geometry.Type.Stretch;
+
+        case 943:
+          return MediaPortal.GUI.Library.Geometry.Type.Normal;
+
+        case 944:
+          return MediaPortal.GUI.Library.Geometry.Type.Original;
+
+        case 945:
+          return MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
+
+        case 946:
+          return MediaPortal.GUI.Library.Geometry.Type.PanScan43;
+
+        case 947:
+          return MediaPortal.GUI.Library.Geometry.Type.Zoom;
+
+        case 1190:
+          return MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
+
+        default:
+          return MediaPortal.GUI.Library.Geometry.Type.Normal;
+      }
+    }
+
   }
 }

@@ -158,14 +158,8 @@ namespace MediaPortal.GUI.Video
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
         _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
 
-        string strValue = xmlreader.GetValueAsString(key, "defaultar", "normal");
-        if (strValue.Equals("zoom")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
-        if (strValue.Equals("stretch")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
-        if (strValue.Equals("normal")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
-        if (strValue.Equals("original")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
-        if (strValue.Equals("letterbox")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
-        if (strValue.Equals("panscan")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
-        if (strValue.Equals("zoom149")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
+        string aspectRatioText = xmlreader.GetValueAsString(key, "defaultar", "normal");
+        GUIGraphicsContext.ARType = MediaPortal.Util.Utils.GetAspectRatio(aspectRatioText);
       }
     }
 
@@ -179,36 +173,8 @@ namespace MediaPortal.GUI.Video
         if (g_Player.IsTVRecording)
           strKey = "mytv";
 
-        switch (GUIGraphicsContext.ARType)
-        {
-          case MediaPortal.GUI.Library.Geometry.Type.Zoom:
-            xmlwriter.SetValue(strKey, "defaultar", "zoom");
-            break;
-
-          case MediaPortal.GUI.Library.Geometry.Type.Stretch:
-            xmlwriter.SetValue(strKey, "defaultar", "stretch");
-            break;
-
-          case MediaPortal.GUI.Library.Geometry.Type.Normal:
-            xmlwriter.SetValue(strKey, "defaultar", "normal");
-            break;
-
-          case MediaPortal.GUI.Library.Geometry.Type.Original:
-            xmlwriter.SetValue(strKey, "defaultar", "original");
-            break;
-
-          case MediaPortal.GUI.Library.Geometry.Type.LetterBox43:
-            xmlwriter.SetValue(strKey, "defaultar", "letterbox");
-            break;
-
-          case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
-            xmlwriter.SetValue(strKey, "defaultar", "panscan");
-            break;
-
-          case MediaPortal.GUI.Library.Geometry.Type.Zoom14to9:
-            xmlwriter.SetValue(strKey, "defaultar", "zoom149");
-            break;
-        }
+        string aspectRatioText = MediaPortal.Util.Utils.GetAspectRatio(GUIGraphicsContext.ARType);
+        xmlwriter.SetValue(strKey, "defaultar", aspectRatioText);
       }
     }
     #endregion
@@ -1295,6 +1261,9 @@ namespace MediaPortal.GUI.Video
       dlg.AddLocalizedString(947); // Zoom
       dlg.AddLocalizedString(1190); // Zoom 14:9
 
+      // set the focus to currently used mode
+      dlg.SelectedLabel = (int)GUIGraphicsContext.ARType;
+
       // show dialog and wait for result
       _IsDialogVisible = true;
       dlg.DoModal(GetID);
@@ -1302,49 +1271,40 @@ namespace MediaPortal.GUI.Video
 
       if (dlg.SelectedId == -1) return;
       _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+
+      GUIGraphicsContext.ARType = MediaPortal.Util.Utils.GetAspectRatioByLangID(dlg.SelectedId);
+      SaveSettings();
+
+      // maybe we could replace the switch by Utils.GetAspectRatio():
       string statusLine = "";
       switch (dlg.SelectedId)
       {
         case 942: // Stretch
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
           statusLine = "Stretch";
-          SaveSettings();
           break;
 
         case 943: // Normal
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
           statusLine = "Normal";
-          SaveSettings();
           break;
 
         case 944: // Original
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
           statusLine = "Original";
-          SaveSettings();
           break;
 
         case 945: // Letterbox
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
           statusLine = "Letterbox 4:3";
-          SaveSettings();
           break;
 
         case 946: // Pan and scan
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
           statusLine = "PanScan 4:3";
-          SaveSettings();
           break;
 
         case 947: // Zoom
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
           statusLine = "Zoom";
-          SaveSettings();
           break;
 
         case 1190: // Zoom 14:9
-          GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom14to9;
           statusLine = "Zoom 14:9";
-          SaveSettings();
           break;
       }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);

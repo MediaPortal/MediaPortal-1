@@ -204,34 +204,39 @@ namespace WindowPlugins.GUISettings.TV
 
     void OnAspectRatio()
     {
-      string[] aspectRatio = { "normal", "original", "stretch", "zoom149", "zoom", "letterbox", "panscan" };
-      string defaultAspectRatio = "";
+      MediaPortal.GUI.Library.Geometry.Type aspectRatio = Geometry.Type.Normal;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        defaultAspectRatio = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
+        string aspectRatioText = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
+        aspectRatio = Utils.GetAspectRatio(aspectRatioText);
       }
+
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg != null)
+      if (dlg == null) return;
+      dlg.Reset();
+      dlg.SetHeading(941); // Change aspect ratio
+
+      dlg.AddLocalizedString(942); // Stretch
+      dlg.AddLocalizedString(943); // Normal
+      dlg.AddLocalizedString(944); // Original
+      dlg.AddLocalizedString(945); // Letterbox
+      dlg.AddLocalizedString(946); // Pan and scan
+      dlg.AddLocalizedString(947); // Zoom
+      dlg.AddLocalizedString(1190); // Zoom 14:9
+
+      // set the focus to currently used mode
+      dlg.SelectedLabel = (int)aspectRatio;
+
+      // show dialog and wait for result
+      dlg.DoModal(GetID);
+      if (dlg.SelectedId == -1) return;
+
+      aspectRatio = Utils.GetAspectRatioByLangID(dlg.SelectedId);
+
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(496));//Menu
-        int selected = 0;
-        for (int index = 0; index < aspectRatio.Length; index++)
-        {
-          if (aspectRatio[index].Equals(defaultAspectRatio))
-          {
-            selected = index;
-          }
-          dlg.Add(aspectRatio[index]);
-        }
-        dlg.SelectedLabel = selected;
-        dlg.DoModal(GetID);
-        if (dlg.SelectedLabel < 0)
-          return;
-        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-        {
-          xmlwriter.SetValue("mytv", "defaultar", aspectRatio[dlg.SelectedLabel]);
-        }
+        string aspectRatioText = Utils.GetAspectRatio(aspectRatio);
+        xmlwriter.SetValue("mytv", "defaultar", aspectRatioText);
       }
     }
 
