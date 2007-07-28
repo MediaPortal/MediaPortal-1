@@ -113,6 +113,7 @@ void  CEpgParser::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageInde
 void CEpgParser::AbortGrabbing()
 {
 	CEnterCriticalSection enter(m_section);
+	m_bGrabbing=false;
 	m_epgDecoder.AbortGrabbing();
 }
 
