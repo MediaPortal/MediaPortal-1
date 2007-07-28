@@ -100,9 +100,9 @@ namespace MediaPortal.Support
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(12, 31);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(256, 13);
+      this.label2.Size = new System.Drawing.Size(249, 13);
       this.label2.TabIndex = 1;
-      this.label2.Text = "Hit \"Collect\" to collect the log files or \"Cancel\" to exit";
+      this.label2.Text = "Hit \"Collect\" to collect the log files or \"Close\" to exit";
       // 
       // labelHeading
       // 
@@ -141,7 +141,7 @@ namespace MediaPortal.Support
       this.btnCancel.Name = "btnCancel";
       this.btnCancel.Size = new System.Drawing.Size(75, 23);
       this.btnCancel.TabIndex = 6;
-      this.btnCancel.Text = "Cancel";
+      this.btnCancel.Text = "Close";
       this.btnCancel.UseVisualStyleBackColor = true;
       this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
       // 
@@ -159,6 +159,7 @@ namespace MediaPortal.Support
       this.Name = "LogCollector";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "MediaPortal Log Collector";
+      this.TopMost = true;
       this.splitContainer1.Panel1.ResumeLayout(false);
       this.splitContainer1.Panel1.PerformLayout();
       this.splitContainer1.Panel2.ResumeLayout(false);

@@ -57,7 +57,7 @@ namespace MediaPortal.Support
       this.progressBar.Location = new System.Drawing.Point(16, 38);
       this.progressBar.Maximum = 5;
       this.progressBar.Name = "progressBar";
-      this.progressBar.Size = new System.Drawing.Size(228, 23);
+      this.progressBar.Size = new System.Drawing.Size(378, 23);
       this.progressBar.Step = 1;
       this.progressBar.TabIndex = 2;
       // 
@@ -65,7 +65,7 @@ namespace MediaPortal.Support
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(257, 77);
+      this.ClientSize = new System.Drawing.Size(406, 77);
       this.ControlBox = false;
       this.Controls.Add(this.progressBar);
       this.Controls.Add(this.labelCurrentAction);

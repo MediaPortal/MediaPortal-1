@@ -77,15 +77,10 @@ namespace MediaPortal.Support
       // Prepare the temporary directory where we collect the logs
       string mpdir = Path.GetDirectoryName(Application.ExecutablePath);
       string tmpLogPath=mpdir+"\\tmplog";
-      if (!Directory.Exists(tmpLogPath))
-        Directory.CreateDirectory(tmpLogPath);
-      else
-      {
-        DirectoryInfo di=new DirectoryInfo(tmpLogPath);
-        FileInfo[] fis=di.GetFiles();
-        foreach (FileInfo fi in fis)
-          fi.Delete();
-      }
+
+      Directory.Delete(tmpLogPath, true);
+      Directory.CreateDirectory(tmpLogPath);
+
       ProgressDialog dlg = new ProgressDialog();
       dlg.Show();
 
@@ -122,8 +117,10 @@ namespace MediaPortal.Support
       arch.Dispose();
       dlg.Close();
 
+      Directory.Delete(tmpLogPath, true);
       MessageBox.Show("All logs have been collected an compressed to the file [" + mpdir + "\\mplogs.zip]", "Finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
       btnCollect.Visible = false;
+      btnCancel.Left = 96;
     }
   }
 }
