@@ -151,6 +151,7 @@ namespace SetupTv.Sections
                       atscChannel.MinorChannel = minor;
                       atscChannel.AudioPid = audio;
                       atscChannel.VideoPid = video;
+                      atscChannel.ModulationType = (ModulationType)(comboBoxModulation.SelectedIndex);
                       layer.AddTuningDetails(_channel, atscChannel);
                     }
                   }

@@ -840,6 +840,7 @@ namespace SetupTv.Sections
                 atscChannel.TransportId = transportId;
                 atscChannel.AudioPid = audioPid;
                 atscChannel.VideoPid = videoPid;
+                atscChannel.ModulationType = (ModulationType)modulation;
                 layer.AddTuningDetails(dbChannel, atscChannel);
                 break;
               case 2: //DVBCChannel

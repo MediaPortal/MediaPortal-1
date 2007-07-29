@@ -308,6 +308,7 @@ namespace TvDatabase
             atscChannel.TransportId = detail.TransportId;
             atscChannel.AudioPid = detail.AudioPid;
             atscChannel.VideoPid = detail.VideoPid;
+            atscChannel.ModulationType = (ModulationType)detail.Modulation;
             return atscChannel;
           case 2: //DVBCChannel
             DVBCChannel dvbcChannel = new DVBCChannel();
@@ -410,6 +411,7 @@ namespace TvDatabase
             atscChannel.TransportId = detail.TransportId;
             atscChannel.AudioPid = detail.AudioPid;
             atscChannel.VideoPid = detail.VideoPid;
+            atscChannel.ModulationType = (ModulationType)detail.Modulation;
             tvChannels.Add(atscChannel);
             break;
           case 2: //DVBCChannel
@@ -566,6 +568,7 @@ namespace TvDatabase
         channelNumber = atscChannel.PhysicalChannel;
         videoPid = atscChannel.VideoPid;
         audioPid = atscChannel.AudioPid;
+        modulation = (int)atscChannel.ModulationType;
         channelType = 1;
       }
 
@@ -680,6 +683,7 @@ namespace TvDatabase
         channelNumber = atscChannel.PhysicalChannel;
         videoPid = atscChannel.VideoPid;
         audioPid = atscChannel.AudioPid;
+        modulation = (int)atscChannel.ModulationType;
         channelType = 1;
       }
 

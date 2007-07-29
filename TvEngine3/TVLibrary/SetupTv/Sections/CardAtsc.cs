@@ -157,11 +157,13 @@ namespace SetupTv.Sections
             tuneChannel.ModulationType = ModulationType.Mod256Qam;
             Log.WriteFile("ATSC tune: QAM checkbox selected - using 256Qam");
           }
-          else tuneChannel.ModulationType = ModulationType.ModNotSet;
+          // old OTA should be set to 8vsb afaik.
+          //else tuneChannel.ModulationType = ModulationType.ModNotSet;
+          else tuneChannel.ModulationType = ModulationType.Mod8Vsb;
           string line = String.Format("{0}tp- channel:{1}", 1 + index, tuneChannel.PhysicalChannel);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
-          if (index == 2)
+          if (index == minchan)
           {
             RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
           }
