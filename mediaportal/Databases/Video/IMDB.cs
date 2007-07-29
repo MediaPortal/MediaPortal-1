@@ -2777,4 +2777,17 @@ namespace MediaPortal.Video.Database
     }
     #endregion
   } // END class IMDB
+
+
+  /// <summary>
+  /// Interface used for script support
+  /// </summary>
+  public interface IIMDBScriptGrabber
+  {
+    void FindFilm(string title, int limit, ArrayList elements);
+    bool GetDetails(IMDB.IMDBUrl url, ref IMDBMovie movieDetails);
+    string GetName();
+    string GetLanguage();
+  }
+
 }// END namespace
