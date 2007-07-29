@@ -1,4 +1,5 @@
 using System;
+using System.Windows.Forms;
 using System.Collections.Generic;
 using MediaPortal.Utils.CommandLine;
 
@@ -51,9 +52,7 @@ namespace MediaPortal.EPG.WebEPGxmltv
 
     public void DisplayOptions()
     {
-      Console.WriteLine("Vaild Command Line options:");
-      Console.WriteLine("/webepg=[path]  Path to webepg directory");
-      Console.WriteLine("/xmltv=[path]   Path to xmltv directory");
+      MessageBox.Show("Vaild Command Line options:\n/webepg=[path]  Path to webepg directory\n/xmltv=[path]   Path to xmltv directory", "Command Line Help", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
     #endregion
   }
