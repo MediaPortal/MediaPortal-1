@@ -67,6 +67,7 @@
         <type>button</type>
         <id>6</id>
         <label>341</label>
+        <ondown>7</ondown>
         <alignY>center</alignY>
       </control>
       <!-- TV Shows -->
@@ -75,7 +76,9 @@
         <id>7</id>
         <hyperlink>9811</hyperlink>
         <label>TV Shows</label>
+        <ondown>8</ondown>
         <alignY>center</alignY>
+        <visible>plugin.isenabled(MP-TV Series)</visible>
       </control>
       <!-- Trailers -->
       <control>
@@ -85,6 +88,7 @@
         <label>5906</label>
         <ondown>99</ondown>
         <alignY>center</alignY>
+        <visible>plugin.isenabled(My Trailers)</visible>
       </control>
     </control>
     <control>
