@@ -133,9 +133,9 @@ namespace SetupTv.Sections
         if (checkBoxQAM.Checked)
         {
           minchan = 0;
-          maxchan = 255;
-          Log.WriteFile("ATSC tune: QAM checkbox selected - using minchan 0 & maxchan 255");
+          maxchan = 99;
         }
+        Log.WriteFile("ATSC tune: using min channel {0} & max channel {1}",minchan, maxchan);
         for (int index = minchan; index <= maxchan; ++index)
         {
           if (_stopScanning) return;
