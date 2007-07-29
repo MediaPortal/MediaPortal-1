@@ -115,6 +115,11 @@ namespace MediaPortal.Utils.Time
       }
       return false;
     }
+
+    public override string ToString()
+    {
+      return _start.ToString() + "-" + _end.ToString();
+    }
     #endregion
   }
 }

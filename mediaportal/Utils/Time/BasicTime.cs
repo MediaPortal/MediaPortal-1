@@ -302,5 +302,10 @@ namespace MediaPortal.Utils.Time
         _hour = 0;
     }
     #endregion
+
+    public override string ToString()
+    {
+      return _hour + ":" + _minute;
+    }
   }
 }
