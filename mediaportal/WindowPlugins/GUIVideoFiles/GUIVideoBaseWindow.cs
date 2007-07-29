@@ -71,7 +71,6 @@ namespace MediaPortal.GUI.Video
     protected string m_strPlayListPath = String.Empty;
     protected string _currentFolder = String.Empty;
     protected string _lastFolder = String.Empty;
-    protected bool m_bShowTrailerButton = false;
     protected bool m_bPlaylistsViewMode = false;
     protected PlayListPlayer playlistPlayer;
 
@@ -120,8 +119,6 @@ namespace MediaPortal.GUI.Video
 
         m_strPlayListPath = xmlreader.GetValueAsString("movies", "playlists", playListFolder);
         m_strPlayListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(m_strPlayListPath);
-
-        m_bShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", false);
       }
 
       SwitchView();
@@ -461,10 +458,6 @@ namespace MediaPortal.GUI.Video
 
       if (btnSortBy != null)
         btnSortBy.SortChanged += new SortEventHandler(SortChanged);
-
-      // Check if mytrailers-plugin is enabled
-      if (btnTrailers != null)
-        btnTrailers.Visible = m_bShowTrailerButton;
       
       base.OnPageLoad();
     }

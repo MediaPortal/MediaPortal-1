@@ -86,6 +86,7 @@
         <hyperlink>5900</hyperlink>
         <onright>50</onright>
         <ondown>99</ondown>
+        <visible>plugin.isenabled(My Trailers)</visible>
       </control>
     </control>
     <import>common.facade.video.xml</import>
