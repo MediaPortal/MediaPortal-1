@@ -37,28 +37,39 @@ namespace MediaPortal.GUI.Library
       public int m_info;
       public int m_data1;
       public int m_data2;
+      public string m_stringData;
       public GUIInfo(int info)
       {
         m_info = info;
         m_data1 = 0;
         m_data2 = 0;
+        m_stringData = String.Empty;
       }
       public GUIInfo(int info, int data1)
       {
         m_info = info;
         m_data1 = data1;
         m_data2 = 0;
+        m_stringData = String.Empty;
+      }
+      public GUIInfo(int info, string stringData)
+      {
+        m_info = info;
+        m_data1 = 0;
+        m_data2 = 0;
+        m_stringData = stringData;
       }
       public GUIInfo(int info, int data1, int data2)
       {
         m_info = info;
         m_data1 = data1;
         m_data2 = data2;
+        m_stringData = String.Empty;
       }
       public override bool Equals(object r)
       {
         GUIInfo right = (GUIInfo)r;
-        return (m_info == right.m_info && m_data1 == right.m_data1 && m_data2 == right.m_data2);
+        return (m_info == right.m_info && m_data1 == right.m_data1 && m_data2 == right.m_data2 && m_stringData == right.m_stringData);
       }
       public override int GetHashCode()
       {
@@ -284,6 +295,8 @@ namespace MediaPortal.GUI.Library
 
     public const int SYSTEM_IDLE_TIME_START = 20000;
     public const int SYSTEM_IDLE_TIME_FINISH = 21000;// 1000 seconds
+
+    public const int PLUGIN_IS_ENABLED = 25000;
 
     public const int CONTROL_IS_VISIBLE = 29998;
     public const int CONTROL_GROUP_HAS_FOCUS = 29999;
@@ -641,6 +654,23 @@ namespace MediaPortal.GUI.Library
           int winID = TranslateWindowString(strTest.Substring(12, strTest.Length - 13));
           if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
             return AddMultiInfo(new GUIInfo(bNegate ? -WINDOW_NEXT : WINDOW_NEXT, winID, 0));
+        }
+      }
+      else if (strCategory == "plugin")
+      {
+        if (strTest.Substring(0, 17) == "plugin.isenabled(")
+        {
+          // use original condition, because plugin Name is case sensitive
+          string pluginName = strCondition;
+          pluginName = pluginName.TrimStart(new char[] { ' ' });
+          pluginName = pluginName.TrimEnd(new char[] { ' ' });
+          if (bNegate)
+            pluginName = pluginName.Remove(0, 1);
+
+          pluginName = pluginName.Substring(17, strTest.Length - 18);
+
+          if (pluginName != String.Empty)
+            return AddMultiInfo(new GUIInfo(bNegate ? -PLUGIN_IS_ENABLED : PLUGIN_IS_ENABLED, pluginName));
         }
       }
       else if (strCategory == "control")
@@ -1184,6 +1214,11 @@ namespace MediaPortal.GUI.Library
             //if (pWindow!=null) 
             //  bReturn = pWindow.ControlGroupHasFocus(info.m_data1, info.m_data2);
             bReturn = false;
+          }
+          break;
+        case PLUGIN_IS_ENABLED:
+          {
+            bReturn = PluginManager.IsPluginNameEnabled(info.m_stringData);
           }
           break;
         case CONTROL_IS_VISIBLE:
