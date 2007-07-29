@@ -30,10 +30,7 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Xml;
 using DirectShowLib;
-
-
 using TvDatabase;
-
 using TvControl;
 using TvLibrary;
 using TvLibrary.Log;
@@ -46,7 +43,6 @@ namespace SetupTv.Sections
 {
   public partial class CardAtsc : SectionSettings
   {
-
     int _cardNumber;
     bool _isScanning = false;
     bool _stopScanning = false;
@@ -70,6 +66,18 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
+      UpdateStatus();
+      TvBusinessLayer layer = new TvBusinessLayer();
+      checkBoxQAM.Checked = (layer.GetSetting("atsc" + _cardNumber.ToString() + "supportsqam", "false").Value == "true");
+    }
+
+    public override void OnSectionDeActivated()
+    {
+      base.OnSectionDeActivated();
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("atsc" + _cardNumber.ToString() + "supportsqam", "false");
+      setting.Value = checkBoxQAM.Checked ? "true" : "false";
+      setting.Persist();
     }
 
     void UpdateStatus()
@@ -100,13 +108,13 @@ namespace SetupTv.Sections
         _stopScanning = true;
       }
     }
+
     void DoScan()
     {
       int tvChannelsNew = 0;
       int radioChannelsNew = 0;
       int tvChannelsUpdated = 0;
       int radioChannelsUpdated = 0;
-
       string buttonText = mpButtonScanTv.Text;
       try
       {
@@ -115,21 +123,26 @@ namespace SetupTv.Sections
         mpButtonScanTv.Text = "Cancel...";
         RemoteControl.Instance.EpgGrabberEnabled = false;
         listViewStatus.Items.Clear();
-
-
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-
         User user = new User();
         user.CardId = _cardNumber;
-        for (int index = 2; index <= 69; ++index)
+        int minchan = 2;
+        int maxchan = 69;
+        //Check if QAM if so then the number of channels needs to start at 0-255
+        if (checkBoxQAM.Checked)
+        {
+          minchan = 0;
+          maxchan = 255;
+          Log.WriteFile("ATSC tune: QAM checkbox selected - using minchan 0 & maxchan 255");
+        }
+        for (int index = minchan; index <= maxchan; ++index)
         {
           if (_stopScanning) return;
-          float percent = ((float)(index)) / (69 - 2);
+          float percent = ((float)(index)) / (maxchan - minchan);
           percent *= 100f;
           if (percent > 100f) percent = 100f;
           progressBar1.Value = (int)percent;
-
           ATSCChannel tuneChannel = new ATSCChannel();
           tuneChannel.NetworkId = -1;
           tuneChannel.TransportId = -1;
@@ -139,8 +152,12 @@ namespace SetupTv.Sections
           tuneChannel.Frequency = -1;
           tuneChannel.SymbolRate = -1;
           tuneChannel.PhysicalChannel = index;
-          tuneChannel.ModulationType = ModulationType.ModNotSet;
-
+          if (checkBoxQAM.Checked)
+          {
+            tuneChannel.ModulationType = ModulationType.Mod256Qam;
+            Log.WriteFile("ATSC tune: QAM checkbox selected - using 256Qam");
+          }
+          else tuneChannel.ModulationType = ModulationType.ModNotSet;
           string line = String.Format("{0}tp- channel:{1}", 1 + index, tuneChannel.PhysicalChannel);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
@@ -150,7 +167,6 @@ namespace SetupTv.Sections
           }
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
           UpdateStatus();
-
           if (channels == null || channels.Length == 0)
           {
             if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
@@ -168,8 +184,6 @@ namespace SetupTv.Sections
               continue;
             }
           }
-
-
           int newChannels = 0;
           int updatedChannels = 0;
           bool exists;
@@ -194,7 +208,6 @@ namespace SetupTv.Sections
               exists = true;
               dbChannel = currentDetail.ReferencedChannel();
             }
-
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
             dbChannel.FreeToAir = channel.FreeToAir;
@@ -203,7 +216,6 @@ namespace SetupTv.Sections
               dbChannel.GrabEpg = false;
             }
             dbChannel.Persist();
-
             if (currentDetail == null)
             {
               layer.AddTuningDetails(dbChannel, channel);
@@ -213,7 +225,6 @@ namespace SetupTv.Sections
               //update tuning details...
               layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
             }
-
             if (channel.IsTv)
             {
               if (exists)
@@ -241,14 +252,11 @@ namespace SetupTv.Sections
               }
             }
             layer.MapChannelToCard(card, dbChannel);
-
             line = line = String.Format("{0}tp- channel:{1}:New:{2} Updated:{3}", 1 + index, tuneChannel.PhysicalChannel, newChannels, updatedChannels);
             item.Text = line;
           }
         }
-
         //DatabaseManager.Instance.SaveChanges();
-
       }
       catch (Exception ex)
       {
@@ -266,7 +274,6 @@ namespace SetupTv.Sections
       }
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
       lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
-
       lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
       lastItem.EnsureVisible();
     }
