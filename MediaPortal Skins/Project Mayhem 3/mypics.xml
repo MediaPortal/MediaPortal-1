@@ -66,6 +66,7 @@
         <type>button</type>
         <id>7</id>
         <label>361</label>
+        <ondown>99</ondown>
         <alignY>center</alignY>
       </control>
       <!--             <control>
