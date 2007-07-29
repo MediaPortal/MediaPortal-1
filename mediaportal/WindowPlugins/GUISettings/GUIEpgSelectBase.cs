@@ -57,7 +57,7 @@ namespace WindowPlugins.GUISettings.Epg
 
     protected bool epgGrabberSelected = false;
     protected ChannelsList _channelList;
-    protected ArrayList _epgChannels;
+    protected List<ChannelGrabberInfo> _epgChannels;
 
 
 
@@ -154,7 +154,7 @@ namespace WindowPlugins.GUISettings.Epg
         int chID = _channelList.FindChannel(chan.Name, country);
         if (chID != -1)
         {
-          ChannelGrabberInfo chInfo = (ChannelGrabberInfo)_epgChannels[chID];
+          ChannelGrabberInfo chInfo = _epgChannels[chID];
           ch.Label2 = chInfo.FullName;
           ch.Path = chInfo.ChannelID;
           ch.ItemId = chID;
@@ -210,8 +210,8 @@ namespace WindowPlugins.GUISettings.Epg
             EPGConfigData data = new EPGConfigData();
             data.DisplayName = item.Label;
             data.ChannelID = item.Path;
-            ChannelGrabberInfo selChannel = (ChannelGrabberInfo)_epgChannels[item.ItemId];
-            GrabberInfo gInfo = (GrabberInfo)selChannel.GrabberList.GetByIndex(0);
+            ChannelGrabberInfo selChannel = _epgChannels[item.ItemId];
+            GrabberInfo gInfo = selChannel.GrabberList[0];
             data.PrimaryGrabberID = gInfo.GrabberID;
             config.Add(data);
           }
