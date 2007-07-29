@@ -147,6 +147,10 @@ namespace MediaPortal.GUI.Library
     const int MONITOR_ON = -1;
     const int MONITOR_OFF = 2;
     static bool _useSeparateRenderThread = false;
+    public static bool _useScreenSelector = false;
+    static private AdapterInformation _currentFullscreenAdapterInfo = null;
+    static private Screen _currentScreen = null;
+    
     [DllImport("user32.dll")]
     static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
 
@@ -226,6 +230,42 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Property to get and set current adapter for creating directx surface
+    /// </summary>
+    static public AdapterInformation currentFullscreenAdapterInfo
+    {
+      get
+      {        
+        if (_currentFullscreenAdapterInfo != null)
+          return _currentFullscreenAdapterInfo;
+        else
+          return Manager.Adapters.Default;
+      }
+      set
+      {
+        _currentFullscreenAdapterInfo = value;
+      }
+    }
+        
+    /// <summary>
+    /// Property to get and set current screen on witch MP is displayed
+    /// </summary>
+    static public Screen currentScreen
+    {
+      get
+      {
+        if (_currentScreen != null)
+          return _currentScreen;
+        else
+          return Screen.PrimaryScreen;
+      }
+      set
+      {
+        _currentScreen = value;
+      }
+    }
+    
+    /// <summary>
     /// Property to get windowed/fullscreen state of application
     /// </summary>
     //SV
@@ -234,7 +274,7 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        return ((Width == Screen.PrimaryScreen.Bounds.Width) && (Height == Screen.PrimaryScreen.Bounds.Height));
+        return ((Width == currentScreen.Bounds.Width) && (Height == currentScreen.Bounds.Height));
       }
     }
 

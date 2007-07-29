@@ -67,6 +67,7 @@ namespace MediaPortal
   {
     private const int MILLI_SECONDS_TIMER = 1;
     protected string m_strSkin = "BlueTwo";
+    public static string _strSkinOverride = string.Empty;
     protected string m_strLanguage = "english";
 
     #region Menu Information
@@ -125,6 +126,7 @@ namespace MediaPortal
     private Caps graphicsCaps; // Caps for the device
 
     internal static string _fullscreenOverride = string.Empty;
+    internal static int _screenNumberOverride = -1;// 0 or higher means it is set
 
     protected Caps Caps
     {
@@ -181,8 +183,6 @@ namespace MediaPortal
     protected bool clipCursorWhenFullscreen; // Whether to limit cursor pos when fullscreen
     protected bool startFullscreen; // Whether to start up the app in fullscreen mode
 
-    protected Size storedSize;
-    protected Point storedLocation;
     private MenuItem menuItemOptions;
     private MenuItem menuItemConfiguration;
 
@@ -404,9 +404,17 @@ namespace MediaPortal
 
         // Initialize the application timer
         //@@@fullscreen
-        storedSize = this.ClientSize;
-        storedLocation = this.Location;
-        oldBounds = new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height);
+        Screen formOnScreen = Screen.FromRectangle(Bounds);
+        if (!formOnScreen.Equals(GUIGraphicsContext.currentScreen))
+        {
+          Point location = this.Location;
+
+          location.X = location.X - formOnScreen.Bounds.Left + GUIGraphicsContext.currentScreen.Bounds.Left;
+          location.Y = location.Y - formOnScreen.Bounds.Top + GUIGraphicsContext.currentScreen.Bounds.Top;
+
+          this.Location = location;
+        }
+        oldBounds = Bounds;
 
         using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
@@ -428,14 +436,13 @@ namespace MediaPortal
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Menu = null;
-            this.Location = new Point(0, 0);
-            this.Bounds = new Rectangle(0, 0, Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-            this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+            Rectangle newBounds = GUIGraphicsContext.currentScreen.Bounds;
+            this.Bounds = newBounds;
             //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth=Screen.PrimaryScreen.Bounds.Width;
             //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight=Screen.PrimaryScreen.Bounds.Height;
             Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
                       this.ClientSize.Width, this.ClientSize.Height,
-                      Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+                      GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
 
             //m_bNeedReset=true;
             //deviceLost=true;
@@ -469,6 +476,26 @@ namespace MediaPortal
       return true;
     }
 
+    /// <summary>
+    /// Finds the adapter that has the specified screen on its primary monitor
+    /// </summary>
+    /// <returns>The adapter that has the specified screen on its primary monitor</returns>
+    GraphicsAdapterInfo FindAdapterForScreen(Screen screen)
+    {
+      foreach (GraphicsAdapterInfo adapterInfo in enumerationSettings.AdapterInfoList)
+      {
+        IntPtr hMon = Manager.GetAdapterMonitor(adapterInfo.AdapterOrdinal);
+
+        NativeMethods.MonitorInformation info = new NativeMethods.MonitorInformation();
+        info.Size = (uint)Marshal.SizeOf(info);
+        NativeMethods.GetMonitorInfo(hMon, ref info);
+        Rectangle rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
+
+        if (rect.Equals(screen.Bounds))
+          return adapterInfo;
+      }
+      return null;
+    }
 
     /// <summary>
     /// Sets up graphicsSettings with best available windowed mode, subject to 
@@ -486,9 +513,15 @@ namespace MediaPortal
       GraphicsAdapterInfo bestAdapterInfo = null;
       GraphicsDeviceInfo bestDeviceInfo = null;
       DeviceCombo bestDeviceCombo = null;
-
-      foreach (GraphicsAdapterInfo adapterInfo in enumerationSettings.AdapterInfoList)
+      foreach (GraphicsAdapterInfo adapterInfoIterate in enumerationSettings.AdapterInfoList)
       {
+        GraphicsAdapterInfo adapterInfo = adapterInfoIterate;
+
+        if (GUIGraphicsContext._useScreenSelector)
+        {
+          adapterInfo = FindAdapterForScreen(GUI.Library.GUIGraphicsContext.currentScreen);
+          primaryDesktopDisplayMode = Manager.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;
+        }
         foreach (GraphicsDeviceInfo deviceInfo in adapterInfo.DeviceInfoList)
         {
           if (doesRequireHardware && deviceInfo.DevType != DeviceType.Hardware)
@@ -531,6 +564,8 @@ namespace MediaPortal
             }
           }
         }
+        if (GUIGraphicsContext._useScreenSelector)
+          break;// no need to loop again.. result would be the same
       }
 
     EndWindowedDeviceComboSearch:
@@ -585,8 +620,16 @@ namespace MediaPortal
       GraphicsDeviceInfo bestDeviceInfo = null;
       DeviceCombo bestDeviceCombo = null;
 
-      foreach (GraphicsAdapterInfo adapterInfo in enumerationSettings.AdapterInfoList)
+      foreach (GraphicsAdapterInfo adapterInfoIterate in enumerationSettings.AdapterInfoList)
       {
+        GraphicsAdapterInfo adapterInfo = adapterInfoIterate;
+
+        if (GUIGraphicsContext._useScreenSelector)
+        {
+          adapterInfo = FindAdapterForScreen(GUI.Library.GUIGraphicsContext.currentScreen);
+          GUI.Library.GUIGraphicsContext.currentFullscreenAdapterInfo = Manager.Adapters[adapterInfo.AdapterOrdinal];
+        }
+
         adapterDesktopDisplayMode = Manager.Adapters[adapterInfo.AdapterOrdinal].CurrentDisplayMode;
         foreach (GraphicsDeviceInfo deviceInfo in adapterInfo.DeviceInfoList)
         {
@@ -630,6 +673,8 @@ namespace MediaPortal
             }
           }
         }
+        if (GUIGraphicsContext._useScreenSelector)
+          break;// no need to loop again.. result would be the same
       }
 
     EndFullscreenDeviceComboSearch:
@@ -1737,15 +1782,15 @@ namespace MediaPortal
         this.MaximizeBox = false;
         this.MinimizeBox = false;
         this.Menu = null;
-        this.Location = new Point(0, 0);
-        this.Bounds = new Rectangle(0, 0, Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-        this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+        oldBounds = this.Bounds;
+        Rectangle newBounds = GUIGraphicsContext.currentScreen.Bounds;
+        this.Bounds = new Rectangle(this.Location, newBounds.Size);
         this.Update();
 
         Log.Info("D3D: Switching windowed mode -> fullscreen done - Maximized: {0}", isMaximized);
         Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
                   this.ClientSize.Width, this.ClientSize.Height,
-                  Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+                  GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
 
         SwitchFullScreenOrWindowed(false);
       }
@@ -1762,24 +1807,23 @@ namespace MediaPortal
         this.MaximizeBox = true;
         this.MinimizeBox = true;
         this.Menu = menuStripMain;
-        this.Location = storedLocation;
-        this.Bounds = new Rectangle(oldBounds.X, oldBounds.Y, oldBounds.Width, oldBounds.Height);
+        Rectangle newBounds = new Rectangle(oldBounds.X, oldBounds.Y, oldBounds.Width, oldBounds.Height);
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
           if (autosize && !GUIGraphicsContext.Fullscreen)
           {
-            storedSize.Height = GUIGraphicsContext.SkinSize.Height;
-            storedSize.Width = GUIGraphicsContext.SkinSize.Width;
+            newBounds.Height = GUIGraphicsContext.SkinSize.Height;
+            newBounds.Width = GUIGraphicsContext.SkinSize.Width;
           }
         }
-        this.ClientSize = storedSize;
+        this.Bounds = newBounds;
         this.Update();
 
         Log.Info("D3D: Switching fullscreen -> windowed mode done - Maximized: {0}", isMaximized);
         Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
                   this.ClientSize.Width, this.ClientSize.Height,
-                  Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+                  GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
 
         SwitchFullScreenOrWindowed(true);
       }

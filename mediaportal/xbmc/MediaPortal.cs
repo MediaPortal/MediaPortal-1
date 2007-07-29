@@ -184,6 +184,18 @@ public class MediaPortalApp : D3DApp, IRender
           }
           _enableLogCollector = true;
         }
+        if (arg.StartsWith("/screen="))
+        {
+          GUIGraphicsContext._useScreenSelector = true;
+          string screenarg = arg.Remove(0, 8);// remove /?= from the argument          
+          if (!int.TryParse(screenarg, out _screenNumberOverride))
+            _screenNumberOverride = -1;
+        }
+        if (arg.StartsWith("/skin="))
+        {
+          string skinOverrideArg = arg.Remove(0, 6);// remove /?= from the argument
+          _strSkinOverride = skinOverrideArg;
+        }
       }
     }
     Log.Info("_confloglevel={0}", _configuredLoglevel);
@@ -572,6 +584,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     int clientSizeX = 720;
     int clientSizeY = 576;
+    int screenNumber = 0;
 
     // check to load plugins
     using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -580,18 +593,34 @@ public class MediaPortalApp : D3DApp, IRender
       timeScreenSaver = xmlreader.GetValueAsInt("general", "screensavertime", 60);
       clientSizeX = xmlreader.GetValueAsInt("general", "sizex", clientSizeX);
       clientSizeY = xmlreader.GetValueAsInt("general", "sizey", clientSizeY);
+
+      string strUseScreenSelector = xmlreader.GetValueAsString("ScreenSelector", "useScreenSelector", "false");
+      GUIGraphicsContext._useScreenSelector = GUIGraphicsContext._useScreenSelector || (strUseScreenSelector != null && strUseScreenSelector == "yes");
+      screenNumber = xmlreader.GetValueAsInt("ScreenSelector", "screennumber", screenNumber);
+
       //GUIGraphicsContext.UseSeparateRenderThread = xmlreader.GetValueAsBool("general", "userenderthread", true);
       // BAV: to be fixed -> until then deactivated to save user aggrivation 
       GUIGraphicsContext.UseSeparateRenderThread = false;
     }
 
+    if (GUIGraphicsContext._useScreenSelector)
+    {
+      if (_screenNumberOverride >= 0)
+        screenNumber = _screenNumberOverride;
+
+      if (screenNumber < 0 || screenNumber > Screen.AllScreens.Length)
+        screenNumber = 0;
+
+      Log.Info("currentScreenNr:" + screenNumber);
+      GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
+    }
     // check if MediaPortal is already running...
 
     Log.Info("Main: Checking for running MediaPortal instance");
 
     Log.Info(@"Main: Deleting old log\capture.log");
     Utils.FileDelete(Config.GetFile(Config.Dir.Log, "capture.log"));
-    if (Screen.PrimaryScreen.Bounds.Width > clientSizeX)
+    if (GUIGraphicsContext.currentScreen.Bounds.Width > clientSizeX)
     {
       MinimumSize = new Size(clientSizeX + 8, clientSizeY + 27);
     }
@@ -610,7 +639,11 @@ public class MediaPortalApp : D3DApp, IRender
     {
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        m_strSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
+        if (_strSkinOverride.Length > 0)
+          m_strSkin = _strSkinOverride;
+        else
+          m_strSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
+
         m_strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
         _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", false);
         GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("general", "mousesupport", true);
@@ -1321,7 +1354,7 @@ public class MediaPortalApp : D3DApp, IRender
       bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
       if (autosize && !GUIGraphicsContext.Fullscreen)
       {
-        if (Screen.PrimaryScreen.Bounds.Width > GUIGraphicsContext.SkinSize.Width)
+        if (GUIGraphicsContext.currentScreen.Bounds.Width > GUIGraphicsContext.SkinSize.Width)
           Size = new Size(GUIGraphicsContext.SkinSize.Width + 8, GUIGraphicsContext.SkinSize.Height + 54);
         else
           Size = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);

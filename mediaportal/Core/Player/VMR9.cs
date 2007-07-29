@@ -353,7 +353,7 @@ namespace MediaPortal.Player
       }
 
       IntPtr hMonitor;
-      AdapterInformation ai = Manager.Adapters.Default;
+      AdapterInformation ai = MediaPortal.GUI.Library.GUIGraphicsContext.currentFullscreenAdapterInfo;
       hMonitor = Manager.GetAdapterMonitor(ai.Adapter);
       IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
