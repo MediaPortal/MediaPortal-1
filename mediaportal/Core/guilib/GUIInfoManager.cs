@@ -1218,7 +1218,8 @@ namespace MediaPortal.GUI.Library
           break;
         case PLUGIN_IS_ENABLED:
           {
-            bReturn = PluginManager.IsPluginNameEnabled(info.m_stringData);
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+              bReturn = xmlreader.GetValueAsBool("plugins", info.m_stringData, false);
           }
           break;
         case CONTROL_IS_VISIBLE:
