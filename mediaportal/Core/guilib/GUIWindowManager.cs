@@ -183,7 +183,9 @@ namespace MediaPortal.GUI.Library
         OnThreadMessageHandler(null, message);
       }
       if (message != null)
+      {        
         _listThreadMessages.Add(message);
+      }
     }
 
     /// <summary>
@@ -637,7 +639,7 @@ namespace MediaPortal.GUI.Library
           newWindowIndex = previousWindowIndex;
           // Check if replacement window was fault, ifso return to home
           if (replaceWindow)
-          {
+          {            
             // activate HOME window
             newWindowId = (int)GUIWindow.Window.WINDOW_HOME;
             for (int i = 0; i < _windowCount; i++)
@@ -695,7 +697,7 @@ namespace MediaPortal.GUI.Library
       finally
       {
         _isSwitchingToNewWindow = false;
-      }
+      }      
     }
 
     /// <summary>
@@ -703,7 +705,7 @@ namespace MediaPortal.GUI.Library
     /// this function will show the previous active window
     /// </summary>
     static public void ShowPreviousWindow()
-    {
+    {      
       Log.Info("Windowmanager:goto previous window");
       _isSwitchingToNewWindow = true;
       try
@@ -1141,9 +1143,16 @@ namespace MediaPortal.GUI.Library
                    _routedWindow, _routedWindow.GetID, GetWindow(ActiveWindow), ActiveWindow);
         }
         if (_currentWindowName != String.Empty && _routedWindow != null)
+        {
           GUIPropertyManager.SetProperty("#currentmodule", _currentWindowName);
+        }
         else
-          GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + ActiveWindow));
+        {
+          //System.Diagnostics.Debugger.Launch();
+          GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + ActiveWindow));          
+          GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(ActiveWindow));
+        }
+        
         _routedWindow = null;
         _shouldRefresh = true;
       }
@@ -1157,7 +1166,7 @@ namespace MediaPortal.GUI.Library
         _routedWindow = GetWindow(dialogId);
         Log.Info("WindowManager:route {0}:{1}->{2}:{3}",
                  GetWindow(ActiveWindow), ActiveWindow, _routedWindow, dialogId);
-        _currentWindowName = GUIPropertyManager.GetProperty("#currentmodule");
+        _currentWindowName = GUIPropertyManager.GetProperty("#currentmodule");        
       }
     }
 

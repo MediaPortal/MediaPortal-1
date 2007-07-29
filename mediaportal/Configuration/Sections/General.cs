@@ -115,7 +115,8 @@ namespace MediaPortal.Configuration.Sections
       new string[] { "general", "autosize", "false" },
       // new string[] { "general", "userenderthread", "true" }
       //new string[] { "general", "allowfocus", "false" }
-      new string[] { "general","usevrm9forwebstreams","false" }
+      new string[] { "general","usevrm9forwebstreams","false" },
+      new string[] { "general","showlastactivemodule","false" }
       };
 
     // PLEASE NOTE: when adding items, adjust the box so it doesn't get scrollbars
@@ -128,7 +129,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public override void LoadSettings()
-    {
+    {      
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         //
@@ -248,7 +249,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGeneralSettings.Location = new System.Drawing.Point(0, 3);
       this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
-      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(472, 397);
+      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(472, 420); //397
       this.groupBoxGeneralSettings.TabIndex = 0;
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General Settings";
@@ -257,7 +258,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(13, 341);
+      this.label1.Location = new System.Drawing.Point(13, 349);//341
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(58, 13);
       this.label1.TabIndex = 1;
@@ -275,7 +276,7 @@ namespace MediaPortal.Configuration.Sections
             "AboveNormal",
             "Normal",
             "BelowNormal"});
-      this.mpThreadPriority.Location = new System.Drawing.Point(89, 338);
+      this.mpThreadPriority.Location = new System.Drawing.Point(89, 346); //338
       this.mpThreadPriority.MinimumSize = new System.Drawing.Size(100, 0);
       this.mpThreadPriority.Name = "mpThreadPriority";
       this.mpThreadPriority.Size = new System.Drawing.Size(367, 21);
@@ -285,7 +286,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.lbDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.lbDebug.AutoSize = true;
-      this.lbDebug.Location = new System.Drawing.Point(13, 368);
+      this.lbDebug.Location = new System.Drawing.Point(13, 376); //368
       this.lbDebug.Name = "lbDebug";
       this.lbDebug.Size = new System.Drawing.Size(56, 13);
       this.lbDebug.TabIndex = 3;
@@ -303,7 +304,7 @@ namespace MediaPortal.Configuration.Sections
             "Warning",
             "Information",
             "Debug"});
-      this.cbDebug.Location = new System.Drawing.Point(89, 365);
+      this.cbDebug.Location = new System.Drawing.Point(89, 373);//365
       this.cbDebug.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbDebug.Name = "cbDebug";
       this.cbDebug.Size = new System.Drawing.Size(367, 21);
@@ -335,10 +336,11 @@ namespace MediaPortal.Configuration.Sections
             "Turn monitor/tv on when resuming from standby",
             "Allow S3 standby although wake up devices are present",
             "Autosize window mode to skin",
-            "Use VRM9 for playback of web streams"});
+            "Use VRM9 for playback of web streams",
+            "Show last active module when starting/resuming from standby"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 308);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 327);//308
       this.settingsCheckedListBox.TabIndex = 0;
       // 
       // General

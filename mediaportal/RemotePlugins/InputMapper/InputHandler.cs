@@ -353,19 +353,23 @@ namespace MediaPortal.InputDevices
             _currentLayer = 1;
           break;
         case "POWER": // power down commands
+          
           if ((map.CmdProperty == "STANDBY") || (map.CmdProperty == "HIBERNATE"))
-          {
+          {             
             GUIGraphicsContext.ResetLastActivity();
-            // Stop all media before suspending or hibernating
+            //Stop all media before suspending or hibernating
             g_Player.Stop();
-
+            // this is all handled in mediaportal.cs - OnSuspend          
+            /*
             if (_basicHome)
               msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
             else
               msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_HOME, 0, null);
-
-            GUIWindowManager.SendThreadMessage(msg);
+            
+            GUIWindowManager.SendThreadMessage(msg);             
+            */
           }
+          
           switch (map.CmdProperty)
           {
             case "EXIT":
@@ -381,10 +385,16 @@ namespace MediaPortal.InputDevices
               GUIGraphicsContext.OnAction(action);
               break;
             case "STANDBY":
-              WindowsController.ExitWindows(RestartOptions.Suspend, true);
+              // we need a slow standby (force=false), in order to have the onsuspend method being called on mediportal.cs
+              // this is needed in order to have "ShowLastActiveModule" working correctly.
+              // also using force=true results in a silent non critical D3DERR_DEVICELOST exception when resuming from powerstate.
+              WindowsController.ExitWindows(RestartOptions.Suspend, false);
               break;
             case "HIBERNATE":
-              WindowsController.ExitWindows(RestartOptions.Hibernate, true);
+              // we need a slow hibernation (force=false), in order to have the onsuspend method being called on mediportal.cs
+              // this is needed in order to have "ShowLastActiveModule" working correctly.
+              // also using force=true results in a silent non critical D3DERR_DEVICELOST exception when resuming from powerstate.
+              WindowsController.ExitWindows(RestartOptions.Hibernate, false);
               break;
           }
           break;

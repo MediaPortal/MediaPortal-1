@@ -114,8 +114,7 @@ namespace MediaPortal
     protected bool ready;
     protected bool hasFocus;
     protected bool isMultiThreaded = true;
-    protected bool _fromTray = false;
-
+    protected bool _fromTray = false;    
     protected bool frameMoving; // Internal variables used for timing
     protected bool singleStep;
     // Main objects used for creating and rendering the 3D scene
@@ -1333,9 +1332,10 @@ namespace MediaPortal
     }
 
     public void RecoverDevice()
-    {
+    {      
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
       {
+        //Debugger.Launch();
         try
         {
           //Log.Debug("d3dapp: RecoverDevice called");
@@ -1348,7 +1348,7 @@ namespace MediaPortal
           // If the device was lost, do not render until we get it back
           isHandlingSizeChanges = false;
           isWindowActive = false;
-          //Log.Debug("d3dapp: DeviceLostException");
+          Log.Debug("d3dapp: DeviceLostException");
 
           return;
           //m_bNeedReset = true;
@@ -1727,10 +1727,69 @@ namespace MediaPortal
         renderThread.IsBackground = true;
         renderThread.Start();
         timer.Enabled = true;
-      }			
+      }
+
+      bool result = ShowLastActiveModule();      
     }
 
+    private void TvDelayThread()
+    {      
+      //we have to use a small delay before calling tvfullscreen.
+      Thread.Sleep(100);
+      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);            
+    }
 
+    protected bool ShowLastActiveModule()
+    {            
+      bool showLastActiveModule = false;
+      int lastActiveModule = -1;
+      bool lastActiveModuleFullscreen = false;
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        showLastActiveModule = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
+        lastActiveModule = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
+        lastActiveModuleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
+      }
+
+      Log.Debug("d3dapp: ShowLastActiveModule active : {0}", showLastActiveModule); 
+      
+
+      if (showLastActiveModule)
+      {
+        Log.Debug("d3dapp: ShowLastActiveModule module : {0}", lastActiveModule);
+        Log.Debug("d3dapp: ShowLastActiveModule fullscreen : {0}", lastActiveModuleFullscreen); 
+        if (lastActiveModule < 0)
+        {
+          Log.Error("Error recalling last active module - invalid module name '{0}'", lastActiveModule);
+          //otherwise ignore.
+        }
+        else
+        {
+          try
+          {           
+            if (lastActiveModule == (int)GUIWindow.Window.WINDOW_TV && lastActiveModuleFullscreen)
+            {
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV);
+              //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);                            
+              Thread tvDelayThread = new Thread(TvDelayThread);
+              tvDelayThread.Start();              
+
+              return true;
+            }
+            
+            GUIWindowManager.ActivateWindow(lastActiveModule);            
+            return true;
+          }
+          catch (Exception e)
+          {
+            Log.Error("Error recalling last active module '{0}' - {1}", lastActiveModule, e.Message);
+            //otherwise ignore.
+          }
+        }
+      }
+      return false;
+    }    
+ 
     private void D3DApp_Closing(object sender, CancelEventArgs e)
     {
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;

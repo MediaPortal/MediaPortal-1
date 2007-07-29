@@ -1268,7 +1268,16 @@ namespace MediaPortal.GUI.Library
               break;
 
             // Initialize the window.
+
             case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+              
+
+              if (((message.Param1 == 0 && message.Param1 != _previousWindowId) || (_previousWindowId == 0)) && (message.Param1 != message.TargetWindowId))
+              {
+                //System.Diagnostics.Debugger.Launch();
+                GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(message.TargetWindowId));
+              }
+
               if (_shouldRestore)
               {
                 DoRestoreSkin();
@@ -1314,7 +1323,7 @@ namespace MediaPortal.GUI.Library
               OnMessage(msg);
 
               GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
-              Log.Info("window:{0} init", this.ToString());
+              Log.Info("window:{0} init", this.ToString());              
 
               _hasRendered = false;
               OnPageLoad();

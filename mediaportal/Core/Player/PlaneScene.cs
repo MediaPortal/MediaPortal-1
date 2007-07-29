@@ -471,7 +471,7 @@ namespace MediaPortal.Player
 
     public void Repaint()
     {
-      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
+      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) return;
       if (!_isEnabled) return;
       if (_stopPainting) return;
       try
