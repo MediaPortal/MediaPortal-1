@@ -28,11 +28,14 @@ using System.IO;
 using System.Net;
 using System.Web;
 using System.Text;
+using System.Xml.Serialization;
 using System.Collections;
+using System.Collections.Generic;
 using MediaPortal.Services;
 using MediaPortal.Webepg.Profile;
 using MediaPortal.TV.Database;
 using MediaPortal.WebEPG;
+using MediaPortal.WebEPG.config;
 using MediaPortal.Utils;
 using MediaPortal.Utils.Time;
 using MediaPortal.Utils.Web;
@@ -46,49 +49,25 @@ namespace MediaPortal.EPG
   {
     #region Private Structs
     // hold information from config file.
-    private struct GrabberInfo
+    private struct grabInfo
     {
       public string id;
       public string name;
+      public bool merged;
       public string grabber;
-      public bool Linked;
-      public int linkStart;
-      public int linkEnd;
-      public int copies;
-      public bool iscopy;
-      public bool isMerged;
-    }
-
-    private struct MergeChannelLocation
-    {
-      public int mergeNum;
-      public int mergeChannel;
-    }
-
-    private struct MergeInfo
-    {
-      public int count;
-      public string name;
-      public MergeChannelData[] channels;
-    }
-
-    private struct MergeChannelData
-    {
-      public TimeRange time;
-      public ArrayList programs;
+      public bool linked;
+      public TimeRange linkTime;
     }
     #endregion
 
     #region Variables
-    private MediaPortal.Webepg.Profile.Xml _xmlreader;
     private WebListingGrabber _epgGrabber;
     private ILog _log;
     private string _configFile;
     private string _xmltvDirectory;
     private string _baseDirectory;
-    private ArrayList _channels = null;
-    private MergeInfo[] _mergedList = null;
-    private Hashtable _mergedChannels = new Hashtable();
+    private WebepgConfigFile _config;
+    private Dictionary<string, List<grabInfo>> _grabList;
     #endregion
 
     #region Constructors/Destructors
@@ -102,7 +81,7 @@ namespace MediaPortal.EPG
       _log.Info(LogType.WebEPG, this.GetType().Assembly.GetName().Name + " " + this.GetType().Assembly.GetName().Version.ToString());
       _log.Info(LogType.WebEPG, _log.GetType().Assembly.GetName().Name + " " + _log.GetType().Assembly.GetName().Version.ToString());
       // set config directories and files.
-      _configFile = configFile; 
+      _configFile = configFile;
       _xmltvDirectory = xmltvDirectory;
       _baseDirectory = baseDirectory;
     }
@@ -134,96 +113,127 @@ namespace MediaPortal.EPG
         GlobalServiceProvider.Add<IHttpStatistics>(httpStats);
       }
 
-      // for each normal channel write info xmltv file.
-      for (int i = 0; i < _channels.Count; i++)
+      _grabList = new Dictionary<string, List<grabInfo>>();
+      // for each channel write info xmltv file.
+      foreach (ChannelMap channel in _config.Channels)
       {
-        GrabberInfo channel = (GrabberInfo)_channels[i];
-        if (!_mergedChannels.Contains(channel.id))
-          xmltv.WriteChannel(channel.id, channel.name);
-      }
-
-      // for each merged channel write info in xmltv file.
-      if (_mergedList != null)
-      {
-        for (int i = 0; i < _mergedList.Length; i++)
+        if (channel.merged == null || channel.merged.Count == 0)
         {
-          xmltv.WriteChannel("merged" + i.ToString(), _mergedList[i].name);
-        }
-      }
+          xmltv.WriteChannel(channel.id, channel.displayName);
 
+          grabInfo grab = new grabInfo();
+          grab.name = channel.displayName;
+          grab.id = channel.id;
+          grab.grabber = channel.grabber;
+          grab.merged = false;
+          grab.linked = true;
+          grab.linkTime = new TimeRange("00:00", "23:00");
 
-      string grabberLast = "";
-      ArrayList programs;
-      //ArrayList mergedPrograms;
-      bool initResult = false;
-
-      // For each channel get listing
-      for (int i = 0; i < _channels.Count; i++)
-      {
-        _log.Info(LogType.WebEPG, "WebEPG: Getting Channel {0} of {1}", i + 1, _channels.Count);
-        GrabberInfo channel = (GrabberInfo)_channels[i];
-
-        if (channel.iscopy)
-        {
-          // if channel is a copy of another channel no need to get data twice.
-          _log.Info(LogType.WebEPG, "WebEPG: Channel is a copy of Channel {0}", channel.copies + 1);
+          if (!_grabList.ContainsKey(channel.id))
+          {
+            List<grabInfo> grabs = new List<grabInfo>();
+            grabs.Add(grab);
+            _grabList.Add(channel.id, grabs);
+          }
+          else
+          {
+            _grabList[channel.id].Add(grab);
+          }
         }
         else
         {
-          // if graber is the same as the current no need re-create
-          if (channel.grabber != grabberLast)
-            initResult = _epgGrabber.Initalise(channel.grabber);
+          xmltv.WriteChannel("[Merged]", channel.displayName);
 
-          grabberLast = channel.grabber;
-
-          if (initResult)
+          foreach (MergedChannel merged in channel.merged)
           {
-            // Get channel lising
-            programs = _epgGrabber.GetGuide(channel.id, channel.Linked, channel.linkStart, channel.linkEnd);
-            if (programs != null)
+            grabInfo grab = new grabInfo();
+            grab.name = channel.displayName;
+            grab.id = merged.id;
+            grab.grabber = merged.grabber;
+            grab.merged = true;
+            grab.linked = true;
+            grab.linkTime = new TimeRange(merged.start, merged.end);
+
+            if (!_grabList.ContainsKey(merged.id))
             {
-              if (channel.isMerged)
+              List<grabInfo> grabs = new List<grabInfo>();
+              grabs.Add(grab);
+              _grabList.Add(merged.id, grabs);
+            }
+            else
+            {
+              _grabList[merged.id].Add(grab);
+            }
+          }
+        }
+      }
+
+      //// for each merged channel write info in xmltv file.
+      //if (_mergedList != null)
+      //{
+      //  for (int i = 0; i < _mergedList.Length; i++)
+      //  {
+      //    xmltv.WriteChannel("merged" + i.ToString(), _mergedList[i].name);
+      //  }
+      //}
+
+
+      string grabberLast = "";
+      List<TVProgram> programs = null;
+      bool initResult = false;
+      _epgGrabber = new WebListingGrabber(_config.Info.GrabDays, _baseDirectory + "\\WebEPG\\grabbers\\");
+
+      // For each channel get listing
+      int i = 1;
+      foreach (string channelid in _grabList.Keys)
+      {
+        _log.Info(LogType.WebEPG, "WebEPG: Getting Channel ID: {0}", channelid);
+        _log.Info(LogType.WebEPG, "        [{0} of {1}]", i++, _grabList.Count);
+
+        if (_grabList[channelid].Count > 0)
+        {
+          if (_grabList[channelid][0].grabber != grabberLast)
+            initResult = _epgGrabber.Initalise(_grabList[channelid][0].grabber);
+
+          grabberLast = _grabList[channelid][0].grabber;
+
+
+          // Get channel lising
+          if (initResult)
+            programs = _epgGrabber.GetGuide(channelid, _grabList[channelid][0].linked, _grabList[channelid][0].linkTime);
+
+          if (programs != null)
+          {
+            // write programs
+            foreach (grabInfo grab in _grabList[channelid])
+            {
+              if (grab.merged)
               {
-                // if channel is merged change id to the merged id.
-                MergeChannelLocation mergedPos = (MergeChannelLocation)_mergedChannels[channel.id];
-                _mergedList[mergedPos.mergeNum].channels[mergedPos.mergeChannel].programs = programs;
-                // the data for merged channels is written later once all part channels have been grabbed
+                _log.Info(LogType.WebEPG, "WebEPG: Writing Merged Channel Part to XMLTV: {0}", grab.name);
+                _log.Info(LogType.WebEPG, "        [{0}]", grab.linkTime);
+
+                for (int p = 0; p < programs.Count; p++)
+                {
+                  if (grab.linkTime.IsInRange(programs[p].Start))
+                    xmltv.WriteProgram(programs[p], grab.name, true);
+                }
               }
               else
               {
-                // write channel data to xmltv file - including any copies.
-                for (int c = 0; c <= channel.copies; c++)
+
+                _log.Info(LogType.WebEPG, "WebEPG: Writing Channel to XMLTV: {0}", grab.name);
+
+                for (int p = 0; p < programs.Count; p++)
                 {
-                  for (int p = 0; p < programs.Count; p++)
-                  {
-                    xmltv.WriteProgram((TVProgram)programs[p], c);
-                  }
+                  xmltv.WriteProgram(programs[p], grab.name, false);
                 }
               }
             }
           }
           else
           {
-            _log.Info(LogType.WebEPG, "WebEPG: Grabber failed for: {0}", channel.name);
-          }
-        }
-      }
-
-      // Write merged channel data to xmltv file
-      if (_mergedList != null && _mergedList.Length > 0)
-      {
-        for (int i = 0; i < _mergedList.Length; i++)
-        {
-          for (int c = 0; c < _mergedList[i].channels.Length; c++)
-          {
-            programs = _mergedList[i].channels[c].programs;
-            for (int p = 0; p < programs.Count; p++)
-            {
-              TVProgram program = (TVProgram)programs[p];
-              program.Channel = "merged" + i.ToString();
-              if (_mergedList[i].channels[c].time.IsInRange(program.Start))
-                xmltv.WriteProgram(program, 0);
-            }
+            foreach (grabInfo grab in _grabList[channelid])
+              _log.Info(LogType.WebEPG, "WebEPG: Grabber failed for: {0}", grab.name);
           }
         }
       }
@@ -231,9 +241,9 @@ namespace MediaPortal.EPG
       xmltv.Close();
 
       // log Http statistics
-      for (int i = 0; i < httpStats.Count; i++)
+      for (int h = 0; h < httpStats.Count; h++)
       {
-        SiteStatistics site = httpStats.GetbyIndex(i);
+        SiteStatistics site = httpStats.GetbyIndex(h);
         _log.Info(LogType.WebEPG, "HTTP Statistics: {0}", site.ToString());
         httpStats.Clear(site.Site);
       }
@@ -249,113 +259,126 @@ namespace MediaPortal.EPG
     /// <returns>bool - success/fail</returns>
     private bool LoadConfig()
     {
-      string grabberDir;
-      int maxGrabDays;
-      int channelCount;
-
       if (!File.Exists(_configFile))
       {
         _log.Info(LogType.WebEPG, "File not found: {0}", _configFile);
         return false;
       }
 
-      Hashtable idList = new Hashtable();
-
-      _channels = new ArrayList();
-
-      _log.Info(LogType.WebEPG, "Loading ChannelMap: WebEPG.xml");
-
-      _xmlreader = new MediaPortal.Webepg.Profile.Xml(_configFile);
-      maxGrabDays = _xmlreader.GetValueAsInt("General", "MaxDays", 1);
-      grabberDir = _xmlreader.GetValueAsString("General", "GrabberDir", _baseDirectory + "\\WebEPG\\grabbers\\");
-      _epgGrabber = new WebListingGrabber(maxGrabDays, grabberDir);
-
-      int AuthCount = _xmlreader.GetValueAsInt("AuthSites", "Count", 0);
-      if (AuthCount > 0)
+      _log.Info(LogType.WebEPG, "Loading Config File: {0}", _configFile);
+      try
       {
-        HTTPAuth authService = new HTTPAuth();
-        for (int i = 1; i <= AuthCount; i++)
-        {
-          string site = _xmlreader.GetValueAsString("Auth" + i.ToString(), "Site", "");
-          string login = _xmlreader.GetValueAsString("Auth" + i.ToString(), "Login", "");
-          string password = _xmlreader.GetValueAsString("Auth" + i.ToString(), "Password", "");
-          NetworkCredential auth = new NetworkCredential(login, password);
-          authService.Add(site, auth);
-        }
-        GlobalServiceProvider.Add<IHttpAuthentication>(authService);
+        XmlSerializer s = new XmlSerializer(typeof(WebepgConfigFile));
+        TextReader r = new StreamReader(_configFile);
+        _config = (WebepgConfigFile)s.Deserialize(r);
+        r.Close();
       }
-
-      int MergeCount = _xmlreader.GetValueAsInt("MergeChannels", "Count", 0);
-
-      if (MergeCount > 0)
+      catch (InvalidOperationException ex)
       {
-        _mergedList = new MergeInfo[MergeCount];
-
-        for (int i = 1; i <= MergeCount; i++)
-        {
-          MergeInfo merged = new MergeInfo();
-          merged.count = _xmlreader.GetValueAsInt("Merge" + i.ToString(), "Channels", 0);
-          merged.name = _xmlreader.GetValueAsString("Merge" + i.ToString(), "DisplayName", "");
-          merged.channels = new MergeChannelData[merged.count];
-          for (int c = 1; c <= merged.count; c++)
-          {
-            string channelId = _xmlreader.GetValueAsString("Merge" + i.ToString(), "Channel" + c.ToString(), "");
-            MergeChannelData mergeTime = new MergeChannelData();
-            MergeChannelLocation location = new MergeChannelLocation();
-            location.mergeChannel = c - 1;
-            location.mergeNum = i - 1;
-            string start = _xmlreader.GetValueAsString("Merge" + i.ToString(), "Start" + c.ToString(), "0:0");
-            string end = _xmlreader.GetValueAsString("Merge" + i.ToString(), "End" + c.ToString(), "0:0");
-            mergeTime.time = new TimeRange(start, end);
-            merged.channels[c - 1] = mergeTime;
-            _mergedChannels.Add(channelId, location);
-          }
-          _mergedList[i - 1] = merged;
-        }
-      }
-
-      channelCount = _xmlreader.GetValueAsInt("ChannelMap", "Count", 0);
-
-      for (int i = 1; i <= channelCount; i++)
-      {
-        GrabberInfo channel = new GrabberInfo();
-        channel.copies = 0;
-        channel.iscopy = false;
-        channel.isMerged = false;
-        channel.name = _xmlreader.GetValueAsString(i.ToString(), "DisplayName", "");
-        channel.id = _xmlreader.GetValueAsString(i.ToString(), "ChannelID", "");
-        channel.grabber = _xmlreader.GetValueAsString(i.ToString(), "Grabber1", "");
-        channel.Linked = _xmlreader.GetValueAsBool(i.ToString(), "Grabber1-Linked", false);
-        if (channel.Linked)
-        {
-          channel.linkStart = _xmlreader.GetValueAsInt(i.ToString(), "Grabber1-Start", 18);
-          channel.linkEnd = _xmlreader.GetValueAsInt(i.ToString(), "Grabber1-End", 23);
-        }
-
-        object obj = idList[channel.id];
-        if (obj == null)
-        {
-          idList.Add(channel.id, i - 1);
-        }
-        else
-        {
-          int pos = (int)obj;
-          GrabberInfo orig = (GrabberInfo)_channels[pos];
-          orig.copies++;
-          channel.id += orig.copies.ToString();
-          channel.copies = pos;
-          channel.iscopy = true;
-          _channels.RemoveAt(pos);
-          _channels.Insert(pos, orig);
-        }
-
-        if (_mergedChannels.Contains(channel.id))
-          channel.isMerged = true;
-
-        _channels.Add(channel);
+        _log.Error(LogType.WebEPG, "WebEPG: Error loading config: {0}", ex.Message);
+        return false;
       }
 
       return true;
+      //string grabberDir;
+      //int maxGrabDays;
+      //int channelCount;
+
+      //Hashtable idList = new Hashtable();
+
+      //_channels = new ArrayList();
+
+      //_xmlreader = new MediaPortal.Webepg.Profile.Xml(_configFile);
+      //maxGrabDays = _xmlreader.GetValueAsInt("General", "MaxDays", 1);
+      //grabberDir = _xmlreader.GetValueAsString("General", "GrabberDir", _baseDirectory + "\\WebEPG\\grabbers\\");
+      //_epgGrabber = new WebListingGrabber(maxGrabDays, grabberDir);
+
+      //int AuthCount = _xmlreader.GetValueAsInt("AuthSites", "Count", 0);
+      //if (AuthCount > 0)
+      //{
+      //  HTTPAuth authService = new HTTPAuth();
+      //  for (int i = 1; i <= AuthCount; i++)
+      //  {
+      //    string site = _xmlreader.GetValueAsString("Auth" + i.ToString(), "Site", "");
+      //    string login = _xmlreader.GetValueAsString("Auth" + i.ToString(), "Login", "");
+      //    string password = _xmlreader.GetValueAsString("Auth" + i.ToString(), "Password", "");
+      //    NetworkCredential auth = new NetworkCredential(login, password);
+      //    authService.Add(site, auth);
+      //  }
+      //  GlobalServiceProvider.Add<IHttpAuthentication>(authService);
+      //}
+
+      //int MergeCount = _xmlreader.GetValueAsInt("MergeChannels", "Count", 0);
+
+      //if (MergeCount > 0)
+      //{
+      //  _mergedList = new MergeInfo[MergeCount];
+
+      //  for (int i = 1; i <= MergeCount; i++)
+      //  {
+      //    MergeInfo merged = new MergeInfo();
+      //    merged.count = _xmlreader.GetValueAsInt("Merge" + i.ToString(), "Channels", 0);
+      //    merged.name = _xmlreader.GetValueAsString("Merge" + i.ToString(), "DisplayName", "");
+      //    merged.channels = new MergeChannelData[merged.count];
+      //    for (int c = 1; c <= merged.count; c++)
+      //    {
+      //      string channelId = _xmlreader.GetValueAsString("Merge" + i.ToString(), "Channel" + c.ToString(), "");
+      //      MergeChannelData mergeTime = new MergeChannelData();
+      //      MergeChannelLocation location = new MergeChannelLocation();
+      //      location.mergeChannel = c - 1;
+      //      location.mergeNum = i - 1;
+      //      string start = _xmlreader.GetValueAsString("Merge" + i.ToString(), "Start" + c.ToString(), "0:0");
+      //      string end = _xmlreader.GetValueAsString("Merge" + i.ToString(), "End" + c.ToString(), "0:0");
+      //      mergeTime.time = new TimeRange(start, end);
+      //      merged.channels[c - 1] = mergeTime;
+      //      _mergedChannels.Add(channelId, location);
+      //    }
+      //    _mergedList[i - 1] = merged;
+      //  }
+      //}
+
+      //channelCount = _xmlreader.GetValueAsInt("ChannelMap", "Count", 0);
+
+      //for (int i = 1; i <= channelCount; i++)
+      //{
+      //  GrabberInfo channel = new GrabberInfo();
+      //  channel.copies = 0;
+      //  channel.iscopy = false;
+      //  channel.isMerged = false;
+      //  channel.name = _xmlreader.GetValueAsString(i.ToString(), "DisplayName", "");
+      //  channel.id = _xmlreader.GetValueAsString(i.ToString(), "ChannelID", "");
+      //  channel.grabber = _xmlreader.GetValueAsString(i.ToString(), "Grabber1", "");
+      //  channel.Linked = _xmlreader.GetValueAsBool(i.ToString(), "Grabber1-Linked", false);
+      //  if (channel.Linked)
+      //  {
+      //    channel.linkStart = _xmlreader.GetValueAsInt(i.ToString(), "Grabber1-Start", 18);
+      //    channel.linkEnd = _xmlreader.GetValueAsInt(i.ToString(), "Grabber1-End", 23);
+      //  }
+
+      //  object obj = idList[channel.id];
+      //  if (obj == null)
+      //  {
+      //    idList.Add(channel.id, i - 1);
+      //  }
+      //  else
+      //  {
+      //    int pos = (int)obj;
+      //    GrabberInfo orig = (GrabberInfo)_channels[pos];
+      //    orig.copies++;
+      //    channel.id += orig.copies.ToString();
+      //    channel.copies = pos;
+      //    channel.iscopy = true;
+      //    _channels.RemoveAt(pos);
+      //    _channels.Insert(pos, orig);
+      //  }
+
+      //  if (_mergedChannels.Contains(channel.id))
+      //    channel.isMerged = true;
+
+      //  _channels.Add(channel);
+      //}
+
+      //return true;
     }
     #endregion
   }

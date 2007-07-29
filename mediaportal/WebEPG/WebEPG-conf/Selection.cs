@@ -55,7 +55,7 @@ namespace WebEPG_conf
     /// </summary>
     private System.ComponentModel.Container components = null;
 
-    public fSelection(TreeNode channels, TreeNode grabbers, bool bChanGrab)
+    public fSelection(TreeNode channels, TreeNode grabbers, bool bChanGrab, System.EventHandler select_click)
     {
       //
       // Required for Windows Form Designer support
@@ -85,11 +85,18 @@ namespace WebEPG_conf
       handler = new EventHandler(DoEvent);
       rbChannels.Click += handler;
       rbWebsites.Click += handler;
-      bSelect.Click += handler;
+      bSelect.Click += select_click;
       bClose.Click += handler;
-      treeView1.DoubleClick += handler;
+      treeView1.DoubleClick += select_click;
     }
 
+    public string[] Selected
+    {
+      get
+      {
+        return (string[])treeView1.SelectedNode.Tag;
+      }
+    }
 
     /// <summary>
     /// Clean up any resources being used.
@@ -251,19 +258,6 @@ namespace WebEPG_conf
       {
         this.Close();
         return;
-      }
-
-      if (source == treeView1 || source == bSelect)
-      {
-        if (treeView1.SelectedNode != null)
-        {
-          string[] id = (string[])treeView1.SelectedNode.Tag;
-          if (id != null)
-          {
-            this.Tag = id;
-            this.Text = "Selection ";
-          }
-        }
       }
 
       if (source == rbChannels)

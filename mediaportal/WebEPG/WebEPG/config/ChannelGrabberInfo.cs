@@ -24,7 +24,8 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using MediaPortal.WebEPG.Config.Grabber;
 
 namespace MediaPortal.EPG.config
 {
@@ -35,6 +36,6 @@ namespace MediaPortal.EPG.config
   {
     public string FullName;
     public string ChannelID;
-    public SortedList GrabberList;
+    public List<GrabberInfo> GrabberList;
   }
 }

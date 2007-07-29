@@ -29,6 +29,7 @@ using System.Net;
 using System.Web;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Serialization;
 using MediaPortal.Services;
@@ -59,11 +60,10 @@ namespace MediaPortal.WebEPG
     string _strBaseDir = string.Empty;
     bool _grabLinked;
     bool _dblookup = true;
-    int _linkStart;
-    int _linkEnd;
+    TimeRange _linkTimeRange;
 
     IParser _parser;
-    ArrayList _programs;
+    List<TVProgram> _programs;
     ArrayList _dbPrograms;
 
     int _dbLastProg;
@@ -193,10 +193,10 @@ namespace MediaPortal.WebEPG
     /// <param name="linkStart">The start time to get link pages.</param>
     /// <param name="linkEnd">The end time to get linked pages.</param>
     /// <returns>list of programs</returns>
-    public ArrayList GetGuide(string strChannelID, bool Linked, int linkStart, int linkEnd)
+    public List<TVProgram> GetGuide(string strChannelID, bool Linked, TimeRange linkTime)
     {
       // Grab with start time Now
-      return GetGuide(strChannelID, Linked, linkStart, linkEnd, DateTime.Now);
+      return GetGuide(strChannelID, Linked, linkTime, DateTime.Now);
     }
 
     /// <summary>
@@ -208,12 +208,11 @@ namespace MediaPortal.WebEPG
     /// <param name="linkEnd">The end time to get linked pages.</param>
     /// <param name="startDateTime">The start date time for grabbing.</param>
     /// <returns>list of programs</returns>
-    public ArrayList GetGuide(string strChannelID, bool Linked, int linkStart, int linkEnd, DateTime startDateTime)
+    public List<TVProgram> GetGuide(string strChannelID, bool Linked, TimeRange linkTime, DateTime startDateTime)
     {
       _strID = strChannelID;
       _grabLinked = Linked;
-      _linkStart = linkStart;
-      _linkEnd = linkEnd;
+      _linkTimeRange = linkTime;
       //int offset = 0;
 
       _reqData.ChannelId = _grabber.GetChannel(strChannelID);
@@ -225,7 +224,7 @@ namespace MediaPortal.WebEPG
 
       //_removeProgramsList = _grabber.GetRemoveProgramList(strChannelID); // <--- !!!
 
-      _programs = new ArrayList();
+      _programs = new List<TVProgram>();
 
       _log.Info(LogType.WebEPG, "WebEPG: ChannelId: {0}", strChannelID);
 

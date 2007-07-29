@@ -11,6 +11,7 @@ using System.Xml.Serialization;
 using System.IO;
 using MediaPortal.Services;
 using MediaPortal.Utils.Web;
+using MediaPortal.Utils.Time;
 using MediaPortal.EPG;
 using MediaPortal.WebEPG;
 using MediaPortal.TV.Database;
@@ -420,12 +421,12 @@ namespace MediaPortal.EPG.WebEPGTester
 
         if (m_EPGGrabber.Initalise(countryGrabber))
         {
-          ArrayList programs = m_EPGGrabber.GetGuide(channelId, false, 0, 23, grabDateTime);
+          List<TVProgram> programs = m_EPGGrabber.GetGuide(channelId, false, new TimeRange("00:00", "23:00"), grabDateTime);
           if (programs != null)
           {
             for (int p = 0; p < programs.Count; p++)
             {
-              xmltv.WriteProgram((TVProgram)programs[p], 0);
+              xmltv.WriteProgram(programs[p], "Tester", false);
             }
 
           }

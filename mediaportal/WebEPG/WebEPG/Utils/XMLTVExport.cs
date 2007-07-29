@@ -71,17 +71,17 @@ namespace MediaPortal.WebEPG
     public void WriteChannel(string id, string name)
     {
       _writer.WriteStartElement("channel");
-      _writer.WriteAttributeString("id", id);
+      _writer.WriteAttributeString("id", name + "-" + id);
       _writer.WriteElementString("display-name", name);
       _writer.WriteEndElement();
       _writer.Flush();
     }
 
-    public void WriteProgram(TVProgram program, int copy)
+    public void WriteProgram(TVProgram program, string name, bool merged)
     {
       string channelid = program.Channel;
-      if(copy > 0)
-        channelid += copy.ToString();
+      if(merged)
+        channelid = "[Merged]";
 
       if (program.Start != 0 &&
           program.Channel != String.Empty &&
@@ -91,7 +91,7 @@ namespace MediaPortal.WebEPG
         _writer.WriteAttributeString("start", program.Start.ToString());
         if(program.End != 0)
           _writer.WriteAttributeString("stop", program.End.ToString());
-        _writer.WriteAttributeString("channel", channelid);
+        _writer.WriteAttributeString("channel", name + "-" + channelid);
 
         _writer.WriteStartElement("title");
         //_writer.WriteAttributeString("lang", "de");

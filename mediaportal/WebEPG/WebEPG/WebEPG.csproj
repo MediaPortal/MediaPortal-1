@@ -143,6 +143,11 @@
     </Compile>
     <Compile Include="config\Grabber\ListingInfo.cs" />
     <Compile Include="config\Grabber\ModifyInfo.cs" />
+    <Compile Include="config\WebEPG\ChannelMap.cs" />
+    <Compile Include="config\WebEPG\MergedChannel.cs" />
+    <Compile Include="config\WebEPG\SiteAuth.cs" />
+    <Compile Include="config\WebEPG\WebepgConfigFile.cs" />
+    <Compile Include="config\WebEPG\WebepgInfo.cs" />
     <Compile Include="ListingTimeControl.cs" />
     <Compile Include="MPCode\TVProgram.cs">
       <SubType>Code</SubType>
@@ -179,9 +184,6 @@
     <Compile Include="WebListingGrabber.cs">
       <SubType>Code</SubType>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="config\WebEPG\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

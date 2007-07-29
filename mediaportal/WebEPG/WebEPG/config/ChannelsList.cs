@@ -27,7 +27,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Collections;
+using System.Collections.Generic;
 using MediaPortal.Util;
 using MediaPortal.WebEPG.Config.Grabber;
 
@@ -36,14 +36,14 @@ namespace MediaPortal.EPG.config
   //<summary>
   //Summary description for config.
   //</summary>
-  public class ChannelsList : IComparer
+  public class ChannelsList : IComparer<ChannelGrabberInfo>
   {
     #region Variables
     string _strGrabberDir;
     string _strChannelsFile;
     const int MAX_COST = 2;
-    SortedList _ChannelList = null;
-    string _Country;
+    Dictionary<string, ChannelGrabberInfo> _ChannelList = null;
+    //string _Country;
     #endregion
 
     #region Constructors/Destructors
@@ -78,7 +78,7 @@ namespace MediaPortal.EPG.config
     }
 
 
-    public SortedList GetChannelsList()
+    public Dictionary<string, ChannelGrabberInfo> GetChannelsList()
     {
       string[] CountryList = GetCountries();
 
@@ -90,9 +90,11 @@ namespace MediaPortal.EPG.config
     }
 
 
-    public SortedList GetChannelList(string country)
+    public Dictionary<string, ChannelGrabberInfo> GetChannelList(string country)
     {
-      LoadChannels(country);
+      //LoadChannels(country);
+      if (_ChannelList == null)
+        LoadAllChannels();
 
       if (_ChannelList != null)
         LoadGrabbers(country);
@@ -100,37 +102,30 @@ namespace MediaPortal.EPG.config
       return _ChannelList;
     }
 
-    public SortedList GetChannelList(string country, string grabber)
-    {
-      //LoadChannels(country);
-      _ChannelList = new SortedList();
+    //public Dictionary<string, ChannelGrabberInfo> GetChannelList(string country, string grabber)
+    //{
+    //  //LoadChannels(country);
+    //  _ChannelList = new Dictionary<string, ChannelGrabberInfo>();
 
-      if (_ChannelList != null)
-        LoadGrabber(country + "\\" + grabber);
+    //  if (_ChannelList != null)
+    //    LoadGrabber(country + "\\" + grabber);
 
-      return _ChannelList;
-    }
+    //  return _ChannelList;
+    //}
 
-    public ArrayList GetChannelArrayList(string country)
+    public List<ChannelGrabberInfo> GetChannelArrayList(string country)
     {
       //ChannelGrabberInfo[] ChannelArray = null;
-      ArrayList ChannelArray = null;
+      List<ChannelGrabberInfo> ChannelArray = null;
 
       GetChannelList(country);
 
       if (_ChannelList != null)
       {
-        IDictionaryEnumerator Enumerator = _ChannelList.GetEnumerator();
+        ChannelArray = new List<ChannelGrabberInfo>();
 
-        //ChannelArray = new ChannelGrabberInfo[_ChannelList.Count];
-        //int i=0;
-
-        ChannelArray = new ArrayList();
-
-        while (Enumerator.MoveNext())
+        foreach (ChannelGrabberInfo channel in _ChannelList.Values)
         {
-          ChannelGrabberInfo channel = (ChannelGrabberInfo)Enumerator.Value;
-          //ChannelArray[i++] = channel;
           ChannelArray.Add(channel);
         }
 
@@ -142,7 +137,8 @@ namespace MediaPortal.EPG.config
 
     public int FindChannel(string Name, string country)
     {
-      ArrayList channels = GetChannelArrayList(country);
+      List<ChannelGrabberInfo> channels = GetChannelArrayList(country);
+
 
       int retChan = -1;
 
@@ -184,7 +180,7 @@ namespace MediaPortal.EPG.config
 
     public ChannelGrabberInfo[] FindChannels(string[] NameList, string country)
     {
-      ArrayList channels = GetChannelArrayList(country);
+      List<ChannelGrabberInfo> channels = GetChannelArrayList(country);
 
       ChannelGrabberInfo[] retList = new ChannelGrabberInfo[NameList.Length];
 
@@ -243,40 +239,40 @@ namespace MediaPortal.EPG.config
     #endregion
 
     #region Private Methods
-    private void LoadChannels(string country)
-    {
-      if (country != _Country)
-        _ChannelList = new SortedList();
-      else
-        return;
+    //private void LoadChannels(string country)
+    //{
+    //  if (country != _Country)
+    //    _ChannelList = new Dictionary<string, ChannelGrabberInfo>();
+    //  else
+    //    return;
 
-      if (System.IO.File.Exists(_strChannelsFile))
-      {
-        //Log.WriteFile(LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
-        MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(_strChannelsFile);
-        int channelCount = xmlreader.GetValueAsInt(country, "TotalChannels", 0);
+    //  if (System.IO.File.Exists(_strChannelsFile))
+    //  {
+    //    //Log.WriteFile(LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
+    //    MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(_strChannelsFile);
+    //    int channelCount = xmlreader.GetValueAsInt(country, "TotalChannels", 0);
 
-        if (channelCount > 0)
-        {
-          if (_ChannelList == null)
-            _ChannelList = new SortedList();
+    //    if (channelCount > 0)
+    //    {
+    //      if (_ChannelList == null)
+    //        _ChannelList = new Dictionary<string, ChannelGrabberInfo>();
 
-          for (int ich = 0; ich < channelCount; ich++)
-          {
-            int channelIndex = xmlreader.GetValueAsInt(country, ich.ToString(), 0);
-            ChannelGrabberInfo channel = new ChannelGrabberInfo();
-            channel.ChannelID = xmlreader.GetValueAsString(channelIndex.ToString(), "ChannelID", "");
-            channel.FullName = xmlreader.GetValueAsString(channelIndex.ToString(), "FullName", "");
-            if (channel.FullName == "")
-              channel.FullName = channel.ChannelID;
-            if (channel.ChannelID != "")
-              _ChannelList.Add(channel.ChannelID, channel);
-          }
+    //      for (int ich = 0; ich < channelCount; ich++)
+    //      {
+    //        int channelIndex = xmlreader.GetValueAsInt(country, ich.ToString(), 0);
+    //        ChannelGrabberInfo channel = new ChannelGrabberInfo();
+    //        channel.ChannelID = xmlreader.GetValueAsString(channelIndex.ToString(), "ChannelID", "");
+    //        channel.FullName = xmlreader.GetValueAsString(channelIndex.ToString(), "FullName", "");
+    //        if (channel.FullName == "")
+    //          channel.FullName = channel.ChannelID;
+    //        if (channel.ChannelID != "")
+    //          _ChannelList.Add(channel.ChannelID, channel);
+    //      }
 
-          _Country = country;
-        }
-      }
-    }
+    //      _Country = country;
+    //    }
+    //  }
+    //}
 
     private void LoadAllChannels()
     {
@@ -284,12 +280,12 @@ namespace MediaPortal.EPG.config
       {
         //Log.WriteFile(LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
         MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(_strChannelsFile);
-        int channelCount = xmlreader.GetValueAsInt("ChannelGrabberInfo", "TotalChannels", 0);
+        int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);
 
         if (channelCount > 0)
         {
           if (_ChannelList == null)
-            _ChannelList = new SortedList();
+            _ChannelList = new Dictionary<string, ChannelGrabberInfo>();
 
           for (int ich = 0; ich < channelCount; ich++)
           {
@@ -298,65 +294,48 @@ namespace MediaPortal.EPG.config
             channel.FullName = xmlreader.GetValueAsString(ich.ToString(), "FullName", "");
             if (channel.FullName == "")
               channel.FullName = channel.ChannelID;
-            if (channel.ChannelID != "" && _ChannelList[channel.ChannelID] == null)
+            if (channel.ChannelID != "" && !_ChannelList.ContainsKey(channel.ChannelID))
               _ChannelList.Add(channel.ChannelID, channel);
           }
         }
       }
     }
 
-    private void LoadGrabber(string grabber)
+    private void LoadGrabber(string country, FileInfo file)
     {
-      if (System.IO.File.Exists(_strGrabberDir + grabber) && _ChannelList != null)
+      GrabberConfigFile grabber;
+      try
       {
-        System.IO.FileInfo file = new System.IO.FileInfo(_strGrabberDir + grabber);
-        GrabberInfo gInfo = new GrabberInfo();
-        XmlDocument xml = new XmlDocument();
-        GrabberConfigFile grabberXml;
-        try
+        XmlSerializer s = new XmlSerializer(typeof(GrabberConfigFile));
+        TextReader r = new StreamReader(file.FullName);
+        grabber = (GrabberConfigFile)s.Deserialize(r);
+      }
+      catch (InvalidOperationException)
+      {
+        return;
+      }
+      grabber.Info.Country = country;
+      grabber.Info.GrabberID = country + "\\" + file.Name;
+
+      foreach (ChannelInfo channel in grabber.Channels)
+      {
+        if (_ChannelList.ContainsKey(channel.id))
         {
-          XmlSerializer s = new XmlSerializer(typeof(GrabberConfigFile));
-          TextReader r = new StreamReader(file.FullName);
-          grabberXml = (GrabberConfigFile)s.Deserialize(r);
+          ChannelGrabberInfo info = _ChannelList[channel.id];
+
+          if (info.GrabberList == null)
+            info.GrabberList = new List<GrabberInfo>();
+          if (!info.GrabberList.Contains(grabber.Info))
+            info.GrabberList.Add(grabber.Info);
         }
-        catch (Exception)
+        else
         {
-          //Log.WriteFile(LogType.Log, false, "WebEPG Config: File open failed - XML error");
-          return;
-        }
-
-        string GrabberSite = file.Name.Replace(".xml", "");
-        GrabberSite = GrabberSite.Replace("_", ".");
-
-        gInfo.GrabberID = file.Directory.Name + "\\" + file.Name;
-        gInfo.GrabberName = GrabberSite;
-        gInfo.Country = file.Directory.Name;
-        //					hGrabberInfo.Add(gInfo.GrabberID, gInfo);
-
-        //					if(CountryList[file.Directory.Name] == null)
-        //						CountryList.Add(file.Directory.Name, new SortedList());
-        foreach (ChannelInfo channel in grabberXml.Channels)
-        {
-          if (channel.id != null)
-          {
-            ChannelGrabberInfo info = (ChannelGrabberInfo)_ChannelList[channel.id];
-            if (info != null)
-            {
-              if (info.GrabberList == null)
-                info.GrabberList = new SortedList();
-              if (info.GrabberList[gInfo.GrabberID] == null)
-                info.GrabberList.Add(gInfo.GrabberID, gInfo);
-            }
-            else
-            {
-              info = new ChannelGrabberInfo();
-              info.ChannelID = channel.id;
-              info.FullName = info.ChannelID;
-              info.GrabberList = new SortedList();
-              info.GrabberList.Add(gInfo.GrabberID, gInfo);
-              _ChannelList.Add(info.ChannelID, info);
-            }
-          }
+          ChannelGrabberInfo info = new ChannelGrabberInfo();
+          info.ChannelID = channel.id;
+          info.FullName = channel.id;
+          info.GrabberList = new List<GrabberInfo>();
+          info.GrabberList.Add(grabber.Info);
+          _ChannelList.Add(info.ChannelID, info);
         }
       }
     }
@@ -367,87 +346,18 @@ namespace MediaPortal.EPG.config
       {
         System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(_strGrabberDir + country);
         //Log.WriteFile(LogType.Log, false, "WebEPG Config: Directory: {0}", Location);
-        GrabberInfo gInfo;
         foreach (System.IO.FileInfo file in dir.GetFiles("*.xml"))
         {
-          gInfo = new GrabberInfo();
-          XmlDocument xml = new XmlDocument();
-          XmlNodeList channelList;
-          try
-          {
-            //Log.WriteFile(LogType.Log, false, "WebEPG Config: File: {0}", file.Name);
-            xml.Load(file.FullName);
-            channelList = xml.DocumentElement.SelectNodes("/profile/section/entry");
-
-            XmlNode entryNode = xml.DocumentElement.SelectSingleNode("section[@name=\"Info\"]/entry[@name=\"GuideDays\"]");
-            if (entryNode != null)
-              gInfo.GrabDays = int.Parse(entryNode.InnerText);
-            entryNode = xml.DocumentElement.SelectSingleNode("section[@name=\"Info\"]/entry[@name=\"SiteDescription\"]");
-            if (entryNode != null)
-              gInfo.SiteDesc = entryNode.InnerText;
-            entryNode = xml.DocumentElement.SelectSingleNode("section[@name=\"Listing\"]/entry[@name=\"SubListingLink\"]");
-            gInfo.Linked = false;
-            if (entryNode != null)
-              gInfo.Linked = true;
-          }
-          catch (System.Xml.XmlException) // ex)
-          {
-            //Log.WriteFile(LogType.Log, false, "WebEPG Config: File open failed - XML error");
-            return;
-          }
-
-          string GrabberSite = file.Name.Replace(".xml", "");
-          GrabberSite = GrabberSite.Replace("_", ".");
-
-          gInfo.GrabberID = file.Directory.Name + "\\" + file.Name;
-          gInfo.GrabberName = GrabberSite;
-          gInfo.Country = file.Directory.Name;
-          //					hGrabberInfo.Add(gInfo.GrabberID, gInfo);
-
-          //					if(CountryList[file.Directory.Name] == null)
-          //						CountryList.Add(file.Directory.Name, new SortedList());
-
-          foreach (XmlNode nodeChannel in channelList)
-          {
-            if (nodeChannel.Attributes != null)
-            {
-              XmlNode id = nodeChannel.ParentNode.Attributes.Item(0);
-              if (id.InnerXml == "ChannelList")
-              {
-                id = nodeChannel.Attributes.Item(0);
-                //idList.Add(id.InnerXml);
-
-                ChannelGrabberInfo info = (ChannelGrabberInfo)_ChannelList[id.InnerXml];
-                if (info != null) // && info.GrabberList[gInfo.GrabberID] != null)
-                {
-                  if (info.GrabberList == null)
-                    info.GrabberList = new SortedList();
-                  if (info.GrabberList[gInfo.GrabberID] == null)
-                    info.GrabberList.Add(gInfo.GrabberID, gInfo);
-                }
-                else
-                {
-                  info = new ChannelGrabberInfo();
-                  info.ChannelID = id.InnerXml;
-                  info.FullName = info.ChannelID;
-                  info.GrabberList = new SortedList();
-                  info.GrabberList.Add(gInfo.GrabberID, gInfo);
-                  _ChannelList.Add(info.ChannelID, info);
-                }
-              }
-            }
-          }
+          LoadGrabber(country, file);
         }
       }
     }
     #endregion
 
-    #region IComparer Members
-    public int Compare(object x, object y)
+    #region IComparer<T> Members
+    public int Compare(ChannelGrabberInfo x, ChannelGrabberInfo y)
     {
-      ChannelGrabberInfo ch1 = (ChannelGrabberInfo)x;
-      ChannelGrabberInfo ch2 = (ChannelGrabberInfo)y;
-      return String.Compare(ch1.FullName, ch2.FullName, true);
+      return String.Compare(x.FullName, y.FullName, true);
     }
     #endregion
   }

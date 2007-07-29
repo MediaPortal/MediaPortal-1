@@ -140,12 +140,23 @@
     <Compile Include="GrabberConfigInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ListViewColumnSorter.cs" />
+    <Compile Include="MergedChannelDetails.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MergedChannelDetails.Designer.cs">
+      <DependentUpon>MergedChannelDetails.cs</DependentUpon>
+    </Compile>
     <Compile Include="Selection.cs">
       <SubType>Form</SubType>
     </Compile>
     <EmbeddedResource Include="Config.resx">
       <DependentUpon>Config.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MergedChannelDetails.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MergedChannelDetails.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Selection.resx">
       <DependentUpon>Selection.cs</DependentUpon>
