@@ -32,6 +32,7 @@ using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Video.Database;
 using MediaPortal.Util;
+using CSScriptLibrary;
 
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
@@ -296,6 +297,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.actorsCheckBox = new System.Windows.Forms.CheckBox();
       this.skipCheckBox = new System.Windows.Forms.CheckBox();
       this.mpButton2 = new MediaPortal.UserInterface.Controls.MPButton();
       this.startButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -390,7 +392,6 @@ namespace MediaPortal.Configuration.Sections
       this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxPictureURL = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.actorsCheckBox = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage8.SuspendLayout();
@@ -428,6 +429,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Scan Movie Folders";
+      // 
+      // actorsCheckBox
+      // 
+      this.actorsCheckBox.AutoSize = true;
+      this.actorsCheckBox.Location = new System.Drawing.Point(16, 163);
+      this.actorsCheckBox.Name = "actorsCheckBox";
+      this.actorsCheckBox.Size = new System.Drawing.Size(106, 17);
+      this.actorsCheckBox.TabIndex = 4;
+      this.actorsCheckBox.Text = "Download actors";
+      this.actorsCheckBox.UseVisualStyleBackColor = true;
       // 
       // skipCheckBox
       // 
@@ -615,17 +626,17 @@ namespace MediaPortal.Configuration.Sections
       // chDatabaseDB
       // 
       this.chDatabaseDB.Text = "Database";
-      this.chDatabaseDB.Width = 69;
+      this.chDatabaseDB.Width = 136;
       // 
       // chDatabaseLanguage
       // 
       this.chDatabaseLanguage.Text = "Language";
-      this.chDatabaseLanguage.Width = 70;
+      this.chDatabaseLanguage.Width = 213;
       // 
       // chDatabaseLimit
       // 
       this.chDatabaseLimit.Text = "Limit";
-      this.chDatabaseLimit.Width = 272;
+      this.chDatabaseLimit.Width = 61;
       // 
       // listViewTextBox
       // 
@@ -1465,16 +1476,6 @@ namespace MediaPortal.Configuration.Sections
       this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
       this.pictureBox1.TabIndex = 33;
       this.pictureBox1.TabStop = false;
-      // 
-      // actorsCheckBox
-      // 
-      this.actorsCheckBox.AutoSize = true;
-      this.actorsCheckBox.Location = new System.Drawing.Point(16, 163);
-      this.actorsCheckBox.Name = "actorsCheckBox";
-      this.actorsCheckBox.Size = new System.Drawing.Size(106, 17);
-      this.actorsCheckBox.TabIndex = 4;
-      this.actorsCheckBox.Text = "Download actors";
-      this.actorsCheckBox.UseVisualStyleBackColor = true;
       // 
       // MovieDatabase
       // 
@@ -2640,7 +2641,7 @@ namespace MediaPortal.Configuration.Sections
                 filmAffinityFound = true;
               else if (strDatabase == "MovieMeter")
                 movieMeterFound = true;
-              else if (strDatabase == "CSPV")
+              else if (strDatabase == "Script")
                 cspvFound = true;
             }
           }
@@ -2660,9 +2661,32 @@ namespace MediaPortal.Configuration.Sections
         if (!movieMeterFound)
           mpComboBox1.Items.Add(new ComboBoxItemDatabase("MovieMeter", "dutch", "20"));
 
-        if (!cspvFound)
-          mpComboBox1.Items.Add(new ComboBoxItemDatabase("CSPV", "hungarian", "20"));
-        
+        //if (!cspvFound)
+        //{
+        //  mpComboBox1.Items.Add(new ComboBoxItemDatabase("Script", "n/a", "20"));
+        //}
+
+        DirectoryInfo di = Config.GetSubDirectoryInfo(Config.Dir.Base,"scripts\\imdb");
+        FileInfo[] fileList = di.GetFiles("*.csscript", SearchOption.AllDirectories);
+        foreach (FileInfo f in fileList)
+        {
+          try
+          {
+            AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(f.FullName, null, false));
+            IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+
+            if (!lvDatabase.Items.ContainsKey(Path.GetFileNameWithoutExtension(f.Name)))
+            {
+              mpComboBox1.Items.Add(new ComboBoxItemDatabase(Path.GetFileNameWithoutExtension(f.Name), grabber.GetName() + " - " + grabber.GetLanguage(), "10"));
+            }
+          }
+          catch (Exception ex)
+          {
+            //textBox3.Text = ex.Message;
+            Log.Error("Script garbber error file: {0}, message : {1}", f.FullName, ex.Message);
+          }
+        }
+
         if (mpComboBox1.Items.Count > 0)
           mpComboBox1.SelectedIndex = 0;
 

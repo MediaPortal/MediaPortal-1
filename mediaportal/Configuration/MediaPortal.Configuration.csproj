@@ -168,6 +168,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\BassRegistration.dll</HintPath>
     </Reference>
+    <Reference Include="CSScriptLibrary, Version=1.9.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.TunerLib, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Interop.TunerLib.dll</HintPath>

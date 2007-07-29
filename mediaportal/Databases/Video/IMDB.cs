@@ -33,7 +33,7 @@ using System.Text.RegularExpressions;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
-
+using CSScriptLibrary;
 
 namespace MediaPortal.Video.Database
 {
@@ -592,22 +592,33 @@ namespace MediaPortal.Video.Database
                 // END MovieMeter.nl support
                 break;
 
-              case "CSPV":
-                // CSPV support
-                line1 = GUILocalizeStrings.Get(984) + ":CSPV";
-                if (m_progress != null)
-                  m_progress.OnProgress(line1, line2, line3, percent);
-                strURL = "http://filmlexikon.hu/Adatbazis_index.php?A_SEARCH=1&adatbazis=1&keywords=" + strSearch + "&what=title";
-                FindCspv(strURL, aLimits[i]);
-                percent += 100 / aDatabases.Length;
-                if (m_progress != null)
-                  m_progress.OnProgress(line1, line2, line3, percent);
-                // END CSPV support
-                break;
-
-              default:
-                // unsupported database?
-                Log.Error("Movie database lookup - database not supported: {0}", aDatabases[i].ToUpper());
+             default:
+                // Script support script.csscript
+               string grabberFileName = Config.GetSubFolder(Config.Dir.Base, "scripts\\imdb") + @"\" + aDatabases[i] + ".csscript";
+               line1 = GUILocalizeStrings.Get(984) + ": Script " + aDatabases[i];
+               if (File.Exists(grabberFileName))
+               {
+                 if (m_progress != null)
+                   m_progress.OnProgress(line1, line2, line3, percent);
+                 try
+                 {
+                   AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(grabberFileName, null, false));
+                   IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+                   grabber.FindFilm(strSearch, aLimits[i], elements);
+                   percent += 100 / aDatabases.Length;
+                   if (m_progress != null)
+                     m_progress.OnProgress(line1, line2, line3, percent);
+                 }
+                 catch (Exception ex)
+                 {
+                   Log.Error("Script garbber error file: {0}, message : {1}", grabberFileName, ex.Message);
+                 }
+               }
+               else
+               {
+                 // unsupported database?
+                 Log.Error("Movie database lookup - database not supported: {0}", aDatabases[i].ToUpper());
+               }
                 break;
             }
           }
@@ -954,31 +965,31 @@ namespace MediaPortal.Video.Database
             return GetDetailsFilmAffinity(url, ref movieDetails);
           case "MovieMeter":
             return GetDetailsMovieMeter(url, ref movieDetails);
-          case "CSPV":
+          default:
+            // Script support script.csscript
+            string grabberFileName = Config.GetSubFolder(Config.Dir.Base, "scripts\\imdb") + @"\" + url.Database + ".csscript";
+            if (File.Exists(grabberFileName))
             {
-              if (GetDetailsCspv(url, ref movieDetails))
+              try
               {
-                elements.Clear();
-                IMDBMovie tempDetails = new IMDBMovie();
-                tempDetails.Title=movieDetails.Title;
-                tempDetails.Plot = movieDetails.Plot;
-                tempDetails.Genre = movieDetails.Genre;
-                FindIMDB(url.IMDBURL, 1);
-                if (elements.Count > 0)
-                {
-                  GetDetailsIMDB((IMDBUrl)elements[0], ref movieDetails);
-                  movieDetails.Title = tempDetails.Title;
-                  movieDetails.Plot = tempDetails.Plot;
-                  movieDetails.Genre = tempDetails.Genre;
-                }
-                return true;
+                AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.Load(grabberFileName, null, false));
+                IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+                grabber.GetDetails(url, ref movieDetails);
               }
+              catch (Exception ex)
+              {
+                Log.Error("Script garbber error GetDetails() file: {0}, message : {1}", grabberFileName, ex.Message);
+                return false;
+              }
+              return true;
+            }
+            else
+            {
+              // unsupported database?
+              Log.Error("Movie database lookup GetDetails()- database not supported: {0}", url.Database);
               return false;
             }
-          default:
-            // Not supported Database / Host
-            Log.Error("Movie DB lookup GetDetails(): Unknown Database {0}", url.Database);
-            return false;
+            break;
         }
       }
       catch (Exception)
