@@ -491,6 +491,7 @@ namespace MediaPortal.GUI.Pictures
     public static readonly string SegmentIndicator = "#segment";
     PlayListPlayer playlistPlayer;
     MusicDatabase mDB = null;
+    bool _autoShuffleMusic = false;
     #endregion
 
     #region GUIWindow overrides
@@ -2385,6 +2386,7 @@ namespace MediaPortal.GUI.Pictures
         _useRandomTransitions = xmlreader.GetValueAsBool("pictures", "random", true);
         _autoShuffle = xmlreader.GetValueAsBool("pictures", "autoShuffle", false);
         _autoRepeat = xmlreader.GetValueAsBool("pictures", "autoRepeat", false);
+        _autoShuffleMusic = xmlreader.GetValueAsBool("musicfiles", "autoShuffle", false);
         //                              _isBackgroundMusicEnabled = xmlreader.GetValueAsBool("pictures", "backgroundmusic", false);
         _isBackgroundMusicEnabled = true;
 
@@ -2424,15 +2426,41 @@ namespace MediaPortal.GUI.Pictures
 
         try
         {
-          playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
+          Playlists.PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP);
+          playlist.Clear();
           playlistPlayer.Reset();
           playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_TEMP;
 
-          PlayListItem playlistItem = new PlayListItem();
+          // Check, if we got a playlist to allow shuffle
+          if (Util.Utils.IsPlayList(filename))
+          {
+            IPlayListIO loader = PlayListFactory.CreateIO(filename);
+            if (loader == null)
+              return;
 
-          playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
-          playlistItem.FileName = filename;
-          playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+            if (!loader.Load(playlist, filename))
+            {
+              return;
+            }
+
+            if (_autoShuffleMusic)
+            {
+              Random r = new Random((int)DateTime.Now.Ticks);
+              int shuffleCount = r.Next() % 50;
+              for (int i = 0; i < shuffleCount; ++i)
+              {
+                playlist.Shuffle();
+              }
+            }
+          }
+          else
+          {
+            PlayListItem playlistItem = new PlayListItem();
+
+            playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
+            playlistItem.FileName = filename;
+            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+          }
           playlistPlayer.Play(0);
 
           _isBackgroundMusicPlaying = true;
