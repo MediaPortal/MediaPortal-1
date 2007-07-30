@@ -43,10 +43,10 @@
     </control>
     <control>
       <type>group</type>
-      <animation effect="slide" time="400" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="400" end="800,0">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
       <description>group element</description>
       <layout>StackLayout</layout>
       <posX>5</posX>
@@ -56,20 +56,15 @@
         <type>button</type>
         <id>2</id>
         <label>100</label>
-        <onleft>2</onleft>
-        <onright>50</onright>
         <onup>17</onup>
-        <ondown>3</ondown>
+        <onright>50</onright>
         <alignY>center</alignY>
       </control>
       <control>
         <type>sortbutton</type>
         <id>3</id>
         <label>103</label>
-        <onleft>3</onleft>
         <onright>50</onright>
-        <onup>2</onup>
-        <ondown>5</ondown>
         <alignY>center</alignY>
       </control>
       <control>
@@ -77,10 +72,7 @@
         <type>button</type>
         <id>5</id>
         <label>457</label>
-        <onleft>5</onleft>
         <onright>50</onright>
-        <onup>3</onup>
-        <ondown>20</ondown>
         <alignY>center</alignY>
       </control>
       <control>
@@ -89,10 +81,7 @@
         <id>20</id>
         <label>136</label>
         <action>33</action>
-        <onleft>20</onleft>
         <onright>50</onright>
-        <onup>5</onup>
-        <ondown>6</ondown>
         <alignY>center</alignY>
       </control>
       <control>
@@ -100,11 +89,31 @@
         <type>button</type>
         <id>6</id>
         <label>341</label>
-        <onleft>6</onleft>
         <onright>50</onright>
-        <onup>20</onup>
+        <ondown>7</ondown>
+        <alignY>center</alignY>
+      </control>
+      <control>
+        <description>TV Shows</description>
+        <type>button</type>
+        <id>7</id>
+        <hyperlink>9811</hyperlink>
+        <label>1300</label>
+        <onright>50</onright>
+        <ondown>8</ondown>
+        <alignY>center</alignY>
+        <visible>plugin.isenabled(MP-TV Series)</visible>
+      </control>
+      <control>
+        <description>Trailers</description>
+        <type>button</type>
+        <id>8</id>
+        <hyperlink>5900</hyperlink>
+        <label>5906</label>
+        <onright>50</onright>
         <ondown>99</ondown>
         <alignY>center</alignY>
+        <visible>plugin.isenabled(My Trailers)</visible>
       </control>
     </control>
     <control>
