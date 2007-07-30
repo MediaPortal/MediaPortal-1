@@ -91,36 +91,40 @@ namespace MediaPortal.GUI.Video
                 return currentView.LocalizedName;
             }
         }
-		public string CurrentView 
-		{
-			get 
-			{ 
-				if (currentView == null) 
-					return String.Empty;
-				return currentView.Name; 
-			}
-			set 
-			{
-                bool done = false;
-				foreach (ViewDefinition definition in views)
-				{
-					if (definition.Name == value) 
-					{
-						currentView=definition;
-						CurrentLevel=0;
-                        done = true;
-                        break;
-					}
-				}
-                if (!done)
-                {
-                    if (views.Count > 0)
-                    {
-                        currentView = (ViewDefinition)views[0];
-                    }
-                }
-			}
-		}
+    public string CurrentView
+    {
+      get
+      {
+        if (currentView == null)
+          return String.Empty;
+        return currentView.Name;
+      }
+      set
+      {
+        bool done = false;
+        foreach (ViewDefinition definition in views)
+        {
+          if (definition.Name == value)
+          {
+            currentView = definition;
+            CurrentLevel = 0;
+            done = true;
+            break;
+          }
+        }
+        if (!done)
+        {
+          if (views.Count > 0)
+          {
+            currentView = (ViewDefinition)views[0];
+          }
+        }
+      }
+    }
+    public int CurrentViewIndex
+    {
+      get { return views.IndexOf(currentView); }
+    }
     public string CurrentLevelWhere
     {
       get

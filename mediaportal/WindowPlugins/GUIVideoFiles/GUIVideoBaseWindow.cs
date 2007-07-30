@@ -574,20 +574,29 @@ namespace MediaPortal.GUI.Video
     protected void OnShowViews()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null)
-        return;
+      if (dlg == null) return;
       dlg.Reset();
-      dlg.SetHeading(499); // menu
-      dlg.Add(GUILocalizeStrings.Get(134));//videos
+      dlg.SetHeading(499); // Views menu
+
+      dlg.AddLocalizedString(134); // Shares
       foreach (ViewDefinition view in handler.Views)
       {
-        dlg.Add(view.LocalizedName); //play
+        dlg.Add(view.LocalizedName);
       }
+
+      // set the focus to currently used view
+      if (this.GetID == (int)GUIWindow.Window.WINDOW_VIDEOS)
+        dlg.SelectedLabel = 0;
+      else if (this.GetID == (int)GUIWindow.Window.WINDOW_VIDEO_TITLE)
+        dlg.SelectedLabel = handler.CurrentViewIndex + 1;
+
+      // show dialog and wait for result
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1)
-        return;
+      if (dlg.SelectedId == -1) return;
+
+      
       if (dlg.SelectedLabel == 0)
-      {
+      { // shares view is selected
         int nNewWindow = (int)GUIWindow.Window.WINDOW_VIDEOS;
         VideoState.StartWindow = nNewWindow;
         if (nNewWindow != GetID)
@@ -597,7 +606,7 @@ namespace MediaPortal.GUI.Video
         }
       }
       else
-      {
+      { // a db view is selected
         ViewDefinition selectedView = (ViewDefinition)handler.Views[dlg.SelectedLabel - 1];
         handler.CurrentView = selectedView.Name;
         VideoState.View = selectedView.Name;
@@ -620,10 +629,9 @@ namespace MediaPortal.GUI.Video
     protected void OnShowSortOptions()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null)
-        return;
+      if (dlg == null) return;
       dlg.Reset();
-      dlg.SetHeading(495);
+      dlg.SetHeading(495); // Sort options
 
       dlg.AddLocalizedString(365); // name
       dlg.AddLocalizedString(104); // date
@@ -632,10 +640,12 @@ namespace MediaPortal.GUI.Video
       dlg.AddLocalizedString(367); // rating
       dlg.AddLocalizedString(430); // label
 
-      dlg.DoModal(GetID);
+      // set the focus to currently used sort method
+      dlg.SelectedLabel = (int)CurrentSortMethod;
 
-      if (dlg.SelectedLabel == -1)
-        return;
+      // show dialog and wait for result
+      dlg.DoModal(GetID);
+      if (dlg.SelectedId == -1) return;
 
       switch (dlg.SelectedId)
       {
