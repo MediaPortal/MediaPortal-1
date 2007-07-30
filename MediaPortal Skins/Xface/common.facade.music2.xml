@@ -32,9 +32,9 @@
 					<textureDownFocus>page_down_focus.png</textureDownFocus>
 					<textureFocus>list_sub_focus.png</textureFocus>
 					<textureNoFocus>list_sub_nofocus.png</textureNoFocus>
-					<textureHeight>40</textureHeight>
+					<textureHeight>45</textureHeight>
 					<image>folder_focus.png</image>
-					<font>font12</font>
+					<font>font16</font>
 					<shadedColor>20ffffff</shadedColor>
 					<selectedColor>FFF8BC70</selectedColor>
 					<playedColor>ffa0d0ff</playedColor>
@@ -44,12 +44,14 @@
 					<colordiffuse>ffffffff</colordiffuse>
 					<remoteColor>ffFFA075</remoteColor>
 					<downloadColor>ff80ff80</downloadColor>
-					<textXOff>32</textXOff>
+					<textXOff>182</textXOff>
 					<textYOff>4</textYOff>
-					<textXOff2>722</textXOff2>
+					<textXOff2>1012</textXOff2>
 					<textYOff2>4</textYOff2>
-					<IconXOff>24</IconXOff>
-					<IconYOff>12</IconYOff>
+					<itemWidth>40</itemWidth>
+					<itemHeight>37</itemHeight>
+					<IconXOff>84</IconXOff>
+					<IconYOff>4</IconYOff>
 					<suffix>|</suffix>
 					<scrollOffset>2</scrollOffset>
 				</control>
@@ -81,7 +83,7 @@
 					<thumbZoom>no</thumbZoom>
 					<imageFolder>icon_empty_nofocus.png</imageFolder>
 					<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
-					<font>font12</font>
+					<font>font14</font>
 					<selectedColor>00ffffff</selectedColor>
 					<textcolor>ffffffff</textcolor>
 					<colordiffuse>ffffffff</colordiffuse>
@@ -134,7 +136,7 @@
 					<itemHeight>210</itemHeight>
 					<textureWidth>203</textureWidth>
 					<textureHeight>210</textureHeight>
-					<font>font10</font>
+					<font>font55</font>
 					<selectedColor>00ffffff</selectedColor>
 					<textcolor>00ffffff</textcolor>
 					<colordiffuse>00ffffff</colordiffuse>

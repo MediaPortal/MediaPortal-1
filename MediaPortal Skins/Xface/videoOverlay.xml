@@ -16,13 +16,30 @@
 	  <animation effect="fade" time="800" delay="250">WindowOpen</animation>
 	  <animation effect="fade" time="800" delay="250">WindowClose</animation>
     </control>
+     <control>
+      		<type>multiimage</type>
+      		<id>1</id>
+     		<posX>370</posX>
+            <posY>703</posY>
+  			<width>68</width>
+  			<height>35</height>
+      		<imagepath>Play</imagepath>
+      		<timeperimage>50</timeperimage>
+      		<fadetime>10</fadetime>
+      		<loop>yes</loop>
+      		<randomize>false</randomize>
+      		<visible>Player.HasVideo + Player.playing</visible>
+      		<animation effect="fade" time="10">VisibleChange</animation>
+    	</control>
    <control>
       <description>play logo</description>
       <type>image</type>
       <id>3</id>
-      <posX>28</posX>
-      <posY>605</posY>
-      <texture>logo_play.png</texture>
+     		<posX>370</posX>
+            <posY>703</posY>
+  			<width>68</width>
+  			<height>35</height>
+      <texture>-</texture>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>
@@ -30,8 +47,10 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>28</posX>
-      <posY>605</posY>
+     		<posX>370</posX>
+            <posY>703</posY>
+  			<width>68</width>
+  			<height>35</height>
       <texture>logo_pause.png</texture>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -40,8 +59,10 @@
       <description>FF logo</description>
       <type>image</type>
       <id>7</id>
-      <posX>28</posX>
-      <posY>605</posY>
+     		<posX>370</posX>
+            <posY>703</posY>
+  			<width>68</width>
+  			<height>35</height>
       <texture>logo_fastforward.png</texture>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -50,8 +71,10 @@
       <description>RW logo</description>
       <type>image</type>
       <id>8</id>
-      <posX>28</posX>
-      <posY>605</posY>
+     		<posX>370</posX>
+            <posY>703</posY>
+  			<width>68</width>
+  			<height>35</height>
       <texture>logo_rewind.png</texture>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>

@@ -39,8 +39,6 @@
       <texture>#header.image</texture>
     </control>
     <control>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
       <type>label</type>
       <id>1</id>
       <posX>374</posX>

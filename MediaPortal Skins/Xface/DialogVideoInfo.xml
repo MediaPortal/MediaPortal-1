@@ -27,7 +27,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>379</posX>
-      <posY>59</posY>
+      <posY>489</posY>
       <width>733</width>
       <label>#title</label>
       <font>font18</font>
@@ -40,7 +40,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>379</posX>
-      <posY>93</posY>
+      <posY>533</posY>
       <width>533</width>
       <label>(#mpaarating)</label>
       <font>font12</font>

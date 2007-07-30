@@ -19,7 +19,7 @@
       <description>group element</description>
       <layout>StackLayout</layout>
       <posX>69</posX>
-      <posY>129</posY>
+      <posY>89</posY>
       <control>
         <description>Switch Button</description>
         <type>button</type>

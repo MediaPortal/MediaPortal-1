@@ -156,7 +156,7 @@
       <posX>507</posX>
       <posY>520</posY>
       <width>350</width>
-      <texture flipY="true" diffuse="Thumb_Mask.png">osd_progress_background.png</texture>
+      <texture flipY="true" diffuse="Thumb_Mask.png">osd_progress_background2.png</texture>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>

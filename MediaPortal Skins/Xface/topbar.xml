@@ -195,9 +195,9 @@
 			<type>button</type>
 			<id>611</id>
 			<posX>966</posX>
-			<posY>670</posY>
-			<width>130</width>
-			<height>88</height>
+			<posY>655</posY>
+			<width>145</width>
+			<height>103</height>
 			<textureFocus>hover_my tv1.png</textureFocus>
 			<textureNoFocus>hover_my tv1.png</textureNoFocus>
 			<hyperlink>1</hyperlink>
@@ -221,9 +221,9 @@
 			<type>button</type>
 			<id>612</id>
 			<posX>1096</posX>
-			<posY>670</posY>
-			<width>130</width>
-			<height>88</height>
+			<posY>665</posY>
+			<width>145</width>
+			<height>103</height>
 			<textureFocus>hover_my pictures1.png</textureFocus>
 			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
 			<hyperlink>2</hyperlink>
@@ -247,9 +247,9 @@
 			<type>button</type>
 			<id>613</id>
 			<posX>1226</posX>
-			<posY>670</posY>
-			<width>130</width>
-			<height>88</height>
+			<posY>650</posY>
+			<width>140</width>
+			<height>98</height>
 			<textureFocus>hover_my music1.png</textureFocus>
 			<textureNoFocus>hover_my music1.png</textureNoFocus>
 			<hyperlink>501</hyperlink>

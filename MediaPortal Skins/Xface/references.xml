@@ -42,7 +42,7 @@
 		<textYOff>6</textYOff>
 		<textureFocus>menu_list_focus.png</textureFocus>
 		<textureNoFocus>menu_list_nofocus.png</textureNoFocus>
-		<font>font13</font>
+		<font>font14</font>
 		<textcolor>white</textcolor>
 		<colordiffuse>white</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
@@ -60,7 +60,7 @@
 		<textYOff>6</textYOff>
 		<textureFocus>menu_list_focus.png</textureFocus>
 		<textureNoFocus>menu_list_nofocus.png</textureNoFocus>
-		<font>font13</font>
+		<font>font14</font>
 		<textcolor>white</textcolor>
 		<colordiffuse>white</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
@@ -95,7 +95,7 @@
 		<textureMoveDownFocused>playlist_item_down_focus.png</textureMoveDownFocused>
 		<textureDelete>playlist_item_delete_nofocus.png</textureDelete>
 		<textureDeleteFocused>playlist_item_delete_focus.png</textureDeleteFocused>
-		<font>font13</font>
+		<font>font14</font>
 		<textcolor>white</textcolor>
 		<colordiffuse>white</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
@@ -115,7 +115,7 @@
 		<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
 		<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
 		<label>-</label>
-		<font>font13</font>
+		<font>font14</font>
 		<textcolor>white</textcolor>
 		<colordiffuse>white</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
@@ -136,7 +136,7 @@
 		<textureDescendingFocused>arrow_round_down_focus.png</textureDescendingFocused>
 		<offsetSortButtonX>250</offsetSortButtonX>
 		<offsetSortButtonY>8</offsetSortButtonY>
-		<font>font13</font>
+		<font>font14</font>
 		<textcolor>White</textcolor>
 		<colordiffuse>White</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
@@ -163,7 +163,7 @@
 		<textureNoFocus>list_sub_nofocus.png</textureNoFocus>
 		<textureHeight>40</textureHeight>
 		<image>folder_focus.png</image>
-		<font>font12</font>
+		<font>font14</font>
 		<shadedColor>20ffffff</shadedColor>
 		<selectedColor>FFF8BC70</selectedColor>
 		<playedColor>ffa0d0ff</playedColor>
@@ -349,7 +349,7 @@
 		<thumbZoom>no</thumbZoom>
 		<imageFolder>icon_empty_nofocus.png</imageFolder>
 		<imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
-		<font>font12</font>
+		<font>font13</font>
 		<selectedColor>00ffffff</selectedColor>
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
@@ -449,10 +449,10 @@
 		<posY>293</posY>
 		<width>546</width>
 		<height>400</height>
-		<spinWidth>21</spinWidth>
-		<spinHeight>21</spinHeight>
-		<spinPosX>1157</spinPosX>
-		<spinPosY>706</spinPosY>
+		<spinWidth>34</spinWidth>
+		<spinHeight>36</spinHeight>
+		<spinPosX>1182</spinPosX>
+		<spinPosY>590</spinPosY>
 		<spinColor>ffffffff</spinColor>
 		<textureUp>page_up_nofocus.png</textureUp>
 		<textureDown>page_down_nofocus.png</textureDown>

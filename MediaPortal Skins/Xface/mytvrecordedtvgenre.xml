@@ -13,8 +13,10 @@
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>113</posX>
-      <posY>26</posY>
+     <posX>89</posX>
+      <posY>4</posY>
+       <width>220</width>
+       <height>55</height>
       <texture>television_logo.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -26,20 +28,20 @@
       <posY>522</posY>
       <width>217</width>
       <height>213</height>
-      <texture>hover_my tv.png</texture>
+      <texture>-</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-    <control>
+   <control>
       <type>label</type>
       <description>My Recorded TV Text Label</description>
       <id>1</id>
-      <posX>474</posX>
-      <posY>93</posY>
+      <posX>374</posX>
+      <posY>39</posY>
       <label>652</label>
-      <font>font16</font>
+     <font>font14</font>
       <align>right</align>
-      <textcolor>ffffffff</textcolor>
+      <textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -47,46 +49,55 @@
       <type>label</type>
       <description>Number of Files Label</description>
       <id>12</id>
-      <posX>493</posX>
-      <posY>546</posY>
+       <posX>762</posX>
+      <posY>640</posY>
+        <align>left</align>
+      <textcolor>ff969696</textcolor>
       <label>#itemcount</label>
-      <textcolor>ffffffff</textcolor>
+      <visible>false</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-      <type>fadelabel</type>
-      <description>Selected item Label</description>
-      <id>1</id>
-      <posX>1233</posX>
-      <posY>93</posY>
-      <label>#selecteditem</label>
-      <align>right</align>
-      <!-- 			<disabledcolor>ff808080</disabledcolor> -->
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>762</posX>
+      <posY>580</posY>
+      <width>365</width>
+      <label>#selecteditem</label>
+      <font>font14</font>
+      <align>left</align>
+      <textcolor>Black</textcolor>
     </control>
+      <control>
+	<type>image</type>
+	<posX>637</posX>
+	<posY>585</posY>
+	<width>85</width>
+	<height>86</height>
+	 <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
+	</control>
+	 <control>
+	<type>image</type>
+	<posX>633</posX>
+	<posY>582</posY>
+	<width>92</width>
+	<height>93</height>
+	 <texture>-</texture>
+	</control>
     <control>
       <type>group</type>
-      <description>group element</description>
-      <id>24</id>
-      <posX>106</posX>
-      <posY>124</posY>
-      <width>264</width>
-      <height>144</height>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <mpe>
-        <layout>Grid</layout>
-        <spring>no</spring>
-        <spacing>0</spacing>
-        <padding>
-          <top>0</top>
-          <right>0</right>
-          <bottom>0</bottom>
-          <left>0</left>
-        </padding>
-      </mpe>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <description>group element</description>
+      <layout>StackLayout</layout>
+      <posX>69</posX>
+      <posY>89</posY>
       <control>
         <type>sortbutton</type>
         <id>3</id>
@@ -229,40 +240,41 @@
         <label>#TV.RecordedTV.Description</label>
         <textcolor>white</textcolor>
       </control>
-      <!--          <control>
-				<type>label</type>
-				<description>genre</description>
-				<id>17</id>
-				<posX>966</posX>
-				<posY>613</posY>
-				<label>#TV.RecordedTV.Genre</label>
-				<align>right</align>
-				<textcolor>ffb2d4f5</textcolor>
-         </control> -->
-    </control>
-    <!-- 		<control>
-			<description>TV background</description>
-			<type>image</type>
-			<id>98</id>
-			<posX>113</posX>
-			<posY>544</posY>
-			<width>235</width>
-			<height>175</height>
-			<colordiffuse>60ffffff</colordiffuse>
-			<texture>previewbackground.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-		</control> -->
+          </control>
     <control>
-      <description>TV preview window</description>
+		<description>video rectangle</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>48</posX>
+		<posY>540</posY>
+		<width>330</width>
+		<height>225</height>
+		 <texture>playback_background.png</texture>
+		 <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+	</control>
+    <control>
+      <description>video preview window</description>
       <type>videowindow</type>
-      <id>99</id>
-      <posX>121</posX>
-      <posY>550</posY>
-      <width>221</width>
-      <height>161</height>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
+      <id>1</id>
+      <posX>96</posX>
+	  <posY>568</posY>
+	  <width>238</width>
+	  <height>131</height>
+	  <keepaspectratio>yes</keepaspectratio>
+	  <centered>yes</centered>
+	  <action>18</action>
+	  <textureFocus>tv_green_border.png</textureFocus>
+    </control>
+     <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>126</posX>
+      <posY>701</posY>
+      <width>158</width>
+     <label>#percentage</label>
+      <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

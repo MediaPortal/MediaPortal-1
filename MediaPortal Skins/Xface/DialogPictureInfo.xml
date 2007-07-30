@@ -26,11 +26,11 @@
       <description>Image Title value</description>
       <type>label</type>
       <id>20</id>
-      <posX>1252</posX>
+      <posX>113</posX>
       <posY>93</posY>
       <label>-</label>
       <font>font16</font>
-      <align>right</align>
+      <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -111,8 +111,8 @@
       <description>Date Taken txt</description>
       <type>label</type>
       <id>1</id>
-      <posX>645</posX>
-      <posY>240</posY>
+      <posX>113</posX>
+      <posY>440</posY>
       <label>9006</label>
       <font>font13</font>
      <textcolor>ff969696</textcolor>
@@ -123,8 +123,8 @@
       <description>Fstop txt</description>
       <type>label</type>
       <id>1</id>
-      <posX>645</posX>
-      <posY>266</posY>
+      <posX>113</posX>
+      <posY>466</posY>
       <label>9007</label>
       <font>font13</font>
       <textcolor>ff969696</textcolor>
@@ -135,8 +135,8 @@
       <description>Exposure Time txt</description>
       <type>label</type>
       <id>1</id>
-      <posX>645</posX>
-      <posY>133</posY>
+      <posX>113</posX>
+      <posY>333</posY>
       <label>9008</label>
       <font>font13</font>
       <align>left</align>
@@ -148,8 +148,8 @@
       <description>Camera Model txt</description>
       <type>label</type>
       <id>1</id>
-      <posX>645</posX>
-      <posY>160</posY>
+      <posX>113</posX>
+      <posY>360</posY>
       <label>9009</label>
       <font>font13</font>
       <textcolor>ff969696</textcolor>
@@ -160,8 +160,8 @@
       <description>Equipment make txt</description>
       <type>label</type>
       <id>1</id>
-      <posX>645</posX>
-      <posY>186</posY>
+      <posX>113</posX>
+      <posY>386</posY>
       <label>9010</label>
       <font>font13</font>
      <textcolor>ff969696</textcolor>
@@ -172,8 +172,8 @@
       <description>View Comment txt</description>
       <type>label</type>
       <id>1</id>
-      <posX>645</posX>
-      <posY>213</posY>
+      <posX>113</posX>
+      <posY>413</posY>
       <label>9011</label>
       <font>font13</font>
      <textcolor>ff969696</textcolor>
@@ -260,8 +260,8 @@
       <description>Date Taken value</description>
       <type>label</type>
       <id>27</id>
-      <posX>910</posX>
-      <posY>240</posY>
+      <posX>379</posX>
+      <posY>440</posY>
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -272,8 +272,8 @@
       <description>Fstop value</description>
       <type>label</type>
       <id>28</id>
-      <posX>910</posX>
-      <posY>266</posY>
+      <posX>379</posX>
+      <posY>466</posY>
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -284,8 +284,8 @@
       <description>Exposure Time value</description>
       <type>label</type>
       <id>29</id>
-      <posX>910</posX>
-      <posY>133</posY>
+      <posX>379</posX>
+      <posY>333</posY>
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -296,8 +296,8 @@
       <description>Camera Model value</description>
       <type>fadelabel</type>
       <id>30</id>
-      <posX>910</posX>
-      <posY>160</posY>
+      <posX>379</posX>
+      <posY>360</posY>
       <width>266</width>
       <label>-</label>
       <font>font13</font>
@@ -309,8 +309,8 @@
       <description>Equipment Make value</description>
       <type>fadelabel</type>
       <id>31</id>
-      <posX>910</posX>
-      <posY>186</posY>
+      <posX>379</posX>
+      <posY>386</posY>
       <width>266</width>
       <label>-</label>
       <font>font13</font>
@@ -322,8 +322,8 @@
       <description>View Comments value</description>
       <type>label</type>
       <id>32</id>
-      <posX>910</posX>
-      <posY>213</posY>
+      <posX>379</posX>
+      <posY>313</posY>
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -334,9 +334,9 @@
       <description>Image</description>
       <type>image</type>
       <id>3</id>
-      <posX>109</posX>
-      <posY>300</posY>
-      <width>373</width>
+      <posX>789</posX>
+      <posY>103</posY>
+      <width>303</width>
       <height>2800</height>
       <texture>-</texture>
       <colorkey>FFFF00FF</colorkey>

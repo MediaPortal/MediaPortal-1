@@ -69,7 +69,6 @@
         <type>togglebutton</type>
         <id>8</id>
         <width>253</width>
-        <font>font13</font>
         <textcolor>White</textcolor>
         <colordiffuse>White</colordiffuse>
         <disabledcolor>#60ffffff</disabledcolor>
@@ -86,7 +85,6 @@
         <description>Active Streams</description>
         <type>button</type>
         <id>9</id>
-        <font>font13</font>
         <label>692</label>
         <onup>8</onup>
         <ondown>10</ondown>
@@ -205,7 +203,7 @@
       <type>label</type>
       <id>13</id>
       <posX>1062</posX>
-      <posY>471</posY>   
+      <posY>471</posY>
  	  <label>#TV.View.stop</label>
       <font>font13</font>
       <align>left</align>
