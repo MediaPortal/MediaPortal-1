@@ -936,15 +936,18 @@ namespace WebEPG_conf
       {
         _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Loading Existing WebEPG.xml");
 
+        XmlSerializer s = new XmlSerializer(typeof(WebepgConfigFile));
+        TextReader r = null;
         try
         {
-          XmlSerializer s = new XmlSerializer(typeof(WebepgConfigFile));
-          TextReader r = new StreamReader(startDirectory + "\\WebEPG.xml");
+          r = new StreamReader(startDirectory + "\\WebEPG.xml");
           _configFile = (WebepgConfigFile)s.Deserialize(r);
           r.Close();
         }
         catch (InvalidOperationException ex)
         {
+          if (r != null)
+            r.Close();
           _log.Error(LogType.WebEPG, "WebEPG: Error loading config {0}: {1}", startDirectory + "\\WebEPG.xml", ex.Message);
           LoadOldConfigFile();
         }
@@ -996,7 +999,7 @@ namespace WebEPG_conf
       }
 
       int mergeCount = xmlreader.GetValueAsInt("MergeChannels", "Count", 0);
-      Dictionary<string, List<MergedChannel>> mergedList = new Dictionary<string,List<MergedChannel>>();
+      Dictionary<string, List<MergedChannel>> mergedList = new Dictionary<string, List<MergedChannel>>();
 
       if (mergeCount > 0)
       {
@@ -1029,7 +1032,7 @@ namespace WebEPG_conf
       {
         ChannelMap channel = new ChannelMap();
         channel.displayName = xmlreader.GetValueAsString(i.ToString(), "DisplayName", "");
-        string grabber = xmlreader.GetValueAsString(i.ToString(), "Grabber1", "");;
+        string grabber = xmlreader.GetValueAsString(i.ToString(), "Grabber1", ""); ;
         if (mergedList.ContainsKey(channel.displayName))
         {
           channel.merged = mergedList[channel.displayName];
@@ -1044,6 +1047,7 @@ namespace WebEPG_conf
         _configFile.Channels.Add(channel);
       }
 
+      xmlreader.Clear();
       xmlreader.Dispose();
     }
 
@@ -1178,7 +1182,8 @@ namespace WebEPG_conf
 
       _log.WriteFile(LogType.WebEPG, Level.Information, "WebEPG Config: Button: Save");
       string confFile = startDirectory + "\\WebEPG.xml";
-      if (System.IO.File.Exists(confFile))
+      FileInfo config = new FileInfo(confFile);
+      if (config.Exists)
       {
         System.IO.File.Delete(confFile.Replace(".xml", ".bak"));
         System.IO.File.Move(confFile, confFile.Replace(".xml", ".bak"));
@@ -1474,7 +1479,7 @@ namespace WebEPG_conf
     {
       if (lvMerged.SelectedItems.Count == 1 && lvMapping.SelectedItems.Count == 1)
       {
-        MergedChannel channel = (MergedChannel) lvMerged.SelectedItems[0].Tag;
+        MergedChannel channel = (MergedChannel)lvMerged.SelectedItems[0].Tag;
         _mergeConfig = new MergedChannelDetails(tChannels, tGrabbers, channel, this.bMergedOk_Click);
         _mergeConfig.MinimizeBox = false;
         _mergeConfig.Show();

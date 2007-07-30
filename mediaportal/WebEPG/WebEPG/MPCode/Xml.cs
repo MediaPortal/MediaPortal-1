@@ -147,36 +147,39 @@ namespace MediaPortal.Webepg.Profile
     /// <seealso cref="GetValue" />
     public void Save()
     {
-      lock (typeof(MediaPortal.Webepg.Profile.Xml))
+      if (_bChanged)
       {
-        if (_doc == null) return;
-        if (_doc.DocumentElement == null) return;
-        if (_doc.ChildNodes.Count == 0) return;
-        if (_doc.DocumentElement.ChildNodes == null) return;
-        if (!_bChanged) return;
-        try
+        lock (typeof(MediaPortal.Webepg.Profile.Xml))
         {
+          if (_doc == null) return;
+          if (_doc.DocumentElement == null) return;
+          if (_doc.ChildNodes.Count == 0) return;
+          if (_doc.DocumentElement.ChildNodes == null) return;
+          if (!_bChanged) return;
           try
           {
-            System.IO.File.Delete(_strFileName + ".bak");
-            System.IO.File.Move(_strFileName, _strFileName + ".bak");
-          }
-          catch (Exception) { }
+            try
+            {
+              System.IO.File.Delete(_strFileName + ".bak");
+              System.IO.File.Move(_strFileName, _strFileName + ".bak");
+            }
+            catch (Exception) { }
 
-          using (StreamWriter stream = new StreamWriter(_strFileName, false))
-          {
-            _doc.Save(stream);
-            _doc = null;
-            stream.Flush();
-            stream.Close();
+            using (StreamWriter stream = new StreamWriter(_strFileName, false))
+            {
+              _doc.Save(stream);
+              _doc = null;
+              stream.Flush();
+              stream.Close();
+            }
+            _bChanged = false;
           }
-          _bChanged = false;
+          catch (Exception ex)
+          {
+            _log.Error("Unable to save {0} {1}", ex.Message);
+          }
+          _doc = null;
         }
-        catch (Exception ex)
-        {
-          _log.Error("Unable to save {0} {1}", ex.Message);
-        }
-        _doc = null;
       }
     }
 
