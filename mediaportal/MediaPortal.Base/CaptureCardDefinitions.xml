@@ -20480,20 +20480,181 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner" name="AVerMedia M780 PCIe TV-Tuner 1" checkdevice="true"/>
-        <filter cat="tvaudio" name="AVerMedia M780 PCIe Audio Decoder 1" checkdevice="true"/>
-        <filter cat="crossbar" name="AVerMedia M780 PCIe Crossbar 1" checkdevice="true"/>
-        <filter cat="capture" name="AVerMedia M780 PCIe Audio/Video Capture 1" checkdevice="true"/>
-        <filter cat="encoder" name="AVerMedia M780 PCIe Encoder 1" checkdevice="true"/>
+        <filter cat="tvtuner"   name="AVerMedia M780 PCIe TV-Tuner 1"             checkdevice="true"/>
+        <filter cat="tvaudio"   name="AVerMedia M780 PCIe Audio Decoder 1"        checkdevice="true"/>
+        <filter cat="crossbar"  name="AVerMedia M780 PCIe Crossbar 1"             checkdevice="true"/>
+        <filter cat="capture"   name="AVerMedia M780 PCIe Audio/Video Capture 1"  checkdevice="true"/>
+        <filter cat="encoder"   name="AVerMedia M780 PCIe Encoder 1"              checkdevice="true"/>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner" sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
-        <connection sourcefilter="tvtuner" sourcepin="1" sinkfilter="tvaudio" sinkpin="0"/>
-        <connection sourcefilter="tvaudio" sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
-        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"/>
-        <connection sourcefilter="capture" sourcepin="3" sinkfilter="encoder" sinkpin="0"/>
-        <connection sourcefilter="capture" sourcepin="4" sinkfilter="encoder" sinkpin="1"/>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="4" sinkfilter="encoder"  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Dvico FusionHDTV Express 1" capturename="FusionHDTV, Transport Stream Capture1" devid="ven_14f1&amp;dev_8852&amp;subsys_db7818ac&amp;rev_02">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"/>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner1"                 checkdevice="true"/>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture1"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"    sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"        sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Dvico FusionHDTV Express 2" capturename="FusionHDTV, Transport Stream Capture2" devid="ven_14f1&amp;dev_8852&amp;subsys_db7818ac&amp;rev_02">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"/>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner2"                 checkdevice="true"/>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture2"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"    sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"        sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+
+  <capturecard commercialname="Hauppauge Nova-TD-500 DVB-T (Tuner 1)" capturename="Hauppauge WinTV MOD7700 DVB-T Capture (Dev1 Path0)" devid="ven_0070&amp;dev_6800&amp;subsys_68000070&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="4"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"                    checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Hauppauge WinTV MOD7700 DVB-T Tuner (Dev1 Path0) "  checkdevice="true"/>
+        <filter cat="capture"         name="Hauppauge WinTV MOD7700 DVB-T Capture (Dev1 Path0)" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge Nova-TD-500 DVB-T (Tuner 2)" capturename="Hauppauge WinTV MOD7700 DVB-T Capture (Dev1 Path1)" devid="ven_0070&amp;dev_6800&amp;subsys_68000070&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="4"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"                    checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Hauppauge WinTV MOD7700 DVB-T Tuner (Dev1 Path1) "  checkdevice="true"/>
+        <filter cat="capture"         name="Hauppauge WinTV MOD7700 DVB-T Capture (Dev1 Path1)" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Compro VideoMate E700 (Tuner 1)" capturename="Compro VideoMate E700 DVB-T Capture 1" devid="ven_18c3&amp;dev_0720&amp;subsys_f000185b&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="4"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Compro VideoMate E700 DVB-T Tuner 1"    checkdevice="true"/>
+        <filter cat="capture"         name="Compro VideoMate E700 DVB-T Capture 1"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Compro VideoMate E700 (Tuner 2)" capturename="Compro VideoMate E700 DVB-T Capture 2" devid="ven_18c3&amp;dev_0720&amp;subsys_f000185b&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="4"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Compro VideoMate E700 DVB-T Tuner 2"    checkdevice="true"/>
+        <filter cat="capture"         name="Compro VideoMate E700 DVB-T Capture 2"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Kworld Handy TV Hybrid 320U" capturename="BDA 2881 Capture" devid="vid_eb1a&amp;pid_e320&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	checkdevice="false"/>
+        <filter cat="tunerdevice"     name="BDA 2881 TVTuner"			            checkdevice="true"/>
+        <filter cat="capture"         name="BDA 2881 Capture"		              checkdevice="true"/>
+      </filters>  
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Creatix CTX929 DVB-S" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000516be&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="713x BDA DVBS Tuner"              checkdevice="true"/>
+        <filter cat="capture"         name="713x BDA Digital Capture"         checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="MSI DigiVOX mini II" capturename="LifeView M9207 BDA Digital Capture" devid="vid_10fd&amp;pid_1513">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
+        <filter cat="tunerdevice"     name="LifeView M9207 BDA Digital Tuner"   checkdevice="true"/>
+        <filter cat="capture"         name="LifeView M9207 BDA Digital Capture" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WINTV-HVR 1110" capturename="Hauppauge WinTV-HVR 713X BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_67010070&amp;rev_d1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"              checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Hauppauge WinTV-HVR 713X BDA DVBT Tuner"      checkdevice="true"/>
+        <filter cat="capture"         name="Hauppauge WinTV-HVR 713X BDA Digital Capture" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
