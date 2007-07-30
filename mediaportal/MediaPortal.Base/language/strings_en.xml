@@ -894,6 +894,7 @@
         <String id="1112">Keep conflict</String>
         <String id="1190">Zoom 14:9</String>
         <String id="1200">Set-up Wizard</String>
+        <String id="1300" prefix="My ">TV Shows</String>
         <String id="1440" prefix="My ">Teletext</String>
         <String id="1441">Teletext</String>
         <String id="1442">Scroll speed (horizontal)</String>

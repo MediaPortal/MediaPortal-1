@@ -77,7 +77,17 @@
         <id>9</id>
         <label>983</label>
         <onright>50</onright>
+        <ondown>10</ondown>
+      </control>
+      <control>
+        <description>TV Shows</description>
+        <type>button</type>
+        <id>10</id>
+        <hyperlink>9811</hyperlink>
+        <label>1300</label>
+        <onright>50</onright>
         <ondown>8</ondown>
+        <visible>plugin.isenabled(MP-TV Series)</visible>
       </control>
       <control>
         <description>Trailers</description>

@@ -895,6 +895,7 @@
         <String id="1112">Ignoriere Überschneidung</String>
         <String id="1190">Zoom 14:9</String>
         <String id="1200">Einrichtungs-Assistent</String>
+        <String id="1300" prefix="Meine ">TV Serien</String>
         <String id="1440" prefix="Mein ">Videotext</String>
         <String id="1441">Videotext</String>
         <String id="1442">Textlauf horizontal</String>
