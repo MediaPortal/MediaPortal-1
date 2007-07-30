@@ -922,10 +922,9 @@ namespace MediaPortal.GUI.Music
     protected void OnShowSort()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null)
-        return;
+      if (dlg == null) return;
       dlg.Reset();
-      dlg.SetHeading(495);
+      dlg.SetHeading(495); // Sort options
 
       dlg.AddLocalizedString(103); // name
       dlg.AddLocalizedString(269); // artist
@@ -938,10 +937,15 @@ namespace MediaPortal.GUI.Music
       dlg.AddLocalizedString(105); // size
       dlg.AddLocalizedString(104); // date
 
-      dlg.DoModal(GetID);
+      // !!! this does not work yet, because we need to change
+      //       the order of MusicSort.SortMethod items OR
+      //       the order which the methods are added to the dialog above
+      // set the focus to currently used sort method
+      //dlg.SelectedLabel = (int)CurrentSortMethod;
 
-      if (dlg.SelectedLabel == -1)
-        return;
+      // show dialog and wait for result
+      dlg.DoModal(GetID);
+      if (dlg.SelectedId == -1) return;
 
       switch (dlg.SelectedId)
       {
@@ -987,73 +991,78 @@ namespace MediaPortal.GUI.Music
     protected void OnShowViews()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null)
-        return;
+      if (dlg == null) return;
       dlg.Reset();
-      dlg.SetHeading(499); // Actions
-      dlg.Add(GUILocalizeStrings.Get(134));//songs
+      dlg.SetHeading(499); // Views menu
+
+      dlg.AddLocalizedString(134); // Shares
       foreach (ViewDefinition view in handler.Views)
       {
-        dlg.Add(view.LocalizedName); //play
+        dlg.Add(view.LocalizedName);
       }
+      dlg.AddLocalizedString(4540); // Now playing
 
-      string playingNow = GUILocalizeStrings.Get(4540);
+      // set the focus to currently used view
+      if (this.GetID == (int)GUIWindow.Window.WINDOW_MUSIC_FILES)
+        dlg.SelectedLabel = 0;
+      else if (this.GetID == (int)GUIWindow.Window.WINDOW_MUSIC_GENRE)
+        dlg.SelectedLabel = handler.CurrentViewIndex + 1;
 
-      if (playingNow.Length == 0)
-        playingNow = "Now playing";
-
-      dlg.Add(playingNow);
-
-      int PLAYING_NOW_INDEX = handler.Views.Count + 1; // "Shares" + total view count + "Playing Now"
-
+      // show dialog and wait for result
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1)
-        return;
-      if (dlg.SelectedLabel == 0)
+      if (dlg.SelectedId == -1) return;
+
+      switch (dlg.SelectedId)
       {
-        int nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
-        MusicState.StartWindow = nNewWindow;
-        if (nNewWindow != GetID)
-        {
-          GUIWindowManager.ReplaceWindow(nNewWindow);
-        }
-      }
-
-      else if (dlg.SelectedLabel == PLAYING_NOW_INDEX)
-      {
-        int nPlayingNowWindow = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
-
-        GUIMusicPlayingNow guiPlayingNow = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(nPlayingNowWindow);
-
-        if (guiPlayingNow != null)
-        {
-          guiPlayingNow.MusicWindow = this;
-          GUIWindowManager.ActivateWindow(nPlayingNowWindow);
-        }
-      }
-
-      else
-      {
-        ViewDefinition selectedView = (ViewDefinition)handler.Views[dlg.SelectedLabel - 1];
-        handler.CurrentView = selectedView.Name;
-        MusicState.View = selectedView.Name;
-        int nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_GENRE;
-        if (GetID != nNewWindow)
-        {
-          MusicState.StartWindow = nNewWindow;
-          if (nNewWindow != GetID)
+        case 134: // Shares
           {
-            GUIWindowManager.ReplaceWindow(nNewWindow);
+            int nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
+            MusicState.StartWindow = nNewWindow;
+            if (nNewWindow != GetID)
+            {
+              GUIWindowManager.ReplaceWindow(nNewWindow);
+            }
           }
-        }
-        else
-        {
-          LoadDirectory(String.Empty);
-          if (facadeView.Count <= 0)
+          break;
+
+        case 4540: // Now playing
           {
-            GUIControl.FocusControl(GetID, btnViewAs.GetID);
+            int nPlayingNowWindow = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
+
+            GUIMusicPlayingNow guiPlayingNow = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(nPlayingNowWindow);
+
+            if (guiPlayingNow != null)
+            {
+              guiPlayingNow.MusicWindow = this;
+              GUIWindowManager.ActivateWindow(nPlayingNowWindow);
+            }
           }
-        }
+          break;
+
+        default: // a db view
+          {
+            ViewDefinition selectedView = (ViewDefinition)handler.Views[dlg.SelectedLabel - 1];
+            handler.CurrentView = selectedView.Name;
+            MusicState.View = selectedView.Name;
+            int nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_GENRE;
+            if (GetID != nNewWindow)
+            {
+              MusicState.StartWindow = nNewWindow;
+              if (nNewWindow != GetID)
+              {
+                GUIWindowManager.ReplaceWindow(nNewWindow);
+              }
+            }
+            else
+            {
+              LoadDirectory(String.Empty);
+              if (facadeView.Count <= 0)
+              {
+                GUIControl.FocusControl(GetID, btnViewAs.GetID);
+              }
+            }
+          }
+          break;
       }
     }
 

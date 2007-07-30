@@ -132,6 +132,10 @@ namespace MediaPortal.GUI.Music
         }
       }
     }
+    public int CurrentViewIndex
+    {
+      get { return views.IndexOf(currentView); }
+    }
 
 
     public void Restore(ViewDefinition view, int level)
