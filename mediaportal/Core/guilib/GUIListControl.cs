@@ -76,7 +76,7 @@ namespace MediaPortal.GUI.Library
     protected GUIFont _font3 = null;
     protected GUISpinControl _upDownControl = null;
     protected List<GUIControl> _listButtons = null;
-    protected GUIverticalScrollbar _verticalScrollbar = null;
+    protected GUIVerticalScrollbar _verticalScrollbar = null;
 
     protected List<GUIListItem> _listItems = new List<GUIListItem>();
     protected List<GUILabelControl> _labelControls1 = new List<GUILabelControl>();
@@ -243,7 +243,7 @@ namespace MediaPortal.GUI.Library
       _upDownControl.ParentControl = this;
       _upDownControl.DimColor = DimColor;
 
-      _verticalScrollbar = new GUIverticalScrollbar(_controlId, 0, 5 + _positionX + _width, _positionY, 15, _height, _scrollbarBackgroundName, _scrollbarTopName, _scrollbarBottomName);
+      _verticalScrollbar = new GUIVerticalScrollbar(_controlId, 0, 5 + _positionX + _width, _positionY, 15, _height, _scrollbarBackgroundName, _scrollbarTopName, _scrollbarBottomName);
       _verticalScrollbar.ParentControl = this;
       _verticalScrollbar.SendNotifies = false;
       _verticalScrollbar.DimColor = DimColor;
@@ -2640,7 +2640,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Gets the vertical scrollbar.
     /// </summary>
-    public GUIverticalScrollbar Scrollbar
+    public GUIVerticalScrollbar Scrollbar
     {
       get { return _verticalScrollbar; }
     }

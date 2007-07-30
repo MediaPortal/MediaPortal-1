@@ -2915,7 +2915,7 @@ namespace MediaPortal.GUI.TV
         percentage = 0;
       if (percentage > 100)
         percentage = 100;
-      GUIverticalScrollbar scrollbar = GetControl((int)Controls.VERT_SCROLLBAR) as GUIverticalScrollbar;
+      GUIVerticalScrollbar scrollbar = GetControl((int)Controls.VERT_SCROLLBAR) as GUIVerticalScrollbar;
       if (scrollbar != null)
       {
         scrollbar.Percentage = percentage;

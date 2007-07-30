@@ -639,7 +639,7 @@ namespace MediaPortal.GUI.Library
         case ("hscrollbar"):
           return typeof(GUIHorizontalScrollbar);
         case ("vscrollbar"):
-          return typeof(GUIverticalScrollbar);
+          return typeof(GUIVerticalScrollbar);
         case ("textbox"):
           return typeof(GUITextControl);
         case ("textboxscrollup"):

@@ -146,7 +146,7 @@ namespace MediaPortal.GUI.Library
     int _frames = 6;
     int _sleeper = 0;
     bool _refresh = false;
-    protected GUIverticalScrollbar _verticalScrollBar = null;
+    protected GUIVerticalScrollbar _verticalScrollBar = null;
     protected string _brackedText;
     protected string _scrollText;
 
@@ -230,7 +230,7 @@ namespace MediaPortal.GUI.Library
 
       int xpos = 5 + _positionX + _width;
       if (xpos + 15 > GUIGraphicsContext.Width) xpos = GUIGraphicsContext.Width - 15;
-      _verticalScrollBar = new GUIverticalScrollbar(_controlId, 0,
+      _verticalScrollBar = new GUIVerticalScrollbar(_controlId, 0,
                                                  5 + _positionX + _width, _positionY, 15, _height,
                                                  _scrollbarBackGroundTextureName, _scrollbarTopTextureName, _scrollbarBottomTextureName);
       _verticalScrollBar.ParentControl = this;
@@ -2161,7 +2161,7 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
-    public GUIverticalScrollbar Scrollbar
+    public GUIVerticalScrollbar Scrollbar
     {
       get { return _verticalScrollBar; }
     }

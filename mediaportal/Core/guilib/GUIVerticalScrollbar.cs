@@ -29,9 +29,9 @@ using System.Windows.Forms;
 namespace MediaPortal.GUI.Library
 {
   /// <summary>
-  /// Implementation of a GUIverticalScrollbar.
+  /// Implementation of a GUIVerticalScrollbar.
   /// </summary>
-  public class GUIverticalScrollbar : GUIControl
+  public class GUIVerticalScrollbar : GUIControl
   {
 	  [XMLSkinElement("buddycontrol")]		protected int      _buddyControlId=-1;
 	  [XMLSkinElement("scrollbarbg")]		protected string   _scrollbarBackgroundName;
@@ -46,7 +46,7 @@ namespace MediaPortal.GUI.Library
     int      _knobPositionY=0;
     bool     _sendNotifies=true;
 
-    public GUIverticalScrollbar(int dwParentID) : base(dwParentID)
+    public GUIVerticalScrollbar(int dwParentID) : base(dwParentID)
     {
     }
 		/// <summary>
@@ -62,7 +62,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="strTopTexture">The top texture of the scrollbar indicator.</param>
 		/// <param name="strBottomTexture">The bottom texture of the scrolbar indicator.</param>
 
-	  public GUIverticalScrollbar(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strBackGroundTexture,string strTopTexture,string strBottomTexture)
+	  public GUIVerticalScrollbar(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strBackGroundTexture,string strTopTexture,string strBottomTexture)
 		  :base(dwParentID, dwControlId, dwPosX, dwPosY,dwWidth, dwHeight)
 	  {
 		  _scrollbarBackgroundName =strBackGroundTexture;

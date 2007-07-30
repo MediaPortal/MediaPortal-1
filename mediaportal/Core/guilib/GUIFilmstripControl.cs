@@ -217,7 +217,7 @@ namespace MediaPortal.GUI.Library
     int _lastItem = -1;
     int _frames = 0;
     bool _refresh = false;
-    protected GUIverticalScrollbar _horizontalScrollbar = null;
+    protected GUIVerticalScrollbar _horizontalScrollbar = null;
     protected string _brackedText;
     protected string _scollText;
     GUIAnimation _imageBackground;
@@ -324,7 +324,7 @@ namespace MediaPortal.GUI.Library
       _font = GUIFontManager.GetFont(_fontName);
       int xpos = 5 + _positionX + _width;
       if (xpos + 15 > GUIGraphicsContext.Width) xpos = GUIGraphicsContext.Width - 15;
-      _horizontalScrollbar = new GUIverticalScrollbar(_controlId, 0, 5 + _positionX + _width, _positionY, 15, _height, _scrollbarBackgroundName, _scrollbarTopName, _scrollbarBottomName);
+      _horizontalScrollbar = new GUIVerticalScrollbar(_controlId, 0, 5 + _positionX + _width, _positionY, 15, _height, _scrollbarBackgroundName, _scrollbarTopName, _scrollbarBottomName);
       _horizontalScrollbar.ParentControl = this;
       _horizontalScrollbar.SendNotifies = false;
       _horizontalScrollbar.DimColor = DimColor;
@@ -2394,7 +2394,7 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
-    public GUIverticalScrollbar Scrollbar
+    public GUIVerticalScrollbar Scrollbar
     {
       get { return _horizontalScrollbar; }
     }
