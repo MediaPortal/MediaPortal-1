@@ -70,18 +70,18 @@
         <ondown>7</ondown>
         <alignY>center</alignY>
       </control>
-      <!-- TV Shows -->
       <control>
+        <description>TV Shows</description>
         <type>button</type>
         <id>7</id>
         <hyperlink>9811</hyperlink>
-        <label>TV Shows</label>
+        <label>1300</label>
         <ondown>8</ondown>
         <alignY>center</alignY>
         <visible>plugin.isenabled(MP-TV Series)</visible>
       </control>
-      <!-- Trailers -->
       <control>
+        <description>Trailers</description>
         <type>button</type>
         <id>8</id>
         <hyperlink>5900</hyperlink>
