@@ -194,10 +194,10 @@
 			<description>home BM FFS</description>
 			<type>button</type>
 			<id>611</id>
-			<posX>966</posX>
-			<posY>655</posY>
-			<width>145</width>
-			<height>103</height>
+			<posX>976</posX>
+			<posY>650</posY>
+			<width>155</width>
+			<height>113</height>
 			<textureFocus>hover_my tv1.png</textureFocus>
 			<textureNoFocus>hover_my tv1.png</textureNoFocus>
 			<hyperlink>1</hyperlink>
@@ -220,10 +220,10 @@
 			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>612</id>
-			<posX>1096</posX>
-			<posY>665</posY>
-			<width>145</width>
-			<height>103</height>
+			<posX>1100</posX>
+			<posY>655</posY>
+			<width>165</width>
+			<height>123</height>
 			<textureFocus>hover_my pictures1.png</textureFocus>
 			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
 			<hyperlink>2</hyperlink>
