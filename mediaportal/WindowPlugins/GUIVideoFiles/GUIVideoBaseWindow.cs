@@ -594,35 +594,40 @@ namespace MediaPortal.GUI.Video
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1) return;
 
-      
-      if (dlg.SelectedLabel == 0)
-      { // shares view is selected
-        int nNewWindow = (int)GUIWindow.Window.WINDOW_VIDEOS;
-        VideoState.StartWindow = nNewWindow;
-        if (nNewWindow != GetID)
-        {
-          GUIVideoFiles.Reset();
-          GUIWindowManager.ReplaceWindow(nNewWindow);
-        }
-      }
-      else
-      { // a db view is selected
-        ViewDefinition selectedView = (ViewDefinition)handler.Views[dlg.SelectedLabel - 1];
-        handler.CurrentView = selectedView.Name;
-        VideoState.View = selectedView.Name;
-        int nNewWindow = (int)GUIWindow.Window.WINDOW_VIDEO_TITLE;
-        if (GetID != nNewWindow)
-        {
-          VideoState.StartWindow = nNewWindow;
-          if (nNewWindow != GetID)
+      switch (dlg.SelectedId)
+      {
+        case 134: // Shares
           {
-            GUIWindowManager.ReplaceWindow(nNewWindow);
+            int nNewWindow = (int)GUIWindow.Window.WINDOW_VIDEOS;
+            VideoState.StartWindow = nNewWindow;
+            if (nNewWindow != GetID)
+            {
+              GUIVideoFiles.Reset();
+              GUIWindowManager.ReplaceWindow(nNewWindow);
+            }
           }
-        }
-        else
-        {
-          LoadDirectory(String.Empty);
-        }
+          break;
+
+        default: // a db view
+          {
+            ViewDefinition selectedView = (ViewDefinition)handler.Views[dlg.SelectedLabel - 1];
+            handler.CurrentView = selectedView.Name;
+            VideoState.View = selectedView.Name;
+            int nNewWindow = (int)GUIWindow.Window.WINDOW_VIDEO_TITLE;
+            if (GetID != nNewWindow)
+            {
+              VideoState.StartWindow = nNewWindow;
+              if (nNewWindow != GetID)
+              {
+                GUIWindowManager.ReplaceWindow(nNewWindow);
+              }
+            }
+            else
+            {
+              LoadDirectory(String.Empty);
+            }
+          }
+          break;
       }
     }
 
