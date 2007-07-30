@@ -1336,19 +1336,20 @@ namespace MediaPortal.GUI.Pictures
     private void OnShowSortMenu()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null)
-        return;
+      if (dlg == null) return;
       dlg.Reset();
-      dlg.SetHeading(495);
+      dlg.SetHeading(495); // Sort options
 
       dlg.AddLocalizedString(103); // name
-      dlg.AddLocalizedString(105); // size
       dlg.AddLocalizedString(104); // date
+      dlg.AddLocalizedString(105); // size
 
+      // set the focus to currently used sort method
+      dlg.SelectedLabel = mapSettings.SortBy;
+
+      // show dialog and wait for result
       dlg.DoModal(GetID);
-
-      if (dlg.SelectedLabel == -1)
-        return;
+      if (dlg.SelectedId == -1) return;
 
       switch (dlg.SelectedId)
       {
@@ -1408,18 +1409,19 @@ namespace MediaPortal.GUI.Pictures
     void OnSwitchView()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null)
-        return;
+      if (dlg == null) return;
       dlg.Reset();
-      dlg.SetHeading(457);
+      dlg.SetHeading(499); // Views menu
 
       dlg.AddLocalizedString(134); // Shares
       dlg.AddLocalizedString(636); // date
 
-      dlg.DoModal(GetID);
+      // set the focus to currently used view
+      dlg.SelectedLabel = (int)disp;
 
-      if (dlg.SelectedLabel == -1)
-        return;
+      // show dialog and wait for result
+      dlg.DoModal(GetID);
+      if (dlg.SelectedId == -1) return;
 
       switch (dlg.SelectedId)
       {
@@ -1438,7 +1440,6 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
       }
-
 
       GUIControl.FocusControl(GetID, btnSwitchView.GetID);
     }
