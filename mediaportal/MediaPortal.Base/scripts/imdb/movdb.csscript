@@ -1,0 +1,262 @@
+//css_reference "core.dll";
+//css_reference "Databases.dll";
+//css_reference "utils.dll";
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using System.IO;
+using System.Net;
+using System.Collections;
+using System.Web;
+using System.Xml;
+using System.Text.RegularExpressions;
+using MediaPortal.Util;
+
+// change to Grabber, this for avoid to load by mediaportal
+class Grabber: MediaPortal.Video.Database.IIMDBScriptGrabber
+{
+  public Grabber()
+    {
+    }
+
+  void MediaPortal.Video.Database.IIMDBScriptGrabber.FindFilm(string strSearch, int iLimit, ArrayList elements)
+  {
+    string strURL = "http://www.gaz1.com/movdb/xml/GetSeries.php?searchby=SeriesName&string=" + strSearch ;
+    string title ="";
+    string databaseurl = "";
+     // string absoluteUri;
+      XmlNodeList xmldata = Generic(strURL);
+      foreach (XmlNode itemNode in xmldata)
+      {
+        databaseurl = "http://www.gaz1.com/movdb/xml/GetSeries.php?searchby=id&string=";
+        foreach (XmlNode propertyNode in itemNode.ChildNodes)
+        {
+          if (propertyNode.Name.ToString() == "SeriesName")
+            title = propertyNode.InnerText;
+          if (propertyNode.Name.ToString() == "id")
+            databaseurl  += propertyNode.InnerText;
+        }
+        if (title != "")
+        {
+          MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl(databaseurl, title + " (movdb)", "movdb");
+          elements.Add(url);
+        }
+      }
+      // code for search for movie titles  
+      // .............
+      //.............
+      // if movie found add to listing 
+  }
+
+
+  bool MediaPortal.Video.Database.IIMDBScriptGrabber.GetDetails(MediaPortal.Video.Database.IMDB.IMDBUrl url, ref MediaPortal.Video.Database.IMDBMovie movieDetails)
+  {
+    // string absoluteUri;
+    XmlNodeList xmldata = Generic(url.URL);
+    foreach (XmlNode itemNode in xmldata)
+    {
+      foreach (XmlNode propertyNode in itemNode.ChildNodes)
+      {
+        switch (propertyNode.Name.ToString())
+        {
+          case "SeriesName":
+            movieDetails.Title = propertyNode.InnerText;
+            break;
+          case "SeriesID":
+            movieDetails.IMDBNumber = propertyNode.InnerText;
+            break;
+          case "Yearmade":
+            int iYear = 1970;
+            System.Int32.TryParse(propertyNode.InnerText,out iYear);
+            movieDetails.Year = iYear;
+            break;
+          case "Director":
+            movieDetails.Director = propertyNode.InnerText.Replace('|',',');
+            break;
+          case "Writer":
+            movieDetails.WritingCredits = propertyNode.InnerText.Replace('|', ',');
+            break;
+          case "Genre":
+            movieDetails.Genre = propertyNode.InnerText.Replace("|", " / ");
+            break;
+          case "Actors":
+            movieDetails.Actor = propertyNode.InnerText.Replace("|", Environment.NewLine);
+            break;
+          case "Tagline":
+            movieDetails.TagLine = propertyNode.InnerText;
+            break;
+          case "Overview":
+            movieDetails.Plot = propertyNode.InnerText;
+            break;
+          case "Shortoverview":
+            movieDetails.PlotOutline = propertyNode.InnerText;
+            break;
+          case "Score":
+            movieDetails.Votes = propertyNode.InnerText;
+            break;
+
+        }
+      }
+    }
+    // preces the web page defined by the url
+    // ................
+    // ................
+    // then fill the database
+    // movieDetails.Year
+    // movieDetails.Genre 
+    // movieDetails.Votes
+    // movieDetails.Top250
+    // movieDetails.TagLine
+    // movieDetails.PlotOutline
+    // movieDetails.ThumbURL
+    // movieDetails.Plot
+    // movieDetails.Cast
+    // movieDetails.RunTime = ....
+    // movieDetails.MPARating = ......
+
+    // found some information 
+    return true;
+    // else
+   // return false;
+  }
+
+  string MediaPortal.Video.Database.IIMDBScriptGrabber.GetName()
+  {
+    return "IMDB grabber from http://www.gaz1.com/movdb/ ";
+  }
+ 
+  string MediaPortal.Video.Database.IIMDBScriptGrabber.GetLanguage()
+  {
+    return "EN";
+  }
+
+  // a general procedure to get a web page 
+  // use like :
+  //    string absoluteUri;
+  //    string strURL = "http://us.imdb.com/Tsearch?title=" + strSearch;
+  //    string strBody = GetPage(strURL, "utf-8", out absoluteUri);
+
+  private string GetPage(string strURL, string strEncode, out string absoluteUri)
+  {
+    string strBody = "";
+    absoluteUri = String.Empty;
+    Stream ReceiveStream = null;
+    StreamReader sr = null;
+    WebResponse result = null;
+    try
+    {
+      // Make the Webrequest
+      //Log.Info("IMDB: get page:{0}", strURL);
+      WebRequest req = WebRequest.Create(strURL);
+
+      result = req.GetResponse();
+      ReceiveStream = result.GetResponseStream();
+
+      // Encoding: depends on selected page
+      Encoding encode = System.Text.Encoding.GetEncoding(strEncode);
+      sr = new StreamReader(ReceiveStream, encode);
+      strBody = sr.ReadToEnd();
+
+      absoluteUri = result.ResponseUri.AbsoluteUri;
+    }
+    catch (Exception)
+    {
+      //Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
+    }
+    finally
+    {
+      if (sr != null)
+      {
+        try
+        {
+          sr.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+      if (ReceiveStream != null)
+      {
+        try
+        {
+          ReceiveStream.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+      if (result != null)
+      {
+        try
+        {
+          result.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+    }
+    return strBody;
+  } // END GetPage()
+
+  static private XmlNodeList Generic(String sUrl)
+  {
+    if (sUrl == null || sUrl.Length < 1 || sUrl[0] == '/')
+    {
+      // this happens if no active mirror is set
+      return null;
+    }
+
+    HttpWebRequest request = null;
+    HttpWebResponse response = null;
+    Stream data = null;
+    try
+    {
+      request = (HttpWebRequest)WebRequest.Create(sUrl);
+      request.Timeout = 20000;
+      response = (HttpWebResponse)request.GetResponse();
+    }
+    catch (Exception e)
+    {
+      // can't connect, timeout, etc
+      MediaPortal.GUI.Library.Log.Error("Can't connect to " + sUrl + " : " + e.Message);
+    }
+
+    if (response != null)
+    {
+      // Get the stream associated with the response.
+      data = response.GetResponseStream();
+      StreamReader reader = new StreamReader(data, Encoding.Default, true);
+      String sXmlData = reader.ReadToEnd().Replace('\0', ' ');
+      data.Close();
+      reader.Close();
+      try
+      {
+        XmlDocument doc = new XmlDocument();
+        doc.LoadXml(sXmlData);
+        // skip xml node
+        XmlNode root = doc.FirstChild.NextSibling;
+        if (root.Name == "Items")
+        {
+          return root.ChildNodes;
+        }
+      }
+      catch (XmlException e)
+      {
+        // bummer
+
+        MediaPortal.GUI.Library.Log.Error("Xml parsing of " + sUrl + " failed (line " + e.LineNumber + " - " + e.Message + ")");
+      }
+      response.Close();
+    }
+
+
+    return null;
+  }
+
+}
