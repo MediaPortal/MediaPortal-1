@@ -91,6 +91,8 @@ namespace MediaPortal.MPInstaller
           this.label11 = new System.Windows.Forms.Label();
           this.pictureBox1 = new System.Windows.Forms.PictureBox();
           this.tabPage_Proiect = new System.Windows.Forms.TabPage();
+          this.label12 = new System.Windows.Forms.Label();
+          this.proiectt_comboBox1 = new System.Windows.Forms.ComboBox();
           this.proiectt_textBox6 = new System.Windows.Forms.ComboBox();
           this.label10 = new System.Windows.Forms.Label();
           this.label9 = new System.Windows.Forms.Label();
@@ -115,8 +117,6 @@ namespace MediaPortal.MPInstaller
           this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
           this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
           this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-          this.proiectt_comboBox1 = new System.Windows.Forms.ComboBox();
-          this.label12 = new System.Windows.Forms.Label();
           this.menuStrip1.SuspendLayout();
           this.contextMenuStrip1.SuspendLayout();
           this.tabPage_Skin.SuspendLayout();
@@ -665,6 +665,30 @@ namespace MediaPortal.MPInstaller
           this.tabPage_Proiect.Text = "Proiect Properties";
           this.tabPage_Proiect.UseVisualStyleBackColor = true;
           // 
+          // label12
+          // 
+          this.label12.AutoSize = true;
+          this.label12.Location = new System.Drawing.Point(3, 119);
+          this.label12.Name = "label12";
+          this.label12.Size = new System.Drawing.Size(52, 13);
+          this.label12.TabIndex = 13;
+          this.label12.Text = "Release :";
+          // 
+          // proiectt_comboBox1
+          // 
+          this.proiectt_comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.proiectt_comboBox1.FormattingEnabled = true;
+          this.proiectt_comboBox1.Items.AddRange(new object[] {
+            "Stable ",
+            "Beta",
+            "Test",
+            "Update"});
+          this.proiectt_comboBox1.Location = new System.Drawing.Point(94, 111);
+          this.proiectt_comboBox1.Name = "proiectt_comboBox1";
+          this.proiectt_comboBox1.Size = new System.Drawing.Size(114, 21);
+          this.proiectt_comboBox1.TabIndex = 12;
+          this.proiectt_comboBox1.SelectedIndexChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
+          // 
           // proiectt_textBox6
           // 
           this.proiectt_textBox6.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -718,7 +742,7 @@ namespace MediaPortal.MPInstaller
           // proiectt_textBox4
           // 
           this.proiectt_textBox4.Location = new System.Drawing.Point(94, 85);
-          this.proiectt_textBox4.Mask = "99.99.99.99999";
+          this.proiectt_textBox4.Mask = "00.00.00.00000";
           this.proiectt_textBox4.Name = "proiectt_textBox4";
           this.proiectt_textBox4.Size = new System.Drawing.Size(76, 20);
           this.proiectt_textBox4.TabIndex = 7;
@@ -798,9 +822,9 @@ namespace MediaPortal.MPInstaller
           // 
           // thumbst_comboBox1
           // 
-          this.thumbst_comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
           this.thumbst_comboBox1.FormattingEnabled = true;
           this.thumbst_comboBox1.Items.AddRange(new object[] {
+            "",
             "TV\\Logos",
             "TV\\Recorded",
             "TV\\Shows",
@@ -916,30 +940,6 @@ namespace MediaPortal.MPInstaller
           // folderBrowserDialog1
           // 
           this.folderBrowserDialog1.ShowNewFolderButton = false;
-          // 
-          // proiectt_comboBox1
-          // 
-          this.proiectt_comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-          this.proiectt_comboBox1.FormattingEnabled = true;
-          this.proiectt_comboBox1.Items.AddRange(new object[] {
-            "Stable ",
-            "Beta",
-            "Test",
-            "Update"});
-          this.proiectt_comboBox1.Location = new System.Drawing.Point(94, 111);
-          this.proiectt_comboBox1.Name = "proiectt_comboBox1";
-          this.proiectt_comboBox1.Size = new System.Drawing.Size(114, 21);
-          this.proiectt_comboBox1.TabIndex = 12;
-          this.proiectt_comboBox1.SelectedIndexChanged += new System.EventHandler(this.proiectt_textBox1_TextChanged);
-          // 
-          // label12
-          // 
-          this.label12.AutoSize = true;
-          this.label12.Location = new System.Drawing.Point(3, 119);
-          this.label12.Name = "label12";
-          this.label12.Size = new System.Drawing.Size(52, 13);
-          this.label12.TabIndex = 13;
-          this.label12.Text = "Release :";
           // 
           // Form1
           // 
