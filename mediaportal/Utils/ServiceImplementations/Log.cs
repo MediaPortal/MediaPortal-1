@@ -99,5 +99,10 @@ namespace MediaPortal.ServiceImplementations
     {
       GlobalServiceProvider.Get<ILog>().WriteFile(type, format, arg);
     }
+
+    public static void SetLogLevel(Level logLevel)
+    {
+      GlobalServiceProvider.Get<ILog>().SetLogLevel(logLevel);
+    }
   }
 }

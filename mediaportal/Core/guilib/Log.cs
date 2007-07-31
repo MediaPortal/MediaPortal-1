@@ -100,6 +100,11 @@ namespace MediaPortal.GUI.Library
       GlobalServiceProvider.Get<ILog>().WriteFile(type, format, arg);
     }
 
+    public static void SetLogLevel(Level logLevel)
+    {
+      GlobalServiceProvider.Get<ILog>().SetLogLevel(logLevel);
+    }
+
     [Obsolete("This method will disappear because the thread information is always logged now.", false)]
     public static void WriteFileThreadId(LogType type, bool isError, string format, params object[] arg)
     {

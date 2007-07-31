@@ -103,7 +103,6 @@ public class MediaPortalApp : D3DApp, IRender
   private int lastActiveModule = -1;
   private bool lastActiveModuleFullscreen = false;
 
-  private static int _configuredLoglevel = 2;
   private static bool _enableLogCollector = false;
   private static bool _mpCrashed = false;
 
@@ -179,12 +178,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
         if (arg == "/debug")
         {
-          using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-          {
-            // set the loglevel to "debug"
-            _configuredLoglevel = xmlreader.GetValueAsInt("general", "loglevel", 2);
-            xmlreader.SetValue("general", "loglevel", 3);
-          }
+          Log.SetLogLevel(MediaPortal.Services.Level.Debug);
           _enableLogCollector = true;
         }
         if (arg.StartsWith("/screen="))
@@ -201,7 +195,6 @@ public class MediaPortalApp : D3DApp, IRender
         }
       }
     }
-    Log.Info("_confloglevel={0}", _configuredLoglevel);
     if (!Config.DirsFileUpdateDetected)
     {
       try
@@ -471,13 +464,8 @@ public class MediaPortalApp : D3DApp, IRender
         }
         else
         {
-          Log.Info("_enableLogCollector={0}", _enableLogCollector);
           if (_enableLogCollector || _mpCrashed)
           {
-            using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-            {
-              xmlreader.SetValue("general", "loglevel", _configuredLoglevel);
-      }
             LogCollector dlg;
             if (_mpCrashed)
               dlg = new LogCollector(LogCollector.DialogCategory.EXCEPTION_VIEW);

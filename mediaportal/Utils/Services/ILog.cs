@@ -73,5 +73,11 @@ namespace MediaPortal.Services
     void WriteFile(LogType type, bool isError, string format, params object[] arg);
     void WriteFile(LogType type, string format, params object[] arg);
     void WriteFile(LogType type, Level logLevel, string format, params object[] arg);
+    /// <summary>
+    /// Sets the loglevel on the fly.
+    /// </summary>
+    /// <param name="logLevel">The loglevel.</param>
+    void SetLogLevel(Level logLevel);
+
   }
 }
