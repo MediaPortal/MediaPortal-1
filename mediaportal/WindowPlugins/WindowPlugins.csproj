@@ -328,6 +328,11 @@
     <Compile Include="GUIMyDreambox\Dreambox\XML.cs" />
     <Compile Include="GUIMyDreambox\GuiRecordings.cs" />
     <Compile Include="GUIMyDreambox\MyDreamboxRadio.cs" />
+    <Compile Include="GUIPrograms\appItemAppExec.cs" />
+    <Compile Include="GUIPrograms\AppSettingsAppExec.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\ProgramSort.cs" />
     <Compile Include="GUITV\GUITVTeletextBase.cs" />
     <Compile Include="GUIVideoFiles\SelectDVDHandler.cs" />
     <Compile Include="Home\GUIHome.cs" />
@@ -433,6 +438,159 @@
     </Compile>
     <Compile Include="GUIPictures\GUISlideShow.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AllGameInfoScraper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\appDirBrowse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\appDirCache.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\appFilesEdit.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppFilesImportProgress.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppFilesView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\appGrouper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppItemGamebase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\appItemMameDirect.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\ApplicationFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\appMyFileIni.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\appMyFileMeedio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppSettingsDirBrowse.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppSettingsDirCache.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppSettingsFilelauncher.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppSettingsGamebase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppSettingsGrouper.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppSettingsMameDirect.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppSettingsMyFileIni.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppSettingsMyFileMeedio.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppSettingsPrePost.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\AppSettingsRoot.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\FileDetailsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\FileInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\FileInfoScraperForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\FileItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\FilelinkItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\FilelinkList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\FileList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\GUIProgramInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\GUIPrograms.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\MyFileIniImporter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\MyFileIniReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\MyFileMeedioImporter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\MyGamebaseImporter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\MyMameImporter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\ProgramComparer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\ProgramContentManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\ProgramDatabase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\ProgramDBComparer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\ProgramFilterItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\ProgramSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\ProgramState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\ProgramUtils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\ProgramViewHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\ProgramViews.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\SetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIPrograms\taggedMenuItem.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="GUIRadioLastFM\GUIRadioLastFM.cs" />
     <Compile Include="GUIRadioLastFM\PluginSetupForm.cs">
@@ -883,6 +1041,60 @@
     <EmbeddedResource Include="GUIMyMail\MailSetupFrom.resx">
       <DependentUpon>MailSetupFrom.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\AppFilesImportProgress.resx">
+      <DependentUpon>AppFilesImportProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\AppFilesView.resx">
+      <DependentUpon>AppFilesView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\AppSettings.resx">
+      <DependentUpon>AppSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\AppSettingsDirBrowse.resx">
+      <DependentUpon>AppSettingsDirBrowse.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\AppSettingsDirCache.resx">
+      <DependentUpon>AppSettingsDirCache.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\AppSettingsFilelauncher.resx">
+      <DependentUpon>AppSettingsFilelauncher.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\AppSettingsGamebase.resx">
+      <DependentUpon>AppSettingsGamebase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\AppSettingsGrouper.resx">
+      <DependentUpon>AppSettingsGrouper.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\AppSettingsMameDirect.resx">
+      <DependentUpon>AppSettingsMameDirect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\AppSettingsMyFileIni.resx">
+      <DependentUpon>AppSettingsMyFileIni.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\AppSettingsMyFileMeedio.resx">
+      <DependentUpon>AppSettingsMyFileMeedio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\AppSettingsPrePost.resx">
+      <DependentUpon>AppSettingsPrePost.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\AppSettingsRoot.resx">
+      <DependentUpon>AppSettingsRoot.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\FileDetailsForm.resx">
+      <DependentUpon>FileDetailsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\FileInfoScraperForm.resx">
+      <DependentUpon>FileInfoScraperForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\ProgramViews.resx">
+      <DependentUpon>ProgramViews.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\SetupForm.resx">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIPrograms\taggedMenuItem.resx">
+      <DependentUpon>taggedMenuItem.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUIRadioLastFM\PluginSetupForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PluginSetupForm.cs</DependentUpon>
@@ -919,6 +1131,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>VideoEditorConfiguration.cs</DependentUpon>
     </EmbeddedResource>
+    <Content Include="GUIPrograms\FileDetailContents.xml" />
+    <Content Include="GUIPrograms\ProgramSettingProfiles.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUIRadioLastFM\BallonRadio.gif" />
@@ -930,6 +1144,10 @@
     <EmbeddedResource Include="GUIRSSFeed\rssicon.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="GUIPrograms\AppSettingsAppExec.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AppSettingsAppExec.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUIRSSFeed\rssicon_disabled.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
