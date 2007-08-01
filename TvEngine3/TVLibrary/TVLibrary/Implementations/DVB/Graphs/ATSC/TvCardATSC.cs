@@ -233,6 +233,12 @@ namespace TvLibrary.Implementations.DVB
 
         hr = atscLocator.put_CarrierFrequency(-1);//(int)atscChannel.Frequency);
         hr = atscLocator.put_InnerFEC(FECMethod.MethodNotSet);
+        //here we check for Hauppauge card
+        ATSCChannel tuneChannel = atscChannel;
+        if (_conditionalAccess !=null)
+        {
+          tuneChannel = _conditionalAccess.SetATSCQAM(_parameters, atscChannel);
+        }
         hr = atscLocator.put_Modulation(atscChannel.ModulationType);
         hr = _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
         hr = _tuneRequest.put_Channel(atscChannel.MajorChannel);

@@ -131,6 +131,15 @@ namespace TvLibrary.Implementations.DVB
             _isHauppauge = true;
             _ptrDiseqc = Marshal.AllocCoTaskMem(1024);
           }
+          // Check for ATSC...
+          else
+          {
+            _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
+            if ((supported & KSPropertySupport.Set) != 0)
+            {
+              _isHauppauge = true;
+            }
+          }
         }
       }
     }
@@ -297,6 +306,32 @@ namespace TvLibrary.Implementations.DVB
       //  hr = _propertySet.Get(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4, out length);
       //  Log.Log.Info("Hauppauge: Get   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
       //}
+    }
+
+    public void SetATSCQAM(ATSCChannel channel)
+    {
+      //Set the Modulation to 256QAM via the driver.
+      int hr;
+      int length;
+      KSPropertySupport supported;
+      _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
+
+      if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
+      {
+        Log.Log.Info("Hauppauge: Set Modulation: {0}", channel.ModulationType);
+        Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
+        hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4);
+        Log.Log.Info("Hauppauge:  returned:{0:X}", hr);
+      }
+      else Log.Log.Info("Hauppauge: 256QAM not supported");
+
+      //get Modulation
+      if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
+      {
+        Log.Log.Info("Hauppauge: Get Modulation");
+        hr = _propertySet.Get(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4, out length);
+        Log.Log.Info("Hauppauge:   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
+      }
     }
   }
 }

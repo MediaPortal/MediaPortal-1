@@ -590,5 +590,25 @@ namespace TvLibrary.Implementations.DVB
       }
       return channel;
     }
+
+    public ATSCChannel SetATSCQAM(ScanParameters parameters, ATSCChannel channel)
+    {
+      try
+      {
+        if (_hauppauge != null)
+        {
+          if (channel.ModulationType == ModulationType.Mod256Qam)
+          {
+            //Set the Hauppauge Modulation type
+            _hauppauge.SetATSCQAM(channel);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
+      return channel;
+    }
   }
 }
