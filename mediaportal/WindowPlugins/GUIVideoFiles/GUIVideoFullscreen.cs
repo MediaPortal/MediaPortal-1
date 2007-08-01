@@ -1312,8 +1312,9 @@ namespace MediaPortal.GUI.Video
       OnMessage(msg);
     }
 
-    void ShowBookmarksMenu()
+    public void ShowBookmarksMenu()
     {
+      if (dlg == null) dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
 
       dlg.Reset();

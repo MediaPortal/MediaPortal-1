@@ -436,19 +436,22 @@ namespace MediaPortal.GUI.Video
 
             if (iControl == (int)Controls.OSD_BOOKMARKS)
             {
+              GUIVideoFullscreen videoWindow = (GUIVideoFullscreen)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+              videoWindow.ShowBookmarksMenu();
+              ToggleButton((int)Controls.OSD_BOOKMARKS, false);
 
-              ToggleSubMenu(iControl, (int)Controls.OSD_SUBMENU_BG_BOOKMARKS);	// hide or show the sub-menu
-              if (m_bSubMenuOn)
-              {
-                // show the controls on this sub menu
-                ShowControl(GetID, (int)Controls.OSD_CREATEBOOKMARK);
-                ShowControl(GetID, (int)Controls.OSD_BOOKMARKS_LIST);
-                ShowControl(GetID, (int)Controls.OSD_BOOKMARKS_LIST_LABEL);
-                ShowControl(GetID, (int)Controls.OSD_CLEARBOOKMARKS);
+              //ToggleSubMenu(iControl, (int)Controls.OSD_SUBMENU_BG_BOOKMARKS);	// hide or show the sub-menu
+              //if (m_bSubMenuOn)
+              //{
+              //  // show the controls on this sub menu
+              //  ShowControl(GetID, (int)Controls.OSD_CREATEBOOKMARK);
+              //  ShowControl(GetID, (int)Controls.OSD_BOOKMARKS_LIST);
+              //  ShowControl(GetID, (int)Controls.OSD_BOOKMARKS_LIST_LABEL);
+              //  ShowControl(GetID, (int)Controls.OSD_CLEARBOOKMARKS);
 
-                FocusControl(GetID, (int)Controls.OSD_CREATEBOOKMARK, 0);	// set focus to the first control in our group
-                PopulateBookmarks();	// populate the list control with bookmarks for this video
-              }
+              //  FocusControl(GetID, (int)Controls.OSD_CREATEBOOKMARK, 0);	// set focus to the first control in our group
+              //  PopulateBookmarks();	// populate the list control with bookmarks for this video
+              //}
             }
 
             if (iControl == (int)Controls.OSD_VIDEO)
