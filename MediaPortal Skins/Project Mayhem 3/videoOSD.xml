@@ -121,8 +121,8 @@
       <font>-</font>
       <onleft>215</onleft>
       <onright>211</onright>
-      <onup>208</onup>
-      <ondown>33</ondown>
+      <onup>216</onup>
+      <ondown>218</ondown>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -142,8 +142,8 @@
       <font>-</font>
       <onleft>210</onleft>
       <onright>213</onright>
-      <onup>209</onup>
-      <ondown>33</ondown>
+      <onup>216</onup>
+      <ondown>218</ondown>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -203,8 +203,8 @@
       <font>-</font>
       <onleft>213</onleft>
       <onright>215</onright>
-      <onup>921</onup>
-      <ondown>33</ondown>
+      <onup>216</onup>
+      <ondown>218</ondown>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -221,9 +221,9 @@
       <label>-</label>
       <font>-</font>
       <onleft>214</onleft>
-      <onright>33</onright>
-      <onup>918</onup>
-      <ondown>33</ondown>
+      <onright>210</onright>
+      <onup>216</onup>
+      <ondown>218</ondown>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -241,8 +241,8 @@
       <textureNoFocus>osd_button_audioSELNF.png</textureNoFocus>
       <label>-</label>
       <font>-</font>
-      <onleft>33</onleft>
-      <onright>216</onright>
+      <onleft>211</onleft>
+      <onright>214</onright>
       <onup>219</onup>
       <ondown>213</ondown>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -262,10 +262,10 @@
       <textureNoFocus>osd_button_videoSELNF.png</textureNoFocus>
       <label>-</label>
       <font>-</font>
-      <onleft>218</onleft>
-      <onright>33</onright>
+      <onleft>211</onleft>
+      <onright>214</onright>
       <onup>213</onup>
-      <ondown>33</ondown>
+      <ondown>219</ondown>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -283,9 +283,9 @@
       <textureNoFocus>osd_button_playlistSELNF.png</textureNoFocus>
       <label>-</label>
       <font>-</font>
-      <onleft>219</onleft>
-      <onright>33</onright>
-      <onup>219</onup>
+      <onleft>211</onleft>
+      <onright>214</onright>
+      <onup>218</onup>
       <ondown>216</ondown>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
