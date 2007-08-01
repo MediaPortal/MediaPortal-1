@@ -129,11 +129,10 @@ namespace SetupTv.Sections
         user.CardId = _cardNumber;
         int minchan = 2;
         int maxchan = 69;
-        //Check if QAM if so then the number of channels needs to start at 0-255
+        //Check if QAM if so then the number of channels needs to start at 2-134
         if (checkBoxQAM.Checked)
         {
-          minchan = 0;
-          maxchan = 99;
+          maxchan = 134;
         }
         Log.WriteFile("ATSC tune: using min channel {0} & max channel {1}",minchan, maxchan);
         for (int index = minchan; index <= maxchan; ++index)
@@ -160,6 +159,7 @@ namespace SetupTv.Sections
           // old OTA should be set to 8vsb afaik.
           //else tuneChannel.ModulationType = ModulationType.ModNotSet;
           else tuneChannel.ModulationType = ModulationType.Mod8Vsb;
+          Log.WriteFile("ATSC tune: Modulation: {0}",tuneChannel.ModulationType);
           string line = String.Format("{0}tp- channel:{1}", 1 + index, tuneChannel.PhysicalChannel);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
