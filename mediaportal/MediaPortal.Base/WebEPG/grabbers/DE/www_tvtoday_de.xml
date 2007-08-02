@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="de" availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
+  <Info language="de" availableDays="7" timezone="W. Europe Standard Time" version="2.1.0" />
   <Channels>
     <!-- Haupt -->
     <Channel id="ard.de" siteId="ARD" />
@@ -144,14 +144,9 @@
           </TemplateText>
         </SectionTemplate>
       </Template>
-      <Template name="Details" start="FILMBESCHREIBUNG">
+      <Template name="Details">
         <SectionTemplate tags="T">
           <TemplateText>
-            &lt;tr&gt;
-            &lt;td align="center" class="tv-sendung-info"&gt;&lt;a/&gt;
-            &lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
             &lt;td align="left" class="tv-sendung-info"&gt;&lt;#DESCRIPTION&gt;&lt;br/&gt;&gt; &lt;#END&gt; | &lt;#DURATION&gt; Min. | &lt;#SHOWVIEW&gt;
             &lt;/td&gt;
             &lt;/tr&gt;
@@ -160,9 +155,6 @@
             &lt;/tr&gt;
             &lt;tr&gt;
             &lt;td align="left" class="tv-sendung-info"&gt;
-            &lt;span class="tv-credits"&gt;&lt;/span&gt;
-            &lt;span class="tv-credits"&gt;&lt;/span&gt;
-            &lt;span class="tv-credits"&gt;&lt;/span&gt;
             &lt;/td&gt;
             &lt;/tr&gt;
           </TemplateText>
