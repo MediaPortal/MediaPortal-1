@@ -35,7 +35,7 @@ namespace MediaPortal.Support
   {
     public void CreateLogs(string destinationFolder)
     {
-      string filename = Path.GetFullPath(destinationFolder) + "\\hotfixes.log";
+      string filename = Path.GetFullPath(destinationFolder) + "\\hotfixes.xml";
       HotfixInformation hotfixes = new HotfixInformation();
 
       using (XmlWriter writer = XmlWriter.Create(filename))

@@ -41,7 +41,7 @@ namespace MediaPortal.Support
 
     public void CreateLogs(string destinationFolder)
     {
-      string filename = Path.GetFullPath(destinationFolder) + "\\" + logname + "_events.csv";
+      string filename = Path.GetFullPath(destinationFolder) + "\\" + logname + "_eventlog.csv";
       using (StreamWriter writer = new StreamWriter(filename))
       {
         writer.WriteLine("\"TimeGenerated\";\"Source\";\"Category\";\"EntryType\";\"Message\";\"InstanceID\"");

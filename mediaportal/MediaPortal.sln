@@ -87,6 +87,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPInstaler", "MPInstaller\M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPInstaller.Library", "MPInstaller\MPInstaller.Library\MPInstaller.Library.csproj", "{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTestTool2", "MPTestTool2\MPTestTool2.csproj", "{349F7518-F251-49BD-8887-07870812D4FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -309,6 +311,12 @@ Global
 		{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}.Release|x86.ActiveCfg = Release|x86
 		{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}.Release|x86.Build.0 = Release|x86
+		{349F7518-F251-49BD-8887-07870812D4FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{349F7518-F251-49BD-8887-07870812D4FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{349F7518-F251-49BD-8887-07870812D4FE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{349F7518-F251-49BD-8887-07870812D4FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{349F7518-F251-49BD-8887-07870812D4FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{349F7518-F251-49BD-8887-07870812D4FE}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

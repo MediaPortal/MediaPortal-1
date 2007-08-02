@@ -74,6 +74,7 @@
       <DependentUpon>LogCollector.cs</DependentUpon>
     </Compile>
     <Compile Include="MediaPortalLogs.cs" />
+    <Compile Include="PlatformLogger.cs" />
     <Compile Include="ProcessRunner.cs" />
     <Compile Include="ProgressDialog.cs">
       <SubType>Form</SubType>

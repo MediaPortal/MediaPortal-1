@@ -25,31 +25,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Diagnostics;
+using System.Windows.Forms;
 
-namespace MediaPortal.Support
+namespace MPTestTool
 {
-  public class TvServerLogger : ILogCreator
+  static class Program
   {
-    public TvServerLogger()
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
+    [STAThread]
+    static void Main()
     {
+      Application.EnableVisualStyles();
+      Application.SetCompatibleTextRenderingDefault(false);
+      Application.Run(new MPTestTool());
     }
-
-    public void CreateLogs(string destinationFolder)
-    {
-      string logPath=Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)+"\\MediaPortal TV Server\\log";
-      if (!Directory.Exists(logPath))
-        return;
-      DirectoryInfo dir=new DirectoryInfo(logPath);
-      FileInfo[] fis=dir.GetFiles("*.log");
-      foreach (FileInfo fi in fis)
-        fi.CopyTo(destinationFolder+"\\tvserver_"+fi.Name,true);
-    }
-
-    public string ActionMessage
-    {
-      get { return "Gathering TvServer log information if any..."; }    }
   }
 }
