@@ -1326,10 +1326,10 @@ namespace MediaPortal.Util
         try
         {
           //file = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
-          Util.Picture.CreateThumbnail(file, strFile, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
-          string strFileL = ConvertToLargeCoverArt(strFile);
-          Util.Picture.CreateThumbnail(file, strFileL, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-          //System.IO.File.Copy(strFile, file, true);
+          //Util.Picture.CreateThumbnail(file, strFile, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
+          //string strFileL = ConvertToLargeCoverArt(strFile);
+          //Util.Picture.CreateThumbnail(file, strFileL, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+          System.IO.File.Copy(file, strFile, true);
         }
         catch (Exception ex)
         {

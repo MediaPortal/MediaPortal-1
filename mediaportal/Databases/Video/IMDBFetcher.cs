@@ -735,8 +735,8 @@ namespace MediaPortal.Video.Database
             MediaPortal.Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
             if (System.IO.File.Exists(temporaryFilename))
             {
-              MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
               MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
+              MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0);
             }
 
             MediaPortal.Util.Utils.FileDelete(temporaryFilename);
