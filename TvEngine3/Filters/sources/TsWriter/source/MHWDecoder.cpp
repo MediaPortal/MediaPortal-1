@@ -80,7 +80,7 @@ bool CMhwDecoder::ParseSummaries(byte* data, int maxLen)
 		return false;
 				
 	CEnterCriticalSection lock (m_critSection);
-	int dataLen=((data[1]&0xff)<<8)+data[2];
+	int dataLen=((data[1]-0x70)<<8)+data[2];
 	if (dataLen<12)
 		return false;
 	int n=0;
