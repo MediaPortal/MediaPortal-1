@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="fi" availableDays="7" timezone="" version="2.0" />
+  <Info language="fi" availableDays="7" timezone="" version="2.0.1" />
   <Channels>
     <Channel id="tv1@yle.fi" siteId="tv1" />
     <Channel id="tv2@yle.fi" siteId="tv2" />
@@ -9,8 +9,10 @@
     <Channel id="subtv.fi" siteId="subtv" />
     <Channel id="fst.fi" siteId="fst5" />
     <Channel id="yleteema@yle.fi" siteId="yleteema" />
-    <Channel id="yle24@yle.fi" siteId="yle24" />
-    <Channel id="nelonenplus@nelonen.fi" siteId="nelonenplus" />
+    <Channel id="disneychannel.fi" siteId="imdisneychannels" />
+    <Channel id="toondisney.fi" siteId="imtoondisneyscan" />
+    <Channel id="playhousedisney.fi" siteId="implayhousedisne" />
+    <Channel id="TCM" siteId="tcm" />
   </Channels>
   <Listing type="Html">
     <Site url="http://www.telvis.fi/tvopas/?vw=channel&amp;ch=[ID]&amp;sh=all&amp;dy=[DD].[MM].[YYYY]" post="" external="false" encoding="" />
