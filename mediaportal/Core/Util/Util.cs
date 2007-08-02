@@ -2305,5 +2305,42 @@ namespace MediaPortal.Util
       }
     }
 
+    public static string TranslateLanguageString(string language)
+    {
+      switch (language.ToLower())
+      {
+        case "undetermined":
+          return GUILocalizeStrings.Get(2599);
+        case "english":
+          return GUILocalizeStrings.Get(2600);
+        case "german":
+          return GUILocalizeStrings.Get(2601);
+        case "french":
+          return GUILocalizeStrings.Get(2602);
+        case "dutch":
+          return GUILocalizeStrings.Get(2603);
+        case "norwegian":
+          return GUILocalizeStrings.Get(2604);
+        case "italian":
+          return GUILocalizeStrings.Get(2605);
+        case "swedish":
+          return GUILocalizeStrings.Get(2606);
+        case "spanish":
+          return GUILocalizeStrings.Get(2607);
+        case "portuguese":
+          return GUILocalizeStrings.Get(2608);
+        case "danish":
+          return GUILocalizeStrings.Get(2609);
+        case "polish":
+          return GUILocalizeStrings.Get(2610);
+        case "czech":
+          return GUILocalizeStrings.Get(2611);
+        case "hungarian":
+          return GUILocalizeStrings.Get(2612);
+        default:
+          return language;
+      }
+    }
+
   }
 }

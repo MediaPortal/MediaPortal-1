@@ -1584,6 +1584,11 @@ namespace MediaPortal.Player
       }
     }
 
+    #region subtitle/audio stream selection
+
+    /// <summary>
+    /// Property which returns the total number of audio streams available
+    /// </summary>
     static public int AudioStreams
     {
       get
@@ -1592,7 +1597,9 @@ namespace MediaPortal.Player
         return _player.AudioStreams;
       }
     }
-
+    /// <summary>
+    /// Property to get/set the current audio stream
+    /// </summary>
     static public int CurrentAudioStream
     {
       get
@@ -1608,13 +1615,20 @@ namespace MediaPortal.Player
         }
       }
     }
-
+    /// <summary>
+    /// Property to get the name for an audio stream
+    /// </summary>
     static public string AudioLanguage(int iStream)
     {
       if (_player == null) return Strings.Unknown;
-      return _player.AudioLanguage(iStream);
+
+      string stream = _player.AudioLanguage(iStream);
+      return MediaPortal.Util.Utils.TranslateLanguageString(stream);
     }
 
+    /// <summary>
+    /// Property to get the total number of subtitle streams
+    /// </summary>
     static public int SubtitleStreams
     {
       get
@@ -1623,7 +1637,9 @@ namespace MediaPortal.Player
         return _player.SubtitleStreams;
       }
     }
-
+    /// <summary>
+    /// Property to get/set the current subtitle stream
+    /// </summary>
     static public int CurrentSubtitleStream
     {
       get
@@ -1639,18 +1655,18 @@ namespace MediaPortal.Player
         }
       }
     }
-
-    static public void SetVideoWindow()
-    {
-      if (_player == null) return;
-      _player.SetVideoWindow();
-    }
-
+    /// <summary>
+    /// Property to get/set the name for a subtitle stream
+    /// </summary>
     static public string SubtitleLanguage(int iStream)
     {
       if (_player == null) return Strings.Unknown;
-      return _player.SubtitleLanguage(iStream);
+
+      string stream = _player.SubtitleLanguage(iStream);
+      return MediaPortal.Util.Utils.TranslateLanguageString(stream);
     }
+
+    #endregion
 
     static public bool EnableSubtitle
     {
@@ -1664,6 +1680,12 @@ namespace MediaPortal.Player
         if (_player == null) return;
         _player.EnableSubtitle = value;
       }
+    }
+
+    static public void SetVideoWindow()
+    {
+      if (_player == null) return;
+      _player.SetVideoWindow();
     }
 
     public static void Init()

@@ -1130,13 +1130,14 @@
         <String id="2514">Back to the text</String>
         <String id="2515">Images</String>
         <String id="2516" prefix="My ">Wikipedia</String>
+        <String id="2599">Undetermined</String>
         <String id="2600">English</String>
         <String id="2601">German</String>
         <String id="2602">French</String>
         <String id="2603">Dutch</String>
         <String id="2604">Norwegian</String>
-        <String id="2606">Swedish</String>
         <String id="2605">Italian</String>
+        <String id="2606">Swedish</String>
         <String id="2607">Spanish</String>
         <String id="2608">Portuguese</String>
         <String id="2609">Danish</String>

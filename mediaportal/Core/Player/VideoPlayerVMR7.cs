@@ -308,12 +308,9 @@ namespace MediaPortal.Player
         defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
         showSubtitles = xmlreader.GetValueAsBool("subtitles", "enabled", true);
       }
-      for (int i = 0; i < SubtitleStreams; ++i)
+      for (int i = 0; i < SubtitleStreams; i++)
       {
-        string language = SubtitleLanguage(i);
-        if (language.StartsWith("S: [")) //haali media splitter show language as "S: [language]"
-          language = language.Substring(4, language.Length-5);
-        if (defaultLanguage.StartsWith(language, StringComparison.OrdinalIgnoreCase))
+        if (defaultLanguage.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase))
         {
           CurrentSubtitleStream = i;
           break;
@@ -1207,10 +1204,16 @@ namespace MediaPortal.Player
 
     #region subtitle/audio stream selection
 
+    /// <summary>
+    /// Property which returns the total number of audio streams available
+    /// </summary>
     public override int AudioStreams
     {
       get { return FStreams.GetStreamCount(StreamType.Audio); }
     }
+    /// <summary>
+    /// Property to get/set the current audio stream
+    /// </summary>
     public override int CurrentAudioStream
     {
       get
@@ -1229,6 +1232,9 @@ namespace MediaPortal.Player
         return;
       }
     }
+    /// <summary>
+    /// Property to get the name for an audio stream
+    /// </summary>
     public override string AudioLanguage(int iStream)
     {
       string streamName = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
@@ -1241,6 +1247,9 @@ namespace MediaPortal.Player
       return streamName;
     }
 
+    /// <summary>
+    /// Property to get the total number of subtitle streams
+    /// </summary>
     public override int SubtitleStreams
     {
       get
@@ -1259,6 +1268,9 @@ namespace MediaPortal.Player
         return ret;
       }
     }
+    /// <summary>
+    /// Property to get/set the current subtitle stream
+    /// </summary>
     public override int CurrentSubtitleStream
     {
       get
@@ -1303,6 +1315,9 @@ namespace MediaPortal.Player
         }
       }
     }
+    /// <summary>
+    /// Property to get/set the name for a subtitle stream
+    /// </summary>
     public override string SubtitleLanguage(int iStream)
     {
       // embedded subtitles
