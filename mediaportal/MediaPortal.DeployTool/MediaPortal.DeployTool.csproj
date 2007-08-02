@@ -1,0 +1,113 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C54A87DB-89E6-4DD9-A508-2749DADC1760}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MediaPortal.DeployTool</RootNamespace>
+    <AssemblyName>MediaPortal.DeployTool</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DeployDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DeployDialog.Designer.cs">
+      <DependentUpon>DeployDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DeployTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DeployTool.Designer.cs">
+      <DependentUpon>DeployTool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogFlowHandler.cs" />
+    <Compile Include="IDeplpoyDialog.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="DeployDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DeployDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DeployTool.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DeployTool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BaseInstallationTypeDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\SingleSeatDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SingleSeatDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Sections\BaseInstallationTypeDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BaseInstallationTypeDlg.Designer.cs">
+      <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\SingleSeatDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\SingleSeatDlg.Designer.cs">
+      <DependentUpon>SingleSeatDlg.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="mplogo.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
