@@ -103,7 +103,6 @@ public class MediaPortalApp : D3DApp, IRender
   private int lastActiveModule = -1;
   private bool lastActiveModuleFullscreen = false;
 
-  private static bool _enableLogCollector = false;
   private static bool _mpCrashed = false;
 
 #if AUTOUPDATE
@@ -175,11 +174,6 @@ public class MediaPortalApp : D3DApp, IRender
         if (arg == "/fullscreen")
         {
           _fullscreenOverride = "yes";
-        }
-        if (arg == "/debug")
-        {
-          Log.SetLogLevel(MediaPortal.Services.Level.Debug);
-          _enableLogCollector = true;
         }
         if (arg.StartsWith("/screen="))
         {
@@ -464,16 +458,15 @@ public class MediaPortalApp : D3DApp, IRender
         }
         else
         {
-          if (_enableLogCollector || _mpCrashed)
+          if (_mpCrashed)
           {
-            LogCollector dlg;
-            if (_mpCrashed)
-              dlg = new LogCollector(LogCollector.DialogCategory.EXCEPTION_VIEW);
-            else
-            {
-              dlg = new LogCollector(LogCollector.DialogCategory.DEBUG_VIEW);
-              dlg.ShowDialog(null);
-    }
+            Process mpTestTool = new Process();
+            mpTestTool.StartInfo.ErrorDialog=true;
+            mpTestTool.StartInfo.UseShellExecute = true;
+            mpTestTool.StartInfo.WorkingDirectory = Application.StartupPath;
+            mpTestTool.StartInfo.FileName="MPTestTool2.exe";
+            mpTestTool.StartInfo.Arguments="-crashed";
+            mpTestTool.Start();
           }
         }
       }

@@ -61,10 +61,14 @@ namespace MediaPortal
 
       ExceptionLogger logger = new ExceptionLogger(ex);
       logger.CreateLogs(directory);
-      LogCollector dlg = new LogCollector(LogCollector.DialogCategory.EXCEPTION_VIEW);
-      dlg.ShowDialog();
       Log.Info("MediaPortal: stop...");
-      //Process.Start("crash.exe");
+      Process mpTestTool = new Process();
+      mpTestTool.StartInfo.ErrorDialog = true;
+      mpTestTool.StartInfo.UseShellExecute = true;
+      mpTestTool.StartInfo.WorkingDirectory = Application.StartupPath;
+      mpTestTool.StartInfo.FileName = "MPTestTool2.exe";
+      mpTestTool.StartInfo.Arguments = "-crashed";
+      mpTestTool.Start();
       Application.Exit();
     }
   }

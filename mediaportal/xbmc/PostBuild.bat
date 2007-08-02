@@ -96,6 +96,9 @@ xcopy /y %1\WindowPlugins\GUIBurner\madlldlib.dll .
 REM Copy All new files from base
 xcopy %1\MediaPortal.Base\*.* . /E /R /Y /D
 
+REM MPTestTool2
+xcopy /y %1\MPTestTool2\bin\%2\MPTestTool2.exe .
+
 REM Register
 regsvr32 /s MPSA.ax
 regsvr32 /s TSFileSource.ax

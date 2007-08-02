@@ -67,12 +67,6 @@
     <Compile Include="HotFixInformationLogger.cs" />
     <Compile Include="HotfixItem.cs" />
     <Compile Include="ILogCreator.cs" />
-    <Compile Include="LogCollector.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LogCollector.Designer.cs">
-      <DependentUpon>LogCollector.cs</DependentUpon>
-    </Compile>
     <Compile Include="MediaPortalLogs.cs" />
     <Compile Include="PlatformLogger.cs" />
     <Compile Include="ProcessRunner.cs" />
@@ -87,10 +81,6 @@
     <Compile Include="TvServerLogger.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LogCollector.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>LogCollector.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ProgressDialog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ProgressDialog.cs</DependentUpon>
