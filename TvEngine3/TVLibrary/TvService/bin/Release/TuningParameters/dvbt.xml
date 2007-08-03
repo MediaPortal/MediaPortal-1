@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- changed : 26.06.2007   -->
+<!-- changed : 03.08.2007   -->
 <!-- contains:   -->
 <!--   - Australia   -->
 <!--   - Austria   -->
@@ -1679,7 +1679,7 @@
 	<country name="Germany - Rhein/Main" offset="125">
 		<carrier frequency="198500" bandwidth="8" />
 		<carrier frequency="482000" bandwidth="8" />
-		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
 		<carrier frequency="738000" bandwidth="8" />
 		<carrier frequency="762000" bandwidth="8" />
 		<carrier frequency="818000" bandwidth="8" />
