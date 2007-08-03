@@ -125,7 +125,7 @@ namespace TvLibrary.Implementations.DVB
             IPin qampin = DsFindPin.ByName(tunerFilter, "MPEG2 Transport");
             _propertySet = qampin as DirectShowLib.IKsPropertySet;
             _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
-            Log.Log.Info("Hauppauge: QuerySupported: {0}", supported);
+            //Log.Log.Info("Hauppauge: QuerySupported: {0}", supported);
             if ((supported & KSPropertySupport.Set) != 0)
             {
               Log.Log.Info("Hauppauge: ATSC QAM card found!");
@@ -291,7 +291,7 @@ namespace TvLibrary.Implementations.DVB
 
       //Set the modulation
       _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
-      Log.Log.Info("Hauppauge: BDADigitalDemodulator supported: {0}", supported);
+      //Log.Log.Info("Hauppauge: BDADigitalDemodulator supported: {0}", supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
         Log.Log.Info("Hauppauge: Set ModulationType: {0}", channel.ModulationType);
@@ -300,14 +300,15 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("Hauppauge:    returned:{0:X}", hr);
       }
 
+      //below is for info only - uncomment if debugging
       //get modulation
-      if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
+      /*if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {
         Log.Log.Info("Hauppauge: Get BDA ModulationType");
         Marshal.WriteInt32(_tempValue, (Int32)0);
         hr = _propertySet.Get(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4, out length);
         Log.Log.Info("Hauppauge: Get   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
-      }
+      }*/
     }
   }
 }

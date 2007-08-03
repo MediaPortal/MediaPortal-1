@@ -43,7 +43,14 @@ namespace SetupTv.Sections
 {
   public partial class CardAtsc : SectionSettings
   {
+    struct ATSCList
+    {
+      public int frequency;		 // frequency
+    }
+
     int _cardNumber;
+    ATSCList[] _atscChannels = new ATSCList[1000];
+    int _channelCount = 0;
     bool _isScanning = false;
     bool _stopScanning = false;
     public CardAtsc()
@@ -61,6 +68,70 @@ namespace SetupTv.Sections
       _cardNumber = cardNumber;
       InitializeComponent();
       base.Text = name;
+      Init();
+    }
+
+    void LoadList(string fileName)
+    {
+      _channelCount = 0;
+      string line;
+      string[] tpdata;
+      System.IO.TextReader tin = System.IO.File.OpenText(fileName);
+      int LineNr = 0;
+      do
+      {
+        line = null;
+        line = tin.ReadLine();
+        if (line != null)
+        {
+          LineNr++;
+          if (line.Length > 0)
+          {
+            if (line.StartsWith(";"))
+              continue;
+            tpdata = line.Split(new char[] { ',' });
+            if (tpdata.Length != 1)
+              tpdata = line.Split(new char[] { ';' });
+            if (tpdata.Length == 1)
+            {
+              try
+              {
+                _atscChannels[_channelCount].frequency = Int32.Parse(tpdata[0]);
+                _channelCount += 1;
+              }
+              catch
+              {
+              }
+            }
+          }
+        }
+      } while (!(line == null));
+      tin.Close();
+    }
+
+    void Init()
+    {
+      if (checkBoxQAM.Enabled != true)
+      {
+        mpComboBoxFrequencies.Enabled = false;
+      }
+      mpComboBoxFrequencies.Items.Clear();
+      try
+      {
+        string[] files = System.IO.Directory.GetFiles("TuningParameters");
+        for (int i = 0; i < files.Length; ++i)
+        {
+          string ext = System.IO.Path.GetExtension(files[i]).ToLower();
+          if (ext != ".qam") continue;
+          string fileName = System.IO.Path.GetFileNameWithoutExtension(files[i]);
+          mpComboBoxFrequencies.Items.Add(fileName);
+        }
+        mpComboBoxFrequencies.SelectedIndex = 0;
+      }
+      catch (Exception)
+      {
+        return;
+      }
     }
 
     public override void OnSectionActivated()
@@ -93,15 +164,17 @@ namespace SetupTv.Sections
       if (channel == null)
         mpLabelChannel.Text = "none";
       else
-        mpLabelChannel.Text = String.Format("{0}", channel.PhysicalChannel);
+        mpLabelChannel.Text = String.Format("{0} {1}", channel.PhysicalChannel, channel.Frequency);
     }
 
     private void mpButtonScanTv_Click(object sender, EventArgs e)
     {
       if (_isScanning == false)
       {
+        LoadList(String.Format(@"Tuningparameters\{0}.qam", mpComboBoxFrequencies.SelectedItem));
         Thread scanThread = new Thread(new ThreadStart(DoScan));
         scanThread.Start();
+        listViewStatus.Items.Clear();
       }
       else
       {
@@ -122,6 +195,8 @@ namespace SetupTv.Sections
         _stopScanning = false;
         mpButtonScanTv.Text = "Cancel...";
         RemoteControl.Instance.EpgGrabberEnabled = false;
+        if (_channelCount == 0) return;
+        mpComboBoxFrequencies.Enabled = false;
         listViewStatus.Items.Clear();
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -129,10 +204,11 @@ namespace SetupTv.Sections
         user.CardId = _cardNumber;
         int minchan = 2;
         int maxchan = 69;
-        //Check if QAM if so then the number of channels needs to start at 2-134
+        //Check if QAM if so then the number of channels varies
         if (checkBoxQAM.Checked)
         {
-          maxchan = 134;
+          minchan = 0;
+          maxchan = _channelCount;
         }
         Log.WriteFile("ATSC tune: using min channel {0} & max channel {1}",minchan, maxchan);
         for (int index = minchan; index <= maxchan; ++index)
@@ -148,19 +224,24 @@ namespace SetupTv.Sections
           tuneChannel.ServiceId = -1;
           tuneChannel.MinorChannel = -1;
           tuneChannel.MajorChannel = -1;
-          tuneChannel.Frequency = -1;
           tuneChannel.SymbolRate = -1;
-          tuneChannel.PhysicalChannel = index;
           if (checkBoxQAM.Checked)
           {
+            Log.WriteFile("ATSC tune: QAM checkbox selected...");
+            tuneChannel.Frequency = _atscChannels[index].frequency * 1000;
+            tuneChannel.PhysicalChannel = -1;
             tuneChannel.ModulationType = ModulationType.Mod256Qam;
-            Log.WriteFile("ATSC tune: QAM checkbox selected - using 256Qam");
           }
-          // old OTA should be set to 8vsb afaik.
-          //else tuneChannel.ModulationType = ModulationType.ModNotSet;
-          else tuneChannel.ModulationType = ModulationType.Mod8Vsb;
-          Log.WriteFile("ATSC tune: Modulation: {0}",tuneChannel.ModulationType);
-          string line = String.Format("{0}tp- channel:{1}", 1 + index, tuneChannel.PhysicalChannel);
+          else
+          {
+            tuneChannel.Frequency = -1;
+            tuneChannel.PhysicalChannel = index;
+            // OTA should be set to Mod8Vsb afaik & not ModNotSet
+            tuneChannel.ModulationType = ModulationType.Mod8Vsb;
+            //tuneChannel.ModulationType = ModulationType.ModNotSet;
+          }
+          Log.WriteFile("ATSC tune: PhysicalChannel: {0} Frequency: {1} Modulation: {2}", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
+          string line = String.Format("{0}tp- channel:{1} frequency:{2}", 1 + index, tuneChannel.PhysicalChannel, tuneChannel.Frequency);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
           if (index == minchan)
@@ -173,14 +254,14 @@ namespace SetupTv.Sections
           {
             if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
             {
-              line = line = String.Format("{0}tp- channel:{1}:No signal", 1 + index, tuneChannel.PhysicalChannel);
+              line = line = String.Format("{0}tp- channel:{1} frequency{2}:No signal", 1 + index, tuneChannel.PhysicalChannel, tuneChannel.Frequency);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
             }
             else
             {
-              line = line = String.Format("{0}tp- channel:{1}:Nothing found", 1 + index, tuneChannel.PhysicalChannel);
+              line = line = String.Format("{0}tp- channel:{1} frequency{2}:Nothing found", 1 + index, tuneChannel.PhysicalChannel, tuneChannel.Frequency);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
@@ -254,7 +335,7 @@ namespace SetupTv.Sections
               }
             }
             layer.MapChannelToCard(card, dbChannel);
-            line = line = String.Format("{0}tp- channel:{1}:New:{2} Updated:{3}", 1 + index, tuneChannel.PhysicalChannel, newChannels, updatedChannels);
+            line = line = String.Format("{0}tp- channel:{1}:frequency{2}:New:{3} Updated:{4}", 1 + index, tuneChannel.PhysicalChannel, tuneChannel.Frequency, newChannels, updatedChannels);
             item.Text = line;
           }
         }
@@ -271,6 +352,7 @@ namespace SetupTv.Sections
         RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
+        mpComboBoxFrequencies.Enabled = true;
         mpButtonScanTv.Text = buttonText;
         _isScanning = false;
       }
