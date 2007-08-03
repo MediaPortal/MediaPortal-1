@@ -336,12 +336,13 @@ void CDVBSub::NotifySubtitle()
     // PTS to milliseconds ( 90khz )
     LONGLONG pts( 0 ); 
    
-    pts = ( pSubtitle->PTS() - m_basePCR - m_CurrentSeekPosition ) / 90;
+    pts = ( pSubtitle->PTS() - m_basePCR /* + m_CurrentSeekPosition*/ ) / 90;
 
     LogDebugPTS( "subtitlePTS           ", pSubtitle->PTS() ); 
     LogDebugPTS( "m_basePCR             ", m_basePCR ); 
     LogDebugPTS( "timestamp             ", pts * 90 ); 
     LogDebugPTS( "m_CurrentSeekPosition ", m_CurrentSeekPosition ); 
+    LogDebugPTS( "subtitlePTS - m_basePCR ", pSubtitle->PTS() - m_basePCR ); 
 
     pSubtitle->SetTimestamp( pts );  
 
