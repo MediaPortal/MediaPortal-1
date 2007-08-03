@@ -311,13 +311,13 @@ namespace MediaPortal.Player
       {
         return;
       }
-      Log.Debug("\n\n***** SubtitleRenderer: Subtitle render *********");
-      Log.Debug(" Current pos: "+player.CurrentPosition); 
+      //Log.Debug("\n\n***** SubtitleRenderer: Subtitle render *********");
+      //Log.Debug(" Current pos: "+player.CurrentPosition); 
       if (!GUIGraphicsContext.IsFullScreenVideo) return;
 
       if (clearOnNextRender)
       {
-        Log.Debug("SubtitleRenderer: clearOnNextRender");
+        //Log.Debug("SubtitleRenderer: clearOnNextRender");
         clearOnNextRender = false;
         if(subTexture != null) subTexture.Dispose();
         subTexture = null;
@@ -334,7 +334,7 @@ namespace MediaPortal.Player
           if (next.presentTime <= player.CurrentPosition) timeForNext = true;
           else
           {
-            Log.Debug("-NEXT subtitle is in the future");
+            //Log.Debug("-NEXT subtitle is in the future");
           }
         }
       }
@@ -342,15 +342,15 @@ namespace MediaPortal.Player
       // Check for subtitle if we dont have one currently or if the current one is beyond its timeout
       if (currentSubtitle == null || currentSubtitle.presentTime + currentSubtitle.timeOut <= player.CurrentPosition || timeForNext)
       {
-        Log.Debug("-Current position: ");
+        //Log.Debug("-Current position: ");
         if (currentSubtitle != null && !timeForNext)
         {
-          Log.Debug("-Current subtitle : " + currentSubtitle.ToString() + " time out expired");
+          //Log.Debug("-Current subtitle : " + currentSubtitle.ToString() + " time out expired");
           currentSubtitle = null;
         }
         if (timeForNext)
         {
-          if (currentSubtitle != null) Log.Debug("-Current subtitle : " + currentSubtitle.ToString() + " TIME FOR NEXT!");
+          //if (currentSubtitle != null) Log.Debug("-Current subtitle : " + currentSubtitle.ToString() + " TIME FOR NEXT!");
         }
 
         Subtitle next = null;
@@ -360,7 +360,7 @@ namespace MediaPortal.Player
           {
             next = subtitles.First.Value;
 
-            Log.Debug("-next from queue: " + next.ToString());
+            //Log.Debug("-next from queue: " + next.ToString());
             // if the next should be displayed now or previously
             if (next.presentTime <= player.CurrentPosition)
             {
@@ -378,7 +378,7 @@ namespace MediaPortal.Player
             // next wants to be displayed in the future so break
             else
             {
-              Log.Debug("-next is in the future");
+              //Log.Debug("-next is in the future");
               break;
             }
           }
