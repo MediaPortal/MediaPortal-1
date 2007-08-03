@@ -3,41 +3,29 @@
   <defaultcontrol>4</defaultcontrol>
   <id>3008</id>
   <controls>
-      <control>
+    <control>
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-     		<posX>370</posX>
-            <posY>703</posY>
-  			<width>68</width>
-  			<height>35</height>
+      <posX>233</posX>
+      <posY>570</posY>
       <texture>logo_pause.png</texture>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
       <description>FF logo</description>
       <type>image</type>
-      <id>7</id>
-     		<posX>370</posX>
-            <posY>703</posY>
-  			<width>68</width>
-  			<height>35</height>
-      <texture>-</texture>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <id>5</id>
+      <posX>233</posX>
+      <posY>570</posY>
+      <texture>logo_fastforward.png</texture>
     </control>
     <control>
       <description>RW logo</description>
       <type>image</type>
-      <id>8</id>
-     		<posX>370</posX>
-            <posY>703</posY>
-  			<width>68</width>
-  			<height>35</height>
-      <texture>-</texture>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <id>6</id>
+      <posX>233</posX>
+      <posY>570</posY>
+      <texture>logo_rewind.png</texture>
     </control>
   </controls>
 </window>
