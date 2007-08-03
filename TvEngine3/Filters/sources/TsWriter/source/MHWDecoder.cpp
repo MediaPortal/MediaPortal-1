@@ -134,7 +134,7 @@ bool CMhwDecoder::ParseTitles(byte* data, int dataLen)
 	if (data[0]!=0x90) 
 		return false;	
 	CEnterCriticalSection lock (m_critSection);
-	int sectionLen=( ( (data[1]-0x70) <<8)+data[2]);
+	int sectionLen=( ( (data[1]&0x0F) <<8)+data[2]);
 	if (sectionLen < 42 || sectionLen>4096) 
 		return false;
 
@@ -157,7 +157,7 @@ bool CMhwDecoder::ParseTitles(byte* data, int dataLen)
 	m_mapTitles[progId]=1;
 
 
-	char buffer[30];
+	char buffer[255];
 	MHWProgramm prg;
 	prg.ChannelID=(data[3])-1;
 	prg.ThemeID=data[4];
@@ -166,9 +166,9 @@ bool CMhwDecoder::ParseTitles(byte* data, int dataLen)
 	prg.Summaries=(data[6] & 0x80)==0?false:true;
 	int m=data[6] >>2;
 	prg.Duration=((data[9]<<8)+data[10]);// minutes
-
-	memcpy(buffer,&data[11],23);
-	buffer[23]=0;
+	int titleLength = data[11];
+	memcpy(buffer,&data[12],titleLength);
+	buffer[titleLength]=0;
 
 	prg.Title=(char*)buffer;
 	prg.PPV=(data[34]<<24)+(data[35]<<16)+(data[36]<<8)+data[37];
