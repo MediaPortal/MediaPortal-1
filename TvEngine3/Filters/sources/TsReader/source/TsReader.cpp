@@ -687,7 +687,11 @@ void CTsReaderFilter::SeekDone(CRefTime& rtSeek)
   //m_demultiplexer.Flush();
   m_bSeeking=false;
   
-	if(m_pDVBSubtitle) m_pDVBSubtitle->SeekDone( rtSeek );
+  if (m_pDVBSubtitle)
+  {
+    m_pDVBSubtitle->SetFirstPcr(m_duration.StartPcr().PcrReferenceBase);
+    m_pDVBSubtitle->SeekDone( rtSeek );
+  }
 }
 
 // When a IMediaSeeking.SetPositions() is done on one of the output pins the output pin will do:
