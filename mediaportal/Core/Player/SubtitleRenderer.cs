@@ -155,7 +155,8 @@ namespace MediaPortal.Player
       {
         subtitles.Clear();
       }
-      this.startPos = startPos;
+      // Fixed seeking, currently TsPlayer & TsReader is not reseting the base time when seeking
+      //this.startPos = startPos;
       clearOnNextRender = true;
       Log.Debug("New StartPos is " + startPos);
       return 0;
