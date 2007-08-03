@@ -122,6 +122,8 @@ namespace TvLibrary.Implementations.DVB
           else
           {
             Log.Log.Info("Hauppauge: DVB-S card not found, checking ATSC QAM");
+            IPin qampin = DsFindPin.ByName(tunerFilter, "MPEG2 Transport");
+            _propertySet = qampin as DirectShowLib.IKsPropertySet;
             _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
             Log.Log.Info("Hauppauge: QuerySupported: {0}", supported);
             if ((supported & KSPropertySupport.Set) != 0)
@@ -289,7 +291,7 @@ namespace TvLibrary.Implementations.DVB
 
       //Set the modulation
       _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
-      //Log.Log.Info("Hauppauge: BDADigitalDemodulator supported: {0}", supported);
+      Log.Log.Info("Hauppauge: BDADigitalDemodulator supported: {0}", supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
         Log.Log.Info("Hauppauge: Set ModulationType: {0}", channel.ModulationType);

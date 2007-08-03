@@ -601,7 +601,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Info("Setting Hauppauge ATSC modulation to 256QAM");
             _hauppauge.SetATSCQAM(channel);
           }
-          Log.Log.Info("SetATSCQAM: Hauppauge ATSC QAM card not found, continuing...");
+          else Log.Log.Info("SetATSCQAM: Hauppauge ATSC QAM card not found, continuing...");
         }
       }
       catch (Exception ex)
