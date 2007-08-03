@@ -33,8 +33,6 @@ namespace TvLibrary.Implementations.DVB
   public class Hauppauge : IDiSEqCController
   {
     #region enums
-    Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e, 0x4, 0xe1, 0xe0);
-
     enum BdaDigitalModulator
     {
       MODULATION_TYPE = 0,
@@ -46,18 +44,21 @@ namespace TvLibrary.Implementations.DVB
       SPECTRAL_INVERSION,
       GUARD_INTERVAL,
       TRANSMISSION_MODE
-    } ;
+    };
+
     enum BdaNodes
     {
       BDA_TUNER_NODE = 0,
       BDA_DEMODULATOR_NODE
     };
+
     enum BdaTunerExtension
     {
       KSPROPERTY_BDA_DISEQC = 0,
       KSPROPERTY_BDA_PILOT = 0x20,
       KSPROPERTY_BDA_ROLL_OFF = 0x21
     };
+
     enum DisEqcVersion
     {
       DISEQC_VER_1X = 1,
@@ -65,6 +66,7 @@ namespace TvLibrary.Implementations.DVB
       ECHOSTAR_LEGACY,	// (not supported)
       DISEQC_VER_UNDEF = 0	// undefined (results in an error)
     };
+
     enum RxMode
     {
       RXMODE_INTERROGATION = 1, // Expecting multiple devices attached
@@ -72,38 +74,22 @@ namespace TvLibrary.Implementations.DVB
       RXMODE_NOREPLY,         // Expecting to receive no Rx message(s)
       RXMODE_DEFAULT = 0        // use current register setting
     };
+
     enum BurstModulationType
     {
       TONE_BURST_UNMODULATED = 0,
       TONE_BURST_MODULATED
     };
-    //Use BDATypes.cs enums instead
-    /*enum RollOff
-    {
-      HCW_ROLL_OFF_NOT_SET = -1,
-      HCW_ROLL_OFF_NOT_DEFINED = 0,
-      HCW_ROLL_OFF_20 = 1,         // .20 Roll Off (DVB-S2 Only)
-      HCW_ROLL_OFF_25,             // .25 Roll Off (DVB-S2 Only)
-      HCW_ROLL_OFF_35,             // .35 Roll Off (DVB-S2 Only) (Default for DVB-S2)
-      HCW_ROLL_OFF_MAX
-    };
-    enum Pilot
-    {
-      HCW_PILOT_NOT_SET = -1,
-      HCW_PILOT_NOT_DEFINED = 0,
-      HCW_PILOT_OFF = 1,           // Pilot Off (DVB-S2 Only) (Default for DVB-S2)
-      HCW_PILOT_ON,                // Pilot On  (DVB-S2 Only)
-      HCW_PILOT_MAX
-    }*/
     #endregion
 
     #region constants
     const byte DISEQC_TX_BUFFER_SIZE = 150;	// 3 bytes per message * 50 messages
     const byte DISEQC_RX_BUFFER_SIZE = 8;		// reply fifo size, do not increase
+    Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e, 0x4, 0xe1, 0xe0);
+    Guid BdaTunerExtentionProperties = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0, 0xc9, 0xf2, 0x1f, 0xc7);
     #endregion
 
     #region variables
-    Guid BdaTunerExtentionProperties = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0, 0xc9, 0xf2, 0x1f, 0xc7);
     bool _isHauppauge = false;
     IntPtr _ptrDiseqc = IntPtr.Zero;
     IntPtr _tempValue = Marshal.AllocCoTaskMem(1024);
@@ -128,15 +114,19 @@ namespace TvLibrary.Implementations.DVB
           _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
+            Log.Log.Info("Hauppauge: DVB-S card found!");
             _isHauppauge = true;
             _ptrDiseqc = Marshal.AllocCoTaskMem(1024);
           }
-          // Check for ATSC...
+          //ATSC QAM check here...
           else
           {
+            Log.Log.Info("Hauppauge: DVB-S card not found, checking ATSC QAM");
             _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
+            Log.Log.Info("Hauppauge: QuerySupported: {0}", supported);
             if ((supported & KSPropertySupport.Set) != 0)
             {
+              Log.Log.Info("Hauppauge: ATSC QAM card found!");
               _isHauppauge = true;
             }
           }
@@ -286,51 +276,35 @@ namespace TvLibrary.Implementations.DVB
         hr = _propertySet.Get(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempInstance, 32, _tempValue, 4, out length);
         Log.Log.Info("Hauppauge:   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
       }
-
-
-      ////Set the modulation
-      //_propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
-      //if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
-      //{
-      //  Log.Log.Info("Hauppauge: Set ModulationType: {0}", channel.ModulationType);
-      //  Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
-      //  hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4);
-      //  Log.Log.Info("Hauppauge:    returned:{0:X}", hr);
-      //}
-
-      ////get modulation
-      //if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
-      //{
-      //  Log.Log.Info("Hauppauge: Get BDA ModulationType");
-      //  Marshal.WriteInt32(_tempValue, (Int32)0);
-      //  hr = _propertySet.Get(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4, out length);
-      //  Log.Log.Info("Hauppauge: Get   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
-      //}
     }
 
+    /// <summary>
+    /// sets the qam modulation for ATSC cards
+    /// </summary>
     public void SetATSCQAM(ATSCChannel channel)
     {
-      //Set the Modulation to 256QAM via the driver.
       int hr;
       int length;
       KSPropertySupport supported;
-      _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
 
+      //Set the modulation
+      _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
+      //Log.Log.Info("Hauppauge: BDADigitalDemodulator supported: {0}", supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        Log.Log.Info("Hauppauge: Set Modulation: {0}", channel.ModulationType);
+        Log.Log.Info("Hauppauge: Set ModulationType: {0}", channel.ModulationType);
         Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
         hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4);
-        Log.Log.Info("Hauppauge:  returned:{0:X}", hr);
+        Log.Log.Info("Hauppauge:    returned:{0:X}", hr);
       }
-      else Log.Log.Info("Hauppauge: 256QAM not supported");
 
-      //get Modulation
+      //get modulation
       if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {
-        Log.Log.Info("Hauppauge: Get Modulation");
+        Log.Log.Info("Hauppauge: Get BDA ModulationType");
+        Marshal.WriteInt32(_tempValue, (Int32)0);
         hr = _propertySet.Get(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4, out length);
-        Log.Log.Info("Hauppauge:   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
+        Log.Log.Info("Hauppauge: Get   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
       }
     }
   }

@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DirectShowLib.BDA;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Channels
 {
@@ -38,8 +39,24 @@ namespace TvLibrary.Channels
     int _symbolRate;
     int _videoPid;
     int _audioPid;
-    ModulationType _modulation;
+    ModulationType _modulation = ModulationType.ModNotSet;
     #endregion
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ATSCChannel"/> class.
+    /// </summary>
+    /// <param name="chan">The chan.</param>
+    public ATSCChannel(ATSCChannel chan)
+      : base((DVBBaseChannel)chan)
+    {
+      _majorChannel = chan.MajorChannel;
+      _minorChannel = chan.MinorChannel;
+      _symbolRate = chan.SymbolRate;
+      _physicalChannel = chan.PhysicalChannel;
+      _audioPid = chan.AudioPid;
+      _videoPid = chan.VideoPid;
+      _modulation = chan.ModulationType;
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="T:ATSCChannel"/> class.
@@ -52,6 +69,7 @@ namespace TvLibrary.Channels
       _physicalChannel = -1;
       _audioPid = -1;
       _videoPid = -1;
+      _modulation = ModulationType.Mod8Vsb;
     }
 
     #region properties
@@ -161,8 +179,8 @@ namespace TvLibrary.Channels
     /// <returns></returns>
     public override string ToString()
     {
-      return String.Format("{0} phys:{1} maj:{2} min:{3} SR:{4} mod:{5} audio pid:{6:X} video pid:{7:X}",
-        base.ToString(), _physicalChannel, _majorChannel, _minorChannel, _symbolRate, _modulation,_audioPid,_videoPid);
+      return String.Format("ATSC:{0} phys:{1} maj:{2} min:{3} SR:{4} mod:{5} audio pid:{6:X} video pid:{7:X}",
+        base.ToString(), _physicalChannel, _majorChannel, _minorChannel, _symbolRate, _modulation, _audioPid, _videoPid);
     }
 
     /// <summary>

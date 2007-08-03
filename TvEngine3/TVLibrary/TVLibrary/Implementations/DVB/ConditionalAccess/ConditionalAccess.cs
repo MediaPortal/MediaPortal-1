@@ -88,7 +88,6 @@ namespace TvLibrary.Implementations.DVB
         }
         _digitalEveryWhere = null;
 
-
         Log.Log.WriteFile("Check for Twinhan");
         _twinhan = new Twinhan(tunerFilter, analyzerFilter);
         if (_twinhan.IsTwinhan)
@@ -108,6 +107,7 @@ namespace TvLibrary.Implementations.DVB
         }
         _technoTrend = null;
 
+        Log.Log.WriteFile("Check for Hauppauge");
         _hauppauge = new Hauppauge(tunerFilter, analyzerFilter);
         if (_hauppauge.IsHauppauge)
         {
@@ -461,8 +461,6 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_hauppauge != null)
         {
-          /*Following not used until new driver released from Hauppauge
-           * 
           //Set Hauppauge pilot, roll-off settings but only if DVB-S2
           //We assume if the modulation is set then a DVB-S2 tuning request has been requested
           if (channel.ModulationType != ModulationType.ModNotSet)
@@ -482,10 +480,10 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("Hauppauge DVB-S2 fec set to:{0}", channel.InnerFecRate);
             _hauppauge.SetDVBS2PilotRolloff(channel);
           }
-          return;*/
+          return channel;
 
           //Work-around until new driver released...
-          if (channel.ModulationType != ModulationType.ModNotSet)
+          /*if (channel.ModulationType != ModulationType.ModNotSet)
           {
             //Set the alternative Hauppauge Modulation type
             if (channel.ModulationType == ModulationType.ModQpsk)
@@ -513,7 +511,7 @@ namespace TvLibrary.Implementations.DVB
               }
             }
           }
-          return channel;
+          return channel;*/
         }
         if (_technoTrend != null)
         {
@@ -591,17 +589,19 @@ namespace TvLibrary.Implementations.DVB
       return channel;
     }
 
-    public ATSCChannel SetATSCQAM(ScanParameters parameters, ATSCChannel channel)
+    public ATSCChannel SetATSCQAM(ATSCChannel channel)
     {
       try
       {
-        if (_hauppauge != null)
+        if (channel.ModulationType == ModulationType.Mod256Qam)
         {
-          if (channel.ModulationType == ModulationType.Mod256Qam)
+          //Set the Hauppauge Modulation type
+          if (_hauppauge != null)
           {
-            //Set the Hauppauge Modulation type
+            Log.Log.Info("Setting Hauppauge ATSC modulation to 256QAM");
             _hauppauge.SetATSCQAM(channel);
           }
+          Log.Log.Info("SetATSCQAM: Hauppauge ATSC QAM card not found, continuing...");
         }
       }
       catch (Exception ex)
