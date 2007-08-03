@@ -104,6 +104,7 @@ public class MediaPortalApp : D3DApp, IRender
   private bool lastActiveModuleFullscreen = false;
 
   private static bool _mpCrashed = false;
+  private static int _startupDelay = 0;
 
 #if AUTOUPDATE
   string m_strNewVersion = "";
@@ -234,6 +235,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
         
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
+        _startupDelay = xmlreader.GetValueAsInt("general", "startup_delay", 0);
       }
 
 #if !DEBUG
@@ -290,6 +292,15 @@ public class MediaPortalApp : D3DApp, IRender
         //clientInfo=null;
 #endif
 
+        if (_startupDelay > 0)
+        {
+          Log.Info("Main: Waiting {0} sec before startup", _startupDelay);
+          if (splashScreen != null)
+          {
+            splashScreen.SetInformation("Waiting " + _startupDelay.ToString() + " sec(s) before startup...");
+          }
+          Thread.Sleep(_startupDelay * 1000);
+        }
 
         Log.Info("Main: Verifying DirectX 9");
         try
