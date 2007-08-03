@@ -175,6 +175,10 @@ public class MediaPortalApp : D3DApp, IRender
         {
           _fullscreenOverride = "yes";
         }
+        if (arg == "/crashtest")
+        {
+          _mpCrashed = true;
+        }
         if (arg.StartsWith("/screen="))
         {
           GUIGraphicsContext._useScreenSelector = true;
