@@ -40,7 +40,6 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class TvCardATSC : TvCardDvbBase, IDisposable, ITVCard
   {
-
     #region variables
     /// <summary>
     /// Hold the ATSC tuning space
@@ -90,20 +89,16 @@ namespace TvLibrary.Implementations.DVB
           throw new TvException("Graph already build");
         }
         Log.Log.WriteFile("BuildGraph");
-
         _graphBuilder = (IFilterGraph2)new FilterGraph();
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
-
         // Method names should be self explanatory
         AddNetworkProviderFilter(typeof(ATSCNetworkProvider).GUID);
         CreateTuningSpace();
         AddMpeg2DemuxerToGraph();
         AddAndConnectBDABoardFilters(_device);
         AddBdaTransportFiltersToGraph();
-
-
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;
       }
@@ -115,6 +110,7 @@ namespace TvLibrary.Implementations.DVB
         throw ex;
       }
     }
+
     /// <summary>
     /// Creates the tuning space.
     /// </summary>
@@ -126,7 +122,6 @@ namespace TvLibrary.Implementations.DVB
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       IEnumTuningSpaces enumTuning;
       ITuningSpace[] spaces = new ITuningSpace[2];
-
       ITuneRequest request;
       int fetched;
       container.get_EnumTuningSpaces(out enumTuning);
@@ -154,14 +149,10 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace.put_MaxMinorChannel(10000);
       _tuningSpace.put_MaxPhysicalChannel(10000);
       _tuningSpace.put__NetworkType(typeof(ATSCNetworkProvider).GUID);
-
-
       _tuningSpace.put_MinChannel(0);
       _tuningSpace.put_MinMinorChannel(0);
       _tuningSpace.put_MinPhysicalChannel(0);
       _tuningSpace.put_InputType(TunerInputType.Antenna);
-
-
       IATSCLocator locator = (IATSCLocator)new ATSCLocator();
       locator.put_CarrierFrequency(-1);
       locator.put_InnerFEC(FECMethod.MethodNotSet);
@@ -173,19 +164,15 @@ namespace TvLibrary.Implementations.DVB
       locator.put_CarrierFrequency(-1);
       locator.put_PhysicalChannel(-1);
       locator.put_TSID(-1);
-
       object newIndex;
       _tuningSpace.put_DefaultLocator(locator);
       container.Add((ITuningSpace)_tuningSpace, out newIndex);
       tuner.put_TuningSpace(_tuningSpace);
       Release.ComObject("TuningSpaceContainer", container);
-
       _tuningSpace.CreateTuneRequest(out request);
       _tuneRequest = (IATSCChannelTuneRequest)request;
-
     }
     #endregion
-
 
     #region tuning & recording
     /// <summary>
@@ -201,7 +188,6 @@ namespace TvLibrary.Implementations.DVB
       {
         //_pmtVersion = -1;
         ATSCChannel atscChannel = channel as ATSCChannel;
-
         if (atscChannel == null)
         {
           Log.Log.WriteFile("atsc:Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
@@ -221,27 +207,24 @@ namespace TvLibrary.Implementations.DVB
         {
           BuildGraph();
         }
-
         ILocator locator;
-
         _tuningSpace.get_DefaultLocator(out locator);
         IATSCLocator atscLocator = (IATSCLocator)locator;
         int hr;
         hr = atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
         hr = atscLocator.put_SymbolRate(-1);//atscChannel.SymbolRate);
         hr = atscLocator.put_TSID(-1);//atscChannel.TransportId);
-
         hr = atscLocator.put_CarrierFrequency(-1);//(int)atscChannel.Frequency);
         hr = atscLocator.put_InnerFEC(FECMethod.MethodNotSet);
         hr = atscLocator.put_Modulation(atscChannel.ModulationType);
         hr = _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
         hr = _tuneRequest.put_Channel(atscChannel.MajorChannel);
         _tuneRequest.put_Locator(locator);
-
         ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest);
-        //Hauppauge said set the tuner modulation after the tune request had been submitted
-        _conditionalAccess.SetATSCQAM(atscChannel);
         RunGraph(ch.SubChannelId);
+        //Hauppauge said set the tuner modulation after the tune request had been submitted
+        //the return value in get modulation (SetATSCQAM) is only correct after the graph is run
+        _conditionalAccess.SetATSCQAM(atscChannel);
         return ch;
       }
       catch (Exception ex)
@@ -280,8 +263,7 @@ namespace TvLibrary.Implementations.DVB
       }
     }
     #endregion
-
-
+    
     #region epg & scanning
     /// <summary>
     /// returns the ITVScanning interface used for scanning channels
@@ -307,7 +289,6 @@ namespace TvLibrary.Implementations.DVB
     {
       return _name;
     }
-
 
     /// <summary>
     /// Method to check if card can tune to the channel specified
