@@ -133,6 +133,7 @@ namespace MediaPortal.Configuration
       AddSection(general);
 
       Log.Info("add skins section");
+      AddChildSection(general, new StartupDelay());
       AddChildSection(general, new Skin());
       AddChildSection(general, new KeyboardControl());
       AddChildSection(general, new Keys());

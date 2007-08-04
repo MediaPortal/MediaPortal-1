@@ -300,6 +300,12 @@
     <Compile Include="Sections\GeneralThumbs.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\StartupDelay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\StartupDelay.Designer.cs">
+      <DependentUpon>StartupDelay.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\TVTeletext.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -647,6 +653,10 @@
     <EmbeddedResource Include="Sections\GeneralThumbs.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GeneralThumbs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\StartupDelay.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>StartupDelay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVTeletext.resx">
       <DependentUpon>TVTeletext.cs</DependentUpon>

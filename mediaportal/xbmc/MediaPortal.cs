@@ -105,6 +105,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   private static bool _mpCrashed = false;
   private static int _startupDelay = 0;
+  private static bool _waitForTvServer = false;
 
 #if AUTOUPDATE
   string m_strNewVersion = "";
@@ -235,7 +236,8 @@ public class MediaPortalApp : D3DApp, IRender
         }
         
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
-        _startupDelay = xmlreader.GetValueAsInt("general", "startup_delay", 0);
+        _startupDelay = xmlreader.GetValueAsInt("general", "startup delay", 0);
+        _waitForTvServer = xmlreader.GetValueAsBool("general", "wait for tvserver", false);
       }
 
 #if !DEBUG
@@ -292,12 +294,48 @@ public class MediaPortalApp : D3DApp, IRender
         //clientInfo=null;
 #endif
 
+        if (_waitForTvServer)
+        {
+          Log.Info("Main: Wait for TvServer requested. Checking if installed...");
+          System.ServiceProcess.ServiceController ctrl = new System.ServiceProcess.ServiceController("TVService");
+          try
+          {
+            string name = ctrl.ServiceName;
+          }
+          catch (Exception)
+          {
+            ctrl = null;
+            Log.Info("Main: TvServer not installed, so we can go on.");
+          }
+          if (ctrl != null)
+          {
+            Log.Info("Main: TvServer found. Checking status...");
+            if (ctrl.Status == System.ServiceProcess.ServiceControllerStatus.StartPending)
+            {
+              Log.Info("Main: TvServer is start pending. Waiting max. 10 seconds until it starts up...");
+              if (splashScreen != null)
+                splashScreen.SetInformation("Waiting for startup of TvServer...");
+              try
+              {
+                ctrl.WaitForStatus(System.ServiceProcess.ServiceControllerStatus.Running);
+              }
+              catch (Exception) { }
+              if (ctrl.Status == System.ServiceProcess.ServiceControllerStatus.Running)
+                Log.Info("Main: Ok. TvServer is started.");
+              else
+                Log.Info("Main: Failed. TvServer is in status {0}", ctrl.Status.ToString());
+            }
+            Log.Info("Main: TvServer is in status {0}. So we can go on.", ctrl.Status.ToString());
+            ctrl.Close();
+          }
+        }
+
         if (_startupDelay > 0)
         {
-          Log.Info("Main: Waiting {0} sec before startup", _startupDelay);
+          Log.Info("Main: Waiting {0} second(s) before startup", _startupDelay);
           if (splashScreen != null)
           {
-            splashScreen.SetInformation("Waiting " + _startupDelay.ToString() + " sec(s) before startup...");
+            splashScreen.SetInformation("Waiting " + _startupDelay.ToString() + " second(s) before startup...");
           }
           Thread.Sleep(_startupDelay * 1000);
         }
