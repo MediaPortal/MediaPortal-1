@@ -1537,6 +1537,10 @@ namespace MediaPortal.GUI.Library
                   OnMessage(msg);
                 }
               }
+              else
+              {
+                _offset -= _columnCount;
+              }
             }
           }
           else
