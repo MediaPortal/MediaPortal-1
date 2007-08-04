@@ -312,7 +312,7 @@ public class MediaPortalApp : D3DApp, IRender
             Log.Info("Main: TvServer found. Checking status...");
             if (ctrl.Status == System.ServiceProcess.ServiceControllerStatus.StartPending)
             {
-              Log.Info("Main: TvServer is start pending. Waiting max. 10 seconds until it starts up...");
+              Log.Info("Main: TvServer is start pending. Waiting until it starts up...");
               if (splashScreen != null)
                 splashScreen.SetInformation("Waiting for startup of TvServer...");
               try
