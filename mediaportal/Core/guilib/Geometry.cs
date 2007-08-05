@@ -157,8 +157,10 @@ namespace MediaPortal.GUI.Library
             // account the crop settings
             int croppedImageWidth = ImageWidth - cropW;
             int croppedImageHeight = ImageHeight - cropH;
-
-            float fCroppedOutputFrameRatio = ((float)croppedImageWidth / (float)croppedImageHeight) / PixelRatio;
+            
+            // suggested by ziphnor
+            float fSourcePixelRatio = fSourceFrameRatio / ((float)ImageWidth / (float)ImageHeight);
+            float fCroppedOutputFrameRatio = fSourcePixelRatio * ((float)croppedImageWidth / (float)croppedImageHeight) / PixelRatio;
 
             //Log.Debug("croppedImage W/H {0}x{1}", croppedImageWidth, croppedImageHeight);
             //Log.Debug("fOutputFrameRatio : {0}", fOutputFrameRatio);
