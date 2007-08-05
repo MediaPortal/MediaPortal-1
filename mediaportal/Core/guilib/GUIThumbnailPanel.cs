@@ -1526,46 +1526,55 @@ namespace MediaPortal.GUI.Library
           if ((_offset % (_rowCount * _columnCount)) != 0) iPage++;
           _controlUpDown.Value = iPage + 1;
         }
+        int iMaxRows = _listItems.Count / _columnCount;
+        int iNextRow = (_offset + _columnCount + (_cursorY+1) * _columnCount) / _columnCount;
 
-        if (_cursorY + 1 == _rowCount - _scrollStartOffset)
+        if ((_cursorY + 1 == _rowCount - _scrollStartOffset) && (iNextRow < iMaxRows))
         {
-          _offset += _columnCount;
-          if (!ValidItem(_cursorX, _cursorY))
+          // we reached the scroll row
           {
-            _cursorX = 0;
+            _offset += _columnCount;
             if (!ValidItem(_cursorX, _cursorY))
             {
-              if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
+              // we reached the last row 
+              _cursorX = 0;
+              if (!ValidItem(_cursorX, _cursorY))
               {
-                //check if _downControlId is set -> then go to the window
-                if (_downControlId > 0)
+                if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
                 {
-                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _downControlId, (int)action.wID, 0, null);
-                  GUIGraphicsContext.SendMessage(msg);
+                  //check if _downControlId is set -> then go to the window
+                  if (_downControlId > 0)
+                  {
+                    GUIMessage msg =
+                      new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _downControlId,
+                                     (int) action.wID, 0, null);
+                    GUIGraphicsContext.SendMessage(msg);
+                  }
+                  else
+                  {
+                    // move to the first item
+                    GUIMessage msg =
+                      new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
+                    OnMessage(msg);
+                  }
                 }
                 else
                 {
-                  // move to the first item
-                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, WindowId, GetID, GetID, 0, 0, null);
-                  OnMessage(msg);
+                  _offset -= _columnCount;
                 }
               }
-              else
-              {
-                _offset -= _columnCount;
-              }
             }
-          }
-          else
-          {
-            _offset -= _columnCount;
-            _scrollCounter = _itemHeight;
-            _scrollingDown = true;
-          }
+            else
+            {
+              _offset -= _columnCount;
+              _scrollCounter = _itemHeight;
+              _scrollingDown = true;
+            }
 
-          OnSelectionChanged();
-          _lastCommandTime = AnimationTimer.TickCount;
-          return;
+            OnSelectionChanged();
+            _lastCommandTime = AnimationTimer.TickCount;
+            return;
+          }
         }
         else
         {
