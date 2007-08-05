@@ -210,8 +210,7 @@ namespace TvPlugin
                   string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
                   if (TVHome.Navigator.CurrentChannel != selectedChan)
                   {
-                    TVHome.Navigator.ZapToChannel(_tvChannelList[lstChannels.SelectedListItemIndex], false);
-                    TVHome.Navigator.ZapNow();
+                    TVHome.ViewChannel(_tvChannelList[lstChannels.SelectedListItemIndex]);
                   }
                 }
                 _canceled = false;
