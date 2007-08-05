@@ -174,6 +174,13 @@ CTsReaderFilter::~CTsReaderFilter()
   
 	hr=m_pSubtitlePin->Disconnect();
 	delete m_pSubtitlePin;
+
+  if (m_pDVBSubtitle) 
+  {
+    m_pDVBSubtitle->Release();
+    m_pDVBSubtitle = NULL;
+  }
+
   if (m_fileReader!=NULL)
     delete m_fileReader;
   if (m_fileDuration!=NULL)
@@ -239,11 +246,11 @@ CBasePin * CTsReaderFilter::GetPin(int n)
   } 
 	else  if (n==1)
 	{
-      return m_pVideoPin;
+    return m_pVideoPin;
   }
   else if (n==2)
   {
-   // return m_pSubtitlePin;
+    //return m_pSubtitlePin;
   }
   return NULL;
   
@@ -291,22 +298,29 @@ STDMETHODIMP CTsReaderFilter::Stop()
 {
 	LogDebug("CTsReaderFilter::Stop()");
 
-  //guarantees that audio/video pins dont block in the fillbuffer() method
+  //guarantees that audio/video/subtitle pins dont block in the fillbuffer() method
   m_bSeeking=true;
   m_demultiplexer.SetHoldAudio(true);
   m_demultiplexer.SetHoldVideo(true);
+  m_demultiplexer.SetHoldSubtitle(true);
   
+  if (m_pSubtitlePin)
+  {
+    m_pSubtitlePin->SetRunningStatus(false);
+  }
+  if (m_pDVBSubtitle) 
+  {
+    m_pDVBSubtitle->Release();
+    m_pDVBSubtitle = NULL;
+  }
+
   //stop duration thread
   StopThread();
-	if(m_pSubtitlePin) m_pSubtitlePin->SetRunningStatus(false);
-  if(m_pDVBSubtitle) m_pDVBSubtitle->Release();
-
-	if(m_pSubtitlePin) m_pSubtitlePin->SetRunningStatus(false);
-  if(m_pDVBSubtitle) m_pDVBSubtitle->Release();
 
 	LogDebug("CTsReaderFilter::Stop()  -stop source");
   //stop filter
 	HRESULT hr=CSource::Stop();
+  LogDebug("CTsReaderFilter::Stop()  -stop source done");
   
   //are we using rtsp?
   if (m_fileDuration==NULL)
@@ -322,6 +336,7 @@ STDMETHODIMP CTsReaderFilter::Stop()
   m_bSeeking=false;
   m_demultiplexer.SetHoldAudio(false);
   m_demultiplexer.SetHoldVideo(false);
+  m_demultiplexer.SetHoldSubtitle(false);
   m_demultiplexer.Flush();
   
 	LogDebug("CTsReaderFilter::Stop() done");
@@ -352,6 +367,7 @@ STDMETHODIMP CTsReaderFilter::Pause()
         //stop audio/video pins from blocking in FillBuffer()
         m_demultiplexer.SetHoldAudio(true);
         m_demultiplexer.SetHoldVideo(true);
+        m_demultiplexer.SetHoldSubtitle(true);
         double startTime=m_seekTime.Millisecs();
 
         //clear buffers
@@ -373,9 +389,10 @@ STDMETHODIMP CTsReaderFilter::Pause()
         pcrEnd.FromClock(duration);
         m_duration.Set( pcrstart, pcrEnd,pcrMax);
 
-        //allow audio/video pins to block in fillbuffer(0
+        //allow audio/video/subtitle pins to block in fillbuffer
         m_demultiplexer.SetHoldAudio(false);
         m_demultiplexer.SetHoldVideo(false);
+        m_demultiplexer.SetHoldSubtitle(false);
         LogDebug("  -- Pause()-  >duration:%f",(m_rtspClient.Duration()/1000.0f));
       }
       else
@@ -1001,6 +1018,6 @@ BOOL APIENTRY DllMain(HANDLE hModule,
                       DWORD  dwReason, 
                       LPVOID lpReserved)
 {
-	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
+  return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
 

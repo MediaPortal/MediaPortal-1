@@ -53,6 +53,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_bEndOfFile=false;
   m_bHoldAudio=false;
   m_bHoldVideo=false;
+  m_bHoldSubtitle=false;
   m_bPreferAC3=false;
   m_iPatVersion=-1;
   m_bSetAudioDiscontinuity=false;
@@ -335,13 +336,16 @@ void CDeMultiplexer::Flush()
   LogDebug("demux:flushing");
   bool holdAudio=HoldAudio();
   bool holdVideo=HoldVideo();
+  bool holdSubtitle=HoldSubtitle();
   SetHoldAudio(true);
   SetHoldVideo(true);
+  SetHoldSubtitle(true);
   FlushAudio();
   FlushVideo();
   FlushSubtitle();
   SetHoldAudio(holdAudio);
   SetHoldVideo(holdVideo);
+  SetHoldSubtitle(holdSubtitle);
 }
 
 ///
@@ -352,6 +356,7 @@ CBuffer* CDeMultiplexer::GetSubtitle()
   //if there is no subtitle pid, then simply return NULL
   if (m_pids.SubtitlePid==0) return NULL;
   if (m_bEndOfFile) return NULL;
+  if (m_bHoldSubtitle) return NULL;
   //ReadFromFile(false,false);
   //if (m_bEndOfFile) return NULL;
 
@@ -1452,6 +1457,19 @@ void CDeMultiplexer::SetHoldVideo(bool onOff)
 {
   LogDebug("demux:set hold video:%d", onOff);
 	m_bHoldVideo=onOff;
+}
+
+///Returns whether the demuxer is allowed to block in GetSubtitle() or not
+bool CDeMultiplexer::HoldSubtitle()
+{
+  return m_bHoldSubtitle;
+}
+	
+///Sets whether the demuxer may block in GetSubtitle() or not
+void CDeMultiplexer::SetHoldSubtitle(bool onOff)
+{
+  LogDebug("demux:set hold subtitle:%d", onOff);
+  m_bHoldSubtitle=onOff;
 }
 
 

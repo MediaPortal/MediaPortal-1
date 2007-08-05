@@ -64,6 +64,8 @@ public:
 	void			 SetHoldAudio(bool onOff);
 	bool			 HoldVideo();
 	void			 SetHoldVideo(bool onOff);
+  bool			 HoldSubtitle();
+	void			 SetHoldSubtitle(bool onOff);
   void       ThreadProc();
   void       FlushVideo();
   void       FlushAudio();
@@ -111,6 +113,7 @@ private:
   bool m_bScanning;
 	bool m_bHoldAudio;
 	bool m_bHoldVideo;
+  bool m_bHoldSubtitle;
   bool m_bPreferAC3;
   int m_iPatVersion;
 

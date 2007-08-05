@@ -51,7 +51,7 @@ CSubtitlePin::CSubtitlePin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *ph
 
 CSubtitlePin::~CSubtitlePin()
 {
-	LogDebug("pin:dtor()");
+	LogDebug("sub pin:dtor()");
 }
 
 bool CSubtitlePin::IsConnected()
@@ -225,9 +225,9 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
 
 	  while (buffer == NULL)
 	  {
-		  Sleep( 100 );
+		  Sleep(1);
 
-		  if( !m_bRunning )
+		  if (!m_bRunning)
 			  {
 				  LogDebug("sub: FillBuffer - stopping");
 				  Sleep(1);
@@ -279,8 +279,8 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
 
         float fTime=(float)cRefTime.Millisecs();
         fTime/=1000.0f;
-        LogCurrentPosition();
-			  LogDebug("sub pSample->SetTime %f ", fTime);
+        //LogCurrentPosition();
+			  //LogDebug("sub pSample->SetTime %f ", fTime);
       }
       else
       {
@@ -295,7 +295,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
     }
     else
     {
-      LogDebug("sub:no buffer --- SHOULD NOT HAPPEN!");
+      LogDebug("sub:no buffer --- THIS SHOULD NOT HAPPEN!");
 		  EmptySample(pSample);
       if (demux.EndOfFile())
       {
@@ -314,7 +314,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
 }
 
 //******************************************************
-/// Called when thread is about to start delivering data to the codec
+/// Called when thread is about to start delivering data to the filter
 /// 
 HRESULT CSubtitlePin::OnThreadStartPlay()
 {    
@@ -323,6 +323,9 @@ HRESULT CSubtitlePin::OnThreadStartPlay()
   float fStart=(float)m_rtStart.Millisecs();
   fStart/=1000.0f;
   LogDebug("sub:OnThreadStartPlay(%f)", fStart);
+  //tell demuxer to delete any subtitle packets it still might have
+	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
+  demux.FlushSubtitle();
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
   return CSourceStream::OnThreadStartPlay( );
 }
@@ -340,14 +343,15 @@ HRESULT CSubtitlePin::ChangeStop()
 }
 HRESULT CSubtitlePin::ChangeRate()
 {
-	return S_OK;
+  if( m_dRateSeeking <= 0 ) 
+  {
+      m_dRateSeeking = 1.0;  // Reset to a reasonable value.
+      return E_FAIL;
+  }
+  UpdateFromSeek();
+  return S_OK;
 }
 
-
-
-void CSubtitlePin::SetStart(CRefTime rtStartTime)
-{
-}
 STDMETHODIMP CSubtitlePin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
 {
   return CSourceSeeking::SetPositions(pCurrent, CurrentFlags, pStop,  StopFlags);
@@ -383,7 +387,7 @@ void CSubtitlePin::UpdateFromSeek()
   {
     if (m_lastSeek==m_rtStart)
     {
-      LogDebug("vid:skip seek");
+      LogDebug("sub:skip seek");
       m_binUpdateFromSeek=false;
       return;
     }
@@ -407,7 +411,7 @@ void CSubtitlePin::UpdateFromSeek()
   //correct the seek time
   seekTime-=earliesTimeStamp;
   if (seekTime<0) seekTime=0;
-  LogDebug("vid seek to %f", seekTime);
+  LogDebug("sub seek to %f", seekTime);
   
   seekTime*=1000.0f;
   rtSeek = CRefTime((LONG)seekTime);
@@ -416,9 +420,9 @@ void CSubtitlePin::UpdateFromSeek()
   m_bSeeking=true;
   while (m_pTsReaderFilter->IsSeeking()) Sleep(1);
 
-  //tell demuxer to stop deliver video data and wait until 
+  //tell demuxer to stop deliver subtitle data and wait until 
   //FillBuffer() finished
-	demux.SetHoldVideo(true);
+	demux.SetHoldSubtitle(true);
   while (m_bInFillBuffer) Sleep(1);
   CAutoLock lock(&m_bufferLock);
 
@@ -465,12 +469,12 @@ void CSubtitlePin::UpdateFromSeek()
     m_pTsReaderFilter->Seek(rtSeek,false);
   }
   
-  //tell demuxer to start deliver video packets again
-//	demux.SetHoldVideo(false);
+  //tell demuxer to start deliver subtitle packets again
+	demux.SetHoldSubtitle(false);
 
   //clear flags indiciating that the pin is seeking
   m_bSeeking=false;
-  LogDebug("vid seek done---");
+  LogDebug("sub seek done---");
   m_binUpdateFromSeek=false;
 }
 

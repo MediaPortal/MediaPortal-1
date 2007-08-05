@@ -50,7 +50,6 @@ public:
   STDMETHODIMP GetCurrentPosition(LONGLONG *pCurrent);
 
 	HRESULT OnThreadStartPlay();
-	void SetStart(CRefTime rtStartTime);
 	void SetRunningStatus(bool onOff);
 
   bool IsConnected();
