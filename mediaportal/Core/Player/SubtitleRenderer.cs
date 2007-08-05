@@ -313,7 +313,7 @@ namespace MediaPortal.Player
       }
       //Log.Debug("\n\n***** SubtitleRenderer: Subtitle render *********");
       //Log.Debug(" Current pos: "+player.CurrentPosition); 
-      if (!GUIGraphicsContext.IsFullScreenVideo) return;
+      //if (!GUIGraphicsContext.IsFullScreenVideo) return;
 
       if (clearOnNextRender)
       {
@@ -398,16 +398,32 @@ namespace MediaPortal.Player
         alphaBlend = GUIGraphicsContext.DX9Device.GetRenderStateBoolean(RenderStates.AlphaBlendEnable);
         vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;
 
-        float rationW = GUIGraphicsContext.OverScanWidth / (float)720;
-        float rationH = GUIGraphicsContext.OverScanHeight / (float)576;
+        int wx = 0, wy = 0, wwidth = 0, wheight = 0;
+        float rationW = 1, rationH = 1;
 
-        // Get the location to render the subtitle to
-        int wx = GUIGraphicsContext.OverScanLeft +
-           (int)(((float)(GUIGraphicsContext.Width - currentSubtitle.width * rationW)) / 2);
-        int wy = GUIGraphicsContext.OverScanTop + (int)(rationH * (float)currentSubtitle.firstScanLine);
-        int wwidth = (int)((float)currentSubtitle.width * rationW);
-        int wheight = (int)((float)currentSubtitle.height * rationH);
+        if (GUIGraphicsContext.IsFullScreenVideo)
+        {
+          rationW = GUIGraphicsContext.OverScanWidth / (float)720;
+          rationH = GUIGraphicsContext.OverScanHeight / (float)576;
+          
+          // Get the location to render the subtitle to
+          wx = GUIGraphicsContext.OverScanLeft +
+             (int)(((float)(GUIGraphicsContext.Width - currentSubtitle.width * rationW)) / 2);
+          wy = GUIGraphicsContext.OverScanTop + (int)(rationH * (float)currentSubtitle.firstScanLine);
+        }
+        else // Video overlay
+        {
+          rationW = GUIGraphicsContext.VideoWindow.Width / (float)720;
+          rationH = GUIGraphicsContext.VideoWindow.Height / (float)576;
 
+          wx = GUIGraphicsContext.VideoWindow.Right - ( GUIGraphicsContext.VideoWindow.Width / 2 ) - 
+            (int)(((float)currentSubtitle.width * rationW) / 2);
+          wy = GUIGraphicsContext.VideoWindow.Top + (int)(rationH * (float)currentSubtitle.firstScanLine);
+        }
+
+        wwidth = (int)((float)currentSubtitle.width * rationW);
+        wheight = (int)((float)currentSubtitle.height * rationH);
+        
         // make sure the vertex buffer is ready and correct for the coordinates
         CreateVertexBuffer(wx, wy, wwidth, wheight);
 
