@@ -1790,6 +1790,18 @@ namespace MediaPortal.GUI.Library
       {
         _cursorY--;
       }
+
+      if (iPage == iPages)  // are we on the last page?
+      {
+        int iItemsOnPage = _listItems.Count - _offset;
+        while ((iItemsOnPage + _columnCount) <= iItemsPerPage)
+        {
+          _offset -= _columnCount;
+          iItemsOnPage += _columnCount;
+          _cursorY++;
+        }
+      }
+
       OnSelectionChanged();
 
     }
