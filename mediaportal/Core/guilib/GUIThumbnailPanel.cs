@@ -735,6 +735,19 @@ namespace MediaPortal.GUI.Library
                 _cursorY++;
               }
               _cursorX = iChan;
+
+              // Special handling when more than one page
+              if (iPage > 1)
+              {
+                while ((iChan+_columnCount) < iItemsPerPage)
+                {
+                  _offset -= _columnCount;
+                  iChan += _columnCount;
+                  _cursorY++;
+                }
+              }
+
+
               OnSelectionChanged();
             }
             _refresh = true;
