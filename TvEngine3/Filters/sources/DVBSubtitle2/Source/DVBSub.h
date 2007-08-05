@@ -94,12 +94,10 @@ public:
 
 private: // data
 
-  int m_VideoPid;
+  int                 m_subtitlePid;
 
   CDVBSubDecoder*     m_pSubDecoder;      // Subtitle decoder
-  IMediaFilter*       m_pMediaFilter;     
   IMediaSeeking*      m_pIMediaSeeking;   // Media seeking interface
-  IReferenceClock*    m_pReferenceClock;
   CCritSec            m_Lock;				      // Main renderer critical section
   CCritSec            m_ReceiveLock;		  // Sublock for received samples
 

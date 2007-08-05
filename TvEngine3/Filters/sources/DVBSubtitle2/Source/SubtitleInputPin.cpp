@@ -108,7 +108,7 @@ HRESULT CSubtitleInputPin::CompleteConnect( IPin *pPin )
 //
 STDMETHODIMP CSubtitleInputPin::ReceiveCanBlock()
 {
-  return S_FALSE; //S_OK;
+  return S_OK;
 }
 
 

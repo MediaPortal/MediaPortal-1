@@ -66,13 +66,14 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_pSubtitleObserver( NULL ),
   m_pTimestampResetObserver( NULL ),
   m_pIMediaSeeking( NULL ),
-  m_pMediaFilter( NULL ),
   m_bSeekingDone( true ),
-  m_pReferenceClock( NULL ),
   m_startTimestamp( -1 ),
   m_CurrentSeekPosition( 0 )
 {
-	// Create subtitle decoder
+  ::DeleteFile("c:\\DVBsub.log");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 3 ----------------");
+  
+  // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
 
 	if( m_pSubDecoder == NULL )
@@ -169,18 +170,6 @@ STDMETHODIMP CDVBSub::Run( REFERENCE_TIME tStart )
     return hr;
   }
 
-  // Get the reference clock interface 
-  if( !m_pReferenceClock )
-  {
-    IFilterGraph *pGraph = GetFilterGraph();
-    if( pGraph )
-    {
-      pGraph->QueryInterface( IID_IMediaFilter, (void**)&m_pMediaFilter );
-      m_pMediaFilter->GetSyncSource( &m_pReferenceClock );
-      pGraph->Release();
-    }
-  }
-
   // Get media seeking interface if missing
   if( !m_pIMediaSeeking )
   {
@@ -224,31 +213,15 @@ STDMETHODIMP CDVBSub::Stop()
   if( m_pSubDecoder ) m_pSubDecoder->Reset();
 	if( m_pSubtitlePin ) m_pSubtitlePin->Reset();
   
-  LogDebug( "Release m_pReferenceClock" );
-  if( m_pReferenceClock )
-  {
-    //m_pReferenceClock->Release();
-    //m_pReferenceClock = NULL;
-  }
-  LogDebug( "Release m_pReferenceClock - done" );
-
-  LogDebug( "Release m_pMediaFilter" );
-  if( m_pMediaFilter )
-  {
-//    m_pMediaFilter->Release();
-    //m_pMediaFilter = NULL;
-  }
-  LogDebug( "Release m_pMediaFilter - done" );
-
-  LogDebug( "Release m_pIMediaSeeking" );
+  //LogDebug( "Release m_pIMediaSeeking" );
   if( m_pIMediaSeeking )
   {
-//    m_pIMediaSeeking->Release();
+    //m_pIMediaSeeking->Release();
     //m_pIMediaSeeking = NULL;
   }
-  LogDebug( "Release m_pIMediaSeeking - done" );
-  LogDebug("CDVBSub::Stop - done" );
+  //LogDebug( "Release m_pIMediaSeeking - done" );
 
+  LogDebug("CDVBSub::Stop - done" );
   return hr;
 }
 
@@ -288,6 +261,16 @@ STDMETHODIMP CDVBSub::Test(int status)
 //
 STDMETHODIMP CDVBSub::SetSubtitlePid( LONG pPid )
 {
+  LogDebug( "CDVBSub::SetSubtitlePid() %d", pPid );
+  
+  if( m_subtitlePid != pPid )
+  {
+    LogDebug( "Subtitle PID has changed!" );
+    Reset();
+  }
+  
+  m_subtitlePid = pPid;
+
   if( m_pSubtitlePin )
   {
     m_pSubtitlePin->SetSubtitlePid( pPid );
