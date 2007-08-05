@@ -1475,7 +1475,7 @@ namespace MediaPortal.GUI.Library
         {
           _cursorY--;
         }
-        else if (_cursorY == _scrollStartOffset && _offset != 0)
+        else if (_cursorY <= _scrollStartOffset && _offset != 0)
         //if (_cursorY == 0 && _offset != 0)
         {
           _scrollCounter = _itemHeight;
