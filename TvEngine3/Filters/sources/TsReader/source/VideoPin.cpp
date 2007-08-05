@@ -368,7 +368,7 @@ HRESULT CVideoPin::OnThreadStartPlay()
   float fStart=(float)m_rtStart.Millisecs();
   fStart/=1000.0f;
   
-  //tell demuxer to delete any audio packets it still might have
+  //tell demuxer to delete any video packets it still might have
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   demux.FlushVideo();
   LogDebug("vid:OnThreadStartPlay(%f) %02.2f", fStart,m_dRateSeeking);
