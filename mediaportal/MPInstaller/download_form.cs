@@ -83,7 +83,7 @@ namespace MediaPortal.MPInstaller
                     }
                     else
                     {
-                      source = source.Replace("&amp;","|");
+                      source = source.Replace("&","|"); 
                       MessageBox.Show(source); 
                       client.DownloadFileAsync(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=download&user=" + user + "&passwd=" + password +"&url="+ source), dest);
                     }
