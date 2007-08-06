@@ -4,4 +4,9 @@
     <StartArguments>/debug</StartArguments>
     <StartWorkingDirectory>C:\erwin\TvEngine3\TVLibrary\TvService\bin\Debug</StartWorkingDirectory>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <StartWorkingDirectory>C:\erwin\TvEngine3\TVLibrary\TvService\bin\Debug</StartWorkingDirectory>
+    <StartArguments>/debug</StartArguments>
+    <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
+  </PropertyGroup>
 </Project>
