@@ -41,6 +41,8 @@ namespace MediaPortal.MPInstaller
         string dest = string.Empty;
         WebClient client = new WebClient();
         public int direction = 0;
+        public string user = string.Empty;
+        public string password = string.Empty;
         public download_form(string s, string d)
         {
             InitializeComponent();
@@ -64,13 +66,33 @@ namespace MediaPortal.MPInstaller
             {
               if (direction == 0)
               {
-                byte[] result=new byte[100];
+                string result = string.Empty; ;
                 try
                 {
-
-                  result = client.DownloadData(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/mp_download.php?file=" + Path.GetFileName(source)));
-                  //MessageBox.Show(MPinstalerStruct.DEFAULT_UPDATE_SITE+"/mp_download.php?file=" + Path.GetFileName(source));
-                  client.DownloadFileAsync(new System.Uri(source), dest);
+                  login_form dlg = new login_form(user,password);
+                  dlg.ShowDialog();
+                  user = dlg.username;
+                  password = dlg.password;
+                  result = client.DownloadString(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=login&user="+user+"&passwd="+password));
+                  if (result.Contains("Login was made !"))
+                  {
+                    if (Path.GetExtension(dest) == ".xml")
+                    {
+                      //MessageBox.Show(MPinstalerStruct.DEFAULT_UPDATE_SITE+"/mp_download.php?file=" + Path.GetFileName(source));
+                      client.DownloadFileAsync(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=getxml&user="+user+"&passwd="+password), dest);
+                    }
+                    else
+                    {
+                      source = source.Replace("&amp;","|");
+                      MessageBox.Show(source); 
+                      client.DownloadFileAsync(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=download&user=" + user + "&passwd=" + password +"&url="+ source), dest);
+                    }
+                  }
+                  else
+                  {
+                    MessageBox.Show("Login error !");
+                    this.Close();
+                  }
 
                 }
                 catch (WebException ex)

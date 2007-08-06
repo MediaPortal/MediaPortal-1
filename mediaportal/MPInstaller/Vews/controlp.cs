@@ -265,9 +265,12 @@ namespace MediaPortal.MPInstaller
     {
       if (listView1.SelectedItems.Count > 0)
       {
-        string file_name = listView1.SelectedItems[0].SubItems[3].Text;
+        MPpackageStruct pk = lst.Find(listView1.SelectedItems[0].SubItems[0].Text);
+        if (pk == null)
+          return;
+        string file_name = pk.FileName;
         string temp_file = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + file_name;
-        download_form dw = new download_form(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/" + file_name, temp_file);
+        download_form dw = new download_form(pk._intalerStruct.UpdateURL, temp_file);
         dw.Text = listView1.SelectedItems[0].SubItems[3].Text;
         dw.ShowDialog();
         if (File.Exists(temp_file))
@@ -369,7 +372,7 @@ namespace MediaPortal.MPInstaller
                     MPpackageStruct pk1 = ((MPpackageStruct)temp_mpih.lst[idx]);
                     file_name = pk1.FileName;
                     temp_file = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + file_name;
-                    download_form dw1 = new download_form(pk1._intalerStruct.UpdateURL + "/" + file_name, temp_file);
+                    download_form dw1 = new download_form(pk1._intalerStruct.UpdateURL , temp_file);
                     dw1.Text = pk1._intalerStruct.UpdateURL + "/" + pk1.FileName + "/" + pk1._intalerStruct.Version;
                     dw1.ShowDialog();
                     if (File.Exists(temp_file))

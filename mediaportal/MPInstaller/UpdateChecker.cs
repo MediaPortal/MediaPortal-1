@@ -104,7 +104,7 @@ namespace MediaPortal.MPInstaller
                 {
                     string file_name = pk.FileName;
                     string temp_file = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + file_name;
-                    download_form dw1 = new download_form(pk._intalerStruct.UpdateURL + "/" + file_name, temp_file);
+                    download_form dw1 = new download_form(pk._intalerStruct.UpdateURL, temp_file);
                     dw1.Text = pk._intalerStruct.UpdateURL + "/" + pk.FileName + "/" + pk._intalerStruct.Version;
                     dw1.ShowDialog();
                     if (File.Exists(temp_file))

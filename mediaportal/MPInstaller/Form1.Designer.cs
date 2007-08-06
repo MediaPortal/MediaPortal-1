@@ -97,7 +97,7 @@ namespace MediaPortal.MPInstaller
           this.label10 = new System.Windows.Forms.Label();
           this.label9 = new System.Windows.Forms.Label();
           this.proiectt_textBox5 = new System.Windows.Forms.TextBox();
-          this.proiectt_textBox4 = new System.Windows.Forms.MaskedTextBox();
+          this.proiectt_textBox4 = new System.Windows.Forms.TextBox();
           this.label5 = new System.Windows.Forms.Label();
           this.proiectt_textBox3 = new System.Windows.Forms.TextBox();
           this.label4 = new System.Windows.Forms.Label();
@@ -742,7 +742,6 @@ namespace MediaPortal.MPInstaller
           // proiectt_textBox4
           // 
           this.proiectt_textBox4.Location = new System.Drawing.Point(94, 85);
-          this.proiectt_textBox4.Mask = "00.00.00.00000";
           this.proiectt_textBox4.Name = "proiectt_textBox4";
           this.proiectt_textBox4.Size = new System.Drawing.Size(76, 20);
           this.proiectt_textBox4.TabIndex = 7;
@@ -1038,7 +1037,7 @@ namespace MediaPortal.MPInstaller
         private System.Windows.Forms.TextBox proiectt_textBox3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.MaskedTextBox proiectt_textBox4;
+        private System.Windows.Forms.TextBox proiectt_textBox4;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox skint_comboBox1;
         private System.Windows.Forms.TabPage tabPage_Thumbs;
