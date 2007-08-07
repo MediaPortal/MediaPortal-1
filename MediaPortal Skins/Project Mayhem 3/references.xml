@@ -75,7 +75,7 @@
     <id>5</id>
     <posX>100</posX>
     <posY>100</posY>
-    <width>480</width>
+    <width>490</width>
     <height>38</height>
     <textXOff>10</textXOff>
     <textYOff>5</textYOff>
@@ -276,7 +276,7 @@
     <id>10</id>
     <posX>225</posX>
     <posY>120</posY>
-    <width>480</width>
+    <width>490</width>
     <height>459</height>
     <spinWidth>18</spinWidth>
     <spinHeight>16</spinHeight>
