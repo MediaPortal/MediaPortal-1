@@ -110,6 +110,10 @@ namespace TvEngine.PowerScheduler.Handlers
         return (_preventers.Count > 0);
       }
     }
+    public void UserShutdownNow()
+    {
+    }
+
     public string HandlerName
     {
       get

@@ -66,6 +66,9 @@ namespace TvEngine.PowerScheduler.Handlers
         return true;
       }
     }
+    public void UserShutdownNow()
+    {
+    }
     public string HandlerName
     {
       get { return "ControllerActiveHandler"; }

@@ -185,6 +185,9 @@ namespace TvEngine.PowerScheduler.Handlers
         return activeServerConnections;
       }
     }
+    public void UserShutdownNow()
+    {
+    }
     public string HandlerName
     {
       get { return "ActiveSharesHandler"; }

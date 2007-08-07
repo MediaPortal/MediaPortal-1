@@ -92,6 +92,9 @@ namespace TvEngine.PowerScheduler.Handlers
         _disAllowShutdown = value;
       }
     }
+    public void UserShutdownNow()
+    {
+    }
     public string HandlerName
     {
       get { return _handlerName; }

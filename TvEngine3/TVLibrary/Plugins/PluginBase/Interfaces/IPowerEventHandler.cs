@@ -30,7 +30,14 @@ using System.ServiceProcess;
 
 namespace TvEngine.Interfaces
 {
-  public delegate bool PowerEventHandler(PowerBroadcastStatus powerStatus);
+  // Summary:
+  //     Indicates the system's power status.
+  public enum PowerEventType
+  {
+    QuerySuspend, QueryStandBy, QuerySuspendFailed, QueryStandByFailed,
+    Suspend, StandBy, ResumeCritical, ResumeSuspend, ResumeStandBy, ResumeAutomatic
+  }
+  public delegate bool PowerEventHandler(PowerEventType powerStatus);
 
   public interface IPowerEventHandler
   {

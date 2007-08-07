@@ -36,12 +36,19 @@ namespace TvEngine.PowerScheduler.Interfaces
   public interface IPowerController
   {
     /// <summary>
-    /// Requests suspension of the system
+    /// Requests suspension of the system. Uses default action.
     /// </summary>
     /// <param name="source">description of who wants to suspend the system</param>
     /// <param name="force">force the system to suspend (not recommended)</param>
-    /// <returns>bool to indicate if the request was honoured</returns>
-    bool SuspendSystem(string source, bool force);
+    void SuspendSystem(string source, bool force);
+
+    /// <summary>
+    /// Requests suspension of the system. 
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="how">How to suspend, see MediaPortal.Util.RestartOptions</param>
+    /// <param name="force"></param>
+    void SuspendSystem(string source, int how, bool force);
 
     /// <summary>
     /// Enables clients on singleseat setups to indicate whether or not the system

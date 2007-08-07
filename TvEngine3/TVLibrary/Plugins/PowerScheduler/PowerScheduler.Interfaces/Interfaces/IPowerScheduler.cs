@@ -88,7 +88,15 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// </summary>
     /// <param name="source">description of who wants to suspend the system</param>
     /// <param name="force">force the system to suspend (not recommended)</param>
-    bool SuspendSystem(string source, bool force);
+    void SuspendSystem(string source, bool force);
+
+    /// <summary>
+    /// Requests suspension of the system. 
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="how">How to suspend, see MediaPortal.Util.RestartOptions</param>
+    /// <param name="force"></param>
+    void SuspendSystem(string source, int how, bool force);
 
     /// <summary>
     /// Resets the idle timer of the PowerScheduler. When enough time has passed (IdleTimeout), the system

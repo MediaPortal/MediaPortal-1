@@ -44,6 +44,7 @@ using System.Runtime.Remoting.Channels.Http;
 using System.Runtime.Remoting;
 using System.Runtime.InteropServices;
 using TvPlugin;
+using MediaPortal.Util;
 
 #endregion
 
@@ -84,15 +85,16 @@ namespace MediaPortal.Plugins.Process
     private WaitableTimer _wakeupTimer;
     private bool _refreshSettings = false;
     private DateTime _lastUserTime = DateTime.Now;  // last time the user was doing sth (action/watching)
-    /// <summary>
-    /// If this is true, the station is unattended.
-    /// </summary>
-    private bool _unattended;
     private PowerSettings _settings;
     private PowerManager _powerManager;
     private List<IStandbyHandler> _standbyHandlers;
     private List<IWakeupHandler> _wakeupHandlers;
     private bool _idle;
+    /// <summary>
+    /// Indicating whether the PowerScheduler is in standby-mode.
+    /// </summary>
+    bool _standby = false;
+
     private Action _lastAction;
     #endregion
 
@@ -103,7 +105,6 @@ namespace MediaPortal.Plugins.Process
       _wakeupHandlers = new List<IWakeupHandler>();
       _lastUserTime = DateTime.Now;
       _idle = false;
-      _unattended = false;
 
       _timer = new System.Timers.Timer();
       _timer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimerElapsed);
@@ -148,11 +149,15 @@ namespace MediaPortal.Plugins.Process
       SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
       Log.Info("PowerScheduler client plugin started");
 
+      _defaultExitWindows = WindowsController.HookExitWindows(SafeExitWindows);
+
       OnResume();
     }
     public void Stop()
     {
       Log.Info("Stopping PowerScheduler client plugin...");
+
+      WindowsController.HookExitWindows( _defaultExitWindows );
       
       OnStandBy();
 
@@ -207,10 +212,192 @@ namespace MediaPortal.Plugins.Process
     {
       return _wakeupHandlers.Contains(handler);
     }
-    public bool SuspendSystem(string source, bool force)
+    public void SuspendSystem(string source, bool force)
     {
-      return EnterSuspendOrHibernate(force);
+      switch (_settings.ShutdownMode)
+      {
+        case ShutdownMode.Suspend:
+          Log.Debug("locally suspending system (force={0})", force);
+          SuspendSystem(source, (int)MediaPortal.Util.RestartOptions.Suspend, force);
+          break;
+        case ShutdownMode.Hibernate:
+          Log.Debug("locally hibernating system (force={0})", force);
+          SuspendSystem(source, (int)MediaPortal.Util.RestartOptions.Hibernate, force);
+          break;
+        case ShutdownMode.StayOn:
+          Log.Debug("standby requested but system is configured to stay on");
+          break;
+        default:
+          Log.Error("PSClientPlugin: unknown shutdown method: {0}", _settings.ShutdownMode);
+          return;
+      }
     }
+    public void SuspendSystem(string source, int how, bool force)
+    {
+      SafeExitWindows( (RestartOptions) how, force, null );
+    }
+
+    /// <summary>
+    /// Used to avoid concurrent suspend requests which could result in a suspend - user resumes - immediately suspends.
+    /// </summary>
+    private DateTime _ignoreSuspendUntil= DateTime.MinValue;
+
+    private Util.WindowsController.ExitWindowsHandler _defaultExitWindows;
+
+    protected class SafeExitWindowsThreadEnv
+    {
+      public PowerScheduler that;
+      public RestartOptions how;
+      public bool force;
+      public MediaPortal.Util.WindowsController.AfterExitWindowsHandler after;
+    }
+
+    private void SafeExitWindows(RestartOptions how, bool force, MediaPortal.Util.WindowsController.AfterExitWindowsHandler after)
+    {
+      if (_settings.GetSetting("SingleSeat").Get<bool>())
+      {
+        // shutdown method and force mode are ignored by delegated suspend/hibernate requests
+        Log.Debug("PSClientPlugin: Delegating shutdown request to tvserver: {0}", how);
+
+        if (after != null)
+        {
+          Log.Error("PSClientPlugin: SafeExitWindows, after != null is not supported yet");
+        }
+
+        try
+        {
+          RemotePowerControl.Instance.SuspendSystem("PowerSchedulerClientPlugin", (int)how, force);
+        }
+        catch (Exception e)
+        {
+          Log.Error("PSClientPlugin: SuspendSystem failed! {0} {1}", e.Message, e.StackTrace);
+        }
+      }
+      else
+      {
+        lock (this)
+        {
+          DateTime now = DateTime.Now;
+
+          // block concurrent request?
+          if (_ignoreSuspendUntil > now)
+          {
+            Log.Info("PSClientPlugin: Concurrent shutdown was ignored: {0} ; force: {1}", how, force);
+            return;
+          }
+
+          // block any other request forever (for now)
+          _ignoreSuspendUntil = DateTime.MaxValue;
+        }
+        Log.Info("PSClientPlugin: Entering shutdown {0} ; forced: {1} -- kick off shutdown thread", how, force);
+        SafeExitWindowsThreadEnv data = new SafeExitWindowsThreadEnv();
+        data.that = this;
+        data.how = how;
+        data.force = force;
+        data.after = after;
+        (new Thread(SafeExitWindowsThread)).Start(data);
+      }
+    }
+
+    protected static void SafeExitWindowsThread(object _data)
+    {
+      SafeExitWindowsThreadEnv data = (SafeExitWindowsThreadEnv)_data;
+      data.that.SafeExitWindowsThread(data.how, data.force, data.after);
+    }
+
+    // to route "after"
+    protected class SafeExitWindowsThreadAfterProxy
+    {
+      public PowerScheduler that;
+      public MediaPortal.Util.WindowsController.AfterExitWindowsHandler after;
+      public void SafeExitWindowsThreadAfter(RestartOptions how, bool force, bool result)
+      {
+        that.SafeExitWindowsThreadAfter(how, force, result, after);
+      }
+    }
+
+
+    protected void SafeExitWindowsThread(RestartOptions how, bool force, MediaPortal.Util.WindowsController.AfterExitWindowsHandler after)
+    {
+      Log.Debug("PSClientPlugin: Shutdown thread is running: {0}, force: {1}", how, force);
+
+      Log.Debug("PSClientPlugin: Informing handlers about UserShutdownNow");
+      UserShutdownNow();
+
+      // user is away, so we set _lastUserTime long time in the past to pretend that he didn't access system a long time
+      _lastUserTime = DateTime.MinValue;
+
+      // test if shutdown is allowed
+      bool disallow = DisAllowShutdown;
+
+      Log.Info("PSClientPlugin: Shutdown is allowed {0} ; forced: {1}", !disallow, force);
+
+      if (disallow && !force)
+      {
+        lock (this)
+        {
+          // allow further requests
+          _ignoreSuspendUntil = DateTime.MinValue;
+        }
+        if (after != null)
+          after(how, force, false);
+        return;
+      }
+
+      SetWakeupTimer();
+
+      // activate standby
+      _denySuspendQuery = false;
+      Log.Info("PSClientPlugin: Entering shutdown {0} ; forced: {1}", (RestartOptions)how, force);
+
+      SafeExitWindowsThreadAfterProxy env = new SafeExitWindowsThreadAfterProxy();
+      env.that = this;
+      env.after = after;
+      _defaultExitWindows((RestartOptions)how, force, env.SafeExitWindowsThreadAfter);
+   }
+
+    protected void SafeExitWindowsThreadAfter(RestartOptions how, bool force, bool result, MediaPortal.Util.WindowsController.AfterExitWindowsHandler after)
+    {
+      lock (this)
+      {
+        if (!result)
+        {
+          // allow further requests
+          _ignoreSuspendUntil = DateTime.MinValue;
+          return;
+        }
+        switch (how)
+        {
+          case RestartOptions.LogOff:
+          case RestartOptions.Suspend:
+          case RestartOptions.Hibernate:
+            {
+              // allow not before 5 seconds
+              // *** this will block any about-to-suspend requests that have been pending before the shutdown was issued
+              // *** (resolves the system-immediately-suspends-after-resume issue)
+              _ignoreSuspendUntil = DateTime.Now.AddSeconds(5);
+              break;
+            }
+          case RestartOptions.PowerOff:
+          case RestartOptions.Reboot:
+          case RestartOptions.ShutDown:
+            {
+              // allow not before 120 seconds, i.e. give enough time to shutdown the system (anyway this value is reset on reboot)
+              _ignoreSuspendUntil = DateTime.Now.AddSeconds(120);
+              break;
+            }
+        }
+      }
+      if( after != null )
+        after(how, force, result);
+    }
+
+
+    private void SuspendSystem()
+    {
+      SuspendSystem("", _settings.ForceShutdown);
+    }
+
     public PowerSettings Settings
     {
       get { return _settings; }
@@ -225,15 +412,17 @@ namespace MediaPortal.Plugins.Process
       if (when > _lastUserTime)
       {
         _lastUserTime = when;
-        _unattended = false;
+        LogVerbose("PowerScheduler: User input detected at {0}", _lastUserTime);
       }
     }
     #endregion
 
+    private bool _currentUnattended = false;  // used only if multi-seat
     private DateTime _currentNextWakeupTime = DateTime.MaxValue;  // used only if multi-seat
     private String _currentNextWakeupHandler = "";  // used only if multi-seat
     private bool _currentDisAllowShutdown = false;  // used only if multi-seat
     private String _currentDisAllowShutdownHandler = "";  // used only if multi-seat
+    private bool _denySuspendQuery = true;
 
     public void GetCurrentState(bool refresh, out bool unattended, out bool disAllowShutdown, out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler)
     {
@@ -252,7 +441,7 @@ namespace MediaPortal.Plugins.Process
       }
 
       // give state
-      unattended = _unattended;
+      unattended = _currentUnattended;
       disAllowShutdown = _currentDisAllowShutdown;
       disAllowShutdownHandler = _currentDisAllowShutdownHandler;
       nextWakeupTime = _currentNextWakeupTime;
@@ -272,24 +461,29 @@ namespace MediaPortal.Plugins.Process
         if (userInput > _lastUserTime)
         {
           _lastUserTime = userInput;
-          _unattended = false;
+          LogVerbose("PowerScheduler: User input detected at {0}", _lastUserTime);
         }
 
         if (!UserInterfaceIdle)
         {
+          // in case the UI is not idle, we pretend that the user is there
           _lastUserTime = DateTime.Now;
-          _unattended = false;
         }
 
-        if (!_unattended && _lastUserTime <= DateTime.Now.AddMinutes(-_settings.IdleTimeout))
-          _unattended = true;
-        return _unattended;
+        bool val= _lastUserTime <= DateTime.Now.AddMinutes(-_settings.IdleTimeout);
+        if( val != _currentUnattended )
+        {
+          _currentUnattended= val;
+          LogVerbose("PowerScheduler: System is now unattended: {0}", val);
+        }
+        return val;
       }
     }
 
     #region IStandbyHandler implementation
     public bool DisAllowShutdown
     {
+      [MethodImpl(MethodImplOptions.Synchronized)]
       get {
         if (!UserInterfaceIdle)
         {
@@ -341,6 +535,72 @@ namespace MediaPortal.Plugins.Process
         _powerManager.AllowStandby();
 
         return false;
+      }
+    }
+
+    private void StopPlayer()
+    {
+      if (g_Player.Playing)
+      {
+        LogVerbose("PSClientPlugin.UserShutdownNow: stopping player");
+        // stop the player
+        Action act = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+        GUIGraphicsContext.OnAction(act);
+
+        // wait until player is stopped, but at most 20 seconds (sometimes the player needs a while to stop)
+        int tries = 200;
+        while (tries-- > 0 && g_Player.Playing)
+        {
+          Thread.Sleep(100);
+        }
+
+        // wait another second for the player's clean-up code
+        Thread.Sleep(1000);
+        LogVerbose("PSClientPlugin.UserShutdownNow: stopped player");
+      }
+    }
+
+    public void UserShutdownNow()
+    {
+      StopPlayer();
+
+      // go to home screen
+      if (_settings.GetSetting("HomeOnly").Get<bool>())
+      {
+        bool basicHome;
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+
+        int homeWindow = basicHome ? (int)GUIWindow.Window.WINDOW_SECOND_HOME : (int)GUIWindow.Window.WINDOW_HOME;
+        int activeWindow = GUIWindowManager.ActiveWindow;
+        if (activeWindow != homeWindow && activeWindow != (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
+        {
+          LogVerbose("PSClientPlugin.UserShutdownNow: going to home screen");
+
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, homeWindow, 0, null);
+          GUIWindowManager.SendThreadMessage(msg);
+
+          // wait until home is shown, but at most 5 seconds
+          int tries = 50;
+          while (tries-- > 0 && GUIWindowManager.ActiveWindow != homeWindow)
+          {
+            Thread.Sleep(100);
+          }
+
+          LogVerbose("PSClientPlugin.UserShutdownNow: gone to home screen");
+        }
+      }
+
+      // if the player was not stoppable in the first place
+      StopPlayer();
+      
+      // trigger the handlers
+      lock( this )
+      {
+        foreach (IStandbyHandler handler in _standbyHandlers)
+        {
+          handler.UserShutdownNow();
+        }
       }
     }
     public string HandlerName
@@ -514,17 +774,17 @@ namespace MediaPortal.Plugins.Process
     {
       _lastUserTime = DateTime.Now;
       _lastAction = action;
-      _unattended = false;
-      // TODO should check here if action is power-off and then set the _lastUserTime to Datime.MinValue
-      // since the user is going away
     }
 
+    private bool _onTimerElapsedInside = false;
     /// <summary>
     /// Periodically refreshes the settings, Updates the status of the internal IStandbyHandler implementation
     /// and checks all standby handlers if standby is allowed or not.
     /// </summary>
     private void OnTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
+      if (_onTimerElapsedInside) return;
+      _onTimerElapsedInside = true;
       try
       {
         LoadSettings();
@@ -548,6 +808,7 @@ namespace MediaPortal.Plugins.Process
       {
         Log.Error(ex);
       }
+      _onTimerElapsedInside = false;
     }
 
     /// <summary>
@@ -573,6 +834,7 @@ namespace MediaPortal.Plugins.Process
             }
             else
             {
+              //LogVerbose("PSClientPlugin.UserInterfaceIdle: Not in home screen, {0}", (GUIWindow.Window) GUIWindowManager.ActiveWindow);
               return false;
             }
           }
@@ -583,6 +845,7 @@ namespace MediaPortal.Plugins.Process
         }
         else
         {
+          //LogVerbose("PSClientPlugin.UserInterfaceIdle: Player is playing");
           return false;
         }
       }
@@ -648,32 +911,44 @@ namespace MediaPortal.Plugins.Process
     /// </summary>
     private void CheckForStandby()
     {
-      if (!_settings.ShutdownEnabled)
-        return;
-
-      // is anybody disallowing shutdown?
-      if (!DisAllowShutdown)
+      lock (this) // avoid clash with OnPowerEvent
       {
-        if (!_idle)
-        {
-          Log.Info("PowerScheduler: System changed from busy state to idle state");
-          _idle = true;
-          SendPowerSchedulerEvent(PowerSchedulerEventType.SystemIdle);
-        }
+        if (!_settings.ShutdownEnabled)
+          return;
 
-        if (Unattended)
+        // scenario: CheckForStandby is called right after resume, but before Resume is handled by OnPowerEvent
+        // then we could mis-send the PC to hibernation again (Unattended not reset yet)
+        // so, we just check for _standby
+        if (_standby)
+          return;
+
+        // unattended? (check regualary to have log entries)
+        bool unattended = Unattended;
+
+        // is anybody disallowing shutdown?
+        if (!DisAllowShutdown)
         {
-          Log.Info("PowerScheduler: System is unattended and idle - initiate suspend/hibernate");
-          EnterSuspendOrHibernate();
+          if (!_idle)
+          {
+            Log.Info("PowerScheduler: System changed from busy state to idle state");
+            _idle = true;
+            SendPowerSchedulerEvent(PowerSchedulerEventType.SystemIdle);
+          }
+
+          if (unattended)
+          {
+            Log.Info("PowerScheduler: System is unattended and idle - initiate suspend/hibernate");
+            SuspendSystem();
+          }
         }
-      }
-      else
-      {
-        if (_idle)
+        else
         {
-          Log.Info("PowerScheduler: System changed from idle state to busy state");
-          _idle = false;
-          SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
+          if (_idle)
+          {
+            Log.Info("PowerScheduler: System changed from idle state to busy state");
+            _idle = false;
+            SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
+          }
         }
       }
     }
@@ -729,12 +1004,6 @@ namespace MediaPortal.Plugins.Process
     /// </summary>
     private void SetWakeupTimer()
     {
-      if (_settings.GetSetting("SingleSeat").Get<bool>())
-      {
-        // no action required since handling is done by the remote scheduler
-        return;
-      }
-
       if (_settings.WakeupEnabled)
       {
         // determine next wakeup time from IWakeupHandlers
@@ -744,75 +1013,21 @@ namespace MediaPortal.Plugins.Process
           nextWakeup = nextWakeup.AddSeconds(-_settings.PreWakeupTime);
           double delta = nextWakeup.Subtract(DateTime.Now).TotalSeconds;
           
-          if( delta < 45 )
+          if( delta < 60 )
           {
             // the wake up event is too near, when we set the timer and the suspend process takes to long, i.e. the timer gets fired
             // while suspending, the system will NOT wake up!
 
-            // so, we will in any case set the wait time to 45 seconds
-            delta= 45;
+            // so, we will in any case set the wait time to 60 seconds
+            delta= 60;
           }
           _wakeupTimer.SecondsToWait = delta;
-          Log.Debug("PowerScheduler: Set wakeup timer to wakeup system in {0} minutes", delta/60);
+          Log.Debug("PSClientPlugin: Set wakeup timer to wakeup system in {0} minutes", delta / 60);
         }
         else
         {
-          Log.Debug("PowerScheduler: No pending events found in the future which should wakeup the system");
+          Log.Debug("PSClientPlugin: No pending events found in the future which should wakeup the system");
           _wakeupTimer.SecondsToWait = -1;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Puts the system into the configured standby mode (Suspend/Hibernate)
-    /// </summary>
-    /// <returns>bool indicating whether or not the request was honoured</returns>
-    private bool EnterSuspendOrHibernate()
-    {
-      return EnterSuspendOrHibernate(_settings.ForceShutdown);
-    }
-
-    /// <summary>
-    /// Puts the system into standby, either by delegating the request to the powerscheduler service in the tvservice,
-    /// or by itself depending on the setup.
-    /// </summary>
-    /// <param name="force">bool which indicates if you want to force the system</param>
-    /// <returns>bool indicating whether or not the request was successful</returns>
-    private bool EnterSuspendOrHibernate(bool force)
-    {
-      if (_settings.GetSetting("SingleSeat").Get<bool>())
-      {
-        // shutdown method and force mode are ignored by delegated suspend/hibernate requests
-        Log.Debug("delegating suspend/hibernate request to tvserver");
-        try
-        {
-          return RemotePowerControl.Instance.SuspendSystem("PowerSchedulerClientPlugin", force);
-        }
-        catch (Exception e)
-        {
-          Log.Error("PSClientPlugin: SuspendSystem failed! {0} {1}", e.Message, e.StackTrace);
-          return false;
-        }
-      }
-      else
-      {
-        // make sure we set the wakeup/resume timer before entering standby
-        SetWakeupTimer();
-
-        switch (_settings.ShutdownMode)
-        {
-          case ShutdownMode.Suspend:
-            Log.Debug("locally suspending system (force={0})", force);
-            return MediaPortal.Util.Utils.SuspendSystem(force);
-          case ShutdownMode.Hibernate:
-            Log.Debug("locally hibernating system (force={0})", force);
-            return MediaPortal.Util.Utils.HibernateSystem(force);
-          case ShutdownMode.StayOn:
-            Log.Debug("standby requested but system is configured to stay on");
-            return true;
-          default:
-            Log.Error("PSClientPlugin: unknown shutdown method: {0}", _settings.ShutdownMode);
-            return false;
         }
       }
     }
@@ -869,14 +1084,14 @@ namespace MediaPortal.Plugins.Process
 
     private void OnResume()
     {
-      if( _settings.GetSetting("SingleSeat").Get<bool>() )
+      if (_settings.GetSetting("SingleSeat").Get<bool>())
       {
         if (_remotingURI == null)
         {
           ChannelServices.RegisterChannel(new HttpChannel(31458), false);
 
           RemotingServices.Marshal(this);
-          _remotingURI= "http://localhost:31458" + RemotingServices.GetObjectUri(this);
+          _remotingURI = "http://localhost:31458" + RemotingServices.GetObjectUri(this);
           Log.Debug("PSClientPlugin: marshalled handlers as {0}", _remotingURI);
         }
         if (_remotingTag == 0)
@@ -885,11 +1100,27 @@ namespace MediaPortal.Plugins.Process
           _remotingTag = RemotePowerControl.Instance.RegisterRemote(_remotingURI, _remotingURI);
           LogVerbose("PSClientPlugin: registered handlers with tvservice with tag {0}", _remotingTag);
         }
-      }
-      LogVerbose("resetting last user time to {0}", DateTime.Now.ToString());
-      _lastUserTime = DateTime.Now;
-      _unattended = false;
 
+        _lastUserTime = DateTime.Now;
+        _standby = false;
+      }
+      else
+      {
+        lock (this)
+        {
+          // INSIDE lock!!! to avoid clash with CheckForStandBy --->
+          _lastUserTime = DateTime.Now;
+          if (_idle)
+          {
+            Log.Info("PowerScheduler: System changed from idle state to busy state");
+            _idle = false;
+            SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
+          }
+          _standby = false;
+          // <--- INSIDE lock!!!
+        }
+      }
+      // enable timer
       _timer.Enabled = true;
       _fastTimer.Enabled = true;
 
@@ -898,6 +1129,8 @@ namespace MediaPortal.Plugins.Process
 
     private void OnStandBy()
     {
+      _standby = true;
+
       _timer.Enabled = false;
       _fastTimer.Enabled = false;
 
@@ -984,64 +1217,42 @@ namespace MediaPortal.Plugins.Process
     #region WndProc messagehandler
     public bool WndProc(ref System.Windows.Forms.Message msg)
     {
-      // we only need to truely handle PowerBroadcast if we're multi seat
-
-      if (_settings.GetSetting("SingleSeat").Get<bool>())
-      {
-        // only need to check for query to set system to unattended
-        if (msg.Msg == WM_POWERBROADCAST)
-        {
-          switch (msg.WParam.ToInt32())
-          {
-            case PBT_APMQUERYSUSPEND:
-            case PBT_APMQUERYSTANDBY:
-              Log.Debug("PSClientPlugin: System wants to enter standby");
-              if (!_unattended)
-              {
-                // scenario: User wants to standby the system, but we disallowed him to do
-                // so. We go to unattended mode.
-                _unattended = UserInterfaceIdle;
-                Log.Info("PowerScheduler: User tries to standby, system is unattended if user interface is idle, which is {0}", _unattended);
-              }
-              break;
-          }
-        }
-        return false;
-      }
-
+      bool singleSeat=_settings.GetSetting("SingleSeat").Get<bool>();
       if (msg.Msg == WM_POWERBROADCAST)
       {
         switch (msg.WParam.ToInt32())
         {
+          case PBT_APMQUERYSUSPENDFAILED:
+          case PBT_APMQUERYSTANDBYFAILED:
+            break;
           case PBT_APMRESUMEAUTOMATIC:
           case PBT_APMRESUMECRITICAL:
           case PBT_APMRESUMESTANDBY:
           case PBT_APMRESUMESUSPEND:
-          case PBT_APMQUERYSUSPENDFAILED:
-          case PBT_APMQUERYSTANDBYFAILED:
             OnResume();
             SendPowerSchedulerEvent(PowerSchedulerEventType.ResumedFromStandby);
             break;
           case PBT_APMQUERYSUSPEND:
           case PBT_APMQUERYSTANDBY:
+            if (singleSeat) break;
+
             Log.Debug("PSClientPlugin: System wants to enter standby");
-            bool idle = !DisAllowShutdown;
-            Log.Debug("PSClientPlugin: System idle: {0}", idle);
-            if (!_unattended)
+
+            if (_denySuspendQuery)
             {
-              // scenario: User wants to standby the system, but we disallowed him to do
-              // so. We go to unattended mode.
-              Log.Info("PowerScheduler: User tries to standby, system is unattended if user interface is idle");
-              _unattended = UserInterfaceIdle;
-            }
-            if (!idle)
+              Log.Debug("PowerScheduler: Suspend queried, starting suspend sequence");
+              SuspendSystem("", (int)(msg.WParam.ToInt32() == PBT_APMQUERYSUSPEND ? RestartOptions.Hibernate : RestartOptions.Suspend), false);
               msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
+              break;
+            }
             break;
           case PBT_APMSUSPEND:
           case PBT_APMSTANDBY:
             OnStandBy();
 
-            SetWakeupTimer();
+            if( !singleSeat )
+              SetWakeupTimer();
+
             SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
             break;
         }

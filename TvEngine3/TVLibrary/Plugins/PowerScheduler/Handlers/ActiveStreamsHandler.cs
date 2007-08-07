@@ -52,6 +52,9 @@ namespace TvEngine.PowerScheduler.Handlers
     {
       get { return (_controller.ActiveStreams > 0); }
     }
+    public void UserShutdownNow()
+    {
+    }
     public string HandlerName
     {
       get { return "ActiveStreamsHandler"; }

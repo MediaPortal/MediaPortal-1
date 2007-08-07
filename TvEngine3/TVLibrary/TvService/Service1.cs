@@ -65,32 +65,7 @@ namespace TvService
     /// </summary>
     public Service1()
     {
-      /* not needed anymore
-      #region QuerySuspendHack the following hack allows to deny suspend queried in NET 2.0
-        // Find the initialisation routine - may break in later versions
-
-        MethodInfo init = typeof(ServiceBase).GetMethod("Initialize",
-          BindingFlags.NonPublic | BindingFlags.Instance);
-
-        // Call it to set up all members
-        init.Invoke(this, new object[] { false });
-
-        // Find the service callback handler
-        FieldInfo handlerEx = typeof(ServiceBase).GetField("commandCallbackEx",
-          BindingFlags.NonPublic | BindingFlags.Instance);
-
-        // Read the base class provided handler
-        _forward = (Delegate)handlerEx.GetValue(this);
-
-        // Create a new delegate to our handler
-        Delegate newDelegate= Delegate.CreateDelegate( _forward.GetType(), this, "ServiceCallbackEx" );
-
-        // Install our handler
-        handlerEx.SetValue(this, newDelegate );
-      #endregion
-      */
-
-     
+    
       string applicationPath = System.Windows.Forms.Application.ExecutablePath;
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
@@ -265,21 +240,45 @@ namespace TvService
 
     IntPtr PowerEventThreadWndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
-      if( msg == WM_POWERBROADCAST )
+      if (msg == WM_POWERBROADCAST)
       {
+        Log.Debug("TV service PowerEventThread received WM_POWERBROADCAST {1}", wParam.ToInt32() );
         switch (wParam.ToInt32())
         {
           case PBT_APMQUERYSUSPENDFAILED:
+            OnPowerEvent(PowerEventType.QuerySuspendFailed);
+            break;
           case PBT_APMQUERYSTANDBYFAILED:
-            OnPowerEventDo(PowerBroadcastStatus.QuerySuspendFailed);
+            OnPowerEvent(PowerEventType.QueryStandByFailed);
             break;
           case PBT_APMQUERYSUSPEND:
-          case PBT_APMQUERYSTANDBY:
-            if( !OnPowerEventDo(PowerBroadcastStatus.QuerySuspend))
+            if (!OnPowerEvent(PowerEventType.QuerySuspend))
               return new IntPtr(BROADCAST_QUERY_DENY);
             break;
+          case PBT_APMQUERYSTANDBY:
+            if (!OnPowerEvent(PowerEventType.QueryStandBy))
+              return new IntPtr(BROADCAST_QUERY_DENY);
+            break;
+          case PBT_APMSUSPEND:
+            OnPowerEvent(PowerEventType.Suspend);
+            break;
+          case PBT_APMSTANDBY:
+            OnPowerEvent(PowerEventType.StandBy);
+            break;
+          case PBT_APMRESUMECRITICAL:
+            OnPowerEvent(PowerEventType.ResumeCritical);
+            break;
+          case PBT_APMRESUMESUSPEND:
+            OnPowerEvent(PowerEventType.ResumeSuspend);
+            break;
+          case PBT_APMRESUMESTANDBY:
+            OnPowerEvent(PowerEventType.ResumeStandBy);
+            break;
+          case PBT_APMRESUMEAUTOMATIC:
+            OnPowerEvent(PowerEventType.ResumeAutomatic);
+            break;
         }
-      }
+      }                 
       return DefWindowProc(hWnd,msg,wParam,lParam);
     }
 
@@ -329,9 +328,11 @@ namespace TvService
             if (!GetMessageA(ref msgApi, IntPtr.Zero, 0, 0)) // returns false on WM_QUIT
               return;
 
+            TranslateMessage(ref msgApi);
+
             Log.Debug("TV service PowerEventThread {0}", msgApi.message);
 
-            TranslateMessage(ref msgApi);
+
             DispatchMessageA(ref msgApi);
           }
           catch (Exception ex)
@@ -348,49 +349,6 @@ namespace TvService
     }
     #endregion
 
-    /* not needed anymore!
-    #region QuerySuspendHack part 2 of the hack
-      Delegate _forward;  // will get the default delegate
-
-      /// <summary>
-      ///   This is the hack stub function that allows to deny supend queries.
-      /// </summary>
-      /// <param name="command"></param>
-      /// <param name="eventType"></param>
-      /// <param name="eventData"></param>
-      /// <param name="eventContext"></param>
-      /// <returns></returns>
-      private int ServiceCallbackEx(int command, int eventType, IntPtr eventData,
-        IntPtr eventContext)
-      {
-        // Call the base class implementation which is fine for all but power and session management
-
-        if (13 != command) return (int) _forward.DynamicInvoke(command, eventType, eventData, eventContext);
-
-        // Process and forward success code
-        if (OnPowerEvent((PowerBroadcastStatus)eventType)) return 0;
-
-        // Abort power operation
-        return 0x424d5144;
-      }
-    #endregion
-    */
-
-    /// <summary>
-    /// When implemented in a derived class, executes when the computer's power status has changed. This applies to laptop computers when they go into suspended mode, which is not the same as a system shutdown.
-    /// </summary>
-    /// <param name="powerStatus">A <see cref="T:System.ServiceProcess.PowerBroadcastStatus"></see> that indicates a notification from the system about its power status.</param>
-    /// <returns>
-    /// When implemented in a derived class, the needs of your application determine what value to return. For example, if a QuerySuspend broadcast status is passed, you could cause your application to reject the query by returning false.
-    /// </returns>
-    [MethodImpl(MethodImplOptions.Synchronized)]
-    protected override bool OnPowerEvent(PowerBroadcastStatus powerStatus)
-    {
-      if (powerStatus != PowerBroadcastStatus.QuerySuspend && powerStatus != PowerBroadcastStatus.QuerySuspendFailed)
-        return OnPowerEventDo(powerStatus);
-      return true;
-    }
-    
 
     /// <summary>
     /// Handles the power event.
@@ -398,8 +356,10 @@ namespace TvService
     /// <param name="powerStatus"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.Synchronized)]
-    protected bool OnPowerEventDo(PowerBroadcastStatus powerStatus)
+    protected bool OnPowerEvent(PowerEventType powerStatus)
     {
+      Log.Debug("OnPowerEvent: PowerStatus: {0}", powerStatus);
+
       bool accept = true;
       bool result;
       List<PowerEventHandler> powerEventPreventers = new List<PowerEventHandler>();
@@ -415,9 +375,6 @@ namespace TvService
         else
           powerEventAllowers.Add(handler);
       }
-      result = base.OnPowerEvent(powerStatus);
-      if (result == false)
-        accept = false;
       if (accept)
         return true;
       else
@@ -430,13 +387,12 @@ namespace TvService
         // everybody that allowed the standby now must receive a deny event
         // since we will not get a QuerySuspendFailed message by the OS when
         // we return false to QuerySuspend
-        if (powerStatus == PowerBroadcastStatus.QuerySuspend )
+        if (powerStatus == PowerEventType.QuerySuspend ||
+          powerStatus == PowerEventType.QueryStandBy)
         {
-          if( result )
-            base.OnPowerEvent(PowerBroadcastStatus.QuerySuspendFailed);
           foreach (PowerEventHandler handler in powerEventAllowers)
           {
-            handler(PowerBroadcastStatus.QuerySuspendFailed);
+            handler(powerStatus == PowerEventType.QuerySuspend ? PowerEventType.QuerySuspendFailed : PowerEventType.QueryStandByFailed);
           }
         }
 
@@ -513,11 +469,12 @@ namespace TvService
 
     }
 
-    private bool OnPowerEventHandler(PowerBroadcastStatus powerStatus)
+    private bool OnPowerEventHandler(PowerEventType powerStatus)
     {
       switch (powerStatus)
       {
-        case PowerBroadcastStatus.QuerySuspend:
+        case PowerEventType.QuerySuspend:
+        case PowerEventType.QueryStandBy:
           if (_controller != null)
           {
             if (_controller.CanSuspend)
@@ -531,13 +488,14 @@ namespace TvService
             }
           }
           return true;
-        case PowerBroadcastStatus.QuerySuspendFailed:
+        case PowerEventType.QuerySuspendFailed:
+        case PowerEventType.QueryStandByFailed:
           if (!_controller.EpgGrabberEnabled)
             _controller.EpgGrabberEnabled = true;
           return true;
-        case PowerBroadcastStatus.ResumeAutomatic:
-        case PowerBroadcastStatus.ResumeCritical:
-        case PowerBroadcastStatus.ResumeSuspend:
+        case PowerEventType.ResumeAutomatic:
+        case PowerEventType.ResumeCritical:
+        case PowerEventType.ResumeSuspend:
           //OnStart(null);
           return true;
       }

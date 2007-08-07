@@ -43,6 +43,19 @@ namespace TvEngine.PowerScheduler.Handlers
         }
       }
     }
+    public void UserShutdownNow()
+    {
+      if (remote == null) return;
+      try
+      {
+        remote.UserShutdownNow();
+      }
+      catch (Exception)
+      {
+        // broken remote handler, nullify this one (dead)
+        remote = null;
+      }
+    }
 
     public string HandlerName
     {

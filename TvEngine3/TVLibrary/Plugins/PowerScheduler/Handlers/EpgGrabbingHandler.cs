@@ -437,6 +437,10 @@ namespace TvEngine.PowerScheduler.Handlers
         Log.Debug("PowerScheduler: next EPG wakeup set by external EPG source {0}", externalName);
       return nextRun;
     }
+    public void UserShutdownNow()
+    {
+    }
+
     public string HandlerName
     {
       get { return "EpgGrabbingHandler"; }
