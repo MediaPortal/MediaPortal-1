@@ -138,7 +138,7 @@
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
-      <type>label</type>
+      <type>fadelabel</type>
       <description>album label</description>
       <id>6</id>
       <posX>410</posX>
