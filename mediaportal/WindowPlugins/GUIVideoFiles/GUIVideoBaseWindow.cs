@@ -96,6 +96,8 @@ namespace MediaPortal.GUI.Video
 
       if (handler == null)
         handler = new VideoViewHandler();
+
+      GUIWindowManager.OnNewAction += new OnActionHandler(OnNewAction);
     }
 
     #endregion 
@@ -205,6 +207,22 @@ namespace MediaPortal.GUI.Video
         return;
       }
       base.OnAction(action);
+    }
+
+    // Make sure we get all of the ACTION_PLAY events (OnAction only receives the ACTION_PLAY event when 
+    // the player is not playing)...
+    void OnNewAction(Action action)
+    {
+      if ((action.wID == Action.ActionType.ACTION_PLAY
+          || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
+          && GUIWindowManager.ActiveWindow == GetID)
+      {
+        GUIListItem item = facadeView.SelectedListItem;
+
+        if (item == null || item.Label == "..") return;
+
+        OnClick(-1);
+      }
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
