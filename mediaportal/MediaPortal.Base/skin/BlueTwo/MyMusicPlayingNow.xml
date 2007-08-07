@@ -112,7 +112,7 @@
             <!-- 			<textcolor>white</textcolor> -->
         </control>
         <control>
-            <type>label</type>
+            <type>fadelabel</type>
             <description>album label</description>
             <id>0</id>
             <posX>404</posX>
