@@ -258,6 +258,10 @@ namespace TvEngine
 
 		#region IStandbyHandler
 
+    public void UserShutdownNow()
+    {
+    }
+
 		public bool DisAllowShutdown
 		{
 			get { return _isUpdating; } 
