@@ -34,6 +34,7 @@ using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.TV.Recording;
 using MediaPortal.Configuration;
+using System.Threading;
 
 namespace MediaPortal.InputDevices
 {
@@ -357,8 +358,37 @@ namespace MediaPortal.InputDevices
           if ((map.CmdProperty == "STANDBY") || (map.CmdProperty == "HIBERNATE"))
           {             
             GUIGraphicsContext.ResetLastActivity();
+
             //Stop all media before suspending or hibernating
-            g_Player.Stop();
+            if (g_Player.Playing)
+            {
+              if (Thread.CurrentThread.Name == "MPMain")
+              {
+                g_Player.Stop();
+              }
+              else
+              {
+                // g_Player.Stop() sometimes crahses the system since MP is not happy when this is done outside the MAIN-thread,
+                // so we pass that to the MAIN-thread
+                if (g_Player.Playing)
+                {
+                  // stop the player
+                  Action act = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+                  GUIGraphicsContext.OnAction(act);
+
+                  // wait until player is stopped, but at most 20 seconds (sometimes the player needs a while to stop)
+                  int tries = 200;
+                  while (tries-- > 0 && g_Player.Playing)
+                  {
+                    Thread.Sleep(100);
+                  }
+
+                  // wait another second for the player's clean-up code
+                  Thread.Sleep(1000);
+                }
+              }
+            }
+
             // this is all handled in mediaportal.cs - OnSuspend          
             /*
             if (_basicHome)

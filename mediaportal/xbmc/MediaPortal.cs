@@ -507,7 +507,7 @@ public class MediaPortalApp : D3DApp, IRender
         if (useRestartOptions)
         {
           Log.Info("Main: Exiting Windows - {0}", restartOptions);
-          WindowsController.ExitWindows(restartOptions, true);
+          WindowsController.ExitWindows(restartOptions, false);
         }
         else
         {

@@ -71,6 +71,7 @@ namespace MediaPortal.GUI.Library
     static int _windowCount = 0;
     static GUIWindow[] _listWindows = new GUIWindow[200];
     static List<GUIMessage> _listThreadMessages = new List<GUIMessage>();
+    static readonly object _listThreadMessagesLock = new object();
     static List<Action> _listThreadActions = new List<Action>();
     static List<int> _listHistory = new List<int>();
     static int _activeWindowIndex = -1;
@@ -183,8 +184,11 @@ namespace MediaPortal.GUI.Library
         OnThreadMessageHandler(null, message);
       }
       if (message != null)
-      {        
-        _listThreadMessages.Add(message);
+      {
+        lock( _listThreadMessagesLock  )
+        {
+          _listThreadMessages.Add(message);
+        }
       }
     }
 
@@ -197,9 +201,13 @@ namespace MediaPortal.GUI.Library
     {
       if (_listThreadMessages.Count > 0)
       {
+        List<GUIMessage> list;
         //				System.Diagnostics.Debug.WriteLine("process messages");
-        List<GUIMessage> list = _listThreadMessages;
-        _listThreadMessages = new List<GUIMessage>();
+        lock( _listThreadMessagesLock  ) // need lock when switching queues
+        {
+          list = _listThreadMessages;
+          _listThreadMessages = new List<GUIMessage>();
+        }
         for (int i = 0; i < list.Count; ++i)
         {
           SendMessage(list[i]);
@@ -209,8 +217,12 @@ namespace MediaPortal.GUI.Library
       if (_listThreadActions.Count > 0)
       {
         //				System.Diagnostics.Debug.WriteLine("process actions");
-        List<Action> list = _listThreadActions;
-        _listThreadActions = new List<Action>();
+        List<Action> list;
+        lock (_listThreadMessagesLock) // need lock when switching queues
+        {
+          list = _listThreadActions;
+          _listThreadActions = new List<Action>();
+        }
         for (int i = 0; i < list.Count; ++i)
         {
           if (OnNewAction != null)
@@ -232,7 +244,10 @@ namespace MediaPortal.GUI.Library
     static void OnActionReceived(Action action)
     {
       if (action != null)
-        _listThreadActions.Add(action);
+        lock (_listThreadMessagesLock)
+        {
+          _listThreadActions.Add(action);
+        }
     }
 
     /// <summary>

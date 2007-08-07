@@ -2169,21 +2169,26 @@ namespace MediaPortal.Util
       catch (Exception) { }
     }
 
-    static public bool HibernateSystem(bool forceShutDown)
+    /// <summary>
+    /// Please use WindowsController.ExitWindows
+    /// </summary>
+    /// <param name="forceShutDown"></param>
+    /// <returns></returns>
+    static public void HibernateSystem(bool forceShutDown)
     {
       Log.Info("Utils: Hibernate system");
-      return (SetSuspendState(PowerState.Hibernate, forceShutDown));
+      WindowsController.ExitWindows(RestartOptions.Hibernate, forceShutDown);
     }
 
-    static public bool SuspendSystem(bool forceShutDown)
+    /// <summary>
+    /// Please use WindowsController.ExitWindows
+    /// </summary>
+    /// <param name="forceShutDown"></param>
+    /// <returns></returns>
+    static public void SuspendSystem(bool forceShutDown)
     {
       Log.Info("Utils: Suspend system");
-      return (SetSuspendState(PowerState.Suspend, forceShutDown));
-    }
-
-    static private bool SetSuspendState(PowerState state, bool forceShutDown)
-    {
-      return (Application.SetSuspendState(state, forceShutDown, false));
+      WindowsController.ExitWindows(RestartOptions.Suspend, forceShutDown);
     }
 
     static public string EncryptPin(string code)

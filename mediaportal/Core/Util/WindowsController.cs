@@ -29,6 +29,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using Utils = MediaPortal.Util.Utils;
+using System.Windows.Forms;
+using System.Threading;
 
 
 namespace MediaPortal.Util 
@@ -108,6 +110,90 @@ namespace MediaPortal.Util
 	/// Implements methods to exit Windows.
 	/// </summary>
 	public class WindowsController {
+    public delegate void AfterExitWindowsHandler(RestartOptions how, bool force, bool result);
+    public delegate void ExitWindowsHandler(RestartOptions how, bool force, AfterExitWindowsHandler after);
+    private static ExitWindowsHandler _exitWindows = ExitWindowsDefault;
+
+    public static ExitWindowsHandler HookExitWindows(ExitWindowsHandler handler)
+    {
+      Log.Debug("WindowsController: Setting ExitWindows to {0}.{1}", handler.Target, handler.Method);
+
+      ExitWindowsHandler old = _exitWindows;
+      _exitWindows = handler;
+      return old;
+    }
+
+    /// <summary>
+    /// Exits windows (and tries to enable any required access rights, if necesarry).
+    /// This is routed thru a property/delegate to enabled someone to hook this function (PSClientPlugin).
+    /// This function immediately returns, the request is executed asynchronously. (Otherwise it would block
+    /// on suspend/hibernate until the system is resumed.)
+    /// 
+    /// The after handler: On hibernate/standby, this handler is called when the system was resumed again.
+    /// On shutdown/restart, this handler is immeditely called after the system was requested to shutdown/restart.
+    /// </summary>
+    /// <param name="how">One of the RestartOptions values that specifies how to exit windows.</param>
+    /// <param name="force">True if the exit has to be forced, false otherwise.</param>
+    /// <param name="after">Handler that is called after ExitWindows</param>
+    /// <exception cref="PrivilegeException">There was an error while requesting a required privilege.</exception>
+    /// <exception cref="PlatformNotSupportedException">The requested exit method is not supported on this platform.</exception>
+    public static void ExitWindows(RestartOptions how, bool force)
+    {
+      ExitWindows(how, force, null);
+    }
+
+    public static void ExitWindows(RestartOptions how, bool force, AfterExitWindowsHandler after)
+    {
+      _exitWindows(how, force, after);
+    }
+
+
+    protected class ExitWindowsDefaultEnv
+    {
+      public RestartOptions how;
+      public bool force;
+      public AfterExitWindowsHandler after;
+    }
+
+    /// <summary>
+    /// Default ExitWindows. Kicks off a thread which handles t
+    /// </summary>
+    /// <param name="how"></param>
+    /// <param name="force"></param>
+    /// <returns></returns>
+    protected static void ExitWindowsDefault(RestartOptions how, bool force, AfterExitWindowsHandler after)
+    {
+      ExitWindowsDefaultEnv env = new ExitWindowsDefaultEnv();
+      env.how = how;
+      env.force = force;
+      env.after = after;
+      (new Thread(ExitWindowsDefaultThread)).Start(env);
+    }
+
+    protected static void ExitWindowsDefaultThread(object _data)
+    {
+      ExitWindowsDefaultEnv env = (ExitWindowsDefaultEnv)_data;
+      RestartOptions how = env.how;
+      bool force = env.force;
+      Log.Debug("WindowsController: Performing ExitWindows {0}, force: {1}", how, force);
+      bool res;
+      switch (how)
+      {
+        case RestartOptions.Suspend:
+          res = Application.SetSuspendState(PowerState.Suspend, force, false);
+          break;
+        case RestartOptions.Hibernate:
+          res = Application.SetSuspendState(PowerState.Hibernate, force, false);
+          break;
+        default:
+          res = ExitWindowsInt((int)how, force);
+          break;
+      }
+      Log.Debug("WindowsController: ExitWindows performed, result: {0}", res);
+      if (env.after != null)
+        env.after(how, force, res);
+    }
+
 		/// <summary>Required to enable or disable the privileges in an access token.</summary>
 		private const int TOKEN_ADJUST_PRIVILEGES = 0x20;
 		/// <summary>Required to query an access token.</summary>
@@ -205,37 +291,14 @@ namespace MediaPortal.Util
 		/// </summary>
 		/// <param name="how">One of the RestartOptions values that specifies how to exit windows.</param>
 		/// <param name="force">True if the exit has to be forced, false otherwise.</param>
-		/// <exception cref="PrivilegeException">There was an error while requesting a required privilege.</exception>
-		/// <exception cref="PlatformNotSupportedException">The requested exit method is not supported on this platform.</exception>
-		public static void ExitWindows(RestartOptions how , bool force ) {
-			switch(how) {
-				case RestartOptions.Suspend:
-          Utils.SuspendSystem(force);
-					//SuspendSystem(false, force);
-					break;
-				case RestartOptions.Hibernate:
-          Utils.HibernateSystem(force);
-					//SuspendSystem(true, force);
-					break;
-				default:
-          ExitWindows((int)how, force);
-					break;
-			}
-		}
-		/// <summary>
-		/// Exits windows (and tries to enable any required access rights, if necesarry).
-		/// </summary>
-		/// <param name="how">One of the RestartOptions values that specifies how to exit windows.</param>
-		/// <param name="force">True if the exit has to be forced, false otherwise.</param>
 		/// <remarks>This method cannot hibernate or suspend the system.</remarks>
 		/// <exception cref="PrivilegeException">There was an error while requesting a required privilege.</exception>
-		protected static void ExitWindows(int how , bool force) {
+		protected static bool ExitWindowsInt(int how , bool force) {
       Log.Info("--Exit Windows - ", how.ToString() + ", " + force.ToString());
       EnableToken("SeShutdownPrivilege");
 			if (force)
 				how = how | EWX_FORCE;
-			if (ExitWindowsEx(how, 0) == 0)
-				throw new PrivilegeException(FormatError(Marshal.GetLastWin32Error()));
+			return ExitWindowsEx(how, 0) != 0;
 		}
 		/// <summary>
 		/// Tries to enable the specified privilege.
@@ -260,18 +323,6 @@ namespace MediaPortal.Util
 			int size = 4;
 			if (AdjustTokenPrivileges(tokenHandle, 0, ref tokenPrivileges, 4 + (12 * tokenPrivileges.PrivilegeCount), ref newPrivileges, ref size) == 0)
 				throw new PrivilegeException(FormatError(Marshal.GetLastWin32Error()));
-		}
-		/// <summary>
-		/// Suspends or hibernates the system.
-		/// </summary>
-		/// <param name="hibernate">True if the system has to hibernate, false if the system has to be suspended.</param>
-		/// <param name="force">True if the exit has to be forced, false otherwise.</param>
-		/// <exception cref="PlatformNotSupportedException">The requested exit method is not supported on this platform.</exception>
-		protected static void SuspendSystem(bool hibernate , bool force  ){
-      Log.Info("--SuspendSystem - ", hibernate.ToString());
-      if (!CheckEntryPoint("powrprof.dll", "SetSuspendState"))
-				throw new PlatformNotSupportedException("The SetSuspendState method is not supported on this system!");
-			SetSuspendState((int)(hibernate ? 1 : 0), (int)(force ? 1 : 0), 0);
 		}
 		/// <summary>
 		/// Checks whether a specified method exists on the local computer.
