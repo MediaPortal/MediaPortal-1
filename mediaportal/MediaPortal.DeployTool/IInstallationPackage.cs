@@ -8,13 +8,17 @@ namespace MediaPortal.DeployTool
   {
     NOT_INSTALLED,
     INSTALLED,
-    PACKAGE_MISSING
+    PACKAGE_MISSING,
+    VERSION_MISMATCH
   }
 
-  interface IInstallationChecker
+  interface IInstallationPackage
   {
     string GetDisplayName();
-    string GetDownloadURL();
-    CheckResult Check();
+
+    bool Download();
+    bool Install();
+    bool UnInstall();
+    CheckResult CheckStatus();
   }
 }

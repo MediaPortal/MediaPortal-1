@@ -36,6 +36,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IInstallationPackage.cs" />
     <Compile Include="DeployDialog.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -50,7 +51,6 @@
     </Compile>
     <Compile Include="DialogFlowHandler.cs" />
     <Compile Include="IDeplpoyDialog.cs" />
-    <Compile Include="IInstallationChecker.cs" />
     <Compile Include="InstallationChecks\DirectX9Checker.cs" />
     <Compile Include="InstallationProperties.cs" />
     <Compile Include="Program.cs" />
@@ -145,7 +145,6 @@
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="mplogo.png" />
     <None Include="Resources\omt_logo_header.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

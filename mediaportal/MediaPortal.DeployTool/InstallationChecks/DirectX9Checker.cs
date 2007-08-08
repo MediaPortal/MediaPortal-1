@@ -26,22 +26,40 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Win32;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
-  class DirectX9Checker: IInstallationChecker
+  class DirectX9Checker: IInstallationPackage
   {
     public string GetDisplayName()
     {
       return "DirectX 9";
     }
-    public string GetDownloadURL()
+
+    public bool Download()
     {
-      return "";
+      return false;
     }
-    public CheckResult Check()
+    public bool Install()
     {
-      return CheckResult.INSTALLED;
+      return false;
+    }
+    public bool UnInstall()
+    {
+      return false;
+    }
+    public CheckResult CheckStatus()
+    {
+      RegistryKey key=Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
+      if (key == null)
+        return CheckResult.NOT_INSTALLED;
+      string version=(string)key.GetValue("Version");
+      key.Close();
+      if (version == "4.09.0000.0900" || version == "4.09.00.0900" || version == "4.09.0000.0901" || version == "4.09.00.0901" || version == "4.09.0000.0902" || version == "4.09.00.0902" || version == "4.09.0000.0904" || version == "4.09.00.0904")
+        return CheckResult.INSTALLED;
+      else
+        return CheckResult.VERSION_MISMATCH;
     }
   }
 }
