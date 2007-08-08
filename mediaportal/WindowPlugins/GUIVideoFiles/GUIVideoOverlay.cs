@@ -313,6 +313,14 @@ namespace MediaPortal.GUI.Video
         VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
         bMovieInfoFound = true;
       }
+      else if (System.IO.File.Exists(System.IO.Path.ChangeExtension(fileName,".xml")))
+      {
+        MatroskaTagInfo info = MatroskaTagHandler.Fetch(System.IO.Path.ChangeExtension(fileName, ".xml"));
+        movieDetails.Title = info.title;
+        movieDetails.Plot = info.description;
+        movieDetails.Genre = info.genre;
+        bMovieInfoFound = true;
+      }
       if (bMovieInfoFound)
       {
         movieDetails.SetPlayProperties();
