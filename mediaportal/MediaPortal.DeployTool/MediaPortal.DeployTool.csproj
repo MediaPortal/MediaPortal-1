@@ -50,6 +50,9 @@
     </Compile>
     <Compile Include="DialogFlowHandler.cs" />
     <Compile Include="IDeplpoyDialog.cs" />
+    <Compile Include="IInstallationChecker.cs" />
+    <Compile Include="InstallationChecks\DirectX9Checker.cs" />
+    <Compile Include="InstallationProperties.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DeployDialog.resx">
@@ -69,13 +72,30 @@
       <SubType>Designer</SubType>
       <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\SingleSeatDlg.resx">
+    <EmbeddedResource Include="Sections\RequirementsDlg.resx">
+      <DependentUpon>RequirementsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
-      <DependentUpon>SingleSeatDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\DBMSSettingsDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DBMSSettingsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\DBMSTypeDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DBMSTypeDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\MPSettingsDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MPSettingsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TvServerSettingsDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TvServerSettingsDlg.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -92,15 +112,41 @@
     <Compile Include="Sections\BaseInstallationTypeDlg.Designer.cs">
       <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\SingleSeatDlg.cs">
+    <Compile Include="Sections\RequirementsDlg.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\SingleSeatDlg.Designer.cs">
-      <DependentUpon>SingleSeatDlg.cs</DependentUpon>
+    <Compile Include="Sections\RequirementsDlg.Designer.cs">
+      <DependentUpon>RequirementsDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\DBMSSettingsDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\DBMSSettingsDlg.Designer.cs">
+      <DependentUpon>DBMSSettingsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\DBMSTypeDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\DBMSTypeDlg.Designer.cs">
+      <DependentUpon>DBMSTypeDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\MPSettingsDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\MPSettingsDlg.Designer.cs">
+      <DependentUpon>MPSettingsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TvServerSettingsDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TvServerSettingsDlg.Designer.cs">
+      <DependentUpon>TvServerSettingsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="mplogo.png" />
+    <None Include="Resources\omt_logo_header.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

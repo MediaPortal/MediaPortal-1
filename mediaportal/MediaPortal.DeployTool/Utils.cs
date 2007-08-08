@@ -24,21 +24,47 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace MediaPortal.DeployTool
 {
-  static class Program
+  class Utils
   {
-    /// <summary>
-    /// The main entry point for the application.
-    /// </summary>
-    [STAThread]
-    static void Main()
+    #region DialogHelper
+    public static void ErrorDlg(string msg)
     {
-      Application.EnableVisualStyles();
-      Application.SetCompatibleTextRenderingDefault(false);
-      Application.Run(new DeployTool());
+      MessageBox.Show(msg,"MediaPortal Deploy Tool -- Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
+    }
+    public static void InfoDlg(string msg)
+    {
+      MessageBox.Show(msg, "MediaPortal Deploy Tool -- Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+    #endregion
+
+    public static bool CheckTargetDir(string dir)
+    {
+      if (dir == "")
+        return false;
+      if (Directory.Exists(dir))
+        return true;
+      DirectoryInfo info=null;
+      try
+      {
+        info=Directory.CreateDirectory(dir);
+      }
+      catch
+      {
+        return false;
+      }
+      if (info == null)
+        return false;
+      else
+      {
+        Directory.Delete(dir);
+        return true;
+      }
     }
   }
 }

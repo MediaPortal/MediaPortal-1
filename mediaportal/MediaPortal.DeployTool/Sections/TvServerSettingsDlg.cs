@@ -22,6 +22,7 @@
  */
 
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,32 +30,47 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 using System.Collections.Specialized;
 
 namespace MediaPortal.DeployTool
 {
-  public partial class DeployDialog : UserControl,IDeployDialog
+  public partial class TvServerSettingsDlg : DeployDialog, IDeployDialog
   {
-    public DialogType type;
-
-    public DeployDialog()
+    public TvServerSettingsDlg()
     {
       InitializeComponent();
-      HeaderLabel.Text = InstallationProperties.Instance["InstallTypeHeader"];
+      type=DialogType.TvServerSettings;
+      textBoxDir.Text = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server";
     }
 
-    #region IDeployDialog interface
-    public virtual DeployDialog GetNextDialog()
+    #region IDeplayDialog interface
+    public override DeployDialog GetNextDialog()
     {
-      return null;
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Requirements);
     }
-    public virtual bool SettingsValid()
+    public override bool SettingsValid()
     {
-      return false;
+      if (!Utils.CheckTargetDir(textBoxDir.Text))
+      {
+        Utils.ErrorDlg("You have to supply a valid installation path for the TV-Server.");
+        return false;
+      }
+      return true;
     }
-    public virtual void SetProperties()
+    public override void SetProperties()
     {
+      InstallationProperties.Instance.Set("TVServerDir", textBoxDir.Text);
     }
     #endregion
+
+    private void buttonBrowse_Click(object sender, EventArgs e)
+    {
+      FolderBrowserDialog dlg = new FolderBrowserDialog();
+      dlg.Description = "Select the installation folder for TV-Server";
+      dlg.SelectedPath = textBoxDir.Text;
+      if (dlg.ShowDialog() == DialogResult.OK)
+        textBoxDir.Text = dlg.SelectedPath;
+    }
   }
 }

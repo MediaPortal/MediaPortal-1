@@ -28,14 +28,13 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeployTool));
       this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+      this.panel1 = new System.Windows.Forms.Panel();
       this.label1 = new System.Windows.Forms.Label();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.splitContainer2 = new System.Windows.Forms.SplitContainer();
       this.nextButton = new System.Windows.Forms.Button();
       this.backButton = new System.Windows.Forms.Button();
-      this.panel1 = new System.Windows.Forms.Panel();
       this.splitContainer1.Panel1.SuspendLayout();
       this.splitContainer1.Panel2.SuspendLayout();
       this.splitContainer1.SuspendLayout();
@@ -62,13 +61,23 @@ namespace MediaPortal.DeployTool
       // splitContainer1.Panel2
       // 
       this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-      this.splitContainer1.Size = new System.Drawing.Size(584, 368);
-      this.splitContainer1.SplitterDistance = 99;
+      this.splitContainer1.Size = new System.Drawing.Size(666, 416);
+      this.splitContainer1.SplitterDistance = 122;
       this.splitContainer1.TabIndex = 3;
+      // 
+      // panel1
+      // 
+      this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.panel1.BackColor = System.Drawing.Color.Black;
+      this.panel1.Location = new System.Drawing.Point(6, 115);
+      this.panel1.Name = "panel1";
+      this.panel1.Size = new System.Drawing.Size(654, 3);
+      this.panel1.TabIndex = 5;
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(4, 67);
+      this.label1.Location = new System.Drawing.Point(5, 84);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(330, 32);
       this.label1.TabIndex = 4;
@@ -78,10 +87,10 @@ namespace MediaPortal.DeployTool
       // pictureBox1
       // 
       this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Image = global::MediaPortal.DeployTool.Properties.Resources.omt_logo_header;
       this.pictureBox1.Location = new System.Drawing.Point(0, 0);
       this.pictureBox1.Name = "pictureBox1";
-      this.pictureBox1.Size = new System.Drawing.Size(584, 99);
+      this.pictureBox1.Size = new System.Drawing.Size(666, 122);
       this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
       this.pictureBox1.TabIndex = 3;
       this.pictureBox1.TabStop = false;
@@ -99,14 +108,14 @@ namespace MediaPortal.DeployTool
       this.splitContainer2.Panel2.BackColor = System.Drawing.Color.WhiteSmoke;
       this.splitContainer2.Panel2.Controls.Add(this.nextButton);
       this.splitContainer2.Panel2.Controls.Add(this.backButton);
-      this.splitContainer2.Size = new System.Drawing.Size(584, 265);
-      this.splitContainer2.SplitterDistance = 230;
+      this.splitContainer2.Size = new System.Drawing.Size(666, 290);
+      this.splitContainer2.SplitterDistance = 251;
       this.splitContainer2.TabIndex = 0;
       // 
       // nextButton
       // 
       this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.nextButton.Location = new System.Drawing.Point(479, 5);
+      this.nextButton.Location = new System.Drawing.Point(561, 5);
       this.nextButton.Name = "nextButton";
       this.nextButton.Size = new System.Drawing.Size(75, 23);
       this.nextButton.TabIndex = 1;
@@ -124,24 +133,15 @@ namespace MediaPortal.DeployTool
       this.backButton.UseVisualStyleBackColor = true;
       this.backButton.Click += new System.EventHandler(this.backButton_Click);
       // 
-      // panel1
-      // 
-      this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.panel1.BackColor = System.Drawing.Color.Black;
-      this.panel1.Location = new System.Drawing.Point(6, 96);
-      this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(572, 3);
-      this.panel1.TabIndex = 5;
-      // 
       // DeployTool
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.BackColor = System.Drawing.Color.White;
-      this.ClientSize = new System.Drawing.Size(584, 368);
+      this.ClientSize = new System.Drawing.Size(666, 416);
       this.Controls.Add(this.splitContainer1);
       this.Name = "DeployTool";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "MediaPortal Deploy Tool";
       this.splitContainer1.Panel1.ResumeLayout(false);
       this.splitContainer1.Panel1.PerformLayout();

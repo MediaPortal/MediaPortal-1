@@ -31,59 +31,49 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using System.Collections.Specialized;
+using System.IO;
 
 namespace MediaPortal.DeployTool
 {
-  public partial class BaseInstallationTypeDlg : DeployDialog, IDeployDialog
+  public partial class MPSettingsDlg : DeployDialog, IDeployDialog
   {
-    public BaseInstallationTypeDlg()
+    public MPSettingsDlg()
     {
       InitializeComponent();
-      type = DialogType.BASE_INSTALLATION_TYPE;
-      rbSingleSeat.Checked = true;
+      type=DialogType.MPSettings;
+      textBoxDir.Text=Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
     }
 
     #region IDeplayDialog interface
     public override DeployDialog GetNextDialog()
     {
-      DialogFlowHandler.Instance.ResetHistory();
-      if (rbSingleSeat.Checked)
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSType);
-      if (rbTvServerMaster.Checked)
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSType);
-      if (rbTvServerSlave.Checked)
+      if (InstallationProperties.Instance["InstallType"] == "client")
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Requirements);
+      else
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
-      if (rbClient.Checked)
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
-      return null;
     }
     public override bool SettingsValid()
     {
+      if (!Utils.CheckTargetDir(textBoxDir.Text))
+      {
+        Utils.ErrorDlg("You have to supply a valid installation path for MediaPortal.");
+        return false;
+      }
       return true;
     }
     public override void SetProperties()
     {
-      if (rbSingleSeat.Checked)
-      {
-        InstallationProperties.Instance.Set("InstallTypeHeader", rbSingleSeat.Text);
-        InstallationProperties.Instance.Set("InstallType", "singleseat");
-      }
-      else if (rbTvServerMaster.Checked)
-      {
-        InstallationProperties.Instance.Set("InstallTypeHeader", rbTvServerMaster.Text);
-        InstallationProperties.Instance.Set("InstallType", "tvserver_master");
-      }
-      else if (rbTvServerSlave.Checked)
-      {
-        InstallationProperties.Instance.Set("InstallTypeHeader", rbTvServerSlave.Text);
-        InstallationProperties.Instance.Set("InstallType", "tvserver_slave");
-      }
-      else
-      {
-        InstallationProperties.Instance.Set("InstallTypeHeader", rbClient.Text);
-        InstallationProperties.Instance.Set("InstallType", "client");
-      }
+      InstallationProperties.Instance.Set("MPDir", textBoxDir.Text);
     }
     #endregion
+
+    private void buttonBrowse_Click(object sender, EventArgs e)
+    {
+      FolderBrowserDialog dlg = new FolderBrowserDialog();
+      dlg.Description = "Select the installation folder for MediaPortal";
+      dlg.SelectedPath = textBoxDir.Text;
+      if (dlg.ShowDialog() == DialogResult.OK)
+        textBoxDir.Text = dlg.SelectedPath;
+    }
   }
 }

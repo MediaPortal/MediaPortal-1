@@ -48,7 +48,7 @@ namespace MediaPortal.DeployTool
       this.BackColor = System.Drawing.Color.Transparent;
       this.Controls.Add(this.HeaderLabel);
       this.Name = "DeployDialog";
-      this.Size = new System.Drawing.Size(304, 172);
+      this.Size = new System.Drawing.Size(620, 308);
       this.ResumeLayout(false);
       this.PerformLayout();
 

@@ -22,23 +22,26 @@
  */
 
 #endregion
+
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.Text;
 
-namespace MediaPortal.DeployTool
+namespace MediaPortal.DeployTool.InstallationChecks
 {
-  static class Program
+  class DirectX9Checker: IInstallationChecker
   {
-    /// <summary>
-    /// The main entry point for the application.
-    /// </summary>
-    [STAThread]
-    static void Main()
+    public string GetDisplayName()
     {
-      Application.EnableVisualStyles();
-      Application.SetCompatibleTextRenderingDefault(false);
-      Application.Run(new DeployTool());
+      return "DirectX 9";
+    }
+    public string GetDownloadURL()
+    {
+      return "";
+    }
+    public CheckResult Check()
+    {
+      return CheckResult.INSTALLED;
     }
   }
 }
