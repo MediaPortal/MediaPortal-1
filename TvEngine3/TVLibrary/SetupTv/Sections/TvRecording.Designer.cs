@@ -33,7 +33,6 @@ namespace SetupTv.Sections
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.checkboxSchedulerPriority = new System.Windows.Forms.CheckBox();
-      this.checkBoxAddToDatabase = new System.Windows.Forms.CheckBox();
       this.checkBoxAutoDelete = new System.Windows.Forms.CheckBox();
       this.label4 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
@@ -84,6 +83,7 @@ namespace SetupTv.Sections
       this.label12 = new System.Windows.Forms.Label();
       this.comboBoxCards = new System.Windows.Forms.ComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.checkBoxCreateTagInfoXML = new System.Windows.Forms.CheckBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -122,8 +122,8 @@ namespace SetupTv.Sections
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.checkBoxCreateTagInfoXML);
       this.groupBox1.Controls.Add(this.checkboxSchedulerPriority);
-      this.groupBox1.Controls.Add(this.checkBoxAddToDatabase);
       this.groupBox1.Controls.Add(this.checkBoxAutoDelete);
       this.groupBox1.Controls.Add(this.label4);
       this.groupBox1.Controls.Add(this.label3);
@@ -146,16 +146,6 @@ namespace SetupTv.Sections
       this.checkboxSchedulerPriority.TabIndex = 8;
       this.checkboxSchedulerPriority.Text = "Allow server to stop LiveTV to record when no free card is available";
       this.checkboxSchedulerPriority.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxAddToDatabase
-      // 
-      this.checkBoxAddToDatabase.AutoSize = true;
-      this.checkBoxAddToDatabase.Location = new System.Drawing.Point(31, 129);
-      this.checkBoxAddToDatabase.Name = "checkBoxAddToDatabase";
-      this.checkBoxAddToDatabase.Size = new System.Drawing.Size(187, 17);
-      this.checkBoxAddToDatabase.TabIndex = 7;
-      this.checkBoxAddToDatabase.Text = "Add recordings to movie database";
-      this.checkBoxAddToDatabase.UseVisualStyleBackColor = true;
       // 
       // checkBoxAutoDelete
       // 
@@ -443,7 +433,7 @@ namespace SetupTv.Sections
       // 
       this.trackBarDisk.Location = new System.Drawing.Point(30, 185);
       this.trackBarDisk.Name = "trackBarDisk";
-      this.trackBarDisk.Size = new System.Drawing.Size(391, 42);
+      this.trackBarDisk.Size = new System.Drawing.Size(391, 45);
       this.trackBarDisk.TabIndex = 7;
       this.trackBarDisk.Visible = false;
       this.trackBarDisk.Scroll += new System.EventHandler(this.trackBarDisk_Scroll);
@@ -665,6 +655,16 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
+      // checkBoxCreateTagInfoXML
+      // 
+      this.checkBoxCreateTagInfoXML.AutoSize = true;
+      this.checkBoxCreateTagInfoXML.Location = new System.Drawing.Point(31, 129);
+      this.checkBoxCreateTagInfoXML.Name = "checkBoxCreateTagInfoXML";
+      this.checkBoxCreateTagInfoXML.Size = new System.Drawing.Size(293, 17);
+      this.checkBoxCreateTagInfoXML.TabIndex = 9;
+      this.checkBoxCreateTagInfoXML.Text = "Automaticly create a xml file containing Matroska tag info";
+      this.checkBoxCreateTagInfoXML.UseVisualStyleBackColor = true;
+      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -698,7 +698,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.TabPage tabPage2;
     private System.Windows.Forms.GroupBox groupBox1;
-    private System.Windows.Forms.CheckBox checkBoxAddToDatabase;
     private System.Windows.Forms.CheckBox checkBoxAutoDelete;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.Label label3;
@@ -749,5 +748,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox mpNumericTextBoxDiskQuota;
       private System.Windows.Forms.CheckBox checkboxSchedulerPriority;
+    private System.Windows.Forms.CheckBox checkBoxCreateTagInfoXML;
   }
 }

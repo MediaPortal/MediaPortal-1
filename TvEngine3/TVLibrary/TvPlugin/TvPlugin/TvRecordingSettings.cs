@@ -55,7 +55,7 @@ namespace TvPlugin
   public class TvRecordingSettings : GUIWindow
   {
     [SkinControlAttribute(4)]    protected GUICheckMarkControl cbAutoDeleteRecordings = null;
-    [SkinControlAttribute(5)]    protected GUICheckMarkControl cbAddRecordingsToDbs = null;
+    [SkinControlAttribute(5)]    protected GUICheckMarkControl cbCreateTagInfoXML = null;
     [SkinControlAttribute(27)]   protected GUISpinControl spinPreRecord = null;
     [SkinControlAttribute(30)]   protected GUISpinControl spinPostRecord = null;
 
@@ -87,13 +87,13 @@ namespace TvPlugin
       spinPostRecord.Value = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
 
       cbAutoDeleteRecordings.Selected = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
-      cbAddRecordingsToDbs.Selected = (layer.GetSetting("addrecordingstomoviedbs", "no").Value == "yes"); 
+      cbCreateTagInfoXML.Selected = (layer.GetSetting("createtaginfoxml", "yes").Value == "yes"); 
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       if (control == cbAutoDeleteRecordings) OnAutoDeleteRecordings();
-      if (control == cbAddRecordingsToDbs) OnAddRecordingsToMovieDatabase();
+      if (control == cbCreateTagInfoXML) OnCreateTagInfoXML();
       if (control == spinPreRecord) OnPreRecord();
       if (control == spinPostRecord) OnPostRecord();
       base.OnClicked(controlId, control, actionType);
@@ -107,11 +107,11 @@ namespace TvPlugin
       setting.Persist();
     }
 
-    void OnAddRecordingsToMovieDatabase()
+    void OnCreateTagInfoXML()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("addrecordingstomoviedbs", "no");
-      setting.Value = cbAutoDeleteRecordings.Selected ? "yes" : "no";
+      Setting setting = layer.GetSetting("createtaginfoxml", "yes");
+      setting.Value = cbCreateTagInfoXML.Selected ? "yes" : "no";
       setting.Persist();
 
     }

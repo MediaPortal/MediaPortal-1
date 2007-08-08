@@ -309,7 +309,7 @@ namespace SetupTv.Sections
       textBoxPostInterval.Text = "5";
       TvBusinessLayer layer = new TvBusinessLayer();
       checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
-      checkBoxAddToDatabase.Checked = (layer.GetSetting("addrecordingstomoviedbs", "no").Value == "yes");
+      checkBoxCreateTagInfoXML.Checked = (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
       checkboxSchedulerPriority.Checked = (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes");
       formatString[0] = "";
       formatString[1] = "";
@@ -373,8 +373,8 @@ namespace SetupTv.Sections
       }
       setting.Persist();
 
-      setting = layer.GetSetting("addrecordingstomoviedbs", "yes");
-      if (checkBoxAddToDatabase.Checked)
+      setting = layer.GetSetting("createtaginfoxml", "yes");
+      if (checkBoxCreateTagInfoXML.Checked)
       {
         setting.Value = "yes";
       }

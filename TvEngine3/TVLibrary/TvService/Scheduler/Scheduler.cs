@@ -71,6 +71,7 @@ namespace TvService
     List<RecordingDetail> _recordingsInProgressList;
     IList _channels;
     User _user;
+    bool _createTagInfoXML;
     #endregion
 
     #region ctor
@@ -82,6 +83,8 @@ namespace TvService
     {
       _user = new User("Scheduler", true);
       _tvController = controller;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      _createTagInfoXML=(layer.GetSetting("createtaginfoxml","yes").Value=="yes");
     }
     #endregion
 
@@ -587,6 +590,14 @@ namespace TvService
         recording.Recording.Persist();
         _recordingsInProgressList.Add(recording);
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.RecordingStarted, new VirtualCard(_user), _user, recording.Schedule, recording.Recording));
+        if (_createTagInfoXML)
+        {
+          MatroskaTagInfo info = new MatroskaTagInfo();
+          info.title = recording.Program.Title;
+          info.description = recording.Program.Description;
+          info.genre = recording.Program.Genre;
+          MatroskaTagHandler.Persist(System.IO.Path.ChangeExtension(fileName, ".xml"), info);
+        }
         Log.Write("recList:count:{0} add scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
       }
       catch (Exception ex)

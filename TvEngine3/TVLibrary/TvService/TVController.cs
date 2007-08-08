@@ -1284,6 +1284,9 @@ namespace TvService
           try
           {
             _streamer.RemoveFile(rec.FileName);
+            //Delete the matroska tag info xml file 
+            if (File.Exists(Path.ChangeExtension(rec.FileName, ".xml")))
+              File.Delete(Path.ChangeExtension(rec.FileName, ".xml"));
             // if a recording got interrupted there may be files like <recording name>_1.mpg, etc
             string SearchFile = System.IO.Path.GetFileNameWithoutExtension(rec.FileName) + @"*";
             // check only the ending for underscores as a user might have a naming pattern including them between e.g. station and program title
