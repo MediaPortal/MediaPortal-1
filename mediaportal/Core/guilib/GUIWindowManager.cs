@@ -106,6 +106,14 @@ namespace MediaPortal.GUI.Library
     static public void SendMessage(GUIMessage message)
     {
       if (message == null) return;
+
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_CALLBACK)
+      {
+        CallbackMsg(message);
+        return;
+      }
+
+
       if (message.Message == GUIMessage.MessageType.GUI_MSG_LOSTFOCUS ||
           message.Message == GUIMessage.MessageType.GUI_MSG_SETFOCUS)
       {
@@ -190,6 +198,56 @@ namespace MediaPortal.GUI.Library
           _listThreadMessages.Add(message);
         }
       }
+    }
+
+    public delegate int Callback(int param1, int param2, object data);
+
+    class CallbackEnv
+    {
+      public int param1, param2;
+      public object data;
+      public int result;
+      public Callback callback;
+      public AutoResetEvent finished = new AutoResetEvent(false);
+    }
+
+    static void CallbackMsg(GUIMessage msg)
+    {
+      CallbackEnv env = (CallbackEnv) msg.Object;
+      env.result= env.callback(env.param1, env.param2, env.data);
+      env.finished.Set();
+    }
+
+    /// <summary>
+    /// This function can be used to call a callback within the context of the message processing thread.
+    /// The function waits until the message thread has picked up and executed the callback.
+    /// This function is also safe if the current thread is the message processing thread.
+    /// </summary>
+    /// <param name="callback">Callback to be executed</param>
+    /// <param name="param1">Param to callback</param>
+    /// <param name="param2">Param to callback</param>
+    /// <param name="data">Param to callback</param>
+    /// <returns>Return value of callback( param1, param2, data )</returns>
+    static public int SendThreadCallbackAndWait(Callback callback, int param1, int param2, object data)
+    {
+      CallbackEnv env = new CallbackEnv();
+      env.callback = callback;
+      env.param1 = param1;
+      env.param2 = param2;
+      env.data = data;
+
+      GUIMessage msg= new GUIMessage(GUIMessage.MessageType.GUI_MSG_CALLBACK, 0, 0, 0, 0, 0, env);
+      SendThreadMessage(msg);
+
+      // if this is the main thread, then dispatch the messages
+      if (Thread.CurrentThread.Name == "MPMain")
+      {
+        DispatchThreadMessages();
+      }
+
+      env.finished.WaitOne();
+
+      return env.result;
     }
 
     /// <summary>
@@ -713,6 +771,15 @@ namespace MediaPortal.GUI.Library
       {
         _isSwitchingToNewWindow = false;
       }      
+    }
+
+    /// <summary>
+    /// Checks if ShowPreviousWindow could activate a previous window. If no, then there is no previous window.
+    /// </summary>
+    /// <returns></returns>
+    static public bool HasPreviousWindow()
+    {
+      return _listHistory.Count > 0;
     }
 
     /// <summary>

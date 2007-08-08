@@ -288,6 +288,13 @@ namespace MediaPortal.InputDevices
       return DoMapAction(btnCode, processID);
     }
 
+    int StopPlayback(int p1, int p2, object d)
+    {
+      g_Player.Stop();
+      return 0;
+    }
+
+
 
     /// <summary>
     /// Evaluates the button number, gets its mapping and executes the action
@@ -362,31 +369,7 @@ namespace MediaPortal.InputDevices
             //Stop all media before suspending or hibernating
             if (g_Player.Playing)
             {
-              if (Thread.CurrentThread.Name == "MPMain")
-              {
-                g_Player.Stop();
-              }
-              else
-              {
-                // g_Player.Stop() sometimes crahses the system since MP is not happy when this is done outside the MAIN-thread,
-                // so we pass that to the MAIN-thread
-                if (g_Player.Playing)
-                {
-                  // stop the player
-                  Action act = new Action(Action.ActionType.ACTION_STOP, 0, 0);
-                  GUIGraphicsContext.OnAction(act);
-
-                  // wait until player is stopped, but at most 20 seconds (sometimes the player needs a while to stop)
-                  int tries = 200;
-                  while (tries-- > 0 && g_Player.Playing)
-                  {
-                    Thread.Sleep(100);
-                  }
-
-                  // wait another second for the player's clean-up code
-                  Thread.Sleep(1000);
-                }
-              }
+              GUIWindowManager.SendThreadCallbackAndWait(StopPlayback, 0, 0, null);
             }
 
             // this is all handled in mediaportal.cs - OnSuspend          

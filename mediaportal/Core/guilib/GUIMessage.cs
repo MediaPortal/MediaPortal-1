@@ -126,6 +126,7 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_SHOW_BALLONTIP_SONGCHANGE = 88, // rtv
       GUI_MSG_STOP_SERVER_TIMESHIFTING = 89, //joboehl
       GUI_MSG_AUDIOVOLUME_CHANGED = 90, //joboehl 
+      GUI_MSG_CALLBACK = 91 // dero: callback in MPMain thread
     };
 
     private string _label = "";
