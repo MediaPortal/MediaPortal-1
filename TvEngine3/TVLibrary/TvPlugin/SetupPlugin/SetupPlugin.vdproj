@@ -1020,7 +1020,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -1436,7 +1436,7 @@
             "SourcePath" = "8:..\\..\\Plugins\\PowerScheduler\\ClientPlugin\\bin\\Release\\PowerSchedulerClientPlugin.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_1A52649B22F6497E96B343026758EDCB"
+            "Folder" = "8:_C2F0F37686774BEB8C7DCDEAD47B6909"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
