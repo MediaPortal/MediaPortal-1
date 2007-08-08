@@ -880,8 +880,10 @@
     <String id="1054">(opptak)</String>
     <String id="1055">(tidsskifting)</String>
     <String id="1056">(utilgjengelig)</String>
-    <String id="1061">Kan fjernes</String>
+    <String id="1061">Minnekort</String>
     <String id="1062">Objekt</String>
+    <String id="1064">Bokmerker</String>
+    <String id="1065">Gå til</String>
     <String id="1100">Importere CD</String>
     <String id="1101">Importere valgte spor</String>
     <String id="1102">Avbryte CD-Import</String>
@@ -893,6 +895,7 @@
     <String id="1112">Behold konflikten</String>
     <String id="1190">Zoom 14:9</String>
     <String id="1200">Oppsettsassistent</String>
+    <String id="1300" prefix="Mine ">TV Serier</String>
     <String id="1440" prefix="Min ">Tekst-TV</String>
     <String id="1441">Tekst-TV</String>
     <String id="1442">Rullehastighet (horisontal)</String>
@@ -1128,6 +1131,7 @@
     <String id="2514">Tilbake til tekst</String>
     <String id="2515">Bilder</String>
     <String id="2516" prefix="Min ">Wikipedia</String>
+    <String id="2599">Ukjent</String>
     <String id="2600">Engelsk</String>
     <String id="2601">Tysk</String>
     <String id="2602">Fransk</String>
