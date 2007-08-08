@@ -24,11 +24,11 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\xbmc\bin\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -194,10 +194,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>Info.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Vews\wizard_1.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>wizard_1.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="app.config" />
     <Compile Include="SkinSelect.cs">
       <SubType>Form</SubType>
@@ -228,12 +224,6 @@
     </Compile>
     <Compile Include="Vews\Info.Designer.cs">
       <DependentUpon>Info.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Vews\wizard_1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Vews\wizard_1.Designer.cs">
-      <DependentUpon>wizard_1.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

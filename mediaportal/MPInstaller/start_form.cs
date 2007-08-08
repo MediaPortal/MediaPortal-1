@@ -30,7 +30,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
+using MediaPortal.MPInstaller;
 namespace MediaPortal.MPInstaller
 {
     public partial class start_form : Form

@@ -60,16 +60,37 @@ namespace MediaPortal.Configuration.Sections
       System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("External Players", System.Windows.Forms.HorizontalAlignment.Left);
       System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Process Plugins", System.Windows.Forms.HorizontalAlignment.Left);
       System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Other Plugins", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Audio/Radio", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Automation", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("EPG/TV", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Games", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Input", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup10 = new System.Windows.Forms.ListViewGroup("Others", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup11 = new System.Windows.Forms.ListViewGroup("PIM", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup12 = new System.Windows.Forms.ListViewGroup("Skins", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup13 = new System.Windows.Forms.ListViewGroup("Utilities", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup14 = new System.Windows.Forms.ListViewGroup("Video/Movies", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup15 = new System.Windows.Forms.ListViewGroup("Web", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup16 = new System.Windows.Forms.ListViewGroup("TV Logo ", System.Windows.Forms.HorizontalAlignment.Left);
       this.imageListLargePlugins = new System.Windows.Forms.ImageList(this.components);
       this.imageListContextMenu = new System.Windows.Forms.ImageList(this.components);
       this.mpTabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.listViewPlugins = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeaderName = new System.Windows.Forms.ColumnHeader();
+      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.mpButtonInstall = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonReinstall = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonUpdate = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonUninstall = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.imageListMPInstaller = new System.Windows.Forms.ImageList(this.components);
       this.contextMenuStrip = new MediaPortal.UserInterface.Controls.MPContextMenuStrip();
       this.toolTip = new MediaPortal.UserInterface.Controls.MPToolTip();
+      this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
+      this.tabPage2.SuspendLayout();
       this.SuspendLayout();
       // 
       // imageListLargePlugins
@@ -100,6 +121,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpTabControl1.Controls.Add(this.tabPage1);
+      this.mpTabControl1.Controls.Add(this.tabPage2);
       this.mpTabControl1.Location = new System.Drawing.Point(0, 8);
       this.mpTabControl1.Name = "mpTabControl1";
       this.mpTabControl1.SelectedIndex = 0;
@@ -121,6 +143,8 @@ namespace MediaPortal.Configuration.Sections
       // listViewPlugins
       // 
       this.listViewPlugins.Activation = System.Windows.Forms.ItemActivation.OneClick;
+      this.listViewPlugins.AllowDrop = true;
+      this.listViewPlugins.AllowRowReorder = true;
       this.listViewPlugins.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -148,7 +172,6 @@ namespace MediaPortal.Configuration.Sections
       this.listViewPlugins.Name = "listViewPlugins";
       this.listViewPlugins.ShowItemToolTips = true;
       this.listViewPlugins.Size = new System.Drawing.Size(424, 288);
-      this.listViewPlugins.Sorting = System.Windows.Forms.SortOrder.Ascending;
       this.listViewPlugins.TabIndex = 0;
       this.listViewPlugins.UseCompatibleStateImageBehavior = false;
       this.listViewPlugins.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listViewPlugins_MouseClick);
@@ -160,6 +183,122 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeaderName.Text = "Name";
       this.columnHeaderName.Width = 420;
       // 
+      // tabPage2
+      // 
+      this.tabPage2.Controls.Add(this.mpButtonInstall);
+      this.tabPage2.Controls.Add(this.mpButtonReinstall);
+      this.tabPage2.Controls.Add(this.mpButtonUpdate);
+      this.tabPage2.Controls.Add(this.mpButtonUninstall);
+      this.tabPage2.Controls.Add(this.mpListView1);
+      this.tabPage2.Location = new System.Drawing.Point(4, 22);
+      this.tabPage2.Name = "tabPage2";
+      this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage2.Size = new System.Drawing.Size(464, 374);
+      this.tabPage2.TabIndex = 1;
+      this.tabPage2.Text = "MPInstaller";
+      this.tabPage2.UseVisualStyleBackColor = true;
+      // 
+      // mpButtonInstall
+      // 
+      this.mpButtonInstall.Location = new System.Drawing.Point(361, 328);
+      this.mpButtonInstall.Name = "mpButtonInstall";
+      this.mpButtonInstall.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonInstall.TabIndex = 4;
+      this.mpButtonInstall.Text = "Install";
+      this.mpButtonInstall.UseVisualStyleBackColor = true;
+      this.mpButtonInstall.Click += new System.EventHandler(this.mpButtonInstall_Click);
+      // 
+      // mpButtonReinstall
+      // 
+      this.mpButtonReinstall.Location = new System.Drawing.Point(253, 328);
+      this.mpButtonReinstall.Name = "mpButtonReinstall";
+      this.mpButtonReinstall.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonReinstall.TabIndex = 3;
+      this.mpButtonReinstall.Text = "Reinstall";
+      this.mpButtonReinstall.UseVisualStyleBackColor = true;
+      this.mpButtonReinstall.Click += new System.EventHandler(this.mpButtonReinstall_Click);
+      // 
+      // mpButtonUpdate
+      // 
+      this.mpButtonUpdate.Enabled = false;
+      this.mpButtonUpdate.Location = new System.Drawing.Point(145, 328);
+      this.mpButtonUpdate.Name = "mpButtonUpdate";
+      this.mpButtonUpdate.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonUpdate.TabIndex = 2;
+      this.mpButtonUpdate.Text = "Update";
+      this.mpButtonUpdate.UseVisualStyleBackColor = true;
+      // 
+      // mpButtonUninstall
+      // 
+      this.mpButtonUninstall.Location = new System.Drawing.Point(37, 328);
+      this.mpButtonUninstall.Name = "mpButtonUninstall";
+      this.mpButtonUninstall.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonUninstall.TabIndex = 1;
+      this.mpButtonUninstall.Text = "Uninstall";
+      this.mpButtonUninstall.UseVisualStyleBackColor = true;
+      this.mpButtonUninstall.Click += new System.EventHandler(this.mpButtonUninstall_Click);
+      // 
+      // mpListView1
+      // 
+      this.mpListView1.Activation = System.Windows.Forms.ItemActivation.OneClick;
+      this.mpListView1.AllowDrop = true;
+      this.mpListView1.AllowRowReorder = true;
+      this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      listViewGroup5.Header = "Audio/Radio";
+      listViewGroup5.Name = "listViewGroupAudio/Radio";
+      listViewGroup6.Header = "Automation";
+      listViewGroup6.Name = "listViewGroupAutomation";
+      listViewGroup7.Header = "EPG/TV";
+      listViewGroup7.Name = "listViewGroupEPG/TV";
+      listViewGroup8.Header = "Games";
+      listViewGroup8.Name = "listViewGroupGames";
+      listViewGroup9.Header = "Input";
+      listViewGroup9.Name = "listViewGroupInput";
+      listViewGroup10.Header = "Others";
+      listViewGroup10.Name = "listViewGroupOthers";
+      listViewGroup11.Header = "PIM";
+      listViewGroup11.Name = "listViewGroupPIM";
+      listViewGroup12.Header = "Skins";
+      listViewGroup12.Name = "listViewGroupSkins";
+      listViewGroup13.Header = "Utilities";
+      listViewGroup13.Name = "listViewGroupUtilities";
+      listViewGroup14.Header = "Video/Movies";
+      listViewGroup14.Name = "listViewGroupVideo/Movies";
+      listViewGroup15.Header = "Web";
+      listViewGroup15.Name = "listViewGroupWeb";
+      listViewGroup16.Header = "TV Logo ";
+      listViewGroup16.Name = "listViewGroupTV Logo ";
+      this.mpListView1.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup5,
+            listViewGroup6,
+            listViewGroup7,
+            listViewGroup8,
+            listViewGroup9,
+            listViewGroup10,
+            listViewGroup11,
+            listViewGroup12,
+            listViewGroup13,
+            listViewGroup14,
+            listViewGroup15,
+            listViewGroup16});
+      this.mpListView1.HotTracking = true;
+      this.mpListView1.HoverSelection = true;
+      this.mpListView1.LargeImageList = this.imageListMPInstaller;
+      this.mpListView1.Location = new System.Drawing.Point(20, 20);
+      this.mpListView1.Name = "mpListView1";
+      this.mpListView1.Size = new System.Drawing.Size(424, 288);
+      this.mpListView1.TabIndex = 0;
+      this.mpListView1.UseCompatibleStateImageBehavior = false;
+      this.mpListView1.SelectedIndexChanged += new System.EventHandler(this.mpListView1_SelectedIndexChanged);
+      // 
+      // imageListMPInstaller
+      // 
+      this.imageListMPInstaller.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListMPInstaller.ImageStream")));
+      this.imageListMPInstaller.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageListMPInstaller.Images.SetKeyName(0, "application.ico");
+      // 
       // contextMenuStrip
       // 
       this.contextMenuStrip.BackColor = System.Drawing.SystemColors.Window;
@@ -167,6 +306,10 @@ namespace MediaPortal.Configuration.Sections
       this.contextMenuStrip.Name = "contextMenuStrip";
       this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
       this.contextMenuStrip.TabStop = true;
+      // 
+      // openFileDialog1
+      // 
+      this.openFileDialog1.FileName = "openFileDialog1";
       // 
       // PluginsNew
       // 
@@ -178,6 +321,7 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.mpTabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
+      this.tabPage2.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -192,6 +336,14 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPToolTip toolTip;
     private MediaPortal.UserInterface.Controls.MPContextMenuStrip contextMenuStrip;
     private System.Windows.Forms.ImageList imageListContextMenu;
+    private System.Windows.Forms.TabPage tabPage2;
+    private MediaPortal.UserInterface.Controls.MPListView mpListView1;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonReinstall;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonUpdate;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonUninstall;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonInstall;
+    private System.Windows.Forms.OpenFileDialog openFileDialog1;
+    private System.Windows.Forms.ImageList imageListMPInstaller;
 
 
   }

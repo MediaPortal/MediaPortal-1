@@ -251,7 +251,7 @@ namespace MediaPortal.MPInstaller
     private void button4_Click(object sender, EventArgs e)
     {
       wizard_1 wiz = new wizard_1();
-      wiz.package.LoadFromFile(Config.GetFolder(Config.Dir.Base) + @"\" + "Instaler" + @"\" + listView1.SelectedItems[0].SubItems[3].Text);
+      wiz.package.LoadFromFile(Config.GetFolder(Config.Dir.Base) + @"\" + "Installer" + @"\" + listView1.SelectedItems[0].SubItems[3].Text);
       if (wiz.package.isValid)
       {
         wiz.starStep();

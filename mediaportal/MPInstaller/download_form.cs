@@ -83,9 +83,13 @@ namespace MediaPortal.MPInstaller
                     }
                     else
                     {
-                      source = source.Replace("&","|"); 
-                      MessageBox.Show(source); 
-                      client.DownloadFileAsync(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=download&user=" + user + "&passwd=" + password +"&url="+ source), dest);
+                      source = source.Replace("&","|");
+                      source = source.Replace("id=", "id1=");
+                      source = source.Replace("http://mpi.team-mediaportal.com", "*");
+                      MessageBox.Show(source);
+                      client.CachePolicy = new System.Net.Cache.RequestCachePolicy();
+                      client.UseDefaultCredentials = true;
+                      client.DownloadFileAsync(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=" + user + "&passwd=" + password +"&url="+ source), dest);
                     }
                   }
                   else

@@ -34,6 +34,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using MediaPortal.MPInstaller;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -42,6 +43,11 @@ namespace MediaPortal.Configuration.Sections
     private ArrayList loadedPlugins = new ArrayList();
     private ArrayList availablePlugins = new ArrayList();
     private bool isLoaded = false;
+
+    public MPInstallHelper lst = new MPInstallHelper();
+    public MPInstallHelper lst_online = new MPInstallHelper();
+    private string InstalDir = Config.GetFolder(Config.Dir.Base) + @"\" + "Installer";
+
 
     private class ItemTag
     {
@@ -110,6 +116,8 @@ namespace MediaPortal.Configuration.Sections
         //
         populateListView();
         LoadSettings();
+        LoadListFiles();
+        LoadToListview("All");
       }
     }
 
@@ -673,5 +681,165 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
+ #region MPInstaller stuff
+    private void mpButtonInstall_Click(object sender, EventArgs e)
+    {
+      if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
+      {
+        this.Hide();
+        install_Package(openFileDialog1.FileName);
+        this.Show();
+        LoadListFiles();
+        LoadToListview("All");
+      }
+      
+    }
+
+    private void install_Package(string fil)
+    {
+      wizard_1 wiz = new wizard_1();
+      wiz.package.LoadFromFile(fil);
+      if (wiz.package.isValid)
+      {
+        wiz.starStep();
+      }
+      else
+        MessageBox.Show("Invalid package !");
+    }
+
+    private void LoadListFiles()
+    {
+      lst.LoadFromFile();
+      //for (int i = 0; i < lst.lst.Count; i++)
+      //{
+      //  ((MPpackageStruct)lst.lst[i]).isInstalled = true;
+      //  ((MPpackageStruct)lst.lst[i]).isLocal = true;
+      //}
+      //string temp_file = InstalDir + @"\online.xml";
+      //if (File.Exists(temp_file))
+      //{
+      //  lst_online.LoadFromFile(temp_file);
+      //  lst_online.Compare(lst);
+      //  lst.AddRange(lst_online);
+      //}
+    }
+    
+    public void LoadToListview(string strgroup)
+    {
+      LoadToListview(lst, mpListView1, strgroup);
+    }
+
+    public bool TestView(MPpackageStruct pk, int idx)
+    {
+      switch (idx)
+      {
+        case 0:
+          return true;
+        case 1:
+          {
+            if (!pk.isNew)
+              return true;
+            break;
+          }
+        case 2:
+          {
+            if (pk.isUpdated)
+              return true;
+            break;
+          }
+        case 3:
+          {
+            if (pk.isNew)
+              return true;
+            break;
+          }
+      }
+      return false;
+    }
+
+    public void LoadToListview(MPInstallHelper mpih, ListView lv, string strgroup)
+    {
+
+      lv.Items.Clear();
+      for (int i = 0; i < mpih.lst.Count; i++)
+      {
+        MPpackageStruct pk = (MPpackageStruct)mpih.lst[i];
+        if ((pk._intalerStruct.Group == strgroup || strgroup == "All") /*&& TestView(pk, comboBox3.SelectedIndex)*/)
+        {
+          ListViewItem item1 = new ListViewItem(pk._intalerStruct.Name, mpListView1.Groups["listViewGroup"+pk._intalerStruct.Group]);//listViewGroup listViewPlugins.Groups["listViewGroupProcess"]
+          item1.ImageIndex = 0;
+          if (pk._intalerStruct.Logo != null)
+          {
+            imageListMPInstaller.Images.Add(pk._intalerStruct.Logo);
+            item1.ImageIndex = imageListMPInstaller.Images.Count - 1;
+          }
+          if (pk.isNew) item1.ForeColor = Color.Red;
+          if (pk.isUpdated) item1.ForeColor = Color.BlueViolet;
+          item1.ToolTipText = pk._intalerStruct.Description;
+          item1.SubItems.Add(pk._intalerStruct.Author);
+          item1.SubItems.Add(pk._intalerStruct.Version);
+          item1.SubItems.Add(Path.GetFileName(pk.FileName));
+          item1.SubItems.Add(pk._intalerStruct.Group);
+          lv.Items.AddRange(new ListViewItem[] { item1 });
+        }
+        //        InitGroups(lv);
+        //        SetGroups(0, lv);
+        //        SetButtonState();
+      }
+    }
+    
+    private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      SetButtonState();
+    }
+
+    private void SetButtonState()
+    {
+      //contextMenuStrip1.Enabled = false;
+      if (mpListView1.SelectedItems.Count > 0)
+      {
+        MPpackageStruct pk = lst.Find(mpListView1.SelectedItems[0].Text);
+        //contextMenuStrip1.Enabled = true;
+        mpButtonReinstall.Enabled = true;
+        mpButtonUninstall.Enabled = true;
+      }
+      else
+      {
+        mpButtonReinstall.Enabled = false;
+        mpButtonUninstall.Enabled = false;
+      }
+    }
+
+    private void mpButtonReinstall_Click(object sender, EventArgs e)
+    {
+      wizard_1 wiz = new wizard_1();
+      MPpackageStruct pk = lst.Find(mpListView1.SelectedItems[0].Text);
+      wiz.package.LoadFromFile(InstalDir + @"\" + pk.FileName);
+      if (wiz.package.isValid)
+      {
+        wiz.starStep();
+      }
+      else
+        MessageBox.Show("Invalid package !");
+    }
+
+    private void mpButtonUninstall_Click(object sender, EventArgs e)
+    {
+      wizard_1 wiz = new wizard_1();
+      MPpackageStruct pk = lst.Find(mpListView1.SelectedItems[0].Text);
+      wiz.package.LoadFromFile(InstalDir + @"\" + pk.FileName);
+      if (wiz.package.isValid)
+      {
+        wiz.uninstall(pk._intalerStruct.Name);
+        mpListView1.Items.Clear();
+        LoadListFiles();
+        LoadToListview("All");
+      }
+      else
+        MessageBox.Show("Invalid package !");
+    }
+
+ #endregion
+
   }
 }

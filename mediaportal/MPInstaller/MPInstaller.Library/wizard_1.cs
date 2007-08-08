@@ -387,7 +387,7 @@ namespace MediaPortal.MPInstaller
       nextStep(-1);
     }
 
-    internal void uninstall(string tit)
+    public void uninstall(string tit)
     {
       inst.LoadFromFile();
       int index = -1;
@@ -430,8 +430,14 @@ namespace MediaPortal.MPInstaller
               {
                 if (System.IO.File.GetCreationTime(u.Path) == u.Date)
                 {
-                  System.IO.File.Delete(u.Path);
-                  listBox1.Items.Add(u.Path);
+                  try
+                  {
+                    System.IO.File.Delete(u.Path);
+                    listBox1.Items.Add(u.Path);
+                  }
+                  catch (Exception)
+                  {
+                  }
                 }
                 else
                   listBox1.Items.Add("File date changed :" + u.Path);
