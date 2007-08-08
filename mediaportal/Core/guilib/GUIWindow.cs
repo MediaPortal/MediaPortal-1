@@ -1270,12 +1270,11 @@ namespace MediaPortal.GUI.Library
             // Initialize the window.
 
             case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-              
-
-              if (((message.Param1 == 0 && message.Param1 != _previousWindowId) || (_previousWindowId == 0)) && (message.Param1 != message.TargetWindowId))
-              {
-                //System.Diagnostics.Debugger.Launch();
-                GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(message.TargetWindowId));
+                            
+              // we do not want fullscreen video/TV dialogue ID's persisted.
+              if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+              {                
+                GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(GUIWindowManager.ActiveWindow));
               }
 
               if (_shouldRestore)
