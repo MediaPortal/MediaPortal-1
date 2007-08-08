@@ -2161,6 +2161,11 @@ namespace MediaPortal.Util
               {
                 System.IO.File.Delete(fileName);
               }
+              //delete Matroska tag file
+              if (fileName.ToLower().IndexOf(".xml") >= 0)
+              {
+                System.IO.File.Delete(fileName);
+              }
             }
           }
           catch (Exception) { }
