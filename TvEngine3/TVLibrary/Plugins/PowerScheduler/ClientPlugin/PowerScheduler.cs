@@ -560,11 +560,34 @@ namespace MediaPortal.Plugins.Process
       }
     }
 
-    public void UserShutdownNow()
+    int UserShutdownNowCB(int p1, int p2, object d)
     {
-      StopPlayer();
+      if (g_Player.Playing)
+      {
+        LogVerbose("PSClientPlugin.UserShutdownNow: stopping player");
+        while (true)
+        {
+          g_Player.Stop();
+          if (g_Player.Playing)
+          {
+            if (!GUIWindowManager.HasPreviousWindow()) break;
+            LogVerbose("PSClientPlugin.UserShutdownNow: player is still playing, activating previous window");
+            GUIWindowManager.ShowPreviousWindow();
+          }
+          else
+            break;
+        }
+        if (g_Player.Playing)
+        {
+          // could not find any previous window that allows to stop the player, we go home
+          LogVerbose("PSClientPlugin.UserShutdownNow: player is still playing, activating home window");
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+          g_Player.Stop();
+        }
+        LogVerbose("PSClientPlugin.UserShutdownNow: stopped player: {0}", !g_Player.Playing);
+      }
 
-      // go to home screen
+      // go to home screen if PS allows only homescreen-standby
       if (_settings.GetSetting("HomeOnly").Get<bool>())
       {
         bool basicHome;
@@ -577,23 +600,19 @@ namespace MediaPortal.Plugins.Process
         {
           LogVerbose("PSClientPlugin.UserShutdownNow: going to home screen");
 
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, homeWindow, 0, null);
-          GUIWindowManager.SendThreadMessage(msg);
-
-          // wait until home is shown, but at most 5 seconds
-          int tries = 50;
-          while (tries-- > 0 && GUIWindowManager.ActiveWindow != homeWindow)
-          {
-            Thread.Sleep(100);
-          }
+          GUIWindowManager.ActivateWindow(homeWindow);
 
           LogVerbose("PSClientPlugin.UserShutdownNow: gone to home screen");
         }
       }
+      return 0;
+    }
 
-      // if the player was not stoppable in the first place
-      StopPlayer();
-      
+    public void UserShutdownNow()
+    {
+      // place GUI thread callback
+      GUIWindowManager.SendThreadCallbackAndWait(UserShutdownNowCB, 0, 0, null);
+
       // trigger the handlers
       lock( this )
       {
