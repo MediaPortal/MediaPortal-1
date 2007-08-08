@@ -56,6 +56,9 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox cbDeinterlace;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
     private MediaPortal.UserInterface.Controls.MPCheckBox byIndexCheckBox;
+    private MediaPortal.UserInterface.Controls.MPCheckBox showChannelNumberCheckBox;
+    private System.Windows.Forms.Label lblChanNumMaxLen;
+    private System.Windows.Forms.NumericUpDown channelNumberMaxLengthNumUpDn;
     bool _init = false;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbTurnOnTimeShift;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox5;
@@ -157,6 +160,9 @@ namespace MediaPortal.Configuration.Sections
         this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
         this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
         this.byIndexCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+        this.showChannelNumberCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+        this.lblChanNumMaxLen = new System.Windows.Forms.Label();
+        this.channelNumberMaxLengthNumUpDn = new System.Windows.Forms.NumericUpDown();
         this.groupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
         this.cbTurnOnTv = new MediaPortal.UserInterface.Controls.MPCheckBox();
         this.gAllowedModes = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -387,24 +393,70 @@ namespace MediaPortal.Configuration.Sections
         this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                     | System.Windows.Forms.AnchorStyles.Right)));
         this.groupBox3.Controls.Add(this.byIndexCheckBox);
+        this.groupBox3.Controls.Add(this.showChannelNumberCheckBox);
+        this.groupBox3.Controls.Add(this.channelNumberMaxLengthNumUpDn);
+        this.groupBox3.Controls.Add(this.lblChanNumMaxLen);
         this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
         this.groupBox3.Location = new System.Drawing.Point(192, 325);
         this.groupBox3.Name = "groupBox3";
-        this.groupBox3.Size = new System.Drawing.Size(280, 53);
+        this.groupBox3.Size = new System.Drawing.Size(280, 100);
         this.groupBox3.TabIndex = 4;
         this.groupBox3.TabStop = false;
-        this.groupBox3.Text = "Misc";
+        this.groupBox3.Text = "Channel Numbers";
         // 
         // byIndexCheckBox
         // 
         this.byIndexCheckBox.AutoSize = true;
         this.byIndexCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.byIndexCheckBox.Location = new System.Drawing.Point(16, 21);
+        this.byIndexCheckBox.Location = new System.Drawing.Point(17, 20);
         this.byIndexCheckBox.Name = "byIndexCheckBox";
         this.byIndexCheckBox.Size = new System.Drawing.Size(182, 17);
-        this.byIndexCheckBox.TabIndex = 0;
+        this.byIndexCheckBox.TabIndex = 1;
         this.byIndexCheckBox.Text = "Select channel by index (non-US)";
         this.byIndexCheckBox.UseVisualStyleBackColor = true;
+        // 
+        // showChannelNumberCheckBox
+        // 
+        this.showChannelNumberCheckBox.AutoSize = true;
+        this.showChannelNumberCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.showChannelNumberCheckBox.Location = new System.Drawing.Point(17, 43);
+        this.showChannelNumberCheckBox.Name = "showChannelNumberCheckBox";
+        this.showChannelNumberCheckBox.Size = new System.Drawing.Size(182, 17);
+        this.showChannelNumberCheckBox.TabIndex = 2;
+        this.showChannelNumberCheckBox.Text = "Show channel numbers";
+        this.showChannelNumberCheckBox.UseVisualStyleBackColor = true;
+        // 
+        // lblChanNumMaxLen
+        // 
+        this.lblChanNumMaxLen.AutoSize = true;
+        this.lblChanNumMaxLen.Location = new System.Drawing.Point(31, 68);
+        this.lblChanNumMaxLen.Name = "lblChanNumMaxLen";
+        this.lblChanNumMaxLen.Size = new System.Drawing.Size(141, 13);
+        this.lblChanNumMaxLen.TabIndex = 3;
+        this.lblChanNumMaxLen.Text = "Channel number max. length";
+        // 
+        // channelNumberMaxLengthNumUpDn
+        // 
+        this.channelNumberMaxLengthNumUpDn.AutoSize = true;
+        this.channelNumberMaxLengthNumUpDn.Location = new System.Drawing.Point(178, 66);
+        this.channelNumberMaxLengthNumUpDn.Name = "channelNumberMaxLengthNumUpDn";
+        this.channelNumberMaxLengthNumUpDn.Size = new System.Drawing.Size(42, 20);
+        this.channelNumberMaxLengthNumUpDn.TabIndex = 4;
+        this.channelNumberMaxLengthNumUpDn.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+        this.channelNumberMaxLengthNumUpDn.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+        this.channelNumberMaxLengthNumUpDn.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
         // 
         // groupBox5
         // 
@@ -595,6 +647,12 @@ namespace MediaPortal.Configuration.Sections
 
         textBoxTimeShiftBuffer.Text = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30).ToString();
         byIndexCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "byindex", true);
+        showChannelNumberCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "showchannelnumber", true);
+
+        int channelNumberMaxLen = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
+        channelNumberMaxLengthNumUpDn.Value = channelNumberMaxLen;
+
+
         int DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 0);
         if (DeInterlaceMode < 0 || DeInterlaceMode > 3)
           DeInterlaceMode = 3;
@@ -703,6 +761,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("mytv", "autoturnontv", cbTurnOnTv.Checked);
         xmlwriter.SetValueAsBool("mytv", "autoturnontimeshifting", cbTurnOnTimeShift.Checked);
         xmlwriter.SetValueAsBool("mytv", "byindex", byIndexCheckBox.Checked);
+        xmlwriter.SetValueAsBool("mytv", "showchannelnumber", showChannelNumberCheckBox.Checked);
+        xmlwriter.SetValue("mytv", "channelnumbermaxlength", channelNumberMaxLengthNumUpDn.Value);
 
         try
         {
