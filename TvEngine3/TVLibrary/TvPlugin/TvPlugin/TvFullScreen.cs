@@ -2379,7 +2379,7 @@ namespace TvPlugin
           GroupMap map = (GroupMap)TVHome.Navigator.CurrentGroup.ReferringGroupMap()[channelNr - 1];
           displayedChannelName = map.ReferencedChannel().Name;
         }
-        else
+        /*else
           for (int ChannelCnt = 0; ChannelCnt < TVHome.Navigator.CurrentGroup.ReferringGroupMap().Count; ChannelCnt++)
           {
             GroupMap map = (GroupMap)TVHome.Navigator.CurrentGroup.ReferringGroupMap()[ChannelCnt];
@@ -2388,11 +2388,15 @@ namespace TvPlugin
               displayedChannelName = map.ReferencedChannel().Name;
               break;
             }
-          }
+          }*/
         if (displayedChannelName != string.Empty)
-          msg.Label = String.Format("{0} {1} ({2})", GUILocalizeStrings.Get(602), _channelName, displayedChannelName);  // Channel
+          //not enough room for label "Channel"
+          //msg.Label = String.Format("{0} {1} ({2})", GUILocalizeStrings.Get(602), _channelName, displayedChannelName);  // Channel
+          msg.Label = String.Format("{0} {1} ({2})", "", _channelName, displayedChannelName);  // Channel
         else
-          msg.Label = String.Format("{0} {1}", GUILocalizeStrings.Get(602), _channelName);  // Channel
+         //not enough room for label "Channel"
+         //msg.Label = String.Format("{0} {1}", GUILocalizeStrings.Get(602), _channelName);  // Channel 
+         msg.Label = String.Format("{0} {1}", "", _channelName);  // Channel
 
         GUIControl cntTarget = base.GetControl((int)Control.LABEL_ROW1);
         if (cntTarget != null)

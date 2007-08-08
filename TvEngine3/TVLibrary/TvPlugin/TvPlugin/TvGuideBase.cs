@@ -126,6 +126,9 @@ namespace TvPlugin
     DateTime _keyPressedTimer = DateTime.Now;
     string _lineInput = String.Empty;
     //static bool _workerThreadRunning = false;
+    bool _byIndex = false;
+    bool _showChannelNumber = false;
+    int _channelNumberMaxLength = 3;
 
     #endregion
 
@@ -174,6 +177,9 @@ namespace TvPlugin
         _currentChannel = xmlreader.GetValueAsString("tvguide", "channel", String.Empty);
         _cursorX = xmlreader.GetValueAsInt("tvguide", "ypos", 0);
         _channelOffset = xmlreader.GetValueAsInt("tvguide", "yoffset", 0);
+        _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
+        _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
+        _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
       }
     }
 
@@ -1457,6 +1463,10 @@ namespace TvPlugin
 
     void RenderChannel(ref Dictionary<int, List<Program>> mapPrograms,int iChannel, Channel channel, long iStart, long iEnd, bool selectCurrentShow)
     {
+      int channelNum = 0;
+      foreach (TuningDetail detail in channel.ReferringTuningDetail())
+        channelNum = detail.ChannelNumber;
+
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Name);
       if (System.IO.File.Exists(strLogo))
       {
@@ -1465,7 +1475,10 @@ namespace TvPlugin
         {
           if (_showChannelLogos)
             img.TexutureIcon = strLogo;
-          img.Label1 = channel.Name;
+          if (channelNum > 0 && _showChannelNumber)
+            img.Label1 = channelNum + " " + channel.Name;
+          else 
+            img.Label1 = channel.Name;
           img.IsVisible = true;
         }
       }
@@ -1476,7 +1489,10 @@ namespace TvPlugin
         {
           if (_showChannelLogos)
             img.TexutureIcon = "defaultVideoBig.png";
-          img.Label1 = channel.Name;
+          if (channelNum > 0 && _showChannelNumber)
+            img.Label1 = channelNum + " " + channel.Name;
+          else
+            img.Label1 = channel.Name;
           img.IsVisible = true;
         }
       }
@@ -2755,7 +2771,7 @@ namespace TvPlugin
       if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
       {
         TimeSpan ts = DateTime.Now - _keyPressedTimer;
-        if (_lineInput.Length >= 2 || ts.TotalMilliseconds >= 800)
+        if (_lineInput.Length >= _channelNumberMaxLength || ts.TotalMilliseconds >= 800)
         {
           _lineInput = String.Empty;
         }
@@ -2763,7 +2779,12 @@ namespace TvPlugin
         if (chKey == '0' && _lineInput.Length == 0)
           return;
         _lineInput += chKey;
-        if (_lineInput.Length == 2)
+
+        // give feedback to user that numbers are being entered
+        GUILabelControl label = GetControl((int)Controls.LABEL_TIME1) as GUILabelControl;
+        label.Label = _lineInput;
+
+        if (_lineInput.Length == _channelNumberMaxLength)
         {
           // change channel
           int iChannel = Int32.Parse(_lineInput);
@@ -2775,7 +2796,36 @@ namespace TvPlugin
 
     void ChangeChannelNr(int iChannelNr)
     {
-      iChannelNr--;
+      int iCounter = 0;
+      bool found = false;
+      int searchChannel = iChannelNr;
+
+      Channel chan;
+      int channelDistance = 99999;
+      
+      if (_byIndex == false)
+      {
+        while (iCounter < _channelList.Count && found == false)
+        {
+          chan = (Channel)_channelList[iCounter];
+          foreach (TuningDetail detail in chan.ReferringTuningDetail())
+          {
+            if (detail.ChannelNumber == searchChannel)
+            {
+              iChannelNr = iCounter;
+              found = true;
+            }  //find closest channel number
+            else if ((int)Math.Abs(detail.ChannelNumber - searchChannel) < channelDistance)
+            {
+              channelDistance = (int)Math.Abs(detail.ChannelNumber - searchChannel);
+              iChannelNr = iCounter;
+            }
+          }
+          iCounter++;
+        }
+      }
+      else
+        iChannelNr--; // offset for indexed channel number
       if (iChannelNr >= 0 && iChannelNr < _channelList.Count)
       {
         UnFocus();

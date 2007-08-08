@@ -174,6 +174,12 @@ namespace SetupTv.Sections
         if (channel.FreeToAir == false)
           imageIndex = 2;
         ListViewItem mappedItem = mpListViewMapped.Items.Add(channel.Name, imageIndex);
+
+        foreach (TuningDetail detail in channel.ReferringTuningDetail())
+        {
+            mappedItem.SubItems.Add(Convert.ToString(detail.ChannelNumber).PadLeft(5,'0'));
+        }
+        
         mappedItem.Tag = map;
         channelsMapped[channel.IdChannel] = true;
       }
@@ -405,6 +411,7 @@ namespace SetupTv.Sections
 
     private void mpListViewMapped_ColumnClick(object sender, ColumnClickEventArgs e)
     {
+        mpListViewMapped.BeginUpdate();
       if (e.Column == lvwColumnSorter2.SortColumn)
       {
         // Reverse the current sort direction for this column.
@@ -426,6 +433,8 @@ namespace SetupTv.Sections
 
       // Perform the sort with these new sort options.
       this.mpListViewMapped.Sort();
+      ReOrderMap();
+      mpListViewMapped.EndUpdate();
     }
 
     private void btnUp_Click(object sender, EventArgs e)
@@ -466,6 +475,5 @@ namespace SetupTv.Sections
       ReOrderMap();
       mpListViewMapped.EndUpdate();
     }
-
   }
 }

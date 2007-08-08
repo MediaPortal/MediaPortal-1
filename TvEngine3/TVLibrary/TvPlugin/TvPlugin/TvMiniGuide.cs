@@ -65,6 +65,23 @@ namespace TvPlugin
     Channel _selectedChannel;
     bool _zap = true;
     Stopwatch benchClock = null;
+    private List<Channel> _channelList = new List<Channel>();
+
+    bool _byIndex = false;
+    bool _showChannelNumber = false;
+    int _channelNumberMaxLength = 3;
+
+    #region Serialisation
+    void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
+        _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
+        _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
+      }
+    }
+    #endregion
 
     /// <summary>
     /// Constructor
@@ -157,6 +174,7 @@ namespace TvPlugin
       GetID = (int)GUIWindow.Window.WINDOW_MINI_GUIDE;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
       _canceled = true;
+      LoadSettings();
       return bResult;
     }
 
@@ -168,6 +186,39 @@ namespace TvPlugin
     public override void Render(float timePassed)
     {
       base.Render(timePassed);		// render our controls to the screen
+    }
+
+    private void GetChannels(bool refresh)
+    {
+      if (refresh)
+        _channelList = new List<Channel>();
+      if (_channelList == null)
+        _channelList = new List<Channel>();
+      if (_channelList.Count == 0)
+      {
+        try
+        {
+          if (TVHome.Navigator.CurrentGroup != null)
+          {
+            foreach (GroupMap chan in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
+            {
+              Channel ch = chan.ReferencedChannel();
+              if (ch.VisibleInGuide && ch.IsTv)
+                _channelList.Add(ch);
+            }
+          }
+        }
+        catch
+        {
+        }
+
+        if (_channelList.Count == 0)
+        {
+          Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true);
+          for (int i = 0; i < 10; ++i)
+            _channelList.Add(newChannel);
+        }
+      }
     }
 
     /// <summary>
@@ -475,6 +526,11 @@ namespace TvPlugin
           item.Label3 = GUILocalizeStrings.Get(789) + prog.TitleNow;
           
           sb.Append(" - ");
+          if (_showChannelNumber == true)
+          {
+            foreach (TuningDetail detail in _tvChannelList[i].ReferringTuningDetail())
+              sb.Append(detail.ChannelNumber + " - ");
+          }
           sb.Append(CalculateProgress(prog.NowStartTime, prog.NowEndTime).ToString());
           sb.Append("%");
           item.Label2 = sb.ToString();

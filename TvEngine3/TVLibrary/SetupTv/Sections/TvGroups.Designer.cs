@@ -40,19 +40,20 @@ namespace SetupTv.Sections
       this.mpListViewGroups = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.btnDown = new System.Windows.Forms.Button();
+      this.btnUp = new System.Windows.Forms.Button();
       this.mpButtonUnmap = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonMap = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListViewMapped = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpListViewChannels = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.mpComboBoxGroup = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.btnDown = new System.Windows.Forms.Button();
-      this.btnUp = new System.Windows.Forms.Button();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -179,6 +180,26 @@ namespace SetupTv.Sections
       this.tabPage2.Text = "Mapping";
       this.tabPage2.UseVisualStyleBackColor = true;
       // 
+      // btnDown
+      // 
+      this.btnDown.Location = new System.Drawing.Point(207, 211);
+      this.btnDown.Name = "btnDown";
+      this.btnDown.Size = new System.Drawing.Size(44, 23);
+      this.btnDown.TabIndex = 17;
+      this.btnDown.Text = "Down";
+      this.btnDown.UseVisualStyleBackColor = true;
+      this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
+      // 
+      // btnUp
+      // 
+      this.btnUp.Location = new System.Drawing.Point(207, 185);
+      this.btnUp.Name = "btnUp";
+      this.btnUp.Size = new System.Drawing.Size(44, 23);
+      this.btnUp.TabIndex = 16;
+      this.btnUp.Text = "Up";
+      this.btnUp.UseVisualStyleBackColor = true;
+      this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
+      // 
       // mpButtonUnmap
       // 
       this.mpButtonUnmap.Location = new System.Drawing.Point(219, 127);
@@ -213,7 +234,8 @@ namespace SetupTv.Sections
       this.mpListViewMapped.AllowDrop = true;
       this.mpListViewMapped.AllowRowReorder = true;
       this.mpListViewMapped.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader3});
       this.mpListViewMapped.LargeImageList = this.imageList1;
       this.mpListViewMapped.Location = new System.Drawing.Point(252, 58);
       this.mpListViewMapped.Name = "mpListViewMapped";
@@ -224,13 +246,18 @@ namespace SetupTv.Sections
       this.mpListViewMapped.View = System.Windows.Forms.View.Details;
       this.mpListViewMapped.DragEnter += new System.Windows.Forms.DragEventHandler(this.mpListViewMapped_DragEnter);
       this.mpListViewMapped.DragDrop += new System.Windows.Forms.DragEventHandler(this.mpListViewMapped_DragDrop);
+//      this.mpListViewMapped.SelectedIndexChanged += new System.EventHandler(this.mpListViewMapped_SelectedIndexChanged);
       this.mpListViewMapped.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListViewMapped_ColumnClick);
       this.mpListViewMapped.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListViewMapped_ItemDrag);
       // 
       // columnHeader2
       // 
       this.columnHeader2.Text = "Name";
-      this.columnHeader2.Width = 180;
+      this.columnHeader2.Width = 130;
+      // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "Channel Number";
       // 
       // imageList1
       // 
@@ -290,26 +317,6 @@ namespace SetupTv.Sections
       this.mpLabel1.TabIndex = 9;
       this.mpLabel1.Text = "Group:";
       // 
-      // btnDown
-      // 
-      this.btnDown.Location = new System.Drawing.Point(207, 211);
-      this.btnDown.Name = "btnDown";
-      this.btnDown.Size = new System.Drawing.Size(44, 23);
-      this.btnDown.TabIndex = 17;
-      this.btnDown.Text = "Down";
-      this.btnDown.UseVisualStyleBackColor = true;
-      this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
-      // 
-      // btnUp
-      // 
-      this.btnUp.Location = new System.Drawing.Point(207, 185);
-      this.btnUp.Name = "btnUp";
-      this.btnUp.Size = new System.Drawing.Size(44, 23);
-      this.btnUp.TabIndex = 16;
-      this.btnUp.Text = "Up";
-      this.btnUp.UseVisualStyleBackColor = true;
-      this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
-      // 
       // TvGroups
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -350,5 +357,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonRenameGroup;
     private System.Windows.Forms.Button btnDown;
     private System.Windows.Forms.Button btnUp;
+    private System.Windows.Forms.ColumnHeader columnHeader3;
   }
 }
