@@ -967,6 +967,8 @@ namespace WebEPG_conf
       foreach (ChannelMap channel in _configFile.Channels)
       {
         _channelMapping.Add(channel.displayName, channel);
+        if (channel.merged != null && channel.merged.Count == 0)
+          channel.merged = null;
       }
 
       nMaxGrab.Value = _configFile.Info.GrabDays;
@@ -998,6 +1000,29 @@ namespace WebEPG_conf
         }
       }
 
+      _configFile.Channels = new List<ChannelMap>();
+
+      int channelCount = xmlreader.GetValueAsInt("ChannelMap", "Count", 0);
+
+      for (int i = 1; i <= channelCount; i++)
+      {
+        ChannelMap channel = new ChannelMap();
+        channel.displayName = xmlreader.GetValueAsString(i.ToString(), "DisplayName", "");
+        string grabber = xmlreader.GetValueAsString(i.ToString(), "Grabber1", ""); ;
+        //if (mergedList.ContainsKey(channel.displayName))
+        //{
+        //  channel.merged = mergedList[channel.displayName];
+        //  foreach (MergedChannel mergedChannel in channel.merged)
+        //    mergedChannel.grabber = grabber;
+        //}
+        //else
+        //{
+          channel.id = xmlreader.GetValueAsString(i.ToString(), "ChannelID", "");
+          channel.grabber = grabber;
+        //}
+        _configFile.Channels.Add(channel);
+      }
+
       int mergeCount = xmlreader.GetValueAsInt("MergeChannels", "Count", 0);
       Dictionary<string, List<MergedChannel>> mergedList = new Dictionary<string, List<MergedChannel>>();
 
@@ -1009,42 +1034,21 @@ namespace WebEPG_conf
           if (channelcount > 0)
           {
             List<MergedChannel> mergedChannels = new List<MergedChannel>();
-            string displayName = xmlreader.GetValueAsString("Merge" + i.ToString(), "DisplayName", "");
-
+            ChannelMap channel = new ChannelMap();
+            channel.displayName = xmlreader.GetValueAsString("Merge" + i.ToString(), "DisplayName", "");
+            channel.merged = new List<MergedChannel>();
             for (int c = 1; c <= channelcount; c++)
             {
-              MergedChannel channel = new MergedChannel();
-              channel.id = xmlreader.GetValueAsString("Merge" + i.ToString(), "Channel" + c.ToString(), "");
-              channel.start = xmlreader.GetValueAsString("Merge" + i.ToString(), "Start" + c.ToString(), "0:0");
-              channel.end = xmlreader.GetValueAsString("Merge" + i.ToString(), "End" + c.ToString(), "0:0");
-              mergedChannels.Add(channel);
+              MergedChannel mergedChannel = new MergedChannel();
+              mergedChannel.id = xmlreader.GetValueAsString("Merge" + i.ToString(), "Channel" + c.ToString(), "");
+              mergedChannel.start = xmlreader.GetValueAsString("Merge" + i.ToString(), "Start" + c.ToString(), "0:0");
+              mergedChannel.end = xmlreader.GetValueAsString("Merge" + i.ToString(), "End" + c.ToString(), "0:0");
+              channel.merged.Add(mergedChannel);
             }
-            mergedList.Add(displayName, mergedChannels);
+            
+            _configFile.Channels.Add(channel);
           }
         }
-      }
-
-      _configFile.Channels = new List<ChannelMap>();
-
-      int channelCount = xmlreader.GetValueAsInt("ChannelMap", "Count", 0);
-
-      for (int i = 1; i <= channelCount; i++)
-      {
-        ChannelMap channel = new ChannelMap();
-        channel.displayName = xmlreader.GetValueAsString(i.ToString(), "DisplayName", "");
-        string grabber = xmlreader.GetValueAsString(i.ToString(), "Grabber1", ""); ;
-        if (mergedList.ContainsKey(channel.displayName))
-        {
-          channel.merged = mergedList[channel.displayName];
-          foreach (MergedChannel mergedChannel in channel.merged)
-            mergedChannel.grabber = grabber;
-        }
-        else
-        {
-          channel.id = xmlreader.GetValueAsString(i.ToString(), "ChannelID", "");
-          channel.grabber = grabber;
-        }
-        _configFile.Channels.Add(channel);
       }
 
       xmlreader.Clear();
@@ -1498,12 +1502,15 @@ namespace WebEPG_conf
             if (channelMap.merged == null || channelMap.merged.Count == 0)
             {
               channelMap.merged = new List<MergedChannel>();
-              MergedChannel channel = new MergedChannel();
-              channel.id = channelMap.id;
-              channelMap.id = null;
-              channel.grabber = channelMap.grabber;
-              channelMap.grabber = null;
-              channelMap.merged.Add(channel);
+              if (channelMap.id != null)
+              {
+                MergedChannel channel = new MergedChannel();
+                channel.id = channelMap.id;
+                channelMap.id = null;
+                channel.grabber = channelMap.grabber;
+                channelMap.grabber = null;
+                channelMap.merged.Add(channel);
+              }
               //_channelMapping.Remove(channel.Text);
               //_channelMapping.Add(channel.Text, channelMap);
             }
@@ -1523,16 +1530,18 @@ namespace WebEPG_conf
         {
           if (_channelMapping.ContainsKey(lvMapping.SelectedItems[0].Text))
           {
-            if (_channelMapping[lvMapping.SelectedItems[0].Text].merged.Count <= 1)
+            if (_channelMapping[lvMapping.SelectedItems[0].Text].merged == null || 
+              _channelMapping[lvMapping.SelectedItems[0].Text].merged.Count <= 1)
             {
               ChannelMap channelMap = _channelMapping[lvMapping.SelectedItems[0].Text];
-              if (channelMap.merged != null && channelMap.merged.Count > 0)
+              if (channelMap.merged != null)
               {
-                channelMap.id = channelMap.merged[0].id;
-                channelMap.grabber = channelMap.merged[0].grabber;
+                if (channelMap.merged.Count > 0)
+                {
+                  channelMap.id = channelMap.merged[0].id;
+                  channelMap.grabber = channelMap.merged[0].grabber;
+                }
                 channelMap.merged = null;
-                //_channelMapping.Remove(channel.Text);
-                //_channelMapping.Add(channel.Text, channelMap);
               }
               UpdateMergedList(channelMap);
               UpdateList();
