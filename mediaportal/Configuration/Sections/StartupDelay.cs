@@ -28,7 +28,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        nudDelay.Value = xmlreader.GetValueAsInt("general", "startup_delay", 0);
+        nudDelay.Value = xmlreader.GetValueAsInt("general", "startup delay", 0);
         cbWaitForTvService.Checked = xmlreader.GetValueAsBool("general", "wait for tvserver", false);
       }
     }
