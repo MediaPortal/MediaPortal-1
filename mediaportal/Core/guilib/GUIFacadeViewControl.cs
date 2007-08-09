@@ -197,6 +197,8 @@ namespace MediaPortal.GUI.Library
             ctl.OnMessage(msg);
           }
         }
+        // Set the View Property
+        SetViewProperty();
         UpdateView();
       }
     }
@@ -675,6 +677,61 @@ namespace MediaPortal.GUI.Library
           _viewAlbum.IsVisible = false;
         if (_viewPlayList != null)
           _viewPlayList.IsVisible = false;
+      }
+    }
+
+    private void SetViewProperty()
+    {
+      switch (_currentViewMode)
+      {
+        case ViewMode.AlbumView:
+          GUIPropertyManager.SetProperty("#albumViewVisible", "true");
+          GUIPropertyManager.SetProperty("#filmstripViewVisible", "false");
+          GUIPropertyManager.SetProperty("#largeiconsViewVisible", "false");
+          GUIPropertyManager.SetProperty("#listViewVisible", "false");
+          GUIPropertyManager.SetProperty("#playlistViewVisible", "false");
+          GUIPropertyManager.SetProperty("#smalliconsViewVisible", "false");
+          break;
+        case ViewMode.Filmstrip:
+          GUIPropertyManager.SetProperty("#albumViewVisible", "false");
+          GUIPropertyManager.SetProperty("#filmstripViewVisible", "true");
+          GUIPropertyManager.SetProperty("#largeiconsViewVisible", "false");
+          GUIPropertyManager.SetProperty("#listViewVisible", "false");
+          GUIPropertyManager.SetProperty("#playlistViewVisible", "false");
+          GUIPropertyManager.SetProperty("#smalliconsViewVisible", "false");
+          break;
+        case ViewMode.LargeIcons:
+          GUIPropertyManager.SetProperty("#albumViewVisible", "false");
+          GUIPropertyManager.SetProperty("#filmstripViewVisible", "false");
+          GUIPropertyManager.SetProperty("#largeiconsViewVisible", "true");
+          GUIPropertyManager.SetProperty("#listViewVisible", "false");
+          GUIPropertyManager.SetProperty("#playlistViewVisible", "false");
+          GUIPropertyManager.SetProperty("#smalliconsViewVisible", "false");
+          break;
+        case ViewMode.List:
+          GUIPropertyManager.SetProperty("#albumViewVisible", "false");
+          GUIPropertyManager.SetProperty("#filmstripViewVisible", "false");
+          GUIPropertyManager.SetProperty("#largeiconsViewVisible", "false");
+          GUIPropertyManager.SetProperty("#listViewVisible", "true");
+          GUIPropertyManager.SetProperty("#playlistViewVisible", "false");
+          GUIPropertyManager.SetProperty("#smalliconsViewVisible", "false");
+          break;
+        case ViewMode.Playlist:
+          GUIPropertyManager.SetProperty("#albumViewVisible", "false");
+          GUIPropertyManager.SetProperty("#filmstripViewVisible", "false");
+          GUIPropertyManager.SetProperty("#largeiconsViewVisible", "false");
+          GUIPropertyManager.SetProperty("#listViewVisible", "false");
+          GUIPropertyManager.SetProperty("#playlistViewVisible", "true");
+          GUIPropertyManager.SetProperty("#smalliconsViewVisible", "false");
+          break;
+        case ViewMode.SmallIcons:
+          GUIPropertyManager.SetProperty("#albumViewVisible", "false");
+          GUIPropertyManager.SetProperty("#filmstripViewVisible", "false");
+          GUIPropertyManager.SetProperty("#largeiconsViewVisible", "false");
+          GUIPropertyManager.SetProperty("#listViewVisible", "false");
+          GUIPropertyManager.SetProperty("#playlistViewVisible", "false");
+          GUIPropertyManager.SetProperty("#smalliconsViewVisible", "true");
+          break;
       }
     }
 
