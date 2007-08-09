@@ -39,7 +39,7 @@ namespace MPTestTool
   {
     #region Variables
     string _tempDir = Path.GetTempPath()+"\\MPTemp";
-    string _zipFile = Application.StartupPath + "\\MediaPortalLogs.zip";
+    string _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)+"\\MediaPortalLogs.zip";
     bool _autoMode = false;
     bool _crashed = false;
     #endregion
