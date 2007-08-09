@@ -611,7 +611,7 @@ namespace MediaPortal.Video.Database
                  }
                  catch (Exception ex)
                  {
-                   Log.Error("Script garbber error file: {0}, message : {1}", grabberFileName, ex.Message);
+                   Log.Info("Script garbber error file: {0}, message : {1}", grabberFileName, ex.Message);
                  }
                }
                else
@@ -978,7 +978,7 @@ namespace MediaPortal.Video.Database
               }
               catch (Exception ex)
               {
-                Log.Error("Script garbber error GetDetails() file: {0}, message : {1}", grabberFileName, ex.Message);
+                Log.Info("Script garbber error GetDetails() file: {0}, message : {1}", grabberFileName, ex.Message);
                 return false;
               }
               return true;
