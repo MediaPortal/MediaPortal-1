@@ -57,7 +57,8 @@ namespace MediaPortal.Music.Database
     taggedtracks,
     topartisttags,
     toptracktags,
-    albuminfo
+    albuminfo,
+    systemrecs,
   }
 
   public enum offlineMode: int
@@ -778,6 +779,8 @@ namespace MediaPortal.Music.Database
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "tags.xml", @"//toptags/tag", feed_);
         case lastFMFeed.chartstoptags:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/tag/toptags.xml", @"//toptags/tag", feed_);
+        case lastFMFeed.systemrecs:
+          return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "systemrecs.xml", @"//recommendations/artist", feed_);
         default:
           return ParseXMLDoc(@"http://ws.audioscrobbler.com/1.0/user/" + asUser_ + "/" + "recenttracks.xml", @"//recenttracks/track", feed_);
       }
@@ -2083,6 +2086,16 @@ namespace MediaPortal.Music.Database
                 goto case lastFMFeed.toptracks;
               case (lastFMFeed.similar):
                 goto case lastFMFeed.topartists;
+              case (lastFMFeed.systemrecs):
+                {
+                  if (child.Name == "name" && child.ChildNodes.Count != 0)
+                    nodeSong.Artist = child.ChildNodes[0].Value;
+                  else if (child.Name == "mbid" && child.ChildNodes.Count != 0)
+                    nodeSong.MusicBrainzID = child.ChildNodes[0].Value;
+                  else if (child.Name == "url" && child.ChildNodes.Count != 0)
+                    nodeSong.URL = child.ChildNodes[0].Value;
+                }
+                break;
 
             } //switch
           }

@@ -622,6 +622,22 @@ namespace MediaPortal.AudioScrobbler
       }
     }
 
+    private void buttonRefreshRecommendations_Click(object sender, EventArgs e)
+    {
+      buttonRefreshSysRecs.Enabled = false;
+      listViewSysRecs.Clear();
+      songList = new List<Song>();
+
+      songList = lastFmLookup.getAudioScrobblerFeed(lastFMFeed.systemrecs, "");
+      listViewSysRecs.Columns.Add("Artist", 250);
+
+      for (int i = 0; i < songList.Count; i++)
+        listViewSysRecs.Items.Add(BuildListViewArtist(songList[i], false, false));
+
+      buttonRefreshSysRecs.Enabled = true;
+    }
+
+
     private void buttonRefreshSuggestions_Click(object sender, EventArgs e)
     {
       changeControlsSuggestions(true);
@@ -737,7 +753,7 @@ namespace MediaPortal.AudioScrobbler
       ArrayList artistsInDB = new ArrayList();
       songList = new List<Song>();
       songList = lastFmLookup.getNeighboursArtists(false);
-      listViewNeighbours.Columns.Add("Artist", 170);
+      listViewNeighbours.Columns.Add("Artist", 250);
       for (int i = 0; i < songList.Count; i++)
       {
         MusicDatabase mdb = new MusicDatabase();
@@ -792,5 +808,6 @@ namespace MediaPortal.AudioScrobbler
       LoadSettings();
     }
     #endregion   
+
   }
 }
