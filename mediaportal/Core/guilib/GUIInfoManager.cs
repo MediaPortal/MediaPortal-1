@@ -285,6 +285,13 @@ namespace MediaPortal.GUI.Library
     public const int XLINK_KAI_USERNAME = 701;
     public const int SKIN_THEME = 702;
 
+    public const int FACADEVIEW_ALBUM = 800;
+    public const int FACADEVIEW_FILMSTRIP = 801;
+    public const int FACADEVIEW_LARGEICONS = 802;
+    public const int FACADEVIEW_LIST = 803;
+    public const int FACADEVIEW_PLAYLIST = 804;
+    public const int FACADEVIEW_SMALLICONS = 805;
+
     public const int WINDOW_IS_TOPMOST = 9994;
     public const int WINDOW_IS_VISIBLE = 9995;
     public const int WINDOW_NEXT = 9996;
@@ -688,7 +695,16 @@ namespace MediaPortal.GUI.Library
             return AddMultiInfo(new GUIInfo(bNegate ? -CONTROL_IS_VISIBLE : CONTROL_IS_VISIBLE, controlID, 0));
         }
       }
-      else if (strTest.Length >=13 && strTest.Substring(0, 13) == "controlgroup(")
+      else if (strCategory == "facadeview")
+      {
+        if (strTest == "facadeview.album") ret = FACADEVIEW_ALBUM;
+        else if (strTest == "facadeview.filmstrip") ret = FACADEVIEW_FILMSTRIP;
+        else if (strTest == "facadeview.largeicons") ret = FACADEVIEW_LARGEICONS;
+        else if (strTest == "facadeview.list") ret = FACADEVIEW_LIST;
+        else if (strTest == "facadeview.playlist") ret = FACADEVIEW_PLAYLIST;
+        else if (strTest == "facadeview.smallicons") ret = FACADEVIEW_SMALLICONS;
+      }
+      else if (strTest.Length >= 13 && strTest.Substring(0, 13) == "controlgroup(")
       {
         int groupID = Int32.Parse(strTest.Substring(13));
         int controlID = 0;
@@ -700,7 +716,7 @@ namespace MediaPortal.GUI.Library
           return AddMultiInfo(new GUIInfo(bNegate ? -CONTROL_GROUP_HAS_FOCUS : CONTROL_GROUP_HAS_FOCUS, groupID, controlID));
         }
       }
-      else if (strTest.Length >=24 && strTest.Substring(0, 24) == "buttonscroller.hasfocus(")
+      else if (strTest.Length >= 24 && strTest.Substring(0, 24) == "buttonscroller.hasfocus(")
       {
         int controlID = Int32.Parse(strTest.Substring(24, strTest.Length - 24));
         if (controlID != 0)
@@ -1044,6 +1060,17 @@ namespace MediaPortal.GUI.Library
       else if (condition == SYSTEM_INTERNET_STATE)
         bReturn = false;//bReturn = SystemHasInternet();
 
+      else if (condition >= 800 && condition <= 805)
+      {
+        bReturn = false;
+        string viewmode = GUIPropertyManager.GetProperty("#facadeview.viewmode");
+        if (viewmode == "album" && condition == FACADEVIEW_ALBUM) bReturn = true;
+        else if (viewmode == "filmstrip" && condition == FACADEVIEW_FILMSTRIP) bReturn = true;
+        else if (viewmode == "largeicons" && condition == FACADEVIEW_LARGEICONS) bReturn = true;
+        else if (viewmode == "list" && condition == FACADEVIEW_LIST) bReturn = true;
+        else if (viewmode == "playlist" && condition == FACADEVIEW_PLAYLIST) bReturn = true;
+        else if (viewmode == "smallicons" && condition == FACADEVIEW_SMALLICONS) bReturn = true;
+      }
       else if (g_Player.Playing)
       {
         switch (condition)

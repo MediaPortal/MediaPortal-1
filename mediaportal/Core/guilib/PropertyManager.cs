@@ -251,12 +251,7 @@ namespace MediaPortal.GUI.Library
       _properties["#numberplace.score4"] = String.Empty;
       _properties["#numberplace.score5"] = String.Empty;
 
-      _properties["#albumViewVisible"] = "false";
-      _properties["#filmstripViewVisible"] = "false";
-      _properties["#largeiconsViewVisible"] = "false";
-      _properties["#listViewVisible"] = "false";
-      _properties["#playlistViewVisible"] = "false";
-      _properties["#smalliconsViewVisible"] = "false";
+      _properties["#facadeview.viewmode"] = String.Empty;
     }
 
     /// <summary>
