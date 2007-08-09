@@ -676,7 +676,8 @@ namespace MediaPortal.MPInstaller
           }
           else if (fil.ToUpper().Contains("MEDIA"))
           {
-            addrow(Path.GetFileName(fil), MPinstalerStruct.SKIN_MEDIA_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
+            string st = Path.GetFullPath(fil).Substring(Path.GetFullPath(fil).ToLower().IndexOf("media\\") + 6);
+            addrow(Path.GetFileName(fil), MPinstalerStruct.SKIN_MEDIA_TYPE, subtype, Path.GetFullPath(fil), "02010", "OutputFileName=" + st+"|");
           }
           else
           {
