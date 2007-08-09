@@ -30,47 +30,50 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
 using System.Collections.Specialized;
+using System.IO;
 
 namespace MediaPortal.DeployTool
 {
-  public partial class TvServerSettingsDlg : DeployDialog, IDeployDialog
+  public partial class FinishedDlg : DeployDialog, IDeployDialog
   {
-    public TvServerSettingsDlg()
+    public FinishedDlg()
     {
       InitializeComponent();
-      type=DialogType.TvServerSettings;
-      textBoxDir.Text = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server";
+      type=DialogType.Finished;
     }
 
     #region IDeplayDialog interface
     public override DeployDialog GetNextDialog()
     {
-      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
+      return null;
     }
     public override bool SettingsValid()
     {
-      if (!Utils.CheckTargetDir(textBoxDir.Text))
-      {
-        Utils.ErrorDlg("You have to supply a valid installation path for the TV-Server.");
-        return false;
-      }
-      return true;
+      return false;
     }
     public override void SetProperties()
     {
-      InstallationProperties.Instance.Set("TVServerDir", textBoxDir.Text);
     }
     #endregion
 
-    private void buttonBrowse_Click(object sender, EventArgs e)
+    #region Hyperlink handler
+    private void OpenURL(string url)
     {
-      FolderBrowserDialog dlg = new FolderBrowserDialog();
-      dlg.Description = "Select the installation folder for TV-Server";
-      dlg.SelectedPath = textBoxDir.Text;
-      if (dlg.ShowDialog() == DialogResult.OK)
-        textBoxDir.Text = dlg.SelectedPath;
+      System.Diagnostics.Process.Start(url);
     }
+    private void linkHomepage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      OpenURL("http://www.team-mediaportal.com");
+    }
+    private void linkForum_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      OpenURL("http://forum.team-mediaportal.com");
+    }
+    private void linkWiki_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      OpenURL("http://wiki.team-mediaportal.com");
+    }
+    #endregion
   }
 }

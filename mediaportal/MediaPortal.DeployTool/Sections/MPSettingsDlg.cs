@@ -48,7 +48,7 @@ namespace MediaPortal.DeployTool
     public override DeployDialog GetNextDialog()
     {
       if (InstallationProperties.Instance["InstallType"] == "client")
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Requirements);
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
       else
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
     }

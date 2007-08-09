@@ -37,8 +37,8 @@ namespace MediaPortal.DeployTool
     DBMSSettings,
     MPSettings,
     TvServerSettings,
-    Requirements,
-    InstallProgress
+    Installation,
+    Finished
   }
   public sealed class DialogFlowHandler
   {
@@ -111,8 +111,11 @@ namespace MediaPortal.DeployTool
           case DialogType.TvServerSettings:
             dlg = (DeployDialog)new TvServerSettingsDlg();
             break;
-          case DialogType.Requirements:
-            dlg = (DeployDialog)new RequirementsDlg();
+          case DialogType.Installation:
+            dlg = (DeployDialog)new InstallDlg();
+            break;
+          case DialogType.Finished:
+            dlg = (DeployDialog)new FinishedDlg();
             break;
         }
         if (dlg != null)

@@ -1,0 +1,216 @@
+#region Copyright (C) 2005-2007 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2007 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using System.Collections.Specialized;
+using System.IO;
+
+namespace MediaPortal.DeployTool
+{
+  public partial class InstallDlg : DeployDialog, IDeployDialog
+  {
+    public InstallDlg()
+    {
+      InitializeComponent();
+      type=DialogType.Installation;
+      PopulateListView();
+    }
+
+    #region IDeplayDialog interface
+    public override DeployDialog GetNextDialog()
+    {
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Finished);
+    }
+    public override bool SettingsValid()
+    {
+      if (!InstallationComplete())
+      {
+        Utils.ErrorDlg("Not all required application are installed.");
+        return false;
+      }
+      else
+        return true;
+    }
+    public override void SetProperties()
+    {
+      InstallationProperties.Instance.Set("finished", "yes");
+    }
+    #endregion
+
+    private bool InstallationComplete()
+    {
+      bool isComplete = true;
+      foreach (ListViewItem item in listView.Items)
+      {
+        IInstallationPackage package = (IInstallationPackage)item.Tag;
+        CheckResult result = package.CheckStatus();
+        if (result.state != CheckState.INSTALLED)
+        {
+          isComplete = false;
+          break;
+        }
+      }
+      return isComplete;
+    }
+    private void AddPackageToListView(IInstallationPackage package)
+    {
+      ListViewItem item=listView.Items.Add(package.GetDisplayName());
+      item.Tag = package;
+      CheckResult result = package.CheckStatus();
+      switch (result.state)
+      {
+        case CheckState.INSTALLED:
+          item.SubItems.Add("Installed");
+          item.SubItems.Add("<nothing>");
+          break;
+        case CheckState.NOT_INSTALLED:
+          item.SubItems.Add("Not installed");
+          if (result.needsDownload)
+            item.SubItems.Add("Download->install");
+          else
+            item.SubItems.Add("Install");
+          break;
+        case CheckState.VERSION_MISMATCH:
+          item.SubItems.Add("Another version is already installed");
+          if (result.needsDownload)
+            item.SubItems.Add("Uninstall previous->download->install");
+          else
+            item.SubItems.Add("Uninstall previous->Install");
+          break;
+      }
+    }
+    private void PopulateListView()
+    {
+      listView.Items.Clear();
+      if (InstallationProperties.Instance["InstallType"] == "singleseat")
+      {
+        AddPackageToListView(new DirectX9Checker());
+        AddPackageToListView(new MediaPortalChecker());
+        AddPackageToListView(new TvServerChecker());
+        AddPackageToListView(new TvPluginServerChecker());
+      }
+      else if (InstallationProperties.Instance["InstallType"] == "tvserver_master")
+      {
+        /*if (InstallationProperties.Instance["DBMSType"] == "mssql")
+          listView.Items.Add("MS-SQL Server");
+        else
+          listView.Items.Add("MySQL");*/
+        AddPackageToListView(new TvServerChecker());
+      }
+      else if (InstallationProperties.Instance["InstallType"] == "tvserver_slave")
+      {
+        AddPackageToListView(new TvServerChecker());
+      }
+      else if (InstallationProperties.Instance["InstallType"] == "client")
+      {
+        AddPackageToListView(new DirectX9Checker());
+        AddPackageToListView(new MediaPortalChecker());
+        AddPackageToListView(new TvPluginServerChecker());
+      }
+      listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+      if (InstallationComplete())
+        buttonInstall.Enabled = false;
+    }
+
+    private void RequirementsDlg_ParentChanged(object sender, EventArgs e)
+    {
+      if (Parent != null)
+        PopulateListView();
+    }
+
+    private bool PerformPackageAction(IInstallationPackage package,ListViewItem item)
+    {
+      CheckResult result = package.CheckStatus();
+      if (result.state != CheckState.INSTALLED)
+      {
+        switch (result.state)
+        {
+          case CheckState.NOT_INSTALLED:
+            if (result.needsDownload)
+            {
+              item.SubItems[1].Text="Downloading...";
+              Update();
+              if (!package.Download())
+              {
+                Utils.ErrorDlg("Failed to download package [" + package.GetDisplayName() + "]");
+                return false;
+              }
+            }
+            item.SubItems[1].Text="Installing...";
+            Update();
+            if (!package.Install())
+            {
+              Utils.ErrorDlg("Failed to install package [" + package.GetDisplayName() + "]");
+              return false;
+            }
+            break;
+          case CheckState.VERSION_MISMATCH:
+            item.SubItems[1].Text="Uninstalling...";
+            Update();
+            if (!package.UnInstall())
+            {
+              Utils.ErrorDlg("Failed to uninstall package [" + package.GetDisplayName() + "]");
+              return false;
+            }
+            if (result.needsDownload)
+            {
+              item.SubItems[1].Text="Downloading...";
+              Update();
+              if (!package.Download())
+              {
+                Utils.ErrorDlg("Failed to download package [" + package.GetDisplayName() + "]");
+                return false;
+              }
+            }
+            item.SubItems[1].Text="Installing...";
+            Update();
+            if (!package.Install())
+            {
+              Utils.ErrorDlg("Failed to install package [" + package.GetDisplayName() + "]");
+              return false;
+            }
+            break;
+        }
+      }
+      return true;
+    }
+    private void buttonInstall_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem item in listView.Items)
+      {
+        IInstallationPackage package = (IInstallationPackage)item.Tag;
+        if (!PerformPackageAction(package,item))
+          break;
+      }
+      PopulateListView();
+    }
+  }
+}

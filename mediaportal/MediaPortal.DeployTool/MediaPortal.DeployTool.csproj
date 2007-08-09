@@ -28,6 +28,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.84.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -36,6 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HTTPDownload.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HTTPDownload.Designer.cs">
+      <DependentUpon>HTTPDownload.cs</DependentUpon>
+    </Compile>
     <Compile Include="IInstallationPackage.cs" />
     <Compile Include="DeployDialog.cs">
       <SubType>UserControl</SubType>
@@ -51,8 +61,17 @@
     </Compile>
     <Compile Include="DialogFlowHandler.cs" />
     <Compile Include="IDeplpoyDialog.cs" />
+    <Compile Include="InstallationChecks\TvPluginChecker.cs" />
+    <Compile Include="InstallationChecks\TvServerChecker.cs" />
     <Compile Include="InstallationChecks\DirectX9Checker.cs" />
+    <Compile Include="InstallationChecks\MediaPortalChecker.cs" />
     <Compile Include="InstallationProperties.cs" />
+    <Compile Include="ManualDownload.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ManualDownload.Designer.cs">
+      <DependentUpon>ManualDownload.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DeployDialog.resx">
@@ -63,6 +82,14 @@
       <SubType>Designer</SubType>
       <DependentUpon>DeployTool.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="HTTPDownload.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>HTTPDownload.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ManualDownload.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ManualDownload.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -72,8 +99,12 @@
       <SubType>Designer</SubType>
       <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\RequirementsDlg.resx">
-      <DependentUpon>RequirementsDlg.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\FinishedDlg.resx">
+      <DependentUpon>FinishedDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\InstallDlg.resx">
+      <DependentUpon>InstallDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DBMSSettingsDlg.resx">
@@ -112,11 +143,17 @@
     <Compile Include="Sections\BaseInstallationTypeDlg.Designer.cs">
       <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\RequirementsDlg.cs">
+    <Compile Include="Sections\FinishedDlg.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\RequirementsDlg.Designer.cs">
-      <DependentUpon>RequirementsDlg.cs</DependentUpon>
+    <Compile Include="Sections\FinishedDlg.Designer.cs">
+      <DependentUpon>FinishedDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\InstallDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\InstallDlg.Designer.cs">
+      <DependentUpon>InstallDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\DBMSSettingsDlg.cs">
       <SubType>UserControl</SubType>

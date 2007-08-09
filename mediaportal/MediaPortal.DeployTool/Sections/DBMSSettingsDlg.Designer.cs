@@ -37,10 +37,6 @@ namespace MediaPortal.DeployTool
       this.buttonBrowse = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
-      // HeaderLabel
-      // 
-      this.HeaderLabel.Size = new System.Drawing.Size(202, 13);
-      // 
       // label1
       // 
       this.label1.AutoSize = true;
@@ -67,6 +63,7 @@ namespace MediaPortal.DeployTool
       this.textBoxDir.Name = "textBoxDir";
       this.textBoxDir.Size = new System.Drawing.Size(463, 20);
       this.textBoxDir.TabIndex = 4;
+      this.textBoxDir.Text = "C:\\Programme\\MSSQL";
       // 
       // textBoxPassword
       // 
@@ -75,6 +72,7 @@ namespace MediaPortal.DeployTool
       this.textBoxPassword.PasswordChar = '*';
       this.textBoxPassword.Size = new System.Drawing.Size(132, 20);
       this.textBoxPassword.TabIndex = 8;
+      this.textBoxPassword.Text = "mediaportal";
       // 
       // label4
       // 
@@ -90,9 +88,9 @@ namespace MediaPortal.DeployTool
       this.label3.AutoSize = true;
       this.label3.Location = new System.Drawing.Point(7, 110);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(255, 13);
+      this.label3.Size = new System.Drawing.Size(372, 13);
       this.label3.TabIndex = 9;
-      this.label3.Text = "(The password for the admin-user of the SQL-Server)";
+      this.label3.Text = "(The password for the admin-user of the SQL-Server. Default is \"mediaportal\")";
       // 
       // buttonBrowse
       // 

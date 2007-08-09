@@ -54,6 +54,11 @@ namespace MediaPortal.DeployTool
 
     private void nextButton_Click(object sender, EventArgs e)
     {
+      if (nextButton.Text == "Close")
+      {
+        Close();
+        return;
+      }
       if (!_currentDialog.SettingsValid())
         return;
       _currentDialog.SetProperties();
@@ -61,6 +66,11 @@ namespace MediaPortal.DeployTool
       SwitchDialog(_currentDialog);
       if (!backButton.Visible)
         backButton.Visible = true;
+      if (InstallationProperties.Instance["finished"] == "yes")
+      {
+        backButton.Visible = false;
+        nextButton.Text = "Close";
+      }
     }
 
     private void backButton_Click(object sender, EventArgs e)

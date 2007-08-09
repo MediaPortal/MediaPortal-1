@@ -4,14 +4,17 @@ using System.Text;
 
 namespace MediaPortal.DeployTool
 {
-  public enum CheckResult
+  public enum CheckState
   {
     NOT_INSTALLED,
     INSTALLED,
-    PACKAGE_MISSING,
     VERSION_MISMATCH
   }
-
+  public struct CheckResult
+  {
+    public CheckState state;
+    public bool needsDownload;
+  }
   interface IInstallationPackage
   {
     string GetDisplayName();

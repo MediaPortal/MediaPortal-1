@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace MediaPortal.DeployTool
 {
@@ -65,6 +66,26 @@ namespace MediaPortal.DeployTool
         Directory.Delete(dir);
         return true;
       }
+    }
+
+    public static void UnzipFile(string zipArchive, string fileToExtract, string targetFile)
+    {
+      File.Delete(targetFile);
+      ZipFile zip=new ZipFile(zipArchive);
+      int idx=zip.FindEntry(fileToExtract,true);
+      Stream zipStream=zip.GetInputStream(idx);
+      FileStream target=new FileStream(targetFile,FileMode.CreateNew);
+      byte[] buffer=new byte[1024];
+      int bytesRead;
+      do
+      {
+        bytesRead = zipStream.Read(buffer, 0, buffer.Length);
+        if (bytesRead > 0)
+          target.Write(buffer, 0, bytesRead);
+      } while (bytesRead > 0);
+      target.Close();
+      zipStream.Close();
+      zip.Close();
     }
   }
 }
