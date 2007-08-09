@@ -572,7 +572,7 @@ namespace MediaPortal.MPInstaller
       return false;
     }
 
-    public string GetZipEntry(MPIFileList flst)
+    public static string GetZipEntry(MPIFileList flst)
     {
       string ret = string.Empty;
       if (flst.Type == PLUGIN_TYPE)
@@ -597,47 +597,52 @@ namespace MediaPortal.MPInstaller
             break;
 
         }
-        ret += @"\" + Path.GetFileName(flst.FileName);
+        ret += @"\" ;
       }
 
       if (flst.Type == SKIN_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + Path.GetFileName(flst.FileName);
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" ;
       }
 
       if (flst.Type == SKIN_MEDIA_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" + Path.GetFileName(flst.FileName);
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" ;
       }
 
       if (flst.Type == SKIN_SOUNDS_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Sounds" + @"\" + Path.GetFileName(flst.FileName);
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Sounds" + @"\" ;
       }
 
       if (flst.Type == SKIN_ANIMATIONS_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Animations" + @"\" + Path.GetFileName(flst.FileName);
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Animations" + @"\" ;
       }
 
       if (flst.Type == SKIN_TETRIS_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Tetris" + @"\" + Path.GetFileName(flst.FileName);
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Tetris" + @"\";
       }
 
       if (flst.Type == TEXT_TYPE)
       {
-        ret = "Release" + @"\" + "Text" + @"\" + flst.SubType + @"\" + Path.GetFileName(flst.FileName);
+        ret = "Release" + @"\" + "Text" + @"\" + flst.SubType + @"\" ;
       }
 
       if (flst.Type == THUMBS_TYPE)
       {
-        ret = "Release" + @"\" + "Thumbs" + @"\" + flst.SubType + @"\" + Path.GetFileName(flst.FileName);
+        ret = "Release" + @"\" + "Thumbs" + @"\" + flst.SubType + @"\" ;
       }
       if (flst.Type == OTHER_TYPE)
       {
-        ret = "Release" + @"\" + "Other" + @"\" + Path.GetFileName(flst.FileName);
+        ret = "Release" + @"\" + "Other" + @"\" ;
       }
+      
+      if (string.IsNullOrEmpty(flst.FileProperties.OutputFileName))
+        ret += Path.GetFileName(flst.FileName);
+      else
+        ret += flst.FileProperties.OutputFileName;
 
       return ret;
     }

@@ -150,8 +150,7 @@ namespace MediaPortal.MPInstaller
           {
             if (fl.SkinType)
             {
-              if (Path.GetFileName(ze.Name) == Path.GetFileName(fl.FileName)
-                  && ze.Name.Contains(@"\" + fl.SubType + @"\") )
+              if (ze.Name.Contains(MPinstalerStruct.GetZipEntry(fl)) )
               {
                 return true;
               }
@@ -159,7 +158,7 @@ namespace MediaPortal.MPInstaller
             }
             else
             {
-              if (Path.GetFileName(ze.Name) == Path.GetFileName(fl.FileName))
+              if (ze.Name.Contains(MPinstalerStruct.GetZipEntry(fl)))
                 return true;
               else return false;
             }
