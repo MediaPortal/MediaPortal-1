@@ -158,8 +158,8 @@ namespace TvLibrary.Implementations.DVB.Structures
           {
             while (true)
             {
-              byte tagInd = descriptor[offset];
-              byte tagLen = len = descriptor[offset + 1];
+              byte tagInd = descriptor[offset];              
+              byte tagLen = descriptor[offset + 1];
               if (tagLen + off < descriptor.Length)
               {
                 if (tagInd == 0x14)
