@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- changed : 03.08.2007   -->
 <!-- contains:   -->
 <!--   - Australia   -->
 <!--   - Austria   -->
@@ -1581,7 +1580,6 @@
 		<carrier frequency="698000" bandwidth="8" />
 		<carrier frequency="746000" bandwidth="8" />
 	</country>
-
 	<country name="Germany - Bremerhaven/Cuxhaven" offset="125">
 		<carrier frequency="482000" bandwidth="8" />
 		<carrier frequency="498000" bandwidth="8" />
@@ -1593,7 +1591,11 @@
 		<carrier frequency="714000" bandwidth="8" />
 		<carrier frequency="746000" bandwidth="8" />
 	</country>
-
+	<country name="Germany - Dresden" offset="125">
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+	</country>
 	<country name="Germany - Düsseldorf/Ruhrgebiet" offset="125">
 		<carrier frequency="506000" bandwidth="8" />
 		<carrier frequency="538000" bandwidth="8" />
