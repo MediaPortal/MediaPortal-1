@@ -117,6 +117,8 @@ namespace MediaPortal.MPInstaller
           this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
           this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
           this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+          this.button1 = new System.Windows.Forms.Button();
+          this.button2 = new System.Windows.Forms.Button();
           this.menuStrip1.SuspendLayout();
           this.contextMenuStrip1.SuspendLayout();
           this.tabPage_Skin.SuspendLayout();
@@ -489,6 +491,8 @@ namespace MediaPortal.MPInstaller
           // 
           // tabPage_Skin
           // 
+          this.tabPage_Skin.Controls.Add(this.button2);
+          this.tabPage_Skin.Controls.Add(this.button1);
           this.tabPage_Skin.Controls.Add(this.label6);
           this.tabPage_Skin.Controls.Add(this.skint_comboBox1);
           this.tabPage_Skin.Location = new System.Drawing.Point(4, 22);
@@ -940,6 +944,26 @@ namespace MediaPortal.MPInstaller
           // 
           this.folderBrowserDialog1.ShowNewFolderButton = false;
           // 
+          // button1
+          // 
+          this.button1.Location = new System.Drawing.Point(6, 57);
+          this.button1.Name = "button1";
+          this.button1.Size = new System.Drawing.Size(141, 23);
+          this.button1.TabIndex = 2;
+          this.button1.Text = "Set to default";
+          this.button1.UseVisualStyleBackColor = true;
+          this.button1.Click += new System.EventHandler(this.button1_Click);
+          // 
+          // button2
+          // 
+          this.button2.Location = new System.Drawing.Point(6, 86);
+          this.button2.Name = "button2";
+          this.button2.Size = new System.Drawing.Size(141, 23);
+          this.button2.TabIndex = 3;
+          this.button2.Text = "Unset from default";
+          this.button2.UseVisualStyleBackColor = true;
+          this.button2.Click += new System.EventHandler(this.button2_Click);
+          // 
           // Form1
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1072,6 +1096,8 @@ namespace MediaPortal.MPInstaller
       private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
       private System.Windows.Forms.Label label12;
       private System.Windows.Forms.ComboBox proiectt_comboBox1;
+      private System.Windows.Forms.Button button2;
+      private System.Windows.Forms.Button button1;
     }
 }
 

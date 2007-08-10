@@ -742,5 +742,40 @@ namespace MediaPortal.MPInstaller
       }
 
     }
+
+    /// <summary>
+    /// Skin tab Set to defaul button
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+    private void button1_Click(object sender, EventArgs e)
+    {
+      _struct.AddFileList(bossview);
+      bossview.Items.Clear();
+      for (int i = 0; i < _struct.FileList.Count; i++)
+      {
+        if (((MPIFileList)_struct.FileList[i]).SkinType && ((MPIFileList)_struct.FileList[i]).FileName.Contains(@"\"+skint_comboBox1.Text+@"\"))
+        {
+          ((MPIFileList)_struct.FileList[i]).FileProperties.DefaultFile = true;
+          ((MPIFileList)_struct.FileList[i]).Option = ((MPIFileList)_struct.FileList[i]).FileProperties.ToString();
+        }
+        addrow((MPIFileList)_struct.FileList[i]);
+      }
+    }
+
+    private void button2_Click(object sender, EventArgs e)
+    {
+      _struct.AddFileList(bossview);
+      bossview.Items.Clear();
+      for (int i = 0; i < _struct.FileList.Count; i++)
+      {
+        if (((MPIFileList)_struct.FileList[i]).SkinType && ((MPIFileList)_struct.FileList[i]).FileName.Contains(@"\" + skint_comboBox1.Text + @"\"))
+        {
+          ((MPIFileList)_struct.FileList[i]).FileProperties.DefaultFile = false;
+          ((MPIFileList)_struct.FileList[i]).Option = ((MPIFileList)_struct.FileList[i]).FileProperties.ToString();
+        }
+        addrow((MPIFileList)_struct.FileList[i]);
+      }
+    }
   }
 }

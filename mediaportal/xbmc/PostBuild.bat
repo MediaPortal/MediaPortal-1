@@ -76,10 +76,6 @@ xcopy /y %1\WebEPG\WebEPG\bin\%2\WebEPG.dll .
 copy %1\WebEPG\WebEPG-xmltv\bin\%2\WebEPG-xmltv.exe WebEPG.exe
 xcopy /y %1\WebEPG\WebEPG-conf\bin\%2\WebEPG-conf.exe .
 
-REM MPInstaller
-xcopy /y %1\MPInstaller\bin\%2\MPInstaller.Library.dll .
-xcopy /y %1\MPInstaller\bin\%2\MPInstaller.exe .
-
 REM TTPremiumBoot
 xcopy /y %1\scripts\*.* scripts\
 xcopy /y %1\scripts\imdb\*.* scripts\imdb\
@@ -98,6 +94,11 @@ xcopy %1\MediaPortal.Base\*.* . /E /R /Y /D
 
 REM MPTestTool2
 xcopy /y %1\MPTestTool2\bin\%2\MPTestTool2.exe .
+
+REM MPInstaller
+xcopy /y %1\MPInstaller\bin\%2\MPInstaller.Library.dll .
+xcopy /y %1\MPInstaller\bin\%2\MPInstaller.exe .
+
 
 REM Register
 regsvr32 /s MPSA.ax
