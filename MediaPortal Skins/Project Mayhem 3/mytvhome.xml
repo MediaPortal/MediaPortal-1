@@ -167,46 +167,51 @@
       <description>Current program title</description>
       <type>fadelabel</type>
       <id>13</id>
-      <posX>328</posX>
-      <posY>158</posY>
-      <width>240</width>
-      <height>20</height>
+      <posX>320</posX>
+      <posY>160</posY>
+      <width>255</width>
+      <height>16</height>
       <label>#TV.View.title</label>
       <align>center</align>
       <textcolor>White</textcolor>
+		<font>font12</font>	
     </control>
     <control>
       <description>Current program time</description>
       <type>label</type>
       <id>13</id>
-      <posX>370</posX>
+      <posX>390</posX>
       <posY>435</posY>
       <label>#TV.View.start-#TV.View.stop</label>
       <align>right</align>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ffa9d0f7</textcolor>
+	  <font>font10</font>
     </control>
     <control>
       <description>Current Channelname</description>
       <type>fadelabel</type>
       <id>13</id>
-      <posX>335</posX>
-      <posY>128</posY>
-      <width>200</width>
+      <posX>282</posX>
+      <posY>122</posY>
+      <width>313</width>
+	  <height>16</height>
       <label>#TV.View.channel</label>
       <align>center</align>
-      <textcolor>white</textcolor>
+      <textcolor>Gray</textcolor>
+	  <font>font12</font>	
     </control>
     <control>
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
-      <posX>290</posX>
+      <posX>285</posX>
       <posY>458</posY>
-      <width>298</width>
-      <height>47</height>
+      <width>305</width>
+      <height>52</height>
       <seperator>----------------------------------------------------------------------------------------------</seperator>
       <label>#TV.View.description</label>
       <textcolor>White</textcolor>
+	  <font>font11</font>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -214,7 +219,7 @@
       <description>progress bar</description>
       <type>progress</type>
       <id>20</id>
-      <posX>375</posX>
+      <posX>395</posX>
       <posY>439</posY>
       <width>200</width>
       <height>15</height>
@@ -227,9 +232,9 @@
       <type>image</type>
       <description>title image</description>
       <id>1</id>
-      <posX>385</posX>
+      <posX>395</posX>
       <posY>440</posY>
-      <width>180</width>
+      <width>200</width>
       <texture>progress_over.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
