@@ -432,7 +432,7 @@ namespace TvLibrary.Implementations.DVB
       Int32 LNBLOFHiLoSW = 11700;
 
       BandTypeConverter.GetDefaultLnbSetup(parameters, channel.BandType, out LNBLOFLowBand, out LNBLOFHighBand, out LNBLOFHiLoSW);
-      if (LNBLOFHiLoSW == 0) LNBLOFHiLoSW = 18000; // dont use lo/hi switch...
+     // if (LNBLOFHiLoSW == 0) LNBLOFHiLoSW = 18000; // dont use lo/hi switch...
 
       if (BandTypeConverter.IsHiBand(channel, parameters))
       {
