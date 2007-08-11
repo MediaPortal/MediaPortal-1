@@ -61,6 +61,7 @@
       <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
+      <visible>!facadeview.list</visible>
     </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -75,6 +76,7 @@
       <font>font14</font>
       <align>left</align>
       <textcolor>Black</textcolor>
+      <visible>!facadeview.list</visible>
     </control>
      <control>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -89,6 +91,7 @@
       <font>font13</font>
       <align>left</align>
     <textcolor>white</textcolor>
+     <visible>!facadeview.list</visible>
     </control>
     <control>
 	<type>image</type>
@@ -97,6 +100,7 @@
 	<width>85</width>
 	<height>86</height>
 	 <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
+	  <visible>!facadeview.list</visible>
 	</control>
 	 <control>
 	<type>image</type>
@@ -105,6 +109,7 @@
 	<width>92</width>
 	<height>93</height>
 	 <texture>Covertop.png</texture>
+	  <visible>!facadeview.list</visible>
 	</control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>

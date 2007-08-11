@@ -3,13 +3,10 @@
   <id>603</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#header.label:652</define>
   <controls>
-    <import>common.time.xml</import>
-    <control>
-      <type>image</type>
-      <description>BG</description>
-      <id>1</id>
-    </control>
+  <import>common.window2.xml</import>
+		 <import>common.time.xml</import>
     <control>
       <type>image</type>
       <id>1</id>
@@ -29,19 +26,6 @@
       <width>217</width>
       <height>213</height>
       <texture>-</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
-    <control>
-      <type>label</type>
-      <description>My Recorded TV Text Label</description>
-      <id>1</id>
-      <posX>374</posX>
-      <posY>39</posY>
-      <label>652</label>
-     <font>font14</font>
-      <align>right</align>
-      <textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -215,8 +199,6 @@
 		<spinHeight>36</spinHeight>
 		<spinPosX>1182</spinPosX>
 		<spinPosY>590</spinPosY>
-		<textureFocus>icon_empty_focus.png</textureFocus>
-		<textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
       </control>
       <control>
         <type>listcontrol</type>

@@ -3,21 +3,17 @@
   <id>7700</id>
   <defaultcontrol>502</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#header.label:teletext</define>
   <controls>
-    <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>1366</width>
-      <height>768</height>
-    </control>
+     <import>common.window2.xml</import>
+		 <import>common.time.xml</import>
     <control>
       <type>image</type>
       <id>501</id>
-      <posX>113</posX>
-      <posY>26</posY>
-      <width>529</width>
-      <height>93</height>
+     <posX>89</posX>
+      <posY>4</posY>
+       <width>290</width>
+       <height>55</height>
       <texture>teletext_logo.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -27,10 +23,10 @@
       <type>image</type>
       <id>500</id>
       <posX>464</posX>
-      <posY>129</posY>
-      <width>613</width>
-      <height>613</height>
-      <texture>button_small_settings_nofocus.png</texture>
+      <posY>89</posY>
+      <width>813</width>
+      <height>489</height>
+      <texture>-</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -60,9 +56,14 @@
     </control>
     <control>
       <type>group</type>
-      <description>group element</description>
-      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <description>group element</description>
+      <layout>StackLayout</layout>
+      <posX>69</posX>
+      <posY>89</posY>
       <control>
         <description>Page100</description>
         <type>button</type>
@@ -73,7 +74,7 @@
         <onup>17</onup>
         <ondown>503</ondown>
         <onright>502</onright>
-        <width>226</width>
+       
       </control>
       <control>
         <description>Page200</description>
@@ -82,7 +83,7 @@
         <posX>113</posX>
         <posY>174</posY>
         <label>591</label>
-        <width>226</width>
+       
         <onup>502</onup>
         <ondown>504</ondown>
         <onright>503</onright>
@@ -94,7 +95,6 @@
         <posX>113</posX>
         <posY>220</posY>
         <label>592</label>
-        <width>226</width>
         <onup>503</onup>
         <ondown>505</ondown>
         <onright>504</onright>
@@ -106,7 +106,6 @@
         <posX>113</posX>
         <posY>265</posY>
         <label>593</label>
-        <width>226</width>
         <font>font13</font>
         <textcolor>ffffffff</textcolor>
         <colordiffuse>ffffffff</colordiffuse>
@@ -121,7 +120,6 @@
         <posX>113</posX>
         <posY>310</posY>
         <label>594</label>
-        <width>226</width>
         <onup>505</onup>
         <ondown>507</ondown>
         <onright>506</onright>
@@ -171,35 +169,45 @@
         <posX>113</posX>
         <posY>356</posY>
         <label>595</label>
-        <width>226</width>
         <onup>506</onup>
         <ondown>502</ondown>
         <onright>507</onright>
       </control>
     </control>
     <control>
-      <description>TV background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>113</posX>
-      <posY>560</posY>
-      <width>240</width>
-      <height>180</height>
-      <colordiffuse>60ffffff</colordiffuse>
-      <texture>previewbackground.png</texture>
+		<description>video rectangle</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>48</posX>
+		<posY>540</posY>
+		<width>330</width>
+		<height>225</height>
+		 <texture>playback_background.png</texture>
+		 <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
+	</control>
     <control>
-      <description>TV preview window</description>
+      <description>video preview window</description>
       <type>videowindow</type>
-      <id>508</id>
-      <posX>123</posX>
-      <posY>566</posY>
-      <width>226</width>
-      <height>166</height>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
+      <id>1</id>
+      <posX>96</posX>
+	  <posY>568</posY>
+	  <width>238</width>
+	  <height>131</height>
+	  <keepaspectratio>yes</keepaspectratio>
+	  <centered>yes</centered>
+	  <action>18</action>
+	  <textureFocus>tv_green_border.png</textureFocus>
+    </control>
+     <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>126</posX>
+      <posY>701</posY>
+      <width>158</width>
+     <label>#percentage</label>
+      <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

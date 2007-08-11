@@ -176,7 +176,7 @@
       <description>Channel label</description>
       <type>label</type>
       <id>13</id>
-      <posX>1212</posX>
+      <posX>1162</posX>
       <posY>583</posY>
       <label>602</label>
       <font>font13</font>
@@ -215,7 +215,7 @@
       <description>Current Channelname</description>
       <type>fadelabel</type>
       <id>13</id>
-      <posX>1212</posX>
+      <posX>1162</posX>
       <posY>612</posY>
       <width>159</width>
       <label>#TV.View.channel</label>

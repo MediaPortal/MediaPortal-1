@@ -147,6 +147,64 @@
        </control>
     </control>
     <import>common.facade.music2.xml</import>
-
+ <control>
+		 	<id>1</id>
+			<type>image</type>
+			<posX>120</posX>
+			<posY>250</posY>
+			<width>150</width>
+			<height>150</height>
+	 		<texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
+	 		<visible>facadeview.list</visible>
+		</control>
+		<control>
+			<type>image</type>
+			<id>1</id>
+			<posX>112</posX>
+			<posY>240</posY>
+			<width>168</width>
+			<height>175</height>
+			<texture>Covertop.png</texture>
+			<visible>facadeview.list</visible>
+		</control>
+		 <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>89</posX>
+      <posY>430</posY>
+      <width>300</width>
+      <label>#itemcount</label>
+      <font>font14</font>
+      <align>left</align>
+     <textcolor>ff969696</textcolor>
+      <visible>facadeview.list</visible>
+    </control>
+     <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>89</posX>
+      <posY>460</posY>
+      <width>300</width>
+      <label>#selecteditem</label>
+      <font>font14</font>
+      <align>left</align>
+    <textcolor>white</textcolor>
+     <visible>facadeview.list</visible>
+    </control>
+     <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>89</posX>
+      <posY>490</posY>
+      <width>365</width>
+     <label>#selecteditem2</label>
+      <font>font14</font>
+      <align>left</align>
+   <textcolor>white</textcolor>
+     <visible>facadeview.list</visible>
+    </control>
   </controls>
 </window>
