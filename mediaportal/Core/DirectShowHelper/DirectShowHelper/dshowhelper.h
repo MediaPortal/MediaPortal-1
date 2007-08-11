@@ -29,5 +29,5 @@ extern TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9;
 typedef HRESULT __stdcall TMFCreateVideoSampleFromSurface(__in_opt IUnknown* pUnkSurface,__deref_out_opt IMFSample** ppSample);
 extern TMFCreateVideoSampleFromSurface* m_pMFCreateVideoSampleFromSurface;
 
-typedef HRESULT __stdcall TMFCreateVideoMediaType(const MFVIDEOFORMAT* pVideoFormat,  IMFVideoMediaType** ppIVideoMediaType);
-extern TMFCreateVideoMediaType* m_pMFCreateVideoMediaType;
+typedef HRESULT __stdcall TMFCreateMediaType(IMFMediaType** ppIMediaType);
+extern TMFCreateMediaType* m_pMFCreateMediaType;

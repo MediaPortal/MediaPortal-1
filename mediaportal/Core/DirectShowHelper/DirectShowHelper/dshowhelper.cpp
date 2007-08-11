@@ -49,10 +49,11 @@ using namespace std;
 
 HMODULE m_hModuleDXVA2 = NULL;
 HMODULE m_hModuleEVR = NULL;
+HMODULE m_hModuleMFPLAT = NULL;
 
 TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9 = NULL;
 TMFCreateVideoSampleFromSurface* m_pMFCreateVideoSampleFromSurface = NULL;
-TMFCreateVideoMediaType* m_pMFCreateVideoMediaType = NULL;
+TMFCreateMediaType* m_pMFCreateMediaType = NULL;
 BOOL m_bEVRLoaded = false;
 
 // This is an example of an exported variable
@@ -288,6 +289,15 @@ void UnloadEVR()
 	  }
 	m_hModuleEVR = NULL;
   }
+  if (m_hModuleMFPLAT!=NULL)
+  {
+	  Log("Freeing lib: EVR.dll");
+	  if ( !FreeLibrary(m_hModuleMFPLAT) )
+	  {
+		  Log("MFPLAT.dll could not be unloaded");
+	  }
+	m_hModuleMFPLAT = NULL;
+  }
   
 }
 
@@ -312,10 +322,12 @@ bool LoadEVR()
 	  if ( m_pMFCreateVideoSampleFromSurface )
 	  {
 		  Log("Found method MFCreateVideoSampleFromSurface");
-		  m_pMFCreateVideoMediaType=(TMFCreateVideoMediaType*)GetProcAddress(m_hModuleEVR,"MFCreateVideoMediaType");
-		  if ( m_pMFCreateVideoMediaType )
+		  sprintf(mfDLLFileName,"%s\\mfplat.dll", systemFolder);
+		  m_hModuleMFPLAT=LoadLibrary(mfDLLFileName);
+		  m_pMFCreateMediaType=(TMFCreateMediaType*)GetProcAddress(m_hModuleMFPLAT,"MFCreateMediaType");
+		  if ( m_pMFCreateMediaType )
 		  {
-			  Log("Found method MFCreateVideoMediaType");
+			  Log("Found method MFCreateMediaType");
 			  Log("Successfully loaded EVR dlls");
 			  return TRUE;
 		  }

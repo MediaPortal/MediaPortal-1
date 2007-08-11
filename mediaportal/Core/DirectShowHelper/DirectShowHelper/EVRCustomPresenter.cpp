@@ -48,9 +48,9 @@
 #include "evrcustompresenter.h"
 
 #define TIME_LOCK(obj, crit, name)  \
-ULONGLONG then = GetTickCount64(); \
+ULONGLONG then = GetTickCount(); \
 CAutoLock lock(obj); \
-	ULONGLONG diff = GetTickCount64() - then; \
+	ULONGLONG diff = GetTickCount() - then; \
 	if ( diff >= crit ) { \
 	  Log("Critical lock time for %s was %d ms", name, diff ); \
 	}
@@ -166,7 +166,7 @@ EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevic
 		m_bInputAvailable = FALSE;
 		m_bendStreaming = FALSE;
 		m_state = RENDER_STATE_SHUTDOWN;
-        //m_UseOffScreenSurface=false;
+        m_bSchedulerRunning = FALSE;
         m_fRate = 1.0f;
         //TODO: use ZeroMemory
         /*for ( int i=0; i<NUM_SURFACES; i++ ) {
@@ -652,32 +652,33 @@ void LogMediaTypes(CComPtr<IMFTransform> pMixer)
 HRESULT EVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType, IMFMediaType** pType)
 {
    	HRESULT				hr;
-   	AM_MEDIA_TYPE*		pAMMedia = NULL;
    	LARGE_INTEGER		i64Size;
-   	MFVIDEOFORMAT*		VideoFormat;
-	IMFVideoMediaType* pMediaType;
    
-	CHECK_HR (pMixerType->GetRepresentation  (FORMAT_MFVideoFormat, (void**)&pAMMedia), "failed: GetRepresentation");
-   	VideoFormat = (MFVIDEOFORMAT*)pAMMedia->pbFormat;
-   	hr = m_pMFCreateVideoMediaType  (VideoFormat, &pMediaType);
-   
+	hr = m_pMFCreateMediaType(pType);
    	if (SUCCEEDED (hr))
    	{
-   		i64Size.HighPart = VideoFormat->videoInfo.dwWidth;
+		CHECK_HR(hr=pMixerType->CopyAllItems(*pType), "failed: CopyAllItems. Could not clone media type" );
+		if ( SUCCEEDED(hr) )
+		{
+			Log("Successfully cloned media type");
+		}
+	    (*pType)->SetUINT32 (MF_MT_PAN_SCAN_ENABLED, 0);
+   		/*i64Size.HighPart = VideoFormat->videoInfo.dwWidth;
    		i64Size.LowPart	 = VideoFormat->videoInfo.dwHeight;
-   		pMediaType->SetUINT64 (MF_MT_FRAME_SIZE, i64Size.QuadPart);
+   		(*pType)->SetUINT64 (MF_MT_FRAME_SIZE, i64Size.QuadPart);
    
-	    pMediaType->SetUINT32 (MF_MT_PAN_SCAN_ENABLED, 0);
 	  
 	  i64Size.HighPart = 1;
 	  i64Size.LowPart  = 1;
-	  pMediaType->SetUINT64 (MF_MT_PIXEL_ASPECT_RATIO, i64Size.QuadPart);
-	  Log("Would set aperture: %dx%d", VideoFormat->videoInfo.dwWidth,
+	  (*pType)->SetUINT64 (MF_MT_PIXEL_ASPECT_RATIO, i64Size.QuadPart);
+	  /*Log("Would set aperture: %dx%d", VideoFormat->videoInfo.dwWidth,
 		  VideoFormat->videoInfo.dwHeight);
+	  MFVideoArea Area;
+	  ZeroMemory( &Area, sizeof(MFVideoArea) );
+	  Area.Area.cx = VideoFormat->videoInfo.dwWidth;
+	  Area.Area.cy = VideoFormat->videoInfo.dwHeight;
+	  pMediaType->SetBlob(MF_MT_GEOMETRIC_APERTURE, (UINT8*)&Area, sizeof(MFVideoArea));*/
     }
-	pMixerType->FreeRepresentation (FORMAT_MFVideoFormat, (void*)pAMMedia);
-   	pMediaType->QueryInterface (__uuidof(IMFMediaType), (void**) pType);
-	pMediaType->Release();
    	return hr;
   }  
 
@@ -720,6 +721,7 @@ HRESULT EVRCustomPresenter::RenegotiateMediaOutputType()
         {
 			//Create a clone of the suggested outputtype
             hr = CreateProposedOutputType(pMixerType, &pType);
+			//pType = pMixerType;
         }
 
         // Step 4. Check if the mixer will accept this media type.
@@ -908,7 +910,8 @@ HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime)
 			return hr;
 		}
 		m_vScheduledSamples.pop();
-		if ( *pNextSampleTime < -400000 ) {
+		//skip only if we have a newer sample available
+		if ( *pNextSampleTime < -800000 && m_vScheduledSamples.size() > 0 ) {
 			//skip!
 			Log( "skipping frame, behind %I64d hns", -*pNextSampleTime );
 			m_iFramesDropped++;
