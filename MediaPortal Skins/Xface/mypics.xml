@@ -107,6 +107,16 @@
 			<posY>250</posY>
 			<width>153</width>
 			<height>138</height>
+	 		<texture flipY="true" diffuse="Thumb_Mask.png">missing_Coverart.png</texture>
+	 		<visible>facadeview.list</visible>
+		</control>
+		 <control>
+		 	<id>1</id>
+			<type>image</type>
+			<posX>120</posX>
+			<posY>250</posY>
+			<width>153</width>
+			<height>138</height>
 	 		<texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
 	 		<visible>facadeview.list</visible>
 		</control>
