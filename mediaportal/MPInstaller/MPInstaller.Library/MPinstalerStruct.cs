@@ -300,15 +300,15 @@ namespace MediaPortal.MPInstaller
           for (int i = 0; i < this.FileList.Count; i++)
           {
             MPIFileList it = (MPIFileList)this.FileList[i];
+            
             writer.WriteStartElement("File");
             writer.WriteElementString("FileName", Path.GetFileName(it.FileName));
             writer.WriteElementString("Type", it.Type);
             writer.WriteElementString("SubType", it.SubType);
-            writer.WriteElementString("Source", Path.GetFullPath(it.FileName));
+            writer.WriteElementString("Source", RelativePath(fil,it.FileName));
             writer.WriteElementString("Id", it.ID);
             writer.WriteElementString("Option", it.Option);
             writer.WriteEndElement();
-            //st = st + bossview.Items[i].SubItems[3].Text + @"\" + bossview.Items[i].Text + ";";
           }
           writer.WriteEndElement();
           writer.WriteStartElement("StringList");
@@ -449,6 +449,20 @@ namespace MediaPortal.MPInstaller
       s.Finish();
       s.Close();
     }
+    
+    string RelativePath(string refpath, string file)
+    {
+      return Path.GetFullPath(file).Replace(Path.GetDirectoryName(refpath) + @"\", "");
+    }
+
+    string AbsolutePath(string refpath, string file)
+    {
+      if (!Path.IsPathRooted(file))
+      {
+        return Path.Combine(Path.GetDirectoryName(refpath), file);
+      }
+      return file;
+    }
 
     public void LoadFromFile(string fil)
     {
@@ -461,8 +475,9 @@ namespace MediaPortal.MPInstaller
       XmlNodeList fileList = ver.SelectNodes("FileList/File");
       foreach (XmlNode nodefile in fileList)
       {
+        string t_path = nodefile.SelectSingleNode("Source").InnerText;
         this.FileList.Add(new MPIFileList(
-               nodefile.SelectSingleNode("Source").InnerText,
+               AbsolutePath(fil,t_path),
                nodefile.SelectSingleNode("Type").InnerText,
                nodefile.SelectSingleNode("SubType").InnerText,
                nodefile.SelectSingleNode("Id").InnerText,
