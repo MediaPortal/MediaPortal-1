@@ -103,7 +103,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(2)</visible>
-			<animation effect="slide" start="-154,-50" end="0,0" time="400">visiblechange</animation>
+			<animation effect="slide" start="-154,-50" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Radio</description>
@@ -124,7 +124,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(3)</visible>
-			<animation effect="slide" start="-369,-50" end="-154,-50" time="400">visiblechange</animation>
+			<animation effect="slide" start="-369,-50" end="-154,-50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Radio</description>
@@ -145,7 +145,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(4)</visible>
-			<animation effect="slide" start="-504,15" end="-369,-50" time="400">visiblechange</animation>
+			<animation effect="slide" start="-504,15" end="-369,-50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Radio</description>
@@ -166,7 +166,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(5)</visible>
-			<animation effect="slide" start="-278,100" end="-504,15" time="400">visiblechange</animation>
+			<animation effect="slide" start="-278,100" end="-504,15" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Radio</description>
@@ -187,8 +187,8 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(6)</visible>
-			<animation effect="slide" start="0,0" end="-278,100" time="400">visiblechange</animation>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="slide" start="0,0" end="-278,100" time="400" reversible="false">visiblechange</animation>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Video</description>
@@ -264,7 +264,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(6)</visible>
-			<animation effect="slide" start="0,0" end="154,50" time="400">visiblechange</animation>
+			<animation effect="slide" start="0,0" end="154,50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Video</description>
@@ -290,8 +290,8 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(5)</visible>
-			<animation effect="slide" start="154,50" end="-108,150" time="400">visiblechange</animation>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="slide" start="154,50" end="-108,150" time="400" reversible="false">visiblechange</animation>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Video</description>
@@ -317,7 +317,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(4)</visible>
-			<animation effect="slide" start="-108,150" end="-350,65" time="400">visiblechange</animation>
+			<animation effect="slide" start="-108,150" end="-350,65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Video</description>
@@ -343,7 +343,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(3)</visible>
-			<animation effect="slide" start="-350,65" end="-215,0" time="400">visiblechange</animation>
+			<animation effect="slide" start="-350,65" end="-215,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Video</description>
@@ -369,7 +369,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(2)</visible>
-			<animation effect="slide" start="-215,0" end="0,0" time="400">visiblechange</animation>
+			<animation effect="slide" start="-215,0" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM FFS</description>
@@ -445,7 +445,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(6)</visible>
-			<animation effect="slide" start="0,0" end="215,0" time="400">visiblechange</animation>
+			<animation effect="slide" start="0,0" end="215,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM FFS</description>
@@ -471,7 +471,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(5)</visible>
-			<animation effect="slide" start="215,0" end="369,50" time="400">visiblechange</animation>
+			<animation effect="slide" start="215,0" end="369,50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM FFS</description>
@@ -497,8 +497,8 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(4)</visible>
-			<animation effect="slide" start="369,50" end="98,150" time="400">visiblechange</animation>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="slide" start="369,50" end="98,150" time="400" reversible="false">visiblechange</animation>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM FFS</description>
@@ -524,7 +524,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(3)</visible>
-			<animation effect="slide" start="98,150" end="-135,65" time="400">visiblechange</animation>
+			<animation effect="slide" start="98,150" end="-135,65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM FFS</description>
@@ -550,7 +550,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(2)</visible>
-			<animation effect="slide" start="-135,65" end="0,0" time="400">visiblechange</animation>
+			<animation effect="slide" start="-135,65" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -626,7 +626,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(6)</visible>
-			<animation effect="slide" start="0,0" end="135,-65" time="400">visiblechange</animation>
+			<animation effect="slide" start="0,0" end="135,-65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -652,7 +652,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(5)</visible>
-			<animation effect="slide" start="135,-60" end="350,-65" time="400">visiblechange</animation>
+			<animation effect="slide" start="135,-60" end="350,-65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -678,7 +678,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(4)</visible>
-			<animation effect="slide" start="350,-65" end="504,-15" time="400">visiblechange</animation>
+			<animation effect="slide" start="350,-65" end="504,-15" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -704,8 +704,8 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(3)</visible>
-			<animation effect="slide" start="504,-15" end="242,85" time="400">visiblechange</animation>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="slide" start="504,-15" end="242,85" time="400" reversible="false">visiblechange</animation>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -731,7 +731,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(2)</visible>
-			<animation effect="slide" start="242,85" end="0,0" time="400">visiblechange</animation>
+			<animation effect="slide" start="242,85" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Pictures</description>
@@ -807,7 +807,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(6)</visible>
-			<animation effect="slide" start="0,0" end="-242,-85" time="400">visiblechange</animation>
+			<animation effect="slide" start="0,0" end="-242,-85" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Pictures</description>
@@ -833,7 +833,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(5)</visible>
-			<animation effect="slide" start="-242,-85" end="-107,-140" time="400">visiblechange</animation>
+			<animation effect="slide" start="-242,-85" end="-107,-140" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Pictures</description>
@@ -859,7 +859,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(4)</visible>
-			<animation effect="slide" start="-107,-140" end="108,-140" time="400">visiblechange</animation>
+			<animation effect="slide" start="-107,-140" end="108,-140" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Pictures</description>
@@ -885,7 +885,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(3)</visible>
-			<animation effect="slide" start="108,-140" end="262,-100" time="400">visiblechange</animation>
+			<animation effect="slide" start="108,-140" end="262,-100" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Pictures</description>
@@ -911,8 +911,8 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(2)</visible>
-			<animation effect="slide" start="262,-100" end="0,0" time="400">visiblechange</animation>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="slide" start="262,-100" end="0,0" time="400" reversible="false">visiblechange</animation>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Radio</description>
@@ -933,7 +933,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(55)</visible>
-			<animation effect="slide" start="-262,100" end="0,0" time="400">visiblechange</animation>
+			<animation effect="slide" start="-262,100" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Radio</description>
@@ -954,8 +954,8 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(44)</visible>
-			<animation effect="slide" start="-504,15" end="-262,100" time="400">visiblechange</animation>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="slide" start="-504,15" end="-262,100" time="400" reversible="false">visiblechange</animation>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Radio</description>
@@ -976,7 +976,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(33)</visible>
-			<animation effect="slide" start="-369,-50" end="-504,15" time="400">visiblechange</animation>
+			<animation effect="slide" start="-369,-50" end="-504,15" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Radio</description>
@@ -997,7 +997,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(22)</visible>
-			<animation effect="slide" start="-145,-50" end="-369,-50" time="400">visiblechange</animation>
+			<animation effect="slide" start="-145,-50" end="-369,-50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Radio</description>
@@ -1018,7 +1018,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(66)</visible>
-			<animation effect="slide" start="0,0" end="-145,-50" time="400">visiblechange</animation>
+			<animation effect="slide" start="0,0" end="-145,-50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Video</description>
@@ -1044,7 +1044,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(66)</visible>
-			<animation effect="slide" start="0,0" end="-215,0" time="400">visiblechange</animation>
+			<animation effect="slide" start="0,0" end="-215,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Video</description>
@@ -1070,7 +1070,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(22)</visible>
-			<animation effect="slide" start="-215,0" end="-350,65" time="400">visiblechange</animation>
+			<animation effect="slide" start="-215,0" end="-350,65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Video</description>
@@ -1096,8 +1096,8 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(33)</visible>
-			<animation effect="slide" start="-350,65" end="-108,150" time="400">visiblechange</animation>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="slide" start="-350,65" end="-108,150" time="400" reversible="false">visiblechange</animation>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Video</description>
@@ -1123,7 +1123,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(44)</visible>
-			<animation effect="slide" start="-108,150" end="154,50" time="400">visiblechange</animation>
+			<animation effect="slide" start="-108,150" end="154,50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Video</description>
@@ -1149,7 +1149,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(55)</visible>
-			<animation effect="slide" start="154,50" end="0,0" time="400">visiblechange</animation>
+			<animation effect="slide" start="154,50" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM FFS</description>
@@ -1175,7 +1175,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(66)</visible>
-			<animation effect="slide" start="0,0" end="-135,65" time="400">visiblechange</animation>
+			<animation effect="slide" start="0,0" end="-135,65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM FFS</description>
@@ -1201,8 +1201,8 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(22)</visible>
-			<animation effect="slide" start="-135,65" end="107,150" time="400">visiblechange</animation>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="slide" start="-135,65" end="107,150" time="400" reversible="false">visiblechange</animation>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM FFS</description>
@@ -1228,7 +1228,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(33)</visible>
-			<animation effect="slide" start="107,150" end="369,50" time="400">visiblechange</animation>
+			<animation effect="slide" start="107,150" end="369,50" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM FFS</description>
@@ -1254,7 +1254,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(44)</visible>
-			<animation effect="slide" start="369,50" end="215,0" time="400">visiblechange</animation>
+			<animation effect="slide" start="369,50" end="215,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM FFS</description>
@@ -1280,7 +1280,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(55)</visible>
-			<animation effect="slide" start="215,0" end="0,0" time="400">visiblechange</animation>
+			<animation effect="slide" start="215,0" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -1306,8 +1306,8 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(66)</visible>
-			<animation effect="slide" start="0,0" end="242,85" time="400">visiblechange</animation>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="slide" start="0,0" end="242,85" time="400" reversible="false">visiblechange</animation>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -1333,7 +1333,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(22)</visible>
-			<animation effect="slide" start="242,85" end="504,-15" time="400">visiblechange</animation>
+			<animation effect="slide" start="242,85" end="504,-15" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -1359,7 +1359,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(33)</visible>
-			<animation effect="slide" start="504,-15" end="350,-65" time="400">visiblechange</animation>
+			<animation effect="slide" start="504,-15" end="350,-65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -1385,7 +1385,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(44)</visible>
-			<animation effect="slide" start="350,-65" end="135,-65" time="400">visiblechange</animation>
+			<animation effect="slide" start="350,-65" end="135,-65" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -1411,7 +1411,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(55)</visible>
-			<animation effect="slide" start="135,-65" end="0,0" time="400">visiblechange</animation>
+			<animation effect="slide" start="135,-65" end="0,0" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Pictures</description>
@@ -1437,7 +1437,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(66)</visible>
-			<animation effect="slide" start="0,0" end="262,-100" time="400">visiblechange</animation>
+			<animation effect="slide" start="0,0" end="262,-100" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Pictures</description>
@@ -1463,7 +1463,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(22)</visible>
-			<animation effect="slide" start="262,-100" end="108,-150" time="400">visiblechange</animation>
+			<animation effect="slide" start="262,-100" end="108,-150" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Pictures</description>
@@ -1489,7 +1489,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(33)</visible>
-			<animation effect="slide" start="108,-150" end="-107,-150" time="400">visiblechange</animation>
+			<animation effect="slide" start="108,-150" end="-107,-150" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Pictures</description>
@@ -1515,7 +1515,7 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(44)</visible>
-			<animation effect="slide" start="-107,-150" end="-242,-85" time="400">visiblechange</animation>
+			<animation effect="slide" start="-107,-150" end="-242,-85" time="400" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>home BM Pictures</description>
@@ -1541,8 +1541,8 @@
 			<onup>210</onup>
 			<ondown>66</ondown>
 			<visible>Control.HasFocus(55)</visible>
-			<animation effect="slide" start="-242,-85" end="0,0" time="400">visiblechange</animation>
-			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500">visiblechange</animation>
+			<animation effect="slide" start="-242,-85" end="0,0" time="400" reversible="false">visiblechange</animation>
+			<animation effect="zoom" start="100,100" end="120,120" center="0,0" time="500" reversible="false">visiblechange</animation>
 		</control>
 		<control>
 			<description>Date</description>

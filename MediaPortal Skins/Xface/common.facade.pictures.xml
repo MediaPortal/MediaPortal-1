@@ -116,6 +116,7 @@
 					<spinHeight>36</spinHeight>
 					<spinPosX>1182</spinPosX>
 					<spinPosY>590</spinPosY>
+					<onup>2</onup>
 					<spinColor>ffffffff</spinColor>
 					<textureUp>page_up_nofocus.png</textureUp>
 					<textureDown>page_down_nofocus.png</textureDown>

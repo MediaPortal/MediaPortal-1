@@ -116,7 +116,7 @@
 					<spinPosX>1182</spinPosX>
 					<spinPosY>590</spinPosY>
 					<spinColor>ffffffff</spinColor>
-					<ondown>611</ondown>
+					<onup>2</onup>
 					<textureUp>page_up_nofocus.png</textureUp>
 					<textureDown>page_down_nofocus.png</textureDown>
 					<textureUpFocus>page_up_focus.png</textureUpFocus>
