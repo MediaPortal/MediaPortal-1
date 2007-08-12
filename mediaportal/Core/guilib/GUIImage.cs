@@ -53,10 +53,10 @@ namespace MediaPortal.GUI.Library
     unsafe private static extern int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m00, float m01, float m02, float m10, float m11, float m12);
+    unsafe private static extern void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20, float m21, float m22, float m23);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineDrawTexture2(int textureNo1, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m00, float m01, float m02, float m10, float m11, float m12, int textureNo2, float uoff2, float voff2, float umax2, float vmax2);
+    unsafe private static extern void FontEngineDrawTexture2(int textureNo1, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20, float m21, float m22, float m23, int textureNo2, float uoff2, float voff2, float umax2, float vmax2);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     unsafe private static extern void FontEnginePresentTextures();
@@ -1162,9 +1162,9 @@ namespace MediaPortal.GUI.Library
         if (Dimmed)
           color = (uint)(_diffuseColor & DimColor);
         color = GUIGraphicsContext.MergeAlpha(color);
-        float m00, m01, m02, m10, m11, m12;
-        GUIGraphicsContext.GetScaling(out m00, out m01, out m02, out m10, out m11, out m12);
-        FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color, m00, m01, m02, m10, m11, m12);
+        float m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23;
+        GUIGraphicsContext.GetScaling(out m00, out m01, out m02, out m03, out m10, out m11, out m12, out m13, out m20, out m21, out m22, out m23);
+        FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23);
 
         if ((_flipX || _flipY) && _diffuseFileName.Length > 0)
         {
@@ -1216,7 +1216,7 @@ namespace MediaPortal.GUI.Library
 
             //FontEngineDrawTexture(_packedTextureNo, fx, fy, nw, nh, _uoff, _voff, _umax, _vmax, (int)color, m00, m01, m02, m10, m11, m12);
             //FontEngineDrawTexture(_packedDiffuseTextureNo, fx, fy, nw, nh, uoff, voff, umax, vmax, (int)color, m00, m01, m02, m10, m11, m12);
-            FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m00, m01, m02, m10, m11, m12
+            FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23
                                   , _packedDiffuseTextureNo, uoff, voff, umax, vmax);
 
           }
@@ -1304,9 +1304,9 @@ namespace MediaPortal.GUI.Library
                 vmax = _diffusetexVoff;
               }
 
-              float m00, m01, m02, m10, m11, m12;
-              GUIGraphicsContext.GetScaling(out m00, out m01, out m02, out m10, out m11, out m12);
-              FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m00, m01, m02, m10, m11, m12
+              float m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23;
+              GUIGraphicsContext.GetScaling(out m00, out m01, out m02, out m03, out m10, out m11, out m12, out m13, out m20, out m21, out m22, out m23); 
+              FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23
                                     , _packedDiffuseTextureNo, uoff, voff, umax, vmax);
             }
           }
@@ -1338,6 +1338,7 @@ namespace MediaPortal.GUI.Library
       //reallocate & load then new image
       _allocated = false;
       Cleanup();
+      //FreeResourcesAndRegEvent();
 
       AllocResources();
     }

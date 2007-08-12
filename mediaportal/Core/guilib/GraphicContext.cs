@@ -1319,7 +1319,7 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        _guiTransform = TransformMatrix.CreateTranslation((float)posX, (float)posY);
+        _guiTransform = TransformMatrix.CreateTranslation((float)posX, (float)posY, 0);
         //_windowScaleX = 1.0f;
         //_windowScaleY = 1.0f;
       }
@@ -1328,24 +1328,31 @@ namespace MediaPortal.GUI.Library
       _finalTransform = _guiTransform;
     }
 
-    static public void GetScaling(out  float m00, out  float m01, out  float m02, out  float m10, out  float m11, out  float m12)
+    static public void GetScaling(out  float m00, out  float m01, out  float m02, out  float m03,
+                                  out  float m10, out  float m11, out  float m12, out  float m13,
+                                  out  float m20, out  float m21, out  float m22, out  float m23)
     {
-      _finalTransform.GetScaling(out   m00, out   m01, out   m02, out   m10, out   m11, out   m12);
+      _finalTransform.GetScaling(out m00, out m01, out m02, out m03, out m10, out m11, out m12, out m13, out m20, out m21, out m22, out m23);
     }
 
-    static public void ScaleFinalCoords(ref float x, ref float y)
+    static public void ScaleFinalCoords(ref float x, ref float y, ref float z)
     {
-      _finalTransform.TransformPosition(ref x, ref y);
+      _finalTransform.TransformPosition(ref x, ref y, ref z);
     }
 
-    static public float ScaleFinalXCoord(float x, float y)
+    static public float ScaleFinalXCoord(float x, float y, float z)
     {
-      return _finalTransform.TransformXCoord(x, y);
+      return _finalTransform.TransformXCoord(x, y, z);
     }
 
-    static public float ScaleFinalYCoord(float x, float y)
+    static public float ScaleFinalYCoord(float x, float y, float z)
     {
-      return _finalTransform.TransformYCoord(x, y);
+      return _finalTransform.TransformYCoord(x, y, z);
+    }
+
+    static public float ScaleFinalZCoord(float x, float y, float z)
+    {
+      return _finalTransform.TransformZCoord(x, y, z);
     }
 
     static public uint MergeAlpha(uint color)

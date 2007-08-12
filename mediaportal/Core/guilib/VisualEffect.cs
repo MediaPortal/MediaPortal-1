@@ -44,7 +44,9 @@ namespace MediaPortal.GUI.Library
     None = 0,
     Fade,
     Slide,
-    Rotate,
+    RotateX,
+    RotateY,
+    RotateZ,
     Zoom
   };
   public enum AnimationProcess
@@ -177,8 +179,12 @@ namespace MediaPortal.GUI.Library
         _effect = EffectType.Fade;
       else if (String.Compare(effectType, "slide") == 0)
         _effect = EffectType.Slide;
+      else if (String.Compare(effectType, "rotatex") == 0)
+        _effect = EffectType.RotateX;
+      else if (String.Compare(effectType, "rotatey") == 0)
+        _effect = EffectType.RotateY;
       else if (String.Compare(effectType, "rotate") == 0)
-        _effect = EffectType.Rotate;
+        _effect = EffectType.RotateZ;
       else if (String.Compare(effectType, "zoom") == 0)
         _effect = EffectType.Zoom;
       // time and delay
@@ -254,7 +260,7 @@ namespace MediaPortal.GUI.Library
         if (_startAlpha < 0) _startAlpha = 0;
         if (_endAlpha < 0) _endAlpha = 0;
       }
-      else if (_effect == EffectType.Rotate)
+      else if ((_effect == EffectType.RotateX) || (_effect == EffectType.RotateY) || (_effect == EffectType.RotateZ))
       {
         nodeAttribute = node.Attributes.GetNamedItem("start");
         if (nodeAttribute != null) _startX = float.Parse(nodeAttribute.Value.ToString());
@@ -264,6 +270,7 @@ namespace MediaPortal.GUI.Library
         // convert to a negative to account for our reversed vertical axis
         _startX *= -1;
         _endX *= -1;
+
 
         nodeAttribute = node.Attributes.GetNamedItem("center");
         if (nodeAttribute != null)
@@ -388,7 +395,7 @@ namespace MediaPortal.GUI.Library
     }
     public void SetCenter(float x, float y)
     {
-      if (_effect == EffectType.Zoom || _effect == EffectType.Rotate)
+      if (_effect == EffectType.Zoom || _effect == EffectType.RotateZ)
       {
         if (_centerX == 0) _centerX = x;
         if (_centerY == 0) _centerY = y;
@@ -412,21 +419,29 @@ namespace MediaPortal.GUI.Library
         }
         else if (_effect == EffectType.Slide)
         {
-          _matrix.SetTranslation((_endX - _startX) * offset + _startX, (_endY - _startY) * offset + _startY);
+          _matrix.SetTranslation((_endX - _startX) * offset + _startX, (_endY - _startY) * offset + _startY, 0);
         }
-        else if (_effect == EffectType.Rotate)
+        else if (_effect == EffectType.RotateX)
         {
-          _matrix.SetTranslation(_centerX, _centerY);
-          _matrix.multiplyAssign(TransformMatrix.CreateRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN));
-          _matrix.multiplyAssign(TransformMatrix.CreateTranslation(-_centerX, -_centerY));
+          _matrix.SetXRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, CenterX, CenterY);
+        }
+        else if (_effect == EffectType.RotateY)
+        {
+          _matrix.SetYRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, CenterX, CenterY);
+        }
+        else if (_effect == EffectType.RotateZ)
+        {
+          //_matrix.SetTranslation(_centerX, _centerY, 0);
+          _matrix.SetZRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, CenterX, CenterY);
+          //_matrix.multiplyAssign(TransformMatrix.CreateTranslation(-_centerX, -_centerY, 0));
         }
         else if (_effect == EffectType.Zoom)
         {
           float scaleX = ((_endX - _startX) * offset + _startX) * 0.01f;
           float scaleY = ((_endY - _startY) * offset + _startY) * 0.01f;
-          _matrix.SetTranslation(_centerX, _centerY);
-          _matrix.multiplyAssign(TransformMatrix.CreateScaler(scaleX, scaleY));
-          _matrix.multiplyAssign(TransformMatrix.CreateTranslation(-_centerX, -_centerY));
+          _matrix.SetTranslation(_centerX, _centerY, 0);
+          _matrix.multiplyAssign(TransformMatrix.CreateScaler(scaleX, scaleY, 0));
+          _matrix.multiplyAssign(TransformMatrix.CreateTranslation(-_centerX, -_centerY, 0));
         }
       }
       if (_currentState == AnimationState.StateApplied)
