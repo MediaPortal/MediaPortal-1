@@ -507,7 +507,7 @@ namespace MediaPortal.MPInstaller
       foreach (XmlNode groupnode in groupmapList)
       {
         SetupGroupsMappig.Add(new GroupStringMapping(groupnode.Attributes["Id"].Value,
-                                        groupnode.Attributes["FileName"].Value));
+                                        AbsolutePath(fil,groupnode.Attributes["FileName"].Value)));
       }
       XmlNode nodeoption = ver.SelectSingleNode("Option");
       this.BuildFileName = nodeoption.SelectSingleNode("BuildFileName").InnerText;

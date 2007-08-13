@@ -49,6 +49,7 @@ namespace MediaPortal.MPInstaller
           this.comboBox3 = new System.Windows.Forms.ComboBox();
           this.button6 = new System.Windows.Forms.Button();
           this.mozPane1 = new Pabo.MozBar.MozPane();
+          this.imageList2 = new System.Windows.Forms.ImageList(this.components);
           this.mozItem1 = new Pabo.MozBar.MozItem();
           this.label2 = new System.Windows.Forms.Label();
           this.button5 = new System.Windows.Forms.Button();
@@ -259,7 +260,7 @@ namespace MediaPortal.MPInstaller
           // 
           this.mozPane1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                       | System.Windows.Forms.AnchorStyles.Left)));
-          this.mozPane1.ImageList = this.imageList1;
+          this.mozPane1.ImageList = this.imageList2;
           this.mozPane1.Items.AddRange(new Pabo.MozBar.MozItem[] {
             this.mozItem1});
           this.mozPane1.Location = new System.Drawing.Point(3, 6);
@@ -267,6 +268,25 @@ namespace MediaPortal.MPInstaller
           this.mozPane1.Size = new System.Drawing.Size(155, 337);
           this.mozPane1.TabIndex = 8;
           this.mozPane1.ItemSelected += new Pabo.MozBar.MozItemEventHandler(this.mozPane1_ItemSelected);
+          // 
+          // imageList2
+          // 
+          this.imageList2.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList2.ImageStream")));
+          this.imageList2.TransparentColor = System.Drawing.Color.Transparent;
+          this.imageList2.Images.SetKeyName(0, "application.ico");
+          this.imageList2.Images.SetKeyName(1, "music0016.png");
+          this.imageList2.Images.SetKeyName(2, "application.ico");
+          this.imageList2.Images.SetKeyName(3, "application.ico");
+          this.imageList2.Images.SetKeyName(4, "application.ico");
+          this.imageList2.Images.SetKeyName(5, "application.ico");
+          this.imageList2.Images.SetKeyName(6, "application.ico");
+          this.imageList2.Images.SetKeyName(7, "application.ico");
+          this.imageList2.Images.SetKeyName(8, "application.ico");
+          this.imageList2.Images.SetKeyName(9, "application.ico");
+          this.imageList2.Images.SetKeyName(10, "videos0011.png");
+          this.imageList2.Images.SetKeyName(11, "application.ico");
+          this.imageList2.Images.SetKeyName(12, "application.ico");
+          this.imageList2.Images.SetKeyName(13, "application.ico");
           // 
           // mozItem1
           // 
@@ -278,7 +298,7 @@ namespace MediaPortal.MPInstaller
           this.mozItem1.Images.SelectedImage = ((System.Drawing.Image)(resources.GetObject("resource.SelectedImage")));
           this.mozItem1.Location = new System.Drawing.Point(2, 2);
           this.mozItem1.Name = "mozItem1";
-          this.mozItem1.Size = new System.Drawing.Size(151, 40);
+          this.mozItem1.Size = new System.Drawing.Size(151, 48);
           this.mozItem1.TabIndex = 0;
           this.mozItem1.Text = "mozItem1";
           this.mozItem1.TextAlign = Pabo.MozBar.MozTextAlign.Right;
@@ -376,5 +396,6 @@ namespace MediaPortal.MPInstaller
       private System.Windows.Forms.Label label3;
       private System.Windows.Forms.ComboBox comboBox3;
       private System.Windows.Forms.ToolStripMenuItem informationToolStripMenuItem;
+      private System.Windows.Forms.ImageList imageList2;
     }
 }

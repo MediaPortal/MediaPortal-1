@@ -69,12 +69,13 @@ namespace MediaPortal.MPInstaller
                 string result = string.Empty; ;
                 try
                 {
-                  login_form dlg = new login_form(user,password);
-                  dlg.ShowDialog();
-                  user = dlg.username;
-                  password = dlg.password;
-                  result = client.DownloadString(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=login&user="+user+"&passwd="+password));
-                  if (result.Contains("Login was made !"))
+                  //login_form dlg = new login_form(user,password);
+                  //dlg.ShowDialog();
+                  //user = dlg.username;
+                  //password = dlg.password;
+                  //result = client.DownloadString(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=login&user="+user+"&passwd="+password));
+//                  if (result.Contains("Login was made !"))
+                  if (true)
                   {
                     if (Path.GetExtension(dest) == ".xml")
                     {
@@ -86,7 +87,6 @@ namespace MediaPortal.MPInstaller
                       source = source.Replace("&","|");
                       source = source.Replace("id=", "id1=");
                       source = source.Replace("http://mpi.team-mediaportal.com", "*");
-                      MessageBox.Show(source);
                       client.CachePolicy = new System.Net.Cache.RequestCachePolicy();
                       client.UseDefaultCredentials = true;
                       client.DownloadFileAsync(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=" + user + "&passwd=" + password +"&url="+ source), dest);

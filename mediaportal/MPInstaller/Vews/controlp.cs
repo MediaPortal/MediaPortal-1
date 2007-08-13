@@ -430,15 +430,15 @@ namespace MediaPortal.MPInstaller
       it1.Text = "All";
       it1.TextAlign = Pabo.MozBar.MozTextAlign.Right;
       mozPane1.Items.AddRange(new Pabo.MozBar.MozItem[] { it1 });
-
+      int cn = 1;
       foreach (string s in MPinstalerStruct.CategoriListing)
       {
         MozItem it = new MozItem();
-        it.Images.Focus = 0;
+        it.Images.Focus = cn;
         it.Images.FocusImage = null;
-        it.Images.Normal = 0;
+        it.Images.Normal = cn;
         it.Images.NormalImage = null;
-        it.Images.Selected = 0;
+        it.Images.Selected = cn;
         it.Images.SelectedImage = null;
         it.Location = new System.Drawing.Point(2, 2);
         it.Size = new System.Drawing.Size(151, 57);
@@ -446,6 +446,7 @@ namespace MediaPortal.MPInstaller
         it.Text = s;
         it.TextAlign = Pabo.MozBar.MozTextAlign.Right;
         mozPane1.Items.AddRange(new Pabo.MozBar.MozItem[] { it });
+        cn++;
       }
     }
 
