@@ -141,7 +141,6 @@ HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
 
 }
 
-
 void Log(const char *fmt, ...) 
 {
 	va_list ap;
@@ -158,9 +157,10 @@ void Log(const char *fmt, ...)
 	{
 		SYSTEMTIME systemTime;
 		GetLocalTime(&systemTime);
-		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d [%x]%s\n",
+		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+			systemTime.wMilliseconds,
 			GetCurrentThreadId(),
 			buffer);
 		fclose(fp);
@@ -291,7 +291,7 @@ void UnloadEVR()
   }
   if (m_hModuleMFPLAT!=NULL)
   {
-	  Log("Freeing lib: EVR.dll");
+	  Log("Freeing lib: MFPLAT.dll");
 	  if ( !FreeLibrary(m_hModuleMFPLAT) )
 	  {
 		  Log("MFPLAT.dll could not be unloaded");
@@ -342,9 +342,9 @@ bool LoadEVR()
 
 void DsDumpGraph( IFilterGraph* vmr9Filter )
 {
-	/*IEnumFilters* pEnum;
+	IEnumFilters* pEnum;
 	vmr9Filter->EnumFilters(&pEnum);
-
+Log("---------------------DUMPGRAPH----------------");
 	HRESULT hr;
 	IBaseFilter* pFilter;
 	ULONG cFetched;
@@ -388,11 +388,12 @@ void DsDumpGraph( IFilterGraph* vmr9Filter )
 		}
 	} while ( cFetched > 0 );
 
-	pEnum->Release();*/
+	pEnum->Release();
+Log("---------------------/DUMPGRAPH----------------");
 	//DumpGraph(vmr9Filter, 0);
 }
 
-BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter,DWORD monitor)
+BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* evrFilter,DWORD monitor)
 {
 	HRESULT hr;
 	m_bEVRLoaded = LoadEVR();
@@ -403,7 +404,7 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter
 	}
 
 	m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
-	m_pVMR9Filter=vmr9Filter;
+	m_pVMR9Filter=evrFilter;
 #ifndef DEFAULT_PRESENTER
 	CComQIPtr<IMFVideoRenderer> pRenderer = m_pVMR9Filter;
 	if (!pRenderer) 
@@ -412,7 +413,6 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter
 		return FALSE;
 	}
 	m_evrPresenter = new EVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor);
-
   hr = pRenderer->InitializeRenderer(NULL, m_evrPresenter);
   if (FAILED(hr) ) {
 	  Log("InitializeRenderer failed: 0x%x", hr);

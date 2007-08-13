@@ -31,7 +31,7 @@ typedef struct _SchedulerParams
 	CCritSec csLock;
 	CAMEvent eHasWork;
 	BOOL bDone;
-	BOOL bWorkScheduled;
+	int iTimerSet;
 } SchedulerParams;
 
 class EVRCustomPresenter
@@ -131,25 +131,34 @@ public:
 	//Local
 	void ReleaseCallBack();
 
-	HRESULT CheckForScheduledSample(LONGLONG *pNextSampleTime);
+	HRESULT CheckForScheduledSample(LONGLONG *pNextSampleTime, DWORD msLastSleepTime);
+	//returns true if there was some input to be processed
+	BOOL CheckForInput();
 	HRESULT ProcessInputNotify();
 protected:
 	void ReleaseSurfaces();
 	void Paint(CComPtr<IDirect3DSurface9> pSurface);
 	HRESULT SetMediaType(CComPtr<IMFMediaType> pType);
 	void ReAllocSurfaces();
+	HRESULT LogOutputTypes();
+	HRESULT GetAspectRatio(CComPtr<IMFMediaType> pType, int* piARX, int* piARY);
 	HRESULT CreateProposedOutputType(IMFMediaType* pMixerType, IMFMediaType** pType);
 	HRESULT RenegotiateMediaOutputType();
 	BOOL CheckForEndOfStream();
-	void	StartScheduler();
-	void	StopScheduler();
+	void	StartWorkers();
+	void	StopWorkers();
+	void	StartThread(PHANDLE handle, SchedulerParams** ppParams,
+					UINT (CALLBACK *ThreadProc)(void*), UINT* threadId);
+	void	EndThread(HANDLE hThread, SchedulerParams* params);
+	void    NotifyThread(SchedulerParams* params);
 	void    NotifyScheduler();
+	void    NotifyWorker();
 	HRESULT GetTimeToSchedule(CComPtr<IMFSample> pSample, LONGLONG* pDelta);
 	void  Flush();
 	void ScheduleSample(CComPtr<IMFSample> pSample);
 	HRESULT TrackSample(IMFSample *pSample);
 	HRESULT GetFreeSample(CComPtr<IMFSample>& ppSample);
-	void	ReturnSample(CComPtr<IMFSample> pSample, BOOL bCheckForWork);
+	void	ReturnSample(CComPtr<IMFSample> pSample);
 	HRESULT PresentSample(CComPtr<IMFSample> pSample);
 	void    ResetStatistics();
 
@@ -161,19 +170,23 @@ protected:
 	CComPtr<IMFTransform> m_pMixer;
 	CComPtr<IMFMediaType> m_pMediaType;
 	CComPtr<IDirect3DSwapChain9> chains[NUM_SURFACES];
+	CComPtr<IDirect3DTexture9> textures[NUM_SURFACES];
 	CComPtr<IDirect3DSurface9> surfaces[NUM_SURFACES];
 	CComPtr<IMFSample> samples[NUM_SURFACES];
 	CCritSec m_lockSamples;
 	vector<CComPtr<IMFSample>> m_vFreeSamples;
 	queue<CComPtr<IMFSample>> m_vScheduledSamples;
 	SchedulerParams *m_schedulerParams;
+	SchedulerParams *m_workerParams;
 	BOOL		  m_bSchedulerRunning;
 	HANDLE		  m_hScheduler;
-	UINT		  m_uThreadId;
+	HANDLE		  m_hWorker;
+	UINT		  m_uSchedulerThreadId;
+	UINT		  m_uWorkerThreadId;
 	UINT          m_iResetToken;
 	float		  m_fRate;
 	long		  m_refCount;
-	int			  m_surfaceCount;
+	//int			  m_surfaceCount;
 	HMONITOR	  m_hMonitor;
 	int   m_iVideoWidth, m_iVideoHeight;
 	int   m_iARX, m_iARY;
@@ -181,6 +194,7 @@ protected:
 	BOOL		m_bfirstFrame;
 	BOOL		m_bfirstInput;
 	BOOL		m_bInputAvailable;
+	LONG		m_lInputAvailable;
 	BOOL		m_bendStreaming;
 	int m_iFramesDrawn, m_iFramesDropped, m_iJitter;
 	LONGLONG m_hnsLastFrameTime, m_hnsTotalDiff;
