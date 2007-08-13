@@ -308,11 +308,6 @@ STDMETHODIMP CTsReaderFilter::Stop()
   {
     m_pSubtitlePin->SetRunningStatus(false);
   }
-  if (m_pDVBSubtitle) 
-  {
-    m_pDVBSubtitle->Release();
-    m_pDVBSubtitle = NULL;
-  }
 
   //stop duration thread
   StopThread();

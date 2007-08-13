@@ -140,6 +140,7 @@ HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
   if (pinInfo.pFilter==NULL) return E_FAIL;
   hr=pinInfo.pFilter->QueryFilterInfo(&filterInfo);
   filterInfo.pGraph->Release();
+  pinInfo.pFilter->Release();
   if (!SUCCEEDED(hr)) return E_FAIL;
   if (wcscmp(filterInfo.achName,L"MediaPortal DVBSub2")!=0)
   {
