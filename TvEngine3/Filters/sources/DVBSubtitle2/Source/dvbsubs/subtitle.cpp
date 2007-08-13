@@ -29,6 +29,8 @@
 
 extern void LogDebug(const char *fmt, ...);
 
+static int count = 0;
+
 //
 // Constructor
 //
@@ -41,7 +43,14 @@ CSubtitle::CSubtitle( int width, int height )
 	m_Bitmap.bmPlanes		  = 1;
 	m_Bitmap.bmWidthBytes	= width * 4;
 
+  count++;
+
+  LogDebug("CSubtitle:: CREATE count %d", count);
+
   m_Data = NULL;
+
+  m_Data = new unsigned char[ m_Bitmap.bmHeight * m_Bitmap.bmWidth *4 ];
+  ZeroMemory( m_Data, m_Bitmap.bmHeight * m_Bitmap.bmWidth * 4 );
 }
 
 //
@@ -49,10 +58,9 @@ CSubtitle::CSubtitle( int width, int height )
 //
 CSubtitle::~CSubtitle()
 {
-	if( m_Data )
-	{
-		delete m_Data;
-	}
+  count--;
+  LogDebug("CSubtitle::~CSubtitle() count %d", count);
+	delete[] m_Data;
 }
 
 
@@ -61,7 +69,7 @@ CSubtitle::~CSubtitle()
 //
 int CSubtitle::RenderBitmap( unsigned char* buffer, unsigned char* my_palette, unsigned char* my_trans, int col_count )
 {
-	uint8_t colorData( 0 );
+  uint8_t colorData( 0 );
 	long position( 0 );
   m_FirstScanline = -1;
 
@@ -79,9 +87,6 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, unsigned char* my_palette, u
       }
     }
   }
-
-  m_Data = new unsigned char[ m_Bitmap.bmHeight * m_Bitmap.bmWidth *4 ];
-  ZeroMemory( m_Data, m_Bitmap.bmHeight * m_Bitmap.bmWidth * 4 );
 
   m_Bitmap.bmBits	= (LPVOID)m_Data;
 

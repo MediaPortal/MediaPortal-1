@@ -21,7 +21,6 @@
 
 #pragma warning( disable: 4995 4996 )
 
-#include <streams.h>
 #include <bdaiface.h>
 #include "DVBSub.h"
 #include "SubtitleInputPin.h"
@@ -71,7 +70,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_CurrentSeekPosition( 0 )
 {
   ::DeleteFile("c:\\DVBsub.log");
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 3 ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 4 ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -207,21 +206,22 @@ STDMETHODIMP CDVBSub::Stop()
   CAutoLock cObjectLock( m_pLock );
   HRESULT hr = CBaseFilter::Stop();
 
-  LogDebug("CDVBSub::Stop - beginning" );
+  LogDebug( "CDVBSub::Stop - beginning" );
 
   // Make sure no further processing is done
   if( m_pSubDecoder ) m_pSubDecoder->Reset();
 	if( m_pSubtitlePin ) m_pSubtitlePin->Reset();
   
   //LogDebug( "Release m_pIMediaSeeking" );
-  if( m_pIMediaSeeking )
+  //if( m_pIMediaSeeking )
   {
     //m_pIMediaSeeking->Release();
     //m_pIMediaSeeking = NULL;
   }
   //LogDebug( "Release m_pIMediaSeeking - done" );
 
-  LogDebug("CDVBSub::Stop - done" );
+  LogDebug( "CDVBSub::Stop - done" );
+
   return hr;
 }
 
@@ -243,7 +243,7 @@ void CDVBSub::Reset()
     (*m_pTimestampResetObserver)();
   }
 
-  LogDebugMediaPosition( "CDVBSub::Reset - media seeking position" );  
+  //LogDebugMediaPosition( "CDVBSub::Reset - media seeking position" );  
 }
 
 
@@ -255,6 +255,7 @@ STDMETHODIMP CDVBSub::Test(int status)
 	LogDebug("TEST : %i", status);
 	return S_OK;
 }
+
 
 //
 // SetSubtitlePid
@@ -353,13 +354,13 @@ void CDVBSub::NotifySubtitle()
   }
   if( m_pSubtitleObserver )
   {
-    // Notify the callback function
+    // Notify the MediaPortal side
 	  SUBTITLE sub;
-	  this->GetSubtitle( 0, &sub );
+	  GetSubtitle( 0, &sub );
 	  LogDebug( "Calling subtitle callback" );
     int retval = (*m_pSubtitleObserver)( &sub );
-	  LogDebug( "subtitle Callback returned" );
-	  this->DiscardOldestSubtitle();
+	  LogDebug( "Subtitle Callback returned" );
+	  DiscardOldestSubtitle();
   }
   else
   {
@@ -398,7 +399,6 @@ STDMETHODIMP CDVBSub::GetSubtitle( int place, SUBTITLE* subtitle )
 	  subtitle->bmPlanes = bitmap->bmPlanes;
 	  subtitle->bmType = bitmap->bmType;
 	  subtitle->bmWidth = bitmap->bmWidth;
-	  //LogDebug("Stride: %i" , bitmap->bmWidthBytes);
 	  subtitle->bmWidthBytes = bitmap->bmWidthBytes;
     subtitle->timestamp = pCSubtitle->Timestamp();
     subtitle->firstScanLine = pCSubtitle->FirstScanline();
@@ -547,7 +547,9 @@ STDMETHODIMP CDVBSub::NonDelegatingQueryInterface( REFIID riid, void** ppv )
 STDMETHODIMP_(ULONG) CDVBSub::NonDelegatingAddRef()
 {
   int tmp = m_cRef;
-  return CUnknown::NonDelegatingAddRef();
+  HRESULT hr = CBaseFilter::NonDelegatingAddRef();
+  //LogDebug("CDVBSub::NonDelegatingAddRef - m_cRef %d", m_cRef );
+  return hr;
 }
 
 // DEBUG ONLY
@@ -557,6 +559,8 @@ STDMETHODIMP_(ULONG) CDVBSub::NonDelegatingAddRef()
 STDMETHODIMP_(ULONG) CDVBSub::NonDelegatingRelease()
 {
   int tmp = m_cRef;
-  return CUnknown::NonDelegatingRelease();
+  HRESULT hr = CBaseFilter::NonDelegatingRelease();
+  //LogDebug("CDVBSub::NonDelegatingRelease - m_cRef %d", m_cRef );
+  return hr;
 }
 #endif

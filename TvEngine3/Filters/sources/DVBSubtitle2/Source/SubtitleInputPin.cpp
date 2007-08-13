@@ -21,7 +21,6 @@
 
 #include <windows.h>
 #include <xprtdefs.h>
-#include <streams.h>
 #include <bdaiface.h>
 
 #include "SubtitleInputPin.h"
@@ -226,6 +225,7 @@ STDMETHODIMP CSubtitleInputPin::EndFlush( void )
   return hr; 
 }
 
+
 #ifdef _DEBUG
 // DEBUG ONLY
 //
@@ -234,7 +234,9 @@ STDMETHODIMP CSubtitleInputPin::EndFlush( void )
 STDMETHODIMP_(ULONG) CSubtitleInputPin::AddRef()
 {
   int tmp = m_cRef;
-  return CBaseInputPin::AddRef();
+  HRESULT hr = CBaseInputPin::NonDelegatingAddRef();
+  //LogDebug("CSubtitleInputPin::NonDelegatingAddRef - m_cRef %d", m_cRef );
+  return hr;
 }
 
 
@@ -245,6 +247,8 @@ STDMETHODIMP_(ULONG) CSubtitleInputPin::AddRef()
 STDMETHODIMP_(ULONG) CSubtitleInputPin::Release()
 {
   int tmp = m_cRef;
-  return CBaseInputPin::Release();
+  HRESULT hr = CBaseInputPin::NonDelegatingRelease();
+  //LogDebug("CSubtitleInputPin::NonDelegatingRelease - m_cRef %d", m_cRef );
+  return hr;
 }
 #endif 

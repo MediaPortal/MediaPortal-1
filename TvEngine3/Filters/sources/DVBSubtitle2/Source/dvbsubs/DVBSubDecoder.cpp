@@ -613,7 +613,7 @@ void CDVBSubDecoder::Compose_subtitle()
 
 int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid ) 
 {
-	if( m_CurrentSubtitle )
+  if( m_CurrentSubtitle )
 		delete m_CurrentSubtitle;
 
 	m_CurrentSubtitle = new CSubtitle( 720, 576 );
@@ -741,7 +741,7 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 			
 			if( n )
 			{
-				Compose_subtitle();
+			  Compose_subtitle();
 				if( m_pObserver )
 				{
 					m_pObserver->NotifySubtitle();
@@ -849,6 +849,7 @@ void CDVBSubDecoder::ReleaseOldestSubtitle()
 {
   if( m_RenderedSubtitles.size() > 0 )
   {
+    delete m_RenderedSubtitles[0];
     m_RenderedSubtitles.erase( m_RenderedSubtitles.begin() );		
   }
 }

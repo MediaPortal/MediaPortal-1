@@ -21,7 +21,7 @@
 
 #include <windows.h>
 #include <xprtdefs.h>
-#include <streams.h>
+//#include <streams.h>
 #include <bdaiface.h>
 #include <initguid.h>
 #include <atlcomcli.h>
