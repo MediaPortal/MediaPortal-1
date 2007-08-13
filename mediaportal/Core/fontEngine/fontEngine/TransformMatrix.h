@@ -223,7 +223,8 @@ public:
     return (unsigned int)(colour * alpha);
   }
 
-private:
+//private:
+	public:
   float m[3][4];
   float alpha;
 };
