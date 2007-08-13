@@ -37,6 +37,7 @@ namespace MediaPortal.GUI.Library
     WindowOpen,
     Visible,
     Focus,
+    Conditional,
   };
 
   public enum EffectType
@@ -62,6 +63,12 @@ namespace MediaPortal.GUI.Library
     InProcess,
     StateApplied
   };
+  public enum AnimationRepeat
+  {
+    None = 0,
+    Pulse,
+    Loop
+  };
 
   public class VisualEffect : ICloneable
   {
@@ -70,9 +77,11 @@ namespace MediaPortal.GUI.Library
     AnimationProcess _queuedProcess;
     AnimationState _currentState;
     AnimationProcess _currentProcess;
+    AnimationRepeat _repeatAnim;
+    Tweener _tweener;
     int _condition;      // conditions that must be satisfied in order for this // animation to be performed
     // animation variables
-    float _acceleration;
+    //float _acceleration;
     float _startX;
     float _startY;
     float _endX;
@@ -89,6 +98,7 @@ namespace MediaPortal.GUI.Library
     uint _delay;
 
     bool _isReversible;    // whether the animation is reversible or not
+    bool _lastCondition;
     TransformMatrix _matrix = new TransformMatrix();
 
     const float DEGREE_TO_RADIAN = 0.01745329f;
@@ -99,6 +109,7 @@ namespace MediaPortal.GUI.Library
     }
     public void Reset()
     {
+      _tweener = null;
       _type = AnimationType.None;
       _effect = EffectType.None;
       _currentState = AnimationState.None;
@@ -109,9 +120,11 @@ namespace MediaPortal.GUI.Library
       _centerX = _centerY = 0;
       _startAlpha = 0;
       _endAlpha = 100;
-      _acceleration = 0;
+      //_acceleration = 0;
       _condition = 0;
       _isReversible = true;
+      _lastCondition = false;
+      _repeatAnim = AnimationRepeat.None;
     }
     float GetFloat(string text)
     {
@@ -120,7 +133,7 @@ namespace MediaPortal.GUI.Library
       string test = fTest.ToString();
       if (test.IndexOf(",") >= 0)
         useCommas = true;
-      if (useCommas) 
+      if (useCommas)
         text = text.Replace(".", ",");
       else
         text = text.Replace(",", ".");
@@ -128,7 +141,7 @@ namespace MediaPortal.GUI.Library
     }
     void GetPosition(string text, ref float x, ref float y)
     {
-//      Log.Info("GetPos:{0}", text);
+      //      Log.Info("GetPos:{0}", text);
       x = y = 0;
       if (text == null) return;
       int pos = text.IndexOf(",");
@@ -144,7 +157,6 @@ namespace MediaPortal.GUI.Library
     }
     public bool Create(XmlNode node)
     {
-      
       string animType = node.InnerText.ToLower();
       if (String.Compare(animType, "visible", true) == 0)
         _type = AnimationType.Visible;
@@ -160,6 +172,8 @@ namespace MediaPortal.GUI.Library
         _type = AnimationType.WindowOpen;
       else if (String.Compare(animType, "windowclose", true) == 0)
         _type = AnimationType.WindowClose;
+      else if (String.Compare(animType, "conditional", true) == 0)
+        _type = AnimationType.Conditional;
       if (_type == AnimationType.None)
       {
         Log.Error("Control has invalid animation type");
@@ -179,12 +193,12 @@ namespace MediaPortal.GUI.Library
         _effect = EffectType.Fade;
       else if (String.Compare(effectType, "slide") == 0)
         _effect = EffectType.Slide;
-      else if (String.Compare(effectType, "rotatex") == 0)
-        _effect = EffectType.RotateX;
-      else if (String.Compare(effectType, "rotatey") == 0)
-        _effect = EffectType.RotateY;
       else if (String.Compare(effectType, "rotate") == 0)
         _effect = EffectType.RotateZ;
+      else if (String.Compare(effectType, "rotatey") == 0)
+        _effect = EffectType.RotateY;
+      else if (String.Compare(effectType, "rotatex") == 0)
+        _effect = EffectType.RotateX;
       else if (String.Compare(effectType, "zoom") == 0)
         _effect = EffectType.Zoom;
       // time and delay
@@ -198,6 +212,61 @@ namespace MediaPortal.GUI.Library
       //_length = (uint)(_length * g_SkinInfo.GetEffectsSlowdown());
       //_delay = (uint)(_delay * g_SkinInfo.GetEffectsSlowdown());
 
+      _tweener = null;
+      nodeAttribute = node.Attributes.GetNamedItem("tween");
+      if (nodeAttribute != null)
+      {
+        string tweenMode = nodeAttribute.Value;
+        if (tweenMode == "linear")
+          _tweener = new LinearTweener();
+        else if (tweenMode == "quadratic")
+          _tweener = new QuadTweener();
+        else if (tweenMode == "cubic")
+          _tweener = new CubicTweener();
+        else if (tweenMode == "sine")
+          _tweener = new SineTweener();
+        else if (tweenMode == "back")
+          _tweener = new BackTweener();
+        else if (tweenMode == "circle")
+          _tweener = new CircleTweener();
+        else if (tweenMode == "bounce")
+          _tweener = new BounceTweener();
+        else if (tweenMode == "elastic")
+          _tweener = new ElasticTweener();
+        nodeAttribute = node.Attributes.GetNamedItem("easing");
+        if (nodeAttribute != null && _tweener != null)
+        {
+          string easing = nodeAttribute.Value;
+          if (easing == "in")
+            _tweener.Easing = TweenerType.EASE_IN;
+          else if (easing == "out")
+            _tweener.Easing = TweenerType.EASE_OUT;
+          else if (easing == "inout")
+            _tweener.Easing = TweenerType.EASE_INOUT;
+        }
+      }
+
+      // acceleration of effect
+      //float accel;
+      nodeAttribute = node.Attributes.GetNamedItem("acceleration");
+      if (nodeAttribute != null)
+      {
+        float acceleration = GetFloat(nodeAttribute.Value.ToString());
+        if (_tweener == null)
+        {
+          if (acceleration != 0.0f)
+          {
+            _tweener = new QuadTweener(acceleration);
+            _tweener.Easing = TweenerType.EASE_IN;
+          }
+          else
+          {
+            _tweener = new LinearTweener();
+          }
+        }
+      }
+
+
       // reversible (defaults to true)
       nodeAttribute = node.Attributes.GetNamedItem("reversible");
       if (nodeAttribute != null)
@@ -207,16 +276,34 @@ namespace MediaPortal.GUI.Library
           _isReversible = false;
       }
 
+
       // acceleration of effect
       //float accel;
-      nodeAttribute = node.Attributes.GetNamedItem("acceleration");
-      if (nodeAttribute != null)
-      {
-        _acceleration = GetFloat(nodeAttribute.Value.ToString());
-      }
+      //nodeAttribute = node.Attributes.GetNamedItem("acceleration");
+      //if (nodeAttribute != null)
+      //{
+      //  _acceleration = GetFloat(nodeAttribute.Value.ToString());
+      //}
 
 
       // slide parameters
+      if (_type == AnimationType.Conditional)
+      {
+        nodeAttribute = node.Attributes.GetNamedItem("pulse");
+        if (nodeAttribute != null)
+        {
+          string reverse = nodeAttribute.Value;
+          if (String.Compare(reverse, "true") == 0)
+            _repeatAnim = AnimationRepeat.Pulse;
+        }
+        nodeAttribute = node.Attributes.GetNamedItem("loop");
+        if (nodeAttribute != null)
+        {
+          string reverse = nodeAttribute.Value;
+          if (String.Compare(reverse, "true") == 0)
+            _repeatAnim = AnimationRepeat.Loop;
+        }
+      }
       if (_effect == EffectType.Slide)
       {
         nodeAttribute = node.Attributes.GetNamedItem("start");
@@ -232,7 +319,7 @@ namespace MediaPortal.GUI.Library
           GetPosition(endPos, ref _endX, ref _endY);
         }
         // scale our parameters
-        GUIGraphicsContext.ScaleHorizontal(ref _startX );
+        GUIGraphicsContext.ScaleHorizontal(ref _startX);
         GUIGraphicsContext.ScaleVertical(ref _startY);
         GUIGraphicsContext.ScaleHorizontal(ref _endX);
         GUIGraphicsContext.ScaleVertical(ref _endY);
@@ -260,7 +347,7 @@ namespace MediaPortal.GUI.Library
         if (_startAlpha < 0) _startAlpha = 0;
         if (_endAlpha < 0) _endAlpha = 0;
       }
-      else if ((_effect == EffectType.RotateX) || (_effect == EffectType.RotateY) || (_effect == EffectType.RotateZ))
+      else if (_effect == EffectType.RotateZ || _effect == EffectType.RotateX || _effect == EffectType.RotateY)
       {
         nodeAttribute = node.Attributes.GetNamedItem("start");
         if (nodeAttribute != null) _startX = float.Parse(nodeAttribute.Value.ToString());
@@ -311,34 +398,35 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.ScaleHorizontal(ref _centerX);
           GUIGraphicsContext.ScaleVertical(ref _centerY);
         }
+        else
+        {
+          /*
+          // no center specified
+          // calculate the center position...
+          if (_startX != 0)
+          {
+            float scale = _endX / _startX;
+            if (scale != 1)
+              _centerX = (_endPosX - scale * _startPosX) / (1 - scale);
+          }
+          if (_startY != 0)
+          {
+            float scale = _endY / _startY;
+            if (scale != 1)
+              _centerY = (_endPosY - scale * _startPosY) / (1 - scale);
+          }*/
+        }
       }
       return true;
     }
-    // creates the reverse animation
-    void CreateReverse(VisualEffect anim)
-    {
-      _acceleration = -anim._acceleration;
-      _startX = anim._endX;
-      _startY = anim._endY;
-      _endX = anim._startX;
-      _endY = anim._startY;
-      _endAlpha = anim._startAlpha;
-      _startAlpha = anim._endAlpha;
-      _centerX = anim._centerX;
-      _centerY = anim._centerY;
-      _type = (AnimationType)(-(int)anim._type);
-      _effect = anim._effect;
-      _length = anim._length;
-      _isReversible = anim._isReversible;
-    }
 
-    public void Animate(uint time, bool hasRendered)
+    public void Animate(uint time, bool startAnim)
     {
       // First start any queued animations
       if (_queuedProcess == AnimationProcess.Normal)
       {
         if (_currentProcess == AnimationProcess.Reverse)
-          _start = (uint)(time - (int)(_length * _amount));  // reverse direction of effect
+          _start = (uint)(time - (int)(_length * _amount));  // reverse direction of animation
         else
           _start = time;
         _currentProcess = AnimationProcess.Normal;
@@ -346,20 +434,15 @@ namespace MediaPortal.GUI.Library
       else if (_queuedProcess == AnimationProcess.Reverse)
       {
         if (_currentProcess == AnimationProcess.Normal)
-          _start = (uint)(time - (int)(_length * (1 - _amount))); // turn around direction of effect
-        else
+          _start = (uint)(time - (int)(_length * (1 - _amount))); // turn around direction of animation
+        else if (_currentProcess == AnimationProcess.None)
           _start = time;
         _currentProcess = AnimationProcess.Reverse;
       }
-      // reset the queued state once we've rendered
-      // Note that if we are delayed, then the resource may not have been allocated as yet
-      // as it hasn't been rendered (is still invisible).  Ideally, the resource should
-      // be allocated based on a visible state, rather than a bool on/off, then only rendered
-      // if it's in the appropriate state (ie allow visible = NO, DELAYED, VISIBLE, and allocate
-      // if it's not NO, render if it's VISIBLE)  The alternative, is to just always render
-      // the control while it's in the DELAYED state (comes down to the definition of the states)
-      if (hasRendered || _queuedProcess == AnimationProcess.Reverse || (_currentState == AnimationState.Delayed && _type > 0))
+      // reset the queued state once we've rendered to ensure allocation has occured
+      if (startAnim || _queuedProcess == AnimationProcess.Reverse)// || (_currentState == ANI_STATE_DELAYED && _type > 0))
         _queuedProcess = AnimationProcess.None;
+
       // Update our animation process
       if (_currentProcess == AnimationProcess.Normal)
       {
@@ -376,7 +459,18 @@ namespace MediaPortal.GUI.Library
         else
         {
           _amount = 1.0f;
-          _currentState = AnimationState.StateApplied;
+          if (_repeatAnim == AnimationRepeat.Pulse && _lastCondition)
+          { // pulsed anims auto-reverse
+            _currentProcess = AnimationProcess.Reverse;
+            _start = time;
+          }
+          else if (_repeatAnim == AnimationRepeat.Loop && _lastCondition)
+          { // looped anims start over
+            _amount = 0.0f;
+            _start = time;
+          }
+          else
+            _currentState = AnimationState.StateApplied;
         }
       }
       else if (_currentProcess == AnimationProcess.Reverse)
@@ -389,66 +483,74 @@ namespace MediaPortal.GUI.Library
         else
         {
           _amount = 0.0f;
-          _currentState = AnimationState.StateApplied;
+          if (_repeatAnim == AnimationRepeat.Pulse && _lastCondition)
+          { // pulsed anims auto-reverse
+            _currentProcess = AnimationProcess.Normal;
+            _start = time;
+          }
+          else
+            _currentState = AnimationState.StateApplied;
         }
       }
     }
-    public void SetCenter(float x, float y)
-    {
-      if (_effect == EffectType.Zoom || _effect == EffectType.RotateZ)
-      {
-        if (_centerX == 0) _centerX = x;
-        if (_centerY == 0) _centerY = y;
-      }
-    }
+
 
     public void RenderAnimation(ref TransformMatrix matrix)
+    {
+      // If we have finished an animation, reset the animation state
+      // We do this here (rather than in Animate()) as we need the
+      // currentProcess information in the UpdateStates() function of the
+      // window and control classes.
+
+      // Now do the real animation
+      if (_currentProcess != AnimationProcess.None)
+        Calculate();
+      if (_currentState == AnimationState.StateApplied)
+      {
+        _currentProcess = AnimationProcess.None;
+        _queuedProcess = AnimationProcess.None;
+      }
+      if (_currentState != AnimationState.None)
+        matrix.multiplyAssign(_matrix);
+    }
+
+    void Calculate()
     {
       // If we have finished an animation, reset the animation state
       // We do this here (rather than in Animate()) as we need the
       // _currentProcess information in the UpdateStates() function of the
       // window and control classes.
 
-      // Now do the real animation
-      if (_currentProcess != AnimationProcess.None)
-      {
-        float offset = _amount * (_acceleration * _amount + 1.0f - _acceleration);
-        if (_effect == EffectType.Fade)
-        {
-          _matrix.SetFader(((float)(_endAlpha - _startAlpha) * _amount + _startAlpha) * 0.01f);
-        }
-        else if (_effect == EffectType.Slide)
-        {
-          _matrix.SetTranslation((_endX - _startX) * offset + _startX, (_endY - _startY) * offset + _startY, 0);
-        }
-        else if (_effect == EffectType.RotateX)
-        {
-          _matrix.SetXRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, CenterX, CenterY);
-        }
-        else if (_effect == EffectType.RotateY)
-        {
-          _matrix.SetYRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, CenterX, CenterY);
-        }
-        else if (_effect == EffectType.RotateZ)
-        {
-          //_matrix.SetTranslation(_centerX, _centerY, 0);
-          _matrix.SetZRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, CenterX, CenterY);
-          //_matrix.multiplyAssign(TransformMatrix.CreateTranslation(-_centerX, -_centerY, 0));
-        }
-        else if (_effect == EffectType.Zoom)
-        {
-          float scaleX = ((_endX - _startX) * offset + _startX) * 0.01f;
-          float scaleY = ((_endY - _startY) * offset + _startY) * 0.01f;
-          _matrix.SetTranslation(_centerX, _centerY, 0);
-          _matrix.multiplyAssign(TransformMatrix.CreateScaler(scaleX, scaleY, 0));
-          _matrix.multiplyAssign(TransformMatrix.CreateTranslation(-_centerX, -_centerY, 0));
-        }
-      }
-      if (_currentState == AnimationState.StateApplied)
-        _currentProcess = AnimationProcess.None;
+      float offset = _amount;
+      if (_tweener != null)
+        offset = _tweener.Tween(_amount, 0.0f, 1.0f, 1.0f);
 
-      if (_currentState != AnimationState.None)
-        matrix.multiplyAssign(_matrix);
+      if (_effect == EffectType.Fade)
+      {
+        _matrix.SetFader(((float)(_endAlpha - _startAlpha) * offset + _startAlpha) * 0.01f);
+      }
+      else if (_effect == EffectType.Slide)
+      {
+        _matrix.SetTranslation((_endX - _startX) * offset + _startX, (_endY - _startY) * offset + _startY, 0);
+      }
+      else if (_effect == EffectType.RotateX)
+      {
+        _matrix.SetXRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, _centerX, _centerY, 1.0f);
+      }
+      else if (_effect == EffectType.RotateY)
+      {
+        _matrix.SetYRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, _centerX, _centerY, 1.0f);
+      }
+      else if (_effect == EffectType.RotateZ)
+      {
+        _matrix.SetZRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, _centerX, _centerY, GUIGraphicsContext.PixelRatio);
+      }
+      else if (_effect == EffectType.Zoom)
+      {
+        float scaleX = ((_endX - _startX) * offset + _startX) * 0.01f;
+        float scaleY = ((_endY - _startY) * offset + _startY) * 0.01f;
+        _matrix.SetScaler(scaleX, scaleY, _centerX, _centerY);
+      }
     }
 
     public void ResetAnimation()
@@ -457,6 +559,68 @@ namespace MediaPortal.GUI.Library
       _queuedProcess = AnimationProcess.None;
       _currentState = AnimationState.None;
     }
+
+    public void ApplyAnimation()
+    {
+      _queuedProcess = AnimationProcess.None;
+      if (_repeatAnim == AnimationRepeat.Pulse)
+      { // pulsed anims auto-reverse
+        _amount = 1.0f;
+        _currentProcess = AnimationProcess.Reverse;
+        _currentState = AnimationState.InProcess;
+      }
+      else if (_repeatAnim == AnimationRepeat.Loop)
+      { // looped anims start over
+        _amount = 0.0f;
+        _currentProcess = AnimationProcess.Normal;
+        _currentState = AnimationState.InProcess;
+      }
+      else
+      {
+        _currentProcess = AnimationProcess.Normal;
+        _currentState = AnimationState.StateApplied;
+        _amount = 1.0f;
+      }
+      Calculate();
+    }
+
+    public void UpdateCondition()
+    {
+      bool condition = GUIInfoManager.GetBool(_condition, 0);
+      if (condition && !_lastCondition)
+        _queuedProcess = AnimationProcess.Normal;
+      else if (!condition && _lastCondition)
+      {
+        if (_isReversible)
+          _queuedProcess = AnimationProcess.Reverse;
+        else
+          ResetAnimation();
+      }
+      _lastCondition = condition;
+    }
+
+    public void SetInitialCondition()
+    {
+      _lastCondition = GUIInfoManager.GetBool(_condition, 0);
+      if (_lastCondition)
+        ApplyAnimation();
+      else
+        ResetAnimation();
+    }
+
+    void QueueAnimation(AnimationProcess process)
+    {
+      _queuedProcess = process;
+    }
+    public void SetCenter(float x, float y)
+    {
+      if (_effect == EffectType.Zoom || _effect == EffectType.RotateZ)
+      {
+        if (_centerX == 0.0f) _centerX = x;
+        if (_centerY == 0.0f) _centerY = y;
+      }
+    }
+
     public bool IsReversible
     {
       get
@@ -496,9 +660,9 @@ namespace MediaPortal.GUI.Library
       }
       set
       {
-         _type=value;
-       }
-     }
+        _type = value;
+      }
+    }
     public AnimationState CurrentState
     {
       get
@@ -594,17 +758,17 @@ namespace MediaPortal.GUI.Library
         _endY = value;
       }
     }
-    public float Acceleration
-    {
-      get
-      {
-        return _acceleration;
-      }
-      set
-      {
-        _acceleration = value;
-      }
-    }
+    //public float Acceleration
+    //{
+    //  get
+    //  {
+    //    return _acceleration;
+    //  }
+    //  set
+    //  {
+    //    _acceleration = value;
+    //  }
+    //}
     public float Amount
     {
       get
@@ -628,7 +792,7 @@ namespace MediaPortal.GUI.Library
       effect._currentState = _currentState;
       effect._currentProcess = _currentProcess;
       effect._condition = _condition;
-      effect._acceleration = _acceleration;
+      //effect._acceleration = _acceleration;
       effect._startX = _startX;
       effect._startY = _startY;
       effect._endX = _endX;
@@ -636,13 +800,16 @@ namespace MediaPortal.GUI.Library
       effect._centerX = _centerX;
       effect._centerY = _centerY;
       effect._startAlpha = _startAlpha;
+      effect._repeatAnim = _repeatAnim;
       effect._endAlpha = _endAlpha;
+      effect._lastCondition = _lastCondition;
       effect._amount = _amount;
       effect._start = _start;
       effect._length = _length;
       effect._delay = _delay;
       effect._isReversible = _isReversible;
       effect._matrix = (TransformMatrix)_matrix.Clone();
+      effect._tweener = _tweener;
       return effect;
     }
 

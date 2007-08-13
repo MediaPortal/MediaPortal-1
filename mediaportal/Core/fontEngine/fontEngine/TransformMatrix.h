@@ -10,14 +10,23 @@ public:
   {
     Reset();
   };
-
-	TransformMatrix(float matrix[3][4])
+  TransformMatrix(float morg[3][4])
   {
-		m[0][0]=matrix[0][0];  m[0][1]=matrix[0][1];  m[0][2]=matrix[0][2];  m[0][3]=matrix[0][3];
-    m[1][0]=matrix[1][0];  m[1][1]=matrix[1][1];  m[1][2]=matrix[1][2];  m[1][3]=matrix[1][3];
-	  m[2][0]=matrix[2][0];  m[2][1]=matrix[2][1];  m[2][2]=matrix[2][2];  m[2][3]=matrix[2][3];
-		alpha = 1.0f;
-  };
+    m[0][0] =morg[0][0];
+    m[0][1] =morg[0][1];
+    m[0][2] =morg[0][2];
+    m[0][3] =morg[0][3];
+
+    m[1][0] =morg[1][0];
+    m[1][1] =morg[1][1];
+    m[1][2] =morg[1][2];
+    m[1][3] =morg[1][3];
+
+    m[2][0] =morg[2][0];
+    m[2][1] =morg[2][1];
+    m[2][2] =morg[2][2];
+    m[2][3] =morg[2][3];
+  }
   void Reset()
   {
     m[0][0] = 1.0f; m[0][1] = m[0][2] = m[0][3] = 0;
@@ -191,18 +200,6 @@ public:
     x = newX;
   }
 
-    inline  float ScaleFinalXCoord(float x, float y)
-  {
-    return TransformXCoord(x, y, 0);
-  }
-  inline  float ScaleFinalYCoord(float x, float y)
-  {
-    return TransformYCoord(x, y, 0);
-  }
-  inline  float ScaleFinalZCoord(float x, float y)
-  {
-    return TransformZCoord(x, y, 0);
-  }
   inline float TransformXCoord(float x, float y, float z) const
   {
     return m[0][0] * x + m[0][1] * y + m[0][2] * z + m[0][3];
@@ -222,9 +219,11 @@ public:
   {
     return (unsigned int)(colour * alpha);
   }
+  inline float ScaleFinalXCoord(float x, float y) const { return TransformXCoord(x, y, 0); }
+  inline float ScaleFinalYCoord(float x, float y) const { return TransformYCoord(x, y, 0); }
+  inline float ScaleFinalZCoord(float x, float y) const { return TransformZCoord(x, y, 0); }
 
-//private:
-	public:
+private:
   float m[3][4];
   float alpha;
 };

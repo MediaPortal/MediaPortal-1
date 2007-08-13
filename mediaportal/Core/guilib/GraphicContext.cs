@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Configuration;
@@ -47,9 +48,9 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIGraphicsContext
   {
+    static List<Point> _cameras = new List<Point>();
+    static List<TransformMatrix> _groupTransforms = new List<TransformMatrix>();
     static TransformMatrix _guiTransform = new TransformMatrix();
-    static TransformMatrix _windowTransform = new TransformMatrix();
-    static TransformMatrix _finalWindowTransform = new TransformMatrix();
     static TransformMatrix _finalTransform = new TransformMatrix();
     //enum containing current state of mediaportal
     public enum State
@@ -150,7 +151,7 @@ namespace MediaPortal.GUI.Library
     public static bool _useScreenSelector = false;
     static private AdapterInformation _currentFullscreenAdapterInfo = null;
     static private Screen _currentScreen = null;
-    
+
     [DllImport("user32.dll")]
     static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
 
@@ -235,7 +236,7 @@ namespace MediaPortal.GUI.Library
     static public AdapterInformation currentFullscreenAdapterInfo
     {
       get
-      {        
+      {
         if (_currentFullscreenAdapterInfo != null)
           return _currentFullscreenAdapterInfo;
         else
@@ -246,7 +247,7 @@ namespace MediaPortal.GUI.Library
         _currentFullscreenAdapterInfo = value;
       }
     }
-        
+
     /// <summary>
     /// Property to get and set current screen on witch MP is displayed
     /// </summary>
@@ -264,7 +265,7 @@ namespace MediaPortal.GUI.Library
         _currentScreen = value;
       }
     }
-    
+
     /// <summary>
     /// Property to get windowed/fullscreen state of application
     /// </summary>
@@ -1167,17 +1168,17 @@ namespace MediaPortal.GUI.Library
 
     static public bool IsEvr
     {
-        get
-        {
-            return m_bisevr;
-        }
-        set
-        {
-            m_bisevr = value;
-        }
+      get
+      {
+        return m_bisevr;
+      }
+      set
+      {
+        m_bisevr = value;
+      }
     }
 
-     static public float TimePassed
+    static public float TimePassed
     {
       get
       {
@@ -1272,15 +1273,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    static public void SetWindowTransform(TransformMatrix matrix)
-    {
-      _finalWindowTransform = _guiTransform.multiply(matrix);
-    }
-
-    static public void SetControlTransform(TransformMatrix matrix)
-    {
-      _finalTransform = _finalWindowTransform.multiply(matrix);
-    }
 
     static public void SetScalingResolution(/*RESOLUTION res,*/ int posX, int posY, bool needsScaling)
     {
@@ -1323,42 +1315,124 @@ namespace MediaPortal.GUI.Library
         //_windowScaleX = 1.0f;
         //_windowScaleY = 1.0f;
       }
+
+      _cameras.Clear();
+      _cameras.Add(new Point(Width / 2, Height / 2));
+      UpdateCameraPosition(_cameras[0]);
       // reset the final transform and window transforms
-      _finalWindowTransform = _guiTransform;
-      _finalTransform = _guiTransform;
+      UpdateFinalTransform(_guiTransform);
     }
 
-    static public void GetScaling(out  float m00, out  float m01, out  float m02, out  float m03,
-                                  out  float m10, out  float m11, out  float m12, out  float m13,
-                                  out  float m20, out  float m21, out  float m22, out  float m23)
+    static public void UpdateFinalTransform(TransformMatrix matrix)
     {
-      _finalTransform.GetScaling(out m00, out m01, out m02, out m03, out m10, out m11, out m12, out m13, out m20, out m21, out m22, out m23);
+      _finalTransform = matrix;
     }
-
+    static public float[,] GetFinalMatrix()
+    {
+      return _finalTransform.Matrix;
+    }
+    static public float ScaleFinalXCoord(float x, float y)
+    {
+      return _finalTransform.TransformXCoord(x, y, 0);
+    }
+    static public float ScaleFinalYCoord(float x, float y)
+    {
+      return _finalTransform.TransformYCoord(x, y, 0);
+    }
+    static public float ScaleFinalZCoord(float x, float y)
+    {
+      return _finalTransform.TransformZCoord(x, y, 0);
+    }
     static public void ScaleFinalCoords(ref float x, ref float y, ref float z)
     {
       _finalTransform.TransformPosition(ref x, ref y, ref z);
-    }
-
-    static public float ScaleFinalXCoord(float x, float y, float z)
-    {
-      return _finalTransform.TransformXCoord(x, y, z);
-    }
-
-    static public float ScaleFinalYCoord(float x, float y, float z)
-    {
-      return _finalTransform.TransformYCoord(x, y, z);
-    }
-
-    static public float ScaleFinalZCoord(float x, float y, float z)
-    {
-      return _finalTransform.TransformZCoord(x, y, z);
     }
 
     static public uint MergeAlpha(uint color)
     {
       uint alpha = _finalTransform.TransformAlpha((color >> 24) & 0xff);
       return ((alpha << 24) & 0xff000000) | (color & 0xffffff);
+    }
+    static public void SetWindowTransform(TransformMatrix matrix)
+    { // reset the group transform stack
+
+      _groupTransforms.Clear();
+      _groupTransforms.Add(_guiTransform.multiply(matrix));
+      UpdateFinalTransform(_groupTransforms[0]);
+    }
+
+    static public void AddTransform(TransformMatrix matrix)
+    {
+      if (_groupTransforms.Count > 0)
+        _groupTransforms.Add(_groupTransforms[_groupTransforms.Count - 1].multiply(matrix));
+      else
+        _groupTransforms.Add(matrix);
+      UpdateFinalTransform(_groupTransforms[_groupTransforms.Count - 1]);
+    }
+    static public void RemoveTransform()
+    {
+      if (_groupTransforms.Count > 0)
+        _groupTransforms.RemoveAt(_groupTransforms.Count - 1);
+      if (_groupTransforms.Count > 0)
+        UpdateFinalTransform(_groupTransforms[_groupTransforms.Count - 1]);
+      else
+        UpdateFinalTransform(new TransformMatrix());
+    }
+
+
+    static public void SetCameraPosition(Point camera)
+    {
+      // offset the camera from our current location (this is in XML coordinates) and scale it up to
+      // the screen resolution
+      Point cam = new Point(camera.X, camera.Y);
+
+
+      _cameras.Add(cam);
+      UpdateCameraPosition(_cameras[0]);
+    }
+
+    static public void RestoreCameraPosition()
+    {
+      _cameras.RemoveAt(0);
+      UpdateCameraPosition(_cameras[0]);
+    }
+
+    static public void UpdateCameraPosition(Point camera)
+    {
+      // NOTE: This routine is currently called (twice) every time there is a <camera>
+      //       tag in the skin.  It actually only has to be called before we render
+      //       something, so another option is to just save the camera coordinates
+      //       and then have a routine called before every draw that checks whether
+      //       the camera has changed, and if so, changes it.  Similarly, it could set
+      //       the world transform at that point as well (or even combine world + view
+      //       to cut down on one setting)
+
+      // and calculate the offset from the screen center
+      Point offset = new Point(camera.X - (Width / 2), camera.Y - (Height / 2));
+
+      // grab the viewport dimensions and location
+      Viewport viewport = DX9Device.Viewport;
+      float w = viewport.Width * 0.5f;
+      float h = viewport.Height * 0.5f;
+
+      // world view.  Until this is moved onto the GPU (via a vertex shader for instance), we set it to the identity
+      // here.
+      Matrix mtxWorld;
+      mtxWorld = Matrix.Identity;
+      DX9Device.SetTransform(TransformType.World, mtxWorld);
+
+      // camera view.  Multiply the Y coord by -1 then translate so that everything is relative to the camera
+      // position.
+      Matrix flipY, translate, mtxView;
+      flipY = Matrix.Scaling(1.0f, -1.0f, 1.0f);
+      translate = Matrix.Translation(-(viewport.X + w + offset.X), -(viewport.Y + h + offset.Y), 2 * h);
+      mtxView = Matrix.Multiply(translate, flipY);
+      DX9Device.SetTransform(TransformType.View, mtxView);
+
+      // projection onto screen space
+      Matrix mtxProjection;
+      mtxProjection = Matrix.PerspectiveOffCenterLH((-w - offset.X) * 0.5f, (w - offset.X) * 0.5f, (-h + offset.Y) * 0.5f, (h + offset.Y) * 0.5f, h, 100 * h);
+      DX9Device.SetTransform(TransformType.Projection, mtxProjection);
     }
   }
 }

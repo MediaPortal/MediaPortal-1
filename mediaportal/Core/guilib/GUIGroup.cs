@@ -104,8 +104,8 @@ namespace MediaPortal.GUI.Library
       uint currentTime = (uint)(DXUtil.Timer(DirectXTimer.GetAbsoluteTime) * 1000.0);
       foreach (GUIControl control in Children)
       {
-        control.UpdateEffectState(currentTime);
-        control.Render(timePassed);
+        control.UpdateVisibility();
+        control.DoRender(timePassed,currentTime);
       }
 
       if (_animator != null && _animator.IsDone())

@@ -197,7 +197,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_OSD = 2901,
       WINDOW_MSNOSD = 2902,
       WINDOW_VIDEO_EDITOR = 2959,
-			WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS = 2960,
+      WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS = 2960,
       WINDOW_VIDEO_OVERLAY = 3000,
       WINDOW_DVD = 3001, // for keymapping
       WINDOW_TV_OVERLAY = 3002,
@@ -224,7 +224,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_NUMBERPLACE = 7777, // rtv - sudoku clone
       WINDOW_RADIO_LASTFM = 7890,
       WINDOW_MUSIC_MENU = 8888, // for harley
-      
+
 
       // Please use IDs up to 9999 only. Let everything above be reserved for external Plugin developers without SVN access.
 
@@ -797,7 +797,7 @@ namespace MediaPortal.GUI.Library
     }
 
     protected virtual void PreLoadPage()
-    {      
+    {
     }
 
     protected virtual void OnPageLoad()
@@ -1110,6 +1110,7 @@ namespace MediaPortal.GUI.Library
             }
             font = null;
           }
+          GUIGraphicsContext.SetScalingResolution(0, 0, false);
           uint currentTime = (uint)(DXUtil.Timer(DirectXTimer.GetAbsoluteTime) * 1000.0);
           // render our window animation - returns false if it needs to stop rendering
           if (!RenderAnimation(currentTime))
@@ -1117,8 +1118,8 @@ namespace MediaPortal.GUI.Library
 
           foreach (GUIControl control in Children)
           {
-            control.UpdateEffectState(currentTime);
-            control.Render(timePassed);
+            control.UpdateVisibility();
+            control.DoRender(timePassed, currentTime);
           }
 
           GUIWaitCursor.Render();
@@ -1252,7 +1253,7 @@ namespace MediaPortal.GUI.Library
         {
           switch (message.Message)
           {
-            case GUIMessage.MessageType.GUI_MSG_CLICKED:              
+            case GUIMessage.MessageType.GUI_MSG_CLICKED:
               if (iControlId != 0)
                 OnClicked(iControlId, GetControl(iControlId), (Action.ActionType)message.Param1);
               break;
@@ -1270,10 +1271,10 @@ namespace MediaPortal.GUI.Library
             // Initialize the window.
 
             case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-                            
+
               // we do not want fullscreen video/TV dialogue ID's persisted.
               if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-              {                
+              {
                 GUIPropertyManager.SetProperty("#currentmoduleid", Convert.ToString(GUIWindowManager.ActiveWindow));
               }
 
@@ -1322,7 +1323,7 @@ namespace MediaPortal.GUI.Library
               OnMessage(msg);
 
               GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
-              Log.Info("window:{0} init", this.ToString());              
+              Log.Info("window:{0} init", this.ToString());
 
               _hasRendered = false;
               OnPageLoad();

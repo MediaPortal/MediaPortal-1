@@ -243,6 +243,7 @@ namespace MediaPortal.GUI.Library
     public const int AUDIOSCROBBLER_FILES_CACHED = 303;
     public const int AUDIOSCROBBLER_SUBMIT_STATE = 304;
 
+    public const int LISTITEM_START = 310;
     public const int LISTITEM_THUMB = 310;
     public const int LISTITEM_LABEL = 311;
     public const int LISTITEM_TITLE = 312;
@@ -254,6 +255,29 @@ namespace MediaPortal.GUI.Library
     public const int LISTITEM_ICON = 318;
     public const int LISTITEM_DIRECTOR = 319;
     public const int LISTITEM_OVERLAY = 320;
+    public const int LISTITEM_LABEL2 = 321;
+    public const int LISTITEM_FILENAME = 322;
+    public const int LISTITEM_DATE = 323;
+    public const int LISTITEM_SIZE = 324;
+    public const int LISTITEM_RATING = 325;
+    public const int LISTITEM_PROGRAM_COUNT = 326;
+    public const int LISTITEM_DURATION = 327;
+    public const int LISTITEM_ISPLAYING = 328;
+    public const int LISTITEM_ISSELECTED = 329;
+    public const int LISTITEM_PLOT = 330;
+    public const int LISTITEM_PLOT_OUTLINE = 331;
+    public const int LISTITEM_EPISODE = 332;
+    public const int LISTITEM_SEASON = 333;
+    public const int LISTITEM_TVSHOW = 334;
+    public const int LISTITEM_PREMIERED = 335;
+    public const int LISTITEM_COMMENT = 336;
+    public const int LISTITEM_ACTUAL_ICON = 337;
+    public const int LISTITEM_PATH = 338;
+    public const int LISTITEM_PICTURE_PATH = 339;
+    public const int LISTITEM_PICTURE_DATETIME = 340;
+    public const int LISTITEM_PICTURE_RESOLUTION = 341;
+    public const int LISTITEM_END = 350;
+
 
     public const int MUSICPM_ENABLED = 350;
     public const int MUSICPM_SONGSPLAYED = 351;
@@ -262,6 +286,16 @@ namespace MediaPortal.GUI.Library
     public const int MUSICPM_MATCHINGSONGSLEFT = 354;
     public const int MUSICPM_RELAXEDSONGSPICKED = 355;
     public const int MUSICPM_RANDOMSONGSPICKED = 356;
+
+    public const int CONTAINER_FOLDERTHUMB = 360;
+    public const int CONTAINER_FOLDERPATH = 361;
+    public const int CONTAINER_CONTENT = 362;
+    public const int CONTAINER_HAS_THUMB = 363;
+    public const int CONTAINER_SORT_METHOD = 364;
+    public const int CONTAINER_ON_NEXT = 365;
+    public const int CONTAINER_ON_PREVIOUS = 366;
+    public const int CONTAINER_HAS_FOCUS = 367;
+
 
     public const int PLAYLIST_LENGTH = 390;
     public const int PLAYLIST_POSITION = 391;
@@ -380,15 +414,15 @@ namespace MediaPortal.GUI.Library
       strTest = strTest.TrimEnd(new char[] { ' ' });
       bool bNegate = strTest[0] == '!';
       int ret = 0;
-      string strCategory="";
+      string strCategory = "";
 
       if (bNegate)
         strTest = strTest.Remove(0, 1);
 
       // translate conditions...
-      if (strTest == "false" || strTest == "no" || strTest == "off" || strTest == "disabled") 
+      if (strTest == "false" || strTest == "no" || strTest == "off" || strTest == "disabled")
         ret = SYSTEM_ALWAYS_FALSE;
-      else if (strTest == "true" || strTest == "yes" || strTest == "on" || strTest == "enabled") 
+      else if (strTest == "true" || strTest == "yes" || strTest == "on" || strTest == "enabled")
         ret = SYSTEM_ALWAYS_TRUE;
       else
         strCategory = strTest.Substring(0, strTest.IndexOf("."));
@@ -583,6 +617,47 @@ namespace MediaPortal.GUI.Library
         else if (strTest == "audioscrobbler.filescached") ret = AUDIOSCROBBLER_FILES_CACHED;
         else if (strTest == "audioscrobbler.submitstate") ret = AUDIOSCROBBLER_SUBMIT_STATE;
       }
+      else if (strCategory.StartsWith("container"))
+      {
+        //000000000011111111111222222222233333333334444444444
+        //012345678900123456789012345678901234567890123456789
+        //Container.ListItem(1).Icon
+        //Listitem(
+        int id = 0;
+        Int32.TryParse(strCategory.Substring(10), out id);
+        string info = strTest.Substring(10);
+        if (info.StartsWith("listitem"))
+        {
+          int offset = 0;
+          Int32.TryParse(strCategory.Substring(9, strCategory.Length - 10), out offset);
+          ret = TranslateListItem(info.Substring(info.IndexOf(".") + 1));
+          if (offset != 0 || id != 0)
+            return AddMultiInfo(new GUIInfo(bNegate ? -ret : ret, id, offset));
+        }
+        else if (info == "folderthumb") ret = CONTAINER_FOLDERTHUMB;
+        else if (info == "folderpath") ret = CONTAINER_FOLDERPATH;
+        else if (info == "onnext") ret = CONTAINER_ON_NEXT;
+        else if (info == "onprevious") ret = CONTAINER_ON_PREVIOUS;
+        else if (info.StartsWith("content("))
+          return AddMultiInfo(new GUIInfo(bNegate ? -CONTAINER_CONTENT : CONTAINER_CONTENT, ConditionalStringParameter(info.Substring(8, info.Length - 9)), 0));
+        else if (info == "hasthumb") ret = CONTAINER_HAS_THUMB;
+        else if (info.StartsWith("sort("))
+        {
+          //SORT_METHOD sort = SORT_METHOD_NONE;
+          //string method = info.Substring(5, info.Length - 6);
+          //if (method.Equals("songrating")) sort = SORT_METHOD_SONG_RATING;
+          //if (sort != SORT_METHOD_NONE)
+          //  return AddMultiInfo(new GUIInfo(bNegate ? -CONTAINER_SORT_METHOD : CONTAINER_SORT_METHOD, sort));
+        }
+        else if (id != 0 && info.StartsWith("hasfocus("))
+        {
+          int itemID;
+          Int32.TryParse(info.Substring(9, info.Length - 10), out itemID);
+          return AddMultiInfo(new GUIInfo(bNegate ? -CONTAINER_HAS_FOCUS : CONTAINER_HAS_FOCUS, id, itemID));
+        }
+        if (id != 0 && (ret == CONTAINER_ON_NEXT || ret == CONTAINER_ON_PREVIOUS))
+          return AddMultiInfo(new GUIInfo(bNegate ? -ret : ret, id));
+      }
       else if (strCategory == "listitem")
       {
         if (strTest == "listitem.thumb") ret = LISTITEM_THUMB;
@@ -636,7 +711,7 @@ namespace MediaPortal.GUI.Library
           if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
             ret = winID;
         }
-        else if (strTest == "window.ismedia") 
+        else if (strTest == "window.ismedia")
           return WINDOW_IS_MEDIA;
         else if (strTest.Substring(0, 17) == "window.istopmost(")
         {
@@ -1335,5 +1410,43 @@ namespace MediaPortal.GUI.Library
         m_boolCache.Clear();
       }
     }
+
+    static int TranslateListItem(string info)
+    {
+      if (info.Equals("thumb")) return LISTITEM_THUMB;
+      else if (info.Equals("icon")) return LISTITEM_ICON;
+      else if (info.Equals("actualicon")) return LISTITEM_ACTUAL_ICON;
+      else if (info.Equals("overlay")) return LISTITEM_OVERLAY;
+      else if (info.Equals("label")) return LISTITEM_LABEL;
+      else if (info.Equals("label2")) return LISTITEM_LABEL2;
+      else if (info.Equals("title")) return LISTITEM_TITLE;
+      else if (info.Equals("tracknumber")) return LISTITEM_TRACKNUMBER;
+      else if (info.Equals("artist")) return LISTITEM_ARTIST;
+      else if (info.Equals("album")) return LISTITEM_ALBUM;
+      else if (info.Equals("year")) return LISTITEM_YEAR;
+      else if (info.Equals("genre")) return LISTITEM_GENRE;
+      else if (info.Equals("director")) return LISTITEM_DIRECTOR;
+      else if (info.Equals("filename")) return LISTITEM_FILENAME;
+      else if (info.Equals("date")) return LISTITEM_DATE;
+      else if (info.Equals("size")) return LISTITEM_SIZE;
+      else if (info.Equals("rating")) return LISTITEM_RATING;
+      else if (info.Equals("programcount")) return LISTITEM_PROGRAM_COUNT;
+      else if (info.Equals("duration")) return LISTITEM_DURATION;
+      else if (info.Equals("isselected")) return LISTITEM_ISSELECTED;
+      else if (info.Equals("isplaying")) return LISTITEM_ISPLAYING;
+      else if (info.Equals("plot")) return LISTITEM_PLOT;
+      else if (info.Equals("plotoutline")) return LISTITEM_PLOT_OUTLINE;
+      else if (info.Equals("episode")) return LISTITEM_EPISODE;
+      else if (info.Equals("season")) return LISTITEM_SEASON;
+      else if (info.Equals("tvshowtitle")) return LISTITEM_TVSHOW;
+      else if (info.Equals("premiered")) return LISTITEM_PREMIERED;
+      else if (info.Equals("comment")) return LISTITEM_COMMENT;
+      else if (info.Equals("path")) return LISTITEM_PATH;
+      else if (info.Equals("picturepath")) return LISTITEM_PICTURE_PATH;
+      else if (info.Equals("pictureresolution")) return LISTITEM_PICTURE_RESOLUTION;
+      else if (info.Equals("picturedatetime")) return LISTITEM_PICTURE_DATETIME;
+      return 0;
+    }
+
   }
 }

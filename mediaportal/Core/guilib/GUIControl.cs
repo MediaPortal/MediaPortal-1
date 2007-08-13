@@ -78,6 +78,8 @@ namespace MediaPortal.GUI.Library
     bool _visibleFromSkinCondition = true;
     int _visibleCondition = 0;
     bool _allowHiddenFocus = false;
+    bool _hasCamera = false;
+    System.Drawing.Point _camera;
 
     List<VisualEffect> _animations = new List<VisualEffect>();
     List<VisualEffect> _thumbAnimations = new List<VisualEffect>();
@@ -197,6 +199,16 @@ namespace MediaPortal.GUI.Library
       base.Height = h;
     }
 
+    public virtual void DoRender(float timePassed,uint currentTime)
+    {
+      Animate(currentTime);
+      if (_hasCamera)
+        GUIGraphicsContext.SetCameraPosition(_camera);
+      Render(timePassed);
+      if (_hasCamera)
+        GUIGraphicsContext.RestoreCameraPosition();
+      GUIGraphicsContext.RemoveTransform();
+    }
     /// <summary>
     /// The default render method. This needs to be overwritten when inherited to give every control 
     /// its specific look and feel.
@@ -441,7 +453,7 @@ namespace MediaPortal.GUI.Library
             }
 
           case GUIMessage.MessageType.GUI_MSG_VISIBLE:
-            Visible = (_visibleCondition!=0) ? GUIInfoManager.GetBool(_visibleCondition, ParentID) : true;
+            Visible = (_visibleCondition != 0) ? GUIInfoManager.GetBool(_visibleCondition, ParentID) : true;
 
             return true;
 
@@ -1250,8 +1262,8 @@ namespace MediaPortal.GUI.Library
           if (animation != null)
           {
             animation.SetPosition(posX, posY);
-						animation.WindowId = parentID;
-						animation.GetID = controlId;
+            animation.WindowId = parentID;
+            animation.GetID = controlId;
             animation.Width = width;
             animation.Height = height;
             return animation;
@@ -1459,7 +1471,7 @@ namespace MediaPortal.GUI.Library
     }
        */
     }
-    public virtual int GetVisibleCondition()  
+    public virtual int GetVisibleCondition()
     {
       return _visibleCondition; ;
     }
@@ -1555,27 +1567,29 @@ namespace MediaPortal.GUI.Library
 
     protected void Animate(uint currentTime)
     {
-      if (false == GUIGraphicsContext.Animations) return;
       TransformMatrix transform = new TransformMatrix();
-      for (int i = 0; i < _animations.Count; i++)
+      if (GUIGraphicsContext.Animations)
       {
-        VisualEffect anim = _animations[i];
-        anim.Animate(currentTime, HasRendered);
-        // Update the control states (such as visibility)
-        UpdateStates(anim.AnimationType, anim.CurrentProcess, anim.CurrentState);
-        // and render the animation effect
-        float centerXOrg = anim.CenterX;
-        float centerYOrg = anim.CenterY;
-        float centerX = 0, centerY = 0;
-        GetCenter(ref centerX, ref centerY);
-        //GUIGraphicsContext.ScaleHorizontal(ref centerX);
-        //GUIGraphicsContext.ScaleVertical(ref centerY);
-        anim.SetCenter(centerX,centerY);
-        anim.RenderAnimation(ref transform);
-        anim.CenterX = centerXOrg;
-        anim.CenterY = centerYOrg;
+        for (int i = 0; i < _animations.Count; i++)
+        {
+          VisualEffect anim = _animations[i];
+          anim.Animate(currentTime, HasRendered);
+          // Update the control states (such as visibility)
+          UpdateStates(anim.AnimationType, anim.CurrentProcess, anim.CurrentState);
+          // and render the animation effect
+          float centerXOrg = anim.CenterX;
+          float centerYOrg = anim.CenterY;
+          float centerX = 0, centerY = 0;
+          GetCenter(ref centerX, ref centerY);
+          //GUIGraphicsContext.ScaleHorizontal(ref centerX);
+          //GUIGraphicsContext.ScaleVertical(ref centerY);
+          anim.SetCenter(centerX, centerY);
+          anim.RenderAnimation(ref transform);
+          anim.CenterX = centerXOrg;
+          anim.CenterY = centerYOrg;
+        }
       }
-      GUIGraphicsContext.SetControlTransform(transform);
+      GUIGraphicsContext.AddTransform(transform);
     }
 
     public virtual bool IsEffectAnimating(AnimationType animType)
@@ -1610,7 +1624,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected void UpdateVisibility()
+    public virtual void UpdateVisibility()
     {
       if (_visibleCondition == 0) return;
       bool bWasVisible = _visibleFromSkinCondition;
@@ -1639,29 +1653,45 @@ namespace MediaPortal.GUI.Library
         _visibleFromSkinCondition = Visible;
         return;
       }
-      _visibleFromSkinCondition = Visible=GUIInfoManager.GetBool(_visibleCondition, ParentID);
+      _visibleFromSkinCondition = Visible = GUIInfoManager.GetBool(_visibleCondition, ParentID);
 
       // no need to enquire every frame if we are always visible or always hidden
       if (_visibleCondition == GUIInfoManager.SYSTEM_ALWAYS_TRUE || _visibleCondition == GUIInfoManager.SYSTEM_ALWAYS_FALSE)
         _visibleCondition = 0;
     }
 
-    public virtual void UpdateEffectState(uint currentTime)
-    {
-      if (_visibleCondition != 0)
-        UpdateVisibility();
-      Animate(currentTime);
-    }
 
     public virtual void SetVisibleCondition(int visible, bool allowHiddenFocus)
     {
       _visibleCondition = visible;
       _allowHiddenFocus = allowHiddenFocus;
     }
-    
+
     protected virtual void OnFocus()
     {
     }
 
+    public System.Drawing.Point Camera
+    {
+      get
+      {
+        return _camera;
+      }
+      set
+      {
+        _camera = value;
+      }
+    }
+    public bool HasCamera
+    {
+      get
+      {
+        return _hasCamera;
+      }
+      set
+      {
+        _hasCamera = value;
+      }
+    }
   }
 }

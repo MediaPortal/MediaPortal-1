@@ -381,17 +381,10 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
 }
 
 //*******************************************************************************************************************
-void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, 
-													 	float m00, float m01, float m02, float m03, 
-														float m10, float m11, float m12, float m13,
-														float m20, float m21, float m22, float m23  )
+void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m[3][4])
 {
 	if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
 	TEXTURE_DATA_T* texture;
-  float m[3][4];
-  m[0][0]=m00;  m[0][1]=m01;  m[0][2]=m02;  m[0][3]=m03;
-  m[1][0]=m10;  m[1][1]=m11;  m[1][2]=m12;  m[1][3]=m13;
-	m[2][0]=m20;  m[2][1]=m21;  m[2][2]=m22;  m[2][3]=m23;
   TransformMatrix matrix(m);
 	//1-2-1
 	bool needRedraw=false;
@@ -516,7 +509,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   //upper left
   float x1=matrix.ScaleFinalXCoord(xpos,ypos);
   float y1=matrix.ScaleFinalYCoord(xpos,ypos);
-  float z1=matrix.ScaleFinalZCoord(xpos, ypos);
+  float z1 = matrix.ScaleFinalZCoord(xpos,ypos);
 
   //bottom left
   float x2=matrix.ScaleFinalXCoord(xpos,ypos2);
@@ -535,41 +528,49 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 
 
   //upper left
-	if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty1 || texture->vertices[iv].color!=color)
+	if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty1 || texture->vertices[iv].color!=color ||
+      texture->vertices[iv].x != x1 || texture->vertices[iv].y !=y1 || texture->vertices[iv].z!=z1)
 		texture->updateVertexBuffer=true;
 	texture->vertices[iv].x=x1 ;  
   texture->vertices[iv].y=y1 ; 
-	texture->vertices[iv].z=z1 ; 
+  texture->vertices[iv].z=z1;
   texture->vertices[iv].color=color;
   texture->vertices[iv].tu=tx1; 
-  texture->vertices[iv].tv=ty1;
+  texture->vertices[iv].tv=ty1; 
   iv++;
 
   //bottom left
-	if (texture->vertices[iv].x != xpos || texture->vertices[iv].y !=ypos2 || texture->vertices[iv].tv!=ty2)
+	if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty2 || texture->vertices[iv].color!=color ||
+      texture->vertices[iv].x != x2 || texture->vertices[iv].y !=y2 || texture->vertices[iv].z!=z2)
 		texture->updateVertexBuffer=true;
 	texture->vertices[iv].x=x2;  
   texture->vertices[iv].y=y2;
 	texture->vertices[iv].z=z2; 
+  texture->vertices[iv].z=z2;
   texture->vertices[iv].color=color;
   texture->vertices[iv].tu=tx1; 
   texture->vertices[iv].tv=ty2;
   iv++;
 
   //bottom right
-	if (texture->vertices[iv].x != xpos2 || texture->vertices[iv].y!=ypos2 || texture->vertices[iv].tu!=tx2)
+	if (texture->vertices[iv].tu != tx2 || texture->vertices[iv].tv !=ty2 || texture->vertices[iv].color!=color ||
+      texture->vertices[iv].x != x3 || texture->vertices[iv].y !=y3 || texture->vertices[iv].z!=z3)
 		texture->updateVertexBuffer=true;
 	texture->vertices[iv].x=x3;  
   texture->vertices[iv].y=y3; 
-	texture->vertices[iv].z=z3; 
+  texture->vertices[iv].z=z3;
   texture->vertices[iv].color=color;
   texture->vertices[iv].tu=tx2; 
   texture->vertices[iv].tv=ty2;iv++;
 
   //upper right
+	if (texture->vertices[iv].tu != tx2 || texture->vertices[iv].tv !=ty1 || texture->vertices[iv].color!=color ||
+      texture->vertices[iv].x != x4 || texture->vertices[iv].y !=y4 || texture->vertices[iv].z!=z4)
+		texture->updateVertexBuffer=true;
 	texture->vertices[iv].x=x4;  
   texture->vertices[iv].y=y4;
 	texture->vertices[iv].z=z4; 
+  texture->vertices[iv].z=z4;
   texture->vertices[iv].color=color;
   texture->vertices[iv].tu=tx2; 
   texture->vertices[iv].tv=ty1;
@@ -581,20 +582,12 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 
 
 //*******************************************************************************************************************
-void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, 
-														float m00, float m01, float m02, float m03, 
-														float m10, float m11, float m12, float m13,
-														float m20, float m21, float m22, float m23,
-							              int textureNo2, float uoff2, float voff2, float umax2, float vmax2)
+void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m[3][4], int textureNo2, float uoff2, float voff2, float umax2, float vmax2)
 {
 	if (textureNo1 < 0 || textureNo1>=MAX_TEXTURES) return;
 	if (textureNo2 < 0 || textureNo2>=MAX_TEXTURES) return;
 
-  float m[3][4];
-  m[0][0]=m00;  m[0][1]=m01;  m[0][2]=m02;  m[0][3]=m03;
-  m[1][0]=m10;  m[1][1]=m11;  m[1][2]=m12;  m[1][3]=m13;
-	m[2][0]=m10;  m[2][1]=m21;  m[2][2]=m22;  m[2][3]=m23;
-	TransformMatrix matrix(m);
+  TransformMatrix matrix(m);
 	FontEnginePresentTextures();
 
 	TEXTURE_DATA_T* texture1;
@@ -624,29 +617,29 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   //upper left
   float x1=matrix.ScaleFinalXCoord(xpos,ypos);
   float y1=matrix.ScaleFinalYCoord(xpos,ypos);
-  float z1=matrix.ScaleFinalZCoord(xpos, ypos);
+  float z1 = matrix.ScaleFinalZCoord(xpos,ypos);
 
   //bottom left
   float x2=matrix.ScaleFinalXCoord(xpos,ypos+nh);
   float y2=matrix.ScaleFinalYCoord(xpos,ypos+nh);
-  float z2=matrix.ScaleFinalZCoord(xpos,ypos+nh);
+  float z2 = matrix.ScaleFinalZCoord(xpos,ypos+nh);
 
   //bottom right
   float x3=matrix.ScaleFinalXCoord(xpos+nw,ypos+nh);
   float y3=matrix.ScaleFinalYCoord(xpos+nw,ypos+nh);
-	float z3=matrix.ScaleFinalZCoord(xpos+nw,ypos+nh);
+  float z3 = matrix.ScaleFinalZCoord(xpos+nw,ypos+nh);
 
   //upper right
   float x4=matrix.ScaleFinalXCoord(xpos+nw,ypos);
   float y4=matrix.ScaleFinalYCoord(xpos+nw,ypos);
-  float z4=matrix.ScaleFinalZCoord(xpos+nw, ypos);
+  float z4 = matrix.ScaleFinalZCoord(xpos+nw,ypos);
   
   
   CUSTOMVERTEX2 verts[4];
 //  CUSTOMVERTEX verts[4];
   verts[0].x = x1; 
   verts[0].y = y1; 
-  verts[0].z = z1; 
+  verts[0].z = z1;
   verts[0].rhw = 1.0f;
   verts[0].tu = tx1;//u1;   
   verts[0].tv = ty1;//v1; 
@@ -666,7 +659,7 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
 
   verts[2].x = x3; 
   verts[2].y = y3; 
-  verts[2].z = z3; 
+  verts[2].z = z3;
   verts[2].rhw = 1.0f;
   verts[2].tu = tx2;//u2;   
   verts[2].tv = ty2;//v2; 
@@ -675,8 +668,8 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   verts[2].color = color;
 
   verts[3].x = x4; 
-  verts[3].y = y4; 
-  verts[3].z = z4; 
+  verts[3].y = y4;
+  verts[3].z = z4;
   verts[3].rhw = 1.0f;
   verts[3].tu = tx2;//u1;   
   verts[3].tv = ty1;//v2; 
@@ -872,10 +865,12 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
 {
   float x1 = matrix.ScaleFinalXCoord(x,y);
   float y1 = matrix.ScaleFinalYCoord(x,y);
-	if(pVertex->x != x1 || pVertex->y != y1 || pVertex->tu != tu || pVertex->tv != tv || pVertex->color != color)
+  float z = matrix.ScaleFinalZCoord(x,y);
+	if(pVertex->x != x1 || pVertex->y != y1 || pVertex->z != z || pVertex->tu != tu || pVertex->tv != tv || pVertex->color != color)
 	{
 		pVertex->x = x1;
 		pVertex->y = y1;
+		pVertex->z = z;
 		pVertex->tu = tu;
 		pVertex->tv = tv;
 		pVertex->color = color;
@@ -884,10 +879,7 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
 }
 
 //*******************************************************************************************************************
-void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int yposStart, DWORD intColor, int maxWidth, 
-													float m00, float m01, float m02, float m03, 
-													float m10, float m11, float m12, float m13,
-													float m20, float m21, float m22, float m23  )
+void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int yposStart, DWORD intColor, int maxWidth, float m[3][4])
 {
 	if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
 	if (m_pDevice==NULL) return;
@@ -895,11 +887,7 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
 	if (textVoid==NULL) return;
   
 	TEXTURE_DATA_T* texture;
-  float m[3][4];
-  m[0][0]=m00;  m[0][1]=m01;  m[0][2]=m02;  m[0][3]=m03;
-  m[1][0]=m10;  m[1][1]=m11;  m[1][2]=m12;  m[1][3]=m13;
-	m[2][0]=m10;  m[2][1]=m21;  m[2][2]=m22;  m[2][3]=m23;
-	TransformMatrix matrix(m);
+  TransformMatrix matrix(m);
 
 	WCHAR* text = (WCHAR*)textVoid;
 

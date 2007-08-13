@@ -507,7 +507,6 @@ namespace MediaPortal.GUI.Library
 					}
 					TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
 					GUIGraphicsContext.ControlTransform = new TransformMatrix();
-					pImage.UpdateEffectState(currentTime);
 					pImage.Render(timePassed);
 					GUIGraphicsContext.ControlTransform = matrix;
 				}
@@ -587,7 +586,6 @@ namespace MediaPortal.GUI.Library
 
 						TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
 						GUIGraphicsContext.ControlTransform = new TransformMatrix();
-						pImage.UpdateEffectState(currentTime);
 						pImage.Render(timePassed);
 						GUIGraphicsContext.ControlTransform = matrix;
 
@@ -623,7 +621,6 @@ namespace MediaPortal.GUI.Library
 					_imageFolderFocus[itemNumber].SetPosition(dwPosX, dwPosY);
 					if (true == _showTexture)
 					{
-						_imageFolderFocus[itemNumber].UpdateEffectState(currentTime);
 						_imageFolderFocus[itemNumber].Render(timePassed);
 					}
 					for (int i = 0; i < _imageFolderFocus.Count; ++i)
@@ -641,7 +638,6 @@ namespace MediaPortal.GUI.Library
 					_frameControl[itemNumber].Focus = true;
 					_frameFocusControl[itemNumber].Focus = true;
 					_frameFocusControl[itemNumber].SetPosition(dwPosX, dwPosY);
-					_frameFocusControl[itemNumber].UpdateEffectState(currentTime);
 					_frameFocusControl[itemNumber].Render(timePassed);
 					for (int i = 0; i < _frameFocusControl.Count; ++i)
 					{
@@ -668,7 +664,6 @@ namespace MediaPortal.GUI.Library
 					_imageFolder[itemNumber].SetPosition(dwPosX, dwPosY);
 					if (true == _showTexture)
 					{
-						_imageFolder[itemNumber].UpdateEffectState(currentTime);
 						_imageFolder[itemNumber].Render(timePassed);
 					}
 				}
@@ -678,7 +673,6 @@ namespace MediaPortal.GUI.Library
 					_frameControl[itemNumber].Focus = false;
 					_frameFocusControl[itemNumber].Focus = false;
 					_frameControl[itemNumber].SetPosition(dwPosX, dwPosY);
-					_frameControl[itemNumber].UpdateEffectState(currentTime);
 					_frameControl[itemNumber].Render(timePassed);
 				}
 
