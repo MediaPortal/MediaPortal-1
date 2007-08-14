@@ -81,7 +81,7 @@ namespace MediaPortal.MPInstaller
     string _group = string.Empty;
     string _release = string.Empty;
     Image _image = null;
-    public ProiectPropertiesClass ProiectProperties;
+    public ProjectPropertiesClass ProiectProperties;
     public ArrayList Uninstall = new ArrayList();
     public ArrayList FileList = new ArrayList();
     public List<LanguageString> Language;
@@ -92,7 +92,7 @@ namespace MediaPortal.MPInstaller
     {
       Language = new List<LanguageString>();
       Actions = new List<ActionInfo>();
-      ProiectProperties = new ProiectPropertiesClass();
+      ProiectProperties = new ProjectPropertiesClass();
       SetupGroups = new List<GroupString>();
       SetupGroupsMappig = new List<GroupStringMapping>();
     }
