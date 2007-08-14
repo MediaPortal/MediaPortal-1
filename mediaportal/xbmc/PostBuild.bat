@@ -96,8 +96,8 @@ REM MPTestTool2
 xcopy /y %1\MPTestTool2\bin\%2\MPTestTool2.exe .
 
 REM MPInstaller
-xcopy /y %1\MPInstaller\bin\%2\MPInstaller.Library.dll .
-xcopy /y %1\MPInstaller\bin\%2\MPInstaller.exe .
+xcopy /y %1\MPInstaller\bin\%2\MPInstaller.Library.* .
+xcopy /y %1\MPInstaller\bin\%2\MPInstaller.* .
 
 
 REM Register
