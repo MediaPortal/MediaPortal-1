@@ -1,6 +1,6 @@
 namespace MediaPortal.MPInstaller
 {
-    partial class post_setup
+    partial class PostSetup
     {
         /// <summary>
         /// Required designer variable.

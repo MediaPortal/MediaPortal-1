@@ -220,9 +220,9 @@ namespace MediaPortal.MPInstaller
             Customize_list.Items.Clear();
             foreach (GroupString gs in package._intalerStruct.SetupGroups)
             {
-              Customize_list.Items.Add(gs.Name, !package._intalerStruct.ProiectProperties.SingleGroupSelect);
+              Customize_list.Items.Add(gs.Name, !package._intalerStruct.ProjectProperties.SingleGroupSelect);
             }
-            if (package._intalerStruct.ProiectProperties.SingleGroupSelect && package._intalerStruct.SetupGroups.Count > 0)
+            if (package._intalerStruct.ProjectProperties.SingleGroupSelect && package._intalerStruct.SetupGroups.Count > 0)
               Customize_list.SetItemChecked(0, true);
             break;
           }
@@ -460,7 +460,7 @@ namespace MediaPortal.MPInstaller
     {
       if (working) return;
       working = true;
-      if (package._intalerStruct.ProiectProperties.SingleGroupSelect)
+      if (package._intalerStruct.ProjectProperties.SingleGroupSelect)
       {
         for (int i = 0; i < Customize_list.Items.Count; i++)
           Customize_list.SetItemChecked(i, false);

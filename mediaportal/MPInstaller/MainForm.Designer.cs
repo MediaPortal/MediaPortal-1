@@ -1,6 +1,6 @@
 namespace MediaPortal.MPInstaller
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace MediaPortal.MPInstaller
         private void InitializeComponent()
         {
           this.components = new System.ComponentModel.Container();
-          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
           this.menuStrip1 = new System.Windows.Forms.MenuStrip();
           this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();

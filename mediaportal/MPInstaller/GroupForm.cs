@@ -35,7 +35,7 @@ namespace MediaPortal.MPInstaller
 {
   public partial class GroupForm : Form
   {
-    public MPinstalerStruct _struct;
+    public MPinstallerStruct _struct;
     public GroupForm()
     {
       InitializeComponent();

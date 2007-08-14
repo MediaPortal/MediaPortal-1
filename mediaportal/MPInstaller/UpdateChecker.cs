@@ -39,7 +39,7 @@ namespace MediaPortal.MPInstaller
     {
         MPInstallHelper lst = new MPInstallHelper();
         MPInstallHelper lst_online = new MPInstallHelper();
-        private string remoteFile=MPinstalerStruct.DEFAULT_UPDATE_SITE+"/MPExtensionFileList.xml";
+        private string remoteFile=MPinstallerStruct.DEFAULT_UPDATE_SITE+"/MPExtensionFileList.xml";
         public UpdateChecker()
         {
             InitializeComponent();

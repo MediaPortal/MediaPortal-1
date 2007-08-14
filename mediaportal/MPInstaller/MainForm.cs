@@ -38,23 +38,23 @@ using MediaPortal.Util;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class Form1 : Form
+  public partial class MainForm : Form
   {
-    private MPinstalerStruct _struct = new MPinstalerStruct();
+    private MPinstallerStruct _struct = new MPinstallerStruct();
     private string proiect_file_name = "Untitled";
     private bool _loading = false;
     public int sortColumn;
     public FilePropertiesClass fpc = new FilePropertiesClass();
 
-    public Form1()
+    public MainForm()
     {
       InitializeComponent();
     }
-    public Form1(string fil)
+    public MainForm(string fil)
     {
       proiect_file_name = fil;
       InitializeComponent();
-      proiectt_textBox6.Items.AddRange(MPinstalerStruct.CategoriListing);
+      proiectt_textBox6.Items.AddRange(MPinstallerStruct.CategoriListing);
       _struct.LoadFromFile(fil);
       _struct.ProiectdFileName = fil;
       loadProperties();
@@ -111,19 +111,19 @@ namespace MediaPortal.MPInstaller
         switch (type)
         {
           case 1:
-            addrow(Path.GetFileName(fil), MPinstalerStruct.PLUGIN_TYPE, MPinstalerStruct.PLUGIN_WINDOW_SUBTYPE, Path.GetFullPath(fil), "01010");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_WINDOW_SUBTYPE, Path.GetFullPath(fil), "01010");
             break;
           case 2:
-            addrow(Path.GetFileName(fil), MPinstalerStruct.PLUGIN_TYPE, MPinstalerStruct.PLUGIN_PROCESS_SUBTYPE, Path.GetFullPath(fil), "01020");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_PROCESS_SUBTYPE, Path.GetFullPath(fil), "01020");
             break;
           case 3:
-            addrow(Path.GetFileName(fil), MPinstalerStruct.PLUGIN_TYPE, MPinstalerStruct.PLUGIN_SUBTITLE_SUBTYPE, Path.GetFullPath(fil), "01030");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_SUBTITLE_SUBTYPE, Path.GetFullPath(fil), "01030");
             break;
           case 4:
-            addrow(Path.GetFileName(fil), MPinstalerStruct.PLUGIN_TYPE, MPinstalerStruct.PLUGIN_TAGREADER_SUBTYPE, Path.GetFullPath(fil), "01040");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_TAGREADER_SUBTYPE, Path.GetFullPath(fil), "01040");
             break;
           case 5:
-            addrow(Path.GetFileName(fil), MPinstalerStruct.PLUGIN_TYPE, MPinstalerStruct.PLUGIN_PLAYER_SUBTYPE, Path.GetFullPath(fil), "01050");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_PLAYER_SUBTYPE, Path.GetFullPath(fil), "01050");
             break;
           default:
             break;
@@ -140,7 +140,7 @@ namespace MediaPortal.MPInstaller
       {
         foreach (string fil in openFileDialog1.FileNames)
         {
-          addrow(Path.GetFileName(fil), MPinstalerStruct.TEXT_TYPE, MPinstalerStruct.TEXT_LOG_TYPE, Path.GetFullPath(fil), "03010", "");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.TEXT_TYPE, MPinstallerStruct.TEXT_LOG_TYPE, Path.GetFullPath(fil), "03010", "");
         }
       }
     }
@@ -182,15 +182,15 @@ namespace MediaPortal.MPInstaller
           }
           switch (type)
           {
-            case 1: addrow(Path.GetFileName(fil), MPinstalerStruct.SKIN_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
+            case 1: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
               break;
-            case 2: addrow(Path.GetFileName(fil), MPinstalerStruct.SKIN_MEDIA_TYPE, subtype, Path.GetFullPath(fil), "02020", "");
+            case 2: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_MEDIA_TYPE, subtype, Path.GetFullPath(fil), "02020", "");
               break;
-            case 3: addrow(Path.GetFileName(fil), MPinstalerStruct.SKIN_SOUNDS_TYPE, subtype, Path.GetFullPath(fil), "02030", "");
+            case 3: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_SOUNDS_TYPE, subtype, Path.GetFullPath(fil), "02030", "");
               break;
-            case 4: addrow(Path.GetFileName(fil), MPinstalerStruct.SKIN_ANIMATIONS_TYPE, subtype, Path.GetFullPath(fil), "02040", "");
+            case 4: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_ANIMATIONS_TYPE, subtype, Path.GetFullPath(fil), "02040", "");
               break;
-            case 5: addrow(Path.GetFileName(fil), MPinstalerStruct.SKIN_TETRIS_TYPE, subtype, Path.GetFullPath(fil), "02050", "");
+            case 5: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_TETRIS_TYPE, subtype, Path.GetFullPath(fil), "02050", "");
               break;
             default:
               break;
@@ -323,7 +323,7 @@ namespace MediaPortal.MPInstaller
       if (IsGoodToSave())
       {
         sToolStripMenuItem_Click(sender, e);
-        Build_dialog buildfrm = new Build_dialog(this._struct);
+        BuildDialog buildfrm = new BuildDialog(this._struct);
         buildfrm.ShowDialog();
         this._struct = buildfrm._struct;
       }
@@ -381,11 +381,11 @@ namespace MediaPortal.MPInstaller
       tabControl1.Controls.Clear();
       tabControl1.Controls.Add(tabPage_Proiect);
       tabControl1.Controls.Add(tabPage_Advanced);
-      propertyGrid1.SelectedObject = _struct.ProiectProperties;
+      propertyGrid1.SelectedObject = _struct.ProjectProperties;
       textt_comboBox1.Items.Clear();
-      textt_comboBox1.Items.Add(MPinstalerStruct.TEXT_LOG_TYPE);
-      textt_comboBox1.Items.Add(MPinstalerStruct.TEXT_README_TYPE);
-      textt_comboBox1.Items.Add(MPinstalerStruct.TEXT_EULA_TYPE);
+      textt_comboBox1.Items.Add(MPinstallerStruct.TEXT_LOG_TYPE);
+      textt_comboBox1.Items.Add(MPinstallerStruct.TEXT_README_TYPE);
+      textt_comboBox1.Items.Add(MPinstallerStruct.TEXT_EULA_TYPE);
       skint_comboBox1.Items.Clear();
       string SkinDirectory = Config.GetFolder(Config.Dir.Skin);
       if (Directory.Exists(SkinDirectory))
@@ -432,33 +432,33 @@ namespace MediaPortal.MPInstaller
       if (bossview.SelectedItems.Count > 0)
       {
         tabControl1.Controls.Clear();
-        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstalerStruct.PLUGIN_TYPE)
+        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.PLUGIN_TYPE)
         {
           tabControl1.Controls.Add(tabPage_Plugin);
         }
-        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstalerStruct.SKIN_TYPE || bossview.SelectedItems[0].SubItems[1].Text == MPinstalerStruct.SKIN_MEDIA_TYPE)
+        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.SKIN_TYPE || bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.SKIN_MEDIA_TYPE)
         {
           tabControl1.Controls.Add(tabPage_Skin);
           skint_comboBox1.Text = bossview.SelectedItems[0].SubItems[2].Text;
         }
-        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstalerStruct.TEXT_TYPE)
+        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.TEXT_TYPE)
         {
           tabControl1.Controls.Add(tabPage_Text);
           textt_comboBox1.Text = bossview.SelectedItems[0].SubItems[2].Text;
         }
-        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstalerStruct.THUMBS_TYPE)
+        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.THUMBS_TYPE)
         {
           tabControl1.Controls.Add(tabPage_Thumbs);
           thumbst_comboBox1.Text = bossview.SelectedItems[0].SubItems[2].Text;
         }
-        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstalerStruct.OTHER_TYPE)
+        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.OTHER_TYPE)
         {
           tabControl1.Controls.Add(tabPage_Other);
           othert_comboBox1.Text = bossview.SelectedItems[0].SubItems[2].Text;
         }
         tabControl1.Controls.Add(tabPage_Proiect);
         tabControl1.Controls.Add(tabPage_Advanced);
-        propertyGrid1.SelectedObject = _struct.ProiectProperties;
+        propertyGrid1.SelectedObject = _struct.ProjectProperties;
         propertyGrid2.SelectedObject = fpc.Parse(bossview.SelectedItems[0].SubItems[5].Text);
         propertyGrid1.Update();
         propertyGrid2.Update();
@@ -499,7 +499,7 @@ namespace MediaPortal.MPInstaller
 
     private void textToolStripMenuItem1_Click(object sender, EventArgs e)
     {
-      addother(MPinstalerStruct.THUMBS_TYPE, thumbst_comboBox1.Text);
+      addother(MPinstallerStruct.THUMBS_TYPE, thumbst_comboBox1.Text);
     }
 
     private void textToolStripMenuItem_Click(object sender, EventArgs e)
@@ -555,7 +555,7 @@ namespace MediaPortal.MPInstaller
 
     private void otherToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      addother(MPinstalerStruct.OTHER_TYPE, "");
+      addother(MPinstallerStruct.OTHER_TYPE, "");
     }
 
     private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -583,7 +583,7 @@ namespace MediaPortal.MPInstaller
 
     private void postSetupToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      post_setup dlg = new post_setup();
+      PostSetup dlg = new PostSetup();
       dlg._struct = this._struct;
       dlg.ShowDialog();
     }
@@ -637,23 +637,23 @@ namespace MediaPortal.MPInstaller
       {
         if (fil.ToUpper().Contains("PLUGINS\\WINDOWS"))
         {
-          addrow(Path.GetFileName(fil), MPinstalerStruct.PLUGIN_TYPE, MPinstalerStruct.PLUGIN_WINDOW_SUBTYPE, Path.GetFullPath(fil), "01010");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_WINDOW_SUBTYPE, Path.GetFullPath(fil), "01010");
         }
         if (fil.ToUpper().Contains("PLUGINS\\TAGREADERS"))
         {
-          addrow(Path.GetFileName(fil), MPinstalerStruct.PLUGIN_TYPE, MPinstalerStruct.PLUGIN_TAGREADER_SUBTYPE, Path.GetFullPath(fil), "01010");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_TAGREADER_SUBTYPE, Path.GetFullPath(fil), "01010");
         }
         if (fil.ToUpper().Contains("PLUGINS\\SUBTITLE"))
         {
-          addrow(Path.GetFileName(fil), MPinstalerStruct.PLUGIN_TYPE, MPinstalerStruct.PLUGIN_SUBTITLE_SUBTYPE, Path.GetFullPath(fil), "01010");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_SUBTITLE_SUBTYPE, Path.GetFullPath(fil), "01010");
         }
         if (fil.ToUpper().Contains("PLUGINS\\PROCESS"))
         {
-          addrow(Path.GetFileName(fil), MPinstalerStruct.PLUGIN_TYPE, MPinstalerStruct.PLUGIN_PROCESS_SUBTYPE, Path.GetFullPath(fil), "01010");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_PROCESS_SUBTYPE, Path.GetFullPath(fil), "01010");
         }
         if (fil.ToUpper().Contains("PLUGINS\\EXTERNALPLAYERS"))
         {
-          addrow(Path.GetFileName(fil), MPinstalerStruct.PLUGIN_TYPE, MPinstalerStruct.PLUGIN_PLAYER_SUBTYPE, Path.GetFullPath(fil), "01010");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.PLUGIN_TYPE, MPinstallerStruct.PLUGIN_PLAYER_SUBTYPE, Path.GetFullPath(fil), "01010");
         }
         return;
       }
@@ -663,34 +663,34 @@ namespace MediaPortal.MPInstaller
         subtype = subtype.Substring(0, subtype.IndexOf("\\"));
         if (fil.ToUpper().Contains("SOUNDS"))
         {
-          addrow(Path.GetFileName(fil), MPinstalerStruct.SKIN_SOUNDS_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
+          addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_SOUNDS_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
         }
         else
           if (fil.ToUpper().Contains("MEDIA\\ANIMATIONS"))
           {
-            addrow(Path.GetFileName(fil), MPinstalerStruct.SKIN_ANIMATIONS_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_ANIMATIONS_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
           }
           else if (fil.ToUpper().Contains("MEDIA\\TETRIS"))
           {
-            addrow(Path.GetFileName(fil), MPinstalerStruct.SKIN_TETRIS_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_TETRIS_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
           }
           else if (fil.ToUpper().Contains("MEDIA"))
           {
             string st = Path.GetFullPath(fil).Substring(Path.GetFullPath(fil).ToLower().IndexOf("media\\") + 6);
-            addrow(Path.GetFileName(fil), MPinstalerStruct.SKIN_MEDIA_TYPE, subtype, Path.GetFullPath(fil), "02010", "OutputFileName=" + st+"|");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_MEDIA_TYPE, subtype, Path.GetFullPath(fil), "02010", "OutputFileName=" + st+"|");
           }
           else
           {
-            addrow(Path.GetFileName(fil), MPinstalerStruct.SKIN_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
+            addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_TYPE, subtype, Path.GetFullPath(fil), "02010", "");
           }
         return;
       }
       if (Path.GetExtension(fil).ToUpper() == ".TXT")
       {
-        addrow(Path.GetFileName(fil), MPinstalerStruct.TEXT_TYPE, MPinstalerStruct.TEXT_README_TYPE, Path.GetFullPath(fil), "02010", "");
+        addrow(Path.GetFileName(fil), MPinstallerStruct.TEXT_TYPE, MPinstallerStruct.TEXT_README_TYPE, Path.GetFullPath(fil), "02010", "");
         return;
       }
-      addrow(Path.GetFileName(fil), MPinstalerStruct.OTHER_TYPE, "", Path.GetFullPath(fil), "02010", "");
+      addrow(Path.GetFileName(fil), MPinstallerStruct.OTHER_TYPE, "", Path.GetFullPath(fil), "02010", "");
     }
 
     private void directoryAutomatedDiscoverTypeToolStripMenuItem_Click(object sender, EventArgs e)
