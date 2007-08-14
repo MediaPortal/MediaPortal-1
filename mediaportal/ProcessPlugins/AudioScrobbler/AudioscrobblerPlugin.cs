@@ -63,7 +63,6 @@ namespace MediaPortal.Audioscrobbler
 
     public bool _doSubmit = true;
 
-    private System.Timers.Timer SongCheckTimer;
     private System.Timers.Timer SongLengthTimer;
 
 
@@ -289,12 +288,12 @@ namespace MediaPortal.Audioscrobbler
           if (g_Player.Paused)
           {
             startStopSongLengthTimer(false, _alertTime);
-            Log.Info("Audioscrobbler plugin: {0}", "track paused - avoid skip protection");
+            Log.Info("Audioscrobbler plugin: {0}", "track paused");
           }
           else
           {
-            startStopSongLengthTimer(true, _alertTime);
-            Log.Info("Audioscrobbler plugin: {0}", "continue track - cancel skip protection");
+            startStopSongLengthTimer(true, _alertTime - _lastPosition);
+            Log.Info("Audioscrobbler plugin: {0}", "continue track - adjust already listened time");
           }
       }
     }
