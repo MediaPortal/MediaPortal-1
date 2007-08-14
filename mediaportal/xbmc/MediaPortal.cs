@@ -1539,44 +1539,6 @@ public class MediaPortalApp : D3DApp, IRender
 
   private static bool reentrant = false;
 
-  VertexBuffer vertices=null;
-  protected VertexBuffer CreateVertexBuffer(Device device)
-  {
-
-    VertexBuffer buf = new VertexBuffer(
-      typeof(CustomVertex.PositionColored), // What type of vertices
-      3,                                    // How many 
-      device,                               // The device
-      0,                                    // Default usage
-      CustomVertex.PositionColored.Format,  // Vertex format
-      Pool.Default);                        // Default pooling
-
-
-    CustomVertex.PositionColored[] verts =
-      (CustomVertex.PositionColored[])buf.Lock(0, 0);
-
-
-    int i = 0;
-    verts[i++] = new CustomVertex.PositionColored(
-      0, 1, 0, Color.Red.ToArgb());
-    verts[i++] = new CustomVertex.PositionColored(
-      -0.5F, 0, 0, Color.Green.ToArgb());
-    verts[i++] = new CustomVertex.PositionColored(
-      0.5F, 0, 0, Color.Blue.ToArgb());
-
-
-    buf.Unlock();
-    return buf;
-  }
-  protected void SetupMatrices()
-  {
-    float angle = Environment.TickCount / 500.0F;
-    GUIGraphicsContext.DX9Device.Transform.World = Microsoft.DirectX.Matrix.RotationY(angle);
-    GUIGraphicsContext.DX9Device.Transform.View = Microsoft.DirectX.Matrix.LookAtLH(new Microsoft.DirectX.Vector3(0, 0.5F, -3),
-      new Microsoft.DirectX.Vector3(0, 0.5F, 0), new Microsoft.DirectX.Vector3(0, 1, 0));
-    GUIGraphicsContext.DX9Device.Transform.Projection =
-      Microsoft.DirectX.Matrix.PerspectiveFovLH((float)Math.PI / 4.0F, 1.0F, 1.0F, 5.0F);
-  }
 
   protected override void Render(float timePassed)
   {
