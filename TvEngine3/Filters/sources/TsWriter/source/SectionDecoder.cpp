@@ -145,7 +145,14 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 		}
     else
     {
-			if (m_bLog) LogDebug("INVALID START: ERR1");
+      if (tsPacket[start]!=m_tableId && tsPacket[1+start]==m_tableId) 
+      {
+        start++;
+      }
+      else
+      {
+			  if (m_bLog) LogDebug("INVALID START: ERR1");
+      }
     }
 
 		m_section.Reset();
