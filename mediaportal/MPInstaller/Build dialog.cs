@@ -37,14 +37,14 @@ using MediaPortal.Utils;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class BuildDialog : Form
+  public partial class Build_dialog : Form
   {
-    public MPinstallerStruct _struct = new MPinstallerStruct();
-    public BuildDialog()
+    public MPinstalerStruct _struct = new MPinstalerStruct();
+    public Build_dialog()
     {
       InitializeComponent();
     }
-    public BuildDialog(MPinstallerStruct st)
+    public Build_dialog(MPinstalerStruct st)
     {
       _struct = st;
       InitializeComponent();

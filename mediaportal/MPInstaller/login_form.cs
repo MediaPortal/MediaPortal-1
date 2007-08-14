@@ -8,11 +8,11 @@ using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
 {
-  public partial class LoginForm : Form
+  public partial class login_form : Form
   {
     public string username = string.Empty;
     public string password = string.Empty;
-    public LoginForm(string usr,string pass)
+    public login_form(string usr,string pass)
     {
       InitializeComponent();
       textBox1.Text = usr;

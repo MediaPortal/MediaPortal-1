@@ -80,7 +80,7 @@ namespace MediaPortal.MPInstaller
                     if (Path.GetExtension(dest) == ".xml")
                     {
                       //MessageBox.Show(MPinstalerStruct.DEFAULT_UPDATE_SITE+"/mp_download.php?file=" + Path.GetFileName(source));
-                      client.DownloadFileAsync(new System.Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=getxml&user="+user+"&passwd="+password), dest);
+                      client.DownloadFileAsync(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=getxml&user="+user+"&passwd="+password), dest);
                     }
                     else
                     {
@@ -89,7 +89,7 @@ namespace MediaPortal.MPInstaller
                       source = source.Replace("http://mpi.team-mediaportal.com", "*");
                       client.CachePolicy = new System.Net.Cache.RequestCachePolicy();
                       client.UseDefaultCredentials = true;
-                      client.DownloadFileAsync(new System.Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=" + user + "&passwd=" + password +"&url="+ source), dest);
+                      client.DownloadFileAsync(new System.Uri(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=" + user + "&passwd=" + password +"&url="+ source), dest);
                     }
                   }
                   else

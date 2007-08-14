@@ -22,7 +22,6 @@
  */
 
 #endregion
-
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System;
@@ -33,7 +32,7 @@ using System.Xml;
 
 namespace MediaPortal.MPInstaller
 {
-  public class ProjectPropertiesClass
+  public class ProiectPropertiesClass
   {
     private string mpminversion;
     private string mpmaxversion;
@@ -44,7 +43,7 @@ namespace MediaPortal.MPInstaller
     private DateTime creationdate;
     private bool singlegroupselect;
 
-    public ProjectPropertiesClass()
+    public ProiectPropertiesClass()
     {
       Clear();
     }

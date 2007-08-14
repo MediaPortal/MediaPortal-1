@@ -33,10 +33,10 @@ using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
 {
-    public partial class PostSetup : Form
+    public partial class post_setup : Form
     {
-        public MPinstallerStruct _struct;
-        public PostSetup()
+        public MPinstalerStruct _struct;
+        public post_setup()
         {
             InitializeComponent();
         }
@@ -54,7 +54,7 @@ namespace MediaPortal.MPInstaller
                     comboBox2.Items.Clear();
                     foreach (MPIFileList fl in _struct.FileList)
                     {
-                        if (fl.Type == MPinstallerStruct.PLUGIN_TYPE)
+                        if (fl.Type == MPinstalerStruct.PLUGIN_TYPE)
                             comboBox2.Items.Add(fl.FileNameShort);
                     }
                     break;

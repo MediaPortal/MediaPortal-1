@@ -1,6 +1,6 @@
 namespace MediaPortal.MPInstaller
 {
-  partial class BuildDialog
+  partial class Build_dialog
   {
     /// <summary>
     /// Required designer variable.
@@ -28,7 +28,7 @@ namespace MediaPortal.MPInstaller
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BuildDialog));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Build_dialog));
       this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();

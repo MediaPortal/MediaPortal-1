@@ -33,16 +33,16 @@ using System.Windows.Forms;
 using MediaPortal.MPInstaller;
 namespace MediaPortal.MPInstaller
 {
-    public partial class StartForm : Form
+    public partial class start_form : Form
     {
-        public StartForm()
+        public start_form()
         {
             InitializeComponent();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MainForm create_dlg = new MainForm();
+            Form1 create_dlg = new Form1();
             this.Hide();
             create_dlg.ShowDialog();
             this.Show();

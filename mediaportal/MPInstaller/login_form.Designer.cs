@@ -1,6 +1,6 @@
 namespace MediaPortal.MPInstaller
 {
-  partial class LoginForm
+  partial class login_form
   {
     /// <summary>
     /// Required designer variable.

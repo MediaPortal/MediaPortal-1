@@ -18,7 +18,7 @@ namespace MediaPortal.MPInstaller
 {
     public class MPpackageStruct
     {
-        public MPinstallerStruct _intalerStruct= new MPinstallerStruct();
+        public MPinstalerStruct _intalerStruct= new MPinstalerStruct();
         public string FileName = String.Empty;
         public string txt_EULA = String.Empty;
         public string txt_log = String.Empty;
@@ -68,7 +68,7 @@ namespace MediaPortal.MPInstaller
                           string tpf;
                           if (InstallableSkinList.Contains(fl.SubType)||!fl.SkinType)
                           {
-                            tpf = Path.GetFullPath(MPinstallerStruct.GetDirEntry(fl));
+                            tpf = Path.GetFullPath(MPinstalerStruct.GetDirEntry(fl));
                           }
                           else
                           {
@@ -104,7 +104,7 @@ namespace MediaPortal.MPInstaller
                               foreach(string sd in this.InstallableSkinList)
                                 if (!this.SkinList.Contains(sd))
                                 {
-                                  string newtpf = Path.GetFullPath(MPinstallerStruct.GetSkinDirEntry(fl,sd));
+                                  string newtpf = Path.GetFullPath(MPinstalerStruct.GetSkinDirEntry(fl,sd));
                                   if (!Directory.Exists(Path.GetDirectoryName(newtpf)))
                                     Directory.CreateDirectory(Path.GetDirectoryName(newtpf));
                                   File.Copy(tpf,newtpf,true);
@@ -150,7 +150,7 @@ namespace MediaPortal.MPInstaller
           {
             if (fl.SkinType)
             {
-              if (ze.Name.Contains(MPinstallerStruct.GetZipEntry(fl)) )
+              if (ze.Name.Contains(MPinstalerStruct.GetZipEntry(fl)) )
               {
                 return true;
               }
@@ -158,7 +158,7 @@ namespace MediaPortal.MPInstaller
             }
             else
             {
-              if (ze.Name.Contains(MPinstallerStruct.GetZipEntry(fl)))
+              if (ze.Name.Contains(MPinstalerStruct.GetZipEntry(fl)))
                 return true;
               else return false;
             }
@@ -206,7 +206,7 @@ namespace MediaPortal.MPInstaller
                         ZipInputStream s = new ZipInputStream(File.OpenRead(FileName));
                         while ((entry = s.GetNextEntry()) != null)
                         {
-                            if (Path.GetFileName(entry.Name) == Path.GetFileName(_intalerStruct.FindList(MPinstallerStruct.TEXT_TYPE,MPinstallerStruct.TEXT_EULA_TYPE).FileName))
+                            if (Path.GetFileName(entry.Name) == Path.GetFileName(_intalerStruct.FindList(MPinstalerStruct.TEXT_TYPE,MPinstalerStruct.TEXT_EULA_TYPE).FileName))
                             {
                                 txt_EULA = String.Empty;
                                 while ((nb = s.Read(data, 0, data.Length)) > 0)
@@ -214,7 +214,7 @@ namespace MediaPortal.MPInstaller
                                      txt_EULA += new ASCIIEncoding().GetString(data, 0, data.Length);
                                 }
                             }
-                            if (Path.GetFileName(entry.Name) == Path.GetFileName(_intalerStruct.FindList(MPinstallerStruct.TEXT_TYPE, MPinstallerStruct.TEXT_LOG_TYPE).FileName))
+                            if (Path.GetFileName(entry.Name) == Path.GetFileName(_intalerStruct.FindList(MPinstalerStruct.TEXT_TYPE, MPinstalerStruct.TEXT_LOG_TYPE).FileName))
                             {
                                 txt_log = String.Empty;
                                 while ((nb = s.Read(data, 0, data.Length)) > 0)
@@ -222,7 +222,7 @@ namespace MediaPortal.MPInstaller
                                     txt_log += new ASCIIEncoding().GetString(data, 0, data.Length);
                                 }
                             }
-                            if (Path.GetFileName(entry.Name) == Path.GetFileName(_intalerStruct.FindList(MPinstallerStruct.TEXT_TYPE, MPinstallerStruct.TEXT_README_TYPE).FileName))
+                            if (Path.GetFileName(entry.Name) == Path.GetFileName(_intalerStruct.FindList(MPinstalerStruct.TEXT_TYPE, MPinstalerStruct.TEXT_README_TYPE).FileName))
                             {
                                 txt_readme = String.Empty;
                                 while ((nb = s.Read(data, 0, data.Length)) > 0)
@@ -283,7 +283,7 @@ namespace MediaPortal.MPInstaller
                 InstallableSkinList.Clear();
                 foreach (MPIFileList fl in _intalerStruct.FileList)
                 {
-                    if (fl.Type == MPinstallerStruct.SKIN_TYPE || fl.Type == MPinstallerStruct.SKIN_MEDIA_TYPE)
+                    if (fl.Type == MPinstalerStruct.SKIN_TYPE || fl.Type == MPinstalerStruct.SKIN_MEDIA_TYPE)
                     {
                         if (!SkinList.Contains(fl.SubType))
                             SkinList.Add(fl.SubType);
@@ -446,7 +446,7 @@ namespace MediaPortal.MPInstaller
                         writer.WriteElementString("Group", it._intalerStruct.Group);
                         it._intalerStruct.WriteLogoElement(writer);
                         writer.WriteStartElement("Properties");
-                        it._intalerStruct.ProjectProperties.Save(writer);
+                        it._intalerStruct.ProiectProperties.Save(writer);
                         writer.WriteEndElement();
                         writer.WriteStartElement("Uninstall");
                         for (int j = 0; j < it._intalerStruct.Uninstall.Count; j++)
@@ -553,7 +553,7 @@ namespace MediaPortal.MPInstaller
                     if (node_des != null)
                         pkg._intalerStruct.Description = node_des.InnerText;
                     XmlNode nodeproperties = nodefile.SelectSingleNode("Properties");
-                    pkg._intalerStruct.ProjectProperties.Load(nodeproperties);
+                    pkg._intalerStruct.ProiectProperties.Load(nodeproperties);
 
                     this.lst.Add(pkg);
                 }

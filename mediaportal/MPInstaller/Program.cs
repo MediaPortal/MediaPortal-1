@@ -63,12 +63,12 @@ namespace MediaPortal.MPInstaller
                     }
                     if (Path.GetExtension(fil) == ".xmp")
                     {
-                        MainForm create_dlg = new MainForm(Path.GetFullPath(fil));
+                        Form1 create_dlg = new Form1(Path.GetFullPath(fil));
                         create_dlg.ShowDialog();
                     }
                 }
                 else
-                    Application.Run(new StartForm());
+                    Application.Run(new start_form());
             }
             else
             {

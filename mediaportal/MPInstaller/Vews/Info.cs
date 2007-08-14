@@ -53,9 +53,9 @@ namespace MediaPortal.MPInstaller
         textBox1.Text = info_pk._intalerStruct.Description.Trim();
       else
         textBox1.Visible = false;
-      linkLabel1.Text = info_pk._intalerStruct.ProjectProperties.ForumURL;
-      linkLabel2.Text = info_pk._intalerStruct.ProjectProperties.WebURL;
-      label4.Text = info_pk._intalerStruct.ProjectProperties.CreationDate.ToLongDateString();
+      linkLabel1.Text = info_pk._intalerStruct.ProiectProperties.ForumURL;
+      linkLabel2.Text = info_pk._intalerStruct.ProiectProperties.WebURL;
+      label4.Text = info_pk._intalerStruct.ProiectProperties.CreationDate.ToLongDateString();
     }
 
     private void button1_Click(object sender, EventArgs e)
