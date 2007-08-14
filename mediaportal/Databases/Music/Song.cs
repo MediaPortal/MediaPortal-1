@@ -31,7 +31,14 @@ namespace MediaPortal.Music.Database
   /// <summary>
   /// 
   /// </summary>
-  public enum SongStatus { Init, Loaded, Cached, Submitted, Late }
+  public enum SongStatus 
+  { Init,
+    Loaded,
+    Cached,
+    Queued,
+    Submitted,
+    Short
+  }
 
   [Serializable()]
   public class Song

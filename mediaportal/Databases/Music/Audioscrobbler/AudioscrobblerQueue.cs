@@ -44,15 +44,17 @@ namespace MediaPortal.Music.Database
         this.artist = track.Artist;
         this.album = track.Album;
         this.title = track.Title;
+        this.tracknr = track.Track;
         this.duration = (int)track.Duration;
         this.start_time = track.getQueueTime(true);
       }
 
-      public QueuedTrack(string artist, string album, string title, int duration, string start_time)
+      public QueuedTrack(string artist, string album, string title, int tracknr, int duration, string start_time)
       {
         this.artist = artist;
         this.album = album;
         this.title = title;
+        this.tracknr = tracknr;
         this.duration = duration;
         this.start_time = start_time;
       }
@@ -73,6 +75,10 @@ namespace MediaPortal.Music.Database
       {
         get { return title; }
       }
+      public int TrackNr
+      {
+        get { return tracknr; }
+      }
       public int Duration
       {
         get { return duration; }
@@ -82,6 +88,7 @@ namespace MediaPortal.Music.Database
       string artist;
       string album;
       string title;
+      int tracknr;
       int duration;
       string start_time;
     }
@@ -122,6 +129,7 @@ namespace MediaPortal.Music.Database
         writer.WriteElementString("Artist", track.Artist);
         writer.WriteElementString("Album", track.Album);
         writer.WriteElementString("Title", track.Title);
+        writer.WriteElementString("TrackNr", track.TrackNr.ToString());
         writer.WriteElementString("Duration", track.Duration.ToString());
         //DateTime startTime = DateTime.Now;
         //string submitStartTime = string.Empty;
@@ -154,6 +162,7 @@ namespace MediaPortal.Music.Database
           string artist = "";
           string album = "";
           string title = "";
+          int tracknr = 0;
           int duration = 0;
           string start_time = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow));
 
@@ -171,6 +180,10 @@ namespace MediaPortal.Music.Database
             {
               title = child.ChildNodes[0].Value;
             }
+            else if (child.Name == "TrackNr" && child.ChildNodes.Count != 0)
+            {
+              tracknr = Convert.ToInt32(child.ChildNodes[0].Value);
+            }
             else if (child.Name == "Duration" && child.ChildNodes.Count != 0)
             {
               duration = Convert.ToInt32(child.ChildNodes[0].Value);
@@ -181,7 +194,7 @@ namespace MediaPortal.Music.Database
             }
           }
 
-          queue.Add(new QueuedTrack(artist, album, title, duration, start_time));
+          queue.Add(new QueuedTrack(artist, album, title, tracknr, duration, start_time));
         }
       }
       catch
@@ -213,6 +226,8 @@ namespace MediaPortal.Music.Database
         //n[0]=<tracknumber>
         //m[0]=<mb-trackid>
 
+        string trackNr = track.TrackNr > 0 ? Convert.ToString(track.TrackNr) : "";
+
         sb.AppendFormat(
              "&a[{0}]={1}&t[{0}]={2}&i[{0}]={3}&o[{0}]={4}&r[{0}]={5}&l[{0}]={6}&b[{0}]={7}&n[{0}]={8}&m[{0}]={9}",
              i,
@@ -223,7 +238,7 @@ namespace MediaPortal.Music.Database
              "",
              track.Duration.ToString(),
              AudioscrobblerBase.getValidURLLastFMString(track.Album),
-             "" /* track.tracknr */,
+             trackNr /* track.tracknr */,
              "" /* musicbrainz id */
              );
       }

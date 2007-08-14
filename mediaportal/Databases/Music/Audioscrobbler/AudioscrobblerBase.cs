@@ -390,7 +390,7 @@ namespace MediaPortal.Music.Database
         return;
       }
 
-      if (!forceNow_)
+      if (!forceNow_ ||ReasonForHandshake != HandshakeType.Recover)
       {
         // Check whether we had a *successful* handshake recently.
         if (DateTime.Now < lastHandshake.Add(handshakeInterval))
@@ -404,9 +404,17 @@ namespace MediaPortal.Music.Database
         }
       }
 
-      BackgroundWorker worker = new BackgroundWorker();
-      worker.DoWork += new DoWorkEventHandler(Worker_TryHandshake);
-      worker.RunWorkerAsync(ReasonForHandshake);
+      if (ReasonForHandshake != HandshakeType.Init && !_signedIn)
+      {
+        Log.Warn("AudioscrobblerBase: {0}", "Diconnected - not attempting handshake");
+        workerFailed(ReasonForHandshake, DateTime.MinValue, new Exception("Diconnected!"));
+      }
+      else
+      {
+        BackgroundWorker worker = new BackgroundWorker();
+        worker.DoWork += new DoWorkEventHandler(Worker_TryHandshake);
+        worker.RunWorkerAsync(ReasonForHandshake);
+      }
     }
 
     private static void Worker_TryHandshake(object sender, DoWorkEventArgs e)
@@ -496,6 +504,10 @@ namespace MediaPortal.Music.Database
           break;
         case HandshakeType.Init:
           Log.Warn("AudioscrobblerBase: {0}", "Handshake failed - could not log in");
+          break;
+        case HandshakeType.Recover:
+          Log.Warn("AudioscrobblerBase: {0}", "Handshake failed - could not recover. Disconnecting...");
+          Disconnect();
           break;
       }
     }
@@ -836,7 +848,6 @@ namespace MediaPortal.Music.Database
            m[0]=<mb-trackid>        The MusicBrainz Track ID, or empty if not known.
            l[0]=<secs>              The length of the track in seconds, or empty if not known. 
         */
-        // Build POST data from the username and the password.
 
         string postData = "s=" + sessionID;
 
@@ -850,7 +861,7 @@ namespace MediaPortal.Music.Database
         if (!postData.Contains("&a[0]"))
         {
           if (_useDebugLog)
-            Log.Debug("AudioscrobblerBase: postData did not contain info for {0}", "latest song");
+            Log.Debug("AudioscrobblerBase: postData did not contain all track parameter");
           return;
         }
 
@@ -884,18 +895,6 @@ namespace MediaPortal.Music.Database
     #region Audioscrobbler response parsers.
     private static bool parseUpToDateMessage(string type_, StreamReader reader_)
     {
-      //try
-      //{
-      //  md5challenge = reader_.ReadLine().Trim();
-      //  submitUrl = reader_.ReadLine().Trim();
-      //}
-      //catch (Exception e)
-      //{
-      //  string logmessage = "Failed to parse UPTODATE response: " + e.Message;
-      //  Log.Warn("AudioscrobblerBase.parseUpToDateMessage: {0}", logmessage);
-      //  md5challenge = "";
-      //  return false;
-      //}
       if (_useDebugLog)
         Log.Debug("AudioscrobblerBase: {0}", "Your client is up to date.");
       return true;
@@ -920,7 +919,6 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        //Log.Info("AudioscrobblerBase.parseFailedMessage: {0}", "Called.");
         string logmessage = "";
         if (type_.Length > 7)
           logmessage = "FAILED: " + type_.Substring(7);
@@ -954,31 +952,6 @@ namespace MediaPortal.Music.Database
       //TriggerSafeModeEvent();
       return true;
     }
-
-    //private static bool parseIntervalMessage(string type_, StreamReader reader_)
-    //{
-    //  try
-    //  {
-    //    string logmessage = "";
-    //    if (type_.Length > 9)
-    //    {
-    //      int newInterval = Convert.ToInt32(type_.Substring(9));
-    //      logmessage = "last.fm's servers currently allow an interval of: " + Convert.ToString(newInterval) + " sec";
-    //      if (newInterval > 30)
-    //        SUBMIT_INTERVAL = newInterval;
-    //    }
-    //    else
-    //      logmessage = "INTERVAL";
-    //    if (_useDebugLog)
-    //      Log.Debug("AudioscrobblerBase: {0}", logmessage);
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    string logmessage = "Failed to parse INTERVAL response: " + ex.Message;
-    //    Log.Error("AudioscrobblerBase.parseIntervalMessage: {0}", logmessage);
-    //  }
-    //  return true;
-    //}
 
     private static bool parseRadioStreamMessage(string type_, StreamReader reader_)
     {
@@ -1025,14 +998,6 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Utilities
-    //private static void InitSubmitTimer()
-    //{
-    //  submitTimer = new System.Timers.Timer();
-    //  submitTimer.Interval = SUBMIT_INTERVAL * 1000;
-    //  submitTimer.Elapsed += new ElapsedEventHandler(OnSubmitTimerTick);
-    //  submitTimer.Start();
-    //}
-
     private static string HashSubmitToken()
     {
       return HashMD5LoginStrings(false, password);
