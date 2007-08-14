@@ -358,20 +358,20 @@ namespace MediaPortal
 
     protected void SetupCamera2D()
     {
-      Matrix matOrtho;
-      Matrix matIdentity = Matrix.Identity;
+      //Matrix matOrtho;
+      //Matrix matIdentity = Matrix.Identity;
 
-      //Setup the orthogonal projection matrix and the default world/view matrix
-      matOrtho = Matrix.OrthoLH((float)GUIGraphicsContext.Width, (float)GUIGraphicsContext.Height, 0.0f, 1.0f);
+      ////Setup the orthogonal projection matrix and the default world/view matrix
+      //matOrtho = Matrix.OrthoLH((float)GUIGraphicsContext.Width, (float)GUIGraphicsContext.Height, 0.0f, 1.0f);
 
 
-      GUIGraphicsContext.DX9Device.SetTransform(TransformType.Projection, matOrtho);
-      GUIGraphicsContext.DX9Device.SetTransform(TransformType.World, matIdentity);
-      GUIGraphicsContext.DX9Device.SetTransform(TransformType.View, matIdentity);
+      //GUIGraphicsContext.DX9Device.SetTransform(TransformType.Projection, matOrtho);
+      //GUIGraphicsContext.DX9Device.SetTransform(TransformType.World, matIdentity);
+      //GUIGraphicsContext.DX9Device.SetTransform(TransformType.View, matIdentity);
 
       //Make sure that the z-buffer and lighting are disabled
-      GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.ZEnable, false);
-      GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.Lighting, false);
+      //GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.ZEnable, false);
+      //GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.Lighting, false);
     }
 
 

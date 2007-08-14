@@ -1419,20 +1419,24 @@ namespace MediaPortal.GUI.Library
       // here.
       Matrix mtxWorld;
       mtxWorld = Matrix.Identity;
-      DX9Device.SetTransform(TransformType.World, mtxWorld);
-
+      DX9Device.Transform.World = mtxWorld;
       // camera view.  Multiply the Y coord by -1 then translate so that everything is relative to the camera
       // position.
       Matrix flipY, translate, mtxView;
       flipY = Matrix.Scaling(1.0f, -1.0f, 1.0f);
       translate = Matrix.Translation(-(viewport.X + w + offset.X), -(viewport.Y + h + offset.Y), 2 * h);
       mtxView = Matrix.Multiply(translate, flipY);
-      DX9Device.SetTransform(TransformType.View, mtxView);
+      DX9Device.Transform.View = mtxView;
 
       // projection onto screen space
-      Matrix mtxProjection;
-      mtxProjection = Matrix.PerspectiveOffCenterLH((-w - offset.X) * 0.5f, (w - offset.X) * 0.5f, (-h + offset.Y) * 0.5f, (h + offset.Y) * 0.5f, h, 100 * h);
-      DX9Device.SetTransform(TransformType.Projection, mtxProjection);
+      Matrix mtxProjection = Matrix.PerspectiveOffCenterLH((-w - offset.X) * 0.5f, //Minimum x-value of the view volume.
+                                                    (w - offset.X) * 0.5f, //Maximum x-value of the view volume.
+                                                    (-h + offset.Y) * 0.5f,//Minimum y-value of the view volume.
+                                                    (h + offset.Y) * 0.5f,//Maximum y-value of the view volume.
+                                                    h,//Minimum z-value of the view volume.
+                                                    100 * h);//Maximum z-value of the view volume.
+      DX9Device.Transform.Projection = mtxProjection;
+
     }
   }
 }

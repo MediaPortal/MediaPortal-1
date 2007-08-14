@@ -1539,6 +1539,45 @@ public class MediaPortalApp : D3DApp, IRender
 
   private static bool reentrant = false;
 
+  VertexBuffer vertices=null;
+  protected VertexBuffer CreateVertexBuffer(Device device)
+  {
+
+    VertexBuffer buf = new VertexBuffer(
+      typeof(CustomVertex.PositionColored), // What type of vertices
+      3,                                    // How many 
+      device,                               // The device
+      0,                                    // Default usage
+      CustomVertex.PositionColored.Format,  // Vertex format
+      Pool.Default);                        // Default pooling
+
+
+    CustomVertex.PositionColored[] verts =
+      (CustomVertex.PositionColored[])buf.Lock(0, 0);
+
+
+    int i = 0;
+    verts[i++] = new CustomVertex.PositionColored(
+      0, 1, 0, Color.Red.ToArgb());
+    verts[i++] = new CustomVertex.PositionColored(
+      -0.5F, 0, 0, Color.Green.ToArgb());
+    verts[i++] = new CustomVertex.PositionColored(
+      0.5F, 0, 0, Color.Blue.ToArgb());
+
+
+    buf.Unlock();
+    return buf;
+  }
+  protected void SetupMatrices()
+  {
+    float angle = Environment.TickCount / 500.0F;
+    GUIGraphicsContext.DX9Device.Transform.World = Microsoft.DirectX.Matrix.RotationY(angle);
+    GUIGraphicsContext.DX9Device.Transform.View = Microsoft.DirectX.Matrix.LookAtLH(new Microsoft.DirectX.Vector3(0, 0.5F, -3),
+      new Microsoft.DirectX.Vector3(0, 0.5F, 0), new Microsoft.DirectX.Vector3(0, 1, 0));
+    GUIGraphicsContext.DX9Device.Transform.Projection =
+      Microsoft.DirectX.Matrix.PerspectiveFovLH((float)Math.PI / 4.0F, 1.0F, 1.0F, 5.0F);
+  }
+
   protected override void Render(float timePassed)
   {
     if (_suspended)
@@ -1562,7 +1601,6 @@ public class MediaPortalApp : D3DApp, IRender
       return;
     }
 
-
     try
     {
       //	Log.Info("app:render()");
@@ -1582,21 +1620,21 @@ public class MediaPortalApp : D3DApp, IRender
         return;
       }
 
-      MediaPortal.GUI.Library.GUIGraphicsContext.SetScalingResolution(0, 0, false);
 
       //Log.Info("render frame:{0}",frames);//remove
       ++frames;
       // clear the surface
-      GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-      CreateStateBlock();
+      GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target , Color.Beige, 1.0f, 0);
       GUIGraphicsContext.DX9Device.BeginScene();
 
+      CreateStateBlock();
+      MediaPortal.GUI.Library.GUIGraphicsContext.SetScalingResolution(0, 0, false);
       // ask the layer manager to render all layers
       GUILayerManager.Render(timePassed);
       RenderStats();
 
       GUIFontManager.Present();
-
+      
       GUIGraphicsContext.DX9Device.EndScene();
       try
       {
@@ -3069,7 +3107,51 @@ public class MediaPortalApp : D3DApp, IRender
 
   private void CreateStateBlock()
   {
-    GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = false;
+    GUIGraphicsContext.DX9Device.RenderState.CullMode = Cull.None;
+    GUIGraphicsContext.DX9Device.RenderState.Lighting = false;
+    GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = true;
+    GUIGraphicsContext.DX9Device.RenderState.FogEnable = false;
+
+    GUIGraphicsContext.DX9Device.RenderState.FillMode = FillMode.Solid;
+    GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = true;
+    GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;
+    GUIGraphicsContext.DX9Device.RenderState.DestinationBlend = Blend.InvSourceAlpha;
+    GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = TextureOperation.Modulate;
+    GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 = TextureArgument.TextureColor;
+    GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 = TextureArgument.Diffuse;
+    GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation = TextureOperation.Modulate;
+    GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 = TextureArgument.TextureColor;
+    GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 = TextureArgument.Diffuse;
+    if (supportsFiltering)
+    {
+      GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
+      GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
+      GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Linear;
+      GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy = g_nAnisotropy;
+
+      GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter = TextureFilter.Linear;
+      GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter = TextureFilter.Linear;
+      GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter = TextureFilter.Linear;
+      GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy = g_nAnisotropy;
+    }
+    else
+    {
+      GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Point;
+      GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Point;
+      GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Point;
+
+      GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter = TextureFilter.Point;
+      GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter = TextureFilter.Point;
+      GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter = TextureFilter.Point;
+    }
+    if (bSupportsAlphaBlend)
+    {
+      GUIGraphicsContext.DX9Device.RenderState.AlphaTestEnable = true;
+      GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x01;
+      GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
+    }
+    return;
+    GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;
     GUIGraphicsContext.DX9Device.RenderState.DestinationBlend = Blend.InvSourceAlpha;
@@ -3088,7 +3170,7 @@ public class MediaPortalApp : D3DApp, IRender
     GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation = TextureOperation.Modulate;
     GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 = TextureArgument.TextureColor;
     GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 = TextureArgument.Diffuse;
-    GUIGraphicsContext.DX9Device.TextureState[0].TextureCoordinateIndex = 0;
+    //GUIGraphicsContext.DX9Device.TextureState[0].TextureCoordinateIndex = 0;
     GUIGraphicsContext.DX9Device.TextureState[0].TextureTransform = TextureTransform.Disable; // REVIEW
     GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation = TextureOperation.Disable;
     GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation = TextureOperation.Disable;

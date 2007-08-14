@@ -624,12 +624,18 @@ namespace MediaPortal.GUI.Library
         //Container.ListItem(1).Icon
         //Listitem(
         int id = 0;
-        Int32.TryParse(strCategory.Substring(10), out id);
+        if (strCategory.Length > 10)
+        {
+          Int32.TryParse(strCategory.Substring(10), out id);
+        }
         string info = strTest.Substring(10);
         if (info.StartsWith("listitem"))
         {
           int offset = 0;
-          Int32.TryParse(strCategory.Substring(9, strCategory.Length - 10), out offset);
+          string sid = info.Substring(9);
+          int p = sid.IndexOf(")");
+          sid = sid.Substring(0, p);
+          Int32.TryParse(sid, out offset);
           ret = TranslateListItem(info.Substring(info.IndexOf(".") + 1));
           if (offset != 0 || id != 0)
             return AddMultiInfo(new GUIInfo(bNegate ? -ret : ret, id, offset));
@@ -652,7 +658,10 @@ namespace MediaPortal.GUI.Library
         else if (id != 0 && info.StartsWith("hasfocus("))
         {
           int itemID;
-          Int32.TryParse(info.Substring(9, info.Length - 10), out itemID);
+          string sid = info.Substring(9);
+          int p = sid.IndexOf(")");
+          sid = sid.Substring(0, p);
+          Int32.TryParse(sid, out itemID);
           return AddMultiInfo(new GUIInfo(bNegate ? -CONTAINER_HAS_FOCUS : CONTAINER_HAS_FOCUS, id, itemID));
         }
         if (id != 0 && (ret == CONTAINER_ON_NEXT || ret == CONTAINER_ON_PREVIOUS))
@@ -1409,6 +1418,18 @@ namespace MediaPortal.GUI.Library
       {
         m_boolCache.Clear();
       }
+    }
+
+    
+    /// \brief Obtains the filename of the image to show from whichever subsystem is needed
+    public static string GetImage(int info, uint contextWindow)
+    {
+      return "";
+    }
+
+    public static string GetLabel(int info, uint contextWindow)
+    {
+      return "";
     }
 
     static int TranslateListItem(string info)

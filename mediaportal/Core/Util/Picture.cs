@@ -396,28 +396,6 @@ namespace MediaPortal.Util
         m_vbBuffer.Unlock();
 
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
-        /*
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation =Direct3D.TextureOperation.Modulate;
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 =Direct3D.TextureArgument.TextureColor;
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 =Direct3D.TextureArgument.Diffuse;
-				
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation =Direct3D.TextureOperation.Modulate;
-				
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 =Direct3D.TextureArgument.TextureColor;
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 =Direct3D.TextureArgument.Diffuse;
-        GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation =Direct3D.TextureOperation.Disable;
-        GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation =Direct3D.TextureOperation.Disable ;
-				
-
-        GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable=false;
-        GUIGraphicsContext.DX9Device.RenderState.FogEnable=false;
-        GUIGraphicsContext.DX9Device.RenderState.FogTableMode=Direct3D.FogMode.None;
-        GUIGraphicsContext.DX9Device.RenderState.FillMode=Direct3D.FillMode.Solid;
-        GUIGraphicsContext.DX9Device.RenderState.CullMode=Direct3D.Cull.CounterClockwise;
-        GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=true;
-        GUIGraphicsContext.DX9Device.RenderState.SourceBlend=Direct3D.Blend.SourceAlpha;
-        GUIGraphicsContext.DX9Device.RenderState.DestinationBlend=Direct3D.Blend.InvSourceAlpha;
-        */
         int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
         float g_fMipMapLodBias = 0.0f;
         GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
@@ -570,28 +548,6 @@ namespace MediaPortal.Util
         m_vbBuffer.Unlock();
 
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
-        /*
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation =Direct3D.TextureOperation.Modulate;
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 =Direct3D.TextureArgument.TextureColor;
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 =Direct3D.TextureArgument.Diffuse;
-				
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation =Direct3D.TextureOperation.Modulate;
-				
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 =Direct3D.TextureArgument.TextureColor;
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 =Direct3D.TextureArgument.Diffuse;
-        GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation =Direct3D.TextureOperation.Disable;
-        GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation =Direct3D.TextureOperation.Disable ;
-				
-
-        GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable=false;
-        GUIGraphicsContext.DX9Device.RenderState.FogEnable=false;
-        GUIGraphicsContext.DX9Device.RenderState.FogTableMode=Direct3D.FogMode.None;
-        GUIGraphicsContext.DX9Device.RenderState.FillMode=Direct3D.FillMode.Solid;
-        GUIGraphicsContext.DX9Device.RenderState.CullMode=Direct3D.Cull.CounterClockwise;
-        GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=true;
-        GUIGraphicsContext.DX9Device.RenderState.SourceBlend=Direct3D.Blend.SourceAlpha;
-        GUIGraphicsContext.DX9Device.RenderState.DestinationBlend=Direct3D.Blend.InvSourceAlpha;
-        */
         int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
         float g_fMipMapLodBias = 0.0f;
         GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
@@ -769,16 +725,6 @@ namespace MediaPortal.Util
         GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy = g_nAnisotropy;
         GUIGraphicsContext.DX9Device.SamplerState[1].MipMapLevelOfDetailBias = g_fMipMapLodBias;
 
-        /*
-        GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable=false;
-        GUIGraphicsContext.DX9Device.RenderState.FogEnable=false;
-        GUIGraphicsContext.DX9Device.RenderState.FogTableMode=Direct3D.FogMode.None;
-        GUIGraphicsContext.DX9Device.RenderState.FillMode=Direct3D.FillMode.Solid;
-        GUIGraphicsContext.DX9Device.RenderState.CullMode=Direct3D.Cull.CounterClockwise;
-        GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=true;
-        GUIGraphicsContext.DX9Device.RenderState.SourceBlend=Direct3D.Blend.SourceAlpha;
-        GUIGraphicsContext.DX9Device.RenderState.DestinationBlend=Direct3D.Blend.InvSourceAlpha;
-  */
         // Render the image
         GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0);
         GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
@@ -942,16 +888,6 @@ namespace MediaPortal.Util
         GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy = g_nAnisotropy;
         GUIGraphicsContext.DX9Device.SamplerState[1].MipMapLevelOfDetailBias = g_fMipMapLodBias;
 
-        /*
-        GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable=false;
-        GUIGraphicsContext.DX9Device.RenderState.FogEnable=false;
-        GUIGraphicsContext.DX9Device.RenderState.FogTableMode=Direct3D.FogMode.None;
-        GUIGraphicsContext.DX9Device.RenderState.FillMode=Direct3D.FillMode.Solid;
-        GUIGraphicsContext.DX9Device.RenderState.CullMode=Direct3D.Cull.CounterClockwise;
-        GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=true;
-        GUIGraphicsContext.DX9Device.RenderState.SourceBlend=Direct3D.Blend.SourceAlpha;
-        GUIGraphicsContext.DX9Device.RenderState.DestinationBlend=Direct3D.Blend.InvSourceAlpha;
-  */
         // Render the image
         GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0);
         GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;

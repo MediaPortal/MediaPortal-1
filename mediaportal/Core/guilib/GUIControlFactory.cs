@@ -416,6 +416,7 @@ namespace MediaPortal.GUI.Library
     }
     private static void UpdateControlWithXmlData(GUIControl control, Type controlType, XmlNode pControlNode, IDictionary defines)
     {
+      List<int> vecInfo = new List<int>();
       Hashtable attributesThatCanBeUpdates = GetAttributesToUpdate(controlType);
       if (attributesThatCanBeUpdates != null)
       {
@@ -424,15 +425,15 @@ namespace MediaPortal.GUI.Library
         {
           XMLSkinAttribute xmlAttr = (XMLSkinAttribute)en.Key;
           MemberInfo correspondingMemberAttr = en.Value as MemberInfo;
-          XmlNode elementNode=pControlNode.SelectSingleNode(xmlAttr.XmlElementName);
-          if (elementNode!=null)
+          XmlNode elementNode = pControlNode.SelectSingleNode(xmlAttr.XmlElementName);
+          if (elementNode != null)
           {
             XmlNode attribNode = elementNode.Attributes.GetNamedItem(xmlAttr.XmlAttributeName);
-            if (attribNode!=null)
+            if (attribNode != null)
             {
               if (correspondingMemberAttr != null)
               {
-                
+
                 string text = attribNode.Value;
 
                 if (text.Length > 0 && text[0] == '#' && defines.Contains(text))
@@ -524,6 +525,21 @@ namespace MediaPortal.GUI.Library
             thumbAnimations.Add(effect);
             continue;
           }
+        }
+        if (element.Name == "info")
+        {
+          List<string> infoList = new List<string>();
+          if (GetMultipleString(element, "info", ref infoList))
+          {
+            vecInfo.Clear();
+            for (int i = 0; i < infoList.Count; i++)
+            {
+              int infoId = GUIInfoManager.TranslateString(infoList[i]);
+              if (infoId!=0)
+                vecInfo.Add(infoId);
+            }
+          }
+          control.Info=vecInfo;
         }
         MemberInfo correspondingMember = membersThatCanBeUpdated[element.Name] as MemberInfo;
 
@@ -814,7 +830,22 @@ namespace MediaPortal.GUI.Library
 
       return new int[0];
     }
-
+    static bool GetMultipleString(XmlNode rootNode, string tag, ref List<string> infoList)
+    {
+      infoList.Clear();
+      if (rootNode.HasChildNodes)
+      {
+        foreach (XmlNode subNode in rootNode.ChildNodes)
+        {
+          infoList.Add(subNode.Value);
+        }
+      }
+      else
+      {
+        infoList.Add(rootNode.Value);
+      }
+      return (infoList.Count>0);
+    }
     #endregion Methods
 
     #region Fields

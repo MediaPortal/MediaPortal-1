@@ -248,6 +248,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="PostBuild.bat" />
     <Compile Include="CodecsForm.cs">
       <SubType>Form</SubType>

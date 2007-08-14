@@ -83,6 +83,7 @@ namespace MediaPortal.GUI.Library
 
     List<VisualEffect> _animations = new List<VisualEffect>();
     List<VisualEffect> _thumbAnimations = new List<VisualEffect>();
+    List<int> _infoList = new List<int>();
     //protected int DimColor = 0x60ffffff;
 
     /// <summary>
@@ -146,7 +147,20 @@ namespace MediaPortal.GUI.Library
       _visibleFromSkinCondition = true;
       _visibleCondition = 0;
     }
-
+    public List<int> Info
+    {
+      get
+      {
+        return _infoList;
+      }
+      set
+      {
+        if (value != null)
+        {
+          _infoList = value;
+        }
+      }
+    }
     public GUIControl ParentControl
     {
       get { return _parentControl; }
@@ -208,6 +222,7 @@ namespace MediaPortal.GUI.Library
       if (_hasCamera)
         GUIGraphicsContext.RestoreCameraPosition();
       GUIGraphicsContext.RemoveTransform();
+ 
     }
     /// <summary>
     /// The default render method. This needs to be overwritten when inherited to give every control 

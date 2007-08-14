@@ -177,12 +177,24 @@ namespace MediaPortal.GUI.Library
       _imageWidth = 0;
       _imageHeight = 0;
       FinalizeConstruction();
-
     }
+
     public System.Drawing.Image MemoryImage
     {
       get { return memoryImage; }
       set { memoryImage = value; }
+    }
+
+    public override void UpdateVisibility()
+    {
+      base.UpdateVisibility();
+
+      // check for conditional information before we free and
+      // alloc as this does free and allocation as well
+      if (Info.Count == 1)
+      {
+        SetFileName(GUIInfoManager.GetImage(Info[0], (uint)ParentID));
+      }
     }
     /// <summary>
     /// Does any scaling on the inital size\position values to fit them to screen 
@@ -1216,7 +1228,7 @@ namespace MediaPortal.GUI.Library
 
             //FontEngineDrawTexture(_packedTextureNo, fx, fy, nw, nh, _uoff, _voff, _umax, _vmax, (int)color, m00, m01, m02, m10, m11, m12);
             //FontEngineDrawTexture(_packedDiffuseTextureNo, fx, fy, nw, nh, uoff, voff, umax, vmax, (int)color, m00, m01, m02, m10, m11, m12);
-            float[,] m= GUIGraphicsContext.GetFinalMatrix();
+            float[,] m = GUIGraphicsContext.GetFinalMatrix();
             FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m
                                   , _packedDiffuseTextureNo, uoff, voff, umax, vmax);
 
