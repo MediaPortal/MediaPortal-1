@@ -671,12 +671,11 @@ namespace MediaPortal.Util
       return strHM;
     }
 
-    static public double GetUnixTime(DateTime desiredTime_)
+    static public long GetUnixTime(DateTime desiredTime_)
     {
       TimeSpan ts = (desiredTime_ - new DateTime(1970, 1, 1, 0, 0, 0));
-      double unixTime = ts.TotalSeconds;
-
-      return unixTime;
+     
+      return (long)ts.TotalSeconds;
     }
 
     static public void GetQualifiedFilename(string strBasePath, ref string strFileName)

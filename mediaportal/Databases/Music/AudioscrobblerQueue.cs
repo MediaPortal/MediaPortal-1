@@ -45,7 +45,7 @@ namespace MediaPortal.Music.Database
         this.album = track.Album;
         this.title = track.Title;
         this.duration = (int)track.Duration;
-        this.start_time = track.getQueueTime();
+        this.start_time = track.getQueueTime(true);
       }
 
       public QueuedTrack(string artist, string album, string title, int duration, string start_time)
@@ -123,6 +123,12 @@ namespace MediaPortal.Music.Database
         writer.WriteElementString("Album", track.Album);
         writer.WriteElementString("Title", track.Title);
         writer.WriteElementString("Duration", track.Duration.ToString());
+        //DateTime startTime = DateTime.Now;
+        //string submitStartTime = string.Empty;
+        //if (DateTime.TryParse(track.StartTime, out startTime))
+        //  submitStartTime = Convert.ToString(Util.Utils.GetUnixTime(startTime.ToUniversalTime()));
+        //else
+        //  submitStartTime = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow - new TimeSpan(0, 0, track.Duration)));
         writer.WriteElementString("Playtime", track.StartTime);
         writer.WriteEndElement(); // Track
       }
@@ -149,7 +155,7 @@ namespace MediaPortal.Music.Database
           string album = "";
           string title = "";
           int duration = 0;
-          string start_time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") ;
+          string start_time = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow));
 
           foreach (XmlNode child in node.ChildNodes)
           {
@@ -195,16 +201,31 @@ namespace MediaPortal.Music.Database
           break;
 
         QueuedTrack track = (QueuedTrack)queue[i];
+        
+        //s=<sessionID>
+        //a[0]=<artist>
+        //t[0]=<track>
+        //i[0]=<time>
+        //o[0]=<source>
+        //r[0]=<rating>
+        //l[0]=<secs>
+        //b[0]=<album>
+        //n[0]=<tracknumber>
+        //m[0]=<mb-trackid>
 
         sb.AppendFormat(
-             "&a[{6}]={0}&t[{6}]={1}&b[{6}]={2}&m[{6}]={3}&l[{6}]={4}&i[{6}]={5}",
+             "&a[{0}]={1}&t[{0}]={2}&i[{0}]={3}&o[{0}]={4}&r[{0}]={5}&l[{0}]={6}&b[{0}]={7}&n[{0}]={8}&m[{0}]={9}",
+             i,
              AudioscrobblerBase.getValidURLLastFMString(track.Artist),
-             AudioscrobblerBase.getValidURLLastFMString(track.Title),
-             AudioscrobblerBase.getValidURLLastFMString(track.Album),
-             "" /* musicbrainz id */,
+             System.Web.HttpUtility.UrlEncode(track.Title),
+             track.StartTime,
+             "P" /* chosen by user */ ,
+             "",
              track.Duration.ToString(),
-             AudioscrobblerBase.getValidURLLastFMString(track.StartTime),
-             i);
+             AudioscrobblerBase.getValidURLLastFMString(track.Album),
+             "" /* track.tracknr */,
+             "" /* musicbrainz id */
+             );
       }
 
       num_tracks = i;

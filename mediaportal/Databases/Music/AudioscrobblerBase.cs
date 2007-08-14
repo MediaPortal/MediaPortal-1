@@ -60,6 +60,7 @@ namespace MediaPortal.Music.Database
     #region Enums
     public enum HandshakeType : int
     {
+      Init = 0,
       Submit = 1,
       ChangeUser = 2,
       PreRadio = 3,
@@ -68,15 +69,14 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Constants
-    const int MAX_QUEUE_SIZE = 10;
-    const int HANDSHAKE_INTERVAL = 30;     //< In minutes.
-    const int CONNECT_WAIT_TIME = 5;      //< Min secs between connects.
-    static int SUBMIT_INTERVAL = 30;    //< Seconds.
+    const int MAX_QUEUE_SIZE = 50;
+    const int HANDSHAKE_INTERVAL = 60;     //< In minutes.
+    const int CONNECT_WAIT_TIME = 3;      //< Min secs between connects.
     const string CLIENT_NAME = "mpm"; //assigned by Russ Garrett from Last.fm Ltd.
     const string CLIENT_VERSION = "0.1";
     const string SCROBBLER_URL = "http://post.audioscrobbler.com";
     const string RADIO_SCROBBLER_URL = "http://ws.audioscrobbler.com/radio/";
-    const string PROTOCOL_VERSION = "1.1";
+    const string PROTOCOL_VERSION = "1.2";
     #endregion
     
     #region Variables
@@ -94,7 +94,6 @@ namespace MediaPortal.Music.Database
     private static Object queueLock;
     private static Object submitLock;
     private static Object ParseLock;
-    private static int _antiHammerCount = 0;
     private static DateTime lastHandshake;        //< last successful attempt.
     private static DateTime lastRadioHandshake;
     private static TimeSpan handshakeInterval;
@@ -103,14 +102,14 @@ namespace MediaPortal.Music.Database
 
     private static TimeSpan minConnectWaitTime;
 
-    private static bool _disableTimerThread;
     private static bool _useDebugLog;
-    private static System.Timers.Timer submitTimer;
     private static bool _signedIn;
 
     // Data received by the Audioscrobbler service.
-    private static string md5challenge;
+    private static string MD5Response;
+    private static string sessionID;
     private static string submitUrl;
+    private static string nowPlayingUrl;
     private static CookieContainer _cookies;
 
     // radio related
@@ -137,8 +136,6 @@ namespace MediaPortal.Music.Database
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _disableTimerThread = xmlreader.GetValueAsBool("audioscrobbler", "disabletimerthread", true);
-
         username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
 
         string tmpPass;
@@ -282,12 +279,7 @@ namespace MediaPortal.Music.Database
     {
       // start thread on start
       if (!_signedIn)
-        DoHandshake(true, HandshakeType.Submit);
-
-      if (!_disableTimerThread)
-        StartSubmitQueueThread();
-      // From now on, try to submit queued songs periodically.
-      InitSubmitTimer();
+        DoHandshake(true, HandshakeType.Init);
     }
 
     /// <summary>
@@ -295,8 +287,6 @@ namespace MediaPortal.Music.Database
     /// </summary>
     public static void Disconnect()
     {
-      if (submitTimer != null)
-        submitTimer.Close();
       if (queue != null)
         queue.Save();
       _signedIn = false;
@@ -310,7 +300,7 @@ namespace MediaPortal.Music.Database
       {
         queue.Save();
         queue = null;        
-        md5challenge = "";
+        MD5Response = "";
         string tmpPass = "";
         try
         {
@@ -350,57 +340,38 @@ namespace MediaPortal.Music.Database
         queue.Add(song_);
       }
 
-      if (_antiHammerCount == 0)
-      {
-        if (_disableTimerThread)
-          if (submitThread != null)
-            if (submitThread.IsAlive)
-            {
-              try
-              {
-                Log.Debug("AudioscrobblerBase: {0}", "trying to kill submit thread (no longer needed)");
-                StopSubmitQueueThread();
-              }
-              catch (Exception ex)
-              {
-                Log.Debug("AudioscrobblerBase: result of thread.Abort - {0}", ex.Message);
-              }
-            }
-        
-        // Try to submit immediately.
-        StartSubmitQueueThread();
 
-        // Reset the submit timer.
-        submitTimer.Close();
-        InitSubmitTimer();
-      }
-      else
-        if (_useDebugLog)
-          Log.Debug("AudioscrobblerBase: {0}", "direct submit cancelled because of previous errors");
-    }     
-    
+      if (submitThread != null)
+        if (submitThread.IsAlive)
+        {
+          try
+          {
+            Log.Debug("AudioscrobblerBase: {0}", "trying to kill submit thread (no longer needed)");
+            StopSubmitQueueThread();
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("AudioscrobblerBase: result of thread.Abort - {0}", ex.Message);
+          }
+        }
+
+      // Try to submit immediately.
+      StartSubmitQueueThread();
+
+      // Reset the submit timer.
+      // submitTimer.Close();
+      // InitSubmitTimer();
+    }
 
     #region Public event triggers
 
     public static void TriggerSafeModeEvent()
     {
-      if (_antiHammerCount < 5)
-      {
-        _antiHammerCount = _antiHammerCount + 1;
-        DoHandshake(true, HandshakeType.Recover);
-        SUBMIT_INTERVAL = SUBMIT_INTERVAL * _antiHammerCount;
-        // prevent null argument exception
-        if (SUBMIT_INTERVAL == 0)
-          SUBMIT_INTERVAL = 120;
-        // reset the timer
-        if (submitTimer != null)
-        {
-          submitTimer.Close();
-          InitSubmitTimer();
-        }
-        Log.Warn("AudioscrobblerBase: falling back to safe mode: new interval: {0} sec", Convert.ToString(SUBMIT_INTERVAL));
-      }
+      DoHandshake(true, HandshakeType.Recover);
+
+      Log.Warn("AudioscrobblerBase: falling back to safe mode");
     }
+    
 
     #endregion
 
@@ -452,11 +423,9 @@ namespace MediaPortal.Music.Database
                  + "&p=" + PROTOCOL_VERSION
                  + "&c=" + CLIENT_NAME
                  + "&v=" + CLIENT_VERSION
-                 + "&u=" + System.Web.HttpUtility.UrlEncode(username);
-      //+ "&t=" + authTime
-      //+ "&a=" + tmpAuth;  
-
-      // Request URI: http://post.audioscrobbler.com/?hs=true&p=1.1&c=ass&v=1.0.6&u=f1n4rf1n
+                 + "&u=" + System.Web.HttpUtility.UrlEncode(username)
+                 + "&t=" + authTime
+                 + "&a=" + tmpAuth;  
 
       try
       {
@@ -469,8 +438,6 @@ namespace MediaPortal.Music.Database
             _signedIn = true;
 
           lastHandshake = DateTime.Now;
-          // reset to leave "safe mode"
-          _antiHammerCount = 0;
 
           if (_useDebugLog)
             Log.Debug("AudioscrobblerBase: {0}", "Handshake successful");
@@ -501,6 +468,9 @@ namespace MediaPortal.Music.Database
         case HandshakeType.PreRadio:
           AttemptRadioHandshake();
           break;
+        case HandshakeType.Init:
+          AttemptSubmitNow();
+          break;
         case HandshakeType.Submit:
           AttemptSubmitNow();
           break;
@@ -523,6 +493,9 @@ namespace MediaPortal.Music.Database
           break;
         case HandshakeType.Submit:
           Log.Warn("AudioscrobblerBase: {0}", "Handshake failed - no submits");
+          break;
+        case HandshakeType.Init:
+          Log.Warn("AudioscrobblerBase: {0}", "Handshake failed - could not log in");
           break;
       }
     }
@@ -583,16 +556,16 @@ namespace MediaPortal.Music.Database
       if (_useDebugLog)
         Log.Debug("AudioscrobblerBase: {0}", "Radio handshake successful");
 
-      url = "http://ws.audioscrobbler.com/ass/"
-           + "upgrade.php?"
-           + "platform=" + "win"
-           + "&version=" + "1.0.7"
-           + "&lang=" + "en"
-           + "&user=" + tmpUser;
+      //url = "http://ws.audioscrobbler.com/ass/"
+      //     + "upgrade.php?"
+      //     + "platform=" + "win"
+      //     + "&version=" + "1.0.7"
+      //     + "&lang=" + "en"
+      //     + "&user=" + tmpUser;
 
-      GetResponse(url, "", true);
-      if (_useDebugLog)
-        Log.Debug("AudioscrobblerBase: {0}", "Upgrade request send");
+      //GetResponse(url, "", true);
+      //if (_useDebugLog)
+      //  Log.Debug("AudioscrobblerBase: {0}", "Upgrade request send");
 
       RadioHandshakeSuccess();
       return true;
@@ -628,7 +601,9 @@ namespace MediaPortal.Music.Database
         if (request == null)
           throw (new Exception());
         else
-          request.CookieContainer = _cookies;
+        {
+          request.CookieContainer = _cookies;          
+        }
       }
       catch (Exception e)
       {
@@ -675,6 +650,8 @@ namespace MediaPortal.Music.Database
       if (_useDebugLog)
         Log.Debug("AudioscrobblerBase: {0}", "Waiting for response");
       StreamReader reader = null;
+      string statusCode = string.Empty;
+
       try
       {
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -709,6 +686,7 @@ namespace MediaPortal.Music.Database
           }
         }
         reader = new StreamReader(response.GetResponseStream());
+        statusCode = response.StatusDescription;
       }
 
       catch (Exception e)
@@ -720,7 +698,7 @@ namespace MediaPortal.Music.Database
 
       // now we are connected
       if (_useDebugLog)
-        Log.Debug("AudioscrobblerBase: {0}", "Response received");
+        Log.Debug("AudioscrobblerBase: Response received - status: {0}", statusCode);
 
       bool success = false;
       bool parse_success = false;
@@ -744,6 +722,8 @@ namespace MediaPortal.Music.Database
           parse_success = parseFailedMessage(respType, reader);
         else if (respType.StartsWith("BADUSER") || respType.StartsWith("BADAUTH"))
           parse_success = parseBadUserMessage(respType, reader);
+        else if (respType.StartsWith("BADTIME"))
+          parse_success = parseBadTimeMessage(respType, reader);
         else if (respType.StartsWith("session="))
           success = parse_success = parseRadioStreamMessage(respType, reader);
         else if (respType.StartsWith(@"[App]")) // upgrade message
@@ -758,9 +738,9 @@ namespace MediaPortal.Music.Database
         }
 
         // read next line to look for an interval
-        while ((respType = reader.ReadLine()) != null)
-          if (respType.StartsWith("INTERVAL"))
-            parse_success = parseIntervalMessage(respType, reader);
+        //while ((respType = reader.ReadLine()) != null)
+        //  if (respType.StartsWith("INTERVAL"))
+        //    parse_success = parseIntervalMessage(respType, reader);
 
       }
       catch (Exception ex)
@@ -777,12 +757,6 @@ namespace MediaPortal.Music.Database
       return success;
     }
     #endregion
-
-    static void OnSubmitTimerTick(object trash_, ElapsedEventArgs args_)
-    {
-      if (!_disableTimerThread || _antiHammerCount > 0)
-        StartSubmitQueueThread();
-    }
 
     /// <summary>
     /// Creates a thread to submit all queued songs.
@@ -863,9 +837,8 @@ namespace MediaPortal.Music.Database
            l[0]=<secs>              The length of the track in seconds, or empty if not known. 
         */
         // Build POST data from the username and the password.
-        string webUsername = System.Web.HttpUtility.UrlEncode(username);
-        string md5resp = HashSubmitToken();
-        string postData = "u=" + webUsername + "&s=" + md5resp;
+
+        string postData = "s=" + sessionID;
 
         StringBuilder sb = new StringBuilder();
 
@@ -911,18 +884,18 @@ namespace MediaPortal.Music.Database
     #region Audioscrobbler response parsers.
     private static bool parseUpToDateMessage(string type_, StreamReader reader_)
     {
-      try
-      {
-        md5challenge = reader_.ReadLine().Trim();
-        submitUrl = reader_.ReadLine().Trim();
-      }
-      catch (Exception e)
-      {
-        string logmessage = "Failed to parse UPTODATE response: " + e.Message;
-        Log.Warn("AudioscrobblerBase.parseUpToDateMessage: {0}", logmessage);
-        md5challenge = "";
-        return false;
-      }
+      //try
+      //{
+      //  md5challenge = reader_.ReadLine().Trim();
+      //  submitUrl = reader_.ReadLine().Trim();
+      //}
+      //catch (Exception e)
+      //{
+      //  string logmessage = "Failed to parse UPTODATE response: " + e.Message;
+      //  Log.Warn("AudioscrobblerBase.parseUpToDateMessage: {0}", logmessage);
+      //  md5challenge = "";
+      //  return false;
+      //}
       if (_useDebugLog)
         Log.Debug("AudioscrobblerBase: {0}", "Your client is up to date.");
       return true;
@@ -930,6 +903,15 @@ namespace MediaPortal.Music.Database
 
     private static bool parseOkMessage(string type_, StreamReader reader_)
     {
+      try
+      {
+        sessionID = reader_.ReadLine().Trim();
+        nowPlayingUrl = reader_.ReadLine().Trim();
+        submitUrl = reader_.ReadLine().Trim();
+      }
+      catch (Exception)
+      {
+      }
       Log.Info("AudioscrobblerBase: {0}", "Action successfully completed.");
       return true;
     }
@@ -962,34 +944,41 @@ namespace MediaPortal.Music.Database
     private static bool parseBadUserMessage(string type_, StreamReader reader_)
     {
       Log.Warn("AudioscrobblerBase: {0}", "PLEASE CHECK YOUR ACCOUNT CONFIG! - re-trying handshake now");
-      TriggerSafeModeEvent();
+      //TriggerSafeModeEvent();
       return true;
     }
 
-    private static bool parseIntervalMessage(string type_, StreamReader reader_)
+    private static bool parseBadTimeMessage(string type_, StreamReader reader_)
     {
-      try
-      {
-        string logmessage = "";
-        if (type_.Length > 9)
-        {
-          int newInterval = Convert.ToInt32(type_.Substring(9));
-          logmessage = "last.fm's servers currently allow an interval of: " + Convert.ToString(newInterval) + " sec";
-          if (newInterval > 30)
-            SUBMIT_INTERVAL = newInterval;
-        }
-        else
-          logmessage = "INTERVAL";
-        if (_useDebugLog)
-          Log.Debug("AudioscrobblerBase: {0}", logmessage);
-      }
-      catch (Exception ex)
-      {
-        string logmessage = "Failed to parse INTERVAL response: " + ex.Message;
-        Log.Error("AudioscrobblerBase.parseIntervalMessage: {0}", logmessage);
-      }
+      Log.Warn("AudioscrobblerBase: {0}", "BADTIME response received!");
+      //TriggerSafeModeEvent();
       return true;
     }
+
+    //private static bool parseIntervalMessage(string type_, StreamReader reader_)
+    //{
+    //  try
+    //  {
+    //    string logmessage = "";
+    //    if (type_.Length > 9)
+    //    {
+    //      int newInterval = Convert.ToInt32(type_.Substring(9));
+    //      logmessage = "last.fm's servers currently allow an interval of: " + Convert.ToString(newInterval) + " sec";
+    //      if (newInterval > 30)
+    //        SUBMIT_INTERVAL = newInterval;
+    //    }
+    //    else
+    //      logmessage = "INTERVAL";
+    //    if (_useDebugLog)
+    //      Log.Debug("AudioscrobblerBase: {0}", logmessage);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    string logmessage = "Failed to parse INTERVAL response: " + ex.Message;
+    //    Log.Error("AudioscrobblerBase.parseIntervalMessage: {0}", logmessage);
+    //  }
+    //  return true;
+    //}
 
     private static bool parseRadioStreamMessage(string type_, StreamReader reader_)
     {
@@ -1036,13 +1025,13 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Utilities
-    private static void InitSubmitTimer()
-    {
-      submitTimer = new System.Timers.Timer();
-      submitTimer.Interval = SUBMIT_INTERVAL * 1000;
-      submitTimer.Elapsed += new ElapsedEventHandler(OnSubmitTimerTick);
-      submitTimer.Start();
-    }
+    //private static void InitSubmitTimer()
+    //{
+    //  submitTimer = new System.Timers.Timer();
+    //  submitTimer.Interval = SUBMIT_INTERVAL * 1000;
+    //  submitTimer.Elapsed += new ElapsedEventHandler(OnSubmitTimerTick);
+    //  submitTimer.Start();
+    //}
 
     private static string HashSubmitToken()
     {
@@ -1086,7 +1075,7 @@ namespace MediaPortal.Music.Database
       if (passwordOnly_)
         return tmp;
 
-      barr = hash.ComputeHash(encoding.GetBytes(tmp + md5challenge));
+      barr = hash.ComputeHash(encoding.GetBytes(tmp + MD5Response));
 
       string md5response = String.Empty;
       for (int i = 0; i < barr.Length; i++)

@@ -382,15 +382,22 @@ namespace MediaPortal.Music.Database
         _DateTimePlayed.ToString("s");
     }
 
-    public string getQueueTime()
+    public string getQueueTime(bool asUnixTime)
     {
-      string queueTime = String.Format("{0:0000}-{1:00}-{2:00} {3:00}:{4:00}:{5:00}",
-                                 _DateTimePlayed.Year,
-                                 _DateTimePlayed.Month,
-                                 _DateTimePlayed.Day,
-                                 _DateTimePlayed.Hour,
-                                 _DateTimePlayed.Minute,
-                                 _DateTimePlayed.Second);
+      string queueTime = string.Empty;
+
+      if (asUnixTime)
+        queueTime = Convert.ToString(Util.Utils.GetUnixTime(DateTimePlayed.ToUniversalTime()));
+      else
+      {
+        queueTime = String.Format("{0:0000}-{1:00}-{2:00} {3:00}:{4:00}:{5:00}",
+                                  _DateTimePlayed.Year,
+                                  _DateTimePlayed.Month,
+                                  _DateTimePlayed.Day,
+                                  _DateTimePlayed.Hour,
+                                  _DateTimePlayed.Minute,
+                                  _DateTimePlayed.Second);
+      }
       return queueTime;
     }
 

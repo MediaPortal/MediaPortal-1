@@ -441,7 +441,7 @@ namespace MediaPortal.AudioScrobbler
       if (showPlayed_)
         listItem.SubItems.Add(Convert.ToString(song_.TimesPlayed));
       if (showDate_)
-        listItem.SubItems.Add(song_.getQueueTime());
+        listItem.SubItems.Add(song_.getQueueTime(false));
       listItem.Tag = song_;
       return listItem;
     }
