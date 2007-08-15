@@ -641,15 +641,15 @@ namespace MediaPortal.Configuration.Sections
         cbAllowStretch.Checked = xmlreader.GetValueAsBool("mytv", "allowarstretch", true);
         cbAllowZoom.Checked = xmlreader.GetValueAsBool("mytv", "allowarzoom", true);
         cbAllowZoom149.Checked = xmlreader.GetValueAsBool("mytv", "allowarzoom149", true);
-        cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("mytv", "allowarletterbox", true);
-        cbAllowPanScan.Checked = xmlreader.GetValueAsBool("mytv", "allowarpanscan", true);
+        cbAllowLetterbox.Checked = xmlreader.GetValueAsBool("mytv", "allowarletterbox", false);
+        cbAllowPanScan.Checked = xmlreader.GetValueAsBool("mytv", "allowarpanscan", false);
 
         cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
         cbTurnOnTimeShift.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontimeshifting", false);
 
         textBoxTimeShiftBuffer.Text = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30).ToString();
         byIndexCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "byindex", true);
-        showChannelNumberCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "showchannelnumber", true);
+        showChannelNumberCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
 
         int channelNumberMaxLen = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
         channelNumberMaxLengthNumUpDn.Value = channelNumberMaxLen;
