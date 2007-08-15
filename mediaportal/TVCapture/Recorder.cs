@@ -45,6 +45,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.TV.Teletext;
 using MediaPortal.TV.DiskSpace;
 using MediaPortal.Configuration;
+using MediaPortal.TV.Scanning;
 
 namespace MediaPortal.TV.Recording
 {
@@ -1280,6 +1281,16 @@ namespace MediaPortal.TV.Recording
         return _commandProcessor.TVChannelName;
       }
     }
+
+    #region AutoTune
+    static public void StartAutoTune(NetworkType networkType, int card, AutoTuneCallback autoTuneCallback)
+    {
+      AutoTuneCommand autoTuneCommand = new AutoTuneCommand(networkType, card, autoTuneCallback);
+      _commandProcessor.AddCommand(autoTuneCommand);
+    }
+        
+    #endregion
+
 
   }//public class Recorder
 }//namespace MediaPortal.TV.Recording

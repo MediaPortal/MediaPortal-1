@@ -189,7 +189,7 @@ namespace MediaPortal.TV.Scanning
       _currentDiseqc = 1;
       _currentIndex = 0;
       LoadFrequencies();
-      _callback.OnProgress(0);
+      if (_callback != null) _callback.OnProgress(0);
     }
 
     public void Next()
@@ -217,12 +217,12 @@ namespace MediaPortal.TV.Scanning
       if (IsFinished()) return;
       float percent = ((float)_currentIndex) / ((float)_count);
       percent *= 100.0f;
-      _callback.OnProgress((int)percent);
+      if (_callback != null) _callback.OnProgress((int)percent);
       TPList transponder = _transponderList[_currentIndex];
       string chanDesc = String.Format("LNB:{0} Freq.:{1} MHz, Pol.:{2} SymbolRate:{3}",
          _currentDiseqc,((float)transponder.TPfreq)/1000.0, GetPolarisation(transponder.TPpol), transponder.TPsymb);
       string description = String.Format("{0} locking...", chanDesc);
-      _callback.OnStatus(description);
+      if (_callback != null) _callback.OnStatus(description);
     }
     string GetPolarisation(int pol)
     {
@@ -250,14 +250,14 @@ namespace MediaPortal.TV.Scanning
         _currentDiseqc,((float)transponder.TPfreq) / 1000.0, GetPolarisation(transponder.TPpol), transponder.TPsymb);
       string description = String.Format("{0}, getting info...", chanDesc);
 
-      _callback.OnStatus(description);
+      if (_callback != null) _callback.OnStatus(description);
       _captureCard.Process();
-      _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
+      if (_callback != null) _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
       _captureCard.StoreTunedChannels(false, true, ref _newChannels, ref _updatedChannels, ref _newRadioChannels, ref _updatedRadioChannels);
-      _callback.OnStatus2(String.Format("new tv:{0} new radio:{1} updated tv:{2} updated radio:{3}", _newChannels, _newRadioChannels, _updatedChannels, _updatedRadioChannels));
+      if (_callback != null) _callback.OnStatus2(String.Format("new tv:{0} new radio:{1} updated tv:{2} updated radio:{3}", _newChannels, _newRadioChannels, _updatedChannels, _updatedRadioChannels));
 
       _captureCard.Process();
-      _callback.UpdateList();
+      if (_callback != null) _callback.UpdateList();
       Log.Info("dvbs-scan:onto next transponder");
     }
 
@@ -308,7 +308,7 @@ namespace MediaPortal.TV.Scanning
       _captureCard.Tune(newchan, _currentDiseqc);
 
       _captureCard.Process();
-      _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
+      if (_callback != null) _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
       Log.Info("dvbs-scan:signal quality:{0} signal strength:{1} signal present:{2}",
                   _captureCard.SignalQuality, _captureCard.SignalStrength, _captureCard.SignalPresent() );
     }

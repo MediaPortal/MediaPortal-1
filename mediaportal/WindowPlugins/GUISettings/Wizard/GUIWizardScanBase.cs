@@ -56,6 +56,7 @@ namespace WindowPlugins.GUISettings.Wizard
 
     int card = 0;
     bool updateList = false;
+    private bool _autoTuneRunning = false;
 
     public GUIWizardScanBase()
     {
@@ -83,10 +84,7 @@ namespace WindowPlugins.GUISettings.Wizard
       WorkerThread.Start();
     }
 
-    protected virtual ITuning GetTuningInterface(TVCaptureDevice captureCard)
-    {
-      return null;
-    }
+    
     protected virtual void OnScanDone()
     {
     }
@@ -98,38 +96,26 @@ namespace WindowPlugins.GUISettings.Wizard
     {
       card = Int32.Parse(GUIPropertyManager.GetProperty("#WizardCard"));
       string country = GUIPropertyManager.GetProperty("#WizardCountry");
-      Recorder.Paused = true;
-      TVCaptureDevice captureCard = null;
-      if (card >= 0 && card < Recorder.Count)
-      {
-        captureCard = Recorder.Get(card);
-        captureCard.CreateGraph();
-      }
-      else
-      {
-        btnNext.Disabled = false;
-        btnBack.Disabled = false;
-        return;
-      }
+      //Recorder.Paused = true;
+            
       updateList = false;
-      ITuning tuning = GetTuningInterface(captureCard);
-      tuning.Start();
-      while (!tuning.IsFinished())
+      Recorder.StartAutoTune(Network(), card, this);
+      _autoTuneRunning = true;
+      while (_autoTuneRunning && (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING))
       {
-        tuning.Next();
+        Thread.Sleep(500);
       }
 
       btnNext.Disabled = false;
       btnBack.Disabled = false;
-      captureCard.DeleteGraph();
       progressBar.Percentage = 100;
       lblStatus.Label = "Press Next to continue the setup";
-      MapTvToOtherCards(captureCard.ID);
-      MapRadioToOtherCards(captureCard.ID);
-      captureCard = null;
+      MapTvToOtherCards(card);
+      MapRadioToOtherCards(card);
+
       GUIControl.FocusControl(GetID, btnNext.GetID);
       OnScanDone();
-      Recorder.Paused = false;
+      //Recorder.Paused = false;
     }
     public override void Process()
     {
@@ -206,6 +192,7 @@ namespace WindowPlugins.GUISettings.Wizard
     }
     public void OnEnded()
     {
+      _autoTuneRunning = false;
     }
 
     public void OnSignal(int quality, int strength)

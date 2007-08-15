@@ -51,12 +51,6 @@ namespace WindowPlugins.GUISettings.Wizard.ATSC
       return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_ATSC_scan.xml");
     }
 
-    protected override ITuning GetTuningInterface(TVCaptureDevice captureCard)
-    {
-      ITuning tuning = new ATSCTuning();
-      tuning.AutoTuneTV(captureCard, this, null);
-      return tuning;
-    }
     protected override void OnScanDone()
     {
       GUIPropertyManager.SetProperty("#Wizard.ATSC.Done", "yes");

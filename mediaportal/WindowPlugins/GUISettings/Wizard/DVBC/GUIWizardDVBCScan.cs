@@ -52,16 +52,6 @@ namespace WindowPlugins.GUISettings.Wizard.DVBC
       return Load(GUIGraphicsContext.Skin + @"\wizard_tvcard_DVBC_scan.xml");
     }
 
-
-    protected override ITuning GetTuningInterface(TVCaptureDevice captureCard)
-    {
-      string country = GUIPropertyManager.GetProperty("#WizardCountry");
-      ITuning tuning = new DVBCTuning();
-      String[] parameters = new String[1];
-      parameters[0] = country;
-      tuning.AutoTuneTV(captureCard, this, parameters);
-      return tuning;
-    }
     protected override void OnScanDone()
     {
       GUIPropertyManager.SetProperty("#Wizard.DVBC.Done", "yes");
