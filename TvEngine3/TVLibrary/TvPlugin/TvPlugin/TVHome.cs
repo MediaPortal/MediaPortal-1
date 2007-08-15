@@ -1226,9 +1226,12 @@ namespace TvPlugin
         timeShiftStartPointPercent *= 100.0d;
         GUIPropertyManager.SetProperty("#TV.Record.percent1", ((int)timeShiftStartPointPercent).ToString());
 
-        double playingPointPercent = ((double)playingPoint) / ((double)programDuration);
-        playingPointPercent *= 100.0d;
-        GUIPropertyManager.SetProperty("#TV.Record.percent2", ((int)playingPointPercent).ToString());
+        if (!g_Player.Paused)
+        {
+          double playingPointPercent = ((double)playingPoint) / ((double)programDuration);
+          playingPointPercent *= 100.0d;
+          GUIPropertyManager.SetProperty("#TV.Record.percent2", ((int)playingPointPercent).ToString());
+        }
 
         double percentLivePoint = ((double)livePoint) / ((double)programDuration);
         percentLivePoint *= 100.0d;
