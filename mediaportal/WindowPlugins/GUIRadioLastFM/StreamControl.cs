@@ -224,6 +224,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
     public string CurrentStream
     {
       get { return _currentRadioURL; }
+
+      set
+      {
+        if (value != _currentRadioURL)
+        {
+          _currentRadioURL = value;
+          Log.Debug("StreamControl: Setting RadioURL to {0}", _currentRadioURL);
+        }
+      }
     }
 
     public StreamType CurrentTuneType

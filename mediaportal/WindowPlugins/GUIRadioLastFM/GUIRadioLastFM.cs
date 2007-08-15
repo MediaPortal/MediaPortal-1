@@ -177,7 +177,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if (action.wID == Action.ActionType.ACTION_NEXT_ITEM && (int)LastFMStation.CurrentStreamState > 2)
       {
-        LastFMStation.SendControlCommand(StreamControls.skiptrack);
+        OnSkipHandler();
       }
 
       base.OnAction(action);
@@ -389,9 +389,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           if (!LastFMStation.PlayStream())
           {
             PlayBackFailedHandler();
-          }
-          else
-            GetXSPFPlaylist();
+          }            
         }
         else
           Log.Info("GUIRadio: Didn't start LastFM radio because stream state is {0}", LastFMStation.CurrentStreamState.ToString());
@@ -485,7 +483,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           LastFMStation.SendControlCommand(StreamControls.bantrack);
           break;
         case 34012:     // Skip
-          LastFMStation.SendControlCommand(StreamControls.skiptrack);
+          OnSkipHandler();
           break;
         case 33040:    // IRC spam          
           try
@@ -712,6 +710,26 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region Handlers
+    void OnSkipHandler()
+    {
+      // LastFMStation.SendControlCommand(StreamControls.skiptrack);
+
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+        return;
+      dlg.Reset();
+      dlg.SetHeading(498); // menu
+      foreach (Song Track in _radioPlaylist)
+        dlg.Add(Track.ToLastFMString());
+
+      dlg.DoModal(GetID);
+      if (dlg.SelectedId == -1)
+        return;
+
+      LastFMStation.CurrentStream = _radioPlaylist[dlg.SelectedId - 1].URL;
+      LastFMStation.PlayStream();
+    }
+
     void OnLastFMStation_StreamSongChanged(MusicTag newCurrentSong, DateTime startTime)
     {
       SetArtistThumb(String.Empty);
@@ -740,6 +758,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
         GUIPropertyManager.SetProperty("#Play.Current.Genre", newCurrentSong.Genre);
         GUIPropertyManager.SetProperty("#Play.Current.Thumb", newCurrentSong.Comment);
         GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(newCurrentSong.Duration));
+
+        GetXSPFPlaylist();
       }
     }
 
@@ -760,7 +780,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       ShowSongTrayBallon(GUILocalizeStrings.Get(34051), GUILocalizeStrings.Get(34052), 15, true); // Stream ended, No more content or bad connection
 
-      Log.Info("GUIRadio: No more content for this selection or interrupted stream..");
+      Log.Info("GUILastFMRadio: No more content for this selection or interrupted stream..");
       LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
       //dlg.AddLocalizedString(930);        //Add to favorites
     }
@@ -868,7 +888,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if ((int)LastFMStation.CurrentStreamState > 2)
       {
-        LastFMStation.SendControlCommand(StreamControls.skiptrack);
+        OnSkipHandler();
       }
     }
 
