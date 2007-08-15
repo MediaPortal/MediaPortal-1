@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>4711</id>
   <defaultcontrol>10</defaultcontrol>
@@ -13,12 +13,12 @@
       <texture>background3.png</texture>
     </control>
     <control>
+      <description>BG</description>
       <type>image</type>
-      <description>wikipedia text logo</description>
-      <id>2</id>
-      <posX>190</posX>
-      <posY>70</posY>
-      <texture>wikipedia_logo.png</texture>
+      <id>1</id>
+      <width>720</width>
+      <height>107</height>
+      <texture>Back_wikipedia.png</texture>
     </control>
     <control>
       <type>label</type>

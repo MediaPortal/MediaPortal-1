@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>6900</id>
   <defaultcontrol>6</defaultcontrol>
@@ -15,10 +15,20 @@
     <control>
       <description>BG</description>
       <type>image</type>
-      <id>1</id>
+      <id>2</id>
       <width>720</width>
       <height>107</height>
       <texture>Back_wwitv.png</texture>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Internet TV</description>
+      <id>3</id>
+      <posX>250</posX>
+      <posY>70</posY>
+      <label>Internet-TV</label>
+      <font>font16</font>
+      <align>right</align>
     </control>
     <control>
       <type>group</type>
