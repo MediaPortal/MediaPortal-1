@@ -396,7 +396,7 @@ namespace TvPlugin
             if (showSeries) break;
           }
         } //if (recs.Count > 1 && currentSortMethod == SortMethod.Date)
-        else if (showSeries == false)
+        else //if (showSeries == false)
         {
           //single recording
           item.Label = rec.ProgramName;
