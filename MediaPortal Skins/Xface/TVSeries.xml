@@ -186,7 +186,7 @@
       <description>Title</description>
       <id>640</id>
       <posX>10</posX>
-      <posY>128</posY>
+      <posY>100</posY>
       <width>595</width>
       <label>#TVSeries.Title</label>
       <textcolor>ffffff</textcolor>
@@ -200,10 +200,10 @@
       <description>Genre</description>
       <id>33</id>
       <posX>10</posX>
-      <posY>168</posY>
+      <posY>130</posY>
       <width>595</width>
       <label>#TVSeries.Subtitle</label>
-      <textcolor>ff6b7487</textcolor>
+      <textcolor>FFB2D4F5</textcolor>
       <font>font13</font>
       <visible>!Control.IsVisible(1232)</visible>
       <animation effect="fade" time="200">WindowOpen</animation>
@@ -214,9 +214,9 @@
       <description>Description</description>
       <id>631</id>
       <posX>10</posX>
-      <posY>200</posY>
+      <posY>170</posY>
       <width>595</width>
-      <height>340</height>
+      <height>350</height>
       <seperator>-----------------------------------------------------------------------------------------------------------------------</seperator>
       <textcolor>ccffffff</textcolor>
       <font>font13</font>
@@ -277,7 +277,7 @@
       <posX>30</posX>
       <posY>570</posY>
       <width>595</width>
-      <height>175</height>
+      <height>115</height>
       <label>#TVSeries.Description</label>
       <seperator>-----------------------------------------------------------------------------------------------------------------------</seperator>
       <textcolor>ffffffff</textcolor>
@@ -337,7 +337,7 @@
       <description>cur_view (light background)</description>
       <id>77</id>
       <posX>1160</posX>
-      <posY>634</posY>
+      <posY>614</posY>
       <width>150</width>
       <label>#TVSeries.CurrentView</label>
       <align>center</align>
@@ -351,7 +351,7 @@
       <type>image</type>
       <id>4352</id>
       <posX>1125</posX>
-      <posY>623</posY>
+      <posY>603</posY>
       <texture>arrow_round_left_focus_black.png</texture>
       <width>26</width>
       <height>26</height>
@@ -364,7 +364,7 @@
       <type>image</type>
       <id>4353</id>
       <posX>1326</posX>
-      <posY>623</posY>
+      <posY>603</posY>
       <texture>arrow_round_right_focus_black.png</texture>
       <width>26</width>
       <height>26</height>
@@ -377,7 +377,7 @@
       <description>cur_view (dark background)</description>
       <id>77</id>
       <posX>1160</posX>
-      <posY>634</posY>
+      <posY>614</posY>
       <width>150</width>
       <label>#TVSeries.CurrentView</label>
       <align>center</align>
@@ -391,7 +391,7 @@
       <type>image</type>
       <id>4352</id>
       <posX>1125</posX>
-      <posY>623</posY>
+      <posY>603</posY>
       <texture>arrow_round_left_focus.png</texture>
       <width>26</width>
       <height>26</height>
@@ -404,7 +404,7 @@
       <type>image</type>
       <id>4353</id>
       <posX>1326</posX>
-      <posY>623</posY>
+      <posY>603</posY>
       <texture>arrow_round_right_focus.png</texture>
       <width>26</width>
       <height>26</height>
@@ -463,22 +463,185 @@
           <spinPosY>455</spinPosY>
           <textXOff2>500</textXOff2>
           <spaceBetweenItems>2</spaceBetweenItems>
-          <textureFocus>menu_list_focus.png</textureFocus>
-          <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
+          <textureFocus>list_sub_focus.png</textureFocus>
+          <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
           <remoteColor>FFa6c3e1</remoteColor>
           <!-- watched color -->
           <downloadColor>ffffffff</downloadColor>
           <!-- not watched color (normal) -->
-          <textcolor>FF78ace0</textcolor>
+          <textcolor>FFB2D4F5</textcolor>
           <!-- local file not present color -->
-          <textcolor2>FF78ace0</textcolor2>
+          <textcolor2>FFB2D4F5</textcolor2>
           <!-- local file not present color  column 2-->
-          <textcolor3>FF78ace0</textcolor3>
+          <textcolor3>FFB2D4F5</textcolor3>
           <!-- local file not present color column 3-->
         </control>
       </control>
     </control>
-    <!-- ********************************************* VIDEO OVERLAY ********************************************* -->
-    <import>videooverlay.xml</import>
+    <!-- ********************************************* VIDEO OVERLAY *********************************************
+    <import>videooverlay.xml</import> -->
+<control>
+       <description>play time label</description>
+      <type>label</type>
+      <id>2</id>
+      <posX>370</posX>
+	  <posY>665</posY>
+      <label>#currentplaytime</label>
+      <align>left</align>
+	  <font>font13</font>
+	  <textcolor>ff969696</textcolor>
+	  <animation effect="fade" time="800" delay="250">WindowOpen</animation>
+	  <animation effect="fade" time="800" delay="250">WindowClose</animation>
+          <visible>!Control.IsVisible(1235)</visible>
+    </control>
+     <control>
+      		<type>multiimage</type>
+      		<id>1</id>
+     		<posX>370</posX>
+                <posY>703</posY>
+  		<width>68</width>
+  		<height>35</height>
+      		<imagepath>Play</imagepath>
+      		<timeperimage>50</timeperimage>
+      		<fadetime>10</fadetime>
+      		<loop>yes</loop>
+      		<randomize>false</randomize>
+      		<visible>Player.HasVideo + Player.playing</visible>
+      		<animation effect="fade" time="10">VisibleChange</animation>
+                <visible>!Control.IsVisible(1235)</visible>
+    	</control>
+      <control>
+      <description>play logo</description>
+      <type>image</type>
+      <id>3</id>
+      <posX>370</posX>
+      <posY>703</posY>
+      <width>68</width>
+      <height>35</height>
+      <texture>-</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>!Control.IsVisible(1235)</visible>
+    </control>
+    <control>
+      <description>Pause logo</description>
+      <type>image</type>
+      <id>4</id>
+     		<posX>370</posX>
+            <posY>703</posY>
+  			<width>68</width>
+  			<height>35</height>
+      <texture>logo_pause.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>!Control.IsVisible(1235)</visible>
+    </control>
+    <control>
+      <description>FF logo</description>
+      <type>image</type>
+      <id>7</id>
+     		<posX>370</posX>
+            <posY>703</posY>
+  			<width>68</width>
+  			<height>35</height>
+      <texture>logo_fastforward.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>!Control.IsVisible(1235)</visible>
+    </control>
+    <control>
+      <description>RW logo</description>
+      <type>image</type>
+      <id>8</id>
+     		<posX>370</posX>
+            <posY>703</posY>
+  			<width>68</width>
+  			<height>35</height>
+      <texture>logo_rewind.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>!Control.IsVisible(1235)</visible>
+    </control>
+     <control>
+			<type>fadelabel</type>
+			<posX>370</posX>
+			<posY>580</posY>
+			<width>275</width>
+			<label>#Play.Current.Title</label>
+			<align>left</align>
+			<font>font16</font>
+			<textcolor>black</textcolor>
+			<animation effect="fade" time="800" delay="250">WindowOpen</animation>
+			<animation effect="fade" time="800" delay="250">WindowClose</animation> 
+                        <visible>!Control.IsVisible(1235)</visible>
+		</control>
+		<control>
+			<type>fadelabel</type>
+			<posX>370</posX>
+			<posY>615</posY>
+			 <width>275</width>
+			<label>#Play.Current.Director</label>
+			<align>left</align>
+			<font>font13</font>
+			 <textcolor>white</textcolor>
+			<animation effect="fade" time="800" delay="250">WindowOpen</animation>
+			<animation effect="fade" time="800" delay="250">WindowClose</animation>
+                        <visible>!Control.IsVisible(1235)</visible>
+		</control>
+		<control>
+			<type>fadelabel</type>
+			<posX>370</posX>
+			<posY>640</posY>
+			 <width>275</width>
+			<label>#Play.Current.Genre</label>
+			<align>left</align>
+			<font>font13</font>
+			 <textcolor>ff969696</textcolor>
+			<animation effect="fade" time="800" delay="250">WindowOpen</animation>
+			<animation effect="fade" time="800" delay="250">WindowClose</animation>
+                        <visible>!Control.IsVisible(1235)</visible>
+		</control>
+     <control>
+		<description>video rectangle</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>48</posX>
+		<posY>540</posY>
+		<width>330</width>
+		<height>225</height>
+		 <texture>playback_background.png</texture>
+		 <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>!Control.IsVisible(1235)</visible>
+	</control>
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>1</id>
+      <posX>96</posX>
+	  <posY>568</posY>
+	  <width>238</width>
+	  <height>131</height>
+	  <keepaspectratio>yes</keepaspectratio>
+	  <centered>yes</centered>
+	  <action>18</action>
+	  <textureFocus>tv_green_border.png</textureFocus>
+          <visible>!Control.IsVisible(1235)</visible>
+    </control>
+     <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>126</posX>
+      <posY>701</posY>
+      <width>158</width>
+     <label>#percentage</label>
+      <visible>yes</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>!Control.IsVisible(1235)</visible>
+    </control>
+
+
   </controls>
 </window>
