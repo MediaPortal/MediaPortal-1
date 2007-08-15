@@ -370,7 +370,7 @@ namespace TvPlugin
       {
         List<Schedule> seriesList = TVHome.Util.GetRecordingTimes(rec);
         GUIListItem item = new GUIListItem();
-        if (seriesList.Count > 1)
+        if (rec.ScheduleType!=0) // !=once
         {
           for (int serieNr = 0; serieNr < seriesList.Count; ++serieNr)
           {
