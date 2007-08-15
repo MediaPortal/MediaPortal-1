@@ -180,10 +180,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll</HintPath>
     </Reference>
-    <Reference Include="MPInstaller.Library, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\xbmc\bin\Debug\MPInstaller.Library.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -225,6 +221,10 @@
     <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MPInstaller\MPInstaller.Library\MPInstaller.Library.csproj">
+      <Project>{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}</Project>
+      <Name>MPInstaller.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
       <Name>RemotePlugins</Name>
