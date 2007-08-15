@@ -439,6 +439,8 @@
         <InfoImagewidth>375</InfoImagewidth>
         <InfoImageheight>375</InfoImageheight>
         <InfoImagediffuse>ffffffff</InfoImagediffuse>
+        <textXOff>0</textXOff>
+        <textYOff>0</textYOff>
     </control>
     <control>
         <description>default fadelabel</description>
