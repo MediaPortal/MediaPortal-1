@@ -542,12 +542,12 @@ namespace MediaPortal.Music.Database
 
     private static bool AttemptRadioHandshake()
     {
-      // http://ws.audioscrobbler.com/radio/handshake.php?version=1.0.6&platform=win32&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=en    
+      // http://ws.audioscrobbler.com/radio/handshake.php?version=1.3.1.1&platform=win32&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=de&player=wmplayer HTTP/1.1
       string tmpUser = System.Web.HttpUtility.UrlEncode(username).ToLower();
       string tmpPass = HashSingleString(password);
       string url = RADIO_SCROBBLER_URL
                  + "handshake.php?"
-                 + "version=" + "1.0.7"
+                 + "version=" + "1.3.1.1"
                  + "&platform=" + "win32"
                  + "&username=" + tmpUser
                  + "&passwordmd5=" + tmpPass

@@ -71,6 +71,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private int _configListEntryCount = 12;
     private List<string> _usersOwnTags = null;
     private List<string> _usersFriends = null;
+    private List<Song> _radioPlaylist = null;
     private ScrobblerUtilsRequest _lastTrackTagRequest;
     private ScrobblerUtilsRequest _lastArtistCoverRequest;
     private ScrobblerUtilsRequest _lastSimilarArtistRequest;
@@ -100,6 +101,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       InfoScrobbler = AudioscrobblerUtils.Instance;
       _usersOwnTags = new List<string>();
       _usersFriends = new List<string>();
+      _radioPlaylist = new List<Song>();
 
       if (_configShowTrayIcon)
         InitTrayIcon();
@@ -386,13 +388,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
         {
           if (!LastFMStation.PlayStream())
           {
-            GUIDialogOK msgdlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-            if (msgdlg == null)
-              return;
-            msgdlg.SetHeading(34050); // No stream active
-            msgdlg.SetLine(1, GUILocalizeStrings.Get(34053)); // Playback of selected stream failed
-            msgdlg.DoModal(GetID);
+            PlayBackFailedHandler();
           }
+          else
+            GetXSPFPlaylist();
         }
         else
           Log.Info("GUIRadio: Didn't start LastFM radio because stream state is {0}", LastFMStation.CurrentStreamState.ToString());
@@ -514,6 +513,26 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region Internet Lookups
+
+    bool GetXSPFPlaylist()
+    {
+      // &discovery=0&desktop=1.3.1.1 HTTP/1.1
+
+      _radioPlaylist = InfoScrobbler.getRadioPlaylist(@"http://ws.audioscrobbler.com/radio/xspf.php?sk=" + AudioscrobblerBase.RadioSession + "&discovery=" + Convert.ToString(LastFMStation.DiscoveryEnabledInt) + "&desktop=1.3.1.1");
+
+     Log.Debug("GUIRadioLastFM: Parsed XSPF Playlist for current radio stream");
+
+     for (int i = 0 ; i < _radioPlaylist.Count ; i++)
+     {
+       Log.Debug("GUIRadioLastFM: Track {0} : {1}", Convert.ToString(i + 1), _radioPlaylist[i].ToLastFMString());
+     }
+
+     if (_radioPlaylist.Count > 0)
+       return true;
+     else
+       return false;
+    }
+
     private void UpdateUsersFriends(string _serviceUser)
     {
       UsersFriendsRequest request = new UsersFriendsRequest(
@@ -693,7 +712,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region Handlers
-    private void OnLastFMStation_StreamSongChanged(MusicTag newCurrentSong, DateTime startTime)
+    void OnLastFMStation_StreamSongChanged(MusicTag newCurrentSong, DateTime startTime)
     {
       SetArtistThumb(String.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", String.Empty);
@@ -724,7 +743,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
     }
 
-    protected void PlayBackStoppedHandler(g_Player.MediaType type, int stoptime, string filename)
+    void PlayBackStoppedHandler(g_Player.MediaType type, int stoptime, string filename)
     {
       if (!filename.Contains(@"/last.mp3?") || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
         return;
@@ -732,7 +751,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       OnPlaybackStopped();
     }
 
-    protected void PlayBackEndedHandler(g_Player.MediaType type, string filename)
+    void PlayBackEndedHandler(g_Player.MediaType type, string filename)
     {
       if (!filename.Contains(@"/last.mp3?") || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
         return;
@@ -744,6 +763,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
       Log.Info("GUIRadio: No more content for this selection or interrupted stream..");
       LastFMStation.CurrentStreamState = StreamPlaybackState.nocontent;
       //dlg.AddLocalizedString(930);        //Add to favorites
+    }
+
+    void PlayBackFailedHandler()
+    {
+      GUIDialogOK msgdlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      if (msgdlg == null)
+        return;
+      msgdlg.SetHeading(34050); // No stream active
+      msgdlg.SetLine(1, GUILocalizeStrings.Get(34053)); // Playback of selected stream failed
+      msgdlg.DoModal(GetID);
     }
     #endregion
 

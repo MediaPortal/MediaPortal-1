@@ -1320,6 +1320,11 @@ namespace MediaPortal.Music.Database
       return fetchRandomTracks(offlineMode.favorites);
     }
 
+    public List<Song> getRadioPlaylist(string fullAdressWithSession)
+    {
+      return ParseXSPFtrackList(fullAdressWithSession);
+    }
+
     #endregion
 
     #region internal fetch routines
@@ -2110,5 +2115,46 @@ namespace MediaPortal.Music.Database
     }
     #endregion
 
+    #region XSPF - Parser
+    private List<Song> ParseXSPFtrackList(string aLocation)
+    {
+      List<Song> XSPFPlaylist = new List<Song>();
+      try
+      {
+        XmlDocument doc = new XmlDocument();
+
+        doc.Load(aLocation);
+
+        XmlNodeList nodes = doc.SelectNodes(@"//playlist/trackList/track");
+
+        foreach (XmlNode node in nodes)
+        {
+          Song nodeSong = new Song();
+          foreach (XmlNode mainchild in node.ChildNodes)
+          {
+            if (mainchild.Name == "creator" && mainchild.ChildNodes.Count != 0)
+              nodeSong.Artist = mainchild.ChildNodes[0].Value;
+            else if (mainchild.Name == "title" && mainchild.ChildNodes.Count != 0)
+              nodeSong.Title = mainchild.ChildNodes[0].Value;
+            else if (mainchild.Name == "album" && mainchild.ChildNodes.Count != 0)
+              nodeSong.Album = mainchild.ChildNodes[0].Value;
+            else if (mainchild.Name == "location" && mainchild.ChildNodes.Count != 0)
+              nodeSong.URL = mainchild.ChildNodes[0].Value;
+            else if (mainchild.Name == "image" && mainchild.ChildNodes.Count != 0)
+              nodeSong.WebImage = mainchild.ChildNodes[0].Value;
+            else if (mainchild.Name == "duration" && mainchild.ChildNodes.Count != 0)
+              nodeSong.Duration = Convert.ToInt32(Convert.ToInt32(mainchild.ChildNodes[0].Value) / 1000);
+          }
+          XSPFPlaylist.Add(nodeSong);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerUtils: Couldn't fetch XSFP Radio tracklist - {0},{1}", ex.Message, ex.StackTrace);
+      }
+
+      return XSPFPlaylist;
+    }
+    #endregion
   }
 }

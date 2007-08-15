@@ -121,6 +121,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
     // SKIP Button
     // 8. http.request.uri = Request URI: http://ws.audioscrobbler.com/radio/control.php?session=e5b0c80f5b5d0937d407fb77a913cb6a&command=skip
 
+    // XSPF Playlist
+    // GET  ws.audioscrobbler.com/radio/xspf.php?sk=e5b0c80f5b5d0937d407fb77a913cb6a&discovery=0&desktop=1.3.1.1
+
+
     //price=
     //shopname=
     //clickthrulink=
@@ -279,6 +283,14 @@ namespace MediaPortal.GUI.RADIOLASTFM
         {
           ToggleDiscoveryMode(value);
         }
+      }
+    }
+
+    public int DiscoveryEnabledInt
+    {
+      get 
+      {
+        return _discoveryMode ? 1 : 0;
       }
     }
 
