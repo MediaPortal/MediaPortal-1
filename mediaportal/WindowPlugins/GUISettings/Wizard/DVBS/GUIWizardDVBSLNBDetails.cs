@@ -191,13 +191,13 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 				int diseqc=xmlreader.GetValueAsInt("dvbs",lnbKey,0);
 				switch (diseqc)
 				{
-					case 0: break;
 					case 1: cmDisEqcSimpleA.Selected=true;break;
 					case 2: cmDisEqcSimpleB.Selected=true;break;
 					case 3: cmDisEqcLevel1AA.Selected=true;break;
 					case 4: cmDisEqcLevel1BA.Selected=true;break;
 					case 5: cmDisEqcLevel1AB.Selected=true;break;
 					case 6: cmDisEqcLevel1BB.Selected=true;break;
+          default: cmDisEqcNone.Selected = true; break;
 				}
 			}
 		}
