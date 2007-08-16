@@ -558,6 +558,11 @@ namespace MediaPortal.GUI.Library
         _reCalculate = true;
         base.AllocResources();
       }
+      catch (Exception e)
+      {
+        Log.Debug("GUIImage.AllocResources() - ", _textureFileNameTag);
+        Log.Error(e);    
+      }
       finally
       {
         _allocated = true;
