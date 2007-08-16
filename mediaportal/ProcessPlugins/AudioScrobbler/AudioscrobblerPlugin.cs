@@ -210,13 +210,9 @@ namespace MediaPortal.Audioscrobbler
         return;
       }
 
-      //// Don't queue if the song didn't start at 0
-      //if (Convert.ToInt32(g_Player.Player.CurrentPosition) <= (STARTED_LATE + _timerTickSecs))
-      //{
-      //  _alertTime = GetAlertTime();
-      //  //Log.Debug("Audioscrobbler plugin: alert time for song - {0} seconds", _alertTime.ToString());
-      //  return;
-      //}     
+      AudioscrobblerBase.CurrentSong = currentSong;
+      AudioscrobblerBase.AnnounceNowPlaying();
+
       _alertTime = GetAlertTime();
 
       if (_alertTime != INFINITE_TIME)

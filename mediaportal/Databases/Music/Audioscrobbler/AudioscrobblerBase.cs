@@ -65,6 +65,7 @@ namespace MediaPortal.Music.Database
       ChangeUser = 2,
       PreRadio = 3,
       Recover = 4,
+      Announce = 5,
     }
     #endregion
 
@@ -116,6 +117,8 @@ namespace MediaPortal.Music.Database
     private static string _radioStreamLocation;
     private static string _radioSession;
     private static bool _subscriber;
+
+    private static Song _currentSong;
     #endregion
 
     /// <summary>
@@ -175,6 +178,7 @@ namespace MediaPortal.Music.Database
       _radioStreamLocation = String.Empty;
       _radioSession = String.Empty;
       _subscriber = false;
+      _currentSong = new Song();
     }
 
     #region Public getters and setters
@@ -216,6 +220,24 @@ namespace MediaPortal.Music.Database
           // allow a new handshake to occur
           lastHandshake = DateTime.MinValue;
           //          Log.Info("AudioscrobblerBase.Password", "Password changed");
+        }
+      }
+    }
+
+    /// <summary>
+    /// Current Song set by Audioscrobbler plugin for Now Playing Announcement
+    /// </summary>
+    public static Song CurrentSong
+    {
+      get
+      {
+        return _currentSong;
+      }
+      set
+      {
+        if (value != _currentSong)
+        {
+          _currentSong = value;
         }
       }
     }
@@ -482,9 +504,11 @@ namespace MediaPortal.Music.Database
         case HandshakeType.Submit:
           AttemptSubmitNow();
           break;
+        case HandshakeType.Announce:
+          AttemptAnnounceNow();
+          break;
       }
     }
-
 
     private static void OnHandshakeFailed(AudioscrobblerBase.HandshakeType ReasonForHandshake, DateTime lastSuccessfulHandshake, Exception errorReason)
     {
@@ -508,6 +532,9 @@ namespace MediaPortal.Music.Database
         case HandshakeType.Recover:
           Log.Warn("AudioscrobblerBase: {0}", "Handshake failed - could not recover. Disconnecting...");
           Disconnect();
+          break;
+        case HandshakeType.Announce:
+          Log.Warn("AudioscrobblerBase: {0}", "Handshake failed - not announcing current song");
           break;
       }
     }
@@ -628,9 +655,11 @@ namespace MediaPortal.Music.Database
       if (postdata_ != "")
       {
         //Log.Info("AudioscrobblerBase.GetResponse: POST to {0}", url_);
-        Log.Info("AudioscrobblerBase: Submitting data: {0}", postdata_);
-        string logmessage = "Connecting to '" + url_ + "\nData: " + postdata_;
-
+        if (url_.Contains(nowPlayingUrl))
+          Log.Info("AudioscrobblerBase: Announcing current track: {0}", postdata_);
+        else
+          Log.Info("AudioscrobblerBase: Submitting data: {0}", postdata_);
+        
         try
         {
           byte[] postHeaderBytes = Encoding.UTF8.GetBytes(postdata_);
@@ -651,9 +680,8 @@ namespace MediaPortal.Music.Database
           requestStream.Close();
         }
         catch (Exception e)
-        {
-          logmessage = "HttpWebRequest.GetRequestStream: " + e.Message;
-          Log.Error("AudioscrobblerBase.GetResponse: {0}", logmessage);
+        {          
+          Log.Warn("AudioscrobblerBase.GetResponse: {0}", e.Message);
           return false;
         }
       }
@@ -796,6 +824,23 @@ namespace MediaPortal.Music.Database
       DoHandshake(false, HandshakeType.Submit);
     }
 
+    public static void AnnounceNowPlaying()
+    {
+      DoHandshake(false, HandshakeType.Announce);
+    }
+
+    private static void AttemptAnnounceNow()
+    {
+      if (CurrentSong.Artist != string.Empty && CurrentSong.Title != string.Empty)
+      {
+        BackgroundWorker worker = new BackgroundWorker();
+        worker.DoWork += new DoWorkEventHandler(Worker_TryAnnounceTracks);
+        worker.RunWorkerAsync();
+      }
+      else
+        Log.Debug("AudioscrobblerBase: AttemptAnnounceNow aborted because of incomplete data");
+    }
+
     private static void AttemptSubmitNow()
     {      
       // If the queue is empty, nothing else to do today.
@@ -809,6 +854,44 @@ namespace MediaPortal.Music.Database
       BackgroundWorker worker = new BackgroundWorker();
       worker.DoWork += new DoWorkEventHandler(Worker_TrySubmitTracks);
       worker.RunWorkerAsync();
+    }
+
+    private static void Worker_TryAnnounceTracks(object sender, DoWorkEventArgs e)
+    {
+      // s=<sessionID>       The Session ID string as returned by the handshake. Required.
+      // a=<artist>          The artist name. Required.
+      // t=<track>           The track name. Required.
+      // b=<album>           The album title, or empty if not known.
+      // l=<secs>            The length of the track in seconds, or empty if not known.
+      // n=<tracknumber>     The position of the track on the album, or empty if not known.
+      // m=<mb-trackid>      The MusicBrainz Track ID, or empty if not known.
+
+      string announceData = string.Empty;
+      StringBuilder sb = new StringBuilder();
+
+      sb.Append("s=");
+      sb.Append(sessionID);
+      sb.Append("&a=");
+      sb.Append(getValidURLLastFMString(CurrentSong.Artist));
+      sb.Append("&t=");
+      sb.Append(System.Web.HttpUtility.UrlEncode(CurrentSong.Title));
+      sb.Append("&b=");
+      sb.Append(getValidURLLastFMString(CurrentSong.Album));
+      sb.Append("&l=");
+      sb.Append(CurrentSong.Duration);
+      sb.Append("&n=");
+      sb.Append(CurrentSong.Track > 0 ? Convert.ToString(CurrentSong.Track) : "");
+      sb.Append("&m=");
+      sb.Append("");
+
+      announceData = sb.ToString();
+
+      // Submit or die.
+      if (!GetResponse(nowPlayingUrl, announceData, false))
+      {
+        Log.Warn("AudioscrobblerBase: Now playing announcement failed.");
+        return;
+      }
     }
 
     private static void Worker_TrySubmitTracks(object sender, DoWorkEventArgs e)
