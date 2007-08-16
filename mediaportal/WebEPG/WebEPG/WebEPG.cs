@@ -117,6 +117,9 @@ namespace MediaPortal.EPG
       // for each channel write info xmltv file.
       foreach (ChannelMap channel in _config.Channels)
       {
+        if (channel.id == null)
+          continue;
+
         if (channel.merged == null || channel.merged.Count == 0)
         {
           xmltv.WriteChannel(channel.id, channel.displayName);

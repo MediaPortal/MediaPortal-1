@@ -98,6 +98,9 @@ namespace MediaPortal.EPG.WebEPGTester
     #endregion
 
     #region ILog Implementations
+    public void SetLogLevel(MediaPortal.Services.Level level)
+    { }
+
     public void BackupLogFiles()
     { }
 
