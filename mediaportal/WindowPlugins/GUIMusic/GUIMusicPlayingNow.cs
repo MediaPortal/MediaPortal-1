@@ -267,10 +267,11 @@ namespace MediaPortal.GUI.Music
 
       CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
 
-      if (CurrentThumbFileName.Length < 1)   // no ThumbFile currently -> check if there is a folder.jpg
+      if (CurrentThumbFileName.Length < 1)   // no LOCAL Thumb found because user has bad settings -> check if there is a folder.jpg in the share
       {
-        CurrentThumbFileName = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(System.IO.Path.GetDirectoryName(CurrentTrackFileName)));
-        if (!System.IO.File.Exists(CurrentThumbFileName)) CurrentThumbFileName = string.Empty;
+        CurrentThumbFileName = Util.Utils.GetFolderThumb(CurrentTrackFileName);
+        if (!System.IO.File.Exists(CurrentThumbFileName))
+          CurrentThumbFileName = string.Empty;
       }
 
       if (CurrentThumbFileName.Length > 0)
