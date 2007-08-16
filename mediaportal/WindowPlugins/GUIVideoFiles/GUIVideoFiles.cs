@@ -2121,7 +2121,6 @@ namespace MediaPortal.GUI.Video
     #region IMDB.IProgress
     public bool OnDisableCancel(IMDBFetcher fetcher)
     {
-      Log.Debug("OnDisableCancel: " + fetcher.MovieName);
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       if (pDlgProgress.IsInstance(fetcher))
       {
@@ -2142,7 +2141,6 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnSearchStarting(IMDBFetcher fetcher)
     {
-      Log.Debug("OnSearchStarting: " + fetcher.MovieName);
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       // show dialog that we're busy querying www.imdb.com
       String heading;
@@ -2164,7 +2162,6 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnSearchStarted(IMDBFetcher fetcher)
     {
-      Log.Debug("OnSearchStarted: " + fetcher.MovieName);
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
@@ -2176,7 +2173,6 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnSearchEnd(IMDBFetcher fetcher)
     {
-      Log.Debug("OnSearchEnd: " + fetcher.MovieName);
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
       {
@@ -2186,7 +2182,6 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnMovieNotFound(IMDBFetcher fetcher)
     {
-      Log.Debug("OnMovieNotFound: " + fetcher.MovieName);
       if (_scanning)
       {
         conflictFiles.Add(fetcher.Movie);
@@ -2205,7 +2200,6 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnDetailsStarting(IMDBFetcher fetcher)
     {
-      Log.Debug("OnDetailsStarting: " + fetcher.MovieName);
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       // show dialog that we're downloading the movie info
       String heading;
@@ -2228,7 +2222,6 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnDetailsStarted(IMDBFetcher fetcher)
     {
-      Log.Debug("OnDetailsStarted: " + fetcher.MovieName);
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
@@ -2240,7 +2233,6 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnDetailsEnd(IMDBFetcher fetcher)
     {
-      Log.Debug("OnDetailsEnd: " + fetcher.MovieName);
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
       {
@@ -2250,7 +2242,6 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnActorsStarting(IMDBFetcher fetcher)
     {
-      Log.Debug("OnActorsStarting: " + fetcher.MovieName);
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       // show dialog that we're downloading the actor info
       String heading;
@@ -2273,7 +2264,6 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnActorsStarted(IMDBFetcher fetcher)
     {
-      Log.Debug("OnActorsStarted: " + fetcher.MovieName);
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
@@ -2285,12 +2275,10 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnActorsEnd(IMDBFetcher fetcher)
     {
-      Log.Debug("OnActorsEnd: " + fetcher.MovieName);
       return true;
     }
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
-      Log.Debug("OnDetailsNotFound: " + fetcher.MovieName);
       if (_scanning)
       {
         conflictFiles.Add(fetcher.Movie);
@@ -2311,7 +2299,6 @@ namespace MediaPortal.GUI.Video
 
     public bool OnRequestMovieTitle(IMDBFetcher fetcher, out string movieName)
     {
-      Log.Debug("OnRequestMovieTitle: " + fetcher.MovieName);
       if (_scanning)
       {
         conflictFiles.Add(fetcher.Movie);
@@ -2335,7 +2322,6 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnSelectMovie(IMDBFetcher fetcher, out int selectedMovie)
     {
-      Log.Debug("OnSelectedMovie: " + fetcher.MovieName);
       if (_scanning)
       {
         conflictFiles.Add(fetcher.Movie);
@@ -2366,7 +2352,6 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnScanStart(int total)
     {
-      Log.Debug("OnScanStart");
       _scanning = true;
       conflictFiles = new ArrayList();
       scanningFileTotal = total;
@@ -2375,7 +2360,6 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnScanEnd()
     {
-      Log.Debug("OnScanEnd");
       _scanning = false;
       if (conflictFiles.Count > 0)
       {
@@ -2447,13 +2431,11 @@ namespace MediaPortal.GUI.Video
     }
     public bool OnScanIterating(int count)
     {
-      Log.Debug("OnScanIterating: " + count.ToString());
       scanningFileNumber = count;
       return true;
     }
     public bool OnScanIterated(int count)
     {
-      Log.Debug("OnScanIterated: " + count.ToString());
       scanningFileNumber = count;
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       if (pDlgProgress.IsCanceled)

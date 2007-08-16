@@ -551,7 +551,7 @@ namespace MediaPortal.GUI.Library
           for (int i = 0; i < frameCount; i++)
           {
             _listTextures[i + iStartCopy] = GUITextureManager.GetTexture(fileName, i, out _textureWidth, out _textureHeight);//,m_pPalette);
-            _listTextures[i + iStartCopy].Disposed += new EventHandler(OnImageDisposedEvent);
+            if (_listTextures[i + iStartCopy] != null) _listTextures[i + iStartCopy].Disposed += new EventHandler(OnImageDisposedEvent);
           }
         }
         // Set state to render the image
@@ -560,7 +560,6 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception e)
       {
-        Log.Debug("GUIImage.AllocResources() - ", _textureFileNameTag);
         Log.Error(e);    
       }
       finally
