@@ -43,6 +43,8 @@ namespace ProcessPlugins.ExternalDisplay
     protected int heightInChars;
     protected int widthInChars;
     protected Line[] lines; //Keeps the lines of text to display on the display
+    protected string[] prevLines; //Keeps the lines text that was displayed last
+    protected int[] posSkips; // Counts how many times the position change of a text that was too long for the display has been skipped
     protected int[] pos; //Keeps track of the start positions in the display lines
     private List<Image> images;
     private IDisplay display; //Reference to the display we are controlling
@@ -87,6 +89,8 @@ namespace ProcessPlugins.ExternalDisplay
       charsToScroll = Settings.Instance.CharsToScroll;
       //
       lines = new Line[heightInChars];
+      prevLines = new string[heightInChars];
+      posSkips = new int[heightInChars];
       pos = new int[heightInChars];
       font = new Font(Settings.Instance.Font, Settings.Instance.FontSize);
       for (int i = 0; i < heightInChars; i++)
@@ -199,7 +203,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Info("ExternalDisplay.DisplayLines: " + ex.Message);
+        Log.Error("ExternalDisplay.DisplayLines: " + ex.Message);
       }
     }
 
@@ -211,6 +215,23 @@ namespace ProcessPlugins.ExternalDisplay
       {
         return;
       }
+
+      if (prevLines[_line] == null) prevLines[_line] = "";
+
+      try
+      {
+        if (prevLines[_line] != text)
+        {
+          pos[_line] = 0;
+          posSkips[_line] = 0;
+          prevLines[_line] = text;
+        }
+      }
+      catch (Exception err)
+      { 
+        Log.Error("ExternalDisplay: ProcessG error - {0}" + err.Message);
+      }
+
       SizeF size = _graphics.MeasureString(text, font);
       if (size.Height > graphicTextHeight)
       {
@@ -244,7 +265,9 @@ namespace ProcessPlugins.ExternalDisplay
       }
       text += " - " + text;
       _graphics.DrawString(text, font, textBrush, new PointF(0 - pos[_line], _line*graphicTextHeight));
-      pos[_line] += pixelsToScroll;
+      if (posSkips[_line] > 2) pos[_line] += pixelsToScroll;
+      else posSkips[_line]++;
+      if (posSkips[_line] > 10) posSkips[_line] = 10; // it is not necessary to increase this value more (avoids a pontential overflow)
     }
 
     /// <summary>
@@ -264,6 +287,23 @@ namespace ProcessPlugins.ExternalDisplay
       {
         return new string(' ', widthInChars);
       }
+
+      if (prevLines[_line] == null) prevLines[_line] = "";
+
+      try
+      {
+        if (prevLines[_line] != tmp)
+        {
+          pos[_line] = 0;
+          posSkips[_line] = 0;
+          prevLines[_line] = tmp;
+        }
+      }
+      catch (Exception err)
+      { 
+        Log.Error("ExternalDisplay: Process error - {0}" + err.Message);
+      }
+
       if (tmp.Length <= widthInChars)
       {
         //Text is shorter than display width
@@ -293,7 +333,14 @@ namespace ProcessPlugins.ExternalDisplay
       }
       tmp += " - " + tmp;
       tmp = tmp.Substring(pos[_line], widthInChars);
-      pos[_line] += charsToScroll;
+
+      if (posSkips[_line] > 2)
+        pos[_line] += charsToScroll;
+      else
+        posSkips[_line]++;
+      if (posSkips[_line] > 10)
+        posSkips[_line] = 10; // it is not necessary to increase this value more (avoids a pontential overflow)
+
       return tmp;
     }
   }
