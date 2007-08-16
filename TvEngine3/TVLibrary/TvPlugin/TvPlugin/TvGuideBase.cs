@@ -590,7 +590,7 @@ namespace TvPlugin
                   for (int i = 0; i < _channelList.Count; i++)
                   {
                     Channel chan = (Channel)_channelList[i];
-                    if (chan.Name.Equals(_currentChannel))
+                    if (chan.DisplayName.Equals(_currentChannel))
                     {
                       _cursorX = i;
                       break;
@@ -1086,7 +1086,7 @@ namespace TvPlugin
       while (channel >= _channelList.Count) channel -= _channelList.Count;
       if (channel < 0) channel = 0;
       Channel chan = (Channel)_channelList[channel];
-      string strChannel = chan.Name;
+      string strChannel = chan.DisplayName;
       if (strChannel == null) return;
 
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
@@ -1210,7 +1210,7 @@ namespace TvPlugin
         {
           Channel tvChan = (Channel)_channelList[chan];
 
-          strLogo = Utils.GetCoverArt(Thumbs.TVChannel, tvChan.Name);
+          strLogo = Utils.GetCoverArt(Thumbs.TVChannel, tvChan.DisplayName);
           if (System.IO.File.Exists(strLogo))
           {
             GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
@@ -1218,7 +1218,7 @@ namespace TvPlugin
             {
               if (_showChannelLogos)
                 img.TexutureIcon = strLogo;
-              img.Label1 = tvChan.Name;
+              img.Label1 = tvChan.DisplayName;
               img.IsVisible = true;
             }
           }
@@ -1229,7 +1229,7 @@ namespace TvPlugin
             {
               if (_showChannelLogos)
                 img.TexutureIcon = "defaultVideoBig.png";
-              img.Label1 = tvChan.Name;
+              img.Label1 = tvChan.DisplayName;
               img.IsVisible = true;
             }
           }
@@ -1255,7 +1255,7 @@ namespace TvPlugin
       GUILabelControl channelLabel = GetControl((int)Controls.SINGLE_CHANNEL_LABEL) as GUILabelControl;
       GUIImage channelImage = GetControl((int)Controls.SINGLE_CHANNEL_IMAGE) as GUIImage;
 
-      strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, channel.Name);
+      strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
       if (channelImage == null)
       {
         if (strLogo.Length > 0)
@@ -1275,7 +1275,7 @@ namespace TvPlugin
         channelLabel = new GUILabelControl(GetID, (int)Controls.SINGLE_CHANNEL_LABEL,
           channelImage.XPosition + 44,
           channelImage.YPosition + 10,
-          300, 40, "font16", channel.Name, 4294967295, GUIControl.Alignment.Left, true);
+          300, 40, "font16", channel.DisplayName, 4294967295, GUIControl.Alignment.Left, true);
         channelLabel.AllocResources();
         GUIControl temp = (GUIControl)channelLabel;
         Add(ref temp);
@@ -1283,13 +1283,13 @@ namespace TvPlugin
 
       setSingleChannelLabelVisibility(true);
 
-      channelLabel.Label = channel.Name;
+      channelLabel.Label = channel.DisplayName;
       if (strLogo.Length > 0)
         channelImage.SetFileName(strLogo);
 
       if (channelLabel != null)
       {
-        channelLabel.Label = channel.Name;
+        channelLabel.Label = channel.DisplayName;
       }
 
 
@@ -1467,7 +1467,7 @@ namespace TvPlugin
       foreach (TuningDetail detail in channel.ReferringTuningDetail())
         channelNum = detail.ChannelNumber;
 
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Name);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
       if (System.IO.File.Exists(strLogo))
       {
         GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
@@ -1476,9 +1476,9 @@ namespace TvPlugin
           if (_showChannelLogos)
             img.TexutureIcon = strLogo;
           if (channelNum > 0 && _showChannelNumber)
-            img.Label1 = channelNum + " " + channel.Name;
+            img.Label1 = channelNum + " " + channel.DisplayName;
           else 
-            img.Label1 = channel.Name;
+            img.Label1 = channel.DisplayName;
           img.IsVisible = true;
         }
       }
@@ -1490,9 +1490,9 @@ namespace TvPlugin
           if (_showChannelLogos)
             img.TexutureIcon = "defaultVideoBig.png";
           if (channelNum > 0 && _showChannelNumber)
-            img.Label1 = channelNum + " " + channel.Name;
+            img.Label1 = channelNum + " " + channel.DisplayName;
           else
-            img.Label1 = channel.Name;
+            img.Label1 = channel.DisplayName;
           img.IsVisible = true;
         }
       }
@@ -2890,7 +2890,7 @@ namespace TvPlugin
 
         if (_channelList.Count == 0)
         {
-          Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true);
+          Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
           for (int i = 0; i < 10; ++i)
             _channelList.Add(newChannel);
         }

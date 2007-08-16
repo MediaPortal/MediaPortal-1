@@ -222,7 +222,7 @@ namespace TvPlugin
         GUIListItem item = new GUIListItem();
         item.Label = String.Format("{0}.{1}", total, rec.ProgramName);
         item.TVTag = rec;
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
         if (!System.IO.File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
@@ -723,7 +723,7 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", "");
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", "");
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
       if (System.IO.File.Exists(strLogo))
       {
         GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
@@ -760,7 +760,7 @@ namespace TvPlugin
       }
 
 
-      string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().Name);
+      string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().DisplayName);
       if (System.IO.File.Exists(logo))
       {
         GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", logo);

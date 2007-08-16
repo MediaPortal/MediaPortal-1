@@ -350,7 +350,7 @@ namespace TvPlugin
           foreach (Channel ch in channels)
           {
             if (ch.IsRadio == false) continue;
-            if (ch.Name == message.Label)
+            if (ch.DisplayName == message.Label)
             {
               TVHome.ViewChannelAndCheck(ch);
             }
@@ -526,7 +526,7 @@ namespace TvPlugin
             if (ch.IsRadio == false) continue;
 
             RadioStation station = new RadioStation();
-            station.Name = ch.Name;
+            station.Name = ch.DisplayName;
             station.URL = "";
             GUIListItem item = new GUIListItem();
             item.Label = station.Name;

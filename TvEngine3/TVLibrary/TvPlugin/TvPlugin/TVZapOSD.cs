@@ -303,7 +303,7 @@ namespace TvPlugin
 
     string GetChannelName()
     {
-      return TVHome.Navigator.ZapChannel.Name;
+      return TVHome.Navigator.ZapChannel.DisplayName;
     }
     void ShowPrograms()
     {

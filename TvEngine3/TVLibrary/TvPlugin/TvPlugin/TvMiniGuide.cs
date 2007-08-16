@@ -214,7 +214,7 @@ namespace TvPlugin
 
         if (_channelList.Count == 0)
         {
-          Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true);
+          Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
           for (int i = 0; i < 10; ++i)
             _channelList.Add(newChannel);
         }
@@ -460,11 +460,11 @@ namespace TvPlugin
           StringBuilder sb = new StringBuilder();
           item = new GUIListItem("");
           // store here as it is not needed right now - please beat me later..
-          item.TVTag = CurrentChan.Name;
+          item.TVTag = CurrentChan.DisplayName;
           item.MusicTag = CurrentChan;
 
-          sb.Append(CurrentChan.Name);
-          ChannelLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, CurrentChan.Name);
+          sb.Append(CurrentChan.DisplayName);
+          ChannelLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, CurrentChan.DisplayName);
 
           // if we are watching this channel mark it
           if (TVHome.Navigator.Channel.IdChannel == CurrentChan.IdChannel)

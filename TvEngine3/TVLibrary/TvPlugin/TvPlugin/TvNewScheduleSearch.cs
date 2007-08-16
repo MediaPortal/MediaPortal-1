@@ -214,7 +214,7 @@ namespace TvPlugin
       {
         GUIListItem item = new GUIListItem();
         item.Label = program.Title;
-        string logo = Utils.GetCoverArt(Thumbs.TVChannel, program.ReferencedChannel().Name);
+        string logo = Utils.GetCoverArt(Thumbs.TVChannel, program.ReferencedChannel().DisplayName);
         if (!System.IO.File.Exists(logo))
         {
           logo = "defaultVideoBig.png";

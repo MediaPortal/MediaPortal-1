@@ -105,12 +105,12 @@ namespace TvPlugin
         {
           if (preNotifySecs > program.StartTime)
           {
-            Log.Info("Notify {0} on {1} start {2}", program.Title, program.ReferencedChannel().Name, program.StartTime);
+            Log.Info("Notify {0} on {1} start {2}", program.Title, program.ReferencedChannel().DisplayName, program.StartTime);
             program.Notify = false;
             program.Persist();
 
             MediaPortal.TV.Database.TVProgram tvProg = new MediaPortal.TV.Database.TVProgram();
-            tvProg.Channel = program.ReferencedChannel().Name;
+            tvProg.Channel = program.ReferencedChannel().DisplayName;
             tvProg.Title = program.Title;
             tvProg.Description = program.Description;
             tvProg.Genre = program.Genre;

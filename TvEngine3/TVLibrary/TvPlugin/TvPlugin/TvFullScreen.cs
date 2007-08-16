@@ -976,7 +976,7 @@ namespace TvPlugin
                   //manual record
                   _isStartingTSForRecording = !g_Player.IsTimeShifting;
 
-                  rec = new Schedule(TVHome.Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.Name + ")", DateTime.Now, DateTime.Now.AddDays(1));
+                  rec = new Schedule(TVHome.Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.DisplayName + ")", DateTime.Now, DateTime.Now.AddDays(1));
                   rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
                   rec.RecommendedCard = TVHome.Card.Id;
@@ -993,7 +993,7 @@ namespace TvPlugin
           else
           {
             _isStartingTSForRecording = !g_Player.IsTimeShifting;
-            Schedule rec = new Schedule(TVHome.Navigator.Channel.IdChannel, (int)ScheduleRecordingType.Once, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.Name + ")", DateTime.Now, DateTime.Now.AddDays(1), 1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
+            Schedule rec = new Schedule(TVHome.Navigator.Channel.IdChannel, (int)ScheduleRecordingType.Once, GUILocalizeStrings.Get(413) + " (" + TVHome.Navigator.Channel.DisplayName + ")", DateTime.Now, DateTime.Now.AddDays(1), 1, 1, "", 1, 1, Schedule.MinSchedule, 5, 5, Schedule.MinSchedule);
             rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
             rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
             rec.RecommendedCard = TVHome.Card.Id;
@@ -1779,7 +1779,7 @@ namespace TvPlugin
       int counter = 0;
       foreach (ChannelLinkageMap map in linkages)
       {
-        string channelName = map.ReferringLinkedChannel().Name;
+        string channelName = map.ReferringLinkedChannel().DisplayName;
         GUIListItem item = new GUIListItem(channelName);
         if (channelName == TVHome.Card.ChannelName)
           selected = counter;
@@ -2377,7 +2377,7 @@ namespace TvPlugin
           if (channelNr > TVHome.Navigator.CurrentGroup.ReferringGroupMap().Count)
             return;
           GroupMap map = (GroupMap)TVHome.Navigator.CurrentGroup.ReferringGroupMap()[channelNr - 1];
-          displayedChannelName = map.ReferencedChannel().Name;
+          displayedChannelName = map.ReferencedChannel().DisplayName;
         }
         /*else
           for (int ChannelCnt = 0; ChannelCnt < TVHome.Navigator.CurrentGroup.ReferringGroupMap().Count; ChannelCnt++)

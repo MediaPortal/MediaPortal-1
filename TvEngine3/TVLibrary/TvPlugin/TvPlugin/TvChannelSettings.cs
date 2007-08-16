@@ -107,9 +107,9 @@ namespace TvPlugin
             chan.Persist();
           }
           GUIListItem item = new GUIListItem();
-          item.Label = chan.Name;
+          item.Label = chan.DisplayName;
           item.MusicTag = chan;
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
           if (!System.IO.File.Exists(strLogo))
           {
             strLogo = "defaultVideoBig.png";
@@ -130,9 +130,9 @@ namespace TvPlugin
           Channel chan = map.ReferencedChannel();
           chan.SortOrder = count;
           GUIListItem item = new GUIListItem();
-          item.Label = chan.Name;
+          item.Label = chan.DisplayName;
           item.MusicTag = chan;
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
           if (!System.IO.File.Exists(strLogo))
           {
             strLogo = "defaultVideoBig.png";

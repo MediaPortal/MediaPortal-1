@@ -245,10 +245,10 @@ namespace TvPlugin
         GUIListItem item = new GUIListItem();
         item.Label = episode.Title;
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-        string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.ReferencedChannel().Name);
+        string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.ReferencedChannel().DisplayName);
         if (!System.IO.File.Exists(logo))
         {
-          item.Label = String.Format("{0} {1}", episode.ReferencedChannel().Name, episode.Title);
+          item.Label = String.Format("{0} {1}", episode.ReferencedChannel().DisplayName, episode.Title);
           logo = "defaultVideoBig.png";
         }
         Schedule recordingSchedule;

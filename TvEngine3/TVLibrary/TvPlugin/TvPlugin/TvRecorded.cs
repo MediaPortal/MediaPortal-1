@@ -575,7 +575,7 @@ namespace TvPlugin
 
             if (!System.IO.File.Exists(strLogo))
             {
-              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
+              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
               if (!System.IO.File.Exists(strLogo))
               {
                 strLogo = rec.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
@@ -614,7 +614,7 @@ namespace TvPlugin
 
             if (!System.IO.File.Exists(strLogo))
             {
-              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
+              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
               if (!System.IO.File.Exists(strLogo))
               {
                 strLogo = rec.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
@@ -744,7 +744,7 @@ namespace TvPlugin
         else
         {
           if (currentSortMethod == SortMethod.Channel)
-            item1.Label2 = item2.Label2 = rec.ReferencedChannel().Name;
+            item1.Label2 = item2.Label2 = rec.ReferencedChannel().DisplayName;
         }
         if (rec.TimesWatched > 0)
         {
@@ -786,7 +786,7 @@ namespace TvPlugin
         GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
         if (null == dlgYesNo) return false;
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-        dlgYesNo.SetLine(1, rec.ReferencedChannel().Name);
+        dlgYesNo.SetLine(1, rec.ReferencedChannel().DisplayName);
         dlgYesNo.SetLine(2, rec.Title);
         dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + Utils.SecondsToHMSString(rec.StopTime));
         dlgYesNo.SetDefaultToYes(true);
@@ -862,7 +862,7 @@ namespace TvPlugin
       if (null == dlgYesNo) return;
       if (rec.TimesWatched > 0) dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
       else dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
-      dlgYesNo.SetLine(1, rec.ReferencedChannel().Name);
+      dlgYesNo.SetLine(1, rec.ReferencedChannel().DisplayName);
       dlgYesNo.SetLine(2, rec.Title);
       dlgYesNo.SetLine(3, String.Empty);
       dlgYesNo.SetDefaultToYes(false);
@@ -981,7 +981,7 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", rec.Genre);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", rec.Description);
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
       if (System.IO.File.Exists(strLogo))
       {
         GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
@@ -1092,13 +1092,13 @@ namespace TvPlugin
         case SortMethod.Channel:
           if (m_bSortAscending)
           {
-            iComp = String.Compare(rec1.ReferencedChannel().Name, rec2.ReferencedChannel().Name, true);
+            iComp = String.Compare(rec1.ReferencedChannel().DisplayName, rec2.ReferencedChannel().DisplayName, true);
             if (iComp == 0) goto case SortMethod.Date;
             else return iComp;
           }
           else
           {
-            iComp = String.Compare(rec2.ReferencedChannel().Name, rec1.ReferencedChannel().Name, true);
+            iComp = String.Compare(rec2.ReferencedChannel().DisplayName, rec1.ReferencedChannel().DisplayName, true);
             if (iComp == 0) goto case SortMethod.Date;
             else return iComp;
           }
@@ -1160,9 +1160,9 @@ namespace TvPlugin
           }
           if (rec1.IdChannel != rec2.IdChannel)
             if (m_bSortAscending)
-              return String.Compare(rec1.ReferencedChannel().Name, rec2.ReferencedChannel().Name);
+              return String.Compare(rec1.ReferencedChannel().DisplayName, rec2.ReferencedChannel().DisplayName);
             else
-              return String.Compare(rec2.ReferencedChannel().Name, rec1.ReferencedChannel().Name);
+              return String.Compare(rec2.ReferencedChannel().DisplayName, rec1.ReferencedChannel().DisplayName);
           if (rec1.Title != rec2.Title)
             if (m_bSortAscending)
               return String.Compare(rec1.Title, rec2.Title);

@@ -380,7 +380,7 @@ namespace TvPlugin
 
                   case 876:
                     {
-                      Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
+                      Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.DisplayName + ")",
                                                   DateTime.Now, DateTime.Now.AddDays(1));
                       newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                       newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
@@ -395,7 +395,7 @@ namespace TvPlugin
             }//if (prog != null)
             else
             {
-              Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
+              Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.DisplayName + ")",
                                                   DateTime.Now, DateTime.Now.AddDays(1));
               newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
               newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
@@ -544,13 +544,13 @@ namespace TvPlugin
             channel = Channel.Retrieve(id);
           }
         }
-        MediaPortal.GUI.Library.Log.Info("tv home init:{0}", channel.Name);
+        MediaPortal.GUI.Library.Log.Info("tv home init:{0}", channel.DisplayName);
         if (_autoTurnOnTv)
         {
           ViewChannelAndCheck(channel);          
         }
         GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
-        MediaPortal.GUI.Library.Log.Info("tv home init:{0} done", channel.Name);
+        MediaPortal.GUI.Library.Log.Info("tv home init:{0} done", channel.DisplayName);
       }
     }
 
@@ -877,9 +877,9 @@ namespace TvPlugin
             Channel ch = Channel.Retrieve(idChannel);
             channels.Add(ch);
             GUIListItem item = new GUIListItem();
-            item.Label = ch.Name;
+            item.Label = ch.DisplayName;
             item.Label2 = user.Name;
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.Name);
+            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
             if (!System.IO.File.Exists(strLogo))
             {
               strLogo = "defaultVideoBig.png";
@@ -987,7 +987,7 @@ namespace TvPlugin
 
               case 876:
                 {
-                  Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
+                  Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.DisplayName + ")",
                                               DateTime.Now, DateTime.Now.AddDays(1));
                   newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
                   newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
@@ -1003,7 +1003,7 @@ namespace TvPlugin
         else
         {
           //manual record
-          Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.Name + ")",
+          Schedule newSchedule = new Schedule(Navigator.Channel.IdChannel, GUILocalizeStrings.Get(413) + " (" + Navigator.Channel.DisplayName + ")",
                                       DateTime.Now, DateTime.Now.AddDays(1));
           newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
           newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
@@ -1326,7 +1326,7 @@ namespace TvPlugin
           MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): channel==null");
           return false;
         }
-        MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.Name);
+        MediaPortal.GUI.Library.Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
         if (g_Player.Playing && !_autoswitchTVon)
         {
           //- Changed by joboehl - Enable TV to autoturnon on channel selection. 
@@ -1939,7 +1939,7 @@ namespace TvPlugin
       get
       {
         if (m_currentChannel == null) return null;
-        return m_currentChannel.Name;
+        return m_currentChannel.DisplayName;
       }
     }
     public Channel Channel
@@ -2060,11 +2060,11 @@ namespace TvPlugin
           if (m_zapchannel.CurrentGroup != null)
           {
             m_currentgroup = GetGroupIndex(m_zapchannel.CurrentGroup.GroupName);
-            MediaPortal.GUI.Library.Log.Info("Channel change:{0} on group {1}", zappingTo.Name, m_zapchannel.CurrentGroup.GroupName);
+            MediaPortal.GUI.Library.Log.Info("Channel change:{0} on group {1}", zappingTo.DisplayName, m_zapchannel.CurrentGroup.GroupName);
           }
           else
           {
-            MediaPortal.GUI.Library.Log.Info("Channel change:{0}", zappingTo.Name);
+            MediaPortal.GUI.Library.Log.Info("Channel change:{0}", zappingTo.DisplayName);
           }
                     
           m_zapchannel = null;
@@ -2183,7 +2183,7 @@ namespace TvPlugin
 
         if (_channelList.Count == 0)
         {
-          Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true);
+          Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false, DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
           for (int i = 0; i < 10; ++i)
             _channelList.Add(newChannel);
         }
@@ -2264,7 +2264,7 @@ namespace TvPlugin
       Channel chan = (Channel)gm.ReferencedChannel();
       m_zapchannel = chan;
 
-      MediaPortal.GUI.Library.Log.Info("Navigator:ZapNext {0}->{1}", currentChan.Name, m_zapchannel.Name);
+      MediaPortal.GUI.Library.Log.Info("Navigator:ZapNext {0}->{1}", currentChan.DisplayName, m_zapchannel.DisplayName);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         if (useZapDelay)
@@ -2306,7 +2306,7 @@ namespace TvPlugin
       Channel chan = (Channel)gm.ReferencedChannel();
       m_zapchannel = chan;
 
-      MediaPortal.GUI.Library.Log.Info("Navigator:ZapPrevious {0}->{1}", currentChan.Name, m_zapchannel.Name);
+      MediaPortal.GUI.Library.Log.Info("Navigator:ZapPrevious {0}->{1}", currentChan.DisplayName, m_zapchannel.DisplayName);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         if (useZapDelay)
@@ -2422,7 +2422,7 @@ namespace TvPlugin
     {
       foreach (Channel chan in channels)
       {
-        if (chan.Name == channelName) return chan;
+        if (chan.DisplayName == channelName) return chan;
       }
       return null;
     }
@@ -2476,7 +2476,7 @@ namespace TvPlugin
       {
         foreach (GroupMap groupMap in ((ChannelGroup)m_groups[m_currentgroup]).ReferringGroupMap())
         {
-          if (groupMap.ReferencedChannel().Name == currentchannelName)
+          if (groupMap.ReferencedChannel().DisplayName == currentchannelName)
           {
             foundMatchingGroupName = true;
             m_currentChannel = GetChannel (groupMap.ReferencedChannel().IdChannel);            
@@ -2505,7 +2505,7 @@ namespace TvPlugin
       {
         try
         {
-          xmlwriter.SetValue("mytv", "channel", m_currentChannel.Name);
+          xmlwriter.SetValue("mytv", "channel", m_currentChannel.DisplayName);
         }
         catch (Exception)
         {

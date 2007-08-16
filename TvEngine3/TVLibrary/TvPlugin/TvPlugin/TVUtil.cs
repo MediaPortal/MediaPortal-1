@@ -174,7 +174,7 @@ namespace TvPlugin
       IList programs;
       if (rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
       {
-        Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().Name);
+        Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().DisplayName);
         programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
       }
       else

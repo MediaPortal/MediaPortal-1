@@ -840,12 +840,12 @@ namespace TvPlugin
           {
             if (sortAscending)
             {
-              iComp = String.Compare(prog1.ReferencedChannel().Name, prog2.ReferencedChannel().Name, true);
+              iComp = String.Compare(prog1.ReferencedChannel().DisplayName, prog2.ReferencedChannel().DisplayName, true);
             }
             else
             {
 
-              iComp = String.Compare(prog2.ReferencedChannel().Name, prog1.ReferencedChannel().Name, true);
+              iComp = String.Compare(prog2.ReferencedChannel().DisplayName, prog1.ReferencedChannel().DisplayName, true);
             }
             return iComp;
           }
@@ -967,7 +967,7 @@ namespace TvPlugin
 
     void SetChannelLogo(Program prog, ref GUIListItem item)
     {
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().Name);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
       if (!System.IO.File.Exists(strLogo))
       {
         strLogo = "defaultVideoBig.png";
@@ -1139,7 +1139,7 @@ namespace TvPlugin
       }
 
 
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().Name);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
       if (System.IO.File.Exists(strLogo))
       {
         GUIPropertyManager.SetProperty("#TV.Search.thumb", strLogo);

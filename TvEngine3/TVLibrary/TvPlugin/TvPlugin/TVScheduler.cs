@@ -328,13 +328,13 @@ namespace TvPlugin
         case SortMethod.Channel:
           if (m_bSortAscending)
           {
-            iComp = String.Compare(rec1.ReferencedChannel().Name, rec2.ReferencedChannel().Name, true);
+            iComp = String.Compare(rec1.ReferencedChannel().DisplayName, rec2.ReferencedChannel().DisplayName, true);
             if (iComp == 0) goto case SortMethod.Date;
             else return iComp;
           }
           else
           {
-            iComp = String.Compare(rec2.ReferencedChannel().Name, rec1.ReferencedChannel().Name, true);
+            iComp = String.Compare(rec2.ReferencedChannel().DisplayName, rec1.ReferencedChannel().DisplayName, true);
             if (iComp == 0) goto case SortMethod.Date;
             else return iComp;
           }
@@ -382,7 +382,7 @@ namespace TvPlugin
             item.Label = recSeries.ProgramName;
             item.TVTag = recSeries;
             item.MusicTag = rec;
-            string logo = Utils.GetCoverArt(Thumbs.TVChannel, recSeries.ReferencedChannel().Name);
+            string logo = Utils.GetCoverArt(Thumbs.TVChannel, recSeries.ReferencedChannel().DisplayName);
             if (!System.IO.File.Exists(logo))
             {
               logo = "defaultVideoBig.png";
@@ -402,7 +402,7 @@ namespace TvPlugin
           item.Label = rec.ProgramName;
           item.TVTag = rec;
           item.MusicTag = rec;
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
+          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
           if (!System.IO.File.Exists(strLogo))
           {
             strLogo = "defaultVideoBig.png";
@@ -791,9 +791,9 @@ namespace TvPlugin
         }
         foreach (Channel chan in channels)
         {
-          dlg.Items.Add(chan.Name);
+          dlg.Items.Add(chan.DisplayName);
         }
-        dlg.Channel = rec.ReferencedChannel().Name;
+        dlg.Channel = rec.ReferencedChannel().DisplayName;
         dlg.StartDateTime = rec.StartTime;
         dlg.EndDateTime = rec.EndTime;
         dlg.DoModal(GetID);
@@ -822,7 +822,7 @@ namespace TvPlugin
           strType = GUILocalizeStrings.Get(651);//Everytime on any channel
           break;
         case ScheduleRecordingType.EveryTimeOnThisChannel:
-          strType = String.Format(GUILocalizeStrings.Get(650), schedule.ReferencedChannel().Name); ;//Everytime on this channel
+          strType = String.Format(GUILocalizeStrings.Get(650), schedule.ReferencedChannel().DisplayName); ;//Everytime on this channel
           break;
         case ScheduleRecordingType.Once:
           strType = GUILocalizeStrings.Get(647);//Once
@@ -881,7 +881,7 @@ namespace TvPlugin
       else
       {
 
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().Name);
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
         if (System.IO.File.Exists(strLogo))
         {
           GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
@@ -921,7 +921,7 @@ namespace TvPlugin
 
       if (schedule.IdChannel < 0)
       {
-        string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().Name);
+        string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().DisplayName);
         if (System.IO.File.Exists(logo))
         {
           GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", logo);

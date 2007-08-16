@@ -98,11 +98,11 @@ namespace TvPlugin
         if (isDigital)
         {
           GUIListItem item = new GUIListItem();
-          item.Label = chan.Name;
+          item.Label = chan.DisplayName;
           item.IsFolder = false;
-          item.ThumbnailImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
-          item.IconImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
-          item.IconImageBig = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+          item.ThumbnailImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
+          item.IconImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
+          item.IconImageBig = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
           item.Selected = chan.GrabEpg;
           item.TVTag = chan;
           listChannels.Add(item);
