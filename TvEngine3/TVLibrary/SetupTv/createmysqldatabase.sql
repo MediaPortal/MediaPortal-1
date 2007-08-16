@@ -111,6 +111,7 @@ CREATE TABLE `channel` (
   `visibleInGuide` bit(1) NOT NULL,
   `externalId` varchar(200) NOT NULL,
   `freetoair` bit(1) NOT NULL,
+  `displayName` varchar(200) NOT NULL,
   PRIMARY KEY  (`idChannel`),
   KEY `IDX_Channel1` (`isTv`,`sortOrder`)
 ) ENGINE=MyISAM AUTO_INCREMENT=383 DEFAULT CHARSET=latin1;

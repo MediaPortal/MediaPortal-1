@@ -227,7 +227,7 @@ namespace SetupTv.Sections
         if (ch.FreeToAir == false)
           imageIndex = 2;
         ListViewItem item = new ListViewItem((items.Count + 1).ToString(), imageIndex);
-        item.SubItems.Add(ch.Name);
+        item.SubItems.Add(ch.DisplayName);
         item.SubItems.Add("-");
         item.Checked = ch.VisibleInGuide;
         item.Tag = ch;
@@ -605,6 +605,7 @@ namespace SetupTv.Sections
         AddAttribute(nodechannel, "TotalTimeWatched", channel.TotalTimeWatched);
         AddAttribute(nodechannel, "VisibleInGuide", channel.VisibleInGuide);
         AddAttribute(nodechannel, "FreeToAir", channel.FreeToAir);
+        AddAttribute(nodechannel, "DisplayName", channel.DisplayName);
 
         XmlNode nodeMaps = xmlDoc.CreateElement("mappings");
         foreach (ChannelMap map in channel.ReferringChannelMap())
@@ -753,6 +754,7 @@ namespace SetupTv.Sections
           DateTime totalTimeWatched = DateTime.ParseExact(nodeChannel.Attributes["TotalTimeWatched"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
           bool visibileInGuide = (nodeChannel.Attributes["VisibleInGuide"].Value == "True");
           bool FreeToAir = (nodeChannel.Attributes["FreeToAir"].Value == "True");
+          string displayName = nodeChannel.Attributes["DisplayName"].Value;
 
           Channel dbChannel = layer.AddChannel("", name);
           dbChannel.GrabEpg = grabEpg;
@@ -764,6 +766,7 @@ namespace SetupTv.Sections
           dbChannel.TotalTimeWatched = totalTimeWatched;
           dbChannel.VisibleInGuide = visibileInGuide;
           dbChannel.FreeToAir = FreeToAir;
+          dbChannel.DisplayName = displayName;
           dbChannel.Persist();
           foreach (XmlNode nodeMap in mappingList)
           {

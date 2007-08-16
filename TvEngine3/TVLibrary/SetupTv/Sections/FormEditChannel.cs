@@ -94,6 +94,7 @@ namespace SetupTv.Sections
           return;
         }
         _channel.Name = textBoxName.Text;
+        _channel.DisplayName = textBoxName.Text;
         _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
         _channel.IsTv = _isTv;
         _channel.IsRadio = !_isTv;
@@ -316,7 +317,7 @@ namespace SetupTv.Sections
 
 
       //general tab
-      _channel.Name = textBoxName.Text;
+      _channel.DisplayName = textBoxName.Text;
       _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
 
       foreach (TuningDetail detail in _channel.ReferringTuningDetail())
@@ -431,7 +432,7 @@ namespace SetupTv.Sections
       if (Channel == null)
       {
         _newChannel = true;
-        Channel = new Channel("", false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "", true);
+        Channel = new Channel("", false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "", true,"");
       }
       CountryCollection countries = new CountryCollection();
       for (int i = 0; i < countries.Countries.Length; ++i)
@@ -457,7 +458,7 @@ namespace SetupTv.Sections
       comboBoxPilot.SelectedIndex = 0;
       comboBoxRollOff.SelectedIndex = 0;
       //general tab
-      textBoxName.Text = _channel.Name;
+      textBoxName.Text = _channel.DisplayName;
       checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;
 
       if (_newChannel)

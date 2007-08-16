@@ -1,83 +1,13 @@
 USE TvLibrary
 
---- version 28 ---
+--- version 30 ---
 GO
 
-CREATE TABLE Keyword(
-	idKeyword int IDENTITY(1,1) NOT NULL,
-	keywordName varchar(200) NOT NULL,
-	rating int NOT NULL,
-	autoRecord bit NOT NULL,
-	searchIn int NOT NULL,
-	CONSTRAINT PK_Keyword PRIMARY KEY  
-(
-	idKeyword ASC
-)
-) 
+ALTER TABLE Channel ADD displayName varchar(200)
 GO
 
-CREATE TABLE Timespan(
-	idTimespan int IDENTITY(1,1) NOT NULL,
-	startTime datetime NOT NULL,
-	endTime datetime NOT NULL,
-	dayOfWeek int NOT NULL,
-	CONSTRAINT PK_Timespan PRIMARY KEY  
-(
-	idTimespan ASC
-)
-) 
+UPDATE Channel SET DisplayName=(SELECT name FROM Channel p WHERE Channel.idChannel=p.idChannel)
 GO
 
-
-CREATE TABLE PersonalTVGuideMap(
-	idPersonalTVGuideMap int IDENTITY(1,1) NOT NULL,
-	idKeyword int NOT NULL,
-	idProgram int NOT NULL,
-	CONSTRAINT PK_PersonalTVGuideMap PRIMARY KEY  
-(
-	idPersonalTVGuideMap ASC
-)
-) 
-GO
-
-ALTER TABLE PersonalTVGuideMap  WITH CHECK ADD  CONSTRAINT FK_PersonalTVGuideMap_Keyword FOREIGN KEY(idKeyword)
-REFERENCES Keyword (idKeyword)
-GO
-
-ALTER TABLE PersonalTVGuideMap  WITH CHECK ADD  CONSTRAINT FK_PersonalTVGuideMap_Progrm FOREIGN KEY(idProgram)
-REFERENCES Program (idProgram)
-GO
-
-CREATE TABLE KeywordMap(
-	idKeywordMap int IDENTITY(1,1) NOT NULL,
-	idKeyword int NOT NULL,
-	idChannelGroup int NOT NULL,
-	CONSTRAINT PK_KeywordMap PRIMARY KEY  
-(
-	idKeywordMap ASC
-)
-) 
-GO
-
-ALTER TABLE KeywordMap  WITH CHECK ADD  CONSTRAINT FK_KeywordMap_Keyword FOREIGN KEY(idKeyword)
-REFERENCES Keyword (idKeyword)
-GO
-
-ALTER TABLE KeywordMap  WITH CHECK ADD  CONSTRAINT FK_KeywordMap_ChannelGroup FOREIGN KEY(idChannelGroup)
-REFERENCES ChannelGroup (idGroup)
-GO
-
-
-
---- version 29 ---
-GO
-
-ALTER TABLE TuningDetail ADD pilot int NOT NULL
-GO
-
-
-ALTER TABLE TuningDetail ADD rollOff int NOT NULL
-GO
-
-insert into version(versionNumber) values(29)
+insert into version(versionNumber) values(30)
 GO

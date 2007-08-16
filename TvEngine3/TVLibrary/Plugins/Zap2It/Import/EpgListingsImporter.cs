@@ -227,7 +227,7 @@ namespace ProcessPlugins.EpgGrabber
             // Create the channel 
             string cname = BuildChannelName(tvStation, tvStationMap);
 
-            mpChannel = new Channel(cname, false, true, 0, Schedule.MinSchedule, false, Schedule.MinSchedule, 10000, true, tvStation.ID + XMLTVID, true);
+            mpChannel = new Channel(cname, false, true, 0, Schedule.MinSchedule, false, Schedule.MinSchedule, 10000, true, tvStation.ID + XMLTVID, true,cname);
             mpChannel.Persist();
 
             TvLibrary.Implementations.AnalogChannel tuningDetail = new TvLibrary.Implementations.AnalogChannel();

@@ -46,6 +46,7 @@ CREATE TABLE Channel(
 	visibleInGuide bit NOT NULL,
 	externalId varchar(200) NOT NULL,
 	freetoair bit NOT NULL,
+	displayName varchar(200) NOT NULL,
  CONSTRAINT PK_Channels PRIMARY KEY  
 (
 	idChannel ASC
@@ -656,5 +657,5 @@ GO
 delete from version
 GO
 
-insert into version(versionNumber) values(29)
+insert into version(versionNumber) values(30)
 GO

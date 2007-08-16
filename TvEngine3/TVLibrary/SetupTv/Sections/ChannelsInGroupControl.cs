@@ -59,7 +59,7 @@ namespace SetupTv.Sections
           if (channel.FreeToAir == false)
             imageIndex = 2;
           ListViewItem item = listView1.Items.Add(index.ToString(), imageIndex);
-          item.SubItems.Add(channel.Name);
+          item.SubItems.Add(channel.DisplayName);
           item.Checked = channel.VisibleInGuide;
           item.Tag = map;
         }

@@ -70,7 +70,7 @@ namespace SetupTv.Sections
         int imageIndex = 1;
         if (ch.FreeToAir == false)
           imageIndex = 2;
-        ComboBoxExItem item = new ComboBoxExItem(ch.Name, imageIndex, ch.IdChannel);
+        ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
 
         mpComboBoxChannels.Items.Add(item);
 
@@ -103,11 +103,10 @@ namespace SetupTv.Sections
 
       if (ServiceHelper.IsStopped) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
-      string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
 
       TvServer server = new TvServer();
-      VirtualCard card = GetCardTimeShiftingChannel(channel,id);
+      VirtualCard card = GetCardTimeShiftingChannel(id);
       if (card != null)
       {
         card.StopTimeShifting();
@@ -167,14 +166,14 @@ namespace SetupTv.Sections
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
       TvServer server = new TvServer();
-      VirtualCard card = GetCardRecordingChannel(channel,id);
+      VirtualCard card = GetCardRecordingChannel(id);
       if (card != null)
       {
         card.StopRecording();
       }
       else
       {
-        card = GetCardTimeShiftingChannel(channel,id);
+        card = GetCardTimeShiftingChannel(id);
         if (card != null)
         {
           string fileName;
@@ -205,9 +204,8 @@ namespace SetupTv.Sections
       if (mpComboBoxChannels.SelectedItem != null)
       {
         TvServer server = new TvServer();
-        string channel = mpComboBoxChannels.SelectedItem.ToString();
         int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
-        VirtualCard card = GetCardTimeShiftingChannel(channel, id);
+        VirtualCard card = GetCardTimeShiftingChannel(id);
         if (card != null)
         {
           mpGroupBox1.Visible = true;
@@ -431,9 +429,9 @@ namespace SetupTv.Sections
     /// <summary>
     /// returns the virtualcard which is timeshifting the channel specified
     /// </summary>
-    /// <param name="channel">channel name</param>
+    /// <param name="channelId">Id of the channel</param>
     /// <returns>virtual card</returns>
-    public VirtualCard GetCardTimeShiftingChannel(string channelName, int channelId)
+    public VirtualCard GetCardTimeShiftingChannel(int channelId)
     {
       IList cards = Card.ListAll();
       foreach (Card card in cards)
@@ -461,9 +459,9 @@ namespace SetupTv.Sections
     /// <summary>
     /// returns the virtualcard which is recording the channel specified
     /// </summary>
-    /// <param name="channel">channel name</param>
+    /// <param name="channelId">Id of the channel</param>
     /// <returns>virtual card</returns>
-    public VirtualCard GetCardRecordingChannel(string channel, int channelId)
+    public VirtualCard GetCardRecordingChannel(int channelId)
     {
       IList cards = Card.ListAll();
       foreach (Card card in cards)

@@ -191,7 +191,7 @@ namespace SetupTv.Sections
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;
-        ListViewItem newItem = new ListViewItem(channel.Name, imageIndex);
+        ListViewItem newItem = new ListViewItem(channel.DisplayName, imageIndex);
         newItem.Tag = channel;
         items.Add(newItem);
       }
@@ -220,7 +220,7 @@ namespace SetupTv.Sections
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;
-        ListViewItem newItem = mpListViewMapped.Items.Add(channel.Name, imageIndex);
+        ListViewItem newItem = mpListViewMapped.Items.Add(channel.DisplayName, imageIndex);
         newItem.Tag = newMap;
       }
       mpListViewMapped.Sort();

@@ -47,13 +47,15 @@ namespace TvDatabase
     private string externalId;
     [TableColumn("freetoair", NotNull = true)]
     private bool freetoair;
+    [TableColumn("displayName", NotNull = true)]
+    private string displayName;
     #endregion
 
     #region Constructors
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
-    public Channel(string name, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId, bool freetoair)
+    public Channel(string name, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId, bool freetoair, string displayName)
     {
       isChanged = true;
       this.name = name;
@@ -67,13 +69,14 @@ namespace TvDatabase
       this.visibleInGuide = visibleInGuide;
       this.externalId = externalId;
       this.freetoair = freetoair;
+      this.displayName = displayName;
     }
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
     /// </summary> 
-    public Channel(int idChannel, string name, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId, bool freetoair)
+    public Channel(int idChannel, string name, bool isRadio, bool isTv, int timesWatched, DateTime totalTimeWatched, bool grabEpg, DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId, bool freetoair, string displayName)
     {
       this.idChannel = idChannel;
       this.name = name;
@@ -87,6 +90,7 @@ namespace TvDatabase
       this.visibleInGuide = visibleInGuide;
       this.externalId = externalId;
       this.freetoair = freetoair;
+      this.displayName = displayName;
     }
     #endregion
 
@@ -133,6 +137,14 @@ namespace TvDatabase
     {
       get { return freetoair; }
       set { isChanged |= freetoair != value; freetoair = value; }
+    }
+    /// <summary>
+    /// Property relating to database column displayName
+    /// </summary>
+    public string DisplayName
+    {
+      get { return displayName; }
+      set { isChanged |= displayName != value; displayName = value; }
     }
 
     /// <summary>

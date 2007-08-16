@@ -280,7 +280,7 @@ namespace TvEngine
                     }
                     if (chan == null)
                     {
-                      chan = new Channel(ConvertHTMLToAnsi(displayName), false, true, 0, Schedule.MinSchedule, false, Schedule.MinSchedule, 10000, true, id, true);
+                      chan = new Channel(ConvertHTMLToAnsi(displayName), false, true, 0, Schedule.MinSchedule, false, Schedule.MinSchedule, 10000, true, id, true, ConvertHTMLToAnsi(displayName));
                       chan.Persist();
                       AnalogChannel tuningDetail = new AnalogChannel();
                       tuningDetail.ChannelNumber = channelNo;
@@ -925,7 +925,7 @@ namespace TvEngine
                   }
                   if (chan == null)
                   {
-                    chan = new Channel(ConvertHTMLToAnsi(nodeName.InnerText), false, true, 0, Schedule.MinSchedule, false, Schedule.MinSchedule, 10000, true, nodeId.InnerText, true);
+                    chan = new Channel(ConvertHTMLToAnsi(nodeName.InnerText), false, true, 0, Schedule.MinSchedule, false, Schedule.MinSchedule, 10000, true, nodeId.InnerText, true, ConvertHTMLToAnsi(nodeName.InnerText));
                     chan.Persist();
                     AnalogChannel tuningDetail = new AnalogChannel();
                     tuningDetail.ChannelNumber = channelNo;

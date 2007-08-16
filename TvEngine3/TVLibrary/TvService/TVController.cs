@@ -1518,7 +1518,7 @@ namespace TvService
     public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card)
     {
       Channel channel = Channel.Retrieve(idChannel);
-      Log.Write("Controller: StartTimeShifting {0} {1}", channel.Name, channel.IdChannel);
+      Log.Write("Controller: StartTimeShifting {0} {1}", channel.DisplayName, channel.IdChannel);
       card = null;
       TvResult result;
       if (_epgGrabber != null)

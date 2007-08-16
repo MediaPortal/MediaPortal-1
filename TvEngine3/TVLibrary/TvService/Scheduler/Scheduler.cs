@@ -518,7 +518,7 @@ namespace TvService
             if (_tvController.IsRecording(ref tmpUser) == false)
             {
               cardInfo = card;
-              Log.Write("Scheduler : record on card:{0} priority:{1} which is tuned to {2}", cardInfo.Id, cardInfo.Card.Priority, recording.Channel.Name);
+              Log.Write("Scheduler : record on card:{0} priority:{1} which is tuned to {2}", cardInfo.Id, cardInfo.Card.Priority, recording.Channel.DisplayName);
               break;
             }
           }
@@ -596,7 +596,7 @@ namespace TvService
           info.title = recording.Program.Title;
           info.description = recording.Program.Description;
           info.genre = recording.Program.Genre;
-          info.channelName = recording.Program.ReferencedChannel().Name;
+          info.channelName = recording.Program.ReferencedChannel().DisplayName;
           MatroskaTagHandler.Persist(System.IO.Path.ChangeExtension(fileName, ".xml"), info);
         }
         Log.Write("recList:count:{0} add scheduleid:{1} card:{2}", _recordingsInProgressList.Count, recording.Schedule.IdSchedule, recording.CardInfo.Card.Name);
