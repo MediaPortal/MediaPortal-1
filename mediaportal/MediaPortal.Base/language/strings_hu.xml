@@ -1078,6 +1078,11 @@
     <String id="13016">Rendezés: Indítás</String>
     <String id="13017">Rendezés: Legújabb</String>
     <String id="13018">Rendezés: Gyakoriság</String>
+    <String id="13031">Gyártó</String>
+    <String id="13032">A legtöbbet betöltött</String>
+    <String id="13033">A jelenleg legtöbbet betöltött</String>
+    <String id="13034">Cím</String>
+    <String id="13041">A fájlinfó megtekintése</String>
     <String id="16001">Véletlen csoport</String>
     <String id="25001">Várakozás oldalra {0:X}...!</String>
     <String id="19001">Tetris</String>
@@ -1273,6 +1278,7 @@
     <String id="1050">Sz-V</String>
     <String id="1051">Rögzít Sz-V</String>
     <String id="1052">zene</String>
+    <String id="1053">Ismeretlen hívó</String>
     <String id="1100">CD importálása</String>
     <String id="1101">A kiválasztott szám importálása</String>
     <String id="1102">CD importálás bezárása</String>
@@ -1320,6 +1326,18 @@
     <String id="200029">Hogyan használod MediaPortal-t?</String>
     <String id="200030">A kijelölt PC-n</String>
     <String id="200038">Asztali PC-n, más alkalmazásokkal osztozkodva</String>
+    <String id="200039">Lépésköz hozzáadása</String>
+    <String id="200040">Lépésköz eltávolítása</String>
+    <String id="200041">Keresési adatok</String>
+    <String id="200042">Linkelt csatornák</String>
+    <String id="200043">Felvételek törlése</String>
+    <String id="200044">Hibás felvételek</String>
+    <String id="200045">Megtekintett és hibás felvételek</String>
+    <String id="200046">Ikonok létrehozása (ebben a könyvtárban)</String>
+    <String id="200047">Ikonok létrehozása (az alkönyvtárakban is)</String>
+    <String id="200048">Ikonok létrehozása újra</String>
+    <String id="200049">Csak a megtekintett videók ehhez a nézethez</String>
+    <String id="200050">Ez törli a felvételeket a merevlemezről</String>		
     <String id="200031">Igen</String>
     <String id="200032">Nem</String>
     <String id="200033">TV beállítás - Analog TV</String>
@@ -1478,7 +1496,11 @@
     <String id="2606">Olasz</String>
     <String id="2607">Spanyol</String>
     <String id="2608">Portugál</String>
-    <String id="6026">Kérlek add meg a az ip címét vagy a hostname-t</String>
+    <String id="2609">Dán</String>
+    <String id="2610">Lengyel</String>
+    <String id="2611">Cseh</String>
+    <String id="2612">Magyar</String>
+    <String id="6026">Kérlek add meg a az ip címét vagy a host nevet</String>
     <String id="6027">a mester Tv-server-nek</String>
     <String id="6028">Jelenlegi beállítások:</String>
     <String id="6029">Váltás</String>
@@ -1501,6 +1523,38 @@
     <String id="19117">Cella törlése</String>
     <String id="19118">Egyszeri segítség</String>
     <String id="19119">Játék újraindítása</String>
+    <String id="19120">Jelőltek szűrése</String>
+    <String id="19121">Idő: </String>
+    <String id="19122">Szűrő 1</String>
+    <String id="19123">Szűrő 2</String>
+    <String id="19124">Szűrő 3</String>
+    <String id="19125">Szűrő 4</String>
+    <String id="19126">Szűrő 5</String>
+    <String id="19127">Szűrő 6</String>
+    <String id="19128">Szűrő 7</String>
+    <String id="19129">Szűrő 8</String>
+    <String id="19130">Szűrő 9</String>
+    <String id="19131">Szűrő pár</String>
+    <String id="19132">Szűrő ki</String>
+    <String id="19133">Jelölt Hozzáadása/Törlése</String>
+    <String id="19134">Választ 1</String>
+    <String id="19135">Választ 2</String>
+    <String id="19136">Választ 3</String>
+    <String id="19137">Választ 4</String>
+    <String id="19138">Választ 5</String>
+    <String id="19139">Választ 6</String>
+    <String id="19140">Választ 7</String>
+    <String id="19141">Választ 8</String>
+    <String id="19142">Választ 9</String>
+    <String id="19143">Jelöltek</String>
+    <String id="19144">Jelöltek megtekintése</String>
+    <String id="19145">Jelöltek elrejtése</String>
+    <String id="19146">Jelöltek törlése</String>
+    <String id="19147">Jelöltek nullázása</String>
+    <String id="19148">Támogatás</String>
+    <String id="19149">Szűrők</String>
+    <String id="19150">Jelöltek</String>
+    <String id="19151">Jelöltek hozzáadása/törlése</String>
     <String id="33000">Scrobble be</String>
     <String id="33001">Scrobble: Hasonló</String>
     <String id="33002">Scrobble: Szomszédok</String>
@@ -1534,6 +1588,7 @@
     <String id="34012">Átugrik</String>
     <String id="34013">Feltérképező üzemmód</String>
     <String id="34014">Elküldés a profile-hoz</String>
+    <String id="34015">Címkék/barátok újratöltése</String>
     <String id="34020">jelenlegi adatfolyam: </String>
     <String id="34030">Nincs címke</String>
     <String id="34031">Nincsenek barátok</String>
@@ -1552,6 +1607,9 @@
     <String id="34053">A kiválasztott adatfolyam visszajátszása nem lehetséges</String>
     <String id="34054">Rádió kapcsolatváltás nem lehetséges!</String>
     <String id="34055">Adatfolyam helyileg nem elérhető</String>
+    <String id="40001">Várakozás készenlétre</String>
+    <String id="40002">MediaPortal használaton kívül, de jelenleg várakozik.</String>
+    <String id="40003">Amikor az összes feladat befejeződött, a MediaPortal készenléti állapotra vált.</String>
     <String id="100035">Alap Központ</String>
     <String id="100507" prefix="My">Zene/Évek</String>
     <String id="100508" prefix="My ">Zene/Kikeresés/Eredmények</String>
@@ -1571,6 +1629,7 @@
     <String id="103011" prefix="My ">TV/Keret beállítások</String>
     <String id="104711" prefix="My ">Wikipedia</String>
     <String id="105900" prefix="My ">Bemutatók</String>
+    <String id="106666">A fogyaztás figyelő várakozik</String>
     <String id="107777" prefix="My ">Sudoku</String>
     <String id="107890" prefix="My ">Last.fm rádió</String>
     <String id="692">TV-Adatfolyamok</String>

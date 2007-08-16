@@ -894,6 +894,7 @@
     <String id="1112">Laisser conflit</String>
     <String id="1190">Zoom 14:9</String>
     <String id="1200">Installation rapide</String>
+    <String id="1300" prefix="Mes ">fichiers TV</String>
     <String id="1440" prefix="Mon ">Télétexte</String>
     <String id="1441">Télétexte</String>
     <String id="1442">Vitesse de défilement (hor.)</String>
@@ -1129,6 +1130,7 @@
     <String id="2514">Retour au texte</String>
     <String id="2515">Images</String>
     <String id="2516" prefix="Mon ">Wikipedia</String>
+    <String id="2599">Indeterminé</String>
     <String id="2600">Anglais</String>
     <String id="2601">Allemand</String>
     <String id="2602">Français</String>
