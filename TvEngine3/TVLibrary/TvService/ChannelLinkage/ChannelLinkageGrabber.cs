@@ -91,7 +91,7 @@ namespace TvService
         Channel chan = layer.GetChannel(map.IdLinkedChannel);
         IList details=chan.ReferringTuningDetail();
         TuningDetail detail=(TuningDetail)details[0];
-        lChannel.Name = chan.Name;
+        lChannel.Name = chan.DisplayName;
         lChannel.NetworkId = (ushort)detail.NetworkId;
         lChannel.TransportId = (ushort)detail.TransportId;
         lChannel.ServiceId = (ushort)detail.ServiceId;
@@ -118,7 +118,7 @@ namespace TvService
           Log.Info("Linked channel with name={0}, networkId={1}, transportId={2}, serviceId={3} not found", lChannel.Name, lChannel.NetworkId, lChannel.TransportId, lChannel.ServiceId);
           continue;
         }
-        dbLinkedChannnel.Name=lChannel.Name;
+        dbLinkedChannnel.DisplayName=lChannel.Name;
         dbLinkedChannnel.Persist();
         ChannelLinkageMap map = new ChannelLinkageMap(dbPortalChannel.IdChannel, dbLinkedChannnel.IdChannel);
         map.Persist();
