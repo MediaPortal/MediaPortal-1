@@ -157,7 +157,7 @@ namespace SetupTv.Sections
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;
-        ListViewItem item = new ListViewItem(channel.Name, imageIndex);
+        ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
         item.Tag = channel;
         items.Add(item);
       }
@@ -191,7 +191,7 @@ namespace SetupTv.Sections
         }
         if (isMapped) continue;
         Levenstein comparer = new Levenstein();
-        float result = comparer.getSimilarity(selectedChannel.Name, channel.Name);
+        float result = comparer.getSimilarity(selectedChannel.DisplayName, channel.DisplayName);
 
 
         int imageIndex = 1;
@@ -199,7 +199,7 @@ namespace SetupTv.Sections
           imageIndex = 2;
         ListViewItem item = new ListViewItem((result * 100f).ToString("f2") + "%", imageIndex);
         item.Tag = channel;
-        item.SubItems.Add(channel.Name);
+        item.SubItems.Add(channel.DisplayName);
         items.Add(item);
       }
       mpListViewMapped.Items.AddRange(items.ToArray());

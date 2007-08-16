@@ -174,7 +174,7 @@ namespace SetupTv.Sections
         }
         string line = "";
         string[] details = new string[4];
-        details[0] = ch.Name;
+        details[0] = ch.DisplayName;
         details[1] = "";
         details[2] = "";
         details[3] = "";

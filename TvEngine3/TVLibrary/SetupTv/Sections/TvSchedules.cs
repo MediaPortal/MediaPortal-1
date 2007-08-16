@@ -66,7 +66,7 @@ namespace SetupTv.Sections
       foreach (Schedule schedule in schedules)
       {
         ListViewItem item = new ListViewItem(schedule.Priority.ToString());
-        item.SubItems.Add(schedule.ReferencedChannel().Name);
+        item.SubItems.Add(schedule.ReferencedChannel().DisplayName);
         switch ((ScheduleRecordingType)schedule.ScheduleType)
         {
           case ScheduleRecordingType.Daily:

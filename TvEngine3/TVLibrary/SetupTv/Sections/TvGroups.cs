@@ -173,7 +173,7 @@ namespace SetupTv.Sections
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;
-        ListViewItem mappedItem = mpListViewMapped.Items.Add(channel.Name, imageIndex);
+        ListViewItem mappedItem = mpListViewMapped.Items.Add(channel.DisplayName, imageIndex);
 
         foreach (TuningDetail detail in channel.ReferringTuningDetail())
         {
@@ -245,7 +245,7 @@ namespace SetupTv.Sections
         int imageIndex = 1;
         if (map.ReferencedChannel().FreeToAir == false)
           imageIndex = 2;
-        ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().Name, imageIndex);
+        ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().DisplayName, imageIndex);
         newItem.Tag = map.ReferencedChannel();
 
 
