@@ -211,7 +211,7 @@ namespace SetupTv.Sections
 
       foreach (Channel channel in mpChannelList)
       {
-        TreeNode stationNode = new TreeNode(channel.Name);
+        TreeNode stationNode = new TreeNode(channel.DisplayName);
         treeViewChannels.Nodes.Add(stationNode);
       }
 
@@ -346,7 +346,7 @@ namespace SetupTv.Sections
             string channelName = string.Empty;
             try
             {
-              channelName = Channel.Retrieve(mapping.IdChannel).Name;
+              channelName = Channel.Retrieve(mapping.IdChannel).DisplayName;
               TreeNode channelNode = FindChannel(channelName);
               if (channelNode != null)
               {
