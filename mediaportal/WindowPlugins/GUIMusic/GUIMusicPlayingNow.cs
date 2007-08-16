@@ -862,21 +862,21 @@ namespace MediaPortal.GUI.Music
       Log.Info("GUIMusicPlayingNow: Set rating for song {0} to {1}", System.IO.Path.GetFileName(g_Player.CurrentFile), Convert.ToString(RatingValue));
     }
 
-    private MusicTag BuildMusicTagFromSong(Song Song_)
-    {
-      MusicTag tmpTag = new MusicTag();
+    //private MusicTag BuildMusicTagFromSong(Song Song_)
+    //{
+    //  MusicTag tmpTag = new MusicTag();
 
-      tmpTag.Title = Song_.Title;
-      tmpTag.Album = Song_.Album;
-      tmpTag.Artist = Song_.Artist;
-      tmpTag.Duration = Song_.Duration;
-      tmpTag.Genre = Song_.Genre;
-      tmpTag.Track = Song_.Track;
-      tmpTag.Year = Song_.Year;
-      tmpTag.Rating = Song_.Rating;
+    //  tmpTag.Title = Song_.Title;
+    //  tmpTag.Album = Song_.Album;
+    //  tmpTag.Artist = Song_.Artist;
+    //  tmpTag.Duration = Song_.Duration;
+    //  tmpTag.Genre = Song_.Genre;
+    //  tmpTag.Track = Song_.Track;
+    //  tmpTag.Year = Song_.Year;
+    //  tmpTag.Rating = Song_.Rating;
 
-      return tmpTag;
-    }
+    //  return tmpTag;
+    //}
 
     private string CleanTagString(string tagField)
     {
@@ -1234,7 +1234,7 @@ namespace MediaPortal.GUI.Music
       }
 
       tag = new MusicTag();
-      tag = BuildMusicTagFromSong(song);
+      tag = song.ToMusicTag();
 
       return tag;
     }
@@ -1361,7 +1361,7 @@ namespace MediaPortal.GUI.Music
         else if (bFound)
         {
           tag = new MusicTag();
-          tag = BuildMusicTagFromSong(song);
+          tag = song.ToMusicTag();
         }
 
       }// end of try
@@ -1439,7 +1439,7 @@ namespace MediaPortal.GUI.Music
       playlistItem.Description = sb.ToString();
       playlistItem.Duration = song.Duration;
 
-      playlistItem.MusicTag = BuildMusicTagFromSong(song);
+      playlistItem.MusicTag = song.ToMusicTag();
 
       if (enqueueNext_)
         PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Insert(playlistItem, PlaylistPlayer.CurrentSong);
@@ -1646,7 +1646,7 @@ namespace MediaPortal.GUI.Music
             //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].TimesPlayed) + ")";
             //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].Rating) + ")";
 
-            item.MusicTag = BuildMusicTagFromSong(AlbumTracks[i]);
+            item.MusicTag = AlbumTracks[i].ToMusicTag();
 
             facadeAlbumInfo.Add(item);
 
@@ -1748,7 +1748,7 @@ namespace MediaPortal.GUI.Music
             //item.Label = TagTracks[i].Artist;
             //item.Label2 = TagTracks[i].Title;
 
-            item.MusicTag = BuildMusicTagFromSong(TagTracks[i]);
+            item.MusicTag = TagTracks[i].ToMusicTag();
 
             facadeTagInfo.Add(item);
 

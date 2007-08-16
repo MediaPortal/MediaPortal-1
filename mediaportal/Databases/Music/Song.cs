@@ -25,6 +25,7 @@
 
 using System;
 using System.Text;
+using MediaPortal.TagReader;
 
 namespace MediaPortal.Music.Database
 {
@@ -313,6 +314,22 @@ namespace MediaPortal.Music.Database
       set { _lastFMMatch = value; }
     }
 
+    public MusicTag ToMusicTag()
+    {
+      MusicTag tmpTag = new MusicTag();
+
+      tmpTag.Title = this.Title;
+      tmpTag.Album = this.Album;
+      tmpTag.Artist = this.Artist;
+      tmpTag.Duration = this.Duration;
+      tmpTag.Genre = this.Genre;
+      tmpTag.Track = this.Track;
+      tmpTag.Year = this.Year;
+      tmpTag.Rating = this.Rating;
+
+      return tmpTag;
+    }
+
     public string ToShortString()
     {
       StringBuilder s = new StringBuilder();
@@ -334,9 +351,18 @@ namespace MediaPortal.Music.Database
       StringBuilder s = new StringBuilder();
 
       if (m_strTitle != "")
-        s.Append(m_strTitle + " - ");
+      {
+        s.Append(m_strTitle);
+        s.Append(" - ");
+      }
       if (m_strArtist != "")
         s.Append(m_strArtist);
+      if (m_iDuration > 0)
+      {
+        s.Append(" [");
+        s.Append(Util.Utils.SecondsToHMSString(m_iDuration));
+        s.Append("]");
+      }
       if (m_iTimedPlayed > 0)
         s.Append(" (played: " + Convert.ToString(m_iTimedPlayed) + " times)");
 

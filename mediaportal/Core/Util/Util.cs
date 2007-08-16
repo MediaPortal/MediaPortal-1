@@ -313,7 +313,7 @@ namespace MediaPortal.Util
     static public bool IsVideo(string strPath)
     {
       if (strPath == null)                           return false;
-      if (strPath.IndexOf(@"/last.mp3?") > 0)        return false;
+      if (IsLastFMStream(strPath))                   return false;
       if (strPath.ToLower().IndexOf("rtsp:") >= 0)   return true;
       if (strPath.ToLower().StartsWith("mms:")
         && strPath.ToLower().EndsWith(".ymvp"))      return true;
@@ -346,6 +346,19 @@ namespace MediaPortal.Util
       return false;
     }
 
+    static public bool IsLastFMStream(string aPath)
+    {
+      if (aPath.StartsWith(@"http://"))
+      {
+        if (aPath.IndexOf(@"/last.mp3?") > 0)
+          return true;
+        if (aPath.Contains(@"last.fm/"))
+          return true;
+      }
+
+      return false;
+    }
+
     static public bool IsAVStream(string strPath)
     {
       if (strPath == null) return false;
@@ -358,8 +371,8 @@ namespace MediaPortal.Util
 
     static public bool IsAudio(string strPath)
     {
-      if (strPath == null) return false;
-      if (strPath.IndexOf(@"/last.mp3?") > 0)      return true;
+      if (strPath == null)              return false;
+      if (IsLastFMStream(strPath))      return true;
       try
       {
         if (!System.IO.Path.HasExtension(strPath)) return false;

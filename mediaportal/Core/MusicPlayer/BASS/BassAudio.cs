@@ -1529,7 +1529,7 @@ namespace MediaPortal.Player
             _lastFMSongStartPosition = 0;
             Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_WMA_ASX, 1);   // Turn on parsing of ASX files
             // Create an Internet Stream
-            if (filePath.IndexOf(@"/last.mp3?") > 0)
+            if (Util.Utils.IsLastFMStream(filePath))
             {
               // we got a last.fm radio stream, so we need to setup a download proc to detect the SYNC between track changes
               _isLastFMRadio = true;

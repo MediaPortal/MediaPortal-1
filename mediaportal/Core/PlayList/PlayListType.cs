@@ -36,6 +36,7 @@ namespace MediaPortal.Playlists
         PLAYLIST_MUSIC_TEMP,
         PLAYLIST_VIDEO,
         PLAYLIST_VIDEO_TEMP,
-        PLAYLIST_MUSIC_VIDEO
+        PLAYLIST_MUSIC_VIDEO,
+        PLAYLIST_RADIO_STREAMS,
     };
 }

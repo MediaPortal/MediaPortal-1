@@ -128,6 +128,7 @@ namespace MediaPortal.Playlists
     PlayList _tempVideoPlayList = new PlayList();
     PlayList _emptyPlayList = new PlayList();
     PlayList _musicVideoPlayList = new PlayList();
+    PlayList _radioStreamPlayList = new PlayList();
     bool _repeatPlayList = true;
     string _currentPlaylistName = string.Empty;
 
@@ -452,8 +453,8 @@ namespace MediaPortal.Playlists
           _entriesNotFound++;
           Log.Error("PlaylistPlayer: *** unable to play - {0} - skipping track!", item.FileName);
 
-          // do not try to play the next movie in the list
-          if (MediaPortal.Util.Utils.IsVideo(item.FileName))
+          // do not try to play the next movie or internetstream in the list
+          if (Util.Utils.IsVideo(item.FileName) || Util.Utils.IsLastFMStream(item.FileName))
             skipmissing = false;
           else
             skipmissing = true;
@@ -527,6 +528,7 @@ namespace MediaPortal.Playlists
         case PlayListType.PLAYLIST_VIDEO: return _videoPlayList;
         case PlayListType.PLAYLIST_VIDEO_TEMP: return _tempVideoPlayList;
         case PlayListType.PLAYLIST_MUSIC_VIDEO: return _musicVideoPlayList;
+        case PlayListType.PLAYLIST_RADIO_STREAMS: return _radioStreamPlayList;
         default:
           _emptyPlayList.Clear();
           return _emptyPlayList;

@@ -312,7 +312,7 @@ namespace MediaPortal.Player
       if (MediaPortal.Util.Utils.IsAudio(fileName))
       {
         // choose player for Internet radio streams 
-        if (fileName.IndexOf(@"/last.mp3?") > 0)
+        if (Util.Utils.IsLastFMStream(fileName))
         {
           switch (streamPlayer)
           {
@@ -475,7 +475,7 @@ namespace MediaPortal.Player
           int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
 
           // choose player for Internet radio streams 
-          if (fileName.IndexOf(@"/last.mp3?") > 0)
+          if (Util.Utils.IsLastFMStream(fileName))
           {
             switch (streamPlayer)
             {

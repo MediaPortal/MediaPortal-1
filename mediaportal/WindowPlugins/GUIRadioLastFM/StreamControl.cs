@@ -36,6 +36,7 @@ using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.TagReader;
 using MediaPortal.Utils.Web;
+using MediaPortal.Playlists;
 
 
 namespace MediaPortal.GUI.RADIOLASTFM
@@ -78,8 +79,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public delegate void RadioSettingsFailed();
     public event RadioSettingsFailed RadioSettingsError;
-    
-    
+
+    private PlayListPlayer PlaylistPlayer = null;
     //private AudioscrobblerUtils InfoScrobbler = null;
 
     private string _currentRadioURL = String.Empty;
@@ -109,7 +110,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       AudioscrobblerBase.RadioHandshakeSuccess += new AudioscrobblerBase.RadioHandshakeCompleted(OnRadioLoginSuccess);
       AudioscrobblerBase.RadioHandshakeError += new AudioscrobblerBase.RadioHandshakeFailed(OnRadioLoginFailed);
-      BassMusicPlayer.Player.LastFMSync += new BassAudioEngine.LastFMSyncReceived(OnLastFMSyncReceived);
+      
+      PlaylistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
     #region Examples
@@ -326,6 +328,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
     public bool PlayStream()
     {
       GUIWaitCursor.Show();
+
+      if (g_Player.Playing)      
+        g_Player.Stop();
+      
       _currentState = StreamPlaybackState.starting;
       // often the buffer is too slow for the playback to start
       for (int i = 0; i < 3; i++)
@@ -336,8 +342,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           _currentState = StreamPlaybackState.streaming;
           ToggleRecordToProfile(_recordToProfile);
           ToggleDiscoveryMode(_discoveryMode);
-
-          SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
+          
           return true;
         }
       }
@@ -346,15 +351,43 @@ namespace MediaPortal.GUI.RADIOLASTFM
       return false;
     }
 
-    public void LoadConfig()
+    public bool PlayPlayListStreams(string aStreamURL)
     {
-        LoadSettings();
+      GUIWaitCursor.Show();
+
+      if (g_Player.Playing)
+        g_Player.Stop();      
+
+      _currentState = StreamPlaybackState.starting;
+
+      PlaylistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_RADIO_STREAMS;
+      PlayList Playlist = PlaylistPlayer.GetPlaylist(PlaylistPlayer.CurrentPlaylistType);
+
+      if (Playlist == null)
+        return false;
+
+      PlaylistPlayer.Play(aStreamURL);
+
+      GUIWaitCursor.Hide();
+      _currentState = StreamPlaybackState.streaming;
+      ToggleRecordToProfile(_recordToProfile);
+      ToggleDiscoveryMode(_discoveryMode);
+      
+      return true;
     }
 
-    public void UpdateNowPlaying()
+    public void LoadConfig()
     {
-      // give the site some time to update and sync with the stream switch
-      SendDelayedCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession, 4750);
+      LoadSettings();
+    }
+
+    public void UpdateNowPlaying(bool delayed)
+    {
+      if (delayed)
+        // give the site some time to update and sync with the stream switch
+        SendDelayedCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession, 4750);
+      else
+        SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
     }
 
     public bool ToggleRecordToProfile(bool submitTracks_)
@@ -709,10 +742,17 @@ namespace MediaPortal.GUI.RADIOLASTFM
           if (StreamSongChanged != null)
             StreamSongChanged(CurrentSongTag, DateTime.Now);
 
+          GUIPropertyManager.SetProperty("#Play.Current.Artist", CurrentSongTag.Artist);
+          GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentSongTag.Album);
+          GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentSongTag.Title);
+          GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentSongTag.Genre);
+          GUIPropertyManager.SetProperty("#Play.Current.Thumb", CurrentSongTag.Comment);
+          GUIPropertyManager.SetProperty("#trackduration", Util.Utils.SecondsToHMSString(CurrentSongTag.Duration));
+
           // Send msg for Ballon Tip on song change
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_BALLONTIP_SONGCHANGE, 0, 0, 0, 0, 0, null);
-          msg.Label = GUIPropertyManager.GetProperty("#Play.Current.Title");
-          msg.Label2 = GUIPropertyManager.GetProperty("#Play.Current.Artist") + " (" + GUIPropertyManager.GetProperty("#Play.Current.Album") + ")";
+          msg.Label = CurrentSongTag.Title;
+          msg.Label2 = CurrentSongTag.Artist + " (" + CurrentSongTag.Album + ")";
           msg.Param1 = 5;
           GUIGraphicsContext.SendMessage(msg);
           msg = null;
@@ -727,13 +767,5 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
     }
     #endregion
-    
-    #region Utils
-    private void OnLastFMSyncReceived(object trash, DateTime syncTime)
-    {
-      SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
-    }
-    #endregion
-
   }
 }
