@@ -60,9 +60,23 @@ namespace MediaPortal.DeployTool.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap average_small {
+            get {
+                object obj = ResourceManager.GetObject("average small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap omt_logo_header {
             get {
                 object obj = ResourceManager.GetObject("omt_logo_header", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap smart_small {
+            get {
+                object obj = ResourceManager.GetObject("smart small", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

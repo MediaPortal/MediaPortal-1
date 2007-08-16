@@ -32,7 +32,9 @@ namespace MediaPortal.DeployTool
 {
   public enum DialogType
   {
+    Welcome,
     BASE_INSTALLATION_TYPE,
+    CUSTOM_INSTALLATION_TYPE,
     DBMSType,
     DBMSSettings,
     MPSettings,
@@ -96,8 +98,14 @@ namespace MediaPortal.DeployTool
       {
         switch (dlgType)
         {
+          case DialogType.Welcome:
+            dlg = (DeployDialog)new WelcomeDlg();
+            break;
           case DialogType.BASE_INSTALLATION_TYPE:
             dlg = (DeployDialog)new BaseInstallationTypeDlg();
+            break;
+          case DialogType.CUSTOM_INSTALLATION_TYPE:
+            dlg = (DeployDialog)new CustomInstallationTypeDlg();
             break;
           case DialogType.DBMSType:
             dlg = (DeployDialog)new DBMSTypeDlg();

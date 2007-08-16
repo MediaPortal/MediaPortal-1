@@ -109,7 +109,7 @@ namespace MediaPortal.DeployTool
       this.splitContainer2.Panel2.Controls.Add(this.nextButton);
       this.splitContainer2.Panel2.Controls.Add(this.backButton);
       this.splitContainer2.Size = new System.Drawing.Size(666, 290);
-      this.splitContainer2.SplitterDistance = 251;
+      this.splitContainer2.SplitterDistance = 250;
       this.splitContainer2.TabIndex = 0;
       // 
       // nextButton
@@ -119,17 +119,17 @@ namespace MediaPortal.DeployTool
       this.nextButton.Name = "nextButton";
       this.nextButton.Size = new System.Drawing.Size(75, 23);
       this.nextButton.TabIndex = 1;
-      this.nextButton.Text = "next -->";
+      this.nextButton.Text = "next";
       this.nextButton.UseVisualStyleBackColor = true;
       this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
       // 
       // backButton
       // 
-      this.backButton.Location = new System.Drawing.Point(26, 5);
+      this.backButton.Location = new System.Drawing.Point(478, 5);
       this.backButton.Name = "backButton";
       this.backButton.Size = new System.Drawing.Size(75, 23);
       this.backButton.TabIndex = 0;
-      this.backButton.Text = "<-- back";
+      this.backButton.Text = " back";
       this.backButton.UseVisualStyleBackColor = true;
       this.backButton.Click += new System.EventHandler(this.backButton_Click);
       // 

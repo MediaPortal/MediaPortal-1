@@ -28,10 +28,16 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      this.rbClient = new System.Windows.Forms.RadioButton();
-      this.rbTvServerSlave = new System.Windows.Forms.RadioButton();
-      this.rbTvServerMaster = new System.Windows.Forms.RadioButton();
-      this.rbSingleSeat = new System.Windows.Forms.RadioButton();
+      this.label1 = new System.Windows.Forms.Label();
+      this.label2 = new System.Windows.Forms.Label();
+      this.label3 = new System.Windows.Forms.Label();
+      this.label4 = new System.Windows.Forms.Label();
+      this.pictureBox2 = new System.Windows.Forms.PictureBox();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
+      this.rbOneClick = new System.Windows.Forms.RadioButton();
+      this.rbAdvanced = new System.Windows.Forms.RadioButton();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // HeaderLabel
@@ -39,65 +45,109 @@ namespace MediaPortal.DeployTool
       this.HeaderLabel.Size = new System.Drawing.Size(273, 13);
       this.HeaderLabel.Text = "Please choose which setup you want to install:";
       // 
-      // rbClient
+      // label1
       // 
-      this.rbClient.AutoSize = true;
-      this.rbClient.Location = new System.Drawing.Point(7, 100);
-      this.rbClient.Name = "rbClient";
-      this.rbClient.Size = new System.Drawing.Size(235, 17);
-      this.rbClient.TabIndex = 8;
-      this.rbClient.TabStop = true;
-      this.rbClient.Text = "MediaPortal Client (connects to a TV-Server)";
-      this.rbClient.UseVisualStyleBackColor = true;
+      this.label1.AutoSize = true;
+      this.label1.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label1.Location = new System.Drawing.Point(88, 44);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(156, 16);
+      this.label1.TabIndex = 1;
+      this.label1.Text = "One Click Installation";
       // 
-      // rbTvServerSlave
+      // label2
       // 
-      this.rbTvServerSlave.AutoSize = true;
-      this.rbTvServerSlave.Location = new System.Drawing.Point(7, 77);
-      this.rbTvServerSlave.Name = "rbTvServerSlave";
-      this.rbTvServerSlave.Size = new System.Drawing.Size(283, 17);
-      this.rbTvServerSlave.TabIndex = 7;
-      this.rbTvServerSlave.TabStop = true;
-      this.rbTvServerSlave.Text = "MediaPortal dedicated TV-Server (without SQL Server)";
-      this.rbTvServerSlave.UseVisualStyleBackColor = true;
+      this.label2.Location = new System.Drawing.Point(91, 64);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(321, 46);
+      this.label2.TabIndex = 2;
+      this.label2.Text = "All required applications will be installed into their default locations and with" +
+          " the default settings. The database password is \"MediaPortal\".";
       // 
-      // rbTvServerMaster
+      // label3
       // 
-      this.rbTvServerMaster.AutoSize = true;
-      this.rbTvServerMaster.Location = new System.Drawing.Point(7, 54);
-      this.rbTvServerMaster.Name = "rbTvServerMaster";
-      this.rbTvServerMaster.Size = new System.Drawing.Size(334, 17);
-      this.rbTvServerMaster.TabIndex = 6;
-      this.rbTvServerMaster.TabStop = true;
-      this.rbTvServerMaster.Text = "MediaPortal dedicated TV-Server (master server with SQL Server)";
-      this.rbTvServerMaster.UseVisualStyleBackColor = true;
+      this.label3.Location = new System.Drawing.Point(91, 179);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(321, 46);
+      this.label3.TabIndex = 6;
+      this.label3.Text = "The advanced installation allows you to install Server/Client setups and to speci" +
+          "fy installation locations and other settings";
       // 
-      // rbSingleSeat
+      // label4
       // 
-      this.rbSingleSeat.AutoSize = true;
-      this.rbSingleSeat.Location = new System.Drawing.Point(7, 31);
-      this.rbSingleSeat.Name = "rbSingleSeat";
-      this.rbSingleSeat.Size = new System.Drawing.Size(249, 17);
-      this.rbSingleSeat.TabIndex = 5;
-      this.rbSingleSeat.TabStop = true;
-      this.rbSingleSeat.Text = "MediaPortal Singleseat installation (stand alone)";
-      this.rbSingleSeat.UseVisualStyleBackColor = true;
+      this.label4.AutoSize = true;
+      this.label4.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label4.Location = new System.Drawing.Point(88, 159);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(159, 16);
+      this.label4.TabIndex = 5;
+      this.label4.Text = "Advanced Installation";
+      // 
+      // pictureBox2
+      // 
+      this.pictureBox2.Image = global::MediaPortal.DeployTool.Properties.Resources.smart_small;
+      this.pictureBox2.Location = new System.Drawing.Point(16, 159);
+      this.pictureBox2.Name = "pictureBox2";
+      this.pictureBox2.Size = new System.Drawing.Size(69, 93);
+      this.pictureBox2.TabIndex = 8;
+      this.pictureBox2.TabStop = false;
+      // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = global::MediaPortal.DeployTool.Properties.Resources.average_small;
+      this.pictureBox1.Location = new System.Drawing.Point(16, 44);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(69, 93);
+      this.pictureBox1.TabIndex = 4;
+      this.pictureBox1.TabStop = false;
+      // 
+      // rbOneClick
+      // 
+      this.rbOneClick.AutoSize = true;
+      this.rbOneClick.Location = new System.Drawing.Point(94, 115);
+      this.rbOneClick.Name = "rbOneClick";
+      this.rbOneClick.Size = new System.Drawing.Size(146, 17);
+      this.rbOneClick.TabIndex = 9;
+      this.rbOneClick.TabStop = true;
+      this.rbOneClick.Text = "Do a one click installation";
+      this.rbOneClick.UseVisualStyleBackColor = true;
+      // 
+      // rbAdvanced
+      // 
+      this.rbAdvanced.AutoSize = true;
+      this.rbAdvanced.Location = new System.Drawing.Point(94, 231);
+      this.rbAdvanced.Name = "rbAdvanced";
+      this.rbAdvanced.Size = new System.Drawing.Size(157, 17);
+      this.rbAdvanced.TabIndex = 10;
+      this.rbAdvanced.TabStop = true;
+      this.rbAdvanced.Text = "Do an advanced installation";
+      this.rbAdvanced.UseVisualStyleBackColor = true;
       // 
       // BaseInstallationTypeDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.rbClient);
-      this.Controls.Add(this.rbTvServerSlave);
-      this.Controls.Add(this.rbTvServerMaster);
-      this.Controls.Add(this.rbSingleSeat);
+      this.Controls.Add(this.rbAdvanced);
+      this.Controls.Add(this.rbOneClick);
+      this.Controls.Add(this.pictureBox2);
+      this.Controls.Add(this.label3);
+      this.Controls.Add(this.label4);
+      this.Controls.Add(this.pictureBox1);
+      this.Controls.Add(this.label2);
+      this.Controls.Add(this.label1);
       this.Name = "BaseInstallationTypeDlg";
-      this.Size = new System.Drawing.Size(359, 172);
+      this.Size = new System.Drawing.Size(542, 266);
+      this.Controls.SetChildIndex(this.label1, 0);
+      this.Controls.SetChildIndex(this.label2, 0);
+      this.Controls.SetChildIndex(this.pictureBox1, 0);
       this.Controls.SetChildIndex(this.HeaderLabel, 0);
-      this.Controls.SetChildIndex(this.rbSingleSeat, 0);
-      this.Controls.SetChildIndex(this.rbTvServerMaster, 0);
-      this.Controls.SetChildIndex(this.rbTvServerSlave, 0);
-      this.Controls.SetChildIndex(this.rbClient, 0);
+      this.Controls.SetChildIndex(this.label4, 0);
+      this.Controls.SetChildIndex(this.label3, 0);
+      this.Controls.SetChildIndex(this.pictureBox2, 0);
+      this.Controls.SetChildIndex(this.rbOneClick, 0);
+      this.Controls.SetChildIndex(this.rbAdvanced, 0);
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -105,9 +155,14 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
-    private System.Windows.Forms.RadioButton rbClient;
-    private System.Windows.Forms.RadioButton rbTvServerSlave;
-    private System.Windows.Forms.RadioButton rbTvServerMaster;
-    private System.Windows.Forms.RadioButton rbSingleSeat;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.PictureBox pictureBox1;
+    private System.Windows.Forms.PictureBox pictureBox2;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.RadioButton rbOneClick;
+    private System.Windows.Forms.RadioButton rbAdvanced;
+
   }
 }

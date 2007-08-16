@@ -34,23 +34,28 @@ using System.Collections.Specialized;
 
 namespace MediaPortal.DeployTool
 {
-  public partial class BaseInstallationTypeDlg : DeployDialog, IDeployDialog
+  public partial class CustomInstallationTypeDlg : DeployDialog, IDeployDialog
   {
-    public BaseInstallationTypeDlg()
+    public CustomInstallationTypeDlg()
     {
       InitializeComponent();
-      type = DialogType.BASE_INSTALLATION_TYPE;
-      rbOneClick.Checked = true;
+      type = DialogType.CUSTOM_INSTALLATION_TYPE;
+      rbSingleSeat.Checked = true;
     }
 
     #region IDeplayDialog interface
     public override DeployDialog GetNextDialog()
     {
       DialogFlowHandler.Instance.ResetHistory();
-      if (rbOneClick.Checked)
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
-      else
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.CUSTOM_INSTALLATION_TYPE);
+      if (rbSingleSeat.Checked)
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSType);
+      if (rbTvServerMaster.Checked)
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSType);
+      if (rbTvServerSlave.Checked)
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.TvServerSettings);
+      if (rbClient.Checked)
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
+      return null;
     }
     public override bool SettingsValid()
     {
@@ -58,15 +63,25 @@ namespace MediaPortal.DeployTool
     }
     public override void SetProperties()
     {
-      if (rbOneClick.Checked)
+      if (rbSingleSeat.Checked)
       {
-        InstallationProperties.Instance.Set("InstallTypeHeader","One Click Installation");
+        InstallationProperties.Instance.Set("InstallTypeHeader", rbSingleSeat.Text);
         InstallationProperties.Instance.Set("InstallType", "singleseat");
-        InstallationProperties.Instance.Set("DBMSType", "mssql");
-        InstallationProperties.Instance.Set("DBMSDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Microsoft SQL Server");
-        InstallationProperties.Instance.Set("DBMSPassword","MediaPortal");
-        InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
-        InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
+      }
+      else if (rbTvServerMaster.Checked)
+      {
+        InstallationProperties.Instance.Set("InstallTypeHeader", rbTvServerMaster.Text);
+        InstallationProperties.Instance.Set("InstallType", "tvserver_master");
+      }
+      else if (rbTvServerSlave.Checked)
+      {
+        InstallationProperties.Instance.Set("InstallTypeHeader", rbTvServerSlave.Text);
+        InstallationProperties.Instance.Set("InstallType", "tvserver_slave");
+      }
+      else
+      {
+        InstallationProperties.Instance.Set("InstallTypeHeader", rbClient.Text);
+        InstallationProperties.Instance.Set("InstallType", "client");
       }
     }
     #endregion

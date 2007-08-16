@@ -99,6 +99,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\CustomInstallationTypeDlg.resx">
+      <DependentUpon>CustomInstallationTypeDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\FinishedDlg.resx">
       <DependentUpon>FinishedDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -123,6 +127,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>TvServerSettingsDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\WelcomeDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WelcomeDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -142,6 +150,12 @@
     </Compile>
     <Compile Include="Sections\BaseInstallationTypeDlg.Designer.cs">
       <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\CustomInstallationTypeDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\CustomInstallationTypeDlg.Designer.cs">
+      <DependentUpon>CustomInstallationTypeDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\FinishedDlg.cs">
       <SubType>UserControl</SubType>
@@ -179,10 +193,22 @@
     <Compile Include="Sections\TvServerSettingsDlg.Designer.cs">
       <DependentUpon>TvServerSettingsDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\WelcomeDlg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\WelcomeDlg.Designer.cs">
+      <DependentUpon>WelcomeDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\omt_logo_header.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\average small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\smart small.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

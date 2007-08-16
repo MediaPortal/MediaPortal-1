@@ -72,7 +72,7 @@ namespace MediaPortal.DeployTool
       this.textBoxPassword.PasswordChar = '*';
       this.textBoxPassword.Size = new System.Drawing.Size(132, 20);
       this.textBoxPassword.TabIndex = 8;
-      this.textBoxPassword.Text = "mediaportal";
+      this.textBoxPassword.Text = "MediaPortal";
       // 
       // label4
       // 
@@ -88,9 +88,9 @@ namespace MediaPortal.DeployTool
       this.label3.AutoSize = true;
       this.label3.Location = new System.Drawing.Point(7, 110);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(372, 13);
+      this.label3.Size = new System.Drawing.Size(374, 13);
       this.label3.TabIndex = 9;
-      this.label3.Text = "(The password for the admin-user of the SQL-Server. Default is \"mediaportal\")";
+      this.label3.Text = "(The password for the admin-user of the SQL-Server. Default is \"MediaPortal\")";
       // 
       // buttonBrowse
       // 

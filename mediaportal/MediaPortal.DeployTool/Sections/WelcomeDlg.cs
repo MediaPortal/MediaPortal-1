@@ -22,7 +22,6 @@
  */
 
 #endregion
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,27 +29,22 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using System.Collections.Specialized;
 
 namespace MediaPortal.DeployTool
 {
-  public partial class BaseInstallationTypeDlg : DeployDialog, IDeployDialog
+  public partial class WelcomeDlg : DeployDialog, IDeployDialog
   {
-    public BaseInstallationTypeDlg()
+    public WelcomeDlg()
     {
       InitializeComponent();
-      type = DialogType.BASE_INSTALLATION_TYPE;
-      rbOneClick.Checked = true;
+      type = DialogType.Welcome;
+      cbLanguage.SelectedIndex = 0;
     }
 
     #region IDeplayDialog interface
     public override DeployDialog GetNextDialog()
     {
-      DialogFlowHandler.Instance.ResetHistory();
-      if (rbOneClick.Checked)
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
-      else
-        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.CUSTOM_INSTALLATION_TYPE);
+      return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE);
     }
     public override bool SettingsValid()
     {
@@ -58,16 +52,6 @@ namespace MediaPortal.DeployTool
     }
     public override void SetProperties()
     {
-      if (rbOneClick.Checked)
-      {
-        InstallationProperties.Instance.Set("InstallTypeHeader","One Click Installation");
-        InstallationProperties.Instance.Set("InstallType", "singleseat");
-        InstallationProperties.Instance.Set("DBMSType", "mssql");
-        InstallationProperties.Instance.Set("DBMSDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Microsoft SQL Server");
-        InstallationProperties.Instance.Set("DBMSPassword","MediaPortal");
-        InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
-        InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
-      }
     }
     #endregion
   }

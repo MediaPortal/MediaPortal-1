@@ -41,7 +41,7 @@ namespace MediaPortal.DeployTool
     public DeployTool()
     {
       InitializeComponent();
-      _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE);
+      _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(DialogType.Welcome);
       splitContainer2.Panel1.Controls.Add(_currentDialog);
       backButton.Visible = false;
       InstallationProperties.Instance.Add("InstallTypeHeader", "Choose installation type");
