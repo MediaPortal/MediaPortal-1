@@ -145,6 +145,8 @@
     <Compile Include="Threading\WorkEventArgs.cs" />
     <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="Time\BasicTime.cs" />
+    <Compile Include="Time\TimeZoneDate.cs" />
+    <Compile Include="Time\TimeZoneInfo.cs" />
     <Compile Include="Time\TimeRange.cs" />
     <Compile Include="Time\WorldDateTime.cs" />
     <Compile Include="Time\WorldTimeZone.cs" />

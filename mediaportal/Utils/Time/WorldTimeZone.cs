@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using Microsoft.Win32;
@@ -50,38 +51,38 @@ namespace MediaPortal.Utils.Time
           "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones",
           "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Time Zones" };
 
-    private static Hashtable _TimeZoneList = null;
-    private static Hashtable _TimeZoneNames = null;
+    private static Dictionary<string, TimeZoneInfo> _TimeZoneList = null;
+    private static Dictionary<string, string> _TimeZoneNames = null;
 
     private TimeZoneInfo _TimeZone;
 
     private bool _bHasDlt;
     #endregion
 
-    #region Structs
-    private struct TimeZoneDate
-    {
-      public int Month;
-      public DayOfWeek DayOfWeek;
-      public int WeekOfMonth;
-      public TimeSpan TimeOfDay;
-    }
+    //#region Structs
+    //private struct TimeZoneDate
+    //{
+    //  public int Month;
+    //  public DayOfWeek DayOfWeek;
+    //  public int WeekOfMonth;
+    //  public TimeSpan TimeOfDay;
+    //}
 
-    private struct TimeZoneInfo
-    {
-      //public int Index;
-      public string Display;
-      public string StdName;
-      public string DltName;
+    //private struct TimeZoneInfo
+    //{
+    //  //public int Index;
+    //  public string Display;
+    //  public string StdName;
+    //  public string DltName;
 
-      public Int32 Offset;
-      public Int32 StdOffset;
-      public Int32 DltOffset;
+    //  public Int32 Offset;
+    //  public Int32 StdOffset;
+    //  public Int32 DltOffset;
 
-      public TimeZoneDate StdDate;
-      public TimeZoneDate DltDate;
-    }
-    #endregion
+    //  public TimeZoneDate StdDate;
+    //  public TimeZoneDate DltDate;
+    //}
+    //#endregion
 
     #region Constructors/Destructors
     /// <summary>
@@ -98,10 +99,10 @@ namespace MediaPortal.Utils.Time
       if (_TimeZoneList == null)
         LoadRegistryTimeZones();
 
-      if (_TimeZoneNames.Contains(TimeZone))
-        TimeZoneName = (String)_TimeZoneNames[TimeZone];
+      if (_TimeZoneNames.ContainsKey(TimeZone))
+        TimeZoneName = _TimeZoneNames[TimeZone];
 
-      if (_TimeZoneList.Contains(TimeZone))
+      if (_TimeZoneList.ContainsKey(TimeZone))
         TimeZoneName = TimeZone;
 
       if (TimeZoneName == string.Empty)
@@ -149,6 +150,19 @@ namespace MediaPortal.Utils.Time
         time = new DateTime(time.Ticks, DateTimeKind.Unspecified);
 
       return time.Add(GetUtcOffset(time) - System.TimeZone.CurrentTimeZone.GetUtcOffset(time));
+    }
+
+    public static List<TimeZoneInfo> GetTimeZones()
+    {
+      if (_TimeZoneList == null)
+        LoadRegistryTimeZones();
+
+      List<TimeZoneInfo> timezonelist = new List<TimeZoneInfo>();
+
+      foreach (TimeZoneInfo timezone in _TimeZoneList.Values)
+        timezonelist.Add(timezone);
+
+      return timezonelist;
     }
     #endregion
 
@@ -205,7 +219,7 @@ namespace MediaPortal.Utils.Time
     /// <summary>
     /// Loads the registry time zones.
     /// </summary>
-    private void LoadRegistryTimeZones()
+    private static void LoadRegistryTimeZones()
     {
       RegistryKey RegKeyRoot = null;
 
@@ -220,8 +234,8 @@ namespace MediaPortal.Utils.Time
 
       if (RegKeyRoot != null)
       {
-        _TimeZoneList = new Hashtable();
-        _TimeZoneNames = new Hashtable();
+        _TimeZoneList = new Dictionary<string, TimeZoneInfo>();
+        _TimeZoneNames = new Dictionary<string, string>();
         string[] timeZoneKeys = RegKeyRoot.GetSubKeyNames();
 
         for (int i = 0; i < timeZoneKeys.Length; i++)
@@ -268,7 +282,7 @@ namespace MediaPortal.Utils.Time
     /// <param name="bytes">The bytes.</param>
     /// <param name="index">The index.</param>
     /// <returns>TimeZoneDate</returns>
-    private TimeZoneDate GetDate(byte[] bytes, Int32 index)
+    private static TimeZoneDate GetDate(byte[] bytes, Int32 index)
     {
       TimeZoneDate TimeChange = new TimeZoneDate();
 
