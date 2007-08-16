@@ -32,6 +32,7 @@ namespace TvService
     public string title;
     public string description;
     public string genre;
+    public string channelName;
   }
   class MatroskaTagHandler
   {
@@ -72,6 +73,9 @@ namespace TvService
           case "GENRE":
             info.genre = simpleTag.ChildNodes[1].InnerText;
             break;
+          case "CHANNEL_NAME":
+            info.channelName = simpleTag.ChildNodes[1].InnerText;
+            break;
         }
       }
       return info;
@@ -87,6 +91,7 @@ namespace TvService
       tagNode.AppendChild(AddSimpleTag("TITLE", taginfo.title, doc));
       tagNode.AppendChild(AddSimpleTag("COMMENT", taginfo.description, doc));
       tagNode.AppendChild(AddSimpleTag("GENRE", taginfo.genre, doc));
+      tagNode.AppendChild(AddSimpleTag("CHANNEL_NAME", taginfo.channelName, doc));
       tagsNode.AppendChild(tagNode);
       doc.AppendChild(tagsNode);
       doc.InsertBefore(xmldecl, tagsNode);
