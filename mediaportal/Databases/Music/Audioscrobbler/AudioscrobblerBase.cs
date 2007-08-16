@@ -428,8 +428,8 @@ namespace MediaPortal.Music.Database
 
       if (ReasonForHandshake != HandshakeType.Init && !_signedIn)
       {
-        Log.Warn("AudioscrobblerBase: {0}", "Diconnected - not attempting handshake");
-        workerFailed(ReasonForHandshake, DateTime.MinValue, new Exception("Diconnected!"));
+        Log.Warn("AudioscrobblerBase: {0}", "Disconnected - not attempting handshake");
+        workerFailed(ReasonForHandshake, DateTime.MinValue, new Exception("Disconnected!"));
       }
       else
       {
@@ -476,7 +476,7 @@ namespace MediaPortal.Music.Database
         }
         else
         {
-          Log.Warn("AudioscrobblerBase: {0}", "Handshake failed");
+          //Log.Warn("AudioscrobblerBase: {0}", "Handshake failed");
           workerFailed(ReasonForHandshake, lastHandshake, errorReason);
         }
       }
