@@ -1,3 +1,24 @@
+/* 
+ *	Copyright (C) 2005-2007 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +32,7 @@ namespace MediaPortal.GUI.Video
     public string title;
     public string description;
     public string genre;
+    public string channelName;
   }
   class MatroskaTagHandler
   {
@@ -51,6 +73,9 @@ namespace MediaPortal.GUI.Video
           case "GENRE":
             info.genre = simpleTag.ChildNodes[1].InnerText;
             break;
+          case "CHANNEL_NAME":
+            info.channelName = simpleTag.ChildNodes[1].InnerText;
+            break;
         }
       }
       return info;
@@ -66,6 +91,7 @@ namespace MediaPortal.GUI.Video
       tagNode.AppendChild(AddSimpleTag("TITLE", taginfo.title, doc));
       tagNode.AppendChild(AddSimpleTag("COMMENT", taginfo.description, doc));
       tagNode.AppendChild(AddSimpleTag("GENRE", taginfo.genre, doc));
+      tagNode.AppendChild(AddSimpleTag("CHANNEL_NAME", taginfo.channelName, doc));
       tagsNode.AppendChild(tagNode);
       doc.AppendChild(tagsNode);
       doc.InsertBefore(xmldecl, tagsNode);

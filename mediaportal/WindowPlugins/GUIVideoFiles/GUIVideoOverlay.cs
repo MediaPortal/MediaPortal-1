@@ -319,6 +319,14 @@ namespace MediaPortal.GUI.Video
         movieDetails.Title = info.title;
         movieDetails.Plot = info.description;
         movieDetails.Genre = info.genre;
+        GUIPropertyManager.SetProperty("#Play.Current.Channel", info.channelName);
+        string logo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, info.channelName);
+        if (!System.IO.File.Exists(logo))
+        {
+          logo = "defaultVideoBig.png";
+        }
+        GUIPropertyManager.SetProperty("#Play.Current.Thumb", logo);
+        _thumbLogo = logo;
         bMovieInfoFound = true;
       }
       if (bMovieInfoFound)
