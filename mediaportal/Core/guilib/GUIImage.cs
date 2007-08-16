@@ -535,6 +535,7 @@ namespace MediaPortal.GUI.Library
           }
           //get each frame of the texture
           int iStartCopy = 0;
+          CachedTexture.Frame[] _saveList = null;
           if (_listTextures == null)
           {
             _listTextures = new CachedTexture.Frame[frameCount];
@@ -544,6 +545,8 @@ namespace MediaPortal.GUI.Library
             int newLength = _listTextures.Length + frameCount;
             iStartCopy = _listTextures.Length;
             CachedTexture.Frame[] _newList = new CachedTexture.Frame[newLength];
+            _saveList = new CachedTexture.Frame[_listTextures.Length];
+            _listTextures.CopyTo(_saveList, 0);
             _listTextures.CopyTo(_newList, 0);
             _listTextures = new CachedTexture.Frame[newLength];
             _newList.CopyTo(_listTextures, 0);
@@ -552,6 +555,17 @@ namespace MediaPortal.GUI.Library
           {
             _listTextures[i + iStartCopy] = GUITextureManager.GetTexture(fileName, i, out _textureWidth, out _textureHeight);//,m_pPalette);
             if (_listTextures[i + iStartCopy] != null) _listTextures[i + iStartCopy].Disposed += new EventHandler(OnImageDisposedEvent);
+            else
+            {
+              Log.Debug("GUIImage.AllocResources nullreference - Filename = (" + fileName + ") i="+i.ToString()+" FrameCount=" +frameCount.ToString());
+              if (_saveList != null)
+              {
+                _listTextures = new CachedTexture.Frame[_saveList.Length];
+                _saveList.CopyTo(_listTextures, 0);
+              }
+              else _listTextures = null;
+              break;
+            }
           }
         }
         // Set state to render the image
