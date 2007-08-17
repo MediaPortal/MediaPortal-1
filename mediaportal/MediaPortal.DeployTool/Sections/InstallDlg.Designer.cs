@@ -29,7 +29,7 @@ namespace MediaPortal.DeployTool
     private void InitializeComponent()
     {
       this.buttonInstall = new System.Windows.Forms.Button();
-      this.label1 = new System.Windows.Forms.Label();
+      this.labelHeading = new System.Windows.Forms.Label();
       this.listView = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
@@ -39,22 +39,22 @@ namespace MediaPortal.DeployTool
       // buttonInstall
       // 
       this.buttonInstall.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonInstall.Location = new System.Drawing.Point(377, 25);
+      this.buttonInstall.Location = new System.Drawing.Point(529, 22);
       this.buttonInstall.Name = "buttonInstall";
-      this.buttonInstall.Size = new System.Drawing.Size(75, 23);
+      this.buttonInstall.Size = new System.Drawing.Size(88, 23);
       this.buttonInstall.TabIndex = 14;
       this.buttonInstall.Text = "install";
       this.buttonInstall.UseVisualStyleBackColor = true;
       this.buttonInstall.Click += new System.EventHandler(this.buttonInstall_Click);
       // 
-      // label1
+      // labelHeading
       // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(4, 30);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(367, 13);
-      this.label1.TabIndex = 11;
-      this.label1.Text = "Press the \"install\" button to perform all necessary actions to install your setup" +
+      this.labelHeading.AutoSize = true;
+      this.labelHeading.Location = new System.Drawing.Point(4, 30);
+      this.labelHeading.Name = "labelHeading";
+      this.labelHeading.Size = new System.Drawing.Size(367, 13);
+      this.labelHeading.TabIndex = 11;
+      this.labelHeading.Text = "Press the \"install\" button to perform all necessary actions to install your setup" +
           "";
       // 
       // listView
@@ -84,18 +84,18 @@ namespace MediaPortal.DeployTool
       // 
       this.columnHeader3.Text = "Action";
       // 
-      // RequirementsDlg
+      // InstallDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.listView);
       this.Controls.Add(this.buttonInstall);
-      this.Controls.Add(this.label1);
-      this.Name = "RequirementsDlg";
+      this.Controls.Add(this.labelHeading);
+      this.Name = "InstallDlg";
       this.Size = new System.Drawing.Size(620, 241);
       this.ParentChanged += new System.EventHandler(this.RequirementsDlg_ParentChanged);
-      this.Controls.SetChildIndex(this.HeaderLabel, 0);
-      this.Controls.SetChildIndex(this.label1, 0);
+      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
+      this.Controls.SetChildIndex(this.labelHeading, 0);
       this.Controls.SetChildIndex(this.buttonInstall, 0);
       this.Controls.SetChildIndex(this.listView, 0);
       this.ResumeLayout(false);
@@ -106,7 +106,7 @@ namespace MediaPortal.DeployTool
     #endregion
 
     private System.Windows.Forms.Button buttonInstall;
-    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label labelHeading;
     private System.Windows.Forms.ListView listView;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader2;

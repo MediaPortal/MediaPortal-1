@@ -31,6 +31,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using System.Collections.Specialized;
+using System.Resources;
 
 namespace MediaPortal.DeployTool
 {
@@ -40,13 +41,23 @@ namespace MediaPortal.DeployTool
     {
       InitializeComponent();
       type = DialogType.BASE_INSTALLATION_TYPE;
+      labelSectionHeader.Text = "";
       rbOneClick.Checked = true;
+      UpdateUI();
     }
 
     #region IDeplayDialog interface
+    public override void UpdateUI()
+    {
+      labelOneClickCaption.Text = Localizer.Instance.GetString("BaseInstallation_labelOneClickCaption");
+      labelOneClickDesc.Text = Localizer.Instance.GetString("BaseInstallation_labelOneClickDesc");
+      rbOneClick.Text = Localizer.Instance.GetString("BaseInstallation_rbOneClick");
+      labelAdvancedCaption.Text = Localizer.Instance.GetString("BaseInstallation_labelAdvancedCaption");
+      labelAdvancedDesc.Text = Localizer.Instance.GetString("BaseInstallation_labelAdvancedDesc");
+      rbAdvanced.Text = Localizer.Instance.GetString("BaseInstallation_rbAdvanced");
+    }
     public override DeployDialog GetNextDialog()
     {
-      DialogFlowHandler.Instance.ResetHistory();
       if (rbOneClick.Checked)
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Installation);
       else
@@ -60,7 +71,7 @@ namespace MediaPortal.DeployTool
     {
       if (rbOneClick.Checked)
       {
-        InstallationProperties.Instance.Set("InstallTypeHeader","One Click Installation");
+        InstallationProperties.Instance.Set("InstallTypeHeader",Localizer.Instance.GetString("BaseInstallation_rbOneClick"));
         InstallationProperties.Instance.Set("InstallType", "singleseat");
         InstallationProperties.Instance.Set("DBMSType", "mssql");
         InstallationProperties.Instance.Set("DBMSDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Microsoft SQL Server");

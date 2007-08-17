@@ -28,9 +28,44 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
+using System.Resources;
+using System.Globalization;
 
 namespace MediaPortal.DeployTool
 {
+  public sealed class Localizer
+  {
+    #region Singleton implementation
+    static readonly Localizer _instance = new Localizer();
+    static Localizer()
+    {
+    }
+    Localizer()
+    {
+      _rscMan = new ResourceManager("MediaPortal.DeployTool.MediaPortal.DeployTool", System.Reflection.Assembly.GetExecutingAssembly());
+    }
+    public static Localizer Instance
+    {
+      get
+      {
+        return _instance;
+      }
+    }
+    #endregion
+
+    #region Variables
+    private ResourceManager _rscMan;
+    #endregion
+
+    public string GetString(string id)
+    {
+      return _rscMan.GetString(id);
+    }
+    public void SwitchCulture(string cultureId)
+    {
+      System.Threading.Thread.CurrentThread.CurrentUICulture = new CultureInfo(cultureId);
+    }
+  }
   class Utils
   {
     #region DialogHelper
@@ -87,5 +122,6 @@ namespace MediaPortal.DeployTool
       zipStream.Close();
       zip.Close();
     }
+
   }
 }

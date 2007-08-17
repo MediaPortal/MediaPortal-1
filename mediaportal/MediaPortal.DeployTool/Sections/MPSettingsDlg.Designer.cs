@@ -30,20 +30,16 @@ namespace MediaPortal.DeployTool
     {
       this.buttonBrowse = new System.Windows.Forms.Button();
       this.textBoxDir = new System.Windows.Forms.TextBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
+      this.labelInstDir = new System.Windows.Forms.Label();
+      this.labelHeading = new System.Windows.Forms.Label();
       this.SuspendLayout();
-      // 
-      // HeaderLabel
-      // 
-      this.HeaderLabel.Size = new System.Drawing.Size(202, 13);
       // 
       // buttonBrowse
       // 
       this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBrowse.Location = new System.Drawing.Point(536, 53);
+      this.buttonBrowse.Location = new System.Drawing.Point(441, 71);
       this.buttonBrowse.Name = "buttonBrowse";
-      this.buttonBrowse.Size = new System.Drawing.Size(75, 23);
+      this.buttonBrowse.Size = new System.Drawing.Size(99, 23);
       this.buttonBrowse.TabIndex = 14;
       this.buttonBrowse.Text = "browse";
       this.buttonBrowse.UseVisualStyleBackColor = true;
@@ -53,28 +49,28 @@ namespace MediaPortal.DeployTool
       // 
       this.textBoxDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxDir.Location = new System.Drawing.Point(112, 54);
+      this.textBoxDir.Location = new System.Drawing.Point(9, 73);
       this.textBoxDir.Name = "textBoxDir";
       this.textBoxDir.Size = new System.Drawing.Size(417, 20);
       this.textBoxDir.TabIndex = 13;
       // 
-      // label2
+      // labelInstDir
       // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(6, 57);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(109, 13);
-      this.label2.TabIndex = 12;
-      this.label2.Text = "MediaPortal install dir:";
+      this.labelInstDir.AutoSize = true;
+      this.labelInstDir.Location = new System.Drawing.Point(6, 57);
+      this.labelInstDir.Name = "labelInstDir";
+      this.labelInstDir.Size = new System.Drawing.Size(109, 13);
+      this.labelInstDir.TabIndex = 12;
+      this.labelInstDir.Text = "MediaPortal install dir:";
       // 
-      // label1
+      // labelHeading
       // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(4, 30);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(297, 13);
-      this.label1.TabIndex = 11;
-      this.label1.Text = "Please set the needed options for the MediaPortal installation:";
+      this.labelHeading.AutoSize = true;
+      this.labelHeading.Location = new System.Drawing.Point(4, 30);
+      this.labelHeading.Name = "labelHeading";
+      this.labelHeading.Size = new System.Drawing.Size(297, 13);
+      this.labelHeading.TabIndex = 11;
+      this.labelHeading.Text = "Please set the needed options for the MediaPortal installation:";
       // 
       // MPSettingsDlg
       // 
@@ -82,13 +78,13 @@ namespace MediaPortal.DeployTool
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.buttonBrowse);
       this.Controls.Add(this.textBoxDir);
-      this.Controls.Add(this.label2);
-      this.Controls.Add(this.label1);
+      this.Controls.Add(this.labelInstDir);
+      this.Controls.Add(this.labelHeading);
       this.Name = "MPSettingsDlg";
       this.Size = new System.Drawing.Size(620, 172);
-      this.Controls.SetChildIndex(this.HeaderLabel, 0);
-      this.Controls.SetChildIndex(this.label1, 0);
-      this.Controls.SetChildIndex(this.label2, 0);
+      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
+      this.Controls.SetChildIndex(this.labelHeading, 0);
+      this.Controls.SetChildIndex(this.labelInstDir, 0);
       this.Controls.SetChildIndex(this.textBoxDir, 0);
       this.Controls.SetChildIndex(this.buttonBrowse, 0);
       this.ResumeLayout(false);
@@ -100,7 +96,7 @@ namespace MediaPortal.DeployTool
 
     private System.Windows.Forms.Button buttonBrowse;
     private System.Windows.Forms.TextBox textBoxDir;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label labelInstDir;
+    private System.Windows.Forms.Label labelHeading;
   }
 }

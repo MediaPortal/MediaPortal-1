@@ -42,9 +42,18 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type=DialogType.Installation;
       PopulateListView();
+      UpdateUI();
     }
 
     #region IDeplayDialog interface
+    public override void UpdateUI()
+    {
+      labelHeading.Text = Localizer.Instance.GetString("Install_labelHeading");
+      buttonInstall.Text = Localizer.Instance.GetString("Install_buttonInstall");
+      listView.Columns[0].Text = Localizer.Instance.GetString("Install_colApplication");
+      listView.Columns[1].Text = Localizer.Instance.GetString("Install_colState");
+      listView.Columns[2].Text = Localizer.Instance.GetString("Install_colAction");
+    }
     public override DeployDialog GetNextDialog()
     {
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Finished);
@@ -53,7 +62,7 @@ namespace MediaPortal.DeployTool
     {
       if (!InstallationComplete())
       {
-        Utils.ErrorDlg("Not all required application are installed.");
+        Utils.ErrorDlg(Localizer.Instance.GetString("Install_errAppsMissing"));
         return false;
       }
       else
@@ -88,22 +97,25 @@ namespace MediaPortal.DeployTool
       switch (result.state)
       {
         case CheckState.INSTALLED:
-          item.SubItems.Add("Installed");
-          item.SubItems.Add("<nothing>");
+          item.SubItems.Add(Localizer.Instance.GetString("Install_stateInstalled"));
+          item.SubItems.Add(Localizer.Instance.GetString("Install_actionNothing"));
+          item.ForeColor = System.Drawing.Color.Green;
           break;
         case CheckState.NOT_INSTALLED:
-          item.SubItems.Add("Not installed");
+          item.SubItems.Add(Localizer.Instance.GetString("Install_stateNotInstalled"));
           if (result.needsDownload)
-            item.SubItems.Add("Download->install");
+            item.SubItems.Add(Localizer.Instance.GetString("Install_actionDownloadInstall"));
           else
-            item.SubItems.Add("Install");
+            item.SubItems.Add(Localizer.Instance.GetString("Install_actionInstall"));
+          item.ForeColor = System.Drawing.Color.Red;
           break;
         case CheckState.VERSION_MISMATCH:
-          item.SubItems.Add("Another version is already installed");
+          item.SubItems.Add(Localizer.Instance.GetString("Install_stateVersionMismatch"));
           if (result.needsDownload)
-            item.SubItems.Add("Uninstall previous->download->install");
+            item.SubItems.Add(Localizer.Instance.GetString("Install_actionUninstallDownloadInstall"));
           else
-            item.SubItems.Add("Uninstall previous->Install");
+            item.SubItems.Add(Localizer.Instance.GetString("Install_actionUninstallInstall"));
+          item.ForeColor = System.Drawing.Color.Purple;
           break;
       }
     }
@@ -156,45 +168,46 @@ namespace MediaPortal.DeployTool
           case CheckState.NOT_INSTALLED:
             if (result.needsDownload)
             {
-              item.SubItems[1].Text="Downloading...";
+              item.SubItems[1].Text=Localizer.Instance.GetString("Install_msgDownloading");
               Update();
               if (!package.Download())
               {
-                Utils.ErrorDlg("Failed to download package [" + package.GetDisplayName() + "]");
+                
+                Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errInstallFailed"),package.GetDisplayName()));
                 return false;
               }
             }
-            item.SubItems[1].Text="Installing...";
+            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgInstalling");
             Update();
             if (!package.Install())
             {
-              Utils.ErrorDlg("Failed to install package [" + package.GetDisplayName() + "]");
+              Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errInstallFailed"), package.GetDisplayName()));
               return false;
             }
             break;
           case CheckState.VERSION_MISMATCH:
-            item.SubItems[1].Text="Uninstalling...";
+            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgUninstalling");
             Update();
             if (!package.UnInstall())
             {
-              Utils.ErrorDlg("Failed to uninstall package [" + package.GetDisplayName() + "]");
+              Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errUinstallFailed"), package.GetDisplayName()));
               return false;
             }
             if (result.needsDownload)
             {
-              item.SubItems[1].Text="Downloading...";
+              item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgDownloading");
               Update();
               if (!package.Download())
               {
-                Utils.ErrorDlg("Failed to download package [" + package.GetDisplayName() + "]");
+                Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errDownloadFailed"), package.GetDisplayName()));
                 return false;
               }
             }
-            item.SubItems[1].Text="Installing...";
+            item.SubItems[1].Text = Localizer.Instance.GetString("Install_msgInstalling");
             Update();
             if (!package.Install())
             {
-              Utils.ErrorDlg("Failed to install package [" + package.GetDisplayName() + "]");
+              Utils.ErrorDlg(string.Format(Localizer.Instance.GetString("Install_errInstallFailed"), package.GetDisplayName()));
               return false;
             }
             break;

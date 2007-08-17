@@ -28,38 +28,38 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
+      this.labelSourceURL = new System.Windows.Forms.Label();
+      this.labelTargetFile = new System.Windows.Forms.Label();
       this.labelURL = new System.Windows.Forms.Label();
       this.labelTarget = new System.Windows.Forms.Label();
       this.progressBar = new System.Windows.Forms.ProgressBar();
       this.buttonCancel = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
-      // label1
+      // labelSourceURL
       // 
-      this.label1.AutoSize = true;
-      this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label1.Location = new System.Drawing.Point(13, 13);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(96, 13);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Download URL:";
+      this.labelSourceURL.AutoSize = true;
+      this.labelSourceURL.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelSourceURL.Location = new System.Drawing.Point(13, 13);
+      this.labelSourceURL.Name = "labelSourceURL";
+      this.labelSourceURL.Size = new System.Drawing.Size(96, 13);
+      this.labelSourceURL.TabIndex = 0;
+      this.labelSourceURL.Text = "Download URL:";
       // 
-      // label2
+      // labelTargetFile
       // 
-      this.label2.AutoSize = true;
-      this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label2.Location = new System.Drawing.Point(13, 40);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(48, 13);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "Target:";
+      this.labelTargetFile.AutoSize = true;
+      this.labelTargetFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelTargetFile.Location = new System.Drawing.Point(13, 57);
+      this.labelTargetFile.Name = "labelTargetFile";
+      this.labelTargetFile.Size = new System.Drawing.Size(48, 13);
+      this.labelTargetFile.TabIndex = 1;
+      this.labelTargetFile.Text = "Target:";
       // 
       // labelURL
       // 
       this.labelURL.AutoSize = true;
-      this.labelURL.Location = new System.Drawing.Point(115, 13);
+      this.labelURL.Location = new System.Drawing.Point(13, 35);
       this.labelURL.Name = "labelURL";
       this.labelURL.Size = new System.Drawing.Size(35, 13);
       this.labelURL.TabIndex = 2;
@@ -68,7 +68,7 @@ namespace MediaPortal.DeployTool
       // labelTarget
       // 
       this.labelTarget.AutoSize = true;
-      this.labelTarget.Location = new System.Drawing.Point(115, 40);
+      this.labelTarget.Location = new System.Drawing.Point(13, 80);
       this.labelTarget.Name = "labelTarget";
       this.labelTarget.Size = new System.Drawing.Size(35, 13);
       this.labelTarget.TabIndex = 3;
@@ -76,16 +76,16 @@ namespace MediaPortal.DeployTool
       // 
       // progressBar
       // 
-      this.progressBar.Location = new System.Drawing.Point(16, 75);
+      this.progressBar.Location = new System.Drawing.Point(16, 110);
       this.progressBar.Name = "progressBar";
       this.progressBar.Size = new System.Drawing.Size(454, 23);
       this.progressBar.TabIndex = 4;
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Location = new System.Drawing.Point(208, 111);
+      this.buttonCancel.Location = new System.Drawing.Point(204, 146);
       this.buttonCancel.Name = "buttonCancel";
-      this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+      this.buttonCancel.Size = new System.Drawing.Size(98, 23);
       this.buttonCancel.TabIndex = 5;
       this.buttonCancel.Text = "Cancel";
       this.buttonCancel.UseVisualStyleBackColor = true;
@@ -95,14 +95,14 @@ namespace MediaPortal.DeployTool
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(494, 146);
+      this.ClientSize = new System.Drawing.Size(494, 196);
       this.ControlBox = false;
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.progressBar);
       this.Controls.Add(this.labelTarget);
       this.Controls.Add(this.labelURL);
-      this.Controls.Add(this.label2);
-      this.Controls.Add(this.label1);
+      this.Controls.Add(this.labelTargetFile);
+      this.Controls.Add(this.labelSourceURL);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.MaximizeBox = false;
       this.MinimizeBox = false;
@@ -118,8 +118,8 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label labelSourceURL;
+    private System.Windows.Forms.Label labelTargetFile;
     private System.Windows.Forms.Label labelURL;
     private System.Windows.Forms.Label labelTarget;
     private System.Windows.Forms.ProgressBar progressBar;

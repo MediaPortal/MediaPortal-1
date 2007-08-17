@@ -28,41 +28,41 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
+      this.labelHeading = new System.Windows.Forms.Label();
+      this.labelFile = new System.Windows.Forms.Label();
       this.labelTargetFile = new System.Windows.Forms.Label();
       this.linkURL = new System.Windows.Forms.LinkLabel();
-      this.label3 = new System.Windows.Forms.Label();
+      this.labelDir = new System.Windows.Forms.Label();
       this.labelTargetDir = new System.Windows.Forms.Label();
       this.linkDir = new System.Windows.Forms.LinkLabel();
-      this.label4 = new System.Windows.Forms.Label();
+      this.labelDesc = new System.Windows.Forms.Label();
       this.buttonContinue = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
-      // label1
+      // labelHeading
       // 
-      this.label1.AutoSize = true;
-      this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label1.Location = new System.Drawing.Point(13, 13);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(284, 13);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "You have to manually download the following file";
+      this.labelHeading.AutoSize = true;
+      this.labelHeading.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+      this.labelHeading.Location = new System.Drawing.Point(13, 13);
+      this.labelHeading.Name = "labelHeading";
+      this.labelHeading.Size = new System.Drawing.Size(284, 13);
+      this.labelHeading.TabIndex = 0;
+      this.labelHeading.Text = "You have to manually download the following file";
       // 
-      // label2
+      // labelFile
       // 
-      this.label2.AutoSize = true;
-      this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label2.Location = new System.Drawing.Point(13, 38);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(61, 13);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "Filename:";
+      this.labelFile.AutoSize = true;
+      this.labelFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
+      this.labelFile.Location = new System.Drawing.Point(13, 38);
+      this.labelFile.Name = "labelFile";
+      this.labelFile.Size = new System.Drawing.Size(61, 13);
+      this.labelFile.TabIndex = 1;
+      this.labelFile.Text = "Filename:";
       // 
       // labelTargetFile
       // 
       this.labelTargetFile.AutoSize = true;
-      this.labelTargetFile.Location = new System.Drawing.Point(78, 39);
+      this.labelTargetFile.Location = new System.Drawing.Point(82, 39);
       this.labelTargetFile.Name = "labelTargetFile";
       this.labelTargetFile.Size = new System.Drawing.Size(35, 13);
       this.labelTargetFile.TabIndex = 2;
@@ -71,7 +71,7 @@ namespace MediaPortal.DeployTool
       // linkURL
       // 
       this.linkURL.AutoSize = true;
-      this.linkURL.Location = new System.Drawing.Point(81, 56);
+      this.linkURL.Location = new System.Drawing.Point(85, 56);
       this.linkURL.Name = "linkURL";
       this.linkURL.Size = new System.Drawing.Size(23, 13);
       this.linkURL.TabIndex = 3;
@@ -79,15 +79,15 @@ namespace MediaPortal.DeployTool
       this.linkURL.Text = "link";
       this.linkURL.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkURL_LinkClicked);
       // 
-      // label3
+      // labelDir
       // 
-      this.label3.AutoSize = true;
-      this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label3.Location = new System.Drawing.Point(13, 76);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(101, 13);
-      this.label3.TabIndex = 4;
-      this.label3.Text = "Target directory:";
+      this.labelDir.AutoSize = true;
+      this.labelDir.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
+      this.labelDir.Location = new System.Drawing.Point(13, 76);
+      this.labelDir.Name = "labelDir";
+      this.labelDir.Size = new System.Drawing.Size(101, 13);
+      this.labelDir.TabIndex = 4;
+      this.labelDir.Text = "Target directory:";
       // 
       // labelTargetDir
       // 
@@ -109,22 +109,22 @@ namespace MediaPortal.DeployTool
       this.linkDir.Text = "Open directory";
       this.linkDir.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkDir_LinkClicked);
       // 
-      // label4
+      // labelDesc
       // 
-      this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(13, 131);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(222, 13);
-      this.label4.TabIndex = 7;
-      this.label4.Text = "If you finished the download press \"Continue\"";
+      this.labelDesc.AutoSize = true;
+      this.labelDesc.Location = new System.Drawing.Point(13, 131);
+      this.labelDesc.Name = "labelDesc";
+      this.labelDesc.Size = new System.Drawing.Size(312, 13);
+      this.labelDesc.TabIndex = 7;
+      this.labelDesc.Text = "Hit \"continue\", when you finished downloading the requested file";
       // 
       // buttonContinue
       // 
-      this.buttonContinue.Location = new System.Drawing.Point(232, 162);
+      this.buttonContinue.Location = new System.Drawing.Point(227, 162);
       this.buttonContinue.Name = "buttonContinue";
-      this.buttonContinue.Size = new System.Drawing.Size(75, 23);
+      this.buttonContinue.Size = new System.Drawing.Size(102, 23);
       this.buttonContinue.TabIndex = 8;
-      this.buttonContinue.Text = "Continue";
+      this.buttonContinue.Text = "continue";
       this.buttonContinue.UseVisualStyleBackColor = true;
       this.buttonContinue.Click += new System.EventHandler(this.buttonContinue_Click);
       // 
@@ -134,17 +134,17 @@ namespace MediaPortal.DeployTool
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(576, 200);
       this.Controls.Add(this.buttonContinue);
-      this.Controls.Add(this.label4);
+      this.Controls.Add(this.labelDesc);
       this.Controls.Add(this.linkDir);
       this.Controls.Add(this.labelTargetDir);
-      this.Controls.Add(this.label3);
+      this.Controls.Add(this.labelDir);
       this.Controls.Add(this.linkURL);
       this.Controls.Add(this.labelTargetFile);
-      this.Controls.Add(this.label2);
-      this.Controls.Add(this.label1);
+      this.Controls.Add(this.labelFile);
+      this.Controls.Add(this.labelHeading);
       this.Name = "ManualDownload";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "Manual download";
+      this.Text = "Maual download";
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -152,14 +152,14 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label labelHeading;
+    private System.Windows.Forms.Label labelFile;
     private System.Windows.Forms.Label labelTargetFile;
     private System.Windows.Forms.LinkLabel linkURL;
-    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Label labelDir;
     private System.Windows.Forms.Label labelTargetDir;
     private System.Windows.Forms.LinkLabel linkDir;
-    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.Label labelDesc;
     private System.Windows.Forms.Button buttonContinue;
   }
 }

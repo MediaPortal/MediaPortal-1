@@ -42,9 +42,16 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type=DialogType.MPSettings;
       textBoxDir.Text=Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal";
+      UpdateUI();
     }
 
     #region IDeplayDialog interface
+    public override void UpdateUI()
+    {
+      labelHeading.Text = Localizer.Instance.GetString("MPSettings_labelHeading");
+      labelInstDir.Text = Localizer.Instance.GetString("MPSettings_labelInstDir");
+      buttonBrowse.Text = Localizer.Instance.GetString("MPSettings_buttonBrowse");
+    }
     public override DeployDialog GetNextDialog()
     {
       if (InstallationProperties.Instance["InstallType"] == "client")
@@ -56,7 +63,7 @@ namespace MediaPortal.DeployTool
     {
       if (!Utils.CheckTargetDir(textBoxDir.Text))
       {
-        Utils.ErrorDlg("You have to supply a valid installation path for MediaPortal.");
+        Utils.ErrorDlg(Localizer.Instance.GetString("MPSettings_errInvalidPath"));
         return false;
       }
       return true;
@@ -70,7 +77,7 @@ namespace MediaPortal.DeployTool
     private void buttonBrowse_Click(object sender, EventArgs e)
     {
       FolderBrowserDialog dlg = new FolderBrowserDialog();
-      dlg.Description = "Select the installation folder for MediaPortal";
+      dlg.Description = Localizer.Instance.GetString("MPSettings_msgSelectDir");
       dlg.SelectedPath = textBoxDir.Text;
       if (dlg.ShowDialog() == DialogResult.OK)
         textBoxDir.Text = dlg.SelectedPath;

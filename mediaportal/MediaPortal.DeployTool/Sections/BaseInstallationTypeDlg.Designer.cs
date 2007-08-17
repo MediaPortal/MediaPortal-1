@@ -28,10 +28,10 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label4 = new System.Windows.Forms.Label();
+      this.labelOneClickCaption = new System.Windows.Forms.Label();
+      this.labelOneClickDesc = new System.Windows.Forms.Label();
+      this.labelAdvancedDesc = new System.Windows.Forms.Label();
+      this.labelAdvancedCaption = new System.Windows.Forms.Label();
       this.pictureBox2 = new System.Windows.Forms.PictureBox();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.rbOneClick = new System.Windows.Forms.RadioButton();
@@ -40,53 +40,53 @@ namespace MediaPortal.DeployTool
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
-      // HeaderLabel
+      // labelSectionHeader
       // 
-      this.HeaderLabel.Size = new System.Drawing.Size(273, 13);
-      this.HeaderLabel.Text = "Please choose which setup you want to install:";
+      this.labelSectionHeader.Size = new System.Drawing.Size(273, 13);
+      this.labelSectionHeader.Text = "Please choose which setup you want to install:";
       // 
-      // label1
+      // labelOneClickCaption
       // 
-      this.label1.AutoSize = true;
-      this.label1.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label1.Location = new System.Drawing.Point(88, 44);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(156, 16);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "One Click Installation";
+      this.labelOneClickCaption.AutoSize = true;
+      this.labelOneClickCaption.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelOneClickCaption.Location = new System.Drawing.Point(88, 25);
+      this.labelOneClickCaption.Name = "labelOneClickCaption";
+      this.labelOneClickCaption.Size = new System.Drawing.Size(156, 16);
+      this.labelOneClickCaption.TabIndex = 1;
+      this.labelOneClickCaption.Text = "One Click Installation";
       // 
-      // label2
+      // labelOneClickDesc
       // 
-      this.label2.Location = new System.Drawing.Point(91, 64);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(321, 46);
-      this.label2.TabIndex = 2;
-      this.label2.Text = "All required applications will be installed into their default locations and with" +
+      this.labelOneClickDesc.Location = new System.Drawing.Point(91, 45);
+      this.labelOneClickDesc.Name = "labelOneClickDesc";
+      this.labelOneClickDesc.Size = new System.Drawing.Size(321, 46);
+      this.labelOneClickDesc.TabIndex = 2;
+      this.labelOneClickDesc.Text = "All required applications will be installed into their default locations and with" +
           " the default settings. The database password is \"MediaPortal\".";
       // 
-      // label3
+      // labelAdvancedDesc
       // 
-      this.label3.Location = new System.Drawing.Point(91, 179);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(321, 46);
-      this.label3.TabIndex = 6;
-      this.label3.Text = "The advanced installation allows you to install Server/Client setups and to speci" +
+      this.labelAdvancedDesc.Location = new System.Drawing.Point(91, 160);
+      this.labelAdvancedDesc.Name = "labelAdvancedDesc";
+      this.labelAdvancedDesc.Size = new System.Drawing.Size(321, 46);
+      this.labelAdvancedDesc.TabIndex = 6;
+      this.labelAdvancedDesc.Text = "The advanced installation allows you to install Server/Client setups and to speci" +
           "fy installation locations and other settings";
       // 
-      // label4
+      // labelAdvancedCaption
       // 
-      this.label4.AutoSize = true;
-      this.label4.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label4.Location = new System.Drawing.Point(88, 159);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(159, 16);
-      this.label4.TabIndex = 5;
-      this.label4.Text = "Advanced Installation";
+      this.labelAdvancedCaption.AutoSize = true;
+      this.labelAdvancedCaption.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelAdvancedCaption.Location = new System.Drawing.Point(88, 140);
+      this.labelAdvancedCaption.Name = "labelAdvancedCaption";
+      this.labelAdvancedCaption.Size = new System.Drawing.Size(159, 16);
+      this.labelAdvancedCaption.TabIndex = 5;
+      this.labelAdvancedCaption.Text = "Advanced Installation";
       // 
       // pictureBox2
       // 
-      this.pictureBox2.Image = global::MediaPortal.DeployTool.Properties.Resources.smart_small;
-      this.pictureBox2.Location = new System.Drawing.Point(16, 159);
+      this.pictureBox2.Image = global::MediaPortal.DeployTool.Images.smart_small;
+      this.pictureBox2.Location = new System.Drawing.Point(16, 140);
       this.pictureBox2.Name = "pictureBox2";
       this.pictureBox2.Size = new System.Drawing.Size(69, 93);
       this.pictureBox2.TabIndex = 8;
@@ -94,8 +94,8 @@ namespace MediaPortal.DeployTool
       // 
       // pictureBox1
       // 
-      this.pictureBox1.Image = global::MediaPortal.DeployTool.Properties.Resources.average_small;
-      this.pictureBox1.Location = new System.Drawing.Point(16, 44);
+      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.average_small;
+      this.pictureBox1.Location = new System.Drawing.Point(16, 25);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(69, 93);
       this.pictureBox1.TabIndex = 4;
@@ -104,7 +104,7 @@ namespace MediaPortal.DeployTool
       // rbOneClick
       // 
       this.rbOneClick.AutoSize = true;
-      this.rbOneClick.Location = new System.Drawing.Point(94, 115);
+      this.rbOneClick.Location = new System.Drawing.Point(94, 96);
       this.rbOneClick.Name = "rbOneClick";
       this.rbOneClick.Size = new System.Drawing.Size(146, 17);
       this.rbOneClick.TabIndex = 9;
@@ -115,7 +115,7 @@ namespace MediaPortal.DeployTool
       // rbAdvanced
       // 
       this.rbAdvanced.AutoSize = true;
-      this.rbAdvanced.Location = new System.Drawing.Point(94, 231);
+      this.rbAdvanced.Location = new System.Drawing.Point(94, 212);
       this.rbAdvanced.Name = "rbAdvanced";
       this.rbAdvanced.Size = new System.Drawing.Size(157, 17);
       this.rbAdvanced.TabIndex = 10;
@@ -130,19 +130,19 @@ namespace MediaPortal.DeployTool
       this.Controls.Add(this.rbAdvanced);
       this.Controls.Add(this.rbOneClick);
       this.Controls.Add(this.pictureBox2);
-      this.Controls.Add(this.label3);
-      this.Controls.Add(this.label4);
+      this.Controls.Add(this.labelAdvancedDesc);
+      this.Controls.Add(this.labelAdvancedCaption);
       this.Controls.Add(this.pictureBox1);
-      this.Controls.Add(this.label2);
-      this.Controls.Add(this.label1);
+      this.Controls.Add(this.labelOneClickDesc);
+      this.Controls.Add(this.labelOneClickCaption);
       this.Name = "BaseInstallationTypeDlg";
       this.Size = new System.Drawing.Size(542, 266);
-      this.Controls.SetChildIndex(this.label1, 0);
-      this.Controls.SetChildIndex(this.label2, 0);
+      this.Controls.SetChildIndex(this.labelOneClickCaption, 0);
+      this.Controls.SetChildIndex(this.labelOneClickDesc, 0);
       this.Controls.SetChildIndex(this.pictureBox1, 0);
-      this.Controls.SetChildIndex(this.HeaderLabel, 0);
-      this.Controls.SetChildIndex(this.label4, 0);
-      this.Controls.SetChildIndex(this.label3, 0);
+      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
+      this.Controls.SetChildIndex(this.labelAdvancedCaption, 0);
+      this.Controls.SetChildIndex(this.labelAdvancedDesc, 0);
       this.Controls.SetChildIndex(this.pictureBox2, 0);
       this.Controls.SetChildIndex(this.rbOneClick, 0);
       this.Controls.SetChildIndex(this.rbAdvanced, 0);
@@ -155,12 +155,12 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label labelOneClickCaption;
+    private System.Windows.Forms.Label labelOneClickDesc;
     private System.Windows.Forms.PictureBox pictureBox1;
     private System.Windows.Forms.PictureBox pictureBox2;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.Label labelAdvancedDesc;
+    private System.Windows.Forms.Label labelAdvancedCaption;
     private System.Windows.Forms.RadioButton rbOneClick;
     private System.Windows.Forms.RadioButton rbAdvanced;
 

@@ -41,9 +41,19 @@ namespace MediaPortal.DeployTool
     {
       InitializeComponent();
       type=DialogType.Finished;
+      UpdateUI();
     }
 
     #region IDeplayDialog interface
+    public override void UpdateUI()
+    {
+      labelHeading1.Text = Localizer.Instance.GetString("Finished_labelHeading1");
+      labelHeading2.Text = Localizer.Instance.GetString("Finished_labelHeading2");
+      labelHeading3.Text = Localizer.Instance.GetString("Finished_labelHeading3");
+      linkHomepage.Text = Localizer.Instance.GetString("Finished_linkHomepage");
+      linkForum.Text = Localizer.Instance.GetString("Finished_linkForum");
+      linkWiki.Text = Localizer.Instance.GetString("Finished_linkWiki");
+    }
     public override DeployDialog GetNextDialog()
     {
       return null;
@@ -75,5 +85,10 @@ namespace MediaPortal.DeployTool
       OpenURL("http://wiki.team-mediaportal.com");
     }
     #endregion
+
+    private void label2_Click(object sender, EventArgs e)
+    {
+
+    }
   }
 }

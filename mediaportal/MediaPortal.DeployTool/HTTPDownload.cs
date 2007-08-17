@@ -15,6 +15,14 @@ namespace MediaPortal.DeployTool
     private WebClient client = null;
     private string _target;
 
+    private void UpdateUI()
+    {
+      this.Text = Localizer.Instance.GetString("HTTPDownload_Title");
+      labelSourceURL.Text = Localizer.Instance.GetString("HTTPDownload_labelSourceURL");
+      labelTargetFile.Text = Localizer.Instance.GetString("HTTPDownload_labelTargetFile");
+      buttonCancel.Text = Localizer.Instance.GetString("HTTPDownload_buttonCancel");
+    }
+
     public HTTPDownload()
     {
       InitializeComponent();
@@ -38,7 +46,7 @@ namespace MediaPortal.DeployTool
       }
       catch
       {
-        Utils.ErrorDlg("There was an error downloading the file.");
+        Utils.ErrorDlg(Localizer.Instance.GetString("HTTPDownload_errDownloadFailed"));
         File.Delete(targetFile);
         DialogResult = DialogResult.Cancel;
         Close();
@@ -58,7 +66,7 @@ namespace MediaPortal.DeployTool
     private void buttonCancel_Click(object sender, EventArgs e)
     {
       client.CancelAsync();
-      Utils.ErrorDlg("Download canceled by user.");
+      Utils.ErrorDlg(Localizer.Instance.GetString("HTTPDownload_msgCanceledByUser"));
       File.Delete(_target);
       DialogResult = DialogResult.Cancel;
     }

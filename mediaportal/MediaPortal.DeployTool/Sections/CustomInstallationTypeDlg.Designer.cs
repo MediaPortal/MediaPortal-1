@@ -36,8 +36,8 @@ namespace MediaPortal.DeployTool
       // 
       // HeaderLabel
       // 
-      this.HeaderLabel.Size = new System.Drawing.Size(273, 13);
-      this.HeaderLabel.Text = "Please choose which setup you want to install:";
+      this.labelSectionHeader.Size = new System.Drawing.Size(273, 13);
+      this.labelSectionHeader.Text = "Please choose which setup you want to install:";
       // 
       // rbClient
       // 
@@ -93,7 +93,7 @@ namespace MediaPortal.DeployTool
       this.Controls.Add(this.rbSingleSeat);
       this.Name = "BaseInstallationTypeDlg";
       this.Size = new System.Drawing.Size(359, 172);
-      this.Controls.SetChildIndex(this.HeaderLabel, 0);
+      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.rbSingleSeat, 0);
       this.Controls.SetChildIndex(this.rbTvServerMaster, 0);
       this.Controls.SetChildIndex(this.rbTvServerSlave, 0);

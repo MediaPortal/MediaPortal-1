@@ -28,23 +28,19 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new System.Windows.Forms.Label();
+      this.labelHeading = new System.Windows.Forms.Label();
       this.rbMSSQL = new System.Windows.Forms.RadioButton();
       this.rbMySQL = new System.Windows.Forms.RadioButton();
       this.SuspendLayout();
       // 
-      // HeaderLabel
+      // labelHeading
       // 
-      this.HeaderLabel.Size = new System.Drawing.Size(202, 13);
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(4, 34);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(227, 13);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "Please select the SQL-Server you want to use:";
+      this.labelHeading.AutoSize = true;
+      this.labelHeading.Location = new System.Drawing.Point(4, 34);
+      this.labelHeading.Name = "labelHeading";
+      this.labelHeading.Size = new System.Drawing.Size(227, 13);
+      this.labelHeading.TabIndex = 1;
+      this.labelHeading.Text = "Please select the SQL-Server you want to use:";
       // 
       // rbMSSQL
       // 
@@ -74,11 +70,11 @@ namespace MediaPortal.DeployTool
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.rbMySQL);
       this.Controls.Add(this.rbMSSQL);
-      this.Controls.Add(this.label1);
+      this.Controls.Add(this.labelHeading);
       this.Name = "DBMSTypeDlg";
-      this.Controls.SetChildIndex(this.label1, 0);
+      this.Controls.SetChildIndex(this.labelHeading, 0);
       this.Controls.SetChildIndex(this.rbMSSQL, 0);
-      this.Controls.SetChildIndex(this.HeaderLabel, 0);
+      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.rbMySQL, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -87,7 +83,7 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
-    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label labelHeading;
     private System.Windows.Forms.RadioButton rbMSSQL;
     private System.Windows.Forms.RadioButton rbMySQL;
   }

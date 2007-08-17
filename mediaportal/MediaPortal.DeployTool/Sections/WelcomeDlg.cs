@@ -39,11 +39,19 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type = DialogType.Welcome;
       cbLanguage.SelectedIndex = 0;
+      UpdateUI();
     }
 
     #region IDeplayDialog interface
+    public override void UpdateUI()
+    {
+      labelHeading1.Text = Localizer.Instance.GetString("Welcome_labelHeading1");
+      labelHeading2.Text = Localizer.Instance.GetString("Welcome_labelHeading2");
+      labelHeading3.Text = Localizer.Instance.GetString("Welcome_labelHeading3");
+    }
     public override DeployDialog GetNextDialog()
     {
+      DialogFlowHandler.Instance.ResetHistory();
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.BASE_INSTALLATION_TYPE);
     }
     public override bool SettingsValid()
@@ -52,7 +60,27 @@ namespace MediaPortal.DeployTool
     }
     public override void SetProperties()
     {
+      InstallationProperties.Instance.Set("language",GetLanguageId());
     }
     #endregion
+
+    private string GetLanguageId()
+    {
+      switch (cbLanguage.Text)
+      {
+        case "english":
+          return "en-US";
+        case "german":
+          return "de-DE";
+      }
+      return "en-US";
+    }
+
+    private void cbLanguage_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      Localizer.Instance.SwitchCulture(GetLanguageId());
+      UpdateUI();
+    }
+
   }
 }

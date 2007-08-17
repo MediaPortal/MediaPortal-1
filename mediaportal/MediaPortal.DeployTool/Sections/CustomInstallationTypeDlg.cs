@@ -41,12 +41,19 @@ namespace MediaPortal.DeployTool
       InitializeComponent();
       type = DialogType.CUSTOM_INSTALLATION_TYPE;
       rbSingleSeat.Checked = true;
+      UpdateUI();
     }
 
     #region IDeplayDialog interface
+    public override void UpdateUI()
+    {
+      rbSingleSeat.Text = Localizer.Instance.GetString("CustomInstallation_rbSingleSeat");
+      rbTvServerMaster.Text = Localizer.Instance.GetString("CustomInstallation_rbTvServerMaster");
+      rbTvServerSlave.Text = Localizer.Instance.GetString("CustomInstallation_rbTvServerSlave");
+      rbClient.Text = Localizer.Instance.GetString("CustomInstallation_rbClient");
+    }
     public override DeployDialog GetNextDialog()
     {
-      DialogFlowHandler.Instance.ResetHistory();
       if (rbSingleSeat.Checked)
         return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSType);
       if (rbTvServerMaster.Checked)

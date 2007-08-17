@@ -28,38 +28,38 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
+      this.labelHeading = new System.Windows.Forms.Label();
+      this.labelInstDir = new System.Windows.Forms.Label();
       this.textBoxDir = new System.Windows.Forms.TextBox();
       this.textBoxPassword = new System.Windows.Forms.TextBox();
-      this.label4 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
+      this.labelPassword = new System.Windows.Forms.Label();
+      this.labelPasswordDesc = new System.Windows.Forms.Label();
       this.buttonBrowse = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
-      // label1
+      // labelHeading
       // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(4, 30);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(296, 13);
-      this.label1.TabIndex = 2;
-      this.label1.Text = "Please set the needed options for the SQL-Server installation:";
+      this.labelHeading.AutoSize = true;
+      this.labelHeading.Location = new System.Drawing.Point(4, 30);
+      this.labelHeading.Name = "labelHeading";
+      this.labelHeading.Size = new System.Drawing.Size(296, 13);
+      this.labelHeading.TabIndex = 2;
+      this.labelHeading.Text = "Please set the needed options for the SQL-Server installation:";
       // 
-      // label2
+      // labelInstDir
       // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(7, 57);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(51, 13);
-      this.label2.TabIndex = 3;
-      this.label2.Text = "Install dir:";
+      this.labelInstDir.AutoSize = true;
+      this.labelInstDir.Location = new System.Drawing.Point(7, 57);
+      this.labelInstDir.Name = "labelInstDir";
+      this.labelInstDir.Size = new System.Drawing.Size(51, 13);
+      this.labelInstDir.TabIndex = 3;
+      this.labelInstDir.Text = "Install dir:";
       // 
       // textBoxDir
       // 
       this.textBoxDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxDir.Location = new System.Drawing.Point(61, 54);
+      this.textBoxDir.Location = new System.Drawing.Point(10, 78);
       this.textBoxDir.Name = "textBoxDir";
       this.textBoxDir.Size = new System.Drawing.Size(463, 20);
       this.textBoxDir.TabIndex = 4;
@@ -67,37 +67,37 @@ namespace MediaPortal.DeployTool
       // 
       // textBoxPassword
       // 
-      this.textBoxPassword.Location = new System.Drawing.Point(80, 83);
+      this.textBoxPassword.Location = new System.Drawing.Point(10, 123);
       this.textBoxPassword.Name = "textBoxPassword";
       this.textBoxPassword.PasswordChar = '*';
       this.textBoxPassword.Size = new System.Drawing.Size(132, 20);
       this.textBoxPassword.TabIndex = 8;
       this.textBoxPassword.Text = "MediaPortal";
       // 
-      // label4
+      // labelPassword
       // 
-      this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(7, 86);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(70, 13);
-      this.label4.TabIndex = 7;
-      this.label4.Text = "sa Password:";
+      this.labelPassword.AutoSize = true;
+      this.labelPassword.Location = new System.Drawing.Point(7, 102);
+      this.labelPassword.Name = "labelPassword";
+      this.labelPassword.Size = new System.Drawing.Size(70, 13);
+      this.labelPassword.TabIndex = 7;
+      this.labelPassword.Text = "sa Password:";
       // 
-      // label3
+      // labelPasswordDesc
       // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(7, 110);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(374, 13);
-      this.label3.TabIndex = 9;
-      this.label3.Text = "(The password for the admin-user of the SQL-Server. Default is \"MediaPortal\")";
+      this.labelPasswordDesc.AutoSize = true;
+      this.labelPasswordDesc.Location = new System.Drawing.Point(7, 153);
+      this.labelPasswordDesc.Name = "labelPasswordDesc";
+      this.labelPasswordDesc.Size = new System.Drawing.Size(374, 13);
+      this.labelPasswordDesc.TabIndex = 9;
+      this.labelPasswordDesc.Text = "(The password for the admin-user of the SQL-Server. Default is \"MediaPortal\")";
       // 
       // buttonBrowse
       // 
       this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBrowse.Location = new System.Drawing.Point(531, 53);
+      this.buttonBrowse.Location = new System.Drawing.Point(488, 77);
       this.buttonBrowse.Name = "buttonBrowse";
-      this.buttonBrowse.Size = new System.Drawing.Size(75, 23);
+      this.buttonBrowse.Size = new System.Drawing.Size(93, 23);
       this.buttonBrowse.TabIndex = 10;
       this.buttonBrowse.Text = "browse";
       this.buttonBrowse.UseVisualStyleBackColor = true;
@@ -108,21 +108,21 @@ namespace MediaPortal.DeployTool
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.buttonBrowse);
-      this.Controls.Add(this.label3);
+      this.Controls.Add(this.labelPasswordDesc);
       this.Controls.Add(this.textBoxPassword);
-      this.Controls.Add(this.label4);
+      this.Controls.Add(this.labelPassword);
       this.Controls.Add(this.textBoxDir);
-      this.Controls.Add(this.label2);
-      this.Controls.Add(this.label1);
+      this.Controls.Add(this.labelInstDir);
+      this.Controls.Add(this.labelHeading);
       this.Name = "DBMSSettingsDlg";
       this.Size = new System.Drawing.Size(620, 206);
-      this.Controls.SetChildIndex(this.HeaderLabel, 0);
-      this.Controls.SetChildIndex(this.label1, 0);
-      this.Controls.SetChildIndex(this.label2, 0);
+      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
+      this.Controls.SetChildIndex(this.labelHeading, 0);
+      this.Controls.SetChildIndex(this.labelInstDir, 0);
       this.Controls.SetChildIndex(this.textBoxDir, 0);
-      this.Controls.SetChildIndex(this.label4, 0);
+      this.Controls.SetChildIndex(this.labelPassword, 0);
       this.Controls.SetChildIndex(this.textBoxPassword, 0);
-      this.Controls.SetChildIndex(this.label3, 0);
+      this.Controls.SetChildIndex(this.labelPasswordDesc, 0);
       this.Controls.SetChildIndex(this.buttonBrowse, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -131,12 +131,12 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label labelHeading;
+    private System.Windows.Forms.Label labelInstDir;
     private System.Windows.Forms.TextBox textBoxDir;
     private System.Windows.Forms.TextBox textBoxPassword;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Label labelPassword;
+    private System.Windows.Forms.Label labelPasswordDesc;
     private System.Windows.Forms.Button buttonBrowse;
   }
 }

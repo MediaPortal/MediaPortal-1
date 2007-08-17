@@ -30,7 +30,7 @@ namespace MediaPortal.DeployTool
     {
       this.splitContainer1 = new System.Windows.Forms.SplitContainer();
       this.panel1 = new System.Windows.Forms.Panel();
-      this.label1 = new System.Windows.Forms.Label();
+      this.labelAppHeading = new System.Windows.Forms.Label();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.splitContainer2 = new System.Windows.Forms.SplitContainer();
       this.nextButton = new System.Windows.Forms.Button();
@@ -55,7 +55,7 @@ namespace MediaPortal.DeployTool
       // splitContainer1.Panel1
       // 
       this.splitContainer1.Panel1.Controls.Add(this.panel1);
-      this.splitContainer1.Panel1.Controls.Add(this.label1);
+      this.splitContainer1.Panel1.Controls.Add(this.labelAppHeading);
       this.splitContainer1.Panel1.Controls.Add(this.pictureBox1);
       // 
       // splitContainer1.Panel2
@@ -75,19 +75,19 @@ namespace MediaPortal.DeployTool
       this.panel1.Size = new System.Drawing.Size(654, 3);
       this.panel1.TabIndex = 5;
       // 
-      // label1
+      // labelAppHeading
       // 
-      this.label1.Location = new System.Drawing.Point(5, 84);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(330, 32);
-      this.label1.TabIndex = 4;
-      this.label1.Text = "This application will guide you through the installation of MediaPortal and all t" +
+      this.labelAppHeading.Location = new System.Drawing.Point(5, 84);
+      this.labelAppHeading.Name = "labelAppHeading";
+      this.labelAppHeading.Size = new System.Drawing.Size(330, 32);
+      this.labelAppHeading.TabIndex = 4;
+      this.labelAppHeading.Text = "This application will guide you through the installation of MediaPortal and all t" +
           "he requiered components";
       // 
       // pictureBox1
       // 
       this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.pictureBox1.Image = global::MediaPortal.DeployTool.Properties.Resources.omt_logo_header;
+      this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.omt_logo_header;
       this.pictureBox1.Location = new System.Drawing.Point(0, 0);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(666, 122);
@@ -115,6 +115,7 @@ namespace MediaPortal.DeployTool
       // nextButton
       // 
       this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.nextButton.AutoSize = true;
       this.nextButton.Location = new System.Drawing.Point(561, 5);
       this.nextButton.Name = "nextButton";
       this.nextButton.Size = new System.Drawing.Size(75, 23);
@@ -125,7 +126,8 @@ namespace MediaPortal.DeployTool
       // 
       // backButton
       // 
-      this.backButton.Location = new System.Drawing.Point(478, 5);
+      this.backButton.AutoSize = true;
+      this.backButton.Location = new System.Drawing.Point(446, 5);
       this.backButton.Name = "backButton";
       this.backButton.Size = new System.Drawing.Size(75, 23);
       this.backButton.TabIndex = 0;
@@ -149,6 +151,7 @@ namespace MediaPortal.DeployTool
       this.splitContainer1.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.splitContainer2.Panel2.ResumeLayout(false);
+      this.splitContainer2.Panel2.PerformLayout();
       this.splitContainer2.ResumeLayout(false);
       this.ResumeLayout(false);
 
@@ -158,7 +161,7 @@ namespace MediaPortal.DeployTool
 
     private System.Windows.Forms.SplitContainer splitContainer1;
     private System.Windows.Forms.PictureBox pictureBox1;
-    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label labelAppHeading;
     private System.Windows.Forms.SplitContainer splitContainer2;
     private System.Windows.Forms.Button nextButton;
     private System.Windows.Forms.Button backButton;

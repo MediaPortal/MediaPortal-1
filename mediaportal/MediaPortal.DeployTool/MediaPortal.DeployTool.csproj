@@ -61,6 +61,11 @@
     </Compile>
     <Compile Include="DialogFlowHandler.cs" />
     <Compile Include="IDeplpoyDialog.cs" />
+    <Compile Include="Images.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Images.resx</DependentUpon>
+    </Compile>
     <Compile Include="InstallationChecks\TvPluginChecker.cs" />
     <Compile Include="InstallationChecks\TvServerChecker.cs" />
     <Compile Include="InstallationChecks\DirectX9Checker.cs" />
@@ -86,14 +91,22 @@
       <SubType>Designer</SubType>
       <DependentUpon>HTTPDownload.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Images.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Images.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="ManualDownload.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ManualDownload.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="MediaPortal.DeployTool.de-DE.resx">
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MediaPortal.DeployTool.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\BaseInstallationTypeDlg.resx">
       <SubType>Designer</SubType>
@@ -131,11 +144,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>WelcomeDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -144,6 +152,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="MediaPortal.DeployTool.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MediaPortal.DeployTool.resx</DependentUpon>
     </Compile>
     <Compile Include="Sections\BaseInstallationTypeDlg.cs">
       <SubType>UserControl</SubType>

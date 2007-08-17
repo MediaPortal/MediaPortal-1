@@ -40,9 +40,18 @@ namespace MediaPortal.DeployTool
     {
       InitializeComponent();
       type = DialogType.DBMSSettings;
+      UpdateUI();
     }
 
     #region IDeplayDialog interface
+    public override void UpdateUI()
+    {
+      labelHeading.Text = Localizer.Instance.GetString("DBMSSettings_labelHeading");
+      labelInstDir.Text = Localizer.Instance.GetString("DBMSSettings_labelInstDir");
+      buttonBrowse.Text = Localizer.Instance.GetString("DBMSSettings_buttonBrowse");
+      labelPassword.Text = Localizer.Instance.GetString("DBMSSettings_labelPassword");
+      labelPasswordDesc.Text = Localizer.Instance.GetString("DBMSSettings_labelPasswordDesc");
+    }
     public override DeployDialog GetNextDialog()
     {
       if (InstallationProperties.Instance["InstallType"] == "singleseat")
@@ -54,12 +63,12 @@ namespace MediaPortal.DeployTool
     {
       if (!Utils.CheckTargetDir(textBoxDir.Text))
       {
-        Utils.ErrorDlg("You have to supply a valid installation path for the SQL-Server.");
+        Utils.ErrorDlg(Localizer.Instance.GetString("DBMSSettings_errInvalidInstallationPath"));
         return false;
       }
       if (textBoxPassword.Text == "")
       {
-        Utils.ErrorDlg("You have to supply a password for the sa SQL-Server user.");
+        Utils.ErrorDlg(Localizer.Instance.GetString("DBMSSettings_errPasswordMissing"));
         return false;
       }
       return true;
@@ -74,7 +83,7 @@ namespace MediaPortal.DeployTool
     private void buttonBrowse_Click(object sender, EventArgs e)
     {
       FolderBrowserDialog dlg = new FolderBrowserDialog();
-      dlg.Description="Select the installation folder for the SQL-Server";
+      dlg.Description = Localizer.Instance.GetString("DBMSSettings_msgSelectDir");
       dlg.SelectedPath = textBoxDir.Text;
       if (dlg.ShowDialog() == DialogResult.OK)
         textBoxDir.Text = dlg.SelectedPath;

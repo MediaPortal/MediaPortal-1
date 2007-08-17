@@ -132,6 +132,8 @@ namespace MediaPortal.DeployTool
           _currentDlgIndex = _dlgs.Count - 1;
         }
       }
+      else
+        dlg.UpdateUI();
       return dlg;
     }
     public void ResetHistory()

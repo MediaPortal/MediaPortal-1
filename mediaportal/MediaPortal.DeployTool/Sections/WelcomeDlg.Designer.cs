@@ -28,41 +28,41 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
+      this.labelHeading1 = new System.Windows.Forms.Label();
+      this.labelHeading2 = new System.Windows.Forms.Label();
+      this.labelHeading3 = new System.Windows.Forms.Label();
       this.cbLanguage = new System.Windows.Forms.ComboBox();
       this.SuspendLayout();
       // 
-      // label1
+      // labelHeading1
       // 
-      this.label1.AutoSize = true;
-      this.label1.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label1.Location = new System.Drawing.Point(21, 16);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(264, 16);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "Thank you for choosing MediaPortal!";
+      this.labelHeading1.AutoSize = true;
+      this.labelHeading1.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelHeading1.Location = new System.Drawing.Point(21, 16);
+      this.labelHeading1.Name = "labelHeading1";
+      this.labelHeading1.Size = new System.Drawing.Size(264, 16);
+      this.labelHeading1.TabIndex = 1;
+      this.labelHeading1.Text = "Thank you for choosing MediaPortal!";
       // 
-      // label2
+      // labelHeading2
       // 
-      this.label2.AutoSize = true;
-      this.label2.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label2.Location = new System.Drawing.Point(21, 47);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(483, 16);
-      this.label2.TabIndex = 2;
-      this.label2.Text = "This deployment tool will guide you through the installation process";
+      this.labelHeading2.AutoSize = true;
+      this.labelHeading2.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelHeading2.Location = new System.Drawing.Point(21, 47);
+      this.labelHeading2.Name = "labelHeading2";
+      this.labelHeading2.Size = new System.Drawing.Size(483, 16);
+      this.labelHeading2.TabIndex = 2;
+      this.labelHeading2.Text = "This deployment tool will guide you through the installation process";
       // 
-      // label3
+      // labelHeading3
       // 
-      this.label3.AutoSize = true;
-      this.label3.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label3.Location = new System.Drawing.Point(21, 80);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(352, 16);
-      this.label3.TabIndex = 3;
-      this.label3.Text = "Please select your language before you continue";
+      this.labelHeading3.AutoSize = true;
+      this.labelHeading3.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelHeading3.Location = new System.Drawing.Point(21, 80);
+      this.labelHeading3.Name = "labelHeading3";
+      this.labelHeading3.Size = new System.Drawing.Size(352, 16);
+      this.labelHeading3.TabIndex = 3;
+      this.labelHeading3.Text = "Please select your language before you continue";
       // 
       // cbLanguage
       // 
@@ -76,20 +76,21 @@ namespace MediaPortal.DeployTool
       this.cbLanguage.Name = "cbLanguage";
       this.cbLanguage.Size = new System.Drawing.Size(121, 24);
       this.cbLanguage.TabIndex = 4;
+      this.cbLanguage.SelectedIndexChanged += new System.EventHandler(this.cbLanguage_SelectedIndexChanged);
       // 
       // WelcomeDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.cbLanguage);
-      this.Controls.Add(this.label3);
-      this.Controls.Add(this.label2);
-      this.Controls.Add(this.label1);
+      this.Controls.Add(this.labelHeading3);
+      this.Controls.Add(this.labelHeading2);
+      this.Controls.Add(this.labelHeading1);
       this.Name = "WelcomeDlg";
-      this.Controls.SetChildIndex(this.label1, 0);
-      this.Controls.SetChildIndex(this.HeaderLabel, 0);
-      this.Controls.SetChildIndex(this.label2, 0);
-      this.Controls.SetChildIndex(this.label3, 0);
+      this.Controls.SetChildIndex(this.labelHeading1, 0);
+      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
+      this.Controls.SetChildIndex(this.labelHeading2, 0);
+      this.Controls.SetChildIndex(this.labelHeading3, 0);
       this.Controls.SetChildIndex(this.cbLanguage, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -98,9 +99,9 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Label labelHeading1;
+    private System.Windows.Forms.Label labelHeading2;
+    private System.Windows.Forms.Label labelHeading3;
     private System.Windows.Forms.ComboBox cbLanguage;
   }
 }

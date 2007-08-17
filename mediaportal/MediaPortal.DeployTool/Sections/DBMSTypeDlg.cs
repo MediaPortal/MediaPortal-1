@@ -15,9 +15,16 @@ namespace MediaPortal.DeployTool
     {
       InitializeComponent();
       type = DialogType.DBMSType;
+      UpdateUI();
     }
 
     #region IDeplayDialog interface
+    public override void UpdateUI()
+    {
+      labelHeading.Text = Localizer.Instance.GetString("DBMSType_labelHeading");
+      rbMSSQL.Text = Localizer.Instance.GetString("DBMSType_rbMSSQL");
+      rbMySQL.Text = Localizer.Instance.GetString("DBMSType_rbMySQL");
+    }
     public override DeployDialog GetNextDialog()
     {
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.DBMSSettings);

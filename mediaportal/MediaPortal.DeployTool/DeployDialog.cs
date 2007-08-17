@@ -40,10 +40,13 @@ namespace MediaPortal.DeployTool
     public DeployDialog()
     {
       InitializeComponent();
-      HeaderLabel.Text = InstallationProperties.Instance["InstallTypeHeader"];
+      labelSectionHeader.Text = InstallationProperties.Instance["InstallTypeHeader"];
     }
 
     #region IDeployDialog interface
+    public virtual void UpdateUI()
+    {
+    }
     public virtual DeployDialog GetNextDialog()
     {
       return null;

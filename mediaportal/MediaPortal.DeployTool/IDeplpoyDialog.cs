@@ -9,7 +9,9 @@ namespace MediaPortal.DeployTool
   {
     DeployDialog GetNextDialog();
 
+    void UpdateUI();
     bool SettingsValid();
     void SetProperties();
+
   }
 }

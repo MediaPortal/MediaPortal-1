@@ -28,25 +28,25 @@ namespace MediaPortal.DeployTool
     /// </summary>
     private void InitializeComponent()
     {
-      this.HeaderLabel = new System.Windows.Forms.Label();
+      this.labelSectionHeader = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
-      // HeaderLabel
+      // labelSectionHeader
       // 
-      this.HeaderLabel.AutoSize = true;
-      this.HeaderLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.HeaderLabel.Location = new System.Drawing.Point(4, 4);
-      this.HeaderLabel.Name = "HeaderLabel";
-      this.HeaderLabel.Size = new System.Drawing.Size(142, 13);
-      this.HeaderLabel.TabIndex = 0;
-      this.HeaderLabel.Text = "Choose installation type";
+      this.labelSectionHeader.AutoSize = true;
+      this.labelSectionHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelSectionHeader.Location = new System.Drawing.Point(4, 4);
+      this.labelSectionHeader.Name = "labelSectionHeader";
+      this.labelSectionHeader.Size = new System.Drawing.Size(142, 13);
+      this.labelSectionHeader.TabIndex = 0;
+      this.labelSectionHeader.Text = "Choose installation type";
       // 
       // DeployDialog
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.BackColor = System.Drawing.Color.Transparent;
-      this.Controls.Add(this.HeaderLabel);
+      this.Controls.Add(this.labelSectionHeader);
       this.Name = "DeployDialog";
       this.Size = new System.Drawing.Size(620, 308);
       this.ResumeLayout(false);
@@ -56,6 +56,6 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
-    public System.Windows.Forms.Label HeaderLabel;
+    public System.Windows.Forms.Label labelSectionHeader;
   }
 }

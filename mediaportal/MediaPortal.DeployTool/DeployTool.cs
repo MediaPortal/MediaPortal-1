@@ -37,14 +37,26 @@ namespace MediaPortal.DeployTool
   public partial class DeployTool : Form
   {
     private DeployDialog _currentDialog;
+    private string _currentCulture="en-US";
+
+    private void UpdateUI()
+    {
+      this.Text = Localizer.Instance.GetString("MainWindow_AppName");
+      labelAppHeading.Text = Localizer.Instance.GetString("MainWindow_labelAppHeading");
+      backButton.Text = Localizer.Instance.GetString("MainWindow_backButton");
+      nextButton.Text = Localizer.Instance.GetString("MainWindow_nextButton");
+    }
 
     public DeployTool()
     {
       InitializeComponent();
+      Localizer.Instance.SwitchCulture("en-US");
+      UpdateUI();
       _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(DialogType.Welcome);
       splitContainer2.Panel1.Controls.Add(_currentDialog);
       backButton.Visible = false;
       InstallationProperties.Instance.Add("InstallTypeHeader", "Choose installation type");
+      UpdateUI();
     }
     private void SwitchDialog(DeployDialog dlg)
     {
@@ -54,7 +66,7 @@ namespace MediaPortal.DeployTool
 
     private void nextButton_Click(object sender, EventArgs e)
     {
-      if (nextButton.Text == "Close")
+      if (nextButton.Text == Localizer.Instance.GetString("MainWindow_buttonClose"))
       {
         Close();
         return;
@@ -62,6 +74,12 @@ namespace MediaPortal.DeployTool
       if (!_currentDialog.SettingsValid())
         return;
       _currentDialog.SetProperties();
+      if (InstallationProperties.Instance["language"] != _currentCulture)
+      {
+        _currentCulture = InstallationProperties.Instance["language"];
+        Localizer.Instance.SwitchCulture(_currentCulture);
+        UpdateUI();
+      }
       _currentDialog = _currentDialog.GetNextDialog();
       SwitchDialog(_currentDialog);
       if (!backButton.Visible)
@@ -69,7 +87,7 @@ namespace MediaPortal.DeployTool
       if (InstallationProperties.Instance["finished"] == "yes")
       {
         backButton.Visible = false;
-        nextButton.Text = "Close";
+        nextButton.Text = Localizer.Instance.GetString("MainWindow_buttonClose");
       }
     }
 

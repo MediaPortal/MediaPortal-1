@@ -30,16 +30,16 @@ namespace MediaPortal.DeployTool
     {
       this.buttonBrowse = new System.Windows.Forms.Button();
       this.textBoxDir = new System.Windows.Forms.TextBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
+      this.labelInstDir = new System.Windows.Forms.Label();
+      this.labelHeading = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
       // buttonBrowse
       // 
       this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBrowse.Location = new System.Drawing.Point(534, 53);
+      this.buttonBrowse.Location = new System.Drawing.Point(449, 71);
       this.buttonBrowse.Name = "buttonBrowse";
-      this.buttonBrowse.Size = new System.Drawing.Size(75, 23);
+      this.buttonBrowse.Size = new System.Drawing.Size(103, 23);
       this.buttonBrowse.TabIndex = 21;
       this.buttonBrowse.Text = "browse";
       this.buttonBrowse.UseVisualStyleBackColor = true;
@@ -49,28 +49,28 @@ namespace MediaPortal.DeployTool
       // 
       this.textBoxDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxDir.Location = new System.Drawing.Point(110, 54);
+      this.textBoxDir.Location = new System.Drawing.Point(9, 73);
       this.textBoxDir.Name = "textBoxDir";
       this.textBoxDir.Size = new System.Drawing.Size(417, 20);
       this.textBoxDir.TabIndex = 20;
       // 
-      // label3
+      // labelInstDir
       // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(6, 57);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(101, 13);
-      this.label3.TabIndex = 19;
-      this.label3.Text = "TV-Server install dir:";
+      this.labelInstDir.AutoSize = true;
+      this.labelInstDir.Location = new System.Drawing.Point(6, 57);
+      this.labelInstDir.Name = "labelInstDir";
+      this.labelInstDir.Size = new System.Drawing.Size(101, 13);
+      this.labelInstDir.TabIndex = 19;
+      this.labelInstDir.Text = "TV-Server install dir:";
       // 
-      // label1
+      // labelHeading
       // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(4, 30);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(289, 13);
-      this.label1.TabIndex = 18;
-      this.label1.Text = "Please set the needed options for the TV-Server installation:";
+      this.labelHeading.AutoSize = true;
+      this.labelHeading.Location = new System.Drawing.Point(4, 30);
+      this.labelHeading.Name = "labelHeading";
+      this.labelHeading.Size = new System.Drawing.Size(289, 13);
+      this.labelHeading.TabIndex = 18;
+      this.labelHeading.Text = "Please set the needed options for the TV-Server installation:";
       // 
       // TvServerSettingsDlg
       // 
@@ -78,13 +78,13 @@ namespace MediaPortal.DeployTool
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.buttonBrowse);
       this.Controls.Add(this.textBoxDir);
-      this.Controls.Add(this.label3);
-      this.Controls.Add(this.label1);
+      this.Controls.Add(this.labelInstDir);
+      this.Controls.Add(this.labelHeading);
       this.Name = "TvServerSettingsDlg";
       this.Size = new System.Drawing.Size(620, 172);
-      this.Controls.SetChildIndex(this.HeaderLabel, 0);
-      this.Controls.SetChildIndex(this.label1, 0);
-      this.Controls.SetChildIndex(this.label3, 0);
+      this.Controls.SetChildIndex(this.labelSectionHeader, 0);
+      this.Controls.SetChildIndex(this.labelHeading, 0);
+      this.Controls.SetChildIndex(this.labelInstDir, 0);
       this.Controls.SetChildIndex(this.textBoxDir, 0);
       this.Controls.SetChildIndex(this.buttonBrowse, 0);
       this.ResumeLayout(false);
@@ -96,7 +96,7 @@ namespace MediaPortal.DeployTool
 
     private System.Windows.Forms.Button buttonBrowse;
     private System.Windows.Forms.TextBox textBoxDir;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label labelInstDir;
+    private System.Windows.Forms.Label labelHeading;
   }
 }
