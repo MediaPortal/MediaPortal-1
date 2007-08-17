@@ -70,6 +70,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private bool _configShowTrayIcon = true;
     private bool _configShowBallonTips = true;
     private bool _configSubmitToProfile = true;
+    private bool _configDirectSkip = false;
     private int _configListEntryCount = 12;
     private List<string> _usersOwnTags = null;
     private List<string> _usersFriends = null;
@@ -96,6 +97,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _configShowTrayIcon = xmlreader.GetValueAsBool("audioscrobbler", "showtrayicon", true);
         _configShowBallonTips = xmlreader.GetValueAsBool("audioscrobbler", "showballontips", true);
         _configSubmitToProfile = xmlreader.GetValueAsBool("audioscrobbler", "submitradiotracks", true);
+        _configDirectSkip = xmlreader.GetValueAsBool("audioscrobbler", "directskip", false);
         _configListEntryCount = xmlreader.GetValueAsInt("audioscrobbler", "listentrycount", 12);
       }
 
@@ -774,19 +776,24 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       if (_radioTrackList.Count > 0)
       {
-        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-        if (dlg == null)
-          return;
-        dlg.Reset();
-        dlg.SetHeading(498); // menu
-        foreach (Song Track in _radioTrackList)
-          dlg.Add(Track.ToLastFMString());
+        if (_configDirectSkip)
+          LastFMStation.PlayPlayListStreams(_radioTrackList[0].URL);
+        else
+        {
+          GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+          if (dlg == null)
+            return;
+          dlg.Reset();
+          dlg.SetHeading(498); // menu
+          foreach (Song Track in _radioTrackList)
+            dlg.Add(Track.ToLastFMString());
 
-        dlg.DoModal(GetID);
-        if (dlg.SelectedId == -1)
-          return;
+          dlg.DoModal(GetID);
+          if (dlg.SelectedId == -1)
+            return;
 
-        LastFMStation.PlayPlayListStreams(_radioTrackList[dlg.SelectedId - 1].URL);
+          LastFMStation.PlayPlayListStreams(_radioTrackList[dlg.SelectedId - 1].URL);
+        }
       }
     }
 

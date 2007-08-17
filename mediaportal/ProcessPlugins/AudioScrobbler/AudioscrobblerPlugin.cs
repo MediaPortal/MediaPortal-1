@@ -62,6 +62,7 @@ namespace MediaPortal.Audioscrobbler
     private int _lastPosition = 0;
 
     public bool _doSubmit = true;
+    public bool _announceNowPlaying = true;
 
     private System.Timers.Timer SongLengthTimer;
 
@@ -211,7 +212,8 @@ namespace MediaPortal.Audioscrobbler
       }
 
       AudioscrobblerBase.CurrentSong = currentSong;
-      AudioscrobblerBase.AnnounceNowPlaying();
+      if (_announceNowPlaying)
+        AudioscrobblerBase.AnnounceNowPlaying();
 
       _alertTime = GetAlertTime();
 
@@ -467,12 +469,13 @@ namespace MediaPortal.Audioscrobbler
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         currentUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
+        _announceNowPlaying = xmlreader.GetValueAsBool("audioscrobbler", "EnableNowPlaying", true);
       }
 
       MusicDatabase mdb = new MusicDatabase();
       _doSubmit = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(currentUser)), "iSubmitOn", -1) == 1) ? true : false;
 
-      Log.Info("Audioscrobbler plugin: submitting songs: {0}", Convert.ToString(_doSubmit));
+      Log.Info("Audioscrobbler plugin: Submit songs: {0}, announce Now Playing: {1}", Convert.ToString(_doSubmit), Convert.ToString(_announceNowPlaying));
 
       if (_doSubmit)
       {

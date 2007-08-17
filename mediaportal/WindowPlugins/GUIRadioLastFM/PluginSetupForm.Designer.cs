@@ -66,6 +66,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.checkBoxUseTrayIcon = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonCancel = new System.Windows.Forms.Button();
       this.buttonSave = new System.Windows.Forms.Button();
+      this.checkBoxDirectSkip = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.panelBannerAlign.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBanner)).BeginInit();
       this.groupBoxSettings.SuspendLayout();
@@ -92,6 +93,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       // groupBoxSettings
       // 
+      this.groupBoxSettings.Controls.Add(this.checkBoxDirectSkip);
       this.groupBoxSettings.Controls.Add(this.labelEngine);
       this.groupBoxSettings.Controls.Add(this.comboBoxStreamPlayerType);
       this.groupBoxSettings.Controls.Add(this.labelListEntries);
@@ -101,7 +103,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.groupBoxSettings.Controls.Add(this.checkBoxUseTrayIcon);
       this.groupBoxSettings.Location = new System.Drawing.Point(12, 81);
       this.groupBoxSettings.Name = "groupBoxSettings";
-      this.groupBoxSettings.Size = new System.Drawing.Size(370, 142);
+      this.groupBoxSettings.Size = new System.Drawing.Size(370, 159);
       this.groupBoxSettings.TabIndex = 1;
       this.groupBoxSettings.TabStop = false;
       this.groupBoxSettings.Text = "Settings";
@@ -109,7 +111,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // labelEngine
       // 
       this.labelEngine.AutoSize = true;
-      this.labelEngine.Location = new System.Drawing.Point(78, 135);
+      this.labelEngine.Location = new System.Drawing.Point(78, 155);
       this.labelEngine.Name = "labelEngine";
       this.labelEngine.Size = new System.Drawing.Size(142, 13);
       this.labelEngine.TabIndex = 6;
@@ -123,7 +125,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.comboBoxStreamPlayerType.Items.AddRange(new object[] {
             "BASS",
             "WMP"});
-      this.comboBoxStreamPlayerType.Location = new System.Drawing.Point(15, 132);
+      this.comboBoxStreamPlayerType.Location = new System.Drawing.Point(15, 152);
       this.comboBoxStreamPlayerType.Name = "comboBoxStreamPlayerType";
       this.comboBoxStreamPlayerType.Size = new System.Drawing.Size(58, 21);
       this.comboBoxStreamPlayerType.TabIndex = 5;
@@ -133,7 +135,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // labelListEntries
       // 
       this.labelListEntries.AutoSize = true;
-      this.labelListEntries.Location = new System.Drawing.Point(79, 108);
+      this.labelListEntries.Location = new System.Drawing.Point(79, 128);
       this.labelListEntries.Name = "labelListEntries";
       this.labelListEntries.Size = new System.Drawing.Size(260, 13);
       this.labelListEntries.TabIndex = 4;
@@ -141,7 +143,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       // numericUpDownListEntries
       // 
-      this.numericUpDownListEntries.Location = new System.Drawing.Point(15, 106);
+      this.numericUpDownListEntries.Location = new System.Drawing.Point(15, 126);
       this.numericUpDownListEntries.Minimum = new decimal(new int[] {
             1,
             0,
@@ -160,7 +162,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       this.checkBoxShowBallonTips.AutoSize = true;
       this.checkBoxShowBallonTips.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxShowBallonTips.Location = new System.Drawing.Point(32, 70);
+      this.checkBoxShowBallonTips.Location = new System.Drawing.Point(32, 93);
       this.checkBoxShowBallonTips.Name = "checkBoxShowBallonTips";
       this.checkBoxShowBallonTips.Size = new System.Drawing.Size(188, 17);
       this.checkBoxShowBallonTips.TabIndex = 2;
@@ -170,6 +172,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // checkBoxSubmitToProfile
       // 
       this.checkBoxSubmitToProfile.AutoSize = true;
+      this.checkBoxSubmitToProfile.Checked = true;
+      this.checkBoxSubmitToProfile.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxSubmitToProfile.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxSubmitToProfile.Location = new System.Drawing.Point(15, 27);
       this.checkBoxSubmitToProfile.Name = "checkBoxSubmitToProfile";
@@ -182,7 +186,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       this.checkBoxUseTrayIcon.AutoSize = true;
       this.checkBoxUseTrayIcon.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUseTrayIcon.Location = new System.Drawing.Point(15, 50);
+      this.checkBoxUseTrayIcon.Location = new System.Drawing.Point(15, 73);
       this.checkBoxUseTrayIcon.Name = "checkBoxUseTrayIcon";
       this.checkBoxUseTrayIcon.Size = new System.Drawing.Size(189, 17);
       this.checkBoxUseTrayIcon.TabIndex = 0;
@@ -193,7 +197,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // buttonCancel
       // 
       this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonCancel.Location = new System.Drawing.Point(307, 237);
+      this.buttonCancel.Location = new System.Drawing.Point(307, 253);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
       this.buttonCancel.TabIndex = 2;
@@ -204,7 +208,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // buttonSave
       // 
       this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonSave.Location = new System.Drawing.Point(226, 237);
+      this.buttonSave.Location = new System.Drawing.Point(226, 253);
       this.buttonSave.Name = "buttonSave";
       this.buttonSave.Size = new System.Drawing.Size(75, 23);
       this.buttonSave.TabIndex = 3;
@@ -212,11 +216,22 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.buttonSave.UseVisualStyleBackColor = true;
       this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
       // 
+      // checkBoxDirectSkip
+      // 
+      this.checkBoxDirectSkip.AutoSize = true;
+      this.checkBoxDirectSkip.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDirectSkip.Location = new System.Drawing.Point(15, 50);
+      this.checkBoxDirectSkip.Name = "checkBoxDirectSkip";
+      this.checkBoxDirectSkip.Size = new System.Drawing.Size(273, 17);
+      this.checkBoxDirectSkip.TabIndex = 7;
+      this.checkBoxDirectSkip.Text = "Skip directly to the next track (do not show selection)";
+      this.checkBoxDirectSkip.UseVisualStyleBackColor = true;
+      // 
       // PluginSetupForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(394, 272);
+      this.ClientSize = new System.Drawing.Size(394, 288);
       this.Controls.Add(this.buttonSave);
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.groupBoxSettings);
@@ -248,5 +263,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private System.Windows.Forms.NumericUpDown numericUpDownListEntries;
     private MediaPortal.UserInterface.Controls.MPLabel labelEngine;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxStreamPlayerType;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDirectSkip;
   }
 }

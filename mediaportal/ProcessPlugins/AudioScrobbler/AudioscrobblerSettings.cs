@@ -65,6 +65,7 @@ namespace MediaPortal.AudioScrobbler
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           tmpuser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
+          checkBoxEnableNowPlaying.Checked = xmlreader.GetValueAsBool("audioscrobbler", "EnableNowPlaying", true);
 
           scrobbleusers = mdb.GetAllScrobbleUsers();
           // no users in database
@@ -118,7 +119,7 @@ namespace MediaPortal.AudioScrobbler
 
             checkBoxLogVerbose.Checked = (mdb.AddScrobbleUserSettings(tmpUserID, "iDebugLog", -1) == 1) ? true : false;
             tmpRand = mdb.AddScrobbleUserSettings(tmpUserID, "iRandomness", -1);
-            checkBoxEnableSubmits.Checked = (mdb.AddScrobbleUserSettings(tmpUserID, "iSubmitOn", -1) == 1) ? true : false;
+            checkBoxEnableSubmits.Checked = (mdb.AddScrobbleUserSettings(tmpUserID, "iSubmitOn", -1) == 1) ? true : false;            
             checkBoxScrobbleDefault.Checked = (mdb.AddScrobbleUserSettings(tmpUserID, "iScrobbleDefault", -1) == 1) ? true : false;
             tmpArtists = mdb.AddScrobbleUserSettings(tmpUserID, "iAddArtists", -1);
             //numericUpDownTracksPerArtist.Value = mdb.AddScrobbleUserSettings(tmpUserID, "iAddTracks", -1);
@@ -187,6 +188,7 @@ namespace MediaPortal.AudioScrobbler
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           xmlwriter.SetValue("audioscrobbler", "user", comboBoxUserName.Text);
+          xmlwriter.SetValueAsBool("audioscrobbler", "EnableNowPlaying", checkBoxEnableNowPlaying.Checked);
 
           string tmpPass = "";
           string tmpUserID = "";
