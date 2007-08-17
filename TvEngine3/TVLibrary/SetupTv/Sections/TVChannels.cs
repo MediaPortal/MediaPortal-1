@@ -1049,5 +1049,21 @@ namespace SetupTv.Sections
       ReOrder();
       RemoteControl.Instance.OnNewSchedule();
     }
+
+    private void renameMarkedChannelsBySIDToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem item in mpListView1.SelectedItems)
+      {
+        Channel channel = (Channel)item.Tag;
+        IList details = channel.ReferringTuningDetail();
+        if (details.Count > 0)
+        {
+          channel.DisplayName = ((TuningDetail)details[0]).ServiceId.ToString();
+          channel.Persist();
+          item.Tag = channel;
+        }
+      }
+      OnSectionActivated();
+    }
   }
 }
