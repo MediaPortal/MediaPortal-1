@@ -47,6 +47,7 @@ namespace MediaPortal.DeployTool
     #region IDeplayDialog interface
     public override void UpdateUI()
     {
+      labelSectionHeader.Text = Localizer.Instance.GetString("CustomInstallation_labelSectionHeader");
       rbSingleSeat.Text = Localizer.Instance.GetString("CustomInstallation_rbSingleSeat");
       rbTvServerMaster.Text = Localizer.Instance.GetString("CustomInstallation_rbTvServerMaster");
       rbTvServerSlave.Text = Localizer.Instance.GetString("CustomInstallation_rbTvServerSlave");

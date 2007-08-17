@@ -115,6 +115,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please choose which setup you want to install:.
+        /// </summary>
+        internal static string CustomInstallation_labelSectionHeader {
+            get {
+                return ResourceManager.GetString("CustomInstallation_labelSectionHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MediaPortal Client (connects to a TV-Server).
         /// </summary>
         internal static string CustomInstallation_rbClient {

@@ -135,6 +135,9 @@
   <data name="BaseInstallation_rbOneClick" xml:space="preserve">
     <value>Perform a One Click Installation</value>
   </data>
+  <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
+    <value>Please choose which setup you want to install:</value>
+  </data>
   <data name="CustomInstallation_rbClient" xml:space="preserve">
     <value>MediaPortal Client (connects to a TV-Server)</value>
   </data>

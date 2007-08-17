@@ -34,7 +34,7 @@ namespace MediaPortal.DeployTool
       this.rbSingleSeat = new System.Windows.Forms.RadioButton();
       this.SuspendLayout();
       // 
-      // HeaderLabel
+      // labelSectionHeader
       // 
       this.labelSectionHeader.Size = new System.Drawing.Size(273, 13);
       this.labelSectionHeader.Text = "Please choose which setup you want to install:";
@@ -83,7 +83,7 @@ namespace MediaPortal.DeployTool
       this.rbSingleSeat.Text = "MediaPortal Singleseat installation (stand alone)";
       this.rbSingleSeat.UseVisualStyleBackColor = true;
       // 
-      // BaseInstallationTypeDlg
+      // CustomInstallationTypeDlg
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -91,8 +91,8 @@ namespace MediaPortal.DeployTool
       this.Controls.Add(this.rbTvServerSlave);
       this.Controls.Add(this.rbTvServerMaster);
       this.Controls.Add(this.rbSingleSeat);
-      this.Name = "BaseInstallationTypeDlg";
-      this.Size = new System.Drawing.Size(359, 172);
+      this.Name = "CustomInstallationTypeDlg";
+      this.Size = new System.Drawing.Size(615, 172);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.rbSingleSeat, 0);
       this.Controls.SetChildIndex(this.rbTvServerMaster, 0);
