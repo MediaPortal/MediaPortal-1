@@ -43,12 +43,12 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
       ManualDownload dlg = new ManualDownload();
-      DialogResult result = dlg.ShowDialog("http://www.microsoft.com/downloads/details.aspx?familyid=0a9b6820-bfbb-4799-9908-d418cdeac197", "directx_9c_redist.exe", Application.StartupPath + "\\deploy");
+      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("DirectX9c"), Utils.GetDownloadFile("DirectX9c"), Application.StartupPath + "\\deploy");
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
-      string exe = Application.StartupPath + "\\deploy\\directx_9c_redist.exe";
+      string exe = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("DirectX9c");
       Process setup = Process.Start(exe,"/q /t:\""+Path.GetTempPath()+"\\directx9c\"");
       setup.WaitForExit();
       Directory.Delete(Path.GetTempPath()+"\\directx9c");
@@ -62,7 +62,7 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\directx_9c_redist.exe");
+      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("DirectX9c"));
       RegistryKey key=Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
       if (key == null)
         result.state = CheckState.NOT_INSTALLED;

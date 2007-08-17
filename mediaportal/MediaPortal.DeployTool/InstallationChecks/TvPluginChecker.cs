@@ -43,13 +43,13 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
       HTTPDownload dlg = new HTTPDownload();
-      DialogResult result=dlg.ShowDialog("http://abrakadabra-sprachen.mine.nu/tvengine3_1.0.0.zip", Application.StartupPath + "\\deploy\\tvengine3_1.0.0.zip");
+      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("TvServer"), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
       string msi = Path.GetTempPath() + "\\SetupPlugin.msi";
-      Utils.UnzipFile(Application.StartupPath + "\\Deploy\\tvengine3_1.0.0.zip", "SetupPlugin.msi", msi);
+      Utils.UnzipFile(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("TvServer"), "SetupPlugin.msi", msi);
       string parameters = "/i \"" + msi + "\" /qb /L* \"" + Path.GetTempPath() + "\\tvplugininst.log\"";
       Process setup = Process.Start("msiexec", parameters);
       setup.WaitForExit();
@@ -83,7 +83,7 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\tvengine3_1.0.0.zip");
+      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("TvServer"));
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{F7444E89-5BC0-497E-9650-E50539860DE0}");
       if (key == null)
         result.state = CheckState.NOT_INSTALLED;

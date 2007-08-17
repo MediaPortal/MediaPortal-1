@@ -43,14 +43,14 @@ namespace MediaPortal.DeployTool
     public bool Download()
     {
       HTTPDownload dlg = new HTTPDownload();
-      DialogResult result = dlg.ShowDialog("http://abrakadabra-sprachen.mine.nu/mediaportal_0.2.3.zip", Application.StartupPath + "\\deploy\\mediaportal_0.2.3.zip");
+      DialogResult result = dlg.ShowDialog(Utils.GetDownloadURL("MediaPortal"), Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal"));
       return (result == DialogResult.OK);
     }
     public bool Install()
     {
       string msi = Path.GetTempPath() + "\\setup.msi";
       string targetDir=InstallationProperties.Instance["MPDir"];
-      Utils.UnzipFile(Application.StartupPath + "\\Deploy\\mediaportal_0.2.3.zip", "Setup.msi", msi);
+      Utils.UnzipFile(Application.StartupPath + "\\Deploy\\" + Utils.GetDownloadFile("MediaPortal"), "Setup.msi", msi);
       string parameters="/i \""+msi+"\" /qb TARGETDIR=\""+targetDir+"\" /L* \""+Path.GetTempPath()+"\\mpinst.log\"";
       Process setup=Process.Start("msiexec",parameters);
       setup.WaitForExit();
@@ -84,7 +84,7 @@ namespace MediaPortal.DeployTool
     public CheckResult CheckStatus()
     {
       CheckResult result;
-      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\mediaportal_0.2.3.zip");
+      result.needsDownload = !File.Exists(Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("MediaPortal"));
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{87819CFA-1786-484D-B0DE-10B5FBF2625D}");
       if (key == null)
         result.state = CheckState.NOT_INSTALLED;

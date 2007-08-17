@@ -1,0 +1,14 @@
+<Applications>
+	<DirectX9c>
+		<URL>http://www.microsoft.com/downloads/details.aspx?familyid=0a9b6820-bfbb-4799-9908-d418cdeac197</URL>
+		<FILE>directx_9c_redist.exe</FILE>
+	</DirectX9c>
+	<MediaPortal>
+		<URL>http://...</URL>
+		<FILE>mediaportal_0.2.3.zip</FILE>
+	</MediaPortal>
+	<TvServer>
+		<URL>http://...</URL>
+		<FILE>tvengine3_1.0.0.zip</FILE>
+	</TvServer>
+</Applications>

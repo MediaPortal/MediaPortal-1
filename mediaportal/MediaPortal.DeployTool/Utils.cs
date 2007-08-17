@@ -30,6 +30,7 @@ using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Resources;
 using System.Globalization;
+using System.Xml;
 
 namespace MediaPortal.DeployTool
 {
@@ -78,6 +79,21 @@ namespace MediaPortal.DeployTool
       MessageBox.Show(msg, "MediaPortal Deploy Tool -- Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
     #endregion
+
+    public static string GetDownloadURL(string id)
+    {
+      XmlDocument doc=new XmlDocument();
+      doc.Load(Application.StartupPath+"\\ApplicationLocations.xml");
+      XmlNode node=doc.SelectSingleNode("/Applications/"+id+"/URL");
+      return node.InnerText;
+    }
+    public static string GetDownloadFile(string id)
+    {
+      XmlDocument doc = new XmlDocument();
+      doc.Load(Application.StartupPath + "\\ApplicationLocations.xml");
+      XmlNode node = doc.SelectSingleNode("/Applications/" + id + "/FILE");
+      return node.InnerText;
+    }
 
     public static bool CheckTargetDir(string dir)
     {
