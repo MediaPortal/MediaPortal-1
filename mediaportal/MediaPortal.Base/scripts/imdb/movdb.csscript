@@ -26,14 +26,14 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
 
   void MediaPortal.Video.Database.IIMDBScriptGrabber.FindFilm(string strSearch, int iLimit, ArrayList elements)
   {
-    string strURL = "http://www.gaz1.com/movdb/xml/GetSeries.php?searchby=SeriesName&string=" + strSearch;
+    string strURL = "http://www.movie-xml.com/xml/GetSeries.php?searchby=SeriesName&string=" + strSearch;
     string title = "";
     string databaseurl = "";
     // string absoluteUri;
     XmlNodeList xmldata = Generic(strURL);
     foreach (XmlNode itemNode in xmldata)
     {
-      databaseurl = "http://www.gaz1.com/movdb/xml/GetSeries.php?searchby=id&string=";
+      databaseurl = "http://www.movie-xml.com/xml/GetSeries.php?searchby=id&string=";
       foreach (XmlNode propertyNode in itemNode.ChildNodes)
       {
         if (propertyNode.Name.ToString() == "SeriesName")
@@ -105,7 +105,7 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
       }
     }
 
-    XmlNodeList xmldatat = Generic("http://www.gaz1.com/movdb/xml/GetBanners.php?SeriesID=" + movieDetails.IMDBNumber);
+    XmlNodeList xmldatat = Generic("http://www.movie-xml.com/xml/GetBanners.php?SeriesID=" + movieDetails.IMDBNumber);
 
     foreach (XmlNode itemNode in xmldatat)
     {
@@ -113,7 +113,7 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
       foreach (XmlNode propertyNode in itemNode.ChildNodes)
       {
         if (propertyNode.Name.ToString() == "BannerPath")
-          movieDetails.ThumbURL = "http://www.gaz1.com/movdb/banners/" + propertyNode.InnerText;
+          movieDetails.ThumbURL = "http://www.movie-xml.com/banners/" + propertyNode.InnerText;
       }
     }
     if (movieDetails.Title == "")
