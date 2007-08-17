@@ -28,6 +28,7 @@ namespace MediaPortal.MPInstaller
         public bool isLocal = false;
         public bool isInstalled = false;
         public bool containsSkin = false;
+        public bool containsPlugin = false;
         public bool isValid = false;
         public List<string> SkinList;
         public List<string> InstallableSkinList;
@@ -39,6 +40,7 @@ namespace MediaPortal.MPInstaller
             txt_log = String.Empty;
             txt_readme = String.Empty;
             containsSkin = false;
+            containsPlugin = false;
             isValid = false;
             isNew = false;
             isUpdated = false;
@@ -288,6 +290,10 @@ namespace MediaPortal.MPInstaller
                         if (!SkinList.Contains(fl.SubType))
                             SkinList.Add(fl.SubType);
                         containsSkin = true;
+                    }
+                    if (fl.Type == MPinstallerStruct.PLUGIN_TYPE)
+                    {
+                      containsPlugin = true;
                     }
                 }
                 //-----------------

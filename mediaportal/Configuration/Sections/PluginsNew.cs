@@ -817,7 +817,15 @@ namespace MediaPortal.Configuration.Sections
       wiz.package.LoadFromFile(InstalDir + @"\" + pk.FileName);
       if (wiz.package.isValid)
       {
-        wiz.starStep();
+        if (wiz.package.containsPlugin)
+        {
+          MessageBox.Show("This package contain plugin file. \n Use MPInstaller to reistall it !");
+        }
+        else
+        {
+
+          wiz.starStep();
+        }
       }
       else
         MessageBox.Show("Invalid package !");
@@ -830,10 +838,18 @@ namespace MediaPortal.Configuration.Sections
       wiz.package.LoadFromFile(InstalDir + @"\" + pk.FileName);
       if (wiz.package.isValid)
       {
-        wiz.uninstall(pk._intalerStruct.Name);
-        mpListView1.Items.Clear();
-        LoadListFiles();
-        LoadToListview("All");
+        if (wiz.package.containsPlugin)
+        {
+          MessageBox.Show("This package contain plugin file. \n Use MPInstaller to unistall it !");
+        }
+        else
+        {
+
+          wiz.uninstall(pk._intalerStruct.Name);
+          mpListView1.Items.Clear();
+          LoadListFiles();
+          LoadToListview("All");
+        }
       }
       else
         MessageBox.Show("Invalid package !");
