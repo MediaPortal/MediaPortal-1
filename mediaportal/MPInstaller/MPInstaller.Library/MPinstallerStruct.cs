@@ -44,7 +44,7 @@ namespace MediaPortal.MPInstaller
   /// <summary>
   ///  Base mpi entity class informations stored in instaler.xmp
   /// </summary>
-  public class MPinstalerStruct
+  public class MPinstallerStruct
   {
     public const string DEFAULT_UPDATE_SITE = "http://mpi.team-mediaportal.com";
 
@@ -88,7 +88,7 @@ namespace MediaPortal.MPInstaller
     public List<ActionInfo> Actions;
     public List<GroupString> SetupGroups;
     public List<GroupStringMapping> SetupGroupsMappig;
-    public MPinstalerStruct()
+    public MPinstallerStruct()
     {
       Language = new List<LanguageString>();
       Actions = new List<ActionInfo>();
@@ -836,7 +836,7 @@ namespace MediaPortal.MPInstaller
 
     public bool SkinType
     {
-      get { return this.Type == MPinstalerStruct.SKIN_TYPE || this.Type == MPinstalerStruct.SKIN_MEDIA_TYPE || this.Type == MPinstalerStruct.SKIN_SOUNDS_TYPE || this.Type == MPinstalerStruct.SKIN_ANIMATIONS_TYPE || this.Type == MPinstalerStruct.SKIN_TETRIS_TYPE; }
+      get { return this.Type == MPinstallerStruct.SKIN_TYPE || this.Type == MPinstallerStruct.SKIN_MEDIA_TYPE || this.Type == MPinstallerStruct.SKIN_SOUNDS_TYPE || this.Type == MPinstallerStruct.SKIN_ANIMATIONS_TYPE || this.Type == MPinstallerStruct.SKIN_TETRIS_TYPE; }
     }
 
     public string SubType
@@ -990,7 +990,7 @@ namespace MediaPortal.MPInstaller
       else return false;
     }
 
-    public void ExecuteAction(MPinstalerStruct xmp)
+    public void ExecuteAction(MPinstallerStruct xmp)
     {
       switch (Place)
       {
@@ -1003,7 +1003,7 @@ namespace MediaPortal.MPInstaller
               break;
             case 1:
               MPIFileList fs = xmp.FindFile(Command);
-              MPIutils.LoadPlugins(MPinstalerStruct.GetDirEntry(fs));
+              MPIutils.LoadPlugins(MPinstallerStruct.GetDirEntry(fs));
               break;
           }
           break;

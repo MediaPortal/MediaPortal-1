@@ -42,7 +42,7 @@ namespace MediaPortal.MPInstaller
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Form1 create_dlg = new Form1();
+            EditForm create_dlg = new EditForm();
             this.Hide();
             create_dlg.ShowDialog();
             this.Show();

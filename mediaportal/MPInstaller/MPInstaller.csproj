@@ -63,11 +63,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Build dialog.cs">
+    <Compile Include="BuildForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Build dialog.Designer.cs">
-      <DependentUpon>Build dialog.cs</DependentUpon>
+    <Compile Include="BuildForm.Designer.cs">
+      <DependentUpon>BuildForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\ImageListPanel.cs">
       <SubType>Component</SubType>
@@ -95,17 +95,17 @@
     <Compile Include="GroupForm.Designer.cs">
       <DependentUpon>GroupForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form1.cs">
+    <Compile Include="EditForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="EditForm.Designer.cs">
+      <DependentUpon>EditForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Language dialog.cs">
+    <Compile Include="LanguageForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Language dialog.Designer.cs">
-      <DependentUpon>Language dialog.cs</DependentUpon>
+    <Compile Include="LanguageForm.Designer.cs">
+      <DependentUpon>LanguageForm.cs</DependentUpon>
     </Compile>
     <Compile Include="login_form.cs">
       <SubType>Form</SubType>
@@ -127,9 +127,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Build dialog.resx">
+    <EmbeddedResource Include="BuildForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>Build dialog.cs</DependentUpon>
+      <DependentUpon>BuildForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ImageListPanel.resx">
       <DependentUpon>ImageListPanel.cs</DependentUpon>
@@ -151,17 +151,17 @@
       <SubType>Designer</SubType>
       <DependentUpon>download_form.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
+    <EmbeddedResource Include="EditForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>Form1.cs</DependentUpon>
+      <DependentUpon>EditForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GroupForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GroupForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Language dialog.resx">
+    <EmbeddedResource Include="LanguageForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>Language dialog.cs</DependentUpon>
+      <DependentUpon>LanguageForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="login_form.resx">
       <SubType>Designer</SubType>
@@ -179,9 +179,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>SkinSelect.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="start_form.resx">
+    <EmbeddedResource Include="StartForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>start_form.cs</DependentUpon>
+      <DependentUpon>StartForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UpdateChecker.resx">
       <SubType>Designer</SubType>
@@ -202,11 +202,11 @@
     <Compile Include="SkinSelect.Designer.cs">
       <DependentUpon>SkinSelect.cs</DependentUpon>
     </Compile>
-    <Compile Include="start_form.cs">
+    <Compile Include="StartForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="start_form.Designer.cs">
-      <DependentUpon>start_form.cs</DependentUpon>
+    <Compile Include="StartForm.Designer.cs">
+      <DependentUpon>StartForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UpdateChecker.cs">
       <SubType>Form</SubType>

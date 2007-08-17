@@ -39,12 +39,12 @@ namespace MediaPortal.MPInstaller
 {
   public partial class Build_dialog : Form
   {
-    public MPinstalerStruct _struct = new MPinstalerStruct();
+    public MPinstallerStruct _struct = new MPinstallerStruct();
     public Build_dialog()
     {
       InitializeComponent();
     }
-    public Build_dialog(MPinstalerStruct st)
+    public Build_dialog(MPinstallerStruct st)
     {
       _struct = st;
       InitializeComponent();

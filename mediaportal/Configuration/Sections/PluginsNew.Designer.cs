@@ -200,6 +200,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButtonInstall
       // 
+      this.mpButtonInstall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonInstall.Location = new System.Drawing.Point(361, 328);
       this.mpButtonInstall.Name = "mpButtonInstall";
       this.mpButtonInstall.Size = new System.Drawing.Size(75, 23);
@@ -210,6 +212,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButtonReinstall
       // 
+      this.mpButtonReinstall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonReinstall.Location = new System.Drawing.Point(253, 328);
       this.mpButtonReinstall.Name = "mpButtonReinstall";
       this.mpButtonReinstall.Size = new System.Drawing.Size(75, 23);
@@ -220,6 +224,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButtonUpdate
       // 
+      this.mpButtonUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonUpdate.Enabled = false;
       this.mpButtonUpdate.Location = new System.Drawing.Point(145, 328);
       this.mpButtonUpdate.Name = "mpButtonUpdate";
@@ -230,6 +236,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButtonUninstall
       // 
+      this.mpButtonUninstall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonUninstall.Location = new System.Drawing.Point(37, 328);
       this.mpButtonUninstall.Name = "mpButtonUninstall";
       this.mpButtonUninstall.Size = new System.Drawing.Size(75, 23);

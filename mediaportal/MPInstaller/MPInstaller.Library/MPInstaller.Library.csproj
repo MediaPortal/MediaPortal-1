@@ -59,7 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MPinstalerStruct.cs" />
+    <Compile Include="MPinstallerStruct.cs" />
     <Compile Include="MPIutils.cs" />
     <Compile Include="MPpackageStruct.cs" />
     <Compile Include="properties.cs" />

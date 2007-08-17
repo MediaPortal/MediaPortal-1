@@ -297,7 +297,7 @@ namespace MediaPortal.MPInstaller
       {
         wiz.uninstall(listView1.SelectedItems[0].Text);
         listView1.Items.Clear();
-        lst.LoadFromFile();
+        LoadListFiles();
         LoadToListview("All");
       }
       else
@@ -431,7 +431,7 @@ namespace MediaPortal.MPInstaller
       it1.TextAlign = Pabo.MozBar.MozTextAlign.Right;
       mozPane1.Items.AddRange(new Pabo.MozBar.MozItem[] { it1 });
       int cn = 1;
-      foreach (string s in MPinstalerStruct.CategoriListing)
+      foreach (string s in MPinstallerStruct.CategoriListing)
       {
         MozItem it = new MozItem();
         it.Images.Focus = cn;
@@ -494,7 +494,7 @@ namespace MediaPortal.MPInstaller
       {
         Directory.CreateDirectory(InstalDir);
       }
-      download_form dw = new download_form(MPinstalerStruct.DEFAULT_UPDATE_SITE + "/" + "MPExtensionFileList.xml", temp_file);
+      download_form dw = new download_form(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/" + "MPExtensionFileList.xml", temp_file);
       dw.Text = "Download online list";
       dw.ShowDialog();
       LoadListFiles();
