@@ -43,6 +43,7 @@ namespace SetupTv.Sections
       this.buttonDown = new System.Windows.Forms.Button();
       this.buttonUtp = new System.Windows.Forms.Button();
       this.mpButtonDel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
       this.contextMenuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -164,10 +165,21 @@ namespace SetupTv.Sections
       this.mpButtonDel.UseVisualStyleBackColor = true;
       this.mpButtonDel.Click += new System.EventHandler(this.mpButtonDel_Click);
       // 
+      // mpButtonPreview
+      // 
+      this.mpButtonPreview.Location = new System.Drawing.Point(184, 319);
+      this.mpButtonPreview.Name = "mpButtonPreview";
+      this.mpButtonPreview.Size = new System.Drawing.Size(63, 23);
+      this.mpButtonPreview.TabIndex = 4;
+      this.mpButtonPreview.Text = "Preview";
+      this.mpButtonPreview.UseVisualStyleBackColor = true;
+      this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
+      // 
       // ChannelsInGroupControl
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpButtonPreview);
       this.Controls.Add(this.mpButtonDel);
       this.Controls.Add(this.buttonDown);
       this.Controls.Add(this.buttonUtp);
@@ -195,5 +207,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ToolStripMenuItem removeEntireGroupToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem editChannelToolStripMenuItem;
     private System.Windows.Forms.ImageList imageList1;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonPreview;
   }
 }
