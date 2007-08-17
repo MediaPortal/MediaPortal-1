@@ -1065,5 +1065,21 @@ namespace SetupTv.Sections
       }
       OnSectionActivated();
     }
+
+    private void addSIDInFrontOfNameToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem item in mpListView1.SelectedItems)
+      {
+        Channel channel = (Channel)item.Tag;
+        IList details = channel.ReferringTuningDetail();
+        if (details.Count > 0)
+        {
+          channel.DisplayName = ((TuningDetail)details[0]).ServiceId.ToString()+" "+channel.DisplayName;
+          channel.Persist();
+          item.Tag = channel;
+        }
+      }
+      OnSectionActivated();
+    }
   }
 }
