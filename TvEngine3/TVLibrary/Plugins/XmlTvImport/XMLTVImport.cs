@@ -272,7 +272,7 @@ namespace TvEngine
                     Channel chan = null;
                     foreach (Channel ch in allChannels)
                     {
-                      if (ch.Name == displayName)
+                      if (ch.DisplayName == displayName)
                       {
                         chan = ch;
                         break;
