@@ -557,13 +557,14 @@ namespace MediaPortal.GUI.Library
             if (_listTextures[i + iStartCopy] != null) _listTextures[i + iStartCopy].Disposed += new EventHandler(OnImageDisposedEvent);
             else
             {
-              Log.Debug("GUIImage.AllocResources nullreference - Filename = (" + fileName + ") i="+i.ToString()+" FrameCount=" +frameCount.ToString());
+              Log.Debug("GUIImage.AllocResources -> Filename = (" + fileName + ") i="+i.ToString()+" FrameCount=" +frameCount.ToString());
               if (_saveList != null)
               {
                 _listTextures = new CachedTexture.Frame[_saveList.Length];
                 _saveList.CopyTo(_listTextures, 0);
               }
               else _listTextures = null;
+              _currentFrameNumber = 0;
               break;
             }
           }
@@ -709,6 +710,7 @@ namespace MediaPortal.GUI.Library
         {
           Cleanup();
           AllocResources();
+          if (_listTextures == null || _listTextures.Length < 1) return;
           frame = _listTextures[_currentFrameNumber];
           if (frame == null)
             return;
@@ -1266,6 +1268,11 @@ namespace MediaPortal.GUI.Library
           {
             Cleanup();
             AllocResources();
+            if (_listTextures == null || _listTextures.Length < 1)
+            {
+              base.Render(timePassed);
+              return;
+            }
             frame = _listTextures[_currentFrameNumber];
             if (frame == null)
             {
