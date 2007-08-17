@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class General : MediaPortal.Configuration.SectionSettings
+  public partial class General : MediaPortal.Configuration.SectionSettings
   {
     [DllImport("User32.dll", CharSet = CharSet.Auto)]
     public static extern int SendMessageTimeout(
@@ -54,41 +54,13 @@ namespace MediaPortal.Configuration.Sections
     const int SMTO_ABORTIFHUNG = 0x2;
     const int HWND_BROADCAST = 0xFFFF;
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGeneralSettings;
-    private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbDebug;
-    private Label lbDebug;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpThreadPriority;
-    private Label label1;
-    private System.ComponentModel.IContainer components = null;
-
     public General()
-      : this("General")
-    {
-    }
+      : this("General") { }
 
     public General(string name)
       : base(name)
     {
-
-      // This call is required by the Windows Form Designer.
       InitializeComponent();
-    }
-
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing)
-      {
-        if (components != null)
-        {
-          components.Dispose();
-        }
-      }
-      base.Dispose(disposing);
     }
 
     string loglevel = "3";  // Debug is default
@@ -129,7 +101,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public override void LoadSettings()
-    {      
+    {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         //
@@ -219,142 +191,5 @@ namespace MediaPortal.Configuration.Sections
         Log.Info("Exception: {0}", ex.StackTrace);
       }
     }
-
-    #region Designer generated code
-    /// <summary>
-    /// Required method for Designer support - do not modify
-    /// the contents of this method with the code editor.
-    /// </summary>
-    private void InitializeComponent()
-    {
-      this.groupBoxGeneralSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.mpThreadPriority = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.lbDebug = new System.Windows.Forms.Label();
-      this.cbDebug = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
-      this.groupBoxGeneralSettings.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // groupBoxGeneralSettings
-      // 
-      this.groupBoxGeneralSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxGeneralSettings.Controls.Add(this.label1);
-      this.groupBoxGeneralSettings.Controls.Add(this.mpThreadPriority);
-      this.groupBoxGeneralSettings.Controls.Add(this.lbDebug);
-      this.groupBoxGeneralSettings.Controls.Add(this.cbDebug);
-      this.groupBoxGeneralSettings.Controls.Add(this.settingsCheckedListBox);
-      this.groupBoxGeneralSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxGeneralSettings.Location = new System.Drawing.Point(0, 3);
-      this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
-      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(472, 420); //397
-      this.groupBoxGeneralSettings.TabIndex = 0;
-      this.groupBoxGeneralSettings.TabStop = false;
-      this.groupBoxGeneralSettings.Text = "General Settings";
-      // 
-      // label1
-      // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(13, 349);//341
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(58, 13);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "MP Priority";
-      // 
-      // mpThreadPriority
-      // 
-      this.mpThreadPriority.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpThreadPriority.BorderColor = System.Drawing.Color.Empty;
-      this.mpThreadPriority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpThreadPriority.FormattingEnabled = true;
-      this.mpThreadPriority.Items.AddRange(new object[] {
-            "High",
-            "AboveNormal",
-            "Normal",
-            "BelowNormal"});
-      this.mpThreadPriority.Location = new System.Drawing.Point(89, 346); //338
-      this.mpThreadPriority.MinimumSize = new System.Drawing.Size(100, 0);
-      this.mpThreadPriority.Name = "mpThreadPriority";
-      this.mpThreadPriority.Size = new System.Drawing.Size(367, 21);
-      this.mpThreadPriority.TabIndex = 2;
-      // 
-      // lbDebug
-      // 
-      this.lbDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.lbDebug.AutoSize = true;
-      this.lbDebug.Location = new System.Drawing.Point(13, 376); //368
-      this.lbDebug.Name = "lbDebug";
-      this.lbDebug.Size = new System.Drawing.Size(56, 13);
-      this.lbDebug.TabIndex = 3;
-      this.lbDebug.Text = "Log Level:";
-      // 
-      // cbDebug
-      // 
-      this.cbDebug.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.cbDebug.BorderColor = System.Drawing.Color.Empty;
-      this.cbDebug.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbDebug.FormattingEnabled = true;
-      this.cbDebug.Items.AddRange(new object[] {
-            "Error",
-            "Warning",
-            "Information",
-            "Debug"});
-      this.cbDebug.Location = new System.Drawing.Point(89, 373);//365
-      this.cbDebug.MinimumSize = new System.Drawing.Size(100, 0);
-      this.cbDebug.Name = "cbDebug";
-      this.cbDebug.Size = new System.Drawing.Size(367, 21);
-      this.cbDebug.TabIndex = 4;
-      // 
-      // settingsCheckedListBox
-      // 
-      this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.settingsCheckedListBox.CheckOnClick = true;
-      this.settingsCheckedListBox.Items.AddRange(new object[] {
-            "Start MediaPortal in fullscreen mode",
-            "Minimize to tray on start up",
-            "Minimize to tray on GUI exit",
-            "Autohide mouse cursor in fullscreen mode when idle",
-            "Show special mouse controls (scrollbars, etc)",
-            "Dont show file extensions like .mp3, .avi, .mpg,...",
-            "Enable animations",
-            "Autostart MediaPortal when windows starts",
-            "Disable Windows XP balloon tips",
-            "Use mouse left double click as right click",
-            "Hide taskbar in fullscreen mode",
-            "MediaPortal always on top",
-            "Enable GUI sound effects",
-            "Blank screen in fullscreen mode when MediaPortal is idle",
-            "Turn off monitor when blanking screen",
-            "Start with basic home screen",
-            "Turn monitor/tv on when resuming from standby",
-            "Allow S3 standby although wake up devices are present",
-            "Autosize window mode to skin",
-            "Use VRM9 for playback of web streams",
-            "Show last active module when starting/resuming from standby"});
-      this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
-      this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 327);//308
-      this.settingsCheckedListBox.TabIndex = 0;
-      // 
-      // General
-      // 
-      this.BackColor = System.Drawing.SystemColors.Control;
-      this.Controls.Add(this.groupBoxGeneralSettings);
-      this.Name = "General";
-      this.Size = new System.Drawing.Size(472, 408);
-      this.groupBoxGeneralSettings.ResumeLayout(false);
-      this.groupBoxGeneralSettings.PerformLayout();
-      this.ResumeLayout(false);
-
-    }
-    #endregion
   }
 }
-
