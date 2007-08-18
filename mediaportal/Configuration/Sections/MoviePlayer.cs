@@ -32,6 +32,7 @@ using MediaPortal.Util;
 using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
+using MediaPortal.GUI.Library;
 
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
@@ -110,6 +111,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
+      Log.Info("--- MoviePlayer.LoadSettings ---");
       if (_init == false) return;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -146,16 +148,19 @@ namespace MediaPortal.Configuration.Sections
             else if (DScalerFilterFound) audioCodec = "DScaler Audio Decoder";
           }
         }
+        Log.Info("  - videoCodec =(" + videoCodec +")");
         if (videoCodec == String.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
           bool Mpeg2DecFilterFound = true;
           bool DScalerFilterFound = true;
+          Log.Info(" - availableVideoFilters.Count = " + availableVideoFilters.Count.ToString());
           if (availableVideoFilters.Count > 0)
           {
             videoCodec = (string)availableVideoFilters[0];
             foreach (string filter in availableVideoFilters)
             {
+              Log.Info(" - filter = (" + filter + ")");
               if (filter.Equals("MPV Decoder Filter"))
               {
                 Mpeg2DecFilterFound = true;
