@@ -233,7 +233,7 @@ namespace MediaPortal.Player
           lock (subtitles)
           {
             subtitles.AddLast(subtitle);
-            //Log.Debug("SubtitleRenderer: Subtitle added, now have " + subtitles.Count + " subtitles in cache");
+            Log.Debug("SubtitleRenderer: Subtitle added, now have " + subtitles.Count + " subtitles in cache");
           }
         }
         catch (Exception e)
