@@ -976,6 +976,13 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   LogDebug(" Pmt      pid:%x ",m_pids.PmtPid);
   LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid);
 
+  IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
+  if( pDVBSubtitleFilter )
+  {
+    // Make sure that subtitle cache is reseted ( in filter & MP ) 
+    pDVBSubtitleFilter->NotifyChannelChange();
+  }
+
   //update audio streams etc..
   if (m_pids.PcrPid>0x1)
   {

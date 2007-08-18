@@ -313,6 +313,12 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           fTime/=1000.0f;
           LogDebug("vid:compensation:%03.3f",fTime);
           prevTime=-1;
+
+          IDVBSubtitle* pDVBSubtitleFilter(m_pTsReaderFilter->GetSubtitleFilter());
+          if( pDVBSubtitleFilter )
+          {
+            pDVBSubtitleFilter->SetTimeCompensation( cRefTime );
+          }
         }
         //adjust the timestamp with the compensation
         cRefTime -=m_pTsReaderFilter->Compensation;

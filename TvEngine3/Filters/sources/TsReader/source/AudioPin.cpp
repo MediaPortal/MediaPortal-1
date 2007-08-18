@@ -305,6 +305,12 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             fTime/=1000.0f;
             LogDebug("aud:compensation:%03.3f",fTime);
             prevTime=-1;
+
+            IDVBSubtitle* pDVBSubtitleFilter(m_pTsReaderFilter->GetSubtitleFilter());
+            if( pDVBSubtitleFilter )
+            {
+              pDVBSubtitleFilter->SetTimeCompensation( cRefTime );
+            }
           }
         }
 
