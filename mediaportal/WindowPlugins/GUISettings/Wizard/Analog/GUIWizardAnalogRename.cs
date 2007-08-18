@@ -49,6 +49,9 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
     protected GUIButtonControl btnBack = null;
     TVCaptureDevice captureCard = null;
 
+    protected ArrayList listTvChannels = new ArrayList();
+
+
     public GUIWizardAnalogRename()
     {
 
@@ -63,6 +66,15 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+      int cardID = Int32.Parse(GUIPropertyManager.GetProperty("#WizardCard"));
+
+      // load Analog channels from DB
+      listTvChannels.Clear();
+      captureCard = Recorder.Get(cardID);
+      if ((captureCard != null) && (captureCard.Network == NetworkType.Analog))
+      {
+        TVDatabase.GetChannelsForCard(ref listTvChannels, cardID);
+      }
 
       UpdateList();
       if (listChannelsFound.Count == 0)
@@ -71,11 +83,9 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
       }
       else
       {
-        int card = Int32.Parse(GUIPropertyManager.GetProperty("#WizardCard"));
-        if (card >= 0 && card < Recorder.Count)
+        if (captureCard != null)
         {
-          captureCard = Recorder.Get(card);
-          TVChannel chan = (TVChannel)GUIWizardAnalogTune.TVChannelsFound[0];
+          TVChannel chan = (TVChannel)listTvChannels[0];
           captureCard.StartViewing(chan.Name);
           captureCard.Tune(chan);
         }
@@ -95,7 +105,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
     {
       int selectedItem = listChannelsFound.SelectedListItemIndex;
       listChannelsFound.Clear();
-      foreach (TVChannel chan in GUIWizardAnalogTune.TVChannelsFound)
+      foreach (TVChannel chan in listTvChannels)
       {
         GUIListItem item = new GUIListItem();
         item.Label = chan.Name;
@@ -112,7 +122,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         listChannelsFound.Add(item);
       }
-      while (selectedItem > 0 && selectedItem >= GUIWizardAnalogTune.TVChannelsFound.Count)
+      while (selectedItem > 0 && selectedItem >= listTvChannels.Count)
         selectedItem--;
       listChannelsFound.SelectedListItemIndex = selectedItem;
       GUIListItem selitem = listChannelsFound.SelectedListItem;
@@ -144,7 +154,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
     {
       ArrayList listChannels = new ArrayList();
       TVDatabase.GetChannels(ref listChannels);
-      foreach (TVChannel ch in GUIWizardAnalogTune.TVChannelsFound)
+      foreach (TVChannel ch in listTvChannels)
       {
         bool found = false;
         foreach (TVChannel listChan in listChannels)
@@ -198,11 +208,11 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
       switch (dlg.SelectedId)
       {
         case 117://delete
-          foreach (TVChannel ch in GUIWizardAnalogTune.TVChannelsFound)
+          foreach (TVChannel ch in listTvChannels)
           {
             if (ch.Number == chan.Number)
             {
-              GUIWizardAnalogTune.TVChannelsFound.Remove(ch);
+              listTvChannels.Remove(ch);
               break;
             }
           }
@@ -218,7 +228,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
           if (keyboard.IsConfirmed)
           {
             chan.Name = keyboard.Text;
-            foreach (TVChannel ch in GUIWizardAnalogTune.TVChannelsFound)
+            foreach (TVChannel ch in listTvChannels)
             {
               if (ch.Number == chan.Number)
               {

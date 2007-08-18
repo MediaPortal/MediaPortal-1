@@ -126,6 +126,10 @@ namespace MediaPortal.TV.Recording
           tuning = new DVBTTuning();
           tuning.AutoTuneTV(dev, _autoTuneCallback, parametersT);
           break;
+        case NetworkType.Analog:
+          tuning = new AnalogTVTuning();
+          tuning.AutoTuneTV(dev, _autoTuneCallback, null);
+          break;
       }
       return tuning;
     }
