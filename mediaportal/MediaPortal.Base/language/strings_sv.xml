@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Language name="Swedish" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Mina ">Program</String>
@@ -641,6 +641,9 @@
     <String id="777">Start av timeshift</String>
     <String id="778">Starta med timeshift automtiskt på</String>
     <String id="779">Timeshift måste sättas på manuellt</String>
+    <String id="780">Välj typ av inspelning</String>
+    <String id="781">Enkel inspelning</String>
+    <String id="782">Avancerad inspelning</String>
     <String id="789">Nu: </String>
     <String id="790">Nästa: </String>
     <String id="798">Lågt</String>
@@ -858,7 +861,7 @@
     <String id="1104">kvar</String>
     <String id="1105">Importerar spår</String>
     <String id="1190">Zoom 14:9</String>
-    <String id="1200">Setup guide</String>
+    <String id="1200">Inställningsguiden</String>
     <String id="1440" prefix="Min ">Text-TV</String>
     <String id="1441">Text-TV</String>
     <String id="1442">Scroll-hastighet</String>
@@ -1181,6 +1184,7 @@
     <String id="6008">Kanalordning</String>
     <String id="6018">minuter före programmet startar</String>
     <String id="6019">minuter efter programmet slutar</String>
+    <String id="6036">H.264 Videocodec</String>
     <String id="8000">Min e-post</String>
     <String id="8001">Kolla brevlådan</String>
     <String id="8002">Autokoll Av</String>
@@ -1230,6 +1234,7 @@
     <String id="10102">Snabbast tid</String>
     <String id="10103" prefix="Min ">Minesweeper</String>
     <String id="10104">Liten TV-tablå</String>
+    <String id="10105">Visas nu</String>
     <String id="11000">Inställningar beskärning</String>
     <String id="11001">Övre:</String>
     <String id="11002">Nedre:</String>
