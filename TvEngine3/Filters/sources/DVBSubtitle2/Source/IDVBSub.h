@@ -21,7 +21,6 @@
 
 #include <windows.h>
 #include <xprtdefs.h>
-//#include <streams.h>
 #include <bdaiface.h>
 #include <initguid.h>
 #include <atlcomcli.h>
@@ -56,9 +55,11 @@ struct SUBTITLE
 DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
 {
   STDMETHOD(SetCallback) ( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) ) PURE;
-  STDMETHOD(SetTimestampResetCallback)( int (CALLBACK *pSubtitleObserver)() ) PURE;
+  STDMETHOD(SetResetCallback)( int (CALLBACK *pResetObserver)() ) PURE;
   STDMETHOD(Test)( int status ) PURE;
+  STDMETHOD(NotifyChannelChange)() PURE;
   STDMETHOD(SetSubtitlePid)( LONG pPid ) PURE;
   STDMETHOD(SetFirstPcr)( LONGLONG pPcr ) PURE;
   STDMETHOD(SeekDone)( CRefTime& rtSeek ) PURE;
+  STDMETHOD(SetTimeCompensation)( CRefTime& rtCompensation ) PURE;
 };

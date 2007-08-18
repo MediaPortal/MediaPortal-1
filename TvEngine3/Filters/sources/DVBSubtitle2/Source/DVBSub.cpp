@@ -63,14 +63,15 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_pSubtitlePin( NULL ),
 	m_pSubDecoder( NULL ),
   m_pSubtitleObserver( NULL ),
-  m_pTimestampResetObserver( NULL ),
+  m_pResetObserver( NULL ),
   m_pIMediaSeeking( NULL ),
   m_bSeekingDone( true ),
   m_startTimestamp( -1 ),
-  m_CurrentSeekPosition( 0 )
+  m_CurrentSeekPosition( 0 ),
+  m_CurrentTimeCompensation( 0 )
 {
   ::DeleteFile("c:\\DVBsub.log");
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 4 ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 5 ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -238,9 +239,9 @@ void CDVBSub::Reset()
   if( m_pSubtitlePin ) m_pSubtitlePin->Reset();
 
   // Notify reset observer
-  if( m_pTimestampResetObserver )
+  if( m_pResetObserver )
   {
-    (*m_pTimestampResetObserver)();
+    (*m_pResetObserver)();
   }
 
   //LogDebugMediaPosition( "CDVBSub::Reset - media seeking position" );  
@@ -305,6 +306,28 @@ STDMETHODIMP CDVBSub::SeekDone( CRefTime& rtSeek )
 	return S_OK;
 }
 
+
+//
+// SetTimeCompensation
+//
+STDMETHODIMP CDVBSub::SetTimeCompensation( CRefTime& rtCompensation )
+{
+  m_CurrentTimeCompensation = rtCompensation.Millisecs() * 90;
+  LogDebugPTS( "SetTimeCompensation", m_CurrentSeekPosition );
+  return S_OK;
+}
+
+
+//
+// NotifyChannelChange
+//
+STDMETHODIMP CDVBSub::NotifyChannelChange()
+{
+  Reset();
+  return S_OK;
+}
+
+
 //
 // NotifySubtitle
 //
@@ -320,13 +343,15 @@ void CDVBSub::NotifySubtitle()
     // PTS to milliseconds ( 90khz )
     LONGLONG pts( 0 ); 
    
-    pts = ( pSubtitle->PTS() - m_basePCR /* + m_CurrentSeekPosition*/ ) / 90;
+    pts = ( pSubtitle->PTS() - m_basePCR - m_CurrentTimeCompensation /* + m_CurrentSeekPosition*/ ) / 90;
 
-    LogDebugPTS( "subtitlePTS           ", pSubtitle->PTS() ); 
-    LogDebugPTS( "m_basePCR             ", m_basePCR ); 
-    LogDebugPTS( "timestamp             ", pts * 90 ); 
-    LogDebugPTS( "m_CurrentSeekPosition ", m_CurrentSeekPosition ); 
-    LogDebugPTS( "subtitlePTS - m_basePCR ", pSubtitle->PTS() - m_basePCR ); 
+    LogDebugPTS( "subtitlePTS               ", pSubtitle->PTS() ); 
+    LogDebugPTS( "m_basePCR                 ", m_basePCR ); 
+    LogDebugPTS( "timestamp                 ", pts * 90 ); 
+    LogDebugPTS( "m_CurrentSeekPosition     ", m_CurrentSeekPosition ); 
+    LogDebugPTS( "m_CurrentTimeCompensation ", m_CurrentTimeCompensation ); 
+
+    LogDebugPTS( "subtitlePTS - m_basePCR - comp ", pSubtitle->PTS() - m_basePCR - m_CurrentTimeCompensation ); 
 
     pSubtitle->SetTimestamp( pts );  
 
@@ -425,12 +450,12 @@ STDMETHODIMP CDVBSub::SetCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* s
 
 
 //
-// SetTimestampResetCallback
+// SetResetCallback
 //
-STDMETHODIMP CDVBSub::SetTimestampResetCallback( int (CALLBACK *pTimestampResetObserver)() )
+STDMETHODIMP CDVBSub::SetResetCallback( int (CALLBACK *pResetObserver)() )
 {
 	LogDebug( "SetTimestampResetedCallback called" );
-  m_pTimestampResetObserver = pTimestampResetObserver;
+  m_pResetObserver = pResetObserver;
   return S_OK;
 }
 

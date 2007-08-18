@@ -62,11 +62,13 @@ public:
 
   // IDVBSubtitle
   virtual HRESULT STDMETHODCALLTYPE SetCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) );
-  virtual HRESULT STDMETHODCALLTYPE SetTimestampResetCallback( int (CALLBACK *pTimestampResetObserver)() );
+  virtual HRESULT STDMETHODCALLTYPE SetResetCallback( int (CALLBACK *pResetObserver)() );
   virtual HRESULT STDMETHODCALLTYPE Test( int status );
   virtual HRESULT STDMETHODCALLTYPE SetSubtitlePid( LONG pPid );
   virtual HRESULT STDMETHODCALLTYPE SetFirstPcr( LONGLONG pPcr );
   virtual HRESULT STDMETHODCALLTYPE SeekDone( CRefTime& rtSeek );
+  virtual HRESULT STDMETHODCALLTYPE SetTimeCompensation( CRefTime& rtCompensation );
+  virtual HRESULT STDMETHODCALLTYPE NotifyChannelChange();
 
   // IUnknown
   DECLARE_IUNKNOWN;
@@ -104,9 +106,10 @@ private: // data
   REFERENCE_TIME      m_startTimestamp;
   REFERENCE_TIME      m_CurrentSeekPosition;
   LONGLONG            m_basePCR;
+  REFERENCE_TIME      m_CurrentTimeCompensation;
 
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub);
-  int                 (CALLBACK *m_pTimestampResetObserver) ();
+  int                 (CALLBACK *m_pResetObserver) ();
 
   bool                m_bSeekingDone;
 };

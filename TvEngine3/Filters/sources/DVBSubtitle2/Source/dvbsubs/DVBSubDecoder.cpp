@@ -59,8 +59,11 @@ int in_scanline=0;
 uint64_t video_pts,first_video_pts,audio_pts,first_audio_pts;
 int audio_pts_wrap=0;
 
+// HACK to adjust the timeout
+const int maxSubtitleTimeOut = 5;
+
 // Logging
-extern void LogDebug(const char *fmt, ...);
+extern void LogDebug( const char *fmt, ... );
 extern void LogDebugPTS( const char *fmt, uint64_t pts );
 
 CDVBSubDecoder::~CDVBSubDecoder()
@@ -339,10 +342,10 @@ void CDVBSubDecoder::Process_page_composition_segment()
 	//LogDebug("DVBsubs: page_state=%d", page_state );
   
   // HACK, not all broadcasters provide valid a timeout values for subtitles
-  if( page_time_out <= 1 || page_time_out > 8 )
+  if( page_time_out <= 1 || page_time_out > maxSubtitleTimeOut )
   {
-    LogDebug("DVBsubs: page_time_out was %i , forcing it to 5 seconds", page_time_out );
-    page_time_out = 8; // in seconds
+    LogDebug("DVBsubs: page_time_out was %i , forcing it to %i seconds", page_time_out, maxSubtitleTimeOut );
+    page_time_out = maxSubtitleTimeOut; // in seconds
   }
   m_CurrentSubtitle->SetTimeout( page_time_out );
 
