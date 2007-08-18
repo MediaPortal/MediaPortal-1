@@ -65,14 +65,14 @@ namespace MediaPortal.Player
     //void GetSubtitle(int place, ref SUBTITLE subtitle);
     //void GetSubtitleCount(out int count);
     void SetCallback(IntPtr callBack);
-    void SetTimestampResetCallback(IntPtr callBack);
+    void SetResetCallback(IntPtr callBack);
     //void DiscardOldestSubtitle();
     void Test(int status);
   }
 
   [UnmanagedFunctionPointer(CallingConvention.StdCall)]
   public delegate int SubtitleCallback(ref SUBTITLE sub);
-  public delegate int ResetTimestampCallback();
+  public delegate int ResetCallback();
 
   public class SubtitleRenderer
   {
@@ -92,7 +92,7 @@ namespace MediaPortal.Player
     // important, these delegates must NOT be garbage collected
     // or horrible things will happen when the native code tries to call those!
     private SubtitleCallback callBack;
-    // private ResetTimestampCallback resetTimeStampCallBack;
+    private ResetCallback resetCallBack;
 
     /// <summary>
     /// Texture storing the current/last subtitle
@@ -126,7 +126,7 @@ namespace MediaPortal.Player
       {
         instance = new SubtitleRenderer();
         instance.callBack = new SubtitleCallback(instance.OnSubtitle);
-        //instance.resetTimeStampCallBack = new ResetTimestampCallback(instance.Reset);
+        instance.resetCallBack = new ResetCallback(instance.Reset);
       }
       return instance;
     }
@@ -141,6 +141,8 @@ namespace MediaPortal.Player
       player = p;
             
     }
+
+
     /// <summary>
     /// Alerts the subtitle render that a seek has just been performed.
     /// Stops displaying the current subtitle and removes any cached subtitles.
@@ -149,7 +151,7 @@ namespace MediaPortal.Player
     /// <returns></returns>
     public int OnSeek(double startPos)
     {
-      Log.Debug("SubtitleRenderer: RESET");
+      Log.Debug("SubtitleRenderer: OnSeek - clear subtitles");
       // Remove all previously received subtitles
       lock (subtitles)
       {
@@ -161,6 +163,25 @@ namespace MediaPortal.Player
       Log.Debug("New StartPos is " + startPos);
       return 0;
     }
+
+
+    /// <summary>
+    /// Alerts the subtitle render that a reset has just been performed.
+    /// Stops displaying the current subtitle and removes any cached subtitles.
+    /// </summary>
+    /// <returns></returns>
+    public int Reset()
+    {
+      Log.Debug("SubtitleRenderer: RESET");
+      // Remove all previously received subtitles
+      lock (subtitles)
+      {
+        subtitles.Clear();
+      }
+      clearOnNextRender = true;
+      return 0;
+    }
+
 
     /// <summary>
     /// Callback from subtitle filter, alerting us that a new subtitle is available
@@ -186,7 +207,7 @@ namespace MediaPortal.Player
           subtitle.width = (uint)sub.bmWidth;
           subtitle.firstScanLine = sub.firstScanLine;
           subtitle.id = subCounter++;
-          Log.Debug("Received Subtitle : " + subtitle.ToString());
+          //Log.Debug("Received Subtitle : " + subtitle.ToString());
 
           // get bits of allocated image
           BitmapData bmData = subtitle.subBitmap.LockBits(new Rectangle(0, 0, sub.bmWidth, sub.bmHeight), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
@@ -212,7 +233,7 @@ namespace MediaPortal.Player
           lock (subtitles)
           {
             subtitles.AddLast(subtitle);
-            Log.Debug("SubtitleRenderer: Subtitle added, now have " + subtitles.Count + " subtitles in cache");
+            //Log.Debug("SubtitleRenderer: Subtitle added, now have " + subtitles.Count + " subtitles in cache");
           }
         }
         catch (Exception e)
@@ -299,8 +320,8 @@ namespace MediaPortal.Player
       IntPtr pCallback = Marshal.GetFunctionPointerForDelegate(callBack);
       subFilter.SetCallback(pCallback);
 
-      //IntPtr pResetTimeStampCallBack = Marshal.GetFunctionPointerForDelegate(resetTimeStampCallBack);
-      //subFilter.SetTimestampResetCallback(pResetTimeStampCallBack);
+      IntPtr pResetCallBack = Marshal.GetFunctionPointerForDelegate(resetCallBack);
+      subFilter.SetResetCallback(pResetCallBack);
 
       return filter;
     }
