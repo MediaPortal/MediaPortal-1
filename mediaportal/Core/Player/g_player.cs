@@ -73,6 +73,8 @@ namespace MediaPortal.Player
     static string _currentDescription = ""; //actual program metadata - usefull for tv - avoids extra DB Lookups. 
     static string _currentFileName = ""; //holds the actual file being played. Usefull for rtsp streams. 
     static double[] _chapters = null;
+
+    static public bool _skipStopMessage = false;
     #endregion
 
     #region events
@@ -417,8 +419,11 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.form.Invalidate(true);
         }
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendThreadMessage(msg);
+        if (!_skipStopMessage)
+        {
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendThreadMessage(msg);
+        }
         GUIGraphicsContext.IsFullScreenVideo = false;
         GUIGraphicsContext.IsPlaying = false;
         GUIGraphicsContext.IsPlayingVideo = false;

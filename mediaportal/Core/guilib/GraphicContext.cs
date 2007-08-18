@@ -58,7 +58,8 @@ namespace MediaPortal.GUI.Library
       STARTING,		// starting up
       RUNNING,		// running
       STOPPING,		// stopping
-      LOST
+      LOST,
+      NEEDRECREATE
     }
     /// <summary>
     /// Event which will be triggered when a message has arrived

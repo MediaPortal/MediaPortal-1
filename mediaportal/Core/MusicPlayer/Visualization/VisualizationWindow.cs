@@ -490,8 +490,8 @@ namespace MediaPortal.Visualization
       LoadSettings();
 
       // Soundspectrum Graphics always show the cursor, so let's hide it here
-      if (GUIGraphicsContext.Fullscreen && _autoHideMouse)
-        Cursor.Hide();
+      /*if (GUIGraphicsContext.Fullscreen && _autoHideMouse)
+        Cursor.Hide();*/
     }
 
     void OnNewAction(Action action)

@@ -58,6 +58,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label1 = new System.Windows.Forms.Label();
       this.cbDebug = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.lbScreen = new System.Windows.Forms.Label();
+      this.cbScreen = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
       this.groupBoxGeneralSettings.SuspendLayout();
       this.SuspendLayout();
@@ -74,7 +76,7 @@ namespace MediaPortal.Configuration.Sections
             "AboveNormal",
             "Normal",
             "BelowNormal"});
-      this.mpThreadPriority.Location = new System.Drawing.Point(99, 348);
+      this.mpThreadPriority.Location = new System.Drawing.Point(99, 360);
       this.mpThreadPriority.MinimumSize = new System.Drawing.Size(100, 0);
       this.mpThreadPriority.Name = "mpThreadPriority";
       this.mpThreadPriority.Size = new System.Drawing.Size(361, 21);
@@ -84,9 +86,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.lbDebug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.lbDebug.AutoSize = true;
-      this.lbDebug.Location = new System.Drawing.Point(6, 378);
+      this.lbDebug.Location = new System.Drawing.Point(6, 390);
       this.lbDebug.Name = "lbDebug";
-      this.lbDebug.Size = new System.Drawing.Size(56, 13);
+      this.lbDebug.Size = new System.Drawing.Size(57, 13);
       this.lbDebug.TabIndex = 3;
       this.lbDebug.Text = "Log Level:";
       // 
@@ -99,11 +101,13 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.Controls.Add(this.mpThreadPriority);
       this.groupBoxGeneralSettings.Controls.Add(this.lbDebug);
       this.groupBoxGeneralSettings.Controls.Add(this.cbDebug);
+      this.groupBoxGeneralSettings.Controls.Add(this.lbScreen);
+      this.groupBoxGeneralSettings.Controls.Add(this.cbScreen);
       this.groupBoxGeneralSettings.Controls.Add(this.settingsCheckedListBox);
       this.groupBoxGeneralSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGeneralSettings.Location = new System.Drawing.Point(3, 3);
       this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
-      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(466, 402);
+      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(466, 438);
       this.groupBoxGeneralSettings.TabIndex = 1;
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General Settings";
@@ -112,9 +116,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(6, 351);
+      this.label1.Location = new System.Drawing.Point(6, 363);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(58, 13);
+      this.label1.Size = new System.Drawing.Size(57, 13);
       this.label1.TabIndex = 1;
       this.label1.Text = "MP Priority";
       // 
@@ -130,11 +134,34 @@ namespace MediaPortal.Configuration.Sections
             "Warning",
             "Information",
             "Debug"});
-      this.cbDebug.Location = new System.Drawing.Point(99, 375);
+      this.cbDebug.Location = new System.Drawing.Point(99, 387);
       this.cbDebug.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbDebug.Name = "cbDebug";
       this.cbDebug.Size = new System.Drawing.Size(361, 21);
       this.cbDebug.TabIndex = 4;
+      // 
+      // lbScreen
+      // 
+      this.lbScreen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.lbScreen.AutoSize = true;
+      this.lbScreen.Location = new System.Drawing.Point(6, 416);
+      this.lbScreen.Name = "lbScreen";
+      this.lbScreen.Size = new System.Drawing.Size(44, 13);
+      this.lbScreen.TabIndex = 5;
+      this.lbScreen.Text = "Screen:";
+      // 
+      // cbScreen
+      // 
+      this.cbScreen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbScreen.BorderColor = System.Drawing.Color.Empty;
+      this.cbScreen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbScreen.FormattingEnabled = true;
+      this.cbScreen.Location = new System.Drawing.Point(99, 413);
+      this.cbScreen.MinimumSize = new System.Drawing.Size(100, 0);
+      this.cbScreen.Name = "cbScreen";
+      this.cbScreen.Size = new System.Drawing.Size(361, 21);
+      this.cbScreen.TabIndex = 6;
       // 
       // settingsCheckedListBox
       // 
@@ -163,10 +190,11 @@ namespace MediaPortal.Configuration.Sections
             "Allow S3 standby although wake up devices are present",
             "Autosize window mode to skin",
             "Use VRM9 for playback of web streams",
-            "Show last active module when starting/resuming from standby"});
+            "Show last active module when starting/resuming from standby",
+            "Use screenselector to choose on witch screen MP should start"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(454, 324);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(454, 334);
       this.settingsCheckedListBox.TabIndex = 0;
       // 
       // General
@@ -175,7 +203,7 @@ namespace MediaPortal.Configuration.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.groupBoxGeneralSettings);
       this.Name = "General";
-      this.Size = new System.Drawing.Size(472, 408);
+      this.Size = new System.Drawing.Size(472, 441);
       this.groupBoxGeneralSettings.ResumeLayout(false);
       this.groupBoxGeneralSettings.PerformLayout();
       this.ResumeLayout(false);
@@ -190,5 +218,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Label label1;
     private MediaPortal.UserInterface.Controls.MPComboBox cbDebug;
     private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbScreen;
+    private System.Windows.Forms.Label lbScreen;
   }
 }

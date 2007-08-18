@@ -150,6 +150,8 @@ public class MediaPortalApp : D3DApp, IRender
   private DateTime m_updateTimer = DateTime.MinValue;
   private int m_iDateLayout;
   private static SplashScreen splashScreen;
+  private static bool _multipleInstancesAllowed = false;
+
   //private GUILayerRenderer _layerRenderer;
 
   #endregion
@@ -175,7 +177,12 @@ public class MediaPortalApp : D3DApp, IRender
       {
         if (arg == "/fullscreen")
         {
-          _fullscreenOverride = "yes";
+          _fullscreenOverride = true;
+        }
+        if (arg.StartsWith("/fullscreen="))
+        {
+          string argValue = arg.Remove(0, 12);// remove /?= from the argument  
+          _fullscreenOverride = argValue != "no";
         }
         if (arg == "/crashtest")
         {
@@ -184,14 +191,20 @@ public class MediaPortalApp : D3DApp, IRender
         if (arg.StartsWith("/screen="))
         {
           GUIGraphicsContext._useScreenSelector = true;
-          string screenarg = arg.Remove(0, 8);// remove /?= from the argument          
-          if (!int.TryParse(screenarg, out _screenNumberOverride))
+          string argValue = arg.Remove(0, 8);// remove /?= from the argument          
+          if (!int.TryParse(argValue, out _screenNumberOverride))
             _screenNumberOverride = -1;
         }
         if (arg.StartsWith("/skin="))
         {
-          string skinOverrideArg = arg.Remove(0, 6);// remove /?= from the argument
-          _strSkinOverride = skinOverrideArg;
+          string argValue = arg.Remove(0, 6);// remove /?= from the argument
+          _strSkinOverride = argValue;
+        }
+        if (arg.StartsWith("/multipleInstancesAllowed"))
+        {
+          //piba: buggy feature that will couse problems.. so disabled for now
+          //would be nice to have as a posebility for some users tho..
+          //_multipleInstancesAllowed = true; 
         }
       }
     }
@@ -256,10 +269,13 @@ public class MediaPortalApp : D3DApp, IRender
 
       using (ProcessLock processLock = new ProcessLock(mpMutex))
       {
-        if (processLock.AlreadyExists)
+        if (!_multipleInstancesAllowed)
         {
-          Log.Warn("Main: MediaPortal is already running");
-          ActivatePreviousInstance();
+          if (processLock.AlreadyExists)
+          {
+            Log.Warn("Main: MediaPortal is already running");
+            ActivatePreviousInstance();
+          }
         }
 
         Application.EnableVisualStyles();
@@ -637,10 +653,9 @@ public class MediaPortalApp : D3DApp, IRender
       lastActiveModule = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
       lastActiveModuleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
 
-
-      string strUseScreenSelector = xmlreader.GetValueAsString("ScreenSelector", "useScreenSelector", "false");
-      GUIGraphicsContext._useScreenSelector = GUIGraphicsContext._useScreenSelector || (strUseScreenSelector != null && strUseScreenSelector == "yes");
-      screenNumber = xmlreader.GetValueAsInt("ScreenSelector", "screennumber", screenNumber);
+      startFullscreen = _fullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false);
+      GUIGraphicsContext._useScreenSelector |= xmlreader.GetValueAsBool("screenselector", "usescreenselector", false);
+      screenNumber = xmlreader.GetValueAsInt("screenselector", "screennumber", screenNumber);
 
       //GUIGraphicsContext.UseSeparateRenderThread = xmlreader.GetValueAsBool("general", "userenderthread", true);
       // BAV: to be fixed -> until then deactivated to save user aggrivation 
@@ -778,7 +793,9 @@ public class MediaPortalApp : D3DApp, IRender
   protected override void WndProc(ref Message msg)
   {
     try
-    {      
+    {
+      //Log.Debug("MediaportApp.WndProc before {0}", msg.ToString());
+
       if (msg.Msg == WM_POWERBROADCAST)
       {
         Log.Info("Main: WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
@@ -1137,7 +1154,8 @@ public class MediaPortalApp : D3DApp, IRender
       if (GUIGraphicsContext.UseSeparateRenderThread)
       {
         // the part of FullRender() [ from Render3DEnvironment(); ] which is needed on Resume...
-        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+        if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) ||
+            (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.NEEDRECREATE))
         {
           RecoverDevice();
         }
@@ -1387,7 +1405,12 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   protected override void InitializeDeviceObjects()
   {
-    GUIWindowManager.Clear();
+    Log.Debug("Main: MediaPortalApp.InitializeDeviceObjects Start");
+
+    if (!isChangingScreen)
+    {
+      GUIWindowManager.Clear();
+    }
 
     GUIWaitCursor.Dispose();
     GUITextureManager.Dispose();
@@ -1395,34 +1418,47 @@ public class MediaPortalApp : D3DApp, IRender
     if (splashScreen != null)
       splashScreen.SetInformation("Loading keymap.xml...");
 
-    ActionTranslator.Load();
+    if (!isChangingScreen)
+    {
+      ActionTranslator.Load();
+    }
 
     if (splashScreen != null)
       splashScreen.SetInformation("Loading strings...");
 
-    GUIGraphicsContext.Skin = m_strSkin;
-    GUIGraphicsContext.ActiveForm = Handle;
-    GUILocalizeStrings.Load(m_strLanguage); //Config.GetFile(Config.Dir.Language, m_strLanguage, "strings.xml"));
+    if (!isChangingScreen)
+    {
+      GUIGraphicsContext.Skin = m_strSkin;
+      GUIGraphicsContext.ActiveForm = Handle;
+      GUILocalizeStrings.Load(m_strLanguage); //Config.GetFile(Config.Dir.Language, m_strLanguage, "strings.xml"));
 
-    if (splashScreen != null)
-      splashScreen.SetInformation("Initialize texture manager...");
+      if (splashScreen != null)
+        splashScreen.SetInformation("Initialize texture manager...");
 
-    GUITextureManager.Init();
-    if (splashScreen != null)
-      splashScreen.SetInformation("Loading fonts...");
+      GUITextureManager.Init();
+      if (splashScreen != null)
+        splashScreen.SetInformation("Loading fonts...");
 
-    GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
+      GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
 
-    if (splashScreen != null)
-      splashScreen.SetInformation("Initializing fonts...");
+      if (splashScreen != null)
+        splashScreen.SetInformation("Initializing fonts...");
 
+    }
     GUIFontManager.InitializeDeviceObjects();
 
     if (splashScreen != null)
       splashScreen.SetInformation("Loading skin...");
 
     Log.Info("Main: Loading {0} skin", m_strSkin);
-    GUIWindowManager.Initialize();
+    if (isChangingScreen)
+    {
+      GUIWindowManager.Dispose();
+    }
+    else
+    {
+      GUIWindowManager.Initialize();
+    }
 
     if (splashScreen != null)
       splashScreen.SetInformation("Loading window plugins...");
@@ -1619,6 +1655,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     catch (Exception ex)
     {
+      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.NEEDRECREATE;
       Log.Error(ex);
       //bool b = true;
     }

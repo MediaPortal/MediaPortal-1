@@ -33,6 +33,7 @@ using Microsoft.Win32;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using System.Runtime.InteropServices;
+using Microsoft.DirectX.Direct3D;
 
 #pragma warning disable 108
 
@@ -64,6 +65,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     string loglevel = "3";  // Debug is default
+    string screennumber = "0"; // 0 is the primary screen
 
     string[][] sectionEntries = new string[][] { 
       new string[] { "general", "startfullscreen", "false" },
@@ -88,7 +90,8 @@ namespace MediaPortal.Configuration.Sections
       // new string[] { "general", "userenderthread", "true" }
       //new string[] { "general", "allowfocus", "false" }
       new string[] { "general","usevrm9forwebstreams","false" },
-      new string[] { "general","showlastactivemodule","false" }
+      new string[] { "general","showlastactivemodule","false" },
+      new string[] { "screenselector","usescreenselector","false" }
       };
 
     // PLEASE NOTE: when adding items, adjust the box so it doesn't get scrollbars
@@ -102,6 +105,16 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
+      foreach (Screen screen in Screen.AllScreens)
+      {
+        foreach (AdapterInformation adapter in Manager.Adapters)
+        {
+          if (screen.DeviceName.StartsWith(adapter.Information.DeviceName.Trim()))
+          {
+            cbScreen.Items.Add(adapter.Information.Description + " (" + screen.Bounds.Width.ToString() + "x" + screen.Bounds.Height.ToString() + ")");
+          }
+        }
+      }
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         //
@@ -115,6 +128,8 @@ namespace MediaPortal.Configuration.Sections
 
         loglevel = xmlreader.GetValueAsString("general", "loglevel", "2");
         cbDebug.SelectedIndex = Convert.ToInt16(loglevel);
+        screennumber = xmlreader.GetValueAsString("screenselector", "screennumber", "0");
+        cbScreen.SelectedIndex = Convert.ToInt16(screennumber);
 
         string prio = xmlreader.GetValueAsString("MP", "ThreadPriority", "Normal");
         // Set the selected index, otherwise the SelectedItem in SaveSettings will be null, if the box isn't checked
@@ -135,6 +150,7 @@ namespace MediaPortal.Configuration.Sections
         // Save Debug Level
         xmlwriter.SetValue("general", "loglevel", cbDebug.SelectedIndex);
         xmlwriter.SetValue("MP", "ThreadPriority", mpThreadPriority.SelectedItem.ToString());
+        xmlwriter.SetValue("screenselector", "screennumber", cbScreen.SelectedIndex);
         //
         // Load general settings
         //
