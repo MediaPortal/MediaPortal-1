@@ -672,8 +672,8 @@ namespace MediaPortal.Configuration.Sections
           ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
           if (availableAudioFilters.Count > 0)
           {
-            bool Mpeg2DecFilterFound = true;
-            bool DScalerFilterFound = true;
+            bool Mpeg2DecFilterFound = false;
+            bool DScalerFilterFound = false;
             audioCodec = (string)availableAudioFilters[0];
             foreach (string filter in availableAudioFilters)
             {
@@ -693,8 +693,8 @@ namespace MediaPortal.Configuration.Sections
         if (videoCodec == String.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-          bool Mpeg2DecFilterFound = true;
-          bool DScalerFilterFound = true;
+          bool Mpeg2DecFilterFound = false;
+          bool DScalerFilterFound = false;
           if (availableVideoFilters.Count > 0)
           {
             videoCodec = (string)availableVideoFilters[0];
@@ -717,7 +717,7 @@ namespace MediaPortal.Configuration.Sections
         if (h264videoCodec == String.Empty)
         {
           ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264Video);
-          bool h264DecFilterFound = true;
+          bool h264DecFilterFound = false;
           if (availableH264VideoFilters.Count > 0)
           {
             h264videoCodec = (string)availableH264VideoFilters[0];
@@ -731,10 +731,10 @@ namespace MediaPortal.Configuration.Sections
             if (h264DecFilterFound) h264videoCodec = "CoreAVC Video Decoder";
           }
         }
-        audioCodecComboBox.SelectedItem = audioCodec;
-        videoCodecComboBox.SelectedItem = videoCodec;
-        h264videoCodecComboBox.SelectedItem = h264videoCodec;
-        audioRendererComboBox.SelectedItem = audioRenderer;
+        audioCodecComboBox.Text = audioCodec;
+        videoCodecComboBox.Text = videoCodec;
+        h264videoCodecComboBox.Text = h264videoCodec;
+        audioRendererComboBox.Text = audioRenderer;
 
         //
         // Set default aspect ratio

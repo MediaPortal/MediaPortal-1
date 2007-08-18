@@ -155,8 +155,8 @@ namespace MediaPortal.Configuration.Sections
         if (videoCodec == String.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-          bool Mpeg2DecFilterFound = true;
-          bool DScalerFilterFound = true;
+          bool Mpeg2DecFilterFound = false;
+          bool DScalerFilterFound = false;
           if (availableVideoFilters.Count > 0)
           {
             videoCodec = (string)availableVideoFilters[0];
@@ -176,8 +176,8 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        audioCodecComboBox.SelectedItem = audioCodec;
-        videoCodecComboBox.SelectedItem = videoCodec;
+        audioCodecComboBox.Text = audioCodec;
+        videoCodecComboBox.Text = videoCodec;
 
       }
       Log.Info("load dvd done");
