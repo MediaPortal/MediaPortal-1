@@ -111,7 +111,6 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      Log.Info("--- MoviePlayer.LoadSettings ---");
       if (_init == false) return;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -130,8 +129,8 @@ namespace MediaPortal.Configuration.Sections
           ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
           if (availableAudioFilters.Count > 0)
           {
-            bool Mpeg2DecFilterFound = true;
-            bool DScalerFilterFound = true;
+            bool Mpeg2DecFilterFound = false;
+            bool DScalerFilterFound = false;
             audioCodec = (string)availableAudioFilters[0];
             foreach (string filter in availableAudioFilters)
             {
@@ -152,8 +151,8 @@ namespace MediaPortal.Configuration.Sections
         if (videoCodec == String.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-          bool Mpeg2DecFilterFound = true;
-          bool DScalerFilterFound = true;
+          bool Mpeg2DecFilterFound = false;
+          bool DScalerFilterFound = false;
           Log.Info(" - availableVideoFilters.Count = " + availableVideoFilters.Count.ToString());
           if (availableVideoFilters.Count > 0)
           {
@@ -163,6 +162,7 @@ namespace MediaPortal.Configuration.Sections
               Log.Info(" - filter = (" + filter + ")");
               if (filter.Equals("MPV Decoder Filter"))
               {
+                Log.Info(" - MPV Decoder filter found");
                 Mpeg2DecFilterFound = true;
               }
               if (filter.Equals("DScaler Mpeg2 Video Decoder"))
@@ -177,7 +177,7 @@ namespace MediaPortal.Configuration.Sections
         if (h264videoCodec == String.Empty)
         {
           ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264Video);
-          bool H264DecFilterFound = true;
+          bool H264DecFilterFound = false;
           if (availableH264VideoFilters.Count > 0)
           {
             h264videoCodec = (string)availableH264VideoFilters[0];
@@ -191,9 +191,9 @@ namespace MediaPortal.Configuration.Sections
             if (H264DecFilterFound) videoCodec = "CoreAVC Video Decoder";
           }
         }
-        audioCodecComboBox.SelectedItem = audioCodec;
-        videoCodecComboBox.SelectedItem = videoCodec;
-        h264videoCodecComboBox.SelectedItem = h264videoCodec;
+        audioCodecComboBox.Text = audioCodec;
+        videoCodecComboBox.Text = videoCodec;
+        h264videoCodecComboBox.Text = h264videoCodec;
       }
     }
 
