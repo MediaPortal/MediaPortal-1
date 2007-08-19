@@ -191,7 +191,7 @@ namespace MediaPortal.Player
     /// <returns></returns>
     public int OnSubtitle(ref SUBTITLE sub)
     {
-      Log.Debug("OnSubtitle");
+      Log.Debug("OnSubtitle - current position " +player.CurrentPosition);
       lock (alert)
       {
         try
