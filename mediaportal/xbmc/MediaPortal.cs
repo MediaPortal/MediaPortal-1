@@ -1622,7 +1622,7 @@ public class MediaPortalApp : D3DApp, IRender
       //Log.Info("render frame:{0}",frames);//remove
       ++frames;
       // clear the surface
-      GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target , Color.Beige, 1.0f, 0);
+      GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target , Color.Black, 1.0f, 0);
       GUIGraphicsContext.DX9Device.BeginScene();
 
       CreateStateBlock();
