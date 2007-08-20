@@ -70,6 +70,8 @@ namespace MediaPortal.MPInstaller
     public const string TEXT_README_TYPE = "Ream_me";
     public const string THUMBS_TYPE = "Thumbs";
     public const string OTHER_TYPE = "Other";
+    public const string INTERNAL_TYPE = "Internal";
+    public const string INTERNAL_PLUGIN_SUBTYPE = "Plugin";
 
     string _builFileName = string.Empty;
     string _proiectFileName = string.Empty;
@@ -619,7 +621,6 @@ namespace MediaPortal.MPInstaller
       {
         ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" ;
       }
-
       if (flst.Type == SKIN_MEDIA_TYPE)
       {
         ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" ;
@@ -653,7 +654,12 @@ namespace MediaPortal.MPInstaller
       {
         ret = "Release" + @"\" + "Other" + @"\" ;
       }
-      
+
+      if (flst.Type == INTERNAL_TYPE)
+      {
+        ret = "Internal" + @"\" + flst.SubType + @"\";
+      }
+     
       if (string.IsNullOrEmpty(flst.FileProperties.OutputFileName))
         ret += Path.GetFileName(flst.FileName);
       else

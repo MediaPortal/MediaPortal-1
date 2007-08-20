@@ -77,6 +77,8 @@ namespace MediaPortal.MPInstaller
           this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
           this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
           this.tabPage_Skin = new System.Windows.Forms.TabPage();
+          this.button2 = new System.Windows.Forms.Button();
+          this.button1 = new System.Windows.Forms.Button();
           this.label6 = new System.Windows.Forms.Label();
           this.skint_comboBox1 = new System.Windows.Forms.ComboBox();
           this.tabPage_Plugin = new System.Windows.Forms.TabPage();
@@ -117,8 +119,8 @@ namespace MediaPortal.MPInstaller
           this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
           this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
           this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-          this.button1 = new System.Windows.Forms.Button();
-          this.button2 = new System.Windows.Forms.Button();
+          this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+          this.internalPluginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.menuStrip1.SuspendLayout();
           this.contextMenuStrip1.SuspendLayout();
           this.tabPage_Skin.SuspendLayout();
@@ -231,9 +233,11 @@ namespace MediaPortal.MPInstaller
             this.settingsToolStripMenuItem,
             this.textToolStripMenuItem1,
             this.otherToolStripMenuItem,
-            this.toolStripSeparator3,
+            this.toolStripSeparator4,
             this.fileAutomatedDiscoverTypeToolStripMenuItem,
-            this.directoryAutomatedDiscoverTypeToolStripMenuItem});
+            this.directoryAutomatedDiscoverTypeToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.internalPluginToolStripMenuItem});
           this.addToolStripMenuItem.Name = "addToolStripMenuItem";
           this.addToolStripMenuItem.Size = new System.Drawing.Size(38, 20);
           this.addToolStripMenuItem.Text = "Add";
@@ -502,6 +506,26 @@ namespace MediaPortal.MPInstaller
           this.tabPage_Skin.TabIndex = 1;
           this.tabPage_Skin.Text = "Skin Properties";
           this.tabPage_Skin.UseVisualStyleBackColor = true;
+          // 
+          // button2
+          // 
+          this.button2.Location = new System.Drawing.Point(6, 86);
+          this.button2.Name = "button2";
+          this.button2.Size = new System.Drawing.Size(141, 23);
+          this.button2.TabIndex = 3;
+          this.button2.Text = "Unset from default";
+          this.button2.UseVisualStyleBackColor = true;
+          this.button2.Click += new System.EventHandler(this.button2_Click);
+          // 
+          // button1
+          // 
+          this.button1.Location = new System.Drawing.Point(6, 57);
+          this.button1.Name = "button1";
+          this.button1.Size = new System.Drawing.Size(141, 23);
+          this.button1.TabIndex = 2;
+          this.button1.Text = "Set to default";
+          this.button1.UseVisualStyleBackColor = true;
+          this.button1.Click += new System.EventHandler(this.button1_Click);
           // 
           // label6
           // 
@@ -944,27 +968,19 @@ namespace MediaPortal.MPInstaller
           // 
           this.folderBrowserDialog1.ShowNewFolderButton = false;
           // 
-          // button1
+          // toolStripSeparator4
           // 
-          this.button1.Location = new System.Drawing.Point(6, 57);
-          this.button1.Name = "button1";
-          this.button1.Size = new System.Drawing.Size(141, 23);
-          this.button1.TabIndex = 2;
-          this.button1.Text = "Set to default";
-          this.button1.UseVisualStyleBackColor = true;
-          this.button1.Click += new System.EventHandler(this.button1_Click);
+          this.toolStripSeparator4.Name = "toolStripSeparator4";
+          this.toolStripSeparator4.Size = new System.Drawing.Size(257, 6);
           // 
-          // button2
+          // internalPluginToolStripMenuItem
           // 
-          this.button2.Location = new System.Drawing.Point(6, 86);
-          this.button2.Name = "button2";
-          this.button2.Size = new System.Drawing.Size(141, 23);
-          this.button2.TabIndex = 3;
-          this.button2.Text = "Unset from default";
-          this.button2.UseVisualStyleBackColor = true;
-          this.button2.Click += new System.EventHandler(this.button2_Click);
+          this.internalPluginToolStripMenuItem.Name = "internalPluginToolStripMenuItem";
+          this.internalPluginToolStripMenuItem.Size = new System.Drawing.Size(260, 22);
+          this.internalPluginToolStripMenuItem.Text = "Internal Plugin";
+          this.internalPluginToolStripMenuItem.Click += new System.EventHandler(this.internalPluginToolStripMenuItem_Click);
           // 
-          // Form1
+          // EditForm
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -977,7 +993,7 @@ namespace MediaPortal.MPInstaller
           this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
           this.MainMenuStrip = this.menuStrip1;
           this.MaximizeBox = false;
-          this.Name = "Form1";
+          this.Name = "EditForm";
           this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
           this.Text = "Create Package";
           this.Load += new System.EventHandler(this.Form1_Load);
@@ -1098,6 +1114,8 @@ namespace MediaPortal.MPInstaller
       private System.Windows.Forms.ComboBox proiectt_comboBox1;
       private System.Windows.Forms.Button button2;
       private System.Windows.Forms.Button button1;
+      private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+      private System.Windows.Forms.ToolStripMenuItem internalPluginToolStripMenuItem;
     }
 }
 

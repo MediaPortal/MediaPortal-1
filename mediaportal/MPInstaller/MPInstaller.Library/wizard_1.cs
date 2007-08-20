@@ -42,6 +42,8 @@ namespace MediaPortal.MPInstaller
     public MPpackageStruct package;
     MPInstallHelper inst = new MPInstallHelper();
     List<ActionInfo> actions = new List<ActionInfo>();
+    
+    string InstalDir = Config.GetFolder(Config.Dir.Base) + @"\" + "Installer";
     bool update = false;
     bool working = false;
     public wizard_1()
@@ -106,6 +108,14 @@ namespace MediaPortal.MPInstaller
       {
         case 1:
           {
+            try
+            {
+              if (package.InstallPlugin != null)
+                package.InstallPlugin.OnStartInstall(ref package);
+            }
+            catch (Exception)
+            {
+            }
             this.Text = "MediaPortal extension installer";
             skinlister.Items.Clear();
             Customize_list.Visible = false;
@@ -309,6 +319,15 @@ namespace MediaPortal.MPInstaller
         skinlister.Items.Add(ac.ToString());
       }
       button_cancel.Text = "Finish";
+      try
+      {
+        if (package.InstallPlugin != null)
+          package.InstallPlugin.OnEndInstall(ref package);
+      }
+      catch (Exception)
+      {
+        
+      }
     }
 
     private void test_next_step(int m)
@@ -408,6 +427,18 @@ namespace MediaPortal.MPInstaller
           {
             if (!this.Visible) this.Show();
             MPpackageStruct p = (MPpackageStruct)inst.lst[index];
+            MPpackageStruct p_temp = new MPpackageStruct();
+
+            if (File.Exists(InstalDir + @"\" + p.FileName))
+              p_temp.LoadFromFile(InstalDir + @"\" + p.FileName);
+            try
+            {
+              if (p_temp.InstallPlugin != null)
+                p_temp.InstallPlugin.OnStartUnInstall(ref p);
+            }
+            catch (Exception)
+            {
+            }
             label2.Visible = true;
             progressBar1.Visible = true;
             progressBar2.Visible = false;
@@ -446,6 +477,18 @@ namespace MediaPortal.MPInstaller
             }
             inst.lst.RemoveAt(index);
             inst.SaveToFile();
+            if (p_temp.InstallPlugin != null)
+            {
+              try
+              {
+                if (p_temp.InstallPlugin != null)
+                  p_temp.InstallPlugin.OnEndUnInstall(ref p);
+              }
+              catch (Exception)
+              {
+
+              }
+            }
           }
         }
         else

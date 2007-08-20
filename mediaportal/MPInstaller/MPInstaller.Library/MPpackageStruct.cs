@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Reflection;
 using System.Text;
 using System.IO;
 using System.Net;
@@ -29,6 +30,7 @@ namespace MediaPortal.MPInstaller
         public bool isInstalled = false;
         public bool containsSkin = false;
         public bool containsPlugin = false;
+        public IMPIInternalPlugin InstallPlugin;
         public bool isValid = false;
         public List<string> SkinList;
         public List<string> InstallableSkinList;
@@ -48,7 +50,7 @@ namespace MediaPortal.MPInstaller
             SkinList = new List<string>();
             InstallableSkinList = new List<string>();
             InstalledSkinList = new List<string>();
-
+            InstallPlugin = null;
         }
         
         public void instal_file(ProgressBar pb,ListBox lb, MPIFileList fl)
@@ -148,7 +150,7 @@ namespace MediaPortal.MPInstaller
 
         bool test_file(MPIFileList fl, ZipEntry ze)
         {
-          if (_intalerStruct.FindFileInGroupState(fl))
+          if ((fl.Type!=MPinstallerStruct.INTERNAL_TYPE)&&(_intalerStruct.FindFileInGroupState(fl)))
           {
             if (fl.SkinType)
             {
@@ -268,6 +270,52 @@ namespace MediaPortal.MPInstaller
                             }
                             fs.Close();
                             _intalerStruct.LoadFromFile(tpf);
+                        }
+                        
+                        if (entry.Name.Contains(MPinstallerStruct.INTERNAL_TYPE+@"\"+MPinstallerStruct.INTERNAL_PLUGIN_SUBTYPE) )
+                        {
+                          string tpf = Path.GetTempFileName();
+                          isValid = true;
+                          FileStream fs = new FileStream(tpf, FileMode.Create);
+                          while ((nb = s.Read(data, 0, data.Length)) > 0)
+                          {
+                            fs.Write(data, 0, nb);
+                          }
+                          fs.Close();
+                          try
+                          {
+                            Assembly pluginAssembly = Assembly.LoadFrom(tpf);
+                            if (pluginAssembly != null)
+                            {
+                              Type[] exportedTypes = pluginAssembly.GetExportedTypes();
+                              foreach (Type type in exportedTypes)
+                              {
+                                if (type.IsAbstract)
+                                {
+                                  continue;
+                                }
+                                                       
+                                if (type.GetInterface("MediaPortal.MPInstaller.IMPIInternalPlugin",true) != null)
+                                {
+                                  try
+                                  {
+                                    //
+                                    // Create instance of the current type
+                                    //
+                                    object pluginObject = Activator.CreateInstance(type);
+                                    InstallPlugin= pluginObject as IMPIInternalPlugin;
+                                  }
+                                  catch (Exception setupFormException)
+                                  {
+                                   MessageBox.Show(string.Format("Exception in plugin SetupForm loading : {0} ", setupFormException.Message));
+                                  }
+                                }
+                              }
+                            }
+                          }
+                          catch (Exception)
+                          {
+                          }
                         }
                     }
                     s.Close();

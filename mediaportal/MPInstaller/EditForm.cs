@@ -130,6 +130,7 @@ namespace MediaPortal.MPInstaller
         }
       }
     }
+
     private void addtext()
     {
       openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
@@ -144,6 +145,7 @@ namespace MediaPortal.MPInstaller
         }
       }
     }
+
     private void addskin(int type)
     {
       //  string fil;
@@ -775,6 +777,21 @@ namespace MediaPortal.MPInstaller
           ((MPIFileList)_struct.FileList[i]).Option = ((MPIFileList)_struct.FileList[i]).FileProperties.ToString();
         }
         addrow((MPIFileList)_struct.FileList[i]);
+      }
+    }
+
+    private void internalPluginToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      openFileDialog1.Filter = "dll files (*.dll)|*.dll|All files (*.*)|*.*";
+      openFileDialog1.FileName = "";
+      openFileDialog1.DefaultExt = "*.dll";
+      openFileDialog1.Multiselect = false;
+      if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
+      {
+        foreach (string fil in openFileDialog1.FileNames)
+        {
+          addrow(Path.GetFileName(fil), MPinstallerStruct.INTERNAL_TYPE, MPinstallerStruct.INTERNAL_PLUGIN_SUBTYPE, Path.GetFullPath(fil), "07010", "");
+        }
       }
     }
   }
