@@ -66,14 +66,7 @@ namespace MediaPortal.DeployTool
         }
       }
       sr.Close();
-      if (installOk)
-      {
-        File.Delete(msi);
-        File.Delete(Path.GetTempPath() + "\\tvserverinst.log");
-        return true;
-      }
-      else
-        return false;
+      return installOk;
     }
     public bool UnInstall()
     {

@@ -66,6 +66,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Images.resx</DependentUpon>
     </Compile>
+    <Compile Include="InstallationChecks\MSSQLExpressChecker.cs" />
     <Compile Include="InstallationChecks\TvPluginChecker.cs" />
     <Compile Include="InstallationChecks\TvServerChecker.cs" />
     <Compile Include="InstallationChecks\DirectX9Checker.cs" />
@@ -222,9 +223,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\smart small.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ApplicationLocations.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -126,15 +126,19 @@ namespace MediaPortal.DeployTool
       {
         AddPackageToListView(new DirectX9Checker());
         AddPackageToListView(new MediaPortalChecker());
+        if (InstallationProperties.Instance["DBMSType"] == "mssql")
+          AddPackageToListView(new MSSQLExpressChecker());
+        //else
+        //  listView.Items.Add("MySQL");*/
         AddPackageToListView(new TvServerChecker());
         AddPackageToListView(new TvPluginServerChecker());
       }
       else if (InstallationProperties.Instance["InstallType"] == "tvserver_master")
       {
-        /*if (InstallationProperties.Instance["DBMSType"] == "mssql")
-          listView.Items.Add("MS-SQL Server");
-        else
-          listView.Items.Add("MySQL");*/
+        if (InstallationProperties.Instance["DBMSType"] == "mssql")
+          AddPackageToListView(new MSSQLExpressChecker());
+        //else
+        //  listView.Items.Add("MySQL");*/
         AddPackageToListView(new TvServerChecker());
       }
       else if (InstallationProperties.Instance["InstallType"] == "tvserver_slave")

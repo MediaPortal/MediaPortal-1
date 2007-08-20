@@ -3,6 +3,10 @@
 		<URL>http://www.microsoft.com/downloads/details.aspx?familyid=0a9b6820-bfbb-4799-9908-d418cdeac197</URL>
 		<FILE>directx_9c_redist.exe</FILE>
 	</DirectX9c>
+	<MSSQLExpress>
+		<URL>http://go.microsoft.com/fwlink/?LinkId=65212</URL>
+		<FILE>SQLEXP*.exe</FILE>
+	</MSSQLExpress>		
 	<MediaPortal>
 		<URL>http://...</URL>
 		<FILE>mediaportal_0.2.3.zip</FILE>

@@ -51,7 +51,6 @@ namespace MediaPortal.DeployTool
       string exe = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadFile("DirectX9c");
       Process setup = Process.Start(exe,"/q /t:\""+Path.GetTempPath()+"\\directx9c\"");
       setup.WaitForExit();
-      Directory.Delete(Path.GetTempPath()+"\\directx9c");
       return true;
     }
     public bool UnInstall()
