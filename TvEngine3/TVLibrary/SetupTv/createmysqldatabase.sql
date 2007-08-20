@@ -489,7 +489,7 @@ CREATE TABLE `version` (
 --
 
 /*!40000 ALTER TABLE `version` DISABLE KEYS */;
-INSERT INTO `version` VALUES  (1,29);
+INSERT INTO `version` VALUES  (1,30);
 /*!40000 ALTER TABLE `version` ENABLE KEYS */;
 #
 
