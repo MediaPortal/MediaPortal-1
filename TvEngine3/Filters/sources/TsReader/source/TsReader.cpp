@@ -47,7 +47,7 @@ void LogDebug(const char *fmt, ...)
 	SYSTEMTIME systemTime;
 	GetLocalTime(&systemTime);
 
-#ifdef DONTLOG
+//#ifdef DONTLOG
   FILE* fp = fopen("c:\\tsreader.log","a+");
 	if (fp!=NULL)
 	{
@@ -57,7 +57,7 @@ void LogDebug(const char *fmt, ...)
 			buffer);
 		fclose(fp);
   }
-#endif
+//#endif
 	char buf[1000];
 	sprintf(buf,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
 		systemTime.wDay, systemTime.wMonth, systemTime.wYear,
