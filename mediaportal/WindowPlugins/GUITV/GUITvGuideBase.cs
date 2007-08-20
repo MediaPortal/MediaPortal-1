@@ -612,13 +612,13 @@ namespace MediaPortal.GUI.TV
                 string day;
                 switch (dtTemp.DayOfWeek)
                 {
-                    case DayOfWeek.Monday: day = GUILocalizeStrings.Get(657); break;
-                    case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(658); break;
-                    case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(659); break;
-                    case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(660); break;
-                    case DayOfWeek.Friday: day = GUILocalizeStrings.Get(661); break;
-                    case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(662); break;
-                    default: day = GUILocalizeStrings.Get(663); break;
+                  case DayOfWeek.Monday: day = GUILocalizeStrings.Get(657); break;
+                  case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(658); break;
+                  case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(659); break;
+                  case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(660); break;
+                  case DayOfWeek.Friday: day = GUILocalizeStrings.Get(661); break;
+                  case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(662); break;
+                  default: day = GUILocalizeStrings.Get(663); break;
                 }
                 day = String.Format("{0} {1}-{2}", day, dtTemp.Day, dtTemp.Month);
                 cntlDay.AddLabel(day, iDay);
@@ -2504,156 +2504,145 @@ namespace MediaPortal.GUI.TV
     {
       if (_currentProgram == null)
         return;
-      if (isItemSelected)
+      if (!isItemSelected)
       {
-        if (_currentProgram.IsRunningAt(DateTime.Now) ||
-            _currentProgram.EndTime <= DateTime.Now)
-        {
-          //view this channel
-          if (g_Player.Playing && g_Player.IsTVRecording)
-          {
-            g_Player.Stop();
-          }
-          try
-          {
-            Log.Info("TVGuide: IsAnyCardRecording: {0}", Convert.ToString(Recorder.IsAnyCardRecording()));
-
-            if (Recorder.IsAnyCardRecording())
-            {
-              // If you select the program which is currently recording open a dialog to ask if you want to see it from the beginning
-              // imagine a sports event where you do not want to see the live point to be spoiled
-
-              // here a check is needed of _currentTitle == Recorder.CurrentTVRecording.Title
-              bool recMatchFound = false;
-              foreach (TVRecording rec in _recordingList)
-              {
-                // Take into consideration old and comming recordings! Just checking titel is not enough
-                // It could be that there is a old recording with the same title
-                if ((rec.Title == _currentProgram.Title) && (rec.StartTime <= DateTime.Now) && (rec.EndTime >= DateTime.Now))
-                {
-                  recMatchFound = true;
-
-                  Log.Debug("TVGuide: clicked on a currently running recording {0}", _currentProgram.Title);
-                  GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-                  if (dlg == null)
-                    return;
-
-                  dlg.Reset();
-                  dlg.SetHeading(_currentProgram.Title);
-                  dlg.AddLocalizedString(979); //Play recording from beginning
-                  dlg.AddLocalizedString(980); //Play recording from live point
-                  dlg.DoModal(GetID);
-
-                  if (dlg.SelectedLabel == -1)
-                    return;
-                  if (_recordingList != null)
-                  {
-                    Log.Debug("TVGuide: Found current program {0} in recording list", _currentTitle);
-                    switch (dlg.SelectedId)
-                    {
-                      case 979: // Play recording from beginning                          
-                        Recorder.StopViewing();
-                        string filename = Recorder.GetRecordingFileName(rec);
-                        if (filename != String.Empty)
-                        {
-                          Log.Info("TVGuide: Play recording {0} from start", _currentTitle);
-                          g_Player.Play(filename);
-                          if (g_Player.Playing)
-                          {
-                            g_Player.ShowFullScreenWindow();
-                            return;
-                          }
-                        }
-                        break;
-
-                      case 980: // Play recording from live point
-                        GUITVHome.IsTVOn = true;
-                        GUITVHome.ViewChannel(rec.Channel);
-                        if (Recorder.IsViewing())
-                        {
-                          if (g_Player.Playing)
-                          {
-                            Log.Info("TVGuide: Show recording {0} at live point", _currentTitle);
-                            g_Player.SeekAsolutePercentage(99);
-                          }
-                          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-                          return;
-                        }
-                        break;
-                    }
-                  }
-                  else
-                    Log.Debug("EPG: _recordingList was not available");
-                }
-              }
-              if (recMatchFound == false)
-              {
-                GUITVHome.IsTVOn = true;
-                GUITVHome.ViewChannelAndCheck(_currentProgram.Channel);
-                if (Recorder.IsViewing() && Recorder.TVChannelName == _currentProgram.Channel)
-                {
-                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-                }
-              }
-            }
-            else
-            {
-              // clicked the show we're currently watching
-              if (Recorder.TVChannelName == _currentProgram.Channel)
-              {
-                Log.Debug("TVGuide: clicked on a currently running show");
-                GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-                if (dlg == null)
-                  return;
-
-                dlg.Reset();
-                dlg.SetHeading(_currentProgram.Title);
-                dlg.AddLocalizedString(938);  //View this channel
-                dlg.AddLocalizedString(1041); //Upcoming episodes
-                dlg.DoModal(GetID);
-
-                if (dlg.SelectedLabel == -1)
-                  return;
-
-                switch (dlg.SelectedId)
-                {
-                  case 1041:
-                    ShowProgramInfo();
-                    Log.Debug("TVGuide: show episodes or repeatings for current show");
-                    break;
-                  case 938:
-                    Log.Debug("TVGuide: switch currently running show to fullscreen");
-                    if (Recorder.IsViewing())
-                      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-                    break;
-                }
-              }
-              else
-              // zap to selected show's channel
-              {
-                GUITVHome.IsTVOn = true;
-                GUITVHome.ViewChannelAndCheck(_currentProgram.Channel);
-                if (Recorder.IsViewing() && Recorder.TVChannelName == _currentProgram.Channel)
-                {
-                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-                }
-              }
-            }
-          }
-          finally
-          {
-            if (VMR9Util.g_vmr9 != null)
-              VMR9Util.g_vmr9.Enable(true);
-          }
-
-          return;
-        }
         ShowProgramInfo();
         return;
       }
-      else
+      // Selected show is not 'On'
+      if (!(_currentProgram.IsRunningAt(DateTime.Now) || _currentProgram.EndTime <= DateTime.Now))
       {
         ShowProgramInfo();
+        return;
+      }
+      // Stop running player
+      if (g_Player.Playing && g_Player.IsTVRecording)
+      {
+        g_Player.Stop();
+      }
+      //view this channel
+      try
+      {
+        TVRecording recFound = null;
+
+        Log.Info("TVGuide: IsAnyCardRecording: {0}", Convert.ToString(Recorder.IsAnyCardRecording()));
+
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        if (dlg == null)
+          return;
+
+        if (Recorder.IsAnyCardRecording())
+        {
+          if (_recordingList == null)
+             Log.Debug("EPG: _recordingList was not available");
+
+          // If you select the program which is currently recording open a dialog to ask if you want to see it from the beginning
+          // imagine a sports event where you do not want to see the live point to be spoiled
+
+          // here a check is needed of _currentTitle == Recorder.CurrentTVRecording.Title
+          foreach (TVRecording rec in _recordingList)
+          {
+            // Take into consideration old and comming recordings! Just checking titel is not enough
+            // It could be that there is a old recording with the same title
+            if ((rec.Title == _currentProgram.Title) && (rec.StartTime <= DateTime.Now) && (rec.EndTime >= DateTime.Now))
+            {
+              recFound = rec;
+              break;
+            }
+          }
+          // We clicked on a show that is recording.
+          if (recFound != null)
+          {
+            Log.Debug("TVGuide: clicked on a currently running recording {0}", _currentProgram.Title);
+            dlg.Reset();
+            dlg.SetHeading(_currentProgram.Title);
+            dlg.AddLocalizedString(979); //Play recording from beginning
+            dlg.AddLocalizedString(980); //Play recording from live point
+            dlg.AddLocalizedString(1041); //Upcoming episodes
+            dlg.DoModal(GetID);
+
+            if (dlg.SelectedLabel == -1)
+              return;
+
+            Log.Debug("TVGuide: Found current program {0} in recording list", _currentTitle);
+            switch (dlg.SelectedId)
+            {
+              case 979: // Play recording from beginning                          
+                Recorder.StopViewing();
+                string filename = Recorder.GetRecordingFileName(recFound);
+                if (filename != String.Empty)
+                {
+                  Log.Info("TVGuide: Play recording {0} from start", _currentTitle);
+                  g_Player.Play(filename);
+                  if (g_Player.Playing)
+                  {
+                    g_Player.ShowFullScreenWindow();
+                  }
+                }
+                break;
+              case 980: // Play recording from live point
+                GUITVHome.IsTVOn = true;
+                GUITVHome.ViewChannel(recFound.Channel);
+                if (Recorder.IsViewing())
+                {
+                  if (g_Player.Playing)
+                  {
+                    Log.Info("TVGuide: Show recording {0} at live point", _currentTitle);
+                    g_Player.SeekAsolutePercentage(99);
+                  }
+                  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                }
+                break;
+              case 1041:
+                ShowProgramInfo();
+                Log.Debug("TVGuide: show episodes or repeatings for current show");
+                break;
+            }
+            return;
+          }
+        } // if (Recorder.IsAnyCardRecording())
+
+        // clicked the show we're currently watching
+        if (Recorder.TVChannelName == _currentProgram.Channel)
+        {
+          Log.Debug("TVGuide: clicked on a currently running show");
+          dlg.Reset();
+          dlg.SetHeading(_currentProgram.Title);
+          dlg.AddLocalizedString(938);  //View this channel
+          dlg.AddLocalizedString(1041); //Upcoming episodes
+          dlg.DoModal(GetID);
+
+          if (dlg.SelectedLabel == -1)
+            return;
+
+          switch (dlg.SelectedId)
+          {
+            case 1041:
+              ShowProgramInfo();
+              Log.Debug("TVGuide: show episodes or repeatings for current show");
+              break;
+            case 938:
+              Log.Debug("TVGuide: switch currently running show to fullscreen");
+              if (Recorder.IsViewing())
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              break;
+          }
+        }
+        else
+        // zap to selected show's channel
+        {
+          GUITVHome.IsTVOn = true;
+          GUITVHome.ViewChannelAndCheck(_currentProgram.Channel);
+          if (Recorder.IsViewing() && Recorder.TVChannelName == _currentProgram.Channel)
+          {
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+          }
+        }
+      }
+      finally
+      {
+        if (VMR9Util.g_vmr9 != null)
+          VMR9Util.g_vmr9.Enable(true);
       }
     }
 
