@@ -192,7 +192,7 @@ namespace TvPlugin
       this.mpCheckBoxPrefRebuildGraphAudioChanged.AutoSize = true;
       this.mpCheckBoxPrefRebuildGraphAudioChanged.BackColor = System.Drawing.SystemColors.ButtonFace;
       this.mpCheckBoxPrefRebuildGraphAudioChanged.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxPrefRebuildGraphAudioChanged.Location = new System.Drawing.Point(262, 59);
+      this.mpCheckBoxPrefRebuildGraphAudioChanged.Location = new System.Drawing.Point(263, 59);
       this.mpCheckBoxPrefRebuildGraphAudioChanged.Name = "mpCheckBoxPrefRebuildGraphAudioChanged";
       this.mpCheckBoxPrefRebuildGraphAudioChanged.Size = new System.Drawing.Size(13, 12);
       this.mpCheckBoxPrefRebuildGraphAudioChanged.TabIndex = 9;

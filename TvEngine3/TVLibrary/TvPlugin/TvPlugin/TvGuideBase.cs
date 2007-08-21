@@ -590,7 +590,7 @@ namespace TvPlugin
                   for (int i = 0; i < _channelList.Count; i++)
                   {
                     Channel chan = (Channel)_channelList[i];
-                    if (chan.DisplayName.Equals(_currentChannel))
+                    if (chan.Name.Equals(_currentChannel))
                     {
                       _cursorX = i;
                       break;
