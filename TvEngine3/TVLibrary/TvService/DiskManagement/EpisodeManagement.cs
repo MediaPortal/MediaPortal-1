@@ -77,6 +77,7 @@ namespace TvService
 
       CheckEpsiodesForRecording(recording,program);
     }
+
     void CheckEpsiodesForRecording(Schedule schedule, TvDatabase.Program program)
     {
       if (!schedule.DoesUseEpisodeManagement) return;
@@ -97,7 +98,10 @@ namespace TvService
                              oldestEpisode.StartTime.ToLongDateString(),
                              oldestEpisode.StartTime.ToLongTimeString());
 
-        oldestEpisode.Remove();
+        //Delete the file from disk and the recording entry from the database.
+        TVController controller = new TVController();
+        controller.DeleteRecording(oldestEpisode.IdRecording);
+        controller = null;
       }
     }
     #endregion
