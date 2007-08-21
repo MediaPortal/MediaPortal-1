@@ -32,7 +32,6 @@ namespace SetupTv.Sections
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvChannels));
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.hdrhekje = new System.Windows.Forms.ColumnHeader();
-      this.hdrName = new System.Windows.Forms.ColumnHeader();
       this.hdrProvider = new System.Windows.Forms.ColumnHeader();
       this.hdrTypes = new System.Windows.Forms.ColumnHeader();
       this.hdrDetail1 = new System.Windows.Forms.ColumnHeader();
@@ -44,6 +43,7 @@ namespace SetupTv.Sections
       this.editChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
       this.renameMarkedChannelsBySIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.addSIDInFrontOfNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpButtonClear = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -59,7 +59,6 @@ namespace SetupTv.Sections
       this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
-      this.addSIDInFrontOfNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -72,7 +71,6 @@ namespace SetupTv.Sections
       this.mpListView1.CheckBoxes = true;
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.hdrhekje,
-            this.hdrName,
             this.hdrProvider,
             this.hdrTypes,
             this.hdrDetail1,
@@ -96,12 +94,8 @@ namespace SetupTv.Sections
       // 
       // hdrhekje
       // 
-      this.hdrhekje.Text = "#";
-      // 
-      // hdrName
-      // 
-      this.hdrName.Text = "Name";
-      this.hdrName.Width = 114;
+      this.hdrhekje.Text = "Name";
+      this.hdrhekje.Width = 120;
       // 
       // hdrProvider
       // 
@@ -137,7 +131,7 @@ namespace SetupTv.Sections
             this.renameMarkedChannelsBySIDToolStripMenuItem,
             this.addSIDInFrontOfNameToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(256, 142);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(256, 120);
       // 
       // addToFavoritesToolStripMenuItem
       // 
@@ -170,6 +164,13 @@ namespace SetupTv.Sections
       this.renameMarkedChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
       this.renameMarkedChannelsBySIDToolStripMenuItem.Text = "Rename selected channel(s) by SID";
       this.renameMarkedChannelsBySIDToolStripMenuItem.Click += new System.EventHandler(this.renameMarkedChannelsBySIDToolStripMenuItem_Click);
+      // 
+      // addSIDInFrontOfNameToolStripMenuItem
+      // 
+      this.addSIDInFrontOfNameToolStripMenuItem.Name = "addSIDInFrontOfNameToolStripMenuItem";
+      this.addSIDInFrontOfNameToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.addSIDInFrontOfNameToolStripMenuItem.Text = "Add SID in front of name";
+      this.addSIDInFrontOfNameToolStripMenuItem.Click += new System.EventHandler(this.addSIDInFrontOfNameToolStripMenuItem_Click);
       // 
       // imageList1
       // 
@@ -324,13 +325,6 @@ namespace SetupTv.Sections
       this.mpButtonPreview.UseVisualStyleBackColor = true;
       this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
       // 
-      // addSIDInFrontOfNameToolStripMenuItem
-      // 
-      this.addSIDInFrontOfNameToolStripMenuItem.Name = "addSIDInFrontOfNameToolStripMenuItem";
-      this.addSIDInFrontOfNameToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
-      this.addSIDInFrontOfNameToolStripMenuItem.Text = "Add SID in front of name";
-      this.addSIDInFrontOfNameToolStripMenuItem.Click += new System.EventHandler(this.addSIDInFrontOfNameToolStripMenuItem_Click);
-      // 
       // TvChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -350,7 +344,6 @@ namespace SetupTv.Sections
     #endregion
 
     private MediaPortal.UserInterface.Controls.MPListView mpListView1;
-    private System.Windows.Forms.ColumnHeader hdrName;
     private System.Windows.Forms.ColumnHeader hdrTypes;
     private System.Windows.Forms.ColumnHeader hdrDetail1;
     private System.Windows.Forms.ColumnHeader hdrDetail2;

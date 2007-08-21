@@ -138,7 +138,7 @@ namespace SetupTv.Sections
     {
       UpdateMenu();
       _redrawTab1 = false;
-      IList dbsCards = Card.ListAll(); ;
+      IList dbsCards = Card.ListAll();
 
       CountryCollection countries = new CountryCollection();
       Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
@@ -189,11 +189,6 @@ namespace SetupTv.Sections
         }
         StringBuilder builder = new StringBuilder();
 
-        string[] details = new string[4];
-        details[0] = "";
-        details[1] = "";
-        details[2] = "";
-        details[3] = "";
         if (analog)
         {
           builder.Append("Analog");
@@ -226,8 +221,7 @@ namespace SetupTv.Sections
         int imageIndex = 1;
         if (ch.FreeToAir == false)
           imageIndex = 2;
-        ListViewItem item = new ListViewItem((items.Count + 1).ToString(), imageIndex);
-        item.SubItems.Add(ch.DisplayName);
+        ListViewItem item = new ListViewItem(ch.DisplayName, imageIndex);
         item.SubItems.Add("-");
         item.Checked = ch.VisibleInGuide;
         item.Tag = ch;
@@ -276,7 +270,7 @@ namespace SetupTv.Sections
           }
         }
         if (provider.Length > 1) provider = provider.Substring(0, provider.Length - 1);
-        item.SubItems[2].Text = (provider);
+        item.SubItems[1].Text = (provider);
         items.Add(item);
       }
       mpListView1.Items.AddRange(items.ToArray());
@@ -454,7 +448,7 @@ namespace SetupTv.Sections
     {
       for (int i = 0; i < mpListView1.Items.Count; ++i)
       {
-        mpListView1.Items[i].Text = (i + 1).ToString();
+        //mpListView1.Items[i].Text = (i + 1).ToString();
 
         Channel channel = (Channel)mpListView1.Items[i].Tag;
         if (channel.SortOrder != i)

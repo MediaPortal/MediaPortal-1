@@ -32,8 +32,6 @@ namespace SetupTv.Sections
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChannelsInGroupControl));
       this.listView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,9 +51,7 @@ namespace SetupTv.Sections
       this.listView1.AllowRowReorder = true;
       this.listView1.CheckBoxes = true;
       this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3});
+            this.columnHeader1});
       this.listView1.ContextMenuStrip = this.contextMenuStrip1;
       this.listView1.FullRowSelect = true;
       this.listView1.HideSelection = false;
@@ -75,18 +71,8 @@ namespace SetupTv.Sections
       // 
       // columnHeader1
       // 
-      this.columnHeader1.Text = "#";
-      this.columnHeader1.Width = 90;
-      // 
-      // columnHeader2
-      // 
-      this.columnHeader2.Text = "Name";
-      this.columnHeader2.Width = 200;
-      // 
-      // columnHeader3
-      // 
-      this.columnHeader3.Text = "Types";
-      this.columnHeader3.Width = 120;
+      this.columnHeader1.Text = "Name";
+      this.columnHeader1.Width = 120;
       // 
       // contextMenuStrip1
       // 
@@ -196,8 +182,6 @@ namespace SetupTv.Sections
 
     private MediaPortal.UserInterface.Controls.MPListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
-    private System.Windows.Forms.ColumnHeader columnHeader3;
     private System.Windows.Forms.Button buttonDown;
     private System.Windows.Forms.Button buttonUtp;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonDel;

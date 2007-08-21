@@ -27,6 +27,7 @@ using System.Text;
 using System.Windows.Forms;
 using TvControl;
 using DirectShowLib;
+using DirectShowLib.BDA;
 
 
 using Gentle.Common;
@@ -129,22 +130,26 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      mpListView1.BeginUpdate();
-      CountryCollection countries = new CountryCollection();
-      Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
       IList dbsCards = Card.ListAll();
+      CountryCollection countries = new CountryCollection();
+      Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
+
       foreach (Card card in dbsCards)
       {
-        cards[card.DevicePath] = RemoteControl.Instance.Type(card.IdCard);
+        cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
       }
-      base.OnSectionActivated();
+      mpListView1.BeginUpdate();
       mpListView1.Items.Clear();
-
+      IList chs = Channel.ListAll();
+      int channelCount = 0;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      IList allmaps = ChannelMap.ListAll();
 
+
+      List<ListViewItem> items = new List<ListViewItem>();
       foreach (Channel ch in channels)
       {
         bool analog = false;
@@ -152,65 +157,113 @@ namespace SetupTv.Sections
         bool dvbt = false;
         bool dvbs = false;
         bool atsc = false;
-        if (ch.IsRadio == false) continue;
-        int imageIndex = 3;
-        if (ch.FreeToAir == false)
-          imageIndex = 0;
-        ListViewItem item = mpListView1.Items.Add((mpListView1.Items.Count + 1).ToString(), imageIndex);
-        foreach (ChannelMap map in ch.ReferringChannelMap())
+        bool notmapped = true;
+        if (ch.IsRadio==false) continue;
+        channelCount++;
+        IList maps = ch.ReferringChannelMap();
+        foreach (ChannelMap map in maps)
         {
-          if (cards.ContainsKey(map.ReferencedCard().DevicePath))
+          if (cards.ContainsKey(map.IdCard))
           {
-            CardType type = cards[map.ReferencedCard().DevicePath];
+            CardType type = cards[map.IdCard];
             switch (type)
             {
-              case CardType.Analog: analog = true; break;
-              case CardType.DvbC: dvbc = true; break;
-              case CardType.DvbT: dvbt = true; break;
-              case CardType.DvbS: dvbs = true; break;
-              case CardType.Atsc: atsc = true; break;
+              case CardType.Analog: analog = true; notmapped = false; break;
+              case CardType.DvbC: dvbc = true; notmapped = false; break;
+              case CardType.DvbT: dvbt = true; notmapped = false; break;
+              case CardType.DvbS: dvbs = true; notmapped = false; break;
+              case CardType.Atsc: atsc = true; notmapped = false; break;
             }
           }
         }
-        string line = "";
-        string[] details = new string[4];
-        details[0] = ch.DisplayName;
-        details[1] = "";
-        details[2] = "";
-        details[3] = "";
+        StringBuilder builder = new StringBuilder();
+
         if (analog)
         {
-          line += "Analog";
+          builder.Append("Analog");
+        }
+        if (notmapped)
+        {
+          if (builder.Length > 0) builder.Append(",");
+          builder.Append("Channel not mapped to a card");
         }
         if (dvbc)
         {
-          if (line != "") line += ",";
-          line += "DVB-C";
+          if (builder.Length > 0) builder.Append(",");
+          builder.Append("DVB-C");
         }
         if (dvbt)
         {
-          if (line != "") line += ",";
-          line += "DVB-T";
+          if (builder.Length > 0) builder.Append(",");
+          builder.Append("DVB-T");
         }
         if (dvbs)
         {
-          if (line != "") line += ",";
-          line += "DVB-S";
+          if (builder.Length > 0) builder.Append(",");
+          builder.Append("DVB-S");
         }
         if (atsc)
         {
-          if (line != "") line += ",";
-          line += "ATSC";
+          if (builder.Length > 0) builder.Append(",");
+          builder.Append("ATSC");
         }
+        int imageIndex = 0;
+        if (ch.FreeToAir == false)
+          imageIndex = 3;
+        ListViewItem item = new ListViewItem(ch.DisplayName, imageIndex);
+        item.SubItems.Add("-");
+        item.Checked = ch.VisibleInGuide;
         item.Tag = ch;
-        item.SubItems.Add(details[0]);
-        item.SubItems.Add(line);
-        item.SubItems.Add(details[1]);
-        item.SubItems.Add(details[2]);
-        item.SubItems.Add(details[3]);
+        item.SubItems.Add(builder.ToString());
+        string provider = "";
+        foreach (TuningDetail detail in ch.ReferringTuningDetail())
+        {
+          provider += String.Format("{0},", detail.Provider);
+          float frequency;
+          switch (detail.ChannelType)
+          {
+            case 0://analog
+              if (detail.VideoSource == (int)AnalogChannel.VideoInputType.Tuner)
+              {
+                frequency = detail.Frequency;
+                frequency /= 1000000.0f;
+                item.SubItems.Add(String.Format("#{0} {1} MHz", detail.ChannelNumber, frequency.ToString("f2")));
+              }
+              else
+              {
+                item.SubItems.Add(detail.VideoSource.ToString());
+              }
+              break;
+
+            case 1://ATSC
+              item.SubItems.Add(String.Format("{0} {1}:{2}", detail.ChannelNumber, detail.MajorChannel, detail.MinorChannel));
+              break;
+
+            case 2:// DVBC
+              frequency = detail.Frequency;
+              frequency /= 1000.0f;
+              item.SubItems.Add(String.Format("{0} MHz SR:{1}", frequency.ToString("f2"), detail.Symbolrate));
+              break;
+
+            case 3:// DVBS
+              frequency = detail.Frequency;
+              frequency /= 1000.0f;
+              item.SubItems.Add(String.Format("{0} MHz {1}", frequency.ToString("f2"), (((Polarisation)detail.Polarisation))));
+              break;
+
+            case 4:// DVBT
+              frequency = detail.Frequency;
+              frequency /= 1000.0f;
+              item.SubItems.Add(String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.Bandwidth));
+              break;
+          }
+        }
+        if (provider.Length > 1) provider = provider.Substring(0, provider.Length - 1);
+        item.SubItems[1].Text = (provider);
+        items.Add(item);
       }
+      mpListView1.Items.AddRange(items.ToArray());
       mpListView1.EndUpdate();
-      ReOrder();
     }
 
     private void buttonDelete_Click(object sender, EventArgs e)
@@ -254,7 +307,7 @@ namespace SetupTv.Sections
     {
       for (int i = 0; i < mpListView1.Items.Count; ++i)
       {
-        mpListView1.Items[i].Text = (i + 1).ToString();
+        //mpListView1.Items[i].Text = (i + 1).ToString();
 
         Channel channel = (Channel)mpListView1.Items[i].Tag;
         if (channel.SortOrder != i)

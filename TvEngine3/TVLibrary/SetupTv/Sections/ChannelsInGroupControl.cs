@@ -58,8 +58,7 @@ namespace SetupTv.Sections
           int imageIndex = 1;
           if (channel.FreeToAir == false)
             imageIndex = 2;
-          ListViewItem item = listView1.Items.Add(index.ToString(), imageIndex);
-          item.SubItems.Add(channel.DisplayName);
+          ListViewItem item = listView1.Items.Add(channel.DisplayName, imageIndex);
           item.Checked = channel.VisibleInGuide;
           item.Tag = map;
         }
@@ -75,7 +74,7 @@ namespace SetupTv.Sections
     {
       for (int i = 0; i < listView1.Items.Count; ++i)
       {
-        listView1.Items[i].Text = (i + 1).ToString();
+        //listView1.Items[i].Text = (i + 1).ToString();
 
         GroupMap groupMap = (GroupMap)listView1.Items[i].Tag;
         if (groupMap.SortOrder != i)
