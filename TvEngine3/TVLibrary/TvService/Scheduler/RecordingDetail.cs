@@ -257,7 +257,7 @@ namespace TvService
       string fileName = string.Empty;
       string recEngineExt = ".mpg";
 
-      strInput = Utils.ReplaceTag(strInput, "%channel%", Utils.MakeFileName(_schedule.ReferencedChannel().Name), "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%channel%", Utils.MakeFileName(_schedule.ReferencedChannel().DisplayName), "unknown");
       strInput = Utils.ReplaceTag(strInput, "%title%", Utils.MakeFileName(Program.Title), "unknown");
       //strInput = Utils.ReplaceTag(strInput, "%name%", Utils.MakeFileName(Program.Episode), "unknown");
       strInput = Utils.ReplaceTag(strInput, "%series%", Utils.MakeFileName(Program.SeriesNum), "unknown");
@@ -300,7 +300,7 @@ namespace TvService
       {
         DateTime dt = Program.StartTime;
         fileName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
-                                  _schedule.ReferencedChannel().Name, Program.Title,
+                                  _schedule.ReferencedChannel().DisplayName, Program.Title,
                                   dt.Year, dt.Month, dt.Day,
                                   dt.Hour,
                                   dt.Minute,
