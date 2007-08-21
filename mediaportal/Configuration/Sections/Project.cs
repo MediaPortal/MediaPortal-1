@@ -49,6 +49,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelSourceForge;
     private System.Windows.Forms.LinkLabel linkLabelSourceforge;
     private MediaPortal.UserInterface.Controls.MPLabel labelInfo2;
+    private LinkLabel linkLabelPayPal;
+    private MediaPortal.UserInterface.Controls.MPLabel labelMePo;
     private System.ComponentModel.IContainer components = null;
 
     public Project()
@@ -87,6 +89,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Project));
       this.groupBoxInfo = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelInfo2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelInfo1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -101,6 +104,8 @@ namespace MediaPortal.Configuration.Sections
       this.labelForums = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkLabelHomepage = new System.Windows.Forms.LinkLabel();
       this.labelHomepage = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.linkLabelPayPal = new System.Windows.Forms.LinkLabel();
+      this.labelMePo = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxInfo.SuspendLayout();
       this.groupBoxContact.SuspendLayout();
       this.SuspendLayout();
@@ -155,9 +160,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxContact.Controls.Add(this.linkLabelHomepage);
       this.groupBoxContact.Controls.Add(this.labelHomepage);
       this.groupBoxContact.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxContact.Location = new System.Drawing.Point(0, 112);
+      this.groupBoxContact.Location = new System.Drawing.Point(211, 112);
       this.groupBoxContact.Name = "groupBoxContact";
-      this.groupBoxContact.Size = new System.Drawing.Size(472, 232);
+      this.groupBoxContact.Size = new System.Drawing.Size(261, 232);
       this.groupBoxContact.TabIndex = 1;
       this.groupBoxContact.TabStop = false;
       this.groupBoxContact.Text = "Contact";
@@ -165,7 +170,7 @@ namespace MediaPortal.Configuration.Sections
       // linkLabelSourceforge
       // 
       this.linkLabelSourceforge.AutoSize = true;
-      this.linkLabelSourceforge.Location = new System.Drawing.Point(24, 160);
+      this.linkLabelSourceforge.Location = new System.Drawing.Point(18, 160);
       this.linkLabelSourceforge.Name = "linkLabelSourceforge";
       this.linkLabelSourceforge.Size = new System.Drawing.Size(213, 13);
       this.linkLabelSourceforge.TabIndex = 7;
@@ -176,7 +181,7 @@ namespace MediaPortal.Configuration.Sections
       // labelSourceForge
       // 
       this.labelSourceForge.AutoSize = true;
-      this.labelSourceForge.Location = new System.Drawing.Point(16, 144);
+      this.labelSourceForge.Location = new System.Drawing.Point(10, 144);
       this.labelSourceForge.Name = "labelSourceForge";
       this.labelSourceForge.Size = new System.Drawing.Size(135, 13);
       this.labelSourceForge.TabIndex = 6;
@@ -185,7 +190,7 @@ namespace MediaPortal.Configuration.Sections
       // linkLabelOnlineDocumentation
       // 
       this.linkLabelOnlineDocumentation.AutoSize = true;
-      this.linkLabelOnlineDocumentation.Location = new System.Drawing.Point(24, 120);
+      this.linkLabelOnlineDocumentation.Location = new System.Drawing.Point(18, 120);
       this.linkLabelOnlineDocumentation.Name = "linkLabelOnlineDocumentation";
       this.linkLabelOnlineDocumentation.Size = new System.Drawing.Size(162, 13);
       this.linkLabelOnlineDocumentation.TabIndex = 5;
@@ -196,7 +201,7 @@ namespace MediaPortal.Configuration.Sections
       // labelOnlineDocumentation
       // 
       this.labelOnlineDocumentation.AutoSize = true;
-      this.labelOnlineDocumentation.Location = new System.Drawing.Point(16, 105);
+      this.labelOnlineDocumentation.Location = new System.Drawing.Point(10, 105);
       this.labelOnlineDocumentation.Name = "labelOnlineDocumentation";
       this.labelOnlineDocumentation.Size = new System.Drawing.Size(115, 13);
       this.labelOnlineDocumentation.TabIndex = 4;
@@ -205,7 +210,7 @@ namespace MediaPortal.Configuration.Sections
       // labelIrcChannelData
       // 
       this.labelIrcChannelData.AutoSize = true;
-      this.labelIrcChannelData.Location = new System.Drawing.Point(24, 200);
+      this.labelIrcChannelData.Location = new System.Drawing.Point(18, 200);
       this.labelIrcChannelData.Name = "labelIrcChannelData";
       this.labelIrcChannelData.Size = new System.Drawing.Size(232, 13);
       this.labelIrcChannelData.TabIndex = 9;
@@ -214,7 +219,7 @@ namespace MediaPortal.Configuration.Sections
       // labelIrcChannel
       // 
       this.labelIrcChannel.AutoSize = true;
-      this.labelIrcChannel.Location = new System.Drawing.Point(16, 184);
+      this.labelIrcChannel.Location = new System.Drawing.Point(10, 184);
       this.labelIrcChannel.Name = "labelIrcChannel";
       this.labelIrcChannel.Size = new System.Drawing.Size(105, 13);
       this.labelIrcChannel.TabIndex = 8;
@@ -223,7 +228,7 @@ namespace MediaPortal.Configuration.Sections
       // linkLabelForums
       // 
       this.linkLabelForums.AutoSize = true;
-      this.linkLabelForums.Location = new System.Drawing.Point(24, 80);
+      this.linkLabelForums.Location = new System.Drawing.Point(18, 80);
       this.linkLabelForums.Name = "linkLabelForums";
       this.linkLabelForums.Size = new System.Drawing.Size(170, 13);
       this.linkLabelForums.TabIndex = 3;
@@ -234,7 +239,7 @@ namespace MediaPortal.Configuration.Sections
       // labelForums
       // 
       this.labelForums.AutoSize = true;
-      this.labelForums.Location = new System.Drawing.Point(16, 64);
+      this.labelForums.Location = new System.Drawing.Point(10, 64);
       this.labelForums.Name = "labelForums";
       this.labelForums.Size = new System.Drawing.Size(44, 13);
       this.labelForums.TabIndex = 2;
@@ -243,7 +248,7 @@ namespace MediaPortal.Configuration.Sections
       // linkLabelHomepage
       // 
       this.linkLabelHomepage.AutoSize = true;
-      this.linkLabelHomepage.Location = new System.Drawing.Point(24, 40);
+      this.linkLabelHomepage.Location = new System.Drawing.Point(18, 40);
       this.linkLabelHomepage.Name = "linkLabelHomepage";
       this.linkLabelHomepage.Size = new System.Drawing.Size(168, 13);
       this.linkLabelHomepage.TabIndex = 1;
@@ -254,16 +259,41 @@ namespace MediaPortal.Configuration.Sections
       // labelHomepage
       // 
       this.labelHomepage.AutoSize = true;
-      this.labelHomepage.Location = new System.Drawing.Point(16, 24);
+      this.labelHomepage.Location = new System.Drawing.Point(10, 24);
       this.labelHomepage.Name = "labelHomepage";
       this.labelHomepage.Size = new System.Drawing.Size(62, 13);
       this.labelHomepage.TabIndex = 0;
       this.labelHomepage.Text = "Homepage:";
       // 
+      // linkLabelPayPal
+      // 
+      this.linkLabelPayPal.ActiveLinkColor = System.Drawing.Color.Transparent;
+      this.linkLabelPayPal.DisabledLinkColor = System.Drawing.Color.Transparent;
+      this.linkLabelPayPal.Image = ((System.Drawing.Image)(resources.GetObject("linkLabelPayPal.Image")));
+      this.linkLabelPayPal.LinkColor = System.Drawing.Color.Transparent;
+      this.linkLabelPayPal.Location = new System.Drawing.Point(133, 314);
+      this.linkLabelPayPal.Name = "linkLabelPayPal";
+      this.linkLabelPayPal.Size = new System.Drawing.Size(72, 29);
+      this.linkLabelPayPal.TabIndex = 2;
+      this.linkLabelPayPal.TabStop = true;
+      this.linkLabelPayPal.Text = "http://sourceforge.net/donate/index.php?group_id=107397";
+      this.linkLabelPayPal.VisitedLinkColor = System.Drawing.Color.Transparent;
+      this.linkLabelPayPal.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelPayPal_LinkClicked);
+      // 
+      // labelMePo
+      // 
+      this.labelMePo.Image = ((System.Drawing.Image)(resources.GetObject("labelMePo.Image")));
+      this.labelMePo.Location = new System.Drawing.Point(3, 142);
+      this.labelMePo.Name = "labelMePo";
+      this.labelMePo.Size = new System.Drawing.Size(258, 202);
+      this.labelMePo.TabIndex = 9;
+      // 
       // Project
       // 
+      this.Controls.Add(this.linkLabelPayPal);
       this.Controls.Add(this.groupBoxContact);
       this.Controls.Add(this.groupBoxInfo);
+      this.Controls.Add(this.labelMePo);
       this.Name = "Project";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBoxInfo.ResumeLayout(false);
@@ -314,6 +344,17 @@ namespace MediaPortal.Configuration.Sections
       if (linkLabelSourceforge.Text.Length > 0)
       {
         System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelSourceforge.Text);
+        System.Diagnostics.Process.Start(sInfo);
+      }
+    }
+
+    private void linkLabelPayPal_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      if (linkLabelPayPal.Text == null)
+        return;
+      if (linkLabelPayPal.Text.Length > 0)
+      {
+        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelPayPal.Text);
         System.Diagnostics.Process.Start(sInfo);
       }
     }
