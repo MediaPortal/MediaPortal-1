@@ -337,6 +337,7 @@
     <String id="404">Vind</String>
     <String id="405">Daggpunkt</String>
     <String id="406">Luftfuktighet</String>
+    <String id="407">ihållande</String>
     <String id="410">Hämtar från Weather.com</String>
     <String id="411">Hämtar väder för:</String>
     <String id="412">Kunde inte hämta väderdata</String>
