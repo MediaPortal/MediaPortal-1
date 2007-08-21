@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>616</id>
   <defaultcontrol>5</defaultcontrol>
@@ -21,6 +21,7 @@
       <ondown>25</ondown>
       <label>200007</label>
       <width>96</width>
+	  <hyperlink>634</hyperlink>
     </control>
     <control>
       <type>label</type>
