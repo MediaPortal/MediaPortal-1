@@ -15,18 +15,18 @@
 
 
 --
--- Create schema tvlibrary
+-- Create schema TvLibrary
 --
 
-CREATE DATABASE IF NOT EXISTS tvlibrary;
-USE tvlibrary;
+CREATE DATABASE IF NOT EXISTS TvLibrary;
+USE TvLibrary;
 #
 --
--- Definition of table `canceledschedule`
+-- Definition of table `CanceledSchedule`
 --
 
-DROP TABLE IF EXISTS `canceledschedule`;
-CREATE TABLE `canceledschedule` (
+DROP TABLE IF EXISTS `CanceledSchedule`;
+CREATE TABLE `CanceledSchedule` (
   `idCanceledSchedule` int(11) NOT NULL auto_increment,
   `idSchedule` int(11) NOT NULL,
   `cancelDateTime` datetime NOT NULL,
@@ -35,19 +35,19 @@ CREATE TABLE `canceledschedule` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
 #
 --
--- Dumping data for table `canceledschedule`
+-- Dumping data for table `CanceledSchedule`
 --
 
-/*!40000 ALTER TABLE `canceledschedule` DISABLE KEYS */;
-/*!40000 ALTER TABLE `canceledschedule` ENABLE KEYS */;
+/*!40000 ALTER TABLE `CanceledSchedule` DISABLE KEYS */;
+/*!40000 ALTER TABLE `CanceledSchedule` ENABLE KEYS */;
 
 
 --
--- Definition of table `card`
+-- Definition of table `Card`
 --
 
-DROP TABLE IF EXISTS `card`;
-CREATE TABLE `card` (
+DROP TABLE IF EXISTS `Card`;
+CREATE TABLE `Card` (
   `idCard` int(11) NOT NULL auto_increment,
   `devicePath` varchar(2000) NOT NULL,
   `name` varchar(200) NOT NULL,
@@ -67,11 +67,11 @@ CREATE TABLE `card` (
 #
 
 --
--- Definition of table `cardgroup`
+-- Definition of table `CardGroup`
 --
 
-DROP TABLE IF EXISTS `cardgroup`;
-CREATE TABLE `cardgroup` (
+DROP TABLE IF EXISTS `CardGroup`;
+CREATE TABLE `CardGroup` (
   `idCardGroup` int(11) NOT NULL auto_increment,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY  (`idCardGroup`)
@@ -79,11 +79,11 @@ CREATE TABLE `cardgroup` (
 #
 
 --
--- Definition of table `cardgroupmap`
+-- Definition of table `CardGroupMap`
 --
 
-DROP TABLE IF EXISTS `cardgroupmap`;
-CREATE TABLE `cardgroupmap` (
+DROP TABLE IF EXISTS `CardGroupMap`;
+CREATE TABLE `CardGroupMap` (
   `idMapping` int(11) NOT NULL auto_increment,
   `idCard` int(11) NOT NULL,
   `idCardGroup` int(11) NOT NULL,
@@ -94,11 +94,11 @@ CREATE TABLE `cardgroupmap` (
 #
 
 --
--- Definition of table `channel`
+-- Definition of table `Channel`
 --
 
-DROP TABLE IF EXISTS `channel`;
-CREATE TABLE `channel` (
+DROP TABLE IF EXISTS `Channel`;
+CREATE TABLE `Channel` (
   `idChannel` int(11) NOT NULL auto_increment,
   `name` varchar(200) NOT NULL,
   `isRadio` bit(1) NOT NULL,
@@ -118,11 +118,11 @@ CREATE TABLE `channel` (
 #
 
 --
--- Definition of table `channelgroup`
+-- Definition of table `ChannelGroup`
 --
 
-DROP TABLE IF EXISTS `channelgroup`;
-CREATE TABLE `channelgroup` (
+DROP TABLE IF EXISTS `ChannelGroup`;
+CREATE TABLE `ChannelGroup` (
   `idGroup` int(11) NOT NULL auto_increment,
   `groupName` varchar(200) NOT NULL,
   `sortOrder` int(11) NOT NULL,
@@ -132,11 +132,11 @@ CREATE TABLE `channelgroup` (
 #
 
 --
--- Definition of table `channelmap`
+-- Definition of table `ChannelMap`
 --
 
-DROP TABLE IF EXISTS `channelmap`;
-CREATE TABLE `channelmap` (
+DROP TABLE IF EXISTS `ChannelMap`;
+CREATE TABLE `ChannelMap` (
   `idChannelMap` int(11) NOT NULL auto_increment,
   `idChannel` int(11) NOT NULL,
   `idCard` int(11) NOT NULL,
@@ -147,11 +147,11 @@ CREATE TABLE `channelmap` (
 #
 
 --
--- Definition of table `conflict`
+-- Definition of table `Conflict`
 --
 
-DROP TABLE IF EXISTS `conflict`;
-CREATE TABLE `conflict` (
+DROP TABLE IF EXISTS `Conflict`;
+CREATE TABLE `Conflict` (
   `idConflict` int(11) NOT NULL auto_increment,
   `idSchedule` int(11) NOT NULL,
   `idConflictingSchedule` int(11) NOT NULL,
@@ -166,11 +166,11 @@ CREATE TABLE `conflict` (
 #
 
 --
--- Definition of table `diseqcmotor`
+-- Definition of table `DiSEqCMotor`
 --
 
-DROP TABLE IF EXISTS `diseqcmotor`;
-CREATE TABLE `diseqcmotor` (
+DROP TABLE IF EXISTS `DiSEqCMotor`;
+CREATE TABLE `DiSEqCMotor` (
   `idDiSEqCMotor` int(11) NOT NULL auto_increment,
   `idCard` int(11) NOT NULL,
   `idSatellite` int(11) NOT NULL,
@@ -182,11 +182,11 @@ CREATE TABLE `diseqcmotor` (
 #
 
 --
--- Definition of table `favorite`
+-- Definition of table `Favorite`
 --
 
-DROP TABLE IF EXISTS `favorite`;
-CREATE TABLE `favorite` (
+DROP TABLE IF EXISTS `Favorite`;
+CREATE TABLE `Favorite` (
   `idFavorite` int(11) NOT NULL auto_increment,
   `idProgram` int(11) NOT NULL,
   `priority` int(11) NOT NULL,
@@ -197,11 +197,11 @@ CREATE TABLE `favorite` (
 #
 
 --
--- Definition of table `groupmap`
+-- Definition of table `GroupMap`
 --
 
-DROP TABLE IF EXISTS `groupmap`;
-CREATE TABLE `groupmap` (
+DROP TABLE IF EXISTS `GroupMap`;
+CREATE TABLE `GroupMap` (
   `idMap` int(11) NOT NULL auto_increment,
   `idGroup` int(11) NOT NULL,
   `idChannel` int(11) NOT NULL,
@@ -213,11 +213,11 @@ CREATE TABLE `groupmap` (
 #
 
 --
--- Definition of table `program`
+-- Definition of table `Program`
 --
 
-DROP TABLE IF EXISTS `program`;
-CREATE TABLE `program` (
+DROP TABLE IF EXISTS `Program`;
+CREATE TABLE `Program` (
   `idProgram` int(11) NOT NULL auto_increment,
   `idChannel` int(11) NOT NULL,
   `startTime` datetime NOT NULL,
@@ -239,11 +239,11 @@ CREATE TABLE `program` (
 #
 
 --
--- Definition of table `recording`
+-- Definition of table `Recording`
 --
 
-DROP TABLE IF EXISTS `recording`;
-CREATE TABLE `recording` (
+DROP TABLE IF EXISTS `Recording`;
+CREATE TABLE `Recording` (
   `idRecording` int(11) NOT NULL auto_increment,
   `idChannel` int(11) NOT NULL,
   `startTime` datetime NOT NULL,
@@ -264,11 +264,11 @@ CREATE TABLE `recording` (
 #
 
 --
--- Definition of table `satellite`
+-- Definition of table `Satellite`
 --
 
-DROP TABLE IF EXISTS `satellite`;
-CREATE TABLE `satellite` (
+DROP TABLE IF EXISTS `Satellite`;
+CREATE TABLE `Satellite` (
   `idSatellite` int(11) NOT NULL auto_increment,
   `satelliteName` varchar(200) NOT NULL,
   `transponderFileName` varchar(200) NOT NULL,
@@ -277,11 +277,11 @@ CREATE TABLE `satellite` (
 #
 
 --
--- Definition of table `schedule`
+-- Definition of table `Schedule`
 --
 
-DROP TABLE IF EXISTS `schedule`;
-CREATE TABLE `schedule` (
+DROP TABLE IF EXISTS `Schedule`;
+CREATE TABLE `Schedule` (
   `id_Schedule` int(11) NOT NULL auto_increment,
   `idChannel` int(11) NOT NULL,
   `scheduleType` int(11) NOT NULL,
@@ -304,11 +304,11 @@ CREATE TABLE `schedule` (
 #
 
 --
--- Definition of table `server`
+-- Definition of table `Server`
 --
 
-DROP TABLE IF EXISTS `server`;
-CREATE TABLE `server` (
+DROP TABLE IF EXISTS `Server`;
+CREATE TABLE `Server` (
   `idServer` int(11) NOT NULL auto_increment,
   `isMaster` bit(1) NOT NULL,
   `hostName` varchar(256) NOT NULL,
@@ -317,11 +317,11 @@ CREATE TABLE `server` (
 #
 
 --
--- Definition of table `setting`
+-- Definition of table `Setting`
 --
 
-DROP TABLE IF EXISTS `setting`;
-CREATE TABLE `setting` (
+DROP TABLE IF EXISTS `Setting`;
+CREATE TABLE `Setting` (
   `idSetting` int(11) NOT NULL auto_increment,
   `tag` varchar(200) NOT NULL,
   `value` varchar(4096) NOT NULL,
@@ -330,10 +330,10 @@ CREATE TABLE `setting` (
 #
 
 --
--- Definition of table `channellinkagemap`
+-- Definition of table `ChannelLinkageMap`
 --
-DROP TABLE IF EXISTS `channellinkagemap`;
-CREATE TABLE `channellinkagemap` (
+DROP TABLE IF EXISTS `ChannelLinkageMap`;
+CREATE TABLE `ChannelLinkageMap` (
   `idMapping` int(11) NOT NULL auto_increment,
   `idPortalChannel` int(11) NOT NULL,
   `idLinkedChannel` int(11) NOT NULL,
@@ -342,11 +342,11 @@ CREATE TABLE `channellinkagemap` (
 #
 
 --
--- Definition of table `tuningdetail`
+-- Definition of table `TuningDetail`
 --
 
-DROP TABLE IF EXISTS `tuningdetail`;
-CREATE TABLE `tuningdetail` (
+DROP TABLE IF EXISTS `TuningDetail`;
+CREATE TABLE `TuningDetail` (
   `idTuning` int(11) NOT NULL auto_increment,
   `idChannel` int(11) NOT NULL,
   `name` varchar(200) NOT NULL,
@@ -474,23 +474,23 @@ CREATE TABLE `KeywordMap`(
 
 
 --
--- Definition of table `version`
+-- Definition of table `Version`
 --
 
-DROP TABLE IF EXISTS `version`;
-CREATE TABLE `version` (
+DROP TABLE IF EXISTS `Version`;
+CREATE TABLE `Version` (
   `idVersion` int(11) NOT NULL auto_increment,
   `versionNumber` int(11) NOT NULL,
   PRIMARY KEY  (`idVersion`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 #
 --
--- Dumping data for table `version`
+-- Dumping data for table `Version`
 --
 
-/*!40000 ALTER TABLE `version` DISABLE KEYS */;
-INSERT INTO `version` VALUES  (1,30);
-/*!40000 ALTER TABLE `version` ENABLE KEYS */;
+/*!40000 ALTER TABLE `Version` DISABLE KEYS */;
+INSERT INTO `Version` VALUES  (1,30);
+/*!40000 ALTER TABLE `Version` ENABLE KEYS */;
 #
 
 
@@ -504,11 +504,11 @@ INSERT INTO `version` VALUES  (1,30);
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 
 
-CREATE INDEX idProgramStart ON program (startTime);
+CREATE INDEX idProgramStart ON Program (startTime);
 #
-CREATE INDEX idxChannel ON channel (isTv,sortOrder);
+CREATE INDEX idxChannel ON Channel (isTv,sortOrder);
 #
-CREATE INDEX idProgramChannel ON program (idChannel);
+CREATE INDEX idProgramChannel ON Program (idChannel);
 #
-CREATE INDEX idProgramBeginEnd ON program (idChannel,startTime,endTime);
+CREATE INDEX idProgramBeginEnd ON Program (idChannel,startTime,endTime);
 #

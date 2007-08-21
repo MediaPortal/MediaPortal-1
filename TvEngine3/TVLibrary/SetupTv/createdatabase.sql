@@ -654,8 +654,8 @@ REFERENCES ChannelGroup (idGroup)
 GO
 
 
-delete from version
+DELETE FROM Version
 GO
 
-insert into version(versionNumber) values(30)
+INSERT INTO Version(versionNumber) values(30)
 GO
