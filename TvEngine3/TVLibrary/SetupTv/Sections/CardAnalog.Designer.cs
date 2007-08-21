@@ -46,6 +46,7 @@ namespace SetupTv.Sections
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpComboBoxSensitivity = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxNoMerge = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
       // 
       // mpBeveledLine1
@@ -209,10 +210,21 @@ namespace SetupTv.Sections
       this.mpButton1.UseVisualStyleBackColor = true;
       this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
       // 
+      // checkBoxNoMerge
+      // 
+      this.checkBoxNoMerge.AutoSize = true;
+      this.checkBoxNoMerge.Location = new System.Drawing.Point(16, 352);
+      this.checkBoxNoMerge.Name = "checkBoxNoMerge";
+      this.checkBoxNoMerge.Size = new System.Drawing.Size(208, 17);
+      this.checkBoxNoMerge.TabIndex = 15;
+      this.checkBoxNoMerge.Text = "Don\'t merge channels with same name";
+      this.checkBoxNoMerge.UseVisualStyleBackColor = true;
+      // 
       // CardAnalog
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.checkBoxNoMerge);
       this.Controls.Add(this.mpButton1);
       this.Controls.Add(this.mpComboBoxSensitivity);
       this.Controls.Add(this.mpLabel4);
@@ -256,5 +268,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxSensitivity;
     private MediaPortal.UserInterface.Controls.MPButton mpButton1;
+    private System.Windows.Forms.CheckBox checkBoxNoMerge;
   }
 }

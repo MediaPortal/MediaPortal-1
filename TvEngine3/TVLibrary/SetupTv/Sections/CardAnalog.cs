@@ -195,7 +195,11 @@ namespace SetupTv.Sections
           item.SubItems.Add(channel.Name);
           mpListView1.EnsureVisible(mpListView1.Items.Count - 1);
 
-          Channel dbChannel = layer.AddChannel("",channel.Name);
+          Channel dbChannel;
+          if (checkBoxNoMerge.Checked)
+            dbChannel=new Channel(channel.Name, false, false, 0, new DateTime(2000, 1, 1), true, new DateTime(2000, 1, 1), -1, true, "", true,channel.Name);
+          else
+            dbChannel=layer.AddChannel("",channel.Name);
           dbChannel.IsTv = channel.IsTv;
           dbChannel.IsRadio = channel.IsRadio;
           dbChannel.FreeToAir = true;
