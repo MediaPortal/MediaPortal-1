@@ -1275,7 +1275,7 @@ namespace MediaPortal.Video.Database
         if (iImage >= 0)
         {
           iEnd = strBody.IndexOf("\"", iImage);
-          movieDetails.ThumbURL = strBody.Substring(iImage, iEnd - iImage).Trim();
+          //movieDetails.ThumbURL = strBody.Substring(iImage, iEnd - iImage).Trim();
         }
 
         //plot
