@@ -264,7 +264,7 @@ namespace MediaPortal.Configuration
           {
             AddChildSection(filterSection, new PowerDVD6DecoderFilters());
           }
-          if (filter.Equals("CyberLink Audio Decoder (PDVD7)"))
+          if (filter.Equals("CyberLink Audio Decoder (PDVD7)") || filter.Equals("CyberLink Audio Decode (PDVD7.x)"))
           {
             AddChildSection(filterSection, new PowerDVD7DecoderFilters());
           }
@@ -423,7 +423,7 @@ namespace MediaPortal.Configuration
       this.sectionTree.ItemHeight = 16;
       this.sectionTree.Location = new System.Drawing.Point(16, 16);
       this.sectionTree.Name = "sectionTree";
-      this.sectionTree.Size = new System.Drawing.Size(184, 467);
+      this.sectionTree.Size = new System.Drawing.Size(184, 440);
       this.sectionTree.TabIndex = 2;
       this.sectionTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
       this.sectionTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.sectionTree_BeforeSelect);
@@ -432,7 +432,7 @@ namespace MediaPortal.Configuration
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.Location = new System.Drawing.Point(621, 506);
+      this.cancelButton.Location = new System.Drawing.Point(621, 479);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 1;
@@ -443,7 +443,7 @@ namespace MediaPortal.Configuration
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.Location = new System.Drawing.Point(542, 506);
+      this.okButton.Location = new System.Drawing.Point(542, 479);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 0;
@@ -477,14 +477,14 @@ namespace MediaPortal.Configuration
       this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
       this.holderPanel.Location = new System.Drawing.Point(216, 48);
       this.holderPanel.Name = "holderPanel";
-      this.holderPanel.Size = new System.Drawing.Size(472, 435);
+      this.holderPanel.Size = new System.Drawing.Size(472, 408);
       this.holderPanel.TabIndex = 4;
       // 
       // beveledLine1
       // 
       this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.beveledLine1.Location = new System.Drawing.Point(8, 496);
+      this.beveledLine1.Location = new System.Drawing.Point(8, 469);
       this.beveledLine1.Name = "beveledLine1";
       this.beveledLine1.Size = new System.Drawing.Size(688, 2);
       this.beveledLine1.TabIndex = 5;
@@ -493,7 +493,7 @@ namespace MediaPortal.Configuration
       // applyButton
       // 
       this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.applyButton.Location = new System.Drawing.Point(462, 506);
+      this.applyButton.Location = new System.Drawing.Point(462, 479);
       this.applyButton.Name = "applyButton";
       this.applyButton.Size = new System.Drawing.Size(75, 23);
       this.applyButton.TabIndex = 6;
@@ -509,7 +509,7 @@ namespace MediaPortal.Configuration
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
-      this.ClientSize = new System.Drawing.Size(704, 537);
+      this.ClientSize = new System.Drawing.Size(704, 510);
       this.Controls.Add(this.applyButton);
       this.Controls.Add(this.beveledLine1);
       this.Controls.Add(this.holderPanel);
@@ -524,7 +524,6 @@ namespace MediaPortal.Configuration
       this.Closed += new System.EventHandler(this.SettingsForm_Closed);
       this.Load += new System.EventHandler(this.SettingsForm_Load);
       this.ResumeLayout(false);
-
     }
 
     #endregion
