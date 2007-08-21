@@ -187,19 +187,31 @@ namespace MediaPortal.Player
         string strAudiorenderer = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
+        string postProcessingFilterSection = "mytv";
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
-          strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
-          strAudiorenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
+          if (_mediaType == g_Player.MediaType.Video)
+          {
+            strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
+            strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
+            strAudiorenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
+            postProcessingFilterSection = "movieplayer";
+          }
+          else
+          {
+            strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
+            strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
+            strAudiorenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
+            postProcessingFilterSection = "mytv";
+          }
           enableDvbSubtitles = xmlreader.GetValueAsBool("mytv", "dvbsubtitles", false);
           // FlipGer: load infos for custom filters
           int intCount = 0;
-          while (xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
+          while (xmlreader.GetValueAsString(postProcessingFilterSection, "filter" + intCount.ToString(), "undefined") != "undefined")
           {
-            if (xmlreader.GetValueAsBool("movieplayer", "usefilter" + intCount.ToString(), false))
+            if (xmlreader.GetValueAsBool(postProcessingFilterSection, "usefilter" + intCount.ToString(), false))
             {
-              strFilters += xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") + ";";
+              strFilters += xmlreader.GetValueAsString(postProcessingFilterSection, "filter" + intCount.ToString(), "undefined") + ";";
               intFilters++;
             }
             intCount++;
