@@ -180,6 +180,8 @@ namespace MediaPortal.GUI.Library
       ACTION_SWITCH_TELETEXT_HIDDEN = 9986,               // Switch on/off the hidden mode in teletext window id=7701 || 7700
       ACTION_SWITCH_TELETEXT_TRANSPARENT = 9987,          // Switch on/off the hidden mode in teletext window id=7701 || 7700
       ACTION_SHOW_INDEXPAGE=9988,                         // Go to index page window id=7701 | 7700
+      ACTION_SKIN_NEXT=9989,                 // used for the changeskin plugin.
+      ACTION_SKIN_PREVIOUS=9990             // used for the changeskin plugin.
     };
     #endregion
 
