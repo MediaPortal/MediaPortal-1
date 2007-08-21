@@ -142,10 +142,10 @@ namespace Mpe.Forms
       {
         ListViewItem item = skinList.Items.Add(skins[i].Name);
         item.Tag = skins[i];
-        FileInfo[] f = skins[i].GetFiles("preview.jpg");
-        if (f != null && f.Length > 0)
+        string f = skins[i].FullName + @"\media\preview.png";
+        if (File.Exists(f))
         {
-          Bitmap b = new Bitmap(f[0].FullName);
+          Bitmap b = new Bitmap(f);
           previews.Add(skins[i].Name, b);
         }
       }

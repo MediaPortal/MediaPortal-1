@@ -266,17 +266,25 @@ namespace Mpe
       {
         if (languageFiles == null)
         {
+          //-------
           languageFiles = new Hashtable();
-          DirectoryInfo[] languages = mediaPortalDir.GetDirectories("language\\*");
-          if (languages == null || languages.Length == 0)
+          DirectoryInfo dir = new DirectoryInfo(mediaPortalDir.FullName+@"\language");
+          foreach (FileInfo file in dir.GetFiles("strings_*.xml"))
           {
-            throw new MpeParserException("Could not locate language strings.");
-          }
-          for (int i = 0; i < languages.Length; i++)
-          {
-            languageFiles.Add(languages[i].Name, new FileInfo(languages[i].FullName + "\\strings.xml"));
-            MpeLog.Debug("Adding Language [" + languages[i].Name + "]");
-          }
+            int pos = file.Name.IndexOf('_') + 1;
+            string cultName = file.Name.Substring(pos, file.Name.Length - file.Extension.Length - pos);
+
+            try
+            {
+              CultureInfo cultInfo = new CultureInfo(cultName);
+//              _availableLanguages.Add(cultInfo.EnglishName, cultName);
+              languageFiles.Add(cultInfo.EnglishName, file);
+            }
+            catch (ArgumentException)
+            {
+            }
+
+          }        
         }
         return languageFiles;
       }
@@ -789,30 +797,49 @@ namespace Mpe
 
     private MpeStringTable CreateStringTable(string language, FileInfo file)
     {
+      MpeStringTable table = new MpeStringTable(language);
       try
       {
+        XmlDocument doc = new XmlDocument();
+        XmlTextReader reader = new XmlTextReader(file.FullName);
+        //docencoding = reader.Encoding;
+        doc.Load(reader);
+        if (doc.DocumentElement == null) return table;
+        string strRoot = doc.DocumentElement.Name;
+        if (strRoot != "Language") return table;
+        XmlNodeList list = doc.DocumentElement.SelectNodes("Section/String");
+        foreach (XmlNode node in list)
+        {
+          table.Add(int.Parse(node.Attributes["id"].Value), node.InnerText);
+        }
+        reader.Close();
+        return table;
+
+        /*
         XPathDocument doc = new XPathDocument(file.FullName);
         XPathNavigator nav = doc.CreateNavigator();
-        XPathNodeIterator iterator = nav.Select("/strings/string");
+        XPathNodeIterator iterator = nav.Select("/Language/Section/String");
         XPathNodeIterator i, j;
         MpeStringTable table = new MpeStringTable(language);
         while (iterator.MoveNext())
         {
-          i = iterator.Current.SelectChildren("id", "");
-          j = iterator.Current.SelectChildren("value", "");
-          if (i.MoveNext() && j.MoveNext())
-          {
+          //i = iterator.Current.SelectChildren("id", "");
+          //j = iterator.Current.SelectChildren("value", "");
+          //if (i.MoveNext() && j.MoveNext())
+          //{
             try
             {
-              table.Add(int.Parse(i.Current.Value), j.Current.Value.Trim());
+              System.Windows.Forms.MessageBox.Show(iterator.Current.GetAttribute("Id","/Language/Section/String")+iterator.Current.Value.Trim());
+              table.Add(int.Parse(iterator.Current.GetAttribute("Id","")), iterator.Current.Value.Trim());
             }
             catch (Exception ee)
             {
               MpeLog.Warn("Language=[" + language + "] " + ee.Message);
             }
-          }
+          //}
         }
         return table;
+         */ 
       }
       catch (Exception e)
       {

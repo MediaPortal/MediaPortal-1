@@ -190,7 +190,7 @@ namespace Mpe.Designers
       dataGrid.AllowNavigation = false;
       dataGrid.AlternatingBackColor = SystemColors.Window;
       dataGrid.BackgroundColor = Color.LightGray;
-      dataGrid.BorderStyle = BorderStyle.None;
+//      dataGrid.BorderStyle = BorderStyle.None;
       dataGrid.DataMember = "";
       dataGrid.Dock = DockStyle.Fill;
       dataGrid.GridLineColor = SystemColors.Control;
@@ -209,7 +209,7 @@ namespace Mpe.Designers
       Controls.Add(dataGrid);
       DockPadding.All = 4;
       Name = "MpeStringDesigner";
-      Size = new Size(376, 224);
+      //Size = new Size(376, 224);
       ((ISupportInitialize) (dataGrid)).EndInit();
       ResumeLayout(false);
     }
