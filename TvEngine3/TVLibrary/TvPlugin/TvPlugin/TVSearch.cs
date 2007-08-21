@@ -1035,12 +1035,10 @@ namespace TvPlugin
                 else
                 {
                   //cancel recording
-                  rec1.Canceled = DateTime.Now;
                   server.StopRecordingSchedule(rec1.IdSchedule);
-                  rec1.Persist();
+                  rec1.Delete();
                   server.OnNewSchedule();
                 }
-
               }
             }
             listRecordings = Schedule.ListAll();
