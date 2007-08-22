@@ -175,7 +175,12 @@ public class MediaPortalApp : D3DApp, IRender
       {
         if (arg == "/fullscreen")
         {
-          _fullscreenOverride = "yes";
+          _fullscreenOverride = true;
+        }
+        if (arg.StartsWith("/fullscreen="))
+        {
+          string argValue = arg.Remove(0, 12);// remove /?= from the argument  
+          _fullscreenOverride = argValue != "no";
         }
         if (arg == "/crashtest")
         {
@@ -238,6 +243,8 @@ public class MediaPortalApp : D3DApp, IRender
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
         _startupDelay = xmlreader.GetValueAsInt("general", "startup delay", 0);
         _waitForTvServer = xmlreader.GetValueAsBool("general", "wait for tvserver", false);
+
+        GUIGraphicsContext._useScreenSelector |= xmlreader.GetValueAsBool("screenselector", "usescreenselector", false);
       }
 
 #if !DEBUG
@@ -450,7 +457,7 @@ public class MediaPortalApp : D3DApp, IRender
             Application.AddMessageFilter(filter);
 
             // Initialize Input Devices
-            InputDevices.Init();
+            InputDevices.Init();            
 
             
 
@@ -636,11 +643,8 @@ public class MediaPortalApp : D3DApp, IRender
       showLastActiveModule = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
       lastActiveModule = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
       lastActiveModuleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
-
-
-      string strUseScreenSelector = xmlreader.GetValueAsString("ScreenSelector", "useScreenSelector", "false");
-      GUIGraphicsContext._useScreenSelector = GUIGraphicsContext._useScreenSelector || (strUseScreenSelector != null && strUseScreenSelector == "yes");
-      screenNumber = xmlreader.GetValueAsInt("ScreenSelector", "screennumber", screenNumber);
+      
+      screenNumber = xmlreader.GetValueAsInt("screenselector", "screennumber", screenNumber);
 
       //GUIGraphicsContext.UseSeparateRenderThread = xmlreader.GetValueAsBool("general", "userenderthread", true);
       // BAV: to be fixed -> until then deactivated to save user aggrivation 

@@ -180,6 +180,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>

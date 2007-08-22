@@ -124,7 +124,7 @@ namespace MediaPortal
     //protected TextureStates textureStates;
     private Caps graphicsCaps; // Caps for the device
 
-    internal static string _fullscreenOverride = string.Empty;
+    internal static bool _fullscreenOverride = false;
     internal static int _screenNumberOverride = -1;// 0 or higher means it is set
 
     protected Caps Caps
@@ -180,7 +180,7 @@ namespace MediaPortal
 
     protected bool showCursorWhenFullscreen; // Whether to show cursor when fullscreen
     protected bool clipCursorWhenFullscreen; // Whether to limit cursor pos when fullscreen
-    protected bool startFullscreen; // Whether to start up the app in fullscreen mode
+    protected bool startFullscreen = false; // Whether to start up the app in fullscreen mode
 
     private MenuItem menuItemOptions;
     private MenuItem menuItemConfiguration;
@@ -417,12 +417,8 @@ namespace MediaPortal
 
         using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          string strStartFull;
-          if (_fullscreenOverride == "yes")
-            strStartFull = _fullscreenOverride;
-          else
-            strStartFull = (string)xmlreader.GetValue("general", "startfullscreen");
-          if (strStartFull != null && strStartFull == "yes")
+          startFullscreen = _fullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false);
+          if (startFullscreen)
           {
             if (autoHideTaskbar && !_minimizeOnStartup)
             {
@@ -749,10 +745,10 @@ namespace MediaPortal
     {
       bool foundFullscreenMode = FindBestFullscreenMode(false, false);
       bool foundWindowedMode = FindBestWindowedMode(false, false);
-      if (startFullscreen && foundFullscreenMode)
-      {
+      /*if (/ *startFullscreen* /false && foundFullscreenMode)
+      { PIBA startFullscreen was not used and now when set to true would couse flickering visualizations whem playing music
         graphicsSettings.IsWindowed = false;
-      }
+      }*/
 
       if (!foundFullscreenMode && !foundWindowedMode)
       {
@@ -2685,6 +2681,27 @@ namespace MediaPortal
     {
       OnProcess();
       FrameMove();
+    }
+
+    protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
+    {
+      bool skipMessage = false;
+      Rectangle newBounds = new Rectangle(x, y, width, height);
+      if (GUIGraphicsContext._useScreenSelector && isMaximized)
+      {        
+        if (!newBounds.Equals(GUIGraphicsContext.currentScreen.Bounds))
+        {
+          skipMessage = true;
+        }
+      }
+      if (skipMessage)
+      {
+        Log.Info("d3dapp: Screenselector: skipped SetBoundsCore {0} does not match {1}", newBounds.ToString(), GUIGraphicsContext.currentScreen.Bounds.ToString());
+      }
+      else
+      {
+        base.SetBoundsCore(x, y, width, height, specified);
+      }
     }
   }
 		
