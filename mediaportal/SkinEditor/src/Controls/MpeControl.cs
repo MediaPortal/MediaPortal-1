@@ -53,6 +53,7 @@ namespace Mpe.Controls
     protected bool masked;
     private bool modified;
     protected Color diffuseColor;
+    protected Color dimColor;
     protected bool autoSize;
     protected MpeControlAlignment alignment;
     protected MpeControlPadding padding;
@@ -112,6 +113,7 @@ namespace Mpe.Controls
       controlLock.LockChanged += new MpeControlLock.LockChangedHandler(OnLockChanged);
       description = "";
       diffuseColor = Color.FromArgb(255, 255, 255, 255);
+      dimColor = Color.FromArgb(0x60ffffff);
       embedded = false;
       enabled = true;
       focused = false;
@@ -150,6 +152,7 @@ namespace Mpe.Controls
       controlLock.LockChanged += new MpeControlLock.LockChangedHandler(OnLockChanged);
       description = control.description;
       diffuseColor = control.diffuseColor;
+      dimColor = control.dimColor;
       embedded = control.embedded;
       enabled = control.enabled;
       focused = control.focused;
@@ -452,6 +455,21 @@ namespace Mpe.Controls
       }
     }
 
+    [Category("Control")]
+    public virtual Color DimColor
+    {
+      get { return dimColor; }
+      set
+      {
+        if (dimColor != value)
+        {
+          dimColor = value;
+          Modified = true;
+          FirePropertyValueChanged("DimColor");
+        }
+      }
+    }
+
     [Category("Actions")]
     public virtual int OnLeft
     {
@@ -687,6 +705,8 @@ namespace Mpe.Controls
         tags.Remove("visible");
         DiffuseColor = parser.GetColor(iterator, "colordiffuse", DiffuseColor);
         tags.Remove("colordiffuse");
+        DimColor = parser.GetColor(iterator, "dimColor", DimColor);
+        tags.Remove("dimColor");
         OnLeft = parser.GetInt(iterator, "onleft", OnLeft);
         tags.Remove("onleft");
         OnRight = parser.GetInt(iterator, "onright", OnRight);
@@ -736,6 +756,11 @@ namespace Mpe.Controls
         if (reference == null || reference.DiffuseColor != DiffuseColor)
         {
           parser.SetColor(doc, node, "colordiffuse", DiffuseColor);
+        }
+        // DimColor 
+        if (reference == null || reference.DimColor != DimColor)
+        {
+          parser.SetColor(doc, node, "dimColor", DimColor);
         }
         // Visible
         if (Visible == false)

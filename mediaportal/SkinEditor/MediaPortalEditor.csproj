@@ -20,8 +20,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Mpe</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>
-    </StartupObject>
+    <StartupObject>Mpe.MediaPortalEditor</StartupObject>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -69,7 +68,7 @@
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>0</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
@@ -360,6 +359,7 @@
       <Generator>MSDataSetGenerator</Generator>
       <CustomToolNamespace>SkinEditor</CustomToolNamespace>
       <LastGenOutput>MpeData.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="todo.html" />
     <None Include="help\Articles\_images\Thumbs.db" />
