@@ -192,7 +192,7 @@ namespace MediaPortal.Configuration.Sections
             "Autosize window mode to skin",
             "Use VRM9 for playback of web streams",
             "Show last active module when starting/resuming from standby",
-            "Use screenselector to choose on witch screen MP should start"});
+            "Use screenselector to choose on which screen MP should start"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
       this.settingsCheckedListBox.Size = new System.Drawing.Size(454, 334);
