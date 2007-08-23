@@ -240,6 +240,7 @@ namespace Mpe.Controls
     }
 
     [Category("Control")]
+    [Description("The type of control you want. See the list below for valid types of control")]
     [ReadOnly(true)]
     public virtual MpeControlType Type
     {
@@ -248,6 +249,7 @@ namespace Mpe.Controls
     }
 
     [Category("Control")]
+    [Description("The id of the control. The id will couple the skin file to the code, so if we later on want to check that a user pressed a button, the id will be required and must be unique. For controls that will never be referenced in the code it is safe to set it to '1'")]
     [DefaultValue(0)]
     public virtual int Id
     {
@@ -441,6 +443,7 @@ namespace Mpe.Controls
     }
 
     [Category("Control")]
+    [Description("Allows you to mix a color & a graphics texture. E.g. If you have a graphics texture like a blue button you can mix it with a yellow color diffuse and the end result will be green. Defaults to 0xFFFFFFFF")]
     public virtual Color DiffuseColor
     {
       get { return diffuseColor; }
@@ -456,6 +459,7 @@ namespace Mpe.Controls
     }
 
     [Category("Control")]
+    [Description("Color for a control when it is not focused. Defaults to half transparent (0x60ffffff)")]
     public virtual Color DimColor
     {
       get { return dimColor; }
@@ -471,6 +475,7 @@ namespace Mpe.Controls
     }
 
     [Category("Actions")]
+    [Description("The control id to move the focus to when the user moves left. If not specified (or zero) MediaPortal will find the closest control in that direction to move to")]
     public virtual int OnLeft
     {
       get { return onLeft; }
@@ -486,6 +491,7 @@ namespace Mpe.Controls
     }
 
     [Category("Actions")]
+    [Description("The control id to move the focus to when the user moves right. If not specified (or zero) MediaPortal will find the closest control in that direction to move to")]
     public virtual int OnRight
     {
       get { return onRight; }
@@ -501,6 +507,7 @@ namespace Mpe.Controls
     }
 
     [Category("Actions")]
+    [Description("The control id to move the focus to when the user moves up. If not specified (or zero) MediaPortal will find the closest control in that direction to move to")]
     public virtual int OnUp
     {
       get { return onUp; }
@@ -516,6 +523,7 @@ namespace Mpe.Controls
     }
 
     [Category("Actions")]
+    [Description("The control id to move the focus to when the user moves down. If not specified (or zero) MediaPortal will find the closest control in that direction to move to")]
     public virtual int OnDown
     {
       get { return onDown; }

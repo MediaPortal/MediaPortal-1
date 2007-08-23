@@ -38,6 +38,7 @@ namespace Mpe.Controls
     #region Variables
 
     private bool allowOverlay;
+    private bool autohideTopbar;
     private int defaultControl;
     private MpeScreenType screenType;
     private MpeScreenSize screenSize;
@@ -152,6 +153,22 @@ namespace Mpe.Controls
           allowOverlay = value;
           Modified = true;
           FirePropertyValueChanged("AllowOverlay");
+        }
+      }
+    }
+    
+    [Category("Control")]
+    [Description("Automatically hide the top bar")]
+    public bool AutohideTopbar
+    {
+      get { return autohideTopbar; }
+      set
+      {
+        if (autohideTopbar != value)
+        {
+          autohideTopbar = value;
+          Modified = true;
+          FirePropertyValueChanged("AutohideTopbar");
         }
       }
     }
@@ -301,6 +318,7 @@ namespace Mpe.Controls
 
         Id = parser.GetInt(iterator, "id", Id);
         AllowOverlay = parser.GetBoolean(iterator, "allowoverlay", AllowOverlay);
+        AutohideTopbar = parser.GetBoolean(iterator, "autohidetopbar", AutohideTopbar);
         DefaultControl = parser.GetInt(iterator, "defaultcontrol", DefaultControl);
 
         if (screenType == MpeScreenType.Dialog)
@@ -432,6 +450,7 @@ namespace Mpe.Controls
         parser.SetValue(doc, node, "id", Id.ToString());
         parser.SetValue(doc, node, "defaultcontrol", DefaultControl.ToString());
         parser.SetValue(doc, node, "allowoverlay", AllowOverlay ? "yes" : "no");
+        parser.SetValue(doc, node, "autohidetopbar", AutohideTopbar ? "yes" : "no");
 
         XmlElement controls = doc.CreateElement("controls");
         node.AppendChild(controls);
