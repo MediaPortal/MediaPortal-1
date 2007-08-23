@@ -722,31 +722,32 @@ namespace Mpe
 
     public MpeAnimationType GetAnimation(XPathNodeIterator iterator, string tagName, MpeAnimationType defaultValue)
     {
-      string s = GetString(iterator, tagName, "");
-      if (s.Equals(MpeAnimationType.FlyInFromBottom.ToString()))
-      {
-        return MpeAnimationType.FlyInFromBottom;
-      }
-      else if (s.Equals(MpeAnimationType.FlyInFromLeft.ToString()))
-      {
-        return MpeAnimationType.FlyInFromLeft;
-      }
-      else if (s.Equals(MpeAnimationType.FlyInFromRight.ToString()))
-      {
-        return MpeAnimationType.FlyInFromRight;
-      }
-      else if (s.Equals(MpeAnimationType.FlyInFromTop.ToString()))
-      {
-        return MpeAnimationType.FlyInFromTop;
-      }
-      else if (s.Equals(MpeAnimationType.None.ToString()))
-      {
-        return MpeAnimationType.None;
-      }
-      else
-      {
-        return defaultValue;
-      }
+      //string s = GetString(iterator, tagName, "");
+      //if (s.Equals(MpeAnimationType.FlyInFromBottom.ToString()))
+      //{
+      //  return MpeAnimationType.FlyInFromBottom;
+      //}
+      //else if (s.Equals(MpeAnimationType.FlyInFromLeft.ToString()))
+      //{
+      //  return MpeAnimationType.FlyInFromLeft;
+      //}
+      //else if (s.Equals(MpeAnimationType.FlyInFromRight.ToString()))
+      //{
+      //  return MpeAnimationType.FlyInFromRight;
+      //}
+      //else if (s.Equals(MpeAnimationType.FlyInFromTop.ToString()))
+      //{
+      //  return MpeAnimationType.FlyInFromTop;
+      //}
+      //else if (s.Equals(MpeAnimationType.None.ToString()))
+      //{
+      //  return MpeAnimationType.None;
+      //}
+      //else
+      //{
+      //  return defaultValue;
+      //}
+      return new MpeAnimationType();
     }
 
     public MpeControlAlignment GetAlignment(XPathNodeIterator iterator, string tagName, MpeControlAlignment defaultValue)

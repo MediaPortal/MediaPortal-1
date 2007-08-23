@@ -368,6 +368,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="todo.html" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="help\Articles\_images\Thumbs.db" />
     <None Include="help\Tutorials\_images\Thumbs.db" />
     <None Include="src\MpeData.xsc">

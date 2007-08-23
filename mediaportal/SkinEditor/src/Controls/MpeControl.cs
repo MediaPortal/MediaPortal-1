@@ -105,6 +105,7 @@ namespace Mpe.Controls
       SetStyle(ControlStyles.AllPaintingInWmPaint, true);
       SetStyle(ControlStyles.UserPaint, true);
       SetStyle(ControlStyles.ResizeRedraw, true);
+      Animation = new MpeAnimationType();
       BackColor = Color.Transparent;
       Size = new Size(64, 64);
       Location = new Point(8, 8);

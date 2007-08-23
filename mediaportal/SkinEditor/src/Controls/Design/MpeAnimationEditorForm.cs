@@ -11,16 +11,42 @@ namespace Mpe.Controls.Design
 {
   public partial class MpeAnimationEditorForm : UserControl
   {
+    protected MpeAnimationType _anim;
     public MpeAnimationEditorForm(MpeAnimationType currentValue, MpeParser parser, IWindowsFormsEditorService editorService)
     {
       InitializeComponent();
+      MpeAnimationBaseType mp = new MpeAnimationBaseType();
+      _anim = currentValue;
+      comboBox1.SelectedIndex = 0;
     }
 
     public MpeAnimationType SelectedValue
     {
-      get { return MpeAnimationType.None ; }
+      get { return _anim ; }
     }
 
+    private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
+    {
+      if (checkBox1.Checked)
+      {
+        propertyGrid1.Enabled = true;
+        _anim.Animation[comboBox1.SelectedIndex].Enabled = true;
+      }
+      else
+      {
+        propertyGrid1.Enabled = false;
+        _anim.Animation[comboBox1.SelectedIndex].Enabled = false; ;
+      }
+    }
+
+    private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      propertyGrid1.SelectedObject = _anim.Animation[comboBox1.SelectedIndex];
+      if (_anim.Animation[comboBox1.SelectedIndex].Enabled)
+        checkBox1.Checked = true;
+      else
+        checkBox1.Checked = false;
+    }
   }
 
   #region MpeAnimationEditor

@@ -51,7 +51,7 @@ namespace Mpe.Controls
       MpeLog.Debug("MpeGroup()");
       Type = MpeControlType.Group;
       AllowDrop = true;
-      animation = MpeAnimationType.None;
+      //animation = MpeAnimationType.None;
     }
 
     public MpeGroup(MpeGroup group) : base(group)
