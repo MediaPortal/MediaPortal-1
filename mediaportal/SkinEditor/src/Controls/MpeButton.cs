@@ -48,6 +48,7 @@ namespace Mpe.Controls
     protected Image textureFocusImage;
     protected FileInfo textureNoFocus;
     protected Image textureNoFocusImage;
+    protected int hyperlink;
 
     #endregion
 
@@ -175,6 +176,42 @@ namespace Mpe.Controls
       set { base.Padding = value; }
     }
 
+    [Category("Labels")]
+    [ReadOnly(false)]
+    [Browsable(true)]
+    [Description("The color of the text when the button does not have the focus/not selected")]
+    public override  Color DisabledColor
+    {
+      get { return base.DisabledColor; }
+      set { base.DisabledColor = value; }
+    }
+   
+    [Category("Labels")]
+    [ReadOnly(false)]
+    [Browsable(true)]
+    [Description("The color of the text when the button has the focus/is selected")]
+    public override Color TextColor
+    {
+      get { return base.TextColor; }
+      set { base.TextColor = value; }
+    }
+
+    [Category("Actions")]
+    [Description("The id of the xml skin page that MP will load when the button is pushed")]
+    public virtual int Hyperlink
+    {
+      get { return hyperlink; }
+      set
+      {
+        if (hyperlink != value)
+        {
+          hyperlink = value;
+          Modified = true;
+          FirePropertyValueChanged("Hyperlink");
+        }
+      }
+    }
+
     [Browsable(true)]
     public override int OnLeft
     {
@@ -238,6 +275,11 @@ namespace Mpe.Controls
       {
         parser.SetInt(doc, node, "width", Width);
         parser.SetInt(doc, node, "height", Height);
+      }
+      // hyperlink
+      if (button == null || button.Hyperlink != Hyperlink)
+      {
+        parser.SetInt(doc, node, "hyperlink", Hyperlink);
       }
       // DiffuseColor
       if (button == null || button.DiffuseColor != DiffuseColor)

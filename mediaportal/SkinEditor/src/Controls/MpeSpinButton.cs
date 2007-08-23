@@ -350,8 +350,8 @@ namespace Mpe.Controls
     [Category("Labels")]
     public virtual Color Color
     {
-      get { return label.Color; }
-      set { label.Color = value; }
+      get { return label.TextColor; }
+      set { label.TextColor = value; }
     }
 
     [Category("Labels")]

@@ -115,10 +115,10 @@ namespace Mpe.Controls
     [Category("Control")]
     public Color Color
     {
-      get { return label.Color; }
+      get { return label.TextColor; }
       set
       {
-        label.Color = value;
+        label.TextColor = value;
         Modified = true;
         FirePropertyValueChanged("Color");
       }
@@ -393,7 +393,7 @@ namespace Mpe.Controls
         label.AutoSize = false;
         label.Font = parser.GetFont(iterator, "font", label.Font);
         label.DisabledColor = parser.GetColor(iterator, "disabledcolor", label.DisabledColor);
-        label.Color = parser.GetColor(iterator, "textcolor", label.Color);
+        label.TextColor = parser.GetColor(iterator, "textcolor", label.TextColor);
         label.Text = parser.GetString(iterator, "text", label.Text);
         Controls.Add(label);
       }

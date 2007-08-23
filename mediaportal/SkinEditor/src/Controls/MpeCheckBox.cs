@@ -137,8 +137,8 @@ namespace Mpe.Controls
     [RefreshPropertiesAttribute(RefreshProperties.Repaint)]
     public virtual Color FocusedColor
     {
-      get { return label.Color; }
-      set { label.Color = value; }
+      get { return label.TextColor; }
+      set { label.TextColor = value; }
     }
 
     [Category("Textures")]

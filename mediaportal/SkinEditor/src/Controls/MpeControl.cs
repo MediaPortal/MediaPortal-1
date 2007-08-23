@@ -28,9 +28,11 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using System.Drawing.Design;
 using System.Xml;
 using System.Xml.XPath;
 using Mpe.Controls.Properties;
+using Mpe.Controls.Design;
 
 namespace Mpe.Controls
 {
@@ -58,6 +60,7 @@ namespace Mpe.Controls
     protected MpeControlAlignment alignment;
     protected MpeControlPadding padding;
     protected MpeControlLock controlLock;
+    private MpeAnimationType animation;
     protected int onLeft;
     protected int onRight;
     protected int onUp;
@@ -246,6 +249,23 @@ namespace Mpe.Controls
     {
       get { return type; }
       set { type = value; }
+    }
+
+    [Category("Control")]
+    [RefreshProperties(RefreshProperties.Repaint)]
+    [Editor(typeof(MpeAnimationEditor), typeof(UITypeEditor))]
+    public virtual MpeAnimationType Animation
+    {
+      get { return animation; }
+      set
+      {
+        if (animation != value)
+        {
+          animation = value;
+          Modified = true;
+          FirePropertyValueChanged("Animation");
+        }
+      }
     }
 
     [Category("Control")]

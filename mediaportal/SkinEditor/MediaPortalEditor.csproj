@@ -117,6 +117,12 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\Controls\Design\MpeAnimationEditorForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Design\MpeAnimationEditorForm.Designer.cs">
+      <DependentUpon>MpeAnimationEditorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="src\Controls\Design\MpeImageEditorForm.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -373,6 +379,10 @@
     <None Include="src\MpeData.xsx">
       <DependentUpon>MpeData.xsd</DependentUpon>
     </None>
+    <EmbeddedResource Include="src\Controls\Design\MpeAnimationEditorForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MpeAnimationEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="src\Controls\Design\MpeImageEditorForm.resx">
       <DependentUpon>MpeImageEditorForm.cs</DependentUpon>
     </EmbeddedResource>

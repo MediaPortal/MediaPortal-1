@@ -26,10 +26,13 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Design;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 using Mpe.Controls.Properties;
+using Mpe.Controls.Design;
+
 
 namespace Mpe.Controls
 {
@@ -64,6 +67,8 @@ namespace Mpe.Controls
     #region Properties
 
     [Category("Control")]
+    [RefreshProperties(RefreshProperties.Repaint)]
+    [Editor(typeof(MpeAnimationEditor), typeof(UITypeEditor))]
     public MpeAnimationType Animation
     {
       get { return animation; }

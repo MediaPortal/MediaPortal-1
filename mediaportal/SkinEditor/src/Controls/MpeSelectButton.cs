@@ -431,12 +431,12 @@ namespace Mpe.Controls
     [Category("Labels")]
     public virtual Color LabelColor
     {
-      get { return label.Color; }
+      get { return label.TextColor; }
       set
       {
-        if (label.Color != value)
+        if (label.TextColor != value)
         {
-          label.Color = value;
+          label.TextColor = value;
           Modified = true;
           FirePropertyValueChanged("LabelColor");
         }
@@ -705,9 +705,9 @@ namespace Mpe.Controls
       {
         parser.SetValue(doc, node, "align", label.Alignment.ToString().ToLower());
       }
-      if (button == null || button.label.Color != label.Color)
+      if (button == null || button.label.TextColor != label.TextColor)
       {
-        parser.SetColor(doc, node, "textcolor", label.Color);
+        parser.SetColor(doc, node, "textcolor", label.TextColor);
       }
       if (button == null || button.label.DisabledColor != label.DisabledColor)
       {

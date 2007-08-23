@@ -164,7 +164,7 @@ namespace Mpe.Controls
     }
 
     [Category("Labels")]
-    public virtual Color Color
+    public virtual Color TextColor
     {
       get { return textBrush.Color; }
       set
@@ -174,12 +174,13 @@ namespace Mpe.Controls
           textBrush.Color = value;
           Invalidate(false);
           Modified = true;
-          FirePropertyValueChanged("Color");
+          FirePropertyValueChanged("TextColor");
         }
       }
     }
 
     [Category("Labels")]
+    [Description("")]
     public virtual Color DisabledColor
     {
       get { return disabledBrush.Color; }
@@ -304,7 +305,7 @@ namespace Mpe.Controls
       {
         Left = Left - Width;
       }
-      Color = parser.GetColor(iterator, "textcolor", Color);
+      TextColor = parser.GetColor(iterator, "textcolor", TextColor);
       tags.Remove("textcolor");
       DisabledColor = parser.GetColor(iterator, "disabledcolor", DisabledColor);
       tags.Remove("disabledcolor");
@@ -349,9 +350,9 @@ namespace Mpe.Controls
         parser.SetValue(doc, node, "align", Alignment.ToString().ToLower());
       }
       // Color
-      if (label == null || label.Color != Color)
+      if (label == null || label.TextColor != TextColor)
       {
-        parser.SetColor(doc, node, "textcolor", Color);
+        parser.SetColor(doc, node, "textcolor", TextColor);
       }
       // DisabledColor
       if (label == null || label.DisabledColor != DisabledColor)
