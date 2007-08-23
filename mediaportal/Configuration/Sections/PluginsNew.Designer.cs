@@ -317,7 +317,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // openFileDialog1
       // 
-      this.openFileDialog1.FileName = "openFileDialog1";
+      this.openFileDialog1.Filter = "MPI files|*.mpi|ZIP files|*.zip|All files|*.*";
       // 
       // PluginsNew
       // 
