@@ -542,7 +542,7 @@ namespace Tag.FLAC
       bool hasMoreMetadataBlocks = (hdrInfo & 1) == 0;
       bool isLastMetadataBlock = !hasMoreMetadataBlocks;
 
-      byte blockType = (byte) (hdrInfo & 255);
+      byte blockType = (byte) (hdrInfo & 0x7F); // Clear High order byte
 
       int metadataLength = Utils.ReadSynchronizedData(buffer, 1, 3);
 
