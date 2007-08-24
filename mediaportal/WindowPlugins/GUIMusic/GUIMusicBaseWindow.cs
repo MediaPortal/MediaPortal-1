@@ -726,7 +726,7 @@ namespace MediaPortal.GUI.Music
         MusicTag tag = (MusicTag)item.MusicTag;
         if (tag != null)
         {
-          string trackNr = String.Format("{0:00}", tag.Track);
+          string trackNr = String.Format("{0:##00}", tag.Track);
           string fileSize = MediaPortal.Util.Utils.GetSize(item.Size);
           string year = tag.Year.ToString();
           string filename = MediaPortal.Util.Utils.GetFilename(item.Path);

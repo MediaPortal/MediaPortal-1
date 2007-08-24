@@ -846,7 +846,9 @@ namespace Tag.MP3
             return val;
         }
 
+        // Get track and disc #
         string sTrack = GetFrameValueString(FrameNames.TRCK.ToString(), FrameNamesV2.TRK.ToString());
+        string sDisc = GetFrameValueString(FrameNames.TPOS.ToString(), FrameNamesV2.TPA.ToString());
 
         try
         {
@@ -861,7 +863,19 @@ namespace Tag.MP3
             if (splitString.Length > 1)
               sTrack = splitString[0];
 
-            return int.Parse(sTrack);
+            int iTrack = int.Parse(sTrack);
+            // If part of a multi disc album, add disc # in front of track #
+            if (sDisc.Length > 0)
+            {
+              string[] splitDiskString = sDisc.Split(delims);
+              
+              if (splitDiskString.Length > 1)
+                sDisc = splitDiskString[0];
+
+              iTrack += (int.Parse(sDisc) * 100);
+            }
+
+            return iTrack;
           }
 
           else
