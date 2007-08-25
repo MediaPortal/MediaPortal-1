@@ -206,7 +206,7 @@ namespace Mpe.Controls
     }
 
     [Browsable(false)]
-    public override bool Visible
+    public override string Visible
     {
       get { return base.Visible; }
       set { base.Visible = value; }

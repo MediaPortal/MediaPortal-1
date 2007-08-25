@@ -51,7 +51,7 @@ namespace Mpe.Controls
     protected string description;
     protected bool focused;
     protected bool enabled;
-    protected bool visible;
+    protected string visible;
     protected bool masked;
     private bool modified;
     protected Color diffuseColor;
@@ -133,7 +133,7 @@ namespace Mpe.Controls
       parser = null;
       textBrush = new SolidBrush(Color.Black);
       type = MpeControlType.Empty;
-      visible = true;
+      visible = "true";
       screen = null;
       tags = new MpeTagCollection();
       tags.TagAdded += new MpeTagCollection.TagAddedHandler(OnTagCollectionChanged);
@@ -450,7 +450,7 @@ namespace Mpe.Controls
 
     [Category("Control")]
     [DefaultValue(true)]
-    public new virtual bool Visible
+    public new virtual string Visible
     {
       get { return visible; }
       set
@@ -850,7 +850,7 @@ namespace Mpe.Controls
         Height = parser.GetInt(iterator, "height", Height);
         tags.Remove("height");
         Padding = parser.GetPadding(iterator, "padding", Padding);
-        Visible = parser.GetBoolean(iterator, "visible", Visible);
+        Visible = parser.GetString(iterator, "visible", Visible);
         tags.Remove("visible");
         DiffuseColor = parser.GetColor(iterator, "colordiffuse", DiffuseColor);
         tags.Remove("colordiffuse");
@@ -914,10 +914,10 @@ namespace Mpe.Controls
         // Animation
         Animation.Save(doc, node, parser);
         // Visible
-        if (Visible == false)
-        {
-          parser.SetValue(doc, node, "visible", "no");
-        }
+        //if (Visible == false)
+        //{
+          parser.SetValue(doc, node, "visible", Visible);
+        //}
         // Actions
         if (OnLeft > 0)
         {
