@@ -720,35 +720,35 @@ namespace Mpe
       return defaultValue;
     }
 
-    public MpeAnimationType GetAnimation(XPathNodeIterator iterator, string tagName, MpeAnimationType defaultValue)
-    {
-      //string s = GetString(iterator, tagName, "");
-      //if (s.Equals(MpeAnimationType.FlyInFromBottom.ToString()))
-      //{
-      //  return MpeAnimationType.FlyInFromBottom;
-      //}
-      //else if (s.Equals(MpeAnimationType.FlyInFromLeft.ToString()))
-      //{
-      //  return MpeAnimationType.FlyInFromLeft;
-      //}
-      //else if (s.Equals(MpeAnimationType.FlyInFromRight.ToString()))
-      //{
-      //  return MpeAnimationType.FlyInFromRight;
-      //}
-      //else if (s.Equals(MpeAnimationType.FlyInFromTop.ToString()))
-      //{
-      //  return MpeAnimationType.FlyInFromTop;
-      //}
-      //else if (s.Equals(MpeAnimationType.None.ToString()))
-      //{
-      //  return MpeAnimationType.None;
-      //}
-      //else
-      //{
-      //  return defaultValue;
-      //}
-      return new MpeAnimationType();
-    }
+    //public MpeAnimationType GetAnimation(XPathNodeIterator iterator, string tagName, MpeAnimationType defaultValue)
+    //{
+    //  //string s = GetString(iterator, tagName, "");
+    //  //if (s.Equals(MpeAnimationType.FlyInFromBottom.ToString()))
+    //  //{
+    //  //  return MpeAnimationType.FlyInFromBottom;
+    //  //}
+    //  //else if (s.Equals(MpeAnimationType.FlyInFromLeft.ToString()))
+    //  //{
+    //  //  return MpeAnimationType.FlyInFromLeft;
+    //  //}
+    //  //else if (s.Equals(MpeAnimationType.FlyInFromRight.ToString()))
+    //  //{
+    //  //  return MpeAnimationType.FlyInFromRight;
+    //  //}
+    //  //else if (s.Equals(MpeAnimationType.FlyInFromTop.ToString()))
+    //  //{
+    //  //  return MpeAnimationType.FlyInFromTop;
+    //  //}
+    //  //else if (s.Equals(MpeAnimationType.None.ToString()))
+    //  //{
+    //  //  return MpeAnimationType.None;
+    //  //}
+    //  //else
+    //  //{
+    //  //  return defaultValue;
+    //  //}
+    //  return new MpeAnimationType();
+    //}
 
     public MpeControlAlignment GetAlignment(XPathNodeIterator iterator, string tagName, MpeControlAlignment defaultValue)
     {
@@ -850,6 +850,8 @@ namespace Mpe
 
     public void SaveStringTable(MpeStringTable stringTable)
     {
+      MpeLog.Error("Saveing the stringtable is disabled");
+      return;
       if (stringTable == null)
       {
         return;
@@ -1091,12 +1093,16 @@ namespace Mpe
       {
         if (b.Width >= b.Height)
         {
-          int h = 128*b.Height/b.Width;
+          int h = 128 * b.Height / b.Width;
+          if (h < 1)
+            h = 1;
           thumb = new Bitmap(b, 128, h);
         }
         else
         {
-          int w = 128*b.Width/b.Height;
+          int w = 128 * b.Width / b.Height;
+          if (w < 1)
+            w = 1;
           thumb = new Bitmap(b, w, 128);
         }
       }

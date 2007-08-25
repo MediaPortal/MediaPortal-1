@@ -46,7 +46,7 @@ namespace Mpe.Controls.Design
             " VisibleChange"});
       this.comboBox1.Location = new System.Drawing.Point(3, 3);
       this.comboBox1.Name = "comboBox1";
-      this.comboBox1.Size = new System.Drawing.Size(305, 21);
+      this.comboBox1.Size = new System.Drawing.Size(341, 21);
       this.comboBox1.TabIndex = 0;
       this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
       // 
@@ -55,7 +55,7 @@ namespace Mpe.Controls.Design
       this.propertyGrid1.Location = new System.Drawing.Point(3, 51);
       this.propertyGrid1.Name = "propertyGrid1";
       this.propertyGrid1.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
-      this.propertyGrid1.Size = new System.Drawing.Size(305, 239);
+      this.propertyGrid1.Size = new System.Drawing.Size(341, 239);
       this.propertyGrid1.TabIndex = 2;
       this.propertyGrid1.ToolbarVisible = false;
       // 
@@ -78,7 +78,7 @@ namespace Mpe.Controls.Design
       this.Controls.Add(this.propertyGrid1);
       this.Controls.Add(this.comboBox1);
       this.Name = "MpeAnimationEditorForm";
-      this.Size = new System.Drawing.Size(311, 293);
+      this.Size = new System.Drawing.Size(347, 293);
       this.ResumeLayout(false);
       this.PerformLayout();
 

@@ -157,6 +157,7 @@ namespace Mpe.Controls
       description = control.description;
       diffuseColor = control.diffuseColor;
       dimColor = control.dimColor;
+      animation = control.animation;
       embedded = control.embedded;
       enabled = control.enabled;
       focused = control.focused;
@@ -701,7 +702,126 @@ namespace Mpe.Controls
             XPathNodeIterator ci = i.Current.SelectChildren("", "");
             if (ci.Count == 0)
             {
-              tags.Add(i.Current.Name, i.Current.Value, false);
+              if (i.Current.Name == "animation")
+              {
+                int pos = -1;
+                switch (i.Current.Value)
+                {
+                  case "WindowOpen":
+                    pos = 0;
+                    break;
+                  case "WindowClose":
+                    pos = 1;
+                    break;
+                  case "Hidden":
+                    pos = 2;
+                    break;
+                  case "Focus":
+                    pos = 3;
+                    break;
+                  case "Unfocus":
+                    pos = 4;
+                    break;
+                  case "VisibleChange":
+                    pos = 5;
+                    break;
+                }
+                if (pos >= 0)
+                {
+                  Animation.Animation[pos].Enabled = true;
+                  string efect = i.Current.GetAttribute("effect", String.Empty);
+                  switch (efect)
+                  {
+                    case "fade":
+                      Animation.Animation[pos].Efect = MpeAnimationEfect.fade;
+                      break;
+                    case "slide":
+                      Animation.Animation[pos].Efect = MpeAnimationEfect.slide;
+                      break;
+                    case "rotate":
+                      Animation.Animation[pos].Efect = MpeAnimationEfect.rotate;
+                      break;
+                    case "rotatex":
+                      Animation.Animation[pos].Efect = MpeAnimationEfect.rotatex;
+                      break;
+                    case "rotatey":
+                      Animation.Animation[pos].Efect = MpeAnimationEfect.rotatey;
+                      break;
+                    case "zoom":
+                      Animation.Animation[pos].Efect = MpeAnimationEfect.zoom;
+                      break;
+                  }
+                  int parami = 0;
+                  bool paramb = false;
+                  int.TryParse(i.Current.GetAttribute("time",String.Empty ),out parami);
+                  Animation.Animation[pos].Time = parami;
+                  parami = 0;
+                  int.TryParse(i.Current.GetAttribute("delay", String.Empty), out parami);
+                  Animation.Animation[pos].Delay = parami;
+                  Animation.Animation[pos].Start = i.Current.GetAttribute("start", String.Empty);
+                  Animation.Animation[pos].End = i.Current.GetAttribute("end", String.Empty);
+                  parami = 0;
+                  int.TryParse(i.Current.GetAttribute("acceleration", String.Empty), out parami);
+                  Animation.Animation[pos].Acceleration = parami;
+                  string center = i.Current.GetAttribute("center", String.Empty);
+                  if (center.Contains(","))
+                  {
+                    int.TryParse(center.Substring(0, center.IndexOf(',')), out parami);
+                    int paramy = 0;
+                    int.TryParse(center.Substring(center.IndexOf(',')+1), out paramy);
+                    Animation.Animation[pos].Center = new Point(parami, paramy);
+                  }
+                  Animation.Animation[pos].Condition = i.Current.GetAttribute("condition", String.Empty);
+                  bool.TryParse(i.Current.GetAttribute("reversible", String.Empty), out paramb);
+                  Animation.Animation[pos].Reversible = paramb;
+                  paramb = false;
+                  bool.TryParse(i.Current.GetAttribute("pulse", String.Empty), out paramb);
+                  Animation.Animation[pos].Pulse = paramb;
+                  switch (i.Current.GetAttribute("tween", String.Empty))
+                  {
+                    case "elastic":
+                      Animation.Animation[pos].Tween = MpeAnimationTween.elastic;
+                      break;
+                    case "bounce":
+                      Animation.Animation[pos].Tween = MpeAnimationTween.bounce;
+                      break;
+                    case "circle":
+                      Animation.Animation[pos].Tween = MpeAnimationTween.circle;
+                      break;
+                    case "back":
+                      Animation.Animation[pos].Tween = MpeAnimationTween.back;
+                      break;
+                    case "sine":
+                      Animation.Animation[pos].Tween = MpeAnimationTween.sine;
+                      break;
+                    case "cubic":
+                      Animation.Animation[pos].Tween = MpeAnimationTween.cubic;
+                      break;
+                    case "quadratic":
+                      Animation.Animation[pos].Tween = MpeAnimationTween.quadratic;
+                      break;
+                    case "linear":
+                      Animation.Animation[pos].Tween = MpeAnimationTween.linear;
+                      break;
+                  }
+                  switch (i.Current.GetAttribute("easing", String.Empty))
+                  {
+                    case "out":
+                      Animation.Animation[pos].Easing = MpeAnimationEasing.Out;
+                      break;
+                    case "in":
+                      Animation.Animation[pos].Easing = MpeAnimationEasing.In;
+                      break;
+                    case "inout":
+                      Animation.Animation[pos].Easing = MpeAnimationEasing.inout;
+                      break;
+                  }
+                }
+              }
+              else
+              {
+                tags.Add(i.Current.Name, i.Current.Value, false);
+              }
             }
           }
         }
@@ -791,6 +911,8 @@ namespace Mpe.Controls
         {
           parser.SetColor(doc, node, "dimColor", DimColor);
         }
+        // Animation
+        Animation.Save(doc, node, parser);
         // Visible
         if (Visible == false)
         {

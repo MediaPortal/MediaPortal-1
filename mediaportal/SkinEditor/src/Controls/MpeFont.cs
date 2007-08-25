@@ -265,23 +265,25 @@ namespace Mpe.Controls
           g.TextContrast = 0;
           g.DrawString(text, SystemFont, Brushes.Black, 0, 0);
           Size size = g.MeasureString(text, SystemFont).ToSize();
-          for (int y = 0; y < size.Height; y++)
-          {
-            for (int x = 0; x < b.Width; x++)
-            {
-              if (b.GetPixel(x, y) != c)
-              {
-                if (x < x1)
-                {
-                  x1 = x;
-                }
-                if (x > x2)
-                {
-                  x2 = x;
-                }
-              }
-            }
-          }
+          //for (int y = 0; y < size.Height; y++)
+          //{
+          //  for (int x = 0; x < b.Width; x++)
+          //  {
+          //    if (b.GetPixel(x, y) != c)
+          //    {
+          //      if (x < x1)
+          //      {
+          //        x1 = x;
+          //      }
+          //      if (x > x2)
+          //      {
+          //        x2 = x;
+          //      }
+          //    }
+          //  }
+          //}
+          x1 = 0;
+          x2 = size.Height;
           return new Rectangle(x1, 0, x2 - x1 + 1, textureData[0].Height);
         }
         catch (Exception ee)

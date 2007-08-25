@@ -27,28 +27,146 @@ using System.Drawing.Design;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Xml;
 
 namespace Mpe.Controls.Properties
 {
-  //public enum MpeAnimationType
-  //{
-  //  None,
-  //  FlyInFromLeft,
-  //  FlyInFromRight,
-  //  FlyInFromTop,
-  //  FlyInFromBottom
-  //} ;
+
+  public enum MpeAnimationTypeEnum
+  {
+    WindowOpen,
+    WindowClose,
+    Hidden,
+    Focus,
+    Unfocus,
+    VisibleChange
+  };
 
   public class MpeAnimationType
   {
     public List<MpeAnimationBaseType> Animation;
+    protected const int EFECTNUMBER = 6;
 
     public MpeAnimationType()
     {
       Animation = new List<MpeAnimationBaseType>();
-      for (int i=0; i < 6; i++)
+      for (int i = 0; i < EFECTNUMBER; i++)
         Animation.Add(new MpeAnimationBaseType());
     }
+    #region Methods
+    
+    public void Init()
+    {
+      for (int i = 0; i < EFECTNUMBER; i++)
+      {
+        Animation[i].Enabled = false;
+      }
+    }
+
+    public virtual void Save(XmlDocument doc, XmlNode node, MpeParser parser)
+    {
+      XmlNodeList n;
+      string name = "animation";
+      if ((n = node.SelectNodes(name)) != null)
+      {
+        foreach (XmlNode nd in n)
+          nd.RemoveAll();
+      }
+      for (int i = 0; i < EFECTNUMBER; i++)
+      {
+        if (Animation[i].Enabled)
+        {
+
+          string value = "-";
+          switch (i)
+          {
+            case 0:
+              value = MpeAnimationTypeEnum.WindowOpen.ToString();
+              break;
+            case 1:
+              value = MpeAnimationTypeEnum.WindowClose.ToString();
+              break;
+            case 2:
+              value = MpeAnimationTypeEnum.Hidden.ToString();
+              break;
+            case 3:
+              value = MpeAnimationTypeEnum.Focus.ToString();
+              break;
+            case 4:
+              value = MpeAnimationTypeEnum.Unfocus.ToString();
+              break;
+            case 5:
+              value = MpeAnimationTypeEnum.VisibleChange.ToString();
+              break;
+          }
+          XmlNode elem = doc.CreateTextNode(value);
+          XmlElement e = doc.CreateElement(name);
+          e.AppendChild(elem);
+          if (Animation[i].Efect != MpeAnimationEfect.None)
+          {
+            e.SetAttribute("effect", Animation[i].Efect.ToString());
+          }
+          if (Animation[i].Time != 0)
+          {
+            e.SetAttribute("time", Animation[i].Time.ToString());
+          }
+          if (Animation[i].Time != 0)
+          {
+            e.SetAttribute("time", Animation[i].Time.ToString());
+          }
+          if (Animation[i].Delay != 0)
+          {
+            e.SetAttribute("delay", Animation[i].Delay.ToString());
+          }
+          if (Animation[i].Start!="")
+          {
+            e.SetAttribute("start", Animation[i].Start);
+          }
+          if (Animation[i].End.Trim()!="")
+          {
+            e.SetAttribute("end", Animation[i].End);
+          }
+          if (Animation[i].Acceleration != 0)
+          {
+            e.SetAttribute("acceleration", Animation[i].Acceleration.ToString());
+          }
+
+          if ((Animation[i].Center.X != 0) && (Animation[i].Center.Y!=0))
+          {
+            e.SetAttribute("center", Animation[i].Center.X.ToString() + "," + Animation[i].Center.Y.ToString());
+          }
+          if (Animation[i].Condition!="")
+          {
+            e.SetAttribute("condition", Animation[i].Condition);
+          }
+          if (!Animation[i].Reversible)
+          {
+            e.SetAttribute("reversible", "false");
+          }
+          else e.SetAttribute("reversible", "true");
+
+          if (Animation[i].Pulse)
+          {
+            e.SetAttribute("pulse", "true");
+          }
+          else e.SetAttribute("pulse", "false");
+          if(Animation[i].Tween!=MpeAnimationTween.None)
+          {
+            e.SetAttribute("tween", Animation[i].Tween.ToString());
+          }
+          if (Animation[i].Easing != MpeAnimationEasing.None)
+          {
+            e.SetAttribute("easing", Animation[i].Easing.ToString().ToLower());
+          }
+          node.AppendChild(e);
+        }
+      }
+    }
+    public override string ToString()
+    {
+      return "(Collection)";
+    }
+    #endregion
   }
 
   public enum MpeAnimationEfect
@@ -98,17 +216,21 @@ namespace Mpe.Controls.Properties
     protected bool _pulse;
     protected MpeAnimationTween _tween;
     protected MpeAnimationEasing _easing;
-    
+
+    #region Properties
     public MpeAnimationBaseType()
     {
       Enabled = false;
     }
+
     public MpeAnimationEfect Efect
     {
       get { return _efect; }
       set { _efect = value; }
     }
     
+    [ReadOnly(true)]
+    [DefaultValue(false)]    
     public bool Enabled
     {
       get { return _enabled; }
@@ -191,5 +313,8 @@ namespace Mpe.Controls.Properties
       get { return _easing; }
       set { _easing = value; }
     }
+    #endregion
+
+
   }
 }

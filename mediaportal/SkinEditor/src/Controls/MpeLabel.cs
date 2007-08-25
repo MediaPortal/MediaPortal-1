@@ -285,6 +285,7 @@ namespace Mpe.Controls
           }
         }
       }
+      MpeLog.Debug("MpeLabel.Prepare().end");
     }
 
     public override MpeControl Copy()

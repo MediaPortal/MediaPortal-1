@@ -354,8 +354,10 @@ namespace Mpe.Controls
       }
       Padding.Left = Padding.Right = parser.GetInt(iterator, "textXOff", Padding.Left);
       Padding.Top = Padding.Bottom = parser.GetInt(iterator, "textYOff", Padding.Top);
+      Hyperlink = parser.GetInt(iterator, "hyperlink", 0);
       tags.Remove("textXOff");
       tags.Remove("textYOff");
+      tags.Remove("hyperlink");
       PrepareControl();
       Modified = false;
     }

@@ -18,6 +18,19 @@ namespace Mpe.Controls.Design
       MpeAnimationBaseType mp = new MpeAnimationBaseType();
       _anim = currentValue;
       comboBox1.SelectedIndex = 0;
+      propertyGrid1.SelectedObject = _anim.Animation[comboBox1.SelectedIndex];
+      if (_anim.Animation[comboBox1.SelectedIndex].Enabled)
+      {
+        checkBox1.Checked = true;
+        propertyGrid1.Enabled = true;
+      }
+      else
+      {
+        checkBox1.Checked = false;
+        propertyGrid1.Enabled = false;
+      }
+
+
     }
 
     public MpeAnimationType SelectedValue

@@ -40,7 +40,7 @@ namespace Mpe.Controls
   {
     #region Variables
 
-    private MpeAnimationType animation;
+    //private MpeAnimationType animation;
 
     #endregion
 
@@ -59,29 +59,29 @@ namespace Mpe.Controls
       MpeLog.Debug("MpeGroup(group)");
       Type = MpeControlType.Group;
       AllowDrop = true;
-      animation = group.animation;
+      //animation = group.animation;
     }
 
     #endregion
 
     #region Properties
 
-    [Category("Control")]
-    [RefreshProperties(RefreshProperties.Repaint)]
-    [Editor(typeof(MpeAnimationEditor), typeof(UITypeEditor))]
-    public MpeAnimationType Animation
-    {
-      get { return animation; }
-      set
-      {
-        if (animation != value)
-        {
-          animation = value;
-          Modified = true;
-          FirePropertyValueChanged("Animation");
-        }
-      }
-    }
+    //[Category("Control")]
+    //[RefreshProperties(RefreshProperties.Repaint)]
+    //[Editor(typeof(MpeAnimationEditor), typeof(UITypeEditor))]
+    //public MpeAnimationType Animation
+    //{
+    //  get { return animation; }
+    //  set
+    //  {
+    //    if (animation != value)
+    //    {
+    //      animation = value;
+    //      Modified = true;
+    //      FirePropertyValueChanged("Animation");
+    //    }
+    //  }
+    //}
 
     #endregion
 
@@ -97,8 +97,8 @@ namespace Mpe.Controls
       MpeLog.Debug("MpeGroup.Load()");
       base.Load(iterator, parser);
       this.parser = parser;
-      Animation = parser.GetAnimation(iterator, "animation", Animation);
-      tags.Remove("animation");
+      //Animation = parser.GetAnimation(iterator, "animation", Animation);
+      //tags.Remove("animation");
 
       // Mpe Specific Tags
       bool firstLoad = false;
@@ -189,7 +189,7 @@ namespace Mpe.Controls
       if (doc != null && node != null)
       {
         base.Save(doc, node, parser, reference);
-        parser.SetValue(doc, node, "animation", Animation.ToString());
+        //parser.SetValue(doc, node, "animation", Animation.ToString());
 
         XmlElement mpenode = doc.CreateElement("mpe");
         node.AppendChild(mpenode);
