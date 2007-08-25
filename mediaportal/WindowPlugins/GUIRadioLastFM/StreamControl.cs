@@ -41,6 +41,7 @@ using MediaPortal.Playlists;
 
 namespace MediaPortal.GUI.RADIOLASTFM
 {
+  #region enums
   public enum StreamPlaybackState : int
   {
     offline = 0,
@@ -67,10 +68,13 @@ namespace MediaPortal.GUI.RADIOLASTFM
     Recommended = 4,
     Tags = 5,
     Neighbours = 6,
+    Playlist = 7,
   }
+  #endregion
 
   class StreamControl
   {
+    #region Event delegates
     public delegate void SongChangedHandler(MusicTag newCurrentSong, DateTime startTime);
     public event SongChangedHandler StreamSongChanged;
 
@@ -79,31 +83,62 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public delegate void RadioSettingsFailed();
     public event RadioSettingsFailed RadioSettingsError;
+    #endregion
 
-    private PlayListPlayer PlaylistPlayer = null;
-    //private AudioscrobblerUtils InfoScrobbler = null;
+    #region Variables
+    private PlayListPlayer PlaylistPlayer = null;    
 
+    /// <summary>
+    /// The "filename" used by the player to access the stream
+    /// </summary>
     private string _currentRadioURL = String.Empty;
+    /// <summary>
+    /// The user associated Session ID - from the response to the Audioscrobbler handshake
+    /// </summary>
     private string _currentSession = String.Empty;
+    /// <summary>
+    /// The last.fm user from you configured in the Audioscrobbler plugin
+    /// </summary>
     private string _currentUser = String.Empty;
+    /// <summary>
+    /// The last.fm user which stream will be tuned to
+    /// </summary>
     private string _currentStreamsUser = String.Empty;
+    /// <summary>
+    /// Did you pay for exclusive member options
+    /// </summary>
     private bool _isSubscriber = false;
+    /// <summary>
+    /// Determines whether the radio tracks appear in the scrobbled tracks list
+    /// </summary>
     private bool _recordToProfile = true;
+    /// <summary>
+    /// Discovery mode tries to avoid stream tracks you've already listened to
+    /// </summary>
     private bool _discoveryMode = false;
-
+    /// <summary>
+    /// Settings loaded
+    /// </summary>
     private bool _isInit = false;
-
+    /// <summary>
+    /// Contains all playlist relevant track informations
+    /// </summary>
     private MusicTag CurrentSongTag;
 
     private StreamPlaybackState _currentState = StreamPlaybackState.offline;
     private StreamType _currentTuneType = StreamType.Recommended;
 
+    /// <summary>
+    /// The time of the last http access
+    /// </summary>
     private DateTime _lastConnectAttempt = DateTime.MinValue;
+    /// <summary>
+    /// Sets the minimum timespan between each http access to avoid hammering
+    /// </summary>
     private TimeSpan _minConnectWaitTime = new TimeSpan(0, 0, 1);
 
-    private Object BadLock = null;
-
     private AsyncGetRequest httpcommand = null;
+    #endregion
 
     // constructor
     public StreamControl()
@@ -149,12 +184,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     #region Serialisation
     private void LoadSettings()
-    {      
-      BadLock = new object();
-
+    {
       CurrentSongTag = new MusicTag();
-
-      //InfoScrobbler = AudioscrobblerUtils.Instance;
+      
       httpcommand = new AsyncGetRequest();
       httpcommand.workerFinished += new AsyncGetRequest.AsyncGetRequestCompleted(OnParseAsyncResponse);
       httpcommand.workerError += new AsyncGetRequest.AsyncGetRequestError(OnAsyncRequestError);
@@ -200,7 +232,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region getters & setters
-
     public string AccountUser
     {
       get { return _currentUser; }
@@ -260,8 +291,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
         Log.Debug("StreamControl: Setting CurrentStreamState to {0}", _currentState.ToString());
       }
     }
-
-
 
     public MusicTag CurrentTrackTag
     {
@@ -324,7 +353,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
     
     #region Control functions
-
     public bool PlayStream()
     {
       GUIWaitCursor.Show();
@@ -568,6 +596,21 @@ namespace MediaPortal.GUI.RADIOLASTFM
       else
         return false;
     }
+
+    public bool TuneIntoWebPlaylist(string username_)
+    {
+      string TuneUser = AudioscrobblerBase.getValidURLLastFMString(username_);
+                                    //ext.last.fm/
+      if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/adjust.php?session=" + _currentSession + @"&url=lastfm://user/" + TuneUser + "/playlist"))
+      {
+        _currentTuneType = StreamType.Playlist;
+        Log.Info("StreamControl: Tune into web playlist of: {0}", username_);
+        GUIPropertyManager.SetProperty("#Play.Current.Lastfm.CurrentStream", GUILocalizeStrings.Get(34049));
+        return true;
+      }
+      else
+        return false;
+    }
     #endregion
     
     #region Network related
@@ -602,7 +645,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // parse the response
       try
       {
-        lock (BadLock)
+        lock (this)
         {
           string responseMessage = String.Empty;
           if (responseList.Count > 0)

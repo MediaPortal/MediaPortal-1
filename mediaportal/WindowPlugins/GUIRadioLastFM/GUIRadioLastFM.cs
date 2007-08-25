@@ -266,13 +266,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
         dlg.Add(desiredFriend);
 
 // 6
-        dlg.Add(GUILocalizeStrings.Get(34048));      // My neighbour radio  
+        dlg.Add(GUILocalizeStrings.Get(34048));      // My neighbour radio
+// 7
+        dlg.Add(GUILocalizeStrings.Get(34049));      // My web playlist
 
         if (isSubscriber)
         {
-// 7
-          dlg.Add(GUILocalizeStrings.Get(34046)); // My personal radio
 // 8
+          dlg.Add(GUILocalizeStrings.Get(34046)); // My personal radio
+// 9
           dlg.Add(GUILocalizeStrings.Get(34047)); // My loved tracks
         }
         
@@ -314,12 +316,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
           case 6:
             TuneIntoSelected = StreamType.Neighbours;
             LastFMStation.StreamsUser = LastFMStation.AccountUser;
-            break;  
+            break;
           case 7:
-            TuneIntoSelected = StreamType.Personal;
+            TuneIntoSelected = StreamType.Playlist;
             LastFMStation.StreamsUser = LastFMStation.AccountUser;
             break;
           case 8:
+            TuneIntoSelected = StreamType.Personal;
+            LastFMStation.StreamsUser = LastFMStation.AccountUser;
+            break;
+          case 9:
             TuneIntoSelected = StreamType.Loved;
             LastFMStation.StreamsUser = LastFMStation.AccountUser;
             break;
@@ -362,6 +368,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
             
           case StreamType.Neighbours:
             LastFMStation.TuneIntoNeighbourRadio(LastFMStation.StreamsUser);
+            break;
+
+          case StreamType.Playlist:
+            LastFMStation.TuneIntoWebPlaylist(LastFMStation.StreamsUser);
             break;
         }
 
