@@ -905,9 +905,12 @@ namespace TvEngine
       // Mit: Bernd Schramm (Buster der Hund);Sandra Schwarzhaupt (Gwendolyn die Katze);Joachim Kemmer (Tortellini der Hahn);Mario Adorf (Fred der Esel);Katharina Thalbach (die Erbin);Peer Augustinski (Dr. Gier);Klausjürgen Wussow (Der Erzähler);Hartmut Engler (Hund Buster);Bert Henry (Drehbuch);Georg Reichel (Drehbuch);Dagmar Kekule (Drehbuch);Peter Wolf (Musik);Dagmar Kekulé (Drehbuch)
       strb.Append("Mit: ");
       if (_actorCount < 1)
+      {
         strb.Append(dbActors);
+        strb.Append("\n");
+      }
       else
-      {        
+      {
         string[] splitActors = dbActors.Split(';');
         if (splitActors != null && splitActors.Length > 0)
         {
@@ -915,16 +918,14 @@ namespace TvEngine
           {
             if (i < _actorCount)
             {
-              strb.Append("\n");
               strb.Append(splitActors[i]);
+              strb.Append("\n");
             }
             else
               break;
           }
         }
       }
-
-      strb.Append("\n");
 
       return strb.ToString();
     }
