@@ -113,59 +113,80 @@ namespace MediaPortal.EPG
         GlobalServiceProvider.Add<IHttpStatistics>(httpStats);
       }
 
+      _log.Info(LogType.WebEPG, "WebEPG: Loading Channel Config");
       _grabList = new Dictionary<string, List<grabInfo>>();
       // for each channel write info xmltv file.
       foreach (ChannelMap channel in _config.Channels)
       {
-        if (channel.id == null)
+        if (channel.id == null && channel.merged == null)
+        {
+          _log.Warn(LogType.WebEPG, " Ignoring Channel Name: {0} - No Channel id", channel.displayName);
           continue;
+        }
 
         if (channel.merged == null || channel.merged.Count == 0)
         {
-          xmltv.WriteChannel(channel.id, channel.displayName);
-
-          grabInfo grab = new grabInfo();
-          grab.name = channel.displayName;
-          grab.id = channel.id;
-          grab.grabber = channel.grabber;
-          grab.merged = false;
-          grab.linked = true;
-          grab.linkTime = new TimeRange("00:00", "23:00");
-
-          if (!_grabList.ContainsKey(channel.id))
+          if (channel.grabber != null)
           {
-            List<grabInfo> grabs = new List<grabInfo>();
-            grabs.Add(grab);
-            _grabList.Add(channel.id, grabs);
+            _log.Debug(LogType.WebEPG, " Loading Channel {0} ID: {1}", channel.displayName, channel.id);
+            xmltv.WriteChannel(channel.id, channel.displayName);
+
+            grabInfo grab = new grabInfo();
+            grab.name = channel.displayName;
+            grab.id = channel.id;
+            grab.grabber = channel.grabber;
+            grab.merged = false;
+            grab.linked = true;
+            grab.linkTime = new TimeRange("00:00", "23:00");
+
+            if (!_grabList.ContainsKey(channel.id))
+            {
+              List<grabInfo> grabs = new List<grabInfo>();
+              grabs.Add(grab);
+              _grabList.Add(channel.id, grabs);
+            }
+            else
+            {
+              _grabList[channel.id].Add(grab);
+            }
           }
           else
           {
-            _grabList[channel.id].Add(grab);
+            _log.Warn(LogType.WebEPG, " Ignoring Channel Name: {0} - No Grabber id", channel.displayName);
           }
         }
         else
         {
+          _log.Debug(LogType.WebEPG, " Loading Merged Channel {0}", channel.displayName);
           xmltv.WriteChannel("[Merged]", channel.displayName);
 
           foreach (MergedChannel merged in channel.merged)
           {
-            grabInfo grab = new grabInfo();
-            grab.name = channel.displayName;
-            grab.id = merged.id;
-            grab.grabber = merged.grabber;
-            grab.merged = true;
-            grab.linked = true;
-            grab.linkTime = new TimeRange(merged.start, merged.end);
-
-            if (!_grabList.ContainsKey(merged.id))
+            if (merged.grabber != null)
             {
-              List<grabInfo> grabs = new List<grabInfo>();
-              grabs.Add(grab);
-              _grabList.Add(merged.id, grabs);
+              grabInfo grab = new grabInfo();
+              grab.name = channel.displayName;
+              grab.id = merged.id;
+              grab.grabber = merged.grabber;
+              grab.merged = true;
+              grab.linked = true;
+              grab.linkTime = new TimeRange(merged.start, merged.end);
+              _log.Debug(LogType.WebEPG, "  Loading Merged Sub-channel: {0} Time range: {1}", merged.id, grab.linkTime.ToString());
+
+              if (!_grabList.ContainsKey(merged.id))
+              {
+                List<grabInfo> grabs = new List<grabInfo>();
+                grabs.Add(grab);
+                _grabList.Add(merged.id, grabs);
+              }
+              else
+              {
+                _grabList[merged.id].Add(grab);
+              }
             }
             else
             {
-              _grabList[merged.id].Add(grab);
+              _log.Warn(LogType.WebEPG, "  Ignoring Merged Sub-channel: {0}/{1} - No Grabber id", channel.displayName, merged.id);
             }
           }
         }
