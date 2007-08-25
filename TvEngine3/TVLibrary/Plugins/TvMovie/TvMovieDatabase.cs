@@ -57,6 +57,7 @@ namespace TvEngine
     private bool _showRatings = false;
     private bool _showAudioFormat = false;
     private bool _slowImport = false;
+    private int _actorCount = 5;
 
     static string _xmlFile;
     #endregion
@@ -451,6 +452,7 @@ namespace TvEngine
       _showRatings = layer.GetSetting("TvMovieShowRatings", "false").Value == "true";
       _showAudioFormat = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
       _slowImport = layer.GetSetting("TvMovieSlowImport", "false").Value == "true";
+      _actorCount = Convert.ToInt32(layer.GetSetting("TvMovieLimitActors", "5").Value);
 
       _xmlFile = String.Format(@"{0}\MediaPortal TV Server\TVMovieMapping.xml", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
     }
@@ -673,7 +675,7 @@ namespace TvEngine
               if (director.Length > 0)
                 sb.Append("Regie: " + director + "\n");
               if (actors.Length > 0)
-                sb.Append("Mit: " + actors + "\n");
+                sb.Append(BuildActorsDescription(actors));
               if (classification != String.Empty && classification != "0")
                 sb.Append("FSK: " + classification + "\n");
               if (date != String.Empty)
@@ -897,40 +899,35 @@ namespace TvEngine
       return detailedRating;
     }
 
-    // obsolete
-    //private DateTime LastUpdate
-    //{
-    //  get
-    //  {
-    //    DateTime lastUpdate = DateTime.MinValue;
-    //    try
-    //    {
-    //      //TvBusinessLayer layer = new TvBusinessLayer();
-    //      //if (layer.GetSetting("TvMovieUseDatabaseDate", "true").Value == "true")
-    //      //{
-    //      FileInfo mpFi = new FileInfo(DatabasePath);
-    //      lastUpdate = mpFi.LastWriteTime;
-    //      //lastUpdate = Convert.ToInt64(string.Format("{0:D4}{1:D2}{2:D2}{3:D2}{4:D2}{5:D2}", dbUpdate.Year, dbUpdate.Month, dbUpdate.Day, dbUpdate.Hour, dbUpdate.Minute, dbUpdate.Second));
-    //      //}
-    //      //else
-    //      //{
-    //      //  // OBSOLETE
-    //      //  using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
-    //      //    if (rkey != null)
-    //      //    {
-    //      //      string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
-    //      //      lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
-    //      //    }
-    //      //}
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //      Log.Error("TVMovie: Error getting database age {0}", ex.Message);
-    //      return lastUpdate;
-    //    }
-    //    return lastUpdate;
-    //  }
-    //}
+    private string BuildActorsDescription(string dbActors)
+    {
+      StringBuilder strb = new StringBuilder();
+      // Mit: Bernd Schramm (Buster der Hund);Sandra Schwarzhaupt (Gwendolyn die Katze);Joachim Kemmer (Tortellini der Hahn);Mario Adorf (Fred der Esel);Katharina Thalbach (die Erbin);Peer Augustinski (Dr. Gier);Klausjürgen Wussow (Der Erzähler);Hartmut Engler (Hund Buster);Bert Henry (Drehbuch);Georg Reichel (Drehbuch);Dagmar Kekule (Drehbuch);Peter Wolf (Musik);Dagmar Kekulé (Drehbuch)
+      strb.Append("Mit: ");
+      if (_actorCount < 1)
+        strb.Append(dbActors);
+      else
+      {        
+        string[] splitActors = dbActors.Split(';');
+        if (splitActors != null && splitActors.Length > 0)
+        {
+          for (int i = 0 ; i < splitActors.Length ; i++)
+          {
+            if (i < _actorCount)
+            {
+              strb.Append("\n");
+              strb.Append(splitActors[i]);
+            }
+            else
+              break;
+          }
+        }
+      }
+
+      strb.Append("\n");
+
+      return strb.ToString();
+    }
 
     private long datetolong(DateTime dt)
     {

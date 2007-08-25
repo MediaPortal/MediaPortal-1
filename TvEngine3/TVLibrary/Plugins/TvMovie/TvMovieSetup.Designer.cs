@@ -57,6 +57,7 @@ namespace SetupTv.Sections
       this.tabControlTvMovie = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
       this.groupBoxDescriptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxShowRatings = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAdditionalInfo = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxShowAudioFormat = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -72,9 +73,6 @@ namespace SetupTv.Sections
       this.radioButton12h = new System.Windows.Forms.RadioButton();
       this.radioButton6h = new System.Windows.Forms.RadioButton();
       this.checkBoxEnableImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxInfos = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.linkLabelInfo = new System.Windows.Forms.LinkLabel();
-      this.labelInfo = new System.Windows.Forms.Label();
       this.tabPageMapChannels = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.labelNote = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxMapping = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -88,13 +86,13 @@ namespace SetupTv.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.listView2 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.checkBoxShowRatings = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.linkLabelInfo = new System.Windows.Forms.LinkLabel();
+      this.checkBoxLimitActors = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlTvMovie.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
       this.groupBoxDescriptions.SuspendLayout();
       this.groupBoxEnableTvMovie.SuspendLayout();
       this.groupBoxImportTime.SuspendLayout();
-      this.groupBoxInfos.SuspendLayout();
       this.tabPageMapChannels.SuspendLayout();
       this.groupBoxMapping.SuspendLayout();
       this.panelTimeSpan.SuspendLayout();
@@ -123,9 +121,9 @@ namespace SetupTv.Sections
       // 
       // tabPageSettings
       // 
+      this.tabPageSettings.Controls.Add(this.linkLabelInfo);
       this.tabPageSettings.Controls.Add(this.groupBoxDescriptions);
       this.tabPageSettings.Controls.Add(this.groupBoxEnableTvMovie);
-      this.tabPageSettings.Controls.Add(this.groupBoxInfos);
       this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageSettings.Name = "tabPageSettings";
       this.tabPageSettings.Padding = new System.Windows.Forms.Padding(3);
@@ -138,6 +136,7 @@ namespace SetupTv.Sections
       // 
       this.groupBoxDescriptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxDescriptions.Controls.Add(this.checkBoxLimitActors);
       this.groupBoxDescriptions.Controls.Add(this.checkBoxShowRatings);
       this.groupBoxDescriptions.Controls.Add(this.checkBoxAdditionalInfo);
       this.groupBoxDescriptions.Controls.Add(this.checkBoxShowAudioFormat);
@@ -146,10 +145,23 @@ namespace SetupTv.Sections
       this.groupBoxDescriptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxDescriptions.Location = new System.Drawing.Point(16, 175);
       this.groupBoxDescriptions.Name = "groupBoxDescriptions";
-      this.groupBoxDescriptions.Size = new System.Drawing.Size(424, 103);
+      this.groupBoxDescriptions.Size = new System.Drawing.Size(424, 130);
       this.groupBoxDescriptions.TabIndex = 4;
       this.groupBoxDescriptions.TabStop = false;
       this.groupBoxDescriptions.Text = "Descriptions";
+      // 
+      // checkBoxShowRatings
+      // 
+      this.checkBoxShowRatings.AutoSize = true;
+      this.checkBoxShowRatings.Checked = true;
+      this.checkBoxShowRatings.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxShowRatings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxShowRatings.Location = new System.Drawing.Point(16, 86);
+      this.checkBoxShowRatings.Name = "checkBoxShowRatings";
+      this.checkBoxShowRatings.Size = new System.Drawing.Size(126, 17);
+      this.checkBoxShowRatings.TabIndex = 3;
+      this.checkBoxShowRatings.Text = "Show program ratings";
+      this.checkBoxShowRatings.UseVisualStyleBackColor = true;
       // 
       // checkBoxAdditionalInfo
       // 
@@ -166,7 +178,7 @@ namespace SetupTv.Sections
       // 
       this.checkBoxShowAudioFormat.AutoSize = true;
       this.checkBoxShowAudioFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxShowAudioFormat.Location = new System.Drawing.Point(16, 80);
+      this.checkBoxShowAudioFormat.Location = new System.Drawing.Point(16, 106);
       this.checkBoxShowAudioFormat.Name = "checkBoxShowAudioFormat";
       this.checkBoxShowAudioFormat.Size = new System.Drawing.Size(171, 17);
       this.checkBoxShowAudioFormat.TabIndex = 2;
@@ -320,40 +332,6 @@ namespace SetupTv.Sections
       this.checkBoxEnableImport.Text = "Enable import from TV Movie database";
       this.checkBoxEnableImport.UseVisualStyleBackColor = true;
       this.checkBoxEnableImport.CheckedChanged += new System.EventHandler(this.checkBoxEnableImport_CheckedChanged);
-      // 
-      // groupBoxInfos
-      // 
-      this.groupBoxInfos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxInfos.Controls.Add(this.linkLabelInfo);
-      this.groupBoxInfos.Controls.Add(this.labelInfo);
-      this.groupBoxInfos.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxInfos.Location = new System.Drawing.Point(16, 284);
-      this.groupBoxInfos.Name = "groupBoxInfos";
-      this.groupBoxInfos.Size = new System.Drawing.Size(424, 65);
-      this.groupBoxInfos.TabIndex = 3;
-      this.groupBoxInfos.TabStop = false;
-      this.groupBoxInfos.Text = "Info";
-      // 
-      // linkLabelInfo
-      // 
-      this.linkLabelInfo.AutoSize = true;
-      this.linkLabelInfo.Location = new System.Drawing.Point(16, 41);
-      this.linkLabelInfo.Name = "linkLabelInfo";
-      this.linkLabelInfo.Size = new System.Drawing.Size(119, 13);
-      this.linkLabelInfo.TabIndex = 1;
-      this.linkLabelInfo.TabStop = true;
-      this.linkLabelInfo.Text = "Click here to read more.";
-      this.linkLabelInfo.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelInfo_LinkClicked);
-      // 
-      // labelInfo
-      // 
-      this.labelInfo.AutoSize = true;
-      this.labelInfo.Location = new System.Drawing.Point(16, 21);
-      this.labelInfo.Name = "labelInfo";
-      this.labelInfo.Size = new System.Drawing.Size(333, 13);
-      this.labelInfo.TabIndex = 0;
-      this.labelInfo.Text = "TV Movie ClickFinder is an EPG application for German TV channels.";
       // 
       // tabPageMapChannels
       // 
@@ -521,16 +499,30 @@ namespace SetupTv.Sections
       this.columnHeader2.Text = "TV Movie Stations";
       this.columnHeader2.Width = 179;
       // 
-      // checkBoxShowRatings
+      // linkLabelInfo
       // 
-      this.checkBoxShowRatings.AutoSize = true;
-      this.checkBoxShowRatings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxShowRatings.Location = new System.Drawing.Point(16, 60);
-      this.checkBoxShowRatings.Name = "checkBoxShowRatings";
-      this.checkBoxShowRatings.Size = new System.Drawing.Size(126, 17);
-      this.checkBoxShowRatings.TabIndex = 3;
-      this.checkBoxShowRatings.Text = "Show program ratings";
-      this.checkBoxShowRatings.UseVisualStyleBackColor = true;
+      this.linkLabelInfo.AutoSize = true;
+      this.linkLabelInfo.LinkArea = new System.Windows.Forms.LinkArea(0, 20);
+      this.linkLabelInfo.Location = new System.Drawing.Point(32, 328);
+      this.linkLabelInfo.Name = "linkLabelInfo";
+      this.linkLabelInfo.Size = new System.Drawing.Size(352, 17);
+      this.linkLabelInfo.TabIndex = 5;
+      this.linkLabelInfo.TabStop = true;
+      this.linkLabelInfo.Text = "TV Movie ClickFinder is an EPG application for German TV channels.";
+      this.linkLabelInfo.UseCompatibleTextRendering = true;
+      // 
+      // checkBoxLimitActors
+      // 
+      this.checkBoxLimitActors.AutoSize = true;
+      this.checkBoxLimitActors.Checked = true;
+      this.checkBoxLimitActors.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxLimitActors.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxLimitActors.Location = new System.Drawing.Point(31, 63);
+      this.checkBoxLimitActors.Name = "checkBoxLimitActors";
+      this.checkBoxLimitActors.Size = new System.Drawing.Size(187, 17);
+      this.checkBoxLimitActors.TabIndex = 4;
+      this.checkBoxLimitActors.Text = "Limit actors - show a maximum of 5";
+      this.checkBoxLimitActors.UseVisualStyleBackColor = true;
       // 
       // TvMovieSetup
       // 
@@ -541,14 +533,13 @@ namespace SetupTv.Sections
       this.Size = new System.Drawing.Size(467, 388);
       this.tabControlTvMovie.ResumeLayout(false);
       this.tabPageSettings.ResumeLayout(false);
+      this.tabPageSettings.PerformLayout();
       this.groupBoxDescriptions.ResumeLayout(false);
       this.groupBoxDescriptions.PerformLayout();
       this.groupBoxEnableTvMovie.ResumeLayout(false);
       this.groupBoxEnableTvMovie.PerformLayout();
       this.groupBoxImportTime.ResumeLayout(false);
       this.groupBoxImportTime.PerformLayout();
-      this.groupBoxInfos.ResumeLayout(false);
-      this.groupBoxInfos.PerformLayout();
       this.tabPageMapChannels.ResumeLayout(false);
       this.tabPageMapChannels.PerformLayout();
       this.groupBoxMapping.ResumeLayout(false);
@@ -578,9 +569,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.TabPage tabPageSettings;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableImport;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxInfos;
-    private System.Windows.Forms.LinkLabel linkLabelInfo;
-    private System.Windows.Forms.Label labelInfo;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxEnableTvMovie;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxDescriptions;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAdditionalInfo;
@@ -597,5 +585,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ProgressBar progressBarImportTotal;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSlowImport;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowRatings;
+    private System.Windows.Forms.LinkLabel linkLabelInfo;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxLimitActors;
   }
 }

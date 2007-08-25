@@ -41,9 +41,6 @@ namespace SetupTv.Sections
 {
   public partial class TvMovieSetup : SectionSettings
   {
-    #region Membervariables
-    #endregion
-
     class ChannelInfo
     {
       string _start = "00:00";
@@ -76,20 +73,20 @@ namespace SetupTv.Sections
     }
 
     #region Form Methods
-
-
     private void treeViewStations_DoubleClick(object sender, EventArgs e)
     {
       MapStation();
     }
-
-
+    
     private void treeViewChannels_DoubleClick(object sender, EventArgs e)
     {
       UnmapStation();
     }
 
-
+    private void linkLabelInfo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      Process.Start("http://www.tvmovie.de/ClickFinder.57.0.html");
+    }
     #endregion
 
     public TvMovieSetup()
@@ -159,6 +156,13 @@ namespace SetupTv.Sections
         setting.Value = "false";
       setting.Persist();
 
+      setting = layer.GetSetting("TvMovieLimitActors", "5");
+      if (checkBoxLimitActors.Checked)
+        setting.Value = "5";
+      else
+        setting.Value = "0";
+      setting.Persist();
+
       setting = layer.GetSetting("TvMovieRestPeriod", "24");
       setting.Value = GetRestPeriod();
       setting.Persist();
@@ -176,6 +180,7 @@ namespace SetupTv.Sections
       checkBoxShowRatings.Checked = layer.GetSetting("TvMovieShowRatings", "false").Value == "true";
       checkBoxShowAudioFormat.Checked = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
       checkBoxSlowImport.Checked = layer.GetSetting("TvMovieSlowImport", "false").Value == "true";
+      checkBoxLimitActors.Checked = Convert.ToInt32(layer.GetSetting("TvMovieLimitActors", "5").Value) > 0;
       SetRestPeriod(layer.GetSetting("TvMovieRestPeriod", "24").Value);    
 
       base.OnSectionActivated();
@@ -514,11 +519,6 @@ namespace SetupTv.Sections
     {
       if (checkBoxAdditionalInfo.Checked)
         checkBoxUseShortDesc.Checked = false;
-    }
-
-    private void linkLabelInfo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-      Process.Start("http://www.tvmovie.de/ClickFinder.57.0.html");
     }
 
     private string GetRestPeriod()
