@@ -1730,13 +1730,21 @@ namespace MediaPortal
 
     private void TvDelayThread()
     {      
-      //we have to use a small delay before calling tvfullscreen.
-      Thread.Sleep(100);
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);            
+      //we have to use a small delay before calling tvfullscreen.                              
+      Thread.Sleep(200);
+      g_Player.ShowFullScreenWindow();      
     }
+    /*
+    private void ModuleDelayThread(int lastActiveModule)
+    {
+      //we have to use a small delay before calling module.                              
+      Thread.Sleep(500);
+      GUIWindowManager.ActivateWindow(lastActiveModule);            
+    }
+    */
 
     protected bool ShowLastActiveModule()
-    {            
+    {          
       bool showLastActiveModule = false;
       int lastActiveModule = -1;
       bool lastActiveModuleFullscreen = false;
@@ -1762,18 +1770,23 @@ namespace MediaPortal
         else
         {
           try
-          {           
+          {
+            GUIWindowManager.ActivateWindow(lastActiveModule);                                                               
+            /*            
+            ThreadStart ts = delegate() { ModuleDelayThread(lastActiveModule); };            
+            Thread moduleDelayThread = new Thread(ts);            
+            moduleDelayThread.Start();
+            */            
+
             if (lastActiveModule == (int)GUIWindow.Window.WINDOW_TV && lastActiveModuleFullscreen)
             {
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV);
+              //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV);
               //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);                            
+            
               Thread tvDelayThread = new Thread(TvDelayThread);
               tvDelayThread.Start();              
-
-              return true;
-            }
+            }             
             
-            GUIWindowManager.ActivateWindow(lastActiveModule);            
             return true;
           }
           catch (Exception e)

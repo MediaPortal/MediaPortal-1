@@ -87,6 +87,7 @@ namespace MediaPortal.GUI.Library
       _properties["#percentage"] = String.Empty;
       _properties["#currentmodule"] = String.Empty;
       _properties["#currentmoduleid"] = String.Empty;
+      _properties["#currentmodulefullscreenstate"] = String.Empty;
       _properties["#channel"] = String.Empty;
       _properties["#TV.start"] = String.Empty;
       _properties["#TV.stop"] = String.Empty;

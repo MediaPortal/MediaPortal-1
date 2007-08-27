@@ -97,6 +97,7 @@ public class MediaPortalApp : D3DApp, IRender
   private bool restoreTopMost = false;
   private bool _startWithBasicHome = false;
   private bool _suspended = false;
+  private DateTime _resumedDateTime = DateTime.Now;
   private bool _onResumeRunning = false;
   protected string _dateFormat = String.Empty;
   private bool showLastActiveModule = false;  
@@ -167,7 +168,7 @@ public class MediaPortalApp : D3DApp, IRender
   [STAThread]
   public static void Main(string[] args)
   {
-    Thread.CurrentThread.Name = "MPMain";
+    Thread.CurrentThread.Name = "MPMain";    
 
     if (args.Length > 0)
     {
@@ -1008,7 +1009,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         return;
       }
-
+      _suspended = true;      
       SaveLastActiveModule();
 
       //switch to windowed mode
@@ -1023,12 +1024,14 @@ public class MediaPortalApp : D3DApp, IRender
       InputDevices.Stop();
 
       Log.Info("Main: Stopping playback");
-      g_Player.Stop();
+      if (!g_Player.Stopped)
+      {
+        g_Player.Stop();
+      }
       Log.Info("Main: Stopping recorder");
       Recorder.Stop();
       Log.Info("Main: Stopping AutoPlay");
-      AutoPlay.StopListening();
-
+      AutoPlay.StopListening();      
       Log.Info("Main: OnSuspend - Done");
     }
   }
@@ -1036,7 +1039,8 @@ public class MediaPortalApp : D3DApp, IRender
   //called when windows wakes up again
   static object syncResume = new object();
   private void OnResume()
-  {    
+  {
+    //System.Diagnostics.Debugger.Launch();
     if (_onResumeRunning == true)
     {
       Log.Info("Main: OnResume - already running -> return without further action");
@@ -1052,6 +1056,16 @@ public class MediaPortalApp : D3DApp, IRender
       }
       
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+      if (_startWithBasicHome)
+      {
+        Log.Info("Main: OnResume - Switch to basic home screen");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+      }
+      else
+      {
+        Log.Info("Main: OnResume - Switch to home screen");
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+      }
       base.RecoverDevice();
 
       _onResumeRunning = true;
@@ -1085,25 +1099,14 @@ public class MediaPortalApp : D3DApp, IRender
       AutoPlay.StartListening();
 
       Log.Info("Main: OnResume - init InputDevices");
-      InputDevices.Init();          
-      
-      if (_startWithBasicHome)
-      {
-        Log.Info("Main: OnResume - Switch to basic home screen");
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
-      }
-      else
-      {
-        Log.Info("Main: OnResume - Switch to home screen");
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
-      }
-
-      bool result = base.ShowLastActiveModule();
-      
-      _onResumeRunning = false;
+      InputDevices.Init();
+            
       _suspended = false;
-                        
+      bool result = base.ShowLastActiveModule();      
+      _onResumeRunning = false;            
       Log.Info("Main: OnResume - Done");
+
+      _resumedDateTime = DateTime.Now;
     }
   }
 
@@ -1302,7 +1305,18 @@ public class MediaPortalApp : D3DApp, IRender
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string currentmoduleid = GUIPropertyManager.GetProperty("#currentmoduleid");
+        
         bool currentmodulefullscreen = (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+
+        string currentmodulefullscreenstate = GUIPropertyManager.GetProperty("#currentmodulefullscreenstate");
+
+        // if MP was closed/hibernated by the use of remote control, we have to retrieve the fullscreen state in an alternative manner.
+        if (!currentmodulefullscreen && currentmodulefullscreenstate == "True")
+        {
+          currentmodulefullscreen = true;
+        }
+        
+        
 
         if (currentmoduleid.Length == 0)
         {
@@ -1465,8 +1479,7 @@ public class MediaPortalApp : D3DApp, IRender
     using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       _startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
-    }
-    
+    }    
     if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml")))
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
     else
@@ -1817,8 +1830,15 @@ public class MediaPortalApp : D3DApp, IRender
   #region Handle messages, keypresses, mouse moves etc
 
   private void OnAction(Action action)
-  {                          
-    if (_suspended)
+  { 
+    DateTime now = DateTime.Now;
+    TimeSpan ts = _resumedDateTime - now;
+    // fix for lastactivemodulefullscreen
+    // when recovering from hibernation/standby after closing with remote control somehow a F9 (keycode 120) onkeydown event is thrown
+    // we are currently filtering it away.
+    // if this is not done the F9 context menu is shown on the restored/shown module.
+    // currently the timer is set to 2 seconds. So we are ignoring action events for 2 sec.
+    if (_suspended || (ts.TotalSeconds > -2 && _resumedDateTime != DateTime.MaxValue))
     {
       return;
     }
@@ -2422,6 +2442,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void keydown(KeyEventArgs e)
   {
+    if (_suspended) return;
     GUIGraphicsContext.ResetLastActivity();
     Key key = new Key(0, (int)e.KeyCode);
     Action action = new Action();
