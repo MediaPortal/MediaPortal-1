@@ -589,20 +589,22 @@ namespace TvLibrary.Implementations.DVB
       return channel;
     }
 
-    public ATSCChannel SetATSCQAM(ATSCChannel channel)
+    public ATSCChannel CheckATSCQAM(ATSCChannel channel)
     {
       try
       {
-        if (channel.ModulationType == ModulationType.Mod256Qam)
-        {
+        //if (channel.ModulationType == ModulationType.Mod256Qam)
+        //{
           //Set the Hauppauge Modulation type
           if (_hauppauge != null)
           {
             Log.Log.Info("Setting Hauppauge ATSC modulation to 256QAM");
+            //set the modulation type to -1 (not set)
+            //channel.ModulationType = ModulationType.ModNotSet;
             _hauppauge.SetATSCQAM(channel);
           }
-          else Log.Log.Info("SetATSCQAM: Hauppauge ATSC QAM card not found, continuing...");
-        }
+          else Log.Log.Info("CheckATSCQAM: Hauppauge ATSC QAM card not found, continuing...");
+        //}
       }
       catch (Exception ex)
       {

@@ -288,6 +288,7 @@ namespace TvLibrary.Implementations.DVB
       int hr;
       int length;
       KSPropertySupport supported;
+      //channel.ModulationType = ModulationType.Mod256Qam;
 
       //Set the modulation
       _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
