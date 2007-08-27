@@ -128,8 +128,6 @@ namespace MediaPortal.Configuration.Sections
 
     private void LoadLanguages()
     {
-      GUILocalizeStrings.Load(null);
-
       string[] languages = GUILocalizeStrings.SupportedLanguages();
       foreach(string language in languages)
         languageComboBox.Items.Add(language);
