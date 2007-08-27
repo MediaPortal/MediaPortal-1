@@ -283,7 +283,7 @@ namespace Mpe.Controls
           //  }
           //}
           x1 = 0;
-          x2 = size.Height;
+          x2 = b.Width;
           return new Rectangle(x1, 0, x2 - x1 + 1, textureData[0].Height);
         }
         catch (Exception ee)
