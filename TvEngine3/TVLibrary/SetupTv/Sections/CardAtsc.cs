@@ -164,7 +164,7 @@ namespace SetupTv.Sections
       if (channel == null)
         mpLabelChannel.Text = "none";
       else
-        mpLabelChannel.Text = String.Format("{0} Frequency {1}", channel.PhysicalChannel, channel.Frequency);
+        mpLabelChannel.Text = String.Format("{0}  Frequency {1}", channel.PhysicalChannel, channel.Frequency);
     }
 
     private void mpButtonScanTv_Click(object sender, EventArgs e)
@@ -241,7 +241,7 @@ namespace SetupTv.Sections
             //tuneChannel.ModulationType = ModulationType.ModNotSet;
           }
           Log.WriteFile("ATSC tune: PhysicalChannel: {0} Frequency: {1} Modulation: {2}", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
-          string line = String.Format("{0}tp- physical channel:{1} frequency:{2} modulation:{3}", 1 + index, tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
+          string line = String.Format("physical channel:{0} frequency:{1} modulation:{2}", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
           if (index == minchan)
@@ -254,14 +254,14 @@ namespace SetupTv.Sections
           {
             if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
             {
-              line = line = String.Format("{0}tp- channel:{1} frequency:{2} modulation:{3}:No signal", 1 + index, tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
+              line = line = String.Format("physical channel:{0} frequency:{1} modulation:{2}: No signal", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
             }
             else
             {
-              line = line = String.Format("{0}tp- channel:{1} frequency:{2} modulation:{3}:Nothing found", 1 + index, tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
+              line = line = String.Format("physical channel:{0} frequency:{1} modulation:{2}: Nothing found", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
@@ -335,7 +335,7 @@ namespace SetupTv.Sections
               }
             }
             layer.MapChannelToCard(card, dbChannel);
-            line = line = String.Format("{0}tp- channel:{1}:frequency{2}:modulation{3}:New:{3} Updated:{4}", 1 + index, tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType, newChannels, updatedChannels);
+            line = line = String.Format("physical channel:{0} frequency:{1} modulation:{2} New:{3} Updated:{4}", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType, newChannels, updatedChannels);
             item.Text = line;
           }
         }
