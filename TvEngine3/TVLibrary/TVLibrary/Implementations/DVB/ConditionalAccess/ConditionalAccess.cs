@@ -599,8 +599,6 @@ namespace TvLibrary.Implementations.DVB
           if (_hauppauge != null)
           {
             Log.Log.Info("Setting Hauppauge ATSC modulation to 256QAM");
-            //set the modulation type to -1 (not set)
-            //channel.ModulationType = ModulationType.ModNotSet;
             _hauppauge.SetATSCQAM(channel);
           }
           else Log.Log.Info("CheckATSCQAM: Hauppauge ATSC QAM card not found, continuing...");

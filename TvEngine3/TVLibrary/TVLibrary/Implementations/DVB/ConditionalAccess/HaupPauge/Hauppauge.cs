@@ -288,7 +288,6 @@ namespace TvLibrary.Implementations.DVB
       int hr;
       int length;
       KSPropertySupport supported;
-      //channel.ModulationType = ModulationType.Mod256Qam;
 
       //Set the modulation
       _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
@@ -298,7 +297,10 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("Hauppauge: Set ModulationType: {0}", channel.ModulationType);
         Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
         hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4);
-        Log.Log.Info("Hauppauge:    returned:{0:X}", hr);
+        if (hr != 0)
+        {
+          Log.Log.Info("Hauppauge:    returned:{0:X}", hr);
+        }
       }
 
       //below is for info only - uncomment if debugging

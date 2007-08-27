@@ -187,7 +187,6 @@ namespace TvLibrary.Implementations.DVB
           try
           {
             _event = new ManualResetEvent(false);
-
             _analyzer.SetCallBack(this);
             _analyzer.Start();
             startTime = DateTime.Now;
@@ -252,15 +251,18 @@ namespace TvLibrary.Implementations.DVB
                     out teletextPid, out subtitlePid, out subtitleLanguage, out videoStreamType);
               bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
               string name = DvbTextConverter.Convert(serviceName, "");
-              //Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} v:{6:X} a:{7:X} ac3:{8:X} type:{9:X}", 
-              //  i, networkId, transportId, serviceId, pmtPid, name,videoPid,audio1Pid,ac3Pid, serviceType);
+              //Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} v:{6:X} a:{7:X} ac3:{8:X} type:{9:X}", i, networkId, transportId, serviceId, pmtPid, name, videoPid, audio1Pid, ac3Pid, serviceType);
               if (videoStreamType == 0x10 || videoStreamType == 0x1b)
               {
                 Log.Log.WriteFile("H264/MPEG4!");
               }
               if ((channel as ATSCChannel) != null)
               {
-                isValid = (majorChannel != 0 && minorChannel != 0);
+                //It seems with ATSC QAM the major & minor channel is not found or is not necessary (TBD)
+                //isValid = (majorChannel != 0 && minorChannel != 0);
+                //So we currently determine if a valid channel is found if the pmt pid is not null.
+                isValid = (pmtPid != 0);
+                //This is not ideal we need to look into raw ATSC transport streams
               }
               if (isValid)
               {
@@ -281,7 +283,6 @@ namespace TvLibrary.Implementations.DVB
                 info.service_name = DvbTextConverter.Convert(serviceName, "");
                 info.pcr_pid = pcrPid;
                 info.scrambled = (freeCAMode != 0);
-
                 info.network_pmt_PID = pmtPid;
 
                 strAudioLanguage1 = Marshal.PtrToStringAnsi(audioLanguage1);
@@ -290,8 +291,8 @@ namespace TvLibrary.Implementations.DVB
                 strAudioLanguage4 = Marshal.PtrToStringAnsi(audioLanguage4);
                 strAudioLanguage5 = Marshal.PtrToStringAnsi(audioLanguage5);
 
-                Log.Log.Info("v:{0:X} a1:{1:X} a2:{2:X} a3:{3:X} a4:{4:X} a5:{5:X} ac3:{6:X} ttx:{7:X} sub:{8:X} pmt:{9:X} pcr:{10:X} onid:{11:X} TSID:{12:X} SID:{13:X} maj:{14} min:{15} type:{16} name:{17}",
-                  videoPid, audio1Pid, audio2Pid, audio3Pid, audio4Pid, audio5Pid, ac3Pid, teletextPid, subtitlePid, pmtPid, pcrPid, networkId, transportId, serviceId, majorChannel, minorChannel, serviceType, name);
+                Log.Log.Info("v:{0:X} a1:{1:X} a2:{2:X} a3:{3:X} a4:{4:X} a5:{5:X} ac3:{6:X} ttx:{7:X} sub:{8:X} pmt:{9:X} pcr:{10:X} onid:{11:X} TSID:{12:X} SID:{13:X} maj:{14} min:{15} type:{16} name:{17}", videoPid, audio1Pid, audio2Pid, audio3Pid, audio4Pid, audio5Pid, ac3Pid, teletextPid, subtitlePid, pmtPid, pcrPid, networkId, transportId, serviceId, majorChannel, minorChannel, serviceType, name);
+                
                 bool hasVideo = false;
                 bool hasAudio = false;
                 if (videoPid > 0)
@@ -392,7 +393,6 @@ namespace TvLibrary.Implementations.DVB
                     channelsFound.Add(dvbChannel);
                     isTvRadioChannel = true;
                   }
-
                 }
                 if (!isTvRadioChannel)
                 {
