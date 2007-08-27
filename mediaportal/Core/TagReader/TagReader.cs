@@ -181,7 +181,10 @@ namespace MediaPortal.TagReader
         }
         reader.Dispose();
       }
-      return null;
+      Log.Warn("TagReader: No Reader found for file {0}. Using Filename as Title", strFile);
+      MusicTag tag = new MusicTag();
+      tag.Title = System.IO.Path.GetFileNameWithoutExtension(strFile);
+      return tag;
     }
   }
 }
