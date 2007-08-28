@@ -338,6 +338,7 @@
     <String id="404">Vent</String>
     <String id="405">Point rosée</String>
     <String id="406">Humidité</String>
+    <String id="407">Lourd</String>
     <String id="410">Interrogation de Weather.com</String>
     <String id="411">Recherche météo pour :</String>
     <String id="412">Impossible d'obtenir la météo</String>
@@ -1474,6 +1475,7 @@
     <String id="34046">Ma radio personnelle</String>
     <String id="34047">Mes pistes préférées</String>
     <String id="34048">Radio de mon voisin</String>
+    <String id="34049">Liste de lecture web</String>
     <String id="34050">Pas de flux actif</String>
     <String id="34051">Flux terminé</String>
     <String id="34052">Pas d'infos ou mauvaise connexion</String>
