@@ -64,7 +64,6 @@ namespace SetupTv.Sections
       }
     }
 
-
     public Channel Channel
     {
       get
@@ -84,8 +83,6 @@ namespace SetupTv.Sections
       {
         comboBoxCountry.Items.Add(countries.Countries[i].Name);
       }
-
-
       if (_newChannel)
       {
         if (textBoxName.Text.Length == 0)
@@ -126,34 +123,64 @@ namespace SetupTv.Sections
             }
           }
         }
-        //atsc
 
+        //atsc
         if (textBoxProgram.Text.Length != 0)
         {
-          int physical, major, minor, audio, video;
+          int physical, frequency, major, minor, audio, video, onid, tsid, sid;
           if (Int32.TryParse(textBoxProgram.Text, out physical))
           {
-            if (Int32.TryParse(textBoxMajor.Text, out major))
+            if (Int32.TryParse(textBoxFrequency.Text, out frequency))
             {
-              if (Int32.TryParse(textBoxMinor.Text, out minor))
+              if (Int32.TryParse(textBoxMajor.Text, out major))
               {
-                if (Int32.TryParse(textBoxAudioPid.Text, out audio))
+                if (Int32.TryParse(textBoxMinor.Text, out minor))
                 {
-                  if (Int32.TryParse(textBoxVideoPid.Text, out video))
+                  if (Int32.TryParse(textBoxAudioPid.Text, out audio))
                   {
-                    if (physical > 0 && major >= 0 && minor >= 0)
+                    if (Int32.TryParse(textBoxVideoPid.Text, out video))
                     {
-                      ATSCChannel atscChannel = new ATSCChannel();
-                      atscChannel.IsTv = _isTv;
-                      atscChannel.IsRadio = !_isTv;
-                      atscChannel.Name = _channel.Name;
-                      atscChannel.PhysicalChannel = physical;
-                      atscChannel.MajorChannel = major;
-                      atscChannel.MinorChannel = minor;
-                      atscChannel.AudioPid = audio;
-                      atscChannel.VideoPid = video;
-                      atscChannel.ModulationType = (ModulationType)(comboBoxModulation.SelectedIndex);
-                      layer.AddTuningDetails(_channel, atscChannel);
+                      if (Int32.TryParse(textBoxQamONID.Text, out onid))
+                      {
+                        if (Int32.TryParse(textBoxQamTSID.Text, out tsid))
+                        {
+                          if (Int32.TryParse(textBoxQamSID.Text, out sid))
+                          {
+                            if (physical > 0 && major >= 0 && minor >= 0)
+                            {
+                              ATSCChannel atscChannel = new ATSCChannel();
+                              atscChannel.IsTv = _isTv;
+                              atscChannel.IsRadio = !_isTv;
+                              atscChannel.Name = _channel.Name;
+                              atscChannel.PhysicalChannel = physical;
+                              atscChannel.Frequency = frequency;
+                              atscChannel.MajorChannel = major;
+                              atscChannel.MinorChannel = minor;
+                              atscChannel.AudioPid = audio;
+                              atscChannel.VideoPid = video;
+                              switch (comboBoxQAMModulation.SelectedIndex)
+                              {
+                                case 0:
+                                  atscChannel.ModulationType = ModulationType.ModNotSet;
+                                  break;
+                                case 1:
+                                  atscChannel.ModulationType = ModulationType.Mod8Vsb;
+                                  break;
+                                case 2:
+                                  atscChannel.ModulationType = ModulationType.Mod64Qam;
+                                  break;
+                                case 3:
+                                  atscChannel.ModulationType = ModulationType.Mod256Qam;
+                                  break;
+                              }
+                              atscChannel.NetworkId = onid;
+                              atscChannel.TransportId = tsid;
+                              atscChannel.ServiceId = sid;
+                              layer.AddTuningDetails(_channel, atscChannel);
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -195,8 +222,8 @@ namespace SetupTv.Sections
             }
           }
         }
-        //dvbs
 
+        //dvbs
         if (textBox5.Text.Length != 0)
         {
           int freq, onid, tsid, sid, symbolrate, switchfreq;
@@ -227,21 +254,7 @@ namespace SetupTv.Sections
                         dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
                         dvbsChannel.Pilot = (Pilot)(comboBoxPilot.SelectedIndex);
                         dvbsChannel.RollOff = (Rolloff)(comboBoxRollOff.SelectedIndex);
-                        switch (comboBoxModulation.SelectedIndex)
-                        {
-                          case 0:
-                            dvbsChannel.ModulationType = ModulationType.ModQpsk;
-                            break;
-                          case 1:
-                            dvbsChannel.ModulationType = ModulationType.Mod8psk;
-                            break;
-                          case 2:
-                            dvbsChannel.ModulationType = ModulationType.Mod16Apsk;
-                            break;
-                          case 3:
-                            dvbsChannel.ModulationType = ModulationType.Mod32Apsk;
-                            break;
-                        }
+                        dvbsChannel.ModulationType = (ModulationType)(comboBoxModulation.SelectedIndex + 1);
                         switch (comboBoxPol.SelectedIndex)
                         {
                           case 0:
@@ -315,7 +328,6 @@ namespace SetupTv.Sections
         return;
       }
 
-
       //general tab
       _channel.DisplayName = textBoxName.Text;
       _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
@@ -340,10 +352,29 @@ namespace SetupTv.Sections
         if (detail.ChannelType == 1)
         {
           detail.ChannelNumber = Int32.Parse(textBoxProgram.Text);
+          detail.Frequency = Int32.Parse(textBoxFrequency.Text);
           detail.MajorChannel = Int32.Parse(textBoxMajor.Text);
           detail.MinorChannel = Int32.Parse(textBoxMinor.Text);
           detail.AudioPid = Int32.Parse(textBoxAudioPid.Text);
           detail.VideoPid = Int32.Parse(textBoxVideoPid.Text);
+          switch (comboBoxQAMModulation.SelectedIndex)
+          {
+            case 0:
+              detail.Modulation = (int)ModulationType.ModNotSet;
+              break;
+            case 1:
+              detail.Modulation = (int)ModulationType.Mod8Vsb;
+              break;
+            case 2:
+              detail.Modulation = (int)ModulationType.Mod64Qam;
+              break;
+            case 3:
+              detail.Modulation = (int)ModulationType.Mod256Qam;
+              break;
+          }
+          detail.NetworkId = Int32.Parse(textBoxQamONID.Text);
+          detail.TransportId = Int32.Parse(textBoxQamTSID.Text);
+          detail.ServiceId = Int32.Parse(textBoxQamSID.Text);
           detail.Persist();
         }
 
@@ -371,10 +402,7 @@ namespace SetupTv.Sections
           detail.InnerFecRate = (int)(BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
           detail.Pilot = (int)(Pilot)(comboBoxPilot.SelectedIndex);
           detail.RollOff = (int)(Rolloff)(comboBoxRollOff.SelectedIndex);
-          if (comboBoxModulation.SelectedIndex == 1)
-            detail.Modulation = (int)ModulationType.Mod8Vsb;
-          else
-            detail.Modulation = (int)ModulationType.ModQpsk;
+          detail.Modulation = (int)(ModulationType)(comboBoxModulation.SelectedIndex - 1);
           switch (comboBoxPol.SelectedIndex)
           {
             case 0:
@@ -477,7 +505,6 @@ namespace SetupTv.Sections
       }
       foreach (TuningDetail detail in _channel.ReferringTuningDetail())
       {
-
         //analog tab
         if (detail.ChannelType == 0 || _newChannel)
         {
@@ -496,10 +523,29 @@ namespace SetupTv.Sections
         {
           _atsc = true;
           textBoxProgram.Text = detail.ChannelNumber.ToString();
+          textBoxFrequency.Text = detail.Frequency.ToString();
           textBoxMajor.Text = detail.MajorChannel.ToString();
           textBoxMinor.Text = detail.MinorChannel.ToString();
           textBoxAudioPid.Text = detail.AudioPid.ToString();
           textBoxVideoPid.Text = detail.VideoPid.ToString();
+          switch ((ModulationType)detail.Modulation)
+          {
+            case ModulationType.ModNotSet:
+              comboBoxQAMModulation.SelectedIndex = 0;
+              break;
+            case ModulationType.Mod8Vsb:
+              comboBoxQAMModulation.SelectedIndex = 1;
+              break;
+            case ModulationType.Mod64Qam:
+              comboBoxQAMModulation.SelectedIndex = 2;
+              break;
+            case ModulationType.Mod256Qam:
+              comboBoxQAMModulation.SelectedIndex = 3;
+              break;
+          }
+          textBoxQamONID.Text = detail.NetworkId.ToString();
+          textBoxQamTSID.Text = detail.TransportId.ToString();
+          textBoxQamSID.Text = detail.ServiceId.ToString();
         }
 
         //DVBC tab
@@ -538,14 +584,14 @@ namespace SetupTv.Sections
               comboBoxPol.SelectedIndex = 2;
               break;
           }
-          if (((ModulationType)detail.Modulation) == ModulationType.Mod8Vsb)
-            comboBoxModulation.SelectedIndex = 1;
-
+          //if (((ModulationType)detail.Modulation) == ModulationType.Mod8Vsb)
+          //comboBoxModulation.SelectedIndex = 1;
+          comboBoxModulation.SelectedIndex = (int)detail.Modulation + 1;
           comboBoxInnerFecRate.SelectedIndex = 1 + detail.InnerFecRate;
           comboBoxPilot.SelectedIndex = (int)detail.Pilot;
           comboBoxRollOff.SelectedIndex = (int)detail.RollOff;
           comboBoxDisEqc.SelectedIndex = (int)detail.Diseqc;
-          Satellite sat=null;
+          Satellite sat = null;
           foreach (DiSEqCMotor motor in DiSEqCMotor.ListAll())
           {
             if (detail.SatIndex == motor.Position)
@@ -582,12 +628,12 @@ namespace SetupTv.Sections
             comboBoxBandWidth.SelectedIndex = 1;
         }
       }
-
     }
 
     private void comboBoxInput_TabIndexChanged(object sender, EventArgs e)
     {
     }
+
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
       switch (tabControl1.SelectedIndex)

@@ -368,7 +368,14 @@ namespace TvLibrary.Implementations.DVB
                 {
                   if (info.service_name.Length == 0)
                   {
-                    info.service_name = String.Format("{0:X}", info.serviceID);
+                    if ((channel as ATSCChannel) != null)
+                    {
+                      Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", info.transportStreamID, info.serviceID);
+
+                      info.service_name = String.Format("Unknown {0:X}-{1:X}", info.transportStreamID, info.serviceID);
+                    }
+                    else
+                      info.service_name = String.Format("{0:X}", info.serviceID);
                   }
                   IChannel dvbChannel = CreateNewChannel(info);
                   if (dvbChannel != null)
@@ -385,7 +392,13 @@ namespace TvLibrary.Implementations.DVB
                     info.serviceType = (int)ServiceType.Audio;
                   if (info.service_name.Length == 0)
                   {
-                    info.service_name = String.Format("{0:X}", info.serviceID);
+                    if ((channel as ATSCChannel) != null)
+                    {
+                      Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", info.transportStreamID, info.serviceID);
+                      info.service_name = String.Format("Unknown {0:X}-{1:X}", info.transportStreamID, info.serviceID);
+                    }
+                    else
+                      info.service_name = String.Format("Unknown {0:X}", info.serviceID);
                   }
                   IChannel dvbChannel = CreateNewChannel(info);
                   if (dvbChannel != null)
@@ -396,8 +409,7 @@ namespace TvLibrary.Implementations.DVB
                 }
                 if (!isTvRadioChannel)
                 {
-                  Log.Log.Write("Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X}",
-                    info.service_provider_name, info.service_name, info.serviceType, info.networkID, info.transportStreamID, info.serviceID);
+                  Log.Log.Write("Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X}", info.service_provider_name, info.service_name, info.serviceType, info.networkID, info.transportStreamID, info.serviceID);
                 }
               }
             }

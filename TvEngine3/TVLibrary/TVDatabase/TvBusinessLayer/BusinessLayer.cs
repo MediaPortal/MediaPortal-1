@@ -154,6 +154,7 @@ namespace TvDatabase
       if (channels.Count == 0) return null;
       return (TuningDetail)channels[0];
     }
+
     public Channel GetChannel(int idChannel)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));

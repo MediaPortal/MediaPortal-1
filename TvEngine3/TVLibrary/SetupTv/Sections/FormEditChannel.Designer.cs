@@ -97,6 +97,8 @@ namespace SetupTv.Sections
       this.label20 = new System.Windows.Forms.Label();
       this.label21 = new System.Windows.Forms.Label();
       this.tabPage6 = new System.Windows.Forms.TabPage();
+      this.comboBoxQAMModulation = new System.Windows.Forms.ComboBox();
+      this.label37 = new System.Windows.Forms.Label();
       this.textBoxVideoPid = new System.Windows.Forms.TextBox();
       this.label27 = new System.Windows.Forms.Label();
       this.textBoxAudioPid = new System.Windows.Forms.TextBox();
@@ -107,8 +109,14 @@ namespace SetupTv.Sections
       this.label22 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.label24 = new System.Windows.Forms.Label();
-      this.comboBox1 = new System.Windows.Forms.ComboBox();
-      this.label37 = new System.Windows.Forms.Label();
+      this.textBoxFrequency = new System.Windows.Forms.TextBox();
+      this.label38 = new System.Windows.Forms.Label();
+      this.textBoxQamSID = new System.Windows.Forms.TextBox();
+      this.textBoxQamTSID = new System.Windows.Forms.TextBox();
+      this.textBoxQamONID = new System.Windows.Forms.TextBox();
+      this.label39 = new System.Windows.Forms.Label();
+      this.label40 = new System.Windows.Forms.Label();
+      this.label41 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -582,10 +590,42 @@ namespace SetupTv.Sections
       this.comboBoxModulation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxModulation.FormattingEnabled = true;
       this.comboBoxModulation.Items.AddRange(new object[] {
-            "QPSK",
-            "8PSK",
-            "16APSK",
-            "32APSK"});
+            "ModNotSet",
+            "ModNotDefined",
+            "Mod16Qam",
+            "Mod32Qam",
+            "Mod64Qam",
+            "Mod80Qam",
+            "Mod96Qam",
+            "Mod112Qam",
+            "Mod128Qam",
+            "Mod160Qam",
+            "Mod192Qam",
+            "Mod224Qam",
+            "Mod256Qam",
+            "Mod320Qam",
+            "Mod384Qam",
+            "Mod448Qam",
+            "Mod512Qam",
+            "Mod640Qam",
+            "Mod768Qam",
+            "Mod896Qam",
+            "Mod1024Qam",
+            "ModQpsk",
+            "ModBpsk",
+            "ModOqpsk",
+            "Mod8Vsb",
+            "Mod16Vsb",
+            "ModAnalogAmplitude",
+            "ModAnalogFrequency",
+            "Mod8psk",
+            "ModRf",
+            "Mod16Apsk",
+            "Mod32Apsk",
+            "ModQpsk2",
+            "Mod8psk2",
+            "ModDirectTV",
+            "ModMax"});
       this.comboBoxModulation.Location = new System.Drawing.Point(90, 241);
       this.comboBoxModulation.Name = "comboBoxModulation";
       this.comboBoxModulation.Size = new System.Drawing.Size(146, 21);
@@ -861,7 +901,15 @@ namespace SetupTv.Sections
       // 
       // tabPage6
       // 
-      this.tabPage6.Controls.Add(this.comboBox1);
+      this.tabPage6.Controls.Add(this.textBoxQamSID);
+      this.tabPage6.Controls.Add(this.textBoxQamTSID);
+      this.tabPage6.Controls.Add(this.textBoxQamONID);
+      this.tabPage6.Controls.Add(this.label39);
+      this.tabPage6.Controls.Add(this.label40);
+      this.tabPage6.Controls.Add(this.label41);
+      this.tabPage6.Controls.Add(this.textBoxFrequency);
+      this.tabPage6.Controls.Add(this.label38);
+      this.tabPage6.Controls.Add(this.comboBoxQAMModulation);
       this.tabPage6.Controls.Add(this.label37);
       this.tabPage6.Controls.Add(this.textBoxVideoPid);
       this.tabPage6.Controls.Add(this.label27);
@@ -880,9 +928,32 @@ namespace SetupTv.Sections
       this.tabPage6.Text = "ATSC";
       this.tabPage6.UseVisualStyleBackColor = true;
       // 
+      // comboBoxQAMModulation
+      // 
+      this.comboBoxQAMModulation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxQAMModulation.FormattingEnabled = true;
+      this.comboBoxQAMModulation.Items.AddRange(new object[] {
+            "ModNotSet",
+            "Mod8Vsb",
+            "Mod64Qam",
+            "Mod256Qam"});
+      this.comboBoxQAMModulation.Location = new System.Drawing.Point(103, 180);
+      this.comboBoxQAMModulation.Name = "comboBoxQAMModulation";
+      this.comboBoxQAMModulation.Size = new System.Drawing.Size(146, 21);
+      this.comboBoxQAMModulation.TabIndex = 58;
+      // 
+      // label37
+      // 
+      this.label37.AutoSize = true;
+      this.label37.Location = new System.Drawing.Point(23, 183);
+      this.label37.Name = "label37";
+      this.label37.Size = new System.Drawing.Size(62, 13);
+      this.label37.TabIndex = 59;
+      this.label37.Text = "Modulation:";
+      // 
       // textBoxVideoPid
       // 
-      this.textBoxVideoPid.Location = new System.Drawing.Point(103, 128);
+      this.textBoxVideoPid.Location = new System.Drawing.Point(103, 127);
       this.textBoxVideoPid.Name = "textBoxVideoPid";
       this.textBoxVideoPid.Size = new System.Drawing.Size(146, 20);
       this.textBoxVideoPid.TabIndex = 4;
@@ -891,7 +962,7 @@ namespace SetupTv.Sections
       // label27
       // 
       this.label27.AutoSize = true;
-      this.label27.Location = new System.Drawing.Point(25, 135);
+      this.label27.Location = new System.Drawing.Point(23, 130);
       this.label27.Name = "label27";
       this.label27.Size = new System.Drawing.Size(52, 13);
       this.label27.TabIndex = 27;
@@ -899,7 +970,7 @@ namespace SetupTv.Sections
       // 
       // textBoxAudioPid
       // 
-      this.textBoxAudioPid.Location = new System.Drawing.Point(103, 102);
+      this.textBoxAudioPid.Location = new System.Drawing.Point(103, 153);
       this.textBoxAudioPid.Name = "textBoxAudioPid";
       this.textBoxAudioPid.Size = new System.Drawing.Size(146, 20);
       this.textBoxAudioPid.TabIndex = 3;
@@ -908,7 +979,7 @@ namespace SetupTv.Sections
       // label26
       // 
       this.label26.AutoSize = true;
-      this.label26.Location = new System.Drawing.Point(25, 105);
+      this.label26.Location = new System.Drawing.Point(23, 156);
       this.label26.Name = "label26";
       this.label26.Size = new System.Drawing.Size(52, 13);
       this.label26.TabIndex = 25;
@@ -916,7 +987,7 @@ namespace SetupTv.Sections
       // 
       // textBoxMinor
       // 
-      this.textBoxMinor.Location = new System.Drawing.Point(103, 76);
+      this.textBoxMinor.Location = new System.Drawing.Point(103, 102);
       this.textBoxMinor.Name = "textBoxMinor";
       this.textBoxMinor.Size = new System.Drawing.Size(146, 20);
       this.textBoxMinor.TabIndex = 2;
@@ -924,7 +995,7 @@ namespace SetupTv.Sections
       // 
       // textBoxMajor
       // 
-      this.textBoxMajor.Location = new System.Drawing.Point(103, 50);
+      this.textBoxMajor.Location = new System.Drawing.Point(103, 76);
       this.textBoxMajor.Name = "textBoxMajor";
       this.textBoxMajor.Size = new System.Drawing.Size(146, 20);
       this.textBoxMajor.TabIndex = 1;
@@ -936,12 +1007,12 @@ namespace SetupTv.Sections
       this.textBoxProgram.Name = "textBoxProgram";
       this.textBoxProgram.Size = new System.Drawing.Size(146, 20);
       this.textBoxProgram.TabIndex = 0;
-      this.textBoxProgram.Text = "34";
+      this.textBoxProgram.Text = "1";
       // 
       // label22
       // 
       this.label22.AutoSize = true;
-      this.label22.Location = new System.Drawing.Point(25, 79);
+      this.label22.Location = new System.Drawing.Point(23, 105);
       this.label22.Name = "label22";
       this.label22.Size = new System.Drawing.Size(36, 13);
       this.label22.TabIndex = 21;
@@ -950,7 +1021,7 @@ namespace SetupTv.Sections
       // label23
       // 
       this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(25, 53);
+      this.label23.Location = new System.Drawing.Point(23, 79);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(36, 13);
       this.label23.TabIndex = 20;
@@ -959,34 +1030,79 @@ namespace SetupTv.Sections
       // label24
       // 
       this.label24.AutoSize = true;
-      this.label24.Location = new System.Drawing.Point(25, 24);
+      this.label24.Location = new System.Drawing.Point(23, 27);
       this.label24.Name = "label24";
       this.label24.Size = new System.Drawing.Size(49, 13);
       this.label24.TabIndex = 19;
       this.label24.Text = "Channel:";
       // 
-      // comboBox1
+      // textBoxFrequency
       // 
-      this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBox1.FormattingEnabled = true;
-      this.comboBox1.Items.AddRange(new object[] {
-            "QPSK",
-            "8PSK",
-            "16APSK",
-            "32APSK"});
-      this.comboBox1.Location = new System.Drawing.Point(103, 153);
-      this.comboBox1.Name = "comboBox1";
-      this.comboBox1.Size = new System.Drawing.Size(146, 21);
-      this.comboBox1.TabIndex = 58;
+      this.textBoxFrequency.Location = new System.Drawing.Point(103, 50);
+      this.textBoxFrequency.Name = "textBoxFrequency";
+      this.textBoxFrequency.Size = new System.Drawing.Size(146, 20);
+      this.textBoxFrequency.TabIndex = 60;
+      this.textBoxFrequency.Text = "-1";
       // 
-      // label37
+      // label38
       // 
-      this.label37.AutoSize = true;
-      this.label37.Location = new System.Drawing.Point(25, 158);
-      this.label37.Name = "label37";
-      this.label37.Size = new System.Drawing.Size(62, 13);
-      this.label37.TabIndex = 59;
-      this.label37.Text = "Modulation:";
+      this.label38.AutoSize = true;
+      this.label38.Location = new System.Drawing.Point(23, 53);
+      this.label38.Name = "label38";
+      this.label38.Size = new System.Drawing.Size(60, 13);
+      this.label38.TabIndex = 61;
+      this.label38.Text = "Frequency:";
+      // 
+      // textBoxQamSID
+      // 
+      this.textBoxQamSID.Location = new System.Drawing.Point(103, 259);
+      this.textBoxQamSID.Name = "textBoxQamSID";
+      this.textBoxQamSID.Size = new System.Drawing.Size(146, 20);
+      this.textBoxQamSID.TabIndex = 64;
+      this.textBoxQamSID.Text = "-1";
+      // 
+      // textBoxQamTSID
+      // 
+      this.textBoxQamTSID.Location = new System.Drawing.Point(103, 233);
+      this.textBoxQamTSID.Name = "textBoxQamTSID";
+      this.textBoxQamTSID.Size = new System.Drawing.Size(146, 20);
+      this.textBoxQamTSID.TabIndex = 63;
+      this.textBoxQamTSID.Text = "-1";
+      // 
+      // textBoxQamONID
+      // 
+      this.textBoxQamONID.Location = new System.Drawing.Point(103, 207);
+      this.textBoxQamONID.Name = "textBoxQamONID";
+      this.textBoxQamONID.Size = new System.Drawing.Size(146, 20);
+      this.textBoxQamONID.TabIndex = 62;
+      this.textBoxQamONID.Text = "-1";
+      // 
+      // label39
+      // 
+      this.label39.AutoSize = true;
+      this.label39.Location = new System.Drawing.Point(23, 236);
+      this.label39.Name = "label39";
+      this.label39.Size = new System.Drawing.Size(64, 13);
+      this.label39.TabIndex = 67;
+      this.label39.Text = "TransportId:";
+      // 
+      // label40
+      // 
+      this.label40.AutoSize = true;
+      this.label40.Location = new System.Drawing.Point(23, 262);
+      this.label40.Name = "label40";
+      this.label40.Size = new System.Drawing.Size(55, 13);
+      this.label40.TabIndex = 66;
+      this.label40.Text = "ServiceId:";
+      // 
+      // label41
+      // 
+      this.label41.AutoSize = true;
+      this.label41.Location = new System.Drawing.Point(23, 210);
+      this.label41.Name = "label41";
+      this.label41.Size = new System.Drawing.Size(59, 13);
+      this.label41.TabIndex = 65;
+      this.label41.Text = "NetworkId:";
       // 
       // FormEditChannel
       // 
@@ -1096,7 +1212,15 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label36;
     private System.Windows.Forms.ComboBox comboBoxPilot;
     private System.Windows.Forms.Label label35;
-    private System.Windows.Forms.ComboBox comboBox1;
+    private System.Windows.Forms.ComboBox comboBoxQAMModulation;
     private System.Windows.Forms.Label label37;
+    private System.Windows.Forms.TextBox textBoxFrequency;
+    private System.Windows.Forms.Label label38;
+    private System.Windows.Forms.TextBox textBoxQamSID;
+    private System.Windows.Forms.TextBox textBoxQamTSID;
+    private System.Windows.Forms.TextBox textBoxQamONID;
+    private System.Windows.Forms.Label label39;
+    private System.Windows.Forms.Label label40;
+    private System.Windows.Forms.Label label41;
   }
 }

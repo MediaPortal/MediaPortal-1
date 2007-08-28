@@ -200,7 +200,6 @@ namespace TvLibrary.Channels
       if (ch.SymbolRate != SymbolRate) return false;
       if (ch.AudioPid != AudioPid) return false;
       if (ch.VideoPid != VideoPid) return false;
-
       return true;
     }
     /// <summary>
@@ -211,8 +210,7 @@ namespace TvLibrary.Channels
     /// </returns>
     public override int GetHashCode()
     {
-      return base.GetHashCode() ^ _physicalChannel.GetHashCode() ^ _majorChannel.GetHashCode()
-             ^ _minorChannel.GetHashCode() ^ _symbolRate.GetHashCode() ^ _modulation.GetHashCode() ^ _videoPid.GetHashCode() ^ _audioPid.GetHashCode();
+      return base.GetHashCode() ^ _physicalChannel.GetHashCode() ^ _majorChannel.GetHashCode() ^ _minorChannel.GetHashCode() ^ _symbolRate.GetHashCode() ^ _modulation.GetHashCode() ^ _videoPid.GetHashCode() ^ _audioPid.GetHashCode();
     }
   }
 }

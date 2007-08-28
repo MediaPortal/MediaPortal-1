@@ -210,8 +210,8 @@ namespace SetupTv.Sections
           minchan = 0;
           maxchan = _channelCount;
         }
-        Log.WriteFile("ATSC tune: using min channel {0} & max channel {1}",minchan, maxchan);
-        for (int index = minchan; index <= maxchan; ++index)
+        //Log.WriteFile("ATSC tune: using min channel {0} & max channel {1}",minchan, maxchan);
+        for (int index = minchan; index < maxchan; ++index)
         {
           if (_stopScanning) return;
           float percent = ((float)(index)) / (maxchan - minchan);
@@ -274,7 +274,8 @@ namespace SetupTv.Sections
           {
             Channel dbChannel;
             ATSCChannel channel = (ATSCChannel)channels[i];
-            TuningDetail currentDetail = layer.GetAtscChannel(channel);
+            //TuningDetail currentDetail = layer.GetAtscChannel(channel);
+            TuningDetail currentDetail = layer.GetChannel(channel);
             if (currentDetail == null)
             {
               //add new channel
