@@ -604,14 +604,10 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       if (_init == false) return;
-
-      Plugins plugin = new Plugins();
-      string plugindesc = plugin.GetPluginDescription("My TV");
-
-      if (plugindesc.Contains("v2") )
-        { pluginVersion = 2; }
+      if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
+        pluginVersion = 3; 
       else 
-        { pluginVersion = 3;}
+        pluginVersion = 2;
 
       //Add call to enable/disable objects. 
       // test call ony
