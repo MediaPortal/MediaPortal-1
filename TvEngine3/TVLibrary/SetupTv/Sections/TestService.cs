@@ -413,7 +413,7 @@ namespace SetupTv.Sections
     private void mpButtonReGrabEpg_Click(object sender, EventArgs e)
     {
       RemoteControl.Instance.EpgGrabberEnabled = false;
-      Gentle.Framework.Broker.Execute("delete from program");
+      Gentle.Framework.Broker.Execute("delete from Program");
       IList channels = Channel.ListAll();
       foreach (Channel ch in channels)
       {

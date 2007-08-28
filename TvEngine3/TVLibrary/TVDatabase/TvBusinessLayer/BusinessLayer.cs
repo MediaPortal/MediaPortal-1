@@ -972,7 +972,7 @@ namespace TvDatabase
           connect.Open();
           using (MySqlCommand cmd = connect.CreateCommand())
           {
-            cmd.CommandText = "select distinct(genre) from program order by genre";
+            cmd.CommandText = "select distinct(genre) from Program order by genre";
             cmd.CommandType = System.Data.CommandType.Text;
             using (System.Data.IDataReader reader = cmd.ExecuteReader())
             {
@@ -993,7 +993,7 @@ namespace TvDatabase
           connect.Open();
           using (System.Data.OleDb.OleDbCommand cmd = connect.CreateCommand())
           {
-            cmd.CommandText = "select distinct(genre) from program order by genre";
+            cmd.CommandText = "select distinct(genre) from Program order by genre";
             cmd.CommandType = System.Data.CommandType.Text;
             using (System.Data.IDataReader reader = cmd.ExecuteReader())
             {
@@ -1095,34 +1095,34 @@ namespace TvDatabase
           case "mysql":
             MySQLConnect = new MySqlConnection(connectString);
             MySQLAdapter = new MySqlDataAdapter();
-            MySQLAdapter.TableMappings.Add("Table", "program");
+            MySQLAdapter.TableMappings.Add("Table", "Program");
             MySQLConnect.Open();
             MySQLCmd = MySQLConnect.CreateCommand();
             MySQLCmd.CommandType = CommandType.Text;
-            MySQLCmd.CommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM program WHERE program.endtime >= NOW() AND program.endtime < DATE_ADD(SYSDATE(),INTERVAL 24 HOUR) ORDER BY idchannel,starttime";
+            MySQLCmd.CommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM Program WHERE Program.endtime >= NOW() AND Program.endtime < DATE_ADD(SYSDATE(),INTERVAL 24 HOUR) ORDER BY idchannel,starttime";
             MySQLAdapter.SelectCommand = MySQLCmd;
             break;
           case "sqlserver":
             MSSQLConnect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;" + connectString);
             OleAdapter = new OleDbDataAdapter();
-            OleAdapter.TableMappings.Add("Table", "program");
+            OleAdapter.TableMappings.Add("Table", "Program");
             MSSQLConnect.Open();
             OleDbCmd = MSSQLConnect.CreateCommand();
             OleDbCmd.CommandType = CommandType.Text;
-            // "select idChannel,idProgram,starttime,endtime,title from program where program.endtime >= now() and program.idProgram in (select idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= now() order by starttime) order by idchannel,starttime desc";
-            OleDbCmd.CommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM program WHERE program.endtime >= getdate() AND program.endtime < DATEADD(day, 1, getdate()) ORDER BY idchannel,starttime";
+            // "select idChannel,idProgram,starttime,endtime,title from Program where Program.endtime >= now() and Program.idProgram in (select idProgram from Program as p3 where p3.idchannel=Program.idchannel and p3.endtime >= now() order by starttime) order by idchannel,starttime desc";
+            OleDbCmd.CommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM Program WHERE Program.endtime >= getdate() AND Program.endtime < DATEADD(day, 1, getdate()) ORDER BY idchannel,starttime";
             OleAdapter.SelectCommand = OleDbCmd;
             break;
           default:
             //MSSQLConnect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;" + connectString);
             OleAdapter = new OleDbDataAdapter();
-            OleAdapter.TableMappings.Add("Table", "program");
+            OleAdapter.TableMappings.Add("Table", "Program");
             Log.Info("BusinessLayer: using slower default SQL to get NowNext info, no connect info for provider {0} - aborting", provider);
-            //SQLCommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM program WHERE program.endtime >= NOW() ORDER BY idchannel,starttime";
+            //SQLCommandText = "SELECT idChannel,idProgram,starttime,endtime,title FROM Program WHERE Program.endtime >= NOW() ORDER BY idchannel,starttime";
             return nowNextList;
         }
 
-        using (System.Data.DataSet dataSet = new DataSet("program"))
+        using (System.Data.DataSet dataSet = new DataSet("Program"))
         {
           // ToDo: check if column fetching wastes performance
           if (provider == "sqlserver")
@@ -1196,10 +1196,10 @@ namespace TvDatabase
       //    connect.Open();
       //    using (System.Data.OleDb.OleDbCommand cmd = connect.CreateCommand())
       //    {
-      //      cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from	program";
-      //      cmd.CommandText += " where	 program.endtime >= getdate() and program.idProgram in ";
+      //      cmd.CommandText = "select idChannel,idProgram,starttime,endtime,title from	Program";
+      //      cmd.CommandText += " where	 Program.endtime >= getdate() and Program.idProgram in ";
       //      cmd.CommandText += " ( ";
-      //      cmd.CommandText += " select top 2 idProgram from program as p3 where p3.idchannel=program.idchannel and p3.endtime >= getdate() order by starttime";
+      //      cmd.CommandText += " select top 2 idProgram from Program as p3 where p3.idchannel=Program.idchannel and p3.endtime >= getdate() order by starttime";
       //      cmd.CommandText += " ) order by idchannel,starttime";
       //      cmd.CommandType = System.Data.CommandType.Text;
       //      using (System.Data.IDataReader reader = cmd.ExecuteReader())

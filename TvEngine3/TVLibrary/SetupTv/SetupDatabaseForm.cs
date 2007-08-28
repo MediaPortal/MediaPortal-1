@@ -413,7 +413,7 @@ namespace SetupTv
                 using (SqlCommand cmd = connect.CreateCommand())
                 {
                   cmd.CommandType = CommandType.Text;
-                  cmd.CommandText = "select * from version";
+                  cmd.CommandText = "select * from Version";
                   using (IDataReader reader = cmd.ExecuteReader())
                   {
                     if (reader.Read())
@@ -442,7 +442,7 @@ namespace SetupTv
                 using (MySqlCommand cmd = connect.CreateCommand())
                 {
                   cmd.CommandType = CommandType.Text;
-                  cmd.CommandText = "select * from version";
+                  cmd.CommandText = "select * from Version";
                   using (IDataReader reader = cmd.ExecuteReader())
                   {
                     if (reader.Read())
