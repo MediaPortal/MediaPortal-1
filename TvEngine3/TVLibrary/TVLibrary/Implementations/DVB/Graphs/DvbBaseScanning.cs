@@ -251,7 +251,7 @@ namespace TvLibrary.Implementations.DVB
                     out teletextPid, out subtitlePid, out subtitleLanguage, out videoStreamType);
               bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid != 0);
               string name = DvbTextConverter.Convert(serviceName, "");
-              //Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} v:{6:X} a:{7:X} ac3:{8:X} type:{9:X}", i, networkId, transportId, serviceId, pmtPid, name, videoPid, audio1Pid, ac3Pid, serviceType);
+              Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} v:{6:X} a:{7:X} ac3:{8:X} type:{9:X}", i, networkId, transportId, serviceId, pmtPid, name, videoPid, audio1Pid, ac3Pid, serviceType);
               if (videoStreamType == 0x10 || videoStreamType == 0x1b)
               {
                 Log.Log.WriteFile("H264/MPEG4!");
