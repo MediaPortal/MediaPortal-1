@@ -347,7 +347,7 @@ namespace MediaPortal.MPInstaller
           {
             writer.WriteStartElement("SetupGroupMapping");
             writer.WriteAttributeString("Id", gs.Id);
-            writer.WriteAttributeString("FileName", gs.FileName);
+            writer.WriteAttributeString("FileName", RelativePath(fil, gs.FileName));
             writer.WriteEndElement();
           }
           writer.WriteEndElement();
