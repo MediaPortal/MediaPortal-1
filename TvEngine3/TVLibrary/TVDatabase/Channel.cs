@@ -560,41 +560,15 @@ namespace TvDatabase
 
     public void Delete()
     {
-      IList list = ReferringHistory();
-      foreach (History his in list)
-        his.Remove();
-
-      list = ReferringConflicts();
-      foreach (Conflict conflict in list)
-        conflict.Remove();
-
-      list = ReferringGroupMap();
-      foreach (GroupMap map in list)
-        map.Remove();
-
-      list = ReferringProgram();
-      foreach (Program program in list)
-        program.Delete();
-
-      list = ReferringSchedule();
-      foreach (Schedule schedule in list)
-        schedule.Delete();
-
-      list = ReferringRecording();
-      foreach (Recording rec in list)
-        rec.Remove();
-
-      list = ReferringChannelMap();
-      foreach (ChannelMap channelMap in list)
-        channelMap.Remove();
-
-      list = ReferringTuningDetail();
-      foreach (TuningDetail detail in list)
-        detail.Remove();
-
-      list = ReferringLinkedChannels();
-      foreach (ChannelLinkageMap linkageMap in list)
-        linkageMap.Remove();
+      Gentle.Framework.Broker.Execute("delete from History WHERE idChannel=" + idChannel.ToString());
+      Gentle.Framework.Broker.Execute("delete from Conflict WHERE idChannel=" + idChannel.ToString());
+      Gentle.Framework.Broker.Execute("delete from GroupMap WHERE idChannel=" + idChannel.ToString());
+      Gentle.Framework.Broker.Execute("delete from Program WHERE idChannel=" + idChannel.ToString());
+      Gentle.Framework.Broker.Execute("delete from Schedule WHERE idChannel=" + idChannel.ToString());
+      Gentle.Framework.Broker.Execute("delete from Recording WHERE idChannel=" + idChannel.ToString());
+      Gentle.Framework.Broker.Execute("delete from ChannelMap WHERE idChannel=" + idChannel.ToString());
+      Gentle.Framework.Broker.Execute("delete from TuningDetail WHERE idChannel=" + idChannel.ToString());
+      Gentle.Framework.Broker.Execute("delete from ChannelLinkageMap WHERE idPortalChannel=" + idChannel.ToString()+" OR idLinkedChannel="+idChannel.ToString());
       Remove();
     }
 

@@ -311,6 +311,9 @@ namespace SetupTv.Sections
 
     private void mpButtonClear_Click(object sender, EventArgs e)
     {
+      NotifyForm dlg = new NotifyForm("Clearing all tv channels...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       IList channels = Channel.ListAll();
       foreach (Channel channel in channels)
       {
@@ -320,7 +323,7 @@ namespace SetupTv.Sections
           channel.Delete();
         }
       }
-
+      dlg.Close();
       /*Gentle.Framework.Broker.Execute("delete from history");
       Gentle.Framework.Broker.Execute("delete from tuningdetail");
       Gentle.Framework.Broker.Execute("delete from GroupMap");
@@ -719,6 +722,9 @@ namespace SetupTv.Sections
       openFileDialog1.AddExtension = true;
       openFileDialog1.Multiselect = false;
       if (openFileDialog1.ShowDialog(this) != DialogResult.OK) return;
+      NotifyForm dlg = new NotifyForm("Importing tv channels...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       CountryCollection collection = new CountryCollection();
       TvBusinessLayer layer = new TvBusinessLayer();
       int channelCount = 0;
@@ -950,10 +956,12 @@ namespace SetupTv.Sections
           }
 
         }
+        dlg.Close();
         MessageBox.Show(String.Format("Imported {0} channels, {1} channel groups and {2} schedules", channelCount, channelGroupCount, scheduleCount));
       }
       catch (Exception ex)
       {
+        dlg.Close();
         MessageBox.Show(this, "Error while importing:\n\n" + ex.ToString() + " " + ex.StackTrace);
       }
       OnSectionActivated();
@@ -1028,6 +1036,9 @@ namespace SetupTv.Sections
 
     private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)
     {
+      NotifyForm dlg = new NotifyForm("Clearing all scrambled tv channels...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       List<ListViewItem> itemsToRemove = new List<ListViewItem>();
       foreach (ListViewItem item in mpListView1.Items)
       {
@@ -1040,6 +1051,7 @@ namespace SetupTv.Sections
       }
       foreach (ListViewItem item in itemsToRemove)
         mpListView1.Items.Remove(item);
+      dlg.Close();
       ReOrder();
       RemoteControl.Instance.OnNewSchedule();
     }

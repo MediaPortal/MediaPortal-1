@@ -374,6 +374,9 @@ namespace SetupTv.Sections
 
     private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)
     {
+      NotifyForm dlg = new NotifyForm("Clearing all scrambled radio channels...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       List<ListViewItem> itemsToRemove = new List<ListViewItem>();
       foreach (ListViewItem item in mpListView1.Items)
       {
@@ -387,6 +390,7 @@ namespace SetupTv.Sections
       foreach (ListViewItem item in itemsToRemove)
         mpListView1.Items.Remove(item);
       ReOrder();
+      dlg.Close();
       RemoteControl.Instance.OnNewSchedule();
     }
 
@@ -418,6 +422,9 @@ namespace SetupTv.Sections
 
     private void mpButtonClear_Click(object sender, EventArgs e)
     {
+      NotifyForm dlg = new NotifyForm("Clearing all radio channels...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       IList channels = Channel.ListAll();
       foreach (Channel channel in channels)
       {
@@ -427,6 +434,7 @@ namespace SetupTv.Sections
           channel.Delete();
         }
       }
+      dlg.Close();
       OnSectionActivated();
     }
 

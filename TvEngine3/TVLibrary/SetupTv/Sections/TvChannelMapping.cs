@@ -99,8 +99,10 @@ namespace SetupTv.Sections
 
     private void mpButtonMap_Click(object sender, EventArgs e)
     {
+      NotifyForm dlg = new NotifyForm("Mapping selected channels to TV-Card...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
-
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
       ListView.SelectedListViewItemCollection selectedItems = mpListViewChannels.SelectedItems;
@@ -117,6 +119,7 @@ namespace SetupTv.Sections
         ListViewItem newItem = mpListViewMapped.Items.Add(channel.DisplayName, imageIndex);
         newItem.Tag = map;
       }
+      dlg.Close();
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
       //DatabaseManager.Instance.SaveChanges();
@@ -124,8 +127,12 @@ namespace SetupTv.Sections
 
     private void mpButtonUnmap_Click(object sender, EventArgs e)
     {
+      NotifyForm dlg = new NotifyForm("Unmapping selected channels from TV-Card...", "This can take some time\n\nPlease be patient...");
+      dlg.Show();
+      dlg.WaitForDisplay();
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
+
       ListView.SelectedListViewItemCollection selectedItems = mpListViewMapped.SelectedItems;
 
       foreach (ListViewItem item in selectedItems)
@@ -144,7 +151,7 @@ namespace SetupTv.Sections
         map.Remove();
       }
       mpListViewChannels.Sort();
-
+      dlg.Close();
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
       // DatabaseManager.Instance.SaveChanges();
