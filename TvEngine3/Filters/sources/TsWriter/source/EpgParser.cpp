@@ -30,8 +30,10 @@ CEpgParser::CEpgParser(void)
 	for (int i=0x4e; i <=0x6f;++i)
 		AddSectionDecoder(PID_EPG,i);
 	// DISH / BEV epg
-	for (int i=0x80; i <=0xfe;++i)
+	for (int i=0x80; i <=0xfe;++i) {
 		AddSectionDecoder(PID_DISH_EPG,i);
+		AddSectionDecoder(PID_BEV_EPG,i);
+	}
 	// Premiere DIREKT Portal
 	AddSectionDecoder(PID_EPG_PREMIERE_DIREKT,0xA0);
 	// Premiere SPORT Portal

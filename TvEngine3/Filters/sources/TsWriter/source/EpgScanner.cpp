@@ -279,7 +279,7 @@ STDMETHODIMP CEpgScanner::GetMHWTheme(UINT themeId, char** theme)
 
 bool CEpgScanner::IsEPG_PID(int pid)
 {
-	return (pid==PID_EPG || pid==PID_DISH_EPG || pid==PID_EPG_PREMIERE_DIREKT || pid==PID_EPG_PREMIERE_SPORT);
+	return (pid==PID_EPG || pid==PID_DISH_EPG || pid==PID_BEV_EPG || pid==PID_EPG_PREMIERE_DIREKT || pid==PID_EPG_PREMIERE_SPORT);
 }
 
 bool CEpgScanner::IsMHW_PID(int pid)

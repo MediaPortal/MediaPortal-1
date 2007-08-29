@@ -30,6 +30,7 @@ using namespace std;
 
 #define PID_EPG			0x12
 #define PID_DISH_EPG	0x300 // DISH Network 9-day epg
+#define PID_BEV_EPG		0x441 // Bev 9-day EPG
 #define PID_EPG_PREMIERE_DIREKT	0x0b11 
 #define PID_EPG_PREMIERE_SPORT	0x0b12
 
