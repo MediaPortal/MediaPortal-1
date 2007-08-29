@@ -46,6 +46,7 @@ using MediaPortal.Ripper;
 using MediaPortal.Player;
 using MediaPortal.Configuration;
 using System.Threading;
+using System.Globalization;
 
 namespace MediaPortal.Util
 {
@@ -2361,6 +2362,38 @@ namespace MediaPortal.Util
           return GUILocalizeStrings.Get(2612);
         default:
           return language;
+      }
+    }
+
+
+    public static string GetCultureRegionLanguage()
+    {
+      string strLongLanguage = CultureInfo.CurrentCulture.EnglishName;
+      int iTrimIndex = strLongLanguage.IndexOf(" ", 0, strLongLanguage.Length);
+      string strShortLanguage = strLongLanguage.Substring(0, iTrimIndex);
+
+      foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
+      {
+        if (cultureInformation.EnglishName.ToLower().IndexOf(strShortLanguage.ToLower()) != -1)
+        {
+          return cultureInformation.EnglishName;
+        }
+      }
+      return "English";
+    }
+
+    public static void PopulateLanguagesToComboBox(ComboBox comboBox, string defaultLanguage)
+    {
+      comboBox.Items.Clear();
+
+      foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
+      {
+        comboBox.Items.Add(cultureInformation.EnglishName);
+
+        if (String.Compare(cultureInformation.EnglishName, defaultLanguage, true) == 0)
+        {
+          comboBox.Text = defaultLanguage;
+        }
       }
     }
 

@@ -74,6 +74,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowStretch;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAllowPanScan;
 
+    string m_strDefaultRegionLanguage = "English";
+
     //string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "zoom149", "letterbox", "panscan" };
 
@@ -87,6 +89,11 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
+
+      // Populate combo box with languages
+      m_strDefaultRegionLanguage = MediaPortal.Util.Utils.GetCultureRegionLanguage();
+      defaultSubtitleLanguageComboBox.Text = m_strDefaultRegionLanguage;
+      MediaPortal.Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, m_strDefaultRegionLanguage);
     }
 
     public override void LoadSettings()
@@ -123,7 +130,7 @@ namespace MediaPortal.Configuration.Sections
         showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "enabled", false);
         checkBoxShowWatched.Checked = xmlreader.GetValueAsBool("movies", "markwatched", true);
 
-        string defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
+        defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("subtitles", "language", m_strDefaultRegionLanguage);
 
         dropShadowTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("subtitles", "shadow", 5));
 
@@ -164,7 +171,6 @@ namespace MediaPortal.Configuration.Sections
             break;
           }
         }
-        PopulateLanguages(defaultSubtitleLanguageComboBox, defaultLanguage);
       }
     }
 
@@ -653,7 +659,7 @@ namespace MediaPortal.Configuration.Sections
           fontColor = String.Format("{0:x}", fontDialog.Color.ToArgb());
 
           subtitlesFontTextBox.Text = String.Format("{0} {1}{2}", fontName, fontSize, fontIsBold ? ", Bold" : "");
-
+          
           //
           // Try to parse the specified color into a valid color
           //
@@ -670,23 +676,6 @@ namespace MediaPortal.Configuration.Sections
 
         }
       }
-    }
-
-
-    void PopulateLanguages(ComboBox comboBox, string defaultLanguage)
-    {
-      comboBox.Items.Clear();
-
-      foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-      {
-        comboBox.Items.Add(cultureInformation.EnglishName);
-
-        if (String.Compare(cultureInformation.EnglishName, defaultLanguage, true) == 0)
-        {
-          comboBox.Text = defaultLanguage;
-        }
-      }
-      comboBox.SelectedItem = defaultLanguage;
     }
   }
 }

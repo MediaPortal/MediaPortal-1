@@ -68,16 +68,12 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
-      //
       // Populate combo box with languages
-      //
-
-      // set default to english
-      m_strDefaultRegionLanguage = GetCultureRegionLanguage();
+      m_strDefaultRegionLanguage = MediaPortal.Util.Utils.GetCultureRegionLanguage();
       defaultSubtitleLanguageComboBox.Text = m_strDefaultRegionLanguage;
       defaultAudioLanguageComboBox.Text = m_strDefaultRegionLanguage;
-      PopulateLanguages(defaultSubtitleLanguageComboBox, m_strDefaultRegionLanguage);
-      PopulateLanguages(defaultAudioLanguageComboBox, m_strDefaultRegionLanguage);
+      MediaPortal.Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, m_strDefaultRegionLanguage);
+      MediaPortal.Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, m_strDefaultRegionLanguage);
 
       autoPlayComboBox.Items.Clear();
       autoPlayComboBox.Items.AddRange(autoPlayOptions);
@@ -157,41 +153,6 @@ namespace MediaPortal.Configuration.Sections
           autoPlayText = "Yes";
 
         xmlwriter.SetValue("dvdplayer", "autoplay", autoPlayText);
-      }
-    }
-
-    string GetCultureRegionLanguage()
-    {
-      string strLongLanguage = CultureInfo.CurrentCulture.EnglishName;
-      int iTrimIndex = strLongLanguage.IndexOf(" ", 0, strLongLanguage.Length);
-      string strShortLanguage = strLongLanguage.Substring(0, iTrimIndex);
-
-      foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-      {
-        if (cultureInformation.EnglishName.ToLower().IndexOf(strShortLanguage.ToLower()) != -1)
-        {
-          return cultureInformation.EnglishName;
-        }
-      }
-      return "English";
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="comboBox"></param>
-    /// <param name="defaultLanguage"></param>
-    void PopulateLanguages(ComboBox comboBox, string defaultLanguage)
-    {
-      comboBox.Items.Clear();
-      foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-      {
-        comboBox.Items.Add(cultureInformation.EnglishName);
-
-        if (String.Compare(cultureInformation.EnglishName, defaultLanguage, true) == 0)
-        {
-          comboBox.Text = defaultLanguage;
-        }
       }
     }
 
