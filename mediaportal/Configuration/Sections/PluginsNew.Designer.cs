@@ -214,6 +214,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpButtonReinstall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonReinstall.Enabled = false;
       this.mpButtonReinstall.Location = new System.Drawing.Point(253, 328);
       this.mpButtonReinstall.Name = "mpButtonReinstall";
       this.mpButtonReinstall.Size = new System.Drawing.Size(75, 23);
@@ -238,6 +239,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpButtonUninstall.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonUninstall.Enabled = false;
       this.mpButtonUninstall.Location = new System.Drawing.Point(37, 328);
       this.mpButtonUninstall.Name = "mpButtonUninstall";
       this.mpButtonUninstall.Size = new System.Drawing.Size(75, 23);

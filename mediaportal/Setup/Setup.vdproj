@@ -1575,12 +1575,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2104021B6D864F2087442F231A0AE9D2"
-        "OwnerKey" = "8:_416D221129EA4472920D97B19D66A6A4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_212F00DEB14B4BD6A7EF1F940FE67CF9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1967,6 +1961,12 @@
         {
         "MsmKey" = "8:_2AB231687B1348479800EC372778C8BD"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2AF63A9E77EA43C2A1B5D66C70DE1B10"
+        "OwnerKey" = "8:_416D221129EA4472920D97B19D66A6A4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -55128,7 +55128,7 @@
         {
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_10C5EAFF1E5A410D8DC57332EAFF0FEC"
             {
-            "Name" = "8:MPInstaller"
+            "Name" = "8:MediaPortal Extension Installer"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -55935,7 +55935,7 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_2104021B6D864F2087442F231A0AE9D2"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_2AF63A9E77EA43C2A1B5D66C70DE1B10"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
