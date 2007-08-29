@@ -87,7 +87,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Set default aspect ratio
         //
-        string defaultAspectRatio = xmlreader.GetValueAsString("dvdplayer", "defaultar", "original");
+        string defaultAspectRatio = xmlreader.GetValueAsString("dvdplayer", "defaultar", "normal");
 
         for (int index = 0; index < aspectRatio.Length; index++)
         {
