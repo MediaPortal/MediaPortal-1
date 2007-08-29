@@ -115,15 +115,17 @@ namespace MediaPortal.Configuration.Sections
 
         displayModeComboBox.Text = xmlreader.GetValueAsString("dvdplayer", "displaymode", "Default");
 
-        string autoPlayText = xmlreader.GetValueAsString("dvdplayer", "autoplay", "Yes");
-
+        string autoPlayText = xmlreader.GetValueAsString("dvdplayer", "autoplay", "Ask");
         switch (autoPlayText)
         {
-          case "No": autoPlayComboBox.Text = autoPlayOptions[1];
+          case "No":
+            autoPlayComboBox.Text = autoPlayOptions[1];
             break;
-          case "Ask": autoPlayComboBox.Text = autoPlayOptions[2];
+          case "Ask":
+            autoPlayComboBox.Text = autoPlayOptions[2];
             break;
-          default: autoPlayComboBox.Text = autoPlayOptions[0];
+          default:
+            autoPlayComboBox.Text = autoPlayOptions[0];
             break;
         }
       }
