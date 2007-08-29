@@ -123,13 +123,16 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.Info("Hauppauge: DVB-S card not found, checking ATSC QAM");
             IPin qampin = DsFindPin.ByName(tunerFilter, "MPEG2 Transport");
-            _propertySet = qampin as DirectShowLib.IKsPropertySet;
-            _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
-            //Log.Log.Info("Hauppauge: QuerySupported: {0}", supported);
-            if ((supported & KSPropertySupport.Set) != 0)
+            if (qampin != null)
             {
-              Log.Log.Info("Hauppauge: ATSC QAM card found!");
-              _isHauppauge = true;
+              _propertySet = qampin as DirectShowLib.IKsPropertySet;
+              _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
+              //Log.Log.Info("Hauppauge: QuerySupported: {0}", supported);
+              if ((supported & KSPropertySupport.Set) != 0)
+              {
+                Log.Log.Info("Hauppauge: ATSC QAM card found!");
+                _isHauppauge = true;
+              }
             }
           }
         }
