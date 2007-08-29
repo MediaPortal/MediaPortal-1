@@ -478,7 +478,7 @@ namespace SetupTv.Sections
       checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "enabledvbs2", "false").Value == "true");
       if (!checkEnableDVBS2.Checked)
       {
-        checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "enabledvbs2", "false").Value == "false");
+        checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber.ToString() + "enabledvbs2", "false").Value == "true");
       }
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
@@ -489,10 +489,11 @@ namespace SetupTv.Sections
     public override void OnSectionDeActivated()
     {
       timer1.Enabled = false;
+      SaveSettings();
       base.OnSectionDeActivated();
     }
 
-    void SaveSettings()
+    public override void SaveSettings()
     {
       Setting setting;
       TvBusinessLayer layer = new TvBusinessLayer();
