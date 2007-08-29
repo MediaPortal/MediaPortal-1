@@ -207,6 +207,7 @@ CMpTsFilterPin::CMpTsFilterPin(CMpTs *pDump,LPUNKNOWN pUnk,CBaseFilter *pFilter,
     m_pWriterFilter(pDump)
 {
 	LogDebug("CMpTsFilterPin:ctor");
+	m_rawPaketWriter=NULL;
 }
 
 
@@ -275,6 +276,9 @@ STDMETHODIMP CMpTsFilterPin::Receive(IMediaSample *pSample)
 			LogDebug("pin:receive cannot get samplepointer");
 			return S_OK;
 		}
+		if (m_rawPaketWriter!=NULL)
+			if (!m_rawPaketWriter->IsFileInvalid())
+				m_rawPaketWriter->Write(pbData,sampleLen);
 		OnRawData(pbData, sampleLen);
 	}
 	catch(...)
@@ -311,6 +315,11 @@ STDMETHODIMP CMpTsFilterPin::NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tSt
     return S_OK;
 } // NewSegment
 
+void CMpTsFilterPin::AssignRawPaketWriter(FileWriter *rawPaketWriter)
+{
+	m_rawPaketWriter=rawPaketWriter;
+}
+
 
 //
 //  CMpTs class
@@ -322,7 +331,8 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
 
 		LogDebug("CMpTs::ctor()");
 		DeleteFile("TsWriter.log");
-
+		
+	b_dumpRawPakets=false;
     m_pFilter = new CMpTsFilter(this, GetOwner(), &m_Lock, phr);
     if (m_pFilter == NULL) 
 		{
@@ -345,6 +355,8 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
 		m_pKNC= new CKnc(GetOwner(),phr);
 //    m_pWinTvCI = new CWinTvUsbCI(GetOwner(),phr);
 		m_pChannelLinkageScanner = new CChannelLinkageScanner(GetOwner(),phr);
+		m_rawPaketWriter=new FileWriter();
+		m_pPin->AssignRawPaketWriter(m_rawPaketWriter);
 }
 
 
@@ -362,6 +374,7 @@ CMpTs::~CMpTs()
 	delete m_pKNC;
 //  delete m_pWinTvCI;
 	delete m_pChannelLinkageScanner;
+	delete m_rawPaketWriter;
   CAutoLock lock(&m_Lock);
   for (int i=0; i < (int)m_vecChannels.size();++i)
   {
@@ -717,24 +730,56 @@ STDMETHODIMP CMpTs:: TimeShiftSetTimeShiftingFileName( int handle, char* pszFile
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTimeShifting->SetTimeShiftingFileName( pszFileName);
+  
+  b_dumpRawPakets=false;
+  HANDLE hTest=CreateFile("C:\\dumprawts.txt",(DWORD) GENERIC_READ,0,0,(DWORD) OPEN_EXISTING,0,NULL);
+  if (hTest!=INVALID_HANDLE_VALUE)
+  {
+    CloseHandle(hTest);
+	b_dumpRawPakets=true;
+	string fileName=pszFileName;
+	fileName=fileName.substr(0, fileName.rfind("\\"));
+	fileName.append("\\raw_paket_dump.ts");
+	
+	LogDebug("Setting name for raw paket dump file to %s",fileName.c_str());
+	WCHAR wstrFileName[2048];
+	MultiByteToWideChar(CP_ACP,0,fileName.c_str(),-1,wstrFileName,1+fileName.size());
+	m_rawPaketWriter->SetFileName(wstrFileName);
+  }
+  return pChannel->m_pTimeShifting->SetTimeShiftingFileName( pszFileName);
 }
 STDMETHODIMP CMpTs:: TimeShiftStart( int handle )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTimeShifting->Start( );
+  if (b_dumpRawPakets)
+  {
+	m_rawPaketWriter->OpenFile();
+	LogDebug("Raw paket dump file created. Now dumping raw pakets to dump file");
+  }
+  return pChannel->m_pTimeShifting->Start( );
 }
 STDMETHODIMP CMpTs:: TimeShiftStop( int handle )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	return pChannel->m_pTimeShifting->Stop( );
+  if (b_dumpRawPakets)
+  {
+	m_rawPaketWriter->CloseFile();
+	LogDebug("Raw paket dump file closed");
+  }
+  return pChannel->m_pTimeShifting->Stop( );
 }
 STDMETHODIMP CMpTs:: TimeShiftReset( int handle )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
+  if (b_dumpRawPakets)
+  {
+	m_rawPaketWriter->CloseFile();
+	m_rawPaketWriter->OpenFile();
+	LogDebug("Raw paket dump file reset");
+  }
 	return pChannel->m_pTimeShifting->Reset( );
 }
 STDMETHODIMP CMpTs:: TimeShiftGetBufferSize( int handle, long * size) 

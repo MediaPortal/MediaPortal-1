@@ -153,8 +153,10 @@ public:
 
 		//CPacketSync overrides
 		void OnTsPacket(byte* tsPacket);
+		void AssignRawPaketWriter(FileWriter *rawPaketWriter);
 private:
 	CCritSec		m_section;
+	FileWriter *m_rawPaketWriter;
 };
 
 
@@ -234,6 +236,8 @@ private:
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
 		CChannelScan*   m_pChannelScanner;
 		CEpgScanner*		m_pEpgScanner;
+		FileWriter* m_rawPaketWriter;
+		bool b_dumpRawPakets;
     CTechnotrend*   m_pTechnoTrend;
 		CKnc* m_pKNC;
 //    CWinTvUsbCI* m_pWinTvCI;

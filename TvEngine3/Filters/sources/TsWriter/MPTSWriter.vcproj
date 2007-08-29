@@ -317,31 +317,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\WinTvUsbCI\USB2CIIFace.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WinTvUsbCI\USB2CIIFace.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WinTvUsbCI\USB2CIiface_i.c"
-				>
-			</File>
-			<File
 				RelativePath=".\source\VideoAnalyzer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\WinTvUsbCI\WinTvUsbCI.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\WinTvUsbCI\WinTvUsbCI.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\WinTvUsbCI\WinTvUsbCI.h"
 				>
 			</File>
 			<Filter
