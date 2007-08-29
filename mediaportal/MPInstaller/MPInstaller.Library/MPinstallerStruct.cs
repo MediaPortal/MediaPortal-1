@@ -302,7 +302,7 @@ namespace MediaPortal.MPInstaller
           for (int i = 0; i < this.FileList.Count; i++)
           {
             MPIFileList it = (MPIFileList)this.FileList[i];
-            
+            it.SetGuid();
             writer.WriteStartElement("File");
             writer.WriteElementString("FileName", Path.GetFileName(it.FileName));
             writer.WriteElementString("Type", it.Type);
@@ -310,6 +310,7 @@ namespace MediaPortal.MPInstaller
             writer.WriteElementString("Source", RelativePath(fil,it.FileName));
             writer.WriteElementString("Id", it.ID);
             writer.WriteElementString("Option", it.Option);
+            writer.WriteElementString("Guid",it.GUID );
             writer.WriteEndElement();
           }
           writer.WriteEndElement();
@@ -478,12 +479,17 @@ namespace MediaPortal.MPInstaller
       foreach (XmlNode nodefile in fileList)
       {
         string t_path = nodefile.SelectSingleNode("Source").InnerText;
+        XmlNode node_guid = nodefile.SelectSingleNode("Guid");
+        string str_guid = string.Empty;
+        if (node_guid != null)
+          str_guid = nodefile.SelectSingleNode("Guid").InnerText;
         this.FileList.Add(new MPIFileList(
                AbsolutePath(fil,t_path),
                nodefile.SelectSingleNode("Type").InnerText,
                nodefile.SelectSingleNode("SubType").InnerText,
                nodefile.SelectSingleNode("Id").InnerText,
-               nodefile.SelectSingleNode("Option").InnerText));
+               nodefile.SelectSingleNode("Option").InnerText,
+               str_guid));
       }
       XmlNodeList langList = ver.SelectNodes("StringList/string");
       foreach (XmlNode langnode in langList)
@@ -664,7 +670,8 @@ namespace MediaPortal.MPInstaller
         ret += Path.GetFileName(flst.FileName);
       else
         ret += flst.FileProperties.OutputFileName;
-
+      if (!string.IsNullOrEmpty(flst.GUID))
+        ret = flst.GUID;
       return ret;
     }
 
@@ -791,6 +798,7 @@ namespace MediaPortal.MPInstaller
     string _SubType = string.Empty;
     string _Id = string.Empty;
     string _Op = string.Empty;
+    string _Guid = string.Empty;
     public FilePropertiesClass FileProperties = new FilePropertiesClass();
 
     public MPIFileList()
@@ -822,7 +830,17 @@ namespace MediaPortal.MPInstaller
       Option = o;
       FilePropertiesClass FileProperties = new FilePropertiesClass();
     }
-
+    
+    public MPIFileList(string fn, string ty, string sty, string i, string o, string g)
+    {
+      FileName = fn;
+      Type = ty;
+      SubType = sty;
+      ID = i;
+      Option = o;
+      GUID = g;
+      FilePropertiesClass FileProperties = new FilePropertiesClass();
+    }
     public string FileName
     {
       get { return _FileName; }
@@ -855,6 +873,16 @@ namespace MediaPortal.MPInstaller
       get { return _Id; }
       set { _Id = value; }
     }
+
+    public string GUID
+    {
+      get
+      {
+        return _Guid;
+      }
+      set { _Guid = value; }
+    }
+
     public string Option
     {
       get { return _Op; }
@@ -863,6 +891,11 @@ namespace MediaPortal.MPInstaller
         _Op = value;
         FileProperties.Parse(_Op);
       }
+    }
+
+    public void SetGuid()
+    {
+      GUID = Guid.NewGuid().ToString();
     }
 
   }
