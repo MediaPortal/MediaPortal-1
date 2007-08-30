@@ -49,21 +49,21 @@ namespace MediaPortal.GUI.Video
   public class GUITrailers : GUIWindow
   {
     #region SkinControlAttributes
-    [SkinControlAttribute(3)]      protected GUISelectButtonControl btnletter = null;
-    [SkinControlAttribute(4)]      protected GUIListControl listview = null;
-    [SkinControlAttribute(5)]      protected GUIToggleButtonControl btntoggleplot = null;
-    [SkinControlAttribute(6)]      protected GUIToggleButtonControl btntogglecast = null;
-    [SkinControlAttribute(24)]     protected GUIImage poster = null;
-    [SkinControlAttribute(50)]     protected GUILabelControl label0 = null;
-    [SkinControlAttribute(51)]     protected GUIFadeLabel label1 = null;
-    [SkinControlAttribute(52)]     protected GUILabelControl label2 = null; //runtime
-    [SkinControlAttribute(53)]     protected GUILabelControl label3 = null;
-    [SkinControlAttribute(54)]     protected GUILabelControl label4 = null;
-    [SkinControlAttribute(55)]     protected GUILabelControl label5 = null;
-    [SkinControlAttribute(56)]     protected GUILabelControl label6 = null;
-    [SkinControlAttribute(57)]     protected GUITextScrollUpControl castarea = null;
-    [SkinControlAttribute(58)]     protected GUILabelControl label8 = null;
-    [SkinControlAttribute(59)]     protected GUITextScrollUpControl plotarea = null;
+    [SkinControlAttribute(3)]     protected GUISelectButtonControl btnletter = null;
+    [SkinControlAttribute(4)]     protected GUIListControl listview = null;
+    [SkinControlAttribute(5)]     protected GUIToggleButtonControl btntoggleplot = null;
+    [SkinControlAttribute(6)]     protected GUIToggleButtonControl btntogglecast = null;
+    [SkinControlAttribute(24)]    protected GUIImage poster = null;
+    [SkinControlAttribute(50)]    protected GUILabelControl label0 = null;
+    [SkinControlAttribute(51)]    protected GUIFadeLabel label1 = null;
+    [SkinControlAttribute(52)]    protected GUILabelControl label2 = null; //runtime
+    [SkinControlAttribute(53)]    protected GUILabelControl label3 = null;
+    [SkinControlAttribute(54)]    protected GUILabelControl label4 = null;
+    [SkinControlAttribute(55)]    protected GUILabelControl label5 = null;
+    [SkinControlAttribute(56)]    protected GUILabelControl label6 = null;
+    [SkinControlAttribute(57)]    protected GUITextScrollUpControl castarea = null;
+    [SkinControlAttribute(58)]    protected GUILabelControl label8 = null;
+    [SkinControlAttribute(59)]    protected GUITextScrollUpControl plotarea = null;
     //[SkinControlAttribute(60)]			protected GUIImageList labelrating =null;
     #endregion
     #region Variables
@@ -137,7 +137,7 @@ namespace MediaPortal.GUI.Video
         int itemIndex = (int)msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
-           OnClick(itemIndex);
+          OnClick(itemIndex);
         }
       }
       if (control == btntoggleplot)
@@ -146,24 +146,25 @@ namespace MediaPortal.GUI.Video
         ToggleButtonCast();
       base.OnClicked(controlId, control, actionType);
     }
-      public override void OnAction(Action action)
+    public override void OnAction(Action action)
+    {
+      if (action.wID == Action.ActionType.ACTION_STOP)
+        SetGUIProperties();
+      if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && mainview != true)
       {
-          if (action.wID == Action.ActionType.ACTION_STOP)
-              SetGUIProperties();
-          if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && mainview!=true)
-          {
-              if (TrailersUtility._workerCompleted == false)
-              {
-                  TrailersUtility._workerCompleted = true;
-                  TrailersUtility.interupted = true;
-                  ShowLabelsFalse();
-              }
-              OnClick(0);
-              return;
-          }
-
-          base.OnAction(action);
+        if (TrailersUtility._workerCompleted == false)
+        {
+          TrailersUtility._workerCompleted = true;
+          TrailersUtility.interupted = true;
+          ShowLabelsFalse();
+        }
+        OnClick(0);
+        return;
       }
+
+      base.OnAction(action);
+    }
+
     protected override void OnPageDestroy(int newWindowId)
     {
       if (GermanTrailers.G_viewInfoAndTrailer == true || YahooTrailers.tview == true || YahooTrailers.cview == true || YahooTrailers.mview == true)
@@ -173,12 +174,13 @@ namespace MediaPortal.GUI.Video
       //GetGUIProperties();
       base.OnPageDestroy(newWindowId);
     }
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
       btnletter.RestoreSelection = false;
       btnletter.AddSubItem("#");
-      for (char k = 'A'; k <= 'Z'; k++)
+      for (char k = 'A' ; k <= 'Z' ; k++)
       {
         btnletter.AddSubItem(k.ToString());
       }
@@ -208,7 +210,7 @@ namespace MediaPortal.GUI.Video
     //public override bool OnMessage(GUIMessage message)
     //{
     //  if(message.Message == GUIMessage.MessageType.GUI_MSG_WINDOWS_MEDIA_PLAYER_BUFFERING)
-      
+
     //  return base.OnMessage(message);
     //}
 
@@ -253,16 +255,16 @@ namespace MediaPortal.GUI.Video
     }
     private string GetSelectedListViewItemText()
     {
-        string strLabel1 = "", strLabel2 = "", strThumb = "";
-        listview.GetSelectedItem(ref strLabel1, ref strLabel2, ref strThumb);
-        if (strLabel1 != "")
-        {
-            if (strLabel1[0] == '[')
-                strLabel1 = strLabel1.Remove(0, 1);
-            if (strLabel1[strLabel1.Length - 1] == ']')
-                strLabel1 = strLabel1.Remove(strLabel1.Length-1, 1);
-        }
-        return strLabel1;
+      string strLabel1 = "", strLabel2 = "", strThumb = "";
+      listview.GetSelectedItem(ref strLabel1, ref strLabel2, ref strThumb);
+      if (strLabel1 != "")
+      {
+        if (strLabel1[0] == '[')
+          strLabel1 = strLabel1.Remove(0, 1);
+        if (strLabel1[strLabel1.Length - 1] == ']')
+          strLabel1 = strLabel1.Remove(strLabel1.Length - 1, 1);
+      }
+      return strLabel1;
     }
     private void OnClick(int itemindex) // // When something is pressed in the listview
     {
@@ -390,7 +392,7 @@ namespace MediaPortal.GUI.Video
         else
         {
           Prev_SelectedItem = listview.SelectedListItemIndex;
-          PlayTrailer(YahooTrailers.MoreUrl[itemindex - 1],GetSelectedListViewItemText());
+          PlayTrailer(YahooTrailers.MoreUrl[itemindex - 1], GetSelectedListViewItemText());
         }
       }
       // RSSView
@@ -409,15 +411,15 @@ namespace MediaPortal.GUI.Video
           YahooTrailers.GetMovieInfo(YahooTrailers.RSSMovieUrl[itemindex - 1], YahooTrailers.RSSMovieName[itemindex - 1]);
           if (TrailersUtility.interupted == true)
           {
-              TrailersUtility.interupted = false;
-              return;
+            TrailersUtility.interupted = false;
+            return;
           }
           ShowListView(YahooTrailers.TrailersClipsMore, false);
           YahooTrailers.GetMovieDetails(YahooTrailers.RSSMovieUrl[itemindex - 1], YahooTrailers.RSSMovieName[itemindex - 1]);
           if (TrailersUtility.interupted == true)
           {
-              TrailersUtility.interupted = false;
-              return;
+            TrailersUtility.interupted = false;
+            return;
           }
           ShowMovieInfo(YahooTrailers.RSSMovieName[itemindex - 1], YahooTrailers.PosterUrl);
           YahooTrailers.RSSTitle = GUIPropertyManager.GetProperty("#title");
@@ -787,9 +789,9 @@ namespace MediaPortal.GUI.Video
       Log.Debug("Url: {0}, mmsurl: {1}, videoname: {2}", url, MMSUrl, videoName);
       bool playOk = false;
       if (useVMR9)
-          playOk = g_Player.PlayVideoStream(MMSUrl,videoName);
+        playOk = g_Player.PlayVideoStream(MMSUrl, videoName);
       else
-          playOk = g_Player.PlayAudioStream(MMSUrl, true);
+        playOk = g_Player.PlayAudioStream(MMSUrl, true);
       if (playOk)
       {
         g_Player.ShowFullScreenWindow();
@@ -797,11 +799,11 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-          Log.Info("GUITrailers: Unable to play {0}", MMSUrl);
-          GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-          dlg.SetHeading("ERROR");
-          dlg.SetText("Unable to play the selected video trailer. Please try again later.");
-          dlg.DoModal(GUIWindowManager.ActiveWindow);
+        Log.Info("GUITrailers: Unable to play {0}", MMSUrl);
+        GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        dlg.SetHeading("ERROR");
+        dlg.SetText("Unable to play the selected video trailer. Please try again later.");
+        dlg.DoModal(GUIWindowManager.ActiveWindow);
       }
     }
 
@@ -853,12 +855,12 @@ namespace MediaPortal.GUI.Video
       pcast = GUIPropertyManager.GetProperty("#cast");
       if (YahooTrailers.tcmview != true)
       {
-          GUIPropertyManager.SetProperty("#title", string.Empty);
-          GUIPropertyManager.SetProperty("#genre", string.Empty);
-          GUIPropertyManager.SetProperty("#runtime", string.Empty);
-          GUIPropertyManager.SetProperty("#year", string.Empty);
-          GUIPropertyManager.SetProperty("#plot", string.Empty);
-          GUIPropertyManager.SetProperty("#cast", string.Empty);
+        GUIPropertyManager.SetProperty("#title", string.Empty);
+        GUIPropertyManager.SetProperty("#genre", string.Empty);
+        GUIPropertyManager.SetProperty("#runtime", string.Empty);
+        GUIPropertyManager.SetProperty("#year", string.Empty);
+        GUIPropertyManager.SetProperty("#plot", string.Empty);
+        GUIPropertyManager.SetProperty("#cast", string.Empty);
       }
       //float.Parse(prating) = GUIPropertyManager.GetProperty("#rating");
     }
@@ -944,11 +946,11 @@ namespace MediaPortal.GUI.Video
 
     public void ShowListView(string[] _TrailerName, int _titlenumber)
     {
-        if (TrailersUtility.interupted == true)
-        {
-            TrailersUtility.interupted = false;
-            return;
-        }
+      if (TrailersUtility.interupted == true)
+      {
+        TrailersUtility.interupted = false;
+        return;
+      }
       poster.SetFileName(GUIGraphicsContext.Skin + @"\media\" + backgroundposter);
       GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(_titlenumber));
 
@@ -1136,9 +1138,11 @@ namespace MediaPortal.GUI.Video
           int i = moviename.IndexOf("opens");
           moviename = moviename.Remove(i);
         }
-        
-//        poster.SetFileName(@"thumbs\MPTemp -" + moviename + ".jpg");
-        poster.SetFileName(System.IO.Path.Combine(Thumbs.Trailers, moviename + ".jpg"));
+
+        // TODO - add utils function here
+        string thumbFile = System.IO.Path.Combine(Thumbs.Trailers, moviename + ".jpg");
+        if (System.IO.File.Exists(thumbFile))
+          poster.SetFileName(thumbFile);
       }
     }
 
@@ -1219,7 +1223,7 @@ namespace MediaPortal.GUI.Video
         }
         else if (letter.Equals("#") == true)
         {
-          for (int n = 0; n <= 9; n++)
+          for (int n = 0 ; n <= 9 ; n++)
             if (movienames[i].StartsWith(n.ToString()) == true)
             {
               LMovieName[j] = movienames[i];
@@ -1246,5 +1250,3 @@ namespace MediaPortal.GUI.Video
 
   }
 }
-
-

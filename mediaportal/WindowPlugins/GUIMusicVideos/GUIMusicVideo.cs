@@ -270,7 +270,9 @@ namespace MediaPortal.GUI.MusicVideos
         YahooUtil loUtil = YahooUtil.getInstance();
         string lsCountryId = loUtil.getYahooSite(moSettings.msDefaultCountryName).countryId;
         Log.Info("country image -country id = {0}", lsCountryId);
-        imgCountry.SetFileName(GUIGraphicsContext.Skin + @"\media\" + lsCountryId + ".png");
+        string countryFlag = GUIGraphicsContext.Skin + @"\media\" + lsCountryId + ".png";
+        if (System.IO.File.Exists(countryFlag))
+          imgCountry.SetFileName(countryFlag);
       }
 
       if (CURRENT_STATE == (int)State.HOME)
