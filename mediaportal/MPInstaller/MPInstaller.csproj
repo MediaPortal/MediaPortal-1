@@ -10,6 +10,7 @@
     <RootNamespace>MPInstaller</RootNamespace>
     <AssemblyName>MPInstaller</AssemblyName>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationIcon>MPI MediaPortal Installer.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -251,6 +252,9 @@
       <Name>MPInstaller.Library</Name>
       <Private>False</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MPI MediaPortal Installer.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
