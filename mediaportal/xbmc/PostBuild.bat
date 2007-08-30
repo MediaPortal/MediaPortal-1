@@ -38,9 +38,6 @@ REM Plugins
 REM SubtitlePlugin
 xcopy /y %1\SubtitlePlugins\bin\%2\SubtitlePlugins.* plugins\subtitle\
 
-REM TagReader
-xcopy /y %1\TagReaderPlugins\bin\%2\TagReaderPlugins.* plugins\TagReaders\
-
 REM ExternalPlayers
 xcopy /y %1\ExternalPlayers\bin\%2\ExternalPlayers.* plugins\ExternalPlayers\
 

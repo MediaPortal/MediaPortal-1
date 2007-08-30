@@ -43,59 +43,12 @@ namespace MediaPortal.TagReader
   /// </summary>
   public class TagReader
   {
-    static ArrayList m_readers = new ArrayList();
-    static bool _useTaglibSharp = false;
-
     /// <summary>
     /// Constructor
     /// This will load all tagreader plugins from plugins/tagreaders
     /// </summary>
     static TagReader()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-      {
-        _useTaglibSharp = xmlreader.GetValueAsBool("musicfiles", "usetaglibsharp", false);
-      }
-
-      if (_useTaglibSharp)
-        return;
-
-      Log.Info("TagReader: Loading tag reader plugins");
-      string[] strFiles = System.IO.Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "tagreaders"), "*.dll");
-      foreach (string strFile in strFiles)
-      {
-        try
-        {
-          Assembly assem = Assembly.LoadFrom(strFile);
-          if (assem != null)
-          {
-            Type[] types = assem.GetExportedTypes();
-
-            foreach (Type t in types)
-            {
-              try
-              {
-                if (t.IsClass)
-                {
-                  if (t.GetInterface("ITag") != null)
-                  {
-                    object newObj = (object)Activator.CreateInstance(t);
-                    Log.Debug("  found plugin: {0} in {1}", t.ToString(), strFile);
-                    ITag reader = (ITag)newObj;
-                    m_readers.Add(reader);
-                  }
-                }
-              }
-              catch (System.NullReferenceException)
-              {
-              }
-            }
-          }
-        }
-        catch (Exception)
-        {
-        }
-      }
     }
 
     /// <summary>
@@ -108,101 +61,6 @@ namespace MediaPortal.TagReader
     /// null when file type is not supported or if the file does not contain any information
     /// </returns>
     static public MusicTag ReadTag(string strFile)
-    {
-
-
-      // Use Taglib-Sharp to read the Music Tag
-      if (_useTaglibSharp)
-        return ReadTags(strFile);
-
-      ITag reader = null;
-      int prio = -1;
-      if (strFile == null) return null;
-      if (strFile.StartsWith(@"http://")) return null;  // Don't try to read tags for streams
-      foreach (ITag tmpReader in m_readers)
-      {
-        if (tmpReader.SupportsFile(strFile) && tmpReader.Priority > prio)
-        {
-          prio = tmpReader.Priority;
-          Type t = tmpReader.GetType();
-          object newObj = (object)Activator.CreateInstance(t);
-          reader = (ITag)newObj;
-        }
-      }
-      if (reader != null)
-      {
-        try
-        {
-          if (reader.SupportsFile(strFile))
-          {
-            MusicTag musicTag = new MusicTag();
-            if (reader.Read(strFile))
-            {
-              musicTag.Album = reader.Album;
-              musicTag.Artist = reader.Artist;
-              musicTag.AlbumArtist = reader.AlbumArtist;
-              musicTag.Comment = reader.Comment;
-              musicTag.Duration = (int)Math.Round(reader.LengthMS / 1000.00);
-              musicTag.Genre = reader.Genre;
-              musicTag.Title = reader.Title;
-              musicTag.Track = reader.Track;
-              musicTag.Year = reader.Year;
-              musicTag.CoverArtImageBytes = reader.CoverArtImageBytes;
-              musicTag.FileName = strFile;
-              musicTag.BitRate = reader.AverageBitrate;
-              musicTag.Lyrics = Utils.CleanLyrics(reader.Lyrics);
-              musicTag.Rating = reader.Rating;
-              if (musicTag.CoverArtImageBytes != null)
-              {
-                System.Drawing.Image img = musicTag.CoverArtImage;
-
-                if (img == null)
-                {
-                  musicTag.CoverArtImageBytes = null;
-                  Log.Warn("TagReader: Image probably corrupted: {0}", strFile);
-                }
-
-                else
-                {
-                  img.Dispose();
-                  img = null;
-                }
-              }
-
-              // if we didn't get a title, use the Filename without extension to prevent the file to appear as "unknown"
-              if (musicTag.Title == "")
-                musicTag.Title = System.IO.Path.GetFileNameWithoutExtension(strFile);
-
-              reader.Dispose();
-
-              return musicTag;
-            }
-            else
-            {
-              Log.Warn("TagReader: {0} does not contain valid tags. Using Filename as Title", strFile);
-              musicTag.Title = System.IO.Path.GetFileNameWithoutExtension(strFile);
-              // Set non Tag related values
-              musicTag.Duration = (int)Math.Round(reader.LengthMS / 1000.00);
-              musicTag.FileName = strFile;
-              musicTag.BitRate = reader.AverageBitrate;
-              reader.Dispose();
-              return musicTag;
-            }
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Error("TagReader: exception on file {0}: {1}", strFile, ex.ToString());
-        }
-        reader.Dispose();
-      }
-      Log.Warn("TagReader: No Reader found for file {0}. Using Filename as Title", strFile);
-      MusicTag tag = new MusicTag();
-      tag.Title = System.IO.Path.GetFileNameWithoutExtension(strFile);
-      return tag;
-    }
-
-    static private MusicTag ReadTags(string strFile)
     {
       if (!IsAudio(strFile))
         return null;
