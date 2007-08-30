@@ -26,8 +26,7 @@
 using System.Drawing;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using System;
-using System.Drawing.Imaging;
+using System.Security.Cryptography;
 
 namespace ProcessPlugins.ExternalDisplay.Drivers
 {
@@ -40,14 +39,16 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     private const int GHOME_ADDR = 0x0000;
     private const int THOME_ADDR = 0x1700;
     private const int CGROM_ADDR = 0x1C00;
-    private int data;
-    private int control;
+    private int dataPort;
+    private int controlPort;
     private int NC_ROWS;
     private int NC_COLS;
     private int grows;
     private int gcols;
-    private Bitmap lastBitmap = null;
-    byte[] bitmapData;
+    private readonly BitmapConverter converter = new BitmapConverter(true);
+    private readonly SHA256Managed sha256 = new SHA256Managed(); //instance of crypto engine used to calculate hashes
+
+    private byte[] lastHash; //hash of the last bitmap that was sent to the display
 
     [DllImport("dlportio.dll", EntryPoint = "DlPortWritePortUchar")]
     private static extern void Output(int adress, byte value);
@@ -62,14 +63,14 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       NC_COLS = _cols;
       grows = linesG;
       gcols = colsG;
-      data = int.Parse(_port, NumberStyles.HexNumber);
-      control = data + 2;
+      dataPort = int.Parse(_port, NumberStyles.HexNumber);
+      controlPort = dataPort + 2;
       int tmp;
 
-      tmp = Input(data + 0x402);
+      tmp = Input(dataPort + 0x402);
       tmp = tmp & 0x1F;
       tmp = tmp | 0x20; // Bidirektionaler Modus = PS/2
-      Output(data + 0x402, (byte) tmp);
+      Output(dataPort + 0x402, (byte) tmp);
 
       // Set Text Home Address to 0x0000
       disp_write_data2(THOME_ADDR); // Data1: LowAddress
@@ -156,38 +157,38 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     private void WaitForDisplayReady()
     {
-        int ret = 0;
-        while (ret != 3)
-        {
-            Output(control, 0x26);
-            Output(control, 0x2e);
-            ret = Input(data);
-            Output(control, 0x26);
-            ret = ret & 3;
-        }
+      int ret = 0;
+      while (ret != 3)
+      {
+        Output(controlPort, 0x26);
+        Output(controlPort, 0x2e);
+        ret = Input(dataPort);
+        Output(controlPort, 0x26);
+        ret = ret & 3;
+      }
     }
 
     public void SendData(int Data)
     {
       WaitForDisplayReady();
-      Output(control, 0); //(* C/D = L (Data) *) R
-      Output(control, 2); //(* CE *)             R
-      Output(data, (byte) Data);
-      Output(control, 3); //(* CE+WR *)
-      Output(control, 2); //(* CE *)             R
-      Output(control, 0);
+      Output(controlPort, 0); //(* C/D = L (Data) *) R
+      Output(controlPort, 2); //(* CE *)             R
+      Output(dataPort, (byte) Data);
+      Output(controlPort, 3); //(* CE+WR *)
+      Output(controlPort, 2); //(* CE *)             R
+      Output(controlPort, 0);
     }
 
 
     public void disp_write_command(int Command)
     {
       WaitForDisplayReady();
-      Output(control, 4); //(* C/D = H (ctrl) *)  R
-      Output(control, 6); //(* CE *)              R
-      Output(data, (byte) Command);
-      Output(control, 7); //(* CE+WR *)
-      Output(control, 6); //(* CE *)              R
-      Output(control, 0);
+      Output(controlPort, 4); //(* C/D = H (ctrl) *)  R
+      Output(controlPort, 6); //(* CE *)              R
+      Output(dataPort, (byte) Command);
+      Output(controlPort, 7); //(* CE+WR *)
+      Output(controlPort, 6); //(* CE *)              R
+      Output(controlPort, 0);
     }
 
 
@@ -301,8 +302,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     /// Shows the advanced configuration screen
     /// </summary>
     public void Configure()
-    {
-    }
+    {}
 
     public bool IsDisabled
     {
@@ -315,8 +315,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     }
 
     public void Dispose()
-    {
-    }
+    {}
 
     private void disp_write_data2(int _data)
     {
@@ -338,43 +337,43 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     public void DrawImage(Bitmap bitmap)
     {
-      if (bitmap == null || bitmap.Equals(lastBitmap))
+      if (bitmap == null)
       {
         return;
       }
-      BitmapData data = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
-      try
+      byte[] data = converter.ToByteArray(bitmap);
+      //Calculate its hash so we can compare it to the previous bitmap more efficiently
+      byte[] hash = sha256.ComputeHash(data);
+      //Compare the new hash with the previous one to determine whether the new image is
+      //equal to the one that is already shown.  If they are equal, then we are done
+      if (ByteArray.AreEqual(hash, lastHash))
       {
-        if (bitmapData == null)
-          bitmapData = new byte[data.Stride * grows];
-        Marshal.Copy(data.Scan0, bitmapData, 0, bitmapData.Length);
-      }
-      finally
-      {
-        bitmap.UnlockBits(data);
+        return;
       }
 
       int size = gcols*grows;
-      byte b=0;
+      byte b = 0;
       disp_set_addr(GHOME_ADDR);
       disp_write_command(0xb0);
       for (int i = 0; i < size; i++)
       {
-        int pixel = i * 3;
-        if (Color.FromArgb(bitmapData[pixel + 2],
-                           bitmapData[pixel + 1],
-                           bitmapData[pixel]).GetBrightness() < 0.5f)
+        int pixel = i*3;
+        if (Color.FromArgb(data[pixel + 2],
+                           data[pixel + 1],
+                           data[pixel]).GetBrightness() < 0.5f)
         {
-          b = (byte)(b | (byte)(1 << (7-i%8)));
+          b = (byte) (b | (byte) (1 << (7 - i%8)));
         }
-        if (i % 8 == 7)
+        if (i%8 == 7)
         {
           disp_auto_write(b);
           b = 0;
         }
       }
       disp_write_command(0xb2);
-      lastBitmap = bitmap;
+      lastHash = hash;
     }
+
+
   }
 }

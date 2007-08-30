@@ -47,8 +47,8 @@ namespace ProcessPlugins.ExternalDisplay
     protected int[] posSkips; // Counts how many times the position change of a text that was too long for the display has been skipped
     protected int[] pos; //Keeps track of the start positions in the display lines
     private List<Image> images;
-    private IDisplay display; //Reference to the display we are controlling
-    private Font font;
+    private readonly IDisplay display; //Reference to the display we are controlling
+    private readonly Font font;
     private static readonly Brush graphicBrush = new SolidBrush(Color.White);
     private static readonly Brush textBrush = new SolidBrush(Color.Black);
     private int graphicTextHeight = -1;
@@ -59,20 +59,17 @@ namespace ProcessPlugins.ExternalDisplay
     private readonly int charsToScroll;
     private Bitmap emptyBitmap;
 
-    public Bitmap EmptyBitmap
+    private Bitmap GetEmptyBitmap()
     {
-      get
+      if (emptyBitmap == null)
       {
-        if (emptyBitmap == null)
+        emptyBitmap = new Bitmap(widthInPixels, heightInPixels, PixelFormat.Format32bppArgb);
+        using (Graphics graphics = Graphics.FromImage(emptyBitmap))
         {
-          emptyBitmap = new Bitmap(widthInPixels, heightInPixels,PixelFormat.Format32bppArgb);
-          using (Graphics graphics = Graphics.FromImage(emptyBitmap))
-          {
-            graphics.FillRectangle(graphicBrush, 0, 0, widthInPixels, heightInPixels);
-          }
+          graphics.FillRectangle(graphicBrush, 0, 0, widthInPixels, heightInPixels);
         }
-        return (Bitmap) emptyBitmap.Clone();
       }
+      return (Bitmap) emptyBitmap.Clone();
     }
 
 
@@ -167,43 +164,81 @@ namespace ProcessPlugins.ExternalDisplay
       {
         if (display.SupportsGraphics)
         {
-          using (Bitmap buffer = EmptyBitmap)
-          {
-            using (Graphics graphics = Graphics.FromImage(buffer))
-            {
-              foreach (Image image in Images)
-              {
-                //we need to use the bitmap's physical dimensions, otherwise the image class 
-                //will resize the image according the dpi of the monitor in Windows.
-                Bitmap bitmap = image.Bitmap;
-                //bitmap can be null if the file is not found or the value evaluated to a non existing file
-                if (bitmap != null)
-                {
-                  graphics.DrawImage(bitmap, new RectangleF(new PointF(image.X, image.Y), bitmap.PhysicalDimension));
-                }
-              }
-              if (!display.SupportsText || forceGraphicText)
-              {
-                for (int i = 0; i < heightInChars; i++)
-                {
-                  ProcessG(graphics, i);
-                }
-              }
-              display.DrawImage(buffer);
-            }
-          }
+          SendGraphics();
         }
         if (display.SupportsText && !forceGraphicText)
         {
-          for (int i = 0; i < heightInChars; i++)
-          {
-            display.SetLine(i, Process(i));
-          }
+          SendText();
         }
       }
       catch (Exception ex)
       {
         Log.Error("ExternalDisplay.DisplayLines: " + ex.Message);
+      }
+    }
+
+    private void SendText()
+    {
+      for (int i = 0; i < heightInChars; i++)
+      {
+        display.SetLine(i, Process(i));
+      }
+    }
+
+    /// <summary>
+    /// Sends all graphics to the display
+    /// </summary>
+    /// <remarks>
+    /// To speed things up, and to avoid updating the same pixel twice when images overlap,
+    /// this method first composes the complete graphical display in a buffer in memory, before
+    /// sending it to the display.
+    /// </remarks>
+    private void SendGraphics()
+    {
+      using (Bitmap buffer = GetEmptyBitmap())
+      {
+        using (Graphics graphics = Graphics.FromImage(buffer))
+        {
+          DrawImages(graphics);
+          //Next, if needed, draw the text on top of them 
+          if (!display.SupportsText || forceGraphicText)
+          {
+            DrawText(graphics);
+          }
+          //Send the buffer to the display
+          display.DrawImage(buffer);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Draws the text to the in-memory buffer
+    /// </summary>
+    /// <param name="graphics"></param>
+    private void DrawText(Graphics graphics)
+    {
+      for (int i = 0; i < heightInChars; i++)
+      {
+        ProcessG(graphics, i);
+      }
+    }
+
+    /// <summary>
+    /// Draws the images (if any) to the in-memory buffer
+    /// </summary>
+    /// <param name="graphics"></param>
+    private void DrawImages(Graphics graphics)
+    {
+      foreach (Image image in Images)
+      {
+        //we need to use the bitmap's physical dimensions, otherwise the image class 
+        //will resize the image according the dpi of the monitor in Windows.
+        Bitmap bitmap = image.Bitmap;
+        //bitmap can be null if the file is not found or the value evaluated to a non existing file
+        if (bitmap != null)
+        {
+          graphics.DrawImage(bitmap, new RectangleF(new PointF(image.X, image.Y), bitmap.PhysicalDimension));
+        }
       }
     }
 

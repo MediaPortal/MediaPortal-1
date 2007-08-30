@@ -121,7 +121,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     }
 
     /// <summary>
-    /// Returns wether this driver supports text mode
+    /// Returns whether this driver supports text mode
     /// </summary>
     public bool SupportsText
     {
@@ -129,7 +129,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     }
 
     /// <summary>
-    /// Returns wether this driver supports graphics mode
+    /// Returns whether this driver supports graphics mode
     /// </summary>
     public bool SupportsGraphics
     {

@@ -385,7 +385,12 @@ namespace ProcessPlugins.ExternalDisplay
     [XmlAttribute]
     public bool ForceGraphicText
     {
-      get { return m_ForceGraphicText; }
+      get
+      {
+        if (!LCDType.SupportsGraphics)
+          return false;
+        return m_ForceGraphicText;
+      }
       set { m_ForceGraphicText = value; }
     }
 
@@ -494,6 +499,11 @@ namespace ProcessPlugins.ExternalDisplay
         Log.Debug("ExternalDisplay: Loading iMON...");
       }
       list.Add(new iMON());
+      if (ExtensiveLogging)
+      {
+        Log.Debug("ExternalDisplay: Loading iMONLCD Graphics...");
+      }
+      list.Add(new iMONLCDg());   // added by ralphy
       if (ExtensiveLogging)
       {
         Log.Debug("ExternalDisplay: Loading ClipBoard...");

@@ -293,6 +293,8 @@
       <DependentUpon>SetupForm.cs</DependentUpon>
     </Compile>
     <Compile Include="DirecTV Serial Control\TunerPlugin.cs" />
+    <Compile Include="ExternalDisplay\BitmapConverter.cs" />
+    <Compile Include="ExternalDisplay\ByteArray.cs" />
     <Compile Include="ExternalDisplay\Drivers\BaseDisplay.cs" />
     <Compile Include="ExternalDisplay\Drivers\Clipboard.cs">
       <SubType>Code</SubType>
@@ -304,6 +306,7 @@
     <Compile Include="ExternalDisplay\DisplayHandler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ExternalDisplay\Drivers\iMONLCDg.cs" />
     <Compile Include="ExternalDisplay\Drivers\ScaleoEV.cs" />
     <Compile Include="ExternalDisplay\ExternalDisplay.cs">
       <SubType>Code</SubType>

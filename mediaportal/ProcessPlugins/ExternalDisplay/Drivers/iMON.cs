@@ -105,7 +105,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     /// </summary>
     public string Description
     {
-      get { return "SoundGraph iMON USB Driver V1.0"; }
+      get { return "SoundGraph iMON VFD USB Driver V1.0"; }
     }
 
     /// <summary>

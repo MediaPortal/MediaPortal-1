@@ -339,7 +339,7 @@ namespace Pabo.MozBar
 		}
 
 		[Category("Behavior")]
-		[Description("Indicates wether the control should use the current theme.")]	
+		[Description("Indicates whether the control should use the current theme.")]	
 		[DefaultValue(false)]
 		public bool Theme
 		{
