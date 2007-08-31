@@ -233,10 +233,14 @@ namespace TvPlugin
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
         OnMessage(msg);
 
-        GUIWindowManager.UnRoute();
+        GUIWindowManager.UnRoute();        
         _running = false;
+        _parentWindow = null;
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
+      GUILayerManager.UnRegisterLayer(this);
+
+      Log.Debug("miniguide: closed");
     }
 
     /// <summary>
@@ -256,16 +260,23 @@ namespace TvPlugin
               {
                 // switching logic
                 SelectedChannel = (Channel)lstChannels.SelectedListItem.MusicTag;
+                
+                Channel changeChannel = null;
                 if (AutoZap)
                 {
                   string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
                   if (TVHome.Navigator.CurrentChannel != selectedChan)
-                  {
-                    TVHome.ViewChannel(_tvChannelList[lstChannels.SelectedListItemIndex]);
+                  {                    
+                    changeChannel = (Channel)_tvChannelList[lstChannels.SelectedListItemIndex];                    
                   }
                 }
                 _canceled = false;
                 Close();
+                
+                if (changeChannel != null)
+                {                  
+                  TVHome.ViewChannel(changeChannel);                  
+                }
               }
             }
             else if (message.SenderControlId == 36) // spincontrol
@@ -598,9 +609,8 @@ namespace TvPlugin
         if (!GUIGraphicsContext.Vmr9Active)
           System.Threading.Thread.Sleep(50);
       }
-      GUILayerManager.UnRegisterLayer(this);
 
-      Log.Debug("miniguide: closed");
+      Close();      
     }
 
     // Overlay IRenderLayer members
