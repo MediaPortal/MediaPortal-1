@@ -49,7 +49,7 @@ namespace MediaPortal.DeployTool
         Utils.ErrorDlg(Localizer.Instance.GetString("HTTPDownload_errDownloadFailed"));
         File.Delete(targetFile);
         DialogResult = DialogResult.Cancel;
-        Close();
+        //Close();
       }
     }
 

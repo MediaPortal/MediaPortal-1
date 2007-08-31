@@ -5,7 +5,7 @@
 	</DirectX9c>
 	<MSSQLExpress>
 		<URL>http://go.microsoft.com/fwlink/?LinkId=65212</URL>
-		<FILE>SQLEXP*.exe</FILE>
+		<FILE>SQLExpress_setup.exe</FILE>
 	</MSSQLExpress>		
 	<MediaPortal>
 		<URL>http://...</URL>

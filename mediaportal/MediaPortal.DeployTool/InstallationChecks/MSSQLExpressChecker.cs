@@ -84,6 +84,7 @@ namespace MediaPortal.DeployTool
       }
       else
         return false;
+      return true;
     }
     public bool UnInstall()
     {
