@@ -180,6 +180,19 @@ namespace TvLibrary.Implementations.DVB
           dvbaChannel.PmtPid = info.network_pmt_PID;
           dvbaChannel.PcrPid = info.pcr_pid;
           dvbaChannel.FreeToAir = !info.scrambled;
+          dvbaChannel.ModulationType = tuningChannela.ModulationType;
+          foreach (PidInfo pid in info.pids)
+          {
+            if (pid.isAC3Audio)
+            {
+              if (pid.pid > 0)
+              {
+                dvbaChannel.AudioPid = pid.pid;
+              }
+            }
+            if (pid.isVideo)
+              dvbaChannel.VideoPid = pid.pid;
+          }
 
           Log.Log.Write("Found:{0}", dvbaChannel);
           return dvbaChannel;
