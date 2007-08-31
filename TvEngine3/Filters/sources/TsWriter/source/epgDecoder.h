@@ -37,6 +37,7 @@ typedef  struct stEPGLanguage
 	DWORD language;
 	string event;
 	string text;
+	//DWORD parentalRating;
 } EPGLanguage;
 
 typedef struct stEPGEvent
@@ -96,6 +97,7 @@ public:
 
 private:
 	bool GetChannelByindex(ULONG channel, EPGChannel& epgChannel);
+	//void DecodeParentalRatingDescriptor(byte* buf,EPGEvent& event);
 	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event);
 	void DecodeContentDescription(byte* buf,EPGEvent& event);
 	void DecodeExtendedEvent(byte* buf, EPGEvent& event);

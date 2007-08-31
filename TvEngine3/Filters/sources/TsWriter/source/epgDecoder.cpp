@@ -172,7 +172,8 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 					}
 					else if (descriptor_tag ==0x55)
 					{
-						//					LogDebug("epg:     parental rating descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+											//LogDebug("epg:     parental rating descriptor:0x%x len:%d start:%d %s",descriptor_tag,descriptor_len,start+off,&buf[start+off]);
+						//DecodeParentalRatingDescriptor(&buf[start+off],epgEvent);
 					}
 					else if (descriptor_tag ==0x5f)
 					{
@@ -208,6 +209,52 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 	}	
 	return S_OK;
 }
+
+/*
+void CEpgDecoder::DecodeParentalRatingDescriptor(byte* data, EPGEvent& epgEvent)
+{
+	try
+	{
+		int descriptor_length=data[1];
+		if (descriptor_length % 4!=0)
+		{
+			return; // Invalid length. Must be always a multiply of 4
+		}
+		int len=0;
+		int off=2;
+		while (off+2<descriptor_length)
+		{
+			DWORD language=(data[off]<<16)+(data[off+1]<<8)+data[off+2];
+			bool langFound=false;
+			EPGEvent::ivecLanguages it = epgEvent.vecLanguages.begin();
+			for (it = epgEvent.vecLanguages.begin(); it != epgEvent.vecLanguages.end();++it)
+			{
+				EPGLanguage& lang=*it;
+				if (lang.language==language)
+				{
+					//found.
+					lang.parentalRating=(unsigned int)data[off+3];
+					LogDebug("epg grab parental:[%d]", lang.parentalRating);
+					langFound=true;
+					break;
+				}
+			}
+			if (!langFound)
+			{
+				EPGLanguage lang;
+				lang.language=language;
+				lang.parentalRating=(unsigned int)data[off+3];
+				LogDebug("epg grab parental:[%d]", lang.parentalRating);
+				epgEvent.vecLanguages.push_back(lang);
+			}
+			off=off+4;
+		}
+	}
+	catch(...)
+	{
+		LogDebug("mpsaa: unhandled exception in Sections::DecodeParentalRatingDescriptor()");
+	}	
+}*/
 
 HRESULT CEpgDecoder::DecodePremierePrivateEPG(byte* buf,int len)
 {
