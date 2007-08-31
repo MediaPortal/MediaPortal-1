@@ -276,11 +276,14 @@ namespace SetupTv.Sections
             ATSCChannel channel = (ATSCChannel)channels[i];
             //TuningDetail currentDetail = layer.GetAtscChannel(channel);
             TuningDetail currentDetail = layer.GetChannel(channel);
+            if (currentDetail != null)
+              if (channel.Frequency != currentDetail.Frequency)
+                currentDetail = null;
             if (currentDetail == null)
             {
               //add new channel
               exists = false;
-              dbChannel = layer.AddChannel(channel.Provider, channel.Name);
+              dbChannel = layer.AddChannel(channel.Provider,channel.Name);
               dbChannel.SortOrder = 10000;
               if (channel.LogicalChannelNumber >= 1)
               {
