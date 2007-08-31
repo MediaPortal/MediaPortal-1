@@ -117,6 +117,10 @@ namespace MediaPortal.Music.Database
     private static string _radioStreamLocation;
     private static string _radioSession;
     private static bool _subscriber;
+    /// <summary>
+    /// Determines whether the radio tracks appear in the scrobbled tracks list
+    /// </summary>
+    private static bool _recordToProfile = true;
 
     private static Song _currentSong;
     #endregion
@@ -140,6 +144,7 @@ namespace MediaPortal.Music.Database
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         username = xmlreader.GetValueAsString("audioscrobbler", "user", "");
+        _recordToProfile = xmlreader.GetValueAsBool("audioscrobbler", "submitradiotracks", true);
 
         string tmpPass;
         ParseLock = new object();
@@ -255,6 +260,22 @@ namespace MediaPortal.Music.Database
       get
       {
         return _radioStreamLocation;
+      }
+    }
+
+    /// <summary>
+    /// Get/Set if you like your radio songs to appear in your last.fm profile
+    /// </summary>
+    public static bool SubmitRadioSongs
+    {
+      get { return _recordToProfile; }
+
+      set
+      {
+        if (value != _recordToProfile)
+        {
+          _recordToProfile = value;
+        }
       }
     }
 
@@ -641,7 +662,8 @@ namespace MediaPortal.Music.Database
           throw (new Exception());
         else
         {
-          request.CookieContainer = _cookies;          
+          request.CookieContainer = _cookies;
+          //request.UserAgent = "Last.fm Client 1.3.1.1 (Windows)";
         }
       }
       catch (Exception e)

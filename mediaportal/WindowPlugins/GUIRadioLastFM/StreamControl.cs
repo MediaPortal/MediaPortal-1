@@ -42,6 +42,13 @@ using MediaPortal.Playlists;
 namespace MediaPortal.GUI.RADIOLASTFM
 {
   #region enums
+  public enum PlaybackType
+  {
+    Unknown = 0,
+    Continuously = 1,
+    PlaylistPlayer = 2,
+  }
+
   public enum StreamPlaybackState : int
   {
     offline = 0,
@@ -109,10 +116,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     /// </summary>
     private bool _isSubscriber = false;
     /// <summary>
-    /// Determines whether the radio tracks appear in the scrobbled tracks list
-    /// </summary>
-    private bool _recordToProfile = true;
-    /// <summary>
     /// Discovery mode tries to avoid stream tracks you've already listened to
     /// </summary>
     private bool _discoveryMode = false;
@@ -127,7 +130,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private StreamPlaybackState _currentState = StreamPlaybackState.offline;
     private StreamType _currentTuneType = StreamType.Recommended;
-
+    private PlaybackType _currentPlaybackType = PlaybackType.Unknown;
     /// <summary>
     /// The time of the last http access
     /// </summary>
@@ -292,25 +295,21 @@ namespace MediaPortal.GUI.RADIOLASTFM
       }
     }
 
-    public MusicTag CurrentTrackTag
+    public PlaybackType CurrentPlaybackType
     {
-      get { return CurrentSongTag; }
-    }
-
-    /// <summary>
-    /// Get/Set if you like your radio songs to appear in your last.fm profile
-    /// </summary>
-    public bool SubmitRadioSongs
-    {
-      get { return _recordToProfile; }
+      get { return _currentPlaybackType; }
 
       set
       {
-        if (value != _recordToProfile)
-        {
-          ToggleRecordToProfile(value);
-        }
+        if (value != _currentPlaybackType)
+          _currentPlaybackType = value;
+        Log.Debug("StreamControl: Setting CurrentPlaybackType to {0}", _currentPlaybackType.ToString());
       }
+    }
+
+    public MusicTag CurrentTrackTag
+    {
+      get { return CurrentSongTag; }
     }
 
     public bool DiscoveryMode
@@ -368,7 +367,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         {
           GUIWaitCursor.Hide();
           _currentState = StreamPlaybackState.streaming;
-          ToggleRecordToProfile(_recordToProfile);
+          ToggleRecordToProfile(AudioscrobblerBase.SubmitRadioSongs);
           ToggleDiscoveryMode(_discoveryMode);
           
           return true;
@@ -398,7 +397,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       GUIWaitCursor.Hide();
       _currentState = StreamPlaybackState.streaming;
-      ToggleRecordToProfile(_recordToProfile);
+      ToggleRecordToProfile(false);
       ToggleDiscoveryMode(_discoveryMode);
       
       return true;
@@ -427,7 +426,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=rtp"))
         {
           success = true;
-          _recordToProfile = true;
+          AudioscrobblerBase.SubmitRadioSongs = true;
           Log.Info("StreamControl: Enabled submitting of radio tracks to profile");
         }
       }
@@ -435,8 +434,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=nortp"))
         {
           success = true;
-          _recordToProfile = false;
-          Log.Info("StreamControl: Disabled submitting of radio tracks to profile");
+          AudioscrobblerBase.SubmitRadioSongs = false;
+          if (CurrentPlaybackType != PlaybackType.PlaylistPlayer)
+            Log.Info("StreamControl: Disabled submitting of radio tracks to profile");
         }
       return success;
     }
@@ -782,6 +782,16 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
         if (CurrentSongTag.Title != prevTitle)
         {
+          AudioscrobblerBase.CurrentSong.Clear();
+          AudioscrobblerBase.CurrentSong.Artist = CurrentSongTag.Artist;
+          AudioscrobblerBase.CurrentSong.Album = CurrentSongTag.Album;
+          AudioscrobblerBase.CurrentSong.Title = CurrentSongTag.Title;
+          AudioscrobblerBase.CurrentSong.Genre = CurrentSongTag.Genre;
+          AudioscrobblerBase.CurrentSong.Duration = CurrentSongTag.Duration;
+          AudioscrobblerBase.CurrentSong.WebImage = CurrentSongTag.Comment;
+          AudioscrobblerBase.CurrentSong.FileName = g_Player.Player.CurrentFile;
+
+          // fire the event
           if (StreamSongChanged != null)
             StreamSongChanged(CurrentSongTag, DateTime.Now);
 

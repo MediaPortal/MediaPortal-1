@@ -42,8 +42,8 @@ namespace MediaPortal.Audioscrobbler
   [PluginIcons("ProcessPlugins.Audioscrobbler.Audioscrobbler.gif", "ProcessPlugins.Audioscrobbler.AudioscrobblerDisabled.gif")]
   public class AudioscrobblerPlugin : ISetupForm, IPlugin
   {
-    private int _timerTickSecs = 15;
-    private int _skipThreshold = 6;
+    //private int _timerTickSecs = 15;
+    //private int _skipThreshold = 6;
     // maybe increase after introduction of x-fading
     private const int STARTED_LATE = 15;
 
@@ -118,7 +118,7 @@ namespace MediaPortal.Audioscrobbler
     #region MediaPortal events
     void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
-      if (type == g_Player.MediaType.Music)
+      if (type == g_Player.MediaType.Music || Util.Utils.IsLastFMStream(filename))
       {
         if (_currentSong == null)
         {
@@ -132,7 +132,7 @@ namespace MediaPortal.Audioscrobbler
               QueueLastSong();
             else
               // do not log twice (OnEnded & OnStarted)
-              if (_currentSong.AudioScrobblerStatus != SongStatus.Queued)
+              if (_currentSong.AudioScrobblerStatus != SongStatus.Queued && !Util.Utils.IsLastFMStream(g_Player.Player.CurrentFile))
                 Log.Debug("Audioscrobbler plugin: OnPlayBackStarted - NOT submitting song {0} because status was: {1}", _currentSong.ToShortString(), _currentSong.AudioScrobblerStatus.ToString());
         }
 
@@ -198,11 +198,20 @@ namespace MediaPortal.Audioscrobbler
         return;
       }
 
-      if (!_doSubmit)
+      if (Util.Utils.IsLastFMStream(currentSong.FileName))
       {
-        Log.Debug("Audioscrobbler plugin: submits disabled - ignore state change");
-        return;
+        if (!AudioscrobblerBase.SubmitRadioSongs)
+        {
+          Log.Debug("Audioscrobbler plugin: radio submits disabled - ignore state change");
+          return;
+        }
       }
+      else
+        if (!_doSubmit)
+        {
+          Log.Debug("Audioscrobbler plugin: submits disabled - ignore state change");
+          return;
+        }
 
       // Only submit if we have reasonable info about the song
       if (currentSong.Artist == "" || currentSong.Title == "")
@@ -233,10 +242,39 @@ namespace MediaPortal.Audioscrobbler
       bool songFound = false;
 
       if (g_Player.IsCDA)
+      {
         songFound = GetCurrentCDASong();
+        if (songFound == false)
+          return;
+      }
       else
-        // local DB file
-        songFound = GetCurrentSong();
+        if (Util.Utils.IsLastFMStream(g_Player.Player.CurrentFile))
+        {
+          for (int i = 0 ; i < 30 ; i++)
+          {
+            _currentSong = AudioscrobblerBase.CurrentSong.Clone();
+
+            if (_currentSong.FileName == g_Player.Player.CurrentFile)
+            {
+              songFound = true;
+              Log.Info("Audioscrobbler plugin: detected new last.fm radio track as: {0} - {1} after {2} seconds", _currentSong.Artist, _currentSong.Title, Convert.ToString(i / 2));
+              break;
+            }
+            System.Threading.Thread.Sleep(500);
+          }
+          if (songFound)
+          {
+            _currentSong.DateTimePlayed = DateTime.UtcNow;
+            _lastPosition = 1;
+            OnSongChangedEvent(_currentSong);
+          }
+          else
+            Log.Info("Audioscrobbler plugin: could not determine last.fm radio track for: {0}", g_Player.CurrentFile);
+          return;
+        }
+        else
+          // local DB file
+          songFound = GetCurrentSong();
 
       if (songFound)
       {
@@ -244,7 +282,6 @@ namespace MediaPortal.Audioscrobbler
         // playback couuuuld be stopped in theory - sometimes g_player's IsPlaying status isn't set in time (e.g. crossfading)
         if (g_Player.CurrentPosition > 0)
         {
-          //_currentSong.AudioScrobblerStatus = SongStatus.Loaded;
           _currentSong.DateTimePlayed = DateTime.UtcNow - TimeSpan.FromSeconds(g_Player.CurrentPosition);
           // avoid false skip detection            
           _lastPosition = Convert.ToInt32(g_Player.Player.CurrentPosition);
@@ -252,7 +289,6 @@ namespace MediaPortal.Audioscrobbler
         }
         else
         {
-          //Log.Debug("Audioscrobbler plugin: g_Player.CurrentPosition equals 0! You might receive unexpected results");
           _currentSong.DateTimePlayed = DateTime.UtcNow;
           _lastPosition = 1;
           OnSongChangedEvent(_currentSong);
@@ -260,20 +296,13 @@ namespace MediaPortal.Audioscrobbler
       }
       // DB lookup of song failed
       else
-        // last.fm radio is handled by the stream itself
-        if (g_Player.IsMusic && (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_RADIO_LASTFM))
+        if (g_Player.IsMusic)
         {
           if (_currentSong.Title != null && _currentSong.Title != String.Empty)
             Log.Info("Audioscrobbler plugin: database does not contain track - ignoring track: {0} by {1} from {2}", _currentSong.Title, _currentSong.Artist, _currentSong.Album);
           else
             Log.Info("Audioscrobbler plugin: database does not contain track: {0}", g_Player.CurrentFile);
-          //Log.Debug("g_player: filename of current song - {0}", g_Player.CurrentFile);
         }
-        //else
-        //{
-        //  Log.Debug("Audioscrobbler plugin: database does not contain details for: {0} - are you using Last.fm or play different content?", g_Player.CurrentFile);
-        //}
-
     }
 
     private void OnPause()
