@@ -491,8 +491,7 @@ namespace TvEngine
         if (map.Station == stationName)
         {
           ClearPrograms(map.Channel);
-          Log.Debug("TVMovie: Purged old programs for channel {0}", map.Channel);
-          break;
+          Log.Debug("TVMovie: Purged old programs for channel {0}", map.Channel);          
         }
 
       try
