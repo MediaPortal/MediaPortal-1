@@ -388,6 +388,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
               if (LastFMStation.PlayPlayListStreams(_radioTrackList[0].URL))
               {
                 LastFMStation.CurrentPlaybackType = PlaybackType.PlaylistPlayer;
+                Log.Warn("GUIRadio: Fallback to playlist mode was needed to start the stream.");
                 return;
               }
             }

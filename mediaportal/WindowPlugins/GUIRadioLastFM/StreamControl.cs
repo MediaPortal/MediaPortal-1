@@ -419,13 +419,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public void ToggleRecordToProfile(bool submitTracks_)
     {
-      if (CurrentPlaybackType != PlaybackType.Continuously)
-        return;
-
       if (submitTracks_)
       {
         if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=rtp"))
-        {          
+        {
           AudioscrobblerBase.SubmitRadioSongs = true;
           Log.Info("StreamControl: Enabled submitting of radio tracks to profile");
         }
@@ -433,8 +430,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
       else
         if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=nortp"))
         {
-          AudioscrobblerBase.SubmitRadioSongs = false;
-          Log.Info("StreamControl: Disabled submitting of radio tracks to profile");
+          if (CurrentPlaybackType != PlaybackType.PlaylistPlayer)
+            Log.Info("StreamControl: Disabled submitting of radio tracks to profile");
         }
     }
 
