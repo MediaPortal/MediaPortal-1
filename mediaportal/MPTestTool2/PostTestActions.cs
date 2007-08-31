@@ -90,6 +90,8 @@ namespace MPTestTool
       sw.WriteLine("<li><a href=Configuration.log>Configuration.log</a></li>");
       sw.WriteLine("<li><a href=Error.log>Error.log</a></li>");
       sw.WriteLine("<li><a href=Recorder.log>Recorder.log</a></li>");
+      if (File.Exists(_tmpDir + "\\TsReader.log"))
+        sw.WriteLine("<li><a href=tsreader.log>TsReader.log</a></li>");
       sw.WriteLine("<li><a href=vmr9.log>vmr9.log</a></li>");
       sw.WriteLine("</ul></td></ul></td><td width=10></td>");
       // TvServer logs
