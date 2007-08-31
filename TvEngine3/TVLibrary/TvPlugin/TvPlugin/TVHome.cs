@@ -83,6 +83,7 @@ namespace TvPlugin
     static bool _rebuildGraphOnNewVideoSpecs = true;
     static bool _rebuildGraphOnNewAudioSpecs = true;
     static bool _avoidSeeking = false;
+    static bool _playbackStopped = false;
     Stopwatch benchClock = null;
 
     [SkinControlAttribute(2)]
@@ -315,6 +316,7 @@ namespace TvPlugin
 
     void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
+      _playbackStopped = true;
       if (type != g_Player.MediaType.TV) return;
       GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
       //if (currentWindow.IsTv) return;
@@ -453,6 +455,14 @@ namespace TvPlugin
 
     protected override void OnPageLoad()
     {
+      // when suspending MP while watching fullscreen TV, the player is stopped ok, but it returns to tvhome, which starts timeshifting.
+      // this could lead the tv server timeshifting even though client is asleep.
+      // although we have to make sure that resuming again activates TV, this is done by checking previous window ID.
+      if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
+      {
+        _playbackStopped = false;
+      }
+
       btnActiveStreams.Label = GUILocalizeStrings.Get(692);
       try
       {
@@ -476,19 +486,35 @@ namespace TvPlugin
       }
       catch (Exception ex)
       {
-        // lets try one more time - seems like the gentle framework is not properly initialized when coming out of standby/hibernation.
+        // lets try one more time - seems like the gentle framework is not properly initialized when coming out of standby/hibernation.        
         if (TVHome.Connected && RemoteControl.IsConnected)
         {
-          try
+          //lets wait 10 secs before giving up.
+          DateTime now = DateTime.Now;
+          TimeSpan ts = now - DateTime.Now;
+          bool success = false;
+
+          while (ts.TotalSeconds > -10 && !success)
           {
-            IList cards = TvDatabase.Card.ListAll();
+            try
+            {
+              IList cards = TvDatabase.Card.ListAll();
+              success = true;
+            }
+            catch (Exception)
+            {
+              success = false;              
+            }
+            ts = now - DateTime.Now;
           }
-          catch (Exception)
+
+          if (!success)
           {
             RemoteControl.Clear();
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SETTINGS_TVENGINE);
             return;
           }
+
         }
         else
         {
@@ -545,7 +571,7 @@ namespace TvPlugin
           }
         }
         MediaPortal.GUI.Library.Log.Info("tv home init:{0}", channel.DisplayName);
-        if (_autoTurnOnTv)
+        if (_autoTurnOnTv && !_playbackStopped)
         {
           ViewChannelAndCheck(channel);          
         }
@@ -1362,7 +1388,8 @@ namespace TvPlugin
         }
 
 
-        User user = new User();
+        User user = new User();        
+
         GUIWaitCursor.Show();
         bool wasPlaying = g_Player.Playing && g_Player.IsTimeShifting && g_Player.IsTV;
 
@@ -1381,7 +1408,7 @@ namespace TvPlugin
         */
         if (wasPlaying)
           SeekToEnd(true);
-
+        
 
 
         succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
@@ -1411,16 +1438,14 @@ namespace TvPlugin
 
           GUIWaitCursor.Hide();
 
-
-
           // issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.
           /*
           if (!_avoidSeeking)          
           {            
             g_Player.ContinueGraph();                        
             g_Player.SeekAbsolute(g_Player.Duration);            
-          }                    
-          */
+          }*/
+          _playbackStopped = false;
           return true;
 
         }
