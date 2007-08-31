@@ -418,7 +418,9 @@ void CPatParser::OnNewSection(CSection& sections)
 		  return ;
 	  }
 
-		if (pmtPid>0x12 && transport_stream_id>0 && serviceId>0)
+	  //some ATSC channels have transport_stream_id==0
+		//if (pmtPid>0x12 && transport_stream_id>0 && serviceId>0)
+	  if (pmtPid>0x12 && serviceId>0)
     {
 			itChannels it =m_mapChannels.find(serviceId);
 			if (it==m_mapChannels.end())
