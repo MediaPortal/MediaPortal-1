@@ -27,8 +27,6 @@
 #endregion
 
 //TODO Known problems
-// if force graphical text not set, display blinks when scrolling due to bug in displayhandler.cs
-// CloseLCD doesn't shut down the display to pitch black - need to determine the correct API call
 // should check the input pixel dimensions in the setup form for validity 
 // IsOpen() behaviour is odd - Even if iMon should be closed, IsOpen returns true in the setup application
 //  is it being opened by iMON.cs or iMONLCD, when VerifyLCD is called?
@@ -63,6 +61,9 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     private readonly string _errorMessage = "";
     private readonly SHA256Managed sha256 = new SHA256Managed(); //instance of crypto engine used to calculate hashes
     private byte[] lastHash; //hash of the last bitmap that was sent to the display
+
+    private bool _Backlight = false;
+    private Int64 _Contrast = 0x0A;
 
     private int _grows = 16;
     private int _gcols = 96;
@@ -260,6 +261,10 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
                       bool backLight, int contrast)
     {
       Log.Debug("iMONLCDg Setup called");
+
+      _Contrast = ((Int64)contrast >> 2);
+      _Backlight = backLight;
+
       _grows = linesG; // TODO should hard code to 16 or test the setup form has valid input
       _gcols = colsG; // should hard code to 96	
       _delay = delay;
@@ -324,6 +329,9 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       {
         Log.Debug("ExternalDisplay.iMONLCDg.OpenLCD: LCD already open");
       }
+      SendData(Command.DisplayOn);             // turn the display on
+      SendData(Command.ClearAlarm);             // clear the alarm
+      SendData((long)Command.SetContrast | _Contrast); // set contrast
       ClearDisplay();
       ClearPixels();
       Log.Info("iMON LCDg Started");
@@ -337,10 +345,29 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       if (IsOpen())
       {
         Log.Info("iMON LCD Close called");
-        SendData(0x0300000000000000); // set zero contrast
         SendData(0x1000000000000000); // remove top and bottom lines
         SendData(0x1100000000000000);
         SendData(0x1200000000000000);
+        if (_Backlight)
+        {
+          // shut down the display
+          SendData(Command.Shutdown);
+        }
+        else
+        {
+          // display the built-in clock
+          DateTime st = DateTime.Now;
+          Int64 data;
+          data = ((Int64)0x50 << 56);
+          data += ((Int64)st.Second << 48);
+          data += ((Int64)st.Minute << 40);
+          data += ((Int64)st.Hour << 32);
+          data += ((Int64)st.Day << 24);
+          data += ((Int64)st.Month << 16);
+          data += (((Int64)st.Year & 0x0F) << 8);
+          data += 0x80;
+          SendData(data);
+        }
         Close();
       }
     }
@@ -360,6 +387,11 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     {
       iMONLCD_SendData(&data);
       Thread.Sleep(_delay);
+    }
+
+    private unsafe void SendData(Command command)
+    {
+      SendData((long) command);
     }
 
     private void SendText(string Line1, string Line2)
@@ -549,16 +581,11 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     /// <returns></returns>	
     private void ClearDisplay()
     {
-      SendData(0x5000000000000040);
-      SendData(0x5100000000000000);
-      SendData(0x0300000000000014); // set contrast (14)
-      //SendData(0x0312be5800000014);  // 
       SendData(0x0200000000000000);
       SendData(0x0100000000000000);
       SendData(0x10ffffff00000000);
       SendData(0x110000ffffffffff);
       SendData(0x1200000000000000);
-      //		ClearPixels();
     }
 
     private void ClearPixels()
@@ -616,7 +643,18 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     #endregion
 
-    #region Display Icons Class		
+    #region Display Commands
+    private enum Command : long
+    {
+      DisplayOn = 0x5000000000000040,
+      ClearAlarm = 0x5100000000000000,
+      SetContrast = 0x0300000000000000,
+      Shutdown = 0x5000000000000008
+    }
+
+    #endregion
+
+    #region Display Icons Class
 
     /// <summary>
     /// Icons Class
