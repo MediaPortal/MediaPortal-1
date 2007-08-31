@@ -34,6 +34,7 @@ using MediaPortal.Drawing;
 
 namespace MediaPortal.GUI.Library
 {
+
   public sealed class GUIWaitCursor : GUIControl
   {
     #region Constructors
@@ -46,6 +47,8 @@ namespace MediaPortal.GUI.Library
 
     #region Methods
 
+    private static Thread guiWaitCursorThread = null;//new Thread(GUIWaitCursorThread);
+
     public static void Dispose()
     {
       if (_animation != null)
@@ -57,6 +60,15 @@ namespace MediaPortal.GUI.Library
     public static void Hide()
     {
       Interlocked.Decrement(ref _showCount);
+      guiWaitCursorThread = null;
+    }
+
+    static private void GUIWaitCursorThread()
+    {
+      if (Interlocked.Increment(ref _showCount) == 1)
+      {
+        _animation.Begin();
+      }
     }
 
     public static void Init()
@@ -99,8 +111,12 @@ namespace MediaPortal.GUI.Library
 
     public static void Show()
     {
-      if (Interlocked.Increment(ref _showCount) == 1)
-        _animation.Begin();
+
+      if (guiWaitCursorThread == null)
+      {
+        guiWaitCursorThread = new Thread(GUIWaitCursorThread);
+        guiWaitCursorThread.Start();
+      }
     }
 
     #endregion Methods
@@ -108,7 +124,7 @@ namespace MediaPortal.GUI.Library
     #region Fields
 
     static GUIAnimation _animation;
-    static int _showCount;
+    static int _showCount = 0;
 
     #endregion Fields
   }

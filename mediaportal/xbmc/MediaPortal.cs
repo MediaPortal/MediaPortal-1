@@ -997,12 +997,11 @@ public class MediaPortalApp : D3DApp, IRender
 
       return true;
     }
-  }
-
+  }  
 
   //called when windows hibernates or goes into standbye mode
   private void  OnSuspend(ref Message msg)
-  {
+  {    
     lock (syncObj)
     {
       if (_suspended)
@@ -1011,6 +1010,18 @@ public class MediaPortalApp : D3DApp, IRender
       }
       _suspended = true;      
       SaveLastActiveModule();
+
+      Log.Info("Main: Stopping playback");
+      if (GUIGraphicsContext.IsPlaying)
+      {
+        g_Player.Stop();
+        //wait for player to stop before proceeding                
+        while (GUIGraphicsContext.IsPlaying)
+        {
+          Thread.Sleep(100);
+        }
+        
+      }
 
       //switch to windowed mode
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && !windowed)
@@ -1022,12 +1033,7 @@ public class MediaPortalApp : D3DApp, IRender
       //stop playback
       _suspended = true;
       InputDevices.Stop();
-
-      Log.Info("Main: Stopping playback");
-      if (!g_Player.Stopped)
-      {
-        g_Player.Stop();
-      }
+     
       Log.Info("Main: Stopping recorder");
       Recorder.Stop();
       Log.Info("Main: Stopping AutoPlay");
@@ -1038,9 +1044,43 @@ public class MediaPortalApp : D3DApp, IRender
 
   //called when windows wakes up again
   static object syncResume = new object();
-  private void OnResume()
+
+  private bool IsNetworkConnected()
   {
+    DateTime now = DateTime.Now;
+    TimeSpan ts = now - DateTime.Now;
+    bool connected = false;
+    if (SystemInformation.Network)
+    {
+       System.Net.NetworkInformation.NetworkInterface[] adapters = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
+
+       while (ts.TotalSeconds > -10)
+       {
+         foreach (System.Net.NetworkInformation.NetworkInterface n in adapters)
+         {
+           if (n.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up)
+           {
+             connected = true;
+             break;
+           }
+         }
+
+         if (connected)
+         {
+           break;
+         }
+         ts = now - DateTime.Now;
+       }
+    }
+    return connected;
+  }
+
+  private void OnResume()
+  {    
     //System.Diagnostics.Debugger.Launch();
+    //wait for NIC's to get ready        
+    //bool res = IsNetworkConnected();    
+
     if (_onResumeRunning == true)
     {
       Log.Info("Main: OnResume - already running -> return without further action");
@@ -1089,7 +1129,14 @@ public class MediaPortalApp : D3DApp, IRender
       if (!Recorder.Running)
       {
         Log.Info("Main: OnResume - Starting recorder");
-        Recorder.Start();
+
+        // this only makes sense if we have cards configured
+        // if no cards are configured then we are probably using tve3.
+        // when resuming from hibernation  
+        if (Recorder.Count > 0)
+        {
+          Recorder.Start();
+        }
         if (turnMonitorOn)
         {
           SetThreadExecutionState(oldState);

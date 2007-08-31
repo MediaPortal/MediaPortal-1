@@ -34,6 +34,7 @@ using System.Globalization;
 using System.Threading;
 using System.Xml.Serialization;
 using Core.Util;
+using Microsoft.Win32;
 
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
@@ -404,7 +405,41 @@ namespace MediaPortal.GUI.Pictures
       }
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
+      SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
     }
+
+    /// <summary>
+    /// This function gets called when 
+    /// <list>
+    /// windows is about to suspend
+    /// windows is about to hibernate
+    /// windows resumes
+    /// a powermode change is detected (AC -> battery or battery -> AC)
+    /// </list>
+    /// The <see cref="PowerModeChangedEventArgs.Mode"/> property can be used to determine the exact cause.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+    {
+      
+      
+      Log.Debug("MyPictures: SystemPowerModeChanged event was raised.");
+      
+      switch (e.Mode)
+      {
+        case PowerModes.Suspend:
+          Log.Info("MyPictures: Suspend or Hibernation detected, shutting down plugin");
+          //DoStop();
+          break;
+        case PowerModes.Resume:
+          Log.Info("MyPictures: Resume from Suspend or Hibernation detected, starting plugin");
+          SystemEvents.PowerModeChanged -= new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
+          //DoStart();
+          break;
+      }
+    }
+
     protected override void OnPageDestroy(int newWindowId)
     {
       selectedItemIndex = GetSelectedItemNo();
@@ -754,6 +789,15 @@ namespace MediaPortal.GUI.Pictures
     #region folder settings
     void LoadFolderSettings(string folderName)
     {
+      // while waking up from hibernation it can take a while before a network drive is accessible.
+      // lets wait 10 sec
+      int count = 0;
+      while (!Directory.Exists(folderName) && count < 100)
+      {
+        Thread.Sleep(100);
+        count++;
+      }
+
       if (folderName == String.Empty)
         folderName = "root";
       object o;
@@ -783,7 +827,7 @@ namespace MediaPortal.GUI.Pictures
     {
       if (folder == String.Empty)
         folder = "root";
-      FolderSettings.AddFolderSetting(folder, "Pictures", typeof(GUIPictures.MapSettings), mapSettings);
+      FolderSettings.AddFolderSetting(folder, "Pictures", typeof(GUIPictures.MapSettings), mapSettings);      
     }
     #endregion
 
@@ -1470,6 +1514,16 @@ namespace MediaPortal.GUI.Pictures
       string objectCount = String.Empty;
 
       GUIWaitCursor.Show();
+
+      // while waking up from hibernation it can take a while before a network drive is accessible.
+      // lets wait 10 sec
+      int count = 0;
+      while (!Directory.Exists(strNewDirectory) && count < 100)
+      {
+        Thread.Sleep(100);
+        count++;
+      }
+
       GUIListItem SelectedItem = GetSelectedItem();
       if (SelectedItem != null)
       {
