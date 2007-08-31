@@ -122,7 +122,6 @@ namespace TvLibrary.Implementations.DVB
           dvbsChannel.DisEqc = tuningChannels.DisEqc;
           dvbsChannel.BandType = tuningChannels.BandType;
           dvbsChannel.FreeToAir = !info.scrambled;
-
           Log.Log.Write("Found:{0}", dvbsChannel);
           return dvbsChannel;
         case (int)CardType.DvbC:
@@ -141,7 +140,6 @@ namespace TvLibrary.Implementations.DVB
           dvbcChannel.PmtPid = info.network_pmt_PID;
           dvbcChannel.PcrPid = info.pcr_pid;
           dvbcChannel.FreeToAir = !info.scrambled;
-
           Log.Log.Write("Found:{0}", dvbcChannel);
           return dvbcChannel;
         case (int)CardType.DvbT:
@@ -159,43 +157,41 @@ namespace TvLibrary.Implementations.DVB
           dvbtChannel.PmtPid = info.network_pmt_PID;
           dvbtChannel.PcrPid = info.pcr_pid;
           dvbtChannel.FreeToAir = !info.scrambled;
-
           Log.Log.Write("Found:{0}", dvbtChannel);
           return dvbtChannel;
         case (int)CardType.Atsc:
           ATSCChannel tuningChannela = (ATSCChannel)_card.Channel;
-          ATSCChannel dvbaChannel = new ATSCChannel();
-          dvbaChannel.Name = info.service_name;
-          dvbaChannel.Provider = info.service_provider_name;
-          dvbaChannel.Frequency = tuningChannela.Frequency;
-          dvbaChannel.PhysicalChannel = tuningChannela.PhysicalChannel;
-          dvbaChannel.LogicalChannelNumber = tuningChannela.LogicalChannelNumber;
-          dvbaChannel.MajorChannel = tuningChannela.MajorChannel;
-          dvbaChannel.MinorChannel = tuningChannela.MinorChannel;
-          dvbaChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
-          dvbaChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
-          dvbaChannel.NetworkId = info.networkID;
-          dvbaChannel.ServiceId = info.serviceID;
-          dvbaChannel.TransportId = info.transportStreamID;
-          dvbaChannel.PmtPid = info.network_pmt_PID;
-          dvbaChannel.PcrPid = info.pcr_pid;
-          dvbaChannel.FreeToAir = !info.scrambled;
-          dvbaChannel.ModulationType = tuningChannela.ModulationType;
+          ATSCChannel atscChannel = new ATSCChannel();
+          atscChannel.Name = info.service_name;
+          atscChannel.Provider = info.service_provider_name;
+          atscChannel.Frequency = tuningChannela.Frequency;
+          atscChannel.PhysicalChannel = tuningChannela.PhysicalChannel;
+          atscChannel.ModulationType = tuningChannela.ModulationType;
+          atscChannel.LogicalChannelNumber = tuningChannela.LogicalChannelNumber;
+          atscChannel.MajorChannel = tuningChannela.MajorChannel;
+          atscChannel.MinorChannel = tuningChannela.MinorChannel;
+          atscChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
+          atscChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
+          atscChannel.NetworkId = info.networkID;
+          atscChannel.ServiceId = info.serviceID;
+          atscChannel.TransportId = info.transportStreamID;
+          atscChannel.PmtPid = info.network_pmt_PID;
+          atscChannel.PcrPid = info.pcr_pid;
+          atscChannel.FreeToAir = !info.scrambled;
           foreach (PidInfo pid in info.pids)
           {
             if (pid.isAC3Audio)
             {
               if (pid.pid > 0)
               {
-                dvbaChannel.AudioPid = pid.pid;
+                atscChannel.AudioPid = pid.pid;
               }
             }
             if (pid.isVideo)
-              dvbaChannel.VideoPid = pid.pid;
+              atscChannel.VideoPid = pid.pid;
           }
-
-          Log.Log.Write("Found:{0}", dvbaChannel);
-          return dvbaChannel;
+          Log.Log.Write("Found:{0}", atscChannel);
+          return atscChannel;
       }
       return null; // never append just to satify the dev tool :-)
     }

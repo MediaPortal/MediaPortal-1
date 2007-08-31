@@ -650,6 +650,11 @@ namespace TvLibrary.Implementations.DVB
         if ((channel as DVBCChannel) == null) return false;
         return true;
       }
+      if (_cardType == CardType.Atsc)
+      {
+        if ((channel as ATSCChannel) == null) return false;
+        return true;
+      }
       return false;
     }
 

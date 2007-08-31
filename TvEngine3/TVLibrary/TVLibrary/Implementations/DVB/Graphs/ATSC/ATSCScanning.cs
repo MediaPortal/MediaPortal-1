@@ -97,6 +97,8 @@ namespace TvLibrary.Implementations.DVB
       atscChannel.MinorChannel = info.minorChannel;
       atscChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
       atscChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
+      atscChannel.NetworkId = info.networkID;
+      atscChannel.ServiceId = info.serviceID;
       atscChannel.TransportId = info.transportStreamID;
       atscChannel.PmtPid = info.network_pmt_PID;
       atscChannel.PcrPid = info.pcr_pid;
