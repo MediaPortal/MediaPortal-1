@@ -48,7 +48,12 @@ void LogDebug(const char *fmt, ...)
 	GetLocalTime(&systemTime);
 
 //#ifdef DONTLOG
-  FILE* fp = fopen("c:\\tsreader.log","a+");
+	char moduleFileName[1024];
+	GetModuleFileName(NULL,moduleFileName,sizeof(moduleFileName));
+	string logFile=moduleFileName;
+	logFile=logFile.substr(0, logFile.rfind("\\"));
+	logFile.append("\\log\\TsReader.log");
+	FILE* fp = fopen(logFile.c_str(),"a+");
 	if (fp!=NULL)
 	{
 		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
