@@ -417,15 +417,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
         SendCommandRequest(@"http://ws.audioscrobbler.com/radio/np.php?session=" + _currentSession);
     }
 
-    public bool ToggleRecordToProfile(bool submitTracks_)
+    public void ToggleRecordToProfile(bool submitTracks_)
     {
-      bool success = false;
+      if (CurrentPlaybackType != PlaybackType.Continuously)
+        return;
 
       if (submitTracks_)
       {
         if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=rtp"))
-        {
-          success = true;
+        {          
           AudioscrobblerBase.SubmitRadioSongs = true;
           Log.Info("StreamControl: Enabled submitting of radio tracks to profile");
         }
@@ -433,12 +433,9 @@ namespace MediaPortal.GUI.RADIOLASTFM
       else
         if (SendCommandRequest(@"http://ws.audioscrobbler.com/radio/control.php?session=" + _currentSession + "&command=nortp"))
         {
-          success = true;
           AudioscrobblerBase.SubmitRadioSongs = false;
-          if (CurrentPlaybackType != PlaybackType.PlaylistPlayer)
-            Log.Info("StreamControl: Disabled submitting of radio tracks to profile");
+          Log.Info("StreamControl: Disabled submitting of radio tracks to profile");
         }
-      return success;
     }
 
     public bool ToggleDiscoveryMode(bool enableDiscovery_)

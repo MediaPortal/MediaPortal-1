@@ -378,10 +378,20 @@ namespace MediaPortal.GUI.RADIOLASTFM
         {
           if (LastFMStation.PlayStream())
           {
-            LastFMStation.CurrentPlaybackType = PlaybackType.Continuously;
+            LastFMStation.CurrentPlaybackType = PlaybackType.Continuously;            
           }
           else
           {
+            RebuildStreamList();
+            if (_radioTrackList.Count > 0)
+            {
+              if (LastFMStation.PlayPlayListStreams(_radioTrackList[0].URL))
+              {
+                LastFMStation.CurrentPlaybackType = PlaybackType.PlaylistPlayer;
+                return;
+              }
+            }
+            
             PlayBackFailedHandler();
           }
         }
