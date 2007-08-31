@@ -34,8 +34,8 @@ using Direct3D = Microsoft.DirectX.Direct3D;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-//using MediaPortal.Services;
-//using MediaPortal.Threading;
+using MediaPortal.Services;
+using MediaPortal.Threading;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
 
@@ -46,6 +46,78 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public class GUIVideoInfo : GUIWindow, IRenderLayer, IMDB.IProgress
   {
+    #region ThumbDownloader
+    public class ThumbDownloader
+    {
+      IMDBMovie _aMovie = null;
+      Work work;
+
+      // Filename must only be the path of the directory
+      public ThumbDownloader(IMDBMovie LookupMovie)
+      {
+        _aMovie = LookupMovie;
+        work = new Work(new DoWorkHandler(this.PerformRequest));
+        work.ThreadPriority = ThreadPriority.Normal;
+        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Normal);
+      }
+
+      void PerformRequest()
+      {
+        try
+        {
+          if (_aMovie == null) return;
+          // Search for more pictures
+          string[] thumbUrls = new string[1];
+          IMDBMovie movie = _aMovie;
+          IMPawardsSearch impSearch = new IMPawardsSearch();
+          impSearch.Search(movie.Title);
+          AmazonImageSearch amazonSearch = new AmazonImageSearch();
+          amazonSearch.Search(movie.Title);
+          int thumb = 0;
+
+          if (movie.ThumbURL != string.Empty)
+          {
+            thumbUrls[0] = movie.ThumbURL;
+            thumb = 1;
+          }
+
+          int pictureCount = amazonSearch.Count + impSearch.Count + thumb;
+          if (pictureCount == 0)
+            return;
+
+          int pictureIndex = 0;
+          thumbUrls = new string[pictureCount];
+
+          if (movie.ThumbURL != string.Empty)
+            thumbUrls[pictureIndex++] = movie.ThumbURL;
+
+          if (amazonSearch.Count > 0)
+          {
+            for (int i = 0 ; i < amazonSearch.Count ; ++i)
+            {
+              thumbUrls[pictureIndex++] = amazonSearch[i];
+            }
+          }
+
+          if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
+          {
+            for (int i = 0 ; i < impSearch.Count ; ++i)
+            {
+              thumbUrls[pictureIndex++] = impSearch[i];
+            }
+          }
+          if (AmazonImagesDownloaded != null)
+            AmazonImagesDownloaded(thumbUrls);
+        }
+        catch (ThreadAbortException)
+        {
+        }
+      }
+    }
+    #endregion
+
+
+
     [SkinControlAttribute(2)]    protected GUIButtonControl btnPlay = null;
     [SkinControlAttribute(3)]    protected GUIToggleButtonControl btnPlot = null;
     [SkinControlAttribute(4)]    protected GUIToggleButtonControl btnCast = null;
@@ -59,8 +131,8 @@ namespace MediaPortal.GUI.Video
     [SkinControlAttribute(30)]   protected GUILabelControl lblImage = null;
     [SkinControlAttribute(100)]  protected GUILabelControl lblDisc = null;
 
-    public delegate void AmazonLookupCompleted();
-    public event AmazonLookupCompleted AmazonImagesDownloaded;
+    public delegate void AmazonLookupCompleted(string[] coverThumbURLs);
+    public static event AmazonLookupCompleted AmazonImagesDownloaded;
 
     enum ViewMode
     {
@@ -171,9 +243,13 @@ namespace MediaPortal.GUI.Video
       }
       Refresh(false);
       Update();
-      imageSearchThread = new Thread(new ThreadStart(AmazonLookupThread));
-      imageSearchThread.Start();
+
+      ThumbDownloader thumbWorker = new ThumbDownloader(currentMovie);
+      //imageSearchThread = new Thread(new ThreadStart(AmazonLookupThread));
+      //imageSearchThread.IsBackground = true;
+      //imageSearchThread.Start();
     }
+
     protected override void OnPageDestroy(int newWindowId)
     {
       base.OnPageDestroy(newWindowId);
@@ -183,7 +259,6 @@ namespace MediaPortal.GUI.Video
         imageSearchThread = null;
       }
     }
-
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
@@ -211,8 +286,12 @@ namespace MediaPortal.GUI.Video
 
           Refresh(false);
           Update();
-          imageSearchThread = new Thread(new ThreadStart(AmazonLookupThread));
-          imageSearchThread.Start();
+
+          ThumbDownloader thumbWorker = new ThumbDownloader(currentMovie);
+
+          //imageSearchThread = new Thread(new ThreadStart(AmazonLookupThread));
+          //imageSearchThread.IsBackground = true;
+          //imageSearchThread.Start();
         }
         return;
       }
@@ -244,12 +323,14 @@ namespace MediaPortal.GUI.Video
         viewmode = ViewMode.Cast;
         Update();
       }
+
       if (control == btnPlot)
       {
 
         viewmode = ViewMode.Image;
         Update();
       }
+
       if (control == btnWatched)
       {
         if (currentMovie.Watched > 0)
@@ -290,6 +371,7 @@ namespace MediaPortal.GUI.Video
       get { return currentMovie; }
       set { currentMovie = value; }
     }
+
     public string FolderForThumbs
     {
       get { return folderForThumbs; }
@@ -323,8 +405,10 @@ namespace MediaPortal.GUI.Video
         btnCast.Selected = false;
 
       }
+
       btnWatched.Selected = (currentMovie.Watched != 0);
       currentMovie.SetProperties();
+
       if (imgCoverArt != null)
       {
         imgCoverArt.FreeResources();
@@ -374,9 +458,10 @@ namespace MediaPortal.GUI.Video
                 if (System.IO.File.Exists(temporaryFilenameLarge))
                 {
                   MediaPortal.Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
-                }else 
+                }
+                else
                 {
-                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);                
+                  MediaPortal.Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
                 }
               }
               MediaPortal.Util.Utils.FileDelete(temporaryFilename);
@@ -426,55 +511,7 @@ namespace MediaPortal.GUI.Video
 
     void AmazonLookupThread()
     {
-      try
-      {
-        if (currentMovie == null) return;
-        // Search for more pictures
-        IMDBMovie movie = currentMovie;
-        IMPawardsSearch impSearch = new IMPawardsSearch();
-        impSearch.Search(movie.Title);
-        AmazonImageSearch amazonSearch = new AmazonImageSearch();
-        amazonSearch.Search(movie.Title);
-        int thumb = 0;
-
-        if (movie.ThumbURL != string.Empty)
-          thumb = 1;
-
-        int pictureCount = amazonSearch.Count + impSearch.Count + thumb;
-        if (pictureCount == 0)
-          return;
-
-        int pictureIndex = 0;
-        coverArtUrls = new string[pictureCount];
-
-        if (movie.ThumbURL != string.Empty)
-          coverArtUrls[pictureIndex++] = movie.ThumbURL;
-
-        if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
-        {
-          for (int i = 0; i < impSearch.Count; ++i)
-          {
-            coverArtUrls[pictureIndex++] = impSearch[i];
-          }
-        }
-
-        if (amazonSearch.Count > 0)
-        {
-          for (int i = 0; i < amazonSearch.Count; ++i)
-          {
-            coverArtUrls[pictureIndex++] = amazonSearch[i];
-          }
-        }
-
-        AmazonImagesDownloaded();
-      }
-      catch (ThreadAbortException)
-      {
-      }
-      finally
-      {
-        imageSearchThread = null;
-      }
+//
     }
 
     private void ResetSpinControl()
@@ -489,9 +526,18 @@ namespace MediaPortal.GUI.Video
       spinImages.UpDownType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
     }
 
-    private void OnAmazonImagesDownloaded()
+    private void OnAmazonImagesDownloaded(string[] aThumbArray)
     {
-      ResetSpinControl();
+      lock (this)
+      {
+        if (aThumbArray.Length > 0)
+        {
+          coverArtUrls = null;
+          coverArtUrls = new string[aThumbArray.Length];
+          aThumbArray.CopyTo(coverArtUrls, 0);
+          ResetSpinControl();
+        }
+      }
     }
 
     #region IMDB.IProgress
@@ -504,6 +550,7 @@ namespace MediaPortal.GUI.Video
       }
       return true;
     }
+    
     public void OnProgress(string line1, string line2, string line3, int percent)
     {
       if (!GUIWindowManager.IsRouted) return;
@@ -515,6 +562,7 @@ namespace MediaPortal.GUI.Video
         pDlgProgress.SetPercentage(percent);
       pDlgProgress.Progress();
     }
+    
     public bool OnSearchStarting(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
@@ -527,6 +575,7 @@ namespace MediaPortal.GUI.Video
       pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
       return true;
     }
+    
     public bool OnSearchStarted(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
@@ -538,6 +587,7 @@ namespace MediaPortal.GUI.Video
       }
       return true;
     }
+    
     public bool OnSearchEnd(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
@@ -547,6 +597,7 @@ namespace MediaPortal.GUI.Video
       }
       return true;
     }
+    
     public bool OnMovieNotFound(IMDBFetcher fetcher)
     {
       // show dialog...
@@ -557,6 +608,7 @@ namespace MediaPortal.GUI.Video
       pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
       return true;
     }
+    
     public bool OnDetailsStarted(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
@@ -568,6 +620,7 @@ namespace MediaPortal.GUI.Video
       }
       return true;
     }
+    
     public bool OnDetailsStarting(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
@@ -580,6 +633,7 @@ namespace MediaPortal.GUI.Video
       pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
       return true;
     }
+    
     public bool OnDetailsEnd(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
@@ -589,6 +643,7 @@ namespace MediaPortal.GUI.Video
       }
       return true;
     }
+    
     public bool OnActorsStarted(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
@@ -600,6 +655,7 @@ namespace MediaPortal.GUI.Video
       }
       return true;
     }
+    
     public bool OnActorsStarting(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
@@ -612,10 +668,12 @@ namespace MediaPortal.GUI.Video
       pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
       return true;
     }
+    
     public bool OnActorsEnd(IMDBFetcher fetcher)
     {
       return true;
     }
+    
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
       // show dialog...
@@ -675,19 +733,21 @@ namespace MediaPortal.GUI.Video
     {
       return true;
     }
+    
     public bool OnScanEnd()
     {
       return true;
     }
+    
     public bool OnScanIterating(int count)
     {
       return true;
     }
+    
     public bool OnScanIterated(int count)
     {
       return true;
     }
-
     #endregion
 
     static public void GetStringFromKeyboard(ref string strLine)
@@ -703,7 +763,6 @@ namespace MediaPortal.GUI.Video
         strLine = keyboard.Text;
       }
     }
-
 
     #region IRenderLayer
     public bool ShouldRenderLayer()
