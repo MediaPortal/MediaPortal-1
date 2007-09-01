@@ -42,7 +42,7 @@ namespace MediaPortal.MPInstaller
           this.button1.Name = "button1";
           this.button1.Size = new System.Drawing.Size(109, 32);
           this.button1.TabIndex = 0;
-          this.button1.Text = "Create package";
+          this.button1.Text = "Create extension";
           this.button1.UseVisualStyleBackColor = true;
           this.button1.Click += new System.EventHandler(this.button1_Click);
           // 
@@ -52,7 +52,7 @@ namespace MediaPortal.MPInstaller
           this.button2.Name = "button2";
           this.button2.Size = new System.Drawing.Size(109, 32);
           this.button2.TabIndex = 1;
-          this.button2.Text = "Install package";
+          this.button2.Text = "Install extension";
           this.button2.UseVisualStyleBackColor = true;
           this.button2.Click += new System.EventHandler(this.button2_Click);
           // 
@@ -62,7 +62,7 @@ namespace MediaPortal.MPInstaller
           this.button3.Name = "button3";
           this.button3.Size = new System.Drawing.Size(109, 32);
           this.button3.TabIndex = 2;
-          this.button3.Text = "Control panel";
+          this.button3.Text = "Extension manager";
           this.button3.UseVisualStyleBackColor = true;
           this.button3.Click += new System.EventHandler(this.button3_Click);
           // 
@@ -98,7 +98,7 @@ namespace MediaPortal.MPInstaller
           this.Name = "start_form";
           this.RightToLeft = System.Windows.Forms.RightToLeft.No;
           this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-          this.Text = "MediaPortal Plugin Installer";
+          this.Text = "MediaPortal Extension Installer";
           this.ResumeLayout(false);
 
         }
