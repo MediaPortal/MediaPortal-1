@@ -96,8 +96,9 @@ public class MediaPortalApp : D3DApp, IRender
   private int timeScreenSaver = 60;
   private bool restoreTopMost = false;
   private bool _startWithBasicHome = false;
-  private bool _suspended = false;
-  private DateTime _resumedDateTime = DateTime.Now;
+  private bool _suspended = false;  
+  private bool ignoreContextMenuAction = false;
+  private DateTime lastContextMenuAction = DateTime.MaxValue;
   private bool _onResumeRunning = false;
   protected string _dateFormat = String.Empty;
   private bool showLastActiveModule = false;  
@@ -1036,7 +1037,26 @@ public class MediaPortalApp : D3DApp, IRender
     {
       Log.Info("Main: disposing VideoDatabaseV5.db3 sqllite database.");
       MediaPortal.Database.DatabaseFactory.GetVideoDatabase().Dispose();
-    }                  
+    }
+
+    //TODO close music and TV db's
+    /*
+    dbPath = Config.GetFile(Config.Dir.Database, "MusicDatabaseV8.db3");
+    isRemotePath = PathIsNetworkPath(dbPath);
+    if (isRemotePath)
+    {
+      Log.Info("Main: disposing MusicDatabaseV8.db3 sqllite database.");      
+      MediaPortal.Database.DatabaseFactory.GetVideoDatabase().Dispose();
+    }
+    
+    dbPath = Config.GetFile(Config.Dir.Database, "TVDatabaseV21.db3");
+    isRemotePath = PathIsNetworkPath(dbPath);
+    if (isRemotePath)
+    {
+      Log.Info("Main: disposing TVDatabaseV21.db3 sqllite database.");
+      MediaPortal.Database.DatabaseFactory.GetVideoDatabase().Dispose();
+    }         
+    */
   }
 
   //called when windows hibernates or goes into standbye mode
@@ -1048,6 +1068,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         return;
       }
+      ignoreContextMenuAction = true;
       _suspended = true;      
       SaveLastActiveModule();      
 
@@ -1126,6 +1147,7 @@ public class MediaPortalApp : D3DApp, IRender
     //System.Diagnostics.Debugger.Launch();
     //wait for NIC's to get ready        
     //bool res = IsNetworkConnected();    
+    ignoreContextMenuAction = true;
 
     if (_onResumeRunning == true)
     {
@@ -1196,10 +1218,10 @@ public class MediaPortalApp : D3DApp, IRender
             
       _suspended = false;
       bool result = base.ShowLastActiveModule();      
-      _onResumeRunning = false;            
+      _onResumeRunning = false;
+      ignoreContextMenuAction = false;    
       Log.Info("Main: OnResume - Done");
-
-      _resumedDateTime = DateTime.Now;
+      
     }
   }
 
@@ -1923,17 +1945,35 @@ public class MediaPortalApp : D3DApp, IRender
   #region Handle messages, keypresses, mouse moves etc
 
   private void OnAction(Action action)
-  { 
-    DateTime now = DateTime.Now;
-    TimeSpan ts = _resumedDateTime - now;
-    // fix for lastactivemodulefullscreen
-    // when recovering from hibernation/standby after closing with remote control somehow a F9 (keycode 120) onkeydown event is thrown
+  {     
+    // hack/fix for lastactivemodulefullscreen
+    // when recovering from hibernation/standby after closing with remote control somehow a F9 (keycode 120) onkeydown event is thrown from outside
     // we are currently filtering it away.
-    // if this is not done the F9 context menu is shown on the restored/shown module.
-    // currently the timer is set to 2 seconds. So we are ignoring action events for 2 sec.
-    if (_suspended || (ts.TotalSeconds > -2 && _resumedDateTime != DateTime.MaxValue))
+    // sometimes more than one F9 keydown event fired.
+    // if these events are not filtered away the F9 context menu is shown on the restored/shown module.
+    if ((action.wID == Action.ActionType.ACTION_CONTEXT_MENU || _suspended) && (showLastActiveModule))
     {
-      return;
+      //Log.Info("ACTION_CONTEXT_MENU, ignored = {0}, suspended = {1}", ignoreContextMenuAction, _suspended);      
+      if (ignoreContextMenuAction)
+      {
+        ignoreContextMenuAction = false;
+        lastContextMenuAction = DateTime.Now;
+        return;
+      }
+      else if (lastContextMenuAction != DateTime.MaxValue)
+      {
+        Log.Info("ignore 1");
+        TimeSpan ts = lastContextMenuAction - DateTime.Now;
+        //Log.Info("ts.TotalMilliseconds = {0}", ts.TotalMilliseconds);
+        if (ts.TotalMilliseconds > -100)
+        {
+          ignoreContextMenuAction = false;
+          lastContextMenuAction = DateTime.Now;
+          Log.Info("ignore 2");
+          return;
+        }
+      }
+      lastContextMenuAction = DateTime.Now;
     }
     try
     {
