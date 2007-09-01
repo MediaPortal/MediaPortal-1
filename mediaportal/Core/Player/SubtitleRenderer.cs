@@ -43,8 +43,8 @@ namespace MediaPortal.Player
     public Bitmap subBitmap;
     public uint width;
     public uint height;
-    public double presentTime; // NOTE: in seconds
-    public double timeOut; // NOTE: in seconds
+    public double presentTime;  // NOTE: in seconds
+    public double timeOut;      // NOTE: in seconds
     public int firstScanLine;
     public long id = 0;
 
@@ -62,17 +62,16 @@ namespace MediaPortal.Player
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IDVBSubtitle2
   {
-    //void GetSubtitle(int place, ref SUBTITLE subtitle);
-    //void GetSubtitleCount(out int count);
     void SetCallback(IntPtr callBack);
     void SetResetCallback(IntPtr callBack);
-    //void DiscardOldestSubtitle();
+    void SetUpdateTimeoutCallback(IntPtr callBack);
     void Test(int status);
   }
 
   [UnmanagedFunctionPointer(CallingConvention.StdCall)]
   public delegate int SubtitleCallback(ref SUBTITLE sub);
   public delegate int ResetCallback();
+  public delegate int UpdateTimeoutCallback(ref Int64 timeOut);
 
   public class SubtitleRenderer
   {
@@ -93,6 +92,7 @@ namespace MediaPortal.Player
     // or horrible things will happen when the native code tries to call those!
     private SubtitleCallback callBack;
     private ResetCallback resetCallBack;
+    private UpdateTimeoutCallback updateTimeoutCallBack;
 
     /// <summary>
     /// Texture storing the current/last subtitle
@@ -127,6 +127,7 @@ namespace MediaPortal.Player
         instance = new SubtitleRenderer();
         instance.callBack = new SubtitleCallback(instance.OnSubtitle);
         instance.resetCallBack = new ResetCallback(instance.Reset);
+        instance.updateTimeoutCallBack = new UpdateTimeoutCallback(instance.UpdateTimeout);
       }
       return instance;
     }
@@ -179,6 +180,32 @@ namespace MediaPortal.Player
         subtitles.Clear();
       }
       clearOnNextRender = true;
+      return 0;
+    }
+
+    /// <summary>
+    /// Callback from subtitle filter
+    /// Updates the latest subtitle timeout 
+    /// </summary>
+    /// <returns></returns>
+    public int UpdateTimeout(ref Int64 timeOut)
+    {
+      Log.Debug("SubtitleRenderer: UpdateTimeout" );
+      Subtitle latest;
+      if (subtitles.Count > 0)
+      {
+        latest = subtitles.Last.Value;
+      }
+      else
+      {
+        latest = currentSubtitle;
+      }
+
+      if (latest != null)
+      {
+        latest.timeOut = (double)timeOut / 1000.0f;
+        Log.Debug("  new timeOut = {0}", latest.timeOut);
+      }
       return 0;
     }
 
@@ -323,6 +350,9 @@ namespace MediaPortal.Player
       IntPtr pResetCallBack = Marshal.GetFunctionPointerForDelegate(resetCallBack);
       subFilter.SetResetCallback(pResetCallBack);
 
+      IntPtr pUpdateTimeoutCallBack = Marshal.GetFunctionPointerForDelegate(updateTimeoutCallBack);
+      subFilter.SetUpdateTimeoutCallback(pUpdateTimeoutCallBack);
+
       return filter;
     }
 
@@ -424,26 +454,26 @@ namespace MediaPortal.Player
 
         if (GUIGraphicsContext.IsFullScreenVideo)
         {
-          rationW = GUIGraphicsContext.OverScanWidth / (float)720;
-          rationH = GUIGraphicsContext.OverScanHeight / (float)576;
+          rationH = GUIGraphicsContext.Height / 576.0f;
+          rationW = GUIGraphicsContext.Height / 576.0f;
           
           // Get the location to render the subtitle to
           wx = GUIGraphicsContext.OverScanLeft +
-             (int)(((float)(GUIGraphicsContext.Width - currentSubtitle.width * rationW)) / 2);
-          wy = GUIGraphicsContext.OverScanTop + (int)(rationH * (float)currentSubtitle.firstScanLine);
+             (int)(((float)(GUIGraphicsContext.Width - currentSubtitle.width * rationW  )) / 2);
+          wy = GUIGraphicsContext.OverScanTop + (int)(rationH * (float)currentSubtitle.firstScanLine );
         }
         else // Video overlay
         {
-          rationW = GUIGraphicsContext.VideoWindow.Width / (float)720;
-          rationH = GUIGraphicsContext.VideoWindow.Height / (float)576;
+          rationW = GUIGraphicsContext.VideoWindow.Width / 720.0f;
+          rationH = GUIGraphicsContext.VideoWindow.Height / 576.0f;
 
           wx = GUIGraphicsContext.VideoWindow.Right - ( GUIGraphicsContext.VideoWindow.Width / 2 ) - 
             (int)(((float)currentSubtitle.width * rationW) / 2);
-          wy = GUIGraphicsContext.VideoWindow.Top + (int)(rationH * (float)currentSubtitle.firstScanLine);
+          wy = GUIGraphicsContext.VideoWindow.Top + (int)(rationH * (float)currentSubtitle.firstScanLine );
         }
 
-        wwidth = (int)((float)currentSubtitle.width * rationW);
-        wheight = (int)((float)currentSubtitle.height * rationH);
+        wwidth = (int)((float)currentSubtitle.width * rationW  );
+        wheight = (int)((float)currentSubtitle.height * rationH );
         
         // make sure the vertex buffer is ready and correct for the coordinates
         CreateVertexBuffer(wx, wy, wwidth, wheight);
