@@ -455,7 +455,7 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.IsFullScreenVideo)
         {
           rationH = GUIGraphicsContext.Height / 576.0f;
-          rationW = GUIGraphicsContext.Height / 576.0f;
+          rationW = rationH;
           
           // Get the location to render the subtitle to
           wx = GUIGraphicsContext.OverScanLeft +
@@ -464,15 +464,15 @@ namespace MediaPortal.Player
         }
         else // Video overlay
         {
-          rationW = GUIGraphicsContext.VideoWindow.Width / 720.0f;
           rationH = GUIGraphicsContext.VideoWindow.Height / 576.0f;
+          rationW = rationH;
 
           wx = GUIGraphicsContext.VideoWindow.Right - ( GUIGraphicsContext.VideoWindow.Width / 2 ) - 
             (int)(((float)currentSubtitle.width * rationW) / 2);
           wy = GUIGraphicsContext.VideoWindow.Top + (int)(rationH * (float)currentSubtitle.firstScanLine );
         }
 
-        wwidth = (int)((float)currentSubtitle.width * rationW  );
+        wwidth = (int)((float)currentSubtitle.width * rationW );
         wheight = (int)((float)currentSubtitle.height * rationH );
         
         // make sure the vertex buffer is ready and correct for the coordinates
