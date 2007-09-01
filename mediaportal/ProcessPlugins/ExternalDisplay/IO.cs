@@ -39,7 +39,7 @@ namespace ProcessPlugins.ExternalDisplay
   /// <author>JoeDalton</author>
   public class IO
   {
-    private static IOPort m_Port = new IOPort();
+    private static readonly IOPort m_Port = new IOPort();
 
     /// <summary>
     /// Provides access to the single instance
