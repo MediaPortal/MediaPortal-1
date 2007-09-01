@@ -63,6 +63,7 @@ public:
   // IDVBSubtitle
   virtual HRESULT STDMETHODCALLTYPE SetCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) );
   virtual HRESULT STDMETHODCALLTYPE SetResetCallback( int (CALLBACK *pResetObserver)() );
+  virtual HRESULT STDMETHODCALLTYPE SetUpdateTimeoutCallback( int (CALLBACK *pUpdateTimeoutObserver)(__int64* pTimeout) );
   virtual HRESULT STDMETHODCALLTYPE Test( int status );
   virtual HRESULT STDMETHODCALLTYPE SetSubtitlePid( LONG pPid );
   virtual HRESULT STDMETHODCALLTYPE SetFirstPcr( LONGLONG pPcr );
@@ -76,6 +77,8 @@ public:
 
   // From MSubdecoderObserver
   void NotifySubtitle();
+  void UpdateSubtitleTimeout( uint64_t pTimeout );
+  
   void NotifySeeking();
 
   static CUnknown * WINAPI CreateInstance( LPUNKNOWN pUnk, HRESULT *pHr );
@@ -106,10 +109,12 @@ private: // data
   REFERENCE_TIME      m_startTimestamp;
   REFERENCE_TIME      m_CurrentSeekPosition;
   LONGLONG            m_basePCR;
-  REFERENCE_TIME      m_CurrentTimeCompensation;
+  LONGLONG            m_prevSubtitleTimestamp;
+  REFERENCE_TIME      m_currentTimeCompensation;
 
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub);
   int                 (CALLBACK *m_pResetObserver) ();
+  int                 (CALLBACK *m_pUpdateTimeoutObserver) (__int64* pTimeout);
 
   bool                m_bSeekingDone;
 };

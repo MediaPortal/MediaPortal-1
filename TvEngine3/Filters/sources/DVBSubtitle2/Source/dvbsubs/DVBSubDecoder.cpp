@@ -168,14 +168,15 @@ void CDVBSubDecoder::Set_clut( int CLUT_id,int CLUT_entry_id,int Y, int Cr, int 
 		return;
 	}
 
-	if( Y == 0 || T_value == 0xff ) 
+	// A value of zero in the Y_value field signals full transparency
+  if( Y == 0 ) 
 	{
 		trans[(CLUT_id*16)+CLUT_entry_id] = 0x0;
     R = G = B = 0;
 	} 
-	else 
+	else
 	{
-		trans[(CLUT_id*16)+CLUT_entry_id] = 255;
+    trans[(CLUT_id*16)+CLUT_entry_id] = 0xff - T_value;
 	}
 
   colours[(CLUT_id*48)+(CLUT_entry_id*3)+0] = R;
@@ -747,7 +748,16 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 			  Compose_subtitle();
 				if( m_pObserver )
 				{
-					m_pObserver->NotifySubtitle();
+					LogDebug("DVBsubs: call NotifySubtitle()");
+          m_pObserver->NotifySubtitle();
+				}
+			}
+      else
+			{
+				if( m_pObserver )
+				{
+					LogDebug("DVBsubs: call UpdateSubtitleTimeout()");
+          m_pObserver->UpdateSubtitleTimeout( m_CurrentSubtitle->PTS() );
 				}
 			}
 		}

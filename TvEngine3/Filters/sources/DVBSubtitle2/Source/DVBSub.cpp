@@ -63,15 +63,17 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_pSubtitlePin( NULL ),
 	m_pSubDecoder( NULL ),
   m_pSubtitleObserver( NULL ),
+  m_pUpdateTimeoutObserver( NULL ),
   m_pResetObserver( NULL ),
   m_pIMediaSeeking( NULL ),
   m_bSeekingDone( true ),
   m_startTimestamp( -1 ),
   m_CurrentSeekPosition( 0 ),
-  m_CurrentTimeCompensation( 0 )
+  m_currentTimeCompensation( 0 ),
+  m_prevSubtitleTimestamp( 0 )
 {
   ::DeleteFile("c:\\DVBsub.log");
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 5 ----------------");
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 6 ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -312,8 +314,8 @@ STDMETHODIMP CDVBSub::SeekDone( CRefTime& rtSeek )
 //
 STDMETHODIMP CDVBSub::SetTimeCompensation( CRefTime& rtCompensation )
 {
-  m_CurrentTimeCompensation = rtCompensation.Millisecs() * 90;
-  LogDebugPTS( "SetTimeCompensation", m_CurrentSeekPosition );
+  m_currentTimeCompensation = rtCompensation.Millisecs() * 90;
+  LogDebugPTS( "SetTimeCompensation", m_currentTimeCompensation );
   return S_OK;
 }
 
@@ -343,17 +345,18 @@ void CDVBSub::NotifySubtitle()
     // PTS to milliseconds ( 90khz )
     LONGLONG pts( 0 ); 
    
-    pts = ( pSubtitle->PTS() - m_basePCR - m_CurrentTimeCompensation /* + m_CurrentSeekPosition*/ ) / 90;
+    pts = ( pSubtitle->PTS() - m_basePCR - m_currentTimeCompensation /* + m_CurrentSeekPosition*/ ) / 90;
 
     LogDebugPTS( "subtitlePTS               ", pSubtitle->PTS() ); 
     LogDebugPTS( "m_basePCR                 ", m_basePCR ); 
     LogDebugPTS( "timestamp                 ", pts * 90 ); 
     LogDebugPTS( "m_CurrentSeekPosition     ", m_CurrentSeekPosition ); 
-    LogDebugPTS( "m_CurrentTimeCompensation ", m_CurrentTimeCompensation ); 
+    LogDebugPTS( "m_currentTimeCompensation ", m_currentTimeCompensation ); 
 
-    LogDebugPTS( "subtitlePTS - m_basePCR - comp ", pSubtitle->PTS() - m_basePCR - m_CurrentTimeCompensation ); 
+    LogDebugPTS( "subtitlePTS - m_basePCR - comp ", pSubtitle->PTS() - m_basePCR - m_currentTimeCompensation ); 
 
-    pSubtitle->SetTimestamp( pts );  
+    pSubtitle->SetTimestamp( pts );
+    m_prevSubtitleTimestamp = pts;
 
     LONGLONG pos( 0 );
     if( m_pIMediaSeeking )
@@ -392,6 +395,30 @@ void CDVBSub::NotifySubtitle()
 	  LogDebug( "No callback set" );
   }
 }
+
+
+//
+// UpdateSubtitleTimeout
+//
+void CDVBSub::UpdateSubtitleTimeout( uint64_t pTimeout )
+{
+  if( m_pUpdateTimeoutObserver )
+  {
+    // Stop displaying the current subtitle
+    LogDebug("Calling update timeout observer" );
+
+    __int64 timeOut( 0 ); 
+    timeOut = ( pTimeout - m_basePCR - m_currentTimeCompensation ) / 90;
+    timeOut -= m_prevSubtitleTimestamp;
+
+    (*m_pUpdateTimeoutObserver)( &timeOut );
+  }
+  else
+  {
+	  LogDebug( "No m_pUpdateTimeoutObserver set" );
+  }  
+}
+
 
 //
 // NotifySeeking
@@ -456,6 +483,17 @@ STDMETHODIMP CDVBSub::SetResetCallback( int (CALLBACK *pResetObserver)() )
 {
 	LogDebug( "SetTimestampResetedCallback called" );
   m_pResetObserver = pResetObserver;
+  return S_OK;
+}
+
+
+//
+// SetUpdateTimeoutCallback
+//
+STDMETHODIMP CDVBSub::SetUpdateTimeoutCallback( int (CALLBACK *pUpdateTimeoutObserver)(__int64* pTimeout) )
+{
+	LogDebug( "SetRemoveSubtitleCallback called" );
+  m_pUpdateTimeoutObserver = pUpdateTimeoutObserver;
   return S_OK;
 }
 

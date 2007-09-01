@@ -56,6 +56,7 @@ DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
 {
   STDMETHOD(SetCallback) ( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) ) PURE;
   STDMETHOD(SetResetCallback)( int (CALLBACK *pResetObserver)() ) PURE;
+  STDMETHOD(SetUpdateTimeoutCallback)( int (CALLBACK *pUpdateTimeoutObserver)(__int64* pTimeout) ) PURE;
   STDMETHOD(Test)( int status ) PURE;
   STDMETHOD(NotifyChannelChange)() PURE;
   STDMETHOD(SetSubtitlePid)( LONG pPid ) PURE;

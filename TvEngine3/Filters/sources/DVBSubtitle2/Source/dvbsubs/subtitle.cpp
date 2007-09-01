@@ -92,13 +92,11 @@ int CSubtitle::RenderBitmap( unsigned char* buffer, unsigned char* my_palette, u
 
 	for( int i =  m_Bitmap.bmWidth * m_FirstScanline ; i < ( m_Bitmap.bmHeight + m_FirstScanline ) * m_Bitmap.bmWidth; i++ )
 	{
-		for( int j = 0 ; j < 3 ; j++ )
+		colorData = buffer[i];
+    for( int j = 0 ; j < 3 ; j++ )
 		{
-      colorData = buffer[i];
-			
-			int value = my_palette[colorData * 3 + j];
-      m_Data[position] = value;
-  		position++;
+      m_Data[position] = my_palette[colorData * 3 + j];
+      position++;
 
 			// Add alpha channel 
       if( j == 2 )
