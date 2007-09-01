@@ -60,7 +60,7 @@ uint64_t video_pts,first_video_pts,audio_pts,first_audio_pts;
 int audio_pts_wrap=0;
 
 // HACK to adjust the timeout
-const int maxSubtitleTimeOut = 5;
+const int maxSubtitleTimeOut = 6;
 
 // Logging
 extern void LogDebug( const char *fmt, ... );
