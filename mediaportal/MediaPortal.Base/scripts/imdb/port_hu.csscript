@@ -1,0 +1,263 @@
+//css_reference "core.dll";
+//css_reference "Databases.dll";
+//css_reference "utils.dll";
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using System.IO;
+using System.Net;
+using System.Collections;
+using System.Web;
+using System.Text.RegularExpressions;
+using MediaPortal.Util;
+
+// change to Grabber, this for avoid to load by mediaportal
+class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
+{
+  public Grabber()
+    {
+    }
+
+  void MediaPortal.Video.Database.IIMDBScriptGrabber.FindFilm(string strSearch, int iLimit, ArrayList elements)
+  {
+    string strURL = "http://www.port.hu/pls/ci/cinema.film_list?i_film_title="+strSearch+"&i_city_id=3372&i_county_id=-1";
+    string absoluteUri;
+    int iCount = 0;
+    try
+    {
+      string strBody = GetPage(strURL, "ISO-8859-1", out absoluteUri);
+      string strurl = string.Empty;
+      string strtitle = string.Empty;
+      MediaPortal.Util.HTMLParser parser = new MediaPortal.Util.HTMLParser(strBody);
+      while ((parser.Position < strBody.Length) && (iCount < iLimit))
+      {
+        if (parser.skipToEndOfNoCase("\"btxt\"><a href=\"")&&
+          parser.extractTo("\"", ref strurl))
+        {
+          if (parser.skipToEndOfNoCase("\"_top\">") &&
+              parser.extractTo("</span>", ref strtitle))
+          {
+            strurl = "http://www.port.hu" + strurl;
+            strtitle = strtitle.Replace("</a>", " ");
+            MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl(strurl, strtitle + " (port_hu)", "port_hu");
+            elements.Add(url);
+          }
+        }
+        iCount++;
+      }
+    }
+    catch (Exception ex)
+    {
+      MediaPortal.GUI.Library.Log.Error("exception for port_hu lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
+    }
+  }
+
+
+  bool MediaPortal.Video.Database.IIMDBScriptGrabber.GetDetails(MediaPortal.Video.Database.IMDB.IMDBUrl url, ref MediaPortal.Video.Database.IMDBMovie movieDetails)
+  {
+    movieDetails.Reset();
+    movieDetails.Database = "port_hu";
+    string strAbsURL;
+    url.URL = url.URL.Replace("&amp;", "&");
+    string strBody = GetPage(url.URL, "ISO-8859-1", out strAbsURL);
+    HTMLUtil htmlUtil = new HTMLUtil();
+    if (strBody == null || strBody.Length == 0)
+      return false;
+    MediaPortal.Util.HTMLParser parser = new MediaPortal.Util.HTMLParser(strBody);
+    if (parser.skipToEndOfNoCase("blackbigtitle\">"))
+    {
+
+      string strTitle = String.Empty;
+      string strYear = String.Empty;
+      string runtime = String.Empty;
+      string strDirector = String.Empty;
+      string strWriting = String.Empty;
+      string strCast = String.Empty;
+      string strGenre = String.Empty;
+      string strPlot = String.Empty;
+      string strNumber = String.Empty;
+      string strThumb = String.Empty;
+      string strRating = String.Empty;
+      string strVotes = String.Empty;
+      string strMpaa = String.Empty;
+      string strother = String.Empty;
+      if (parser.extractTo("</span>", ref strTitle))
+        movieDetails.Title = strTitle;
+      if (parser.skipToEndOfNoCase("<span class=\"txt\">(") && parser.extractTo(")</center>", ref strTitle))
+      {
+        movieDetails.Title = strTitle;
+      }
+
+      if (parser.skipToEndOfNoCase("\"btxt\">") && parser.extractTo(",", ref strother))
+      {
+        movieDetails.TagLine = strother;
+      }
+
+      if (parser.extractTo("perc,", ref runtime))
+      {
+        try
+        {
+          movieDetails.RunTime = System.Int32.Parse(runtime.Trim());
+        }
+        catch (Exception)
+        {
+          movieDetails.RunTime =0;
+        }
+      }
+
+      if (parser.extractTo("</span>", ref strYear))
+      {
+        try
+        {
+          movieDetails.Year = System.Int32.Parse(strYear.Trim());
+        }
+        catch (Exception)
+        {
+          movieDetails.Year = 1970;
+        }
+      }
+
+      if (parser.skipToEndOfNoCase("<span class=\"btxt\">") && parser.extractTo("</span>", ref strMpaa))
+      {
+        movieDetails.MPARating = strMpaa;
+      }
+      
+      if (parser.skipToEndOfNoCase("<span class=\"btxt\">rendez") && 
+        parser.skipToEndOfNoCase("_top\">") && 
+        parser.extractTo("<br>", ref strDirector))
+      {
+        movieDetails.Director = MediaPortal.Util.HTMLParser.removeHtml(strDirector);
+      }
+
+      if (parser.skipToEndOfNoCase("<span class=\"btxt\">forgat") &&
+        parser.skipToEndOfNoCase("_top\">") &&
+        parser.extractTo("<br>", ref strWriting))
+      {
+        movieDetails.WritingCredits = MediaPortal.Util.HTMLParser.removeHtml(strWriting);
+      }
+
+      if (parser.skipToEndOfNoCase("<br><P><b>szerepl") &&
+        parser.skipToEndOfNoCase("_top\">") &&
+        parser.extractTo("</span>", ref strCast))
+      {
+        movieDetails.Cast = MediaPortal.Util.HTMLParser.removeHtml(strCast).Replace("(", " as ").Replace(")", "");
+      }
+
+      if (parser.skipToEndOfNoCase("<table") &&
+        parser.skipToEndOfNoCase("<div class=\"separator\">") &&
+        parser.skipToEndOfNoCase("<span class=\"txt\">") &&
+        parser.extractTo("</span>", ref strPlot))
+      {
+        movieDetails.Plot = htmlUtil.ConvertHTMLToAnsi(strPlot.Replace("<BR>", Environment.NewLine));
+      }
+      movieDetails.Database = "port_hu";
+      return true;
+    }
+    else
+      return false;
+    // preces the web page defined by the url
+    // ................
+    // ................
+    // then fill the database
+    // movieDetails.Year
+    // movieDetails.Genre 
+    // movieDetails.Votes
+    // movieDetails.Top250
+    // movieDetails.TagLine
+    // movieDetails.PlotOutline
+    // movieDetails.ThumbURL
+    // movieDetails.Plot
+    // movieDetails.Cast
+    // movieDetails.RunTime = ....
+    // movieDetails.MPARating = ......
+
+    // found some information 
+    //return true;
+    // else
+  }
+
+  string MediaPortal.Video.Database.IIMDBScriptGrabber.GetName()
+  {
+    return "Port.hu grabber ";
+  }
+ 
+  string MediaPortal.Video.Database.IIMDBScriptGrabber.GetLanguage()
+  {
+    return "HU";
+  }
+
+  // a general procedure to get a web page 
+  // use like :
+  //    string absoluteUri;
+  //    string strURL = "http://us.imdb.com/Tsearch?title=" + strSearch;
+  //    string strBody = GetPage(strURL, "utf-8", out absoluteUri);
+
+  private string GetPage(string strURL, string strEncode, out string absoluteUri)
+  {
+    string strBody = "";
+    absoluteUri = String.Empty;
+    Stream ReceiveStream = null;
+    StreamReader sr = null;
+    WebResponse result = null;
+    try
+    {
+      // Make the Webrequest
+      //Log.Info("IMDB: get page:{0}", strURL);
+      WebRequest req = WebRequest.Create(strURL);
+
+      result = req.GetResponse();
+      ReceiveStream = result.GetResponseStream();
+
+      // Encoding: depends on selected page
+      Encoding encode = System.Text.Encoding.GetEncoding(strEncode);
+      sr = new StreamReader(ReceiveStream, encode);
+      strBody = sr.ReadToEnd();
+
+      absoluteUri = result.ResponseUri.AbsoluteUri;
+    }
+    catch (Exception)
+    {
+      //Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
+    }
+    finally
+    {
+      if (sr != null)
+      {
+        try
+        {
+          sr.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+      if (ReceiveStream != null)
+      {
+        try
+        {
+          ReceiveStream.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+      if (result != null)
+      {
+        try
+        {
+          result.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+    }
+    return strBody;
+  } // END GetPage()
+
+}
