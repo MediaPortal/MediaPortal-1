@@ -372,11 +372,11 @@ namespace TvEngine
                   {
                     switch (xmlProg.Name)
                     {
-                      case "title": if (nodeTitle == null) nodeTitle = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
-                      case "category": if (nodeCategory == null) nodeCategory = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
-                      case "desc": if (nodeDescription == null) nodeDescription = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
-                      case "sub-title": if (nodeEpisode == null) nodeEpisode = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
-                      case "previously-shown": if (nodeRepeat == null) nodeRepeat = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
+                      case "title": if (nodeTitle == null) nodeTitle = xmlProg.ReadString(); else xmlProg.Skip(); break;
+                      case "category": if (nodeCategory == null) nodeCategory = xmlProg.ReadString(); else xmlProg.Skip(); break;
+                      case "desc": if (nodeDescription == null) nodeDescription = xmlProg.ReadString(); else xmlProg.Skip(); break;
+                      case "sub-title": if (nodeEpisode == null) nodeEpisode = xmlProg.ReadString(); else xmlProg.Skip(); break;
+                      case "previously-shown": if (nodeRepeat == null) nodeRepeat = xmlProg.ReadString(); else xmlProg.Skip(); break;
                       case "episode-num":
                         if (nodeEpisodeNum == null)
                         {
@@ -385,9 +385,9 @@ namespace TvEngine
                         }
                         else xmlProg.Skip(); 
                         break;
-                      case "date": if (nodeDate == null) nodeDate = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
-                      case "star-rating": if (nodeStarRating == null) nodeStarRating = xmlProg.ReadInnerXml(); else xmlProg.Skip(); break;
-                      case "rating": if (nodeClassification == null) nodeClassification = xmlProg.ReadInnerXml(); else xmlProg.Skip();  break;
+                      case "date": if (nodeDate == null) nodeDate = xmlProg.ReadString(); else xmlProg.Skip(); break;
+                      case "star-rating": if (nodeStarRating == null) nodeStarRating = xmlProg.ReadString(); else xmlProg.Skip(); break;
+                      case "rating": if (nodeClassification == null) nodeClassification = xmlProg.ReadString(); else xmlProg.Skip();  break;
                       default:
                         // unknown, skip entire node
                         xmlProg.Skip();
