@@ -523,15 +523,6 @@ namespace MediaPortal.GUI.Music
     {
       GUIWaitCursor.Show();
 
-      // while waking up from hibernation it can take a while before a network drive is accessible.
-      // lets wait 10 sec
-      int count = 0;
-      while (!Directory.Exists(strNewDirectory) && count < 100)
-      {
-        Thread.Sleep(100);
-        count++;
-      }
-
       try
       {
         GUIListItem SelectedItem = facadeView.SelectedListItem;
