@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Language name="Swedish" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Mina ">Program</String>
@@ -1090,10 +1090,14 @@
     <String id="2602">Franska</String>
     <String id="2603">Holländska</String>
     <String id="2604">Norska</String>
-    <String id="2605">Svenska</String>
-    <String id="2606">Italienska</String>
+    <String id="2605">Italienska</String>
+    <String id="2606">Svenska</String>
     <String id="2607">Spanska</String>
     <String id="2608">Portugisiska</String>
+	<String id="2609">Danska</String>
+    <String id="2610">Polska</String>
+    <String id="2611">Tjeckiska</String>
+    <String id="2612">Ungersk</String>
     <String id="2997">h.</String>
     <String id="2998">min.</String>
     <String id="2999">sek.</String>
