@@ -105,6 +105,7 @@ namespace SQLite.NET
     private int busyRetryDelay = 25;
     private IntPtr dbHandle = IntPtr.Zero;
     private string databaseName = String.Empty;
+    private string DBName = String.Empty;
     //private long dbHandleAdres=0;
 
     #endregion
@@ -187,14 +188,50 @@ namespace SQLite.NET
       }
     }
 
+    static private bool WaitForFile(string fileName)
+    {
+      // while waking up from hibernation it can take a while before a network drive is accessible.
+      // lets wait 10 sec      
+      int count = 0;
+      bool validFile = false;
+      try
+      {
+        string file = System.IO.Path.GetFileName(fileName);
+
+        validFile = file.Length > 0;
+      }
+      catch (Exception ex)
+      {
+        validFile = false;
+      }
+
+      if (validFile)
+      {
+        while (!File.Exists(fileName) && count < 100)
+        {
+          System.Threading.Thread.Sleep(100);
+          count++;
+        }
+      }
+      else
+      {
+        return true;
+      }
+
+      return (validFile && count < 100);
+    }
+
     // Methods
     public SQLiteClient(string dbName)
     {
+      bool res = WaitForFile(dbName);
+
+      this.DBName = dbName;
       databaseName = Path.GetFileName(dbName);
       //Log.Info("dbs:open:{0}",databaseName);
       dbHandle = IntPtr.Zero;
 
-      SqliteError err = (SqliteError) sqlite3_open16(dbName, out dbHandle);
+      SqliteError err = (SqliteError)sqlite3_open16(dbName, out dbHandle);
       //Log.Info("dbs:opened:{0} {1} {2:X}",databaseName, err.ToString(),dbHandle.ToInt32());
       if (err != SqliteError.OK)
       {
@@ -262,10 +299,10 @@ namespace SQLite.NET
         {
           IntPtr pVm;
           IntPtr pzTail;
-          err = sqlite3_prepare16(dbHandle, query, query.Length*2, out pVm, out pzTail);
+          err = sqlite3_prepare16(dbHandle, query, query.Length * 2, out pVm, out pzTail);
           if (err == SqliteError.OK)
           {
-            ReadpVm(query, set1, pVm);
+            ReadpVm(query, set1, ref pVm);
           }
 
           if (pVm == IntPtr.Zero)
@@ -286,7 +323,7 @@ namespace SQLite.NET
       return set1;
     }
 
-    internal void ReadpVm(string query, SQLiteResultSet set1, IntPtr pVm)
+    internal void ReadpVm(string query, SQLiteResultSet set1, ref IntPtr pVm)
     {
       int pN;
       SqliteError res = SqliteError.ERROR;
@@ -295,18 +332,56 @@ namespace SQLite.NET
       {
         ThrowError("SqlClient:pvm=null", query, res);
       }
-      while (true)
+      DateTime now = DateTime.Now;
+      TimeSpan ts = now - DateTime.Now;
+      while (true && ts.TotalSeconds > -5)
       {
         res = sqlite3_step(pVm);
         pN = sqlite3_column_count(pVm);
+        /*
         if (res == SqliteError.ERROR)
         {
           ThrowError("sqlite3_step", query, res);
         }
+        */
         if (res == SqliteError.DONE)
         {
           break;
         }
+
+
+        // when resuming from hibernation or standby and where the db3 files are located on a network drive, we often end up in a neverending loop
+        // while (true)...it never exits. and the app is hanging.
+        // Lets handle it by disconnecting the DB, and then reconnect.
+        if (res == SqliteError.BUSY || res == SqliteError.ERROR)
+        {
+          this.Close();
+
+          dbHandle = IntPtr.Zero;
+
+          bool res2 = WaitForFile(this.DBName);
+
+          SqliteError err = (SqliteError)sqlite3_open16(this.DBName, out dbHandle);
+
+          if (err != SqliteError.OK)
+          {
+            throw new SQLiteException(string.Format("Failed to re-open database, SQLite said: {0} {1}", DBName, err.ToString()));
+          }
+          else
+          {                        
+            IntPtr pzTail;
+            err = sqlite3_prepare16(dbHandle, query, query.Length * 2, out pVm, out pzTail);
+
+            res = sqlite3_step(pVm);
+            pN = sqlite3_column_count(pVm);
+
+            if (pVm == IntPtr.Zero)
+            {
+              ThrowError("sqlite3_prepare16:pvm=null", query, err);
+            }           
+          }
+        }
+
         // We have some data; lets read it
         if (set1.ColumnNames.Count == 0)
         {
@@ -336,6 +411,13 @@ namespace SQLite.NET
           row.fields.Add(colData);
         }
         set1.Rows.Add(row);
+
+        ts = now - DateTime.Now;
+      }
+
+      if (res == SqliteError.BUSY || res == SqliteError.ERROR)
+      {
+        ThrowError("sqlite3_step", query, res);
       }
     }
 

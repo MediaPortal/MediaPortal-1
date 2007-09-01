@@ -161,6 +161,9 @@ public class MediaPortalApp : D3DApp, IRender
   private static RestartOptions restartOptions = RestartOptions.Reboot;
   private static bool useRestartOptions = false;
 
+  [DllImport("shlwapi.dll")]
+  private static extern bool PathIsNetworkPath(string Path);
+
   #region main()
 
   //NProf doesnt work if the [STAThread] attribute is set
@@ -993,11 +996,48 @@ public class MediaPortalApp : D3DApp, IRender
         msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
         Log.Info("Main: TVRecording running -> Suspend stopped");
         return false;
-      }
+      }      
 
       return true;
     }
-  }  
+  }
+
+  // we only dispose the DB connection if the DB path is remote.      
+  // since local db's have no problems.
+  private void DisposeDBs()
+  {
+    string dbPath = Config.GetFile(Config.Dir.Database, "FolderDatabase3.db3");
+    bool isRemotePath = PathIsNetworkPath(dbPath);
+    if (isRemotePath)
+    {
+      Log.Info("Main: disposing FolderDatabase3 sqllite database.");
+      MediaPortal.Database.DatabaseFactory.GetFolderDatabase().Dispose();
+    }
+
+    dbPath = Config.GetFile(Config.Dir.Database, "PictureDatabase.db3");
+    isRemotePath = PathIsNetworkPath(dbPath);
+    if (isRemotePath)
+    {
+      Log.Info("Main: disposing PictureDatabase sqllite database.");
+      MediaPortal.Database.DatabaseFactory.GetPictureDatabase().Dispose();
+    }
+
+    dbPath = Config.GetFile(Config.Dir.Database, "RadioDatabase4.db3");
+    isRemotePath = PathIsNetworkPath(dbPath);
+    if (isRemotePath)
+    {
+      Log.Info("Main: disposing RadioDatabase4 sqllite database.");
+      MediaPortal.Database.DatabaseFactory.GetRadioDatabase().Dispose();
+    }
+
+    dbPath = Config.GetFile(Config.Dir.Database, "VideoDatabaseV5.db3");
+    isRemotePath = PathIsNetworkPath(dbPath);
+    if (isRemotePath)
+    {
+      Log.Info("Main: disposing VideoDatabaseV5.db3 sqllite database.");
+      MediaPortal.Database.DatabaseFactory.GetVideoDatabase().Dispose();
+    }                  
+  }
 
   //called when windows hibernates or goes into standbye mode
   private void  OnSuspend(ref Message msg)
@@ -1009,7 +1049,7 @@ public class MediaPortalApp : D3DApp, IRender
         return;
       }
       _suspended = true;      
-      SaveLastActiveModule();
+      SaveLastActiveModule();      
 
       Log.Info("Main: Stopping playback");
       if (GUIGraphicsContext.IsPlaying)
@@ -1037,7 +1077,13 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("Main: Stopping recorder");
       Recorder.Stop();
       Log.Info("Main: Stopping AutoPlay");
-      AutoPlay.StopListening();      
+      AutoPlay.StopListening();
+
+      // we only dispose the DB connection if the DB path is remote.      
+      // since local db's have no problems.
+      DisposeDBs();
+
+
       Log.Info("Main: OnSuspend - Done");
     }
   }
