@@ -50,7 +50,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 // A structure for our custom vertex type
 struct CUSTOMVERTEX
 {
-    FLOAT x, y, z; // The transformed position for the vertex
+    FLOAT x, y, z, rhw; // The transformed position for the vertex
     DWORD color;        // The vertex color
     FLOAT tu, tv;   // The texture coordinates
 };
@@ -58,14 +58,15 @@ struct CUSTOMVERTEX
   struct CUSTOMVERTEX2 
   {
       FLOAT x, y, z;
+      FLOAT rhw;
       DWORD color;
       FLOAT tu, tv;   // Texture coordinates
       FLOAT tu2, tv2;
   };
 
 // Our custom FVF, which describes our custom vertex structure
-#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1)
-#define D3DFVF_CUSTOMVERTEX2 (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1|D3DFVF_TEX2)
+#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
+#define D3DFVF_CUSTOMVERTEX2 (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1|D3DFVF_TEX2)
 
 
 struct FONT_DATA_T
@@ -273,7 +274,7 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 		for (int i=0; i < MaxNumTextureVertices;++i)
 		{
 			textureData[selected].vertices[i].z=0;
-			//textureData[selected].vertices[i].rhw=1;
+			textureData[selected].vertices[i].rhw=1;
 		}
 
 	}
@@ -350,7 +351,7 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
 		for (int i=0; i < MaxNumTextureVertices;++i)
 		{
 			textureData[selected].vertices[i].z=0;
-			//textureData[selected].vertices[i].rhw=1;
+			textureData[selected].vertices[i].rhw=1;
 		}
 	}
 	textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
@@ -525,13 +526,6 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   float y4=matrix.ScaleFinalYCoord(xpos2,ypos);
 	float z4=matrix.ScaleFinalZCoord(xpos2,ypos);
 
-  if (z1>0.0f||z2>0.0f || z3>0.0f || z4>0.0f)
-  {
-    char szbuf[1024];
-    sprintf(szbuf,"(%02.2f,%02.2f,%02.2f,%02.2f,%02.2f,%02.2f) (%02.2f,%02.2f,%02.2f,%02.2f,%02.2f,%02.2f) (%02.2f,%02.2f,%02.2f,%02.2f,%02.2f,%02.2f) (%02.2f,%02.2f,%02.2f,%02.2f,%02.2f,%02.2f)\n",
-            x1,y1,z1, x2,y2,z2, x3,y3,z3, x4,y4,z4);
-    ::OutputDebugStringA(szbuf);
-  }
 
   //upper left
 	if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty1 || texture->vertices[iv].color!=color ||
@@ -552,6 +546,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 	texture->vertices[iv].x=x2;  
   texture->vertices[iv].y=y2;
 	texture->vertices[iv].z=z2; 
+  texture->vertices[iv].z=z2;
   texture->vertices[iv].color=color;
   texture->vertices[iv].tu=tx1; 
   texture->vertices[iv].tv=ty2;
@@ -575,6 +570,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 	texture->vertices[iv].x=x4;  
   texture->vertices[iv].y=y4;
 	texture->vertices[iv].z=z4; 
+  texture->vertices[iv].z=z4;
   texture->vertices[iv].color=color;
   texture->vertices[iv].tu=tx2; 
   texture->vertices[iv].tv=ty1;
@@ -644,7 +640,7 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   verts[0].x = x1; 
   verts[0].y = y1; 
   verts[0].z = z1;
-  //verts[0].rhw = 1.0f;
+  verts[0].rhw = 1.0f;
   verts[0].tu = tx1;//u1;   
   verts[0].tv = ty1;//v1; 
   verts[0].tu2 =tx1_2 ;//u1*m_diffuseScaleU; 
@@ -654,7 +650,7 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   verts[1].x = x2; 
   verts[1].y = y2; 
   verts[1].z = z2;
-  //verts[1].rhw = 1.0f;
+  verts[1].rhw = 1.0f;
   verts[1].tu = tx1;//u2;   
   verts[1].tv = ty2;//v1; 
   verts[1].tu2 = tx1_2;//u2*m_diffuseScaleU; 
@@ -664,7 +660,7 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   verts[2].x = x3; 
   verts[2].y = y3; 
   verts[2].z = z3;
-  //verts[2].rhw = 1.0f;
+  verts[2].rhw = 1.0f;
   verts[2].tu = tx2;//u2;   
   verts[2].tv = ty2;//v2; 
   verts[2].tu2 = tx2_2;//u2*m_diffuseScaleU; 
@@ -674,7 +670,7 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   verts[3].x = x4; 
   verts[3].y = y4;
   verts[3].z = z4;
-  //verts[3].rhw = 1.0f;
+  verts[3].rhw = 1.0f;
   verts[3].tu = tx2;//u1;   
   verts[3].tv = ty1;//v2; 
   verts[3].tu2 = tx2_2;//u1*m_diffuseScaleU; 
@@ -691,8 +687,8 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   m_pDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
   m_pDevice->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
   m_pDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-  m_pDevice->SetRenderState( D3DRS_ZENABLE, TRUE );
-  m_pDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_CCW );
+  m_pDevice->SetRenderState( D3DRS_ZENABLE, FALSE );
+  m_pDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
   m_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
   m_pDevice->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_MODULATE );
@@ -807,7 +803,7 @@ void FontEngineAddFont( int fontNumber,void* fontTexture, int firstChar, int end
 	for (int i=0; i < MaxNumfontVertices;++i)
 	{
 		fontData[fontNumber].vertices[i].z=0;
-		//fontData[fontNumber].vertices[i].rhw=1;
+		fontData[fontNumber].vertices[i].rhw=1;
 	}
 	
 

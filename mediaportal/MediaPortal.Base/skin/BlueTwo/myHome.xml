@@ -40,8 +40,6 @@
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="zoom" start="20,20" end="100,100" center="384,288" time="500">WindowOpen</animation>
       <animation effect="zoom" start="100,100" end="20,20" center="384,288" time="500">WindowClose</animation>
-      <animation effect="rotatey" start="0" end="20" center="525,0" tween="back" ease="easeout"  time="500">focus</animation>
-      <animation effect="rotatey" start="20" end="0" center="525,0"  tween="back" ease="easeout"   time="500">unfocus</animation>
       <id>50</id>
       <posX>370</posX>
       <posY>130</posY>

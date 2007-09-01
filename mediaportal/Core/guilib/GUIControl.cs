@@ -1580,7 +1580,7 @@ namespace MediaPortal.GUI.Library
       centerY = (float)(YPosition + (Height / 2));
     }
 
-    protected void Animate(uint currentTime)
+    public TransformMatrix getTransformMatrix(uint currentTime)
     {
       TransformMatrix transform = new TransformMatrix();
       if (GUIGraphicsContext.Animations)
@@ -1604,6 +1604,12 @@ namespace MediaPortal.GUI.Library
           anim.CenterY = centerYOrg;
         }
       }
+      return transform;
+    }
+
+    public void Animate(uint currentTime)
+    {
+      TransformMatrix transform = getTransformMatrix(currentTime);
       GUIGraphicsContext.AddTransform(transform);
     }
 

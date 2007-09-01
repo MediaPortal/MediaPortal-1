@@ -379,6 +379,7 @@ namespace MediaPortal.GUI.Library
 
 			float fTextPosY = (float)dwPosY + (float)_textureHeight;
 
+            TransformMatrix tm = null;
 			long dwColor = _textColor;
 			if (pItem.Selected) dwColor = _selectedColor;
 			if (pItem.IsPlayed) dwColor = _playedColor;
@@ -398,7 +399,6 @@ namespace MediaPortal.GUI.Library
 			{
 				iOverSized = (_thumbNailWidth + _thumbNailHeight) / THUMBNAIL_OVERSIZED_DIVIDER;
 			}
-
 			if (pItem.HasThumbnail)
 			{
 				GUIImage pImage = pItem.Thumbnail;
@@ -421,53 +421,38 @@ namespace MediaPortal.GUI.Library
 					pImage.DimColor = DimColor;
 					_sleeper += SLEEP_FRAME_COUNT;
 				}
-				if (null != pImage)
-				{
-					if (pImage.TextureHeight == 0 && pImage.TextureWidth == 0)
-					{
-						pImage.FreeResources();
-						pImage.AllocResources();
-					}
-					pImage.ZoomFromTop = !pItem.IsFolder;
-					pImage.Width = _thumbNailWidth + 2 * iOverSized;
-					pImage.Height = _thumbNailHeight + 2 * iOverSized;
-					int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-					int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-					pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
-					pImage.DimColor = DimColor;
-					if (bFocus || !Focus)
-					{
-						pImage.ColourDiffuse = 0xffffffff;
-						pImage.Focus = Focus;
-					}
-					else
-					{
-						pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
-						pImage.Focus = false;
-					}
-					TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
-					GUIGraphicsContext.ControlTransform = new TransformMatrix();
-					pImage.Render(timePassed);
-					GUIGraphicsContext.ControlTransform = matrix;
-				}
-
-			/*	if (_showFrame)
-				{
-					if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
-					{
-						if (_frameFocusControl != null)
-						{
-							_frameFocusControl.SetPosition(dwPosX, dwPosY);
-							_frameFocusControl.Render(timePassed);
-						}
-					}
-					else if (_frameControl != null)
-					{
-						_frameControl.SetPosition(dwPosX, dwPosY);
-						_frameControl.Render(timePassed);
-					}
-				}
-*/
+        if (null != pImage)
+        {
+          if (pImage.TextureHeight == 0 && pImage.TextureWidth == 0)
+          {
+            pImage.FreeResources();
+            pImage.AllocResources();
+          }
+          pImage.ZoomFromTop = !pItem.IsFolder;
+          pImage.Width = _thumbNailWidth + 2*iOverSized;
+          pImage.Height = _thumbNailHeight + 2*iOverSized;
+          int xOff = (_thumbNailWidth + 2*iOverSized - pImage.RenderWidth)/2;
+          int yOff = (_thumbNailHeight + 2*iOverSized - pImage.RenderHeight)/2;
+          pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff,
+                             _thumbNailPositionY - iOverSized + dwPosY + yOff);
+          pImage.DimColor = DimColor;
+          if (bFocus || !Focus)
+          {
+            pImage.ColourDiffuse = 0xffffffff;
+            pImage.Focus = Focus;
+          }
+          else
+          {
+            pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+            pImage.Focus = false;
+          }
+          TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
+          GUIGraphicsContext.ControlTransform = new TransformMatrix();
+          pImage.UpdateVisibility();
+          pImage.DoRender(timePassed, currentTime);
+          tm = pImage.getTransformMatrix(currentTime);
+          GUIGraphicsContext.ControlTransform = matrix;
+        }
 			}
 			else
 			{
@@ -523,103 +508,99 @@ namespace MediaPortal.GUI.Library
 							pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
 							pImage.Focus = false;
 						}
-
+            
 						TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
 						GUIGraphicsContext.ControlTransform = new TransformMatrix();
-						pImage.Render(timePassed);
-						GUIGraphicsContext.ControlTransform = matrix;
+
+            pImage.UpdateVisibility();
+            pImage.DoRender(timePassed, currentTime);
+            tm = pImage.getTransformMatrix(currentTime);
+					  GUIGraphicsContext.ControlTransform = matrix;
 
 					}
-					/*if (_showFrame)
-					{
-						if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
-						{
-							if (_frameFocusControl != null)
-							{
-								_frameFocusControl.SetPosition(dwPosX, dwPosY);
-								_frameFocusControl.Render(timePassed);
-							}
-						}
-						else if (_frameControl != null)
-						{
-							_frameControl.SetPosition(dwPosX, dwPosY);
-							_frameControl.Render(timePassed);
-						}
-					}
-					*/
 				}
 			}
 
-			if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
-			{
-				TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
-				GUIGraphicsContext.ControlTransform = new TransformMatrix();
-				if (_showFolder)
-				{
-					_imageFolder[itemNumber].Focus = true;
-					_imageFolderFocus[itemNumber].Focus = true;
-					_imageFolderFocus[itemNumber].SetPosition(dwPosX, dwPosY);
-					if (true == _showTexture)
-					{
-						_imageFolderFocus[itemNumber].Render(timePassed);
-					}
-					for (int i = 0; i < _imageFolderFocus.Count; ++i)
-					{
-						if (i != itemNumber)
-						{
-							_imageFolder[i].Focus = false;
-							_imageFolderFocus[i].Focus = false;
-						}
-					}
-				}
+      if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
+      {
+        TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
+        GUIGraphicsContext.ControlTransform = new TransformMatrix();
+        if (_showFolder)
+        {
+          _imageFolder[itemNumber].Focus = true;
+          _imageFolderFocus[itemNumber].Focus = true;
+          _imageFolderFocus[itemNumber].SetPosition(dwPosX, dwPosY);
+          if (true == _showTexture)
+          {
+            _imageFolderFocus[itemNumber].UpdateVisibility();
+            _imageFolderFocus[itemNumber].DoRender(timePassed, currentTime);
+          }
+          for (int i = 0; i < _imageFolderFocus.Count; ++i)
+          {
+            if (i != itemNumber)
+            {
+              _imageFolder[i].Focus = false;
+              _imageFolderFocus[i].Focus = false;
+            }
+          }
+        }
 
-				if (_showFrame)
-				{
-					_frameControl[itemNumber].Focus = true;
-					_frameFocusControl[itemNumber].Focus = true;
-					_frameFocusControl[itemNumber].SetPosition(dwPosX, dwPosY);
-					_frameFocusControl[itemNumber].Render(timePassed);
-					for (int i = 0; i < _frameFocusControl.Count; ++i)
-					{
-						if (i != itemNumber)
-						{
-							_frameControl[i].Focus = false;
-							_frameFocusControl[i].Focus = false;
-						}
-					}
-				}
-
-							
-				RenderText((float)dwPosX + _textXOff, fTextPosY + _textYOff, dwColor, pItem.Label, true);
-				GUIGraphicsContext.ControlTransform = matrix;
-			}
-			else
-			{
-				TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
-				GUIGraphicsContext.ControlTransform = new TransformMatrix();
-				if (_showFolder)
-				{
-					_imageFolder[itemNumber].Focus = false;
-					_imageFolderFocus[itemNumber].Focus = false;
-					_imageFolder[itemNumber].SetPosition(dwPosX, dwPosY);
-					if (true == _showTexture)
-					{
-						_imageFolder[itemNumber].Render(timePassed);
-					}
-				}
-				
-				if (_showFrame)
-				{
-					_frameControl[itemNumber].Focus = false;
-					_frameFocusControl[itemNumber].Focus = false;
-					_frameControl[itemNumber].SetPosition(dwPosX, dwPosY);
-					_frameControl[itemNumber].Render(timePassed);
-				}
+        if (_showFrame)
+        {
+          _frameControl[itemNumber].Focus = true;
+          _frameFocusControl[itemNumber].Focus = true;
+          _frameFocusControl[itemNumber].SetPosition(dwPosX, dwPosY);
+          _frameFocusControl[itemNumber].UpdateVisibility();
+          _frameFocusControl[itemNumber].DoRender(timePassed, currentTime);
+          for (int i = 0; i < _frameFocusControl.Count; ++i)
+          {
+            if (i != itemNumber)
+            {
+              _frameControl[i].Focus = false;
+              _frameFocusControl[i].Focus = false;
+            }
+          }
+        }
 
 
-				RenderText((float)dwPosX+_textXOff, fTextPosY+_textYOff, dwColor, pItem.Label, false);
-				GUIGraphicsContext.ControlTransform = matrix;
-			}
+        if (tm != null) GUIGraphicsContext.AddTransform(tm);
+        RenderText((float)dwPosX + _textXOff, fTextPosY + _textYOff, dwColor, pItem.Label, true);
+        if (tm != null) GUIGraphicsContext.RemoveTransform();
+        GUIGraphicsContext.ControlTransform = matrix;
+      }
+      else
+      {
+        TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
+        GUIGraphicsContext.ControlTransform = new TransformMatrix();
+        if (_showFolder)
+        {
+          _imageFolder[itemNumber].Focus = false;
+          _imageFolderFocus[itemNumber].Focus = false;
+          _imageFolder[itemNumber].SetPosition(dwPosX, dwPosY);
+          if (true == _showTexture)
+          {
+            //_imageFolder[itemNumber].Render(timePassed);
+            _imageFolder[itemNumber].UpdateVisibility();
+            _imageFolder[itemNumber].DoRender(timePassed, currentTime);
+          }
+        }
+
+        if (_showFrame)
+        {
+          _frameControl[itemNumber].Focus = false;
+          _frameFocusControl[itemNumber].Focus = false;
+          _frameControl[itemNumber].SetPosition(dwPosX, dwPosY);          
+          //_frameControl[itemNumber].Render(timePassed);
+          _frameControl[itemNumber].UpdateVisibility();
+          _frameControl[itemNumber].DoRender(timePassed, currentTime);
+        }
+
+
+        if (tm != null) GUIGraphicsContext.AddTransform(tm);
+        RenderText((float) dwPosX + _textXOff, fTextPosY + _textYOff, dwColor, pItem.Label, false);
+        if (tm != null) GUIGraphicsContext.RemoveTransform();
+        GUIGraphicsContext.ControlTransform = matrix;
+      }
 		}
     
 
