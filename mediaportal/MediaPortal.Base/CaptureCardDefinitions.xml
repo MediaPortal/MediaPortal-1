@@ -20650,7 +20650,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
-        <filter cat="tunerdevice"     name="PCTV 70e Device TVTuner"          checkdevice="true"/>
+        <filter cat="tunerdevice"     name="PCTV 70e BDA TVTuner"             checkdevice="true"/>
         <filter cat="capture"         name="PCTV 70e Device"                  checkdevice="true"/>
       </filters>
       <connections>
