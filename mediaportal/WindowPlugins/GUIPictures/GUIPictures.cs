@@ -788,16 +788,7 @@ namespace MediaPortal.GUI.Pictures
 
     #region folder settings
     void LoadFolderSettings(string folderName)
-    {
-      // while waking up from hibernation it can take a while before a network drive is accessible.
-      // lets wait 10 sec
-      int count = 0;
-      while (!Directory.Exists(folderName) && count < 100)
-      {
-        Thread.Sleep(100);
-        count++;
-      }
-
+    {     
       if (folderName == String.Empty)
         folderName = "root";
       object o;

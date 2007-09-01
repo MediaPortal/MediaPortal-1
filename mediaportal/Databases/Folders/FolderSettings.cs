@@ -24,6 +24,8 @@
 #endregion
 
 using System;
+using System.IO;
+using System.Threading;
 using System.Collections.Generic;
 using System.Text;
 using Databases.Folders;
@@ -39,16 +41,53 @@ namespace MediaPortal.Database
       _database.Dispose();
       _database = null;
     }
+
+    static private bool WaitForPath(string folderName)
+    {
+      // while waking up from hibernation it can take a while before a network drive is accessible.
+      // lets wait 10 sec      
+      int count = 0;
+      bool validDir = false;
+      try
+      {
+        string dir = System.IO.Path.GetDirectoryName(folderName);
+        
+        validDir = dir.Length > 0;
+      }
+      catch (Exception ex)
+      {
+        validDir = false;
+      }
+
+      if (validDir)
+      {
+        while (!Directory.Exists(folderName) && count < 100)
+        {
+          System.Threading.Thread.Sleep(100);
+          count++;
+        }
+      }
+      else
+      {
+        return true;
+      }
+
+      return (validDir && count < 100);
+    }
+
     static public void DeleteFolderSetting(string path, string Key)
     {
+      bool res = WaitForPath(path);
       _database.DeleteFolderSetting(path, Key);
     }
     static public void AddFolderSetting(string path, string Key, Type type, object Value)
     {
+      bool res = WaitForPath(path);
       _database.AddFolderSetting( path,  Key,  type,  Value);
     }
     static public void GetFolderSetting(string path, string Key, Type type, out object Value)
     {
+      bool res = WaitForPath(path);
       _database.GetFolderSetting(path, Key, type, out Value);
     }
   }

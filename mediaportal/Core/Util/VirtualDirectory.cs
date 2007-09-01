@@ -573,7 +573,9 @@ namespace MediaPortal.Util
     /// </returns>
     public ArrayList GetDirectory(string strDir)
     {
-      if ((strDir == null) || (strDir == ""))
+      bool res = WaitForPath(strDir);
+
+      if ((strDir == null) || (strDir == "") || !res)
       {
         m_strPreviousDir = "";
         CurrentShare = "";
@@ -920,8 +922,11 @@ namespace MediaPortal.Util
     /// </returns>
     public ArrayList GetDirectoryUnProtected(string strDir, bool useExtensions)
     {
+      bool res = WaitForPath(strDir);
+
       if (strDir == null) return GetRoot();
       if (strDir == "") return GetRoot();
+      if (!res) return GetRoot();
 
       //if we have a folder like D:\
       //then remove the \
@@ -1389,7 +1394,8 @@ namespace MediaPortal.Util
     /// </returns>
     public List<GUIListItem> GetDirectoryExt(string strDir)
     {
-      if ((strDir == null) || (strDir == ""))
+      bool res = WaitForPath(strDir);
+      if ((strDir == null) || (strDir == "") || !res)
       {
         m_strPreviousDir = "";
         CurrentShare = "";
@@ -1809,6 +1815,40 @@ namespace MediaPortal.Util
     }
 
 
+    private bool WaitForPath(string folderName)
+    {
+      // while waking up from hibernation it can take a while before a network drive is accessible.
+      // lets wait 10 sec      
+      int count = 0;
+      bool validDir = false;
+      try
+      {
+        string dir = System.IO.Path.GetDirectoryName(folderName);
+
+        validDir = dir.Length > 0;
+      }
+      catch (Exception ex)
+      {
+        validDir = false;
+      }
+
+      if (validDir)
+      {
+        while (!Directory.Exists(folderName) && count < 100)
+        {
+          System.Threading.Thread.Sleep(100);
+          count++;
+        }
+      }
+      else
+      {
+        return true;
+      }
+
+      return (validDir && count < 100);
+    }
+
+
     /// <summary>
     /// This method returns an arraylist of GUIListItems for the specified folder
     /// This method does not check if the folder is protected by an pincode. it will
@@ -1820,8 +1860,11 @@ namespace MediaPortal.Util
     /// </returns>
     public List<GUIListItem> GetDirectoryUnProtectedExt(string strDir, bool useExtensions)
     {
+      bool res = WaitForPath(strDir);
+
       if (strDir == null) return GetRootExt();
       if (strDir == "") return GetRootExt();
+      if (!res) return GetRootExt();
 
       if (strDir.Substring(1) == @"\") strDir = strDir.Substring(0, strDir.Length - 1);
       List<GUIListItem> items = new List<GUIListItem>();

@@ -406,16 +406,7 @@ namespace MediaPortal.GUI.Video
 
 
     void LoadFolderSettings(string folderName)
-    {
-      // while waking up from hibernation it can take a while before a network drive is accessible.
-      // lets wait 10 sec
-      int count = 0;
-      while (!Directory.Exists(folderName) && count < 100)
-      {
-        Thread.Sleep(100);
-        count++;
-      }
-
+    {      
       if (folderName == String.Empty) folderName = "root";
       object o;
       FolderSettings.GetFolderSetting(folderName, "VideoFiles", typeof(GUIVideoFiles.MapSettings), out o);
@@ -453,22 +444,28 @@ namespace MediaPortal.GUI.Video
       FolderSettings.AddFolderSetting(folderName, "VideoFiles", typeof(GUIVideoFiles.MapSettings), mapSettings);
     }
 
-    protected override void LoadDirectory(string newFolderName)
+    private bool WaitForPath(string folderName)
     {
-      if (newFolderName == null) return;
-      
-      GUIWaitCursor.Show();
-
       // while waking up from hibernation it can take a while before a network drive is accessible.
       // lets wait 10 sec
+      bool result = false;
       int count = 0;
-      while (!Directory.Exists(newFolderName) && count < 100)
+
+      while (!Directory.Exists(folderName) && count < 100)
       {
         Thread.Sleep(100);
         count++;
       }
 
+      return Directory.Exists(folderName);
+    }
 
+    protected override void LoadDirectory(string newFolderName)
+    {
+      if (newFolderName == null) return;
+      
+      GUIWaitCursor.Show();
+     
       //newFolderName = System.IO.Path.GetDirectoryName(newFolderName);
       // Mounting and loading a DVD image file takes a long time,
       // so display a message letting the user know that something 
