@@ -327,10 +327,6 @@ namespace MediaPortal.Dialogs
       XK_SEARCH_GENERE // search for genere
     };
 
-    enum KeyboardLanguageType
-    {
-      KEYBOARD_ENGLISH,
-    };
     enum StringID
     {
       STR_MENU_KEYBOARD_NAME,
@@ -1110,19 +1106,6 @@ namespace MediaPortal.Dialogs
 
             case Event.EV_X_BUTTON:           // Toggle keyboard
               Press(_currentKeyboard == KeyboardTypes.TYPE_SYMBOLS ? Xkey.XK_ALPHABET : Xkey.XK_SYMBOLS);
-              /*if( m_iKeyboard == KEYBOARD_ENGLISH )
-              {
-                Press( _currentKeyboard == KeyboardTypes.TYPE_SYMBOLS ?Xkey.XK_ALPHABET : Xkey.XK_SYMBOLS );
-              }
-              else
-              {
-                switch( _currentKeyboard )
-                {
-                  case KeyboardTypes.TYPE_ALPHABET: Press( Xkey.XK_SYMBOLS  ); break;
-                  case KeyboardTypes.TYPE_SYMBOLS:  Press( Xkey.XK_ACCENTS  ); break;
-                  case KeyboardTypes.TYPE_ACCENTS:  Press( Xkey.XK_ALPHABET ); break;
-                }
-              }*/
               break;
             case Event.EV_WHITE_BUTTON:       // Backspace
               Press(Xkey.XK_BACKSPACE);
@@ -1506,14 +1489,6 @@ namespace MediaPortal.Dialogs
         if (key.xKey == Xkey.XK_SHIFT || key.xKey == Xkey.XK_CAPSLOCK)
           return true;
       }
-
-      // On the English keyboard, the Accents key is disabled
-      //if( m_iKeyboard == KeyboardLanguageType.KEYBOARD_ENGLISH )
-      {
-        if (key.xKey == Xkey.XK_ACCENTS)
-          return true;
-      }
-
       return false;
     }
 
