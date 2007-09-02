@@ -385,7 +385,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     private unsafe void SendData(Int64 data)
     {
-      iMONLCD_SendData(&data);
+      iMONLCD_SendData(ref data);
       Thread.Sleep(_delay);
     }
 
