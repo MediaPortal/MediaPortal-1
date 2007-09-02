@@ -213,7 +213,7 @@ namespace MediaPortal.GUI.Library
                     {
                       // maximize the movie width
                       float fNewWidth = (float)ScreenWidth;
-                      float fNewHeight = (float)(fNewWidth / fOutputFrameRatio);
+                      float fNewHeight = (float)(fNewWidth / fCroppedOutputFrameRatio);
 
                       if (fNewHeight > ScreenHeight)
                       {
