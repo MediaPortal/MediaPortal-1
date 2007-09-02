@@ -1519,7 +1519,9 @@ namespace MediaPortal.GUI.Library
             }
             else
             {
-              _offset = (CalculateRows(_listItems.Count) - _rowCount)*_columnCount;
+              _offset = (CalculateRows(_listItems.Count) - _rowCount) * _columnCount;
+              if (_offset < 0)
+                _offset = 0;
               _cursorY = _rowCount;
               while (_offset + _cursorY * _columnCount + _cursorX >= _listItems.Count) _cursorY--;
             }
