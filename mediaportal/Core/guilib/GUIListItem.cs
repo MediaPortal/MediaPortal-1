@@ -509,6 +509,11 @@ namespace MediaPortal.GUI.Library
         _imagePinIcon.FreeResources();
         _imagePinIcon = null;
       }
+      if (null != _imageBigPinIcon)
+      {
+        _imageBigPinIcon.FreeResources();
+        _imageBigPinIcon = null;
+      }
     }
 
     /// <summary>
