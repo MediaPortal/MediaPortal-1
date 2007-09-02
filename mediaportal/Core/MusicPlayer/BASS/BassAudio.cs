@@ -870,7 +870,7 @@ namespace MediaPortal.Player
           else if (_useASIO && _mixer == 0)
           {
             // For ASIO we neeed an Decoding Mixer with the number of Channels equals the ASIO Channels
-            _mixer = BassMix.BASS_Mixer_StreamCreate(44100, _asioNumberChannels, BASSStream.BASS_MIXER_NONSTOP | BASSStream.BASS_STREAM_AUTOFREE | BASSStream.BASS_STREAM_DECODE);
+            _mixer = BassMix.BASS_Mixer_StreamCreate(44100, _asioNumberChannels, BASSStream.BASS_MIXER_NONSTOP | BASSStream.BASS_STREAM_DECODE);
             // assign ASIO and assume the ASIO format, samplerate and number of channels from the BASS stream
             _asioHandler = new BassAsioHandler(0, 0, _mixer);
           }
@@ -1505,7 +1505,7 @@ namespace MediaPortal.Player
           // We need different flags for standard BASS and ASIO / Mixing
           BASSStream streamFlags;
           if (_useASIO || _Mixing)
-            streamFlags = BASSStream.BASS_STREAM_DECODE | BASSStream.BASS_SAMPLE_FLOAT | BASSStream.BASS_STREAM_AUTOFREE;
+            streamFlags = BASSStream.BASS_STREAM_DECODE | BASSStream.BASS_SAMPLE_FLOAT;  // Don't use the BASS_STREAM_AUTOFREE flag on a decoding channel. will produce a BASS_ERROR_NOTAVAIL
           else
             streamFlags = BASSStream.BASS_STREAM_AUTOFREE;
 
