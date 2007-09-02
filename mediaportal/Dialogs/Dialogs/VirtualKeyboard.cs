@@ -87,37 +87,9 @@ namespace MediaPortal.Dialogs
     const long BUTTONTEXT_COLOR = 0xffffffff;
     const float FIXED_JSL_SIZE = 3.0f;
 
-    // Xboxdings font button mappings
-    const string TEXT_A_BUTTON = "A";
-    const string TEXT_B_BUTTON = "B";
-    const string TEXT_X_BUTTON = "C";
-    const string TEXT_Y_BUTTON = "D";
     const int KEY_WIDTH = 34;   // width of std key in pixels
 
-    string[] g_strEnglish = 
-    {
-      "English",
-      "Choose Keyboard",
-      "Sample graphics. Don't use in your game",
-      "Select",
-      "Back",
-      "Help",
-      "SPACE",
-      "BKSP",
-      "SHIFT",
-      "CAPS",
-      "ALPHABET",
-      "SYMB",
-      "ACEENTS",
-      "DONE",
-      "Select",
-      "Cance",
-      "Toggle\nmode",
-      "Display help",
-      "Backspace",
-      "Space",
-      "Trigger buttons move cursor",
-    };
+ 
     #endregion
 
     #region enums
@@ -149,28 +121,7 @@ namespace MediaPortal.Dialogs
       STATE_MAX
     };
 
-    enum ControllerSState
-    {
-      XKJ_START = 1 << 0,
-      XKJ_BACK = 1 << 1,
-      XKJ_A = 1 << 2,
-      XKJ_B = 1 << 3,
-      XKJ_X = 1 << 4,
-      XKJ_Y = 1 << 5,
-      XKJ_BLACK = 1 << 6,
-      XKJ_WHITE = 1 << 7,
-      XKJ_LEFTTR = 1 << 8,
-      XKJ_RIGHTTR = 1 << 9,
 
-      XKJ_DUP = 1 << 12,
-      XKJ_DDOWN = 1 << 13,
-      XKJ_DLEFT = 1 << 14,
-      XKJ_DRIGHT = 1 << 15,
-      XKJ_UP = 1 << 16,
-      XKJ_DOWN = 1 << 17,
-      XKJ_LEFT = 1 << 18,
-      XKJ_RIGHT = 1 << 19
-    };
 
     enum Event
     {
@@ -871,9 +822,6 @@ namespace MediaPortal.Dialogs
       keyRow.Add(new Key(Xkey.XK_9));
       keyRow.Add(new Key(Xkey.XK_0));
 
-      if (_useSearchLayout)
-        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));  // Searchkeyboard
-
       keyBoard.Add(keyRow);
 
       // Second row is Shift, A-J
@@ -916,13 +864,13 @@ namespace MediaPortal.Dialogs
       keyRow.Add(new Key(Xkey.XK_T));
       keyBoard.Add(keyRow);
 
-      // Fourth row is Symbols, U-Z, Backspace
+      // Fourth row is Accents, U-Z, Backspace
       keyRow = new ArrayList();
 
       if (_useSearchLayout)
         keyRow.Add(new Key(Xkey.XK_CAPSLOCK, MODEKEY_WIDTH));   // Searchkeyboard
       else
-        keyRow.Add(new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
+        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
 
       keyRow.Add(new Key(Xkey.XK_U));
       keyRow.Add(new Key(Xkey.XK_V));
@@ -933,13 +881,14 @@ namespace MediaPortal.Dialogs
       keyRow.Add(new Key(Xkey.XK_BACKSPACE, (KEY_WIDTH * 4) + (GAP_WIDTH * 3)));
       keyBoard.Add(keyRow);
 
-      // Fifth row is Accents, Space, Left, Right
+      // Fifth row is <empty>, Space, Left, Right
       keyRow = new ArrayList();
 
       if (_useSearchLayout)
-        keyRow.Add(new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));   // Searchkeyboard
+        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));   // Searchkeyboard
       else
-        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+        keyRow.Add(new Key(Xkey.XK_NULL, MODEKEY_WIDTH));
+        
 
       keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH * 6) + (GAP_WIDTH * 5)));
       keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
@@ -968,9 +917,6 @@ namespace MediaPortal.Dialogs
       keyRow.Add(new Key(Xkey.XK_FSLASH));
       keyRow.Add(new Key(Xkey.XK_AT));
       keyRow.Add(new Key(Xkey.XK_NSIGN));
-
-      if (_useSearchLayout)
-        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));  // Searchkeyboard
 
       keyBoard.Add(keyRow);
 
@@ -1037,7 +983,7 @@ namespace MediaPortal.Dialogs
       if (_useSearchLayout)
         keyRow.Add(new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH)); // Searchkeyboard
       else
-        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+        keyRow.Add(new Key(Xkey.XK_NULL, MODEKEY_WIDTH));
 
       keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH * 6) + (GAP_WIDTH * 5)));
       keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
@@ -1066,9 +1012,6 @@ namespace MediaPortal.Dialogs
       keyRow.Add(new Key(Xkey.XK_8));
       keyRow.Add(new Key(Xkey.XK_9));
       keyRow.Add(new Key(Xkey.XK_0));
-
-      if (_useSearchLayout)
-        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));  // Searchkeyboard
 
       keyBoard.Add(keyRow);
 
@@ -1118,7 +1061,7 @@ namespace MediaPortal.Dialogs
       if (_useSearchLayout)
         keyRow.Add(new Key(Xkey.XK_CAPSLOCK, MODEKEY_WIDTH)); // Searchkeyboard
       else
-        keyRow.Add(new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
+        keyRow.Add(new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
 
       keyRow.Add(new Key(Xkey.XK_CAP_U_GRAVE));
       keyRow.Add(new Key(Xkey.XK_CAP_U_ACUTE));
@@ -1133,9 +1076,9 @@ namespace MediaPortal.Dialogs
       keyRow = new ArrayList();
 
       if (_useSearchLayout)
-        keyRow.Add(new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH)); // Searchkeyboard
+        keyRow.Add(new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH)); // Searchkeyboard
       else
-        keyRow.Add(new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+        keyRow.Add(new Key(Xkey.XK_NULL, MODEKEY_WIDTH));
 
       keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH * 6) + (GAP_WIDTH * 5)));
       keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
@@ -1317,50 +1260,12 @@ namespace MediaPortal.Dialogs
             break;
           case Xkey.XK_ALPHABET:
             _currentKeyboard = KeyboardTypes.TYPE_ALPHABET;
-
-            // Adjust mode keys
-            if (_useSearchLayout)
-            {
-              ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));  // Searchkeyboard
-              ChangeKey((int)_currentKeyboard, 0, 11, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH)); // Searchkeyboard
-            }
-            else
-            {
-              ChangeKey((int)_currentKeyboard, 3, 0, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
-              ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
-            }
-
             break;
           case Xkey.XK_SYMBOLS:
             _currentKeyboard = KeyboardTypes.TYPE_SYMBOLS;
-
-            // Adjust mode keys
-            if (_useSearchLayout)
-            {
-              ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH)); // Searchkeyboard
-              ChangeKey((int)_currentKeyboard, 0, 11, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH)); // Searchkeyboard
-            }
-            else
-            {
-              ChangeKey((int)_currentKeyboard, 3, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
-              ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
-            }
-
             break;
           case Xkey.XK_ACCENTS:
             _currentKeyboard = KeyboardTypes.TYPE_ACCENTS;
-
-            // Adjust mode keys
-            if (_useSearchLayout)
-            {
-              ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH)); // Searchkeyboard
-              ChangeKey((int)_currentKeyboard, 0, 11, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH)); // Searchkeyboard
-            }
-            else
-            {
-              ChangeKey((int)_currentKeyboard, 3, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
-              ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
-            }
             break;
           case Xkey.XK_ARROWLEFT:
             if (_position > 0)
@@ -1651,49 +1556,7 @@ namespace MediaPortal.Dialogs
       float u = 1.0f;
 
       _keyTexture.Draw(x, y, nw, nh, uoffs, 0.0f, u, v, (int)keyColor);
-      /*
 
-            VertexBuffer m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
-                                              4, GUIGraphicsContext.DX9Device, 
-                                              0, CustomVertex.TransformedColoredTextured.Format, 
-                                              Pool.Managed);
-
-            CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0,0);
-            verts[0].X=x- 0.5f; verts[0].Y=y+nh- 0.5f;verts[0].Z= 0.0f;verts[0].Rhw=1.0f ;
-            verts[0].Color = (int)KeyColor;
-            verts[0].Tu = uoffs;
-            verts[0].Tv = v;
-
-            verts[1].X= x- 0.5f; verts[1].Y=y- 0.5f;verts[1].Z= 0.0f; verts[1].Rhw=1.0f ;
-            verts[1].Color = (int)KeyColor;
-            verts[1].Tu = uoffs;
-            verts[1].Tv = 0.0f;
-
-            verts[2].X= x+nw- 0.5f; verts[2].Y=y+nh- 0.5f;verts[2].Z= 0.0f;verts[2].Rhw=1.0f;
-            verts[2].Color = (int)KeyColor;
-            verts[2].Tu = uoffs+u;
-            verts[2].Tv = v;
-
-            verts[3].X=  x+nw- 0.5f;verts[3].Y=  y- 0.5f;verts[3].Z=   0.0f;verts[3].Rhw=  1.0f ;
-            verts[3].Color = (int)KeyColor;
-            verts[3].Tu = uoffs+u;
-            verts[3].Tv = 0.0f;
-
-
-            m_vbBuffer.Unlock();
-
-            GUIGraphicsContext.DX9Device.SetTexture( 0, _keyTexture);
-
-            // Render the image
-            GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0);
-            GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
-            GUIGraphicsContext.DX9Device.DrawPrimitives( PrimitiveType.TriangleStrip, 0, 2 );
-        
-
-            // unset the texture and palette or the texture caching crashes because the runtime still has a reference
-            GUIGraphicsContext.DX9Device.SetTexture( 0, null);
-            m_vbBuffer.Dispose();
-      */
       // Draw the key text. If key name is, use a slightly smaller font.
       float textWidth = 0;
       float textHeight = 0;
@@ -1834,10 +1697,10 @@ namespace MediaPortal.Dialogs
                   break;
               }
               break;
-            case Xkey.XK_ACCENTS:
+           /* case Xkey.XK_ACCENTS:
               selKeyColor = COLOR_INVISIBLE;
               selTextColor = COLOR_INVISIBLE;
-              break;
+              break;*/
           }
 
           // Highlight the current key
