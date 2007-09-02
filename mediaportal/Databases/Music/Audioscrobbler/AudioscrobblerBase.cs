@@ -135,7 +135,7 @@ namespace MediaPortal.Music.Database
       workerFailed += new HandshakeFailed(OnHandshakeFailed);
 
       if (_useDebugLog)
-        Log.Info("AudioscrobblerBase: new scrobbler for {0} with {1} cached songs - debuglog={2}", Username, Convert.ToString(queue.Count), Convert.ToString(_useDebugLog));
+        Log.Info("AudioscrobblerBase: new scrobbler for {0} with {1} cached songs - debuglog = {2}", Username, Convert.ToString(queue.Count), Convert.ToString(_useDebugLog));
     }
 
 
@@ -425,6 +425,9 @@ namespace MediaPortal.Music.Database
     /// <returns>True if the connection was successful, false otherwise</returns>
     private static void DoHandshake(bool forceNow_, HandshakeType ReasonForHandshake)
     {
+      if (_useDebugLog)
+        Log.Debug("AudioscrobblerBase: Attempting {0} handshake", ReasonForHandshake.ToString());
+
       // Handle uninitialized username/password.
       if (username.Length < 1 || password.Length < 1)
       {
@@ -449,7 +452,7 @@ namespace MediaPortal.Music.Database
 
       if (ReasonForHandshake != HandshakeType.Init && !_signedIn)
       {
-        Log.Warn("AudioscrobblerBase: {0}", "Disconnected - not attempting handshake");
+        Log.Warn("AudioscrobblerBase: {0}", "Disconnected - not attempting {0} handshake", ReasonForHandshake.ToString());
         workerFailed(ReasonForHandshake, DateTime.MinValue, new Exception("Disconnected!"));
       }
       else
@@ -491,7 +494,7 @@ namespace MediaPortal.Music.Database
           lastHandshake = DateTime.Now;
 
           if (_useDebugLog)
-            Log.Debug("AudioscrobblerBase: {0}", "Handshake successful");
+            Log.Debug("AudioscrobblerBase: {0} handshake successful", ReasonForHandshake.ToString());
 
           workerSuccess(ReasonForHandshake, lastHandshake);
         }

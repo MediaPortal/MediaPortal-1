@@ -516,21 +516,25 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #endregion
 
     #region Playlist functions
-    private void RebuildStreamList()
+    private bool RebuildStreamList()
     {
+      bool success = false;
       PlayList playlist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_RADIO_STREAMS);
       if (playlist == null)
-        return;
+        return success;
 
-      GetXSPFPlaylist();
+      if (GetXSPFPlaylist())
+      {        
+        playlist.Clear();
 
-      playlist.Clear();
-
-      foreach (Song tmpsong in _radioTrackList)
-      {
-        Song addSong = tmpsong.Clone();
-        AddStreamSongToPlaylist(ref addSong);
+        foreach (Song tmpsong in _radioTrackList)
+        {
+          Song addSong = tmpsong.Clone();
+          AddStreamSongToPlaylist(ref addSong);
+        }
+        success = true;
       }
+      return success;
     }    
 
     private bool AddStreamSongToPlaylist(ref Song song)
@@ -865,20 +869,18 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (!Util.Utils.IsLastFMStream(filename) || LastFMStation.CurrentStreamState != StreamPlaybackState.streaming)
         return;
 
-      PlaylistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_RADIO_STREAMS;      
-      PlayList checkList = PlaylistPlayer.GetPlaylist(PlaylistPlayer.CurrentPlaylistType);
-      if (checkList != null && checkList.Count > 0)
+      if (RebuildStreamList())
       {
-        Log.Debug("GUIRadioLastFM: PlayBackEndedHandler for {0} - fetching next item", filename);
-        PlayListItem nextPlaylistItem = PlaylistPlayer.GetNextItem();
-        if (nextPlaylistItem != null)
+        if (_radioTrackList.Count > 0)
         {
-          PlaylistPlayer.PlayNext();
-          LastFMStation.CurrentPlaybackType = PlaybackType.PlaylistPlayer;
-          return;
+          if (LastFMStation.PlayPlayListStreams(_radioTrackList[0].URL))
+          {
+            LastFMStation.CurrentPlaybackType = PlaybackType.PlaylistPlayer;
+            return;
+          }
         }
         else
-          Log.Info("GUIRadioLastFM: PlayBackEndedHandler - no more items found!");
+          Log.Debug("GUIRadioLastFM: PlayBackEndedHandler - no more items found!");
       }
 
       OnPlaybackStopped();

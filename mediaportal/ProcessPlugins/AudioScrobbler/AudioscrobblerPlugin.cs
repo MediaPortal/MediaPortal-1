@@ -86,13 +86,6 @@ namespace MediaPortal.Audioscrobbler
       }
     }
 
-    //public static AudioscrobblerBase Audioscrobbler
-    //{
-    //  get {
-    //    return scrobbler;
-    //  }
-    //}
-
     private void OnManualDisconnect(object sender, EventArgs args)
     {
       AudioscrobblerBase.Disconnect();
@@ -104,15 +97,15 @@ namespace MediaPortal.Audioscrobbler
         AudioscrobblerBase.Connect();
     }
 
-    private void OnEnabledChangedEvent(bool isEnabled)
-    {
-      if (isEnabled)
-        OnManualConnect(null, null);
-      else
-      {
-        AudioscrobblerBase.Disconnect();
-      }
-    }
+    //private void OnEnabledChangedEvent(bool isEnabled)
+    //{
+    //  if (isEnabled)
+    //    OnManualConnect(null, null);
+    //  else
+    //  {
+    //    AudioscrobblerBase.Disconnect();
+    //  }
+    //}
     #endregion
 
     #region MediaPortal events
