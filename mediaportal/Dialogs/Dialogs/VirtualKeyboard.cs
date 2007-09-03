@@ -997,18 +997,18 @@ namespace MediaPortal.Dialogs
 
       // First row
       keyRow = new ArrayList();
+      // Swedish - Finnish
       keyRow.Add(new Key(Xkey.XK_OK, MODEKEY_WIDTH));
-      keyRow.Add(new Key(Xkey.XK_1));
-      keyRow.Add(new Key(Xkey.XK_2));
-      keyRow.Add(new Key(Xkey.XK_3));
-      keyRow.Add(new Key(Xkey.XK_4));
-      keyRow.Add(new Key(Xkey.XK_5));
-      keyRow.Add(new Key(Xkey.XK_6));
-      keyRow.Add(new Key(Xkey.XK_7));
-      keyRow.Add(new Key(Xkey.XK_8));
-      keyRow.Add(new Key(Xkey.XK_9));
-      keyRow.Add(new Key(Xkey.XK_0));
-
+      keyRow.Add(new Key(Xkey.XK_CAP_A_RING));
+      keyRow.Add(new Key(Xkey.XK_CAP_A_DIAERESIS));
+      keyRow.Add(new Key(Xkey.XK_CAP_O_DIAERESIS));
+      keyRow.Add(new Key(Xkey.XK_CAP_A_GRAVE));
+      keyRow.Add(new Key(Xkey.XK_CAP_A_ACUTE));
+      keyRow.Add(new Key(Xkey.XK_CAP_A_CIRCUMFLEX));
+      keyRow.Add(new Key(Xkey.XK_CAP_I_GRAVE));
+      keyRow.Add(new Key(Xkey.XK_CAP_I_ACUTE));
+      keyRow.Add(new Key(Xkey.XK_CAP_I_CIRCUMFLEX));
+      keyRow.Add(new Key(Xkey.XK_CAP_I_DIAERESIS));
       keyBoard.Add(keyRow);
 
       // Second row
@@ -1019,16 +1019,16 @@ namespace MediaPortal.Dialogs
       else
         keyRow.Add(new Key(Xkey.XK_SHIFT, MODEKEY_WIDTH));
 
-      keyRow.Add(new Key(Xkey.XK_CAP_A_GRAVE));
-      keyRow.Add(new Key(Xkey.XK_CAP_A_ACUTE));
-      keyRow.Add(new Key(Xkey.XK_CAP_A_CIRCUMFLEX));
-      keyRow.Add(new Key(Xkey.XK_CAP_A_DIAERESIS));
+      //Danish - Norwegian
+      keyRow.Add(new Key(Xkey.XK_CAP_A_RING));
+      keyRow.Add(new Key(Xkey.XK_CAP_AE));
+      keyRow.Add(new Key(Xkey.XK_CAP_O_STROKE));
       keyRow.Add(new Key(Xkey.XK_CAP_C_CEDILLA));
       keyRow.Add(new Key(Xkey.XK_CAP_E_GRAVE));
       keyRow.Add(new Key(Xkey.XK_CAP_E_ACUTE));
       keyRow.Add(new Key(Xkey.XK_CAP_E_CIRCUMFLEX));
       keyRow.Add(new Key(Xkey.XK_CAP_E_DIAERESIS));
-      keyRow.Add(new Key(Xkey.XK_CAP_I_GRAVE));
+
       keyBoard.Add(keyRow);
 
       // Third row
@@ -1039,16 +1039,16 @@ namespace MediaPortal.Dialogs
       else
         keyRow.Add(new Key(Xkey.XK_CAPSLOCK, MODEKEY_WIDTH));
 
-      keyRow.Add(new Key(Xkey.XK_CAP_I_ACUTE));
-      keyRow.Add(new Key(Xkey.XK_CAP_I_CIRCUMFLEX));
-      keyRow.Add(new Key(Xkey.XK_CAP_I_DIAERESIS));
-      keyRow.Add(new Key(Xkey.XK_CAP_N_TILDE));
+      // German
+      keyRow.Add(new Key(Xkey.XK_CAP_U_DIAERESIS));
+      keyRow.Add(new Key(Xkey.XK_CAP_O_DIAERESIS));
+      keyRow.Add(new Key(Xkey.XK_CAP_A_DIAERESIS));
+      keyRow.Add(new Key(Xkey.XK_SM_SHARP_S));
       keyRow.Add(new Key(Xkey.XK_CAP_O_GRAVE));
       keyRow.Add(new Key(Xkey.XK_CAP_O_ACUTE));
       keyRow.Add(new Key(Xkey.XK_CAP_O_CIRCUMFLEX));
       keyRow.Add(new Key(Xkey.XK_CAP_O_TILDE));
-      keyRow.Add(new Key(Xkey.XK_CAP_O_DIAERESIS));
-      keyRow.Add(new Key(Xkey.XK_SM_SHARP_S));
+
       keyBoard.Add(keyRow);
 
       // Fourth row
@@ -1059,10 +1059,11 @@ namespace MediaPortal.Dialogs
       else
         keyRow.Add(new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
 
+      keyRow.Add(new Key(Xkey.XK_CAP_N_TILDE));
       keyRow.Add(new Key(Xkey.XK_CAP_U_GRAVE));
       keyRow.Add(new Key(Xkey.XK_CAP_U_ACUTE));
       keyRow.Add(new Key(Xkey.XK_CAP_U_CIRCUMFLEX));
-      keyRow.Add(new Key(Xkey.XK_CAP_U_DIAERESIS));
+
       keyRow.Add(new Key(Xkey.XK_CAP_Y_ACUTE));
       keyRow.Add(new Key(Xkey.XK_CAP_Y_DIAERESIS));
       keyRow.Add(new Key(Xkey.XK_BACKSPACE, (KEY_WIDTH * 4) + (GAP_WIDTH * 3)));
