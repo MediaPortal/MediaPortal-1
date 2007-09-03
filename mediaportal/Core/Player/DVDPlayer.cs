@@ -260,7 +260,7 @@ namespace MediaPortal.Player
     bool FirstPlayDvd(string file)
     {
       int hr;
-
+      
       try
       {
         _pendingCmd = true;
@@ -337,6 +337,8 @@ namespace MediaPortal.Player
         hr = _mediaCtrl.Run();
         if (hr < 0 || hr > 1)
         {
+          HResult hrdebug = new HResult(hr);
+          Log.Info(hrdebug.ToDXString());
           Log.Error("DVDPlayer:Unable to start playing() 0x:{0:X}", hr);
           CloseInterfaces();
           return false;
