@@ -48,7 +48,7 @@ namespace MediaPortal.GUI.Library
   /// Pluginwindows should be copied in the plugins/windows folder
   /// </summary>
   public class GUIWindow : Page
-  {
+  {        
     #region window ids
 
     /// <summary>
@@ -263,6 +263,7 @@ namespace MediaPortal.GUI.Library
     private string _lastSkin = string.Empty;
     bool _windowAllocated;
     bool _hasRendered = false;
+    private bool _windowLoaded = false;
 
     VisualEffect _showAnimation = new VisualEffect();   // for dialogs
     VisualEffect _closeAnimation = new VisualEffect();
@@ -961,6 +962,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     protected virtual void OnWindowLoaded()
     {
+      this._windowLoaded = false;
       _listPositions = new List<CPosition>();
 
       for (int i = 0; i < Children.Count; ++i)
@@ -995,7 +997,7 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-
+      this._windowLoaded = true;
     }
 
     /// <summary>
@@ -1604,6 +1606,11 @@ namespace MediaPortal.GUI.Library
     public StoryboardCollection Storyboards
     {
       get { if (_storyboards == null) _storyboards = new StoryboardCollection(); return _storyboards; }
+    }
+
+    public bool WindowLoaded
+    {
+      get { return _windowLoaded; }
     }
 
     #endregion Properties
