@@ -422,7 +422,7 @@ namespace MediaPortal.MPInstaller
         {
             for (int i = 0; i < lst.Count; i++)
             {
-                if (((MPpackageStruct)lst[i])._intalerStruct.Name.Trim() == pk._intalerStruct.Name.Trim())
+                if (((MPpackageStruct)lst[i])._intalerStruct.Name.Trim().ToUpper() == pk._intalerStruct.Name.Trim().ToUpper())
                     lst.RemoveAt(i);
             }
             lst.Add(pk);

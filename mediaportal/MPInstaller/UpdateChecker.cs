@@ -99,13 +99,13 @@ namespace MediaPortal.MPInstaller
         {
             foreach (ListViewItem it in listView1.Items)
             {
-                MPpackageStruct pk = lst.Find(it.SubItems[0].Text);
+                MPpackageStruct pk = lst_online.Find(it.SubItems[0].Text);
                 if (pk != null)
                 {
                     string file_name = pk.FileName;
                     string temp_file = Path.GetFullPath(Environment.GetEnvironmentVariable("TEMP")) + @"\" + file_name;
                     download_form dw1 = new download_form(pk._intalerStruct.UpdateURL, temp_file);
-                    dw1.Text = pk._intalerStruct.UpdateURL + "/" + pk.FileName + "/" + pk._intalerStruct.Version;
+                    dw1.Text = pk._intalerStruct.UpdateURL + "/" +  pk._intalerStruct.Version;
                     dw1.ShowDialog();
                     if (File.Exists(temp_file))
                     {

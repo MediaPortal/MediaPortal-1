@@ -84,12 +84,12 @@ namespace MediaPortal.MPInstaller
                     }
                     else
                     {
-                      source = source.Replace("&","|");
-                      source = source.Replace("id=", "id1=");
-                      source = source.Replace("http://mpi.team-mediaportal.com", "*");
+                      //source = source.Replace("&","|");
+                      //source = source.Replace("id=", "id1=");
+                      //source = source.Replace("http://mpi.team-mediaportal.com", "*");
                       client.CachePolicy = new System.Net.Cache.RequestCachePolicy();
                       client.UseDefaultCredentials = true;
-                      client.DownloadFileAsync(new System.Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=" + user + "&passwd=" + password +"&url="+ source), dest);
+                      client.DownloadFileAsync(new System.Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=" + user + "&passwd=" + password + "&filename=" +Path.GetFileName(source)), dest);
                     }
                   }
                   else
@@ -126,8 +126,16 @@ namespace MediaPortal.MPInstaller
         {
             if (e.Error != null)
             {
-                if (File.Exists(dest))
+              
+              if (File.Exists(dest))
+                if (!client.IsBusy)
+                  try
+                  {
                     File.Delete(dest);
+                  }
+                  catch (Exception)
+                  {
+                  }
                 MessageBox.Show(e.Error.Message + "\n" + e.Error.InnerException);
             }
             button1.Enabled = false;
