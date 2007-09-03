@@ -25,6 +25,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -772,7 +773,7 @@ namespace TvPlugin
     }
 
     public override void Process()
-    {
+    {      
       if (!TVHome.Connected) return;
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (GUIGraphicsContext.InVmr9Render)
@@ -1345,6 +1346,7 @@ namespace TvPlugin
 
     static public bool ViewChannelAndCheck(Channel channel)
     {
+     
       try
       {                    
         if (channel == null)
@@ -1444,7 +1446,8 @@ namespace TvPlugin
           {            
             g_Player.ContinueGraph();                        
             g_Player.SeekAbsolute(g_Player.Duration);            
-          }*/
+          }
+          */
           _playbackStopped = false;
           return true;
 
@@ -1500,17 +1503,22 @@ namespace TvPlugin
           }
           string[] lines = errorMessage.Split('\r');
           pDlgOK.SetHeading(605);//my tv
-          pDlgOK.SetLine(1, lines[0]);
-          if (lines.Length > 1)
-            pDlgOK.SetLine(2, lines[1]);
-          else
-            pDlgOK.SetLine(2, "");
 
-          if (lines.Length > 2)
-            pDlgOK.SetLine(3, lines[2]);
+          pDlgOK.SetLine(1, channel.Name);
+
+          pDlgOK.SetLine(2, lines[0]);
+          if (lines.Length > 1)
+            pDlgOK.SetLine(3, lines[1]);
           else
             pDlgOK.SetLine(3, "");
-          pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+
+          if (lines.Length > 2)
+            pDlgOK.SetLine(4, lines[2]);
+          else
+            pDlgOK.SetLine(4, "");
+
+          ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
+          Thread showDlgThread = new Thread (pThread);          
 
           // If failed and wasPlaying TV, fallback to the last viewed channel. 
           if (!g_Player.IsTimeShifting && wasPlaying)
@@ -1518,6 +1526,9 @@ namespace TvPlugin
             ViewChannelAndCheck(Navigator.Channel);
             GUIWaitCursor.Hide();
           }
+          // show the dialog asynch.
+          // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
+          showDlgThread.Start(pDlgOK);
         }
         return false;
       }
@@ -1527,6 +1538,40 @@ namespace TvPlugin
         GUIWaitCursor.Hide();
         return false;
       }
+    }
+
+
+    private static void ShowDlg (object Dialogue)
+    {
+      GUIDialogOK pDlgOK = null;
+
+      if (Dialogue is GUIDialogOK)
+      {
+        pDlgOK = (GUIDialogOK) Dialogue;
+      }
+      else
+      {
+        return;
+      }
+      
+      GUIWindow guiWindow = GUIWindowManager.GetWindow( GUIWindowManager.ActiveWindow );
+      
+      int count = 0;
+
+      while (count < 50)
+      {
+        if (guiWindow.WindowLoaded)
+        {          
+          break;
+        }
+        else
+        {
+          System.Threading.Thread.Sleep(100);
+        }
+        count++;
+      }
+          
+      pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
     }
 
     static public void ViewChannel(Channel channel)
