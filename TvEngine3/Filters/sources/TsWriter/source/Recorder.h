@@ -25,6 +25,7 @@
 #include "entercriticalsection.h"
 #include "timeshifting.h"
 #include "tsheader.h"
+#include "PmtParser.h"
 #include <vector>
 using namespace std;
 using namespace Mediaportal;
@@ -47,7 +48,7 @@ DECLARE_INTERFACE_(ITsRecorder, IUnknown)
 	STDMETHOD(SetPmtPid)(THIS_ int mtPid)PURE;
 };
 
-class CRecorder: public CUnknown, public ITsRecorder, public IFileWriter
+class CRecorder: public CUnknown, public ITsRecorder, public IFileWriter, IPmtCallBack
 {
 public:
 	CRecorder(LPUNKNOWN pUnk, HRESULT *phr);
@@ -66,6 +67,12 @@ public:
 
 	void OnTsPacket(byte* tsPacket);
 	void Write(byte* buffer, int len);
+
+	void OnPmtReceived(int pmtPid);
+  void OnPidsReceived(const CPidTable& info);
+
+  void PatchPcr(byte* tsPacket,CTsHeader& header);
+  void PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr);
 private:
   void WriteTs(byte* tsPacket);
 	CMultiplexer     m_multiPlexer;
@@ -81,4 +88,17 @@ private:
   int              m_iWriteBufferPos;
   int              m_iPmtPid;
   int              m_iPart;
+  CPmtParser*      m_pPmtParser;
+  int              m_pmtVersion;
+
+  CPcr            m_prevPcr;
+  CPcr            m_highestPcr;
+  CPcr            m_startPcr;
+  CPcr            m_pcrHole;
+  
+  CAdaptionField  m_adaptionField;
+  bool            m_bStartPcrFound;
+  bool            m_bDetermineNewStartPcr;
+
+  int             m_pcrPid;
 };

@@ -27,6 +27,7 @@
 #include <initguid.h>
 
 
+#include "AdaptionField.h"
 #include "recorder.h"
 #define ERROR_FILE_TOO_LARGE 223
 #define RECORD_BUFFER_SIZE 256000
@@ -43,8 +44,14 @@ CRecorder::CRecorder(LPUNKNOWN pUnk, HRESULT *phr)
   m_pWriteBuffer = new byte[RECORD_BUFFER_SIZE];
   m_iWriteBufferPos=0;
   m_iPmtPid=-1;
+  m_pmtVersion=-1;
 	m_multiPlexer.SetFileWriterCallBack(this);
-  
+  m_pPmtParser=new CPmtParser();
+  if (m_pPmtParser)
+  {
+    m_pPmtParser->SetPmtCallBack(this);
+    m_pPmtParser->SetTableId(2);
+  }
 }
 CRecorder::~CRecorder(void)
 {
@@ -54,6 +61,7 @@ CRecorder::~CRecorder(void)
 	  m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file
   }
   delete [] m_pWriteBuffer;
+  delete m_pPmtParser;
 }
 
 void CRecorder::OnTsPacket(byte* tsPacket)
@@ -64,6 +72,12 @@ void CRecorder::OnTsPacket(byte* tsPacket)
     if (m_tsHeader.SyncByte!=0x47) return;
 	  if (m_tsHeader.TransportError) return;
 	  CEnterCriticalSection enter(m_section);
+    
+    if (m_tsHeader.Pid==m_iPmtPid)
+    {
+      m_pPmtParser->OnTsPacket(tsPacket);
+    }
+    
     if (m_timeShiftMode==ProgramStream)
     {
 		  m_multiPlexer.OnTsPacket(tsPacket);
@@ -95,6 +109,8 @@ STDMETHODIMP CRecorder::SetPcrPid(int pcrPid)
 {
 	CEnterCriticalSection enter(m_section);
 	LogDebug("Recorder:pcr pid:%x",pcrPid);
+	m_pcrPid = pcrPid;
+  
 	m_multiPlexer.SetPcrPid(pcrPid);
 	return S_OK;
 }
@@ -104,22 +120,42 @@ STDMETHODIMP CRecorder::SetPmtPid(int pmtPid)
 	CEnterCriticalSection enter(m_section);
 	m_iPmtPid=pmtPid;
 	LogDebug("Recorder:pmt pid:%x",m_iPmtPid);
+  if (m_pPmtParser)
+  {
+    m_pPmtParser->SetPid(pmtPid);
+  }
 	return S_OK;
 }
 
 STDMETHODIMP CRecorder::AddStream(int pid,bool isAc3,bool isAudio,bool isVideo)
 {
 	CEnterCriticalSection enter(m_section);
-	if (isAudio)
-		LogDebug("Recorder:add audio stream pid:%x",pid);
-	else if (isVideo)
-		LogDebug("Recorder:add video stream pid:%x",pid);
-	else 
-		LogDebug("Recorder:add private stream pid:%x",pid);
+  bool pidFound=false;
+  itvecPids it = m_vecPids.begin();
 
-  m_vecPids.push_back(pid);
-	m_multiPlexer.AddPesStream(pid,isAc3,isAudio,isVideo);
-	return S_OK;
+  // Do not add duplicate PIDs in the vector, easier to do here than in the OnPidsReceived
+  while (it!=m_vecPids.end())
+  {
+    if (pid==*it)
+    {
+      pidFound = true;
+    }
+    ++it;
+  }
+
+  if( !pidFound )
+  {
+	  if (isAudio)
+		  LogDebug("Recorder:add audio stream pid:%x",pid);
+	  else if (isVideo)
+		  LogDebug("Recorder:add video stream pid:%x",pid);
+	  else 
+		  LogDebug("Recorder:add private stream pid:%x",pid);
+    
+    m_vecPids.push_back(pid);
+	  m_multiPlexer.AddPesStream(pid,isAc3,isAudio,isVideo);
+  }
+  return S_OK;
 }
 
 STDMETHODIMP CRecorder::RemoveStream(int pid)
@@ -290,11 +326,16 @@ void CRecorder::Write(byte* buffer, int len)
 void CRecorder::WriteTs(byte* tsPacket)
 {
 	if (!m_bRecording) return;
-  if (m_tsHeader.Pid==0 ||m_tsHeader.Pid==0x11 || m_tsHeader.Pid==m_multiPlexer.GetPcrPid() || m_tsHeader.Pid==m_iPmtPid)
+
+  bool writePid = false;
+
+  int PayLoadUnitStart=0;
+  if (m_tsHeader.PayloadUnitStart) PayLoadUnitStart=1;
+
+  if (m_tsHeader.Pid==0 ||m_tsHeader.Pid==0x11 || m_tsHeader.Pid==m_iPmtPid || m_tsHeader.Pid==m_pcrPid)
   {
-    //PAT/PCR/PMT/SDT
-    Write(tsPacket,188);
-    return;
+    //PAT/PMT/SDT/PCR
+    writePid = true;
   }
 
   itvecPids it = m_vecPids.begin();
@@ -302,9 +343,205 @@ void CRecorder::WriteTs(byte* tsPacket)
   {
     if (m_tsHeader.Pid==*it)
     {
-      Write(tsPacket,188);
-      return;
+      writePid = true;
     }
     ++it;
   }
+
+  // Patch PCR & PTS/DTS to start from beginning & fill PCR "holes"
+  if( writePid )
+  {
+    CAdaptionField field;
+    field.Decode(m_tsHeader,tsPacket);
+
+	  byte pkt[200];
+	  memcpy(pkt,tsPacket,188);
+	  int pid=m_tsHeader.Pid;
+	  pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+	  pkt[2]=(pid&0xff);
+	  if (m_tsHeader.Pid==m_pcrPid)  PatchPcr(pkt,m_tsHeader);
+	  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+	  {
+	    if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);
+		  //info.ContintuityCounter=m_tsHeader.ContinuityCounter;
+      //m_iPacketCounter++;
+	  }
+    Write(pkt,188);
+  }
+}
+
+void CRecorder::OnPmtReceived(int pmtPid)
+{
+  //LogDebug("Recorder: OnPmtReceived");
+}
+
+void CRecorder::OnPidsReceived(const CPidTable& info)
+{
+  if (m_pmtVersion!=m_pPmtParser->GetPmtVersion() )
+  {
+    LogDebug("Recorder: PMT version changed from %d to %d", m_pmtVersion, m_pPmtParser->GetPmtVersion() );
+
+    if (m_pmtVersion==-1)
+    {
+      LogDebug("Recorder: first PMT change, ignore it!" );
+      m_pmtVersion=m_pPmtParser->GetPmtVersion();
+      return;
+    }
+
+    LogDebug("Recorder: Update PMT pmt:0x%x pcr:0x%x video:0x%x audio1:0x%x audio2:0x%x audio3:%x audio4:0x%x audio5:0x%x video:0x%x teletext:0x%x subtitle:0x%x",
+      info.PmtPid,info.PcrPid,info.VideoPid,info.AudioPid1,info.AudioPid2,info.AudioPid3, info.AudioPid4,info.AudioPid5,info.VideoPid,info.TeletextPid,info.SubtitlePid);
+  
+    m_pmtVersion=m_pPmtParser->GetPmtVersion();
+    
+    // AddStream() makes sure that duplicates aren't inserted
+    if (info.SubtitlePid!=0)AddStream(info.SubtitlePid, false, false, false);
+    if (info.AC3Pid!=0)AddStream(info.AC3Pid, true, false, false);
+    if (info.AudioPid1!=0)AddStream(info.AudioPid1, false, true, false);
+    if (info.AudioPid2!=0)AddStream(info.AudioPid2, false, true, false);
+    if (info.AudioPid3!=0)AddStream(info.AudioPid3, false, true, false);
+    if (info.AudioPid4!=0)AddStream(info.AudioPid4, false, true, false);
+    if (info.AudioPid5!=0)AddStream(info.AudioPid5, false, true, false);
+    if (info.VideoPid!=0)AddStream(info.VideoPid, false, false, true); 
+    if (info.TeletextPid!=0)AddStream(info.TeletextPid, false, false, false); 
+  }
+}
+//*******************************************************************
+//* PatchPcr()
+//* Patches the PCR so the start of the timeshifting file always starts
+//* with a PCR of 0. 
+//*******************************************************************
+void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
+{
+  if (header.PayLoadOnly()) return;
+  m_adaptionField.Decode(header,tsPacket);
+  if (m_adaptionField.PcrFlag==false) return;
+  CPcr pcrNew=m_adaptionField.Pcr;
+	if (m_bStartPcrFound)
+	{
+		if (m_bDetermineNewStartPcr )
+		{
+			m_bDetermineNewStartPcr=false;
+      m_startPcr=pcrNew; //  = newStartPcr;
+			m_highestPcr.Reset(); //= newStartPcr;
+		}
+	}
+  
+	if (m_bStartPcrFound==false)
+	{
+		m_bDetermineNewStartPcr=false;
+		m_bStartPcrFound=true;
+		m_startPcr  = pcrNew;
+    m_highestPcr= pcrNew;
+		LogDebug("Pcr new start pcr :%s", m_startPcr.ToString());
+	} 
+
+  CPcr pcrHi=pcrNew;
+  CPcr diff;
+
+  if (pcrNew > m_highestPcr)
+  {
+    diff = pcrNew - m_prevPcr;
+	  m_highestPcr = pcrNew;
+  }
+  else
+  {
+    diff = m_prevPcr - pcrNew;
+    m_highestPcr = pcrNew;
+  }
+  
+  double tmp = diff.ToClock();
+
+  if(diff.ToClock() > 10L && m_prevPcr.ToClock() > 0)
+  {
+    CPcr step;
+    step.FromClock(0.02); // an estimated PCR step
+    
+    if (pcrNew > m_prevPcr)
+    {
+      m_pcrHole += diff;
+      m_pcrHole -= step; 
+      LogDebug( "PCR hole detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+    }
+    else
+    {
+      m_pcrHole -= diff;
+      m_pcrHole += step;
+      LogDebug( "PCR hole detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+    }
+  }
+  
+	pcrHi -= m_startPcr;
+  pcrHi -= m_pcrHole;
+
+  //LogDebug("hole %s hi %s new %s prev %s--- diff %f", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), tmp );
+  tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
+  tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
+  tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
+  tsPacket[9] = (byte)(((pcrHi.PcrReferenceBase>>1)&0xff));
+  tsPacket[10]=	(byte)(((pcrHi.PcrReferenceBase&0x1)<<7) + 0x7e+ ((pcrHi.PcrReferenceExtension>>8)&0x1));
+  tsPacket[11]= (byte)(pcrHi.PcrReferenceExtension&0xff);
+
+  m_prevPcr = pcrNew;
+}
+
+//*******************************************************************
+//* PatchPtsDts()
+//* Patches the PTS/DTS timestamps in a audio/video transport packet
+//* so the start of the timeshifting file always starts
+//* with a PTS/DTS of 0. 
+//*******************************************************************
+void CRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
+{
+  if (false==header.PayloadUnitStart) return;
+
+  int start=header.PayLoadStart;
+  if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) return; 
+
+  byte* pesHeader=&tsPacket[start];
+	CPcr pts;
+	CPcr dts;
+  if (!CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
+  {
+		return ;
+	}
+	if (pts.IsValid)
+	{
+    CPcr ptsorg=pts;
+		pts -= startPcr;
+    pts -= m_pcrHole;
+		// 9       10        11        12      13
+		//76543210 76543210 76543210 76543210 76543210
+		//0011pppM pppppppp pppppppM pppppppp pppppppM 
+		//LogDebug("pts: org:%s new:%s start:%s", ptsorg.ToString(),pts.ToString(),startPcr.ToString()); 
+		byte marker=0x21;
+		if (dts.PcrReferenceBase!=0) marker=0x31;
+		pesHeader[13]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
+		pesHeader[12]=(byte)(   (pts.PcrReferenceBase&0xff));				   pts.PcrReferenceBase>>=8;
+		pesHeader[11]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
+		pesHeader[10]=(byte)(   (pts.PcrReferenceBase&0xff));					 pts.PcrReferenceBase>>=8;
+		pesHeader[9] =(byte)( (((pts.PcrReferenceBase&7)<<1)+marker)); 
+    
+		if (dts.IsValid)
+		{
+			CPcr dtsorg=dts;
+			dts -= startPcr;
+      dts -= m_pcrHole;
+			// 14       15        16        17      18
+			//76543210 76543210 76543210 76543210 76543210
+			//0001pppM pppppppp pppppppM pppppppp pppppppM 
+	 		//LogDebug("dts: org:%s new:%s start:%s", dtsorg.ToString(),dts.ToString(),startPcr.ToString()); 
+			pesHeader[18]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
+			pesHeader[17]=(byte)(   (dts.PcrReferenceBase&0xff));				  dts.PcrReferenceBase>>=8;
+			pesHeader[16]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
+			pesHeader[15]=(byte)(   (dts.PcrReferenceBase&0xff));					dts.PcrReferenceBase>>=8;
+			pesHeader[14]=(byte)( (((dts.PcrReferenceBase&7)<<1)+0x11)); 
+		}
+	
+		//pts.Reset();
+		//dts.Reset();
+		//if (CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
+		//{
+		//	LogDebug("pts:%s dts:%s", pts.ToString(),dts.ToString());
+		//}
+	}
 }
