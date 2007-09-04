@@ -36,10 +36,10 @@ using ProcessPlugins.ExternalDisplay.VFD_Control;
 namespace ProcessPlugins.ExternalDisplay.Drivers
 {
   /// <summary>
-  /// Scaleo EV VFD driver
+  /// DM-140GINK Demo VFD driver
   /// </summary>
-  /// <author>David Kesl</author>
-  public class ScaleoEV : BaseDisplay, IDisplay
+  /// <author>stevie77</author>
+  public class DM140GINK : BaseDisplay, IDisplay
   {
     #region Static Fields
 
@@ -57,11 +57,11 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     #region Constructor
 
-    public ScaleoEV()
+    public DM140GINK()
     {
       try
       {
-        vfd = new control(0x1509,0x925d);
+        vfd = new control(0x040b,0x7001);
         vfd.initScreen();
       }
       catch (NotSupportedException ex)
@@ -93,7 +93,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     /// </summary>
     public string Description
     {
-      get { return "Fujitsu-Siemens ScaleoEV VFD driver by David Kesl(davidk)"; }
+        get { return "DM-140GINK VFD driver for MSI Media Live & Hiper HMC-2K53A Barebones"; }
     }
 
     public void Dispose()
@@ -101,7 +101,6 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       try
       {
         vfd.clearScreen();
-        vfd.writeMainScreen("SCALEO E");
         vfd.Shutdown();
       }
       catch (Exception ex)
@@ -136,7 +135,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     /// </summary>
     public string Name
     {
-      get { return "ScaleoEV"; }
+      get { return "DM-140GINK"; }
     }
 
     public void SetCustomCharacters(int[][] customCharacters)
@@ -151,7 +150,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     {
       if (line >= lines)
       {
-        Log.Error("ScaleoEV.SetLine: error bad line number" + line);
+        Log.Error("DM140GINK.SetLine: error bad line number" + line);
         return;
       }
       try
@@ -161,18 +160,11 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
         //Volume calculation
         int vol;
-        if (VolumeHandler.Instance.Volume <= 13106)
-        {
-          vol = VolumeHandler.Instance.Volume/6553*4;
-        } //first 2 steps
-        else
-        {
-          vol = VolumeHandler.Instance.Volume/6553*2 + 4;
-        }
+        vol = VolumeHandler.Instance.Volume / 2730;
 
         // Display symbols
         // LiveTV, LiveRadio
-        if (Recorder.IsViewing() || Recorder.IsRadio())
+        if (Recorder.IsViewing() || Recorder.IsRadio() || g_Player.IsTV || g_Player.IsTimeShifting || g_Player.IsRadio)
         {
           vfd.updateSymbol(control.VFDSymbols.Antenna, true);
         }
@@ -265,7 +257,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
         }
 
         // Recording in progress
-        if (Recorder.IsRecording())
+        if (Recorder.IsRecording() || g_Player.IsTVRecording)
         {
           vfd.updateSymbol(control.VFDSymbols.REC, true);
         }

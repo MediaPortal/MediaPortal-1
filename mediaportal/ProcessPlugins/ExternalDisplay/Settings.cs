@@ -549,6 +549,11 @@ namespace ProcessPlugins.ExternalDisplay
         Log.Debug("ExternalDisplay: Loading ScaleoEV...");
       }
       list.Add(new ScaleoEV());
+      if (ExtensiveLogging)
+      {
+        Log.Debug("ExternalDisplay: Loading DM-140GINK Demo...");
+      }
+      list.Add(new DM140GINK());
       DirectoryInfo dinfo = new DirectoryInfo(Config.GetSubFolder(Config.Dir.Plugins, @"process\LCDDrivers"));
       if (!dinfo.Exists)
       {

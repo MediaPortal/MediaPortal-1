@@ -302,6 +302,7 @@
     <Compile Include="ExternalDisplay\DisplayHandler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ExternalDisplay\Drivers\DM140GINK.cs" />
     <Compile Include="ExternalDisplay\Drivers\iMONLCDg.cs" />
     <Compile Include="ExternalDisplay\Drivers\ScaleoEV.cs" />
     <Compile Include="ExternalDisplay\ExternalDisplay.cs">

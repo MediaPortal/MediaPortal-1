@@ -89,21 +89,21 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
           _isDisabled = true;
           _errorMessage = "Could not find an iMON LCDg display";
         }
-        //      
-        //      	if (!IsOpen())
-        //      	{
-        //      		Log.Debug("ExternalDisplay.iMONLCDg .ctr(): LCD not open");
-        //      		if	(!Open(VfdType, reserved))
-        //  	        {
-        //	          Log.Error("ExternalDisplay.iMONLCDg .ctr(): Open failed");
-        //      		  isDisabled = true;
-        //	          errorMessage = "Could not find an iMON LCDg display";
-        //	        }
-        //      	}
-        //      	else
-        //      	{
-        //      		Log.Info("ExternalDisplay.iMONLCD Constructor: Already open");
-        //      	}
+//      
+//      	if (!IsOpen())
+//      	{
+//      		Log.Debug("ExternalDisplay.iMONLCDg .ctr(): LCD not open");
+//      		if	(!Open(VfdType, reserved))
+//  	        {
+//	          Log.Error("ExternalDisplay.iMONLCDg .ctr(): Open failed");
+//      		  isDisabled = true;
+//	          errorMessage = "Could not find an iMON LCDg display";
+//	        }
+//      	}
+//      	else
+//      	{
+//      		Log.Info("ExternalDisplay.iMONLCD Constructor: Already open");
+//      	}
       }
       catch (Exception ex)
       {
@@ -123,7 +123,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     }
 
     public void SetCustomCharacters(int[][] customCharacters)
-    { }
+    {}
 
     public void DrawImage(Bitmap bitmap)
     {
@@ -139,7 +139,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       {
         if (bitmapData == null)
         {
-          bitmapData = new byte[data.Stride * _grows];
+          bitmapData = new byte[data.Stride*_grows];
         }
         Marshal.Copy(data.Scan0, bitmapData, 0, bitmapData.Length);
       }
@@ -157,31 +157,31 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
         return;
       }
 
-      //gcols=96; grows=16;
-      byte[] PixelArray = new byte[_gcols * 2];
+//gcols=96; grows=16;
+      byte[] PixelArray = new byte[_gcols*2];
       for (int i = 0; i < _gcols - 1; i++)
       {
         PixelArray[i] = 0; // line1
         PixelArray[i + _gcols] = 0; // line2
         for (int j = 0; j < 8; j++)
         {
-          int pixel = j * data.Stride + i * 4;
+          int pixel = j*data.Stride + i*4;
           if (Color.FromArgb(bitmapData[pixel + 2],
                              bitmapData[pixel + 1],
                              bitmapData[pixel]).GetBrightness() < 0.5f)
           {
-            PixelArray[i] = (byte)(PixelArray[i] | (byte)(1 << (7 - j)));
+            PixelArray[i] = (byte) (PixelArray[i] | (byte) (1 << (7 - j)));
           }
         }
 
         for (int j = 8; j < 16; j++)
         {
-          int pixel = j * data.Stride + i * 4;
+          int pixel = j*data.Stride + i*4;
           if (Color.FromArgb(bitmapData[pixel + 2],
                              bitmapData[pixel + 1],
                              bitmapData[pixel]).GetBrightness() < 0.5f)
           {
-            PixelArray[i + _gcols] = (byte)(PixelArray[i + _gcols] | (byte)(1 << (15 - j)));
+            PixelArray[i + _gcols] = (byte) (PixelArray[i + _gcols] | (byte) (1 << (15 - j)));
           }
         }
         //       Log.Info("PixelArray i {0}: {1}{2}",i, PixelArray[i].ToString("X2"),PixelArray[i+gcols/2].ToString("X2"));
@@ -299,7 +299,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       {
         _lines[i] = new string(' ', Settings.Instance.TextWidth);
       }
-      //      DisplayLines();
+//      DisplayLines();
     }
 
     /// <summary>
@@ -381,17 +381,17 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       SendText(_lines[0], _lines[1]);
     }
 
-    #region  iMON LCD Specific methods
+    #region  iMON LCD Specific methods 
 
-    private unsafe void SendData(Int64 data)
+    private void SendData(Int64 data)
     {
       iMONLCD_SendData(ref data);
       Thread.Sleep(_delay);
     }
 
-    private unsafe void SendData(Command command)
+    private void SendData(Command command)
     {
-      SendData((long)command);
+      SendData((long) command);
     }
 
     private void SendText(string Line1, string Line2)
@@ -442,9 +442,9 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       int DataControl = 0x20;
 
       lock (this) // must send all the data to LCD without being interrupted.?
-      // if scrolling too quickly, calls may get banked up and grind to a halt???
+        // if scrolling too quickly, calls may get banked up and grind to a halt???
       {
-        for (int k = 0; k <= 27 * 7; k += 7)
+        for (int k = 0; k <= 27*7; k += 7)
         {
           Int64 PixelWord = DataControl;
           for (int i = 6; i >= 0; i--)
@@ -474,20 +474,20 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       Int64 Data;
       //Least sig. bit is on the right
 
-      Data = ((Int64)TopProgress) << 8 * 4;
+      Data = ((Int64) TopProgress) << 8*4;
       Data += TopLine;
       Data &= 0x00FFFFFFFFFFFFFF;
       Data += 0x1000000000000000;
       SendData(Data);
 
-      Data = ((Int64)TopProgress) >> 8 * 3;
-      Data += ((Int64)BotProgress) << 8;
-      Data += ((Int64)BotLine) << 8 * 5;
+      Data = ((Int64) TopProgress) >> 8*3;
+      Data += ((Int64) BotProgress) << 8;
+      Data += ((Int64) BotLine) << 8*5;
       Data &= 0x00FFFFFFFFFFFFFF;
       Data += 0x1100000000000000;
       SendData(Data);
 
-      Data = ((Int64)BotLine) >> 8 * 2;
+      Data = ((Int64) BotLine) >> 8*2;
       Data += 0x1200000000000000;
       SendData(Data);
     }
@@ -555,7 +555,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
       int DataControl = 0x40;
 
-      for (int k = 0; k <= 3 * 7; k += 7)
+      for (int k = 0; k <= 3*7; k += 7)
       {
         Int64 EqData = DataControl;
         for (int i = 6; i >= 0; i--)
@@ -614,7 +614,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
            mask >>= 1)
       {
         result >>= 1;
-        byte tempbyte = (byte)(inByte & mask);
+        byte tempbyte = (byte) (inByte & mask);
         if (tempbyte != 0x00)
         {
           result |= 0x80;
@@ -1270,7 +1270,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
         return (icon);
       }
 
-    #endregion
+      #endregion
 
       #region Bit Helpers
 
@@ -1307,7 +1307,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       }
     }
 
-      #endregion
+    #endregion
 
     #region Font Bit Map
 
@@ -1575,23 +1575,23 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     #region Interop declarations
 
-    [DllImport("SG_VFD.dll", EntryPoint = "iMONVFD_Init")]
+    [DllImport("SG_VFD.dll", EntryPoint="iMONVFD_Init")]
     private static extern bool Open(int vfdType, int resevered);
 
-    [DllImport("SG_VFD.dll", EntryPoint = "iMONVFD_Uninit")]
+    [DllImport("SG_VFD.dll", EntryPoint="iMONVFD_Uninit")]
     private static extern void Close();
 
-    [DllImport("SG_VFD.dll", EntryPoint = "iMONVFD_IsInited")]
+    [DllImport("SG_VFD.dll", EntryPoint="iMONVFD_IsInited")]
     private static extern bool IsOpen();
 
-    [DllImport("SG_VFD.dll", EntryPoint = "iMONVFD_SetText")]
+    [DllImport("SG_VFD.dll", EntryPoint="iMONVFD_SetText")]
     private static extern bool SetText(string firstLine, string secondLine);
 
-    [DllImport("sg_vfd.dll", EntryPoint = "iMONVFD_SetEQ")]
+    [DllImport("sg_vfd.dll", EntryPoint="iMONVFD_SetEQ")]
     public static extern bool SetEQ(int arEQValue);
 
-    [DllImport("sg_vfd.dll", EntryPoint = "iMONLCD_SendData")]
-    public static extern unsafe bool iMONLCD_SendData(ref Int64 bitMap);
+    [DllImport("sg_vfd.dll", EntryPoint="iMONLCD_SendData")]
+    public static extern bool iMONLCD_SendData(ref Int64 bitMap);
 
     #endregion
   }

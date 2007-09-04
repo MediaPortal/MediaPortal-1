@@ -1,4 +1,30 @@
+#region Copyright (C) 2005-2007 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2007 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 // adapted for Scaleo EV VFD by David Kesl
+// adapted for other display types by Joe Dalton
 
 // Usbhidio is brought to you by
 // Jan Axelson
@@ -9,11 +35,9 @@
 // Fax: 608-241-5848
 // http://www.lvr.com
 // jan@lvr.com
-
 using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 
@@ -21,36 +45,12 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
 {
   public class control
   {
-    /// <summary>
-    /// Enumeration of VFD symbols:
-    /// V,
-    /// CD,
-    /// Play,
-    /// Rewind,
-    /// Pause,
-    /// Forward,
-    /// Mute,
-    /// REC,
-    /// Antenna,
-    /// DVD
-    /// </summary>
-    public enum VFDSymbols
-    {
-      V = 0x8000, // for VCD
-      CD = 0x4000,
-      Play = 0x2000,
-      Rewind = 0x1000,
-      Pause = 0x0800,
-      Forward = 0x0400,
-      Mute = 0x0200,
-      REC = 0x0100,
-      Antenna = 0x0002,
-      DVD = 0x0001
-    }
 
     #region Readonly Fields
 
     private readonly Hid _MyHID = new Hid();
+    readonly uint _VendorID;
+    readonly uint _ProductID;
 
     #endregion
 
@@ -63,6 +63,11 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
 
     #endregion
 
+    public control(uint vendorID, uint productID)
+    {
+      _VendorID = vendorID;
+      _ProductID = productID;
+    }
     /// <summary>
     /// Uses a series of API calls to locate a HID-class device
     /// by its Vendor ID and Product ID.
@@ -83,10 +88,7 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
         Security.bInheritHandle = Convert.ToInt32(true);
         Security.nLength = Marshal.SizeOf(Security);
 
-        // IDs vom VFD des Scaleo E
-        short MyVendorID = short.Parse("1509", NumberStyles.HexNumber);
-        short MyProductID = short.Parse("925d", NumberStyles.HexNumber);
-
+ 
         /*
                   API function: 'HidD_GetHidGuid
                   Purpose: Retrieves the interface class GUID for the HID class.
@@ -173,8 +175,8 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
                 Debug.WriteLine("  Version Number: " + _MyHID.DeviceAttributes.VersionNumber.ToString("x"));
 
                 // Find out if the device matches the one we're looking for.
-                if ((_MyHID.DeviceAttributes.VendorID == MyVendorID) &
-                    (_MyHID.DeviceAttributes.ProductID == MyProductID))
+                if ((_MyHID.DeviceAttributes.VendorID == _VendorID) &
+                    (_MyHID.DeviceAttributes.ProductID == _ProductID))
                 {
                   // It's the desired device.
                   Debug.WriteLine("  My device detected");
@@ -237,7 +239,7 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
     {
       if (!FindTheHid())
       {
-        throw new NotSupportedException("ScaleoEV display not found");
+        throw new NotSupportedException("Display not found");
       }
       if (Process.GetProcessesByName("ehshell").Length > 0)
       {
@@ -469,6 +471,33 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
       {
         Log.Error(ex);
       }
+    }
+
+    /// <summary>
+    /// Enumeration of VFD symbols:
+    /// V,
+    /// CD,
+    /// Play,
+    /// Rewind,
+    /// Pause,
+    /// Forward,
+    /// Mute,
+    /// REC,
+    /// Antenna,
+    /// DVD
+    /// </summary>
+    public enum VFDSymbols
+    {
+      V = 0x8000, // for VCD
+      CD = 0x4000,
+      Play = 0x2000,
+      Rewind = 0x1000,
+      Pause = 0x0800,
+      Forward = 0x0400,
+      Mute = 0x0200,
+      REC = 0x0100,
+      Antenna = 0x0002,
+      DVD = 0x0001
     }
   }
 }
