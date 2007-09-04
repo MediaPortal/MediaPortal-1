@@ -92,11 +92,12 @@ namespace MediaPortal.MPInstaller
                       client.DownloadFileAsync(new System.Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=" + user + "&passwd=" + password + "&filename=" +Path.GetFileName(source)), dest);
                     }
                   }
-                  else
-                  {
-                    MessageBox.Show("Login error !");
-                    this.Close();
-                  }
+                    // TODO
+                  //else
+                  //{
+                  //  MessageBox.Show("Login error !");
+                  //  this.Close();
+                  //}
 
                 }
                 catch (WebException ex)

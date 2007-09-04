@@ -988,8 +988,7 @@ namespace MediaPortal.Video.Database
               // unsupported database?
               Log.Error("Movie database lookup GetDetails()- database not supported: {0}", url.Database);
               return false;
-            }
-            break;
+            }            
         }
       }
       catch (Exception)

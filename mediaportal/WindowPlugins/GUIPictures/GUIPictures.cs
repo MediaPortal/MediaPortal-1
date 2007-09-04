@@ -1544,7 +1544,7 @@ namespace MediaPortal.GUI.Pictures
         Filter(ref itemlist);
 
 
-        int itemIndex = 0;
+        // int itemIndex = 0;
         foreach (GUIListItem item in itemlist)
         {
           item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);

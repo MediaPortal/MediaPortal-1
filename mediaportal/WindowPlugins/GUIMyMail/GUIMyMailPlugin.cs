@@ -29,11 +29,11 @@ using System.Net;
 using System.Collections;
 using System.Xml.Serialization;
 using System.Globalization;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Topbar;
+
 using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+using MediaPortal.Topbar;
 using MediaPortal.Util;
 
 namespace MyMail
@@ -52,6 +52,7 @@ namespace MyMail
     ~MyMailPlugin()
     {
     }
+
     #region "Declares"
     //
     enum Controls
@@ -101,6 +102,7 @@ namespace MyMail
     ArrayList m_strUserPass = new ArrayList();
     ArrayList m_knownMails = new ArrayList();
     #endregion
+
     #region ISetupForm
     public bool HasSetup()
     {
@@ -179,6 +181,7 @@ namespace MyMail
 
       return bResult;
     }
+
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
@@ -473,17 +476,16 @@ namespace MyMail
 
         DisplayOverlayNotify(false, ""); // remove the notify
       }
-
     }
+
     void SaveSettings()
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValueAsBool("mymail", "autoCheck", m_bAutoCheck);
       }
-
-
     }
+
     void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -611,8 +613,8 @@ namespace MyMail
           }
         }
       }
-
     }
+
     //mb.BoxLabel+"("+Convert.ToString(mb.NewMailCount)+"/"+Convert.ToString(mb.MailCount)+")";
     GUIListItem GetSelectedItem()
     {
@@ -621,6 +623,7 @@ namespace MyMail
       GUIListItem item = GUIControl.GetSelectedListItem(GetID, iControl);
       return item;
     }
+
     void ShowMail(eMail theMail)
     {
       MailInfo mailWindow = (MailInfo)GUIWindowManager.GetWindow(8001);
@@ -628,6 +631,7 @@ namespace MyMail
       mailWindow.SetMailBox = m_currMailBox;
       GUIWindowManager.ActivateWindow(8001);
     }
+
     void SetAutoCheckButton()
     {
       GUIToggleButtonControl theControl = (GUIToggleButtonControl)GUIWindowManager.GetWindow(GetID).GetControl((int)Controls.CONTROL_SWITCH_AUTOCHECK);

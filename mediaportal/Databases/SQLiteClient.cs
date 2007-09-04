@@ -200,7 +200,7 @@ namespace SQLite.NET
 
         validFile = file.Length > 0;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         validFile = false;
       }

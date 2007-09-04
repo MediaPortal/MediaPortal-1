@@ -1827,7 +1827,7 @@ namespace MediaPortal.Util
 
         validDir = dir.Length > 0;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         validDir = false;
       }

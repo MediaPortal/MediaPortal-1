@@ -171,18 +171,6 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AxInterop.AXVLC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>GUIMyDreambox\AxInterop.AXVLC.dll</HintPath>
-    </Reference>
-    <Reference Include="Communications, Version=0.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\Communications.dll</HintPath>
-    </Reference>
-    <Reference Include="Interop.AXVLC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>GUIMyDreambox\Interop.AXVLC.dll</HintPath>
-    </Reference>
     <Reference Include="Interop.TunerLib, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Interop.TunerLib.dll</HintPath>
@@ -324,10 +312,6 @@
     </Compile>
     <Compile Include="GUIDVD\GUIDVDFullscreen.cs" />
     <Compile Include="GUIMusic\GUIMusicMenu.cs" />
-    <Compile Include="GUIMyDreambox\Dreambox\EPG.cs" />
-    <Compile Include="GUIMyDreambox\Dreambox\XML.cs" />
-    <Compile Include="GUIMyDreambox\GuiRecordings.cs" />
-    <Compile Include="GUIMyDreambox\MyDreamboxRadio.cs" />
     <Compile Include="GUIPrograms\appItemAppExec.cs" />
     <Compile Include="GUIPrograms\AppSettingsAppExec.cs">
       <SubType>UserControl</SubType>
@@ -400,22 +384,6 @@
     <Compile Include="GUIMusic\MusicViewHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUIMyDreambox\DreamboxSetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUIMyDreambox\DreamboxSetupForm.Designer.cs">
-      <DependentUpon>DreamboxSetupForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GUIMyDreambox\Dreambox\BoxInfo.cs" />
-    <Compile Include="GUIMyDreambox\Dreambox\ChannelInfo.cs" />
-    <Compile Include="GUIMyDreambox\Dreambox\Core.cs" />
-    <Compile Include="GUIMyDreambox\Dreambox\Data.cs" />
-    <Compile Include="GUIMyDreambox\Dreambox\NowPlaying799.cs" />
-    <Compile Include="GUIMyDreambox\Dreambox\Remote.cs" />
-    <Compile Include="GUIMyDreambox\Dreambox\Request.cs" />
-    <Compile Include="GUIMyDreambox\Dreambox\Zap.cs" />
-    <Compile Include="GUIMyDreambox\MyDreamboxGui.cs" />
-    <Compile Include="GUIMyDreambox\MyDreamboxPlugin.cs" />
     <Compile Include="GUIMyMail\GUIMyMailPlugin.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1031,10 +999,6 @@
     <EmbeddedResource Include="GUIMusicVideos\GUIMusicVideoSetupForm.resx">
       <DependentUpon>GUIMusicVideoSetupForm.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUIMyDreambox\DreamboxSetupForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>DreamboxSetupForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUIMyMail\MailDetailSetup.resx">
       <DependentUpon>MailDetailSetup.cs</DependentUpon>

@@ -77,9 +77,6 @@ REM TTPremiumBoot
 xcopy /y %1\scripts\*.* scripts\
 xcopy /y %1\scripts\imdb\*.* scripts\imdb\
 
-rem MyDreambox plugin dependencies
-xcopy /y %1\WindowPlugins\GUIMyDreambox\AxInterop.AXVLC.dll .
-xcopy /y %1\WindowPlugins\GUIMyDreambox\Interop.AXVLC.dll .
 
 rem MyBurner plugin dependencies
 xcopy /y %1\WindowPlugins\GUIBurner\XPBurnComponent.dll .

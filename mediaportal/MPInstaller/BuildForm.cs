@@ -141,32 +141,35 @@ namespace MediaPortal.MPInstaller
                   listBox1.Refresh();
                   listBox1.Update();
                 }
-                else
-                {
-                  string tempfile = Path.GetTempPath() + @"\MPExtensionFileList.xml";
-                  string configfile = textBox2.Text + "/MPExtensionFileList.xml";
-                  if (download_form.FtpDownload(configfile, tempfile, textBox3.Text, textBox4.Text))
-                  {
-                    listBox1.Items.Add("List file downloaded !");
-                    listBox1.SelectedIndex = listBox1.Items.Count - 1;
-                    listBox1.Refresh();
-                    listBox1.Update();
-                    MPInstallHelper temp_mpih = new MPInstallHelper();
-                    temp_mpih.LoadFromFile(tempfile);
-                    MPpackageStruct pk = new MPpackageStruct();
-                    pk.LoadFromFile(textBox1.Text);
-                    temp_mpih.Add(pk);
-                    temp_mpih.SaveToFile();
-                    download_form.FtpRenam(configfile, "MPExtensionFileList_old.xml", textBox3.Text, textBox4.Text);
-                    listBox1.Items.Add("List file renamed !");
-                    listBox1.Refresh();
-                    listBox1.Update();
-                    download_form.FtpUpload(tempfile, textBox2.Text, textBox3.Text, textBox4.Text);
-                    listBox1.Items.Add("List file uploaded !");
-                    listBox1.Refresh();
-                    listBox1.Update();
-                  }
-                }
+
+                  // TODO
+
+                //else
+                //{
+                //  string tempfile = Path.GetTempPath() + @"\MPExtensionFileList.xml";
+                //  string configfile = textBox2.Text + "/MPExtensionFileList.xml";
+                //  if (download_form.FtpDownload(configfile, tempfile, textBox3.Text, textBox4.Text))
+                //  {
+                //    listBox1.Items.Add("List file downloaded !");
+                //    listBox1.SelectedIndex = listBox1.Items.Count - 1;
+                //    listBox1.Refresh();
+                //    listBox1.Update();
+                //    MPInstallHelper temp_mpih = new MPInstallHelper();
+                //    temp_mpih.LoadFromFile(tempfile);
+                //    MPpackageStruct pk = new MPpackageStruct();
+                //    pk.LoadFromFile(textBox1.Text);
+                //    temp_mpih.Add(pk);
+                //    temp_mpih.SaveToFile();
+                //    download_form.FtpRenam(configfile, "MPExtensionFileList_old.xml", textBox3.Text, textBox4.Text);
+                //    listBox1.Items.Add("List file renamed !");
+                //    listBox1.Refresh();
+                //    listBox1.Update();
+                //    download_form.FtpUpload(tempfile, textBox2.Text, textBox3.Text, textBox4.Text);
+                //    listBox1.Items.Add("List file uploaded !");
+                //    listBox1.Refresh();
+                //    listBox1.Update();
+                //  }
+                //}
               }
             }
           }

@@ -447,8 +447,7 @@ namespace MediaPortal.GUI.Video
     private bool WaitForPath(string folderName)
     {
       // while waking up from hibernation it can take a while before a network drive is accessible.
-      // lets wait 10 sec
-      bool result = false;
+      // lets wait 10 sec      
       int count = 0;
 
       while (!Directory.Exists(folderName) && count < 100)

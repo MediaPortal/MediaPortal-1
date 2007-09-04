@@ -68,8 +68,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private StreamControl LastFMStation = null;
     private NotifyIcon _trayBallonSongChange = null;
     private bool _configShowTrayIcon = true;
-    private bool _configShowBallonTips = true;
-    private bool _configSubmitToProfile = true;
+    private bool _configShowBallonTips = true;    
     private bool _configDirectSkip = false;
     private int _configListEntryCount = 12;
     private List<string> _usersOwnTags = null;

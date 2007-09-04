@@ -169,9 +169,9 @@ namespace MediaPortal.GUI.TV
 
     public override void OnAction(Action action)
     {
-      switch (action.wID)
-      {
-      }
+      //switch (action.wID)
+      //{
+      //}
       base.OnAction(action);
     }
 

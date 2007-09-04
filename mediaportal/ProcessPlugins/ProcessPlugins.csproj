@@ -204,10 +204,6 @@
       <Project>{C6564AA7-976B-43EF-9E35-7E607EE1DD12}</Project>
       <Name>MusicShareWatcherHelper</Name>
     </ProjectReference>
-    <Reference Include="Communications, Version=0.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\Communications.dll</HintPath>
-    </Reference>
     <Reference Include="Interop.GIRDERLib, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Interop.GIRDERLib.dll</HintPath>
@@ -404,22 +400,6 @@
     <Compile Include="ExternalDisplay\VFD_Control\Hid.cs" />
     <Compile Include="ExternalDisplay\VFD_Control\HidDeclarations.cs" />
     <Compile Include="ExternalDisplay\VFD_Control\VFD_Control.cs" />
-    <Compile Include="ExternalDreamboxTV\Dreambox\BoxInfo.cs" />
-    <Compile Include="ExternalDreamboxTV\Dreambox\ChannelInfo.cs" />
-    <Compile Include="ExternalDreamboxTV\Dreambox\Core.cs" />
-    <Compile Include="ExternalDreamboxTV\Dreambox\Data.cs" />
-    <Compile Include="ExternalDreamboxTV\Dreambox\NowPlaying799.cs" />
-    <Compile Include="ExternalDreamboxTV\Dreambox\Remote.cs" />
-    <Compile Include="ExternalDreamboxTV\Dreambox\Request.cs" />
-    <Compile Include="ExternalDreamboxTV\Dreambox\XML.cs" />
-    <Compile Include="ExternalDreamboxTV\Dreambox\Zap.cs" />
-    <Compile Include="ExternalDreamboxTV\ExternalDreamboxTV.cs" />
-    <Compile Include="ExternalDreamboxTV\ExternalDreamBoxTVSettings.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ExternalDreamboxTV\ExternalDreamBoxTVSettings.Designer.cs">
-      <DependentUpon>ExternalDreamBoxTVSettings.cs</DependentUpon>
-    </Compile>
     <Compile Include="HCWBlaster\HCWBlaster.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -541,10 +521,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ExternalDisplay\lcd_deactivated.gif" />
-    <EmbeddedResource Include="ExternalDreamboxTV\ExternalDreamBoxTVSettings.resx">
-      <DependentUpon>ExternalDreamBoxTVSettings.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="PowerScheduler\PowerSchedulerSetupForm.resx">
       <DependentUpon>PowerSchedulerSetupForm.cs</DependentUpon>
       <SubType>Designer</SubType>

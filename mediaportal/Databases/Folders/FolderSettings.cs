@@ -54,7 +54,7 @@ namespace MediaPortal.Database
         
         validDir = dir.Length > 0;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         validDir = false;
       }

@@ -135,9 +135,9 @@ namespace MediaPortal.GUI.TV
         }
       }
 
-      switch (action.wID)
-      {
-      }
+      //switch (action.wID)
+      //{
+      //}
       base.OnAction(action);
     }
 

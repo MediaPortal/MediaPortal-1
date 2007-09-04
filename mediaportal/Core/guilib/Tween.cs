@@ -96,21 +96,18 @@ namespace MediaPortal.GUI.Library
       {
         case TweenerType.EASE_IN:
           time /= duration;
-          return change * time * (_a * time + 1 - _a) + start;
-          break;
+          return change * time * (_a * time + 1 - _a) + start;          
 
         case TweenerType.EASE_OUT:
           time /= duration;
-          return -change * time * (_a * time - 1 - _a) + start;
-          break;
+          return -change * time * (_a * time - 1 - _a) + start;          
 
         case TweenerType.EASE_INOUT:
           time /= duration / 2;
           if (time < 1)
             return (change) * time * (_a * time + 1 - _a) + start;
           time--;
-          return (-change) * time * (_a * time - 1 - _a) + start;
-          break;
+          return (-change) * time * (_a * time - 1 - _a) + start;          
       }
       return change * time * time + start;
     }
