@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006 Team MediaPortal
+ *	Copyright (C) 2006-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -24,7 +24,31 @@
 #include <math.h>
 #include "pcr.h" 
 #define MAX_CLOCK  95443.71768
+
 extern void LogDebug(const char *fmt, ...) ;
+
+/*****************
+*The TS packets contain clock synchronization information in fields called the Program Reference Clock (PCR), 
+*Decoding Time Stamp, Presentation time Stamp (PTS). During the video transmission it is important 
+*that the transmitter and receiver maintain synchronization and frame rate. Subtle variation in the 
+*clock frequency used at the encoder/transrriitter and the decoder/receiver can lead to overflowing 
+*or empty buffers-especially because of the high data rates involved with video material. To avoid 
+*this, the PCR field is used to synchronize a 27 MHz master clock at both ends.
+*
+*The clock consists of a 42-bit counter that increments at 27 MHz (with the upper 33 bits incrementing 
+*at a 90 kHz rate). The PCR field is used to transmit periodic samples of this counter. 
+*The receiver can compare its counter with the received values and a simple phase locked 
+*loop (PLL) circuit can be used to adjust the local rate to accurately match the transmitter. 
+*This clock can be used with the frame time stamps that specify when a frame needs to be displayed, 
+*to buffer and smooth jitter that may have occurred when the MPEG stream was transported through 
+*variable delay (e.g. ATM switch buffering). These timestamps can also be used for effects such as 
+*slow motion and pausing the video (e.g. VCR-like control).
+*
+* The PCR is split in 2 parts:
+* the base is the upper 33 bits, incrementing at 90Khz, each tick=1/90Khz
+* the extension is the lower 9 bits, incrementing at 27Mhz
+******************/
+
 CPcr::CPcr()
 {
   Reset();
@@ -60,7 +84,7 @@ void CPcr::Decode(byte* data)
 
   PcrReferenceExtension=0;
   k=(data[4]& 0x1);  k<<=8LL;PcrReferenceExtension+=k; // bit 8
-  k=data[5];                 PcrReferenceExtension+=k; // bit 0-7 
+  k=data[5];                 PcrReferenceExtension+=k; // bit 0-7
 	IsValid=true;
 }
 
@@ -119,18 +143,18 @@ bool CPcr::DecodeFromPesHeader(byte* pesHeader, CPcr& pts, CPcr& dts)
 	return (ptsAvailable||dtsAvailable);
 }
 
+//***********************************
+//* convert from clock(in seconds) to pcr 
+//***********************************
 void CPcr::FromClock(double clock)
 {
-  while (clock > MAX_CLOCK)
-  {
-    clock -= MAX_CLOCK;
-  }
-  while (clock < 0)
-  {
-    clock += MAX_CLOCK;
-  }
-  PcrReferenceBase=(UINT64)fabs(clock*90000.0);
-  PcrReferenceExtension=(UINT64)( ( clock-floor(clock) )*27000000.0);
+  double khz90Ticks = clock / ((1.0/90000.0));
+  PcrReferenceBase = (UINT64)(fabs(khz90Ticks));
+
+  clock -= (PcrReferenceBase*((1.0/90000.0)));
+  double mhz27Ticks= clock / ((1.0/27000000.0));
+
+  PcrReferenceExtension=(UINT64)(fabs(mhz27Ticks));
 }
 
 double CPcr::ToClock() const
@@ -138,14 +162,6 @@ double CPcr::ToClock() const
   double clock = ((double)(PcrReferenceBase)) / 90000.0;
   clock += ((double)PcrReferenceExtension) / 27000000.0;
   
-  while (clock > MAX_CLOCK)
-  {
-    clock -= MAX_CLOCK;
-  }
-  while (clock < 0)
-  {
-    clock += 0;
-  }
   return clock;
 }
 void CPcr::Time(int& day,int& hour, int &minutes, int& seconds, int & millsecs)
