@@ -57,6 +57,9 @@ namespace TvPlugin
     [SkinControlAttribute(51)]    protected GUISMSInputControl smsInputControl = null;
     public string _searchKeyword = "";
     public bool _refreshList = false;
+
+    private Action LastAction = null; // Keeps the Last received Action from the OnAction Methode
+    private int LastActionTime = 0; // stores the time of the last action from the OnAction Methode
     #endregion
 
     public TvNewScheduleSearch()
@@ -87,6 +90,8 @@ namespace TvPlugin
 
     public override void OnAction(Action action)
     {
+      if (LastActionTime + 100 > System.Environment.TickCount && action == LastAction) return; // don't do anything if the keypress is comes to soon after the previos one and the action is the same as before.
+
       switch (action.wID)
       {
         case Action.ActionType.ACTION_PREVIOUS_MENU:
@@ -94,6 +99,15 @@ namespace TvPlugin
             GUIWindowManager.ShowPreviousWindow();
             return;
           }
+        case Action.ActionType.ACTION_SELECT_ITEM:
+          {
+            if (GetFocusControlId() == smsInputControl.GetID)
+            {
+              _refreshList = true;
+              return;
+            }
+          }
+          break;
       }
 
       if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
@@ -105,15 +119,17 @@ namespace TvPlugin
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int)smsInputControl.GetID, 0, 0, null);
           OnMessage(msg);
         }
+        smsInputControl.OnAction(action);
+        return;
       }
-      else
-      {
-        // translate all other actions from regular keypresses back to keypresses
-        if (action.m_key != null && action.m_key.KeyChar >= 32)
-        {
-          action.wID = Action.ActionType.ACTION_KEY_PRESSED;
-        }
-      }
+      //else
+      //{
+      //  // translate all other actions from regular keypresses back to keypresses
+      //  if (action.m_key != null && action.m_key.KeyChar >= 32)
+      //  {
+      //    action.wID = Action.ActionType.ACTION_KEY_PRESSED;
+      //  }
+      //}
       base.OnAction(action);
     }
 
@@ -176,7 +192,7 @@ namespace TvPlugin
       if (_searchKeyword != smsInputControl.Text)
       {
         _searchKeyword = smsInputControl.Text;
-        _refreshList = true;
+        //_refreshList = true;
       }
     }
     public override void Process()
