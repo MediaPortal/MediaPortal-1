@@ -43,12 +43,18 @@ namespace TestApp
         comboBoxInput.SelectedIndex = 0;
         if (_channel.TunerSource == TunerInputType.Cable)
           comboBoxInput.SelectedIndex = 1;
-        for (int i = 0; i < countries.Countries.Length; ++i)
+
+        if (_channel.Country == null)
+          comboBoxCountry.SelectedIndex = 0;
+        else
         {
-          if (_channel.Country.Id == countries.Countries[i].Id)
+          for (int i = 0; i < countries.Countries.Length; ++i)
           {
-            comboBoxCountry.SelectedIndex = i;
-            break;
+            if ((_channel.Country.Id == countries.Countries[i].Id))
+            {
+              comboBoxCountry.SelectedIndex = i;
+              break;
+            }
           }
         }
         textBoxChannel.Text = _channel.ChannelNumber.ToString();
