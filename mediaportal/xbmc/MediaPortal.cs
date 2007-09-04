@@ -2518,7 +2518,7 @@ public class MediaPortalApp : D3DApp, IRender
     // Log.Info("key:{0} 0x{1:X} (2)", (int)keyc, (int)keyc, keyc);
     Key key = new Key(e.KeyChar, 0);
     Action action = new Action();
-    if (GUIWindowManager.IsRouted)
+    if (GUIWindowManager.IsRouted || GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_TV_SEARCH ) // is a dialog open or maybe the tv schedule search (GUISMSInputControl)?
     {
       GUIGraphicsContext.ResetLastActivity();
       if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action) &&
@@ -2526,7 +2526,8 @@ public class MediaPortalApp : D3DApp, IRender
           (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_VIRTUAL_WEB_KEYBOARD) &&
           (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_MSN_CHAT) &&
           (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_MSNOSD) &&
-          (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_TVMSNOSD))
+          (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_TVMSNOSD) &&
+          (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_TV_SEARCH) )
       {
         if (action.SoundFileName.Length > 0 && !g_Player.Playing)
         {

@@ -306,7 +306,8 @@ namespace MediaPortal.GUI.Library
           else if (_currentKey == '?') _currentKey = '.';
           else if (_currentKey == '.') _currentKey = '0';
           else if (_currentKey == '0') _currentKey = '1';
-          else if (_currentKey == '1') _currentKey = '-';
+          else if (_currentKey == '1') _currentKey = 'ß';
+          else if (_currentKey == 'ß') _currentKey = '-';
           else if (_currentKey == '-') _currentKey = '+';
           else if (_currentKey == '+') _currentKey = ' ';
           _timerKey = DateTime.Now;
@@ -318,7 +319,11 @@ namespace MediaPortal.GUI.Library
           else if (_currentKey == 'a') _currentKey = 'b';
           else if (_currentKey == 'b') _currentKey = 'c';
           else if (_currentKey == 'c') _currentKey = '2';
-          else if (_currentKey == '2') _currentKey = 'a';
+          else if (_currentKey == '2') _currentKey = 'ä';
+          else if (_currentKey == 'ä') _currentKey = 'à';
+          else if (_currentKey == 'à') _currentKey = 'á';
+          else if (_currentKey == 'á') _currentKey = 'â';
+          else if (_currentKey == 'â') _currentKey = 'a';
           _timerKey = DateTime.Now;
         }
         if (Key == '3')
@@ -327,7 +332,10 @@ namespace MediaPortal.GUI.Library
           else if (_currentKey == 'd') _currentKey = 'e';
           else if (_currentKey == 'e') _currentKey = 'f';
           else if (_currentKey == 'f') _currentKey = '3';
-          else if (_currentKey == '3') _currentKey = 'd';
+          else if (_currentKey == '3') _currentKey = 'è';
+          else if (_currentKey == 'è') _currentKey = 'é';
+          else if (_currentKey == 'é') _currentKey = 'ê';
+          else if (_currentKey == 'ê') _currentKey = 'd';
           _timerKey = DateTime.Now;
         }
         if (Key == '4')
@@ -336,7 +344,10 @@ namespace MediaPortal.GUI.Library
           else if (_currentKey == 'g') _currentKey = 'h';
           else if (_currentKey == 'h') _currentKey = 'i';
           else if (_currentKey == 'i') _currentKey = '4';
-          else if (_currentKey == '4') _currentKey = 'g';
+          else if (_currentKey == '4') _currentKey = 'ì';
+          else if (_currentKey == 'ì') _currentKey = 'í';
+          else if (_currentKey == 'í') _currentKey = 'î';
+          else if (_currentKey == 'î') _currentKey = 'g';
           _timerKey = DateTime.Now;
         }
         if (Key == '5')
@@ -354,7 +365,11 @@ namespace MediaPortal.GUI.Library
           else if (_currentKey == 'm') _currentKey = 'n';
           else if (_currentKey == 'n') _currentKey = 'o';
           else if (_currentKey == 'o') _currentKey = '6';
-          else if (_currentKey == '6') _currentKey = 'm';
+          else if (_currentKey == '6') _currentKey = 'ö';
+          else if (_currentKey == 'ö') _currentKey = 'ò';
+          else if (_currentKey == 'ò') _currentKey = 'ó';
+          else if (_currentKey == 'ó') _currentKey = 'ô';
+          else if (_currentKey == 'ô') _currentKey = 'm';
           _timerKey = DateTime.Now;
         }
         if (Key == '7')
@@ -373,7 +388,11 @@ namespace MediaPortal.GUI.Library
           else if (_currentKey == 't') _currentKey = 'u';
           else if (_currentKey == 'u') _currentKey = 'v';
           else if (_currentKey == 'v') _currentKey = '8';
-          else if (_currentKey == '8') _currentKey = 't';
+          else if (_currentKey == '8') _currentKey = 'ü';
+          else if (_currentKey == 'ü') _currentKey = 'ù';
+          else if (_currentKey == 'ù') _currentKey = 'ú';
+          else if (_currentKey == 'ú') _currentKey = 'û';
+          else if (_currentKey == 'û') _currentKey = 't';
           _timerKey = DateTime.Now;
         }
         if (Key == '9')
@@ -659,6 +678,15 @@ namespace MediaPortal.GUI.Library
         base.DimColor = value;
         _image.DimColor = value;
       }
+    }
+
+    /// <summary>
+    /// Get/set the current cursor position
+    /// </summary>
+    public int CursorPosition
+    {
+      get { return _position; }
+      set { _position = value; }
     }
 
   }
