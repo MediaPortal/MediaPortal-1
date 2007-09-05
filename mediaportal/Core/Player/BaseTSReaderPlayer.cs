@@ -1196,7 +1196,7 @@ namespace MediaPortal.Player
       _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
       fCurrentPos = lStreamPos;
       fCurrentPos /= 10000000d;
-      _streamPos = fCurrentPos; // save the steam position 
+      _streamPos = fCurrentPos; // save the stream position 
 
       long lContentStart, lContentEnd;
       double fContentStart, fContentEnd;
