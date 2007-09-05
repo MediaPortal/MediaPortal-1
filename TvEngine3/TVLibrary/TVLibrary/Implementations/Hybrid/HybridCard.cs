@@ -366,6 +366,13 @@ namespace TvLibrary.Implementations.Hybrid
       _cards[_currentCardIndex].GrabEpg(callback);
     }
     /// <summary>
+    /// Start grabbing the epg while timeshifting
+    /// </summary>
+    public void GrabEpg()
+    {
+      _cards[_currentCardIndex].GrabEpg();
+    }
+    /// <summary>
     /// Aborts grabbing the epg
     /// </summary>
     public void AbortGrabbing()

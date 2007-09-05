@@ -58,8 +58,12 @@ namespace SetupTv.Sections
       textBoxCAT.Text = layer.GetSetting("timeoutCAT", "5").Value;
       textBoxPMT.Text = layer.GetSetting("timeoutPMT", "10").Value;
       textBoxSDT.Text = layer.GetSetting("timeoutSDT", "20").Value;
+
       textBoxEpgTimeOut.Text = layer.GetSetting("timeoutEPG", "10").Value;
       textBoxEPGRefresh.Text = layer.GetSetting("timeoutEPGRefresh", "240").Value;
+
+      checkBoxEnableEpgWhileTimeshifting.Checked = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
+      textBoxTSEpgTimeout.Text = layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value;
 
 
       textBoxMinfiles.Text = layer.GetSetting("timeshiftMinFiles", "6").Value;
@@ -121,6 +125,17 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("timeoutEPGRefresh", "240");
       s.Value = textBoxEPGRefresh.Text;
+      s.Persist();
+
+      s = layer.GetSetting("timeshiftingEpgGrabberEnabled", "no");
+      if (checkBoxEnableEpgWhileTimeshifting.Checked)
+        s.Value = "yes";
+      else
+        s.Value = "no";
+      s.Persist();
+
+      s = layer.GetSetting("timeshiftingEpgGrabberTimeout", "2");
+      s.Value = textBoxTSEpgTimeout.Text;
       s.Persist();
 
       s = layer.GetSetting("timeshiftMinFiles", "6");

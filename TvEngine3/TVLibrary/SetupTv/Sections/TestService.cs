@@ -337,6 +337,7 @@ namespace SetupTv.Sections
             if (vcard.IsRecording) tmp = "Recording";
             if (vcard.IsScanning) tmp = "Scanning";
             if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
+            if (vcard.IsTimeShifting && vcard.IsGrabbingEpg) tmp = " Timeshifting (Grabbing EPG)";
             item.SubItems[2].Text = tmp;
             if (vcard.IsScrambled) tmp = "yes";
             else tmp = "no";

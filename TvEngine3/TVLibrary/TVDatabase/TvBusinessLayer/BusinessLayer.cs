@@ -819,7 +819,16 @@ namespace TvDatabase
       sb.AddConstraint(String.Format("endTime < '{0}'", dtYesterday.ToString(GetDateTimeString(), mmddFormat)));
       SqlStatement stmt = sb.GetStatement(true);
       ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
-
+    }
+    public void RemoveOldPrograms(int idChannel)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Delete, typeof(Program));
+      DateTime dtThisMorning = DateTime.Now.Date;
+      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+      sb.AddConstraint(String.Format("startTime < '{0}'", dtThisMorning.ToString(GetDateTimeString(), mmddFormat)));
+      SqlStatement stmt = sb.GetStatement(true);
+      ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
     }
     public IList GetOnairNow()
     {
@@ -831,6 +840,22 @@ namespace TvDatabase
       return progs;
     }
 
+    public IList GetPrograms(Channel channel, DateTime startTime)
+    {
+      //The DateTime.MinValue is lower than the min datetime value of the database
+      if (startTime == DateTime.MinValue)
+        startTime = startTime.AddYears(1900);
+      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+
+      sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
+      sb.AddConstraint(String.Format("startTime>='{0}'",startTime.ToString(GetDateTimeString(), mmddFormat)));
+      sb.AddOrderByField(true, "startTime");
+
+      SqlStatement stmt = sb.GetStatement(true);
+      IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      return progs;
+    }
     public IList GetPrograms(Channel channel, DateTime startTime, DateTime endTime)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
@@ -906,6 +931,20 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
       IList progs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
       return progs;
+    }
+    public DateTime GetNewestProgramForChannel(int idChannel)
+    {
+      DateTime dtNewestEntry = DateTime.MinValue;
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+      sb.AddOrderByField(false,"startTime");
+      sb.SetRowLimit(1);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList progs=ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      if (progs.Count > 0)
+        return ((Program)progs[0]).StartTime;
+      else
+        return DateTime.MinValue;
     }
 
 

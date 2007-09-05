@@ -146,6 +146,8 @@ namespace TvLibrary.Implementations.DVB
     protected Dictionary<int, TvDvbChannel> _mapSubChannels;
     protected ScanParameters _parameters;
     protected Hauppauge _hauppauge;
+
+    private TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
     #endregion
 
     #endregion
@@ -159,6 +161,7 @@ namespace TvLibrary.Implementations.DVB
       _lastSignalUpdate = DateTime.MinValue;
       _mapSubChannels = new Dictionary<int, TvDvbChannel>();
       _parameters = new ScanParameters();
+      _timeshiftingEPGGrabber = new TimeShiftingEPGGrabber((ITVCard)this);
     }
     #endregion
 
@@ -2342,6 +2345,14 @@ namespace TvLibrary.Implementations.DVB
       _epgGrabbing = true;
     }
     /// <summary>
+    /// Start grabbing the epg while timeshifting
+    /// </summary>
+    public void GrabEpg()
+    {
+      if (_timeshiftingEPGGrabber.StartGrab())
+        GrabEpg(_timeshiftingEPGGrabber);
+    }
+    /// <summary>
     /// Gets the UTC.
     /// </summary>
     /// <param name="val">The val.</param>
@@ -2362,6 +2373,7 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Write("dvb:abort grabbing epg");
       _interfaceEpgGrabber.AbortGrabbing();
+      _timeshiftingEPGGrabber.OnEpgCancelled();
     }
 
     /// <summary>

@@ -147,6 +147,7 @@
     <Compile Include="Teletext\Implementations\TeletextPageCache.cs" />
     <Compile Include="Teletext\Implementations\TeletextPageRenderer.cs" />
     <Compile Include="Teletext\Implementations\ToptextDecoder.cs" />
+    <Compile Include="TimeShiftingEPGGrabber.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">

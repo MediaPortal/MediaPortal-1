@@ -152,6 +152,10 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
     void GrabEpg(BaseEpgGrabber callback);
+    /// <summary>
+    /// Start grabbing the epg while timeshifting
+    /// </summary>
+    void GrabEpg();
 
     /// <summary>
     /// Aborts grabbing the epg. This also triggers the OnEpgReceived callback.

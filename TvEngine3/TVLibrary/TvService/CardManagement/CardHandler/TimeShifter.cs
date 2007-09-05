@@ -50,6 +50,7 @@ namespace TvService
   {
     ITvCardHandler _cardHandler;
     bool _linkageScannerEnabled;
+    bool _timeshiftingEpgGrabberEnabled;
     ChannelLinkageGrabber _linkageGrabber = null;
     /// <summary>
     /// Initializes a new instance of the <see cref="TimerShifter"/> class.
@@ -62,6 +63,7 @@ namespace TvService
       _linkageScannerEnabled = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
 
       _linkageGrabber = new ChannelLinkageGrabber(cardHandler.Card);
+      _timeshiftingEpgGrabberEnabled = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
     }
 
 
@@ -249,6 +251,8 @@ namespace TvService
 
           if (_linkageScannerEnabled)
             _cardHandler.Card.StartLinkageScanner(_linkageGrabber);
+          if (_timeshiftingEpgGrabberEnabled)
+            _cardHandler.Card.GrabEpg();
 
           return TvResult.Succeeded;
         }

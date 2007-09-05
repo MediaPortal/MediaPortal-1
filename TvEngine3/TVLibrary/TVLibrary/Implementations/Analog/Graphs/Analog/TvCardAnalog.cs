@@ -680,6 +680,9 @@ namespace TvLibrary.Implementations.Analog
     public void GrabEpg(BaseEpgGrabber callback)
     {
     }
+    public void GrabEpg()
+    {
+    }
     void SetFrequencyOverride(AnalogChannel channel)
     {
       int countryCode = channel.Country.Id;
