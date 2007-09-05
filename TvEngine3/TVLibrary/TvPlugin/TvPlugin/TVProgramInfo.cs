@@ -772,7 +772,7 @@ namespace TvPlugin
               {
                 foreach (Schedule conflict in conflicts)
                 {
-                  Program prog = new Program(conflict.IdChannel, conflict.StartTime, conflict.EndTime, conflict.ProgramName, "-", "-", false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty);
+                  Program prog = new Program(conflict.IdChannel, conflict.StartTime, conflict.EndTime, conflict.ProgramName, "-", "-", false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty, -1);
                   OnRecordProgram(prog);
                 }
                 break;
