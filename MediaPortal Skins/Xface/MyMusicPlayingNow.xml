@@ -126,30 +126,31 @@
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
-      <type>fadelabel</type>
-      <description>year label</description>
-      <id>0</id>
-      <posX>852</posX>
-      <posY>446</posY>
-      <width>150</width>
-      <label>#Play.Current.Year</label>
-      <font>font13</font>
-      <align>right</align>
-      <!-- 			<textcolor>white</textcolor> -->
-    </control>
-    <control>
       <type>label</type>
       <description>album label</description>
       <id>0</id>
       <posX>511</posX>
-      <posY>446</posY>
-      <width>230</width>
+      <posY>450</posY>
+      <width>300</width>
       <label>#Play.Current.Album</label>
       <font>font13</font>
       <align>left</align>
       <!-- 			<textcolor>white</textcolor> -->
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
+    <control>
+      <type>label</type>
+      <description>year label</description>
+      <id>0</id>
+      <posX>511</posX>
+      <posY>480</posY>
+      <width>150</width>
+      <label>#Play.Current.Year</label>
+      <font>font13</font>
+      <align>left</align>
+      <!-- 			<textcolor>white</textcolor> -->
+      <animation effect="fade" time="150">WindowOpen</animation>
+    </control>    
     <control>
       <type>image</type>
       <id>117</id>
@@ -165,7 +166,7 @@
       <id>118</id>
       <posX>504</posX>
       <posY>520</posY>
-      <width>240</width>
+      <width>350</width>
     </control>
     <control>
       <type>label</type>
@@ -173,7 +174,7 @@
       <id>0</id>
       <posX>865</posX>
       <posY>524</posY>
-      <label>#currentplaytime</label>
+      <label>#duration</label>
       <font>font14</font>
       <align>left</align>
       <textcolor>80ffffff</textcolor>
@@ -185,7 +186,7 @@
       <id>0</id>
       <posX>498</posX>
       <posY>524</posY>
-      <label>#duration</label>
+      <label>#currentplaytime</label>
       <font>font14</font>
       <align>right</align>
       <textcolor>80ffffff</textcolor>
@@ -194,34 +195,34 @@
       <type>label</type>
       <description>up next label</description>
       <id>20</id>
-      <posX>1237</posX>
+      <posX>950</posX>
       <posY>589</posY>
       <label>4541</label>
       <font>font14</font>
       <align>right</align>
-      <textcolor>ff969696</textcolor>
+      <textcolor>90010101</textcolor>
     </control>
     <control>
       <type>fadelabel</type>
       <description>next track label</description>
       <id>121</id>
-      <posX>1237</posX>
-      <posY>616</posY>
+      <posX>990</posX>
+      <posY>589</posY>
       <width>300</width>
-      <font>font16</font>
+      <font>font14</font>
       <label>#Play.Next.Title</label>
-      <align>right</align>
+      <align>left</align>
       <textcolor>90010101</textcolor>
     </control>
     <control>
       <type>fadelabel</type>
       <description>next artist label</description>
       <id>123</id>
-      <posX>1235</posX>
-      <posY>644</posY>
+      <posX>990</posX>
+      <posY>620</posY>
       <width>300</width>
       <label>#Play.Next.Artist</label>
-      <align>right</align>
+      <align>left</align>
       <textcolor>ff969696</textcolor>
     </control>
     <control>
