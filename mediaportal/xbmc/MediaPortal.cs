@@ -661,7 +661,7 @@ public class MediaPortalApp : D3DApp, IRender
       if (_screenNumberOverride >= 0)
         screenNumber = _screenNumberOverride;
 
-      if (screenNumber < 0 || screenNumber > Screen.AllScreens.Length)
+      if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
         screenNumber = 0;
 
       Log.Info("currentScreenNr:" + screenNumber);
