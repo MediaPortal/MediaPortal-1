@@ -263,6 +263,14 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Property to get the stream position in the currently playing file (in secs)
+    /// </summary>
+    public virtual double StreamPosition
+    {
+      get { return 0; }
+    }
+
+    /// <summary>
     /// Property to get the content start in the currently playing file (in secs)
     /// </summary>
     public virtual double ContentStart

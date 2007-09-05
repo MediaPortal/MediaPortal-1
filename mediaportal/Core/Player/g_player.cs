@@ -1283,6 +1283,15 @@ namespace MediaPortal.Player
       }
     }
 
+    static public double StreamPosition
+    {
+      get
+      {
+        if (_player == null) return 0;
+        return _player.StreamPosition;
+      }
+    }
+
     static public double ContentStart
     {
       get

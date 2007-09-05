@@ -83,6 +83,7 @@ namespace MediaPortal.Player
     protected IMediaSeeking _mediaSeeking = null;
     protected int _speed = 1;
     protected double _currentPos;
+    protected double _streamPos;
     protected double _duration = -1d;
     protected bool _isStarted = false;
     protected bool _isLive = false;
@@ -843,6 +844,14 @@ namespace MediaPortal.Player
       }
     }
 
+    public override double StreamPosition
+    {
+      get
+      {
+        return _streamPos;
+      }
+    }
+
     public override double ContentStart
     {
       get { return 0.0; }
@@ -1187,6 +1196,7 @@ namespace MediaPortal.Player
       _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
       fCurrentPos = lStreamPos;
       fCurrentPos /= 10000000d;
+      _streamPos = fCurrentPos; // save the steam position 
 
       long lContentStart, lContentEnd;
       double fContentStart, fContentEnd;

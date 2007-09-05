@@ -218,7 +218,7 @@ namespace MediaPortal.Player
     /// <returns></returns>
     public int OnSubtitle(ref SUBTITLE sub)
     {
-      Log.Debug("OnSubtitle - current position " +player.CurrentPosition);
+      Log.Debug("OnSubtitle - stream position " + player.StreamPosition);
       lock (alert)
       {
         try
@@ -363,7 +363,7 @@ namespace MediaPortal.Player
         return;
       }
       //Log.Debug("\n\n***** SubtitleRenderer: Subtitle render *********");
-      //Log.Debug(" Current pos: "+player.CurrentPosition); 
+      //Log.Debug(" Stream pos: "+player.StreamPosition); 
       //if (!GUIGraphicsContext.IsFullScreenVideo) return;
 
       if (clearOnNextRender)
@@ -382,7 +382,7 @@ namespace MediaPortal.Player
         if (subtitles.Count > 0)
         {
           Subtitle next = subtitles.First.Value;
-          if (next.presentTime <= player.CurrentPosition) timeForNext = true;
+          if (next.presentTime <= player.StreamPosition) timeForNext = true;
           else
           {
             //Log.Debug("-NEXT subtitle is in the future");
@@ -391,7 +391,7 @@ namespace MediaPortal.Player
       }
 
       // Check for subtitle if we dont have one currently or if the current one is beyond its timeout
-      if (currentSubtitle == null || currentSubtitle.presentTime + currentSubtitle.timeOut <= player.CurrentPosition || timeForNext)
+      if (currentSubtitle == null || currentSubtitle.presentTime + currentSubtitle.timeOut <= player.StreamPosition || timeForNext)
       {
         //Log.Debug("-Current position: ");
         if (currentSubtitle != null && !timeForNext)
@@ -413,14 +413,14 @@ namespace MediaPortal.Player
 
             //Log.Debug("-next from queue: " + next.ToString());
             // if the next should be displayed now or previously
-            if (next.presentTime <= player.CurrentPosition)
+            if (next.presentTime <= player.StreamPosition)
             {
               // remove from queue
               subtitles.RemoveFirst();
 
               // if it is not too late for this sub to be displayed, break
               // otherwise continue
-              if (next.presentTime + next.timeOut >= player.CurrentPosition)
+              if (next.presentTime + next.timeOut >= player.StreamPosition)
               {
                 currentSubtitle = next;
                 break;
