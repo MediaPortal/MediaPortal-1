@@ -45,6 +45,8 @@ namespace TvDatabase
     private int starRating;
     [TableColumn("classification", NotNull = true)]
     private string classification;
+    [TableColumn("parentalRating", NotNull = true)]
+    private int parentalRating;
 
     #endregion
 
@@ -52,7 +54,7 @@ namespace TvDatabase
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
-    public Program(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre, bool notify, DateTime originalAirDate, string seriesNum, string episodeNum, int starRating, string classification)
+    public Program(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre, bool notify, DateTime originalAirDate, string seriesNum, string episodeNum, int starRating, string classification, int parentalRating)
     {
       isChanged = true;
       this.idChannel = idChannel;
@@ -67,13 +69,14 @@ namespace TvDatabase
       this.episodeNum = episodeNum;
       this.starRating = starRating;
       this.classification = classification;
+      this.parentalRating = parentalRating;
     }
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
     /// </summary> 
-    public Program(int idProgram, int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre, bool notify, DateTime originalAirDate, string seriesNum, string episodeNum, int starRating, string classification)
+    public Program(int idProgram, int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre, bool notify, DateTime originalAirDate, string seriesNum, string episodeNum, int starRating, string classification, int parentalRating)
     {
       this.idProgram = idProgram;
       this.idChannel = idChannel;
@@ -88,6 +91,7 @@ namespace TvDatabase
       this.episodeNum = episodeNum;
       this.starRating = starRating;
       this.classification = classification;
+      this.parentalRating = parentalRating;
     }
     #endregion
 
@@ -297,6 +301,22 @@ namespace TvDatabase
       {
         isChanged |= classification != value;
         classification = value;
+      }
+    }
+
+    /// <summary>
+    /// A parental guidance rating for a program (the nr gives the min. age suggested to watch this program)
+    /// </summary>
+    public int ParentalRating
+    {
+      get
+      {
+        return parentalRating; 
+      }
+      set
+      {
+        isChanged |= parentalRating != value;
+        parentalRating = value;
       }
     }
 
@@ -515,7 +535,7 @@ namespace TvDatabase
 
     public Program Clone()
     {
-      Program p = new Program(idChannel, StartTime, EndTime, Title, Description, Genre, Notify, OriginalAirDate, SeriesNum, EpisodeNum, StarRating, Classification);
+      Program p = new Program(idChannel, StartTime, EndTime, Title, Description, Genre, Notify, OriginalAirDate, SeriesNum, EpisodeNum, StarRating, Classification, parentalRating);
       return p;
     }
   }

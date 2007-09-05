@@ -2488,7 +2488,7 @@ namespace TvLibrary.Implementations.DVB
 
               EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
 
-              EpgLanguageText epgLang = new EpgLanguageText("ALL", title, summary, theme);
+              EpgLanguageText epgLang = new EpgLanguageText("ALL", title, summary, theme,-1);
               program.Text.Add(epgLang);
               epgChannel.Programs.Add(program);
             }
@@ -2526,6 +2526,7 @@ namespace TvLibrary.Implementations.DVB
                 IntPtr ptrTitle = IntPtr.Zero;
                 IntPtr ptrDesc = IntPtr.Zero;
                 IntPtr ptrGenre = IntPtr.Zero;
+                int parentalRating;
                 _interfaceEpgGrabber.GetEPGEvent((uint)x, (uint)i, out languageCount, out start_time_MJD, out start_time_UTC, out duration, out ptrGenre);
                 genre = DvbTextConverter.Convert(ptrGenre, "");
 
@@ -2567,7 +2568,7 @@ namespace TvLibrary.Implementations.DVB
                   //EPGEvent newEvent = new EPGEvent(genre, dtStart, dtEnd);
                   for (int z = 0; z < languageCount; ++z)
                   {
-                    _interfaceEpgGrabber.GetEPGLanguage((uint)x, (uint)i, (uint)z, out languageId, out ptrTitle, out ptrDesc);
+                    _interfaceEpgGrabber.GetEPGLanguage((uint)x, (uint)i, (uint)z, out languageId, out ptrTitle, out ptrDesc,out parentalRating);
                     //title = DvbTextConverter.Convert(ptrTitle,"");
                     //description = DvbTextConverter.Convert(ptrDesc,"");
                     string language = String.Empty;
@@ -2595,7 +2596,7 @@ namespace TvLibrary.Implementations.DVB
                     description = description.Trim();
                     language = language.Trim();
                     genre = genre.Trim();
-                    EpgLanguageText epgLangague = new EpgLanguageText(language, title, description, genre);
+                    EpgLanguageText epgLangague = new EpgLanguageText(language, title, description, genre,parentalRating);
                     epgProgram.Text.Add(epgLangague);
 
                   }

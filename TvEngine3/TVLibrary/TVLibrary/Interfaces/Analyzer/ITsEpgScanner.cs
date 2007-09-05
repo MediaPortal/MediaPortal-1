@@ -104,7 +104,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="eventDescription">The event description.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGLanguage([In] uint channel, [In] uint eventid, [In]uint languageIndex, [Out] out uint language, [Out] out IntPtr eventText, [Out] out IntPtr eventDescription);
+    int GetEPGLanguage([In] uint channel, [In] uint eventid, [In]uint languageIndex, [Out] out uint language, [Out] out IntPtr eventText, [Out] out IntPtr eventDescription,[Out] out int parentalRating);
 
     /// <summary>
     /// Start grabbing MGW

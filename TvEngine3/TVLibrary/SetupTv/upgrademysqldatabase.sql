@@ -1,10 +1,10 @@
 USE TvLibrary;
-# --- version 30 ---
-ALTER TABLE Channel ADD displayName varchar(200)
+# --- version 31 ---
+ALTER TABLE Program ADD parentalRating int(11)
 #
-UPDATE Channel SET DisplayName=(SELECT name FROM Channel p WHERE Channel.idChannel=p.idChannel)
+UPDATE Program SET parentalRating=0
 #
 DELETE FROM `version`
 #
-UPDATE `version` SET `versionNumber`=30;
+UPDATE `version` SET `versionNumber`=31;
 #

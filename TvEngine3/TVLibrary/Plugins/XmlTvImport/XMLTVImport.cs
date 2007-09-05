@@ -637,7 +637,7 @@ namespace TvEngine
                     }
                   }
 
-                  Program prog = new Program(channel.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, DateTime.MinValue, seriesNum, episodeNum, starRating, classification);
+                  Program prog = new Program(channel.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, DateTime.MinValue, seriesNum, episodeNum, starRating, classification,-1);
                   //prog.Description = ConvertHTMLToAnsi(strDescription);
                   //prog.StartTime = iStart;
                   //prog.EndTime = iStop;
@@ -1256,7 +1256,7 @@ namespace TvEngine
                       break;
                     }
                   }
-                  Program prog = new Program(channel.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, DateTime.MinValue, seriesNum, episodeNum, starRating, classification);
+                  Program prog = new Program(channel.IdChannel, longtodate(startDate), longtodate(stopDate), title, description, category, false, DateTime.MinValue, seriesNum, episodeNum, starRating, classification,0);
                   //prog.Description = ConvertHTMLToAnsi(strDescription);
                   //prog.StartTime = iStart;
                   //prog.EndTime = iStop;

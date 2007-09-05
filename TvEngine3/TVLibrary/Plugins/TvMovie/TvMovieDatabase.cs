@@ -642,7 +642,7 @@ namespace TvEngine
                 EPGStarRating = -1; break;
             }
 
-            Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification);
+            Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, false, OnAirDate, string.Empty, string.Empty, EPGStarRating, classification,0);
 
             if (audioFormat == String.Empty)
               prog.Description = description.Replace("<br>", "\n");

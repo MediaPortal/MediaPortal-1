@@ -173,7 +173,7 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 					else if (descriptor_tag ==0x55)
 					{
 											//LogDebug("epg:     parental rating descriptor:0x%x len:%d start:%d %s",descriptor_tag,descriptor_len,start+off,&buf[start+off]);
-						//DecodeParentalRatingDescriptor(&buf[start+off],epgEvent);
+						DecodeParentalRatingDescriptor(&buf[start+off],epgEvent);
 					}
 					else if (descriptor_tag ==0x5f)
 					{
@@ -210,7 +210,6 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 	return S_OK;
 }
 
-/*
 void CEpgDecoder::DecodeParentalRatingDescriptor(byte* data, EPGEvent& epgEvent)
 {
 	try
@@ -218,6 +217,7 @@ void CEpgDecoder::DecodeParentalRatingDescriptor(byte* data, EPGEvent& epgEvent)
 		int descriptor_length=data[1];
 		if (descriptor_length % 4!=0)
 		{
+			LogDebug("*** epg:DecodeParentalRatingDescriptor check 1");
 			return; // Invalid length. Must be always a multiply of 4
 		}
 		int len=0;
@@ -225,27 +225,42 @@ void CEpgDecoder::DecodeParentalRatingDescriptor(byte* data, EPGEvent& epgEvent)
 		while (off+2<descriptor_length)
 		{
 			DWORD language=(data[off]<<16)+(data[off+1]<<8)+data[off+2];
-			bool langFound=false;
-			EPGEvent::ivecLanguages it = epgEvent.vecLanguages.begin();
-			for (it = epgEvent.vecLanguages.begin(); it != epgEvent.vecLanguages.end();++it)
+			unsigned int rating=(unsigned int)data[off+3];
+			if (rating>0xf)
 			{
-				EPGLanguage& lang=*it;
-				if (lang.language==language)
-				{
-					//found.
-					lang.parentalRating=(unsigned int)data[off+3];
-					LogDebug("epg grab parental:[%d]", lang.parentalRating);
-					langFound=true;
-					break;
-				}
+				// According to ETSI EN 300 468 the rating is
+				// 0x00			undefined
+				// 0x01-0x0F	minimum=rating+3 years
+				// 0x10-0xFF	defined by the broadcaster
+				LogDebug("*** epg:DecodeParentalRatingDescriptor check 2");
 			}
-			if (!langFound)
+			else
 			{
-				EPGLanguage lang;
-				lang.language=language;
-				lang.parentalRating=(unsigned int)data[off+3];
-				LogDebug("epg grab parental:[%d]", lang.parentalRating);
-				epgEvent.vecLanguages.push_back(lang);
+				rating=rating+3;
+				bool langFound=false;
+				EPGEvent::ivecLanguages it = epgEvent.vecLanguages.begin();
+				for (it = epgEvent.vecLanguages.begin(); it != epgEvent.vecLanguages.end();++it)
+				{
+					EPGLanguage& lang=*it;
+					if (lang.language==language)
+					{
+						//found.
+						lang.parentalRating=rating;
+						//LogDebug("epg grab parental:%s [%d]",langi, rating);
+						langFound=true;
+						break;
+					}
+				}
+				if (!langFound)
+				{
+					EPGLanguage lang;
+					lang.language=language;
+					lang.parentalRating=rating;
+					lang.text="";
+					lang.event="";
+					//LogDebug("epg grab parental: %s [%d]",langi, rating);
+					epgEvent.vecLanguages.push_back(lang);
+				}
 			}
 			off=off+4;
 		}
@@ -254,7 +269,7 @@ void CEpgDecoder::DecodeParentalRatingDescriptor(byte* data, EPGEvent& epgEvent)
 	{
 		LogDebug("mpsaa: unhandled exception in Sections::DecodeParentalRatingDescriptor()");
 	}	
-}*/
+}
 
 HRESULT CEpgDecoder::DecodePremierePrivateEPG(byte* buf,int len)
 {
@@ -428,8 +443,9 @@ void CEpgDecoder::DecodeDishShortDescription(byte* data, EPGEvent& epgEvent, int
 		EPGLanguage lang;
 		lang.event=(char*)decompressed;
 		free(decompressed);
+		lang.parentalRating=0;
 		// simulated lang id for "eng"
-		lang.language=6647399;
+		lang.language=langENG;
 		epgEvent.vecLanguages.push_back(lang);
 		//LogDebug("DISH EPG ShortDescription=%s",text.c_str());
 	}
@@ -462,7 +478,8 @@ void CEpgDecoder::DecodeDishLongDescription(byte* data, EPGEvent& epgEvent, int 
 		EPGLanguage lang;
 		lang.text=(char*)decompressed;
 		free(decompressed);
-		lang.language=6647399;
+		lang.language=langENG;
+		lang.parentalRating=0;
 		epgEvent.vecLanguages.push_back(lang);
 	}
 	catch(...)
@@ -570,6 +587,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 			lang.event+=item;
 		if (text.size()>0)
 			lang.text+=text;
+		lang.parentalRating=0;
 			//LogDebug("epg grab ext:[%s][%s]", lang.event.c_str(),lang.text.c_str());
 		epgEvent.vecLanguages.push_back(lang);
 
@@ -623,6 +641,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 		    lang.language=ISO_639_language_code;
 		    lang.event="";
 		    lang.text="";
+			lang.parentalRating=0;
 		    epgEvent.vecLanguages.push_back(lang);
 				LogDebug("*** DecodeShortEventDescriptor: check1: %d %d",event_len,descriptor_len);
 				return;
@@ -638,6 +657,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 	    lang.language=ISO_639_language_code;
 	    lang.event="";
 	    lang.text="";
+		lang.parentalRating=0;
 	    epgEvent.vecLanguages.push_back(lang);
 			LogDebug("*** DecodeShortEventDescriptor: check1a: %d %d",event_len,descriptor_len);
 			return;
@@ -653,6 +673,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 	      lang.language=ISO_639_language_code;
 	      lang.event="";
 	      lang.text="";
+		  lang.parentalRating=0;
 	      epgEvent.vecLanguages.push_back(lang);
 				LogDebug("*** DecodeShortEventDescriptor: check2: %d %d",event_len,descriptor_len);
 				return;
@@ -668,6 +689,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 	    lang.language=ISO_639_language_code;
 	    lang.event="";
 	    lang.text="";
+		lang.parentalRating=0;
 	    epgEvent.vecLanguages.push_back(lang);
 			LogDebug("*** DecodeShortEventDescriptor: check2a: %d %d",event_len,descriptor_len);
 			return;
@@ -692,6 +714,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 			lang.event=eventText;
 		if (eventDescription.size()>0)
 			lang.text=eventDescription;
+		lang.parentalRating=0;
 		//LogDebug("epg grab short:[%s][%s]", lang.event.c_str(),lang.text.c_str());
 		epgEvent.vecLanguages.push_back(lang);
 
@@ -1034,7 +1057,7 @@ void CEpgDecoder::GetEPGEvent( ULONG channel,  ULONG eventIndex,ULONG* languageC
 	*duration=epgEvent.duration;
 	*genre=(char*)epgEvent.genre.c_str() ;
 }
-void CEpgDecoder::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription    )
+void CEpgDecoder::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription, unsigned int* parentalRating  )
 {
 	CEnterCriticalSection lock (m_critSection);
 	*language=0;
@@ -1068,6 +1091,7 @@ void CEpgDecoder::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageInde
 		*eventText=(char*)lang.event.c_str();
 		*eventDescription=(char*)lang.text.c_str();
 		*language=lang.language;
+		*parentalRating=lang.parentalRating;
 		//LogDebug("epg:get->[%s][%s]", lang.event.c_str(),lang.text.c_str());
 	}
 }

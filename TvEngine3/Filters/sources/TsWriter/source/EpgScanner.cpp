@@ -158,13 +158,13 @@ STDMETHODIMP CEpgScanner::GetEPGEvent( ULONG channel,  ULONG eventidx,ULONG* lan
 	}
 	return S_OK;
 }
-STDMETHODIMP CEpgScanner::GetEPGLanguage(THIS_ ULONG channel, ULONG eventidx,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription    )
+STDMETHODIMP CEpgScanner::GetEPGLanguage(THIS_ ULONG channel, ULONG eventidx,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription,unsigned int* parentalRating    )
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
 		//LogDebug("EpgScanner::GetEPGLanguage");
-		m_epgParser.GetEPGLanguage( channel,  eventidx, languageIndex,language,eventText,eventDescription    );
+		m_epgParser.GetEPGLanguage( channel,  eventidx, languageIndex,language,eventText,eventDescription,parentalRating    );
 	}
 	catch(...)
 	{

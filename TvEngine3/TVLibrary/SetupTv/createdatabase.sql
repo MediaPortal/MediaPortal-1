@@ -218,6 +218,7 @@ CREATE TABLE Program(
 	classification varchar(200) NOT NULL,
 	starRating int NOT NULL,
 	notify bit NOT NULL,
+	parentalRating int NOT NULL,
  CONSTRAINT PK_Programs PRIMARY KEY  
 (
 	idProgram ASC

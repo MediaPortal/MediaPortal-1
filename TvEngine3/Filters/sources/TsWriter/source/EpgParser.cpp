@@ -106,10 +106,10 @@ void	CEpgParser::GetEPGEvent( ULONG channel,  ULONG levent,ULONG* language, ULON
 	CEnterCriticalSection enter(m_section);
 	m_epgDecoder.GetEPGEvent(  channel, levent,language, dateMJD, timeUTC, duration, strgenre,eventid       );
 }
-void  CEpgParser::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription    )
+void  CEpgParser::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription, unsigned int* parentalRating    )
 {
 	CEnterCriticalSection enter(m_section);
-	m_epgDecoder.GetEPGLanguage(channel, eventid,languageIndex,language, eventText, eventDescription    );
+	m_epgDecoder.GetEPGLanguage(channel, eventid,languageIndex,language, eventText, eventDescription, parentalRating    );
 }
 
 void CEpgParser::AbortGrabbing()

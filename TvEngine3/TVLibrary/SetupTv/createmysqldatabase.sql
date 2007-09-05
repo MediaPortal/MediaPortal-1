@@ -231,6 +231,7 @@ CREATE TABLE `Program` (
   `classification` varchar(200) NOT NULL,
   `starRating` int(11) NOT NULL,
   `notify` bit(1) NOT NULL,
+  `parentalRating` int(11) NOT NULL,
   PRIMARY KEY  (`idProgram`),
   KEY `IDX_StartTime` (`startTime`),
   KEY `IDX_Program1` (`idChannel`),

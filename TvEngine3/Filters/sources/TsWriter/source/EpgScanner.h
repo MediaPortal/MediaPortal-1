@@ -49,7 +49,7 @@ DECLARE_INTERFACE_(ITsEpgScanner, IUnknown)
 	STDMETHOD(GetEPGEventCount) (THIS_ ULONG channel, ULONG* eventCount)PURE;
 	STDMETHOD(GetEPGChannel) (THIS_ ULONG channel, WORD* networkId, WORD* transportid,WORD* service_id  )PURE;
 	STDMETHOD(GetEPGEvent) (THIS_ ULONG channel, ULONG eventid,ULONG* language,ULONG* dateMJD,ULONG* timeUTC,ULONG* duration,char** genre    )PURE;
-	STDMETHOD(GetEPGLanguage) (THIS_ ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription    )PURE;
+	STDMETHOD(GetEPGLanguage) (THIS_ ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription, unsigned int* parentalRating  )PURE;
 
 	//mhw
 	STDMETHOD(GrabMHW)()PURE;
@@ -79,7 +79,7 @@ public:
 	STDMETHODIMP GetEPGEventCount( ULONG channel,  ULONG* eventCount);
 	STDMETHODIMP GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
 	STDMETHODIMP GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre    );
-	STDMETHODIMP GetEPGLanguage(THIS_ ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription    );
+	STDMETHODIMP GetEPGLanguage(THIS_ ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription,unsigned int* parentalRating    );
 	//MHW
 	STDMETHODIMP GrabMHW();
 	STDMETHODIMP IsMHWReady(BOOL* yesNo);

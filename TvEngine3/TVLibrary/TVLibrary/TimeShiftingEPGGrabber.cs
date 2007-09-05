@@ -141,11 +141,12 @@ namespace TvLibrary
       }
       return false;
     }
-    private void GetEPGLanguage(List<EpgLanguageText> texts,out string title, out string description, out string genre)
+    private void GetEPGLanguage(List<EpgLanguageText> texts,out string title, out string description, out string genre, out int parentalRating)
     {
       title = "";
       description = "";
       genre = "";
+      parentalRating = -1;
 
       if (texts.Count != 0)
       {
@@ -168,12 +169,14 @@ namespace TvLibrary
           title = texts[offset].Title;
           description = texts[offset].Description;
           genre = texts[offset].Genre;
+          parentalRating = texts[offset].ParentalRating;
         }
         else
         {
           title = texts[0].Title;
           description = texts[0].Description;
           genre = texts[0].Genre;
+          parentalRating = texts[0].ParentalRating;
         }
       }
 
@@ -218,9 +221,9 @@ namespace TvLibrary
           EpgProgram epgProgram = epgChannel.Programs[i];
           if (!ProgramExists(dbPrograms, epgProgram.StartTime, epgProgram.EndTime))
           {
-            string title; string description; string genre;
-            GetEPGLanguage(epgProgram.Text, out title, out description, out genre);
-            Program prog = new Program(dbChannel.IdChannel, epgProgram.StartTime, epgProgram.EndTime, title,description,genre, false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty);
+            string title; string description; string genre; int parentRating;
+            GetEPGLanguage(epgProgram.Text, out title, out description, out genre, out parentRating);
+            Program prog = new Program(dbChannel.IdChannel, epgProgram.StartTime, epgProgram.EndTime, title,description,genre, false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty,parentRating);
             prog.Persist();
             iInserted++;
           }

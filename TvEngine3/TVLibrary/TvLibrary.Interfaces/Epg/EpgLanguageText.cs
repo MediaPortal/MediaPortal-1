@@ -35,6 +35,7 @@ namespace TvLibrary.Epg
     string _title;
     string _description;
     string _genre;
+    int _parentalRating;
     #endregion
 
     #region ctor
@@ -45,12 +46,14 @@ namespace TvLibrary.Epg
     /// <param name="title">The title.</param>
     /// <param name="description">The description.</param>
     /// <param name="genre">The genre.</param>
-    public EpgLanguageText(string language, string title, string description, string genre)
+    /// <param name="parentalRating">The parental rating.</param>
+    public EpgLanguageText(string language, string title, string description, string genre, int parentalRating)
     {
       Language = language;
       Title = title;
       Description = description;
       Genre = genre;
+      ParentalRating = parentalRating;
     }
     #endregion
 
@@ -117,6 +120,22 @@ namespace TvLibrary.Epg
       {
         _genre = value;
         if (_genre == null) _genre = "";
+      }
+    }
+    /// <summary>
+    /// Gets or sets the parental rating.
+    /// </summary>
+    /// <value>The parental rating.</value>
+    public int ParentalRating
+    {
+      get
+      {
+        return _parentalRating;
+      }
+      set
+      {
+        _parentalRating = value;
+        if (_parentalRating == null) _parentalRating = -1;
       }
     }
     #endregion

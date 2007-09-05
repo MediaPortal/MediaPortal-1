@@ -37,7 +37,7 @@ typedef  struct stEPGLanguage
 	DWORD language;
 	string event;
 	string text;
-	//DWORD parentalRating;
+	unsigned int parentalRating;
 } EPGLanguage;
 
 typedef struct stEPGEvent
@@ -90,14 +90,14 @@ public:
 	ULONG	GetEPGEventCount( ULONG channel);
 	void	GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
 	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre  ,unsigned int* eventid   );
-	void    GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription    );
+	void    GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription,unsigned int* parentalRating  );
 	void	AbortGrabbing();
 	HRESULT	DecodeEPG(byte* pbData,int len);
 	HRESULT	DecodePremierePrivateEPG(byte* pbData,int len);
 
 private:
 	bool GetChannelByindex(ULONG channel, EPGChannel& epgChannel);
-	//void DecodeParentalRatingDescriptor(byte* buf,EPGEvent& event);
+	void DecodeParentalRatingDescriptor(byte* buf,EPGEvent& event);
 	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event);
 	void DecodeContentDescription(byte* buf,EPGEvent& event);
 	void DecodeExtendedEvent(byte* buf, EPGEvent& event);

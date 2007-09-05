@@ -404,7 +404,7 @@ namespace ProcessPlugins.EpgGrabber
         //        if( !string.IsNullOrEmpty( tvProgram.StarRating ) )
         //          mpProgram.StarRating = ( tvProgram.StarRating.LastIndexOf( '*' ) + 1.0 ) + ( tvProgram.StarRating.EndsWith( "+" ) ? 0.5 : 0.0 );
         
-        Program mpProgram = new Program(idTvChannel, localStartTime, localEndTime, zTitle, description.ToString(), zGenre, false, tvProgram.OriginalAirDate.Date, zSeriesNum, zEpisodeNum, -1, zClassification);
+        Program mpProgram = new Program(idTvChannel, localStartTime, localEndTime, zTitle, description.ToString(), zGenre, false, tvProgram.OriginalAirDate.Date, zSeriesNum, zEpisodeNum, -1, zClassification,0);
               
         mpProgram.Persist();
         stats._iPrograms++;
