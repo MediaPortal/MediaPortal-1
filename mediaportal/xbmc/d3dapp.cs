@@ -777,13 +777,12 @@ namespace MediaPortal
         presentParams.BackBufferWidth = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
         presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
         presentParams.BackBufferFormat = graphicsSettings.BackBufferFormat;
-        presentParams.PresentationInterval = PresentInterval.Immediate;
+        presentParams.PresentationInterval = PresentInterval.Default;
         presentParams.FullScreenRefreshRateInHz = 0;
         presentParams.SwapEffect = SwapEffect.Discard;
         presentParams.PresentFlag = PresentFlag.Video; //PresentFlag.LockableBackBuffer;
         presentParams.DeviceWindow = ourRenderTarget;
         presentParams.Windowed = true;
-        //presentParams.PresentationInterval = PresentInterval.Immediate;
       }
       else
       {
