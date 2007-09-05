@@ -166,7 +166,7 @@
       <id>118</id>
       <posX>504</posX>
       <posY>520</posY>
-      <width>350</width>
+      <width>360</width>
     </control>
     <control>
       <type>label</type>
@@ -190,17 +190,19 @@
       <font>font14</font>
       <align>right</align>
       <textcolor>80ffffff</textcolor>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>label</type>
       <description>up next label</description>
       <id>20</id>
-      <posX>950</posX>
+      <posX>966</posX>
       <posY>589</posY>
       <label>4541</label>
       <font>font14</font>
       <align>right</align>
       <textcolor>90010101</textcolor>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>fadelabel</type>
@@ -213,17 +215,19 @@
       <label>#Play.Next.Title</label>
       <align>left</align>
       <textcolor>90010101</textcolor>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>fadelabel</type>
       <description>next artist label</description>
       <id>123</id>
       <posX>990</posX>
-      <posY>620</posY>
+      <posY>616</posY>
       <width>300</width>
       <label>#Play.Next.Artist</label>
       <align>left</align>
       <textcolor>ff969696</textcolor>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <type>listcontrol</type>
@@ -504,6 +508,7 @@
       <posY>148</posY>
       <width>550</width>
       <label>33030</label>
+      <animation effect="fade" time="150">WindowOpen</animation>
       <!-- 			<textcolor>80ffffff</textcolor> -->
     </control>
     <control>
@@ -514,6 +519,7 @@
       <posY>148</posY>
       <width>550</width>
       <label>Top tracks for tag</label>
+      <animation effect="fade" time="150">WindowOpen</animation>
       <!-- 			<textcolor>80ffffff</textcolor> -->
     </control>
   </controls>
