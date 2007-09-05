@@ -368,8 +368,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwPosX">x-coordinate of the item</param>
     /// <param name="dwPosY">y-coordinate of the item</param>
     /// <param name="pItem">item itself</param>
-    void RenderItem(int itemNumber, float timePassed, bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem)
-    {
+		void RenderItem(int itemNumber, float timePassed, bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem)
+		{
       if (_font == null) return;
       if (pItem == null) return;
       if (dwPosY < 0) return;
@@ -381,10 +381,7 @@ namespace MediaPortal.GUI.Library
 
       float fTextPosY = (float)dwPosY + (float)_textureHeight;
 
-      TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
-      GUIGraphicsContext.ControlTransform = new TransformMatrix();
-
-      TransformMatrix textTransformMatrix = null;
+      TransformMatrix tm = null;
       long dwColor = _textColor;
       if (pItem.Selected) dwColor = _selectedColor;
       if (pItem.IsPlayed) dwColor = _playedColor;
@@ -422,8 +419,7 @@ namespace MediaPortal.GUI.Library
           pItem.Thumbnail = pImage;
           int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
           int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-          pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff,
-                             _thumbNailPositionY - iOverSized + dwPosY + yOff);
+          pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
           pImage.DimColor = DimColor;
           _sleeper += SLEEP_FRAME_COUNT;
         }
@@ -439,7 +435,7 @@ namespace MediaPortal.GUI.Library
           pImage.Height = _thumbNailHeight + 2 * iOverSized;
           int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
           int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-          pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff,
+          pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff,
                              _thumbNailPositionY - iOverSized + dwPosY + yOff);
           pImage.DimColor = DimColor;
           if (itemFocused)
@@ -452,9 +448,12 @@ namespace MediaPortal.GUI.Library
             pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
             pImage.Focus = false;
           }
+          TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
+          GUIGraphicsContext.ControlTransform = new TransformMatrix();
           pImage.UpdateVisibility();
-          pImage.DoRender(timePassed, currentTime);//image
-          textTransformMatrix = pImage.getTransformMatrix(currentTime);
+          pImage.DoRender(timePassed, currentTime);
+          tm = pImage.getTransformMatrix(currentTime);
+          GUIGraphicsContext.ControlTransform = matrix;
         }
       }
       else
@@ -498,8 +497,7 @@ namespace MediaPortal.GUI.Library
             pImage.Height = _thumbNailHeight + 2 * iOverSized;
             int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
             int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
-            pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff,
-                               _thumbNailPositionY - iOverSized + dwPosY + yOff);
+            pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
             pImage.DimColor = DimColor;
 
             if (itemFocused)
@@ -511,37 +509,99 @@ namespace MediaPortal.GUI.Library
               pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
             }
             pImage.Focus = itemFocused;
+
+            TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
+            GUIGraphicsContext.ControlTransform = new TransformMatrix();
+
             pImage.UpdateVisibility();
-            pImage.DoRender(timePassed, currentTime);//folder up arrow
-            textTransformMatrix = pImage.getTransformMatrix(currentTime);
+            pImage.DoRender(timePassed, currentTime);
+            tm = pImage.getTransformMatrix(currentTime);
+            GUIGraphicsContext.ControlTransform = matrix;
+
           }
         }
       }
 
-      if (_showFolder)
+      if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
       {
-        _imageFolder[itemNumber].Focus = itemFocused;
-        _imageFolderFocus[itemNumber].Focus = itemFocused;
-        if (true == _showTexture)
+        TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
+        GUIGraphicsContext.ControlTransform = new TransformMatrix();
+        if (_showFolder)
         {
-          if (itemFocused)
+          _imageFolder[itemNumber].Focus = true;
+          _imageFolderFocus[itemNumber].Focus = true;
+          _imageFolderFocus[itemNumber].SetPosition(dwPosX, dwPosY);
+          if (true == _showTexture)
           {
-            _imageFolderFocus[itemNumber].SetPosition(dwPosX, dwPosY);
             _imageFolderFocus[itemNumber].UpdateVisibility();
             _imageFolderFocus[itemNumber].DoRender(timePassed, currentTime);
           }
-          else
+          for (int i = 0; i < _imageFolderFocus.Count; ++i)
           {
-            _imageFolder[itemNumber].SetPosition(dwPosX, dwPosY);
+            if (i != itemNumber)
+            {
+              _imageFolder[i].Focus = false;
+              _imageFolderFocus[i].Focus = false;
+            }
+          }
+        }
+
+        if (_showFrame)
+        {
+          _frameControl[itemNumber].Focus = true;
+          _frameFocusControl[itemNumber].Focus = true;
+          _frameFocusControl[itemNumber].SetPosition(dwPosX, dwPosY);
+          _frameFocusControl[itemNumber].UpdateVisibility();
+          _frameFocusControl[itemNumber].DoRender(timePassed, currentTime);
+          for (int i = 0; i < _frameFocusControl.Count; ++i)
+          {
+            if (i != itemNumber)
+            {
+              _frameControl[i].Focus = false;
+              _frameFocusControl[i].Focus = false;
+            }
+          }
+        }
+
+
+        if (tm != null) GUIGraphicsContext.AddTransform(tm);
+        RenderText((float)dwPosX + _textXOff, fTextPosY + _textYOff, dwColor, pItem.Label, true);
+        if (tm != null) GUIGraphicsContext.RemoveTransform();
+        GUIGraphicsContext.ControlTransform = matrix;
+      }
+      else
+      {
+        TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
+        GUIGraphicsContext.ControlTransform = new TransformMatrix();
+        if (_showFolder)
+        {
+          _imageFolder[itemNumber].Focus = false;
+          _imageFolderFocus[itemNumber].Focus = false;
+          _imageFolder[itemNumber].SetPosition(dwPosX, dwPosY);
+          if (true == _showTexture)
+          {
+            //_imageFolder[itemNumber].Render(timePassed);
             _imageFolder[itemNumber].UpdateVisibility();
             _imageFolder[itemNumber].DoRender(timePassed, currentTime);
           }
         }
+
+        if (_showFrame)
+        {
+          _frameControl[itemNumber].Focus = false;
+          _frameFocusControl[itemNumber].Focus = false;
+          _frameControl[itemNumber].SetPosition(dwPosX, dwPosY);
+          //_frameControl[itemNumber].Render(timePassed);
+          _frameControl[itemNumber].UpdateVisibility();
+          _frameControl[itemNumber].DoRender(timePassed, currentTime);
+        }
+
+
+        if (tm != null) GUIGraphicsContext.AddTransform(tm);
+        RenderText((float)dwPosX + _textXOff, fTextPosY + _textYOff, dwColor, pItem.Label, false);
+        if (tm != null) GUIGraphicsContext.RemoveTransform();
+        GUIGraphicsContext.ControlTransform = matrix;
       }
-      if (textTransformMatrix != null) GUIGraphicsContext.AddTransform(textTransformMatrix);
-      RenderText((float)dwPosX + _textXOff, fTextPosY + _textYOff, dwColor, pItem.Label, itemFocused);//nonfocused frame text
-      if (textTransformMatrix != null) GUIGraphicsContext.RemoveTransform();
-      GUIGraphicsContext.ControlTransform = matrix;
     }
     
 
