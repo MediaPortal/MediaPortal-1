@@ -931,8 +931,7 @@ namespace MediaPortal.Util
 
       try
       {
-        theImage = Image.FromFile(strFile);
-
+        theImage = Image.FromFile(strFile);        
 
         if (CreateThumbnail(theImage, strThumb, iMaxWidth, iMaxHeight, iRotate))
           return true;
@@ -1036,6 +1035,7 @@ namespace MediaPortal.Util
             try
             {
               result.Save(strThumb, System.Drawing.Imaging.ImageFormat.Jpeg);
+              System.Threading.Thread.Sleep(50);
               return true;
             }
             catch (Exception ex)
@@ -1072,6 +1072,7 @@ namespace MediaPortal.Util
         line.End();
       }
     }
+
     static public void DrawRectangle(Rectangle rect, long color, bool fill)
     {
       if (fill)

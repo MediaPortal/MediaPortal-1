@@ -85,29 +85,30 @@ namespace MediaPortal.GUI.Pictures
 
       if (!vDir.IsRemote(path))
       {
-        List<GUIListItem> itemlist = vDir.GetDirectoryUnProtectedExt(path, false);
-
-        foreach (GUIListItem item in itemlist)
+        using (PictureDatabase dbs = new PictureDatabase())
         {
-          //if (currentFolder != path)
-          //  return;
-          //if (GUIWindowManager.ActiveWindow != GetID)
-          //  return;
-          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-            return;
-          if (!item.IsFolder)
+          List<GUIListItem> itemlist = vDir.GetDirectoryUnProtectedExt(path, false);
+
+          foreach (GUIListItem item in itemlist)
           {
-            if (!item.IsRemote && MediaPortal.Util.Utils.IsPicture(item.Path))
+            //if (currentFolder != path)
+            //  return;
+            //if (GUIWindowManager.ActiveWindow != GetID)
+            //  return;
+            if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+              return;
+            if (!item.IsFolder)
             {
-              using (PictureDatabase dbs = new PictureDatabase())
+              if (!item.IsRemote && MediaPortal.Util.Utils.IsPicture(item.Path))
               {
                 string thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(item.Path));
                 if (recreateThumbs || !System.IO.File.Exists(thumbnailImage))
                 {
                   int iRotate = dbs.GetRotation(item.Path);
+                  System.Threading.Thread.Sleep(50);
                   Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, iRotate);
-                  System.Threading.Thread.Sleep(100);
-                  Log.Info("GUIPictures: On-Demand-Creation of missing thumb successful for {0}", item.Path);
+                  System.Threading.Thread.Sleep(150);
+                  Log.Debug("GUIPictures: On-Demand-Creation of missing thumb successful for {0}", item.Path);
                 }
 
                 if (autocreateLargeThumbs)
@@ -116,29 +117,32 @@ namespace MediaPortal.GUI.Pictures
                   if (recreateThumbs || !System.IO.File.Exists(thumbnailImage))
                   {
                     int iRotate = dbs.GetRotation(item.Path);
+                    System.Threading.Thread.Sleep(50);
                     Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate);
-                    System.Threading.Thread.Sleep(100);
-                    Log.Info("GUIPictures: On-Demand-Creation of missing large thumb successful for {0}", item.Path);
+                    System.Threading.Thread.Sleep(250);
+                    Log.Debug("GUIPictures: On-Demand-Creation of missing large thumb successful for {0}", item.Path);
                   }
+                }
+
+              }
+            }
+            else
+            {
+              int pin;
+              if ((item.Label != "..") && (!vDir.IsProtectedShare(item.Path, out pin)))
+              {
+                string thumbnailImage = item.Path + @"\folder.jpg";
+                if (recreateThumbs || (!item.IsRemote && !System.IO.File.Exists(thumbnailImage)))
+                {
+                  System.Threading.Thread.Sleep(50);
+                  Log.Debug("GUIPictures: Trying to create missing folder thumb for {0}", item.Path);
+                  CreateFolderThumb(item.Path);
+                  System.Threading.Thread.Sleep(150);
                 }
               }
             }
-          }
-          else
-          {
-            int pin;
-            if ((item.Label != "..") && (!vDir.IsProtectedShare(item.Path, out pin)))
-            {
-              string thumbnailImage = item.Path + @"\folder.jpg";
-              if (recreateThumbs || (!item.IsRemote && !System.IO.File.Exists(thumbnailImage)))
-              {
-                Log.Info("GUIPictures: Trying to create missing folder thumb for {0}", item.Path);
-                CreateFolderThumb(item.Path);                
-                System.Threading.Thread.Sleep(100);
-              }
-            }
-          }
-        } //foreach (GUIListItem item in itemlist)
+          } //foreach (GUIListItem item in itemlist)
+        }
       }
     }
 
@@ -147,38 +151,42 @@ namespace MediaPortal.GUI.Pictures
       // Add a thumbnail of the specified picture file to the image referenced by g, draw it at the
       // given location and size.
       Image img = null;
-      using (PictureDatabase dbs = new PictureDatabase())
-      {
-        int iRotate = dbs.GetRotation(strFileName);
-        img = Image.FromFile(strFileName);
-        if (img != null)
-        {
-          if (iRotate > 0)
-          {
-            RotateFlipType flipType;
-            switch (iRotate)
-            {
-              case 1:
-                flipType = RotateFlipType.Rotate90FlipNone;
-                img.RotateFlip(flipType);
-                break;
-              case 2:
-                flipType = RotateFlipType.Rotate180FlipNone;
-                img.RotateFlip(flipType);
-                break;
-              case 3:
-                flipType = RotateFlipType.Rotate270FlipNone;
-                img.RotateFlip(flipType);
-                break;
-              default:
-                flipType = RotateFlipType.RotateNoneFlipNone;
-                break;
-            }
-          }
-          g.DrawImage(img, x, y, w, h);
+      //using (PictureDatabase dbs = new PictureDatabase())
+      //{
+      //  int iRotate = dbs.GetRotation(strFileName);
+      //  img = Image.FromFile(strFileName);
+      //  if (img != null)
+      //  {
+      //    if (iRotate > 0)
+      //    {
+      //      RotateFlipType flipType;
+      //      switch (iRotate)
+      //      {
+      //        case 1:
+      //          flipType = RotateFlipType.Rotate90FlipNone;
+      //          img.RotateFlip(flipType);
+      //          break;
+      //        case 2:
+      //          flipType = RotateFlipType.Rotate180FlipNone;
+      //          img.RotateFlip(flipType);
+      //          break;
+      //        case 3:
+      //          flipType = RotateFlipType.Rotate270FlipNone;
+      //          img.RotateFlip(flipType);
+      //          break;
+      //        default:
+      //          flipType = RotateFlipType.RotateNoneFlipNone;
+      //          break;
+      //      }
+      //    }
+      //    g.DrawImage(img, x, y, w, h);
 
-        }
-      }
+      //  }
+      //}
+
+      img = Image.FromFile(strFileName);
+      if (img != null)
+        g.DrawImage(img, x, y, w, h);
     }
 
     void CreateFolderThumb(string path)
@@ -228,6 +236,7 @@ namespace MediaPortal.GUI.Pictures
               try
               {
                 AddPicture(g, (string)pictureList[0], x + 10, y + 10, w, h);
+                System.Threading.Thread.Sleep(50);
               }
               catch (Exception)
               {
@@ -240,6 +249,7 @@ namespace MediaPortal.GUI.Pictures
                 try
                 {
                   AddPicture(g, (string)pictureList[1], x + thumbnailWidth + 20, y + 10, w, h);
+                  System.Threading.Thread.Sleep(50);
                 }
                 catch (Exception)
                 {
@@ -253,6 +263,7 @@ namespace MediaPortal.GUI.Pictures
                 try
                 {
                   AddPicture(g, (string)pictureList[2], x + 10, y + thumbnailHeight + 20, w, h);
+                  System.Threading.Thread.Sleep(50);
                 }
                 catch (Exception)
                 {
@@ -266,6 +277,7 @@ namespace MediaPortal.GUI.Pictures
                 try
                 {
                   AddPicture(g, (string)pictureList[3], x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
+                  System.Threading.Thread.Sleep(50);
                 }
                 catch (Exception)
                 {
@@ -278,7 +290,9 @@ namespace MediaPortal.GUI.Pictures
               string thumbnailImageName = path + @"\folder.jpg";
               if (System.IO.File.Exists(thumbnailImageName))
                 MediaPortal.Util.Utils.FileDelete(thumbnailImageName);
+
               bmp.Save(thumbnailImageName, System.Drawing.Imaging.ImageFormat.Jpeg);
+              System.Threading.Thread.Sleep(50);
 
               // File.SetAttributes(thumbnailImageName, FileAttributes.Hidden);
             }
