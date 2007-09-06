@@ -59,6 +59,7 @@ namespace SetupTv.Sections
       textBoxPMT.Text = layer.GetSetting("timeoutPMT", "10").Value;
       textBoxSDT.Text = layer.GetSetting("timeoutSDT", "20").Value;
 
+      checkBoxEnableEPGWhileIdle.Checked=(layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes");
       textBoxEpgTimeOut.Text = layer.GetSetting("timeoutEPG", "10").Value;
       textBoxEPGRefresh.Text = layer.GetSetting("timeoutEPGRefresh", "240").Value;
 
@@ -117,6 +118,13 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("timeoutSDT", "20");
       s.Value = textBoxSDT.Text;
+      s.Persist();
+
+      s = layer.GetSetting("idleEPGGrabberEnabled", "yes");
+      if (checkBoxEnableEPGWhileIdle.Checked)
+        s.Value = "yes";
+      else
+        s.Value = "no";
       s.Persist();
 
       s = layer.GetSetting("timeoutEPG", "10");

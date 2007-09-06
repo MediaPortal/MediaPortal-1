@@ -413,6 +413,12 @@ namespace SetupTv.Sections
 
     private void mpButtonReGrabEpg_Click(object sender, EventArgs e)
     {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value != "yes")
+      {
+        MessageBox.Show("EPG grabber is disabled. Please enable EPG grabbing while idle.");
+        return;
+      }
       RemoteControl.Instance.EpgGrabberEnabled = false;
       Gentle.Framework.Broker.Execute("delete from Program");
       IList channels = Channel.ListAll();

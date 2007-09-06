@@ -90,9 +90,14 @@ namespace TvService
     /// </summary>
     public void Start()
     {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value != "yes")
+      {
+        Log.Epg("EPG: grabber disabled");
+        return;
+      }
       if (_isRunning) return;
 
-      TvBusinessLayer layer = new TvBusinessLayer();
       Setting s = layer.GetSetting("timeoutEPGRefresh", "240");
       if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
       {

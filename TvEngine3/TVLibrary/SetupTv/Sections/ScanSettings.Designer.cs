@@ -53,6 +53,12 @@ namespace SetupTv.Sections
       this.mpComboBoxPrio = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.lblPriority = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.groupBox5 = new System.Windows.Forms.GroupBox();
+      this.checkBoxEnableEpgWhileTimeshifting = new System.Windows.Forms.CheckBox();
+      this.label24 = new System.Windows.Forms.Label();
+      this.label22 = new System.Windows.Forms.Label();
+      this.textBoxTSEpgTimeout = new System.Windows.Forms.TextBox();
+      this.label23 = new System.Windows.Forms.Label();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.label15 = new System.Windows.Forms.Label();
       this.textBoxEPGRefresh = new System.Windows.Forms.TextBox();
@@ -71,22 +77,19 @@ namespace SetupTv.Sections
       this.textBoxMaxFileSize = new System.Windows.Forms.TextBox();
       this.textBoxMinfiles = new System.Windows.Forms.TextBox();
       this.label18 = new System.Windows.Forms.Label();
-      this.groupBox5 = new System.Windows.Forms.GroupBox();
-      this.label22 = new System.Windows.Forms.Label();
-      this.textBoxTSEpgTimeout = new System.Windows.Forms.TextBox();
-      this.label23 = new System.Windows.Forms.Label();
-      this.label24 = new System.Windows.Forms.Label();
-      this.checkBoxEnableEpgWhileTimeshifting = new System.Windows.Forms.CheckBox();
+      this.checkBoxEnableEPGWhileIdle = new System.Windows.Forms.CheckBox();
+      this.label25 = new System.Windows.Forms.Label();
+      this.label26 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox4.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.tabPage2.SuspendLayout();
       this.tabPage3.SuspendLayout();
+      this.groupBox5.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.tabPage4.SuspendLayout();
       this.groupBox3.SuspendLayout();
-      this.groupBox5.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -359,6 +362,7 @@ namespace SetupTv.Sections
       // 
       // tabPage3
       // 
+      this.tabPage3.Controls.Add(this.label26);
       this.tabPage3.Controls.Add(this.groupBox5);
       this.tabPage3.Controls.Add(this.groupBox2);
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -368,9 +372,68 @@ namespace SetupTv.Sections
       this.tabPage3.Text = "EPG";
       this.tabPage3.UseVisualStyleBackColor = true;
       // 
+      // groupBox5
+      // 
+      this.groupBox5.Controls.Add(this.checkBoxEnableEpgWhileTimeshifting);
+      this.groupBox5.Controls.Add(this.label24);
+      this.groupBox5.Controls.Add(this.label22);
+      this.groupBox5.Controls.Add(this.textBoxTSEpgTimeout);
+      this.groupBox5.Controls.Add(this.label23);
+      this.groupBox5.Location = new System.Drawing.Point(12, 121);
+      this.groupBox5.Name = "groupBox5";
+      this.groupBox5.Size = new System.Drawing.Size(325, 77);
+      this.groupBox5.TabIndex = 17;
+      this.groupBox5.TabStop = false;
+      this.groupBox5.Text = "EPG grabbing while timeshifting";
+      // 
+      // checkBoxEnableEpgWhileTimeshifting
+      // 
+      this.checkBoxEnableEpgWhileTimeshifting.AutoSize = true;
+      this.checkBoxEnableEpgWhileTimeshifting.Location = new System.Drawing.Point(90, 28);
+      this.checkBoxEnableEpgWhileTimeshifting.Name = "checkBoxEnableEpgWhileTimeshifting";
+      this.checkBoxEnableEpgWhileTimeshifting.Size = new System.Drawing.Size(15, 14);
+      this.checkBoxEnableEpgWhileTimeshifting.TabIndex = 9;
+      this.checkBoxEnableEpgWhileTimeshifting.UseVisualStyleBackColor = true;
+      // 
+      // label24
+      // 
+      this.label24.AutoSize = true;
+      this.label24.Location = new System.Drawing.Point(14, 27);
+      this.label24.Name = "label24";
+      this.label24.Size = new System.Drawing.Size(52, 13);
+      this.label24.TabIndex = 8;
+      this.label24.Text = "Enabled?";
+      // 
+      // label22
+      // 
+      this.label22.AutoSize = true;
+      this.label22.Location = new System.Drawing.Point(196, 56);
+      this.label22.Name = "label22";
+      this.label22.Size = new System.Drawing.Size(28, 13);
+      this.label22.TabIndex = 7;
+      this.label22.Text = "mins";
+      // 
+      // textBoxTSEpgTimeout
+      // 
+      this.textBoxTSEpgTimeout.Location = new System.Drawing.Point(89, 49);
+      this.textBoxTSEpgTimeout.Name = "textBoxTSEpgTimeout";
+      this.textBoxTSEpgTimeout.Size = new System.Drawing.Size(100, 20);
+      this.textBoxTSEpgTimeout.TabIndex = 6;
+      // 
+      // label23
+      // 
+      this.label23.AutoSize = true;
+      this.label23.Location = new System.Drawing.Point(14, 52);
+      this.label23.Name = "label23";
+      this.label23.Size = new System.Drawing.Size(48, 13);
+      this.label23.TabIndex = 5;
+      this.label23.Text = "Timeout:";
+      // 
       // groupBox2
       // 
+      this.groupBox2.Controls.Add(this.checkBoxEnableEPGWhileIdle);
       this.groupBox2.Controls.Add(this.label15);
+      this.groupBox2.Controls.Add(this.label25);
       this.groupBox2.Controls.Add(this.textBoxEPGRefresh);
       this.groupBox2.Controls.Add(this.label14);
       this.groupBox2.Controls.Add(this.label8);
@@ -378,15 +441,15 @@ namespace SetupTv.Sections
       this.groupBox2.Controls.Add(this.textBoxEpgTimeOut);
       this.groupBox2.Location = new System.Drawing.Point(12, 16);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(325, 77);
+      this.groupBox2.Size = new System.Drawing.Size(325, 99);
       this.groupBox2.TabIndex = 16;
       this.groupBox2.TabStop = false;
-      this.groupBox2.Text = "EPG Grabber";
+      this.groupBox2.Text = "EPG grabbing while idle";
       // 
       // label15
       // 
       this.label15.AutoSize = true;
-      this.label15.Location = new System.Drawing.Point(196, 56);
+      this.label15.Location = new System.Drawing.Point(196, 80);
       this.label15.Name = "label15";
       this.label15.Size = new System.Drawing.Size(28, 13);
       this.label15.TabIndex = 7;
@@ -394,7 +457,7 @@ namespace SetupTv.Sections
       // 
       // textBoxEPGRefresh
       // 
-      this.textBoxEPGRefresh.Location = new System.Drawing.Point(89, 49);
+      this.textBoxEPGRefresh.Location = new System.Drawing.Point(89, 73);
       this.textBoxEPGRefresh.Name = "textBoxEPGRefresh";
       this.textBoxEPGRefresh.Size = new System.Drawing.Size(100, 20);
       this.textBoxEPGRefresh.TabIndex = 6;
@@ -402,7 +465,7 @@ namespace SetupTv.Sections
       // label14
       // 
       this.label14.AutoSize = true;
-      this.label14.Location = new System.Drawing.Point(14, 52);
+      this.label14.Location = new System.Drawing.Point(14, 76);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(73, 13);
       this.label14.TabIndex = 5;
@@ -411,7 +474,7 @@ namespace SetupTv.Sections
       // label8
       // 
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(195, 26);
+      this.label8.Location = new System.Drawing.Point(195, 50);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(28, 13);
       this.label8.TabIndex = 4;
@@ -420,7 +483,7 @@ namespace SetupTv.Sections
       // label7
       // 
       this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(14, 22);
+      this.label7.Location = new System.Drawing.Point(14, 46);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(48, 13);
       this.label7.TabIndex = 2;
@@ -428,7 +491,7 @@ namespace SetupTv.Sections
       // 
       // textBoxEpgTimeOut
       // 
-      this.textBoxEpgTimeOut.Location = new System.Drawing.Point(89, 19);
+      this.textBoxEpgTimeOut.Location = new System.Drawing.Point(89, 43);
       this.textBoxEpgTimeOut.Name = "textBoxEpgTimeOut";
       this.textBoxEpgTimeOut.Size = new System.Drawing.Size(100, 20);
       this.textBoxEpgTimeOut.TabIndex = 3;
@@ -536,62 +599,32 @@ namespace SetupTv.Sections
       this.label18.TabIndex = 15;
       this.label18.Text = "Minimum";
       // 
-      // groupBox5
+      // checkBoxEnableEPGWhileIdle
       // 
-      this.groupBox5.Controls.Add(this.checkBoxEnableEpgWhileTimeshifting);
-      this.groupBox5.Controls.Add(this.label24);
-      this.groupBox5.Controls.Add(this.label22);
-      this.groupBox5.Controls.Add(this.textBoxTSEpgTimeout);
-      this.groupBox5.Controls.Add(this.label23);
-      this.groupBox5.Location = new System.Drawing.Point(12, 102);
-      this.groupBox5.Name = "groupBox5";
-      this.groupBox5.Size = new System.Drawing.Size(325, 77);
-      this.groupBox5.TabIndex = 17;
-      this.groupBox5.TabStop = false;
-      this.groupBox5.Text = "EPG grabbing while timeshifting";
+      this.checkBoxEnableEPGWhileIdle.AutoSize = true;
+      this.checkBoxEnableEPGWhileIdle.Location = new System.Drawing.Point(90, 22);
+      this.checkBoxEnableEPGWhileIdle.Name = "checkBoxEnableEPGWhileIdle";
+      this.checkBoxEnableEPGWhileIdle.Size = new System.Drawing.Size(15, 14);
+      this.checkBoxEnableEPGWhileIdle.TabIndex = 11;
+      this.checkBoxEnableEPGWhileIdle.UseVisualStyleBackColor = true;
       // 
-      // label22
+      // label25
       // 
-      this.label22.AutoSize = true;
-      this.label22.Location = new System.Drawing.Point(196, 56);
-      this.label22.Name = "label22";
-      this.label22.Size = new System.Drawing.Size(28, 13);
-      this.label22.TabIndex = 7;
-      this.label22.Text = "mins";
+      this.label25.AutoSize = true;
+      this.label25.Location = new System.Drawing.Point(14, 21);
+      this.label25.Name = "label25";
+      this.label25.Size = new System.Drawing.Size(52, 13);
+      this.label25.TabIndex = 10;
+      this.label25.Text = "Enabled?";
       // 
-      // textBoxTSEpgTimeout
+      // label26
       // 
-      this.textBoxTSEpgTimeout.Location = new System.Drawing.Point(89, 49);
-      this.textBoxTSEpgTimeout.Name = "textBoxTSEpgTimeout";
-      this.textBoxTSEpgTimeout.Size = new System.Drawing.Size(100, 20);
-      this.textBoxTSEpgTimeout.TabIndex = 6;
-      // 
-      // label23
-      // 
-      this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(14, 52);
-      this.label23.Name = "label23";
-      this.label23.Size = new System.Drawing.Size(48, 13);
-      this.label23.TabIndex = 5;
-      this.label23.Text = "Timeout:";
-      // 
-      // label24
-      // 
-      this.label24.AutoSize = true;
-      this.label24.Location = new System.Drawing.Point(14, 27);
-      this.label24.Name = "label24";
-      this.label24.Size = new System.Drawing.Size(52, 13);
-      this.label24.TabIndex = 8;
-      this.label24.Text = "Enabled?";
-      // 
-      // checkBoxEnableEpgWhileTimeshifting
-      // 
-      this.checkBoxEnableEpgWhileTimeshifting.AutoSize = true;
-      this.checkBoxEnableEpgWhileTimeshifting.Location = new System.Drawing.Point(90, 28);
-      this.checkBoxEnableEpgWhileTimeshifting.Name = "checkBoxEnableEpgWhileTimeshifting";
-      this.checkBoxEnableEpgWhileTimeshifting.Size = new System.Drawing.Size(15, 14);
-      this.checkBoxEnableEpgWhileTimeshifting.TabIndex = 9;
-      this.checkBoxEnableEpgWhileTimeshifting.UseVisualStyleBackColor = true;
+      this.label26.AutoSize = true;
+      this.label26.Location = new System.Drawing.Point(12, 220);
+      this.label26.Name = "label26";
+      this.label26.Size = new System.Drawing.Size(328, 13);
+      this.label26.TabIndex = 18;
+      this.label26.Text = "Be sure to restart the TvService if you make changes in this section!";
       // 
       // ScanSettings
       // 
@@ -610,13 +643,14 @@ namespace SetupTv.Sections
       this.tabPage2.ResumeLayout(false);
       this.tabPage2.PerformLayout();
       this.tabPage3.ResumeLayout(false);
+      this.tabPage3.PerformLayout();
+      this.groupBox5.ResumeLayout(false);
+      this.groupBox5.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.tabPage4.ResumeLayout(false);
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
-      this.groupBox5.ResumeLayout(false);
-      this.groupBox5.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -672,6 +706,9 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label22;
     private System.Windows.Forms.TextBox textBoxTSEpgTimeout;
     private System.Windows.Forms.Label label23;
+    private System.Windows.Forms.CheckBox checkBoxEnableEPGWhileIdle;
+    private System.Windows.Forms.Label label25;
+    private System.Windows.Forms.Label label26;
 
   }
 }

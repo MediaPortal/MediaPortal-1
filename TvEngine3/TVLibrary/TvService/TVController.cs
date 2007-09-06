@@ -1724,18 +1724,26 @@ namespace TvService
         {
           if (value)
           {
-            Log.Write("Controller: epg start");
             if (_epgGrabber != null)
             {
-              _epgGrabber.Start();
+              TvBusinessLayer layer = new TvBusinessLayer();
+              if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes")
+              {
+                Log.Write("Controller: epg start");
+                _epgGrabber.Start();
+              }
             }
           }
           else
           {
-            Log.Write("Controller: epg stop");
             if (_epgGrabber != null)
             {
-              _epgGrabber.Stop();
+              TvBusinessLayer layer = new TvBusinessLayer();
+              if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes")
+              {
+                Log.Write("Controller: epg stop");
+                _epgGrabber.Stop();
+              }
             }
           }
         }

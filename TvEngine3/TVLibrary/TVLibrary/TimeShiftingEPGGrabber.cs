@@ -237,6 +237,8 @@ namespace TvLibrary
             iInserted++;
           }
         }
+        dbChannel.LastGrabTime = DateTime.Now;
+        dbChannel.Persist();
         Log.Log.Epg("- Inserted {0} epg entries for channel {1}", iInserted, dbChannel.DisplayName);
       }
       Log.Log.Epg("TimeshiftingEPG: Finished updating the database.");
