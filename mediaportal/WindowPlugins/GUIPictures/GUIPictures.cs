@@ -91,8 +91,6 @@ namespace MediaPortal.GUI.Pictures
 
           foreach (GUIListItem item in itemlist)
           {
-            //if (currentFolder != path)
-            //  return;
             //if (GUIWindowManager.ActiveWindow != GetID)
             //  return;
             if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
@@ -1087,7 +1085,9 @@ namespace MediaPortal.GUI.Pictures
       {
         MediaPortal.Util.Utils.SetThumbnails(ref item);
         string thumbnailImage = GetThumbnail(item.Path);
-        item.ThumbnailImage = thumbnailImage;
+        item.IconImage = thumbnailImage;
+        string thumbnailLargeImage = GetLargeThumbnail(item.Path);
+        item.ThumbnailImage = thumbnailLargeImage;
       }
       else
       {
@@ -1355,106 +1355,23 @@ namespace MediaPortal.GUI.Pictures
       if (disp == Display.Files)
       {
         MissingThumbCacher ManualThumbBuilder = new MissingThumbCacher(strDir, _autocreateLargeThumbs, Regenerate);
-        //List<GUIListItem> itemlist = virtualDirectory.GetDirectoryExt(strDir);
-        //Filter(ref itemlist);
-        //foreach (GUIListItem item in itemlist)
-        //{
-        //  if (dlgProgress != null)
-        //  {
-        //    dlgProgress.SetLine(1, strDir);
-        //    dlgProgress.SetLine(2, String.Format(GUILocalizeStrings.Get(8033) + ": {0}/{1}", ++Count, itemlist.Count));
-        //    dlgProgress.SetPercentage((100 * Count) / itemlist.Count);
-        //    dlgProgress.Progress();
-        //    dlgProgress.ShowProgressBar(true);
-        //    if (dlgProgress.IsCanceled)
-        //      return;
-        //  }
-        //  if (item.IsFolder)
-        //  {
-        //    if (item.Label != "..")
-        //    {
-        //      if (Recursive)
-        //        CreateAllThumbs(item.Path, dlgProgress, dbs, Regenerate, Recursive);
-        //      if (Regenerate || !System.IO.File.Exists(item.Path + @"\folder.jpg"))
-        //        CreateFolderThumb(item.Path);
-        //    }
-        //  }
-        //  else
-        //  {
-        //    string thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(item.Path));
-        //    if ((Regenerate || !System.IO.File.Exists(thumbnailImage)) && MediaPortal.Util.Utils.IsPicture(item.Path))
-        //    {
-        //      int iRotate = dbs.GetRotation(item.Path);
-
-        //      // create thumbs for default listcontrol views
-        //      thumbnailImage = GetThumbnail(item.Path);
-        //      Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, iRotate);
-
-        //      // create large thumbs for filmstrip panel
-        //      thumbnailImage = GetLargeThumbnail(item.Path);
-        //      Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate);
-        //    }
-        //  }
-        //}
       }
       else if (disp == Display.Date)
       {
         // TODO: Thumbworker alternative on file base instead of directory
-
-
-        //List<string> pics = new List<string>();
-        //int totalCount = dbs.ListPicsByDate(strDir.Replace("\\", "-"), ref pics);
-        //foreach (string pic in pics)
-        //{
-        //  //if (dlgProgress != null)
-        //  //{
-        //  //  dlgProgress.SetLine(1, strDir);
-        //  //  dlgProgress.SetLine(2, String.Format(GUILocalizeStrings.Get(8033) + ": {0}/{1}", ++Count, totalCount));
-        //  //  dlgProgress.SetPercentage((100 * Count) / totalCount);
-        //  //  dlgProgress.Progress();
-        //  //  if (dlgProgress.IsCanceled)
-        //  //    return;
-        //  //}
-        //  string thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(pic));
-        //  if ((Regenerate || !System.IO.File.Exists(thumbnailImage)) && MediaPortal.Util.Utils.IsPicture(pic))
-        //  {
-        //    int iRotate = dbs.GetRotation(pic);
-
-        //    // create thumbs for default listcontrol views
-        //    thumbnailImage = GetThumbnail(pic);
-        //    Util.Picture.CreateThumbnail(pic, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, iRotate);
-
-        //    // create large thumbs for filmstrip panel
-        //    thumbnailImage = GetLargeThumbnail(pic);
-        //    Util.Picture.CreateThumbnail(pic, thumbnailImage, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, iRotate);
-        //  }
-        //}
       }
     }
 
     void OnCreateAllThumbs(string strDir, bool Regenerate, bool Recursive)
     {
-      //GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-      //if (dlgProgress != null)
-      //{
-      //  dlgProgress.Reset();
-      //  dlgProgress.SetHeading(110);
-      //  dlgProgress.ShowProgressBar(false);
-      //  dlgProgress.SetLine(1, String.Empty);
-      //  dlgProgress.SetLine(2, String.Empty);
-      //  dlgProgress.StartModal(GetID);
-      //  dlgProgress.Progress();
-      //}
       using (PictureDatabase dbs = new PictureDatabase())
       {
         CreateAllThumbs(strDir, dbs, Regenerate, Recursive);
       }
 
-      //if (dlgProgress != null)
-      //  dlgProgress.Close();
-
       GUITextureManager.CleanupThumbs();
       GUIWaitCursor.Hide();
+
       LoadDirectory(currentFolder);
     }
 
@@ -1589,27 +1506,17 @@ namespace MediaPortal.GUI.Pictures
       return false;
     }
 
+    static private bool ContainsFolderThumb(GUIListItem aItem)
+    {
+      if (!aItem.IsFolder && aItem.Path.Contains(@"folder.jpg"))
+        return true;
+      else
+        return false;
+    }
+
     static public void Filter(ref List<GUIListItem> itemlist)
     {
-      bool isFound;
-      do
-      {
-        isFound = false;
-        for (int i = 0 ; i < itemlist.Count ; ++i)
-        {
-          Thread.Sleep(100);
-          GUIListItem item = itemlist[i];
-          if (!item.IsFolder)
-          {
-            if (item.Path.IndexOf("folder.jpg") > 0)
-            {
-              isFound = true;
-              itemlist.RemoveAt(i);
-              break;
-            }
-          }
-        }
-      } while (isFound);
+      itemlist.RemoveAll(ContainsFolderThumb);
     }
 
     void LoadDirectory(string strNewDirectory)
@@ -1619,15 +1526,6 @@ namespace MediaPortal.GUI.Pictures
 
       GUIWaitCursor.Show();
 
-      // while waking up from hibernation it can take a while before a network drive is accessible.
-      // lets wait 10 sec
-      int count = 0;
-      while (!Directory.Exists(strNewDirectory) && count < 100)
-      {
-        Thread.Sleep(100);
-        count++;
-      }
-
       GUIListItem SelectedItem = GetSelectedItem();
       if (SelectedItem != null)
       {
@@ -1636,6 +1534,7 @@ namespace MediaPortal.GUI.Pictures
           folderHistory.Set(SelectedItem.Label, currentFolder);
         }
       }
+
       if (strNewDirectory != currentFolder && mapSettings != null)
       {
         SaveFolderSettings(currentFolder);
@@ -1645,7 +1544,9 @@ namespace MediaPortal.GUI.Pictures
       {
         LoadFolderSettings(strNewDirectory);
       }
+
       currentFolder = strNewDirectory;
+
       GUIControl.ClearControl(GetID, facadeView.GetID);
 
       if (disp == Display.Files)
@@ -1656,7 +1557,6 @@ namespace MediaPortal.GUI.Pictures
         itemlist = virtualDirectory.GetDirectoryExt(currentFolder);
         Filter(ref itemlist);
 
-
         // int itemIndex = 0;
         foreach (GUIListItem item in itemlist)
         {
@@ -1665,18 +1565,8 @@ namespace MediaPortal.GUI.Pictures
           facadeView.Add(item);
 
         }
+
         OnSort();
-        /*
-        for (int i = 0; i < GetItemCount(); ++i)
-        {
-          GUIListItem item = GetItem(i);
-          if (item.Label == strSelectedItem)
-          {
-            GUIControl.SelectItemControl(GetID, facadeView.GetID, itemIndex);
-            break;
-          }
-          itemIndex++;
-        }	*/
       }
       else
       {
@@ -1704,6 +1594,7 @@ namespace MediaPortal.GUI.Pictures
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(totalItemCount));
 
       ShowThumbPanel();
+
       GUIWaitCursor.Hide();
     }
 
@@ -1899,7 +1790,8 @@ namespace MediaPortal.GUI.Pictures
       if (filmstrip == null)
         return;
       string thumbnailImage = GetLargeThumbnail(item.Path);
-      filmstrip.InfoImageFileName = thumbnailImage;
+      if (System.IO.File.Exists(thumbnailImage))
+        filmstrip.InfoImageFileName = thumbnailImage;
       //UpdateButtonStates();  -> fixing mantis bug 902
     }
 
