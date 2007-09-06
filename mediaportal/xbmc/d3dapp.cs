@@ -125,6 +125,7 @@ namespace MediaPortal
     private Caps graphicsCaps; // Caps for the device
 
     internal static bool _fullscreenOverride = false;
+    internal static bool _windowedOverride = false;
     internal static int _screenNumberOverride = -1;// 0 or higher means it is set
 
     protected Caps Caps
@@ -418,6 +419,9 @@ namespace MediaPortal
         using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           startFullscreen = _fullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", false);
+          if (_windowedOverride)
+            startFullscreen = false;
+
           if (startFullscreen)
           {
             if (autoHideTaskbar && !_minimizeOnStartup)

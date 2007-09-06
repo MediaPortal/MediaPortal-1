@@ -182,10 +182,15 @@ public class MediaPortalApp : D3DApp, IRender
         {
           _fullscreenOverride = true;
         }
+        if (arg == "/windowed")
+        {
+          _windowedOverride = true;        
+        }
         if (arg.StartsWith("/fullscreen="))
         {
           string argValue = arg.Remove(0, 12);// remove /?= from the argument  
-          _fullscreenOverride = argValue != "no";
+          _fullscreenOverride |= argValue != "no";
+          _windowedOverride |= argValue.Equals("no");
         }
         if (arg == "/crashtest")
         {
