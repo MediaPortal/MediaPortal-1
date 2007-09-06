@@ -712,6 +712,13 @@ namespace SetupTv.Sections
       Export();
     }
 
+    private string GetNodeAttribute(XmlNode node, string attribute, string defaultValue)
+    {
+      if (node.Attributes[attribute]==null)
+        return defaultValue;
+      else
+        return node.Attributes[attribute].Value;
+    }
     private void mpButtonImport_Click(object sender, EventArgs e)
     {
       openFileDialog1.CheckFileExists = true;
@@ -745,16 +752,16 @@ namespace SetupTv.Sections
           XmlNodeList tuningList = nodeChannel.SelectNodes("TuningDetails/tune");
           XmlNodeList mappingList = nodeChannel.SelectNodes("mappings/map");
           string name = nodeChannel.Attributes["Name"].Value;
-          bool grabEpg = (nodeChannel.Attributes["GrabEpg"].Value == "True");
-          bool isRadio = (nodeChannel.Attributes["IsRadio"].Value == "True");
-          bool isTv = (nodeChannel.Attributes["IsTv"].Value == "True");
-          DateTime lastGrabTime = DateTime.ParseExact(nodeChannel.Attributes["LastGrabTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-          int sortOrder = Int32.Parse(nodeChannel.Attributes["SortOrder"].Value);
-          int timesWatched = Int32.Parse(nodeChannel.Attributes["TimesWatched"].Value);
-          DateTime totalTimeWatched = DateTime.ParseExact(nodeChannel.Attributes["TotalTimeWatched"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-          bool visibileInGuide = (nodeChannel.Attributes["VisibleInGuide"].Value == "True");
-          bool FreeToAir = (nodeChannel.Attributes["FreeToAir"].Value == "True");
-          string displayName = nodeChannel.Attributes["DisplayName"].Value;
+          bool grabEpg = (GetNodeAttribute(nodeChannel,"GrabEpg","True") == "True");
+          bool isRadio = (GetNodeAttribute(nodeChannel,"IsRadio","False") == "True");
+          bool isTv = (GetNodeAttribute(nodeChannel, "IsTv", "True") == "True");
+          DateTime lastGrabTime = DateTime.ParseExact(GetNodeAttribute(nodeChannel,"LastGrabTime","01.01.1900"), "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+          int sortOrder = Int32.Parse(GetNodeAttribute(nodeChannel, "SortOrder", "0"));
+          int timesWatched = Int32.Parse(GetNodeAttribute(nodeChannel,"TimesWatched","0"));
+          DateTime totalTimeWatched = DateTime.ParseExact(GetNodeAttribute(nodeChannel,"TotalTimeWatched","01.01.1900"), "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+          bool visibileInGuide = (GetNodeAttribute(nodeChannel,"VisibleInGuide","True") == "True");
+          bool FreeToAir = (GetNodeAttribute(nodeChannel,"FreeToAir","True") == "True");
+          string displayName = GetNodeAttribute(nodeChannel, "DisplayName", name);
 
           Channel dbChannel = layer.AddChannel("", name);
           dbChannel.GrabEpg = grabEpg;
@@ -796,19 +803,19 @@ namespace SetupTv.Sections
             int pcrPid = Int32.Parse(nodeTune.Attributes["PcrPid"].Value);
             int pmtPid = Int32.Parse(nodeTune.Attributes["PmtPid"].Value);
             int polarisation = Int32.Parse(nodeTune.Attributes["Polarisation"].Value);
-            string provider = nodeTune.Attributes["Provider"].Value;
+            string provider = GetNodeAttribute(nodeTune,"Provider","");
             int serviceId = Int32.Parse(nodeTune.Attributes["ServiceId"].Value);
             int switchingFrequency = Int32.Parse(nodeTune.Attributes["SwitchingFrequency"].Value);
             int symbolrate = Int32.Parse(nodeTune.Attributes["Symbolrate"].Value);
             int transportId = Int32.Parse(nodeTune.Attributes["TransportId"].Value);
-            int tuningSource = Int32.Parse(nodeTune.Attributes["TuningSource"].Value);
-            int videoPid = Int32.Parse(nodeTune.Attributes["VideoPid"].Value);
-            int videoSource = Int32.Parse(nodeTune.Attributes["VideoSource"].Value);
-            int SatIndex = Int32.Parse(nodeTune.Attributes["SatIndex"].Value);
-            int InnerFecRate = Int32.Parse(nodeTune.Attributes["InnerFecRate"].Value);
-            int band = Int32.Parse(nodeTune.Attributes["Band"].Value);
-            int pilot = Int32.Parse(nodeTune.Attributes["Pilot"].Value);
-            int rollOff = Int32.Parse(nodeTune.Attributes["RollOff"].Value);
+            int tuningSource = Int32.Parse(GetNodeAttribute(nodeTune,"TuningSource","0"));
+            int videoPid = Int32.Parse(GetNodeAttribute(nodeTune,"VideoPid","-1"));
+            int videoSource = Int32.Parse(GetNodeAttribute(nodeTune,"VideoSource","0"));
+            int SatIndex = Int32.Parse(GetNodeAttribute(nodeTune,"SatIndex","-1"));
+            int InnerFecRate = Int32.Parse(GetNodeAttribute(nodeTune,"InnerFecRate","-1"));
+            int band = Int32.Parse(GetNodeAttribute(nodeTune,"Band","0"));
+            int pilot = Int32.Parse(GetNodeAttribute(nodeTune, "Pilot", "-1"));
+            int rollOff = Int32.Parse(GetNodeAttribute(nodeTune,"RollOff","-1"));
 
             switch (channelType)
             {
@@ -932,7 +939,7 @@ namespace SetupTv.Sections
             schedule.MaxAirings = Int32.Parse(nodeSchedule.Attributes["MaxAirings"].Value);
             schedule.RecommendedCard = Int32.Parse(nodeSchedule.Attributes["RecommendedCard"].Value);
             schedule.ScheduleType = Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
-            schedule.Series = (nodeSchedule.Attributes["Series"].Value == "True");
+            schedule.Series = (GetNodeAttribute(nodeSchedule,"Series","False") == "True");
             schedule.Persist();
         }
         // Import channel groups
@@ -947,7 +954,7 @@ namespace SetupTv.Sections
           foreach (XmlNode nodeMap in mappingList)
           {
             Channel channel = layer.GetChannelByName(nodeMap.Attributes["ChannelName"].Value);
-            int sortOrder=Int32.Parse(nodeMap.Attributes["SortOrder"].Value);
+            int sortOrder=Int32.Parse(GetNodeAttribute(nodeMap,"SortOrder","9999"));
             if (channel != null)
             {
               GroupMap map = new GroupMap(group.IdGroup, channel.IdChannel, sortOrder);
