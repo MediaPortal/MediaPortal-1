@@ -226,6 +226,14 @@ namespace TvService
             context.OnZap(user);
             if (_linkageScannerEnabled)
               _cardHandler.Card.StartLinkageScanner(_linkageGrabber);
+            if (_timeshiftingEpgGrabberEnabled)
+            {
+              Channel channel = Channel.Retrieve(user.IdChannel);
+              if (channel.GrabEpg)
+                _cardHandler.Card.GrabEpg();
+              else
+                Log.Info("TimeshiftingEPG: channel {0} is not configured for grabbing epg", channel.DisplayName);
+            }
             return TvResult.Succeeded;
           }
 
@@ -248,12 +256,16 @@ namespace TvService
             return TvResult.NoVideoAudioDetected;
           }
           context.OnZap(user);
-
           if (_linkageScannerEnabled)
             _cardHandler.Card.StartLinkageScanner(_linkageGrabber);
           if (_timeshiftingEpgGrabberEnabled)
-            _cardHandler.Card.GrabEpg();
-
+          {
+            Channel channel = Channel.Retrieve(user.IdChannel);
+            if (channel.GrabEpg)
+              _cardHandler.Card.GrabEpg();
+            else
+              Log.Info("TimeshiftingEPG: channel {0} is not configured for grabbing epg", channel.DisplayName);
+          }
           return TvResult.Succeeded;
         }
       }

@@ -40,6 +40,7 @@ namespace TvLibrary
     private List<EpgChannel> _epg;
     private bool _updateThreadRunning;
     private string _epgLanguages;
+    private bool _storeOnlySelectedChannels;
     #endregion
 
     public TimeShiftingEPGGrabber(ITVCard card)
@@ -47,7 +48,7 @@ namespace TvLibrary
       _card = card;
       TvBusinessLayer layer = new TvBusinessLayer();
       _epgLanguages = layer.GetSetting("epgLanguages").Value;
-      
+      _storeOnlySelectedChannels = (layer.GetSetting("epgStoreOnlySelected","no").Value=="yes");
       _grabStartTime = DateTime.Now;
       _epgTimer = new System.Timers.Timer();
       double timeout;
@@ -207,10 +208,18 @@ namespace TvLibrary
           Log.Log.Epg("TimeshiftingEPG: no channel found for nid={0} tid={1} sid={2}", dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
           continue;
         }
+        if (_storeOnlySelectedChannels)
+        {
+          if (!dbChannel.GrabEpg)
+          {
+            Log.Log.Epg("TimeshiftingEPG: channel {0} is not configured to grab epg.", dbChannel.DisplayName);
+            continue;
+          }
+        }
         DateTime newestEntry = layer.GetNewestProgramForChannel(dbChannel.IdChannel);
         if (epgChannel.Programs[epgChannel.Programs.Count - 1].StartTime <= newestEntry)
         {
-          Log.Log.Epg("TimeshiftingEPG: no new epg entries for channel {0}", dbChannel.Name);
+          Log.Log.Epg("TimeshiftingEPG: no new epg entries for channel {0}", dbChannel.DisplayName);
           continue;
         }
         int epgOffset = GetEPGOffset(epgChannel.Programs,newestEntry);
@@ -228,7 +237,7 @@ namespace TvLibrary
             iInserted++;
           }
         }
-        Log.Log.Epg("- Inserted {0} epg entries for channel {1}", iInserted, dbChannel.Name);
+        Log.Log.Epg("- Inserted {0} epg entries for channel {1}", iInserted, dbChannel.DisplayName);
       }
       Log.Log.Epg("TimeshiftingEPG: Finished updating the database.");
       _epg.Clear();
