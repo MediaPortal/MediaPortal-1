@@ -108,6 +108,9 @@ namespace TvPlugin
       if (type == g_Player.MediaType.Radio)
       {
         VirtualCard card = TVHome.Card;
+        if (card == null)
+          return;
+
         if (card.IsTimeShifting && card.Channel != null)
         {
           if (card.Channel.IsRadio)
@@ -792,6 +795,16 @@ namespace TvPlugin
       }
     }
 
+    bool IsUrl(string fileName)
+    {
+      if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
+      fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
+      {
+        return true;
+      }
+      return false;
+    }
+
     void FillPlayList()
     {
       playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
@@ -804,7 +817,12 @@ namespace TvPlugin
         for (int i = 0; i < currentPlayList.Count; ++i)
         {
           PlayListItem playlistItem = new PlayListItem();
-          playlistItem.Type = currentPlayList[i].Type;
+          // If we got a Url, we should set the type to AudioStream
+          if (IsUrl(currentPlayList[i].FileName))
+            playlistItem.Type = PlayListItem.PlayListItemType.AudioStream;
+          else
+            playlistItem.Type = currentPlayList[i].Type;
+         
           playlistItem.FileName = currentPlayList[i].FileName;
           playlistItem.Description = currentPlayList[i].Description;
           playlistItem.Duration = currentPlayList[i].Duration;
@@ -835,7 +853,12 @@ namespace TvPlugin
               playlistItem.FileName = playlist[0].FileName;
               playlistItem.Description = playlist[0].Description;
               playlistItem.Duration = playlist[0].Duration;
-              playlistItem.Type = playlist[0].Type;
+              // If we got a Url, we should set the type to AudioStream
+              if (IsUrl(playlist[0].FileName))
+                playlistItem.Type = PlayListItem.PlayListItemType.AudioStream;
+              else
+                playlistItem.Type = currentPlayList[0].Type;
+
               playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
             }
           }
@@ -889,6 +912,10 @@ namespace TvPlugin
       }
       else
       {
+        // We have the Station Name in there to retrieve the correct Coverart for the station in the Vis Window
+        GUIPropertyManager.RemovePlayerProperties();
+        GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", item.Label);
+        GUIPropertyManager.SetProperty("#Play.Current.Album", item.Label);
         if (currentPlayList != null)
         {
           // add current playlist->playlist and play selected item
