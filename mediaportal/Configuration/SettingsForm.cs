@@ -79,6 +79,7 @@ namespace MediaPortal.Configuration
     private SerialUIR serialuir;
     private RedEye redeye; //PB00//
     private DirectInputRemote dinputRemote;
+    private static ConfigSplashScreen splashScreen;
 
     //
     // Hashtable where we store each added tree node/section for faster access
@@ -94,7 +95,12 @@ namespace MediaPortal.Configuration
 
     public SettingsForm()
     {
-
+#if !DEBUG
+      // create the splashscreen 
+      splashScreen = new ConfigSplashScreen();
+      splashScreen.Version = "0.2.3 RC2";
+      splashScreen.Run();
+#endif
       Log.Info("SettingsForm constructor");
       //
       // Required for Windows Form Designer support
@@ -125,14 +131,26 @@ namespace MediaPortal.Configuration
       BassRegistration.BassRegistration.Register();
 
       Log.Info("add project section");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding project section...");
+      }
       Project project = new Project();
       AddSection(project);
 
       Log.Info("add general section");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding general section...");
+      }
       General general = new General();
       AddSection(general);
 
       Log.Info("add skins section");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding skins section...");
+      }
       AddChildSection(general, new StartupDelay());
       AddChildSection(general, new Skin());
       AddChildSection(general, new KeyboardControl());
@@ -146,6 +164,10 @@ namespace MediaPortal.Configuration
       AddChildSection(general, new CDSpeed());
       
       Log.Info("add DVD section");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding DVD section...");
+      }
       SectionSettings dvd = new DVD();
       AddSection(dvd);
 
@@ -159,6 +181,10 @@ namespace MediaPortal.Configuration
       AddChildSection(dvd, new DVDPostProcessing());
 
       Log.Info("add movie section");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding movie section...");
+      }
       SectionSettings movie = new Movies();
       AddSection(movie);
       Log.Info("  add movie shares section");
@@ -175,6 +201,10 @@ namespace MediaPortal.Configuration
       AddChildSection(movie, new MoviePostProcessing());
 
       Log.Info("add music section");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding music section...");
+      }
       SectionSettings music = new Sections.Music();
       AddSection(music);
       Log.Info("  add music shares section");
@@ -195,6 +225,10 @@ namespace MediaPortal.Configuration
       AddChildSection(music, new MusicASIO());
 
       Log.Info("add pictures section");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding pictures section...");
+      }
       SectionSettings picture = new Pictures();
       AddSection(picture);
       Log.Info("  add pictures shares section");
@@ -203,12 +237,20 @@ namespace MediaPortal.Configuration
       AddChildSection(picture, new PictureExtensions());
 
       Log.Info("add radio section");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding radio section...");
+      }
       SectionSettings radio = new Sections.Radio();
       AddSection(radio);
       Log.Info("  add radio stations section");
       AddChildSection(radio, new RadioStations());
 
       Log.Info("add television section");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding television section...");
+      }
       SectionSettings television = new Television();
       AddSection(television);
       Log.Info("  add tv capture cards section");
@@ -227,6 +269,10 @@ namespace MediaPortal.Configuration
       AddChildSection(television, new TVTeletext());
 
       SectionSettings remote = new Remote();
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding remote...");
+      }
       AddSection(remote);
 
       Log.Info("add USBUIRT section");
@@ -245,6 +291,10 @@ namespace MediaPortal.Configuration
       AddChildSection(remote, dinputRemote);
 
       //Look for Audio Decoders, if exist assume decoders are installed & present config option
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding filters section...");
+      }
       FiltersSection filterSection = new FiltersSection();
       AddSection(filterSection);
       ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
@@ -312,9 +362,16 @@ namespace MediaPortal.Configuration
             AddChildSection(EncoderfilterSection, new InterVideoEncoderFilters());
           }
         }
-      
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding weather section...");
+      }
       Log.Info("add weather section");
       AddSection(new Weather());
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Loading plugins...");
+      }
       Log.Info("add plugins section");
       AddSection(new PluginsNew());
 
@@ -322,11 +379,21 @@ namespace MediaPortal.Configuration
       // Select first item in the section tree
       //
       sectionTree.SelectedNode = sectionTree.Nodes[0];
-
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Bringing to front...");
+      }
       Log.Info("bring to front");
       // make sure window is in front of mediaportal
       BringToFront();
       Log.Info("settingsform constructor done");
+#if !DEBUG
+      if (splashScreen != null)
+      {
+        splashScreen.Stop();
+        splashScreen = null;
+      }
+#endif
     }
 
     /// <summary>
