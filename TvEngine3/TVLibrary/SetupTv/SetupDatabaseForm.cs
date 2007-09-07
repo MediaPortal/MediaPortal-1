@@ -452,7 +452,7 @@ namespace SetupTv
                       connect.Close();
                       if (version != _currentSchemaVersion)
                       {
-                        isPreviousVersion = (_currentSchemaVersion == version + 1);
+                        isPreviousVersion = (_currentSchemaVersion-1 == version);
                         return true;
                       }
                       return false;
