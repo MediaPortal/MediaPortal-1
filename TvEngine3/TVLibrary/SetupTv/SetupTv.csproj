@@ -174,7 +174,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="upgrademysqldatabase.sql" />
+    <EmbeddedResource Include="upgrademysqldatabase.sql" />
     <EmbeddedResource Include="SetupTv.exe.manifest" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
