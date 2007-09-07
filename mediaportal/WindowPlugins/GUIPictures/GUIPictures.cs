@@ -1086,8 +1086,15 @@ namespace MediaPortal.GUI.Pictures
         MediaPortal.Util.Utils.SetThumbnails(ref item);
         string thumbnailImage = GetThumbnail(item.Path);
         item.IconImage = thumbnailImage;
-        string thumbnailLargeImage = GetLargeThumbnail(item.Path);
-        item.ThumbnailImage = thumbnailLargeImage;
+        if (_autocreateLargeThumbs)
+        {
+          string thumbnailLargeImage = GetLargeThumbnail(item.Path);
+          item.ThumbnailImage = thumbnailLargeImage;
+        }
+        else
+        {
+          item.ThumbnailImage = thumbnailImage;
+        }
       }
       else
       {
