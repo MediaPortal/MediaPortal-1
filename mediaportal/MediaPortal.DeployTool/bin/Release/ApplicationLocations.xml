@@ -6,7 +6,11 @@
 	<MSSQLExpress>
 		<URL>http://go.microsoft.com/fwlink/?LinkId=65212</URL>
 		<FILE>SQLExpress_setup.exe</FILE>
-	</MSSQLExpress>		
+	</MSSQLExpress>	
+    <MySQL>
+	   <URL>http://dev.mysql.com/get/Downloads/MySQL-5.0/mysql-essential-5.0.45-win32.msi/from/http://sunsite.informatik.rwth-aachen.de/mysql/</URL>
+	   <FILE>mysql_essentials.msi</FILE>
+    </MySQL>	
 	<MediaPortal>
 		<URL>http://...</URL>
 		<FILE>mediaportal_0.2.3.zip</FILE>

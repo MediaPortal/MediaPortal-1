@@ -181,7 +181,7 @@
     <value>Microsoft SQL-Server Express</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
-    <value>MySQL</value>
+    <value>MySQL 5</value>
   </data>
   <data name="Finished_labelHeading1" xml:space="preserve">
     <value>Herzlichen Glückwunsch !</value>

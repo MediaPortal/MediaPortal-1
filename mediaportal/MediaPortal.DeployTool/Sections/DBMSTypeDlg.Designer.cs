@@ -59,9 +59,9 @@ namespace MediaPortal.DeployTool
       this.rbMySQL.AutoSize = true;
       this.rbMySQL.Location = new System.Drawing.Point(7, 81);
       this.rbMySQL.Name = "rbMySQL";
-      this.rbMySQL.Size = new System.Drawing.Size(60, 17);
+      this.rbMySQL.Size = new System.Drawing.Size(69, 17);
       this.rbMySQL.TabIndex = 3;
-      this.rbMySQL.Text = "MySQL";
+      this.rbMySQL.Text = "MySQL 5";
       this.rbMySQL.UseVisualStyleBackColor = true;
       // 
       // DBMSTypeDlg

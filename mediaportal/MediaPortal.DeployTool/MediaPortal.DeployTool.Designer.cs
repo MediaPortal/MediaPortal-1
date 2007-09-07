@@ -250,7 +250,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MySQL.
+        ///   Looks up a localized string similar to MySQL 5.
         /// </summary>
         internal static string DBMSType_rbMySQL {
             get {
