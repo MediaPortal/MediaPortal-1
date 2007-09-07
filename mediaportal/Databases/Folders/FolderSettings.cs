@@ -42,29 +42,52 @@ namespace MediaPortal.Database
       _database = null;
     }
 
-    static private bool WaitForPath(string folderName)
+    static private bool WaitForPath(string pathName)
     {
       // while waking up from hibernation it can take a while before a network drive is accessible.
       // lets wait 10 sec      
       int count = 0;
-      bool validDir = false;
+      bool validPath = false;
+
+      string extension = System.IO.Path.GetExtension(pathName);
+      //bool isImageFile = IsImageFile(extension);
+
       try
       {
-        string dir = System.IO.Path.GetDirectoryName(folderName);
-        
-        validDir = dir.Length > 0;
+        string path = "";
+        if (extension.Length == 0)
+        {
+          path = System.IO.Path.GetDirectoryName(pathName);
+        }
+        else
+        {
+          path = System.IO.Path.GetFileName(pathName);
+        }
+
+        validPath = (path.Length > 0);
       }
       catch (Exception)
       {
-        validDir = false;
+        validPath = false;
       }
 
-      if (validDir)
+      if (validPath)
       {
-        while (!Directory.Exists(folderName) && count < 100)
+        if (extension.Length == 0)
         {
-          System.Threading.Thread.Sleep(100);
-          count++;
+          while (!Directory.Exists(pathName) && count < 100)
+          {
+            System.Threading.Thread.Sleep(100);
+            count++;
+          }
+        }
+        else
+        {
+          while (!File.Exists(pathName) && count < 100)
+          {
+            System.Threading.Thread.Sleep(100);
+            count++;
+          }
         }
       }
       else
@@ -72,7 +95,7 @@ namespace MediaPortal.Database
         return true;
       }
 
-      return (validDir && count < 100);
+      return (validPath && count < 100);
     }
 
     static public void DeleteFolderSetting(string path, string Key)

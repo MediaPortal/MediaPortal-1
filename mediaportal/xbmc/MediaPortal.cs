@@ -1966,15 +1966,12 @@ public class MediaPortalApp : D3DApp, IRender
         return;
       }
       else if (lastContextMenuAction != DateTime.MaxValue)
-      {
-        Log.Info("ignore 1");
-        TimeSpan ts = lastContextMenuAction - DateTime.Now;
-        //Log.Info("ts.TotalMilliseconds = {0}", ts.TotalMilliseconds);
+      {        
+        TimeSpan ts = lastContextMenuAction - DateTime.Now;        
         if (ts.TotalMilliseconds > -100)
         {
           ignoreContextMenuAction = false;
-          lastContextMenuAction = DateTime.Now;
-          Log.Info("ignore 2");
+          lastContextMenuAction = DateTime.Now;       
           return;
         }
       }

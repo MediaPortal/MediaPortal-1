@@ -442,22 +442,7 @@ namespace MediaPortal.GUI.Video
     {
       if (folderName == String.Empty) folderName = "root";
       FolderSettings.AddFolderSetting(folderName, "VideoFiles", typeof(GUIVideoFiles.MapSettings), mapSettings);
-    }
-
-    private bool WaitForPath(string folderName)
-    {
-      // while waking up from hibernation it can take a while before a network drive is accessible.
-      // lets wait 10 sec      
-      int count = 0;
-
-      while (!Directory.Exists(folderName) && count < 100)
-      {
-        Thread.Sleep(100);
-        count++;
-      }
-
-      return Directory.Exists(folderName);
-    }
+    }    
 
     protected override void LoadDirectory(string newFolderName)
     {
