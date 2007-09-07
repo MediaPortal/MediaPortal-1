@@ -6,8 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalPlayers", "External
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubtitlePlugins", "SubtitlePlugins\SubtitlePlugins.csproj", "{5B8BC37B-44EB-4736-8B27-0960F3E03822}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagReaderPlugins", "TagReaderPlugins\TagReaderPlugins.csproj", "{96B7452E-8D2B-4EAE-8300-153CCB6C5109}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowPlugins", "WindowPlugins\WindowPlugins.csproj", "{B282C55B-A37B-4CEC-A4FC-00791069BF00}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Databases", "Databases\Databases.csproj", "{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}"
@@ -27,7 +25,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPo
 		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD} = {396C5208-5D46-4A11-92C1-FD0F2F42D7DD}
 		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC} = {BD4A3413-C9F9-4299-BB52-ED45027EE7CC}
 		{3333B71D-6304-452C-BEA5-D037E7B3AA6B} = {3333B71D-6304-452C-BEA5-D037E7B3AA6B}
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109} = {96B7452E-8D2B-4EAE-8300-153CCB6C5109}
 		{596BDC58-35E0-488F-BED2-FC7A133BC047} = {596BDC58-35E0-488F-BED2-FC7A133BC047}
 		{B282C55B-A37B-4CEC-A4FC-00791069BF00} = {B282C55B-A37B-4CEC-A4FC-00791069BF00}
 		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD} = {47B8906A-5EC9-4641-811E-8BC0EAF97DDD}
@@ -59,9 +56,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HcwHelper", "RemotePlugins\Remotes\HcwRemote\HCWHelper\HcwHelper.csproj", "{596BDC58-35E0-488F-BED2-FC7A133BC047}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Tests", "MediaPortal.Tests\MediaPortal.Tests.csproj", "{DF3AC5D1-762E-4807-8642-1AE773B65E07}"
-	ProjectSection(ProjectDependencies) = postProject
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109} = {96B7452E-8D2B-4EAE-8300-153CCB6C5109}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowLib", "DirectShowLib\DirectShowLib.csproj", "{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}"
 EndProject
@@ -75,7 +69,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicShareWatcher", "Proces
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPInstaller.Library", "MPInstaller\MPInstaller.Library\MPInstaller.Library.csproj", "{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPInstaler", "MPInstaller\MPInstaler.csproj", "{11ADEC11-8343-40AD-8AE1-F5AF63F3D7DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPInstaller", "MPInstaller\MPInstaller.csproj", "{11ADEC11-8343-40AD-8AE1-F5AF63F3D7DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -137,21 +131,6 @@ Global
 		{5B8BC37B-44EB-4736-8B27-0960F3E03822}.UseCaptureDefintionsRelease|Any CPU.Build.0 = UseCaptureDefintionsRelease|Any CPU
 		{5B8BC37B-44EB-4736-8B27-0960F3E03822}.UseCaptureDefintionsRelease|x86.ActiveCfg = UseCaptureDefintionsRelease|x86
 		{5B8BC37B-44EB-4736-8B27-0960F3E03822}.UseCaptureDefintionsRelease|x86.Build.0 = UseCaptureDefintionsRelease|x86
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.Debug|x86.ActiveCfg = Debug|x86
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.Debug|x86.Build.0 = Debug|x86
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.Release|Any CPU.Build.0 = Release|Any CPU
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.Release|x86.ActiveCfg = Release|x86
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.Release|x86.Build.0 = Release|x86
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|x86
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|x86
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.UseCaptureCardDefinitions|x86.Build.0 = Release|x86
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.UseCaptureDefintionsRelease|Any CPU.Build.0 = Release|Any CPU
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
-		{96B7452E-8D2B-4EAE-8300-153CCB6C5109}.UseCaptureDefintionsRelease|x86.Build.0 = Release|x86
 		{B282C55B-A37B-4CEC-A4FC-00791069BF00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B282C55B-A37B-4CEC-A4FC-00791069BF00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B282C55B-A37B-4CEC-A4FC-00791069BF00}.Debug|x86.ActiveCfg = Debug|x86
