@@ -6,5 +6,5 @@ UPDATE `Program` SET `parentalRating`=0
 #
 DELETE FROM `Version`
 #
-INSERT INTO `Version` (`versionNumer`) VALUES(31)
+INSERT INTO `Version` (`versionNumber`) VALUES(31)
 #
