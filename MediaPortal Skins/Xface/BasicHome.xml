@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="yes"?>
 <window>
 	<id>35</id>
-	<defaultcontrol>2</defaultcontrol>
+	<defaultcontrol>44</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<disabletopbar>yes</disabletopbar>
 	<controls>

@@ -76,15 +76,6 @@
 					<id>7</id>
 					<label>361</label>
 					<onup>6</onup>
-					<ondown>8</ondown>
-					<onright>50</onright>
-				</control>
-				<control>
-					<description>Create Thumbnails</description>
-					<type>button</type>
-					<id>8</id>
-					<label>109</label>
-					<onup>7</onup>
 					<ondown>9</ondown>
 					<onright>50</onright>
 				</control>
@@ -93,7 +84,7 @@
 					<type>button</type>
 					<id>9</id>
 					<label>735</label>
-					<onup>8</onup>
+					<onup>7</onup>
 					<ondown>99</ondown>
 					<onright>50</onright>
 				</control>
