@@ -42,60 +42,26 @@ namespace MediaPortal.Database
       _database = null;
     }
 
+
     static private bool WaitForPath(string pathName)
     {
       // while waking up from hibernation it can take a while before a network drive is accessible.
       // lets wait 10 sec      
       int count = 0;
-      bool validPath = false;
 
-      string extension = System.IO.Path.GetExtension(pathName);
-      //bool isImageFile = IsImageFile(extension);
-
-      try
-      {
-        string path = "";
-        if (extension.Length == 0)
-        {
-          path = System.IO.Path.GetDirectoryName(pathName);
-        }
-        else
-        {
-          path = System.IO.Path.GetFileName(pathName);
-        }
-
-        validPath = (path.Length > 0);
-      }
-      catch (Exception)
-      {
-        validPath = false;
-      }
-
-      if (validPath)
-      {
-        if (extension.Length == 0)
-        {
-          while (!Directory.Exists(pathName) && count < 100)
-          {
-            System.Threading.Thread.Sleep(100);
-            count++;
-          }
-        }
-        else
-        {
-          while (!File.Exists(pathName) && count < 100)
-          {
-            System.Threading.Thread.Sleep(100);
-            count++;
-          }
-        }
-      }
-      else
+      if (pathName.Length == 0 || pathName == "root")
       {
         return true;
       }
 
-      return (validPath && count < 100);
+      //we cant be sure if pathName is a file or a folder, so we look for both.      
+      while ((!Directory.Exists(pathName) && !File.Exists(pathName)) && count < 100)
+      {
+        System.Threading.Thread.Sleep(100);
+        count++;
+      }
+
+      return (count < 100);
     }
 
     static public void DeleteFolderSetting(string path, string Key)
