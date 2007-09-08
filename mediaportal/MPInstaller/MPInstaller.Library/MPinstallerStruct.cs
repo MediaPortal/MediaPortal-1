@@ -895,7 +895,10 @@ namespace MediaPortal.MPInstaller
 
     public void SetGuid()
     {
-      GUID = Guid.NewGuid().ToString();
+      if (Type != MPinstallerStruct.INTERNAL_TYPE)
+        GUID = Guid.NewGuid().ToString();
+      else
+        GUID = string.Empty;
     }
 
   }
