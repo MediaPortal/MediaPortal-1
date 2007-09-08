@@ -1153,9 +1153,10 @@ namespace TvLibrary.Implementations.DVB
       _tsFilterInterface.TimeShiftPause(_subChannelIndex, 1);
       _tsFilterInterface.TimeShiftSetPcrPid(_subChannelIndex, _channelInfo.pcr_pid);
       _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, dvbChannel.PmtPid);
+
       foreach (PidInfo info in _channelInfo.pids)
       {
-        if (info.isAC3Audio || info.isAudio || info.isVideo || info.isDVBSubtitle)
+        if (info.isAC3Audio || info.isAudio || info.isVideo || info.isDVBSubtitle || info.isTeletext)
         {
           Log.Log.WriteFile("subch:{0} set timeshift {1}:{2}", _subChannelId, info.stream_type, info);
           _tsFilterInterface.TimeShiftAddStream(_subChannelIndex,info.pid, info.stream_type, info.language);
@@ -1183,7 +1184,7 @@ namespace TvLibrary.Implementations.DVB
       //bool audioPidSet = false;
       foreach (PidInfo info in _channelInfo.pids)
       {
-        if (info.isAC3Audio || info.isAudio || info.isVideo ||info.isDVBSubtitle)
+        if (info.isAC3Audio || info.isAudio || info.isVideo ||info.isDVBSubtitle || info.isTeletext)
         {
           bool addPid = false;
           if (info.isVideo)
@@ -1202,7 +1203,7 @@ namespace TvLibrary.Implementations.DVB
             //audioPidSet = true;
             //}
           }
-          if (info.isDVBSubtitle)
+          if (info.isDVBSubtitle || info.isTeletext)
           {
             addPid = true;
           }
