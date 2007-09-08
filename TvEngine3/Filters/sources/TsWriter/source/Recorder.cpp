@@ -421,8 +421,8 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
 		if (m_bDetermineNewStartPcr )
 		{
 			m_bDetermineNewStartPcr=false;
-      m_startPcr=pcrNew; //  = newStartPcr;
-			m_highestPcr.Reset(); //= newStartPcr;
+      m_startPcr=pcrNew; 
+			m_highestPcr.Reset();
 		}
 	}
   
@@ -457,7 +457,6 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
       m_pcrDuration = m_prevPcr;
       m_pcrDuration -= m_startPcr;
       m_pcrHole.Reset();
-
       m_startPcr.Reset();
       m_highestPcr.Reset();
 
@@ -491,7 +490,7 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
     pcrHi += m_pcrDuration;
   }
 
-  LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString() );
+  //LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString() );
   tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
   tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
   tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
