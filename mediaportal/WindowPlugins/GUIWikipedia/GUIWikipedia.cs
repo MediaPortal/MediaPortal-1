@@ -166,7 +166,7 @@ namespace Wikipedia
         VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
         if (null == keyboard) return;
         string searchterm = string.Empty;
-        keyboard.IsSearchKeyboard = true;
+        //keyboard.IsSearchKeyboard = true;
         keyboard.Reset();
         keyboard.Text = "";
         keyboard.DoModal(GetID); // show it...
