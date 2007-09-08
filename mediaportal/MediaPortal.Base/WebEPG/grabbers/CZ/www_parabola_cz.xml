@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Grabber>
-  <Info language="cz" availableDays="4" timezone="W. Europe Standard Time" version="2.0" />
+  <Info language="cz" availableDays="4" timezone="W. Europe Standard Time" version="2.0.1" />
   <Channels>
     <Channel id="CT1@ct.cz" siteId="1" />
     <Channel id="CT2@ct.cz" siteId="2" />
@@ -73,6 +73,10 @@
     <Channel id="HustlerTV@hustler.cz" siteId="65" />
     <Channel id="BlueHustler@hustler.cz" siteId="66" />
     <Channel id="xxxxtreme@hustler.cz" siteId="67" />
+    <Channel id="axn@axn.cz" siteId="20" />
+    <Channel id="bbcworld@bbc.cz" siteId="104" />
+    <Channel id="dwtv@dwtv.cz" siteId="109" />
+    <Channel id="animax@animax.cz" siteId="44" />
   </Channels>
   <Listing type="Html">
     <Site url="http://www.parabola.cz/program.php?tvs1=[ID]&amp;tvday=[DAY_NAME]" post="" external="false" encoding="windows-1250" />
