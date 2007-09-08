@@ -57,6 +57,7 @@ namespace MediaPortal.GUI.Home
         string text = xmlreader.GetValueAsString("home", "dateformat", "<Day> <Month> <DD>");
         cboxFormat.Items.Add(text);
         if (!text.Equals("<Day> <DD>.<Month>")) cboxFormat.Items.Add("<Day> <DD>.<Month>");
+        if (!text.Equals("<Day> <DD> <Month>")) cboxFormat.Items.Add("<Day> <DD> <Month>");
         if (!text.Equals("<Day> <Month> <DD>")) cboxFormat.Items.Add("<Day> <Month> <DD>");
         cboxFormat.Text = text;
       }
