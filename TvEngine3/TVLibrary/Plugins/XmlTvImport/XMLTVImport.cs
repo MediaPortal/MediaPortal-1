@@ -348,6 +348,8 @@ namespace TvEngine
             {
               do
               {
+                try
+                {
                 String nodeStart = xmlReader.GetAttribute("start");
                 String nodeStop = xmlReader.GetAttribute("stop");
                 String nodeChannel = xmlReader.GetAttribute("channel");
@@ -386,7 +388,19 @@ namespace TvEngine
                         else xmlProg.Skip(); 
                         break;
                       case "date": if (nodeDate == null) nodeDate = xmlProg.ReadString(); else xmlProg.Skip(); break;
-                      case "star-rating": if (nodeStarRating == null) nodeStarRating = xmlProg.ReadString(); else xmlProg.Skip(); break;
+                        case "star-rating":
+                          if (nodeStarRating == null)
+                          {
+                            //nodeStarRating = xmlProg.ReadString(); piba this dont work 
+                            XmlReader StarRatingReader = xmlProg.ReadSubtree();
+                            StarRatingReader.ReadToDescendant("value");
+                            if (StarRatingReader.NodeType == XmlNodeType.Element)
+                            {
+                              nodeStarRating = StarRatingReader.ReadString();
+                            }
+                          }
+                          else xmlProg.Skip();
+                          break;
                       case "rating": if (nodeClassification == null) nodeClassification = xmlProg.ReadString(); else xmlProg.Skip();  break;
                       default:
                         // unknown, skip entire node
@@ -663,6 +677,14 @@ namespace TvEngine
                   }
                   programIndex++;
                 }
+
+                }
+                catch (exception ex)
+                {
+                  Log.Error("xmltvimport: error :{0} ", ex.Message);
+                  Log.Info("xmltvimport: cant import programm start:{0} stop:{1} channelid:{2}", nodeStart, nodeStop, nodeChannel);
+                }
+
                 // get the next programme
               } while (xmlReader.ReadToNextSibling("programme"));
 
@@ -1506,7 +1528,7 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        Log.Error("XML tv import error:{1} ", ex.Message);
+        Log.Error("XML tv import error:{0} ", ex.Message);
       }
     }
 
