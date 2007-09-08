@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Language name="Swedish" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Mina ">Program</String>
@@ -7,6 +7,7 @@
     <String id="3" prefix="Mina ">Filmer</String>
     <String id="4">TV-tablå</String>
     <String id="5">Inställningar</String>
+    <String id="6">Etikett saknas!</String>
     <String id="7" prefix="Mina ">Filer</String>
     <String id="8" prefix="Mitt ">Väder</String>
     <String id="9" prefix="Mina ">Nyheter</String>
@@ -470,6 +471,8 @@
     <String id="552">NNV</String>
     <String id="553">sent</String>
     <String id="555">{1} {2} från {0}</String>
+    <String id="556">varierande</String>
+    <String id="557">lugnt</String>
     <String id="558">Vindstilla</String>
     <String id="590">S. 100</String>
     <String id="591">S. 200</String>
@@ -477,6 +480,7 @@
     <String id="593">Dold text</String>
     <String id="594">Delsida</String>
     <String id="595">Fullskärm</String>
+    <String id="596">Vämtar på sida {0}/{1}...</String>
     <String id="599">Storm</String>
     <String id="600">TV-tablå</String>
     <String id="601">Spela in nu</String>
@@ -642,6 +646,12 @@
     <String id="768">Hittade inga kanaler</String>
     <String id="769">Hittade inga program</String>
     <String id="770">Hittade ingen XMLTV-fil</String>
+    <String id="771">Felaktig PIN</String>
+    <String id="772">Vill du försöka igen?</String>
+    <String id="773">START</String>
+    <String id="774">SLUT</String>
+    <String id="775">Starta TV:n i "Min TV" automatiskt</String>
+    <String id="776">Starta inte TV:n i "Min TV" automatiskt</String>
     <String id="777">Start av timeshift</String>
     <String id="778">Starta med timeshift automtiskt på</String>
     <String id="779">Timeshift måste sättas på manuellt</String>
@@ -1097,7 +1107,7 @@
 	<String id="2609">Danska</String>
     <String id="2610">Polska</String>
     <String id="2611">Tjeckiska</String>
-    <String id="2612">Ungersk</String>
+    <String id="2612">Ungerska</String>
     <String id="2997">h.</String>
     <String id="2998">min.</String>
     <String id="2999">sek.</String>
@@ -1200,6 +1210,7 @@
     <String id="6008">Kanalordning</String>
     <String id="6018">minuter före programmet startar</String>
     <String id="6019">minuter efter programmet slutar</String>
+    <String id="6023">Skärminställningar</String>
     <String id="6036">H.264 Videocodec</String>
     <String id="8000">Min e-post</String>
     <String id="8001">Kolla brevlådan</String>
@@ -1291,24 +1302,33 @@
     <String id="19012">Game Over</String>
     <String id="19100">GeoClock</String>
     <String id="19101" prefix="Min ">Sudoku</String>
-    <String id="19102">New game</String>
-    <String id="19103">Solve</String>
-    <String id="19104">Clear</String>
-    <String id="19105">Block invalid moves</String>
-    <String id="19106">Show invalid moves</String>
-    <String id="19107">Level: </String>
-    <String id="19108">easy</String>
+    <String id="19102">Nytt parti</String>
+    <String id="19103">Lös</String>
+    <String id="19104">Rensa</String>
+    <String id="19105">Blockera felaktiga drag</String>
+    <String id="19106">Visa felaktiga drag</String>
+    <String id="19107">Nivå: </String>
+    <String id="19108">lätt</String>
     <String id="19109">medium</String>
-    <String id="19110">difficult</String>
-    <String id="19111">Game Over</String>
-    <String id="19112">Congratulation!</String>
-    <String id="19113">You have solved the game correctly.</String>
-    <String id="19114">Sorry, but your solution is wrong.</String>
-    <String id="19115">kids</String>
-    <String id="19116">Cell value</String>
-    <String id="19117">Clear cell</String>
-    <String id="19118">Help once</String>
-    <String id="19119">Reset game</String>
+    <String id="19110">svårt</String>
+    <String id="19111">Partiet är slut</String>
+    <String id="19112">Grattulerar!</String>
+    <String id="19113">Din lösning är korrekt.</String>
+    <String id="19114">Tyvärr, din lösning är fel.</String>
+    <String id="19115">barn</String>
+    <String id="19116">Cellvärde</String>
+    <String id="19117">Rensa cell</String>
+    <String id="19118">Hjälp</String>
+    <String id="19119">Återställ</String>
+    <String id="19122">Filter 1</String>
+    <String id="19123">Filter 2</String>
+    <String id="19124">Filter 3</String>
+    <String id="19125">Filter 4</String>
+    <String id="19126">Filter 5</String>
+    <String id="19127">Filter 6</String>
+    <String id="19128">Filter 7</String>
+    <String id="19129">Filter 8</String>
+    <String id="19130">Filter 9</String>
     <String id="25001">Väntar på sida {0:X}...!</String>
     <String id="30000" prefix="Mina ">Musikvideor</String>
     <String id="30001">Mest önskat</String>
@@ -1496,6 +1516,7 @@
     <String id="103007">Min TV/Zap OSD</String>
     <String id="107700">Min TV/Text-TV</String>
     <String id="107701">Min TV/Text-TV</String>
+    <String id="108888">Musikmeny</String>
     <String id="200000">Var god ange vilken EPG grabber du använder. Om ditt land inte</String>
     <String id="200001">finns på listan måste du tillföra EPG:n manuellt</String>
     <String id="200002">Nu kan du mappa EPG-kanalerna till dina TV-kanaleler</String>
