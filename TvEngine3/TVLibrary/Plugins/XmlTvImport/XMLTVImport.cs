@@ -393,10 +393,12 @@ namespace TvEngine
                           {
                             //nodeStarRating = xmlProg.ReadString(); piba this dont work 
                             XmlReader StarRatingReader = xmlProg.ReadSubtree();
-                            StarRatingReader.ReadToDescendant("value");
-                            if (StarRatingReader.NodeType == XmlNodeType.Element)
+                            if (StarRatingReader.ReadToDescendant("value"))
                             {
-                              nodeStarRating = StarRatingReader.ReadString();
+                              if (StarRatingReader.NodeType == XmlNodeType.Element)
+                              {
+                                nodeStarRating = StarRatingReader.ReadString();
+                              }
                             }
                           }
                           else xmlProg.Skip();
