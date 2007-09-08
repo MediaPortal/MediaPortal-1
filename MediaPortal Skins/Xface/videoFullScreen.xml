@@ -10,14 +10,13 @@
       <posY>10</posY>
       <width>1246</width>
       <height>60</height>
-      <texture>osd_bg_top.png</texture>
+      <texture>-</texture>
       <type>image</type>
       <id>0</id>
       <colordiffuse>White</colordiffuse>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
-    <import>common.progressbar.xml</import>
     <control>
       <description>row 1 label</description>
       <type>label</type>
@@ -186,7 +185,7 @@
       <posY>632</posY>
       <width>1000</width>
       <height>89</height>
-      <texture>osd_bg_top.png</texture>
+      <texture>-</texture>
       <colordiffuse>White</colordiffuse>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -272,5 +271,5 @@
     <colordiffuse>White</colordiffuse>
     <visible>no</visible>
     <animation effect="fade" time="250">visiblechange</animation>
-  </control>  
+  </control>
 </window>

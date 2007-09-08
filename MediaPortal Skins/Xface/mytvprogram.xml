@@ -170,7 +170,7 @@
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-    </control>    
+    </control>
     <control>
       <description>Description1</description>
       <type>textboxscrollup</type>
@@ -198,7 +198,7 @@
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-    </control>      
+    </control>
     <control>
       <description>genre</description>
       <type>label</type>
@@ -213,28 +213,39 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-      <description>Current program background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>142</posX>
-      <posY>558</posY>
-      <width>214</width>
-      <height>178</height>
-      <texture>playback_background.png</texture>
+		<description>video rectangle</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>48</posX>
+		<posY>540</posY>
+		<width>330</width>
+		<height>225</height>
+		 <texture>playback_background.png</texture>
+		 <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
+	</control>
     <control>
-      <description>TV preview window</description>
+      <description>video preview window</description>
       <type>videowindow</type>
-      <id>99</id>
-      <posX>163</posX>
-      <posY>574</posY>
-      <width>180</width>
-      <height>144</height>
-      <onup>5</onup>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
+      <id>1</id>
+      <posX>96</posX>
+	  <posY>568</posY>
+	  <width>238</width>
+	  <height>131</height>
+	  <keepaspectratio>yes</keepaspectratio>
+	  <centered>yes</centered>
+	  <action>18</action>
+	  <textureFocus>tv_green_border.png</textureFocus>
+    </control>
+     <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>126</posX>
+      <posY>701</posY>
+      <width>158</width>
+     <label>#percentage</label>
+      <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

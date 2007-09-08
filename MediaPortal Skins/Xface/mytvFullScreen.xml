@@ -13,14 +13,14 @@
       <posY>10</posY>
       <width>1246</width>
       <height>60</height>
-      <texture>osd_bg_top.png</texture>
+      <texture>-</texture>
       <type>image</type>
       <id>0</id>
       <colordiffuse>White</colordiffuse>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
-    <import>common.progressbar.xml</import>
+   
     <control>
       <description>row 1 label</description>
       <type>label</type>
@@ -214,7 +214,7 @@
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
     </control> -->
-    <control>
+<!--     <control>
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
       <id>100</id>
@@ -245,7 +245,7 @@
       <toplabel />
       <font>font13</font>
       <textcolor>FF000000</textcolor>
-    </control>
+     </control> -->
     <control>
       <description>rec logo</description>
       <type>image</type>

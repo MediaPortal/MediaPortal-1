@@ -4,8 +4,8 @@
 		<control>
 			<type>group</type>
 			<visible>Control.HasFocus(21)|Control.HasFocus(50)</visible>
-			<animation effect="slide" time="350" end="300,0">hidden</animation>
-			<animation effect="slide" time="450" start="300,0">visible</animation>
+			<animation effect="slide" time="350" end="150,0">hidden</animation>
+			<animation effect="slide" time="450" start="150,0">visible</animation>
 			<animation effect="fade" time="250">WindowClose</animation>
 			<animation effect="fade" time="500">WindowOpen</animation>
 			<description>group element</description>
@@ -159,6 +159,8 @@
 					<showBackGround>no</showBackGround>
 					<showInfoImage>no</showInfoImage>
 					<enableFocusZoom>no</enableFocusZoom>
+					<textXOff>8</textXOff>
+					<textYOff>30</textYOff>
 					<thumbAnimation effect="zoom" start="100,100" end="140,140" time="300">focus</thumbAnimation>
 					<thumbAnimation effect="zoom" start="140,140" end="100,100" time="300">unfocus</thumbAnimation>
 				</control>

@@ -4,15 +4,15 @@
   <defaultcontrol>213</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <import>common.progressbar.xml</import>
+   <import>common.progressbar.xml</import>
     <control>
       <description>Current Time Info</description>
       <type>label</type>
       <id>110</id>
-      <posX>1221</posX>
-      <posY>43</posY>
+      <posX>882</posX>
+      <posY>573</posY>
       <label>#time</label>
-      <align>center</align>
+      <align>left</align>
       <font>font13</font>
       <textcolor>FF071422</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -22,11 +22,23 @@
       <description>background</description>
       <type>image</type>
       <id>0</id>
-      <posX>60</posX>
-      <posY>478</posY>
-      <width>400</width>
-      <height>230</height>
-      <texture>osd_bg_video.png</texture>
+      <posX>304</posX>
+      <posY>50</posY>
+      <width>758</width>
+      <height>696</height>
+      <texture>osd_bg_bottom.png</texture>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+      <control>
+      <description>clock</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>840</posX>
+      <posY>573</posY>
+      <width>30</width>
+      <height>30</height>
+      <texture>Clock2.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -34,8 +46,8 @@
       <description>TV Logo</description>
       <type>image</type>
       <id>102</id>
-      <posX>80</posX>
-      <posY>498</posY>
+     <posX>420</posX>
+      <posY>186</posY>
       <width>50</width>
       <height>68</height>
       <texture>#Play.Current.Thumb</texture>
@@ -48,13 +60,26 @@
       <description>Movie Name</description>
       <id>36</id>
       <type>fadelabel</type>
-      <width>290</width>
+       <width>310</width>
       <height>30</height>
-      <posX>150</posX>
-      <posY>496</posY>
+      <posX>500</posX>
+      <posY>195</posY>
+      <align>left</align>
       <font>font13</font>
       <label>#Play.Current.Title</label>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+     <control>
+      <description>Progress Bar</description>
+      <type>progress</type>
+      <id>1</id>
+      <posX>496</posX>
+      <posY>121</posY>
+      <width>378</width>
+      <height>5</height>
+      <label>#percentage</label>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -62,13 +87,14 @@
       <description>Plot</description>
       <type>textboxscrollup</type>
       <id>1</id>
-      <posX>154</posX>
-      <posY>530</posY>
-      <width>290</width>
-      <height>150</height>
+      <posX>450</posX>
+      <posY>280</posY>
+      <width>480</width>
+      <height>249</height>
+      <align>left</align>
       <label>#Play.Current.Plot</label>
-      <font>font10</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <font>font12</font>
+      <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -76,20 +102,20 @@
       <description>Play</description>
       <type>togglebutton</type>
       <id>213</id>
-      <posX>80</posX>
-      <posY>588</posY>
-      <width>50</width>
-      <height>50</height>
-      <AltTextureFocus>osd_pause_focus.png</AltTextureFocus>
-      <AltTextureNoFocus>osd_pause_nofocus.png</AltTextureNoFocus>
-      <textureFocus>osd_play_focus.png</textureFocus>
-      <textureNoFocus>osd_play_nofocus.png</textureNoFocus>
+      <posX>650</posX>
+      <posY>563</posY>
+      <width>64</width>
+      <height>64</height>
+      <AltTextureFocus>ButtonBig_Pause_Focus.png</AltTextureFocus>
+      <AltTextureNoFocus>ButtonBig_Pause.png</AltTextureNoFocus>
+      <textureFocus>ButtonBig_Play_Focus.png</textureFocus>
+      <textureNoFocus>ButtonBig_Play.png</textureNoFocus>
       <label>-</label>
       <font>-</font>
-      <onleft>213</onleft>
+      <onleft>218</onleft>
       <onright>213</onright>
       <onup>213</onup>
-      <ondown>218</ondown>
+      <ondown>213</ondown>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -97,8 +123,8 @@
       <description>Subtitles Menu</description>
       <type>togglebutton</type>
       <id>218</id>
-      <posX>90</posX>
-      <posY>643</posY>
+      <posX>500</posX>
+      <posY>575</posY>
       <width>30</width>
       <height>30</height>
       <AltTextureFocus>osd_subtitles_focus.png</AltTextureFocus>
@@ -107,9 +133,9 @@
       <textureNoFocus>osd_subtitles_nofocus.png</textureNoFocus>
       <label>-</label>
       <font>-</font>
-      <onleft>218</onleft>
-      <onright>218</onright>
-      <onup>213</onup>
+        <onleft>218</onleft>
+      <onright>213</onright>
+      <onup>218</onup>
       <ondown>218</ondown>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
@@ -118,11 +144,11 @@
       <description>Sub Menu Background (subtitles)</description>
       <type>image</type>
       <id>302</id>
-      <posX>480</posX>
-      <posY>478</posY>
-      <width>310</width>
-      <height>230</height>
-      <texture>osd_bg_settings.png</texture>
+     <posX>304</posX>
+      <posY>50</posY>
+      <width>758</width>
+      <height>696</height>
+      <texture>-</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
@@ -131,11 +157,11 @@
       <description>SubTitle Delay label</description>
       <type>label</type>
       <id>850</id>
-      <posX>510</posX>
-      <posY>548</posY>
+      <posX>820</posX>
+      <posY>678</posY>
       <label>303</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>60FFFFFF</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
@@ -144,15 +170,15 @@
       <description>SubTitle Delay Slider</description>
       <type>slider</type>
       <id>800</id>
-      <posX>510</posX>
-      <posY>578</posY>
+      <posX>600</posX>
+      <posY>678</posY>
       <spintype>float</spintype>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
       <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
       <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
-      <onup>801</onup>
-      <ondown>802</ondown>
-      <onleft>800</onleft>
+      <onup>218</onup>
+      <ondown>800</ondown>
+      <onleft>801</onleft>
       <onright>800</onright>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -162,12 +188,12 @@
       <description>SubTitles On/Off Checkbox</description>
       <type>checkmark</type>
       <id>801</id>
-      <posX>510</posX>
-      <posY>508</posY>
+      <posX>450</posX>
+      <posY>678</posY>
       <label>305</label>
-      <onup>801</onup>
-      <ondown>800</ondown>
-      <onleft>801</onleft>
+      <onup>218</onup>
+      <ondown>801</ondown>
+      <onleft>218</onleft>
       <onright>801</onright>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>

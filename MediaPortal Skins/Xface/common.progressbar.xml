@@ -9,7 +9,7 @@
       <posY>10</posY>
       <width>1246</width>
       <height>60</height>
-      <texture>osd_bg_top.png</texture>
+      <texture>-</texture>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
@@ -22,20 +22,8 @@
       <posY>25</posY>
       <width>825</width>
       <height>30</height>
-      <texture>osd_progress_background.png</texture>
+      <texture>-</texture>
       <visible>no</visible>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <animation effect="fade" time="250">windowopen</animation>
-    </control>
-    <control>
-      <description>Progress Bar</description>
-      <type>progress</type>
-      <id>1</id>
-      <posX>185</posX>
-      <posY>33</posY>
-      <width>859</width>
-      <height>14</height>
-      <label>#percentage</label>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -43,12 +31,12 @@
       <description>Start Time Info</description>
       <type>label</type>
       <id>101</id>
-      <posX>130</posX>
-      <posY>43</posY>
+      <posX>483</posX>
+      <posY>111</posY>
       <label>#currentplaytime</label>
-      <align>center</align>
+      <align>right</align>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>black</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
       <visible>no</visible>
@@ -57,12 +45,12 @@
       <description>End Time Info</description>
       <type>label</type>
       <id>102</id>
-      <posX>1085</posX>
-      <posY>43</posY>
+      <posX>882</posX>
+      <posY>111</posY>
       <label>#currentremaining</label>
-      <align>center</align>
+      <align>left</align>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>black</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
       <visible>no</visible>

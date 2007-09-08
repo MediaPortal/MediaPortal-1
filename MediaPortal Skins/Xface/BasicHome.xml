@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="yes"?>
 <window>
 	<id>35</id>
-	<defaultcontrol>44</defaultcontrol>
+	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<disabletopbar>yes</disabletopbar>
 	<controls>
@@ -9,7 +9,7 @@
 			<description>BG</description>
 			<type>image</type>
 			<id>1</id>
-			<texture>Background3.png</texture>
+			<texture>Background2.png</texture>
 			<width>1366</width>
 			<height>768</height>
 		</control>
@@ -19,7 +19,16 @@
 			<posY>700</posY>
 			<height>89</height>
 			<width>1366</width>
-			<texture>Barback.png</texture>
+			<texture>-Barback.png</texture>
+			<colorDiffuse>effffffff</colorDiffuse>
+		</control>
+		<control>
+			<type>image</type>
+			<posX>0</posX>
+			<posY>600</posY>
+			<height>95</height>
+			<width>1366</width>
+			<texture>Bar4.png</texture>
 			<colorDiffuse>effffffff</colorDiffuse>
 		</control>
 		<control>
@@ -1766,10 +1775,10 @@
 			<description>Subbackground</description>
 			<type>image</type>
 			<id>500</id>
-			<posX>280</posX>
+			<posX>281</posX>
 			<posY>625</posY>
-			<width>776</width>
-			<height>48</height>
+			<width>774</width>
+			<height>45</height>
 			<texture>Subbackground.png</texture>			<visible>[Control.IsVisible(601)|Control.IsVisible(602)|Control.IsVisible(603)|Control.IsVisible(604)|Control.IsVisible(605)|Control.IsVisible(606)|Control.IsVisible(607)|Control.IsVisible(608)|Control.IsVisible(609)|Control.IsVisible(610)|Control.IsVisible(611)|Control.IsVisible(612)]</visible>
 			<animation effect="fade" time="300">Visible</animation>
 			<animation effect="fade" time="400">WindowOpen</animation>
@@ -1790,8 +1799,8 @@
 			<label>tv series</label>
 			<hyperlink>9811</hyperlink>
 			<font>font14</font>
-			<textcolor>ff71787A</textcolor>
-			<textcolorNoFocus>ff5F6364</textcolorNoFocus>
+			<textcolor>ffffffff</textcolor>
+			<textcolorNoFocus>80ffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
 			<onup>5</onup>
@@ -1806,7 +1815,7 @@
 			<description>Video submenu 2</description>
 			<type>button</type>
 			<id>602</id>
-			<posX>532</posX>
+			<posX>533</posX>
 			<posY>628</posY>
 			<width>269</width>
 			<height>40</height>
@@ -1817,8 +1826,8 @@
 			<label>trailers</label>
 			<hyperlink>5900</hyperlink>
 			<font>font14</font>
-			<textcolor>ff71787A</textcolor>
-			<textcolorNoFocus>ff5F6364</textcolorNoFocus>
+			<textcolor>ffffffff</textcolor>
+			<textcolorNoFocus>80ffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
 			<onup>5</onup>
@@ -1833,7 +1842,7 @@
 			<description>Video submenu 3</description>
 			<type>button</type>
 			<id>612</id>
-			<posX>801</posX>
+			<posX>802</posX>
 			<posY>628</posY>
 			<width>250</width>
 			<height>40</height>
@@ -1844,8 +1853,8 @@
 			<label>music videos</label>
 			<hyperlink>4734</hyperlink>
 			<font>font14</font>
-			<textcolor>ff71787A</textcolor>
-			<textcolorNoFocus>ff5F6364</textcolorNoFocus>
+			<textcolor>ffffffff</textcolor>
+			<textcolorNoFocus>80ffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
 			<onup>5</onup>
@@ -1871,8 +1880,8 @@
 			<label>scheduled rec</label>
 			<hyperlink>601</hyperlink>
 			<font>font14</font>
-			<textcolor>ff71787A</textcolor>
-			<textcolorNoFocus>ff5F6364</textcolorNoFocus>
+			<textcolor>ffffffff</textcolor>
+			<textcolorNoFocus>80ffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
 			<onup>4</onup>
@@ -1887,7 +1896,7 @@
 			<description>TV submenu 2</description>
 			<type>button</type>
 			<id>604</id>
-			<posX>532</posX>
+			<posX>533</posX>
 			<posY>628</posY>
 			<width>269</width>
 			<height>40</height>
@@ -1898,8 +1907,8 @@
 			<label>recorded tv</label>
 			<hyperlink>603</hyperlink>
 			<font>font14</font>
-			<textcolor>ff71787A</textcolor>
-			<textcolorNoFocus>ff5F6364</textcolorNoFocus>
+			<textcolor>ffffffff</textcolor>
+			<textcolorNoFocus>80ffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
 			<onup>4</onup>
@@ -1914,7 +1923,7 @@
 			<description>TV submenu 3</description>
 			<type>button</type>
 			<id>605</id>
-			<posX>801</posX>
+			<posX>802</posX>
 			<posY>628</posY>
 			<width>250</width>
 			<height>40</height>
@@ -1925,8 +1934,8 @@
 			<label>tv guide</label>
 			<hyperlink>600</hyperlink>
 			<font>font14</font>
-			<textcolor>ff71787A</textcolor>
-			<textcolorNoFocus>ff5F6364</textcolorNoFocus>
+			<textcolor>ffffffff</textcolor>
+			<textcolorNoFocus>80ffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
 			<onup>4</onup>
@@ -1952,8 +1961,8 @@
 			<label>last fm radio</label>
 			<hyperlink>7890</hyperlink>
 			<font>font14</font>
-			<textcolor>ff71787A</textcolor>
-			<textcolorNoFocus>ff5F6364</textcolorNoFocus>
+			<textcolor>ffffffff</textcolor>
+			<textcolorNoFocus>80ffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
 			<onup>3</onup>
@@ -1968,7 +1977,7 @@
 			<description>Music submenu 2</description>
 			<type>button</type>
 			<id>607</id>
-			<posX>532</posX>
+			<posX>533</posX>
 			<posY>628</posY>
 			<width>269</width>
 			<height>40</height>
@@ -1979,8 +1988,8 @@
 			<label>current playlist</label>
 			<hyperlink>500</hyperlink>
 			<font>font14</font>
-			<textcolor>ff71787A</textcolor>
-			<textcolorNoFocus>ff5F6364</textcolorNoFocus>
+			<textcolor>ffffffff</textcolor>
+			<textcolorNoFocus>80ffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
 			<onup>3</onup>
@@ -1995,7 +2004,7 @@
 			<description>Music submenu 3</description>
 			<type>button</type>
 			<id>611</id>
-			<posX>801</posX>
+			<posX>802</posX>
 			<posY>628</posY>
 			<width>250</width>
 			<height>40</height>
@@ -2006,8 +2015,8 @@
 			<label>myradio</label>
 			<hyperlink>30</hyperlink>
 			<font>font14</font>
-			<textcolor>ff71787A</textcolor>
-			<textcolorNoFocus>ff5F6364</textcolorNoFocus>
+			<textcolor>ffffffff</textcolor>
+			<textcolorNoFocus>80ffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
 			<onup>3</onup>
@@ -2033,8 +2042,8 @@
 			<label>weather</label>
 			<hyperlink>2600</hyperlink>
 			<font>font14</font>
-			<textcolor>ff71787A</textcolor>
-			<textcolorNoFocus>ff5F6364</textcolorNoFocus>
+			<textcolor>ffffffff</textcolor>
+			<textcolorNoFocus>80ffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
 			<onup>6</onup>
@@ -2049,19 +2058,19 @@
 			<description>Other submenu 2</description>
 			<type>button</type>
 			<id>609</id>
-			<posX>532</posX>
+			<posX>533</posX>
 			<posY>628</posY>
 			<width>269</width>
 			<height>40</height>
-			<align>left</align>
+			<align>center</align>
 			<textureFocus>submiddle_focus.png</textureFocus>
 			<textureNoFocus>submiddle_nofocus.png</textureNoFocus>
 			<visible>Control.HasFocus(6)|Control.HasFocus(66)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)</visible>
 			<label>Plugins</label>
 			<hyperlink>34</hyperlink>
 			<font>font14</font>
-			<textcolor>ff71787A</textcolor>
-			<textcolorNoFocus>ff5F6364</textcolorNoFocus>
+			<textcolor>ffffffff</textcolor>
+			<textcolorNoFocus>80ffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
 			<onup>6</onup>
@@ -2076,18 +2085,19 @@
 			<description>Other submenu 3</description>
 			<type>button</type>
 			<id>610</id>
-			<posX>801</posX>
+			<posX>802</posX>
 			<posY>628</posY>
 			<width>250</width>
 			<height>40</height>
+			<align>center</align>
 			<textureFocus>subright_focus.png</textureFocus>
 			<textureNoFocus>subright_nofocus.png</textureNoFocus>
 			<visible>Control.HasFocus(6)|Control.HasFocus(66)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)</visible>
 			<label>news</label>
 			<hyperlink>2700</hyperlink>
 			<font>font14</font>
-			<textcolor>ff71787A</textcolor>
-			<textcolorNoFocus>ff5F6364</textcolorNoFocus>
+			<textcolor>ffffffff</textcolor>
+			<textcolorNoFocus>80ffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
 			<onup>6</onup>

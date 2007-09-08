@@ -162,13 +162,13 @@
       <description>Current program title</description>
       <type>fadelabel</type>
       <id>13</id>
-      <posX>295</posX>
-      <posY>582</posY>
+      <posX>69</posX>
+      <posY>552</posY>
       <width>433</width>
       <label>#TV.View.title</label>
       <font>font13</font>
       <align>left</align>
-      <textcolor>Black</textcolor>
+      <textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -229,10 +229,10 @@
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
-      <posX>295</posX>
-      <posY>606</posY>
-      <width>666</width>
-      <height>90</height>
+      <posX>69</posX>
+      <posY>584</posY>
+      <width>896</width>
+      <height>110</height>
       <seperator>----------------------------------------------------------------------------------------------</seperator>
       <label>#TV.View.description</label>
       <font>font13</font>
