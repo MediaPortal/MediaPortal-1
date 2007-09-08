@@ -95,6 +95,8 @@ private:
   CPcr            m_highestPcr;
   CPcr            m_startPcr;
   CPcr            m_pcrHole;
+  CPcr            m_pcrDuration;
+  bool            m_bPCRRollover;
   
   CAdaptionField  m_adaptionField;
   bool            m_bStartPcrFound;

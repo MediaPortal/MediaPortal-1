@@ -448,32 +448,50 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
     diff = m_prevPcr - pcrNew;
     m_highestPcr = pcrNew;
   }
-  
-  double tmp = diff.ToClock();
 
   if(diff.ToClock() > 10L && m_prevPcr.ToClock() > 0)
   {
-    CPcr step;
-    step.FromClock(0.02); // an estimated PCR step
-    
-    if (pcrNew > m_prevPcr)
+    if( diff.ToClock() > 95443L ) // Max PCR value 95443.71768
     {
-      m_pcrHole += diff;
-      m_pcrHole -= step; 
-      LogDebug( "PCR hole detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+      m_bPCRRollover = true;
+      m_pcrDuration = m_prevPcr;
+      m_pcrDuration -= m_startPcr;
+      m_pcrHole.Reset();
+
+      m_startPcr.Reset();
+      m_highestPcr.Reset();
+
+      LogDebug( "PCR rollover detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
     }
     else
-    {
-      m_pcrHole -= diff;
-      m_pcrHole += step;
-      LogDebug( "PCR hole detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+    {      
+      CPcr step;
+      step.FromClock(0.02); // an estimated PCR step
+      
+      if (pcrNew > m_prevPcr)
+      {
+        m_pcrHole += diff;
+        m_pcrHole -= step; 
+        LogDebug( "Jump forward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+      }
+      else
+      {
+        m_pcrHole -= diff;
+        m_pcrHole += step;
+        LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+      }
     }
   }
-  
-	pcrHi -= m_startPcr;
+
+  pcrHi -= m_startPcr;
   pcrHi -= m_pcrHole;
 
-  //LogDebug("hole %s hi %s new %s prev %s--- diff %f", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), tmp );
+  if( m_bPCRRollover )
+  {
+    pcrHi += m_pcrDuration;
+  }
+
+  LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString() );
   tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
   tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
   tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
@@ -509,6 +527,11 @@ void CRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
     CPcr ptsorg=pts;
 		pts -= startPcr;
     pts -= m_pcrHole;
+
+    if( m_bPCRRollover )
+    {
+      pts += m_pcrDuration;
+    }
 		// 9       10        11        12      13
 		//76543210 76543210 76543210 76543210 76543210
 		//0011pppM pppppppp pppppppM pppppppp pppppppM 
@@ -526,6 +549,12 @@ void CRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 			CPcr dtsorg=dts;
 			dts -= startPcr;
       dts -= m_pcrHole;
+
+      if( m_bPCRRollover )
+      {
+        dts += m_pcrDuration;
+      }
+
 			// 14       15        16        17      18
 			//76543210 76543210 76543210 76543210 76543210
 			//0001pppM pppppppp pppppppM pppppppp pppppppM 
