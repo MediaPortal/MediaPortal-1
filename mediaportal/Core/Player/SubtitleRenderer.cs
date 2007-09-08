@@ -38,6 +38,19 @@ namespace MediaPortal.Player
     public Int32 firstScanLine;
   }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct TEXT_SUBTITLE
+    {
+        public int startTextLine;
+        public int totalTextLines;
+
+        public UInt64 timeStamp;
+        public UInt64 timeOut; // in seconds
+        public string text; // subtitle lines seperated by newline characters
+
+
+    }
+
   public class Subtitle
   {
     public Bitmap subBitmap;
@@ -63,6 +76,7 @@ namespace MediaPortal.Player
   public interface IDVBSubtitle2
   {
     void SetCallback(IntPtr callBack);
+    //void SetTextCallback(IntPtr callBack);
     void SetResetCallback(IntPtr callBack);
     void SetUpdateTimeoutCallback(IntPtr callBack);
     void Test(int status);
@@ -271,6 +285,74 @@ namespace MediaPortal.Player
       return 0;
     }
 
+      public int OnTextSubtitle(IntPtr p /*ref TEXT_SUBTITLE sub*/)
+      {
+
+          Log.Debug("On\nText\nSubtitle\ncalled");
+          try
+          {
+              TEXT_SUBTITLE sub = (TEXT_SUBTITLE)Marshal.PtrToStructure(p, typeof(TEXT_SUBTITLE));
+              Log.Debug("Start line: " + sub.startTextLine + " total lines " + sub.totalTextLines);
+              Log.Debug("Timeout: " + sub.timeOut);
+              Log.Debug(sub.text);
+
+              Subtitle subtitle = new Subtitle();
+              subtitle.subBitmap = RenderText(sub.text, sub.startTextLine, sub.totalTextLines);
+              subtitle.timeOut = sub.timeOut;
+              subtitle.presentTime = ((double)sub.timeStamp / 1000.0f) + startPos + player.CurrentPosition + 5; // compute present time in SECONDS
+              subtitle.height = 576;
+              subtitle.width = 720;
+              subtitle.firstScanLine = (int)(sub.startTextLine / (float)sub.totalTextLines) * 576; //sub.firstScanLine;
+
+              lock (subtitles)
+              {
+                  subtitles.AddLast(subtitle);
+                  Log.Debug("SubtitleRenderer: Text subtitle added, now have " + subtitles.Count + " subtitles in cache " + subtitle.ToString());
+
+              }
+          }
+          catch (Exception e)
+          {
+              Log.Error("Problem marshalling TEXT_SUBTITLE");
+              Log.Error(e);
+          }
+          return 0;
+      }
+
+
+      public Bitmap RenderText(string lines, int startLine, int totalLines)
+      {
+          int w = 720;
+          int h = 576;
+
+          Bitmap bmp = new Bitmap(w, h);
+
+          int hOffset = (int)(h * (startLine / (float)totalLines));
+
+
+          Console.WriteLine(hOffset);
+
+          using (Graphics gBmp = Graphics.FromImage(bmp))
+          using (SolidBrush brush = new SolidBrush(Color.FromArgb(255, 255, 255)))
+          using (SolidBrush blackBrush = new SolidBrush(Color.FromArgb(0, 0, 0)))
+          {
+              gBmp.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+              using (System.Drawing.Font fnt = new System.Drawing.Font("Courier", 14, FontStyle.Bold)) // fixed width font!
+              {
+
+                  SizeF size = gBmp.MeasureString(lines, fnt);
+                  //gBmp.FillRectangle(new SolidBrush(Color.Pink), new Rectangle(0, 0, w, h));
+                  int vOffset = (int)((w - size.Width) / 2); // center based on actual text width
+                  gBmp.DrawString(lines, fnt, blackBrush, new PointF(vOffset + 1, hOffset + 0));
+                  gBmp.DrawString(lines, fnt, blackBrush, new PointF(vOffset + 0, hOffset + 1));
+                  gBmp.DrawString(lines, fnt, blackBrush, new PointF(vOffset - 1, hOffset + 0));
+                  gBmp.DrawString(lines, fnt, blackBrush, new PointF(vOffset + 0, hOffset - 1));
+                  gBmp.DrawString(lines, fnt, brush, new PointF(vOffset, hOffset));
+              }
+          }
+          return bmp;
+      }
+
 
     /// <summary>
     /// Update the subtitle texture from a Bitmap
@@ -352,6 +434,9 @@ namespace MediaPortal.Player
 
       IntPtr pUpdateTimeoutCallBack = Marshal.GetFunctionPointerForDelegate(updateTimeoutCallBack);
       subFilter.SetUpdateTimeoutCallback(pUpdateTimeoutCallBack);
+
+      //IntPtr pTextCallback = Marshal.GetFunctionPointerForDelegate(textCallBack); // needed for when teletext stuff is added
+      //subFilter.SetTextCallback(pTextCallback);
 
       return filter;
     }
