@@ -379,7 +379,7 @@ namespace MediaPortal.EPG.WebEPGTester
         if (!System.IO.Directory.Exists(channelDir))
           System.IO.Directory.CreateDirectory(channelDir);
 
-        WebListingGrabber m_EPGGrabber = new WebListingGrabber((int)numDays.Value, _webepgDir + "\\grabbers\\");
+        WebListingGrabber m_EPGGrabber = new WebListingGrabber(_webepgDir + "\\grabbers\\");
 
         _log.Info("WebEPG: Grabber {0}\\{1}", country, grabber);
 
@@ -419,7 +419,7 @@ namespace MediaPortal.EPG.WebEPGTester
         if (!cbCache.Checked)
           cache.CacheMode = HTMLCache.Mode.Disabled;
 
-        if (m_EPGGrabber.Initalise(countryGrabber))
+        if (m_EPGGrabber.Initalise(countryGrabber, (int)numDays.Value))
         {
           List<TVProgram> programs = m_EPGGrabber.GetGuide(channelId, false, new TimeRange("00:00", "23:00"), grabDateTime);
           if (programs != null)

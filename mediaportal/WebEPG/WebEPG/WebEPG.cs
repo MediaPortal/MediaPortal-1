@@ -205,7 +205,7 @@ namespace MediaPortal.EPG
       string grabberLast = "";
       List<TVProgram> programs = null;
       bool initResult = false;
-      _epgGrabber = new WebListingGrabber(_config.Info.GrabDays, _baseDirectory + "\\WebEPG\\grabbers\\");
+      _epgGrabber = new WebListingGrabber(_baseDirectory + "\\WebEPG\\grabbers\\");
 
       // For each channel get listing
       int i = 1;
@@ -217,7 +217,7 @@ namespace MediaPortal.EPG
         if (_grabList[channelid].Count > 0)
         {
           if (_grabList[channelid][0].grabber != grabberLast)
-            initResult = _epgGrabber.Initalise(_grabList[channelid][0].grabber);
+            initResult = _epgGrabber.Initalise(_grabList[channelid][0].grabber, _config.Info.GrabDays);
 
           grabberLast = _grabList[channelid][0].grabber;
 

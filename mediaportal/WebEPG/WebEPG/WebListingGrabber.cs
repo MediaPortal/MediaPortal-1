@@ -78,11 +78,10 @@ namespace MediaPortal.WebEPG
     /// </summary>
     /// <param name="maxGrabDays">The number of days to grab</param>
     /// <param name="baseDir">The baseDir for grabber files</param>
-    public WebListingGrabber(int maxGrabDays, string baseDir)
+    public WebListingGrabber(string baseDir)
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
-      _maxGrabDays = maxGrabDays;
       _strBaseDir = baseDir;
     }
     #endregion
@@ -93,8 +92,10 @@ namespace MediaPortal.WebEPG
     /// </summary>
     /// <param name="File">The grabber config file file.</param>
     /// <returns>bool - success/fail loading the config file</returns>
-    public bool Initalise(string File)
+    public bool Initalise(string File, int maxGrabDays)
     {
+      _maxGrabDays = maxGrabDays;
+
       // Load configuration file
       _log.Info(LogType.WebEPG, "WebEPG: Opening {0}", File);
 
@@ -175,7 +176,7 @@ namespace MediaPortal.WebEPG
           _parser = new WebParser(_grabber.Listing.HtmlTemplate);
           if (_grabber.Info.GrabDays < _maxGrabDays)
           {
-            _log.Warn(LogType.WebEPG, "WebEPG: GrabDays {0} more than GuideDays {0}, limiting grab days", _grabber.Info.GrabDays, _maxGrabDays);
+            _log.Warn(LogType.WebEPG, "WebEPG: Grab days ({0}) more than Guide days ({1}), limiting grab to {1} days", _maxGrabDays, _grabber.Info.GrabDays);
             _maxGrabDays = _grabber.Info.GrabDays;
           }
 
