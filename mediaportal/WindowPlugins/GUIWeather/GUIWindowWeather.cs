@@ -1043,7 +1043,7 @@ namespace MediaPortal.GUI.Weather
           localizedWord = GUILocalizeStrings.Get(371);
         else if (String.Compare(tokenSplit, "Mostly", true) == 0)
           localizedWord = GUILocalizeStrings.Get(372);
-        else if (String.Compare(tokenSplit, "Sunny", true) == 0)
+        else if (String.Compare(tokenSplit, "Sunny", true) == 0 || String.Compare(tokenSplit, "Sun", true) == 0)
           localizedWord = GUILocalizeStrings.Get(373);
         else if (String.Compare(tokenSplit, "Cloudy", true) == 0 || String.Compare(tokenSplit, "Clouds", true) == 0)
           localizedWord = GUILocalizeStrings.Get(374);
@@ -1172,6 +1172,7 @@ namespace MediaPortal.GUI.Weather
         }
       }
     }
+
 
     //Do a complete download, parse and update
     void RefreshMe(bool autoUpdate)
@@ -1386,12 +1387,24 @@ namespace MediaPortal.GUI.Weather
 
             if (null != pDayTimeElement)
             {
+              string finalString;
               GetInteger(pDayTimeElement, "icon", out tempInteger);
               _forecast[i].iconImageNameLow = Config.GetFile(Config.Dir.Weather, String.Format("64x64\\{0}.png", tempInteger));
               _forecast[i].iconImageNameHigh = Config.GetFile(Config.Dir.Weather, String.Format("128x128\\{0}.png", tempInteger));
               GetString(pDayTimeElement, "t", out  _forecast[i].Overview, String.Empty);
               _forecast[i].Overview = LocalizeOverview(_forecast[i].Overview);
-              SplitLongString(ref _forecast[i].Overview, 6, 15);
+              finalString = String.Empty;
+              foreach (string tokenSplit in _forecast[i].Overview.Split('/'))
+              {
+                string workstring;
+                workstring = tokenSplit;
+                SplitLongString(ref workstring, 6, 15);
+                // A string after a / starts with ' '
+                if (workstring[0] == ' ')
+                  workstring = '\n' + workstring.Substring(1, workstring.Length - 1);
+                finalString += workstring;
+              }
+              _forecast[i].Overview = finalString;
               GetInteger(pDayTimeElement, "hmid", out tempInteger);
               _forecast[i].Humidity = String.Format("{0}%", tempInteger);
               GetInteger(pDayTimeElement, "ppcp", out tempInteger);
