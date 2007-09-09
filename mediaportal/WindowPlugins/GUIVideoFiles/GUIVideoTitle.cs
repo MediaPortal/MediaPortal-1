@@ -70,6 +70,7 @@ namespace MediaPortal.GUI.Video
       handler.CurrentView = "369";
       return Load(GUIGraphicsContext.Skin + @"\myvideoTitle.xml");
     }
+
     protected override string SerializeName
     {
       get
@@ -417,6 +418,7 @@ namespace MediaPortal.GUI.Video
 
       ArrayList itemlist = new ArrayList();
       ArrayList movies = handler.Execute();
+
       if (handler.CurrentLevel > 0)
       {
         GUIListItem listItem = new GUIListItem("..");
@@ -425,6 +427,7 @@ namespace MediaPortal.GUI.Video
         MediaPortal.Util.Utils.SetDefaultIcons(listItem);
         itemlist.Add(listItem);
       }
+
       foreach (IMDBMovie movie in movies)
       {
         GUIListItem item = new GUIListItem();
@@ -446,12 +449,16 @@ namespace MediaPortal.GUI.Video
         itemlist.Add(item);
       }
 
-      string selectedItemLabel = m_history.Get(currentFolder);
       int itemIndex = 0;
       foreach (GUIListItem item in itemlist)
       {
         facadeView.Add(item);
       }
+
+      string selectedItemLabel = m_history.Get(currentFolder);
+      SelectedItem = facadeView.SelectedListItem;
+      if (SelectedItem != null)
+        selectedItemLabel = SelectedItem.Label;
 
       int itemCount = itemlist.Count;
       if (itemlist.Count > 0)
@@ -463,8 +470,7 @@ namespace MediaPortal.GUI.Video
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(itemCount));
 
-      SetIMDBThumbs(itemlist);
-      SetLabels();
+      SetIMDBThumbs(itemlist);      
       OnSort();
 
       SwitchView();

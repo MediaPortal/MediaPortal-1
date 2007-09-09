@@ -1201,6 +1201,7 @@ namespace MediaPortal.GUI.Video
     {
       PlayMovieFromPlayList(askForResumeMovie, -1);
     }
+
     static public void PlayMovieFromPlayList(bool askForResumeMovie, int iMovieIndex)
     {
       string filename;
