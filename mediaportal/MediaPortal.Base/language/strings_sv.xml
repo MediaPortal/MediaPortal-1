@@ -467,13 +467,15 @@
     <String id="549">VSV</String>
     <String id="550">Beskär</String>
     <String id="551">VNV</String>
-    <String id="550">Beskär</String>
     <String id="552">NNV</String>
     <String id="553">sent</String>
+    <String id="554">väldigt</String>
     <String id="555">{1} {2} från {0}</String>
     <String id="556">varierande</String>
     <String id="557">lugnt</String>
     <String id="558">Vindstilla</String>
+    <String id="559">i närheten av</String>
+    <String id="560">Uppklarnande</String>
     <String id="590">S. 100</String>
     <String id="591">S. 200</String>
     <String id="592">S. 300</String>
@@ -835,6 +837,8 @@
     <String id="1015">Påminn INTE om programstart</String>
     <String id="1016">Program börjar om 5 minuter</String>
     <String id="1017">Sortera efter: Längd</String>
+    <String id="1018">Programmet startar om {0} minutes</String>
+    <String id="1019">Programmet startar snart</String>
     <String id="1020">Information</String>
     <String id="1021">Tryck på Alt+Enter för att</String>
     <String id="1022">återvända till fönsterläge</String>
@@ -882,6 +886,9 @@
     <String id="1103">Importerar spår</String>
     <String id="1104">kvar</String>
     <String id="1105">Importerar spår</String>
+    <String id="1110">Hoppa över ny inspelning</String>
+    <String id="1111">Hoppa över konflikterande inspelning(ar)</String>
+    <String id="1112">Behåll konflikten</String>
     <String id="1190">Zoom 14:9</String>
     <String id="1200">Inställningsguiden</String>
     <String id="1440" prefix="Min ">Text-TV</String>
@@ -1211,6 +1218,8 @@
     <String id="6018">minuter före programmet startar</String>
     <String id="6019">minuter efter programmet slutar</String>
     <String id="6023">Skärminställningar</String>
+    <String id="6024">Hopp</String>
+    <String id="6025">Inställningar hopp</String>
     <String id="6036">H.264 Videocodec</String>
     <String id="8000">Min e-post</String>
     <String id="8001">Kolla brevlådan</String>
