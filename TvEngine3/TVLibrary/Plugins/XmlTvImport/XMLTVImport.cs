@@ -110,16 +110,29 @@ namespace TvEngine
     private int ParseStarRating(string epgRating)
     {
       // format = 5.2/10
-      string strRating = epgRating.Remove(epgRating.IndexOf(@"/") - 1);
       int Rating = -1;
       decimal tmpRating = -1;
-      NumberFormatInfo NFO = NumberFormatInfo.InvariantInfo;
-      NumberStyles NStyle = NumberStyles.Float;
+      int pos = epgRating.IndexOf(@"/");
 
-      if (Decimal.TryParse(strRating, NStyle, NFO, out tmpRating))
-        Rating = Convert.ToInt16(tmpRating);
+      if (pos != -1)      // check if epgRating is well formed
+      {
+        string strRating = epgRating.Remove(pos - 1);
+        NumberFormatInfo NFO = NumberFormatInfo.InvariantInfo;
+        NumberStyles NStyle = NumberStyles.Float;
+
+        if (Decimal.TryParse(strRating, NStyle, NFO, out tmpRating))
+        {
+          Rating = Convert.ToInt16(tmpRating);
+        }
+        else
+        {
+          Log.Info("XMLTVImport: star-rating could not be used - {0},({1})", epgRating, strRating);
+        }
+      }
       else
-        Log.Info("XMLTVImport: star-rating could not be used - {0},({1})", epgRating, strRating);
+      {
+        Log.Info("XMLTVImport: star-rating could not be used - {0})", epgRating);
+      }
 
       return Rating;
     }
@@ -348,12 +361,11 @@ namespace TvEngine
             {
               do
               {
+                String nodeStart = xmlReader.GetAttribute("start");
+                String nodeStop = xmlReader.GetAttribute("stop");
+                String nodeChannel = xmlReader.GetAttribute("channel");
                 try
                 {
-                  String nodeStart = xmlReader.GetAttribute("start");
-                  String nodeStop = xmlReader.GetAttribute("stop");
-                  String nodeChannel = xmlReader.GetAttribute("channel");
-
                   String nodeTitle = null;
                   String nodeCategory = null;
                   String nodeDescription = null;
@@ -681,7 +693,7 @@ namespace TvEngine
                   }
 
                 }
-                catch (exception ex)
+                catch (Exception ex)
                 {
                   Log.Error("xmltvimport: error :{0} ", ex.Message);
                   Log.Info("xmltvimport: cant import programm start:{0} stop:{1} channelid:{2}", nodeStart, nodeStop, nodeChannel);
