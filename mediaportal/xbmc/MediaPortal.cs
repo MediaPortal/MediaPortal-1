@@ -1202,14 +1202,7 @@ public class MediaPortalApp : D3DApp, IRender
       if (!Recorder.Running)
       {
         Log.Info("Main: OnResume - Starting recorder");
-
-        // this only makes sense if we have cards configured
-        // if no cards are configured then we are probably using tve3.
-        // when resuming from hibernation  
-        if (Recorder.Count > 0)
-        {
-          Recorder.Start();
-        }
+        Recorder.Start();
         if (turnMonitorOn)
         {
           SetThreadExecutionState(oldState);
