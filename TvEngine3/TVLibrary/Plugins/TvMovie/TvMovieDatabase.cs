@@ -49,7 +49,7 @@ namespace TvEngine
     #region Members
     private OleDbConnection _databaseConnection = null;
     private bool _canceled = false;
-    private ArrayList _stations = null;
+    private ArrayList _tvmEpgChannels = null;
     private ArrayList _channelList = null;
     private int _programsCounter = 0;
     private bool _useShortProgramDesc = false;
@@ -71,15 +71,15 @@ namespace TvEngine
 
     private struct Mapping
     {
-      private string _channel;
-      private string _station;
+      private string _mpChannel;
+      private string _tvmEpgChannel;
       private TimeSpan _start;
       private TimeSpan _end;
 
-      public Mapping(string channel, string station, string start, string end)
+      public Mapping(string mpChannel, string tvmChannel, string start, string end)
       {
-        _channel = channel;
-        _station = station;
+        _mpChannel = mpChannel;
+        _tvmEpgChannel = tvmChannel;
         _start = CleanInput(start);
         _end = CleanInput(end);
       }
@@ -87,12 +87,12 @@ namespace TvEngine
       #region struct getter & setters
       public string Channel
       {
-        get { return _channel; }
+        get { return _mpChannel; }
       }
 
-      public string Station
+      public string TvmEpgChannel
       {
-        get { return _station; }
+        get { return _tvmEpgChannel; }
       }
 
       public TimeSpan Start
@@ -130,7 +130,7 @@ namespace TvEngine
     #region class get && set functions
     public ArrayList Stations
     {
-      get { return _stations; }
+      get { return _tvmEpgChannels; }
     }
 
     public bool Canceled
@@ -226,28 +226,6 @@ namespace TvEngine
       return tvChannels;
     }
 
-
-    //public static void ReorganizeTvMovie()
-    //{
-    //  Process updateProcess = new Process();
-
-    //  using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\Gemeinsames"))
-    //  {
-    //    if (rkey != null)
-    //    {
-    //      updateProcess.StartInfo.FileName = string.Format("{0}\\comptvdb.exe", rkey.GetValue("ProgrammPath"));
-    //      updateProcess.StartInfo.Arguments = DatabasePath;
-    //    }
-    //    else
-    //      return;
-    //  }
-
-    //  updateProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
-
-    //  updateProcess.Start();
-    //  updateProcess.WaitForExit();
-    //}
-
     public void Connect()
     {
       LoadMemberSettings();
@@ -284,9 +262,9 @@ namespace TvEngine
         _databaseConnection.Close();
       }
 
-      _stations = new ArrayList();
+      _tvmEpgChannels = new ArrayList();
       foreach (DataRow sender in tvMovieTable.Tables["Sender"].Rows)
-        _stations.Add(sender["Senderkennung"]);
+        _tvmEpgChannels.Add(sender["Senderkennung"]);
 
       _channelList = GetChannels();
     }
@@ -315,9 +293,9 @@ namespace TvEngine
       int maximum = 0;
 
       //Log.Debug("TVMovie: Calculating stations");
-      foreach (string station in _stations)
+      foreach (string tvmChan in _tvmEpgChannels)
         foreach (Mapping mapping in mappingList)
-          if (mapping.Station == station)
+          if (mapping.TvmEpgChannel == tvmChan)
           {
             maximum++;
             break;
@@ -346,7 +324,7 @@ namespace TvEngine
 
       int counter = 0;
 
-      foreach (string station in _stations)
+      foreach (string station in _tvmEpgChannels)
       {
         if (_canceled)
           return;
@@ -357,7 +335,7 @@ namespace TvEngine
         IList allChannels = Channel.ListAll();
 
         foreach (Mapping mapping in mappingList)
-          if (mapping.Station == station)
+          if (mapping.TvmEpgChannel == station)
             channelNames.Add(mapping);
 
         if (channelNames.Count > 0)
@@ -386,16 +364,8 @@ namespace TvEngine
 
       if (!_canceled)
       {
-        // OBSOLETE
         try
-        { 
-          //using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\EWE\\TVGhost\\TVUpdate"))
-          //  if (rkey != null)
-          //  {
-          //    string regLastUpdate = string.Format("{0}", rkey.GetValue("LetztesTVUpdate"));
-          //    lastUpdate = Convert.ToInt64(regLastUpdate.Substring(8));
-          //  }
-
+        {
           setting = layer.GetSetting("TvMovieLastUpdate");
           setting.Value = DateTime.Now.ToString();
           setting.Persist();
@@ -488,7 +458,7 @@ namespace TvEngine
       DataSet tvMovieTable = new DataSet();
 
       foreach (Mapping map in channelNames)
-        if (map.Station == stationName)
+        if (map.TvmEpgChannel == stationName)
         {
           ClearPrograms(map.Channel);
           Log.Debug("TVMovie: Purged old programs for channel {0}", map.Channel);          
@@ -600,7 +570,7 @@ namespace TvEngine
 
             foreach (Channel ch in allChannels)
             {
-              if (ch.Name == channelName.Channel)
+              if (ch.DisplayName == channelName.Channel)
               {
                 progChannel = ch;
                 break;
@@ -712,7 +682,7 @@ namespace TvEngine
       {
         string newStart = mapping.TimeSharingStart;
         string newEnd = mapping.TimeSharingEnd;
-        string newChannel = Channel.Retrieve(mapping.IdChannel).Name;
+        string newChannel = Channel.Retrieve(mapping.IdChannel).DisplayName;
         string newStation = mapping.StationName;
 
         mappingList.Add(new TvMovieDatabase.Mapping(newChannel, newStation, newStart, newEnd));
@@ -725,7 +695,7 @@ namespace TvEngine
     {
       if (_channelList != null)
         foreach (Channel channel in _channelList)
-          if (channel.Name == channelName)
+          if (channel.DisplayName == channelName)
             return true;
 
       return false;
@@ -733,8 +703,8 @@ namespace TvEngine
 
     private bool CheckStation(string stationName)
     {
-      if (_stations != null)
-        foreach (string station in _stations)
+      if (_tvmEpgChannels != null)
+        foreach (string station in _tvmEpgChannels)
           if (station == stationName)
             return true;
 
@@ -960,7 +930,7 @@ namespace TvEngine
       IList allChannels = Channel.ListAll();
       foreach (Channel ch in allChannels)
       {
-        if (ch.Name == channel)
+        if (ch.DisplayName == channel)
         {
           progChannel = ch;
           break;
