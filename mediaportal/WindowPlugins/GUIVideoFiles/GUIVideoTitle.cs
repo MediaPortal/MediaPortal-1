@@ -456,9 +456,8 @@ namespace MediaPortal.GUI.Video
       }
 
       string selectedItemLabel = m_history.Get(currentFolder);
-      SelectedItem = facadeView.SelectedListItem;
-      if (SelectedItem != null)
-        selectedItemLabel = SelectedItem.Label;
+      if (string.IsNullOrEmpty(selectedItemLabel) && facadeView.SelectedListItem != null)
+        selectedItemLabel = facadeView.SelectedListItem.Label;
 
       int itemCount = itemlist.Count;
       if (itemlist.Count > 0)
