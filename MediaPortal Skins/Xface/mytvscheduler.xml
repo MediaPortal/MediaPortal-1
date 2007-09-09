@@ -5,9 +5,8 @@
   <allowoverlay>no</allowoverlay>
   <define>#header.label:646</define>
   <define>#header.image:television_logo.png</define>
-  <define>#header.hover:hover_my tv.png</define>
+  <define>#header.hover:-</define>
   <controls>
-    <import>common.time.xml</import>
     <control>
       <description>BG</description>
       <type>image</type>
@@ -15,6 +14,8 @@
       <width>1366</width>
       <height>768</height>
     </control>
+     <import>common.time.xml</import>
+          <import>common.window2.xml</import>
     <control>
       <type>image</type>
       <id>1</id>
@@ -22,19 +23,20 @@
       <posY>522</posY>
       <width>217</width>
       <height>213</height>
-      <texture>hover_my tv.png</texture>
+      <texture>-</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-    <control>
+      <control>
       <description>Scheduler Text Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>474</posX>
-      <posY>93</posY>
+      <posX>374</posX>
+      <posY>39</posY>
       <label>646</label>
+      <font>font14</font>
       <align>right</align>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -66,10 +68,13 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-      <type>group</type>
+       <type>group</type>
+      <layout>StackLayout</layout>
       <description>group element</description>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <posX>69</posX>
+      <posY>89</posY>
       <control>
         <type>sortbutton</type>
         <id>2</id>
@@ -223,30 +228,40 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-    <control>
-      <description>TV background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>113</posX>
-      <posY>544</posY>
-      <width>235</width>
-      <height>175</height>
-      <colordiffuse>60ffffff</colordiffuse>
-      <texture>previewbackground.png</texture>
+   <control>
+		<description>video rectangle</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>48</posX>
+		<posY>540</posY>
+		<width>330</width>
+		<height>225</height>
+		 <texture>playback_background.png</texture>
+		 <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="500">WindowClose</animation>
-    </control>
+	</control>
     <control>
-      <description>TV preview window</description>
+      <description>video preview window</description>
       <type>videowindow</type>
-      <id>99</id>
-      <posX>121</posX>
-      <posY>550</posY>
-      <width>221</width>
-      <height>161</height>
-      <onup>7</onup>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
+      <id>1</id>
+      <posX>96</posX>
+	  <posY>568</posY>
+	  <width>238</width>
+	  <height>131</height>
+	  <keepaspectratio>yes</keepaspectratio>
+	  <centered>yes</centered>
+	  <action>18</action>
+	  <textureFocus>tv_green_border.png</textureFocus>
+    </control>
+     <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>126</posX>
+      <posY>701</posY>
+      <width>158</width>
+     <label>#percentage</label>
+      <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

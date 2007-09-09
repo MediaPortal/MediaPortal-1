@@ -7,7 +7,7 @@
       <id>1</id>
       <width>1366</width>
       <height>768</height>
-      <texture>background2.png</texture>
+      <texture>background.png</texture>
     </control>
       <control>
 	  <type>image</type>
