@@ -39,10 +39,10 @@
       <type>label</type>
       <id>4</id>
       <posX>398</posX>
-      <posY>333</posY>
+      <posY>319</posY>
       <label>181</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>Black</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>

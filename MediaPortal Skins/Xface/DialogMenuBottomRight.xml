@@ -30,11 +30,11 @@
         <description>Heading text label</description>
         <type>label</type>
         <id>4</id>
-        <posX>683</posX>
-        <posY>560</posY>
+        <posX>663</posX>
+        <posY>547</posY>
         <label>181</label>
         <font>font10</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>Black</textcolor>
       </control>
       <control>
         <description>Label text </description>
@@ -60,9 +60,10 @@
         <description>Exit button</description>
         <type>button</type>
         <id>2</id>
-        <posX>1157</posX>
-        <posY>560</posY>
-        <width>42</width>
+        <posX>987</posX>
+        <posY>540</posY>
+        <width>38</width>
+        <height>38</height>
         <textureFocus>dialogue_shutdown_focus.png</textureFocus>
         <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
         <label>-</label>

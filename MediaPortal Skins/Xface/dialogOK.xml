@@ -9,8 +9,8 @@
       <description>OK button</description>
       <type>button</type>
       <id>10</id>
-      <posX>890</posX>
-      <posY>294</posY>
+      <posX>910</posX>
+      <posY>274</posY>
       <textYOff>9</textYOff>
       <width>48</width>
       <height>48</height>

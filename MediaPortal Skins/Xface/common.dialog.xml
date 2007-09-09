@@ -12,10 +12,10 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>366</posX>
+      <posX>330</posX>
       <posY>250</posY>
-      <width>634</width>
-      <height>268</height>
+      <width>724</width>
+      <height>388</height>
       <texture>dialog_background.png</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -29,7 +29,7 @@
       <width>480</width>
       <label>-</label>
       <font>font13</font>
-      <textcolor>ffffffff</textcolor>
+      <textcolor>Black</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>

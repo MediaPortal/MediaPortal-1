@@ -16,8 +16,8 @@
       <type>image</type>
       <id>0</id>
       <posX>335</posX>
-      <posY>261</posY>
-      <width>800</width>
+      <posY>281</posY>
+      <width>750</width>
       <height>328</height>
       <texture>dialog_background.png</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
@@ -31,7 +31,7 @@
       <posY>306</posY>
       <label>934</label>
       <font>font13</font>
-      <textcolor>ffffffff</textcolor>
+      <textcolor>Black</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -87,11 +87,11 @@
       <description>OK button</description>
       <type>button</type>
       <id>12</id>
-      <posX>1005</posX>
-      <posY>313</posY>
+      <posX>965</posX>
+      <posY>297</posY>
       <textYOff>9</textYOff>
-      <width>58</width>
-      <height>58</height>
+      <width>54</width>
+      <height>54</height>
       <textureFocus>dialogue_ok_focus.png</textureFocus>
       <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
       <label>-</label>

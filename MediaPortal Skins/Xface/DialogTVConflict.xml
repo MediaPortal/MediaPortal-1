@@ -25,24 +25,13 @@
 			<animation>WindowClose</animation>
 		</control>
 		<control>
-			<type>image</type>
-			<id>6</id>
-			<posX>208</posX>
-			<posY>104</posY>
-			<width>950</width>
-			<height>600</height>
-			<texture>dialog_background.png</texture>
-			<animation>WindowOpen</animation>
-			<animation>WindowClose</animation>
-		</control>
-		<control>
 			<description>Heading text label</description>
 			<type>label</type>
 			<id>4</id>
 			<posX>303</posX>
-			<posY>200</posY>
+			<posY>170</posY>
 			<font>font16</font>
-			<textcolor>FFFFFFFF</textcolor>
+			<textcolor>Black</textcolor>
 			<animation>WindowOpen</animation>
 			<animation>WindowClose</animation>
 		</control>
@@ -51,7 +40,7 @@
 			<type>listcontrol</type>
 			<id>3</id>
 			<posX>303</posX>
-			<posY>270</posY>
+			<posY>240</posY>
 			<width>750</width>
 			<height>213</height>
 			<textXOff>47</textXOff>
@@ -82,9 +71,9 @@
 			<description>Skip new Recording</description>
 			<type>button</type>
 			<id>11</id>
-			<posX>493</posX>
+			<posX>513</posX>
 			<posY>460</posY>
-			<width>400</width>
+			<width>300</width>
 			<label>1110</label>
 			<onup>3</onup>
 			<ondown>12</ondown>
@@ -93,9 +82,9 @@
 			<description>Skip conflicting Recording</description>
 			<type>button</type>
 			<id>12</id>
-			<posX>493</posX>
+			<posX>513</posX>
 			<posY>513</posY>
-			<width>400</width>
+			<width>300</width>
 			<label>1111</label>
 			<onup>11</onup>
 			<ondown>13</ondown>
@@ -104,9 +93,9 @@
 			<description>Keep Conflict</description>
 			<type>button</type>
 			<id>13</id>
-			<posX>493</posX>
+			<posX>513</posX>
 			<posY>566</posY>
-			<width>400</width>
+			<width>300</width>
 			<label>1112</label>
 			<onup>12</onup>
 			<ondown>3</ondown>

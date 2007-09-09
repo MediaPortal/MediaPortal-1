@@ -29,11 +29,11 @@
       <description>Heading text label</description>
       <type>label</type>
       <id>4</id>
-      <posX>379</posX>
-      <posY>133</posY>
+      <posX>359</posX>
+      <posY>113</posY>
       <label>181</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>Black</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -41,10 +41,10 @@
       <description>Exit button</description>
       <type>button</type>
       <id>2</id>
-      <posX>1081</posX>
-      <posY>133</posY>
-      <width>58</width>
-      <height>58</height>
+      <posX>841</posX>
+      <posY>101</posY>
+      <width>50</width>
+      <height>50</height>
       <textureFocus>dialogue_shutdown_focus.png</textureFocus>
       <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
       <label>-</label>
@@ -59,8 +59,8 @@
       <description>textarea</description>
       <type>textbox</type>
       <id>3</id>
-      <posX>303</posX>
-      <posY>200</posY>
+      <posX>285</posX>
+      <posY>170</posY>
       <width>600</width>
       <height>346</height>
       <onleft>2</onleft>

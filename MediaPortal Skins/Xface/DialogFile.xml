@@ -8,18 +8,18 @@
     <control>
       <type>image</type>
       <id>100</id>
-      <posX>390</posX>
-      <posY>401</posY>
+      <posX>458</posX>
+      <posY>361</posY>
       <width>460</width>
-      <texture>osd_progress_background.png</texture>
+      <texture>osd_progress_background2.png</texture>
     </control>
     <control>
       <description>progress control</description>
       <type>progress</type>
       <id>20</id>
-      <posX>369</posX>
-      <posY>400</posY>
-      <width>489</width>
+     <posX>470</posX>
+      <posY>358</posY>
+      <width>430</width>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -30,7 +30,7 @@
       <posX>388</posX>
       <posY>440</posY>
       <width>140</width>
-      <height>50</height>
+      <height>40</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>107</label>
@@ -48,7 +48,7 @@
       <posX>622</posX>
       <posY>440</posY>
       <width>140</width>
-      <height>50</height>
+      <height>40</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>106</label>
@@ -66,7 +66,7 @@
       <posX>388</posX>
       <posY>493</posY>
       <width>140</width>
-      <height>50</height>
+      <height>40</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>511</label>
@@ -84,7 +84,7 @@
       <posX>622</posX>
       <posY>493</posY>
       <width>140</width>
-      <height>50</height>
+      <height>40</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>512</label>
@@ -102,7 +102,7 @@
       <posX>857</posX>
       <posY>440</posY>
       <width>140</width>
-      <height>50</height>
+      <height>40</height>
       <textureFocus>small_button_focus.png</textureFocus>
       <textureNoFocus>small_button_nofocus.png</textureNoFocus>
       <label>510</label>

@@ -31,18 +31,19 @@
         <type>label</type>
         <id>3</id>
         <posX>677</posX>
-        <posY>560</posY>
+        <posY>546</posY>
         <label>181</label>
         <font>font10</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <textcolor>Black</textcolor>
       </control>
       <control>
         <description>OK button</description>
         <type>button</type>
         <id>4</id>
         <posX>1077</posX>
-        <posY>564</posY>
-        <width>42</width>
+        <posY>540</posY>
+        <width>38</width>
+        <height>38</height>
         <textureFocus>dialogue_ok_focus.png</textureFocus>
         <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
         <label>-</label>

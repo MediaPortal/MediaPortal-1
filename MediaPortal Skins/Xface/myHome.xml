@@ -11,6 +11,7 @@
       <id>1</id>
       <width>1366</width>
       <height>768</height>
+      <texture>background5.png</texture>
     </control>
     <control>
       <description>background image</description>
@@ -29,8 +30,6 @@
       <type>menu</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="rotatey" start="0" end="10" center="300,0" tween="back" ease="easein"  time="500">focus</animation>
-      <animation effect="rotatey" start="10" end="0" center="300,0" tween="back" ease="easein"   time="500">unfocus</animation>
       <id>50</id>
       <posX>290</posX>
       <posY>60</posY>
