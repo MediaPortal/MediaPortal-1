@@ -604,3 +604,8 @@ STDMETHODIMP CVideoPin::GetCurrentPosition(LONGLONG *pCurrent)
  // LogDebug("vid:GetCurrentPosition");
   return E_NOTIMPL;//CSourceSeeking::GetCurrentPosition(pCurrent);
 }
+
+STDMETHODIMP CVideoPin::Notify(IBaseFilter * pSender, Quality q)
+{
+    return E_NOTIMPL;
+}

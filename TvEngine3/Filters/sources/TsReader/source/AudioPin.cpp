@@ -601,3 +601,8 @@ STDMETHODIMP CAudioPin::GetCurrentPosition(LONGLONG *pCurrent)
  // LogDebug("aud:GetCurrentPosition");
   return E_NOTIMPL;//CSourceSeeking::GetCurrentPosition(pCurrent);
 }
+
+STDMETHODIMP CAudioPin::Notify(IBaseFilter * pSender, Quality q)
+{
+    return E_NOTIMPL;
+}

@@ -58,6 +58,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_iPatVersion=-1;
   m_bSetAudioDiscontinuity=false;
   m_bSetVideoDiscontinuity=false;
+  m_reader=NULL;
 
   //get ac3 preference from registry key
   HKEY key;
@@ -505,7 +506,7 @@ bool CDeMultiplexer::EndOfFile()
 bool CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
 {
 	CAutoLock lock (&m_sectionRead);
-  
+  if (m_reader==NULL) return false;
   DWORD dwTick=GetTickCount();
   byte buffer[READ_SIZE];
   while (true)

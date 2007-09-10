@@ -48,6 +48,8 @@ public:
   STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
   STDMETHODIMP GetDuration(LONGLONG *pDuration);
   STDMETHODIMP GetCurrentPosition(LONGLONG *pCurrent);
+  STDMETHODIMP Notify(IBaseFilter * pSender, Quality q);
+
 
 	HRESULT OnThreadStartPlay();
 	void SetStart(CRefTime rtStartTime);

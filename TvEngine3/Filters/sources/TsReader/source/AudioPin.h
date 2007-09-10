@@ -48,6 +48,7 @@ public:
   STDMETHODIMP GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest );
   STDMETHODIMP GetDuration(LONGLONG *pDuration);
   STDMETHODIMP GetCurrentPosition(LONGLONG *pCurrent);
+  STDMETHODIMP Notify(IBaseFilter * pSender, Quality q);
 
 	HRESULT OnThreadStartPlay();
 	void SetStart(CRefTime rtStartTime);
