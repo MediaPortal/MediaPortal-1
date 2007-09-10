@@ -32,25 +32,21 @@ class CPesDecoder
 public:
 	CPesDecoder(CPesCallback* callback);
 	virtual ~CPesDecoder(void);
-	void					SetMaxLength(int len);
 	void					SetPid(int pid);
 	int						GetPid();
 	bool					OnTsPacket(byte* tsPacket);
 	void					Reset();
 	int						GetStreamId();
-	bool					IsAudio();
-	bool					IsVideo();
 	void					SetStreamId(int streamId);
 private:
-  bool          m_bStart;
-  int           m_iPesHeaderLen;
-  byte          m_pesHeader[256];
+	bool          m_bStart;
+	int           m_iPesHeaderLen;
+	byte          m_pesHeader[256];
 	CPesCallback* m_pCallback;
 	unsigned long m_packets;
 	int					  m_pid;
 	byte*					m_pesBuffer;
-	int						m_iWritePos;
-	int						m_iMaxLength;
+	int						m_iWritePos; // next free position in buffer
 	int						m_iStreamId;
-  int           m_iPesLenght;
+  int						m_iPesLength;
 };
