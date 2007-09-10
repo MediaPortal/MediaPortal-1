@@ -72,8 +72,8 @@ namespace MediaPortal.Music.Database
     #region Constants
     const int MAX_QUEUE_SIZE = 50;
     const int HANDSHAKE_INTERVAL = 60;     //< In minutes.
-    const int CONNECT_WAIT_TIME = 3;      //< Min secs between connects.
-    const string CLIENT_NAME = "mpm"; //assigned by Russ Garrett from Last.fm Ltd.
+    const int CONNECT_WAIT_TIME = 3;       //< Min secs between connects.
+    const string CLIENT_NAME = "mpm";      //assigned by Russ Garrett from Last.fm Ltd.
     const string CLIENT_VERSION = "0.1";
     const string SCROBBLER_URL = "http://post.audioscrobbler.com";
     const string RADIO_SCROBBLER_URL = "http://ws.audioscrobbler.com/radio/";
@@ -389,7 +389,7 @@ namespace MediaPortal.Music.Database
         {
           try
           {
-            Log.Debug("AudioscrobblerBase: {0}", "trying to kill submit thread (no longer needed)");
+            Log.Debug("AudioscrobblerBase: trying to kill submit thread (no longer needed)");
             StopSubmitQueueThread();
           }
           catch (Exception ex)
@@ -452,15 +452,23 @@ namespace MediaPortal.Music.Database
 
       if (ReasonForHandshake != HandshakeType.Init && !_signedIn)
       {
-        Log.Warn("AudioscrobblerBase: {0}", "Disconnected - not attempting {0} handshake", ReasonForHandshake.ToString());
-        workerFailed(ReasonForHandshake, DateTime.MinValue, new Exception("Disconnected!"));
+         if (ReasonForHandshake == HandshakeType.PreRadio)
+         {
+           Log.Warn("AudioscrobblerBase: Disconnected - nevertheless trying radio handshake to listen without submits");
+           AttemptRadioHandshake();
+           return;
+         }
+         else
+         {
+           Log.Warn("AudioscrobblerBase: Disconnected - not attempting {0} handshake", ReasonForHandshake.ToString());
+           workerFailed(ReasonForHandshake, DateTime.MinValue, new Exception("Disconnected!"));
+           return;
+         }
       }
-      else
-      {
-        BackgroundWorker worker = new BackgroundWorker();
-        worker.DoWork += new DoWorkEventHandler(Worker_TryHandshake);
-        worker.RunWorkerAsync(ReasonForHandshake);
-      }
+
+      BackgroundWorker worker = new BackgroundWorker();
+      worker.DoWork += new DoWorkEventHandler(Worker_TryHandshake);
+      worker.RunWorkerAsync(ReasonForHandshake);      
     }
 
     private static void Worker_TryHandshake(object sender, DoWorkEventArgs e)
@@ -594,15 +602,17 @@ namespace MediaPortal.Music.Database
     private static bool AttemptRadioHandshake()
     {
       // http://ws.audioscrobbler.com/radio/handshake.php?version=1.3.1.1&platform=win32&username=f1n4rf1n&passwordmd5=3847af7ab43a1c31503e8bef7736c41f&language=de&player=wmplayer HTTP/1.1
+      
       string tmpUser = System.Web.HttpUtility.UrlEncode(username).ToLower();
       string tmpPass = HashSingleString(password);
       string url = RADIO_SCROBBLER_URL
                  + "handshake.php?"
-                 + "version=" + "1.3.1.1"
+                 + "version=" + "1.3.2.9"
                  + "&platform=" + "win32"
                  + "&username=" + tmpUser
                  + "&passwordmd5=" + tmpPass
-                 + "&language=" + "en";
+                 + "&language=" + "en"
+                 + "&player=unknown";
 
       // Parse handshake response
       bool success = GetResponse(url, "", true);
