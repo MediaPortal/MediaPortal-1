@@ -179,6 +179,92 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 					{
 						//					LogDebug("epg:     private data descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 					}
+					else if (descriptor_tag==0x89)
+					{
+						/*89: B2 05
+						is the Movie rating as per http://www.mpaa.org
+						first 3 bits are:
+
+						0x1: *
+						0x2: *+
+						0x3: **
+						0x4: **+
+						0x5: ***
+						0x6: ***+
+						0x7: ****
+
+						next 3 bits are:
+
+						0x0: NA
+						0x1: G
+						0x2: PG
+						0x3: PG-13
+						0x4: R
+						0x5: NC-17
+						0x6: R
+						0x7: NR
+
+						the next bits and bytes describe, but i haven't figured out the order yet:
+						SC,L,N,V 
+						http://dvbn.happysat.org/viewtopic.php?t=16912&highlight=parental+rating
+
+						*/
+						byte bRating=buf[start+off+2]&0x7;
+						string starRating="<unrated>";
+						switch (bRating)
+						{
+							case 1:
+								starRating="*";
+								break;
+							case 2:
+								starRating="*+";
+								break;
+							case 3:
+								starRating="**";
+								break;
+							case 4:
+								starRating="**+";
+								break;
+							case 5:
+								starRating="***";
+								break;
+							case 6:
+								starRating="***+";
+								break;
+							case 7:
+								starRating="****";
+								break;
+						}
+						byte bPRating=buf[start+off+3]&0x38;
+						string pRating="<unknown>";
+						switch (bPRating)
+						{
+							case 0:
+								pRating="NR";
+							case 1:
+								pRating="G";
+								break;
+							case 2:
+								pRating="PG";
+								break;
+							case 3:
+								pRating="PG-13";
+								break;
+							case 4:
+								pRating="R";
+								break;
+							case 5:
+								pRating="AO";
+								break;
+							case 6:
+								pRating="<null rating>";
+								break;
+							case 7:
+								pRating="NC-17";
+								break;
+						}
+						LogDebug("epg:  star rating: %s parental rating: %s",starRating.c_str(),pRating.c_str());
+					}
 					else if (descriptor_tag ==0x91)
 					{
 						//					LogDebug("epg:     dish network short description descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
