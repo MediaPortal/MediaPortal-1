@@ -83,47 +83,51 @@ namespace MediaPortal.WinampPlayer
     /// </summary>
     private void InitializeComponent()
     {
-      this.buttonEnable = new MediaPortal.UserInterface.Controls.MPButton();
-      this.extensionBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.SuspendLayout();
-      // 
-      // buttonEnable
-      // 
-      this.buttonEnable.Location = new System.Drawing.Point(136, 56);
-      this.buttonEnable.Name = "buttonEnable";
-      this.buttonEnable.TabIndex = 3;
-      this.buttonEnable.Text = "Save";
-      this.buttonEnable.Click += new System.EventHandler(this.buttonEnable_Click);
-      // 
-      // extensionBox
-      // 
-      this.extensionBox.Location = new System.Drawing.Point(72, 16);
-      this.extensionBox.Name = "extensionBox";
-      this.extensionBox.Size = new System.Drawing.Size(256, 20);
-      this.extensionBox.TabIndex = 4;
-      this.extensionBox.Text = ".cda, .mp3, .mp2, .mp1, .aac, .apl, .wav, .voc, .au, .snd, .aif, .aiff";
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(8, 16);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(64, 23);
-      this.label1.TabIndex = 5;
-      this.label1.Text = "Extensions";
-      // 
-      // ConfigurationForm
-      // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(344, 85);
-      this.Controls.Add(this.label1);
-      this.Controls.Add(this.extensionBox);
-      this.Controls.Add(this.buttonEnable);
-      this.Name = "ConfigurationForm";
-      this.Text = "Configuration";
-      this.Closing += new System.ComponentModel.CancelEventHandler(this.ConfigurationForm_Closing);
-      this.Load += new System.EventHandler(this.ConfigurationForm_Load);
-      this.ResumeLayout(false);
+        this.buttonEnable = new MediaPortal.UserInterface.Controls.MPButton();
+        this.extensionBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+        this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.SuspendLayout();
+        // 
+        // buttonEnable
+        // 
+        this.buttonEnable.Location = new System.Drawing.Point(136, 56);
+        this.buttonEnable.Name = "buttonEnable";
+        this.buttonEnable.Size = new System.Drawing.Size(75, 23);
+        this.buttonEnable.TabIndex = 3;
+        this.buttonEnable.Text = "Save";
+        this.buttonEnable.UseVisualStyleBackColor = true;
+        this.buttonEnable.Click += new System.EventHandler(this.buttonEnable_Click);
+        // 
+        // extensionBox
+        // 
+        this.extensionBox.BorderColor = System.Drawing.Color.Empty;
+        this.extensionBox.Location = new System.Drawing.Point(72, 16);
+        this.extensionBox.Name = "extensionBox";
+        this.extensionBox.Size = new System.Drawing.Size(256, 20);
+        this.extensionBox.TabIndex = 4;
+        this.extensionBox.Text = ".cda, .mp3, .mp2, .mp1, .aac, .apl, .wav, .voc, .au, .snd, .aif, .aiff, .wma";
+        // 
+        // label1
+        // 
+        this.label1.Location = new System.Drawing.Point(8, 16);
+        this.label1.Name = "label1";
+        this.label1.Size = new System.Drawing.Size(64, 23);
+        this.label1.TabIndex = 5;
+        this.label1.Text = "Extensions";
+        // 
+        // ConfigurationForm
+        // 
+        this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+        this.ClientSize = new System.Drawing.Size(344, 85);
+        this.Controls.Add(this.label1);
+        this.Controls.Add(this.extensionBox);
+        this.Controls.Add(this.buttonEnable);
+        this.Name = "ConfigurationForm";
+        this.Text = "Configuration";
+        this.Closing += new System.ComponentModel.CancelEventHandler(this.ConfigurationForm_Closing);
+        this.Load += new System.EventHandler(this.ConfigurationForm_Load);
+        this.ResumeLayout(false);
+        this.PerformLayout();
 
     }
     #endregion

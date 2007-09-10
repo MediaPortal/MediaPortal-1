@@ -350,27 +350,7 @@ namespace MediaPortal.WinampPlayer
       m_winampController.Position = fPercent;
     }
 
-    /// <summary>
-    /// The main entry point for the application.
-    /// </summary>
-    [STAThread]
-    static void Main(string[] args)
-    {
-      try
-      {
-        string filename = @"C:\WinApps\CDex\my music\George Winston\December\05-Carol Of The Bells.mp3";
-        WinampPlugin prog = new WinampPlugin();
-        prog.Play(filename);
-        //WinampPlugin.
-      }
-      catch (System.Exception e)
-      {
-        System.Console.Error.WriteLine(e);
-      }
-      System.Console.In.ReadLine();
-    }
-
-    public override void Process()
+      public override void Process()
     {
       if (!Playing)
         return;
