@@ -161,12 +161,11 @@
       <description>location label</description>
       <type>label</type>
       <id>10</id>
-      <posX>552</posX>
-      <posY>100</posY>
+      <posX>88</posX>
+      <posY>626</posY>
       <label>-</label>
-      <font>font13</font>
-      <align>right</align>
-      <textcolor>White</textcolor>
+      <font>font16</font>      
+      <textcolor>90010101</textcolor>
     </control>
     <control>
       <description>update time label</description>
