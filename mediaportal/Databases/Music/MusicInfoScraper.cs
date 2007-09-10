@@ -149,35 +149,20 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        string body;
-        WebRequest req = WebRequest.Create(url);
-        req.Method="POST";
-        req.ContentType = "application/x-www-form-urlencoded";
+        string strBody;
 
-        byte [] bytes = null;
-        // Get the data that is being posted (or sent) to the server
-        bytes = System.Text.Encoding.ASCII.GetBytes (strData);
-        req.ContentLength = bytes.Length;
-        // 1. Get an output stream from the request object
-        using (Stream outputStream = req.GetRequestStream())
-        {
+        string strUri = String.Format("{0}?{1}", url, strData);
+        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strUri);
+        req.ProtocolVersion = HttpVersion.Version11;
+        req.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; Maxthon; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04307.00";
+        HttpWebResponse result = (HttpWebResponse)req.GetResponse();
+        Stream ReceiveStream = result.GetResponseStream();
 
-          // 2. Post the data out to the stream
-          outputStream.Write(bytes, 0, bytes.Length);
-
-          // 3. Close the output stream and send the data out to the web server
-          outputStream.Close();
-        }
-
-
-        WebResponse result = req.GetResponse();
-        using (Stream ReceiveStream = result.GetResponseStream())
-        {
-          Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
-          StreamReader sr = new StreamReader(ReceiveStream, encode);
-          body = sr.ReadToEnd();
-          return body;
-        }
+        // 1252 is encoding for Windows format
+        Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
+        StreamReader sr = new StreamReader(ReceiveStream, encode);
+        strBody = sr.ReadToEnd();
+        return strBody;
       }
       catch(Exception)
       {
