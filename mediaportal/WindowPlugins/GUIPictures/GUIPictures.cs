@@ -1702,7 +1702,7 @@ namespace MediaPortal.GUI.Pictures
         using (PictureDatabase dbs = new PictureDatabase())
         {
           List<string> Days = new List<string>();
-          int Count = dbs.ListDays(year, month, ref Days);
+          int Count = dbs.ListDays(month, year, ref Days);
           foreach (string day in Days)
           {
             item = new GUIListItem(day);
@@ -1733,7 +1733,7 @@ namespace MediaPortal.GUI.Pictures
           }
         }
       }
-      else if (strNewDirectory.Length == 9)
+      else if (strNewDirectory.Length == 10)
       {
         // Pics from one day
         string year = strNewDirectory.Substring(0, 4);
