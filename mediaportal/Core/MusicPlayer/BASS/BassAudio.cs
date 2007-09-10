@@ -231,6 +231,7 @@ namespace MediaPortal.Player
     private SYNCPROC PlaybackStreamFreedProcDelegate = null;
     private SYNCPROC MetaTagSyncProcDelegate = null;
     private DOWNLOADPROC LastFmDownloadProcDelegate = null;   // Download Proc, when playing a last.fm stream
+    private DOWNLOADPROC DownloadProcDelegate = null;   // Download Proc to receive status information for a stream
     #endregion
 
     #region Variables
@@ -750,6 +751,7 @@ namespace MediaPortal.Player
 
         BassRegistration.BassRegistration.Register();
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_GVOL_STREAM, _StreamVolume);
+
         if (_Mixing || _useASIO)
           // In case of mixing use a Buffer of 500ms only, because the Mixer plays the complete bufer, before for example skipping
           BufferingMS = 500;
@@ -764,6 +766,7 @@ namespace MediaPortal.Player
         PlaybackStreamFreedProcDelegate = new SYNCPROC(PlaybackStreamFreedProc);
         MetaTagSyncProcDelegate = new SYNCPROC(MetaTagSyncProc);
         LastFmDownloadProcDelegate = new DOWNLOADPROC(LastFmDownload);
+        DownloadProcDelegate = new DOWNLOADPROC(DownloadProc);
 
         StreamEventSyncHandles.Add(new List<int>());
         StreamEventSyncHandles.Add(new List<int>());
@@ -1502,6 +1505,9 @@ namespace MediaPortal.Player
 
         if (filePath != String.Empty)
         {
+          // Turn on parsing of ASX files
+          Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_WMA_ASX, 1);
+
           // We need different flags for standard BASS and ASIO / Mixing
           BASSStream streamFlags;
           if (_useASIO || _Mixing)
@@ -1527,7 +1533,7 @@ namespace MediaPortal.Player
             _isRadio = true;  // We're playing Internet Radio Stream
             _isLastFMRadio = false;
             _lastFMSongStartPosition = 0;
-            Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_WMA_ASX, 1);   // Turn on parsing of ASX files
+
             // Create an Internet Stream
             if (Util.Utils.IsLastFMStream(filePath))
             {
@@ -1537,7 +1543,7 @@ namespace MediaPortal.Player
               _bufferOffset = Bass.BASS_ChannelSeconds2Bytes(stream, (float)(_BufferingMS / 1000));
             }
             else
-              stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, null, 0);
+              stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags | BASSStream.BASS_STREAM_STATUS , DownloadProc, 0);
 
             if (stream != 0)
             {
@@ -2125,6 +2131,32 @@ namespace MediaPortal.Player
         InternetStreamSongChanged(this);
     }
 
+
+    /// <summary>
+    /// This Procedure is called, when BASS starts the download of an Internet Stream.
+    /// Because of the BASS_STREAM_STATUS flag set, only the http parms are being sent and processed.
+    /// </summary>
+    /// <param name="buffer"></param>
+    /// <param name="length"></param>
+    /// <param name="user"></param>
+    private void DownloadProc(IntPtr buffer, int length, int user)
+    {
+      try
+      {
+        if (buffer != IntPtr.Zero)
+        {
+          string tags = Marshal.PtrToStringAnsi(buffer);
+          if (tags != null)
+          {
+            Log.Debug("Bass Stream Status: {0}", tags);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("BASS: Exception in Downloadproc: {0} {1}", ex.Message, ex.StackTrace);
+      }
+    }
 
     /// <summary>
     /// This Procedure is automatically called whenever BASS plays Last.FM Radio. it detects song changes, which are
