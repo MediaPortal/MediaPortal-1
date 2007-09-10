@@ -658,5 +658,5 @@ GO
 DELETE FROM Version
 GO
 
-INSERT INTO Version(versionNumber) values(30)
+INSERT INTO Version(versionNumber) values(31)
 GO
