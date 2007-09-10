@@ -74,13 +74,12 @@
         <backgroundwidth>427</backgroundwidth>
         <backgroundheight>446</backgroundheight>
           -->
-          <thumbs flipY="true" diffuse="Thumb_Mask.png"/>
-          <InfoImage flipY="true" diffuse="Thumb_Mask.png"/>
+          <thumbs flipY="true" diffuse="Thumb_Mask.png"></thumbs>
+          <InfoImage flipY="true" diffuse="Thumb_Mask.png"></InfoImage>
           <showFrame>yes</showFrame>
           <showFolder>yes</showFolder>
           <showBackGround>no</showBackGround>
           <showInfoImage>yes</showInfoImage>
-          <enableFocusZoom>no</enableFocusZoom>
           <thumbAnimation effect="zoom" start="100,100" end="150,150" time="300">focus</thumbAnimation>
           <thumbAnimation effect="zoom" start="150,150" end="100,100" time="300">unfocus</thumbAnimation>
         </control>

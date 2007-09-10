@@ -14,10 +14,10 @@
     <control>
       <type>image</type>
       <id>1</id>
-       <posX>89</posX>
+      <posX>89</posX>
       <posY>4</posY>
-       <width>220</width>
-       <height>55</height>
+      <width>220</width>
+      <height>55</height>
       <texture>info_logo.png</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -67,7 +67,7 @@
       <posY>186</posY>
       <label>9002</label>
       <font>font13</font>
-     <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -79,7 +79,7 @@
       <posY>213</posY>
       <label>9003</label>
       <font>font13</font>
-     <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -91,7 +91,7 @@
       <posY>240</posY>
       <label>9004</label>
       <font>font13</font>
-     <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -115,7 +115,7 @@
       <posY>440</posY>
       <label>9006</label>
       <font>font13</font>
-     <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -140,7 +140,7 @@
       <label>9008</label>
       <font>font13</font>
       <align>left</align>
-     <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -164,7 +164,7 @@
       <posY>386</posY>
       <label>9010</label>
       <font>font13</font>
-     <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -176,7 +176,7 @@
       <posY>413</posY>
       <label>9011</label>
       <font>font13</font>
-     <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>

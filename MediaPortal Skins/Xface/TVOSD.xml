@@ -33,7 +33,7 @@
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-      <control>
+    <control>
       <description>clock</description>
       <type>image</type>
       <id>0</id>
@@ -59,7 +59,7 @@
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-     <control>
+    <control>
       <description>Progress Bar</description>
       <type>progress</type>
       <id>1</id>
@@ -102,7 +102,6 @@
       <toplabel />
       <font>font13</font>
       <textcolor>FF000000</textcolor>
-       <visible>no</visible>
     </control>
     <control>
       <description>rec logo</description>

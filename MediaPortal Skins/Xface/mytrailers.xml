@@ -64,7 +64,7 @@
       <posX>454</posX>
       <posY>406</posY>
       <label>Cast:</label>
-       <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
     </control>
     <control>
       <type>label</type>
@@ -83,7 +83,7 @@
       <posX>454</posX>
       <posY>340</posY>
       <label>172</label>
-       <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
     </control>
     <control>
       <type>label</type>
@@ -111,7 +111,7 @@
       <posX>454</posX>
       <posY>373</posY>
       <label>174</label>
-       <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
     </control>
     <control>
       <type>label</type>
@@ -195,7 +195,7 @@
       <height>245</height>
       <texture>playback_background.png</texture>
     </control>
-     <control>
+    <control>
       <type>image</type>
       <description>movie poster</description>
       <id>24</id>
@@ -204,6 +204,5 @@
       <width>110</width>
       <height>162</height>
     </control>
-
   </controls>
 </window>

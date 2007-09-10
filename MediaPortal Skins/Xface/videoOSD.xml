@@ -4,7 +4,7 @@
   <defaultcontrol>213</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-   <import>common.progressbar.xml</import>
+    <import>common.progressbar.xml</import>
     <control>
       <description>Current Time Info</description>
       <type>label</type>
@@ -30,7 +30,7 @@
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-      <control>
+    <control>
       <description>clock</description>
       <type>image</type>
       <id>0</id>
@@ -46,7 +46,7 @@
       <description>TV Logo</description>
       <type>image</type>
       <id>102</id>
-     <posX>420</posX>
+      <posX>420</posX>
       <posY>186</posY>
       <width>50</width>
       <height>68</height>
@@ -60,18 +60,17 @@
       <description>Movie Name</description>
       <id>36</id>
       <type>fadelabel</type>
-       <width>310</width>
+      <width>310</width>
       <height>30</height>
       <posX>500</posX>
       <posY>195</posY>
-      <align>left</align>
       <font>font13</font>
       <label>#Play.Current.Title</label>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-     <control>
+    <control>
       <description>Progress Bar</description>
       <type>progress</type>
       <id>1</id>
@@ -133,7 +132,7 @@
       <textureNoFocus>osd_subtitles_nofocus.png</textureNoFocus>
       <label>-</label>
       <font>-</font>
-        <onleft>218</onleft>
+      <onleft>218</onleft>
       <onright>213</onright>
       <onup>218</onup>
       <ondown>218</ondown>
@@ -144,7 +143,7 @@
       <description>Sub Menu Background (subtitles)</description>
       <type>image</type>
       <id>302</id>
-     <posX>304</posX>
+      <posX>304</posX>
       <posY>50</posY>
       <width>758</width>
       <height>696</height>

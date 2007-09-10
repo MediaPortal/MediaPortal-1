@@ -55,7 +55,7 @@
       <posY>389</posY>
       <width>114</width>
       <height>85</height>
-       <texture flipY="true" diffuse="Thumb_Mask.png">weather\logos\TWClogo_64px.png</texture>
+      <texture flipY="true" diffuse="Thumb_Mask.png">weather\logos\TWClogo_64px.png</texture>
     </control>
     <control>
       <description>Current Temp static label</description>
@@ -478,7 +478,7 @@
       <type>image</type>
       <id>1200</id>
       <label>-</label>
-       <posX>455</posX>
+      <posX>455</posX>
       <posY>79</posY>
       <width>720</width>
       <height>476</height>

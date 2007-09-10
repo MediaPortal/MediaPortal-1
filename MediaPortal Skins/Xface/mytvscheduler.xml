@@ -14,8 +14,8 @@
       <width>1366</width>
       <height>768</height>
     </control>
-     <import>common.time.xml</import>
-          <import>common.window2.xml</import>
+    <import>common.time.xml</import>
+    <import>common.window2.xml</import>
     <control>
       <type>image</type>
       <id>1</id>
@@ -27,7 +27,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-      <control>
+    <control>
       <description>Scheduler Text Label</description>
       <type>label</type>
       <id>1</id>
@@ -68,7 +68,7 @@
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
     <control>
-       <type>group</type>
+      <type>group</type>
       <layout>StackLayout</layout>
       <description>group element</description>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -228,39 +228,39 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-   <control>
-		<description>video rectangle</description>
-		<type>image</type>
-		<id>0</id>
-		<posX>48</posX>
-		<posY>540</posY>
-		<width>330</width>
-		<height>225</height>
-		 <texture>playback_background.png</texture>
-		 <animation effect="fade" time="500">WindowClose</animation>
+    <control>
+      <description>video rectangle</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>48</posX>
+      <posY>540</posY>
+      <width>330</width>
+      <height>225</height>
+      <texture>playback_background.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
-	</control>
+    </control>
     <control>
       <description>video preview window</description>
       <type>videowindow</type>
       <id>1</id>
       <posX>96</posX>
-	  <posY>568</posY>
-	  <width>238</width>
-	  <height>131</height>
-	  <keepaspectratio>yes</keepaspectratio>
-	  <centered>yes</centered>
-	  <action>18</action>
-	  <textureFocus>tv_green_border.png</textureFocus>
+      <posY>568</posY>
+      <width>238</width>
+      <height>131</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
     </control>
-     <control>
+    <control>
       <description>progress bar</description>
       <type>progress</type>
       <id>20</id>
       <posX>126</posX>
       <posY>701</posY>
       <width>158</width>
-     <label>#percentage</label>
+      <label>#percentage</label>
       <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>

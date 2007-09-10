@@ -20,7 +20,6 @@
       <type>progress</type>
       <id>20</id>
       <posX>458</posX>
-      <posY>433</posY>
       <width>460</width>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>

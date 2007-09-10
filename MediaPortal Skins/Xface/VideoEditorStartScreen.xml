@@ -56,7 +56,7 @@
         <subitem>2077</subitem>
         <subitem>2078</subitem>
         <subitem>2071</subitem>
-				<subitem>2066</subitem>
+        <subitem>2066</subitem>
       </subitems>
     </control>
     <control>
@@ -92,14 +92,14 @@
       <posY>306</posY>
       <width>240</width>
     </control>
-		<control>
-			<type>label</type>
-			<id>106</id>
-			<posX>106</posX>
-			<posY>326</posY>
-			<align>left</align>
-			<font>font14</font>
-			<label></label>
-		</control>
+    <control>
+      <type>label</type>
+      <id>106</id>
+      <posX>106</posX>
+      <posY>326</posY>
+      <align>left</align>
+      <font>font14</font>
+      <label />
+    </control>
   </controls>
 </window>

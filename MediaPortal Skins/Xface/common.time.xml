@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
     <control>
-	<type>image</type>
-	<posX>1250</posX>
-	<posY>15</posY>
-	<width>35</width>
-	<height>35</height>
-	 <texture>Clock.png</texture>
-	  <animation effect="fade" time="200">WindowOpen</animation>
+      <type>image</type>
+      <posX>1250</posX>
+      <posY>15</posY>
+      <width>35</width>
+      <height>35</height>
+      <texture>Clock.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
-	</control>
+    </control>
     <control>
       <description>Date</description>
       <type>label</type>
@@ -33,10 +33,9 @@
       <label>#time</label>
       <align>right</align>
       <font>font12</font>
-     <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-
   </controls>
 </window>

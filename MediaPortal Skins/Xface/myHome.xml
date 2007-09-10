@@ -34,7 +34,7 @@
       <posX>290</posX>
       <posY>60</posY>
       <width>399</width>
-     <textcolor>ffffffff</textcolor>
+      <textcolor>ffffffff</textcolor>
       <textColorNoFocus>00ffffff</textColorNoFocus>
       <dimColor>80ffffff</dimColor>
       <buttonTextXOff>11</buttonTextXOff>
@@ -46,7 +46,7 @@
       <numberOfButtons>4</numberOfButtons>
       <textureButtonFocus>button_empty.png</textureButtonFocus>
       <textureButtonNoFocus>buttonNF_empty.png</textureButtonNoFocus>
-       <hoverX>800</hoverX>
+      <hoverX>800</hoverX>
       <hoverY>370</hoverY>
       <hoverWidth>290</hoverWidth>
       <hoverHeight>285</hoverHeight>
@@ -56,29 +56,29 @@
       <textureBackground>background_glass_menu_area11.png</textureBackground>
       <onright>13</onright>
       <onleft>10</onleft>
-      <hover flipY="true" diffuse="Thumb_Mask.png"/>
+      <hover flipY="true" diffuse="Thumb_Mask.png"></hover>
     </control>
-     <control>
-	<type>image</type>
-	<posX>1150</posX>
-	<posY>650</posY>
-	<width>169</width>
-	<height>58</height>
-	 <texture>mplogo.png</texture>
-	  <animation effect="fade" time="200">WindowOpen</animation>
+    <control>
+      <type>image</type>
+      <posX>1150</posX>
+      <posY>650</posY>
+      <width>169</width>
+      <height>58</height>
+      <texture>mplogo.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
-	</control>
+    </control>
     <!-- Date and Time -->
     <control>
-	<type>image</type>
-	<posX>250</posX>
-	<posY>15</posY>
-	<width>35</width>
-	<height>35</height>
-	 <texture>Clock.png</texture>
-	  <animation effect="fade" time="200">WindowOpen</animation>
+      <type>image</type>
+      <posX>250</posX>
+      <posY>15</posY>
+      <width>35</width>
+      <height>35</height>
+      <texture>Clock.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
-	</control>
+    </control>
     <control>
       <description>Date</description>
       <type>label</type>
@@ -101,7 +101,7 @@
       <label>#time</label>
       <align>right</align>
       <font>font12</font>
-     <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>

@@ -9,23 +9,21 @@
       <height>768</height>
       <texture>background4.png</texture>
     </control>
-      <control>
-	  <type>image</type>
-	  <posX>0</posX>
-	  <posY>700</posY>
-	  <height>89</height>
+    <control>
+      <type>image</type>
+      <posY>700</posY>
+      <height>89</height>
       <width>1366</width>
       <texture>Barback.png</texture>
-	  <colorDiffuse>effffffff</colorDiffuse>
+      <colorDiffuse>effffffff</colorDiffuse>
     </control>
     <control>
-	<type>image</type>
-	<posX>0</posX>
-	<posY>-20</posY>
-	<height>89</height>
-    <width>1366</width>
-    <texture>Barback.png</texture>
-	<colorDiffuse>effffffff</colorDiffuse>
+      <type>image</type>
+      <posY>-20</posY>
+      <height>89</height>
+      <width>1366</width>
+      <texture>Barback.png</texture>
+      <colorDiffuse>effffffff</colorDiffuse>
     </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -34,8 +32,8 @@
       <id>1</id>
       <posX>89</posX>
       <posY>4</posY>
-       <width>220</width>
-       <height>55</height>
+      <width>220</width>
+      <height>55</height>
       <texture>#header.image</texture>
     </control>
     <control>
@@ -63,7 +61,7 @@
       <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
-       <visible>!facadeview.list</visible>
+      <visible>!facadeview.list</visible>
     </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -76,11 +74,10 @@
       <width>365</width>
       <label>#selecteditem</label>
       <font>font14</font>
-      <align>left</align>
       <textcolor>Black</textcolor>
-       <visible>!facadeview.list</visible>
+      <visible>!facadeview.list</visible>
     </control>
-     <control>
+    <control>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <description>Selected item Label</description>
@@ -91,28 +88,26 @@
       <width>365</width>
       <label>#selecteditem2</label>
       <font>font13</font>
-      <align>left</align>
-    <textcolor>white</textcolor>
-     <visible>!facadeview.list</visible>
+      <visible>!facadeview.list</visible>
     </control>
     <control>
-	<type>image</type>
-	<posX>642</posX>
-	<posY>590</posY>
-	<width>93</width>
-	<height>68</height>
-	 <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
-	  <visible>!facadeview.list</visible>
-	</control>
-	 <control>
-	<type>image</type>
-	<posX>633</posX>
-	<posY>582</posY>
-	<width>120</width>
-	<height>99</height>
-	 <texture>Picture_cover.png</texture>
-	  <visible>!facadeview.list</visible>
-	</control>
+      <type>image</type>
+      <posX>642</posX>
+      <posY>590</posY>
+      <width>93</width>
+      <height>68</height>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
+      <visible>!facadeview.list</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <posX>633</posX>
+      <posY>582</posY>
+      <width>120</width>
+      <height>99</height>
+      <texture>Picture_cover.png</texture>
+      <visible>!facadeview.list</visible>
+    </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -126,16 +121,16 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-     <control>
-	<type>image</type>
-	<posX>1250</posX>
-	<posY>15</posY>
-	<width>35</width>
-	<height>35</height>
-	 <texture>Clock.png</texture>
-	  <animation effect="fade" time="200">WindowOpen</animation>
+    <control>
+      <type>image</type>
+      <posX>1250</posX>
+      <posY>15</posY>
+      <width>35</width>
+      <height>35</height>
+      <texture>Clock.png</texture>
+      <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
-	</control>
+    </control>
     <control>
       <description>Date</description>
       <type>label</type>
@@ -158,10 +153,9 @@
       <label>#time</label>
       <align>right</align>
       <font>font12</font>
-     <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-
   </controls>
 </window>

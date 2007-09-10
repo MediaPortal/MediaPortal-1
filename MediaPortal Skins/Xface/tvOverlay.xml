@@ -4,7 +4,7 @@
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <control> 
+    <control>
       <description>rec logo</description>
       <type>image</type>
       <id>4</id>

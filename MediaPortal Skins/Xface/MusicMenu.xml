@@ -24,7 +24,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-    
     <control>
       <description>home BM Radio</description>
       <type>button</type>
@@ -52,7 +51,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-    
     <control>
       <description>home BM Music</description>
       <type>button</type>
@@ -79,7 +77,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-
     <control>
       <description>Date</description>
       <type>label</type>

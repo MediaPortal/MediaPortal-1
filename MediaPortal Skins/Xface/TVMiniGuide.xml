@@ -89,7 +89,6 @@
       <type>label</type>
       <id>5</id>
       <posX>288</posX>
-      <posY>80</posY>
       <width>240</width>
       <label>10105</label>
       <font>font14</font>
@@ -97,7 +96,7 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-<!--     <control>
+    <!--     <control>
       <description>Heading text label</description>
       <type>label</type>
       <id>4</id>

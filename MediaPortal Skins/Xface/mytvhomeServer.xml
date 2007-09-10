@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>1</id>
   <defaultcontrol>2</defaultcontrol>
@@ -45,8 +46,7 @@
         <ondown>7</ondown>
         <onright>99</onright>
       </control>
-
-<!--       <control>
+      <!--       <control>
         <description>Group button</description>
         <type>button</type>
         <id>6</id>
@@ -73,10 +73,6 @@
         <colordiffuse>White</colordiffuse>
         <disabledcolor>#60ffffff</disabledcolor>
         <label>707</label>
-        <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-        <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-        <textureFocus>togglebutton-on-focus.png</textureFocus>
-        <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
         <onup>7</onup>
         <ondown>9</ondown>
         <onright>99</onright>
@@ -119,7 +115,7 @@
         <ondown>2</ondown>
         <onright>99</onright>
       </control>
-<!--       <control>
+      <!--       <control>
         <description>TuningDetails</description>
         <type>button</type>
         <id>14</id>
@@ -129,7 +125,6 @@
         <onright>99</onright>
       </control> -->
     </control>
-
     <control>
       <description>TV background</description>
       <type>image</type>
@@ -138,7 +133,6 @@
       <posY>86</posY>
       <width>760</width>
       <height>505</height>
-      <colordiffuse>ffffffff</colordiffuse>
       <texture>tv_background.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -167,7 +161,6 @@
       <width>433</width>
       <label>#TV.View.title</label>
       <font>font13</font>
-      <align>left</align>
       <textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -198,13 +191,13 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-     <control>
+    <control>
       <description>Current program time</description>
       <type>label</type>
       <id>13</id>
       <posX>1062</posX>
       <posY>471</posY>
- 	  <label>#TV.View.stop</label>
+      <label>#TV.View.stop</label>
       <font>font13</font>
       <align>left</align>
       <textcolor>ff969696</textcolor>
@@ -221,7 +214,7 @@
       <label>#TV.View.channel</label>
       <font>font13</font>
       <align>right</align>
-       <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -236,7 +229,7 @@
       <seperator>----------------------------------------------------------------------------------------------</seperator>
       <label>#TV.View.description</label>
       <font>font13</font>
-     <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -263,7 +256,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-<!--     <control>
+    <!--     <control>
       <description>rectangle</description>
       <type>image</type>
       <id>21</id>
@@ -297,7 +290,6 @@
       <height>40</height>
       <posX>68</posX>
       <label>#TV.Record.channel\r#TV.Record.title\r#TV.Record.start #TV.Record.stop</label>
-      <align>left</align>
       <font>font13</font>
       <textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -309,10 +301,9 @@
       <id>24</id>
       <posX>193</posX>
       <posY>566</posY>
-        <width>76</width>
+      <width>76</width>
       <height>76</height>
       <texture>tvguide_record_button.png</texture>
-      <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>

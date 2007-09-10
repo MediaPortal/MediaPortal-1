@@ -298,7 +298,7 @@
       <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-    </control>	
+    </control>
     <control>
       <description>record pin</description>
       <type>image</type>

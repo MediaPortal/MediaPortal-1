@@ -3,17 +3,17 @@
   <id>606</id>
   <defaultcontrol>3</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-   <define>#header.label:652</define>
+  <define>#header.label:652</define>
   <controls>
-   <import>common.window2.xml</import>
-		 <import>common.time.xml</import>
+    <import>common.window2.xml</import>
+    <import>common.time.xml</import>
     <control>
       <type>image</type>
       <id>1</id>
-     <posX>89</posX>
+      <posX>89</posX>
       <posY>4</posY>
-       <width>220</width>
-       <height>55</height>
+      <width>220</width>
+      <height>55</height>
       <texture>television_logo.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -29,13 +29,13 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-     <control>
+    <control>
       <type>label</type>
       <description>Number of Files Label</description>
       <id>12</id>
-       <posX>762</posX>
+      <posX>762</posX>
       <posY>640</posY>
-        <align>left</align>
+      <align>left</align>
       <textcolor>ff969696</textcolor>
       <label>#itemcount</label>
       <visible>false</visible>
@@ -53,17 +53,16 @@
       <width>365</width>
       <label>#selecteditem</label>
       <font>font14</font>
-      <align>left</align>
       <textcolor>Black</textcolor>
     </control>
-      <control>
-	<type>image</type>
-	<posX>637</posX>
-	<posY>585</posY>
-	<width>85</width>
-	<height>86</height>
-	 <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
-	</control>
+    <control>
+      <type>image</type>
+      <posX>637</posX>
+      <posY>585</posY>
+      <width>85</width>
+      <height>86</height>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
+    </control>
     <control>
       <type>group</type>
       <description>group element</description>
@@ -142,7 +141,7 @@
         <height>493</height>
         <onleft>3</onleft>
         <onright>11</onright>
-<!--         <onup>3</onup>
+        <!--         <onup>3</onup>
         <ondown>3</ondown> -->
         <!-- 				<textcolor>ffffffff</textcolor>
 				<downloadColor>ff80ff80</downloadColor>
@@ -244,38 +243,38 @@
       <animation effect="fade" time="500">WindowClose</animation>
 		</control> -->
     <control>
-		<description>video rectangle</description>
-		<type>image</type>
-		<id>0</id>
-		<posX>48</posX>
-		<posY>540</posY>
-		<width>330</width>
-		<height>225</height>
-		 <texture>playback_background.png</texture>
-		 <animation effect="fade" time="500">WindowClose</animation>
+      <description>video rectangle</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>48</posX>
+      <posY>540</posY>
+      <width>330</width>
+      <height>225</height>
+      <texture>playback_background.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
-	</control>
+    </control>
     <control>
       <description>video preview window</description>
       <type>videowindow</type>
       <id>1</id>
       <posX>96</posX>
-	  <posY>568</posY>
-	  <width>238</width>
-	  <height>131</height>
-	  <keepaspectratio>yes</keepaspectratio>
-	  <centered>yes</centered>
-	  <action>18</action>
-	  <textureFocus>tv_green_border.png</textureFocus>
+      <posY>568</posY>
+      <width>238</width>
+      <height>131</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
     </control>
-     <control>
+    <control>
       <description>progress bar</description>
       <type>progress</type>
       <id>20</id>
       <posX>126</posX>
       <posY>701</posY>
       <width>158</width>
-     <label>#percentage</label>
+      <label>#percentage</label>
       <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>

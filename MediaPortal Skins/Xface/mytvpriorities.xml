@@ -5,10 +5,10 @@
   <allowoverlay>no</allowoverlay>
   <define>#header.label:877</define>
   <define>#header.image:television_logo.png</define>
-  <define>#header.hover:hover_my tv.png</define>  
+  <define>#header.hover:hover_my tv.png</define>
   <controls>
-  <import>common.window.xml</import>
-  <import>common.time.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>BG</description>
       <type>image</type>
@@ -16,7 +16,7 @@
       <width>1366</width>
       <height>768</height>
     </control>
-<!--     <control>
+    <!--     <control>
       <type>image</type>
       <id>1</id>
       <posX>113</posX>
@@ -46,7 +46,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control> -->
-<!--     <control>
+    <!--     <control>
       <description>Date</description>
       <type>label</type>
       <id>200</id>
@@ -72,7 +72,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control> -->
-<!--     <control>
+    <!--     <control>
       <description>Number of Files Label</description>
       <type>label</type>
       <id>12</id>

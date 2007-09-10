@@ -10,7 +10,7 @@
     <import>common.window2.xml</import>
     <import>common.time.xml</import>
     <control>
-       <type>group</type>
+      <type>group</type>
       <layout>StackLayout</layout>
       <description>group element</description>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -129,7 +129,6 @@
       <posY>86</posY>
       <width>760</width>
       <height>505</height>
-      <colordiffuse>ffffffff</colordiffuse>
       <texture>tv_background.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -158,7 +157,6 @@
       <width>433</width>
       <label>#TV.View.title</label>
       <font>font13</font>
-      <align>left</align>
       <textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
@@ -189,13 +187,13 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-     <control>
+    <control>
       <description>Current program time</description>
       <type>label</type>
       <id>13</id>
       <posX>1062</posX>
       <posY>471</posY>
- 	  <label>#TV.View.stop</label>
+      <label>#TV.View.stop</label>
       <font>font13</font>
       <align>left</align>
       <textcolor>ff969696</textcolor>
@@ -212,7 +210,7 @@
       <label>#TV.View.channel</label>
       <font>font13</font>
       <align>right</align>
-       <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -227,7 +225,7 @@
       <seperator>----------------------------------------------------------------------------------------------</seperator>
       <label>#TV.View.description</label>
       <font>font13</font>
-     <textcolor>ff969696</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -274,7 +272,6 @@
       <height>40</height>
       <posX>68</posX>
       <label>#TV.Record.channel\r#TV.Record.title\r#TV.Record.start #TV.Record.stop</label>
-      <align>left</align>
       <font>font13</font>
       <textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -286,10 +283,9 @@
       <id>24</id>
       <posX>193</posX>
       <posY>566</posY>
-        <width>76</width>
+      <width>76</width>
       <height>76</height>
       <texture>tvguide_record_button.png</texture>
-      <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
