@@ -105,6 +105,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
+      cbScreen.Items.Clear();
       foreach (Screen screen in Screen.AllScreens)
       {
         foreach (AdapterInformation adapter in Manager.Adapters)
@@ -129,6 +130,11 @@ namespace MediaPortal.Configuration.Sections
         loglevel = xmlreader.GetValueAsString("general", "loglevel", "3");
         cbDebug.SelectedIndex = Convert.ToInt16(loglevel);
         screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
+
+        while (cbScreen.Items.Count <= screennumber)
+        {
+          cbScreen.Items.Add("screen nr :" + cbScreen.Items.Count + " (currently unavailable)");
+        }
         cbScreen.SelectedIndex = screennumber;
 
         string prio = xmlreader.GetValueAsString("MP", "ThreadPriority", "Normal");
