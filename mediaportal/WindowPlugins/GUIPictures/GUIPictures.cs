@@ -395,6 +395,7 @@ namespace MediaPortal.GUI.Pictures
     //bool _hideExtensions = true;
     Display disp = Display.Files;
     
+    int CountOfNonImageItems = 0; // stores the count of items in a folder that are no images (folders etc...)
 
     #endregion
 
@@ -950,6 +951,13 @@ namespace MediaPortal.GUI.Pictures
       UpdateButtonStates();
     }
 
+    /// <summary>
+    /// Set the selected item of the facadeview
+    /// </summary>
+    public void SetSelectedItemIndex(int index)
+    {
+      selectedItemIndex = CountOfNonImageItems + index;
+    }
     #endregion
 
     #region folder settings
@@ -1565,12 +1573,14 @@ namespace MediaPortal.GUI.Pictures
         Filter(ref itemlist);
 
         // int itemIndex = 0;
+        CountOfNonImageItems = 0;
         foreach (GUIListItem item in itemlist)
         {
           item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
           item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
           facadeView.Add(item);
 
+          if (item.IsFolder) CountOfNonImageItems++; // necessary to select the right item later from the slideshow
         }
 
         OnSort();
@@ -1607,6 +1617,7 @@ namespace MediaPortal.GUI.Pictures
 
     void LoadDateView(string strNewDirectory)
     {
+      CountOfNonImageItems = 0; 
       if (strNewDirectory == "")
       {
         // Years
@@ -1625,6 +1636,7 @@ namespace MediaPortal.GUI.Pictures
             item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
             facadeView.Add(item);
+            CountOfNonImageItems++; // necessary to select the right item later from the slideshow
           }
         }
       }
@@ -1639,6 +1651,7 @@ namespace MediaPortal.GUI.Pictures
         item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         facadeView.Add(item);
+        CountOfNonImageItems++; // necessary to select the right item later from the slideshow
         using (PictureDatabase dbs = new PictureDatabase())
         {
           List<string> Months = new List<string>();
@@ -1652,6 +1665,7 @@ namespace MediaPortal.GUI.Pictures
             item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
             facadeView.Add(item);
+            CountOfNonImageItems++; // necessary to select the right item later from the slideshow
           }
           List<string> pics = new List<string>();
           int PicCount = dbs.CountPicsByDate(year);
@@ -1684,6 +1698,7 @@ namespace MediaPortal.GUI.Pictures
         item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         facadeView.Add(item);
+        CountOfNonImageItems++; // necessary to select the right item later from the slideshow
         using (PictureDatabase dbs = new PictureDatabase())
         {
           List<string> Days = new List<string>();
@@ -1697,6 +1712,7 @@ namespace MediaPortal.GUI.Pictures
             item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
             facadeView.Add(item);
+            CountOfNonImageItems++; // necessary to select the right item later from the slideshow
           }
           List<string> pics = new List<string>();
           int PicCount = dbs.CountPicsByDate(year + "-" + month);
@@ -1722,7 +1738,7 @@ namespace MediaPortal.GUI.Pictures
         // Pics from one day
         string year = strNewDirectory.Substring(0, 4);
         string month = strNewDirectory.Substring(5, 2);
-        string day = strNewDirectory.Substring(7, 2);
+        string day = strNewDirectory.Substring(8, 2);
         GUIListItem item = new GUIListItem("..");
         item.Path = year + "\\" + month;
         item.IsFolder = true;
@@ -1730,6 +1746,7 @@ namespace MediaPortal.GUI.Pictures
         item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         facadeView.Add(item);
+        CountOfNonImageItems++; // necessary to select the right item later from the slideshow
         using (PictureDatabase dbs = new PictureDatabase())
         {
           List<string> pics = new List<string>();

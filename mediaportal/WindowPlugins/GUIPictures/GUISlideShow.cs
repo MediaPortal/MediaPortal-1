@@ -1222,6 +1222,10 @@ namespace MediaPortal.GUI.Pictures
 
       _currentSlideIndex = NextSlideIndex(jump, _currentSlideIndex);
 
+      //Set the current item as selected item in the facadeview
+      GUIPictures tmpGUIpictures = (GUIPictures)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_PICTURES);
+      tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
+
       if (_currentSlideIndex == 0)
       {
         if (_autoRepeat)
@@ -1280,6 +1284,10 @@ namespace MediaPortal.GUI.Pictures
         PushCurrentTextureToBackground();
 
       _currentSlideIndex = PreviousSlideIndex(jump, _currentSlideIndex);
+
+      //Set the current item as selected item in the facadeview
+      GUIPictures tmpGUIpictures = (GUIPictures)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_PICTURES);
+      tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
 
       //PrefetchNextSlide();
 
