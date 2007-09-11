@@ -677,6 +677,8 @@ namespace SetupTv.Sections
           AddAttribute(nodeTune, "Band", (int)detail.Band);
           AddAttribute(nodeTune, "Pilot", (int)detail.Pilot);
           AddAttribute(nodeTune, "RollOff", (int)detail.RollOff);
+          AddAttribute(nodeTune, "Url", detail.Url);
+          AddAttribute(nodeTune, "Bitrate", detail.Bitrate);
           nodeTuningDetails.AppendChild(nodeTune);
         }
         nodechannel.AppendChild(nodeTuningDetails);
@@ -843,6 +845,8 @@ namespace SetupTv.Sections
             int band = Int32.Parse(GetNodeAttribute(nodeTune,"Band","0"));
             int pilot = Int32.Parse(GetNodeAttribute(nodeTune, "Pilot", "-1"));
             int rollOff = Int32.Parse(GetNodeAttribute(nodeTune,"RollOff","-1"));
+            string url=GetNodeAttribute(nodeTune,"Url","");
+            int bitrate=Int32.Parse(GetNodeAttribute(nodeTune,"Bitrate","0"));
 
             switch (channelType)
             {
@@ -938,7 +942,10 @@ namespace SetupTv.Sections
                 dvbtChannel.TransportId = transportId;
                 layer.AddTuningDetails(dbChannel, dvbtChannel);
                 break;
-
+              case 5: //Webstream
+                TuningDetail detail = new TuningDetail(dbChannel.IdChannel, dbChannel.DisplayName, "(Webstream)", 5, 0, 0, 31, isTv, !isTv, 0, 0, 0, 0, true, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, url, bitrate);
+                detail.Persist();
+                break;
             }
           }
         }
