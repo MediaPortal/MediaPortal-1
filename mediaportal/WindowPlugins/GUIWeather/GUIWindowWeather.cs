@@ -75,70 +75,48 @@ namespace MediaPortal.GUI.Weather
     #region enums
     enum Controls
     {
-      CONTROL_BTNSWITCH = 2
-    ,
-      CONTROL_BTNREFRESH = 3
-    ,
-      CONTROL_BTNVIEW = 4
-    ,
-      CONTROL_LOCATIONSELECT = 5
-    ,
-      CONTROL_LABELLOCATION = 10
-    ,
-      CONTROL_LABELUPDATED = 11
-    ,
-      CONTROL_IMAGELOGO = 101
-    ,
-      CONTROL_IMAGENOWICON = 21
-      ,
-      CONTROL_LABELNOWCOND = 22
-  ,
-      CONTROL_LABELNOWTEMP = 23
-    ,
-      CONTROL_LABELNOWFEEL = 24
-    ,
-      CONTROL_LABELNOWUVID = 25
-    ,
-      CONTROL_LABELNOWWIND = 26
-    ,
-      CONTROL_LABELNOWDEWP = 27
-    ,
-      CONTORL_LABELNOWHUMI = 28
-    ,
-      CONTROL_STATICTEMP = 223
-    ,
-      CONTROL_STATICFEEL = 224
-    ,
-      CONTROL_STATICUVID = 225
-    ,
-      CONTROL_STATICWIND = 226
-    ,
-      CONTROL_STATICDEWP = 227
-    ,
-      CONTROL_STATICHUMI = 228
-    ,
-      CONTROL_LABELD0DAY = 31
-    ,
-      CONTROL_LABELD0HI = 32
-    ,
-      CONTROL_LABELD0LOW = 33
-    ,
-      CONTROL_LABELD0GEN = 34
-    ,
-      CONTROL_IMAGED0IMG = 35
-    ,
-      CONTROL_LABELSUNR = 70
-    ,
-      CONTROL_STATICSUNR = 71
-    ,
-      CONTROL_LABELSUNS = 72
-    ,
-      CONTROL_STATICSUNS = 73
-    ,
-      CONTROL_IMAGE_SAT = 1000
-    ,
-      CONTROL_IMAGE_SAT_END = 1100
-    , CONTROL_IMAGE_SUNCLOCK = 1200
+      CONTROL_BTNSWITCH = 2,
+      CONTROL_BTNREFRESH = 3,
+      CONTROL_BTNVIEW = 4,
+      CONTROL_LOCATIONSELECT = 5,
+      CONTROL_LABELLOCATION = 10,
+      CONTROL_LABELUPDATED = 11,
+      CONTROL_IMAGELOGO = 101,
+      CONTROL_IMAGENOWICON = 21,
+      CONTROL_LABELNOWCOND = 22,
+      CONTROL_LABELNOWTEMP = 23,
+      CONTROL_LABELNOWFEEL = 24,
+      CONTROL_LABELNOWUVID = 25,
+      CONTROL_LABELNOWWIND = 26,
+      CONTROL_LABELNOWDEWP = 27,
+      CONTORL_LABELNOWHUMI = 28,
+      CONTROL_STATICTEMP = 223,
+      CONTROL_STATICFEEL = 224,
+      CONTROL_STATICUVID = 225,
+      CONTROL_STATICWIND = 226,
+      CONTROL_STATICDEWP = 227,
+      CONTROL_STATICHUMI = 228,
+      CONTROL_LABELD0DAY = 31,
+      CONTROL_LABELD0HI = 32,
+      CONTROL_LABELD0LOW = 33,
+      CONTROL_LABELD0GEN = 34,
+      CONTROL_IMAGED0IMG = 35,
+      CONTROL_LABELSUNR = 70,
+      CONTROL_STATICSUNR = 71,
+      CONTROL_LABELSUNS = 72,
+      CONTROL_STATICSUNS = 73,
+      CONTROL_IMAGE_SAT = 1000,
+      CONTROL_IMAGE_SAT_END = 1100,
+      CONTROL_IMAGE_SUNCLOCK = 1200,
+    }
+
+    enum WindUnit : int
+    {
+      Kmh = 0,
+      mph = 1,
+      ms = 2,
+      Kn = 3,
+      Bft = 4,
     }
 
     enum Mode
@@ -168,7 +146,7 @@ namespace MediaPortal.GUI.Weather
     string _locationCode = "UKXX0085";
     ArrayList _listLocations = new ArrayList();
     string _temperatureFarenheit = "C";
-    string _windSpeed = "K";
+    WindUnit _currentWindUnit = WindUnit.Bft;
     int _refreshIntercal = 30;
     string _nowLocation = String.Empty;
     string _nowUpdated = String.Empty;
@@ -578,7 +556,24 @@ namespace MediaPortal.GUI.Weather
       {
         _locationCode = xmlreader.GetValueAsString("weather", "location", String.Empty);
         _temperatureFarenheit = xmlreader.GetValueAsString("weather", "temperature", "C");
-        _windSpeed = xmlreader.GetValueAsString("weather", "speed", "K");
+        int loadWind = xmlreader.GetValueAsInt("weather", "speed", 0);
+        switch (loadWind)
+        {
+          case 0: _currentWindUnit = WindUnit.Kmh;
+            break;
+          case 1: _currentWindUnit = WindUnit.mph;
+            break;
+          case 2: _currentWindUnit = WindUnit.ms;
+            break;
+          case 3: _currentWindUnit = WindUnit.Kn;
+            break;
+          case 4: _currentWindUnit = WindUnit.Bft;
+            break;
+          default:
+            _currentWindUnit = WindUnit.Bft;
+            break;
+        }
+
         _refreshIntercal = xmlreader.GetValueAsInt("weather", "refresh", 60);
         _refreshTimer = DateTime.Now.AddMinutes(-(_refreshIntercal + 1));
 
@@ -639,7 +634,7 @@ namespace MediaPortal.GUI.Weather
       {
         xmlwriter.SetValue("weather", "location", _locationCode);
         xmlwriter.SetValue("weather", "temperature", _temperatureFarenheit);
-        xmlwriter.SetValue("weather", "speed", _windSpeed);
+        xmlwriter.SetValue("weather", "speed", (int)_currentWindUnit);
       }
 
     }
@@ -647,26 +642,45 @@ namespace MediaPortal.GUI.Weather
 
     int ConvertSpeed(int curSpeed)
     {
-      //we might not need to convert at all
-      if ((_temperatureFarenheit[0] == 'C' && _windSpeed[0] == 'K') ||
-        (_temperatureFarenheit[0] == 'F' && _windSpeed[0] == 'M'))
-        return curSpeed;
+      // only calculate in the metric system
+      if (_temperatureFarenheit[0] == 'F')
+        curSpeed = Convert.ToInt32(curSpeed / 1.6093);
 
-      //got through that so if temp is C, speed must be M or S
-      if (_temperatureFarenheit[0] == 'C')
+      switch (_currentWindUnit)
       {
-        if (_windSpeed[0] == 'S')
-          return (int)(curSpeed * (1000.0 / 3600.0) + 0.5);		//mps
-        else
-          return (int)(curSpeed / (8.0 / 5.0));		//mph
+        case WindUnit.Kmh:
+          return curSpeed;
+
+        case WindUnit.mph:
+          return (int)(curSpeed * 1.6093);
+
+        case WindUnit.ms:
+          return (int)(curSpeed * (1000.0 / 3600.0) + 0.5);
+
+        case WindUnit.Kn:
+          return (int)(curSpeed / 1.852);
+
+        case WindUnit.Bft:
+          return (int)((curSpeed + 10) / 6);
       }
-      else
-      {
-        if (_windSpeed[0] == 'S')
-          return (int)(curSpeed * (8.0 / 5.0) * (1000.0 / 3600.0) + 0.5);		//mps
-        else
-          return (int)(curSpeed * (8.0 / 5.0));		//kph
-      }
+
+      return curSpeed;
+
+      ////got through that so if temp is C, speed must be M or S
+      //if (_temperatureFarenheit[0] == 'C')
+      //{
+      //  if (_currentWindUnit == WindUnit.ms)
+      //    return (int)(curSpeed * (1000.0 / 3600.0) + 0.5);		//mps
+      //  else
+      //    return (int)(curSpeed / (8.0 / 5.0));		//mph
+      //}
+      //else
+      //{
+      //  if (_currentWindUnit == WindUnit.ms)
+      //    return (int)(curSpeed * (8.0 / 5.0) * (1000.0 / 3600.0) + 0.5);		//mps
+      //  else
+      //    return (int)(curSpeed * (8.0 / 5.0));		//kph
+      //}
     }
 
     void UpdateButtons()
@@ -1282,12 +1296,16 @@ namespace MediaPortal.GUI.Weather
       // units (C or F and mph or km/h or m/s) 
       unitTemperature = _temperatureFarenheit;
 
-      if (_windSpeed[0] == 'M')
-        unitSpeed = "mph";
-      else if (_windSpeed[0] == 'K')
-        unitSpeed = "km/h";
+      if (_currentWindUnit == WindUnit.Kmh)
+        unitSpeed = GUILocalizeStrings.Get(561); // "km/h";
+      else if (_currentWindUnit == WindUnit.mph)
+        unitSpeed = GUILocalizeStrings.Get(562); // "mph";
+      else if (_currentWindUnit == WindUnit.Kn)
+        unitSpeed = GUILocalizeStrings.Get(563); // "kn";
+      else if (_currentWindUnit == WindUnit.ms)
+        unitSpeed = GUILocalizeStrings.Get(564); // "m/s";
       else
-        unitSpeed = "m/s";
+        unitSpeed = GUILocalizeStrings.Get(565); // "bft";
 
       // location
       XmlNode element = xmlElement.SelectSingleNode("loc");

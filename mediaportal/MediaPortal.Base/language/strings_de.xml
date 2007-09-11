@@ -479,7 +479,12 @@
         <String id="557">windstill</String>
         <String id="558">Kein Wind</String>
         <String id="559">in der Nähe</String>
-        <String id="560">aufklarend</String>
+        <String id="560">aufklarend</String>        
+        <String id="561">Km/h</String>
+        <String id="562">Mph</String>
+        <String id="563">Kn</String>
+        <String id="564">M/s</String>
+        <String id="565">Bft</String>        
         <String id="590">Übersicht</String>
         <String id="591">Sport</String>
         <String id="592">Programm</String>

@@ -480,6 +480,11 @@
         <String id="558">No wind</String>
         <String id="559">in the vicinity</String>
         <String id="560">Clearing</String>
+        <String id="561">km/h</String>
+        <String id="562">mph</String>
+        <String id="563">kn</String>
+        <String id="564">m/s</String>
+        <String id="565">bft</String>
         <String id="590">P. 100</String>
         <String id="591">P. 200</String>
         <String id="592">P. 300</String>

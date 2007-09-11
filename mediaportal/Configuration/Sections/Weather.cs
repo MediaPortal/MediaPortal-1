@@ -37,6 +37,17 @@ namespace MediaPortal.Configuration.Sections
   {
     const int MaximumCities = 20;
 
+    enum WindUnit : int
+    {
+      Kmh = 0,
+      mph = 1,
+      ms = 2,
+      Kn = 3,
+      Bft = 4,
+    }
+
+    private WindUnit selectedWindUnit = WindUnit.Bft;
+
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
@@ -75,7 +86,7 @@ namespace MediaPortal.Configuration.Sections
       // Populate combo boxes with default values
       //
       temperatureComboBox.Items.AddRange(new string[] { "Celsius", "Fahrenheit" });
-      windSpeedComboBox.Items.AddRange(new string[] { "m/s", "km/hour", "mph" });
+      windSpeedComboBox.Items.AddRange(new string[] { "kilometer/hour", "miles per hour", "meter/second", "Knots", "Beaufort" });
     }
 
     /// <summary>
@@ -85,14 +96,29 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string windSpeed = xmlreader.GetValueAsString("weather", "speed", "K");
-
-        if (windSpeed.Equals("K"))
-          windSpeedComboBox.Text = "km/hour";
-        else if (windSpeed.Equals("M"))
-          windSpeedComboBox.Text = "mph";
-        else if (windSpeed.Equals("S"))
-          windSpeedComboBox.Text = "m/s";
+        int loadWind = xmlreader.GetValueAsInt("weather", "speed", 4);
+        switch (loadWind)
+        {
+          case 0: selectedWindUnit = WindUnit.Kmh;
+            windSpeedComboBox.Text = "kilometer/hour";
+            break;
+          case 1: selectedWindUnit = WindUnit.mph;
+            windSpeedComboBox.Text = "miles per hour";
+            break;
+          case 2: selectedWindUnit = WindUnit.ms;
+            windSpeedComboBox.Text = "meter/second";
+            break;
+          case 3: selectedWindUnit = WindUnit.Kn;
+            windSpeedComboBox.Text = "Knots";
+            break;
+          case 4: selectedWindUnit = WindUnit.Bft;
+            windSpeedComboBox.Text = "Beaufort";
+            break;
+          default:
+            selectedWindUnit = WindUnit.Bft;
+            windSpeedComboBox.Text = "Beaufort";
+            break;
+        }            
 
         string temperature = xmlreader.GetValueAsString("weather", "temperature", "C");
 
@@ -133,16 +159,18 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string windSpeed = String.Empty;
+        if (windSpeedComboBox.Text.Equals("kilometer/hour"))
+          selectedWindUnit = WindUnit.Kmh;
+        else if (windSpeedComboBox.Text.Equals("miles per hour"))
+          selectedWindUnit = WindUnit.mph;
+        else if (windSpeedComboBox.Text.Equals("meter/second"))
+          selectedWindUnit = WindUnit.ms;
+        else if (windSpeedComboBox.Text.Equals("Knots"))
+          selectedWindUnit = WindUnit.Kn;
+        else if (windSpeedComboBox.Text.Equals("Beaufort"))
+          selectedWindUnit = WindUnit.Bft;
 
-        if (windSpeedComboBox.Text.Equals("km/hour"))
-          windSpeed = "K";
-        else if (windSpeedComboBox.Text.Equals("mph"))
-          windSpeed = "M";
-        else if (windSpeedComboBox.Text.Equals("m/s"))
-          windSpeed = "S";
-
-        xmlwriter.SetValue("weather", "speed", windSpeed);
+        xmlwriter.SetValue("weather", "speed", (int)selectedWindUnit);
 
         string temperature = String.Empty;
 
