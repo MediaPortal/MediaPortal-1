@@ -597,6 +597,11 @@ namespace MediaPortal.MPInstaller
       return false;
     }
 
+    /// <summary>
+    /// Generate a mpi zip entry 
+    /// </summary>
+    /// <param name="flst">The file </param>
+    /// <returns></returns>
     public static string GetZipEntry(MPIFileList flst)
     {
       string ret = string.Empty;

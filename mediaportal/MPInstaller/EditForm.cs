@@ -309,6 +309,11 @@ namespace MediaPortal.MPInstaller
       _loading = false;
     }
 
+    /// <summary>
+    /// Show the language editor form
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     private void languageToolStripMenuItem_Click(object sender, EventArgs e)
     {
       Form2 StrForm = new Form2();
@@ -710,7 +715,8 @@ namespace MediaPortal.MPInstaller
         FileInfo[] fileList = di.GetFiles("*.*", SearchOption.AllDirectories);
         foreach (FileInfo f in fileList)
         {
-          addFile(f.FullName);
+          if (!f.DirectoryName.Contains(".svn"))
+            addFile(f.FullName);
         }
       }
 

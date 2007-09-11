@@ -1001,7 +1001,6 @@ namespace MediaPortal.MPInstaller
           this.Controls.Add(this.menuStrip1);
           this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
           this.MainMenuStrip = this.menuStrip1;
-          this.MaximizeBox = false;
           this.Name = "EditForm";
           this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
           this.Text = "Create Package";
