@@ -49,6 +49,7 @@ namespace Wikipedia
         private string unparsedArticle = string.Empty;
         private string parsedArticle = string.Empty;
         private string language = "Default";
+        private int current = 0;
         private ArrayList linkArray = new ArrayList();
         private ArrayList imageArray = new ArrayList();
         private ArrayList imagedescArray = new ArrayList();
@@ -246,8 +247,8 @@ namespace Wikipedia
                 }
 
                 // surrounded by {{ and }} is (atm) unusable stuff.
-                //Log.Debug("Wikipedia: Remove stuff between {{ and }}.");
-                while (tempParsedArticle.IndexOf("{{") >= 0)
+                Log.Debug("Wikipedia: Remove unusable stuff 1.");
+                while (current < tempParsedArticle.Length && tempParsedArticle.IndexOf("{{", current) >= 0)
                 {
                     builder = new StringBuilder(tempParsedArticle);
                     iStart = tempParsedArticle.IndexOf("{{");
@@ -273,15 +274,17 @@ namespace Wikipedia
                     }
 
                     tempParsedArticle = builder.ToString();
+                    current = iStart + 2;
                 }
+                current = 0;
 
                 // surrounded by {| and |} is (atm) unusable stuff.
-                //Log.Debug("Wikipedia: Remove stuff between {| and |}.");
-                while (tempParsedArticle.IndexOf("{|") >= 0)
+                Log.Debug("Wikipedia: Remove unusable stuff 2.");
+                while (current < tempParsedArticle.Length && tempParsedArticle.IndexOf("{|", current) >= 0)
                 {
                     builder = new StringBuilder(tempParsedArticle);
-                    iStart = tempParsedArticle.IndexOf("{|");
-                    iEnd = tempParsedArticle.IndexOf("|}") + 2;
+                    iStart = tempParsedArticle.IndexOf("{|", current);
+                    iEnd = tempParsedArticle.IndexOf("|}", current) + 2;
 
                     try
                     {
@@ -291,10 +294,14 @@ namespace Wikipedia
                     {
                         Log.Error(e.ToString());
                         Log.Error(builder.ToString());
+                        current = iStart + 2;
                     }
 
                     tempParsedArticle = builder.ToString();
+                    current = iStart + 2;
+
                 }
+                current = 0;
 
                 // Remove audio links.
                 Log.Debug("Wikipedia: Remove audio links.");
