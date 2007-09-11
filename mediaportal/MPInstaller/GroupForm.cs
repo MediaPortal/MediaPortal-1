@@ -131,23 +131,43 @@ namespace MediaPortal.MPInstaller
       }
     }
 
+    /// <summary>
+    ///  Add files to group
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     private void button2_Click(object sender, EventArgs e)
     {
-      for (int i=0; i < listView2.SelectedItems.Count; i++)
+      foreach (ListViewItem li in listView2.SelectedItems)
       {
-        listView3.Items.Add(listView2.SelectedItems[i].Text);
-        listView2.Items.Remove(listView2.SelectedItems[i]);
+        listView3.Items.Add(li.Text);
+        listView2.Items.Remove(li);
       }
+      //for (int i=0; i < listView2.SelectedItems.Count; i++)
+      //{
+      //  listView3.Items.Add(listView2.SelectedItems[i].Text);
+      //  listView2.Items.Remove(listView2.SelectedItems[i]);
+      //}
       update_data();
     }
 
+    /// <summary>
+    /// Remove files from group
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     private void button3_Click(object sender, EventArgs e)
     {
-      for (int i = 0; i < listView3.SelectedItems.Count; i++)
+      foreach (ListViewItem li in listView3.SelectedItems)
       {
-        listView2.Items.Add(listView3.SelectedItems[i].Text);
-        listView3.Items.Remove(listView3.SelectedItems[i]);
+        listView2.Items.Add(li.Text);
+        listView3.Items.Remove(li);
       }
+      //for (int i = 0; i < listView3.SelectedItems.Count; i++)
+      //{
+      //  listView2.Items.Add(listView3.SelectedItems[i].Text);
+      //  listView3.Items.Remove(listView3.SelectedItems[i]);
+      //}
       update_data();
     }
     
@@ -163,6 +183,11 @@ namespace MediaPortal.MPInstaller
       {
         _struct.SetupGroupsMappig.Add(new GroupStringMapping(comboBox1.Text, listView3.Items[i].Text));
       }
+    }
+
+    private void button5_Click(object sender, EventArgs e)
+    {
+
     }
   }
 }
