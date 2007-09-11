@@ -169,6 +169,9 @@ namespace MediaPortal.MPInstaller
         case 5: openFileDialog1.Filter = "png files (*.png)|*.png|bmp files (*.bmp)|*.bmp|xml files (*.xml)|*.xml|All files (*.*)|*.*";
           openFileDialog1.DefaultExt = "*.png";
           break;
+        case 6: openFileDialog1.Filter = "font files (*.ttf)|*.ttf|All files (*.*)|*.*";
+          openFileDialog1.DefaultExt = "*.ttf";
+          break;
       }
       if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
       {
@@ -193,6 +196,8 @@ namespace MediaPortal.MPInstaller
             case 4: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_ANIMATIONS_TYPE, subtype, Path.GetFullPath(fil), "02040", "");
               break;
             case 5: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_TETRIS_TYPE, subtype, Path.GetFullPath(fil), "02050", "");
+              break;
+            case 6: addrow(Path.GetFileName(fil), MPinstallerStruct.SKIN_SYSTEMFONT_TYPE, subtype, Path.GetFullPath(fil), "02060", "");
               break;
             default:
               break;
@@ -438,7 +443,8 @@ namespace MediaPortal.MPInstaller
         {
           tabControl1.Controls.Add(tabPage_Plugin);
         }
-        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.SKIN_TYPE || bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.SKIN_MEDIA_TYPE)
+        if (bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.SKIN_TYPE || bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.SKIN_MEDIA_TYPE ||
+            bossview.SelectedItems[0].SubItems[1].Text == MPinstallerStruct.SKIN_SYSTEMFONT_TYPE)
         {
           tabControl1.Controls.Add(tabPage_Skin);
           skint_comboBox1.Text = bossview.SelectedItems[0].SubItems[2].Text;
@@ -794,5 +800,11 @@ namespace MediaPortal.MPInstaller
         }
       }
     }
+
+    private void systemFontToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      addskin(6);
+    }
+
   }
 }

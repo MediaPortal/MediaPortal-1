@@ -64,6 +64,7 @@ namespace MediaPortal.MPInstaller
     public const string SKIN_ANIMATIONS_TYPE = "Animations";
     public const string SKIN_TETRIS_TYPE = "Tetris";
     public const string SKIN_XML_SUBTYPE = "Genskin";
+    public const string SKIN_SYSTEMFONT_TYPE = "System_Font";
     public const string TEXT_TYPE = "Text";
     public const string TEXT_EULA_TYPE = "EULA";
     public const string TEXT_LOG_TYPE = "Log";
@@ -97,6 +98,7 @@ namespace MediaPortal.MPInstaller
       ProiectProperties = new ProiectPropertiesClass();
       SetupGroups = new List<GroupString>();
       SetupGroupsMappig = new List<GroupStringMapping>();
+      
     }
 
     public string UpdateURL
@@ -665,7 +667,12 @@ namespace MediaPortal.MPInstaller
       {
         ret = "Internal" + @"\" + flst.SubType + @"\";
       }
-     
+      
+      if (flst.Type == SKIN_SYSTEMFONT_TYPE)
+      {
+        ret = "System_Font" + @"\" + flst.SubType + @"\";
+      }
+
       if (string.IsNullOrEmpty(flst.FileProperties.OutputFileName))
         ret += Path.GetFileName(flst.FileName);
       else
@@ -782,6 +789,11 @@ namespace MediaPortal.MPInstaller
       {
         ret = Config.GetFolder(Config.Dir.Base) + @"\" + "Docs" + @"\";
       }
+      if (flst.Type == SKIN_SYSTEMFONT_TYPE)
+      {
+        ret = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot"), "Fonts") + @"\";
+      }
+
       if (string.IsNullOrEmpty(flst.FileProperties.OutputFileName))
         ret += Path.GetFileName(flst.FileName);
       else

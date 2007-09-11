@@ -59,9 +59,11 @@ namespace MediaPortal.MPInstaller
           this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.textToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
           this.otherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-          this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+          this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
           this.fileAutomatedDiscoverTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.directoryAutomatedDiscoverTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+          this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+          this.internalPluginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.customizationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.postSetupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.setupGroupsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -119,8 +121,7 @@ namespace MediaPortal.MPInstaller
           this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
           this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
           this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-          this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-          this.internalPluginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+          this.systemFontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.menuStrip1.SuspendLayout();
           this.contextMenuStrip1.SuspendLayout();
           this.tabPage_Skin.SuspendLayout();
@@ -296,7 +297,8 @@ namespace MediaPortal.MPInstaller
             this.mediaToolStripMenuItem,
             this.soundsToolStripMenuItem,
             this.animationsToolStripMenuItem,
-            this.tetrisToolStripMenuItem});
+            this.tetrisToolStripMenuItem,
+            this.systemFontToolStripMenuItem});
           this.skinToolStripMenuItem.Name = "skinToolStripMenuItem";
           this.skinToolStripMenuItem.Size = new System.Drawing.Size(260, 22);
           this.skinToolStripMenuItem.Text = "Skin";
@@ -304,35 +306,35 @@ namespace MediaPortal.MPInstaller
           // componentToolStripMenuItem
           // 
           this.componentToolStripMenuItem.Name = "componentToolStripMenuItem";
-          this.componentToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+          this.componentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
           this.componentToolStripMenuItem.Text = "Component";
           this.componentToolStripMenuItem.Click += new System.EventHandler(this.componentToolStripMenuItem_Click);
           // 
           // mediaToolStripMenuItem
           // 
           this.mediaToolStripMenuItem.Name = "mediaToolStripMenuItem";
-          this.mediaToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+          this.mediaToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
           this.mediaToolStripMenuItem.Text = "Media";
           this.mediaToolStripMenuItem.Click += new System.EventHandler(this.mediaToolStripMenuItem_Click);
           // 
           // soundsToolStripMenuItem
           // 
           this.soundsToolStripMenuItem.Name = "soundsToolStripMenuItem";
-          this.soundsToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+          this.soundsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
           this.soundsToolStripMenuItem.Text = "Sounds";
           this.soundsToolStripMenuItem.Click += new System.EventHandler(this.soundsToolStripMenuItem_Click);
           // 
           // animationsToolStripMenuItem
           // 
           this.animationsToolStripMenuItem.Name = "animationsToolStripMenuItem";
-          this.animationsToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+          this.animationsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
           this.animationsToolStripMenuItem.Text = "Animations";
           this.animationsToolStripMenuItem.Click += new System.EventHandler(this.animationsToolStripMenuItem_Click);
           // 
           // tetrisToolStripMenuItem
           // 
           this.tetrisToolStripMenuItem.Name = "tetrisToolStripMenuItem";
-          this.tetrisToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+          this.tetrisToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
           this.tetrisToolStripMenuItem.Text = "Tetris";
           this.tetrisToolStripMenuItem.Click += new System.EventHandler(this.tetrisToolStripMenuItem_Click);
           // 
@@ -371,10 +373,10 @@ namespace MediaPortal.MPInstaller
           this.otherToolStripMenuItem.Text = "Other";
           this.otherToolStripMenuItem.Click += new System.EventHandler(this.otherToolStripMenuItem_Click);
           // 
-          // toolStripSeparator3
+          // toolStripSeparator4
           // 
-          this.toolStripSeparator3.Name = "toolStripSeparator3";
-          this.toolStripSeparator3.Size = new System.Drawing.Size(257, 6);
+          this.toolStripSeparator4.Name = "toolStripSeparator4";
+          this.toolStripSeparator4.Size = new System.Drawing.Size(257, 6);
           // 
           // fileAutomatedDiscoverTypeToolStripMenuItem
           // 
@@ -390,6 +392,18 @@ namespace MediaPortal.MPInstaller
           this.directoryAutomatedDiscoverTypeToolStripMenuItem.Text = "Directory - Automated discover type";
           this.directoryAutomatedDiscoverTypeToolStripMenuItem.Click += new System.EventHandler(this.directoryAutomatedDiscoverTypeToolStripMenuItem_Click);
           // 
+          // toolStripSeparator3
+          // 
+          this.toolStripSeparator3.Name = "toolStripSeparator3";
+          this.toolStripSeparator3.Size = new System.Drawing.Size(257, 6);
+          // 
+          // internalPluginToolStripMenuItem
+          // 
+          this.internalPluginToolStripMenuItem.Name = "internalPluginToolStripMenuItem";
+          this.internalPluginToolStripMenuItem.Size = new System.Drawing.Size(260, 22);
+          this.internalPluginToolStripMenuItem.Text = "Internal Plugin";
+          this.internalPluginToolStripMenuItem.Click += new System.EventHandler(this.internalPluginToolStripMenuItem_Click);
+          // 
           // customizationToolStripMenuItem
           // 
           this.customizationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -402,14 +416,14 @@ namespace MediaPortal.MPInstaller
           // postSetupToolStripMenuItem
           // 
           this.postSetupToolStripMenuItem.Name = "postSetupToolStripMenuItem";
-          this.postSetupToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+          this.postSetupToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
           this.postSetupToolStripMenuItem.Text = "Post Setup";
           this.postSetupToolStripMenuItem.Click += new System.EventHandler(this.postSetupToolStripMenuItem_Click);
           // 
           // setupGroupsToolStripMenuItem
           // 
           this.setupGroupsToolStripMenuItem.Name = "setupGroupsToolStripMenuItem";
-          this.setupGroupsToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+          this.setupGroupsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
           this.setupGroupsToolStripMenuItem.Text = "Setup Groups";
           this.setupGroupsToolStripMenuItem.Click += new System.EventHandler(this.setupGroupsToolStripMenuItem_Click);
           // 
@@ -968,17 +982,12 @@ namespace MediaPortal.MPInstaller
           // 
           this.folderBrowserDialog1.ShowNewFolderButton = false;
           // 
-          // toolStripSeparator4
+          // systemFontToolStripMenuItem
           // 
-          this.toolStripSeparator4.Name = "toolStripSeparator4";
-          this.toolStripSeparator4.Size = new System.Drawing.Size(257, 6);
-          // 
-          // internalPluginToolStripMenuItem
-          // 
-          this.internalPluginToolStripMenuItem.Name = "internalPluginToolStripMenuItem";
-          this.internalPluginToolStripMenuItem.Size = new System.Drawing.Size(260, 22);
-          this.internalPluginToolStripMenuItem.Text = "Internal Plugin";
-          this.internalPluginToolStripMenuItem.Click += new System.EventHandler(this.internalPluginToolStripMenuItem_Click);
+          this.systemFontToolStripMenuItem.Name = "systemFontToolStripMenuItem";
+          this.systemFontToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+          this.systemFontToolStripMenuItem.Text = "System Font";
+          this.systemFontToolStripMenuItem.Click += new System.EventHandler(this.systemFontToolStripMenuItem_Click);
           // 
           // EditForm
           // 
@@ -1116,6 +1125,7 @@ namespace MediaPortal.MPInstaller
       private System.Windows.Forms.Button button1;
       private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
       private System.Windows.Forms.ToolStripMenuItem internalPluginToolStripMenuItem;
+      private System.Windows.Forms.ToolStripMenuItem systemFontToolStripMenuItem;
     }
 }
 

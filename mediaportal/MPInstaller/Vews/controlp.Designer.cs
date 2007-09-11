@@ -76,7 +76,6 @@ namespace MediaPortal.MPInstaller
           this.listView1.ContextMenuStrip = this.contextMenuStrip1;
           this.listView1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
           this.listView1.FullRowSelect = true;
-          this.listView1.GridLines = true;
           this.listView1.HideSelection = false;
           this.listView1.LargeImageList = this.imageList1;
           this.listView1.Location = new System.Drawing.Point(164, 0);
