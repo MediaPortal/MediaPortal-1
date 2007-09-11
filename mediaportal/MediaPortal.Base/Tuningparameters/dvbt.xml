@@ -305,11 +305,10 @@
 		<carrier frequency="778000" bandwidth="8"/>
 		<carrier frequency="834000" bandwidth="8" />
 	</country>
-	<country name="Croatia - Zagreb - Sljeme" offset="125">
+	<country name="Croatia - Zagreb" offset="125">
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
 		<carrier frequency="522000" bandwidth="8" />
-	</country>
-	<country name="Croatia - Zagreb - HRT dom" offset="125">
-		<carrier frequency="754000" bandwidth="8" />
 	</country>
 	<country name="Czech Republic - Prague" offset="125">
 		<carrier frequency="506000" bandwidth="8" />
