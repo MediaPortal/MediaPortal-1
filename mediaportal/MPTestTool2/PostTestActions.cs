@@ -32,7 +32,7 @@ using System.Reflection;
 using System.Collections;
 using System.Diagnostics;
 using System.Windows.Forms;
-
+using MediaPortal.Configuration;
 using MediaPortal.Support;
 using System.Collections.Generic;
 
@@ -153,7 +153,7 @@ namespace MPTestTool
     private List<ILogCreator> CreateLoggers()
     {
       List<ILogCreator> logs = new List<ILogCreator>();
-      logs.Add(new MediaPortalLogs(Application.StartupPath+"\\log"));
+      logs.Add(new MediaPortalLogs(Config.GetFolder(Config.Dir.Log)));
       logs.Add(new TvServerLogger());
       logs.Add(new DxDiagLog(new ProcessRunner()));
       logs.Add(new HotFixInformationLogger());

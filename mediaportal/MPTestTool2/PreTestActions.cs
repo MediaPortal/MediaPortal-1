@@ -27,6 +27,7 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
+using MediaPortal.Configuration;
 
 namespace MPTestTool
 {
@@ -95,7 +96,7 @@ namespace MPTestTool
 		{
 			base.setAction("Clearing MediaPortal log subdirectory...");
       Update();
-			ClearDir(Application.StartupPath+"\\log");
+      ClearDir(Config.GetFolder(Config.Dir.Log));
 		}
 	}
 }
