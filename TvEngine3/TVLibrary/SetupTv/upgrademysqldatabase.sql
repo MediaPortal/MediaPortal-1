@@ -1,10 +1,10 @@
 USE TvLibrary;
 # --- version 31 ---
-ALTER TABLE `Program` ADD `parentalRating` int(11)
+ALTER TABLE `Program` ADD `url` varchar(200), `bitrate` int(11)
 #
-UPDATE `Program` SET `parentalRating`=0
+UPDATE `TuningDetail` SET `url`='', `bitrate`=0
 #
 DELETE FROM `Version`
 #
-INSERT INTO `Version` (`versionNumber`) VALUES(31)
+INSERT INTO `Version` (`versionNumber`) VALUES(32)
 #

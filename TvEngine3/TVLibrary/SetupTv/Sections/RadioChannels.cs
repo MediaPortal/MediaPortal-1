@@ -157,22 +157,39 @@ namespace SetupTv.Sections
         bool dvbt = false;
         bool dvbs = false;
         bool atsc = false;
+        bool webstream = false;
         bool notmapped = true;
         if (ch.IsRadio==false) continue;
         channelCount++;
-        IList maps = ch.ReferringChannelMap();
-        foreach (ChannelMap map in maps)
+        IList details = ch.ReferringTuningDetail();
+        if (details != null)
         {
-          if (cards.ContainsKey(map.IdCard))
+          if (details.Count == 1)
           {
-            CardType type = cards[map.IdCard];
-            switch (type)
+            TuningDetail detail = (TuningDetail)details[0];
+            if (detail.ChannelType == 5)
             {
-              case CardType.Analog: analog = true; notmapped = false; break;
-              case CardType.DvbC: dvbc = true; notmapped = false; break;
-              case CardType.DvbT: dvbt = true; notmapped = false; break;
-              case CardType.DvbS: dvbs = true; notmapped = false; break;
-              case CardType.Atsc: atsc = true; notmapped = false; break;
+              webstream = true;
+              notmapped = false;
+            }
+          }
+        }
+        if (notmapped)
+        {
+          IList maps = ch.ReferringChannelMap();
+          foreach (ChannelMap map in maps)
+          {
+            if (cards.ContainsKey(map.IdCard))
+            {
+              CardType type = cards[map.IdCard];
+              switch (type)
+              {
+                case CardType.Analog: analog = true; notmapped = false; break;
+                case CardType.DvbC: dvbc = true; notmapped = false; break;
+                case CardType.DvbT: dvbt = true; notmapped = false; break;
+                case CardType.DvbS: dvbs = true; notmapped = false; break;
+                case CardType.Atsc: atsc = true; notmapped = false; break;
+              }
             }
           }
         }
@@ -206,6 +223,11 @@ namespace SetupTv.Sections
         {
           if (builder.Length > 0) builder.Append(",");
           builder.Append("ATSC");
+        }
+        if (webstream)
+        {
+          if (builder.Length > 0) builder.Append(",");
+          builder.Append("Webstream");
         }
         int imageIndex = 0;
         if (ch.FreeToAir == false)
@@ -255,6 +277,9 @@ namespace SetupTv.Sections
               frequency = detail.Frequency;
               frequency /= 1000.0f;
               item.SubItems.Add(String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.Bandwidth));
+              break;
+            case 5:// Webstream
+              item.SubItems.Add(detail.Url);
               break;
           }
         }
@@ -325,9 +350,11 @@ namespace SetupTv.Sections
       Channel channel = (Channel)mpListView1.Items[indexes[0]].Tag;
       FormEditChannel dlg = new FormEditChannel();
       dlg.Channel = channel;
-      dlg.ShowDialog(this);
-      channel.Persist();
-      OnSectionActivated();
+      if (dlg.ShowDialog(this) == DialogResult.OK)
+      {
+        channel.Persist();
+        OnSectionActivated();
+      }
     }
 
     private void buttonDown_Click(object sender, EventArgs e)
@@ -368,8 +395,8 @@ namespace SetupTv.Sections
       FormEditChannel dlg = new FormEditChannel();
       dlg.Channel = null;
       dlg.IsTv = false;
-      dlg.ShowDialog(this);
-      OnSectionActivated();
+      if (dlg.ShowDialog(this)==DialogResult.OK)
+        OnSectionActivated();
     }
 
     private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)

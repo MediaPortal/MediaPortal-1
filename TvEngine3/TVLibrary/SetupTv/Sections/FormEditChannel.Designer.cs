@@ -97,6 +97,14 @@ namespace SetupTv.Sections
       this.label20 = new System.Windows.Forms.Label();
       this.label21 = new System.Windows.Forms.Label();
       this.tabPage6 = new System.Windows.Forms.TabPage();
+      this.textBoxQamSID = new System.Windows.Forms.TextBox();
+      this.textBoxQamTSID = new System.Windows.Forms.TextBox();
+      this.textBoxQamONID = new System.Windows.Forms.TextBox();
+      this.label39 = new System.Windows.Forms.Label();
+      this.label40 = new System.Windows.Forms.Label();
+      this.label41 = new System.Windows.Forms.Label();
+      this.textBoxFrequency = new System.Windows.Forms.TextBox();
+      this.label38 = new System.Windows.Forms.Label();
       this.comboBoxQAMModulation = new System.Windows.Forms.ComboBox();
       this.label37 = new System.Windows.Forms.Label();
       this.textBoxVideoPid = new System.Windows.Forms.TextBox();
@@ -109,14 +117,12 @@ namespace SetupTv.Sections
       this.label22 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.label24 = new System.Windows.Forms.Label();
-      this.textBoxFrequency = new System.Windows.Forms.TextBox();
-      this.label38 = new System.Windows.Forms.Label();
-      this.textBoxQamSID = new System.Windows.Forms.TextBox();
-      this.textBoxQamTSID = new System.Windows.Forms.TextBox();
-      this.textBoxQamONID = new System.Windows.Forms.TextBox();
-      this.label39 = new System.Windows.Forms.Label();
-      this.label40 = new System.Windows.Forms.Label();
-      this.label41 = new System.Windows.Forms.Label();
+      this.tabSHOUTcast = new System.Windows.Forms.TabPage();
+      this.btnSearchSHOUTcast = new System.Windows.Forms.Button();
+      this.edStreamURL = new System.Windows.Forms.TextBox();
+      this.label45 = new System.Windows.Forms.Label();
+      this.nudStreamBitrate = new System.Windows.Forms.NumericUpDown();
+      this.label44 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -124,6 +130,8 @@ namespace SetupTv.Sections
       this.tabPage4.SuspendLayout();
       this.tabPage5.SuspendLayout();
       this.tabPage6.SuspendLayout();
+      this.tabSHOUTcast.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.nudStreamBitrate)).BeginInit();
       this.SuspendLayout();
       // 
       // buttonOk
@@ -144,6 +152,7 @@ namespace SetupTv.Sections
       this.tabControl1.Controls.Add(this.tabPage4);
       this.tabControl1.Controls.Add(this.tabPage5);
       this.tabControl1.Controls.Add(this.tabPage6);
+      this.tabControl1.Controls.Add(this.tabSHOUTcast);
       this.tabControl1.Location = new System.Drawing.Point(12, 12);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
@@ -928,6 +937,74 @@ namespace SetupTv.Sections
       this.tabPage6.Text = "ATSC";
       this.tabPage6.UseVisualStyleBackColor = true;
       // 
+      // textBoxQamSID
+      // 
+      this.textBoxQamSID.Location = new System.Drawing.Point(103, 259);
+      this.textBoxQamSID.Name = "textBoxQamSID";
+      this.textBoxQamSID.Size = new System.Drawing.Size(146, 20);
+      this.textBoxQamSID.TabIndex = 64;
+      this.textBoxQamSID.Text = "-1";
+      // 
+      // textBoxQamTSID
+      // 
+      this.textBoxQamTSID.Location = new System.Drawing.Point(103, 233);
+      this.textBoxQamTSID.Name = "textBoxQamTSID";
+      this.textBoxQamTSID.Size = new System.Drawing.Size(146, 20);
+      this.textBoxQamTSID.TabIndex = 63;
+      this.textBoxQamTSID.Text = "-1";
+      // 
+      // textBoxQamONID
+      // 
+      this.textBoxQamONID.Location = new System.Drawing.Point(103, 207);
+      this.textBoxQamONID.Name = "textBoxQamONID";
+      this.textBoxQamONID.Size = new System.Drawing.Size(146, 20);
+      this.textBoxQamONID.TabIndex = 62;
+      this.textBoxQamONID.Text = "-1";
+      // 
+      // label39
+      // 
+      this.label39.AutoSize = true;
+      this.label39.Location = new System.Drawing.Point(23, 236);
+      this.label39.Name = "label39";
+      this.label39.Size = new System.Drawing.Size(64, 13);
+      this.label39.TabIndex = 67;
+      this.label39.Text = "TransportId:";
+      // 
+      // label40
+      // 
+      this.label40.AutoSize = true;
+      this.label40.Location = new System.Drawing.Point(23, 262);
+      this.label40.Name = "label40";
+      this.label40.Size = new System.Drawing.Size(55, 13);
+      this.label40.TabIndex = 66;
+      this.label40.Text = "ServiceId:";
+      // 
+      // label41
+      // 
+      this.label41.AutoSize = true;
+      this.label41.Location = new System.Drawing.Point(23, 210);
+      this.label41.Name = "label41";
+      this.label41.Size = new System.Drawing.Size(59, 13);
+      this.label41.TabIndex = 65;
+      this.label41.Text = "NetworkId:";
+      // 
+      // textBoxFrequency
+      // 
+      this.textBoxFrequency.Location = new System.Drawing.Point(103, 50);
+      this.textBoxFrequency.Name = "textBoxFrequency";
+      this.textBoxFrequency.Size = new System.Drawing.Size(146, 20);
+      this.textBoxFrequency.TabIndex = 60;
+      this.textBoxFrequency.Text = "-1";
+      // 
+      // label38
+      // 
+      this.label38.AutoSize = true;
+      this.label38.Location = new System.Drawing.Point(23, 53);
+      this.label38.Name = "label38";
+      this.label38.Size = new System.Drawing.Size(60, 13);
+      this.label38.TabIndex = 61;
+      this.label38.Text = "Frequency:";
+      // 
       // comboBoxQAMModulation
       // 
       this.comboBoxQAMModulation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -1036,73 +1113,67 @@ namespace SetupTv.Sections
       this.label24.TabIndex = 19;
       this.label24.Text = "Channel:";
       // 
-      // textBoxFrequency
+      // tabSHOUTcast
       // 
-      this.textBoxFrequency.Location = new System.Drawing.Point(103, 50);
-      this.textBoxFrequency.Name = "textBoxFrequency";
-      this.textBoxFrequency.Size = new System.Drawing.Size(146, 20);
-      this.textBoxFrequency.TabIndex = 60;
-      this.textBoxFrequency.Text = "-1";
+      this.tabSHOUTcast.Controls.Add(this.btnSearchSHOUTcast);
+      this.tabSHOUTcast.Controls.Add(this.edStreamURL);
+      this.tabSHOUTcast.Controls.Add(this.label45);
+      this.tabSHOUTcast.Controls.Add(this.nudStreamBitrate);
+      this.tabSHOUTcast.Controls.Add(this.label44);
+      this.tabSHOUTcast.Location = new System.Drawing.Point(4, 22);
+      this.tabSHOUTcast.Name = "tabSHOUTcast";
+      this.tabSHOUTcast.Padding = new System.Windows.Forms.Padding(3);
+      this.tabSHOUTcast.Size = new System.Drawing.Size(404, 299);
+      this.tabSHOUTcast.TabIndex = 6;
+      this.tabSHOUTcast.Text = "Web-Stream";
+      this.tabSHOUTcast.UseVisualStyleBackColor = true;
       // 
-      // label38
+      // btnSearchSHOUTcast
       // 
-      this.label38.AutoSize = true;
-      this.label38.Location = new System.Drawing.Point(23, 53);
-      this.label38.Name = "label38";
-      this.label38.Size = new System.Drawing.Size(60, 13);
-      this.label38.TabIndex = 61;
-      this.label38.Text = "Frequency:";
+      this.btnSearchSHOUTcast.Location = new System.Drawing.Point(23, 76);
+      this.btnSearchSHOUTcast.Name = "btnSearchSHOUTcast";
+      this.btnSearchSHOUTcast.Size = new System.Drawing.Size(124, 23);
+      this.btnSearchSHOUTcast.TabIndex = 4;
+      this.btnSearchSHOUTcast.Text = "Search SHOUTcast";
+      this.btnSearchSHOUTcast.UseVisualStyleBackColor = true;
+      this.btnSearchSHOUTcast.Click += new System.EventHandler(this.btnSearchSHOUTcast_Click);
       // 
-      // textBoxQamSID
+      // edStreamURL
       // 
-      this.textBoxQamSID.Location = new System.Drawing.Point(103, 259);
-      this.textBoxQamSID.Name = "textBoxQamSID";
-      this.textBoxQamSID.Size = new System.Drawing.Size(146, 20);
-      this.textBoxQamSID.TabIndex = 64;
-      this.textBoxQamSID.Text = "-1";
+      this.edStreamURL.Location = new System.Drawing.Point(63, 14);
+      this.edStreamURL.Name = "edStreamURL";
+      this.edStreamURL.Size = new System.Drawing.Size(335, 20);
+      this.edStreamURL.TabIndex = 1;
       // 
-      // textBoxQamTSID
+      // label45
       // 
-      this.textBoxQamTSID.Location = new System.Drawing.Point(103, 233);
-      this.textBoxQamTSID.Name = "textBoxQamTSID";
-      this.textBoxQamTSID.Size = new System.Drawing.Size(146, 20);
-      this.textBoxQamTSID.TabIndex = 63;
-      this.textBoxQamTSID.Text = "-1";
+      this.label45.AutoSize = true;
+      this.label45.Location = new System.Drawing.Point(20, 17);
+      this.label45.Name = "label45";
+      this.label45.Size = new System.Drawing.Size(32, 13);
+      this.label45.TabIndex = 6;
+      this.label45.Text = "URL:";
       // 
-      // textBoxQamONID
+      // nudStreamBitrate
       // 
-      this.textBoxQamONID.Location = new System.Drawing.Point(103, 207);
-      this.textBoxQamONID.Name = "textBoxQamONID";
-      this.textBoxQamONID.Size = new System.Drawing.Size(146, 20);
-      this.textBoxQamONID.TabIndex = 62;
-      this.textBoxQamONID.Text = "-1";
+      this.nudStreamBitrate.Location = new System.Drawing.Point(63, 40);
+      this.nudStreamBitrate.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            0});
+      this.nudStreamBitrate.Name = "nudStreamBitrate";
+      this.nudStreamBitrate.Size = new System.Drawing.Size(53, 20);
+      this.nudStreamBitrate.TabIndex = 2;
       // 
-      // label39
+      // label44
       // 
-      this.label39.AutoSize = true;
-      this.label39.Location = new System.Drawing.Point(23, 236);
-      this.label39.Name = "label39";
-      this.label39.Size = new System.Drawing.Size(64, 13);
-      this.label39.TabIndex = 67;
-      this.label39.Text = "TransportId:";
-      // 
-      // label40
-      // 
-      this.label40.AutoSize = true;
-      this.label40.Location = new System.Drawing.Point(23, 262);
-      this.label40.Name = "label40";
-      this.label40.Size = new System.Drawing.Size(55, 13);
-      this.label40.TabIndex = 66;
-      this.label40.Text = "ServiceId:";
-      // 
-      // label41
-      // 
-      this.label41.AutoSize = true;
-      this.label41.Location = new System.Drawing.Point(23, 210);
-      this.label41.Name = "label41";
-      this.label41.Size = new System.Drawing.Size(59, 13);
-      this.label41.TabIndex = 65;
-      this.label41.Text = "NetworkId:";
+      this.label44.AutoSize = true;
+      this.label44.Location = new System.Drawing.Point(20, 43);
+      this.label44.Name = "label44";
+      this.label44.Size = new System.Drawing.Size(40, 13);
+      this.label44.TabIndex = 4;
+      this.label44.Text = "Bitrate:";
       // 
       // FormEditChannel
       // 
@@ -1113,7 +1184,7 @@ namespace SetupTv.Sections
       this.Controls.Add(this.buttonOk);
       this.Name = "FormEditChannel";
       this.Text = "Edit Channel";
-      this.Load += new System.EventHandler(this.FormEditChannel_Load);
+      this.Shown += new System.EventHandler(this.FormEditChannel_Load);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();
@@ -1127,6 +1198,9 @@ namespace SetupTv.Sections
       this.tabPage5.PerformLayout();
       this.tabPage6.ResumeLayout(false);
       this.tabPage6.PerformLayout();
+      this.tabSHOUTcast.ResumeLayout(false);
+      this.tabSHOUTcast.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.nudStreamBitrate)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -1222,5 +1296,11 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label39;
     private System.Windows.Forms.Label label40;
     private System.Windows.Forms.Label label41;
+    private System.Windows.Forms.TabPage tabSHOUTcast;
+    private System.Windows.Forms.Button btnSearchSHOUTcast;
+    private System.Windows.Forms.TextBox edStreamURL;
+    private System.Windows.Forms.Label label45;
+    private System.Windows.Forms.NumericUpDown nudStreamBitrate;
+    private System.Windows.Forms.Label label44;
   }
 }

@@ -207,6 +207,16 @@ namespace SetupTv.Sections
       foreach (Channel channel in channels)
       {
         if (channel.IsTv == false) continue;
+        IList details = channel.ReferringTuningDetail();
+        if (details != null)
+        {
+          if (details.Count > 0)
+          {
+            TuningDetail detail = (TuningDetail)details[0];
+            if (detail.ChannelType == 5)
+              continue;
+          }
+        }
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;

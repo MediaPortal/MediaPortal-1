@@ -381,6 +381,8 @@ CREATE TABLE `TuningDetail` (
   `innerFecRate` int(11) NOT NULL,
   `pilot` int(11) NOT NULL,
   `rollOff` int(11) NOT NULL,
+  `url` varchar(200) NOT NULL,
+  `bitrate` int(11) NOT NULL,
   PRIMARY KEY  (`idTuning`),
   KEY `IDX_TuningDetail1` (`idChannel`)
 ) ENGINE=MyISAM AUTO_INCREMENT=396 DEFAULT CHARSET=latin1;
@@ -490,7 +492,7 @@ CREATE TABLE `Version` (
 --
 
 /*!40000 ALTER TABLE `Version` DISABLE KEYS */;
-INSERT INTO `Version` VALUES  (1,31);
+INSERT INTO `Version` VALUES  (1,32);
 /*!40000 ALTER TABLE `Version` ENABLE KEYS */;
 #
 

@@ -179,6 +179,16 @@ namespace SetupTv.Sections
       foreach (Channel channel in allChannels)
       {
         if (channel.IsTv == false) continue;
+        IList details = channel.ReferringTuningDetail();
+        if (details != null)
+        {
+          if (details.Count > 0)
+          {
+            TuningDetail detail = (TuningDetail)details[0];
+            if (detail.ChannelType == 5)
+              continue;
+          }
+        }
         bool isMapped = false;
         IList list = channel.ReferringChannelMap();
         foreach (ChannelMap map in list)

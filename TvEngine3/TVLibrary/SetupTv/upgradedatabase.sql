@@ -1,16 +1,16 @@
 USE TvLibrary
 
---- version 31 ---
+--- version 32 ---
 GO
 
-ALTER TABLE Program ADD parentalRating int
+ALTER TABLE TuningDetail ADD url varchar(200), bitrate int
 GO
 
-UPDATE Program SET parentalRating=0
+UPDATE TuningDetail SET url='',bitrate=0
 GO
 
-DELETE FROM version
+DELETE FROM Version
 GO
 
-insert into version(versionNumber) values(31)
+insert into Version(versionNumber) values(32)
 GO

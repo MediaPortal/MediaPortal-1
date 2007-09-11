@@ -184,6 +184,16 @@ namespace SetupTv.Sections
       {
         Channel channel = map.ReferencedChannel();
         if (channel.IsRadio == false) continue;
+        IList details = channel.ReferringTuningDetail();
+        if (details != null)
+        {
+          if (details.Count > 0)
+          {
+            TuningDetail detail = (TuningDetail)details[0];
+            if (detail.ChannelType == 5)
+              continue;
+          }
+        }
         int imageIndex = 3;
         if (channel.FreeToAir == false)
           imageIndex = 0;

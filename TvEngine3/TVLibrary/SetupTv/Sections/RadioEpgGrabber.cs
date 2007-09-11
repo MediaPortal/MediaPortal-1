@@ -135,6 +135,16 @@ namespace SetupTv.Sections
         bool dvbs = false;
         bool atsc = false;
         if (ch.IsRadio == false) continue;
+        IList dets = ch.ReferringTuningDetail();
+        if (dets != null)
+        {
+          if (dets.Count > 0)
+          {
+            TuningDetail detail = (TuningDetail)dets[0];
+            if (detail.ChannelType == 5)
+              continue;
+          }
+        }
         int imageIndex = 3;
         if (ch.FreeToAir == false)
           imageIndex = 0;

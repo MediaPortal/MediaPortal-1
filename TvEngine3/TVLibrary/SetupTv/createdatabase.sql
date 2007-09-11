@@ -185,6 +185,8 @@ CREATE TABLE TuningDetail(
 	innerFecRate int NOT NULL,
 	pilot int NOT NULL,
 	rollOff int NOT NULL,
+	url varchar(200) NOT NULL,
+	bitrate int NOT NULL,
  CONSTRAINT PK_TuningDetail PRIMARY KEY  
 (
 	idTuning ASC
@@ -658,5 +660,5 @@ GO
 DELETE FROM Version
 GO
 
-INSERT INTO Version(versionNumber) values(31)
+INSERT INTO Version(versionNumber) values(32)
 GO

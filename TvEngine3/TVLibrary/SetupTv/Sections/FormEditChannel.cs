@@ -46,6 +46,7 @@ namespace SetupTv.Sections
     bool _atsc = false;
     bool _newChannel = false;
     bool _isTv = true;
+    bool _webstream = false;
     Channel _channel;
     public FormEditChannel()
     {
@@ -324,6 +325,14 @@ namespace SetupTv.Sections
             }
           }
         }
+        if (edStreamURL.Text != "")
+        {
+          _channel.GrabEpg = false;
+          _channel.Persist();
+          TuningDetail detail = new TuningDetail(_channel.IdChannel, _channel.DisplayName, "(Webstream)", 5, 0, 0, 31, _isTv, !_isTv, 0, 0, 0,0, true, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, edStreamURL.Text, (int)nudStreamBitrate.Value);
+          detail.Persist();
+        }
+
         this.Close();
         return;
       }
@@ -450,17 +459,26 @@ namespace SetupTv.Sections
             detail.Bandwidth = 8;
           detail.Persist();
         }
+        //Webstream tab
+        if (detail.ChannelType == 5)
+        {
+          _webstream = true;
+          detail.Url = edStreamURL.Text;
+          detail.Bitrate = (int)nudStreamBitrate.Value;
+          detail.Persist();
+        }
       }
+      this.DialogResult = DialogResult.OK;
       this.Close();
     }
 
     private void FormEditChannel_Load(object sender, EventArgs e)
     {
       _newChannel = false;
-      if (Channel == null)
+      if (_channel == null)
       {
         _newChannel = true;
-        Channel = new Channel("", false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "", true,"");
+        Channel = new Channel("",false , true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "", true,"");
       }
       CountryCollection countries = new CountryCollection();
       for (int i = 0; i < countries.Countries.Length; ++i)
@@ -496,6 +514,7 @@ namespace SetupTv.Sections
         _dvbc = true;
         _dvbs = true;
         _atsc = true;
+        _webstream = true;
         textBoxChannel.Text = "";
         textBoxProgram.Text = "";
         textboxFreq.Text = "";
@@ -627,6 +646,14 @@ namespace SetupTv.Sections
           else
             comboBoxBandWidth.SelectedIndex = 1;
         }
+
+        //webstream tab
+        if (detail.ChannelType == 5 || _newChannel)
+        {
+          _webstream = true;
+          edStreamURL.Text = detail.Url;
+          nudStreamBitrate.Value = detail.Bitrate;
+        }
       }
     }
 
@@ -673,6 +700,13 @@ namespace SetupTv.Sections
             MessageBox.Show(this, "No ATSC tuning details available for this channel");
           }
           break;
+        case 6:
+          if (_webstream == false)
+          {
+            tabControl1.SelectedIndex = 0;
+            MessageBox.Show(this, "No Webstream details available for this channel");
+          }
+          break;
       }
     }
 
@@ -711,6 +745,16 @@ namespace SetupTv.Sections
       float freq = frequency;
       freq /= 1000000f;
       return freq.ToString("f2");
+    }
+
+    private void btnSearchSHOUTcast_Click(object sender, EventArgs e)
+    {
+      SearchSHOUTcast dlg = new SearchSHOUTcast();
+      DialogResult dialogResult = dlg.ShowDialog(this);
+      if (dlg.Station == null) return;
+      textBoxName.Text = dlg.Station.name;
+      edStreamURL.Text = dlg.Station.url;
+      nudStreamBitrate.Value = dlg.Station.bitrate;
     }
   }
 }
