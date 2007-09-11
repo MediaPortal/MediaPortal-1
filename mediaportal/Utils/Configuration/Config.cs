@@ -272,6 +272,13 @@ private Config()
                   {
                     strPath = Get(Dir.Base) + strPath;
                   }
+
+                  // Check if e.g. a network path is accessible - otherwhise MP might not start
+                  if (!Directory.Exists(strPath))
+                  {
+                    continue;
+                  }
+
                   // See if we got a slash at the end. If not add one.
                   if (!strPath.EndsWith(@"\"))
                   {

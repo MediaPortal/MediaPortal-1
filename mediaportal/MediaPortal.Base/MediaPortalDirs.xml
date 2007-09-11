@@ -27,47 +27,47 @@
    result is: C:\Temp\log\
 -->
 <Config>
-  <!-- The Path were all the Config files are located (mediaportal.xml, etc.) -->
+  <!-- The path were all the config files are located (mediaportal.xml, etc.) -->
   <Dir id = "Config">
     <Path></Path>
   </Dir>
-  <!-- The Path were all the Plugins are located. Don't modify -->
+  <!-- The path were all the plugins are located. Don't modify -->
   <Dir id = "Plugins">
     <Path>Plugins\</Path>
   </Dir>
-  <!-- The Path were the log files should be written to -->
+  <!-- The path were the log files should be written to -->
   <Dir id = "Log">
     <Path>Log\</Path>
   </Dir>
-      <!-- The Path were the Custom Inputdevice Mappings are located. -->
+      <!-- The path were the custom inputdevice mappings are located. -->
   <Dir id = "CustomInputDevice">
     <Path>InputDeviceMappings\custom</Path>
   </Dir>
-  <!-- The Path were the Default Inputdevice Mappings are located. -->
+  <!-- The path were the Default Inputdevice Mappings are located. -->
   <Dir id = "CustomInputDefault">
     <Path>InputDeviceMappings\defaults</Path>
   </Dir>
-  <!-- The Path were the skins are located -->
+  <!-- The path were the skins are located -->
   <Dir id = "Skin">
     <Path>Skin\</Path>
   </Dir>
-    <!-- The Path were the Language files are located -->
+    <!-- The path were the language files are located -->
   <Dir id = "Language">
     <Path>Language\</Path>
   </Dir>
-  <!-- The Path for the databases -->
+  <!-- The path for the databases -->
   <Dir id = "Database">
     <Path>Database\</Path>
   </Dir>
-  <!-- The Path for the Thumbs, like Music Cover Art, TV Logos, etc. -->
+  <!-- The path for the thumbs, like music cover art, TV logos, etc. -->
   <Dir id = "Thumbs">
     <Path>Thumbs\</Path>
   </Dir>
-  <!-- The Path were all the Weather related files are located. -->
+  <!-- The path were all the weather related files are located. -->
   <Dir id = "Weather">
     <Path>Weather\</Path>
   </Dir>
-  <!-- A Path holding cached information. Like Picture thumbs, modified skin files (packedgfx), etc. Files in there can be removed by the user -->
+  <!-- A path holding cached information. Like modified skin files (packedgfx), etc. Files in there can be removed by the user -->
   <Dir id = "Cache">
     <Path>Cache\</Path>
   </Dir>
