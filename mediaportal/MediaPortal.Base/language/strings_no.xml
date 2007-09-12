@@ -481,6 +481,11 @@
     <String id="558">Ingen vind</String>
     <String id="559">i nærheten</String>
     <String id="560">Klarner</String>
+    <String id="561">Km/t</String>
+    <String id="562">Mph</String>
+    <String id="563">Kn</String>
+    <String id="564">m/s</String>
+    <String id="565">bft</String>
     <String id="590">S. 100</String>
     <String id="591">S. 200</String>
     <String id="592">S. 300</String>
