@@ -118,16 +118,17 @@ namespace TvEngine
       int maxStarsMp = 10;
       int rating = -1;
       int pos = ratingStr.IndexOf('/');
-      double starCount;
-      String starCountStr;
 
       try
       {
         if (pos == -1)
         {
           Log.Info("XMLTVImport: star-rating could not be used - {0}", ratingStr);
-          return -1;
+          return rating;
         }
+
+        double starCount;
+        String starCountStr;
 
         starCountStr = ratingStr.Substring(0, pos);
         maxStars = Convert.ToInt32(ratingStr.Substring(pos + 1));
@@ -137,6 +138,9 @@ namespace TvEngine
         starCount = Convert.ToDouble(starCountStr, formatInfo);
 
         rating = (int)((starCount * maxStarsMp / maxStars) + 0.5);
+
+        if (rating < 0 || (rating > maxStarsMp + 0.5))
+          rating = -1;
       }
       catch
       {
