@@ -329,10 +329,9 @@ namespace SetupTv.Sections
         {
           _channel.GrabEpg = false;
           _channel.Persist();
-          TuningDetail detail = new TuningDetail(_channel.IdChannel, _channel.DisplayName, "(Webstream)", 5, 0, 0, 31, _isTv, !_isTv, 0, 0, 0,0, true, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, edStreamURL.Text, (int)nudStreamBitrate.Value);
-          detail.Persist();
+          layer.AddWebStreamTuningDetails(_channel, edStreamURL.Text, (int)nudStreamBitrate.Value);
         }
-
+        this.DialogResult = DialogResult.OK;
         this.Close();
         return;
       }

@@ -147,7 +147,7 @@ namespace SetupTv.Sections
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
       IList allmaps = ChannelMap.ListAll();
-
+      TvBusinessLayer layer = new TvBusinessLayer();
 
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (Channel ch in channels)
@@ -161,18 +161,10 @@ namespace SetupTv.Sections
         bool notmapped = true;
         if (ch.IsRadio==false) continue;
         channelCount++;
-        IList details = ch.ReferringTuningDetail();
-        if (details != null)
+        if (layer.ChannelIsWebstream(ch))
         {
-          if (details.Count == 1)
-          {
-            TuningDetail detail = (TuningDetail)details[0];
-            if (detail.ChannelType == 5)
-            {
-              webstream = true;
-              notmapped = false;
-            }
-          }
+          webstream = true;
+          notmapped = false;
         }
         if (notmapped)
         {
@@ -230,7 +222,7 @@ namespace SetupTv.Sections
           builder.Append("Webstream");
         }
         int imageIndex = 0;
-        if (ch.FreeToAir == false)
+        if (ch.FreeToAir)
           imageIndex = 3;
         ListViewItem item = new ListViewItem(ch.DisplayName, imageIndex);
         item.SubItems.Add("-");
@@ -395,7 +387,7 @@ namespace SetupTv.Sections
       FormEditChannel dlg = new FormEditChannel();
       dlg.Channel = null;
       dlg.IsTv = false;
-      if (dlg.ShowDialog(this)==DialogResult.OK)
+      if (dlg.ShowDialog()==DialogResult.OK)
         OnSectionActivated();
     }
 

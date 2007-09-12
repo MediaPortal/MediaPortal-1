@@ -148,16 +148,7 @@ namespace SetupTv.Sections
         bool dvbs = false;
         bool atsc = false;
         if (ch.IsTv == false) continue;
-        IList dets = ch.ReferringTuningDetail();
-        if (dets != null)
-        {
-          if (dets.Count > 0)
-          {
-            TuningDetail detail = (TuningDetail)dets[0];
-            if (detail.ChannelType == 5)
-              continue;
-          }
-        }
+        if (layer.ChannelIsWebstream(ch)) continue;
         int imageIndex = 1;
         if (ch.FreeToAir == false)
           imageIndex = 2;

@@ -132,6 +132,20 @@ CREATE TABLE `ChannelGroup` (
 #
 
 --
+-- Definition of table `ChannelGroup`
+--
+
+DROP TABLE IF EXISTS `RadioChannelGroup`;
+CREATE TABLE `RadioChannelGroup` (
+  `idGroup` int(11) NOT NULL auto_increment,
+  `groupName` varchar(200) NOT NULL,
+  `sortOrder` int(11) NOT NULL,
+  PRIMARY KEY  (`idGroup`),
+  KEY `IDX_RadioChannelGroup` (`sortOrder`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+#
+
+--
 -- Definition of table `ChannelMap`
 --
 
@@ -209,6 +223,22 @@ CREATE TABLE `GroupMap` (
   PRIMARY KEY  (`idMap`),
   KEY `FK_GroupMap_Channel` (`idChannel`),
   KEY `FK_GroupMap_ChannelGroup` (`idGroup`)
+) ENGINE=MyISAM AUTO_INCREMENT=145 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+#
+
+--
+-- Definition of table `RadioGroupMap`
+--
+
+DROP TABLE IF EXISTS `RadioGroupMap`;
+CREATE TABLE `RadioGroupMap` (
+  `idMap` int(11) NOT NULL auto_increment,
+  `idGroup` int(11) NOT NULL,
+  `idChannel` int(11) NOT NULL,
+  `SortOrder` int(11) NOT NULL,
+  PRIMARY KEY  (`idMap`),
+  KEY `FK_RadioGroupMap_Channel` (`idChannel`),
+  KEY `FK_RadioGroupMap_ChannelGroup` (`idGroup`)
 ) ENGINE=MyISAM AUTO_INCREMENT=145 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
 #
 
@@ -492,7 +522,7 @@ CREATE TABLE `Version` (
 --
 
 /*!40000 ALTER TABLE `Version` DISABLE KEYS */;
-INSERT INTO `Version` VALUES  (1,32);
+INSERT INTO `Version` VALUES  (1,33);
 /*!40000 ALTER TABLE `Version` ENABLE KEYS */;
 #
 

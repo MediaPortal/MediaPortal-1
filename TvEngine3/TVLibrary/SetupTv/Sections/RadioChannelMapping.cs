@@ -96,7 +96,8 @@ namespace SetupTv.Sections
         if (card.Enabled == false) continue;
         mpComboBoxCard.Items.Add(new CardInfo(card));
       }
-      mpComboBoxCard.SelectedIndex = 0;
+      if (mpComboBoxCard.Items.Count>0)
+        mpComboBoxCard.SelectedIndex = 0;
       mpComboBoxCard_SelectedIndexChanged_1(null, null);
     }
 
@@ -117,9 +118,9 @@ namespace SetupTv.Sections
         Channel channel = (Channel)item.Tag;
         ChannelMap map = layer.MapChannelToCard(card, channel);
         mpListViewChannels.Items.Remove(item);
-        int imageIndex = 3;
-        if (channel.FreeToAir == false)
-          imageIndex = 0;
+        int imageIndex = 0;
+        if (channel.FreeToAir)
+          imageIndex = 3;
 
         ListViewItem newItem = mpListViewMapped.Items.Add(channel.DisplayName, imageIndex);
         newItem.Tag = map;
@@ -180,20 +181,11 @@ namespace SetupTv.Sections
       IList maps = card.ReferringChannelMap();
 
       List<ListViewItem> items = new List<ListViewItem>();
+      TvBusinessLayer layer = new TvBusinessLayer();
       foreach (ChannelMap map in maps)
       {
         Channel channel = map.ReferencedChannel();
         if (channel.IsRadio == false) continue;
-        IList details = channel.ReferringTuningDetail();
-        if (details != null)
-        {
-          if (details.Count > 0)
-          {
-            TuningDetail detail = (TuningDetail)details[0];
-            if (detail.ChannelType == 5)
-              continue;
-          }
-        }
         int imageIndex = 3;
         if (channel.FreeToAir == false)
           imageIndex = 0;
@@ -220,9 +212,10 @@ namespace SetupTv.Sections
       foreach (Channel channel in channels)
       {
         if (channel.IsRadio == false) continue;
-        int imageIndex = 3;
-        if (channel.FreeToAir == false)
-          imageIndex = 0;
+        if (layer.ChannelIsWebstream(channel)) continue;
+        int imageIndex = 0;
+        if (channel.FreeToAir)
+          imageIndex = 3;
         ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
         item.Tag = channel;
         items.Add(item);

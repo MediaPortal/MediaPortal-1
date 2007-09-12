@@ -229,6 +229,12 @@
     <Compile Include="Sections\ComboBoxEx .cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Sections\RadioGroups.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\RadioGroups.Designer.cs">
+      <DependentUpon>RadioGroups.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\FormEditCard.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -351,6 +357,7 @@
       <DependentUpon>TvSchedules.cs</DependentUpon>
     </Compile>
     <Compile Include="ServiceHelper.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -418,6 +425,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Combinations.resx">
       <DependentUpon>Combinations.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\RadioGroups.resx">
+      <DependentUpon>RadioGroups.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\FormEditCard.resx">

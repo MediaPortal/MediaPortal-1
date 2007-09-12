@@ -68,6 +68,8 @@
     <Compile Include="ChannelLinkageMap.cs" />
     <Compile Include="ChannelMap.cs" />
     <Compile Include="Conflict.cs" />
+    <Compile Include="RadioGroupMap.cs" />
+    <Compile Include="RadioChannelGroup.cs" />
     <Compile Include="DiSEqCMotor.cs" />
     <Compile Include="Favorite.cs" />
     <Compile Include="GroupMap.cs" />

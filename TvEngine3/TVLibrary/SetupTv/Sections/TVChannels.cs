@@ -158,6 +158,7 @@ namespace SetupTv.Sections
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
       IList allmaps = ChannelMap.ListAll();
+      TvBusinessLayer layer=new TvBusinessLayer();
 
 
       List<ListViewItem> items = new List<ListViewItem>();
@@ -172,18 +173,10 @@ namespace SetupTv.Sections
         bool notmapped = true;
         if (ch.IsTv == false) continue;
         channelCount++;
-        IList details = ch.ReferringTuningDetail();
-        if (details != null)
+        if (layer.ChannelIsWebstream(ch))
         {
-          if (details.Count == 1)
-          {
-            TuningDetail detail = (TuningDetail)details[0];
-            if (detail.ChannelType == 5)
-            {
-              webstream = true;
-              notmapped = false;
-            }
-          }
+          webstream = true;
+          notmapped = false;
         }
         if (notmapped)
         {
@@ -943,8 +936,7 @@ namespace SetupTv.Sections
                 layer.AddTuningDetails(dbChannel, dvbtChannel);
                 break;
               case 5: //Webstream
-                TuningDetail detail = new TuningDetail(dbChannel.IdChannel, dbChannel.DisplayName, "(Webstream)", 5, 0, 0, 31, isTv, !isTv, 0, 0, 0, 0, true, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, url, bitrate);
-                detail.Persist();
+                layer.AddWebStreamTuningDetails(dbChannel, url, bitrate);
                 break;
             }
           }
