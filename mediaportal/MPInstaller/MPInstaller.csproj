@@ -177,6 +177,11 @@
       <SubType>Designer</SubType>
       <DependentUpon>post_setup.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="SkinSelect.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SkinSelect.cs</DependentUpon>
@@ -198,6 +203,11 @@
       <DependentUpon>Info.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SkinSelect.cs">
       <SubType>Form</SubType>
     </Compile>
