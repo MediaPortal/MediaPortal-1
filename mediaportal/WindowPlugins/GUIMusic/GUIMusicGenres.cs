@@ -379,6 +379,12 @@ namespace MediaPortal.GUI.Music
         }
       }
       _showArtist = String.Empty;
+
+      using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        playlistPlayer.RepeatPlaylist = settings.GetValueAsBool("musicfiles", "repeat", true);
+      }
+
       //btnPlaylistFolder.Disabled = true;
     }
     protected override void OnPageDestroy(int newWindowId)

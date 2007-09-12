@@ -506,6 +506,11 @@ namespace MediaPortal.GUI.Music
       LoadFolderSettings(currentFolder);
       LoadDirectory(currentFolder);
 
+      using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        playlistPlayer.RepeatPlaylist = settings.GetValueAsBool("musicfiles", "repeat", true);
+      }
+
       if (btnSearch != null)
         btnSearch.Disabled = true;
     }
