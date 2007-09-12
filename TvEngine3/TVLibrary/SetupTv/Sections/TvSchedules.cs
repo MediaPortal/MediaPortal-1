@@ -129,6 +129,7 @@ namespace SetupTv.Sections
             Schedule schedule = (Schedule)item.Tag;            
             TvServer server = new TvServer();
             server.StopRecordingSchedule(schedule.IdSchedule);
+            schedule.Delete();
             
             listView1.Items.Remove(item);
           }             
