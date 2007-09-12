@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("font")]                          protected string _fontName;
     [XMLSkinElement("label")]                         protected string _label = "";
     [XMLSkinElement("textcolor")]                     protected long _textColor = 0xFFFFFFFF;
-		[XMLSkinElement("textcolorNoFocus")]          		protected long _textColorNoFocus = 0xFFFFFFFF;
+    [XMLSkinElement("textcolorNoFocus")]          		protected long _textColorNoFocus = 0xFFFFFFFF;
     [XMLSkinElement("disabledcolor")]                 protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("hyperlink")]                     protected int _hyperLinkWindowId = -1;
     [XMLSkinElement("action")]                        protected int _actionId = -1;
@@ -223,6 +223,10 @@ namespace MediaPortal.GUI.Library
 
         case Alignment.ALIGN_RIGHT:
           x = _positionX + _width - _textOffsetX;
+          break;
+
+        case Alignment.ALIGN_CENTER:
+          x = _positionX + ((_width / 2) - (labelWidth / 2));
           break;
       }
       _labelControl.SetPosition(x, _textOffsetY + _positionY);
