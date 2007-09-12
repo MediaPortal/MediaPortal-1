@@ -83,9 +83,9 @@ namespace TvDatabase
     private int pilot;
     [TableColumn("rollOff", NotNull = true)]
     private int rollOff;
-    [TableColumn("url", NotNull = true, NullValue = "")]
+    [TableColumn("url", NotNull = true)]
     private string url;
-    [TableColumn("bitrate", NotNull = true, NullValue = 0)]
+    [TableColumn("bitrate", NotNull = true)]
     private int bitrate;
 
     #endregion
