@@ -107,34 +107,43 @@ namespace TvEngine
       get { return _status; }
     }
 
-    private int ParseStarRating(string epgRating)
+    private int ParseStarRating(string ratingStr)
     {
-      // format = 5.2/10
-      int Rating = -1;
-      decimal tmpRating = -1;
-      int pos = epgRating.IndexOf(@"/");
+      // Converts the supplied ratingStr string (e.g. "3.5/5" meaning
+      // three and a half stars out of five) into the star rating system
+      // of TVServer (integer value between 0 and 10). -1 has the meaning
+      // of no rating available.
 
-      if (pos != -1)      // check if epgRating is well formed
+      int maxStars;
+      int maxStarsMp = 10;
+      int rating = -1;
+      int pos = ratingStr.IndexOf('/');
+      double starCount;
+      String starCountStr;
+
+      try
       {
-        string strRating = epgRating.Remove(pos - 1);
-        NumberFormatInfo NFO = NumberFormatInfo.InvariantInfo;
-        NumberStyles NStyle = NumberStyles.Float;
+        if (pos == -1)
+        {
+          Log.Info("XMLTVImport: star-rating could not be used - {0}", ratingStr);
+          return -1;
+        }
 
-        if (Decimal.TryParse(strRating, NStyle, NFO, out tmpRating))
-        {
-          Rating = Convert.ToInt16(tmpRating);
-        }
-        else
-        {
-          Log.Info("XMLTVImport: star-rating could not be used - {0},({1})", epgRating, strRating);
-        }
+        starCountStr = ratingStr.Substring(0, pos);
+        maxStars = Convert.ToInt32(ratingStr.Substring(pos + 1));
+
+        NumberFormatInfo formatInfo = new NumberFormatInfo();
+        formatInfo.NumberDecimalSeparator = ".";
+        starCount = Convert.ToDouble(starCountStr, formatInfo);
+
+        rating = (int)((starCount * maxStarsMp / maxStars) + 0.5);
       }
-      else
+      catch
       {
-        Log.Info("XMLTVImport: star-rating could not be used - {0})", epgRating);
+        Log.Error("XMLTVImport: error parsing star-rating - {0}", ratingStr);
       }
 
-      return Rating;
+      return rating;
     }
 
     public bool Import(string fileName, bool showProgress)
