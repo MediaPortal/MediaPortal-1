@@ -129,47 +129,9 @@ namespace SetupTv.Sections
             Schedule schedule = (Schedule)item.Tag;            
             TvServer server = new TvServer();
             server.StopRecordingSchedule(schedule.IdSchedule);
-            /*
-            VirtualCard card = GetCardRecordingChannel(schedule.IdChannel);
-            if (card != null)
-            {
-                card.StopRecording();                
-            }
-            */
+            
             listView1.Items.Remove(item);
           }             
-      }
-
-      /// <summary>
-      /// returns the virtualcard which is recording the channel specified
-      /// </summary>
-      /// <param name="channelId">Id of the channel</param>
-      /// <returns>virtual card</returns>
-      
-      /*
-      private VirtualCard GetCardRecordingChannel(int channelId)
-      {
-          IList cards = Card.ListAll();
-          foreach (Card card in cards)
-          {
-              User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
-              if (usersForCard == null) continue;
-              if (usersForCard.Length == 0) continue;
-              for (int i = 0; i < usersForCard.Length; ++i)
-              {
-                  if (usersForCard[i].IdChannel == channelId)
-                  {
-                      VirtualCard vcard = new VirtualCard(usersForCard[i], RemoteControl.HostName);
-                      if (vcard.IsRecording)
-                      {
-                          vcard.RecordingFolder = card.RecordingFolder;
-                          return vcard;
-                      }
-                  }
-              }
-          }
-          return null;
-      }
-      */
+      }      
   }
 }
