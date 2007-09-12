@@ -150,7 +150,7 @@ namespace SetupTv.Sections
     }
     bool _needRestart = false;
     public TvRecording()
-      : this("Recording")
+      : this("Recording settings")
     {
     }
 
