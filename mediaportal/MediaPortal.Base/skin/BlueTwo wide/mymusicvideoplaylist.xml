@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>500</id>
-  <defaultcontrol>2</defaultcontrol>
+  <defaultcontrol>20</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:136</define>
   <define>#header.image:logo_music videos.png</define>
@@ -18,6 +18,14 @@
       <posX>113</posX>
       <posY>129</posY>
       <layout>StackLayout</layout>
+      <control>
+        <description>my playlist button</description>
+        <type>button</type>
+        <id>39</id>
+        <label>983</label>
+        <onright>50</onright>
+        <ondown>20</ondown>
+      </control>
       <control>
         <description>Shuffle button</description>
         <type>button</type>
@@ -77,17 +85,17 @@
         <control>
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>
-          <id>51</id>
-          <onleft>2</onleft>
-          <onright>52</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
+          <id>50</id>
+          <onleft>20</onleft>
+          <onright>50</onright>
+          <onup>20</onup>
+          <ondown>20</ondown>
         </control>
         <control>
           <description>album view listcontrol</description>
           <type>listcontrol</type>
           <subtype>album</subtype>
-          <id>52</id>
+          <id>50</id>
           <font>font13</font>
           <font2>font13</font2>
           <selectedColor>FFFF6600</selectedColor>
@@ -102,19 +110,20 @@
           <itemHeight>108</itemHeight>
           <spaceBetweenItems>18</spaceBetweenItems>
           <textureHeight>120</textureHeight>
-          <onleft>2</onleft>
-          <onright>52</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
+          <onleft>20</onleft>
+          <onright>50</onright>
+          <onup>20</onup>
+          <ondown>20</ondown>
         </control>
         <control>
           <description>playlist control</description>
           <type>playlistcontrol</type>
-          <id>53</id>
-          <onleft>2</onleft>
+          <id>50</id>
+          <!--
+          <onleft>52</onleft>
           <onright>53</onright>
-          <onup>2</onup>
-          <ondown>2</ondown>
+          <onup>52</onup>
+          <ondown>52</ondown> -->
           <textcolor>FFFFFFFF</textcolor>
         </control>
       </control>
