@@ -100,6 +100,10 @@ namespace MediaPortal.MPInstaller
       //install();
     }
 
+    /// <summary>
+    /// Performe the next step.
+    /// </summary>
+    /// <param name="m">Step incrementer</param>
     public void nextStep(int m)
     {
       step += m;
@@ -248,7 +252,7 @@ namespace MediaPortal.MPInstaller
             button_next.Text = "Next";
             button_back.Visible = true;
             richTextBox1.Visible = true;
-            richTextBox1.Text = String.Format("Intall paths : \n");
+            richTextBox1.Text = String.Format("Install paths : \n");
             foreach (Config.Dir option in Enum.GetValues(typeof(Config.Dir)))
             {
                 richTextBox1.Text += String.Format("{0} - {1}\n", option, Config.GetFolder(option));
@@ -258,10 +262,17 @@ namespace MediaPortal.MPInstaller
         case 8:
           {
             if (!this.Visible) this.ShowDialog();
-            for (int i = 0; i < skinlister.Items.Count; i++)
+            if (package.IsSkinPackage)
             {
-              if (skinlister.GetItemChecked(i))
-                package.InstallableSkinList.Add(skinlister.Items[i].ToString());
+              package.InstallableSkinList.AddRange(package.SkinList);
+            }
+            else
+            {
+              for (int i = 0; i < skinlister.Items.Count; i++)
+              {
+                if (skinlister.GetItemChecked(i))
+                  package.InstallableSkinList.Add(skinlister.Items[i].ToString());
+              }
             }
             for (int i = 0; i < Customize_list.Items.Count; i++)
             {
@@ -292,15 +303,15 @@ namespace MediaPortal.MPInstaller
       if (progressBar1 != null)
       {
         progressBar1.Minimum = 0;
-        progressBar1.Maximum = package._intalerStruct.FileList.Count;
+        progressBar1.Maximum = package._intalerStruct.FileList.Count+1;
       }
-      for (int i = 0; i < package._intalerStruct.FileList.Count; i++)
-      {
-        package.instal_file(progressBar2, listBox1, (MPIFileList)package._intalerStruct.FileList[i]);
-        progressBar1.Value++;
-        this.Refresh();
-        this.Update();
-      }
+      //for (int i = 0; i < package._intalerStruct.FileList.Count; i++)
+      //{
+      package.instal_file(progressBar2, progressBar1, listBox1);
+        //progressBar1.Value++;
+        //this.Refresh();
+        //this.Update();
+      //}
       package.installLanguage(listBox1);
       button_next.Visible = false;
       button_cancel.Enabled = true;
@@ -330,6 +341,10 @@ namespace MediaPortal.MPInstaller
       }
     }
 
+    /// <summary>
+    /// Test if the next step is need to be done.
+    /// </summary>
+    /// <param name="m">Step incrementer</param>
     private void test_next_step(int m)
     {
       switch (step)
@@ -359,7 +374,7 @@ namespace MediaPortal.MPInstaller
           }
           break;
         case 5:
-          if (!package.containsSkin)
+          if (!package.containsSkin || package.IsSkinPackage)
           {
             step += m;
             test_next_step(m);
@@ -465,6 +480,10 @@ namespace MediaPortal.MPInstaller
                   {
                     System.IO.File.Delete(u.Path);
                     listBox1.Items.Add(u.Path);
+                    listBox1.Update();
+                    listBox1.Refresh();
+                    this.Refresh();
+                    this.Update();
                   }
                   catch (Exception)
                   {

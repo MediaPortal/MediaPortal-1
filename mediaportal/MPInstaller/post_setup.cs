@@ -29,6 +29,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.IO;
 using System.Windows.Forms;
 
 namespace MediaPortal.MPInstaller
@@ -49,6 +50,12 @@ namespace MediaPortal.MPInstaller
                     comboBox2.Items.Clear();
                     comboBox2.Items.Add("MediaPortal.exe");
                     comboBox2.Items.Add("Configuration.exe");
+                    foreach (MPIFileList fl in _struct.FileList)
+                    {
+                      if ((fl.Type == MPinstallerStruct.OTHER_TYPE)&&
+                           ((Path.GetExtension(fl.FileName).ToUpper() == ".BAT") || (Path.GetExtension(fl.FileName).ToUpper() == ".EXE")))
+                        comboBox2.Items.Add(fl.FileNameShort);
+                    }
                     break;
                 case 1:
                     comboBox2.Items.Clear();

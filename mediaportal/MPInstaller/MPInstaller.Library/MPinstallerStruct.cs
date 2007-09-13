@@ -570,6 +570,32 @@ namespace MediaPortal.MPInstaller
       return fs;
     }
 
+    /// <summary>
+    /// Finds the file from zip entry.
+    /// </summary>
+    /// <param name="file">The zip entry name</param>
+    /// <returns></returns>
+    /// 
+    public MPIFileList FindFileFromZipEntry(string file)
+    {
+      MPIFileList fs = null;
+      for (int i = 0; i < FileList.Count; i++)
+      {
+        if ((GetZipEntry((MPIFileList)FileList[i]) == file))
+        {
+          fs = (MPIFileList)FileList[i];
+          break;
+        }
+      }
+      return fs;
+    }
+
+
+    /// <summary>
+    /// Finds the file in list.
+    /// </summary>
+    /// <param name="file">The file name</param>
+    /// <returns></returns>
     public MPIFileList FindFile(string file)
     {
       MPIFileList fs = new MPIFileList();
@@ -1049,6 +1075,10 @@ namespace MediaPortal.MPInstaller
       else return false;
     }
 
+    /// <summary>
+    /// Executes the action.
+    /// </summary>
+    /// <param name="xmp">FIle list</param>
     public void ExecuteAction(MPinstallerStruct xmp)
     {
       switch (Place)
@@ -1057,8 +1087,15 @@ namespace MediaPortal.MPInstaller
           switch (Id)
           {
             case 0:
-
-              MPIutils.StartApp(Config.GetFile(Config.Dir.Base, Command));
+              if (Command == "MediaPortal.exe" || Command == "Configuration.exe")
+              {
+                MPIutils.StartApp(Config.GetFile(Config.Dir.Base, Command));
+              }
+              else
+              {
+                MPIFileList fs_ = xmp.FindFile(Command);
+                MPIutils.StartApp(Config.GetFile(Config.Dir.Base, MPinstallerStruct.GetDirEntry(fs_)));
+              }
               break;
             case 1:
               MPIFileList fs = xmp.FindFile(Command);
