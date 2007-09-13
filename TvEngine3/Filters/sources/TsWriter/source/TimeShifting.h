@@ -151,21 +151,23 @@ private:
 	int									 m_iPmtContinuityCounter;
 	int									 m_iPatContinuityCounter;
   
-  BOOL          m_bPaused;
-	CPcr          m_startPcr;
-	CPcr          m_highestPcr;
-  bool          m_bDetermineNewStartPcr;
-	bool		      m_bStartPcrFound;
-  int           m_iPacketCounter;
-	int			      m_iPatVersion;
-	int			      m_iPmtVersion;
-  byte*         m_pWriteBuffer;
-  int           m_iWriteBufferPos;
-  CTsHeader     m_tsHeader;
-  CAdaptionField m_adaptionField;
+  BOOL            m_bPaused;
+	CPcr            m_startPcr;
+	CPcr            m_highestPcr;
+  bool            m_bDetermineNewStartPcr;
+	bool		        m_bStartPcrFound;
+  int             m_iPacketCounter;
+	int			        m_iPatVersion;
+	int			        m_iPmtVersion;
+  byte*           m_pWriteBuffer;
+  int             m_iWriteBufferPos;
+  CTsHeader       m_tsHeader;
+  CAdaptionField  m_adaptionField;
   CPcr            m_prevPcr;
   CPcr            m_pcrHole;
   CPcr            m_pcrDuration;
   bool            m_bPCRRollover;
-  FILE*         m_fDump;
+  bool            m_bIgnoreNextPcrJump;
+  FILE*           m_fDump;
+
 };

@@ -148,6 +148,7 @@ CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr)
   m_pWriteBuffer = new byte[WRITE_BUFFER_SIZE];
   m_iWriteBufferPos=0;
   m_fDump=NULL;
+  m_bIgnoreNextPcrJump=false;
 }
 //*******************************************************************
 //* dtor
@@ -229,6 +230,7 @@ STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
 		{
 			LogDebug("Timeshifter:determine new start pcr"); 
 			m_bDetermineNewStartPcr=true;
+      m_bIgnoreNextPcrJump=true;
 		}
     m_pcrPid=pcrPid;
 		m_vecPids.clear();
@@ -792,7 +794,7 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 					if (PayLoadUnitStart)
 					{
 						info.seenStart=true;
-						LogDebug("timeshift: start of video detected");
+					  LogDebug("timeshift: start of video detected");
 					}
 				}
 				if (!info.seenStart) return;
@@ -1100,6 +1102,7 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 
 			m_startPcr  = newStartPcr;
 			m_highestPcr= newStartPcr;
+      m_prevPcr = newStartPcr;
 		}
 	}
   
@@ -1126,35 +1129,43 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
     m_highestPcr = pcrNew;
   }
 
-  if(diff.ToClock() > 10L && m_prevPcr.ToClock() > 0)
+  if(diff.ToClock() > 10L && m_prevPcr.ToClock() > 0 )
   {
-    if( diff.ToClock() > 95443L ) // Max PCR value 95443.71768
+    if( m_bIgnoreNextPcrJump )
     {
-      m_bPCRRollover = true;
-      m_pcrDuration = m_prevPcr;
-      m_pcrDuration -= m_startPcr;
-      m_pcrHole.Reset();
-      m_startPcr.Reset();
-      m_highestPcr.Reset();
-
-      LogDebug( "PCR rollover detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+      LogDebug( "Ignoring first PCR jump after channel change! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+      m_bIgnoreNextPcrJump=false;
     }
     else
-    {      
-      CPcr step;
-      step.FromClock(0.02); // an estimated PCR step
-      
-      if (pcrNew > m_prevPcr)
+    {
+      if( diff.ToClock() > 95443L ) // Max PCR value 95443.71768
       {
-        m_pcrHole += diff;
-        m_pcrHole -= step; 
-        LogDebug( "Jump forward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+        m_bPCRRollover = true;
+        m_pcrDuration = m_prevPcr;
+        m_pcrDuration -= m_startPcr;
+        m_pcrHole.Reset();
+        m_startPcr.Reset();
+        m_highestPcr.Reset();
+
+        LogDebug( "PCR rollover detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
       }
       else
-      {
-        m_pcrHole -= diff;
-        m_pcrHole += step;
-        LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+      {      
+        CPcr step;
+        step.FromClock(0.02); // an estimated PCR step
+        
+        if (pcrNew > m_prevPcr)
+        {
+          m_pcrHole += diff;
+          m_pcrHole -= step; 
+          LogDebug( "Jump forward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+        }
+        else
+        {
+          m_pcrHole -= diff;
+          m_pcrHole += step;
+          LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+        }
       }
     }
   }
