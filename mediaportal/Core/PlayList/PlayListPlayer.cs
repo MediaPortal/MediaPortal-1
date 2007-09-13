@@ -429,7 +429,7 @@ namespace MediaPortal.Playlists
           playlist.ResetStatus();
         }
 
-        Log.Info("PlaylistPlayer: Play - {0}", item.FileName);
+        //Log.Debug("PlaylistPlayer: Play - {0}", item.FileName);
         if (item.Type == PlayListItem.PlayListItemType.Radio)
         {
           msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO, 0, 0, 0, 0, 0, null);
