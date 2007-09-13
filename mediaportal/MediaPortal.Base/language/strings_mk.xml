@@ -338,6 +338,7 @@
     <String id="404">Ветер</String>
     <String id="405">Роса</String>
     <String id="406">Влажност</String>
+    <String id="407">Тежок</String>
     <String id="410">Пристапувам на Weather.com</String>
     <String id="411">Преземам време за: </String>
     <String id="412">Не можам да земам податоци за времето</String>
@@ -879,6 +880,10 @@
     <String id="1054">(се снима)</String>
     <String id="1055">(временско поместување)</String>
     <String id="1056">(нерасположиво)</String>
+    <String id="1061">Пренослив</String>
+    <String id="1062">Објект</String>
+    <String id="1064">Белешки</String>
+    <String id="1065">Скокни на</String>
     <String id="1100">Увези CD</String>
     <String id="1101">Увези ја избраната патека</String>
     <String id="1102">Откажи увоз на CD</String>
@@ -890,6 +895,7 @@
     <String id="1112">Задржи конфликт</String>
     <String id="1190">Зум 14:9</String>
     <String id="1200">Волшебник за Setup</String>
+    <String id="1300" prefix="Мои ">TV Show-а</String>
     <String id="1440" prefix="Мој ">Телетекст</String>
     <String id="1441">Телетекст</String>
     <String id="1442">Лизгачка брзина (хоризонт.)</String>
@@ -1125,13 +1131,14 @@
     <String id="2514">Назад до текстот</String>
     <String id="2515">Слики</String>
     <String id="2516" prefix="Моја ">Википедија</String>
+    <String id="2599">Неодредено</String>
     <String id="2600">Англиски</String>
     <String id="2601">Германски</String>
     <String id="2602">Француски</String>
     <String id="2603">Холандски</String>
     <String id="2604">Норвешки</String>
-    <String id="2606">Шведски</String>
     <String id="2605">Италијански</String>
+    <String id="2606">Шведски</String>
     <String id="2607">Шпански</String>
     <String id="2608">Португалски</String>
     <String id="2609">Дански</String>
@@ -1228,7 +1235,7 @@
     <String id="5923">Ново на DVD неделава</String>
     <String id="5924">Ново на DVD следната недела</String>
     <String id="5925">DVD pre-orders</String>
-    <String id="6000">Видео кодек</String>
+    <String id="6000">MPEG-2 Видео кодек</String>
     <String id="6001">Аудио кодек</String>
     <String id="6002">Аудио Renderer</String>
     <String id="6003">Расплеткување</String>
@@ -1264,6 +1271,7 @@
     <String id="6033">Барај според клучен збор</String>
     <String id="6034">Барај според жанр</String>
     <String id="6035">Додај распоред</String>
+    <String id="6036">H.264 Видео кодек</String>
     <String id="8000" prefix="Моја ">Пошта</String>
     <String id="8001">Провери пошт. сандаче</String>
     <String id="8002">Исклучи авто-проверка</String>
@@ -1466,7 +1474,8 @@
     <String id="34045">Сеуште не е избран пријател</String>
     <String id="34046">Мое лично радио</String>
     <String id="34047">Мои сакани нумери</String>
-    <String id="34048">Радио од моите соседи</String>
+    <String id="34048">Радио од мои соседи</String>
+    <String id="34049">Моја веб плејлиста</String>
     <String id="34050">Нема активен поток</String>
     <String id="34051">Потокот запре!</String>
     <String id="34052">Нема содржини или лоша конекција</String>
