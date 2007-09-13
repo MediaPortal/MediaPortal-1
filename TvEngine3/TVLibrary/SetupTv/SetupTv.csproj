@@ -170,17 +170,8 @@
     </Compile>
     <None Include="App.config" />
     <EmbeddedResource Include="createmysqldatabase.sql" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
     <EmbeddedResource Include="upgrademysqldatabase.sql" />
     <EmbeddedResource Include="SetupTv.exe.manifest" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <Compile Include="SearchSHOUTcast.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -357,7 +348,6 @@
       <DependentUpon>TvSchedules.cs</DependentUpon>
     </Compile>
     <Compile Include="ServiceHelper.cs" />
-    <Compile Include="Settings.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
