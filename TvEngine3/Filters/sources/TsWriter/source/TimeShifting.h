@@ -163,5 +163,9 @@ private:
   int           m_iWriteBufferPos;
   CTsHeader     m_tsHeader;
   CAdaptionField m_adaptionField;
+  CPcr            m_prevPcr;
+  CPcr            m_pcrHole;
+  CPcr            m_pcrDuration;
+  bool            m_bPCRRollover;
   FILE*         m_fDump;
 };

@@ -1112,21 +1112,70 @@ void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 		LogDebug("Pcr new start pcr :%s", m_startPcr.ToString());
 	} 
 
+  CPcr pcrHi=pcrNew;
+  CPcr diff;
+
   if (pcrNew > m_highestPcr)
   {
+    diff = pcrNew - m_prevPcr;
 	  m_highestPcr = pcrNew;
   }
+  else
+  {
+    diff = m_prevPcr - pcrNew;
+    m_highestPcr = pcrNew;
+  }
 
-  //set patched PCR in the ts packet
-  CPcr pcrHi=pcrNew;
-	pcrHi -= m_startPcr;
-	//LogDebug("Pcr  :%s :%s :%s", pcrHi.ToString(),m_startPcr.ToString(), pcrNew.ToString());
+  if(diff.ToClock() > 10L && m_prevPcr.ToClock() > 0)
+  {
+    if( diff.ToClock() > 95443L ) // Max PCR value 95443.71768
+    {
+      m_bPCRRollover = true;
+      m_pcrDuration = m_prevPcr;
+      m_pcrDuration -= m_startPcr;
+      m_pcrHole.Reset();
+      m_startPcr.Reset();
+      m_highestPcr.Reset();
+
+      LogDebug( "PCR rollover detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+    }
+    else
+    {      
+      CPcr step;
+      step.FromClock(0.02); // an estimated PCR step
+      
+      if (pcrNew > m_prevPcr)
+      {
+        m_pcrHole += diff;
+        m_pcrHole -= step; 
+        LogDebug( "Jump forward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+      }
+      else
+      {
+        m_pcrHole -= diff;
+        m_pcrHole += step;
+        LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+      }
+    }
+  }
+
+  pcrHi -= m_startPcr;
+  pcrHi -= m_pcrHole;
+
+  if( m_bPCRRollover )
+  {
+    pcrHi += m_pcrDuration;
+  }
+
+  //LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString() );
   tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
   tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
   tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
   tsPacket[9] = (byte)(((pcrHi.PcrReferenceBase>>1)&0xff));
   tsPacket[10]=	(byte)(((pcrHi.PcrReferenceBase&0x1)<<7) + 0x7e+ ((pcrHi.PcrReferenceExtension>>8)&0x1));
   tsPacket[11]= (byte)(pcrHi.PcrReferenceExtension&0xff);
+
+  m_prevPcr = pcrNew;
 }
 
 //*******************************************************************
@@ -1154,11 +1203,17 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 	if (pts.IsValid)
 	{
     CPcr ptsorg=pts;
-		pts -= startPcr ;
+		pts -= startPcr;
+    pts -= m_pcrHole;
+
+    if( m_bPCRRollover )
+    {
+      pts += m_pcrDuration;
+    }
 		// 9       10        11        12      13
 		//76543210 76543210 76543210 76543210 76543210
 		//0011pppM pppppppp pppppppM pppppppp pppppppM 
-//		LogDebug("pts: org:%s new:%s start:%s", ptsorg.ToString(),pts.ToString(),startPcr.ToString()); 
+		//LogDebug("pts: org:%s new:%s start:%s", ptsorg.ToString(),pts.ToString(),startPcr.ToString()); 
 		byte marker=0x21;
 		if (dts.PcrReferenceBase!=0) marker=0x31;
 		pesHeader[13]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
@@ -1167,15 +1222,21 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 		pesHeader[10]=(byte)(   (pts.PcrReferenceBase&0xff));					 pts.PcrReferenceBase>>=8;
 		pesHeader[9] =(byte)( (((pts.PcrReferenceBase&7)<<1)+marker)); 
     
-	
 		if (dts.IsValid)
 		{
 			CPcr dtsorg=dts;
 			dts -= startPcr;
+      dts -= m_pcrHole;
+
+      if( m_bPCRRollover )
+      {
+        dts += m_pcrDuration;
+      }
+
 			// 14       15        16        17      18
 			//76543210 76543210 76543210 76543210 76543210
 			//0001pppM pppppppp pppppppM pppppppp pppppppM 
-	//		LogDebug("dts: org:%s new:%s start:%s", dtsorg.ToString(),dts.ToString(),startPcr.ToString()); 
+	 		//LogDebug("dts: org:%s new:%s start:%s", dtsorg.ToString(),dts.ToString(),startPcr.ToString()); 
 			pesHeader[18]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
 			pesHeader[17]=(byte)(   (dts.PcrReferenceBase&0xff));				  dts.PcrReferenceBase>>=8;
 			pesHeader[16]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
@@ -1191,4 +1252,3 @@ void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 		//}
 	}
 }
-
