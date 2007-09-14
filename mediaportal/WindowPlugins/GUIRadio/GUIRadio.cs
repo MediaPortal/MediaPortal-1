@@ -779,7 +779,7 @@ namespace MediaPortal.GUI.Radio
     bool IsUrl(string fileName)
     {
       if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
-      fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
+      fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtsp:"))
       {
         return true;
       }

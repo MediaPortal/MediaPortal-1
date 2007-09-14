@@ -231,7 +231,6 @@ namespace MediaPortal.Player
     private SYNCPROC PlaybackStreamFreedProcDelegate = null;
     private SYNCPROC MetaTagSyncProcDelegate = null;
     private DOWNLOADPROC LastFmDownloadProcDelegate = null;   // Download Proc, when playing a last.fm stream
-    private DOWNLOADPROC DownloadProcDelegate = null;   // Download Proc to receive status information for a stream
     #endregion
 
     #region Variables
@@ -766,7 +765,6 @@ namespace MediaPortal.Player
         PlaybackStreamFreedProcDelegate = new SYNCPROC(PlaybackStreamFreedProc);
         MetaTagSyncProcDelegate = new SYNCPROC(MetaTagSyncProc);
         LastFmDownloadProcDelegate = new DOWNLOADPROC(LastFmDownload);
-        DownloadProcDelegate = new DOWNLOADPROC(DownloadProc);
 
         StreamEventSyncHandles.Add(new List<int>());
         StreamEventSyncHandles.Add(new List<int>());
@@ -1528,7 +1526,7 @@ namespace MediaPortal.Player
               Log.Error("BASS: CD: {0}.", Enum.GetName(typeof(BASSErrorCode), Bass.BASS_ErrorGetCode()));
           }
           else if (filePath.ToLower().Contains(@"http://") || filePath.ToLower().Contains(@"https://") ||
-                   filePath.ToLower().StartsWith("mms"))
+                   filePath.ToLower().StartsWith("mms") || filePath.ToLower().StartsWith("rtsp"))
           {
             _isRadio = true;  // We're playing Internet Radio Stream
             _isLastFMRadio = false;
@@ -1543,7 +1541,7 @@ namespace MediaPortal.Player
               _bufferOffset = Bass.BASS_ChannelSeconds2Bytes(stream, (float)(_BufferingMS / 1000));
             }
             else
-              stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags | BASSStream.BASS_STREAM_STATUS , DownloadProc, 0);
+              stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags , null, 0);
 
             if (stream != 0)
             {
@@ -2129,33 +2127,6 @@ namespace MediaPortal.Player
 
       if (InternetStreamSongChanged != null)
         InternetStreamSongChanged(this);
-    }
-
-
-    /// <summary>
-    /// This Procedure is called, when BASS starts the download of an Internet Stream.
-    /// Because of the BASS_STREAM_STATUS flag set, only the http parms are being sent and processed.
-    /// </summary>
-    /// <param name="buffer"></param>
-    /// <param name="length"></param>
-    /// <param name="user"></param>
-    private void DownloadProc(IntPtr buffer, int length, int user)
-    {
-      try
-      {
-        if (buffer != IntPtr.Zero)
-        {
-          string tags = Marshal.PtrToStringAnsi(buffer);
-          if (tags != null)
-          {
-            Log.Debug("Bass Stream Status: {0}", tags);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("BASS: Exception in Downloadproc: {0} {1}", ex.Message, ex.StackTrace);
-      }
     }
 
     /// <summary>
