@@ -871,7 +871,7 @@ namespace MediaPortal.Player
           else if (_useASIO && _mixer == 0)
           {
             // For ASIO we neeed an Decoding Mixer with the number of Channels equals the ASIO Channels
-            _mixer = BassMix.BASS_Mixer_StreamCreate(48000, _asioNumberChannels, BASSStream.BASS_MIXER_NONSTOP | BASSStream.BASS_STREAM_DECODE);
+            _mixer = BassMix.BASS_Mixer_StreamCreate(44100, _asioNumberChannels, BASSStream.BASS_MIXER_NONSTOP | BASSStream.BASS_STREAM_DECODE);
             // assign ASIO and assume the ASIO format, samplerate and number of channels from the BASS stream
             _asioHandler = new BassAsioHandler(0, 0, _mixer);
           }
