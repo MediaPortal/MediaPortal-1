@@ -176,8 +176,6 @@ namespace TvService
     /// </summary>
     void DoSchedule()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-
       DateTime now = DateTime.Now;
       IList schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
