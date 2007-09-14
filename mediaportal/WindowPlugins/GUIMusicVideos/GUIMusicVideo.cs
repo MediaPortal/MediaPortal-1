@@ -906,10 +906,10 @@ namespace MediaPortal.GUI.MusicVideos
       if ((int)State.HOME == CURRENT_STATE)
       {
         btnTop.Visible = true;
+        btnNew.Visible = true;
+        btnGenre.Visible = true;
         btnSearch.Visible = true;
         btnFavorites.Visible = true;
-        btnGenre.Visible = true;
-        btnNew.Visible = true;
         btnCountry.Visible = true;
 
         btnBack.Visible = false;
@@ -917,10 +917,17 @@ namespace MediaPortal.GUI.MusicVideos
         btnNextPage.Visible = false;
         btnPreviousPage.Visible = false;
 
+        btnTop.NavigateUp = btnPlayList.GetID;
         btnPlayList.NavigateUp = btnCountry.GetID;
         btnPlayList.NavigateDown = btnTop.GetID;
         listSongs.NavigateLeft = btnTop.GetID;
         listSongs.Clear();
+        if (g_Player.Playing)
+        {
+          // Temp hack
+          btnPlayList.NavigateDown = 99;
+          btnTop.NavigateUp = 99;
+        }
         GUIPropertyManager.SetProperty("#itemcount", "");
       }
       else

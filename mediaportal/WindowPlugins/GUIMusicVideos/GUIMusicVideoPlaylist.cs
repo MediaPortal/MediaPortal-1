@@ -268,19 +268,26 @@ namespace MediaPortal.GUI.MusicVideos
 
       if (facadeView.Count > 0)
       {
+        btnShuffle.Disabled = false;
+        btnSave.Disabled = false;
         btnClear.Disabled = false;
         btnPlay.Disabled = false;
-        btnSave.Disabled = false;
-        btnShuffle.Disabled = false;
         if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_VIDEO)
         {
           btnNext.Disabled = false;
           btnPrevious.Disabled = false;
+          btnPlay.NavigateDown = btnNext.GetID;
+          // Temp hack
+          btnPrevious.NavigateDown = 99;
+          btnMyPlaylists.NavigateUp = 99;
         }
         else
         {
           btnNext.Disabled = true;
           btnPrevious.Disabled = true;
+
+          btnPlay.NavigateDown = btnMyPlaylists.GetID;
+          btnMyPlaylists.NavigateUp = btnPlay.GetID;
         }
       }
       else
