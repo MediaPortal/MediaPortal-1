@@ -1408,6 +1408,7 @@ namespace TvPlugin
           g_Player.PauseGraph();
         }
         */
+
         if (wasPlaying)
           SeekToEnd(true);
         
@@ -1441,13 +1442,13 @@ namespace TvPlugin
           GUIWaitCursor.Hide();
 
           // issues with tsreader and mdapi powered channels, having video/audio artifacts on ch. changes.
-          /*
+          
           if (!_avoidSeeking)          
           {            
-            g_Player.ContinueGraph();                        
+            //g_Player.ContinueGraph();                        
             g_Player.SeekAbsolute(g_Player.Duration);            
           }
-          */
+          
           _playbackStopped = false;
           return true;
 
@@ -1517,18 +1518,31 @@ namespace TvPlugin
           else
             pDlgOK.SetLine(4, "");
 
-          ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
-          Thread showDlgThread = new Thread (pThread);          
-
-          // If failed and wasPlaying TV, fallback to the last viewed channel. 
-          if (!g_Player.IsTimeShifting && wasPlaying)
+          if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
           {
-            ViewChannelAndCheck(Navigator.Channel);
-            GUIWaitCursor.Hide();
+            pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
+            // If failed and wasPlaying TV, fallback to the last viewed channel. 
+            if (!g_Player.IsTimeShifting && wasPlaying)
+            {
+              ViewChannelAndCheck(Navigator.Channel);
+              GUIWaitCursor.Hide();
+            }
           }
-          // show the dialog asynch.
-          // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
-          showDlgThread.Start(pDlgOK);
+          else
+          {            
+            ParameterizedThreadStart pThread = new ParameterizedThreadStart(ShowDlg);
+            Thread showDlgThread = new Thread (pThread);          
+
+            // If failed and wasPlaying TV, fallback to the last viewed channel. 
+            if (!g_Player.IsTimeShifting && wasPlaying)
+            {
+              ViewChannelAndCheck(Navigator.Channel);
+              GUIWaitCursor.Hide();
+            }
+            // show the dialog asynch.
+            // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
+            showDlgThread.Start(pDlgOK);            
+          }
         }
         return false;
       }
