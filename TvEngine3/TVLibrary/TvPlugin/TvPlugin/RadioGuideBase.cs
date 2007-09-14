@@ -1939,6 +1939,10 @@ namespace TvPlugin
           dlg.AddLocalizedString(938);// View this channel
 
         dlg.AddLocalizedString(939);// Switch mode
+        if (_currentProgram != null && _currentChannel.Length > 0 && _currentTitle.Length > 0)
+        {
+          dlg.AddLocalizedString(264);// Record
+        }
 
 
         dlg.DoModal(GetID);
@@ -1953,6 +1957,10 @@ namespace TvPlugin
 
           case 939: // switch mode
             OnSwitchMode();
+            break;
+
+          case 264: // record
+            OnRecordContext();
             break;
 
         }
@@ -1982,7 +1990,11 @@ namespace TvPlugin
     }
     void ShowProgramInfo()
     {
-      if (_currentProgram == null) return;
+      if (_currentProgram == null)
+        return;
+
+      TVProgramInfo.CurrentProgram = _currentProgram;
+      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
     }
 
     void OnRecord(bool isItemSelected)
@@ -1999,6 +2011,15 @@ namespace TvPlugin
         //@todo
         //Recorder.StartRadio(station.Name);
       }
+    }
+    /// <summary>
+    /// "Record" entry in context menu
+    /// </summary>
+    void OnRecordContext()
+    {
+      if (_currentProgram == null)
+        return;
+      ShowProgramInfo();
     }
     void CheckRecordingConflicts()
     {
