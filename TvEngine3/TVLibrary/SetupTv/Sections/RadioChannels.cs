@@ -158,12 +158,18 @@ namespace SetupTv.Sections
         bool dvbs = false;
         bool atsc = false;
         bool webstream = false;
+        bool fmRadio = false;
         bool notmapped = true;
         if (ch.IsRadio==false) continue;
         channelCount++;
-        if (layer.ChannelIsWebstream(ch))
+        if (ch.IsWebstream())
         {
           webstream = true;
+          notmapped = false;
+        }
+        if (ch.IsFMRadio())
+        {
+          fmRadio = true;
           notmapped = false;
         }
         if (notmapped)
@@ -221,6 +227,11 @@ namespace SetupTv.Sections
           if (builder.Length > 0) builder.Append(",");
           builder.Append("Webstream");
         }
+        if (fmRadio)
+        {
+          if (builder.Length > 0) builder.Append(",");
+          builder.Append("FM Radio");
+        }
         int imageIndex = 0;
         if (ch.FreeToAir)
           imageIndex = 3;
@@ -273,6 +284,11 @@ namespace SetupTv.Sections
             case 5:// Webstream
               item.SubItems.Add(detail.Url);
               break;
+            case 6:// FM Radio
+              frequency = detail.Frequency;
+              frequency /= 1000000.0f;
+              item.SubItems.Add(String.Format("{0} MHz", frequency.ToString("f3")));
+              break;
           }
         }
         if (provider.Length > 1) provider = provider.Substring(0, provider.Length - 1);
@@ -281,19 +297,6 @@ namespace SetupTv.Sections
       }
       mpListView1.Items.AddRange(items.ToArray());
       mpListView1.EndUpdate();
-    }
-
-    private void buttonDelete_Click(object sender, EventArgs e)
-    {
-      foreach (ListViewItem item in mpListView1.SelectedItems)
-      {
-        Channel channel = (Channel)item.Tag;
-        channel.Delete();
-        mpListView1.Items.Remove(item);
-      }
-      //DatabaseManager.Instance.SaveChanges();
-      ReOrder();
-      RemoteControl.Instance.OnNewSchedule();
     }
 
     private void mpListView1_ItemDrag(object sender, ItemDragEventArgs e)
@@ -342,6 +345,7 @@ namespace SetupTv.Sections
       Channel channel = (Channel)mpListView1.Items[indexes[0]].Tag;
       FormEditChannel dlg = new FormEditChannel();
       dlg.Channel = channel;
+      dlg.IsTv = false;
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
         channel.Persist();
@@ -487,6 +491,43 @@ namespace SetupTv.Sections
         }
       }
       OnSectionActivated();
+    }
+
+    private void btnAddFromPLS_Click(object sender, EventArgs e)
+    {
+      OpenFileDialog dlg = new OpenFileDialog();
+      dlg.CheckFileExists = true;
+      dlg.CheckPathExists = true;
+      dlg.DefaultExt = ".pls";
+      dlg.Filter = "Playlists (*.pls)|*.pls";
+      dlg.Multiselect = false;
+      if (dlg.ShowDialog() == DialogResult.OK)
+      {
+        IniFileWrapper inif = new IniFileWrapper(dlg.FileName);
+        int nrEntries;
+        if (!Int32.TryParse(inif.GetIniValue("playlist", "numberofentries", "_"), out nrEntries)) ;
+        {
+          MessageBox.Show("Failed to parse playlist"+Environment.NewLine+"Please refer to http://gonze.com/playlists/playlist-format-survey.html#PLS for the specification","Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
+          return;
+        }
+        TvBusinessLayer layer=new TvBusinessLayer();
+        int iAdded=0;
+        for (int i=1;i<nrEntries+1;i++)
+        {
+          string url=inif.GetIniValue("playlist","File"+i.ToString(),"");
+          if (url=="")
+            continue;
+          string title=inif.GetIniValue("playlist","Title"+i.ToString(),"");
+          if (title=="")
+            title=url;
+          Channel channel=new Channel(title,true,false,0,new DateTime(2000, 1, 1),false,new DateTime(2000, 1, 1),-1,true,"",true,title);
+          channel.Persist();
+          layer.AddWebStreamTuningDetails(channel,url,0);
+          iAdded++;
+        }
+        MessageBox.Show(iAdded.ToString()+" streams out of "+nrEntries.ToString()+" have been added.","Information",MessageBoxButtons.OK,MessageBoxIcon.Information);
+        OnSectionActivated();
+      }
     }
   }
 }

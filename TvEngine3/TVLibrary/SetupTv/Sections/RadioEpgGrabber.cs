@@ -126,7 +126,6 @@ namespace SetupTv.Sections
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
-      TvBusinessLayer layer=new TvBusinessLayer();
 
       foreach (Channel ch in channels)
       {
@@ -136,7 +135,8 @@ namespace SetupTv.Sections
         bool dvbs = false;
         bool atsc = false;
         if (ch.IsRadio == false) continue;
-        if (layer.ChannelIsWebstream(ch)) continue;
+        if (ch.IsWebstream()) continue;
+        if (ch.IsFMRadio()) continue;
         int imageIndex = 3;
         if (ch.FreeToAir == false)
           imageIndex = 0;

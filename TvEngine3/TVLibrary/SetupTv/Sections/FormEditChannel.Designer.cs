@@ -123,6 +123,9 @@ namespace SetupTv.Sections
       this.label45 = new System.Windows.Forms.Label();
       this.nudStreamBitrate = new System.Windows.Forms.NumericUpDown();
       this.label44 = new System.Windows.Forms.Label();
+      this.tabFMRadio = new System.Windows.Forms.TabPage();
+      this.edFMFreq = new System.Windows.Forms.TextBox();
+      this.label42 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -132,6 +135,7 @@ namespace SetupTv.Sections
       this.tabPage6.SuspendLayout();
       this.tabSHOUTcast.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nudStreamBitrate)).BeginInit();
+      this.tabFMRadio.SuspendLayout();
       this.SuspendLayout();
       // 
       // buttonOk
@@ -153,6 +157,7 @@ namespace SetupTv.Sections
       this.tabControl1.Controls.Add(this.tabPage5);
       this.tabControl1.Controls.Add(this.tabPage6);
       this.tabControl1.Controls.Add(this.tabSHOUTcast);
+      this.tabControl1.Controls.Add(this.tabFMRadio);
       this.tabControl1.Location = new System.Drawing.Point(12, 12);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
@@ -249,7 +254,6 @@ namespace SetupTv.Sections
       this.textBoxAnalogFrequency.Size = new System.Drawing.Size(100, 20);
       this.textBoxAnalogFrequency.TabIndex = 1;
       this.textBoxAnalogFrequency.Text = "0";
-      this.textBoxAnalogFrequency.TextChanged += new System.EventHandler(this.textBox10_TextChanged);
       // 
       // label29
       // 
@@ -307,7 +311,6 @@ namespace SetupTv.Sections
       this.label3.Size = new System.Drawing.Size(46, 13);
       this.label3.TabIndex = 10;
       this.label3.Text = "Country:";
-      this.label3.Click += new System.EventHandler(this.label3_Click);
       // 
       // comboBoxInput
       // 
@@ -320,7 +323,6 @@ namespace SetupTv.Sections
       this.comboBoxInput.Name = "comboBoxInput";
       this.comboBoxInput.Size = new System.Drawing.Size(258, 21);
       this.comboBoxInput.TabIndex = 2;
-      this.comboBoxInput.TabIndexChanged += new System.EventHandler(this.comboBoxInput_TabIndexChanged);
       // 
       // label2
       // 
@@ -1175,6 +1177,35 @@ namespace SetupTv.Sections
       this.label44.TabIndex = 4;
       this.label44.Text = "Bitrate:";
       // 
+      // tabFMRadio
+      // 
+      this.tabFMRadio.Controls.Add(this.edFMFreq);
+      this.tabFMRadio.Controls.Add(this.label42);
+      this.tabFMRadio.Location = new System.Drawing.Point(4, 22);
+      this.tabFMRadio.Name = "tabFMRadio";
+      this.tabFMRadio.Padding = new System.Windows.Forms.Padding(3);
+      this.tabFMRadio.Size = new System.Drawing.Size(404, 299);
+      this.tabFMRadio.TabIndex = 7;
+      this.tabFMRadio.Text = "FM Radio";
+      this.tabFMRadio.UseVisualStyleBackColor = true;
+      // 
+      // edFMFreq
+      // 
+      this.edFMFreq.Location = new System.Drawing.Point(69, 17);
+      this.edFMFreq.Name = "edFMFreq";
+      this.edFMFreq.Size = new System.Drawing.Size(86, 20);
+      this.edFMFreq.TabIndex = 7;
+      this.edFMFreq.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.edFMFreq_KeyPress);
+      // 
+      // label42
+      // 
+      this.label42.AutoSize = true;
+      this.label42.Location = new System.Drawing.Point(9, 20);
+      this.label42.Name = "label42";
+      this.label42.Size = new System.Drawing.Size(60, 13);
+      this.label42.TabIndex = 8;
+      this.label42.Text = "Frequency:";
+      // 
       // FormEditChannel
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1201,6 +1232,8 @@ namespace SetupTv.Sections
       this.tabSHOUTcast.ResumeLayout(false);
       this.tabSHOUTcast.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nudStreamBitrate)).EndInit();
+      this.tabFMRadio.ResumeLayout(false);
+      this.tabFMRadio.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1302,5 +1335,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label45;
     private System.Windows.Forms.NumericUpDown nudStreamBitrate;
     private System.Windows.Forms.Label label44;
+    private System.Windows.Forms.TabPage tabFMRadio;
+    private System.Windows.Forms.TextBox edFMFreq;
+    private System.Windows.Forms.Label label42;
   }
 }

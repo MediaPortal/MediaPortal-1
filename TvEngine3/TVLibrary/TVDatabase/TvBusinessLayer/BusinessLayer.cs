@@ -490,15 +490,6 @@ namespace TvDatabase
       return newMap;
     }
 
-    public bool ChannelIsWebstream(Channel channel)
-    {
-      IList details = channel.ReferringTuningDetail();
-      if (details == null) return false;
-      if (details.Count != 1) return false;
-      TuningDetail detail = (TuningDetail)details[0];
-      return (detail.ChannelType == 5);
-    }
-
     /// <summary>
     /// Gets a list of tv channels sorted by their group
     /// </summary>
@@ -812,6 +803,49 @@ namespace TvDatabase
       int rollOff = (int)Rolloff.NotSet;
       if (url == null)
         url = "";
+      TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
+                              channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
+                              networkId, transportId, serviceId, pmtPid, freeToAir,
+                              modulation, polarisation, symbolRate, diseqc, switchFrequency,
+                              bandwidth, majorChannel, minorChannel, pcrPid, videoInputType, tunerSource, videoPid, audioPid, band, satIndex, innerFecRate, pilot, rollOff, url, bitrate);
+      detail.Persist();
+      return detail;
+    }
+    public TuningDetail AddFMRadioTuningDetails(Channel channel, int frequency)
+    {
+      string channelName = channel.Name;
+      long channelFrequency = frequency;
+      int channelNumber = 0;
+      int country = 31;
+      bool isRadio = channel.IsRadio;
+      bool isTv = channel.IsTv;
+      int tunerSource = 0;
+      int videoInputType = 0;
+      int symbolRate = 0;
+      int modulation = 0;
+      int polarisation = 0;
+      int switchFrequency = 0;
+      int diseqc = 0;
+      int bandwidth = 8;
+      bool freeToAir = true;
+      int pcrPid = -1;
+      int pmtPid = -1;
+      int networkId = -1;
+      int serviceId = -1;
+      int transportId = -1;
+      int minorChannel = -1;
+      int majorChannel = -1;
+      string provider = "";
+      int channelType = 6;
+      int videoPid = -1;
+      int audioPid = -1;
+      int band = 0;
+      int satIndex = -1;
+      int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
+      int pilot = (int)Pilot.NotSet;
+      int rollOff = (int)Rolloff.NotSet;
+      string url = "";
+      int bitrate = 0;
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
                               channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                               networkId, transportId, serviceId, pmtPid, freeToAir,

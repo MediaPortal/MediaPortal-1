@@ -47,6 +47,7 @@ namespace SetupTv.Sections
     bool _newChannel = false;
     bool _isTv = true;
     bool _webstream = false;
+    bool _fmRadio = false;
     Channel _channel;
     public FormEditChannel()
     {
@@ -118,7 +119,7 @@ namespace SetupTv.Sections
               else
                 analogChannel.TunerSource = TunerInputType.Antenna;
               analogChannel.VideoSource = (AnalogChannel.VideoInputType)comboBoxVideoSource.SelectedIndex;
-              analogChannel.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text);
+              analogChannel.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text,"2");
 
               layer.AddTuningDetails(_channel, analogChannel);
             }
@@ -325,11 +326,19 @@ namespace SetupTv.Sections
             }
           }
         }
+        // Webstream
         if (edStreamURL.Text != "")
         {
           _channel.GrabEpg = false;
           _channel.Persist();
           layer.AddWebStreamTuningDetails(_channel, edStreamURL.Text, (int)nudStreamBitrate.Value);
+        }
+        // FM Radio
+        if (edFMFreq.Text != "")
+        {
+          _channel.GrabEpg = false;
+          _channel.Persist();
+          layer.AddFMRadioTuningDetails(_channel,(int)GetFrequency(edFMFreq.Text,"3"));
         }
         this.DialogResult = DialogResult.OK;
         this.Close();
@@ -352,7 +361,7 @@ namespace SetupTv.Sections
           else
             detail.TuningSource = (int)TunerInputType.Antenna;
           detail.VideoSource = comboBoxVideoSource.SelectedIndex;
-          detail.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text);
+          detail.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text,"2");
           detail.Persist();
         }
 
@@ -466,6 +475,13 @@ namespace SetupTv.Sections
           detail.Bitrate = (int)nudStreamBitrate.Value;
           detail.Persist();
         }
+        // FM Radio
+        if (detail.ChannelType == 6)
+        {
+          _fmRadio = true;
+          detail.Frequency = (int)GetFrequency(edFMFreq.Text,"3");
+          detail.Persist();
+        }
       }
       this.DialogResult = DialogResult.OK;
       this.Close();
@@ -473,6 +489,8 @@ namespace SetupTv.Sections
 
     private void FormEditChannel_Load(object sender, EventArgs e)
     {
+      if (_isTv)
+        tabControl1.Controls.Remove(tabFMRadio);
       _newChannel = false;
       if (_channel == null)
       {
@@ -514,6 +532,7 @@ namespace SetupTv.Sections
         _dvbs = true;
         _atsc = true;
         _webstream = true;
+        _fmRadio = true;
         textBoxChannel.Text = "";
         textBoxProgram.Text = "";
         textboxFreq.Text = "";
@@ -533,7 +552,7 @@ namespace SetupTv.Sections
           CountryCollection collection = new CountryCollection();
           comboBoxCountry.SelectedIndex = detail.CountryId;
           comboBoxVideoSource.SelectedIndex = detail.VideoSource;
-          textBoxAnalogFrequency.Text = SetFrequency(detail.Frequency);
+          textBoxAnalogFrequency.Text = SetFrequency(detail.Frequency,"2");
         }
 
         //ATSC tab
@@ -653,11 +672,14 @@ namespace SetupTv.Sections
           edStreamURL.Text = detail.Url;
           nudStreamBitrate.Value = detail.Bitrate;
         }
-      }
-    }
 
-    private void comboBoxInput_TabIndexChanged(object sender, EventArgs e)
-    {
+        //FM Radio
+        if (detail.ChannelType == 6 || _newChannel)
+        {
+          _fmRadio = true;
+          edFMFreq.Text = SetFrequency(detail.Frequency,"3");
+        }
+      }
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -706,12 +728,14 @@ namespace SetupTv.Sections
             MessageBox.Show(this, "No Webstream details available for this channel");
           }
           break;
+        case 7:
+          if (_fmRadio == false)
+          {
+            tabControl1.SelectedIndex = 0;
+            MessageBox.Show(this, "No FM Radio details available for this channel");
+          }
+          break;
       }
-    }
-
-    private void label3_Click(object sender, EventArgs e)
-    {
-
     }
 
     private void comboBoxCountry_SelectedIndexChanged(object sender, EventArgs e)
@@ -719,14 +743,10 @@ namespace SetupTv.Sections
 
     }
 
-    private void textBox10_TextChanged(object sender, EventArgs e)
-    {
-
-    }
-    long GetFrequency(string text)
+    long GetFrequency(string text,string precision)
     {
       float tmp = 123.25f;
-      if (tmp.ToString("f2").IndexOf(',') > 0)
+      if (tmp.ToString("f"+precision).IndexOf(',') > 0)
       {
         text = text.Replace('.', ',');
       }
@@ -739,11 +759,11 @@ namespace SetupTv.Sections
       return (long)freq;
     }
 
-    string SetFrequency(long frequency)
+    string SetFrequency(long frequency,string precision)
     {
       float freq = frequency;
       freq /= 1000000f;
-      return freq.ToString("f2");
+      return freq.ToString("f"+precision);
     }
 
     private void btnSearchSHOUTcast_Click(object sender, EventArgs e)
@@ -754,6 +774,26 @@ namespace SetupTv.Sections
       textBoxName.Text = dlg.Station.name;
       edStreamURL.Text = dlg.Station.url;
       nudStreamBitrate.Value = dlg.Station.bitrate;
+    }
+
+    private void edFMFreq_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      //
+      // Make sure we only type one comma or dot
+      //
+      if (e.KeyChar == '.' || e.KeyChar == ',')
+      {
+        if (edFMFreq.Text.IndexOfAny(new char[] { ',', '.' }) >= 0)
+        {
+          e.Handled = true;
+          return;
+        }
+      }
+
+      if (char.IsNumber(e.KeyChar) == false && (e.KeyChar != 8 && e.KeyChar != '.' && e.KeyChar != ','))
+      {
+        e.Handled = true;
+      }
     }
   }
 }

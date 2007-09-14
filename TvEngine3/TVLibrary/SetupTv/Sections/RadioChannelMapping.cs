@@ -181,7 +181,6 @@ namespace SetupTv.Sections
       IList maps = card.ReferringChannelMap();
 
       List<ListViewItem> items = new List<ListViewItem>();
-      TvBusinessLayer layer = new TvBusinessLayer();
       foreach (ChannelMap map in maps)
       {
         Channel channel = map.ReferencedChannel();
@@ -212,7 +211,8 @@ namespace SetupTv.Sections
       foreach (Channel channel in channels)
       {
         if (channel.IsRadio == false) continue;
-        if (layer.ChannelIsWebstream(channel)) continue;
+        if (channel.IsWebstream()) continue;
+        if (channel.IsFMRadio()) continue;
         int imageIndex = 0;
         if (channel.FreeToAir)
           imageIndex = 3;

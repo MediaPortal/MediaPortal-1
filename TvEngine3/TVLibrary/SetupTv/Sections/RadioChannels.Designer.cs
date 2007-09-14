@@ -38,7 +38,6 @@ namespace SetupTv.Sections
       this.hdrProvider = new System.Windows.Forms.ColumnHeader();
       this.hdrTypes = new System.Windows.Forms.ColumnHeader();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.buttonDelete = new System.Windows.Forms.Button();
       this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonDel = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonEdit = new MediaPortal.UserInterface.Controls.MPButton();
@@ -49,6 +48,7 @@ namespace SetupTv.Sections
       this.renameMarkedChannelsBySIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.addSIDInFrontOfNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.btnAddFromPLS = new MediaPortal.UserInterface.Controls.MPButton();
       this.contextMenuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -84,6 +84,7 @@ namespace SetupTv.Sections
       this.mpListView1.TabIndex = 1;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
+      this.mpListView1.DoubleClick += new System.EventHandler(this.mpButtonEdit_Click);
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
       this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
       // 
@@ -110,19 +111,9 @@ namespace SetupTv.Sections
       this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
       this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
       // 
-      // buttonDelete
-      // 
-      this.buttonDelete.Location = new System.Drawing.Point(131, 338);
-      this.buttonDelete.Name = "buttonDelete";
-      this.buttonDelete.Size = new System.Drawing.Size(75, 23);
-      this.buttonDelete.TabIndex = 2;
-      this.buttonDelete.Text = "Delete";
-      this.buttonDelete.UseVisualStyleBackColor = true;
-      this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
-      // 
       // mpButtonAdd
       // 
-      this.mpButtonAdd.Location = new System.Drawing.Point(131, 363);
+      this.mpButtonAdd.Location = new System.Drawing.Point(127, 338);
       this.mpButtonAdd.Name = "mpButtonAdd";
       this.mpButtonAdd.Size = new System.Drawing.Size(54, 23);
       this.mpButtonAdd.TabIndex = 14;
@@ -144,7 +135,7 @@ namespace SetupTv.Sections
       // 
       this.mpButtonEdit.Location = new System.Drawing.Point(67, 338);
       this.mpButtonEdit.Name = "mpButtonEdit";
-      this.mpButtonEdit.Size = new System.Drawing.Size(58, 23);
+      this.mpButtonEdit.Size = new System.Drawing.Size(54, 23);
       this.mpButtonEdit.TabIndex = 13;
       this.mpButtonEdit.Text = "Edit";
       this.mpButtonEdit.UseVisualStyleBackColor = true;
@@ -172,7 +163,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonDeleteEncrypted
       // 
-      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(212, 338);
+      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(210, 362);
       this.mpButtonDeleteEncrypted.Name = "mpButtonDeleteEncrypted";
       this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(103, 23);
       this.mpButtonDeleteEncrypted.TabIndex = 15;
@@ -182,7 +173,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonClear
       // 
-      this.mpButtonClear.Location = new System.Drawing.Point(212, 362);
+      this.mpButtonClear.Location = new System.Drawing.Point(210, 338);
       this.mpButtonClear.Name = "mpButtonClear";
       this.mpButtonClear.Size = new System.Drawing.Size(55, 23);
       this.mpButtonClear.TabIndex = 16;
@@ -210,20 +201,30 @@ namespace SetupTv.Sections
             this.renameMarkedChannelsBySIDToolStripMenuItem,
             this.addSIDInFrontOfNameToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(256, 70);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(256, 48);
+      // 
+      // btnAddFromPLS
+      // 
+      this.btnAddFromPLS.Location = new System.Drawing.Point(127, 362);
+      this.btnAddFromPLS.Name = "btnAddFromPLS";
+      this.btnAddFromPLS.Size = new System.Drawing.Size(77, 23);
+      this.btnAddFromPLS.TabIndex = 17;
+      this.btnAddFromPLS.Text = "Add from .pls";
+      this.btnAddFromPLS.UseVisualStyleBackColor = true;
+      this.btnAddFromPLS.Click += new System.EventHandler(this.btnAddFromPLS_Click);
       // 
       // RadioChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.mpButtonClear);
+      this.Controls.Add(this.btnAddFromPLS);
       this.Controls.Add(this.mpButtonDeleteEncrypted);
-      this.Controls.Add(this.mpButtonAdd);
       this.Controls.Add(this.mpButtonDel);
+      this.Controls.Add(this.mpButtonClear);
       this.Controls.Add(this.mpButtonEdit);
+      this.Controls.Add(this.mpButtonAdd);
       this.Controls.Add(this.buttonDown);
       this.Controls.Add(this.buttonUtp);
-      this.Controls.Add(this.buttonDelete);
       this.Controls.Add(this.mpListView1);
       this.Name = "RadioChannels";
       this.Size = new System.Drawing.Size(467, 388);
@@ -239,7 +240,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader hdrDetail1;
     private MediaPortal.UserInterface.Controls.MPListView mpListView1;
     private System.Windows.Forms.ColumnHeader hdrTypes;
-    private System.Windows.Forms.Button buttonDelete;
     private System.Windows.Forms.ImageList imageList1;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonAdd;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonDel;
@@ -253,5 +253,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ToolStripMenuItem renameMarkedChannelsBySIDToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem addSIDInFrontOfNameToolStripMenuItem;
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+    private MediaPortal.UserInterface.Controls.MPButton btnAddFromPLS;
   }
 }

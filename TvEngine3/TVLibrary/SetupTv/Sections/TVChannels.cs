@@ -158,8 +158,6 @@ namespace SetupTv.Sections
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
       IList allmaps = ChannelMap.ListAll();
-      TvBusinessLayer layer=new TvBusinessLayer();
-
 
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (Channel ch in channels)
@@ -173,7 +171,7 @@ namespace SetupTv.Sections
         bool notmapped = true;
         if (ch.IsTv == false) continue;
         channelCount++;
-        if (layer.ChannelIsWebstream(ch))
+        if (ch.IsWebstream())
         {
           webstream = true;
           notmapped = false;

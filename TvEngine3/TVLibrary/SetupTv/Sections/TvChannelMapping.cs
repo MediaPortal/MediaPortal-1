@@ -202,12 +202,11 @@ namespace SetupTv.Sections
         }
       }
       mpListViewMapped.Items.AddRange(items.ToArray());
-      TvBusinessLayer layer=new TvBusinessLayer();
       items = new List<ListViewItem>();
       foreach (Channel channel in channels)
       {
         if (channel.IsTv == false) continue;
-        if (layer.ChannelIsWebstream(channel)) continue;
+        if (channel.IsWebstream()) continue;
         int imageIndex = 1;
         if (channel.FreeToAir == false)
           imageIndex = 2;

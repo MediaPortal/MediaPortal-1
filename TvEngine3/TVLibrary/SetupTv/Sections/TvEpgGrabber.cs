@@ -148,7 +148,7 @@ namespace SetupTv.Sections
         bool dvbs = false;
         bool atsc = false;
         if (ch.IsTv == false) continue;
-        if (layer.ChannelIsWebstream(ch)) continue;
+        if (ch.IsWebstream()) continue;
         int imageIndex = 1;
         if (ch.FreeToAir == false)
           imageIndex = 2;
