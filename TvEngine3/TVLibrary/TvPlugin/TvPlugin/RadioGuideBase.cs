@@ -2122,12 +2122,24 @@ namespace TvPlugin
     void GetChannels()
     {
       _channelList = new ArrayList();
-      IList channels = Channel.ListAll();
-      foreach (Channel chan in channels)
+      if (Radio.selectedGroup == null)
       {
-        if (chan.IsRadio)
+        IList channels = Channel.ListAll();
+        foreach (Channel channel in channels)
         {
-          _channelList.Add(chan);
+          if (channel.IsRadio)
+            _channelList.Add(channel);
+        }
+      }
+      else
+      {
+        Radio.selectedGroup.ReferringRadioGroupMap();
+        IList maps = Radio.selectedGroup.ReferringRadioGroupMap();
+        foreach (RadioGroupMap map in maps)
+        {
+          Channel channel = map.ReferencedChannel();
+          if (channel.IsRadio)
+            _channelList.Add(channel);
         }
       }
 

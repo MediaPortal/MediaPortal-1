@@ -1647,7 +1647,7 @@ namespace TvDatabase
       }
     #endregion
 
-      #region recordings
+    #region recordings
       public Recording GetRecordingByFileName(string fileName)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Recording));
@@ -1658,6 +1658,19 @@ namespace TvDatabase
       if (recordings.Count == 0)
         return null;
       return (Recording)recordings[0];
+    }
+    #endregion
+
+    #region Channelgroups
+    public RadioChannelGroup GetRadioChannelGroupByName(string name)
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(RadioChannelGroup));
+      sb.AddConstraint(Operator.Equals, "groupName", name);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList groups=ObjectFactory.GetCollection(typeof(RadioChannelGroup),stmt.Execute());
+      if (groups == null) return null;
+      if (groups.Count == 0) return null;
+      return (RadioChannelGroup)groups[0];
     }
     #endregion
   }
