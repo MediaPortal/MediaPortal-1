@@ -24,7 +24,6 @@
         <id>2</id>
         <label>30001</label>
         <onright>50</onright>
-        <onup>17</onup>
       </control>
       <control>
         <description>New Videos button</description>
@@ -67,14 +66,6 @@
         <id>25</id>
         <label>136</label>
         <onright>50</onright>
-      </control>
-      <control>
-        <description>my playlist button</description>
-        <type>button</type>
-        <id>39</id>
-        <label>983</label>
-        <onright>50</onright>
-        <ondown>99</ondown>
       </control>
     </control>
     <control>
