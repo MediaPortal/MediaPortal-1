@@ -24,7 +24,6 @@
         <id>2</id>
         <label>30001</label>
         <onright>50</onright>
-        <onup>17</onup>
       </control>
       <control>
         <description>New Videos button</description>
@@ -68,7 +67,6 @@
         <label>136</label>
         <onright>50</onright>
       </control>
-
     </control>
     <control>
       <description>group element</description>
