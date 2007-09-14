@@ -163,7 +163,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonDeleteEncrypted
       // 
-      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(210, 362);
+      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(216, 362);
       this.mpButtonDeleteEncrypted.Name = "mpButtonDeleteEncrypted";
       this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(103, 23);
       this.mpButtonDeleteEncrypted.TabIndex = 15;
@@ -173,7 +173,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonClear
       // 
-      this.mpButtonClear.Location = new System.Drawing.Point(210, 338);
+      this.mpButtonClear.Location = new System.Drawing.Point(216, 338);
       this.mpButtonClear.Name = "mpButtonClear";
       this.mpButtonClear.Size = new System.Drawing.Size(55, 23);
       this.mpButtonClear.TabIndex = 16;
@@ -207,7 +207,7 @@ namespace SetupTv.Sections
       // 
       this.btnAddFromPLS.Location = new System.Drawing.Point(127, 362);
       this.btnAddFromPLS.Name = "btnAddFromPLS";
-      this.btnAddFromPLS.Size = new System.Drawing.Size(77, 23);
+      this.btnAddFromPLS.Size = new System.Drawing.Size(83, 23);
       this.btnAddFromPLS.TabIndex = 17;
       this.btnAddFromPLS.Text = "Add from .pls";
       this.btnAddFromPLS.UseVisualStyleBackColor = true;
@@ -218,10 +218,10 @@ namespace SetupTv.Sections
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.btnAddFromPLS);
-      this.Controls.Add(this.mpButtonDeleteEncrypted);
       this.Controls.Add(this.mpButtonDel);
-      this.Controls.Add(this.mpButtonClear);
+      this.Controls.Add(this.mpButtonDeleteEncrypted);
       this.Controls.Add(this.mpButtonEdit);
+      this.Controls.Add(this.mpButtonClear);
       this.Controls.Add(this.mpButtonAdd);
       this.Controls.Add(this.buttonDown);
       this.Controls.Add(this.buttonUtp);
