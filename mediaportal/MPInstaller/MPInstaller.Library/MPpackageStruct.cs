@@ -326,31 +326,34 @@ namespace MediaPortal.MPInstaller
             ZipInputStream s = new ZipInputStream(File.OpenRead(FileName));
             while ((entry = s.GetNextEntry()) != null)
             {
-              if (Path.GetFileName(entry.Name) == Path.GetFileName(_intalerStruct.FindList(MPinstallerStruct.TEXT_TYPE, MPinstallerStruct.TEXT_EULA_TYPE).FileName))
+              MPIFileList fl = _intalerStruct.FindFileFromZipEntry(entry.Name);
+              if (fl != null)
               {
-                txt_EULA = String.Empty;
-                while ((nb = s.Read(data, 0, data.Length)) > 0)
+                if (fl.Type==MPinstallerStruct.TEXT_TYPE && fl.SubType==MPinstallerStruct.TEXT_EULA_TYPE)
                 {
-                  txt_EULA += new ASCIIEncoding().GetString(data, 0, data.Length);
+                  txt_EULA = String.Empty;
+                  while ((nb = s.Read(data, 0, data.Length)) > 0)
+                  {
+                    txt_EULA += new ASCIIEncoding().GetString(data, 0, data.Length);
+                  }
+                }
+                if (fl.Type == MPinstallerStruct.TEXT_TYPE && fl.SubType == MPinstallerStruct.TEXT_LOG_TYPE)
+                {
+                  txt_log = String.Empty;
+                  while ((nb = s.Read(data, 0, data.Length)) > 0)
+                  {
+                    txt_log += new ASCIIEncoding().GetString(data, 0, data.Length);
+                  }
+                }
+                if (fl.Type == MPinstallerStruct.TEXT_TYPE && fl.SubType == MPinstallerStruct.TEXT_README_TYPE)
+                {
+                  txt_readme = String.Empty;
+                  while ((nb = s.Read(data, 0, data.Length)) > 0)
+                  {
+                    txt_readme += new ASCIIEncoding().GetString(data, 0, data.Length);
+                  }
                 }
               }
-              if (Path.GetFileName(entry.Name) == Path.GetFileName(_intalerStruct.FindList(MPinstallerStruct.TEXT_TYPE, MPinstallerStruct.TEXT_LOG_TYPE).FileName))
-              {
-                txt_log = String.Empty;
-                while ((nb = s.Read(data, 0, data.Length)) > 0)
-                {
-                  txt_log += new ASCIIEncoding().GetString(data, 0, data.Length);
-                }
-              }
-              if (Path.GetFileName(entry.Name) == Path.GetFileName(_intalerStruct.FindList(MPinstallerStruct.TEXT_TYPE, MPinstallerStruct.TEXT_README_TYPE).FileName))
-              {
-                txt_readme = String.Empty;
-                while ((nb = s.Read(data, 0, data.Length)) > 0)
-                {
-                  txt_readme += new ASCIIEncoding().GetString(data, 0, data.Length);
-                }
-              }
-
             }
             s.Close();
           }
