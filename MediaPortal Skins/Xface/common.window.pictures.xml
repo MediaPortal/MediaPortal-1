@@ -103,8 +103,8 @@
       <type>image</type>
       <posX>633</posX>
       <posY>582</posY>
-      <width>120</width>
-      <height>99</height>
+      <width>122</width>
+      <height>149</height>
       <texture>Picture_cover.png</texture>
       <visible>!facadeview.list</visible>
     </control>

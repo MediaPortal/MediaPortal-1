@@ -3,9 +3,9 @@
   <controls>
     <control>
       <type>group</type>
-      <visible>Control.HasFocus(21)|Control.HasFocus(50)</visible>
-      <animation effect="slide" time="350" end="300,0">hidden</animation>
-      <animation effect="slide" time="450" start="300,0">visible</animation>
+
+      <animation effect="slide" time="350" end="300,0">WindowClose</animation>
+      <animation effect="slide" time="450" start="300,0">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
       <animation effect="fade" time="500">WindowOpen</animation>
       <description>group element</description>
@@ -53,12 +53,14 @@
           <thumbPosY>12</thumbPosY>
           <imageFolderFocus>Framefocus.png</imageFolderFocus>
           <frame>Picture_cover.png</frame>
-          <frameFocus>Picture_cover.png</frameFocus>
+          <frameFocus>Pictureframe_cover.png</frameFocus>
           <itemWidth>246</itemWidth>
           <itemHeight>210</itemHeight>
           <textureWidth>237</textureWidth>
-          <textureHeight>189</textureHeight>
-          <font>font10</font>
+          <textureHeight>289</textureHeight>
+          <font>font11</font>
+          <textXOff>8</textXOff>
+		  <textYOff>-25</textYOff>
           <selectedColor>00ffffff</selectedColor>
           <textcolor>00ffffff</textcolor>
           <colordiffuse>00ffffff</colordiffuse>

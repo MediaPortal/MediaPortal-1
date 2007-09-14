@@ -7,7 +7,7 @@
   <define>#header.image:videos_logo.png</define>
   <define>#header.hover:-</define>
   <controls>
-    <import>common.window.xml</import>
+    <import>common.window.video.xml</import>
     <control>
       <type>imagelist</type>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -147,5 +147,69 @@
       </control>
     </control>
     <import>common.facade.video.xml</import>
+     <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>120</posX>
+      <posY>226</posY>
+      <width>128</width>
+      <height>182</height>
+      <texture flipY="true" diffuse="Thumb_Mask.png">missing_Coverart.png</texture>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <id>1</id>
+      <type>image</type>
+      <posX>120</posX>
+      <posY>226</posY>
+      <width>128</width>
+      <height>182</height>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>112</posX>
+      <posY>220</posY>
+      <width>149</width>
+      <height>322</height>
+      <texture>Cover_dvd.png</texture>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>89</posX>
+      <posY>430</posY>
+      <width>300</width>
+      <label>#itemcount</label>
+      <font>font14</font>
+      <textcolor>ff969696</textcolor>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>89</posX>
+      <posY>460</posY>
+      <width>300</width>
+      <label>#selecteditem</label>
+      <font>font14</font>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>89</posX>
+      <posY>490</posY>
+      <width>365</width>
+      <label>#selecteditem2</label>
+      <font>font14</font>
+      <visible>facadeview.list</visible>
+    </control>
   </controls>
 </window>

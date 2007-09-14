@@ -168,9 +168,9 @@
       <type>image</type>
       <id>1</id>
       <posX>112</posX>
-      <posY>240</posY>
+      <posY>230</posY>
       <width>168</width>
-      <height>175</height>
+      <height>250</height>
       <texture>Covertop.png</texture>
       <visible>facadeview.list</visible>
     </control>

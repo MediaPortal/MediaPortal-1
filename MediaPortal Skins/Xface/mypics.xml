@@ -115,7 +115,7 @@
       <posX>102</posX>
       <posY>240</posY>
       <width>210</width>
-      <height>179</height>
+      <height>265</height>
       <texture>Picture_cover.png</texture>
       <visible>facadeview.list</visible>
     </control>

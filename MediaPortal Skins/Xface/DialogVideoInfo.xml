@@ -10,14 +10,15 @@
       <id>1</id>
       <width>1366</width>
       <height>768</height>
+       <texture>background.png</texture>
     </control>
     <control>
       <type>image</type>
       <id>1</id>
       <posX>89</posX>
       <posY>4</posY>
-      <width>220</width>
-      <height>55</height>
+       <width>220</width>
+       <height>55</height>
       <texture>movieinfo_logo.png</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -153,7 +154,7 @@
       <posY>420</posY>
       <label>427</label>
       <font>font13</font>
-      <textcolor>ff969696</textcolor>
+     <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -295,7 +296,7 @@
       <posY>393</posY>
       <label>299</label>
       <font>font13</font>
-      <textcolor>ff969696</textcolor>
+     <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
@@ -333,7 +334,7 @@
       <posY>133</posY>
       <width>208</width>
       <height>292</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png">#thumb</texture>
+       <texture flipY="true" diffuse="Thumb_Mask.png">#thumb</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>FFFFFFFF</colordiffuse>
       <keepaspectratio>yes</keepaspectratio>
@@ -342,7 +343,7 @@
     </control>
     <control>
       <description>textarea</description>
-      <type>textbox</type>
+     <type>textbox</type>
       <id>22</id>
       <posX>379</posX>
       <posY>585</posY>
@@ -352,7 +353,7 @@
       <onright>2</onright>
       <onup>2</onup>
       <ondown>2</ondown>
-      <textcolor>ff969696</textcolor>
+        <textcolor>ff969696</textcolor>
       <label>#cast</label>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>

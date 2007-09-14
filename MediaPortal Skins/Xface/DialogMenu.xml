@@ -42,18 +42,17 @@
       <id>4</id>
       <posX>520</posX>
       <posY>156</posY>
-      <label>181</label>
-      <control>
-        <description>Radio Guide</description>
-        <type>button</type>
-        <id>8</id>
-        <label>533</label>
-        <onleft>8</onleft>
-        <onright>50</onright>
-        <onup>7</onup>
-        <ondown>99</ondown>
-        <hyperlink>762</hyperlink>
-      </control>
+      <label>181</label><control>
+					<description>Radio Guide</description>
+					<type>button</type>
+					<id>8</id>
+					<label>533</label>
+					<onleft>8</onleft>
+					<onright>50</onright>
+					<onup>7</onup>
+					<ondown>99</ondown>
+					<hyperlink>762</hyperlink>
+				</control>
       <font>font13</font>
       <textcolor>80000000</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>

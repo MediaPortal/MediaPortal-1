@@ -3,9 +3,8 @@
   <controls>
     <control>
       <type>group</type>
-      <visible>Control.HasFocus(21)|Control.HasFocus(50)</visible>
-      <animation effect="slide" time="350" end="150,0">hidden</animation>
-      <animation effect="slide" time="450" start="150,0">visible</animation>
+      <animation effect="slide" time="350" end="150,0">WindowClose</animation>
+      <animation effect="slide" time="450" start="150,0">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
       <animation effect="fade" time="500">WindowOpen</animation>
       <description>group element</description>
@@ -41,7 +40,6 @@
           <description>Filmstrip view</description>
           <type>filmstrip</type>
           <id>50</id>
-          <visible>Control.HasFocus(50)</visible>
           <animation effect="slide" time="350" end="300,0">focus</animation>
           <animation effect="slide" time="450" start="300,0">unfocus</animation>
           <posX>80</posX>
@@ -51,11 +49,14 @@
           <thumbHeight>179</thumbHeight>
           <thumbPosY>12</thumbPosY>
           <imageFolderFocus>Framefocus.png</imageFolderFocus>
+	      <frame>Frame.png</frame>
           <frameFocus>Covertop.png</frameFocus>
           <itemWidth>203</itemWidth>
-          <itemHeight>210</itemHeight>
-          <textureHeight>210</textureHeight>
-          <font>font12</font>
+          <itemHeight>310</itemHeight>
+          <textureHeight>310</textureHeight>
+          <font>font11</font>
+          <textXOff>8</textXOff>
+		  <textYOff>0</textYOff>
           <selectedColor>00ffffff</selectedColor>
           <textcolor>00ffffff</textcolor>
           <colordiffuse>00ffffff</colordiffuse>
@@ -68,8 +69,6 @@
           <showFolder>no</showFolder>
           <showBackGround>no</showBackGround>
           <showInfoImage>no</showInfoImage>
-          <textXOff>8</textXOff>
-          <textYOff>30</textYOff>
           <thumbAnimation effect="zoom" start="100,100" end="140,140" time="300">focus</thumbAnimation>
           <thumbAnimation effect="zoom" start="140,140" end="100,100" time="300">unfocus</thumbAnimation>
         </control>

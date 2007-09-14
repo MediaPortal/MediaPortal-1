@@ -10,14 +10,15 @@
       <id>1</id>
       <width>1366</width>
       <height>768</height>
+      <texture>background.png</texture>
     </control>
     <control>
       <type>image</type>
       <id>1</id>
       <posX>89</posX>
       <posY>4</posY>
-      <width>220</width>
-      <height>55</height>
+       <width>220</width>
+       <height>55</height>
       <texture>movieinfo_logo.png</texture>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
@@ -55,7 +56,7 @@
       <posY>160</posY>
       <label>686</label>
       <font>font13</font>
-      <textcolor>ff969696</textcolor>
+     <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>

@@ -7,22 +7,25 @@
       <id>1</id>
       <width>1366</width>
       <height>768</height>
+      <texture>background2.png</texture>
     </control>
-    <control>
-      <type>image</type>
-      <posY>700</posY>
-      <height>89</height>
+      <control>
+	  <type>image</type>
+	  <posX>0</posX>
+	  <posY>700</posY>
+	  <height>89</height>
       <width>1366</width>
       <texture>Barback.png</texture>
-      <colorDiffuse>effffffff</colorDiffuse>
+	  <colorDiffuse>effffffff</colorDiffuse>
     </control>
     <control>
-      <type>image</type>
-      <posY>-20</posY>
-      <height>89</height>
-      <width>1366</width>
-      <texture>Barback.png</texture>
-      <colorDiffuse>effffffff</colorDiffuse>
+	<type>image</type>
+	<posX>0</posX>
+	<posY>-20</posY>
+	<height>89</height>
+    <width>1366</width>
+    <texture>Barback.png</texture>
+	<colorDiffuse>effffffff</colorDiffuse>
     </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -31,8 +34,8 @@
       <id>1</id>
       <posX>89</posX>
       <posY>4</posY>
-      <width>220</width>
-      <height>55</height>
+       <width>220</width>
+       <height>55</height>
       <texture>#header.image</texture>
     </control>
     <control>
@@ -62,16 +65,16 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
-    <control>
-      <type>image</type>
-      <posX>1250</posX>
-      <posY>15</posY>
-      <width>35</width>
-      <height>35</height>
-      <texture>Clock.png</texture>
-      <animation effect="fade" time="200">WindowOpen</animation>
+     <control>
+	<type>image</type>
+	<posX>1250</posX>
+	<posY>15</posY>
+	<width>35</width>
+	<height>35</height>
+	 <texture>Clock.png</texture>
+	  <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
-    </control>
+	</control>
     <control>
       <description>Date</description>
       <type>label</type>
@@ -94,9 +97,10 @@
       <label>#time</label>
       <align>right</align>
       <font>font12</font>
-      <textcolor>ff969696</textcolor>
+     <textcolor>ff969696</textcolor>
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>
+
   </controls>
 </window>

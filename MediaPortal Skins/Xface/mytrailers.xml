@@ -192,7 +192,7 @@
       <posX>128</posX>
       <posY>277</posY>
       <width>160</width>
-      <height>245</height>
+      <height>265</height>
       <texture>playback_background.png</texture>
     </control>
     <control>
@@ -202,7 +202,8 @@
       <posX>155</posX>
       <posY>312</posY>
       <width>110</width>
-      <height>162</height>
+      <height>152</height>
+      <texture>missing_Coverart.png</texture>
     </control>
   </controls>
 </window>

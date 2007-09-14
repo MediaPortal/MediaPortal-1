@@ -91,7 +91,7 @@
     <control>
       <type>image</type>
       <posX>637</posX>
-      <posY>585</posY>
+      <posY>588</posY>
       <width>85</width>
       <height>86</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
@@ -100,9 +100,9 @@
     <control>
       <type>image</type>
       <posX>633</posX>
-      <posY>582</posY>
+      <posY>578</posY>
       <width>92</width>
-      <height>93</height>
+      <height>143</height>
       <texture>Covertop.png</texture>
       <visible>!facadeview.list</visible>
     </control>

@@ -17,7 +17,7 @@
       <description>progress control</description>
       <type>progress</type>
       <id>20</id>
-      <posX>470</posX>
+     <posX>470</posX>
       <posY>358</posY>
       <width>430</width>
       <animation effect="fade" time="200">WindowOpen</animation>

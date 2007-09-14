@@ -155,7 +155,7 @@
       <posX>112</posX>
       <posY>220</posY>
       <width>149</width>
-      <height>202</height>
+      <height>322</height>
       <texture>Cover_dvd.png</texture>
       <visible>facadeview.list</visible>
     </control>
