@@ -85,6 +85,7 @@ namespace MediaPortal.GUI.Video
             return ritem.Path;
           }
           dlgSel.Reset();
+					dlgSel.SetHeading(196); // Choose movie
           for (int i = 0; i < rootDrives.Count; i++)
           {
             GUIListItem dlgItem = new GUIListItem();
@@ -92,7 +93,6 @@ namespace MediaPortal.GUI.Video
             Log.Debug("SelectDVDHandler: adding list item of possible playback location - {0}", dlgItem.Path);
             dlgSel.Add(dlgItem);
           }
-          dlgSel.SetHeading(196); // Choose movie
           dlgSel.DoModal(parentId);
 
           if (dlgSel.SelectedLabel != -1)
