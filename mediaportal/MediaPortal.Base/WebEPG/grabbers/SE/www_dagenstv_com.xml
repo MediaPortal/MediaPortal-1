@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="10" timezone="W. Europe Standard Time" version="2.0.1" />
+  <Info availableDays="10" timezone="W. Europe Standard Time" version="2.0.2" />
   <Channels>
     <Channel id="24@svt.se" siteId="101" />
     <Channel id="3plus.dk" siteId="83" />
@@ -35,7 +35,6 @@
     <Channel id="europa@svt.se" siteId="100" />
     <Channel id="eurosport@eurosport.com" siteId="9" />
     <Channel id="eurosport2@eurosport.com" siteId="217" />
-    <Channel id="eurosportnews@eurosport.com" siteId="141" />
     <Channel id="explorer@viasat.se" siteId="76" />
     <Channel id="extremesports.tv" siteId="67" />
     <Channel id="fmen.tv" siteId="259" />
@@ -53,7 +52,7 @@
     <Channel id="Guld@tv4.se" siteId="252" />
     <Channel id="hallmarkchannel.com" siteId="13" />
     <Channel id="HD@canalplus.se" siteId="229" />
-    <Channel id="HD@discovery.com" siteId="229" />
+    <Channel id="HD@discovery.com" siteId="263" />
     <Channel id="HDsport@canalplus.se" siteId="271" />
     <Channel id="hd@svt.se" siteId="264" />
     <Channel id="hd@tv4.se" siteId="292" />
@@ -73,11 +72,10 @@
     <Channel id="mdr.de" siteId="91" />
     <Channel id="mezzo.tv" siteId="46" />
     <Channel id="mix@canalplus.se" siteId="255" />
-    <Channel id="mix@discovery.com" siteId="89" />
     <Channel id="MTV@mtve.com" siteId="14" />
     <Channel id="MTV2@mtve.com" siteId="74" />
     <Channel id="mtv3@mtv3.fi" siteId="39" />
-    <Channel id="motors.tv" siteId="247" />
+    <Channel id="motors.tv" siteId="268" />
     <Channel id="nasn.tv" siteId="267" />
     <Channel id="nationalgeographic.com" siteId="48" />
     <Channel id="nelonen@nelonen.fi" siteId="189" />
@@ -85,6 +83,7 @@
     <Channel id="nordic@tv1000.se" siteId="209" />
     <Channel id="nrk1@nrk.no" siteId="72" />
     <Channel id="nrk2@nrk.no" siteId="63" />
+    <Channel id="nyhetskanalen@tv2.no" siteId="921" />
     <Channel id="ostergotland@kanallokal.se" siteId="234" />
     <Channel id="playboytv.co.uk" siteId="223" />
     <Channel id="Playhouse@disneychannel.co.uk" siteId="251" />
@@ -107,8 +106,8 @@
     <Channel id="skynews@sky.com" siteId="18" />
     <Channel id="spiceplatinum.nl" siteId="222" />
     <Channel id="spiceuk.tv" siteId="110" />
-    <Channel id="sportexpressen.se" siteId="275" />
     <Channel id="sport@canalplus.se" siteId="140" />
+    <Channel id="sport@tv4.se" siteId="275" />
     <Channel id="sport@viasatsport.se" siteId="53" />
     <Channel id="sport2@canalplus.se" siteId="258" />
     <Channel id="sport2@viasatsport.se" siteId="197" />
@@ -143,7 +142,6 @@
     <Channel id="tvp.pl" siteId="66" />
     <Channel id="vh1.com" siteId="47" />
     <Channel id="viva.tv" siteId="106" />
-    <Channel id="vivaplus.tv" siteId="85" />
     <Channel id="voice.fi" siteId="216" />
     <Channel id="vox.de" siteId="107" />
     <Channel id="yle24@yle.fi" siteId="220" />
