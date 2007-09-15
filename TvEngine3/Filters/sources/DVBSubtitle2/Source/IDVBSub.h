@@ -24,6 +24,7 @@
 #include <bdaiface.h>
 #include <initguid.h>
 #include <atlcomcli.h>
+#include "SubStructs.h"
 
 #pragma once
 
@@ -35,31 +36,26 @@ DEFINE_GUID(CLSID_DVBSub2,
 DEFINE_GUID(IID_IDVBSubtitle2, 
   0x901c9084, 0x246a, 0x47c9, 0xbb, 0xcd, 0xf8, 0xf3, 0x98, 0xd3, 0xa, 0xb0);
 
-// structure used to communicate subtitles to MediaPortal's managed code
-struct SUBTITLE
-{
-  // Subtitle bitmap
-  LONG        bmType;
-  LONG        bmWidth;
-  LONG        bmHeight;
-  LONG        bmWidthBytes;
-  WORD        bmPlanes;
-  WORD        bmBitsPixel;
-  LPVOID      bmBits;
+// {4A4fAE7C-6095-11DC-8314-0800200C9A66}
+DEFINE_GUID(IID_IDVBSubtitleSource, 
+  0x4a4fae7c, 0x6095, 0x11dc, 0x83, 0x14, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66);
 
-  unsigned    __int64 timestamp;
-  unsigned    __int64 timeOut;
-  int         firstScanLine;
+DECLARE_INTERFACE_( IDVBSubtitleSource, IUnknown )
+{
+  STDMETHOD(SetBitmapCallback) ( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) ) PURE;
+  STDMETHOD(SetTeletextCallback) ( int (CALLBACK *pSTextSubtitleObserver)(TEXT_SUBTITLE* sub) ) PURE;
+  STDMETHOD(SetResetCallback)( int (CALLBACK *pResetObserver)() ) PURE;
+  STDMETHOD(StatusTest)( int testval ) PURE;
 };
 
 DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
 {
-  STDMETHOD(SetCallback) ( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) ) PURE;
-  STDMETHOD(SetResetCallback)( int (CALLBACK *pResetObserver)() ) PURE;
   STDMETHOD(SetUpdateTimeoutCallback)( int (CALLBACK *pUpdateTimeoutObserver)(__int64* pTimeout) ) PURE;
   STDMETHOD(Test)( int status ) PURE;
   STDMETHOD(NotifyChannelChange)() PURE;
+  STDMETHOD(NotifySubPageInfo)(int page, char lang[3]) PURE;
   STDMETHOD(SetSubtitlePid)( LONG pPid ) PURE;
+  STDMETHOD(SetTeletextPid)( LONG pPid ) PURE;
   STDMETHOD(SetFirstPcr)( LONGLONG pPcr ) PURE;
   STDMETHOD(SeekDone)( CRefTime& rtSeek ) PURE;
   STDMETHOD(SetTimeCompensation)( CRefTime& rtCompensation ) PURE;
