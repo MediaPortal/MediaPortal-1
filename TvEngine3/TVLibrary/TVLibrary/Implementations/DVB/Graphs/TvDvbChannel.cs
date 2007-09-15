@@ -1159,7 +1159,7 @@ namespace TvLibrary.Implementations.DVB
         if (info.isAC3Audio || info.isAudio || info.isVideo || info.isDVBSubtitle /*|| info.isTeletext*/)
         {
           Log.Log.WriteFile("subch:{0} set timeshift {1}:{2}", _subChannelId, info.stream_type, info);
-          _tsFilterInterface.TimeShiftAddStream(_subChannelIndex,info.pid, info.stream_type, info.language);
+          _tsFilterInterface.TimeShiftAddStream(_subChannelIndex,info.pid, info.stream_type, info.language); // stream_type == service_type ?
         }
       }
       _tsFilterInterface.TimeShiftPause(_subChannelIndex, 0);
@@ -1184,7 +1184,7 @@ namespace TvLibrary.Implementations.DVB
       //bool audioPidSet = false;
       foreach (PidInfo info in _channelInfo.pids)
       {
-        if (info.isAC3Audio || info.isAudio || info.isVideo ||info.isDVBSubtitle /*|| info.isTeletext*/)
+        if (info.isAC3Audio || info.isAudio || info.isVideo ||info.isDVBSubtitle || info.isTeletext)
         {
           bool addPid = false;
           if (info.isVideo)
@@ -1203,7 +1203,7 @@ namespace TvLibrary.Implementations.DVB
             //audioPidSet = true;
             //}
           }
-          if (info.isDVBSubtitle /*|| info.isTeletext*/)
+          if (info.isDVBSubtitle || info.isTeletext)
           {
             addPid = true;
           }
