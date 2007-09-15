@@ -30,68 +30,67 @@ namespace SetupTv.Sections
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RadioChannels));
-      this.hdrDetail2 = new System.Windows.Forms.ColumnHeader();
-      this.hdrDetail3 = new System.Windows.Forms.ColumnHeader();
-      this.hdrDetail1 = new System.Windows.Forms.ColumnHeader();
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
-      this.hdrHekje = new System.Windows.Forms.ColumnHeader();
+      this.hdrhekje = new System.Windows.Forms.ColumnHeader();
       this.hdrProvider = new System.Windows.Forms.ColumnHeader();
       this.hdrTypes = new System.Windows.Forms.ColumnHeader();
-      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonDel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonEdit = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonDown = new System.Windows.Forms.Button();
-      this.buttonUtp = new System.Windows.Forms.Button();
-      this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonClear = new MediaPortal.UserInterface.Controls.MPButton();
-      this.renameMarkedChannelsBySIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.addSIDInFrontOfNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.hdrDetail1 = new System.Windows.Forms.ColumnHeader();
+      this.hdrDetail2 = new System.Windows.Forms.ColumnHeader();
+      this.hdrDetail3 = new System.Windows.Forms.ColumnHeader();
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-      this.btnAddFromPLS = new MediaPortal.UserInterface.Controls.MPButton();
+      this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.editChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+      this.mpButtonClear = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpButtonDel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonUtp = new System.Windows.Forms.Button();
+      this.buttonDown = new System.Windows.Forms.Button();
+      this.mpButtonEdit = new MediaPortal.UserInterface.Controls.MPButton();
+      this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.tabControl1 = new System.Windows.Forms.TabControl();
+      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnPlaylist = new System.Windows.Forms.Button();
       this.contextMenuStrip1.SuspendLayout();
+      this.tabControl1.SuspendLayout();
+      this.tabPage1.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // hdrDetail2
-      // 
-      this.hdrDetail2.Text = "Details";
-      // 
-      // hdrDetail3
-      // 
-      this.hdrDetail3.Text = "Details";
-      // 
-      // hdrDetail1
-      // 
-      this.hdrDetail1.Text = "Details";
       // 
       // mpListView1
       // 
       this.mpListView1.AllowDrop = true;
       this.mpListView1.AllowRowReorder = true;
+      this.mpListView1.CheckBoxes = true;
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.hdrHekje,
+            this.hdrhekje,
             this.hdrProvider,
             this.hdrTypes,
             this.hdrDetail1,
             this.hdrDetail2,
             this.hdrDetail3});
+      this.mpListView1.ContextMenuStrip = this.contextMenuStrip1;
       this.mpListView1.FullRowSelect = true;
+      this.mpListView1.LabelEdit = true;
       this.mpListView1.LargeImageList = this.imageList1;
-      this.mpListView1.Location = new System.Drawing.Point(14, 30);
+      this.mpListView1.Location = new System.Drawing.Point(9, 11);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(438, 302);
+      this.mpListView1.Size = new System.Drawing.Size(438, 311);
       this.mpListView1.SmallImageList = this.imageList1;
-      this.mpListView1.TabIndex = 1;
+      this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
-      this.mpListView1.DoubleClick += new System.EventHandler(this.mpButtonEdit_Click);
+      this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
+      this.mpListView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.mpListView1_AfterLabelEdit);
       this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
       // 
-      // hdrHekje
+      // hdrhekje
       // 
-      this.hdrHekje.Text = "Name";
-      this.hdrHekje.Width = 120;
+      this.hdrhekje.Text = "Name";
+      this.hdrhekje.Width = 120;
       // 
       // hdrProvider
       // 
@@ -100,7 +99,51 @@ namespace SetupTv.Sections
       // hdrTypes
       // 
       this.hdrTypes.Text = "Types";
-      this.hdrTypes.Width = 90;
+      this.hdrTypes.Width = 50;
+      // 
+      // hdrDetail1
+      // 
+      this.hdrDetail1.Text = "Details";
+      this.hdrDetail1.Width = 66;
+      // 
+      // hdrDetail2
+      // 
+      this.hdrDetail2.Text = "Details";
+      this.hdrDetail2.Width = 50;
+      // 
+      // hdrDetail3
+      // 
+      this.hdrDetail3.Text = "Details";
+      this.hdrDetail3.Width = 50;
+      // 
+      // contextMenuStrip1
+      // 
+      this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addToFavoritesToolStripMenuItem,
+            this.deleteThisChannelToolStripMenuItem,
+            this.editChannelToolStripMenuItem});
+      this.contextMenuStrip1.Name = "contextMenuStrip1";
+      this.contextMenuStrip1.Size = new System.Drawing.Size(177, 70);
+      // 
+      // addToFavoritesToolStripMenuItem
+      // 
+      this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+      this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
+      // 
+      // deleteThisChannelToolStripMenuItem
+      // 
+      this.deleteThisChannelToolStripMenuItem.Name = "deleteThisChannelToolStripMenuItem";
+      this.deleteThisChannelToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+      this.deleteThisChannelToolStripMenuItem.Text = "Delete this channel";
+      this.deleteThisChannelToolStripMenuItem.Click += new System.EventHandler(this.deleteThisChannelToolStripMenuItem_Click);
+      // 
+      // editChannelToolStripMenuItem
+      // 
+      this.editChannelToolStripMenuItem.Name = "editChannelToolStripMenuItem";
+      this.editChannelToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+      this.editChannelToolStripMenuItem.Text = "Edit channel";
+      this.editChannelToolStripMenuItem.Click += new System.EventHandler(this.editChannelToolStripMenuItem_Click);
       // 
       // imageList1
       // 
@@ -111,148 +154,168 @@ namespace SetupTv.Sections
       this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
       this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
       // 
-      // mpButtonAdd
-      // 
-      this.mpButtonAdd.Location = new System.Drawing.Point(127, 338);
-      this.mpButtonAdd.Name = "mpButtonAdd";
-      this.mpButtonAdd.Size = new System.Drawing.Size(54, 23);
-      this.mpButtonAdd.TabIndex = 14;
-      this.mpButtonAdd.Text = "Add";
-      this.mpButtonAdd.UseVisualStyleBackColor = true;
-      this.mpButtonAdd.Click += new System.EventHandler(this.mpButtonAdd_Click);
-      // 
-      // mpButtonDel
-      // 
-      this.mpButtonDel.Location = new System.Drawing.Point(67, 362);
-      this.mpButtonDel.Name = "mpButtonDel";
-      this.mpButtonDel.Size = new System.Drawing.Size(54, 23);
-      this.mpButtonDel.TabIndex = 10;
-      this.mpButtonDel.Text = "Delete";
-      this.mpButtonDel.UseVisualStyleBackColor = true;
-      this.mpButtonDel.Click += new System.EventHandler(this.mpButtonDel_Click);
-      // 
-      // mpButtonEdit
-      // 
-      this.mpButtonEdit.Location = new System.Drawing.Point(67, 338);
-      this.mpButtonEdit.Name = "mpButtonEdit";
-      this.mpButtonEdit.Size = new System.Drawing.Size(54, 23);
-      this.mpButtonEdit.TabIndex = 13;
-      this.mpButtonEdit.Text = "Edit";
-      this.mpButtonEdit.UseVisualStyleBackColor = true;
-      this.mpButtonEdit.Click += new System.EventHandler(this.mpButtonEdit_Click);
-      // 
-      // buttonDown
-      // 
-      this.buttonDown.Location = new System.Drawing.Point(17, 362);
-      this.buttonDown.Name = "buttonDown";
-      this.buttonDown.Size = new System.Drawing.Size(44, 23);
-      this.buttonDown.TabIndex = 12;
-      this.buttonDown.Text = "Down";
-      this.buttonDown.UseVisualStyleBackColor = true;
-      this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
-      // 
-      // buttonUtp
-      // 
-      this.buttonUtp.Location = new System.Drawing.Point(17, 338);
-      this.buttonUtp.Name = "buttonUtp";
-      this.buttonUtp.Size = new System.Drawing.Size(44, 23);
-      this.buttonUtp.TabIndex = 11;
-      this.buttonUtp.Text = "Up";
-      this.buttonUtp.UseVisualStyleBackColor = true;
-      this.buttonUtp.Click += new System.EventHandler(this.buttonUtp_Click);
-      // 
-      // mpButtonDeleteEncrypted
-      // 
-      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(216, 362);
-      this.mpButtonDeleteEncrypted.Name = "mpButtonDeleteEncrypted";
-      this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(103, 23);
-      this.mpButtonDeleteEncrypted.TabIndex = 15;
-      this.mpButtonDeleteEncrypted.Text = "Delete Scrambled";
-      this.mpButtonDeleteEncrypted.UseVisualStyleBackColor = true;
-      this.mpButtonDeleteEncrypted.Click += new System.EventHandler(this.mpButtonDeleteEncrypted_Click);
-      // 
       // mpButtonClear
       // 
-      this.mpButtonClear.Location = new System.Drawing.Point(216, 338);
+      this.mpButtonClear.Location = new System.Drawing.Point(253, 350);
       this.mpButtonClear.Name = "mpButtonClear";
       this.mpButtonClear.Size = new System.Drawing.Size(55, 23);
-      this.mpButtonClear.TabIndex = 16;
+      this.mpButtonClear.TabIndex = 1;
       this.mpButtonClear.Text = "Clear";
       this.mpButtonClear.UseVisualStyleBackColor = true;
       this.mpButtonClear.Click += new System.EventHandler(this.mpButtonClear_Click);
       // 
-      // renameMarkedChannelsBySIDToolStripMenuItem
+      // mpLabelChannelCount
       // 
-      this.renameMarkedChannelsBySIDToolStripMenuItem.Name = "renameMarkedChannelsBySIDToolStripMenuItem";
-      this.renameMarkedChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
-      this.renameMarkedChannelsBySIDToolStripMenuItem.Text = "Rename selected channel(s) by SID";
-      this.renameMarkedChannelsBySIDToolStripMenuItem.Click += new System.EventHandler(this.renameMarkedChannelsBySIDToolStripMenuItem_Click);
+      this.mpLabelChannelCount.AutoSize = true;
+      this.mpLabelChannelCount.Location = new System.Drawing.Point(13, 14);
+      this.mpLabelChannelCount.Name = "mpLabelChannelCount";
+      this.mpLabelChannelCount.Size = new System.Drawing.Size(0, 13);
+      this.mpLabelChannelCount.TabIndex = 2;
       // 
-      // addSIDInFrontOfNameToolStripMenuItem
+      // mpButtonDel
       // 
-      this.addSIDInFrontOfNameToolStripMenuItem.Name = "addSIDInFrontOfNameToolStripMenuItem";
-      this.addSIDInFrontOfNameToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
-      this.addSIDInFrontOfNameToolStripMenuItem.Text = "Add SID in front of name";
-      this.addSIDInFrontOfNameToolStripMenuItem.Click += new System.EventHandler(this.addSIDInFrontOfNameToolStripMenuItem_Click);
+      this.mpButtonDel.Location = new System.Drawing.Point(76, 350);
+      this.mpButtonDel.Name = "mpButtonDel";
+      this.mpButtonDel.Size = new System.Drawing.Size(55, 23);
+      this.mpButtonDel.TabIndex = 1;
+      this.mpButtonDel.Text = "Delete";
+      this.mpButtonDel.UseVisualStyleBackColor = true;
+      this.mpButtonDel.Click += new System.EventHandler(this.mpButtonDel_Click);
       // 
-      // contextMenuStrip1
+      // buttonUtp
       // 
-      this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.renameMarkedChannelsBySIDToolStripMenuItem,
-            this.addSIDInFrontOfNameToolStripMenuItem});
-      this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(256, 48);
+      this.buttonUtp.Location = new System.Drawing.Point(9, 326);
+      this.buttonUtp.Name = "buttonUtp";
+      this.buttonUtp.Size = new System.Drawing.Size(55, 23);
+      this.buttonUtp.TabIndex = 3;
+      this.buttonUtp.Text = "Up";
+      this.buttonUtp.UseVisualStyleBackColor = true;
+      this.buttonUtp.Click += new System.EventHandler(this.buttonUtp_Click);
       // 
-      // btnAddFromPLS
+      // buttonDown
       // 
-      this.btnAddFromPLS.Location = new System.Drawing.Point(127, 362);
-      this.btnAddFromPLS.Name = "btnAddFromPLS";
-      this.btnAddFromPLS.Size = new System.Drawing.Size(83, 23);
-      this.btnAddFromPLS.TabIndex = 17;
-      this.btnAddFromPLS.Text = "Add from .pls";
-      this.btnAddFromPLS.UseVisualStyleBackColor = true;
-      this.btnAddFromPLS.Click += new System.EventHandler(this.btnAddFromPLS_Click);
+      this.buttonDown.Location = new System.Drawing.Point(9, 350);
+      this.buttonDown.Name = "buttonDown";
+      this.buttonDown.Size = new System.Drawing.Size(55, 23);
+      this.buttonDown.TabIndex = 4;
+      this.buttonDown.Text = "Down";
+      this.buttonDown.UseVisualStyleBackColor = true;
+      this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
+      // 
+      // mpButtonEdit
+      // 
+      this.mpButtonEdit.Location = new System.Drawing.Point(76, 326);
+      this.mpButtonEdit.Name = "mpButtonEdit";
+      this.mpButtonEdit.Size = new System.Drawing.Size(55, 23);
+      this.mpButtonEdit.TabIndex = 5;
+      this.mpButtonEdit.Text = "Edit";
+      this.mpButtonEdit.UseVisualStyleBackColor = true;
+      this.mpButtonEdit.Click += new System.EventHandler(this.mpButtonEdit_Click);
+      // 
+      // openFileDialog1
+      // 
+      this.openFileDialog1.FileName = "openFileDialog1";
+      // 
+      // tabControl1
+      // 
+      this.tabControl1.Controls.Add(this.tabPage1);
+      this.tabControl1.Location = new System.Drawing.Point(3, 3);
+      this.tabControl1.Name = "tabControl1";
+      this.tabControl1.SelectedIndex = 0;
+      this.tabControl1.Size = new System.Drawing.Size(465, 400);
+      this.tabControl1.TabIndex = 8;
+      this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
+      // 
+      // tabPage1
+      // 
+      this.tabPage1.Controls.Add(this.btnPlaylist);
+      this.tabPage1.Controls.Add(this.mpButtonDeleteEncrypted);
+      this.tabPage1.Controls.Add(this.mpButtonAdd);
+      this.tabPage1.Controls.Add(this.mpListView1);
+      this.tabPage1.Controls.Add(this.mpButtonClear);
+      this.tabPage1.Controls.Add(this.mpButtonDel);
+      this.tabPage1.Controls.Add(this.mpButtonEdit);
+      this.tabPage1.Controls.Add(this.mpLabelChannelCount);
+      this.tabPage1.Controls.Add(this.buttonDown);
+      this.tabPage1.Controls.Add(this.buttonUtp);
+      this.tabPage1.Location = new System.Drawing.Point(4, 22);
+      this.tabPage1.Name = "tabPage1";
+      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage1.Size = new System.Drawing.Size(457, 374);
+      this.tabPage1.TabIndex = 0;
+      this.tabPage1.Text = "Channels";
+      this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // mpButtonDeleteEncrypted
+      // 
+      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(137, 350);
+      this.mpButtonDeleteEncrypted.Name = "mpButtonDeleteEncrypted";
+      this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(110, 23);
+      this.mpButtonDeleteEncrypted.TabIndex = 10;
+      this.mpButtonDeleteEncrypted.Text = "Delete Scrambled";
+      this.mpButtonDeleteEncrypted.UseVisualStyleBackColor = true;
+      this.mpButtonDeleteEncrypted.Click += new System.EventHandler(this.mpButtonDeleteEncrypted_Click);
+      // 
+      // mpButtonAdd
+      // 
+      this.mpButtonAdd.Location = new System.Drawing.Point(137, 326);
+      this.mpButtonAdd.Name = "mpButtonAdd";
+      this.mpButtonAdd.Size = new System.Drawing.Size(55, 23);
+      this.mpButtonAdd.TabIndex = 9;
+      this.mpButtonAdd.Text = "Add";
+      this.mpButtonAdd.UseVisualStyleBackColor = true;
+      this.mpButtonAdd.Click += new System.EventHandler(this.mpButtonAdd_Click);
+      // 
+      // btnPlaylist
+      // 
+      this.btnPlaylist.Location = new System.Drawing.Point(198, 326);
+      this.btnPlaylist.Name = "btnPlaylist";
+      this.btnPlaylist.Size = new System.Drawing.Size(110, 23);
+      this.btnPlaylist.TabIndex = 11;
+      this.btnPlaylist.Text = "Import playlist";
+      this.btnPlaylist.UseVisualStyleBackColor = true;
+      this.btnPlaylist.Click += new System.EventHandler(this.btnPlaylist_Click);
       // 
       // RadioChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.btnAddFromPLS);
-      this.Controls.Add(this.mpButtonDel);
-      this.Controls.Add(this.mpButtonDeleteEncrypted);
-      this.Controls.Add(this.mpButtonEdit);
-      this.Controls.Add(this.mpButtonClear);
-      this.Controls.Add(this.mpButtonAdd);
-      this.Controls.Add(this.buttonDown);
-      this.Controls.Add(this.buttonUtp);
-      this.Controls.Add(this.mpListView1);
+      this.Controls.Add(this.tabControl1);
       this.Name = "RadioChannels";
-      this.Size = new System.Drawing.Size(467, 388);
+      this.Size = new System.Drawing.Size(474, 412);
       this.contextMenuStrip1.ResumeLayout(false);
+      this.tabControl1.ResumeLayout(false);
+      this.tabPage1.ResumeLayout(false);
+      this.tabPage1.PerformLayout();
       this.ResumeLayout(false);
 
     }
 
     #endregion
 
-    private System.Windows.Forms.ColumnHeader hdrDetail2;
-    private System.Windows.Forms.ColumnHeader hdrDetail3;
-    private System.Windows.Forms.ColumnHeader hdrDetail1;
     private MediaPortal.UserInterface.Controls.MPListView mpListView1;
     private System.Windows.Forms.ColumnHeader hdrTypes;
+    private System.Windows.Forms.ColumnHeader hdrDetail1;
+    private System.Windows.Forms.ColumnHeader hdrDetail2;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonClear;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannelCount;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonDel;
+    private System.Windows.Forms.Button buttonUtp;
+    private System.Windows.Forms.Button buttonDown;
+    private System.Windows.Forms.ColumnHeader hdrhekje;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonEdit;
+    private System.Windows.Forms.OpenFileDialog openFileDialog1;
+    private System.Windows.Forms.TabControl tabControl1;
+    private System.Windows.Forms.TabPage tabPage1;
+    private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+    private System.Windows.Forms.ToolStripMenuItem addToFavoritesToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem deleteThisChannelToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem editChannelToolStripMenuItem;
     private System.Windows.Forms.ImageList imageList1;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonAdd;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonDel;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonEdit;
-    private System.Windows.Forms.Button buttonDown;
-    private System.Windows.Forms.Button buttonUtp;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonDeleteEncrypted;
-    private System.Windows.Forms.ColumnHeader hdrHekje;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonClear;
+    private System.Windows.Forms.ColumnHeader hdrDetail3;
     private System.Windows.Forms.ColumnHeader hdrProvider;
-    private System.Windows.Forms.ToolStripMenuItem renameMarkedChannelsBySIDToolStripMenuItem;
-    private System.Windows.Forms.ToolStripMenuItem addSIDInFrontOfNameToolStripMenuItem;
-    private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-    private MediaPortal.UserInterface.Controls.MPButton btnAddFromPLS;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonDeleteEncrypted;
+    private System.Windows.Forms.Button btnPlaylist;
   }
 }

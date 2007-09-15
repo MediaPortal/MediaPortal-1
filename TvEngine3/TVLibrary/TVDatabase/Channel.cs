@@ -322,6 +322,27 @@ namespace TvDatabase
       //return new GentleList( typeof(GroupMap), this );
     }
     /// <summary>
+    /// Get a list of RadioGroupMap referring to the current entity.
+    /// </summary>
+    public IList ReferringRadioGroupMap()
+    {
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(RadioGroupMap));
+
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection(typeof(RadioGroupMap), stmt.Execute());
+
+      // TODO In the end, a GentleList should be returned instead of an arraylist
+      //return new GentleList( typeof(GroupMap), this );
+    }
+    /// <summary>
     /// Get a list of Conflicts referring to the current entity.
     /// </summary>
     public IList ReferringConflicts()

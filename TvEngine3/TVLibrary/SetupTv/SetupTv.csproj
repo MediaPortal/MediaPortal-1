@@ -92,6 +92,15 @@
     <Compile Include="NotifyForm.Designer.cs">
       <DependentUpon>NotifyForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="PlaylistSupport\IPlayListIO.cs" />
+    <Compile Include="PlaylistSupport\PlayList.cs" />
+    <Compile Include="PlaylistSupport\PlayListB4sIO.cs" />
+    <Compile Include="PlaylistSupport\PlayListFactory.cs" />
+    <Compile Include="PlaylistSupport\PlayListItem.cs" />
+    <Compile Include="PlaylistSupport\PlayListM3uIO.cs" />
+    <Compile Include="PlaylistSupport\PlayListPLSIO.cs" />
+    <Compile Include="PlaylistSupport\PlayListType.cs" />
+    <Compile Include="PlaylistSupport\PlayListWPLIO.cs" />
     <Compile Include="PluginLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -210,6 +219,12 @@
     </Compile>
     <Compile Include="Sections\ChannelsInGroupControl.Designer.cs">
       <DependentUpon>ChannelsInGroupControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\ChannelsInRadioGroupControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\ChannelsInRadioGroupControl.designer.cs">
+      <DependentUpon>ChannelsInRadioGroupControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\Combinations.cs">
       <SubType>UserControl</SubType>
@@ -412,6 +427,10 @@
     <EmbeddedResource Include="Sections\ChannelsInGroupControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ChannelsInGroupControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\ChannelsInRadioGroupControl.resx">
+      <DependentUpon>ChannelsInRadioGroupControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Combinations.resx">
       <DependentUpon>Combinations.cs</DependentUpon>

@@ -741,43 +741,6 @@ namespace SetupTv
 
       return (Application.SetSuspendState(state, forceShutDown, false));
     }
-  }
-  public class IniFileWrapper
-  {
 
-    private string filename;
-
-    public string Filename
-    {
-      get { return filename; }
-    }
-
-    public IniFileWrapper(string filename)
-    {
-      this.filename = filename;
-    }
-
-    [DllImport("kernel32.dll", EntryPoint = "GetPrivateProfileString")]
-    private static extern int GetPrivateProfileString(string lpAppName,
-      string lpKeyName, string lpDefault, StringBuilder lpReturnedString,
-      int nSize, string lpFileName);
-
-    [DllImport("kernel32.dll", EntryPoint = "WritePrivateProfileString")]
-    private static extern bool WritePrivateProfileString(string lpAppName,
-      string lpKeyName, string lpString, string lpFileName);
-
-    public string GetIniValue(string section, string key,string sDefault)
-    {
-      StringBuilder buffer = new StringBuilder();
-      if (GetPrivateProfileString(section, key, sDefault,buffer, buffer.Capacity, filename) != 0)
-        return buffer.ToString();
-      else
-        return sDefault;
-    }
-
-    public bool WriteIniValue(string section, string key, string value)
-    {
-      return WritePrivateProfileString(section, key, value, filename);
-    }
   }
 }

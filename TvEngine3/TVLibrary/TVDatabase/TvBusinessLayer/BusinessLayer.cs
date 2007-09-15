@@ -125,6 +125,24 @@ namespace TvDatabase
         map.Persist();
       }
     }
+    public void AddChannelToRadioGroup(Channel channel, RadioChannelGroup group)
+    {
+      bool found = false;
+      IList groupMaps = group.ReferringRadioGroupMap();
+      foreach (RadioGroupMap map in groupMaps)
+      {
+        if (map.IdChannel == channel.IdChannel)
+        {
+          found = true;
+          break;
+        }
+      }
+      if (!found)
+      {
+        RadioGroupMap map = new RadioGroupMap(group.IdGroup, channel.IdChannel, channel.SortOrder);
+        map.Persist();
+      }
+    }
 
     public IList Channels
     {
@@ -509,6 +527,17 @@ namespace TvDatabase
       }
 
       return ResultingChannelList;
+    }
+
+    public IList GetAllRadioChannels()
+    {
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
+      sb.AddConstraint(Operator.Equals, "isRadio", 1);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList radioChannels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+      if (radioChannels == null) return null;
+      if (radioChannels.Count == 0) return null;
+      return radioChannels;
     }
     #endregion
 
@@ -1662,6 +1691,7 @@ namespace TvDatabase
     #endregion
 
     #region Channelgroups
+    
     public RadioChannelGroup GetRadioChannelGroupByName(string name)
     {
       SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(RadioChannelGroup));
