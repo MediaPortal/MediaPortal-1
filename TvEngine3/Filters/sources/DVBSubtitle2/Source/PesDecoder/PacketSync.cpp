@@ -30,12 +30,14 @@ CPacketSync::CPacketSync(void)
 CPacketSync::~CPacketSync(void)
 {
 }
+extern void LogDebug( const char *fmt, ... );
 
 // [188]   [188]		 [188]		[100]				[88]
 // 0..187  188..375	 376..563 564..663		0..87
 // datalen=664
 void CPacketSync::OnRawData(byte* pData, int nDataLen)
 {
+	//LogDebug("On raw data");
 	int syncOffset=0;
 	if (m_tempBufferPos >=0 )
 	{
@@ -47,7 +49,10 @@ void CPacketSync::OnRawData(byte* pData, int nDataLen)
 
 	while (syncOffset < nDataLen)
 	{
-		if (syncOffset + TS_PACKET_LEN > nDataLen) break;
+		if (syncOffset + TS_PACKET_LEN > nDataLen){ 
+			
+			break;
+		}
 		if (pData[syncOffset] != TS_PACKET_SYNC) 
 		{
 			syncOffset++;

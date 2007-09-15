@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="C:\temp\Extras\DirectShow\Samples\C++\DirectShow\BaseClasses;C:\temp\Extras\DirectShow\Include;"
+				AdditionalIncludeDirectories="&quot;$(DS_BASECLASSES)&quot;;&quot;$(DXSDK_DIR)\Include&quot;"
 				PreprocessorDefinitions="NDEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -77,11 +77,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/NODEFAULTLIB:LIBCMT"
 				AdditionalDependencies="strmbase.lib quartz.lib winmm.lib ws2_32.lib"
 				OutputFile="Release/DVBSub2.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\DXSDK\Lib"
+				AdditionalLibraryDirectories="$(DXSDK_DIR)\Lib;$(DS_BASECLASSES)\XP32_RETAIL"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile=".\source\DVBSub2.def"
@@ -151,7 +152,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D &quot;_WIN32_WINNT=0x0501&quot; /D &quot;WINVER=0x0501&quot; /D &quot;NTDDI_VERSION=NTDDI_WINXPSP2&quot;"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft DirectX SDK\Include&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0\Samples\Multimedia\DirectShow\BaseClasses&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0\VC\INCLUDE&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(DXSDK_DIR)\Include&quot;;&quot;$(DS_BASECLASSES)&quot;"
 				PreprocessorDefinitions="DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -185,7 +186,7 @@
 				OutputFile="Debug/DVBSub2.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0\Samples\Multimedia\DirectShow\BaseClasses\Debug_MBCS&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0\Lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(DS_BASECLASSES)\XP32_DEBUG&quot;"
 				IgnoreAllDefaultLibraries="false"
 				ModuleDefinitionFile=".\source\DVBSub2.def"
 				GenerateDebugInformation="true"
@@ -245,11 +246,31 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source\Hamming.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\dvbsubs\subtitle.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\source\SubtitleInputPin.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TeletextConversion.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TeletextDecoder.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TeletextInputPin.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TeletextPageHeader.cpp"
 				>
 			</File>
 		</Filter>
@@ -266,11 +287,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source\Hamming.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Source\IDVBSub.h"
 				>
 			</File>
 			<File
 				RelativePath=".\source\SubdecoderObserver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\SubStructs.h"
 				>
 			</File>
 			<File
@@ -283,6 +312,22 @@
 			</File>
 			<File
 				RelativePath=".\source\dvbsubs\tables.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TeletextConversion.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TeletextDecoder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TeletextInputPin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\TeletextPageHeader.h"
 				>
 			</File>
 		</Filter>

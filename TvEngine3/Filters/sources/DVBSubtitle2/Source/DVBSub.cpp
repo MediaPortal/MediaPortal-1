@@ -24,6 +24,7 @@
 #include <bdaiface.h>
 #include "DVBSub.h"
 #include "SubtitleInputPin.h"
+#include "TeletextInputPin.h"
 
 extern void LogDebug( const char *fmt, ... );
 extern void LogDebugPTS( const char *fmt, uint64_t pts );
@@ -39,7 +40,12 @@ const AMOVIESETUP_MEDIATYPE sudPinTypesIn =
 	&MEDIATYPE_NULL, &MEDIASUBTYPE_NULL
 };
 
-const AMOVIESETUP_PIN sudPins[4] =
+const AMOVIESETUP_MEDIATYPE sudPinTypesTeletext =
+{
+	&MEDIATYPE_MPEG2_SECTIONS, &MEDIASUBTYPE_DVB_SI
+};
+
+const AMOVIESETUP_PIN sudPins[] =
 {
 	{
 		L"In",				        // Pin string name
@@ -51,7 +57,18 @@ const AMOVIESETUP_PIN sudPins[4] =
 		L"In",				        // Connects to pin
 		1,							      // Number of types
 		&sudPinTypesSubtitle  // Pin information
-	}
+	},
+	{
+		L"TeletextIn",				        // Pin string name
+			FALSE,						    // Is it rendered
+			FALSE,						    // Is it an output
+			FALSE,						    // Allowed none
+			FALSE,						    // Likewise many
+			&CLSID_NULL,					// Connects to filter
+			L"TeletextIn",				        // Connects to pin
+			1,							      // Number of types
+			&sudPinTypesTeletext  // Pin information
+	},
 };
 
 
@@ -63,6 +80,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_pSubtitlePin( NULL ),
 	m_pSubDecoder( NULL ),
   m_pSubtitleObserver( NULL ),
+  m_pTextSubtitleObserver( NULL ),
   m_pUpdateTimeoutObserver( NULL ),
   m_pResetObserver( NULL ),
   m_pIMediaSeeking( NULL ),
@@ -73,7 +91,8 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   m_prevSubtitleTimestamp( 0 )
 {
   ::DeleteFile("c:\\DVBsub.log");
-  LogDebug("-------------- MediaPortal DVBSub2.ax version 6 ----------------");
+
+  LogDebug("-------------- MediaPortal DVBSub2.ax version 6 (+teletext mod) ----------------");
   
   // Create subtitle decoder
 	m_pSubDecoder = new CDVBSubDecoder();
@@ -105,6 +124,23 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
     return;
   }
 
+	// Create Teletext input pin
+	m_pTeletextInputPin = new CTeletextInputPin( this,
+		GetOwner(),
+		this,
+		&m_Lock,
+		&m_ReceiveLock,
+		phr); 
+
+	if ( m_pTeletextInputPin == NULL )
+	{
+		if( phr )
+		{
+			*phr = E_OUTOFMEMORY;
+		}
+		return;
+	}
+
   if( m_pSubDecoder )
   {
     m_pSubDecoder->SetObserver( this );
@@ -129,6 +165,7 @@ CDVBSub::~CDVBSub()
 
 	delete m_pSubDecoder;
 	delete m_pSubtitlePin;
+	delete m_pTeletextInputPin;
   
   LogDebug( "CDVBSub::~CDVBSub() - end" );
 }
@@ -142,6 +179,9 @@ CBasePin * CDVBSub::GetPin( int n )
   if( n == 0 )
 		return m_pSubtitlePin;
 
+  if( n == 1 )
+		return m_pTeletextInputPin;
+
   return NULL;
 }
 
@@ -151,7 +191,7 @@ CBasePin * CDVBSub::GetPin( int n )
 //
 int CDVBSub::GetPinCount()
 {
-	return 1; // subtitle in
+	return 2; // subtitle in, teletext in
 }
 
 
@@ -259,6 +299,51 @@ STDMETHODIMP CDVBSub::Test(int status)
 	return S_OK;
 }
 
+//
+// Test
+//
+STDMETHODIMP CDVBSub::StatusTest(int status)
+{
+	LogDebug("STATUSTEST : %i", status);
+	return S_OK;
+}
+
+
+STDMETHODIMP CDVBSub::NotifySubPageInfo(int page, char lang[3]){
+	LogDebug("CDVBSub::NotifySubPageInfo");
+  if( m_pTeletextInputPin )
+  {
+    m_pTeletextInputPin->NotifySubPageInfo(page,lang);
+  
+  }
+    return S_OK;
+}
+
+//
+// SetSubtitlePid
+//
+STDMETHODIMP CDVBSub::SetTeletextPid( LONG pPid )
+{
+  LogDebug( "CDVBSub::SetTeletextPid() %d", pPid );
+  
+  if( m_teletextPid != pPid )
+  {
+    LogDebug( "Teletext PID has changed!" );
+    Reset();
+  }
+  
+  m_subtitlePid = pPid;
+
+  if( m_pTeletextInputPin )
+  {
+    m_pTeletextInputPin->SetTeletextPid( pPid );
+    return S_OK;
+  }
+  else
+  {
+    return S_FALSE;
+  }
+}
 
 //
 // SetSubtitlePid
@@ -396,6 +481,17 @@ void CDVBSub::NotifySubtitle()
   }
 }
 
+void CDVBSub::NotifyTeletextSubtitle(TEXT_SUBTITLE& sub){
+	LogDebug("New text subtitle");
+	if( m_pTextSubtitleObserver != NULL)
+	{
+		//LogDebug("Calling text subtitle observer with text: %s",sub.text);
+		(*m_pTextSubtitleObserver)(&sub);
+	}
+	else{
+		LogDebug("No text subtitle observer to call");
+	}
+}
 
 //
 // UpdateSubtitleTimeout
@@ -411,7 +507,7 @@ void CDVBSub::UpdateSubtitleTimeout( uint64_t pTimeout )
     timeOut = ( pTimeout - m_basePCR - m_currentTimeCompensation ) / 90;
     timeOut -= m_prevSubtitleTimestamp;
 
-    (*m_pUpdateTimeoutObserver)( &timeOut );
+	(*m_pUpdateTimeoutObserver)( &timeOut );
   }
   else
   {
@@ -466,15 +562,24 @@ STDMETHODIMP CDVBSub::GetSubtitle( int place, SUBTITLE* subtitle )
 }
 
 //
-// SetCallback
+// SetBitmapCallback
 //
-STDMETHODIMP CDVBSub::SetCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) )
+STDMETHODIMP CDVBSub::SetBitmapCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub))
 {
-	LogDebug( "SetCallback called" );
+  LogDebug( "SetBitmapCallback called" );
   m_pSubtitleObserver = pSubtitleObserver;
   return S_OK;
 }
 
+//
+// SetTeletextCallback
+//
+STDMETHODIMP CDVBSub::SetTeletextCallback( int (CALLBACK *pTextSubtitleObserver)(TEXT_SUBTITLE* sub) )
+{
+	LogDebug( "SetTeletextCallback called" );
+	m_pTextSubtitleObserver = pTextSubtitleObserver;
+	return S_OK;
+}
 
 //
 // SetResetCallback
@@ -492,7 +597,7 @@ STDMETHODIMP CDVBSub::SetResetCallback( int (CALLBACK *pResetObserver)() )
 //
 STDMETHODIMP CDVBSub::SetUpdateTimeoutCallback( int (CALLBACK *pUpdateTimeoutObserver)(__int64* pTimeout) )
 {
-	LogDebug( "SetRemoveSubtitleCallback called" );
+  LogDebug( "SetUpdateTimeoutCallback called" );
   m_pUpdateTimeoutObserver = pUpdateTimeoutObserver;
   return S_OK;
 }
@@ -577,9 +682,14 @@ CUnknown * WINAPI CDVBSub::CreateInstance( LPUNKNOWN punk, HRESULT *phr )
 STDMETHODIMP CDVBSub::NonDelegatingQueryInterface( REFIID riid, void** ppv )
 {
 	if ( riid == IID_IDVBSubtitle2 )
-  {
+	{
 		//LogDebug( "QueryInterface in DVBSub.CPP accepting" );
-    return GetInterface( (IDVBSubtitle *) this, ppv );
+		return GetInterface( (IDVBSubtitle *) this, ppv );
+	}
+	else if ( riid == IID_IDVBSubtitleSource )
+	{
+		//LogDebug( "QueryInterface in DVBSub.CPP accepting" );
+		return GetInterface( (IDVBSubtitleSource *) this, ppv );
 	}
 	else
 	{
@@ -587,15 +697,15 @@ STDMETHODIMP CDVBSub::NonDelegatingQueryInterface( REFIID riid, void** ppv )
 		HRESULT hr = CBaseFilter::NonDelegatingQueryInterface( riid, ppv );
 
 		if( SUCCEEDED(hr) )
-    {
+		{
 			//LogDebug("QI succeeded");
 		}
 		else if( hr == E_NOINTERFACE )
-    {
+		{
 			//LogDebug( "QI -> E_NOINTERFACE" );
 		}
 		else
-    {
+		{
 			//LogDebug( "QI failed" );
 		}
 		return hr;

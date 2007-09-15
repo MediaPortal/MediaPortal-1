@@ -28,13 +28,13 @@
 #include <bdaiface.h>
 #include <initguid.h>
 #include <atlcomcli.h>
-
 #include "dvbsubs\dvbsubdecoder.h"
 #include "SubdecoderObserver.h"
 #include <vector>
 
 #include "IDVBSub.h"
 
+class CTeletextInputPin;
 class CSubtitleInputPin;
 class CDVBSubDecoder;
 
@@ -42,7 +42,7 @@ typedef __int64 int64_t;
 
 extern void LogDebug( const char *fmt, ... );
 
-class CDVBSub : public CBaseFilter, public MSubdecoderObserver, IDVBSubtitle
+class CDVBSub : public CBaseFilter, public MSubdecoderObserver, IDVBSubtitle, IDVBSubtitleSource
 {
 public:
   // Constructor & destructor
@@ -60,12 +60,18 @@ public:
   virtual HRESULT STDMETHODCALLTYPE DiscardOldestSubtitle();
   virtual HRESULT STDMETHODCALLTYPE GetSubtitleCount( int* count );
 
-  // IDVBSubtitle
-  virtual HRESULT STDMETHODCALLTYPE SetCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) );
+  // IDVBSubtitleSource
+  virtual HRESULT STDMETHODCALLTYPE StatusTest( int status );
+  virtual HRESULT STDMETHODCALLTYPE SetBitmapCallback( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub));
+  virtual HRESULT STDMETHODCALLTYPE SetTeletextCallback( int (CALLBACK *pSTextubtitleObserver)(TEXT_SUBTITLE* sub));
   virtual HRESULT STDMETHODCALLTYPE SetResetCallback( int (CALLBACK *pResetObserver)() );
+  
+  // IDVBSubtitle
   virtual HRESULT STDMETHODCALLTYPE SetUpdateTimeoutCallback( int (CALLBACK *pUpdateTimeoutObserver)(__int64* pTimeout) );
   virtual HRESULT STDMETHODCALLTYPE Test( int status );
   virtual HRESULT STDMETHODCALLTYPE SetSubtitlePid( LONG pPid );
+  virtual HRESULT STDMETHODCALLTYPE SetTeletextPid( LONG pPid );
+  virtual HRESULT STDMETHODCALLTYPE NotifySubPageInfo(int page, char lang[3]);
   virtual HRESULT STDMETHODCALLTYPE SetFirstPcr( LONGLONG pPcr );
   virtual HRESULT STDMETHODCALLTYPE SeekDone( CRefTime& rtSeek );
   virtual HRESULT STDMETHODCALLTYPE SetTimeCompensation( CRefTime& rtCompensation );
@@ -77,6 +83,7 @@ public:
 
   // From MSubdecoderObserver
   void NotifySubtitle();
+  void NotifyTeletextSubtitle(TEXT_SUBTITLE& sub);
   void UpdateSubtitleTimeout( uint64_t pTimeout );
   
   void NotifySeeking();
@@ -95,11 +102,14 @@ private:
 
 public:
 
-  CSubtitleInputPin*  m_pSubtitlePin;
+  CTeletextInputPin*  m_pTeletextInputPin;
 
+  CSubtitleInputPin*  m_pSubtitlePin;
+  
 private: // data
 
   int                 m_subtitlePid;
+  int                 m_teletextPid;
 
   CDVBSubDecoder*     m_pSubDecoder;      // Subtitle decoder
   IMediaSeeking*      m_pIMediaSeeking;   // Media seeking interface
@@ -113,6 +123,7 @@ private: // data
   REFERENCE_TIME      m_currentTimeCompensation;
 
   int                 (CALLBACK *m_pSubtitleObserver) (SUBTITLE* sub);
+  int				  (CALLBACK *m_pTextSubtitleObserver) (TEXT_SUBTITLE* sub);
   int                 (CALLBACK *m_pResetObserver) ();
   int                 (CALLBACK *m_pUpdateTimeoutObserver) (__int64* pTimeout);
 
