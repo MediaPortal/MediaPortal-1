@@ -71,6 +71,7 @@ namespace MediaPortal.Player
   STDMETHOD(SetBitmapCallback) ( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) ) PURE;
   STDMETHOD(SetTeletextCallback) ( int (CALLBACK *pSTextSubtitleObserver)(TEXT_SUBTITLE* sub) ) PURE;
   STDMETHOD(SetResetCallback)( int (CALLBACK *pResetObserver)() ) PURE;
+  STDMETHOD(SetUpdateTimeoutCallback)( int (CALLBACK *pUpdateTimeoutObserver)(__int64* pTimeout) ) PURE; 
   STDMETHOD(StatusTest)( int testval ) PURE;
  */
   /// <summary>
@@ -85,6 +86,7 @@ namespace MediaPortal.Player
     void SetBitmapCallback(IntPtr callBack);
     void SetTeletextCallback(IntPtr callBack);
     void SetResetCallback(IntPtr callBack);
+    void SetUpdateTimeoutCallback(IntPtr callBack);
     void StatusTest(int status);
   }
 
@@ -317,7 +319,6 @@ namespace MediaPortal.Player
               {
                   subtitles.AddLast(subtitle);
                   Log.Debug("SubtitleRenderer: Text subtitle added, now have " + subtitles.Count + " subtitles in cache " + subtitle.ToString());
-
               }
           }
           catch (Exception e)
@@ -445,8 +446,8 @@ namespace MediaPortal.Player
       IntPtr pResetCallBack = Marshal.GetFunctionPointerForDelegate(resetCallBack);
       subFilter.SetResetCallback(pResetCallBack);
 
-      //IntPtr pUpdateTimeoutCallBack = Marshal.GetFunctionPointerForDelegate(updateTimeoutCallBack);
-      //subFilter.SetUpdateTimeoutCallback(pUpdateTimeoutCallBack);
+      IntPtr pUpdateTimeoutCallBack = Marshal.GetFunctionPointerForDelegate(updateTimeoutCallBack);
+      subFilter.SetUpdateTimeoutCallback(pUpdateTimeoutCallBack);
 
       //IntPtr pTextCallback = Marshal.GetFunctionPointerForDelegate(textCallBack); // needed for when teletext stuff is added
       //subFilter.SetTextCallback(pTextCallback);
