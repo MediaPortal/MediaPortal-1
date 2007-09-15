@@ -270,7 +270,8 @@ namespace MediaPortal.GUI.GUIBurner
     {
       try
       {
-        Help.ShowHelp(this, @"http://www.team-mediaportal.com/files/Download/SystemUtilities/BurnerSupportFiles.rar/");
+				Help.ShowHelp(this, @"http://www.team-mediaportal.com/files/Download/SystemUtilities/MyBurnerSupportFiles/");
+        //Help.ShowHelp(this, @"http://www.team-mediaportal.com/files/Download/SystemUtilities/BurnerSupportFiles.rar/");
       }
       catch
       {
