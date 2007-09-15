@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="no" availableDays="12" timezone="W. Europe Standard Time" version="2.0" />
+  <Info language="no" availableDays="12" timezone="W. Europe Standard Time" version="2.0.1" />
   <Channels>
     <Channel id="sportn@viasat.no" siteId="sportn" />  
     <Channel id="film@tv2.no" siteId="tv2film" />  
@@ -81,6 +81,9 @@
     <Channel id="sport3@viasatsport.no" siteId="viaspo3" />
     <Channel id="ztv.se" siteId="ztvsve" />
     <Channel id="thevoice.no" siteId="thevoicetv" />
+    <Channel id="nrk3@nrk.no" siteId="nrk3" />
+    <Channel id="viasat4@viasat.no" siteId="viasat4" />
+    <Channel id="fem@tvnorge.no" siteId="fem" />
   </Channels>
   <Listing type="Html">
     <Site url="http://www.sol.no/underholdning/tv/guiden/index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]" post="" external="false" encoding="" />

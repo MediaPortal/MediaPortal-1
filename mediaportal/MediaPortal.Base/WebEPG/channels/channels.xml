@@ -5419,6 +5419,18 @@
     <entry name="ChannelID">racinguk.tv</entry>
     <entry name="FullName">Racing UK</entry>
   </section>
+   <section name="1354">
+    <entry name="ChannelID">nrk3@nrk.no</entry>
+    <entry name="FullName">NRK3</entry>
+  </section>
+  <section name="1355">
+    <entry name="ChannelID">viasat4@viasat.no</entry>
+    <entry name="FullName">Viasat4</entry>
+  </section>
+  <section name="1356">
+    <entry name="ChannelID">fem@tvnorge.no</entry>
+    <entry name="FullName">FEM</entry>
+  </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
   </section>
@@ -6627,7 +6639,7 @@
     <entry name="66">1251</entry>
   </section>
   <section name="NO">
-    <entry name="TotalChannels">79</entry>
+    <entry name="TotalChannels">82</entry>
     <entry name="0">24</entry>
     <entry name="1">25</entry>
     <entry name="2">60</entry>
@@ -6707,6 +6719,9 @@
     <entry name="76">1207</entry>
     <entry name="77">1256</entry>
     <entry name="78">1257</entry>
+    <entry name="79">1354</entry>
+    <entry name="80">1355</entry>
+    <entry name="81">1356</entry>
   </section>
   <section name="NZ">
     <entry name="TotalChannels">6</entry>
