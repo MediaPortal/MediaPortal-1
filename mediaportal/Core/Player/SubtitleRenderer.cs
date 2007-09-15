@@ -66,31 +66,38 @@ namespace MediaPortal.Player
       return "Subtitle " + id + " meta data: Timeout=" + timeOut + " timestamp=" + presentTime;
     }
   }
+
+  /*
+  STDMETHOD(SetBitmapCallback) ( int (CALLBACK *pSubtitleObserver)(SUBTITLE* sub) ) PURE;
+  STDMETHOD(SetTeletextCallback) ( int (CALLBACK *pSTextSubtitleObserver)(TEXT_SUBTITLE* sub) ) PURE;
+  STDMETHOD(SetResetCallback)( int (CALLBACK *pResetObserver)() ) PURE;
+  STDMETHOD(StatusTest)( int testval ) PURE;
+ */
   /// <summary>
   /// Interface to the subtitle filter, which
   /// allows us to get notified of subtitles and
   /// retrieve them
   /// </summary>
-  [Guid("901C9084-246A-47c9-BBCD-F8F398D30AB0"),
+   [Guid("4A4fAE7C-6095-11DC-8314-0800200C9A66"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IDVBSubtitle2
+  public interface IDVBSubtitleSource
   {
-    void SetCallback(IntPtr callBack);
-    //void SetTextCallback(IntPtr callBack);
+    void SetBitmapCallback(IntPtr callBack);
+    void SetTeletextCallback(IntPtr callBack);
     void SetResetCallback(IntPtr callBack);
-    void SetUpdateTimeoutCallback(IntPtr callBack);
-    void Test(int status);
+    void StatusTest(int status);
   }
 
   [UnmanagedFunctionPointer(CallingConvention.StdCall)]
   public delegate int SubtitleCallback(ref SUBTITLE sub);
+  public delegate int TextSubtitleCallback(/*ref TEXT_SUBTITLE sub*/IntPtr textsub);
   public delegate int ResetCallback();
   public delegate int UpdateTimeoutCallback(ref Int64 timeOut);
 
   public class SubtitleRenderer
   {
     private static SubtitleRenderer instance = null;
-    private IDVBSubtitle2 subFilter = null;
+    private IDVBSubtitleSource subFilter = null;
     private long subCounter = 0;
     /// <summary>
     /// The coordinates of current vertex buffer
@@ -105,6 +112,7 @@ namespace MediaPortal.Player
     // important, these delegates must NOT be garbage collected
     // or horrible things will happen when the native code tries to call those!
     private SubtitleCallback callBack;
+    private TextSubtitleCallback textCallBack;
     private ResetCallback resetCallBack;
     private UpdateTimeoutCallback updateTimeoutCallBack;
 
@@ -140,6 +148,7 @@ namespace MediaPortal.Player
       {
         instance = new SubtitleRenderer();
         instance.callBack = new SubtitleCallback(instance.OnSubtitle);
+        instance.textCallBack = new TextSubtitleCallback(instance.OnTextSubtitle);
         instance.resetCallBack = new ResetCallback(instance.Reset);
         instance.updateTimeoutCallBack = new UpdateTimeoutCallback(instance.UpdateTimeout);
       }
@@ -299,7 +308,7 @@ namespace MediaPortal.Player
               Subtitle subtitle = new Subtitle();
               subtitle.subBitmap = RenderText(sub.text, sub.startTextLine, sub.totalTextLines);
               subtitle.timeOut = sub.timeOut;
-              subtitle.presentTime = ((double)sub.timeStamp / 1000.0f) + startPos + player.CurrentPosition + 5; // compute present time in SECONDS
+              subtitle.presentTime = player.CurrentPosition; // compute present time in SECONDS, text subs are show immediatly
               subtitle.height = 576;
               subtitle.width = 720;
               subtitle.firstScanLine = (int)(sub.startTextLine / (float)sub.totalTextLines) * 576; //sub.firstScanLine;
@@ -328,7 +337,6 @@ namespace MediaPortal.Player
           Bitmap bmp = new Bitmap(w, h);
 
           int hOffset = (int)(h * (startLine / (float)totalLines));
-
 
           Console.WriteLine(hOffset);
 
@@ -419,21 +427,26 @@ namespace MediaPortal.Player
       try
       {
         filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub2");
-        subFilter = filter as IDVBSubtitle2;
+        subFilter = filter as IDVBSubtitleSource;
         Log.Debug("SubtitleRenderer: CreateFilter success: " + (filter != null) + " & " + (subFilter != null));
       }
       catch (Exception e)
       {
         Log.Error(e);
       }
+      subFilter.StatusTest(111);
       IntPtr pCallback = Marshal.GetFunctionPointerForDelegate(callBack);
-      subFilter.SetCallback(pCallback);
+      IntPtr pTextCallback = Marshal.GetFunctionPointerForDelegate(textCallBack);
+      subFilter.SetBitmapCallback(pCallback);
+      subFilter.SetTeletextCallback(pTextCallback);
+
+      subFilter.StatusTest(222);
 
       IntPtr pResetCallBack = Marshal.GetFunctionPointerForDelegate(resetCallBack);
       subFilter.SetResetCallback(pResetCallBack);
 
-      IntPtr pUpdateTimeoutCallBack = Marshal.GetFunctionPointerForDelegate(updateTimeoutCallBack);
-      subFilter.SetUpdateTimeoutCallback(pUpdateTimeoutCallBack);
+      //IntPtr pUpdateTimeoutCallBack = Marshal.GetFunctionPointerForDelegate(updateTimeoutCallBack);
+      //subFilter.SetUpdateTimeoutCallback(pUpdateTimeoutCallBack);
 
       //IntPtr pTextCallback = Marshal.GetFunctionPointerForDelegate(textCallBack); // needed for when teletext stuff is added
       //subFilter.SetTextCallback(pTextCallback);
