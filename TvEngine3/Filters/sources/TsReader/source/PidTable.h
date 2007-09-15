@@ -20,6 +20,9 @@
  */
 #pragma once
 #include <windows.h>
+#include "TeletextServiceInfo.h"
+#include <vector>
+
 class CPidTable
 {
 public:
@@ -28,6 +31,8 @@ public:
   CPidTable(const CPidTable& pids);
   virtual ~CPidTable();
   void Reset();
+
+  bool HasTeletextPageInfo(int page); // do we have a TeletextServiceInfo entry for that page
   
   CPidTable& operator = (const CPidTable &pids);
   void Copy(const CPidTable &pids);
@@ -74,9 +79,12 @@ public:
 	BYTE Lang8_3;
 	WORD AudioPid8;
 	WORD AudioServiceType8;
-	WORD TeletextPid;
+	WORD TeletextPid; // which PID contains the teletext data
+	//WORD TeletextSubPage; // which page is the primary subtitles on
+	//char TeletextSubLang[3]; // which language are they in
+	std::vector<TeletextServiceInfo> TeletextInfo;
 	WORD SubtitlePid;
-  int  ServiceId;
+	int  ServiceId;
 	BYTE SubLang1_1;
 	BYTE SubLang1_2;
 	BYTE SubLang1_3;

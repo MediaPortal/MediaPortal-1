@@ -1,4 +1,4 @@
-/* 
+/** 
  *	Copyright (C) 2005 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -24,16 +24,16 @@
 #include <streams.h>
 #include <sbe.h>
 #include "tsreader.h"
-#include "SubtitlePin.h"
 #include "AudioPin.h"
 #include "Videopin.h"
+#include "TeletextPin.h"
 #define MAX_TIME  86400000L
 extern void LogDebug(const char *fmt, ...) ;
 
-CSubtitlePin::CSubtitlePin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section) :
-	CSourceStream(NAME("pinSubtitle"), phr, pFilter, L"Subtitle"),
+CTeletextPin::CTeletextPin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *phr,CCritSec* section) :
+	CSourceStream(NAME("pinTeletext"), phr, pFilter, L"Teletext"),
 	m_pTsReaderFilter(pFilter),
-  CSourceSeeking(NAME("pinSubtitle"),pUnk,phr,section),
+  CSourceSeeking(NAME("pinTeletext"),pUnk,phr,section),
 	m_section(section)
 {
 	m_rtStart=0;
@@ -47,38 +47,40 @@ CSubtitlePin::CSubtitlePin(LPUNKNOWN pUnk, CTsReaderFilter *pFilter, HRESULT *ph
   //AM_SEEKING_CanGetCurrentPos |
 	AM_SEEKING_Source;
   m_bSeeking=false;
+
+  LogDebug("Creating teletext output pin");
 }
 
-CSubtitlePin::~CSubtitlePin()
+CTeletextPin::~CTeletextPin()
 {
-	LogDebug("sub pin:dtor()");
+	LogDebug("ttxt pin:dtor()");
 }
 
-bool CSubtitlePin::IsConnected()
+bool CTeletextPin::IsConnected()
 {
   return m_bConnected;
 }
-STDMETHODIMP CSubtitlePin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
+STDMETHODIMP CTeletextPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
   if (riid == IID_IStreamBufferConfigure)
   {
-		LogDebug("sub:IID_IStreamBufferConfigure()");
+		LogDebug("ttxt:IID_IStreamBufferConfigure()");
   }
   if (riid == IID_IStreamBufferInitialize)
   {
-		LogDebug("sub:IID_IStreamBufferInitialize()");
+		LogDebug("ttxt:IID_IStreamBufferInitialize()");
   }
   if (riid == IID_IStreamBufferMediaSeeking||riid == IID_IStreamBufferMediaSeeking2)
   {
-		LogDebug("sub:IID_IStreamBufferMediaSeeking()");
+		LogDebug("ttxt:IID_IStreamBufferMediaSeeking()");
   }
   if (riid == IID_IStreamBufferSource)
   {
-		LogDebug("sub:IID_IStreamBufferSource()");
+		LogDebug("ttxt:IID_IStreamBufferSource()");
   }
   if (riid == IID_IStreamBufferDataCounters)
   {
-		LogDebug("sub:IID_IStreamBufferDataCounters()");
+		LogDebug("ttxt:IID_IStreamBufferDataCounters()");
   }
   if (riid == IID_IMediaSeeking)
   {
@@ -91,7 +93,7 @@ STDMETHODIMP CSubtitlePin::NonDelegatingQueryInterface( REFIID riid, void ** ppv
   return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
 
-HRESULT CSubtitlePin::GetMediaType(CMediaType *pmt)
+HRESULT CTeletextPin::GetMediaType(CMediaType *pmt)
 {
 	pmt->InitMediaType();
 	pmt->SetType      (& MEDIATYPE_Stream);
@@ -103,7 +105,7 @@ HRESULT CSubtitlePin::GetMediaType(CMediaType *pmt)
 	return S_OK;
 }
 
-HRESULT CSubtitlePin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest)
+HRESULT CTeletextPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest)
 {
 	HRESULT hr;
 	CheckPointer(pAlloc, E_POINTER);
@@ -130,7 +132,7 @@ HRESULT CSubtitlePin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTI
 	return S_OK;
 }
 
-HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
+HRESULT CTeletextPin::CheckConnect(IPin *pReceivePin)
 {
   HRESULT hr;
   PIN_INFO pinInfo;
@@ -143,36 +145,37 @@ HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
 
   // we only want to connect to the DVB subtitle input pin
   // on the subtitle filter (and not the teletext one for example!)
-  if( wcscmp(pinInfo.achName, L"In") != 0){
-	  //LogDebug("sub pin: Cant connect to pin name %s", pinInfo.achName);
+  if( wcscmp(pinInfo.achName, L"TeletextIn") != 0){
+    //LogDebug("Ttxt pin: Cant connect to pin name %s", pinInfo.achName);	
 	return E_FAIL;
   }
 
   hr=pinInfo.pFilter->QueryFilterInfo(&filterInfo);
   filterInfo.pGraph->Release();
+  pinInfo.pFilter->Release(); // we dotn need the filter just the info
 
   if (!SUCCEEDED(hr)) return E_FAIL;
   if (wcscmp(filterInfo.achName,L"MediaPortal DVBSub2")!=0)
   {
-	  //LogDebug("sub pin: Cant connect to filter name %s", filterInfo.achName);
+	//LogDebug("Ttxt pin: Cant connect to filter name %s", filterInfo.achName);
     return E_FAIL;
   }
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
-HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
+HRESULT CTeletextPin::CompleteConnect(IPin *pReceivePin)
 {
   m_bInFillBuffer=false;
-	LogDebug("pin:CompleteConnect()");
+	LogDebug("teletext pin:CompleteConnect()");
 	HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
 	
   if (SUCCEEDED(hr))
 	{
-		LogDebug("pin:CompleteConnect() done");
+		LogDebug("teletext pin:CompleteConnect() done");
     m_bConnected=true;
 	}
 	else
 	{
-		LogDebug("pin:CompleteConnect() failed:%x",hr);
+		LogDebug("teletext pin:CompleteConnect() failed:%x",hr);
 	}
 
   if (m_pTsReaderFilter->IsTimeShifting())
@@ -188,20 +191,20 @@ HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
     m_pTsReaderFilter->GetDuration(&refTime);
     m_rtDuration=CRefTime(refTime);
   }
-  LogDebug("sub:CompleteConnect() ok");
+  LogDebug("teletext pin:CompleteConnect() ok");
 	return hr;
 }
 
 
-HRESULT CSubtitlePin::BreakConnect()
+HRESULT CTeletextPin::BreakConnect()
 {
-  LogDebug("sub:BreakConnect() ok");
+  LogDebug("ttxt:BreakConnect() ok");
   m_bConnected=false;
   //return CBaseOutputPin::BreakConnect();
   return CSourceStream::BreakConnect();
 }
 
-HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
+HRESULT CTeletextPin::FillBuffer(IMediaSample *pSample)
 {
   try
   {
@@ -228,7 +231,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
 
 	  if (m_bDiscontinuity)
     {
-      LogDebug("sub:set discontinuity");
+      LogDebug("ttxt:set discontinuity");
       pSample->SetDiscontinuity(TRUE);
       m_bDiscontinuity=FALSE;
     }
@@ -241,7 +244,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
 
 		  if (!m_bRunning)
 			  {
-				  LogDebug("sub: FillBuffer - stopping");
+				  LogDebug("ttxt: FillBuffer - stopping");
 				  Sleep(1);
 				  EmptySample(pSample);
 				  m_bInFillBuffer=false;
@@ -250,7 +253,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
 
 		  if (demux.EndOfFile())
 			  {
-        LogDebug("sub: FillBuffer - end of file");
+        LogDebug("ttxt: FillBuffer - end of file");
 			  Sleep(1);
 			  EmptySample(pSample);
 			  m_bInFillBuffer=false;
@@ -259,16 +262,16 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
 
 		  if (m_pTsReaderFilter->IsSeeking() || m_bSeeking)
 		  {
-			  LogDebug("sub: FillBuffer - seeking detected!");
+			  LogDebug("ttxt: FillBuffer - seeking detected!");
 			  Sleep(1);
 			  EmptySample(pSample); 
         m_bInFillBuffer=false;
 			  return NOERROR;
 		  }
-      // check if new subtitle data has arrived
+      // check if new teletext data has arrived
       {
         CAutoLock lock(&m_bufferLock);
-        buffer=demux.GetSubtitle();
+        buffer=demux.GetTeletext();
       }
 	  }
 
@@ -307,7 +310,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
     }
     else
     {
-      LogDebug("sub:no buffer --- THIS SHOULD NOT HAPPEN!");
+      LogDebug("ttxt:no buffer --- THIS SHOULD NOT HAPPEN!");
 		  EmptySample(pSample);
       if (demux.EndOfFile())
       {
@@ -318,7 +321,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
   }
   catch(...)
   {
-    LogDebug("sub:fillbuffer exception");
+    LogDebug("ttxt:fillbuffer exception");
   }
 
   m_bInFillBuffer=false;
@@ -328,32 +331,32 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
 //******************************************************
 /// Called when thread is about to start delivering data to the filter
 /// 
-HRESULT CSubtitlePin::OnThreadStartPlay()
+HRESULT CTeletextPin::OnThreadStartPlay()
 {    
   m_bInFillBuffer=false;
   m_bDiscontinuity=TRUE;
   float fStart=(float)m_rtStart.Millisecs();
   fStart/=1000.0f;
-  LogDebug("sub:OnThreadStartPlay(%f)", fStart);
+  LogDebug("ttxt:OnThreadStartPlay(%f)", fStart);
   //tell demuxer to delete any subtitle packets it still might have
 	CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-  demux.FlushSubtitle();
+  demux.FlushTeletext();
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
   return CSourceStream::OnThreadStartPlay( );
 }
 
 // CMediaSeeking
-HRESULT CSubtitlePin::ChangeStart()
+HRESULT CTeletextPin::ChangeStart()
 {
   UpdateFromSeek();
 	return S_OK;
 }
-HRESULT CSubtitlePin::ChangeStop()
+HRESULT CTeletextPin::ChangeStop()
 {
   UpdateFromSeek();
 	return S_OK;
 }
-HRESULT CSubtitlePin::ChangeRate()
+HRESULT CTeletextPin::ChangeRate()
 {
   if( m_dRateSeeking <= 0 ) 
   {
@@ -364,7 +367,7 @@ HRESULT CSubtitlePin::ChangeRate()
   return S_OK;
 }
 
-STDMETHODIMP CSubtitlePin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
+STDMETHODIMP CTeletextPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
 {
   return CSourceSeeking::SetPositions(pCurrent, CurrentFlags, pStop,  StopFlags);
 }
@@ -372,7 +375,7 @@ STDMETHODIMP CSubtitlePin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, 
 //******************************************************
 /// Returns true if a thread is currently executing in UpdateFromSeek()
 /// 
-bool CSubtitlePin::IsSeeking()
+bool CTeletextPin::IsSeeking()
 {
   return m_binUpdateFromSeek;
 }
@@ -381,7 +384,7 @@ bool CSubtitlePin::IsSeeking()
 /// UpdateFromSeek() called when need to seek to a specific timestamp in the file
 /// m_rtStart contains the time we need to seek to...
 /// 
-void CSubtitlePin::UpdateFromSeek()
+void CTeletextPin::UpdateFromSeek()
 {
   m_binUpdateFromSeek=true;
   
@@ -399,7 +402,7 @@ void CSubtitlePin::UpdateFromSeek()
   {
     if (m_lastSeek==m_rtStart)
     {
-      LogDebug("sub:skip seek");
+      LogDebug("ttxt:skip seek");
       m_binUpdateFromSeek=false;
       return;
     }
@@ -495,7 +498,7 @@ void CSubtitlePin::UpdateFromSeek()
 /// pEarliest -> the earliest (pcr) timestamp in the file
 /// pLatest   -> the latest (pcr) timestamp in the file
 /// 
-STDMETHODIMP CSubtitlePin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
+STDMETHODIMP CTeletextPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
 {
 //  LogDebug("vid:GetAvailable");
   if (m_pTsReaderFilter->IsTimeShifting())
@@ -531,7 +534,7 @@ STDMETHODIMP CSubtitlePin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLates
 /// for timeshifting files it returns the current pcr - the first pcr ever read
 /// So the duration keeps growing, even if timeshifting files are wrapped and being resued!
 //
-STDMETHODIMP CSubtitlePin::GetDuration(LONGLONG *pDuration)
+STDMETHODIMP CTeletextPin::GetDuration(LONGLONG *pDuration)
 {
   if (m_pTsReaderFilter->IsTimeShifting())
   {
@@ -553,25 +556,25 @@ STDMETHODIMP CSubtitlePin::GetDuration(LONGLONG *pDuration)
 /// reason is that only the audio/video renderer now exactly the 
 /// current playing position and they do implement GetCurrentPosition()
 /// 
-STDMETHODIMP CSubtitlePin::GetCurrentPosition(LONGLONG *pCurrent)
+STDMETHODIMP CTeletextPin::GetCurrentPosition(LONGLONG *pCurrent)
 {
 //  LogDebug("sub:GetCurrentPosition");
   return E_NOTIMPL;//CSourceSeeking::GetCurrentPosition(pCurrent);
 }
 
-void CSubtitlePin::SetRunningStatus(bool onOff)
+void CTeletextPin::SetRunningStatus(bool onOff)
 {
 	m_bRunning = onOff;
 }
 
-void CSubtitlePin::EmptySample(IMediaSample *pSample)    
+void CTeletextPin::EmptySample(IMediaSample *pSample)    
 {
   pSample->SetDiscontinuity(TRUE);
   pSample->SetActualDataLength(0);
   pSample->SetTime(NULL,NULL);  
 }
 
-void CSubtitlePin::LogCurrentPosition()  
+void CTeletextPin::LogCurrentPosition()  
 {
   IFilterGraph* pGraph = m_pTsReaderFilter->GetFilterGraph();
 	IMediaSeeking* pMediaSeeking( NULL );

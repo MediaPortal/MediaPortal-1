@@ -46,12 +46,14 @@ public:
   CBuffer*   GetVideo();
   CBuffer*   GetAudio();
   CBuffer*   GetSubtitle();
+  CBuffer*   GetTeletext();
 	void       OnTsPacket(byte* tsPacket);
 	void       OnNewChannel(CChannelInfo& info);
   void       SetFileReader(FileReader* reader);
   void       FillSubtitle(CTsHeader& header, byte* tsPacket);
   void       FillAudio(CTsHeader& header, byte* tsPacket);
   void       FillVideo(CTsHeader& header, byte* tsPacket);
+  void       FillTeletext(CTsHeader& header, byte* tsPacket);
   CPidTable  GetPidTable();
   void       SetAudioStream(int stream);
   int        GetAudioStream();
@@ -70,6 +72,7 @@ public:
   void       FlushVideo();
   void       FlushAudio();
   void       FlushSubtitle();
+  void		 FlushTeletext();
   int        GetVideoServiceType();
 private:
   struct stAudioStream
@@ -92,15 +95,18 @@ private:
   CCritSec m_sectionAudio;
   CCritSec m_sectionVideo;
   CCritSec m_sectionSubtitle;
+  CCritSec m_sectionTeletext;
   CCritSec m_sectionRead;
 	FileReader* m_reader;
   CPatParser m_patParser;
   CPidTable m_pids;
+  vector<CBuffer*> m_vecTeletextBuffers; // Ziphnor
   vector<CBuffer*> m_vecSubtitleBuffers;
   vector<CBuffer*> m_vecVideoBuffers;
   vector<CBuffer*> m_vecAudioBuffers;
   typedef vector<CBuffer*>::iterator ivecBuffers;
 
+  CBuffer* m_pCurrentTeletextBuffer;
   CBuffer* m_pCurrentSubtitleBuffer;
   CBuffer* m_pCurrentVideoBuffer;
   CBuffer* m_pCurrentAudioBuffer;
@@ -110,6 +116,7 @@ private:
   unsigned int m_iAudioStream;
   unsigned int m_audioPid;
   unsigned int m_currentSubtitlePid;
+  unsigned int m_currentTeletextPid; // Ziphnor
   bool m_bScanning;
 	bool m_bHoldAudio;
 	bool m_bHoldVideo;

@@ -30,6 +30,7 @@
 #include "subtitlePin.h"
 #include "..\..\DVBSubtitle2\Source\IDVBSub.h"
 #include "MediaFormats.h"
+#include <cassert>
 
 #define MAX_BUF_SIZE 800
 #define OUTPUT_PACKET_LENGTH 0x6000e
@@ -46,6 +47,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_pCurrentVideoBuffer = new CBuffer();
   m_pCurrentAudioBuffer = new CBuffer();
   m_pCurrentSubtitleBuffer = new CBuffer();
+  m_pCurrentTeletextBuffer = new CBuffer();
   m_iAudioStream=0;
   m_audioPid=0;
   m_currentSubtitlePid=0;
@@ -318,6 +320,7 @@ void CDeMultiplexer::FlushAudio()
 
 void CDeMultiplexer::FlushSubtitle()
 {
+  LogDebug("demux:flush subtitle");
   CAutoLock lock (&m_sectionSubtitle);
   delete m_pCurrentSubtitleBuffer;
   ivecBuffers it = m_vecSubtitleBuffers.begin();
@@ -328,6 +331,21 @@ void CDeMultiplexer::FlushSubtitle()
     it = m_vecSubtitleBuffers.erase(it);
   }
   m_pCurrentSubtitleBuffer = new CBuffer();
+}
+
+void CDeMultiplexer::FlushTeletext()
+{
+  LogDebug("demux:flush teletext");
+  CAutoLock lock (&m_sectionTeletext);
+  delete m_pCurrentTeletextBuffer;
+  ivecBuffers it = m_vecTeletextBuffers.begin();
+  while (it != m_vecTeletextBuffers.end())
+  {
+    CBuffer* teletextBuffer = *it;
+    delete teletextBuffer;
+    it = m_vecTeletextBuffers.erase(it);
+  }
+  m_pCurrentTeletextBuffer = new CBuffer();
 }
 
 /// Flushes all buffers 
@@ -344,6 +362,7 @@ void CDeMultiplexer::Flush()
   FlushAudio();
   FlushVideo();
   FlushSubtitle();
+  FlushTeletext();
   SetHoldAudio(holdAudio);
   SetHoldVideo(holdVideo);
   SetHoldSubtitle(holdSubtitle);
@@ -370,6 +389,33 @@ CBuffer* CDeMultiplexer::GetSubtitle()
     CBuffer* subtitleBuffer=*it;
     m_vecSubtitleBuffers.erase(it);
     return subtitleBuffer;
+  }
+  //no subtitle packets available
+  return NULL;
+}
+
+///
+///Returns the next teletext packet
+// or NULL if there is none available
+CBuffer* CDeMultiplexer::GetTeletext()
+{
+  //if there is no teletext pid, then simply return NULL
+  if (m_pids.TeletextPid==0) return NULL;
+  if (m_bEndOfFile) return NULL;
+  if (m_bHoldSubtitle) return NULL; // FIXME
+  //ReadFromFile(false,false);
+  //if (m_bEndOfFile) return NULL;
+
+	CAutoLock lock (&m_sectionTeletext);
+  //are there subtitle packets in the buffer?
+  if (m_vecTeletextBuffers.size()!=0)
+  {
+    //yup, then return the next one
+    
+    ivecBuffers it =m_vecTeletextBuffers.begin();
+    CBuffer* teletextBuffer=*it;
+    m_vecTeletextBuffers.erase(it);
+    return teletextBuffer;
   }
   //no subtitle packets available
   return NULL;
@@ -648,12 +694,34 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
     IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
     if( pDVBSubtitleFilter )
     {
+      LogDebug("Calling SetSubtitlePid");
       pDVBSubtitleFilter->SetSubtitlePid(m_pids.SubtitlePid);
       pDVBSubtitleFilter->SetFirstPcr(m_duration.FirstStartPcr().PcrReferenceBase);
     
       m_currentSubtitlePid = m_pids.SubtitlePid;
     }
   }
+
+  if( m_pids.TeletextPid > 0 && m_pids.TeletextPid != m_currentTeletextPid )
+  {
+    IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
+    if( pDVBSubtitleFilter )
+    {
+	  //LogDebug("Calling SetTeletextPid %i", m_pids.TeletextPid);
+      pDVBSubtitleFilter->SetTeletextPid(m_pids.TeletextPid);
+	  std::vector<TeletextServiceInfo>::iterator vit = m_pids.TeletextInfo.begin();
+	  while(vit != m_pids.TeletextInfo.end()){
+			TeletextServiceInfo& info = *vit;
+			if(info.page >= 100 && info.IsSubtitleInfo()){
+				//LogDebug("Calling NotifySubPageInfo %i", info.page);
+				pDVBSubtitleFilter->NotifySubPageInfo(info.page, info.lang);
+			}
+			vit++;
+	  }
+      m_currentTeletextPid = m_pids.TeletextPid;
+    }
+  }
+
   //Do we have a start pcr?
   //if (!m_duration.StartPcr().IsValid)
   //{
@@ -701,6 +769,7 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   FillSubtitle(header,tsPacket);
   FillAudio(header,tsPacket);
   FillVideo(header,tsPacket);
+  FillTeletext(header,tsPacket);
 }
 
 /// This method will check if the tspacket is an audio packet
@@ -911,6 +980,34 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
     m_vecSubtitleBuffers.push_back(m_pCurrentSubtitleBuffer);
 
     m_pCurrentSubtitleBuffer = new CBuffer();
+  }
+}
+
+//static int addCount = 0;
+
+void CDeMultiplexer::FillTeletext(CTsHeader& header, byte* tsPacket)
+{
+  if (m_pids.TeletextPid==0) return;
+  if (header.Pid!=m_pids.TeletextPid) return;
+  if (m_filter.GetTeletextPin()->IsConnected()==false) return;
+  if ( header.AdaptionFieldOnly() ) return;
+
+  CAutoLock lock (&m_sectionTeletext);
+  if ( false==header.AdaptionFieldOnly() ) 
+  {
+    if (m_vecTeletextBuffers.size()>MAX_BUF_SIZE) 
+    {
+      LogDebug("TeletextBuffer contains too much!");
+      m_vecTeletextBuffers.erase(m_vecSubtitleBuffers.begin());
+    }
+
+    //m_pCurrentTeletextBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
+    //m_pCurrentTeletextBuffer->SetPts(m_subtitlePcr);
+    m_pCurrentTeletextBuffer->Add(tsPacket,188); // we only want data
+	
+    m_vecTeletextBuffers.push_back(m_pCurrentTeletextBuffer);
+	//LogDebug("Teletext buffers %i", ++addCount);
+    m_pCurrentTeletextBuffer = new CBuffer();
   }
 }
 

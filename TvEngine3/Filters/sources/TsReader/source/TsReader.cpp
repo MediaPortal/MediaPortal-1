@@ -32,8 +32,11 @@
 #include "audiopin.h"
 #include "videopin.h"
 #include "subtitlepin.h"
+#include "teletextpin.h"
 #include "tsfileSeek.h"
 #include "memoryreader.h"
+#include <cassert>
+
 void LogDebug(const char *fmt, ...) 
 {
 	va_list ap;
@@ -90,11 +93,18 @@ const AMOVIESETUP_MEDIATYPE acceptSubtitlePinTypes =
 	&MEDIASUBTYPE_MPEG2_TRANSPORT      // minor type
 };
 
+const AMOVIESETUP_MEDIATYPE acceptTeletextPinTypes =
+{
+  &MEDIATYPE_Stream,           // major type
+	&MEDIASUBTYPE_MPEG2_TRANSPORT      // minor type
+};
+
 const AMOVIESETUP_PIN audioVideoPin[] =
 {
 	{L"Audio",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptAudioPinTypes},
 	{L"Video",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptVideoPinTypes},
-	{L"Subtitle",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptSubtitlePinTypes}
+	{L"Subtitle",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptSubtitlePinTypes},
+	{L"Teletext",FALSE,TRUE,FALSE,FALSE,&CLSID_NULL,NULL,1,&acceptTeletextPinTypes}
 };
 
 const AMOVIESETUP_FILTER TSReader =
@@ -137,7 +147,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 {
 
   ::DeleteFile("c:\\tsreader.log");
-  LogDebug("-------------- v1.0.0.0 ----------------");
+  LogDebug("-------------- v1.0.0.0 (+ttxt mod) ----------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -146,7 +156,8 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	LogDebug("CTsReaderFilter::ctor");
 	m_pAudioPin = new CAudioPin(GetOwner(), this, phr,&m_section);
 	m_pVideoPin = new CVideoPin(GetOwner(), this, phr,&m_section);
-  m_pSubtitlePin = new CSubtitlePin(GetOwner(), this, phr,&m_section);
+	m_pSubtitlePin = new CSubtitlePin(GetOwner(), this, phr,&m_section);
+	m_pTeletextPin = new CTeletextPin(GetOwner(), this, phr,&m_section);
   
   // Not used anywhere and currently is causing a leak (2 objects left active in TsReader.ax)
   // - tourettes
@@ -179,6 +190,9 @@ CTsReaderFilter::~CTsReaderFilter()
   
 	hr=m_pSubtitlePin->Disconnect();
 	delete m_pSubtitlePin;
+
+	hr=m_pTeletextPin->Disconnect();
+	delete m_pTeletextPin;
 
   if (m_pDVBSubtitle) 
   {
@@ -255,7 +269,12 @@ CBasePin * CTsReaderFilter::GetPin(int n)
   }
   else if (n==2)
   {
-    //return m_pSubtitlePin;
+	  //LogDebug("Get Subtitle pin");
+    return m_pSubtitlePin;
+  }
+  else if (n == 3){
+	  //LogDebug("Get Teletext pin");
+	return m_pTeletextPin;
   }
   return NULL;
   
@@ -264,7 +283,8 @@ CBasePin * CTsReaderFilter::GetPin(int n)
 
 int CTsReaderFilter::GetPinCount()
 {
-  return 2;
+  //return 2;
+  return 4;
 }
 
 STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
@@ -276,6 +296,7 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
   CAutoLock cObjectLock(m_pLock);
 		 
 	if(m_pSubtitlePin) m_pSubtitlePin->SetRunningStatus(true);
+	if(m_pTeletextPin) m_pTeletextPin->SetRunningStatus(true);
   //are we using RTSP or local file
   if (m_fileDuration==NULL)
   {
@@ -312,6 +333,10 @@ STDMETHODIMP CTsReaderFilter::Stop()
   if (m_pSubtitlePin)
   {
     m_pSubtitlePin->SetRunningStatus(false);
+  }
+  if (m_pTeletextPin)
+  {
+    m_pTeletextPin->SetRunningStatus(false);
   }
 
   //stop duration thread
@@ -741,6 +766,12 @@ CSubtitlePin* CTsReaderFilter::GetSubtitlePin()
   return m_pSubtitlePin;
 }
 
+//Returns the teletext output pin
+CTeletextPin* CTsReaderFilter::GetTeletextPin()
+{
+  return m_pTeletextPin;
+}
+
 IDVBSubtitle* CTsReaderFilter::GetSubtitleFilter()
 {
   return m_pDVBSubtitle;
@@ -950,7 +981,7 @@ HRESULT CTsReaderFilter::FindSubtitleFilter()
   if( m_pDVBSubtitle )
 		return S_OK;
   
-  LogDebug( "FindSubtitleFilter - start");
+  //LogDebug( "FindSubtitleFilter - start");
 
 	IEnumFilters * piEnumFilters = NULL;
 	if (GetFilterGraph() && SUCCEEDED(GetFilterGraph()->EnumFilters(&piEnumFilters)))
@@ -963,7 +994,10 @@ HRESULT CTsReaderFilter::FindSubtitleFilter()
 			{
 				if (!wcsicmp(L"MediaPortal DVBSub2", filterInfo.achName))
 				{
-          pFilter->QueryInterface( IID_IDVBSubtitle2, ( void**)&m_pDVBSubtitle );  
+					HRESULT fhr = pFilter->QueryInterface( IID_IDVBSubtitle2, ( void**)&m_pDVBSubtitle );
+					assert( fhr == S_OK);
+					//LogDebug("Testing that DVBSub2 works");
+					m_pDVBSubtitle->Test(1);
 				}
         filterInfo.pGraph->Release(); 
 			}
@@ -972,7 +1006,7 @@ HRESULT CTsReaderFilter::FindSubtitleFilter()
 		}
 		piEnumFilters->Release();
 	}
-  LogDebug( "FindSubtitleFilter - End");
+  //LogDebug( "FindSubtitleFilter - End");
   return S_OK;
 }
 

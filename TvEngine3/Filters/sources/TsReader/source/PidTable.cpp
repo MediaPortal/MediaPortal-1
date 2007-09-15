@@ -22,6 +22,8 @@
 #include <windows.h>
 #include "PidTable.h"
 
+void LogDebug(const char *fmt, ...) ; 
+
 CPidTable::CPidTable(const CPidTable& pids)
 {
   Copy(pids);
@@ -38,6 +40,7 @@ CPidTable::~CPidTable(void)
 
 void CPidTable::Reset()
 {
+	//LogDebug("Pid table reset");
   PcrPid=0;
   PmtPid=0;
   VideoPid=0;
@@ -82,6 +85,7 @@ void CPidTable::Reset()
   Lang8_3=0;
   AudioServiceType8=0;
   TeletextPid=0;
+  // no reason to reset TeletextSubLang
   SubtitlePid=0;
   ServiceId=-1;
 	videoServiceType=-1;
@@ -96,6 +100,7 @@ CPidTable& CPidTable::operator = (const CPidTable &pids)
 
 void CPidTable::Copy(const CPidTable &pids)
 {
+  //LogDebug("Pid table copy");
   PcrPid=pids.PcrPid;
   PmtPid=pids.PmtPid;
   VideoPid=pids.VideoPid;
@@ -140,7 +145,21 @@ void CPidTable::Copy(const CPidTable &pids)
   Lang8_3=pids.Lang8_3;
   AudioServiceType8=pids.AudioServiceType8;
   TeletextPid=pids.TeletextPid;
+  TeletextInfo = pids.TeletextInfo;
   SubtitlePid=pids.SubtitlePid;
   ServiceId=pids.ServiceId;
-	videoServiceType=pids.videoServiceType;
+  videoServiceType=pids.videoServiceType;
+}
+
+bool CPidTable::HasTeletextPageInfo(int page){
+	std::vector<TeletextServiceInfo>::iterator vit = TeletextInfo.begin();
+	while(vit != TeletextInfo.end()){ // is the page already registrered
+		TeletextServiceInfo& info = *vit;
+		if(info.page == page){
+			return true;
+			break;
+		}
+		else vit++;
+	}
+	return false;
 }
