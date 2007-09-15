@@ -1947,19 +1947,36 @@ namespace TvPlugin
         TvNotifyManager.OnNotifiesChanged();
         m_groups.Clear();
 
+        MediaPortal.GUI.Library.Log.Info("Checking if radio group for all radio channels exists");
+        TvBusinessLayer layer = new TvBusinessLayer();
+        RadioChannelGroup radioGroup=layer.GetRadioChannelGroupByName(GUILocalizeStrings.Get(972));
+        if (radioGroup == null)
+        {
+          MediaPortal.GUI.Library.Log.Info("All channels group for radio channels does not exist. Creating it...");
+          radioGroup = new RadioChannelGroup(GUILocalizeStrings.Get(972), 9999);
+          radioGroup.Persist();
+        }
+        IList radioChannels = layer.GetAllRadioChannels();
+        if (radioChannels!=null)
+        {
+          foreach (Channel radioChannel in radioChannels)
+            layer.AddChannelToRadioGroup(radioChannel,radioGroup);
+        }
+        MediaPortal.GUI.Library.Log.Info("Done.");
+
         MediaPortal.GUI.Library.Log.Info("get all groups from database");
+        bool found = false;
         sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
         sb.AddOrderByField(true, "groupName");
         stmt = sb.GetStatement(true);
         IList groups = ObjectFactory.GetCollection(typeof(ChannelGroup), stmt.Execute());
         IList allgroupMaps = GroupMap.ListAll();
-        bool found = false;
+        found = false;
         foreach (ChannelGroup group in groups)
         {
           if (group.GroupName == GUILocalizeStrings.Get(972))
           {
             found = true;
-            TvBusinessLayer layer = new TvBusinessLayer();
             foreach (Channel channel in channels)
             {
               if (channel.IsTv == false) continue;
@@ -1985,7 +2002,6 @@ namespace TvPlugin
 
         if (!found)
         {
-          TvBusinessLayer layer = new TvBusinessLayer();
           MediaPortal.GUI.Library.Log.Info(" group:{0} not found. create it", GUILocalizeStrings.Get(972));
           foreach (Channel channel in channels)
           {

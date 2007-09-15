@@ -305,6 +305,12 @@ namespace TvPlugin
             if (ch.IsRadio == false) continue;
             if (ch.DisplayName == message.Label)
             {
+              if (g_Player.Playing)
+              {
+                if (g_Player.IsTimeShifting)
+                  TVHome.Card.StopTimeShifting();
+                g_Player.Stop();
+              }
               if (ch.IsFMRadio() || ch.IsWebstream())
                 g_Player.Play(GetPlayPath(ch));
               else
@@ -685,6 +691,12 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#Play.Current.Album", item.Label);
       if (item.MusicTag == null) return;
       Channel channel=(Channel)item.MusicTag;
+      if (g_Player.Playing)
+      {
+        if (g_Player.IsTimeShifting)
+          TVHome.Card.StopTimeShifting();
+        g_Player.Stop();
+      }
       if (channel.IsFMRadio() || channel.IsWebstream())
         g_Player.Play(GetPlayPath(channel));
       else
