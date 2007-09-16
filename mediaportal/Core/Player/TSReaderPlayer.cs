@@ -140,8 +140,36 @@ namespace MediaPortal.Player
     VMR9Util _vmr9 = null;
     IPin _pinAudio = null;
     IPin _pinVideo = null;
+    protected ISubtitleStream _subtitleStream = null;
     bool enableDvbSubtitles = false;
     #endregion
+
+    /// <summary>
+    /// Interface to the TsReader filter wich provides information about the 
+    /// subtitle streams and allows us to change the current subtitle stream
+    /// </summary>
+    /// 
+    [Guid("43FED769-C5EE-46aa-912D-7EBDAE4EE93A"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface ISubtitleStream
+    {
+      void SetSubtitleStream( Int32 stream );
+      void GetSubtitleStreamType( Int32 stream, ref Int32 type );
+      void GetSubtitleStreamCount( ref Int32 count );
+      void GetCurrentSubtitleStream( ref Int32 stream );
+      void GetSubtitleStreamLanguage(Int32 stream, ref SUBTITLE_LANGUAGE szLanguage);
+    }
+
+    /// <summary>
+    /// Structure to pass the subtitle language data from TsReader to this class
+    /// </summary>
+    /// 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SUBTITLE_LANGUAGE
+    {
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 4)]
+      public string lang;
+    }
 
     #region ctor
     public TSReaderPlayer()
@@ -398,6 +426,15 @@ namespace MediaPortal.Player
           Log.Error("Unable to get IMediaSeeking interface#1");
         }
 
+        if (enableDvbSubtitles)
+        {
+          _subtitleStream = _fileSource as ISubtitleStream;
+          if (_subtitleStream == null)
+          {
+            Log.Error("Unable to get ISubtitleStream interface");
+          }
+        }
+
         //source.SetClockMode(3);//audio renderer
         if (_audioRendererFilter != null)
         {
@@ -637,6 +674,89 @@ namespace MediaPortal.Player
         _state = PlayState.Playing;
 
         Log.Info("TSReaderPlayer: current pos:{0} dur:{1}", CurrentPosition, Duration);
+      }
+    }
+
+    /// <summary>
+    /// Property to get the total number of subtitle streams
+    /// </summary>
+    public override int SubtitleStreams
+    {
+      get 
+      {
+        Int32 count = 0; 
+        if (_subtitleStream!=null)
+        {
+          _subtitleStream.GetSubtitleStreamCount(ref count);
+        }
+        return count;
+      }
+    }
+
+    /// <summary>
+    /// Property to get/set the current subtitle stream
+    /// </summary>
+    public override int CurrentSubtitleStream
+    {
+      get 
+      {
+        Int32 currentStream = 0;
+        if (_subtitleStream != null)
+        {
+          _subtitleStream.GetCurrentSubtitleStream(ref currentStream);
+        }
+        return currentStream; 
+      }
+      set 
+      {
+        if (_subtitleStream != null)
+        {
+          _subtitleStream.SetSubtitleStream(value);
+        } 
+      }
+    }
+
+    /// <summary>
+    /// Property to get the name for a subtitle stream
+    /// </summary>
+    public override string SubtitleLanguage(int iStream)
+    {
+      if (enableDvbSubtitles)
+      {
+        SUBTITLE_LANGUAGE language;
+        language.lang = "";
+
+        _subtitleStream.GetSubtitleStreamLanguage(iStream, ref language);
+        return language.lang;
+      }
+      else
+      {
+        return Strings.Unknown;
+      }
+    }
+
+    /// <summary>
+    /// Property to enable/disable subtitles
+    /// </summary>
+    public override bool EnableSubtitle
+    {
+      get
+      {
+        if (enableDvbSubtitles)
+        {
+          return dvbSubRenderer.RenderSubtitles;
+        }
+        else
+        {
+          return true;
+        }
+      }
+      set
+      {
+        if (enableDvbSubtitles)
+        {
+          dvbSubRenderer.RenderSubtitles = value;
+        }
       }
     }
 
