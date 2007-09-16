@@ -100,9 +100,15 @@ namespace TvPlugin
       //  OnUpdateState(false);
       //  return base.IsAnimating(AnimationType.WindowClose);
       //}
-
+      
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds < 1000) return _lastStatus;
+
+      if (!TVHome.Connected)
+      {        
+        return false;
+      }
+
       TvServer server = new TvServer();
       if (TVHome.Connected)
       {

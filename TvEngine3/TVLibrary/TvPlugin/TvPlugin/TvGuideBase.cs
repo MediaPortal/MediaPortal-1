@@ -557,6 +557,10 @@ namespace TvPlugin
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
             {
+              if (TVHome.HandleServerNotConnected())
+              {
+                return false;
+              }
               base.OnMessage(message);
               ///@
               ///_notifyList = new List<TVNotify>();
