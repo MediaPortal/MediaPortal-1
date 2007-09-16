@@ -136,6 +136,23 @@ namespace MediaPortal.Player
     private object alert = new object();
 
     private bool clearOnNextRender = false;
+    private bool renderSubtitles = true;
+
+    public bool RenderSubtitles
+    {
+      get
+      {
+        return renderSubtitles;
+      }
+      set
+      {
+        renderSubtitles = value;
+        if (value == false)
+        {
+          clearOnNextRender = true;
+        }
+      }
+    }
 
     private SubtitleRenderer()
     {
@@ -163,10 +180,9 @@ namespace MediaPortal.Player
       }
       clearOnNextRender = true;
       player = p;
-            
     }
 
-
+ 
     /// <summary>
     /// Alerts the subtitle render that a seek has just been performed.
     /// Stops displaying the current subtitle and removes any cached subtitles.
@@ -470,6 +486,11 @@ namespace MediaPortal.Player
         if(subTexture != null) subTexture.Dispose();
         subTexture = null;
         currentSubtitle = null;
+      }
+
+      if (renderSubtitles == false)
+      {
+        return;
       }
 
       // ugly temp!
