@@ -97,7 +97,7 @@
       <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
       <visible>!facadeview.list</visible>
     </control>
-    <control>
+<!--     <control>
       <type>image</type>
       <posX>633</posX>
       <posY>578</posY>
@@ -105,7 +105,7 @@
       <height>143</height>
       <texture>Covertop.png</texture>
       <visible>!facadeview.list</visible>
-    </control>
+    </control> -->
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
