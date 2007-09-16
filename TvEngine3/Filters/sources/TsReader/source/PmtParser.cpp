@@ -91,7 +91,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 	int elementary_PID=0;
 	int ES_info_length=0;
 	int audioToSet=0;
-
+  int subtitleToSet=0;
 
 	m_pidInfo.Reset();
 	m_pidInfo.PmtPid=GetPid();
@@ -100,6 +100,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 	{
 		//if (start+pointer+4>=sectionLen+9) return ;
 		int curAudio=-1;
+    int curSubtitle=-1;
 		stream_type = section[start+pointer];
 		elementary_PID = ((section[start+pointer+1]&0x1F)<<8)+section[start+pointer+2];
 		ES_info_length = ((section[start+pointer+3] & 0xF)<<8)+section[start+pointer+4];
@@ -345,19 +346,45 @@ void CPmtParser::OnNewSection(CSection& sections)
 				}
 
 			}
-			if(indicator==DESCRIPTOR_DVB_SUBTITLING && m_pidInfo.SubtitlePid==0)
+			if(indicator==DESCRIPTOR_DVB_SUBTITLING ) //&& m_pidInfo.SubtitlePid==0)
 			{
-				if (stream_type==SERVICE_TYPE_DVB_SUBTITLES2)
-				{
-					BYTE d[3];
-					d[0]=section[start+pointer+2];
+			  if (stream_type==SERVICE_TYPE_DVB_SUBTITLES2)
+        {
+          subtitleToSet++;
+			    curSubtitle=subtitleToSet;
+				  BYTE d[3];
+          d[0]=section[start+pointer+2];
 					d[1]=section[start+pointer+3];
 					d[2]=section[start+pointer+4];
-					m_pidInfo.SubtitlePid=elementary_PID;
-					m_pidInfo.SubLang1_1=d[0];
-					m_pidInfo.SubLang1_2=d[1];
-					m_pidInfo.SubLang1_3=d[2];
-				}
+
+			    switch(curSubtitle)
+			    {
+			    case 1:
+					  m_pidInfo.SubtitlePid1=elementary_PID;
+					  m_pidInfo.SubLang1_1=d[0];
+					  m_pidInfo.SubLang1_2=d[1];
+					  m_pidInfo.SubLang1_3=d[2];
+				    break;
+			    case 2:
+					  m_pidInfo.SubtitlePid2=elementary_PID;
+					  m_pidInfo.SubLang2_1=d[0];
+					  m_pidInfo.SubLang2_2=d[1];
+					  m_pidInfo.SubLang2_3=d[2];
+				    break;
+			    case 3:
+					  m_pidInfo.SubtitlePid3=elementary_PID;
+					  m_pidInfo.SubLang3_1=d[0];
+					  m_pidInfo.SubLang3_2=d[1];
+					  m_pidInfo.SubLang3_3=d[2];
+				    break;
+			    case 4:
+					  m_pidInfo.SubtitlePid4=elementary_PID;
+					  m_pidInfo.SubLang4_1=d[0];
+					  m_pidInfo.SubLang4_2=d[1];
+					  m_pidInfo.SubLang4_3=d[2];
+				    break;
+          }
+        }
 			}
 			len2 -= x;
 			len1 -= x;

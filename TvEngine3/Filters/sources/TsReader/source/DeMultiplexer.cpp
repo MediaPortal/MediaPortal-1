@@ -49,6 +49,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_pCurrentSubtitleBuffer = new CBuffer();
   m_pCurrentTeletextBuffer = new CBuffer();
   m_iAudioStream=0;
+  m_iSubtitleStream=0;
   m_audioPid=0;
   m_currentSubtitlePid=0;
   m_bScanning=false;
@@ -75,7 +76,6 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
     }
     RegCloseKey(key);
   }
-  
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -84,7 +84,9 @@ CDeMultiplexer::~CDeMultiplexer()
   delete m_pCurrentVideoBuffer;
   delete m_pCurrentAudioBuffer;
   delete m_pCurrentSubtitleBuffer;
-
+  
+  m_subtitleStreams.clear();
+  m_audioStreams.clear();
 }
 
 int CDeMultiplexer::GetVideoServiceType()
@@ -265,9 +267,61 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
       break;
-
   }
 }
+// This methods selects the subtitle stream specified
+bool CDeMultiplexer::SetSubtitleStream(__int32 stream)
+{
+  //is stream index valid?
+  if (stream< 0 || stream>=m_subtitleStreams.size()) 
+    return S_FALSE;
+
+  //set index
+  m_iSubtitleStream=stream;   
+  return S_OK;
+}
+
+bool CDeMultiplexer::GetCurrentSubtitleStream(__int32 &stream)
+{
+  stream = m_iSubtitleStream;
+  return S_OK;
+}
+
+bool CDeMultiplexer::GetSubtitleStreamLanguage(__int32 stream,char* szLanguage)
+{
+  /*
+  if (stream <0 || stream>=m_subtitleStreams.size())
+  {
+    szLanguage[0]=szLanguage[1]=szLanguage[2]=0;
+    return;
+  }
+  szName[0]=m_subtitleStreams[stream].language[0];
+  szName[1]=m_subtitleStreams[stream].language[1];
+  szName[2]=m_subtitleStreams[stream].language[2];
+  szName[3]=m_subtitleStreams[stream].language[3];
+  */
+
+  return S_OK;
+}
+bool CDeMultiplexer::GetSubtitleStreamCount(__int32 &count)
+{
+  count = m_subtitleStreams.size();
+  return S_OK;
+}
+
+bool CDeMultiplexer::GetSubtitleStreamType(__int32 stream, __int32 &type)
+{
+  if (m_iSubtitleStream< 0 || m_iSubtitleStream >=m_subtitleStreams.size())
+  {
+    // invalid stream number
+    return S_FALSE;
+  }
+
+  type = m_subtitleStreams[m_iSubtitleStream].subtitleType;
+  return S_OK;
+}
+
+
 
 void CDeMultiplexer::GetVideoStreamType(CMediaType& pmt)
 {
@@ -374,7 +428,7 @@ void CDeMultiplexer::Flush()
 CBuffer* CDeMultiplexer::GetSubtitle()
 {
   //if there is no subtitle pid, then simply return NULL
-  if (m_pids.SubtitlePid==0) return NULL;
+  if (m_currentSubtitlePid==0) return NULL;
   if (m_bEndOfFile) return NULL;
   if (m_bHoldSubtitle) return NULL;
   //ReadFromFile(false,false);
@@ -689,19 +743,6 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   //skip any packets with errors in it
   if (header.TransportError) return;
 
-  if( m_pids.SubtitlePid > 0 && m_pids.SubtitlePid != m_currentSubtitlePid )
-  {
-    IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
-    if( pDVBSubtitleFilter )
-    {
-      LogDebug("Calling SetSubtitlePid");
-      pDVBSubtitleFilter->SetSubtitlePid(m_pids.SubtitlePid);
-      pDVBSubtitleFilter->SetFirstPcr(m_duration.FirstStartPcr().PcrReferenceBase);
-    
-      m_currentSubtitlePid = m_pids.SubtitlePid;
-    }
-  }
-
   if( m_pids.TeletextPid > 0 && m_pids.TeletextPid != m_currentTeletextPid )
   {
     IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
@@ -955,9 +996,25 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 /// ifso, it decodes the PES subtitle packet and stores it in the subtitle buffers
 void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
 {
-  if (m_pids.SubtitlePid==0) return;
-  if (header.Pid!=m_pids.SubtitlePid) return;
   if (m_filter.GetSubtitlePin()->IsConnected()==false) return;
+  if (m_iSubtitleStream<0 || m_iSubtitleStream>=m_subtitleStreams.size()) return;
+  
+  // If current subtitle PID has changed notify the DVB sub filter
+  if( m_subtitleStreams[m_iSubtitleStream].pid > 0 && 
+    m_subtitleStreams[m_iSubtitleStream].pid != m_currentSubtitlePid )
+  {
+    IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
+    if( pDVBSubtitleFilter )
+    {
+      LogDebug("Calling SetSubtitlePid");
+      pDVBSubtitleFilter->SetSubtitlePid(m_subtitleStreams[m_iSubtitleStream].pid);
+      pDVBSubtitleFilter->SetFirstPcr(m_duration.FirstStartPcr().PcrReferenceBase);
+    
+      m_currentSubtitlePid = m_subtitleStreams[m_iSubtitleStream].pid;
+    }
+  }
+ 
+  if (m_currentSubtitlePid==0 || m_currentSubtitlePid != header.Pid) return;
 	if ( header.AdaptionFieldOnly() ) return;
 
 	CAutoLock lock (&m_sectionSubtitle);
@@ -965,8 +1022,8 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
   {
     if (header.PayloadUnitStart)
     {
-        m_subtitlePcr = m_streamPcr;
-        //LogDebug("FillSubtitle: PayloadUnitStart -- %lld", m_streamPcr.PcrReferenceBase );
+      m_subtitlePcr = m_streamPcr;
+      //LogDebug("FillSubtitle: PayloadUnitStart -- %lld", m_streamPcr.PcrReferenceBase );
     }
     if (m_vecSubtitleBuffers.size()>MAX_BUF_SIZE) 
     {
@@ -1043,7 +1100,10 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 				m_pids.AudioPid8==pids.AudioPid8 && m_pids.AudioServiceType8==pids.AudioServiceType8 &&
 				m_pids.PcrPid==pids.PcrPid &&
 				m_pids.PmtPid==pids.PmtPid &&
-				m_pids.SubtitlePid==pids.SubtitlePid)
+				m_pids.SubtitlePid1==pids.SubtitlePid1 &&
+        m_pids.SubtitlePid2==pids.SubtitlePid2 &&
+        m_pids.SubtitlePid3==pids.SubtitlePid3 &&
+        m_pids.SubtitlePid4==pids.SubtitlePid4 )
 	{
 		if ( pids.videoServiceType==m_pids.videoServiceType && m_pids.VideoPid==pids.VideoPid) 
     {
@@ -1072,7 +1132,10 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   LogDebug(" audio8   pid:%x type:%x ",m_pids.AudioPid8,m_pids.AudioServiceType8);
   LogDebug(" Pcr      pid:%x ",m_pids.PcrPid);
   LogDebug(" Pmt      pid:%x ",m_pids.PmtPid);
-  LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid);
+  LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid1);
+  LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid2);
+  LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid3);
+  LogDebug(" Subtitle pid:%x ",m_pids.SubtitlePid4);
 
   IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
   if( pDVBSubtitleFilter )
@@ -1181,10 +1244,59 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     m_audioStreams.push_back(audio);
   }
 
-
   if (m_iAudioStream>=m_audioStreams.size())
   {
     m_iAudioStream=0;
+  }
+
+  m_subtitleStreams.clear();
+  
+  if (m_pids.SubtitlePid1!=0) 
+  {
+    struct stSubtitleStream subtitle;
+    subtitle.pid=m_pids.SubtitlePid1;
+    subtitle.language[0]=m_pids.Lang1_1;
+    subtitle.language[1]=m_pids.Lang1_2;
+    subtitle.language[2]=m_pids.Lang1_3;
+    subtitle.language[3]=0;
+    subtitle.subtitleType=0; // DVB subtitle
+    m_subtitleStreams.push_back(subtitle);
+  }
+
+  if (m_pids.SubtitlePid2!=0) 
+  {
+    struct stSubtitleStream subtitle;
+    subtitle.pid=m_pids.SubtitlePid2;
+    subtitle.language[0]=m_pids.Lang2_1;
+    subtitle.language[1]=m_pids.Lang2_2;
+    subtitle.language[2]=m_pids.Lang2_3;
+    subtitle.language[3]=0;
+    subtitle.subtitleType=0; // DVB subtitle
+    m_subtitleStreams.push_back(subtitle);
+  }
+
+  if (m_pids.SubtitlePid3!=0) 
+  {
+    struct stSubtitleStream subtitle;
+    subtitle.pid=m_pids.SubtitlePid3;
+    subtitle.language[0]=m_pids.Lang3_1;
+    subtitle.language[1]=m_pids.Lang3_2;
+    subtitle.language[2]=m_pids.Lang3_3;
+    subtitle.language[3]=0;
+    subtitle.subtitleType=0; // DVB subtitle
+    m_subtitleStreams.push_back(subtitle);
+  }
+
+  if (m_pids.SubtitlePid4!=0) 
+  {
+    struct stSubtitleStream subtitle;
+    subtitle.pid=m_pids.SubtitlePid4;
+    subtitle.language[0]=m_pids.Lang4_1;
+    subtitle.language[1]=m_pids.Lang4_2;
+    subtitle.language[2]=m_pids.Lang4_3;
+    subtitle.language[3]=0;
+    subtitle.subtitleType=0; // DVB subtitle
+    m_subtitleStreams.push_back(subtitle);
   }
 
   bool changed=false;
@@ -1364,92 +1476,90 @@ HRESULT CDeMultiplexer::IsPlaying()
 {
   LogDebug("demux:IsPlaying");
 
-	HRESULT hr = S_FALSE;
+  HRESULT hr = S_FALSE;
 
-	FILTER_STATE state = State_Stopped;
+  FILTER_STATE state = State_Stopped;
 
-	FILTER_INFO Info;
-	if (SUCCEEDED(m_filter.QueryFilterInfo(&Info)) && Info.pGraph != NULL)
-	{
-		// Get IMediaFilter interface
-		IMediaFilter* pMediaFilter = NULL;
-		hr = Info.pGraph->QueryInterface(IID_IMediaFilter, (void**)&pMediaFilter);
-		if (!pMediaFilter)
-		{
-			Info.pGraph->Release();
-			hr =  m_filter.GetState(200, &state);
-			if (state == State_Running)
-			{
-				if (hr == S_OK || hr == VFW_S_STATE_INTERMEDIATE || VFW_S_CANT_CUE)
-					return S_OK;
-			}
+  FILTER_INFO Info;
+  if (SUCCEEDED(m_filter.QueryFilterInfo(&Info)) && Info.pGraph != NULL)
+  {
+	  // Get IMediaFilter interface
+	  IMediaFilter* pMediaFilter = NULL;
+	  hr = Info.pGraph->QueryInterface(IID_IMediaFilter, (void**)&pMediaFilter);
+	  if (!pMediaFilter)
+	  {
+		  Info.pGraph->Release();
+		  hr =  m_filter.GetState(200, &state);
+		  if (state == State_Running)
+		  {
+			  if (hr == S_OK || hr == VFW_S_STATE_INTERMEDIATE || VFW_S_CANT_CUE)
+				  return S_OK;
+		  }
 
-			return S_FALSE;
-		}
-		else
-			pMediaFilter->Release();
+		  return S_FALSE;
+	  }
+	  else
+		  pMediaFilter->Release();
 
-		IMediaControl *pMediaControl = NULL;
-		if (SUCCEEDED(Info.pGraph->QueryInterface(IID_IMediaControl, (void **) &pMediaControl)))
-		{
-			hr = pMediaControl->GetState(200, (OAFilterState*)&state);
-			pMediaControl->Release();
-		}
+	  IMediaControl *pMediaControl = NULL;
+	  if (SUCCEEDED(Info.pGraph->QueryInterface(IID_IMediaControl, (void **) &pMediaControl)))
+	  {
+		  hr = pMediaControl->GetState(200, (OAFilterState*)&state);
+		  pMediaControl->Release();
+	  }
 
-		Info.pGraph->Release();
-	
-		if (state == State_Running)
-		{
-			if (hr == S_OK || hr == VFW_S_STATE_INTERMEDIATE || VFW_S_CANT_CUE)
-				return S_OK;
-		}
-	}
-	return S_FALSE;
+	  Info.pGraph->Release();
+
+	  if (state == State_Running)
+	  {
+		  if (hr == S_OK || hr == VFW_S_STATE_INTERMEDIATE || VFW_S_CANT_CUE)
+			  return S_OK;
+	  }
+  }
+  return S_FALSE;
 }
 bool CreateFilter(const WCHAR *Name, IBaseFilter **Filter,
    REFCLSID FilterCategory)
 {
+  HRESULT hr;    
 
-   HRESULT hr;    
+  // Create the system device enumerator.
+  CComPtr<ICreateDevEnum> devenum;
+  hr = devenum.CoCreateInstance(CLSID_SystemDeviceEnum);
+  if (FAILED(hr))
+    return false;    
 
-   // Create the system device enumerator.
-   CComPtr<ICreateDevEnum> devenum;
-   hr = devenum.CoCreateInstance(CLSID_SystemDeviceEnum);
-   if (FAILED(hr))
+  // Create an enumerator for this category.
+  CComPtr<IEnumMoniker> classenum;
+  hr = devenum->CreateClassEnumerator(FilterCategory, &classenum, 0);
+  if (hr != S_OK)
+    return false;    
+
+  // Find the filter that matches the name given.
+  CComVariant name(Name);
+  CComPtr<IMoniker> moniker;
+  while (classenum->Next(1, &moniker, 0) == S_OK)
+  {
+    CComPtr<IPropertyBag> properties;
+    hr = moniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&properties);
+    if (FAILED(hr))
       return false;    
 
-   // Create an enumerator for this category.
-   CComPtr<IEnumMoniker> classenum;
-   hr = devenum->CreateClassEnumerator(FilterCategory, &classenum, 0);
-   if (hr != S_OK)
+    CComVariant friendlyname;
+    hr = properties->Read(L"FriendlyName", &friendlyname, 0);
+    if (FAILED(hr))
       return false;    
 
-   // Find the filter that matches the name given.
-   CComVariant name(Name);
-   CComPtr<IMoniker> moniker;
-   while (classenum->Next(1, &moniker, 0) == S_OK)
-   {
-      CComPtr<IPropertyBag> properties;
-      hr = moniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&properties);
-      if (FAILED(hr))
-         return false;    
+    if (name == friendlyname)
+    {
+      hr = moniker->BindToObject(0, 0, IID_IBaseFilter, (void **)Filter);
+      return SUCCEEDED(hr);
+    }    
+    moniker.Release();
+  }    
 
-      CComVariant friendlyname;
-      hr = properties->Read(L"FriendlyName", &friendlyname, 0);
-      if (FAILED(hr))
-         return false;    
-
-      if (name == friendlyname)
-      {
-         hr = moniker->BindToObject(0, 0, IID_IBaseFilter, (void **)Filter);
-         return SUCCEEDED(hr);
-      }    
-
-      moniker.Release();
-   }    
-
-   // Couldn't find a matching filter.
-   return false;
+  // Couldn't find a matching filter.
+  return false;
 }
 //
 /// Create a filter by category and name, and add it to a filter
@@ -1469,18 +1579,16 @@ bool AddFilter(IFilterGraph *Graph, const WCHAR *Name,
    IBaseFilter **Filter, REFCLSID FilterCategory,
    const WCHAR *NameInGraph)
 {
+  if (!CreateFilter(Name, Filter, FilterCategory))
+    return false;   
 
-   if (!CreateFilter(Name, Filter, FilterCategory))
-      return false;   
-
-   if (FAILED(Graph->AddFilter(*Filter, NameInGraph)))
-   {
-      (*Filter)->Release();
-      *Filter = 0;
-      return false;
-   }   
-
-   return true;
+  if (FAILED(Graph->AddFilter(*Filter, NameInGraph)))
+  {
+    (*Filter)->Release();
+    *Filter = 0;
+    return false;
+  }   
+  return true;
 }   
 
 ///
@@ -1593,7 +1701,6 @@ void CDeMultiplexer::SetHoldSubtitle(bool onOff)
 void CDeMultiplexer::ThreadProc()
 {
   try
-
   {
     LogDebug("demux:reconfigure graph");
     while (m_filter.GetVideoPin()->IsSeeking() ||m_filter.GetAudioPin()->IsSeeking() )
@@ -1614,7 +1721,6 @@ void CDeMultiplexer::ThreadProc()
     //re-render the audio output pin
     LogDebug("demux:  render audio");
     RenderFilterPin(m_filter.GetAudioPin(),true,false);
-
 
     //if we where playing
     if (isPlaying==S_OK )

@@ -29,6 +29,7 @@
 #include "memorybuffer.h"
 #include "TeletextPin.h"
 #include "..\..\DVBSubtitle2\Source\IDVBSub.h"
+#include "ISubtitleStream.h"
 #include <map>
 using namespace std;
 
@@ -41,7 +42,8 @@ class CTsReaderFilter;
 DEFINE_GUID(CLSID_TSReader, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0xfe, 0x49, 0xb2, 0x3f);
 
 
-class CTsReaderFilter : public CSource,public TSThread,public IFileSourceFilter, public IAMFilterMiscFlags, public IAMStreamSelect
+class CTsReaderFilter : public CSource, public TSThread, public IFileSourceFilter, 
+                        public IAMFilterMiscFlags, public IAMStreamSelect, public ISubtitleStream
 {
 public:
 		DECLARE_IUNKNOWN
@@ -69,6 +71,14 @@ private:
     STDMETHODIMP Count(DWORD* streamCount);
     STDMETHODIMP Enable(long index, DWORD flags);
     STDMETHODIMP Info( long lIndex,AM_MEDIA_TYPE **ppmt,DWORD *pdwFlags, LCID *plcid, DWORD *pdwGroup, WCHAR **ppszName, IUnknown **ppObject, IUnknown **ppUnk);
+
+    //ISubtitleStream
+    STDMETHODIMP SetSubtitleStream(__int32 stream);
+    STDMETHODIMP GetSubtitleStreamType(__int32 stream, int &type);
+    STDMETHODIMP GetSubtitleStreamCount(__int32 &count);
+    STDMETHODIMP GetCurrentSubtitleStream(__int32 &stream);
+    STDMETHODIMP GetSubtitleStreamLanguage(__int32 stream,char* szLanguage);
+
 public:
 	// IFileSourceFilter
 	STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);

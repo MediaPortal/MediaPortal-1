@@ -61,6 +61,14 @@ public:
   void       GetAudioStreamType(int stream,CMediaType&  pmt);
   void       GetVideoStreamType(CMediaType& pmt);
   int        GetAudioStreamCount();
+
+  // TsReader::ISubtitleStream uses these 
+  bool       SetSubtitleStream(__int32 stream);
+  bool       GetSubtitleStreamType(__int32 stream, __int32& count);
+  bool       GetSubtitleStreamCount(__int32 &count);
+  bool       GetCurrentSubtitleStream(__int32 &stream);
+  bool       GetSubtitleStreamLanguage(__int32 stream, char* szLanguage);
+
   bool       EndOfFile();
 	bool			 HoldAudio();
 	void			 SetHoldAudio(bool onOff);
@@ -72,7 +80,7 @@ public:
   void       FlushVideo();
   void       FlushAudio();
   void       FlushSubtitle();
-  void		 FlushTeletext();
+  void       FlushTeletext();
   int        GetVideoServiceType();
 private:
   struct stAudioStream
@@ -80,8 +88,16 @@ private:
     int pid;
     int audioType;
     char language[4];
+  };
+  struct stSubtitleStream
+  {
+    int pid;
+    int subtitleType;  // 0=DVB, 1=teletext <-- needs enum
+    char language[4];
   } ;
+
   vector<struct stAudioStream> m_audioStreams;
+  vector<struct stSubtitleStream> m_subtitleStreams;
   void GetVideoMedia(CMediaType *pmt);
   void GetH264Media(CMediaType *pmt);
   void GetMpeg4Media(CMediaType *pmt);
@@ -116,6 +132,7 @@ private:
   unsigned int m_iAudioStream;
   unsigned int m_audioPid;
   unsigned int m_currentSubtitlePid;
+  unsigned int m_iSubtitleStream;
   unsigned int m_currentTeletextPid; // Ziphnor
   bool m_bScanning;
 	bool m_bHoldAudio;

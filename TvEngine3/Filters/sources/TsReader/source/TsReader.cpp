@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -72,7 +72,6 @@ void LogDebug(const char *fmt, ...)
 		systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
 		buffer);
 	::OutputDebugString(buf);
-	
 };
 
 
@@ -120,9 +119,6 @@ CFactoryTemplate g_Templates[] =
 int g_cTemplates = sizeof(g_Templates) / sizeof(g_Templates[0]);
 
 
-
-
-
 CUnknown * WINAPI CTsReaderFilter::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 {
 	ASSERT(phr);
@@ -147,7 +143,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 {
 
   ::DeleteFile("c:\\tsreader.log");
-  LogDebug("-------------- v1.0.0.0 (+ttxt mod) ----------------");
+  LogDebug("-------------- v1.0.0.1 (+ttxt mod) ----------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -159,9 +155,6 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
 	m_pSubtitlePin = new CSubtitlePin(GetOwner(), this, phr,&m_section);
 	m_pTeletextPin = new CTeletextPin(GetOwner(), this, phr,&m_section);
   
-  // Not used anywhere and currently is causing a leak (2 objects left active in TsReader.ax)
-  // - tourettes
-  // m_referenceClock= new CBaseReferenceClock("refClock",GetOwner(), phr);
   m_bSeeking=false;
 
 	if (m_pAudioPin == NULL) 
@@ -210,30 +203,27 @@ STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** p
 {
   if (riid == IID_IStreamBufferConfigure)
   {
-  
-	    LogDebug("filt:IID_IStreamBufferConfigure()");
+    LogDebug("filt:IID_IStreamBufferConfigure()");
   }
   if (riid == IID_IStreamBufferInitialize)
   {
-  
-	    LogDebug("filt:IID_IStreamBufferInitialize()");
+    LogDebug("filt:IID_IStreamBufferInitialize()");
   }
   if (riid == IID_IStreamBufferMediaSeeking||riid == IID_IStreamBufferMediaSeeking2)
   {
-  
-	    LogDebug("filt:IID_IStreamBufferMediaSeeking()");
+    LogDebug("filt:IID_IStreamBufferMediaSeeking()");
   }
   if (riid == IID_IStreamBufferSource)
   {
-	    LogDebug("filt:IID_IStreamBufferSource()");
+    LogDebug("filt:IID_IStreamBufferSource()");
   }
   if (riid == IID_IStreamBufferDataCounters)
   {
-	    LogDebug("filt:IID_IStreamBufferDataCounters()");
+    LogDebug("filt:IID_IStreamBufferDataCounters()");
   }
   if (riid == IID_IMediaSeeking)
   {
-	    LogDebug("filt:IID_IMediaSeeking()");
+    LogDebug("filt:IID_IMediaSeeking()");
     if (m_pAudioPin->IsConnected())
       return m_pAudioPin->NonDelegatingQueryInterface(riid, ppv);
     
@@ -252,9 +242,12 @@ STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** p
 	{
 		return GetInterface((IAMStreamSelect*)this, ppv);
 	}
+  if (riid == IID_ISubtitleStream)
+	{
+		return GetInterface((ISubtitleStream*)this, ppv);
+	}
 
 	return CSource::NonDelegatingQueryInterface(riid, ppv);
-
 }
 
 CBasePin * CTsReaderFilter::GetPin(int n)
@@ -269,21 +262,18 @@ CBasePin * CTsReaderFilter::GetPin(int n)
   }
   else if (n==2)
   {
-	  //LogDebug("Get Subtitle pin");
     return m_pSubtitlePin;
   }
-  else if (n == 3){
-	  //LogDebug("Get Teletext pin");
-	return m_pTeletextPin;
+  else if (n == 3)
+  {
+    return m_pTeletextPin;
   }
   return NULL;
-  
 }
 
 
 int CTsReaderFilter::GetPinCount()
 {
-  //return 2;
   return 4;
 }
 
@@ -586,8 +576,6 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
         (DWORD)m_duration.StartPcr().PcrReferenceBase,(DWORD) m_duration.EndPcr().PcrReferenceBase,
         milli);
 	  m_fileReader->SetFilePointer(0LL,FILE_BEGIN);
-    
-
   }
 
   //AddGraphToRot(GetFilterGraph());
@@ -732,7 +720,7 @@ void CTsReaderFilter::SeekDone(CRefTime& rtSeek)
   if (m_pDVBSubtitle)
   {
     m_pDVBSubtitle->SetFirstPcr(m_duration.StartPcr().PcrReferenceBase);
-    m_pDVBSubtitle->SeekDone( rtSeek );
+    m_pDVBSubtitle->SeekDone(rtSeek);
   }
 }
 
@@ -774,6 +762,10 @@ CTeletextPin* CTsReaderFilter::GetTeletextPin()
 
 IDVBSubtitle* CTsReaderFilter::GetSubtitleFilter()
 {
+  if( !m_pDVBSubtitle )
+  {
+    FindSubtitleFilter();
+  }
   return m_pDVBSubtitle;
 }
 
@@ -803,7 +795,6 @@ void CTsReaderFilter::ThreadProc()
       duration.SetFileReader(m_fileDuration);
       duration.SetVideoPid(m_duration.GetPid());
       duration.UpdateDuration();
-
 
       //did we find a duration?
 			if (duration.Duration().Millisecs()>0)
@@ -912,7 +903,6 @@ HRESULT CTsReaderFilter::AddGraphToRot(IUnknown *pUnkGraph)
 // Removes a filter graph from the Running Object Table
 void CTsReaderFilter::RemoveGraphFromRot()
 {
-  
   if (m_dwGraphRegister==0) return;
   CComPtr <IRunningObjectTable> pROT;
 
@@ -972,6 +962,33 @@ STDMETHODIMP CTsReaderFilter::Info( long lIndex,AM_MEDIA_TYPE **ppmt,DWORD *pdwF
   }
   return S_OK;
 }
+
+// ISubtitleStream methods 
+STDMETHODIMP CTsReaderFilter::SetSubtitleStream(__int32 stream)
+{
+  return m_demultiplexer.SetSubtitleStream(stream);
+}
+
+STDMETHODIMP CTsReaderFilter::GetSubtitleStreamLanguage(__int32 stream,char* szLanguage)
+{
+  return m_demultiplexer.GetSubtitleStreamLanguage( stream, szLanguage );
+}
+
+STDMETHODIMP CTsReaderFilter::GetSubtitleStreamType(__int32 stream, int &type)
+{
+  return m_demultiplexer.GetSubtitleStreamType(stream, type);
+}
+
+STDMETHODIMP CTsReaderFilter::GetSubtitleStreamCount(__int32 &count)
+{
+  return m_demultiplexer.GetSubtitleStreamCount(count);
+}
+
+STDMETHODIMP CTsReaderFilter::GetCurrentSubtitleStream(__int32 &stream)
+{
+  return m_demultiplexer.GetCurrentSubtitleStream(stream);
+}
+
 
 //
 // FindSubtitleFilter
