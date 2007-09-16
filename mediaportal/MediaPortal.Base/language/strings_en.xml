@@ -922,6 +922,8 @@
         <String id="1507">Unknown channel</String>
         <String id="1508">Channel not mapped to any card</String>
         <String id="1509">No tuning details for the channel</String>
+        <String id="1510">Connection to TV server lost</String>
+        <String id="1511">No Active streams</String>
         <String id="1950" prefix="My ">Status</String>
         <String id="1951">Harddisk</String>
         <String id="1952">Fan</String>
