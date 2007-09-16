@@ -378,6 +378,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\ISubtitleStream.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\MediaSeeking.h"
 				>
 			</File>
