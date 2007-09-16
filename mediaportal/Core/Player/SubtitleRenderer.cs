@@ -41,14 +41,12 @@ namespace MediaPortal.Player
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TEXT_SUBTITLE
     {
-        public int startTextLine;
-        public int totalTextLines;
+      public int startTextLine;
+      public int totalTextLines;
 
-        public UInt64 timeStamp;
-        public UInt64 timeOut; // in seconds
-        public string text; // subtitle lines seperated by newline characters
-
-
+      public UInt64 timeStamp;
+      public UInt64 timeOut; // in seconds
+      public string text; // subtitle lines seperated by newline characters
     }
 
   public class Subtitle
