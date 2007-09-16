@@ -1255,9 +1255,9 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     struct stSubtitleStream subtitle;
     subtitle.pid=m_pids.SubtitlePid1;
-    subtitle.language[0]=m_pids.Lang1_1;
-    subtitle.language[1]=m_pids.Lang1_2;
-    subtitle.language[2]=m_pids.Lang1_3;
+    subtitle.language[0]=m_pids.SubLang1_1;
+    subtitle.language[1]=m_pids.SubLang1_2;
+    subtitle.language[2]=m_pids.SubLang1_3;
     subtitle.language[3]=0;
     subtitle.subtitleType=0; // DVB subtitle
     m_subtitleStreams.push_back(subtitle);
@@ -1267,9 +1267,9 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     struct stSubtitleStream subtitle;
     subtitle.pid=m_pids.SubtitlePid2;
-    subtitle.language[0]=m_pids.Lang2_1;
-    subtitle.language[1]=m_pids.Lang2_2;
-    subtitle.language[2]=m_pids.Lang2_3;
+    subtitle.language[0]=m_pids.SubLang2_1;
+    subtitle.language[1]=m_pids.SubLang2_2;
+    subtitle.language[2]=m_pids.SubLang2_3;
     subtitle.language[3]=0;
     subtitle.subtitleType=0; // DVB subtitle
     m_subtitleStreams.push_back(subtitle);
@@ -1279,9 +1279,9 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     struct stSubtitleStream subtitle;
     subtitle.pid=m_pids.SubtitlePid3;
-    subtitle.language[0]=m_pids.Lang3_1;
-    subtitle.language[1]=m_pids.Lang3_2;
-    subtitle.language[2]=m_pids.Lang3_3;
+    subtitle.language[0]=m_pids.SubLang3_1;
+    subtitle.language[1]=m_pids.SubLang3_2;
+    subtitle.language[2]=m_pids.SubLang3_3;
     subtitle.language[3]=0;
     subtitle.subtitleType=0; // DVB subtitle
     m_subtitleStreams.push_back(subtitle);
@@ -1291,9 +1291,9 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     struct stSubtitleStream subtitle;
     subtitle.pid=m_pids.SubtitlePid4;
-    subtitle.language[0]=m_pids.Lang4_1;
-    subtitle.language[1]=m_pids.Lang4_2;
-    subtitle.language[2]=m_pids.Lang4_3;
+    subtitle.language[0]=m_pids.SubLang4_1;
+    subtitle.language[1]=m_pids.SubLang4_2;
+    subtitle.language[2]=m_pids.SubLang4_3;
     subtitle.language[3]=0;
     subtitle.subtitleType=0; // DVB subtitle
     m_subtitleStreams.push_back(subtitle);
