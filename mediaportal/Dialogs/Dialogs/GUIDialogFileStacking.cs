@@ -58,22 +58,27 @@ namespace MediaPortal.Dialogs
             // enable the CD's
             for (int i = 1; i <= m_iNumberOfFiles; ++i)
             {
-              EnableControl(GetID, i);
-              ShowControl(GetID, i);
+              GUIControl pControl = GetControl(i + 100);
+              EnableControl(GetID, i + 100);
+              ShowControl(GetID, i + 100);
+              if (i<m_iNumberOfFiles)
+               pControl.NavigateRight = i + 1 + 100;
+              else
+               pControl.NavigateRight = 101;
             }
 
             // disable CD's we dont use
             for (int i = m_iNumberOfFiles + 1; i <= 40; ++i)
             {
-              HideControl(GetID, i);
-              DisableControl(GetID, i);
+              HideControl(GetID, i + 100);
+              DisableControl(GetID, i + 100);
             }
           }
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
-            m_iSelectedFile = message.SenderControlId;
+            m_iSelectedFile = message.SenderControlId-100;
             PageDestroy();
           }
           break;
@@ -91,17 +96,22 @@ namespace MediaPortal.Dialogs
         int dwScreenWidth = GUIGraphicsContext.Width;
         for (int i = 1; i <= m_iNumberOfFiles; ++i)
         {
-          GUIControl pControl = GetControl(i);
+          GUIControl pControl = GetControl(i+100);
           if (null != pControl)
           {
-            int dwEndPos = dwScreenWidth - ((m_iNumberOfFiles - i) * 32) - 140;
-            int dwStartPos = dwScreenWidth;
+            int dwEndPos = dwScreenWidth/2 - ((m_iNumberOfFiles - i) * 32);
+            int dwStartPos = dwScreenWidth/2 + 140;
             float fStep = dwStartPos - dwEndPos;
             fStep /= 25.0f;
             fStep *= m_iFrames;
             int dwPosX = (int)(dwStartPos - fStep);
-            pControl.SetPosition(dwPosX, pControl.YPosition);
+            pControl.SetPosition(dwPosX, GUIGraphicsContext.Height/2);
           }
+        }
+        if (m_iFrames == 25)
+        {
+          GUIControl pControl = GetControl(101);
+          pControl.Focus = true;
         }
         m_iFrames++;
       }
@@ -119,7 +129,10 @@ namespace MediaPortal.Dialogs
       LoadSkin();
       AllocResources();
       InitControls();
-
+      SetControlLabel(GetID, 1, GUILocalizeStrings.Get(6037));
+      SetControlLabel(GetID, 2, GUILocalizeStrings.Get(6038));
+      SetControlLabel(GetID, 3, string.Empty);
+      SetControlLabel(GetID, 4, string.Empty);
       m_iNumberOfFiles = iFiles;
     }
 
