@@ -1558,7 +1558,7 @@ namespace MediaPortal.GUI.Library
         if (_listItems.Count % _columnCount > 0) iMaxRows++;
         int iNextRow = (_offset + _columnCount + (_cursorY+1) * _columnCount) / _columnCount;
 
-        if ((_cursorY + 1 == _rowCount - _scrollStartOffset) && (iNextRow < iMaxRows))
+        if ((_cursorY + 1 == _rowCount - _scrollStartOffset) && (iNextRow <= iMaxRows - _scrollStartOffset))
         {
           // we reached the scroll row
           {
