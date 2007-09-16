@@ -289,17 +289,16 @@ bool CDeMultiplexer::GetCurrentSubtitleStream(__int32 &stream)
 
 bool CDeMultiplexer::GetSubtitleStreamLanguage(__int32 stream,char* szLanguage)
 {
-  /*
+  
   if (stream <0 || stream>=m_subtitleStreams.size())
   {
     szLanguage[0]=szLanguage[1]=szLanguage[2]=0;
-    return;
+    return S_FALSE;
   }
-  szName[0]=m_subtitleStreams[stream].language[0];
-  szName[1]=m_subtitleStreams[stream].language[1];
-  szName[2]=m_subtitleStreams[stream].language[2];
-  szName[3]=m_subtitleStreams[stream].language[3];
-  */
+  szLanguage[0]=m_subtitleStreams[stream].language[0];
+  szLanguage[1]=m_subtitleStreams[stream].language[1];
+  szLanguage[2]=m_subtitleStreams[stream].language[2];
+  szLanguage[3]=m_subtitleStreams[stream].language[3];
 
   return S_OK;
 }
