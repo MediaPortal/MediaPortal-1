@@ -1,6 +1,6 @@
 namespace SetupTv.Sections
 {
-  partial class ChannelsInGroupControl
+  partial class ChannelsInRadioGroupControl
   {
     /// <summary> 
     /// Required designer variable.
@@ -159,7 +159,6 @@ namespace SetupTv.Sections
       this.mpButtonPreview.TabIndex = 4;
       this.mpButtonPreview.Text = "Preview";
       this.mpButtonPreview.UseVisualStyleBackColor = true;
-      this.mpButtonPreview.Click += new System.EventHandler(this.mpButtonPreview_Click);
       // 
       // ChannelsInGroupControl
       // 
