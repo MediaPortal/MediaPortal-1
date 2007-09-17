@@ -126,6 +126,7 @@ bool CPesDecoder::OnTsPacket(byte* tsPacket)
 		{
 			if (m_iStreamId<0){ //if stream id not set yet, get it from this 
 				m_iStreamId=tsPacket[pos+3];
+				assert(m_iStreamId >= 0);
 			}
 			else assert( m_iStreamId == tsPacket[pos+3]); // stream id should not change!
 
