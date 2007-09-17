@@ -923,6 +923,8 @@
         <String id="1507">Unbekannter Kanal</String>
         <String id="1508">Kanal wurde keiner Karte zugewiesen</String>
         <String id="1509">Keine Tuning-Details für diesen Kanal</String>
+        <String id="1510">Verbindung zum TV Service verloren</String>
+        <String id="1511">Keine Streams aktiv</String>
         <String id="1950" prefix="Mein ">Status</String>
         <String id="1951">Festplatte</String>
         <String id="1952">Lüfter</String>
@@ -1278,6 +1280,8 @@
         <String id="6034">Suche nach Genre</String>
         <String id="6035">Programmierung hinzufügen</String>
         <String id="6036">H.264 Video Codec</String>
+        <String id="6037">Mehrteiliger Film</String>
+        <String id="6038">Bitte eine Disk auswählen.</String>
         <String id="8000" prefix="Meine ">E-Mails</String>
         <String id="8001">E-Mails abrufen</String>
         <String id="8002">Autocheck aus</String>

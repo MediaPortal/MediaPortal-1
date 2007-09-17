@@ -922,8 +922,8 @@
         <String id="1507">Unknown channel</String>
         <String id="1508">Channel not mapped to any card</String>
         <String id="1509">No tuning details for the channel</String>
-        <String id="1510">Connection to TV server lost</String>
-        <String id="1511">No Active streams</String>
+        <String id="1510">Connection to TV service lost</String>
+        <String id="1511">No active streams</String>
         <String id="1950" prefix="My ">Status</String>
         <String id="1951">Harddisk</String>
         <String id="1952">Fan</String>
@@ -1269,7 +1269,7 @@
         <String id="6024">Skip steps</String>
         <String id="6025">Skip step set-up</String>
         <String id="6026">Please specify the IP address or host name</String>
-        <String id="6027">of the master TV-server</String>
+        <String id="6027">of the master TV service</String>
         <String id="6028">Current setting:</String>
         <String id="6029">Change</String>
         <String id="6030">Today</String>
@@ -1277,8 +1277,8 @@
         <String id="6032">Search by title</String>
         <String id="6033">Search by keyword</String>
         <String id="6034">Search by genre</String>
-        <String id="6035">Add Schedule</String>
-        <String id="6036">H.264 Video Codec</String>
+        <String id="6035">Add schedule</String>
+        <String id="6036">H.264 video codec</String>
         <String id="6037">Stacked movie</String>
         <String id="6038">Please select disk to play.</String>
         <String id="8000" prefix="My ">Mail</String>
