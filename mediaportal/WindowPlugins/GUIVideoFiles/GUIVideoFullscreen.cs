@@ -722,6 +722,10 @@ namespace MediaPortal.GUI.Video
               OnMessage(msg);
               Log.Info("GUIVideoFullscreen: switched subtitle to {0}", msg.Label);
             }
+            else
+            {
+              Log.Info("GUIVideoFullscreen toggle subtitle: no subtitle streams available!");
+            }
           }
           break;
 
