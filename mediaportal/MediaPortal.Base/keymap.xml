@@ -213,7 +213,7 @@
       <description>show context menu for currently selected item</description>
     </action>
     <action>
-      <id>25</id>
+      <id>119</id>
       <key>L</key>
       <sound>click.wav</sound>
       <description>Toggle Subtitles</description>
@@ -585,6 +585,12 @@
       <key>ESC</key>
       <sound />
       <description>Toggle between GUI and fullscreen</description>
+    </action>
+    <action>
+      <id>119</id>
+      <key>L</key>
+      <sound />
+      <description>Next subtitle</description>
     </action>
   </window>
   <window>
@@ -1055,6 +1061,12 @@
       <key>P</key>
       <sound />
       <description>Play/Unpause</description>
+    </action>
+    <action>
+      <id>119</id>
+      <key>L</key>
+      <sound />
+      <description>Next subtitle</description>
     </action>
   </window>
   <window>
