@@ -1,3 +1,5 @@
+#pragma warning( disable: 4995 4996 )
+
 #include "TeletextDecoder.h"
 #include "Hamming.h"
 #include "TeletextConversion.h"
@@ -5,11 +7,13 @@
 #include <sstream>
 #include <cassert>
 
+
+
 using namespace std;
 
+
+
 extern void LogDebug( const char *fmt, ... );
-
-
 
 #define MSB3_NP( x ) (x & 0x70) // 3 most significant bits, removing parity bit
 #define LSB4( x ) (x & 0x0F) // 4 less significant bits (no parity)

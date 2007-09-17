@@ -32,6 +32,8 @@ using namespace std;
 #include "Hamming.h"
 #include "TeletextConversion.h"
 
+#pragma warning( disable: 4995 4996 )
+
 extern void LogDebug( const char *fmt, ... );
 
 //
