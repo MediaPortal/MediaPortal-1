@@ -28,6 +28,7 @@ using TvLibrary.Epg;
 using TvLibrary.Log;
 using TvLibrary.Channels;
 using TvDatabase;
+using System.Collections.Specialized;
 
 namespace TvLibrary
 {
@@ -41,6 +42,8 @@ namespace TvLibrary
     private bool _updateThreadRunning;
     private string _epgLanguages;
     private bool _storeOnlySelectedChannels;
+    private string _titleTemplate;
+    private string _descriptionTemplate;
     #endregion
 
     public TimeShiftingEPGGrabber(ITVCard card)
@@ -57,6 +60,8 @@ namespace TvLibrary
       _epgTimer.Interval = timeout*60000;
       _epgTimer.Elapsed += new System.Timers.ElapsedEventHandler(_epgTimer_Elapsed);
       _updateThreadRunning = false;
+      _titleTemplate = layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
+      _descriptionTemplate = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
     }
     public bool StartGrab()
     {
@@ -240,7 +245,15 @@ namespace TvLibrary
           {
             string title; string description; string genre; int starRating; string classification; int parentRating;
             GetEPGLanguage(epgProgram.Text, out title, out description, out genre,out starRating, out classification, out parentRating);
-            Program prog = new Program(dbChannel.IdChannel, epgProgram.StartTime, epgProgram.EndTime, title,description,genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification,parentRating);
+            NameValueCollection values = new NameValueCollection();
+            values.Add("%TITLE%", title);
+            values.Add("%DESCRIPTION%", description);
+            values.Add("%GENRE%", genre);
+            values.Add("%STARRATING%", starRating.ToString());
+            values.Add("%STARRATING_STR%", GetStarRatingStr(starRating));
+            values.Add("%CLASSIFICATION%", classification);
+            values.Add("%PARENTALRATING%", parentRating.ToString());
+            Program prog = new Program(dbChannel.IdChannel, epgProgram.StartTime, epgProgram.EndTime,EvalTemplate(_titleTemplate,values) ,EvalTemplate(_descriptionTemplate,values),genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification,parentRating);
             prog.Persist();
             iInserted++;
           }
@@ -254,6 +267,44 @@ namespace TvLibrary
       _epg = null;
       _card.IsEpgGrabbing = false;
       _updateThreadRunning = false;
+    }
+    #endregion
+
+    #region Template helper
+    private string GetStarRatingStr(int starRating)
+    {
+      string rating = "<undefined>";
+      switch (starRating)
+      {
+        case 1:
+          rating = "*";
+          break;
+        case 2:
+          rating = "*+";
+          break;
+        case 3:
+          rating = "**";
+          break;
+        case 4:
+          rating = "**+";
+          break;
+        case 5:
+          rating = "***";
+          break;
+        case 6:
+          rating = "***+";
+          break;
+        case 7:
+          rating = "****";
+          break;
+      }
+      return rating;
+    }
+    private string EvalTemplate(string template, NameValueCollection values)
+    {
+      for (int i = 0; i < values.Count; i++)
+        template = template.Replace(values.Keys[i], values[i]);
+      return template;
     }
     #endregion
   }

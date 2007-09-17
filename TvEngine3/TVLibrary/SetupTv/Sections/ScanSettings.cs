@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -91,7 +92,8 @@ namespace SetupTv.Sections
         mpComboBoxPrio.SelectedIndex = 3; //fall back to default which is normal=3
       }
 
-      
+      edTitleTemplate.Text = layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
+      edDescriptionTemplate.Text = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
 
 
       
@@ -169,31 +171,13 @@ namespace SetupTv.Sections
       s.Value = mpComboBoxPrio.SelectedIndex.ToString();
       s.Persist();
 
-    }
+      s = layer.GetSetting("epgTitleTemplate", "%TITLE%");
+      s.Value = edTitleTemplate.Text;
+      s.Persist();
 
-    private void groupBox1_Enter(object sender, EventArgs e)
-    {
-
-    }
-
-    private void ScanSettings_Load(object sender, EventArgs e)
-    {
-
-    }
-
-    private void textBox1_TextChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void label2_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    private void label16_Click(object sender, EventArgs e)
-    {
-
+      s = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%");
+      s.Value = edDescriptionTemplate.Text;
+      s.Persist();
     }
 
     private void mpComboBoxPrio_SelectedIndexChanged(object sender, EventArgs e)
@@ -235,5 +219,56 @@ namespace SetupTv.Sections
       }
       
     }
+
+    private string GetStarRatingStr(int starRating)
+    {
+      string rating = "<undefined>";
+      switch (starRating)
+      {
+        case 1:
+          rating = "*";
+          break;
+        case 2:
+          rating = "*+";
+          break;
+        case 3:
+          rating = "**";
+          break;
+        case 4:
+          rating = "**+";
+          break;
+        case 5:
+          rating = "***";
+          break;
+        case 6:
+          rating = "***+";
+          break;
+        case 7:
+          rating = "****";
+          break;
+      }
+      return rating;
+    }
+
+    private string EvalTemplate(string template, NameValueCollection values)
+    {
+      for (int i = 0; i < values.Count; i++)
+        template = template.Replace(values.Keys[i], values[i]);
+      return template;
+    }
+
+    private void btnTest_Click(object sender, EventArgs e)
+    {
+      NameValueCollection defaults=new NameValueCollection();
+      defaults.Add("%TITLE%","Over the hedge");
+      defaults.Add("%DESCRIPTION%","A scheming raccoon fools a mismatched family of forest creatures into helping him repay a debt of food, by invading the new suburban sprawl that popped up while they were hibernating...and learns a lesson about family himself.");
+      defaults.Add("%GENRE%","movie/drama (general)");
+      defaults.Add("%STARRATING%","6");
+      defaults.Add("%STARRATING_STR%","***+");
+      defaults.Add("%CLASSIFICATION%","PG");
+      defaults.Add("%PARENTALRATING%","8");
+      edTitleTest.Text = EvalTemplate(edTitleTemplate.Text, defaults);
+      edDescriptionTest.Text = EvalTemplate(edDescriptionTemplate.Text, defaults);
+     }
   }
 }

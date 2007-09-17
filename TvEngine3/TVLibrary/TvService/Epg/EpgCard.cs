@@ -34,6 +34,7 @@ using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvEngine.Events;
 using System.Threading;
+using System.Collections.Specialized;
 
 namespace TvService
 {
@@ -76,6 +77,8 @@ namespace TvService
     Card _card;
     User _user;
     bool _storeOnlySelectedChannels;
+    string _titleTemplate;
+    string _descriptionTemplate;
     #endregion
 
     #region ctor
@@ -97,6 +100,8 @@ namespace TvService
       _epgTimer.Elapsed += new System.Timers.ElapsedEventHandler(_epgTimer_Elapsed);
       _eventHandler = new TvServerEventHandler(controller_OnTvServerEvent);
       TvBusinessLayer layer = new TvBusinessLayer();
+      _titleTemplate = layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
+      _descriptionTemplate = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%").Value;
       Setting setting = layer.GetSetting("epgStoreOnlySelected");
       _storeOnlySelectedChannels = (setting.Value == "yes");
       controller.OnTvServerEvent += _eventHandler;
@@ -864,8 +869,15 @@ namespace TvService
         if (description == null) description = "";
         if (genre == null) genre = "";
         if (classification == null) classification = "";
-
-        TvDatabase.Program newProgram = new TvDatabase.Program(channel.IdChannel, program.StartTime, program.EndTime, title, description, genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification,parentalRating);
+        NameValueCollection values = new NameValueCollection();
+        values.Add("%TITLE%", title);
+        values.Add("%DESCRIPTION%", description);
+        values.Add("%GENRE%", genre);
+        values.Add("%STARRATING%", starRating.ToString());
+        values.Add("%STARRATING_STR%", GetStarRatingStr(starRating));
+        values.Add("%CLASSIFICATION%", classification);
+        values.Add("%PARENTALRATING%", parentalRating.ToString());
+        TvDatabase.Program newProgram = new TvDatabase.Program(channel.IdChannel, program.StartTime, program.EndTime, EvalTemplate(_titleTemplate,values), EvalTemplate(_descriptionTemplate,values), genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification,parentalRating);
         newProgram.Persist();
         lastProgram = program.EndTime;
 
@@ -945,6 +957,42 @@ namespace TvService
         }
       }
       return Channel.Retrieve(idChannel);
+    }
+
+    private string GetStarRatingStr(int starRating)
+    {
+      string rating = "<undefined>";
+      switch (starRating)
+      {
+        case 1:
+          rating = "*";
+          break;
+        case 2:
+          rating = "*+";
+          break;
+        case 3:
+          rating = "**";
+          break;
+        case 4:
+          rating = "**+";
+          break;
+        case 5:
+          rating = "***";
+          break;
+        case 6:
+          rating = "***+";
+          break;
+        case 7:
+          rating = "****";
+          break;
+      }
+      return rating;
+    }
+    private string EvalTemplate(string template, NameValueCollection values)
+    {
+      for (int i = 0; i < values.Count; i++)
+        template = template.Replace(values.Keys[i], values[i]);
+      return template;
     }
     #endregion
     #endregion

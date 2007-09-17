@@ -660,7 +660,9 @@ namespace SetupTv.Sections
         Channel channel = new Channel(item.Description,true, false, 0, Schedule.MinSchedule, false, Schedule.MinSchedule, 10000, true, "", true, item.Description);
         channel.Persist();
         layer.AddWebStreamTuningDetails(channel,item.FileName,0);
+        iInserted++;
       }
+      MessageBox.Show("Imported " + iInserted.ToString() + " new channels from playlist");
     }
   }
 }

@@ -60,7 +60,7 @@ namespace SetupTv
         InitializeComponent();
         this.linkLabel1 = new System.Windows.Forms.LinkLabel();
         this.linkLabel1.AutoSize = true;
-        this.linkLabel1.Location = new System.Drawing.Point(16, 503);
+        this.linkLabel1.Location = new System.Drawing.Point(16, 523);
         this.linkLabel1.Name = "linkLabel1";
         this.linkLabel1.Size = new System.Drawing.Size(115, 13);
         this.linkLabel1.TabIndex = 8;
@@ -373,7 +373,7 @@ namespace SetupTv
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.Location = new System.Drawing.Point(520, 499);
+      this.cancelButton.Location = new System.Drawing.Point(520, 519);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 1;
@@ -384,7 +384,7 @@ namespace SetupTv
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.Location = new System.Drawing.Point(441, 499);
+      this.okButton.Location = new System.Drawing.Point(441, 519);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 0;
@@ -418,14 +418,14 @@ namespace SetupTv
       this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
       this.holderPanel.Location = new System.Drawing.Point(216, 48);
       this.holderPanel.Name = "holderPanel";
-      this.holderPanel.Size = new System.Drawing.Size(522, 428);
+      this.holderPanel.Size = new System.Drawing.Size(522, 455);
       this.holderPanel.TabIndex = 5;
       // 
       // beveledLine1
       // 
       this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.beveledLine1.Location = new System.Drawing.Point(8, 489);
+      this.beveledLine1.Location = new System.Drawing.Point(8, 509);
       this.beveledLine1.Name = "beveledLine1";
       this.beveledLine1.Size = new System.Drawing.Size(688, 2);
       this.beveledLine1.TabIndex = 6;
@@ -434,7 +434,7 @@ namespace SetupTv
       // applyButton
       // 
       this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.applyButton.Location = new System.Drawing.Point(361, 499);
+      this.applyButton.Location = new System.Drawing.Point(361, 519);
       this.applyButton.Name = "applyButton";
       this.applyButton.Size = new System.Drawing.Size(75, 23);
       this.applyButton.TabIndex = 7;
@@ -447,7 +447,7 @@ namespace SetupTv
       // buttonViewLog
       // 
       this.buttonViewLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonViewLog.Location = new System.Drawing.Point(600, 499);
+      this.buttonViewLog.Location = new System.Drawing.Point(600, 519);
       this.buttonViewLog.Name = "buttonViewLog";
       this.buttonViewLog.Size = new System.Drawing.Size(96, 23);
       this.buttonViewLog.TabIndex = 2;
@@ -461,7 +461,7 @@ namespace SetupTv
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.AutoScroll = true;
       this.CancelButton = this.cancelButton;
-      this.ClientSize = new System.Drawing.Size(754, 530);
+      this.ClientSize = new System.Drawing.Size(754, 550);
       this.Controls.Add(this.buttonViewLog);
       this.Controls.Add(this.applyButton);
       this.Controls.Add(this.beveledLine1);
