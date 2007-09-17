@@ -68,6 +68,7 @@ public:
 	}
 
 	bool PageInProgress(){
+		LogDebug("Mag %i in progress: %i", magID, (pageNumInProgress != -1));
 		return pageNumInProgress != -1;
 	}
 
@@ -105,7 +106,7 @@ public:
 		magazines = new Magazine[8];
 		
 		//assert(_CrtIsValidPointer(this));
-		LogDebug("TxtDec this %i", this);
+		//LogDebug("TxtDec this %i", this);
 		
 //		LogDebug("tcs is valid just after init? : %i", //_CrtIsValidPointer(tcs));
 		//LogDebug("magazines is valid just after init? : %i", //_CrtIsValidPointer(magazines));

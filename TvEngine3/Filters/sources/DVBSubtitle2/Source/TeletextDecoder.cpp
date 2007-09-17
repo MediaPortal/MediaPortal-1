@@ -70,7 +70,7 @@ string ToBinary(byte b){
 
 void Magazine::EndPage(){
 
-	if(pageNumInProgress < 0 || pageNumInProgress >= 966){
+	if(pageNumInProgress != -1 && (pageNumInProgress < 0 || pageNumInProgress >= 966)){
 		LogDebug("DANGER DANGER!, endpage with pageNumInProgress = %i", pageNumInProgress);
 		return;
 	}
@@ -172,6 +172,7 @@ void Magazine::StartPage(TeletextPageHeader& header){
 		if(pageNumInProgress != -1){ // if we were working on a previous page its finished now
 			EndPage();
 		}
+		//LogDebug("Mag %i FILLER ends page %i", magID, pageNumInProgress);
 		Clear();
 		pageNumInProgress = -1;
 		return;
@@ -181,7 +182,7 @@ void Magazine::StartPage(TeletextPageHeader& header){
 	language = header.Language();
 
 	if(pageNumInProgress != new_page_num){
-		//LogDebug("Page %i finished by new page %i", pageNumInProgress, new_page_num);
+		//LogDebug("Mag %i, Page %i finished by new page %i", magID, pageNumInProgress, new_page_num);
 		if(pageNumInProgress != -1){ // if we were working on a previous page its finished now
 			EndPage();
 		}
@@ -267,10 +268,12 @@ void TeletextDecoder::OnTeletextPacket(byte* data){
 			if(header.isSerial()){ // to support serial mode, just end all pages in progress (there should be only one)
 				int inProgress = 0;
 				for(int i = 0; i < 8; i++){
-					if(magazines[i].PageInProgress()) inProgress++;
+					if(magazines[i].PageInProgress()){					
+						inProgress++;
+					}
 					magazines[i].EndPage();
 				}
-				assert(inProgress == 1);
+				assert(inProgress <= 1); // at most one page should be in progress
 			}
 			this->magazines[magIndex].StartPage(header);
 		}
