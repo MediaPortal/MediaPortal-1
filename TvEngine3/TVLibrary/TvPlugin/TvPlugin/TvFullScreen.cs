@@ -641,6 +641,27 @@ namespace TvPlugin
           }
           break;
 
+        case Action.ActionType.ACTION_NEXT_SUBTITLE:
+          if (g_Player.SubtitleStreams > 0)
+          {
+            _statusVisible = true;
+            _statusTimeOutTimer = DateTime.Now;
+
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+            g_Player.SwitchToNextSubtitle();
+            if (g_Player.EnableSubtitle)
+              msg.Label = string.Format("{0} ({1}/{2})", g_Player.SubtitleLanguage(g_Player.CurrentSubtitleStream), g_Player.CurrentSubtitleStream + 1, g_Player.SubtitleStreams);
+            else
+              msg.Label = GUILocalizeStrings.Get(519); // Subtitles off
+            OnMessage(msg);
+            Log.Info("MyTV toggle subtitle: switched subtitle to {0}", msg.Label);
+          }
+          else
+          {
+            Log.Info("MyTV toggle subtitle: no subtitle streams available!");
+          }
+          break;
+
         case Action.ActionType.ACTION_PAGE_UP:
           OnPageUp();
           break;
