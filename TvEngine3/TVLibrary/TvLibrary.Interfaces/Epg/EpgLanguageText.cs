@@ -35,6 +35,8 @@ namespace TvLibrary.Epg
     string _title;
     string _description;
     string _genre;
+    int _starRating;
+    string _classification;
     int _parentalRating;
     #endregion
 
@@ -46,13 +48,17 @@ namespace TvLibrary.Epg
     /// <param name="title">The title.</param>
     /// <param name="description">The description.</param>
     /// <param name="genre">The genre.</param>
+    /// <param name="starRating">The star rating</param>
+    /// <param name="classification">The classification</param>
     /// <param name="parentalRating">The parental rating.</param>
-    public EpgLanguageText(string language, string title, string description, string genre, int parentalRating)
+    public EpgLanguageText(string language, string title, string description, string genre,int starRating,string classification, int parentalRating)
     {
       Language = language;
       Title = title;
       Description = description;
       Genre = genre;
+      StarRating = starRating;
+      Classification = Classification;
       ParentalRating = parentalRating;
     }
     #endregion
@@ -120,6 +126,38 @@ namespace TvLibrary.Epg
       {
         _genre = value;
         if (_genre == null) _genre = "";
+      }
+    }
+    /// <summary>
+    /// Gets or sets the star rating.
+    /// </summary>
+    /// <value>The star rating.</value>
+    public int StarRating
+    {
+      get
+      {
+        return _starRating;
+      }
+      set
+      {
+        _starRating = value;
+        if (_starRating == null) _starRating = 0;
+      }
+    }
+    /// <summary>
+    /// Gets or sets the classification.
+    /// </summary>
+    /// <value>The classification.</value>
+    public string Classification
+    {
+      get
+      {
+        return _classification;
+      }
+      set
+      {
+        _classification = value;
+        if (_classification == null) _classification = "";
       }
     }
     /// <summary>

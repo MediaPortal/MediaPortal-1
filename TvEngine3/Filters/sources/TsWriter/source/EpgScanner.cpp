@@ -144,13 +144,13 @@ STDMETHODIMP CEpgScanner::GetEPGChannel( ULONG channelidx,  WORD* networkId,  WO
 	}
 	return S_OK;
 }
-STDMETHODIMP CEpgScanner::GetEPGEvent( ULONG channel,  ULONG eventidx,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre    )
+STDMETHODIMP CEpgScanner::GetEPGEvent( ULONG channel,  ULONG eventidx,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre,int* starRating,char** classification    )
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
     unsigned int eventid;
-		m_epgParser.GetEPGEvent( channel,  eventidx, language,dateMJD, timeUTC, duration, genre,&eventid   );
+		m_epgParser.GetEPGEvent( channel,  eventidx, language,dateMJD, timeUTC, duration, genre,starRating,classification,&eventid   );
 	}
 	catch(...)
 	{

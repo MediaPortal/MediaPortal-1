@@ -181,89 +181,7 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 					}
 					else if (descriptor_tag==0x89)
 					{
-						/*89: B2 05
-						is the Movie rating as per http://www.mpaa.org
-						first 3 bits are:
-
-						0x1: *
-						0x2: *+
-						0x3: **
-						0x4: **+
-						0x5: ***
-						0x6: ***+
-						0x7: ****
-
-						next 3 bits are:
-
-						0x0: NA
-						0x1: G
-						0x2: PG
-						0x3: PG-13
-						0x4: R
-						0x5: NC-17
-						0x6: R
-						0x7: NR
-
-						the next bits and bytes describe, but i haven't figured out the order yet:
-						SC,L,N,V 
-						http://dvbn.happysat.org/viewtopic.php?t=16912&highlight=parental+rating
-
-						*/
-						byte bRating=buf[start+off+2]&0x7;
-						string starRating="<unrated>";
-						switch (bRating)
-						{
-							case 1:
-								starRating="*";
-								break;
-							case 2:
-								starRating="*+";
-								break;
-							case 3:
-								starRating="**";
-								break;
-							case 4:
-								starRating="**+";
-								break;
-							case 5:
-								starRating="***";
-								break;
-							case 6:
-								starRating="***+";
-								break;
-							case 7:
-								starRating="****";
-								break;
-						}
-						byte bPRating=buf[start+off+3]&0x38;
-						string pRating="<unknown>";
-						switch (bPRating)
-						{
-							case 0:
-								pRating="NR";
-							case 1:
-								pRating="G";
-								break;
-							case 2:
-								pRating="PG";
-								break;
-							case 3:
-								pRating="PG-13";
-								break;
-							case 4:
-								pRating="R";
-								break;
-							case 5:
-								pRating="AO";
-								break;
-							case 6:
-								pRating="<null rating>";
-								break;
-							case 7:
-								pRating="NC-17";
-								break;
-						}
-						LogDebug("epg:  star rating: %s parental rating: %s",starRating.c_str(),pRating.c_str());
+						DecodeCombinedStarRating_MPAARatingDescriptor(&buf[start+off],epgEvent);
 					}
 					else if (descriptor_tag ==0x91)
 					{
@@ -296,6 +214,66 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len)
 	return S_OK;
 }
 
+void CEpgDecoder::DecodeCombinedStarRating_MPAARatingDescriptor(byte* data,EPGEvent &epgEvent)
+{
+	/*89: B2 05
+	is the Movie rating as per http://www.mpaa.org
+	first 3 bits are:
+		0x1: *
+		0x2: *+
+		0x3: **
+		0x4: **+
+		0x5: ***
+		0x6: ***+
+		0x7: ****
+	next 3 bits are:
+		0x0: NA
+		0x1: G
+    	0x2: PG
+		0x3: PG-13
+		0x4: R
+		0x5: NC-17
+		0x6: R
+		0x7: NR
+
+	the next bits and bytes describe, but i haven't figured out the order yet:
+				SC,L,N,V 
+	http://dvbn.happysat.org/viewtopic.php?t=16912&highlight=parental+rating */
+	
+	int starRating=(int)data[2]&0x7;
+	if (starRating>0 && starRating<8)
+		epgEvent.starRating=starRating;
+	byte bPRating=data[3]&0x38;
+	epgEvent.classification="<unknown>";
+	switch (bPRating)
+	{
+		case 0:
+			epgEvent.classification="NR";
+			break;
+		case 1:
+			epgEvent.classification="G";
+			break;
+		case 2:
+			epgEvent.classification="PG";
+			break;
+		case 3:
+			epgEvent.classification="PG-13";
+			break;
+		case 4:
+			epgEvent.classification="R";
+			break;
+		case 5:
+			epgEvent.classification="AO";
+			break;
+		case 6:
+			epgEvent.classification="R";
+			break;
+		case 7:
+			epgEvent.classification="NC-17";
+			break;
+	}
+}
+
 void CEpgDecoder::DecodeParentalRatingDescriptor(byte* data, EPGEvent& epgEvent)
 {
 	try
@@ -303,7 +281,7 @@ void CEpgDecoder::DecodeParentalRatingDescriptor(byte* data, EPGEvent& epgEvent)
 		int descriptor_length=data[1];
 		if (descriptor_length % 4!=0)
 		{
-			LogDebug("*** epg:DecodeParentalRatingDescriptor check 1");
+			//LogDebug("*** epg:DecodeParentalRatingDescriptor check 1");
 			return; // Invalid length. Must be always a multiply of 4
 		}
 		int len=0;
@@ -318,7 +296,7 @@ void CEpgDecoder::DecodeParentalRatingDescriptor(byte* data, EPGEvent& epgEvent)
 				// 0x00			undefined
 				// 0x01-0x0F	minimum=rating+3 years
 				// 0x10-0xFF	defined by the broadcaster
-				LogDebug("*** epg:DecodeParentalRatingDescriptor check 2");
+				//LogDebug("*** epg:DecodeParentalRatingDescriptor check 2");
 			}
 			else
 			{
@@ -1108,7 +1086,7 @@ void CEpgDecoder::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transpo
 		*service_id=m_prevChannel.service_id;
 	}
 }
-void CEpgDecoder::GetEPGEvent( ULONG channel,  ULONG eventIndex,ULONG* languageCount, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre ,unsigned int* eventid   )
+void CEpgDecoder::GetEPGEvent( ULONG channel,  ULONG eventIndex,ULONG* languageCount, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre ,int* starRating, char** classification, unsigned int* eventid   )
 {
 	CEnterCriticalSection lock (m_critSection);
   Sort();
@@ -1142,6 +1120,8 @@ void CEpgDecoder::GetEPGEvent( ULONG channel,  ULONG eventIndex,ULONG* languageC
 	*timeUTC=epgEvent.timeUTC;
 	*duration=epgEvent.duration;
 	*genre=(char*)epgEvent.genre.c_str() ;
+	*starRating=epgEvent.starRating;
+	*classification=(char*)epgEvent.classification.c_str();
 }
 void CEpgDecoder::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription, unsigned int* parentalRating  )
 {

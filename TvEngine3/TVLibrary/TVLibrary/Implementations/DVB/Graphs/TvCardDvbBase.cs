@@ -2488,7 +2488,7 @@ namespace TvLibrary.Implementations.DVB
 
               EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
 
-              EpgLanguageText epgLang = new EpgLanguageText("ALL", title, summary, theme,-1);
+              EpgLanguageText epgLang = new EpgLanguageText("ALL", title, summary, theme,0,"",-1);
               program.Text.Add(epgLang);
               epgChannel.Programs.Add(program);
             }
@@ -2522,13 +2522,20 @@ namespace TvLibrary.Implementations.DVB
               for (uint i = 0; i < eventCount; ++i)
               {
                 uint start_time_MJD = 0, start_time_UTC = 0, duration = 0, languageId = 0, languageCount = 0;
-                string title, description, genre;
+                string title, description, genre, classification;
                 IntPtr ptrTitle = IntPtr.Zero;
                 IntPtr ptrDesc = IntPtr.Zero;
                 IntPtr ptrGenre = IntPtr.Zero;
+                int starRating;
+                IntPtr ptrClassification = IntPtr.Zero;
                 int parentalRating;
-                _interfaceEpgGrabber.GetEPGEvent((uint)x, (uint)i, out languageCount, out start_time_MJD, out start_time_UTC, out duration, out ptrGenre);
+
+                _interfaceEpgGrabber.GetEPGEvent((uint)x, (uint)i, out languageCount, out start_time_MJD, out start_time_UTC, out duration, out ptrGenre, out starRating, out ptrClassification);
                 genre = DvbTextConverter.Convert(ptrGenre, "");
+                classification = DvbTextConverter.Convert(ptrClassification, "");
+
+                if (starRating < 1 || starRating > 7)
+                  starRating = 0;
 
                 int duration_hh = getUTC((int)((duration >> 16)) & 255);
                 int duration_mm = getUTC((int)((duration >> 8)) & 255);
@@ -2592,11 +2599,12 @@ namespace TvLibrary.Implementations.DVB
                     if (description == null) description = "";
                     if (language == null) language = "";
                     if (genre == null) genre = "";
+                    if (classification == null) classification = "";
                     title = title.Trim();
                     description = description.Trim();
                     language = language.Trim();
                     genre = genre.Trim();
-                    EpgLanguageText epgLangague = new EpgLanguageText(language, title, description, genre,parentalRating);
+                    EpgLanguageText epgLangague = new EpgLanguageText(language, title, description, genre,starRating,classification, parentalRating);
                     epgProgram.Text.Add(epgLangague);
 
                   }

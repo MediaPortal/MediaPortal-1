@@ -89,9 +89,11 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="time">The time.</param>
     /// <param name="duration">The duration.</param>
     /// <param name="genre">The genre.</param>
+    /// <param name="starRating">The star rating</param>
+    /// <param name="classification">The classification</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGEvent([In] uint channel, [In] uint eventid, [Out] out uint languageCount, [Out] out uint date, [Out] out uint time, [Out] out uint duration, out IntPtr genre);
+    int GetEPGEvent([In] uint channel, [In] uint eventid, [Out] out uint languageCount, [Out] out uint date, [Out] out uint time, [Out] out uint duration, out IntPtr genre,[Out] out int starRating,out IntPtr classification );
 
     /// <summary>
     /// Gets the EPG language.

@@ -46,7 +46,7 @@ public:
 	ULONG	GetEPGChannelCount( );
 	ULONG	GetEPGEventCount( ULONG channel);
 	void	GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
-	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre ,unsigned int* eventid    );
+	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre ,int* starRating, char** classification, unsigned int* eventid    );
 	void    GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription,unsigned int* parentalRating    );
 	void	AbortGrabbing();
 

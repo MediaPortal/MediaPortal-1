@@ -820,6 +820,8 @@ namespace TvService
         string title = "";
         string description = "";
         string genre = "";
+        int starRating = 0;
+        string classification = "";
         int parentalRating = -1;
 
         if (program.Text.Count != 0)
@@ -843,6 +845,8 @@ namespace TvService
             title = program.Text[offset].Title;
             description = program.Text[offset].Description;
             genre = program.Text[offset].Genre;
+            starRating = program.Text[offset].StarRating;
+            classification = program.Text[offset].Classification;
             parentalRating = program.Text[offset].ParentalRating;
           }
           else
@@ -850,6 +854,8 @@ namespace TvService
             title = program.Text[0].Title;
             description = program.Text[0].Description;
             genre = program.Text[0].Genre;
+            starRating = program.Text[0].StarRating;
+            classification = program.Text[0].Classification;
             parentalRating = program.Text[0].ParentalRating;
           }
         }
@@ -857,8 +863,9 @@ namespace TvService
         if (title == null) title = "";
         if (description == null) description = "";
         if (genre == null) genre = "";
+        if (classification == null) classification = "";
 
-        TvDatabase.Program newProgram = new TvDatabase.Program(channel.IdChannel, program.StartTime, program.EndTime, title, description, genre, false, DateTime.MinValue, string.Empty, string.Empty, -1, string.Empty,parentalRating);
+        TvDatabase.Program newProgram = new TvDatabase.Program(channel.IdChannel, program.StartTime, program.EndTime, title, description, genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification,parentalRating);
         newProgram.Persist();
         lastProgram = program.EndTime;
 
