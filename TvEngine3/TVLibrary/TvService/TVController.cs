@@ -1147,7 +1147,11 @@ namespace TvService
         if (false == _cards[cardId].IsLocal)
         {
           try
-          {													
+          {
+						if (this.IsGrabbingEpg(cardId))
+						{
+							_epgGrabber.Stop(); // we need this, otherwise tvservice will hang in the event stoptimeshifting is called by heartbeat timeout function
+						}	
             RemoteControl.HostName = _cards[cardId].DataBaseCard.ReferencedServer().HostName;
             return RemoteControl.Instance.StopTimeShifting(ref user);
           }
