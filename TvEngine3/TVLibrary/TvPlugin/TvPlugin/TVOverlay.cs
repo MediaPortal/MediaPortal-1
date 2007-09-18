@@ -42,6 +42,7 @@ namespace TvPlugin
   public class TvOverlay : GUIOverlayWindow, IRenderLayer
   {
     DateTime _updateTimer = DateTime.Now;
+		DateTime _updateHeartBeatTimer = DateTime.Now;
     bool _lastStatus = false;
     bool _didRenderLastTime = false;
     public TvOverlay()
@@ -95,12 +96,24 @@ namespace TvPlugin
     }
     public bool ShouldRenderLayer()
     {
+
       if (GUIGraphicsContext.IsFullScreenVideo) return false;
       //{
       //  OnUpdateState(false);
       //  return base.IsAnimating(AnimationType.WindowClose);
       //}
-      
+
+			TimeSpan tshb = DateTime.Now - _updateHeartBeatTimer;
+
+			if (tshb.TotalSeconds > TVHome.HEARTBEAT_INTERVAL)
+			{
+				// send heartbeat to tv server each 5 sec.
+				// this way we signal to the server that we are alive thus avoid being kicked.
+				Log.Debug("Process: sending HeartBeat signal to server.");
+				RemoteControl.Instance.HeartBeat(TVHome.Card.User);
+				_updateHeartBeatTimer = DateTime.Now;
+			}
+
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds < 1000) return _lastStatus;
 
@@ -129,7 +142,7 @@ namespace TvPlugin
     public void RenderLayer(float timePassed)
     {
       if (GUIGraphicsContext.IsFullScreenVideo) return ;
-      Render(timePassed);
+      Render(timePassed);			
     }
     #endregion
   }

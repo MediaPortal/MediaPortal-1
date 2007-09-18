@@ -60,7 +60,7 @@ namespace TvPlugin
 
 		#region constants
 
-		private const int HEARTBEAT_INTERVAL = 15;
+		public const int HEARTBEAT_INTERVAL = 5; //seconds
 
 		#endregion
 
@@ -879,11 +879,11 @@ namespace TvPlugin
     public override void Process()
     {            
       TimeSpan ts = DateTime.Now - _updateTimer;
-			TimeSpan tshb = DateTime.Now - _updateHeartBeatTimer;
+			TimeSpan tshb = DateTime.Now - _updateHeartBeatTimer;			
 
 			if (tshb.TotalSeconds > HEARTBEAT_INTERVAL)
 			{
-				// send heartbeat to tv server each 15 sec.
+				// send heartbeat to tv server each 5 sec.
 				// this way we signal to the server that we are alive thus avoid being kicked.
 				Log.Debug("Process: sending HeartBeat signal to server.");
 				RemoteControl.Instance.HeartBeat(TVHome.Card.User);
