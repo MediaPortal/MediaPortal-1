@@ -66,7 +66,7 @@ namespace TvService
       _timer.Interval = 60000;
       _timer.Enabled = true;
       _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
-    }
+    }	
 
     #endregion
 
@@ -178,6 +178,21 @@ namespace TvService
         _owner = _users[0];
       }
     }
+
+		public void HeartBeatUser(User user)
+		{
+			Log.Debug("user:{0} heartbeat received", user.Name);
+
+			foreach (User existingUser in _users)
+			{
+				if (existingUser.Name == user.Name)
+				{
+					existingUser.HeartBeat = DateTime.Now;					
+					break;
+				}
+			}			
+		}
+
     /// <summary>
     /// Gets the user.
     /// </summary>

@@ -155,6 +155,15 @@ namespace TvService
       }
     }
 
+		public void HeartBeartUser(User user)
+		{
+			TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+			if (context == null) return;
+			if (!context.DoesExists(user)) return;
+			
+			context.HeartBeatUser(user);
+		}
+
     /// <summary>
     /// Determines whether the card is locked and ifso returns by which user
     /// </summary>

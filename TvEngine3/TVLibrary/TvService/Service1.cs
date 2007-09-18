@@ -141,7 +141,7 @@ namespace TvService
       if (_controller != null)
       {
         _controller.DeInit();
-        _controller.Dispose();
+        //_controller.Dispose(); dispose is already calling deinit, so why bother ?
         _controller = null;
       }
 

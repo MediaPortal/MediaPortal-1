@@ -726,6 +726,12 @@ namespace TvControl
 
     bool SupportsSubChannels(int cardId);
 
+		/// <summary>
+		/// Signals heartbeat to the server
+		/// </summary>		
+		/// <param name="user">The user.</param>
+		void HeartBeat(User user);
+
     /// <summary>
     /// Gets the number of channels decrypting.
     /// </summary>

@@ -36,6 +36,7 @@ namespace TvControl
     int _cardId;
     int _subChannel;
     int _idChannel;
+		DateTime _lastHeartBeat;
     [NonSerialized]
     object _history;
 
@@ -49,6 +50,7 @@ namespace TvControl
       _cardId = -1;
       _idChannel = -1;
       _subChannel=-1;
+			_lastHeartBeat = DateTime.MinValue;
     }
 
     /// <summary>
@@ -170,6 +172,18 @@ namespace TvControl
         _history = value;
       }
     }
+
+		public DateTime HeartBeat
+		{
+			get
+			{
+				return _lastHeartBeat;
+			}
+			set
+			{
+				_lastHeartBeat = value;
+			}
+		}
 
     #region ICloneable Members
 

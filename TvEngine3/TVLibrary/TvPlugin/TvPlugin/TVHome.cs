@@ -58,6 +58,12 @@ namespace TvPlugin
   public class TVHome : GUIWindow, ISetupForm, IShowPlugin
   {
 
+		#region constants
+
+		private const int HEARTBEAT_INTERVAL = 15;
+
+		#endregion
+
     #region variables
     enum Controls
     {
@@ -71,6 +77,7 @@ namespace TvPlugin
     static TVUtil _util;
     static VirtualCard _card = null;
     DateTime _updateTimer = DateTime.Now;
+		DateTime _updateHeartBeatTimer = DateTime.Now;
     static DateTime _updateProgressTimer = DateTime.MinValue;
     bool _autoTurnOnTv = false;
     static bool _autoswitchTVon = false;
@@ -872,6 +879,17 @@ namespace TvPlugin
     public override void Process()
     {            
       TimeSpan ts = DateTime.Now - _updateTimer;
+			TimeSpan tshb = DateTime.Now - _updateHeartBeatTimer;
+
+			if (tshb.TotalSeconds > HEARTBEAT_INTERVAL)
+			{
+				// send heartbeat to tv server each 15 sec.
+				// this way we signal to the server that we are alive thus avoid being kicked.
+				Log.Debug("Process: sending HeartBeat signal to server.");
+				RemoteControl.Instance.HeartBeat(TVHome.Card.User);
+				_updateHeartBeatTimer = DateTime.Now;				
+			}
+			
       
       if (GUIGraphicsContext.InVmr9Render) return;
       if (ts.TotalMilliseconds < 1000) return;      

@@ -20,6 +20,7 @@
  */
 
 using System;
+using System.Threading;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -51,6 +52,10 @@ namespace TvService
   /// </summary>
   public class TVController : MarshalByRefObject, IController, IDisposable, ITvServerEvent
   {
+		#region constants
+		private const int HEARTBEAT_MAX_SECS_EXCEED_ALLOWED = 30;
+		#endregion
+
     #region variables
     /// <summary>
     /// EPG grabber for DVB
@@ -69,6 +74,7 @@ namespace TvService
     /// </summary>
     bool _isMaster = false;
 
+		Thread heartBeatMonitorThread = null;
 
     /// <summary>
     /// Reference to our server
@@ -103,7 +109,7 @@ namespace TvService
           Init();
         }
       }
-    }
+    }		
 
     public Dictionary<int, ITvCardHandler> CardCollection
     {
@@ -448,6 +454,23 @@ namespace TvService
             }
           }
         }
+
+				// setup heartbeat monitoring thread.
+				// useful for kicking idle/dead clients.
+				Log.WriteFile("Controller: setup HeartBeat Monitor");
+
+				//stop thread, just incase it is running.
+				if (heartBeatMonitorThread != null)
+				{
+					if (heartBeatMonitorThread.IsAlive)
+					{
+						heartBeatMonitorThread.Abort();
+					}
+				}
+
+				heartBeatMonitorThread = new Thread(HeartBeatMonitor);				
+				heartBeatMonitorThread.Start();				
+				
       }
       catch (Exception ex)
       {
@@ -481,8 +504,18 @@ namespace TvService
     /// </summary>
     public void DeInit()
     {
+			Log.Info("Controller: DeInit.");
       try
       {
+				if (heartBeatMonitorThread != null)
+				{
+					if (heartBeatMonitorThread.IsAlive)
+					{
+						Log.Info("Controller: HeartBeat monitor stopped...");
+						heartBeatMonitorThread.Abort();
+					}
+				}
+
         if (_pluginsStarted != null)
         {
           foreach (ITvServerPlugin plugin in _pluginsStarted)
@@ -1104,7 +1137,7 @@ namespace TvService
     /// <param name="cardId">id of the card.</param>
     /// <returns></returns>
     public bool StopTimeShifting(ref User user)
-    {
+    {						
       if (user.CardId < 0) return false;
       int cardId = user.CardId;
       try
@@ -1114,7 +1147,7 @@ namespace TvService
         if (false == _cards[cardId].IsLocal)
         {
           try
-          {
+          {													
             RemoteControl.HostName = _cards[cardId].DataBaseCard.ReferencedServer().HostName;
             return RemoteControl.Instance.StopTimeShifting(ref user);
           }
@@ -1133,6 +1166,10 @@ namespace TvService
         Log.Write("Controller: StopTimeShifting {0}", cardId);
         lock (this)
         {
+					if (this.IsGrabbingEpg(cardId))
+					{
+						_epgGrabber.Stop(); // we need this, otherwise tvservice will hang in the event stoptimeshifting is called by heartbeat timeout function
+					}
           bool result = false;
           int subChannel = user.SubChannel;
           if (_cards[cardId].TimeShifter.Stop(ref user))
@@ -2039,6 +2076,48 @@ namespace TvService
 
     #region private members
 
+		private void HeartBeatMonitor()
+		{
+			Log.Write("Controller:   Heartbeat Monitor initiated; max timeout allowed is {0} sec.", HEARTBEAT_MAX_SECS_EXCEED_ALLOWED);
+			while (true)
+			{
+				Log.Write("Controller:   Heartbeat Monitor ping");
+
+				DateTime now = DateTime.Now;
+				Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
+
+				//for each card
+				while (enumerator.MoveNext())
+				{
+					KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
+					//get a list of all users for this card
+					User[] users = keyPair.Value.Users.GetUsers();
+					if (users != null)
+					{
+						//for each user
+						for (int i = 0; i < users.Length; ++i)
+						{
+							User tmpUser = users[i];
+							if (tmpUser.HeartBeat > DateTime.MinValue)
+							{
+								TimeSpan ts = tmpUser.HeartBeat - now;
+
+								// more than 30 seconds have elapsed since last heartbeat was received.
+								// lets kick the client
+								if (ts.TotalSeconds < (-1 * HEARTBEAT_MAX_SECS_EXCEED_ALLOWED))
+								{
+									Log.Write("Controller:   Heartbeat Monitor (30+ sec. max idletime allowed)- kicking idle user {0}", tmpUser.Name);
+									bool res = StopTimeShifting(ref tmpUser);
+								}
+							}							
+						}
+					}
+				}
+				// client signals heartbeats each 15 sec.
+				Thread.Sleep(HEARTBEAT_MAX_SECS_EXCEED_ALLOWED * 1000); //sleep for 30 secs. before checking heartbeat again
+			}
+		}
+
     /// <summary>
     /// Determines whether the the user is the owner of the card
     /// </summary>
@@ -2073,6 +2152,13 @@ namespace TvService
     {
       if (cardId < 0) return false;
       return _cards[cardId].SupportsSubChannels;
+    }
+
+    public void HeartBeat(User user)
+    {
+			if (user == null) return;
+			if (user.CardId < 0) return;
+			_cards[user.CardId].Users.HeartBeartUser(user);			
     }
 
     /// <summary>
