@@ -51,6 +51,25 @@ namespace MediaPortal.Configuration.Sections
       IntPtr uTimeout,
       out IntPtr lpdwResult);
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    public class DISPLAY_DEVICE
+    {
+      public int cb = 0;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+      public string DeviceName = new String(' ', 32);
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public string DeviceString = new String(' ', 128);
+      public int StateFlags = 0;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public string DeviceID = new String(' ', 128);
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public string DeviceKey = new String(' ', 128);    
+    }
+
+    [DllImport("user32.dll")]
+    public extern static bool EnumDisplayDevices(string lpDevice,
+      int iDevNum, [In, Out] DISPLAY_DEVICE lpDisplayDevice, int dwFlags);
+
     const int WM_SETTINGCHANGE = 0x1A;
     const int SMTO_ABORTIFHUNG = 0x2;
     const int HWND_BROADCAST = 0xFFFF;
@@ -108,11 +127,22 @@ namespace MediaPortal.Configuration.Sections
       cbScreen.Items.Clear();
       foreach (Screen screen in Screen.AllScreens)
       {
+        int dwf = 0;
+        DISPLAY_DEVICE info = new DISPLAY_DEVICE();
+        string monitorname = null;
+        info.cb = Marshal.SizeOf(info);
+        if (EnumDisplayDevices(screen.DeviceName, 0, info, dwf))
+          monitorname = info.DeviceString;
+        if (monitorname == null)
+          monitorname = "";
+        
         foreach (AdapterInformation adapter in Manager.Adapters)
         {
           if (screen.DeviceName.StartsWith(adapter.Information.DeviceName.Trim()))
           {
-            cbScreen.Items.Add(adapter.Information.Description + " (" + screen.Bounds.Width.ToString() + "x" + screen.Bounds.Height.ToString() + ")");
+            cbScreen.Items.Add(string.Format("{0} ({1}x{2}) on {3}",               
+              monitorname, screen.Bounds.Width, screen.Bounds.Height,
+              adapter.Information.Description));
           }
         }
       }
