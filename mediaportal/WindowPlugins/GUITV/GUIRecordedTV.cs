@@ -27,7 +27,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-//using System.Threading;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -58,28 +57,19 @@ namespace MediaPortal.GUI.TV
 
     void PerformRequest()
     {
-      //if (_creatingThumbNails)
-      //  return;
-      //try
-      //{
-      //  _creatingThumbNails = true;
-        List<TVRecorded> recordings = new List<TVRecorded>();
-        TVDatabase.GetRecordedTV(ref recordings);
-        foreach (TVRecorded rec in recordings)
+
+      List<TVRecorded> recordings = new List<TVRecorded>();
+      TVDatabase.GetRecordedTV(ref recordings);
+      foreach (TVRecorded rec in recordings)
+      {
+        string thumbNail = Util.Utils.GetCoverArtName(Thumbs.TVRecorded, Util.Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, Util.Utils.GetThumbExtension())));
+        if (!System.IO.File.Exists(thumbNail))
         {
-          string thumbNail = Util.Utils.GetCoverArtName(Thumbs.TVRecorded, Util.Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, Util.Utils.GetThumbExtension())));
-          if (!System.IO.File.Exists(thumbNail))
-          {
-            Log.Debug("GUIRecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
-            if (!DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail))
-              Log.Info("GUIRecordedTV: No thumbnail created for {0}", Util.Utils.SplitFilename(rec.FileName));
-          }
+          Log.Debug("GUIRecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
+          if (!DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail))
+            Log.Info("GUIRecordedTV: No thumbnail created for {0}", Util.Utils.SplitFilename(rec.FileName));
         }
-      //}
-      //finally
-      //{
-      //  _creatingThumbNails = false;
-      //}
+      }
     }
   }
   #endregion
@@ -94,13 +84,6 @@ namespace MediaPortal.GUI.TV
     }
 
     #region variables
-    enum Controls
-    {
-      LABEL_PROGRAMTITLE = 13,
-      LABEL_PROGRAMTIME = 14,
-      LABEL_PROGRAMDESCRIPTION = 15,
-      LABEL_PROGRAMGENRE = 17,
-    };
 
     enum SortMethod
     {
@@ -125,7 +108,6 @@ namespace MediaPortal.GUI.TV
     bool _createRecordedThumbs = true;
     int m_iSelectedItem = 0;
     string currentShow = String.Empty;
-    //bool _creatingThumbNails = false;
     RecordingThumbCacher thumbworker = null;
 
     [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
@@ -279,8 +261,6 @@ namespace MediaPortal.GUI.TV
     {
       base.OnPageLoad();
 
-
-      //DiskManagement.ImportDvrMsFiles();
       LoadSettings();
       LoadDirectory();
       if (Recorder.IsViewing())
@@ -306,9 +286,7 @@ namespace MediaPortal.GUI.TV
       GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
-      //CreateThumbnails();
-      //if (GlobalServiceProvider.Get<IThreadPool>().BusyThreadCount == 0)
-      //{
+
       if (thumbworker == null)
       {
         if (_createRecordedThumbs)
@@ -316,9 +294,6 @@ namespace MediaPortal.GUI.TV
       }
       else
         Log.Debug("GUIRecordedTV: thumbworker already running - didn't start another one");
-      //}
-      //else
-      //  Log.Info("GUIRecordedTV: threadpool busy - didn't start thumb creation");
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -329,8 +304,6 @@ namespace MediaPortal.GUI.TV
         ShowViews();
         return;
       }
-
-
       if (control == btnViewAs)
       {
         switch (currentViewMethod)
@@ -527,7 +500,6 @@ namespace MediaPortal.GUI.TV
               GUIListItem item = new GUIListItem();
               item.Label = rec.Title;
               item.TVTag = rec;
-              //string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
               string strLogo = Util.Utils.GetCoverArt(Thumbs.TVRecorded, Util.Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, Util.Utils.GetThumbExtension())));
               
               if (!System.IO.File.Exists(strLogo))
@@ -566,7 +538,6 @@ namespace MediaPortal.GUI.TV
               item = new GUIListItem();
               item.Label = rec.Title;
               item.TVTag = rec;
-              //string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
               string strLogo = Util.Utils.GetCoverArt(Thumbs.TVRecorded, Util.Utils.SplitFilename(System.IO.Path.ChangeExtension(rec.FileName, Util.Utils.GetThumbExtension())));
 
               if (!System.IO.File.Exists(strLogo))
@@ -608,7 +579,6 @@ namespace MediaPortal.GUI.TV
           cntlLabel.YPosition = listViews.SpinY;
 
         OnSort();
-        //UpdateButtonStates(); done in on sort
         UpdateProperties();
         GUIWaitCursor.Hide();
       }
@@ -663,19 +633,11 @@ namespace MediaPortal.GUI.TV
 
       if (currentViewMethod == ViewAs.List)
       {
-        GUIControl.HideControl(GetID, (int)Controls.LABEL_PROGRAMTITLE);
-        GUIControl.HideControl(GetID, (int)Controls.LABEL_PROGRAMDESCRIPTION);
-        GUIControl.HideControl(GetID, (int)Controls.LABEL_PROGRAMGENRE);
-        GUIControl.HideControl(GetID, (int)Controls.LABEL_PROGRAMTIME);
         listAlbums.IsVisible = false;
         listViews.IsVisible = true;
       }
       else
       {
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTITLE);
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMDESCRIPTION);
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMGENRE);
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTIME);
         listAlbums.IsVisible = true;
         listViews.IsVisible = false;
       }
@@ -1134,38 +1096,5 @@ namespace MediaPortal.GUI.TV
       m_bSortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
       OnSort();
     }
-
-    //void CreateThumbnails()
-    //{
-      //if (_creatingThumbNails) return;
-      //Thread WorkerThread = new Thread(new ThreadStart(WorkerThreadFunction));
-      //WorkerThread.SetApartmentState(ApartmentState.STA);
-      //WorkerThread.IsBackground = true;
-      //WorkerThread.Priority = ThreadPriority.BelowNormal;
-      //WorkerThread.Start();
-    //}
-
-    //void WorkerThreadFunction()
-    //{
-      //if (_creatingThumbNails) return;
-      //try
-      //{
-      //  _creatingThumbNails = true;
-      //  List<TVRecorded> recordings = new List<TVRecorded>();
-      //  TVDatabase.GetRecordedTV(ref recordings);
-      //  foreach (TVRecorded rec in recordings)
-      //  {
-      //    string thumbNail = Util.Utils.GetCoverArt(Thumbs.TVRecorded, System.IO.Path.ChangeExtension(rec.FileName, Util.Utils.GetThumbExtension()));
-      //    if (!System.IO.File.Exists(thumbNail))
-      //    {
-      //      DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail);
-      //    }
-      //  }
-      //}
-      //finally
-      //{
-      //  _creatingThumbNails = false;
-      //}
-    //}
   }
 }
