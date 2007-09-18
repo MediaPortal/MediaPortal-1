@@ -773,13 +773,13 @@ namespace MediaPortal
       presentParams.EnableAutoDepthStencil = false;
       presentParams.ForceNoMultiThreadedFlag = false;
 
-      if (windowed)
+      if (true || windowed)
       {
         presentParams.MultiSample = graphicsSettings.WindowedMultisampleType;
         presentParams.MultiSampleQuality = graphicsSettings.WindowedMultisampleQuality;
         presentParams.AutoDepthStencilFormat = graphicsSettings.WindowedDepthStencilBufferFormat;
-        presentParams.BackBufferWidth = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
-        presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
+        presentParams.BackBufferWidth = ourRenderTarget.ClientRectangle.Width;
+        presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Height;
         presentParams.BackBufferFormat = graphicsSettings.BackBufferFormat;
         presentParams.PresentationInterval = PresentInterval.Default;
         presentParams.FullScreenRefreshRateInHz = 0;
@@ -802,7 +802,12 @@ namespace MediaPortal
         presentParams.SwapEffect = SwapEffect.Discard;
         presentParams.PresentFlag = PresentFlag.Video; //|PresentFlag.LockableBackBuffer;
         presentParams.DeviceWindow = this;
-        presentParams.Windowed = false;
+
+        if (GUIGraphicsContext._useScreenSelector)
+        {          
+          presentParams.Windowed = true;//prevents minimizing when other screen is clicked or alt+tab is used.
+        } else
+          presentParams.Windowed = false;
       }
       GUIGraphicsContext.DirectXPresentParameters = presentParams;
     }
@@ -1855,7 +1860,7 @@ namespace MediaPortal
         this.Menu = null;
         oldBounds = this.Bounds;
         Rectangle newBounds = GUIGraphicsContext.currentScreen.Bounds;
-        this.Bounds = new Rectangle(this.Location, newBounds.Size);
+        this.Bounds = newBounds;
         this.Update();
 
         Log.Info("D3D: Switching windowed mode -> fullscreen done - Maximized: {0}", isMaximized);
