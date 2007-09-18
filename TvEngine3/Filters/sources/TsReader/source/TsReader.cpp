@@ -141,8 +141,15 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr) :
   m_rtspClient(m_buffer),
   m_pDVBSubtitle(NULL)
 {
+  char moduleFileName[1024];
+	GetModuleFileName(NULL,moduleFileName,sizeof(moduleFileName));
+	string logFile=moduleFileName;
+	char logFileName[1024];
+  logFile=logFile.substr(0, logFile.rfind("\\"));
+	logFile.append("\\log\\TsReader.log");
+  strcpy(logFileName, logFile.c_str() );
+  ::DeleteFile(logFileName);
 
-  ::DeleteFile("c:\\tsreader.log");
   LogDebug("-------------- v1.0.0.1 (+ttxt mod) ----------------");
 
   m_fileReader=NULL;
