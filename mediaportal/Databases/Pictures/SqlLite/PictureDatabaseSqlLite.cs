@@ -127,8 +127,24 @@ namespace MediaPortal.Picture.Database
               DateTime dat;
               DateTimeStyles mpPicStyle;
               mpPicStyle = DateTimeStyles.None;
-              DateTime.TryParseExact(picExifDate, "G", System.Threading.Thread.CurrentThread.CurrentCulture, mpPicStyle, out dat);
-              strDateTaken = dat.ToString("yyyy-MM-dd HH:mm:ss");
+              if (picExifDate != null) // If the image contains a valid exif date store it in the database, otherwise use the file date
+              {
+                DateTime.TryParseExact(picExifDate, "G", System.Threading.Thread.CurrentThread.CurrentCulture, mpPicStyle, out dat);
+                strDateTaken = dat.ToString("yyyy-MM-dd HH:mm:ss");
+              }
+              else
+              {
+                try
+                {
+                  dat = File.GetLastWriteTime(strPicture);
+                  if (!TimeZone.CurrentTimeZone.IsDaylightSavingTime(dat)) dat = dat.AddHours(1); // Try to respect the timezone of the file date
+                  strDateTaken = dat.ToString("yyyy-MM-dd HH:mm:ss");
+                }
+                catch (Exception ex)
+                {
+                  Log.Error("file date conversion exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+                }
+              }
             }
             catch (System.FormatException ex)
             {
