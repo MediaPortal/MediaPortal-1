@@ -2085,7 +2085,7 @@ namespace TvService
 			Log.Write("Controller:   Heartbeat Monitor initiated; max timeout allowed is {0} sec.", HEARTBEAT_MAX_SECS_EXCEED_ALLOWED);
 			while (true)
 			{
-				Log.Write("Controller:   Heartbeat Monitor ping");
+				//Log.Write("Controller:   Heartbeat Monitor ping");
 
 				DateTime now = DateTime.Now;
 				Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
@@ -2117,7 +2117,7 @@ namespace TvService
 						}
 					}
 				}
-				// client signals heartbeats each 15 sec.
+				// note; client signals heartbeats each 15 sec.
 				Thread.Sleep(HEARTBEAT_MAX_SECS_EXCEED_ALLOWED * 1000); //sleep for 30 secs. before checking heartbeat again
 			}
 		}
