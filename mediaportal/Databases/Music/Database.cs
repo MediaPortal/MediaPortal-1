@@ -2729,7 +2729,12 @@ namespace MediaPortal.Music.Database
 
     public int MusicDatabaseReorg(ArrayList shares)
     {
-      return MusicDatabaseReorg(shares, _treatFolderAsAlbum, _scanForVariousArtists, true);
+      bool updateSinceLastImport = false;
+       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      {
+        updateSinceLastImport = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", false);
+      }    
+      return MusicDatabaseReorg(shares, _treatFolderAsAlbum, _scanForVariousArtists, updateSinceLastImport);
     }
 
     public int MusicDatabaseReorg(ArrayList shares, bool treatFolderAsAlbum, bool scanForVariousArtists, bool updateSinceLastImport)
