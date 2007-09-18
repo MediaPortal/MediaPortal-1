@@ -67,6 +67,9 @@ namespace MediaPortal.TagReader
 
       try
       {
+        // Set the flag to use the standard System Encoding set by the user
+        // Otherwise Latin1 is used as default, which causes characters in various languages being displayed wrong
+        TagLib.ByteVector.UseBrokenLatin1Behavior = true;
         TagLib.File tag = TagLib.File.Create(strFile);
         MusicTag musictag = new MusicTag();
         string[] artists = tag.Tag.Performers;
