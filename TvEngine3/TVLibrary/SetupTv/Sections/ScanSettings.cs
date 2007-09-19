@@ -267,6 +267,7 @@ namespace SetupTv.Sections
       defaults.Add("%STARRATING_STR%","***+");
       defaults.Add("%CLASSIFICATION%","PG");
       defaults.Add("%PARENTALRATING%","8");
+      defaults.Add("%NEWLINE%", Environment.NewLine);
       edTitleTest.Text = EvalTemplate(edTitleTemplate.Text, defaults);
       edDescriptionTest.Text = EvalTemplate(edDescriptionTemplate.Text, defaults);
      }

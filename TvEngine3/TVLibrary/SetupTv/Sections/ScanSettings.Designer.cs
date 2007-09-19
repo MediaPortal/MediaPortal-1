@@ -53,6 +53,7 @@ namespace SetupTv.Sections
       this.mpComboBoxPrio = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.lblPriority = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.label38 = new System.Windows.Forms.Label();
       this.label37 = new System.Windows.Forms.Label();
       this.label36 = new System.Windows.Forms.Label();
       this.label35 = new System.Windows.Forms.Label();
@@ -96,7 +97,7 @@ namespace SetupTv.Sections
       this.textBoxMaxFileSize = new System.Windows.Forms.TextBox();
       this.textBoxMinfiles = new System.Windows.Forms.TextBox();
       this.label18 = new System.Windows.Forms.Label();
-      this.label38 = new System.Windows.Forms.Label();
+      this.label39 = new System.Windows.Forms.Label();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox4.SuspendLayout();
@@ -379,6 +380,7 @@ namespace SetupTv.Sections
       // 
       // tabPage3
       // 
+      this.tabPage3.Controls.Add(this.label39);
       this.tabPage3.Controls.Add(this.label38);
       this.tabPage3.Controls.Add(this.label37);
       this.tabPage3.Controls.Add(this.label36);
@@ -405,6 +407,15 @@ namespace SetupTv.Sections
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "EPG";
       this.tabPage3.UseVisualStyleBackColor = true;
+      // 
+      // label38
+      // 
+      this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label38.Location = new System.Drawing.Point(344, 227);
+      this.label38.Name = "label38";
+      this.label38.Size = new System.Drawing.Size(120, 58);
+      this.label38.TabIndex = 35;
+      this.label38.Text = "You can use a combination of any of the below placeholders";
       // 
       // label37
       // 
@@ -801,14 +812,14 @@ namespace SetupTv.Sections
       this.label18.TabIndex = 15;
       this.label18.Text = "Minimum";
       // 
-      // label38
+      // label39
       // 
-      this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label38.Location = new System.Drawing.Point(344, 227);
-      this.label38.Name = "label38";
-      this.label38.Size = new System.Drawing.Size(120, 58);
-      this.label38.TabIndex = 35;
-      this.label38.Text = "You can use a combination of any of the below placeholders";
+      this.label39.AutoSize = true;
+      this.label39.Location = new System.Drawing.Point(344, 391);
+      this.label39.Name = "label39";
+      this.label39.Size = new System.Drawing.Size(73, 13);
+      this.label39.TabIndex = 36;
+      this.label39.Text = "%NEWLINE%";
       // 
       // ScanSettings
       // 
@@ -909,6 +920,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label37;
     private System.Windows.Forms.Label label36;
     private System.Windows.Forms.Label label38;
+    private System.Windows.Forms.Label label39;
 
   }
 }

@@ -253,6 +253,7 @@ namespace TvLibrary
             values.Add("%STARRATING_STR%", GetStarRatingStr(starRating));
             values.Add("%CLASSIFICATION%", classification);
             values.Add("%PARENTALRATING%", parentRating.ToString());
+            values.Add("%NEWLINE%", Environment.NewLine);
             Program prog = new Program(dbChannel.IdChannel, epgProgram.StartTime, epgProgram.EndTime,EvalTemplate(_titleTemplate,values) ,EvalTemplate(_descriptionTemplate,values),genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification,parentRating);
             prog.Persist();
             iInserted++;

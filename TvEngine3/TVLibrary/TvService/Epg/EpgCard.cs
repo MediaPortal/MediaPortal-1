@@ -877,6 +877,7 @@ namespace TvService
         values.Add("%STARRATING_STR%", GetStarRatingStr(starRating));
         values.Add("%CLASSIFICATION%", classification);
         values.Add("%PARENTALRATING%", parentalRating.ToString());
+        values.Add("%NEWLINE%", Environment.NewLine);
         TvDatabase.Program newProgram = new TvDatabase.Program(channel.IdChannel, program.StartTime, program.EndTime, EvalTemplate(_titleTemplate,values), EvalTemplate(_descriptionTemplate,values), genre, false, DateTime.MinValue, string.Empty, string.Empty, starRating, classification,parentalRating);
         newProgram.Persist();
         lastProgram = program.EndTime;
