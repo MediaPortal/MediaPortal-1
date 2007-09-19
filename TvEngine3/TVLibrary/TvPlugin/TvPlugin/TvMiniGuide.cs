@@ -56,7 +56,7 @@ namespace TvPlugin
     [SkinControlAttribute(35)]    protected GUIListControl lstChannels = null;
     [SkinControlAttribute(36)]    protected GUISpinControl spinGroup = null;
 
-      bool _canceled = false;
+    bool _canceled = false;
     bool _running = false;    
     int _parentWindowID = 0;
     GUIWindow _parentWindow = null;
@@ -70,6 +70,7 @@ namespace TvPlugin
     bool _byIndex = false;
     bool _showChannelNumber = false;
     int _channelNumberMaxLength = 3;
+    DateTime _updateHeartBeatTimer = DateTime.Now;
 
     #region Serialisation
     void LoadSettings()
@@ -617,6 +618,17 @@ namespace TvPlugin
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {
+      TimeSpan tshb = DateTime.Now - _updateHeartBeatTimer;
+
+      if (tshb.TotalSeconds > TVHome.HEARTBEAT_INTERVAL)
+      {
+        // send heartbeat to tv server each 5 sec.
+        // this way we signal to the server that we are alive thus avoid being kicked.
+        Log.Debug("Process: sending HeartBeat signal to server.");
+        RemoteControl.Instance.HeartBeat(TVHome.Card.User);
+        _updateHeartBeatTimer = DateTime.Now;
+      }
+
       return true;
     }
 
