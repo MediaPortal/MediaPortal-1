@@ -261,7 +261,7 @@ namespace TvLibrary.Implementations.DVB
                 //It seems with ATSC QAM the major & minor channel is not found or is not necessary (TBD)
                 //isValid = (majorChannel != 0 && minorChannel != 0);
                 //So we currently determine if a valid channel is found if the pmt pid is not null.
-                isValid = (pmtPid != 0);
+                isValid = (pmtPid != -1);
                 //This is not ideal we need to look into raw ATSC transport streams
               }
               if (isValid)
@@ -291,7 +291,7 @@ namespace TvLibrary.Implementations.DVB
                 strAudioLanguage4 = Marshal.PtrToStringAnsi(audioLanguage4);
                 strAudioLanguage5 = Marshal.PtrToStringAnsi(audioLanguage5);
 
-                Log.Log.Info("v:{0:X} a1:{1:X} a2:{2:X} a3:{3:X} a4:{4:X} a5:{5:X} ac3:{6:X} ttx:{7:X} sub:{8:X} pmt:{9:X} pcr:{10:X} onid:{11:X} TSID:{12:X} SID:{13:X} maj:{14} min:{15} type:{16} name:{17}", videoPid, audio1Pid, audio2Pid, audio3Pid, audio4Pid, audio5Pid, ac3Pid, teletextPid, subtitlePid, pmtPid, pcrPid, networkId, transportId, serviceId, majorChannel, minorChannel, serviceType, name);
+                //Log.Log.Info("v:{0:X} a1:{1:X} a2:{2:X} a3:{3:X} a4:{4:X} a5:{5:X} ac3:{6:X} ttx:{7:X} sub:{8:X} pmt:{9:X} pcr:{10:X} onid:{11:X} TSID:{12:X} SID:{13:X} maj:{14} min:{15} type:{16} name:{17}", videoPid, audio1Pid, audio2Pid, audio3Pid, audio4Pid, audio5Pid, ac3Pid, teletextPid, subtitlePid, pmtPid, pcrPid, networkId, transportId, serviceId, majorChannel, minorChannel, serviceType, name);
                 
                 bool hasVideo = false;
                 bool hasAudio = false;
@@ -370,7 +370,7 @@ namespace TvLibrary.Implementations.DVB
                   {
                     if ((channel as ATSCChannel) != null)
                     {
-                      Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID.ToString());
+                      //Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID.ToString());
                       info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID);
                     }
                     else
@@ -393,7 +393,7 @@ namespace TvLibrary.Implementations.DVB
                   {
                     if ((channel as ATSCChannel) != null)
                     {
-                      Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID.ToString());
+                      //Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID.ToString());
                       info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID);
                     }
                     else
