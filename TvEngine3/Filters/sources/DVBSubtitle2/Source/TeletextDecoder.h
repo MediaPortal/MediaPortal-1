@@ -6,7 +6,7 @@
 #include <windows.h>
 #include "DVBSub.h"
 #include <cassert>
-#include <hash_set>
+#include <hash_map>
 #include "TeletextPageHeader.h"
 
 using namespace stdext;
@@ -29,8 +29,6 @@ public:
 		pageNumInProgress = -1;
 		language = -1;
 		magID = -1;
-		pageToDecode = -1;
-
 	}
 
 	~Magazine(){
@@ -57,10 +55,6 @@ public:
 		this->filter = filter;
 	}
 
-	void UsePage(int page, char lang[3]){
-		pageToDecode = page;
-	}
-
 	void SanityCheck(){
 		//assert(_CrtIsValidPointer(pageContent));
 		//assert(_CrtIsValidPointer(pageContent,TELETEXT_LINES*TELETEXT_WIDTH,TRUE));
@@ -70,6 +64,11 @@ public:
 	bool PageInProgress(){
 		LogDebug("Mag %i in progress: %i", magID, (pageNumInProgress != -1));
 		return pageNumInProgress != -1;
+	}
+
+	void SetLanguage(int page, DVBLANG lang){
+		CAutoLock lock(&langInfoLock);
+		langInfo[page] = lang;
 	}
 
 	void SetMag(int mag){
@@ -85,11 +84,10 @@ private:
 	CDVBSub* filter;
 	int pageNumInProgress;
 	int language; // encoding language
-	int real_language; // DVB SI language info
-	int pageToDecode;
+
 	byte* pageContent; // indexed by line and character (col)
-	hash_set<int> nonSubPages;
-	hash_set<int> subPages;
+	hash_map<int,DVBLANG> langInfo; // DVB SI language info
+	CCritSec            langInfoLock;	
 	int magID;
 };
 
@@ -104,15 +102,6 @@ public:
 		this->filter = filter;
 		
 		magazines = new Magazine[8];
-		
-		//assert(_CrtIsValidPointer(this));
-		//LogDebug("TxtDec this %i", this);
-		
-//		LogDebug("tcs is valid just after init? : %i", //_CrtIsValidPointer(tcs));
-		//LogDebug("magazines is valid just after init? : %i", //_CrtIsValidPointer(magazines));
-		//LogDebug("otherMags is valid just after init? : %i", //_CrtIsValidPointer(otherMags));		
-
-		//assert(_CrtIsValidPointer(magazines));
 
 		for(int i = 0; i < 8; i++){
 			magazines[i].SetMag(i+1);
@@ -128,7 +117,7 @@ public:
 
 	void OnTeletextPacket(byte* data);
 
-	void NotifySubPageInfo(int page, char lang[3]);
+	void NotifySubPageInfo(int page, DVBLANG lang);
 
 	
 	Magazine* otherMags;

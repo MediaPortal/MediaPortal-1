@@ -65,7 +65,7 @@ public:
 	// From CPesCallback
 	int OnNewPesPacket( int streamid,byte* header, int headerlen,byte* data, int len, bool isStart );
 
-	void NotifySubPageInfo(int page, char lang[3]);
+	void NotifySubPageInfo(int page, DVBLANG& lang);
 
 private:
 

@@ -79,9 +79,9 @@ void Magazine::EndPage(){
 		return;
 	}
 	
-	if(pageNumInProgress != pageToDecode) return;
+	//if(pageNumInProgress != pageToDecode) return;
 
-	LogDebug("Finished Page %i: (pageToDecode is %i)",pageNumInProgress, pageToDecode);
+	LogDebug("Finished Page %i",pageNumInProgress);
 	bool hasContent = true;
 
 	for(int i = 0; i < 25; i++){
@@ -151,16 +151,44 @@ void Magazine::EndPage(){
 
 	TEXT_SUBTITLE sub;
 
+	sub.page = pageNumInProgress;
+	sub.character_table = language;
+
 	string lines = s.str();
+
+	/*bool nonblank = false;
+	for(int i = 0; i < lines.length(); i++){
+		if(lines[i] == 'e'){
+			nonblank = true;
+		}
+	}*/
+
+	langInfoLock.Lock();
+
+	hash_map<int,DVBLANG>::iterator it = langInfo.find(pageNumInProgress);
+	if(it != langInfo.end())
+	{	
+		DVBLANG& lang = (*it).second;
+		char langName[4];
+		langName[3] = '\0';
+		memcpy(text, lang.lang,3);
+		sub.language = text;
+	}
+	else{
+		sub.language = "";
+	}
+
+	langInfoLock.Unlock();
 
 	sub.firstLine = 0;
 	sub.totalLines = TELETEXT_LINES;
+	
 	sub.text = lines.c_str();
-	sub.timestamp = 0;
-	sub.timeOut = 3000000; // teletext pages will be actively overwritten if they need to hide
+	//LogDebug("Length of sub content %i",strlen(sub.text));
+	sub.timestamp = 0; // show immediatly
+	sub.timeOut = 9000000; // teletext pages will be actively overwritten if they need to hide :)
 
 	filter->NotifyTeletextSubtitle(sub);
-	
 }
 
 void Magazine::StartPage(TeletextPageHeader& header){
@@ -197,29 +225,14 @@ void Magazine::StartPage(TeletextPageHeader& header){
 	if(header.eraseBit()) {
 		Clear();
 	}
-	
-	if(!header.isSubtitle()){
-		if(nonSubPages.find(pageNumInProgress) == nonSubPages.end()){
-			nonSubPages.insert(pageNumInProgress);
-			//LogDebug("Not subtitle (total %i): Page %i", nonSubPages.size(), pageNumInProgress);
-		}
-	}
-	else{
-		if(subPages.find(pageNumInProgress) == subPages.end()){
-			subPages.insert(pageNumInProgress);
-			//LogDebug("New subtitle page encountered (total %i): Page %i",subPages.size(), pageNumInProgress);
-		}
-		subPages.insert(pageNumInProgress);	
-	}
 	assert(pageNumInProgress >= 100 && pageNumInProgress <= 966);
 }
 
-void TeletextDecoder::NotifySubPageInfo(int page, char lang[3]){
-	LogDebug("Page %i is lang %c%c%c",page, lang[0],lang[1],lang[2]);
+void TeletextDecoder::NotifySubPageInfo(int page, DVBLANG lang){
+	LogDebug("Page %i is lang %c%c%c",page, lang.lang[0],lang.lang[1],lang.lang[2]);
 
-	// temp, just choose the latest advertised page
 	for(int i = 0; i < 8; i++){
-		magazines[i].UsePage(page, lang);
+		magazines[i].SetLanguage(page, lang);// todo: only inform relevant magazine
 	}
 }
 
@@ -288,3 +301,22 @@ void TeletextDecoder::OnTeletextPacket(byte* data){
 			//LogDebug("Packet %i for magazine %i (discarded)", Y, mag);
 		}
 }
+
+
+/*
+GARBAGE:
+	if(!header.isSubtitle()){
+		if(nonSubPages.find(pageNumInProgress) == nonSubPages.end()){
+			nonSubPages.insert(pageNumInProgress);
+			//LogDebug("Not subtitle (total %i): Page %i", nonSubPages.size(), pageNumInProgress);
+		}
+	}
+	else{
+		if(subPages.find(pageNumInProgress) == subPages.end()){
+			subPages.insert(pageNumInProgress);
+			//LogDebug("New subtitle page encountered (total %i): Page %i",subPages.size(), pageNumInProgress);
+		}
+		subPages.insert(pageNumInProgress);	
+	}
+
+*/

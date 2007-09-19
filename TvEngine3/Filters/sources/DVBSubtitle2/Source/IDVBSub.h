@@ -53,7 +53,7 @@ DECLARE_INTERFACE_( IDVBSubtitle, IUnknown )
 {
   STDMETHOD(Test)( int status ) PURE;
   STDMETHOD(NotifyChannelChange)() PURE;
-  STDMETHOD(NotifySubPageInfo)(int page, char lang[3]) PURE;
+  STDMETHOD(NotifySubPageInfo)(int page, DVBLANG& lang) PURE;
   STDMETHOD(SetSubtitlePid)( LONG pPid ) PURE;
   STDMETHOD(SetTeletextPid)( LONG pPid ) PURE;
   STDMETHOD(SetFirstPcr)( LONGLONG pPcr ) PURE;

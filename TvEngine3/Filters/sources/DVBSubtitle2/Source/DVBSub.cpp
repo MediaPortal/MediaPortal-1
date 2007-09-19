@@ -309,7 +309,7 @@ STDMETHODIMP CDVBSub::StatusTest(int status)
 }
 
 
-STDMETHODIMP CDVBSub::NotifySubPageInfo(int page, char lang[3]){
+STDMETHODIMP CDVBSub::NotifySubPageInfo(int page, DVBLANG& lang){
 	LogDebug("CDVBSub::NotifySubPageInfo");
   if( m_pTeletextInputPin )
   {

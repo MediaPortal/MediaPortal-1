@@ -71,7 +71,7 @@ public:
   virtual HRESULT STDMETHODCALLTYPE Test( int status );
   virtual HRESULT STDMETHODCALLTYPE SetSubtitlePid( LONG pPid );
   virtual HRESULT STDMETHODCALLTYPE SetTeletextPid( LONG pPid );
-  virtual HRESULT STDMETHODCALLTYPE NotifySubPageInfo(int page, char lang[3]);
+  virtual HRESULT STDMETHODCALLTYPE NotifySubPageInfo(int page, DVBLANG& lang);
   virtual HRESULT STDMETHODCALLTYPE SetFirstPcr( LONGLONG pPcr );
   virtual HRESULT STDMETHODCALLTYPE SeekDone( CRefTime& rtSeek );
   virtual HRESULT STDMETHODCALLTYPE SetTimeCompensation( CRefTime& rtCompensation );

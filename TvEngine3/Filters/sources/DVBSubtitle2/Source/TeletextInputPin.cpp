@@ -131,7 +131,7 @@ HRESULT CTeletextInputPin::CompleteConnect( IPin *pPin )
 }
 
 
-void CTeletextInputPin::NotifySubPageInfo(int page, char lang[3]){
+void CTeletextInputPin::NotifySubPageInfo(int page, DVBLANG& lang){
 	LogDebug("CTeletextInputPin::NotifySubPageInfo");
 	
 	CAutoLock lock(m_pReceiveLock);
