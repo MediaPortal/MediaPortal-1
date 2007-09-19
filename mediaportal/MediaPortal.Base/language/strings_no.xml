@@ -923,6 +923,8 @@
     <String id="1507">Ukjent kanal</String>
     <String id="1508">Kanalen er ikke satt opp mot noen tuner</String>
     <String id="1509">Ingen kanal-informasjon for denne kanalen</String>
+    <String id="1510">Tilkoblingen til TV Service mistet</String>
+    <String id="1511">Ingen aktive streams</String>
     <String id="1950" prefix="Min ">Status</String>
     <String id="1951">Harddisk</String>
     <String id="1952">Vifte</String>
@@ -1278,6 +1280,8 @@
     <String id="6034">Søk etter sjanger</String>
     <String id="6035">Legg til en oppgave</String>
     <String id="6036">H.264 Video Codec</String>
+    <String id="6037">Stablet film</String>
+    <String id="6038">Vennligst velg en disk for avspilling.</String>
     <String id="8000" prefix="Min ">Epost</String>
     <String id="8001">Sjekk postboks</String>
     <String id="8002">Autosjekk av</String>
@@ -1597,6 +1601,7 @@
     <String id="100758" prefix="Min ">Fildialog</String>
     <String id="100759" prefix="Mine ">Arkiverte Tv-info</String>
     <String id="100760" prefix="Min ">Brenner</String>
+
     <String id="100761" prefix="Min ">TV guide</String>
     <String id="100762" prefix="Min ">Radio guide</String>
     <String id="100770" prefix="Min ">Utforsker</String>

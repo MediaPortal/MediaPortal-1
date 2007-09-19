@@ -68,7 +68,7 @@
     <String id="133">Artyści</String>
     <String id="134">Foldery</String>
     <String id="135">Gatunki</String>
-    <String id="136">Lista odtw.</String>
+    <String id="136">Lista odtwarzania</String>
     <String id="137">Szukaj</String>
     <String id="138">INFORMACJE O SYSTEMIE</String>
     <String id="139">Temperatury:</String>
@@ -247,9 +247,9 @@
     <String id="313">Reorganizuj bazę danych</String>
     <String id="314">Przygotowywanie...</String>
     <String id="315">Błąd bazy danych</String>
-    <String id="316">Wyszukiwanie piosenek...</String>
+    <String id="316">Wyszukiwanie utworów...</String>
     <String id="317">Reorganizacja zakończona pomyślnie</String>
-    <String id="318">Zaznaczanie usuniętych piosenek</String>
+    <String id="318">Zaznaczanie usuniętych utworów</String>
     <String id="319">Błąd podczas reorganizacji</String>
     <String id="320">Wyszukiwanie artystów...</String>
     <String id="321">Błąd reorganizacji artystów</String>
@@ -264,8 +264,8 @@
     <String id="330">To może trochę potrwać...</String>
     <String id="331">Kompresowanie bazy danych...</String>
     <String id="332">Błąd podczas kompresowania</String>
-    <String id="333">Czy chcesz reorganizować bazę piosenek?</String>
-    <String id="334">Reorganizuj bazę piosenek</String>
+    <String id="333">Czy chcesz reorganizować bazę utworów?</String>
+    <String id="334">Reorganizuj bazę utworów</String>
     <String id="335">Start</String>
     <String id="336">Dopasuj szybkości</String>
     <String id="337">Wyjście dźwięku:</String>
@@ -300,7 +300,7 @@
     <String id="366">Sortuj: Rok</String>
     <String id="367">Sortuj: Ocena</String>
     <String id="368">IMDB</String>
-    <String id="369">Tytuł</String>
+    <String id="369">Tytuły</String>
     <String id="370">Burze</String>
     <String id="371">Częściowe</String>
     <String id="372">Duże</String>
@@ -406,7 +406,7 @@
     <String id="474">Wyłączone</String>
     <String id="475">Tylko muzyka</String>
     <String id="476">Muzyka &amp; Wideo</String>
-    <String id="477">Błąd podczas ładowania listy odtw.</String>
+    <String id="477">Błąd podczas ładowania listy odtwarzania</String>
     <String id="478">OSD</String>
     <String id="479">Skóra i Język</String>
     <String id="480">Interfejs użytkownika</String>
@@ -417,9 +417,9 @@
     <String id="485">Usuń album</String>
     <String id="486">Powtarzaj</String>
     <String id="487">Powtarzaj raz</String>
-    <String id="488">Powtarzaj listę odtw.</String>
-    <String id="489">Użyj listy odtw. w piosenkach</String>
-    <String id="490">Automatycznie przełączaj listy i ikony w piosenkach</String>
+    <String id="488">Powtarzaj listę odtwarzania</String>
+    <String id="489">Użyj listy odtwarzania w utworach</String>
+    <String id="490">Automatycznie przełączaj listy i ikony w utworach</String>
     <String id="491">Użyj dużych ikon</String>
     <String id="492">Język dźwięku</String>
     <String id="493">Aktor:</String>
@@ -446,7 +446,7 @@
     <String id="515">Błąd podczas kasowania folderu, operacja została przerwana</String>
     <String id="516">Nie można usunąć docelowego pliku, operacja została przerwana</String>
     <String id="517">Błąd krytyczny, operacja została przerwana</String>
-    <String id="518">Czy usunąć tę piosenkę?</String>
+    <String id="518">Czy usunąć ten utwór?</String>
     <String id="519">Napisy wyłączone</String>
     <String id="529">Widok: Lista Dużych Ikon</String>
     <String id="530">Wykryto dysk z obrazami, czy chcesz go otworzyć?</String>
@@ -637,7 +637,7 @@
     <String id="747">min</String>
     <String id="748">Opady</String>
     <String id="750">Obrazy</String>
-    <String id="751">Pokaż wszystkie piosenki dla tego artysty</String>
+    <String id="751">Pokaż wszystkie utwory dla tego artysty</String>
 	<String id="752">Nie wybrano nagrań</String>
     <String id="753">Nie zainstalowano kart z tunerem</String>
 	<String id="754">Żaden tuner nie nagrywa wybranego programu</String>
@@ -762,7 +762,7 @@
     <String id="923">Pokaż</String>
     <String id="924">Menu</String>
     <String id="925">Usuń ten film</String>
-    <String id="926">Dodaj do listy odtw.</String>
+    <String id="926">Dodaj do listy odtwarzania</String>
     <String id="927">Ostrzeżenie</String>
     <String id="928">Znajdź okładkę</String>
     <String id="929">Zamknij menu</String>
@@ -880,7 +880,7 @@
     <String id="1049">Hibernacja</String>
     <String id="1050">Sob-Nie</String>
     <String id="1051">Nagrywaj Sob-Nie</String>
-    <String id="1052">Piosenki</String>
+    <String id="1052">Utwory</String>
     <String id="1053">Nieznany dzwoniący</String>
     <String id="1054">(nagrywanie)</String>
     <String id="1055">(timeshifting)</String>
@@ -922,6 +922,8 @@
     <String id="1507">Nieznany kanał</String>
     <String id="1508">Kanał nie jest przypisany do żadnej karty.</String>
 	<String id="1509">Brak szczegółów strojenia dla kanału</String>
+	<String id="1510">Połączenie do usługi TV stracone</String>
+	<String id="1511">Brak aktywnych strumieni</String>
     <String id="1950" prefix="Mój ">Status</String>
     <String id="1951">Dysk twardy</String>
     <String id="1952">Wentylator</String>
@@ -1090,7 +1092,7 @@
     <String id="2142">MPEG2 -&gt; MPEG4</String>
     <String id="2143">Strona główna</String>
     <String id="2144">Rozpocznij nagrywanie</String>
-    <String id="2145">Importuj aktualną listę odtw.</String>
+    <String id="2145">Importuj aktualną listę odtwarzania</String>
     <String id="2146">Niewystarczająca ilość miejsca na CD</String>
     <String id="2147">Niewystarczająca ilość miejsca na DVD</String>
     <String id="2200" prefix="Mój ">Eksplorator</String>
@@ -1213,7 +1215,7 @@
     <String id="4553">Pokaż listę odtwarzania</String>
     <String id="4554">Przeszukiwanie info o CD</String>
     <String id="4555">Obecna Lista odtw.</String>
-    <String id="4557">Dodaj wszystko do listy odtw.</String>
+    <String id="4557">Dodaj wszystko do listy odtwarzania</String>
     <String id="5900" prefix="Moje ">Zwiastuny</String>
     <String id="5901">Pokaż wideo</String>
     <String id="5902">Wybierz kategorię</String>
@@ -1277,6 +1279,8 @@
     <String id="6034">Szukaj po gatunku</String>
 	<String id="6035">Dodaj plan</String>
     <String id="6036">Kodek wideo H.264</String>
+	<String id="6037">Film bufurowany</String>
+	<String id="6038">Wybierz dysk do odtworzenia.</String>
     <String id="8000" prefix="Moja ">Poczta</String>
     <String id="8001">Sprawdź skrzynkę</String>
     <String id="8002">Auto. sprawdzanie wył.</String>
@@ -1480,7 +1484,7 @@
     <String id="34046">Moje osobiste radio</String>
     <String id="34047">Moje ukochane ścieżki</String>
     <String id="34048">Moje radio sąsiada</String>
-    <String id="34049">Moja sieciowa lista odtw.</String>
+    <String id="34049">Moja sieciowa lista odtwarzania</String>
     <String id="34050">Brak aktywnego strumienia</String>
     <String id="34051">Strumień zakończony!</String>
     <String id="34052">Brak zawartości lub złe połączenie</String>
