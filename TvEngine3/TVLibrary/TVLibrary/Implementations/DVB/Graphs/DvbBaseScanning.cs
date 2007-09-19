@@ -370,8 +370,16 @@ namespace TvLibrary.Implementations.DVB
                   {
                     if ((channel as ATSCChannel) != null)
                     {
-                      //Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID.ToString());
-                      info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID);
+                      if (((ATSCChannel)channel).Frequency > 0)
+                      {
+                        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID.ToString());
+                        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID);
+                      }
+                      else
+                      {
+                        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", ((ATSCChannel)channel).PhysicalChannel, info.network_pmt_PID.ToString());
+                        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).PhysicalChannel, info.network_pmt_PID);
+                      }
                     }
                     else
                       info.service_name = String.Format("{0:X}", info.serviceID);
@@ -393,8 +401,16 @@ namespace TvLibrary.Implementations.DVB
                   {
                     if ((channel as ATSCChannel) != null)
                     {
-                      //Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID.ToString());
-                      info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID);
+                      if (((ATSCChannel)channel).Frequency > 0)
+                      {
+                        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID.ToString());
+                        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID);
+                      }
+                      else
+                      {
+                        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", ((ATSCChannel)channel).PhysicalChannel, info.network_pmt_PID.ToString());
+                        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).PhysicalChannel, info.network_pmt_PID);
+                      }
                     }
                     else
                       info.service_name = String.Format("Unknown {0:X}", info.serviceID);
