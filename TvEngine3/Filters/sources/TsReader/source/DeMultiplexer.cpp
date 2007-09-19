@@ -754,7 +754,8 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 			TeletextServiceInfo& info = *vit;
 			if(info.page >= 100 && info.IsSubtitleInfo()){
 				//LogDebug("Calling NotifySubPageInfo %i", info.page);
-				pDVBSubtitleFilter->NotifySubPageInfo(info.page, info.lang);
+				DVBLANG lang(info.lang[0],info.lang[1],info.lang[2]);
+				pDVBSubtitleFilter->NotifySubPageInfo(info.page, lang);
 			}
 			vit++;
 	  }
