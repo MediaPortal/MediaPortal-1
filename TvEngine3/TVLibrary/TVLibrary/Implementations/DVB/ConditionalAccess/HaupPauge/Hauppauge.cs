@@ -285,11 +285,12 @@ namespace TvLibrary.Implementations.DVB
 
     /// <summary>
     /// sets the qam modulation for ATSC cards
+    /// ideally this should move to standard BDA as it's not Hauppauge specific
     /// </summary>
     public void SetATSCQAM(ATSCChannel channel)
     {
       int hr;
-      int length;
+      //int length;
       KSPropertySupport supported;
 
       //Set the modulation

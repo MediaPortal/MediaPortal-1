@@ -593,16 +593,15 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        //if (channel.ModulationType == ModulationType.Mod256Qam)
-        //{
-          //Set the Hauppauge Modulation type
+        if (channel.ModulationType == ModulationType.Mod256Qam)
+        {
           if (_hauppauge != null)
           {
-            Log.Log.Info("Setting Hauppauge ATSC modulation to 256QAM");
+            Log.Log.Info("Setting BDA Digital Demodulator to 256QAM");
             _hauppauge.SetATSCQAM(channel);
           }
-          else Log.Log.Info("CheckATSCQAM: Hauppauge ATSC QAM card not found, continuing...");
-        //}
+          else Log.Log.Info("CheckATSCQAM: ATSC QAM card not found, continuing...");
+        }
       }
       catch (Exception ex)
       {
