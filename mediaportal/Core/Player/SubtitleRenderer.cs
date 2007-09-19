@@ -38,15 +38,56 @@ namespace MediaPortal.Player
     public Int32 firstScanLine;
   }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+  /*
+   * int character_table;
+  LPCSTR language;
+  int page;
+  LPCSTR text;
+  int firstLine;  // can be 0 to (totalLines - 1)
+  int totalLines; // for teletext this is 25 lines
+
+  unsigned    __int64 timestamp;
+  unsigned    __int64 timeOut;
+
+  */
+  [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TEXT_SUBTITLE
     {
+      public int encoding;
+      public string language;
+      
+      public int page;
+      public string text; // subtitle lines seperated by newline characters
       public int startTextLine;
       public int totalTextLines;
 
       public UInt64 timeStamp;
       public UInt64 timeOut; // in seconds
-      public string text; // subtitle lines seperated by newline characters
+
+    }
+
+    public enum TeletextCharTable { 
+        English = 1,
+        Swedish = 2,
+        Third = 3,
+        Fourth = 4,
+        Fifth = 5,
+        Sixth = 6//,
+    }
+
+    public class TeletextPageEntry {
+
+        public TeletextPageEntry() { }
+
+        public TeletextPageEntry(TeletextPageEntry e) {
+            page = e.page;
+            encoding = e.encoding;
+            language = String.Copy(e.language);
+        }
+
+        public int page = -1; // indicates not valid
+        public TeletextCharTable encoding;
+        public string language;
     }
 
   public class Subtitle
@@ -93,9 +134,12 @@ namespace MediaPortal.Player
   public delegate int TextSubtitleCallback(/*ref TEXT_SUBTITLE sub*/IntPtr textsub);
   public delegate int ResetCallback();
   public delegate int UpdateTimeoutCallback(ref Int64 timeOut);
+  public delegate void PageInfoCallback(TeletextPageEntry entry);
 
   public class SubtitleRenderer
   {
+    private bool useBitmap = true; // if false use teletext
+    private int activeSubPage; // if use teletext, what page
     private static SubtitleRenderer instance = null;
     private IDVBSubtitleSource subFilter = null;
     private long subCounter = 0;
@@ -115,6 +159,7 @@ namespace MediaPortal.Player
     private TextSubtitleCallback textCallBack;
     private ResetCallback resetCallBack;
     private UpdateTimeoutCallback updateTimeoutCallBack;
+    private PageInfoCallback pageInfoCallback;
 
     /// <summary>
     /// Texture storing the current/last subtitle
@@ -182,6 +227,24 @@ namespace MediaPortal.Player
       player = p;
     }
 
+      public void SetPageInfoCallback(PageInfoCallback cb) {
+          this.pageInfoCallback = cb;
+      }
+
+      public void SetSubtitleOption(SubtitleOption option)
+      {
+          if (option.type == SubtitleType.Teletext) {
+              useBitmap = false;
+              activeSubPage = option.entry.page;
+          }
+          else if (option.type == SubtitleType.Bitmap)
+          {
+              useBitmap = true;
+          }
+          else {
+              Log.Error("Unknown subtitle option " + option);
+          }
+      }
  
     /// <summary>
     /// Alerts the subtitle render that a seek has just been performed.
@@ -257,6 +320,7 @@ namespace MediaPortal.Player
     /// <returns></returns>
     public int OnSubtitle(ref SUBTITLE sub)
     {
+      if (!useBitmap) return 0; // TODO: Might be good to let this cache and then check in Render method because bitmap subs arrive a while before display
       Log.Debug("OnSubtitle - stream position " + player.StreamPosition);
       lock (alert)
       {
@@ -312,14 +376,54 @@ namespace MediaPortal.Player
 
       public int OnTextSubtitle(IntPtr p /*ref TEXT_SUBTITLE sub*/)
       {
-
+          TEXT_SUBTITLE sub = new TEXT_SUBTITLE();
           Log.Debug("On\nText\nSubtitle\ncalled");
           try
           {
-              TEXT_SUBTITLE sub = (TEXT_SUBTITLE)Marshal.PtrToStructure(p, typeof(TEXT_SUBTITLE));
+              sub = (TEXT_SUBTITLE)Marshal.PtrToStructure(p, typeof(TEXT_SUBTITLE));
+              Log.Debug("Page: " + sub.page);
+              Log.Debug("Character table: " + sub.encoding);
               Log.Debug("Start line: " + sub.startTextLine + " total lines " + sub.totalTextLines);
               Log.Debug("Timeout: " + sub.timeOut);
-              Log.Debug(sub.text);
+              Log.Debug("Timestamp" + sub.timeStamp);
+              Log.Debug("Language: " + sub.language);
+              String content = sub.text;
+              if (content.Trim().Length > 0) // debug log subtitles
+              {
+                  StringTokenizer st = new StringTokenizer(content, new char[] { '\n' });
+                  while (st.HasMore)
+                  {
+                      Log.Debug(st.NextToken());
+                  }
+              }
+          }
+          catch (Exception e)
+          {
+              Log.Error("Problem marshalling TEXT_SUBTITLE");
+              Log.Error(e);
+          }
+
+          try
+          {
+              TeletextPageEntry pageEntry = new TeletextPageEntry();
+              pageEntry.language = String.Copy(sub.language);
+              pageEntry.encoding = (TeletextCharTable)sub.encoding;
+              pageEntry.page = sub.page;
+              
+              if (pageInfoCallback != null)
+              {
+                  pageInfoCallback(pageEntry);
+              }
+
+              // if we dont need the subtitle
+              if (useBitmap || (activeSubPage != pageEntry.page))
+              {
+                  Log.Debug("Text subtitle (page {0}) discarded: useBitmap is {1} and activeSubPage is {2}", pageEntry.page, useBitmap, activeSubPage);
+                  return 0;
+              }
+              else {
+                  Log.Debug("Text subtitle (page {0}) ACCEPTED: useBitmap is {1} and activeSubPage is {2}", pageEntry.page, useBitmap, activeSubPage);
+              }
 
               Subtitle subtitle = new Subtitle();
               subtitle.subBitmap = RenderText(sub.text, sub.startTextLine, sub.totalTextLines);
@@ -332,12 +436,12 @@ namespace MediaPortal.Player
               lock (subtitles)
               {
                   subtitles.AddLast(subtitle);
+
                   Log.Debug("SubtitleRenderer: Text subtitle added, now have " + subtitles.Count + " subtitles in cache " + subtitle.ToString());
               }
           }
-          catch (Exception e)
-          {
-              Log.Error("Problem marshalling TEXT_SUBTITLE");
+          catch (Exception e) {
+              Log.Error("Problem processing text subtitle");
               Log.Error(e);
           }
           return 0;

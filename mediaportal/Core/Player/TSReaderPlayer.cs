@@ -303,6 +303,7 @@ namespace MediaPortal.Player
             _subtitleFilter = SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
             SubtitleRenderer.GetInstance().SetPlayer(this);
             dvbSubRenderer = SubtitleRenderer.GetInstance();
+            
           }
           catch (Exception e)
           {
@@ -433,6 +434,7 @@ namespace MediaPortal.Player
           {
             Log.Error("Unable to get ISubtitleStream interface");
           }
+          subSelector = new SubtitleSelector(_subtitleStream, dvbSubRenderer);
         }
 
         //source.SetClockMode(3);//audio renderer
@@ -684,12 +686,11 @@ namespace MediaPortal.Player
     {
       get 
       {
-        Int32 count = 0; 
-        if (_subtitleStream!=null)
-        {
-          _subtitleStream.GetSubtitleStreamCount(ref count);
-        }
-        return count;
+          if (enableDvbSubtitles)
+          {
+              return subSelector.CountOptions();
+          }
+          else return 0;
       }
     }
 
@@ -700,18 +701,17 @@ namespace MediaPortal.Player
     {
       get 
       {
-        Int32 currentStream = 0;
-        if (_subtitleStream != null)
-        {
-          _subtitleStream.GetCurrentSubtitleStream(ref currentStream);
-        }
-        return currentStream; 
+          if (enableDvbSubtitles)
+          {
+              return subSelector.GetCurrentOption();
+          }
+          else return 0;
       }
       set 
       {
-        if (_subtitleStream != null)
+        if (enableDvbSubtitles)
         {
-          _subtitleStream.SetSubtitleStream(value);
+            subSelector.SetOption(value);
         } 
       }
     }
@@ -723,11 +723,7 @@ namespace MediaPortal.Player
     {
       if (enableDvbSubtitles)
       {
-        SUBTITLE_LANGUAGE language;
-        language.lang = "";
-
-        _subtitleStream.GetSubtitleStreamLanguage(iStream, ref language);
-        return language.lang;
+          return subSelector.GetCurrentLanguage();
       }
       else
       {
@@ -748,7 +744,7 @@ namespace MediaPortal.Player
         }
         else
         {
-          return true;
+          return false;
         }
       }
       set

@@ -328,6 +328,7 @@
     <Compile Include="Player\RTSPPlayer.cs" />
     <Compile Include="Player\SubtitleRenderer.cs" />
     <Compile Include="Player\BaseTSReaderPlayer.cs" />
+    <Compile Include="Player\SubtitleSelector.cs" />
     <Compile Include="Player\TSReaderPlayer.cs" />
     <Compile Include="TagReader\ITag.cs" />
     <Compile Include="TagReader\Utils.cs" />
