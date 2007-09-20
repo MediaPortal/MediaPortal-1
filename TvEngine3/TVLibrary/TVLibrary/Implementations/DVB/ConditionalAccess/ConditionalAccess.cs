@@ -465,11 +465,27 @@ namespace TvLibrary.Implementations.DVB
           //We assume if the modulation is set then a DVB-S2 tuning request has been requested
           if (channel.ModulationType != ModulationType.ModNotSet)
           {
-            //Set the Hauppauge Modulation type
+            //Set the alternative Hauppauge Modulation type
+            //It seems DVB-S2 QPSK is STILL not working!
+            //Test for i-loop
             if (channel.ModulationType == ModulationType.ModQpsk)
             {
-              channel.ModulationType = ModulationType.ModQpsk2;
+              if (channel.InnerFecRate == BinaryConvolutionCodeRate.Rate9_10)
+              {
+                channel.ModulationType = ModulationType.Mod32Qam;
+              }
+              if (channel.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9)
+              {
+                channel.ModulationType = ModulationType.Mod16Qam;
+              }
+              else
+                channel.ModulationType = ModulationType.ModBpsk;
             }
+            //Set the Hauppauge Modulation type
+            /*if (channel.ModulationType == ModulationType.ModQpsk)
+            {
+              channel.ModulationType = ModulationType.ModQpsk2;
+            }*/
             if (channel.ModulationType == ModulationType.Mod8psk)
             {
               channel.ModulationType = ModulationType.Mod8psk2;
