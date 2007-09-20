@@ -73,7 +73,7 @@ void CRecorder::OnTsPacket(byte* tsPacket)
 	  if (m_tsHeader.TransportError) return;
 	  CEnterCriticalSection enter(m_section);
     
-    if (m_tsHeader.Pid==m_iPmtPid)
+    if (m_tsHeader.Pid==m_iPmtPid && m_pPmtParser )
     {
       m_pPmtParser->OnTsPacket(tsPacket);
     }
@@ -377,7 +377,7 @@ void CRecorder::OnPmtReceived(int pmtPid)
 
 void CRecorder::OnPidsReceived(const CPidTable& info)
 {
-  if (m_pmtVersion!=m_pPmtParser->GetPmtVersion() )
+  if (m_pPmtParser && m_pmtVersion!=m_pPmtParser->GetPmtVersion() )
   {
     LogDebug("Recorder: PMT version changed from %d to %d", m_pmtVersion, m_pPmtParser->GetPmtVersion() );
 
