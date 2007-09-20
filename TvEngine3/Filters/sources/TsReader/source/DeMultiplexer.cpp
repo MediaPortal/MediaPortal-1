@@ -1008,8 +1008,10 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
     {
       LogDebug("Calling SetSubtitlePid");
       pDVBSubtitleFilter->SetSubtitlePid(m_subtitleStreams[m_iSubtitleStream].pid);
+      LogDebug(" done - SetSubtitlePid");
+      LogDebug("Calling SetFirstPcr");
       pDVBSubtitleFilter->SetFirstPcr(m_duration.FirstStartPcr().PcrReferenceBase);
-    
+      LogDebug(" done - SetFirstPcr");
       m_currentSubtitlePid = m_subtitleStreams[m_iSubtitleStream].pid;
     }
   }
