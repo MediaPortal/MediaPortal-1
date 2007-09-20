@@ -1,23 +1,23 @@
 /* 
- *	Copyright (C) 2006-2007 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+*	Copyright (C) 2006-2007 Team MediaPortal
+*	http://www.team-mediaportal.com
+*
+*  This Program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2, or (at your option)
+*  any later version.
+*   
+*  This Program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*  GNU General Public License for more details.
+*   
+*  You should have received a copy of the GNU General Public License
+*  along with GNU Make; see the file COPYING.  If not, write to
+*  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+*  http://www.gnu.org/copyleft/gpl.html
+*
+*/
 
 #pragma warning(disable : 4995)
 #include <windows.h>
@@ -26,6 +26,7 @@
 #include <time.h>
 #include <streams.h>
 #include <initguid.h>
+#include <cassert>
 
 #include "timeshifting.h"
 #include "pmtparser.h"
@@ -55,6 +56,7 @@ int FAKE_PCR_PID      = 0x30;//0x21;          // pid we use for our PCR
 int FAKE_VIDEO_PID    = 0x30;                 // pid we use for the video stream
 int FAKE_AUDIO_PID    = 0x40;                 // pid we use for the audio strean
 int FAKE_SUBTITLE_PID = 0x50;                 // pid we use for subtitles
+int FAKE_TELETEXT_PID = 0x60; // Ziphnor
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -104,750 +106,819 @@ static DWORD crc_table[256] = {
 	0x933eb0bb, 0x97ffad0c, 0xafb010b1, 0xab710d06, 0xa6322bdf, 0xa2f33668,
 	0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4};
 
-//*******************************************************************
-//* calculate crc for a data block
-//* data : block of data   
-//* len  : length of data
-//*******************************************************************
-DWORD crc32 (char *data, int len)
-{
-	register int i;
-	DWORD crc = 0xffffffff;
-
-	for (i=0; i<len; i++)
-		crc = (crc << 8) ^ crc_table[((crc >> 24) ^ *data++) & 0xff];
-
-	return crc;
-}
-
-//*******************************************************************
-//* ctor
-//*******************************************************************
-CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr) 
-:CUnknown( NAME ("MpTsTimeshifting"), pUnk)
-{
-  m_bPaused=FALSE;
-	m_params.chunkSize=268435424;
-	m_params.maxFiles=20;
-	m_params.maxSize=268435424;
-	m_params.minFiles=6;
-  
-  m_pmtPid=-1;
-  m_pcrPid=-1;
-  m_timeShiftMode=ProgramStream;
-	m_bTimeShifting=false;
-	m_pTimeShiftFile=NULL;
-	m_multiPlexer.SetFileWriterCallBack(this);
-  
-	m_bStartPcrFound=false;
-  m_startPcr.Reset();
-  m_highestPcr.Reset();
-  m_bDetermineNewStartPcr=false;
-	m_iPatVersion=0;
-	m_iPmtVersion=0;
-  m_pWriteBuffer = new byte[WRITE_BUFFER_SIZE];
-  m_iWriteBufferPos=0;
-  m_fDump=NULL;
-  m_bIgnoreNextPcrJump=false;
-}
-//*******************************************************************
-//* dtor
-//*******************************************************************
-CTimeShifting::~CTimeShifting(void)
-{
-  delete [] m_pWriteBuffer;
-}
-
-//*******************************************************************
-//* OnTsPacket gets called when a new mpeg-2 transport packet has been received
-//* Method will check if we are timeshifting and ifso write the packet to
-//* the timeshift file if pid is correct
-//*******************************************************************
-void CTimeShifting::OnTsPacket(byte* tsPacket)
-{
-  if (m_bPaused) return;
-	if (m_bTimeShifting)
+	//*******************************************************************
+	//* calculate crc for a data block
+	//* data : block of data   
+	//* len  : length of data
+	//*******************************************************************
+	DWORD crc32 (char *data, int len)
 	{
-    CTsHeader header(tsPacket);
-    if (header.Pid==0x1fff) return;
-    
-    if (header.SyncByte!=0x47) return;
-    if (header.TransportError) return;
-	  CEnterCriticalSection enter(m_section);
-    //* timeshifting to mpeg-2 program stream
-    if (m_timeShiftMode==ProgramStream)
-    {
-      //* then feed packet to multiplexer for transform transport stream into program stream
-		  m_multiPlexer.OnTsPacket(tsPacket);
-    }
-    else
-    {
-      //* timeshifting to mpeg-2 transport stream. Just write packet to file
-      WriteTs(tsPacket);
-    }
+		register int i;
+		DWORD crc = 0xffffffff;
+
+		for (i=0; i<len; i++)
+			crc = (crc << 8) ^ crc_table[((crc >> 24) ^ *data++) & 0xff];
+
+		return crc;
 	}
-}
 
-
-//*******************************************************************
-//* Pause or continue timeshifting
-//* This method allows the client to pause and continue timeshifting
-//* Normally client pauses the timeshifting when updating the pids
-//* and continues timeshifting when all pids have been set
-//* onOff : 0 = continue, 1=pause
-//*******************************************************************
-STDMETHODIMP CTimeShifting::Pause( BYTE onOff) 
-{
-  if (onOff!=0) 
-    m_bPaused=TRUE;
-  else
-    m_bPaused=FALSE;
-	if (m_bPaused)
-    LogDebug("Timeshifter:paused:yes"); 
-  else
-  {
-    LogDebug("Timeshifter:paused:no"); 
-    Flush();
-    m_iPacketCounter=200;//write fake pat/pmt
-  }
-  return S_OK;
-}
-
-//*******************************************************************
-//* Sets the pcr pid to timeshift
-//* pcrPid = the PCR pid
-//*******************************************************************
-STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
-{
-	CEnterCriticalSection enter(m_section);
-	try
+	//*******************************************************************
+	//* ctor
+	//*******************************************************************
+	CTimeShifting::CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr) 
+		:CUnknown( NAME ("MpTsTimeshifting"), pUnk)
 	{
-		LogDebug("Timeshifter:pcr pid:0x%x",pcrPid); 
-		
-		m_multiPlexer.ClearStreams();
-		m_multiPlexer.SetPcrPid(pcrPid);
+		m_bPaused=FALSE;
+		m_params.chunkSize=268435424;
+		m_params.maxFiles=20;
+		m_params.maxSize=268435424;
+		m_params.minFiles=6;
+
+		m_pmtPid=-1;
+		m_pcrPid=-1;
+		m_timeShiftMode=ProgramStream;
+		m_bTimeShifting=false;
+		m_pTimeShiftFile=NULL;
+		m_multiPlexer.SetFileWriterCallBack(this);
+
+		m_bStartPcrFound=false;
+		m_startPcr.Reset();
+		m_highestPcr.Reset();
+		m_bDetermineNewStartPcr=false;
+		m_iPatVersion=0;
+		m_iPmtVersion=0;
+		m_pWriteBuffer = new byte[WRITE_BUFFER_SIZE];
+		m_iWriteBufferPos=0;
+		m_fDump=NULL;
+		m_bIgnoreNextPcrJump=false;
+	}
+	//*******************************************************************
+	//* dtor
+	//*******************************************************************
+	CTimeShifting::~CTimeShifting(void)
+	{
+		delete [] m_pWriteBuffer;
+	}
+
+	//*******************************************************************
+	//* OnTsPacket gets called when a new mpeg-2 transport packet has been received
+	//* Method will check if we are timeshifting and ifso write the packet to
+	//* the timeshift file if pid is correct
+	//*******************************************************************
+	void CTimeShifting::OnTsPacket(byte* tsPacket)
+	{
+		if (m_bPaused) return;
 		if (m_bTimeShifting)
 		{
-			LogDebug("Timeshifter:determine new start pcr"); 
-			m_bDetermineNewStartPcr=true;
-      m_bIgnoreNextPcrJump=true;
-		}
-    m_pcrPid=pcrPid;
-		m_vecPids.clear();
-		FAKE_NETWORK_ID   = 0x456;
-		FAKE_TRANSPORT_ID = 0x4;
-		FAKE_SERVICE_ID   = 0x89;
-		FAKE_PMT_PID      = 0x20;
-		FAKE_PCR_PID      = 0x30;//0x21;
-		FAKE_VIDEO_PID    = 0x30;
-		FAKE_AUDIO_PID    = 0x40;
-		FAKE_SUBTITLE_PID = 0x50;
-		m_iPatVersion++;
-		if (m_iPatVersion>15) 
-			m_iPatVersion=0;
-		m_iPmtVersion++;
-		if (m_iPmtVersion>15) 
-			m_iPmtVersion=0;
-	}
-	catch(...)
-	{
-		LogDebug("Timeshifter:SetPcrPid exception");
-	}
-	return S_OK;
-}
+			CTsHeader header(tsPacket);
+			if (header.Pid==0x1fff) return;
 
-//*******************************************************************
-//* Sets the PMT pid to timeshift
-//* pmtPid = the PMT pid
-//*******************************************************************
-STDMETHODIMP CTimeShifting::SetPmtPid(int pmtPid)
-{
-  CEnterCriticalSection enter(m_section);
-	try
-	{
-		LogDebug("Timeshifter:pmt pid:0x%x",pmtPid);
-    m_pmtPid=pmtPid;
-	}
-	catch(...)
-	{
-		LogDebug("Timeshifter:SetPmtPid exception");
-	}
-	return S_OK;
-}
-
-//*******************************************************************
-//* Sets the timeshifting mode
-//* This can be mpeg-2 program stream or mpeg-2 transport stream
-//* mode 0 = ProgramStream, 1= transport stream
-//*******************************************************************
-STDMETHODIMP CTimeShifting::SetMode(int mode) 
-{
-  m_timeShiftMode=(TimeShiftingMode)mode;
-  if (mode==ProgramStream)
-			LogDebug("Timeshifter:program stream mode");
-  else
-      LogDebug("Timeshifter:transport stream mode");
-	return S_OK;
-}
-
-//*******************************************************************
-//* Returns the timeshifting mode
-//* This can be mpeg-2 program stream or mpeg-2 transport stream
-//* mode 0 = ProgramStream, 1= transport stream
-//*******************************************************************
-STDMETHODIMP CTimeShifting::GetMode(int *mode) 
-{
-  *mode=(int)m_timeShiftMode;
-	return S_OK;
-}
-
-
-//*******************************************************************
-//* Adds an audio/video stream to the timeshift file
-//* pid         : pid to add
-//* serviceType : service type of pid. Indicates if its audio/video and which encoding is ued
-//* language    : The video/audio language
-//*******************************************************************
-STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
-{
-  if (pid==0) return S_OK;
-	CEnterCriticalSection enter(m_section);
-	itvecPids it=m_vecPids.begin();
-	while (it!=m_vecPids.end())
-	{
-		PidInfo& info=*it;
-    if (info.realPid==pid) return S_OK;
-    ++it;
-  }
-
-	try
-	{
-		if (SERVICE_TYPE_AUDIO_MPEG1==serviceType||SERVICE_TYPE_AUDIO_MPEG2==serviceType||serviceType==SERVICE_TYPE_AUDIO_AC3)
-    {
-			if (m_pcrPid == pid)
+			if (header.SyncByte!=0x47) return;
+			if (header.TransportError) return;
+			CEnterCriticalSection enter(m_section);
+			//* timeshifting to mpeg-2 program stream
+			if (m_timeShiftMode==ProgramStream)
 			{
-				FAKE_PCR_PID = FAKE_AUDIO_PID;
+				//* then feed packet to multiplexer for transform transport stream into program stream
+				m_multiPlexer.OnTsPacket(tsPacket);
 			}
-      PidInfo info;
-			info.realPid=pid;
-			info.fakePid=FAKE_AUDIO_PID;
-			info.seenStart=false;
-			info.serviceType=serviceType;
-			info.ContintuityCounter=0;
-			strcpy(info.language,language);
-			m_vecPids.push_back(info);
+			else
+			{
+				//* timeshifting to mpeg-2 transport stream. Just write packet to file
+				WriteTs(tsPacket);
+			}
+		}
+	}
+
+
+	//*******************************************************************
+	//* Pause or continue timeshifting
+	//* This method allows the client to pause and continue timeshifting
+	//* Normally client pauses the timeshifting when updating the pids
+	//* and continues timeshifting when all pids have been set
+	//* onOff : 0 = continue, 1=pause
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::Pause( BYTE onOff) 
+	{
+		if (onOff!=0) 
+			m_bPaused=TRUE;
+		else
+			m_bPaused=FALSE;
+		if (m_bPaused)
+			LogDebug("Timeshifter:paused:yes"); 
+		else
+		{
+			LogDebug("Timeshifter:paused:no"); 
+			Flush();
+			m_iPacketCounter=200;//write fake pat/pmt
+		}
+		return S_OK;
+	}
+
+	//*******************************************************************
+	//* Sets the pcr pid to timeshift
+	//* pcrPid = the PCR pid
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::SetPcrPid(int pcrPid)
+	{
+		CEnterCriticalSection enter(m_section);
+		try
+		{
+			LogDebug("Timeshifter:pcr pid:0x%x",pcrPid); 
+
+			m_multiPlexer.ClearStreams();
+			m_multiPlexer.SetPcrPid(pcrPid);
+			if (m_bTimeShifting)
+			{
+				LogDebug("Timeshifter:determine new start pcr"); 
+				m_bDetermineNewStartPcr=true;
+				m_bIgnoreNextPcrJump=true;
+			}
+			m_pcrPid=pcrPid;
+			m_vecPids.clear();
+			FAKE_NETWORK_ID   = 0x456;
+			FAKE_TRANSPORT_ID = 0x4;
+			FAKE_SERVICE_ID   = 0x89;
+			FAKE_PMT_PID      = 0x20;
+			FAKE_PCR_PID      = 0x30;//0x21;
+			FAKE_VIDEO_PID    = 0x30;
+			FAKE_AUDIO_PID    = 0x40;
+			FAKE_SUBTITLE_PID = 0x50;
+			m_iPatVersion++;
+			if (m_iPatVersion>15) 
+				m_iPatVersion=0;
+			m_iPmtVersion++;
+			if (m_iPmtVersion>15) 
+				m_iPmtVersion=0;
+		}
+		catch(...)
+		{
+			LogDebug("Timeshifter:SetPcrPid exception");
+		}
+		return S_OK;
+	}
+
+	//*******************************************************************
+	//* Sets the PMT pid to timeshift
+	//* pmtPid = the PMT pid
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::SetPmtPid(int pmtPid)
+	{
+		CEnterCriticalSection enter(m_section);
+		try
+		{
+			LogDebug("Timeshifter:pmt pid:0x%x",pmtPid);
+			m_pmtPid=pmtPid;
+		}
+		catch(...)
+		{
+			LogDebug("Timeshifter:SetPmtPid exception");
+		}
+		return S_OK;
+	}
+
+	//*******************************************************************
+	//* Sets the timeshifting mode
+	//* This can be mpeg-2 program stream or mpeg-2 transport stream
+	//* mode 0 = ProgramStream, 1= transport stream
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::SetMode(int mode) 
+	{
+		m_timeShiftMode=(TimeShiftingMode)mode;
+		if (mode==ProgramStream)
+			LogDebug("Timeshifter:program stream mode");
+		else
+			LogDebug("Timeshifter:transport stream mode");
+		return S_OK;
+	}
+
+	//*******************************************************************
+	//* Returns the timeshifting mode
+	//* This can be mpeg-2 program stream or mpeg-2 transport stream
+	//* mode 0 = ProgramStream, 1= transport stream
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::GetMode(int *mode) 
+	{
+		*mode=(int)m_timeShiftMode;
+		return S_OK;
+	}
+
+	//*******************************************************************
+	//* Adds a stream to the timeshift file (unsupported streams ignored)
+	//* Original descriptor_data required. WriteFakePMT will write the original
+	//* descriptor into the PMT associating it with the fake PID.
+	//* pid             : pid to add
+	//* descriptor_data : original DVB SI descriptor from the PMT
+	// * Added by Ziphnor
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::AddStreamWithDescriptor(int pid, const byte* descriptor_data){
+		//LogDebug("AddStreamWDesc PID %i", pid);
+		if (pid==0) return S_OK;
+		CEnterCriticalSection enter(m_section);
+		itvecPids it=m_vecPids.begin();
+		while (it!=m_vecPids.end())
+		{
+			PidInfo& info=*it;
+			if (info.realPid==pid) return S_OK;
+			++it;
+		}
+
+		try{
+			byte descriptor_tag = descriptor_data[0];
 			
-			LogDebug("Timeshifter:add audio stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
-			FAKE_AUDIO_PID++;
-      if (serviceType==SERVICE_TYPE_AUDIO_AC3)
-			  m_multiPlexer.AddPesStream(pid,true,false,false);
-      else
-			  m_multiPlexer.AddPesStream(pid,false,true,false);
-    }
-		else if (serviceType==SERVICE_TYPE_VIDEO_MPEG1||serviceType==SERVICE_TYPE_VIDEO_MPEG2||serviceType==SERVICE_TYPE_VIDEO_MPEG4||serviceType==SERVICE_TYPE_VIDEO_H264)
-    {
-			//if (m_pcrPid == pid)
-			//{
-			//	FAKE_PCR_PID = FAKE_VIDEO_PID;
-			//}
-			//LogDebug("Timeshifter:add video pes stream pid:%x",pid);
-      PidInfo info;
-			info.realPid=pid;
-			info.fakePid=FAKE_VIDEO_PID;
-			info.seenStart=false;
-			info.serviceType=serviceType;
-			info.ContintuityCounter=0;
-			strcpy(info.language,language);
-			m_vecPids.push_back(info);
-			LogDebug("Timeshifter:add video stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
-			FAKE_VIDEO_PID++;
-			m_multiPlexer.AddPesStream(pid,false,false,true);
-    }
-		else if (serviceType==SERVICE_TYPE_DVB_SUBTITLES1||serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
-		{
-      PidInfo info;
-			info.realPid=pid;
-			info.fakePid=FAKE_SUBTITLE_PID;
-			info.seenStart=false;
-			info.serviceType=serviceType;
-			info.ContintuityCounter=0;
-			strcpy(info.language,language);
-			m_vecPids.push_back(info);
-			LogDebug("Timeshifter:add subtitle stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
-			FAKE_SUBTITLE_PID++;
-			m_multiPlexer.AddPesStream(pid,false,false,true);
+			if(descriptor_tag == DESCRIPTOR_DVB_TELETEXT){
+				PidInfo info;
+				info.realPid=pid;
+				info.fakePid=FAKE_TELETEXT_PID;
+				info.seenStart=false;
+				info.serviceType = 0x06;
+				info.ContintuityCounter=0;
+				//strcpy(info.language,language);
+				int descriptor_length = descriptor_data[1] + 2;
+				memcpy(info.descriptor_data,descriptor_data,descriptor_length);
+				info.descriptor_valid = true;
+
+				m_vecPids.push_back(info);
+				LogDebug("Timeshifter:add (with descriptor) teletext stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+				FAKE_TELETEXT_PID++;
+				m_multiPlexer.AddPesStream(pid,false,false,true);
+			}
+			// feel free to add more descriptor types here, they will automatically work with 
+			// WriteFakePMT as the descriptor is given
+			else{
+				LogDebug("WARNING: AddStreamWithDesc(pid,descriptor) doesnt support descriptor type %X, ignoring", descriptor_tag);
+			}
 		}
-		else 
-    {
-      PidInfo info;
-			info.realPid=pid;
-			info.fakePid=pid;
-			info.serviceType=serviceType;
-			info.seenStart=false;
-			info.ContintuityCounter=0;
-			strcpy(info.language,language);
-			LogDebug("Timeshifter:add stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
-			m_vecPids.push_back(info);
-    }
-	}
-	catch(...)
-	{
-		LogDebug("Timeshifter:AddPesStream exception");
-	}
-	return S_OK;
-}
-
-//*******************************************************************
-//* Removes a stream from the timeshift file
-//* pid         : pid to remove
-//*******************************************************************
-STDMETHODIMP CTimeShifting::RemoveStream(int pid)
-{
-	CEnterCriticalSection enter(m_section);
-	try
-	{
-		//LogDebug("Timeshifter:remove pes stream pid:%x",pid);
-		m_multiPlexer.RemovePesStream(pid);
-	}
-	catch(...)
-	{
-		LogDebug("Timeshifter:RemovePesStream exception");
-	}
-	return S_OK;
-}
-
-//*******************************************************************
-//* Sets the filename for the timeshift file
-//* pszFileName : full path and filename
-//*******************************************************************
-STDMETHODIMP CTimeShifting::SetTimeShiftingFileName(char* pszFileName)
-{
-	CEnterCriticalSection enter(m_section);
-	try
-	{
-		LogDebug("Timeshifter:set filename:%s",pszFileName);
-    m_iPacketCounter=0;
-    m_pmtPid=-1;
-    m_pcrPid=-1;
-    m_vecPids.clear();
-	  m_startPcr.Reset();
-		m_bStartPcrFound=false;
-	  m_highestPcr.Reset();
-    m_bDetermineNewStartPcr=false;
-		m_multiPlexer.Reset();
-		strcpy(m_szFileName,pszFileName);
-		strcat(m_szFileName,".tsbuffer");
-	}
-	catch(...)
-	{
-		LogDebug("Timeshifter:SetTimeShiftingFileName exception");
-	}
-	return S_OK;
-}
-
-//*******************************************************************
-//* Starts timeshifting
-//*******************************************************************
-STDMETHODIMP CTimeShifting::Start()
-{
-	CEnterCriticalSection enter(m_section);
-	try
-	{
-    /*m_fDump=fopen("c:\\dump.txt","r");
-    if (m_fDump!=NULL)
-    {
-      fclose(m_fDump);
-      ::DeleteFile("c:\\dump.ts");
-      m_fDump = fopen("c:\\dump.ts","wb+");
-    }*/
-		if (strlen(m_szFileName)==0) return E_FAIL;
-		::DeleteFile((LPCTSTR) m_szFileName);
-		WCHAR wstrFileName[2048];
-		MultiByteToWideChar(CP_ACP,0,m_szFileName,-1,wstrFileName,1+strlen(m_szFileName));
-
-		//fTsFile = fopen("c:\\users\\public\\test.ts","wb+");
-		m_pTimeShiftFile = new MultiFileWriter(&m_params);
-		if (FAILED(m_pTimeShiftFile->OpenFile(wstrFileName))) 
+		catch(...)
 		{
-			LogDebug("Timeshifter:failed to open filename:%s %d",m_szFileName,GetLastError());
-			m_pTimeShiftFile->CloseFile();
-			delete m_pTimeShiftFile;
-			m_pTimeShiftFile=NULL;
-			return E_FAIL;
+			LogDebug("Timeshifter:AddStream(pid,byte*) exception");
+		}
+		return S_OK;
+	}
+
+	//*******************************************************************
+	//* Adds an audio/video stream to the timeshift file
+	//* pid         : pid to add
+	//* serviceType : service type of pid. Indicates if its audio/video and which encoding is ued
+	//* language    : The video/audio language
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::AddStream(int pid, int serviceType, char* language)
+	{
+		if (pid==0) return S_OK;
+		CEnterCriticalSection enter(m_section);
+		itvecPids it=m_vecPids.begin();
+		while (it!=m_vecPids.end())
+		{
+			PidInfo& info=*it;
+			if (info.realPid==pid) return S_OK;
+			++it;
 		}
 
-		m_iPmtContinuityCounter=-1;
-		m_iPatContinuityCounter=-1;
-    m_bDetermineNewStartPcr=false;
-		m_startPcr.Reset();
-		m_bStartPcrFound=false;
-		m_highestPcr.Reset();
-    m_iPacketCounter=0;
-    m_iWriteBufferPos=0;
-    LogDebug("Timeshifter:Start timeshifting:'%s'",m_szFileName);
-    LogDebug("Timeshifter:real pcr:%x fake pcr:%x",m_pcrPid,FAKE_PCR_PID);
-    LogDebug("Timeshifter:real pmt:%x fake pmt:%x",m_pmtPid,FAKE_PMT_PID);
-    itvecPids it=m_vecPids.begin();
-    while (it!=m_vecPids.end())
-    {
-	    PidInfo& info=*it;
-      LogDebug("Timeshifter:real pid:%x fake pid:%x type:%x",info.realPid,info.fakePid,info.serviceType);
-      ++it;
-    }
-		m_bTimeShifting=true;
-		if (m_timeShiftMode==TransportStream)
+		try
+		{
+			if (SERVICE_TYPE_AUDIO_MPEG1==serviceType||SERVICE_TYPE_AUDIO_MPEG2==serviceType||serviceType==SERVICE_TYPE_AUDIO_AC3)
+			{
+				if (m_pcrPid == pid)
+				{
+					FAKE_PCR_PID = FAKE_AUDIO_PID;
+				}
+				PidInfo info;
+				info.realPid=pid;
+				info.fakePid=FAKE_AUDIO_PID;
+				info.seenStart=false;
+				info.serviceType=serviceType;
+				info.ContintuityCounter=0;
+				strcpy(info.language,language);
+				m_vecPids.push_back(info);
+
+				LogDebug("Timeshifter:add audio stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+				FAKE_AUDIO_PID++;
+				if (serviceType==SERVICE_TYPE_AUDIO_AC3)
+					m_multiPlexer.AddPesStream(pid,true,false,false);
+				else
+					m_multiPlexer.AddPesStream(pid,false,true,false);
+			}
+			else if (serviceType==SERVICE_TYPE_VIDEO_MPEG1||serviceType==SERVICE_TYPE_VIDEO_MPEG2||serviceType==SERVICE_TYPE_VIDEO_MPEG4||serviceType==SERVICE_TYPE_VIDEO_H264)
+			{
+				//if (m_pcrPid == pid)
+				//{
+				//	FAKE_PCR_PID = FAKE_VIDEO_PID;
+				//}
+				//LogDebug("Timeshifter:add video pes stream pid:%x",pid);
+				PidInfo info;
+				info.realPid=pid;
+				info.fakePid=FAKE_VIDEO_PID;
+				info.seenStart=false;
+				info.serviceType=serviceType;
+				info.ContintuityCounter=0;
+				strcpy(info.language,language);
+				m_vecPids.push_back(info);
+				LogDebug("Timeshifter:add video stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+				FAKE_VIDEO_PID++;
+				m_multiPlexer.AddPesStream(pid,false,false,true);
+			}
+			else if (serviceType==SERVICE_TYPE_DVB_SUBTITLES1||serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
+			{
+				PidInfo info;
+				info.realPid=pid;
+				info.fakePid=FAKE_SUBTITLE_PID;
+				info.seenStart=false;
+				info.serviceType=serviceType;
+				info.ContintuityCounter=0;
+				strcpy(info.language,language);
+				m_vecPids.push_back(info);
+				LogDebug("Timeshifter:add subtitle stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+				FAKE_SUBTITLE_PID++;
+				m_multiPlexer.AddPesStream(pid,false,false,true);
+			}
+			else 
+			{
+				PidInfo info;
+				info.realPid=pid;
+				info.fakePid=pid;
+				info.serviceType=serviceType;
+				info.seenStart=false;
+				info.ContintuityCounter=0;
+				strcpy(info.language,language);
+				LogDebug("Timeshifter:add stream real pid:0x%x fake pid:0x%x type:%x",info.realPid,info.fakePid,info.serviceType);
+				m_vecPids.push_back(info);
+			}
+		}
+		catch(...)
+		{
+			LogDebug("Timeshifter:AddPesStream exception");
+		}
+		return S_OK;
+	}
+
+	//*******************************************************************
+	//* Removes a stream from the timeshift file
+	//* pid         : pid to remove
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::RemoveStream(int pid)
+	{
+		CEnterCriticalSection enter(m_section);
+		try
+		{
+			//LogDebug("Timeshifter:remove pes stream pid:%x",pid);
+			m_multiPlexer.RemovePesStream(pid);
+		}
+		catch(...)
+		{
+			LogDebug("Timeshifter:RemovePesStream exception");
+		}
+		return S_OK;
+	}
+
+	//*******************************************************************
+	//* Sets the filename for the timeshift file
+	//* pszFileName : full path and filename
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::SetTimeShiftingFileName(char* pszFileName)
+	{
+		CEnterCriticalSection enter(m_section);
+		try
+		{
+			LogDebug("Timeshifter:set filename:%s",pszFileName);
+			m_iPacketCounter=0;
+			m_pmtPid=-1;
+			m_pcrPid=-1;
+			m_vecPids.clear();
+			m_startPcr.Reset();
+			m_bStartPcrFound=false;
+			m_highestPcr.Reset();
+			m_bDetermineNewStartPcr=false;
+			m_multiPlexer.Reset();
+			strcpy(m_szFileName,pszFileName);
+			strcat(m_szFileName,".tsbuffer");
+		}
+		catch(...)
+		{
+			LogDebug("Timeshifter:SetTimeShiftingFileName exception");
+		}
+		return S_OK;
+	}
+
+	//*******************************************************************
+	//* Starts timeshifting
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::Start()
+	{
+		CEnterCriticalSection enter(m_section);
+		try
+		{
+			/*m_fDump=fopen("c:\\dump.txt","r");
+			if (m_fDump!=NULL)
+			{
+			fclose(m_fDump);
+			::DeleteFile("c:\\dump.ts");
+			m_fDump = fopen("c:\\dump.ts","wb+");
+			}*/
+			if (strlen(m_szFileName)==0) return E_FAIL;
+			::DeleteFile((LPCTSTR) m_szFileName);
+			WCHAR wstrFileName[2048];
+			MultiByteToWideChar(CP_ACP,0,m_szFileName,-1,wstrFileName,1+strlen(m_szFileName));
+
+			//fTsFile = fopen("c:\\users\\public\\test.ts","wb+");
+			m_pTimeShiftFile = new MultiFileWriter(&m_params);
+			if (FAILED(m_pTimeShiftFile->OpenFile(wstrFileName))) 
+			{
+				LogDebug("Timeshifter:failed to open filename:%s %d",m_szFileName,GetLastError());
+				m_pTimeShiftFile->CloseFile();
+				delete m_pTimeShiftFile;
+				m_pTimeShiftFile=NULL;
+				return E_FAIL;
+			}
+
+			m_iPmtContinuityCounter=-1;
+			m_iPatContinuityCounter=-1;
+			m_bDetermineNewStartPcr=false;
+			m_startPcr.Reset();
+			m_bStartPcrFound=false;
+			m_highestPcr.Reset();
+			m_iPacketCounter=0;
+			m_iWriteBufferPos=0;
+			LogDebug("Timeshifter:Start timeshifting:'%s'",m_szFileName);
+			LogDebug("Timeshifter:real pcr:%x fake pcr:%x",m_pcrPid,FAKE_PCR_PID);
+			LogDebug("Timeshifter:real pmt:%x fake pmt:%x",m_pmtPid,FAKE_PMT_PID);
+			itvecPids it=m_vecPids.begin();
+			while (it!=m_vecPids.end())
+			{
+				PidInfo& info=*it;
+				LogDebug("Timeshifter:real pid:%x fake pid:%x type:%x",info.realPid,info.fakePid,info.serviceType);
+				++it;
+			}
+			m_bTimeShifting=true;
+			if (m_timeShiftMode==TransportStream)
+			{
+				WriteFakePAT();
+				WriteFakePMT();
+			}
+			m_bPaused=FALSE;
+		}
+		catch(...)
+		{
+			LogDebug("Timeshifter:Start timeshifting exception");
+		}
+		return S_OK;
+	}
+
+	//*******************************************************************
+	//* Resets the timeshifter
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::Reset()
+	{
+		CEnterCriticalSection enter(m_section);
+		try
+		{
+			LogDebug("Timeshifter:Reset");
+			m_pmtPid=-1;
+			m_pcrPid=-1;
+			m_bDetermineNewStartPcr=false;
+			m_startPcr.Reset();
+			m_bStartPcrFound=false;
+			m_highestPcr.Reset();
+			m_vecPids.clear();
+			m_multiPlexer.Reset();
+			FAKE_NETWORK_ID   = 0x456;
+			FAKE_TRANSPORT_ID = 0x4;
+			FAKE_SERVICE_ID   = 0x89;
+			FAKE_PMT_PID      = 0x20;
+			FAKE_PCR_PID      = 0x30;//0x21;
+			FAKE_VIDEO_PID    = 0x30;
+			FAKE_AUDIO_PID    = 0x40;
+			FAKE_SUBTITLE_PID = 0x50;
+			m_iPacketCounter=0;
+			m_bPaused=FALSE;
+		}
+		catch(...)
+		{
+			LogDebug("Timeshifter:Reset timeshifting exception");
+		}
+		return S_OK;
+	}
+
+
+	//*******************************************************************
+	//* Stops timeshifting
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::Stop()
+	{
+		CEnterCriticalSection enter(m_section);
+		try
+		{
+			//fclose(fTsFile );
+
+			LogDebug("Timeshifter:Stop timeshifting:'%s'",m_szFileName);
+			m_bTimeShifting=false;
+			m_multiPlexer.Reset();
+			if (m_pTimeShiftFile!=NULL)
+			{
+				m_pTimeShiftFile->CloseFile();
+				delete m_pTimeShiftFile;
+				m_pTimeShiftFile=NULL;
+			}
+			if (m_fDump!=NULL)
+			{
+				fclose(m_fDump);
+				m_fDump=NULL;
+			}
+			Reset();
+		}
+		catch(...)
+		{
+			LogDebug("Timeshifter:Stop timeshifting exception");
+		}
+		return S_OK;
+	}
+
+
+	//*******************************************************************
+	//* Flush i/o buffer to timeshifting file
+	//*******************************************************************
+	void CTimeShifting::Flush()
+	{
+		try
+		{
+			if (m_iWriteBufferPos>0)
+			{
+				if (m_pTimeShiftFile!=NULL)
+				{
+					m_pTimeShiftFile->Write(m_pWriteBuffer,m_iWriteBufferPos);
+					m_iWriteBufferPos=0;
+				}
+			}
+		}
+		catch(...)
+		{
+			LogDebug("Timeshifter:Write exception");
+		}
+	}
+
+
+	//*******************************************************************
+	//* Write a datablock to i/o buffer
+	//* When the i/o buffer is full, it is flushed to the timeshifting file
+	//* buffer: block of data
+	//* len   : length of buffer
+	//*******************************************************************
+	void CTimeShifting::Write(byte* buffer, int len)
+	{
+		if (!m_bTimeShifting) return;
+		if (buffer==NULL) return;
+		if (len <=0) return;
+		CEnterCriticalSection enter(m_section);
+		if (len + m_iWriteBufferPos >= WRITE_BUFFER_SIZE)
+		{
+			Flush();
+		}
+		memcpy(&m_pWriteBuffer[m_iWriteBufferPos],buffer,len);
+		m_iWriteBufferPos+=len;
+	}
+
+	//*******************************************************************
+	//* returns the buffer size
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::GetBufferSize(long *size)
+	{
+		CheckPointer(size, E_POINTER);
+		*size = 0;
+		return S_OK;
+	}
+
+	//*******************************************************************
+	//* returns the number of timeshifting files in use
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::GetNumbFilesAdded(WORD *numbAdd)
+	{
+		CheckPointer(numbAdd, E_POINTER);
+		*numbAdd = (WORD)m_pTimeShiftFile->getNumbFilesAdded();
+		return NOERROR;
+	}
+
+	//*******************************************************************
+	//* returns the number of timeshifting files removed since start
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::GetNumbFilesRemoved(WORD *numbRem)
+	{
+		CheckPointer(numbRem, E_POINTER);
+		*numbRem = (WORD)m_pTimeShiftFile->getNumbFilesRemoved();
+		return NOERROR;
+	}
+
+	//*******************************************************************
+	//* returns the current timeshifting file
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::GetCurrentFileId(WORD *fileID)
+	{
+		CheckPointer(fileID, E_POINTER);
+		*fileID = (WORD)m_pTimeShiftFile->getCurrentFileId();
+		return NOERROR;
+	}
+
+	//*******************************************************************
+	//* returns the minimum amount of timeshifting files
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::GetMinTSFiles(WORD *minFiles)
+	{
+		CheckPointer(minFiles, E_POINTER);
+		*minFiles = (WORD) m_params.minFiles;
+		return NOERROR;
+	}
+
+	//*******************************************************************
+	//* Sets the minimum amount of timeshifting files
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::SetMinTSFiles(WORD minFiles)
+	{
+		m_params.minFiles=(long)minFiles;
+		return NOERROR;
+	}
+
+	//*******************************************************************
+	//* returns the maxmimum amount of timeshifting files
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::GetMaxTSFiles(WORD *maxFiles)
+	{
+		CheckPointer(maxFiles, E_POINTER);
+		*maxFiles = (WORD) m_params.maxFiles;
+		return NOERROR;
+	}
+
+	//*******************************************************************
+	//* sets the maxmimum amount of timeshifting files
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::SetMaxTSFiles(WORD maxFiles)
+	{
+		m_params.maxFiles=(long)maxFiles;
+		return NOERROR;
+	}
+
+	//*******************************************************************
+	//* returns the maxmimum filesize for a timeshifting file
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::GetMaxTSFileSize(__int64 *maxSize)
+	{
+		CheckPointer(maxSize, E_POINTER);
+		*maxSize = m_params.maxSize;
+		return NOERROR;
+	}
+
+	//*******************************************************************
+	//* sets the maxmimum filesize for a timeshifting file
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::SetMaxTSFileSize(__int64 maxSize)
+	{
+		m_params.maxSize=maxSize;
+		return NOERROR;
+	}
+
+	//*******************************************************************
+	//* returns the initial file length for a timeshifting file
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::GetChunkReserve(__int64 *chunkSize)
+	{
+		CheckPointer(chunkSize, E_POINTER);
+		*chunkSize = m_params.chunkSize;
+		return NOERROR;
+	}
+
+	//*******************************************************************
+	//* sets the initial file length for a timeshifting file
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::SetChunkReserve(__int64 chunkSize)
+	{
+		m_params.chunkSize=chunkSize;
+		return NOERROR;
+	}
+
+	//*******************************************************************
+	//* returns the current filesize of all timeshift files
+	//*******************************************************************
+	STDMETHODIMP CTimeShifting::GetFileBufferSize(__int64 *lpllsize)
+	{
+		CheckPointer(lpllsize, E_POINTER);
+		m_pTimeShiftFile->GetFileSize(lpllsize);
+		return NOERROR;
+	}
+
+	//*******************************************************************
+	//* WriteTs()
+	//* this method checks if the pid of the tspacket needs to be written to
+	//* the timeshift file. Ifso.. the pid is written to the timeshifting file
+	//* This method also inserts the pat/pmt packets in the stream
+	//* and adjust the PCR/PTS timestamps
+	//*
+	//* tsPacket : mpeg-2 transport stream packet of 188 bytes
+	//*******************************************************************
+	void CTimeShifting::WriteTs(byte* tsPacket)
+	{
+		if (m_pcrPid<0 || m_vecPids.size()==0|| m_pmtPid<0) return;
+
+		m_tsHeader.Decode(tsPacket);
+		//if (m_tsHeader.TransportError) return;
+		//if (m_tsHeader.TScrambling!=0) return;
+		if (m_iPacketCounter>=100)
 		{
 			WriteFakePAT();
 			WriteFakePMT();
+			m_iPacketCounter=0;
 		}
-    m_bPaused=FALSE;
-	}
-	catch(...)
-	{
-		LogDebug("Timeshifter:Start timeshifting exception");
-	}
-	return S_OK;
-}
 
-//*******************************************************************
-//* Resets the timeshifter
-//*******************************************************************
-STDMETHODIMP CTimeShifting::Reset()
-{
-	CEnterCriticalSection enter(m_section);
-	try
-	{
-		LogDebug("Timeshifter:Reset");
-    m_pmtPid=-1;
-    m_pcrPid=-1;
-    m_bDetermineNewStartPcr=false;
-	  m_startPcr.Reset();
-		m_bStartPcrFound=false;
-	  m_highestPcr.Reset();
-		m_vecPids.clear();
-		m_multiPlexer.Reset();
-		FAKE_NETWORK_ID   = 0x456;
-		FAKE_TRANSPORT_ID = 0x4;
-		FAKE_SERVICE_ID   = 0x89;
-		FAKE_PMT_PID      = 0x20;
-		FAKE_PCR_PID      = 0x30;//0x21;
-		FAKE_VIDEO_PID    = 0x30;
-		FAKE_AUDIO_PID    = 0x40;
-		FAKE_SUBTITLE_PID = 0x50;
-    m_iPacketCounter=0;
-    m_bPaused=FALSE;
-	}
-	catch(...)
-	{
-		LogDebug("Timeshifter:Reset timeshifting exception");
-	}
-	return S_OK;
-}
+		int PayLoadUnitStart=0;
+		if (m_tsHeader.PayloadUnitStart) PayLoadUnitStart=1;
 
 
-//*******************************************************************
-//* Stops timeshifting
-//*******************************************************************
-STDMETHODIMP CTimeShifting::Stop()
-{
-	CEnterCriticalSection enter(m_section);
-	try
-	{
-		//fclose(fTsFile );
-
-		LogDebug("Timeshifter:Stop timeshifting:'%s'",m_szFileName);
-		m_bTimeShifting=false;
-		m_multiPlexer.Reset();
-		if (m_pTimeShiftFile!=NULL)
+		itvecPids it=m_vecPids.begin();
+		itvecPids itPcr=m_vecPids.end();
+		while (it!=m_vecPids.end())
 		{
-			m_pTimeShiftFile->CloseFile();
-			delete m_pTimeShiftFile;
-			m_pTimeShiftFile=NULL;
-		}
-    if (m_fDump!=NULL)
-    {
-      fclose(m_fDump);
-      m_fDump=NULL;
-    }
-		Reset();
-	}
-	catch(...)
-	{
-		LogDebug("Timeshifter:Stop timeshifting exception");
-	}
-	return S_OK;
-}
+			PidInfo& info=*it;
+			if (info.fakePid==FAKE_PCR_PID)
+				itPcr=it;
 
-
-//*******************************************************************
-//* Flush i/o buffer to timeshifting file
-//*******************************************************************
-void CTimeShifting::Flush()
-{
-  try
-  {
-    if (m_iWriteBufferPos>0)
-    {
-	    if (m_pTimeShiftFile!=NULL)
-	    {
-		    m_pTimeShiftFile->Write(m_pWriteBuffer,m_iWriteBufferPos);
-        m_iWriteBufferPos=0;
-	    }
-    }
-  }
-  catch(...)
-  {
-	  LogDebug("Timeshifter:Write exception");
-  }
-}
-
-
-//*******************************************************************
-//* Write a datablock to i/o buffer
-//* When the i/o buffer is full, it is flushed to the timeshifting file
-//* buffer: block of data
-//* len   : length of buffer
-//*******************************************************************
-void CTimeShifting::Write(byte* buffer, int len)
-{
-  if (!m_bTimeShifting) return;
-  if (buffer==NULL) return;
-  if (len <=0) return;
-	CEnterCriticalSection enter(m_section);
-  if (len + m_iWriteBufferPos >= WRITE_BUFFER_SIZE)
-  {
-	  Flush();
-  }
-  memcpy(&m_pWriteBuffer[m_iWriteBufferPos],buffer,len);
-  m_iWriteBufferPos+=len;
-}
-
-//*******************************************************************
-//* returns the buffer size
-//*******************************************************************
-STDMETHODIMP CTimeShifting::GetBufferSize(long *size)
-{
-	CheckPointer(size, E_POINTER);
-	*size = 0;
-	return S_OK;
-}
-
-//*******************************************************************
-//* returns the number of timeshifting files in use
-//*******************************************************************
-STDMETHODIMP CTimeShifting::GetNumbFilesAdded(WORD *numbAdd)
-{
-    CheckPointer(numbAdd, E_POINTER);
-	*numbAdd = (WORD)m_pTimeShiftFile->getNumbFilesAdded();
-    return NOERROR;
-}
-
-//*******************************************************************
-//* returns the number of timeshifting files removed since start
-//*******************************************************************
-STDMETHODIMP CTimeShifting::GetNumbFilesRemoved(WORD *numbRem)
-{
-    CheckPointer(numbRem, E_POINTER);
-	*numbRem = (WORD)m_pTimeShiftFile->getNumbFilesRemoved();
-    return NOERROR;
-}
-
-//*******************************************************************
-//* returns the current timeshifting file
-//*******************************************************************
-STDMETHODIMP CTimeShifting::GetCurrentFileId(WORD *fileID)
-{
-    CheckPointer(fileID, E_POINTER);
-	*fileID = (WORD)m_pTimeShiftFile->getCurrentFileId();
-    return NOERROR;
-}
-
-//*******************************************************************
-//* returns the minimum amount of timeshifting files
-//*******************************************************************
-STDMETHODIMP CTimeShifting::GetMinTSFiles(WORD *minFiles)
-{
-    CheckPointer(minFiles, E_POINTER);
-	*minFiles = (WORD) m_params.minFiles;
-    return NOERROR;
-}
-
-//*******************************************************************
-//* Sets the minimum amount of timeshifting files
-//*******************************************************************
-STDMETHODIMP CTimeShifting::SetMinTSFiles(WORD minFiles)
-{
-	m_params.minFiles=(long)minFiles;
-    return NOERROR;
-}
-
-//*******************************************************************
-//* returns the maxmimum amount of timeshifting files
-//*******************************************************************
-STDMETHODIMP CTimeShifting::GetMaxTSFiles(WORD *maxFiles)
-{
-    CheckPointer(maxFiles, E_POINTER);
-	*maxFiles = (WORD) m_params.maxFiles;
-	return NOERROR;
-}
-
-//*******************************************************************
-//* sets the maxmimum amount of timeshifting files
-//*******************************************************************
-STDMETHODIMP CTimeShifting::SetMaxTSFiles(WORD maxFiles)
-{
-	m_params.maxFiles=(long)maxFiles;
-    return NOERROR;
-}
-
-//*******************************************************************
-//* returns the maxmimum filesize for a timeshifting file
-//*******************************************************************
-STDMETHODIMP CTimeShifting::GetMaxTSFileSize(__int64 *maxSize)
-{
-    CheckPointer(maxSize, E_POINTER);
-	*maxSize = m_params.maxSize;
-	return NOERROR;
-}
-
-//*******************************************************************
-//* sets the maxmimum filesize for a timeshifting file
-//*******************************************************************
-STDMETHODIMP CTimeShifting::SetMaxTSFileSize(__int64 maxSize)
-{
-	m_params.maxSize=maxSize;
-    return NOERROR;
-}
-
-//*******************************************************************
-//* returns the initial file length for a timeshifting file
-//*******************************************************************
-STDMETHODIMP CTimeShifting::GetChunkReserve(__int64 *chunkSize)
-{
-  CheckPointer(chunkSize, E_POINTER);
-	*chunkSize = m_params.chunkSize;
-	return NOERROR;
-}
-
-//*******************************************************************
-//* sets the initial file length for a timeshifting file
-//*******************************************************************
-STDMETHODIMP CTimeShifting::SetChunkReserve(__int64 chunkSize)
-{
-  m_params.chunkSize=chunkSize;
-    return NOERROR;
-}
-
-//*******************************************************************
-//* returns the current filesize of all timeshift files
-//*******************************************************************
-STDMETHODIMP CTimeShifting::GetFileBufferSize(__int64 *lpllsize)
-{
-    CheckPointer(lpllsize, E_POINTER);
-	m_pTimeShiftFile->GetFileSize(lpllsize);
-	return NOERROR;
-}
-
-//*******************************************************************
-//* WriteTs()
-//* this method checks if the pid of the tspacket needs to be written to
-//* the timeshift file. Ifso.. the pid is written to the timeshifting file
-//* This method also inserts the pat/pmt packets in the stream
-//* and adjust the PCR/PTS timestamps
-//*
-//* tsPacket : mpeg-2 transport stream packet of 188 bytes
-//*******************************************************************
-void CTimeShifting::WriteTs(byte* tsPacket)
-{
-	if (m_pcrPid<0 || m_vecPids.size()==0|| m_pmtPid<0) return;
-
-  m_tsHeader.Decode(tsPacket);
-	//if (m_tsHeader.TransportError) return;
-	//if (m_tsHeader.TScrambling!=0) return;
-  if (m_iPacketCounter>=100)
-  {
-    WriteFakePAT();
-    WriteFakePMT();
-    m_iPacketCounter=0;
-  }
-
-  int PayLoadUnitStart=0;
-  if (m_tsHeader.PayloadUnitStart) PayLoadUnitStart=1;
-
-
-	itvecPids it=m_vecPids.begin();
-	itvecPids itPcr=m_vecPids.end();
-	while (it!=m_vecPids.end())
-	{
-		PidInfo& info=*it;
-		if (info.fakePid==FAKE_PCR_PID)
-			itPcr=it;
-
-		if (m_tsHeader.Pid==info.realPid)
-		{
-			if (info.serviceType==SERVICE_TYPE_VIDEO_MPEG1 || info.serviceType==SERVICE_TYPE_VIDEO_MPEG2||info.serviceType==SERVICE_TYPE_VIDEO_MPEG4||info.serviceType==SERVICE_TYPE_VIDEO_H264)
+			if (m_tsHeader.Pid==info.realPid)
 			{
-//        PatchPcr(tsPacket,m_tsHeader);
-				//video
-				if (!info.seenStart) 
+				if (info.serviceType==SERVICE_TYPE_VIDEO_MPEG1 || info.serviceType==SERVICE_TYPE_VIDEO_MPEG2||info.serviceType==SERVICE_TYPE_VIDEO_MPEG4||info.serviceType==SERVICE_TYPE_VIDEO_H264)
 				{
-					if (PayLoadUnitStart)
+					//        PatchPcr(tsPacket,m_tsHeader);
+					//video
+					if (!info.seenStart) 
 					{
-						info.seenStart=true;
-					  LogDebug("timeshift: start of video detected");
+						if (PayLoadUnitStart)
+						{
+							info.seenStart=true;
+							LogDebug("timeshift: start of video detected");
+						}
 					}
-				}
-				if (!info.seenStart) return;
-				//LogDebug("vid:%x->%x %x %x", info.realPid,info.fakePid,m_tsHeader.ContinuityCounter,m_tsHeader.AdaptionControl);
-				byte pkt[200];
-				memcpy(pkt,tsPacket,188);
-				int pid=info.fakePid;
-				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-				pkt[2]=(pid&0xff);
-				if (m_tsHeader.Pid==m_pcrPid)  PatchPcr(pkt,m_tsHeader);
-				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-				{
-				  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);
-					info.ContintuityCounter=m_tsHeader.ContinuityCounter;
-					Write(pkt,188);
-          m_iPacketCounter++;
-				}
-				return;
-			}
-
-			if (info.serviceType==SERVICE_TYPE_AUDIO_MPEG1 || info.serviceType==SERVICE_TYPE_AUDIO_MPEG2|| info.serviceType==SERVICE_TYPE_AUDIO_AC3)
-			{
-				//audio
-				if (!info.seenStart)
-				{
-					if (PayLoadUnitStart)
+					if (!info.seenStart) return;
+					//LogDebug("vid:%x->%x %x %x", info.realPid,info.fakePid,m_tsHeader.ContinuityCounter,m_tsHeader.AdaptionControl);
+					byte pkt[200];
+					memcpy(pkt,tsPacket,188);
+					int pid=info.fakePid;
+					pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+					pkt[2]=(pid&0xff);
+					if (m_tsHeader.Pid==m_pcrPid)  PatchPcr(pkt,m_tsHeader);
+					if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 					{
-						info.seenStart=true;
-						LogDebug("timeshift: start of audio detected");
+						if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);
+						info.ContintuityCounter=m_tsHeader.ContinuityCounter;
+						Write(pkt,188);
+						m_iPacketCounter++;
 					}
+					return;
 				}
-				if (!info.seenStart) return;
-				
-				byte pkt[200];
-				memcpy(pkt,tsPacket,188);
-				int pid=info.fakePid;
-				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-				pkt[2]=(pid&0xff);
-				if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
-				
-				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-				{
-				  if (PayLoadUnitStart)  PatchPtsDts(pkt,m_tsHeader,m_startPcr);
-					info.ContintuityCounter=m_tsHeader.ContinuityCounter;
-					Write(pkt,188);
-          m_iPacketCounter++;
-				}
-				return;
-			}
 
-			if (info.serviceType==SERVICE_TYPE_DVB_SUBTITLES1 || info.serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
-			{
-				//subtitle pid...
+				if (info.serviceType==SERVICE_TYPE_AUDIO_MPEG1 || info.serviceType==SERVICE_TYPE_AUDIO_MPEG2|| info.serviceType==SERVICE_TYPE_AUDIO_AC3)
+				{
+					//audio
+					if (!info.seenStart)
+					{
+						if (PayLoadUnitStart)
+						{
+							info.seenStart=true;
+							LogDebug("timeshift: start of audio detected");
+						}
+					}
+					if (!info.seenStart) return;
+
+					byte pkt[200];
+					memcpy(pkt,tsPacket,188);
+					int pid=info.fakePid;
+					pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+					pkt[2]=(pid&0xff);
+					if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
+
+					if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+					{
+						if (PayLoadUnitStart)  PatchPtsDts(pkt,m_tsHeader,m_startPcr);
+						info.ContintuityCounter=m_tsHeader.ContinuityCounter;
+						Write(pkt,188);
+						m_iPacketCounter++;
+					}
+					return;
+				}
+
+				if (info.serviceType==SERVICE_TYPE_DVB_SUBTITLES1 || info.serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
+				{
+					//subtitle pid...
+					byte pkt[200];
+					memcpy(pkt,tsPacket,188);
+					int pid=info.fakePid;
+					pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+					pkt[2]=(pid&0xff);
+					if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
+					if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+					{
+						if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);
+						info.ContintuityCounter=m_tsHeader.ContinuityCounter;
+						Write(pkt,188);
+						m_iPacketCounter++;
+					}
+					return;
+				}
+
+				//private pid...
 				byte pkt[200];
 				memcpy(pkt,tsPacket,188);
 				int pid=info.fakePid;
@@ -856,410 +927,447 @@ void CTimeShifting::WriteTs(byte* tsPacket)
 				if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
 				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				{
-				  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);
 					info.ContintuityCounter=m_tsHeader.ContinuityCounter;
 					Write(pkt,188);
-          m_iPacketCounter++;
+					m_iPacketCounter++;
 				}
 				return;
 			}
+			++it;
+		}
 
-			//private pid...
+		if (m_tsHeader.Pid==m_pcrPid)
+		{
 			byte pkt[200];
 			memcpy(pkt,tsPacket,188);
-			int pid=info.fakePid;
-			pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+			int pid=FAKE_PCR_PID;
+			PatchPcr(pkt,m_tsHeader);
+			pkt[1]=( (pid>>8) & 0x1f);
 			pkt[2]=(pid&0xff);
-			if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
+			pkt[3]=(2<<4);// Adaption Field Control==adaptation field only, no payload
+			pkt[4]=0xb7;
+
 			if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 			{
-				info.ContintuityCounter=m_tsHeader.ContinuityCounter;
+				if(itPcr!=m_vecPids.end())
+				{
+					PidInfo& info=*itPcr;
+					pkt[3] &=0xf0;
+					pkt[3] += (info.ContintuityCounter&0xf);
+					//LogDebug("pcr:%x->%x %d", m_pcrPid,FAKE_PCR_PID,info.ContintuityCounter);
+				}
 				Write(pkt,188);
-        m_iPacketCounter++;
+				m_iPacketCounter++;
 			}
 			return;
 		}
-		++it;
 	}
 
-  if (m_tsHeader.Pid==m_pcrPid)
-  {
-    byte pkt[200];
-    memcpy(pkt,tsPacket,188);
-    int pid=FAKE_PCR_PID;
-    PatchPcr(pkt,m_tsHeader);
-		pkt[1]=( (pid>>8) & 0x1f);
-		pkt[2]=(pid&0xff);
-		pkt[3]=(2<<4);// Adaption Field Control==adaptation field only, no payload
-		pkt[4]=0xb7;
 
-    if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-		{
-			if(itPcr!=m_vecPids.end())
-			{
-				PidInfo& info=*itPcr;
-				pkt[3] &=0xf0;
-				pkt[3] += (info.ContintuityCounter&0xf);
-				//LogDebug("pcr:%x->%x %d", m_pcrPid,FAKE_PCR_PID,info.ContintuityCounter);
-			}
-			Write(pkt,188);
-      m_iPacketCounter++;
-		}
-    return;
-  }
-}
-
-
-//*******************************************************************
-//* WriteFakePAT()
-//* Constructs a PAT table and writes it to the timeshifting file
-//*******************************************************************
-void CTimeShifting::WriteFakePAT()
-{
-  int tableId=TABLE_ID_PAT;
-  int transportId=FAKE_TRANSPORT_ID;
-  int pmtPid=FAKE_PMT_PID;
-  int sectionLenght=9+4;
-  int current_next_indicator=1;
-  int section_number = 0;
-  int last_section_number = 0;
-
-  int pid=PID_PAT;
-  int PayLoadUnitStart=1;
-  int AdaptionControl=1;
-  m_iPatContinuityCounter++;
-  if (m_iPatContinuityCounter>0xf) m_iPatContinuityCounter=0;
-
-  BYTE pat[200];
-  memset(pat,0,sizeof(pat));
-  pat[0]=0x47;
-  pat[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-  pat[2]=(pid&0xff);
-  pat[3]=(AdaptionControl<<4) +m_iPatContinuityCounter;		//0x10
-  pat[4]=0;																								//0
-
-  pat[5]=tableId;//table id																//0
-  pat[6]=0xb0+((sectionLenght>>8)&0xf);										//0xb0
-  pat[7]=sectionLenght&0xff;
-  pat[8]=(transportId>>8)&0xff;
-  pat[9]=(transportId)&0xff;
-	pat[10]=((m_iPatVersion&0x1f)<<1)+current_next_indicator;
-  pat[11]=section_number;
-  pat[12]=last_section_number;
-  pat[13]=(FAKE_SERVICE_ID>>8)&0xff;
-  pat[14]=(FAKE_SERVICE_ID)&0xff;
-  pat[15]=((pmtPid>>8)&0xff)|0xe0;
-  pat[16]=(pmtPid)&0xff;
-  
-  int len=17;
-  DWORD crc= crc32((char*)&pat[5],len-5);
-  pat[len]=(byte)((crc>>24)&0xff);
-  pat[len+1]=(byte)((crc>>16)&0xff);
-  pat[len+2]=(byte)((crc>>8)&0xff);
-  pat[len+3]=(byte)((crc)&0xff);
-  Write(pat,188);
-}
-
-//*******************************************************************
-//* WriteFakePMT()
-//* Constructs a PMT table and writes it to the timeshifting file
-//*******************************************************************
-void CTimeShifting::WriteFakePMT()
-{
-  int program_info_length=0;
-  int sectionLenght=9+2*5+5;
-  
-  int current_next_indicator=1;
-  int section_number = 0;
-  int last_section_number = 0;
-  int transportId=FAKE_TRANSPORT_ID;
-
-  int tableId=2;
-  int pid=FAKE_PMT_PID;
-  int PayLoadUnitStart=1;
-  int AdaptionControl=1;
-
-  m_iPmtContinuityCounter++;
-  if (m_iPmtContinuityCounter>0xf) m_iPmtContinuityCounter=0;
-
-  BYTE pmt[256];
-  memset(pmt,0xff,sizeof(pmt));
-  pmt[0]=0x47;
-  pmt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-  pmt[2]=(pid&0xff);
-  pmt[3]=(AdaptionControl<<4) +m_iPmtContinuityCounter;
-  pmt[4]=0;
-  byte* pmtPtr=&pmt[4];
-  pmt[5]=tableId;//table id
-  pmt[6]=0;
-  pmt[7]=0;
-  pmt[8]=(FAKE_SERVICE_ID>>8)&0xff;
-  pmt[9]=(FAKE_SERVICE_ID)&0xff;
-	pmt[10]=((m_iPmtVersion&0x1f)<<1)+current_next_indicator;
-  pmt[11]=section_number;
-  pmt[12]=last_section_number;
-  pmt[13]=(FAKE_PCR_PID>>8)&0xff;
-  pmt[14]=(FAKE_PCR_PID)&0xff;
-  pmt[15]=(program_info_length>>8)&0xff;
-  pmt[16]=(program_info_length)&0xff;
-  
-	int pmtLength=9+4;
-  int offset=17;
-	itvecPids it=m_vecPids.begin();
-	while (it!=m_vecPids.end())
+	//*******************************************************************
+	//* WriteFakePAT()
+	//* Constructs a PAT table and writes it to the timeshifting file
+	//*******************************************************************
+	void CTimeShifting::WriteFakePAT()
 	{
-		PidInfo& info=*it;
-		int serviceType=info.serviceType;
-		if (serviceType==SERVICE_TYPE_AUDIO_AC3)
+		int tableId=TABLE_ID_PAT;
+		int transportId=FAKE_TRANSPORT_ID;
+		int pmtPid=FAKE_PMT_PID;
+		int sectionLenght=9+4;
+		int current_next_indicator=1;
+		int section_number = 0;
+		int last_section_number = 0;
+
+		int pid=PID_PAT;
+		int PayLoadUnitStart=1;
+		int AdaptionControl=1;
+		m_iPatContinuityCounter++;
+		if (m_iPatContinuityCounter>0xf) m_iPatContinuityCounter=0;
+
+		BYTE pat[200];
+		memset(pat,0,sizeof(pat));
+		pat[0]=0x47;
+		pat[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+		pat[2]=(pid&0xff);
+		pat[3]=(AdaptionControl<<4) +m_iPatContinuityCounter;		//0x10
+		pat[4]=0;																								//0
+
+		pat[5]=tableId;//table id																//0
+		pat[6]=0xb0+((sectionLenght>>8)&0xf);										//0xb0
+		pat[7]=sectionLenght&0xff;
+		pat[8]=(transportId>>8)&0xff;
+		pat[9]=(transportId)&0xff;
+		pat[10]=((m_iPatVersion&0x1f)<<1)+current_next_indicator;
+		pat[11]=section_number;
+		pat[12]=last_section_number;
+		pat[13]=(FAKE_SERVICE_ID>>8)&0xff;
+		pat[14]=(FAKE_SERVICE_ID)&0xff;
+		pat[15]=((pmtPid>>8)&0xff)|0xe0;
+		pat[16]=(pmtPid)&0xff;
+
+		int len=17;
+		DWORD crc= crc32((char*)&pat[5],len-5);
+		pat[len]=(byte)((crc>>24)&0xff);
+		pat[len+1]=(byte)((crc>>16)&0xff);
+		pat[len+2]=(byte)((crc>>8)&0xff);
+		pat[len+3]=(byte)((crc)&0xff);
+		Write(pat,188);
+	}
+
+	//*******************************************************************
+	//* WriteFakePMT()
+	//* Constructs a PMT table and writes it to the timeshifting file
+	//*******************************************************************
+	void CTimeShifting::WriteFakePMT()
+	{
+		int program_info_length=0;
+		int sectionLenght=9+2*5+5;
+
+		int current_next_indicator=1;
+		int section_number = 0;
+		int last_section_number = 0;
+		int transportId=FAKE_TRANSPORT_ID;
+
+		int tableId=2;
+		int pid=FAKE_PMT_PID;
+		int PayLoadUnitStart=1;
+		int AdaptionControl=1;
+
+		m_iPmtContinuityCounter++;
+		if (m_iPmtContinuityCounter>0xf) m_iPmtContinuityCounter=0;
+
+		// Ziphnor: is this enough (and we only write 188 bytes of it at the end)?
+		// a single descriptor can contain up to 257 bytes (up to 255 bytes after descriptor_length)
+		BYTE pmt[256]; 
+
+		memset(pmt,0xff,sizeof(pmt));
+		pmt[0]=0x47;
+		pmt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+		pmt[2]=(pid&0xff);
+		pmt[3]=(AdaptionControl<<4) +m_iPmtContinuityCounter;
+		pmt[4]=0;
+		byte* pmtPtr=&pmt[4];
+		pmt[5]=tableId;//table id
+		pmt[6]=0;
+		pmt[7]=0;
+		pmt[8]=(FAKE_SERVICE_ID>>8)&0xff;
+		pmt[9]=(FAKE_SERVICE_ID)&0xff;
+		pmt[10]=((m_iPmtVersion&0x1f)<<1)+current_next_indicator;
+		pmt[11]=section_number;
+		pmt[12]=last_section_number;
+		pmt[13]=(FAKE_PCR_PID>>8)&0xff;
+		pmt[14]=(FAKE_PCR_PID)&0xff;
+		pmt[15]=(program_info_length>>8)&0xff;
+		pmt[16]=(program_info_length)&0xff;
+
+		int pmtLength=9+4;
+		int offset=17;
+		itvecPids it=m_vecPids.begin();
+
+		vector<PidInfo> toEndOfPMT; // hack: delays teletext descriptor until last so its only stored if it fits (Ziphnor)
+		// TODO: Fix this method so it can write a PMT thats larger than one TsPacket!! (Ziphnor)
+
+		while (it!=m_vecPids.end())
 		{
-			//AC3 is represented as stream type 6
-			serviceType=SERVICE_TYPE_DVB_SUBTITLES2;
-		}
-    pmt[offset++]=serviceType;
-    pmt[offset++]=0xe0+((info.fakePid>>8)&0x1F); // reserved; elementary_pid (high)
-    pmt[offset++]=(info.fakePid)&0xff; // elementary_pid (low)
-    pmt[offset++]=0xF0;// reserved; ES_info_length (high)
-		pmtLength+=4;
-		if (info.serviceType==SERVICE_TYPE_AUDIO_AC3)
-		{
-			int esLen=0;
-			pmt[offset++]=esLen+2;						// ES_info_length (low)
-			pmt[offset++]=DESCRIPTOR_DVB_AC3; // descriptor indicator
-			pmt[offset++]=esLen;
-			pmtLength+=3;
-		}
-		else if (info.serviceType==SERVICE_TYPE_DVB_SUBTITLES1 || info.serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
-		{ 
-			int esLen=strlen(info.language)+5;
-			pmt[offset++]=esLen+2;   // ES_info_length (low)
-			pmt[offset++]=DESCRIPTOR_DVB_SUBTITLING;   // descriptor indicator
-			pmt[offset++]=esLen;
-			pmtLength+=3;
-			for (int i=0; i < 3;++i)
+			PidInfo& info=*it;
+
+			if(info.descriptor_valid){ // we have the full descriptor data so we just copy it into the PMT
+				// hack: delay until last part of PMT
+				toEndOfPMT.push_back(info);
+				it++;
+				continue;
+			}
+
+			int serviceType=info.serviceType;
+			if (serviceType==SERVICE_TYPE_AUDIO_AC3)
 			{
-				pmt[offset++]=info.language[i];
+				//AC3 is represented as stream type 6
+				serviceType=SERVICE_TYPE_DVB_SUBTITLES2; // ugly hack
+			}
+
+			pmt[offset++]=serviceType;
+			pmt[offset++]=0xe0+((info.fakePid>>8)&0x1F); // reserved; elementary_pid (high)
+			pmt[offset++]=(info.fakePid)&0xff; // elementary_pid (low)
+			pmt[offset++]=0xF0;// reserved; ES_info_length (high)
+			pmtLength+=4;
+
+			
+
+			if (info.serviceType==SERVICE_TYPE_AUDIO_AC3)
+			{
+				int esLen=0;
+				pmt[offset++]=esLen+2;						// ES_info_length (low)
+				pmt[offset++]=DESCRIPTOR_DVB_AC3; // descriptor indicator
+				pmt[offset++]=esLen;
+				pmtLength+=3;
+			}
+			else if (info.serviceType==SERVICE_TYPE_DVB_SUBTITLES1 || info.serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
+			{ 
+				int esLen=strlen(info.language)+5;
+				pmt[offset++]=esLen+2;   // ES_info_length (low)
+				pmt[offset++]=DESCRIPTOR_DVB_SUBTITLING;   // descriptor indicator
+				pmt[offset++]=esLen;
+				pmtLength+=3;
+				for (int i=0; i < 3;++i)
+				{
+					pmt[offset++]=info.language[i];
+					pmtLength++;
+				}
+				pmt[offset++]=0x10;
+				pmt[offset++]=0x00;
+				pmt[offset++]=0x01;
+				pmt[offset++]=0x00;
+				pmt[offset++]=0x01;
+				pmtLength+=5;
+			}
+			else
+			{
+				pmt[offset++]=0;   // ES_info_length (low)
 				pmtLength++;
 			}
-			pmt[offset++]=0x10;
-			pmt[offset++]=0x00;
-			pmt[offset++]=0x01;
-			pmt[offset++]=0x00;
-			pmt[offset++]=0x01;
-      pmtLength+=5;
+			++it;
 		}
-    else
-		{
-			pmt[offset++]=0;   // ES_info_length (low)
-			pmtLength++;
+
+		it = toEndOfPMT.begin();
+		//LogDebug("WRiting %i pid descriptors at end of fake pmt",toEndOfPMT.size());
+		while(it != toEndOfPMT.end()){
+			
+				PidInfo& info = *it;
+				int descriptor_length = info.descriptor_data[1] + 2; // 0 is tag, 1 is length		
+				//LogDebug("Descriptor (total) length is %i", descriptor_length);
+				if(pmtLength + descriptor_length + 4 >= 188){ // if it will make the PMT too big
+					LogDebug("Cant fit descriptor for fake PID %i because it would make fake PMT not fit in one ts packet! ",info.fakePid);
+					it++;
+					continue;
+				}
+				pmt[offset++]=info.serviceType;
+				pmt[offset++]=0xe0+((info.fakePid>>8)&0x1F); // reserved; elementary_pid (high)
+				pmt[offset++]=(info.fakePid)&0xff; // elementary_pid (low)
+				pmt[offset++]=0xF0;// reserved; ES_info_length (high)
+				pmtLength+=4;
+
+				// NOTE: This is completely generic and will work with all stream types
+				// (if we have the original descriptor we just reuse it)
+				
+				//LogDebug("Writing Fake PMT with original DESCRIPTOR tag %X for real PID %i, fake pid %i", info.descriptor_data[0], info.realPid, info.fakePid );
+
+				pmt[offset++] = descriptor_length; // ES_info_length(low) // what is the descriptor is so big it needs the high bits as well?
+				pmtLength++;
+
+				memcpy(&pmt[offset], info.descriptor_data, descriptor_length); // copy descriptor content
+				offset += descriptor_length;
+				pmtLength += descriptor_length;
+				it++;
 		}
-    ++it;
-  }
+
+		unsigned section_length = (pmtLength);
+		pmt[6]=0xb0+((section_length>>8)&0xf);
+		pmt[7]=section_length&0xff;
+
+		DWORD crc= crc32((char*)&pmt[5],offset-5);
+		pmt[offset++]=(byte)((crc>>24)&0xff);
+		pmt[offset++]=(byte)((crc>>16)&0xff);
+		pmt[offset++]=(byte)((crc>>8)&0xff);
+		pmt[offset++]=(byte)((crc)&0xff);
+
+		if(pmtLength > 188) LogDebug("ERROR: Pmt length : %i ( >188 )!!!!",pmtLength);
+
+		Write(pmt,188);
+	}
 
 
-  unsigned section_length = (pmtLength );
-  pmt[6]=0xb0+((section_length>>8)&0xf);
-  pmt[7]=section_length&0xff;
-
-  DWORD crc= crc32((char*)&pmt[5],offset-5);
-  pmt[offset++]=(byte)((crc>>24)&0xff);
-  pmt[offset++]=(byte)((crc>>16)&0xff);
-  pmt[offset++]=(byte)((crc>>8)&0xff);
-  pmt[offset++]=(byte)((crc)&0xff);
-  Write(pmt,188);
-}
-
-//*******************************************************************
-//* PatchPcr()
-//* Patches the PCR so the start of the timeshifting file always starts
-//* with a PCR of 0. 
-//* When zapping from channel A<-> channel B it will also make sure
-//* that the PCR is continuious
-//*******************************************************************
-void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
-{
-  //LogDebug("pcr pid:%x  head:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x",header.Pid, tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5]);
-  if (header.PayLoadOnly()) return;
-  //LogDebug(" pcrflag:%x", (tsPacket[5]&0x10));
-  //LogDebug(" opcrflag:%x", (tsPacket[5]&0x8));
-  m_adaptionField.Decode(header,tsPacket);
-  if (m_adaptionField.PcrFlag==false) return;
-  CPcr pcrNew=m_adaptionField.Pcr;
-	if (m_bStartPcrFound)
+	//*******************************************************************
+	//* PatchPcr()
+	//* Patches the PCR so the start of the timeshifting file always starts
+	//* with a PCR of 0. 
+	//* When zapping from channel A<-> channel B it will also make sure
+	//* that the PCR is continuious
+	//*******************************************************************
+	void CTimeShifting::PatchPcr(byte* tsPacket,CTsHeader& header)
 	{
-		if (m_bDetermineNewStartPcr )
+		//LogDebug("pcr pid:%x  head:%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x",header.Pid, tsPacket[0],tsPacket[1],tsPacket[2],tsPacket[3],tsPacket[4],tsPacket[5]);
+		if (header.PayLoadOnly()) return;
+		//LogDebug(" pcrflag:%x", (tsPacket[5]&0x10));
+		//LogDebug(" opcrflag:%x", (tsPacket[5]&0x8));
+		m_adaptionField.Decode(header,tsPacket);
+		if (m_adaptionField.PcrFlag==false) return;
+		CPcr pcrNew=m_adaptionField.Pcr;
+		if (m_bStartPcrFound)
+		{
+			if (m_bDetermineNewStartPcr )
+			{
+				m_bDetermineNewStartPcr=false;
+
+				CPcr duration=m_highestPcr ;
+				duration-= m_startPcr;
+				CPcr newStartPcr = pcrNew;
+				newStartPcr -=duration ;
+				LogDebug("Pcr start    :%s",m_startPcr.ToString());
+				LogDebug("Pcr high     :%s",m_highestPcr.ToString());
+				LogDebug("Pcr duration :%s",duration.ToString());
+				LogDebug("Pcr current  :%s",pcrNew.ToString());
+				LogDebug("Pcr newstart :%s",newStartPcr.ToString());
+
+				m_startPcr  = newStartPcr;
+				m_highestPcr= newStartPcr;
+				m_prevPcr = newStartPcr;
+			}
+		}
+
+		if (m_bStartPcrFound==false)
 		{
 			m_bDetermineNewStartPcr=false;
+			m_bStartPcrFound=true;
+			m_startPcr  = pcrNew;
+			m_highestPcr= pcrNew;
+			LogDebug("Pcr new start pcr :%s", m_startPcr.ToString());
+		} 
 
-			CPcr duration=m_highestPcr ;
-			duration-= m_startPcr;
-			CPcr newStartPcr = pcrNew;
-			newStartPcr -=duration ;
-			LogDebug("Pcr start    :%s",m_startPcr.ToString());
-			LogDebug("Pcr high     :%s",m_highestPcr.ToString());
-			LogDebug("Pcr duration :%s",duration.ToString());
-			LogDebug("Pcr current  :%s",pcrNew.ToString());
-			LogDebug("Pcr newstart :%s",newStartPcr.ToString());
+		CPcr pcrHi=pcrNew;
+		CPcr diff;
 
-			m_startPcr  = newStartPcr;
-			m_highestPcr= newStartPcr;
-      m_prevPcr = newStartPcr;
-		}
-	}
-  
-	if (m_bStartPcrFound==false)
-	{
-		m_bDetermineNewStartPcr=false;
-		m_bStartPcrFound=true;
-		m_startPcr  = pcrNew;
-    m_highestPcr= pcrNew;
-		LogDebug("Pcr new start pcr :%s", m_startPcr.ToString());
-	} 
-
-  CPcr pcrHi=pcrNew;
-  CPcr diff;
-
-  if (pcrNew > m_highestPcr)
-  {
-    diff = pcrNew - m_prevPcr;
-	  m_highestPcr = pcrNew;
-  }
-  else
-  {
-    diff = m_prevPcr - pcrNew;
-    m_highestPcr = pcrNew;
-  }
-
-  if(diff.ToClock() > 10L && m_prevPcr.ToClock() > 0 )
-  {
-    if( m_bIgnoreNextPcrJump )
-    {
-      LogDebug( "Ignoring first PCR jump after channel change! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
-      m_bIgnoreNextPcrJump=false;
-    }
-    else
-    {
-      if( diff.ToClock() > 95443L ) // Max PCR value 95443.71768
-      {
-        m_bPCRRollover = true;
-        m_pcrDuration = m_prevPcr;
-        m_pcrDuration -= m_startPcr;
-        m_pcrHole.Reset();
-        m_startPcr.Reset();
-        m_highestPcr.Reset();
-
-        LogDebug( "PCR rollover detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
-      }
-      else
-      {      
-        CPcr step;
-        step.FromClock(0.02); // an estimated PCR step
-        
-        if (pcrNew > m_prevPcr)
-        {
-          m_pcrHole += diff;
-          m_pcrHole -= step; 
-          LogDebug( "Jump forward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
-        }
-        else
-        {
-          m_pcrHole -= diff;
-          m_pcrHole += step;
-          LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
-        }
-      }
-    }
-  }
-
-  pcrHi -= m_startPcr;
-  pcrHi -= m_pcrHole;
-
-  if( m_bPCRRollover )
-  {
-    pcrHi += m_pcrDuration;
-  }
-
-  //LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString() );
-  tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
-  tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
-  tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
-  tsPacket[9] = (byte)(((pcrHi.PcrReferenceBase>>1)&0xff));
-  tsPacket[10]=	(byte)(((pcrHi.PcrReferenceBase&0x1)<<7) + 0x7e+ ((pcrHi.PcrReferenceExtension>>8)&0x1));
-  tsPacket[11]= (byte)(pcrHi.PcrReferenceExtension&0xff);
-
-  m_prevPcr = pcrNew;
-}
-
-//*******************************************************************
-//* PatchPtsDts()
-//* Patches the PTS/DTS timestamps in a audio/video transport packet
-//* so the start of the timeshifting file always starts
-//* with a PTS/DTS of 0. 
-//* When zapping from channel A<-> channel B it will also make sure
-//* that the PTS/TS is continuious
-//*******************************************************************
-void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
-{
-  if (false==header.PayloadUnitStart) return;
-
-  int start=header.PayLoadStart;
-  if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) return; 
-
-  byte* pesHeader=&tsPacket[start];
-	CPcr pts;
-	CPcr dts;
-  if (!CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
-  {
-		return ;
-	}
-	if (pts.IsValid)
-	{
-    CPcr ptsorg=pts;
-		pts -= startPcr;
-    pts -= m_pcrHole;
-
-    if( m_bPCRRollover )
-    {
-      pts += m_pcrDuration;
-    }
-		// 9       10        11        12      13
-		//76543210 76543210 76543210 76543210 76543210
-		//0011pppM pppppppp pppppppM pppppppp pppppppM 
-		//LogDebug("pts: org:%s new:%s start:%s", ptsorg.ToString(),pts.ToString(),startPcr.ToString()); 
-		byte marker=0x21;
-		if (dts.PcrReferenceBase!=0) marker=0x31;
-		pesHeader[13]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
-		pesHeader[12]=(byte)(   (pts.PcrReferenceBase&0xff));				   pts.PcrReferenceBase>>=8;
-		pesHeader[11]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
-		pesHeader[10]=(byte)(   (pts.PcrReferenceBase&0xff));					 pts.PcrReferenceBase>>=8;
-		pesHeader[9] =(byte)( (((pts.PcrReferenceBase&7)<<1)+marker)); 
-    
-		if (dts.IsValid)
+		if (pcrNew > m_highestPcr)
 		{
-			CPcr dtsorg=dts;
-			dts -= startPcr;
-      dts -= m_pcrHole;
-
-      if( m_bPCRRollover )
-      {
-        dts += m_pcrDuration;
-      }
-
-			// 14       15        16        17      18
-			//76543210 76543210 76543210 76543210 76543210
-			//0001pppM pppppppp pppppppM pppppppp pppppppM 
-	 		//LogDebug("dts: org:%s new:%s start:%s", dtsorg.ToString(),dts.ToString(),startPcr.ToString()); 
-			pesHeader[18]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
-			pesHeader[17]=(byte)(   (dts.PcrReferenceBase&0xff));				  dts.PcrReferenceBase>>=8;
-			pesHeader[16]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
-			pesHeader[15]=(byte)(   (dts.PcrReferenceBase&0xff));					dts.PcrReferenceBase>>=8;
-			pesHeader[14]=(byte)( (((dts.PcrReferenceBase&7)<<1)+0x11)); 
+			diff = pcrNew - m_prevPcr;
+			m_highestPcr = pcrNew;
 		}
-	
-		//pts.Reset();
-		//dts.Reset();
-		//if (CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
-		//{
-		//	LogDebug("pts:%s dts:%s", pts.ToString(),dts.ToString());
-		//}
+		else
+		{
+			diff = m_prevPcr - pcrNew;
+			m_highestPcr = pcrNew;
+		}
+
+		if(diff.ToClock() > 10L && m_prevPcr.ToClock() > 0 )
+		{
+			if( m_bIgnoreNextPcrJump )
+			{
+				LogDebug( "Ignoring first PCR jump after channel change! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+				m_bIgnoreNextPcrJump=false;
+			}
+			else
+			{
+				if( diff.ToClock() > 95443L ) // Max PCR value 95443.71768
+				{
+					m_bPCRRollover = true;
+					m_pcrDuration = m_prevPcr;
+					m_pcrDuration -= m_startPcr;
+					m_pcrHole.Reset();
+					m_startPcr.Reset();
+					m_highestPcr.Reset();
+
+					LogDebug( "PCR rollover detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+				}
+				else
+				{      
+					CPcr step;
+					step.FromClock(0.02); // an estimated PCR step
+
+					if (pcrNew > m_prevPcr)
+					{
+						m_pcrHole += diff;
+						m_pcrHole -= step; 
+						LogDebug( "Jump forward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+					}
+					else
+					{
+						m_pcrHole -= diff;
+						m_pcrHole += step;
+						LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+					}
+				}
+			}
+		}
+
+		pcrHi -= m_startPcr;
+		pcrHi -= m_pcrHole;
+
+		if( m_bPCRRollover )
+		{
+			pcrHi += m_pcrDuration;
+		}
+
+		//LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString() );
+		tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
+		tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
+		tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
+		tsPacket[9] = (byte)(((pcrHi.PcrReferenceBase>>1)&0xff));
+		tsPacket[10]=	(byte)(((pcrHi.PcrReferenceBase&0x1)<<7) + 0x7e+ ((pcrHi.PcrReferenceExtension>>8)&0x1));
+		tsPacket[11]= (byte)(pcrHi.PcrReferenceExtension&0xff);
+
+		m_prevPcr = pcrNew;
 	}
-}
+
+	//*******************************************************************
+	//* PatchPtsDts()
+	//* Patches the PTS/DTS timestamps in a audio/video transport packet
+	//* so the start of the timeshifting file always starts
+	//* with a PTS/DTS of 0. 
+	//* When zapping from channel A<-> channel B it will also make sure
+	//* that the PTS/TS is continuious
+	//*******************************************************************
+	void CTimeShifting::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
+	{
+		if (false==header.PayloadUnitStart) return;
+
+		int start=header.PayLoadStart;
+		if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) return; 
+
+		byte* pesHeader=&tsPacket[start];
+		CPcr pts;
+		CPcr dts;
+		if (!CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
+		{
+			return ;
+		}
+		if (pts.IsValid)
+		{
+			CPcr ptsorg=pts;
+			pts -= startPcr;
+			pts -= m_pcrHole;
+
+			if( m_bPCRRollover )
+			{
+				pts += m_pcrDuration;
+			}
+			// 9       10        11        12      13
+			//76543210 76543210 76543210 76543210 76543210
+			//0011pppM pppppppp pppppppM pppppppp pppppppM 
+			//LogDebug("pts: org:%s new:%s start:%s", ptsorg.ToString(),pts.ToString(),startPcr.ToString()); 
+			byte marker=0x21;
+			if (dts.PcrReferenceBase!=0) marker=0x31;
+			pesHeader[13]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
+			pesHeader[12]=(byte)(   (pts.PcrReferenceBase&0xff));				   pts.PcrReferenceBase>>=8;
+			pesHeader[11]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
+			pesHeader[10]=(byte)(   (pts.PcrReferenceBase&0xff));					 pts.PcrReferenceBase>>=8;
+			pesHeader[9] =(byte)( (((pts.PcrReferenceBase&7)<<1)+marker)); 
+
+			if (dts.IsValid)
+			{
+				CPcr dtsorg=dts;
+				dts -= startPcr;
+				dts -= m_pcrHole;
+
+				if( m_bPCRRollover )
+				{
+					dts += m_pcrDuration;
+				}
+
+				// 14       15        16        17      18
+				//76543210 76543210 76543210 76543210 76543210
+				//0001pppM pppppppp pppppppM pppppppp pppppppM 
+				//LogDebug("dts: org:%s new:%s start:%s", dtsorg.ToString(),dts.ToString(),startPcr.ToString()); 
+				pesHeader[18]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
+				pesHeader[17]=(byte)(   (dts.PcrReferenceBase&0xff));				  dts.PcrReferenceBase>>=8;
+				pesHeader[16]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
+				pesHeader[15]=(byte)(   (dts.PcrReferenceBase&0xff));					dts.PcrReferenceBase>>=8;
+				pesHeader[14]=(byte)( (((dts.PcrReferenceBase&7)<<1)+0x11)); 
+			}
+
+			//pts.Reset();
+			//dts.Reset();
+			//if (CPcr::DecodeFromPesHeader(pesHeader,pts,dts))
+			//{
+			//	LogDebug("pts:%s dts:%s", pts.ToString(),dts.ToString());
+			//}
+		}
+	}

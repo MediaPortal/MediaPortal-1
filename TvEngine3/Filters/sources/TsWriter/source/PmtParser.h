@@ -36,6 +36,7 @@ using namespace std;
 
 #define SERVICE_TYPE_DVB_SUBTITLES1		0x5
 #define SERVICE_TYPE_DVB_SUBTITLES2		0x6
+//#define SERVICE_TYPE_TELETEXT			0x6; // ?
 
 #define DESCRIPTOR_DVB_AC3				0x6a
 #define DESCRIPTOR_DVB_TELETEXT			0x56

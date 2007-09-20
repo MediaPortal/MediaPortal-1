@@ -54,6 +54,7 @@ DECLARE_INTERFACE_(ITsTimeshifting, IUnknown)
 {
 	STDMETHOD(SetPcrPid)(THIS_ int pcrPid)PURE;
 	STDMETHOD(AddStream)(THIS_ int pid, int serviceType, char* language)PURE;
+	STDMETHOD(AddStreamWithDescriptor)(THIS_ int pid, const byte* descriptor_data)PURE;
 	STDMETHOD(RemoveStream)(THIS_ int pid)PURE;
 	
   STDMETHOD(SetTimeShiftingFileName)(THIS_ char* pszFileName)PURE;
@@ -86,12 +87,20 @@ class CTimeShifting: public CUnknown, public ITsTimeshifting, public IFileWriter
 public:
 	struct PidInfo
 	{
+
+
 		int  realPid;
 		int  fakePid;
 		int  serviceType;
 		bool seenStart;
 		char language[255];
+		byte descriptor_data[255]; // if descriptor_valid then this contains the original descriptor from the PMT
+		bool descriptor_valid;
 		int  ContintuityCounter;
+
+		PidInfo(){
+			descriptor_valid = false;
+		}
 	};
 	CTimeShifting(LPUNKNOWN pUnk, HRESULT *phr);
 	~CTimeShifting(void);
@@ -99,6 +108,7 @@ public:
 	
 	STDMETHODIMP SetPcrPid(int pcrPid);
 	STDMETHODIMP AddStream(int pid, int serviceType, char* language);
+	STDMETHODIMP AddStreamWithDescriptor(int pid, const byte* descriptor_data);
 	STDMETHODIMP RemoveStream(int pid);
 	STDMETHODIMP SetTimeShiftingFileName(char* pszFileName);
 	STDMETHODIMP Start();

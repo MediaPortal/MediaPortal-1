@@ -716,10 +716,20 @@ STDMETHODIMP CMpTs:: TimeShiftSetPcrPid( int handle, int pcrPid)
 }
 STDMETHODIMP CMpTs:: TimeShiftAddStream( int handle, int pid, int serviceType, char* language)
 {
+  //LogDebug("TimeShiftAddStream %X", serviceType);
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pTimeShifting->AddStream( pid,  serviceType, language);
 }
+
+STDMETHODIMP CMpTs:: TimeShiftAddStreamWithDescriptor( int handle, int pid, byte* data)
+{
+	//LogDebug("TimeShiftAddStreamWithDescriptor PID : %i", pid);
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+  return pChannel->m_pTimeShifting->AddStreamWithDescriptor( pid, data);
+}
+
 STDMETHODIMP CMpTs:: TimeShiftRemoveStream( int handle, int pid)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
