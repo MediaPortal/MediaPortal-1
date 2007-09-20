@@ -377,7 +377,6 @@ STDMETHODIMP CDVBSub::SetSubtitlePid( LONG pPid )
 STDMETHODIMP CDVBSub::SetFirstPcr( LONGLONG pPcr )
 {
   m_basePCR = pPcr;
-  LogDebugMediaPosition( "SetFirstPcr - media position" );  
   LogDebugPTS( "SetFirstPcr", pPcr ); 
   return S_OK;
 }
