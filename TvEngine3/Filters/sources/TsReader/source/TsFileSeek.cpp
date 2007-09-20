@@ -23,7 +23,7 @@
 #include "TsFileSeek.h"
 #include "adaptionfield.h"
 
-const float SEEKING_ACCURACY = 0.25;
+const float SEEKING_ACCURACY = 0.05;
 const int MAX_SEEKING_ITERATIONS = 50;
 const bool useBinarySearch = true;
 
