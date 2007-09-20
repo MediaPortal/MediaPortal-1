@@ -416,7 +416,7 @@ namespace MediaPortal.Player
               }
 
               // if we dont need the subtitle
-              if (useBitmap || (activeSubPage != pageEntry.page))
+              if (!renderSubtitles || useBitmap || (activeSubPage != pageEntry.page))
               {
                   Log.Debug("Text subtitle (page {0}) discarded: useBitmap is {1} and activeSubPage is {2}", pageEntry.page, useBitmap, activeSubPage);
                   return 0;
