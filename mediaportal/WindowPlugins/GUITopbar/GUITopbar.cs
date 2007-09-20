@@ -165,7 +165,7 @@ namespace MediaPortal.Topbar
         foreach (CPosition pos in _listPositions)
         {
           int y = (int)pos.YPos - m_iMoveUp;
-          y += GUIGraphicsContext.OverScanTop;
+          //y += GUIGraphicsContext.OverScanTop;     // already done
           pos.control.SetPosition((int)pos.XPos, y);
         }
       }
@@ -213,7 +213,7 @@ namespace MediaPortal.Topbar
           foreach (CPosition pos in _listPositions)
           {
             int y = (int)pos.YPos - m_iMoveUp;
-            y += GUIGraphicsContext.OverScanTop;
+            //y += GUIGraphicsContext.OverScanTop;  // already done
             pos.control.SetPosition((int)pos.XPos, y);
           }
         }

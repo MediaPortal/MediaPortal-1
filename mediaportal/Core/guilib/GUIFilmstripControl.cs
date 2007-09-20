@@ -304,11 +304,11 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScalePosToScreenResolution(ref _itemBigWidth, ref _itemBigHeight);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _itemWidth, ref _itemHeight);
 
-      _infoImagePositionX += GUIGraphicsContext.OverScanLeft;
-      _infoImagePositionY += GUIGraphicsContext.OverScanTop;
+      //_infoImagePositionX += GUIGraphicsContext.OverScanLeft;
+      //_infoImagePositionY += GUIGraphicsContext.OverScanTop;
 
-      _backGroundPositionX += GUIGraphicsContext.OverScanLeft;
-      _backGroundPositionY += GUIGraphicsContext.OverScanTop;
+      //_backGroundPositionX += GUIGraphicsContext.OverScanLeft;
+      //_backGroundPositionY += GUIGraphicsContext.OverScanTop;
       GUIGraphicsContext.ScaleRectToScreenResolution(ref _infoImagePositionX, ref _infoImagePositionY, ref _infoImageWidth, ref _infoImageHeight);
       GUIGraphicsContext.ScaleRectToScreenResolution(ref _backGroundPositionX, ref _backGroundPositionY, ref _backGroundWidth, ref _backGroundHeight);
     }
