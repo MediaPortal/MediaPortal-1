@@ -470,6 +470,8 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pidInfo.isVideo = false;
                     pidInfo.isTeletext = true;
                     pidInfo.isDVBSubtitle = false;
+                    pidInfo.stream_type = 0x6; // Ziphnor
+                    pidInfo.SetDescriptorData(data); // remember the original descriptor
                     pidInfo.teletextLANG = DVB_GetTeletextDescriptor(data);
                     break;
                   //case 0xc2:
@@ -585,6 +587,7 @@ namespace TvLibrary.Implementations.DVB.Structures
 
       return ISO_639_language_code;
     }
+
     private string DVB_GetTeletextDescriptor(byte[] b)
     {
       int descriptor_tag;

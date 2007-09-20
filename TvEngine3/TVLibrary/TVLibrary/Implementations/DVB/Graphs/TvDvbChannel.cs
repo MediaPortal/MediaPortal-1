@@ -1142,6 +1142,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     void SetTimeShiftPids()
     {
+      //Log.Log.WriteFile("SetTimeShiftPids new DLL");
       if (_channelInfo == null) return;
       if (_channelInfo.pids.Count == 0) return;
       if (_currentChannel == null) return;
@@ -1154,12 +1155,28 @@ namespace TvLibrary.Implementations.DVB
       _tsFilterInterface.TimeShiftSetPcrPid(_subChannelIndex, _channelInfo.pcr_pid);
       _tsFilterInterface.TimeShiftSetPmtPid(_subChannelIndex, dvbChannel.PmtPid);
 
+
+     // bool storeTeletext = 
+          
+        
+          //_linkageScannerEnabled = (layer.GetSetting("linkageScannerEnabled", "no").Value == "yes");
       foreach (PidInfo info in _channelInfo.pids)
       {
-        if (info.isAC3Audio || info.isAudio || info.isVideo || info.isDVBSubtitle /*|| info.isTeletext*/)
+        if (info.isAC3Audio || info.isAudio || info.isVideo || info.isDVBSubtitle)
         {
           Log.Log.WriteFile("subch:{0} set timeshift {1}:{2}", _subChannelId, info.stream_type, info);
-          _tsFilterInterface.TimeShiftAddStream(_subChannelIndex,info.pid, info.stream_type, info.language); // stream_type == service_type ?
+          _tsFilterInterface.TimeShiftAddStream(_subChannelIndex,info.pid, info.stream_type, info.language); // stream_type == service_type i guess
+        }
+        else if (info.isTeletext && info.HasDescriptorData()) {
+            Log.Log.WriteFile("subch:{0} set timeshift {1}:{2} (new add stream method)", _subChannelId, info.stream_type, info);
+            //Log.Log.WriteFile("descriptor_tag {0} length {1}",info.GetDescriptorData()[0], info.GetDescriptorData().Length );
+            unsafe { // we need to pass a pointer to the descriptor data
+                fixed (byte* data = info.GetDescriptorData()) {
+                    IntPtr pData = new IntPtr(data);
+                    _tsFilterInterface.TimeShiftAddStreamWithDescriptor(_subChannelIndex, info.pid, pData);
+                }
+            }
+            
         }
       }
       _tsFilterInterface.TimeShiftPause(_subChannelIndex, 0);
@@ -1171,6 +1188,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     void SetRecorderPids()
     {
+        Log.Log.WriteFile("SetRecorderPids");
       if (_channelInfo == null) return;
       if (_channelInfo.pids.Count == 0) return;
       if (_currentChannel == null) return;

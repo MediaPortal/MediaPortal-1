@@ -63,6 +63,16 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int AddStream(short pid, short serviceType,[In, MarshalAs(UnmanagedType.LPStr)] string language);
+
+    /// <summary>
+    /// Adds a stream.
+    /// </summary>
+    /// <param name="pid">The pid.</param>
+    /// <param name="data">Original descriptor data (will be re-used in fake PMT)</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int AddStreamWithDescriptor(short pid, IntPtr data);
+
     /// <summary>
     /// Removes a stream.
     /// </summary>

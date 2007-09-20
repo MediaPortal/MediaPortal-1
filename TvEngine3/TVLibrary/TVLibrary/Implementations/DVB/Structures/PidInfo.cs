@@ -9,6 +9,10 @@ namespace TvLibrary.Implementations.DVB.Structures
   /// </summary>
   public class PidInfo
   {
+
+
+    private byte[] descriptor_data;
+
     /// <summary>
     /// stream type
     /// </summary>
@@ -76,6 +80,39 @@ namespace TvLibrary.Implementations.DVB.Structures
       isAudio = true;
     }
 
+      /// <summary>
+      /// Set the content of the descriptor for this PID
+      /// </summary>
+      /// <param name="data"></param>
+      public void SetDescriptorData(byte[] data) {
+          if (data != null)
+          {
+              this.descriptor_data = new byte[data[1] + 2]; // descriptor_length and tag
+              if (this.descriptor_data.Length != data.Length)
+              {
+                  Log.Log.WriteFile("PROBLEM : descriptor lengths dont match {0} {1}", data.Length, descriptor_data.Length);
+              }
+              else Log.Log.WriteFile("Set descriptor data with length {0}", descriptor_data.Length);
+              System.Array.Copy(data, this.descriptor_data, descriptor_data.Length);
+          }
+      }
+
+      /// <summary>
+      /// Checks if the descriptor data has been set
+      /// </summary>
+      /// <returns></returns>
+      public bool HasDescriptorData() {
+          return descriptor_data != null;
+      }
+
+      /// <summary>
+      /// Returns the descriptor data
+      /// </summary>
+      /// <returns></returns>
+      public byte[] GetDescriptorData() {
+          return descriptor_data;
+      }
+
     /// <summary>
     /// Ctor for an ac3 pid
     /// </summary> 
@@ -110,6 +147,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     {
       pid = teletextPid;
       language = "";
+      stream_type = 0x06;
       isTeletext = true;
     }
     /// <summary>
