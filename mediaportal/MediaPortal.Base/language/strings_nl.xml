@@ -439,7 +439,8 @@
     <String id="516">Kan doelbestand niet verwijderen, aktie is afgebroken</String>
     <String id="517">Fatale fout opgetreden, aktie is afgebroken</String>
     <String id="518">Dit liedje verwijderen?</String>
-    <String id="530">CD met afbeeldingen gevonden, wilt U de CD bekijken?</String>
+		<String id="528">Albumartiesten</String>
+		<String id="530">CD met afbeeldingen gevonden, wilt U de CD bekijken?</String>
     <String id="531">CD met films gevonden, wilt U de CD bekijken?</String>
     <String id="532">Audio CD gevonden, wilt U de CD beluisteren?</String>
     <String id="533">Gids</String>

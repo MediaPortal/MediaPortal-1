@@ -55,6 +55,7 @@ namespace MediaPortal.GUI.Settings
       ERROR_DATABASE = 315,
       ERROR_REORG_SONGS = 319,
       ERROR_REORG_ARTIST = 321,
+      ERROR_REORG_ALBUMARTIST = 322,
       ERROR_REORG_GENRE = 323,
       ERROR_REORG_PATH = 325,
       ERROR_REORG_ALBUM = 327,
@@ -241,7 +242,7 @@ namespace MediaPortal.GUI.Settings
 
       string strSQL;
       SQLiteResultSet results;
-      strSQL = String.Format("select * from album,artist where album.idArtist=artist.idArtist order by album.strAlbum");
+      strSQL = String.Format("select * from album,albumartist where album.idAlbumArtist=albumartist.idAlbumArtist order by album.strAlbum");
       results = MusicDatabase.DBHandle.Execute(strSQL);
       int iRowsFound = results.Rows.Count;
       if (iRowsFound == 0)
@@ -263,7 +264,7 @@ namespace MediaPortal.GUI.Settings
         MusicDatabase.AlbumInfoCache album = new MusicDatabase.AlbumInfoCache();
         album.idAlbum = Int32.Parse(DatabaseUtility.Get(results, i, "album.idAlbum"));
         album.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
-        album.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
+        album.AlbumArtist = DatabaseUtility.Get(results, i, "albumartist.strAlbumArtist");
         vecAlbums.Add(album);
       }
 
@@ -276,7 +277,7 @@ namespace MediaPortal.GUI.Settings
         pDlgSelect.Reset();
         foreach (MusicDatabase.AlbumInfoCache album in vecAlbums)
         {
-          pDlgSelect.Add(album.Album + " - " + album.Artist);
+          pDlgSelect.Add(album.Album + " - " + album.AlbumArtist);
         }
         pDlgSelect.DoModal(GUIWindowManager.ActiveWindow);
 

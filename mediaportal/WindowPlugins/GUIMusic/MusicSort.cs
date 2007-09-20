@@ -177,6 +177,12 @@ namespace MediaPortal.GUI.Music
           string artist2 = "";
           if (item1.MusicTag != null) artist1 = ((MusicTag)item1.MusicTag).Artist;
           if (item2.MusicTag != null) artist2 = ((MusicTag)item2.MusicTag).Artist;
+
+          if (artist1 == "" && ((MusicTag)item1.MusicTag).AlbumArtist != "")
+            artist1 = ((MusicTag)item1.MusicTag).AlbumArtist;
+          if (artist2 == "" && ((MusicTag)item2.MusicTag).AlbumArtist != "")
+            artist2 = ((MusicTag)item2.MusicTag).AlbumArtist;
+          
           if (bAscending)
           {
             return String.Compare(artist1, artist2, true);

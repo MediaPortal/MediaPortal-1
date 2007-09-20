@@ -49,6 +49,7 @@ namespace MediaPortal.Configuration.Sections
       {
         "album",
         "artist",
+        "albumartist",
         "title",
         "genre",
         "year",

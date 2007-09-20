@@ -36,6 +36,7 @@ namespace MediaPortal.Music.Database
     int    m_iIdAlbum=0;
     string m_strAlbum="";
     string m_strArtist="";
+    string m_strAlbumArtist="";
     string m_strGenre="";
     string m_strTones="" ;
     string m_strStyles="" ;
@@ -112,6 +113,11 @@ namespace MediaPortal.Music.Database
     {
       get { return m_strAlbum;}
       set { m_strAlbum=value;}
+    }
+    public string AlbumArtist
+    {
+      get { return m_strAlbumArtist; }
+      set { m_strAlbumArtist = value; }
     }
     public int IdAlbum
     {

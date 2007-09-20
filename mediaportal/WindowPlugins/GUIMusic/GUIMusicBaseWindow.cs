@@ -766,8 +766,25 @@ namespace MediaPortal.GUI.Music
           line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%track%", trackNr);
           line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%filesize%", fileSize);
           line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%filesize%", fileSize);
-          line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%artist%", tag.Artist);
-          line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%artist%", tag.Artist);
+          if (handler.View != null)
+          {
+            FilterDefinition tempfilter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
+            if (tempfilter.Where == "albumartist")
+            {
+              line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%artist%", tag.AlbumArtist);
+              line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%artist%", tag.AlbumArtist);
+            }
+            else
+            {
+              line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%artist%", tag.Artist);
+              line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%artist%", tag.Artist);
+            }
+          }
+          else
+          {
+            line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%artist%", tag.Artist);
+            line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%artist%", tag.Artist);
+          }
           line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%album%", tag.Album);
           line2 = MediaPortal.Util.Utils.ReplaceTag(line2, "%album%", tag.Album);
           line1 = MediaPortal.Util.Utils.ReplaceTag(line1, "%title%", tag.Title);
@@ -1155,12 +1172,17 @@ namespace MediaPortal.GUI.Music
       }
       else if (song.albumId >= 0)
       {
-
         ShowAlbumInfo(false, song.Artist, song.Album, song.FileName, pItem.MusicTag as MusicTag, song.albumId);
       }
       else if (song.artistId >= 0)
       {
         ShowArtistInfo(song.Artist, song.Album, song.artistId, song.albumId);
+      }
+      else if (song.albumartistId >= 0)
+      {
+        song.artistId = m_database.GetArtistId(song.AlbumArtist);
+        if (song.artistId != -1)
+          ShowArtistInfo(song.AlbumArtist, song.Album, song.artistId, song.albumId);
       }
       facadeView.RefreshCoverArt();
 

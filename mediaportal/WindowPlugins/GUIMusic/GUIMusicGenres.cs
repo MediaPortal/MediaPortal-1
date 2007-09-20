@@ -515,7 +515,8 @@ namespace MediaPortal.GUI.Music
           }
         }
       }
-      else if (song.artistId >= 0 && song.albumId < 0 && song.songId < 0)
+      else if ((song.artistId >= 0 && song.albumId < 0 && song.songId < 0) ||
+               (song.albumartistId >= 0 && song.albumId < 0 && song.songId < 0))
       {
         string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, item.Label);
         if (System.IO.File.Exists(strThumb))
@@ -550,7 +551,7 @@ namespace MediaPortal.GUI.Music
           // so we'll pull to info from the db to reconstruct the full album path
           else if (strThumb.Length == 0)
           {
-            string albumPath = m_database.GetAlbumPath(song.artistId, song.albumId);
+            string albumPath = m_database.GetAlbumPath(song.albumartistId, song.albumId);
 
             if (albumPath.Length > 0)
             {
@@ -877,6 +878,7 @@ namespace MediaPortal.GUI.Music
         tag.Title = song.Title;
         tag.Album = song.Album;
         tag.Artist = song.Artist;
+        tag.AlbumArtist = song.AlbumArtist;
         tag.Duration = song.Duration;
         tag.Genre = song.Genre;
         tag.Track = song.Track;
@@ -1068,7 +1070,7 @@ namespace MediaPortal.GUI.Music
       foreach (Song album in albums)
       {
         List<Song> albumSongs = new List<Song>();
-        m_database.GetSongsByArtistAlbum(album.artistId, album.albumId, ref albumSongs);
+        m_database.GetSongsByAlbumArtistAlbum(album.albumartistId, album.albumId, ref albumSongs);
 
         foreach (Song albumSong in albumSongs)
         {
@@ -1088,26 +1090,32 @@ namespace MediaPortal.GUI.Music
       if (pItem.IsFolder)
       {
         if (pItem.Label == "..") return;
-        string artist = string.Empty;
 
         if (pItem.AlbumInfoTag != null)
         {
           List<Song> songs = new List<Song>();
           Song s = (Song)pItem.AlbumInfoTag;
-          bool isArtistItem = s.artistId != -1 && s.albumId == -1 && s.genreId == -1 && s.Year <= 0;
+          bool isArtistItem = s.artistId != -1 && s.albumId == -1 && s.albumartistId == -1 && s.genreId == -1 && s.Year <= 0;
           bool isAlbumItem = s.albumId != -1;
+          bool isAlbumArtistItem = s.albumartistId != -1 && s.artistId == -1 && s.albumId == -1 && s.genreId == -1 && s.Year <= 0;
           bool isGenreItem = s.genreId != -1;
-          bool isYearItem = s.Year != -1 && s.artistId == -1 && s.albumId == -1 && s.genreId == -1;
+          bool isYearItem = s.Year != -1 && s.artistId == -1 && s.albumId == -1 && s.albumartistId == -1 && s.genreId == -1;
 
           if (isArtistItem)
           {
             m_database.GetSongsByArtist(s.artistId, ref songs);
-            AddAlbumsToPlayList(songs, playList);
+            AddSongsToPlayList(songs, playList);
           }
 
           else if (isAlbumItem)
           {
             songs.Add(s);
+            AddAlbumsToPlayList(songs, playList);
+          }
+
+          if (isAlbumArtistItem)
+          {
+            m_database.GetSongsByAlbumArtist(s.albumartistId, ref songs);
             AddAlbumsToPlayList(songs, playList);
           }
 
@@ -1135,6 +1143,7 @@ namespace MediaPortal.GUI.Music
           tag.Title = song.Title;
           tag.Album = song.Album;
           tag.Artist = song.Artist;
+          tag.AlbumArtist = song.AlbumArtist;
           tag.Duration = song.Duration;
           tag.Genre = song.Genre;
           tag.Track = song.Track;

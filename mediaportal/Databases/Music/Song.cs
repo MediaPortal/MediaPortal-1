@@ -48,6 +48,7 @@ namespace MediaPortal.Music.Database
     string m_strTitle = "";
     string m_strArtist = "";
     string m_strAlbum = "";
+    string m_strAlbumArtist = "";
     string m_strGenre = "";
     int m_iTrack = 0;
     int m_iDuration = 0;
@@ -57,6 +58,7 @@ namespace MediaPortal.Music.Database
     int idGenre = -1;
     int idAlbum = -1;
     int idArtist = -1;
+    int idAlbumArtist = -1;
     int Id = -1;
     bool favorite = false;
     string m_strDateModified = "";
@@ -77,6 +79,7 @@ namespace MediaPortal.Music.Database
       Song newsong = new Song();
       newsong.Album = Album;
       newsong.Artist = Artist;
+      newsong.AlbumArtist = AlbumArtist;
       newsong.Duration = Duration;
       newsong.FileName = FileName;
       newsong.Genre = Genre;
@@ -88,6 +91,7 @@ namespace MediaPortal.Music.Database
       newsong.idGenre = idGenre;
       newsong.idAlbum = idAlbum;
       newsong.idArtist = idArtist;
+      newsong.idAlbumArtist = idAlbumArtist;
       newsong.Id = Id;
       newsong.favorite = Favorite;
       newsong.DateModified = DateModified;
@@ -108,11 +112,13 @@ namespace MediaPortal.Music.Database
       idGenre = -1;
       idAlbum = -1;
       idArtist = -1;
+      idAlbumArtist = -1;
       Id = -1;
       m_strFileName = "";
       m_strTitle = "";
       m_strArtist = "";
       m_strAlbum = "";
+      m_strAlbumArtist = "";
       m_strGenre = "";
       m_iTrack = 0;
       m_iDuration = 0;
@@ -178,6 +184,12 @@ namespace MediaPortal.Music.Database
     {
       get { return m_strGenre; }
       set { m_strGenre = value; }
+    }
+
+    public string AlbumArtist
+    {
+      get { return m_strAlbumArtist; }
+      set { m_strAlbumArtist = value; }
     }
 
     public int Track
@@ -255,6 +267,12 @@ namespace MediaPortal.Music.Database
     {
       get { return idArtist; }
       set { idArtist = value; }
+    }
+
+    public int albumartistId
+    {
+      get { return idAlbumArtist; }
+      set { idAlbumArtist = value; }
     }
 
     public int songId
