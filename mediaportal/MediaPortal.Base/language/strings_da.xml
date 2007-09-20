@@ -871,6 +871,8 @@
     <String id="1051">Optag Lør-Søn</String>
     <String id="1052">Sange</String>
     <String id="1053">Ukendt person</String>
+    <String id="1055">(Tidsforskyder)</String>
+    <String id="1056">(Ikke tilgængelig)</String>
     <String id="1100">Importer CD</String>
     <String id="1101">Importer valgte numre</String>
     <String id="1102">Annuller import af CD</String>
@@ -1293,6 +1295,7 @@
     <String id="10102">Hurtigste tid</String>
     <String id="10103" prefix="Min ">Minesweeper</String>
     <String id="10104">Mini EPG</String>
+    <String id="10105">TV Nu</String>
     <String id="11000">Beskæringsopsætning</String>
     <String id="11001">Top:</String>
     <String id="11002">Bund:</String>
@@ -1630,5 +1633,15 @@
     <String id="200038">På en PC der også bruges til andre programmer</String>
     <String id="200039">Tilføj skip trin</String>
     <String id="200040">Fjern skip trin</String>
+    <String id="200041">Modtager detaljer</String>
+    <String id="200042">Sammenkædede kanaler</String>
+    <String id="200043">Ryd op i optagelser</String>
+    <String id="200044">Ugyldige optagelser</String>
+    <String id="200045">Sete og ugyldige optagelser</String>
+    <String id="200046">Opret miniature (denne folder)</String>
+    <String id="200047">Opret miniature (inkl. underfolderer)</String>
+    <String id="200048">Genskab alle miniaturer</String>
+    <String id="200049">Kun sete optagelser for denne udsendelse</String>
+    <String id="200050">Dette vil slette dine optagelser fra harddisken</String>		
   </Section>
 </Language>
