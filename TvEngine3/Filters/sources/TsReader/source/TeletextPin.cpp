@@ -58,6 +58,7 @@ CTeletextPin::~CTeletextPin()
 
 bool CTeletextPin::IsConnected()
 {
+	//LogDebug("CTelextPin connected? %i",m_bConnected); 
   return m_bConnected;
 }
 STDMETHODIMP CTeletextPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )

@@ -56,6 +56,7 @@ CSubtitlePin::~CSubtitlePin()
 
 bool CSubtitlePin::IsConnected()
 {
+	//LogDebug("CSubtitlePin connected? %i",m_bConnected);
   return m_bConnected;
 }
 STDMETHODIMP CSubtitlePin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )

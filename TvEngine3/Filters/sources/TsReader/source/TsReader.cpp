@@ -769,10 +769,10 @@ CTeletextPin* CTsReaderFilter::GetTeletextPin()
 
 IDVBSubtitle* CTsReaderFilter::GetSubtitleFilter()
 {
-  if( !m_pDVBSubtitle )
+  /*if( !m_pDVBSubtitle )
   {
-    FindSubtitleFilter();
-  }
+    FindSubtitleFilter(); // THIS CAUSED A DEADLOCK WITH STOP() ! NOW ONLY EXECUTED IN RUN()
+  }*/
   return m_pDVBSubtitle;
 }
 
@@ -1000,11 +1000,12 @@ STDMETHODIMP CTsReaderFilter::GetCurrentSubtitleStream(__int32 &stream)
 //
 // FindSubtitleFilter
 //
+// be careful with this method, can cause deadlock with CSync::Stop, so should only be called in Run()
 HRESULT CTsReaderFilter::FindSubtitleFilter()
 {
+  
   if( m_pDVBSubtitle )
 		return S_OK;
-  
   //LogDebug( "FindSubtitleFilter - start");
 
 	IEnumFilters * piEnumFilters = NULL;
@@ -1023,7 +1024,7 @@ HRESULT CTsReaderFilter::FindSubtitleFilter()
 					//LogDebug("Testing that DVBSub2 works");
 					m_pDVBSubtitle->Test(1);
 				}
-        filterInfo.pGraph->Release(); 
+				filterInfo.pGraph->Release(); 
 			}
 			pFilter->Release();
 			pFilter = NULL;
