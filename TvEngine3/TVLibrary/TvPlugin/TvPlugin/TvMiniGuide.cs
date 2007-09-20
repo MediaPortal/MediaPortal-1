@@ -620,7 +620,7 @@ namespace TvPlugin
     {
       TimeSpan tshb = DateTime.Now - _updateHeartBeatTimer;
 
-      if (tshb.TotalSeconds > TVHome.HEARTBEAT_INTERVAL)
+      if (tshb.TotalSeconds > TVHome.HEARTBEAT_INTERVAL && TVHome.Connected)
       {
         // send heartbeat to tv server each 5 sec.
         // this way we signal to the server that we are alive thus avoid being kicked.
