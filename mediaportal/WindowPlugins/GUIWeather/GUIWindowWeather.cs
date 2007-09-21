@@ -1415,12 +1415,9 @@ namespace MediaPortal.GUI.Weather
               foreach (string tokenSplit in _forecast[i].Overview.Split('/'))
               {
                 string workstring;
-                workstring = tokenSplit;
+                workstring = tokenSplit.Trim();
                 SplitLongString(ref workstring, 6, 15);
-                // A string after a / starts with ' '
-                if (workstring[0] == ' ')
-                  workstring = '\n' + workstring.Substring(1, workstring.Length - 1);
-                finalString += workstring;
+                finalString += workstring + '\n';
               }
               _forecast[i].Overview = finalString;
               GetInteger(pDayTimeElement, "hmid", out tempInteger);
