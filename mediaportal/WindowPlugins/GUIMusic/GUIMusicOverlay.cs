@@ -153,11 +153,23 @@ namespace MediaPortal.GUI.Music
         if (g_Player.CurrentFile.Contains(".tsbuffer")) // timeshifting via TVServer ?
         {
           PlayListItem pitem=playlistPlayer.GetCurrentItem();
-          if (pitem.FileName!=_fileName)
+          if (pitem != null)
           {
-            _fileName=pitem.FileName;
-            _visualisationEnabled=false;
-            SetCurrentFile(_fileName);
+            if (pitem.FileName != _fileName)
+            {
+              _fileName = pitem.FileName;
+              _visualisationEnabled = false;
+              SetCurrentFile(_fileName);
+            }
+          }
+          else
+          {
+            if (g_Player.CurrentFile != _fileName)
+            {
+              _fileName = g_Player.CurrentFile;
+              _visualisationEnabled = false;
+              SetCurrentFile(_fileName);
+            }
           }
         }
         else
@@ -464,19 +476,16 @@ namespace MediaPortal.GUI.Music
         string strFName = g_Player.CurrentFile;
         string coverart;
         // check if radio via TVPlugin
-        if (strFName.EndsWith(".tsbuffer",StringComparison.InvariantCultureIgnoreCase))
+        if (strFName.EndsWith(".tsbuffer",StringComparison.InvariantCultureIgnoreCase) || strFName.StartsWith("rtsp://",StringComparison.InvariantCultureIgnoreCase))
         {
           // yes
-          if (fileName.IndexOf(".radio") > 0)
-          {
-            string strChan = System.IO.Path.GetFileNameWithoutExtension(fileName);
+            string strChan = GUIPropertyManager.GetProperty("#Play.Current.ArtistThumb");
             tag.Title = strChan;
             coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, strChan);
             if (coverart != String.Empty)
               thumb = coverart;
             else
               thumb = String.Empty;
-          }
         }
         else
         {
