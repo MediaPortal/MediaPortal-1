@@ -72,10 +72,11 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
       // Disable it TVE3
-      Plugins plugin = new Plugins();
-      string plugindesc = plugin.GetPluginDescription("My TV");
+      //Plugins plugin = new Plugins();
+      //string plugindesc = plugin.GetPluginDescription("My TV");
 
-      if (plugindesc.Contains("v3"))
+      //if (plugindesc.Contains("v3"))
+      if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
       {
         this.Enabled = false;
         _init = true;

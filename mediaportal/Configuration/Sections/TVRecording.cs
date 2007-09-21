@@ -91,9 +91,7 @@ namespace MediaPortal.Configuration.Sections
       // TODO: Add any initialization after the InitializeComponent call
 
       // Disable if TVE3
-      Plugins plugin = new Plugins();
-      string plugindesc = plugin.GetPluginDescription("My TV");
-      if (plugindesc.Contains("v3"))
+      if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"))
       {
         this.Enabled = false;
       }

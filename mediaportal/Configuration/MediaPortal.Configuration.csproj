@@ -312,6 +312,9 @@
     <Compile Include="Sections\StartupDelay.Designer.cs">
       <DependentUpon>StartupDelay.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\TVClient.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\TVTeletext.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -667,6 +670,10 @@
     <EmbeddedResource Include="Sections\StartupDelay.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StartupDelay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TVClient.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TVClient.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVTeletext.resx">
       <DependentUpon>TVTeletext.cs</DependentUpon>

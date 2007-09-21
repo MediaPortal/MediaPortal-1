@@ -267,6 +267,8 @@ namespace MediaPortal.Configuration
       AddChildSection(television, new TVPostProcessing());
       Log.Info("  add tv teletext section");
       AddChildSection(television, new TVTeletext());
+      Log.Info("  add tv client section");
+      AddChildSection(television, new TVClient());
 
       SectionSettings remote = new Remote();
       if (splashScreen != null)
