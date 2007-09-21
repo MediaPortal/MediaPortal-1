@@ -1499,6 +1499,19 @@ namespace TvPlugin
         {
           MediaPortal.GUI.Library.Log.Info("Navigator.Channel==null");
         }
+        /* A part of the code to implement IP-TV 
+        if (channel.IsWebstream())
+        {
+          IList details = channel.ReferringTuningDetail();
+          TuningDetail detail = (TuningDetail)details[0];
+          g_Player.PlayVideoStream(detail.Url, channel.DisplayName);
+          return true;
+        }
+        else
+        {
+          if (Navigator.LastViewedChannel.IsWebstream())
+            g_Player.Stop();
+        }*/
 
         string errorMessage;
         TvResult succeeded;
@@ -2090,20 +2103,23 @@ namespace TvPlugin
         TvNotifyManager.OnNotifiesChanged();
         m_groups.Clear();
 
-        MediaPortal.GUI.Library.Log.Info("Checking if radio group for all radio channels exists");
         TvBusinessLayer layer = new TvBusinessLayer();
-        RadioChannelGroup radioGroup=layer.GetRadioChannelGroupByName(GUILocalizeStrings.Get(972));
-        if (radioGroup == null)
+        MediaPortal.GUI.Library.Log.Info("Checking if radio group for all radio channels exists");
+        RadioChannelGroup allRadioChannelsGroup = layer.GetRadioChannelGroupByName(GUILocalizeStrings.Get(972));
+        if (allRadioChannelsGroup == null)
         {
           MediaPortal.GUI.Library.Log.Info("All channels group for radio channels does not exist. Creating it...");
-          radioGroup = new RadioChannelGroup(GUILocalizeStrings.Get(972), 9999);
-          radioGroup.Persist();
+          allRadioChannelsGroup = new RadioChannelGroup(GUILocalizeStrings.Get(972), 9999);
+          allRadioChannelsGroup.Persist();
         }
         IList radioChannels = layer.GetAllRadioChannels();
-        if (radioChannels!=null)
+        if (radioChannels.Count > allRadioChannelsGroup.ReferringRadioGroupMap().Count)
         {
-          foreach (Channel radioChannel in radioChannels)
-            layer.AddChannelToRadioGroup(radioChannel,radioGroup);
+          if (radioChannels != null)
+          {
+            foreach (Channel radioChannel in radioChannels)
+              layer.AddChannelToRadioGroup(radioChannel, allRadioChannelsGroup);
+          }
         }
         MediaPortal.GUI.Library.Log.Info("Done.");
 

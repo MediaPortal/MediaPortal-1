@@ -292,37 +292,6 @@ namespace TvPlugin
       }
     }
 
-
-    public override bool OnMessage(GUIMessage message)
-    {
-      switch (message.Message)
-      {
-        case GUIMessage.MessageType.GUI_MSG_PLAY_RADIO_STATION:
-          return true;
-          IList channels = Channel.ListAll();
-          foreach (Channel ch in channels)
-          {
-            if (ch.IsRadio == false) continue;
-            if (ch.DisplayName == message.Label)
-            {
-              if (g_Player.Playing)
-              {
-                if (g_Player.IsTimeShifting)
-                  TVHome.Card.StopTimeShifting();
-                g_Player.Stop();
-              }
-              if (ch.IsFMRadio() || ch.IsWebstream())
-                g_Player.Play(GetPlayPath(ch));
-              else
-                TVHome.ViewChannelAndCheck(ch);
-            }
-          }
-          break;
-      }
-      return base.OnMessage(message);
-    }
-
-
     bool ViewByIcon
     {
       get
@@ -693,12 +662,12 @@ namespace TvPlugin
       Channel channel=(Channel)item.MusicTag;
       if (g_Player.Playing)
       {
-        if (g_Player.IsTimeShifting)
-          TVHome.Card.StopTimeShifting();
-        g_Player.Stop();
+        if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && channel.IsWebstream()))
+          g_Player.Stop();
+
       }
       if (channel.IsFMRadio() || channel.IsWebstream())
-        g_Player.Play(GetPlayPath(channel));
+        g_Player.PlayAudioStream(GetPlayPath(channel));
       else
         TVHome.ViewChannelAndCheck(channel);
     }
