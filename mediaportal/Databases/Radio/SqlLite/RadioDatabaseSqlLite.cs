@@ -1337,7 +1337,9 @@ namespace MediaPortal.Radio.Database
           long longYesterday =  MediaPortal.Util.Utils.datetolong(yesterday);
           strSQL = String.Format("DELETE FROM tblPrograms WHERE iEndTime < '{0}'", longYesterday);
           m_db.Execute(strSQL);
+
           DatabaseUtility.CompactDatabase(m_db);
+
           Log.WriteFile(LogType.EPG, "vacuum done");
         }
         catch (Exception ex)

@@ -107,7 +107,6 @@
     <String id="172">Utgivelsesdato:</String>
     <String id="173">Rating:</String>
     <String id="174">Sjanger:</String>
-
     <String id="175">Toner:</String>
     <String id="176">Stil:</String>
     <String id="177">Anmeldelse:</String>
@@ -449,6 +448,7 @@
     <String id="517">Fatal feil, handlingen er ikke fullført</String>
     <String id="518">Slette denne sangen?</String>
     <String id="519">Undertekst av</String>
+    <String id="528">Album Artist</String>
     <String id="529">Vis: Store Ikoner</String>
     <String id="530">Foto-disk er satt inn, vil du åpne denne?</String>
     <String id="531">Film er satt inn, vil du åpne denne?</String>
@@ -1601,7 +1601,6 @@
     <String id="100758" prefix="Min ">Fildialog</String>
     <String id="100759" prefix="Mine ">Arkiverte Tv-info</String>
     <String id="100760" prefix="Min ">Brenner</String>
-
     <String id="100761" prefix="Min ">TV guide</String>
     <String id="100762" prefix="Min ">Radio guide</String>
     <String id="100770" prefix="Min ">Utforsker</String>
