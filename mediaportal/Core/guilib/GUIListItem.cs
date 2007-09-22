@@ -24,7 +24,7 @@
 #endregion
 
 using System;
-using Core.Util;
+using MediaPortal.Util;
 namespace MediaPortal.GUI.Library
 {
 

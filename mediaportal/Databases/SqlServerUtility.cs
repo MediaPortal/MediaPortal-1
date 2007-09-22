@@ -92,6 +92,7 @@ namespace MediaPortal.Database
 
       ExecuteNonQuery(connection, sql);
     }
+
     public static void AddConstraint(SqlConnection connection, string constraintName, string sqlCreateStatement)
     {
       string sql = String.Format("if not exists (select * from dbo.sysobjects where id = object_id(N'{0}'))\n", constraintName);
@@ -102,6 +103,7 @@ namespace MediaPortal.Database
 
       ExecuteNonQuery(connection, sql);
     }
+
     public static void AddIndex(SqlConnection connection, string constraintName, string sqlCreateStatement)
     {
       string sql = String.Format("if not exists (select * from sysindexes where name like '{0}')\n", constraintName);

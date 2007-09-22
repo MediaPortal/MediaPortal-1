@@ -103,7 +103,7 @@ namespace MediaPortal.GUI.Settings
       {
         try
         {
-          MusicDatabase.DBHandle.Execute("rollback");
+          MusicDatabase.Instance.Execute("rollback");
         }
         catch (Exception)
         {
@@ -169,7 +169,7 @@ namespace MediaPortal.GUI.Settings
       SQLiteResultSet results;
       string strSQL;
       strSQL = String.Format("select * from albuminfo,album,genre,artist where albuminfo.idAlbum=album.idAlbum and albuminfo.idGenre=genre.idGenre and albuminfo.idArtist=artist.idArtist order by album.strAlbum");
-      results = MusicDatabase.DBHandle.Execute(strSQL);
+      results = MusicDatabase.Instance.Execute(strSQL);
       int iRowsFound = results.Rows.Count;
       if (iRowsFound == 0)
       {
@@ -217,7 +217,7 @@ namespace MediaPortal.GUI.Settings
 
         MusicDatabase.AlbumInfoCache albumDel = (MusicDatabase.AlbumInfoCache)vecAlbums[iSelectedAlbum];
         strSQL = String.Format("delete from albuminfo where albuminfo.idAlbum={0}", albumDel.idAlbum);
-        MusicDatabase.DBHandle.Execute(strSQL);
+        MusicDatabase.Instance.Execute(strSQL);
 
 
         vecAlbums.Clear();
@@ -243,7 +243,7 @@ namespace MediaPortal.GUI.Settings
       string strSQL;
       SQLiteResultSet results;
       strSQL = String.Format("select * from album,albumartist where album.idAlbumArtist=albumartist.idAlbumArtist order by album.strAlbum");
-      results = MusicDatabase.DBHandle.Execute(strSQL);
+      results = MusicDatabase.Instance.Execute(strSQL);
       int iRowsFound = results.Rows.Count;
       if (iRowsFound == 0)
       {
@@ -292,15 +292,15 @@ namespace MediaPortal.GUI.Settings
         MusicDatabase.AlbumInfoCache albumDel = (MusicDatabase.AlbumInfoCache)vecAlbums[iSelectedAlbum];
         //	Delete album
         strSQL = String.Format("delete from album where idAlbum={0}", albumDel.idAlbum);
-        MusicDatabase.DBHandle.Execute(strSQL);
+        MusicDatabase.Instance.Execute(strSQL);
 
         //	Delete album info
         strSQL = String.Format("delete from albuminfo where idAlbum={0}", albumDel.idAlbum);
-        MusicDatabase.DBHandle.Execute(strSQL);
+        MusicDatabase.Instance.Execute(strSQL);
 
         //	Get the songs of the album
         strSQL = String.Format("select * from song where idAlbum={0}", albumDel.idAlbum);
-        results = MusicDatabase.DBHandle.Execute(strSQL);
+        results = MusicDatabase.Instance.Execute(strSQL);
         iRowsFound = results.Rows.Count;
         if (iRowsFound != 0)
         {
@@ -315,13 +315,13 @@ namespace MediaPortal.GUI.Settings
           foreach (int iID in m_artistids)
           {
             strSQL = String.Format("select * from song where idArtist={0} and idAlbum<>{1}", iID, albumDel.idAlbum);
-            results = MusicDatabase.DBHandle.Execute(strSQL);
+            results = MusicDatabase.Instance.Execute(strSQL);
             iRowsFound = results.Rows.Count;
             if (iRowsFound == 0)
             {
               //	No, delete the artist
               strSQL = String.Format("delete from artist where idArtist={0}", iID);
-              MusicDatabase.DBHandle.Execute(strSQL);
+              MusicDatabase.Instance.Execute(strSQL);
             }
           }
           m_artistids.Clear();
@@ -329,7 +329,7 @@ namespace MediaPortal.GUI.Settings
 
         //	Delete the albums songs
         strSQL = String.Format("delete from song where idAlbum={0}", albumDel.idAlbum);
-        MusicDatabase.DBHandle.Execute(strSQL);
+        MusicDatabase.Instance.Execute(strSQL);
 
         // Delete album thumb
 

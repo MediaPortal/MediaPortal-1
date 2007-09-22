@@ -227,32 +227,34 @@
     <Compile Include="MusicVideos\YahooTopVideos.cs" />
     <Compile Include="MusicVideos\YahooUtil.cs" />
     <Compile Include="MusicVideos\YahooVideo.cs" />
-    <Compile Include="Music\AlbumInfo.cs">
+    <Compile Include="Music\InternetLookups\AlbumInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Music\AlbumSort.cs" />
-    <Compile Include="Music\AllmusicSiteScraper.cs">
+    <Compile Include="Music\InternetLookups\AllmusicSiteScraper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Music\AmazonWebservice.cs" />
-    <Compile Include="Music\ArtistInfo.cs">
+    <Compile Include="Music\InternetLookups\AmazonWebservice.cs" />
+    <Compile Include="Music\InternetLookups\ArtistInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Music\Audioscrobbler\AudioscrobblerBase.cs" />
     <Compile Include="Music\Audioscrobbler\AudioscrobblerUtils.cs" />
-    <Compile Include="Music\AWSECommerceService.cs" />
-    <Compile Include="Music\Database.cs">
+    <Compile Include="Music\InternetLookups\AWSECommerceService.cs" />
+    <Compile Include="Music\MusicDatabase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Music\MusicAlbumInfo.cs">
+    <Compile Include="Music\InternetLookups\MusicAlbumInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Music\MusicArtistInfo.cs">
+    <Compile Include="Music\InternetLookups\MusicArtistInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Music\MusicInfoScraper.cs">
+    <Compile Include="Music\InternetLookups\MusicInfoScraper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Music\MusicDbHelper.cs" />
+    <Compile Include="Music\MusicDbLookups.cs" />
     <Compile Include="Music\MusicSong.cs">
       <SubType>Code</SubType>
     </Compile>

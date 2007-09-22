@@ -297,7 +297,7 @@ namespace MediaPortal.GUI.Music
         {
           songs = new List<Song>();
           sql = String.Format("select distinct iYear from song ");
-          SQLiteResultSet results = database.GetResults(sql);
+          SQLiteResultSet results = MusicDatabase.Instance.Execute(sql);
           for (int i = 0; i < results.Rows.Count; i++)
           {
             Song song = new Song();

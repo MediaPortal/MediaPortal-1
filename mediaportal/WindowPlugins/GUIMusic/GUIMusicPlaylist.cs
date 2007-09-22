@@ -1429,7 +1429,7 @@ namespace MediaPortal.GUI.Music
         return false;
 
       // lookup how many times this artist's songs were played
-      avgPlayCount = dbs.GetAVGPlayCountForArtist(Artist_);
+      avgPlayCount = dbs.GetAveragePlayCountForArtist(Artist_);
 
       switch (_preferCountForTracks)
       {

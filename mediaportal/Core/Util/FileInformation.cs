@@ -26,7 +26,7 @@
 using System;
 using System.IO;
 
-namespace Core.Util
+namespace MediaPortal.Util
 {
 	/// <summary>
 	/// Summary description for FileInformation.

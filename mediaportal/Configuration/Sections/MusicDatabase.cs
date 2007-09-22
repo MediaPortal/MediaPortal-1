@@ -197,6 +197,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxUpdateSinceLastImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxCreateFolderThumb = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxUseFolderThumb = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxCreateArtistGenre = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -209,7 +210,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.fileLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.progressBar = new System.Windows.Forms.ProgressBar();
-      this.checkBoxUpdateSinceLastImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();
@@ -237,9 +237,23 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Scan Music Folders";
       // 
+      // checkBoxUpdateSinceLastImport
+      // 
+      this.checkBoxUpdateSinceLastImport.AutoSize = true;
+      this.checkBoxUpdateSinceLastImport.Checked = true;
+      this.checkBoxUpdateSinceLastImport.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxUpdateSinceLastImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxUpdateSinceLastImport.Location = new System.Drawing.Point(16, 281);
+      this.checkBoxUpdateSinceLastImport.Name = "checkBoxUpdateSinceLastImport";
+      this.checkBoxUpdateSinceLastImport.Size = new System.Drawing.Size(262, 17);
+      this.checkBoxUpdateSinceLastImport.TabIndex = 9;
+      this.checkBoxUpdateSinceLastImport.Text = "Only update files added / changed after last import";
+      this.checkBoxUpdateSinceLastImport.UseVisualStyleBackColor = true;
+      // 
       // checkBoxCreateFolderThumb
       // 
       this.checkBoxCreateFolderThumb.AutoSize = true;
+      this.checkBoxCreateFolderThumb.Enabled = false;
       this.checkBoxCreateFolderThumb.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCreateFolderThumb.Location = new System.Drawing.Point(33, 191);
       this.checkBoxCreateFolderThumb.Name = "checkBoxCreateFolderThumb";
@@ -375,19 +389,6 @@ namespace MediaPortal.Configuration.Sections
       this.progressBar.Name = "progressBar";
       this.progressBar.Size = new System.Drawing.Size(440, 16);
       this.progressBar.TabIndex = 1;
-      // 
-      // checkBoxUpdateSinceLastImport
-      // 
-      this.checkBoxUpdateSinceLastImport.AutoSize = true;
-      this.checkBoxUpdateSinceLastImport.Checked = true;
-      this.checkBoxUpdateSinceLastImport.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxUpdateSinceLastImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUpdateSinceLastImport.Location = new System.Drawing.Point(16, 281);
-      this.checkBoxUpdateSinceLastImport.Name = "checkBoxUpdateSinceLastImport";
-      this.checkBoxUpdateSinceLastImport.Size = new System.Drawing.Size(262, 17);
-      this.checkBoxUpdateSinceLastImport.TabIndex = 9;
-      this.checkBoxUpdateSinceLastImport.Text = "Only update files added / changed after last import";
-      this.checkBoxUpdateSinceLastImport.UseVisualStyleBackColor = true;
       // 
       // MusicDatabase
       // 
