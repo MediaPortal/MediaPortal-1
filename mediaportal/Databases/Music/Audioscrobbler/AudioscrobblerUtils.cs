@@ -810,7 +810,7 @@ namespace MediaPortal.Music.Database
                 case songFilterType.Track:
                   {
                     Song dbSong = new Song();
-                    if (mdb.GetSong(unfilteredList_[s].Title, ref dbSong))
+                    if (mdb.GetSongByTitle(unfilteredList_[s].Title, ref dbSong))
                     {
                       tmpSong = dbSong.Clone();
                       // Log.Debug("Audioscrobber: Track filter for {1} found db song - {0}", tmpSong.FileName, unfilteredList_[s].Title);

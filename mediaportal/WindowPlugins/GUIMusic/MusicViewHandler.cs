@@ -363,7 +363,7 @@ namespace MediaPortal.GUI.Music
           List<AlbumInfo> albums = new List<AlbumInfo>();
 
           if (!isVariousArtistsAlbum)
-            database.GetAlbums(ref albums);
+            database.GetAllAlbums(ref albums);
 
           else
             database.GetVariousArtistsAlbums(ref albums);

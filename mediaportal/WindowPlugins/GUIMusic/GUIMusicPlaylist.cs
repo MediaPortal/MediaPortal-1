@@ -424,7 +424,7 @@ namespace MediaPortal.GUI.Music
               if (currentOfflineMode == offlineMode.favorites)
               {
                 MusicDatabase checkdb = new MusicDatabase();
-                if (checkdb.GetNumOfFavorites() <= _maxScrobbledArtistsForSongs * 2)
+                if (checkdb.GetTotalFavorites() <= _maxScrobbledArtistsForSongs * 2)
                 {
                   shouldContinue = true;
                   Log.Warn("Audioscrobbler playlist: Cannot activate offline mode: favorites because there are not enough tracks");

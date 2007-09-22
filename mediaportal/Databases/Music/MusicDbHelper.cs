@@ -24,7 +24,8 @@
 #endregion
 
 namespace MediaPortal.Music.Database
-{  
+{
+  #region Usings
   using System;  
   using System.Collections;
   using System.Collections.Generic;
@@ -37,6 +38,7 @@ namespace MediaPortal.Music.Database
   using MediaPortal.ServiceImplementations;
   using MediaPortal.TagReader;
   using MediaPortal.Util;
+  #endregion
 
   #region Reorg class
   public delegate void MusicDBReorgEventHandler(object sender, DatabaseReorgEventArgs e);
@@ -141,8 +143,7 @@ namespace MediaPortal.Music.Database
       _pathCache.Clear();
       _albumCache.Clear();
     }
-
-
+    
     #region		Database rebuild
     public int MusicDatabaseReorg(ArrayList shares)
     {
@@ -1255,7 +1256,7 @@ namespace MediaPortal.Music.Database
     private void UpdateSortableArtistNames()
     {
       ArrayList artists = new ArrayList();
-      this.GetArtists(ref artists);
+      this.GetAllArtists(ref artists);
 
       for (int i = 0 ; i < artists.Count ; i++)
       {
