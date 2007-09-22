@@ -686,7 +686,7 @@ namespace MediaPortal.GUI.Library
             }
             catch (Exception ex)
             {
-              Log.Info("WindowManager:Unable to initialize window:{0} {1} {2} {3}",
+              Log.Warn("WindowManager: Unable to initialize window:{0} {1} {2} {3}",
                       newWindowId, ex.Message, ex.Source, ex.StackTrace);
               break;
             }
@@ -787,8 +787,8 @@ namespace MediaPortal.GUI.Library
     /// this function will show the previous active window
     /// </summary>
     static public void ShowPreviousWindow()
-    {      
-      Log.Info("Windowmanager:goto previous window");
+    {
+      Log.Debug("Windowmanager: Goto previous window");
       _isSwitchingToNewWindow = true;
       try
       {
@@ -901,7 +901,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void CloseCurrentWindow()
     {
-      Log.Info("Windowmanager:closing current window");
+      Log.Debug("Windowmanager: closing current window");
       _isSwitchingToNewWindow = true;
       try
       {
@@ -1221,7 +1221,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_routedWindow != null)
         {
-          Log.Info("WindowManager:unroute to {0}:{1}->{2}:{3}",
+          Log.Debug("WindowManager: unroute to {0}:{1}->{2}:{3}",
                    _routedWindow, _routedWindow.GetID, GetWindow(ActiveWindow), ActiveWindow);
         }
         if (_currentWindowName != String.Empty && _routedWindow != null)
@@ -1246,7 +1246,7 @@ namespace MediaPortal.GUI.Library
       {
         _shouldRefresh = true;
         _routedWindow = GetWindow(dialogId);
-        Log.Info("WindowManager:route {0}:{1}->{2}:{3}",
+        Log.Debug("WindowManager: route {0}:{1}->{2}:{3}",
                  GetWindow(ActiveWindow), ActiveWindow, _routedWindow, dialogId);
         _currentWindowName = GUIPropertyManager.GetProperty("#currentmodule");        
       }
@@ -1278,16 +1278,17 @@ namespace MediaPortal.GUI.Library
       msg.Param3 = iLine2;
       GUIWindowManager.SendThreadMessage(msg);
     }
+
     static public void Replace(int windowId, GUIWindow window)
     {
-      Log.Info("WindowManager::replace {0}", windowId);
+      //Log.Debug("WindowManager: Replace {0}", windowId);
       for (int i = 0; i < _listWindows.Length; ++i)
       {
         if (_listWindows[i] != null)
         {
           if (_listWindows[i].GetID == windowId)
           {
-            Log.Info("WindowManager::replaced {0} with {1}", _listWindows[i], window);
+            Log.Debug("WindowManager: Replaced {0} with {1}", _listWindows[i], window);
             ISetupForm frm = window as ISetupForm;
             if (frm != null)
             {
@@ -1295,7 +1296,7 @@ namespace MediaPortal.GUI.Library
               {
                 if (((ISetupForm)PluginManager.SetupForms[x]).GetWindowId() == windowId)
                 {
-                  Log.Info("WindowManager::setup...");
+                  Log.Debug("WindowManager: Setup...");
                   PluginManager.SetupForms.RemoveAt(x);
                   break;
                   //PluginManager.SetupForms[x] = frm;

@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.Library
 
     static void dispose(bool disposing)
     {
-      Log.Info("texturemanager:dispose()");
+      Log.Info("TextureManager: Dispose()");
       _packer.Dispose();
       if (disposing)
       {
@@ -259,13 +259,13 @@ namespace MediaPortal.GUI.Library
               theImage = null;
               _cache.Add(newCache);
 
-              //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+              //Log.Info("  TextureManager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
               return newCache.Frames;
             }
           }
         catch (Exception ex)
         {
-          Log.Error("TextureManager:exception loading texture {0}", fileName);
+          Log.Error("TextureManager: exception loading texture {0}", fileName);
           Log.Error(ex);
         }
         return 0;
@@ -342,7 +342,7 @@ namespace MediaPortal.GUI.Library
         memoryImage = null;
         _cache.Add(newCache);
 
-        Log.Info("  texturemanager:added: memoryImage  " + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString()); return newCache.Frames;
+        Log.Info("TextureManager: added: memoryImage  " + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString()); return newCache.Frames;
 
       }
       catch (Exception ex)
@@ -659,7 +659,7 @@ namespace MediaPortal.GUI.Library
 
     static public void CleanupThumbs()
     {
-      Log.Info("texturemanager:CleanupThumbs()");
+      Log.Debug("TextureManager: CleanupThumbs()");
       try
       {
         List<CachedTexture> newCache = new List<CachedTexture>();
