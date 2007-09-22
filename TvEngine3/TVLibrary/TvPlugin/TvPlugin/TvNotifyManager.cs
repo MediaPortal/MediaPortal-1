@@ -150,7 +150,7 @@ namespace TvPlugin
           if (preNotifySecs > start && rec.StartTime > DateTime.Now)
           {
             //check if freecard is available. 
-            if ((int)TVHome.TvServer.GetChannelState(rec.IdChannel) == 0) //not tunnable
+            if ((int)TVHome.TvServer.GetChannelState(rec.IdChannel, TVHome.Card.User) == 0) //not tunnable
             {
               GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
               if (pDlgOK != null)

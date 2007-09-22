@@ -153,7 +153,7 @@ namespace TvService
             //now we check if its free...
             cardsFound++;
             bool sameTransponder = false;
-            if (tvcard.Tuner.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (checkTransponders == false)))
+						if ((tvcard.Tuner.IsTunedToTransponder(tuningDetail) || tvcard.Users.IsOwner(user)) && (tvcard.SupportsSubChannels || (checkTransponders == false)))
             {
               //card is in use, but it is tuned to the same transponder.
               //meaning.. we can use it.

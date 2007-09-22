@@ -333,12 +333,13 @@ namespace TvControl
     /// Finds out whether a channel is currently tuneable or not
     /// </summary>
     /// <param name="idChannel">the channel id</param>
+		/// <param name="user">User</param>
     /// <returns>an enum indicating tunable/timeshifting/recording</returns>
-    public ChannelState GetChannelState(int idChannel)
+    public ChannelState GetChannelState(int idChannel, User user)
     {
       try
       {
-        return RemoteControl.Instance.GetChannelState(idChannel);
+        return RemoteControl.Instance.GetChannelState(idChannel, user);
       }
       catch (Exception ex)
       {

@@ -371,8 +371,9 @@ namespace TvControl
     /// Finds out whether a channel is currently tuneable or not
     /// </summary>
     /// <param name="idChannel">The channel id</param>
+		/// <param name="user">User</param>
     /// <returns>an enum indicating tunable/timeshifting/recording</returns>
-    ChannelState GetChannelState(int idChannel);
+    ChannelState GetChannelState(int idChannel, User user);
 
     /// <summary>
     /// Fetches all channels with backbuffer

@@ -2029,18 +2029,19 @@ namespace TvService
     /// Checks if a channel is tunable/tuned or not...
     /// </summary>
     /// <param name="channelName">Name of the channel.</param>
+		/// <param name="user">User</param>
     /// <returns>
     ///         <c>channel state tunable|nottunable</c>.
     /// </returns>
-    public ChannelState GetChannelState(int idChannel)
+    public ChannelState GetChannelState(int idChannel, User user)
     {
       ChannelState chanState;
       Channel dbchannel = Channel.Retrieve(idChannel);
 
-      User anyUser = new User();
+      //User anyUser = new User();
       TvResult viewResult;
       ICardAllocation allocation = CardAllocationFactory.Create(true);
-      List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_cards, dbchannel, ref anyUser, true, out viewResult);
+			List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_cards, dbchannel, ref user, true, out viewResult);
       if (viewResult == TvResult.Succeeded)
         chanState = ChannelState.tunable;
       else

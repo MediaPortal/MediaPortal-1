@@ -456,7 +456,7 @@ namespace TvPlugin
       {
         CurrentChan = _tvChannelList[i];
         if (CheckChannelState)
-          CurrentChanState = (int)TVHome.TvServer.GetChannelState(CurrentChan.IdChannel);
+          CurrentChanState = (int)TVHome.TvServer.GetChannelState(CurrentChan.IdChannel, TVHome.Card.User);
         else
           CurrentChanState = (int)ChannelState.tunable;
 
