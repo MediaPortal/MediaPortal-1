@@ -273,19 +273,18 @@ namespace MediaPortal.MPInstaller
           this.imageList2.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList2.ImageStream")));
           this.imageList2.TransparentColor = System.Drawing.Color.Transparent;
           this.imageList2.Images.SetKeyName(0, "application.ico");
-          this.imageList2.Images.SetKeyName(1, "music0016.png");
-          this.imageList2.Images.SetKeyName(2, "application.ico");
-          this.imageList2.Images.SetKeyName(3, "application.ico");
-          this.imageList2.Images.SetKeyName(4, "application.ico");
-          this.imageList2.Images.SetKeyName(5, "application.ico");
-          this.imageList2.Images.SetKeyName(6, "application.ico");
-          this.imageList2.Images.SetKeyName(7, "application.ico");
-          this.imageList2.Images.SetKeyName(8, "application.ico");
-          this.imageList2.Images.SetKeyName(9, "application.ico");
-          this.imageList2.Images.SetKeyName(10, "videos0011.png");
-          this.imageList2.Images.SetKeyName(11, "application.ico");
-          this.imageList2.Images.SetKeyName(12, "application.ico");
-          this.imageList2.Images.SetKeyName(13, "application.ico");
+          this.imageList2.Images.SetKeyName(1, "Radio.png");
+          this.imageList2.Images.SetKeyName(2, "auto.png");
+          this.imageList2.Images.SetKeyName(3, "tv.png");
+          this.imageList2.Images.SetKeyName(4, "Games.png");
+          this.imageList2.Images.SetKeyName(5, "Input.png");
+          this.imageList2.Images.SetKeyName(6, "Other.png");
+          this.imageList2.Images.SetKeyName(7, "PIM.png");
+          this.imageList2.Images.SetKeyName(8, "Pictures.png");
+          this.imageList2.Images.SetKeyName(9, "Utilites.png");
+          this.imageList2.Images.SetKeyName(10, "Movies.png");
+          this.imageList2.Images.SetKeyName(11, "Web.png");
+          this.imageList2.Images.SetKeyName(12, "TVlogos.png");
           // 
           // mozItem1
           // 
@@ -297,7 +296,7 @@ namespace MediaPortal.MPInstaller
           this.mozItem1.Images.SelectedImage = ((System.Drawing.Image)(resources.GetObject("resource.SelectedImage")));
           this.mozItem1.Location = new System.Drawing.Point(2, 2);
           this.mozItem1.Name = "mozItem1";
-          this.mozItem1.Size = new System.Drawing.Size(151, 48);
+          this.mozItem1.Size = new System.Drawing.Size(151, 58);
           this.mozItem1.TabIndex = 0;
           this.mozItem1.Text = "mozItem1";
           this.mozItem1.TextAlign = Pabo.MozBar.MozTextAlign.Right;
