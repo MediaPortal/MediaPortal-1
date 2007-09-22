@@ -1325,7 +1325,7 @@ namespace MediaPortal.GUI.Library
               OnMessage(msg);
 
               GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
-              Log.Info("window:{0} init", this.ToString());
+              Log.Debug("Window: {0} init", this.ToString());
 
               _hasRendered = false;
               OnPageLoad();
@@ -1346,7 +1346,7 @@ namespace MediaPortal.GUI.Library
                   GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + _previousWindowId));
                 }
 
-                Log.Info("window:{0} deinit", this.ToString());
+                Log.Debug("Window: {0} deinit", this.ToString());
                 FreeResources();
                 DeInitControls();
                 GUITextureManager.CleanupThumbs();
