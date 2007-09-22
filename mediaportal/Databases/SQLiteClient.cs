@@ -240,7 +240,6 @@ namespace SQLite.NET
       //Log.Info("dbs:opened:{0} {1:X}",databaseName, dbHandle.ToInt32());
     }
 
-
     public int ChangedRows()
     {
       if (dbHandle == IntPtr.Zero)
@@ -249,7 +248,6 @@ namespace SQLite.NET
       }
       return sqlite3_changes(dbHandle);
     }
-
 
     public void Close()
     {

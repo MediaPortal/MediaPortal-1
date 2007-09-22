@@ -28,6 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Text;
+
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -94,7 +95,7 @@ namespace MediaPortal.GUI.Music
     // add the beginning artist again to avoid drifting away in style.
     const int REINSERT_AFTER_THIS_MANY_SONGS = 10;
 
-    #region Base variabeles
+    #region Variables
     DirectoryHistory m_history = new DirectoryHistory();
     string m_strDirectory = String.Empty;
     int m_iItemSelected = -1;
@@ -1403,7 +1404,7 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    bool ScrobbleSimilarArtists(string Artist_)
+    private bool ScrobbleSimilarArtists(string Artist_)
     {
       MusicDatabase dbs = MusicDatabase.Instance;
       PlayList list = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);

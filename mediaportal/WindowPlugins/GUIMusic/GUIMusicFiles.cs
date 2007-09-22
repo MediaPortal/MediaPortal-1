@@ -556,7 +556,7 @@ namespace MediaPortal.GUI.Music
 
         string strSelectedItem = m_history.Get(currentFolder);
         int iItem = 0;
-        OnRetrieveMusicInfo(ref itemlist);
+        OnRetrieveMusicInfo(ref itemlist, false);
         foreach (GUIListItem item in itemlist)
         {
           MusicTag tag = item.MusicTag as MusicTag;
@@ -982,7 +982,7 @@ namespace MediaPortal.GUI.Music
           }
         }
         m_bScan = true;
-        OnRetrieveMusicInfo(ref queueItems);
+        OnRetrieveMusicInfo(ref queueItems, false);
         m_database.CheckVariousArtistsAndCoverArt();
         m_bScan = false;
 
@@ -1130,7 +1130,7 @@ namespace MediaPortal.GUI.Music
 
         m_bScan = true;
         currentFolder = pItem.Path;
-        OnRetrieveMusicInfo(ref items);
+        OnRetrieveMusicInfo(ref items, false);
         currentFolder = oldFolder;
         m_bScan = false;
         GUIListItem item = items[1] as GUIListItem;
@@ -1178,7 +1178,7 @@ namespace MediaPortal.GUI.Music
 
         m_bScan = true;
         currentFolder = pItem.Path;
-        OnRetrieveMusicInfo(ref items);
+        OnRetrieveMusicInfo(ref items, false);
         currentFolder = oldFolder;
         m_bScan = false;
         GUIListItem item = items[1] as GUIListItem;
@@ -1205,7 +1205,7 @@ namespace MediaPortal.GUI.Music
         List<GUIListItem> list = new List<GUIListItem>();
         list.Add(pItem);
         m_bScan = true;
-        OnRetrieveMusicInfo(ref list);
+        OnRetrieveMusicInfo(ref list, false);
         m_bScan = false;
       }
 
@@ -1221,7 +1221,7 @@ namespace MediaPortal.GUI.Music
         List<GUIListItem> list = new List<GUIListItem>();
         list.Add(item);
         m_bScan = true;
-        OnRetrieveMusicInfo(ref list);
+        OnRetrieveMusicInfo(ref list, false);
         m_bScan = false;
       }
       base.AddSongToFavorites(item);
@@ -1255,8 +1255,9 @@ namespace MediaPortal.GUI.Music
       dirUp.IconImage = "defaultFolderBack.png";
       dirUp.IconImageBig = "defaultFolderBackBig.png";
       itemlist.Insert(0, dirUp);
-      //
-      OnRetrieveMusicInfo(ref itemlist);
+      
+      OnRetrieveMusicInfo(ref itemlist, false);
+
       foreach (GUIListItem item in itemlist)
       {
         item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
@@ -1332,9 +1333,6 @@ namespace MediaPortal.GUI.Music
       if (playList == null || pItem == null)
         return;
 
-      //Tfro71 6-1-2006 added a check to see if m_database exists. Otherwise is has to be initiated.
-      //Because when the autoplay detects a CD and the current screen is not from the Music Gui the musicdatabase 
-      //does not have an instance
       if (m_database == null)
         m_database = MusicDatabase.Instance;
 
@@ -1347,7 +1345,7 @@ namespace MediaPortal.GUI.Music
         currentFolder = pItem.Path;
 
         List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
-        OnRetrieveMusicInfo(ref itemlist);
+        OnRetrieveMusicInfo(ref itemlist, false);
 
         // Sort share folder tracks.  
         try
@@ -1374,7 +1372,7 @@ namespace MediaPortal.GUI.Music
           List<GUIListItem> list = new List<GUIListItem>();
           list.Add(pItem);
           m_bScan = true;
-          OnRetrieveMusicInfo(ref list);
+          OnRetrieveMusicInfo(ref list, true);
           m_bScan = false;
 
           PlayListItem playlistItem = new PlayListItem();
@@ -1598,18 +1596,17 @@ namespace MediaPortal.GUI.Music
         playlistPlayer.Play(0);
       }
     }
-    void OnRetrieveMusicInfo(ref List<GUIListItem> items)
+
+    void OnRetrieveMusicInfo(ref List<GUIListItem> items, bool aPlaylistAdd)
     {
       int nFolderCount = 0;
-      //Tfro71 6-1-2006 added a check to see if m_database exists. Otherwise is has to be initiated.
-      //Because when the autoplay detects a CD and the current screen is not from the Music Gui the musicdatabase 
-      //does not have an instance
+
       if (m_database == null)
         m_database = MusicDatabase.Instance;
 
-      foreach (GUIListItem item in items)
+      for (int i = 0 ; i < items.Count ; i++)
       {
-        if (item.IsFolder)
+        if (items[i].IsFolder)
           nFolderCount++;
       }
 
@@ -1617,15 +1614,31 @@ namespace MediaPortal.GUI.Music
       if (nFolderCount == (int)items.Count)
         return;
 
-      GUIDialogProgress dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-
+      GUIDialogProgress dlg = null;
+      if (!aPlaylistAdd)      
+        dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      
       if (currentFolder.Length == 0)
         return;
-      //string strItem;
+      
       List<SongMap> songsMap = new List<SongMap>();
-      // get all information for all files in current directory from database 
-      m_database.GetSongsByPath2(currentFolder, ref songsMap);
 
+      if (aPlaylistAdd)
+      {
+        Song AddSong = new Song();
+        SongMap AddMap = new SongMap();
+        if (m_database.GetSongByFileName(items[0].Path, ref AddSong))
+        {
+          AddMap.m_song = AddSong;
+          AddMap.m_strPath = items[0].Path;
+          songsMap.Add(AddMap);
+        }
+      }
+      else
+      {
+        // get all information for all files in current directory from database 
+        m_database.GetSongsByPath2(currentFolder, ref songsMap);
+      }
       //musicCD is the information about the cd...
       //delete old CD info
       //GUIMusicFiles.MusicCD = null;
@@ -1641,15 +1654,18 @@ namespace MediaPortal.GUI.Music
           continue;
         if (pItem.Path.Length == 0)
           continue;
+
         string strFilePath = System.IO.Path.GetFullPath(pItem.Path);
-        strFilePath = strFilePath.Substring(0, strFilePath.Length - (1 + System.IO.Path.GetFileName(pItem.Path).Length));
-        if (strFilePath != currentFolder)
-        {
+        //strFilePath = strFilePath.Substring(0, strFilePath.Length - (1 + System.IO.Path.GetFileName(pItem.Path).Length));
+        strFilePath = System.IO.Path.GetDirectoryName(strFilePath);
+
+        if (strFilePath != currentFolder)        
           return;
-        }
+        
         string strExtension = System.IO.Path.GetExtension(pItem.Path);
         if (m_bScan && strExtension.ToLower().Equals(".cda"))
           continue;
+
         if (m_bScan && dlg != null)
         {
           dlg.SetPercentage((int)((double)i / (double)items.Count * 100.00));
@@ -1727,12 +1743,7 @@ namespace MediaPortal.GUI.Music
             }//if (strExtension!=".cda" )
             else // int_20h: if it is .cda then get info from freedb
             {
-              if (m_bScan)
-                continue;
-
-              if (bCDDAFailed)
-                continue;
-              if (!Util.Win32API.IsConnectedToInternet())
+              if (m_bScan || bCDDAFailed || !Util.Win32API.IsConnectedToInternet() || aPlaylistAdd)
                 continue;
 
               try
@@ -1899,18 +1910,19 @@ namespace MediaPortal.GUI.Music
               }
             }
           }
-          foreach (SongMap song1 in songsMap)
+
+          for (int j = 0 ; j < songsMap.Count ; j++)
           {
-            if (song1.m_song.FileName == pItem.Path)
+            if (songsMap[j].m_song.FileName == pItem.Path)
             {
-              pItem.AlbumInfoTag = song1.m_song;
+              pItem.AlbumInfoTag = songsMap[j].m_song;
               break;
             }
           }
-
+          
           if (tag != null && m_bScan && bNewFile)
           {
-            Song song = new Song();
+            Song song = new Song();            
             song.Title = tag.Title;
             song.Genre = tag.Genre;
             song.FileName = pItem.Path;
@@ -1937,7 +1949,7 @@ namespace MediaPortal.GUI.Music
         dlg.Progress();
       }
 
-      OnRetrieveMusicInfo(ref items);
+      OnRetrieveMusicInfo(ref items, false);
       m_database.CheckVariousArtistsAndCoverArt();
 
       if (dlg != null && dlg.IsCanceled)
@@ -2047,7 +2059,6 @@ namespace MediaPortal.GUI.Music
 
     private void OnQueueAllItems()
     {
-
       PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
       int index = Math.Max(playlistPlayer.CurrentSong, 0);
 
@@ -2086,26 +2097,40 @@ namespace MediaPortal.GUI.Music
         AddItemToPlayList(pItem, ref playList);
       }
       else if (playList.Count > 1)
-      {
-        PlayList tempPlayList = new PlayList();
+      {        
+        List<GUIListItem> itemList = new List<GUIListItem>();
+        itemList.Add(pItem);
 
-        for (int i = 0; i < playList.Count; i++)
-        {
-          if (i == index + 1)
-          {
-            AddItemToPlayList(pItem, ref tempPlayList);
-          }
+        OnRetrieveMusicInfo(ref itemList, true);
+        pItem = itemList[0];
 
-          tempPlayList.Add(playList[i]);
-        }
+        PlayListItem playlistItem = new PlayListItem();
+        playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
+        playlistItem.FileName = pItem.Path;
+        playlistItem.Description = pItem.Label;
+        playlistItem.Duration = pItem.Duration;
+        playlistItem.MusicTag = pItem.MusicTag;
 
-        playList.Clear();
+        playList.Insert(playlistItem, index);
 
-        // add each item of the playlist to the playlistplayer
-        for (int i = 0; i < tempPlayList.Count; ++i)
-        {
-          playList.Add(tempPlayList[i]);
-        }
+        //PlayList tempPlayList = new PlayList();
+        //for (int i = 0; i < playList.Count; i++)
+        //{
+        //  if (i == index + 1)
+        //  {
+        //    AddItemToPlayList(pItem, ref tempPlayList);
+        //  }
+
+        //  tempPlayList.Add(playList[i]);
+        //}
+
+        //playList.Clear();
+
+        //// add each item of the playlist to the playlistplayer
+        //for (int i = 0; i < tempPlayList.Count; ++i)
+        //{
+        //  playList.Add(tempPlayList[i]);
+        //}
       }
 
       else
@@ -2177,10 +2202,8 @@ namespace MediaPortal.GUI.Music
           playlistPlayer.Play(playStartIndex);
         }
 
-
-        //SV
         bool didJump = DoPlayNowJumpTo(playList.Count);
-        Log.Info("GUIMusicFiles: Doing Play now jump to: {0} ({1})", PlayNowJumpTo, didJump);
+        Log.Debug("GUIMusicFiles: Doing play now jump to: {0} ({1})", PlayNowJumpTo, didJump);
       }
     }
     #endregion
