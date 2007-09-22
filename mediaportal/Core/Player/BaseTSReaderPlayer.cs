@@ -832,6 +832,7 @@ namespace MediaPortal.Player
     {
       get
       {
+        UpdateCurrentPosition();
         if (_duration < 0)
           Process();
         return _duration;
@@ -841,6 +842,7 @@ namespace MediaPortal.Player
     {
       get
       {
+        UpdateCurrentPosition();
         return _currentPos;
       }
     }
