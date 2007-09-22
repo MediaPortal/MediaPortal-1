@@ -517,7 +517,7 @@ namespace MediaPortal.GUI.Music
         PlayList currentPlaylist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
         if (currentPlaylist.Count > 0)
         {
-          MusicDatabase mdb = new MusicDatabase();
+          MusicDatabase mdb = MusicDatabase.Instance;
           MusicTag listTag = new MusicTag();
           List<GUIListItem> guiListItemList = new List<GUIListItem>();
           GUIListItem queueItem = new GUIListItem();
@@ -796,7 +796,7 @@ namespace MediaPortal.GUI.Music
           }
         case 930: // add to favorites
           {
-            MusicDatabase dbs = new MusicDatabase();
+            MusicDatabase dbs = MusicDatabase.Instance;
             Song currentSong = new Song();
             string strFile = g_Player.Player.CurrentFile;
 
@@ -818,7 +818,7 @@ namespace MediaPortal.GUI.Music
             {
               if (CurrentTrackTag != null)
               {
-                MusicDatabase dbs = new MusicDatabase();
+                MusicDatabase dbs = MusicDatabase.Instance;
                 ArrayList albumSongs = new ArrayList();
                 String strAlbum = CurrentTrackTag.Album;
                 //DatabaseUtility.RemoveInvalidChars(ref strAlbum);
@@ -856,7 +856,7 @@ namespace MediaPortal.GUI.Music
       CurrentTrackTag.Rating = RatingValue;
       GUIPropertyManager.SetProperty("#Play.Current.Rating", (Convert.ToDecimal(2 * CurrentTrackTag.Rating + 1)).ToString());
 
-      MusicDatabase dbs = new MusicDatabase();
+      MusicDatabase dbs = MusicDatabase.Instance;
       string strFile = g_Player.CurrentFile;
 
       dbs.SetRating(strFile, RatingValue);
@@ -1132,7 +1132,7 @@ namespace MediaPortal.GUI.Music
     {
       bool isCurSongCdTrack = IsCdTrack(CurrentTrackFileName);
       bool isNextSongCdTrack = IsCdTrack(NextTrackFileName);
-      MusicDatabase dbs = new MusicDatabase();
+      MusicDatabase dbs = MusicDatabase.Instance;
 
       if (CurrentTrackTag != null)
         PreviousTrackTag = CurrentTrackTag;

@@ -1336,7 +1336,7 @@ namespace MediaPortal.GUI.Music
       //Because when the autoplay detects a CD and the current screen is not from the Music Gui the musicdatabase 
       //does not have an instance
       if (m_database == null)
-        m_database = new MusicDatabase();
+        m_database = MusicDatabase.Instance;
 
       if (pItem.IsFolder)
       {
@@ -1605,7 +1605,7 @@ namespace MediaPortal.GUI.Music
       //Because when the autoplay detects a CD and the current screen is not from the Music Gui the musicdatabase 
       //does not have an instance
       if (m_database == null)
-        m_database = new MusicDatabase();
+        m_database = MusicDatabase.Instance;
 
       foreach (GUIListItem item in items)
       {

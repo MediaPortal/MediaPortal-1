@@ -255,7 +255,7 @@ namespace SQLite.NET
     {
       if (dbHandle != IntPtr.Zero)
       {
-        Log.Info("dbs:close:{0}", databaseName);
+        Log.Info("SQLiteClient: Closing database: {0}", databaseName);
         sqlite3_close(dbHandle);
         dbHandle = IntPtr.Zero;
         databaseName = String.Empty;
@@ -265,11 +265,11 @@ namespace SQLite.NET
     private void ThrowError(string statement, string sqlQuery, SqliteError err)
     {
       string errorMsg = Marshal.PtrToStringUni(sqlite3_errmsg16(dbHandle));
-      Log.Error("SQL:{0} cmd:{1} err:{2} detailed:{3} query:{4}",
+      Log.Error("SQLiteClient: {0} cmd:{1} err:{2} detailed:{3} query:{4}",
                 databaseName, statement, err.ToString(), errorMsg, sqlQuery);
 
       throw new SQLiteException(
-        String.Format("SQL:{0} cmd:{1} err:{2} detailed:{3} query:{4}", databaseName, statement, err.ToString(),
+        String.Format("SQLiteClient: {0} cmd:{1} err:{2} detailed:{3} query:{4}", databaseName, statement, err.ToString(),
                       errorMsg, sqlQuery), err);
     }
 
@@ -281,12 +281,12 @@ namespace SQLite.NET
         //Log.Info("dbs:{0} sql:{1}", databaseName,query);
         if (query == null)
         {
-          Log.Error("database:query==null");
+          Log.Error("SQLiteClient: query==null");
           return set1;
         }
         if (query.Length == 0)
         {
-          Log.Error("database:query==''");
+          Log.Error("SQLiteClient: query==''");
           return set1;
         }
         IntPtr errMsg;
@@ -316,7 +316,7 @@ namespace SQLite.NET
         }
         if (err != SqliteError.OK)
         {
-          Log.Error("database:query returned {0} {1}", err.ToString(), query);
+          Log.Error("SQLiteClient: query returned {0} {1}", err.ToString(), query);
           ThrowError("sqlite3_finalize", query, err);
         }
       }
@@ -330,7 +330,7 @@ namespace SQLite.NET
 
       if (pVm == IntPtr.Zero)
       {
-        ThrowError("SqlClient:pvm=null", query, res);
+        ThrowError("SQLiteClient: pvm=null", query, res);
       }
       DateTime now = DateTime.Now;
       TimeSpan ts = now - DateTime.Now;

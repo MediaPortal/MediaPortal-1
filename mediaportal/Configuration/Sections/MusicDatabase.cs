@@ -74,7 +74,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    MediaPortal.Music.Database.MusicDatabase m_dbs = new MediaPortal.Music.Database.MusicDatabase();
+    MediaPortal.Music.Database.MusicDatabase m_dbs = MediaPortal.Music.Database.MusicDatabase.Instance;
 
     public MusicDatabase()
       : this("Music Database")

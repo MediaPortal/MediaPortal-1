@@ -41,11 +41,10 @@ namespace Databases.Folders
 	/// </summary>
   public class FolderSettingsSqlLite : IFolderSettings, IDisposable
 	{
-    public SQLiteClient m_db=null;
+    public SQLiteClient m_db = null;
 
     public FolderSettingsSqlLite()
 		{
-
       try 
       {
         // Open database
@@ -62,6 +61,7 @@ namespace Databases.Folders
         Log.Error(ex);
       }
     }
+
     public void Dispose()
     {
       if (m_db != null)
@@ -70,8 +70,7 @@ namespace Databases.Folders
         m_db.Dispose();
         m_db = null;
       }
-    }
-  
+    }  
 
     string Get(SQLiteResultSet results, int iRecord, string strColum)
     {

@@ -901,7 +901,7 @@ namespace MediaPortal.GUI.Music
             GUIWindowManager.Process();
 
             if (_MusicDatabase == null)
-                _MusicDatabase = new MusicDatabase();
+              _MusicDatabase = MusicDatabase.Instance;
 
             int albumCount = 0;
             int curCount = 0;

@@ -420,7 +420,7 @@ namespace MediaPortal.Audioscrobbler
 
     private bool GetCurrentSong()
     {
-      MusicDatabase dbs = new MusicDatabase();
+      MusicDatabase dbs = MusicDatabase.Instance;
       string strFile = g_Player.Player.CurrentFile;
       if (strFile != String.Empty)
         return dbs.GetSongByFileName(strFile, ref _currentSong);
@@ -494,7 +494,7 @@ namespace MediaPortal.Audioscrobbler
         _announceNowPlaying = xmlreader.GetValueAsBool("audioscrobbler", "EnableNowPlaying", true);
       }
 
-      MusicDatabase mdb = new MusicDatabase();
+      MusicDatabase mdb = MusicDatabase.Instance;
       _doSubmit = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(currentUser)), "iSubmitOn", -1) == 1) ? true : false;
 
       Log.Info("Audioscrobbler plugin: Submit songs: {0}, announce Now Playing: {1}", Convert.ToString(_doSubmit), Convert.ToString(_announceNowPlaying));

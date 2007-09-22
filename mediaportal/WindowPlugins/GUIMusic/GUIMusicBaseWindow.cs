@@ -598,8 +598,8 @@ namespace MediaPortal.GUI.Music
         if (Util.Utils.IsLastFMStream(g_Player.CurrentFile))
           g_Player.Stop();
 
-      if (m_database == null)      
-        m_database = new MusicDatabase();
+      if (m_database == null)
+        m_database = MusicDatabase.Instance;
       
       if (handler == null)      
         handler = new MusicViewHandler();

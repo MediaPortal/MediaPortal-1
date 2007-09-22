@@ -636,7 +636,7 @@ namespace MediaPortal.Music.Database
         _defaultUser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
         _doCoverLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmthumbs", true);        
       }
-      MusicDatabase mdb = new MusicDatabase();
+      MusicDatabase mdb = MusicDatabase.Instance;
       _currentNeighbourMode = lastFMFeed.weeklyartistchart;
 
       _useDebugLog = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(_defaultUser)), "iDebugLog", -1) == 1) ? true : false;
@@ -792,7 +792,7 @@ namespace MediaPortal.Music.Database
       {
         lock (LookupLock)
         {
-          MusicDatabase mdb = new MusicDatabase();
+          MusicDatabase mdb = MusicDatabase.Instance;
           List<Song> tmpSongs = new List<Song>();
 
           Song tmpSong = new Song();
@@ -1423,7 +1423,7 @@ namespace MediaPortal.Music.Database
     {
       int addedSongs = 0;
       //      Random thisOne = new Random();
-      MusicDatabase dbs = new MusicDatabase();
+      MusicDatabase dbs = MusicDatabase.Instance;
       List<Song> randomSongList = new List<Song>();
       Song randomSong = new Song();
       Song lookupSong = new Song();

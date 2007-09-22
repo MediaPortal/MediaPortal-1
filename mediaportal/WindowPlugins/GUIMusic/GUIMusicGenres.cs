@@ -1001,7 +1001,7 @@ namespace MediaPortal.GUI.Music
           if (strFile.StartsWith(@"http://")) break;  // Don't try increasing the Top100 for streams
           if (MediaPortal.Util.Utils.IsAudio(strFile))
           {
-            MusicDatabase dbs = new MusicDatabase();
+            MusicDatabase dbs = MusicDatabase.Instance;
             dbs.IncrTop100CounterByFileName(strFile);
           }
           break;
@@ -1085,7 +1085,7 @@ namespace MediaPortal.GUI.Music
         return;
 
       if (m_database == null)
-        m_database = new MusicDatabase();
+        m_database = MusicDatabase.Instance;
 
       if (pItem.IsFolder)
       {

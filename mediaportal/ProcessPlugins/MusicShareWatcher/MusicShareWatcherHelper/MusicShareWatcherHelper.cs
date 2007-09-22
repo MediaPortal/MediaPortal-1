@@ -63,7 +63,7 @@ namespace MediaPortal.MusicShareWatcher
       // Create Log File
       Log.BackupLogFile(LogType.MusicShareWatcher);
 
-      musicDB = new MusicDatabase();
+      musicDB = MusicDatabase.Instance;
       LoadShares();
       Log.Info(LogType.MusicShareWatcher, "MusicShareWatcher starting up!");
     }

@@ -830,7 +830,7 @@ namespace MediaPortal.Dialogs
       else if (MediaPortal.Util.Utils.IsAudio(item.Path))
       {
         //Remove from music database
-        if (dbMusic == null) dbMusic = new MusicDatabase();
+        if (dbMusic == null) dbMusic = MusicDatabase.Instance;
         if (dbMusic != null)
         {
           dbMusic.DeleteSong(item.Path, true);

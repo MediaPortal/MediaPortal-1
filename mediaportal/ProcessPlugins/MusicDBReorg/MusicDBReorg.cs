@@ -78,7 +78,7 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
         _runMinutes = reader.GetValueAsInt("musicdbreorg", "minutes", 0);
       }
 
-      mDB = new MusicDatabase();
+      mDB = MusicDatabase.Instance;
     }
 
     #endregion

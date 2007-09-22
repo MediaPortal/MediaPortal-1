@@ -57,7 +57,7 @@ namespace MediaPortal.AudioScrobbler
     {
       try
       {
-        MusicDatabase mdb = new MusicDatabase();
+        MusicDatabase mdb = MusicDatabase.Instance;
         List<string> scrobbleusers = new List<string>();
         string tmpuser = "";
         string tmppass = "";
@@ -170,7 +170,7 @@ namespace MediaPortal.AudioScrobbler
 
     protected void SaveSettings()
     {
-      MusicDatabase mdb = new MusicDatabase();
+      MusicDatabase mdb = MusicDatabase.Instance;
       int usedebuglog = 0;
       int submitsenabled = 1;
       int scrobbledefault = 1;
@@ -758,7 +758,7 @@ namespace MediaPortal.AudioScrobbler
       listViewNeighbours.Columns.Add("Artist", 250);
       for (int i = 0; i < songList.Count; i++)
       {
-        MusicDatabase mdb = new MusicDatabase();
+        MusicDatabase mdb = MusicDatabase.Instance;
         if (!mdb.GetArtists(4, songList[i].Artist, ref artistsInDB))
         {
           bool foundDoubleEntry = false;
@@ -799,7 +799,7 @@ namespace MediaPortal.AudioScrobbler
 
     private void buttonDelUser_Click(object sender, EventArgs e)
     {
-      MusicDatabase mdb = new MusicDatabase();
+      MusicDatabase mdb = MusicDatabase.Instance;
       mdb.DeleteScrobbleUser(comboBoxUserName.Text);
       if (comboBoxUserName.Items.Count <= 1)
       {

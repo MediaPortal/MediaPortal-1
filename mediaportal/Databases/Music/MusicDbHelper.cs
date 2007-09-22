@@ -337,7 +337,7 @@ namespace MediaPortal.Music.Database
 
         try
         {
-          results = MusicDB.Execute(strSQL);
+          results = MusicDbClient.Execute(strSQL);
           if (results == null)
           {
             Log.Info("Musicdatabasereorg: UpdateTags finished with error (results == null)");
@@ -532,7 +532,7 @@ namespace MediaPortal.Music.Database
           //Log.Write (strSQL);
           try
           {
-            MusicDB.Execute(strSQL);
+            MusicDbClient.Execute(strSQL);
           }
           catch (Exception)
           {
@@ -677,7 +677,7 @@ namespace MediaPortal.Music.Database
       strSQL = String.Format("select * from song, path where song.idPath=path.idPath");
       try
       {
-        results = MusicDatabase.Instance.Execute(strSQL);
+        results = MusicDatabase.DirectExecute(strSQL);
         if (results == null)
           return (int)Errors.ERROR_REORG_SONGS;
       }
@@ -725,7 +725,7 @@ namespace MediaPortal.Music.Database
       string strSql = "delete from artist where artist.idArtist not in (select idArtist from song)";
       try
       {
-        MusicDB.Execute(strSql);
+        MusicDbClient.Execute(strSql);
       }
       catch (Exception)
       {
@@ -744,7 +744,7 @@ namespace MediaPortal.Music.Database
       string strSql = "delete from albumartist where albumartist.idAlbumArtist not in (select idAlbumArtist from song)";
       try
       {
-        MusicDB.Execute(strSql);
+        MusicDbClient.Execute(strSql);
       }
       catch (Exception)
       {
@@ -764,7 +764,7 @@ namespace MediaPortal.Music.Database
       string strSql = "delete from genre where idGenre not in (select idGenre from song)";
       try
       {
-        MusicDB.Execute(strSql);
+        MusicDbClient.Execute(strSql);
       }
       catch (Exception)
       {
@@ -776,7 +776,7 @@ namespace MediaPortal.Music.Database
       strSql = "select count (*) aantal from genre where idGenre not in (select idGenre from song)";
       try
       {
-        result = MusicDatabase.Instance.Execute(strSql);
+        result = MusicDatabase.DirectExecute(strSql);
       }
       catch (Exception)
       {
@@ -799,7 +799,7 @@ namespace MediaPortal.Music.Database
       string strSql = String.Format("delete from path where idPath not in (select idPath from song)");
       try
       {
-        MusicDB.Execute(strSql);
+        MusicDbClient.Execute(strSql);
       }
       catch (Exception)
       {
@@ -818,7 +818,7 @@ namespace MediaPortal.Music.Database
       string strSql = String.Format("delete from albuminfo where idAlbum not in (select idAlbum from song)");
       try
       {
-        MusicDB.Execute(strSql);
+        MusicDbClient.Execute(strSql);
       }
       catch (Exception)
       {
@@ -831,7 +831,7 @@ namespace MediaPortal.Music.Database
       strSql = String.Format("delete from album where idAlbum not in (select idAlbum from song)");
       try
       {
-        MusicDB.Execute(strSql);
+        MusicDbClient.Execute(strSql);
       }
       catch (Exception)
       {
@@ -848,7 +848,7 @@ namespace MediaPortal.Music.Database
       //	compress database
       try
       {
-        DatabaseUtility.CompactDatabase(MusicDatabase.Instance);
+        DatabaseUtility.CompactDatabase(MusicDatabase.Instance.DbConnection);
       }
       catch (Exception)
       {
@@ -910,7 +910,7 @@ namespace MediaPortal.Music.Database
 
       try
       {
-        PathResults = MusicDatabase.Instance.Execute(strSQL);
+        PathResults = MusicDatabase.DirectExecute(strSQL);
         if (PathResults == null)
           return (int)Errors.ERROR_REORG_SONGS;
       }
@@ -945,7 +945,7 @@ namespace MediaPortal.Music.Database
           strSQL = String.Format("delete from song where idPath = {0}", PathId);
           try
           {
-            PathDeleteResults = MusicDatabase.Instance.Execute(strSQL);
+            PathDeleteResults = MusicDatabase.DirectExecute(strSQL);
             if (PathDeleteResults == null)
               return (int)Errors.ERROR_REORG_SONGS;
           }
@@ -1026,7 +1026,7 @@ namespace MediaPortal.Music.Database
 
         try
         {
-          results = MusicDB.Execute(strSQL);
+          results = MusicDbClient.Execute(strSQL);
           if (results == null)
           {
             Log.Info("Musicdatabasereorg: AddMissingFiles finished with error (results == null)");
@@ -1186,7 +1186,7 @@ namespace MediaPortal.Music.Database
           }
 
           strSQL = string.Format("update album set iNumArtists={0} where idAlbum={1}", artistCount, album.idAlbum);
-          MusicDB.Execute(strSQL);
+          MusicDbClient.Execute(strSQL);
 
           // Remove the processed Album from the cache
           lock (_albumCache)
@@ -1213,7 +1213,7 @@ namespace MediaPortal.Music.Database
             Log.Info("Musicdatabasereorg: updating artist id's for 'Various Artists' albums");
 
             strSQL = string.Format("update album set idAlbumArtist={0} where iNumArtists>1", idVariousArtists);
-            MusicDB.Execute(strSQL);
+            MusicDbClient.Execute(strSQL);
           }
         }
       }
@@ -1270,7 +1270,7 @@ namespace MediaPortal.Music.Database
           DatabaseUtility.RemoveInvalidChars(ref sortableArtistName);
           DatabaseUtility.RemoveInvalidChars(ref origArtistName);
           string strSQL = String.Format("update artist set strSortName='{0}' where strArtist like '{1}'", sortableArtistName, origArtistName);
-          MusicDB.Execute(strSQL);
+          MusicDbClient.Execute(strSQL);
         }
 
         catch (Exception ex)
@@ -1292,7 +1292,7 @@ namespace MediaPortal.Music.Database
                      dwCRC);
 
       SQLiteResultSet results;
-      results = MusicDB.Execute(strSQL);
+      results = MusicDbClient.Execute(strSQL);
       if (results.Rows.Count > 0)
         // Found
         return true;
@@ -1329,7 +1329,7 @@ namespace MediaPortal.Music.Database
                        strFName,
                        dwOldCRC);
           SQLiteResultSet results;
-          results = MusicDB.Execute(strSQL);
+          results = MusicDbClient.Execute(strSQL);
           return true;
         }
         else
@@ -1349,7 +1349,7 @@ namespace MediaPortal.Music.Database
             SQLiteResultSet results;
             SQLiteResultSet resultSongs;
             ulong dwCRC = 0;
-            results = MusicDB.Execute(strSQL);
+            results = MusicDbClient.Execute(strSQL);
             if (results.Rows.Count > 0)
             {
               try
@@ -1368,11 +1368,11 @@ namespace MediaPortal.Music.Database
                           strTmpPath,
                           lPathId);
 
-                  MusicDB.Execute(strSQL);
+                  MusicDbClient.Execute(strSQL);
                   // And now we need to update the songs with the new CRC
                   strSQL = String.Format("select * from song where idPath = {0}",
                                lPathId);
-                  resultSongs = MusicDB.Execute(strSQL);
+                  resultSongs = MusicDbClient.Execute(strSQL);
                   if (resultSongs.Rows.Count > 0)
                   {
                     for (int i = 0 ; i < resultSongs.Rows.Count ; i++)
@@ -1383,7 +1383,7 @@ namespace MediaPortal.Music.Database
                       strSQL = String.Format("update song set dwFileNameCRC='{0}' where idSong={1}",
                                 dwCRC,
                                 lSongId);
-                      MusicDB.Execute(strSQL);
+                      MusicDbClient.Execute(strSQL);
                     }
                   }
                   EmptyCache();
@@ -1431,7 +1431,7 @@ namespace MediaPortal.Music.Database
         // Get all songs and Path matching the deleted directory and remove them.
         SQLiteResultSet results;
         SQLiteResultSet resultSongs;
-        results = MusicDB.Execute(strSQL);
+        results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count > 0)
         {
           try
@@ -1445,7 +1445,7 @@ namespace MediaPortal.Music.Database
               // And now we need to remove the songs
               strSQL = String.Format("select * from song where idPath = {0}",
                            lPathId);
-              resultSongs = MusicDB.Execute(strSQL);
+              resultSongs = MusicDbClient.Execute(strSQL);
               if (resultSongs.Rows.Count > 0)
               {
                 for (int i = 0 ; i < resultSongs.Rows.Count ; i++)
@@ -1459,7 +1459,7 @@ namespace MediaPortal.Music.Database
             // And finally let's remove all the path information
             strSQL = String.Format("delete from path where strPath like '{0}%'",
                                 strPath);
-            results = MusicDB.Execute(strSQL);
+            results = MusicDbClient.Execute(strSQL);
             CommitTransaction();
             return true;
           }
@@ -1491,19 +1491,19 @@ namespace MediaPortal.Music.Database
         string strUserName = userName_;
 
         DatabaseUtility.RemoveInvalidChars(ref strUserName);
-        if (null == MusicDB)
+        if (null == MusicDbClient)
           return -1;
 
         SQLiteResultSet results;
         strSQL = String.Format("select * from scrobbleusers where strUsername like '{0}'", strUserName);
-        results = MusicDB.Execute(strSQL);
+        results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count == 0)
         {
           // doesnt exists, add it
           strSQL = String.Format("insert into scrobbleusers (idScrobbleUser , strUsername) values ( NULL, '{0}' )", strUserName);
-          MusicDB.Execute(strSQL);
-          Log.Info("MusicDatabase: added scrobbleuser {0} with ID {1}", strUserName, Convert.ToString(MusicDB.LastInsertID()));
-          return MusicDB.LastInsertID();
+          MusicDbClient.Execute(strSQL);
+          Log.Info("MusicDatabase: added scrobbleuser {0} with ID {1}", strUserName, Convert.ToString(MusicDbClient.LastInsertID()));
+          return MusicDbClient.LastInsertID();
         }
         else
           return DatabaseUtility.GetAsInt(results, 0, "idScrobbleUser");
@@ -1528,12 +1528,12 @@ namespace MediaPortal.Music.Database
         string strUserPassword = userPassword_;
 
         DatabaseUtility.RemoveInvalidChars(ref strUserPassword);
-        if (null == MusicDB)
+        if (null == MusicDbClient)
           return string.Empty;
 
         SQLiteResultSet results;
         strSQL = String.Format("select * from scrobbleusers where idScrobbleUser = '{0}'", userID_);
-        results = MusicDB.Execute(strSQL);
+        results = MusicDbClient.Execute(strSQL);
         // user doesn't exist therefore no password to change
         if (results.Rows.Count == 0)
           return string.Empty;
@@ -1550,7 +1550,7 @@ namespace MediaPortal.Music.Database
           else
           {
             strSQL = String.Format("update scrobbleusers set strPassword='{0}' where idScrobbleUser like '{1}'", strUserPassword, userID_);
-            MusicDB.Execute(strSQL);
+            MusicDbClient.Execute(strSQL);
             return userPassword_;
           }
         }
@@ -1577,7 +1577,7 @@ namespace MediaPortal.Music.Database
         SQLiteResultSet results;
 
         strSQL = String.Format("select idScrobbleSettings, idScrobbleUser from scrobblesettings where idScrobbleUser = '{0}'", userID_);
-        results = MusicDB.Execute(strSQL);
+        results = MusicDbClient.Execute(strSQL);
         currentSettingID = DatabaseUtility.Get(results, 0, "idScrobbleSettings");
         //Log.Info("MusicDatabase: updating settings with ID {0}", currentSettingID);
 
@@ -1585,17 +1585,17 @@ namespace MediaPortal.Music.Database
         if (results.Rows.Count == 0)
         {
           strSQL = String.Format("insert into scrobblesettings (idScrobbleSettings, idScrobbleUser, " + fieldName_ + ") values ( NULL, '{0}', '{1}')", userID_, fieldValue_);
-          MusicDB.Execute(strSQL);
-          Log.Info("MusicDatabase: added scrobblesetting {0} for userid {1}", Convert.ToString(MusicDB.LastInsertID()), userID_);
+          MusicDbClient.Execute(strSQL);
+          Log.Info("MusicDatabase: added scrobblesetting {0} for userid {1}", Convert.ToString(MusicDbClient.LastInsertID()), userID_);
           if (fieldValue_ > -1)
-            return MusicDB.LastInsertID();
+            return MusicDbClient.LastInsertID();
           else
             return fieldValue_;
         }
         else
         {
           strSQL = String.Format("select " + fieldName_ + " from scrobblesettings where idScrobbleSettings = '{0}'", currentSettingID);
-          results = MusicDB.Execute(strSQL);
+          results = MusicDbClient.Execute(strSQL);
 
           if (DatabaseUtility.GetAsInt(results, 0, fieldName_) == fieldValue_)
             // setting didn't change
@@ -1609,7 +1609,7 @@ namespace MediaPortal.Music.Database
             else
             {
               strSQL = String.Format("update scrobblesettings set " + fieldName_ + "='{0}' where idScrobbleSettings like '{1}'", fieldValue_, currentSettingID);
-              MusicDB.Execute(strSQL);
+              MusicDbClient.Execute(strSQL);
               return fieldValue_;
             }
           }
@@ -1629,7 +1629,7 @@ namespace MediaPortal.Music.Database
       List<string> scrobbleUsers = new List<string>();
 
       strSQL = "select * from scrobbleusers";
-      results = MusicDB.Execute(strSQL);
+      results = MusicDbClient.Execute(strSQL);
 
       if (results.Rows.Count != 0)
       {
@@ -1654,19 +1654,19 @@ namespace MediaPortal.Music.Database
         string strUserName = userName_;
 
         DatabaseUtility.RemoveInvalidChars(ref strUserName);
-        if (null == MusicDB)
+        if (null == MusicDbClient)
           return false;
 
         strUserID = AddScrobbleUser(strUserName);
 
         SQLiteResultSet results;
         strSQL = String.Format("delete from scrobblesettings where idScrobbleUser = '{0}'", strUserID);
-        results = MusicDB.Execute(strSQL);
+        results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count == 1)
         {
           // setting removed now remove user
           strSQL = String.Format("delete from scrobbleusers where idScrobbleUser = '{0}'", strUserID);
-          MusicDB.Execute(strSQL);
+          MusicDbClient.Execute(strSQL);
           return true;
         }
         else

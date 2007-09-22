@@ -515,7 +515,7 @@ namespace MediaPortal.GUI.Music
       if (files == null || files.Length == 0)
         return false;
 
-      dbMusic = new MusicDatabase();
+      dbMusic = MusicDatabase.Instance;
 
       string artist = string.Empty;
       bool IsCompilationAlbum = false;

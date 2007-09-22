@@ -149,10 +149,10 @@ namespace MediaPortal.Music.Database
         string tmpPass;
         ParseLock = new object();
 
-        MusicDatabase mdb = new MusicDatabase();
+        
 
-        tmpPass = mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(username)), "");
-        _useDebugLog = (mdb.AddScrobbleUserSettings(Convert.ToString(mdb.AddScrobbleUser(username)), "iDebugLog", -1) == 1) ? true : false;
+        tmpPass = MusicDatabase.Instance.AddScrobbleUserPassword(Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "");
+        _useDebugLog = (MusicDatabase.Instance.AddScrobbleUserSettings(Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "iDebugLog", -1) == 1) ? true : false;
 
         if (tmpPass != String.Empty)
         {

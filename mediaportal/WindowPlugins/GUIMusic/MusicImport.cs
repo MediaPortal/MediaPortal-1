@@ -358,7 +358,7 @@ namespace MediaPortal.MusicImport
               {
                 if (importUnknown || (trackInfo.MusicTag.Artist != "Unknown Artist") || (trackInfo.MusicTag.Album != "Unknown Album"))
                 {
-                  MusicDatabase dbs = new MusicDatabase();
+                  MusicDatabase dbs = MusicDatabase.Instance;
                   Song song = new Song();
 
                   song.FileName = trackInfo.TargetFileName;

@@ -527,7 +527,7 @@ namespace MediaPortal.GUI.Pictures
 
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
           if (mDB == null)
-            mDB = new MusicDatabase();
+            mDB = MusicDatabase.Instance;
           ShowSong();
           break;
       }

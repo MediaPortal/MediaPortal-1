@@ -141,7 +141,7 @@ namespace MediaPortal.GUI.Music
 
     private void LoadScrobbleUserSettings()
     {
-      MusicDatabase mdb = new MusicDatabase();
+      MusicDatabase mdb = MusicDatabase.Instance;
       string currentUID = Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser));
       ScrobblerOn = (mdb.AddScrobbleUserSettings(currentUID, "iScrobbleDefault", -1) == 1) ? true : false;
       _maxScrobbledArtistsForSongs = mdb.AddScrobbleUserSettings(currentUID, "iAddArtists", -1);
@@ -319,7 +319,7 @@ namespace MediaPortal.GUI.Music
 
       if (control == btnScrobbleUser)
       {
-        MusicDatabase mdb = new MusicDatabase();
+        MusicDatabase mdb = MusicDatabase.Instance;
         List<string> scrobbleusers = new List<string>();
 
         scrobbleusers = mdb.GetAllScrobbleUsers();
@@ -423,7 +423,7 @@ namespace MediaPortal.GUI.Music
             if (currentScrobbleMode == ScrobbleMode.Random)
               if (currentOfflineMode == offlineMode.favorites)
               {
-                MusicDatabase checkdb = new MusicDatabase();
+                MusicDatabase checkdb = MusicDatabase.Instance;
                 if (checkdb.GetTotalFavorites() <= _maxScrobbledArtistsForSongs * 2)
                 {
                   shouldContinue = true;
@@ -648,7 +648,7 @@ namespace MediaPortal.GUI.Music
     {
       if (items.Count <= 0)
         return;
-      MusicDatabase dbs = new MusicDatabase();
+      MusicDatabase dbs = MusicDatabase.Instance;
       Song song = new Song();
       foreach (GUIListItem item in items)
       {
@@ -1209,7 +1209,7 @@ namespace MediaPortal.GUI.Music
     {
       PlayList currentPlaylist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
-      MusicDatabase dbs = new MusicDatabase();
+      MusicDatabase dbs = MusicDatabase.Instance;
       Song current10SekSong = new Song();
       List<Song> scrobbledArtists = new List<Song>();
 
@@ -1405,7 +1405,7 @@ namespace MediaPortal.GUI.Music
 
     bool ScrobbleSimilarArtists(string Artist_)
     {
-      MusicDatabase dbs = new MusicDatabase();
+      MusicDatabase dbs = MusicDatabase.Instance;
       PlayList list = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
       ArrayList similarSongList = new ArrayList();
       List<Song> songList = new List<Song>();
