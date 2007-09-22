@@ -53,7 +53,7 @@ namespace TvPlugin
   {
     #region Base Dialog Variables
     bool m_bRunning = false;
-    #endregion
+    #endregion    
 
     public TVGuideDialog()
       : base()
@@ -174,7 +174,8 @@ namespace TvPlugin
 
     #region IRenderLayer
     public bool ShouldRenderLayer()
-    {
+    {      
+      TVHome.SendHeartBeat();
       return true;
     }
 

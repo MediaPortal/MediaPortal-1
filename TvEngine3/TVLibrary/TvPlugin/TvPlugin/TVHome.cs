@@ -77,8 +77,9 @@ namespace TvPlugin
     static TVUtil _util;
     static VirtualCard _card = null;
     DateTime _updateTimer = DateTime.Now;
-		DateTime _updateHeartBeatTimer = DateTime.Now;
+		static DateTime _updateHeartBeatTimer = DateTime.Now;
     static DateTime _updateProgressTimer = DateTime.MinValue;
+    static bool _sendingHeartBeat = false;
     bool _autoTurnOnTv = false;
     static bool _autoswitchTVon = false;
     int _lagtolerance = 10; //Added by joboehl
@@ -874,22 +875,13 @@ namespace TvPlugin
           break;        
       }
       return base.OnMessage(message);
-    }
+    }    
 
     public override void Process()
     {            
       TimeSpan ts = DateTime.Now - _updateTimer;
-			TimeSpan tshb = DateTime.Now - _updateHeartBeatTimer;			
 
-			if (tshb.TotalSeconds > HEARTBEAT_INTERVAL && TVHome.Connected)
-			{
-				// send heartbeat to tv server each 5 sec.
-				// this way we signal to the server that we are alive thus avoid being kicked.
-				Log.Debug("Process: sending HeartBeat signal to server.");
-				RemoteControl.Instance.HeartBeat(TVHome.Card.User);
-				_updateHeartBeatTimer = DateTime.Now;				
-			}
-			
+      TVHome.SendHeartBeat();      
       
       if (GUIGraphicsContext.InVmr9Render) return;
       if (ts.TotalMilliseconds < 1000) return;      
@@ -984,6 +976,25 @@ namespace TvPlugin
 
     public static void UpdateTimeShift()
     {
+    }
+
+    public static void SendHeartBeat()
+    {
+      if (_sendingHeartBeat) return;
+      _sendingHeartBeat = true;
+
+			TimeSpan tshb = DateTime.Now - _updateHeartBeatTimer;			
+
+			if (tshb.TotalSeconds > HEARTBEAT_INTERVAL && TVHome.Connected)
+			{
+				// send heartbeat to tv server each 5 sec.
+				// this way we signal to the server that we are alive thus avoid being kicked.
+        Log.Debug("TVHome.SendHeartBeat: sending HeartBeat signal to server.");
+				RemoteControl.Instance.HeartBeat(TVHome.Card.User);
+				_updateHeartBeatTimer = DateTime.Now;				
+			}
+
+      _sendingHeartBeat = false;
     }
 
     void OnActiveStreams()
@@ -1855,7 +1866,7 @@ namespace TvPlugin
     {
       TvSetupForm setup = new TvSetupForm();
       setup.ShowDialog();
-    }
+    }    
 
     #endregion
 

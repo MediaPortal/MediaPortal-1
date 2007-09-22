@@ -99,8 +99,7 @@ namespace TvPlugin
 
     long _timeOsdOnscreen;
     long _zapTimeOutValue;
-    DateTime _updateTimer = DateTime.Now;
-		DateTime _updateHeartBeatTimer = DateTime.Now;
+    DateTime _updateTimer = DateTime.Now;		
     bool _lastPause = false;
     int _lastSpeed = 1;
     DateTime _keyPressedTimer = DateTime.Now;
@@ -1820,16 +1819,8 @@ namespace TvPlugin
     public override void Process()
     {
       TimeSpan ts = DateTime.Now - _updateTimer;
-			TimeSpan tshb = DateTime.Now - _updateHeartBeatTimer;
-
-      if (tshb.TotalSeconds > TVHome.HEARTBEAT_INTERVAL && TVHome.Connected)
-			{
-				// send heartbeat to tv server each 5 sec.
-				// this way we signal to the server that we are alive thus avoid being kicked.
-				Log.Debug("Process: sending HeartBeat signal to server.");
-				RemoteControl.Instance.HeartBeat(TVHome.Card.User);
-				_updateHeartBeatTimer = DateTime.Now;
-			}
+      
+      TVHome.SendHeartBeat();
 
       if (ts.TotalMilliseconds < 800)
       {

@@ -69,8 +69,7 @@ namespace TvPlugin
 
     bool _byIndex = false;
     bool _showChannelNumber = false;
-    int _channelNumberMaxLength = 3;
-    DateTime _updateHeartBeatTimer = DateTime.Now;
+    int _channelNumberMaxLength = 3;    
 
     #region Serialisation
     void LoadSettings()
@@ -617,17 +616,8 @@ namespace TvPlugin
     // Overlay IRenderLayer members
     #region IRenderLayer
     public bool ShouldRenderLayer()
-    {
-      TimeSpan tshb = DateTime.Now - _updateHeartBeatTimer;
-
-      if (tshb.TotalSeconds > TVHome.HEARTBEAT_INTERVAL && TVHome.Connected)
-      {
-        // send heartbeat to tv server each 5 sec.
-        // this way we signal to the server that we are alive thus avoid being kicked.
-        Log.Debug("Process: sending HeartBeat signal to server.");
-        RemoteControl.Instance.HeartBeat(TVHome.Card.User);
-        _updateHeartBeatTimer = DateTime.Now;
-      }
+    {      
+      TVHome.SendHeartBeat();
 
       return true;
     }
