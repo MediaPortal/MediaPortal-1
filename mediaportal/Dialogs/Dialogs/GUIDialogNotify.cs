@@ -40,7 +40,7 @@ namespace MediaPortal.Dialogs
     [SkinControlAttribute(5)]   protected GUIImage imgLogo = null;
     [SkinControlAttribute(6)]   protected GUITextControl txtArea = null;
 
-    int timeOutInSeconds = 8;
+    int timeOutInSeconds = 5;
     private DateTime timeStart = DateTime.Now;
     bool m_bNeedRefresh = false;
     string logoUrl = string.Empty;
