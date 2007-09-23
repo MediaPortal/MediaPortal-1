@@ -44,7 +44,7 @@
     </control>
     <control>
       <type>multiimage</type>
-      <id>1</id>
+      <id>0</id>
       <posX>370</posX>
       <posY>703</posY>
       <width>68</width>
@@ -54,7 +54,7 @@
       <fadetime>10</fadetime>
       <loop>yes</loop>
       <randomize>false</randomize>
-      <visible>Player.HasAudio + Player.playing</visible>
+      <visible>Player.playing</visible>
       <animation effect="fade" time="10">VisibleChange</animation>
     </control>
     <control>
@@ -165,7 +165,7 @@
       <id>20</id>
       <posX>126</posX>
       <posY>701</posY>
-      <width>158</width>
+      <width>190</width>
       <label>#percentage</label>
       <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
