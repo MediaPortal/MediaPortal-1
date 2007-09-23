@@ -2657,6 +2657,7 @@ namespace TvPlugin
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {
+      TVHome.SendHeartBeat();
       return true;
     }
 
