@@ -95,14 +95,12 @@ namespace TvPlugin
     }
     public bool ShouldRenderLayer()
     {
-
+      TVHome.SendHeartBeat(); // this is the only place needed to send the heartbeat from.
       if (GUIGraphicsContext.IsFullScreenVideo) return false;
       //{
       //  OnUpdateState(false);
       //  return base.IsAnimating(AnimationType.WindowClose);
-      //}
-
-      TVHome.SendHeartBeat();
+      //}      
       
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds < 1000) return _lastStatus;

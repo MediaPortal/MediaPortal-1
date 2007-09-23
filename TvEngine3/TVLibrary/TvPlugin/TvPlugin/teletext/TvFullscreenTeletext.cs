@@ -131,7 +131,7 @@ namespace TvPlugin {
 
     #region IRenderLayer
     public bool ShouldRenderLayer() {
-      TVHome.SendHeartBeat();
+      //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
       return true;
     }
 

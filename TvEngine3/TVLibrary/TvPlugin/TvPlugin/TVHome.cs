@@ -881,7 +881,7 @@ namespace TvPlugin
     {            
       TimeSpan ts = DateTime.Now - _updateTimer;
 
-      TVHome.SendHeartBeat();      
+      //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
       
       if (GUIGraphicsContext.InVmr9Render) return;
       if (ts.TotalMilliseconds < 1000) return;      

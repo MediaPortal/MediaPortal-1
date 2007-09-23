@@ -1818,9 +1818,7 @@ namespace TvPlugin
 
     public override void Process()
     {
-      TimeSpan ts = DateTime.Now - _updateTimer;
-      
-      TVHome.SendHeartBeat();
+      TimeSpan ts = DateTime.Now - _updateTimer;            
 
       if (ts.TotalMilliseconds < 800)
       {
@@ -2657,7 +2655,7 @@ namespace TvPlugin
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {
-      TVHome.SendHeartBeat();
+      //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
       return true;
     }
 
