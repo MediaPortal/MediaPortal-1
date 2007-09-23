@@ -13,6 +13,7 @@
       <texture>Background3.png</texture>
     </control>
     <control>
+      <id>0</id>
       <type>image</type>
       <posY>700</posY>
       <height>89</height>
@@ -21,6 +22,7 @@
       <colorDiffuse>effffffff</colorDiffuse>
     </control>
     <control>
+      <id>0</id>
       <type>image</type>
       <posY>-20</posY>
       <height>89</height>
@@ -124,7 +126,7 @@
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
-      <type>label</type>
+      <type>fadelabel</type>
       <description>album label</description>
       <id>0</id>
       <posX>511</posX>
@@ -137,7 +139,7 @@
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
-      <type>label</type>
+      <type>fadelabel</type>
       <description>year label</description>
       <id>0</id>
       <posX>511</posX>
@@ -495,6 +497,23 @@
       <align>left</align>
       <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
       <visible>no</visible>
+    </control>
+    <control>
+      <type>imagelist</type>
+      <id>1337</id>
+      <posX>475</posX>
+      <posY>666</posY>
+      <width>128</width>
+      <height>30</height>
+      <textureWidth>24</textureWidth>
+      <textureHeight>24</textureHeight>
+      <subitems>
+        <subitem>greystar.png</subitem>
+        <subitem>star.png</subitem>
+      </subitems>
+      <orientation>horizontal</orientation>
+      <align>right</align>
+      <percentage>#Play.Current.Rating</percentage>
     </control>
     <control>
       <type>fadelabel</type>
