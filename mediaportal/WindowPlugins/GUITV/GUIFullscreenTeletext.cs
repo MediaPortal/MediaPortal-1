@@ -89,7 +89,6 @@ namespace MediaPortal.GUI.TV
     protected override void OnPageLoad() {
       _isFullScreenVideo = GUIGraphicsContext.IsFullScreenVideo;
       base.OnPageLoad();
-      InitializeWindow(true);
       int left = GUIGraphicsContext.Width / 20;
       int top = GUIGraphicsContext.Height / 20;
       if (imgTeletextForeground != null) {

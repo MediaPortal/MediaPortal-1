@@ -51,6 +51,7 @@ namespace MediaPortal.GUI.TV {
     protected int _numberOfRequestedUpdates = 0;
     protected bool _rememberLastValues;
     protected bool _updating;
+    protected int _percentageOfMaximumHeight;
     #endregion
 
     #region Property
@@ -91,6 +92,8 @@ namespace MediaPortal.GUI.TV {
       TeletextGrabber.TeletextCache.TransparentMode = _transparentMode;
       TeletextGrabber.TeletextCache.FullscreenMode = fullscreenMode;
       TeletextGrabber.TeletextCache.PageSelectText = "100";
+      TeletextGrabber.TeletextCache.PercentageOfMaximumHeight = _percentageOfMaximumHeight;
+
 
       // Initialize the images
       if (imgTeletextForeground != null) {
@@ -330,6 +333,9 @@ namespace MediaPortal.GUI.TV {
           _numberOfRequestedUpdates++;
         } else {
           _updating = true;
+          if (_numberOfRequestedUpdates > 0) {
+            _numberOfRequestedUpdates--;
+          }
           GetNewPage();
           _updating = false;
         }
@@ -348,6 +354,7 @@ namespace MediaPortal.GUI.TV {
           GetNewPage();
           _numberOfRequestedUpdates--;
           _updating = false;
+          Thread.Sleep(200);
         } else {
           // Otherwise sleep for 300ms
           Thread.Sleep(300);
@@ -415,6 +422,7 @@ namespace MediaPortal.GUI.TV {
         _hiddenMode = xmlreader.GetValueAsBool("mytv", "teletextHidden", false);
         _transparentMode = xmlreader.GetValueAsBool("mytv", "teletextTransparent", false);
         _rememberLastValues = xmlreader.GetValueAsBool("mytv", "teletextRemember", true);
+        _percentageOfMaximumHeight = xmlreader.GetValueAsInt("mytv", "teletextFontSize", 80);
       }
     }
 

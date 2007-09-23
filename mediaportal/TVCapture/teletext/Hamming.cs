@@ -50,7 +50,7 @@ namespace MediaPortal.TV.Teletext
     const int SUBPAGENUMBER_BYTE4_OFFSET = 7;
     
     // C4 Bit in header
-    const int ERASE_BYTE_OFFSET = 6;
+    const int ERASE_BYTE_OFFSET = 5;
     const int ERASE_BIT = 8;
     
     // C6 Bit in header
@@ -60,6 +60,10 @@ namespace MediaPortal.TV.Teletext
     // C5 Bit in header
     const int NEWSFLASH_BYTE_OFFSET = 7;
     const int NEWSFLASH_BIT = 4;
+
+    // C8 Bit in header
+    const int UPDATE_BYTE_OFFSET = 8;
+    const int UPDATE_BIT = 2;
 
     // C11 Bit in header
     const int SERIAL_BYTE_OFFSET = 9;
@@ -158,6 +162,18 @@ namespace MediaPortal.TV.Teletext
     {
       int controlByte = Decode[rowData[offset + ERASE_BYTE_OFFSET]];
       controlByte &= ERASE_BIT;
+      return (controlByte != 0);
+    }
+
+    /// <summary>
+    /// Check if the update bit (C8) is set in the teletext page header
+    /// </summary>
+    /// <param name="offset">Offset in the data stream</param>
+    /// <param name="rowData">Teletext data</param>
+    /// <returns>true, if update bit is set</returns>
+    static public bool IsUpdateBitSet(int offset, ref byte[] rowData) {
+      int controlByte = Decode[rowData[offset + UPDATE_BYTE_OFFSET]];
+      controlByte &= UPDATE_BIT;
       return (controlByte != 0);
     }
 

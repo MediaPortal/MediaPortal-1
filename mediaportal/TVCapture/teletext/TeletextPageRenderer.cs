@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace MediaPortal.TV.Teletext
@@ -35,9 +36,9 @@ namespace MediaPortal.TV.Teletext
     #endregion
 
     #region variables
-    System.Drawing.Bitmap _pageBitmap = null;
-    System.Drawing.Graphics _renderGraphics = null;
-    System.Drawing.Font _fontTeletext = null;
+    Bitmap _pageBitmap = null;
+    Graphics _renderGraphics = null;
+    Font _fontTeletext = null;
 
     bool _hiddenMode = true;
     bool _transparentMode = false;
@@ -47,6 +48,7 @@ namespace MediaPortal.TV.Teletext
 
     int _pageRenderWidth = 1920;
     int _pageRenderHeight = 1080;
+    int _percentageOfMaximumHeight = 80;
     #endregion
 
     #region enums
@@ -197,6 +199,14 @@ namespace MediaPortal.TV.Teletext
         }
       }
     }
+
+    /// <summary>
+    /// Gets/Sets  the percentage of the maximum height for the font size
+    /// </summary>
+    public int PercentageOfMaximumHeight {
+      get { return _percentageOfMaximumHeight; }
+      set { _percentageOfMaximumHeight = value; }
+    }
     #endregion
 
     #region private methods
@@ -211,7 +221,7 @@ namespace MediaPortal.TV.Teletext
     /// <param name="w">width of the font</param>
     /// <param name="h">height of the font</param>
     /// <param name="txtLanguage">Teletext language</param>
-    private void Render(System.Drawing.Graphics graph, byte chr, int attrib, ref int x, ref int y, int w, int h, int txtLanguage) {
+    private void Render(Graphics graph, byte chr, int attrib, ref int x, ref int y, int w, int h, int txtLanguage) {
       bool charReady = false;
       char chr2 = '?';
 
@@ -230,14 +240,14 @@ namespace MediaPortal.TV.Teletext
       /* get colors */
       int fColor = attrib & 0x0F;
       int bColor = (attrib >> 4) & 0x0F;
-      System.Drawing.Color bgColor = GetColor(bColor);
+      Color bgColor = GetColor(bColor);
       // We are in transparent mode and fullscreen. Make beckground transparent
       if (_transparentMode && _fullscreenMode)
-        bgColor = System.Drawing.Color.HotPink;
-      System.Drawing.Brush backBrush = new System.Drawing.SolidBrush(bgColor);
-      System.Drawing.Brush foreBrush = new System.Drawing.SolidBrush(GetColor(fColor));
-      System.Drawing.Pen backPen = new System.Drawing.Pen(backBrush, 1);
-      System.Drawing.Pen forePen = new System.Drawing.Pen(foreBrush, 1);
+        bgColor = Color.HotPink;
+      Brush backBrush = new SolidBrush(bgColor);
+      Brush foreBrush = new SolidBrush(GetColor(fColor));
+      Pen backPen = new Pen(backBrush, 1);
+      Pen forePen = new Pen(foreBrush, 1);
       // Draw the graphic
       try {
         if (((attrib & 0x300) > 0) && ((chr & 0xA0) == 0x20)) {
@@ -421,12 +431,12 @@ namespace MediaPortal.TV.Teletext
         if (charReady == false) {
           string text = "" + chr2;
           graph.FillRectangle(backBrush, x, y, w, h);
-          System.Drawing.SizeF width = graph.MeasureString(text, _fontTeletext);
-          System.Drawing.PointF xyPos = new System.Drawing.PointF((float)x + ((w - ((int)width.Width)) / 2), (float)y);
+          SizeF width = graph.MeasureString(text, _fontTeletext);
+          PointF xyPos = new PointF((float)x + ((w - ((int)width.Width)) / 2), (float)y);
           graph.DrawString(text, _fontTeletext, foreBrush, xyPos);
           if (factor == 2) {
             graph.FillRectangle(backBrush, x, y + h, w, h);
-            System.Drawing.Color[,] pixelColor = new System.Drawing.Color[w + 1, h + 1];
+            Color[,] pixelColor = new Color[w + 1, h + 1];
             // save char
             for (int ypos = 0; ypos < h; ypos++) {
               for (int xpos = 0; xpos < w; xpos++) {
@@ -463,31 +473,31 @@ namespace MediaPortal.TV.Teletext
     /// </summary>
     /// <param name="colorNumber">Number of the teletext color, referring to the enumeration TextColors </param>
     /// <returns>Corresponding System Color, or black if the value is not defined</returns>
-    private System.Drawing.Color GetColor(int colorNumber) {
+    private Color GetColor(int colorNumber) {
 
       switch (colorNumber) {
         case (int)TextColors.Black:
-          return System.Drawing.Color.Black;
+          return Color.Black;
         case (int)TextColors.Red:
-          return System.Drawing.Color.Red;
+          return Color.Red;
         case (int)TextColors.Green:
-          return System.Drawing.Color.FromArgb(0, 255, 0);
+          return Color.FromArgb(0, 255, 0);
         case (int)TextColors.Yellow:
-          return System.Drawing.Color.Yellow;
+          return Color.Yellow;
         case (int)TextColors.Blue:
-          return System.Drawing.Color.Blue;
+          return Color.Blue;
         case (int)TextColors.Magenta:
-          return System.Drawing.Color.Magenta;
+          return Color.Magenta;
         case (int)TextColors.White:
-          return System.Drawing.Color.White;
+          return Color.White;
         case (int)TextColors.Cyan:
-          return System.Drawing.Color.Cyan;
+          return Color.Cyan;
         case (int)TextColors.Trans1:
-          return System.Drawing.Color.HotPink;
+          return Color.HotPink;
         case (int)TextColors.Trans2:
-          return System.Drawing.Color.HotPink;
+          return Color.HotPink;
       }
-      return System.Drawing.Color.Black;
+      return Color.Black;
     }
     /// <summary>
     /// Checks if is a valid page to be displayed
@@ -518,14 +528,14 @@ namespace MediaPortal.TV.Teletext
     /// <param name="mPage">Pagenumber</param>
     /// <param name="sPage">Subpagenumber</param>
     /// <returns>Rendered teletext page as bitmap</returns>
-    public System.Drawing.Bitmap RenderPage(byte[] byPage, int mPage, int sPage) {
+    public Bitmap RenderPage(byte[] byPage, int mPage, int sPage) {
       // Create Bitmap and set HotPink as the transparent color
       if (_pageBitmap == null) {
-        _pageBitmap = new System.Drawing.Bitmap(_pageRenderWidth, _pageRenderHeight);
-        _pageBitmap.MakeTransparent(System.Drawing.Color.HotPink);
+        _pageBitmap = new Bitmap(_pageRenderWidth, _pageRenderHeight);
+        _pageBitmap.MakeTransparent(Color.HotPink);
       }
       if (_renderGraphics == null)
-        _renderGraphics = System.Drawing.Graphics.FromImage(_pageBitmap);
+        _renderGraphics = Graphics.FromImage(_pageBitmap);
 
       int row, col;
       int hold;
@@ -798,7 +808,7 @@ namespace MediaPortal.TV.Teletext
                   break;
 
                 case (int)Attributes.Conceal:
-                  if (_hiddenMode == true) {
+                  if (_hiddenMode == false) {
                     foreground = background;
                     pageAttribs[index] = (doubleheight << 10 | charset << 8 | background << 4 | foreground);
                   }
@@ -906,16 +916,22 @@ namespace MediaPortal.TV.Teletext
       int x;
       int width = _pageRenderWidth / 40;
       int height = (_pageRenderHeight - 2) / 25;
-      float fntSizeX = (width - 2 < 10) ? 10 : width - 2;
-      float fntSizeY = (height - 8.7f < 10f) ? 10f : height - 8.7f;
-      _fontTeletext = new System.Drawing.Font("Verdana", Math.Min(fntSizeX, fntSizeY), System.Drawing.FontStyle.Bold);
-      System.Drawing.SolidBrush brush = null;
+      float fntSize = Math.Min(width, height);
+      float nPercentage = ((float)_percentageOfMaximumHeight / 100);
+      _fontTeletext = new Font("Verdana", fntSize, FontStyle.Regular, GraphicsUnit.Pixel);
+      float fntHeight = _fontTeletext.GetHeight(_renderGraphics);
+      while (fntHeight > nPercentage * height || fntHeight > nPercentage * width) {
+        fntSize -= 0.1f;
+        _fontTeletext = new Font("Verdana", fntSize, FontStyle.Regular, GraphicsUnit.Pixel);
+        fntHeight = _fontTeletext.GetHeight(_renderGraphics);
+      }
+      SolidBrush brush = null;
       try {
         // Select the brush, depending on the page and mode
         if ((isBoxed || _transparentMode) && _fullscreenMode)
-          brush = new System.Drawing.SolidBrush(System.Drawing.Color.HotPink);
+          brush = new SolidBrush(Color.HotPink);
         else
-          brush = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
+          brush = new SolidBrush(Color.Black);
 
         // Draw the base rectangle
         _renderGraphics.FillRectangle(brush, 0, 0, _pageRenderWidth, _pageRenderHeight);

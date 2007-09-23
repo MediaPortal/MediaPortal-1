@@ -166,6 +166,10 @@ namespace MediaPortal.TV.Teletext
       get { return _renderer.FullscreenMode; }
       set { _renderer.FullscreenMode = value; }
     }
+    public int PercentageOfMaximumHeight {
+      get { return _renderer.PercentageOfMaximumHeight; }
+      set { _renderer.PercentageOfMaximumHeight = value; }
+    }
 
     public void ClearBuffer()
     {
