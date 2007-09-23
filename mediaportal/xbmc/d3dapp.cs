@@ -765,21 +765,22 @@ namespace MediaPortal
 
     /// <summary>
     /// Build presentation parameters from the current settings
+    /// windowed = true,  normal mode (must use desktop refresh rate)
+    /// windowed = false, exlusive mode (can set screen refresh rate)
     /// </summary>
-    public void BuildPresentParamsFromSettings()
+    public void BuildPresentParamsFromSettings(bool bwindowed)
     {
-      presentParams.Windowed = graphicsSettings.IsWindowed;
       presentParams.BackBufferCount = 2;
       presentParams.EnableAutoDepthStencil = false;
       presentParams.ForceNoMultiThreadedFlag = false;
 
-      if (true || windowed)
+      if (bwindowed)
       {
         presentParams.MultiSample = graphicsSettings.WindowedMultisampleType;
         presentParams.MultiSampleQuality = graphicsSettings.WindowedMultisampleQuality;
         presentParams.AutoDepthStencilFormat = graphicsSettings.WindowedDepthStencilBufferFormat;
-        presentParams.BackBufferWidth = ourRenderTarget.ClientRectangle.Width;
-        presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Height;
+        presentParams.BackBufferWidth = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
+        presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
         presentParams.BackBufferFormat = graphicsSettings.BackBufferFormat;
         presentParams.PresentationInterval = PresentInterval.Default;
         presentParams.FullScreenRefreshRateInHz = 0;
@@ -802,18 +803,15 @@ namespace MediaPortal
         presentParams.SwapEffect = SwapEffect.Discard;
         presentParams.PresentFlag = PresentFlag.Video; //|PresentFlag.LockableBackBuffer;
         presentParams.DeviceWindow = this;
-
-        if (GUIGraphicsContext._useScreenSelector)
-        {          
-          presentParams.Windowed = true;//prevents minimizing when other screen is clicked or alt+tab is used.
-        } else
-          presentParams.Windowed = false;
+        presentParams.Windowed = false;
+        Log.Info("D3D: BuildPresentParamsFromSettings using {0}Hz as RefreshRate", graphicsSettings.DisplayMode.RefreshRate);
       }
       GUIGraphicsContext.DirectXPresentParameters = presentParams;
+      windowed = bwindowed;
     }
 
     /// <summary>
-    /// Switch between full screen and window depending on parameter
+    /// Switch between exlusive mode and windowed depending on parameter
     /// </summary>
     /// 
     public void SwitchFullScreenOrWindowed(bool bWindowed)
@@ -825,31 +823,29 @@ namespace MediaPortal
       GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
 
       if (bWindowed)
-        Log.Info("D3D: Switch to windowed mode - Playing media: {0}", g_Player.Playing);
+        Log.Debug("D3D: Switch to windowed mode - Playing media: {0}", g_Player.Playing);
       else
-        Log.Info("D3D: Switch to fullscreen mode - Playing media: {0}", g_Player.Playing);
+        Log.Debug("D3D: Switch to exlusive mode - Playing media: {0}", g_Player.Playing);
 
-      windowed = bWindowed;
-      BuildPresentParamsFromSettings();
+      BuildPresentParamsFromSettings(bWindowed);
       try
       {
         GUIGraphicsContext.DX9Device.Reset(presentParams);
 
         if (windowed)
-          Log.Info("D3D: Switched to windowed mode successfully");
+          Log.Debug("D3D: Switched to windowed mode successfully");
         else
-          Log.Info("D3D: Switched to fullscreen mode successfully");
+          Log.Debug("D3D: Switched to exlusive mode successfully");
 
       }
       catch (Exception ex)
       {
         if (windowed)
-          Log.Info("D3D: Switch to windowed mode failed - {0}", ex.ToString());
+          Log.Debug("D3D: Switch to windowed mode failed - {0}", ex.ToString());
         else
-          Log.Info("D3D: Switch to fullscreen mode failed - {0}", ex.ToString());
+          Log.Debug("D3D: Switch to fullscreen mode failed - {0}", ex.ToString());
 
-        windowed = !bWindowed;
-        BuildPresentParamsFromSettings();
+        BuildPresentParamsFromSettings(!bWindowed);
         try
         {
           GUIGraphicsContext.DX9Device.Reset(presentParams);
@@ -875,10 +871,8 @@ namespace MediaPortal
       GraphicsAdapterInfo adapterInfo = graphicsSettings.AdapterInfo;
       GraphicsDeviceInfo deviceInfo = graphicsSettings.DeviceInfo;
 
-      windowed = graphicsSettings.IsWindowed;
-
-      // Set up the presentation parameters
-      BuildPresentParamsFromSettings();
+      // Set up the presentation parameters, we start in none exlusive mode
+      BuildPresentParamsFromSettings(true);
 
       if (deviceInfo.Caps.PrimitiveMiscCaps.IsNullReference)
         // Warn user about null ref device that can't render anything
