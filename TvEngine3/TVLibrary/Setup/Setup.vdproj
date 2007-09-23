@@ -1005,12 +1005,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_7D8E3F61FA9048128E5922C36ACB6EF4"
-        "OwnerKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_7E45295B087344FDBBBB2DF1A36D774D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1031,6 +1025,12 @@
         {
         "MsmKey" = "8:_7F22C4858B3E4B81B79FE60296705A30"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7F2C5882731E4DAF83BA5484B55679F5"
+        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1455,12 +1455,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_BD5140BB04F04EF69FAA02B589E0F4CD"
-        "OwnerKey" = "8:_9CCD9023620943089B74B25C0BBF5D12"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_BD74230C98FF2449983EB26ED27EC0DE"
         "OwnerKey" = "8:_2F82617808CF42DE9255C338B0C4F778"
         "MsmSig" = "8:_UNDEFINED"
@@ -1523,6 +1517,12 @@
         {
         "MsmKey" = "8:_BD74230C98FF2449983EB26ED27EC0DE"
         "OwnerKey" = "8:_899341C657B645F0881CFBDBFBBFFEAE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BF8EA75A3A2B4B53BE8FFD938A12EC54"
+        "OwnerKey" = "8:_554620AFFA98471AA9267BAF3078BB45"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2878,7 +2878,7 @@
             "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\Sweden Comhem Göteborg.dvbc"
             "TargetName" = "8:Sweden Comhem Göteborg.dvbc"
             "Tag" = "8:"
-            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -6829,7 +6829,7 @@
             "SourcePath" = "8:..\\TvService\\bin\\Release\\TuningParameters\\Sweden Comhem Stockholm.dvbc"
             "TargetName" = "8:Sweden Comhem Stockholm.dvbc"
             "Tag" = "8:"
-            "Folder" = "8:_5A092B5055EA443AB462A6217E9C2838"
+            "Folder" = "8:_9E0C7D44D6294FAB99DC8EE7FBC5BD7E"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -7923,11 +7923,11 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_7D8E3F61FA9048128E5922C36ACB6EF4"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_7F2C5882731E4DAF83BA5484B55679F5"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_8_0_microsoft_vc80_crt_x86.msm"
+            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
                 "Properties"
                 {
                 }
@@ -7951,11 +7951,11 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_BD5140BB04F04EF69FAA02B589E0F4CD"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_BF8EA75A3A2B4B53BE8FFD938A12EC54"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_8_0_microsoft_vc80_atl_x86.msm"
+            "SourcePath" = "8:policy_8_0_microsoft_vc80_crt_x86.msm"
                 "Properties"
                 {
                 }
