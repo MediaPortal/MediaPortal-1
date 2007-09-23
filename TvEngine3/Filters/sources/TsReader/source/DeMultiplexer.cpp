@@ -738,6 +738,7 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   if (m_pids.PcrPid==0) return;
 
   if (header.Pid==0) return;
+  if (header.TScrambling) return;
 
   //skip any packets with errors in it
   if (header.TransportError) return;
@@ -800,11 +801,14 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   }
 
   //as long as we dont have a stream pcr timestamp we return
+  
   if (m_streamPcr.IsValid==false)
   {
     return;
   }
   if (m_bScanning) return;
+
+  
 
   //process the ts packet further
   FillSubtitle(header,tsPacket);
