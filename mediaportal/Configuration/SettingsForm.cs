@@ -38,6 +38,7 @@ using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
 using Keys = MediaPortal.Configuration.Sections.Keys;
+using System.ComponentModel;
 
 namespace MediaPortal.Configuration
 {
@@ -48,27 +49,34 @@ namespace MediaPortal.Configuration
   {
     public delegate bool IECallBack(int hwnd, int lParam);
 
-
     private const int SW_SHOWNORMAL = 1;
-    //private const int SW_RESTORE = 9;
+    private const int SW_SHOW = 5;
+    private const int SW_RESTORE = 9;
 
-    [DllImport("user32.dll")]
+    private string _windowName = "MediaPortal - Setup";
+
+    [DllImport("User32.")]
     public static extern int SendMessage(IntPtr window, int message, int wparam, int lparam);
 
-    //[DllImport("user32.dll")]
-    //private static extern bool SetForegroundWindow(IntPtr hWnd);
-
-    [DllImport("user32.dll")]
+    [DllImport("User32")]
     private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-    [DllImport("user32.Dll")]
+    [DllImport("User32")]
     public static extern int EnumWindows(IECallBack x, int y);
 
-    [DllImport("User32.Dll")]
+    [DllImport("User32")]
     public static extern void GetWindowText(int h, StringBuilder s, int nMaxCount);
 
-    [DllImport("User32.Dll")]
+    [DllImport("User32")]
     public static extern void GetClassName(int h, StringBuilder s, int nMaxCount);
+
+    [DllImport("User32", CharSet = CharSet.Auto)]
+    public static extern IntPtr FindWindow(
+      [MarshalAs(UnmanagedType.LPTStr)] string lpClassName,
+      [MarshalAs(UnmanagedType.LPTStr)] string lpWindowName);
+
+    [DllImport("User32")]
+    private static extern int SetForegroundWindow(IntPtr hwnd);
 
     private MPButton cancelButton;
     private MPButton okButton;
@@ -79,7 +87,8 @@ namespace MediaPortal.Configuration
     private SerialUIR serialuir;
     private RedEye redeye; //PB00//
     private DirectInputRemote dinputRemote;
-    private static ConfigSplashScreen splashScreen;
+    
+    private static ConfigSplashScreen splashScreen = new ConfigSplashScreen();
 
     //
     // Hashtable where we store each added tree node/section for faster access
@@ -95,12 +104,10 @@ namespace MediaPortal.Configuration
 
     public SettingsForm()
     {
-#if !DEBUG
-      // create the splashscreen 
-      splashScreen = new ConfigSplashScreen();
+      // start the splashscreen      
       splashScreen.Version = "0.2.3 RC2";
       splashScreen.Run();
-#endif
+
       Log.Info("SettingsForm constructor");
       //
       // Required for Windows Form Designer support
@@ -381,21 +388,40 @@ namespace MediaPortal.Configuration
       // Select first item in the section tree
       //
       sectionTree.SelectedNode = sectionTree.Nodes[0];
-      if (splashScreen != null)
-      {
-        splashScreen.SetInformation("Bringing to front...");
-      }
-      Log.Info("bring to front");
+      //if (splashScreen != null)
+      //{
+      //  splashScreen.SetInformation("Bringing to front...");
+      //}
+      //Log.Info("bring to front");
       // make sure window is in front of mediaportal
-      BringToFront();
-      Log.Info("settingsform constructor done");
-#if !DEBUG
+      
       if (splashScreen != null)
       {
-        splashScreen.Stop();
+        splashScreen.Stop(500);
         splashScreen = null;
+
+        BackgroundWorker FrontWorker = new BackgroundWorker();
+        FrontWorker.DoWork += new DoWorkEventHandler(FrontWorker_DoWork);
+        FrontWorker.RunWorkerAsync();
       }
-#endif
+
+      Log.Info("settingsform constructor done");
+    }
+
+    void FrontWorker_DoWork(object sender, DoWorkEventArgs e)
+    {
+      IntPtr hwnd;
+      // get the window handle of configuration.exe
+      do
+      {        
+        hwnd = FindWindow(null, _windowName);
+        System.Threading.Thread.Sleep(100);
+
+      } while (hwnd == IntPtr.Zero);
+
+      System.Threading.Thread.Sleep(50);
+      ShowWindow(hwnd, SW_SHOW);
+      SetForegroundWindow(hwnd);
     }
 
     /// <summary>

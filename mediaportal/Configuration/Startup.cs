@@ -54,6 +54,7 @@ namespace MediaPortal.Configuration
     string sectionsConfiguration = String.Empty;
 
     public delegate bool IECallBack(int hwnd, int lParam);
+
     private const int SW_SHOWNORMAL = 1;
 
     [DllImport("user32.dll")]
@@ -78,9 +79,8 @@ namespace MediaPortal.Configuration
     /// <param name="arguments"></param>
     public Startup(string[] arguments)
     {
-      GC.Collect();
       Thread.CurrentThread.Name = "Config Main";
-      Thread.CurrentThread.Priority = ThreadPriority.Highest;
+      Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
 
       // Logger should write into Configuration.log
       Log.SetConfigurationMode();
