@@ -159,12 +159,32 @@ namespace TvDatabase
 
     public TuningDetail GetChannel(DVBBaseChannel channel)
     {
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(TuningDetail));
-      sb.AddConstraint(Operator.Equals, "name", channel.Name);
-      sb.AddConstraint(Operator.Equals, "provider", channel.Provider);
-      sb.AddConstraint(Operator.Equals, "networkId", channel.NetworkId);
-      sb.AddConstraint(Operator.Equals, "transportId", channel.TransportId);
-      sb.AddConstraint(Operator.Equals, "serviceId", channel.ServiceId);
+			int channelType = 0;
+
+			if (channel is DVBTChannel)
+			{
+				channelType = 4;
+			}
+			else if (channel is DVBSChannel)
+			{
+				channelType = 3;
+			}
+			else if (channel is DVBCChannel)
+			{
+				channelType = 2;
+			}
+			else // must be ATSCChannel  or AnalogChannel
+			{
+				channelType = 1;
+			}			
+			
+			SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(TuningDetail));
+			sb.AddConstraint(Operator.Equals, "name", channel.Name);
+			sb.AddConstraint(Operator.Equals, "provider", channel.Provider);
+			sb.AddConstraint(Operator.Equals, "networkId", channel.NetworkId);
+			sb.AddConstraint(Operator.Equals, "transportId", channel.TransportId);
+			sb.AddConstraint(Operator.Equals, "serviceId", channel.ServiceId);
+			sb.AddConstraint(Operator.Equals, "channelType", channelType);
 
       SqlStatement stmt = sb.GetStatement(true);
       IList channels = ObjectFactory.GetCollection(typeof(TuningDetail), stmt.Execute());
@@ -172,6 +192,8 @@ namespace TvDatabase
       if (channels.Count == 0) return null;
       return (TuningDetail)channels[0];
     }
+
+   
 
     public Channel GetChannel(int idChannel)
     {
