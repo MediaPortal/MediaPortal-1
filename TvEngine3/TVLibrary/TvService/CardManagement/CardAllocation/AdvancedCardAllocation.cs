@@ -153,14 +153,16 @@ namespace TvService
             //now we check if its free...
             cardsFound++;
             bool sameTransponder = false;
-						if ((tvcard.Tuner.IsTunedToTransponder(tuningDetail) || tvcard.Users.IsOwner(user)) && (tvcard.SupportsSubChannels || (checkTransponders == false)))
+
+						if (tvcard.Tuner.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (checkTransponders == false)))
             {
               //card is in use, but it is tuned to the same transponder.
               //meaning.. we can use it.
               //but we must check if cam can decode the extra channel as well
 
               //first check if cam is already decrypting this channel
-              int camDecrypting = tvcard.NumberOfChannelsDecrypting;
+              int camDecrypting = tvcard.NumberOfChannelsDecrypting;														
+
               bool checkCam = true;
               User[] currentUsers = tvcard.Users.GetUsers();
               if (currentUsers != null)
