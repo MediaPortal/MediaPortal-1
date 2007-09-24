@@ -638,7 +638,6 @@ bool CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
         if (isAudio && m_bHoldAudio) return false;
         if (isVideo && m_bHoldVideo) return false;
       }
-    
       
       if (result==false) 
       {
@@ -696,7 +695,7 @@ bool CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
 		//Failed to read any data
     if ( (isAudio && m_bHoldAudio) || (isVideo && m_bHoldVideo) )
     {
-//      LogDebug("demux:paused %d %d",m_bHoldAudio,m_bHoldVideo);
+      //LogDebug("demux:paused %d %d",m_bHoldAudio,m_bHoldVideo);
       return false;
     }
 
@@ -801,14 +800,11 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   }
 
   //as long as we dont have a stream pcr timestamp we return
-  
   if (m_streamPcr.IsValid==false)
   {
     return;
   }
   if (m_bScanning) return;
-
-  
 
   //process the ts packet further
   FillSubtitle(header,tsPacket);
@@ -973,7 +969,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
       m_pCurrentVideoBuffer->Add(&tsPacket[pos],copyLen);
       pos+=copyLen;
 
-       if (m_bSetVideoDiscontinuity)
+      if (m_bSetVideoDiscontinuity)
       {
         m_bSetVideoDiscontinuity=false;
         m_pCurrentVideoBuffer->SetDiscontinuity();
