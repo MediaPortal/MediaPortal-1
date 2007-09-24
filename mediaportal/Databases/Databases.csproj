@@ -253,8 +253,8 @@
     <Compile Include="Music\InternetLookups\MusicInfoScraper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Music\MusicDbHelper.cs" />
-    <Compile Include="Music\MusicDbLookups.cs" />
+    <Compile Include="Music\MusicDatabase.Import.cs" />
+    <Compile Include="Music\MusicDatabase.Lookups.cs" />
     <Compile Include="Music\MusicSong.cs">
       <SubType>Code</SubType>
     </Compile>
