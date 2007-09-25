@@ -730,25 +730,16 @@ namespace MediaPortal.GUI.Music
           string fileSize = MediaPortal.Util.Utils.GetSize(item.Size);
           string year = tag.Year.ToString();
           string filename = MediaPortal.Util.Utils.GetFilename(item.Path);
+
           // For an index view, don't translate the duration
           string duration = "";
-          // When in Shares View, the View = null
-          if (handler.View != null)
-          {
-            FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
-            if (filter.SqlOperator == "group")
-            {
-              duration = Convert.ToString(tag.Duration);
-            }
-            else
-            {
+          // When in Shares View, sortmethod is Track and duration should be HMSS format
+          // eliminates bug mentioned in http://forum.team-mediaportal.com/mymusic_list_shows_song_length_just_full-t28125.html
+          if (method == MusicSort.SortMethod.Track)
               duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
-            }
-          }
           else
-          {
-            duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
-          }
+              duration = Convert.ToString(tag.Duration);
+          
           string rating = tag.Rating.ToString();
           if (tag.Track <= 0)
             trackNr = "";
@@ -1033,6 +1024,9 @@ namespace MediaPortal.GUI.Music
       {
         case 134: // Shares
           {
+            //ViewDefinition selectedView = (ViewDefinition)handler.Views[dlg.SelectedLabel - 1];
+            //handler.CurrentView = selectedView.Name;
+            //MusicState.View = selectedView.Name;
             int nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
             MusicState.StartWindow = nNewWindow;
             if (nNewWindow != GetID)
