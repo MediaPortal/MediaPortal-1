@@ -387,6 +387,7 @@ namespace MediaPortal.GUI.Music
 
       //btnPlaylistFolder.Disabled = true;
     }
+
     protected override void OnPageDestroy(int newWindowId)
     {
       _currentLevel = handler.CurrentLevel;
@@ -404,6 +405,7 @@ namespace MediaPortal.GUI.Music
 
       base.OnPageDestroy(newWindowId);
     }
+
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
       if (control == btnSearch)

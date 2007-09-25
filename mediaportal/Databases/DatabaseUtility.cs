@@ -193,6 +193,34 @@ namespace MediaPortal.Database
       }
       return returnValue;
     }
+
+
+    static public int GetAsInt(SQLiteResultSet results, int iRecord, int column)
+    {
+      string result = Get(results, iRecord, column);
+      try
+      {
+        int intValue = Int32.Parse(result);
+        return intValue;
+      }
+      catch (Exception)
+      { }
+      return 0;
+    }
+
+    static public long GetAsInt64(SQLiteResultSet results, int iRecord, int column)
+    {
+      string result = Get(results, iRecord, column);
+      try
+      {
+        long longValue = Int64.Parse(result);
+        return longValue;
+      }
+      catch (Exception)
+      { }
+      return 0;
+    }
+
     static public long GetAsInt64(SQLiteResultSet results, int iRecord, string strColum)
     {
       string result = Get(results, iRecord, strColum);
@@ -212,6 +240,49 @@ namespace MediaPortal.Database
       }
       return returnValue;
     }
+
+    static public DateTime GetAsDateTime(SQLiteResultSet results, int iRecord, string aTimestampColum)
+    {
+      DateTime finalResult = DateTime.MinValue;
+      if (results == null || string.IsNullOrEmpty(aTimestampColum) || results.Rows.Count < 1 || results.Rows.Count < iRecord)
+        return finalResult;
+
+      try
+      {
+        SQLiteResultSet.Row arr = results.Rows[iRecord];
+        int iCol = 0;
+        if (results.ColumnIndices.ContainsKey(aTimestampColum))
+        {
+          iCol = (int)results.ColumnIndices[aTimestampColum];
+          if (arr.fields[iCol] != null)
+            finalResult = Convert.ToDateTime((arr.fields[iCol]));
+        }
+      }
+      catch (Exception)
+      {
+      }
+
+      return finalResult;
+    }
+
+
+    static public string Get(SQLiteResultSet results, int iRecord, int column)
+    {
+      if (null == results)
+        return String.Empty;
+      if (results.Rows.Count < iRecord)
+        return String.Empty;
+      if (column < 0 || column >= results.ColumnNames.Count)
+        return String.Empty;
+      SQLiteResultSet.Row arr = results.Rows[iRecord];
+      if (arr.fields[column] == null)
+        return String.Empty;
+      string strLine = (arr.fields[column]).Trim();
+      //strLine = strLine.Replace("''","'");
+      return strLine;
+      ;
+    }
+
     static public string Get(SQLiteResultSet results, int iRecord, string strColum)
     {
       if (null == results)
@@ -248,48 +319,7 @@ namespace MediaPortal.Database
       return String.Empty;
     }
 
-    static public int GetAsInt(SQLiteResultSet results, int iRecord, int column)
-    {
-      string result = Get(results, iRecord, column);
-      try
-      {
-        int intValue = Int32.Parse(result);
-        return intValue;
-      }
-      catch (Exception)
-      { }
-      return 0;
-    }
 
-    static public long GetAsInt64(SQLiteResultSet results, int iRecord, int column)
-    {
-      string result = Get(results, iRecord, column);
-      try
-      {
-        long longValue = Int64.Parse(result);
-        return longValue;
-      }
-      catch (Exception)
-      { }
-      return 0;
-    }
-
-    static public string Get(SQLiteResultSet results, int iRecord, int column)
-    {
-      if (null == results)
-        return String.Empty;
-      if (results.Rows.Count < iRecord)
-        return String.Empty;
-      if (column < 0 || column >= results.ColumnNames.Count)
-        return String.Empty;
-      SQLiteResultSet.Row arr = results.Rows[iRecord];
-      if (arr.fields[column] == null)
-        return String.Empty;
-      string strLine = (arr.fields[column]).Trim();
-      //strLine = strLine.Replace("''","'");
-      return strLine;
-      ;
-    }
 
     static public void RemoveInvalidChars(ref string strTxt)
     {
