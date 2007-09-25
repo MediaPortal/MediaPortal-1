@@ -766,7 +766,7 @@ namespace MediaPortal
     /// <summary>
     /// Build presentation parameters from the current settings
     /// windowed = true,  normal mode (must use desktop refresh rate)
-    /// windowed = false, exlusive mode (can set screen refresh rate)
+    /// windowed = false, exclusive mode (can set screen refresh rate)
     /// </summary>
     public void BuildPresentParamsFromSettings(bool bwindowed)
     {
@@ -811,7 +811,7 @@ namespace MediaPortal
     }
 
     /// <summary>
-    /// Switch between exlusive mode and windowed depending on parameter
+    /// Switch between exclusive mode and windowed depending on parameter
     /// </summary>
     /// 
     public void SwitchFullScreenOrWindowed(bool bWindowed)
@@ -825,7 +825,7 @@ namespace MediaPortal
       if (bWindowed)
         Log.Debug("D3D: Switch to windowed mode - Playing media: {0}", g_Player.Playing);
       else
-        Log.Debug("D3D: Switch to exlusive mode - Playing media: {0}", g_Player.Playing);
+        Log.Debug("D3D: Switch to exclusive mode - Playing media: {0}", g_Player.Playing);
 
       BuildPresentParamsFromSettings(bWindowed);
       try
@@ -835,7 +835,7 @@ namespace MediaPortal
         if (windowed)
           Log.Debug("D3D: Switched to windowed mode successfully");
         else
-          Log.Debug("D3D: Switched to exlusive mode successfully");
+          Log.Debug("D3D: Switched to exclusive mode successfully");
 
       }
       catch (Exception ex)
@@ -843,7 +843,7 @@ namespace MediaPortal
         if (windowed)
           Log.Debug("D3D: Switch to windowed mode failed - {0}", ex.ToString());
         else
-          Log.Debug("D3D: Switch to fullscreen mode failed - {0}", ex.ToString());
+          Log.Debug("D3D: Switch to exclusive mode failed - {0}", ex.ToString());
 
         BuildPresentParamsFromSettings(!bWindowed);
         try
@@ -871,7 +871,7 @@ namespace MediaPortal
       GraphicsAdapterInfo adapterInfo = graphicsSettings.AdapterInfo;
       GraphicsDeviceInfo deviceInfo = graphicsSettings.DeviceInfo;
 
-      // Set up the presentation parameters, we start in none exlusive mode
+      // Set up the presentation parameters, we start in none exclusive mode
       BuildPresentParamsFromSettings(true);
 
       if (deviceInfo.Caps.PrimitiveMiscCaps.IsNullReference)
