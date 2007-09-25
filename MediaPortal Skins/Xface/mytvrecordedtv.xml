@@ -5,7 +5,7 @@
   <allowoverlay>no</allowoverlay>
   <define>#header.label:652</define>
   <controls>
-    <import>common.window2.xml</import>
+    <import>common.window3.xml</import>
     <import>common.time.xml</import>
     <control>
       <type>image</type>

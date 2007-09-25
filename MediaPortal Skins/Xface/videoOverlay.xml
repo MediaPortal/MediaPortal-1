@@ -126,7 +126,7 @@
     <control>
       <description>video preview window</description>
       <type>videowindow</type>
-      <id>1</id>
+      <id>99</id>
       <posX>96</posX>
       <posY>568</posY>
       <width>238</width>

@@ -254,6 +254,22 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
+     <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>29</id>
+      <posX>675</posX>
+      <posY>515</posY>
+      <width>382</width>
+      <label>#TV.View.Percentage</label>
+     <texturebg>progress_back1.png</texturebg>
+     <lefttexture>osd_progress_left1.png</lefttexture>
+     <midtexture>osd_progress_mid1.png</midtexture>
+     <righttexture>osd_progress_right1.png</righttexture>
+      <visible>yes</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
     <control>
       <description>Recording Channel</description>
       <type>image</type>

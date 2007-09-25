@@ -7,7 +7,7 @@
   <define>#header.image:tetris\logo.png</define>
   <define>#header.hover:</define>
   <controls>
-    <import>common.window.xml</import>
+    <import>common.window2.xml</import>
     <control>
       <description>button group</description>
       <type>group</type>
@@ -16,8 +16,8 @@
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="400" end="800,0">WindowClose</animation>
-      <posX>113</posX>
-      <posY>129</posY>
+      <posX>69</posX>
+      <posY>89</posY>
       <layout>StackLayout</layout>
       <control>
         <description>New Game</description>
@@ -46,27 +46,27 @@
         <description>Scoreboard background</description>
         <type>image</type>
         <id>200</id>
-        <posX>113</posX>
-        <posY>425</posY>
+        <posX>69</posX>
+        <posY>290</posY>
         <width>285</width>
         <height>300</height>
         <texture>tetris\scoreboard.png</texture>
-        <colordiffuse>60ffffff</colordiffuse>
+        <colordiffuse>ffffffff</colordiffuse>
       </control>
       <control>
         <description>Score: label</description>
         <type>label</type>
         <id>201</id>
-        <posX>128</posX>
-        <posY>546</posY>
+        <posX>98</posX>
+        <posY>246</posY>
         <label>19005</label>
       </control>
       <control>
         <description>Score</description>
         <type>label</type>
         <id>202</id>
-        <posX>383</posX>
-        <posY>546</posY>
+        <posX>353</posX>
+        <posY>246</posY>
         <width>216</width>
         <align>right</align>
         <label>#tetris_score</label>
@@ -75,16 +75,16 @@
         <description>Level: label</description>
         <type>label</type>
         <id>203</id>
-        <posX>128</posX>
-        <posY>592</posY>
+        <posX>98</posX>
+        <posY>292</posY>
         <label>19006</label>
       </control>
       <control>
         <description>Level</description>
         <type>label</type>
         <id>204</id>
-        <posX>383</posX>
-        <posY>592</posY>
+        <posX>353</posX>
+        <posY>292</posY>
         <width>216</width>
         <align>right</align>
         <label>#tetris_level</label>
@@ -93,16 +93,16 @@
         <description>Lines: label</description>
         <type>label</type>
         <id>205</id>
-        <posX>128</posX>
-        <posY>637</posY>
+        <posX>98</posX>
+        <posY>337</posY>
         <label>19007</label>
       </control>
       <control>
         <description>Lines</description>
         <type>label</type>
         <id>206</id>
-        <posX>383</posX>
-        <posY>637</posY>
+        <posX>353</posX>
+        <posY>337</posY>
         <width>216</width>
         <align>right</align>
         <label>#tetris_lines</label>
@@ -111,16 +111,16 @@
         <description>Highscore: label</description>
         <type>label</type>
         <id>205</id>
-        <posX>128</posX>
-        <posY>682</posY>
+        <posX>98</posX>
+        <posY>382</posY>
         <label>19008</label>
       </control>
       <control>
         <description>Highscore</description>
         <type>label</type>
         <id>206</id>
-        <posX>383</posX>
-        <posY>682</posY>
+        <posX>353</posX>
+        <posY>382</posY>
         <width>216</width>
         <align>right</align>
         <label>#tetris_highscore</label>
@@ -137,8 +137,8 @@
         <description>Tetris control</description>
         <type>tetris</type>
         <id>10</id>
-        <posX>550</posX>
-        <posY>129</posY>
+        <posX>650</posX>
+        <posY>89</posY>
         <width>526</width>
         <height>600</height>
         <font>font16</font>

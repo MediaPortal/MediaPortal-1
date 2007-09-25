@@ -7,7 +7,7 @@
   <define>#header.image:television_logo.png</define>
   <define>#header.hover:hover_my tv.png</define>
   <controls>
-    <import>common.window.xml</import>
+    <import>common.window3.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>BG</description>
@@ -190,30 +190,40 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-    <control>
-      <description>TV background</description>
+   <control>
+      <description>video rectangle</description>
       <type>image</type>
-      <id>1</id>
-      <posX>113</posX>
-      <posY>560</posY>
-      <width>240</width>
-      <height>180</height>
-      <colordiffuse>60ffffff</colordiffuse>
+      <id>0</id>
+      <posX>48</posX>
+      <posY>540</posY>
+      <width>330</width>
+      <height>225</height>
       <texture>playback_background.png</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
-      <description>TV preview window</description>
+      <description>video preview window</description>
       <type>videowindow</type>
       <id>99</id>
-      <posX>123</posX>
-      <posY>566</posY>
-      <width>226</width>
-      <height>166</height>
-      <onup>7</onup>
+      <posX>96</posX>
+      <posY>568</posY>
+      <width>238</width>
+      <height>131</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
+    </control>
+    <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>126</posX>
+      <posY>701</posY>
+      <width>158</width>
+      <label>#TV.View.Percentage</label>
+      <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
