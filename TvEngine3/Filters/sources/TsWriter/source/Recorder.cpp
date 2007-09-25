@@ -391,6 +391,8 @@ void CRecorder::OnPidsReceived(const CPidTable& info)
     LogDebug("Recorder: Update PMT pmt:0x%x pcr:0x%x video:0x%x audio1:0x%x audio2:0x%x audio3:%x audio4:0x%x audio5:0x%x video:0x%x teletext:0x%x subtitle:0x%x",
       info.PmtPid,info.PcrPid,info.VideoPid,info.AudioPid1,info.AudioPid2,info.AudioPid3, info.AudioPid4,info.AudioPid5,info.VideoPid,info.TeletextPid,info.SubtitlePid);
   
+    LogDebug("Recorder: clear PIDs vector" );
+    m_vecPids.clear();
     m_pmtVersion=m_pPmtParser->GetPmtVersion();
     
     // AddStream() makes sure that duplicates aren't inserted

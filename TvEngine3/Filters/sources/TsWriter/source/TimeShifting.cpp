@@ -267,8 +267,10 @@ static DWORD crc_table[256] = {
 		CEnterCriticalSection enter(m_section);
 		try
 		{
-			LogDebug("Timeshifter:pmt pid:0x%x",pmtPid);
+      LogDebug("Timeshifter:pmt pid:0x%x",pmtPid);
 			m_pmtPid=pmtPid;
+      LogDebug("Timeshifter:SetPmtPid clear old PIDs");
+      m_vecPids.clear();
 		}
 		catch(...)
 		{
