@@ -80,6 +80,10 @@
       <description>options listcontrol</description>
       <type>listcontrol</type>
       <id>3</id>
+      <textXOff>32</textXOff>
+		<textYOff>4</textYOff>
+		<textXOff2>602</textXOff2>
+		<textYOff2>4</textYOff2>
       <posX>350</posX>
       <posY>260</posY>
       <width>650</width>

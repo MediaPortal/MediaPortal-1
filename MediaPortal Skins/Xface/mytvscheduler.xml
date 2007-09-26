@@ -15,7 +15,7 @@
       <height>768</height>
     </control>
      <import>common.time.xml</import>
-          <import>common.window2.xml</import>
+          <import>common.window5.xml</import>
     <control>
       <type>image</type>
       <id>1</id>
@@ -60,7 +60,7 @@
       <posX>1252</posX>
       <posY>93</posY>
       <width>533</width>
-      <label>#selecteditem</label>
+      <label>-</label>
       <font>font13</font>
       <align>right</align>
       <textcolor>ffffffff</textcolor>
@@ -180,11 +180,11 @@
       <type>fadelabel</type>
       <id>13</id>
       <posX>493</posX>
-      <posY>586</posY>
+      <posY>605</posY>
       <width>333</width>
       <label>#TV.Scheduled.Title</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ff000000</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -193,11 +193,11 @@
       <type>label</type>
       <id>14</id>
       <posX>493</posX>
-      <posY>613</posY>
+      <posY>629</posY>
       <label>#TV.Scheduled.Time</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -206,12 +206,12 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>493</posX>
-      <posY>646</posY>
-      <width>573</width>
-      <height>86</height>
+      <posY>649</posY>
+      <width>273</width>
+      <height>76</height>
       <label>#TV.Scheduled.Description</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -224,7 +224,7 @@
       <label>#TV.Scheduled.Channel</label>
       <align>right</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>black</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -243,7 +243,7 @@
     <control>
       <description>video preview window</description>
       <type>videowindow</type>
-      <id>1</id>
+      <id>99</id>
       <posX>96</posX>
 	  <posY>568</posY>
 	  <width>238</width>

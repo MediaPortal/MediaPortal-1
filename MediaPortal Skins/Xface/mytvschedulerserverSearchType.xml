@@ -5,9 +5,9 @@
   <allowoverlay>no</allowoverlay>
   <define>#header.image:television_logo.png</define>
   <define>#header.label:6035</define>
-  <define>#header.hover:hover_my tv.png</define>
+  <define>#header.hover:-</define>
   <controls>
-    <import>common.window.xml</import>
+    <import>common.window2.xml</import>
     <import>common.time.xml</import>
     <control>
       <type>group</type>
@@ -15,8 +15,8 @@
       <description>group element</description>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
-      <posX>113</posX>
-      <posY>129</posY>
+      <posX>69</posX>
+      <posY>89</posY>
       <control>
         <description>Quick Record</description>
         <type>button</type>

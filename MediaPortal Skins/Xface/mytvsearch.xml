@@ -6,7 +6,7 @@
   <define>#header.image:television_logo.png</define>
   <define>#header.label:724</define>
   <controls>
-    <import>common.window2.xml</import>
+    <import>common.window3.xml</import>
     <control>
       <description>Number of Files Label</description>
       <type>label</type>

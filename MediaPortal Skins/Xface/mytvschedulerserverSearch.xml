@@ -3,13 +3,13 @@
   <id>747</id>
   <defaultcontrol>51</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#header.image:television_logo.png</define>
+  <define>#header.label:6035</define>
+  <define>#header.hover:-</define>
   <controls>
+    <import>common.window2.xml</import>
+    <import>common.time.xml</import>
     <control>
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>1366</width>
-      <height>768</height>
     </control>
     <control>
       <type>image</type>
@@ -18,7 +18,7 @@
       <posY>522</posY>
       <width>217</width>
       <height>213</height>
-      <texture>hover_my tv.png</texture>
+      <texture>-</texture>
     </control>
     <control>
       <description>status</description>

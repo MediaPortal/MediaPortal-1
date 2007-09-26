@@ -44,7 +44,7 @@
       <description>Number of Files Label</description>
       <type>label</type>
       <id>12</id>
-      <posX>493</posX>
+      <posX>440</posX>
       <posY>706</posY>
       <label>#itemcount</label>
       <font>font13</font>
@@ -58,7 +58,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>1252</posX>
-      <posY>93</posY>
+      <posY>603</posY>
       <width>533</width>
       <label>#selecteditem</label>
       <font>font13</font>
@@ -174,8 +174,8 @@
         <spinPosY>557</spinPosY>
         <itemWidth>46</itemWidth>
         <itemHeight>30</itemHeight>
-        <textureFocus>recording_background_focus.png</textureFocus>
-        <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
+       <textureFocus>list_sub_focus.png</textureFocus>
+		<textureNoFocus>list_sub_nofocus.png</textureNoFocus>
         <spaceBetweenItems>5</spaceBetweenItems>
         <textureHeight>50</textureHeight>
         <keepaspectratio>no</keepaspectratio>
@@ -191,7 +191,7 @@
       <description>Current program title</description>
       <type>fadelabel</type>
       <id>13</id>
-      <posX>493</posX>
+      <posX>440</posX>
       <posY>586</posY>
       <width>333</width>
       <label>#TV.Scheduled.Title</label>
@@ -204,8 +204,8 @@
       <description>Current program time</description>
       <type>label</type>
       <id>14</id>
-      <posX>493</posX>
-      <posY>613</posY>
+      <posX>440</posX>
+      <posY>583</posY>
       <label>#TV.Scheduled.Time</label>
       <align>left</align>
       <font>font13</font>
@@ -217,10 +217,10 @@
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
-      <posX>493</posX>
-      <posY>646</posY>
-      <width>573</width>
-      <height>86</height>
+      <posX>440</posX>
+      <posY>616</posY>
+      <width>523</width>
+      <height>76</height>
       <label>#TV.Scheduled.Description</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>

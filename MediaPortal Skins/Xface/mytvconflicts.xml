@@ -108,6 +108,8 @@
         <description>scheduler recordings listcontrol</description>
         <type>listcontrol</type>
         <id>10</id>
+        <posX>269</posX>
+        <posY>89</posY>
         <width>566</width>
         <height>493</height>
         <textXOff>94</textXOff>
@@ -146,7 +148,7 @@
       <width>333</width>
       <label>#TV.Scheduled.Title</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>FF000000</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -159,7 +161,7 @@
       <label>#TV.Scheduled.Time</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -173,7 +175,7 @@
       <height>86</height>
       <label>#TV.Scheduled.Description</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>ff969696</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
@@ -186,7 +188,7 @@
       <label>#TV.Scheduled.Genre</label>
       <align>right</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>FF000000</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
