@@ -2124,14 +2124,14 @@ namespace TvPlugin
           allRadioChannelsGroup.Persist();
         }
         IList radioChannels = layer.GetAllRadioChannels();
-        if (radioChannels.Count > allRadioChannelsGroup.ReferringRadioGroupMap().Count)
-        {
-          if (radioChannels != null)
-          {
-            foreach (Channel radioChannel in radioChannels)
-              layer.AddChannelToRadioGroup(radioChannel, allRadioChannelsGroup);
-          }
-        }
+				if (radioChannels != null)
+				{
+					if (radioChannels.Count > allRadioChannelsGroup.ReferringRadioGroupMap().Count)
+					{						
+						foreach (Channel radioChannel in radioChannels)
+							layer.AddChannelToRadioGroup(radioChannel, allRadioChannelsGroup);						
+					}
+				}
         MediaPortal.GUI.Library.Log.Info("Done.");
 
         MediaPortal.GUI.Library.Log.Info("get all groups from database");
