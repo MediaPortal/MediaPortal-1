@@ -126,9 +126,9 @@ namespace TvEngine
         {
           Channel channel = TvDatabase.Channel.Retrieve(tvEvent.Recording.IdChannel);
           
-          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.Name);
+          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.DisplayName);
           
-          Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, channel.Name, _program, parameters);
+          Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, channel.DisplayName, _program, parameters);
 
           LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
         }
@@ -136,9 +136,9 @@ namespace TvEngine
         {
           Channel channel = TvDatabase.Channel.Retrieve(tvEvent.Recording.IdChannel);
 
-          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.Name);
+          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.DisplayName);
 
-          Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, channel.Name, _program, parameters);
+          Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, channel.DisplayName, _program, parameters);
 
           LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
         }
