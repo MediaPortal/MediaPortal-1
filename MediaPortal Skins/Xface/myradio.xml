@@ -86,6 +86,14 @@
         <description>listcontrol</description>
         <type>listcontrol</type>
         <id>50</id>
+        <textureHeight>45</textureHeight>
+          <font>font16</font>
+          <textXOff>82</textXOff>
+          <textXOff2>872</textXOff2>
+          <itemWidth>40</itemWidth>
+          <itemHeight>37</itemHeight>
+          <IconXOff>64</IconXOff>
+          <IconYOff>4</IconYOff>
         <onleft>51</onleft>
         <onright>51</onright>
         <onup>2</onup>
