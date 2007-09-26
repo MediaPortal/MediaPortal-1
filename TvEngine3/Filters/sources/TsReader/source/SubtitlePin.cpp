@@ -238,7 +238,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
 
 	  while (buffer == NULL)
 	  {
-		  Sleep(1);
+		  Sleep(10);
 
 		  if (!m_bRunning)
 			  {
