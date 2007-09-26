@@ -1802,7 +1802,7 @@ namespace TvPlugin
       {
         string channelName = map.ReferringLinkedChannel().DisplayName;
         GUIListItem item = new GUIListItem(channelName);
-        if (channelName == TVHome.Card.ChannelName)
+        if (channelName == TVHome.Navigator.CurrentChannel)  //contains the display name
           selected = counter;
         dlg.Add(item);
         counter++;

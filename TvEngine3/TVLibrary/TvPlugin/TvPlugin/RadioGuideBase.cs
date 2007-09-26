@@ -522,7 +522,7 @@ namespace TvPlugin
                 _showChannelLogos = false;
                 if (TVHome.Card.IsTimeShifting)
                 {
-                  _currentChannel = TVHome.Card.ChannelName;
+                  _currentChannel = TVHome.Navigator.CurrentChannel; //contains the display name
                   GetChannels();
                   for (int i = 0; i < _channelList.Count; i++)
                   {
