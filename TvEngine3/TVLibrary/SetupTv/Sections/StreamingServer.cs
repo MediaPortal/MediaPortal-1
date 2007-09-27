@@ -74,6 +74,7 @@ namespace SetupTv.Sections
         if (i >= listView1.Items.Count)
         {
           ListViewItem item = new ListViewItem(client.StreamName);
+					item.Tag = client;
           item.SubItems.Add(client.IpAdress);
           if (client.IsActive)
             item.SubItems.Add("yes");
@@ -106,5 +107,51 @@ namespace SetupTv.Sections
     {
 
     }
+
+		private void mpButtonKick_Click(object sender, EventArgs e)
+		{
+			foreach (ListViewItem item in listView1.SelectedItems)
+			{
+				RtspClient client = (RtspClient)item.Tag;
+				
+				User user = new User();
+				user.Name = System.Net.Dns.GetHostByAddress(client.IpAdress).HostName;				
+
+				IList dbsCards = Card.ListAll();
+				
+
+        foreach (Card card in dbsCards)
+        {
+					User[] users = TvControl.RemoteControl.Instance.GetUsersForCard(card.IdCard);
+					
+					foreach (User u in users)
+					{
+						if (u.Name == user.Name)
+						{							
+							Channel ch = Channel.Retrieve(u.IdChannel);
+
+							if (ch.Name == client.Description)
+							{
+								user.CardId = card.IdCard;
+								break;
+							}
+						}
+					} 
+					if (user.CardId > -1) break;
+        }
+				
+				bool res = TvControl.RemoteControl.Instance.StopTimeShifting(ref user);				
+
+				if (res)
+				{
+					listView1.Items.Remove(item);
+				}
+			}          
+		}
+
+		private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			mpButtonKick_Click (sender, e);
+		}
   }
 }

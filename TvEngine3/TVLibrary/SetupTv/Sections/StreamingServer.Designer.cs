@@ -28,105 +28,173 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StreamingServer));
-      this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.listView1 = new System.Windows.Forms.ListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
-      this.label1 = new System.Windows.Forms.Label();
-      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.SuspendLayout();
-      // 
-      // timer1
-      // 
-      this.timer1.Interval = 1000;
-      this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-      // 
-      // listView1
-      // 
-      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StreamingServer));
+			this.timer1 = new System.Windows.Forms.Timer(this.components);
+			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+			this.tabControl1 = new System.Windows.Forms.TabControl();
+			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.mpButtonKick = new MediaPortal.UserInterface.Controls.MPButton();
+			this.listView1 = new System.Windows.Forms.ListView();
+			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+			this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+			this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
+			this.tabControl1.SuspendLayout();
+			this.tabPage1.SuspendLayout();
+			this.contextMenuStrip1.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// timer1
+			// 
+			this.timer1.Interval = 1000;
+			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+			// 
+			// imageList1
+			// 
+			this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+			this.imageList1.Images.SetKeyName(0, "user.ico");
+			// 
+			// tabControl1
+			// 
+			this.tabControl1.Controls.Add(this.tabPage1);
+			this.tabControl1.Location = new System.Drawing.Point(3, 3);
+			this.tabControl1.Name = "tabControl1";
+			this.tabControl1.SelectedIndex = 0;
+			this.tabControl1.Size = new System.Drawing.Size(476, 414);
+			this.tabControl1.TabIndex = 10;
+			// 
+			// tabPage1
+			// 
+			this.tabPage1.Controls.Add(this.mpButtonKick);
+			this.tabPage1.Controls.Add(this.listView1);
+			this.tabPage1.Controls.Add(this.mpLabelChannelCount);
+			this.tabPage1.Location = new System.Drawing.Point(4, 22);
+			this.tabPage1.Name = "tabPage1";
+			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage1.Size = new System.Drawing.Size(468, 388);
+			this.tabPage1.TabIndex = 0;
+			this.tabPage1.Text = "Streaming clients";
+			this.tabPage1.UseVisualStyleBackColor = true;
+			// 
+			// mpButtonKick
+			// 
+			this.mpButtonKick.Location = new System.Drawing.Point(9, 365);
+			this.mpButtonKick.Name = "mpButtonKick";
+			this.mpButtonKick.Size = new System.Drawing.Size(55, 23);
+			this.mpButtonKick.TabIndex = 4;
+			this.mpButtonKick.Text = "Kick";
+			this.mpButtonKick.UseVisualStyleBackColor = true;
+			this.mpButtonKick.Click += new System.EventHandler(this.mpButtonKick_Click);
+			// 
+			// listView1
+			// 
+			this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3,
             this.columnHeader4,
             this.columnHeader5});
-      this.listView1.Location = new System.Drawing.Point(18, 49);
-      this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(446, 347);
-      this.listView1.SmallImageList = this.imageList1;
-      this.listView1.TabIndex = 0;
-      this.listView1.UseCompatibleStateImageBehavior = false;
-      this.listView1.View = System.Windows.Forms.View.Details;
-      this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
-      // 
-      // columnHeader1
-      // 
-      this.columnHeader1.Text = "Stream";
-      this.columnHeader1.Width = 50;
-      // 
-      // columnHeader2
-      // 
-      this.columnHeader2.Text = "IP Adress";
-      this.columnHeader2.Width = 100;
-      // 
-      // columnHeader3
-      // 
-      this.columnHeader3.Text = "Active";
-      this.columnHeader3.Width = 50;
-      // 
-      // columnHeader4
-      // 
-      this.columnHeader4.Text = "Connected Since";
-      this.columnHeader4.Width = 120;
-      // 
-      // columnHeader5
-      // 
-      this.columnHeader5.Text = "Description";
-      this.columnHeader5.Width = 120;
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(15, 31);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(90, 13);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "Streaming clients:";
-      this.label1.Click += new System.EventHandler(this.label1_Click);
-      // 
-      // imageList1
-      // 
-      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageList1.Images.SetKeyName(0, "user.ico");
-      // 
-      // StreamingServer
-      // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.label1);
-      this.Controls.Add(this.listView1);
-      this.Name = "StreamingServer";
-      this.Size = new System.Drawing.Size(482, 449);
-      this.ResumeLayout(false);
-      this.PerformLayout();
+			this.listView1.ContextMenuStrip = this.contextMenuStrip1;
+			this.listView1.FullRowSelect = true;
+			this.listView1.Location = new System.Drawing.Point(9, 11);
+			this.listView1.Name = "listView1";
+			this.listView1.Size = new System.Drawing.Size(453, 348);
+			this.listView1.SmallImageList = this.imageList1;
+			this.listView1.TabIndex = 3;
+			this.listView1.UseCompatibleStateImageBehavior = false;
+			this.listView1.View = System.Windows.Forms.View.Details;
+			// 
+			// columnHeader1
+			// 
+			this.columnHeader1.Text = "Stream";
+			this.columnHeader1.Width = 50;
+			// 
+			// columnHeader2
+			// 
+			this.columnHeader2.Text = "IP Adress";
+			this.columnHeader2.Width = 100;
+			// 
+			// columnHeader3
+			// 
+			this.columnHeader3.Text = "Active";
+			this.columnHeader3.Width = 50;
+			// 
+			// columnHeader4
+			// 
+			this.columnHeader4.Text = "Connected Since";
+			this.columnHeader4.Width = 120;
+			// 
+			// columnHeader5
+			// 
+			this.columnHeader5.Text = "Description";
+			this.columnHeader5.Width = 120;
+			// 
+			// contextMenuStrip1
+			// 
+			this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deleteToolStripMenuItem,
+            this.toolStripMenuItem1});
+			this.contextMenuStrip1.Name = "contextMenuStrip1";
+			this.contextMenuStrip1.Size = new System.Drawing.Size(153, 54);
+			// 
+			// deleteToolStripMenuItem
+			// 
+			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.deleteToolStripMenuItem.Text = "Kick";
+			this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+			// 
+			// toolStripMenuItem1
+			// 
+			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+			this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+			// 
+			// mpLabelChannelCount
+			// 
+			this.mpLabelChannelCount.AutoSize = true;
+			this.mpLabelChannelCount.Location = new System.Drawing.Point(13, 14);
+			this.mpLabelChannelCount.Name = "mpLabelChannelCount";
+			this.mpLabelChannelCount.Size = new System.Drawing.Size(0, 13);
+			this.mpLabelChannelCount.TabIndex = 2;
+			// 
+			// StreamingServer
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.tabControl1);
+			this.Name = "StreamingServer";
+			this.Size = new System.Drawing.Size(482, 419);
+			this.tabControl1.ResumeLayout(false);
+			this.tabPage1.ResumeLayout(false);
+			this.tabPage1.PerformLayout();
+			this.contextMenuStrip1.ResumeLayout(false);
+			this.ResumeLayout(false);
 
     }
 
     #endregion
 
-    private System.Windows.Forms.Timer timer1;
-    private System.Windows.Forms.ListView listView1;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
-    private System.Windows.Forms.ColumnHeader columnHeader3;
-    private System.Windows.Forms.ColumnHeader columnHeader4;
-    private System.Windows.Forms.ColumnHeader columnHeader5;
+		private System.Windows.Forms.Timer timer1;
     private System.Windows.Forms.ImageList imageList1;
+		private System.Windows.Forms.TabControl tabControl1;
+		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.ListView listView1;
+		private System.Windows.Forms.ColumnHeader columnHeader1;
+		private System.Windows.Forms.ColumnHeader columnHeader2;
+		private System.Windows.Forms.ColumnHeader columnHeader3;
+		private System.Windows.Forms.ColumnHeader columnHeader4;
+		private System.Windows.Forms.ColumnHeader columnHeader5;
+		private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannelCount;
+		private MediaPortal.UserInterface.Controls.MPButton mpButtonKick;
+		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+		private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
   }
 }

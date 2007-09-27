@@ -129,14 +129,17 @@ namespace TvLibrary.Streaming
             RtspStream stream = _streams[streamName];
             if (stream.Recording != null && stream.Recording.Length>0)
               description = stream.Recording;
-            else
+						else if (stream.Card.SubChannels.Length>0)
             {
-              description = stream.Card.SubChannels[0].CurrentChannel.Name;
+              description = stream.Card.SubChannels[0].CurrentChannel.Name;							
             }
           }
-          
-          RtspClient client = new RtspClient(isActive != 0, ipadress, streamName, description,started);
-          clients.Add(client);
+
+					if (description.Length > 0)
+					{
+						RtspClient client = new RtspClient(isActive != 0, ipadress, streamName, description, started);
+						clients.Add(client);
+					}
         }
         return clients;
       }
