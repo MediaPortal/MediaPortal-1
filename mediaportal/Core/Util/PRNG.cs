@@ -35,7 +35,7 @@ namespace MediaPortal.Util
   /// <summary>
   /// Pseudo Random Number Generator; a more random version of System.Random
   /// </summary>
-  public class PRNG
+  public class PseudoRandomNumberGenerator
   {
     #region Variables
 
@@ -48,12 +48,12 @@ namespace MediaPortal.Util
 
     #region Constructor/Destructor
 
-    public PRNG()
+    public PseudoRandomNumberGenerator()
     {
       _prng = new RNGCryptoServiceProvider();
     }
 
-    ~PRNG()
+    ~PseudoRandomNumberGenerator()
     {
       _prng = null;
     }

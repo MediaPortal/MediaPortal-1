@@ -983,7 +983,7 @@ namespace MediaPortal.GUI.Music
         }
         m_bScan = true;
         OnRetrieveMusicInfo(ref queueItems, false);
-        m_database.CheckVariousArtistsAndCoverArt();
+        // m_database.CheckVariousArtistsAndCoverArt();
         m_bScan = false;
 
         foreach (GUIListItem queueItem in queueItems)
@@ -1950,7 +1950,7 @@ namespace MediaPortal.GUI.Music
       }
 
       OnRetrieveMusicInfo(ref items, false);
-      m_database.CheckVariousArtistsAndCoverArt();
+      // m_database.CheckVariousArtistsAndCoverArt();
 
       if (dlg != null && dlg.IsCanceled)
         return false;
@@ -2187,7 +2187,7 @@ namespace MediaPortal.GUI.Music
         AddItemToPlayList(pItem, ref playList);
 
       // We might have added a lot of new songs to the DB, so the Various Artist count needs to be updated.
-      m_database.CheckVariousArtistsAndCoverArt();
+      // m_database.CheckVariousArtistsAndCoverArt();
 
       if (playList.Count > 0)
       {

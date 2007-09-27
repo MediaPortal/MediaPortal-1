@@ -363,8 +363,8 @@ namespace MediaPortal.GUI.Music
           if (!isVariousArtistsAlbum)
             database.GetAllAlbums(ref albums);
 
-          else
-            database.GetVariousArtistsAlbums(ref albums);
+          //else
+          //  database.GetVariousArtistsAlbums(ref albums);
 
           foreach (Song song in songs)
           {
@@ -406,21 +406,20 @@ namespace MediaPortal.GUI.Music
         string temp = r.Replace(sOrigSql, " ");
         sOrigSql = temp;
 
-        string selectedVal = ((FilterDefinition)currentView.Filters[CurrentLevel - 1]).SelectedValue;
+        //string selectedVal = ((FilterDefinition)currentView.Filters[CurrentLevel - 1]).SelectedValue;
 
-        if (selectedVal.Length > 0)
-        {
-          int albumartistId = int.Parse(selectedVal);
-          long idVariousArtists = database.GetVariousArtistsId();
+        //if (selectedVal.Length > 0)
+        //{
+        //  int albumartistId = int.Parse(selectedVal);
+        //  long idVariousArtists = database.GetVariousArtistsId();
 
-          if (albumartistId == idVariousArtists)
-          {
-            modified = true;
-            sOrigSql = sOrigSql.Replace("and song.idAlbumArtist=", "and album.idAlbumArtist=");
-          }
-        }
+        //  if (albumartistId == idVariousArtists)
+        //  {
+        //    modified = true;
+        //    sOrigSql = sOrigSql.Replace("and song.idAlbumArtist=", "and album.idAlbumArtist=");
+        //  }
+        //}
       }
-
       catch { }
 
       return modified;
@@ -435,21 +434,17 @@ namespace MediaPortal.GUI.Music
 
       try
       {
-        // Replace occurances of multiple space chars with single space
-        System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"\s+");
-        string temp = r.Replace(sOrigSql, " ");
-        sOrigSql = temp;
+          // Replace occurances of multiple space chars with single space
+          System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"\s+");
+          string temp = r.Replace(sOrigSql, " ");
+          sOrigSql = temp;
 
-        long idVariousArtists = database.GetVariousArtistsId();
-        string sSearch = string.Format("song.idAlbumArtist='{0}'", idVariousArtists);
-        string sReplace = string.Format("album.idAlbumArtist='{0}'", idVariousArtists);
+          //long idVariousArtists = database.GetVariousArtistsId();
+          //string sSearch = string.Format("song.idAlbumArtist='{0}'", idVariousArtists);
+          //string sReplace = string.Format("album.idAlbumArtist='{0}'", idVariousArtists);
 
-        string newSqlString = sOrigSql.Replace(sSearch, sReplace);
-        modified = newSqlString != sOrigSql;
-
-        sOrigSql = newSqlString;
+          modified = true;
       }
-
       catch { }
 
       return modified;

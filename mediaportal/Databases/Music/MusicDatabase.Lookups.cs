@@ -178,7 +178,7 @@ namespace MediaPortal.Music.Database
       {
         aSong.Clear();
 
-        PRNG rand = new PRNG();
+        PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
         
         int maxIDSong, rndIDSong;
         string strSQL = String.Format("SELECT max(idTrack) FROM tracks");
@@ -562,7 +562,7 @@ namespace MediaPortal.Music.Database
         string temp = r.Replace(aSQL, " ");
         aSQL = temp;
 
-        long idVariousArtists = GetVariousArtistsId();
+        // long idVariousArtists = GetVariousArtistsId();
 
         //if (aAlbumartistId == idVariousArtists)
         //{
@@ -652,55 +652,6 @@ namespace MediaPortal.Music.Database
         if (songs.Count > 0)
           return true;
       }
-      catch (Exception ex)
-      {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-
-      return false;
-    }
-
-    public bool GetSongsByAlbumID(int aAlbumId, ref List<Song> aSongList)
-    {
-      try
-      {
-        aSongList.Clear();
-        if (null == MusicDbClient)
-          return false;
-
-        string strSQL;
-        strSQL = String.Format("select song.idSong,artist.idArtist,album.idAlbum,genre.idGenre,song.favorite,song.strTitle, song.iYear, song.iDuration, song.iTrack, song.iTimesPlayed, song.strFileName, song.iRating, path.strPath, genre.strGenre, album.strAlbum, artist.strArtist from song,path,album,genre,artist where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and album.idAlbum={0} and path.idPath=song.idPath order by song.iTrack", aAlbumId);
-        SQLiteResultSet results;
-        results = MusicDbClient.Execute(strSQL);
-        if (results.Rows.Count == 0)
-          return false;
-        for (int i = 0 ; i < results.Rows.Count ; ++i)
-        {
-          Song song = new Song();
-          song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
-          song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
-          song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
-          song.Track = DatabaseUtility.GetAsInt(results, i, "song.iTrack");
-          song.Duration = DatabaseUtility.GetAsInt(results, i, "song.iDuration");
-          song.Year = DatabaseUtility.GetAsInt(results, i, "song.iYear");
-          song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
-          song.Favorite = DatabaseUtility.GetAsInt(results, i, "tracks.iFavorite") != 0;
-          song.TimesPlayed = DatabaseUtility.GetAsInt(results, i, "song.iTimesPlayed");
-          song.Rating = DatabaseUtility.GetAsInt(results, i, "song.iRating");
-          song.artistId = DatabaseUtility.GetAsInt(results, i, "artist.idArtist");
-          song.albumId = DatabaseUtility.GetAsInt(results, i, "album.idAlbum");
-          song.genreId = DatabaseUtility.GetAsInt(results, i, "genre.idGenre");
-          string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
-          strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
-          song.FileName = strFileName;
-
-          aSongList.Add(song);
-        }
-
-        return true;
-      }
-
       catch (Exception ex)
       {
         Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
@@ -952,74 +903,45 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
-    public bool GetVariousArtistsAlbums(ref List<AlbumInfo> aAlbumInfoList)
-    {
-      try
-      {
-        aAlbumInfoList.Clear();
-        if (null == MusicDbClient)
-          return false;
+    //public bool GetVariousArtistsAlbums(ref List<AlbumInfo> aAlbumInfoList)
+    //{
+    //  try
+    //  {
+    //    aAlbumInfoList.Clear();
+    //    if (null == MusicDbClient)
+    //      return false;
 
-        string variousArtists = GUILocalizeStrings.Get(340);
+    //    string variousArtists = GUILocalizeStrings.Get(340);
 
-        if (variousArtists.Length == 0)
-          variousArtists = "Various Artists";
+    //    if (variousArtists.Length == 0)
+    //      variousArtists = "Various Artists";
 
-        long idVariousArtists = GetVariousArtistsId();
+    //    long idVariousArtists = GetVariousArtistsId();
 
-        string strSQL;
-        strSQL = String.Format("select * from album where album.idAlbumArtist='{0}'", idVariousArtists);
-        SQLiteResultSet results;
-        results = MusicDbClient.Execute(strSQL);
-        if (results.Rows.Count == 0)
-          return false;
-        for (int i = 0 ; i < results.Rows.Count ; ++i)
-        {
-          AlbumInfo album = new AlbumInfo();
-          album.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
-          album.IdAlbum = DatabaseUtility.GetAsInt(results, i, "album.idAlbumArtist");  //album.IdAlbum contains IdAlbumArtist
-          album.AlbumArtist = variousArtists;
-          aAlbumInfoList.Add(album);
-        }
-        return true;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
+    //    string strSQL;
+    //    strSQL = String.Format("select * from album where album.idAlbumArtist='{0}'", idVariousArtists);
+    //    SQLiteResultSet results;
+    //    results = MusicDbClient.Execute(strSQL);
+    //    if (results.Rows.Count == 0)
+    //      return false;
+    //    for (int i = 0 ; i < results.Rows.Count ; ++i)
+    //    {
+    //      AlbumInfo album = new AlbumInfo();
+    //      album.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
+    //      album.IdAlbum = DatabaseUtility.GetAsInt(results, i, "album.idAlbumArtist");  //album.IdAlbum contains IdAlbumArtist
+    //      album.AlbumArtist = variousArtists;
+    //      aAlbumInfoList.Add(album);
+    //    }
+    //    return true;
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+    //    Open();
+    //  }
 
-      return false;
-    }
-
-    public string GetAlbumPath(int aAlbumArtistId, int aAlbumId)
-    {
-      try
-      {
-        if (null == MusicDbClient)
-          return string.Empty;
-
-        //string sql = string.Format("select * from song, path where song.idPath=path.idPath and song.idArtist='{0}' and  song.idAlbum='{1}'  limit 1", nArtistId, nAlbumId);
-        string sql = string.Format("select path.strPath from song,path,album where song.idPath=path.idPath and song.idAlbum=album.idAlbum and album.idAlbumArtist='{0}' and  album.idAlbum='{1}'  limit 1", aAlbumArtistId, aAlbumId);
-        SQLiteResultSet results = MusicDbClient.Execute(sql);
-
-        if (results.Rows.Count > 0)
-        {
-          string sPath = DatabaseUtility.Get(results, 0, "path.strPath");
-          sPath += DatabaseUtility.Get(results, 0, "song.strFileName");
-
-          return sPath;
-        }
-      }
-
-      catch (Exception ex)
-      {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
-
-      return string.Empty;
-    }
+    //  return false;
+    //}
 
     public void ResetTop100()
     {
@@ -1103,7 +1025,7 @@ namespace MediaPortal.Music.Database
         int lAlbumArtistId = -1;
         int lAlbumId = -1;
 
-        strSQL = String.Format("delete  from albuminfo where idAlbum={0} ", lAlbumId);
+        strSQL = String.Format("delete from albuminfo where idAlbum={0} ", lAlbumId);
         MusicDbClient.Execute(strSQL);
 
         strSQL = String.Format("insert into albuminfo (idAlbumInfo,idAlbum,idArtist,idGenre,strTones,strStyles,strReview,strImage,iRating,iYear,strTracks) values(NULL,{0},{1},{2},'{3}','{4}','{5}','{6}',{7},{8},'{9}' )",
@@ -1345,121 +1267,103 @@ namespace MediaPortal.Music.Database
       return -1;
     }
     
-    public void CheckVariousArtistsAndCoverArt()
-    {
-      if (_albumCache.Count <= 0)
-        return;
+    //public void CheckVariousArtistsAndCoverArt()
+    //{
+    //  if (_albumCache.Count <= 0)
+    //    return;
 
-      foreach (AlbumInfoCache album in _albumCache)
-      {
-        int lAlbumId = album.idAlbum;
-        int lAlbumArtistId = album.idAlbumArtist;
-        bool bVarious = false;
-        ArrayList songs = new ArrayList();
-        GetSongsByAlbum(album.Album, ref songs);
-        if (_scanForVariousArtists && songs.Count > 1)
-        {
-          //	Are the artists of this album all the same
-          for (int i = 0 ; i < (int)songs.Count - 1 ; i++)
-          {
-            Song song = (Song)songs[i];
-            Song song1 = (Song)songs[i + 1];
-            if (song.Artist != song1.Artist)
-            {
-              string variousArtists = GUILocalizeStrings.Get(340);
+    //  foreach (AlbumInfoCache album in _albumCache)
+    //  {
+    //    int lAlbumId = album.idAlbum;
+    //    int lAlbumArtistId = album.idAlbumArtist;
+    //    bool bVarious = false;
+    //    ArrayList songs = new ArrayList();
+    //    GetSongsByAlbum(album.Album, ref songs);
+    //    if (_scanForVariousArtists && songs.Count > 1)
+    //    {
+    //      //	Are the artists of this album all the same
+    //      for (int i = 0 ; i < (int)songs.Count - 1 ; i++)
+    //      {
+    //        Song song = (Song)songs[i];
+    //        Song song1 = (Song)songs[i + 1];
+    //        if (song.Artist != song1.Artist)
+    //        {
+    //          string variousArtists = GUILocalizeStrings.Get(340);
               
-              // HW - Changed to compile correct. Do we still need it?
-              //lAlbumArtistId = AddAlbumArtist(variousArtists);
-              bVarious = true;
-              break;
-            }
-          }
-        }
+    //          // HW - Changed to compile correct. Do we still need it?
+    //          //lAlbumArtistId = AddAlbumArtist(variousArtists);
+    //          bVarious = true;
+    //          break;
+    //        }
+    //      }
+    //    }
 
-        if (bVarious)
-        {
-          string strSQL;
-          strSQL = String.Format("update album set idAlbumArtist={0} where idAlbum={1}", lAlbumArtistId, album.idAlbum);
-          MusicDbClient.Execute(strSQL);
-        }
-        /*
-                string strTempCoverArt;
-                string strCoverArt;
-                CUtil::GetAlbumThumb(album.strAlbum+album.strPath, strTempCoverArt, true);
-                //	Was the album art of this album read during scan?
-                if (CUtil::ThumbCached(strTempCoverArt))
-                {
-                  //	Yes.
-                  //	Copy as permanent directory thumb
-                  CUtil::GetAlbumThumb(album.strPath, strCoverArt);
-                  ::CopyFile(strTempCoverArt, strCoverArt, false);
+    //    if (bVarious)
+    //    {
+    //      string strSQL;
+    //      strSQL = String.Format("update album set idAlbumArtist={0} where idAlbum={1}", lAlbumArtistId, album.idAlbum);
+    //      MusicDbClient.Execute(strSQL);
+    //    }
+    //    /*
+    //            string strTempCoverArt;
+    //            string strCoverArt;
+    //            CUtil::GetAlbumThumb(album.strAlbum+album.strPath, strTempCoverArt, true);
+    //            //	Was the album art of this album read during scan?
+    //            if (CUtil::ThumbCached(strTempCoverArt))
+    //            {
+    //              //	Yes.
+    //              //	Copy as permanent directory thumb
+    //              CUtil::GetAlbumThumb(album.strPath, strCoverArt);
+    //              ::CopyFile(strTempCoverArt, strCoverArt, false);
 
-                  //	And move as permanent thumb for files and directory, where
-                  //	album and path is known
-                  CUtil::GetAlbumThumb(album.strAlbum+album.strPath, strCoverArt);
-                  ::MoveFileEx(strTempCoverArt, strCoverArt, MOVEFILE_REPLACE_EXISTING);
-                }*/
-      }
+    //              //	And move as permanent thumb for files and directory, where
+    //              //	album and path is known
+    //              CUtil::GetAlbumThumb(album.strAlbum+album.strPath, strCoverArt);
+    //              ::MoveFileEx(strTempCoverArt, strCoverArt, MOVEFILE_REPLACE_EXISTING);
+    //            }*/
+    //  }
 
-      _albumCache.Clear();
-    }
+    //  _albumCache.Clear();
+    //}
 
     /// <summary>
     /// Checks if songs of a given Album ID have different artists.
     /// Used by MusicShareWatcher
     /// </summary>
     /// <param name="albumId"></param>
-    public void CheckVariousArtists(string aAlbum)
-    {
-      int lAlbumArtistId = 0;
-      int lAlbumId = 0;
-      bool bVarious = false;
-      ArrayList songs = new ArrayList();
-      GetSongsByAlbum(aAlbum, ref songs);
-      if (_scanForVariousArtists && songs.Count > 1)
-      {
-        //	Are the artists of this album all the same
-        for (int i = 0 ; i < (int)songs.Count - 1 ; i++)
-        {
-          Song song = (Song)songs[i];
-          Song song1 = (Song)songs[i + 1];
-          if (song.Artist != song1.Artist)
-          {
-            string variousArtists = GUILocalizeStrings.Get(340);
+    //public void CheckVariousArtists(string aAlbum)
+    //{
+    //  int lAlbumArtistId = 0;
+    //  int lAlbumId = 0;
+    //  bool bVarious = false;
+    //  ArrayList songs = new ArrayList();
+    //  GetSongsByAlbum(aAlbum, ref songs);
+    //  if (_scanForVariousArtists && songs.Count > 1)
+    //  {
+    //    //	Are the artists of this album all the same
+    //    for (int i = 0 ; i < (int)songs.Count - 1 ; i++)
+    //    {
+    //      Song song = (Song)songs[i];
+    //      Song song1 = (Song)songs[i + 1];
+    //      if (song.Artist != song1.Artist)
+    //      {
+    //        string variousArtists = GUILocalizeStrings.Get(340);
             
-            // HW - Changed to compile correct. Do we still need it? 
-            //lAlbumArtistId = AddAlbumArtist(variousArtists);
-            lAlbumId = song.albumId;
-            bVarious = true;
-            break;
-          }
-        }
+    //        // HW - Changed to compile correct. Do we still need it? 
+    //        //lAlbumArtistId = AddAlbumArtist(variousArtists);
+    //        lAlbumId = song.albumId;
+    //        bVarious = true;
+    //        break;
+    //      }
+    //    }
 
-        if (bVarious)
-        {
-          string strSQL;
-          strSQL = String.Format("update album set idAlbumArtist={0} where idAlbum={1}", lAlbumArtistId, lAlbumId);
-          MusicDbClient.Execute(strSQL);
-        }
-      }
-    }
-
-    public int GetVariousArtistsId()
-    {
-      int idVariousArtists = -1;
-
-      if (_scanForVariousArtists)
-      {
-        string variousArtists = GUILocalizeStrings.Get(340);
-
-        if (variousArtists.Length == 0)
-          variousArtists = "Various Artists";
-
-        // HW - Changed to compile correct. Do we still need it?
-        //idVariousArtists = AddAlbumArtist(variousArtists);
-      }
-
-      return idVariousArtists;
-    }
+    //    if (bVarious)
+    //    {
+    //      string strSQL;
+    //      strSQL = String.Format("update album set idAlbumArtist={0} where idAlbum={1}", lAlbumArtistId, lAlbumId);
+    //      MusicDbClient.Execute(strSQL);
+    //    }
+    //  }
+    //}
   }
 }
