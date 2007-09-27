@@ -1637,7 +1637,7 @@ namespace MediaPortal.GUI.Music
       else
       {
         // get all information for all files in current directory from database 
-        m_database.GetSongsByPath2(currentFolder, ref songsMap);
+        m_database.GetSongsByPath(currentFolder, ref songsMap);
       }
       //musicCD is the information about the cd...
       //delete old CD info
@@ -1933,7 +1933,7 @@ namespace MediaPortal.GUI.Music
             song.Duration = tag.Duration;
             pItem.AlbumInfoTag = song;
 
-            m_database.AddSong(song, false);
+            m_database.AddSong(pItem.Path);
           }
         }//if (!pItem.IsFolder)
       }

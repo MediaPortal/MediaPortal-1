@@ -244,7 +244,7 @@ namespace MediaPortal.MusicShareWatcher
                   AddNewSong(currentEvent.FileName);
                   break;
                 case MusicShareWatcherEvent.EventType.Change:
-                  UpdateSong(currentEvent.FileName);
+                  musicDB.UpdateSong(currentEvent.FileName);
                   break;
                 case MusicShareWatcherEvent.EventType.Delete:
                   musicDB.DeleteSong(currentEvent.FileName, true);
@@ -298,43 +298,10 @@ namespace MediaPortal.MusicShareWatcher
         // The file is not closed yet. Ignore the event, it will be processed by the Change event
         return;
       }
-      MusicTag tag = new MusicTag();
-      tag = TagReader.TagReader.ReadTag(strFileName);
-      if (tag != null)
-      {
-        // We got a valid file, so let's add it
-        Song song = new Song();
-        song.Title = tag.Title;
-        song.Genre = tag.Genre;
-        song.FileName = strFileName;
-        song.Artist = tag.Artist;
-        song.Album = tag.Album;
-        song.Year = tag.Year;
-        song.Track = tag.Track;
-        song.Duration = tag.Duration;
-        musicDB.AddSong(song, true);
-        Log.Info(LogType.MusicShareWatcher, "Added Song: {0}", strFileName);
-        // Check for Various Artists
-        musicDB.CheckVariousArtists(song.Album);
-      }
-    }
 
-    private static void UpdateSong(string strFilename)
-    {
-      Song song = new Song();
-      if (musicDB.GetSongByFileName(strFilename, ref song))
-      {
-        if (musicDB.UpdateSong(strFilename, song.songId))
-          Log.Info(LogType.MusicShareWatcher, "Updated Song: {0}", strFilename);
-        // Change of the song may have resulted in the Album to become a Various Artist Album
-        musicDB.CheckVariousArtists(song.Album);
-      }
-      else
-      {
-        // The song was not found in the database, add it
-        Log.Info(LogType.MusicShareWatcher, "Added Song: {0}", strFilename);
-        AddNewSong(strFilename);
-      }
+      musicDB.AddSong(strFileName);
+      // Check for Various Artists
+      //musicDB.CheckVariousArtists(song.Album);
     }
     #endregion
 

@@ -65,6 +65,8 @@ namespace MediaPortal.TagReader
       if (!IsAudio(strFile))
         return null;
 
+      char[] trimChars = { ' ', '\x00' };
+
       try
       {
         // Set the flag to use the standard System Encoding set by the user
@@ -74,16 +76,16 @@ namespace MediaPortal.TagReader
         MusicTag musictag = new MusicTag();
         string[] artists = tag.Tag.Performers;
         if (artists.Length > 0)
-          musictag.Artist = artists[0];
+          musictag.Artist = String.Join(";", artists).Trim(trimChars);
         musictag.Album = tag.Tag.Album;
         string[] albumartists = tag.Tag.AlbumArtists;
         if (albumartists.Length > 0)
-          musictag.AlbumArtist = albumartists[0];
+          musictag.AlbumArtist = String.Join(";", albumartists).Trim(trimChars);
         musictag.BitRate = tag.Properties.AudioBitrate;
         musictag.Comment = tag.Tag.Comment;
         string[] composer = tag.Tag.Composers;
         if (composer.Length > 0)
-          musictag.Composer = composer[0];
+          musictag.Composer = composer[0].Trim(trimChars);
         IPicture[] pics = new IPicture[] { };
         pics = tag.Tag.Pictures;
         if (pics.Length > 0)
@@ -93,14 +95,17 @@ namespace MediaPortal.TagReader
         musictag.FileType = tag.MimeType;
         string[] genre = tag.Tag.Genres;
         if (genre.Length > 0)
-          musictag.Genre = genre[0];
+          musictag.Genre = String.Join(";", genre).Trim(trimChars);
         string lyrics = tag.Tag.Lyrics;
         if (lyrics == null)
           musictag.Lyrics = "";
         else
-          musictag.Lyrics = lyrics;
-        musictag.Title = tag.Tag.Title;
+          musictag.Lyrics = lyrics.Trim(trimChars);
+        musictag.Title = tag.Tag.Title.Trim(trimChars);
         musictag.Track = (int)tag.Tag.Track;
+        musictag.TrackTotal = (int)tag.Tag.TrackCount;
+        musictag.DiscID = (int)tag.Tag.Disc;
+        musictag.DiscTotal = (int)tag.Tag.DiscCount;
         musictag.Year = (int)tag.Tag.Year;
 
         if (tag.MimeType == "taglib/mp3")

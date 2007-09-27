@@ -1408,20 +1408,12 @@ namespace MediaPortal.GUI.Music
     {
       MusicDatabase dbs = MusicDatabase.Instance;
       PlayList list = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-      ArrayList similarSongList = new ArrayList();
-      List<Song> songList = new List<Song>();
-      Song[] songs = null;
+      List<Song> songList = new List<Song>();      
       double avgPlayCount = 0;
       int songsAdded = 0;
       int j = 0;
 
-      dbs.GetSongsByArtist(Artist_, ref similarSongList);
-      songs = (Song[])similarSongList.ToArray(typeof(Song));
-
-      foreach (Song singlesong in songs)
-      {
-        songList.Add(singlesong);
-      }
+      dbs.GetSongsByArtist(Artist_, ref songList);
 
       //      Log.Debug("GUIMusicPlaylist: ScrobbleSimilarArtists found {0} songs allowed to add", Convert.ToString(songList.Count));
 

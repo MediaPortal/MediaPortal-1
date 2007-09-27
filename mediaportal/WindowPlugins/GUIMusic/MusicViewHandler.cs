@@ -157,6 +157,7 @@ namespace MediaPortal.GUI.Music
         currentLevel = value;
       }
     }
+
     public int MaxLevels
     {
       get { return currentView.Filters.Count; }
@@ -165,17 +166,11 @@ namespace MediaPortal.GUI.Music
     public void Select(Song song)
     {
       FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
-      if (definition.SqlOperator == "group")
-      {
-        definition.SelectedValue = GetFieldNameValue(song, definition.Where).ToString();
-      }
-      else
-      {
-        definition.SelectedValue = GetFieldIdValue(song, definition.Where).ToString();
-      }
+      definition.SelectedValue = GetFieldValue(song, definition.Where).ToString();
       if (currentLevel + 1 < currentView.Filters.Count) currentLevel++;
 
     }
+
     public List<Song> Execute()
     {
       //build the query
@@ -195,7 +190,7 @@ namespace MediaPortal.GUI.Music
 
       if (CurrentLevel > 0)
       {
-        whereClause = "where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and song.idAlbumArtist=albumartist.idAlbumArtist and " + whereClause;
+        whereClause = "where " + whereClause;
       }
 
       //execute the query
@@ -209,21 +204,12 @@ namespace MediaPortal.GUI.Music
         bool useGenreTable = false;
         FilterDefinition defRoot = (FilterDefinition)currentView.Filters[0];
         string table = GetTable(defRoot.Where, ref useSongTable, ref useAlbumTable, ref useArtistTable, ref useAlbumArtistTable, ref useGenreTable);
+        string searchField = "";
 
         // Handle the grouping of songs
         if (definition.SqlOperator == "group")
         {
-          string searchField = "";
-          if (table == "album")
-          {
-            searchField = "strAlbum";
-            useAlbumTable = true;
-            useArtistTable = false;
-            useAlbumArtistTable = false;
-            useGenreTable = false;
-            useSongTable = false;
-          }
-          else if (table == "artist")
+          if (table == "artist")
           {
             searchField = "strArtist";
             useAlbumTable = false;
@@ -250,53 +236,56 @@ namespace MediaPortal.GUI.Music
             useGenreTable = true;
             useSongTable = false;
           }
-          else if (defRoot.Where == "title")
+          else if (table == "tracks")
           {
-            searchField = "strTitle";
-            useAlbumTable = false;
+            if (useAlbumTable)
+            {
+              searchField = "strAlbum";
+              useAlbumTable = true;
+              useSongTable = false;
+            }
+            else
+            {
+              searchField = "strTitle";
+              useAlbumTable = false;
+              useSongTable = true;
+            }
+
             useArtistTable = false;
             useAlbumArtistTable = false;
             useGenreTable = false;
-            useSongTable = true;
           }
 
-          sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) IX, Count(*) from {2} GROUP BY IX", searchField, definition.Restriction, table);
+          sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) IX, Count(distinct {0}) from {2} GROUP BY IX", searchField, definition.Restriction, table);
           database.GetSongsByIndex(sql, out songs, CurrentLevel, useArtistTable, useAlbumTable, useAlbumArtistTable, useSongTable, useGenreTable);
           return songs;
         }
 
-        if (table == "album")
-        {
-          sql = String.Format("select * from album,albumartist where album.idAlbumArtist=albumartist.idAlbumArtist ");
-          if (whereClause != String.Empty) sql += "and " + whereClause;
-          if (orderClause != String.Empty) sql += orderClause;
-          database.GetSongsByFilter(sql, out songs, false, true, false, false, false);
-        }
-        else if (table == "artist")
+        if (table == "artist")
         {
           sql = String.Format("select * from artist ");
           if (whereClause != String.Empty) sql += "where " + whereClause;
           if (orderClause != String.Empty) sql += orderClause;
-          database.GetSongsByFilter(sql, out songs, true, false, false, false, false);
+          database.GetSongsByFilter(sql, out songs, true, false, false, false);
         }
         else if (table == "albumartist")
         {
           sql = String.Format("select * from albumartist ");
           if (whereClause != String.Empty) sql += "where " + whereClause;
           if (orderClause != String.Empty) sql += orderClause;
-          database.GetSongsByFilter(sql, out songs, false, false, true, false, false);
+          database.GetSongsByFilter(sql, out songs, false, true, false, false);
         }
         else if (table == "genre")
         {
           sql = String.Format("select * from genre ");
           if (whereClause != String.Empty) sql += "where " + whereClause;
           if (orderClause != String.Empty) sql += orderClause;
-          database.GetSongsByFilter(sql, out songs, false, false, false, false, true);
+          database.GetSongsByFilter(sql, out songs, false, false, false, true);
         }
         else if (defRoot.Where == "year")
         {
           songs = new List<Song>();
-          sql = String.Format("select distinct iYear from song ");
+          sql = String.Format("select distinct iYear from tracks ");
           SQLiteResultSet results = MusicDatabase.DirectExecute(sql);
           for (int i = 0; i < results.Rows.Count; i++)
           {
@@ -315,11 +304,11 @@ namespace MediaPortal.GUI.Music
         }
         else
         {
-          whereClause = "where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist ";
+          whereClause = "";
           BuildRestriction(defRoot, ref whereClause);
-          sql = String.Format("select * from song,album,genre,artist,path {0} {1}",
+          sql = String.Format("select * from tracks {0} {1}",
             whereClause, orderClause);
-          database.GetSongsByFilter(sql, out songs, true, true, true, true, true);
+          database.GetSongsByFilter(sql, out songs, true, true, true, true);
         }
       }
       else if (CurrentLevel < MaxLevels - 1)
@@ -342,20 +331,29 @@ namespace MediaPortal.GUI.Music
           if (defPrevious.SqlOperator == "group")
             previousRestriction = Convert.ToInt16(defPrevious.Restriction);
           string field = GetField(defCurrent.Where);
-          sql = String.Format("select UPPER(SUBSTR({0},1,{4})) IX, Count(distinct {1}.{0}), {1}.* from song,album,genre,artist,albumartist,path {2} {3}",
-                                            field, table, whereClause, orderClause, previousRestriction + Convert.ToInt16(defCurrent.Restriction));
+          sql = String.Format("select UPPER(SUBSTR({0},1,{3})) IX, Count(distinct {0}), * from tracks {1} {2}",
+                                            field, whereClause, orderClause, previousRestriction + Convert.ToInt16(defCurrent.Restriction));
 
           database.GetSongsByIndex(sql, out songs, CurrentLevel, useArtistTable, useAlbumTable, useAlbumArtistTable, useSongTable, useGenreTable);
         }
         else
         {
-          sql = String.Format("select distinct {0}.* from song,album,genre,artist,albumartist,path {1} {2}",
-                          table, whereClause, orderClause);
+          if (useAlbumTable)
+            whereClause += " group by strAlbum ";
+          else if (useArtistTable)
+            whereClause += " group by strArtist ";
+          else if (useAlbumArtistTable)
+            whereClause += " group by strAlbumArtist ";
+          else if (useGenreTable)
+            whereClause += " group by strAlbum ";
+
+          sql = String.Format("select distinct * from tracks {0} {1}",
+                          whereClause, orderClause);
 
           if (useAlbumTable && CurrentLevel > 0)
             isVariousArtistsAlbum = ModifyAlbumQueryForVariousArtists(ref sql);
 
-          database.GetSongsByFilter(sql, out songs, useArtistTable, useAlbumTable, useAlbumArtistTable, useSongTable, useGenreTable);
+          database.GetSongsByFilter(sql, out songs, false, false, true, false);
         }
 
         if (table == "album")
@@ -383,11 +381,11 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        sql = String.Format("select * from song,album,genre,artist,albumartist,path {0} {1}",
+        sql = String.Format("select * from tracks {0} {1}",
           whereClause, orderClause);
 
         bool modified = ModifySongsQueryForVariousArtists(ref sql);
-        database.GetSongsByFilter(sql, out songs, true, true, true, true, true);
+        database.GetSongsByFilter(sql, out songs, true, true, true, true);
       }
       return songs;
     }
@@ -464,17 +462,17 @@ namespace MediaPortal.GUI.Music
         if (whereClause != "") whereClause += " and ";
         // Was the value selected a "#"? Then we have the group of special chars and need to search for values < A
         if (filter.SelectedValue == "#")
-          whereClause += String.Format(" {0} < 'A'", GetFieldName(filter.Where));
+          whereClause += String.Format(" {0} < 'A'", GetField(filter.Where));
         else
         {
           restrictionLength += Convert.ToInt16(filter.Restriction);
-          whereClause += String.Format(" ({0} like '{1}%' or {0} like '{2}%')", GetFieldName(filter.Where), filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+          whereClause += String.Format(" ({0} like '{1}%' or {0} like '{2}%')", GetField(filter.Where), filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
         }
       }
       else
       {
         if (whereClause != "") whereClause += " and ";
-        whereClause += String.Format(" {0}='{1}'", GetFieldId(filter.Where), filter.SelectedValue);
+        whereClause += String.Format(" {0}='{1}'", GetField(filter.Where), filter.SelectedValue);
       }
     }
 
@@ -507,9 +505,10 @@ namespace MediaPortal.GUI.Music
             filter.SqlOperator = "like";
           }
         }
-        whereClause += String.Format(" {0} {1} '{2}'", GetFieldName(filter.Where), filter.SqlOperator, restriction);
+        whereClause += String.Format(" {0} {1} '{2}'", GetField(filter.Where), filter.SqlOperator, restriction);
       }
     }
+
     void BuildWhere(FilterDefinition filter, ref string whereClause)
     {
       if (filter.WhereValue != "*")
@@ -529,20 +528,22 @@ namespace MediaPortal.GUI.Music
         orderClause += String.Format(" Limit {0}", filter.Limit);
       }
     }
+
     string GetTable(string where, ref bool useSongTable, ref bool useAlbumTable, ref bool useArtistTable, ref bool useAlbumArtistTable, ref bool useGenreTable)
     {
-      if (where == "album") { useAlbumTable = true; return "album"; }
+      if (where == "album") { useSongTable = true; useAlbumTable = true; return "tracks"; }
       if (where == "artist") { useArtistTable = true; return "artist"; }
       if (where == "albumartist") { useAlbumArtistTable = true; return "albumartist"; }
-      if (where == "title") { useSongTable = true; return "song"; }
+      if (where == "title") { useSongTable = true; return "tracks"; }
       if (where == "genre") { useGenreTable = true; return "genre"; }
-      if (where == "year") { useSongTable = true; return "song"; }
-      if (where == "track") { useSongTable = true; return "song"; }
-      if (where == "timesplayed") { useSongTable = true; return "song"; }
-      if (where == "rating") { useSongTable = true; return "song"; }
-      if (where == "favorites") { useSongTable = true; return "song"; }
+      if (where == "year") { useSongTable = true; return "tracks"; }
+      if (where == "track") { useSongTable = true; return "tracks"; }
+      if (where == "timesplayed") { useSongTable = true; return "tracks"; }
+      if (where == "rating") { useSongTable = true; return "tracks"; }
+      if (where == "favorites") { useSongTable = true; return "tracks"; }
       return null;
     }
+
     string GetField(string where)
     {
       if (where == "album") return "strAlbum";
@@ -554,7 +555,7 @@ namespace MediaPortal.GUI.Music
       if (where == "track") return "iTrack";
       if (where == "timesplayed") return "iTimesPlayed";
       if (where == "rating") return "iRating";
-      if (where == "favorites") return "favorite";
+      if (where == "favorites") return "iFavorite";
       return null;
     }
 
@@ -572,63 +573,25 @@ namespace MediaPortal.GUI.Music
       if (where == "favorites") song.Favorite = (Int32.Parse(newValue) != 0);
       return null;
     }
-    string GetFieldId(string where)
-    {
-      if (where == "album") return "album.idAlbum";
-      if (where == "artist") return "song.idArtist";
-      if (where == "albumartist") return "song.idAlbumArtist";
-      if (where == "title") return "song.idSong";
-      if (where == "genre") return "genre.idGenre";
-      if (where == "year") return "song.iYear";
-      if (where == "track") return "song.iTrack";
-      if (where == "timesplayed") return "song.iTimesPlayed";
-      if (where == "rating") return "song.iRating";
-      if (where == "favorites") return "song.favorite";
-      return null;
-    }
-    string GetFieldName(string where)
-    {
-      if (where == "album") return "album.strAlbum";
-      if (where == "artist") return "artist.strArtist";
-      if (where == "albumartist") return "albumartist.strAlbumArtist";
-      if (where == "title") return "song.strTitle";
-      if (where == "genre") return "genre.strGenre";
-      if (where == "year") return "song.iYear";
-      if (where == "track") return "song.iTrack";
-      if (where == "timesplayed") return "song.iTimesPlayed";
-      if (where == "rating") return "song.iRating";
-      if (where == "favorites") return "song.favorite";
-      return null;
-    }
-    int GetFieldIdValue(Song song, string where)
-    {
-      if (where == "album") return song.albumId;
-      if (where == "artist") return song.artistId;
-      if (where == "albumartist") return song.albumartistId;
-      if (where == "title") return song.songId;
-      if (where == "genre") return song.genreId;
-      if (where == "year") return song.Year;
-      if (where == "track") return song.Track;
-      if (where == "timesplayed") return song.TimesPlayed;
-      if (where == "rating") return song.Rating;
-      if (where == "favorites")
-      {
-        if (song.Favorite) return 1;
-        return 0;
-      }
-      return -1;
-    }
 
-    string GetFieldNameValue(Song song, string where)
+    string GetFieldValue(Song song, string where)
     {
       if (where == "album") return song.Album;
       if (where == "artist") return song.Artist;
       if (where == "albumartist") return song.AlbumArtist;
       if (where == "title") return song.Title;
       if (where == "genre") return song.Genre;
-      return null;
+      if (where == "year") return song.Year.ToString();
+      if (where == "track") return song.Track.ToString();
+      if (where == "timesplayed") return song.TimesPlayed.ToString();
+      if (where == "rating") return song.Rating.ToString();
+      if (where == "favorites")
+      {
+        if (song.Favorite) return "1";
+        return "0";
+      }
+      return "";
     }
-
 
     public void SetLabel(Song song, ref GUIListItem item)
     {

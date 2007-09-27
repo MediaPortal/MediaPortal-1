@@ -53,14 +53,14 @@ namespace MediaPortal.Music.Database
     private static bool _useFolderArtForArtistGenre = false;
     private static bool _createMissingFolderThumbs = false;
     private static string _supportedExtensions = ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
-
-    private static DateTime _lastImport = DateTime.ParseExact("1900-01-01 00:00:00", "yyyy-M-d H:m:s", System.Globalization.CultureInfo.InvariantCulture);
+        private static DateTime _lastImport; 
     private static System.DateTime _currentDate = DateTime.Now;
 
     string[] ArtistNamePrefixes = new string[]
             {
               "the",
-              "les"
+              "les",
+              "die"
             };
 
     #endregion
@@ -85,7 +85,7 @@ namespace MediaPortal.Music.Database
 
     ~MusicDatabase()
     {
-      Log.Debug("MusicDatabase: Disposing database");
+      //Log.Debug("MusicDatabase: Disposing database");
       //if (MusicDB != null)
       //  MusicDB.Close();
     }
@@ -97,7 +97,7 @@ namespace MediaPortal.Music.Database
       get 
       {
         if (MusicDbClient == null)
-          MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV9.db3"));
+          MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3"));
         
         return MusicDbClient; 
       }
@@ -147,141 +147,88 @@ namespace MediaPortal.Music.Database
         }
         catch (Exception) { }
 
-        // no database V9 - copy and update V8
-        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV9.db3")))
-        {
-          if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV8.db3")))
-          {
-            File.Copy((Config.GetFile(Config.Dir.Database, "MusicDatabaseV8.db3")), (Config.GetFile(Config.Dir.Database, "MusicDatabaseV9.db3")), false);
-            if (UpdateDB_V8_to_V9())
-            {
-              Log.Info("MusicDatabaseV9: old V8 database successfully updated");
-            }
-            else
-            {
-              Log.Error("MusicDatabaseV8: error while trying to update your database to V9");
-              // Remove the invalid V9 database
-              File.Delete(Config.GetFile(Config.Dir.Database, "MusicDatabaseV9.db3"));
-            }
-          }
-        }
-
+        // When we have deleted the database, we need to scan from the beginning, regardsless of the last import setting
+        if (!System.IO.File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3")))
+          _lastImport = DateTime.ParseExact("1900-01-01 00:00:00", "yyyy-M-d H:m:s", System.Globalization.CultureInfo.InvariantCulture); ;
 
         // Get the DB handle or create it if necessary
         MusicDbClient = DbConnection;
 
-
-        // set connection params
         DatabaseUtility.SetPragmas(MusicDbClient);
 
-        DatabaseUtility.AddTable(MusicDbClient, "artist", "CREATE TABLE artist ( idArtist integer primary key, strArtist text, strSortName text)");
-        DatabaseUtility.AddTable(MusicDbClient, "album", "CREATE TABLE album ( idAlbum integer primary key, idAlbumArtist integer, strAlbum text, iNumArtists integer)");
-        DatabaseUtility.AddTable(MusicDbClient, "albumartist", "CREATE TABLE albumartist ( idAlbumArtist integer primary key, strAlbumArtist text)");
-        DatabaseUtility.AddTable(MusicDbClient, "genre", "CREATE TABLE genre ( idGenre integer primary key, strGenre text)");
-        DatabaseUtility.AddTable(MusicDbClient, "path", "CREATE TABLE path ( idPath integer primary key,  strPath text)");
-        DatabaseUtility.AddTable(MusicDbClient, "albuminfo", "CREATE TABLE albuminfo ( idAlbumInfo integer primary key, idAlbum integer, idArtist integer, idAlbumArtist integer,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer)");
-        DatabaseUtility.AddTable(MusicDbClient, "artistinfo", "CREATE TABLE artistinfo ( idArtistInfo integer primary key, idArtist integer, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text)");
-        DatabaseUtility.AddTable(MusicDbClient, "song", "CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idAlbumArtist integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer, favorite integer, dateadded timestamp)");
+        // Tracks table containing information for songs 
+        DatabaseUtility.AddTable(
+              MusicDbClient, "tracks",
+              @"CREATE TABLE tracks ( " +
+          // Unique id Autoincremented
+              "idTrack integer primary key autoincrement, " +
+          // Full Path of the file. 
+              "strPath text, " +
+          // Artist
+              "strArtist text, strArtistSortName text, strAlbumArtist text, " +
+          // Album (How to handle Various Artist Albums)
+              "strAlbum text, " +
+          // Genre (multiple genres)
+              "strGenre text, " +
+          // Song
+              "strTitle text, iTrack integer, iNumTracks integer, iDuration integer, iYear integer, " +
+              "iTimesPlayed integer, iRating integer, iFavorite integer, iResumeAt integer, iDisc integer, iNumDisc integer, " +
+              "iGainTrack double,  iPeakTrack double, " +
+              "strLyrics text, musicBrainzID text, " +
+              "dateLastPlayed timestamp, dateAdded timestamp" +
+              ")"
+              );
+
         // Add a Trigger for inserting the Date into the song table, whenever we do an update
-        string strSQL = "CREATE TRIGGER IF NOT EXISTS insert_song_timeStamp AFTER INSERT ON song " +
+        string strSQL = "CREATE TRIGGER IF NOT EXISTS insert_song_timeStamp AFTER INSERT ON tracks " +
                         "BEGIN " +
-                        " UPDATE song SET dateadded = DATETIME('NOW') " +
+                        " UPDATE tracks SET dateAdded = DATETIME('NOW') " +
                         " WHERE rowid = new.rowid; " +
                         "END;";
         MusicDbClient.Execute(strSQL);
 
+        // Indices for Tracks table
+        DatabaseUtility.AddIndex(MusicDbClient, "idxpath_strPath", "CREATE INDEX idxpath_strPath ON tracks(strPath ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxartist_strArtist", "CREATE INDEX idxartist_strArtist ON tracks(strArtist ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxartist_strArtistSortName", "CREATE INDEX idxartist_strArtistSortName ON tracks(strArtistSortName ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxalbum_strAlbumArtist", "CREATE INDEX idxalbum_strAlbumArtist ON tracks(strAlbumArtist ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxalbum_strAlbum", "CREATE INDEX idxalbum_strAlbum ON tracks(strAlbum ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxgenre_strGenre", "CREATE INDEX idxgenre_strGenre ON tracks(strGenre ASC)");
+
+        // Artist 
+        DatabaseUtility.AddTable(MusicDbClient, "artist", "CREATE TABLE artist ( idArtist integer primary key autoincrement, strArtist text)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxartisttable_strArtist", "CREATE INDEX idxartisttable_strArtist ON artist(strArtist ASC)");
+
+        // AlbumArtist 
+        DatabaseUtility.AddTable(MusicDbClient, "albumartist", "CREATE TABLE albumartist ( idAlbumArtist integer primary key autoincrement, strAlbumArtist text)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxalbumartisttable_strAlbumArtist", "CREATE INDEX idxalbumartisttable_strAlbumArtist ON albumartist(strAlbumArtist ASC)");
+
+        // Genre
+        DatabaseUtility.AddTable(MusicDbClient, "genre", "CREATE TABLE genre ( idGenre integer primary key autoincrement, strGenre text)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxgenretable_strGenre", "CREATE INDEX idxgenretable_strGenre ON genre(strGenre ASC)");
+
+        // Artist Info and Album Info
+        DatabaseUtility.AddTable(MusicDbClient, "albuminfo", "CREATE TABLE albuminfo ( idAlbumInfo integer primary key autoincrement, strAlbum text, strArtist text, strAlbumArtist text,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer)");
+        DatabaseUtility.AddTable(MusicDbClient, "artistinfo", "CREATE TABLE artistinfo ( idArtistInfo integer primary key autoincrement, strArtist text, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text)");
+
+        // Indices for Album and Artist Info
+        DatabaseUtility.AddIndex(MusicDbClient, "idxalbuminfo_strAlbum", "CREATE INDEX idxalbuminfo_strAlbum ON albuminfo(strAlbum ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxalbuminfo_strArtist", "CREATE INDEX idxalbuminfo_strArtist ON albuminfo(strArtist ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxalbuminfo_idGenre", "CREATE INDEX idxalbuminfo_idGenre ON albuminfo(idGenre ASC)");
+        DatabaseUtility.AddIndex(MusicDbClient, "idxartistinfo_strArtist", "CREATE INDEX idxartistinfo_strArtist ON artistinfo(strArtist ASC)");
+
+        // Scrobble table
         DatabaseUtility.AddTable(MusicDbClient, "scrobbleusers", "CREATE TABLE scrobbleusers ( idScrobbleUser integer primary key, strUsername text, strPassword text)");
         DatabaseUtility.AddTable(MusicDbClient, "scrobblesettings", "CREATE TABLE scrobblesettings ( idScrobbleSettings integer primary key, idScrobbleUser integer, iAddArtists integer, iAddTracks integer, iNeighbourMode integer, iRandomness integer, iScrobbleDefault integer, iSubmitOn integer, iDebugLog integer, iOfflineMode integer, iPlaylistLimit integer, iPreferCount integer, iRememberStartArtist integer)");
         DatabaseUtility.AddTable(MusicDbClient, "scrobblemode", "CREATE TABLE scrobblemode ( idScrobbleMode integer primary key, idScrobbleUser integer, iSortID integer, strModeName text)");
         DatabaseUtility.AddTable(MusicDbClient, "scrobbletags", "CREATE TABLE scrobbletags ( idScrobbleTag integer primary key, idScrobbleMode integer, iSortID integer, strTagName text)");
-
-        DatabaseUtility.AddIndex(MusicDbClient, "idxartist_strArtist", "CREATE UNIQUE INDEX idxartist_strArtist ON artist(strArtist ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxartist_strSortName", "CREATE INDEX idxartist_strSortName ON artist(strSortName ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxalbum_idAlbumArtist", "CREATE INDEX idxalbum_idAlbumArtist ON album(idAlbumArtist ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxalbum_strAlbum", "CREATE INDEX idxalbum_strAlbum ON album(strAlbum ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxgenre_strGenre", "CREATE UNIQUE INDEX idxgenre_strGenre ON genre(strGenre ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxpath_strPath", "CREATE UNIQUE INDEX idxpath_strPath ON path(strPath ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxalbuminfo_idAlbum", "CREATE INDEX idxalbuminfo_idAlbum ON albuminfo(idAlbum ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxalbuminfo_idArtist", "CREATE INDEX idxalbuminfo_idArtist ON albuminfo(idArtist ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxalbuminfo_idGenre", "CREATE INDEX idxalbuminfo_idGenre ON albuminfo(idGenre ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxartistinfo_idArtist", "CREATE INDEX idxartistinfo_idArtist ON artistinfo(idArtist ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxsong_idArtist", "CREATE INDEX idxsong_idArtist ON song(idArtist ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxsong_idAlbum", "CREATE INDEX idxsong_idAlbum ON song(idAlbum ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxsong_idGenre", "CREATE INDEX idxsong_idGenre ON song(idGenre ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxsong_idPath", "CREATE INDEX idxsong_idPath ON song(idPath ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxsong_strTitle", "CREATE INDEX idxsong_strTitle ON song(strTitle ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxsong_strFileName", "CREATE INDEX idxsong_strFileName ON song(strFileName ASC)");
-        DatabaseUtility.AddIndex(MusicDbClient, "idxsong_dwFileNameCRC", "CREATE INDEX idxsong_dwFileNameCRC ON song(dwFileNameCRC ASC)");
-
       }
 
       catch (Exception ex)
       {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("MusicDatabase: exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
-      Log.Info("music database opened");
-    }
-
-    private bool UpdateDB_V8_to_V9()
-    {
-      try
-      {
-        bool success = true;
-        // We're working on a copy of the V8 database        
-        using (SQLiteClient update_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV9.db3")))
-        {
-          DatabaseUtility.SetPragmas(update_db);
-          SQLiteResultSet results;
-
-          // workaround for missing ALTER TABLE commands
-          string strSQL = @"CREATE TEMPORARY TABLE album_backup(idAlbum integer primary key, idAlbumArtist integer, strAlbum text, iNumArtists integer)";
-          results = update_db.Execute(strSQL);
-          strSQL = "INSERT INTO album_backup SELECT idAlbum, idArtist, strAlbum, iNumArtists FROM album";
-          results = update_db.Execute(strSQL);
-          strSQL = "DROP TABLE album";
-          results = update_db.Execute(strSQL);
-          strSQL = "CREATE TABLE album(idAlbum integer primary key, idAlbumArtist integer, strAlbum text, iNumArtists integer)";
-          results = update_db.Execute(strSQL);
-          strSQL = "INSERT INTO album SELECT idAlbum, idAlbumArtist, strAlbum, iNumArtists FROM album_backup";
-          results = update_db.Execute(strSQL);
-          strSQL = "DROP TABLE album_backup";
-          results = update_db.Execute(strSQL);
-
-          strSQL = "CREATE TABLE albumartist ( idAlbumArtist integer primary key, strAlbumArtist text)";
-          results = update_db.Execute(strSQL);
-          strSQL = "INSERT INTO albumartist SELECT idArtist, strArtist FROM artist";
-          results = update_db.Execute(strSQL);
-
-          strSQL = "ALTER TABLE albuminfo ADD COLUMN idAlbumArtist integer";
-          results = update_db.Execute(strSQL);
-          strSQL = "UPDATE albuminfo SET idAlbumArtist=(SELECT idAlbumArtist FROM album where album.idAlbum=albuminfo.idAlbum)";
-          results = update_db.Execute(strSQL);
-
-          strSQL = "ALTER TABLE song ADD COLUMN idAlbumArtist integer";
-          results = update_db.Execute(strSQL);
-          strSQL = "UPDATE song SET idAlbumArtist=(SELECT idAlbumArtist FROM album where album.idAlbum=song.idAlbum)";
-          results = update_db.Execute(strSQL);
-
-          strSQL = "ALTER TABLE scrobblesettings ADD COLUMN iAnnounce integer";
-          results = update_db.Execute(strSQL);
-
-          //strSQL = "DROP INDEX idxalbum_idArtist";
-          //results = update_db.Execute(strSQL);
-
-          // do a quick test whether the update was successful
-          if (!DatabaseUtility.TableColumnExists(update_db, "album", "idAlbumArtist"))
-            success = false;
-
-          // write the journal before using closes the db handle
-          update_db.Close();
-        }
-        return success;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("musicdatabase: Error updating V8 to V9: {0} stack: {1}", ex.Message, ex.StackTrace);
-        return false;
-      }
+      Log.Info("MusicDatabase: Database opened");
     }
     #endregion
 
@@ -290,26 +237,26 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        MusicDbClient.Execute("begin");
+        MusicDatabase.DirectExecute("begin");
       }
       catch (Exception ex)
       {
-        Log.Error("BeginTransaction: musicdatabase begin transaction failed exception err:{0} ", ex.Message);
+        Log.Error("MusicDatabase: BeginTransaction: musicdatabase begin transaction failed exception err:{0} ", ex.Message);
         //Open();
       }
     }
 
     public void CommitTransaction()
     {
-      Log.Info("Commit will effect {0} rows", MusicDbClient.ChangedRows());
+      Log.Debug("MusicDatabase: Commit will effect {0} rows", MusicDatabase.Instance.DbConnection.ChangedRows());
       SQLiteResultSet CommitResults;
       try
       {
-        CommitResults = MusicDbClient.Execute("commit");
+        CommitResults = MusicDatabase.DirectExecute("commit");
       }
       catch (Exception ex)
       {
-        Log.Error("musicdatabase commit failed exception err:{0} ", ex.Message);
+        Log.Error("MusicDatabase: Commit failed exception err:{0} ", ex.Message);
         Open();
       }
     }
@@ -318,11 +265,11 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        MusicDbClient.Execute("rollback");
+        MusicDatabase.DirectExecute("rollback");
       }
       catch (Exception ex)
       {
-        Log.Error("musicdatabase rollback failed exception err:{0} ", ex.Message);
+        Log.Error("MusicDatabase: Rollback failed exception err:{0} ", ex.Message);
         Open();
       }
     }

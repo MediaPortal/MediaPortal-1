@@ -451,53 +451,56 @@ namespace MediaPortal.GUI.Music
       FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
       if (filter.SqlOperator == "group")
       {
-        if (filter.Where == "artist")
-        {
-          string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, item.Label);
-          if (System.IO.File.Exists(strThumb))
-          {
-            item.IconImage = strThumb;
-            item.IconImageBig = strThumb;
-            item.ThumbnailImage = strThumb;
-            return;
-          }
-        }
-        else if (filter.Where == "album")
-        {
-          string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicAlbum, item.Label);
-          if (System.IO.File.Exists(strThumb))
-          {
-            item.IconImage = strThumb;
-            item.IconImageBig = strThumb;
-            item.ThumbnailImage = strThumb;
-            return;
-          }
-        }
-        else if (filter.Where == "genre")
-        {
-          string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieGenre, item.Label);
-          if (System.IO.File.Exists(strThumb))
-          {
-            item.IconImage = strThumb;
-            item.IconImageBig = strThumb;
-            item.ThumbnailImage = strThumb;
-            return;
-          }
-        }
-        else if (filter.Where == "title")
-        {
-          string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicAlbum, item.Label);
-          if (System.IO.File.Exists(strThumb))
-          {
-            item.IconImage = strThumb;
-            item.IconImageBig = strThumb;
-            item.ThumbnailImage = strThumb;
-            return;
-          }
-        }
-        return;
+
+        // Really fetch thumbs for ONE char?
+
+        //if (filter.Where == "artist")
+        //{
+        //  string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, item.Label);
+        //  if (System.IO.File.Exists(strThumb))
+        //  {
+        //    item.IconImage = strThumb;
+        //    item.IconImageBig = strThumb;
+        //    item.ThumbnailImage = strThumb;
+        //    return;
+        //  }
+        //}
+        //else if (filter.Where == "album")
+        //{
+        //  string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicAlbum, item.Label);
+        //  if (System.IO.File.Exists(strThumb))
+        //  {
+        //    item.IconImage = strThumb;
+        //    item.IconImageBig = strThumb;
+        //    item.ThumbnailImage = strThumb;
+        //    return;
+        //  }
+        //}
+        //else if (filter.Where == "genre")
+        //{
+        //  string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieGenre, item.Label);
+        //  if (System.IO.File.Exists(strThumb))
+        //  {
+        //    item.IconImage = strThumb;
+        //    item.IconImageBig = strThumb;
+        //    item.ThumbnailImage = strThumb;
+        //    return;
+        //  }
+        //}
+        //else if (filter.Where == "title")
+        //{
+        //  string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicAlbum, item.Label);
+        //  if (System.IO.File.Exists(strThumb))
+        //  {
+        //    item.IconImage = strThumb;
+        //    item.IconImageBig = strThumb;
+        //    item.ThumbnailImage = strThumb;
+        //    return;
+        //  }
+        //}
+        //return;
       }
-      if (song.genreId >= 0 && song.albumId < 0 && song.artistId < 0 && song.songId < 0)
+      if (song.Genre.Equals(item.Label))
       {
         string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicGenre, item.Label);
         if (System.IO.File.Exists(strThumb))
@@ -517,8 +520,7 @@ namespace MediaPortal.GUI.Music
           }
         }
       }
-      else if ((song.artistId >= 0 && song.albumId < 0 && song.songId < 0) ||
-               (song.albumartistId >= 0 && song.albumId < 0 && song.songId < 0))
+      else if (song.Artist.Equals(item.Label))
       {
         string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, item.Label);
         if (System.IO.File.Exists(strThumb))
@@ -527,8 +529,8 @@ namespace MediaPortal.GUI.Music
           item.IconImageBig = strThumb;
           item.ThumbnailImage = strThumb;
         }
-      }
-      else if (song.albumId >= 0)
+      }        
+      else if (song.Album.Length > 1) // exclude "#"
       {
         MusicTag tag = item.MusicTag as MusicTag;
         string strThumb = GUIMusicFiles.GetAlbumThumbName(tag.Artist, tag.Album);
@@ -549,32 +551,34 @@ namespace MediaPortal.GUI.Music
             item.ThumbnailImage = strThumb;
           }
 
-        // MediaPortal.Util.Utils.GetFolderThumb returns an empty string when item.Path.Length == 0
+          // Ouch.. Who did that?
+
+          // MediaPortal.Util.Utils.GetFolderThumb returns an empty string when item.Path.Length == 0
           // so we'll pull to info from the db to reconstruct the full album path
-          else if (strThumb.Length == 0)
-          {
-            string albumPath = m_database.GetAlbumPath(song.albumartistId, song.albumId);
+          //else if (strThumb.Length == 0)
+          //{
+          //  string albumPath = m_database.GetAlbumPath(song.albumartistId, song.albumId);
 
-            if (albumPath.Length > 0)
-            {
-              albumPath = albumPath.TrimEnd(new char[] { '\\' });
-              albumPath += "\\";
+          //  if (albumPath.Length > 0)
+          //  {
+          //    albumPath = albumPath.TrimEnd(new char[] { '\\' });
+          //    albumPath += "\\";
 
-              strThumb = MediaPortal.Util.Utils.GetFolderThumb(albumPath);
-              if (System.IO.File.Exists(strThumb))
-              {
-                item.IconImage = strThumb;
-                item.IconImageBig = strThumb;
-                item.ThumbnailImage = strThumb;
+          //    strThumb = MediaPortal.Util.Utils.GetFolderThumb(albumPath);
+          //    if (System.IO.File.Exists(strThumb))
+          //    {
+          //      item.IconImage = strThumb;
+          //      item.IconImageBig = strThumb;
+          //      item.ThumbnailImage = strThumb;
 
-                // Save a copy to the \thumbs folder so we don't need to do this again
-                System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(strThumb);
+          //      // Save a copy to the \thumbs folder so we don't need to do this again
+          //      System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(strThumb);
 
-                if (bmp != null)
-                  bmp.Save(albumThumb);
-              }
-            }
-          }
+          //      if (bmp != null)
+          //        bmp.Save(albumThumb);
+          //    }
+          //  }
+          //}
         }
       }
       else
@@ -1072,7 +1076,7 @@ namespace MediaPortal.GUI.Music
       foreach (Song album in albums)
       {
         List<Song> albumSongs = new List<Song>();
-        m_database.GetSongsByAlbumArtistAlbum(album.albumartistId, album.albumId, ref albumSongs);
+        MusicDatabase.Instance.GetSongsByAlbumArtistAlbum(album.AlbumArtist, album.Album, ref albumSongs);
 
         foreach (Song albumSong in albumSongs)
         {
@@ -1097,16 +1101,16 @@ namespace MediaPortal.GUI.Music
         {
           List<Song> songs = new List<Song>();
           Song s = (Song)pItem.AlbumInfoTag;
-          bool isArtistItem = s.artistId != -1 && s.albumId == -1 && s.albumartistId == -1 && s.genreId == -1 && s.Year <= 0;
-          bool isAlbumItem = s.albumId != -1;
-          bool isAlbumArtistItem = s.albumartistId != -1 && s.artistId == -1 && s.albumId == -1 && s.genreId == -1 && s.Year <= 0;
-          bool isGenreItem = s.genreId != -1;
-          bool isYearItem = s.Year != -1 && s.artistId == -1 && s.albumId == -1 && s.albumartistId == -1 && s.genreId == -1;
+          bool isArtistItem = !string.IsNullOrEmpty(s.Artist) && string.IsNullOrEmpty(s.Album) && string.IsNullOrEmpty(s.AlbumArtist) && string.IsNullOrEmpty(s.Genre) && s.Year <= 0;
+          bool isAlbumItem = !string.IsNullOrEmpty(s.Album);
+          bool isAlbumArtistItem = !string.IsNullOrEmpty(s.AlbumArtist) && string.IsNullOrEmpty(s.Genre) && s.Year <= 0;
+          bool isGenreItem = !string.IsNullOrEmpty(s.Genre);
+          bool isYearItem = s.Year != -1 && string.IsNullOrEmpty(s.Artist) && string.IsNullOrEmpty(s.Album) && string.IsNullOrEmpty(s.Genre);
 
           if (isArtistItem)
           {
-            m_database.GetSongsByArtist(s.artistId, ref songs);
-            AddSongsToPlayList(songs, playList);
+            if (MusicDatabase.Instance.GetSongsByArtist(s.Artist, ref songs))
+              AddSongsToPlayList(songs, playList);
           }
 
           else if (isAlbumItem)
@@ -1117,20 +1121,20 @@ namespace MediaPortal.GUI.Music
 
           if (isAlbumArtistItem)
           {
-            m_database.GetSongsByAlbumArtist(s.albumartistId, ref songs);
-            AddAlbumsToPlayList(songs, playList);
+            if (MusicDatabase.Instance.GetSongsByAlbumArtist(s.AlbumArtist, ref songs))
+              AddAlbumsToPlayList(songs, playList);
           }
 
           else if (isGenreItem)
           {
-            m_database.GetSongsByGenre(s.genreId, ref songs);
-            AddSongsToPlayList(songs, playList);
+            if (MusicDatabase.Instance.GetSongsByGenre(s.Genre, ref songs))
+              AddSongsToPlayList(songs, playList);
           }
 
           else if (isYearItem)
           {
-            m_database.GetSongsByYear(s.Year, ref songs);
-            AddSongsToPlayList(songs, playList);
+            if (MusicDatabase.Instance.GetSongsByYear(s.Year, ref songs))
+              AddSongsToPlayList(songs, playList);
           }
         }
       }

@@ -359,36 +359,8 @@ namespace MediaPortal.MusicImport
                 if (importUnknown || (trackInfo.MusicTag.Artist != "Unknown Artist") || (trackInfo.MusicTag.Album != "Unknown Album"))
                 {
                   MusicDatabase dbs = MusicDatabase.Instance;
-                  Song song = new Song();
-
-                  song.FileName = trackInfo.TargetFileName;
-                  song.Album = trackInfo.MusicTag.Album;
-                  song.Artist = trackInfo.MusicTag.Artist;
-                  song.Duration = trackInfo.MusicTag.Duration;
-                  song.Genre = trackInfo.MusicTag.Genre;
-                  song.Rating = trackInfo.MusicTag.Rating;
-                  song.TimesPlayed = trackInfo.MusicTag.TimesPlayed;
-                  song.Title = trackInfo.MusicTag.Title;
-                  song.Track = trackInfo.MusicTag.Track;
-                  song.Year = trackInfo.MusicTag.Year;
-                  dbs.AddSong(song, true);
+                  dbs.AddSong(trackInfo.TargetFileName);
                 }
-
-                //if (iTunesApp == null)
-                //{
-                //  iTunesApp = new iTunesLib.iTunesAppClass();
-                //}
-                //IITLibraryPlaylist mainLibrary = iTunesApp.LibraryPlaylist;
-                //mainLibrary.AddFile(trackInfo.TargetFileName);
-
-
-                // what about???
-                // song.albumId;
-                // song.artistId;
-                // song.Favorite;
-                // song.genreId;
-                // song.songId;
-                // trackInfo.MusicTag.Comment;
               }
             }
             catch

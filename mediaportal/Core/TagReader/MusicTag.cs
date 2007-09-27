@@ -43,6 +43,7 @@ namespace MediaPortal.TagReader
     internal int m_iYear = 0;
     internal int m_iDuration = 0;
     internal int m_iTrack = 0;
+    internal int m_iNumTrack = 0;
     internal int m_TimesPlayed = 0;
     internal int m_iRating = 0;
     internal byte[] m_CoverArtImageBytes = null;
@@ -52,6 +53,8 @@ namespace MediaPortal.TagReader
     internal int m_BitRate = 0;
     internal string m_FileName = string.Empty;
     internal string m_Lyrics = string.Empty;
+    internal int m_iDiscId = 0;
+    internal int m_iNumDisc = 0;
     #endregion
 
     #region ctor
@@ -101,12 +104,15 @@ namespace MediaPortal.TagReader
       m_iYear = 0;
       m_iDuration = 0;
       m_iTrack = 0;
+      m_iNumTrack = 0;
       m_TimesPlayed = 0;
       m_iRating = 0;
       m_BitRate = 0;
       m_Composer = "";
       m_AlbumArtist = "";
       m_Lyrics = "";
+      m_iDiscId = 0;
+      m_iNumDisc = 0;
     }
 
     public bool IsMissingData
@@ -215,6 +221,33 @@ namespace MediaPortal.TagReader
     {
       get { return m_iTrack; }
       set { m_iTrack = value; }
+    }
+
+    /// <summary>
+    /// Property to get/set the Total Track number field of the music file
+    /// </summary>
+    public int TrackTotal
+    {
+      get { return m_iNumTrack; }
+      set { m_iNumTrack = value; }
+    }
+
+    /// <summary>
+    /// Property to get/set the Disc Id field of the music file
+    /// </summary>
+    public int DiscID
+    {
+      get { return m_iDiscId; }
+      set { m_iDiscId = value; }
+    }
+
+    /// <summary>
+    /// Property to get/set the Total Disc number field of the music file
+    /// </summary>
+    public int DiscTotal
+    {
+      get { return m_iNumDisc; }
+      set { m_iNumDisc = value; }
     }
 
     /// <summary>
