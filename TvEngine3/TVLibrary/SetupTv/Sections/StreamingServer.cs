@@ -115,10 +115,9 @@ namespace SetupTv.Sections
 				RtspClient client = (RtspClient)item.Tag;
 				
 				User user = new User();
-				user.Name = System.Net.Dns.GetHostByAddress(client.IpAdress).HostName;				
+				user.Name = System.Net.Dns.GetHostEntry(client.IpAdress).HostName;								
 
-				IList dbsCards = Card.ListAll();
-				
+				IList dbsCards = Card.ListAll();				
 
         foreach (Card card in dbsCards)
         {
