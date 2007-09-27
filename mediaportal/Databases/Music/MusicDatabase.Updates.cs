@@ -541,26 +541,33 @@ namespace MediaPortal.Music.Database
     /// <param name="totalFiles"></param>
     private void CheckFileForInclusion(string file, ref int totalFiles)
     {
-      string ext = System.IO.Path.GetExtension(file).ToLower();
-      if (ext == ".m3u")
-        return;
-      if (ext == ".pls")
-        return;
-      if (ext == ".wpl")
-        return;
-      if (ext == ".b4s")
-        return;
-      if ((File.GetAttributes(file) & FileAttributes.Hidden) == FileAttributes.Hidden)
-        return;
+      try
+      {
 
-      // Only get files with the required extension
-      if (_supportedExtensions.IndexOf(ext) == -1)
-        return;
+        string ext = System.IO.Path.GetExtension(file).ToLower();
+        if (ext == ".m3u")
+          return;
+        if (ext == ".pls")
+          return;
+        if (ext == ".wpl")
+          return;
+        if (ext == ".b4s")
+          return;
+        if ((File.GetAttributes(file) & FileAttributes.Hidden) == FileAttributes.Hidden)
+          return;
 
-      // Only Add files to the list, if they have been Created / Updated after the Last Import date
-      if (System.IO.File.GetCreationTime(file) > _lastImport || System.IO.File.GetLastWriteTime(file) > _lastImport)
-        availableFiles.Add(file);
+        // Only get files with the required extension
+        if (_supportedExtensions.IndexOf(ext) == -1)
+          return;
 
+        // Only Add files to the list, if they have been Created / Updated after the Last Import date
+        if (System.IO.File.GetCreationTime(file) > _lastImport || System.IO.File.GetLastWriteTime(file) > _lastImport)
+          availableFiles.Add(file);
+      }
+      catch (Exception)
+      {
+        // File.GetAttributes may fail if (file) is 0 bytes long
+      }
       totalFiles++;
     }
 
