@@ -74,6 +74,7 @@ namespace TvService
           //RemoteControl.Instance.GrabEpg();
           return false;
         }
+				if (grabber == null) return false;
         _cardHandler.Card.GrabEpg(grabber);
         return true;
 
