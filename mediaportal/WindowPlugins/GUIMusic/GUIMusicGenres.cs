@@ -1065,46 +1065,39 @@ namespace MediaPortal.GUI.Music
         {
           List<Song> songs = new List<Song>();
           Song s = (Song)pItem.AlbumInfoTag;
-          bool isArtistItem = !string.IsNullOrEmpty(s.Artist) && string.IsNullOrEmpty(s.Album) && string.IsNullOrEmpty(s.AlbumArtist) && string.IsNullOrEmpty(s.Genre) && s.Year <= 0;
-          bool isAlbumItem = !string.IsNullOrEmpty(s.Album);
-          bool isAlbumArtistItem = !string.IsNullOrEmpty(s.AlbumArtist) && string.IsNullOrEmpty(s.Genre) && s.Year <= 0;
-          bool isGenreItem = !string.IsNullOrEmpty(s.Genre);
-          bool isYearItem = s.Year != -1 && string.IsNullOrEmpty(s.Artist) && string.IsNullOrEmpty(s.Album) && string.IsNullOrEmpty(s.Genre);
 
-          if (isArtistItem)
-          {
-            if (MusicDatabase.Instance.GetSongsByArtist(s.Artist, ref songs))
-              AddSongsToPlayList(songs, playList);
-          }
+          FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
 
-          else if (isAlbumItem)
+          switch (filter.Where)
           {
-            songs.Add(s);
-            AddAlbumsToPlayList(songs, playList);
-          }
-
-          if (isAlbumArtistItem)
-          {
-            if (MusicDatabase.Instance.GetSongsByAlbumArtist(s.AlbumArtist, ref songs))
+            case "artist":
+              if (MusicDatabase.Instance.GetSongsByArtist(s.Artist, ref songs))
+                AddSongsToPlayList(songs, playList);
+              break;
+            case "artistalbum":
+              if (MusicDatabase.Instance.GetSongsByAlbumArtist(s.AlbumArtist, ref songs))
+                AddAlbumsToPlayList(songs, playList);
+              break;
+            case "album":
+              songs.Add(s);
               AddAlbumsToPlayList(songs, playList);
+              break;
+            case "genre":
+              if (MusicDatabase.Instance.GetSongsByGenre(s.Genre, ref songs))
+                AddSongsToPlayList(songs, playList);
+              break;
+            case "year":
+              if (MusicDatabase.Instance.GetSongsByYear(s.Year, ref songs))
+                AddSongsToPlayList(songs, playList);
+              break;
+            default:
+              Log.Debug("GUIMusicGenres: AddItemToPlayList - could not determine type for {0}", s.ToShortString());
+              break;
           }
 
-          else if (isGenreItem)
-          {
-            if (MusicDatabase.Instance.GetSongsByGenre(s.Genre, ref songs))
-              AddSongsToPlayList(songs, playList);
-          }
-
-          else if (isYearItem)
-          {
-            if (MusicDatabase.Instance.GetSongsByYear(s.Year, ref songs))
-              AddSongsToPlayList(songs, playList);
-          }
         }
       }
-
-// item is not a folder
-      else
+      else // item is not a folder
       {
         if (pItem.AlbumInfoTag != null)
         {

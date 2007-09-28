@@ -49,6 +49,7 @@ namespace MediaPortal.FoobarPlugin
     public static extern IntPtr FindWindow(
       [MarshalAs(UnmanagedType.LPTStr)] string lpClassName,
       [MarshalAs(UnmanagedType.LPTStr)] string lpWindowName);
+
     [StructLayout(LayoutKind.Sequential)]
     struct COPYDATASTRUCT
     {
