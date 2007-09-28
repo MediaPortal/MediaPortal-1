@@ -303,7 +303,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ExternalDisplay\Drivers\DM140GINK.cs" />
-    <Compile Include="ExternalDisplay\Drivers\iMONLCDg.cs" />
+    <Compile Include="ExternalDisplay\Drivers\FicSpectra.cs" />
+    <Compile Include="ExternalDisplay\Drivers\iMONLCDg.cs">
+    </Compile>
+    <Compile Include="ExternalDisplay\Drivers\MatrixMX.cs" />
     <Compile Include="ExternalDisplay\Drivers\ScaleoEV.cs" />
     <Compile Include="ExternalDisplay\ExternalDisplay.cs">
       <SubType>Code</SubType>

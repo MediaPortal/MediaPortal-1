@@ -59,6 +59,7 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
     private int _HIDHandle;
     private bool _MyDeviceDetected;
     private int _Volume = -1;
+    private bool[] FICIconStatus = new bool[50];
     private BitVector32 _SymbolsVisible = new BitVector32(0);
 
     #endregion
@@ -241,21 +242,51 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
       {
         throw new NotSupportedException("Display not found");
       }
-      if (Process.GetProcessesByName("ehshell").Length > 0)
+      if (_VendorID == 0x0547 && _ProductID == 0x7000)
       {
-        return; //exit if xpMCE is running
+          clearLines();          
       }
-      Hid.OutputReport myOutputReport = new Hid.OutputReport();
-      myOutputReport.Write(new byte[] {0x00, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-      myOutputReport.Write(new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-      myOutputReport.Write(new byte[] {0x00, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-      myOutputReport.Write(new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-      myOutputReport.Write(new byte[] {0x00, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-      myOutputReport.Write(new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-      myOutputReport.Write(new byte[] {0x00, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-      myOutputReport.Write(new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
+      else
+      {
+          if (Process.GetProcessesByName("ehshell").Length > 0)
+          {
+              return; //exit if xpMCE is running
+          }
+          //code for Scaleo EV only
+          Hid.OutputReport myOutputReport = new Hid.OutputReport();
+          myOutputReport.Write(new byte[] { 0x00, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+          myOutputReport.Write(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+          myOutputReport.Write(new byte[] { 0x00, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+          myOutputReport.Write(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+          myOutputReport.Write(new byte[] { 0x00, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+          myOutputReport.Write(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+          myOutputReport.Write(new byte[] { 0x00, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+          myOutputReport.Write(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+      }
     }
 
+    public void updateFICSymbol(FICSymbols vfdsymbol, bool visible)
+    {
+        if (FICIconStatus[(int)vfdsymbol] != visible)
+        {
+            int i;
+            // FIC Spectra Symbol
+            Hid.OutputReport myOutputReport = new Hid.OutputReport();
+            // reset USB write buffer
+            byte[] WriteBuffer = new byte[65];
+            for (i = 0; i < 65; i++) WriteBuffer[i] = 0;
+            WriteBuffer[1] = 0x85;
+            WriteBuffer[2] = 0x02;
+            WriteBuffer[3] = 0x01;
+            WriteBuffer[4] = (byte)vfdsymbol;
+            if (visible == true) 
+                WriteBuffer[5] = 0x01;
+            else 
+                WriteBuffer[5] = 0x00;
+            myOutputReport.Write(WriteBuffer, _HIDHandle);
+            FICIconStatus[(int)vfdsymbol] = visible;
+        }        
+    }
 
     /// <summary>
     /// Displays a symbol on the VFD
@@ -263,9 +294,10 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
     /// <param name="vfdsymbol"></param>
     /// <param name="visible"></param>
     public void updateSymbol(VFDSymbols vfdsymbol, bool visible)
-    {
-      _SymbolsVisible[(int) vfdsymbol] = visible;
-      _updateSymbols();
+    {       
+        // scaleo symbol update
+        _SymbolsVisible[(int)vfdsymbol] = visible;
+        _updateSymbols();
     }
 
     private void _updateSymbols()
@@ -306,8 +338,39 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
     /// <param name="volume"></param>
     public void setVolume(int volume) // 12 Balken
     {
-      _Volume = volume;
-      _updateSymbols();
+        if (_VendorID == 0x0547 && _ProductID == 0x7000)
+        {
+            // fic spectra
+            if (volume != _Volume)
+            {
+                _Volume = volume;
+                int i;
+                // set volume icon
+                updateFICSymbol(FICSymbols.Volume, true);
+                Hid.OutputReport myOutputReport = new Hid.OutputReport();
+                // reset USB write buffer
+                byte[] WriteBuffer = new byte[65];
+                for (i = 0; i < 65; i++) WriteBuffer[i] = 0;
+                WriteBuffer[1] = 0x85;
+                WriteBuffer[2] = 0x02;
+                WriteBuffer[3] = 0x0B;
+                for (i = 1; i < 12; i++)
+                {
+                    WriteBuffer[4 + (i - 1) * 2] = (byte)(i + 1);
+                    if (volume >= i)
+                        WriteBuffer[5 + (i - 1) * 2] = 1;
+                    else
+                        WriteBuffer[5 + (i - 1) * 2] = 0;
+                }
+                myOutputReport.Write(WriteBuffer, _HIDHandle);
+            }
+        }
+        else
+        {
+            // Scaleo E
+            _Volume = volume;
+            _updateSymbols();
+        }
     }
 
     /// <summary>
@@ -316,28 +379,36 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
     /// <param name="text"></param>
     public void writeMainScreen(string text)
     {
-      byte[] WriteBuffer = new byte[18];
-      byte[] WB1 = new byte[9];
-      byte[] WB2 = new byte[9];
-      if (Process.GetProcessesByName("ehshell").Length > 0)
-      {
-        return; //exit if xpMCE is running
-      }
-      for (int i = 0; i < text.Length; i++)
-      {
-        WriteBuffer[i + 1] = (byte) (text[i]);
-      }
-      for (int i = 1; i < 9; i++)
-      {
-        WB1[i] = WriteBuffer[i];
-        WB2[i] = WriteBuffer[i + 8];
-      }
+        if (_VendorID == 0x0547 && _ProductID == 0x7000) 
+        {
+            // write single line into display
+            writeLine(1, text);
+        }
+        else
+        {
+            byte[] WriteBuffer = new byte[18];
+            byte[] WB1 = new byte[9];
+            byte[] WB2 = new byte[9];
+            if (Process.GetProcessesByName("ehshell").Length > 0)
+            {
+                return; //exit if xpMCE is running
+            }
+            for (int i = 0; i < text.Length; i++)
+            {
+                WriteBuffer[i + 1] = (byte)(text[i]);
+            }
+            for (int i = 1; i < 9; i++)
+            {
+                WB1[i] = WriteBuffer[i];
+                WB2[i] = WriteBuffer[i + 8];
+            }
 
-      Hid.OutputReport myOutputReport = new Hid.OutputReport();
-      myOutputReport.Write(new byte[] {0x00, 0x06, 0x05, 0x02, 0x01, 0x05, 0x00, 0x08, 0x00}, _HIDHandle);
-      myOutputReport.Write(new byte[] {0x00, 0x06, 0x03, 0x01, 0x0A, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-      myOutputReport.Write(WB1, _HIDHandle); // Text 1-8
-      myOutputReport.Write(WB2, _HIDHandle); // Text 9-14
+            Hid.OutputReport myOutputReport = new Hid.OutputReport();
+            myOutputReport.Write(new byte[] { 0x00, 0x06, 0x05, 0x02, 0x01, 0x05, 0x00, 0x08, 0x00 }, _HIDHandle);
+            myOutputReport.Write(new byte[] { 0x00, 0x06, 0x03, 0x01, 0x0A, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+            myOutputReport.Write(WB1, _HIDHandle); // Text 1-8
+            myOutputReport.Write(WB2, _HIDHandle); // Text 9-14
+        }
     }
 
     /// <summary>
@@ -348,82 +419,101 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
     /// <param name="text"></param>
     public void writeLine(int LineNo, string text)
     {
-      byte[] WriteBuffer = new byte[50];
-      byte[] WB1 = new byte[9];
-      byte[] WB2 = new byte[9];
-      byte[] WB3 = new byte[9];
-      byte[] WB4 = new byte[9];
-      byte[] WB5 = new byte[9];
-      byte[] WB6 = new byte[9];
-      if (Process.GetProcessesByName("ehshell").Length > 0)
-      {
-        return; //exit if xpMCE is running
-      }
-      for (int i = 0; i < text.Length; i++)
-      {
-        WriteBuffer[i + 1] = (byte) (text[i]);
-      }
-      for (int i = 1; i < 9; i++)
-      {
-        WB1[i] = WriteBuffer[i];
-        WB2[i] = WriteBuffer[i + 8];
-        WB3[i] = WriteBuffer[i + 16];
-        WB4[i] = WriteBuffer[i + 24];
-        WB5[i] = WriteBuffer[i + 32];
-        WB6[i] = WriteBuffer[i + 40];
-      }
+        if (_VendorID == 0x0547 && _ProductID == 0x7000)
+        {
+            //write line on FIC Spectra Display
+            byte[] WriteBuffer = new byte[65];
+            WriteBuffer[1] = 0x8B;
+            WriteBuffer[2] = 0x04;
+            WriteBuffer[3] = 0x01;
+            WriteBuffer[4] = (byte) text.Length;
+            for (int i = 0; i < text.Length; i++)
+            {
+                WriteBuffer[i + 5] = (byte)(text[i]);
+            }
+            Hid.OutputReport myOutputReport = new Hid.OutputReport();
+            myOutputReport.Write(WriteBuffer, _HIDHandle);
+        }
+        else
+        {
+            //write line for Scaleo 
+            byte[] WriteBuffer = new byte[50];
+            byte[] WB1 = new byte[9];
+            byte[] WB2 = new byte[9];
+            byte[] WB3 = new byte[9];
+            byte[] WB4 = new byte[9];
+            byte[] WB5 = new byte[9];
+            byte[] WB6 = new byte[9];
+            if (Process.GetProcessesByName("ehshell").Length > 0)
+            {
+                return; //exit if xpMCE is running
+            }
+            for (int i = 0; i < text.Length; i++)
+            {
+                WriteBuffer[i + 1] = (byte)(text[i]);
+            }
+            for (int i = 1; i < 9; i++)
+            {
+                WB1[i] = WriteBuffer[i];
+                WB2[i] = WriteBuffer[i + 8];
+                WB3[i] = WriteBuffer[i + 16];
+                WB4[i] = WriteBuffer[i + 24];
+                WB5[i] = WriteBuffer[i + 32];
+                WB6[i] = WriteBuffer[i + 40];
+            }
 
-      Hid.OutputReport myOutputReport = new Hid.OutputReport();
-      //7 0x06
-      //6 0x03
-      //5 1=obli 3=unli 2=obre 4=unre scroll  hängt auch von der Vergangenheit ab???
-      //4 text.Length
-      //3 
-      //2 0x00
-      //1 0x00
-      //0 0x00
-      if (LineNo == 1)
-      {
-        // erase line 1               
-        myOutputReport.Write(new byte[] {0x00, 0x04, 0x04, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-        // init line 1
-        myOutputReport.Write(new byte[] {0x00, 0x06, 0x03, 0x01, (byte) text.Length, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-      }
-      else
-      {
-        // erase line 2               
-        myOutputReport.Write(new byte[] {0x00, 0x04, 0x04, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-        // init line 2                
-        myOutputReport.Write(new byte[] {0x00, 0x06, 0x03, 0x03, (byte) text.Length, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-      }
-      // write text
-      myOutputReport.Write(WB1, _HIDHandle); // Text 1-8
-      if (text.Length > 8)
-      {
-        myOutputReport.Write(WB2, _HIDHandle); // Text 9-14
-      }
-      if (text.Length > 16)
-      {
-        myOutputReport.Write(WB3, _HIDHandle); // Text 9-16
-      }
-      if (text.Length > 24)
-      {
-        myOutputReport.Write(WB4, _HIDHandle); // Text 9-16
-      }
-      if (text.Length > 32)
-      {
-        myOutputReport.Write(WB5, _HIDHandle); // Text 9-16
-      }
-      if (text.Length > 40)
-      {
-        myOutputReport.Write(WB6, _HIDHandle); // Text 9-16
-      }
-      // write trailer
-      myOutputReport.Write(new byte[] {0x00, 0x06, 0x05, 0x02, 0x02, 0x05, 0x00, 0x80, 0x00}, _HIDHandle);
-      if (text.Length > 18)
-      {
-        myOutputReport.Write(new byte[] {0x00, 0x06, 0x05, 0x02, 0x02, 0x05, 0x00, 0x84, 0x00}, _HIDHandle);
-      }
+            Hid.OutputReport myOutputReport = new Hid.OutputReport();
+            //7 0x06
+            //6 0x03
+            //5 1=obli 3=unli 2=obre 4=unre scroll  hängt auch von der Vergangenheit ab???
+            //4 text.Length
+            //3 
+            //2 0x00
+            //1 0x00
+            //0 0x00
+            if (LineNo == 1)
+            {
+                // erase line 1               
+                myOutputReport.Write(new byte[] { 0x00, 0x04, 0x04, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+                // init line 1
+                myOutputReport.Write(new byte[] { 0x00, 0x06, 0x03, 0x01, (byte)text.Length, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+            }
+            else
+            {
+                // erase line 2               
+                myOutputReport.Write(new byte[] { 0x00, 0x04, 0x04, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+                // init line 2                
+                myOutputReport.Write(new byte[] { 0x00, 0x06, 0x03, 0x03, (byte)text.Length, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+            }
+            // write text
+            myOutputReport.Write(WB1, _HIDHandle); // Text 1-8
+            if (text.Length > 8)
+            {
+                myOutputReport.Write(WB2, _HIDHandle); // Text 9-14
+            }
+            if (text.Length > 16)
+            {
+                myOutputReport.Write(WB3, _HIDHandle); // Text 9-16
+            }
+            if (text.Length > 24)
+            {
+                myOutputReport.Write(WB4, _HIDHandle); // Text 9-16
+            }
+            if (text.Length > 32)
+            {
+                myOutputReport.Write(WB5, _HIDHandle); // Text 9-16
+            }
+            if (text.Length > 40)
+            {
+                myOutputReport.Write(WB6, _HIDHandle); // Text 9-16
+            }
+            // write trailer
+            myOutputReport.Write(new byte[] { 0x00, 0x06, 0x05, 0x02, 0x02, 0x05, 0x00, 0x80, 0x00 }, _HIDHandle);
+            if (text.Length > 18)
+            {
+                myOutputReport.Write(new byte[] { 0x00, 0x06, 0x05, 0x02, 0x02, 0x05, 0x00, 0x84, 0x00 }, _HIDHandle);
+            }
+        }
     }
 
     /// <summary>
@@ -431,8 +521,17 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
     /// </summary>
     public void clearLines()
     {
-      writeLine(1, "");
-      writeLine(2, "");
+        if (_VendorID == 0x0547 && _ProductID == 0x7000)
+        {
+            // FIC Spectra display
+            writeLine(1, "       ");
+        }
+        else
+        {
+            // Scaleo E
+            writeLine(1, "");
+            writeLine(2, "");
+        }
     }
 
     /// <summary>
@@ -440,16 +539,27 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
     /// </summary>
     public void clearScreen()
     {
-      if (Process.GetProcessesByName("ehshell").Length > 0)
+      if (_VendorID == 0x0547 && _ProductID == 0x7000)
       {
-        return; //exit if xpMCE is running
+          // FIC Spectra clear screen
+          writeLine(1, "       ");
+          setVolume(0);
+          updateFICSymbol(FICSymbols.Volume, false);
+          updateFICSymbol(FICSymbols.Home, false);
       }
-      Hid.OutputReport myOutputReport = new Hid.OutputReport();
-      myOutputReport.Write(new byte[] {0x00, 0x04, 0x04, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-      //clear screen
-      myOutputReport.Write(new byte[] {0x00, 0x04, 0x04, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-      myOutputReport.Write(new byte[] {0x00, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
-      myOutputReport.Write(new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
+      else
+      {
+          if (Process.GetProcessesByName("ehshell").Length > 0)
+          {
+              return; //exit if xpMCE is running
+          }
+          Hid.OutputReport myOutputReport = new Hid.OutputReport();
+          myOutputReport.Write(new byte[] { 0x00, 0x04, 0x04, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+          //clear screen
+          myOutputReport.Write(new byte[] { 0x00, 0x04, 0x04, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+          myOutputReport.Write(new byte[] { 0x00, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+          myOutputReport.Write(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, _HIDHandle);
+      }
     }
 
     /// <summary>
@@ -498,6 +608,27 @@ namespace ProcessPlugins.ExternalDisplay.VFD_Control
       REC = 0x0100,
       Antenna = 0x0002,
       DVD = 0x0001
+    }
+    public enum FICSymbols
+    {
+        // FIC Spectra icon values
+        Volume = 0x01,
+        Mute = 0x0F,
+        Home = 0x26,
+        REC = 0x11,
+        Radio = 0x12,
+        DVD = 0x13,
+        VCD = 0x14,
+        CD = 0x15,
+        Music = 0x16,
+        Photo = 0x17,
+        TV = 0x18,
+        Rew = 0x20,
+        Pause = 0x21,
+        Play = 0x22,
+        Fwd = 0x29,
+        Guide1 = 0x24,
+        Guide2 = 0x25
     }
   }
 }

@@ -554,6 +554,21 @@ namespace ProcessPlugins.ExternalDisplay
         Log.Debug("ExternalDisplay: Loading DM-140GINK Demo...");
       }
       list.Add(new DM140GINK());
+      if (ExtensiveLogging)
+      {
+        Log.Debug("ExternalDisplay: Loading MatrixMX...");
+      }
+      list.Add(new MatrixMX());   // added by cybrmage
+      //if (ExtensiveLogging)
+      //{
+      //  Log.Debug("ExternalDisplay: Loading MatrixGX...");
+      //}
+      //list.Add(new MatrixGX());   // added by cybrmage
+      if (ExtensiveLogging)
+      {
+        Log.Debug("ExternalDisplay: Loading FICSpectra...");
+      }
+      list.Add(new FICSpectra());
       DirectoryInfo dinfo = new DirectoryInfo(Config.GetSubFolder(Config.Dir.Plugins, @"process\LCDDrivers"));
       if (!dinfo.Exists)
       {
