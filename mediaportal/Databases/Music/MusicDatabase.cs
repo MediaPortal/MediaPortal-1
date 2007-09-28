@@ -47,7 +47,6 @@ namespace MediaPortal.Music.Database
     private SQLiteClient MusicDbClient = null;
 
     private static bool _treatFolderAsAlbum = false;
-    private static bool _scanForVariousArtists = true;
     private static bool _extractEmbededCoverArt = true;
     private static bool _useFolderThumbs = true;
     private static bool _useFolderArtForArtistGenre = false;
@@ -115,7 +114,6 @@ namespace MediaPortal.Music.Database
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _treatFolderAsAlbum = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
-        _scanForVariousArtists = xmlreader.GetValueAsBool("musicfiles", "scanForVariousArtists", true);
         _extractEmbededCoverArt = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", true);
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);

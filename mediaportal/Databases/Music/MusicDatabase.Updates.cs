@@ -116,14 +116,13 @@ namespace MediaPortal.Music.Database
       {
         updateSinceLastImport = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", false);
       }
-      return MusicDatabaseReorg(shares, _treatFolderAsAlbum, _scanForVariousArtists, updateSinceLastImport);
+      return MusicDatabaseReorg(shares, _treatFolderAsAlbum, updateSinceLastImport);
     }
 
-    public int MusicDatabaseReorg(ArrayList shares, bool treatFolderAsAlbum, bool scanForVariousArtists, bool updateSinceLastImport)
+    public int MusicDatabaseReorg(ArrayList shares, bool treatFolderAsAlbum, bool updateSinceLastImport)
     {
       // Make sure we use the selected settings if the user hasn't saved the configuration
       _treatFolderAsAlbum = treatFolderAsAlbum;
-      _scanForVariousArtists = scanForVariousArtists;
 
       if (!updateSinceLastImport)
         _lastImport = DateTime.MinValue;
