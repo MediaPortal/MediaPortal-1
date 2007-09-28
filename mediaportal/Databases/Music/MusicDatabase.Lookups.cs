@@ -212,7 +212,7 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
-    public void GetSongsByFilter(string aSQL, out List<Song> aSongs, bool aArtistTable, bool aAlbumartistTable, bool aSongTable, bool aGenreTable)
+    public void GetSongsByFilter(string aSQL, out List<Song> aSongs, bool aArtistTable, bool aAlbumartistTable, bool aSongTable, bool aGenreTable, bool aAlbumTable)
     {
       Log.Debug("SQL Filter: {0}", aSQL);
       aSongs = new List<Song>();
@@ -235,6 +235,11 @@ namespace MediaPortal.Music.Database
           {
             columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
             song.AlbumArtist = fields.fields[columnIndex];                        
+          }
+          if (aAlbumTable && !aSongTable)
+          {
+            columnIndex = (int)results.ColumnIndices["strAlbum"];
+            song.Album = fields.fields[columnIndex];
           }
           if (aGenreTable && !aSongTable)
           {
@@ -499,7 +504,7 @@ namespace MediaPortal.Music.Database
           variousArtists = "Various Artists";
 
         string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%{0}' ORDER BY strAlbum asc", strAlbumArtist);
-        GetSongsByFilter(sql, out aSongList, false, false, true, false);
+        GetSongsByFilter(sql, out aSongList, false, false, true, false, false);
 
         List<AlbumInfo> albums = new List<AlbumInfo>();
         GetAllAlbums(ref albums);
@@ -544,7 +549,7 @@ namespace MediaPortal.Music.Database
 
         string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%{0}' AND strAlbum = '{1}' order by iTrack asc", strAlbumArtist, strAlbum);
         ModifyAlbumQueryForVariousArtists(ref sql, strAlbumArtist, strAlbum);
-        GetSongsByFilter(sql, out aSongList, true, true, true, false);
+        GetSongsByFilter(sql, out aSongList, true, true, true, false, false);
 
         return true;
       }
@@ -589,7 +594,7 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strGenre);
 
         string sql = string.Format("SELECT * FROM tracks WHERE strGenre like '%{0}' order by strTitle asc", strGenre);
-        GetSongsByFilter(sql, out aSongList, true, true, true, true);
+        GetSongsByFilter(sql, out aSongList, true, true, true, true, false);
 
         return true;
       }

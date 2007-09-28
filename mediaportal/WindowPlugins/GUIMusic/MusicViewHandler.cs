@@ -266,21 +266,28 @@ namespace MediaPortal.GUI.Music
           sql = String.Format("select * from artist ");
           if (whereClause != String.Empty) sql += "where " + whereClause;
           if (orderClause != String.Empty) sql += orderClause;
-          database.GetSongsByFilter(sql, out songs, true, false, false, false);
+          database.GetSongsByFilter(sql, out songs, true, false, false, false, false);
         }
         else if (table == "albumartist")
         {
           sql = String.Format("select * from albumartist ");
           if (whereClause != String.Empty) sql += "where " + whereClause;
           if (orderClause != String.Empty) sql += orderClause;
-          database.GetSongsByFilter(sql, out songs, false, true, false, false);
+          database.GetSongsByFilter(sql, out songs, false, true, false, false, false);
+        }
+        else if (table == "album")
+        {
+          sql = String.Format("select distinct strAlbum from tracks ");
+          if (whereClause != String.Empty) sql += "where " + whereClause;
+          if (orderClause != String.Empty) sql += orderClause;
+          database.GetSongsByFilter(sql, out songs, false, false, false, false, true);
         }
         else if (table == "genre")
         {
           sql = String.Format("select * from genre ");
           if (whereClause != String.Empty) sql += "where " + whereClause;
           if (orderClause != String.Empty) sql += orderClause;
-          database.GetSongsByFilter(sql, out songs, false, false, false, true);
+          database.GetSongsByFilter(sql, out songs, false, false, false, true, false);
         }
         else if (defRoot.Where == "year")
         {
@@ -308,7 +315,7 @@ namespace MediaPortal.GUI.Music
           BuildRestriction(defRoot, ref whereClause);
           sql = String.Format("select * from tracks {0} {1}",
             whereClause, orderClause);
-          database.GetSongsByFilter(sql, out songs, true, true, true, true);
+          database.GetSongsByFilter(sql, out songs, false, false, true, false, false);
         }
       }
       else if (CurrentLevel < MaxLevels - 1)
@@ -353,7 +360,7 @@ namespace MediaPortal.GUI.Music
           if (useAlbumTable && CurrentLevel > 0)
             isVariousArtistsAlbum = ModifyAlbumQueryForVariousArtists(ref sql);
 
-          database.GetSongsByFilter(sql, out songs, useArtistTable, useAlbumArtistTable, useSongTable, useGenreTable);
+          database.GetSongsByFilter(sql, out songs, useArtistTable, useAlbumArtistTable, useSongTable, useGenreTable, useAlbumTable);
         }
 
         if (table == "album")
@@ -385,7 +392,7 @@ namespace MediaPortal.GUI.Music
           whereClause, orderClause);
 
         bool modified = ModifySongsQueryForVariousArtists(ref sql);
-        database.GetSongsByFilter(sql, out songs, true, true, true, true);
+        database.GetSongsByFilter(sql, out songs, false, false, true, false, false);
       }
       return songs;
     }
@@ -480,7 +487,11 @@ namespace MediaPortal.GUI.Music
           whereClause += " group by ix";
           return;
         }
-        if (whereClause != "") whereClause += " and ";
+        if (whereClause != "") 
+          whereClause += " and ";
+        else 
+          whereClause = "where ";
+
         string restriction = filter.Restriction;
         restriction = restriction.Replace("*", "%");
         Database.DatabaseUtility.RemoveInvalidChars(ref restriction);

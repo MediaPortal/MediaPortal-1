@@ -648,7 +648,7 @@ namespace MediaPortal.GUI.Music
       if (!item.IsFolder && !item.IsRemote)
       {
         Song song = item.AlbumInfoTag as Song;
-        if (song.songId >= 0)
+        if (song.Id >= 0)
         {
           dlg.AddLocalizedString(930); //Add to favorites
           dlg.AddLocalizedString(931); //Rating
@@ -741,7 +741,7 @@ namespace MediaPortal.GUI.Music
 
       else
       {
-        if (song.songId > 0) AddItemToPlayList(song);
+        if (song.Id > 0) AddItemToPlayList(song);
       }
     }
     #endregion

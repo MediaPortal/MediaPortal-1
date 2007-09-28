@@ -805,7 +805,7 @@ namespace MediaPortal.GUI.Music
             {
               if (currentSong == null)
                 return;
-              if (currentSong.songId < 0)
+              if (currentSong.Id < 0)
                 return;
               currentSong.Favorite = true;
               dbs.SetFavorite(currentSong);

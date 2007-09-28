@@ -1957,7 +1957,7 @@ namespace MediaPortal.GUI.Music
       Song song = item.AlbumInfoTag as Song;
       if (song == null)
         return;
-      if (song.songId < 0)
+      if (song.Id < 0)
         return;
       song.Favorite = true;
       m_database.SetFavorite(song);

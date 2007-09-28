@@ -45,7 +45,6 @@ namespace MediaPortal.Music.Database
   [Serializable()]
   public class Song
   {
-    int _id = -1;
     int _iTrackId = -1;
     string _strFileName = "";
     string _strTitle = "";
@@ -111,8 +110,6 @@ namespace MediaPortal.Music.Database
 
     public void Clear()
     {
-
-      _id = -1;
       _iTrackId = -1;
       _favorite = false;
       _strFileName = "";
@@ -138,12 +135,6 @@ namespace MediaPortal.Music.Database
       _iDisc = 0;
       _iNumDisc = 0;
       _strLyrics = "";
-    }
-
-    public int songId
-    {
-      get { return _id; }
-      set { _id = value; }
     }
 
     public int Id
