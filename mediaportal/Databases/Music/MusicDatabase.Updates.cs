@@ -146,6 +146,17 @@ namespace MediaPortal.Music.Database
         Log.Info("Musicdatabasereorg: Last import done at {0}", _lastImport.ToString());
 
         BeginTransaction();
+
+
+        // When starting a complete rescan, we cleanup the foreign keys
+        if (_lastImport == DateTime.MinValue)
+        {
+          MyArgs.progress = 2;
+          MyArgs.phase = "Cleaning up Artists, AlbumArtists and Genres";
+          OnDatabaseReorgChanged(MyArgs);
+          CleanupForeignKeys();
+        }
+
         /// Delete files that don't exist anymore (example: you deleted files from the Windows Explorer)
         MyArgs.progress = 4;
         MyArgs.phase = "Removing non existing songs";
@@ -159,25 +170,6 @@ namespace MediaPortal.Music.Database
 
         int GetFilesResult = GetFiles(8, 85, ref fileCount);
         Log.Info("Musicdatabasereorg: Add / Update files: {0} files added / updated", GetFilesResult);
-
-        /// Cleanup foreign keys tables.
-        /// We added, deleted new files
-        /// We update all the tags
-        /// Now lets clean up all the foreign keys
-        MyArgs.progress = 88;
-        MyArgs.phase = "Checking Artists";
-        OnDatabaseReorgChanged(MyArgs);
-        ExamineAndDeleteArtistids();
-
-        MyArgs.progress = 90;
-        MyArgs.phase = "Checking AlbumArtists";
-        OnDatabaseReorgChanged(MyArgs);
-        ExamineAndDeleteAlbumArtistids();
-
-        MyArgs.progress = 92;
-        MyArgs.phase = "Checking Genres";
-        OnDatabaseReorgChanged(MyArgs);
-        ExamineAndDeleteGenreids();
       }
 
       catch (Exception ex)
@@ -686,7 +678,6 @@ namespace MediaPortal.Music.Database
         if (null == MusicDbClient)
           return;
 
-        SQLiteResultSet results;
         string strSQL;
 
         // split up the artist, in case we've got multiple artists
@@ -694,8 +685,7 @@ namespace MediaPortal.Music.Database
         foreach (string artist in artists)
         {
           strSQL = String.Format("select idArtist from artist where strArtist = '{0}'", strArtist.Trim());
-          results = MusicDbClient.Execute(strSQL);
-          if (results.Rows.Count == 0)
+          if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
           {
             // Insert the Artist
             strSQL = String.Format("insert into artist (strArtist) values ('{0}')", artist.Trim());
@@ -724,7 +714,6 @@ namespace MediaPortal.Music.Database
         if (null == MusicDbClient)
           return;
 
-        SQLiteResultSet results;
         string strSQL;
 
         // split up the albumartist, in case we've got multiple albumartists
@@ -732,8 +721,7 @@ namespace MediaPortal.Music.Database
         foreach (string artist in artists)
         {
           strSQL = String.Format("select idAlbumArtist from albumartist where strAlbumArtist = '{0}'", artist.Trim());
-          results = MusicDbClient.Execute(strSQL);
-          if (results.Rows.Count == 0)
+          if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
           {
             // Insert the AlbumArtist
             strSQL = String.Format("insert into albumartist (strAlbumArtist) values ('{0}')", artist.Trim());
@@ -1093,70 +1081,31 @@ namespace MediaPortal.Music.Database
     }
     #endregion
 
-    #region Clean Up after Reorg
+    #region Clean Up Foreign Keys
 
     /// <summary>
-    /// This will delete all artists from the database that don't have a corresponding song anymore
+    /// On a complete rescan of the shares, we will delete all the entries in the Artist, AlbumArtist and Genre table,
+    /// to get rid of "dead" entries for which no song exists
     /// </summary>
     /// <returns></returns>
-    private int ExamineAndDeleteArtistids()
+    private int CleanupForeignKeys()
     {
-      string strSql = "delete from artist where artist.strArtist not in (select strArtist from tracks)";
       try
       {
+        string strSql = "delete from artist";
+        MusicDbClient.Execute(strSql);
+        strSql = "delete from albumartist";
+        MusicDbClient.Execute(strSql);
+        strSql = "delete from genre";
         MusicDbClient.Execute(strSql);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Error("Musicdatabasereorg: ExamineAndDeleteArtistids failed");
+        Log.Error("Musicdatabasereorg: CleanupForeignKeys failed");
         return (int)Errors.ERROR_REORG_ARTIST;
       }
 
-      Log.Info("Musicdatabasereorg: ExamineAndDeleteArtistids completed");
-      return (int)Errors.ERROR_OK;
-    }
-
-    /// <summary>
-    /// This will delete all albumartists from the database that don't have a corresponding song anymore
-    /// </summary>
-    /// <returns></returns>
-    private int ExamineAndDeleteAlbumArtistids()
-    {
-      string strSql = "delete from albumartist where albumartist.strAlbumArtist not in (select strAlbumArtist from tracks)";
-      try
-      {
-        MusicDbClient.Execute(strSql);
-      }
-      catch (Exception)
-      {
-        Log.Error("Musicdatabasereorg: ExamineAndDeleteAlbumArtistids failed");
-        //m_db.Execute("rollback");
-        return (int)Errors.ERROR_REORG_ALBUMARTIST;
-      }
-
-      Log.Info("Musicdatabasereorg: ExamineAndDeleteAlbumArtistids completed");
-      return (int)Errors.ERROR_OK;
-    }
-
-    /// <summary>
-    /// This will delete all genres from the database that don't have a corresponding song anymore 
-    /// </summary>
-    /// <returns></returns>
-    private int ExamineAndDeleteGenreids()
-    {
-      SQLiteResultSet result;
-      string strSql = "delete from genre where strGenre not in (select strGenre from tracks)";
-      try
-      {
-        MusicDbClient.Execute(strSql);
-      }
-      catch (Exception)
-      {
-        Log.Error("Musicdatabasereorg: ExamineAndDeleteGenreids failed");
-        return (int)Errors.ERROR_REORG_GENRE;
-      }
-
-      Log.Info("Musicdatabasereorg: ExamineAndDeleteGenreids completed");
+      Log.Info("Musicdatabasereorg: CleanupForeignKeys completed");
       return (int)Errors.ERROR_OK;
     }
     #endregion
