@@ -90,5 +90,17 @@ namespace MediaPortal.MPInstaller
             checker.Check();
             this.Show();
         }
+
+      private void label1_MouseEnter(object sender, EventArgs e)
+      {
+        ((Label)sender).Font = new System.Drawing.Font("Verdana", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0))); 
+        ((Label)sender).ForeColor = Color.Blue;
+      }
+
+      private void label1_MouseLeave(object sender, EventArgs e)
+      {
+        ((Label)sender).Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0))); 
+        ((Label)sender).ForeColor = Color.White;
+      }
     }
 }
