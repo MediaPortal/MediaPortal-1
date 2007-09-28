@@ -521,6 +521,15 @@ namespace TvPlugin
               OnLastViewedChannel();
           }
           break;
+        case Action.ActionType.ACTION_SHOW_GUI:
+        {
+          // If we are in tvhome and TV is currently off and no fullscreen TV then turn ON TV now!
+          if (!g_Player.IsTimeShifting && !g_Player.FullScreen)
+          {
+            OnClicked(8, btnTvOnOff, MediaPortal.GUI.Library.Action.ActionType.ACTION_MOUSE_CLICK); //8=togglebutton
+          }
+          break;
+        }
       }
       base.OnAction(action);
     }
