@@ -1255,7 +1255,87 @@ namespace MediaPortal.Music.Database
 
       return -1;
     }
-    
+
+    public bool GetGenres(ref ArrayList genres)
+    {
+      try
+      {
+        genres.Clear();
+
+        if (MusicDbClient == null)
+          return false;
+
+        string strSQL;
+        strSQL = String.Format("select * from genre");
+        SQLiteResultSet results;
+        results = MusicDbClient.Execute(strSQL);
+        if (results.Rows.Count == 0)
+          return false;
+
+        for (int i = 0; i < results.Rows.Count; ++i)
+        {
+          string strGenre = DatabaseUtility.Get(results, i, "strGenre");
+          genres.Add(strGenre);
+        }
+
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return false;
+    }
+
+    public bool GetGenres(int searchKind, string strGenere1, ref ArrayList genres)
+    {
+      try
+      {
+        genres.Clear();
+        string strGenere = strGenere1;
+
+        if (MusicDbClient == null)
+          return false;
+
+        string strSQL = String.Empty;
+        switch (searchKind)
+        {
+          case 0:
+            strSQL = String.Format("select * from genre where strGenre like '{0}%'", strGenere);
+            break;
+          case 1:
+            strSQL = String.Format("select * from genre where strGenre like '%{0}%'", strGenere);
+            break;
+          case 2:
+            strSQL = String.Format("select * from genre where strGenre like '%{0}'", strGenere);
+            break;
+          case 3:
+            strSQL = String.Format("select * from genre where strGenre like '{0}'", strGenere);
+            break;
+          default:
+            return false;
+        }
+        SQLiteResultSet results;
+        results = MusicDbClient.Execute(strSQL);
+        if (results.Rows.Count == 0)
+          return false;
+        for (int i = 0; i < results.Rows.Count; ++i)
+        {
+          string strGenre = DatabaseUtility.Get(results, i, "strGenre");
+          genres.Add(strGenre);
+        }
+
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return false;
+    }
+
     //public void CheckVariousArtistsAndCoverArt()
     //{
     //  if (_albumCache.Count <= 0)
