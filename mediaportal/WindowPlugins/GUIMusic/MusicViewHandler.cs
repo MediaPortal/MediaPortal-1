@@ -275,7 +275,7 @@ namespace MediaPortal.GUI.Music
           if (orderClause != String.Empty) sql += orderClause;
           database.GetSongsByFilter(sql, out songs, false, true, false, false, false);
         }
-        else if (table == "album")
+        else if (table == "tracks" && useAlbumTable)  // Album was selected
         {
           sql = String.Format("select distinct strAlbum from tracks ");
           if (whereClause != String.Empty) sql += "where " + whereClause;
