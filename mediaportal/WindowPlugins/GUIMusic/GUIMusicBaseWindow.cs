@@ -1324,7 +1324,7 @@ namespace MediaPortal.GUI.Music
       }
       else if (song.Album != "")
       {
-        ShowAlbumInfo(false, song.Artist, song.Album, song.FileName, pItem.MusicTag as MusicTag, song.albumId);
+        ShowAlbumInfo(false, song.Artist, song.Album, song.FileName, pItem.MusicTag as MusicTag);
       }
       else if (song.Artist != "")
       {
@@ -1667,12 +1667,12 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    protected void ShowAlbumInfo(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag, int albumId)
+    protected void ShowAlbumInfo(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag)
     {
-      ShowAlbumInfo(GetID, isFolder, artistName, albumName, strPath, tag, albumId);
+      ShowAlbumInfo(GetID, isFolder, artistName, albumName, strPath, tag);
     }
 
-    public void ShowAlbumInfo(int parentWindowID, bool isFolder, string artistName, string albumName, string strPath, MusicTag tag, int albumId)
+    public void ShowAlbumInfo(int parentWindowID, bool isFolder, string artistName, string albumName, string strPath, MusicTag tag)
     {
       // check cache
       GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
@@ -1695,7 +1695,7 @@ namespace MediaPortal.GUI.Music
           if (pDlgAlbumInfo.NeedsRefresh)
           {
             m_database.DeleteAlbumInfo(albumName, artistName);
-            ShowAlbumInfo(isFolder, artistName, albumName, strPath, tag, albumId);
+            ShowAlbumInfo(isFolder, artistName, albumName, strPath, tag);
           }
           return;
         }
@@ -1827,7 +1827,7 @@ namespace MediaPortal.GUI.Music
               if (pDlgAlbumInfo.NeedsRefresh)
               {
                 m_database.DeleteAlbumInfo(album.Title, album.Artist);
-                ShowAlbumInfo(isFolder, artistName, albumName, strPath, tag, albumId);
+                ShowAlbumInfo(isFolder, artistName, albumName, strPath, tag);
                 return;
               }
               if (isFolder)

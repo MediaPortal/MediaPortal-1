@@ -45,6 +45,7 @@ namespace MediaPortal.Music.Database
   [Serializable()]
   public class Song
   {
+    int _id = -1;
     int _iTrackId = -1;
     string _strFileName = "";
     string _strTitle = "";
@@ -70,45 +71,7 @@ namespace MediaPortal.Music.Database
     int _iDisc = 0;
     int _iNumDisc = 0;
     string _strLyrics = "";
-
-    // delete after conversion
-    int idGenre = -1;
-    int idAlbum = -1;
-    int idArtist = -1;
-    int idAlbumArtist = -1;
-    // int Id = -1;
-
-    public int albumId
-    {
-      get { return idAlbum; }
-      set { idAlbum = value; }
-    }
-
-    public int genreId
-    {
-      get { return idGenre; }
-      set { idGenre = value; }
-    }
-
-    public int artistId
-    {
-      get { return idArtist; }
-      set { idArtist = value; }
-    }
-
-    public int albumartistId
-    {
-      get { return idAlbumArtist; }
-      set { idAlbumArtist = value; }
-    }
-
-    public int songId
-    {
-      get { return Id; }
-      set { Id = value; }
-    }
-    // ----------------------------------
-
+    
 
     public Song()
     {
@@ -148,6 +111,8 @@ namespace MediaPortal.Music.Database
 
     public void Clear()
     {
+
+      _id = -1;
       _iTrackId = -1;
       _favorite = false;
       _strFileName = "";
@@ -173,6 +138,12 @@ namespace MediaPortal.Music.Database
       _iDisc = 0;
       _iNumDisc = 0;
       _strLyrics = "";
+    }
+
+    public int songId
+    {
+      get { return _id; }
+      set { _id = value; }
     }
 
     public int Id

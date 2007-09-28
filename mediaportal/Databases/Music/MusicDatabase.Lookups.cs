@@ -414,7 +414,7 @@ namespace MediaPortal.Music.Database
 
         aSongList.Clear();
 
-        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '{0}'", strArtist);
+        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%{0}'", strArtist);
 
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
@@ -498,7 +498,7 @@ namespace MediaPortal.Music.Database
         if (variousArtists.Length == 0)
           variousArtists = "Various Artists";
 
-        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '{0}' ORDER BY strAlbum asc", strAlbumArtist);
+        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%{0}' ORDER BY strAlbum asc", strAlbumArtist);
         GetSongsByFilter(sql, out aSongList, false, false, true, false);
 
         List<AlbumInfo> albums = new List<AlbumInfo>();
@@ -542,7 +542,7 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strAlbumArtist);
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
 
-        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '{0}' AND strAlbum = '{1}' order by iTrack asc", strAlbumArtist, strAlbum);
+        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%{0}' AND strAlbum = '{1}' order by iTrack asc", strAlbumArtist, strAlbum);
         ModifyAlbumQueryForVariousArtists(ref sql, strAlbumArtist, strAlbum);
         GetSongsByFilter(sql, out aSongList, true, true, true, false);
 
@@ -588,7 +588,7 @@ namespace MediaPortal.Music.Database
         string strGenre = aGenre;
         DatabaseUtility.RemoveInvalidChars(ref strGenre);
 
-        string sql = string.Format("SELECT * FROM tracks WHERE strGenre='{0}' order by strTitle asc", strGenre);
+        string sql = string.Format("SELECT * FROM tracks WHERE strGenre like '%{0}' order by strTitle asc", strGenre);
         GetSongsByFilter(sql, out aSongList, true, true, true, true);
 
         return true;

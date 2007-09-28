@@ -1027,7 +1027,7 @@ namespace MediaPortal.GUI.Music
         // Is this an album?
         if (tag != null && tag.Album.Length > 0)
         {
-          ShowAlbumInfo(true, tag.Artist, tag.Album, pItem.Path, tag, -1);
+          ShowAlbumInfo(true, tag.Artist, tag.Album, pItem.Path, tag);
           facadeView.RefreshCoverArt();
         }
 
