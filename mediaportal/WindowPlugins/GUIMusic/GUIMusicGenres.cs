@@ -445,145 +445,109 @@ namespace MediaPortal.GUI.Music
       if (item.Label == "..") return;
       MediaPortal.Util.Utils.SetDefaultIcons(item);
       if (item.IsRemote) return;
+
+      string strThumb = string.Empty;
       Song song = item.AlbumInfoTag as Song;
       if (song == null) return;
+
       // Get Cover Art for Index display
       FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
       if (filter.SqlOperator == "group")
       {
-
-        // Really fetch thumbs for ONE char?
-
-        //if (filter.Where == "artist")
-        //{
-        //  string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, item.Label);
-        //  if (System.IO.File.Exists(strThumb))
-        //  {
-        //    item.IconImage = strThumb;
-        //    item.IconImageBig = strThumb;
-        //    item.ThumbnailImage = strThumb;
-        //    return;
-        //  }
-        //}
-        //else if (filter.Where == "album")
-        //{
-        //  string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicAlbum, item.Label);
-        //  if (System.IO.File.Exists(strThumb))
-        //  {
-        //    item.IconImage = strThumb;
-        //    item.IconImageBig = strThumb;
-        //    item.ThumbnailImage = strThumb;
-        //    return;
-        //  }
-        //}
-        //else if (filter.Where == "genre")
-        //{
-        //  string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieGenre, item.Label);
-        //  if (System.IO.File.Exists(strThumb))
-        //  {
-        //    item.IconImage = strThumb;
-        //    item.IconImageBig = strThumb;
-        //    item.ThumbnailImage = strThumb;
-        //    return;
-        //  }
-        //}
-        //else if (filter.Where == "title")
-        //{
-        //  string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicAlbum, item.Label);
-        //  if (System.IO.File.Exists(strThumb))
-        //  {
-        //    item.IconImage = strThumb;
-        //    item.IconImageBig = strThumb;
-        //    item.ThumbnailImage = strThumb;
-        //    return;
-        //  }
-        //}
-        //return;
-      }
-      if (song.Genre.Equals(item.Label))
-      {
-        string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicGenre, item.Label);
-        if (System.IO.File.Exists(strThumb))
-        {
-          item.IconImage = strThumb;
-          item.IconImageBig = strThumb;
-          item.ThumbnailImage = strThumb;
-        }
-        else
-        {
-          strThumb = MediaPortal.Util.Utils.GetFolderThumb(item.Path);
-          if (System.IO.File.Exists(strThumb))
-          {
-            item.IconImage = strThumb;
-            item.IconImageBig = strThumb;
-            item.ThumbnailImage = strThumb;
-          }
-        }
-      }
-      else if (song.Artist.Equals(item.Label))
-      {
-        string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, item.Label);
-        if (System.IO.File.Exists(strThumb))
-        {
-          item.IconImage = strThumb;
-          item.IconImageBig = strThumb;
-          item.ThumbnailImage = strThumb;
-        }
-      }        
-      else if (song.Album.Length > 1) // exclude "#"
-      {
-        MusicTag tag = item.MusicTag as MusicTag;
-        string strThumb = GUIMusicFiles.GetAlbumThumbName(tag.Artist, tag.Album);
-        string albumThumb = strThumb;
-        if (System.IO.File.Exists(strThumb))
-        {
-          item.IconImage = strThumb;
-          item.IconImageBig = strThumb;
-          item.ThumbnailImage = strThumb;
-        }
-        else
-        {
-          strThumb = MediaPortal.Util.Utils.GetFolderThumb(item.Path);
-          if (System.IO.File.Exists(strThumb))
-          {
-            item.IconImage = strThumb;
-            item.IconImageBig = strThumb;
-            item.ThumbnailImage = strThumb;
-          }
-
-          // Ouch.. Who did that?
-
-          // MediaPortal.Util.Utils.GetFolderThumb returns an empty string when item.Path.Length == 0
-          // so we'll pull to info from the db to reconstruct the full album path
-          //else if (strThumb.Length == 0)
-          //{
-          //  string albumPath = m_database.GetAlbumPath(song.albumartistId, song.albumId);
-
-          //  if (albumPath.Length > 0)
-          //  {
-          //    albumPath = albumPath.TrimEnd(new char[] { '\\' });
-          //    albumPath += "\\";
-
-          //    strThumb = MediaPortal.Util.Utils.GetFolderThumb(albumPath);
-          //    if (System.IO.File.Exists(strThumb))
-          //    {
-          //      item.IconImage = strThumb;
-          //      item.IconImageBig = strThumb;
-          //      item.ThumbnailImage = strThumb;
-
-          //      // Save a copy to the \thumbs folder so we don't need to do this again
-          //      System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(strThumb);
-
-          //      if (bmp != null)
-          //        bmp.Save(albumThumb);
-          //    }
-          //  }
-          //}
-        }
+        // Add Code here if users want to add pics showing "A", "B" and "C" ;)
       }
       else
       {
-        base.OnRetrieveCoverArt(item);
+        switch (filter.Where)
+        {
+          case "genre":
+            strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicGenre, item.Label);
+            if (System.IO.File.Exists(strThumb))
+            {
+              item.IconImage = strThumb;
+              item.IconImageBig = strThumb;
+              item.ThumbnailImage = strThumb;
+            }
+            // this would slowly access the remote shares directly...
+            //else
+            //{
+            //  strThumb = MediaPortal.Util.Utils.GetFolderThumb(item.Path);
+            //  if (System.IO.File.Exists(strThumb))
+            //  {
+            //    item.IconImage = strThumb;
+            //    item.IconImageBig = strThumb;
+            //    item.ThumbnailImage = strThumb;
+            //  }
+            //}
+            break;
+
+          case "albumartist":
+            goto case "artist";
+
+          case "artist":
+            strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, item.Label);
+            if (System.IO.File.Exists(strThumb))
+            {
+              item.IconImage = strThumb;
+              item.IconImageBig = strThumb;
+              item.ThumbnailImage = strThumb;
+            }
+            break;
+
+          case "track":
+            goto case "album";
+
+          case "album":
+            if (item.IsFolder)
+            {
+              strThumb = MediaPortal.Util.Utils.GetLocalFolderThumb(item.Path);
+              if (System.IO.File.Exists(strThumb))
+              {
+                item.IconImage = strThumb;
+                item.IconImageBig = strThumb;
+                item.ThumbnailImage = strThumb;
+              }
+              else
+              {
+                if (_createMissingFolderThumbCache)
+                {
+                  strThumb = MediaPortal.Util.Utils.GetFolderThumb(item.Path);
+                  if (System.IO.File.Exists(strThumb))
+                  {
+                    FolderThumbCacher thumbworker = new FolderThumbCacher(item.Path);
+                  }
+                }
+              }
+            }
+            else
+            {
+              MusicTag tag = item.MusicTag as MusicTag;
+              strThumb = GUIMusicFiles.GetAlbumThumbName(tag.Artist, tag.Album);
+              if (System.IO.File.Exists(strThumb))
+              {
+                item.IconImage = strThumb;
+                item.IconImageBig = strThumb;
+                item.ThumbnailImage = strThumb;
+              }
+            }
+            break;
+
+          default:
+            Log.Warn("GUIMusicGenres: OnRetrieveCoverArt - no filter definition matched for item {0}", item.Label);
+            base.OnRetrieveCoverArt(item);
+            break;
+        }
+
+        if (!string.IsNullOrEmpty(strThumb))
+        {
+          // let us test if there is a larger cover art image
+          string strLarge = MediaPortal.Util.Utils.ConvertToLargeCoverArt(strThumb);
+          if (System.IO.File.Exists(strLarge))
+          {
+            item.ThumbnailImage = strLarge;
+          }
+        }
+
       }
     }
 
