@@ -353,7 +353,7 @@ namespace MediaPortal.GUI.Music
           if (useAlbumTable && CurrentLevel > 0)
             isVariousArtistsAlbum = ModifyAlbumQueryForVariousArtists(ref sql);
 
-          database.GetSongsByFilter(sql, out songs, false, false, true, false);
+          database.GetSongsByFilter(sql, out songs, useArtistTable, useAlbumArtistTable, useSongTable, useGenreTable);
         }
 
         if (table == "album")
@@ -370,7 +370,7 @@ namespace MediaPortal.GUI.Music
           {
             foreach (AlbumInfo album in albums)
             {
-              if (song.Album.Equals(album.Album) && song.albumartistId == album.IdAlbum)  //album.IdAlbum contains IdAlbumArtist
+              if (song.Album.Equals(album.Album) && song.AlbumArtist == album.Artist)  //album.IdAlbum contains IdAlbumArtist
               {
                 song.Artist = album.AlbumArtist;
                 break;
