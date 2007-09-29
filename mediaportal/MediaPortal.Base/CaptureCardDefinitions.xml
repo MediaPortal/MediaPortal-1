@@ -877,6 +877,22 @@
       </connections>
     </tv>
   </capturecard>
+  
+  <capturecard commercialname="AverMedia AVerTVHD MCE A180" capturename="AVerMedia BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_10441461&a mp;rev_d1">
+		<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+		<tv>
+			<interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+				<filters>
+					<filter cat="networkprovider" name="Microsoft ATSC Network Provider" checkdevice="false"/>
+					<filter cat="tunerdevice" name="AVerMedia BDA ATSC Tuner" checkdevice="true"/>
+					<filter cat="capture" name="AVerMedia BDA Digital Capture" checkdevice="true"/>
+				</filters>
+			<connections>
+				<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+				<connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+			</connections>
+		</tv>
+	</capturecard>
 
   <capturecard commercialname="Pinnacle 300i DVBT" capturename="Pinnacle PCTV 300i PAL Stereo BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_002d11bd&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
