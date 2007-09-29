@@ -1074,9 +1074,9 @@ namespace MediaPortal.GUI.Music
               if (MusicDatabase.Instance.GetSongsByArtist(s.Artist, ref songs))
                 AddSongsToPlayList(songs, playList);
               break;
-            case "artistalbum":
+            case "albumartist":
               if (MusicDatabase.Instance.GetSongsByAlbumArtist(s.AlbumArtist, ref songs))
-                AddAlbumsToPlayList(songs, playList);
+                AddSongsToPlayList(songs, playList);
               break;
             case "album":
               songs.Add(s);

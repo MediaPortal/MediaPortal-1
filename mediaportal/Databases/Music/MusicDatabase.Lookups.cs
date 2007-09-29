@@ -505,26 +505,6 @@ namespace MediaPortal.Music.Database
 
         string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%{0}' ORDER BY strAlbum asc", strAlbumArtist);
         GetSongsByFilter(sql, out aSongList, false, false, true, false, false);
-
-        List<AlbumInfo> albums = new List<AlbumInfo>();
-        GetAllAlbums(ref albums);
-
-        foreach (Song song in aSongList)
-        {
-          foreach (AlbumInfo album in albums)
-          {
-            if (song.Album.Equals(album.Album))
-            {
-              // When we have a Various Artist album, we need to keep the original Artist id, to find songs
-              // no longer possible
-              //if (album.AlbumArtist == variousArtists)
-              //  song.artistId = aAlbumArtistId;
-              song.Artist = album.AlbumArtist;
-              break;
-            }
-          }
-        }
-
         return true;
       }
       catch (Exception ex)
