@@ -2,6 +2,7 @@
 
 // data recieved is with the 4 first bytes cut-off (magazine etc
 TeletextPageHeader::TeletextPageHeader(int mag,byte* data){
+	
 	int offset = 0;	
 	magazine = mag;
 	BYTE pageByte = unham(data[offset], data[offset+1]); // The lower two (hex) numbers of page
@@ -13,6 +14,7 @@ TeletextPageHeader::TeletextPageHeader(int mag,byte* data){
 	}
 	else pageNum = -1;
 
+	LogDebug("TeletextPageHeader page: %i", pageNum);
 	//int subpage = ((unham(data[offset + 4], data[offset+5]) << 8) | unham(data[offset+2], data[offset+3])) & 0x3F7F;
 
 	language = ((unham(data[offset + 6], data[offset + 7]) >> 5) & 0x07);
@@ -29,7 +31,7 @@ TeletextPageHeader::TeletextPageHeader(int mag,byte* data){
 	magazineSerial =                (data[offset + 7] & 0x02) == 0x02; // Byte 13, bit 2
 
 	if(magazineSerial){
-		LogDebug("Magazine %i reported as in serial mode!",mag);
+		LogDebug("Magazine %i is in serial mode",mag);
 	}
 }
 

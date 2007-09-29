@@ -62,7 +62,7 @@ public:
 	}
 
 	bool PageInProgress(){
-		LogDebug("Mag %i in progress: %i", magID, (pageNumInProgress != -1));
+		//LogDebug("Mag %i in progress: %i", magID, (pageNumInProgress != -1));
 		return pageNumInProgress != -1;
 	}
 

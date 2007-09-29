@@ -74,7 +74,8 @@ string ToBinary(byte b){
 
 void Magazine::EndPage(){
 
-	if(pageNumInProgress != -1 && (pageNumInProgress < 0 || pageNumInProgress >= 966)){
+	if(pageNumInProgress == -1) return; // no page in progress
+	else if((pageNumInProgress < 0 || pageNumInProgress >= 966)){
 		LogDebug("DANGER DANGER!, endpage with pageNumInProgress = %i", pageNumInProgress);
 		return;
 	}
@@ -189,6 +190,7 @@ void Magazine::EndPage(){
 	sub.timeOut = 9000000; // teletext pages will be actively overwritten if they need to hide :)
 
 	filter->NotifyTeletextSubtitle(sub);
+	pageNumInProgress = -1;
 }
 
 void Magazine::StartPage(TeletextPageHeader& header){
@@ -291,6 +293,7 @@ void TeletextDecoder::OnTeletextPacket(byte* data){
 					magazines[i].EndPage();
 				}
 				assert(inProgress <= 1); // at most one page should be in progress
+				if(inProgress > 1) LogDebug("Pages in progress at same time exceeds one ! (%i)",inProgress);
 			}
 			this->magazines[magIndex].StartPage(header);
 		}
