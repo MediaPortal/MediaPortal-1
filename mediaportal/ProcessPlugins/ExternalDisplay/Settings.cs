@@ -559,11 +559,11 @@ namespace ProcessPlugins.ExternalDisplay
         Log.Debug("ExternalDisplay: Loading MatrixMX...");
       }
       list.Add(new MatrixMX());   // added by cybrmage
-      //if (ExtensiveLogging)
-      //{
-      //  Log.Debug("ExternalDisplay: Loading MatrixGX...");
-      //}
-      //list.Add(new MatrixGX());   // added by cybrmage
+      if (ExtensiveLogging)
+      {
+        Log.Debug("ExternalDisplay: Loading MatrixGX...");
+      }
+      list.Add(new MatrixGX());   // added by cybrmage
       if (ExtensiveLogging)
       {
         Log.Debug("ExternalDisplay: Loading FICSpectra...");

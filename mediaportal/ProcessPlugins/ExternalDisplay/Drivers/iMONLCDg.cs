@@ -478,7 +478,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     {
       get
       {
-        if (File.Exists("SG_VFD.dll"))
+        if (!File.Exists(Config.GetFile(Config.Dir.Base, "SG_VFD.dll")))
         {
           _errorMessage = "Required file \"SG_VFD.dll\" is not installed!";
           _isDisabled = true;
@@ -592,7 +592,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     /// </summary>
     public string Description
     {
-      get { return "SoundGraph iMON Integrated USB VFD/LCD Driver V09_25_2007"; }
+      get { return "SoundGraph iMON Integrated USB VFD/LCD Driver V09_28_2007"; }
     }
 
     /// <summary>
@@ -646,7 +646,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
                       bool backLight, int contrast)
     {
       //        Log.SetLogLevel(MediaPortal.Services.Level.Debug);   // uncomment this line to get excessive logging
-      Log.Debug("iMONLCDg Driver - v09_25_2007");
+      Log.Debug("iMONLCDg Driver - v09_28_2007");
 
       #region iMONLCDg Advanced Configuration and display detection
 
@@ -1015,10 +1015,14 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
               data += 0x80;
               SendData(data);
             }
-            // dispose of the custom font data and the custon Large Icon data
+            // dispose of the custom font data
+            if (_useCustomFont)
+            {
+                CFont.CloseFont();
+            }
+            // dispose of the custom Large Icon data
             if (_UseCustomIcons || _UseLargeIcons)
             {
-              CFont.CloseFont();
               CustomLargeIcon.CloseIcons();
             }
           }
@@ -1121,7 +1125,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       try
       {
         iMONLCD_SendData(ref data);
-        Log.Info("iMONLCDg.SendData() Sending {0} to display", data.ToString("x0000000000000000"));
+        Log.Debug("iMONLCDg.SendData() Sending {0} to display", data.ToString("x0000000000000000"));
         Thread.Sleep(_delay);
       }
       catch (Exception ex)
