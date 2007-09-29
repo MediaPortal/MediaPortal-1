@@ -694,7 +694,10 @@ namespace MediaPortal.Player
 
           switch (code)
           {
-            case EventCode.DvdWarning:
+            case EventCode.DvdPlaybackRateChange:
+							if (_speed != p1/10000) _speed = p1/10000;   // if RWD reaches start then PlaybackRate is changing automaticly 
+          		break;
+						case EventCode.DvdWarning:
               Log.Info("DVDPlayer DVD warning :{0}", p1, p2);
               break;
             case EventCode.DvdCurrentHmsfTime:
