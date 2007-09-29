@@ -2288,7 +2288,11 @@ namespace MediaPortal.GUI.TV
         string displayedChannelName = string.Empty;
 
         if (_byIndex)
-          displayedChannelName = GUITVHome.Navigator.CurrentGroup.TvChannels[Int32.Parse(_channelName) - 1].Name;
+        {
+          int index = Int32.Parse(_channelName) - 1;
+          if(index < GUITVHome.Navigator.CurrentGroup.TvChannels.Count)
+            displayedChannelName = GUITVHome.Navigator.CurrentGroup.TvChannels[index].Name;
+        }
         else
           for (int ChannelCnt = 0; ChannelCnt < GUITVHome.Navigator.CurrentGroup.TvChannels.Count; ChannelCnt++)
             if (GUITVHome.Navigator.CurrentGroup.TvChannels[ChannelCnt].Number == Int32.Parse(_channelName))
