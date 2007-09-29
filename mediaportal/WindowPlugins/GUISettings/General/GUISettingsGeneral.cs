@@ -55,7 +55,6 @@ namespace WindowPlugins.GUISettings
     int selectedSkinIndex;
     bool selectedFullScreen;
     bool selectedScreenSaver;
-    string _originalSkin;
 
     class CultureComparer : IComparer
     {
@@ -106,15 +105,13 @@ namespace WindowPlugins.GUISettings
       SetScreenSaver();
       SetLanguages();
       SetSkins();
-      //btnSkin.CaptionChanged += new EventHandler(RefreshSkinPreview);
+      btnSkin.CaptionChanged += new EventHandler(RefreshSkinPreview);
       GUIControl.FocusControl(GetID, btnSkin.GetID);
     }
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      //btnSkin.CaptionChanged -= new EventHandler(RefreshSkinPreview);
-      if (btnSkin.SelectedLabel != _originalSkin)
-        SwitchToNewSkin();
+      btnSkin.CaptionChanged -= new EventHandler(RefreshSkinPreview);
       base.OnPageDestroy(newWindowId);
       SaveSettings();
     }
@@ -176,9 +173,10 @@ namespace WindowPlugins.GUISettings
 
     void SetSkins()
     {
+      string currentSkin = "";
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _originalSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
+        currentSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
       }
 
       GUIControl.ClearControl(GetID, btnSkin.GetID);
@@ -198,7 +196,7 @@ namespace WindowPlugins.GUISettings
           if (refFile.Exists)
           {
             GUIControl.AddItemLabelControl(GetID, btnSkin.GetID, skinDir.Name);
-            if (String.Compare(skinDir.Name, _originalSkin, true) == 0)
+            if (String.Compare(skinDir.Name, currentSkin, true) == 0)
             {
               GUIControl.SelectItemControl(GetID, btnSkin.GetID, skinNo);
               imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, skinDir.Name, @"media\preview.png"));
@@ -209,7 +207,6 @@ namespace WindowPlugins.GUISettings
       }
     }
 
-    
     void BackupButtons()
     {
       selectedLangIndex = btnLanguage.SelectedItem;
@@ -227,24 +224,18 @@ namespace WindowPlugins.GUISettings
       if (selectedScreenSaver)
         GUIControl.SelectControl(GetID, btnScreenSaver.GetID);
     }
-    
-    /*    
+
     void RefreshSkinPreview(object sender, EventArgs e)
     {
       imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, btnSkin.SelectedLabel, @"media\preview.png"));
-    }*/
+    }
 
     void OnSkinChanged()
     {
 
       // Backup the buttons, needed later
       BackupButtons();
-      imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, btnSkin.SelectedLabel, @"media\preview.png"));
-      RestoreButtons();
-    }
 
-    void SwitchToNewSkin()
-    {
       // Set the skin to the selected skin and reload GUI
       GUIGraphicsContext.Skin = btnSkin.SelectedLabel;
       SaveSettings();
@@ -258,15 +249,25 @@ namespace WindowPlugins.GUISettings
       {
         xmlreader.SetValue("general", "skinobsoletecount", 0);
         bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
-        if (autosize && !GUIGraphicsContext.Fullscreen)
-          Form.ActiveForm.Size = new System.Drawing.Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+				if (autosize && !GUIGraphicsContext.Fullscreen)
+				{
+					try
+					{
+						Form.ActiveForm.Size = new System.Drawing.Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+					}
+					catch(Exception ex)
+					{
+						Log.Error("OnSkinChanged exception:{0}", ex.ToString());
+						Log.Error(ex);
+					}
+				}
       }
       GUIWindowManager.OnResize();
-      //GUIWindowManager.ActivateWindow(GetID);
-      //GUIControl.FocusControl(GetID, btnSkin.GetID);
+      GUIWindowManager.ActivateWindow(GetID);
+      GUIControl.FocusControl(GetID, btnSkin.GetID);
 
       // Apply the selected buttons again, since they are cleared when we reload
-      //RestoreButtons();
+      RestoreButtons();
     }
 
     void OnLanguageChanged()
