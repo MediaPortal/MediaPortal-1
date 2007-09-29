@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using MediaPortal.GUI.Library;
 using System.Drawing;
 using System.Text;
 
@@ -235,7 +236,11 @@ namespace MediaPortal.TV.Teletext
     #endregion
 
     #region private methods
-    
+
+    /// <summary>
+    /// Returns a cached brush.
+    /// </summary>
+    /// 
     Brush getBrush(int bColor)
     {
       if (_brushes[bColor] == null)
@@ -245,6 +250,10 @@ namespace MediaPortal.TV.Teletext
       return _brushes[bColor];
     }
 
+    /// <summary>
+    /// Returns a cached pen.
+    /// </summary>
+    /// 
     Pen getPen(int bColor)
     {
       if (_pens[bColor] == null)
@@ -254,6 +263,10 @@ namespace MediaPortal.TV.Teletext
       return _pens[bColor];
     }
 
+    /// <summary>
+    /// Generates the header line.
+    /// </summary>
+    /// 
     private void GenerateHeaderLine(int mPage, int sPage)
     {
       // Generate header line, if it should be displayed
@@ -294,438 +307,19 @@ namespace MediaPortal.TV.Teletext
           _pageAttribs[i] = ((int)TextColors.Black << 4) | ((int)TextColors.White);
       }
     }
-    /// <summary>
-    /// Render a single position in the bitmap
-    /// </summary>
-    /// <param name="graph">Graphics</param>
-    /// <param name="chr">Character</param>
-    /// <param name="attrib">Attributes</param>
-    /// <param name="x">x position</param>
-    /// <param name="y">y position</param>
-    /// <param name="w">width of the font</param>
-    /// <param name="h">height of the font</param>
-    /// <param name="txtLanguage">Teletext language</param>
-    private void Render(Graphics graph, byte chr, int attrib, ref int x, ref int y, int w, int h, int txtLanguage)
-    {
-      bool charReady = false;
-      char chr2 = '?';
-
-      // Skip the character if 0xFF
-      if (chr == 0xFF)
-      {
-        x += w;
-        return;
-      }
-      // Generate mosaic
-      int[] mosaicY = new int[4];
-      mosaicY[0] = 0;
-      mosaicY[1] = (h + 1) / 3;
-      mosaicY[2] = (h * 2 + 1) / 3;
-      mosaicY[3] = h;
-
-      /* get colors */
-      int fColor = attrib & 0x0F;
-      int bColor = (attrib >> 4) & 0x0F;
-
-      // We are in transparent mode and fullscreen. Make background transparent
-      if (_transparentMode && _fullscreenMode)
-        bColor = (int)TextColors.Trans1;
-
-      Brush backBrush = getBrush(bColor);
-      Brush foreBrush = getBrush(fColor);
-
-      Pen backPen = getPen(bColor);
-      Pen forePen = getPen(fColor);
-      // Draw the graphic
-      try
-      {
-        if (((attrib & 0x300) > 0) && ((chr & 0xA0) == 0x20))
-        {
-          int w1 = w / 2;
-          int w2 = w - w1;
-          int y1;
-
-          chr = (byte)((chr & 0x1f) | ((chr & 0x40) >> 1));
-          if ((attrib & 0x200) > 0)
-            for (y1 = 0; y1 < 3; y1++)
-            {
-              graph.FillRectangle(backBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
-              if ((chr & 1) > 0)
-                graph.FillRectangle(foreBrush, x + 1, y + mosaicY[y1] + 1, w1 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
-              graph.FillRectangle(backBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
-              if ((chr & 2) > 0)
-                graph.FillRectangle(foreBrush, x + w1 + 1, y + mosaicY[y1] + 1, w2 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
-              chr >>= 2;
-            }
-          else
-            for (y1 = 0; y1 < 3; y1++)
-            {
-              if ((chr & 1) > 0)
-                graph.FillRectangle(foreBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
-              else
-                graph.FillRectangle(backBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
-              if ((chr & 2) > 0)
-                graph.FillRectangle(foreBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
-              else
-                graph.FillRectangle(backBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
-
-              chr >>= 2;
-            }
-
-          x += w;
-          return;
-        }
-        int factor = 0;
-
-        if ((attrib & 1 << 10) > 0)
-          factor = 2;
-        else
-          factor = 1;
-
-        charReady = false;
-        // If character is still not drawn, then we analyse it again
-        switch (chr)
-        {
-          case 0x00:
-          case 0x20:
-            if(bColor != _background)
-            {
-              graph.FillRectangle(backBrush, x, y, w, h * factor);
-            }
-            x += w;
-            charReady = true;
-            break;
-          case 0x23:
-          case 0x24:
-            chr2 = m_charTableA[txtLanguage, chr - 0x23];
-            break;
-          case 0x40:
-            chr2 = m_charTableB[txtLanguage];
-            break;
-          case 0x5B:
-          case 0x5C:
-          case 0x5D:
-          case 0x5E:
-          case 0x5F:
-          case 0x60:
-            chr2 = m_charTableC[txtLanguage, chr - 0x5B];
-            break;
-          case 0x7B:
-          case 0x7C:
-          case 0x7D:
-          case 0x7E:
-            chr2 = m_charTableD[txtLanguage, chr - 0x7B];
-            break;
-          case 0x7F:
-            graph.FillRectangle(backBrush, x, y, w, factor * h);
-            graph.FillRectangle(foreBrush, x + (w / 12), y + factor * (h * 5 / 20), w * 10 / 12, factor * (h * 11 / 20));
-            x += w;
-            charReady = true;
-            break;
-          case 0xE0:
-            graph.FillRectangle(backBrush, x + 1, y + 1, w - 1, h - 1);
-            graph.DrawLine(forePen, x, y, x + w, y);
-            graph.DrawLine(forePen, x, y, x, y + h);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE1:
-            graph.FillRectangle(backBrush, x, y + 1, w, h - 1);
-            graph.DrawLine(forePen, x, y, x + w, y);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE2:
-            graph.FillRectangle(backBrush, x, y + 1, w - 1, h - 1);
-            graph.DrawLine(forePen, x, y, x + w, y);
-            graph.DrawLine(forePen, x + w - 1, y + 1, x + w - 1, y + h - 1);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE3:
-            graph.FillRectangle(backBrush, x + 1, y, w - 1, h);
-            graph.DrawLine(forePen, x, y, x, y + h);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE4:
-            graph.FillRectangle(backBrush, x, y, w - 1, h);
-            graph.DrawLine(forePen, x + w - 1, y, x + w - 1, y + h);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE5:
-            graph.FillRectangle(backBrush, x + 1, y, w - 1, h - 1);
-            graph.DrawLine(forePen, x, y + h - 1, x + w, y + h - 1);
-            graph.DrawLine(forePen, x, y, x, y + h - 1);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE6:
-            graph.FillRectangle(backBrush, x, y, w, h - 1);
-            graph.DrawLine(forePen, x, y + h - 1, x + w, y + h - 1);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE7:
-            graph.FillRectangle(backBrush, x, y, w - 1, h - 1);
-            graph.DrawLine(forePen, x, y + h - 1, x + w, y + h - 1);
-            graph.DrawLine(forePen, x + w - 1, y, x + w - 1, y + h - 1);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE8:
-            graph.FillRectangle(backBrush, x + 1, y, w - 1, h);
-            for (int r = 0; r < w / 2; r++)
-              graph.DrawLine(forePen, x + r, y + r, x + r, y + h - r);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE9:
-            graph.FillRectangle(backBrush, x + w / 2, y, (w + 1) / 2, h);
-            graph.FillRectangle(foreBrush, x, y, w / 2, h);
-            x += w;
-            charReady = true;
-            break;
-          case 0xEA:
-            graph.FillRectangle(backBrush, x, y, w, h);
-            graph.FillRectangle(foreBrush, x, y, w / 2, h / 2);
-            x += w;
-            charReady = true;
-            break;
-          case 0xEB:
-            graph.FillRectangle(backBrush, x, y + 1, w, h - 1);
-            for (int r = 0; r < w / 2; r++)
-              graph.DrawLine(forePen, x + r, y + r, x + w - r, y + r);
-            x += w;
-            charReady = true;
-            break;
-          case 0xEC:
-            graph.FillRectangle(backBrush, x, y + (w / 2), w, h - (w / 2));
-            graph.FillRectangle(foreBrush, x, y, w, h / 2);
-            x += w;
-            charReady = true;
-            break;
-          case 0xED:
-          case 0xEE:
-          case 0xEF:
-          case 0xF0:
-          case 0xF1:
-          case 0xF2:
-          case 0xF3:
-          case 0xF4:
-          case 0xF5:
-          case 0xF6:
-            chr2 = m_charTableE[chr - 0xED];
-            break;
-          default:
-            chr2 = (char)chr;
-            break;
-        }
-        // If still not drawn than it's a text and we draw the string
-        if (charReady == false)
-        {
-          string text = "" + chr2;
-          graph.FillRectangle(backBrush, x, y, w, h * factor);
-          SizeF width = graph.MeasureString(text, _fontTeletext);
-          PointF xyPos = new PointF((float)x + ((w - ((int)width.Width)) / 2), (float)y);
-          graph.DrawString(text, _fontTeletext, foreBrush, xyPos);
-          if (factor == 2)
-          {
-            // draw doubleheight
-            for (int ypos = 0; ypos < h; ypos++)
-            {
-              for (int xpos = 0; xpos < w; xpos++)
-              {
-                try
-                {
-                  if (y + (ypos * 2) + 1 < _pageBitmap.Height)
-                  {
-                    int m = h - ypos - 1;
-                    _pageBitmap.SetPixel(x + xpos, y + (m * 2), _pageBitmap.GetPixel(xpos + x, m + y)); 
-                    _pageBitmap.SetPixel(x + xpos, y + (m * 2) + 1, _pageBitmap.GetPixel(xpos + x, m + y));
-                  }
-                }
-                catch { }
-              }
-            }
-
-          }
-          x += w;
-        }
-      }
-      catch { }
-      return;
-    }
-    /// <summary>
-    /// Converts the color of the teletext informations to a system color
-    /// </summary>
-    /// <param name="colorNumber">Number of the teletext color, referring to the enumeration TextColors </param>
-    /// <returns>Corresponding System Color, or black if the value is not defined</returns>
-    private Color GetColor(int colorNumber)
-    {
-
-      switch (colorNumber)
-      {
-        case (int)TextColors.Black:
-          return Color.Black;
-        case (int)TextColors.Red:
-          return Color.Red;
-        case (int)TextColors.Green:
-          return Color.FromArgb(0, 255, 0);
-        case (int)TextColors.Yellow:
-          return Color.Yellow;
-        case (int)TextColors.Blue:
-          return Color.Blue;
-        case (int)TextColors.Magenta:
-          return Color.Magenta;
-        case (int)TextColors.White:
-          return Color.White;
-        case (int)TextColors.Cyan:
-          return Color.Cyan;
-        case (int)TextColors.Trans1:
-          return Color.HotPink;
-        case (int)TextColors.Trans2:
-          return Color.HotPink;
-      }
-      return Color.Black;
-    }
-    /// <summary>
-    /// Checks if is a valid page to be displayed
-    /// </summary>
-    /// <param name="i">Pagenumber to check</param>
-    /// <returns>True, if page should be displayed</returns>
-    private bool IsDecimalPage(int i)
-    {
-      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));
-    }
 
     /// <summary>
-    /// Checks if is a valid subpage 
+    /// Generate intermediate page that is later drawn on Bmp
     /// </summary>
-    /// <param name="i">Subpagenumber to check</param>
-    /// <returns>True, if subpage is valid</returns>
-    private bool IsDecimalSubPage(int i)
+    /// 
+
+    private void GeneratePage(bool row24, bool isBoxed, bool displayHeaderAndTopText)
     {
-      if (i >= 0x80) return false;
-
-      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x70));
-    }
-    #endregion
-
-    #region public methods
-    /// <summary>
-    /// Renders a teletext page to a bitmap
-    /// </summary>
-    /// <param name="byPage">Teletext page data</param>
-    /// <param name="mPage">Pagenumber</param>
-    /// <param name="sPage">Subpagenumber</param>
-    /// <returns>Rendered teletext page as bitmap</returns>
-    public Bitmap RenderPage(byte[] byPage, int mPage, int sPage)
-    {
-      MediaPortal.GUI.Library.Log.Debug("RenderPage start");
-      // Create Bitmap and set HotPink as the transparent color
-      if (_pageBitmap == null)
-      {
-        _pageBitmap = new Bitmap(_pageRenderWidth, _pageRenderHeight);
-        _pageBitmap.MakeTransparent(Color.HotPink);
-        _renderGraphics = Graphics.FromImage(_pageBitmap);
-        _fontwidth = _pageRenderWidth / 40;
-        _fontheight = (_pageRenderHeight - 2) / 25;
-
-        float fntSize = Math.Min(_fontwidth, _fontheight);
-        float nPercentage = ((float)_percentageOfMaximumHeight / 100);
-        _fontTeletext = new Font("Verdana", fntSize, FontStyle.Regular, GraphicsUnit.Pixel);
-        float fntHeight = _fontTeletext.GetHeight(_renderGraphics);
-        while (fntHeight > nPercentage * _fontheight || fntHeight > nPercentage * _fontwidth)
-        {
-          fntSize -= 0.1f;
-          _fontTeletext = new Font("Verdana", fntSize, FontStyle.Regular, GraphicsUnit.Pixel);
-          fntHeight = _fontTeletext.GetHeight(_renderGraphics);
-        }
-      }
       int row, col;
       int hold;
       int foreground, background, doubleheight, charset, mosaictype;
       byte held_mosaic;
       bool flag = false;
-      bool isBoxed = false;
-
-      bool row24 = false;
-      // Decode the page data (Hamming 8/4 or odd parity)
-      for (int rowNr = 0; rowNr < MAX_ROWS; rowNr++)
-      {
-        if (rowNr * 42 >= byPage.Length) break;
-        int packetNumber = Hamming.GetPacketNumber(rowNr * 42, ref byPage);
-        // Only the packets 0-25 are accepted
-        if (packetNumber < 0 || packetNumber > 25) continue;
-        bool stripParity = true;
-        // Packets 0 and 25 are hamming 8/4 encoded
-        if (packetNumber == 25 || packetNumber == 0)
-          stripParity = false;
-        // Decode the whole row and remove the first two bytes
-        for (col = 2; col < 42; col++)
-        {
-          // After pageheader in packet 0 (Bit 10) odd parity is used
-          if (col >= 10 && packetNumber == 0) stripParity = true;
-          byte kar = byPage[rowNr * 42 + col];
-          if (stripParity)
-            kar &= 0x7f;
-          _pageChars[packetNumber * 40 + col - 2] = kar;
-        }
-        // Exists a packet 24 (Toptext line)
-        if (packetNumber == 24)
-          row24 = true;
-      }
-      row = col = 0;
-      int txtLanguage = 0;
-      // language detection. Extract the bit C12-C14 from the teletext header and set the language code
-      int languageCode = 0;
-      byte byte1 = Hamming.Decode[byPage[9]];
-      if (byte1 == 0xFF)
-        languageCode = 0;
-      else
-        languageCode = ((byte1 >> 3) & 0x01) | (((byte1 >> 2) & 0x01) << 1) | (((byte1 >> 1) & 0x01) << 2);
-
-      switch (languageCode)
-      {
-        case 0:
-          txtLanguage = 1;
-          break;
-        case 1:
-          txtLanguage = 4;
-          break;
-        case 2:
-          txtLanguage = 11;
-          break;
-        case 3:
-          txtLanguage = 5;
-          break;
-        case 4:
-          txtLanguage = 3;
-          break;
-        case 5:
-          txtLanguage = 8;
-          break;
-        case 6:
-          txtLanguage = 0;
-          break;
-        default:
-          txtLanguage = 1;
-          break;
-
-      }
-      // Detect if it's a boxed page. Boxed Page = subtitle and/or newsflash bit is set
-      bool isSubtitlePage = Hamming.IsSubtitleBitSet(0, ref byPage);
-      bool isNewsflash = Hamming.IsNewsflash(0, ref byPage);
-      isBoxed = isNewsflash | isSubtitlePage;
-      MediaPortal.GUI.Library.Log.Debug("Newsflash: " + isNewsflash);
-      MediaPortal.GUI.Library.Log.Debug("Subtitle: " + isSubtitlePage);
-      MediaPortal.GUI.Library.Log.Debug("Boxed: " + isBoxed);
-
-      // Determine if the header or toptext line sould be displayed.
-      bool displayHeaderAndTopText = !_fullscreenMode || !isBoxed || (isBoxed && _selectedPageText.IndexOf("-") != -1)
-        || (isBoxed && _selectedPageText.IndexOf("-") == -1 && !_selectedPageText.Equals(Convert.ToString(mPage, 16)));
 
       // Iterate over all lines of the teletext page and prepare the rendering
       for (row = 0; row <= 24; row++)
@@ -1023,9 +617,450 @@ namespace MediaPortal.TV.Teletext
           }
         }
       }//for (int rowNr = 0; rowNr < 24; rowNr++)
+    }
 
-      if(displayHeaderAndTopText)
-        GenerateHeaderLine(mPage,sPage);
+    /// <summary>
+    /// Render background
+    /// </summary>
+    /// 
+
+    private void RenderBackground(Graphics graph, int w, int h, bool displayHeaderAndTopText)
+    {
+      int row, col;
+      int startColor, startCol;
+      int y;
+
+      y = 0;
+      // Iterate over all lines of the teletext page 
+
+      for (row = 0; row <= 24; row++)
+      {
+
+        startColor = (_pageAttribs[row * 40] >> 4) & 0x0F;
+        startCol = 0;
+
+        if (!displayHeaderAndTopText && row == 24)
+          break;
+
+        for (col = 1; col <= 40; col++)
+        {
+          int thisColor;
+
+          if (col < 40)
+            thisColor = (_pageAttribs[row * 40 + col] >> 4) & 0x0F;
+          else
+            thisColor = -1; // col == 40 (force draw of line)
+
+          // if the color has changed, draw the previous color 
+          if (thisColor != startColor)
+          {
+            Brush backBrush = getBrush(startColor);
+            if (startColor != _background) // But dont background twice
+              graph.FillRectangle(backBrush, startCol * w, y, (col - startCol) * w, h);
+            startColor = thisColor;
+            startCol = col;
+          }
+        }
+        y += _fontheight + (row == 23 ? 2 : 0);
+      }
+    }
+    /// <summary>
+    /// Render a single position in the bitmap
+    /// </summary>
+    /// <param name="graph">Graphics</param>
+    /// <param name="chr">Character</param>
+    /// <param name="attrib">Attributes</param>
+    /// <param name="x">x position</param>
+    /// <param name="y">y position</param>
+    /// <param name="w">width of the font</param>
+    /// <param name="h">height of the font</param>
+    /// <param name="txtLanguage">Teletext language</param>
+    private void RenderForeground(Graphics graph, byte chr, int attrib, ref int x, ref int y, int w, int h, int txtLanguage)
+    {
+      bool charReady = false;
+      char chr2 = '?';
+
+      // Skip the character if 0xFF
+      if (chr == 0xFF)
+      {
+        x += w;
+        return;
+      }
+      // Generate mosaic
+      int[] mosaicY = new int[4];
+      mosaicY[0] = 0;
+      mosaicY[1] = (h + 1) / 3;
+      mosaicY[2] = (h * 2 + 1) / 3;
+      mosaicY[3] = h;
+
+      /* get fg color */
+      int fColor = attrib & 0x0F;
+
+      Brush foreBrush = getBrush(fColor);
+      Pen forePen = getPen(fColor);
+
+      // Draw the graphic
+      try
+      {
+        if (((attrib & 0x300) > 0) && ((chr & 0xA0) == 0x20))
+        {
+          int w1 = w / 2;
+          int w2 = w - w1;
+          int y1;
+
+          chr = (byte)((chr & 0x1f) | ((chr & 0x40) >> 1));
+          if ((attrib & 0x200) > 0)
+            for (y1 = 0; y1 < 3; y1++)
+            {
+              if ((chr & 1) > 0)
+                graph.FillRectangle(foreBrush, x + 1, y + mosaicY[y1] + 1, w1 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
+              if ((chr & 2) > 0)
+                graph.FillRectangle(foreBrush, x + w1 + 1, y + mosaicY[y1] + 1, w2 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
+              chr >>= 2;
+            }
+          else
+            for (y1 = 0; y1 < 3; y1++)
+            {
+              if ((chr & 1) > 0)
+                graph.FillRectangle(foreBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
+              if ((chr & 2) > 0)
+                graph.FillRectangle(foreBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
+              chr >>= 2;
+            }
+
+          x += w;
+          return;
+        }
+        int factor = 0;
+
+        if ((attrib & 1 << 10) > 0)
+          factor = 2;
+        else
+          factor = 1;
+
+        charReady = false;
+        // If character is still not drawn, then we analyse it again
+        switch (chr)
+        {
+          case 0x00:
+          case 0x20:
+            x += w;
+            charReady = true;
+            break;
+          case 0x23:
+          case 0x24:
+            chr2 = m_charTableA[txtLanguage, chr - 0x23];
+            break;
+          case 0x40:
+            chr2 = m_charTableB[txtLanguage];
+            break;
+          case 0x5B:
+          case 0x5C:
+          case 0x5D:
+          case 0x5E:
+          case 0x5F:
+          case 0x60:
+            chr2 = m_charTableC[txtLanguage, chr - 0x5B];
+            break;
+          case 0x7B:
+          case 0x7C:
+          case 0x7D:
+          case 0x7E:
+            chr2 = m_charTableD[txtLanguage, chr - 0x7B];
+            break;
+          case 0x7F:
+            graph.FillRectangle(foreBrush, x + (w / 12), y + factor * (h * 5 / 20), w * 10 / 12, factor * (h * 11 / 20));
+            x += w;
+            charReady = true;
+            break;
+          case 0xE0:
+            graph.DrawLine(forePen, x, y, x + w, y);
+            graph.DrawLine(forePen, x, y, x, y + h);
+            x += w;
+            charReady = true;
+            break;
+          case 0xE1:
+            graph.DrawLine(forePen, x, y, x + w, y);
+            x += w;
+            charReady = true;
+            break;
+          case 0xE2:
+            graph.DrawLine(forePen, x, y, x + w, y);
+            graph.DrawLine(forePen, x + w - 1, y + 1, x + w - 1, y + h - 1);
+            x += w;
+            charReady = true;
+            break;
+          case 0xE3:
+            graph.DrawLine(forePen, x, y, x, y + h);
+            x += w;
+            charReady = true;
+            break;
+          case 0xE4:
+            graph.DrawLine(forePen, x + w - 1, y, x + w - 1, y + h);
+            x += w;
+            charReady = true;
+            break;
+          case 0xE5:
+            graph.DrawLine(forePen, x, y + h - 1, x + w, y + h - 1);
+            graph.DrawLine(forePen, x, y, x, y + h - 1);
+            x += w;
+            charReady = true;
+            break;
+          case 0xE6:
+            graph.DrawLine(forePen, x, y + h - 1, x + w, y + h - 1);
+            x += w;
+            charReady = true;
+            break;
+          case 0xE7:
+            graph.DrawLine(forePen, x, y + h - 1, x + w, y + h - 1);
+            graph.DrawLine(forePen, x + w - 1, y, x + w - 1, y + h - 1);
+            x += w;
+            charReady = true;
+            break;
+          case 0xE8:
+            for (int r = 0; r < w / 2; r++)
+              graph.DrawLine(forePen, x + r, y + r, x + r, y + h - r);
+            x += w;
+            charReady = true;
+            break;
+          case 0xE9:
+            graph.FillRectangle(foreBrush, x, y, w / 2, h);
+            x += w;
+            charReady = true;
+            break;
+          case 0xEA:
+            graph.FillRectangle(foreBrush, x, y, w / 2, h / 2);
+            x += w;
+            charReady = true;
+            break;
+          case 0xEB:
+            for (int r = 0; r < w / 2; r++)
+              graph.DrawLine(forePen, x + r, y + r, x + w - r, y + r);
+            x += w;
+            charReady = true;
+            break;
+          case 0xEC:
+            graph.FillRectangle(foreBrush, x, y, w, h / 2);
+            x += w;
+            charReady = true;
+            break;
+          case 0xED:
+          case 0xEE:
+          case 0xEF:
+          case 0xF0:
+          case 0xF1:
+          case 0xF2:
+          case 0xF3:
+          case 0xF4:
+          case 0xF5:
+          case 0xF6:
+            chr2 = m_charTableE[chr - 0xED];
+            break;
+          default:
+            chr2 = (char)chr;
+            break;
+        }
+        if (charReady)
+          return;
+
+        // If still not drawn than it's a text and we draw the string
+        string text = "" + chr2;
+        SizeF width = graph.MeasureString(text, _fontTeletext);
+        PointF xyPos = new PointF((float)x + ((w - ((int)width.Width)) / 2), (float)y);
+        graph.DrawString(text, _fontTeletext, foreBrush, xyPos);
+        if (factor == 2)
+        {
+          // draw doubleheight
+          for (int ypos = 0; ypos < h; ypos++)
+          {
+            for (int xpos = 0; xpos < w; xpos++)
+            {
+              try
+              {
+                if (y + (ypos * 2) + 1 < _pageBitmap.Height)
+                {
+                  int m = h - ypos - 1;
+                  _pageBitmap.SetPixel(x + xpos, y + (m * 2), _pageBitmap.GetPixel(xpos + x, m + y));
+                  _pageBitmap.SetPixel(x + xpos, y + (m * 2) + 1, _pageBitmap.GetPixel(xpos + x, m + y));
+                }
+              }
+              catch { }
+            }
+          }
+
+        }
+        x += w;
+      }
+      catch { }
+      return;
+    }
+    /// <summary>
+    /// Converts the color of the teletext informations to a system color
+    /// </summary>
+    /// <param name="colorNumber">Number of the teletext color, referring to the enumeration TextColors </param>
+    /// <returns>Corresponding System Color, or black if the value is not defined</returns>
+    private Color GetColor(int colorNumber)
+    {
+
+      switch (colorNumber)
+      {
+        case (int)TextColors.Black:
+          return Color.Black;
+        case (int)TextColors.Red:
+          return Color.Red;
+        case (int)TextColors.Green:
+          return Color.FromArgb(0, 255, 0);
+        case (int)TextColors.Yellow:
+          return Color.Yellow;
+        case (int)TextColors.Blue:
+          return Color.Blue;
+        case (int)TextColors.Magenta:
+          return Color.Magenta;
+        case (int)TextColors.White:
+          return Color.White;
+        case (int)TextColors.Cyan:
+          return Color.Cyan;
+        case (int)TextColors.Trans1:
+          return Color.HotPink;
+        case (int)TextColors.Trans2:
+          return Color.HotPink;
+      }
+      return Color.Black;
+    }
+    /// <summary>
+    /// Checks if is a valid page to be displayed
+    /// </summary>
+    /// <param name="i">Pagenumber to check</param>
+    /// <returns>True, if page should be displayed</returns>
+    private bool IsDecimalPage(int i)
+    {
+      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));
+    }
+
+    /// <summary>
+    /// Checks if is a valid subpage 
+    /// </summary>
+    /// <param name="i">Subpagenumber to check</param>
+    /// <returns>True, if subpage is valid</returns>
+    private bool IsDecimalSubPage(int i)
+    {
+      if (i >= 0x80) return false;
+
+      return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x70));
+    }
+
+    private int GetLanguageCode(byte code)
+    {
+      int languageCode;
+
+      if (code == 0xff)
+        languageCode = 0;
+      else
+        languageCode = ((code >> 3) & 0x01) | (((code >> 2) & 0x01) << 1) | (((code >> 1) & 0x01) << 2);
+
+      switch (languageCode)
+      {
+        case 0:
+          return 1;
+        case 1:
+          return 4;
+        case 2:
+          return 11;
+        case 3:
+          return 5;
+        case 4:
+          return 3;
+        case 5:
+          return 8;
+        case 6:
+          return 0;
+        default:
+          return 1;
+      }
+    }
+
+    #endregion
+
+    #region public methods
+    /// <summary>
+    /// Renders a teletext page to a bitmap
+    /// </summary>
+    /// <param name="byPage">Teletext page data</param>
+    /// <param name="mPage">Pagenumber</param>
+    /// <param name="sPage">Subpagenumber</param>
+    /// <returns>Rendered teletext page as bitmap</returns>
+    public Bitmap RenderPage(byte[] byPage, int mPage, int sPage)
+    {
+      MediaPortal.GUI.Library.Log.Debug("RenderPage start");
+      // Create Bitmap and set HotPink as the transparent color
+      if (_pageBitmap == null)
+      {
+        _pageBitmap = new Bitmap(_pageRenderWidth, _pageRenderHeight);
+        _pageBitmap.MakeTransparent(Color.HotPink);
+        _renderGraphics = Graphics.FromImage(_pageBitmap);
+        _fontwidth = _pageRenderWidth / 40;
+        _fontheight = (_pageRenderHeight - 2) / 25;
+
+        float fntSize = Math.Min(_fontwidth, _fontheight);
+        float nPercentage = ((float)_percentageOfMaximumHeight / 100);
+        _fontTeletext = new Font("Verdana", fntSize, FontStyle.Regular, GraphicsUnit.Pixel);
+        float fntHeight = _fontTeletext.GetHeight(_renderGraphics);
+        while (fntHeight > nPercentage * _fontheight || fntHeight > nPercentage * _fontwidth)
+        {
+          fntSize -= 0.1f;
+          _fontTeletext = new Font("Verdana", fntSize, FontStyle.Regular, GraphicsUnit.Pixel);
+          fntHeight = _fontTeletext.GetHeight(_renderGraphics);
+        }
+      }
+
+      int row, col;
+      bool isBoxed = false;
+      bool row24 = false;
+
+      // Decode the page data (Hamming 8/4 or odd parity)
+      for (int rowNr = 0; rowNr < MAX_ROWS; rowNr++)
+      {
+        if (rowNr * 42 >= byPage.Length) break;
+        int packetNumber = Hamming.GetPacketNumber(rowNr * 42, ref byPage);
+        // Only the packets 0-25 are accepted
+        if (packetNumber < 0 || packetNumber > 25) continue;
+        bool stripParity = true;
+        // Packets 0 and 25 are hamming 8/4 encoded
+        if (packetNumber == 25 || packetNumber == 0)
+          stripParity = false;
+        // Decode the whole row and remove the first two bytes
+        for (col = 2; col < 42; col++)
+        {
+          // After pageheader in packet 0 (Bit 10) odd parity is used
+          if (col >= 10 && packetNumber == 0) stripParity = true;
+          byte kar = byPage[rowNr * 42 + col];
+          if (stripParity)
+            kar &= 0x7f;
+          _pageChars[packetNumber * 40 + col - 2] = kar;
+        }
+        // Exists a packet 24 (Toptext line)
+        if (packetNumber == 24)
+          row24 = true;
+      }
+      row = col = 0;
+
+      // language detection. Extract the bit C12-C14 from the teletext header and set the language code
+      int txtLanguage = GetLanguageCode(Hamming.Decode[byPage[9]]);
+
+      // Detect if it's a boxed page. Boxed Page = subtitle and/or newsflash bit is set
+      bool isSubtitlePage = Hamming.IsSubtitleBitSet(0, ref byPage);
+      bool isNewsflash = Hamming.IsNewsflash(0, ref byPage);
+      isBoxed = isNewsflash | isSubtitlePage;
+      Log.Debug("Newsflash: {0}, Subtitle: {1}, Boxed: {2}", isNewsflash, isSubtitlePage, isBoxed);
+
+      // Determine if the header or toptext line sould be displayed.
+      bool displayHeaderAndTopText = !_fullscreenMode || !isBoxed || (isBoxed && _selectedPageText.IndexOf("-") != -1)
+        || (isBoxed && _selectedPageText.IndexOf("-") == -1 && !_selectedPageText.Equals(Convert.ToString(mPage, 16)));
+
+      GeneratePage(row24, isBoxed, displayHeaderAndTopText);
+
+      if (displayHeaderAndTopText)
+        GenerateHeaderLine(mPage, sPage);
 
       // Now we generate the bitmap
       int y = 0;
@@ -1040,27 +1075,27 @@ namespace MediaPortal.TV.Teletext
         else
           _background = (int)TextColors.Black;
 
-        // Draw the base rectangle
-        // Select the brush, depending on the page and mode
+        // Draw the base rectangle:
+        // Select the brush, depending on the page and mode and fill the rectangle with the teletext bg
         _renderGraphics.FillRectangle(getBrush(_background), 0, 0, _pageRenderWidth, _pageRenderHeight);
-        // Fill the rectangle with the teletext page informations
-        if (_renderGraphics != null && _pageBitmap != null)
-        {
-          for (row = 0; row < 25; row++)
-          {
-            // If not display a toptext line than abort
-            if (!displayHeaderAndTopText && row == 24) break;
-            x = 0;
-            // Draw a single point
-            for (col = 0; col < 40; col++)
-              Render(_renderGraphics, _pageChars[row * 40 + col], _pageAttribs[row * 40 + col], ref x, ref y, _fontwidth, _fontheight, txtLanguage);
 
-            y += _fontheight + (row == 23 ? 2 : 0);
-          }
+        // Draw the individual backgrund colors
+        RenderBackground(_renderGraphics, _fontwidth, _fontheight, displayHeaderAndTopText);
+
+        for (row = 0; row < 25; row++)
+        {
+          x = 0;
+          // If not display a toptext line then abort
+          if (!displayHeaderAndTopText && row == 24) 
+            break;
+          // Draw a single point
+          for (col = 0; col < 40; col++)
+            RenderForeground(_renderGraphics, _pageChars[row * 40 + col], _pageAttribs[row * 40 + col], ref x, ref y, _fontwidth, _fontheight, txtLanguage);
+          y += _fontheight + (row == 23 ? 2 : 0);
         }
       }
       catch { }
-      MediaPortal.GUI.Library.Log.Debug("RenderPage end");
+      Log.Debug("RenderPage end");
       return _pageBitmap;
       // send the bitmap to the callback
     }
@@ -1079,8 +1114,8 @@ namespace MediaPortal.TV.Teletext
     }
     public void Clear()
     {
-      if(_renderGraphics != null)
-      _renderGraphics.FillRectangle(getBrush((int)TextColors.Black), 0, 0, _pageRenderWidth, _pageRenderHeight);
+      if (_renderGraphics != null)
+        _renderGraphics.FillRectangle(getBrush((int)TextColors.Black), 0, 0, _pageRenderWidth, _pageRenderHeight);
     }
     #endregion
   }
