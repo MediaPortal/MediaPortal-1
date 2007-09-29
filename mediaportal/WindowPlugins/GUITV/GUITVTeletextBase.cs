@@ -374,6 +374,8 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     protected void UpdatePage()
     {
+      Log.Debug("dvb-teletext: Thread render create");
+
       // While not stop the thread, continue
       while (!_updateThreadStop)
       {
