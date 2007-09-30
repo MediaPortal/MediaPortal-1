@@ -1650,7 +1650,10 @@ namespace MediaPortal.GUI.Video
         if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC ||
           playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
         {
-          return;
+          // Only stay in fullscreen if there are (still) items to play
+          PlayList current = playlistPlayer.GetPlaylist(playlistPlayer.CurrentPlaylistType);
+          if (current.Count > 0 && !current.AllPlayed())
+            return;
         }
         _isOsdVisible = false;
         GUIWindowManager.IsOsdVisible = false;

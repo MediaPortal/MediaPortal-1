@@ -34,6 +34,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Subtitle;
 using MediaPortal.Configuration;
+using MediaPortal.Playlists;
 using Un4seen.Bass.AddOn.Cd;
 
 namespace MediaPortal.Player
@@ -659,6 +660,13 @@ namespace MediaPortal.Player
         //stop radio
         GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msgRadio);
+        PlayListType currentList = PlayListPlayer.SingletonPlayer.CurrentPlaylistType;
+        // Clear any temp. playlists before starting playback
+        if (currentList == PlayListType.PLAYLIST_MUSIC_TEMP || currentList == PlayListType.PLAYLIST_VIDEO_TEMP)
+        {
+          PlayListPlayer.SingletonPlayer.GetPlaylist(currentList).Clear();
+          PlayListPlayer.SingletonPlayer.Reset();
+        }
         //stop timeshifting tv
         //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
         //GUIWindowManager.SendMessage(msgTv);
