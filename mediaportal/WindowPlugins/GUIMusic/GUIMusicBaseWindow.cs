@@ -895,12 +895,59 @@ namespace MediaPortal.GUI.Music
 
           // For an index view, don't translate the duration
           string duration = "";
-          // When in Shares View, sortmethod is Track and duration should be HMSS format
+
           // eliminates bug mentioned in http://forum.team-mediaportal.com/mymusic_list_shows_song_length_just_full-t28125.html
-          if (method == MusicSort.SortMethod.Track)
-              duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
-          else
+          // testing on MusicState.Startwindow is a bit dirty, but there is no other way to determine Shares View
+          // Handler.View is null when program starts but is never set another time
+          // so it is not possible to check if shares view is selected
+          if ((handler.View != null) && (MusicState.StartWindow != 501))
+          {
+            FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
+            if (filter.SqlOperator != "group")
+            {
+              switch (CurrentSortMethod)
+              {
+                case MusicSort.SortMethod.Name:
+                  duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
+                  break;
+                case MusicSort.SortMethod.Date:
+                  duration = Convert.ToString(tag.Duration);
+                  break;
+                case MusicSort.SortMethod.Size:
+                  duration = Convert.ToString(tag.Duration);
+                  break;
+                case MusicSort.SortMethod.Track:
+                  duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
+                  break;
+                case MusicSort.SortMethod.Duration:
+                  duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
+                  break;
+                case MusicSort.SortMethod.Title:
+                  duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
+                  break;
+                case MusicSort.SortMethod.Artist:
+                  duration = Convert.ToString(tag.Duration);
+                  break;
+                case MusicSort.SortMethod.Album:
+                  duration = Convert.ToString(tag.Duration);
+                  break;
+                case MusicSort.SortMethod.Filename:
+                  duration = Convert.ToString(tag.Duration);
+                  break;
+                case MusicSort.SortMethod.Rating:
+                  duration = Convert.ToString(tag.Duration);
+                  break;
+              }
+            }
+            else
+            {
               duration = Convert.ToString(tag.Duration);
+            }
+          }
+          else
+          {
+            duration = MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
+          }
           
           string rating = tag.Rating.ToString();
           if (tag.Track <= 0)
