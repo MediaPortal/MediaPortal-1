@@ -874,7 +874,7 @@ namespace MediaPortal.Util
 
                 item = new GUIListItem();
                 item.IsFolder = true;
-                item.Label = Utils.GetFilename(strFiles[i]);
+              	item.Label = System.IO.Path.GetFileName(strFiles[i]);  //Utils.GetFilename(strFiles[i]);
                 item.Label2 = "";
                 item.Path = strFiles[i];
                 item.FileInfo = null;

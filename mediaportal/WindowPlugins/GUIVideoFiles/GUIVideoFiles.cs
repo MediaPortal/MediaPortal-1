@@ -509,7 +509,7 @@ namespace MediaPortal.GUI.Video
                 {
                   if (MediaPortal.Util.Utils.ShouldStack(item1.Path, item2.Path))
                   {
-                    if (String.Compare(item1.Path, item2.Path, true) > 0)
+                    if (String.Compare(item1.Path, item2.Path, true) > 0)  
                     {
                       addItem = false;
                       // Update to reflect the stacked size
@@ -524,8 +524,7 @@ namespace MediaPortal.GUI.Video
           if (addItem)
           {
             string label = item1.Label;
-
-            MediaPortal.Util.Utils.RemoveStackEndings(ref label);
+						if ((VirtualDirectory.IsValidExtension(item1.Path, MediaPortal.Util.Utils.VideoExtensions, false))) MediaPortal.Util.Utils.RemoveStackEndings(ref label);
             item1.Label = label;
             itemfiltered.Add(item1);
           }
@@ -693,7 +692,7 @@ namespace MediaPortal.GUI.Video
                 {
                   VideoDatabase.GetMovieInfo(path, ref movieDetails);
                   string title = System.IO.Path.GetFileName(path);
-                  MediaPortal.Util.Utils.RemoveStackEndings(ref title);
+									if ((VirtualDirectory.IsValidExtension(path, MediaPortal.Util.Utils.VideoExtensions, false))) MediaPortal.Util.Utils.RemoveStackEndings(ref title);
                   if (movieDetails.Title != String.Empty) title = movieDetails.Title;
 
                   timeMovieStopped = VideoDatabase.GetMovieStopTime(idFile);
@@ -2023,7 +2022,7 @@ namespace MediaPortal.GUI.Video
             {
               VideoDatabase.GetMovieInfo((string)movies[0], ref movieDetails);
               string title = System.IO.Path.GetFileName((string)movies[0]);
-              MediaPortal.Util.Utils.RemoveStackEndings(ref title);
+							if ((VirtualDirectory.IsValidExtension((string)movies[0], MediaPortal.Util.Utils.VideoExtensions, false))) MediaPortal.Util.Utils.RemoveStackEndings(ref title);
               if (movieDetails.Title != String.Empty) title = movieDetails.Title;
 
               timeMovieStopped = VideoDatabase.GetMovieStopTime(idFile);
