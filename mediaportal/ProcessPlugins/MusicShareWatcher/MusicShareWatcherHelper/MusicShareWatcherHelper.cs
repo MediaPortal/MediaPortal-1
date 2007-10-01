@@ -155,6 +155,7 @@ namespace MediaPortal.MusicShareWatcher
           watcherFile.Renamed += new RenamedEventHandler(OnRenamed);
           // For directories, i'm only interested in a Delete event
           watcherDirectory.Deleted += new FileSystemEventHandler(OnDirectoryDeleted);
+          watcherDirectory.Renamed +=new RenamedEventHandler(OnRenamed);
 
           // Begin watching.
           watcherFile.EnableRaisingEvents = true;

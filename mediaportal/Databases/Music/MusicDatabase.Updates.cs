@@ -335,7 +335,7 @@ namespace MediaPortal.Music.Database
 
         string strSQL;
 
-        strSQL = String.Format("select idTrack, strArtist, strGenre from tracks where strPath = '{0}'", strFileName);
+        strSQL = String.Format("select idTrack, strArtist, strAlbumArtist, strGenre from tracks where strPath = '{0}'", strFileName);
 
         SQLiteResultSet results;
         results = MusicDbClient.Execute(strSQL);
@@ -343,6 +343,7 @@ namespace MediaPortal.Music.Database
         {
           int idTrack = DatabaseUtility.GetAsInt(results, 0, "tracks.idTrack");
           string strArtist = DatabaseUtility.Get(results, 0, "tracks.strArtist");
+          string strAlbumArtist = DatabaseUtility.Get(results, 0, "tracks.strAlbumArtist");
           string strGenre = DatabaseUtility.Get(results, 0, "tracks.strGenre");
 
           // Delete
@@ -357,11 +358,27 @@ namespace MediaPortal.Music.Database
             foreach (string artist in artists)
             {
               strSQL = String.Format("select idTrack from tracks where strArtist like '%{0}%'", artist.Trim());
-              results = MusicDbClient.Execute(strSQL);
-              if (results.Rows.Count == 0)
+              if (MusicDatabase.DirectExecute(strSQL).Rows.Count == 0)
               {
                 // Delete artist with no songs
                 strSQL = String.Format("delete from artist where strArtist = '{0}'", artist.Trim());
+                MusicDbClient.Execute(strSQL);
+
+                // Delete artist info
+                strSQL = String.Format("delete from artistinfo where strArtist = '{0}'", artist.Trim());
+                MusicDbClient.Execute(strSQL);
+              }
+            }
+
+            // split up the artist, in case we've got multiple artists
+            string[] albumartists = strAlbumArtist.Split('|');
+            foreach (string artist in albumartists)
+            {
+              strSQL = String.Format("select idTrack from tracks where strArtist like '%{0}%'", artist.Trim());
+              if (MusicDatabase.DirectExecute(strSQL).Rows.Count == 0)
+              {
+                // Delete artist with no songs
+                strSQL = String.Format("delete from albumartist where strAlbumArtist = '{0}'", artist.Trim());
                 MusicDbClient.Execute(strSQL);
 
                 // Delete artist info
@@ -375,8 +392,7 @@ namespace MediaPortal.Music.Database
             foreach (string genre in genres)
             {
               strSQL = String.Format("select idTrack from tracks where strGenre like '%{0}%'", genre.Trim());
-              results = MusicDbClient.Execute(strSQL);
-              if (results.Rows.Count == 0)
+              if (MusicDatabase.DirectExecute(strSQL).Rows.Count == 0)
               {
                 // Delete genres with no songs
                 strSQL = String.Format("delete from genre where strGenre = '{0}'", genre.Trim());
@@ -1121,7 +1137,7 @@ namespace MediaPortal.Music.Database
       DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
       string strSQL;
-      strSQL = String.Format("select idTrack from tracks where strFileName like '{0}'",
+      strSQL = String.Format("select idTrack from tracks where strPath like '{0}'",
                      strFileName);
 
       SQLiteResultSet results;
