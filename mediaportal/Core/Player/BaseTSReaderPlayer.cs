@@ -613,7 +613,10 @@ namespace MediaPortal.Player
     }
     public override bool IsTimeShifting
     {
-      get { return _isLive; }
+      get
+      {
+        return (_isLive && (_mediaType == g_Player.MediaType.TV || _mediaType == g_Player.MediaType.Radio));
+      }
     }
 
     public override bool Visible
