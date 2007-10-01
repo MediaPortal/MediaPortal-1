@@ -163,6 +163,7 @@ namespace MediaPortal.GUI.Music
       get { return currentView.Filters.Count; }
     }
 
+    
     public void Select(Song song)
     {
       FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
@@ -170,7 +171,7 @@ namespace MediaPortal.GUI.Music
       if (currentLevel + 1 < currentView.Filters.Count) currentLevel++;
 
     }
-
+    
     public List<Song> Execute()
     {
       //build the query
@@ -347,43 +348,24 @@ namespace MediaPortal.GUI.Music
         {
           if (useAlbumTable)
             whereClause += " group by strAlbum ";
-          else if (useArtistTable)
-            whereClause += " group by strArtist ";
-          else if (useAlbumArtistTable)
-            whereClause += " group by strAlbumArtist ";
-          else if (useGenreTable)
-            whereClause += " group by strAlbum ";
 
-          sql = String.Format("select distinct * from tracks {0} {1}",
-                          whereClause, orderClause);
-
-          if (useAlbumTable && CurrentLevel > 0)
-            isVariousArtistsAlbum = ModifyAlbumQueryForVariousArtists(ref sql);
-
-          database.GetSongsByFilter(sql, out songs, useArtistTable, useAlbumArtistTable, useSongTable, useGenreTable, useAlbumTable);
-        }
-
-        if (table == "album")
-        {
-          List<AlbumInfo> albums = new List<AlbumInfo>();
-
-          if (!isVariousArtistsAlbum)
-            database.GetAllAlbums(ref albums);
-
-          //else
-          //  database.GetVariousArtistsAlbums(ref albums);
-
-          foreach (Song song in songs)
+          // Now we need to check the previous filters, if we were already on the tracks table previously
+          // In this case the from clause must contain the tracks table only
+          string from = String.Format("{1} from {0}", table, GetField(defCurrent.Where));
+          for (int i = CurrentLevel - 1; i == 0; i--)
           {
-            foreach (AlbumInfo album in albums)
+            FilterDefinition filter = (FilterDefinition)currentView.Filters[i];
+            if (filter.Where != table)
             {
-              if (song.Album.Equals(album.Album) && song.AlbumArtist == album.Artist)  //album.IdAlbum contains IdAlbumArtist
-              {
-                song.Artist = album.AlbumArtist;
-                break;
-              }
+              from = String.Format("{0} from tracks", GetField(defCurrent.Where));
+              break;
             }
           }
+
+          sql = String.Format("select distinct {0} {1} {2}",
+                          from, whereClause, orderClause);
+
+          database.GetSongsByFilter(sql, out songs, useArtistTable, useAlbumArtistTable, useSongTable, useGenreTable, useAlbumTable);
         }
       }
       else
@@ -391,70 +373,9 @@ namespace MediaPortal.GUI.Music
         sql = String.Format("select * from tracks {0} {1}",
           whereClause, orderClause);
 
-        bool modified = ModifySongsQueryForVariousArtists(ref sql);
         database.GetSongsByFilter(sql, out songs, false, false, true, false, false);
       }
       return songs;
-    }
-
-    // Handle "Various Artists" cases where the artist id is different for 
-    // many/most/all of the album tracks
-    bool ModifyAlbumQueryForVariousArtists(ref string sOrigSql)
-    {
-      if (CurrentLevel < 1)
-        return false;
-
-      bool modified = false;
-
-      try
-      {
-        // Replace occurances of multiple space chars with single space
-        System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"\s+");
-        string temp = r.Replace(sOrigSql, " ");
-        sOrigSql = temp;
-
-        //string selectedVal = ((FilterDefinition)currentView.Filters[CurrentLevel - 1]).SelectedValue;
-
-        //if (selectedVal.Length > 0)
-        //{
-        //  int albumartistId = int.Parse(selectedVal);
-        //  long idVariousArtists = database.GetVariousArtistsId();
-
-        //  if (albumartistId == idVariousArtists)
-        //  {
-        //    modified = true;
-        //    sOrigSql = sOrigSql.Replace("and song.idAlbumArtist=", "and album.idAlbumArtist=");
-        //  }
-        //}
-      }
-      catch { }
-
-      return modified;
-    }
-
-    bool ModifySongsQueryForVariousArtists(ref string sOrigSql)
-    {
-      if (CurrentLevel < 1)
-        return false;
-
-      bool modified = false;
-
-      try
-      {
-          // Replace occurances of multiple space chars with single space
-          System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"\s+");
-          string temp = r.Replace(sOrigSql, " ");
-          sOrigSql = temp;
-
-          //long idVariousArtists = database.GetVariousArtistsId();
-          //string sSearch = string.Format("song.idAlbumArtist='{0}'", idVariousArtists);
-          //string sReplace = string.Format("album.idAlbumArtist='{0}'", idVariousArtists);
-
-          modified = true;
-      }
-      catch { }
-
-      return modified;
     }
 
     void BuildSelect(FilterDefinition filter, ref string whereClause)
@@ -474,7 +395,9 @@ namespace MediaPortal.GUI.Music
       else
       {
         if (whereClause != "") whereClause += " and ";
-        whereClause += String.Format(" {0}='{1}'", GetField(filter.Where), filter.SelectedValue);
+        string selectedValue = filter.SelectedValue;
+        Database.DatabaseUtility.RemoveInvalidChars(ref selectedValue);
+        whereClause += String.Format(" {0} like '%{1}%'", GetField(filter.Where), selectedValue);
       }
     }
 
@@ -520,7 +443,9 @@ namespace MediaPortal.GUI.Music
       if (filter.WhereValue != "*")
       {
         if (whereClause != "") whereClause += " and ";
-        whereClause += String.Format(" {0}='{1}'", GetField(filter.Where), filter.WhereValue);
+        string selectedValue = filter.WhereValue;
+        Database.DatabaseUtility.RemoveInvalidChars(ref selectedValue);
+        whereClause += String.Format(" {0} like '%{1}%'", GetField(filter.Where), selectedValue);
       }
     }
 
@@ -562,21 +487,6 @@ namespace MediaPortal.GUI.Music
       if (where == "timesplayed") return "iTimesPlayed";
       if (where == "rating") return "iRating";
       if (where == "favorites") return "iFavorite";
-      return null;
-    }
-
-    string SetField(Song song, string where, string newValue)
-    {
-      if (where == "album") song.Album = newValue;
-      if (where == "artist") song.Artist = newValue;
-      if (where == "albumartist") song.AlbumArtist = newValue;
-      if (where == "title") song.Title = newValue;
-      if (where == "genre") song.Genre = newValue;
-      if (where == "year") song.Year = Int32.Parse(newValue);
-      if (where == "track") song.Track = Int32.Parse(newValue);
-      if (where == "timesplayed") song.TimesPlayed = Int32.Parse(newValue);
-      if (where == "rating") song.Rating = Int32.Parse(newValue);
-      if (where == "favorites") song.Favorite = (Int32.Parse(newValue) != 0);
       return null;
     }
 
