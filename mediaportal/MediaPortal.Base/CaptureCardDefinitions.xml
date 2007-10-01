@@ -20714,4 +20714,27 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Saber DA-1N1-E (NTSC)" capturename="ViXS PureTV Capture" devid="ven_1745&amp;dev_2100&amp;subsys_48b81043&amp;rev_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="ViXS PureTV Analog TV Tuner" checkdevice="true"/>
+        <filter cat="tvaudio"  name="ViXS PureTV TV Audio"        checkdevice="true"/>
+        <filter cat="crossbar" name="ViXS PureTV Crossbar"        checkdevice="true"/>
+        <filter cat="capture"  name="ViXS PureTV Capture"         checkdevice="true"/>
+        <filter cat="encoder"  name="ViXS PureTV Encoder"         checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
