@@ -242,6 +242,7 @@ namespace MediaPortal.Music.Database
             song.Album = fields.fields[columnIndex];
             columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
             song.AlbumArtist = fields.fields[columnIndex];
+            song.Artist = song.AlbumArtist;         // Make Artist equal to AlbumArtist (used by facadeView)
             // Set the Pathname for Cover Art Retrieval
             columnIndex = (int)results.ColumnIndices["strPath"];
             song.FileName = String.Format("{0}\\",System.IO.Path.GetDirectoryName(fields.fields[columnIndex]));
