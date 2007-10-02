@@ -46,7 +46,7 @@ namespace MediaPortal.MPInstaller
   /// </summary>
   public class MPinstallerStruct
   {
-    public const string DEFAULT_UPDATE_SITE = "http://mpi.team-mediaportal.com";
+    public const string DEFAULT_UPDATE_SITE = "http://www.team-mediaportal.com";
 
 
     static public string[] CategoriListing ={ "Audio/Radio", "Automation", "EPG/TV", "Games", "Input", "Others", "PIM", "Skins", "Utilities", "Video/Movies", "Web", "TV Logo" };
