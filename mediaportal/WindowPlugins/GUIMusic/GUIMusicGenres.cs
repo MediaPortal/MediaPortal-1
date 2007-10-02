@@ -468,17 +468,6 @@ namespace MediaPortal.GUI.Music
               item.IconImageBig = strThumb;
               item.ThumbnailImage = strThumb;
             }
-            // this would slowly access the remote shares directly...
-            //else
-            //{
-            //  strThumb = MediaPortal.Util.Utils.GetFolderThumb(item.Path);
-            //  if (System.IO.File.Exists(strThumb))
-            //  {
-            //    item.IconImage = strThumb;
-            //    item.IconImageBig = strThumb;
-            //    item.ThumbnailImage = strThumb;
-            //  }
-            //}
             break;
 
           case "albumartist":

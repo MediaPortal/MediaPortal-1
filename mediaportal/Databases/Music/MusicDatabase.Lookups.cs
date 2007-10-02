@@ -242,6 +242,9 @@ namespace MediaPortal.Music.Database
             song.Album = fields.fields[columnIndex];
             columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
             song.AlbumArtist = fields.fields[columnIndex];
+            // Set the Pathname for Cover Art Retrieval
+            columnIndex = (int)results.ColumnIndices["strPath"];
+            song.FileName = String.Format("{0}\\",System.IO.Path.GetDirectoryName(fields.fields[columnIndex]));
           }
           if (filter == "genre")
           {
@@ -530,7 +533,6 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
 
         string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%{0}' AND strAlbum = '{1}' order by iTrack asc", strAlbumArtist, strAlbum);
-        ModifyAlbumQueryForVariousArtists(ref sql, strAlbumArtist, strAlbum);
         GetSongsByFilter(sql, out aSongList, "tracks");
 
         return true;
@@ -542,28 +544,6 @@ namespace MediaPortal.Music.Database
       }
 
       return false;
-    }
-
-    // Handle "Various Artists" cases where the artist id is different for 
-    // many/most/all of the album tracks
-    private void ModifyAlbumQueryForVariousArtists(ref string aSQL, string aAlbumartist, string aAlbum)
-    {
-      try
-      {
-        // Replace occurances of multiple space chars with single space
-        System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"\s+");
-        string temp = r.Replace(aSQL, " ");
-        aSQL = temp;
-
-        // long idVariousArtists = GetVariousArtistsId();
-
-        //if (aAlbumartistId == idVariousArtists)
-        //{
-        //  aSQL = aSQL.Replace("and song.idAlbumArtist=", "and album.idAlbumArtist=");
-        //}
-      }
-
-      catch { }
     }
 
     public bool GetSongsByGenre(string aGenre, ref List<Song> aSongList)

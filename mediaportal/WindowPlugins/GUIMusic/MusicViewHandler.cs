@@ -226,8 +226,8 @@ namespace MediaPortal.GUI.Music
             break;
 
           case "album":
-            sql = String.Format("select distinct strAlbum, strAlbumArtist from tracks ");
-            if (whereClause != String.Empty) sql += "where " + whereClause;
+            sql = String.Format("select distinct strAlbum, strAlbumArtist, strPath from tracks ");
+            if (whereClause != String.Empty) sql += "where " + whereClause + " group by strAlbum";
             if (orderClause != String.Empty) sql += orderClause;
             break;
 
@@ -296,11 +296,12 @@ namespace MediaPortal.GUI.Music
             }
           }
 
-          // When searching for an album, we need to retrieve the AlbumArtist as well
+          // When searching for an album, we need to retrieve the AlbumArtist as well, because we could have same album names for different artists
+          // We need also the Path to retrieve the coverart
           // We don't have an album table anymore, so change the table to search for to tracks here.
           if (table == "album")
           {
-            from = String.Format("{0}, strAlbumArtist from tracks", GetField(defCurrent.Where));
+            from = String.Format("{0}, strAlbumArtist, strPath from tracks", GetField(defCurrent.Where));
             whereClause += " group by strAlbum ";
           }
 
