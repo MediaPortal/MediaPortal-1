@@ -268,7 +268,9 @@ static DWORD crc_table[256] = {
 		try
 		{
 			LogDebug("Timeshifter:pmt pid:0x%x",pmtPid);
-			m_pmtPid=pmtPid;
+      m_pmtPid=pmtPid;
+      LogDebug("Timeshifter:SetPmtPid clear old PIDs");
+      m_vecPids.clear();
 		}
 		catch(...)
 		{
@@ -816,6 +818,18 @@ static DWORD crc_table[256] = {
 		if (m_pcrPid<0 || m_vecPids.size()==0|| m_pmtPid<0) return;
 
 		m_tsHeader.Decode(tsPacket);
+<<<<<<< .mine
+		if (m_tsHeader.TransportError) 
+    {
+      LogDebug("  m_tsHeader.TransportError - IGNORE TS PACKET!");
+      return;
+    }
+		/*if (m_tsHeader.TScrambling!=0) 
+    {
+      LogDebug("  m_tsHeader.TScrambling!=0 - IGNORE TS PACKET!");
+      return;
+    }*/
+=======
 
 		//if (m_tsHeader.TransportError) return;
 		//if (m_tsHeader.TScrambling!=0) return;		
@@ -824,6 +838,7 @@ static DWORD crc_table[256] = {
 		int start=0;
 				
 
+>>>>>>> .r16092
 		if (m_iPacketCounter>=100)
 		{
 			WriteFakePAT();
@@ -1245,7 +1260,7 @@ static DWORD crc_table[256] = {
 			m_bStartPcrFound=true;
 			m_startPcr  = pcrNew;
 			m_highestPcr= pcrNew;
-			LogDebug("Pcr new start pcr :%s", m_startPcr.ToString());
+			LogDebug("Pcr new start pcr :%s - pid:%x", m_startPcr.ToString() , header.Pid);
 		} 
 
 		CPcr pcrHi=pcrNew;
@@ -1262,11 +1277,16 @@ static DWORD crc_table[256] = {
 			m_highestPcr = pcrNew;
 		}
 
-		if(diff.ToClock() > 10L && m_prevPcr.ToClock() > 0 )
+    if( m_bDetermineNewStartPcr )
+    {
+      LogDebug( "not allowed to patch PCRs yet - m_bDetermineNewStartPcr = true" );
+    }
+
+		if(diff.ToClock() > 10L && m_prevPcr.ToClock() > 0 && !m_bDetermineNewStartPcr )
 		{
 			if( m_bIgnoreNextPcrJump )
 			{
-				LogDebug( "Ignoring first PCR jump after channel change! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+				LogDebug( "Ignoring first PCR jump after channel change! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() , header.Pid);
 				m_bIgnoreNextPcrJump=false;
 			}
 			else
@@ -1280,7 +1300,7 @@ static DWORD crc_table[256] = {
 					m_startPcr.Reset();
 					m_highestPcr.Reset();
 
-					LogDebug( "PCR rollover detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+					LogDebug( "PCR rollover detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString(), header.Pid );
 				}
 				else
 				{      
@@ -1291,13 +1311,13 @@ static DWORD crc_table[256] = {
 					{
 						m_pcrHole += diff;
 						m_pcrHole -= step; 
-						LogDebug( "Jump forward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+						LogDebug( "Jump forward in PCR detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString(), header.Pid );
 					}
 					else
 					{
 						m_pcrHole -= diff;
 						m_pcrHole += step;
-						LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+						LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() , header.Pid);
 					}
 				}
 			}
@@ -1311,7 +1331,7 @@ static DWORD crc_table[256] = {
 			pcrHi += m_pcrDuration;
 		}
 
-		//LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString() );
+		LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s - pid:%x", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), header.Pid );
 		tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
 		tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
 		tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
