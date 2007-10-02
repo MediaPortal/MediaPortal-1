@@ -227,7 +227,8 @@ namespace MediaPortal.GUI.Music
 
           case "album":
             sql = String.Format("select distinct strAlbum, strAlbumArtist, strPath from tracks ");
-            if (whereClause != String.Empty) sql += "where " + whereClause + " group by strAlbum";
+            if (whereClause != String.Empty) sql += "where " + whereClause;
+            sql += " group by strAlbum";
             if (orderClause != String.Empty) sql += orderClause;
             break;
 
