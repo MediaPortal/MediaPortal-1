@@ -286,7 +286,8 @@ namespace MediaPortal.TV.Recording
       Log.Info("Commandprocessor: Starting");
       if (GUIGraphicsContext.DX9Device != null)
       {
-        AvailableFilters af = AvailableFilters.Instance;
+        // hwahrmann: not needed here. caused sometimes hangs, when starting a VS debug session
+        //AvailableFilters af = AvailableFilters.Instance;
         //Log.Debug("Commandprocessor: Starting tv cards");
 
         for (int i = 0; i < TVCards.Count; ++i)
