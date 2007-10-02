@@ -163,7 +163,7 @@ namespace MediaPortal.GUI.Music
       get { return currentView.Filters.Count; }
     }
 
-    
+
     public void Select(Song song)
     {
       FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
@@ -171,7 +171,7 @@ namespace MediaPortal.GUI.Music
       if (currentLevel + 1 < currentView.Filters.Count) currentLevel++;
 
     }
-    
+
     public List<Song> Execute()
     {
       //build the query
@@ -195,141 +195,78 @@ namespace MediaPortal.GUI.Music
       }
 
       //execute the query
-      string sql;
+      string sql = "";
       if (CurrentLevel == 0)
       {
-        bool useSongTable = false;
-        bool useAlbumTable = false;
-        bool useArtistTable = false;
-        bool useAlbumArtistTable = false;
-        bool useGenreTable = false;
         FilterDefinition defRoot = (FilterDefinition)currentView.Filters[0];
-        string table = GetTable(defRoot.Where, ref useSongTable, ref useAlbumTable, ref useArtistTable, ref useAlbumArtistTable, ref useGenreTable);
-        string searchField = "";
+        string table = GetTable(defRoot.Where);
+        string searchField = GetField(defRoot.Where);
 
         // Handle the grouping of songs
         if (definition.SqlOperator == "group")
         {
-          if (table == "artist")
-          {
-            searchField = "strArtist";
-            useAlbumTable = false;
-            useArtistTable = true;
-            useAlbumArtistTable = false;
-            useGenreTable = false;
-            useSongTable = false;
-          }
-          else if (table == "albumartist")
-          {
-            searchField = "strAlbumArtist";
-            useAlbumTable = false;
-            useArtistTable = false;
-            useAlbumArtistTable = true;
-            useGenreTable = false;
-            useSongTable = false;
-          }
-          else if (table == "genre")
-          {
-            searchField = "strGenre";
-            useAlbumTable = false;
-            useArtistTable = false;
-            useAlbumArtistTable = false;
-            useGenreTable = true;
-            useSongTable = false;
-          }
-          else if (table == "tracks")
-          {
-            if (useAlbumTable)
-            {
-              searchField = "strAlbum";
-              useAlbumTable = true;
-              useSongTable = false;
-            }
-            else
-            {
-              searchField = "strTitle";
-              useAlbumTable = false;
-              useSongTable = true;
-            }
+          string searchTable = table;
+          // We don't have an album table anymore, so change the table to search for to tracks here.
+          if (table == "album")
+            searchTable = "tracks";
 
-            useArtistTable = false;
-            useAlbumArtistTable = false;
-            useGenreTable = false;
-          }
-
-          sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) IX, Count(distinct {0}) from {2} GROUP BY IX", searchField, definition.Restriction, table);
-          database.GetSongsByIndex(sql, out songs, CurrentLevel, useArtistTable, useAlbumTable, useAlbumArtistTable, useSongTable, useGenreTable);
+          sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) IX, Count(distinct {0}) from {2} GROUP BY IX", searchField, definition.Restriction, searchTable);
+          database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
           return songs;
         }
 
-        if (table == "artist")
+        switch (table)
         {
-          sql = String.Format("select * from artist ");
-          if (whereClause != String.Empty) sql += "where " + whereClause;
-          if (orderClause != String.Empty) sql += orderClause;
-          database.GetSongsByFilter(sql, out songs, true, false, false, false, false);
-        }
-        else if (table == "albumartist")
-        {
-          sql = String.Format("select * from albumartist ");
-          if (whereClause != String.Empty) sql += "where " + whereClause;
-          if (orderClause != String.Empty) sql += orderClause;
-          database.GetSongsByFilter(sql, out songs, false, true, false, false, false);
-        }
-        else if (table == "tracks" && useAlbumTable)  // Album was selected
-        {
-          sql = String.Format("select distinct strAlbum from tracks ");
-          if (whereClause != String.Empty) sql += "where " + whereClause;
-          if (orderClause != String.Empty) sql += orderClause;
-          database.GetSongsByFilter(sql, out songs, false, false, false, false, true);
-        }
-        else if (table == "genre")
-        {
-          sql = String.Format("select * from genre ");
-          if (whereClause != String.Empty) sql += "where " + whereClause;
-          if (orderClause != String.Empty) sql += orderClause;
-          database.GetSongsByFilter(sql, out songs, false, false, false, true, false);
-        }
-        else if (defRoot.Where == "year")
-        {
-          songs = new List<Song>();
-          sql = String.Format("select distinct iYear from tracks ");
-          SQLiteResultSet results = MusicDatabase.DirectExecute(sql);
-          for (int i = 0; i < results.Rows.Count; i++)
-          {
-            Song song = new Song();
-            try
+          case "artist":
+          case "albumartist":
+          case "genre":
+            sql = String.Format("select * from {0} ", table);
+            if (whereClause != String.Empty) sql += "where " + whereClause;
+            if (orderClause != String.Empty) sql += orderClause;
+            break;
+
+          case "album":
+            sql = String.Format("select distinct strAlbum, strAlbumArtist from tracks ");
+            if (whereClause != String.Empty) sql += "where " + whereClause;
+            if (orderClause != String.Empty) sql += orderClause;
+            break;
+
+          case "tracks":
+            if (defRoot.Where == "year")
             {
-              song.Year = (int)Math.Floor(0.5d + Double.Parse(Database.DatabaseUtility.Get(results, i, "iYear")));
+              songs = new List<Song>();
+              sql = String.Format("select distinct iYear from tracks ");
+              SQLiteResultSet results = MusicDatabase.DirectExecute(sql);
+              for (int i = 0; i < results.Rows.Count; i++)
+              {
+                Song song = new Song();
+                try
+                {
+                  song.Year = (int)Math.Floor(0.5d + Double.Parse(Database.DatabaseUtility.Get(results, i, "iYear")));
+                }
+                catch (Exception)
+                {
+                  song.Year = 0;
+                }
+                if (song.Year > 1000)
+                  songs.Add(song);
+              }
+              return songs;
             }
-            catch (Exception)
+            else
             {
-              song.Year = 0;
+              whereClause = "";
+              BuildRestriction(defRoot, ref whereClause);
+              sql = String.Format("select * from tracks {0} {1}", whereClause, orderClause);
             }
-            if (song.Year > 1000)
-              songs.Add(song);
-          }
+            break;
         }
-        else
-        {
-          whereClause = "";
-          BuildRestriction(defRoot, ref whereClause);
-          sql = String.Format("select * from tracks {0} {1}",
-            whereClause, orderClause);
-          database.GetSongsByFilter(sql, out songs, false, false, true, false, false);
-        }
+        database.GetSongsByFilter(sql, out songs, table);
       }
       else if (CurrentLevel < MaxLevels - 1)
       {
-        bool isVariousArtistsAlbum = false;
-
-        bool useSongTable = false;
-        bool useAlbumTable = false;
-        bool useArtistTable = false;
-        bool useAlbumArtistTable = false;
-        bool useGenreTable = false;
         FilterDefinition defCurrent = (FilterDefinition)currentView.Filters[CurrentLevel];
-        string table = GetTable(defCurrent.Where, ref useSongTable, ref useAlbumTable, ref useArtistTable, ref useAlbumArtistTable, ref useGenreTable);
+        string table = GetTable(defCurrent.Where);
 
         if (defCurrent.SqlOperator == "group")
         {
@@ -342,13 +279,10 @@ namespace MediaPortal.GUI.Music
           sql = String.Format("select UPPER(SUBSTR({0},1,{3})) IX, Count(distinct {0}), * from tracks {1} {2}",
                                             field, whereClause, orderClause, previousRestriction + Convert.ToInt16(defCurrent.Restriction));
 
-          database.GetSongsByIndex(sql, out songs, CurrentLevel, useArtistTable, useAlbumTable, useAlbumArtistTable, useSongTable, useGenreTable);
+          database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
         }
         else
         {
-          if (useAlbumTable)
-            whereClause += " group by strAlbum ";
-
           // Now we need to check the previous filters, if we were already on the tracks table previously
           // In this case the from clause must contain the tracks table only
           string from = String.Format("{1} from {0}", table, GetField(defCurrent.Where));
@@ -362,18 +296,24 @@ namespace MediaPortal.GUI.Music
             }
           }
 
-          sql = String.Format("select distinct {0} {1} {2}",
-                          from, whereClause, orderClause);
+          // When searching for an album, we need to retrieve the AlbumArtist as well
+          // We don't have an album table anymore, so change the table to search for to tracks here.
+          if (table == "album")
+          {
+            from = String.Format("{0}, strAlbumArtist from tracks", GetField(defCurrent.Where));
+            whereClause += " group by strAlbum ";
+          }
 
-          database.GetSongsByFilter(sql, out songs, useArtistTable, useAlbumArtistTable, useSongTable, useGenreTable, useAlbumTable);
+          sql = String.Format("select distinct {0} {1} {2}", from, whereClause, orderClause);
+
+          database.GetSongsByFilter(sql, out songs, table);
         }
       }
       else
       {
-        sql = String.Format("select * from tracks {0} {1}",
-          whereClause, orderClause);
+        sql = String.Format("select * from tracks {0} {1}", whereClause, orderClause);
 
-        database.GetSongsByFilter(sql, out songs, false, false, true, false, false);
+        database.GetSongsByFilter(sql, out songs, "tracks");
       }
       return songs;
     }
@@ -410,9 +350,9 @@ namespace MediaPortal.GUI.Music
           whereClause += " group by ix";
           return;
         }
-        if (whereClause != "") 
+        if (whereClause != "")
           whereClause += " and ";
-        else 
+        else
           whereClause = "where ";
 
         string restriction = filter.Restriction;
@@ -460,18 +400,18 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    string GetTable(string where, ref bool useSongTable, ref bool useAlbumTable, ref bool useArtistTable, ref bool useAlbumArtistTable, ref bool useGenreTable)
+    string GetTable(string where)
     {
-      if (where == "album") { useSongTable = true; useAlbumTable = true; return "tracks"; }
-      if (where == "artist") { useArtistTable = true; return "artist"; }
-      if (where == "albumartist") { useAlbumArtistTable = true; return "albumartist"; }
-      if (where == "title") { useSongTable = true; return "tracks"; }
-      if (where == "genre") { useGenreTable = true; return "genre"; }
-      if (where == "year") { useSongTable = true; return "tracks"; }
-      if (where == "track") { useSongTable = true; return "tracks"; }
-      if (where == "timesplayed") { useSongTable = true; return "tracks"; }
-      if (where == "rating") { useSongTable = true; return "tracks"; }
-      if (where == "favorites") { useSongTable = true; return "tracks"; }
+      if (where == "album") return "album";
+      if (where == "artist") return "artist";
+      if (where == "albumartist") return "albumartist";
+      if (where == "title") return "tracks";
+      if (where == "genre") return "genre";
+      if (where == "year") return "tracks";
+      if (where == "track") return "tracks";
+      if (where == "timesplayed") return "tracks";
+      if (where == "rating") return "tracks";
+      if (where == "favorites") return "tracks";
       return null;
     }
 

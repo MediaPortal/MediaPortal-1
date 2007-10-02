@@ -212,7 +212,7 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
-    public void GetSongsByFilter(string aSQL, out List<Song> aSongs, bool aArtistTable, bool aAlbumartistTable, bool aSongTable, bool aGenreTable, bool aAlbumTable)
+    public void GetSongsByFilter(string aSQL, out List<Song> aSongs, string filter)
     {
       Log.Debug("SQL Filter: {0}", aSQL);
       aSongs = new List<Song>();
@@ -226,27 +226,29 @@ namespace MediaPortal.Music.Database
           song = new Song();
           SQLiteResultSet.Row fields = results.Rows[i];
           int columnIndex = 0;
-          if (aArtistTable && !aSongTable)
+          if (filter == "artist")
           {
             columnIndex = (int)results.ColumnIndices["strArtist"];
             song.Artist = fields.fields[columnIndex];
           }
-          if (aAlbumartistTable && !aSongTable)
+          if (filter == "albumartist")
           {
             columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
             song.AlbumArtist = fields.fields[columnIndex];                        
           }
-          if (aAlbumTable && !aSongTable)
+          if (filter == "album")
           {
             columnIndex = (int)results.ColumnIndices["strAlbum"];
             song.Album = fields.fields[columnIndex];
+            columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
+            song.AlbumArtist = fields.fields[columnIndex];
           }
-          if (aGenreTable && !aSongTable)
+          if (filter == "genre")
           {
             columnIndex = (int)results.ColumnIndices["strGenre"];
             song.Genre = fields.fields[columnIndex];            
           }
-          if (aSongTable)
+          if (filter == "tracks")
           {
             AssignAllSongFieldsFromResultSet(ref song, results, i);
           }
@@ -260,7 +262,7 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    public void GetSongsByIndex(string aSQL, out List<Song> aSongs, int aLevel, bool aArtistTable, bool aAlbumTable, bool aAlbumartistTable, bool aSongTable, bool aGenreTable)
+    public void GetSongsByIndex(string aSQL, out List<Song> aSongs, int aLevel, string filter)
     {
       Log.Debug("SQL Index: {0}", aSQL);
       aSongs = new List<Song>();
@@ -301,7 +303,7 @@ namespace MediaPortal.Music.Database
               if (specialCharCount > 0)
               {
                 song = new Song();
-                if (!aSongTable)
+                if (filter != "tracks")
                 {
                   song.Artist = "#";
                   song.Album = "#";
@@ -316,31 +318,31 @@ namespace MediaPortal.Music.Database
           }
 
           song = new Song();
-          if (aArtistTable && !aSongTable)
+          if (filter == "artist")
           {
             song.Artist = fields.fields[0];
             // Count of songs
             song.Duration = Convert.ToInt16(fields.fields[1]);
           }
-          if (aAlbumTable && !aSongTable)
+          if (filter == "album")
           {
             song.Album = fields.fields[0];
             // Count of songs
             song.Duration = Convert.ToInt16(fields.fields[1]);
           }
-          if (aAlbumartistTable && !aSongTable)
+          if (filter == "albumartist")
           {
             song.AlbumArtist = fields.fields[0];
             // Count of songs
             song.Duration = Convert.ToInt16(fields.fields[1]);
           }
-          if (aGenreTable && !aSongTable)
+          if (filter == "genre")
           {
             song.Genre = fields.fields[0];
             // Count of songs
             song.Duration = Convert.ToInt16(fields.fields[1]);
           }
-          if (aSongTable)
+          if (filter == "tracks")
           {
             song.Title = fields.fields[0];
             // Count of songs
@@ -504,7 +506,7 @@ namespace MediaPortal.Music.Database
           variousArtists = "Various Artists";
 
         string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%{0}' ORDER BY strAlbum asc", strAlbumArtist);
-        GetSongsByFilter(sql, out aSongList, false, false, true, false, false);
+        GetSongsByFilter(sql, out aSongList, "tracks");
         return true;
       }
       catch (Exception ex)
@@ -529,7 +531,7 @@ namespace MediaPortal.Music.Database
 
         string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%{0}' AND strAlbum = '{1}' order by iTrack asc", strAlbumArtist, strAlbum);
         ModifyAlbumQueryForVariousArtists(ref sql, strAlbumArtist, strAlbum);
-        GetSongsByFilter(sql, out aSongList, true, true, true, false, false);
+        GetSongsByFilter(sql, out aSongList, "tracks");
 
         return true;
       }
@@ -574,7 +576,7 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strGenre);
 
         string sql = string.Format("SELECT * FROM tracks WHERE strGenre like '%{0}' order by strTitle asc", strGenre);
-        GetSongsByFilter(sql, out aSongList, true, true, true, true, false);
+        GetSongsByFilter(sql, out aSongList, "genre");
 
         return true;
       }
