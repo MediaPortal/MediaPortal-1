@@ -267,10 +267,8 @@ static DWORD crc_table[256] = {
 		CEnterCriticalSection enter(m_section);
 		try
 		{
-      LogDebug("Timeshifter:pmt pid:0x%x",pmtPid);
+			LogDebug("Timeshifter:pmt pid:0x%x",pmtPid);
 			m_pmtPid=pmtPid;
-      LogDebug("Timeshifter:SetPmtPid clear old PIDs");
-      m_vecPids.clear();
 		}
 		catch(...)
 		{
@@ -814,12 +812,18 @@ static DWORD crc_table[256] = {
 	//* tsPacket : mpeg-2 transport stream packet of 188 bytes
 	//*******************************************************************
 	void CTimeShifting::WriteTs(byte* tsPacket)
-	{
+	{	  	  
 		if (m_pcrPid<0 || m_vecPids.size()==0|| m_pmtPid<0) return;
 
 		m_tsHeader.Decode(tsPacket);
+
 		//if (m_tsHeader.TransportError) return;
-		//if (m_tsHeader.TScrambling!=0) return;
+		//if (m_tsHeader.TScrambling!=0) return;		
+
+		bool writeTS = true;
+		int start=0;
+				
+
 		if (m_iPacketCounter>=100)
 		{
 			WriteFakePAT();
@@ -829,7 +833,6 @@ static DWORD crc_table[256] = {
 
 		int PayLoadUnitStart=0;
 		if (m_tsHeader.PayloadUnitStart) PayLoadUnitStart=1;
-
 
 		itvecPids it=m_vecPids.begin();
 		itvecPids itPcr=m_vecPids.end();
@@ -841,97 +844,115 @@ static DWORD crc_table[256] = {
 
 			if (m_tsHeader.Pid==info.realPid)
 			{
-				if (info.serviceType==SERVICE_TYPE_VIDEO_MPEG1 || info.serviceType==SERVICE_TYPE_VIDEO_MPEG2||info.serviceType==SERVICE_TYPE_VIDEO_MPEG4||info.serviceType==SERVICE_TYPE_VIDEO_H264)
+				// writeTS determines if a TS packet gets written to the timeshifting file or not.
+				// invalid headers are skipped, such as scrambled packets.				
+				writeTS = true; 
+				if (PayLoadUnitStart)
 				{
-					//        PatchPcr(tsPacket,m_tsHeader);
-					//video
-					if (!info.seenStart) 
-					{
-						if (PayLoadUnitStart)
-						{
-							info.seenStart=true;
-							LogDebug("timeshift: start of video detected");
-						}
-					}
-					if (!info.seenStart) return;
-					//LogDebug("vid:%x->%x %x %x", info.realPid,info.fakePid,m_tsHeader.ContinuityCounter,m_tsHeader.AdaptionControl);
-					byte pkt[200];
-					memcpy(pkt,tsPacket,188);
-					int pid=info.fakePid;
-					pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-					pkt[2]=(pid&0xff);
-					if (m_tsHeader.Pid==m_pcrPid)  PatchPcr(pkt,m_tsHeader);
-					if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-					{
-						if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);
-						info.ContintuityCounter=m_tsHeader.ContinuityCounter;
-						Write(pkt,188);
-						m_iPacketCounter++;
-					}
-					return;
+				  byte pkt[200];
+				  memcpy(pkt,tsPacket,188);
+				  PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  
+				  start=m_tsHeader.PayLoadStart;
+				  if (tsPacket[start] !=0 || tsPacket[start+1] !=0  || tsPacket[start+2] !=1) writeTS = false; 
 				}
-
-				if (info.serviceType==SERVICE_TYPE_AUDIO_MPEG1 || info.serviceType==SERVICE_TYPE_AUDIO_MPEG2|| info.serviceType==SERVICE_TYPE_AUDIO_AC3)
+				if (writeTS)
 				{
-					//audio
-					if (!info.seenStart)
-					{
-						if (PayLoadUnitStart)
-						{
-							info.seenStart=true;
-							LogDebug("timeshift: start of audio detected");
-						}
-					}
-					if (!info.seenStart) return;
+				  if (info.serviceType==SERVICE_TYPE_VIDEO_MPEG1 || info.serviceType==SERVICE_TYPE_VIDEO_MPEG2||info.serviceType==SERVICE_TYPE_VIDEO_MPEG4||info.serviceType==SERVICE_TYPE_VIDEO_H264)
+				  {
+					  //        PatchPcr(tsPacket,m_tsHeader);
+					  //video
+					  if (!info.seenStart) 
+					  {
+						  if (PayLoadUnitStart)
+						  {
+							  info.seenStart=true;
+							  LogDebug("timeshift: start of video detected");
+						  }
+					  }
+					  if (!info.seenStart) return;
+					  //LogDebug("vid:%x->%x %x %x", info.realPid,info.fakePid,m_tsHeader.ContinuityCounter,m_tsHeader.AdaptionControl);
+					  byte pkt[200];
+					  memcpy(pkt,tsPacket,188);
+					  int pid=info.fakePid;
+					  pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+					  pkt[2]=(pid&0xff);
+					  if (m_tsHeader.Pid==m_pcrPid)  PatchPcr(pkt,m_tsHeader);
 
-					byte pkt[200];
-					memcpy(pkt,tsPacket,188);
-					int pid=info.fakePid;
-					pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-					pkt[2]=(pid&0xff);
-					if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
-
-					if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-					{
-						if (PayLoadUnitStart)  PatchPtsDts(pkt,m_tsHeader,m_startPcr);
+					  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+					  {						
+						if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  												
 						info.ContintuityCounter=m_tsHeader.ContinuityCounter;
-						Write(pkt,188);
+						if (writeTS) Write(pkt,188);
 						m_iPacketCounter++;
-					}
-					return;
-				}
+  						
+					  }
+					  return;
+				  }
 
-				if (info.serviceType==SERVICE_TYPE_DVB_SUBTITLES1 || info.serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
-				{
-					//subtitle pid...
-					byte pkt[200];
-					memcpy(pkt,tsPacket,188);
-					int pid=info.fakePid;
-					pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-					pkt[2]=(pid&0xff);
-					if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
-					if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-					{
-						if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);
-						info.ContintuityCounter=m_tsHeader.ContinuityCounter;
-						Write(pkt,188);
-						m_iPacketCounter++;
-					}
-					return;
-				}
+				  if (info.serviceType==SERVICE_TYPE_AUDIO_MPEG1 || info.serviceType==SERVICE_TYPE_AUDIO_MPEG2|| info.serviceType==SERVICE_TYPE_AUDIO_AC3)
+				  {
+					  //audio
+					  if (!info.seenStart)
+					  {
+						  if (PayLoadUnitStart)
+						  {
+							  info.seenStart=true;
+							  LogDebug("timeshift: start of audio detected");
+						  }
+					  }
+					  if (!info.seenStart) return;
 
-				//private pid...
-				byte pkt[200];
-				memcpy(pkt,tsPacket,188);
-				int pid=info.fakePid;
-				pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
-				pkt[2]=(pid&0xff);
-				if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
-				if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-				{
-					info.ContintuityCounter=m_tsHeader.ContinuityCounter;
-					Write(pkt,188);
-					m_iPacketCounter++;
+					  byte pkt[200];
+					  memcpy(pkt,tsPacket,188);
+					  int pid=info.fakePid;
+					  pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+					  pkt[2]=(pid&0xff);
+					  if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
+
+					  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+					  {						  
+						  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  							
+						  info.ContintuityCounter=m_tsHeader.ContinuityCounter;
+						  if (writeTS) Write(pkt,188);
+						  m_iPacketCounter++;
+					  }
+					  return;
+				  }
+
+				  if (info.serviceType==SERVICE_TYPE_DVB_SUBTITLES1 || info.serviceType==SERVICE_TYPE_DVB_SUBTITLES2)
+				  {
+					  //subtitle pid...
+					  byte pkt[200];
+					  memcpy(pkt,tsPacket,188);
+					  int pid=info.fakePid;
+					  pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+					  pkt[2]=(pid&0xff);
+					  if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
+
+					  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+					  {						  						  
+						  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  												
+						  info.ContintuityCounter=m_tsHeader.ContinuityCounter;
+						  if (writeTS) Write(pkt,188);
+						  m_iPacketCounter++;
+					  }
+					  return;
+				  }
+
+				  //private pid...
+				  byte pkt[200];
+				  memcpy(pkt,tsPacket,188);
+				  int pid=info.fakePid;
+				  pkt[1]=(PayLoadUnitStart<<6) + ( (pid>>8) & 0x1f);
+				  pkt[2]=(pid&0xff);
+				  if (m_tsHeader.Pid==m_pcrPid) PatchPcr(pkt,m_tsHeader);
+
+				  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
+				  {							  
+					  info.ContintuityCounter=m_tsHeader.ContinuityCounter;
+					  if (writeTS) Write(pkt,188);
+					  m_iPacketCounter++;
+				  }
 				}
 				return;
 			}
@@ -950,15 +971,17 @@ static DWORD crc_table[256] = {
 			pkt[4]=0xb7;
 
 			if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
-			{
+			{						
 				if(itPcr!=m_vecPids.end())
 				{
-					PidInfo& info=*itPcr;
+				  
+					PidInfo& info=*itPcr;					
 					pkt[3] &=0xf0;
 					pkt[3] += (info.ContintuityCounter&0xf);
 					//LogDebug("pcr:%x->%x %d", m_pcrPid,FAKE_PCR_PID,info.ContintuityCounter);
 				}
-				Write(pkt,188);
+
+				if (writeTS) Write(pkt,188);
 				m_iPacketCounter++;
 			}
 			return;
