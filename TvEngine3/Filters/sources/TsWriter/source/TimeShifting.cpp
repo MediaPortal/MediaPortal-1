@@ -818,27 +818,23 @@ static DWORD crc_table[256] = {
 		if (m_pcrPid<0 || m_vecPids.size()==0|| m_pmtPid<0) return;
 
 		m_tsHeader.Decode(tsPacket);
-<<<<<<< .mine
-		if (m_tsHeader.TransportError) 
-    {
-      LogDebug("  m_tsHeader.TransportError - IGNORE TS PACKET!");
-      return;
-    }
-		/*if (m_tsHeader.TScrambling!=0) 
-    {
-      LogDebug("  m_tsHeader.TScrambling!=0 - IGNORE TS PACKET!");
-      return;
-    }*/
-=======
 
-		//if (m_tsHeader.TransportError) return;
-		//if (m_tsHeader.TScrambling!=0) return;		
+		if (m_tsHeader.TransportError) 
+		{
+		  LogDebug("  m_tsHeader.TransportError - IGNORE TS PACKET!");
+		  return;
+		}
+		/*if (m_tsHeader.TScrambling!=0) 
+		{
+		  LogDebug("  m_tsHeader.TScrambling!=0 - IGNORE TS PACKET!");
+		  return;
+		}
+		*/
 
 		bool writeTS = true;
 		int start=0;
 				
 
->>>>>>> .r16092
 		if (m_iPacketCounter>=100)
 		{
 			WriteFakePAT();
@@ -897,7 +893,7 @@ static DWORD crc_table[256] = {
 					  {						
 						if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  												
 						info.ContintuityCounter=m_tsHeader.ContinuityCounter;
-						if (writeTS) Write(pkt,188);
+						Write(pkt,188);
 						m_iPacketCounter++;
   						
 					  }
@@ -928,7 +924,7 @@ static DWORD crc_table[256] = {
 					  {						  
 						  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  							
 						  info.ContintuityCounter=m_tsHeader.ContinuityCounter;
-						  if (writeTS) Write(pkt,188);
+						  Write(pkt,188);
 						  m_iPacketCounter++;
 					  }
 					  return;
@@ -948,7 +944,7 @@ static DWORD crc_table[256] = {
 					  {						  						  
 						  if (PayLoadUnitStart) PatchPtsDts(pkt,m_tsHeader,m_startPcr);					  					  												
 						  info.ContintuityCounter=m_tsHeader.ContinuityCounter;
-						  if (writeTS) Write(pkt,188);
+						  Write(pkt,188);
 						  m_iPacketCounter++;
 					  }
 					  return;
@@ -965,7 +961,7 @@ static DWORD crc_table[256] = {
 				  if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 				  {							  
 					  info.ContintuityCounter=m_tsHeader.ContinuityCounter;
-					  if (writeTS) Write(pkt,188);
+					  Write(pkt,188);
 					  m_iPacketCounter++;
 				  }
 				}
@@ -988,15 +984,14 @@ static DWORD crc_table[256] = {
 			if (m_bDetermineNewStartPcr==false && m_bStartPcrFound) 
 			{						
 				if(itPcr!=m_vecPids.end())
-				{
-				  
+				{				  
 					PidInfo& info=*itPcr;					
 					pkt[3] &=0xf0;
 					pkt[3] += (info.ContintuityCounter&0xf);
 					//LogDebug("pcr:%x->%x %d", m_pcrPid,FAKE_PCR_PID,info.ContintuityCounter);
-				}
+				}				
 
-				if (writeTS) Write(pkt,188);
+				Write(pkt,188);
 				m_iPacketCounter++;
 			}
 			return;
