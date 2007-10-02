@@ -132,12 +132,13 @@ namespace MediaPortal.GUI.TV
       switch (action.wID)
       {
         case Action.ActionType.ACTION_CONTEXT_MENU:
-          if (GetFocusControlId() == -1)
           {
-            m_bRunning = false;
-            return;
+            if (GetFocusControlId() == 1)
+            {
+              m_bRunning = false;
+            }
+            break;
           }
-          break;
         case Action.ActionType.ACTION_CLOSE_DIALOG:
           m_bRunning = false;
           return;
