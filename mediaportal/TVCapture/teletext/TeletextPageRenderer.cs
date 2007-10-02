@@ -56,8 +56,8 @@ namespace MediaPortal.TV.Teletext
     int _background = 0;
     Brush[] _brushes = new Brush[15];
     Pen[] _pens = new Pen[15];
-    byte[] _pageChars = new byte[31 * 40];
-    int[] _pageAttribs = new int[31 * 40];
+    byte[] _pageChars;
+    int[] _pageAttribs;
     #endregion
 
     #region enums
@@ -991,6 +991,10 @@ namespace MediaPortal.TV.Teletext
     /// <returns>Rendered teletext page as bitmap</returns>
     public Bitmap RenderPage(byte[] byPage, int mPage, int sPage)
     {
+      int row, col;
+      bool isBoxed = false;
+      bool row24 = false;
+
       MediaPortal.GUI.Library.Log.Debug("RenderPage start");
       // Create Bitmap and set HotPink as the transparent color
       if (_pageBitmap == null)
@@ -1013,9 +1017,8 @@ namespace MediaPortal.TV.Teletext
         }
       }
 
-      int row, col;
-      bool isBoxed = false;
-      bool row24 = false;
+      _pageChars = new byte[31 * 40];
+      _pageAttribs = new int[31 * 40];
 
       // Decode the page data (Hamming 8/4 or odd parity)
       for (int rowNr = 0; rowNr < MAX_ROWS; rowNr++)
