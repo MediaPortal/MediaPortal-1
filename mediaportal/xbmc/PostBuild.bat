@@ -93,6 +93,9 @@ REM MPInstaller
 xcopy /y %1\MPInstaller\bin\%2\MPInstaller.Library.* .
 xcopy /y %1\MPInstaller\bin\%2\MPInstaller.* .
 
+REM MusicDBConvert
+xcopy /y %1\MusicDBConvert\bin\%2\MusicDBConvert.exe .
+
 
 REM Register
 regsvr32 /s MPSA.ax

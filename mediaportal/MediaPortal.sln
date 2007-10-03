@@ -83,6 +83,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPInstaller.Library", "MPIn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTestTool2", "MPTestTool2\MPTestTool2.csproj", "{349F7518-F251-49BD-8887-07870812D4FE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicDBConvert", "MusicDBConvert\MusicDBConvert.csproj", "{3DABD719-786B-48A4-A453-B00BAEEE7290}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -303,6 +305,12 @@ Global
 		{349F7518-F251-49BD-8887-07870812D4FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{349F7518-F251-49BD-8887-07870812D4FE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{349F7518-F251-49BD-8887-07870812D4FE}.Release|x86.ActiveCfg = Release|Any CPU
+		{3DABD719-786B-48A4-A453-B00BAEEE7290}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DABD719-786B-48A4-A453-B00BAEEE7290}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DABD719-786B-48A4-A453-B00BAEEE7290}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3DABD719-786B-48A4-A453-B00BAEEE7290}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DABD719-786B-48A4-A453-B00BAEEE7290}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DABD719-786B-48A4-A453-B00BAEEE7290}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
