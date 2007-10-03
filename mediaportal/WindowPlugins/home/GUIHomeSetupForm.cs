@@ -24,32 +24,27 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Home
 {
-  public partial class GUIHomeSetupForm : System.Windows.Forms.Form , ISetupForm, IComparer
+  public partial class GUIHomeSetupForm : Form , ISetupForm, IComparer
   {
     public GUIHomeSetupForm()
     {
       InitializeComponent();
       LoadSettings();
+			UpdateTestBox();
     }
 
     private void LoadSettings()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         chkboxFixScrollbar.Checked = xmlreader.GetValueAsBool("home", "scrollfixed", false);
         chkBoxUseMyPlugins.Checked = xmlreader.GetValueAsBool("home", "usemyplugins", true);
@@ -66,7 +61,7 @@ namespace MediaPortal.GUI.Home
 
     private void SaveSettings()
     {
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlWriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlWriter.SetValueAsBool("home", "scrollfixed",  chkboxFixScrollbar.Checked);
         xmlWriter.SetValueAsBool("home", "usemyplugins", chkBoxUseMyPlugins.Checked);
@@ -78,7 +73,7 @@ namespace MediaPortal.GUI.Home
 
     private void SaveMenuSorting()
     {
-      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlWriter = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         foreach (TreeNode node in tvMenu.Nodes)
         {
@@ -98,12 +93,12 @@ namespace MediaPortal.GUI.Home
     private void btnOK_Click(object sender, EventArgs e)
     {
       SaveSettings();
-      this.Close();
+      Close();
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-      this.Close();
+      Close();
     }
 
     private void btnDayText_Click(object sender, EventArgs e)
@@ -151,7 +146,7 @@ namespace MediaPortal.GUI.Home
     {
       tboxTest.Text = "";
       string dateString = cboxFormat.Text;
-      if ((dateString == null) || (dateString.Length == 0)) return;
+      if (String.IsNullOrEmpty(dateString)) return;
 
       DateTime cur = DateTime.Now;
       string day;
@@ -217,7 +212,7 @@ namespace MediaPortal.GUI.Home
       string directory = Config.GetSubFolder(Config.Dir.Plugins, "windows");
       if (!Directory.Exists(directory)) return;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         TreeNode tnMyPlugIns = null;
         bool useMyPlugins = xmlreader.GetValueAsBool("home", "usemyplugins", true);
@@ -269,7 +264,7 @@ namespace MediaPortal.GUI.Home
 
                       string showInHome = xmlreader.GetValue("home", pluginForm.PluginName());
 
-                      TreeNode node = null;
+                      TreeNode node;
                       if ((useMyPlugins) && (showInHome.CompareTo("no") == 0)) node = tnMyPlugIns.Nodes.Add(pluginForm.PluginName());
                       else node = tvMenu.Nodes.Add(pluginForm.PluginName());
 
@@ -348,17 +343,6 @@ namespace MediaPortal.GUI.Home
         tvMenu.Sort();
         tvMenu.SelectedNode = tnSelected;
       }
-      /*
-      TreeNodeCollection nodeColl = tvMenu.Nodes;
-      if (tnSelected.Parent != null) nodeColl = tnSelected.Parent.Nodes;  
-      if (nodeIndex > 0)
-      {
-        nodeColl.RemoveAt(nodeIndex);
-        nodeIndex--;
-        nodeColl.Insert(nodeIndex, tnSelected);
-        tvMenu.SelectedNode = tnSelected;
-      }
-      */
       tvMenu.EndUpdate();
     }
 
@@ -379,19 +363,8 @@ namespace MediaPortal.GUI.Home
 
         tvMenu.SelectedNode = tnSelected;
       }
-
-      /*int nodeIndex = tnSelected.Index;
-      if (nodeIndex+1 < nodeColl.Count)
-      {
-        nodeColl.RemoveAt(nodeIndex);
-        nodeIndex++;
-        nodeColl.Insert(nodeIndex, tnSelected);
-        tvMenu.SelectedNode = tnSelected;
-      }
-       */
       tvMenu.EndUpdate();
     }
-
 
     #endregion
 
@@ -413,7 +386,7 @@ namespace MediaPortal.GUI.Home
     }
     public void ShowPlugin()
     {
-      System.Windows.Forms.Form setup = new GUIHomeSetupForm();
+      Form setup = new GUIHomeSetupForm();
       setup.ShowDialog();
     }
     //System.Reflection.TargetInvocationException
@@ -512,7 +485,7 @@ namespace MediaPortal.GUI.Home
 
       if (_name != String.Empty)
       {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           _index = xmlreader.GetValueAsInt("pluginSorting", _name, Int32.MaxValue);
         }
