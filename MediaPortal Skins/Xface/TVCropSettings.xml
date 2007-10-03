@@ -12,16 +12,16 @@
       <posY>125</posY>
       <width>766</width>
       <height>368</height>
-      <texture>dialog_schedule_rec.png</texture>
+      <texture>dialog_background.png</texture>
     </control>
     <control>
       <description>Exit button</description>
       <type>button</type>
       <id>2</id>
-      <posX>935</posX>
-      <posY>180</posY>
-      <width>58</width>
-      <height>58</height>
+      <posX>966</posX>
+      <posY>146</posY>
+      <width>50</width>
+      <height>50</height>
       <textureFocus>dialogue_shutdown_focus.png</textureFocus>
       <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
       <label>-</label>
@@ -34,12 +34,12 @@
       <description>Heading text label</description>
       <type>label</type>
       <id>4</id>
-      <posX>425</posX>
-      <posY>182</posY>
+      <posX>520</posX>
+      <posY>156</posY>
       <width>415</width>
       <label>11000</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>80000000</textcolor>
     </control>
     <control>
       <description>Capture device text label</description>

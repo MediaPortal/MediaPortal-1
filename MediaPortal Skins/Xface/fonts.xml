@@ -20,6 +20,13 @@
         <end>1536</end>
     </font>
     <font>
+        <name>font8</name>
+        <filename>Franklin Gothic Medium</filename>
+        <height>9</height>
+        <start>0</start>
+        <end>1536</end>
+    </font>
+    <font>
         <name>font9</name>
         <filename>Franklin Gothic Medium</filename>
         <height>10</height>

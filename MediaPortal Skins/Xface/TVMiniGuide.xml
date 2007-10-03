@@ -57,9 +57,9 @@
       <spaceBetweenItems>1</spaceBetweenItems>
       <textureHeight>50</textureHeight>
       <keepaspectratio>no</keepaspectratio>
-      <font>font12</font>
-      <font2>font12</font2>
-      <font3>font13</font3>
+      <font>font8</font>
+      <font2>font9</font2>
+      <font3>font12</font3>
       <remoteColor>ffffffff</remoteColor>
       <!-- used for selected channel -->
       <onleft>36</onleft>
@@ -108,6 +108,18 @@
       <animation effect="fade" time="200">WindowOpen</animation>
       <animation effect="fade" time="200">WindowClose</animation>
     </control>   -->
+       <control>
+      <description>clock</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>300</posX>
+      <posY>674</posY>
+      <width>30</width>
+      <height>30</height>
+      <texture>Clock2.png</texture>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
     <control>
       <description>time label</description>
       <id>0</id>

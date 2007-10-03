@@ -176,8 +176,8 @@
       <id>15</id>
       <posX>493</posX>
       <posY>465</posY>
-      <width>789</width>
-      <height>165</height>
+      <width>710</width>
+      <height>116</height>
       <label>#TV.RecordedTV.Description</label>
       <font>font13</font>
       <textcolor>FFFFFFF0</textcolor>
@@ -202,7 +202,7 @@
       <description>genre</description>
       <type>label</type>
       <id>17</id>
-      <posX>1271</posX>
+      <posX>1210</posX>
       <posY>430</posY>
       <label />
       <align>right</align>

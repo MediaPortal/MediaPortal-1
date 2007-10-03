@@ -7,7 +7,34 @@
   <define>#currentplaytime:#TV.View.start</define>
   <define>#currentremaining:#TV.View.stop</define>
   <controls>
-    <import>common.progressbar.xml</import>
+     <control>
+      <description>Start Time Info</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>483</posX>
+      <posY>111</posY>
+      <label>#currentplaytime</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>black</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+      <visible>no</visible>
+    </control>
+    <control>
+      <description>End Time Info</description>
+      <type>label</type>
+      <id>102</id>
+      <posX>882</posX>
+      <posY>111</posY>
+      <label>#currentremaining</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>black</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+      <visible>no</visible>
+    </control>
     <control>
       <description>Current Time Info</description>
       <type>label</type>
@@ -70,38 +97,6 @@
       <texturebg>-</texturebg>
       <visible>yes</visible>
       <label>#TV.View.Percentage</label>
-    </control>
-    <control>
-      <description>TV Progress Bar</description>
-      <type>tvprogress</type>
-      <id>101</id>
-      <posX>180</posX>
-      <posY>27</posY>
-      <width>862</width>
-      <height>14</height>
-      <toptexture>-</toptexture>
-      <TextureOffsetY>29</TextureOffsetY>
-      <bottomtexture>-</bottomtexture>
-      <texturetick>-</texturetick>
-      <lefttexture>-</lefttexture>
-      <midtexture>-</midtexture>
-      <righttexture>-</righttexture>
-      <logotexture>-</logotexture>
-      <fillbackgroundtexture>-</fillbackgroundtexture>
-      <fillbgxoff>18</fillbgxoff>
-      <fillbgyoff>13</fillbgyoff>
-      <filltexture1>osd_progress_mid_red.png</filltexture1>
-      <filltexture2>osd_progress_mid.png</filltexture2>
-      <filltexture3>osd_progress_mid_orange.png</filltexture3>
-      <fillheight>26</fillheight>
-      <label>#TV.Record.percent1</label>
-      <label1>#TV.Record.percent2</label1>
-      <label2>#TV.Record.percent3</label2>
-      <startlabel />
-      <endlabel />
-      <toplabel />
-      <font>font13</font>
-      <textcolor>FF000000</textcolor>
     </control>
     <control>
       <description>rec logo</description>

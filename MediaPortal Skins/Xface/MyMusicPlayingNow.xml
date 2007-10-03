@@ -47,9 +47,9 @@
       <id>0</id>
       <posX>120</posX>
       <posY>590</posY>
-      <width>160</width>
-      <height>162</height>
-      <texture>defaultAudioBig.png</texture>
+      <width>155</width>
+      <height>145</height>
+      <texture>hover_my music1.png</texture>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>

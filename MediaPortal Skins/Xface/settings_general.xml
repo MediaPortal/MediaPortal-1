@@ -14,8 +14,8 @@
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="500" end="800,0">WindowClose</animation>
-      <posX>68</posX>
-      <posY>165</posY>
+      <posX>69</posX>
+      <posY>89</posY>
       <layout>StackLayout</layout>
       <!-- topmost item needs an onup with a value of 17 for topbar to work -->
       <control>
@@ -25,6 +25,7 @@
         <width>280</width>
         <label>166</label>
         <onup>17</onup>
+        <ondown>11</ondown>
       </control>
       <control>
         <description>Language</description>
@@ -32,6 +33,8 @@
         <id>11</id>
         <width>280</width>
         <label>248</label>
+         <onup>10</onup>
+        <ondown>12</ondown>
       </control>
       <control>
         <description>Start in fullscreen mode</description>
@@ -39,6 +42,8 @@
         <id>12</id>
         <width>280</width>
         <label>1047</label>
+         <onup>11</onup>
+        <ondown>13</ondown>
       </control>
       <control>
         <description>Screensaver</description>
@@ -46,14 +51,17 @@
         <id>13</id>
         <width>280</width>
         <label>360</label>
+         <onup>12</onup>
+        <ondown>14</ondown>
       </control>
       <control>
         <description>Skip steps screen button</description>
         <type>button</type>
-        <id>21</id>
+        <id>14</id>
         <width>280</width>
         <label>6024</label>
         <hyperlink>708</hyperlink>
+         <onup>13</onup>
         <ondown>99</ondown>
       </control>
     </control>

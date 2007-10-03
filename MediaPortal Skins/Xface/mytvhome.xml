@@ -300,10 +300,10 @@
       <description>record pin</description>
       <type>image</type>
       <id>24</id>
-      <posX>193</posX>
-      <posY>566</posY>
-        <width>76</width>
-      <height>76</height>
+      <posX>68</posX>
+      <posY>520</posY>
+        <width>30</width>
+      <height>30</height>
       <texture>tvguide_record_button.png</texture>
       <visible>yes</visible>
       <animation effect="fade" time="250">WindowOpen</animation>

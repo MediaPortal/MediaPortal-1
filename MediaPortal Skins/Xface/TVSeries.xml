@@ -2,14 +2,12 @@
 <window>
   <id>9811</id>
   <defaultcontrol>50</defaultcontrol>
-	<allowoverlay>yes</allowoverlay>
+	<allowoverlay>no</allowoverlay>
 	<!-- <define>#header.hover:hover_my tv series.png</define> -->
 	<define>#header.location:134</define>
 	<controls>
-		<import>common.time.xml</import>
 		
 <!-- ***********************************DUMMY LABELS********************************************* -->
-		
 		
 		<control>
 			<type>label</type>
@@ -69,14 +67,9 @@
 		<!-- to make a control visible only when the facade is in list mode do this: <visible>Control.IsVisible(1235)</visible> -->
 		<!-- to make a control invisible when the facade is in list mode do this: <visible>!Control.IsVisible(1235)</visible> -->
 		</control>
-
-
-
+		
 <!-- ********************** BACKGROUNDS************************************** -->
-
-
-
-
+		
 		<control>
 			<description>BG</description>
 			<type>image</type>
@@ -100,8 +93,6 @@
 			<height>768</height>
 			<texture>-</texture>
 			<colordiffuse>ffffffff</colordiffuse>
-			<!--<animation effect="fade" time="600" delay="200" reversible="false">hidden</animation>
-			<animation effect="fade" time="1000" reversible="false">visible</animation>-->
 		</control>
 		
 	    <control>
@@ -115,28 +106,27 @@
 		</control>
 		
 	    <control>
-			<description>Bottom bars when fanart is loaded</description>
+			<description>Bottom bars and dark faded BG</description>
 			<type>image</type>
 			<posX>0</posX>
-			<posY>581</posY>
-			<height>187</height>
+			<posY>66</posY>
+			<height>702</height>
 		    <width>1366</width>
-		    <texture>BarBackBottom.png</texture>
+		    <texture>tvseries_BarBackBottom.png</texture>
 			<colorDiffuse>effffffff</colorDiffuse>
 		</control>
 		
-		<!-- TEXT TOP LEFT START (Only visible when there is no banner/fanart present) -->
-
-
+		<!-- ********************** TOP BANNER ********************** -->	
+		
 		<control>
 		    <animation effect="fade" time="250">WindowOpen</animation>
 		    <animation effect="fade" time="500">WindowClose</animation>
 		    <type>image</type>
 		    <id>1</id>
-		    <posX>8</posX>
+		    <posX>12</posX>
 		    <posY>8</posY>
-		    <width>75</width>
-		    <height>75</height>
+		    <width>65</width>
+		    <height>65</height>
 			<keepaspectratio>yes</keepaspectratio>
 		    <texture>hover_my tv1.png</texture>
 		</control>
@@ -163,102 +153,12 @@
 		    <label>tvseries</label>
 		    <font>font14</font>
 		    <align>right</align>
-		    <textcolor>White</textcolor>
+		    <textcolor>aaaaaa</textcolor>
 		    <animation effect="fade" time="200">WindowOpen</animation>
 		    <animation effect="fade" time="200">WindowClose</animation>
 		</control>
-
-<!--
-		<control>
-			<description>icon background</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>377</width>
-			<height>133</height>
-			<texture>Logo_background.png</texture>
-			<animation effect="fade" time="500">WindowClose</animation>
-			<visible>!Control.IsVisible(1235)</visible>
-		</control>
 		
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>15</posX>
-			<posY>0</posY>
-			<width>61</width>
-			<height>122</height>
-			<texture>hover_my tv.png</texture>
-			<animation effect="fade" time="1000" delay="2000">WindowOpen</animation>
-			<animation effect="fade" time="500">WindowClose</animation>
-			<visible>!Control.IsVisible(1235)</visible>
-		</control>
-	
-		<control>
-			<type>image</type>
-			<description>Television top left text logo</description>
-			<id>1</id>
-			<posX>90</posX>
-			<posY>23</posY>
-			<texture>tvseries_logo.png</texture>
-			<animation effect="fade" time="500" delay="1300">WindowOpen</animation>
-			<animation effect="fade" time="500">WindowClose</animation>
-			<visible>!Control.IsVisible(1235)</visible>
-		</control>
-		
-		<control>
-		    <type>label</type>
-		    <description>Recorded TV Label</description>
-		    <id>1</id>
-		    <posX>251</posX>
-		    <posY>68</posY>
-		    <label>3019</label>
-		    <font>wipeouts</font>
-		    <align>center</align>
-		    <textcolor>ffffffff</textcolor>
-		    <animation effect="fade" time="1000" end="60" delay="2000">WindowOpen</animation>
-			<animation effect="slide" time="1000" delay="2000" start="-600,0" end="0,0" acceleration="-1">WindowOpen</animation>
-		    <animation effect="fade" time="500" start="50">WindowClose</animation>
-			<visible>!Control.IsVisible(1235)</visible>
-		</control>
--->
-		<!-- TEXT TOP LEFT END -->
-		
-		<!--
-		<control>
-			<description>ListBackground (dark background)</description>
-			<type>image</type>
-			<id>3435</id>
-			<animation effect="fade" time="400">WindowClose</animation>
-			<animation effect="fade" time="400">WindowOpen</animation>
-			<animation effect="zoom" start="70,70" end="100,100" center="640,360"  time="400" >WindowOpen</animation>
-			<animation effect="zoom" start="100,100" end="130,130" center="640,360"  time="400" >WindowClose</animation>
-			<posX>650</posX>
-			<posY>240</posY>
-			<texture></texture>
-			<colordiffuse>ff999999</colordiffuse>
-			<visible>Control.IsVisible(1235)</visible>
-		</control>
-		
-		<control>
-			<description>ListBackground (light background)</description>
-			<type>image</type>
-			<id>3435</id>
-			<animation effect="fade" time="400">WindowClose</animation>
-			<animation effect="fade" time="400">WindowOpen</animation>
-			<animation effect="zoom" start="70,70" end="100,100" center="640,360"  time="400" >WindowOpen</animation>
-			<animation effect="zoom" start="100,100" end="130,130" center="640,360"  time="400" >WindowClose</animation>
-			<posX>650</posX>
-			<posY>240</posY>
-			<texture></texture>
-			<colordiffuse>ff333333</colordiffuse>
-			<visible>Control.IsVisible(1235)+Control.IsVisible(1234)</visible>
-		</control>
-		-->
-		
-<!-- ********************** IMPORT PROCESS *************************************** -->	
-		
+		<!-- ********************** IMPORT PROCESS ANIMATION ********************** 
 		
 		<control>
 			<description>Import Animation</description>
@@ -278,10 +178,9 @@
 			 <colordiffuse>ccffffff</colordiffuse>
 		</control>
 		
+		 ********************** INFORMATION IN LIST VIEW ********************** -->
 		
-<!-- *****************************************INFORMATION IN LIST VIEW***************************************************************** -->
-		
-		<!-- INFORMATION - NO FAN ART - START-->
+		<!-- TITLES (NO FAN ART) START-->
 		<control>
 			<type>fadelabel</type>
 			<description>Title (no fanart)</description>
@@ -307,25 +206,9 @@
 			<font>font13</font>
 			<visible>!Control.IsVisible(1232)</visible>
 		</control>
+		<!-- TITLES (NO FAN ART) END-->
 		
-		<control>
-			<type>textboxscrollup</type>
-			<description>Description (all)</description>
-			<id>631</id>
-			<posX>450</posX><!-- 370 -->
-			<posY>584</posY>
-			<width>700</width>
-			<height>120</height>
-			<seperator>-----------------------------------------------------------------------------------------------------------------------</seperator>
-			<dimColor>ff000000</dimColor>
-			<textcolor>666666</textcolor>
-			<font>font12</font>
-			<label>#TVSeries.Description</label>
-		</control>
-		<!-- INFORMATION - NO FAN ART - END-->
-		
-		<!-- INFORMATION - FAN ART - START-->
-		
+		<!-- TITLES (FAN ART) START-->
 		<control>
 			<type>fadelabel</type>
 			<description>Title (fanart)</description>
@@ -351,10 +234,24 @@
 			<font>font13</font>
 			<visible>Control.IsVisible(1232)</visible>
 		</control>
-		<!-- INFORMATION - FAN ART - END-->
+		<!-- TITLES (FAN ART) END-->
 		
+		<control>
+			<type>textboxscrollup</type>
+			<description>Description (all)</description>
+			<id>631</id>
+			<posX>450</posX><!-- 370 -->
+			<posY>584</posY>
+			<width>700</width>
+			<height>120</height>
+			<seperator>-----------------------------------------------------------------------------------------------------------------------</seperator>
+			<dimColor>ff000000</dimColor>
+			<textcolor>666666</textcolor>
+			<font>font12</font>
+			<label>#TVSeries.Description</label>
+		</control>
 		
-<!--  ***************************** LOGOS / BANNERS ******************************** -->
+		<!-- ********************** LOGOS / BANNERS ********************** -->
 		
 		
 		<control>
@@ -418,11 +315,9 @@
 			<colordiffuse>ffFFFFFF</colordiffuse>
 			<animation effect="fade" time="600">visible</animation>
 		</control>
-		
-		
-<!-- ************************** VIEW SELECTION ***********************************-->
-		
-				
+			
+		<!-- ********************** VIEW SELECTION ********************** -->
+			
 		<control>
 			<type>label</type>
 			<description>Last View</description>
@@ -475,9 +370,7 @@
 			<font>font12</font>
 		</control>
 		
-		
-<!-- *********************** LIST /GRAPHICAL VIEW*********************************** -->
-		
+		<!-- ********************** LIST / GRAPHICAL VIEW ********************** -->
 		
 		<control>
 			<type>group</type>
@@ -513,21 +406,26 @@
 						<description>text list</description>
 						<type>listcontrol</type>
 						<id>50</id>
-						<posX>756</posX>
-						<posY>93</posY>
+						<posX>770</posX>
+						<posY>70</posY>
 						<width>600</width>
 						<height>500</height>
 						<textXOff2>590</textXOff2>
-						<spaceBetweenItems>2</spaceBetweenItems>
-				        <remoteColor>FFa6c3e1</remoteColor>			<!-- watched color -->
+						<spaceBetweenItems>1</spaceBetweenItems>
+						<remoteColor>FFa6c3e1</remoteColor>			<!-- watched color -->
 				        <downloadColor>FFFFFFFF</downloadColor>		<!-- not watched color (normal) -->
 				        <textcolor>FF78ace0</textcolor>				<!-- local file not present color -->
 				        <textcolor2>FF78ace0</textcolor2>			<!-- local file not present color  column 2-->
 				        <textcolor3>FF78ace0</textcolor3>			<!-- local file not present color column 3-->
+						<IconXOff>9999</IconXOff>					<!-- remove thumbs infront of episode names -->
+						<itemWidth>1</itemWidth>					<!-- remove thumbs infront of episode names -->
+						<itemHeight>1</itemHeight>					<!-- remove thumbs infront of episode names -->
+						<unfocusedAlpha>200</unfocusedAlpha>
 					</control>
 				</control>
 		</control>
 		
+		<import>common.time.xml</import>
 		<import>common.facade.xml</import>
 	</controls>
 </window>

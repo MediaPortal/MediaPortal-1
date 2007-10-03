@@ -1,0 +1,425 @@
+<window>
+  <id>7986</id>
+  <defaultcontrol>6</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:134</define>
+  <define>#header.image:videos_logo.png</define>
+  <define>#header.hover:-</define>
+  <controls>
+    <import>common.window.mesfilms.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <description>AMC logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>110</posX>
+      <posY>70</posY>
+      <height>40</height>
+      <colordiffuse>9Fffffff</colordiffuse>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>amclogo.png</texture>
+    </control>
+    <control>
+      <description>Selection</description>
+      <type>fadelabel</type>
+      <id>12</id>
+      <posX>480</posX>
+      <posY>60</posY>
+      <label>label</label>
+      <font>font14</font>
+      <align>left</align>
+      <textcolor>ffa9d0f7</textcolor>
+    </control>
+    <control>
+      <description>Group buttons</description>
+      <type>group</type>
+      <description>group element</description>
+      <id>1</id>
+      <posX>100</posX>
+      <posY>97</posY>
+      <width>198</width>
+      <layout>StackLayout</layout>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <control>
+         <type>button</type>
+         <description>Layout</description>
+         <id>6</id>
+         <onleft>5</onleft>
+         <onright>1026</onright>
+         <onup>5</onup>
+         <ondown>2</ondown>
+         <animation>unfocus</animation>
+         <label>101</label>
+         <textcolor>ff000000</textcolor>
+      </control>
+      <control>
+        <description>Sort button</description>
+        <type>sortbutton</type>
+        <id>2</id>
+        <onleft>6</onleft>
+        <onright>1026</onright>
+        <onup>6</onup>
+        <ondown>3</ondown>
+        <textureFocus>menu_list_focus.png</textureFocus>
+        <disabledcolor>60ffffff</disabledcolor>
+        <label>103</label>
+        <textcolor>White</textcolor>
+        <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
+        <textureAscendingFocused>arrow_round_up_focus.png</textureAscendingFocused>
+        <textureAscending>arrow_round_up_nofocus.png</textureAscending>
+        <textureDescending>arrow_round_down_nofocus.png</textureDescending>
+        <textureDescendingFocused>arrow_round_down_focus.png</textureDescendingFocused>
+      </control>
+      <control>
+        <description>Switch view</description>
+        <type>button</type>
+        <id>3</id>
+        <onleft>2</onleft>
+        <onright>1026</onright>
+        <onup>2</onup>
+        <ondown>4</ondown>
+        <label>457</label>
+      </control>
+      <control>
+        <description>Search by Films</description>
+        <type>button</type>
+        <id>4</id>
+        <onleft>3</onleft>
+        <onright>1026</onright>
+        <onup>3</onup>
+        <ondown>5</ondown>
+        <label>137</label>
+      </control>
+      <control>
+        <description>Search by Actors</description>
+        <type>button</type>
+        <id>5</id>
+        <onleft>4</onleft>
+        <onright>1026</onright>
+        <onup>4</onup>
+        <ondown>6</ondown>
+        <label>137</label>
+      </control>
+    </control>
+    <control>
+      <description>composite control consisting of a list control and a thumbnail panel</description>
+      <type>group</type>
+      <id>1000</id>
+      <posX>480</posX>
+      <posY>56</posY>
+      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <mpe>
+        <layout>Grid</layout>
+        <spring>no</spring>
+        <spacing>0</spacing>
+        <padding>
+          <top>0</top>
+          <right>0</right>
+          <bottom>0</bottom>
+          <left>0</left>
+        </padding>
+      </mpe>
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>1026</id>
+         <control>
+            <description>Thumbnail Panel</description>
+            <type>thumbnailpanel</type>
+            <scrollOffset>1</scrollOffset>
+            <onleft>6</onleft>
+         <width>880</width>
+         <height>570</height>
+	    <textureWidthBig>205</textureWidthBig>
+            <textureHeightBig>245</textureHeightBig>
+            <itemWidthBig>205</itemWidthBig>
+            <itemHeightBig>245</itemHeightBig>
+            <thumbWidthBig>188</thumbWidthBig>
+            <thumbHeightBig>184</thumbHeightBig>
+            <thumbPosXBig>10</thumbPosXBig>
+            <thumbPosYBig>16</thumbPosYBig>
+          </control>
+          <control>
+            <type>listcontrol</type>
+            <description>listcontrol</description>
+            <posX>440</posX>
+            <posY>97</posY>
+            <width>780</width>
+            <height>512</height>
+            <onleft>6</onleft>
+            <font>font13</font>
+         </control>
+      </control>
+      <control>
+        <description>Biography value</description>
+        <type>textboxscrollup</type>
+        <id>1025</id>
+        <posX>138</posX>
+        <posY>590</posY>
+        <width>760</width>
+        <height>110</height>
+        <onleft>2</onleft>
+        <onright>800</onright>
+        <onup>1026</onup>
+        <ondown>1026</ondown>
+        <colordiffuse>ffffffff</colordiffuse>
+        <textcolor>black</textcolor>
+        <speed>1</speed>
+        <label>-</label>
+        <font>font12</font>
+        <seperator>------------------------------------------------------------------------------------------------------------------------------</seperator>
+      </control>
+         <control>
+            <type>fadelabel</type>
+            <description>Title (during Icons)</description>
+            <id>1027</id>
+            <posX>125</posX>
+            <posY>594</posY>
+            <onleft>6</onleft>
+            <onright>1026</onright>
+            <onup>1026</onup>
+            <ondown>1026</ondown>
+            <font>font14</font>
+            <textcolor>black</textcolor>
+            <width>240</width>
+            <height>24</height>
+            <label>-</label>
+         </control>
+     <control>
+      <type>label</type>
+      <description>CategoryValue (during Icons)</description>
+      <id>1024</id>
+      <posX>950</posX>
+      <posY>594</posY>
+      <onleft>6</onleft>
+      <onright>1026</onright>
+      <onup>1026</onup>
+      <ondown>1026</ondown>
+      <font>font14</font>
+      <textcolor>ffffffff</textcolor>
+      <width>200</width>
+      <height>24</height>
+      <label>-</label>
+    </control>
+    </control>
+    <control>
+      <description>Star rating</description>
+      <type>image</type>
+      <id>1065</id>
+      <posX>337</posX>
+      <posY>430</posY>
+      <width>36</width>
+      <height>36</height>
+      <visible>no</visible>
+      <texture>star.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating half grey</description>
+      <type>image</type>
+      <id>1060</id>
+      <posX>337</posX>
+      <posY>430</posY>
+      <width>36</width>
+      <height>36</height>
+      <visible>no</visible>
+      <texture>starhalf.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating grey</description>
+      <type>image</type>
+      <id>1055</id>
+      <posX>337</posX>
+      <posY>430</posY>
+      <width>36</width>
+      <height>36</height>
+      <visible>no</visible>
+      <texture>greystar.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating</description>
+      <type>image</type>
+      <id>1064</id>
+      <posX>340</posX>
+      <posY>396</posY>
+      <width>30</width>
+      <height>30</height>
+      <visible>no</visible>
+      <texture>star.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating half grey</description>
+      <type>image</type>
+      <id>1059</id>
+      <posX>340</posX>
+      <posY>396</posY>
+      <width>30</width>
+      <height>30</height>
+      <visible>no</visible>
+      <texture>starhalf.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating grey</description>
+      <type>image</type>
+      <id>1054</id>
+      <posX>340</posX>
+      <posY>396</posY>
+      <width>30</width>
+      <height>30</height>
+      <visible>no</visible>
+      <texture>greystar.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating</description>
+      <type>image</type>
+      <id>1063</id>
+      <posX>343</posX>
+      <posY>368</posY>
+      <width>24</width>
+      <height>24</height>
+      <visible>no</visible>
+      <texture>star.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating half grey</description>
+      <type>image</type>
+      <id>1058</id>
+      <posX>343</posX>
+      <posY>368</posY>
+      <width>24</width>
+      <height>24</height>
+      <visible>no</visible>
+      <texture>starhalf.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating grey</description>
+      <type>image</type>
+      <id>1053</id>
+      <posX>343</posX>
+      <posY>368</posY>
+      <width>24</width>
+      <height>24</height>
+      <visible>no</visible>
+      <texture>greystar.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating</description>
+      <type>image</type>
+      <id>1062</id>
+      <posX>347</posX>
+      <posY>346</posY>
+      <width>18</width>
+      <height>18</height>
+      <visible>no</visible>
+      <texture>star.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating half grey</description>
+      <type>image</type>
+      <id>1057</id>
+      <posX>347</posX>
+      <posY>346</posY>
+      <width>18</width>
+      <height>18</height>
+      <visible>no</visible>
+      <texture>starhalf.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating grey</description>
+      <type>image</type>
+      <id>1052</id>
+      <posX>347</posX>
+      <posY>346</posY>
+      <width>18</width>
+      <height>18</height>
+      <visible>no</visible>
+      <texture>greystar.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating</description>
+      <type>image</type>
+      <id>1061</id>
+      <posX>350</posX>
+      <posY>330</posY>
+      <width>12</width>
+      <height>12</height>
+      <visible>no</visible>
+      <texture>star.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating half grey</description>
+      <type>image</type>
+      <id>1056</id>
+      <posX>350</posX>
+      <posY>330</posY>
+      <width>12</width>
+      <height>12</height>
+      <visible>no</visible>
+      <texture>starhalf.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Star rating grey</description>
+      <type>image</type>
+      <id>1051</id>
+      <posX>350</posX>
+      <posY>330</posY>
+      <width>12</width>
+      <height>12</height>
+      <visible>no</visible>
+      <texture>greystar.png</texture>
+      <centered>yes</centered>
+    </control>
+    <control>
+      <description>Thumbnail with video playing</description>
+      <type>image</type>
+      <id>1020</id>
+      <posX>155</posX>
+      <posY>310</posY>
+      <width>180</width>
+      <height>225</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>Thumbnail with no video playing</description>
+      <type>image</type>
+      <id>1021</id>
+      <posX>130</posX>
+      <posY>310</posY>
+      <width>230</width>
+      <height>270</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>-</texture>
+    </control>
+    <control>
+      <description>YearValue</description>
+      <type>label</type>
+      <id>1022</id>
+      <posX>327</posX>
+      <posY>555</posY>
+      <visible>no</visible>
+      <label>6</label>
+      <font>font12</font>
+    </control>
+    
+  </controls>
+</window>

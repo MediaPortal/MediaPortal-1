@@ -16,16 +16,16 @@
       <animation effect="slide" time="250" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="500" end="0,-300">WindowClose</animation>
       <posX>69</posX>
-      <posY>129</posY>
+      <posY>89</posY>
       <layout>StackLayout</layout>
       <control>
-      <description>my playlist button</description> 
-      <type>button</type> 
-      <id>39</id> 
-      <label>983</label> 
-      <onright>50</onright> 
-      </control> 
-      <control> 
+      <description>my playlist button</description>
+      <type>button</type>
+      <id>39</id>
+      <label>983</label>
+      <onright>50</onright>
+      </control>
+      <control>
         <description>Shuffle button</description>
         <type>button</type>
         <id>20</id>
@@ -113,15 +113,33 @@
           <onup>20</onup>
           <ondown>20</ondown>
         </control>
-        <control>
-          <description>playlist control</description>
+       <control>
+          <description>playlist listcontrol</description>
           <type>playlistcontrol</type>
           <id>50</id>
-          <onleft>52</onleft>
-          <onright>53</onright>
-          <onup>52</onup>
-          <ondown>52</ondown> 
-          <textcolor>FFFFFFFF</textcolor>
+       <posX>375</posX>
+          <width>950</width>
+          <textureHeight>45</textureHeight>
+          <font>font16</font>
+          <textXOff>82</textXOff>
+          <textXOff2>742</textXOff2>
+          <itemWidth>40</itemWidth>
+          <itemHeight>37</itemHeight>
+          <IconXOff>64</IconXOff>
+          <IconYOff>4</IconYOff>
+          <upBtnWidth>43</upBtnWidth>
+		<downBtnWidth>47</downBtnWidth>
+		<deleteBtnWidth>47</deleteBtnWidth>
+		<upBtnHeight>45</upBtnHeight>
+		<downBtnHeight>45</downBtnHeight>
+		<deleteBtnHeight>45</deleteBtnHeight>
+		<upBtnXOffset>772</upBtnXOffset>
+		<downBtnXOffset>819</downBtnXOffset>
+		<deleteBtnXOffset>870</deleteBtnXOffset>
+		<upBtnYOffset>1</upBtnYOffset>
+		<downBtnYOffset>1</downBtnYOffset>
+		<deleteBtnYOffset>1</deleteBtnYOffset>
+          <scrollOffset>1</scrollOffset>
         </control>
       </control>
     </control>

@@ -63,14 +63,14 @@
 			<height>194</height>
 			<textureFocus>-</textureFocus>
 			<textureNoFocus>-</textureNoFocus>
-			<hyperlink>2</hyperlink>
-			<label>1</label>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>33</onleft>
 			<onright>6</onright>
 			<onup>210</onup>
-			<ondown>607</ondown>
+			<ondown>603</ondown>
 			<visible>Control.IsVisible(2)</visible>
 		</control>
 		<control>
@@ -83,14 +83,14 @@
 			<height>194</height>
 			<textureFocus>-</textureFocus>
 			<textureNoFocus>-</textureNoFocus>
-			<hyperlink>2</hyperlink>
-			<label>1</label>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>33</onleft>
 			<onright>6</onright>
 			<onup>210</onup>
-			<ondown>607</ondown>
+			<ondown>603</ondown>
 			<visible>Control.IsVisible(22)</visible>
 		</control>
 		<control>
@@ -103,8 +103,8 @@
 			<height>194</height>
 			<textureFocus>hover_my radio1.png</textureFocus>
 			<textureNoFocus>hover_my radio1.png</textureNoFocus>
-			<hyperlink>2</hyperlink>
-			<label>1</label>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>21</onleft>
@@ -124,8 +124,8 @@
 			<height>194</height>
 			<textureFocus>hover_my radio1.png</textureFocus>
 			<textureNoFocus>hover_my radio1.png</textureNoFocus>
-			<hyperlink>2</hyperlink>
-			<label>1</label>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>21</onleft>
@@ -145,8 +145,8 @@
 			<height>194</height>
 			<textureFocus>hover_my radio1.png</textureFocus>
 			<textureNoFocus>hover_my radio1.png</textureNoFocus>
-			<hyperlink>2</hyperlink>
-			<label>1</label>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>21</onleft>
@@ -166,8 +166,8 @@
 			<height>194</height>
 			<textureFocus>hover_my radio1.png</textureFocus>
 			<textureNoFocus>hover_my radio1.png</textureNoFocus>
-			<hyperlink>2</hyperlink>
-			<label>1</label>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>21</onleft>
@@ -187,8 +187,8 @@
 			<height>194</height>
 			<textureFocus>hover_my radio1.png</textureFocus>
 			<textureNoFocus>hover_my radio1.png</textureNoFocus>
-			<hyperlink>2</hyperlink>
-			<label>1</label>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>21</onleft>
@@ -390,13 +390,14 @@
 			<height>168</height>
 			<textureFocus>-</textureFocus>
 			<textureNoFocus>-</textureNoFocus>
-			<hyperlink>1</hyperlink>
+			<hyperlink>2</hyperlink>
+			<label>2</label>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
 			<hoverY>360</hoverY>
 			<hoverWidth>272</hoverWidth>
 			<hoverHeight>306</hoverHeight>
-			<label>605</label>
+			<label>1</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>55</onleft>
@@ -415,13 +416,14 @@
 			<height>168</height>
 			<textureFocus>-</textureFocus>
 			<textureNoFocus>-</textureNoFocus>
-			<hyperlink>1</hyperlink>
+			<hyperlink>2</hyperlink>
+			<label>2</label>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
 			<hoverY>360</hoverY>
 			<hoverWidth>272</hoverWidth>
 			<hoverHeight>306</hoverHeight>
-			<label>605</label>
+			<label>1</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>55</onleft>
@@ -438,15 +440,15 @@
 			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my tv1.png</textureFocus>
-			<textureNoFocus>hover_my tv1.png</textureNoFocus>
-			<hyperlink>1</hyperlink>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<label>2</label>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
 			<hoverY>360</hoverY>
 			<hoverWidth>272</hoverWidth>
 			<hoverHeight>306</hoverHeight>
-			<label>605</label>
+			<label>1</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>4</onleft>
@@ -464,15 +466,15 @@
 			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my tv1.png</textureFocus>
-			<textureNoFocus>hover_my tv1.png</textureNoFocus>
-			<hyperlink>1</hyperlink>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<label>2</label>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
 			<hoverY>360</hoverY>
 			<hoverWidth>272</hoverWidth>
 			<hoverHeight>306</hoverHeight>
-			<label>605</label>
+			<label>1</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>4</onleft>
@@ -490,15 +492,15 @@
 			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my tv1.png</textureFocus>
-			<textureNoFocus>hover_my tv1.png</textureNoFocus>
-			<hyperlink>1</hyperlink>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<label>2</label>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
 			<hoverY>360</hoverY>
 			<hoverWidth>272</hoverWidth>
 			<hoverHeight>306</hoverHeight>
-			<label>605</label>
+			<label>1</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>4</onleft>
@@ -517,15 +519,15 @@
 			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my tv1.png</textureFocus>
-			<textureNoFocus>hover_my tv1.png</textureNoFocus>
-			<hyperlink>1</hyperlink>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<label>2</label>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
 			<hoverY>360</hoverY>
 			<hoverWidth>272</hoverWidth>
 			<hoverHeight>306</hoverHeight>
-			<label>605</label>
+			<label>1</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>4</onleft>
@@ -543,15 +545,15 @@
 			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my tv1.png</textureFocus>
-			<textureNoFocus>hover_my tv1.png</textureNoFocus>
-			<hyperlink>1</hyperlink>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<label>2</label>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
 			<hoverY>360</hoverY>
 			<hoverWidth>272</hoverWidth>
 			<hoverHeight>306</hoverHeight>
-			<label>605</label>
+			<label>1</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>4</onleft>
@@ -800,8 +802,8 @@
 			<posY>460</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my pictures1.png</textureFocus>
-			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
 			<hyperlink>30</hyperlink>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
@@ -826,8 +828,8 @@
 			<posY>460</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my pictures1.png</textureFocus>
-			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
 			<hyperlink>30</hyperlink>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
@@ -852,8 +854,8 @@
 			<posY>460</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my pictures1.png</textureFocus>
-			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
 			<hyperlink>30</hyperlink>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
@@ -878,8 +880,8 @@
 			<posY>460</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my pictures1.png</textureFocus>
-			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
 			<hyperlink>30</hyperlink>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
@@ -904,8 +906,8 @@
 			<posY>460</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my pictures1.png</textureFocus>
-			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
 			<hyperlink>30</hyperlink>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
@@ -931,10 +933,10 @@
 			<posY>360</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my tv1.png</textureFocus>
-			<textureNoFocus>hover_my tv1.png</textureNoFocus>
-			<hyperlink>2</hyperlink>
-			<label>1</label>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>21</onleft>
@@ -952,10 +954,10 @@
 			<posY>360</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my tv1.png</textureFocus>
-			<textureNoFocus>hover_my tv1.png</textureNoFocus>
-			<hyperlink>2</hyperlink>
-			<label>1</label>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>21</onleft>
@@ -974,10 +976,10 @@
 			<posY>360</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my tv1.png</textureFocus>
-			<textureNoFocus>hover_my tv1.png</textureNoFocus>
-			<hyperlink>2</hyperlink>
-			<label>1</label>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>21</onleft>
@@ -995,10 +997,10 @@
 			<posY>360</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my tv1.png</textureFocus>
-			<textureNoFocus>hover_my tv1.png</textureNoFocus>
-			<hyperlink>2</hyperlink>
-			<label>1</label>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>21</onleft>
@@ -1016,10 +1018,10 @@
 			<posY>360</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my tv1.png</textureFocus>
-			<textureNoFocus>hover_my tv1.png</textureNoFocus>
-			<hyperlink>2</hyperlink>
-			<label>1</label>
+			<textureFocus>hover_my pictures1.png</textureFocus>
+			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
+			<hyperlink>1</hyperlink>
+			<label>605</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>21</onleft>
@@ -1168,15 +1170,15 @@
 			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my pictures1.png</textureFocus>
-			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
-			<hyperlink>1</hyperlink>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
+			<label>2</label>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
 			<hoverY>360</hoverY>
 			<hoverWidth>272</hoverWidth>
 			<hoverHeight>306</hoverHeight>
-			<label>605</label>
+			<label>1</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>4</onleft>
@@ -1194,15 +1196,15 @@
 			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my pictures1.png</textureFocus>
-			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
-			<hyperlink>1</hyperlink>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
+			<label>2</label>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
 			<hoverY>360</hoverY>
 			<hoverWidth>272</hoverWidth>
 			<hoverHeight>306</hoverHeight>
-			<label>605</label>
+			<label>1</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>4</onleft>
@@ -1221,15 +1223,15 @@
 			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my pictures1.png</textureFocus>
-			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
-			<hyperlink>1</hyperlink>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
+			<label>2</label>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
 			<hoverY>360</hoverY>
 			<hoverWidth>272</hoverWidth>
 			<hoverHeight>306</hoverHeight>
-			<label>605</label>
+			<label>1</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>4</onleft>
@@ -1247,15 +1249,15 @@
 			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my pictures1.png</textureFocus>
-			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
-			<hyperlink>1</hyperlink>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
+			<label>2</label>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
 			<hoverY>360</hoverY>
 			<hoverWidth>272</hoverWidth>
 			<hoverHeight>306</hoverHeight>
-			<label>605</label>
+			<label>1</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>4</onleft>
@@ -1273,15 +1275,15 @@
 			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
-			<textureFocus>hover_my pictures1.png</textureFocus>
-			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
-			<hyperlink>1</hyperlink>
+			<textureFocus>hover_my tv1.png</textureFocus>
+			<textureNoFocus>hover_my tv1.png</textureNoFocus>
+			<label>2</label>
 			<hover>-</hover>
 			<hoverX>502</hoverX>
 			<hoverY>360</hoverY>
 			<hoverWidth>272</hoverWidth>
 			<hoverHeight>306</hoverHeight>
-			<label>605</label>
+			<label>1</label>
 			<textcolor>00ffffff</textcolor>
 			<textcolorNoFocus>00ffffff</textcolorNoFocus>
 			<onleft>4</onleft>
@@ -1876,7 +1878,7 @@
 			<textalign>center</textalign>
 			<textureFocus>subleft_focus.png</textureFocus>
 			<textureNoFocus>subleft_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(4)|Control.HasFocus(44)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
+			<visible>Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
 			<label>scheduled rec</label>
 			<hyperlink>601</hyperlink>
 			<font>font14</font>
@@ -1884,7 +1886,7 @@
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
-			<onup>4</onup>
+			<onup>2</onup>
 			<ondown>603</ondown>
 			<onleft>603</onleft>
 			<onright>604</onright>
@@ -1903,7 +1905,7 @@
 			<textalign>center</textalign>
 			<textureFocus>submiddle_focus.png</textureFocus>
 			<textureNoFocus>submiddle_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(4)|Control.HasFocus(44)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
+			<visible>Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
 			<label>recorded tv</label>
 			<hyperlink>603</hyperlink>
 			<font>font14</font>
@@ -1911,7 +1913,7 @@
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
-			<onup>4</onup>
+			<onup>2</onup>
 			<ondown>604</ondown>
 			<onleft>603</onleft>
 			<onright>605</onright>
@@ -1930,7 +1932,7 @@
 			<textalign>center</textalign>
 			<textureFocus>subright_focus.png</textureFocus>
 			<textureNoFocus>subright_nofocus.png</textureNoFocus>
-			<visible>Control.HasFocus(4)|Control.HasFocus(44)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
+			<visible>Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)</visible>
 			<label>tv guide</label>
 			<hyperlink>600</hyperlink>
 			<font>font14</font>
@@ -1938,7 +1940,7 @@
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 			<textYOff>1</textYOff>
 			<textXOff>40</textXOff>
-			<onup>4</onup>
+			<onup>2</onup>
 			<ondown>605</ondown>
 			<onleft>604</onleft>
 			<onright>605</onright>

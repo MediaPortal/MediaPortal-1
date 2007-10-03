@@ -17,18 +17,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>
     <control>
-      <description>music rectangle</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>48</posX>
-      <posY>540</posY>
-      <width>330</width>
-      <height>225</height>
-      <texture>playback_background.png</texture>
-      <animation effect="fade" time="500">WindowClose</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-    </control>
-    <control>
       <description>music logo</description>
       <type>image</type>
       <id>1</id>
@@ -147,9 +135,21 @@
       <animation effect="fade" time="800" delay="250">WindowClose</animation>
     </control>
     <control>
+      <description>music rectangle</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>48</posX>
+      <posY>540</posY>
+      <width>330</width>
+      <height>225</height>
+      <texture>playback_background.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
       <description>video preview window</description>
       <type>videowindow</type>
-      <id>9</id>
+      <id>99</id>
       <posX>96</posX>
       <posY>568</posY>
       <width>238</width>

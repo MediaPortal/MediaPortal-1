@@ -2,7 +2,7 @@
 <window>
   <id>0</id>
   <defaultcontrol>50</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+  <allowoverlay>no</allowoverlay>
   <autohidetopbar>yes</autohidetopbar>
   <controls>
     <control>
@@ -31,11 +31,11 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <id>50</id>
-      <posX>290</posX>
-      <posY>60</posY>
-      <width>399</width>
+      <posX>400</posX>
+      <posY>10</posY>
+      <width>439</width>
       <textcolor>ffffffff</textcolor>
-      <textColorNoFocus>00ffffff</textColorNoFocus>
+      <textColorNoFocus>60ffffff</textColorNoFocus>
       <dimColor>80ffffff</dimColor>
       <buttonTextXOff>11</buttonTextXOff>
       <buttonTextYOff>60</buttonTextYOff>
@@ -43,10 +43,10 @@
       <buttonFont>font16</buttonFont>
       <buttonHeight>136</buttonHeight>
       <spaceBetweenButtons>0</spaceBetweenButtons>
-      <numberOfButtons>4</numberOfButtons>
+      <numberOfButtons>5</numberOfButtons>
       <textureButtonFocus>button_empty.png</textureButtonFocus>
       <textureButtonNoFocus>buttonNF_empty.png</textureButtonNoFocus>
-      <hoverX>800</hoverX>
+      <hoverX>950</hoverX>
       <hoverY>370</hoverY>
       <hoverWidth>290</hoverWidth>
       <hoverHeight>285</hoverHeight>
@@ -60,8 +60,8 @@
     </control>
     <control>
       <type>image</type>
-      <posX>1150</posX>
-      <posY>650</posY>
+      <posX>1060</posX>
+      <posY>670</posY>
       <width>169</width>
       <height>58</height>
       <texture>mplogo.png</texture>
@@ -189,6 +189,46 @@
       <onright>50</onright>
       <onup>13</onup>
       <ondown>50</ondown>
+    </control>
+    <control>
+      <description>music rectangle</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>48</posX>
+      <posY>540</posY>
+      <width>330</width>
+      <height>225</height>
+      <texture>playback_background.png</texture>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>Player.HasMedia</visible>
+    </control>
+     <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>96</posX>
+      <posY>568</posY>
+      <width>238</width>
+      <height>131</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+      <visible>Player.HasMedia</visible>
+    </control>
+    <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>20</id>
+      <posX>126</posX>
+      <posY>701</posY>
+      <width>158</width>
+      <label>#percentage</label>
+      <visible>yes</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+      <visible>Player.HasMedia</visible>
     </control>
   </controls>
 </window>

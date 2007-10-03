@@ -127,7 +127,7 @@
 			<posY>310</posY>
 			<width>192</width>
 			<height>168</height>
-			<texture>hover_my tv1.png</texture>
+			<texture>hover_my pictures1.png</texture>
 			<visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)|Control.HasFocus(611)|Control.HasFocus(612)]</visible>
 		</control>
 		<control>
@@ -245,7 +245,7 @@
 			<posY>460</posY>
 			<width>192</width>
 			<height>168</height>
-			<texture>hover_my pictures1.png</texture>
+			<texture>hover_my tv1.png</texture>
 			<visible>![Control.HasFocus(6)|Control.HasFocus(5)|Control.HasFocus(4)|Control.HasFocus(3)|Control.HasFocus(2)|Control.HasFocus(22)|Control.HasFocus(33)|Control.HasFocus(44)|Control.HasFocus(55)|Control.HasFocus(66)|Control.HasFocus(601)|Control.HasFocus(602)|Control.HasFocus(603)|Control.HasFocus(604)|Control.HasFocus(605)|Control.HasFocus(606)|Control.HasFocus(607)|Control.HasFocus(608)|Control.HasFocus(609)|Control.HasFocus(610)|Control.HasFocus(611)|Control.HasFocus(612)]</visible>
 		</control>
 		<control>

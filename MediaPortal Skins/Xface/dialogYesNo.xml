@@ -9,8 +9,8 @@
       <description>No button</description>
       <type>button</type>
       <id>10</id>
-      <posX>733</posX>
-      <posY>420</posY>
+      <posX>743</posX>
+      <posY>490</posY>
       <textXOff>44</textXOff>
       <textYOff>9</textYOff>
       <width>140</width>
@@ -29,8 +29,8 @@
       <description>Yes button</description>
       <type>button</type>
       <id>11</id>
-      <posX>493</posX>
-      <posY>420</posY>
+      <posX>503</posX>
+      <posY>490</posY>
       <textXOff>50</textXOff>
       <textYOff>9</textYOff>
       <width>140</width>

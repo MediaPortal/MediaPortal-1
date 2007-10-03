@@ -4,7 +4,34 @@
   <defaultcontrol>213</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <import>common.progressbar.xml</import>
+   <control>
+      <description>Start Time Info</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>483</posX>
+      <posY>111</posY>
+      <label>#currentplaytime</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>black</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+      <visible>no</visible>
+    </control>
+    <control>
+      <description>End Time Info</description>
+      <type>label</type>
+      <id>102</id>
+      <posX>882</posX>
+      <posY>111</posY>
+      <label>#currentremaining</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>black</textcolor>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+      <visible>no</visible>
+    </control>
     <control>
       <description>Current Time Info</description>
       <type>label</type>

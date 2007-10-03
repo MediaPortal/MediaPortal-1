@@ -5,8 +5,6 @@
   <allowoverlay>yes</allowoverlay>
   <autohidetopbar>no</autohidetopbar>
   <controls>
-
-
     <control>
 				<type>image</type>
 				<posX>423</posX>
@@ -194,10 +192,10 @@
 			<description>home BM FFS</description>
 			<type>button</type>
 			<id>611</id>
-			<posX>976</posX>
-			<posY>640</posY>
-			<width>155</width>
-			<height>123</height>
+			<posX>1012</posX>
+			<posY>655</posY>
+			<width>135</width>
+			<height>103</height>
 			<textureFocus>hover_my tv1.png</textureFocus>
 			<textureNoFocus>hover_my tv1.png</textureNoFocus>
 			<hyperlink>1</hyperlink>
@@ -220,10 +218,10 @@
 			<description>home BM Pictures</description>
 			<type>button</type>
 			<id>612</id>
-			<posX>1107</posX>
-			<posY>645</posY>
-			<width>155</width>
-			<height>123</height>
+			<posX>1127</posX>
+			<posY>660</posY>
+			<width>135</width>
+			<height>103</height>
 			<textureFocus>hover_my pictures1.png</textureFocus>
 			<textureNoFocus>hover_my pictures1.png</textureNoFocus>
 			<hyperlink>2</hyperlink>
@@ -247,9 +245,9 @@
 			<type>button</type>
 			<id>613</id>
 			<posX>1226</posX>
-			<posY>640</posY>
-			<width>140</width>
-			<height>128</height>
+			<posY>655</posY>
+			<width>135</width>
+			<height>103</height>
 			<textureFocus>hover_my music1.png</textureFocus>
 			<textureNoFocus>hover_my music1.png</textureNoFocus>
 			<hyperlink>501</hyperlink>

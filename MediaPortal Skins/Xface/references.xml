@@ -97,7 +97,7 @@
 		<textureDeleteFocused>playlist_item_delete_focus.png</textureDeleteFocused>
 		<font>font14</font>
 		<textcolor>white</textcolor>
-		<colordiffuse>white</colordiffuse>
+		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
 	</control>
 	<control>
