@@ -183,7 +183,7 @@ namespace MediaPortal.GUI.Music
       restrictionLength = 0;
       for (int i = 0; i < CurrentLevel; ++i)
       {
-        BuildSelect((FilterDefinition)currentView.Filters[i], ref whereClause);
+        BuildSelect((FilterDefinition)currentView.Filters[i], ref whereClause, i);
       }
       BuildWhere((FilterDefinition)currentView.Filters[CurrentLevel], ref whereClause);
       BuildRestriction((FilterDefinition)currentView.Filters[CurrentLevel], ref whereClause);
@@ -320,12 +320,12 @@ namespace MediaPortal.GUI.Music
       return songs;
     }
 
-    void BuildSelect(FilterDefinition filter, ref string whereClause)
+    void BuildSelect(FilterDefinition filter, ref string whereClause, int filterLevel)
     {
       if (filter.SqlOperator == "group")
       {
         // Don't need to include the grouping value, when it was on the first level
-        if (CurrentLevel > 1)
+        if (CurrentLevel > 1 && filterLevel == 0)
           return;
 
         if (whereClause != "") whereClause += " and ";
