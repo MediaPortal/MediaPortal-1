@@ -287,7 +287,7 @@ namespace MediaPortal.GUI.Music
           // Now we need to check the previous filters, if we were already on the tracks table previously
           // In this case the from clause must contain the tracks table only
           string from = String.Format("{1} from {0}", table, GetField(defCurrent.Where));
-          for (int i = CurrentLevel - 1; i == 0; i--)
+          for (int i = CurrentLevel; i > - 1; i--)
           {
             FilterDefinition filter = (FilterDefinition)currentView.Filters[i];
             if (filter.Where != table)
@@ -324,6 +324,10 @@ namespace MediaPortal.GUI.Music
     {
       if (filter.SqlOperator == "group")
       {
+        // Don't need to include the grouping value, when it was on the first level
+        if (CurrentLevel > 1)
+          return;
+
         if (whereClause != "") whereClause += " and ";
         // Was the value selected a "#"? Then we have the group of special chars and need to search for values < A
         if (filter.SelectedValue == "#")
