@@ -54,18 +54,7 @@ namespace MediaPortal.Music.Database
 
   public partial class MusicDatabase
   {
-    #region Cache classes
-    public class AlbumInfoCache : AlbumInfo
-    {
-      public int idAlbum = 0;
-      public int idArtist = 0;
-      public int idAlbumArtist = 0;
-      public int idPath = -1;
-    };
-
-    private ArrayList _albumCache = new ArrayList();
     private ArrayList _shares = new ArrayList();
-    #endregion
 
     #region Reorg events
     // An event that clients can use to be notified whenever the
@@ -102,11 +91,6 @@ namespace MediaPortal.Music.Database
     private MusicTag _previousMusicTag = null;
     private bool _foundVariousArtist = false;
 
-
-    public void EmptyCache()
-    {
-      _albumCache.Clear();
-    }
 
     #region		Database rebuild
     public int MusicDatabaseReorg(ArrayList shares)
@@ -195,8 +179,6 @@ namespace MediaPortal.Music.Database
         MyArgs.progress = 100;
         MyArgs.phase = "Rescan completed";
         OnDatabaseReorgChanged(MyArgs);
-        EmptyCache();
-
 
         DateTime stopTime = DateTime.Now;
         TimeSpan ts = stopTime - startTime;
@@ -1215,7 +1197,6 @@ namespace MediaPortal.Music.Database
                           idTrack);
 
                   MusicDbClient.Execute(strSQL);
-                  EmptyCache();
                 }
                 CommitTransaction();
                 return true;

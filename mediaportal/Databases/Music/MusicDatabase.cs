@@ -52,7 +52,7 @@ namespace MediaPortal.Music.Database
     private static bool _useFolderArtForArtistGenre = false;
     private static bool _createMissingFolderThumbs = false;
     private static string _supportedExtensions = ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
-        private static DateTime _lastImport; 
+    private static DateTime _lastImport;
     private static System.DateTime _currentDate = DateTime.Now;
 
     string[] ArtistNamePrefixes = new string[]
@@ -77,28 +77,24 @@ namespace MediaPortal.Music.Database
     /// </summary>
     private MusicDatabase()
     {
-      // Log.Debug("MusicDatabase: private database constructor");
       LoadDBSettings();
       Open();
     }
 
     ~MusicDatabase()
     {
-      //Log.Debug("MusicDatabase: Disposing database");
-      //if (MusicDB != null)
-      //  MusicDB.Close();
     }
     #endregion
 
     #region Getters & Setters
     private SQLiteClient DbConnection
     {
-      get 
+      get
       {
         if (MusicDbClient == null)
           MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3"));
-        
-        return MusicDbClient; 
+
+        return MusicDbClient;
       }
     }
     #endregion
@@ -119,7 +115,7 @@ namespace MediaPortal.Music.Database
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
         _useFolderArtForArtistGenre = xmlreader.GetValueAsBool("musicfiles", "createartistgenrethumbs", false);
         _supportedExtensions = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
-        
+
         try
         {
           string lastImport = xmlreader.GetValueAsString("musicfiles", "lastImport", "1900-01-01 00:00:00");
@@ -145,13 +141,31 @@ namespace MediaPortal.Music.Database
         }
         catch (Exception) { }
 
-        // When we have deleted the database, we need to scan from the beginning, regardsless of the last import setting
+
         if (!System.IO.File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3")))
+        {
+          // When we have deleted the database, we need to scan from the beginning, regardsless of the last import setting
           _lastImport = DateTime.ParseExact("1900-01-01 00:00:00", "yyyy-M-d H:m:s", System.Globalization.CultureInfo.InvariantCulture); ;
 
-        // Get the DB handle or create it if necessary
-        MusicDbClient = DbConnection;
+          // Get the DB handle or create it if necessary
+          MusicDbClient = DbConnection;
 
+          if (!CreateDatabase())
+            return;
+        }
+      }
+
+      catch (Exception ex)
+      {
+        Log.Error("MusicDatabase: exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+      Log.Info("MusicDatabase: Database opened");
+    }
+
+    private bool CreateDatabase()
+    {
+      try
+      {
         DatabaseUtility.SetPragmas(MusicDbClient);
 
         // Tracks table containing information for songs 
@@ -217,16 +231,18 @@ namespace MediaPortal.Music.Database
 
         // Scrobble table
         DatabaseUtility.AddTable(MusicDbClient, "scrobbleusers", "CREATE TABLE scrobbleusers ( idScrobbleUser integer primary key, strUsername text, strPassword text)");
-        DatabaseUtility.AddTable(MusicDbClient, "scrobblesettings", "CREATE TABLE scrobblesettings ( idScrobbleSettings integer primary key, idScrobbleUser integer, iAddArtists integer, iAddTracks integer, iNeighbourMode integer, iRandomness integer, iScrobbleDefault integer, iSubmitOn integer, iDebugLog integer, iOfflineMode integer, iPlaylistLimit integer, iPreferCount integer, iRememberStartArtist integer)");
+        DatabaseUtility.AddTable(MusicDbClient, "scrobblesettings", "CREATE TABLE scrobblesettings ( idScrobbleSettings integer primary key, idScrobbleUser integer, iAddArtists integer, iAddTracks integer, iNeighbourMode integer, iRandomness integer, iScrobbleDefault integer, iSubmitOn integer, iDebugLog integer, iOfflineMode integer, iPlaylistLimit integer, iPreferCount integer, iRememberStartArtist integer, iAnnounce integer)");
         DatabaseUtility.AddTable(MusicDbClient, "scrobblemode", "CREATE TABLE scrobblemode ( idScrobbleMode integer primary key, idScrobbleUser integer, iSortID integer, strModeName text)");
         DatabaseUtility.AddTable(MusicDbClient, "scrobbletags", "CREATE TABLE scrobbletags ( idScrobbleTag integer primary key, idScrobbleMode integer, iSortID integer, strTagName text)");
-      }
 
+        Log.Info("MusicDatabase: New Database created successfully");
+        return true;
+      }
       catch (Exception ex)
       {
-        Log.Error("MusicDatabase: exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("MusicDatabase: Create of database failed. Err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
-      Log.Info("MusicDatabase: Database opened");
+      return false;
     }
     #endregion
 

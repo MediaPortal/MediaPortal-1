@@ -1808,7 +1808,6 @@ namespace MediaPortal.GUI.Music
       }
       else
         m_database.RollbackTransaction();
-      m_database.EmptyCache();
       dlg.Close();
       // disable scan mode
       m_bScan = false;

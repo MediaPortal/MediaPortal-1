@@ -83,6 +83,13 @@ namespace MediaPortal.GUI.Settings
     }
     #endregion
 
+    public class AlbumInfoCache
+    {
+      public int idAlbumInfo = 0;
+      public string Artist;
+      public string Album;
+    };
+
     #region Implementation
     private void SetPercentDonebyEvent(object sender, DatabaseReorgEventArgs e)
     {
@@ -168,7 +175,7 @@ namespace MediaPortal.GUI.Settings
 
       SQLiteResultSet results;
       string strSQL;
-      strSQL = String.Format("select * from albuminfo,album,genre,artist where albuminfo.idAlbum=album.idAlbum and albuminfo.idGenre=genre.idGenre and albuminfo.idArtist=artist.idArtist order by album.strAlbum");
+      strSQL = String.Format("select * from albuminfo order by strAlbum");
       results = MusicDatabase.DirectExecute(strSQL);
       int iRowsFound = results.Rows.Count;
       if (iRowsFound == 0)
@@ -187,10 +194,10 @@ namespace MediaPortal.GUI.Settings
       ArrayList vecAlbums = new ArrayList();
       for (int i = 0; i < results.Rows.Count; ++i)
       {
-        MusicDatabase.AlbumInfoCache album = new MusicDatabase.AlbumInfoCache();
-        album.idAlbum = Int32.Parse(DatabaseUtility.Get(results, i, "album.idAlbum"));
-        album.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
-        album.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
+        AlbumInfoCache album = new AlbumInfoCache();
+        album.idAlbumInfo = DatabaseUtility.GetAsInt(results, i, "idAlbumInfo");
+        album.Album = DatabaseUtility.Get(results, i, "strAlbum");
+        album.Artist = DatabaseUtility.Get(results, i, "strArtist");
         vecAlbums.Add(album);
       }
 
@@ -201,7 +208,7 @@ namespace MediaPortal.GUI.Settings
       {
         pDlgSelect.SetHeading(szText);
         pDlgSelect.Reset();
-        foreach (MusicDatabase.AlbumInfoCache album in vecAlbums)
+        foreach (AlbumInfoCache album in vecAlbums)
         {
           pDlgSelect.Add(album.Album + " - " + album.Artist);
         }
@@ -215,8 +222,8 @@ namespace MediaPortal.GUI.Settings
           return;
         }
 
-        MusicDatabase.AlbumInfoCache albumDel = (MusicDatabase.AlbumInfoCache)vecAlbums[iSelectedAlbum];
-        strSQL = String.Format("delete from albuminfo where albuminfo.idAlbum={0}", albumDel.idAlbum);
+        AlbumInfoCache albumDel = (AlbumInfoCache)vecAlbums[iSelectedAlbum];
+        strSQL = String.Format("delete from albuminfo where idAlbumInfo={0}", albumDel.idAlbumInfo);
         MusicDatabase.DirectExecute(strSQL);
 
 
@@ -234,15 +241,9 @@ namespace MediaPortal.GUI.Settings
       // to rollback transactions even if CMusicDatabase
       // memberfunctions are called; create our working dataset
 
-      ArrayList m_songids = new ArrayList();
-      ArrayList m_albumids = new ArrayList();
-      ArrayList m_artistids = new ArrayList();
-      ArrayList m_genreids = new ArrayList();
-      ArrayList m_albumnames = new ArrayList();
-
       string strSQL;
       SQLiteResultSet results;
-      strSQL = String.Format("select * from album,albumartist where album.idAlbumArtist=albumartist.idAlbumArtist order by album.strAlbum");
+      strSQL = String.Format("select distinct strAlbum, strAlbumArtist from tracks order by strAlbum");
       results = MusicDatabase.DirectExecute(strSQL);
       int iRowsFound = results.Rows.Count;
       if (iRowsFound == 0)
@@ -261,10 +262,9 @@ namespace MediaPortal.GUI.Settings
       ArrayList vecAlbums = new ArrayList();
       for (int i = 0; i < results.Rows.Count; ++i)
       {
-        MusicDatabase.AlbumInfoCache album = new MusicDatabase.AlbumInfoCache();
-        album.idAlbum = Int32.Parse(DatabaseUtility.Get(results, i, "album.idAlbum"));
-        album.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
-        album.AlbumArtist = DatabaseUtility.Get(results, i, "albumartist.strAlbumArtist");
+        AlbumInfoCache album = new AlbumInfoCache();
+        album.Album = DatabaseUtility.Get(results, i, "strAlbum");
+        album.Artist = DatabaseUtility.Get(results, i, "strAlbumArtist");
         vecAlbums.Add(album);
       }
 
@@ -275,9 +275,9 @@ namespace MediaPortal.GUI.Settings
       {
         pDlgSelect.SetHeading(szText);
         pDlgSelect.Reset();
-        foreach (MusicDatabase.AlbumInfoCache album in vecAlbums)
+        foreach (AlbumInfoCache album in vecAlbums)
         {
-          pDlgSelect.Add(album.Album + " - " + album.AlbumArtist);
+          pDlgSelect.Add(album.Album + " - " + album.Artist);
         }
         pDlgSelect.DoModal(GUIWindowManager.ActiveWindow);
 
@@ -289,50 +289,14 @@ namespace MediaPortal.GUI.Settings
           return;
         }
 
-        MusicDatabase.AlbumInfoCache albumDel = (MusicDatabase.AlbumInfoCache)vecAlbums[iSelectedAlbum];
+        AlbumInfoCache albumDel = (AlbumInfoCache)vecAlbums[iSelectedAlbum];
         //	Delete album
-        strSQL = String.Format("delete from album where idAlbum={0}", albumDel.idAlbum);
+        strSQL = String.Format("delete from tracks where strAlbum='{0}' and strAlbumArtist like '%{1}'", albumDel.Album, albumDel.Artist);
         MusicDatabase.DirectExecute(strSQL);
 
         //	Delete album info
-        strSQL = String.Format("delete from albuminfo where idAlbum={0}", albumDel.idAlbum);
+        strSQL = String.Format("delete from albuminfo where strAlbum='{0}' and strAlbumArtist like '%{1}'", albumDel.Album, albumDel.Artist);
         MusicDatabase.DirectExecute(strSQL);
-
-        //	Get the songs of the album
-        strSQL = String.Format("select * from song where idAlbum={0}", albumDel.idAlbum);
-        results = MusicDatabase.DirectExecute(strSQL);
-        iRowsFound = results.Rows.Count;
-        if (iRowsFound != 0)
-        {
-          //	Get all artists of this album
-          m_artistids.Clear();
-          for (int i = 0; i < results.Rows.Count; ++i)
-          {
-            m_artistids.Add(Int32.Parse(DatabaseUtility.Get(results, i, "idArtist")));
-          }
-
-          //	Do we have another song of this artist?
-          foreach (int iID in m_artistids)
-          {
-            strSQL = String.Format("select * from song where idArtist={0} and idAlbum<>{1}", iID, albumDel.idAlbum);
-            results = MusicDatabase.DirectExecute(strSQL);
-            iRowsFound = results.Rows.Count;
-            if (iRowsFound == 0)
-            {
-              //	No, delete the artist
-              strSQL = String.Format("delete from artist where idArtist={0}", iID);
-              MusicDatabase.DirectExecute(strSQL);
-            }
-          }
-          m_artistids.Clear();
-        }
-
-        //	Delete the albums songs
-        strSQL = String.Format("delete from song where idAlbum={0}", albumDel.idAlbum);
-        MusicDatabase.DirectExecute(strSQL);
-
-        // Delete album thumb
-
       }
     }
     #endregion
