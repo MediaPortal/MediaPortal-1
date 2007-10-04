@@ -655,11 +655,28 @@ namespace MediaPortal.GUI.TV
             return true;
           }
         //break;
+        case GUIMessage.MessageType.GUI_MSG_DISABLEGUIDEREFRESH:
+          TVDatabase.OnProgramsChanged -= new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
+          TVDatabase.OnNotifiesChanged -= new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
+          ConflictManager.OnConflictsUpdated -= new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
+          break;
 
-        case GUIMessage.MessageType.GUI_MSG_CLICKED:
-          int iControl = message.SenderControlId;
-          if (iControl == (int)Controls.SPINCONTROL_DAY)
-          {
+        case GUIMessage.MessageType.GUI_MSG_ENABLEGUIDEREFRESH:
+          TVDatabase.OnProgramsChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
+          TVDatabase.OnNotifiesChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
+          ConflictManager.OnConflictsUpdated += new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
+          break;
+
+      }
+      return base.OnMessage(message);
+    }
+
+    protected bool MessageClicked(GUIMessage message)
+    {
+      int iControl = message.SenderControlId;
+      
+      if (iControl == (int)Controls.SPINCONTROL_DAY)
+      {
             GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
             int iDay = cntlDay.Value;
 
@@ -691,25 +708,8 @@ namespace MediaPortal.GUI.TV
           {
             OnSwitchMode();
           }
-          break;
-
-        case GUIMessage.MessageType.GUI_MSG_DISABLEGUIDEREFRESH:
-          TVDatabase.OnProgramsChanged -= new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
-          TVDatabase.OnNotifiesChanged -= new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
-          ConflictManager.OnConflictsUpdated -= new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
-          break;
-
-        case GUIMessage.MessageType.GUI_MSG_ENABLEGUIDEREFRESH:
-          TVDatabase.OnProgramsChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
-          TVDatabase.OnNotifiesChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
-          ConflictManager.OnConflictsUpdated += new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
-          break;
-
-      }
       return base.OnMessage(message);
-      ;
     }
-
 
     public override void Process()
     {

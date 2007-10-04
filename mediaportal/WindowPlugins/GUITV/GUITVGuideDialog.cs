@@ -114,7 +114,6 @@ namespace MediaPortal.GUI.TV
 
     public override bool OnMessage(GUIMessage message)
     {
-      //      needRefresh = true;
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
@@ -123,6 +122,9 @@ namespace MediaPortal.GUI.TV
             m_bRunning = false;
             return true;
           }
+        case GUIMessage.MessageType.GUI_MSG_CLICKED:
+          m_bRunning = false;
+          return MessageClicked(message);
       }
       return base.OnMessage(message);
     }
@@ -155,7 +157,7 @@ namespace MediaPortal.GUI.TV
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {
-      return true;
+      return m_bRunning;
     }
 
     public void RenderLayer(float timePassed)

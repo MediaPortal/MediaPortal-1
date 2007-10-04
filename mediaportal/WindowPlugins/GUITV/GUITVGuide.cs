@@ -66,6 +66,15 @@ namespace MediaPortal.GUI.TV
       return result;
     }
 
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_CLICKED:
+          return MessageClicked(message);
+      }
+      return base.OnMessage(message);
+    }
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
