@@ -54,11 +54,11 @@
           <itemHeight>210</itemHeight>
           <textureWidth>173</textureWidth>
           <textureHeight>380</textureHeight>
-          <font>font9</font>
+          <font>font12</font>
           <textXOff>8</textXOff>
-		  <textYOff>-65</textYOff>
+		  <textYOff>-115</textYOff>
           <selectedColor>20ffffff</selectedColor>
-          <textcolor>00ffffff</textcolor>
+          <textcolor>ffffffff</textcolor>
           <background>Coverbig.png</background>
           <thumbs flipY="true" diffuse="Thumb_Mask.png"></thumbs>
           <InfoImage flipY="true" diffuse="Thumb_Mask.png"></InfoImage>

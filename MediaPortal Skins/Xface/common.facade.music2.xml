@@ -40,8 +40,6 @@
           <description>Filmstrip view</description>
           <type>filmstrip</type>
           <id>50</id>
-          <animation effect="slide" time="350" end="300,0">focus</animation>
-          <animation effect="slide" time="450" start="300,0">unfocus</animation>
           <posX>80</posX>
           <width>1250</width>
           <onup>2</onup>
@@ -54,11 +52,11 @@
           <itemWidth>203</itemWidth>
           <itemHeight>310</itemHeight>
           <textureHeight>310</textureHeight>
-          <font>font9</font>
+          <font>font12</font>
           <textXOff>8</textXOff>
-		  <textYOff>0</textYOff>
+		  <textYOff>-50</textYOff>
           <selectedColor>00ffffff</selectedColor>
-          <textcolor>00ffffff</textcolor>
+          <textcolor>ffffffff</textcolor>
           <colordiffuse>00ffffff</colordiffuse>
           <remoteColor>00ffffff</remoteColor>
           <downloadColor>00ffffff</downloadColor>
@@ -69,8 +67,8 @@
           <showFolder>no</showFolder>
           <showBackGround>no</showBackGround>
           <showInfoImage>no</showInfoImage>
-          <thumbAnimation effect="zoom" start="100,100" end="140,140" time="300">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="140,140" end="100,100" time="300">unfocus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="100,100" end="140,140" time="300" reversible="false" >focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="140,140" end="100,100" time="300" reversible="false" >unfocus</thumbAnimation>
         </control>
         <control>
           <description>playlist listcontrol</description>

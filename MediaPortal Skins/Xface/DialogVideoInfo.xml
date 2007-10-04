@@ -316,7 +316,7 @@
       <description>Plot value</description>
       <type>textboxscrollup</type>
       <id>20</id>
-      <posX>379</posX>
+      <posX>179</posX>
       <posY>585</posY>
       <width>800</width>
       <height>110</height>
@@ -345,7 +345,7 @@
       <description>textarea</description>
      <type>textbox</type>
       <id>22</id>
-      <posX>379</posX>
+      <posX>179</posX>
       <posY>585</posY>
       <width>800</width>
       <height>160</height>
