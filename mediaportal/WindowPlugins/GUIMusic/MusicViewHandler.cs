@@ -343,7 +343,12 @@ namespace MediaPortal.GUI.Music
         if (whereClause != "") whereClause += " and ";
         string selectedValue = filter.SelectedValue;
         Database.DatabaseUtility.RemoveInvalidChars(ref selectedValue);
-        whereClause += String.Format(" {0} like '%{1}%'", GetField(filter.Where), selectedValue);
+        
+        // Do we have a Multiplevalues field, then we need compare with like
+        if (IsMultipleValueField(GetField(filter.Where)))
+          whereClause += String.Format(" {0} like '%{1}%'", GetField(filter.Where), selectedValue);
+        else
+          whereClause += String.Format(" {0} = '{1}'", GetField(filter.Where), selectedValue);
       }
     }
 
@@ -391,7 +396,12 @@ namespace MediaPortal.GUI.Music
         if (whereClause != "") whereClause += " and ";
         string selectedValue = filter.WhereValue;
         Database.DatabaseUtility.RemoveInvalidChars(ref selectedValue);
-        whereClause += String.Format(" {0} like '%{1}%'", GetField(filter.Where), selectedValue);
+
+        // Do we have a Multiplevalues field, then we need compare with like
+        if (IsMultipleValueField(GetField(filter.Where)))
+          whereClause += String.Format(" {0} like '%{1}%'", GetField(filter.Where), selectedValue);
+        else
+          whereClause += String.Format(" {0} = '{1}'", GetField(filter.Where), selectedValue);
       }
     }
 
@@ -403,6 +413,25 @@ namespace MediaPortal.GUI.Music
       if (filter.Limit > 0)
       {
         orderClause += String.Format(" Limit {0}", filter.Limit);
+      }
+    }
+
+    /// <summary>
+    /// Check, if this is a field with multiple values, for which we need to compare with Like %value% instead of equals
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    private bool IsMultipleValueField(string field)
+    {
+      switch (field)
+      {
+        case "strArtist":
+        case "strAlbumArtist":
+        case "strGenre":
+          return true;
+        
+        default:
+          return false;
       }
     }
 
@@ -501,7 +530,6 @@ namespace MediaPortal.GUI.Music
         item.Label2 = String.Empty;
         item.Label3 = String.Empty;
       }
-
     }
   }
 }
