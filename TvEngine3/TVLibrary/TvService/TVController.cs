@@ -610,7 +610,14 @@ namespace TvService
     public int CardId(int cardIndex)
     {
       IList cards = Card.ListAll();
-      return ((Card)cards[cardIndex]).IdCard;
+			if (cards != null && cards.Count > cardIndex)
+			{
+				return ((Card)cards[cardIndex]).IdCard;
+			}
+			else
+			{
+				return -1;
+			}
     }
 
     /// <summary>
