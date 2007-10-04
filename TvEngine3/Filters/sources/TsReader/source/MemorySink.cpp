@@ -22,6 +22,7 @@ CMemorySink::~CMemorySink()
 {
   Log("CMemorySink::dtor");
   delete[] fBuffer;
+  delete[] m_pSubmitBuffer;
 }
 
 CMemorySink* CMemorySink::createNew(UsageEnvironment& env, CMemoryBuffer& buffer,unsigned bufferSize) 
