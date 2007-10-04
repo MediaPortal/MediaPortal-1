@@ -312,7 +312,7 @@ namespace MediaPortal.Player
         {0, 1}  // right-rear center out = right in
     };
 
-    private DSP_StreamCopy _streamcopy;
+    private StreamCopy _streamcopy;
     #endregion
 
     #region Properties
@@ -1160,7 +1160,7 @@ namespace MediaPortal.Player
 
       // In case od ASIO return the clone of the stream, because for a decoding channel, we can't get data from the original stream
       if (_useASIO)
-        return _streamcopy.StreamCopy;
+        return _streamcopy.Stream;
 
       if (_Mixing)
       {
@@ -1658,9 +1658,8 @@ namespace MediaPortal.Player
             Bass.BASS_ChannelGetInfo(stream, info);
 
             // In order to provide data for visualisation we need to clone the stream
-            _streamcopy = new DSP_StreamCopy();
+            _streamcopy = new StreamCopy();
             _streamcopy.ChannelHandle = stream;
-            _streamcopy.StreamDevice = 0;                            // Use the No output device to prevent playback of the cloned stream.
             _streamcopy.StreamFlags = BASSStream.BASS_STREAM_DECODE | BASSStream.BASS_SAMPLE_FLOAT; // decode the channel, so that we have a Streamcopy
 
             _asioHandler.Pan = _asioBalance;
@@ -1671,7 +1670,15 @@ namespace MediaPortal.Player
             // try to set the device rate too (saves resampling)
             BassAsio.BASS_ASIO_SetRate((double)info.freq);
 
-            _streamcopy.Start();   // start the cloned stream
+            try
+            {
+              _streamcopy.Start();   // start the cloned stream
+            }
+            catch (Exception ex)
+            {
+              Log.Error("Captured an error on StreamCopy start");
+            }
+
             if (BassAsio.BASS_ASIO_IsStarted())
               playbackStarted = true;
             else
