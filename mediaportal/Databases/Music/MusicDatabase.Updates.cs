@@ -682,7 +682,7 @@ namespace MediaPortal.Music.Database
         string[] artists = strArtist.Split(new char[] { ';', '|' });
         foreach (string artist in artists)
         {
-          strSQL = String.Format("select idArtist from artist where upper(strArtist) = '{0}'", artist.Trim().ToUpperInvariant());
+          strSQL = String.Format("select idArtist from artist where strArtist = '{0}'", artist.Trim());
           if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
           {
             // Insert the Artist
@@ -718,7 +718,7 @@ namespace MediaPortal.Music.Database
         string[] artists = strAlbumArtist.Split(new char[] { ';', '|' });
         foreach (string artist in artists)
         {
-          strSQL = String.Format("select idAlbumArtist from albumartist where upper(strAlbumArtist) = '{0}'", artist.Trim().ToUpperInvariant());
+          strSQL = String.Format("select idAlbumArtist from albumartist where strAlbumArtist = '{0}'", artist.Trim());
           if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
           {
             // Insert the AlbumArtist
@@ -750,7 +750,7 @@ namespace MediaPortal.Music.Database
         string[] genres = strGenre.Split(new char[] { ';', '|' });
         foreach (string genre in genres)
         {
-          strSQL = String.Format("select idGenre from genre where upper(strGenre) = '{0}'", genre.Trim().ToUpperInvariant());
+          strSQL = String.Format("select idGenre from genre where strGenre = '{0}'", genre.Trim());
           if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
           {
             // Insert the Genre
