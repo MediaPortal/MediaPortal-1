@@ -141,17 +141,20 @@ namespace MediaPortal.Music.Database
         }
         catch (Exception) { }
 
-        // Get the DB handle or create it if necessary
-        MusicDbClient = DbConnection;
-
         if (!System.IO.File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3")))
         {
+          // Get the DB handle or create it if necessary
+          MusicDbClient = DbConnection;
+
           // When we have deleted the database, we need to scan from the beginning, regardsless of the last import setting
           _lastImport = DateTime.ParseExact("1900-01-01 00:00:00", "yyyy-M-d H:m:s", System.Globalization.CultureInfo.InvariantCulture); ;
 
           if (!CreateDatabase())
             return;
         }
+
+        // Get the DB handle or create it if necessary
+        MusicDbClient = DbConnection;
       }
 
       catch (Exception ex)
