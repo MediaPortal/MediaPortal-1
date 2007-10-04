@@ -29,3 +29,4 @@ void FontEngineDrawSurface(int fx, int fy, int nw, int nh,
 						   void* surface);
 
 void PrintStatistics();
+void Cleanup();

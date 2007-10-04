@@ -35,7 +35,9 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 	case DLL_PROCESS_ATTACH:
 	case DLL_THREAD_ATTACH:
 	case DLL_THREAD_DETACH:
+		break;
 	case DLL_PROCESS_DETACH:
+		Cleanup();
 		break;
 	}
     return TRUE;
@@ -123,6 +125,20 @@ void Log(char* txt)
 	fclose(fp);
 
 }
+//*******************************************************************************************************************
+
+void Cleanup()
+{
+	for (int i=0; i < MAX_TEXTURES;++i)
+	{
+		if (texturePlace[i] != NULL)
+			delete[] texturePlace[i];
+	}
+	delete[] textureData;
+	delete[] fontData;
+	return;
+}
+
 //*******************************************************************************************************************
 void FontEngineInitialize(int screenWidth, int screenHeight)
 {
