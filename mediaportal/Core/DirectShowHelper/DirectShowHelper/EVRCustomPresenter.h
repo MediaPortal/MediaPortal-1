@@ -42,6 +42,9 @@ class EVRCustomPresenter
 	public IMFAsyncCallback,
 	public IQualProp,
 	public IMFRateSupport,
+  public IMFVideoDisplayControl,
+  public IEVRTrustedVideoPlugin,
+  public IMFVideoPositionMapper,
 	public CCritSec
 {
 
@@ -58,11 +61,11 @@ public:
 
 	//IMFAsyncCallback
     virtual HRESULT STDMETHODCALLTYPE GetParameters( 
-        /* [out] */ __RPC__out DWORD *pdwFlags,
-        /* [out] */ __RPC__out DWORD *pdwQueue);
+        /* [out] */  DWORD *pdwFlags,
+        /* [out] */  DWORD *pdwQueue);
     
     virtual HRESULT STDMETHODCALLTYPE Invoke( 
-        /* [in] */ __RPC__in_opt IMFAsyncResult *pAsyncResult);
+        /* [in] */  IMFAsyncResult *pAsyncResult);
 
 	//IMFGetService
 	virtual HRESULT STDMETHODCALLTYPE GetService( 
@@ -118,12 +121,73 @@ public:
         /* [in] */ BOOL fThin,
         /* [in] */ float flRate,
         /* [unique][out][in] */ float *pflNearestSupportedRate);
-    
+
+
+        virtual HRESULT STDMETHODCALLTYPE GetNativeVideoSize( 
+            /* [unique][out][in] */  SIZE *pszVideo,
+            /* [unique][out][in] */  SIZE *pszARVideo) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetIdealVideoSize( 
+            /* [unique][out][in] */  SIZE *pszMin,
+            /* [unique][out][in] */  SIZE *pszMax) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetVideoPosition( 
+            /* [unique][in] */  const MFVideoNormalizedRect *pnrcSource,
+            /* [unique][in] */  const LPRECT prcDest) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetVideoPosition( 
+            /* [out] */  MFVideoNormalizedRect *pnrcSource,
+            /* [out] */  LPRECT prcDest) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetAspectRatioMode( 
+            /* [in] */ DWORD dwAspectRatioMode) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetAspectRatioMode( 
+            /* [out] */  DWORD *pdwAspectRatioMode) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetVideoWindow( 
+            /* [in] */  HWND hwndVideo) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetVideoWindow( 
+            /* [out] */  HWND *phwndVideo) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE RepaintVideo( void) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetCurrentImage( 
+            /* [out][in] */  BITMAPINFOHEADER *pBih,
+            /* [size_is][size_is][out] */  BYTE **pDib,
+            /* [out] */  DWORD *pcbDib,
+            /* [unique][out][in] */  LONGLONG *pTimeStamp) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetBorderColor( 
+            /* [in] */ COLORREF Clr) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetBorderColor( 
+            /* [out] */  COLORREF *pClr) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetRenderingPrefs( 
+            /* [in] */ DWORD dwRenderFlags) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetRenderingPrefs( 
+            /* [out] */  DWORD *pdwRenderFlags) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE SetFullscreen( 
+            /* [in] */ BOOL fFullscreen) ;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetFullscreen( 
+            /* [out] */  BOOL *pfFullscreen) ;
+
+        
+	      virtual HRESULT STDMETHODCALLTYPE IsInTrustedVideoMode (BOOL *pYes);
+	      virtual HRESULT STDMETHODCALLTYPE CanConstrict (BOOL *pYes);
+        virtual HRESULT STDMETHODCALLTYPE SetConstriction(DWORD dwKPix);
+        virtual HRESULT STDMETHODCALLTYPE DisableImageExport(BOOL bDisable);
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
         REFIID riid,
         void** ppvObject);
+    virtual HRESULT STDMETHODCALLTYPE MapOutputCoordinateToInputStream(float xOut,float yOut,DWORD dwOutputStreamIndex,DWORD dwInputStreamIndex,float* pxIn,float* pyIn);
 
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
@@ -135,6 +199,7 @@ public:
 	//returns true if there was some input to be processed
 	BOOL CheckForInput();
 	HRESULT ProcessInputNotify();
+  void EnableFrameSkipping(bool onOff);
 protected:
 	void ReleaseSurfaces();
 	void Paint(CComPtr<IDirect3DSurface9> pSurface);
@@ -199,4 +264,5 @@ protected:
 	int m_iFramesDrawn, m_iFramesDropped, m_iJitter;
 	LONGLONG m_hnsLastFrameTime, m_hnsTotalDiff;
 	RENDER_STATE m_state;
+  bool  m_enableFrameSkipping;
 };

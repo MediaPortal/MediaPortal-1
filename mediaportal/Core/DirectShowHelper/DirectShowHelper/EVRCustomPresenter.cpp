@@ -119,12 +119,13 @@ UINT CALLBACK WorkerThread(void* param)
 	SchedulerParams *p = (SchedulerParams*)param;
 	while ( true ) 
 	{
-		TIME_LOCK(&p->csLock, 10, "Worker thread main lock");
+		//TIME_LOCK(&p->csLock, 10, "Worker thread main lock");
+    p->csLock.Lock();
 		if ( p->bDone ) 
 		{
 			Log("Worker done, deleting data");
-			delete p;
 			p->csLock.Unlock();
+			delete p;
 			//AvRevertMmThreadCharacteristics(hMmThread);
 			return 0;
 		}
@@ -150,13 +151,14 @@ UINT CALLBACK SchedulerThread(void* param)
 	while ( true ) 
 	{
 		//Log("Scheduler callback");
-		TIME_LOCK(&p->csLock, 10, "Scheduler thread main lock");
+		//TIME_LOCK(&p->csLock, 10, "Scheduler thread main lock");
+    p->csLock.Lock();
 		if ( p->bDone ) Log("Trying to end things, waiting for timers : %d", p->iTimerSet);
 		if ( p->bDone && p->iTimerSet <= 0 ) 
 		{
 			Log("Scheduler done, deleting data");
-			delete p;
 			p->csLock.Unlock();
+			delete p;
 			//AvRevertMmThreadCharacteristics(hMmThread);
 			return 0;
 		}
@@ -190,6 +192,7 @@ UINT CALLBACK SchedulerThread(void* param)
 EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor)
 : m_refCount(1)
 {
+  m_enableFrameSkipping=true;
     if (m_pMFCreateVideoSampleFromSurface!=NULL)
     {
         Log("----------v0.37---------------------------");
@@ -216,6 +219,11 @@ EVRCustomPresenter::EVRCustomPresenter( IVMR9Callback* pCallback, IDirect3DDevic
             //samples[i] = NULL;
         }*/
     }
+}
+void EVRCustomPresenter::EnableFrameSkipping(bool onOff)
+{
+  Log("Evr Enable frame skipping:%d",onOff);
+  m_enableFrameSkipping=onOff;
 }
 
 EVRCustomPresenter::~EVRCustomPresenter()
@@ -287,13 +295,34 @@ LogIID( riid );
 		*ppvObject = static_cast<IMFRateSupport*>( this );
         AddRef();
         hr = S_OK;
+    }
+    else if( riid == IID_IMFVideoDisplayControl  ) {
+        *ppvObject = static_cast<IMFVideoDisplayControl*>( this );
+        AddRef();
+        Log( "QueryInterface:IID_IMFVideoDisplayControl:%x",(*ppvObject)  );
+        hr = S_OK;
+    } 
+    else if( riid == IID_IEVRTrustedVideoPlugin  ) {
+        *ppvObject = static_cast<IEVRTrustedVideoPlugin*>( this );
+        AddRef();
+        Log( "QueryInterface:IID_IEVRTrustedVideoPlugin:%x",(*ppvObject)  );
+        hr = S_OK;
+    } 
+    else if( riid == IID_IMFVideoPositionMapper  ) {
+        *ppvObject = static_cast<IMFVideoPositionMapper*>( this );
+        AddRef();
+        hr = S_OK;
     } 
     else if( riid == IID_IUnknown ) {
-        *ppvObject = 
-            static_cast<IUnknown*>( 
-			static_cast<IMFVideoDeviceID*>( this ) );
+        *ppvObject = static_cast<IUnknown*>( static_cast<IMFVideoDeviceID*>( this ) );
         AddRef();
         hr = S_OK;    
+    }
+    else
+    {
+        LogIID( riid );
+        *ppvObject=NULL;
+        hr=E_NOINTERFACE;
     }
 	if ( FAILED(hr) ) {
 		Log( "QueryInterface failed" );
@@ -1028,8 +1057,16 @@ HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime, D
 			if ( m_vScheduledSamples.size() > 0 || *pNextSampleTime < -1500000 ) 
 			{
 				//skip!
-				Log( "skipping frame, behind %I64d ms, last sleep time %d ms.", -*pNextSampleTime/10000, msLastSleepTime );
 				m_iFramesDropped++;
+			
+        if (!m_enableFrameSkipping)
+        {
+          CHECK_HR(PresentSample(pSample), "PresentSample failed");
+        }
+        else
+        {
+				 Log( "skipping frame, behind %I64d ms, last sleep time %d ms.", -*pNextSampleTime/10000, msLastSleepTime );
+        }
 			}
 			else
 			{
@@ -1037,7 +1074,9 @@ HRESULT EVRCustomPresenter::CheckForScheduledSample(LONGLONG *pNextSampleTime, D
 				Log("frame is too late for %I64d ms, last sleep time %d ms.", -*pNextSampleTime/10000, msLastSleepTime );
 				CHECK_HR(PresentSample(pSample), "PresentSample failed");
 			}
-		} else {
+		} 
+    else 
+    {
 			CHECK_HR(PresentSample(pSample), "PresentSample failed");
 		}
 		ReturnSample(pSample);
@@ -1399,7 +1438,29 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetService(
         AddRef();
         hr = S_OK;
     } 
-	if ( FAILED(hr) ) {
+	else if( riid == IID_IMFVideoDisplayControl) {
+		*ppvObject = static_cast<IMFVideoDisplayControl*>( this );
+        AddRef();
+        hr = S_OK;
+    } 
+    else if( riid == IID_IEVRTrustedVideoPlugin  ) {
+        *ppvObject = static_cast<IEVRTrustedVideoPlugin*>( this );
+        AddRef();
+        hr = S_OK;
+    } 
+    else if( riid == IID_IMFVideoPositionMapper  ) {
+        *ppvObject = static_cast<IMFVideoPositionMapper*>( this );
+        AddRef();
+        hr = S_OK;
+    } 
+  else
+  {
+	  LogGUID(guidService);
+	  LogIID(riid);
+      *ppvObject=NULL;
+      hr=E_NOINTERFACE;
+  }
+	if ( FAILED(hr) || (*ppvObject)==NULL) {
 		Log("GetService failed" );
 	}
 	return hr;
@@ -1528,4 +1589,190 @@ HRESULT STDMETHODCALLTYPE EVRCustomPresenter::get_DevSyncOffset(int *piDev)
 {
 	//Log("evr:get_DevSyncOffset");
 	return S_OK;
+}
+
+
+
+STDMETHODIMP EVRCustomPresenter::GetNativeVideoSize( 
+    /* [unique][out][in] */  SIZE *pszVideo,
+    /* [unique][out][in] */  SIZE *pszARVideo) 
+{
+  Log("IMFVideoDisplayControl.GetNativeVideoSize()");
+  pszVideo->cx=m_iVideoWidth;
+  pszVideo->cy=m_iVideoHeight;
+  pszARVideo->cx=m_iARX;
+  pszARVideo->cy=m_iARY;
+
+  return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetIdealVideoSize( 
+    /* [unique][out][in] */  SIZE *pszMin,
+    /* [unique][out][in] */  SIZE *pszMax) 
+{
+  Log("IMFVideoDisplayControl.GetIdealVideoSize()");
+  pszMin->cx=m_iVideoWidth;
+  pszMin->cy=m_iVideoHeight;
+  pszMax->cx=m_iVideoWidth;
+  pszMax->cy=m_iVideoHeight;
+  return E_NOTIMPL;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetVideoPosition( 
+    /* [unique][in] */  const MFVideoNormalizedRect *pnrcSource,
+    /* [unique][in] */  const LPRECT prcDest) 
+{
+  Log("IMFVideoDisplayControl.SetVideoPosition()");
+  return E_NOTIMPL;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetVideoPosition( 
+    /* [out] */  MFVideoNormalizedRect *pnrcSource,
+    /* [out] */  LPRECT prcDest) 
+{
+  
+  //Log("IMFVideoDisplayControl.GetVideoPosition()");
+  pnrcSource->left=0;
+  pnrcSource->top=0;
+  pnrcSource->right=m_iVideoWidth;
+  pnrcSource->bottom=m_iVideoHeight;
+  
+  prcDest->left=0;
+  prcDest->top=0;
+  prcDest->right=m_iVideoWidth;
+  prcDest->bottom=m_iVideoHeight;
+  return S_OK;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetAspectRatioMode( 
+    /* [in] */ DWORD dwAspectRatioMode) 
+{
+  Log("IMFVideoDisplayControl.SetAspectRatioMode()");
+  return S_OK;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetAspectRatioMode( 
+    /* [out] */  DWORD *pdwAspectRatioMode) 
+{
+  Log("IMFVideoDisplayControl.GetAspectRatioMode()");
+  *pdwAspectRatioMode=VMR_ARMODE_NONE;
+  return S_OK;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetVideoWindow( 
+    /* [in] */  HWND hwndVideo) 
+{
+  Log("IMFVideoDisplayControl.SetVideoWindow()");
+  return E_NOTIMPL;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetVideoWindow( 
+    /* [out] */  HWND *phwndVideo) 
+{
+  Log("IMFVideoDisplayControl.GetVideoWindow()");
+  return S_OK;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::RepaintVideo( void) 
+{
+  Log("IMFVideoDisplayControl.RepaintVideo()");
+  return S_OK;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetCurrentImage( 
+    /* [out][in] */  BITMAPINFOHEADER *pBih,
+    /* [size_is][size_is][out] */ BYTE **pDib,
+    /* [out] */  DWORD *pcbDib,
+    /* [unique][out][in] */  LONGLONG *pTimeStamp) 
+{
+  Log("IMFVideoDisplayControl.GetCurrentImage()");
+  return E_NOTIMPL;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetBorderColor( 
+    /* [in] */ COLORREF Clr)
+{
+  Log("IMFVideoDisplayControl.SetBorderColor()");
+  return E_NOTIMPL;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetBorderColor( 
+    /* [out] */  COLORREF *pClr) 
+{
+  Log("IMFVideoDisplayControl.GetBorderColor()");
+  if(pClr) *pClr = 0;
+  return S_OK;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetRenderingPrefs( 
+    /* [in] */ DWORD dwRenderFlags) 
+{
+  Log("IMFVideoDisplayControl.SetRenderingPrefs()");
+  return S_OK;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetRenderingPrefs( 
+    /* [out] */  DWORD *pdwRenderFlags) 
+{
+  Log("IMFVideoDisplayControl.GetRenderingPrefs()");
+  return S_OK;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetFullscreen( 
+    /* [in] */ BOOL fFullscreen) 
+{
+  Log("IMFVideoDisplayControl.SetFullscreen()");
+  return S_OK;
+}
+
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::GetFullscreen( 
+    /* [out] */  BOOL *pfFullscreen) 
+{
+  Log("GetFullscreen()");
+  *pfFullscreen=NULL;
+  return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::IsInTrustedVideoMode (BOOL *pYes)
+{
+  Log("IEVRTrustedVideoPlugin.IsInTrustedVideoMode()");
+  *pYes=TRUE;
+  return S_OK;
+}
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::CanConstrict (BOOL *pYes)
+{
+  *pYes=TRUE;
+  Log("IEVRTrustedVideoPlugin.CanConstrict()");
+  return S_OK;
+}
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::SetConstriction(DWORD dwKPix)
+{
+  Log("IEVRTrustedVideoPlugin.SetConstriction(%d)",dwKPix);
+  return S_OK;
+}
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::DisableImageExport(BOOL bDisable)
+{
+  Log("IEVRTrustedVideoPlugin.DisableImageExport(%d)",bDisable);
+  return S_OK;
+}
+HRESULT STDMETHODCALLTYPE EVRCustomPresenter::MapOutputCoordinateToInputStream(float xOut,float yOut,DWORD dwOutputStreamIndex,DWORD dwInputStreamIndex,float* pxIn,float* pyIn)
+{
+  //Log("IMFVideoPositionMapper.MapOutputCoordinateToInputStream(%f,%f)",xOut,yOut);
+  *pxIn=xOut;
+  *pyIn=yOut;
+  return S_OK;
 }
