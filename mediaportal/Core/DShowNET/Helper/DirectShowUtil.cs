@@ -31,6 +31,8 @@ using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.Util;
+using MediaPortal.Player;
+using System.Collections;
 
 #pragma warning disable 618
 namespace DShowNET.Helper
@@ -264,6 +266,248 @@ namespace DShowNET.Helper
       return null;
     }
 
+    static private void ListMediaTypes(IPin pin)
+    {
+      IEnumMediaTypes types;
+      pin.EnumMediaTypes(out types);
+      types.Reset();
+      while (true)
+      {
+        AMMediaType[] mediaTypes = new AMMediaType[1];
+        int typesFetched;
+        int hr = types.Next(1, mediaTypes, out typesFetched);
+        if (hr != 0 || typesFetched == 0) break;
+        Log.Info("Has output type: {0}, {1}", mediaTypes[0].majorType,
+          mediaTypes[0].subType);
+      }
+      Marshal.ReleaseComObject(types);
+      Log.Info("-----EndofTypes");
+    }
+
+
+    static private bool TestMediaTypes(IPin pin, IPin receiver)
+    {
+      bool ret = false;
+      IEnumMediaTypes types;
+      pin.EnumMediaTypes(out types);
+      types.Reset();
+      while (true)
+      {
+        AMMediaType[] mediaTypes = new AMMediaType[1];
+        int typesFetched;
+        int hr = types.Next(1, mediaTypes, out typesFetched);
+        if (hr != 0 || typesFetched == 0) break;
+        //Log.Info("Check output type: {0}, {1}", mediaTypes[0].majorType,
+        //  mediaTypes[0].subType);
+        if (receiver.QueryAccept(mediaTypes[0]) == 0 )
+        {
+          //Log.Info("Accepted!");
+          ret = true;
+          break;
+        }
+      }
+      Marshal.ReleaseComObject(types);
+      //Log.Info("-----EndofTypes");
+      return ret;
+    }
+
+    
+    static private bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin)
+    {
+      return TryConnect(graphBuilder, filtername, outputPin, true);
+    }
+
+    static private bool CheckFilterIsLoaded(IGraphBuilder graphBuilder, String name)
+    {
+      int hr;
+      bool ret = false;
+      IEnumFilters enumFilters;
+      graphBuilder.EnumFilters(out enumFilters);
+      do
+      {
+        int ffetched;
+        IBaseFilter[] filters = new IBaseFilter[1];
+        hr = enumFilters.Next(1, filters, out ffetched);
+        if (hr == 0 && ffetched > 0)
+        {
+          FilterInfo info;
+          filters[0].QueryFilterInfo(out info);
+          string filtername = info.achName;
+          Marshal.ReleaseComObject(filters[0]);
+          if (filtername.Equals(name))
+          {
+            ret = true;
+            break;
+          }
+        }
+        else
+        {
+          break;
+        }
+          
+      } while (true);
+      Marshal.ReleaseComObject(enumFilters);
+      return ret;
+    }
+
+    static private bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin, IBaseFilter to)
+    {
+      bool ret = false;
+      int hr;
+      FilterInfo info;
+      PinInfo outputInfo;
+      to.QueryFilterInfo(out info);
+      outputPin.QueryPinInfo(out outputInfo);
+      if (info.achName.Equals(filtername)) return false; //do not connect to self
+      Log.Info("Testing filter: {0}", info.achName);
+      
+      IEnumPins enumPins;
+      IPin[] pins = new IPin[1];
+      to.EnumPins(out enumPins);
+      do
+      {
+        int pinsFetched;
+        hr = enumPins.Next(1, pins, out pinsFetched);
+        if (hr != 0 || pinsFetched == 0) break;
+        PinDirection direction;
+        pins[0].QueryDirection(out direction);
+        if (direction == PinDirection.Input) // && TestMediaTypes(outputPin, pins[0]))
+        {
+            PinInfo pinInfo;
+            pins[0].QueryPinInfo(out pinInfo);
+            Log.Info("Trying to connect to {0}",
+              pinInfo.name);
+            //ListMediaTypes(pins[0]);
+            //hr =  outputPin.Connect(pins[0], null);
+            hr = graphBuilder.ConnectDirect(outputPin, pins[0], null);
+            if (hr == 0)
+            {
+              Log.Info("Connection succeeded");
+              if (RenderOutputPins(graphBuilder, to))
+              {
+                Log.Info("Successfully rendered pin {0}:{1} to {2}:{3}.", 
+                  filtername, outputInfo.name, info.achName, pinInfo.name);
+                ret = true;
+                Marshal.ReleaseComObject(pins[0]);
+                break;
+              }
+              else
+              {
+                Log.Info("Rendering got stuck. Trying next filter, and disconnecting {0}!",  outputInfo.name);
+                outputPin.Disconnect();
+                pins[0].Disconnect();
+              }
+            }
+            else
+            {
+              Log.Info("Connection failed: {0:x}", hr);
+            }
+        }
+        Marshal.ReleaseComObject(pins[0]);
+      } while (true);
+      Marshal.ReleaseComObject(enumPins);
+      if (!ret)
+      {
+        Log.Info("Dead end. Could not successfully connect pin {0} to filter {1}!", outputInfo.name, info.achName);
+      }
+      return ret;
+    }
+
+    static ArrayList GetFilters(IGraphBuilder graphBuilder)
+    {
+      ArrayList ret = new ArrayList();
+      IEnumFilters enumFilters;
+      graphBuilder.EnumFilters(out enumFilters);
+      for (;;) {
+        int ffetched;
+        IBaseFilter[] filters = new IBaseFilter[1];
+        int hr = enumFilters.Next(1, filters, out ffetched);
+        if (hr == 0 && ffetched > 0)
+        {
+          ret.Add(filters[0]);
+        }
+        else
+        {
+          break;
+        }
+      }
+      Marshal.ReleaseComObject(enumFilters);
+      return ret;
+    }
+
+    static void ReleaseFilters(ArrayList filters)
+    {
+      foreach (IBaseFilter filter in filters)
+      {
+        Marshal.ReleaseComObject(filter);
+      }
+    }
+
+    static private bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin, bool TryNewFilters)
+    {
+      int hr;
+      Log.Info("----------------TryConnect-------------");
+      PinInfo outputInfo;
+      outputPin.QueryPinInfo(out outputInfo);
+      //ListMediaTypes(outputPin);
+      ArrayList currentfilters = GetFilters(graphBuilder);
+      foreach ( IBaseFilter filter in currentfilters )
+      {
+        if (TryConnect(graphBuilder, filtername, outputPin, filter))
+        {
+          ReleaseFilters(currentfilters);
+          return true;
+        }
+      }
+      ReleaseFilters(currentfilters);
+      //not found, try new filter from registry
+      Log.Info("No preloaded filter could be connected. Trying to load new one from registry");
+      IEnumMediaTypes enumTypes;
+      hr = outputPin.EnumMediaTypes(out enumTypes);
+      if (hr != 0)
+      {
+        Log.Info("Failed: {0:x}", hr);
+        return false;
+      }
+      Log.Info("Got enum");
+      while (TryNewFilters)
+      {
+        AMMediaType[] mediaTypes = new AMMediaType[1];
+        int typesFetched;
+        hr = enumTypes.Next(1, mediaTypes, out typesFetched);
+        if (hr != 0 || typesFetched == 0) break;
+        Log.Info("Getting corresponding filters");
+        ArrayList filters = FilterHelper.GetFilters(mediaTypes[0].majorType,
+          mediaTypes[0].subType, (Merit)0x00400000);
+        foreach ( string name in filters )
+        {
+          if (!CheckFilterIsLoaded(graphBuilder, name))
+          {
+            Log.Info("Loading filter: {0}", name);
+            IBaseFilter f = DirectShowUtil.AddFilterToGraph(graphBuilder, name);
+            if (f != null && TryConnect(graphBuilder, filtername, outputPin, f))
+            {
+              Marshal.ReleaseComObject(enumTypes);
+              Marshal.ReleaseComObject(f);
+              return true;
+            }
+            else
+            {
+              graphBuilder.RemoveFilter(f);
+              Marshal.ReleaseComObject(f);
+            }
+          }
+          else
+          {
+            Log.Info("Ignoring filter {0}. Already in graph.", name);
+          }
+        }
+      }
+      Marshal.ReleaseComObject(enumTypes);
+      Log.Info("TryConnect failed.");
+      return outputInfo.name.StartsWith("~");
+    }
+
     static public bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter)
     {
       return RenderOutputPins(graphBuilder, filter, 100);
@@ -273,6 +517,8 @@ namespace DShowNET.Helper
       int pinsRendered = 0;
       bool bAllConnected = true;
       IEnumPins pinEnum;
+      FilterInfo info;
+      filter.QueryFilterInfo(out info);
       int hr = filter.EnumPins(out pinEnum);
       if ((hr == 0) && (pinEnum != null))
       {
@@ -296,7 +542,7 @@ namespace DShowNET.Helper
               if (hr == 0)
               {
                 Log.Info("  got pin#{0}:{1}", iPinNo - 1, pinInfo.name);
-                //Marshal.ReleaseComObject(pinInfo.filter);
+                Marshal.ReleaseComObject(pinInfo.filter);
               }
               else
               {
@@ -310,14 +556,15 @@ namespace DShowNET.Helper
                 hr = pins[0].ConnectedTo(out pConnectPin);
                 if (hr != 0 || pConnectPin == null)
                 {
-                  hr = graphBuilder.Render(pins[0]);
-                  if (hr == 0)
+                  hr = 0;
+                  if (TryConnect(graphBuilder, info.achName, pins[0]))
+                  //if (graphBuilder.Render(pins[0]) == 0)
                   {
                     Log.Info("  render ok");
                   }
                   else
                   {
-                    Log.Error("  render failed:{0:x}", hr);
+                    Log.Error("  render {0} failed:{1:x}", pinInfo.name, hr);
                     bAllConnected = false;
                   }
                   pinsRendered++;
@@ -337,7 +584,7 @@ namespace DShowNET.Helper
             }
           }
           else iFetched = 0;
-        } while (iFetched == 1 && pinsRendered < maxPinsToRender);
+        } while (iFetched == 1 && pinsRendered < maxPinsToRender && bAllConnected);
         Marshal.ReleaseComObject(pinEnum);
       }
       return bAllConnected;

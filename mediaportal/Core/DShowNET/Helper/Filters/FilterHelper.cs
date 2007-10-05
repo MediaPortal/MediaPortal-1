@@ -164,6 +164,11 @@ namespace DShowNET.Helper
 
     public static ArrayList GetFilters(Guid mediaType, Guid mediaSubType)
     {
+      return GetFilters(mediaType, mediaSubType, (Merit)0x080001);
+    }
+
+    public static ArrayList GetFilters(Guid mediaType, Guid mediaSubType, Merit merit)
+    {
       ArrayList filters = new ArrayList();
       IEnumMoniker enumMoniker = null;
       IMoniker[] moniker = new IMoniker[1];
@@ -174,7 +179,7 @@ namespace DShowNET.Helper
            out enumMoniker,
           0,
           true,
-          (Merit)0x080001,
+          merit,
           true,
           1,
           new Guid[] { mediaType, mediaSubType },
