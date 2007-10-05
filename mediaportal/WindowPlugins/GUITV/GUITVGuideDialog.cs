@@ -124,7 +124,7 @@ namespace MediaPortal.GUI.TV
           }
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           m_bRunning = false;
-          return MessageClicked(message);
+          break;
       }
       return base.OnMessage(message);
     }
@@ -149,7 +149,10 @@ namespace MediaPortal.GUI.TV
           return;
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           m_bRunning = false;
-          return;          
+          return;
+        case Action.ActionType.ACTION_SELECT_ITEM:
+		  m_bRunning = false;
+		  break;
       }
       base.OnAction(action);
     }
@@ -167,3 +170,4 @@ namespace MediaPortal.GUI.TV
     #endregion
   }
 }
+

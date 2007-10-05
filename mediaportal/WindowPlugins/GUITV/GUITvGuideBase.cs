@@ -261,7 +261,7 @@ namespace MediaPortal.GUI.TV
             }
             else
             {
-              OnSelectItem(true);
+              OnSelectItem();
             }
           }
           break;
@@ -655,28 +655,11 @@ namespace MediaPortal.GUI.TV
             return true;
           }
         //break;
-        case GUIMessage.MessageType.GUI_MSG_DISABLEGUIDEREFRESH:
-          TVDatabase.OnProgramsChanged -= new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
-          TVDatabase.OnNotifiesChanged -= new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
-          ConflictManager.OnConflictsUpdated -= new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
-          break;
 
-        case GUIMessage.MessageType.GUI_MSG_ENABLEGUIDEREFRESH:
-          TVDatabase.OnProgramsChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
-          TVDatabase.OnNotifiesChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
-          ConflictManager.OnConflictsUpdated += new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
-          break;
-
-      }
-      return base.OnMessage(message);
-    }
-
-    protected bool MessageClicked(GUIMessage message)
-    {
-      int iControl = message.SenderControlId;
-      
-      if (iControl == (int)Controls.SPINCONTROL_DAY)
-      {
+        case GUIMessage.MessageType.GUI_MSG_CLICKED:
+          int iControl = message.SenderControlId;
+          if (iControl == (int)Controls.SPINCONTROL_DAY)
+          {
             GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
             int iDay = cntlDay.Value;
 
@@ -700,7 +683,7 @@ namespace MediaPortal.GUI.TV
           }
           if (iControl >= 100)
           {
-            OnSelectItem(true);
+            OnSelectItem();
             Update(false);
             SetFocus();
           }
@@ -708,8 +691,25 @@ namespace MediaPortal.GUI.TV
           {
             OnSwitchMode();
           }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_DISABLEGUIDEREFRESH:
+          TVDatabase.OnProgramsChanged -= new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
+          TVDatabase.OnNotifiesChanged -= new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
+          ConflictManager.OnConflictsUpdated -= new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_ENABLEGUIDEREFRESH:
+          TVDatabase.OnProgramsChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
+          TVDatabase.OnNotifiesChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_On_notifyListChanged);
+          ConflictManager.OnConflictsUpdated += new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
+          break;
+
+      }
       return base.OnMessage(message);
+      ;
     }
+
 
     public override void Process()
     {
@@ -2500,15 +2500,10 @@ namespace MediaPortal.GUI.TV
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
     }
 
-    void OnSelectItem(bool isItemSelected)
+    void OnSelectItem()
     {
       if (_currentProgram == null)
         return;
-      if (!isItemSelected)
-      {
-        ShowProgramInfo();
-        return;
-      }
       // Selected show is not 'On'
       if (!(_currentProgram.IsRunningAt(DateTime.Now) || _currentProgram.EndTime <= DateTime.Now))
       {
