@@ -46,6 +46,7 @@
 #include <dxva2api.h>
 #include "dshowhelper.h"
 #include "evrcustompresenter.h"
+#include <process.h>
 
 #define TIME_LOCK(obj, crit, name)  \
 DWORD then = GetTickCount(); \
@@ -144,8 +145,8 @@ UINT CALLBACK SchedulerThread(void* param)
 {
 	SchedulerParams *p = (SchedulerParams*)param;
 	LONGLONG hnsSampleTime = 0;
-	DWORD dwTaskIndex;
-	/*HANDLE hMmThread;
+	/*DWORD dwTaskIndex;
+	HANDLE hMmThread;
 	hMmThread = AvSetMmThreadCharacteristics("Playback", &dwTaskIndex);
 	AvSetMmThreadPriority(hMmThread, AVRT_PRIORITY_HIGH);*/
 	while ( true ) 
@@ -500,9 +501,7 @@ HRESULT EVRCustomPresenter::GetCurrentMediaType(IMFVideoMediaType** ppMediaType)
         __uuidof(IMFVideoMediaType), (void**)ppMediaType),
 		"Query interface failed in GetCurrentMediaType");
 
-done:
-
-	Log( "GetCurrentMediaType done" );
+	  Log( "GetCurrentMediaType done" );
     return hr;
 }
 
@@ -514,7 +513,6 @@ HRESULT EVRCustomPresenter::TrackSample(IMFSample *pSample)
     CHECK_HR(hr = pSample->QueryInterface(__uuidof(IMFTrackedSample), (void**)&pTracked), "Cannot get Interface IMFTrackedSample");
     CHECK_HR(hr = pTracked->SetAllocator(this, NULL), "SetAllocator failed"); 
 
-done:
     SAFE_RELEASE(pTracked);
     return hr;
 }
@@ -632,7 +630,7 @@ HRESULT EVRCustomPresenter::SetMediaType(CComPtr<IMFMediaType> pType)
 
 
 	LARGE_INTEGER u64;
-	UINT32 u32;
+//	UINT32 u32;
 	
 	CHECK_HR(pType->GetUINT64(MF_MT_FRAME_SIZE, (UINT64*)&u64), "Getting Framesize failed!");
 	m_iVideoWidth = u64.HighPart;
@@ -975,7 +973,6 @@ HRESULT EVRCustomPresenter::PresentSample(CComPtr<IMFSample> pSample)
 			"failed: Present");*/
     }
 
-done:
     SAFE_RELEASE(pBuffer);
     SAFE_RELEASE(pSurface);
     //SAFE_RELEASE(pSwapChain);
@@ -1230,7 +1227,7 @@ HRESULT EVRCustomPresenter::ProcessInputNotify()
 		hr = m_pMixer->ProcessOutput(0, 1, outputSamples,
 			&dwStatus);
 		SAFE_RELEASE(outputSamples[0].pEvents);
-		LONGLONG latency;
+//		LONGLONG latency;
 		if ( SUCCEEDED( hr ) ) {
 			LOG_TRACE("Processoutput succeeded, status: %d", dwStatus);
 			//Log("Scheduling sample");
