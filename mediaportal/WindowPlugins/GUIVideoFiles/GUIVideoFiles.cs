@@ -354,7 +354,8 @@ namespace MediaPortal.GUI.Video
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_CD_REMOVED:
-          if (g_Player.Playing && g_Player.IsDVD)
+					if (g_Player.Playing && g_Player.IsDVD && 
+						  message.Label.Equals(g_Player.CurrentFile.Substring(0,2), StringComparison.InvariantCultureIgnoreCase))   // test if it is our drive
           {
             Log.Info("GUIVideoFiles: Stop dvd since DVD is ejected");
             g_Player.Stop();

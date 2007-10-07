@@ -146,7 +146,7 @@ namespace MediaPortal.Ripper
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CD_REMOVED,
                                       (int)GUIWindow.Window.WINDOW_MUSIC_FILES,
                                       GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
-      msg.Label = String.Format("{0}:", DriveLetter);
+      msg.Label = String.Format("{0}", DriveLetter);  
       msg.SendToTargetWindow = true;
       GUIWindowManager.SendThreadMessage(msg);
 

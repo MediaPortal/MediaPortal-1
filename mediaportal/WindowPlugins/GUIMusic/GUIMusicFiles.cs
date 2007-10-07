@@ -490,7 +490,8 @@ namespace MediaPortal.GUI.Music
 
         case GUIMessage.MessageType.GUI_MSG_CD_REMOVED:
           GUIMusicFiles.MusicCD = null;
-          if (g_Player.Playing && MediaPortal.Util.Utils.IsCDDA(g_Player.CurrentFile))
+          if (g_Player.Playing && MediaPortal.Util.Utils.IsCDDA(g_Player.CurrentFile) &&
+						  message.Label.Equals(g_Player.CurrentFile.Substring(0, 2), StringComparison.InvariantCultureIgnoreCase))   // test if it is our drive
           {
             g_Player.Stop();
           }
