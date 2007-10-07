@@ -3,7 +3,10 @@
   <id>2700</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+  <define>#header.label:News</define>
   <controls>
+    <import>common.window3.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>background image</description>
       <type>image</type>
@@ -12,10 +15,29 @@
       <height>768</height>
     </control>
     <control>
+     <type>image</type>
+     <posX>0</posX>
+     <posY>-20</posY>
+     <height>89</height>
+     <width>1366</width>
+     <texture>Barback.png</texture>
+     <colorDiffuse>effffffff</colorDiffuse>
+    </control>
+    <control>
+      <type>image</type>
+      <posY>700</posY>
+      <height>89</height>
+      <width>1366</width>
+      <texture>Barback.png</texture>
+      <colorDiffuse>effffffff</colorDiffuse>
+    </control>
+    <control>
       <type>image</type>
       <id>1</id>
-      <posX>113</posX>
-      <posY>26</posY>
+       <posX>89</posX>
+      <posY>4</posY>
+      <width>220</width>
+      <height>55</height>
       <texture>newsfeed_logo.png</texture>
     </control>
     <control>
@@ -23,7 +45,7 @@
       <id>1</id>
       <posX>142</posX>
       <posY>493</posY>
-      <texture>hover_my news.png</texture>
+      <texture>-</texture>
     </control>
     <!--control>
 			<description>My news text label</description>
@@ -51,8 +73,8 @@
       <description>Number of Files Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>493</posX>
-      <posY>408</posY>
+      <posX>1140</posX>
+      <posY>458</posY>
       <label>#itemcount</label>
       <align>left</align>
       <textcolor>ffffffff</textcolor>
@@ -61,12 +83,12 @@
       <description>Selected item Label</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>1252</posX>
-      <posY>93</posY>
-      <width>533</width>
+      <posX>374</posX>
+      <posY>550</posY>
+      <width>650</width>
       <label>#selecteditem</label>
-      <font>font13</font>
-      <align>right</align>
+      <font>font16</font>
+      <align>left</align>
       <textcolor>ffffffff</textcolor>
     </control>
     <control>
@@ -100,11 +122,12 @@
         <description>Site Logo</description>
         <type>image</type>
         <id>101</id>
-        <posX>113</posX>
-        <posY>226</posY>
+        <posX>180</posX>
+        <posY>326</posY>
         <width>170</width>
         <height>170</height>
-        <texture>thumbs\ars_article.png</texture>
+        <!-- texture>thumbs\ars_article.png</texture -->
+        <texture flipY="true" diffuse="Thumb_Mask.png">thumbs\ars_article.png</texture>
         <keepaspectratio>yes</keepaspectratio>
       </control>
     </control>
@@ -129,14 +152,14 @@
         <description>Chosen Story description</description>
         <type>textboxscrollup</type>
         <id>506</id>
-        <posX>497</posX>
-        <posY>466</posY>
-        <width>573</width>
-        <height>240</height>
+		<posX>374</posX>
+		<posY>585</posY>
+		<width>660</width>
+		<height>120</height>
         <label>-</label>
         <seperator>----------------------------------------------------------------------------------------------</seperator>
-        <font>font13</font>
-        <textcolor>FFFFFFFF</textcolor>
+        <font>font16</font>
+        <textcolor>ff969696</textcolor>
       </control>
     </control>
   </controls>

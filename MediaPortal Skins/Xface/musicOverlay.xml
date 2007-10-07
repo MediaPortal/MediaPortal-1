@@ -38,7 +38,7 @@
       <width>68</width>
       <height>35</height>
       <imagepath>Play</imagepath>
-      <timeperimage>50</timeperimage>
+      <timeperimage>40</timeperimage>
       <fadetime>10</fadetime>
       <loop>yes</loop>
       <randomize>false</randomize>

@@ -10,11 +10,14 @@
       <id>1</id>
       <width>1366</width>
       <height>768</height>
+      <texture>Background5.png</texture>
     </control>
     <control>
       <type>image</type>
       <id>1</id>
-      <texture>background_browser_bar.png</texture>
+      <width>1366</width>
+      <height>56</height>
+      <texture>Bararea2.png</texture>
     </control>
     <control>
       <description>Back button</description>
@@ -22,13 +25,13 @@
       <id>2</id>
       <posX>85</posX>
       <posY>6</posY>
-      <width>56</width>
-      <height>56</height>
+      <width>42</width>
+      <height>42</height>
       <label>-</label>
       <textureFocus>nav_back_focus.png</textureFocus>
       <textureNoFocus>nav_back_nofocus.png</textureNoFocus>
       <onright>3</onright>
-      <onleft>7</onleft>
+      <onleft>11</onleft>
     </control>
     <control>
       <description>Forward button</description>
@@ -37,8 +40,8 @@
       <posX>180</posX>
       <posY>6</posY>
       <label>-</label>
-      <width>56</width>
-      <height>56</height>
+      <width>42</width>
+      <height>42</height>
       <textureFocus>nav_forward_focus.png</textureFocus>
       <textureNoFocus>nav_forward_nofocus.png</textureNoFocus>
       <onright>4</onright>
@@ -50,8 +53,8 @@
       <id>4</id>
       <posX>275</posX>
       <posY>6</posY>
-      <width>56</width>
-      <height>56</height>
+      <width>42</width>
+      <height>42</height>
       <label>-</label>
       <textureFocus>nav_refresh_focus.png</textureFocus>
       <textureNoFocus>nav_refresh_nofocus1.png</textureNoFocus>
@@ -64,8 +67,8 @@
       <id>5</id>
       <posX>369</posX>
       <posY>6</posY>
-      <width>56</width>
-      <height>56</height>
+      <width>42</width>
+      <height>42</height>
       <label>-</label>
       <textureFocus>stop_enabled.png</textureFocus>
       <textureNoFocus>stop_disabled.png</textureNoFocus>
@@ -73,27 +76,13 @@
       <onleft>4</onleft>
     </control>
     <control>
-      <description>Home button</description>
-      <type>button</type>
-      <id>9</id>
-      <posX>464</posX>
-      <posY>6</posY>
-      <width>56</width>
-      <height>56</height>
-      <label>-</label>
-      <textureFocus>nav_home_focus.png</textureFocus>
-      <textureNoFocus>nav_home_nofocus.png</textureNoFocus>
-      <onright>6</onright>
-      <onleft>5</onleft>
-    </control>
-    <control>
       <description>Favorites Button</description>
       <type>button</type>
       <id>6</id>
       <posX>559</posX>
       <posY>6</posY>
-      <width>56</width>
-      <height>56</height>
+      <width>42</width>
+      <height>42</height>
       <label>-</label>
       <textureFocus>nav_favorites_focus.png</textureFocus>
       <textureNoFocus>nav_favorites_nofocus.png</textureNoFocus>
@@ -109,10 +98,52 @@
       <label>-</label>
       <textureFocus>nav_url_focus.png</textureFocus>
       <textureNoFocus>nav_url_nofocus.png</textureNoFocus>
-      <onright>2</onright>
+      <onright>10</onright>
       <onleft>6</onleft>
-      <width>56</width>
-      <height>56</height>
+      <width>42</width>
+      <height>42</height>
+    </control>
+    <control>
+      <description>Home button</description>
+      <type>button</type>
+      <id>9</id>
+      <posX>464</posX>
+      <posY>6</posY>
+      <width>42</width>
+      <height>42</height>
+      <label>-</label>
+      <textureFocus>nav_home_focus.png</textureFocus>
+      <textureNoFocus>nav_home_nofocus.png</textureNoFocus>
+      <onright>6</onright>
+      <onleft>5</onleft>
+    </control>
+    <control>
+      <description>Zoom-in button</description>
+      <type>button</type>
+      <id>10</id>
+      <posX>749</posX>
+      <posY>6</posY>
+      <label>-</label>
+      <textureFocus>nav_zoom_in_focus.png</textureFocus>
+      <textureNoFocus>nav_zoom_in_nofocus.png</textureNoFocus>
+      <onright>11</onright>
+      <onleft>7</onleft>
+      <width>42</width>
+      <height>42</height>
+    </control>
+    <control>
+      <description>Zoom-out button</description>
+      <type>button</type>
+      <id>11</id>
+      <posX>844</posX>
+      <posY>6</posY>
+      <label>-</label>
+      <textureFocus>nav_zoom_out_focus.png</textureFocus>
+      <textureNoFocus>nav_zoom_out_nofocus.png</textureNoFocus>
+      <onright>2</onright>
+      <onleft>10</onleft>
+      <width>42</width>
+      <height>42</height>
     </control>
     <control>
       <description>Status label</description>

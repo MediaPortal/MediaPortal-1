@@ -25,17 +25,17 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
     </control>
-    <control>
+     <control>
       <description>Menu</description>
       <type>menu</type>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <id>50</id>
-      <posX>290</posX>
-      <posY>60</posY>
-      <width>399</width>
+      <posX>400</posX>
+      <posY>10</posY>
+      <width>439</width>
       <textcolor>ffffffff</textcolor>
-      <textColorNoFocus>00ffffff</textColorNoFocus>
+      <textColorNoFocus>60ffffff</textColorNoFocus>
       <dimColor>80ffffff</dimColor>
       <buttonTextXOff>11</buttonTextXOff>
       <buttonTextYOff>60</buttonTextYOff>
@@ -43,10 +43,10 @@
       <buttonFont>font16</buttonFont>
       <buttonHeight>136</buttonHeight>
       <spaceBetweenButtons>0</spaceBetweenButtons>
-      <numberOfButtons>4</numberOfButtons>
+      <numberOfButtons>5</numberOfButtons>
       <textureButtonFocus>button_empty.png</textureButtonFocus>
       <textureButtonNoFocus>buttonNF_empty.png</textureButtonNoFocus>
-      <hoverX>800</hoverX>
+      <hoverX>950</hoverX>
       <hoverY>370</hoverY>
       <hoverWidth>290</hoverWidth>
       <hoverHeight>285</hoverHeight>

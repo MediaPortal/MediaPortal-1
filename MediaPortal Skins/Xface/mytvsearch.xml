@@ -7,7 +7,20 @@
   <define>#header.label:724</define>
   <controls>
     <import>common.window2.xml</import>
-   
+     <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>12</id>
+      <posX>1043</posX>
+      <posY>621</posY>
+      <label>#itemcount</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>00FFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="500">WindowClose</animation>
+    </control>
+
     <control>
       <description>Selected item Label</description>
       <type>fadelabel</type>
