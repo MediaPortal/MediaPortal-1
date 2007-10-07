@@ -143,6 +143,8 @@ namespace MediaPortal.TV.Recording
       UpdateTimer();
 
       DateTime dtCurrentTime = DateTime.Now;
+			string manualStr = GUILocalizeStrings.Get(413);
+
       // If the scheduled recordings have been changed,deleted or added since last time
       // then we need to re-load the recordings from the database
       if (_recordingsListChanged)
@@ -190,9 +192,11 @@ namespace MediaPortal.TV.Recording
                 if (rec.StartTime <= prog.StartTime && rec.IsRecordingProgramAtTime(dtCurrentTime, prog, rec.PreRecord, rec.PostRecord))
                 {
                   // yes, then record it
-                  if (Record(handler, dtCurrentTime, rec, prog, rec.PreRecord, rec.PostRecord))
+                  if (!Record(handler, dtCurrentTime, rec, prog, rec.PreRecord, rec.PostRecord))
                   {
-                    break;
+										Log.Error("Scheduler.Process Error: Could not start recording ({0})", rec.ToString());
+										Log.WriteFile(LogType.Recorder, "Scheduler.Process Error: Could not start recording ({0})", rec.ToString());
+                    //break;  // do not break here, may cause issues if you have parallel recordings starting at same time 
                   }
                 }
               }
@@ -253,16 +257,23 @@ namespace MediaPortal.TV.Recording
         //if recording has been recorded already, then skip it
         if (rec.IsDone()) continue;
 
-        // 1st check if the recording itself should b recorded
-        if (rec.IsRecordingProgramAtTime(DateTime.Now, null, rec.PreRecord, rec.PostRecord))
+				// do we have a manual recording ?
+				if (!rec.Title.Equals(manualStr)) continue;
+
+				//create dummy Prog for Manual recordings
+				TVProgram prog = new TVProgram(rec.Channel, rec.StartTime, rec.EndTime, rec.Title);
+        
+				// 1st check if the recording itself should be recorded
+        if (rec.IsRecordingProgramAtTime(DateTime.Now, prog, rec.PreRecord, rec.PostRecord))
         {
           //yes, time to record it. Are we already recording it?
           if (!handler.IsRecordingSchedule(rec, out cardNo))
           {
             // no, then start recording it now
-            if (Record(handler, dtCurrentTime, rec, null, rec.PreRecord, rec.PostRecord))
+            if (!Record(handler, dtCurrentTime, rec, prog, rec.PreRecord, rec.PostRecord))
             {
-              // recording it
+							Log.Error("Scheduler.Process Error: Could not start recording ({0})", rec.ToString());
+							Log.WriteFile(LogType.Recorder, "Scheduler.Process Error: Could not start recording ({0})", rec.ToString());
             }
           }
         }
