@@ -375,7 +375,7 @@ namespace MediaPortal.Player
         UpdateCurrentPosition();
         UpdateDuration();
         OnInitialized();
-        Log.Info("TSReaderPlayer:running pos:{1} duration:{2} {3}", Duration, CurrentPosition, dur);
+        Log.Info("TSReaderPlayer:running pos:{0} duration:{1} {2}", Duration, CurrentPosition, dur);
       }
       else
       {
@@ -385,7 +385,7 @@ namespace MediaPortal.Player
         UpdateCurrentPosition();
         UpdateDuration();
         OnInitialized();
-        Log.Info("TSReaderPlayer:running pos:{1} duration:{2} {3}", Duration, CurrentPosition, dur);
+        Log.Info("TSReaderPlayer:running pos:{0} duration:{1} {2}", Duration, CurrentPosition, dur);
       }
       return true;
     }
