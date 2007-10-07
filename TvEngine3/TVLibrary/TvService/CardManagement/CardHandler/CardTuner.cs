@@ -111,12 +111,30 @@ namespace TvService
                 User[] users = context.Users;
                 for (int i = 0; i < users.Length; ++i)
                 {
-                  if (users[i].Name != user.Name)
-                  {
-                    Log.Info("  stop subchannel:{0} user:{1}", i, users[i].Name);
-                    _cardHandler.Card.FreeSubChannel(users[i].SubChannel);
-                    context.Remove(users[i]);
-                  }
+									if (users[i].Name != user.Name)
+									{
+										Log.Info("  stop subchannel:{0} user:{1}", i, users[i].Name);
+
+										//fix for b2b mantis; http://mantis.team-mediaportal.com/view.php?id=1112
+										if (users[i].IsAdmin) // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.
+										{
+											Log.Info("user is scheduler :{0}", users[i].Name);											
+											int recScheduleId = RemoteControl.Instance.GetRecordingSchedule(users[i].CardId, users[i].IdChannel);
+
+											if (recScheduleId > 0)
+											{
+												Schedule schedule = Schedule.Retrieve(recScheduleId);
+												Log.Info("removing schedule with id:{0}", schedule.IdSchedule);
+												RemoteControl.Instance.StopRecordingSchedule(schedule.IdSchedule);
+												schedule.Delete();
+											}
+										}
+										else
+										{
+											_cardHandler.Card.FreeSubChannel(users[i].SubChannel);
+											context.Remove(users[i]);
+										}
+									}
                 }
               }
               else
