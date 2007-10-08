@@ -58,33 +58,33 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.label1);
       this.mpGroupBox1.Controls.Add(this.mpNonsquare);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(13, 16);
+      this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(429, 349);
+      this.mpGroupBox1.Size = new System.Drawing.Size(459, 157);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "Video Mixing Renderer 9 Advanced Settings";
+      this.mpGroupBox1.Text = "Video Mixing Renderer 9 - Advanced settings";
       // 
       // DXEclusiveCheckbox
       // 
       this.DXEclusiveCheckbox.AutoSize = true;
       this.DXEclusiveCheckbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.DXEclusiveCheckbox.Location = new System.Drawing.Point(30, 92);
+      this.DXEclusiveCheckbox.Location = new System.Drawing.Point(30, 59);
       this.DXEclusiveCheckbox.Name = "DXEclusiveCheckbox";
-      this.DXEclusiveCheckbox.Size = new System.Drawing.Size(157, 17);
+      this.DXEclusiveCheckbox.Size = new System.Drawing.Size(155, 17);
       this.DXEclusiveCheckbox.TabIndex = 5;
-      this.DXEclusiveCheckbox.Text = "Use VMR 9 Exclusive Mode";
+      this.DXEclusiveCheckbox.Text = "Use VMR 9 exclusive mode";
       this.VMR9Tips.SetToolTip(this.DXEclusiveCheckbox, "Prevents video \"tearing\" during playback");
       this.DXEclusiveCheckbox.UseVisualStyleBackColor = true;
       // 
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(27, 138);
+      this.label3.Location = new System.Drawing.Point(27, 101);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(106, 13);
+      this.label3.Size = new System.Drawing.Size(102, 13);
       this.label3.TabIndex = 4;
-      this.label3.Text = "VMR9 Filtering Mode";
+      this.label3.Text = "VMR9 filtering mode";
       // 
       // mpVMR9FilterMethod
       // 
@@ -97,7 +97,7 @@ namespace MediaPortal.Configuration.Sections
             "Anisotropic Filtering",
             "Pyrimidal Quad Filtering",
             "Gaussian Quad Filtering"});
-      this.mpVMR9FilterMethod.Location = new System.Drawing.Point(30, 154);
+      this.mpVMR9FilterMethod.Location = new System.Drawing.Point(30, 122);
       this.mpVMR9FilterMethod.Name = "mpVMR9FilterMethod";
       this.mpVMR9FilterMethod.Size = new System.Drawing.Size(203, 21);
       this.mpVMR9FilterMethod.TabIndex = 2;
