@@ -931,6 +931,7 @@ namespace MediaPortal.AudioScrobbler
 
       if (listViewCoverAlbums.Items.Count > 0)
       {
+        string strVariousArtists = GUILocalizeStrings.Get(340);
         progressBarCoverAlbums.Maximum = listViewCoverAlbums.Items.Count;
         progressBarCoverAlbums.Value = 0;
         progressBarCoverAlbums.Visible = true;
@@ -939,9 +940,17 @@ namespace MediaPortal.AudioScrobbler
         {
           if (listViewCoverAlbums.Items[i].SubItems[3].Text == "none" || !checkBoxCoverAlbumsMissing.Checked)
           {
-            lastFmLookup.getAlbumInfo(listViewCoverAlbums.Items[i].Text, listViewCoverAlbums.Items[i].SubItems[1].Text, false);
+            string curArtist = listViewCoverAlbums.Items[i].Text;
+            string curAlbum = listViewCoverAlbums.Items[i].SubItems[1].Text;
+
+            if (string.IsNullOrEmpty(curArtist) || string.IsNullOrEmpty(curAlbum))
+              continue;
+            if (curArtist == "Various Artists" || curArtist == strVariousArtists || curArtist == "unknown")
+              continue;
+
+            lastFmLookup.getAlbumInfo(curArtist, curAlbum, false);
             // let's check and update the artist's status
-            string strThumb = Util.Utils.GetAlbumThumbName(listViewCoverAlbums.Items[i].Text, listViewCoverAlbums.Items[i].SubItems[1].Text);
+            string strThumb = Util.Utils.GetAlbumThumbName(curArtist, curAlbum);
             if (System.IO.File.Exists(strThumb))
               listViewCoverAlbums.Items[i].SubItems[2].Text = ((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
 

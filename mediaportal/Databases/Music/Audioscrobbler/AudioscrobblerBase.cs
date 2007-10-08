@@ -1184,6 +1184,9 @@ namespace MediaPortal.Music.Database
       dotIndex = cleanString.IndexOf("(");
       if (dotIndex > 0)
         cleanString = cleanString.Remove(dotIndex);
+      dotIndex = cleanString.IndexOf("feat.");
+      if (dotIndex > 0)
+        cleanString = cleanString.Remove(dotIndex);
 
       // substitute "&" with "and"
       cleanString = cleanString.Replace("&", " and ");
