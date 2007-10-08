@@ -1360,7 +1360,7 @@ namespace MediaPortal.Music.Database
               string tmpFile = System.IO.Path.GetTempFileName();
               WebClient client = new WebClient();
               //client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-              client.Headers.Add("user-agent", @"Mozilla/5.0 (X11; U; Linux i686; de-DE; rv:1.8.1) Gecko/20060601 Firefox/2.0 (Ubuntu-edgy)");
+              //client.Headers.Add("user-agent", @"Mozilla/5.0 (X11; U; Linux i686; de-DE; rv:1.8.1) Gecko/20060601 Firefox/2.0 (Ubuntu-edgy)");
               client.DownloadFile(imageUrl, tmpFile);
 
               //temp file downloaded - check if needed

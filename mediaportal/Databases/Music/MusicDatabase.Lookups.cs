@@ -769,7 +769,7 @@ namespace MediaPortal.Music.Database
       {
         aArtistArray.Clear();
 
-        string strSQL = String.Format("SELECT * FROM artist");
+        string strSQL = String.Format("SELECT DISTINCT strArtist FROM tracks ORDER BY strArtist");
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
           return false;
