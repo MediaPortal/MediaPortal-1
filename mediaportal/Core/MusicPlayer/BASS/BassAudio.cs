@@ -1642,6 +1642,11 @@ namespace MediaPortal.Player
               }
             }
           }
+          else
+          {
+            int error = Bass.BASS_ErrorGetCode();
+            Log.Error("BASS: Unable to create Stream for {0}.  Reason: {1}.", filePath, Enum.GetName(typeof(BASSErrorCode), error));
+          }
 
           bool playbackStarted = false;
           if (_Mixing)
