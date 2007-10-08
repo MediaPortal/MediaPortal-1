@@ -197,7 +197,7 @@ namespace MediaPortal.GUI.Music
       if (control == btnRefresh)
       {
         string imageFileName = albumInfo.ImageURL;
-        string thumbNailFileName = GUIMusicFiles.GetAlbumThumbName(m_tag.Artist, m_tag.Album);
+        string thumbNailFileName = Util.Utils.GetAlbumThumbName(m_tag.Artist, m_tag.Album);
         MediaPortal.Util.Utils.FileDelete(thumbNailFileName);
         needsRefresh = true;
         Close();
@@ -311,7 +311,7 @@ namespace MediaPortal.GUI.Music
         m_tag.Artist = albumInfo.Artist;
         m_tag.Album = albumInfo.Title;
       }
-      thumbNailFileName = GUIMusicFiles.GetAlbumThumbName(m_tag.Artist, m_tag.Album);
+      thumbNailFileName = Util.Utils.GetAlbumThumbName(m_tag.Artist, m_tag.Album);
       if (!System.IO.File.Exists(thumbNailFileName))
       {
         //	Download image and save as 

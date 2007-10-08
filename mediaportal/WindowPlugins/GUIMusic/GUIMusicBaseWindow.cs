@@ -151,7 +151,7 @@ namespace MediaPortal.GUI.Music
             {
               if (musicTag != null && musicTag.Album != String.Empty && musicTag.Artist != String.Empty)
               {
-                string albumThumb = GUIMusicFiles.GetAlbumThumbName(musicTag.Artist, musicTag.Album);
+                string albumThumb = Util.Utils.GetAlbumThumbName(musicTag.Artist, musicTag.Album);
 
                 if (System.IO.File.Exists(albumThumb))
                 {
@@ -1879,7 +1879,7 @@ namespace MediaPortal.GUI.Music
               }
               if (isFolder)
               {
-                string thumb = GetAlbumThumbName(album.Artist, album.Title);
+                string thumb = Util.Utils.GetAlbumThumbName(album.Artist, album.Title);
                 if (System.IO.File.Exists(thumb))
                 {
                   try
@@ -1936,7 +1936,7 @@ namespace MediaPortal.GUI.Music
       try
       {
         System.Drawing.Image coverImg = MediaPortal.Music.Amazon.AmazonWebservice.GetImageFromURL(albumInfo.Image);
-        string thumbPath = GetAlbumThumbName(albumInfo.Artist, albumInfo.Album);
+        string thumbPath = Util.Utils.GetAlbumThumbName(albumInfo.Artist, albumInfo.Album);
 
         if (thumbPath.Length == 0 || coverImg == null)
           return false;
@@ -1976,7 +1976,7 @@ namespace MediaPortal.GUI.Music
       if (ArtistName.Length == 0 || AlbumName.Length == 0)
         return false;
 
-      bool bHasThumbnailImage = System.IO.File.Exists(GUIMusicBaseWindow.GetAlbumThumbName(ArtistName, AlbumName));
+      bool bHasThumbnailImage = System.IO.File.Exists(Util.Utils.GetAlbumThumbName(ArtistName, AlbumName));
 
       if (!checkAlbumFolder)
         return bHasThumbnailImage;
@@ -1985,18 +1985,6 @@ namespace MediaPortal.GUI.Music
       bool bHasAlbumFolderImage = System.IO.File.Exists(System.IO.Path.Combine(path, "folder.jpg"));
 
       return bHasThumbnailImage && bHasAlbumFolderImage;
-    }
-
-    static public string GetAlbumThumbName(string ArtistName, string AlbumName)
-    {
-      if (ArtistName == String.Empty)
-        return String.Empty;
-      if (AlbumName == String.Empty)
-        return String.Empty;
-      Util.Utils.RemoveStackEndings(ref AlbumName);
-
-      string name = String.Format("{0}-{1}", ArtistName, AlbumName);
-      return MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, name);
     }
 
     protected virtual void AddSongToFavorites(GUIListItem item)

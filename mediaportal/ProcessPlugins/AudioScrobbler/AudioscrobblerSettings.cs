@@ -784,13 +784,13 @@ namespace MediaPortal.AudioScrobbler
     private void buttonCoverArtistsRefresh_Click(object sender, EventArgs e)
     {
       buttonCoverArtistsRefresh.Enabled = false;
-      buttonCoverArtistLookup.Enabled = false;
+      buttonCoverArtistsLookup.Enabled = false;
       listViewCoverArtists.Clear();
       ArrayList CoverArtists = new ArrayList();
       MusicDatabase mdb = MusicDatabase.Instance;
       if (mdb.GetAllArtists(ref CoverArtists))
       {
-        listViewCoverArtists.Columns.Add("Artist", 225);
+        listViewCoverArtists.Columns.Add("Artist", 220);
         listViewCoverArtists.Columns.Add("Low res", 100);
         listViewCoverArtists.Columns.Add("High res", 100);
 
@@ -818,8 +818,6 @@ namespace MediaPortal.AudioScrobbler
             else
               listItem.SubItems.Add("none");
 
-            strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
-
             listViewCoverArtists.Items.Add(listItem);
 
             progressBarCoverArtists.Value = i + 1;
@@ -831,13 +829,13 @@ namespace MediaPortal.AudioScrobbler
         progressBarCoverArtists.Visible = false;
       }
       buttonCoverArtistsRefresh.Enabled = true;
-      buttonCoverArtistLookup.Enabled = true;
+      buttonCoverArtistsLookup.Enabled = true;
     }
 
     private void buttonCoverArtistLookup_Click(object sender, EventArgs e)
     {
       buttonCoverArtistsRefresh.Enabled = false;
-      buttonCoverArtistLookup.Enabled = false;
+      buttonCoverArtistsLookup.Enabled = false;
 
       if (listViewCoverArtists.Items.Count > 0)
       {
@@ -847,7 +845,7 @@ namespace MediaPortal.AudioScrobbler
 
         for (int i = 0; i < listViewCoverArtists.Items.Count; i++)
         {
-          if (listViewCoverArtists.Items[i].SubItems[1].Text == "none" || !checkBoxCoverArtistsMissing.Checked)
+          if (listViewCoverArtists.Items[i].SubItems[2].Text == "none" || !checkBoxCoverArtistsMissing.Checked)
           {
             lastFmLookup.getArtistInfo(listViewCoverArtists.Items[i].Text);
             // let's check and update the artist's status
@@ -870,7 +868,98 @@ namespace MediaPortal.AudioScrobbler
 
       progressBarCoverArtists.Visible = false;
       buttonCoverArtistsRefresh.Enabled = true;
-      buttonCoverArtistLookup.Enabled = true;
+      buttonCoverArtistsLookup.Enabled = true;
+    }
+
+    private void buttonCoverAlbumsRefresh_Click(object sender, EventArgs e)
+    {
+      buttonCoverAlbumsRefresh.Enabled = false;
+      buttonCoverAlbumsLookup.Enabled = false;
+      listViewCoverAlbums.Clear();
+      List<AlbumInfo> CoverAlbums = new List<AlbumInfo>();
+      MusicDatabase mdb = MusicDatabase.Instance;
+      if (mdb.GetAllAlbums(ref CoverAlbums))
+      {
+        listViewCoverAlbums.Columns.Add("Artist", 150);
+        listViewCoverAlbums.Columns.Add("Album", 150);
+        listViewCoverAlbums.Columns.Add("Low res", 60);
+        listViewCoverAlbums.Columns.Add("High res", 60);
+
+        progressBarCoverAlbums.Maximum = CoverAlbums.Count;
+        progressBarCoverAlbums.Value = 0;
+        progressBarCoverAlbums.Visible = true;
+
+        for (int i = 0; i < CoverAlbums.Count; i++)
+        {
+          try
+          {            
+            ListViewItem listItem = new ListViewItem(CoverAlbums[i].AlbumArtist);
+            listItem.SubItems.Add(CoverAlbums[i].Album);
+
+            // check low res
+            string strThumb = MediaPortal.Util.Utils.GetAlbumThumbName(CoverAlbums[i].AlbumArtist, CoverAlbums[i].Album);
+            if (System.IO.File.Exists(strThumb))
+              listItem.SubItems.Add((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
+            else
+              listItem.SubItems.Add("none");
+
+            // check high res
+            strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
+            if (System.IO.File.Exists(strThumb))
+              listItem.SubItems.Add((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
+            else
+              listItem.SubItems.Add("none");
+
+            listViewCoverAlbums.Items.Add(listItem);
+
+            progressBarCoverAlbums.Value = i + 1;
+          }
+          catch (Exception)
+          {
+          }
+        }
+        progressBarCoverAlbums.Visible = false;
+      }
+      buttonCoverAlbumsRefresh.Enabled = true;
+      buttonCoverAlbumsLookup.Enabled = true;
+    }
+
+    private void buttonCoverAlbumsLookup_Click(object sender, EventArgs e)
+    {
+      buttonCoverAlbumsRefresh.Enabled = false;
+      buttonCoverAlbumsLookup.Enabled = false;
+
+      if (listViewCoverAlbums.Items.Count > 0)
+      {
+        progressBarCoverAlbums.Maximum = listViewCoverAlbums.Items.Count;
+        progressBarCoverAlbums.Value = 0;
+        progressBarCoverAlbums.Visible = true;
+
+        for (int i = 0; i < listViewCoverAlbums.Items.Count; i++)
+        {
+          if (listViewCoverAlbums.Items[i].SubItems[3].Text == "none" || !checkBoxCoverAlbumsMissing.Checked)
+          {
+            lastFmLookup.getAlbumInfo(listViewCoverAlbums.Items[i].Text, listViewCoverAlbums.Items[i].SubItems[1].Text, false);
+            // let's check and update the artist's status
+            string strThumb = Util.Utils.GetAlbumThumbName(listViewCoverAlbums.Items[i].Text, listViewCoverAlbums.Items[i].SubItems[1].Text);
+            if (System.IO.File.Exists(strThumb))
+              listViewCoverAlbums.Items[i].SubItems[2].Text = ((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
+
+            strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
+            if (System.IO.File.Exists(strThumb))
+              listViewCoverAlbums.Items[i].SubItems[3].Text = ((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
+
+            listViewCoverAlbums.RedrawItems(i, i, false);
+            listViewCoverAlbums.Items[i].EnsureVisible();
+          }
+
+          progressBarCoverAlbums.Value = i + 1;
+        }
+      }
+
+      progressBarCoverAlbums.Visible = false;
+      buttonCoverAlbumsRefresh.Enabled = true;
+      buttonCoverAlbumsLookup.Enabled = true;
     }
 
     private void buttonAddUser_Click(object sender, EventArgs e)
@@ -905,6 +994,5 @@ namespace MediaPortal.AudioScrobbler
       LoadSettings();
     }
     #endregion
-
   }
 }

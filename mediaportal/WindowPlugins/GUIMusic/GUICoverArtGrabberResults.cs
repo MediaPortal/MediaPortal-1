@@ -487,7 +487,7 @@ namespace MediaPortal.GUI.Music
       string thumbPath;
 
       // Look for the album cover thumbnail...
-      thumbPath = GUIMusicBaseWindow.GetAlbumThumbName(artist, album);
+      thumbPath = Util.Utils.GetAlbumThumbName(artist, album);
 
       // If it doesn't exist look for it in the album folder
       if (!System.IO.File.Exists(thumbPath))

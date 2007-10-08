@@ -1692,6 +1692,17 @@ namespace MediaPortal.Util
       return strRet;
     }
 
+    static public string GetAlbumThumbName(string ArtistName, string AlbumName)
+    {
+      if (string.IsNullOrEmpty(ArtistName) || string.IsNullOrEmpty(AlbumName))
+        return string.Empty;
+
+      RemoveStackEndings(ref AlbumName);
+
+      string name = string.Format("{0}-{1}", ArtistName, AlbumName);
+      return GetCoverArtName(Thumbs.MusicAlbum, name);
+    }
+
     static public string GetFolderThumb(string strFile)
     {
       if (strFile == null)              return String.Empty;

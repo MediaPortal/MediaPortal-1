@@ -1280,7 +1280,7 @@ namespace MediaPortal.GUI.Music
       }
 
       // use covert art thumbnail for albums
-      string strThumb = GUIMusicFiles.GetAlbumThumbName(strArtistName, strAlbumName);
+      string strThumb = Util.Utils.GetAlbumThumbName(strArtistName, strAlbumName);
       if (System.IO.File.Exists(strThumb))
       {
         if (_createMissingFolderThumbs && _createMissingFolderThumbCache)

@@ -937,7 +937,7 @@ namespace MediaPortal.Music.Database
     }
 
     /// <summary>
-    /// Fetch Amazon cover link, release date and album songs sortable by their popularity
+    /// Fetch cover link, release date and album songs sortable by their popularity
     /// </summary>
     /// <param name="artistToSearch_">Band name</param>
     /// <param name="albumToSearch_">Album name</param>
@@ -951,8 +951,7 @@ namespace MediaPortal.Music.Database
       List<Song> albumTracks = new List<Song>();
       do
       {
-        //lock (LookupLock)
-          albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
+        albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
 
         if (sortBestTracks)
           albumTracks.Sort(CompareSongsByTimesPlayed);
@@ -1329,7 +1328,13 @@ namespace MediaPortal.Music.Database
 
     #region internal fetch routines
 
-    /// <summary>downloads the large thumb from amazon</summary>
+    /// <summary>
+    /// Downloads images and saves them into the given location
+    /// </summary>
+    /// <param name="imageUrl">source URL of the image</param>
+    /// <param name="fileName">destination filename</param>
+    /// <param name="thumbspath">thumb directory</param>
+    /// <returns>whether the lookup has been successful</returns>
     private bool fetchWebImage(string imageUrl, string fileName, string thumbspath)
     {
       bool success = false;
@@ -1355,8 +1360,6 @@ namespace MediaPortal.Music.Database
           // Here we get the image from the web and save it to disk
           try
           {
-            //lock (LookupLock)
-            //{
               string tmpFile = System.IO.Path.GetTempFileName();
               WebClient client = new WebClient();
               //client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
@@ -1401,7 +1404,6 @@ namespace MediaPortal.Music.Database
                 Log.Info("MyMusic: Thumb successfully downloaded: {0}", fullLargePath);
               }
               success = true;
-            //}
           }
           catch (Exception e)
           {

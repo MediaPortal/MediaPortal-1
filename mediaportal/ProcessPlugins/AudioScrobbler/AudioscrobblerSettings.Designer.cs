@@ -99,9 +99,17 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageCoverArt = new System.Windows.Forms.TabPage();
       this.tabControlCoverArt = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageArtistArt = new System.Windows.Forms.TabPage();
-      this.buttonCoverArtistLookup = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxCoverArtistsMissing = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.progressBarCoverArtists = new System.Windows.Forms.ProgressBar();
+      this.buttonCoverArtistsLookup = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonCoverArtistsRefresh = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewCoverArtists = new MediaPortal.UserInterface.Controls.MPListView();
+      this.tabPageAlbumArt = new System.Windows.Forms.TabPage();
+      this.checkBoxCoverAlbumsMissing = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.progressBarCoverAlbums = new System.Windows.Forms.ProgressBar();
+      this.buttonCoverAlbumsLookup = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonCoverAlbumsRefresh = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewCoverAlbums = new MediaPortal.UserInterface.Controls.MPListView();
       this.tabPageLiveData = new System.Windows.Forms.TabPage();
       this.tabControlLiveFeeds = new System.Windows.Forms.TabControl();
       this.tabPageRecent = new System.Windows.Forms.TabPage();
@@ -149,8 +157,6 @@ namespace MediaPortal.AudioScrobbler
       this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.labelPassword = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelUser = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.progressBarCoverArtists = new System.Windows.Forms.ProgressBar();
-      this.checkBoxCoverArtistsMissing = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.panelPicBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxASLogo)).BeginInit();
       this.tabControlSettings.SuspendLayout();
@@ -168,6 +174,7 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageCoverArt.SuspendLayout();
       this.tabControlCoverArt.SuspendLayout();
       this.tabPageArtistArt.SuspendLayout();
+      this.tabPageAlbumArt.SuspendLayout();
       this.tabPageLiveData.SuspendLayout();
       this.tabControlLiveFeeds.SuspendLayout();
       this.tabPageRecent.SuspendLayout();
@@ -685,6 +692,7 @@ namespace MediaPortal.AudioScrobbler
       // tabControlCoverArt
       // 
       this.tabControlCoverArt.Controls.Add(this.tabPageArtistArt);
+      this.tabControlCoverArt.Controls.Add(this.tabPageAlbumArt);
       this.tabControlCoverArt.Location = new System.Drawing.Point(6, 6);
       this.tabControlCoverArt.Name = "tabControlCoverArt";
       this.tabControlCoverArt.SelectedIndex = 0;
@@ -695,7 +703,7 @@ namespace MediaPortal.AudioScrobbler
       // 
       this.tabPageArtistArt.Controls.Add(this.checkBoxCoverArtistsMissing);
       this.tabPageArtistArt.Controls.Add(this.progressBarCoverArtists);
-      this.tabPageArtistArt.Controls.Add(this.buttonCoverArtistLookup);
+      this.tabPageArtistArt.Controls.Add(this.buttonCoverArtistsLookup);
       this.tabPageArtistArt.Controls.Add(this.buttonCoverArtistsRefresh);
       this.tabPageArtistArt.Controls.Add(this.listViewCoverArtists);
       this.tabPageArtistArt.Location = new System.Drawing.Point(4, 22);
@@ -706,16 +714,40 @@ namespace MediaPortal.AudioScrobbler
       this.tabPageArtistArt.Text = "Artist images";
       this.tabPageArtistArt.UseVisualStyleBackColor = true;
       // 
-      // buttonCoverArtistLookup
+      // checkBoxCoverArtistsMissing
       // 
-      this.buttonCoverArtistLookup.Enabled = false;
-      this.buttonCoverArtistLookup.Location = new System.Drawing.Point(452, 41);
-      this.buttonCoverArtistLookup.Name = "buttonCoverArtistLookup";
-      this.buttonCoverArtistLookup.Size = new System.Drawing.Size(83, 23);
-      this.buttonCoverArtistLookup.TabIndex = 4;
-      this.buttonCoverArtistLookup.Text = "Lookup";
-      this.buttonCoverArtistLookup.UseVisualStyleBackColor = true;
-      this.buttonCoverArtistLookup.Click += new System.EventHandler(this.buttonCoverArtistLookup_Click);
+      this.checkBoxCoverArtistsMissing.AutoSize = true;
+      this.checkBoxCoverArtistsMissing.Checked = true;
+      this.checkBoxCoverArtistsMissing.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxCoverArtistsMissing.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxCoverArtistsMissing.Location = new System.Drawing.Point(452, 70);
+      this.checkBoxCoverArtistsMissing.Name = "checkBoxCoverArtistsMissing";
+      this.checkBoxCoverArtistsMissing.Size = new System.Drawing.Size(82, 17);
+      this.checkBoxCoverArtistsMissing.TabIndex = 10;
+      this.checkBoxCoverArtistsMissing.Text = "Only missing";
+      this.checkBoxCoverArtistsMissing.UseVisualStyleBackColor = true;
+      // 
+      // progressBarCoverArtists
+      // 
+      this.progressBarCoverArtists.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarCoverArtists.Location = new System.Drawing.Point(6, 238);
+      this.progressBarCoverArtists.Name = "progressBarCoverArtists";
+      this.progressBarCoverArtists.Size = new System.Drawing.Size(440, 23);
+      this.progressBarCoverArtists.Step = 1;
+      this.progressBarCoverArtists.TabIndex = 9;
+      this.progressBarCoverArtists.Visible = false;
+      // 
+      // buttonCoverArtistsLookup
+      // 
+      this.buttonCoverArtistsLookup.Enabled = false;
+      this.buttonCoverArtistsLookup.Location = new System.Drawing.Point(452, 41);
+      this.buttonCoverArtistsLookup.Name = "buttonCoverArtistsLookup";
+      this.buttonCoverArtistsLookup.Size = new System.Drawing.Size(83, 23);
+      this.buttonCoverArtistsLookup.TabIndex = 4;
+      this.buttonCoverArtistsLookup.Text = "Lookup";
+      this.buttonCoverArtistsLookup.UseVisualStyleBackColor = true;
+      this.buttonCoverArtistsLookup.Click += new System.EventHandler(this.buttonCoverArtistLookup_Click);
       // 
       // buttonCoverArtistsRefresh
       // 
@@ -739,6 +771,78 @@ namespace MediaPortal.AudioScrobbler
       this.listViewCoverArtists.TabIndex = 2;
       this.listViewCoverArtists.UseCompatibleStateImageBehavior = false;
       this.listViewCoverArtists.View = System.Windows.Forms.View.Details;
+      // 
+      // tabPageAlbumArt
+      // 
+      this.tabPageAlbumArt.Controls.Add(this.checkBoxCoverAlbumsMissing);
+      this.tabPageAlbumArt.Controls.Add(this.progressBarCoverAlbums);
+      this.tabPageAlbumArt.Controls.Add(this.buttonCoverAlbumsLookup);
+      this.tabPageAlbumArt.Controls.Add(this.buttonCoverAlbumsRefresh);
+      this.tabPageAlbumArt.Controls.Add(this.listViewCoverAlbums);
+      this.tabPageAlbumArt.Location = new System.Drawing.Point(4, 22);
+      this.tabPageAlbumArt.Name = "tabPageAlbumArt";
+      this.tabPageAlbumArt.Size = new System.Drawing.Size(542, 266);
+      this.tabPageAlbumArt.TabIndex = 1;
+      this.tabPageAlbumArt.Text = "Album covers";
+      this.tabPageAlbumArt.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxCoverAlbumsMissing
+      // 
+      this.checkBoxCoverAlbumsMissing.AutoSize = true;
+      this.checkBoxCoverAlbumsMissing.Checked = true;
+      this.checkBoxCoverAlbumsMissing.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxCoverAlbumsMissing.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxCoverAlbumsMissing.Location = new System.Drawing.Point(452, 70);
+      this.checkBoxCoverAlbumsMissing.Name = "checkBoxCoverAlbumsMissing";
+      this.checkBoxCoverAlbumsMissing.Size = new System.Drawing.Size(82, 17);
+      this.checkBoxCoverAlbumsMissing.TabIndex = 15;
+      this.checkBoxCoverAlbumsMissing.Text = "Only missing";
+      this.checkBoxCoverAlbumsMissing.UseVisualStyleBackColor = true;
+      // 
+      // progressBarCoverAlbums
+      // 
+      this.progressBarCoverAlbums.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarCoverAlbums.Location = new System.Drawing.Point(6, 238);
+      this.progressBarCoverAlbums.Name = "progressBarCoverAlbums";
+      this.progressBarCoverAlbums.Size = new System.Drawing.Size(440, 23);
+      this.progressBarCoverAlbums.Step = 1;
+      this.progressBarCoverAlbums.TabIndex = 14;
+      this.progressBarCoverAlbums.Visible = false;
+      // 
+      // buttonCoverAlbumsLookup
+      // 
+      this.buttonCoverAlbumsLookup.Enabled = false;
+      this.buttonCoverAlbumsLookup.Location = new System.Drawing.Point(452, 41);
+      this.buttonCoverAlbumsLookup.Name = "buttonCoverAlbumsLookup";
+      this.buttonCoverAlbumsLookup.Size = new System.Drawing.Size(83, 23);
+      this.buttonCoverAlbumsLookup.TabIndex = 13;
+      this.buttonCoverAlbumsLookup.Text = "Lookup";
+      this.buttonCoverAlbumsLookup.UseVisualStyleBackColor = true;
+      this.buttonCoverAlbumsLookup.Click += new System.EventHandler(this.buttonCoverAlbumsLookup_Click);
+      // 
+      // buttonCoverAlbumsRefresh
+      // 
+      this.buttonCoverAlbumsRefresh.Location = new System.Drawing.Point(452, 12);
+      this.buttonCoverAlbumsRefresh.Name = "buttonCoverAlbumsRefresh";
+      this.buttonCoverAlbumsRefresh.Size = new System.Drawing.Size(83, 23);
+      this.buttonCoverAlbumsRefresh.TabIndex = 12;
+      this.buttonCoverAlbumsRefresh.Text = "Refresh";
+      this.buttonCoverAlbumsRefresh.UseVisualStyleBackColor = true;
+      this.buttonCoverAlbumsRefresh.Click += new System.EventHandler(this.buttonCoverAlbumsRefresh_Click);
+      // 
+      // listViewCoverAlbums
+      // 
+      this.listViewCoverAlbums.AllowColumnReorder = true;
+      this.listViewCoverAlbums.AllowDrop = true;
+      this.listViewCoverAlbums.AllowRowReorder = false;
+      this.listViewCoverAlbums.Location = new System.Drawing.Point(6, 12);
+      this.listViewCoverAlbums.Name = "listViewCoverAlbums";
+      this.listViewCoverAlbums.ShowGroups = false;
+      this.listViewCoverAlbums.Size = new System.Drawing.Size(440, 220);
+      this.listViewCoverAlbums.TabIndex = 11;
+      this.listViewCoverAlbums.UseCompatibleStateImageBehavior = false;
+      this.listViewCoverAlbums.View = System.Windows.Forms.View.Details;
       // 
       // tabPageLiveData
       // 
@@ -1292,30 +1396,6 @@ namespace MediaPortal.AudioScrobbler
       this.labelUser.TabIndex = 2;
       this.labelUser.Text = "Username";
       // 
-      // progressBarCoverArtists
-      // 
-      this.progressBarCoverArtists.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBarCoverArtists.Location = new System.Drawing.Point(6, 238);
-      this.progressBarCoverArtists.Name = "progressBarCoverArtists";
-      this.progressBarCoverArtists.Size = new System.Drawing.Size(440, 23);
-      this.progressBarCoverArtists.Step = 1;
-      this.progressBarCoverArtists.TabIndex = 9;
-      this.progressBarCoverArtists.Visible = false;
-      // 
-      // checkBoxCoverArtistsMissing
-      // 
-      this.checkBoxCoverArtistsMissing.AutoSize = true;
-      this.checkBoxCoverArtistsMissing.Checked = true;
-      this.checkBoxCoverArtistsMissing.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxCoverArtistsMissing.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxCoverArtistsMissing.Location = new System.Drawing.Point(452, 70);
-      this.checkBoxCoverArtistsMissing.Name = "checkBoxCoverArtistsMissing";
-      this.checkBoxCoverArtistsMissing.Size = new System.Drawing.Size(82, 17);
-      this.checkBoxCoverArtistsMissing.TabIndex = 10;
-      this.checkBoxCoverArtistsMissing.Text = "Only missing";
-      this.checkBoxCoverArtistsMissing.UseVisualStyleBackColor = true;
-      // 
       // AudioscrobblerSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1352,6 +1432,8 @@ namespace MediaPortal.AudioScrobbler
       this.tabControlCoverArt.ResumeLayout(false);
       this.tabPageArtistArt.ResumeLayout(false);
       this.tabPageArtistArt.PerformLayout();
+      this.tabPageAlbumArt.ResumeLayout(false);
+      this.tabPageAlbumArt.PerformLayout();
       this.tabPageLiveData.ResumeLayout(false);
       this.tabControlLiveFeeds.ResumeLayout(false);
       this.tabPageRecent.ResumeLayout(false);
@@ -1463,10 +1545,16 @@ namespace MediaPortal.AudioScrobbler
     private System.Windows.Forms.TabPage tabPageCoverArt;
     private MediaPortal.UserInterface.Controls.MPTabControl tabControlCoverArt;
     private System.Windows.Forms.TabPage tabPageArtistArt;
-    private MediaPortal.UserInterface.Controls.MPButton buttonCoverArtistLookup;
+    private MediaPortal.UserInterface.Controls.MPButton buttonCoverArtistsLookup;
     private MediaPortal.UserInterface.Controls.MPButton buttonCoverArtistsRefresh;
     private MediaPortal.UserInterface.Controls.MPListView listViewCoverArtists;
     private System.Windows.Forms.ProgressBar progressBarCoverArtists;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCoverArtistsMissing;
+    private System.Windows.Forms.TabPage tabPageAlbumArt;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCoverAlbumsMissing;
+    private System.Windows.Forms.ProgressBar progressBarCoverAlbums;
+    private MediaPortal.UserInterface.Controls.MPButton buttonCoverAlbumsLookup;
+    private MediaPortal.UserInterface.Controls.MPButton buttonCoverAlbumsRefresh;
+    private MediaPortal.UserInterface.Controls.MPListView listViewCoverAlbums;
   }
 }

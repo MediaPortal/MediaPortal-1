@@ -511,7 +511,7 @@ namespace MediaPortal.GUI.Music
             else
             {
               MusicTag tag = item.MusicTag as MusicTag;
-              strThumb = GUIMusicFiles.GetAlbumThumbName(tag.Artist, tag.Album);
+              strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
               if (System.IO.File.Exists(strThumb))
               {
                 item.IconImage = strThumb;

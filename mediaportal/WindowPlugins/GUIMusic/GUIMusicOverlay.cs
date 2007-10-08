@@ -542,7 +542,7 @@ namespace MediaPortal.GUI.Music
 
       if (isCurrent && tag != null)
       {
-        strThumb = GUIMusicFiles.GetAlbumThumbName(tag.Artist, tag.Album);
+        strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
         if (System.IO.File.Exists(strThumb))
           thumb = strThumb;
       }
