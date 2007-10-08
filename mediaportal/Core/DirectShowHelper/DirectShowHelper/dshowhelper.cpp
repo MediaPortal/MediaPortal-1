@@ -20,7 +20,7 @@
 *
 */
 
-
+#pragma warning(disable: 4995)
 // Windows Header Files:
 #include <windows.h>
 
@@ -56,26 +56,11 @@ TMFCreateVideoSampleFromSurface* m_pMFCreateVideoSampleFromSurface = NULL;
 TMFCreateMediaType* m_pMFCreateMediaType = NULL;
 BOOL m_bEVRLoaded = false;
 
-// This is an example of an exported variable
-DSHOWHELPER_API int ndshowhelper=0;
-
-// This is an example of an exported function.
-DSHOWHELPER_API int fndshowhelper(void)
-{
-  return 42;
-}
-
-// This is the constructor of a class that has been exported.
-// see dshowhelper.h for the class definition
-Cdshowhelper::Cdshowhelper()
-{ 
-  return; 
-}
 
 LPDIRECT3DDEVICE9			    m_pDevice=NULL;
 CVMR9AllocatorPresenter*	m_vmr9Presenter=NULL;
-EVRCustomPresenter*	m_evrPresenter=NULL;
-IMFVideoDisplayControl* m_pControl=NULL;
+EVRCustomPresenter*	      m_evrPresenter=NULL;
+IMFVideoDisplayControl*   m_pControl=NULL;
 IBaseFilter*				      m_pVMR9Filter=NULL;
 IVMRSurfaceAllocator9*		m_allocator=NULL;
 
@@ -559,14 +544,15 @@ void Vmr9SetDeinterlaceMode(int mode)
   char major[128];
   char subtype[128];
   strcpy(major,"unknown");
-  sprintf(subtype,"unknown (0x%x-0x%x-0x%x-0x%x)",pmt.subtype.Data1,pmt.subtype.Data2,pmt.subtype.Data3,pmt.subtype.Data4);
+  sprintf(subtype,"unknown (0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x)",
+    pmt.subtype.Data1,pmt.subtype.Data2,pmt.subtype.Data3,
+    pmt.subtype.Data4[0], pmt.subtype.Data4[1], pmt.subtype.Data4[2], pmt.subtype.Data4[3], pmt.subtype.Data4[4], pmt.subtype.Data4[5], pmt.subtype.Data4[6], pmt.subtype.Data4[7]);
   if (pmt.majortype==MEDIATYPE_AnalogVideo)
     strcpy(major,"Analog video");
   if (pmt.majortype==MEDIATYPE_Video)
     strcpy(major,"video");
   if (pmt.majortype==MEDIATYPE_Stream)
     strcpy(major,"stream");
-
   if (pmt.subtype==MEDIASUBTYPE_MPEG2_VIDEO)
     strcpy(subtype,"mpeg2 video");
   if (pmt.subtype==MEDIASUBTYPE_MPEG1System)
@@ -578,12 +564,12 @@ void Vmr9SetDeinterlaceMode(int mode)
     strcpy(subtype,"mpeg1 packet");
   if (pmt.subtype==MEDIASUBTYPE_MPEG1Payload )
     strcpy(subtype,"mpeg1 payload");
-  //	if (pmt.subtype==MEDIASUBTYPE_ATSC_SI)
-  //		strcpy(subtype,"ATSC SI");
-  //	if (pmt.subtype==MEDIASUBTYPE_DVB_SI)
-  //		strcpy(subtype,"DVB SI");
-  //	if (pmt.subtype==MEDIASUBTYPE_MPEG2DATA)
-  //		strcpy(subtype,"MPEG2 Data");
+ 	if (pmt.subtype==MEDIASUBTYPE_ATSC_SI)
+  		strcpy(subtype,"ATSC SI");
+  if (pmt.subtype==MEDIASUBTYPE_DVB_SI)
+  		strcpy(subtype,"DVB SI");
+  if (pmt.subtype==MEDIASUBTYPE_MPEG2DATA)
+  		strcpy(subtype,"MPEG2 Data");
   if (pmt.subtype==MEDIASUBTYPE_MPEG2_TRANSPORT)
     strcpy(subtype,"MPEG2 Transport");
   if (pmt.subtype==MEDIASUBTYPE_MPEG2_PROGRAM)
@@ -623,8 +609,8 @@ void Vmr9SetDeinterlaceMode(int mode)
     strcpy(subtype,"MEDIASUBTYPE_AYUV");
   if (pmt.subtype==MEDIASUBTYPE_YV12)
     strcpy(subtype,"MEDIASUBTYPE_YV12");
-  //	if (pmt.subtype==MEDIASUBTYPE_NV12)
-  //		strcpy(subtype,"MEDIASUBTYPE_NV12");
+ 	if (pmt.subtype==MEDIASUBTYPE_NV12)
+  	strcpy(subtype,"MEDIASUBTYPE_NV12");
   Log("vmr9:SetDeinterlace() major:%s subtype:%s", major,subtype);
   VideoDesc.dwSize = sizeof(VMR9VideoDesc);
   VideoDesc.dwFourCC=vidInfo2->bmiHeader.biCompression;
