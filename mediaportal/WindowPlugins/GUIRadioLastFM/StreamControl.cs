@@ -383,7 +383,11 @@ namespace MediaPortal.GUI.RADIOLASTFM
       GUIWaitCursor.Show();
 
       if (g_Player.Playing)
-        g_Player.Stop();      
+      {
+        g_Player.Stop();
+        //if (BassMusicPlayer.Player.CrossFadingEnabled)
+        //  Thread.Sleep(BassMusicPlayer.Player.CrossFadeIntervalMS);
+      }
 
       _currentState = StreamPlaybackState.starting;
 

@@ -238,6 +238,7 @@ namespace MediaPortal.GUI.Music
 
     public static bool _createMissingFolderThumbCache = true;
     public static bool _createMissingFolderThumbs = false;
+    public bool _useFolderThumbs = true;
 
     protected View currentView = View.List;
     protected View currentViewRoot = View.List;
@@ -247,7 +248,7 @@ namespace MediaPortal.GUI.Music
     protected bool m_bSortAscendingRoot;
     protected string m_strPlayListPath = string.Empty;
     private bool m_bUseID3 = false;
-    private bool _autoShuffleOnLoad = false;
+    private bool _autoShuffleOnLoad = false;    
 
     protected MusicViewHandler handler;
     protected MusicDatabase m_database;
@@ -262,8 +263,6 @@ namespace MediaPortal.GUI.Music
     string[] _sortTags2 = new string[20];
     protected PlayListPlayer playlistPlayer;
 
-    //SV
-    //protected int PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
     protected PlayNowJumpToType PlayNowJumpTo = PlayNowJumpToType.None;
     protected bool UsingInternalMusicPlayer = false;
 
@@ -293,23 +292,6 @@ namespace MediaPortal.GUI.Music
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        //string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "nowplaying");
-
-        //switch (playNowJumpTo)
-        //{
-        //    case "nowplaying":
-        //        PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
-        //        break;
-
-        //    case "playlist":
-        //        PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST;
-        //        break;
-
-        //    case "none":
-        //        PlayNowJumpToWindowID = -1;
-        //        break;
-        //}
-
         string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "none");
 
         switch (playNowJumpTo)
@@ -363,6 +345,7 @@ namespace MediaPortal.GUI.Music
       {
         _createMissingFolderThumbCache = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
+        _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
 
         currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", (int)View.List);
         currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", (int)View.List);

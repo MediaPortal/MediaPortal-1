@@ -487,7 +487,7 @@ namespace MediaPortal.GUI.Music
             goto case "album";
 
           case "album":
-            if (item.IsFolder)
+            if (item.IsFolder && _useFolderThumbs)
             {
               strThumb = MediaPortal.Util.Utils.GetLocalFolderThumb(item.Path);
               if (System.IO.File.Exists(strThumb))

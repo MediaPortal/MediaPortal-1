@@ -1209,6 +1209,7 @@ namespace MediaPortal.Music.Database
     {
       int dotIndex = 0;
       // build a clean end
+      inputString_ = inputString_.Trim();
       dotIndex = inputString_.LastIndexOf('-');
       if (dotIndex >= inputString_.Length - 2)
         inputString_ = inputString_.Remove(dotIndex);
@@ -1230,7 +1231,7 @@ namespace MediaPortal.Music.Database
         {
           outString = removeInvalidChars(lastFMString);
 
-          if (outString != string.Empty)
+          if (!string.IsNullOrEmpty(outString))
             urlString = System.Web.HttpUtility.UrlEncode(removeEndingChars(outString));
 
           outString = urlString;
@@ -1244,7 +1245,7 @@ namespace MediaPortal.Music.Database
           foreach (Char singleChar in invalidSingleChars)
           {
             // do not loop unless needed
-            if (urlString.IndexOf(singleChar) != -1)
+            if (urlString.IndexOf(singleChar) > 0)
             {
               // check each letter of the string
               for (int s = 0; s < urlString.Length; s++)
