@@ -649,6 +649,7 @@ namespace TvService
           }
           _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
         }
+				_recordingsInProgressList.Remove(recording); //only remove recording from the list, if we are succesful
       }
       catch (Exception ex)
       {
@@ -656,7 +657,8 @@ namespace TvService
       }
       finally
       {
-        _recordingsInProgressList.Remove(recording);
+				//maybe this is causing the never ending recording from hell.
+				//_recordingsInProgressList.Remove(recording);
       }
     }
 
