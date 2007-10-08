@@ -592,9 +592,9 @@ namespace MediaPortal.Music.Database
 
         // When we got Multiple Entries of either Artist, Genre, Albumartist in WMP notation, separated by ";",
         // we will store them separeted by "|"
-        tag.Artist = tag.Artist.Replace(';', '|');
-        tag.AlbumArtist = tag.AlbumArtist.Replace(';', '|');
-        tag.Genre = tag.Genre.Replace(';', '|');
+        tag.Artist = FormatMultipleEntry(tag.Artist);
+        tag.AlbumArtist = FormatMultipleEntry(tag.AlbumArtist);
+        tag.Genre = FormatMultipleEntry(tag.Genre);
 
         if (tag.AlbumArtist == "unknown" || tag.AlbumArtist == String.Empty)
           tag.AlbumArtist = tag.Artist;
@@ -605,6 +605,23 @@ namespace MediaPortal.Music.Database
         return tag;
       }
       return null;
+    }
+
+    /// <summary>
+    /// Multiple Entry fields need to be formatted to contain a | at the end to be able to search correct
+    /// </summary>
+    /// <param name="str"></param>
+    /// <returns></returns>
+    public string FormatMultipleEntry(string str)
+    {
+      string[] strSplit = str.Split(new char[] { ';', '|' });
+      // Can't use a Join as i need to trim all the elements 
+      string strJoin = "";
+      foreach (string strTmp in strSplit)
+      {
+        strJoin += String.Format("{0} | ",strTmp.Trim());
+      }
+      return strJoin;
     }
 
     /// <summary>

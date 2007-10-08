@@ -335,7 +335,7 @@ namespace MediaPortal.GUI.Music
         else
         {
           restrictionLength += Convert.ToInt16(filter.Restriction);
-          whereClause += String.Format(" ({0} like '{1}%' or {0} like '{2}%')", GetField(filter.Where), filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+          whereClause += String.Format(" ({0} like '{1}%' or '{2}%')", GetField(filter.Where), filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
         }
       }
       else
@@ -346,7 +346,7 @@ namespace MediaPortal.GUI.Music
         
         // Do we have a Multiplevalues field, then we need compare with like
         if (IsMultipleValueField(GetField(filter.Where)))
-          whereClause += String.Format(" {0} like '%{1}%'", GetField(filter.Where), selectedValue);
+          whereClause += String.Format(" {0} like '%{1} |%'", GetField(filter.Where), selectedValue);
         else
           whereClause += String.Format(" {0} = '{1}'", GetField(filter.Where), selectedValue);
       }
@@ -399,7 +399,7 @@ namespace MediaPortal.GUI.Music
 
         // Do we have a Multiplevalues field, then we need compare with like
         if (IsMultipleValueField(GetField(filter.Where)))
-          whereClause += String.Format(" {0} like '%{1}%'", GetField(filter.Where), selectedValue);
+          whereClause += String.Format(" {0} like '%{1} |%'", GetField(filter.Where), selectedValue);
         else
           whereClause += String.Format(" {0} = '{1}'", GetField(filter.Where), selectedValue);
       }

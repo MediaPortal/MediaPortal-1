@@ -47,10 +47,10 @@ namespace MediaPortal.Music.Database
 
       aSong.Id = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.idTrack");
       aSong.FileName = DatabaseUtility.Get(aResult, aRow, "tracks.strPath");
-      aSong.Artist = DatabaseUtility.Get(aResult, aRow, "tracks.strArtist");
-      aSong.AlbumArtist = DatabaseUtility.Get(aResult, aRow, "tracks.strAlbumArtist");
+      aSong.Artist = DatabaseUtility.Get(aResult, aRow, "tracks.strArtist").Trim(new char[] { '|', ' ' });
+      aSong.AlbumArtist = DatabaseUtility.Get(aResult, aRow, "tracks.strAlbumArtist").Trim(new char[] { '|', ' ' });
       aSong.Album = DatabaseUtility.Get(aResult, aRow, "tracks.strAlbum");
-      aSong.Genre = DatabaseUtility.Get(aResult, aRow, "tracks.strGenre");
+      aSong.Genre = DatabaseUtility.Get(aResult, aRow, "tracks.strGenre").Trim(new char[] { '|', ' ' });
       aSong.Title = DatabaseUtility.Get(aResult, aRow, "tracks.strTitle");
       aSong.Track = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iTrack");
       aSong.TrackTotal = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iNumTracks");
@@ -229,12 +229,12 @@ namespace MediaPortal.Music.Database
           if (filter == "artist")
           {
             columnIndex = (int)results.ColumnIndices["strArtist"];
-            song.Artist = fields.fields[columnIndex];
+            song.Artist = fields.fields[columnIndex].Trim(new char[] { '|', ' ' });
           }
           if (filter == "albumartist")
           {
             columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
-            song.AlbumArtist = fields.fields[columnIndex];                        
+            song.AlbumArtist = fields.fields[columnIndex].Trim(new char[] { '|', ' ' });                        
           }
           if (filter == "album")
           {
@@ -250,7 +250,7 @@ namespace MediaPortal.Music.Database
           if (filter == "genre")
           {
             columnIndex = (int)results.ColumnIndices["strGenre"];
-            song.Genre = fields.fields[columnIndex];            
+            song.Genre = fields.fields[columnIndex].Trim(new char[] { '|', ' ' });            
           }
           if (filter == "tracks")
           {
