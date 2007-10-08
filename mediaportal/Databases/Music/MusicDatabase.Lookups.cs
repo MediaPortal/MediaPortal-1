@@ -249,6 +249,7 @@ namespace MediaPortal.Music.Database
           }
           if (filter == "genre")
           {
+            AssignAllSongFieldsFromResultSet(ref song, results, i);
             columnIndex = (int)results.ColumnIndices["strGenre"];
             song.Genre = fields.fields[columnIndex].Trim(new char[] { '|', ' ' });            
           }

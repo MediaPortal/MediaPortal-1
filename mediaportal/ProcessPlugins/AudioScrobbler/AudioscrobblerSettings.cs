@@ -790,9 +790,9 @@ namespace MediaPortal.AudioScrobbler
       MusicDatabase mdb = MusicDatabase.Instance;
       if (mdb.GetAllArtists(ref CoverArtists))
       {
-        listViewCoverArtists.Columns.Add("Artist", 220);
-        listViewCoverArtists.Columns.Add("Low res", 100);
-        listViewCoverArtists.Columns.Add("High res", 100);
+        listViewCoverArtists.Columns.Add("Artist", 300);
+        listViewCoverArtists.Columns.Add("Low res", 60);
+        listViewCoverArtists.Columns.Add("High res", 60);
 
         progressBarCoverArtists.Maximum = CoverArtists.Count;
         progressBarCoverArtists.Value = 0;
@@ -802,10 +802,11 @@ namespace MediaPortal.AudioScrobbler
         {
           try
           {
-            ListViewItem listItem = new ListViewItem(CoverArtists[i].ToString());
+            string curArtist = CoverArtists[i].ToString().Trim(new char[] { '|', ' ' });
+            ListViewItem listItem = new ListViewItem(curArtist);
 
             // check low res
-            string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, CoverArtists[i].ToString());
+            string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, curArtist);
             if (System.IO.File.Exists(strThumb))
               listItem.SubItems.Add((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
             else
@@ -839,6 +840,7 @@ namespace MediaPortal.AudioScrobbler
 
       if (listViewCoverArtists.Items.Count > 0)
       {
+        string strVariousArtists = GUILocalizeStrings.Get(340);
         progressBarCoverArtists.Maximum = listViewCoverArtists.Items.Count;
         progressBarCoverArtists.Value = 0;
         progressBarCoverArtists.Visible = true;
@@ -847,9 +849,13 @@ namespace MediaPortal.AudioScrobbler
         {
           if (listViewCoverArtists.Items[i].SubItems[2].Text == "none" || !checkBoxCoverArtistsMissing.Checked)
           {
-            lastFmLookup.getArtistInfo(listViewCoverArtists.Items[i].Text);
+            string curArtist = listViewCoverArtists.Items[i].Text;
+            if (curArtist == "Various Artists" || curArtist == strVariousArtists || curArtist == "unknown")
+              continue;
+
+            lastFmLookup.getArtistInfo(curArtist);
             // let's check and update the artist's status
-            string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, listViewCoverArtists.Items[i].Text);
+            string strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MusicArtists, curArtist);
             if (System.IO.File.Exists(strThumb))
               listViewCoverArtists.Items[i].SubItems[1].Text = ((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
 
@@ -857,8 +863,8 @@ namespace MediaPortal.AudioScrobbler
             if (System.IO.File.Exists(strThumb))
               listViewCoverArtists.Items[i].SubItems[2].Text = ((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
 
-            listViewCoverArtists.RedrawItems(i, i, false);
-            //listViewCoverArtists.TopItem = listViewCoverArtists.Items[i];
+            //listViewCoverArtists.RedrawItems(i, i, false);
+            this.Refresh();
             listViewCoverArtists.Items[i].EnsureVisible();
           }
 
@@ -892,8 +898,8 @@ namespace MediaPortal.AudioScrobbler
         for (int i = 0; i < CoverAlbums.Count; i++)
         {
           try
-          {            
-            ListViewItem listItem = new ListViewItem(CoverAlbums[i].AlbumArtist);
+          {
+            ListViewItem listItem = new ListViewItem(CoverAlbums[i].AlbumArtist.Trim(new char[] { '|', ' ' }));
             listItem.SubItems.Add(CoverAlbums[i].Album);
 
             // check low res
@@ -958,7 +964,8 @@ namespace MediaPortal.AudioScrobbler
             if (System.IO.File.Exists(strThumb))
               listViewCoverAlbums.Items[i].SubItems[3].Text = ((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
 
-            listViewCoverAlbums.RedrawItems(i, i, false);
+            //listViewCoverAlbums.RedrawItems(i, i, false);
+            this.Refresh();
             listViewCoverAlbums.Items[i].EnsureVisible();
           }
 

@@ -1201,6 +1201,8 @@ namespace MediaPortal.Music.Database
         cleanString.Remove(cleanString.IndexOf("Soundtrack"));
       if (cleanString.EndsWith("OST"))
         cleanString.Remove(cleanString.IndexOf("OST"));
+      if (cleanString.EndsWith(" EP"))
+        cleanString.Remove(cleanString.IndexOf(" EP"));
 
       return cleanString;
     }

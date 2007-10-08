@@ -619,7 +619,7 @@ namespace MediaPortal.Music.Database
       string strJoin = "";
       foreach (string strTmp in strSplit)
       {
-        strJoin += String.Format("{0} | ",strTmp.Trim());
+        strJoin += String.Format("{0} | ", strTmp.Trim());
       }
       return strJoin;
     }

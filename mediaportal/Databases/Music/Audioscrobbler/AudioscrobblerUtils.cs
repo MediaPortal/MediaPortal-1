@@ -972,6 +972,22 @@ namespace MediaPortal.Music.Database
               urlArtist = AudioscrobblerBase.getValidURLLastFMString("The " + artistToSearch_);
               urlAlbum = AudioscrobblerBase.getValidURLLastFMString("The " + albumToSearch_);
               break;
+            case 4:
+              urlArtist = artistToSearch_.Replace("oe", "ö");
+              urlArtist = urlArtist.Replace("ae", "ä");
+              urlArtist = urlArtist.Replace("ue", "ü");
+              urlArtist = AudioscrobblerBase.getValidURLLastFMString(urlArtist);
+              urlAlbum = albumToSearch_.Replace("oe", "ö");
+              urlAlbum = urlAlbum.Replace("ae", "ä");
+              urlAlbum = urlAlbum.Replace("ue", "ü");
+              urlAlbum = AudioscrobblerBase.getValidURLLastFMString(urlAlbum);
+              break;
+            case 5:
+              if (artistToSearch_.IndexOf("&") > 0)
+                urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_.Remove(artistToSearch_.IndexOf("&")));
+              else
+                goto default;
+              break;
             default:
               Log.Debug("AudioScrobblerUtils: No album info for {1} found after {0} tries", failover, artistToSearch_ + " - " + albumToSearch_);
               failover = 0;
