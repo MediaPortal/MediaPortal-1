@@ -579,7 +579,7 @@ namespace SetupTv.Sections
       this.groupBox5.Size = new System.Drawing.Size(325, 77);
       this.groupBox5.TabIndex = 17;
       this.groupBox5.TabStop = false;
-      this.groupBox5.Text = "EPG grabbing while timeshifting";
+      this.groupBox5.Text = "EPG grabbing while timeshifting/recording";
       // 
       // checkBoxEnableEpgWhileTimeshifting
       // 

@@ -51,13 +51,16 @@ namespace TvService
   public class Recorder
   {
     ITvCardHandler _cardHandler;
+		bool _timeshiftingEpgGrabberEnabled;
     /// <summary>
     /// Initializes a new instance of the <see cref="Recording"/> class.
     /// </summary>
     /// <param name="cardHandler">The card handler.</param>
     public Recorder(ITvCardHandler cardHandler)
     {
+			TvBusinessLayer layer = new TvBusinessLayer();
       _cardHandler = cardHandler;
+			_timeshiftingEpgGrabberEnabled = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
     }
     /// <summary>
     /// Starts recording.
@@ -113,6 +116,16 @@ namespace TvService
             fileName = subchannel.RecordingFileName;
             context.Owner = user;
           }
+
+					if (_timeshiftingEpgGrabberEnabled)
+					{
+						Channel channel = Channel.Retrieve(user.IdChannel);
+						if (channel.GrabEpg)
+							_cardHandler.Card.GrabEpg();
+						else
+							Log.Info("TimeshiftingEPG: channel {0} is not configured for grabbing epg", channel.DisplayName);
+					}
+
           return result;
 
         }
