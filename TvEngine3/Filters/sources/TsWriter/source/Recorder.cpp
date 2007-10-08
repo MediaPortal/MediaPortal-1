@@ -380,6 +380,8 @@ void CRecorder::OnPidsReceived(const CPidTable& info)
   if (m_pPmtParser && m_pmtVersion!=m_pPmtParser->GetPmtVersion() )
   {
     LogDebug("Recorder: PMT version changed from %d to %d", m_pmtVersion, m_pPmtParser->GetPmtVersion() );
+    LogDebug("Recorder: pmt:0x%x pcr:0x%x video:0x%x audio1:0x%x audio2:0x%x audio3:%x audio4:0x%x audio5:0x%x video:0x%x teletext:0x%x subtitle:0x%x",
+      info.PmtPid,info.PcrPid,info.VideoPid,info.AudioPid1,info.AudioPid2,info.AudioPid3, info.AudioPid4,info.AudioPid5,info.VideoPid,info.TeletextPid,info.SubtitlePid);
 
     if (m_pmtVersion==-1)
     {
@@ -388,9 +390,6 @@ void CRecorder::OnPidsReceived(const CPidTable& info)
       return;
     }
 
-    LogDebug("Recorder: Update PMT pmt:0x%x pcr:0x%x video:0x%x audio1:0x%x audio2:0x%x audio3:%x audio4:0x%x audio5:0x%x video:0x%x teletext:0x%x subtitle:0x%x",
-      info.PmtPid,info.PcrPid,info.VideoPid,info.AudioPid1,info.AudioPid2,info.AudioPid3, info.AudioPid4,info.AudioPid5,info.VideoPid,info.TeletextPid,info.SubtitlePid);
-  
     LogDebug("Recorder: clear PIDs vector" );
     m_vecPids.clear();
     m_pmtVersion=m_pPmtParser->GetPmtVersion();
@@ -462,7 +461,7 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
       m_startPcr.Reset();
       m_highestPcr.Reset();
 
-      LogDebug( "PCR rollover detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+      LogDebug( "PCR rollover detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString(), header.Pid );
     }
     else
     {      
@@ -473,13 +472,13 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
       {
         m_pcrHole += diff;
         m_pcrHole -= step; 
-        LogDebug( "Jump forward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+        LogDebug( "Jump forward in PCR detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString(), header.Pid );
       }
       else
       {
         m_pcrHole -= diff;
         m_pcrHole += step;
-        LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString() );
+        LogDebug( "Jump backward in PCR detected! prev %s new %s diff %s - pid:%x" , m_prevPcr.ToString(), pcrNew.ToString(), diff.ToString(), header.Pid );
       }
     }
   }
@@ -492,7 +491,7 @@ void CRecorder::PatchPcr(byte* tsPacket,CTsHeader& header)
     pcrHi += m_pcrDuration;
   }
 
-  //LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString() );
+  //LogDebug("hole: %s hi: %s new: %s prev: %s start: %s - diff: %s - pid:%x", m_pcrHole.ToString(), pcrHi.ToString(), pcrNew.ToString(), m_prevPcr.ToString(), m_startPcr.ToString(), diff.ToString(), header.Pid );
   tsPacket[6] = (byte)(((pcrHi.PcrReferenceBase>>25)&0xff));
   tsPacket[7] = (byte)(((pcrHi.PcrReferenceBase>>17)&0xff));
   tsPacket[8] = (byte)(((pcrHi.PcrReferenceBase>>9)&0xff));
@@ -536,7 +535,7 @@ void CRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 		// 9       10        11        12      13
 		//76543210 76543210 76543210 76543210 76543210
 		//0011pppM pppppppp pppppppM pppppppp pppppppM 
-		//LogDebug("pts: org:%s new:%s start:%s", ptsorg.ToString(),pts.ToString(),startPcr.ToString()); 
+		//LogDebug("pts: org:%s new:%s start:%s - pid:%x", ptsorg.ToString(),pts.ToString(),startPcr.ToString(), header.Pid); 
 		byte marker=0x21;
 		if (dts.PcrReferenceBase!=0) marker=0x31;
 		pesHeader[13]=(byte)((( (pts.PcrReferenceBase&0x7f)<<1)+1));   pts.PcrReferenceBase>>=7;
@@ -559,7 +558,7 @@ void CRecorder::PatchPtsDts(byte* tsPacket,CTsHeader& header,CPcr& startPcr)
 			// 14       15        16        17      18
 			//76543210 76543210 76543210 76543210 76543210
 			//0001pppM pppppppp pppppppM pppppppp pppppppM 
-	 		//LogDebug("dts: org:%s new:%s start:%s", dtsorg.ToString(),dts.ToString(),startPcr.ToString()); 
+	 		//LogDebug("dts: org:%s new:%s start:%s - pid:%x", dtsorg.ToString(),dts.ToString(),startPcr.ToString(), header.Pid); 
 			pesHeader[18]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
 			pesHeader[17]=(byte)(   (dts.PcrReferenceBase&0xff));				  dts.PcrReferenceBase>>=8;
 			pesHeader[16]=(byte)( (((dts.PcrReferenceBase&0x7f)<<1)+1));  dts.PcrReferenceBase>>=7;
