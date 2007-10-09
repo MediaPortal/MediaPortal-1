@@ -1363,7 +1363,7 @@ namespace MediaPortal.Music.Database
       if (imageUrl != "")
       {
         // do not download last.fm's placeholder
-        if ((imageUrl.IndexOf("no_album") <= 0) && (imageUrl.IndexOf("no_artist") <= 0) && (imageUrl.IndexOf(@"/noimage/") <= 0))
+        if ((imageUrl.IndexOf("no_album") <= 0) && (imageUrl.IndexOf("no_artist") <= 0) && (imageUrl.IndexOf(@"/noimage/") <= 0) && (!imageUrl.EndsWith(@"160/260045.jpg")))
         {
           //Create the album subdir in thumbs if it does not exist.
           if (!System.IO.Directory.Exists(thumbspath))
