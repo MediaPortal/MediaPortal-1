@@ -242,7 +242,13 @@ namespace MediaPortal.Music.Database
             song.Album = fields.fields[columnIndex];
             columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
             song.AlbumArtist = fields.fields[columnIndex];
-            song.Artist = song.AlbumArtist;         // Make Artist equal to AlbumArtist (used by facadeView)
+            if (song.AlbumArtist.ToLowerInvariant().Contains("unknown"))
+            {
+              columnIndex = (int)results.ColumnIndices["strArtist"];
+              song.Artist = fields.fields[columnIndex].Trim(new char[] { '|', ' ' });
+            }
+            else
+              song.Artist = song.AlbumArtist;         // Make Artist equal to AlbumArtist (used by facadeView)
             // Set the Pathname for Cover Art Retrieval
             columnIndex = (int)results.ColumnIndices["strPath"];
             song.FileName = String.Format("{0}\\",System.IO.Path.GetDirectoryName(fields.fields[columnIndex]));
@@ -800,7 +806,7 @@ namespace MediaPortal.Music.Database
         aAlbumInfoList.Clear();
 
         string strSQL;
-        strSQL = String.Format("SELECT distinct(strAlbum), strAlbumArtist FROM tracks ORDER BY strAlbumArtist, strAlbum");
+        strSQL = String.Format("SELECT DISTINCT strAlbum, strAlbumArtist, strArtist FROM tracks ORDER BY strArtist, strAlbumArtist, strAlbum");
         
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
@@ -810,7 +816,8 @@ namespace MediaPortal.Music.Database
         {
           AlbumInfo album = new AlbumInfo();
           album.Album = DatabaseUtility.Get(results, i, "strAlbum");
-          album.AlbumArtist = DatabaseUtility.Get(results, i, "strAlbumArtist");          
+          album.AlbumArtist = DatabaseUtility.Get(results, i, "strAlbumArtist");
+          album.Artist = DatabaseUtility.Get(results, i, "strArtist");
           
           aAlbumInfoList.Add(album);
         }
@@ -835,7 +842,7 @@ namespace MediaPortal.Music.Database
 
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
 
-        string strSQL = "SELECT distinct(strAlbum), * FROM tracks where strAlbum like ";
+        string strSQL = "SELECT DISTINCT strAlbum, * FROM tracks where strAlbum like ";
         switch (aSearchKind)
         {
           case 0:
@@ -863,6 +870,7 @@ namespace MediaPortal.Music.Database
           AlbumInfo album = new AlbumInfo();
           album.Album = DatabaseUtility.Get(results, i, "strAlbum");
           album.AlbumArtist = DatabaseUtility.Get(results, i, "strAlbumArtist");
+          album.Artist = DatabaseUtility.Get(results, i, "strArtist");
           //album.IdAlbum = DatabaseUtility.GetAsInt(results, i, "album.idAlbumArtist");  //album.IdAlbum contains IdAlbumArtist
           aAlbumArray.Add(album);
         }
@@ -1154,31 +1162,31 @@ namespace MediaPortal.Music.Database
       return false;
     }
     
-    //public int GetArtistId(string aArtist)
-    //{
-    //  try
-    //  {
-    //    if (MusicDbClient == null)
-    //      return -1;
+    public int GetArtistId(string aArtist)
+    {
+      try
+      {
+        if (MusicDbClient == null)
+          return -1;
 
-    //    string strSQL;
-    //    strSQL = String.Format("select distinct artist.idArtist from artist where artist.strArtist='{0}'", aArtist);
-    //    SQLiteResultSet results;
-    //    results = MusicDbClient.Execute(strSQL);
-    //    if (results.Rows.Count == 0)
-    //      return -1;
+        string strSQL;
+        strSQL = String.Format("select DISTINCT artist.idArtist from artist where artist.strArtist='{0}'", aArtist);
+        SQLiteResultSet results;
+        results = MusicDbClient.Execute(strSQL);
+        if (results.Rows.Count == 0)
+          return -1;
 
-    //    return DatabaseUtility.GetAsInt(results, 0, "artist.idArtist");
-    //  }
+        return DatabaseUtility.GetAsInt(results, 0, "artist.idArtist");
+      }
 
-    //  catch (Exception ex)
-    //  {
-    //    Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-    //    Open();
-    //  }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
 
-    //  return -1;
-    //}
+      return -1;
+    }
 
     public bool GetGenres(ref ArrayList genres)
     {

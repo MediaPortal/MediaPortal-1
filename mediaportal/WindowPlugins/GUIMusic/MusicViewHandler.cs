@@ -302,7 +302,7 @@ namespace MediaPortal.GUI.Music
           // We don't have an album table anymore, so change the table to search for to tracks here.
           if (table == "album")
           {
-            from = String.Format("{0}, strAlbumArtist, strPath from tracks", GetField(defCurrent.Where));
+            from = String.Format("{0}, strArtist, strAlbumArtist, strPath from tracks", GetField(defCurrent.Where));
             whereClause += " group by strAlbum ";
           }
 

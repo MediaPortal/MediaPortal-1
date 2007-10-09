@@ -912,11 +912,11 @@ namespace MediaPortal.AudioScrobbler
         {
           try
           {
-            ListViewItem listItem = new ListViewItem(CoverAlbums[i].AlbumArtist.Trim(new char[] { '|', ' ' }));
+            ListViewItem listItem = new ListViewItem(CoverAlbums[i].Artist.Trim(new char[] { '|', ' ' }));
             listItem.SubItems.Add(CoverAlbums[i].Album);
 
             // check low res
-            string strThumb = MediaPortal.Util.Utils.GetAlbumThumbName(CoverAlbums[i].AlbumArtist, CoverAlbums[i].Album);
+            string strThumb = MediaPortal.Util.Utils.GetAlbumThumbName(CoverAlbums[i].Artist, CoverAlbums[i].Album);
             if (System.IO.File.Exists(strThumb))
               listItem.SubItems.Add((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
             else

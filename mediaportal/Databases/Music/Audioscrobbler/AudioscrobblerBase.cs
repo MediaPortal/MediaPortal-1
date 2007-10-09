@@ -1188,6 +1188,8 @@ namespace MediaPortal.Music.Database
       if (dotIndex > 0)
         cleanString = cleanString.Remove(dotIndex);
 
+      // TODO: build REGEX here
+
       // substitute "&" with "and"
       cleanString = cleanString.Replace("&", " and ");
       // make sure there's only one space
@@ -1203,6 +1205,8 @@ namespace MediaPortal.Music.Database
         cleanString.Remove(cleanString.IndexOf("OST"));
       if (cleanString.EndsWith(" EP"))
         cleanString.Remove(cleanString.IndexOf(" EP"));
+      if (cleanString.EndsWith(" (EP)"))
+        cleanString.Remove(cleanString.IndexOf(" (EP)"));
 
       return cleanString;
     }
