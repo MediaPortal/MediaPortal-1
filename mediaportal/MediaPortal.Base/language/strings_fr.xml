@@ -448,6 +448,7 @@
     <String id="517">Erreur fatale, l'action ne peut aboutir</String>
     <String id="518">Effacer ce morceau ?</String>
     <String id="519">Sous-titres off</String>
+    <String id="528">Album Artistes</String>
     <String id="529">Vue: Grande liste d'icône</String>
     <String id="530">Disque de Photo inséré, voulez-vous l'ouvrir ?</String>
     <String id="531">Disque vidéo inséré, voulez-vous l'ouvrir ?</String>
@@ -480,6 +481,11 @@
     <String id="558">Aucun vent</String>
     <String id="559">à proximité </String>
     <String id="560">Dégagement </String>
+    <String id="561">km/h</String>
+    <String id="562">mph</String>
+    <String id="563">nd</String>
+    <String id="564">m/s</String>
+    <String id="565">bft</String>
     <String id="590">P. 100</String>
     <String id="591">P. 200</String>
     <String id="592">P. 300</String>
@@ -917,6 +923,8 @@
     <String id="1507">Chaîne inconnue</String>
     <String id="1508">Chaîne définie sur aucune carte</String>
     <String id="1509">Pas de fréquence pour cette chaîne</String>
+    <String id="1510">Connexion au service TV perdue</String>
+    <String id="1511">Pas de flux actif</String>
     <String id="1950" prefix="Mon ">Etat</String>
     <String id="1951">Disque dur</String>
     <String id="1952">Ventilateur</String>
@@ -1272,6 +1280,8 @@
     <String id="6034">Recherche par genre</String>
     <String id="6035">Ajouter programme</String>
     <String id="6036">Codec Video H.264</String>
+    <String id="6037">Film empilé</String>
+    <String id="6038">Selectionner disque à lancer</String>
     <String id="8000" prefix="Mes ">Messages</String>
     <String id="8001">Vérifier boîte aux lettres</String>
     <String id="8002">Vérification auto. inactive</String>
