@@ -777,7 +777,7 @@ namespace MediaPortal.Music.Database
 
         for (int i = 0 ; i < results.Rows.Count ; ++i)
         {
-          string strArtist = DatabaseUtility.Get(results, i, "strArtist").Trim(new char[] { '|', ' ' });
+          string strArtist = DatabaseUtility.Get(results, i, "strArtist");
           aArtistArray.Add(strArtist);
         }
 
@@ -809,8 +809,8 @@ namespace MediaPortal.Music.Database
         for (int i = 0 ; i < results.Rows.Count ; ++i)
         {
           AlbumInfo album = new AlbumInfo();
-          album.AlbumArtist = DatabaseUtility.Get(results, i, "strAlbumArtist").Trim(new char[] { '|', ' ' });
-          album.Album = DatabaseUtility.Get(results, i, "strAlbum");          
+          album.Album = DatabaseUtility.Get(results, i, "strAlbum");
+          album.AlbumArtist = DatabaseUtility.Get(results, i, "strAlbumArtist");          
           
           aAlbumInfoList.Add(album);
         }
@@ -862,7 +862,7 @@ namespace MediaPortal.Music.Database
         {
           AlbumInfo album = new AlbumInfo();
           album.Album = DatabaseUtility.Get(results, i, "strAlbum");
-          album.AlbumArtist = DatabaseUtility.Get(results, i, "strAlbumArtist").Trim(new char[] { '|', ' ' });
+          album.AlbumArtist = DatabaseUtility.Get(results, i, "strAlbumArtist");
           //album.IdAlbum = DatabaseUtility.GetAsInt(results, i, "album.idAlbumArtist");  //album.IdAlbum contains IdAlbumArtist
           aAlbumArray.Add(album);
         }
@@ -1240,7 +1240,7 @@ namespace MediaPortal.Music.Database
 
         for (int i = 0; i < results.Rows.Count; ++i)
         {
-          string tmpGenre = DatabaseUtility.Get(results, i, "strGenre").Trim(new char[] { '|', ' ' });
+          string tmpGenre = DatabaseUtility.Get(results, i, "strGenre");
           if (!string.IsNullOrEmpty(tmpGenre))
             aGenreArray.Add(tmpGenre);
         }

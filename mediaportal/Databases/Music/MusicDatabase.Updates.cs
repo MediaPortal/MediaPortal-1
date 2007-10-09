@@ -1084,7 +1084,7 @@ namespace MediaPortal.Music.Database
           {
             int id = map.m_song.Id;
             strSQL = string.Format("update tracks set strAlbumArtist = 'Various Artists' where idTrack={0}", id);
-            MusicDbClient.Execute(strSQL);
+            MusicDatabase.DirectExecute(strSQL);
           }
         }
 
