@@ -39,31 +39,30 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
       if (iStartOfMovieList < 0) iStartOfMovieList = strBody.IndexOf("Partial Matches");
       if (iStartOfMovieList < 0) iStartOfMovieList = strBody.IndexOf("Approx Matches");
 
-      int endOfTitleList = strBody.IndexOf("Suggestions For Improving Your Results");
-      if (iStartOfMovieList < 0)
-      {
-        int iMovieTitle = strBody.IndexOf("<title>");
-        int iMovieDirector = strBody.IndexOf("Director");
-        int iMovieGenre = strBody.IndexOf("Genre:");
-        int iMoviePlot = strBody.IndexOf("Plot");
-
-        if (iMovieTitle >= 0 && iMovieDirector >= 0 && iMovieGenre >= 0 && iMoviePlot >= 0)
+        int endOfTitleList = strBody.IndexOf("Suggestions For Improving Your Results");
+        if (iStartOfMovieList < 0)
         {
-          int iEnd = strBody.IndexOf("<", iMovieTitle + 7);
-          if (iEnd > 0)
+          int iMovieTitle = strBody.IndexOf("<title>");
+          int iOverview = strBody.IndexOf("Overview");
+          int iMovieGenre = strBody.IndexOf("Genre:");
+          int iMoviePlot = strBody.IndexOf("Plot");
+
+          if (iMovieTitle >= 0 && iOverview >= 0 && iMoviePlot >= 0)
           {
-            iMovieTitle += "<title>".Length;
-            strTitle = strBody.Substring(iMovieTitle, iEnd - iMovieTitle);
-            strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
-            MediaPortal.Util.HTMLUtil htmlUtil = new HTMLUtil();
-            htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
-	    // name of grabber !!!
-            MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl(strURL, strTitle + " (imdb_com)", "imdb_com");
-            elements.Add(url);
+            int iEnd = strBody.IndexOf("<", iMovieTitle + 7);
+            if (iEnd > 0)
+            {
+              iMovieTitle += "<title>".Length;
+              strTitle = strBody.Substring(iMovieTitle, iEnd - iMovieTitle);
+              strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
+              HTMLUtil htmlUtil = new HTMLUtil();
+              htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
+              IMDBUrl url = new IMDBUrl(strURL, strTitle + " (imdb)", "IMDB");
+              elements.Add(url);
+            }
           }
+          return;
         }
-        return;
-      }
 
       iStartOfMovieList += "<table>".Length;
       int iEndOfMovieList = strBody.IndexOf("</table>", iStartOfMovieList);

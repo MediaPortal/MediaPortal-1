@@ -1020,11 +1020,11 @@ namespace MediaPortal.Video.Database
         if (iStartOfMovieList < 0)
         {
           int iMovieTitle = strBody.IndexOf("<title>");
-          int iMovieDirector = strBody.IndexOf("Director");
+          int iOverview = strBody.IndexOf("Overview");
           int iMovieGenre = strBody.IndexOf("Genre:");
           int iMoviePlot = strBody.IndexOf("Plot");
 
-          if (iMovieTitle >= 0 && iMovieDirector >= 0 && iMovieGenre >= 0 && iMoviePlot >= 0)
+          if (iMovieTitle >= 0 && iOverview >= 0 && iMoviePlot >= 0)
           {
             int iEnd = strBody.IndexOf("<", iMovieTitle + 7);
             if (iEnd > 0)
@@ -1042,7 +1042,7 @@ namespace MediaPortal.Video.Database
         }
 
         iStartOfMovieList += "<table>".Length;
-        int iEndOfMovieList = strBody.IndexOf("</table>", iStartOfMovieList);
+        int iEndOfMovieList = strBody.IndexOf("Suggestions For Improving Your Results"); //strBody.IndexOf("</table>", iStartOfMovieList);
 
         if (iEndOfMovieList < 0)
         {
