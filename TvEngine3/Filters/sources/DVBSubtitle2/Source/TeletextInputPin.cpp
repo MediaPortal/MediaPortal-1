@@ -243,15 +243,24 @@ int CTeletextInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen
 	// see Table 1 in section 4.3
 	int size = 46; // data_unit_id + data_unit_length + data_field()
 	int dataLeft = dataBlockLen - 1; // subtract 1 for data_identifier
-
+	
+	int initialDataLeft = dataLeft;
+	
 	int offset = -1;
 
 	for(int i = 0; dataLeft >= size; i++){
-		offset = 1 + i * size; 
+		//offset = 1 + i * size; 
+		offset = dataBlockLen - dataLeft; 
 
 		byte data_unit_id = data[offset];	
 
 		if(!(data_unit_id == 0xFF || data_unit_id == 0x02 || data_unit_id == 0x03)){
+			if(data_unit_id >= 0x80 && data_unit_id <= 0xFE){
+				// custom data. Can have other data field length, so skip it.
+				byte data_unit_length = data[offset+1];
+				dataLeft -= data_unit_length + 2; // +2 for id and length
+				continue;
+			}
 			LogDebug("Data unit id incorrect: %X", data_unit_id);
 			if(data_unit_id == 0x2C && data[offset+2] == 0xE4 && data_identifier == 0x02){
 				LogDebug("Data starts without data_identifier! data_identifier has value of data_unit_id, data_unit_id of data_unit_length etc..!!!");
@@ -265,7 +274,12 @@ int CTeletextInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen
 			//LogDebug("EBU Teletext subtitle data"); 
 
 			byte data_unit_length = data[offset+1];
-			assert(data_unit_length == 0x2C); // always the same length for teletext data (see section 4.4)
+
+			// always the same length for teletext data (see section 4.4)
+			if(data_unit_length != 0x2C){
+				LogDebug("EBU teletext sub has wrong length field! %X", data_unit_length);
+			}
+			
 
 			byte* teletextPacketData = &data[offset+2]; // skip past data_unit_id and data_unit_length
 
@@ -273,7 +287,9 @@ int CTeletextInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen
 		}
 		else if(data_unit_id == 0x02){ //EBU teletext non-subtitle data
 			byte data_unit_length = data[offset+1];
-			assert(data_unit_length == 0x2C);
+			if(data_unit_length != 0x2C){
+				LogDebug("EBU teletext non-sub has wrong length field! %X", data_unit_length);
+			}
 		}
 		dataLeft -= size;
 	}
