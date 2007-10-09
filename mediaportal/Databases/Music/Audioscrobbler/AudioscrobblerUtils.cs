@@ -989,7 +989,7 @@ namespace MediaPortal.Music.Database
                 goto default;
               break;
             default:
-              Log.Debug("AudioScrobblerUtils: No album info for {1} found after {0} tries", failover, artistToSearch_ + " - " + albumToSearch_);
+              Log.Debug("AudioScrobblerUtils: No album info found for {0}", artistToSearch_ + " - " + albumToSearch_);
               failover = 0;
               break;
           }
@@ -1149,7 +1149,7 @@ namespace MediaPortal.Music.Database
 
           if (artistToSearch_.ToLowerInvariant() != tmpSong.Artist.ToLowerInvariant())
           {
-            Log.Info("AudioScrobblerUtils: alternative artist spelling detected - try to fetch both thumbs (MP: {0} / official: {1})", artistToSearch_, tmpSong.Artist);
+            Log.Warn("AudioScrobblerUtils: alternative artist spelling detected - trying to fetch both thumbs (MP: {0} / official: {1})", artistToSearch_, tmpSong.Artist);
             fetchWebImage(coverURL, artistToSearch_ + ".jpg", Thumbs.MusicArtists);
             fetchWebImage(coverURL, tmpSong.Artist + ".jpg", Thumbs.MusicArtists);
           }
@@ -1744,7 +1744,7 @@ namespace MediaPortal.Music.Database
         if (artist_.ToLowerInvariant() != tmpArtist.ToLowerInvariant())        
         {
           string thumbPathAlternative = tmpArtist + "-" + tmpAlbum + Util.Utils.GetThumbExtension();
-          Log.Info("AudioScrobblerUtils: alternative album artist spelling detected - try to fetch both thumbs (MP: {0} / official: {1})", artist_, tmpArtist);
+          Log.Warn("AudioScrobblerUtils: alternative album artist spelling detected - fetching both thumbs (MP: {0} / official: {1})", artist_, tmpArtist);
           fetchWebImage(tmpCover, thumbPathAlternative, Thumbs.MusicAlbum);
           fetchWebImage(tmpCover, thumbPath, Thumbs.MusicAlbum);
         }

@@ -800,7 +800,7 @@ namespace MediaPortal.Music.Database
         aAlbumInfoList.Clear();
 
         string strSQL;
-        strSQL = String.Format("SELECT distinct(strAlbum), strAlbumArtist FROM tracks");
+        strSQL = String.Format("SELECT distinct(strAlbum), strAlbumArtist FROM tracks ORDER BY strAlbumArtist, strAlbum");
         
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
