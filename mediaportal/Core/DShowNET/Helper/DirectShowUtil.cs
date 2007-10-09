@@ -89,7 +89,7 @@ namespace DShowNET.Helper
     {
       try
       {
-       
+
         IPin pinOut = null;
         IBaseFilter NewFilter = null;
         Log.Info("add filter:{0} to graph clock:{1}", strFilterName, setAsReferenceClock);
@@ -98,7 +98,7 @@ namespace DShowNET.Helper
         bool bRendererExists = false;
         foreach (Filter filter in Filters.AudioRenderers)
         {
-          
+
           if (String.Compare(filter.Name, strFilterName, true) == 0)
           {
             bRendererExists = true;
@@ -116,21 +116,21 @@ namespace DShowNET.Helper
         bool bNeedAdd = true;
         IEnumFilters enumFilters;
         HResult hr = new HResult(graphBuilder.EnumFilters(out enumFilters));
-       
+
         if (hr >= 0 && enumFilters != null)
         {
           int iFetched;
           enumFilters.Reset();
           while (!bAllRemoved)
           {
-           
+
             IBaseFilter[] pBasefilter = new IBaseFilter[2];
             hr.Set(enumFilters.Next(1, pBasefilter, out iFetched));
             if (hr < 0 || iFetched != 1 || pBasefilter[0] == null) break;
 
-           foreach (Filter filter in Filters.AudioRenderers)
+            foreach (Filter filter in Filters.AudioRenderers)
             {
-             
+
               Guid classId1;
               Guid classId2;
 
@@ -139,13 +139,25 @@ namespace DShowNET.Helper
               if (filter.Name == "ReClock Audio Renderer")
               {
                 Log.Warn("Reclock is installed - if this method fails, reinstall and regsvr32 /u reclock and then uninstall");
-             //   return null;
-            
+                //   return null;
+
               }
-           
-              NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
-              if (NewFilter == null)
-                Log.Info("NewFilter = null");
+
+              try
+              {
+                NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
+                if (NewFilter == null)
+                {
+                  Log.Info("NewFilter = null");
+                  continue;
+                }
+
+              }
+              catch (Exception e)
+              {
+                Log.Info("Exception in BindToMoniker({0}): {1}", filter.MonikerString, e.Message);
+                continue;
+              }
               NewFilter.GetClassID(out classId2);
               Marshal.ReleaseComObject(NewFilter);
               NewFilter = null;
