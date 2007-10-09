@@ -2339,6 +2339,8 @@ namespace TvLibrary.Implementations.DVB
 
       _epgGrabberCallback = callback;
       Log.Log.Write("dvb:grab epg...");
+      if (_interfaceEpgGrabber == null)
+        return;
       _interfaceEpgGrabber.SetCallBack((IEpgCallback)callback);
       _interfaceEpgGrabber.GrabEPG();
       _interfaceEpgGrabber.GrabMHW();
