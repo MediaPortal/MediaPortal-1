@@ -1042,22 +1042,28 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
   }
 }
 
-//static int addCount = 0;
-
 void CDeMultiplexer::FillTeletext(CTsHeader& header, byte* tsPacket)
 {
+	
   if (m_pids.TeletextPid==0) return;
   if (header.Pid!=m_pids.TeletextPid) return;
   if (m_filter.GetTeletextPin()->IsConnected()==false) return;
   if ( header.AdaptionFieldOnly() ) return;
 
   CAutoLock lock (&m_sectionTeletext);
+
   if ( false==header.AdaptionFieldOnly() ) 
   {
-    if (m_vecTeletextBuffers.size()>MAX_BUF_SIZE) 
+    if (m_vecTeletextBuffers.size()>=  MAX_BUF_SIZE) 
     {
-      LogDebug("TeletextBuffer contains too much!");
-      m_vecTeletextBuffers.erase(m_vecSubtitleBuffers.begin());
+	  LogDebug("TeletextBuffer contains too much (%i buffers already)!", m_vecTeletextBuffers.size());
+	  int s = m_vecTeletextBuffers.size();
+	  if(m_vecTeletextBuffers.begin() == m_vecTeletextBuffers.end()){
+		LogDebug("Too many teletext buffers, but yet teletext buffer vector is empty!");
+		return;
+	  }
+	  //else m_vecTeletextBuffers.erase(m_vecSubtitleBuffers.begin());
+	  m_vecTeletextBuffers.clear();
     }
 
     //m_pCurrentTeletextBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
@@ -1069,9 +1075,6 @@ void CDeMultiplexer::FillTeletext(CTsHeader& header, byte* tsPacket)
     m_pCurrentTeletextBuffer = new CBuffer();
   }
 }
-
-	
-
 
 /// This method gets called-back from the pat parser when a new PAT/PMT/SDT has been received
 /// In this method we check if any audio/video/subtitle pid or format has changed
