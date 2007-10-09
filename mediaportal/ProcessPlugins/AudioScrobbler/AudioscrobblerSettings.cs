@@ -964,7 +964,7 @@ namespace MediaPortal.AudioScrobbler
 
             if (string.IsNullOrEmpty(curArtist) || string.IsNullOrEmpty(curAlbum))
               continue;
-            if (curArtist.ToLowerInvariant() == "various artists" || curArtist.ToLowerInvariant() == strVariousArtists || curArtist.ToLowerInvariant() == "unknown")
+            if (curArtist.ToLowerInvariant() == "various artists" || curArtist.ToLowerInvariant() == strVariousArtists || curArtist.ToLowerInvariant() == "unknown" || curAlbum.ToLowerInvariant() == "unknown")
             {
               listViewCoverAlbums.Items[i].ForeColor = Color.LightGray;
               continue;
