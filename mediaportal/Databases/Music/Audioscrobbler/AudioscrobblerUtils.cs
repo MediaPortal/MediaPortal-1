@@ -1089,7 +1089,7 @@ namespace MediaPortal.Music.Database
         }
         else
         {
-          Log.Debug("AudioScrobblerUtils: randomPosition {0} not reasonable for list of {1} tags", randomPosition, tagTracks.Count);
+          //Log.Debug("AudioScrobblerUtils: randomPosition {0} not reasonable for list of {1} tags", randomPosition, tagTracks.Count);
           if (tagTracks.Count == 1)
           {
             tmpGenre = tagTracks[0].Genre.ToLowerInvariant();

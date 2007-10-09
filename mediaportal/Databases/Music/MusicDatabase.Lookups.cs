@@ -557,7 +557,7 @@ namespace MediaPortal.Music.Database
         string strGenre = aGenre;
         DatabaseUtility.RemoveInvalidChars(ref strGenre);
 
-        string sql = string.Format("SELECT * FROM tracks WHERE strGenre like '%{0}' order by strTitle asc", strGenre);
+        string sql = string.Format("SELECT * FROM tracks WHERE strGenre like '%{0}%' order by strTitle asc", strGenre);
         GetSongsByFilter(sql, out aSongList, "genre");
 
         return true;
@@ -777,7 +777,7 @@ namespace MediaPortal.Music.Database
 
         for (int i = 0 ; i < results.Rows.Count ; ++i)
         {
-          string strArtist = DatabaseUtility.Get(results, i, "strArtist");
+          string strArtist = DatabaseUtility.Get(results, i, "strArtist").Trim(new char[] { '|', ' ' });
           aArtistArray.Add(strArtist);
         }
 
@@ -809,8 +809,8 @@ namespace MediaPortal.Music.Database
         for (int i = 0 ; i < results.Rows.Count ; ++i)
         {
           AlbumInfo album = new AlbumInfo();
-          album.Album = DatabaseUtility.Get(results, i, "strAlbum");
-          album.AlbumArtist = DatabaseUtility.Get(results, i, "strAlbumArtist");
+          album.AlbumArtist = DatabaseUtility.Get(results, i, "strAlbumArtist").Trim(new char[] { '|', ' ' });
+          album.Album = DatabaseUtility.Get(results, i, "strAlbum");          
           
           aAlbumInfoList.Add(album);
         }
@@ -862,7 +862,7 @@ namespace MediaPortal.Music.Database
         {
           AlbumInfo album = new AlbumInfo();
           album.Album = DatabaseUtility.Get(results, i, "strAlbum");
-          album.AlbumArtist = DatabaseUtility.Get(results, i, "strAlbumArtist");
+          album.AlbumArtist = DatabaseUtility.Get(results, i, "strAlbumArtist").Trim(new char[] { '|', ' ' });
           //album.IdAlbum = DatabaseUtility.GetAsInt(results, i, "album.idAlbumArtist");  //album.IdAlbum contains IdAlbumArtist
           aAlbumArray.Add(album);
         }
@@ -877,46 +877,6 @@ namespace MediaPortal.Music.Database
 
       return false;
     }
-
-    //public bool GetVariousArtistsAlbums(ref List<AlbumInfo> aAlbumInfoList)
-    //{
-    //  try
-    //  {
-    //    aAlbumInfoList.Clear();
-    //    if (null == MusicDbClient)
-    //      return false;
-
-    //    string variousArtists = GUILocalizeStrings.Get(340);
-
-    //    if (variousArtists.Length == 0)
-    //      variousArtists = "Various Artists";
-
-    //    long idVariousArtists = GetVariousArtistsId();
-
-    //    string strSQL;
-    //    strSQL = String.Format("select * from album where album.idAlbumArtist='{0}'", idVariousArtists);
-    //    SQLiteResultSet results;
-    //    results = MusicDbClient.Execute(strSQL);
-    //    if (results.Rows.Count == 0)
-    //      return false;
-    //    for (int i = 0 ; i < results.Rows.Count ; ++i)
-    //    {
-    //      AlbumInfo album = new AlbumInfo();
-    //      album.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
-    //      album.IdAlbum = DatabaseUtility.GetAsInt(results, i, "album.idAlbumArtist");  //album.IdAlbum contains IdAlbumArtist
-    //      album.AlbumArtist = variousArtists;
-    //      aAlbumInfoList.Add(album);
-    //    }
-    //    return true;
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-    //    Open();
-    //  }
-
-    //  return false;
-    //}
 
     public void ResetTop100()
     {
@@ -1194,45 +1154,40 @@ namespace MediaPortal.Music.Database
       return false;
     }
     
-    public int GetArtistId(string aArtist)
-    {
-      try
-      {
-        if (MusicDbClient == null)
-          return -1;
+    //public int GetArtistId(string aArtist)
+    //{
+    //  try
+    //  {
+    //    if (MusicDbClient == null)
+    //      return -1;
 
-        string strSQL;
-        strSQL = String.Format("select distinct artist.idArtist from artist where artist.strArtist='{0}'", aArtist);
-        SQLiteResultSet results;
-        results = MusicDbClient.Execute(strSQL);
-        if (results.Rows.Count == 0)
-          return -1;
+    //    string strSQL;
+    //    strSQL = String.Format("select distinct artist.idArtist from artist where artist.strArtist='{0}'", aArtist);
+    //    SQLiteResultSet results;
+    //    results = MusicDbClient.Execute(strSQL);
+    //    if (results.Rows.Count == 0)
+    //      return -1;
 
-        return DatabaseUtility.GetAsInt(results, 0, "artist.idArtist");
-      }
+    //    return DatabaseUtility.GetAsInt(results, 0, "artist.idArtist");
+    //  }
 
-      catch (Exception ex)
-      {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        Open();
-      }
+    //  catch (Exception ex)
+    //  {
+    //    Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+    //    Open();
+    //  }
 
-      return -1;
-    }
+    //  return -1;
+    //}
 
     public bool GetGenres(ref ArrayList genres)
     {
       try
       {
         genres.Clear();
-
-        if (MusicDbClient == null)
-          return false;
-
         string strSQL;
-        strSQL = String.Format("select * from genre");
-        SQLiteResultSet results;
-        results = MusicDbClient.Execute(strSQL);
+        strSQL = String.Format("SELECT * FROM genre ORDER BY strGenre");
+        SQLiteResultSet results= MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
           return false;
 
@@ -1242,7 +1197,8 @@ namespace MediaPortal.Music.Database
           genres.Add(strGenre);
         }
 
-        return true;
+        if (genres.Count > 0)
+          return true;
       }
       catch (Exception ex)
       {
@@ -1252,45 +1208,44 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
-    public bool GetGenres(int searchKind, string strGenere1, ref ArrayList genres)
+    public bool GetGenres(int searchKind, string aGenre, ref ArrayList aGenreArray)
     {
       try
       {
-        genres.Clear();
-        string strGenere = strGenere1;
-
-        if (MusicDbClient == null)
-          return false;
+        aGenreArray.Clear();
+        string strGenre = aGenre;
+        DatabaseUtility.RemoveInvalidChars(ref strGenre);
 
         string strSQL = String.Empty;
         switch (searchKind)
         {
           case 0:
-            strSQL = String.Format("select * from genre where strGenre like '{0}%'", strGenere);
+            strSQL = String.Format("select * from genre where strGenre like '{0}%'", strGenre);
             break;
           case 1:
-            strSQL = String.Format("select * from genre where strGenre like '%{0}%'", strGenere);
+            strSQL = String.Format("select * from genre where strGenre like '%{0}%'", strGenre);
             break;
           case 2:
-            strSQL = String.Format("select * from genre where strGenre like '%{0}'", strGenere);
+            strSQL = String.Format("select * from genre where strGenre like '%{0}'", strGenre);
             break;
           case 3:
-            strSQL = String.Format("select * from genre where strGenre like '{0}'", strGenere);
+            strSQL = String.Format("select * from genre where strGenre like '{0}'", strGenre);
             break;
           default:
             return false;
         }
-        SQLiteResultSet results;
-        results = MusicDbClient.Execute(strSQL);
+        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
           return false;
+
         for (int i = 0; i < results.Rows.Count; ++i)
         {
-          string strGenre = DatabaseUtility.Get(results, i, "strGenre");
-          genres.Add(strGenre);
+          string tmpGenre = DatabaseUtility.Get(results, i, "strGenre").Trim(new char[] { '|', ' ' });
+          if (!string.IsNullOrEmpty(tmpGenre))
+            aGenreArray.Add(tmpGenre);
         }
-
-        return true;
+        if (aGenreArray.Count > 0)
+          return true;
       }
       catch (Exception ex)
       {
