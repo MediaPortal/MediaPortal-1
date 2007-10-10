@@ -57,7 +57,7 @@ class Grabber : MediaPortal.Video.Database.IIMDBScriptGrabber
               strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
               HTMLUtil htmlUtil = new HTMLUtil();
               htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
-              IMDBUrl url = new IMDBUrl(strURL, strTitle + " (imdb)", "IMDB");
+              MediaPortal.Video.Database.IMDB.IMDBUrl url = new MediaPortal.Video.Database.IMDB.IMDBUrl(strURL, strTitle + " (imdb)", "IMDB");
               elements.Add(url);
             }
           }
