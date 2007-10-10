@@ -431,8 +431,8 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
 
         aSongList.Clear();
-
-        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%{0}'", strArtist);
+        // TODO: check whether we need LIKE %<artist>% here
+        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%{0}%'", strArtist);
 
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
@@ -516,7 +516,7 @@ namespace MediaPortal.Music.Database
         if (variousArtists.Length == 0)
           variousArtists = "Various Artists";
 
-        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%{0}' ORDER BY strAlbum asc", strAlbumArtist);
+        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%{0}%' ORDER BY strAlbum asc", strAlbumArtist);
         GetSongsByFilter(sql, out aSongList, "tracks");
         return true;
       }
@@ -540,7 +540,7 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strAlbumArtist);
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
 
-        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%{0}' AND strAlbum = '{1}' order by iTrack asc", strAlbumArtist, strAlbum);
+        string sql = string.Format("SELECT * FROM tracks WHERE strAlbumArtist LIKE '%{0}%' AND strAlbum = '{1}' order by iTrack asc", strAlbumArtist, strAlbum);
         GetSongsByFilter(sql, out aSongList, "tracks");
 
         return true;
@@ -963,7 +963,7 @@ namespace MediaPortal.Music.Database
         if (null == MusicDbClient)
           return;
 
-        strSQL = String.Format("delete from albuminfo where strAlbum like '{0}' and strArtist like '{1}'", album.Album, album.Artist);
+        strSQL = String.Format("delete from albuminfo where strAlbum like '{0}' and strArtist like '{1}%'", album.Album, album.Artist);
         MusicDbClient.Execute(strSQL);
 
         strSQL = String.Format("insert into albuminfo (strAlbum,strArtist, strTones,strStyles,strReview,strImage,iRating,iYear,strTracks) values('{0}','{1}','{2}','{3}','{4}','{5}',{6},{7},'{8}')",
@@ -1038,7 +1038,7 @@ namespace MediaPortal.Music.Database
         if (null == MusicDbClient)
           return;
 
-        strSQL = String.Format("delete from artistinfo where strArtist like '{0}'", artist.Artist);
+        strSQL = String.Format("delete from artistinfo where strArtist like '{0}%'", artist.Artist);
         SQLiteResultSet results;
         results = MusicDbClient.Execute(strSQL);
 
@@ -1077,7 +1077,7 @@ namespace MediaPortal.Music.Database
       DatabaseUtility.RemoveInvalidChars(ref strArtist);
       SQLiteResultSet results;
       results = MusicDbClient.Execute(strSQL);
-      strSQL = String.Format("delete from albuminfo where strAlbum like '{0} ' and strArtist like '{1}'", strAlbum, strArtist);
+      strSQL = String.Format("delete from albuminfo where strAlbum like '{0} ' and strArtist like '{1}%'", strAlbum, strArtist);
       MusicDbClient.Execute(strSQL);
     }
 
@@ -1094,7 +1094,7 @@ namespace MediaPortal.Music.Database
       try
       {
         string strSQL;
-        strSQL = String.Format("select * from albuminfo where strArtist like '{0}' and strAlbum  like '{1}'", aArtistName, aAlbumName);
+        strSQL = String.Format("select * from albuminfo where strArtist like '{0}%' and strAlbum  like '{1}'", aArtistName, aAlbumName);
         SQLiteResultSet results;
         results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count != 0)
@@ -1130,7 +1130,7 @@ namespace MediaPortal.Music.Database
         string strArtist = aArtist;
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
         string strSQL;
-        strSQL = String.Format("select * from artistinfo where strArtist like '{0}'", strArtist);
+        strSQL = String.Format("select * from artistinfo where strArtist like '{0}%'", strArtist);
         SQLiteResultSet results;
         results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count != 0)
