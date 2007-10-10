@@ -592,7 +592,6 @@ namespace TvDatabase
       if (IsRadio)
       {
         Gentle.Framework.Broker.Execute("delete from RadioGroupMap WHERE idChannel=" + idChannel.ToString());
-        Gentle.Framework.Broker.Execute("delete from RadioChannelGroup WHERE idChannel=" + idChannel.ToString());
       }
       else
       {
