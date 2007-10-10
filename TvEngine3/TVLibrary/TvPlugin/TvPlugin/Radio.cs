@@ -402,6 +402,13 @@ namespace TvPlugin
           item.MusicTag = group;
           item.ThumbnailImage = String.Empty;
           MediaPortal.Util.Utils.SetDefaultIcons(item);
+          string thumbnail = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, "folder_" + group.GroupName);
+          if (System.IO.File.Exists(thumbnail))
+          {
+            item.IconImageBig = thumbnail;
+            item.IconImage = thumbnail;
+            item.ThumbnailImage = thumbnail;
+          }
           listView.Add(item);
           thumbnailView.Add(item);
           totalItems++;
