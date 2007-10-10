@@ -1486,7 +1486,8 @@ namespace MediaPortal.GUI.Music
       if (songList.Count < _maxScrobbledSongsPerArtist)
         return false;
 
-      Random rand = new Random();
+      PseudoRandomNumberGenerator rand = new PseudoRandomNumberGenerator();
+      // Random rand = new Random();
       int randomPosition;
 
       while (songsAdded < _maxScrobbledSongsPerArtist)
