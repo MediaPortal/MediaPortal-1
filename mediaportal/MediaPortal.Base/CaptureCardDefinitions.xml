@@ -17647,7 +17647,7 @@
       <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
-        <filter cat="tunerdevice"     name="DTV-DVB Mantis DVBS BDA Receiver"	checkdevice="true"/>
+        <filter cat="tunerdevice"     name="DTV-DVB Mantis DVBT BDA Receiver"	checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>

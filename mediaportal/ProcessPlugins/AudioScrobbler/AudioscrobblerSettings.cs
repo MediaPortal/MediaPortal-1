@@ -994,7 +994,7 @@ namespace MediaPortal.AudioScrobbler
 
             //listViewCoverAlbums.RedrawItems(i, i, false);
             listViewCoverAlbums.Items[i].EnsureVisible();
-            this.Refresh();            
+            this.Refresh();
           }
 
           progressBarCoverAlbums.Value = i + 1;
