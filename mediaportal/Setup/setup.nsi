@@ -31,14 +31,18 @@ SetCompressor lzma
 
 # General Definitions for the Interface
 ;..................................................................................................
-!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
+!define MUI_ICON "images\install.ico"
+!define MUI_HEADERIMAGE_BITMAP "images\header.bmp"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "images\wizard.bmp"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP "images\wizard.bmp"
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT HKLM
 !define MUI_STARTMENUPAGE_NODISABLE
 !define MUI_STARTMENUPAGE_REGISTRY_KEY $(^INSTDIR_REG_KEY)
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER MediaPortal
-!define MUI_FINISHPAGE_RUN $INSTDIR\Configuration.exe
+!define MUI_FINISHPAGE_RUN  
+!define MUI_FINISHPAGE_RUN_FUNCTION RunConfig
 !define MUI_FINISHPAGE_RUN_TEXT "Run MediaPortal Configuration"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
@@ -141,18 +145,8 @@ Section -Main SEC0000
     SetOutPath $INSTDIR
     SetOverwrite on   
 
-    ;After set the output path open the uninstall log macros block and add files/dirs with File /r
-    ;This should be repeated every time the parent output path is changed either within the same
-    ;section, or if there are more sections including optional components.
-    !insertmacro UNINSTALL.LOG_OPEN_INSTALL
-        
-    ;------------  Common Files and Folders for XP & Vista
-    ; Doc
-    File "..\Docs\BASS License.txt"
-    File "..\Docs\MediaPortal License.rtf"
-    File "..\Docs\SQLite Database Browser.exe"
-
-    ; Folder     
+    ; Folder
+    ; We don't monitor the folder content on installation. Simply remove the complete directory     
     File /r ..\xbmc\bin\Release\database
     File /r ..\xbmc\bin\Release\InputDeviceMappings
     File /r ..\xbmc\bin\Release\language
@@ -166,7 +160,18 @@ Section -Main SEC0000
     File /r ..\xbmc\bin\Release\weather
     File /r ..\xbmc\bin\Release\WebEPG
     File /r ..\xbmc\bin\Release\Wizards
-   
+    
+    ;After set the output path open the uninstall log macros block and add files/dirs with File /r
+    ;This should be repeated every time the parent output path is changed either within the same
+    ;section, or if there are more sections including optional components.
+    !insertmacro UNINSTALL.LOG_OPEN_INSTALL
+        
+    ;------------  Common Files and Folders for XP & Vista
+    ; Doc
+    File "..\Docs\BASS License.txt"
+    File "..\Docs\MediaPortal License.rtf"
+    File "..\Docs\SQLite Database Browser.exe"
+ 
     ; Files
     File ..\xbmc\bin\Release\AppStart.exe
     File ..\xbmc\bin\Release\AppStart.exe.config
@@ -287,14 +292,14 @@ Section -Main SEC0000
     File ..\xbmc\bin\Release\wikipedia.xml
     File ..\xbmc\bin\Release\yac-area-codes.xml
 
-    ; Folders 
+   ; Close before we change the directory
+    !insertmacro UNINSTALL.LOG_CLOSE_INSTALL
+    
+    ; Folders
+    ; Don't monitor the folder content. we're not deleting those 2 anyhow on install 
     File /r ..\xbmc\bin\Release\thumbs
     File /r ..\xbmc\bin\Release\xmltv
     
-    ; Close before we change the directory
-    !insertmacro UNINSTALL.LOG_CLOSE_INSTALL
-    
-    ; And we open it again
     
     ; The Following Filters and Dll need to be copied to \windows\system32 for xp
     ; In Vista they stay in the Install Directory
@@ -377,6 +382,7 @@ SectionEnd
 ;..................................................................................................
 Section -post SEC0001
     WriteRegStr HKLM "${INSTDIR_REG_KEY}" Path $INSTDIR
+    WriteRegStr HKLM "${INSTDIR_REG_KEY}" PathFilter $FILTERDIR
     SetOutPath $INSTDIR
     WriteUninstaller $INSTDIR\uninstall.exe
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
@@ -450,6 +456,14 @@ Function .onInstSuccess
 
 FunctionEnd
 
+; Start the Configuration after the successfull install
+; needed in an extra function to set the working directory
+Function RunConfig
+SetOutPath $INSTDIR
+Exec "$INSTDIR\Configuration.exe"
+FunctionEnd
+
+
 # Macro for selecting uninstaller sections
 !macro SELECT_UNSECTION SECTION_NAME UNSECTION_ID
     Push $R0
@@ -469,18 +483,67 @@ LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall $(^Name)"
 
 Section /o -un.Main UNSEC0000
 
+    ; Remove the Folders
+    ; Don't touch the Database, InputMappings
+    RmDir /r /REBOOTOK $INSTDIR\language
+    RmDir /r /REBOOTOK $INSTDIR\MusicPlayer
+    RmDir /r /REBOOTOK $INSTDIR\osdskin-media
+    RmDir /r /REBOOTOK $INSTDIR\plugins
+    RmDir /r /REBOOTOK $INSTDIR\scripts
+    RmDir /r /REBOOTOK $INSTDIR\skin
+    RmDir /r /REBOOTOK $INSTDIR\TTPremiumBoot
+    RmDir /r /REBOOTOK $INSTDIR\Tuningparameters
+    RmDir /r /REBOOTOK $INSTDIR\weather
+    RmDir /r /REBOOTOK $INSTDIR\WebEPG
+    RmDir /r /REBOOTOK $INSTDIR\Wizards
+
     ;uninstall from path, must be repeated for every install logged path individual
     !insertmacro UNINSTALL.LOG_UNINSTALL "$INSTDIR"
     !insertmacro UNINSTALL.LOG_UNINSTALL "$APPDATA\Team MediaPortal\MediaPortal"
 
     ;end uninstall, after uninstall from all logged paths has been performed
     !insertmacro UNINSTALL.LOG_END_UNINSTALL
-
+    
+    
     ; Remove the Common DLLs and Filters, which have not been logged with the Automatic Uninstaller
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71.dll
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\MFC71u.dll
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcp71.dll
     !insertmacro UnInstallLib DLL SHARED NOREMOVE $FilterDir\msvcr71.dll    
+
+    ; Unregister the Filter
+    UnRegDll $FilterDir\cdxareader.ax
+    UnRegDll $FilterDir\CLDump.ax
+    UnRegDll $FilterDir\MpgMux.ax
+    UnRegDll $FilterDir\MPReader.ax
+    UnRegDll $FilterDir\MPSA.ax
+    UnRegDll $FilterDir\MPTS.ax
+    UnRegDll $FilterDir\MPTSWriter.ax
+    UnRegDll $FilterDir\shoutcastsource.ax
+    UnRegDll $FilterDir\TSFileSource.ax
+    UnRegDll $FilterDir\WinTVCapWriter.ax
+    UnRegDll $FilterDir\GenDMOProp.dll
+    UnRegDll $FilterDir\MpegAudio.dll
+    UnRegDll $FilterDir\MpegVideo.dll
+    UnRegDll $FilterDir\MpaDecFilter.ax
+    UnRegDll $FilterDir\Mpeg2DecFilter.ax      
+
+    ; ... and delete them
+    Delete /REBOOTOK $FilterDir\cdxareader.ax
+    Delete /REBOOTOK $FilterDir\CLDump.ax
+    Delete /REBOOTOK $FilterDir\MpgMux.ax
+    Delete /REBOOTOK $FilterDir\MPReader.ax
+    Delete /REBOOTOK $FilterDir\MPSA.ax
+    Delete /REBOOTOK $FilterDir\MPTS.ax
+    Delete /REBOOTOK $FilterDir\MPTSWriter.ax
+    Delete /REBOOTOK $FilterDir\shoutcastsource.ax
+    Delete /REBOOTOK $FilterDir\TSFileSource.ax
+    Delete /REBOOTOK $FilterDir\WinTVCapWriter.ax
+    Delete /REBOOTOK $FilterDir\GenDMOProp.dll
+    Delete /REBOOTOK $FilterDir\MpegAudio.dll
+    Delete /REBOOTOK $FilterDir\MpegVideo.dll
+    Delete /REBOOTOK $FilterDir\MpaDecFilter.ax
+    Delete /REBOOTOK $FilterDir\Mpeg2DecFilter.ax    
 
     Delete /REBOOTOK $SMPROGRAMS\$StartMenuGroup\MediaPortal.lnk
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\MediaPortal Debug.lnk"
@@ -498,6 +561,7 @@ Section -un.post UNSEC0001
     Delete /REBOOTOK $INSTDIR\uninstall.exe
     DeleteRegValue HKLM "${INSTDIR_REG_KEY}" StartMenuGroup
     DeleteRegValue HKLM "${INSTDIR_REG_KEY}" Path
+    DeleteRegValue HKLM "${INSTDIR_REG_KEY}" PathFilter
     DeleteRegKey /IfEmpty HKLM "${INSTDIR_REG_KEY}\Components"
     DeleteRegKey /IfEmpty HKLM "${INSTDIR_REG_KEY}"
     RmDir /REBOOTOK $SMPROGRAMS\$StartMenuGroup
@@ -506,6 +570,7 @@ SectionEnd
 # Uninstaller functions
 Function un.onInit
     ReadRegStr $INSTDIR HKLM "${INSTDIR_REG_KEY}" Path
+    ReadRegStr $FILTERDIR HKLM "${INSTDIR_REG_KEY}" PathFilter
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuGroup
     !insertmacro SELECT_UNSECTION Main ${UNSEC0000}
     !insertmacro UNINSTALL.LOG_BEGIN_UNINSTALL
