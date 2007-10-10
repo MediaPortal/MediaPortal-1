@@ -91,6 +91,8 @@ namespace MediaPortal.Music.Database
     private MusicTag _previousMusicTag = null;
     private bool _foundVariousArtist = false;
 
+    private char[] trimChars = { ' ', '\x00', '|' };
+
 
     #region		Database rebuild
     public int MusicDatabaseReorg(ArrayList shares)
@@ -532,7 +534,6 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-
         string ext = System.IO.Path.GetExtension(file).ToLower();
         if (ext == ".m3u")
           return;
@@ -631,8 +632,6 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     public int AddSong(string strFileName)
     {
-      SQLiteResultSet results;
-
       // Get the Tags from the file
       MusicTag tag = GetTag(strFileName);
       if (tag != null)
@@ -656,7 +655,7 @@ namespace MediaPortal.Music.Database
         );
         try
         {
-          results = MusicDbClient.Execute(strSQL);
+          SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
           if (results == null)
           {
             Log.Info("Insert of song {0} failed", strFileName);
@@ -690,9 +689,6 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        if (null == MusicDbClient)
-          return;
-
         string strSQL;
 
         // split up the artist, in case we've got multiple artists
@@ -704,7 +700,7 @@ namespace MediaPortal.Music.Database
           {
             // Insert the Artist
             strSQL = String.Format("insert into artist (strArtist) values ('{0}')", artist.Trim());
-            MusicDbClient.Execute(strSQL);
+            MusicDatabase.DirectExecute(strSQL);
           }
         }
         return;
@@ -726,9 +722,6 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        if (null == MusicDbClient)
-          return;
-
         string strSQL;
 
         // split up the albumartist, in case we've got multiple albumartists
@@ -740,7 +733,7 @@ namespace MediaPortal.Music.Database
           {
             // Insert the AlbumArtist
             strSQL = String.Format("insert into albumartist (strAlbumArtist) values ('{0}')", artist.Trim());
-            MusicDbClient.Execute(strSQL);
+            MusicDatabase.DirectExecute(strSQL);
           }
         }
         return;
@@ -813,7 +806,7 @@ namespace MediaPortal.Music.Database
                                  );
           try
           {
-            MusicDbClient.Execute(strSQL);
+            MusicDatabase.DirectExecute(strSQL);
 
             // Now add the Artist, AlbumArtist and Genre to the Artist / Genre Tables
             AddArtist(tag.Artist);
@@ -842,9 +835,8 @@ namespace MediaPortal.Music.Database
     }
 
     private void ExtractCoverArt(MusicTag tag)
-    {
-      char[] trimChars = { ' ', '\x00' };
-      String tagAlbumName = String.Format("{0}-{1}", tag.Artist.Trim(trimChars), tag.Album.Trim(trimChars));
+    {      
+      string tagAlbumName = string.Format("{0}-{1}", tag.Artist.Trim(trimChars), tag.Album.Trim(trimChars));
       string strSmallThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
       string strLargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, Util.Utils.MakeFileName(tagAlbumName));
 
@@ -900,8 +892,8 @@ namespace MediaPortal.Music.Database
 
       if (_useFolderArtForArtistGenre)
       {
-        CreateArtistThumbs(strSmallThumb, tag.Artist);
-        CreateGenreThumbs(tag.FileName, tag.Genre);
+        CreateArtistThumbs(strSmallThumb, tag.Artist.Trim(trimChars));
+        CreateGenreThumbs(tag.FileName, tag.Genre.Trim(trimChars));
       }
     }
 
@@ -961,7 +953,7 @@ namespace MediaPortal.Music.Database
     {
       if (System.IO.File.Exists(strSmallThumb) && songArtist != String.Empty)
       {
-        string artistThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.MakeFileName(songArtist));
+        string artistThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.MakeFileName(songArtist.Trim(trimChars)));
         if (!System.IO.File.Exists(artistThumb))
         {
           try
@@ -981,7 +973,7 @@ namespace MediaPortal.Music.Database
         // using the thumb of the first item of a gerne / artist having a thumb
 
         // The genre may contains unallowed chars
-        string strGenre = MediaPortal.Util.Utils.MakeFileName(songGenre);
+        string strGenre = MediaPortal.Util.Utils.MakeFileName(songGenre.Trim(trimChars));
 
         // Sometimes the genre contains a number code in brackets -> remove that
         // (code borrowed from addGenre() method)
@@ -997,7 +989,7 @@ namespace MediaPortal.Music.Database
             }
           }
         }
-        // Now the genre is clean and sober -> build a filename out of it
+        // Now the genre is clean -> build a filename out of it
         string genreThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicGenre, Util.Utils.MakeFileName(strGenre));
 
         if (!System.IO.File.Exists(genreThumb))
@@ -1279,19 +1271,17 @@ namespace MediaPortal.Music.Database
         string strUserName = userName_;
 
         DatabaseUtility.RemoveInvalidChars(ref strUserName);
-        if (null == MusicDbClient)
-          return -1;
 
-        SQLiteResultSet results;
+        
         strSQL = String.Format("select * from scrobbleusers where strUsername like '{0}'", strUserName);
-        results = MusicDbClient.Execute(strSQL);
+        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
         {
           // doesnt exists, add it
           strSQL = String.Format("insert into scrobbleusers (idScrobbleUser , strUsername) values ( NULL, '{0}' )", strUserName);
-          MusicDbClient.Execute(strSQL);
+          MusicDatabase.DirectExecute(strSQL);
           Log.Info("MusicDatabase: added scrobbleuser {0} with ID {1}", strUserName, Convert.ToString(MusicDbClient.LastInsertID()));
-          return MusicDbClient.LastInsertID();
+          return MusicDatabase.Instance.DbConnection.LastInsertID();
         }
         else
           return DatabaseUtility.GetAsInt(results, 0, "idScrobbleUser");
@@ -1316,12 +1306,10 @@ namespace MediaPortal.Music.Database
         string strUserPassword = userPassword_;
 
         DatabaseUtility.RemoveInvalidChars(ref strUserPassword);
-        if (null == MusicDbClient)
-          return string.Empty;
 
         SQLiteResultSet results;
         strSQL = String.Format("select * from scrobbleusers where idScrobbleUser = '{0}'", userID_);
-        results = MusicDbClient.Execute(strSQL);
+        results = MusicDatabase.DirectExecute(strSQL);
         // user doesn't exist therefore no password to change
         if (results.Rows.Count == 0)
           return string.Empty;
@@ -1338,7 +1326,7 @@ namespace MediaPortal.Music.Database
           else
           {
             strSQL = String.Format("update scrobbleusers set strPassword='{0}' where idScrobbleUser like '{1}'", strUserPassword, userID_);
-            MusicDbClient.Execute(strSQL);
+            MusicDatabase.DirectExecute(strSQL);
             return userPassword_;
           }
         }
@@ -1365,7 +1353,7 @@ namespace MediaPortal.Music.Database
         SQLiteResultSet results;
 
         strSQL = String.Format("select idScrobbleSettings, idScrobbleUser from scrobblesettings where idScrobbleUser = '{0}'", userID_);
-        results = MusicDbClient.Execute(strSQL);
+        results = MusicDatabase.DirectExecute(strSQL);
         currentSettingID = DatabaseUtility.Get(results, 0, "idScrobbleSettings");
         //Log.Info("MusicDatabase: updating settings with ID {0}", currentSettingID);
 
@@ -1373,17 +1361,17 @@ namespace MediaPortal.Music.Database
         if (results.Rows.Count == 0)
         {
           strSQL = String.Format("insert into scrobblesettings (idScrobbleSettings, idScrobbleUser, " + fieldName_ + ") values ( NULL, '{0}', '{1}')", userID_, fieldValue_);
-          MusicDbClient.Execute(strSQL);
+          MusicDatabase.DirectExecute(strSQL);
           Log.Info("MusicDatabase: added scrobblesetting {0} for userid {1}", Convert.ToString(MusicDbClient.LastInsertID()), userID_);
           if (fieldValue_ > -1)
-            return MusicDbClient.LastInsertID();
+            return MusicDatabase.Instance.DbConnection.LastInsertID();
           else
             return fieldValue_;
         }
         else
         {
           strSQL = String.Format("select " + fieldName_ + " from scrobblesettings where idScrobbleSettings = '{0}'", currentSettingID);
-          results = MusicDbClient.Execute(strSQL);
+          results = MusicDatabase.DirectExecute(strSQL);
 
           if (DatabaseUtility.GetAsInt(results, 0, fieldName_) == fieldValue_)
             // setting didn't change
@@ -1397,7 +1385,7 @@ namespace MediaPortal.Music.Database
             else
             {
               strSQL = String.Format("update scrobblesettings set " + fieldName_ + "='{0}' where idScrobbleSettings like '{1}'", fieldValue_, currentSettingID);
-              MusicDbClient.Execute(strSQL);
+              MusicDatabase.DirectExecute(strSQL);
               return fieldValue_;
             }
           }
@@ -1417,7 +1405,7 @@ namespace MediaPortal.Music.Database
       List<string> scrobbleUsers = new List<string>();
 
       strSQL = "select * from scrobbleusers";
-      results = MusicDbClient.Execute(strSQL);
+      results = MusicDatabase.DirectExecute(strSQL);
 
       if (results.Rows.Count != 0)
       {
@@ -1442,19 +1430,17 @@ namespace MediaPortal.Music.Database
         string strUserName = userName_;
 
         DatabaseUtility.RemoveInvalidChars(ref strUserName);
-        if (null == MusicDbClient)
-          return false;
 
         strUserID = AddScrobbleUser(strUserName);
 
         SQLiteResultSet results;
         strSQL = String.Format("delete from scrobblesettings where idScrobbleUser = '{0}'", strUserID);
-        results = MusicDbClient.Execute(strSQL);
+        results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 1)
         {
           // setting removed now remove user
           strSQL = String.Format("delete from scrobbleusers where idScrobbleUser = '{0}'", strUserID);
-          MusicDbClient.Execute(strSQL);
+          MusicDatabase.DirectExecute(strSQL);
           return true;
         }
         else

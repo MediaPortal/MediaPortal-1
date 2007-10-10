@@ -1701,7 +1701,16 @@ namespace MediaPortal.Music.Database
         foreach (XmlNode mainchild in nodes[0].ChildNodes)
         {
           if (mainchild.Name == "releasedate" && mainchild.ChildNodes.Count != 0)
-            tmpRelease = Convert.ToDateTime(mainchild.ChildNodes[0].Value);
+          {
+            try
+            {
+              tmpRelease = Convert.ToDateTime(mainchild.ChildNodes[0].Value);
+            }
+            catch (Exception ex)
+            {
+              Log.Warn("AudioscrobblerUtils: ParseXMLDocForAlbumInfo for {0}-{1} discovered: last.fm is using an invalid date! ({2})", tmpArtist, tmpAlbum, mainchild.ChildNodes[0].Value); 
+            }            
+          }
           else if (mainchild.Name == "coverart" && mainchild.ChildNodes.Count != 0)
           {
             foreach (XmlNode coverchild in mainchild.ChildNodes)
