@@ -695,6 +695,9 @@ namespace MediaPortal.Music.Database
         string[] artists = strArtist.Split(new char[] { ';', '|' });
         foreach (string artist in artists)
         {
+          if (artist.Trim() == String.Empty)
+            continue;
+
           strSQL = String.Format("select idArtist from artist where strArtist = '{0}'", artist.Trim());
           if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
           {
@@ -728,6 +731,9 @@ namespace MediaPortal.Music.Database
         string[] artists = strAlbumArtist.Split(new char[] { ';', '|' });
         foreach (string artist in artists)
         {
+          if (artist.Trim() == String.Empty)
+            continue;
+
           strSQL = String.Format("select idAlbumArtist from albumartist where strAlbumArtist = '{0}'", artist.Trim());
           if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
           {
@@ -760,6 +766,9 @@ namespace MediaPortal.Music.Database
         string[] genres = strGenre.Split(new char[] { ';', '|' });
         foreach (string genre in genres)
         {
+          if (genre.Trim() == String.Empty)
+            continue;
+
           strSQL = String.Format("select idGenre from genre where strGenre = '{0}'", genre.Trim());
           if (MusicDatabase.DirectExecute(strSQL).Rows.Count < 1)
           {
