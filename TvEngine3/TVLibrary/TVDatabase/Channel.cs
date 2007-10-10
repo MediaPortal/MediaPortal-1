@@ -586,18 +586,17 @@ namespace TvDatabase
       Gentle.Framework.Broker.Execute("delete from Program WHERE idChannel=" + idChannel.ToString());
       Gentle.Framework.Broker.Execute("delete from Schedule WHERE idChannel=" + idChannel.ToString());
       Gentle.Framework.Broker.Execute("delete from Recording WHERE idChannel=" + idChannel.ToString());
-      
+      Gentle.Framework.Broker.Execute("delete from ChannelMap WHERE idChannel=" + idChannel.ToString());      
       Gentle.Framework.Broker.Execute("delete from TuningDetail WHERE idChannel=" + idChannel.ToString());
       
       if (IsRadio)
       {
         Gentle.Framework.Broker.Execute("delete from RadioGroupMap WHERE idChannel=" + idChannel.ToString());
-        Gentle.Framework.Broker.Execute("delete from RadioChannelMap WHERE idChannel=" + idChannel.ToString());
+        Gentle.Framework.Broker.Execute("delete from RadioChannelGroup WHERE idChannel=" + idChannel.ToString());
       }
       else
       {
         Gentle.Framework.Broker.Execute("delete from GroupMap WHERE idChannel=" + idChannel.ToString());
-        Gentle.Framework.Broker.Execute("delete from ChannelMap WHERE idChannel=" + idChannel.ToString());
         Gentle.Framework.Broker.Execute("delete from ChannelLinkageMap WHERE idPortalChannel=" + idChannel.ToString() + " OR idLinkedChannel=" + idChannel.ToString());
       }
       Remove();
