@@ -274,7 +274,11 @@ private Config()
                   }
 
                   // Check if e.g. a network path is accessible - otherwhise MP might not start
-                  if (!Directory.Exists(strPath))
+                  try
+                  {
+                    Directory.CreateDirectory(strPath);
+                  }
+                  catch (Exception)
                   {
                     continue;
                   }
