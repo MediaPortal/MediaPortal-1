@@ -908,11 +908,17 @@ namespace MediaPortal.AudioScrobbler
         {
           try
           {
-            ListViewItem listItem = new ListViewItem(CoverAlbums[i].Artist.Trim(new char[] { '|', ' ' }));
-            listItem.SubItems.Add(CoverAlbums[i].Album);
+            string curArtist = CoverAlbums[i].AlbumArtist.Trim(new char[] { '|', ' ' });
+            string curAlbum = CoverAlbums[i].Album;
+
+            if (curArtist.ToLowerInvariant().Contains("unknown"))
+              curArtist = CoverAlbums[i].Artist.Trim(new char[] { '|', ' ' });
+
+            ListViewItem listItem = new ListViewItem(curArtist);
+            listItem.SubItems.Add(curAlbum);
 
             // check low res
-            string strThumb = MediaPortal.Util.Utils.GetAlbumThumbName(CoverAlbums[i].Artist, CoverAlbums[i].Album);
+            string strThumb = MediaPortal.Util.Utils.GetAlbumThumbName(curArtist, curAlbum);
             if (System.IO.File.Exists(strThumb))
               listItem.SubItems.Add((new System.IO.FileInfo(strThumb).Length / 1024) + "KB");
             else
@@ -987,8 +993,8 @@ namespace MediaPortal.AudioScrobbler
               listViewCoverAlbums.Items[i].ForeColor = Color.Red;
 
             //listViewCoverAlbums.RedrawItems(i, i, false);
-            this.Refresh();
             listViewCoverAlbums.Items[i].EnsureVisible();
+            this.Refresh();            
           }
 
           progressBarCoverAlbums.Value = i + 1;

@@ -971,11 +971,7 @@ namespace MediaPortal.Util
     /// </param>
     static public bool CreateThumbnail(Image theImage, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
     {
-      if (strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0)
-        return false;
-      if (strThumb == String.Empty)
-        return false;
-      if (theImage == null)
+      if (string.IsNullOrEmpty(strThumb) || iMaxHeight <= 0 || iMaxHeight <= 0)
         return false;
 
       try
@@ -998,14 +994,11 @@ namespace MediaPortal.Util
         int iWidth = iMaxWidth;
         int iHeight = iMaxHeight;
         float fAR = (theImage.Width) / ((float)theImage.Height);
+
         if (theImage.Width > theImage.Height)
-        {
           iHeight = (int)Math.Floor((((float)iWidth) / fAR));
-        }
         else
-        {
           iWidth = (int)Math.Floor((fAR * ((float)iHeight)));
-        }
 
         try
         {
