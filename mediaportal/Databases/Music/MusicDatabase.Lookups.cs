@@ -241,7 +241,7 @@ namespace MediaPortal.Music.Database
             columnIndex = (int)results.ColumnIndices["strAlbum"];
             song.Album = fields.fields[columnIndex];
             columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
-            song.AlbumArtist = fields.fields[columnIndex];
+            song.AlbumArtist = fields.fields[columnIndex].Trim(new char[] { '|', ' ' });  
             if (song.AlbumArtist.ToLowerInvariant().Contains("unknown"))
             {
               columnIndex = (int)results.ColumnIndices["strArtist"];
