@@ -26,8 +26,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net;
-using System.Globalization;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;

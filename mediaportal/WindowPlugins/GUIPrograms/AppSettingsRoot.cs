@@ -25,12 +25,9 @@
 
 using System;
 using System.ComponentModel;
-using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using Programs.Utils;
-using ProgramsDatabase;
 
-namespace WindowPlugins.GUIPrograms
+namespace MediaPortal.GUI.GUIPrograms
 {
   public class AppSettingsRoot : AppSettings
   {

@@ -24,22 +24,15 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Video.Database;
-using MediaPortal.Util;
 using MediaPortal.Playlists;
 
 namespace MediaPortal.GUI.Video
 {
-  /// <summary>
-  /// 
-  /// </summary>
-  /// 
-
   public class GUIVideoOSD : GUIWindow
   {
     enum Controls:int

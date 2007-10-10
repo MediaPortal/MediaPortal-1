@@ -25,14 +25,9 @@
 
 using System;
 using System.Collections;
-using System.Net;
-using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using MediaPortal.Player;
-using MediaPortal.Playlists;
 using MediaPortal.Video.Database;
-using MediaPortal.TagReader;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.View;
 

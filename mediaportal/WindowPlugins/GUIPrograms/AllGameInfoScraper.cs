@@ -24,22 +24,13 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Net;
-using System.Text;
 using System.Collections.Generic;
-
-using MediaPortal.Profile;
-using MediaPortal.Services;
 
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Utils.Web;
 
-using Programs.Utils;
-
-namespace ProgramsDatabase
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for AllGameInfoScraper.
@@ -67,7 +58,7 @@ namespace ProgramsDatabase
       // TODO: Add constructor logic here
       //
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
       {
         _extensiveLogging = xmlreader.GetValueAsBool("general", "extendedLogging", true);
         templateSearch = xmlreader.GetValue("templateSearch", "template");
@@ -356,7 +347,7 @@ namespace ProgramsDatabase
       string template = String.Empty;
       string tags = String.Empty;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
       {
         template = xmlreader.GetValue("templateValue", "template");
         tags = xmlreader.GetValue("templateValue", "tags");
@@ -436,7 +427,7 @@ namespace ProgramsDatabase
       string template = String.Empty;
       string tags = String.Empty;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
       {
         template = xmlreader.GetValue("templateValueRating", "template");
         tags = xmlreader.GetValue("templateValueRating", "tags");
@@ -509,7 +500,7 @@ namespace ProgramsDatabase
       string template = String.Empty;
       string tags = String.Empty;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
       {
         template = xmlreader.GetValue("templateValueList", "template");
         tags = xmlreader.GetValue("templateValueList", "tags");
@@ -590,7 +581,7 @@ namespace ProgramsDatabase
       string template = String.Empty;
       string tags = String.Empty;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
       {
         template = xmlreader.GetValue("templateText", "template");
         tags = xmlreader.GetValue("templateText", "tags");
@@ -662,7 +653,7 @@ namespace ProgramsDatabase
       string template = String.Empty;
       string tags = String.Empty;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
       {
         template = xmlreader.GetValue("packshot", "template");
         tags = xmlreader.GetValue("packshot", "tags");
@@ -731,7 +722,7 @@ namespace ProgramsDatabase
       string template = String.Empty;
       string tags = String.Empty;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
       {
         KeyName = xmlreader.GetValueAsString(section, "KeyName", null);
         KeyString = xmlreader.GetValueAsString(section, "KeyString", null);

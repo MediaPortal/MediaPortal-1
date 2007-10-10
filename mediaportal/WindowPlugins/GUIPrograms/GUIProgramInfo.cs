@@ -24,18 +24,11 @@
 #endregion
 
 using System;
-using MediaPortal.Dialogs;
 using Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using ProgramsDatabase;
-using Programs.Utils;
 
-namespace WindowPlugins.GUIPrograms
+namespace MediaPortal.GUI.GUIPrograms
 {
-  /// <summary>
-  /// 
-  /// </summary>
   public class GUIFileInfo : GUIWindow, IRenderLayer
   {
     #region SkinControls
@@ -350,7 +343,7 @@ namespace WindowPlugins.GUIPrograms
         }
         x = x + deltaX;
         y = y + deltaY;
-        Picture.RenderImage(curTexture, (int)x, (int)y, curWidth, curHeight, textureWidth, textureHeight, 0, 0, true);
+        Util.Picture.RenderImage(curTexture, (int)x, (int)y, curWidth, curHeight, textureWidth, textureHeight, 0, 0, true);
       }
     }
 
@@ -408,7 +401,7 @@ namespace WindowPlugins.GUIPrograms
         // load the found thumbnail picture
         if (System.IO.File.Exists(thumbFile))
         {
-          curTexture = Picture.Load(thumbFile, 0, 512, 512, true, false, out textureWidth, out textureHeight);
+          curTexture = Util.Picture.Load(thumbFile, 0, 512, 512, true, false, out textureWidth, out textureHeight);
         }
         curApp.NextThumb(); // try to find a next thumbnail
       }

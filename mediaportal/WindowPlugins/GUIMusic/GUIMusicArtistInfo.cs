@@ -24,16 +24,13 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Net;
 using System.Collections;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Music.Database;
 using System.Text;
+
+using Microsoft.DirectX.Direct3D;
+
+using MediaPortal.GUI.Library;
+using MediaPortal.Music.Database;
 
 namespace MediaPortal.GUI.Music
 {
@@ -42,30 +39,18 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class GUIMusicArtistInfo : GUIWindow, IRenderLayer
   {
-    [SkinControlAttribute(20)]
-    protected GUILabelControl lblArtist = null;
-    [SkinControlAttribute(21)]
-    protected GUILabelControl lblArtistName = null;
-    [SkinControlAttribute(22)]
-    protected GUILabelControl lblBorn = null;
-    [SkinControlAttribute(23)]
-    protected GUILabelControl lblYearsActive = null;
-    [SkinControlAttribute(24)]
-    protected GUILabelControl lblGenre = null;
-    [SkinControlAttribute(25)]
-    protected GUIFadeLabel lblTones = null;
-    [SkinControlAttribute(26)]
-    protected GUIFadeLabel lblStyles = null;
-    [SkinControlAttribute(27)]
-    protected GUILabelControl lblInstruments = null;
-    [SkinControlAttribute(3)]
-    protected GUIImage imgCoverArt = null;
-    [SkinControlAttribute(4)]
-    protected GUITextControl tbReview = null;
-    [SkinControlAttribute(5)]
-    protected GUIButtonControl btnBio = null;
-    [SkinControlAttribute(6)]
-    protected GUIButtonControl btnRefresh = null;
+    [SkinControlAttribute(20)]    protected GUILabelControl lblArtist = null;
+    [SkinControlAttribute(21)]    protected GUILabelControl lblArtistName = null;
+    [SkinControlAttribute(22)]    protected GUILabelControl lblBorn = null;
+    [SkinControlAttribute(23)]    protected GUILabelControl lblYearsActive = null;
+    [SkinControlAttribute(24)]    protected GUILabelControl lblGenre = null;
+    [SkinControlAttribute(25)]    protected GUIFadeLabel lblTones = null;
+    [SkinControlAttribute(26)]    protected GUIFadeLabel lblStyles = null;
+    [SkinControlAttribute(27)]    protected GUILabelControl lblInstruments = null;
+    [SkinControlAttribute(3)]     protected GUIImage imgCoverArt = null;
+    [SkinControlAttribute(4)]     protected GUITextControl tbReview = null;
+    [SkinControlAttribute(5)]     protected GUIButtonControl btnBio = null;
+    [SkinControlAttribute(6)]     protected GUIButtonControl btnRefresh = null;
 
 
     #region Base Dialog Variables
@@ -87,10 +72,12 @@ namespace MediaPortal.GUI.Music
     {
       GetID = (int)GUIWindow.Window.WINDOW_ARTIST_INFO;
     }
+
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\DialogArtistInfo.xml");
     }
+
     public override void PreInit()
     {
     }

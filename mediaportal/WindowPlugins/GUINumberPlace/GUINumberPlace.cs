@@ -24,17 +24,16 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
+
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
-using MediaPortal.Util;
 
 namespace MediaPortal.GUI.NumberPlace
 {

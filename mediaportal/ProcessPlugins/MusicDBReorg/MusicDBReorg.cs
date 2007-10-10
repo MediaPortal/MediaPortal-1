@@ -26,11 +26,9 @@
 #region usings
 
 using System;
-using System.Text;
 using System.Threading;
-using System.Collections.Generic;
+
 using MediaPortal.Configuration;
-using MediaPortal.Util;
 using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.GUI.Library;
@@ -65,7 +63,7 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     public MusicDBReorg()
     {
       // load settings
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         _runMondays = reader.GetValueAsBool("musicdbreorg", "monday", false);
         _runTuesdays = reader.GetValueAsBool("musicdbreorg", "tuesday", false);
@@ -162,7 +160,7 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
           }
 
           // store last run
-          using (Settings writer = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+          using (Settings writer = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
           {
             writer.SetValue("musicdbreorg", "lastrun", DateTime.Now.Day);
           }
@@ -220,7 +218,7 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     private bool HasRunToday()
     {
       int lastRunDay;
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         lastRunDay = reader.GetValueAsInt("musicdbreorg", "lastrun", 0);
       }

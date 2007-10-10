@@ -30,21 +30,16 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.IO;
-using System.Windows.Forms;
-using System.Windows.Media.Animation;
+
+using Microsoft.DirectX.Direct3D;
 
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Picture.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.Configuration;
-
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
 #endregion
 
 namespace MediaPortal.GUI.Pictures

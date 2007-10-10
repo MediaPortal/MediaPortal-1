@@ -25,13 +25,12 @@
 
 using System;
 using System.Windows.Forms;
-using System.Drawing;
 using System.Runtime.InteropServices;
+
 using DShowNET.Helper;
-using MediaPortal.Profile;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using DirectShowLib;
+
+using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 
 namespace MediaPortal.Player
@@ -373,7 +372,7 @@ namespace MediaPortal.Player
     {
       int iStage = 1;
       string audioDevice;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         audioDevice = xmlreader.GetValueAsString("audioplayer", "sounddevice", "Default DirectSound Device");
       }

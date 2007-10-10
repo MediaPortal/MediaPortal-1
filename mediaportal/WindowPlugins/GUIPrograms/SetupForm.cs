@@ -30,13 +30,11 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using MediaPortal.Configuration;
-using Programs.Utils;
-using ProgramsDatabase;
 
-namespace WindowPlugins.GUIPrograms
+using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
+
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for SetupForm.

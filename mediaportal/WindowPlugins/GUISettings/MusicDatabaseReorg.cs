@@ -25,12 +25,11 @@
 
 using System;
 using System.Collections;
-using System.Threading;
+
 using SQLite.NET;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Database;
 using MediaPortal.Music.Database;
 

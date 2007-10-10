@@ -26,18 +26,15 @@
 using System;
 using System.Drawing;
 using System.Collections;
+
 using MediaPortal.GUI.Library;
-using MediaPortal.Video.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
 using MediaPortal.TagReader;
-using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Radio.Database;
-using MediaPortal.Music.Database;
-
 
 namespace MediaPortal.GUI.Music
 {

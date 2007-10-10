@@ -24,21 +24,17 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Player;
 
 namespace MediaPortal.GUI.TV
 {
-  /// <summary>
-  /// 
-  /// </summary>
   public class GUITVConflicts : GUIWindow
   {
     #region variables, ctor/dtor
@@ -70,9 +66,9 @@ namespace MediaPortal.GUI.TV
 
     public override void OnAction(Action action)
     {
-      switch (action.wID)
-      {
-      }
+      //switch (action.wID)
+      //{
+      //}
       base.OnAction(action);
     }
     protected override void OnPageLoad()

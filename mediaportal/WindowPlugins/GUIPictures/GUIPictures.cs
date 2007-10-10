@@ -25,15 +25,12 @@
 
 using System;
 using System.IO;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Xml.Serialization;
-using Core.Util;
+
 using Microsoft.Win32;
 
 using MediaPortal.Database;
@@ -41,7 +38,6 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Services;
-using MediaPortal.Player;
 using MediaPortal.Threading;
 using MediaPortal.Configuration;
 using MediaPortal.Picture.Database;

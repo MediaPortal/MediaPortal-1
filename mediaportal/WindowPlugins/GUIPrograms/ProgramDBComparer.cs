@@ -26,9 +26,9 @@
 using System;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
-using ProgramsDatabase;
 
-namespace WindowPlugins.GUIPrograms
+
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for ProgramDBComparer.

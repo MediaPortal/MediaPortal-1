@@ -28,16 +28,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.GUI.View;
 using MediaPortal.Database;
-using Programs.Utils;
-using ProgramsDatabase;
+
+
 using SQLite.NET;
 using MediaPortal.Configuration;
 
-namespace WindowPlugins.GUIPrograms
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for ProgramViewHandler.

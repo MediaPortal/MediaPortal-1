@@ -27,14 +27,14 @@ using System;
 using System.Collections;
 using System.IO;
 using MediaPortal.GUI.Library;
-using Programs.Utils;
+
 using SQLite.NET;
-using WindowPlugins.GUIPrograms;
+
 using MediaPortal.Database;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
 
-namespace ProgramsDatabase
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for DBPrograms.

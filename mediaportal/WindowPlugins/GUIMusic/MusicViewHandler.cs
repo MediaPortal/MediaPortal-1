@@ -25,14 +25,14 @@
 
 using System;
 using System.IO;
-using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Collections;
 using System.Collections.Generic;
+
 using SQLite.NET;
+
 using MediaPortal.GUI.View;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
 using MediaPortal.Music.Database;
 

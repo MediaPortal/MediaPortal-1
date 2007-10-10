@@ -27,11 +27,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using MediaPortal.GUI.Library;
-using Programs.Utils;
+
 using SQLite.NET;
 
-namespace ProgramsDatabase
+using MediaPortal.GUI.Library;
+
+namespace MediaPortal.GUI.GUIPrograms
 {
   public class FileItem
   {

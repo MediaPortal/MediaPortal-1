@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-using System.Text;
 using MediaPortal.GUI.Library;
 
 namespace WindowPlugins.GUIMusic

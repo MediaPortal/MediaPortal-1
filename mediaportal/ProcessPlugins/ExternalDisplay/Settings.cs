@@ -31,9 +31,12 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+
 using ExternalDisplay.Setting;
+
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+
 using ProcessPlugins.ExternalDisplay.Drivers;
 using ProcessPlugins.ExternalDisplay.Setting;
 

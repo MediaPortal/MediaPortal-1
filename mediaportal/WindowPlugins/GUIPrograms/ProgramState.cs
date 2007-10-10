@@ -24,9 +24,10 @@
 #endregion
 
 using System;
+
 using MediaPortal.GUI.Library;
 
-namespace WindowPlugins.GUIPrograms
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for ProgramState.

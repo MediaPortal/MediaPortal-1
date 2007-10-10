@@ -26,18 +26,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-//using System.Windows.Forms;
-using System.IO;
 using System.Xml;
-using MediaPortal.Util;
+
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.GUI.Settings.Wizard;
 using MediaPortal.TV.Database;
 using MediaPortal.EPG.config;
 using MediaPortal.WebEPG.Config.Grabber;
-using DShowNET;
 
 namespace WindowPlugins.GUISettings.Epg
 {

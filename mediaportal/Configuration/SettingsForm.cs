@@ -25,20 +25,23 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+
+using DShowNET;
+using DShowNET.Helper;
+using DirectShowLib;
+
 using MediaPortal.Configuration.Sections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using MediaPortal.Util;
-using DShowNET;
-using DShowNET.Helper;
-using DirectShowLib;
+
 using Keys = MediaPortal.Configuration.Sections.Keys;
-using System.ComponentModel;
+
 
 namespace MediaPortal.Configuration
 {
@@ -126,7 +129,7 @@ namespace MediaPortal.Configuration
       //
 
       string strLanguage;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
@@ -800,7 +803,7 @@ namespace MediaPortal.Configuration
     {
       int MaximumShares = 20;
       //Do we have 1 or more music,picture,video shares?
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string playlistFolder = xmlreader.GetValueAsString("music", "playlists", "");
         if (playlistFolder == String.Empty)

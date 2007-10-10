@@ -1114,7 +1114,7 @@ namespace MediaPortal.Music.Database
         strSql = "delete from genre";
         MusicDbClient.Execute(strSql);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         Log.Error("Musicdatabasereorg: CleanupForeignKeys failed");
         return (int)Errors.ERROR_REORG_ARTIST;

@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.TagReader;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Music
 {

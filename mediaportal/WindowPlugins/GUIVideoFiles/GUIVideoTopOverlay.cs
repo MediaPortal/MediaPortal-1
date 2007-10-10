@@ -23,12 +23,8 @@
 
 #endregion
 
-using System;
 using MediaPortal.GUI.Library;
-using MediaPortal.Video.Database;
 using MediaPortal.Player;
-using MediaPortal.Util;
-using MediaPortal.TV.Database;
 
 namespace MediaPortal.GUI.Video
 {

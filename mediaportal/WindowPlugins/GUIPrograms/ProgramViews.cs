@@ -31,12 +31,11 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Windows.Forms;
-using MediaPortal.GUI.Library;
+
 using MediaPortal.GUI.View;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
 
-namespace WindowPlugins.GUIPrograms
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for ProgramViews.

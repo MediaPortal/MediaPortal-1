@@ -23,17 +23,8 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Xml;
-using System.Threading;
-using MediaPortal.TV.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
-using MediaPortal.TV.Scanning;
-using MediaPortal.Util;
-using MediaPortal.GUI.Settings.Wizard;
-using MediaPortal.Configuration;
 
 namespace WindowPlugins.GUISettings.Wizard.DVBS
 {
@@ -42,7 +33,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
   /// </summary>
   public class GUIWizardDVBSScan : GUIWizardScanBase
   {
-    int m_diseqcLoops;
+    // int m_diseqcLoops;
 
     public GUIWizardDVBSScan()
     {

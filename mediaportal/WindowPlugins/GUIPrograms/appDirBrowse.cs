@@ -27,20 +27,20 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Diagnostics;
-using MediaPortal.Player;
+
 using SQLite.NET;
-using Programs.Utils;
+
 using MediaPortal.Ripper;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.Util;
-using WindowPlugins.GUIPrograms;
 
-namespace ProgramsDatabase
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for appDirBrowse.
   /// </summary>
-  public class appItemDirBrowse : ProgramsDatabase.AppItem
+  public class appItemDirBrowse : AppItem
   {
     VirtualDirectory curDirectory = new VirtualDirectory();
     ProgramComparer pc = new ProgramComparer(); // slightly hacky: pc replaces the base.dbPc object....

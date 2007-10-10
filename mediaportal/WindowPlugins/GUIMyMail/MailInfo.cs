@@ -25,19 +25,17 @@
 
 using System;
 using System.Diagnostics;
-using System.ComponentModel;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Collections;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using MediaPortal.Dialogs;
-using MediaPortal.Topbar;
 using MediaPortal.GUI.Pictures;
 using MediaPortal.Player;
+
 using System.Runtime.InteropServices;
-using Core.Util;
-namespace MyMail
+
+namespace MediaPortal.GUI.MyMail
 {
   /// <summary>
   /// Zusammenfassung für MailInfo.

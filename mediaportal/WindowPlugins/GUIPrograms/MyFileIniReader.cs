@@ -27,7 +27,7 @@ using System.IO;
 using System.Text;
 using MediaPortal.GUI.Library;
 
-namespace ProgramsDatabase
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for MyFileIniReader.

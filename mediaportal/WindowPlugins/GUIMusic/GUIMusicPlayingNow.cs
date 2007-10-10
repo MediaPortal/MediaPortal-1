@@ -26,18 +26,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net;
-using System.Globalization;
-using System.Threading;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
-using System.Drawing;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.GUI.View;
-//using MediaPortal.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;

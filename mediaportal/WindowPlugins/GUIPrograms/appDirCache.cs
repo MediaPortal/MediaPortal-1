@@ -26,14 +26,14 @@
 using System;
 using System.Collections;
 using System.IO;
+
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using Programs.Utils;
-using SQLite.NET;
-using System.Windows.Forms;
 
-namespace ProgramsDatabase
+using SQLite.NET;
+
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for appItemDirCache.

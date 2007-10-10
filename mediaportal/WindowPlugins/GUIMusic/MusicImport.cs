@@ -26,20 +26,16 @@
 using System;
 using System.IO;
 using System.Collections;
-using System.Text;
 using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
-using Yeti.MMedia;
 using Yeti.MMedia.Mp3;
 using Yeti.Lame;
 using WaveLib;
 using Roger.ID3;
-//using iTunesLib;
 
 namespace MediaPortal.MusicImport
 {

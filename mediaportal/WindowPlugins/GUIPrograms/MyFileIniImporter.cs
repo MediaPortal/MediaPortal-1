@@ -26,10 +26,10 @@
 using System;
 using System.Collections;
 using System.IO;
-using Programs.Utils;
+
 using SQLite.NET;
 
-namespace ProgramsDatabase
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for MyFileIniImporter.

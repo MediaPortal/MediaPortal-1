@@ -25,19 +25,16 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Drawing;
-using MediaPortal.GUI.Library;
 using System.Xml;
-using MediaPortal.Util;
+
+using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
-
-using System.ComponentModel;
-using System.Threading;
 
 namespace MediaPortal.GUI.Weather
 {

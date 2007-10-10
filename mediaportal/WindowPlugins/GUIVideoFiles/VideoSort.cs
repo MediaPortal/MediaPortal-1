@@ -26,6 +26,7 @@
 using System;
 using System.Globalization;
 using System.Collections.Generic;
+
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Video

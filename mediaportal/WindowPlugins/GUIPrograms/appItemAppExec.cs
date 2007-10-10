@@ -25,18 +25,15 @@
 
 using System;
 using System.IO;
-using System.Collections;
 using System.Diagnostics;
-using System.Xml;
+
 using SQLite.NET;
+
 using MediaPortal.Ripper;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using WindowPlugins.GUIPrograms;
-using Programs.Utils;
 
-namespace ProgramsDatabase
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for appItemAppExec.

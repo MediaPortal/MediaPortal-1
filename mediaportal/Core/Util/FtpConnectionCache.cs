@@ -27,10 +27,11 @@ using System;
 using System.IO;
 using System.Collections;
 using System.ComponentModel;
+
 using EnterpriseDT.Net.Ftp;
 using MediaPortal.GUI.Library;
 
-namespace Core.Util
+namespace MediaPortal.Util
 {
   /// <summary>
   /// This (static) class will handle all ftp connections with remote shares

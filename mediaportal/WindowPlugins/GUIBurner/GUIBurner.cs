@@ -25,14 +25,8 @@
 
 using System;
 using System.Collections;
-using System.Diagnostics;
 using System.IO;
-using System.Globalization;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Soap;
-using System.Threading;
 using System.Text;
 using System.Windows.Forms;
 
@@ -41,14 +35,8 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Ripper;
-using MediaPortal.Player;
 using MediaPortal.Playlists;
-using MediaPortal.Video.Database;
-using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
-
-using Core.Util;
-
 
 namespace MediaPortal.GUI.GUIBurner
 {

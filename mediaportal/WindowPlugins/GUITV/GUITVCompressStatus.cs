@@ -26,22 +26,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using MediaPortal.Player;
-using MediaPortal.Video.Database;
-using Toub.MediaCenter.Dvrms.Metadata;
 using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.TV
 {
-  /// <summary>
-  /// 
-  /// </summary>
   public class GUITVCompressStatus : GUIWindow, IComparer<GUIListItem>
   {
     #region variables
@@ -162,9 +156,9 @@ namespace MediaPortal.GUI.TV
 
     public override void OnAction(Action action)
     {
-      switch (action.wID)
-      {
-      }
+      //switch (action.wID)
+      //{
+      //}
       base.OnAction(action);
     }
 

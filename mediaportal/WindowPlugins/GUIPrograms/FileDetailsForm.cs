@@ -28,11 +28,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using Core.Util;
-using Programs.Utils;
-using ProgramsDatabase;
 
-namespace WindowPlugins.GUIPrograms
+using MediaPortal.Util;
+
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for FileDetailsForm.

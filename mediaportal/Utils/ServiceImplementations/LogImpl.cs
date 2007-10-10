@@ -26,8 +26,7 @@
 using System;
 using System.IO;
 using System.Threading;
-//using MediaPortal.GUI.Library;
-using MediaPortal.Profile;
+
 using MediaPortal.Services;
 using MediaPortal.Configuration;
 
@@ -59,10 +58,10 @@ namespace MediaPortal.ServiceImplementations
         Directory.CreateDirectory(logDir);
       }
       //BackupLogFiles();
-      using (Settings xmlReader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _minLevel =
-          (Level) Enum.Parse(typeof(Level), xmlReader.GetValueAsString("general", "loglevel", "3"));
+          (Level) Enum.Parse(typeof(Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
       }
       bConfiguration = false;
     }

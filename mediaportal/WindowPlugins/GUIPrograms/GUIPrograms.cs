@@ -27,19 +27,16 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Xml.Serialization;
+
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
-using MediaPortal.Profile;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
-using Microsoft.DirectX.Direct3D;
-using Programs.Utils;
-using ProgramsDatabase;
-using FileInfo = ProgramsDatabase.FileInfo;
 
-namespace WindowPlugins.GUIPrograms
+
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// The GUIPrograms plugin is used to list a collection of arbitrary files
@@ -183,7 +180,7 @@ namespace WindowPlugins.GUIPrograms
 
     void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         switch ((View) mapSettings.ViewAs)
         {
@@ -220,7 +217,7 @@ namespace WindowPlugins.GUIPrograms
         slideSpeed = int.Parse(_slideSpeed);
       }
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         switch (xmlreader.GetValueAsString("myprograms", "viewby", "list"))
         {
@@ -251,7 +248,7 @@ namespace WindowPlugins.GUIPrograms
 
     void LoadLastAppIDFromSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         mapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", - 1);
         mapSettings.LastViewLevel = xmlreader.GetValueAsInt("myprograms", "lastViewLevel", - 1);

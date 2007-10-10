@@ -26,19 +26,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Xml;
-using MediaPortal;
-using MediaPortal.GUI.View;
+
 using MediaPortal.GUI.Library;
-using MediaPortal.GUI;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.MusicVideos.Database;
-using System.ComponentModel;
-using System.IO;
 
 namespace MediaPortal.GUI.MusicVideos
 {

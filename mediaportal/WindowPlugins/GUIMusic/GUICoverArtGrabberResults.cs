@@ -24,14 +24,10 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Net;
-using System.Collections;
-using Microsoft.DirectX;
+
 using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
+
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Music.Database;
 using MediaPortal.TagReader;

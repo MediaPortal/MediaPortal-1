@@ -1085,9 +1085,8 @@ namespace MediaPortal.Music.Database
     {
       string strArtist = aArtistName;
       DatabaseUtility.RemoveInvalidChars(ref strArtist);
-      SQLiteResultSet results;
       strSQL = String.Format("delete from artistinfo where strArtist like '{0}'", strArtist);
-      MusicDbClient.Execute(strSQL);
+      MusicDatabase.DirectExecute(strSQL);
     }
 
     public bool GetAlbumInfo(string aAlbumName, string aArtistName, ref AlbumInfo aAlbumInfo)

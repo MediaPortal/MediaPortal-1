@@ -24,14 +24,12 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Net;
 using System.Windows.Forms;
-using Core.Util;
 
-namespace MyMail
+using MediaPortal.Util;
+
+namespace MediaPortal.GUI.MyMail
 {
   /// <summary>
   /// Summary description for MailDetailSetup.

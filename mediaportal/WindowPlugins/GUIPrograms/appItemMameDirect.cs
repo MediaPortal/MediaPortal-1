@@ -28,10 +28,10 @@ using System.Diagnostics;
 using System.IO;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using Programs.Utils;
+
 using SQLite.NET;
 
-namespace ProgramsDatabase
+namespace MediaPortal.GUI.GUIPrograms
 {
 	/// <summary>
 	/// Summary description for appItemMameDirect.

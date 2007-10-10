@@ -27,10 +27,10 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.Windows.Forms;
+
 using MediaPortal.GUI.Library;
 
-
-namespace MyMail
+namespace MediaPortal.GUI.MyMail
 {
   /// <summary>
   /// Zusammenfassung für MailOverlay.

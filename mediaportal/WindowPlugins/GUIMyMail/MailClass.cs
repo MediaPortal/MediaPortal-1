@@ -24,22 +24,20 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
 using System.Collections;
 using System.Net.Sockets;
-using System.Drawing.Design;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using MediaPortal.Dialogs;
-using MediaPortal.GUI.Library;
 using System.ComponentModel;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
-using System.Windows.Forms.Design;
 
-namespace MyMail
+using MediaPortal.Dialogs;
+using MediaPortal.GUI.Library;
+
+namespace MediaPortal.GUI.MyMail
 {
   /// <summary>
   /// this a mail-client in a class

@@ -25,22 +25,17 @@
 
 using System;
 using System.Collections;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
 using MediaPortal.TV.Recording;
-using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
-using System.Collections.Generic;
 
 namespace MediaPortal.GUI.Video
 {

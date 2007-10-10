@@ -5,11 +5,10 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using ProgramsDatabase;
-using System.Diagnostics;
-using Programs.Utils;
 
-namespace WindowPlugins.GUIPrograms
+using System.Diagnostics;
+
+namespace MediaPortal.GUI.GUIPrograms
 {
   public class AppSettingsAppExec : AppSettings
   {

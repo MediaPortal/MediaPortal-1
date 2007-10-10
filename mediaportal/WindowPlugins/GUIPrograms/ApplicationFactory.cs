@@ -23,11 +23,9 @@
 
 #endregion
 
-using Programs.Utils;
 using SQLite.NET;
-using WindowPlugins.GUIPrograms;
 
-namespace ProgramsDatabase
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Factory object that creates the matchin AppItem descendant class

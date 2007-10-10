@@ -25,7 +25,7 @@
 
 using System;
 
-namespace Core.Util
+namespace MediaPortal.Util
 {
 	/// <summary>
 	/// Summary description for ConditionChecker.

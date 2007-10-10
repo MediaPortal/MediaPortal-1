@@ -27,11 +27,11 @@ using System;
 using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using ProgramsDatabase;
-using Programs.Utils;
+
+
 using MediaPortal.Configuration;
 
-namespace WindowPlugins.GUIPrograms
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for ProgramContentManager.

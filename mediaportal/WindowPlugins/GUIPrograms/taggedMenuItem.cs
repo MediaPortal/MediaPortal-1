@@ -26,7 +26,7 @@
 using System.Windows.Forms;
 using System.Xml;
 
-namespace WindowPlugins.GUIPrograms
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for taggedMenuItem.

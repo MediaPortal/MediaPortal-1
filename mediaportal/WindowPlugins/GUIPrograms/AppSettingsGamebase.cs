@@ -29,10 +29,8 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using Programs.Utils;
-using ProgramsDatabase;
 
-namespace WindowPlugins.GUIPrograms
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for AppSettingsGamebase.

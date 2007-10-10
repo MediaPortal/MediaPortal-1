@@ -24,18 +24,13 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
 using System.Timers;
 using System.Windows.Forms;
+
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
-using MediaPortal.Util;
 
 namespace MediaPortal.Audioscrobbler
 {

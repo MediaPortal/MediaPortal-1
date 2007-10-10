@@ -26,15 +26,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
-using MediaPortal.Player;
 using MediaPortal.Configuration;
-using System.Management;
-using System.IO;
-using EnterpriseDT.Net.Ftp;
-using Core.Util;
 
+using EnterpriseDT.Net.Ftp;
 
 namespace MediaPortal.Util
 {

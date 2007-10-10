@@ -31,9 +31,9 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+
 using MediaPortal.Configuration.Controls;
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Profile;
 
 #pragma warning disable 108
@@ -283,7 +283,7 @@ namespace MediaPortal.Configuration.Sections
     {
       try
       {
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           foreach (DataRow row in ds.Tables[0].Rows)
           {
@@ -327,7 +327,7 @@ namespace MediaPortal.Configuration.Sections
       LoadAll();
       try
       {
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           foreach (DataRow row in ds.Tables[0].Rows)
           {

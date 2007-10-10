@@ -25,9 +25,9 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
-using ProgramsDatabase;
 
-namespace WindowPlugins.GUIPrograms
+
+namespace MediaPortal.GUI.GUIPrograms
 {
   public class AppFilesImportProgress : AppSettings
   {

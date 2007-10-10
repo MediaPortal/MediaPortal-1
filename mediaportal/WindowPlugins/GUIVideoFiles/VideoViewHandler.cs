@@ -1,5 +1,6 @@
+#region Copyright (C) 2005-2007 Team MediaPortal
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005-2007 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,14 +19,16 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
 
 using System;
 using System.IO;
-using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Collections;
 using System.Collections.Generic;
+
 using SQLite.NET;
+
 using MediaPortal.GUI.View;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
@@ -41,7 +44,7 @@ namespace MediaPortal.GUI.Video
     string defaultVideoViews = Config.GetFile(Config.Dir.Base, "defaultVideoViews.xml");
     string customVideoViews = Config.GetFile(Config.Dir.Config, "VideoViews.xml");
 
-		ViewDefinition currentView;
+	ViewDefinition currentView;
     int currentLevel = 0;
     List<ViewDefinition> views = new List<ViewDefinition>();
 

@@ -26,13 +26,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Net;
-using System.Globalization;
 using System.Threading;
 using System.Xml.Serialization;
-using MediaPortal.Dispatcher;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
@@ -43,10 +39,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Services;
 using MediaPortal.Dialogs;
-using MediaPortal.GUI.View;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Soap;
-using Core.Util;
+
 
 #pragma warning disable 108
 

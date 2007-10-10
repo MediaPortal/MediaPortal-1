@@ -26,11 +26,12 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using MediaPortal.GUI.Library;
-using Programs.Utils;
+
 using SQLite.NET;
 
-namespace ProgramsDatabase
+using MediaPortal.GUI.Library;
+
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for MyFileMeedioImporter.

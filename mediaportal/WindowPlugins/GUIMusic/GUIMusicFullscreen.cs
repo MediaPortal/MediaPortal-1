@@ -23,20 +23,11 @@
 
 #endregion
 
-using System;
-using System.Diagnostics;
-using System.Drawing;
 using System.Windows.Forms;
+
 using MediaPortal.GUI.Library;
-using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-using MediaPortal.Util;
-using MediaPortal.TV.Recording;
-using MediaPortal.TV.Database;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.GUI.Video
 {

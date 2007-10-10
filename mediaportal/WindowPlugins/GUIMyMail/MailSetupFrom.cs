@@ -28,11 +28,10 @@ using System.Collections;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
-using MediaPortal.Profile;
-using MediaPortal.Util;
+
 using MediaPortal.Configuration;
 
-namespace MyMail
+namespace MediaPortal.GUI.MyMail
 {
   /// <summary>
   /// Zusammenfassung für MailSetupFrom.
@@ -276,7 +275,7 @@ namespace MyMail
       applicationPath = Path.GetFullPath(applicationPath);
       applicationPath = Path.GetDirectoryName(applicationPath);
 
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         MailBox tmpBox;
         int boxCount = m_mailBox.Count;
@@ -334,7 +333,7 @@ namespace MyMail
 
     void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         int boxCount = 0;
         MailBox tmpBox;

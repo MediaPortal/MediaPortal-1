@@ -28,12 +28,13 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
-using Core.Util;
+
+using MediaPortal.Util;
 using MediaPortal.GUI.Library;
-using Programs.Utils;
+
 using SQLite.NET;
 
-namespace ProgramsDatabase
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for MyMameImporter.

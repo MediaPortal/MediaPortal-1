@@ -24,14 +24,7 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Net;
-using System.Threading;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Soap;
 using System.Xml.Serialization;
 
 using MediaPortal.Database;
@@ -40,9 +33,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-using MediaPortal.Services;
 using MediaPortal.TagReader;
-using MediaPortal.Threading;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
 using MediaPortal.Music.Database;

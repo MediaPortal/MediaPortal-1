@@ -26,9 +26,6 @@
 using System;
 using MediaPortal.GUI.Library;
 
-
-
-
 namespace MediaPortal.GUI.Settings
 {
   /// <summary>

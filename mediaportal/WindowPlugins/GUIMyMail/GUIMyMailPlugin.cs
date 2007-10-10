@@ -25,20 +25,14 @@
 
 using System;
 using System.Windows.Forms;
-using System.Net;
 using System.Collections;
-using System.Xml.Serialization;
-using System.Globalization;
 
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Topbar;
-using MediaPortal.Util;
 
-namespace MyMail
+namespace MediaPortal.GUI.MyMail
 {
-
   /// <summary>
   /// Zusammenfassung für Class1.
   /// </summary>
@@ -403,8 +397,8 @@ namespace MyMail
         }
 
         //set object count label
-        GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(itemlist.Count));
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, Utils.GetObjectCountLabel(itemlist.Count));
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(itemlist.Count));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, Util.Utils.GetObjectCountLabel(itemlist.Count));
       }
 
     }
@@ -416,8 +410,8 @@ namespace MyMail
         GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST);
 
         //set object count label
-        GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(0));
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, Utils.GetObjectCountLabel(0));
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(0));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, Util.Utils.GetObjectCountLabel(0));
       }
     }
     // add a incoming mail
@@ -471,8 +465,8 @@ namespace MyMail
         }
 
         //set object count label
-        GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(itemlist.Count - 1));
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, Utils.GetObjectCountLabel(itemlist.Count - 1));
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(itemlist.Count - 1));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, Util.Utils.GetObjectCountLabel(itemlist.Count - 1));
 
         DisplayOverlayNotify(false, ""); // remove the notify
       }

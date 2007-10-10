@@ -26,10 +26,8 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Programs.Utils;
-using ProgramsDatabase;
 
-namespace WindowPlugins.GUIPrograms
+namespace MediaPortal.GUI.GUIPrograms
 {
   public class AppSettingsGrouper : AppSettings
   {

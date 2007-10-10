@@ -27,11 +27,10 @@ using System;
 using System.Collections;
 //using System.Diagnostics;
 using MediaPortal.GUI.Library;
-using Programs.Utils;
-using SQLite.NET;
-using WindowPlugins.GUIPrograms;
 
-namespace ProgramsDatabase
+using SQLite.NET;
+
+namespace MediaPortal.GUI.GUIPrograms
 {
 
   public class Filelist : ArrayList

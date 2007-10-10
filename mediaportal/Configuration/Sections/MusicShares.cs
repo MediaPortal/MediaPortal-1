@@ -56,7 +56,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        bool added = false;
+        //bool added = false;
         string defaultShare = xmlreader.GetValueAsString("music", "default", "");
         RememberLastFolder = xmlreader.GetValueAsBool("music", "rememberlastfolder", false);
 

@@ -24,18 +24,11 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Data;
 using System.IO;
 using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using Programs.Utils;
-using ProgramsDatabase;
 
-namespace WindowPlugins.GUIPrograms
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for AppSettingsMameDirect.

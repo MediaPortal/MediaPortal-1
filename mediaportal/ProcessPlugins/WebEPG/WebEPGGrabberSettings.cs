@@ -24,17 +24,9 @@
 #endregion
 
 #region usings
-
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using MediaPortal.Util;
 using MediaPortal.Profile;
-using MediaPortal.UserInterface.Controls;
 using MediaPortal.Configuration;
 #endregion
 
@@ -58,7 +50,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
     private void LoadSettings()
     {
       // load settings
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         int hours, minutes;
         hours = reader.GetValueAsInt("webepggrabber", "hours", 0);
@@ -84,7 +76,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
     private void SaveSettings()
     {
       // save settings
-      using (Settings writer = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings writer = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         int hours, minutes;
         hours = Int32.Parse(hoursTextBox.Text);

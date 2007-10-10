@@ -24,21 +24,14 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml;
 using System.IO;
-using System.Runtime.InteropServices;
+
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
-using System.Threading;
-using System.Runtime.InteropServices.ComTypes;
-using MediaPortal.InputDevices;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
-
 
 namespace MediaPortal.InputDevices
 {
@@ -276,7 +269,7 @@ namespace MediaPortal.InputDevices
 
     void LoadRemotes()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
 
         XmlNodeList listRemotes = doc.DocumentElement.SelectNodes("/mappings/remote");
@@ -368,7 +361,7 @@ namespace MediaPortal.InputDevices
           Log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
         }
       }
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         xmlwriter.SetValue("remote", "remotenumberindex" + m_sRemoteClass, mpRemotenumber.SelectedIndex);
       }

@@ -26,9 +26,8 @@
 using System;
 using System.Collections;
 using SQLite.NET;
-using WindowPlugins.GUIPrograms;
 
-namespace ProgramsDatabase
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for ProgramSettings.

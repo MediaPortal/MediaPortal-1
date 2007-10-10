@@ -24,16 +24,11 @@
 #endregion
 
 using System;
-using System.Drawing;
+
 using MediaPortal.Video.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using System.Web;
-using System.Net;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
-using System.Threading;
+
 namespace MediaPortal.GUI.Video
 {
   /// <summary>
@@ -41,16 +36,12 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public class GUIVideoArtistInfo : GUIWindow, IRenderLayer
   {
-    [SkinControlAttribute(3)]
-    protected GUIToggleButtonControl btnBiography = null;
-    [SkinControlAttribute(4)]
-    protected GUIToggleButtonControl btnMovies = null;
-    [SkinControlAttribute(20)]
-    protected GUITextScrollUpControl tbPlotArea = null;
-    [SkinControlAttribute(21)]
-    protected GUIImage imgCoverArt = null;
-    [SkinControlAttribute(22)]
-    protected GUITextControl tbTextArea = null;
+    [SkinControlAttribute(3)]     protected GUIToggleButtonControl btnBiography = null;
+    [SkinControlAttribute(4)]     protected GUIToggleButtonControl btnMovies = null;
+    [SkinControlAttribute(20)]    protected GUITextScrollUpControl tbPlotArea = null;
+    [SkinControlAttribute(21)]    protected GUIImage imgCoverArt = null;
+    [SkinControlAttribute(22)]    protected GUITextControl tbTextArea = null;
+
     enum ViewMode
     {
       Biography,
@@ -75,14 +66,15 @@ namespace MediaPortal.GUI.Video
     {
       GetID = (int)GUIWindow.Window.WINDOW_VIDEO_ARTIST_INFO;
     }
+
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\DialogVideoArtistInfo.xml");
     }
+
     public override void PreInit()
     {
     }
-
 
     public override void OnAction(Action action)
     {

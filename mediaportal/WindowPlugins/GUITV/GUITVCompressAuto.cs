@@ -24,14 +24,13 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
+
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
-using MediaPortal.Player;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
+
 namespace MediaPortal.GUI.TV
 {
   /// <summary>
@@ -85,9 +84,9 @@ namespace MediaPortal.GUI.TV
 
     public override void OnAction(Action action)
     {
-      switch (action.wID)
-      {
-      }
+      //switch (action.wID)
+      //{
+      //}
       base.OnAction(action);
     }
 

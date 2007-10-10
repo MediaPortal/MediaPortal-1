@@ -24,9 +24,7 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Net;
 using System.Globalization;
 using System.Threading;
 
@@ -38,7 +36,6 @@ using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.View;
-using MediaPortal.MusicImport;
 using MediaPortal.Configuration;
 using MediaPortal.Threading;
 using MediaPortal.Services;

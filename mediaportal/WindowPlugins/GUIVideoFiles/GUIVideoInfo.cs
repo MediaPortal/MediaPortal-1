@@ -24,13 +24,7 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Net;
 using System.Threading;
-using System.Web;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
 
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -115,8 +109,6 @@ namespace MediaPortal.GUI.Video
       }
     }
     #endregion
-
-
 
     [SkinControlAttribute(2)]    protected GUIButtonControl btnPlay = null;
     [SkinControlAttribute(3)]    protected GUIToggleButtonControl btnPlot = null;

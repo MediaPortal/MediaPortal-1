@@ -24,24 +24,12 @@
 #endregion
 
 using System;
-using System.Globalization;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Collections;
+
 using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using MediaPortal.TV.Recording;
-using MediaPortal.TV.Database;
-using MediaPortal.Util;
 using MediaPortal.GUI.MSN;
 
 namespace MediaPortal.GUI.Video
 {
-  /// <summary>
-  /// 
-  /// </summary>
-  /// 
-
   public class GUIVideoMSNOSD : GUIWindow, IRenderLayer
   {
     enum Controls 

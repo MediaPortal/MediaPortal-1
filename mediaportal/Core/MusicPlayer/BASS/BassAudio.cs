@@ -25,26 +25,24 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.IO;
 using System.Drawing;
 using System.Runtime.InteropServices;
+
 using Un4seen.Bass;
 using Un4seen.BassAsio;
 using Un4seen.Bass.AddOn.Cd;
 using Un4seen.Bass.AddOn.Fx;
 using Un4seen.Bass.AddOn.Mix;
-using Un4seen.Bass.AddOn.Vis;
 using Un4seen.Bass.AddOn.Vst;
 using Un4seen.Bass.AddOn.Wa;
 using Un4seen.Bass.Misc;
+
 using MediaPortal.Player.DSP;
 using MediaPortal.GUI.Library;
-using MediaPortal.GUI.View;
 using MediaPortal.Visualization;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
 
 namespace MediaPortal.Player
@@ -1679,7 +1677,7 @@ namespace MediaPortal.Player
             {
               _streamcopy.Start();   // start the cloned stream
             }
-            catch (Exception ex)
+            catch (Exception)
             {
               Log.Error("Captured an error on StreamCopy start");
             }

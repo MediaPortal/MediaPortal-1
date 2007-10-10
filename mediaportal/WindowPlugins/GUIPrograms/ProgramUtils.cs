@@ -26,12 +26,13 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+
+using SQLite.NET;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using SQLite.NET;
-using WindowPlugins.GUIPrograms;
 
-namespace Programs.Utils
+namespace MediaPortal.GUI.GUIPrograms
 {
   public enum myProgSourceType
   {

@@ -26,12 +26,12 @@
 using System;
 using System.Data.OleDb;
 using System.IO;
+
 using MediaPortal.GUI.Library;
-using Programs.Utils;
-using ProgramsDatabase;
+
 using SQLite.NET;
 
-namespace WindowPlugins.GUIPrograms
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for MyGamebaseImporter.

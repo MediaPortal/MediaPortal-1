@@ -24,9 +24,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+
 using NUnit.Framework;
+
 using MediaPortal.Profile;
 
 namespace MediaPortal.Tests.Core.Profile
@@ -37,7 +37,7 @@ namespace MediaPortal.Tests.Core.Profile
 
     private static Settings CreateXml()
     {
-      return new Settings("Core\\guilib\\TestData\\MediaPortal.xml");
+      return new MediaPortal.Profile.Settings("Core\\guilib\\TestData\\MediaPortal.xml");
     }
 
     [SetUp]

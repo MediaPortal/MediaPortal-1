@@ -25,11 +25,10 @@
 
 using System.Collections;
 using MediaPortal.GUI.Library;
-using Programs.Utils;
-using SQLite.NET;
-using WindowPlugins.GUIPrograms;
 
-namespace ProgramsDatabase
+using SQLite.NET;
+
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for Applist.

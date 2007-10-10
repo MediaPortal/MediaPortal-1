@@ -26,11 +26,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Web.Security;
 using System.Windows.Forms;
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
@@ -247,7 +243,7 @@ namespace MediaPortal.AudioScrobbler
     }
     #endregion
 
-    #region control events
+    #region Control events
     // Implements the manual sorting of items by columns.
     class ListViewItemComparer : IComparer
     {

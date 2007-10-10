@@ -24,9 +24,10 @@
 #endregion
 
 using MediaPortal.GUI.Library;
+
 using SQLite.NET;
 
-namespace ProgramsDatabase
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for appFilesEdit.

@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.NumberPlace

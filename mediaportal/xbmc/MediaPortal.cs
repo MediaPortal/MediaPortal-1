@@ -24,7 +24,6 @@
 #endregion
 
 #region usings
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,6 +37,7 @@ using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
+
 using MediaPortal;
 using MediaPortal.Dialogs;
 using MediaPortal.Dispatcher;
@@ -55,10 +55,8 @@ using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
 using MediaPortal.Configuration;
-using Geometry = MediaPortal.GUI.Library.Geometry;
-using Timer = System.Timers.Timer;
-using MediaPortal.Support;
 
+using Timer = System.Timers.Timer;
 #endregion
 
 namespace MediaPortal
@@ -231,7 +229,7 @@ public class MediaPortalApp : D3DApp, IRender
 
       bool autoHideTaskbar = true; ;
 
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string MPThreadPriority = xmlreader.GetValueAsString("MP", "ThreadPriority", "Normal");
         if (MPThreadPriority == "AboveNormal")
@@ -644,7 +642,7 @@ public class MediaPortalApp : D3DApp, IRender
     int screenNumber = 0;
 
     // check to load plugins
-    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       useScreenSaver = xmlreader.GetValueAsBool("general", "screensaver", true);
       timeScreenSaver = xmlreader.GetValueAsInt("general", "screensavertime", 60);
@@ -695,7 +693,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     try
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         if (_strSkinOverride.Length > 0)
           m_strSkin = _strSkinOverride;
@@ -1186,7 +1184,7 @@ public class MediaPortalApp : D3DApp, IRender
 
       EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
       bool turnMonitorOn;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
         if (turnMonitorOn)
@@ -1340,7 +1338,7 @@ public class MediaPortalApp : D3DApp, IRender
     tMouseClickTimer.Elapsed += new ElapsedEventHandler(tMouseClickTimer_Elapsed);
     tMouseClickTimer.SynchronizingObject = this;
 
-    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       _dateFormat = xmlreader.GetValueAsString("home", "dateformat", "<Day> <Month> <DD>");
 
@@ -1590,7 +1588,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     Log.Info("Main: Activating windowmanager");
     // Edit Michel
-    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       _startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
     }    
@@ -3267,7 +3265,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x01;
       GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
     }
-    return;
+    return;  //?
     GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;
@@ -3694,7 +3692,7 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
     //
     // Only load the USBUIRT device if it has been enabled in the configuration
     //
-    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       bool inputEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
       bool outputEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false);
@@ -3819,7 +3817,7 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
     catch (Exception)
     {
     }
-    using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
     {
       m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
     }
@@ -3861,7 +3859,7 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
         }
         //Check the general.enables3trick configuration option and create/delete the USBBIOSx
         //value accordingly
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           bool enableS3Trick = xmlreader.GetValueAsBool("general", "enables3trick", true);
           if (enableS3Trick)

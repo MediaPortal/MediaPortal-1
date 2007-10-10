@@ -24,17 +24,12 @@
 #endregion
 
 #region usings
-
 using System;
-using System.Text;
 using System.Threading;
-using System.Collections.Generic;
 using MediaPortal.Configuration;
-using MediaPortal.Util;
 using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.GUI.Library;
-//using MediaPortal.Webepg.TV.Database;
 #endregion
 
 namespace MediaPortal.ProcessPlugins.WebEPG
@@ -69,7 +64,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
       _epgLog = services.Get<ILog>();
 
       // load settings
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         _runMondays = reader.GetValueAsBool("webepggrabber", "monday", true);
         _runTuesdays = reader.GetValueAsBool("webepggrabber", "tuesday", true);
@@ -147,7 +142,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
           _epgLog.Info(LogType.WebEPG, "WebEPG: Finished");
 
           // store last run
-          using (Settings writer = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+          using (Settings writer = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
           {
             writer.SetValue("webepggrabber", "lastrun", DateTime.Now.Day);
           }
@@ -205,7 +200,7 @@ namespace MediaPortal.ProcessPlugins.WebEPG
     private bool HasRunToday()
     {
       int lastRunDay;
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
+      using (Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "mediaportal.xml")))
       {
         lastRunDay = reader.GetValueAsInt("webepggrabber", "lastrun", 0);
       }

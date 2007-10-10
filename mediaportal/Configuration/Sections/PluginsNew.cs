@@ -29,11 +29,10 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using MediaPortal.Configuration;
+
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
-using MediaPortal.Util;
 using MediaPortal.MPInstaller;
 
 namespace MediaPortal.Configuration.Sections
@@ -366,7 +365,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         foreach (ListViewItem item in listViewPlugins.Items)
         {
@@ -409,7 +408,7 @@ namespace MediaPortal.Configuration.Sections
     public override void SaveSettings()
     {
       LoadAll();
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         foreach (ListViewItem item in listViewPlugins.Items)
         {

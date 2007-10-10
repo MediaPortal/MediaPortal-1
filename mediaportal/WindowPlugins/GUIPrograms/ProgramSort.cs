@@ -25,13 +25,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+
 using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 
-using ProgramsDatabase;
-
-namespace WindowPlugins.GUIPrograms
+namespace MediaPortal.GUI.GUIPrograms
 {
   /// <summary>
   /// Summary description for ProgramSort.

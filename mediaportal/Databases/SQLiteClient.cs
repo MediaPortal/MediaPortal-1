@@ -224,7 +224,7 @@ namespace SQLite.NET
     // Methods
     public SQLiteClient(string dbName)
     {
-      bool res = WaitForFile(dbName);
+      // bool res = WaitForFile(dbName);
 
       this.DBName = dbName;
       databaseName = Path.GetFileName(dbName);

@@ -23,10 +23,8 @@
 
 #endregion
 
-using System;
 using DirectShowLib;
-using MediaPortal.Profile;
-using MediaPortal.Util;
+
 using MediaPortal.Configuration;
 
 namespace MediaPortal.GUI.Library
@@ -54,7 +52,7 @@ namespace MediaPortal.GUI.Library
       get
       {
         if (_noSignalTimeOut == -1)
-          using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             _noSignalTimeOut = xmlreader.GetValueAsInt("debug", "nosignaltimeout", 5);
 
         return _noSignalTimeOut;
