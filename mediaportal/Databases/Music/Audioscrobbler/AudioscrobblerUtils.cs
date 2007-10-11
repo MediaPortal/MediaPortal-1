@@ -1019,7 +1019,7 @@ namespace MediaPortal.Music.Database
 
             foreach (Song localSong in filteredSongs)
             {
-              if (localSong.Artist == albumTracks[i].Artist && localSong.Title == albumTracks[i].Title)
+              if (localSong.Artist.ToLowerInvariant() == albumTracks[i].Artist.ToLowerInvariant() && localSong.Title.ToLowerInvariant() == albumTracks[i].Title.ToLowerInvariant())
                 albumTracks[i].URL = "local";
             }            
           }
