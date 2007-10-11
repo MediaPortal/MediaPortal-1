@@ -577,7 +577,19 @@ namespace MediaPortal.GUI.Music
                 {
                   if (!facadeAlbumInfo.SelectedListItem.IsPlayed)
                     AddInfoTrackToPlaylist(facadeAlbumInfo.SelectedListItem, true);
-                  // TODO: Notify user that desired album hit was not found in his collection
+                  else
+                  {
+                    Log.Info("GUIMusicPlayingNow: Could not add {0} from top album tracks because it was not found in your collection!");
+                    GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                    if (dlg == null)
+                      break;
+                    //dlg. Reset();
+                    dlg.SetHeading(502);     // Unable to complete action
+                    dlg.SetLine(2, 33032);   // This album's top track could not
+                    dlg.SetLine(3, 33033);   // be found in your collection!
+
+                    dlg.DoModal(GetID);
+                  }
                 }
               }
             }

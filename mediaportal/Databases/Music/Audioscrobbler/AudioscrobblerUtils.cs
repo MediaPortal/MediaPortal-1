@@ -1101,7 +1101,7 @@ namespace MediaPortal.Music.Database
                   if (t == tagTracks.Count - 1)
                   {
                     tmpGenre = tagTracks[0].Genre.ToLowerInvariant();
-                    Log.Debug("AudioScrobblerUtils: Random tag picking unsuccessful - selecting {0}", tmpGenre);
+                    //Log.Debug("AudioScrobblerUtils: Random tag picking unsuccessful - selecting {0}", tmpGenre);
                     break;
                   }
                 }

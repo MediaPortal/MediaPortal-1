@@ -1460,6 +1460,8 @@
         <String id="33019">random favourite tracks</String>
         <String id="33030">Top album tracks</String>
         <String id="33031">Other tracks tagged with:</String>
+        <String id="33032">This album's top track could not</String>
+        <String id="33033">be found in your collection!</String>
         <String id="33040">Copy now playing spam to clipboard</String>
         <String id="33041">Add this album to playlist</String>
         <String id="34000" prefix="My ">Last.fm</String>

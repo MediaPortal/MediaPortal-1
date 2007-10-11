@@ -1461,6 +1461,8 @@
         <String id="33019">Zufällige Lieblings-Titel</String>
         <String id="33030">Hits dieses Albums</String>
         <String id="33031">Weitere Titel markiert als: </String>
+        <String id="33032">Dieser Album-Hit konnte nicht</String>
+        <String id="33033">in der Datenbank gefunden werden!</String>
         <String id="33040">Aktuellen Titel für IRC in die Zwischenablage kopieren</String>
         <String id="33041">Dieses Album hinzufügen</String>
         <String id="34000" prefix="Mein ">Last.fm</String>

@@ -25,7 +25,7 @@
       <type>label</type>
       <id>1</id>
       <posX>428</posX>
-      <posY>300</posY>
+      <posY>296</posY>
       <width>480</width>
       <label>-</label>
       <font>font13</font>
@@ -38,7 +38,7 @@
       <type>fadelabel</type>
       <id>2</id>
       <posX>428</posX>
-      <posY>340</posY>
+      <posY>336</posY>
       <label>-</label>
       <width>480</width>
       <font>font13</font>
@@ -51,7 +51,7 @@
       <type>label</type>
       <id>3</id>
       <posX>428</posX>
-      <posY>372</posY>
+      <posY>368</posY>
       <label>-</label>
       <width>480</width>
       <font>font13</font>
@@ -64,7 +64,7 @@
       <type>label</type>
       <id>4</id>
       <posX>428</posX>
-      <posY>402</posY>
+      <posY>398</posY>
       <label>-</label>
       <width>480</width>
       <font>font13</font>
