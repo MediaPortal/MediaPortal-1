@@ -34,7 +34,7 @@
           <id>50</id>
           <posX>90</posX>
           <width>1250</width>
-          <font>font14</font>
+          <font>font12</font>
         </control>
         <control>
           <description>Filmstrip view</description>

@@ -150,20 +150,20 @@
      <control>
       <id>1</id>
       <type>image</type>
-      <posX>120</posX>
-      <posY>226</posY>
-      <width>128</width>
-      <height>182</height>
+      <posX>130</posX>
+      <posY>160</posY>
+      <width>168</width>
+      <height>240</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">missing_Coverart.png</texture>
       <visible>facadeview.list</visible>
     </control>
     <control>
       <id>1</id>
       <type>image</type>
-      <posX>120</posX>
-      <posY>226</posY>
-      <width>128</width>
-      <height>182</height>
+      <posX>130</posX>
+      <posY>160</posY>
+      <width>168</width>
+      <height>240</height>
       <texture flipY="true" diffuse="Thumb_Mask.png">#selectedthumb</texture>
       <visible>facadeview.list</visible>
     </control>
@@ -171,9 +171,9 @@
       <type>image</type>
       <id>1</id>
       <posX>112</posX>
-      <posY>220</posY>
-      <width>149</width>
-      <height>322</height>
+      <posY>153</posY>
+      <width>207</width>
+      <height>425</height>
       <texture>Cover_dvd.png</texture>
       <visible>facadeview.list</visible>
     </control>
@@ -182,7 +182,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>89</posX>
-      <posY>430</posY>
+      <posY>445</posY>
       <width>300</width>
       <label>#itemcount</label>
       <font>font14</font>
@@ -194,7 +194,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>89</posX>
-      <posY>460</posY>
+      <posY>475</posY>
       <width>300</width>
       <label>#selecteditem</label>
       <font>font14</font>
@@ -205,7 +205,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>89</posX>
-      <posY>490</posY>
+      <posY>505</posY>
       <width>365</width>
       <label>#selecteditem2</label>
       <font>font14</font>
