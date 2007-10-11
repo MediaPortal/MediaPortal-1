@@ -41,11 +41,10 @@ using MediaPortal.UserInterface.Controls;
 namespace SetupTv.Sections
 {
   public partial class TvSchedules : SectionSettings
-  {
-
+  {		
     public TvSchedules()
       : this("TV Schedules")
-    {
+    {			
     }
 
     public TvSchedules(string name)
@@ -115,6 +114,8 @@ namespace SetupTv.Sections
         }
         listView1.Items.Add(item);
       }
+
+			listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
     }
 
       private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -132,7 +133,9 @@ namespace SetupTv.Sections
             schedule.Delete();
             
             listView1.Items.Remove(item);
-          }             
-      }      
+          }
+					listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
+      }
+		
   }
 }

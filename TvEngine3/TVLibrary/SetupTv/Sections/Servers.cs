@@ -64,6 +64,7 @@ namespace SetupTv.Sections
         }
         item.Tag = server;
       }
+			mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
     }
 
     private void Servers_Load(object sender, EventArgs e)
@@ -134,9 +135,6 @@ namespace SetupTv.Sections
 
     }
 
-    private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
-    {
 
-    }
   }
 }

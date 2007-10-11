@@ -70,6 +70,7 @@ namespace SetupTv.Sections
         item.Tag = setting;
 
       }
+			listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
       _ignoreEvents = false;
     }
     public override void OnSectionDeActivated()

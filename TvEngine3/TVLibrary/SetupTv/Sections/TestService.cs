@@ -376,6 +376,7 @@ namespace SetupTv.Sections
           item.SubItems[5].Text = "";
           item.SubItems[6].Text = "";
         }
+				mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
       }
       catch (Exception ex)
       {

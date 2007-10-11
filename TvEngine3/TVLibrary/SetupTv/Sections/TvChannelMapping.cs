@@ -274,5 +274,6 @@ namespace SetupTv.Sections
       // Perform the sort with these new sort options.
       this.mpListViewMapped.Sort();
     }
+	
   }
 }

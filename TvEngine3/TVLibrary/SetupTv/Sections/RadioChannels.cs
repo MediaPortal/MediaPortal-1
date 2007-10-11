@@ -125,7 +125,7 @@ namespace SetupTv.Sections
         item.Tag = group;
         item.Click += new EventHandler(OnAddToFavoritesMenuItem_Click);
         addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
-        TabPage page = new TabPage(group.GroupName);
+        TabPage page = new TabPage(group.GroupName);				
         page.Controls.Add(new ChannelsInRadioGroupControl());
         page.Tag = group;
         tabControl1.TabPages.Add(page);
@@ -309,6 +309,7 @@ namespace SetupTv.Sections
       mpListView1.Items.AddRange(items.ToArray());
       mpListView1.EndUpdate();
       mpLabelChannelCount.Text = String.Format("Total channels:{0}", channelCount);
+			mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
     }
 
     void OnAddToFavoritesMenuItem_Click(object sender, EventArgs e)
@@ -502,7 +503,7 @@ namespace SetupTv.Sections
         mpListView1.Items.RemoveAt(oldIndex);
         mpListView1.Items.Insert(newIndex, item);
         ReOrder();
-        e.CancelEdit = true;
+        e.CancelEdit = true;				
       }
       catch (Exception)
       {
@@ -631,6 +632,7 @@ namespace SetupTv.Sections
       dlg.Close();
       ReOrder();
       RemoteControl.Instance.OnNewSchedule();
+			mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
     }
 
     private void btnPlaylist_Click(object sender, EventArgs e)

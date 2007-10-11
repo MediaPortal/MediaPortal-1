@@ -161,6 +161,7 @@ namespace SetupTv.Sections
           item.SubItems.Add(card.Name);
           item.Tag = card;
         }
+				
       }
       catch (Exception)
       {
@@ -169,6 +170,7 @@ namespace SetupTv.Sections
       ReOrder();
       UpdateHybrids();
       UpdateMenu();
+			mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
     }
 
     private void buttonUp_Click(object sender, EventArgs e)

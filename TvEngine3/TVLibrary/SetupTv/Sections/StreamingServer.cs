@@ -101,6 +101,8 @@ namespace SetupTv.Sections
       }
       while (listView1.Items.Count > clients.Count)
         listView1.Items.RemoveAt(listView1.Items.Count-1);
+
+			listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				
     }
 
     private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -145,7 +147,8 @@ namespace SetupTv.Sections
 				{
 					listView1.Items.Remove(item);
 				}
-			}          
+			}
+			listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);				  
 		}
 
 		private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
