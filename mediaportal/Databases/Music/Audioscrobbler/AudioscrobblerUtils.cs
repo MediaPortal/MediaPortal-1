@@ -1084,7 +1084,7 @@ namespace MediaPortal.Music.Database
             if (_unwantedTags.Contains(tmpGenre.ToLowerInvariant()))
             {
               randomPosition = rand.Next(0, calcRandValue);
-              Log.Debug("AudioScrobblerUtils: Tag {0} in blacklist, randomly chosing another one", tmpGenre);
+              // Log.Debug("AudioScrobblerUtils: Tag {0} in blacklist, randomly chosing another one", tmpGenre);
               // do not try to often..
               // if random picking doesn't lead to a result quit the randomness and pick the best
               if (x > tagTracks.Count * 3)
