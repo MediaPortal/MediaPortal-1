@@ -57,20 +57,20 @@ namespace MediaPortal.GUI.Music
     #region Base variables
 
     DirectoryHistory m_history = new DirectoryHistory();
-    string m_strDirectory = String.Empty;
+    string m_strDirectory = string.Empty;
     int m_iItemSelected = -1;
     VirtualDirectory m_directory = new VirtualDirectory();
     View[,] views;
     bool[,] sortasc;
     MusicSort.SortMethod[,] sortby;
-    static string _showArtist = String.Empty;
+    static string _showArtist = string.Empty;
 
     int _currentLevel;
     ViewDefinition _currentView;
     List<Share> _shareList = new List<Share>();
 
-    string m_strCurrentFolder = String.Empty;
-    string currentFolder = String.Empty;
+    string m_strCurrentFolder = string.Empty;
+    string currentFolder = string.Empty;
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
@@ -96,7 +96,7 @@ namespace MediaPortal.GUI.Music
       base.LoadSettings();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string strDefault = xmlreader.GetValueAsString("music", "default", String.Empty);
+        string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
         
         m_useGlobalSearch = xmlreader.GetValueAsBool("musicmisc", "useglobalsearch", false);
         if (m_useGlobalSearch)
@@ -121,14 +121,14 @@ namespace MediaPortal.GUI.Music
           string shareViewPath = String.Format("shareview{0}", i);
 
           Share share = new Share();
-          share.Name = xmlreader.GetValueAsString("music", strShareName, String.Empty);
-          share.Path = xmlreader.GetValueAsString("music", strSharePath, String.Empty);
+          share.Name = xmlreader.GetValueAsString("music", strShareName, string.Empty);
+          share.Path = xmlreader.GetValueAsString("music", strSharePath, string.Empty);
           share.Pincode = xmlreader.GetValueAsInt("music", strPincode, -1);
 
           share.IsFtpShare = xmlreader.GetValueAsBool("music", shareType, false);
-          share.FtpServer = xmlreader.GetValueAsString("music", shareServer, String.Empty);
-          share.FtpLoginName = xmlreader.GetValueAsString("music", shareLogin, String.Empty);
-          share.FtpPassword = xmlreader.GetValueAsString("music", sharePwd, String.Empty);
+          share.FtpServer = xmlreader.GetValueAsString("music", shareServer, string.Empty);
+          share.FtpLoginName = xmlreader.GetValueAsString("music", shareLogin, string.Empty);
+          share.FtpPassword = xmlreader.GetValueAsString("music", sharePwd, string.Empty);
           share.FtpPort = xmlreader.GetValueAsInt("music", sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString("music", remoteFolder, "/");
           share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("music", shareViewPath, (int)Share.Views.List);
@@ -164,7 +164,7 @@ namespace MediaPortal.GUI.Music
     #region overrides
     public override bool Init()
     {
-      m_strDirectory = String.Empty;
+      m_strDirectory = string.Empty;
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
       return Load(GUIGraphicsContext.Skin + @"\mymusicgenres.xml");
     }
@@ -345,7 +345,7 @@ namespace MediaPortal.GUI.Music
     {
       base.OnPageLoad();
       string view = MusicState.View;
-      if (view == String.Empty)
+      if (view == string.Empty)
         view = ((ViewDefinition)handler.Views[0]).Name;
 
       if (_currentView != null && _currentView.Name == view)
@@ -361,7 +361,7 @@ namespace MediaPortal.GUI.Music
       {
         GUIControl.FocusControl(GetID, btnViewAs.GetID);
       }
-      if (_showArtist != String.Empty)
+      if (_showArtist != string.Empty)
       {
         for (int i = 0; i < facadeView.Count; ++i)
         {
@@ -377,7 +377,7 @@ namespace MediaPortal.GUI.Music
           }
         }
       }
-      _showArtist = String.Empty;
+      _showArtist = string.Empty;
 
       using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
@@ -419,7 +419,7 @@ namespace MediaPortal.GUI.Music
           VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
           if (null == keyboard) return;
           keyboard.IsSearchKeyboard = true;
-          keyboard.Text = String.Empty;
+          keyboard.Text = string.Empty;
           keyboard.Reset();
           //keyBoard.KindOfSearch=(int)MediaPortal.Dialogs.VirtualSearchKeyboard.SearchKinds.SEARCH_STARTS_WITH;
           keyboard_TextChanged(0, "");
@@ -553,7 +553,7 @@ namespace MediaPortal.GUI.Music
 
       if (item.IsFolder)
       {
-        if (item.Label == ".." && item.Path != String.Empty)
+        if (item.Label == ".." && item.Path != string.Empty)
         {
           // Remove selection
           m_iItemSelected = -1;
@@ -780,7 +780,7 @@ namespace MediaPortal.GUI.Music
 
       GUIControl.ClearControl(GetID, facadeView.GetID);
 
-      string strObjects = String.Empty;
+      string strObjects = string.Empty;
       TimeSpan totalPlayingTime = new TimeSpan();
 
       List<Song> songs = handler.Execute();
@@ -814,7 +814,7 @@ namespace MediaPortal.GUI.Music
       if (handler.CurrentLevel > 0)
       {
         GUIListItem pItem = new GUIListItem("..");
-        pItem.Path = String.Empty;
+        pItem.Path = string.Empty;
         pItem.IsFolder = true;
         MediaPortal.Util.Utils.SetDefaultIcons(pItem);
         facadeView.Add(pItem);

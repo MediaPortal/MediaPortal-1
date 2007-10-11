@@ -239,7 +239,7 @@ namespace MediaPortal.Player
     private int CurrentStreamIndex = 0;
 
     private PlayState _State = PlayState.Init;
-    private string FilePath = String.Empty;
+    private string FilePath = string.Empty;
     private VisualizationInfo VizPluginInfo = null;
     private int VizFPS = 20;
 
@@ -276,7 +276,7 @@ namespace MediaPortal.Player
 
     private bool _isCDDAFile = false;
     private bool _useASIO = false;
-    private string _asioDevice = String.Empty;
+    private string _asioDevice = string.Empty;
     private int _asioDeviceNumber = -1;
     private int _asioNumberChannels = 2;
     private double _asioBalance = 0.00;
@@ -1499,7 +1499,7 @@ namespace MediaPortal.Player
         if (_CrossFadeIntervalMS > 0)
           crossOverSeconds = (float)_CrossFadeIntervalMS / 1000f;
 
-        if (filePath != String.Empty)
+        if (filePath != string.Empty)
         {
           // Turn on parsing of ASX files
           Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_WMA_ASX, 1);
@@ -1544,7 +1544,7 @@ namespace MediaPortal.Player
             if (stream != 0)
             {
               // Get the Tags and set the Meta Tag SyncProc
-              _prevMetaTag = String.Empty;
+              _prevMetaTag = string.Empty;
               SetStreamTags(stream);
               GetMetaTags(Bass.BASS_ChannelGetTags(stream, BASSTag.BASS_TAG_META));
               Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_META, 0, MetaTagSyncProcDelegate, 0);

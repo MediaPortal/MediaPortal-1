@@ -153,7 +153,7 @@ namespace MediaPortal.TV.Recording
 			for (int i=0; i < number_of_bytes;++i)
 				data += String.Format(" {0:X}", buf[offset+i]);
 			Log.Info("DecodeString() {0}", data);
-			return String.Empty;
+			return string.Empty;
 		}
 
 		string[] DecodeMultipleStrings(byte[] buf, int offset)
@@ -167,7 +167,7 @@ namespace MediaPortal.TV.Recording
 				int ISO_639_language_code = (buf[offset+1]<<16)+(buf[offset+2]<<8)+(buf[offset+3]);
 				int number_of_segments=buf[offset+4];
 				int start=offset+5;
-				labels[i]=String.Empty;
+				labels[i]=string.Empty;
 				for (int k=0; k < number_of_segments;++k)
 				{
 					int compression_type = buf[start];

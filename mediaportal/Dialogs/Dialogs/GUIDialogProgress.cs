@@ -142,7 +142,7 @@ namespace MediaPortal.Dialogs
       if (LineNr < 1) return;
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 1 + LineNr, 0, 0, null);
       msg.Label = Line;
-      if ((msg.Label == String.Empty) || (msg.Label == ""))msg.Label = "  ";
+      if ((msg.Label == string.Empty) || (msg.Label == ""))msg.Label = "  ";
       OnMessage(msg);
     }
 

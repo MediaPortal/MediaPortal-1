@@ -234,8 +234,8 @@ namespace MediaPortal.GUI.Library
       base.FinalizeConstruction();
 
       _font = GUIFontManager.GetFont(_fontName);
-      if (_fontName2Name == String.Empty) _fontName2Name = _fontName;
-      if (_fontName3Name == String.Empty) _fontName3Name = _fontName2Name;
+      if (_fontName2Name == string.Empty) _fontName2Name = _fontName;
+      if (_fontName3Name == string.Empty) _fontName3Name = _fontName2Name;
       Font2 = _fontName2Name;
       Font3 = _fontName3Name;
 
@@ -742,7 +742,7 @@ namespace MediaPortal.GUI.Library
       RenderScrollbar(timePassed, dwPosY);
 
       if (Focus)
-        GUIPropertyManager.SetProperty("#highlightedbutton", String.Empty);
+        GUIPropertyManager.SetProperty("#highlightedbutton", string.Empty);
       base.Render(timePassed);
     } //public override void Render()
 
@@ -1081,7 +1081,7 @@ namespace MediaPortal.GUI.Library
               }
               if (((action.m_key.KeyChar >= 65) && (action.m_key.KeyChar <= 90)) || (action.m_key.KeyChar == (int)Keys.Space))
               {
-                if (action.m_key.KeyChar == (int)Keys.Space && _searchString == String.Empty) return;
+                if (action.m_key.KeyChar == (int)Keys.Space && _searchString == string.Empty) return;
                 _searchString += (char)action.m_key.KeyChar;
                 SearchItem(_searchString, SearchType.SEARCH_FIRST);
               }

@@ -51,7 +51,7 @@ namespace DShowNET.Helper
 	public class Filter : IComparable
 	{
 		/// <summary> Human-readable name of the filter </summary>
-		string _name = String.Empty;
+		string _name = string.Empty;
 		bool _nameResolved = false;
 
 		/// <summary> Unique string referencing this filter. This string can be used to recreate this filter. </summary>

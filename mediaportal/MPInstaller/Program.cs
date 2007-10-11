@@ -40,7 +40,7 @@ namespace MediaPortal.MPInstaller
         [STAThread]
         static void Main(string[] args)
         {
-            string fil = String.Empty;
+            string fil = string.Empty;
             if (args.Length > 0)
                 fil = args[0];
             Application.EnableVisualStyles();

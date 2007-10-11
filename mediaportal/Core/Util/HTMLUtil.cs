@@ -127,7 +127,7 @@ namespace MediaPortal.Util
     }
 		public string ConvertHTMLToAnsi(string strHTML)
 		{
-			string strippedHtml=String.Empty;
+			string strippedHtml=string.Empty;
 			ConvertHTMLToAnsi( strHTML, out strippedHtml);
 			return strippedHtml;
 		}

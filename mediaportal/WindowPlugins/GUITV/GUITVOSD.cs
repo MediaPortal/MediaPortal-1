@@ -1328,7 +1328,7 @@ namespace MediaPortal.GUI.TV
         GUIPropertyManager.SetProperty("#TV.View.remaining", string.Empty);
         if (lblCurrentTime != null)
         {
-          lblCurrentTime.Label = String.Empty;
+          lblCurrentTime.Label = string.Empty;
         }
       }
       UpdateProgressBar();

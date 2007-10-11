@@ -166,9 +166,9 @@ namespace MediaPortal.GUI.NumberPlace
           m_highScore.Clear();
           for (int i = 1; i < 4; i++)
           {
-            string name = xmlreader.GetValueAsString("NumberPlace", "name" + i, String.Empty);
+            string name = xmlreader.GetValueAsString("NumberPlace", "name" + i, string.Empty);
             int score = xmlreader.GetValueAsInt("NumberPlace", "score" + i, 0);
-            if (!name.Equals(String.Empty))
+            if (!name.Equals(string.Empty))
               m_highScore.Add(new Highscore(name, score));
           }
         }
@@ -568,8 +568,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         dlg.SetHeading(GUILocalizeStrings.Get(19111)); // Game Over
         dlg.SetLine(1, GUILocalizeStrings.Get(19114)); // Sorry, but your solution is wrong.
-        dlg.SetLine(2, String.Empty);
-        dlg.SetLine(3, String.Empty);
+        dlg.SetLine(2, string.Empty);
+        dlg.SetLine(3, string.Empty);
         dlg.DoModal(GUIWindowManager.ActiveWindow);
       }
     }
@@ -1164,8 +1164,8 @@ namespace MediaPortal.GUI.NumberPlace
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(19101);  // Sudoku
-      strButtonImage = String.Empty;
-      strButtonImageFocus = String.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
       strPictureImage = "hover_" + pluginConfigFileName + ".png";
       return true;
     }

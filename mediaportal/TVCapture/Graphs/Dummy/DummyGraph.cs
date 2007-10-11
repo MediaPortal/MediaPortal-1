@@ -410,7 +410,7 @@ namespace MediaPortal.TV.Recording
 
         public string LastError()
         {
-            return String.Empty;
+            return string.Empty;
         }
     }
 }

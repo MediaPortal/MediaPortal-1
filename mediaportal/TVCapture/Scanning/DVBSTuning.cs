@@ -117,7 +117,7 @@ namespace MediaPortal.TV.Scanning
       _currentIndex = 0;
 
       string fileName = _tplFiles[_currentDiseqc - 1];
-      if (fileName == String.Empty)
+      if (fileName == string.Empty)
       {
         Log.Info("dvbs-scan: no transponders found");
         _currentIndex = _count + 1;

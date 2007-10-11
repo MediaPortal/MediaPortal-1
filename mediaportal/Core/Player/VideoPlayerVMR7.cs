@@ -1241,7 +1241,7 @@ namespace MediaPortal.Player
 
       // remove prefix, which is added by Haali Media Splitter
       if (streamName.StartsWith("A: "))
-        streamName = streamName.Replace("A: ", String.Empty);
+        streamName = streamName.Replace("A: ", string.Empty);
       streamName = streamName.Trim('[', ']');
 
       return streamName;
@@ -1327,7 +1327,7 @@ namespace MediaPortal.Player
 
         // remove prefix, which is added by Haali Media Splitter
         if (streamName.StartsWith("S: "))
-          streamName = streamName.Replace("S: ", String.Empty);
+          streamName = streamName.Replace("S: ", string.Empty);
         streamName = streamName.Trim('[', ']');
 
         return streamName;

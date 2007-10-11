@@ -620,7 +620,7 @@ namespace MediaPortal.GUI.Library
 
     static public void ReleaseTexture(string fileName)
     {
-      if (fileName == String.Empty) return;
+      if (fileName == string.Empty) return;
 
       //dont dispose radio/tv logo's since they are used by the overlay windows
       if (fileName.ToLower().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos")) >= 0) return;

@@ -209,7 +209,7 @@ namespace WindowPlugins.VideoEditor
 
 		private void SelectItem(GUISpinControl spinControl, string text)
 		{
-			if (spinControl == null || text == String.Empty)
+			if (spinControl == null || text == string.Empty)
 				return;
 			for (int i = 0; i < spinControl.SubItemCount; i++)
 			{

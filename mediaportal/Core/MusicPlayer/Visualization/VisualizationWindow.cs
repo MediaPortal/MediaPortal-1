@@ -1293,7 +1293,7 @@ namespace MediaPortal.Visualization
           return GUIPropertyManager.GetProperty(propertyString);
 
         if (CurrentTrackTag == null)
-          return String.Empty;
+          return string.Empty;
 
         // There's a potential timing issue here; if we call GUIPropertyManager.GetProperty right after
         // a g_Player.PlayBackStarted event, sometimes the properties haven't been set yet.  To avoid this 
@@ -1939,11 +1939,11 @@ namespace MediaPortal.Visualization
 
     private string GetAlbumThumbName(string filename, string ArtistName, string AlbumName)
     {
-      if (ArtistName == String.Empty)
-        return String.Empty;
+      if (ArtistName == string.Empty)
+        return string.Empty;
 
-      if (AlbumName == String.Empty)
-        return String.Empty;
+      if (AlbumName == string.Empty)
+        return string.Empty;
 
       string name = String.Format("{0}-{1}", ArtistName, AlbumName);
       string thumbPath = MediaPortal.Util.Utils.GetCoverArtName(MediaPortal.Util.Thumbs.MusicAlbum, name);

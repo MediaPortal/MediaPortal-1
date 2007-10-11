@@ -154,7 +154,7 @@ namespace MediaPortal.Music.Database
         tmpPass = MusicDatabase.Instance.AddScrobbleUserPassword(Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "");
         _useDebugLog = (MusicDatabase.Instance.AddScrobbleUserSettings(Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "iDebugLog", -1) == 1) ? true : false;
 
-        if (tmpPass != String.Empty)
+        if (tmpPass != string.Empty)
         {
           try
           {
@@ -180,8 +180,8 @@ namespace MediaPortal.Music.Database
       lastConnectAttempt = DateTime.MinValue;
       minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
       _cookies = new CookieContainer();
-      _radioStreamLocation = String.Empty;
-      _radioSession = String.Empty;
+      _radioStreamLocation = string.Empty;
+      _radioSession = string.Empty;
       _subscriber = false;
       _currentSong = new Song();
     }
@@ -1150,7 +1150,7 @@ namespace MediaPortal.Music.Database
       UTF8Encoding encoding = new UTF8Encoding();
       byte[] barr = hash.ComputeHash(encoding.GetBytes(inputString_));
 
-      string tmp = String.Empty;
+      string tmp = string.Empty;
       for (int i = 0; i < barr.Length; i++)
       {
         tmp += barr[i].ToString("x2");
@@ -1160,7 +1160,7 @@ namespace MediaPortal.Music.Database
 
       barr = hash.ComputeHash(encoding.GetBytes(tmp + MD5Response));
 
-      string md5response = String.Empty;
+      string md5response = string.Empty;
       for (int i = 0; i < barr.Length; i++)
       {
         md5response += barr[i].ToString("x2");

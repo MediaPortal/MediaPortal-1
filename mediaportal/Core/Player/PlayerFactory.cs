@@ -159,7 +159,7 @@ namespace MediaPortal.Player
 
     public IPlayer Create(string fileName)
     {
-      string strAudioPlayer = String.Empty;
+      string strAudioPlayer = string.Empty;
       int streamPlayer = 0;
 
       // Free BASS to avoid problems with Digital Audio, when watching movies

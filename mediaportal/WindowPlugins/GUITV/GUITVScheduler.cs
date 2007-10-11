@@ -64,7 +64,7 @@ namespace MediaPortal.GUI.TV
     bool m_bSortAscending = true;
     int m_iSelectedItem = 0;
     bool needUpdate = false;
-    string currentShow = String.Empty;
+    string currentShow = string.Empty;
 
     public GUITVScheduler()
     {
@@ -81,7 +81,7 @@ namespace MediaPortal.GUI.TV
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string strTmp = String.Empty;
+        string strTmp = string.Empty;
         strTmp = (string)xmlreader.GetValue("tvscheduler", "sort");
         if (strTmp != null)
         {
@@ -142,7 +142,7 @@ namespace MediaPortal.GUI.TV
           {
             if (item.IsFolder && item.Label == "..")
             {
-              currentShow = String.Empty;
+              currentShow = string.Empty;
               LoadDirectory();
               return;
             }
@@ -425,7 +425,7 @@ namespace MediaPortal.GUI.TV
       List<TVRecording> itemlist = new List<TVRecording>();
       TVDatabase.GetRecordings(ref itemlist);
       int total = 0;
-      if (currentShow == String.Empty)
+      if (currentShow == string.Empty)
       {
         foreach (TVRecording rec in itemlist)
         {
@@ -577,7 +577,7 @@ namespace MediaPortal.GUI.TV
 
     void UpdateButtonStates()
     {
-      string strLine = String.Empty;
+      string strLine = string.Empty;
       switch (currentSortMethod)
       {
         case SortMethod.Channel:
@@ -641,7 +641,7 @@ namespace MediaPortal.GUI.TV
         }
         else
         {
-          item.PinImage = String.Empty;
+          item.PinImage = string.Empty;
         }
 
         switch (currentSortMethod)
@@ -653,7 +653,7 @@ namespace MediaPortal.GUI.TV
           case SortMethod.Name:
             goto case SortMethod.Type;
           case SortMethod.Type:
-            string strType = String.Empty;
+            string strType = string.Empty;
             item.Label = rec.Title;
             string strTime = String.Format("{0} {1} - {2}",
                                 rec.StartTime.ToShortDateString(),
@@ -737,7 +737,7 @@ namespace MediaPortal.GUI.TV
       {
         if (item.Label.Equals(".."))
         {
-          currentShow = String.Empty;
+          currentShow = string.Empty;
           LoadDirectory();
           return;
         }
@@ -863,7 +863,7 @@ namespace MediaPortal.GUI.TV
           {
             Recorder.StopViewing();
             string filename = Recorder.GetRecordingFileName(rec);
-            if (filename != String.Empty)
+            if (filename != string.Empty)
             {
               g_Player.Play(filename);
               if (g_Player.Playing)
@@ -878,7 +878,7 @@ namespace MediaPortal.GUI.TV
           {
             Recorder.StopViewing();
             string filename = Recorder.GetRecordingFileName(rec);
-            if (filename != String.Empty)
+            if (filename != string.Empty)
             {
               g_Player.Play(filename);
               if (g_Player.Playing)
@@ -1178,7 +1178,7 @@ namespace MediaPortal.GUI.TV
 
     string GetRecType(TVRecording rec)
     {
-      string strType = String.Empty;
+      string strType = string.Empty;
       switch (rec.RecType)
       {
         case TVRecording.RecordingType.Daily:
@@ -1225,7 +1225,7 @@ namespace MediaPortal.GUI.TV
       {
         pDlgOK.SetHeading(624);
         pDlgOK.SetLine(1, String.Format("{0}{1}", GUILocalizeStrings.Get(625), iCleaned));
-        pDlgOK.SetLine(2, String.Empty);
+        pDlgOK.SetLine(2, string.Empty);
         pDlgOK.DoModal(GetID);
       }
     }

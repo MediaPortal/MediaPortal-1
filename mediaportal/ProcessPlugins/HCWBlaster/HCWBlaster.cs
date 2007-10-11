@@ -187,10 +187,10 @@ namespace MediaPortal.HCWBlaster
 		///          false : plugin does not need its own button on home</returns>
 		public bool   GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
 		{
-			strButtonText       = String.Empty;
-			strButtonImage      = String.Empty;
-			strButtonImageFocus = String.Empty;
-			strPictureImage     = String.Empty;
+			strButtonText       = string.Empty;
+			strButtonImage      = string.Empty;
+			strButtonImageFocus = string.Empty;
+			strPictureImage     = string.Empty;
 			return false;
 		}
 

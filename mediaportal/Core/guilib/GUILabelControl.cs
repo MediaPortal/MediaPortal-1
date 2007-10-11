@@ -93,14 +93,14 @@ namespace MediaPortal.GUI.Library
       base.FinalizeConstruction();
 
       if (_fontName == null)
-        _fontName = String.Empty;
+        _fontName = string.Empty;
       if (_fontName != "" && _fontName != "-")
         _font = GUIFontManager.GetFont(_fontName);
 
       GUILocalizeStrings.LocalizeLabel(ref _labelText);
 
       if (_labelText == null)
-        _labelText = String.Empty;
+        _labelText = string.Empty;
       if (_labelText.IndexOf("#") >= 0)
         _containsProperty = true;
 
@@ -403,7 +403,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         if (value == null) return;
-        if (value == String.Empty) return;
+        if (value == string.Empty) return;
         if (_font == null)
         {
           _font = GUIFontManager.GetFont(value);

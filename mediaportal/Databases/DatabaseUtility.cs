@@ -269,14 +269,14 @@ namespace MediaPortal.Database
     static public string Get(SQLiteResultSet results, int iRecord, int column)
     {
       if (null == results)
-        return String.Empty;
+        return string.Empty;
       if (results.Rows.Count < iRecord)
-        return String.Empty;
+        return string.Empty;
       if (column < 0 || column >= results.ColumnNames.Count)
-        return String.Empty;
+        return string.Empty;
       SQLiteResultSet.Row arr = results.Rows[iRecord];
       if (arr.fields[column] == null)
-        return String.Empty;
+        return string.Empty;
       string strLine = (arr.fields[column]).Trim();
       //strLine = strLine.Replace("''","'");
       return strLine;
@@ -286,37 +286,37 @@ namespace MediaPortal.Database
     static public string Get(SQLiteResultSet results, int iRecord, string strColum)
     {
       if (null == results)
-        return String.Empty;
+        return string.Empty;
       if (results.Rows.Count == 0)
-        return String.Empty;
+        return string.Empty;
       if (results.Rows.Count < iRecord)
-        return String.Empty;
+        return string.Empty;
       SQLiteResultSet.Row arr = results.Rows[iRecord];
       int iCol = 0;
       if (results.ColumnIndices.ContainsKey(strColum))
       {
         iCol = (int)results.ColumnIndices[strColum];
         if (arr.fields[iCol] == null)
-          return String.Empty;
+          return string.Empty;
         string strLine = (arr.fields[iCol]).Trim();
         //strLine = strLine.Replace("''","'");
         return strLine;
       }
       int pos = strColum.IndexOf(".");
       if (pos < 0)
-        return String.Empty;
+        return string.Empty;
       strColum = strColum.Substring(pos + 1);
       if (results.ColumnIndices.ContainsKey(strColum))
       {
         iCol = (int)results.ColumnIndices[strColum];
         if (arr.fields[iCol] == null)
-          return String.Empty;
+          return string.Empty;
         string strLine = (arr.fields[iCol]).Trim();
         //strLine = strLine.Replace("''","'");
         return strLine;
       }
 
-      return String.Empty;
+      return string.Empty;
     }
 
 
@@ -333,7 +333,7 @@ namespace MediaPortal.Database
         strTxt = Strings.Unknown;
         return;
       }
-      string strReturn = String.Empty;
+      string strReturn = string.Empty;
       for (int i = 0; i < (int)strTxt.Length; ++i)
       {
         char k = strTxt[i];
@@ -347,7 +347,7 @@ namespace MediaPortal.Database
         strReturn += k;
       }
       strReturn = strReturn.Trim();
-      if (strReturn == String.Empty)
+      if (strReturn == string.Empty)
         strReturn = Strings.Unknown;
       strTxt = strReturn;
     }
@@ -361,7 +361,7 @@ namespace MediaPortal.Database
       {
         return Strings.Unknown;
       }
-      string strReturn = String.Empty;
+      string strReturn = string.Empty;
       for (int i = 0; i < (int)strTxt.Length; ++i)
       {
         char k = strTxt[i];
@@ -375,7 +375,7 @@ namespace MediaPortal.Database
         strReturn += k;
       }
       strReturn = strReturn.Trim();
-      if (strReturn == String.Empty)
+      if (strReturn == string.Empty)
         strReturn = Strings.Unknown;
       return strReturn;
     }

@@ -60,7 +60,7 @@ namespace MediaPortal.GUI.Video
 
     IMDBActor currentActor = null;
     bool _prevOverlay = false;
-    string imdbCoverArtUrl = String.Empty;
+    string imdbCoverArtUrl = string.Empty;
 
     public GUIVideoArtistInfo()
     {

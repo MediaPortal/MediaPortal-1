@@ -84,8 +84,8 @@ namespace MediaPortal.WebEPG
         channelid = "[Merged]";
 
       if (program.Start != 0 &&
-          program.Channel != String.Empty &&
-          program.Title != String.Empty)
+          program.Channel != string.Empty &&
+          program.Title != string.Empty)
       {
         _writer.WriteStartElement("programme");
         _writer.WriteAttributeString("start", program.Start.ToString());
@@ -98,26 +98,26 @@ namespace MediaPortal.WebEPG
         _writer.WriteString(program.Title);
         _writer.WriteEndElement();
 
-        if (program.Episode != String.Empty && program.Episode != "unknown")
+        if (program.Episode != string.Empty && program.Episode != "unknown")
           _writer.WriteElementString("sub-title", program.Episode);
 
-        if (program.Description != String.Empty && program.Description != "unknown")
+        if (program.Description != string.Empty && program.Description != "unknown")
           _writer.WriteElementString("desc", program.Description);
 
-        if (program.Genre != String.Empty && program.Genre != "-")
+        if (program.Genre != string.Empty && program.Genre != "-")
           _writer.WriteElementString("category", program.Genre);
 
-        string episodeNum = String.Empty;
-        if (program.EpisodeNum != String.Empty)
+        string episodeNum = string.Empty;
+        if (program.EpisodeNum != string.Empty)
           episodeNum += program.EpisodeNum;
 
-        if (program.SeriesNum != String.Empty)
+        if (program.SeriesNum != string.Empty)
           episodeNum += "." + program.SeriesNum;
 
-        if(episodeNum != String.Empty)
+        if(episodeNum != string.Empty)
           _writer.WriteElementString("episode-num", episodeNum);
 
-        if (program.Repeat != String.Empty)
+        if (program.Repeat != string.Empty)
           _writer.WriteElementString("previously-shown", null);
 
         /*

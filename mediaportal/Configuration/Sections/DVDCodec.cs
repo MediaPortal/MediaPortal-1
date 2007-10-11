@@ -128,7 +128,7 @@ namespace MediaPortal.Configuration.Sections
         audioRendererComboBox.SelectedItem = audioRenderer;
         dvdNavigatorComboBox.SelectedItem = dvdNavigator;
 
-        if (audioCodec == String.Empty)
+        if (audioCodec == string.Empty)
         {
           ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
           if (availableAudioFilters.Count > 0)
@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        if (videoCodec == String.Empty)
+        if (videoCodec == string.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
           bool Mpeg2DecFilterFound = false;

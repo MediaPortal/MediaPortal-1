@@ -257,7 +257,7 @@ namespace MediaPortal.Configuration.Sections
     }
     long ConvertToFrequency(string frequency)
     {
-      if (frequency.Trim() == String.Empty) return 0;
+      if (frequency.Trim() == string.Empty) return 0;
       float testValue = 189.24f;
       string usage = testValue.ToString("f2");
       if (usage.IndexOf(".") >= 0) frequency = frequency.Replace(",", ".");
@@ -270,7 +270,7 @@ namespace MediaPortal.Configuration.Sections
 
     long ConvertToTvFrequency(string frequency, ref TVChannel chan)
     {
-      if (frequency.Trim() == String.Empty) return 0;
+      if (frequency.Trim() == string.Empty) return 0;
       chan.Number = TVDatabase.FindFreeTvChannelNumber(chan.Number);
       frequency = frequency.ToUpper();
       for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)

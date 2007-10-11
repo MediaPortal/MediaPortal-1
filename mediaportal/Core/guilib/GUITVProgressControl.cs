@@ -133,17 +133,17 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-      if (_topTextureName == null) _topTextureName = String.Empty;
-      if (_bottomTextureName == null) _bottomTextureName = String.Empty;
-      if (_leftTextureName == null) _leftTextureName = String.Empty;
-      if (_midTextureName == null) _midTextureName = String.Empty;
-      if (_rightTextureName == null) _rightTextureName = String.Empty;
-      if (_tickTextureName == null) _tickTextureName = String.Empty;
-      if (_tickFill1TextureName == null) _tickFill1TextureName = String.Empty;
-      if (_tickFill2TextureName == null) _tickFill2TextureName = String.Empty;
-      if (_tickFill3TextureName == null) _tickFill3TextureName = String.Empty;
-      if (_fillBackGroundTextureName == null) _fillBackGroundTextureName = String.Empty;
-      if (_logoTextureName == null) _logoTextureName = String.Empty;
+      if (_topTextureName == null) _topTextureName = string.Empty;
+      if (_bottomTextureName == null) _bottomTextureName = string.Empty;
+      if (_leftTextureName == null) _leftTextureName = string.Empty;
+      if (_midTextureName == null) _midTextureName = string.Empty;
+      if (_rightTextureName == null) _rightTextureName = string.Empty;
+      if (_tickTextureName == null) _tickTextureName = string.Empty;
+      if (_tickFill1TextureName == null) _tickFill1TextureName = string.Empty;
+      if (_tickFill2TextureName == null) _tickFill2TextureName = string.Empty;
+      if (_tickFill3TextureName == null) _tickFill3TextureName = string.Empty;
+      if (_fillBackGroundTextureName == null) _fillBackGroundTextureName = string.Empty;
+      if (_logoTextureName == null) _logoTextureName = string.Empty;
       _imageTop = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _topTextureName);
       _imageBottom = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _bottomTextureName);
       _imageLeft = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _leftTextureName);

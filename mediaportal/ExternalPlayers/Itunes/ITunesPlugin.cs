@@ -41,7 +41,7 @@ namespace MediaPortal.ITunesPlayer
     iTunesLib.iTunesAppClass _iTunesApplication = null;
     IITUserPlaylist _playList;
     bool _playerIsPaused;
-    string _currentFile = String.Empty;
+    string _currentFile = string.Empty;
     bool _started;
     bool _ended;
     double _duration;

@@ -136,7 +136,7 @@ namespace MediaPortal.GUI.Video
     IMDBMovie currentMovie = null;
     string folderForThumbs = string.Empty;
     string[] coverArtUrls = new string[1];
-    string imdbCoverArtUrl = String.Empty;
+    string imdbCoverArtUrl = string.Empty;
 
     Thread imageSearchThread = null;
 
@@ -195,7 +195,7 @@ namespace MediaPortal.GUI.Video
       {
         spinDisc.IsVisible = true;
         spinDisc.Disabled = false;
-        string szNumber = String.Empty;
+        string szNumber = string.Empty;
         int iPos = 0;
         bool bNumber = false;
         for (int i = 0; i < currentMovie.DVDLabel.Length; ++i)
@@ -412,7 +412,7 @@ namespace MediaPortal.GUI.Video
 
     void Refresh(bool forceFolderThumb)
     {
-      string coverArtImage = String.Empty;
+      string coverArtImage = string.Empty;
       try
       {
         string imageUrl = currentMovie.ThumbURL;
@@ -467,7 +467,7 @@ namespace MediaPortal.GUI.Video
           if (((System.IO.File.Exists(coverArtImage)) && (FolderForThumbs != string.Empty)) || forceFolderThumb)
           {
             // copy icon to folder also;
-            string strFolderImage = String.Empty;              
+            string strFolderImage = string.Empty;              
             if (forceFolderThumb)
               strFolderImage = System.IO.Path.GetFullPath(currentMovie.Path);
             else
@@ -562,7 +562,7 @@ namespace MediaPortal.GUI.Video
       pDlgProgress.Reset();
       pDlgProgress.SetHeading(197);
       pDlgProgress.SetLine(1, fetcher.MovieName);
-      pDlgProgress.SetLine(2, String.Empty);
+      pDlgProgress.SetLine(2, string.Empty);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
       return true;
@@ -596,7 +596,7 @@ namespace MediaPortal.GUI.Video
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
       pDlgOK.SetHeading(195);
       pDlgOK.SetLine(1, fetcher.MovieName);
-      pDlgOK.SetLine(2, String.Empty);
+      pDlgOK.SetLine(2, string.Empty);
       pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
       return true;
     }
@@ -620,7 +620,7 @@ namespace MediaPortal.GUI.Video
       pDlgProgress.Reset();
       pDlgProgress.SetHeading(198);
       pDlgProgress.SetLine(1, fetcher.MovieName);
-      pDlgProgress.SetLine(2, String.Empty);
+      pDlgProgress.SetLine(2, string.Empty);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
       return true;
@@ -655,7 +655,7 @@ namespace MediaPortal.GUI.Video
       pDlgProgress.Reset();
       pDlgProgress.SetHeading(986);
       pDlgProgress.SetLine(1, fetcher.MovieName);
-      pDlgProgress.SetLine(2, String.Empty);
+      pDlgProgress.SetLine(2, string.Empty);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
       return true;
@@ -673,7 +673,7 @@ namespace MediaPortal.GUI.Video
       // show dialog...
       pDlgOK.SetHeading(195);
       pDlgOK.SetLine(1, fetcher.MovieName);
-      pDlgOK.SetLine(2, String.Empty);
+      pDlgOK.SetLine(2, string.Empty);
       pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
       return false;
     }
@@ -749,7 +749,7 @@ namespace MediaPortal.GUI.Video
       keyboard.Reset();
       keyboard.Text = strLine;
       keyboard.DoModal(GUIWindowManager.ActiveWindow);
-      strLine = String.Empty;
+      strLine = string.Empty;
       if (keyboard.IsConfirmed)
       {
         strLine = keyboard.Text;

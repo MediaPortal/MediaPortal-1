@@ -45,7 +45,7 @@ namespace MediaPortal.Configuration.Sections
     {
       get
       {
-        string extensions = String.Empty;
+        string extensions = string.Empty;
 
         foreach (string extension in extensionsListBox.Items)
         {
@@ -237,7 +237,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Clear text
         //
-        extensionTextBox.Text = String.Empty;
+        extensionTextBox.Text = string.Empty;
       }
     }
 

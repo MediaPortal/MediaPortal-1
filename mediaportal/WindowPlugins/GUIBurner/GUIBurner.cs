@@ -511,7 +511,7 @@ namespace MediaPortal.GUI.GUIBurner
               {
                 #region Drive
                 currentFolder = item.Label;
-                if (currentFolder != String.Empty)
+                if (currentFolder != string.Empty)
                   LoadListControl(currentFolder, currentExt);
                 else
                   LoadDriveListControl();
@@ -1591,8 +1591,8 @@ namespace MediaPortal.GUI.GUIBurner
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(2100);
-      strButtonImage = String.Empty;
-      strButtonImageFocus = String.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
       strPictureImage = "hover_my burner.png";
       return true;
     }

@@ -76,7 +76,7 @@ namespace MediaPortal.TV.Epg
     List<MHWEvent> _listMhwEvents;
     List<ATSCEvent> _listAtscEvents;
     List<EpgChannelUpdate> _epgChannels;
-    string _epgTvChannelName = String.Empty;
+    string _epgTvChannelName = string.Empty;
     #endregion
 
     #region properties
@@ -318,11 +318,11 @@ namespace MediaPortal.TV.Epg
         DateTime programStartTime = programStartTimeUTC.ToLocalTime();
 
         if (title == null)
-          title = String.Empty;
+          title = string.Empty;
 
         if (description == null)
-          description = String.Empty;
-        if (title == String.Empty || title == "n.a.")
+          description = string.Empty;
+        if (title == string.Empty || title == "n.a.")
         {
           continue;
         }
@@ -487,7 +487,7 @@ namespace MediaPortal.TV.Epg
               //Below rem'd out to support czech subtitles see further below
               //title = Marshal.PtrToStringAnsi(ptrTitle);
               //description = Marshal.PtrToStringAnsi(ptrDesc);
-              string language = String.Empty;
+              string language = string.Empty;
               language += (char)((languageId >> 16) & 0xff);
               language += (char)((languageId >> 8) & 0xff);
               language += (char)((languageId) & 0xff);
@@ -540,7 +540,7 @@ namespace MediaPortal.TV.Epg
         _listChannels = null;
         Log.WriteFile(LogType.EPG, "epg-grab: updating EPG:{0}", events.Count);
         TVDatabase.SupressEvents = true;
-        string languagesToGrab = String.Empty;
+        string languagesToGrab = string.Empty;
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           languagesToGrab = xmlreader.GetValueAsString("epg-grabbing", "grabLanguages", "");
@@ -587,10 +587,10 @@ namespace MediaPortal.TV.Epg
                 string[] langs = languagesToGrab.Split(new char[] { '/' });
                 foreach (string lang in langs)
                 {
-                  if (lang == String.Empty) continue;
+                  if (lang == string.Empty) continue;
                   // Smirnoff: made this case-insensitive as per bug reports
                   if (string.Compare(epgLang.Language, lang, true) == 0) grabLanguage = true;
-                  if (epgLang.Language == String.Empty) grabLanguage = true;
+                  if (epgLang.Language == string.Empty) grabLanguage = true;
                 }
               }
               else grabLanguage = true;

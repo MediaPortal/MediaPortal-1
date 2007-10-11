@@ -63,8 +63,8 @@ namespace WindowPlugins.VideoEditor
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(2090);
-      strButtonImage = String.Empty;
-      strButtonImageFocus = String.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
       strPictureImage = "hover_videoeditor.png";
       return true;
     }

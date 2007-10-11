@@ -663,7 +663,7 @@ namespace MediaPortal.Configuration.Sections
         string h264videoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
         string audioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
 
-        if (audioCodec == String.Empty)
+        if (audioCodec == string.Empty)
         {
           ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
           if (availableAudioFilters.Count > 0)
@@ -686,7 +686,7 @@ namespace MediaPortal.Configuration.Sections
             else if (DScalerFilterFound) audioCodec = "DScaler Audio Decoder";
           }
         }
-        if (videoCodec == String.Empty)
+        if (videoCodec == string.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
           bool Mpeg2DecFilterFound = false;
@@ -710,7 +710,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        if (h264videoCodec == String.Empty)
+        if (h264videoCodec == string.Empty)
         {
           ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264Video);
           bool h264DecFilterFound = false;

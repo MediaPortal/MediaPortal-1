@@ -168,19 +168,19 @@ namespace DShowNET
     {
       Guid propertyGuid=guidPropSet;
       IKsPropertySet propertySet= captureFilter as IKsPropertySet;
-      string returnedText = String.Empty;
+      string returnedText = string.Empty;
    //   uint IsTypeSupported=0;
    //   uint uiSize;
     //  if (propertySet==null) 
     //  {
     //    Log.Info("GetString() properySet=null");
-    //    return String.Empty;
+    //    return string.Empty;
     //  }
     //  int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
     //  if (hr!=0 && (IsTypeSupported & (uint)KsPropertySupport.Get)==0) 
     //  {
     //    Log.Info("GetString() property is not supported");
-    //    return String.Empty;
+    //    return string.Empty;
     //  }
 
     //  IntPtr pDataReturned = Marshal.AllocCoTaskMem(100);

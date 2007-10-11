@@ -203,7 +203,7 @@ namespace MediaPortal.GUI.Library
     public override void ScaleToScreenResolution()
     {
       if (_textureFileNameTag == null)
-        _textureFileNameTag = String.Empty;
+        _textureFileNameTag = string.Empty;
       if (_textureFileNameTag != "-" && _textureFileNameTag != "")
       {
         if (_width == 0 || _height == 0)
@@ -637,7 +637,7 @@ namespace MediaPortal.GUI.Library
         {
           file = GUIPropertyManager.Parse(_textureFileNameTag);
         }
-        if (file != null && file != String.Empty)
+        if (file != null && file != string.Empty)
         {
           if (logtextures)
             Log.Info("GUIImage:freeresources:{0}", file);

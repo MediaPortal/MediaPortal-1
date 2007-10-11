@@ -103,14 +103,14 @@ namespace MediaPortal.Dialogs
       //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 1, 0, 0, null);
       //msg.Label = strLine;
       //OnMessage(msg);
-      SetLine(1, String.Empty);
-      SetLine(2, String.Empty);
-      SetLine(3, String.Empty);
+      SetLine(1, string.Empty);
+      SetLine(2, string.Empty);
+      SetLine(3, string.Empty);
     }
 
     public void SetHeading(int iString)
     {
-      if (iString == 0) SetHeading(String.Empty);
+      if (iString == 0) SetHeading(string.Empty);
       else SetHeading(GUILocalizeStrings.Get(iString));
     }
 
@@ -125,7 +125,7 @@ namespace MediaPortal.Dialogs
     public void SetLine(int iLine, int iString)
     {
       if (iLine <= 0) return;
-      if (iString == 0) SetLine(iLine, String.Empty);
+      if (iString == 0) SetLine(iLine, string.Empty);
       SetLine(iLine, GUILocalizeStrings.Get(iString));
     }
 

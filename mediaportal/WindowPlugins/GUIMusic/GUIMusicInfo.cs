@@ -219,7 +219,7 @@ namespace MediaPortal.GUI.Music
       lblArtist.Label = albumInfo.Artist;
       lblDate.Label = albumInfo.DateOfRelease;
 
-      string rating = String.Empty;
+      string rating = string.Empty;
       if (albumInfo.Rating > 0)
         rating = String.Format("{0}/9", albumInfo.Rating);
       lblRating.Label = rating;
@@ -240,7 +240,7 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        string line = String.Empty;
+        string line = string.Empty;
         for (int i = 0; i < albumInfo.NumberOfSongs; ++i)
         {
           MusicSong song = albumInfo.GetSong(i);

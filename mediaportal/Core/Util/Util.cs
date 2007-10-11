@@ -171,7 +171,7 @@ namespace MediaPortal.Util
 
     static public string GetDriveSerial(string drive)
     {
-      if (drive == null) return String.Empty;
+      if (drive == null) return string.Empty;
       //receives volume name of drive
       StringBuilder volname = new StringBuilder(256);
       //receives serial number of drive,not in case of network drive(win95/98)
@@ -192,7 +192,7 @@ namespace MediaPortal.Util
 
     static public string GetDriveName(string drive)
     {
-      if (drive == null) return String.Empty;
+      if (drive == null) return string.Empty;
       //receives volume name of drive
       StringBuilder volname = new StringBuilder(256);
       //receives serial number of drive,not in case of network drive(win95/98)
@@ -648,7 +648,7 @@ namespace MediaPortal.Util
       catch (Exception)
       {
       }
-      return String.Empty;
+      return string.Empty;
     }
 
     static public string SecondsToHMString(int lSeconds)
@@ -703,8 +703,8 @@ namespace MediaPortal.Util
 
     static public string stripHTMLtags(string strHTML)
     {
-      if (strHTML == null) return String.Empty;
-      if (strHTML.Length == 0) return String.Empty;
+      if (strHTML == null) return string.Empty;
+      if (strHTML.Length == 0) return string.Empty;
       string stripped = Regex.Replace(strHTML, @"<(.|\n)*?>", string.Empty);
       return stripped.Trim();
     }
@@ -755,7 +755,7 @@ namespace MediaPortal.Util
 
     static public string GetObjectCountLabel(int iTotalItems)
     {
-      string strObjects = String.Empty;
+      string strObjects = string.Empty;
 
       if (iTotalItems == 1)
         strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(1062)); //Object
@@ -767,7 +767,7 @@ namespace MediaPortal.Util
 
     static public string GetSongCountLabel(int iTotalItems, int iTotalSeconds)
     {
-      string strObjects = String.Empty;
+      string strObjects = string.Empty;
 
       if (iTotalItems == 1)
         strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1063),
@@ -867,8 +867,8 @@ namespace MediaPortal.Util
 
     static public string SplitFilename(string strFileNameAndPath)
     {
-      string path = String.Empty;
-      string singlefilename = String.Empty;
+      string path = string.Empty;
+      string singlefilename = string.Empty;
       Split(strFileNameAndPath, out path, out singlefilename);
       return singlefilename;
     }
@@ -1171,8 +1171,8 @@ namespace MediaPortal.Util
       int k = 0;
       int j = 0;
 
-      if (strText == null) return String.Empty;
-      if (strText.Length == 0) return String.Empty;
+      if (strText == null) return string.Empty;
+      if (strText.Length == 0) return string.Empty;
 
       string strFName = strText.Replace(':', '_');
       strFName = strFName.Replace('/', '_');
@@ -1216,8 +1216,8 @@ namespace MediaPortal.Util
 
     static public string MakeDirectoryPath(string strText)
     {
-      if (strText == null) return String.Empty;
-      if (strText.Length == 0) return String.Empty;
+      if (strText == null) return string.Empty;
+      if (strText.Length == 0) return string.Empty;
       string strFName = strText.Replace('*', '_');
       strFName = strFName.Replace(':', '_');
       strFName = strFName.Replace('?', '_');
@@ -1305,7 +1305,7 @@ namespace MediaPortal.Util
       string url = String.Format("mpcache-{0}", EncryptLine(strURL));
 
       string file = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
-      if (file != String.Empty && System.IO.File.Exists(file))
+      if (file != string.Empty && System.IO.File.Exists(file))
       {
         try
         {
@@ -1383,8 +1383,8 @@ namespace MediaPortal.Util
 
     static public string RemoveTrailingSlash(string strLine)
     {
-      if (strLine == null) return String.Empty;
-      if (strLine.Length == 0) return String.Empty;
+      if (strLine == null) return string.Empty;
+      if (strLine.Length == 0) return string.Empty;
       string strPath = strLine;
       while (strPath.Length > 0)
       {
@@ -1425,8 +1425,8 @@ namespace MediaPortal.Util
 
     static public string GetFilename(string strPath, bool withoutExtension)
     {
-      if (strPath == null) return String.Empty;
-      if (strPath.Length == 0) return String.Empty;
+      if (strPath == null) return string.Empty;
+      if (strPath.Length == 0) return string.Empty;
       try
       {
         if (m_bHideExtensions || withoutExtension)
@@ -1619,8 +1619,8 @@ namespace MediaPortal.Util
 
     static public string FilterFileName(string strName)
     {
-      if (strName == null) return String.Empty;
-      if (strName.Length == 0) return String.Empty;
+      if (strName == null) return string.Empty;
+      if (strName.Length == 0) return string.Empty;
       strName = strName.Replace(@"\", "_");
       strName = strName.Replace("/", "_");
       strName = strName.Replace(":", "_");
@@ -1666,9 +1666,9 @@ namespace MediaPortal.Util
 
     static public string EncryptLine(string strLine)
     {
-      if (strLine == null)            return String.Empty;
-      if (strLine.Length == 0)        return String.Empty;
-      if (String.Compare(Strings.Unknown, strLine, true) == 0) return String.Empty;
+      if (strLine == null)            return string.Empty;
+      if (strLine.Length == 0)        return string.Empty;
+      if (String.Compare(Strings.Unknown, strLine, true) == 0) return string.Empty;
       CRCTool crc = new CRCTool();
       crc.Init(CRCTool.CRCCode.CRC32);
       ulong dwcrc = crc.calc(strLine);
@@ -1689,8 +1689,8 @@ namespace MediaPortal.Util
 
     static public string GetFolderThumb(string strFile)
     {
-      if (strFile == null)              return String.Empty;
-      if (strFile.Length == 0)          return String.Empty;
+      if (strFile == null)              return string.Empty;
+      if (strFile.Length == 0)          return string.Empty;
 
       string strPath, strFileName;
       Utils.Split(strFile, out strPath, out strFileName);
@@ -1701,8 +1701,8 @@ namespace MediaPortal.Util
 
     static public string GetLocalFolderThumb(string strFile)
     {
-      if (strFile == null)              return String.Empty;
-      if (strFile.Length == 0)          return String.Empty;
+      if (strFile == null)              return string.Empty;
+      if (strFile.Length == 0)          return string.Empty;
 
       string strPath, strFileName;
       Utils.Split(strFile, out strPath, out strFileName);
@@ -1741,9 +1741,9 @@ namespace MediaPortal.Util
 
     static public string ConvertToLargeCoverArt(string smallArt)
     {
-      if (smallArt == null)             return String.Empty;
-      if (smallArt.Length == 0)         return String.Empty;
-      if (smallArt == String.Empty)     return smallArt;
+      if (smallArt == null)             return string.Empty;
+      if (smallArt.Length == 0)         return string.Empty;
+      if (smallArt == string.Empty)     return smallArt;
 
       string smallExt = GetThumbExtension();
       string LargeExt = String.Format(@"L{0}", GetThumbExtension());
@@ -2002,8 +2002,8 @@ namespace MediaPortal.Util
 
     public static string ReplaceTag(string line, string tag, string value, string empty)
     {
-      if (line == null) return String.Empty;
-      if (line.Length == 0) return String.Empty;
+      if (line == null) return string.Empty;
+      if (line.Length == 0) return string.Empty;
       if (tag == null) return line;
       if (tag.Length == 0) return line;
 
@@ -2038,7 +2038,7 @@ namespace MediaPortal.Util
       ulong freeBytesAvailable = 0;
       ulong totalNumberOfBytes = 0;
       ulong totalNumberOfFreeBytes = 0;
-      string driveName = String.Empty;
+      string driveName = string.Empty;
 
       if (drive.StartsWith(@"\\"))
         // We've got unc notation
@@ -2058,13 +2058,13 @@ namespace MediaPortal.Util
     static public void DeleteOldTimeShiftFiles(string path)
     {
       if (path == null) return;
-      if (path == String.Empty) return;
+      if (path == string.Empty) return;
       // Remove any trailing slashes
       path = Utils.RemoveTrailingSlash(path);
 
 
       // clean the TempDVR\ folder
-      string directory = String.Empty;
+      string directory = string.Empty;
       string[] files;
       try
       {

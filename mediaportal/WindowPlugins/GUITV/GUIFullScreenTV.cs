@@ -2241,7 +2241,7 @@ namespace MediaPortal.GUI.TV
         ChangeChannelNr(iChannel);
         _channelInputVisible = false;
 
-        _channelName = String.Empty;
+        _channelName = string.Empty;
       }
     }
     public void OnKeyCode(char chKey)

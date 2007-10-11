@@ -824,7 +824,7 @@ namespace MediaPortal.GUI.Library
       }
 
       if (Focus)
-        GUIPropertyManager.SetProperty("#highlightedbutton", String.Empty);
+        GUIPropertyManager.SetProperty("#highlightedbutton", string.Empty);
       base.Render(timePassed);
     }
 
@@ -959,7 +959,7 @@ namespace MediaPortal.GUI.Library
               }
               if (((action.m_key.KeyChar >= 65) && (action.m_key.KeyChar <= 90)) || (action.m_key.KeyChar == (int)Keys.Space))
               {
-                if (action.m_key.KeyChar == (int)Keys.Space && _searchString == String.Empty) return;
+                if (action.m_key.KeyChar == (int)Keys.Space && _searchString == string.Empty) return;
                 _searchString += (char)action.m_key.KeyChar;
                 SearchItem(_searchString, SearchType.SEARCH_FIRST);
               }
@@ -1672,7 +1672,7 @@ namespace MediaPortal.GUI.Library
     {
       if (_font == null) return;
       if (wszText == null) return;
-      if (wszText == String.Empty) return;
+      if (wszText == string.Empty) return;
 
       float fTextHeight = 0, fTextWidth = 0;
       float fwidth, fWidth = 0, fHeight = 0;
@@ -2032,7 +2032,7 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_upDownControl == null) return String.Empty;
+        if (_upDownControl == null) return string.Empty;
         return _upDownControl.TexutureUpName;
       }
     }
@@ -2041,7 +2041,7 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_upDownControl == null) return String.Empty;
+        if (_upDownControl == null) return string.Empty;
         return _upDownControl.TexutureDownName;
       }
     }
@@ -2050,7 +2050,7 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_upDownControl == null) return String.Empty;
+        if (_upDownControl == null) return string.Empty;
         return _upDownControl.TexutureUpFocusName;
       }
     }
@@ -2059,7 +2059,7 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_upDownControl == null) return String.Empty;
+        if (_upDownControl == null) return string.Empty;
         return _upDownControl.TexutureDownFocusName;
       }
     }
@@ -2105,8 +2105,8 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_imageFolderFocus.Count == 0) return String.Empty;
-        if (_imageFolderFocus[0] == null) return String.Empty;
+        if (_imageFolderFocus.Count == 0) return string.Empty;
+        if (_imageFolderFocus[0] == null) return string.Empty;
         return _imageFolderFocus[0].FileName;
       }
     }
@@ -2115,8 +2115,8 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_imageFolder.Count == 0) return String.Empty;
-        if (_imageFolder[0] == null) return String.Empty;
+        if (_imageFolder.Count == 0) return string.Empty;
+        if (_imageFolder[0] == null) return string.Empty;
         return _imageFolder[0].FileName;
       }
     }
@@ -2409,7 +2409,7 @@ namespace MediaPortal.GUI.Library
       get
       {
         if (_imageBackground != null) return _imageBackground.FileName;
-        return String.Empty;
+        return string.Empty;
       }
       set
       {
@@ -2480,7 +2480,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_imageInfo != null)
           return _imageInfo.FileName;
-        return String.Empty;
+        return string.Empty;
       }
       set
       {

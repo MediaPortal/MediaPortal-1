@@ -32,8 +32,8 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class Error
 	{
-    static string errorReason=String.Empty;
-    static string errorDescription=String.Empty;
+    static string errorReason=string.Empty;
+    static string errorDescription=string.Empty;
 		
     static public string Description
     {
@@ -83,8 +83,8 @@ namespace MediaPortal.GUI.Library
 
     static public void Clear()
     {
-      Reason=String.Empty;
-      Description=String.Empty;
+      Reason=string.Empty;
+      Description=string.Empty;
     }
 	}
 }

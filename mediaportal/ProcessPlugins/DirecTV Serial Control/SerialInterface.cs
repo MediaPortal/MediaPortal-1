@@ -422,8 +422,8 @@ namespace DirecTV
 
     string ToString(byte[] data)
     {
-      if (data == null) return String.Empty;
-      string tmp = String.Empty;
+      if (data == null) return string.Empty;
+      string tmp = string.Empty;
       foreach (byte b in data)
       {
         tmp += String.Format("{0:x}", b) + " ";

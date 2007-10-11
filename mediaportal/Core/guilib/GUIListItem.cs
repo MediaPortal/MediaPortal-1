@@ -43,19 +43,19 @@ namespace MediaPortal.GUI.Library
     //even which gets fired if the list,thumbnail or filmstrip few needs the
     //coverart for the specified item
     public event RetrieveCoverArtHandler OnRetrieveArt = null;
-    protected string _label = String.Empty;							// text of column1
-    protected string _label2 = String.Empty;							// text of column2
-    protected string _label3 = String.Empty;							// text of column3
-    protected string _thumbNailName = String.Empty;			// filename of thumbnail 
-    protected string _smallIconName = String.Empty;								// filename of icon
-    protected string _bigIconName = String.Empty;						// filename of icon
+    protected string _label = string.Empty;							// text of column1
+    protected string _label2 = string.Empty;							// text of column2
+    protected string _label3 = string.Empty;							// text of column3
+    protected string _thumbNailName = string.Empty;			// filename of thumbnail 
+    protected string _smallIconName = string.Empty;								// filename of icon
+    protected string _bigIconName = string.Empty;						// filename of icon
     protected GUIImage _thumbnailImage = null;			// pointer to CImage containing the thumbnail
     protected GUIImage _imageIcon = null;					// pointer to CImage containing the icon
     protected GUIImage _imageBigPinIcon = null;				// pointer to CImage containing the icon
     protected bool _isSelected = false;					// item is selected or not
     protected bool _isFolder = false;						// indicated if the item is a folder or a path
-    protected string _folder = String.Empty;								// path + filename of the item
-    protected string _dvdLabel = String.Empty;						// indicates the disc number of movie
+    protected string _folder = string.Empty;								// path + filename of the item
+    protected string _dvdLabel = string.Empty;						// indicates the disc number of movie
     protected int _duration = 0;							// duration (in seconds) of the movie or song
     FileInformation _fileInfo = null;								// file info (size, date/time etc.) of the file
     bool _shaded = false;						// indicates if the item needs to be rendered shaded
@@ -65,7 +65,7 @@ namespace MediaPortal.GUI.Library
     object _tagTv;										// object containing the tag info of a tv-recording
     object _tagAlbumInfo;							// object tag info of a music album
     bool _isCoverArtRetrieved = false;
-    string _pinIconName = String.Empty;
+    string _pinIconName = string.Empty;
     protected GUIImage _imagePinIcon = null;
     protected bool _isRemote = false;           // indicating if this is a local or remote file
     protected bool _isDownloading = false;            // indicating if this file is being downloaded
@@ -524,9 +524,9 @@ namespace MediaPortal.GUI.Library
       FreeMemory();
       if (OnRetrieveArt != null)
       {
-        _thumbNailName = String.Empty;
-        _smallIconName = String.Empty;
-        _pinIconName = String.Empty;
+        _thumbNailName = string.Empty;
+        _smallIconName = string.Empty;
+        _pinIconName = string.Empty;
       }
     }
 

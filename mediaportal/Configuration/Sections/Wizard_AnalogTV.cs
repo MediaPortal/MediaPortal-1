@@ -756,7 +756,7 @@ namespace MediaPortal.Configuration.Sections
     }
     long ConvertToTvFrequency(string frequency)
     {
-      if (frequency.Trim() == String.Empty) return 0;
+      if (frequency.Trim() == string.Empty) return 0;
       frequency = frequency.ToUpper();
       for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
       {

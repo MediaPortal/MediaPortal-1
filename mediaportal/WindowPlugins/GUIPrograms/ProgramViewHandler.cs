@@ -96,7 +96,7 @@ namespace MediaPortal.GUI.GUIPrograms
       get
       {
         if (currentView == null)
-          return String.Empty;
+          return string.Empty;
         return currentView.LocalizedName;
       }
     }
@@ -106,7 +106,7 @@ namespace MediaPortal.GUI.GUIPrograms
       get
       {
         if (currentView == null)
-          return String.Empty;
+          return string.Empty;
         return currentView.Name;
       }
       set
@@ -252,7 +252,7 @@ namespace MediaPortal.GUI.GUIPrograms
 
     void BuildRestriction(FilterDefinition filter, SQLSelectBuilder sqlSelect)
     {
-      if (filter.SqlOperator != String.Empty && filter.Restriction != String.Empty)
+      if (filter.SqlOperator != string.Empty && filter.Restriction != string.Empty)
       {
         string whereClause = "";
         string restriction = filter.Restriction;
@@ -484,20 +484,20 @@ namespace MediaPortal.GUI.GUIPrograms
       if ((definition.Where == "genre") || (definition.Where == "genre2") || (definition.Where == "genre3") || (definition.Where == "genre4") || (definition.Where == "genre5"))
       {
         item.Label = filterItem.Genre;
-        item.Label2 = String.Empty;
-        item.Label3 = String.Empty;
+        item.Label2 = string.Empty;
+        item.Label3 = string.Empty;
       }
       if (definition.Where == "year")
       {
         item.Label = (filterItem.Year).ToString();
-        item.Label2 = String.Empty;
-        item.Label3 = String.Empty;
+        item.Label2 = string.Empty;
+        item.Label3 = string.Empty;
       }
       else
       {
         item.Label = filterItem.Title;
-        item.Label2 = String.Empty;
-        item.Label3 = String.Empty;
+        item.Label2 = string.Empty;
+        item.Label3 = string.Empty;
       }
 
     }

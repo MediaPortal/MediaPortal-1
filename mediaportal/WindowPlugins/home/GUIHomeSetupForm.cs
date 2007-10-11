@@ -413,9 +413,9 @@ namespace MediaPortal.GUI.Home
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       strButtonText = PluginName();
-      strButtonImage = String.Empty;
-      strButtonImageFocus = String.Empty;
-      strPictureImage = String.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
+      strPictureImage = string.Empty;
       return true;
     }
 
@@ -439,12 +439,12 @@ namespace MediaPortal.GUI.Home
   public class PluginInfo
   {
     protected ISetupForm _setup = null;
-    protected string _name = String.Empty;
+    protected string _name = string.Empty;
     protected int _index = -1;
-    protected string _text = String.Empty;
-    protected string _btnImage = String.Empty;
-    protected string _focus = String.Empty;
-    protected string _picImage = String.Empty;
+    protected string _text = string.Empty;
+    protected string _btnImage = string.Empty;
+    protected string _focus = string.Empty;
+    protected string _picImage = string.Empty;
 
     public PluginInfo(string Name)
     {
@@ -483,7 +483,7 @@ namespace MediaPortal.GUI.Home
         _setup.GetHome(out _text, out _btnImage, out _focus, out _picImage);
       }
 
-      if (_name != String.Empty)
+      if (_name != string.Empty)
       {
         using (Profile.Settings xmlreader = new Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {

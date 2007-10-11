@@ -199,7 +199,7 @@ namespace MediaPortal.TV.Database
                   TVChannel chan = new TVChannel();
 
                   //parse name of channel to see if it contains a channel number
-                  string number = String.Empty;
+                  string number = string.Empty;
                   for (int i = 0; i < nodeName.InnerText.Length; ++i)
                   {
                     if (Char.IsDigit(nodeName.InnerText[i]))
@@ -208,7 +208,7 @@ namespace MediaPortal.TV.Database
                     }
                     else break;
                   }
-                  if (number == String.Empty)
+                  if (number == string.Empty)
                   {
                     for (int i = 0; i < nodeId.InnerText.Length; ++i)
                     {
@@ -220,7 +220,7 @@ namespace MediaPortal.TV.Database
                     }
                   }
                   int channelNo = 0;
-                  if (number != String.Empty)
+                  if (number != string.Empty)
                     channelNo = Int32.Parse(number);
                   chan.XMLId = nodeId.InnerText;
                   chan.Name = htmlUtil.ConvertHTMLToAnsi(nodeName.InnerText);

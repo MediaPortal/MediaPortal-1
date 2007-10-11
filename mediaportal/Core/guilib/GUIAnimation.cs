@@ -109,7 +109,7 @@ namespace MediaPortal.GUI.Library
     protected void InitTriggerList()
     {
       _triggerList.Clear();
-      if (_triggerNames == String.Empty) return;
+      if (_triggerNames == string.Empty) return;
 
       foreach (string trigger in _triggerNames.Split(';'))
       {

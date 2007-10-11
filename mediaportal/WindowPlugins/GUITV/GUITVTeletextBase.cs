@@ -37,7 +37,7 @@ namespace MediaPortal.GUI.TV
 
     #region variables
     protected Bitmap bmpTeletextPage;
-    protected string inputLine = String.Empty;
+    protected string inputLine = string.Empty;
     protected int currentPageNumber = 100;
     protected int currentSubPageNumber = 1;
     private static Mutex _requestmutex = new Mutex();

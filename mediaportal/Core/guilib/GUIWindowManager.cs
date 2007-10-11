@@ -82,7 +82,7 @@ namespace MediaPortal.GUI.Library
     static GUIWindow _displayedOsd = null;
     static bool _shouldRefresh = false;
     static bool _isSwitchingToNewWindow = false;
-    static string _currentWindowName = String.Empty;
+    static string _currentWindowName = string.Empty;
     static int _nextWindowIndex = -1;
     static Object thisLock = new Object();      // used in Route functions
     #endregion
@@ -1224,7 +1224,7 @@ namespace MediaPortal.GUI.Library
           Log.Debug("WindowManager: unroute to {0}:{1}->{2}:{3}",
                    _routedWindow, _routedWindow.GetID, GetWindow(ActiveWindow), ActiveWindow);
         }
-        if (_currentWindowName != String.Empty && _routedWindow != null)
+        if (_currentWindowName != string.Empty && _routedWindow != null)
         {
           GUIPropertyManager.SetProperty("#currentmodule", _currentWindowName);
         }

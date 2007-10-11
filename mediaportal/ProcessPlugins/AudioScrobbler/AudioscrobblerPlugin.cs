@@ -286,7 +286,7 @@ namespace MediaPortal.Audioscrobbler
       else
         if (g_Player.IsMusic)
         {
-          if (_currentSong.Title != null && _currentSong.Title != String.Empty)
+          if (_currentSong.Title != null && _currentSong.Title != string.Empty)
             Log.Info("Audioscrobbler plugin: database does not contain track - ignoring track: {0} by {1} from {2}", _currentSong.Title, _currentSong.Artist, _currentSong.Album);
           else
             Log.Info("Audioscrobbler plugin: database does not contain track: {0}", g_Player.CurrentFile);
@@ -417,7 +417,7 @@ namespace MediaPortal.Audioscrobbler
     {
       MusicDatabase dbs = MusicDatabase.Instance;
       string strFile = g_Player.Player.CurrentFile;
-      if (strFile != String.Empty)
+      if (strFile != string.Empty)
         return dbs.GetSongByFileName(strFile, ref _currentSong);
       else
         return false;

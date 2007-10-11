@@ -375,7 +375,7 @@ namespace MediaPortal.Player
         _state = PlayState.Playing;
         _pendingCmd = false;
         Log.Info("DVDPlayer:Started playing()");
-        if (_currentFile == String.Empty)
+        if (_currentFile == string.Empty)
         {
           for (int i = 0; i <= 26; ++i)
           {

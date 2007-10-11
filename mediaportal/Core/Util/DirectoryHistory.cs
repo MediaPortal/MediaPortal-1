@@ -32,8 +32,8 @@ namespace MediaPortal.Util
   {
     class DirectoryItem
     {
-      string m_strItem = String.Empty;
-      string m_strDir = String.Empty;
+      string m_strItem = string.Empty;
+      string m_strDir = string.Empty;
       public DirectoryItem()
       {
       }
@@ -70,7 +70,7 @@ namespace MediaPortal.Util
 
     public string Get(string strDir)
     {
-      if (strDir == null) return String.Empty;
+      if (strDir == null) return string.Empty;
       foreach (DirectoryItem item in m_history)
       {
         if (item.Dir == strDir)
@@ -78,7 +78,7 @@ namespace MediaPortal.Util
           return item.Item;
         }
       }
-      return String.Empty;
+      return string.Empty;
     }
 
     public void Set(string strItem, string strDir)

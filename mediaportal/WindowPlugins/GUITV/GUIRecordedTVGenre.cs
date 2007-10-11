@@ -65,7 +65,7 @@ namespace MediaPortal.GUI.TV
     SortMethod currentSortMethod = SortMethod.Date;
     bool m_bSortAscending = true;
     bool showRoot = true;
-    string currentGenre = String.Empty;
+    string currentGenre = string.Empty;
     [SkinControlAttribute(3)]    protected GUISortButtonControl btnSortBy = null;
     [SkinControlAttribute(5)]    protected GUIButtonControl btnView = null;
     [SkinControlAttribute(6)]    protected GUIButtonControl btnCleanup = null;
@@ -428,7 +428,7 @@ namespace MediaPortal.GUI.TV
     }
     void UpdateButtons()
     {
-      string strLine = String.Empty;
+      string strLine = string.Empty;
       switch (currentSortMethod)
       {
         case SortMethod.Channel:
@@ -645,7 +645,7 @@ namespace MediaPortal.GUI.TV
           if (rec.Genre != "unknown")
             item.Label3 = rec.Genre;
           else
-            item.Label3 = String.Empty;
+            item.Label3 = string.Empty;
           if (rec.Played > 0)
             item.IsPlayed = true;
         }
@@ -729,7 +729,7 @@ namespace MediaPortal.GUI.TV
           if (stoptime > 0)
           {
             string title = System.IO.Path.GetFileName(rec.FileName);
-            if (movieDetails.Title != String.Empty) title = movieDetails.Title;
+            if (movieDetails.Title != string.Empty) title = movieDetails.Title;
 
             GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
             if (null == dlgYesNo) return false;
@@ -771,7 +771,7 @@ namespace MediaPortal.GUI.TV
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
       dlgYesNo.SetLine(1, rec.Channel);
       dlgYesNo.SetLine(2, rec.Title);
-      dlgYesNo.SetLine(3, String.Empty);
+      dlgYesNo.SetLine(3, string.Empty);
       dlgYesNo.SetDefaultToYes(true);
       dlgYesNo.DoModal(GetID);
 
@@ -785,9 +785,9 @@ namespace MediaPortal.GUI.TV
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo) return;
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(676));//delete watched recordings?
-      dlgYesNo.SetLine(1, String.Empty);
-      dlgYesNo.SetLine(2, String.Empty);
-      dlgYesNo.SetLine(3, String.Empty);
+      dlgYesNo.SetLine(1, string.Empty);
+      dlgYesNo.SetLine(2, string.Empty);
+      dlgYesNo.SetLine(3, string.Empty);
       dlgYesNo.SetDefaultToYes(true);
       dlgYesNo.DoModal(GetID);
 
@@ -815,11 +815,11 @@ namespace MediaPortal.GUI.TV
       GUIListItem pItem = GetItem(GetSelectedItemNo());
       if (pItem == null)
       {
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", string.Empty);
         return;
       }
       TVRecorded rec = pItem.TVTag as TVRecorded;
@@ -847,10 +847,10 @@ namespace MediaPortal.GUI.TV
       }
       else
       {
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", string.Empty);
         GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
       }
 

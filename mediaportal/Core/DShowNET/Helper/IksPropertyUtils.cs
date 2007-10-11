@@ -294,17 +294,17 @@ namespace DShowNET
 			if (propertySet==null) 
 			{
 				Log.Info("GetString() properySet=null");
-				return String.Empty;
+				return string.Empty;
 			}
 			int hr=propertySet.QuerySupported( ref propertyGuid, propId, out IsTypeSupported);
 			if (hr!=0 || (IsTypeSupported & (uint)KsPropertySupport.Get)==0) 
 			{
 				Log.Info("GetString() property is not supported");
-				return String.Empty;
+				return string.Empty;
 			}
 
 			IntPtr pDataReturned = Marshal.AllocCoTaskMem(100);
-			string returnedText=String.Empty;
+			string returnedText=string.Empty;
 			hr=propertySet.RemoteGet(ref propertyGuid,propId,IntPtr.Zero,0, pDataReturned,100,out uiSize);
 			if (hr==0)
 			{

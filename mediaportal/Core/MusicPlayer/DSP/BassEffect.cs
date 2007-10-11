@@ -40,7 +40,7 @@ namespace MediaPortal.Player.DSP
     /// The Name of the Effect
     /// </summary>
     [XmlAttribute]
-    public string EffectName = String.Empty;
+    public string EffectName = string.Empty;
 
     /// <summary>
     /// List of Parameters for this Effect

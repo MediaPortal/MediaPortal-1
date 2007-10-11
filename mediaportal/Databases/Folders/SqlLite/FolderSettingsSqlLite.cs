@@ -112,7 +112,7 @@ namespace Databases.Folders
     int AddPath(string FilteredPath)
     {
 			if (FilteredPath==null) return -1;
-			if (FilteredPath==String.Empty) return -1;
+			if (FilteredPath==string.Empty) return -1;
       if (null == m_db) return -1;
       try
       {
@@ -141,9 +141,9 @@ namespace Databases.Folders
     public void DeleteFolderSetting(string strPath, string Key)
 		{
 			if (strPath==null) return;
-			if (strPath==String.Empty) return;
+			if (strPath==string.Empty) return;
 			if (Key==null) return;
-			if (Key==String.Empty) return;
+			if (Key==string.Empty) return;
       if (null == m_db) return ;
       try
       {
@@ -166,9 +166,9 @@ namespace Databases.Folders
     public void AddFolderSetting(string strPath, string Key, Type type, object Value)
 		{
 			if (strPath==null) return;
-			if (strPath==String.Empty) return;
+			if (strPath==string.Empty) return;
 			if (Key==null) return;
-			if (Key==String.Empty) return;
+			if (Key==string.Empty) return;
 
       if (null == m_db) return ;
       try
@@ -217,9 +217,9 @@ namespace Databases.Folders
     {
       Value=null;
 			if (strPath==null) return;
-			if (strPath==String.Empty) return;
+			if (strPath==string.Empty) return;
 			if (Key==null) return;
-			if (Key==String.Empty) return;
+			if (Key==string.Empty) return;
 
       if (null == m_db) return ;
       try

@@ -78,9 +78,9 @@ namespace MediaPortal.GUI.Radio
     bool sortAscending = true;
     VirtualDirectory virtualDirectory = new VirtualDirectory();
     DirectoryHistory directoryHistory = new DirectoryHistory();
-    string currentFolder = String.Empty;
-    string startFolder = String.Empty;
-    string currentRadioFolder = String.Empty;
+    string currentFolder = string.Empty;
+    string startFolder = string.Empty;
+    string currentRadioFolder = string.Empty;
     int selectedItemIndex = -1;
     PlayList currentPlayList = null;
     PlayListPlayer playlistPlayer;
@@ -100,7 +100,7 @@ namespace MediaPortal.GUI.Radio
 
     public override bool Init()
     {
-      currentFolder = String.Empty;
+      currentFolder = string.Empty;
       bool bResult = Load(GUIGraphicsContext.Skin + @"\MyRadio.xml");
 
       return bResult;
@@ -112,9 +112,9 @@ namespace MediaPortal.GUI.Radio
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        currentRadioFolder = xmlreader.GetValueAsString("radio", "folder", String.Empty);
+        currentRadioFolder = xmlreader.GetValueAsString("radio", "folder", string.Empty);
 
-        string tmpLine = String.Empty;
+        string tmpLine = string.Empty;
         tmpLine = (string)xmlreader.GetValue("myradio", "viewby");
         if (tmpLine != null)
         {
@@ -323,7 +323,7 @@ namespace MediaPortal.GUI.Radio
           foreach (RadioStation station in stations)
           {
             PlayListItem playlistItem = new Playlists.PlayListItem();
-            if (station.URL == String.Empty)
+            if (station.URL == string.Empty)
               playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Radio;
             else
               playlistItem.Type = Playlists.PlayListItem.PlayListItemType.AudioStream;
@@ -445,7 +445,7 @@ namespace MediaPortal.GUI.Radio
       listView.Clear();
       thumbnailView.Clear();
 
-      string objectCount = String.Empty;
+      string objectCount = string.Empty;
       int totalItems = 0;
 
       if (currentPlayList != null)
@@ -455,7 +455,7 @@ namespace MediaPortal.GUI.Radio
         item.Path = currentFolder;
         item.IsFolder = true;
         item.MusicTag = null;
-        item.ThumbnailImage = String.Empty;
+        item.ThumbnailImage = string.Empty;
         MediaPortal.Util.Utils.SetDefaultIcons(item);
         listView.Add(item);
         thumbnailView.Add(item);
@@ -467,7 +467,7 @@ namespace MediaPortal.GUI.Radio
           item.Path = currentPlayList[i].FileName;
           item.IsFolder = false;
           item.MusicTag = null;
-          item.ThumbnailImage = String.Empty;
+          item.ThumbnailImage = string.Empty;
           item.IconImageBig = "DefaultMyradioStreamBig.png";
           item.IconImage = "DefaultMyradioStream.png";
 
@@ -519,7 +519,7 @@ namespace MediaPortal.GUI.Radio
                 item.IconImage = thumbnail;
                 item.ThumbnailImage = thumbnail;
               }
-              //if (item.ThumbnailImage==String.Empty)
+              //if (item.ThumbnailImage==string.Empty)
               //  item.ThumbnailImage="DefaultMyradioBig.png";
             }
 
@@ -658,8 +658,8 @@ namespace MediaPortal.GUI.Radio
           }
 
         case SortMethod.Type:
-          string strURL1 = String.Empty;
-          string strURL2 = String.Empty;
+          string strURL1 = string.Empty;
+          string strURL2 = string.Empty;
           if (station1 != null) strURL1 = station1.URL;
           else
           {
@@ -852,7 +852,7 @@ namespace MediaPortal.GUI.Radio
             if (station != null)
             {
               playlistItem.FileName = GetPlayPath(station);
-              if (station.URL == String.Empty) playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Radio;
+              if (station.URL == string.Empty) playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Radio;
               else playlistItem.Type = Playlists.PlayListItem.PlayListItemType.AudioStream;
             }
             else
@@ -975,9 +975,9 @@ namespace MediaPortal.GUI.Radio
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(665);
-      strButtonImage = String.Empty;
-      strButtonImageFocus = String.Empty;
-      strPictureImage = String.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
+      strPictureImage = string.Empty;
       return true;
     }
 

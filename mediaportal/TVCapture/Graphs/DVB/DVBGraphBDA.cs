@@ -172,7 +172,7 @@ namespace MediaPortal.TV.Recording
         {
           string catName = dsFilter.Category;
           Log.Info("DVBGraphBDA:  Adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
-          if (dsFilter.MonikerDisplayName == String.Empty)
+          if (dsFilter.MonikerDisplayName == string.Empty)
           {
             _lastError = String.Format("Cannot add filter {0}",dsFilter.FriendlyName);
             Log.Error("DVBGraphBDA:  no moniker found for filter:{0}", dsFilter.FriendlyName);

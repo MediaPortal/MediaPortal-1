@@ -351,7 +351,7 @@ namespace MediaPortal.Configuration.Sections
             xmlwriter.SetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
             xmlwriter.SetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
             xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DLLName, bEnabled);
-            if (itemTag.strType != String.Empty)
+            if (itemTag.strType != string.Empty)
             {
               xmlwriter.SetValueAsBool("pluginswindows", itemTag.strType, bEnabled);
             }

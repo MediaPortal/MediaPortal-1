@@ -34,15 +34,15 @@ namespace MediaPortal.GUI.Library
 	public class GUIActionGroup : GUIGroup
 	{
 		#region skin Properties
-		[XMLSkinElement("textureFocus")]		protected string _focusedTextureName = String.Empty;
-		[XMLSkinElement("textureNoFocus")]	protected string _nonFocusedTextureName = String.Empty;
+		[XMLSkinElement("textureFocus")]		protected string _focusedTextureName = string.Empty;
+		[XMLSkinElement("textureNoFocus")]	protected string _nonFocusedTextureName = string.Empty;
 		[XMLSkinElement("buttonX")]		      protected int _buttonX = 0;
 		[XMLSkinElement("buttonY")]	     	  protected int _buttonY = 0;
 		[XMLSkinElement("buttonwidth")]		  protected int _buttonWidth = 0;
 		[XMLSkinElement("buttonheight")]		protected int _buttonHeight = 0;
 		[XMLSkinElement("defaultcontrol")]	protected int _defaultcontrol = -1;
 		[XMLSkinElement("onexit")]	        protected int _exitcontrol = -1;
-		[XMLSkinElement("allowoverlay")]		protected string _allowOverlayString = String.Empty;
+		[XMLSkinElement("allowoverlay")]		protected string _allowOverlayString = string.Empty;
     #endregion
 
 		public enum NextButtonStates

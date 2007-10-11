@@ -169,34 +169,34 @@ namespace MediaPortal.TV.Recording
       _lastTvRecording = null;
       _lastProgramRecording = null;
 
-      GUIPropertyManager.SetProperty("#TV.View.channel", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.thumb", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.channel", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.thumb", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.start", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.stop", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.remaining", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.genre", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.title", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.description", string.Empty);
 
-      GUIPropertyManager.SetProperty("#TV.Next.start", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Next.stop", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Next.genre", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Next.title", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Next.description", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.start", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.stop", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.genre", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.title", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.description", string.Empty);
 
-      GUIPropertyManager.SetProperty("#TV.Record.channel", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.start", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.stop", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.genre", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.title", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.description", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.thumb", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.channel", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.start", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.stop", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.genre", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.title", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.description", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.thumb", string.Empty);
 
-      GUIPropertyManager.SetProperty("#TV.Record.percent1", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.percent2", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.percent3", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.duration", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.current", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.percent1", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.percent2", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.percent3", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.duration", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.current", string.Empty);
     }//static void CleanProperties()
 
 #if LOGPROPERTIES
@@ -347,17 +347,17 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.start", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.stop", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.remaining", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.genre", string.Empty);
         GUIPropertyManager.SetProperty("#TV.View.title", tvChannelName);
-        GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Next.start", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Next.stop", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Next.genre", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.description", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Next.start", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Next.stop", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Next.genre", string.Empty);
         GUIPropertyManager.SetProperty("#TV.Next.title", tvChannelName);
-        GUIPropertyManager.SetProperty("#TV.Next.description", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Next.description", string.Empty);
       }
 
       string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, tvChannelName);
@@ -383,17 +383,17 @@ namespace MediaPortal.TV.Recording
         }
       }
 
-      GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.start", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.stop", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.remaining", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.genre", string.Empty);
       GUIPropertyManager.SetProperty("#TV.View.title", tvChannelName);
-      GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Next.start", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Next.stop", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Next.genre", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.View.description", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.start", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.stop", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.genre", string.Empty);
       GUIPropertyManager.SetProperty("#TV.Next.title", tvChannelName);
-      GUIPropertyManager.SetProperty("#TV.Next.description", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.description", string.Empty);
 
 
       if (_currentTvChannel != null)
@@ -450,9 +450,9 @@ namespace MediaPortal.TV.Recording
             GUIPropertyManager.SetProperty("#TV.Record.thumb", strLogo);
             GUIPropertyManager.SetProperty("#TV.Record.start", _lastTvRecording.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             GUIPropertyManager.SetProperty("#TV.Record.stop", _lastTvRecording.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-            GUIPropertyManager.SetProperty("#TV.Record.genre", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.Record.genre", string.Empty);
             GUIPropertyManager.SetProperty("#TV.Record.title", _lastTvRecording.Title);
-            GUIPropertyManager.SetProperty("#TV.Record.description", String.Empty);
+            GUIPropertyManager.SetProperty("#TV.Record.description", string.Empty);
           }
           else
           {
@@ -477,13 +477,13 @@ namespace MediaPortal.TV.Recording
         {
           _lastTvRecording = null;
           _lastProgramRecording = null;
-          GUIPropertyManager.SetProperty("#TV.Record.channel", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.Record.start", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.Record.stop", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.Record.genre", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.Record.title", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.Record.description", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.Record.thumb", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.Record.channel", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Record.start", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Record.stop", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Record.genre", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Record.title", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Record.description", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Record.thumb", string.Empty);
         }
       }
     }

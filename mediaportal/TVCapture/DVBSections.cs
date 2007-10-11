@@ -449,8 +449,8 @@ namespace MediaPortal.TV.Recording
       ch.program_number = -1;
       ch.network_pmt_PID = -1;
       ch.transportStreamID = -1;
-      ch.service_provider_name = String.Empty;
-      ch.service_name = String.Empty;
+      ch.service_provider_name = string.Empty;
+      ch.service_name = string.Empty;
       ch.serviceType = -1;
       ch.eitSchedule = false;
       ch.eitPreFollow = false;
@@ -466,7 +466,7 @@ namespace MediaPortal.TV.Recording
       ch.pid_list = new ArrayList();
       ch.serviceID = -1;
       ch.networkID = -1;
-      ch.pidCache = String.Empty;
+      ch.pidCache = string.Empty;
       ch.minorChannel = -1;
       ch.majorChannel = -1;
       ch.modulation = -1;
@@ -568,15 +568,15 @@ namespace MediaPortal.TV.Recording
     {
       if (strTxt == null)
       {
-        strTxt = String.Empty;
+        strTxt = string.Empty;
         return;
       }
       if (strTxt.Length == 0)
       {
-        strTxt = String.Empty;
+        strTxt = string.Empty;
         return;
       }
-      string strReturn = String.Empty;
+      string strReturn = string.Empty;
       for (int i = 0; i < (int)strTxt.Length; ++i)
       {
         char k = strTxt[i];
@@ -1839,7 +1839,7 @@ namespace MediaPortal.TV.Recording
       int teletext_magazine_number;
       int teletext_page_number;
       int len;
-      if (b.Length < 2) return String.Empty;
+      if (b.Length < 2) return string.Empty;
       descriptor_tag = b[0];
       descriptor_length = b[1];
 

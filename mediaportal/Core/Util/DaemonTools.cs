@@ -40,7 +40,7 @@ namespace MediaPortal.Util
     static string _Drive;
     static bool _Enabled;
     static int _DriveNo;
-    static string _MountedIsoFile = String.Empty;
+    static string _MountedIsoFile = string.Empty;
     static List<string> _supportedExtensions;
 
     static DaemonTools()
@@ -86,7 +86,7 @@ namespace MediaPortal.Util
     static public bool IsMounted(string IsoFile)
     {
       if (IsoFile == null) return false;
-      if (IsoFile == String.Empty) return false;
+      if (IsoFile == string.Empty) return false;
       IsoFile = Utils.RemoveTrailingSlash(IsoFile);
       if (_MountedIsoFile.Equals(IsoFile))
       {
@@ -104,9 +104,9 @@ namespace MediaPortal.Util
 
     static public bool Mount(string IsoFile, out string VirtualDrive)
     {
-      VirtualDrive = String.Empty;
+      VirtualDrive = string.Empty;
       if (IsoFile == null) return false;
-      if (IsoFile == String.Empty) return false;
+      if (IsoFile == string.Empty) return false;
       if (!_Enabled) return false;
       if (!System.IO.File.Exists(_Path)) return false;
 
@@ -140,13 +140,13 @@ namespace MediaPortal.Util
         timeout += 100;
       }
 
-      _MountedIsoFile = String.Empty;
+      _MountedIsoFile = string.Empty;
     }
 
     static public string GetVirtualDrive()
     {
-      if (_MountedIsoFile != String.Empty) return _Drive;
-      return String.Empty;
+      if (_MountedIsoFile != string.Empty) return _Drive;
+      return string.Empty;
     }
 
     /// <summary>
@@ -160,7 +160,7 @@ namespace MediaPortal.Util
     static public bool IsImageFile(string extension)
     {
       if (extension == null) return false;
-      if (extension == String.Empty) return false;
+      if (extension == string.Empty) return false;
       extension = extension.ToLower();
       foreach (string ext in _supportedExtensions)
         if (ext.Equals(extension))

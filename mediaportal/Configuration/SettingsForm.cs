@@ -806,14 +806,14 @@ namespace MediaPortal.Configuration
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string playlistFolder = xmlreader.GetValueAsString("music", "playlists", "");
-        if (playlistFolder == String.Empty)
+        if (playlistFolder == string.Empty)
         {
           MessageBox.Show("No music playlist folder specified", "MediaPortal Settings", MessageBoxButtons.OK,
                           MessageBoxIcon.Exclamation);
           return false;
         }
         playlistFolder = xmlreader.GetValueAsString("movies", "playlists", "");
-        if (playlistFolder == String.Empty)
+        if (playlistFolder == string.Empty)
         {
           MessageBox.Show("No movie playlist folder specified", "MediaPortal Settings", MessageBoxButtons.OK,
                           MessageBoxIcon.Exclamation);
@@ -825,7 +825,7 @@ namespace MediaPortal.Configuration
         {
           string sharePath = String.Format("sharepath{0}", index);
           string sharePathData = xmlreader.GetValueAsString("music", sharePath, "");
-          if (!MediaPortal.Util.Utils.IsDVD(sharePathData) && sharePathData != String.Empty)
+          if (!MediaPortal.Util.Utils.IsDVD(sharePathData) && sharePathData != string.Empty)
           {
             added = true;
           }
@@ -843,7 +843,7 @@ namespace MediaPortal.Configuration
         {
           string sharePath = String.Format("sharepath{0}", index);
           string shareNameData = xmlreader.GetValueAsString("movies", sharePath, "");
-          if (!MediaPortal.Util.Utils.IsDVD(shareNameData) && shareNameData != String.Empty)
+          if (!MediaPortal.Util.Utils.IsDVD(shareNameData) && shareNameData != string.Empty)
           {
             added = true;
           }
@@ -861,7 +861,7 @@ namespace MediaPortal.Configuration
         {
           string sharePath = String.Format("sharepath{0}", index);
           string shareNameData = xmlreader.GetValueAsString("pictures", sharePath, "");
-          if (!MediaPortal.Util.Utils.IsDVD(shareNameData) && shareNameData != String.Empty)
+          if (!MediaPortal.Util.Utils.IsDVD(shareNameData) && shareNameData != string.Empty)
           {
             added = true;
           }

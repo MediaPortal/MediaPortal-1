@@ -575,7 +575,9 @@ namespace MediaPortal.GUI.Music
               {
                 if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
                 {
-                  AddInfoTrackToPlaylist(facadeAlbumInfo.SelectedListItem, true);
+                  if (!facadeAlbumInfo.SelectedListItem.IsPlayed)
+                    AddInfoTrackToPlaylist(facadeAlbumInfo.SelectedListItem, true);
+                  // TODO: Notify user that desired album hit was not found in his collection
                 }
               }
             }
@@ -709,7 +711,7 @@ namespace MediaPortal.GUI.Music
         dlg.AddLocalizedString(33041);
 
       //dlg.AddLocalizedString(928);        // Find Coverart
-      //dlg.AddLocalizedString(4521);       // Show Album Info
+      dlg.AddLocalizedString(4521);       // Show Album Info
 
       if (IsCdTrack(CurrentTrackFileName))
         dlg.AddLocalizedString(4554);   // Lookup CD info
@@ -815,8 +817,7 @@ namespace MediaPortal.GUI.Music
                 MusicDatabase dbs = MusicDatabase.Instance;
                 ArrayList albumSongs = new ArrayList();
                 String strAlbum = CurrentTrackTag.Album;
-                //DatabaseUtility.RemoveInvalidChars(ref strAlbum);
-                //bool songFound = dbs.GetSongsByArtist(CurrentTrackTag.Artist, ref albumSongs);
+
                 bool albumSongsFound = dbs.GetSongsByAlbum(strAlbum, ref albumSongs);
 
                 if (albumSongsFound)
@@ -909,6 +910,7 @@ namespace MediaPortal.GUI.Music
         AlbumInfoRequest request = new AlbumInfoRequest(
                                         CurrentArtist,
                                         CurrentAlbum,
+                                        true,
                                         true,
                                         new AlbumInfoRequest.AlbumInfoRequestHandler(OnUpdateAlbumInfoCompleted)
                                         );
@@ -1642,6 +1644,7 @@ namespace MediaPortal.GUI.Music
             //item.Label2 = " (" + GUILocalizeStrings.Get(931) + ": " + Convert.ToString(AlbumTracks[i].Rating) + ")";
 
             item.MusicTag = AlbumTracks[i].ToMusicTag();
+            item.IsPlayed = AlbumTracks[i].URL == "local" ? false : true;
 
             facadeAlbumInfo.Add(item);
 

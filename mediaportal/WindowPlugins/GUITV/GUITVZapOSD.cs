@@ -345,15 +345,15 @@ namespace MediaPortal.GUI.TV
       {
         if (lblStartTime != null)
         {
-          lblStartTime.Label = String.Empty;
+          lblStartTime.Label = string.Empty;
         }
         if (lblEndTime != null)
         {
-          lblEndTime.Label = String.Empty;
+          lblEndTime.Label = string.Empty;
         }
         if (lblCurrentTime != null)
         {
-          lblCurrentTime.Label = String.Empty;
+          lblCurrentTime.Label = string.Empty;
         }
       }
       UpdateProgressBar();

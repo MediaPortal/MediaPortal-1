@@ -403,7 +403,7 @@ namespace MediaPortal.GUI.GUIPrograms
       cbViews.Items.Clear();
       foreach (ViewDefinition view in views)
       {
-        if (view.Name != String.Empty)
+        if (view.Name != string.Empty)
         {
           cbViews.Items.Add(view);
         }
@@ -536,7 +536,7 @@ namespace MediaPortal.GUI.GUIPrograms
       }
 
       //Set the Data Grid Source as the Data Table created above
-      dataGrid.CaptionText = String.Empty;
+      dataGrid.CaptionText = string.Empty;
       dataGrid.DataSource = datasetFilters;
 
       //set style property when first time the grid loads, next time onwards it //will maintain its property
@@ -730,7 +730,7 @@ namespace MediaPortal.GUI.GUIPrograms
       {
         FilterDefinition def = new FilterDefinition();
         def.Where = row[0] as string;
-        if (def.Where == String.Empty)
+        if (def.Where == string.Empty)
         {
           continue;
         }

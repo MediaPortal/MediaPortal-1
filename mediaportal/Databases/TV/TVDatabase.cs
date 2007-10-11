@@ -254,7 +254,7 @@ namespace MediaPortal.TV.Database
     {
       lock (typeof(TVDatabase))
       {
-        string strSQL = String.Empty;
+        string strSQL = string.Empty;
         try
         {
           DatabaseUtility.RemoveInvalidChars(ref provider);
@@ -310,7 +310,7 @@ namespace MediaPortal.TV.Database
     {
       lock (typeof(TVDatabase))
       {
-        string strSQL = String.Empty;
+        string strSQL = string.Empty;
         try
         {
 
@@ -338,9 +338,9 @@ namespace MediaPortal.TV.Database
             string service = ch.ServiceName;
 
             if (provider == null)
-              provider = String.Empty;
+              provider = string.Empty;
             if (service == null)
-              service = String.Empty;
+              service = string.Empty;
             DatabaseUtility.RemoveInvalidChars(ref provider);
             DatabaseUtility.RemoveInvalidChars(ref service);
             string al = ch.AudioLanguage;
@@ -816,7 +816,7 @@ namespace MediaPortal.TV.Database
     {
       lock (typeof(TVDatabase))
       {
-        string strSQL = String.Empty;
+        string strSQL = string.Empty;
         try
         {
           string strChannel = channel.Name;
@@ -1450,7 +1450,7 @@ namespace MediaPortal.TV.Database
       string genre = genre1;
       DatabaseUtility.RemoveInvalidChars(ref genre);
       DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
-      string strSQL = String.Empty;
+      string strSQL = string.Empty;
       string strOrder = " order by iStartTime";
       switch (SearchKind)
       {
@@ -1479,7 +1479,7 @@ namespace MediaPortal.TV.Database
 
     public static bool GetProgramsPerGenre(string genre1, ArrayList progs)
     {
-      return SearchProgramsPerGenre(genre1, progs, -1, String.Empty);
+      return SearchProgramsPerGenre(genre1, progs, -1, string.Empty);
     }
 
     public static bool GetProgramsPerChannel(string strChannel1, long iStartTime, long iEndTime, ref ArrayList progs)
@@ -1487,7 +1487,7 @@ namespace MediaPortal.TV.Database
       lock (typeof(TVDatabase))
       {
 
-        string strSQL = String.Empty;
+        string strSQL = string.Empty;
         progs.Clear();
         try
         {
@@ -1558,7 +1558,7 @@ namespace MediaPortal.TV.Database
       lock (typeof(TVDatabase))
       {
 
-        string strSQL = String.Empty;
+        string strSQL = string.Empty;
         progs.Clear();
         try
         {
@@ -1655,7 +1655,7 @@ namespace MediaPortal.TV.Database
     public static bool SearchPrograms(long iStartTime, long iEndTime, ref ArrayList progs, int SearchKind, string SearchCriteria, string channel)
     {
       DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
-      string strSQL = String.Empty;
+      string strSQL = string.Empty;
       string strOrder = " order by iStartTime";
       switch (SearchKind)
       {
@@ -1675,7 +1675,7 @@ namespace MediaPortal.TV.Database
           strSQL = String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '{0}' ", SearchCriteria);
           break;
       }
-      if (channel != String.Empty)
+      if (channel != string.Empty)
       {
         DatabaseUtility.RemoveInvalidChars(ref channel);
         strSQL += String.Format(" and channel.strChannel like '{0}' ", channel);
@@ -1686,7 +1686,7 @@ namespace MediaPortal.TV.Database
     public static bool SearchMinimalPrograms(long iStartTime, long iEndTime, ref ArrayList progs, int SearchKind, string SearchCriteria, string channel)
     {
       DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
-      string strSQL = String.Empty;
+      string strSQL = string.Empty;
       string strOrder = " order by iStartTime";
       switch (SearchKind)
       {
@@ -1706,7 +1706,7 @@ namespace MediaPortal.TV.Database
           strSQL = String.Format("select channel.strChannel,tblPrograms.strTitle,tblPrograms.iStartTime,tblPrograms.iEndTime from channel,tblPrograms where tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '{0}' ", SearchCriteria);
           break;
       }
-      if (channel != String.Empty)
+      if (channel != string.Empty)
       {
         DatabaseUtility.RemoveInvalidChars(ref channel);
         strSQL += String.Format(" and channel.strChannel like '{0}' ", channel);
@@ -1717,7 +1717,7 @@ namespace MediaPortal.TV.Database
     public static bool SearchProgramsByDescription(long iStartTime, long iEndTime, ref ArrayList progs, int SearchKind, string SearchCriteria)
     {
       DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
-      string strSQL = String.Empty;
+      string strSQL = string.Empty;
       string strOrder = " order by iStartTime";
       switch (SearchKind)
       {
@@ -1781,7 +1781,7 @@ namespace MediaPortal.TV.Database
 
     public static bool GetPrograms(long iStartTime, long iEndTime, ref ArrayList progs)
     {
-      return SearchPrograms(iStartTime, iEndTime, ref progs, -1, String.Empty, String.Empty);
+      return SearchPrograms(iStartTime, iEndTime, ref progs, -1, string.Empty, string.Empty);
     }
 
     public static void SetRecordedFileName(TVRecorded rec)
@@ -2562,7 +2562,7 @@ namespace MediaPortal.TV.Database
       lock (typeof(TVDatabase))
       {
         //delete programs from database that are more than 1 day old
-        string strSQL = String.Empty;
+        string strSQL = string.Empty;
         try
         {
           System.DateTime yesterday = System.DateTime.Today.AddDays(-1);
@@ -2796,7 +2796,7 @@ namespace MediaPortal.TV.Database
 
     public static bool GetEPGMapping(string xmlTvId, out int idChannel, out string strChannel)
     {
-      strChannel = String.Empty;
+      strChannel = string.Empty;
       idChannel = -1;
       if (m_db == null) return false;
       lock (typeof(TVDatabase))
@@ -2898,7 +2898,7 @@ namespace MediaPortal.TV.Database
       lock (typeof(TVDatabase))
       {
         if (null == m_db) return -1;
-        string strSQL = String.Empty;
+        string strSQL = string.Empty;
         try
         {
           string strChannel = channelName;
@@ -2967,7 +2967,7 @@ namespace MediaPortal.TV.Database
       lock (typeof(TVDatabase))
       {
         if (null == m_db) return -1;
-        string strSQL = String.Empty;
+        string strSQL = string.Empty;
         try
         {
           string strChannel = channelName;
@@ -4599,13 +4599,13 @@ namespace MediaPortal.TV.Database
 
     public static bool GetPrograms(long iStartTime, long iEndTime, ref List<TVProgram> progs)
     {
-      return SearchPrograms(iStartTime, iEndTime, ref progs, -1, String.Empty, String.Empty);
+      return SearchPrograms(iStartTime, iEndTime, ref progs, -1, string.Empty, string.Empty);
     }
 
     public static bool SearchPrograms(long iStartTime, long iEndTime, ref List<TVProgram> progs, int SearchKind, string SearchCriteria, string channel)
     {
       DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
-      string strSQL = String.Empty;
+      string strSQL = string.Empty;
       string strOrder = " order by iStartTime";
       switch (SearchKind)
       {
@@ -4625,7 +4625,7 @@ namespace MediaPortal.TV.Database
           strSQL = String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '{0}' ", SearchCriteria);
           break;
       }
-      if (channel != String.Empty)
+      if (channel != string.Empty)
       {
         DatabaseUtility.RemoveInvalidChars(ref channel);
         strSQL += String.Format(" and channel.strChannel like '{0}' ", channel);
@@ -4638,7 +4638,7 @@ namespace MediaPortal.TV.Database
       lock (typeof(TVDatabase))
       {
 
-        string strSQL = String.Empty;
+        string strSQL = string.Empty;
         progs.Clear();
         try
         {
@@ -4680,7 +4680,7 @@ namespace MediaPortal.TV.Database
               prog.Title = DatabaseUtility.Get(results, i, "tblPrograms.strTitle");
               prog.Description = DatabaseUtility.Get(results, i, "tblPrograms.strDescription");
               if (prog.Description == Strings.Unknown)
-                prog.Description = String.Empty;
+                prog.Description = string.Empty;
               prog.Episode = DatabaseUtility.Get(results, i, "tblPrograms.strEpisodeName");
               prog.Repeat = DatabaseUtility.Get(results, i, "tblPrograms.strRepeat");
               prog.ID = DatabaseUtility.GetAsInt(results, i, "tblPrograms.idProgram");
@@ -4816,7 +4816,7 @@ namespace MediaPortal.TV.Database
     public static bool SearchMinimalPrograms(long iStartTime, long iEndTime, ref List<TVProgram> progs, int SearchKind, string SearchCriteria, string channel)
     {
       DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
-      string strSQL = String.Empty;
+      string strSQL = string.Empty;
       string strOrder = " order by iStartTime";
       switch (SearchKind)
       {
@@ -4836,7 +4836,7 @@ namespace MediaPortal.TV.Database
           strSQL = String.Format("select channel.strChannel,tblPrograms.strTitle,tblPrograms.iStartTime,tblPrograms.iEndTime from channel,tblPrograms where tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '{0}' ", SearchCriteria);
           break;
       }
-      if (channel != String.Empty)
+      if (channel != string.Empty)
       {
         DatabaseUtility.RemoveInvalidChars(ref channel);
         strSQL += String.Format(" and channel.strChannel like '{0}' ", channel);
@@ -4847,7 +4847,7 @@ namespace MediaPortal.TV.Database
     public static bool SearchProgramsByDescription(long iStartTime, long iEndTime, ref List<TVProgram> progs, int SearchKind, string SearchCriteria)
     {
       DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
-      string strSQL = String.Empty;
+      string strSQL = string.Empty;
       string strOrder = " order by iStartTime";
       switch (SearchKind)
       {
@@ -4876,7 +4876,7 @@ namespace MediaPortal.TV.Database
       string genre = genre1;
       DatabaseUtility.RemoveInvalidChars(ref genre);
       DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
-      string strSQL = String.Empty;
+      string strSQL = string.Empty;
       string strOrder = " order by iStartTime";
       switch (SearchKind)
       {
@@ -4905,7 +4905,7 @@ namespace MediaPortal.TV.Database
 
     public static bool GetProgramsPerGenre(string genre1, List<TVProgram> progs)
     {
-      return SearchProgramsPerGenre(genre1, progs, -1, String.Empty);
+      return SearchProgramsPerGenre(genre1, progs, -1, string.Empty);
     }
 
     public static bool GetProgramTitles(long iStartTime, long iEndTime, ref List<TVProgram> progs)
@@ -5047,7 +5047,7 @@ namespace MediaPortal.TV.Database
       {
         try
         {
-          if (null == m_db) return String.Empty;
+          if (null == m_db) return string.Empty;
           foreach (CachedGenre genre in m_genreCache)
           {
             if (genre.idGenre == idGenre)
@@ -5057,7 +5057,7 @@ namespace MediaPortal.TV.Database
           strSQL = String.Format("select * from genre where idGenre={0}", idGenre);
           SQLiteResultSet results;
           results = m_db.Execute(strSQL);
-          if (results.Rows.Count == 0) return String.Empty;
+          if (results.Rows.Count == 0) return string.Empty;
           string genreLabel = DatabaseUtility.Get(results, 0, "strGenre");
 
           m_genreCache.Add(new CachedGenre(idGenre, genreLabel));
@@ -5068,7 +5068,7 @@ namespace MediaPortal.TV.Database
           Log.Error("TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
           Open();
         }
-        return String.Empty;
+        return string.Empty;
       }
     }
 

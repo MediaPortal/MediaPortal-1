@@ -245,7 +245,7 @@ namespace MediaPortal.Picture.Database
           ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPic);
           strDateTime = System.DateTime.Parse(metaData.DatePictureTaken.DisplayValue).ToString("yyyy-MM-dd HH:mm:ss");
         }
-        if (strDateTime != String.Empty && strDateTime != "")
+        if (strDateTime != string.Empty && strDateTime != "")
         {
           DateTime dtDateTime = DateTime.ParseExact(strDateTime, "yyyy-MM-dd HH:mm:ss", new System.Globalization.CultureInfo(""));
           return dtDateTime;

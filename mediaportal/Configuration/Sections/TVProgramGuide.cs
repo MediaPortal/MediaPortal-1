@@ -1048,7 +1048,7 @@ namespace MediaPortal.Configuration.Sections
       if (e.KeyChar == (char)System.Windows.Forms.Keys.Delete || e.KeyChar == (char)System.Windows.Forms.Keys.Back)
       {
         GrabbercomboBox.SelectedItem = null;
-        GrabbercomboBox.Text = String.Empty;
+        GrabbercomboBox.Text = string.Empty;
       }
     }
 

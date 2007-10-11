@@ -91,21 +91,21 @@ namespace MediaPortal.TV.Recording
 
     class RecordingFinished
     {
-      public string fileName = String.Empty;
+      public string fileName = string.Empty;
     }
     #endregion
 
     #region variables
-    string _videoCaptureDevice = String.Empty;
-    string _videoCaptureMoniker = String.Empty;//@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_88010070&rev_01#3&267a616a&0&60#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}";
-    string _commercialName = String.Empty;
-    string _deviceId = String.Empty;
-    string _captureName = String.Empty;
+    string _videoCaptureDevice = string.Empty;
+    string _videoCaptureMoniker = string.Empty;//@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_88010070&rev_01#3&267a616a&0&60#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}";
+    string _commercialName = string.Empty;
+    string _deviceId = string.Empty;
+    string _captureName = string.Empty;
     bool _useForRecording = false;
     bool _useForTv = false;
-    string _friendlyName = String.Empty;
+    string _friendlyName = string.Empty;
     int _cardPriority = 1;
-    string _recordingPath = String.Empty;
+    string _recordingPath = string.Empty;
     CardTypes _cardType;
     bool _supportsTv;
     bool _supportsRadio;
@@ -136,7 +136,7 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     private TVProgram _currentTvProgramRecording = null;
     [NonSerialized]
-    private string _currentTvChannelName = String.Empty;
+    private string _currentTvChannelName = string.Empty;
     [NonSerialized]
     private int _preRecordInterval = 0;		// In minutes
     [NonSerialized]
@@ -152,7 +152,7 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     private DateTime _timeTimeshiftingStarted;
     [NonSerialized]
-    private string _currentRadioStationName = String.Empty;
+    private string _currentRadioStationName = string.Empty;
     [NonSerialized]
     private int _radioSensitivity = 1;
     [NonSerialized]
@@ -759,9 +759,9 @@ namespace MediaPortal.TV.Recording
       get
       {
         if (!IsRecording)
-          return String.Empty;
+          return string.Empty;
         if (_recordedTvObject == null)
-          return String.Empty;
+          return string.Empty;
         return _recordedTvObject.FileName;
       }
     }
@@ -771,7 +771,7 @@ namespace MediaPortal.TV.Recording
       get
       {
         if (_currentRadioStationName == null)
-          return String.Empty;
+          return string.Empty;
         return _currentRadioStationName;
       }
     }
@@ -1165,7 +1165,7 @@ namespace MediaPortal.TV.Recording
     }
     public string GetLastError()
     {
-      if (_currentGraph == null) return String.Empty;
+      if (_currentGraph == null) return string.Empty;
       return _currentGraph.LastError();
     }
 
@@ -1494,8 +1494,8 @@ namespace MediaPortal.TV.Recording
 
     string StripIllegalChars(string recordingAttribute)
     {
-      if (recordingAttribute == null) return String.Empty;
-      if (recordingAttribute.Length == 0) return String.Empty;
+      if (recordingAttribute == null) return string.Empty;
+      if (recordingAttribute.Length == 0) return string.Empty;
       recordingAttribute = recordingAttribute.Replace(":", " ");
       recordingAttribute = recordingAttribute.Replace(";", " ");
       return recordingAttribute;
@@ -1688,9 +1688,9 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        _recordedTvObject.Title = String.Empty;
-        _recordedTvObject.Genre = String.Empty;
-        _recordedTvObject.Description = String.Empty;
+        _recordedTvObject.Title = string.Empty;
+        _recordedTvObject.Genre = string.Empty;
+        _recordedTvObject.Description = string.Empty;
         _recordedTvObject.End = MediaPortal.Util.Utils.datetolong(DateTime.Now.AddHours(2));
       }
 
@@ -1727,7 +1727,7 @@ namespace MediaPortal.TV.Recording
       {
         return chan.Name;
       }
-      return String.Empty;
+      return string.Empty;
     }
     /// <summary>
     /// Returns the channel number for a channel name
@@ -1792,7 +1792,7 @@ namespace MediaPortal.TV.Recording
     }
     void SaveContrastGammaBrightnessSettings()
     {
-      if (_friendlyName != null && _friendlyName != String.Empty)
+      if (_friendlyName != null && _friendlyName != string.Empty)
       {
 
         string filename = Config.GetFile(Config.Dir.Database, String.Format(@"card_{0}.xml", _friendlyName));
@@ -1834,7 +1834,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     void SaveCropSettings()
     {
-      if (_friendlyName != null && _friendlyName != String.Empty)
+      if (_friendlyName != null && _friendlyName != string.Empty)
       {
         string filename = Config.GetFile(Config.Dir.Database, String.Format(@"card_{0}.xml", _friendlyName));
         using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(filename))

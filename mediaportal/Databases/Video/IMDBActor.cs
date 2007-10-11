@@ -39,12 +39,12 @@ namespace MediaPortal.Video.Database
 			public string Role;
 			public int Year;
 		};
-		string _Name=String.Empty;
-		string _thumbnailUrl=String.Empty;
-		string _placeOfBirth=String.Empty;
-		string _dateOfBirth=String.Empty;
-		string _miniBiography=String.Empty;
-		string _biography=String.Empty;
+		string _Name=string.Empty;
+		string _thumbnailUrl=string.Empty;
+		string _placeOfBirth=string.Empty;
+		string _dateOfBirth=string.Empty;
+		string _miniBiography=string.Empty;
+		string _biography=string.Empty;
 		ArrayList movies=new ArrayList(); 
 
 		public IMDBActor()

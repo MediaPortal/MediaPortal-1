@@ -36,7 +36,7 @@ namespace MediaPortal.MusicVideos.Database
         private YahooVideo moVideo;
         private YahooUtil moUtil = YahooUtil.getInstance();
         private YahooSettings moSettings = YahooSettings.getInstance();
-        private String msUrl = String.Empty;
+        private String msUrl = string.Empty;
         private DateTime moTimeOfUrl;
         private bool mbUpdateUrl =true;
         public MVPlayListItem()

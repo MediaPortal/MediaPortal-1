@@ -161,7 +161,7 @@ namespace MediaPortal.GUI.Library
       if (translation == null)
       {
         Log.Error("No translation found for id {0}", dwCode);
-        return String.Empty;
+        return string.Empty;
       }
 
       return translation;
@@ -172,7 +172,7 @@ namespace MediaPortal.GUI.Library
       if (_stringProvider == null)
         Load(null);
 
-      if (strLabel == null) strLabel = String.Empty;
+      if (strLabel == null) strLabel = string.Empty;
       if (strLabel == "-") strLabel = "";
       if (strLabel == "") return;
       // This can't be a valid string code if the first character isn't a number.
@@ -189,7 +189,7 @@ namespace MediaPortal.GUI.Library
       catch (FormatException e)
       {
         Log.Error(e);
-        strLabel = String.Empty;
+        strLabel = string.Empty;
         return;
       }
 
@@ -197,7 +197,7 @@ namespace MediaPortal.GUI.Library
       if (strLabel == null)
       {
         Log.Error("No translation found for id {0}", dwLabelID);
-        strLabel = String.Empty;
+        strLabel = string.Empty;
       }
     }
 

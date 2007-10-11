@@ -489,7 +489,7 @@ namespace MediaPortal.Ripper
     {
       if (strDrive == null)
         return MediaType.UNKNOWN;
-      if (strDrive == String.Empty)
+      if (strDrive == string.Empty)
         return MediaType.UNKNOWN;
       try
       {

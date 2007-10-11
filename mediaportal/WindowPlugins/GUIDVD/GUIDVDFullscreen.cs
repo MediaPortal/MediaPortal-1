@@ -144,8 +144,8 @@ namespace MediaPortal.GUI.Video
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(341);
-      strButtonImage = String.Empty;
-      strButtonImageFocus = String.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
       strPictureImage = "";
       return true;
     }

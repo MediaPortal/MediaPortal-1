@@ -48,211 +48,211 @@ namespace MediaPortal.GUI.Library
     }
     static GUIPropertyManager() 
     {
-      _properties["#highlightedbutton"] = String.Empty;
-      _properties["#itemcount"] = String.Empty;
-      _properties["#selecteditem"] = String.Empty;
-      _properties["#selecteditem2"] = String.Empty;
-      _properties["#selectedthumb"] = String.Empty;
-      _properties["#homedate"] = String.Empty;
-      _properties["#title"] = String.Empty;			// song title, imdb movie title, recording title
-      _properties["#artist"] = String.Empty;			// song artist
-      _properties["#album"] = String.Empty;			// song album
-      _properties["#track"] = String.Empty;			// song track number
-      _properties["#year"] = String.Empty;				// song year , imdb movie year
-      _properties["#comment"] = String.Empty;		// song comment
-      _properties["#director"] = String.Empty;		// imdb movie director
-      _properties["#genre"] = String.Empty;			// imdb movie genres
-      _properties["#cast"] = String.Empty;				// imdb movie cast 
-      _properties["#dvdlabel"] = String.Empty;		// imdb movie dvd label
-      _properties["#imdbnumber"] = String.Empty; // imdb movie number
-      _properties["#file"] = String.Empty;				// imdb movie filename
-      _properties["#plot"] = String.Empty;				// imdb movie plot 
-      _properties["#plotoutline"] = String.Empty;// imdb movie plot outline
-      _properties["#rating"] = String.Empty;		  // imdb movie rating (0-10)
-      _properties["#tagline"] = String.Empty;    // imdb movie tag line
-      _properties["#votes"] = String.Empty;		  // imdb movie votes
-      _properties["#credits"] = String.Empty;    // imdb movie writing credits
-      _properties["#mpaarating"] = String.Empty; // imdb movie MPAA rating
-      _properties["#runtime"] = String.Empty;    // imdb movie runtime 
-      _properties["#iswatched"] = String.Empty;  // boolean indication movie has been watched
-      _properties["#thumb"] = String.Empty;
-      _properties["#currentplaytime"] = String.Empty;
-      _properties["#currentremaining"] = String.Empty;
-      _properties["#shortcurrentremaining"] = String.Empty;
-      _properties["#shortcurrentplaytime"] = String.Empty;
-      _properties["#duration"] = String.Empty;
-      _properties["#shortduration"] = String.Empty;
-      _properties["#playlogo"] = String.Empty;
-      _properties["#playspeed"] = String.Empty;
-      _properties["#percentage"] = String.Empty;
-      _properties["#currentmodule"] = String.Empty;
-      _properties["#currentmoduleid"] = String.Empty;
-      _properties["#currentmodulefullscreenstate"] = String.Empty;
-      _properties["#channel"] = String.Empty;
-      _properties["#TV.start"] = String.Empty;
-      _properties["#TV.stop"] = String.Empty;
-      _properties["#TV.current"] = String.Empty;
-      _properties["#TV.Record.channel"] = String.Empty;
-      _properties["#TV.Record.start"] = String.Empty;
-      _properties["#TV.Record.stop"] = String.Empty;
-      _properties["#TV.Record.genre"] = String.Empty;
-      _properties["#TV.Record.title"] = String.Empty;
-      _properties["#TV.Record.description"] = String.Empty;
-      _properties["#TV.Record.thumb"] = String.Empty;
-      _properties["#TV.View.channel"] = String.Empty;
-      _properties["#TV.View.thumb"] = String.Empty;
-      _properties["#TV.View.start"] = String.Empty;
-      _properties["#TV.View.stop"] = String.Empty;
-      _properties["#TV.View.remaining"] = String.Empty;
-      _properties["#TV.View.genre"] = String.Empty;
-      _properties["#TV.View.title"] = String.Empty;
-      _properties["#TV.View.description"] = String.Empty;
-      _properties["#TV.View.Percentage"] = String.Empty;
+      _properties["#highlightedbutton"] = string.Empty;
+      _properties["#itemcount"] = string.Empty;
+      _properties["#selecteditem"] = string.Empty;
+      _properties["#selecteditem2"] = string.Empty;
+      _properties["#selectedthumb"] = string.Empty;
+      _properties["#homedate"] = string.Empty;
+      _properties["#title"] = string.Empty;			// song title, imdb movie title, recording title
+      _properties["#artist"] = string.Empty;			// song artist
+      _properties["#album"] = string.Empty;			// song album
+      _properties["#track"] = string.Empty;			// song track number
+      _properties["#year"] = string.Empty;				// song year , imdb movie year
+      _properties["#comment"] = string.Empty;		// song comment
+      _properties["#director"] = string.Empty;		// imdb movie director
+      _properties["#genre"] = string.Empty;			// imdb movie genres
+      _properties["#cast"] = string.Empty;				// imdb movie cast 
+      _properties["#dvdlabel"] = string.Empty;		// imdb movie dvd label
+      _properties["#imdbnumber"] = string.Empty; // imdb movie number
+      _properties["#file"] = string.Empty;				// imdb movie filename
+      _properties["#plot"] = string.Empty;				// imdb movie plot 
+      _properties["#plotoutline"] = string.Empty;// imdb movie plot outline
+      _properties["#rating"] = string.Empty;		  // imdb movie rating (0-10)
+      _properties["#tagline"] = string.Empty;    // imdb movie tag line
+      _properties["#votes"] = string.Empty;		  // imdb movie votes
+      _properties["#credits"] = string.Empty;    // imdb movie writing credits
+      _properties["#mpaarating"] = string.Empty; // imdb movie MPAA rating
+      _properties["#runtime"] = string.Empty;    // imdb movie runtime 
+      _properties["#iswatched"] = string.Empty;  // boolean indication movie has been watched
+      _properties["#thumb"] = string.Empty;
+      _properties["#currentplaytime"] = string.Empty;
+      _properties["#currentremaining"] = string.Empty;
+      _properties["#shortcurrentremaining"] = string.Empty;
+      _properties["#shortcurrentplaytime"] = string.Empty;
+      _properties["#duration"] = string.Empty;
+      _properties["#shortduration"] = string.Empty;
+      _properties["#playlogo"] = string.Empty;
+      _properties["#playspeed"] = string.Empty;
+      _properties["#percentage"] = string.Empty;
+      _properties["#currentmodule"] = string.Empty;
+      _properties["#currentmoduleid"] = string.Empty;
+      _properties["#currentmodulefullscreenstate"] = string.Empty;
+      _properties["#channel"] = string.Empty;
+      _properties["#TV.start"] = string.Empty;
+      _properties["#TV.stop"] = string.Empty;
+      _properties["#TV.current"] = string.Empty;
+      _properties["#TV.Record.channel"] = string.Empty;
+      _properties["#TV.Record.start"] = string.Empty;
+      _properties["#TV.Record.stop"] = string.Empty;
+      _properties["#TV.Record.genre"] = string.Empty;
+      _properties["#TV.Record.title"] = string.Empty;
+      _properties["#TV.Record.description"] = string.Empty;
+      _properties["#TV.Record.thumb"] = string.Empty;
+      _properties["#TV.View.channel"] = string.Empty;
+      _properties["#TV.View.thumb"] = string.Empty;
+      _properties["#TV.View.start"] = string.Empty;
+      _properties["#TV.View.stop"] = string.Empty;
+      _properties["#TV.View.remaining"] = string.Empty;
+      _properties["#TV.View.genre"] = string.Empty;
+      _properties["#TV.View.title"] = string.Empty;
+      _properties["#TV.View.description"] = string.Empty;
+      _properties["#TV.View.Percentage"] = string.Empty;
 
-      _properties["#TV.Next.start"] = String.Empty;
-      _properties["#TV.Next.stop"] = String.Empty;
-      _properties["#TV.Next.genre"] = String.Empty;
-      _properties["#TV.Next.title"] = String.Empty;
-      _properties["#TV.Next.description"] = String.Empty;
+      _properties["#TV.Next.start"] = string.Empty;
+      _properties["#TV.Next.stop"] = string.Empty;
+      _properties["#TV.Next.genre"] = string.Empty;
+      _properties["#TV.Next.title"] = string.Empty;
+      _properties["#TV.Next.description"] = string.Empty;
 
-      _properties["#TV.Guide.Day"] = String.Empty;
-      _properties["#TV.Guide.thumb"] = String.Empty;
-      _properties["#TV.Guide.Title"] = String.Empty;
-      _properties["#TV.Guide.Time"] = String.Empty;
-      _properties["#TV.Guide.Duration"] = String.Empty;
-      _properties["#TV.Guide.TimeFromNow"] = String.Empty;
-      _properties["#TV.Guide.Description"] = String.Empty;
-      _properties["#TV.Guide.Genre"] = String.Empty;
-      _properties["#TV.Guide.EpisodeName"] = String.Empty;
-      _properties["#TV.Guide.SeriesNumber"] = String.Empty;
-      _properties["#TV.Guide.EpisodeNumber"] = String.Empty;
-      _properties["#TV.Guide.EpisodePart"] = String.Empty;
-      _properties["#TV.Guide.EpisodeDetail"] = String.Empty;
-      _properties["#TV.Guide.Date"] = String.Empty;
-      _properties["#TV.Guide.StarRating"] = String.Empty;
-      _properties["#TV.Guide.Classification"] = String.Empty;
-      _properties["#TV.Guide.Group"] = String.Empty;
+      _properties["#TV.Guide.Day"] = string.Empty;
+      _properties["#TV.Guide.thumb"] = string.Empty;
+      _properties["#TV.Guide.Title"] = string.Empty;
+      _properties["#TV.Guide.Time"] = string.Empty;
+      _properties["#TV.Guide.Duration"] = string.Empty;
+      _properties["#TV.Guide.TimeFromNow"] = string.Empty;
+      _properties["#TV.Guide.Description"] = string.Empty;
+      _properties["#TV.Guide.Genre"] = string.Empty;
+      _properties["#TV.Guide.EpisodeName"] = string.Empty;
+      _properties["#TV.Guide.SeriesNumber"] = string.Empty;
+      _properties["#TV.Guide.EpisodeNumber"] = string.Empty;
+      _properties["#TV.Guide.EpisodePart"] = string.Empty;
+      _properties["#TV.Guide.EpisodeDetail"] = string.Empty;
+      _properties["#TV.Guide.Date"] = string.Empty;
+      _properties["#TV.Guide.StarRating"] = string.Empty;
+      _properties["#TV.Guide.Classification"] = string.Empty;
+      _properties["#TV.Guide.Group"] = string.Empty;
 
-      _properties["#Radio.Guide.Day"] = String.Empty;
-      _properties["#Radio.Guide.thumb"] = String.Empty;
-      _properties["#Radio.Guide.Title"] = String.Empty;
-      _properties["#Radio.Guide.Time"] = String.Empty;
-      _properties["#Radio.Guide.Duration"] = String.Empty;
-      _properties["#Radio.Guide.TimeFromNow"] = String.Empty;
-      _properties["#Radio.Guide.Description"] = String.Empty;
-      _properties["#Radio.Guide.Genre"] = String.Empty;
-      _properties["#Radio.Guide.EpisodeName"] = String.Empty;
-      _properties["#Radio.Guide.SeriesNumber"] = String.Empty;
-      _properties["#Radio.Guide.EpisodeNumber"] = String.Empty;
-      _properties["#Radio.Guide.EpisodePart"] = String.Empty;
-      _properties["#Radio.Guide.EpisodeDetail"] = String.Empty;
-      _properties["#Radio.Guide.Date"] = String.Empty;
-      _properties["#Radio.Guide.StarRating"] = String.Empty;
-      _properties["#Radio.Guide.Classification"] = String.Empty;
+      _properties["#Radio.Guide.Day"] = string.Empty;
+      _properties["#Radio.Guide.thumb"] = string.Empty;
+      _properties["#Radio.Guide.Title"] = string.Empty;
+      _properties["#Radio.Guide.Time"] = string.Empty;
+      _properties["#Radio.Guide.Duration"] = string.Empty;
+      _properties["#Radio.Guide.TimeFromNow"] = string.Empty;
+      _properties["#Radio.Guide.Description"] = string.Empty;
+      _properties["#Radio.Guide.Genre"] = string.Empty;
+      _properties["#Radio.Guide.EpisodeName"] = string.Empty;
+      _properties["#Radio.Guide.SeriesNumber"] = string.Empty;
+      _properties["#Radio.Guide.EpisodeNumber"] = string.Empty;
+      _properties["#Radio.Guide.EpisodePart"] = string.Empty;
+      _properties["#Radio.Guide.EpisodeDetail"] = string.Empty;
+      _properties["#Radio.Guide.Date"] = string.Empty;
+      _properties["#Radio.Guide.StarRating"] = string.Empty;
+      _properties["#Radio.Guide.Classification"] = string.Empty;
 
-      _properties["#TV.RecordedTV.Title"] = String.Empty;
-      _properties["#TV.RecordedTV.Time"] = String.Empty;
-      _properties["#TV.RecordedTV.Description"] = String.Empty;
-      _properties["#TV.RecordedTV.thumb"] = String.Empty;
-      _properties["#TV.RecordedTV.Genre"] = String.Empty;
-      _properties["#TV.Signal.Quality"] = String.Empty;
+      _properties["#TV.RecordedTV.Title"] = string.Empty;
+      _properties["#TV.RecordedTV.Time"] = string.Empty;
+      _properties["#TV.RecordedTV.Description"] = string.Empty;
+      _properties["#TV.RecordedTV.thumb"] = string.Empty;
+      _properties["#TV.RecordedTV.Genre"] = string.Empty;
+      _properties["#TV.Signal.Quality"] = string.Empty;
 
-      _properties["#TV.Scheduled.Title"] = String.Empty;
-      _properties["#TV.Scheduled.Time"] = String.Empty;
-      _properties["#TV.Scheduled.Description"] = String.Empty;
-      _properties["#TV.Scheduled.thumb"] = String.Empty;
-      _properties["#TV.Scheduled.Genre"] = String.Empty;
-      _properties["#TV.Scheduled.Channel"] = String.Empty;
+      _properties["#TV.Scheduled.Title"] = string.Empty;
+      _properties["#TV.Scheduled.Time"] = string.Empty;
+      _properties["#TV.Scheduled.Description"] = string.Empty;
+      _properties["#TV.Scheduled.thumb"] = string.Empty;
+      _properties["#TV.Scheduled.Genre"] = string.Empty;
+      _properties["#TV.Scheduled.Channel"] = string.Empty;
 
-      _properties["#TV.Search.Title"] = String.Empty;
-      _properties["#TV.Search.Time"] = String.Empty;
-      _properties["#TV.Search.Description"] = String.Empty;
-      _properties["#TV.Search.thumb"] = String.Empty;
-      _properties["#TV.Search.Genre"] = String.Empty;
+      _properties["#TV.Search.Title"] = string.Empty;
+      _properties["#TV.Search.Time"] = string.Empty;
+      _properties["#TV.Search.Description"] = string.Empty;
+      _properties["#TV.Search.thumb"] = string.Empty;
+      _properties["#TV.Search.Genre"] = string.Empty;
 
-      _properties["#view"] = String.Empty;
+      _properties["#view"] = string.Empty;
 
-      _properties["#TV.Transcoding.Percentage"] = String.Empty;
-      _properties["#TV.Transcoding.File"] = String.Empty;
-      _properties["#TV.Transcoding.Title"] = String.Empty;
-      _properties["#TV.Transcoding.Genre"] = String.Empty;
-      _properties["#TV.Transcoding.Description"] = String.Empty;
-      _properties["#TV.Transcoding.Channel"] = String.Empty;
+      _properties["#TV.Transcoding.Percentage"] = string.Empty;
+      _properties["#TV.Transcoding.File"] = string.Empty;
+      _properties["#TV.Transcoding.Title"] = string.Empty;
+      _properties["#TV.Transcoding.Genre"] = string.Empty;
+      _properties["#TV.Transcoding.Description"] = string.Empty;
+      _properties["#TV.Transcoding.Channel"] = string.Empty;
 
 
-      _properties["#Play.Current.Thumb"] = String.Empty;
-      _properties["#Play.Current.File"] = String.Empty;
-      _properties["#Play.Current.Title"] = String.Empty;
-      _properties["#Play.Current.Genre"] = String.Empty;
-      _properties["#Play.Current.Comment"] = String.Empty;
-      _properties["#Play.Current.Artist"] = String.Empty;
-      _properties["#Play.Current.Director"] = String.Empty;
-      _properties["#Play.Current.Album"] = String.Empty;
-      _properties["#Play.Current.Track"] = String.Empty;
-      _properties["#Play.Current.Year"] = String.Empty;
-      _properties["#Play.Current.Duration"] = String.Empty;
-      _properties["#Play.Current.Plot"] = String.Empty;
-      _properties["#Play.Current.PlotOutline"] = String.Empty;
-      _properties["#Play.Current.Channel"] = String.Empty;
-      _properties["#Play.Current.Cast"] = String.Empty;
-      _properties["#Play.Current.DVDLabel"] = String.Empty;
-      _properties["#Play.Current.IMDBNumber"] = String.Empty;
-      _properties["#Play.Current.Rating"] = String.Empty;
-      _properties["#Play.Current.TagLine"] = String.Empty;
-      _properties["#Play.Current.Votes"] = String.Empty;
-      _properties["#Play.Current.Credits"] = String.Empty;
-      _properties["#Play.Current.Runtime"] = String.Empty;
-      _properties["#Play.Current.MPAARating"] = String.Empty;
-      _properties["#Play.Current.IsWatched"] = String.Empty;
+      _properties["#Play.Current.Thumb"] = string.Empty;
+      _properties["#Play.Current.File"] = string.Empty;
+      _properties["#Play.Current.Title"] = string.Empty;
+      _properties["#Play.Current.Genre"] = string.Empty;
+      _properties["#Play.Current.Comment"] = string.Empty;
+      _properties["#Play.Current.Artist"] = string.Empty;
+      _properties["#Play.Current.Director"] = string.Empty;
+      _properties["#Play.Current.Album"] = string.Empty;
+      _properties["#Play.Current.Track"] = string.Empty;
+      _properties["#Play.Current.Year"] = string.Empty;
+      _properties["#Play.Current.Duration"] = string.Empty;
+      _properties["#Play.Current.Plot"] = string.Empty;
+      _properties["#Play.Current.PlotOutline"] = string.Empty;
+      _properties["#Play.Current.Channel"] = string.Empty;
+      _properties["#Play.Current.Cast"] = string.Empty;
+      _properties["#Play.Current.DVDLabel"] = string.Empty;
+      _properties["#Play.Current.IMDBNumber"] = string.Empty;
+      _properties["#Play.Current.Rating"] = string.Empty;
+      _properties["#Play.Current.TagLine"] = string.Empty;
+      _properties["#Play.Current.Votes"] = string.Empty;
+      _properties["#Play.Current.Credits"] = string.Empty;
+      _properties["#Play.Current.Runtime"] = string.Empty;
+      _properties["#Play.Current.MPAARating"] = string.Empty;
+      _properties["#Play.Current.IsWatched"] = string.Empty;
 
-      _properties["#Play.Current.ArtistThumb"] = String.Empty;
-      _properties["#Play.Current.Lastfm.TrackTags"] = String.Empty;
-      _properties["#Play.Current.Lastfm.SimilarArtists"] = String.Empty;
-      _properties["#Play.Current.Lastfm.ArtistInfo"] = String.Empty;
-      _properties["#Play.Current.Lastfm.CurrentStream"] = String.Empty;
+      _properties["#Play.Current.ArtistThumb"] = string.Empty;
+      _properties["#Play.Current.Lastfm.TrackTags"] = string.Empty;
+      _properties["#Play.Current.Lastfm.SimilarArtists"] = string.Empty;
+      _properties["#Play.Current.Lastfm.ArtistInfo"] = string.Empty;
+      _properties["#Play.Current.Lastfm.CurrentStream"] = string.Empty;
 
-      _properties["#Play.Next.Thumb"] = String.Empty;
-      _properties["#Play.Next.File"] = String.Empty;
-      _properties["#Play.Next.Title"] = String.Empty;
-      _properties["#Play.Next.Genre"] = String.Empty;
-      _properties["#Play.Next.Comment"] = String.Empty;
-      _properties["#Play.Next.Artist"] = String.Empty;
-      _properties["#Play.Next.Director"] = String.Empty;
-      _properties["#Play.Next.Album"] = String.Empty;
-      _properties["#Play.Next.Track"] = String.Empty;
-      _properties["#Play.Next.Year"] = String.Empty;
-      _properties["#Play.Next.Duration"] = String.Empty;
-      _properties["#Play.Next.Plot"] = String.Empty;
-      _properties["#Play.Next.PlotOutline"] = String.Empty;
-      _properties["#Play.Next.Channel"] = String.Empty;
-      _properties["#Play.Next.Cast"] = String.Empty;
-      _properties["#Play.Next.DVDLabel"] = String.Empty;
-      _properties["#Play.Next.IMDBNumber"] = String.Empty;
-      _properties["#Play.Next.Rating"] = String.Empty;
-      _properties["#Play.Next.TagLine"] = String.Empty;
-      _properties["#Play.Next.Votes"] = String.Empty;
-      _properties["#Play.Next.Credits"] = String.Empty;
-      _properties["#Play.Next.Runtime"] = String.Empty;
-      _properties["#Play.Next.MPAARating"] = String.Empty;
-      _properties["#Play.Next.IsWatched"] = String.Empty;
+      _properties["#Play.Next.Thumb"] = string.Empty;
+      _properties["#Play.Next.File"] = string.Empty;
+      _properties["#Play.Next.Title"] = string.Empty;
+      _properties["#Play.Next.Genre"] = string.Empty;
+      _properties["#Play.Next.Comment"] = string.Empty;
+      _properties["#Play.Next.Artist"] = string.Empty;
+      _properties["#Play.Next.Director"] = string.Empty;
+      _properties["#Play.Next.Album"] = string.Empty;
+      _properties["#Play.Next.Track"] = string.Empty;
+      _properties["#Play.Next.Year"] = string.Empty;
+      _properties["#Play.Next.Duration"] = string.Empty;
+      _properties["#Play.Next.Plot"] = string.Empty;
+      _properties["#Play.Next.PlotOutline"] = string.Empty;
+      _properties["#Play.Next.Channel"] = string.Empty;
+      _properties["#Play.Next.Cast"] = string.Empty;
+      _properties["#Play.Next.DVDLabel"] = string.Empty;
+      _properties["#Play.Next.IMDBNumber"] = string.Empty;
+      _properties["#Play.Next.Rating"] = string.Empty;
+      _properties["#Play.Next.TagLine"] = string.Empty;
+      _properties["#Play.Next.Votes"] = string.Empty;
+      _properties["#Play.Next.Credits"] = string.Empty;
+      _properties["#Play.Next.Runtime"] = string.Empty;
+      _properties["#Play.Next.MPAARating"] = string.Empty;
+      _properties["#Play.Next.IsWatched"] = string.Empty;
 
-      _properties["#Lastfm.Rating.AlbumTrack1"] = String.Empty;
-      _properties["#Lastfm.Rating.AlbumTrack2"] = String.Empty;
-      _properties["#Lastfm.Rating.AlbumTrack3"] = String.Empty;
+      _properties["#Lastfm.Rating.AlbumTrack1"] = string.Empty;
+      _properties["#Lastfm.Rating.AlbumTrack2"] = string.Empty;
+      _properties["#Lastfm.Rating.AlbumTrack3"] = string.Empty;
 
-      _properties["#numberplace.time"] = String.Empty;
-      _properties["#numberplace.name1"] = String.Empty;
-      _properties["#numberplace.name2"] = String.Empty;
-      _properties["#numberplace.name3"] = String.Empty;
-      _properties["#numberplace.name4"] = String.Empty;
-      _properties["#numberplace.name5"] = String.Empty;
-      _properties["#numberplace.score1"] = String.Empty;
-      _properties["#numberplace.score2"] = String.Empty;
-      _properties["#numberplace.score3"] = String.Empty;
-      _properties["#numberplace.score4"] = String.Empty;
-      _properties["#numberplace.score5"] = String.Empty;
+      _properties["#numberplace.time"] = string.Empty;
+      _properties["#numberplace.name1"] = string.Empty;
+      _properties["#numberplace.name2"] = string.Empty;
+      _properties["#numberplace.name3"] = string.Empty;
+      _properties["#numberplace.name4"] = string.Empty;
+      _properties["#numberplace.name5"] = string.Empty;
+      _properties["#numberplace.score1"] = string.Empty;
+      _properties["#numberplace.score2"] = string.Empty;
+      _properties["#numberplace.score3"] = string.Empty;
+      _properties["#numberplace.score4"] = string.Empty;
+      _properties["#numberplace.score5"] = string.Empty;
 
-      _properties["#facadeview.viewmode"] = String.Empty;
+      _properties["#facadeview.viewmode"] = string.Empty;
     }
 
     /// <summary>
@@ -273,7 +273,7 @@ namespace MediaPortal.GUI.Library
     {
       if (tag == null) return;
       if (tagvalue == null) return;
-      if (tag == String.Empty) return;
+      if (tag == string.Empty) return;
       if (tag[0] != '#') return;
 
       if (tag.Equals("#currentmodule"))
@@ -302,15 +302,15 @@ namespace MediaPortal.GUI.Library
     /// <returns>property value</returns>
     static public string GetProperty(string tag)
     {
-      if (tag == null) return String.Empty;
-      if (tag == String.Empty) return String.Empty;
-      if (tag[0] != '#') return String.Empty;
+      if (tag == null) return string.Empty;
+      if (tag == string.Empty) return string.Empty;
+      if (tag[0] != '#') return string.Empty;
       lock (_properties)
       {
         if (_properties.ContainsKey(tag))
           return (string)_properties[tag];
       }
-      return String.Empty;
+      return string.Empty;
     }
 
     /// <summary>
@@ -318,57 +318,57 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void RemovePlayerProperties()
     {
-      SetProperty("#Play.Current.Thumb", String.Empty);
-      SetProperty("#Play.Current.File", String.Empty);
-      SetProperty("#Play.Current.Title", String.Empty);
-      SetProperty("#Play.Current.Genre", String.Empty);
-      SetProperty("#Play.Current.Comment", String.Empty);
-      SetProperty("#Play.Current.Artist", String.Empty);
-      SetProperty("#Play.Current.Director", String.Empty);
-      SetProperty("#Play.Current.Album", String.Empty);
-      SetProperty("#Play.Current.Track", String.Empty);
-      SetProperty("#Play.Current.Year", String.Empty);
-      SetProperty("#Play.Current.Duration", String.Empty);
-      SetProperty("#Play.Current.Plot", String.Empty);
-      SetProperty("#Play.Current.PlotOutline", String.Empty);
-      SetProperty("#Play.Current.Channel", String.Empty);
-      SetProperty("#Play.Current.Cast", String.Empty);
-      SetProperty("#Play.Current.DVDLabel", String.Empty);
-      SetProperty("#Play.Current.IMDBNumber", String.Empty);
-      SetProperty("#Play.Current.Rating", String.Empty);
-      SetProperty("#Play.Current.TagLine", String.Empty);
-      SetProperty("#Play.Current.Votes", String.Empty);
-      SetProperty("#Play.Current.Credits", String.Empty);
-      SetProperty("#Play.Current.Runtime", String.Empty);
-      SetProperty("#Play.Current.MPAARating", String.Empty);
-      SetProperty("#Play.Current.IsWatched", String.Empty);
+      SetProperty("#Play.Current.Thumb", string.Empty);
+      SetProperty("#Play.Current.File", string.Empty);
+      SetProperty("#Play.Current.Title", string.Empty);
+      SetProperty("#Play.Current.Genre", string.Empty);
+      SetProperty("#Play.Current.Comment", string.Empty);
+      SetProperty("#Play.Current.Artist", string.Empty);
+      SetProperty("#Play.Current.Director", string.Empty);
+      SetProperty("#Play.Current.Album", string.Empty);
+      SetProperty("#Play.Current.Track", string.Empty);
+      SetProperty("#Play.Current.Year", string.Empty);
+      SetProperty("#Play.Current.Duration", string.Empty);
+      SetProperty("#Play.Current.Plot", string.Empty);
+      SetProperty("#Play.Current.PlotOutline", string.Empty);
+      SetProperty("#Play.Current.Channel", string.Empty);
+      SetProperty("#Play.Current.Cast", string.Empty);
+      SetProperty("#Play.Current.DVDLabel", string.Empty);
+      SetProperty("#Play.Current.IMDBNumber", string.Empty);
+      SetProperty("#Play.Current.Rating", string.Empty);
+      SetProperty("#Play.Current.TagLine", string.Empty);
+      SetProperty("#Play.Current.Votes", string.Empty);
+      SetProperty("#Play.Current.Credits", string.Empty);
+      SetProperty("#Play.Current.Runtime", string.Empty);
+      SetProperty("#Play.Current.MPAARating", string.Empty);
+      SetProperty("#Play.Current.IsWatched", string.Empty);
 
 
 
-      SetProperty("#Play.Next.Thumb", String.Empty);
-      SetProperty("#Play.Next.File", String.Empty);
-      SetProperty("#Play.Next.Title", String.Empty);
-      SetProperty("#Play.Next.Genre", String.Empty);
-      SetProperty("#Play.Next.Comment", String.Empty);
-      SetProperty("#Play.Next.Artist", String.Empty);
-      SetProperty("#Play.Next.Director", String.Empty);
-      SetProperty("#Play.Next.Album", String.Empty);
-      SetProperty("#Play.Next.Track", String.Empty);
-      SetProperty("#Play.Next.Year", String.Empty);
-      SetProperty("#Play.Next.Duration", String.Empty);
-      SetProperty("#Play.Next.Plot", String.Empty);
-      SetProperty("#Play.Next.PlotOutline", String.Empty);
-      SetProperty("#Play.Next.Channel", String.Empty);
-      SetProperty("#Play.Next.Cast", String.Empty);
-      SetProperty("#Play.Next.DVDLabel", String.Empty);
-      SetProperty("#Play.Next.IMDBNumber", String.Empty);
-      SetProperty("#Play.Next.Rating", String.Empty);
-      SetProperty("#Play.Next.TagLine", String.Empty);
-      SetProperty("#Play.Next.Votes", String.Empty);
-      SetProperty("#Play.Next.Credits", String.Empty);
-      SetProperty("#Play.Next.Runtime", String.Empty);
-      SetProperty("#Play.Next.MPAARating", String.Empty);
-      SetProperty("#Play.Next.IsWatched", String.Empty);
+      SetProperty("#Play.Next.Thumb", string.Empty);
+      SetProperty("#Play.Next.File", string.Empty);
+      SetProperty("#Play.Next.Title", string.Empty);
+      SetProperty("#Play.Next.Genre", string.Empty);
+      SetProperty("#Play.Next.Comment", string.Empty);
+      SetProperty("#Play.Next.Artist", string.Empty);
+      SetProperty("#Play.Next.Director", string.Empty);
+      SetProperty("#Play.Next.Album", string.Empty);
+      SetProperty("#Play.Next.Track", string.Empty);
+      SetProperty("#Play.Next.Year", string.Empty);
+      SetProperty("#Play.Next.Duration", string.Empty);
+      SetProperty("#Play.Next.Plot", string.Empty);
+      SetProperty("#Play.Next.PlotOutline", string.Empty);
+      SetProperty("#Play.Next.Channel", string.Empty);
+      SetProperty("#Play.Next.Cast", string.Empty);
+      SetProperty("#Play.Next.DVDLabel", string.Empty);
+      SetProperty("#Play.Next.IMDBNumber", string.Empty);
+      SetProperty("#Play.Next.Rating", string.Empty);
+      SetProperty("#Play.Next.TagLine", string.Empty);
+      SetProperty("#Play.Next.Votes", string.Empty);
+      SetProperty("#Play.Next.Credits", string.Empty);
+      SetProperty("#Play.Next.Runtime", string.Empty);
+      SetProperty("#Play.Next.MPAARating", string.Empty);
+      SetProperty("#Play.Next.IsWatched", string.Empty);
 
       _isChanged = true;
     }
@@ -380,8 +380,8 @@ namespace MediaPortal.GUI.Library
     /// <returns>The value of the property.</returns>
     static public string Parse(string line)
     {
-      if (line == null) return String.Empty;
-      if (line == String.Empty) return String.Empty;
+      if (line == null) return string.Empty;
+      if (line == string.Empty) return string.Empty;
       if (line.IndexOf('#') == -1) return line;
       lock (_properties)
       {

@@ -58,7 +58,7 @@ namespace MediaPortal.Music.Database
         fitness += 4;
       }
 
-      if (_artistName != String.Empty)
+      if (_artistName != string.Empty)
       {
         string[] parts = _artistName.Split(new char[] { ' ' });
         int[] offsets = new int[parts.Length];
@@ -82,7 +82,7 @@ namespace MediaPortal.Music.Database
         }
       }
 
-      if (_album != String.Empty)
+      if (_album != string.Empty)
       {
         string[] parts = _album.Split(new char[] { ' ' });
         int[] offsets = new int[parts.Length];

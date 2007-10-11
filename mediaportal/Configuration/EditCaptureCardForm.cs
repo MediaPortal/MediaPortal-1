@@ -347,7 +347,7 @@ namespace MediaPortal.Configuration
 
 
           bool add = false;
-          if (ccd.CaptureName != String.Empty)
+          if (ccd.CaptureName != string.Empty)
           {
             string videoDev = (string)(availableVideoDevices[i]);
             string videoMon = (string)(availableVideoDeviceMonikers[i]);
@@ -360,7 +360,7 @@ namespace MediaPortal.Configuration
 
             cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
             cd.ID = cardId;
-            if (ccd.CaptureName != String.Empty)
+            if (ccd.CaptureName != string.Empty)
             {
               cd.VideoDevice = ccd.CaptureName;////Hauppauge WinTV PVR PCI II Capture
               cd.CommercialName = ccd.CommercialName;//PVR 150MCE
@@ -1465,7 +1465,7 @@ namespace MediaPortal.Configuration
 
     void FillInDefaultRecordingPath()
     {
-      if (tbRecordingFolder.Text != String.Empty) return;
+      if (tbRecordingFolder.Text != string.Empty) return;
 
       string recFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
       recFolder += @"\My Recordings";
@@ -1484,7 +1484,7 @@ namespace MediaPortal.Configuration
     /// <param name="e"></param>
     private void okButton_Click(object sender, System.EventArgs e)
     {
-      if (tbRecordingFolder.Text == String.Empty)
+      if (tbRecordingFolder.Text == string.Empty)
       {
         tabControl1.SelectedTab = tabPage1;
         MessageBox.Show("No recording folder specified", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -1523,7 +1523,7 @@ namespace MediaPortal.Configuration
     void SaveAllSettings()
     {
 
-      if (CaptureCard != null && CaptureCard.FriendlyName != String.Empty)
+      if (CaptureCard != null && CaptureCard.FriendlyName != string.Empty)
       {
         try
         {
@@ -1862,7 +1862,7 @@ namespace MediaPortal.Configuration
         if (capture != null)
         {
           FillAutotuneTab();
-          if (capture.FriendlyName != String.Empty)
+          if (capture.FriendlyName != string.Empty)
           {
             string filename = String.Format(Config.GetFile(Config.Dir.Database,"card_{0}.xml"), capture.FriendlyName);
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))

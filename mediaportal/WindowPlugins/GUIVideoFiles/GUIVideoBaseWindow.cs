@@ -67,9 +67,9 @@ namespace MediaPortal.GUI.Video
     protected bool m_bSortAscending;
     protected bool m_bSortAscendingRoot;
     protected VideoViewHandler handler;
-    protected string m_strPlayListPath = String.Empty;
-    protected string _currentFolder = String.Empty;
-    protected string _lastFolder = String.Empty;
+    protected string m_strPlayListPath = string.Empty;
+    protected string _currentFolder = string.Empty;
+    protected string _lastFolder = string.Empty;
     protected bool m_bPlaylistsViewMode = false;
     protected PlayListPlayer playlistPlayer;
 
@@ -174,7 +174,7 @@ namespace MediaPortal.GUI.Video
     {
       get
       {
-        return String.Empty;
+        return string.Empty;
       }
     }
 
@@ -406,7 +406,7 @@ namespace MediaPortal.GUI.Video
       GUIControl.FocusControl(GetID, iControl);
 
 
-      string strLine = String.Empty;
+      string strLine = string.Empty;
       View view = CurrentView;
       switch (view)
       {
@@ -533,7 +533,7 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
-          string strSize1 = String.Empty, strDate = String.Empty;
+          string strSize1 = string.Empty, strDate = string.Empty;
           if (item.FileInfo != null && !item.IsFolder)
             strSize1 = MediaPortal.Util.Utils.GetSize(item.FileInfo.Length);
           if (item.FileInfo != null && !item.IsFolder)
@@ -641,7 +641,7 @@ namespace MediaPortal.GUI.Video
             }
             else
             {
-              LoadDirectory(String.Empty);
+              LoadDirectory(string.Empty);
             }
           }
           break;
@@ -766,7 +766,7 @@ namespace MediaPortal.GUI.Video
       {
         dlgOK.SetHeading(6);
         dlgOK.SetLine(1, 477);
-        dlgOK.SetLine(2, String.Empty);
+        dlgOK.SetLine(2, string.Empty);
         dlgOK.DoModal(GetID);
       }
     }

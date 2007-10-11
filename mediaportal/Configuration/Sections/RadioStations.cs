@@ -474,7 +474,7 @@ namespace MediaPortal.Configuration.Sections
           // Remove URL if we have a normal radio station
           //
           if (editStation.Station.Type.Equals("Radio"))
-            editStation.Station.URL = String.Empty;
+            editStation.Station.URL = string.Empty;
 
           listItem.SubItems[0].Text = editStation.Station.Type;
           listItem.SubItems[1].Text = editStation.Station.Name;
@@ -841,7 +841,7 @@ namespace MediaPortal.Configuration.Sections
         }
         if (!mapped)
         {
-          if (chan.URL == String.Empty)
+          if (chan.URL == string.Empty)
           {
             ListViewItem newItem = new ListViewItem(chan.Name);
             newItem.Tag = chan;
@@ -852,7 +852,7 @@ namespace MediaPortal.Configuration.Sections
 
       foreach (MediaPortal.Radio.Database.RadioStation chanCard in cardChannels)
       {
-        if (chanCard.URL == String.Empty)
+        if (chanCard.URL == string.Empty)
         {
           ListViewItem newItemCard = new ListViewItem(chanCard.Name);
           newItemCard.Tag = chanCard;

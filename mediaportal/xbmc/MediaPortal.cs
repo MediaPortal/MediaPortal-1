@@ -98,7 +98,7 @@ public class MediaPortalApp : D3DApp, IRender
   private bool ignoreContextMenuAction = false;
   private DateTime lastContextMenuAction = DateTime.MaxValue;
   private bool _onResumeRunning = false;
-  protected string _dateFormat = String.Empty;
+  protected string _dateFormat = string.Empty;
   private bool showLastActiveModule = false;  
   private int lastActiveModule = -1;
   private bool lastActiveModuleFullscreen = false;
@@ -1348,7 +1348,7 @@ public class MediaPortalApp : D3DApp, IRender
         RadioStation station;
         RadioDatabase.GetStation(strDefault, out station);
         GUIMessage msg;
-        if (station.URL != null && !station.URL.Equals(String.Empty) && station.Frequency == 0)
+        if (station.URL != null && !station.URL.Equals(string.Empty) && station.Frequency == 0)
         {
           msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
           msg.Label = station.URL;
@@ -1836,8 +1836,8 @@ public class MediaPortalApp : D3DApp, IRender
       }
       else
       {
-        GUIPropertyManager.SetProperty("#duration", String.Empty);
-        GUIPropertyManager.SetProperty("#shortduration", String.Empty);
+        GUIPropertyManager.SetProperty("#duration", string.Empty);
+        GUIPropertyManager.SetProperty("#shortduration", string.Empty);
         GUIPropertyManager.SetProperty("#percentage", "0");
       }
       GUIPropertyManager.SetProperty("#playspeed", g_Player.Speed.ToString());
@@ -3330,7 +3330,7 @@ GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.None;
   protected string GetDate()
   {
     string dateString = _dateFormat;
-    if ((dateString == null) || (dateString.Length == 0)) return String.Empty;
+    if ((dateString == null) || (dateString.Length == 0)) return string.Empty;
 
     DateTime cur = DateTime.Now;
     string day;

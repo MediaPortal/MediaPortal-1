@@ -234,7 +234,7 @@ namespace MediaPortal.Configuration.Sections
         //}
 
         IntPtr result = IntPtr.Zero;
-        SendMessageTimeout((IntPtr)HWND_BROADCAST, (IntPtr)WM_SETTINGCHANGE, IntPtr.Zero, Marshal.StringToBSTR(String.Empty), (IntPtr)SMTO_ABORTIFHUNG, (IntPtr)3, out result);
+        SendMessageTimeout((IntPtr)HWND_BROADCAST, (IntPtr)WM_SETTINGCHANGE, IntPtr.Zero, Marshal.StringToBSTR(string.Empty), (IntPtr)SMTO_ABORTIFHUNG, (IntPtr)3, out result);
       }
       catch (Exception ex)
       {

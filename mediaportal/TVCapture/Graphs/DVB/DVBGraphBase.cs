@@ -295,7 +295,7 @@ namespace MediaPortal.TV.Recording
     protected DateTime _processTimer = DateTime.MinValue;
     protected IPin _pinTeletext;
     protected string _currentTimeShiftFileName;
-    protected string _lastError = String.Empty;
+    protected string _lastError = string.Empty;
 
 #if DUMP
 		System.IO.FileStream fileout;
@@ -3354,10 +3354,10 @@ namespace MediaPortal.TV.Recording
         _currentTuningObject.Audio1 = 0;
         _currentTuningObject.Audio2 = 0;
         _currentTuningObject.Audio3 = 0;
-        _currentTuningObject.AudioLanguage = String.Empty;
-        _currentTuningObject.AudioLanguage1 = String.Empty;
-        _currentTuningObject.AudioLanguage2 = String.Empty;
-        _currentTuningObject.AudioLanguage3 = String.Empty;
+        _currentTuningObject.AudioLanguage = string.Empty;
+        _currentTuningObject.AudioLanguage1 = string.Empty;
+        _currentTuningObject.AudioLanguage2 = string.Empty;
+        _currentTuningObject.AudioLanguage3 = string.Empty;
         //check if this channel has audio/video streams
         int audioOptions = 0;
         if (info.pid_list != null)
@@ -4191,7 +4191,7 @@ namespace MediaPortal.TV.Recording
 
     protected void SetHardwarePidFiltering()
     {
-      string pidsText = String.Empty;
+      string pidsText = string.Empty;
       ArrayList pids = new ArrayList();
       if (_inScanningMode == false)
       {
@@ -4255,7 +4255,7 @@ namespace MediaPortal.TV.Recording
 
     public string RadioTimeshiftFileName()
     {
-      return String.Empty;
+      return string.Empty;
     }
     
     public void GrabTeletext(bool yesNo)
@@ -4342,7 +4342,7 @@ namespace MediaPortal.TV.Recording
       {
         //if (_scanPidListReady) return 0;
         Log.Info("FilterPids:{0}", count);
-        string pidsText = String.Empty;
+        string pidsText = string.Empty;
         _scanPidList = new ArrayList();
         for (int i = 0; i < count; ++i)
         {

@@ -108,19 +108,19 @@ namespace MediaPortal.GUI.Video
     {
       if (!g_Player.Playing)
       {
-        _fileName = String.Empty;
+        _fileName = string.Empty;
         OnUpdateState(false);
         return base.IsAnimating(AnimationType.WindowClose);
       }
       if ((g_Player.IsRadio || g_Player.IsMusic))
       {
-        _fileName = String.Empty;
+        _fileName = string.Empty;
         OnUpdateState(false);
         return base.IsAnimating(AnimationType.WindowClose);
       }
       if (!g_Player.IsVideo && !g_Player.IsDVD && !g_Player.IsTVRecording && !g_Player.IsTV)
       {
-        _fileName = String.Empty;
+        _fileName = string.Empty;
         OnUpdateState(false);
         return base.IsAnimating(AnimationType.WindowClose);
       }

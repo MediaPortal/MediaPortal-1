@@ -200,7 +200,7 @@ namespace MediaPortal.Configuration.Sections
       if (listView1.SelectedItems == null) return;
       int index = 0;
       ListViewItem listItem = listView1.SelectedItems[0];
-      if (textBoxTitle.Text == String.Empty)
+      if (textBoxTitle.Text == string.Empty)
       {
         MessageBox.Show("Please select a movie", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); ;
         return;
@@ -294,7 +294,7 @@ namespace MediaPortal.Configuration.Sections
       progressDialog.ResetProgress();
       progressDialog.SetHeading("Searching IMDB...");
       progressDialog.SetLine1(fetcher.MovieName);
-      progressDialog.SetLine2(String.Empty);
+      progressDialog.SetLine2(string.Empty);
       progressDialog.Instance = fetcher;
       return true;
     }

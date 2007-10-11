@@ -73,10 +73,10 @@ namespace MediaPortal.Profile
     public string GetValue(string section, string entry)
     {
       object value = xmlDoc.GetValue(section, entry);
-      if (value == null) return String.Empty;
+      if (value == null) return string.Empty;
 
       string strValue = value.ToString();
-      if (strValue.Length == 0) return String.Empty;
+      if (strValue.Length == 0) return string.Empty;
       return strValue;
     }
 

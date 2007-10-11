@@ -248,7 +248,7 @@ namespace WindowPlugins.VideoEditor
 				else if (item.Label.Substring(1, 1) == ":")  // is a drive
 				{
 					currentFolder = item.Label;
-					if (currentFolder != String.Empty)
+					if (currentFolder != string.Empty)
 						LoadListControl(currentFolder, extensions);
 					else
 						LoadShares();
@@ -650,10 +650,10 @@ namespace WindowPlugins.VideoEditor
       {
         //ShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", true);
        // fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        //fileMenuPinCode = Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
+        //fileMenuPinCode = Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         directory.Clear();
         videoListLct.Clear();
-        string strDefault = xmlreader.GetValueAsString("movies", "default", String.Empty);
+        string strDefault = xmlreader.GetValueAsString("movies", "default", string.Empty);
         for (int i = 0; i < 20; i++)
         {
           string strShareName = String.Format("sharename{0}", i);
@@ -669,8 +669,8 @@ namespace WindowPlugins.VideoEditor
           string shareViewPath = String.Format("shareview{0}", i);
 
           Share share = new Share();
-          share.Name = xmlreader.GetValueAsString("movies", strShareName, String.Empty);
-          share.Path = xmlreader.GetValueAsString("movies", strSharePath, String.Empty);
+          share.Name = xmlreader.GetValueAsString("movies", strShareName, string.Empty);
+          share.Path = xmlreader.GetValueAsString("movies", strSharePath, string.Empty);
           string pinCode = Utils.DecryptPin(xmlreader.GetValueAsString("movies", strPincode, string.Empty));
           if (pinCode != string.Empty)
             share.Pincode = Convert.ToInt32(pinCode);
@@ -678,9 +678,9 @@ namespace WindowPlugins.VideoEditor
             share.Pincode = -1;
 
           share.IsFtpShare = xmlreader.GetValueAsBool("movies", shareType, false);
-          share.FtpServer = xmlreader.GetValueAsString("movies", shareServer, String.Empty);
-          share.FtpLoginName = xmlreader.GetValueAsString("movies", shareLogin, String.Empty);
-          share.FtpPassword = xmlreader.GetValueAsString("movies", sharePwd, String.Empty);
+          share.FtpServer = xmlreader.GetValueAsString("movies", shareServer, string.Empty);
+          share.FtpLoginName = xmlreader.GetValueAsString("movies", shareLogin, string.Empty);
+          share.FtpPassword = xmlreader.GetValueAsString("movies", sharePwd, string.Empty);
           share.FtpPort = xmlreader.GetValueAsInt("movies", sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString("movies", remoteFolder, "/");
           share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("movies", shareViewPath, (int)Share.Views.List);

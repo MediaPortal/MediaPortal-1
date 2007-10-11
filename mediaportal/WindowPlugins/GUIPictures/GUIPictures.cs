@@ -50,7 +50,7 @@ namespace MediaPortal.GUI.Pictures
   {
     VirtualDirectory vDir = new VirtualDirectory();    
 
-    string _filepath = String.Empty;
+    string _filepath = string.Empty;
     bool _createLarge = true;
     bool _recreateWithoutCheck = false;
     //bool _hideFileExtensions = true;
@@ -380,13 +380,13 @@ namespace MediaPortal.GUI.Pictures
     int selectedItemIndex = -1;
     GUIListItem selectedListItem = null;
     DirectoryHistory folderHistory = new DirectoryHistory();
-    string currentFolder = String.Empty;
-    string m_strDirectoryStart = String.Empty;
-    string destinationFolder = String.Empty;
+    string currentFolder = string.Empty;
+    string m_strDirectoryStart = string.Empty;
+    string destinationFolder = string.Empty;
     VirtualDirectory virtualDirectory = new VirtualDirectory();
     MapSettings mapSettings = new MapSettings();
     bool isFileMenuEnabled = false;
-    string fileMenuPinCode = String.Empty;
+    string fileMenuPinCode = string.Empty;
     bool _autocreateLargeThumbs = true;
     //bool _hideExtensions = true;
     Display disp = Display.Files;
@@ -416,8 +416,8 @@ namespace MediaPortal.GUI.Pictures
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        fileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
-        string strDefault = xmlreader.GetValueAsString("pictures", "default", String.Empty);
+        fileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        string strDefault = xmlreader.GetValueAsString("pictures", "default", string.Empty);
         virtualDirectory.Clear();
         for (int i = 0; i < 20; i++)
         {
@@ -434,8 +434,8 @@ namespace MediaPortal.GUI.Pictures
           string shareViewPath = String.Format("shareview{0}", i);
 
           Share share = new Share();
-          share.Name = xmlreader.GetValueAsString("pictures", shareName, String.Empty);
-          share.Path = xmlreader.GetValueAsString("pictures", sharePath, String.Empty);
+          share.Name = xmlreader.GetValueAsString("pictures", shareName, string.Empty);
+          share.Path = xmlreader.GetValueAsString("pictures", sharePath, string.Empty);
           string pinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("pictures", strPincode, string.Empty));
           if (pinCode != string.Empty)
             share.Pincode = Convert.ToInt32(pinCode);
@@ -443,9 +443,9 @@ namespace MediaPortal.GUI.Pictures
             share.Pincode = -1;
 
           share.IsFtpShare = xmlreader.GetValueAsBool("pictures", shareType, false);
-          share.FtpServer = xmlreader.GetValueAsString("pictures", shareServer, String.Empty);
-          share.FtpLoginName = xmlreader.GetValueAsString("pictures", shareLogin, String.Empty);
-          share.FtpPassword = xmlreader.GetValueAsString("pictures", sharePwd, String.Empty);
+          share.FtpServer = xmlreader.GetValueAsString("pictures", shareServer, string.Empty);
+          share.FtpLoginName = xmlreader.GetValueAsString("pictures", shareLogin, string.Empty);
+          share.FtpPassword = xmlreader.GetValueAsString("pictures", sharePwd, string.Empty);
           share.FtpPort = xmlreader.GetValueAsInt("pictures", sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString("pictures", remoteFolder, "/");
           share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("pictures", shareViewPath, (int)Share.Views.List);
@@ -494,8 +494,8 @@ namespace MediaPortal.GUI.Pictures
     #region overrides
     public override bool Init()
     {
-      currentFolder = String.Empty;
-      destinationFolder = String.Empty;
+      currentFolder = string.Empty;
+      destinationFolder = string.Empty;
 
       bool result = Load(GUIGraphicsContext.Skin + @"\mypics.xml");
       LoadSettings();
@@ -713,9 +713,9 @@ namespace MediaPortal.GUI.Pictures
 
         case GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED:
         case GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED:
-          if (currentFolder == String.Empty || currentFolder.Substring(0, 2) == message.Label)
+          if (currentFolder == string.Empty || currentFolder.Substring(0, 2) == message.Label)
           {
-            currentFolder = String.Empty;
+            currentFolder = string.Empty;
             LoadDirectory(currentFolder);
           }
           break;
@@ -787,9 +787,9 @@ namespace MediaPortal.GUI.Pictures
         case 500: // File menu
           {
             // get pincode
-            if (fileMenuPinCode != String.Empty)
+            if (fileMenuPinCode != string.Empty)
             {
-              string strUserCode = String.Empty;
+              string strUserCode = string.Empty;
               if (GetUserInputString(ref strUserCode) && strUserCode == fileMenuPinCode)
               {
                 OnShowFileMenu();
@@ -877,7 +877,7 @@ namespace MediaPortal.GUI.Pictures
       GUIControl.ShowControl(GetID, iControl);
       GUIControl.FocusControl(GetID, iControl);
 
-      string textLine = String.Empty;
+      string textLine = string.Empty;
       View view = (View)mapSettings.ViewAs;
       SortMethod method = (SortMethod)mapSettings.SortBy;
       bool sortAsc = mapSettings.SortAscending;
@@ -959,7 +959,7 @@ namespace MediaPortal.GUI.Pictures
     #region folder settings
     void LoadFolderSettings(string folderName)
     {     
-      if (folderName == String.Empty)
+      if (folderName == string.Empty)
         folderName = "root";
       object o;
       FolderSettings.GetFolderSetting(folderName, "Pictures", typeof(GUIPictures.MapSettings), out o);
@@ -986,7 +986,7 @@ namespace MediaPortal.GUI.Pictures
 
     void SaveFolderSettings(string folder)
     {
-      if (folder == String.Empty)
+      if (folder == string.Empty)
         folder = "root";
       FolderSettings.AddFolderSetting(folder, "Pictures", typeof(GUIPictures.MapSettings), mapSettings);      
     }
@@ -1016,8 +1016,8 @@ namespace MediaPortal.GUI.Pictures
       else if (!item1.IsFolder && item2.IsFolder)
         return 1;
 
-      string sizeItem1 = String.Empty;
-      string sizeItem2 = String.Empty;
+      string sizeItem1 = string.Empty;
+      string sizeItem2 = string.Empty;
       if (item1.FileInfo != null && !item1.IsFolder)
         sizeItem1 = MediaPortal.Util.Utils.GetSize(item1.FileInfo.Length);
       if (item2.FileInfo != null && !item1.IsFolder)
@@ -1127,8 +1127,8 @@ namespace MediaPortal.GUI.Pictures
       else
         dlgYesNo.SetHeading(503);
       dlgYesNo.SetLine(1, strFileName);
-      dlgYesNo.SetLine(2, String.Empty);
-      dlgYesNo.SetLine(3, String.Empty);
+      dlgYesNo.SetLine(2, string.Empty);
+      dlgYesNo.SetLine(3, string.Empty);
       dlgYesNo.DoModal(GetID);
 
       if (!dlgYesNo.IsConfirmed)
@@ -1533,7 +1533,7 @@ namespace MediaPortal.GUI.Pictures
     void LoadDirectory(string strNewDirectory)
     {
       List<GUIListItem> itemlist;
-      string objectCount = String.Empty;
+      string objectCount = string.Empty;
 
       GUIWaitCursor.Show();
 
@@ -1770,15 +1770,15 @@ namespace MediaPortal.GUI.Pictures
     
     static public string GetThumbnail(string fileName)
     {
-      if (fileName == String.Empty)
-        return String.Empty;
+      if (fileName == string.Empty)
+        return string.Empty;
       return String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(fileName));
     }
 
     static public string GetLargeThumbnail(string fileName)
     {
-      if (fileName == String.Empty)
-        return String.Empty;
+      if (fileName == string.Empty)
+        return string.Empty;
       return String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, MediaPortal.Util.Utils.EncryptLine(fileName));
     }   
 
@@ -1856,9 +1856,9 @@ namespace MediaPortal.GUI.Pictures
     {
       // TODO:  Add GUIPictures.GetHome implementation
       strButtonText = GUILocalizeStrings.Get(1);
-      strButtonImage = String.Empty;
-      strButtonImageFocus = String.Empty;
-      strPictureImage = String.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
+      strPictureImage = string.Empty;
       return true;
     }
 

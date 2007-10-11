@@ -349,7 +349,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void AddActionNode(ref ArrayList list, XmlNode node)
     {
-      string id = "0", key = String.Empty, sound = String.Empty, description = String.Empty;
+      string id = "0", key = string.Empty, sound = string.Empty, description = string.Empty;
 
       XmlNode idNode = node.SelectSingleNode("id");
       XmlNode keyNode = node.SelectSingleNode("key");
@@ -630,8 +630,8 @@ namespace MediaPortal.Configuration.Sections
         descriptionTextBox.Text = window.Description;
         idTextBox.Text = window.Id.ToString();
 
-        keyTextBox.Text = String.Empty;
-        soundTextBox.Text = String.Empty;
+        keyTextBox.Text = string.Empty;
+        soundTextBox.Text = string.Empty;
 
         descriptionTextBox.Enabled = idComboBox.Enabled = true;
       }
@@ -1032,7 +1032,7 @@ namespace MediaPortal.Configuration.Sections
 
     public string GetName(int code)
     {
-      string result = String.Empty;
+      string result = string.Empty;
 
       if (ContainsKey(code))
       {
@@ -1052,7 +1052,7 @@ namespace MediaPortal.Configuration.Sections
 
     public string GetSettingName(int code)
     {
-      string result = String.Empty;
+      string result = string.Empty;
 
       if (ContainsKey(code))
       {

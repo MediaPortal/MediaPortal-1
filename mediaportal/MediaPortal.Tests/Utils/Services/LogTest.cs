@@ -58,13 +58,13 @@
 ////                    Log log = new Log(logString, Log.Level.Error);
 
 ////          log.Debug(TEST_DEBUG);
-////          Assert.IsTrue( logString.ToString() == String.Empty );
+////          Assert.IsTrue( logString.ToString() == string.Empty );
 
 ////          log.Info(TEST_INFO);
-////                    Assert.IsTrue( logString.ToString() == String.Empty );
+////                    Assert.IsTrue( logString.ToString() == string.Empty );
 
 ////          log.Warn(TEST_WARN);
-////                    Assert.IsTrue( logString.ToString() == String.Empty );
+////                    Assert.IsTrue( logString.ToString() == string.Empty );
 
 ////          log.Error(TEST_ERROR);
 ////                    Assert.IsTrue(logString.ToString().IndexOf(TEST_ERROR) != -1);
@@ -77,10 +77,10 @@
 ////                Log log = new Log(logString, Log.Level.Warning);
 
 ////                log.Debug(TEST_DEBUG);
-////                Assert.IsTrue(logString.ToString() == String.Empty);
+////                Assert.IsTrue(logString.ToString() == string.Empty);
 
 ////                log.Info(TEST_INFO);
-////                Assert.IsTrue(logString.ToString() == String.Empty);
+////                Assert.IsTrue(logString.ToString() == string.Empty);
 
 ////                log.Warn(TEST_WARN);
 ////                Assert.IsTrue(logString.ToString().IndexOf(TEST_WARN) != -1);
@@ -98,7 +98,7 @@
 ////                Log log = new Log(logString, Log.Level.Information);
 
 ////                log.Debug(TEST_DEBUG);
-////                Assert.IsTrue(logString.ToString() == String.Empty);
+////                Assert.IsTrue(logString.ToString() == string.Empty);
 
 ////                log.Info(TEST_INFO);
 ////                Assert.IsTrue(logString.ToString().IndexOf(TEST_INFO) != -1);

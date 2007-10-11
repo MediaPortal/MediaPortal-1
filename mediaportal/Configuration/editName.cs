@@ -125,7 +125,7 @@ namespace MediaPortal
 
     private void editName_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
     {
-      if (e.KeyCode == Keys.Enter && textBoxName.Text != String.Empty)
+      if (e.KeyCode == Keys.Enter && textBoxName.Text != string.Empty)
       {
         this.Close();
       }

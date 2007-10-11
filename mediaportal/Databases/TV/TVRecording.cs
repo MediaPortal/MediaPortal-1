@@ -960,7 +960,7 @@ namespace MediaPortal.TV.Database
     /// <returns>Returns a string describing the recording</returns>
     public override string ToString()
     {
-      string strLine = String.Empty;
+      string strLine = string.Empty;
       switch (RecType)
       {
         case RecordingType.Once:
@@ -1117,11 +1117,11 @@ namespace MediaPortal.TV.Database
 
     public void SetProperties(TVProgram prog)
     {
-      GUIPropertyManager.SetProperty("#TV.Scheduled.Title", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Scheduled.Time", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Scheduled.Description", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Title", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Time", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Description", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", string.Empty);
 
       string strTime = String.Format("{0} {1} - {2}",
         MediaPortal.Util.Utils.GetShortDayString(StartTime),
@@ -1138,9 +1138,9 @@ namespace MediaPortal.TV.Database
       }
       else
       {
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Description", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Description", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", string.Empty);
       }
 
 

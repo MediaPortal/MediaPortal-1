@@ -754,7 +754,7 @@ namespace MediaPortal.Configuration.Sections
 
     long ConvertToFrequency(string frequency)
     {
-      if (frequency.Trim() == String.Empty) return 0;
+      if (frequency.Trim() == string.Empty) return 0;
       float testValue = 189.24f;
       string usage = testValue.ToString("f2");
       if (usage.IndexOf(".") >= 0) frequency = frequency.Replace(",", ".");
@@ -906,7 +906,7 @@ namespace MediaPortal.Configuration.Sections
             // Remove URL if we have a normal radio station
             //
             if (editStation.Station.Type.Equals("Radio"))
-              editStation.Station.URL = String.Empty;
+              editStation.Station.URL = string.Empty;
 
             listItem.SubItems[0].Text = editStation.Station.Name;
             listItem.SubItems[1].Text = editStation.Station.Frequency.ToString(Frequency.Format.MegaHertz);

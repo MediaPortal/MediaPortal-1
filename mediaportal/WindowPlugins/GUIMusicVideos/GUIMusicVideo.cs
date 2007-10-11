@@ -299,7 +299,7 @@ namespace MediaPortal.GUI.MusicVideos
       }
       else if (control == btnSearch)
       {
-        SearchVideos(true, String.Empty);
+        SearchVideos(true, string.Empty);
       }
       else if (control == btnFavorites)
       {
@@ -944,7 +944,7 @@ namespace MediaPortal.GUI.MusicVideos
         listSongs.NavigateLeft = btnBack.GetID;
         miSelectedIndex = 0;
 
-        String lsItemCount = String.Empty;
+        String lsItemCount = string.Empty;
 
         switch (CURRENT_STATE)
         {

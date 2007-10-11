@@ -52,10 +52,10 @@ namespace MediaPortal.Util
 
     List<Share> m_shares = new List<Share>();
     List<string> m_extensions = null;
-    string m_strPreviousDir = String.Empty;
-    string currentShare = String.Empty;
-    string previousShare = String.Empty;
-    string m_strLocalFolder = String.Empty;
+    string m_strPreviousDir = string.Empty;
+    string currentShare = string.Empty;
+    string previousShare = string.Empty;
+    string m_strLocalFolder = string.Empty;
     Share defaultshare = null;
     bool showFilesWithoutExtension = false;
     /// <summary>
@@ -70,7 +70,7 @@ namespace MediaPortal.Util
       Clear();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string strDefault = xmlreader.GetValueAsString(section, "default", String.Empty);
+        string strDefault = xmlreader.GetValueAsString(section, "default", string.Empty);
         for (int i = 0; i < 20; i++)
         {
           string strShareName = String.Format("sharename{0}", i);
@@ -86,8 +86,8 @@ namespace MediaPortal.Util
           string shareViewPath = String.Format("shareview{0}", i);
 
           Share share = new Share();
-          share.Name = xmlreader.GetValueAsString(section, strShareName, String.Empty);
-          share.Path = xmlreader.GetValueAsString(section, strSharePath, String.Empty);
+          share.Name = xmlreader.GetValueAsString(section, strShareName, string.Empty);
+          share.Path = xmlreader.GetValueAsString(section, strSharePath, string.Empty);
           string pinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString(section, strPincode, string.Empty));
           if (pinCode != string.Empty)
             share.Pincode = Convert.ToInt32(pinCode);
@@ -95,9 +95,9 @@ namespace MediaPortal.Util
             share.Pincode = -1;
 
           share.IsFtpShare = xmlreader.GetValueAsBool(section, shareType, false);
-          share.FtpServer = xmlreader.GetValueAsString(section, shareServer, String.Empty);
-          share.FtpLoginName = xmlreader.GetValueAsString(section, shareLogin, String.Empty);
-          share.FtpPassword = xmlreader.GetValueAsString(section, sharePwd, String.Empty);
+          share.FtpServer = xmlreader.GetValueAsString(section, shareServer, string.Empty);
+          share.FtpLoginName = xmlreader.GetValueAsString(section, shareLogin, string.Empty);
+          share.FtpPassword = xmlreader.GetValueAsString(section, sharePwd, string.Empty);
           share.FtpPort = xmlreader.GetValueAsInt(section, sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString(section, remoteFolder, "/");
           share.DefaultView = (Share.Views)xmlreader.GetValueAsInt(section, shareViewPath, (int)Share.Views.List);
@@ -151,9 +151,9 @@ namespace MediaPortal.Util
 
     public void Reset()
     {
-      currentShare = String.Empty;
-      previousShare = String.Empty;
-      m_strPreviousDir = String.Empty;
+      currentShare = string.Empty;
+      previousShare = string.Empty;
+      m_strPreviousDir = string.Empty;
     }
 
     public bool RequestPin(string folder)
@@ -254,7 +254,7 @@ namespace MediaPortal.Util
     /// </returns>
     public ArrayList GetRoot()
     {
-      previousShare = String.Empty;
+      previousShare = string.Empty;
 
       ArrayList items = new ArrayList();
       foreach (Share share in m_shares)
@@ -733,7 +733,7 @@ namespace MediaPortal.Util
 
         string folder = strDir.Substring("remote:".Length);
         string[] subitems = folder.Split(new char[] { '?' });
-        if (subitems[4] == String.Empty) subitems[4] = "/";
+        if (subitems[4] == string.Empty) subitems[4] = "/";
 
         FTPFile[] files;
         try
@@ -1094,7 +1094,7 @@ namespace MediaPortal.Util
     public bool IsValidExtension(string strPath)
     {
       if (strPath == null) return false;
-      if (strPath == String.Empty) return false;
+      if (strPath == string.Empty) return false;
       try
       {
         //				if (!System.IO.Path.HasExtension(strPath)) return false;
@@ -1123,7 +1123,7 @@ namespace MediaPortal.Util
     public static bool IsValidExtension(string strPath, ArrayList extensions, bool filesWithoutExtension)
     {
       if (strPath == null) return false;
-      if (strPath == String.Empty) return false;
+      if (strPath == string.Empty) return false;
       try
       {
         //				if (!System.IO.Path.HasExtension(strPath)) return false;
@@ -1156,7 +1156,7 @@ namespace MediaPortal.Util
           return share.Path;
         }
       }
-      return String.Empty;
+      return string.Empty;
     }
 
     /// <summary>
@@ -1169,7 +1169,7 @@ namespace MediaPortal.Util
     /// <param name="path">on return contains the path</param>
     public void GetRemoteFileNameAndPath(string remotefile, out string filename, out string path)
     {
-      filename = String.Empty;
+      filename = string.Empty;
       path = "/";
       if (!IsRemote(remotefile)) return;
       int slash = remotefile.LastIndexOf("/");
@@ -1212,7 +1212,7 @@ namespace MediaPortal.Util
           }
         }
       }
-      return String.Empty;
+      return string.Empty;
     }
 
     /// <summary>
@@ -1231,8 +1231,8 @@ namespace MediaPortal.Util
         return true;
       }
 
-      string singleFilename = String.Empty;
-      string singlePath = String.Empty;
+      string singleFilename = string.Empty;
+      string singlePath = string.Empty;
       GetRemoteFileNameAndPath(file, out singleFilename, out singlePath);
 
       //check if we're still downloading
@@ -1244,7 +1244,7 @@ namespace MediaPortal.Util
 
       //nop then check if local file exists
       string localFile = GetLocalFilename(file);
-      if (localFile == String.Empty) return false;
+      if (localFile == string.Empty) return false;
       if (System.IO.File.Exists(localFile))
       {
         FileInfo info = new FileInfo(localFile);
@@ -1360,7 +1360,7 @@ namespace MediaPortal.Util
       bool ActiveConnection = true;
       string folder = file.Substring("remote:".Length);
       string[] subitems = folder.Split(new char[] { '?' });
-      if (subitems[4] == String.Empty) subitems[4] = "/";
+      if (subitems[4] == string.Empty) subitems[4] = "/";
       //if (subitems[5] == null) 
       ActiveConnection = true;
       //else
@@ -1558,7 +1558,7 @@ namespace MediaPortal.Util
 
         string folder = strDir.Substring("remote:".Length);
         string[] subitems = folder.Split(new char[] { '?' });
-        if (subitems[4] == String.Empty) subitems[4] = "/";
+        if (subitems[4] == string.Empty) subitems[4] = "/";
 
         FTPFile[] files;
         try
@@ -1869,7 +1869,7 @@ namespace MediaPortal.Util
 
         string folder = strDir.Substring("remote:".Length);
         string[] subitems = folder.Split(new char[] { '?' });
-        if (subitems[4] == String.Empty) subitems[4] = "/";
+        if (subitems[4] == string.Empty) subitems[4] = "/";
 
         FTPFile[] files;
         try
@@ -2104,7 +2104,7 @@ namespace MediaPortal.Util
     /// </returns>
     public List<GUIListItem> GetRootExt()
     {
-      previousShare = String.Empty;
+      previousShare = string.Empty;
 
       List<GUIListItem> items = new List<GUIListItem>();
       foreach (Share share in m_shares)
@@ -2302,16 +2302,16 @@ namespace MediaPortal.Util
           string sharePort = String.Format("shareport{0}", index);
           string shareRemotePath = String.Format("shareremotepath{0}", index);
 
-          string shareNameData = String.Empty;
-          string sharePathData = String.Empty;
+          string shareNameData = string.Empty;
+          string sharePathData = string.Empty;
           int sharePinData = -1;
 
           bool shareTypeData = false;
-          string shareServerData = String.Empty;
-          string shareLoginData = String.Empty;
-          string sharePwdData = String.Empty;
+          string shareServerData = string.Empty;
+          string shareLoginData = string.Empty;
+          string sharePwdData = string.Empty;
           int sharePortData = 21;
-          string shareRemotePathData = String.Empty;
+          string shareRemotePathData = string.Empty;
 
           if (sharesList != null && sharesList.Count > index)
           {

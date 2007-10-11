@@ -270,10 +270,10 @@ namespace MediaPortal.GUI.TV
         }
         else
         {
-          item.PinImage = String.Empty;
+          item.PinImage = string.Empty;
         }
 
-        string strType = String.Empty;
+        string strType = string.Empty;
         item.Label = rec.Title;
         string strTime = String.Format("{0} {1} - {2}",
           rec.StartTime.ToShortDateString(),

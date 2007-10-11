@@ -58,14 +58,14 @@ namespace MediaPortal.GUI.GUIBurner
     System.Diagnostics.Process BurnerProcess;         // Will run the external processes in another thread
     CopyState _CurrentCopyState;             // Current Convert State aka Step
     DVDBurnStates _CurrentBurnState;                // Current Burn State aka Step
-    string _CurrentProcess = String.Empty; // Current Process Running
+    string _CurrentProcess = string.Empty; // Current Process Running
     bool _Started = false;        // Has the Processing Started
-    string _PathtoDvdBurnExe = String.Empty; // Path to the EXE files for Burning
-    string _CurrentFileName = String.Empty; // Current Filename being processed
+    string _PathtoDvdBurnExe = string.Empty; // Path to the EXE files for Burning
+    string _CurrentFileName = string.Empty; // Current Filename being processed
     ArrayList _FileNames;                       // ArrayList of files to process
     int _FileNameCount = 0;            // Track the file in the Array being processed
-    string _TempFolderPath = String.Empty; // Path to temp folder used
-    string _RecorderDrive = String.Empty; // CD/DVD Drive letter
+    string _TempFolderPath = string.Empty; // Path to temp folder used
+    string _RecorderDrive = string.Empty; // CD/DVD Drive letter
     bool _InDebugMode = false;        // Debug option
     bool _BurnTheDVD = true;         // Burn the DVD
     List<string> _FilesToBurn = new List<string>(); // Converted Files ready to Burn

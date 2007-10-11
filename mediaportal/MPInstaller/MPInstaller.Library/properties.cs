@@ -195,10 +195,10 @@ namespace MediaPortal.MPInstaller
 
     public void Clear()
     {
-      MPMaxVersion = String.Empty;
-      MPMinVersion = String.Empty;
-      ForumURL = String.Empty;
-      WebURL = String.Empty;
+      MPMaxVersion = string.Empty;
+      MPMinVersion = string.Empty;
+      ForumURL = string.Empty;
+      WebURL = string.Empty;
       CreationDate = DateTime.Today;
       SingleGroupSelect = false;
     }

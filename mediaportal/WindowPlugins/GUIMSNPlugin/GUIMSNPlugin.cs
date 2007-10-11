@@ -144,7 +144,7 @@ namespace MediaPortal.GUI.MSN
         }
       }
       _currentconversation = null;
-      contactname = String.Empty;
+      contactname = string.Empty;
     }
     static public bool IsTyping
     {

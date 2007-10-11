@@ -95,9 +95,9 @@ namespace MPTestTool
     private System.Windows.Forms.GroupBox step2Group;
 
     // command line parameters
-    private static string _mpDir = String.Empty;
-    private static string _logDir = String.Empty;
-    private static string _nick = String.Empty;
+    private static string _mpDir = string.Empty;
+    private static string _logDir = string.Empty;
+    private static string _nick = string.Empty;
     private static bool _auto = false;
 
     private bool validNick = false;
@@ -127,7 +127,7 @@ namespace MPTestTool
 
       // validate commandline parameters
       setStatus("Checking command line parameters");
-      if (_mpDir != String.Empty)
+      if (_mpDir != string.Empty)
       {
         mpDirBox.Text = _mpDir;
         CheckMPDir();
@@ -148,7 +148,7 @@ namespace MPTestTool
         // set variables accordingly
         CheckMPDir();
       }
-      if (_logDir != String.Empty)
+      if (_logDir != string.Empty)
       {
         logDirBox.Text = _logDir;
         CheckLogDir();
@@ -168,7 +168,7 @@ namespace MPTestTool
           Warning("Cannot use default log destination directory " + strDefaultLogDir + "\nPlease specify one manually. Exception:\n\n" + ex.GetBaseException());
         }
       }
-      if (_nick != String.Empty)
+      if (_nick != string.Empty)
       {
         nickBox.Text = _nick;
         CheckNickName();

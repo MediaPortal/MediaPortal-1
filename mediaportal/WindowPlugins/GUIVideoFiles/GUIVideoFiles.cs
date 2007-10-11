@@ -95,15 +95,15 @@ namespace MediaPortal.GUI.Video
 
     static IMDB _imdb;
     DirectoryHistory m_history = new DirectoryHistory();
-    string _virtualStartDirectory = String.Empty;
+    string _virtualStartDirectory = string.Empty;
     int currentSelectedItem = -1;
     static VirtualDirectory virtualDirectory;
     MapSettings mapSettings = new MapSettings();
     static bool m_askBeforePlayingDVDImage = false;
     // File menu
-    string destinationFolder = String.Empty;
+    string destinationFolder = string.Empty;
     bool fileMenuEnabled = false;
-    string fileMenuPinCode = String.Empty;
+    string fileMenuPinCode = string.Empty;
     static PlayListPlayer playlistPlayer;
     bool _scanning = false;
     int scanningFileNumber = 1;
@@ -188,10 +188,10 @@ namespace MediaPortal.GUI.Video
         _getActors = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
         _markWatchedFiles = xmlreader.GetValueAsBool("movies", "markwatched", true);
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        fileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
+        fileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         /*virtualDirectory.Clear();
         
-        string strDefault = xmlreader.GetValueAsString("movies", "default", String.Empty);
+        string strDefault = xmlreader.GetValueAsString("movies", "default", string.Empty);
         for (int i = 0; i < 20; i++)
         {
           string strShareName = String.Format("sharename{0}", i);
@@ -207,8 +207,8 @@ namespace MediaPortal.GUI.Video
           string shareViewPath = String.Format("shareview{0}", i);
 
           Share share = new Share();
-          share.Name = xmlreader.GetValueAsString("movies", strShareName, String.Empty);
-          share.Path = xmlreader.GetValueAsString("movies", strSharePath, String.Empty);
+          share.Name = xmlreader.GetValueAsString("movies", strShareName, string.Empty);
+          share.Path = xmlreader.GetValueAsString("movies", strSharePath, string.Empty);
           string pinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("movies", strPincode, string.Empty));
           if (pinCode != string.Empty)
             share.Pincode = Convert.ToInt32(pinCode);
@@ -216,9 +216,9 @@ namespace MediaPortal.GUI.Video
             share.Pincode = -1;
 
           share.IsFtpShare = xmlreader.GetValueAsBool("movies", shareType, false);
-          share.FtpServer = xmlreader.GetValueAsString("movies", shareServer, String.Empty);
-          share.FtpLoginName = xmlreader.GetValueAsString("movies", shareLogin, String.Empty);
-          share.FtpPassword = xmlreader.GetValueAsString("movies", sharePwd, String.Empty);
+          share.FtpServer = xmlreader.GetValueAsString("movies", shareServer, string.Empty);
+          share.FtpLoginName = xmlreader.GetValueAsString("movies", shareLogin, string.Empty);
+          share.FtpPassword = xmlreader.GetValueAsString("movies", sharePwd, string.Empty);
           share.FtpPort = xmlreader.GetValueAsInt("movies", sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString("movies", remoteFolder, "/");
           share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("movies", shareViewPath, (int)Share.Views.List);
@@ -240,7 +240,7 @@ namespace MediaPortal.GUI.Video
         }*/
         virtualDirectory = VirtualDirectories.Instance.Movies;
 
-        if (_virtualStartDirectory == String.Empty)
+        if (_virtualStartDirectory == string.Empty)
         {
           if (virtualDirectory.DefaultShare != null)
           {
@@ -358,7 +358,7 @@ namespace MediaPortal.GUI.Video
           {
             if (MediaPortal.Util.Utils.IsDVD(_currentFolder))
             {
-              _currentFolder = String.Empty;
+              _currentFolder = string.Empty;
               LoadDirectory(_currentFolder);
             }
           }
@@ -387,9 +387,9 @@ namespace MediaPortal.GUI.Video
 
         case GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED:
         case GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED:
-          if (_currentFolder == String.Empty || _currentFolder.Substring(0, 2) == message.Label)
+          if (_currentFolder == string.Empty || _currentFolder.Substring(0, 2) == message.Label)
           {
-            _currentFolder = String.Empty;
+            _currentFolder = string.Empty;
             LoadDirectory(_currentFolder);
           }
           break;
@@ -401,7 +401,7 @@ namespace MediaPortal.GUI.Video
 
     void LoadFolderSettings(string folderName)
     {      
-      if (folderName == String.Empty) folderName = "root";
+      if (folderName == string.Empty) folderName = "root";
       object o;
       FolderSettings.GetFolderSetting(folderName, "VideoFiles", typeof(GUIVideoFiles.MapSettings), out o);
       if (o != null)
@@ -434,7 +434,7 @@ namespace MediaPortal.GUI.Video
 
     void SaveFolderSettings(string folderName)
     {
-      if (folderName == String.Empty) folderName = "root";
+      if (folderName == string.Empty) folderName = "root";
       FolderSettings.AddFolderSetting(folderName, "VideoFiles", typeof(GUIVideoFiles.MapSettings), mapSettings);
     }    
 
@@ -479,7 +479,7 @@ namespace MediaPortal.GUI.Video
 
       _currentFolder = newFolderName;
 
-      string objectCount = String.Empty;
+      string objectCount = string.Empty;
 
       ArrayList itemlist = new ArrayList();
       GUIControl.ClearControl(GetID, facadeView.GetID);
@@ -691,7 +691,7 @@ namespace MediaPortal.GUI.Video
                   VideoDatabase.GetMovieInfo(path, ref movieDetails);
                   string title = System.IO.Path.GetFileName(path);
 									if ((VirtualDirectory.IsValidExtension(path, MediaPortal.Util.Utils.VideoExtensions, false))) MediaPortal.Util.Utils.RemoveStackEndings(ref title);
-                  if (movieDetails.Title != String.Empty) title = movieDetails.Title;
+                  if (movieDetails.Title != string.Empty) title = movieDetails.Title;
 
                   timeMovieStopped = VideoDatabase.GetMovieStopTime(idFile);
                   if (timeMovieStopped > 0)
@@ -991,7 +991,7 @@ namespace MediaPortal.GUI.Video
         }
       }
       // Use DVD label as movie name
-      if (MediaPortal.Util.Utils.IsDVD(pItem.Path) && (pItem.DVDLabel != String.Empty))
+      if (MediaPortal.Util.Utils.IsDVD(pItem.Path) && (pItem.DVDLabel != string.Empty))
       {
         if (System.IO.File.Exists(pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
         {
@@ -1065,7 +1065,7 @@ namespace MediaPortal.GUI.Video
       VideoDatabase.GetMovieInfoById(idMovie, ref movieDetails);
 
       if (!MediaPortal.Util.Utils.IsDVD(movieDetails.Path)) return true;
-      string cdlabel = String.Empty;
+      string cdlabel = string.Empty;
       cdlabel = MediaPortal.Util.Utils.GetDriveSerial(movieDetails.Path);
       if (cdlabel.Equals(movieDetails.CDLabel)) return true;
 
@@ -1111,7 +1111,7 @@ namespace MediaPortal.GUI.Video
       keyboard.Reset();
       keyboard.Text = strLine;
       keyboard.DoModal(GUIWindowManager.ActiveWindow);
-      strLine = String.Empty;
+      strLine = string.Empty;
       if (keyboard.IsConfirmed)
       {
         strLine = keyboard.Text;
@@ -1148,9 +1148,9 @@ namespace MediaPortal.GUI.Video
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(3);
-      strButtonImage = String.Empty;
-      strButtonImageFocus = String.Empty;
-      strPictureImage = String.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
+      strPictureImage = string.Empty;
       return true;
     }
 
@@ -1221,7 +1221,7 @@ namespace MediaPortal.GUI.Video
         {
           string title = System.IO.Path.GetFileName(filename);
           VideoDatabase.GetMovieInfoById(idMovie, ref movieDetails);
-          if (movieDetails.Title != String.Empty) title = movieDetails.Title;
+          if (movieDetails.Title != string.Empty) title = movieDetails.Title;
 
           if (askForResumeMovie)
           {
@@ -1318,7 +1318,7 @@ namespace MediaPortal.GUI.Video
           if (dlgProgress != null) dlgProgress.Close();
         }
         ArrayList items = virtualDirectory.GetDirectory(file);
-        if (items.Count == 1 && file != String.Empty) return false; // protected share, with wrong pincode
+        if (items.Count == 1 && file != string.Empty) return false; // protected share, with wrong pincode
       }
       return DaemonTools.IsMounted(file);
     }
@@ -1439,7 +1439,7 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        if ((System.IO.Path.GetFileName(item.Path) != String.Empty) || MediaPortal.Util.Utils.IsDVD(item.Path))
+        if ((System.IO.Path.GetFileName(item.Path) != string.Empty) || MediaPortal.Util.Utils.IsDVD(item.Path))
         {
           if (item.IsRemote) return;
           if ((item.IsFolder) && (item.Label == ".."))
@@ -1522,7 +1522,7 @@ namespace MediaPortal.GUI.Video
         case 654: // Eject
           if (MediaPortal.Util.Utils.getDriveType(item.Path) != 5) MediaPortal.Util.Utils.EjectCDROM();
           else MediaPortal.Util.Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
-          LoadDirectory(String.Empty);
+          LoadDirectory(string.Empty);
           break;
 
         case 341: //Play dvd
@@ -1579,9 +1579,9 @@ namespace MediaPortal.GUI.Video
         case 500: // File menu
           {
             // get pincode
-            if (fileMenuPinCode != String.Empty)
+            if (fileMenuPinCode != string.Empty)
             {
-              string userCode = String.Empty;
+              string userCode = string.Empty;
               if (GetUserInputString(ref userCode) && userCode == fileMenuPinCode)
               {
                 OnShowFileMenu();
@@ -1680,7 +1680,7 @@ namespace MediaPortal.GUI.Video
             dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
             dlgYesNo.SetLine(1, movieFileName);
             dlgYesNo.SetLine(2, String.Format("{0}: {1}", GUILocalizeStrings.Get(3021), iPart++));
-            dlgYesNo.SetLine(3, String.Empty);
+            dlgYesNo.SetLine(3, string.Empty);
             dlgYesNo.DoModal(GetID);
 
             if (!dlgYesNo.IsConfirmed)
@@ -1696,8 +1696,8 @@ namespace MediaPortal.GUI.Video
           if (null == dlgYesNo) return;
           dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
           dlgYesNo.SetLine(1, movieTitle);
-          dlgYesNo.SetLine(2, String.Empty);
-          dlgYesNo.SetLine(3, String.Empty);
+          dlgYesNo.SetLine(2, string.Empty);
+          dlgYesNo.SetLine(3, string.Empty);
           dlgYesNo.DoModal(GetID);
 
           if (!dlgYesNo.IsConfirmed)
@@ -1727,7 +1727,7 @@ namespace MediaPortal.GUI.Video
             dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
             dlgYesNo.SetLine(1, movieFileName);
             dlgYesNo.SetLine(2, String.Format("Part:{0}", iPart++));
-            dlgYesNo.SetLine(3, String.Empty);
+            dlgYesNo.SetLine(3, string.Empty);
             dlgYesNo.DoModal(GetID);
 
             if (!dlgYesNo.IsConfirmed)
@@ -2024,7 +2024,7 @@ namespace MediaPortal.GUI.Video
               VideoDatabase.GetMovieInfo((string)movies[0], ref movieDetails);
               string title = System.IO.Path.GetFileName((string)movies[0]);
 							if ((VirtualDirectory.IsValidExtension((string)movies[0], MediaPortal.Util.Utils.VideoExtensions, false))) MediaPortal.Util.Utils.RemoveStackEndings(ref title);
-              if (movieDetails.Title != String.Empty) title = movieDetails.Title;
+              if (movieDetails.Title != string.Empty) title = movieDetails.Title;
 
               timeMovieStopped = VideoDatabase.GetMovieStopTime(idFile);
               if (timeMovieStopped > 0)
@@ -2156,7 +2156,7 @@ namespace MediaPortal.GUI.Video
       pDlgProgress.Reset();
       pDlgProgress.SetHeading(heading);
       pDlgProgress.SetLine(1, fetcher.MovieName);
-      pDlgProgress.SetLine(2, String.Empty);
+      pDlgProgress.SetLine(2, string.Empty);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
       return true;
@@ -2194,7 +2194,7 @@ namespace MediaPortal.GUI.Video
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
         pDlgOK.SetHeading(195);
         pDlgOK.SetLine(1, fetcher.MovieName);
-        pDlgOK.SetLine(2, String.Empty);
+        pDlgOK.SetLine(2, string.Empty);
         pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
         return true;
       }
@@ -2216,7 +2216,7 @@ namespace MediaPortal.GUI.Video
       pDlgProgress.SetHeading(heading);
       //pDlgProgress.SetLine(0, strMovieName);
       pDlgProgress.SetLine(1, fetcher.MovieName);
-      pDlgProgress.SetLine(2, String.Empty);
+      pDlgProgress.SetLine(2, string.Empty);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
       return true;
@@ -2258,7 +2258,7 @@ namespace MediaPortal.GUI.Video
       pDlgProgress.SetHeading(heading);
       //pDlgProgress.SetLine(0, strMovieName);
       pDlgProgress.SetLine(1, fetcher.MovieName);
-      pDlgProgress.SetLine(2, String.Empty);
+      pDlgProgress.SetLine(2, string.Empty);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
       return true;
@@ -2292,7 +2292,7 @@ namespace MediaPortal.GUI.Video
         // show dialog...
         pDlgOK.SetHeading(195);
         pDlgOK.SetLine(1, fetcher.MovieName);
-        pDlgOK.SetLine(2, String.Empty);
+        pDlgOK.SetLine(2, string.Empty);
         pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
         return false;
       }

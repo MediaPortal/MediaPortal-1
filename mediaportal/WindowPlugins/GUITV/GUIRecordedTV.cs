@@ -107,7 +107,7 @@ namespace MediaPortal.GUI.TV
     bool _deleteWatchedShows = false;
     bool _createRecordedThumbs = true;
     int m_iSelectedItem = 0;
-    string currentShow = String.Empty;
+    string currentShow = string.Empty;
     RecordingThumbCacher thumbworker = null;
 
     [SkinControlAttribute(2)]    protected GUIButtonControl btnViewAs = null;
@@ -124,7 +124,7 @@ namespace MediaPortal.GUI.TV
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string strTmp = String.Empty;
+        string strTmp = string.Empty;
         strTmp = (string)xmlreader.GetValue("tvrecorded", "sort");
         if (strTmp != null)
         {
@@ -218,7 +218,7 @@ namespace MediaPortal.GUI.TV
           {
             if (item.IsFolder && item.Label == "..")
             {
-              currentShow = String.Empty;
+              currentShow = string.Empty;
               LoadDirectory();
               return;
             }
@@ -472,7 +472,7 @@ namespace MediaPortal.GUI.TV
         List<TVRecorded> recordings = new List<TVRecorded>();
         List<GUIListItem> itemlist = new List<GUIListItem>();
         TVDatabase.GetRecordedTV(ref recordings);
-        if (currentShow == String.Empty)
+        if (currentShow == string.Empty)
         {
           foreach (TVRecorded rec in recordings)
           {
@@ -591,7 +591,7 @@ namespace MediaPortal.GUI.TV
 
     void UpdateButtonStates()
     {
-      string strLine = String.Empty;
+      string strLine = string.Empty;
       switch (currentSortMethod)
       {
         case SortMethod.Channel:
@@ -666,7 +666,7 @@ namespace MediaPortal.GUI.TV
           if (rec.Genre != "unknown")
             item1.Label3 = item2.Label3 = rec.Genre;
           else
-            item1.Label3 = item2.Label3 = String.Empty;
+            item1.Label3 = item2.Label3 = string.Empty;
         }
         else
         {
@@ -690,7 +690,7 @@ namespace MediaPortal.GUI.TV
       if (pItem.IsFolder)
       {
         if (pItem.Label.Equals(".."))
-          currentShow = String.Empty;
+          currentShow = string.Empty;
         else
           currentShow = pItem.Label;
         LoadDirectory();
@@ -717,7 +717,7 @@ namespace MediaPortal.GUI.TV
           if (stoptime > 0)
           {
             string title = System.IO.Path.GetFileName(rec.FileName);
-            if (movieDetails.Title != String.Empty) title = movieDetails.Title;
+            if (movieDetails.Title != string.Empty) title = movieDetails.Title;
 
             GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
             if (null == dlgYesNo) return false;
@@ -763,7 +763,7 @@ namespace MediaPortal.GUI.TV
       else dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
       dlgYesNo.SetLine(1, rec.Channel);
       dlgYesNo.SetLine(2, rec.Title);
-      dlgYesNo.SetLine(3, String.Empty);
+      dlgYesNo.SetLine(3, string.Empty);
       dlgYesNo.SetDefaultToYes(false);
       dlgYesNo.DoModal(GetID);
 
@@ -785,9 +785,9 @@ namespace MediaPortal.GUI.TV
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo) return;
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(676));//delete watched recordings?
-      dlgYesNo.SetLine(1, String.Empty);
-      dlgYesNo.SetLine(2, String.Empty);
-      dlgYesNo.SetLine(3, String.Empty);
+      dlgYesNo.SetLine(1, string.Empty);
+      dlgYesNo.SetLine(2, string.Empty);
+      dlgYesNo.SetLine(3, string.Empty);
       dlgYesNo.SetDefaultToYes(true);
       dlgYesNo.DoModal(GetID);
 

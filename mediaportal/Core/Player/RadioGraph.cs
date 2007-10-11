@@ -58,8 +58,8 @@ namespace MediaPortal.Player
     int                     m_iTuningSpace=0;
     bool                    m_bUseCable = false;
     IBaseFilter             m_audioFilter=null;
-    string                  m_strAudioDevice=String.Empty;
-    string                  m_strAudioInputPin=String.Empty;
+    string                  m_strAudioDevice=string.Empty;
+    string                  m_strAudioInputPin=string.Empty;
     IBaseFilter             m_filterCaptureAudio = null;
     //int                     _RecordingLevel=80;
 

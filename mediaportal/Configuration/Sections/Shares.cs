@@ -47,10 +47,10 @@ namespace MediaPortal.Configuration.Sections
       public string PinCode;
 
       public bool IsRemote = false;
-      public string Server = String.Empty;
-      public string LoginName = String.Empty;
-      public string PassWord = String.Empty;
-      public string RemoteFolder = String.Empty;
+      public string Server = string.Empty;
+      public string LoginName = string.Empty;
+      public string PassWord = string.Empty;
+      public string RemoteFolder = string.Empty;
       public int Port = 21;
       public bool ActiveConnection = true;
       public Views DefaultView = Views.List;
@@ -468,7 +468,7 @@ namespace MediaPortal.Configuration.Sections
                 name = String.Format("({0}:) Ram", drive.Substring(0, 1).ToUpper());
                 break;
             }
-            AddShare(new ShareData(name, drive, String.Empty), false);
+            AddShare(new ShareData(name, drive, string.Empty), false);
           }
         }
       }

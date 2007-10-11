@@ -83,25 +83,27 @@ namespace MediaPortal.Music.Database
     public string ArtistToSearch;
     public string AlbumToSearch;
     public bool SortBestTracks;
+    public bool MarkLocalTracks;
 
     public delegate void AlbumInfoRequestHandler(AlbumInfoRequest request, List<Song> songs);
     public AlbumInfoRequestHandler AlbumInfoRequestCompleted;
 
-    public AlbumInfoRequest(string artistToSearch, string albumToSearch, bool sortBestTracks)
+    public AlbumInfoRequest(string artistToSearch, string albumToSearch, bool sortBestTracks, bool markLocalTracks)
       : base(RequestType.GetAlbumInfo)
     {
       ArtistToSearch = artistToSearch;
       AlbumToSearch = albumToSearch;
       SortBestTracks = sortBestTracks;
+      MarkLocalTracks = markLocalTracks;
     }
-    public AlbumInfoRequest(string artistToSearch, string albumToSearch, bool sortBestTracks, AlbumInfoRequestHandler handler)
-      : this(artistToSearch, albumToSearch, sortBestTracks)
+    public AlbumInfoRequest(string artistToSearch, string albumToSearch, bool sortBestTracks, bool markLocalTracks, AlbumInfoRequestHandler handler)
+      : this(artistToSearch, albumToSearch, sortBestTracks, markLocalTracks)
     {
       AlbumInfoRequestCompleted += handler;
     }
     public override void PerformRequest()
     {
-      List<Song> songs = AudioscrobblerUtils.Instance.getAlbumInfo(ArtistToSearch, AlbumToSearch, SortBestTracks);
+      List<Song> songs = AudioscrobblerUtils.Instance.getAlbumInfo(ArtistToSearch, AlbumToSearch, SortBestTracks, MarkLocalTracks);
       if (AlbumInfoRequestCompleted != null)
         AlbumInfoRequestCompleted(this, songs);
     }
@@ -531,7 +533,7 @@ namespace MediaPortal.Music.Database
           {
             // ...and y is not null, compare 
             int retval = 0;
-            if (x.LastFMMatch != String.Empty && y.LastFMMatch != String.Empty)
+            if (x.LastFMMatch != string.Empty && y.LastFMMatch != string.Empty)
             {
               if (Convert.ToInt32(x.LastFMMatch) < Convert.ToInt32(x.LastFMMatch))
                 retval = 1;
@@ -786,7 +788,7 @@ namespace MediaPortal.Music.Database
       }
     }
 
-    public List<Song> filterForLocalSongs(List<Song> unfilteredList_, string excludeArtist_, string currentTag_, songFilterType filterType)
+    public List<Song> filterForLocalSongs(List<Song> unfilteredList_, string excludeArtist_, bool onlyUniqueArtists, string currentTag_, songFilterType filterType)
     {
       try
       {
@@ -797,12 +799,12 @@ namespace MediaPortal.Music.Database
 
           Song tmpSong = new Song();
           bool foundDoubleEntry = false;
-          string tmpArtist = String.Empty;
+          string tmpArtist = string.Empty;
 
           for (int s = 0; s < unfilteredList_.Count; s++)
           {
             tmpArtist = unfilteredList_[s].Artist.ToLowerInvariant();
-            // only accept other artists than the current playing
+            // only accept other artists than the current playing but include current "tag" since some people tag just using the artist's name..
             if (tmpArtist != excludeArtist_.ToLowerInvariant() || tmpArtist == currentTag_)
             {
               switch (filterType)
@@ -815,19 +817,24 @@ namespace MediaPortal.Music.Database
                       tmpSong = dbSong.Clone();
                       // Log.Debug("Audioscrobber: Track filter for {1} found db song - {0}", tmpSong.FileName, unfilteredList_[s].Title);
                       foundDoubleEntry = false;
-                      // check and prevent entries from the same artist
-                      for (int j = 0; j < tmpSongs.Count; j++)
-                      {                        
-                        if (tmpSong.Artist == tmpSongs[j].Artist)
+
+                      if (onlyUniqueArtists)
+                      {
+                        // check and prevent entries from the same artist
+                        for (int j = 0 ; j < tmpSongs.Count ; j++)
                         {
-                          foundDoubleEntry = true;
-                          break;
+                          if (tmpSong.Artist == tmpSongs[j].Artist)
+                          {
+                            foundDoubleEntry = true;
+                            break;
+                          }
                         }
                       }
+
                       // new item therefore add it
                       if (!foundDoubleEntry)
                       {
-                        if (currentTag_ != String.Empty)
+                        if (currentTag_ != string.Empty)
                           tmpSong.Genre = currentTag_;
                         tmpSongs.Add(tmpSong);
                       }
@@ -943,7 +950,7 @@ namespace MediaPortal.Music.Database
     /// <param name="albumToSearch_">Album name</param>
     /// <param name="sortBestTracks">false gives album songs in trackorder, true by popularity</param>
     /// <returns>Song-List of Album Tracks with Title, Artist, Album, TimesPlayed, URL(track), DateTimePlayed (album release), WebImage</returns>
-    public List<Song> getAlbumInfo(string artistToSearch_, string albumToSearch_, bool sortBestTracks)
+    public List<Song> getAlbumInfo(string artistToSearch_, string albumToSearch_, bool sortBestTracks, bool aMarkLocalInURL)
     {
       int failover = 0;
       string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
@@ -952,9 +959,6 @@ namespace MediaPortal.Music.Database
       do
       {
         albumTracks = ParseXMLDocForAlbumInfo(urlArtist, urlAlbum);
-
-        if (sortBestTracks)
-          albumTracks.Sort(CompareSongsByTimesPlayed);
 
         if (albumTracks.Count == 0)
         {
@@ -999,6 +1003,29 @@ namespace MediaPortal.Music.Database
 
       } while (failover != 0);
 
+      if (albumTracks.Count > 0)
+      {
+        if (sortBestTracks)
+          albumTracks.Sort(CompareSongsByTimesPlayed);
+
+        if (aMarkLocalInURL)
+        {
+          List<Song> filteredSongs = new List<Song>();
+          filteredSongs = filterForLocalSongs(albumTracks, string.Empty, false, string.Empty, songFilterType.Track);
+
+          for (int i = 0 ; i < albumTracks.Count ; i++)
+          {
+            albumTracks[i].URL = string.Empty;
+
+            foreach (Song localSong in filteredSongs)
+            {
+              if (localSong.Artist == albumTracks[i].Artist && localSong.Title == albumTracks[i].Title)
+                albumTracks[i].URL = "local";
+            }            
+          }
+        }
+      }
+
       return albumTracks;
     }
 
@@ -1018,7 +1045,7 @@ namespace MediaPortal.Music.Database
       Random rand = new Random();
       string urlArtist = AudioscrobblerBase.getValidURLLastFMString(artistToSearch_);
       string urlTrack = AudioscrobblerBase.getValidURLLastFMString(trackToSearch_);
-      string tmpGenre = String.Empty;
+      string tmpGenre = string.Empty;
       List<Song> tagTracks = new List<Song>();
 
       // fetch the most popular Tags for the current track
@@ -1097,7 +1124,7 @@ namespace MediaPortal.Music.Database
           }
         }
 
-        if (tmpGenre != String.Empty)
+        if (tmpGenre != string.Empty)
         {
           // use the best matches for the given track only            
           if (sortBestTracks_)
@@ -1139,9 +1166,9 @@ namespace MediaPortal.Music.Database
 
       tmpSong = ParseXMLDocForArtistInfo(urlArtist);
 
-      if (tmpSong.Artist != String.Empty)
+      if (tmpSong.Artist != string.Empty)
       {
-        if (tmpSong.WebImage != null || tmpSong.WebImage != String.Empty)
+        if (tmpSong.WebImage != null || tmpSong.WebImage != string.Empty)
         {
           string coverURL = tmpSong.WebImage;
           // last.fm has higher resolution artist art.
@@ -1238,7 +1265,7 @@ namespace MediaPortal.Music.Database
           _limitRandomListCount = oldRandomLimit;
           // enough similar artists
           if (addAvailableTracksOnly_)
-            return filterForLocalSongs(randomTaggedArtists, String.Empty, String.Empty, currentFilterType);
+            return filterForLocalSongs(randomTaggedArtists, string.Empty, true, string.Empty, currentFilterType);
           else
             return randomTaggedArtists;
         }
@@ -1246,7 +1273,7 @@ namespace MediaPortal.Music.Database
         {
           // limit not reached - return all Artists
           if (addAvailableTracksOnly_)
-            return filterForLocalSongs(taggedArtists, String.Empty, String.Empty, currentFilterType);
+            return filterForLocalSongs(taggedArtists, string.Empty, true, string.Empty, currentFilterType);
           else
             return taggedArtists;
         }        
@@ -1254,7 +1281,7 @@ namespace MediaPortal.Music.Database
       else
       {
         if (addAvailableTracksOnly_)
-          return filterForLocalSongs(ParseXMLDocForTags(taggedWith_, searchType_), String.Empty, String.Empty, currentFilterType);
+          return filterForLocalSongs(ParseXMLDocForTags(taggedWith_, searchType_), string.Empty, true, string.Empty, currentFilterType);
         else
           return ParseXMLDocForTags(taggedWith_, searchType_);
       }
@@ -1563,7 +1590,7 @@ namespace MediaPortal.Music.Database
 
             if (myNeighboorsArtists.Count > 0)
             {
-              if (myNeighboorsArtists[0].LastFMMatch != String.Empty)
+              if (myNeighboorsArtists[0].LastFMMatch != string.Empty)
                 myNeighboorsArtists.Sort(CompareSongsByMatch);
               else
                 if (myNeighboorsArtists[0].TimesPlayed >= 0)
@@ -1616,7 +1643,7 @@ namespace MediaPortal.Music.Database
             myNeighboorsArtists = getAudioScrobblerFeed(_currentNeighbourMode, myNeighbours[i].Artist);
             if (myNeighboorsArtists.Count > 0)
             {
-              if (myNeighboorsArtists[0].LastFMMatch != String.Empty)
+              if (myNeighboorsArtists[0].LastFMMatch != string.Empty)
                 myNeighboorsArtists.Sort(CompareSongsByMatch);
               else
                 if (myNeighboorsArtists[0].TimesPlayed >= 0)
@@ -1684,9 +1711,9 @@ namespace MediaPortal.Music.Database
         doc.Load(@"http://ws.audioscrobbler.com/1.0/album/" + artist_ + "/" + album_ + "/info.xml");
 
         XmlNodeList nodes = doc.SelectNodes(@"//album");
-        string tmpCover = String.Empty;
-        string tmpArtist = String.Empty;
-        string tmpAlbum = String.Empty;
+        string tmpCover = string.Empty;
+        string tmpArtist = string.Empty;
+        string tmpAlbum = string.Empty;
         DateTime tmpRelease = DateTime.MinValue;
         
         if (nodes[0].Attributes["artist"].Value != "")
@@ -1701,16 +1728,7 @@ namespace MediaPortal.Music.Database
         foreach (XmlNode mainchild in nodes[0].ChildNodes)
         {
           if (mainchild.Name == "releasedate" && mainchild.ChildNodes.Count != 0)
-          {
-            try
-            {
-              tmpRelease = Convert.ToDateTime(mainchild.ChildNodes[0].Value);
-            }
-            catch (Exception ex)
-            {
-              Log.Warn("AudioscrobblerUtils: ParseXMLDocForAlbumInfo for {0}-{1} discovered: last.fm is using an invalid date! ({2})", tmpArtist, tmpAlbum, mainchild.ChildNodes[0].Value); 
-            }            
-          }
+            tmpRelease = Convert.ToDateTime(mainchild.ChildNodes[0].Value);
           else if (mainchild.Name == "coverart" && mainchild.ChildNodes.Count != 0)
           {
             foreach (XmlNode coverchild in mainchild.ChildNodes)

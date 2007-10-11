@@ -1611,7 +1611,7 @@ namespace MediaPortal.Configuration.Sections
       progressDialog.ResetProgress();
       progressDialog.SetHeading("Searching IMDB...");
       progressDialog.SetLine1(fetcher.MovieName);
-      progressDialog.SetLine2(String.Empty);
+      progressDialog.SetLine2(string.Empty);
       progressDialog.Instance = fetcher;
       return true;
     }
@@ -2155,7 +2155,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void buttonLookupMovie_Click(object sender, System.EventArgs e)
     {
-      if (tbTitle.Text == String.Empty)
+      if (tbTitle.Text == string.Empty)
       {
         MessageBox.Show("Please enter a movie title", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); ;
         return;
@@ -2322,7 +2322,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void btnLookupImage_Click(object sender, System.EventArgs e)
     {
-      if (textBoxPictureURL.Text == String.Empty) return;
+      if (textBoxPictureURL.Text == string.Empty) return;
       if (pictureBox1.Image != null)
       {
         pictureBox1.Image.Dispose();
@@ -2451,7 +2451,7 @@ namespace MediaPortal.Configuration.Sections
         XmlNode nodeDuration = nodeDVD.SelectSingleNode("RunningTime");
         XmlNode nodeOverview = nodeDVD.SelectSingleNode("Overview");
 
-        string genre = String.Empty;
+        string genre = string.Empty;
         XmlNodeList genreList = nodeDVD.SelectNodes("Genres/Genre");
         foreach (XmlNode nodeGenre in genreList)
         {
@@ -2466,9 +2466,9 @@ namespace MediaPortal.Configuration.Sections
         XmlNodeList actorsList = nodeDVD.SelectNodes("Actors/Actor");
         foreach (XmlNode nodeActor in actorsList)
         {
-          string firstname = String.Empty;
-          string lastname = String.Empty;
-          string role = String.Empty;
+          string firstname = string.Empty;
+          string lastname = string.Empty;
+          string role = string.Empty;
           XmlNode nodeFirstName = nodeActor.SelectSingleNode("FirstName");
           XmlNode nodeLastName = nodeActor.SelectSingleNode("LastName");
           XmlNode nodeRole = nodeActor.SelectSingleNode("Role");
@@ -2480,13 +2480,13 @@ namespace MediaPortal.Configuration.Sections
         }
 
 
-        string credits = String.Empty;
+        string credits = string.Empty;
         XmlNodeList creditsList = nodeDVD.SelectNodes("Credits/Credit");
         foreach (XmlNode nodeCredit in creditsList)
         {
           // Added check for firstname, lastname valid
-          string firstname = String.Empty;
-          string lastname = String.Empty;
+          string firstname = string.Empty;
+          string lastname = string.Empty;
           XmlNode nodeFirstName = nodeCredit.SelectSingleNode("FirstName");
           XmlNode nodeLastName = nodeCredit.SelectSingleNode("LastName");
           if (nodeFirstName != null && nodeFirstName.InnerText != null) firstname = nodeFirstName.InnerText;
@@ -2497,30 +2497,30 @@ namespace MediaPortal.Configuration.Sections
 
         IMDBMovie movie = new IMDBMovie();
         movie.Cast = cast;
-        movie.CDLabel = String.Empty;
-        movie.Director = String.Empty;
-        movie.DVDLabel = String.Empty;
-        movie.File = String.Empty;
+        movie.CDLabel = string.Empty;
+        movie.Director = string.Empty;
+        movie.DVDLabel = string.Empty;
+        movie.File = string.Empty;
         movie.Genre = genre;
-        movie.IMDBNumber = String.Empty;
+        movie.IMDBNumber = string.Empty;
         // Added check to validate rating
         if (nodeRating != null && nodeRating.InnerText != null) movie.MPARating = nodeRating.InnerText;
         else movie.MPARating = "NR";
-        movie.Path = String.Empty;
+        movie.Path = string.Empty;
         // Added check to validate overview and duration
         if (nodeOverview != null && nodeOverview.InnerText != null) movie.Plot = nodeOverview.InnerText;
-        else movie.Plot = String.Empty;
-        movie.PlotOutline = String.Empty;
+        else movie.Plot = string.Empty;
+        movie.PlotOutline = string.Empty;
         movie.Rating = 0;
         if (nodeDuration != null && nodeDuration.InnerText != null)
           movie.RunTime = Int32.Parse(nodeDuration.InnerText);
         else movie.RunTime = 0;
-        movie.SearchString = String.Empty;
-        movie.TagLine = String.Empty;
-        movie.ThumbURL = String.Empty;
+        movie.SearchString = string.Empty;
+        movie.TagLine = string.Empty;
+        movie.ThumbURL = string.Empty;
         movie.Title = nodeTitle.InnerText;
         movie.Top250 = 0;
-        movie.Votes = String.Empty;
+        movie.Votes = string.Empty;
         movie.Watched = 0;
         movie.WritingCredits = credits;
         // Added check to validate year
@@ -2574,7 +2574,7 @@ namespace MediaPortal.Configuration.Sections
         }
         foreach (ListViewItem item in listViewGenres.Items)
         {
-          if (movie.Genre == String.Empty) movie.Genre = item.Text;
+          if (movie.Genre == string.Empty) movie.Genre = item.Text;
           else movie.Genre += " / " + item.Text;
         }
 
@@ -2585,7 +2585,7 @@ namespace MediaPortal.Configuration.Sections
           {
             actor += " as " + item.SubItems[1].Text;
           }
-          if (movie.Cast == String.Empty) movie.Cast = actor;
+          if (movie.Cast == string.Empty) movie.Cast = actor;
           else movie.Cast += "\n" + actor;
         }
         return movie;
@@ -2963,7 +2963,7 @@ namespace MediaPortal.Configuration.Sections
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
         tbLocalImage.Text = dlg.FileName;
-        if (tbLocalImage.Text == String.Empty || !System.IO.File.Exists(tbLocalImage.Text)) return;
+        if (tbLocalImage.Text == string.Empty || !System.IO.File.Exists(tbLocalImage.Text)) return;
 
         // Clear previous
         if (pictureBox1.Image != null)

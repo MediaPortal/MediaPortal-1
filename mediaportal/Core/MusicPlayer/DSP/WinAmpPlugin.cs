@@ -41,6 +41,6 @@ namespace MediaPortal.Player.DSP
     /// The Dll to load for the Plugin
     /// </summary>
     [XmlAttribute]
-    public string PluginDll = String.Empty;
+    public string PluginDll = string.Empty;
   }
 }

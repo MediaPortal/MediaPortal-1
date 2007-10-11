@@ -50,7 +50,7 @@ namespace MediaPortal.TV.Epg
       _networkId = networkId;
       _serviceId = serviceId;
       _transportId = transportId;
-      Languages.Add(new EPGLanguage(String.Empty, title, description));
+      Languages.Add(new EPGLanguage(string.Empty, title, description));
     }
     public NetworkType Network
     {

@@ -96,13 +96,13 @@ namespace MediaPortal.GUI.Music
 
     #region Variables
     DirectoryHistory m_history = new DirectoryHistory();
-    string m_strDirectory = String.Empty;
+    string m_strDirectory = string.Empty;
     int m_iItemSelected = -1;
     int m_iLastControl = 0;
     int m_nTempPlayListWindow = 0;
-    string m_strTempPlayListDirectory = String.Empty;
-    string m_strCurrentFile = String.Empty;
-    string _currentScrobbleUser = String.Empty;
+    string m_strTempPlayListDirectory = string.Empty;
+    string m_strCurrentFile = string.Empty;
+    string _currentScrobbleUser = string.Empty;
     Song _scrobbleStartTrack;
     VirtualDirectory _virtualDirectory = new VirtualDirectory();
     //const int MaxNumPShuffleSongPredict = 12;
@@ -274,7 +274,7 @@ namespace MediaPortal.GUI.Music
 
       btnScrobbleUser.Label = GUILocalizeStrings.Get(33005) + _currentScrobbleUser;
 
-      LoadDirectory(String.Empty);
+      LoadDirectory(string.Empty);
       if (m_iItemSelected >= 0)
       {
         GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
@@ -515,7 +515,7 @@ namespace MediaPortal.GUI.Music
             ////if party shuffle...
             //if (PShuffleOn)// || ScrobblerOn)
             //{
-            //  LoadDirectory(String.Empty);
+            //  LoadDirectory(string.Empty);
             //  UpdateButtonStates();
             //}
             //ended changes
@@ -728,14 +728,14 @@ namespace MediaPortal.GUI.Music
                 pItem.Label2 = str;
               }
               else
-                pItem.Label2 = String.Empty;
+                pItem.Label2 = string.Empty;
             }
             pItem.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             itemlist.Add(pItem);
           }
           OnRetrieveMusicInfo(ref itemlist);
           iCurrentSong = 0;
-          strFileName = String.Empty;
+          strFileName = string.Empty;
           //	Search current playlist item
           if ((m_nTempPlayListWindow == GetID && m_strTempPlayListDirectory.IndexOf(m_strDirectory) >= 0 && g_Player.Playing
             && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
@@ -834,7 +834,7 @@ namespace MediaPortal.GUI.Music
       if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
         playlistPlayer.Reset();
       ClearScrobbleStartTrack();
-      LoadDirectory(String.Empty);
+      LoadDirectory(string.Empty);
       UpdateButtonStates();
       GUIControl.FocusControl(GetID, btnNowPlaying.GetID);
 
@@ -862,7 +862,7 @@ namespace MediaPortal.GUI.Music
 
       if (playlist.Count <= 0)
         return;
-      string strFileName = String.Empty;
+      string strFileName = string.Empty;
       if (playlistPlayer.CurrentSong >= 0)
       {
         if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
@@ -890,14 +890,14 @@ namespace MediaPortal.GUI.Music
 
     void SavePlayList()
     {
-      string strNewFileName = String.Empty;
+      string strNewFileName = string.Empty;
       if (GetKeyboard(ref strNewFileName))
       {
         string strPath = System.IO.Path.GetFileNameWithoutExtension(strNewFileName);
-        string strPlayListPath = String.Empty;
+        string strPlayListPath = string.Empty;
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          strPlayListPath = xmlreader.GetValueAsString("music", "playlists", String.Empty);
+          strPlayListPath = xmlreader.GetValueAsString("music", "playlists", string.Empty);
           strPlayListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(strPlayListPath);
         }
 
@@ -1029,7 +1029,7 @@ namespace MediaPortal.GUI.Music
     //      i = list.Count;
     //    }
     //  }
-    //  //LoadDirectory(String.Empty); - will cause errors when playlist screen is not active
+    //  //LoadDirectory(string.Empty); - will cause errors when playlist screen is not active
     //}
 
 
@@ -1152,7 +1152,7 @@ namespace MediaPortal.GUI.Music
     {
       if (_trackArtist == null)
         return;
-      if (_trackArtist != String.Empty)
+      if (_trackArtist != string.Empty)
       {
         SimilarArtistRequest request2 = new SimilarArtistRequest(
                       _trackArtist,
@@ -1226,15 +1226,15 @@ namespace MediaPortal.GUI.Music
               scrobbledArtists.Add(tmpArtist);
               break;
             }
-          string strFile = String.Empty;
-          if (g_Player.Player.CurrentFile != null && g_Player.Player.CurrentFile != String.Empty && g_Player.IsMusic)
+          string strFile = string.Empty;
+          if (g_Player.Player.CurrentFile != null && g_Player.Player.CurrentFile != string.Empty && g_Player.IsMusic)
           {
             strFile = g_Player.Player.CurrentFile;
 
             bool songFound = dbs.GetSongByFileName(strFile, ref current10SekSong);
             if (songFound)
             {
-              if (_scrobbleStartTrack == null || _scrobbleStartTrack.Artist == String.Empty)
+              if (_scrobbleStartTrack == null || _scrobbleStartTrack.Artist == string.Empty)
                 _scrobbleStartTrack = current10SekSong.Clone();
 
               try
@@ -1397,7 +1397,7 @@ namespace MediaPortal.GUI.Music
         // only focus the file while playlist is visible
         if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST)
         {
-          LoadDirectory(String.Empty);
+          LoadDirectory(string.Empty);
           SelectCurrentPlayingSong();
         }
       }
@@ -1533,7 +1533,7 @@ namespace MediaPortal.GUI.Music
             {
               tag = (MusicTag)item.MusicTag;
 
-              if (tag.Title == ("unknown") || tag.Title.IndexOf("unknown") > 0 || tag.Title == String.Empty)
+              if (tag.Title == ("unknown") || tag.Title.IndexOf("unknown") > 0 || tag.Title == string.Empty)
                 dirtyTag = true;
             }
             else

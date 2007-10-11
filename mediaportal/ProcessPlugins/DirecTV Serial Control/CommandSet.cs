@@ -27,7 +27,7 @@ namespace DirecTV
 {
   public class CommandSet
   {
-    public string Name = String.Empty;
+    public string Name = string.Empty;
     public Command POWER_OFF;
     public Command POWER_ON;
     public Command SHOW_TEXT;

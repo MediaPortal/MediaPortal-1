@@ -96,9 +96,9 @@ namespace MPTestTool
 		}
 		public new object GetValue(string key, System.Type type)
 		{
-			if (!ConfigIsLoaded()) return String.Empty;
+			if (!ConfigIsLoaded()) return string.Empty;
 			XmlNode node;
-			string value = String.Empty;
+			string value = string.Empty;
 			string selectedNode = key.Substring(0, key.LastIndexOf("//"));
 			try {
 				node = config.SelectSingleNode(selectedNode);
@@ -127,7 +127,7 @@ namespace MPTestTool
 				else
 					return Convert.ToString(value);
 			} catch {
-				return String.Empty;
+				return string.Empty;
 			}
 		}
 	}

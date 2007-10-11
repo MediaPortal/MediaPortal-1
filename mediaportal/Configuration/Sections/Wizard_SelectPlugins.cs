@@ -597,16 +597,16 @@ namespace MediaPortal.Configuration.Sections
           string sharePort = String.Format("shareport{0}", index);
           string shareRemotePath = String.Format("shareremotepath{0}", index);
 
-          string shareNameData = String.Empty;
-          string sharePathData = String.Empty;
-          string sharePinData = String.Empty;
+          string shareNameData = string.Empty;
+          string sharePathData = string.Empty;
+          string sharePinData = string.Empty;
 
           bool shareTypeData = false;
-          string shareServerData = String.Empty;
-          string shareLoginData = String.Empty;
-          string sharePwdData = String.Empty;
+          string shareServerData = string.Empty;
+          string shareLoginData = string.Empty;
+          string sharePwdData = string.Empty;
           int sharePortData = 21;
-          string shareRemotePathData = String.Empty;
+          string shareRemotePathData = string.Empty;
 
           if (sharesList != null && sharesList.Count > index)
           {

@@ -113,7 +113,7 @@ namespace MediaPortal.GUI.Library
       _imageBackGround.KeepAspectRatio = false;
       _imageMid.KeepAspectRatio = false;
       _imageRight.KeepAspectRatio = false;
-      if (_property == null) _property = String.Empty;
+      if (_property == null) _property = string.Empty;
       if (_property.IndexOf("#") >= 0) _containsProperty = true;
     }
 
@@ -164,7 +164,7 @@ namespace MediaPortal.GUI.Library
       if (_containsProperty)
       {
         string m_strText = GUIPropertyManager.Parse(_property);
-        if (m_strText != String.Empty)
+        if (m_strText != string.Empty)
         {
           try
           {

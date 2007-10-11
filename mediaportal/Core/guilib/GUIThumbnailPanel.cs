@@ -644,7 +644,7 @@ namespace MediaPortal.GUI.Library
       }
 
       if (Focus)
-        GUIPropertyManager.SetProperty("#highlightedbutton", String.Empty);
+        GUIPropertyManager.SetProperty("#highlightedbutton", string.Empty);
       base.Render(timePassed);
     }
 
@@ -807,7 +807,7 @@ namespace MediaPortal.GUI.Library
               }
               if (((action.m_key.KeyChar >= 65) && (action.m_key.KeyChar <= 90)) || (action.m_key.KeyChar == (int)Keys.Space))
               {
-                if (action.m_key.KeyChar == (int)Keys.Space && _searchString == String.Empty) return;
+                if (action.m_key.KeyChar == (int)Keys.Space && _searchString == string.Empty) return;
                 _searchString += (char)action.m_key.KeyChar;
                 SearchItem(_searchString, SearchType.SEARCH_FIRST);
               }

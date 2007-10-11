@@ -3068,7 +3068,7 @@ namespace MediaPortal.Configuration
           textBoxGeneralName.Text = channel.Name;
           comboBoxGeneralChannel.SelectedItem = channel.Channel.ToString();
           comboBoxGeneralChannel.Text = channel.Channel.ToString();
-          labelSpecial.Text = String.Empty;
+          labelSpecial.Text = string.Empty;
           string chanNr = (string)comboBoxGeneralChannel.SelectedItem;
           if (chanNr == null)
             chanNr = comboBoxGeneralChannel.Text.ToUpper().Trim();
@@ -3570,7 +3570,7 @@ namespace MediaPortal.Configuration
 
     private void comboBoxChannels_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-      labelSpecial.Text = String.Empty;
+      labelSpecial.Text = string.Empty;
       string chanNr = (string)comboBoxGeneralChannel.SelectedItem;
       if (chanNr == null)
         chanNr = comboBoxGeneralChannel.Text.ToUpper().Trim();
@@ -3590,11 +3590,11 @@ namespace MediaPortal.Configuration
   public class TelevisionChannel
   {
     public int ID;
-    public string Name = String.Empty;
+    public string Name = string.Empty;
     public int Channel = 0;
     public Frequency Frequency = new Frequency(0);
     public bool External = false;
-    public string ExternalTunerChannel = String.Empty;
+    public string ExternalTunerChannel = string.Empty;
     public bool VisibleInGuide = true;
     public AnalogVideoStandard standard = AnalogVideoStandard.None;
     public int Country;
@@ -3658,7 +3658,7 @@ namespace MediaPortal.Configuration
 
     public string ToString(Format format)
     {
-      string result = String.Empty;
+      string result = string.Empty;
 
       try
       {

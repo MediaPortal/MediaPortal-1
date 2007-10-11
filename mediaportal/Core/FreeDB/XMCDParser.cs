@@ -338,7 +338,7 @@ namespace MediaPortal.Freedb
       */
       //isALegitimateCompilation if the CD Artist is either not set or equals "Various", "Various Artists", etc...
       Regex artistTagIsSetToVarious = new Regex(@"^(([Vv]arious)|([Aa]ssorted))( [Aa]rtist[s]?)?$");
-      bool isALegitimateCompilation = (m_artist == String.Empty || artistTagIsSetToVarious.Match(m_artist).Success) ? true : false;
+      bool isALegitimateCompilation = (m_artist == string.Empty || artistTagIsSetToVarious.Match(m_artist).Success) ? true : false;
 
       // Log.Debug("MediaPortal.Freedb.XMCDParser.InitVariables: IS THE CURRENT CD A COMPILATION? isALegitimateCompilation: {0}", isALegitimateCompilation.ToString());
 

@@ -337,19 +337,19 @@ namespace MediaPortal.TV.Recording
         tv.Description = data.event_item_text;
         //
         if (tv.Title == null)
-          tv.Title = String.Empty;
+          tv.Title = string.Empty;
 
         if (tv.Description == null)
-          tv.Description = String.Empty;
+          tv.Description = string.Empty;
 
-        if (tv.Description == String.Empty)
+        if (tv.Description == string.Empty)
           tv.Description = data.event_text;
 
-        if (tv.Title == String.Empty)
+        if (tv.Title == string.Empty)
           tv.Title = data.event_name;
 
         //
-        if (tv.Title == String.Empty || tv.Title == "n.a.")
+        if (tv.Title == string.Empty || tv.Title == "n.a.")
         {
           //Log.Info("epg: entrie without title found");
           dateProgramEnd = DateTime.MinValue;
@@ -359,7 +359,7 @@ namespace MediaPortal.TV.Recording
         //
         // for check
         //
-        if (channelName == String.Empty)
+        if (channelName == string.Empty)
         {
           //Log.Info("epg-grab: FAILED no channel-name: {0} : {1}",tv.Start,tv.End);
           dateProgramEnd = DateTime.MinValue;
@@ -483,7 +483,7 @@ namespace MediaPortal.TV.Recording
                     }
                     break;
                 }
-                if (progName != String.Empty) break;
+                if (progName != string.Empty) break;
               }//foreach (TVChannel chan in channels)
             }
             break;
@@ -784,7 +784,7 @@ namespace MediaPortal.TV.Recording
         foreach (Programm prg in m_titleBuffer)
         {
           DVBSections.EITDescr eit = new MediaPortal.TV.Recording.DVBSections.EITDescr();
-          string channelName = String.Empty;
+          string channelName = string.Empty;
           if (prg.ChannelID >= m_namesBuffer.Count || prg.ChannelID < 0)
           {
             list.Add(prg);
@@ -830,7 +830,7 @@ namespace MediaPortal.TV.Recording
                       }
                       break;
                   }
-                  if (channelName != String.Empty) break;
+                  if (channelName != string.Empty) break;
                 }//foreach (TVChannel chan in channels)
               }
               break;

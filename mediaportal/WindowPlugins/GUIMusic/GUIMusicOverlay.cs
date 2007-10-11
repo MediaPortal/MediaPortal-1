@@ -70,8 +70,8 @@ namespace MediaPortal.GUI.Music
 
     #region Variables
     bool _isFocused = false;
-    string _fileName           = String.Empty;
-    string _thumbLogo          = String.Empty;
+    string _fileName           = string.Empty;
+    string _thumbLogo          = string.Empty;
     bool _useBassEngine        = false;
     bool _didRenderLastTime    = false;
     bool _visualisationEnabled = true;
@@ -140,7 +140,7 @@ namespace MediaPortal.GUI.Music
            g_Player.IsVideo || g_Player.IsDVD || g_Player.IsTVRecording || g_Player.IsTV ||
           (!g_Player.IsRadio && !g_Player.IsMusic) )
       {
-        _fileName = String.Empty;
+        _fileName = string.Empty;
         OnUpdateState(false);
         return base.IsAnimating(AnimationType.WindowClose);
       }
@@ -309,7 +309,7 @@ namespace MediaPortal.GUI.Music
 
     void SetCurrentFile(string fileName)
     {
-      if ((fileName == null) || (fileName == String.Empty))
+      if ((fileName == null) || (fileName == string.Empty))
         return;
       // last.fm radio sets properties manually therefore do not overwrite them.
       if (Util.Utils.IsLastFMStream(fileName))
@@ -324,7 +324,7 @@ namespace MediaPortal.GUI.Music
       GUIPropertyManager.SetProperty("#Play.Current.File", System.IO.Path.GetFileName(fileName));
 
       MusicTag tag = null;
-      _thumbLogo = String.Empty;
+      _thumbLogo = string.Empty;
       tag = GetInfo(fileName, out _thumbLogo);
 
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", _thumbLogo);
@@ -333,17 +333,17 @@ namespace MediaPortal.GUI.Music
         string strText = GUILocalizeStrings.Get(437);	//	"Duration"
         string strDuration = String.Format("{0} {1}", strText, MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration));
         if (tag.Duration <= 0)
-          strDuration = String.Empty;
+          strDuration = string.Empty;
 
         strText = GUILocalizeStrings.Get(435);	//	"Track"
         string strTrack = String.Format("{0} {1}", strText, tag.Track);
         if (tag.Track <= 0)
-          strTrack = String.Empty;
+          strTrack = string.Empty;
 
         strText = GUILocalizeStrings.Get(436);	//	"Year"
         string strYear = String.Format("{0} {1}", strText, tag.Year);
         if (tag.Year <= 1900)
-          strYear = String.Empty;
+          strYear = string.Empty;
 
         GUIPropertyManager.SetProperty("#Play.Current.Genre", tag.Genre);
         GUIPropertyManager.SetProperty("#Play.Current.Comment", tag.Comment);
@@ -358,14 +358,14 @@ namespace MediaPortal.GUI.Music
 
       // Show Information of Next File in Playlist
       fileName = playlistPlayer.GetNext();
-      if (fileName == String.Empty)
+      if (fileName == string.Empty)
       {
         // fix high cpu load due to constant checking
         //m_strThumb = (string)GUIPropertyManager.GetProperty("#Play.Current.Thumb");
         return;
       }
       tag = null;
-      string thumb = String.Empty;
+      string thumb = string.Empty;
       tag = GetInfo(fileName, out thumb);
 
       GUIPropertyManager.SetProperty("#Play.Next.Thumb", thumb);
@@ -381,17 +381,17 @@ namespace MediaPortal.GUI.Music
         string strText = GUILocalizeStrings.Get(437);	//	"Duration"
         string strDuration = String.Format("{0}{1}", strText, MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration));
         if (tag.Duration <= 0)
-          strDuration = String.Empty;
+          strDuration = string.Empty;
 
         strText = GUILocalizeStrings.Get(435);	//	"Track"
         string strTrack = String.Format("{0}{1}", strText, tag.Track);
         if (tag.Track <= 0)
-          strTrack = String.Empty;
+          strTrack = string.Empty;
 
         strText = GUILocalizeStrings.Get(436);	//	"Year"
         string strYear = String.Format("{0}{1}", strText, tag.Year);
         if (tag.Year <= 1900)
-          strYear = String.Empty;
+          strYear = string.Empty;
 
         GUIPropertyManager.SetProperty("#Play.Next.Genre", tag.Genre);
         GUIPropertyManager.SetProperty("#Play.Next.Comment", tag.Comment);
@@ -448,7 +448,7 @@ namespace MediaPortal.GUI.Music
     MusicTag GetInfo(string fileName, out string thumb)
     {
       string skin = GUIGraphicsContext.Skin;
-      thumb = String.Empty;
+      thumb = string.Empty;
       MusicTag tag = null;
       
       //if (_useID3)  // <-- always use it since one file lookup isn't a performance issue (especially with the new tagreader and it's < 0.1 seconds)
@@ -462,7 +462,7 @@ namespace MediaPortal.GUI.Music
       {
         tag = new MusicTag();
         string cover = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, Recorder.RadioStationName());
-        if (cover != String.Empty)
+        if (cover != string.Empty)
           thumb = cover;
         tag.Title = Recorder.RadioStationName();
       }
@@ -479,10 +479,10 @@ namespace MediaPortal.GUI.Music
             string strChan = GUIPropertyManager.GetProperty("#Play.Current.ArtistThumb");
             tag.Title = strChan;
             coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, strChan);
-            if (coverart != String.Empty)
+            if (coverart != string.Empty)
               thumb = coverart;
             else
-              thumb = String.Empty;
+              thumb = string.Empty;
         }
         else
         {
@@ -499,7 +499,7 @@ namespace MediaPortal.GUI.Music
                 // got it, check if it has a thumbnail
                 tag.Title = station.Name;
                 coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
-                if (coverart != String.Empty)
+                if (coverart != string.Empty)
                   thumb = coverart;
               }
             }
@@ -509,7 +509,7 @@ namespace MediaPortal.GUI.Music
               {
                 tag.Title = station.Name;
                 coverart = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, station.Name);
-                if (coverart != String.Empty)
+                if (coverart != string.Empty)
                   thumb = coverart;
               }
             }
@@ -535,7 +535,7 @@ namespace MediaPortal.GUI.Music
           tag = (MusicTag)item.MusicTag;
       }
 
-      string strThumb = String.Empty;
+      string strThumb = string.Empty;
 
       if (isCurrent && tag != null)
       {
@@ -545,7 +545,7 @@ namespace MediaPortal.GUI.Music
       }
 
       // no succes with album cover try folder cache
-      if (thumb == String.Empty)
+      if (thumb == string.Empty)
       {
         strThumb = Util.Utils.GetLocalFolderThumb(fileName);
         if (System.IO.File.Exists(strThumb))
@@ -555,7 +555,7 @@ namespace MediaPortal.GUI.Music
         else
         {
           // nothing locally - try the share itself
-          string strRemoteFolderThumb = String.Empty;          
+          string strRemoteFolderThumb = string.Empty;          
           strRemoteFolderThumb = Util.Utils.GetFolderThumb(fileName);
 
           if (System.IO.File.Exists(strRemoteFolderThumb))

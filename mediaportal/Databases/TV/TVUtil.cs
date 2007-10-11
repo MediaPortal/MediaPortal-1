@@ -173,7 +173,7 @@ namespace MediaPortal.TV.Database
       if (rec.RecType == TVRecording.RecordingType.EveryTimeOnThisChannel)
         TVDatabase.SearchMinimalPrograms(MediaPortal.Util.Utils.datetolong(dtDay), MediaPortal.Util.Utils.datetolong(dtDay.AddDays(_days)), ref programs, 3, rec.Title, rec.Channel);
       else
-        TVDatabase.SearchMinimalPrograms(MediaPortal.Util.Utils.datetolong(dtDay), MediaPortal.Util.Utils.datetolong(dtDay.AddDays(_days)), ref programs, 3, rec.Title, String.Empty);
+        TVDatabase.SearchMinimalPrograms(MediaPortal.Util.Utils.datetolong(dtDay), MediaPortal.Util.Utils.datetolong(dtDay.AddDays(_days)), ref programs, 3, rec.Title, string.Empty);
       foreach (TVProgram prog in programs)
       {
         if (rec.IsRecordingProgram(prog, false))

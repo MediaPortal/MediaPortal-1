@@ -43,8 +43,8 @@ namespace MediaPortal.GUI.GUIPrograms
     
     List<FileInfo> gameList = new List<FileInfo>();
 
-    string templateSearch = String.Empty;
-    string templateSearchTags = String.Empty;
+    string templateSearch = string.Empty;
+    string templateSearchTags = string.Empty;
 
     bool _extensiveLogging = true;
 
@@ -80,7 +80,7 @@ namespace MediaPortal.GUI.GUIPrograms
 
     public string GetSearchURL(string gameTitle)
     {
-      string cleanTitle = String.Empty;
+      string cleanTitle = string.Empty;
 
       gameTitle = gameTitle.ToLower();
 
@@ -101,7 +101,7 @@ namespace MediaPortal.GUI.GUIPrograms
 
     public string GetScreenshotURL(FileInfo curGame)
     {
-      string cleanTitle = String.Empty;
+      string cleanTitle = string.Empty;
 
       return String.Format("{0}~T5", curGame.GameURL);
     }
@@ -344,8 +344,8 @@ namespace MediaPortal.GUI.GUIPrograms
     {
       if (_extensiveLogging) Log.Info("MyPrograms: AllGameInfoScraper: ParseValues()");
 
-      string template = String.Empty;
-      string tags = String.Empty;
+      string template = string.Empty;
+      string tags = string.Empty;
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
       {
@@ -424,8 +424,8 @@ namespace MediaPortal.GUI.GUIPrograms
     {
       if (_extensiveLogging) Log.Info("MyPrograms: AllGameInfoScraper: ParseValueRating()");
 
-      string template = String.Empty;
-      string tags = String.Empty;
+      string template = string.Empty;
+      string tags = string.Empty;
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
       {
@@ -497,8 +497,8 @@ namespace MediaPortal.GUI.GUIPrograms
     {
       if (_extensiveLogging) Log.Info("MyPrograms: AllGameInfoScraper: ParseValueLists()");
 
-      string template = String.Empty;
-      string tags = String.Empty;
+      string template = string.Empty;
+      string tags = string.Empty;
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
       {
@@ -578,8 +578,8 @@ namespace MediaPortal.GUI.GUIPrograms
     {
       if (_extensiveLogging) Log.Info("MyPrograms: AllGameInfoScraper: ParseTexts()");
 
-      string template = String.Empty;
-      string tags = String.Empty;
+      string template = string.Empty;
+      string tags = string.Empty;
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
       {
@@ -650,8 +650,8 @@ namespace MediaPortal.GUI.GUIPrograms
     {
       if (_extensiveLogging) Log.Info("MyPrograms: AllGameInfoScraper: ParsePackshot()");
 
-      string template = String.Empty;
-      string tags = String.Empty;
+      string template = string.Empty;
+      string tags = string.Empty;
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
       {
@@ -716,11 +716,11 @@ namespace MediaPortal.GUI.GUIPrograms
 
       string section = "screenshots";
 
-      string KeyName = String.Empty;
-      string KeyString = String.Empty;
-      string ValueName = String.Empty;
-      string template = String.Empty;
-      string tags = String.Empty;
+      string KeyName = string.Empty;
+      string KeyString = string.Empty;
+      string ValueName = string.Empty;
+      string template = string.Empty;
+      string tags = string.Empty;
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "grabber_AllGame_com.xml")))
       {

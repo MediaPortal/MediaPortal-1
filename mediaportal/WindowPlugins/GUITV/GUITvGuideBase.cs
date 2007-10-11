@@ -95,9 +95,9 @@ namespace MediaPortal.GUI.TV
     int _numberOfBlocks = 4;
     int _cursorY = 0;
     int _cursorX = 0;
-    string _currentTitle = String.Empty;
-    string _currentTime = String.Empty;
-    string _currentTvChannel = String.Empty;
+    string _currentTitle = string.Empty;
+    string _currentTime = string.Empty;
+    string _currentTvChannel = string.Empty;
     long _currentStartTime = 0;
     long _currentEndTime = 0;
     TVProgram _currentProgram = null;
@@ -121,7 +121,7 @@ namespace MediaPortal.GUI.TV
     DateTime _updateTimer = DateTime.Now;
 
     DateTime _keyPressedTimer = DateTime.Now;
-    string _lineInput = String.Empty;
+    string _lineInput = string.Empty;
     static bool _workerThreadRunning = false;
 
     bool _byIndex = false;
@@ -170,7 +170,7 @@ namespace MediaPortal.GUI.TV
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _currentTvChannel = xmlreader.GetValueAsString("tvguide", "channel", String.Empty);
+        _currentTvChannel = xmlreader.GetValueAsString("tvguide", "channel", string.Empty);
         _cursorX = xmlreader.GetValueAsInt("tvguide", "ypos", 0);
         _channelOffset = xmlreader.GetValueAsInt("tvguide", "yoffset", 0);
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
@@ -628,7 +628,7 @@ namespace MediaPortal.GUI.TV
             if (cntlTimeInterval != null)
             {
               for (int i = 1; i <= 4; i++)
-                cntlTimeInterval.AddLabel(String.Empty, i);
+                cntlTimeInterval.AddLabel(string.Empty, i);
               cntlTimeInterval.Value = 1;
             }
             if (message.Param1 != (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO)
@@ -793,8 +793,8 @@ namespace MediaPortal.GUI.TV
       bool shouldImportTvGuide = false;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string strTmp = String.Empty;
-        strTmp = xmlreader.GetValueAsString("tvguide", "date", String.Empty);
+        string strTmp = string.Empty;
+        strTmp = xmlreader.GetValueAsString("tvguide", "date", string.Empty);
         if (System.IO.File.Exists(_tvGuideFileName))
         {
           string strFileTime = System.IO.File.GetLastWriteTime(_tvGuideFileName).ToString();
@@ -885,7 +885,7 @@ namespace MediaPortal.GUI.TV
           GUILabelControl label = GetControl((int)Controls.LABEL_TIME1 + iLabel) as GUILabelControl;
           if (label == null)
           {
-            label = new GUILabelControl(GetID, (int)Controls.LABEL_TIME1 + iLabel, xpos, ypos, iLabelWidth, cntlHeaderBkgImg.RenderHeight, labelTime.FontName, String.Empty, labelTime.TextColor, GUIControl.Alignment.ALIGN_CENTER, false);
+            label = new GUILabelControl(GetID, (int)Controls.LABEL_TIME1 + iLabel, xpos, ypos, iLabelWidth, cntlHeaderBkgImg.RenderHeight, labelTime.FontName, string.Empty, labelTime.TextColor, GUIControl.Alignment.ALIGN_CENTER, false);
             label.AllocResources();
             GUIControl cntl = (GUIControl)label;
             this.Add(ref cntl);
@@ -919,7 +919,7 @@ namespace MediaPortal.GUI.TV
           GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChan) as GUIButton3PartControl;
           if (imgBut == null)
           {
-            string strChannelImageFileName = String.Empty;
+            string strChannelImageFileName = string.Empty;
             if (_showChannelLogos)
               strChannelImageFileName = cntlChannelImg.FileName;
             imgBut = new GUIButton3PartControl(GetID, (int)Controls.IMG_CHAN1 + iChan, xpos, ypos,
@@ -943,7 +943,7 @@ namespace MediaPortal.GUI.TV
           imgBut.SetPosition(xpos, ypos);
           imgBut.FontName1 = cntlChannelLabel.FontName;
           imgBut.TextColor1 = cntlChannelLabel.TextColor;
-          imgBut.Label1 = String.Empty;
+          imgBut.Label1 = string.Empty;
           imgBut.RenderLeft = false;
           imgBut.RenderRight = false;
 
@@ -1079,20 +1079,20 @@ namespace MediaPortal.GUI.TV
         if (strChannel == null)
           return;
         string strLogo = Util.Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
-        GUIPropertyManager.SetProperty("#TV.Guide.Title", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.Time", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.Description", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.Genre", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeDetail", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.Date", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.StarRating", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.Classification", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.Duration", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.Title", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.Time", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.Description", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.Genre", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeDetail", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.Date", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.StarRating", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.Classification", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.Duration", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow", string.Empty);
         if (!System.IO.File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
@@ -1100,8 +1100,8 @@ namespace MediaPortal.GUI.TV
         GUIPropertyManager.SetProperty("#TV.Guide.thumb", strLogo);
         _currentStartTime = 0;
         _currentEndTime = 0;
-        _currentTitle = String.Empty;
-        _currentTime = String.Empty;
+        _currentTitle = string.Empty;
+        _currentTime = string.Empty;
         _currentTvChannel = strChannel;
         GUIControl.HideControl(GetID, (int)Controls.IMG_REC_PIN);
       }
@@ -1120,31 +1120,31 @@ namespace MediaPortal.GUI.TV
         GUIPropertyManager.SetProperty("#TV.Guide.Duration", _currentProgram.Duration);
         GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow", _currentProgram.TimeFromNow);
         if (_currentProgram.Episode == "-")
-          GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName", string.Empty);
         else
           GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName", _currentProgram.Episode);
         if (_currentProgram.SeriesNum == "-")
-          GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber", string.Empty);
         else
           GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber", _currentProgram.SeriesNum);
         if (_currentProgram.EpisodeNum == "-")
-          GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber", string.Empty);
         else
           GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber", _currentProgram.EpisodeNum);
         if (_currentProgram.EpisodePart == "-")
-          GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart", string.Empty);
         else
           GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart", _currentProgram.EpisodePart);
         if (_currentProgram.Date == "-")
-          GUIPropertyManager.SetProperty("#TV.Guide.Date", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.Guide.Date", string.Empty);
         else
           GUIPropertyManager.SetProperty("#TV.Guide.Date", _currentProgram.Date);
         if (_currentProgram.StarRating == "-")
-          GUIPropertyManager.SetProperty("#TV.Guide.StarRating", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.Guide.StarRating", string.Empty);
         else
           GUIPropertyManager.SetProperty("#TV.Guide.StarRating", _currentProgram.StarRating);
         if (_currentProgram.Classification == "-")
-          GUIPropertyManager.SetProperty("#TV.Guide.Classification", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.Guide.Classification", string.Empty);
         else
           GUIPropertyManager.SetProperty("#TV.Guide.Classification", _currentProgram.Classification);
         GUIPropertyManager.SetProperty("#TV.Guide.EpisodeDetail", _currentProgram.EpisodeDetails);
@@ -1197,7 +1197,7 @@ namespace MediaPortal.GUI.TV
     void RenderSingleChannel(TVChannel channel)
     {
       int chan = _channelOffset;
-      string strLogo = String.Empty;
+      string strLogo = string.Empty;
 
       for (int iChannel = 0; iChannel < _channelCount; iChannel++)
       {
@@ -1331,7 +1331,7 @@ namespace MediaPortal.GUI.TV
             "tvguide_button_light_left.png",
             "tvguide_button_light_middle.png",
             "tvguide_button_light_right.png",
-            String.Empty);
+            string.Empty);
           img.AllocResources();
           img.ColourDiffuse = GetColorForGenre(program.Genre);
           GUIControl cntl = (GUIControl)img;
@@ -1387,8 +1387,8 @@ namespace MediaPortal.GUI.TV
         img.FontName1 = "font13";
         img.TextColor1 = 0xffffffff;
 
-        string strTimeSingle = String.Empty;
-        string strTime = String.Empty;
+        string strTimeSingle = string.Empty;
+        string strTime = string.Empty;
 
         img.Label1 = program.Title;
         if (program.Start != 0)
@@ -1449,7 +1449,7 @@ namespace MediaPortal.GUI.TV
 
         img.SetPosition(img.XPosition, img.YPosition);
 
-        img.TexutureIcon = String.Empty;
+        img.TexutureIcon = string.Empty;
         if (ShouldNotifyProgram(program))
           img.TexutureIcon = Thumbs.TvNotifyIcon;
         if (bRecording)
@@ -1651,7 +1651,7 @@ namespace MediaPortal.GUI.TV
                 "tvguide_button_light_left.png",
                 "tvguide_button_light_middle.png",
                 "tvguide_button_light_right.png",
-                String.Empty);
+                string.Empty);
               img.AllocResources();
               GUIControl cntl = (GUIControl)img;
               Add(ref cntl);
@@ -1673,7 +1673,7 @@ namespace MediaPortal.GUI.TV
             img.RenderLeft = false;
             img.RenderRight = false;
 
-            img.TexutureIcon = String.Empty;
+            img.TexutureIcon = string.Empty;
             if (ShouldNotifyProgram(program))
               img.TexutureIcon = Thumbs.TvNotifyIcon;
             if (bRecording)
@@ -2268,8 +2268,8 @@ namespace MediaPortal.GUI.TV
       {
         dlgProgress.Reset();
         dlgProgress.SetHeading(606);
-        dlgProgress.SetLine(1, String.Empty);
-        dlgProgress.SetLine(2, String.Empty);
+        dlgProgress.SetLine(1, string.Empty);
+        dlgProgress.SetLine(2, string.Empty);
         dlgProgress.StartModal(GetID);
         dlgProgress.Progress();
       }
@@ -2565,7 +2565,7 @@ namespace MediaPortal.GUI.TV
               case 979: // Play recording from beginning                          
                 Recorder.StopViewing();
                 string filename = Recorder.GetRecordingFileName(recFound);
-                if (filename != String.Empty)
+                if (filename != string.Empty)
                 {
                   Log.Info("TVGuide: Play recording {0} from start", _currentTitle);
                   g_Player.Play(filename);
@@ -2738,7 +2738,7 @@ namespace MediaPortal.GUI.TV
         // change channel
         int iChannel = Int32.Parse(_lineInput);
         ChangeChannelNr(iChannel);
-        _lineInput = String.Empty;
+        _lineInput = string.Empty;
       }
     }
 
@@ -2749,7 +2749,7 @@ namespace MediaPortal.GUI.TV
         TimeSpan ts = DateTime.Now - _keyPressedTimer;
         if (_lineInput.Length >= 2 || ts.TotalMilliseconds >= 800)
         {
-          _lineInput = String.Empty;
+          _lineInput = string.Empty;
         }
         _keyPressedTimer = DateTime.Now;
         if (chKey == '0' && _lineInput.Length == 0)

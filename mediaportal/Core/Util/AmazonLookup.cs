@@ -50,7 +50,7 @@ namespace MediaPortal.Util
     public string this[int index]
     {
       get { 
-				if (index<0 || index>=m_imageList.Count) return String.Empty;
+				if (index<0 || index>=m_imageList.Count) return string.Empty;
 				return (string)m_imageList[index];
 			}
     }
@@ -58,7 +58,7 @@ namespace MediaPortal.Util
     public void Search(string searchtag)
     {
 			if (searchtag==null) return;
-			if (searchtag==String.Empty) return;
+			if (searchtag==string.Empty) return;
       m_imageList.Clear();
 			AWSECommerceService amazonService = new AWSECommerceService();
 			ItemSearch itemSearch = new ItemSearch();

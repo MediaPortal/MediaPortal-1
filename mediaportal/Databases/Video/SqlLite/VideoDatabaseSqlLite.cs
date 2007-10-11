@@ -1710,7 +1710,7 @@ namespace MediaPortal.Video.Database
 
     public string GetDVDLabel(string strFile)
     {
-      string cdlabel = String.Empty;
+      string cdlabel = string.Empty;
       if (MediaPortal.Util.Utils.IsDVD(strFile))
       {
         cdlabel = MediaPortal.Util.Utils.GetDriveSerial(strFile);

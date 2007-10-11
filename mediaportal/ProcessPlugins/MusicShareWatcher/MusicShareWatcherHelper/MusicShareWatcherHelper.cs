@@ -312,16 +312,16 @@ namespace MediaPortal.MusicShareWatcher
     int LoadShares()
     {
       MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
-      string strDefault = xmlreader.GetValueAsString("music", "default", String.Empty);
+      string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
       for (int i = 0; i < 20; i++)
       {
         string strShareName = String.Format("sharename{0}", i);
         string strSharePath = String.Format("sharepath{0}", i);
         string shareType = String.Format("sharetype{0}", i);
 
-        string ShareType = xmlreader.GetValueAsString("music", shareType, String.Empty);
+        string ShareType = xmlreader.GetValueAsString("music", shareType, string.Empty);
         if (ShareType == "yes") continue;
-        string SharePath = xmlreader.GetValueAsString("music", strSharePath, String.Empty);
+        string SharePath = xmlreader.GetValueAsString("music", strSharePath, string.Empty);
 
         if (SharePath.Length > 0)
           m_Shares.Add(SharePath);

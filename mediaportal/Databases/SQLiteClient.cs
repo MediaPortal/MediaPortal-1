@@ -104,8 +104,8 @@ namespace SQLite.NET
     private int busyRetries = 5;
     private int busyRetryDelay = 25;
     private IntPtr dbHandle = IntPtr.Zero;
-    private string databaseName = String.Empty;
-    private string DBName = String.Empty;
+    private string databaseName = string.Empty;
+    private string DBName = string.Empty;
     //private long dbHandleAdres=0;
 
     #endregion
@@ -256,7 +256,7 @@ namespace SQLite.NET
         Log.Info("SQLiteClient: Closing database: {0}", databaseName);
         sqlite3_close(dbHandle);
         dbHandle = IntPtr.Zero;
-        databaseName = String.Empty;
+        databaseName = string.Empty;
       }
     }
 

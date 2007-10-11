@@ -846,11 +846,11 @@ namespace MediaPortal.MPInstaller
 
     public MPIFileList()
     {
-      FileName = String.Empty; ;
-      Type = String.Empty;
-      SubType = String.Empty;
-      ID = String.Empty;
-      Option = String.Empty;
+      FileName = string.Empty; ;
+      Type = string.Empty;
+      SubType = string.Empty;
+      ID = string.Empty;
+      Option = string.Empty;
       FilePropertiesClass FileProperties = new FilePropertiesClass();
     }
 
@@ -860,7 +860,7 @@ namespace MediaPortal.MPInstaller
       Type = ty;
       SubType = sty;
       ID = i;
-      Option = String.Empty;
+      Option = string.Empty;
       FilePropertiesClass FileProperties = new FilePropertiesClass();
     }
 

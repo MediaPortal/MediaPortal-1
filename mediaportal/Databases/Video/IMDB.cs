@@ -285,7 +285,7 @@ namespace MediaPortal.Video.Database
     private string GetPage(string strURL, string strEncode, out string absoluteUri)
     {
       string strBody = "";
-      absoluteUri = String.Empty;
+      absoluteUri = string.Empty;
       Stream ReceiveStream = null;
       StreamReader sr = null;
       WebResponse result = null;
@@ -1203,7 +1203,7 @@ namespace MediaPortal.Video.Database
 
             // set rating
             string strRating = strBody.Substring(iStart, iEnd - iStart);
-            if (strRating != String.Empty)
+            if (strRating != string.Empty)
               strRating = strRating.Replace('.', ',');
             try
             {
@@ -2254,7 +2254,7 @@ namespace MediaPortal.Video.Database
     private void FindFilmAffinity(string strURL, int iLimit)
     {
       int iCount = 0;
-      string strTitle = String.Empty;
+      string strTitle = string.Empty;
       try
       {
         string absoluteUri;
@@ -2327,18 +2327,18 @@ namespace MediaPortal.Video.Database
         HTMLParser parser = new HTMLParser(strBody);
         if (parser.skipToEndOfNoCase("<img src=\"http://www.filmaffinity.com/images/movie.gif\" border=\"0\">"))
         {
-          string strTitle = String.Empty;
-          string strYear = String.Empty;
-          string runtime = String.Empty;
-          string strDirector = String.Empty;
-          string strWriting = String.Empty;
-          string strCast = String.Empty;
-          string strGenre = String.Empty;
-          string strPlot = String.Empty;
-          string strNumber = String.Empty;
-          string strThumb = String.Empty;
-          string strRating = String.Empty;
-          string strVotes = String.Empty;
+          string strTitle = string.Empty;
+          string strYear = string.Empty;
+          string runtime = string.Empty;
+          string strDirector = string.Empty;
+          string strWriting = string.Empty;
+          string strCast = string.Empty;
+          string strGenre = string.Empty;
+          string strPlot = string.Empty;
+          string strNumber = string.Empty;
+          string strThumb = string.Empty;
+          string strRating = string.Empty;
+          string strVotes = string.Empty;
           parser.extractTo("</span>", ref strTitle);
           //Log.Info("FilmAffinity:Title:{0}", strTitle);
           strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
@@ -2659,8 +2659,8 @@ namespace MediaPortal.Video.Database
     private void FindCspv(string strURL, int iLimit)
     {
       int iCount = 0;
-      string strTitle = String.Empty;
-      string strOTitle = String.Empty;
+      string strTitle = string.Empty;
+      string strOTitle = string.Empty;
       try
       {
         string absoluteUri;
@@ -2722,19 +2722,19 @@ namespace MediaPortal.Video.Database
         HTMLParser parser = new HTMLParser(strBody);
         if (parser.skipToEndOfNoCase("middle-left\">"))
         {
-          string strTitle = String.Empty;
-          string strYear = String.Empty;
-          string runtime = String.Empty;
-          string strDirector = String.Empty;
-          string strWriting = String.Empty;
-          string strCast = String.Empty;
-          string strGenre = String.Empty;
-          string strPlot = String.Empty;
-          string strNumber = String.Empty;
-          string strThumb = String.Empty;
-          string strRating = String.Empty;
-          string strVotes = String.Empty;
-          string strMpaa = String.Empty;
+          string strTitle = string.Empty;
+          string strYear = string.Empty;
+          string runtime = string.Empty;
+          string strDirector = string.Empty;
+          string strWriting = string.Empty;
+          string strCast = string.Empty;
+          string strGenre = string.Empty;
+          string strPlot = string.Empty;
+          string strNumber = string.Empty;
+          string strThumb = string.Empty;
+          string strRating = string.Empty;
+          string strVotes = string.Empty;
+          string strMpaa = string.Empty;
           parser.extractTo("</h1>", ref strTitle);
           strTitle = MediaPortal.Util.Utils.stripHTMLtags(strTitle);
           movieDetails.Title = strTitle;

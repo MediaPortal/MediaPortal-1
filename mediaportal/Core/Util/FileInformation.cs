@@ -36,7 +36,7 @@ namespace MediaPortal.Util
     long      length=0;
     DateTime  creationTime=DateTime.MinValue;
 		DateTime  modificationTime=DateTime.MinValue;
-    string    name=String.Empty;
+    string    name=string.Empty;
 
     public FileInformation()
     {

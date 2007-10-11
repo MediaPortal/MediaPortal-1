@@ -65,7 +65,7 @@ namespace MediaPortal.Dialogs
     protected GUILabelControl lblHeading = null;
 
     bool _confirmed = false;
-    string channel = String.Empty;
+    string channel = string.Empty;
     bool enableEditStartTime = true;
     bool enableEditChannel = true;
     DateTime startDateTime = DateTime.Now;

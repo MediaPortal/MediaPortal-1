@@ -90,7 +90,7 @@ namespace MediaPortal.GUI.Video
       get
       {
         if (currentView == null)
-          return String.Empty;
+          return string.Empty;
         return currentView.LocalizedName;
       }
     }
@@ -100,7 +100,7 @@ namespace MediaPortal.GUI.Video
       get
       {
         if (currentView == null)
-          return String.Empty;
+          return string.Empty;
         return currentView.Name;
       }
       set
@@ -168,8 +168,8 @@ namespace MediaPortal.GUI.Video
     {
       //build the query
       ArrayList movies = new ArrayList();
-      string whereClause = String.Empty;
-      string orderClause = String.Empty;
+      string whereClause = string.Empty;
+      string orderClause = string.Empty;
       string fromClause = "actors,movie,movieinfo,path";
       if (CurrentLevel > 0)
       {
@@ -198,15 +198,15 @@ namespace MediaPortal.GUI.Video
         if (table == "actors")
         {
           sql = String.Format("select * from actors ");
-          if (whereClause != String.Empty) sql += "where " + whereClause;
-          if (orderClause != String.Empty) sql += orderClause;
+          if (whereClause != string.Empty) sql += "where " + whereClause;
+          if (orderClause != string.Empty) sql += orderClause;
           VideoDatabase.GetMoviesByFilter(sql, out movies, true, false, false);
         }
         else if (table == "genre")
         {
           sql = String.Format("select * from genre ");
-          if (whereClause != String.Empty) sql += "where " + whereClause;
-          if (orderClause != String.Empty) sql += orderClause;
+          if (whereClause != string.Empty) sql += "where " + whereClause;
+          if (orderClause != string.Empty) sql += orderClause;
           VideoDatabase.GetMoviesByFilter(sql, out movies, false, false, true);
         }
         else if (defRoot.Where == "year")
@@ -276,7 +276,7 @@ namespace MediaPortal.GUI.Video
 
     void BuildRestriction(FilterDefinition filter, ref string whereClause)
     {
-      if (filter.SqlOperator != String.Empty && filter.Restriction != String.Empty)
+      if (filter.SqlOperator != string.Empty && filter.Restriction != string.Empty)
       {
         if (whereClause != "") whereClause += " and ";
         string restriction = filter.Restriction;
@@ -383,20 +383,20 @@ namespace MediaPortal.GUI.Video
       if (definition.Where == "genre")
       {
         item.Label = movie.SingleGenre;
-        item.Label2 = String.Empty;
-        item.Label3 = String.Empty;
+        item.Label2 = string.Empty;
+        item.Label3 = string.Empty;
       }
       if (definition.Where == "actor")
       {
         item.Label = movie.Actor;
-        item.Label2 = String.Empty;
-        item.Label3 = String.Empty;
+        item.Label2 = string.Empty;
+        item.Label3 = string.Empty;
       }
       if (definition.Where == "year")
       {
         item.Label = movie.Year.ToString();
-        item.Label2 = String.Empty;
-        item.Label3 = String.Empty;
+        item.Label2 = string.Empty;
+        item.Label3 = string.Empty;
       }
 
     }

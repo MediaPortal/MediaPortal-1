@@ -350,10 +350,10 @@ namespace MediaPortal.TV.Recording
             }
             else
             {
-              return String.Empty;
+              return string.Empty;
             }
         }
-      return String.Empty;
+      return string.Empty;
     }
 
     /// <summary>
@@ -368,9 +368,9 @@ namespace MediaPortal.TV.Recording
       //Log.Info("    GetHardwareLocation: filter:{1}", monikerName);
 
       int pos1 = monikerName.IndexOf("#");
-      if (pos1 < 0) return String.Empty;
+      if (pos1 < 0) return string.Empty;
       int pos2 = monikerName.LastIndexOf("#");
-      if (pos2 < 0) return String.Empty;
+      if (pos2 < 0) return string.Empty;
       string left = monikerName.Substring(0, pos1);
       string mid = monikerName.Substring(pos1 + 1, (pos2 - pos1) - 1);
       mid = mid.Replace("#", "\\");
@@ -390,7 +390,7 @@ namespace MediaPortal.TV.Recording
           locInfo = locInfo.Substring(0, fPos);
           return locInfo;
         }
-      return String.Empty;
+      return string.Empty;
     }
 
 
@@ -462,7 +462,7 @@ namespace MediaPortal.TV.Recording
         foreach (FilterDefinition fd in ccd.Tv.FilterDefinitions)
         {
           fd.DSFilter = null;
-          fd.MonikerDisplayName = String.Empty;
+          fd.MonikerDisplayName = string.Empty;
           FilterDefinition fd_copy = new FilterDefinition();
           fd_copy.Category = fd.Category;
           fd_copy.CheckDevice = fd.CheckDevice;

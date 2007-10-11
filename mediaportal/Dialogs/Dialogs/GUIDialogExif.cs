@@ -114,7 +114,7 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(int iString)
     {
-      if (iString == 0) SetHeading(String.Empty);
+      if (iString == 0) SetHeading(string.Empty);
       else SetHeading(GUILocalizeStrings.Get(iString));
     }
 
@@ -134,19 +134,19 @@ namespace MediaPortal.Dialogs
 
       m_pTexture = Util.Picture.Load(FileName, iRotate, 512, 512, true, false, out m_iTextureWidth, out m_iTextureHeight);
 
-      lblCameraModel.Label = String.Empty;
-      lblDateTakenLabel.Label = String.Empty;
-      lblEquipmentMake.Label = String.Empty;
-      lblExposureCompensation.Label = String.Empty;
-      lblExposureTime.Label = String.Empty;
-      lblFlash.Label = String.Empty;
-      lblFstop.Label = String.Empty;
-      lblImgDimensions.Label = String.Empty;
-      lblImgTitle.Label = String.Empty;
-      lblMeteringMode.Label = String.Empty;
-      lblResolutions.Label = String.Empty;
-      lblShutterSpeed.Label = String.Empty;
-      lblViewComments.Label = String.Empty;
+      lblCameraModel.Label = string.Empty;
+      lblDateTakenLabel.Label = string.Empty;
+      lblEquipmentMake.Label = string.Empty;
+      lblExposureCompensation.Label = string.Empty;
+      lblExposureTime.Label = string.Empty;
+      lblFlash.Label = string.Empty;
+      lblFstop.Label = string.Empty;
+      lblImgDimensions.Label = string.Empty;
+      lblImgTitle.Label = string.Empty;
+      lblMeteringMode.Label = string.Empty;
+      lblResolutions.Label = string.Empty;
+      lblShutterSpeed.Label = string.Empty;
+      lblViewComments.Label = string.Empty;
 
       using (ExifMetadata extractor = new ExifMetadata())
       {

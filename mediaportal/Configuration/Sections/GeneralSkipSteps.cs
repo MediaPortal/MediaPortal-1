@@ -94,7 +94,7 @@ namespace MediaPortal.Configuration.Sections
         try
         {
           regValue = xmlreader.GetValueAsString("movieplayer", "skipsteps", DEFAULT_SETTING);
-          if (regValue == String.Empty) // config after wizard run 1st
+          if (regValue == string.Empty) // config after wizard run 1st
           {
             regValue = DEFAULT_SETTING;
             Log.Info("GeneralSkipSteps - creating new Skip-Settings {0}", "");
@@ -123,7 +123,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        if (labelError.Text != String.Empty)
+        if (labelError.Text != string.Empty)
         {
           textBoxManualSkipSteps.Text = DEFAULT_SETTING;
         }
@@ -731,7 +731,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void RemoveStep(int stepsize)
     {
-      string newText = String.Empty;
+      string newText = string.Empty;
       foreach (string token in textBoxManualSkipSteps.Text.Split(new char[] { ',', ';', ' ' }))
       {
         if (token == string.Empty) continue;
@@ -748,12 +748,12 @@ namespace MediaPortal.Configuration.Sections
           return;
         }
       }
-      textBoxManualSkipSteps.Text = (newText.Length > 0 ? newText.Substring(0, newText.Length - 1) : String.Empty);
+      textBoxManualSkipSteps.Text = (newText.Length > 0 ? newText.Substring(0, newText.Length - 1) : string.Empty);
     }
 
     private void AddStep(int stepsize)
     {
-      string newText = String.Empty;
+      string newText = string.Empty;
       bool stepAdded = false;
       foreach (string token in textBoxManualSkipSteps.Text.Split(new char[] { ',', ';', ' ' }))
       {
@@ -784,7 +784,7 @@ namespace MediaPortal.Configuration.Sections
         newText += Convert.ToString(stepsize);
         newText += ",";
       }
-      textBoxManualSkipSteps.Text = (newText.Length > 0 ? newText.Substring(0, newText.Length - 1) : String.Empty);
+      textBoxManualSkipSteps.Text = (newText.Length > 0 ? newText.Substring(0, newText.Length - 1) : string.Empty);
     }
 
     private void SetError(string errorText)
@@ -792,7 +792,7 @@ namespace MediaPortal.Configuration.Sections
       if (errorText == null)
       {
         textBoxManualSkipSteps.BackColor = Color.White;
-        labelError.Text = String.Empty;
+        labelError.Text = string.Empty;
       }
       else
       {
@@ -828,7 +828,7 @@ namespace MediaPortal.Configuration.Sections
     private string ConvertToNewStyle(string strSteps)
     {
       int count = 0;
-      string newStyle = String.Empty;
+      string newStyle = string.Empty;
       foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
       {
         if (token == string.Empty)
@@ -869,7 +869,7 @@ namespace MediaPortal.Configuration.Sections
           return DEFAULT_SETTING;
         }
       }
-      return (newStyle == String.Empty ? String.Empty : newStyle.Substring(0, newStyle.Length - 1));
+      return (newStyle == string.Empty ? string.Empty : newStyle.Substring(0, newStyle.Length - 1));
     }
 
   }

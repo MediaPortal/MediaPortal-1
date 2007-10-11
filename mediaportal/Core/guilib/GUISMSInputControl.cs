@@ -544,7 +544,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         if (value == null) return;
-        if (value == String.Empty) return;
+        if (value == string.Empty) return;
         _font = GUIFontManager.GetFont(value);
         _fontName = value;
       }
@@ -559,7 +559,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         if (value == null) return;
-        if (value == String.Empty) return;
+        if (value == string.Empty) return;
         _font2 = GUIFontManager.GetFont(value);
         _fontName2 = value;
       }
@@ -574,7 +574,7 @@ namespace MediaPortal.GUI.Library
       set
       {
         if (value == null) return;
-        if (value == String.Empty) return;
+        if (value == string.Empty) return;
         _fontTextBox = GUIFontManager.GetFont(value);
         _textBoxFontName = value;
       }

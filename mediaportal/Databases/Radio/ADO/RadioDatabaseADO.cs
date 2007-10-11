@@ -1194,7 +1194,7 @@ namespace MediaPortal.Radio.Database
     public void RemoveOldPrograms()
     {
       //delete programs from database that are more than 1 day old
-      string strSQL = String.Empty;
+      string strSQL = string.Empty;
       try
       {
         System.DateTime yesterday = System.DateTime.Today.AddDays(-1);
@@ -1241,7 +1241,7 @@ namespace MediaPortal.Radio.Database
 
     public bool GetProgramsPerChannel(string strChannel1, long iStartTime, long iEndTime, ref List<TVProgram> progs)
     {
-      string strSQL = String.Empty;
+      string strSQL = string.Empty;
       progs.Clear();
       try
       {

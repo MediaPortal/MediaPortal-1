@@ -90,11 +90,11 @@ namespace MediaPortal.TV.Recording
         if (status != Status.Busy)
         {
           GUIPropertyManager.SetProperty("#TV.Transcoding.Percentage", "0");
-          GUIPropertyManager.SetProperty("#TV.Transcoding.File", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.Transcoding.Title", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.Transcoding.Genre", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.Transcoding.Description", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.Transcoding.Channel", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.Transcoding.File", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Transcoding.Title", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Transcoding.Genre", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Transcoding.Description", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Transcoding.Channel", string.Empty);
         }
         else
         {

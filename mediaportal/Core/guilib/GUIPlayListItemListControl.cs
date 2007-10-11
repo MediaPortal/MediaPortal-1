@@ -744,7 +744,7 @@ namespace MediaPortal.GUI.Library
       RenderScrollbar(timePassed, dwPosY);
 
       if (Focus)
-        GUIPropertyManager.SetProperty("#highlightedbutton", String.Empty);
+        GUIPropertyManager.SetProperty("#highlightedbutton", string.Empty);
     }
 
     protected override void RenderButton(float timePassed, int buttonNr, int x, int y, bool gotFocus)

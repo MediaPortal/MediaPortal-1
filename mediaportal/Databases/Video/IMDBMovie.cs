@@ -36,33 +36,33 @@ namespace MediaPortal.Video.Database
   public class IMDBMovie
   {
     int m_id = -1;
-    string m_strDirector = String.Empty;
-    string m_strWritingCredits = String.Empty;
-    string m_strGenre = String.Empty;
-    string m_strTagLine = String.Empty;
-    string m_strPlotOutline = String.Empty;
-    string m_strPlot = String.Empty;
-    string m_strPictureURL = String.Empty;
-    string m_strTitle = String.Empty;
-    string m_strVotes = String.Empty;
-    string m_strCast = String.Empty;
-    string m_strSearchString = String.Empty;
-    string m_strFile = String.Empty;
-    string m_strPath = String.Empty;
-    string m_strDVDLabel = String.Empty;
-    string m_strIMDBNumber = String.Empty;
-    string m_strDatabase = String.Empty;
-    string m_strCDLabel = String.Empty;
+    string m_strDirector = string.Empty;
+    string m_strWritingCredits = string.Empty;
+    string m_strGenre = string.Empty;
+    string m_strTagLine = string.Empty;
+    string m_strPlotOutline = string.Empty;
+    string m_strPlot = string.Empty;
+    string m_strPictureURL = string.Empty;
+    string m_strTitle = string.Empty;
+    string m_strVotes = string.Empty;
+    string m_strCast = string.Empty;
+    string m_strSearchString = string.Empty;
+    string m_strFile = string.Empty;
+    string m_strPath = string.Empty;
+    string m_strDVDLabel = string.Empty;
+    string m_strIMDBNumber = string.Empty;
+    string m_strDatabase = string.Empty;
+    string m_strCDLabel = string.Empty;
     int m_iTop250 = 0;
     int m_iYear = 1900;
     float m_fRating = 0.0f;
-    string m_strMPARating = String.Empty;
+    string m_strMPARating = string.Empty;
     int m_iRunTime = 0;
     int m_iWatched = 0;
     int m_actorid = -1;
     int m_genreid = -1;
-    string m_strActor = String.Empty;
-    string m_strgenre = String.Empty;
+    string m_strActor = string.Empty;
+    string m_strgenre = string.Empty;
 
     public IMDBMovie()
     {
@@ -76,7 +76,7 @@ namespace MediaPortal.Video.Database
     {
       get
       {
-        if ((m_strTitle != String.Empty) && (m_strTitle != Strings.Unknown)) return false;
+        if ((m_strTitle != string.Empty) && (m_strTitle != Strings.Unknown)) return false;
         return true;
       }
     }
@@ -218,23 +218,23 @@ namespace MediaPortal.Video.Database
     }
     public void Reset()
     {
-      m_strDirector = String.Empty;
-      m_strWritingCredits = String.Empty;
-      m_strGenre = String.Empty;
-      m_strTagLine = String.Empty;
-      m_strPlotOutline = String.Empty;
-      m_strPlot = String.Empty;
-      m_strPictureURL = String.Empty;
-      m_strTitle = String.Empty;
-      m_strVotes = String.Empty;
-      m_strCast = String.Empty;
-      m_strSearchString = String.Empty;
-      m_strIMDBNumber = String.Empty;
+      m_strDirector = string.Empty;
+      m_strWritingCredits = string.Empty;
+      m_strGenre = string.Empty;
+      m_strTagLine = string.Empty;
+      m_strPlotOutline = string.Empty;
+      m_strPlot = string.Empty;
+      m_strPictureURL = string.Empty;
+      m_strTitle = string.Empty;
+      m_strVotes = string.Empty;
+      m_strCast = string.Empty;
+      m_strSearchString = string.Empty;
+      m_strIMDBNumber = string.Empty;
       m_iTop250 = 0;
       m_iYear = 1900;
       m_fRating = 0.0f;
-      m_strDatabase = String.Empty;
-      m_strMPARating = String.Empty;
+      m_strDatabase = string.Empty;
+      m_strMPARating = string.Empty;
       m_iRunTime = 0;
       m_iWatched = 0;
     }

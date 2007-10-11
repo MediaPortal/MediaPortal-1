@@ -152,7 +152,7 @@ namespace MediaPortal.Util
     public ulong calc(string strline)
     {
       if (strline == null) return 0;
-      if (strline == String.Empty) return 0;
+      if (strline == string.Empty) return 0;
       try
       {
         using (MemoryStream stream = new MemoryStream())

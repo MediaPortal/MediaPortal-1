@@ -38,7 +38,7 @@ namespace MediaPortal.TV.Epg
 			char ch;
 			int i;
 			i = 0;
-			string output = String.Empty;
+			string output = string.Empty;
 			byte b = Marshal.ReadByte( ptr, 0 );
 			if( b < 0x20 )
 			{

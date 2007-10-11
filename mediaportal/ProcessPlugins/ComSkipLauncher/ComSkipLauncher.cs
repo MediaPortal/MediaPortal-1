@@ -186,7 +186,7 @@ namespace ProcessPlugins.ComSkipLauncher
 
     internal static string ProcessParameters(string input, string fileName, string channel)
     {
-      string output = String.Empty;
+      string output = string.Empty;
 
       try
       {

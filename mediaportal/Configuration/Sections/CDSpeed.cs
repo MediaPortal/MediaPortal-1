@@ -263,7 +263,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         //Set the Data Grid Source as the Data Table created above
-        dataGrid1.CaptionText = String.Empty;
+        dataGrid1.CaptionText = string.Empty;
         dataGrid1.DataSource = datasetFilters;
 
         //set style property when first time the grid loads, next time onwards it //will maintain its property
@@ -335,14 +335,14 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         ckEnableCDSpeed.Checked = reader.GetValueAsBool("cdspeed", "enabled", false);
-        _speedTableCD = reader.GetValueAsString("cdspeed", "drivespeedCD", String.Empty);
-        _disableCD = reader.GetValueAsString("cdspeed", "disableCD", String.Empty);
-        _speedTableDVD = reader.GetValueAsString("cdspeed", "drivespeedDVD", String.Empty);
-        _disableDVD = reader.GetValueAsString("cdspeed", "disableDVD", String.Empty);
+        _speedTableCD = reader.GetValueAsString("cdspeed", "drivespeedCD", string.Empty);
+        _disableCD = reader.GetValueAsString("cdspeed", "disableCD", string.Empty);
+        _speedTableDVD = reader.GetValueAsString("cdspeed", "drivespeedDVD", string.Empty);
+        _disableDVD = reader.GetValueAsString("cdspeed", "disableDVD", string.Empty);
       }
 
       // On first use, the table are empty and need to be filled with the max speed
-      if (_speedTableCD == String.Empty || _speedTableDVD == String.Empty)
+      if (_speedTableCD == string.Empty || _speedTableDVD == string.Empty)
       {
         BASS_CD_INFO cdinfo = new BASS_CD_INFO();
         StringBuilder builder = new StringBuilder();

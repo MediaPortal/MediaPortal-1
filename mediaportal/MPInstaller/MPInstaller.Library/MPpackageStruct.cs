@@ -20,10 +20,10 @@ namespace MediaPortal.MPInstaller
   public class MPpackageStruct
   {
     public MPinstallerStruct _intalerStruct = new MPinstallerStruct();
-    public string FileName = String.Empty;
-    public string txt_EULA = String.Empty;
-    public string txt_log = String.Empty;
-    public string txt_readme = String.Empty;
+    public string FileName = string.Empty;
+    public string txt_EULA = string.Empty;
+    public string txt_log = string.Empty;
+    public string txt_readme = string.Empty;
     public bool isNew = false;
     public bool isUpdated = false;
     public bool isLocal = false;
@@ -38,9 +38,9 @@ namespace MediaPortal.MPInstaller
 
     public MPpackageStruct()
     {
-      txt_EULA = String.Empty;
-      txt_log = String.Empty;
-      txt_readme = String.Empty;
+      txt_EULA = string.Empty;
+      txt_log = string.Empty;
+      txt_readme = string.Empty;
       containsSkin = false;
       containsPlugin = false;
       isValid = false;
@@ -331,7 +331,7 @@ namespace MediaPortal.MPInstaller
               {
                 if (fl.Type==MPinstallerStruct.TEXT_TYPE && fl.SubType==MPinstallerStruct.TEXT_EULA_TYPE)
                 {
-                  txt_EULA = String.Empty;
+                  txt_EULA = string.Empty;
                   while ((nb = s.Read(data, 0, data.Length)) > 0)
                   {
                     txt_EULA += new ASCIIEncoding().GetString(data, 0, data.Length);
@@ -339,7 +339,7 @@ namespace MediaPortal.MPInstaller
                 }
                 if (fl.Type == MPinstallerStruct.TEXT_TYPE && fl.SubType == MPinstallerStruct.TEXT_LOG_TYPE)
                 {
-                  txt_log = String.Empty;
+                  txt_log = string.Empty;
                   while ((nb = s.Read(data, 0, data.Length)) > 0)
                   {
                     txt_log += new ASCIIEncoding().GetString(data, 0, data.Length);
@@ -347,7 +347,7 @@ namespace MediaPortal.MPInstaller
                 }
                 if (fl.Type == MPinstallerStruct.TEXT_TYPE && fl.SubType == MPinstallerStruct.TEXT_README_TYPE)
                 {
-                  txt_readme = String.Empty;
+                  txt_readme = string.Empty;
                   while ((nb = s.Read(data, 0, data.Length)) > 0)
                   {
                     txt_readme += new ASCIIEncoding().GetString(data, 0, data.Length);
@@ -831,7 +831,7 @@ namespace MediaPortal.MPInstaller
     public bool SaveMap_old(string strFileName)
     {
       if (strFileName == null) return false;
-      if (strFileName == String.Empty) return false;
+      if (strFileName == string.Empty) return false;
       try
       {
         this.Language.Sort(new LanguageStringComparer());
@@ -876,7 +876,7 @@ namespace MediaPortal.MPInstaller
     public bool SaveMap(string strFileName)
     {
       if (strFileName == null) return false;
-      if (strFileName == String.Empty) return false;
+      if (strFileName == string.Empty) return false;
       try
       {
         this.Language.Sort(new LanguageStringComparer());
@@ -924,7 +924,7 @@ namespace MediaPortal.MPInstaller
         this.iChars = string.Empty;
         this.Language.Clear();
         if (strFileName == null) return false;
-        if (strFileName == String.Empty) return false;
+        if (strFileName == string.Empty) return false;
         try
         {
           XmlDocument doc = new XmlDocument();
@@ -951,13 +951,13 @@ namespace MediaPortal.MPInstaller
             XmlAttribute prefix = node.Attributes["Prefix"];
             if (prefix != null)
               ls.prefix = prefix.Value;
-            else ls.prefix = String.Empty;
+            else ls.prefix = string.Empty;
             ls.mapSting = node.SelectSingleNode("value").InnerText;
             XmlAttribute suffix = node.Attributes["Suffix"];
             if (suffix != null)
               ls.sufix = suffix.Value;
             else
-              ls.sufix = String.Empty;
+              ls.sufix = string.Empty;
             this.Language.Add(ls);
           }
           reader.Close();
@@ -978,7 +978,7 @@ namespace MediaPortal.MPInstaller
       this.iChars = string.Empty;
       this.Language.Clear();
       if (strFileName == null) return false;
-      if (strFileName == String.Empty) return false;
+      if (strFileName == string.Empty) return false;
       try
       {
         XmlDocument doc = new XmlDocument();
@@ -1003,13 +1003,13 @@ namespace MediaPortal.MPInstaller
           XmlAttribute prefix = node.Attributes["prefix"];
           if (prefix != null)
             ls.prefix = prefix.Value;
-          else ls.prefix = String.Empty;
+          else ls.prefix = string.Empty;
           ls.mapSting = node.InnerText;
           XmlAttribute suffix = node.Attributes["suffix"];
           if (suffix != null)
             ls.sufix = suffix.Value;
           else
-            ls.sufix = String.Empty;
+            ls.sufix = string.Empty;
           this.Language.Add(ls);
         }
         reader.Close();

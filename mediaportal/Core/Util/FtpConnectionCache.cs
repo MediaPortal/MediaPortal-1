@@ -47,15 +47,15 @@ namespace MediaPortal.Util
     class FtpConnection
     {
       public FTPClient Connection = null;				//current FTP connection
-      public string HostName = String.Empty;		//host name
-      public string LoginName = String.Empty;	  //loginname
-      public string Password = String.Empty;		//password
+      public string HostName = string.Empty;		//host name
+      public string LoginName = string.Empty;	  //loginname
+      public string Password = string.Empty;		//password
       public int Port = 21;								    	//tcp/ip port of the server
       public bool Busy = false;						      //Flag indicating if we are busy downloading a file
       public bool PASV = false;                 //use passive mode
-      public string RemoteFileName = String.Empty;	//remote file we're downloading
-      public string LocalFileName = String.Empty;	 //local file where download is stored
-      public string OriginalRemoteFileName = String.Empty;	//original remote filename
+      public string RemoteFileName = string.Empty;	//remote file we're downloading
+      public string LocalFileName = string.Empty;	 //local file where download is stored
+      public string OriginalRemoteFileName = string.Empty;	//original remote filename
       public long BytesTransferred = 0;			    // bytes transferred
       public long BytesOffset = 0;					  	// bytes offset when resuming an ftp download
 
@@ -155,9 +155,9 @@ namespace MediaPortal.Util
         string folder = orgremoteFile.Substring("remote:".Length);
         folder = folder.Substring(0, folder.Length - (name.Length + 1));
         string[] subitems = folder.Split(new char[] { '?' });
-        if (subitems[4] == String.Empty) subitems[4] = "/";
+        if (subitems[4] == string.Empty) subitems[4] = "/";
         bool fileExists = false;
-        string tmpDir = String.Empty;
+        string tmpDir = string.Empty;
         FTPFile[] files;
         try
         {

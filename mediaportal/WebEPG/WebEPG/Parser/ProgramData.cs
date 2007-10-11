@@ -42,11 +42,11 @@ namespace MediaPortal.WebEPG.Parser
   public class ProgramData : IParserData
   {
     #region Variables
-    private string _channelId = String.Empty;
-    private string _title = String.Empty;
-    private string _subTitle = String.Empty;
-    private string _description = String.Empty;
-    private string _genre = String.Empty;
+    private string _channelId = string.Empty;
+    private string _title = string.Empty;
+    private string _subTitle = string.Empty;
+    private string _description = string.Empty;
+    private string _genre = string.Empty;
     private List<string> _actors;
     private DataPreference _preference;
     private HTTPRequest _sublink;

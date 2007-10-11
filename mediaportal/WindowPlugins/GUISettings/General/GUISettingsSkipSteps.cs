@@ -98,14 +98,14 @@ namespace WindowPlugins.GUISettings
       base.OnPageLoad();
       //Load settings
       Log.Info("GUISkipSteps: {0}", "Load settings");
-      string regValue = String.Empty;
+      string regValue = string.Empty;
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         try
         {
           regValue = xmlreader.GetValueAsString("movieplayer", "skipsteps", DEFAULT_SETTING);
-          if (regValue == String.Empty) // config after wizard run 1st
+          if (regValue == string.Empty) // config after wizard run 1st
           {
             regValue = DEFAULT_SETTING;
             Log.Info("GeneralSkipSteps - creating new Skip-Settings {0}", "");
@@ -220,7 +220,7 @@ namespace WindowPlugins.GUISettings
         vk.Reset();
         vk.DoModal(GetID);
         string newStep = vk.Text;
-        if (newStep == String.Empty || newStep == null) return;
+        if (newStep == string.Empty || newStep == null) return;
         string error = verifySkipStep(newStep);
         if (error != null)
         {
@@ -411,7 +411,7 @@ namespace WindowPlugins.GUISettings
         default: break; // Do nothing
       }
 
-      string newText = String.Empty;
+      string newText = string.Empty;
       bool stepAdded = false;
       foreach (string token in labelCurrent.Label.Split(new char[] { ',', ';', ' ' }))
       {
@@ -442,7 +442,7 @@ namespace WindowPlugins.GUISettings
         newText += Convert.ToString(stepsize);
         newText += ",";
       }
-      labelCurrent.Label = (newText.Length > 0 ? newText.Substring(0, newText.Length - 1) : String.Empty);
+      labelCurrent.Label = (newText.Length > 0 ? newText.Substring(0, newText.Length - 1) : string.Empty);
     }
 
     private void RemoveStep(int stepsize)
@@ -468,7 +468,7 @@ namespace WindowPlugins.GUISettings
         default: break; // Do nothing
       }
 
-      string newText = String.Empty;
+      string newText = string.Empty;
       foreach (string token in labelCurrent.Label.Split(new char[] { ',', ';', ' ' }))
       {
         if (token == string.Empty) continue;
@@ -485,7 +485,7 @@ namespace WindowPlugins.GUISettings
           return;
         }
       }
-      labelCurrent.Label = (newText.Length > 0 ? newText.Substring(0, newText.Length - 1) : String.Empty);
+      labelCurrent.Label = (newText.Length > 0 ? newText.Substring(0, newText.Length - 1) : string.Empty);
     }
 
     #endregion
@@ -519,7 +519,7 @@ namespace WindowPlugins.GUISettings
     private string ConvertToNewStyle(string strSteps)
     {
       int count = 0;
-      string newStyle = String.Empty;
+      string newStyle = string.Empty;
       foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
       {
         if (token == string.Empty)
@@ -560,7 +560,7 @@ namespace WindowPlugins.GUISettings
           return DEFAULT_SETTING;
         }
       }
-      return (newStyle == String.Empty ? String.Empty : newStyle.Substring(0, newStyle.Length - 1));
+      return (newStyle == string.Empty ? string.Empty : newStyle.Substring(0, newStyle.Length - 1));
     }
 
     #endregion

@@ -34,24 +34,24 @@ namespace MediaPortal.Webepg.TV.Database
   /// </summary>
   public class TVProgram //: IComparable
 	{
-		string _strChannel=String.Empty;
-    string _strGenre=String.Empty;
-    string _strTitle=String.Empty;
-    string _strEpisode=String.Empty;
-    string _strDescription=String.Empty;
-    string _strRepeat=String.Empty;
-    string _strDate=String.Empty;
-    string _strSeriesNum=String.Empty;
-    string _strEpisodeNum=String.Empty;
-    string _strEpisodePart=String.Empty;
-    string _strEpisodeFullDetails=String.Empty;
-    string _strStarRating=String.Empty;
-    string _strClassification=String.Empty;
+		string _strChannel=string.Empty;
+    string _strGenre=string.Empty;
+    string _strTitle=string.Empty;
+    string _strEpisode=string.Empty;
+    string _strDescription=string.Empty;
+    string _strRepeat=string.Empty;
+    string _strDate=string.Empty;
+    string _strSeriesNum=string.Empty;
+    string _strEpisodeNum=string.Empty;
+    string _strEpisodePart=string.Empty;
+    string _strEpisodeFullDetails=string.Empty;
+    string _strStarRating=string.Empty;
+    string _strClassification=string.Empty;
     long   _iStartTime=0;
     long   _iEndTime=0;
     int    _iID=0;
-    string _strDuration=String.Empty;
-    string _strTimeFromNow=String.Empty;
+    string _strDuration=string.Empty;
+    string _strTimeFromNow=string.Empty;
     /// <summary>
     /// Constructor
     /// </summary>
@@ -360,7 +360,7 @@ namespace MediaPortal.Webepg.TV.Database
 //    {
 //      if (_strTitle == "No TVGuide data available") return;
 //      string space = " ";
-//      string strRemaining=String.Empty;
+//      string strRemaining=string.Empty;
 //      DateTime progStart = longtodate(_iStartTime);
 //      TimeSpan timeRelative = progStart.Subtract(DateTime.Now);
 //      if (timeRelative.Days==0)
@@ -444,14 +444,14 @@ namespace MediaPortal.Webepg.TV.Database
 //    {
 //      string space = " ";
 //      StringBuilder epDetail = new StringBuilder();
-//      if ((_strEpisode != "-")&(_strEpisode !=String.Empty)) epDetail.Append(_strEpisode);
-//      if ((_strSeriesNum !="-")&(_strSeriesNum !=String.Empty))
+//      if ((_strEpisode != "-")&(_strEpisode !=string.Empty)) epDetail.Append(_strEpisode);
+//      if ((_strSeriesNum !="-")&(_strSeriesNum !=string.Empty))
 //      {
 //        epDetail.Append(space+"()");
 //        epDetail.Insert(epDetail.Length-1,GUILocalizeStrings.Get(3019)+space+_strSeriesNum);
 //      }
-//      if ((_strEpisodeNum !="-")&(_strEpisodeNum !=String.Empty)) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3020)+space+_strEpisodeNum);
-//      if ((_strEpisodePart !="-")&(_strEpisodePart !=String.Empty)) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3021)+space+_strEpisodePart.Substring(0,1)+space+GUILocalizeStrings.Get(3022)+space+_strEpisodePart.Substring(2,1));
+//      if ((_strEpisodeNum !="-")&(_strEpisodeNum !=string.Empty)) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3020)+space+_strEpisodeNum);
+//      if ((_strEpisodePart !="-")&(_strEpisodePart !=string.Empty)) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3021)+space+_strEpisodePart.Substring(0,1)+space+GUILocalizeStrings.Get(3022)+space+_strEpisodePart.Substring(2,1));
 //      _strEpisodeFullDetails = epDetail.ToString();
 //		}
 //		#region IComparable Members

@@ -172,7 +172,7 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValue("weather", "speed", (int)selectedWindUnit);
 
-        string temperature = String.Empty;
+        string temperature = string.Empty;
 
         if (temperatureComboBox.Text.Equals("Celsius"))
           temperature = "C";
@@ -194,14 +194,14 @@ namespace MediaPortal.Configuration.Sections
           string cityHumid = String.Format("humid{0}", index);
           string cityPrecip = String.Format("precip{0}", index);
 
-          string cityNameData = String.Empty;
-          string cityCodeData = String.Empty;
-          string citySatData = String.Empty;
-          string cityTempData = String.Empty;
-          string cityUVData = String.Empty;
-          string cityWindsData = String.Empty;
-          string cityHumidData = String.Empty;
-          string cityPrecipData = String.Empty;
+          string cityNameData = string.Empty;
+          string cityCodeData = string.Empty;
+          string citySatData = string.Empty;
+          string cityTempData = string.Empty;
+          string cityUVData = string.Empty;
+          string cityWindsData = string.Empty;
+          string cityHumidData = string.Empty;
+          string cityPrecipData = string.Empty;
 
           if (citiesListView.Items != null && citiesListView.Items.Count > index)
           {

@@ -120,7 +120,7 @@ namespace MediaPortal.Utils.Web
         }        
 
         List<String> responseStrings = new List<string>();
-        String tmp = String.Empty;
+        String tmp = string.Empty;
         while ((tmp = reader.ReadLine()) != null)
           responseStrings.Add(tmp);
 

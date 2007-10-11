@@ -282,7 +282,7 @@ namespace MediaPortal.GUI.TV
       // start viewing tv... 
       GUIGraphicsContext.IsFullScreenVideo = false;
       string channelName = Navigator.CurrentChannel;
-      if (Navigator.CurrentChannel == String.Empty)
+      if (Navigator.CurrentChannel == string.Empty)
       {
         if (Navigator.CurrentGroup == null && Navigator.Groups.Count > 0)
         {
@@ -297,7 +297,7 @@ namespace MediaPortal.GUI.TV
         }
       }
 
-      if (channelName != String.Empty)
+      if (channelName != string.Empty)
       {
         if (Recorder.View)
         {
@@ -897,9 +897,9 @@ namespace MediaPortal.GUI.TV
     {
       // TODO:  Add GUITVHome.GetHome implementation
       strButtonText = GUILocalizeStrings.Get(605);
-      strButtonImage = String.Empty;
-      strButtonImageFocus = String.Empty;
-      strPictureImage = String.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
+      strPictureImage = string.Empty;
       return true;
     }
 
@@ -946,7 +946,7 @@ namespace MediaPortal.GUI.TV
 
     private List<TVGroup> m_groups = new List<TVGroup>(); // Contains all channel groups (including an "all channels" group)
     private int m_currentgroup = 0;
-    private string m_currentchannel = String.Empty;
+    private string m_currentchannel = string.Empty;
     private DateTime m_zaptime;
     private long m_zapdelay;
     private string m_zapchannel = null;
@@ -1141,7 +1141,7 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     public void UpdateCurrentChannel()
     {
-      string newChannel = String.Empty;
+      string newChannel = string.Empty;
       //if current card is watching tv then use that channel
       if (Recorder.IsViewing() || Recorder.IsTimeShifting())
       {
@@ -1162,9 +1162,9 @@ namespace MediaPortal.GUI.TV
           }
         }
       }
-      if (newChannel == String.Empty)
+      if (newChannel == string.Empty)
         newChannel = m_currentchannel;
-      if (m_currentchannel != newChannel && newChannel != String.Empty)
+      if (m_currentchannel != newChannel && newChannel != string.Empty)
       {
         m_currentchannel = newChannel;
         m_currentTvChannel = GetTVChannel(m_currentchannel);
@@ -1246,7 +1246,7 @@ namespace MediaPortal.GUI.TV
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToNextChannel(bool useZapDelay)
     {
-      string currentChan = String.Empty;
+      string currentChan = string.Empty;
       int currindex;
       if (m_zapchannel == null)
       {
@@ -1285,7 +1285,7 @@ namespace MediaPortal.GUI.TV
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToPreviousChannel(bool useZapDelay)
     {
-      string currentChan = String.Empty;
+      string currentChan = string.Empty;
       int currindex;
       if (m_zapchannel == null)
       {
@@ -1391,7 +1391,7 @@ namespace MediaPortal.GUI.TV
       m_groups.Add(tvgroup);
       m_groups.AddRange(groups); // Add rest of the groups to the end of the list
 
-      if (m_currentchannel.Trim() == String.Empty)
+      if (m_currentchannel.Trim() == string.Empty)
       {
         TVGroup group = (TVGroup)m_groups[m_currentgroup];
         m_currentchannel = ((TVChannel)group.TvChannels[0]).Name;
@@ -1446,7 +1446,7 @@ namespace MediaPortal.GUI.TV
 
     public void LoadSettings(MediaPortal.Profile.Settings xmlreader)
     {
-      m_currentchannel = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
+      m_currentchannel = xmlreader.GetValueAsString("mytv", "channel", string.Empty);
       m_zapdelay = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
       string groupname = xmlreader.GetValueAsString("mytv", "group", GUILocalizeStrings.Get(972));
       m_currentgroup = GetGroupIndex(groupname);
@@ -1465,10 +1465,10 @@ namespace MediaPortal.GUI.TV
 
     public void SaveSettings(MediaPortal.Profile.Settings xmlwriter)
     {
-      if (m_currentchannel.Trim() != String.Empty)
+      if (m_currentchannel.Trim() != string.Empty)
         xmlwriter.SetValue("mytv", "channel", m_currentchannel);
 
-      if (CurrentGroup.GroupName.Trim() != String.Empty)
+      if (CurrentGroup.GroupName.Trim() != string.Empty)
         xmlwriter.SetValue("mytv", "group", CurrentGroup.GroupName);
     }
 

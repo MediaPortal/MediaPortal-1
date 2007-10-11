@@ -35,8 +35,8 @@ namespace MediaPortal.MPInstaller
 {
   public partial class SkinSelect : Form
   {
-    public string Type = String.Empty;
-    public string SubType = String.Empty;
+    public string Type = string.Empty;
+    public string SubType = string.Empty;
     public SkinSelect()
     {
       InitializeComponent();

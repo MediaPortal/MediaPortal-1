@@ -96,7 +96,7 @@ namespace MediaPortal.Tests.Commands
     {
       CommandProcessor proc = new CommandProcessor();
       Assert.AreEqual(proc.CurrentCardIndex, -1);
-      Assert.AreEqual(proc.TVChannelName, String.Empty);
+      Assert.AreEqual(proc.TVChannelName, string.Empty);
     }
     [Test]
     public void TestDummyCommand()

@@ -320,10 +320,10 @@ namespace MediaPortal.ProcessPlugins.WebEPG
 
     public bool GetHome(out string buttonText, out string buttonImage, out string imageFocus, out string pictureImage)
     {
-      buttonText = String.Empty;
-      buttonImage = String.Empty;
-      imageFocus = String.Empty;
-      pictureImage = String.Empty;
+      buttonText = string.Empty;
+      buttonImage = string.Empty;
+      imageFocus = string.Empty;
+      pictureImage = string.Empty;
       return false;
     }
 

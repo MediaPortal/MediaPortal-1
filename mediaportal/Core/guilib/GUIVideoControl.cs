@@ -98,7 +98,7 @@ namespace MediaPortal.GUI.Library
 
     public override bool CanFocus()
     {
-      if (_imageFocusRectangle.FileName==String.Empty) return false;
+      if (_imageFocusRectangle.FileName==string.Empty) return false;
       return true;
     }
 

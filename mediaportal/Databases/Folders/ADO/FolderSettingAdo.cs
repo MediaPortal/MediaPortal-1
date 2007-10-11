@@ -76,7 +76,7 @@ namespace Databases.Folders.SqlServer
     int AddPath(string filteredPath)
     {
       if (filteredPath == null) return -1;
-      if (filteredPath == String.Empty) return -1;
+      if (filteredPath == string.Empty) return -1;
       try
       {
         string sql = String.Format("select * from tblFolderPath where strPath like '{0}'", filteredPath);
@@ -111,9 +111,9 @@ namespace Databases.Folders.SqlServer
     public void DeleteFolderSetting(string path, string Key)
     {
       if (path == null) return;
-      if (path == String.Empty) return;
+      if (path == string.Empty) return;
       if (Key == null) return;
-      if (Key == String.Empty) return;
+      if (Key == string.Empty) return;
       try
       {
         string pathFiltered = Utils.RemoveTrailingSlash(path);
@@ -135,9 +135,9 @@ namespace Databases.Folders.SqlServer
     public void AddFolderSetting(string path, string key, Type type, object Value)
     {
       if (path == null) return;
-      if (path == String.Empty) return;
+      if (path == string.Empty) return;
       if (key == null) return;
-      if (key == String.Empty) return;
+      if (key == string.Empty) return;
 
       try
       {
@@ -185,9 +185,9 @@ namespace Databases.Folders.SqlServer
     {
       valueObject=null;
 			if (path==null) return;
-			if (path==String.Empty) return;
+			if (path==string.Empty) return;
 			if (key==null) return;
-			if (key==String.Empty) return;
+			if (key==string.Empty) return;
 
       try
       {
@@ -199,7 +199,7 @@ namespace Databases.Folders.SqlServer
         int idPath=AddPath(pathFiltered);
         if (idPath<0) return ;
         
-        string strValue=String.Empty;
+        string strValue=string.Empty;
         string sql = String.Format("select * from tblFolderSetting where idPath={0} and tagName like '{1}'", idPath, keyFiltered);
         using (SqlCommand cmd = _connection.CreateCommand())
         {

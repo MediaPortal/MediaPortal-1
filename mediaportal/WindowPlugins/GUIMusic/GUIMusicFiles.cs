@@ -128,21 +128,21 @@ namespace MediaPortal.GUI.Music
     MapSettings _MapSettings = new MapSettings();
 
     DirectoryHistory m_history = new DirectoryHistory();
-    string currentFolder = String.Empty;
-    string m_strDirectoryStart = String.Empty;
+    string currentFolder = string.Empty;
+    string m_strDirectoryStart = string.Empty;
     int m_iItemSelected = -1;
     GUIListItem m_itemItemSelected = null;
     VirtualDirectory _virtualDirectory = new VirtualDirectory();
     bool m_bScan = false;
     bool m_bAutoShuffle = true;
-    string m_strDiscId = String.Empty;
-    string m_strCurrentFolder = String.Empty;
+    string m_strDiscId = string.Empty;
+    string m_strCurrentFolder = string.Empty;
     int m_iSelectedAlbum = -1;
     static Freedb.CDInfoDetail m_musicCD = null;
     // File menu
-    string m_strDestination = String.Empty;
+    string m_strDestination = string.Empty;
     bool m_bFileMenuEnabled = false;
-    string m_strFileMenuPinCode = String.Empty;
+    string m_strFileMenuPinCode = string.Empty;
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
@@ -159,7 +159,7 @@ namespace MediaPortal.GUI.Music
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
-        MusicState.View = xmlreader.GetValueAsString("music", "startview", String.Empty);
+        MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
       }
 
       GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
@@ -195,11 +195,11 @@ namespace MediaPortal.GUI.Music
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         m_bFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        m_strFileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
+        m_strFileMenuPinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
 
         m_bAutoShuffle = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", true);
 
-        string strDefault = xmlreader.GetValueAsString("music", "default", String.Empty);
+        string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
         _virtualDirectory.Clear();
         for (int i = 0; i < 20; i++)
         {
@@ -216,8 +216,8 @@ namespace MediaPortal.GUI.Music
           string shareViewPath = String.Format("shareview{0}", i);
 
           Share share = new Share();
-          share.Name = xmlreader.GetValueAsString("music", strShareName, String.Empty);
-          share.Path = xmlreader.GetValueAsString("music", strSharePath, String.Empty);
+          share.Name = xmlreader.GetValueAsString("music", strShareName, string.Empty);
+          share.Path = xmlreader.GetValueAsString("music", strSharePath, string.Empty);
           string pinCode = MediaPortal.Util.Utils.DecryptPin(xmlreader.GetValueAsString("music", strPincode, string.Empty));
           if (pinCode != string.Empty)
             share.Pincode = Convert.ToInt32(pinCode);
@@ -225,9 +225,9 @@ namespace MediaPortal.GUI.Music
             share.Pincode = -1;
 
           share.IsFtpShare = xmlreader.GetValueAsBool("music", shareType, false);
-          share.FtpServer = xmlreader.GetValueAsString("music", shareServer, String.Empty);
-          share.FtpLoginName = xmlreader.GetValueAsString("music", shareLogin, String.Empty);
-          share.FtpPassword = xmlreader.GetValueAsString("music", sharePwd, String.Empty);
+          share.FtpServer = xmlreader.GetValueAsString("music", shareServer, string.Empty);
+          share.FtpLoginName = xmlreader.GetValueAsString("music", shareLogin, string.Empty);
+          share.FtpPassword = xmlreader.GetValueAsString("music", sharePwd, string.Empty);
           share.FtpPort = xmlreader.GetValueAsInt("music", sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString("music", remoteFolder, "/");
           share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("music", shareViewPath, (int)Share.Views.List);
@@ -283,7 +283,7 @@ namespace MediaPortal.GUI.Music
 
     public override bool Init()
     {
-      currentFolder = String.Empty;
+      currentFolder = string.Empty;
 
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mymusicsongs.xml");
       return bResult;
@@ -459,7 +459,7 @@ namespace MediaPortal.GUI.Music
           if ((MediaPortal.Util.Utils.GetDriveType(c + ":") & 5) == 5)
           {
             // Only try to play a CD if we got a valid Serial Number, which means a CD is inserted.
-            if (MediaPortal.Util.Utils.GetDriveSerial(c + ":") != String.Empty)
+            if (MediaPortal.Util.Utils.GetDriveSerial(c + ":") != string.Empty)
             {
               OnPlayCD(c + ":", false);
               break;
@@ -490,7 +490,7 @@ namespace MediaPortal.GUI.Music
           {
             if (MediaPortal.Util.Utils.IsDVD(currentFolder))
             {
-              currentFolder = String.Empty;
+              currentFolder = string.Empty;
               LoadDirectory(currentFolder);
             }
           }
@@ -515,9 +515,9 @@ namespace MediaPortal.GUI.Music
 
         case GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED:
         case GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED:
-          if (currentFolder == String.Empty || currentFolder.Substring(0, 2) == message.Label)
+          if (currentFolder == string.Empty || currentFolder.Substring(0, 2) == message.Label)
           {
-            currentFolder = String.Empty;
+            currentFolder = string.Empty;
             LoadDirectory(currentFolder);
           }
           break;
@@ -552,7 +552,7 @@ namespace MediaPortal.GUI.Music
       {
         if (item.Label == "..")
           isUpFolder = true;
-        if ((System.IO.Path.GetFileName(item.Path) != String.Empty) || isCD && !isDVD)
+        if ((System.IO.Path.GetFileName(item.Path) != string.Empty) || isCD && !isDVD)
         {
           if (!isUpFolder)
           {
@@ -650,7 +650,7 @@ namespace MediaPortal.GUI.Music
             MediaPortal.Util.Utils.EjectCDROM();
           else
             MediaPortal.Util.Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
-          LoadDirectory(String.Empty);
+          LoadDirectory(string.Empty);
           break;
 
         case 930: // add to favorites
@@ -668,9 +668,9 @@ namespace MediaPortal.GUI.Music
         case 500: // File menu
           {
             // get pincode
-            if (m_strFileMenuPinCode != String.Empty)
+            if (m_strFileMenuPinCode != string.Empty)
             {
-              string strUserCode = String.Empty;
+              string strUserCode = string.Empty;
               if (GetUserInputString(ref strUserCode) && strUserCode == m_strFileMenuPinCode)
               {
                 OnShowFileMenu();
@@ -730,7 +730,7 @@ namespace MediaPortal.GUI.Music
             }
             else
             {
-              LoadDirectory(String.Empty);
+              LoadDirectory(string.Empty);
               if (facadeView.Count <= 0)
               {
                 GUIControl.FocusControl(GetID, btnViewAs.GetID);
@@ -939,7 +939,7 @@ namespace MediaPortal.GUI.Music
         {
           pDlgOK.SetHeading(703);
           pDlgOK.SetLine(1, 703);
-          pDlgOK.SetLine(2, String.Empty);
+          pDlgOK.SetLine(2, string.Empty);
           pDlgOK.DoModal(GetID);
 
           //throw new Exception("no internet");
@@ -1083,7 +1083,7 @@ namespace MediaPortal.GUI.Music
       GUIListItem dirUp = new GUIListItem("..");
       dirUp.Path = currentFolder; // to get where we are
       dirUp.IsFolder = true;
-      dirUp.ThumbnailImage = String.Empty;
+      dirUp.ThumbnailImage = string.Empty;
       dirUp.IconImage = "defaultFolderBack.png";
       dirUp.IconImageBig = "defaultFolderBackBig.png";
       itemlist.Insert(0, dirUp);
@@ -1111,7 +1111,7 @@ namespace MediaPortal.GUI.Music
 
     void LoadFolderSettings(string folderName)
     {
-      if (folderName == String.Empty)
+      if (folderName == string.Empty)
         folderName = "root";
       object o;
       FolderSettings.GetFolderSetting(folderName, "MusicFiles", typeof(GUIMusicFiles.MapSettings), out o);
@@ -1146,7 +1146,7 @@ namespace MediaPortal.GUI.Music
 
     void SaveFolderSettings(string strDirectory)
     {
-      if (strDirectory == String.Empty)
+      if (strDirectory == string.Empty)
         strDirectory = "root";
       _MapSettings.SortAscending = CurrentSortAsc;
       _MapSettings.SortBy = (int)CurrentSortMethod;
@@ -1242,7 +1242,7 @@ namespace MediaPortal.GUI.Music
     {
       if (isfolder)
       {
-        string strFolderThumb = String.Empty;        
+        string strFolderThumb = string.Empty;        
         strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumbForDir(filename);
 
         if (System.IO.File.Exists(strFolderThumb))
@@ -1260,8 +1260,8 @@ namespace MediaPortal.GUI.Music
         return string.Empty;
       }
 
-      string strAlbumName = String.Empty;
-      string strArtistName = String.Empty;
+      string strAlbumName = string.Empty;
+      string strArtistName = string.Empty;
       if (tag != null)
       {
         if (tag.Album.Length > 0)
@@ -1290,7 +1290,7 @@ namespace MediaPortal.GUI.Music
 
     int GetCDATrackNumber(string strFile)
     {
-      string strTrack = String.Empty;
+      string strTrack = string.Empty;
       int pos = strFile.IndexOf(".cda");
       if (pos >= 0)
       {
@@ -1538,9 +1538,9 @@ namespace MediaPortal.GUI.Music
                 if (null != pDlgOK && !Util.Win32API.IsConnectedToInternet())
                 {
                   pDlgOK.SetHeading(703);
-                  //pDlgOK.SetLine(0, String.Empty);
+                  //pDlgOK.SetLine(0, string.Empty);
                   pDlgOK.SetLine(1, 703);
-                  pDlgOK.SetLine(2, String.Empty);
+                  pDlgOK.SetLine(2, string.Empty);
                   pDlgOK.DoModal(GetID);
 
                   //throw new Exception("no internet");
@@ -1645,7 +1645,7 @@ namespace MediaPortal.GUI.Music
                     // prob hidden track									
                     tag.Artist = GUIMusicFiles.MusicCD.Artist;
                     tag.Duration = -1;
-                    tag.Title = String.Empty;
+                    tag.Title = string.Empty;
                     tag.Track = -1;
                     pItem.Label = pItem.Path;
                   }
@@ -1791,7 +1791,7 @@ namespace MediaPortal.GUI.Music
         string strPath = System.IO.Path.GetFileName(currentFolder);
         dlg.SetHeading(189);
         dlg.SetLine(1, 330);
-        //dlg.SetLine(1, String.Empty);
+        //dlg.SetLine(1, string.Empty);
         dlg.SetLine(2, strPath);
         dlg.StartModal(GetID);
       }
@@ -1800,7 +1800,7 @@ namespace MediaPortal.GUI.Music
       if (DoScan(currentFolder, ref items))
       {
         dlg.SetLine(1, 328);
-        dlg.SetLine(2, String.Empty);
+        dlg.SetLine(2, string.Empty);
         dlg.SetLine(3, 330);
         dlg.Progress();
         m_database.CommitTransaction();
@@ -2118,9 +2118,9 @@ namespace MediaPortal.GUI.Music
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       strButtonText = GUILocalizeStrings.Get(2);
-      strButtonImage = String.Empty;
-      strButtonImageFocus = String.Empty;
-      strPictureImage = String.Empty;
+      strButtonImage = string.Empty;
+      strButtonImageFocus = string.Empty;
+      strPictureImage = string.Empty;
       return true;
     }
 

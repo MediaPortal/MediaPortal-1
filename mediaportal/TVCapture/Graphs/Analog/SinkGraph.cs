@@ -97,7 +97,7 @@ namespace MediaPortal.TV.Recording
     protected bool _hasTeletext = false;
     bool _isTuning = false;
     protected string _TVTunerMoniker = string.Empty;
-    protected string _lastError = String.Empty;
+    protected string _lastError = string.Empty;
 
     /// <summary>
     /// Constructor
@@ -1697,7 +1697,7 @@ namespace MediaPortal.TV.Recording
     }
     public string RadioTimeshiftFileName()
     {
-      return String.Empty;
+      return string.Empty;
     }
 
     public void GrabTeletext( bool yesNo )

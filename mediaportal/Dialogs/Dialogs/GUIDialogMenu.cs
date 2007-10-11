@@ -42,7 +42,7 @@ namespace MediaPortal.Dialogs
     protected int selectedItemIndex = -1;
     protected int selectedId = -1;
     protected bool showQuickNumbers = true;
-    protected string selectedItemLabel = String.Empty;
+    protected string selectedItemLabel = string.Empty;
     protected ArrayList listItems = new ArrayList();
     protected DateTime keyTimer = DateTime.Now;
     protected string keySelection = string.Empty;

@@ -44,11 +44,11 @@ namespace MediaPortal.GUI.Video
 
 
     DirectoryHistory m_history = new DirectoryHistory();
-    string currentFolder = String.Empty;
+    string currentFolder = string.Empty;
     int currentSelectedItem = -1;
     int previousControlId = 0;
     int m_nTempPlayListWindow = 0;
-    string m_strTempPlayListDirectory = String.Empty;
+    string m_strTempPlayListDirectory = string.Empty;
     VirtualDirectory m_directory = new VirtualDirectory();
     //PlayListPlayer playlistPlayer;
     #endregion
@@ -137,7 +137,7 @@ namespace MediaPortal.GUI.Video
       currentView = View.PlayList;
       facadeView.View = GUIFacadeControl.ViewMode.Playlist;
 
-      LoadDirectory(String.Empty);
+      LoadDirectory(string.Empty);
       if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO)
       {
         int iSong = playlistPlayer.CurrentSong;
@@ -234,7 +234,7 @@ namespace MediaPortal.GUI.Video
         case GUIMessage.MessageType.GUI_MSG_PLAYLIST_CHANGED:
           {
             //	global playlist changed outside playlist window
-            LoadDirectory(String.Empty);
+            LoadDirectory(string.Empty);
 
             if (previousControlId == facadeView.GetID && facadeView.Count <= 0)
             {
@@ -294,7 +294,7 @@ namespace MediaPortal.GUI.Video
           currentFolder = strNewDirectory;
           facadeView.Clear();
 
-          string strObjects = String.Empty;
+          string strObjects = string.Empty;
 
           ArrayList itemlist = new ArrayList();
 
@@ -324,7 +324,7 @@ namespace MediaPortal.GUI.Video
                 pItem.Label2 = str;
               }
               else
-                pItem.Label2 = String.Empty;
+                pItem.Label2 = string.Empty;
             }
             itemlist.Add(pItem);
             MediaPortal.Util.Utils.SetDefaultIcons(pItem);
@@ -332,7 +332,7 @@ namespace MediaPortal.GUI.Video
           }
 
           iCurrentSong = 0;
-          strFileName = String.Empty;
+          strFileName = string.Empty;
           //	Search current playlist item
           if ((m_nTempPlayListWindow == GetID && m_strTempPlayListDirectory.IndexOf(currentFolder) >= 0 && g_Player.Playing
             && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO_TEMP)
@@ -414,7 +414,7 @@ namespace MediaPortal.GUI.Video
       playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Clear();
       if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO)
         playlistPlayer.Reset();
-      LoadDirectory(String.Empty);
+      LoadDirectory(string.Empty);
       UpdateButtonStates();
       GUIControl.FocusControl(GetID, btnViewAs.GetID);
     }
@@ -531,7 +531,7 @@ namespace MediaPortal.GUI.Video
       PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
 
       if (playlist.Count <= 0) return;
-      string currentSongFileName = String.Empty;
+      string currentSongFileName = string.Empty;
       if (playlistPlayer.CurrentSong >= 0)
       {
         if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO)
@@ -560,13 +560,13 @@ namespace MediaPortal.GUI.Video
     void OnSavePlayList()
     {
       currentSelectedItem = facadeView.SelectedListItemIndex;
-      string playlistFileName = String.Empty;
+      string playlistFileName = string.Empty;
       if (GetKeyboard(ref playlistFileName))
       {
-        string playListPath = String.Empty;
+        string playListPath = string.Empty;
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
-          playListPath = xmlreader.GetValueAsString("movies", "playlists", String.Empty);
+          playListPath = xmlreader.GetValueAsString("movies", "playlists", string.Empty);
           playListPath = MediaPortal.Util.Utils.RemoveTrailingSlash(playListPath);
         }
 

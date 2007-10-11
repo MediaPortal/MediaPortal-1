@@ -101,7 +101,7 @@ namespace MediaPortal.GUI.TV
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string strTmp = String.Empty;
+        string strTmp = string.Empty;
         strTmp = (string)xmlreader.GetValue("tvcompress", "sort");
         if (strTmp != null)
         {
@@ -373,7 +373,7 @@ namespace MediaPortal.GUI.TV
 
     void UpdateButtonStates()
     {
-      string strLine = String.Empty;
+      string strLine = string.Empty;
       switch (currentSortMethod)
       {
         case SortMethod.Channel:

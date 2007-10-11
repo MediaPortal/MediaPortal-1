@@ -70,7 +70,7 @@ namespace MediaPortal.GUI.Library
       int _duration;	//duration of current frame
       int _textureNumber=-1;
       public readonly bool UseNewTextureEngine = true;
-      string _imageName = String.Empty;
+      string _imageName = string.Empty;
       static private bool logTextures = false;
       #endregion
 

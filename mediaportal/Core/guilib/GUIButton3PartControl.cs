@@ -71,9 +71,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("label2")]
     protected string _tagLabel2 = "";
     [XMLSkinElement("font1")]
-    protected string _fontName1 = String.Empty;
+    protected string _fontName1 = string.Empty;
     [XMLSkinElement("font2")]
-    protected string _fontName2 = String.Empty;
+    protected string _fontName2 = string.Empty;
     [XMLSkinElement("textcolor1")]
     protected long _textColor1 = (long)0xFFFFFFFF;
     [XMLSkinElement("textcolor2")]
@@ -574,7 +574,7 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_imageIcon == null) return String.Empty;
+        if (_imageIcon == null) return string.Empty;
         return _imageIcon.FileName;
       }
       set
@@ -587,7 +587,7 @@ namespace MediaPortal.GUI.Library
           _imageIcon.Height = _iconHeight;
           _reCalculate = true;
 
-          if (value == String.Empty)
+          if (value == string.Empty)
           {
             _imageIcon.IsVisible = false;
           }

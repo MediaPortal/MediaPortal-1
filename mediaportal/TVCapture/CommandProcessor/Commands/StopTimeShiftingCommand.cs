@@ -86,7 +86,7 @@ namespace MediaPortal.TV.Recording
             if (i == handler.CurrentCardIndex)
             {
               handler.CurrentCardIndex = -1;
-              handler.TVChannelName = String.Empty;
+              handler.TVChannelName = string.Empty;
             }
           }
         }

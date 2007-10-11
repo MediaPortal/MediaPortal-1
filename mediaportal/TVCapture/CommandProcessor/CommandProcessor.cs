@@ -125,7 +125,7 @@ namespace MediaPortal.TV.Recording
     /// <returns>filename of the timeshifting file</returns>
     public string GetTimeShiftFileName(int card)
     {
-      if (card < 0 || card >= _tvcards.Count) return String.Empty;
+      if (card < 0 || card >= _tvcards.Count) return string.Empty;
       TVCaptureDevice dev = _tvcards[card];
       string fileName = dev.TimeShiftFullFileName;
       return fileName;

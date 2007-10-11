@@ -51,7 +51,7 @@ namespace MediaPortal.Configuration
 
     StartupMode startupMode = StartupMode.Normal;
 
-    string sectionsConfiguration = String.Empty;
+    string sectionsConfiguration = string.Empty;
 
     public delegate bool IECallBack(int hwnd, int lParam);
 

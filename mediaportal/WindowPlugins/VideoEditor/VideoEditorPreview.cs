@@ -137,7 +137,7 @@ namespace WindowPlugins.VideoEditor
     {
       try
       {
-        if (filepath != String.Empty)
+        if (filepath != string.Empty)
         {
 					if (System.IO.File.Exists(filepath))
 					{
@@ -588,8 +588,8 @@ namespace WindowPlugins.VideoEditor
       GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
       dlg.SetHeading(title);
       dlg.SetLine(1, text);
-      dlg.SetLine(2, String.Empty);
-      dlg.SetLine(3, String.Empty);
+      dlg.SetLine(2, string.Empty);
+      dlg.SetLine(3, string.Empty);
       dlg.DoModal(GUIWindowManager.ActiveWindow);
     }
 

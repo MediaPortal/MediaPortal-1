@@ -1286,10 +1286,10 @@ namespace MediaPortal.GUI.Library
               }
               else
               {
-                GUIPropertyManager.SetProperty("#itemcount", String.Empty);
-                GUIPropertyManager.SetProperty("#selecteditem", String.Empty);
-                GUIPropertyManager.SetProperty("#selecteditem2", String.Empty);
-                GUIPropertyManager.SetProperty("#selectedthumb", String.Empty);
+                GUIPropertyManager.SetProperty("#itemcount", string.Empty);
+                GUIPropertyManager.SetProperty("#selecteditem", string.Empty);
+                GUIPropertyManager.SetProperty("#selecteditem2", string.Empty);
+                GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
                 LoadSkin();
                 AllocResources();
               }

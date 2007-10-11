@@ -36,7 +36,7 @@ namespace WindowPlugins.GUITV
 	{
 		[SkinControlAttribute(102)]			  protected GUILabelControl lblNotify=null;
 		[SkinControlAttribute(1)]			  protected GUIProgressControl progressControl=null;
-		string notify=String.Empty;
+		string notify=string.Empty;
 		public GUITVNoSignal()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL;

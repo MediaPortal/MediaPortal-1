@@ -528,7 +528,7 @@ namespace MediaPortal.GUI.Library
         dirUp.Path = searchString;
         dirUp.ItemId = searchKind;
         dirUp.IsFolder = true;
-        dirUp.ThumbnailImage = String.Empty;
+        dirUp.ThumbnailImage = string.Empty;
         dirUp.IconImage = "defaultFolderBack.png";
         dirUp.IconImageBig = "defaultFolderBackBig.png";
         if (_viewAlbum != null)
@@ -586,7 +586,7 @@ namespace MediaPortal.GUI.Library
       }
 
       //set object count label
-      string strObjects = String.Empty;
+      string strObjects = string.Empty;
       if (iTotalItems == 1)
         strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(1062)); //Object
       else

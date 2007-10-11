@@ -199,12 +199,12 @@ namespace MPTestTool
 
     private MPVersion GetMPVersion()
     {
-      String version = String.Empty;
+      String version = string.Empty;
       String xmlVersionURL = @"http://scoop.cybox.nl/mediaportal/mediaportalversions.xml";
       String lookupText = "Online lookup successful";
-      String localVersion = String.Empty;
-      String localHash = String.Empty;
-      String localCreationTime = String.Empty;
+      String localVersion = string.Empty;
+      String localHash = string.Empty;
+      String localCreationTime = string.Empty;
       String MPexe = mpdir + "MediaPortal.exe";
 
       // Create the DataSet
@@ -238,7 +238,7 @@ namespace MPTestTool
         lookupText = "Online lookup failed (" + ex.Message + ")";
         version = localVersion;
       }
-      if (version.Equals(String.Empty))
+      if (version.Equals(string.Empty))
       {
         version = localVersion;
         lookupText = "No matching version found in online database";

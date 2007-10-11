@@ -41,7 +41,7 @@ namespace MediaPortal.GUI.Video
     #region Base variabeles
 
     DirectoryHistory m_history = new DirectoryHistory();
-    string currentFolder = String.Empty;
+    string currentFolder = string.Empty;
     int currentSelectedItem = -1;
     VirtualDirectory m_directory = new VirtualDirectory();
     View[,] views;
@@ -61,7 +61,7 @@ namespace MediaPortal.GUI.Video
     #region overrides
     public override bool Init()
     {
-      currentFolder = String.Empty;
+      currentFolder = string.Empty;
       handler.CurrentView = "369";
       return Load(GUIGraphicsContext.Skin + @"\myvideoTitle.xml");
     }
@@ -241,7 +241,7 @@ namespace MediaPortal.GUI.Video
     protected override void OnPageLoad()
     {
       string view = VideoState.View;
-      if (view == String.Empty)
+      if (view == string.Empty)
         view = ((ViewDefinition)handler.Views[0]).Name;
 
       handler.CurrentView = view;
@@ -409,7 +409,7 @@ namespace MediaPortal.GUI.Video
 
       GUIControl.ClearControl(GetID, facadeView.GetID);
 
-      string objectCount = String.Empty;
+      string objectCount = string.Empty;
 
       ArrayList itemlist = new ArrayList();
       ArrayList movies = handler.Execute();
@@ -417,7 +417,7 @@ namespace MediaPortal.GUI.Video
       if (handler.CurrentLevel > 0)
       {
         GUIListItem listItem = new GUIListItem("..");
-        listItem.Path = String.Empty;
+        listItem.Path = string.Empty;
         listItem.IsFolder = true;
         MediaPortal.Util.Utils.SetDefaultIcons(listItem);
         itemlist.Add(listItem);
@@ -512,8 +512,8 @@ namespace MediaPortal.GUI.Video
       if (null == dlgYesNo) return;
       dlgYesNo.SetHeading(GUILocalizeStrings.Get(925));
       dlgYesNo.SetLine(1, movie.Title);
-      dlgYesNo.SetLine(2, String.Empty);
-      dlgYesNo.SetLine(3, String.Empty);
+      dlgYesNo.SetLine(2, string.Empty);
+      dlgYesNo.SetLine(3, string.Empty);
       dlgYesNo.DoModal(GetID);
 
       if (!dlgYesNo.IsConfirmed) return;
@@ -585,7 +585,7 @@ namespace MediaPortal.GUI.Video
             }
 
           }
-          else if (movie.Actor != String.Empty)
+          else if (movie.Actor != string.Empty)
           {            
             coverArtImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieActors, movie.Actor);
             if (System.IO.File.Exists(coverArtImage))
@@ -620,7 +620,7 @@ namespace MediaPortal.GUI.Video
           facadeView.FilmstripView.InfoImageFileName = coverArtImage;
         }
       }
-      else if (movie.Actor != String.Empty)
+      else if (movie.Actor != string.Empty)
       {
         string coverArtImage;
         coverArtImage = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, movie.Actor);

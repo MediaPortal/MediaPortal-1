@@ -80,7 +80,7 @@ namespace MediaPortal.TV.Scanning
 
       _listFrequencies.Clear();
       _currentFrequencyIndex = -1;
-      String countryCode = String.Empty;
+      String countryCode = string.Empty;
 
       Log.Info("dvbt-scan:Opening dvbt.xml");
       XmlDocument doc = new XmlDocument();

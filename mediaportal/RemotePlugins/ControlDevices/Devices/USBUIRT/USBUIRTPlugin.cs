@@ -47,7 +47,7 @@ namespace MediaPortal.ControlDevices.USBUIRT
   {
     public bool Succeeded = false;
     public string Button;
-    public string IrCode = String.Empty;
+    public string IrCode = string.Empty;
     public bool IsToggledIrCode = false;
     public int TotalCodeCount = 0;
     public int CurrentCodeCount = 0;

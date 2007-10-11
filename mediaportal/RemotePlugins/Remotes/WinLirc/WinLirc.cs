@@ -154,7 +154,7 @@ namespace MediaPortal.InputDevices
 		public bool StartWinLirc(string exeName)
 		{
 			if (exeName==null) return false;
-			if (exeName==String.Empty) return false;
+			if (exeName==string.Empty) return false;
 			ProcessStartInfo psI = new ProcessStartInfo(exeName, "");
 			Process newProcess = new Process();
 
@@ -193,7 +193,7 @@ namespace MediaPortal.InputDevices
 			try
 			{
 				if (channel_data==null) return;
-				if (channel_data==String.Empty) return;
+				if (channel_data==string.Empty) return;
 				if(m_hwnd.ToInt32() == 0)
 				{
 					Log.Info("WinLirc HWND is invalid. Check WinLirc is running");

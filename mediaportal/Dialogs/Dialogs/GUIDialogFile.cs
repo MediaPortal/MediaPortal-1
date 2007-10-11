@@ -69,8 +69,8 @@ namespace MediaPortal.Dialogs
     long m_dwTotalSize = 0;
     int m_iFileNr = 0;
     DirectoryHistory m_history = new DirectoryHistory();
-    string sourceFolder = String.Empty;
-    string destinationFolder = String.Empty;
+    string sourceFolder = string.Empty;
+    string destinationFolder = string.Empty;
     VirtualDirectory m_directory = null;
     bool m_bButtonYes = false;
     bool m_bButtonNo = false;

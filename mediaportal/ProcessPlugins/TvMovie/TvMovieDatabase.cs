@@ -429,7 +429,7 @@ namespace ProcessPlugins.TvMovie
     /// <returns></returns>
     private string BuildAudioDescription(bool audioDesc, bool dolbyDigital, bool dolbySurround, bool dolby, bool stereo, bool dualAudio)
     {
-      string audioFormat = String.Empty;
+      string audioFormat = string.Empty;
 
       if (dolbyDigital)
         audioFormat = "Dolby Digital";
@@ -451,7 +451,7 @@ namespace ProcessPlugins.TvMovie
       //Log.Debug("TVMovie: ImportStation({0})", stationName);
 
       string sqlSelect = string.Empty;
-      string audioFormat = String.Empty;
+      string audioFormat = string.Empty;
 
       if (_databaseConnection == null)
         return 0;
@@ -556,7 +556,7 @@ namespace ProcessPlugins.TvMovie
             epgEntry.Start = Utils.datetolong(newStartDate);
             epgEntry.End = Utils.datetolong(newEndDate);
             epgEntry.Title = title;
-            if (audioFormat == String.Empty)
+            if (audioFormat == string.Empty)
               epgEntry.Description = description.Replace("<br>", "\n");
             else
               epgEntry.Description = "Ton: " + audioFormat + "\n" + description.Replace("<br>", "\n");
@@ -573,14 +573,14 @@ namespace ProcessPlugins.TvMovie
             {
               StringBuilder sb = new StringBuilder();
 
-              if (epgEntry.Episode != String.Empty)
+              if (epgEntry.Episode != string.Empty)
                 sb.Append("Folge: " + epgEntry.Episode + "\n");
               if (starRating != -1)
                 sb.Append("Wertung: " + string.Format("{0}/5", starRating) + "\n");
               sb.Append(epgEntry.Description + "\n");
-              if (epgEntry.Classification != String.Empty && epgEntry.Classification != "0")
+              if (epgEntry.Classification != string.Empty && epgEntry.Classification != "0")
                 sb.Append("FSK: " + epgEntry.Classification + "\n");
-              if (epgEntry.Date != String.Empty)
+              if (epgEntry.Date != string.Empty)
                 sb.Append("Jahr: " + epgEntry.Date + "\n");
 
               epgEntry.Description = sb.ToString();

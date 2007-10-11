@@ -436,41 +436,41 @@ namespace MediaPortal.Configuration
 
     private void okButton_Click(object sender, System.EventArgs e)
     {
-      if (nameTextBox.Text == String.Empty)
+      if (nameTextBox.Text == string.Empty)
       {
         MessageBox.Show("No name specified.Please fill in a name for this folder", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         return;
 
       }
 
-      if (folderTextBox.Text == String.Empty)
+      if (folderTextBox.Text == string.Empty)
       {
         MessageBox.Show("No local folder specified.Please choose a local folder", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         return;
       }
       if (checkBoxRemote.Checked)
       {
-        if (textBoxRemoteFolder.Text == String.Empty)
+        if (textBoxRemoteFolder.Text == string.Empty)
         {
           MessageBox.Show("No remote ftp folder specified.Please choose a remote folder", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
           return;
         }
-        if (textBoxServer.Text == String.Empty)
+        if (textBoxServer.Text == string.Empty)
         {
           MessageBox.Show("No remote ftp server specified.Please choose a remote ftp server", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
           return;
         }
-        if (textBoxLogin.Text == String.Empty)
+        if (textBoxLogin.Text == string.Empty)
         {
           MessageBox.Show("No login for the remote ftp server specified.Please choose a loginname", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
           return;
         }
-        if (textBoxPassword.Text == String.Empty)
+        if (textBoxPassword.Text == string.Empty)
         {
           MessageBox.Show("No password for the remote ftp server specified.Please choose a password", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
           return;
         }
-        if (textBoxPort.Text == String.Empty)
+        if (textBoxPort.Text == string.Empty)
         {
           MessageBox.Show("No TCP/IP port for the remote ftp server specified.Please specify a TCP/IP port", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
           return;

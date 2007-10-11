@@ -78,8 +78,8 @@ namespace MediaPortal.Dialogs
     public override void Reset()
     {
       base.Reset();
-      SetHeadingRow2(String.Empty);
-      SetHeadingRow3(String.Empty);
+      SetHeadingRow2(string.Empty);
+      SetHeadingRow3(string.Empty);
 
       timedOut = true;
       timeoutInSeconds = -1;

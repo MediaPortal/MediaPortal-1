@@ -651,7 +651,7 @@ namespace MediaPortal.Video.Database
               {
                 return false;
               }
-              if (strMovieName == String.Empty) return false;
+              if (strMovieName == string.Empty) return false;
             }
           }
           else
@@ -675,7 +675,7 @@ namespace MediaPortal.Video.Database
                   {
                     return false;
                   }
-                  if (strMovieName == String.Empty) return false;
+                  if (strMovieName == string.Empty) return false;
                 }
               }
             }
@@ -689,7 +689,7 @@ namespace MediaPortal.Video.Database
               {
                 return false;
               }
-              if (strMovieName == String.Empty) return false;
+              if (strMovieName == string.Empty) return false;
             }
           }
         } while (selectedMovie < 0);

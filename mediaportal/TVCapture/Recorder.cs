@@ -152,7 +152,7 @@ namespace MediaPortal.TV.Recording
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         automaticbacktoback = xmlreader.GetValueAsBool("mytv", "automaticbacktoback", false);
-        if (_commandProcessor != null) _commandProcessor.TVChannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
+        if (_commandProcessor != null) _commandProcessor.TVChannelName = xmlreader.GetValueAsString("mytv", "channel", string.Empty);
       }
 
 
@@ -325,7 +325,7 @@ namespace MediaPortal.TV.Recording
     static public void RecordNow(string channelName, bool manualStop)
     {
       if (channelName == null) return;
-      if (channelName == String.Empty) return;
+      if (channelName == string.Empty) return;
 
       if (!Running) return;
 
@@ -520,8 +520,8 @@ namespace MediaPortal.TV.Recording
     /// <returns>string which contains the friendly name</returns>
     static public string GetFriendlyNameForCard(int card)
     {
-      if (!Running) return String.Empty;
-      if (card < 0 || card >= _commandProcessor.TVCards.Count) return String.Empty;
+      if (!Running) return string.Empty;
+      if (card < 0 || card >= _commandProcessor.TVCards.Count) return string.Empty;
       TVCaptureDevice dev = _commandProcessor.TVCards[card];
       return dev.FriendlyName;
     }//static public string GetFriendlyNameForCard(int card)
@@ -534,8 +534,8 @@ namespace MediaPortal.TV.Recording
     /// </returns>
     static public string GetTVChannelName()
     {
-      if (!Running) return String.Empty;
-      if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return String.Empty;
+      if (!Running) return string.Empty;
+      if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return string.Empty;
       return _commandProcessor.TVChannelName;
     }//static public string GetTVChannelName()
 
@@ -771,9 +771,9 @@ namespace MediaPortal.TV.Recording
     static public string GetRecordingFileName(TVRecording rec)
     {
 
-      if (!Running) return String.Empty;
+      if (!Running) return string.Empty;
       int card;
-      if (!_commandProcessor.IsRecordingSchedule(rec, out card)) return String.Empty;
+      if (!_commandProcessor.IsRecordingSchedule(rec, out card)) return string.Empty;
       TVCaptureDevice dev = _commandProcessor.TVCards[card] as TVCaptureDevice;
 
       return dev.RecordingFileName;
@@ -788,8 +788,8 @@ namespace MediaPortal.TV.Recording
     static public string GetTimeShiftFileName(int card)
     {
 
-      if (!Running) return String.Empty;
-      if (card < 0 || card >= _commandProcessor.TVCards.Count) return String.Empty;
+      if (!Running) return string.Empty;
+      if (card < 0 || card >= _commandProcessor.TVCards.Count) return string.Empty;
       TVCaptureDevice dev = _commandProcessor.TVCards[card];
       string FileName = dev.TimeShiftFullFileName;
       return FileName;
@@ -803,7 +803,7 @@ namespace MediaPortal.TV.Recording
     static public string GetTimeShiftFileNameByCardId(int cardId)
     {
 
-      if (!Running) return String.Empty;
+      if (!Running) return string.Empty;
       for (int i = 0; i < _commandProcessor.TVCards.Count; ++i)
       {
         TVCaptureDevice dev = _commandProcessor.TVCards[i];
@@ -813,7 +813,7 @@ namespace MediaPortal.TV.Recording
           return FileName;
         }
       }
-      return String.Empty;
+      return string.Empty;
     }
 
 
@@ -845,7 +845,7 @@ namespace MediaPortal.TV.Recording
     static public string RadioStationName()
     {
 
-      if (!Running) return String.Empty;
+      if (!Running) return string.Empty;
       for (int i = 0; i < _commandProcessor.TVCards.Count; ++i)
       {
         TVCaptureDevice dev = _commandProcessor.TVCards[i];
@@ -951,7 +951,7 @@ namespace MediaPortal.TV.Recording
           errorMessage = "Recorder is not started";
           return false;
         }
-        errorMessage = String.Empty;
+        errorMessage = string.Empty;
         if (reEntrantStartViewing)
         {
           errorMessage = GUILocalizeStrings.Get(763);// "Recorder is busy";
@@ -1277,7 +1277,7 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (!Running) return String.Empty;
+        if (!Running) return string.Empty;
         return _commandProcessor.TVChannelName;
       }
     }

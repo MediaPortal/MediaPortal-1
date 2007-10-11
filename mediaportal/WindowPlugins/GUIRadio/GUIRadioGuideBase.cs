@@ -94,9 +94,9 @@ namespace MediaPortal.GUI.Radio
     int _numberOfBlocks = 4;
     int _cursorY = 0;
     int _cursorX = 0;
-    string _currentTitle = String.Empty;
-    string _currentTime = String.Empty;
-    string _currentRadioStation = String.Empty;
+    string _currentTitle = string.Empty;
+    string _currentTime = string.Empty;
+    string _currentRadioStation = string.Empty;
     long _currentStartTime = 0;
     long _currentEndTime = 0;
     TVProgram _currentProgram = null;
@@ -115,7 +115,7 @@ namespace MediaPortal.GUI.Radio
     DateTime _updateTimer = DateTime.Now;
 
     DateTime _keyPressedTimer = DateTime.Now;
-    string _lineInput = String.Empty;
+    string _lineInput = string.Empty;
     //static bool _workerThreadRunning = false;
 
     #endregion
@@ -162,7 +162,7 @@ namespace MediaPortal.GUI.Radio
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        _currentRadioStation = xmlreader.GetValueAsString("radioguide", "channel", String.Empty);
+        _currentRadioStation = xmlreader.GetValueAsString("radioguide", "channel", string.Empty);
         _cursorX = xmlreader.GetValueAsInt("radioguide", "ypos", 0);
         _channelOffset = xmlreader.GetValueAsInt("radioguide", "yoffset", 0);
       }
@@ -556,7 +556,7 @@ namespace MediaPortal.GUI.Radio
             GUISpinControl cntlTimeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
             if (cntlTimeInterval != null)
             {
-              for (int i = 1; i <= 4; i++) cntlTimeInterval.AddLabel(String.Empty, i);
+              for (int i = 1; i <= 4; i++) cntlTimeInterval.AddLabel(string.Empty, i);
               cntlTimeInterval.Value = 1;
             }
             if (message.Param1 != (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO)
@@ -771,7 +771,7 @@ namespace MediaPortal.GUI.Radio
           GUILabelControl label = GetControl((int)Controls.LABEL_TIME1 + iLabel) as GUILabelControl;
           if (label == null)
           {
-            label = new GUILabelControl(GetID, (int)Controls.LABEL_TIME1 + iLabel, xpos, ypos, iLabelWidth, cntlHeaderBkgImg.RenderHeight, labelTime.FontName, String.Empty, labelTime.TextColor, GUIControl.Alignment.ALIGN_CENTER, false);
+            label = new GUILabelControl(GetID, (int)Controls.LABEL_TIME1 + iLabel, xpos, ypos, iLabelWidth, cntlHeaderBkgImg.RenderHeight, labelTime.FontName, string.Empty, labelTime.TextColor, GUIControl.Alignment.ALIGN_CENTER, false);
             label.AllocResources();
             GUIControl cntl = (GUIControl)label;
             this.Add(ref cntl);
@@ -805,7 +805,7 @@ namespace MediaPortal.GUI.Radio
           GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChan) as GUIButton3PartControl;
           if (imgBut == null)
           {
-            string strChannelImageFileName = String.Empty;
+            string strChannelImageFileName = string.Empty;
             if (_showChannelLogos) strChannelImageFileName = cntlChannelImg.FileName;
             imgBut = new GUIButton3PartControl(GetID, (int)Controls.IMG_CHAN1 + iChan, xpos, ypos,
               cntlChannelTemplate.Width - 2, cntlChannelTemplate.Height - 2,
@@ -827,7 +827,7 @@ namespace MediaPortal.GUI.Radio
           imgBut.SetPosition(xpos, ypos);
           imgBut.FontName1 = cntlChannelLabel.FontName;
           imgBut.TextColor1 = cntlChannelLabel.TextColor;
-          imgBut.Label1 = String.Empty;
+          imgBut.Label1 = string.Empty;
           imgBut.RenderLeft = false;
           imgBut.RenderRight = false;
 
@@ -947,20 +947,20 @@ namespace MediaPortal.GUI.Radio
         string strChannel = chan.Name;
         if (strChannel == null) return;
         string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, strChannel);
-        GUIPropertyManager.SetProperty("#Radio.Guide.Title", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Guide.Time", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Guide.Description", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Guide.Genre", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Guide.EpisodeName", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Guide.SeriesNumber", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Guide.EpisodeNumber", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Guide.EpisodePart", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Guide.EpisodeDetail", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Guide.Date", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Guide.StarRating", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Guide.Classification", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Guide.Duration", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Guide.TimeFromNow", String.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.Title", string.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.Time", string.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.Description", string.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.Genre", string.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.EpisodeName", string.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.SeriesNumber", string.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.EpisodeNumber", string.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.EpisodePart", string.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.EpisodeDetail", string.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.Date", string.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.StarRating", string.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.Classification", string.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.Duration", string.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Guide.TimeFromNow", string.Empty);
         if (!System.IO.File.Exists(strLogo))
         {
           strLogo = "defaultVideoBig.png";
@@ -968,8 +968,8 @@ namespace MediaPortal.GUI.Radio
         GUIPropertyManager.SetProperty("#Radio.Guide.thumb", strLogo);
         _currentStartTime = 0;
         _currentEndTime = 0;
-        _currentTitle = String.Empty;
-        _currentTime = String.Empty;
+        _currentTitle = string.Empty;
+        _currentTime = string.Empty;
         _currentRadioStation = strChannel;
         GUIControl.HideControl(GetID, (int)Controls.IMG_REC_PIN);
       }
@@ -987,19 +987,19 @@ namespace MediaPortal.GUI.Radio
         GUIPropertyManager.SetProperty("#Radio.Guide.Genre", _currentProgram.Genre);
         GUIPropertyManager.SetProperty("#Radio.Guide.Duration", _currentProgram.Duration);
         GUIPropertyManager.SetProperty("#Radio.Guide.TimeFromNow", _currentProgram.TimeFromNow);
-        if (_currentProgram.Episode == "-") GUIPropertyManager.SetProperty("#Radio.Guide.EpisodeName", String.Empty);
+        if (_currentProgram.Episode == "-") GUIPropertyManager.SetProperty("#Radio.Guide.EpisodeName", string.Empty);
         else GUIPropertyManager.SetProperty("#Radio.Guide.EpisodeName", _currentProgram.Episode);
-        if (_currentProgram.SeriesNum == "-") GUIPropertyManager.SetProperty("#Radio.Guide.SeriesNumber", String.Empty);
+        if (_currentProgram.SeriesNum == "-") GUIPropertyManager.SetProperty("#Radio.Guide.SeriesNumber", string.Empty);
         else GUIPropertyManager.SetProperty("#Radio.Guide.SeriesNumber", _currentProgram.SeriesNum);
-        if (_currentProgram.EpisodeNum == "-") GUIPropertyManager.SetProperty("#Radio.Guide.EpisodeNumber", String.Empty);
+        if (_currentProgram.EpisodeNum == "-") GUIPropertyManager.SetProperty("#Radio.Guide.EpisodeNumber", string.Empty);
         else GUIPropertyManager.SetProperty("#Radio.Guide.EpisodeNumber", _currentProgram.EpisodeNum);
-        if (_currentProgram.EpisodePart == "-") GUIPropertyManager.SetProperty("#Radio.Guide.EpisodePart", String.Empty);
+        if (_currentProgram.EpisodePart == "-") GUIPropertyManager.SetProperty("#Radio.Guide.EpisodePart", string.Empty);
         else GUIPropertyManager.SetProperty("#Radio.Guide.EpisodePart", _currentProgram.EpisodePart);
-        if (_currentProgram.Date == "-") GUIPropertyManager.SetProperty("#Radio.Guide.Date", String.Empty);
+        if (_currentProgram.Date == "-") GUIPropertyManager.SetProperty("#Radio.Guide.Date", string.Empty);
         else GUIPropertyManager.SetProperty("#Radio.Guide.Date", _currentProgram.Date);
-        if (_currentProgram.StarRating == "-") GUIPropertyManager.SetProperty("#Radio.Guide.StarRating", String.Empty);
+        if (_currentProgram.StarRating == "-") GUIPropertyManager.SetProperty("#Radio.Guide.StarRating", string.Empty);
         else GUIPropertyManager.SetProperty("#Radio.Guide.StarRating", _currentProgram.StarRating);
-        if (_currentProgram.Classification == "-") GUIPropertyManager.SetProperty("#Radio.Guide.Classification", String.Empty);
+        if (_currentProgram.Classification == "-") GUIPropertyManager.SetProperty("#Radio.Guide.Classification", string.Empty);
         else GUIPropertyManager.SetProperty("#Radio.Guide.Classification", _currentProgram.Classification);
         GUIPropertyManager.SetProperty("#Radio.Guide.EpisodeDetail", _currentProgram.EpisodeDetails);
         if (!System.IO.File.Exists(strLogo))
@@ -1108,7 +1108,7 @@ namespace MediaPortal.GUI.Radio
             "tvguide_button_light_left.png",
             "tvguide_button_light_middle.png",
             "tvguide_button_light_right.png",
-            String.Empty);
+            string.Empty);
           img.AllocResources();
           img.ColourDiffuse = GetColorForGenre(program.Genre);
           GUIControl cntl = (GUIControl)img;
@@ -1150,8 +1150,8 @@ namespace MediaPortal.GUI.Radio
         img.FontName1 = "font13";
         img.TextColor1 = 0xffffffff;
 
-        string strTimeSingle = String.Empty;
-        string strTime = String.Empty;
+        string strTimeSingle = string.Empty;
+        string strTime = string.Empty;
 
         img.Label1 = program.Title;
         if (program.Start != 0)
@@ -1212,7 +1212,7 @@ namespace MediaPortal.GUI.Radio
 
         img.SetPosition(img.XPosition, img.YPosition);
 
-        img.TexutureIcon = String.Empty;
+        img.TexutureIcon = string.Empty;
         if (ShouldNotifyProgram(program))
           img.TexutureIcon = Thumbs.TvNotifyIcon;
         if (bRecording)
@@ -1355,7 +1355,7 @@ namespace MediaPortal.GUI.Radio
                 "tvguide_button_light_left.png",
                 "tvguide_button_light_middle.png",
                 "tvguide_button_light_right.png",
-                String.Empty);
+                string.Empty);
               img.AllocResources();
               GUIControl cntl = (GUIControl)img;
               Add(ref cntl);
@@ -1377,7 +1377,7 @@ namespace MediaPortal.GUI.Radio
             img.RenderLeft = false;
             img.RenderRight = false;
 
-            img.TexutureIcon = String.Empty;
+            img.TexutureIcon = string.Empty;
             if (ShouldNotifyProgram(program))
               img.TexutureIcon = Thumbs.TvNotifyIcon;
             if (bRecording)
@@ -2043,7 +2043,7 @@ namespace MediaPortal.GUI.Radio
         // change channel
         int iChannel = Int32.Parse(_lineInput);
         ChangeChannelNr(iChannel);
-        _lineInput = String.Empty;
+        _lineInput = string.Empty;
       }
     }
 
@@ -2054,7 +2054,7 @@ namespace MediaPortal.GUI.Radio
         TimeSpan ts = DateTime.Now - _keyPressedTimer;
         if (_lineInput.Length >= 2 || ts.TotalMilliseconds >= 800)
         {
-          _lineInput = String.Empty;
+          _lineInput = string.Empty;
         }
         _keyPressedTimer = DateTime.Now;
         if (chKey == '0' && _lineInput.Length == 0) return;

@@ -2260,7 +2260,7 @@ namespace MediaPortal.Configuration.Sections
         ch2.Frequency = ch1.Frequency;
       }
 
-      if (ch1.ExternalTunerChannel != String.Empty)
+      if (ch1.ExternalTunerChannel != string.Empty)
       {
         ch2.ExternalTunerChannel = ch1.ExternalTunerChannel;
         ch2.External = ch1.External;

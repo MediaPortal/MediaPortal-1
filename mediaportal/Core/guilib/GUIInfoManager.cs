@@ -43,14 +43,14 @@ namespace MediaPortal.GUI.Library
         m_info = info;
         m_data1 = 0;
         m_data2 = 0;
-        m_stringData = String.Empty;
+        m_stringData = string.Empty;
       }
       public GUIInfo(int info, int data1)
       {
         m_info = info;
         m_data1 = data1;
         m_data2 = 0;
-        m_stringData = String.Empty;
+        m_stringData = string.Empty;
       }
       public GUIInfo(int info, string stringData)
       {
@@ -64,7 +64,7 @@ namespace MediaPortal.GUI.Library
         m_info = info;
         m_data1 = data1;
         m_data2 = data2;
-        m_stringData = String.Empty;
+        m_stringData = string.Empty;
       }
       public override bool Equals(object r)
       {
@@ -760,7 +760,7 @@ namespace MediaPortal.GUI.Library
 
           pluginName = pluginName.Substring(17, strTest.Length - 18);
 
-          if (pluginName != String.Empty)
+          if (pluginName != string.Empty)
             return AddMultiInfo(new GUIInfo(bNegate ? -PLUGIN_IS_ENABLED : PLUGIN_IS_ENABLED, pluginName));
         }
       }

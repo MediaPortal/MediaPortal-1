@@ -340,7 +340,7 @@ namespace MediaPortal.GUI.GUIPrograms
         strTxt = Strings.Unknown;
         return;
       }
-      string strReturn = String.Empty;
+      string strReturn = string.Empty;
       for (int i = 0; i < (int)strTxt.Length; ++i)
       {
         char k = strTxt[i];
@@ -354,7 +354,7 @@ namespace MediaPortal.GUI.GUIPrograms
         strReturn += k;
       }
       strReturn = strReturn.Trim();
-      if (strReturn == String.Empty)
+      if (strReturn == string.Empty)
         strReturn = Strings.Unknown;
       strTxt = strReturn;
     }

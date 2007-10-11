@@ -95,19 +95,19 @@ namespace MediaPortal.GUI.RADIOLASTFM
     /// <summary>
     /// The "filename" used by the player to access the stream
     /// </summary>
-    private string _currentRadioURL = String.Empty;
+    private string _currentRadioURL = string.Empty;
     /// <summary>
     /// The user associated Session ID - from the response to the Audioscrobbler handshake
     /// </summary>
-    private string _currentSession = String.Empty;
+    private string _currentSession = string.Empty;
     /// <summary>
     /// The last.fm user from you configured in the Audioscrobbler plugin
     /// </summary>
-    private string _currentUser = String.Empty;
+    private string _currentUser = string.Empty;
     /// <summary>
     /// The last.fm user which stream will be tuned to
     /// </summary>
-    private string _currentStreamsUser = String.Empty;
+    private string _currentStreamsUser = string.Empty;
     /// <summary>
     /// Did you pay for exclusive member options
     /// </summary>
@@ -209,7 +209,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       _currentStreamsUser = _currentUser;
       _currentSession = AudioscrobblerBase.RadioSession;
 
-      if (_currentSession != String.Empty)
+      if (_currentSession != string.Empty)
       {
         _isSubscriber = AudioscrobblerBase.Subscriber;
         //_currentRadioURL = "http://streamer1.last.fm/last.mp3?Session=" + _currentSession;
@@ -225,7 +225,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private void OnRadioLoginFailed()
     {
       _currentState = StreamPlaybackState.offline;
-      _currentSession = String.Empty;
+      _currentSession = string.Empty;
       _isInit = false; // need to check that..
       RadioSettingsError();
     }
@@ -572,7 +572,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public bool TuneIntoTags(List<String> tags_)
     {
-      string TuneTags = String.Empty;
+      string TuneTags = string.Empty;
 
       foreach (string singleTag in tags_)
       {
@@ -642,7 +642,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         lock (this)
         {
-          string responseMessage = String.Empty;
+          string responseMessage = string.Empty;
           if (responseList.Count > 0)
           {
             List<string> responseStrings = new List<string>(responseList);

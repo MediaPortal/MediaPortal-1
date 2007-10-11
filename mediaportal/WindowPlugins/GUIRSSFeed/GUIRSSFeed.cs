@@ -615,7 +615,7 @@ namespace MediaPortal.GUI.RSS
       string text = null;
       try
       {
-        string data = String.Empty;
+        string data = string.Empty;
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(feed.m_link);
 
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();

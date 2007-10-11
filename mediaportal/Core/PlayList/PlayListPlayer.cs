@@ -243,22 +243,22 @@ namespace MediaPortal.Playlists
 
     public string Get(int iSong)
     {
-      if (_currentPlayList == PlayListType.PLAYLIST_NONE) return String.Empty;
+      if (_currentPlayList == PlayListType.PLAYLIST_NONE) return string.Empty;
 
       PlayList playlist = GetPlaylist(_currentPlayList);
-      if (playlist.Count <= 0) return String.Empty;
+      if (playlist.Count <= 0) return string.Empty;
 
       if (iSong >= playlist.Count)
       {
         //	Is last element of video stacking playlist?
         if (_currentPlayList == PlayListType.PLAYLIST_VIDEO_TEMP)
         {
-          return String.Empty;
+          return string.Empty;
         }
 
         if (!_repeatPlayList)
         {
-          return String.Empty; ;
+          return string.Empty; ;
         }
         iSong = 0;
       }
@@ -313,7 +313,7 @@ namespace MediaPortal.Playlists
       if (resultingItem != null)
         return resultingItem.FileName;
       else
-        return String.Empty;
+        return string.Empty;
     }
 
     public void PlayNext()

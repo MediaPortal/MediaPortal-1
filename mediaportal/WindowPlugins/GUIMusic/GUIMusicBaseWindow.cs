@@ -54,7 +54,7 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     public class FolderThumbCacher
     {
-      string _filename = String.Empty;
+      string _filename = string.Empty;
       Work work;
 
       // aFilePath must only be the path of the directory
@@ -69,10 +69,10 @@ namespace MediaPortal.GUI.Music
       void PerformRequest()
       {
         string filename = _filename;
-        string strFolderThumb = String.Empty;
+        string strFolderThumb = string.Empty;
         strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumbForDir(filename);
 
-        string strRemoteFolderThumb = String.Empty;
+        string strRemoteFolderThumb = string.Empty;
         strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
 
         if (System.IO.File.Exists(strRemoteFolderThumb))
@@ -113,7 +113,7 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     public class FolderThumbWorker
     {
-      string _filename = String.Empty;
+      string _filename = string.Empty;
       MusicTag _filetag = null;
       Work work;
 
@@ -134,10 +134,10 @@ namespace MediaPortal.GUI.Music
         {
           MusicTag musicTag = _filetag;
           string filename = _filename;
-          string strFolderThumb = String.Empty;
+          string strFolderThumb = string.Empty;
           strFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumb(filename);
 
-          string strRemoteFolderThumb = String.Empty;
+          string strRemoteFolderThumb = string.Empty;
           //strRemoteFolderThumb = String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(filename));
           strRemoteFolderThumb = MediaPortal.Util.Utils.GetFolderThumb(filename);
 
@@ -146,7 +146,7 @@ namespace MediaPortal.GUI.Music
             // no folder.jpg in this share but maybe there's downloaded album art we can save now.
             try
             {
-              if (musicTag != null && musicTag.Album != String.Empty && musicTag.Artist != String.Empty)
+              if (musicTag != null && musicTag.Album != string.Empty && musicTag.Artist != string.Empty)
               {
                 string albumThumb = Util.Utils.GetAlbumThumbName(musicTag.Artist, musicTag.Album);
 
@@ -611,7 +611,7 @@ namespace MediaPortal.GUI.Music
       facadeView.IsVisible = true;
       GUIControl.FocusControl(GetID, facadeView.GetID);
 
-      string strLine = String.Empty;
+      string strLine = string.Empty;
       View view = CurrentView;
       switch (view)
       {
@@ -846,7 +846,7 @@ namespace MediaPortal.GUI.Music
       {
         dlgOK.SetHeading(6);
         dlgOK.SetLine(1, 477);
-        dlgOK.SetLine(2, String.Empty);
+        dlgOK.SetLine(2, string.Empty);
         dlgOK.DoModal(GetID);
       }
     }
@@ -1016,7 +1016,7 @@ namespace MediaPortal.GUI.Music
 
       if (method == MusicSort.SortMethod.Size || method == MusicSort.SortMethod.Filename)
       {
-        if (item.IsFolder) item.Label2 = String.Empty;
+        if (item.IsFolder) item.Label2 = string.Empty;
         else
         {
           if (item.Size > 0)
@@ -1101,7 +1101,7 @@ namespace MediaPortal.GUI.Music
         return;
       MusicTag tag = (MusicTag)item.MusicTag;
       string strThumb = GUIMusicFiles.GetCoverArt(item.IsFolder, item.Path, tag);
-      if (strThumb != String.Empty)
+      if (strThumb != string.Empty)
       {
         item.ThumbnailImage = strThumb;
         item.IconImageBig = strThumb;
@@ -1255,7 +1255,7 @@ namespace MediaPortal.GUI.Music
             }
             else
             {
-              LoadDirectory(String.Empty);
+              LoadDirectory(string.Empty);
               if (facadeView.Count <= 0)
               {
                 GUIControl.FocusControl(GetID, btnViewAs.GetID);
@@ -1338,12 +1338,12 @@ namespace MediaPortal.GUI.Music
       {
         if (!pItem.IsFolder)
         {
-          if (pItem.Path != String.Empty)
+          if (pItem.Path != string.Empty)
             OnInfoFile(pItem);
         }
         else
         {
-          if (pItem.Path != String.Empty)
+          if (pItem.Path != string.Empty)
             OnInfoFolder(pItem);
         }
         facadeView.RefreshCoverArt();
@@ -1401,7 +1401,7 @@ namespace MediaPortal.GUI.Music
       {
         pDlgOK.SetHeading(703);
         pDlgOK.SetLine(1, 703);
-        pDlgOK.SetLine(2, String.Empty);
+        pDlgOK.SetLine(2, string.Empty);
         pDlgOK.DoModal(GetID);
         return;
       }
@@ -1416,7 +1416,7 @@ namespace MediaPortal.GUI.Music
         dlgProgress.Reset();
         dlgProgress.SetHeading(320);
         dlgProgress.SetLine(1, artistName);
-        dlgProgress.SetLine(2, String.Empty);
+        dlgProgress.SetLine(2, string.Empty);
         dlgProgress.SetPercentage(0);
         dlgProgress.StartModal(GetID);
         dlgProgress.Progress();
@@ -1462,7 +1462,7 @@ namespace MediaPortal.GUI.Music
             dlgProgress.Reset();
             dlgProgress.SetHeading(320);
             dlgProgress.SetLine(1, artistName);
-            dlgProgress.SetLine(2, String.Empty);
+            dlgProgress.SetLine(2, string.Empty);
             dlgProgress.SetPercentage(40);
             dlgProgress.StartModal(GetID);
             dlgProgress.ShowProgressBar(true);
@@ -1591,7 +1591,7 @@ namespace MediaPortal.GUI.Music
         {
           pDlgOK.SetHeading(702);
           pDlgOK.SetLine(1, 702);
-          pDlgOK.SetLine(2, String.Empty);
+          pDlgOK.SetLine(2, string.Empty);
           pDlgOK.DoModal(GetID);
         }
       }
@@ -1605,7 +1605,7 @@ namespace MediaPortal.GUI.Music
       {
         pDlgOK.SetHeading(703);
         pDlgOK.SetLine(1, 703);
-        pDlgOK.SetLine(2, String.Empty);
+        pDlgOK.SetLine(2, string.Empty);
         pDlgOK.DoModal(GetID);
 
         //throw new Exception("no internet");
@@ -1660,7 +1660,7 @@ namespace MediaPortal.GUI.Music
           {
             dlgOk.SetHeading(caption);
             dlgOk.SetLine(1, line1Text);
-            dlgOk.SetLine(2, String.Empty);
+            dlgOk.SetLine(2, string.Empty);
             dlgOk.DoModal(GetID);
           }
         }
@@ -1688,7 +1688,7 @@ namespace MediaPortal.GUI.Music
         {
           dlgOk.SetHeading(187);
           dlgOk.SetLine(1, 187);
-          dlgOk.SetLine(2, String.Empty);
+          dlgOk.SetLine(2, string.Empty);
           dlgOk.DoModal(GetID);
         }
       }
@@ -1901,7 +1901,7 @@ namespace MediaPortal.GUI.Music
         {
           dlgOk.SetHeading(187);
           dlgOk.SetLine(1, 187);
-          dlgOk.SetLine(2, String.Empty);
+          dlgOk.SetLine(2, string.Empty);
           //dlgOk.DoModal(GetID);
           dlgOk.DoModal(parentWindowID);
         }

@@ -126,16 +126,16 @@ namespace MediaPortal.Player
     /// </summary>
     public static void LoadDriveSpeed()
     {
-      string speedTableCD = String.Empty;
-      string speedTableDVD = String.Empty;
-      string disableCD = String.Empty;
-      string disableDVD = String.Empty;
+      string speedTableCD = string.Empty;
+      string speedTableDVD = string.Empty;
+      string disableCD = string.Empty;
+      string disableDVD = string.Empty;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        speedTableCD = xmlreader.GetValueAsString("cdspeed", "drivespeedCD", String.Empty);
-        disableCD = xmlreader.GetValueAsString("cdspeed", "disableCD", String.Empty);
-        speedTableDVD = xmlreader.GetValueAsString("cdspeed", "drivespeedDVD", String.Empty);
-        disableDVD = xmlreader.GetValueAsString("cdspeed", "disableDVD", String.Empty);
+        speedTableCD = xmlreader.GetValueAsString("cdspeed", "drivespeedCD", string.Empty);
+        disableCD = xmlreader.GetValueAsString("cdspeed", "disableCD", string.Empty);
+        speedTableDVD = xmlreader.GetValueAsString("cdspeed", "drivespeedDVD", string.Empty);
+        disableDVD = xmlreader.GetValueAsString("cdspeed", "disableDVD", string.Empty);
         driveSpeedControlEnabled = xmlreader.GetValueAsBool("cdspeed", "enabled", false);
       }
       if (!driveSpeedControlEnabled)
@@ -158,7 +158,7 @@ namespace MediaPortal.Player
         builderDriveLetter.Append(BassCd.BASS_CD_GetDriveLetterChar(i));
       }
       _driveLetters = builderDriveLetter.ToString();
-      if (speedTableCD == String.Empty || speedTableDVD == String.Empty)
+      if (speedTableCD == string.Empty || speedTableDVD == string.Empty)
       {
         BASS_CD_INFO cdinfo = new BASS_CD_INFO();
         StringBuilder builder = new StringBuilder();
@@ -195,7 +195,7 @@ namespace MediaPortal.Player
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         string strFromXml = xmlreader.GetValueAsString("movieplayer", "skipsteps", "15,30,60,180,300,600,900,1800,3600,7200");
-        if (strFromXml == String.Empty) // config after wizard run 1st
+        if (strFromXml == string.Empty) // config after wizard run 1st
         {
           strFromXml = "15,30,60,180,300,600,900,1800,3600,7200";
           Log.Info("g_player - creating new Skip-Settings {0}", "");
@@ -242,7 +242,7 @@ namespace MediaPortal.Player
     private static string ConvertToNewStyle(string strSteps)
     {
       int count = 0;
-      string newStyle = String.Empty;
+      string newStyle = string.Empty;
       foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
       {
         if (token == string.Empty)
@@ -276,7 +276,7 @@ namespace MediaPortal.Player
           }
         }
       }
-      return (newStyle == String.Empty ? String.Empty : newStyle.Substring(0, newStyle.Length - 1));
+      return (newStyle == string.Empty ? string.Empty : newStyle.Substring(0, newStyle.Length - 1));
     }
 
     /// <summary>
@@ -293,7 +293,7 @@ namespace MediaPortal.Player
       {
         // is the DVD inserted in a Drive for which we need to control the speed
         string rootPath = System.IO.Path.GetPathRoot(strFile);
-        string speed = String.Empty;
+        string speed = string.Empty;
         if (rootPath != null)
         {
           if (rootPath.Length > 1)
@@ -651,7 +651,7 @@ namespace MediaPortal.Player
     {
       try
       {
-        string strAudioPlayer = String.Empty;
+        string strAudioPlayer = string.Empty;
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
           strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");

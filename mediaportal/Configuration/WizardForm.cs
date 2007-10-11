@@ -79,7 +79,7 @@ namespace MediaPortal.Configuration
 
     static WizardForm wizardForm;
 
-    string wizardCaption = String.Empty;
+    string wizardCaption = string.Empty;
 
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private MediaPortal.UserInterface.Controls.MPButton nextButton;
@@ -95,7 +95,7 @@ namespace MediaPortal.Configuration
 
     public void AddSection(SectionSettings settings, string topic, string information)
     {
-      AddSection(settings, topic, information, String.Empty);
+      AddSection(settings, topic, information, string.Empty);
     }
 
     public void AddSection(SectionSettings settings, string topic, string information, string expression)
@@ -133,7 +133,7 @@ namespace MediaPortal.Configuration
       // Check if we got a sections file to read from, or if we should specify
       // the default sections
       //
-      if (sectionConfiguration != String.Empty && System.IO.File.Exists(sectionConfiguration))
+      if (sectionConfiguration != string.Empty && System.IO.File.Exists(sectionConfiguration))
       {
         LoadSections(sectionConfiguration);
       }
@@ -293,11 +293,11 @@ namespace MediaPortal.Configuration
                 //
                 if (dependencyNode == null)
                 {
-                  AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty, infoNode != null ? infoNode.InnerText : String.Empty);
+                  AddSection(section, topicNode != null ? topicNode.InnerText : string.Empty, infoNode != null ? infoNode.InnerText : string.Empty);
                 }
                 else
                 {
-                  AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty, infoNode != null ? infoNode.InnerText : String.Empty, dependencyNode.InnerText);
+                  AddSection(section, topicNode != null ? topicNode.InnerText : string.Empty, infoNode != null ? infoNode.InnerText : string.Empty, dependencyNode.InnerText);
                 }
               }
             }

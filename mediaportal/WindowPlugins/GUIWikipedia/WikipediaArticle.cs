@@ -515,7 +515,7 @@ namespace Wikipedia
                     {
                         // for the 2nd a ":" is a link to the article in another language.
                         // TODO Add links to other languages!!!
-                        parsedKeyword = String.Empty;
+                        parsedKeyword = string.Empty;
                     }
                     else
                     {

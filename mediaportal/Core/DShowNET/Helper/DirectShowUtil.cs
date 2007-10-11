@@ -993,7 +993,7 @@ namespace DShowNET.Helper
     }
     public static string GetFriendlyName(IMoniker mon)
     {
-      if (mon == null) return String.Empty;
+      if (mon == null) return string.Empty;
       object bagObj = null;
       IPropertyBag bag = null;
       try

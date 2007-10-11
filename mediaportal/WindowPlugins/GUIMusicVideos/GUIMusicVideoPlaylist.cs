@@ -46,12 +46,12 @@ namespace MediaPortal.GUI.MusicVideos
   {
     #region Base variabeles
     DirectoryHistory m_history = new DirectoryHistory();
-    string m_strDirectory = String.Empty;
+    string m_strDirectory = string.Empty;
     int m_iItemSelected = -1;
     int m_iLastControl = 0;
 
-    string m_strCurrentFile = String.Empty;
-    string m_playlist = String.Empty;
+    string m_strCurrentFile = string.Empty;
+    string m_playlist = string.Empty;
     PlayListPlayer playlistPlayer;
     protected string _currentPlaying;
     #endregion
@@ -158,7 +158,7 @@ namespace MediaPortal.GUI.MusicVideos
       if (facadeView.Count == 0)
         btnSave.Disabled = true;
 
-      LoadDirectory(String.Empty);
+      LoadDirectory(string.Empty);
       if (m_iItemSelected >= 0)
       {
         GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
@@ -396,12 +396,12 @@ namespace MediaPortal.GUI.MusicVideos
         if (loPlayListItem.Duration > 0)
           pItem.Label2 = MediaPortal.Util.Utils.SecondsToHMSString(loPlayListItem.Duration);
         else
-          pItem.Label2 = String.Empty;
+          pItem.Label2 = string.Empty;
 
         itemlist.Add(pItem);
       }
 
-      strFileName = String.Empty;
+      strFileName = string.Empty;
 
       string strSelectedItem = m_history.Get(m_strDirectory);
       int iItem = 0;
@@ -492,13 +492,13 @@ namespace MediaPortal.GUI.MusicVideos
         item.Description = video.artistName + "-" + video.songName;
         playList.Add(item);
       }
-      LoadDirectory(String.Empty);
+      LoadDirectory(string.Empty);
 
     }
 
     void ClearPlayList()
     {
-      if (m_playlist != String.Empty)
+      if (m_playlist != string.Empty)
       {
         GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
         if (null == dlgYesNo)
@@ -511,13 +511,13 @@ namespace MediaPortal.GUI.MusicVideos
         {
           MusicVideoDatabase.getInstance().DeletePlaylist(m_playlist);
         }
-        m_playlist = String.Empty;
+        m_playlist = string.Empty;
       }
       GUIControl.ClearControl(GetID, facadeView.GetID);
       playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO).Clear();
       if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_VIDEO)
         playlistPlayer.Reset();
-      LoadDirectory(String.Empty);
+      LoadDirectory(string.Empty);
       UpdateButtonStates();
       GUIControl.FocusControl(GetID, btnMyPlaylists.GetID);
     }
@@ -561,7 +561,7 @@ namespace MediaPortal.GUI.MusicVideos
       PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_VIDEO);
 
       if (playlist.Count <= 0) return;
-      string strFileName = String.Empty;
+      string strFileName = string.Empty;
       if (playlistPlayer.CurrentSong >= 0)
       {
         if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_VIDEO)

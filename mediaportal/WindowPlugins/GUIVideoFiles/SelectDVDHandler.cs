@@ -160,7 +160,7 @@ namespace MediaPortal.GUI.Video
             {
               string title = System.IO.Path.GetFileName(fileName);
               VideoDatabase.GetMovieInfoById(idMovie, ref movieDetails);
-              if (movieDetails.Title != String.Empty) title = movieDetails.Title;
+              if (movieDetails.Title != string.Empty) title = movieDetails.Title;
 
               GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
               if (null == dlgYesNo) return false;

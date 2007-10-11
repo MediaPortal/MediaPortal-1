@@ -1160,7 +1160,7 @@ namespace MediaPortal
             }
           }
           _strCurrentFile = playlistPlayer.Get(playlistPlayer.CurrentSong);
-          if (_strCurrentFile.Equals(String.Empty) && g_Player.IsDVD == true)
+          if (_strCurrentFile.Equals(string.Empty) && g_Player.IsDVD == true)
             _strCurrentFile = g_Player.CurrentFile;
           Log.Info("D3D: Form resized - Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}", _currentPlayListType, _currentPlayList.Count, playlistPlayer.CurrentSong, _strCurrentFile, _currentPlayerPos);
           g_Player.Stop();

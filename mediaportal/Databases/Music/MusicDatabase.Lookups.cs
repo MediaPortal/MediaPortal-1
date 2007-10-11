@@ -459,7 +459,7 @@ namespace MediaPortal.Music.Database
 
     public bool GetSongsByPath(string aPath, ref List<SongMap> aSongList)
     {
-      string strSQL = String.Empty;
+      string strSQL = string.Empty;
       try
       {
         aSongList.Clear();
@@ -657,7 +657,7 @@ namespace MediaPortal.Music.Database
         string strTitle = aTitle;
         DatabaseUtility.RemoveInvalidChars(ref strTitle);
 
-        string strSQL = String.Empty;
+        string strSQL = string.Empty;
         switch (aSearchKind)
         {
           case 0:
@@ -686,8 +686,8 @@ namespace MediaPortal.Music.Database
           GUIListItem item = new GUIListItem();
           item.IsFolder = false;
           item.Label = MediaPortal.Util.Utils.GetFilename(strFileName);
-          item.Label2 = String.Empty;
-          item.Label3 = String.Empty;
+          item.Label2 = string.Empty;
+          item.Label3 = string.Empty;
           item.Path = strFileName;
           item.FileInfo = new FileInformation(strFileName, item.IsFolder);
           MediaPortal.Util.Utils.SetDefaultIcons(item);
@@ -721,7 +721,7 @@ namespace MediaPortal.Music.Database
         string strArtist = aArtist;
         //DatabaseUtility.RemoveInvalidChars(ref strArtist);
 
-        string strSQL = String.Empty;
+        string strSQL = string.Empty;
         switch (aSearchKind)
         {
           case 0:
@@ -1223,7 +1223,7 @@ namespace MediaPortal.Music.Database
         string strGenre = aGenre;
         DatabaseUtility.RemoveInvalidChars(ref strGenre);
 
-        string strSQL = String.Empty;
+        string strSQL = string.Empty;
         switch (searchKind)
         {
           case 0:

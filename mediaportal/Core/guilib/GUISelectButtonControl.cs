@@ -970,7 +970,7 @@ namespace MediaPortal.GUI.Library
         {
           return (string)_subItemList[SelectedItem];
         }
-        return String.Empty;
+        return string.Empty;
       }
     }
 

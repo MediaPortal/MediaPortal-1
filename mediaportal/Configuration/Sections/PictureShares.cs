@@ -120,7 +120,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
-        string defaultShare = String.Empty;
+        string defaultShare = string.Empty;
 
         for (int index = 0; index < MaximumShares; index++)
         {
@@ -136,16 +136,16 @@ namespace MediaPortal.Configuration.Sections
           string shareRemotePath = String.Format("shareremotepath{0}", index);
           string shareViewPath = String.Format("shareview{0}", index);
 
-          string shareNameData = String.Empty;
-          string sharePathData = String.Empty;
-          string sharePinData = String.Empty;
+          string shareNameData = string.Empty;
+          string sharePathData = string.Empty;
+          string sharePinData = string.Empty;
 
           bool shareTypeData = false;
-          string shareServerData = String.Empty;
-          string shareLoginData = String.Empty;
-          string sharePwdData = String.Empty;
+          string shareServerData = string.Empty;
+          string shareLoginData = string.Empty;
+          string sharePwdData = string.Empty;
           int sharePortData = 21;
-          string shareRemotePathData = String.Empty;
+          string shareRemotePathData = string.Empty;
           int shareView = (int)ShareData.Views.List;
 
           if (CurrentShares != null && CurrentShares.Count > index)

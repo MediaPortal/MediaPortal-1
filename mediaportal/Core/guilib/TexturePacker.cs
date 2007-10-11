@@ -323,11 +323,11 @@ namespace MediaPortal.GUI.Library
         {
           if (files[i] == null) continue;
           files[i] = files[i].ToLower();
-          if (files[i] != String.Empty)
+          if (files[i] != string.Empty)
           {
             if (files[i].IndexOf("preview.") >= 0)
             {
-              files[i] = String.Empty;
+              files[i] = string.Empty;
               continue;
             }
             bool dontAdd;
@@ -335,11 +335,11 @@ namespace MediaPortal.GUI.Library
 
             if (AddBitmap(bigOne.root, rootImage, files[i], out dontAdd))
             {
-              files[i] = String.Empty;
+              files[i] = string.Empty;
             }
             else
             {
-              if (dontAdd) files[i] = String.Empty;
+              if (dontAdd) files[i] = string.Empty;
               else ImagesLeft = true;
             }
           }
@@ -455,7 +455,7 @@ namespace MediaPortal.GUI.Library
         fileName = fileName.Remove(0, 1);
       }
       fileName = fileName.ToLower();
-      if (fileName == String.Empty) return false;
+      if (fileName == string.Empty) return false;
       int index = 0;
       foreach (PackedTexture bigOne in _packedTextures)
       {

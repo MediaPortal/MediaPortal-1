@@ -286,7 +286,7 @@ namespace MediaPortal.GUI.TV
           }
           prog = GetCurrentProgram(current);
 
-          if (prog == null || prog.Title == String.Empty)
+          if (prog == null || prog.Title == string.Empty)
             item.Label2 = current.Name;
 
           if (prog != null)

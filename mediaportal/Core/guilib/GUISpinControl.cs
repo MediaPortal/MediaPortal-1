@@ -157,14 +157,14 @@ namespace MediaPortal.GUI.Library
       {
         if (!IsVisible)
         {
-          _typed = String.Empty;
+          _typed = string.Empty;
           base.Render(timePassed);
           return;
         }
       }
       if (!Focus)
       {
-        _typed = String.Empty;
+        _typed = string.Empty;
       }
       int dwPosX = _positionX;
       string wszText;

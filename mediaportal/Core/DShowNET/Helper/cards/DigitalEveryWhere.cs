@@ -531,7 +531,7 @@ namespace DShowNET
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Get) == 0)
       {
         Log.Error("FireDTV:GetDriverVersion() not supported");
-        return String.Empty;
+        return string.Empty;
       }
       int byteCount = 0;
       IntPtr pDataInstance = Marshal.AllocHGlobal(100);
@@ -546,11 +546,11 @@ namespace DShowNET
       if (hr != 0)
       {
         Log.Error("FireDTV:GetFirmwareVersionNumber() failed 0x{0:X}", hr);
-        return String.Empty;
+        return string.Empty;
       }
       Log.Info("count:{0}", byteCount);
 
-      string version = String.Empty;
+      string version = string.Empty;
       for (int i = 0; i < byteCount; ++i)
       {
         char ch;
@@ -576,7 +576,7 @@ namespace DShowNET
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Get) == 0)
       {
         Log.Error("FireDTV:GetDriverVersion() not supported");
-        return String.Empty;
+        return string.Empty;
       }
       int byteCount = 0;
       IntPtr pDataInstance = Marshal.AllocHGlobal(22);
@@ -591,11 +591,11 @@ namespace DShowNET
       if (hr != 0)
       {
         Log.Error("FireDTV:GetDriverVersion() failed 0x{0:X}", hr);
-        return String.Empty;
+        return string.Empty;
       }
       Log.Info("count:{0}", byteCount);
 
-      string version = String.Empty;
+      string version = string.Empty;
 
       for (int i = 0; i < byteCount; ++i)
       {

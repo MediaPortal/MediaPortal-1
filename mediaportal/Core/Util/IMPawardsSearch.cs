@@ -53,7 +53,7 @@ namespace MediaPortal.Util
     {
       get
       {
-        if (index < 0 || index >= imageList.Count) return String.Empty;
+        if (index < 0 || index >= imageList.Count) return string.Empty;
         return (string)imageList[index];
       }
     }
@@ -64,7 +64,7 @@ namespace MediaPortal.Util
       if (searchtag == string.Empty) return;
       imageList.Clear();
       searchtag = searchtag.Replace(" ", "+");
-      string result = String.Empty;
+      string result = string.Empty;
 
       string url = "http://www.google.com/custom?domains=www.impawards.com&q=" + searchtag + "&sa=Google+Search&sitesearch=www.impawards.com";
       WebClient wc = new WebClient();

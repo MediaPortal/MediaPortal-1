@@ -40,7 +40,7 @@ namespace MediaPortal.AudioScrobbler
     private AudioscrobblerUtils lastFmLookup;
     List<Song> songList = null;
     List<Song> similarList = null;
-    private string _currentUser = String.Empty;
+    private string _currentUser = string.Empty;
 
     public AudioscrobblerSettings()
     {
@@ -94,7 +94,7 @@ namespace MediaPortal.AudioScrobbler
 
             EncryptDecrypt Crypter = new EncryptDecrypt();
 
-            if (tmppass != String.Empty)
+            if (tmppass != string.Empty)
             {
               try
               {
@@ -180,7 +180,7 @@ namespace MediaPortal.AudioScrobbler
       int prefercount = 2;
       int rememberstartartist = 1;
 
-      if (comboBoxUserName.Text != String.Empty)
+      if (comboBoxUserName.Text != string.Empty)
       {
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
         {
@@ -972,7 +972,7 @@ namespace MediaPortal.AudioScrobbler
               continue;
             }
 
-            lastFmLookup.getAlbumInfo(curArtist, curAlbum, false);
+            lastFmLookup.getAlbumInfo(curArtist, curAlbum, false, false);
             // let's check and update the artist's status
             string strThumb = Util.Utils.GetAlbumThumbName(curArtist, curAlbum);
             if (System.IO.File.Exists(strThumb))
@@ -1017,8 +1017,8 @@ namespace MediaPortal.AudioScrobbler
       }
       labelNewUserHint.Visible = true;
       comboBoxUserName.DropDownStyle = ComboBoxStyle.DropDown;
-      comboBoxUserName.Text = String.Empty;
-      maskedTextBoxASPassword.Text = String.Empty;
+      comboBoxUserName.Text = string.Empty;
+      maskedTextBoxASPassword.Text = string.Empty;
       groupBoxOptions.Enabled = false;
       buttonAddUser.Enabled = false;
       buttonDelUser.Enabled = false;

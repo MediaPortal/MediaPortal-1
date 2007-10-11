@@ -516,7 +516,7 @@ namespace MediaPortal.Configuration.Sections
             continue;
           }
 
-          if (ccd.CaptureName == String.Empty) continue;
+          if (ccd.CaptureName == string.Empty) continue;
           if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
             ((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1))
           {

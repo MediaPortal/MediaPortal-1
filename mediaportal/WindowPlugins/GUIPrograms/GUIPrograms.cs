@@ -242,7 +242,7 @@ namespace MediaPortal.GUI.GUIPrograms
         mapSettings.OverviewVisible = xmlreader.GetValueAsBool("myprograms", "overviewvisible", true);
 
         ProgramState.StartWindow = xmlreader.GetValueAsInt("myprograms", "startWindow", GetID);
-        ProgramState.View = xmlreader.GetValueAsString("myprograms", "startview", String.Empty);
+        ProgramState.View = xmlreader.GetValueAsString("myprograms", "startview", string.Empty);
       }
     }
 
@@ -547,7 +547,7 @@ namespace MediaPortal.GUI.GUIPrograms
       base.OnPageLoad();
 
       string view = ProgramState.View;
-      if (view == String.Empty)
+      if (view == string.Empty)
         view = ((ViewDefinition)ViewHandler.Views[0]).Name;
       ViewHandler.CurrentView = view;
 
@@ -650,7 +650,7 @@ namespace MediaPortal.GUI.GUIPrograms
         {
           dlgOk.SetHeading(187);
           dlgOk.SetLine(1, strMsg);
-          dlgOk.SetLine(2, String.Empty);
+          dlgOk.SetLine(2, string.Empty);
           dlgOk.DoModal(GetID);
         }
       }

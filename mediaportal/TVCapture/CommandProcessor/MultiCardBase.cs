@@ -64,7 +64,7 @@ namespace MediaPortal.TV.Recording
 
 
     protected int _currentCardIndex = -1;
-    string _currentTvChannel = String.Empty;
+    string _currentTvChannel = string.Empty;
     protected DateTime _killTimeshiftingTimer;
 
     static List<TVChannel> _tvChannelsList = new List<TVChannel>();

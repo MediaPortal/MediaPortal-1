@@ -81,7 +81,7 @@ namespace MediaPortal.Util
       iHeight = 0;
       if (strPic == null)
         return null;
-      if (strPic == String.Empty)
+      if (strPic == string.Empty)
         return null;
 
       Log.Info("load picture {0}", strPic);
@@ -922,7 +922,7 @@ namespace MediaPortal.Util
     {
       if (strFile == null || strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0)
         return false;
-      if (strFile == String.Empty || strThumb == String.Empty)
+      if (strFile == string.Empty || strThumb == string.Empty)
         return false;
       if (!System.IO.File.Exists(strFile))
         return false;

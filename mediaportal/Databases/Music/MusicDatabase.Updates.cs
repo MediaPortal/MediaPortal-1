@@ -227,15 +227,15 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     private int LoadShares()
     {
-      string currentFolder = String.Empty;
+      string currentFolder = string.Empty;
       bool fileMenuEnabled = false;
-      string fileMenuPinCode = String.Empty;
+      string fileMenuPinCode = string.Empty;
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
 
-        string strDefault = xmlreader.GetValueAsString("music", "default", String.Empty);
+        string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
         for (int i = 0; i < 20; i++)
         {
           string strShareName = String.Format("sharename{0}", i);
@@ -248,7 +248,7 @@ namespace MediaPortal.Music.Database
           string sharePort = String.Format("shareport{0}", i);
           string remoteFolder = String.Format("shareremotepath{0}", i);
 
-          string SharePath = xmlreader.GetValueAsString("music", strSharePath, String.Empty);
+          string SharePath = xmlreader.GetValueAsString("music", strSharePath, string.Empty);
 
           if (SharePath.Length > 0)
             _shares.Add(SharePath);
@@ -597,7 +597,7 @@ namespace MediaPortal.Music.Database
         tag.AlbumArtist = FormatMultipleEntry(tag.AlbumArtist);
         tag.Genre = FormatMultipleEntry(tag.Genre);
 
-        if (tag.AlbumArtist == "unknown" || tag.AlbumArtist == String.Empty)
+        if (tag.AlbumArtist == "unknown" || tag.AlbumArtist == string.Empty)
           tag.AlbumArtist = tag.Artist;
 
         // Extract the Coverart
@@ -695,7 +695,7 @@ namespace MediaPortal.Music.Database
         string[] artists = strArtist.Split(new char[] { ';', '|' });
         foreach (string artist in artists)
         {
-          if (artist.Trim() == String.Empty)
+          if (artist.Trim() == string.Empty)
             continue;
 
           strSQL = String.Format("select idArtist from artist where strArtist = '{0}'", artist.Trim());
@@ -731,7 +731,7 @@ namespace MediaPortal.Music.Database
         string[] artists = strAlbumArtist.Split(new char[] { ';', '|' });
         foreach (string artist in artists)
         {
-          if (artist.Trim() == String.Empty)
+          if (artist.Trim() == string.Empty)
             continue;
 
           strSQL = String.Format("select idAlbumArtist from albumartist where strAlbumArtist = '{0}'", artist.Trim());
@@ -766,7 +766,7 @@ namespace MediaPortal.Music.Database
         string[] genres = strGenre.Split(new char[] { ';', '|' });
         foreach (string genre in genres)
         {
-          if (genre.Trim() == String.Empty)
+          if (genre.Trim() == string.Empty)
             continue;
 
           strSQL = String.Format("select idGenre from genre where strGenre = '{0}'", genre.Trim());
@@ -908,7 +908,7 @@ namespace MediaPortal.Music.Database
 
     private void CreateFolderThumbs(string strSongPath, string strSmallThumb)
     {
-      if (System.IO.File.Exists(strSmallThumb) && strSongPath != String.Empty)
+      if (System.IO.File.Exists(strSmallThumb) && strSongPath != string.Empty)
       {
         string folderThumb = MediaPortal.Util.Utils.GetFolderThumb(strSongPath);
         string localFolderThumb = MediaPortal.Util.Utils.GetLocalFolderThumb(strSongPath);
@@ -960,7 +960,7 @@ namespace MediaPortal.Music.Database
 
     private void CreateArtistThumbs(string strSmallThumb, string songArtist)
     {
-      if (System.IO.File.Exists(strSmallThumb) && songArtist != String.Empty)
+      if (System.IO.File.Exists(strSmallThumb) && songArtist != string.Empty)
       {
         string artistThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MusicArtists, Util.Utils.MakeFileName(songArtist.Trim(trimChars)));
         if (!System.IO.File.Exists(artistThumb))
@@ -977,7 +977,7 @@ namespace MediaPortal.Music.Database
 
     private void CreateGenreThumbs(string strSmallThumb, string songGenre)
     {
-      if (System.IO.File.Exists(strSmallThumb) && songGenre != String.Empty)
+      if (System.IO.File.Exists(strSmallThumb) && songGenre != string.Empty)
       {
         // using the thumb of the first item of a gerne / artist having a thumb
 

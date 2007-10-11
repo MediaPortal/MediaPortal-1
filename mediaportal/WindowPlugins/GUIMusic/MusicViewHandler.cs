@@ -97,7 +97,7 @@ namespace MediaPortal.GUI.Music
       get
       {
         if (currentView == null)
-          return String.Empty;
+          return string.Empty;
         return currentView.LocalizedName;
       }
     }
@@ -107,7 +107,7 @@ namespace MediaPortal.GUI.Music
       get
       {
         if (currentView == null)
-          return String.Empty;
+          return string.Empty;
         return currentView.Name;
       }
       set
@@ -176,8 +176,8 @@ namespace MediaPortal.GUI.Music
     {
       //build the query
       List<Song> songs = new List<Song>();
-      string whereClause = String.Empty;
-      string orderClause = String.Empty;
+      string whereClause = string.Empty;
+      string orderClause = string.Empty;
       FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
 
       restrictionLength = 0;
@@ -221,15 +221,15 @@ namespace MediaPortal.GUI.Music
           case "albumartist":
           case "genre":
             sql = String.Format("select * from {0} ", table);
-            if (whereClause != String.Empty) sql += "where " + whereClause;
-            if (orderClause != String.Empty) sql += orderClause;
+            if (whereClause != string.Empty) sql += "where " + whereClause;
+            if (orderClause != string.Empty) sql += orderClause;
             break;
 
           case "album":
             sql = String.Format("select distinct strAlbum, strAlbumArtist, strPath from tracks ");
-            if (whereClause != String.Empty) sql += "where " + whereClause;
+            if (whereClause != string.Empty) sql += "where " + whereClause;
             sql += " group by strAlbum";
-            if (orderClause != String.Empty) sql += orderClause;
+            if (orderClause != string.Empty) sql += orderClause;
             break;
 
           case "tracks":
@@ -354,7 +354,7 @@ namespace MediaPortal.GUI.Music
 
     void BuildRestriction(FilterDefinition filter, ref string whereClause)
     {
-      if (filter.SqlOperator != String.Empty && filter.Restriction != String.Empty)
+      if (filter.SqlOperator != string.Empty && filter.Restriction != string.Empty)
       {
         if (filter.SqlOperator == "group")
         {
@@ -491,8 +491,8 @@ namespace MediaPortal.GUI.Music
       if (definition.Where == "genre")
       {
         item.Label = song.Genre;
-        item.Label2 = String.Empty;
-        item.Label3 = String.Empty;
+        item.Label2 = string.Empty;
+        item.Label3 = string.Empty;
       }
       if (definition.Where == "album")
       {
@@ -502,7 +502,7 @@ namespace MediaPortal.GUI.Music
         {
           item.Label2 = song.Artist;
         }
-        item.Label3 = String.Empty;
+        item.Label3 = string.Empty;
       }
       if (definition.Where == "artist")
       {
@@ -510,9 +510,9 @@ namespace MediaPortal.GUI.Music
         // Don't clear the label in case of a Group/Index view, to show the counter
         if (definition.SqlOperator != "group")
         {
-          item.Label2 = String.Empty;
+          item.Label2 = string.Empty;
         }
-        item.Label3 = String.Empty;
+        item.Label3 = string.Empty;
       }
       if (definition.Where == "albumartist")
       {
@@ -520,15 +520,15 @@ namespace MediaPortal.GUI.Music
         // Don't clear the label in case of a Group/Index view, to show the counter
         if (definition.SqlOperator != "group")
         {
-          item.Label2 = String.Empty;
+          item.Label2 = string.Empty;
         }
-        item.Label3 = String.Empty;
+        item.Label3 = string.Empty;
       }
       if (definition.Where == "year")
       {
         item.Label = song.Year.ToString();
-        item.Label2 = String.Empty;
-        item.Label3 = String.Empty;
+        item.Label2 = string.Empty;
+        item.Label3 = string.Empty;
       }
     }
   }

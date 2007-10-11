@@ -27,7 +27,7 @@ namespace DirecTV
 {
   public class KeyMap
   {
-    public string KeyMapName = String.Empty;
+    public string KeyMapName = string.Empty;
     public byte RIGHT;
     public byte LEFT;
     public byte UP;

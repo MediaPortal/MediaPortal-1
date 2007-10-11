@@ -51,7 +51,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureHeight")]
     int _textureHeight = 32;
     [XMLSkinElement("percentage")]
-    string _tagLine = String.Empty;
+    string _tagLine = string.Empty;
     int m_iPercentage;
 
     ArrayList _itemList = new ArrayList();
@@ -99,7 +99,7 @@ namespace MediaPortal.GUI.Library
         base.Render(timePassed);
         return;
       }
-      if (_tagLine != String.Empty)
+      if (_tagLine != string.Empty)
       {
         string percent = GUIPropertyManager.Parse(_tagLine);
         try

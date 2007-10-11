@@ -148,7 +148,7 @@ namespace WindowPlugins.GUISettings
     void SetLanguages()
     {
       GUIControl.ClearControl(GetID, btnLanguage.GetID);
-      string currentLanguage = String.Empty;
+      string currentLanguage = string.Empty;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         currentLanguage = xmlreader.GetValueAsString("skin", "language", "English");

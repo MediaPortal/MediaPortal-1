@@ -68,7 +68,7 @@ namespace MediaPortal.Utils.Xml
     /// <param name="prefix">Namespace prefix of the attribute.</param>
     /// <param name="localName">LocalName of the attribute.</param>
     /// <param name="ns">NamespaceURI of the attribute</param>
-    /// <exception cref="T:System.ArgumentException">localName is either null or String.Empty. </exception>
+    /// <exception cref="T:System.ArgumentException">localName is either null or string.Empty. </exception>
     public override void WriteStartAttribute(string prefix, string localName, string ns)
     {
       //If the prefix or localname are "xmlns", don't write it.
@@ -120,7 +120,7 @@ namespace MediaPortal.Utils.Xml
     /// </summary>
     /// <param name="localName">The local name to write.</param>
     /// <param name="ns">The namespace URI to associate with the name.</param>
-    /// <exception cref="T:System.ArgumentException">localName is either null or String.Empty.localName is not a valid name according to the W3C Namespaces spec. </exception>
+    /// <exception cref="T:System.ArgumentException">localName is either null or string.Empty.localName is not a valid name according to the W3C Namespaces spec. </exception>
     public override void WriteQualifiedName(string localName, string ns)
     {
       //Always write the qualified name using only the

@@ -78,7 +78,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 			}
 			catch(Exception){}
 
-			string cardsDetected=String.Empty;
+			string cardsDetected=string.Empty;
 			//enum all cards known in capturedefinitions.xml
 			foreach (CaptureCardDefinition ccd  in CaptureCardDefinitions.CaptureCards)
 			{
@@ -102,7 +102,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 						cd.UseForTV=true;
 						cd.Priority=10;
 						captureCards.Add(cd);
-						if ( cardsDetected!=String.Empty) cardsDetected+= "\n";
+						if ( cardsDetected!=string.Empty) cardsDetected+= "\n";
 						cardsDetected+="SkyStar 2 DVB-S";
 
 
@@ -134,7 +134,7 @@ namespace MediaPortal.GUI.Settings.Wizard
             cd.SupportsRadio = true;
             cd.Priority = 10;
             captureCards.Add(cd);
-            if (cardsDetected != String.Empty) cardsDetected += "\n";
+            if (cardsDetected != string.Empty) cardsDetected += "\n";
             cardsDetected += "Techno Trend Premium";
 
 
@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.Settings.Wizard
             continue;
           }
 
-					if (ccd.CaptureName==String.Empty) continue;
+					if (ccd.CaptureName==string.Empty) continue;
 					if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
 						((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1 )) 
 					{
@@ -169,7 +169,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 						cd.UseForRecording=true;
 						cd.UseForTV=true;
 
-						if ( cardsDetected!=String.Empty) cardsDetected+= "\n";
+						if ( cardsDetected!=string.Empty) cardsDetected+= "\n";
 						cardsDetected+=cd.CommercialName;
 						captureCards.Add(cd);
 						availableVideoDeviceMonikers.RemoveAt(i);
@@ -178,7 +178,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 				}
 			}
 			SaveCaptureCards(captureCards);
-			if (cardsDetected==String.Empty)
+			if (cardsDetected==string.Empty)
 				cardsDetected="No TV cards detected";
 			tbCards.Label=cardsDetected;
 			Recorder.Stop();

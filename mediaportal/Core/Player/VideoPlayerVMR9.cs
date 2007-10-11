@@ -128,8 +128,8 @@ namespace MediaPortal.Player
           customFilters[i] = DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
         }
         if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
-        //int hr = graphBuilder.RenderFile(m_strCurrentFile, String.Empty);
-        graphBuilder.RenderFile(m_strCurrentFile, String.Empty);
+        //int hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
+        graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
         /*if (hr != 0)
         {
           Error.SetError("Unable to play movie", "Unable to render file. Missing codecs?");

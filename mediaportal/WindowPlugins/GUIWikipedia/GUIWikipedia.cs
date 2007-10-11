@@ -189,7 +189,7 @@ namespace Wikipedia
           GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
           dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
           dlg.SetLine(1, GUILocalizeStrings.Get(2500)); // No searchterm entered!
-          dlg.SetLine(2, String.Empty);
+          dlg.SetLine(2, string.Empty);
           dlg.SetLine(3, GUILocalizeStrings.Get(2501)); // Please enter a valid searchterm!
           dlg.DoModal(GUIWindowManager.ActiveWindow);
         }

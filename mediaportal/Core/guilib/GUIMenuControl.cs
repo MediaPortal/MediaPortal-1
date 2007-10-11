@@ -53,10 +53,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("buttonOffset")]              protected int     _buttonOffset         = 25;      // offset from the border to the buttons
     [XMLSkinElement("buttonFont")]                protected string  _buttonFont           = "font16";
     [XMLSkinElement("numberOfButtons")]           protected int     _numberOfButtons      = 5;
-    [XMLSkinElement("textureBackground")]         protected string  _textureBackground    = String.Empty;
-    [XMLSkinElement("textureButtonFocus")]        protected string  _textureButtonFocus   = String.Empty;
-    [XMLSkinElement("textureButtonNoFocus")]      protected string  _textureButtonNoFocus = String.Empty;
-    [XMLSkinElement("textureHoverNoFocus")]       protected string  _textureHoverNoFocus  = String.Empty;
+    [XMLSkinElement("textureBackground")]         protected string  _textureBackground    = string.Empty;
+    [XMLSkinElement("textureButtonFocus")]        protected string  _textureButtonFocus   = string.Empty;
+    [XMLSkinElement("textureButtonNoFocus")]      protected string  _textureButtonNoFocus = string.Empty;
+    [XMLSkinElement("textureHoverNoFocus")]       protected string  _textureHoverNoFocus  = string.Empty;
     [XMLSkinElement("hoverX")]                    protected int     _hoverPositionX       = 0;
     [XMLSkinElement("hoverY")]                    protected int     _hoverPositionY       = 0;
     [XMLSkinElement("hoverWidth")]                protected int     _hoverWidth           = 0;

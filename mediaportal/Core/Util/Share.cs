@@ -46,15 +46,15 @@ namespace MediaPortal.Util
       Albums = 3,
       FilmStrip = 4
     }
-    private string m_strPath = String.Empty;
-    private string m_strName = String.Empty;
+    private string m_strPath = string.Empty;
+    private string m_strName = string.Empty;
     private bool m_bDefault = false;
     private int m_iPincode = -1;
     private bool isRemote = false;
-    private string remoteServer = String.Empty;
-    private string remoteLogin = String.Empty;
-    private string remotePassword = String.Empty;
-    private string remoteFolder = String.Empty;
+    private string remoteServer = string.Empty;
+    private string remoteLogin = string.Empty;
+    private string remotePassword = string.Empty;
+    private string remoteFolder = string.Empty;
     private int remotePort = 21;
     public Views DefaultView = Views.List;
     /// <summary>
@@ -73,7 +73,7 @@ namespace MediaPortal.Util
     {
       if (strName == null || strPath == null)
         return;
-      if (strName == String.Empty || strPath == String.Empty)
+      if (strName == string.Empty || strPath == string.Empty)
         return;
       m_strName = strName;
       m_strPath = Utils.RemoveTrailingSlash(strPath);
@@ -91,7 +91,7 @@ namespace MediaPortal.Util
     {
       if (strName == null || strPath == null)
         return;
-      if (strName == String.Empty || strPath == String.Empty)
+      if (strName == string.Empty || strPath == string.Empty)
         return;
       m_strName = strName;
       m_strPath = Utils.RemoveTrailingSlash(strPath);
