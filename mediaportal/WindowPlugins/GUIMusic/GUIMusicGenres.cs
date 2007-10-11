@@ -1265,7 +1265,14 @@ namespace MediaPortal.GUI.Music
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
       if (filmstrip == null)
         return;
-      filmstrip.InfoImageFileName = item.ThumbnailImage;
+
+      if (item.Label == "..")
+      {
+        filmstrip.InfoImageFileName = string.Empty;
+        return;
+      }
+      else
+        filmstrip.InfoImageFileName = item.ThumbnailImage;
     }
 
     private void OnQueueAllItems()

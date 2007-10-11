@@ -576,16 +576,19 @@ namespace MediaPortal.GUI.Library
       get { return _isPlayed; }
       set { _isPlayed = value; }
     }
+
     public bool IsRemote
     {
       get { return _isRemote; }
       set { _isRemote = value; }
     }
+
     public bool IsDownloading
     {
       get { return _isDownloading; }
       set { _isDownloading = value; }
     }
+
     public bool RetrieveArt
     {
       get { return _retrieveCoverArtAllowed; }
@@ -608,7 +611,6 @@ namespace MediaPortal.GUI.Library
           _imagePinIcon.DimColor = value;
       }
     }
-
 
   }
 }

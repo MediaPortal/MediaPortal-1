@@ -545,73 +545,54 @@ namespace MediaPortal.Util
     public static void SetThumbnails(ref GUIListItem item)
     {
       if (item == null) return;
-      try
+      string strThumb = string.Empty;
+
+      if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path).ToLower())))
       {
-        if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path).ToLower())))
+        if (IsPicture(item.Path)) return;
+
+        strThumb = System.IO.Path.ChangeExtension(item.Path, ".jpg");
+
+        if (!System.IO.File.Exists(strThumb))
         {
-          if (IsPicture(item.Path)) return;
-
-          // check for filename.tbn
-          string strThumb = System.IO.Path.ChangeExtension(item.Path, ".tbn");
-          if (System.IO.File.Exists(strThumb))
+          strThumb = System.IO.Path.ChangeExtension(item.Path, ".tbn");
+          if (!System.IO.File.Exists(strThumb))
           {
-            // yep got it
-            item.ThumbnailImage = strThumb;
-            item.IconImage = strThumb;
-            item.IconImageBig = strThumb;
-            return;
-          }
-          strThumb = System.IO.Path.ChangeExtension(item.Path, ".jpg");
-          if (System.IO.File.Exists(strThumb))
-          {
-            // yep got it
-            item.ThumbnailImage = strThumb;
-            item.IconImage = strThumb;
-            item.IconImageBig = strThumb;
-            return;
-          }
-          strThumb = System.IO.Path.ChangeExtension(item.Path, ".png");
-          if (System.IO.File.Exists(strThumb))
-          {
-            // yep got it
-            item.ThumbnailImage = strThumb;
-            item.IconImage = strThumb;
-            item.IconImageBig = strThumb;
-            return;
-          }
-
-          // check for thumbs\filename.tbn
-
-          strThumb = GetThumb(item.Path);
-          if (System.IO.File.Exists(strThumb))
-          {
-            // yep got it
-            item.ThumbnailImage = strThumb;
-            item.IconImage = strThumb;
-            item.IconImageBig = strThumb;
-            return;
-          }
-        }
-        else
-        {
-          if (item.Label != "..")
-          {
-            // check for folder.jpg
-            string strThumb = item.Path + @"\folder.jpg";
-            if (System.IO.File.Exists(strThumb))
+            strThumb = System.IO.Path.ChangeExtension(item.Path, ".png");
+            if (!System.IO.File.Exists(strThumb))
             {
-              // got it
-              item.ThumbnailImage = strThumb;
-              item.IconImage = strThumb;
-              item.IconImageBig = strThumb;
+              strThumb = GetThumb(item.Path);
+              if (!System.IO.File.Exists(strThumb))
+                return;
             }
           }
         }
+
+        // now strThumb exists
+        item.ThumbnailImage = strThumb;
+        item.IconImage = strThumb;
+        item.IconImageBig = strThumb;
       }
-      catch (Exception)
+      else
       {
+        if (item.Label != "..")
+        {
+          strThumb = item.Path + @"\folder.jpg";
+          if (System.IO.File.Exists(strThumb))
+          {
+            item.ThumbnailImage = strThumb;
+            item.IconImage = strThumb;
+            item.IconImageBig = strThumb;
+          }
+        }
       }
-    }
+      if (!string.IsNullOrEmpty(strThumb))
+      {
+        strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
+        if (System.IO.File.Exists(strThumb))
+          item.ThumbnailImage = strThumb;
+      }
+    }  
 
     static public string SecondsToShortHMSString(int lSeconds)
     {
@@ -646,6 +627,7 @@ namespace MediaPortal.Util
         strHMS = String.Format("{0}:{1:00}", mm, ss);
       return strHMS;
     }
+
     static public string GetShortDayString(DateTime dt)
     {
       try
@@ -782,6 +764,7 @@ namespace MediaPortal.Util
 
       return strObjects;
     }
+
     static public string GetSongCountLabel(int iTotalItems, int iTotalSeconds)
     {
       string strObjects = String.Empty;
@@ -865,7 +848,8 @@ namespace MediaPortal.Util
 
     static public string GetThumb(string strLine)
     {
-      if (strLine == null) return "000";
+      if (string.IsNullOrEmpty(strLine))
+        return "000";
       try
       {
         if (String.Compare(Strings.Unknown, strLine, true) == 0) return "";
@@ -1729,8 +1713,8 @@ namespace MediaPortal.Util
 
     static public string GetLocalFolderThumbForDir(string strDirPath)
     {
-      if (strDirPath == null)              return String.Empty;
-      if (strDirPath.Length == 0)          return String.Empty;
+      if (string.IsNullOrEmpty(strDirPath))
+        return string.Empty;      
 
       string strFolderJpg = String.Format(@"{0}\{1}{2}", Thumbs.MusicFolder, EncryptLine(strDirPath), GetThumbExtension());
 
@@ -1739,12 +1723,8 @@ namespace MediaPortal.Util
 
     static public string GetCoverArt(string strFolder, string strFileName)
     {
-      if (strFolder == null)             return String.Empty;
-      if (strFolder.Length == 0)         return String.Empty;
-
-      if (strFileName == null)           return String.Empty;
-      if (strFileName.Length == 0)       return String.Empty;
-      if (strFileName == String.Empty)   return String.Empty;
+      if (string.IsNullOrEmpty(strFolder) || string.IsNullOrEmpty(strFileName))
+        return string.Empty;
 
       string strThumb = String.Format(@"{0}\{1}", strFolder, Utils.MakeFileName(strFileName));
 
@@ -1756,7 +1736,7 @@ namespace MediaPortal.Util
         return strThumb + ".gif";
       else if (System.IO.File.Exists(strThumb + ".tbn"))
         return strThumb + ".tbn";
-      return String.Empty;
+      return string.Empty;
     }
 
     static public string ConvertToLargeCoverArt(string smallArt)
@@ -1773,26 +1753,21 @@ namespace MediaPortal.Util
 
     static public string GetCoverArtName(string strFolder, string strFileName)
     {
-      if (strFolder == null)            return String.Empty;
-      if (strFolder.Length == 0)        return String.Empty;
-
-      if (strFileName == null)          return String.Empty;
-      if (strFileName.Length == 0)      return String.Empty;
+      if (string.IsNullOrEmpty(strFolder) || string.IsNullOrEmpty(strFileName))
+        return string.Empty;
 
       string strThumb = Utils.GetCoverArt(strFolder, strFileName);
+
       if (strThumb == string.Empty)
-        strThumb = String.Format(@"{0}\{1}{2}", strFolder, Utils.MakeFileName(strFileName), GetThumbExtension());
+        strThumb = string.Format(@"{0}\{1}{2}", strFolder, Utils.MakeFileName(strFileName), GetThumbExtension());
 
       return strThumb;
     }
 
     static public string GetLargeCoverArtName(string strFolder, string strFileName)
     {
-      if (strFolder == null)            return String.Empty;
-      if (strFolder.Length == 0)        return String.Empty;
-
-      if (strFileName == null)          return String.Empty;
-      if (strFileName.Length == 0)      return String.Empty;
+      if (string.IsNullOrEmpty(strFolder) || string.IsNullOrEmpty(strFileName))
+        return string.Empty;
 
       return Utils.GetCoverArtName(strFolder, strFileName + "L");
     }

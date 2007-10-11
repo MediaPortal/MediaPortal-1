@@ -484,6 +484,7 @@ namespace MediaPortal.GUI.Video
       ArrayList itemlist = new ArrayList();
       GUIControl.ClearControl(GetID, facadeView.GetID);
 
+      // here we get ALL files in every subdir, look for folderthumbs, defaultthumbs, etc
       itemlist = virtualDirectory.GetDirectory(_currentFolder);
       if (mapSettings.Stack)
       {
@@ -503,7 +504,7 @@ namespace MediaPortal.GUI.Video
                 {
                   if (MediaPortal.Util.Utils.ShouldStack(item1.Path, item2.Path))
                   {
-                    if (String.Compare(item1.Path, item2.Path, true) > 0)  
+                    if (String.Compare(item1.Path, item2.Path, true) > 0)
                     {
                       addItem = false;
                       // Update to reflect the stacked size
@@ -518,7 +519,8 @@ namespace MediaPortal.GUI.Video
           if (addItem)
           {
             string label = item1.Label;
-						if ((VirtualDirectory.IsValidExtension(item1.Path, MediaPortal.Util.Utils.VideoExtensions, false))) MediaPortal.Util.Utils.RemoveStackEndings(ref label);
+            if ((VirtualDirectory.IsValidExtension(item1.Path, MediaPortal.Util.Utils.VideoExtensions, false)))
+              MediaPortal.Util.Utils.RemoveStackEndings(ref label);
             item1.Label = label;
             itemfiltered.Add(item1);
           }
@@ -536,6 +538,8 @@ namespace MediaPortal.GUI.Video
         selectDVDHandler = new SelectDVDHandler();
         GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
       }
+
+      // folder.jpg will already be assigned from "itemlist = virtualDirectory.GetDirectory(_currentFolder);" here
       selectDVDHandler.SetIMDBThumbs(itemlist, _markWatchedFiles);
 
       foreach (GUIListItem item in itemlist)
@@ -1179,15 +1183,16 @@ namespace MediaPortal.GUI.Video
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
-      if (filmstrip == null) return;
+      if (filmstrip == null)
+        return;
+
       if (item.Label == "..")
       {
-        filmstrip.InfoImageFileName = String.Empty;
+        filmstrip.InfoImageFileName = string.Empty;
         return;
       }
-
-      if (item.IsFolder) filmstrip.InfoImageFileName = item.ThumbnailImage;
-      else filmstrip.InfoImageFileName = MediaPortal.Util.Utils.ConvertToLargeCoverArt(item.ThumbnailImage);
+      else
+        filmstrip.InfoImageFileName = item.ThumbnailImage;
     }
 
     static public void PlayMovieFromPlayList(bool askForResumeMovie)
@@ -1818,7 +1823,7 @@ namespace MediaPortal.GUI.Video
       return virtualDirectory.IsProtectedShare(folder, out pinCode);
     }
 
-    static void DownloadThumnail(string folder, string url, string name)
+    static void DownloadThumbnail(string folder, string url, string name)
     {
       if (url == null) return;
       if (url.Length == 0) return;
@@ -1848,6 +1853,7 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
+
     static void DownloadDirector(IMDBMovie movieDetails)
     {
       string actor = movieDetails.Director;
@@ -1866,7 +1872,7 @@ namespace MediaPortal.GUI.Video
           if (imdbActor.ThumbnailUrl.Length != 0)
           {
             //ShowProgress(GUILocalizeStrings.Get(1009), actor, "", 0);
-            DownloadThumnail(Thumbs.MovieActors, imdbActor.ThumbnailUrl, actor);
+            DownloadThumbnail(Thumbs.MovieActors, imdbActor.ThumbnailUrl, actor);
           }
           else
             Log.Debug("GUIVideoFiles: url=empty for director {0}", actor);
@@ -1875,6 +1881,7 @@ namespace MediaPortal.GUI.Video
           Log.Debug("GUIVideoFiles: url=null for director {0}", actor);
       }
     }
+
     static void DownloadActors(IMDBMovie movieDetails)
     {
 
@@ -1912,7 +1919,7 @@ namespace MediaPortal.GUI.Video
                   VideoDatabase.SetActorInfo(actorId, imdbActor);
                 }
                 //ShowProgress(GUILocalizeStrings.Get(1009), actor, "", percent);
-                DownloadThumnail(Thumbs.MovieActors, imdbActor.ThumbnailUrl, actor);
+                DownloadThumbnail(Thumbs.MovieActors, imdbActor.ThumbnailUrl, actor);
               }
               else
                 Log.Debug("GUIVideoFiles: url=empty for actor {0}", actor);

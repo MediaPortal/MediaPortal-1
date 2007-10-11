@@ -569,13 +569,13 @@ namespace MediaPortal.GUI.Video
     {
       for (int x = 0; x < items.Count; ++x)
       {
+        string coverArtImage = string.Empty;
         GUIListItem listItem = (GUIListItem)items[x];
         IMDBMovie movie = listItem.AlbumInfoTag as IMDBMovie;
         if (movie != null)
         {
           if (movie.ID >= 0)
-          {
-            string coverArtImage;
+          {            
             coverArtImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieTitle, movie.Title);
             if (System.IO.File.Exists(coverArtImage))
             {
@@ -586,8 +586,7 @@ namespace MediaPortal.GUI.Video
 
           }
           else if (movie.Actor != String.Empty)
-          {
-            string coverArtImage;
+          {            
             coverArtImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieActors, movie.Actor);
             if (System.IO.File.Exists(coverArtImage))
             {
@@ -596,6 +595,13 @@ namespace MediaPortal.GUI.Video
               listItem.IconImage = coverArtImage;
             }
           }
+        }
+        // let's try to assign better covers
+        if (!string.IsNullOrEmpty(coverArtImage))
+        {
+          coverArtImage = Util.Utils.ConvertToLargeCoverArt(coverArtImage);
+          if (System.IO.File.Exists(coverArtImage))
+            listItem.ThumbnailImage = coverArtImage;
         }
       }
     }

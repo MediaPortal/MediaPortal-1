@@ -418,6 +418,7 @@ namespace MediaPortal.GUI.Video
       UpdateButtonStates();
       GUIControl.FocusControl(GetID, btnViewAs.GetID);
     }
+
     void SetIMDBThumbs(ArrayList items)
     {
       GUIListItem listItem;
@@ -452,6 +453,10 @@ namespace MediaPortal.GUI.Video
                     listItem.IconImageBig = coverArtImage;
                     listItem.IconImage = coverArtImage;
                   }
+                  // look for better thumbs
+                  coverArtImage = Util.Utils.ConvertToLargeCoverArt(coverArtImage);
+                  if (System.IO.File.Exists(coverArtImage))
+                    listItem.ThumbnailImage = coverArtImage;
                   break;
                 }
               }
@@ -478,6 +483,10 @@ namespace MediaPortal.GUI.Video
               listItem.IconImageBig = coverArtImage;
               listItem.IconImage = coverArtImage;
             }
+            // look for better thumbs
+            coverArtImage = Util.Utils.ConvertToLargeCoverArt(coverArtImage);
+            if (System.IO.File.Exists(coverArtImage))
+              listItem.ThumbnailImage = coverArtImage;
           }
         }
       }

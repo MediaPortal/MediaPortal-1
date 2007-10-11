@@ -202,6 +202,7 @@ namespace MediaPortal.GUI.Video
     {
       GUIListItem pItem;
       IMDBMovie movieDetails = new IMDBMovie();
+
       for (int x = 0; x < items.Count; x++)
       {
         string strThumb = string.Empty;
@@ -209,42 +210,31 @@ namespace MediaPortal.GUI.Video
         pItem = (GUIListItem)items[x];
         string file = string.Empty;
         bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
-        if (pItem.ThumbnailImage != String.Empty)
-        {
-          if (isFolderPinProtected)
-          {
-            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
-          }
-          continue;
-        }
+
         if (pItem.IsFolder)
         {
-          if (pItem.Label == "..") continue;
+          if (pItem.Label == "..")
+            continue;
+
           if (isFolderPinProtected)
           {
+            // hide maybe rated content
             MediaPortal.Util.Utils.SetDefaultIcons(pItem);
             continue;
           }
-          if (System.IO.File.Exists(pItem.Path + "\\folder.jpg"))
-          {
-            strThumb = pItem.Path + "\\folder.jpg";
-            strLargeThumb = strThumb;
-          }
-          else if (!isFolderPinProtected)
-          {
+          else
             file = GetFolderVideoFile(pItem.Path);
-          }
-        } // of if (pItem.IsFolder)
-        else if (!pItem.IsFolder
-                  || (pItem.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(pItem.Path).ToLower())))
+
+        }
+        else if (!pItem.IsFolder || (pItem.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(pItem.Path).ToLower())))
         {
           file = pItem.Path;
         }
         else
-        {
           continue;
-        }
-        if (file != string.Empty)
+
+
+        if (!string.IsNullOrEmpty(file))
         {
           byte[] resumeData = null;
           int fileId = VideoDatabase.GetFileId(file);
@@ -258,7 +248,6 @@ namespace MediaPortal.GUI.Video
               pItem.Label = String.Format("({0}:) {1}", pItem.Path.Substring(0, 1), movieDetails.Title);
             }
             strThumb = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
-            strLargeThumb = MediaPortal.Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
 
             if (movieDetails.Watched > 0 && markWatchedFiles)
               foundWatched = true;
@@ -279,21 +268,25 @@ namespace MediaPortal.GUI.Video
             }
           }
           if (!pItem.IsFolder)
-          {
             pItem.IsPlayed = foundWatched;
-          }
-        }
 
-        if (System.IO.File.Exists(strThumb))
-        {
+
+          if (!System.IO.File.Exists(strThumb) || string.IsNullOrEmpty(strThumb))
+          {
+            strThumb = MediaPortal.Util.Utils.GetCoverArtName(Thumbs.MovieTitle, System.IO.Path.ChangeExtension(file, ".jpg"));
+            if (!System.IO.File.Exists(strThumb))
+              continue;
+          }
+
           pItem.ThumbnailImage = strThumb;
           pItem.IconImageBig = strThumb;
           pItem.IconImage = strThumb;
-        }
-        if (System.IO.File.Exists(strLargeThumb))
-        {
-          pItem.IconImageBig = strLargeThumb;
-        }
+
+          strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
+          if (System.IO.File.Exists(strThumb))
+            pItem.ThumbnailImage = strThumb;
+
+        } // <-- file == empty
       } // of for (int x = 0; x < items.Count; ++x)
     }
 
