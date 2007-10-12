@@ -500,7 +500,7 @@ namespace MediaPortal.Configuration
 
     private void searchTextBox_KeyUp( object sender, System.Windows.Forms.KeyEventArgs e )
     {
-        if (e.KeyCode == Keys.Enter)
+        if (e.KeyCode == Keys.Enter && searchTextBox.Focused)
             this.buttonCitySearch.PerformClick();
     }
 

@@ -723,7 +723,7 @@ namespace MediaPortal.GUI.Music
         dlg.AddLocalizedString(33041);
 
       //dlg.AddLocalizedString(928);        // Find Coverart
-      dlg.AddLocalizedString(4521);       // Show Album Info
+      // dlg.AddLocalizedString(4521);       // Show Album Info
 
       if (IsCdTrack(CurrentTrackFileName))
         dlg.AddLocalizedString(4554);   // Lookup CD info
