@@ -397,6 +397,37 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
+    public bool GetSongByArtistTitle(string aArtist, string aTitle, ref Song aSong)
+    {
+      try
+      {
+        aSong.Clear();
+        string strTitle = aTitle;
+        string strArtist = aArtist;
+        DatabaseUtility.RemoveInvalidChars(ref strTitle);
+        DatabaseUtility.RemoveInvalidChars(ref strArtist);
+
+        string strSQL = String.Format("SELECT * FROM tracks WHERE strArtist LIKE '%{0}%' AND strTitle LIKE '{1}%'",strArtist, strTitle);
+
+        SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
+        if (results.Rows.Count == 0)
+          return false;
+
+        if (results.Rows.Count > 1)
+          Log.Warn("MusicDatabase: Lookups: GetSongByArtistTitle found multiple ({2}) results for {0}-{1}", strArtist, strTitle, Convert.ToString(results.Rows.Count));
+
+        if (AssignAllSongFieldsFromResultSet(ref aSong, results, 0))
+          return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+
+      return false;
+    }
+
     public bool GetSongByTitle(string aTitle, ref Song aSong)
     {
       try
@@ -405,7 +436,7 @@ namespace MediaPortal.Music.Database
         string strTitle = aTitle;
         DatabaseUtility.RemoveInvalidChars(ref strTitle);
 
-        string strSQL = String.Format("SELECT * FROM tracks WHERE strTitle='{0}'", strTitle);
+        string strSQL = String.Format("SELECT * FROM tracks WHERE strTitle LIKE '{0}'", strTitle);
 
         SQLiteResultSet results = MusicDatabase.DirectExecute(strSQL);
         if (results.Rows.Count == 0)
