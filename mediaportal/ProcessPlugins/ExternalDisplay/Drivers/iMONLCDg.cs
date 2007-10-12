@@ -478,9 +478,9 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     {
       get
       {
-        if (!File.Exists(Config.GetFile(Config.Dir.Base, "SG_VFD.dll")))
+        if (!File.Exists(Config.GetFile(Config.Dir.Base, "SG_LCD.dll")))
         {
-          _errorMessage = "Required file \"SG_VFD.dll\" is not installed!";
+          _errorMessage = "Required file \"SG_LCD.dll\" is not installed!";
           _isDisabled = true;
         }
         return _isDisabled;
@@ -805,7 +805,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
         {
           _isDisabled = true;
           _errorMessage = ex.Message;
-          Log.Info("IDisplay(API) iMONLCDg.Setup() - caught an exception. Did you copy SG_VFD.sll to you windows\\system32 directory??");
+          Log.Info("IDisplay(API) iMONLCDg.Setup() - caught an exception. Did you copy SG_LCD.sll to you windows\\system32 directory??");
         }
       }
       #endregion
@@ -1110,7 +1110,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     private void SetText(string Line1, string Line2)
     {
-      // exception handler is not needed here - this function is in all versions of SG_VFD.dll
+      // exception handler is not needed here - this function is in all versions of SG_LCD.dll
       lock (DWriteMutex)
       {
         iMONVFD_SetText(Line1, Line2);
@@ -1119,7 +1119,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       }
     }
 
-    // This routine must have an error handler - iMONLCD_SendData is not included in all versions of SG_VFD.dll
+    // This routine must have an error handler - iMONLCD_SendData is not included in all versions of SG_LCD.dll
     private void SendData(ulong data)
     {
       try
@@ -1132,7 +1132,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
       {
         _isDisabled = true;
         _errorMessage = ex.Message;
-        Log.Info("iMONLCDg.SendData() caught exception '{0}'\nIs your SG_VFD.dll version 5.1 or higher??");
+        Log.Info("iMONLCDg.SendData() caught exception '{0}'\nIs your SG_LCD.dll version 5.1 or higher??");
       }
     }
 
@@ -3159,24 +3159,24 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
     #endregion
 
 
-    #region Interop declarations SG_VFD.dll
+    #region Interop declarations SG_LCD.dll
 
-    [DllImport("SG_VFD.dll", EntryPoint = "iMONVFD_Init")]
+    [DllImport("SG_LCD.dll", EntryPoint = "iMONVFD_Init")]
     private static extern bool Open(int vfdType, int resevered);
 
-    [DllImport("SG_VFD.dll", EntryPoint = "iMONVFD_Uninit")]
+    [DllImport("SG_LCD.dll", EntryPoint = "iMONVFD_Uninit")]
     private static extern void Close();
 
-    [DllImport("SG_VFD.dll", EntryPoint = "iMONVFD_IsInited")]
+    [DllImport("SG_LCD.dll", EntryPoint = "iMONVFD_IsInited")]
     private static extern bool IsOpen();
 
-    [DllImport("SG_VFD.dll", EntryPoint = "iMONVFD_SetText")]         // VFD specific
+    [DllImport("SG_LCD.dll", EntryPoint = "iMONVFD_SetText")]         // VFD specific
     private static extern bool iMONVFD_SetText(string firstLine, string secondLine);
 
-    [DllImport("sg_vfd.dll", EntryPoint = "iMONVFD_SetEQ")]
+    [DllImport("SG_LCD.dll", EntryPoint = "iMONVFD_SetEQ")]
     public static extern bool SetEQ(int arEQValue);
 
-    [DllImport("sg_vfd.dll", EntryPoint = "iMONLCD_SendData")]        // LCD specific
+    [DllImport("SG_LCD.dll", EntryPoint = "iMONLCD_SendData")]        // LCD specific
     public static extern bool iMONLCD_SendData(ref ulong bitMap);
     //    public static extern unsafe bool iMONLCD_SendData(Int64* bitMap);
 
@@ -3304,7 +3304,7 @@ namespace ProcessPlugins.ExternalDisplay.Drivers
 
     #region Unused Methods
 
-    //private void SetEQ(byte[] EqDataArray)      // not currently used - included for complete coverage of SG_VFD.dll functions
+    //private void SetEQ(byte[] EqDataArray)      // not currently used - included for complete coverage of SG_LCD.dll functions
     //{
     //  // 16 sized array for single bar.
     //  // EqDataArray[0] 	0 -> up bars
