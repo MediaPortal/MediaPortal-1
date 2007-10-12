@@ -1819,7 +1819,7 @@ namespace MediaPortal.Util
       // lets wait 10 sec      
       int count = 0;      
 
-      if (pathName.Length == 0 || pathName == "root")
+      if (pathName.Length == 0 || pathName == "root" || IsRemote(pathName))
       {
         return true;
       }
